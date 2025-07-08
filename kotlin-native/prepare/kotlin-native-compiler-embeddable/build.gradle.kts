@@ -1,7 +1,9 @@
 import org.gradle.kotlin.dsl.support.serviceOf
+import org.jetbrains.kotlin.nativeDistribution.BuiltNativeDistribution
 import org.jetbrains.kotlin.nativeDistribution.NativeDistributionProperty
 import org.jetbrains.kotlin.nativeDistribution.nativeDistribution
 import org.jetbrains.kotlin.nativeDistribution.nativeDistributionProperty
+import org.jetbrains.kotlin.nativeDistribution.nativeDistributionWithStdlibAndRuntime
 
 plugins {
     kotlin("jvm")
@@ -102,13 +104,12 @@ open class ProjectTestArgumentProvider @Inject constructor(
     @get:Classpath
     val compilerClasspath: ConfigurableFileCollection = objectFactory.fileCollection()
 
-    @get:InputDirectory
-    @get:PathSensitive(PathSensitivity.RELATIVE)
-    val nativeDistribution: NativeDistributionProperty = objectFactory.nativeDistributionProperty()
+    @get:Nested
+    val nativeDistribution: Property<BuiltNativeDistribution> = objectFactory.property(BuiltNativeDistribution::class)
 
     override fun asArguments(): Iterable<String> = listOf(
             "-DcompilerClasspath=${compilerClasspath.files.joinToString(separator = File.pathSeparator) { it.absolutePath }}",
-            "-Dkotlin.native.home=${nativeDistribution.get().root.asFile.absolutePath}",
+            "-Dkotlin.native.home=${nativeDistribution.get().dist.root.asFile.absolutePath}",
     )
 }
 
@@ -121,7 +122,6 @@ projectTest {
 
         // The tests run the compiler and try to produce an executable on host.
         // So, distribution with stdlib and runtime for host is required.
-        nativeDistribution.set(project.nativeDistribution)
-        dependsOn(":kotlin-native:prepare:kotlin-native-distribution:distRuntime")
+        nativeDistribution.set(project.nativeDistributionWithStdlibAndRuntime())
     })
 }

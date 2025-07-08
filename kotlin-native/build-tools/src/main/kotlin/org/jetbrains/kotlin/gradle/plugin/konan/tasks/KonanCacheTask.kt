@@ -15,6 +15,7 @@ import org.gradle.api.services.ServiceReference
 import org.gradle.api.tasks.*
 import org.gradle.kotlin.dsl.listProperty
 import org.gradle.kotlin.dsl.newInstance
+import org.gradle.kotlin.dsl.property
 import org.gradle.workers.WorkAction
 import org.gradle.workers.WorkParameters
 import org.gradle.workers.WorkerExecutor
@@ -23,8 +24,7 @@ import org.jetbrains.kotlin.gradle.plugin.konan.prepareAsOutput
 import org.jetbrains.kotlin.gradle.plugin.konan.registerIsolatedClassLoadersServiceIfAbsent
 import org.jetbrains.kotlin.gradle.plugin.konan.runKonanTool
 import org.jetbrains.kotlin.konan.target.PlatformManager
-import org.jetbrains.kotlin.nativeDistribution.NativeDistributionProperty
-import org.jetbrains.kotlin.nativeDistribution.nativeDistributionProperty
+import org.jetbrains.kotlin.nativeDistribution.BuiltNativeDistribution
 import javax.inject.Inject
 
 private abstract class KonanCacheAction : WorkAction<KonanCacheAction.Parameters> {
@@ -70,8 +70,8 @@ open class KonanCacheTask @Inject constructor(
     @get:OutputDirectory
     val outputDirectory: DirectoryProperty = objectFactory.directoryProperty()
 
-    @get:Internal("Depends upon the compiler classpath, native libraries (used by codegen) and konan.properties (compilation flags + dependencies)")
-    val compilerDistribution: NativeDistributionProperty = objectFactory.nativeDistributionProperty()
+    @get:Nested
+    val compilerDistribution: Property<BuiltNativeDistribution> = objectFactory.property(BuiltNativeDistribution::class)
 
     @get:Nested
     protected val dependencies = objectFactory.listProperty(Dependency::class)
@@ -79,19 +79,6 @@ open class KonanCacheTask @Inject constructor(
     fun dependency(configure: Dependency.() -> Unit) {
         dependencies.add(objectFactory.newInstance<Dependency>().apply { configure() })
     }
-
-    @get:Classpath
-    protected val compilerClasspath = compilerDistribution.map { it.compilerClasspath }
-
-    @get:InputDirectory
-    @get:PathSensitive(PathSensitivity.NONE)
-    @Suppress("unused") // used only by Gradle machinery via reflection.
-    protected val codegenLibs = compilerDistribution.map { it.nativeLibs }
-
-    @get:InputFile
-    @get:PathSensitive(PathSensitivity.NONE)
-    @Suppress("unused") // used only by Gradle machinery via reflection.
-    protected val konanProperties = compilerDistribution.map { it.konanProperties }
 
     @get:ServiceReference
     protected val isolatedClassLoadersService = project.gradle.sharedServices.registerIsolatedClassLoadersServiceIfAbsent()
@@ -114,14 +101,14 @@ open class KonanCacheTask @Inject constructor(
                 add(klib)
                 add("-Xcached-library=$klib,${it.cache.get().asFile.absolutePath}")
             }
-            PlatformManager(compilerDistribution.get().root.asFile.absolutePath).apply {
+            PlatformManager(compilerDistribution.get().dist.root.asFile.absolutePath).apply {
                 addAll(platform(targetByName(target.get())).additionalCacheFlags)
             }
         }
         val workQueue = workerExecutor.noIsolation()
         workQueue.submit(KonanCacheAction::class.java) {
             this.isolatedClassLoaderService.set(this@KonanCacheTask.isolatedClassLoadersService)
-            this.compilerClasspath.from(this@KonanCacheTask.compilerClasspath)
+            this.compilerClasspath.from(this@KonanCacheTask.compilerDistribution.get().dist.compilerClasspath)
             this.args.addAll(args)
         }
     }

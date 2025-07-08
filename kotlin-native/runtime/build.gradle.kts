@@ -12,6 +12,8 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.konan.target.*
 import org.jetbrains.kotlin.library.KOTLIN_NATIVE_STDLIB_NAME
 import org.jetbrains.kotlin.nativeDistribution.nativeDistribution
+import org.jetbrains.kotlin.nativeDistribution.nativeDistributionWithCompiler
+import org.jetbrains.kotlin.nativeDistribution.nativeDistributionWithStdlibAndRuntime
 import org.jetbrains.kotlin.utils.capitalized
 import org.jetbrains.kotlin.konan.target.Architecture as TargetArchitecture
 
@@ -474,9 +476,7 @@ val nativeStdlib by tasks.registering(KonanCompileTask::class) {
     group = BasePlugin.BUILD_GROUP
     description = "Build the Kotlin/Native standard library"
 
-    // Requires Native distribution with the compiler JARs.
-    this.compilerDistribution.set(nativeDistribution)
-    dependsOn(":kotlin-native:prepare:kotlin-native-distribution:distCompiler")
+    this.compilerDistribution.set(nativeDistributionWithCompiler)
 
     this.outputDirectory.set(
             layout.buildDirectory.dir("stdlib/${HostManager.hostName}/stdlib")
@@ -557,12 +557,7 @@ val stdlibCacheElements by configurations.creating {
 
 cacheableTargetNames.forEach { targetName ->
     val stdlibCache = tasks.register("${targetName}StdlibCache", KonanCacheTask::class.java) {
-        val dist = nativeDistribution
-
-        // Requires Native distribution with stdlib klib and runtime modules for `targetName`.
-        this.compilerDistribution.set(dist)
-        dependsOn(":kotlin-native:prepare:kotlin-native-distribution:crossDistRuntime${targetName.capitalized}")
-        inputs.dir(dist.map { it.runtime(targetName) }) // manually depend on runtime modules (stdlib cache links these modules in)
+        this.compilerDistribution.set(nativeDistributionWithStdlibAndRuntime(platformManager.targetByName(targetName).withSanitizer()))
 
         this.klib.fileProvider(nativeStdlib.flatMap { it.outputDirectory.asFile })
         this.target.set(targetName)

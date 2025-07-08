@@ -12,12 +12,14 @@ import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.tasks.*
+import org.gradle.kotlin.dsl.property
 import org.gradle.process.ExecOperations
 import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.konan.target.Family
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.util.visibleName
-import org.jetbrains.kotlin.nativeDistribution.nativeDistribution
+import org.jetbrains.kotlin.nativeDistribution.BuiltNativeDistribution
+import org.jetbrains.kotlin.nativeDistribution.nativeDistributionWithCompiler
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.InputStream
@@ -31,9 +33,11 @@ fun Project.familyDefFiles(family: Family) = fileTree("src/platform/${family.vis
 
 fun Project.registerUpdateDefFileDependenciesForAppleFamiliesTasks(aggregateTask: TaskProvider<*>): Map<Family, TaskProvider<*>> {
     val shouldUpdate = project.getBooleanProperty(updateDefFileDependenciesFlag) ?: false
+    val distribution = nativeDistributionWithCompiler
 
     val updateDefFilesTaskPerFamily = KonanTarget.predefinedTargets.values.filter { it.family.isAppleFamily }.groupBy { it.family }.mapValues {
         registerUpdateDefFileDependenciesTask(
+                distribution,
                 family = it.key,
                 targets = it.value,
                 shouldUpdate = shouldUpdate,
@@ -72,16 +76,15 @@ fun Project.registerUpdateDefFileDependenciesForAppleFamiliesTasks(aggregateTask
 }
 
 private fun Project.registerUpdateDefFileDependenciesTask(
+        distribution: BuiltNativeDistribution,
         family: Family,
         targets: List<KonanTarget>,
         shouldUpdate: Boolean,
 ): TaskProvider<UpdateDefFileDependenciesTask> = tasks.register("${family.visibleName}UpdateDefFileDependencies", UpdateDefFileDependenciesTask::class.java) {
-    dependsOn(":kotlin-native:prepare:kotlin-native-distribution:distCompiler")
-
     onlyIf("-P${updateDefFileDependenciesFlag} is not set") { shouldUpdate }
     defFiles.from(familyDefFiles(family))
     targetNames.set(targets.map { it.name })
-    runKonan.set(nativeDistribution.map { it.runKonan.asFile })
+    compilerDistribution.set(distribution)
     defFileDiffsFile.set(layout.buildDirectory.file("${family.visibleName}ChangedDefFiles"))
 }
 
@@ -98,9 +101,8 @@ private open class UpdateDefFileDependenciesTask @Inject constructor(
     @get:Input
     val targetNames: ListProperty<String> = project.objects.listProperty(String::class.java)
 
-    @get:PathSensitive(PathSensitivity.RELATIVE)
-    @get:InputFile
-    val runKonan: Property<File> = project.objects.property(File::class.java)
+    @get:Nested
+    val compilerDistribution: Property<BuiltNativeDistribution> = project.objects.property(BuiltNativeDistribution::class)
 
     /**
      * The [internalToolchain], [developerDir] and [selectedXcode] are implicit inputs to runKonan. If one of these changes,
@@ -130,7 +132,7 @@ private open class UpdateDefFileDependenciesTask @Inject constructor(
         val initialDefFiles = mutableMapOf<File, String>()
         defFiles.forEach { initialDefFiles[it] = it.readText() }
         execOperations.exec {
-            commandLine(runKonan.get(), "defFileDependencies", *targetNames.get().flatMap { listOf("-target", it) }.toTypedArray(), *defFiles.map { it.path }.toTypedArray())
+            commandLine(compilerDistribution.get().dist.runKonan, "defFileDependencies", *targetNames.get().flatMap { listOf("-target", it) }.toTypedArray(), *defFiles.map { it.path }.toTypedArray())
         }
         val changedDefFiles = mutableListOf<File>()
         defFiles.forEach {

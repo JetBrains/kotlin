@@ -5,12 +5,11 @@
 
 import org.jetbrains.kotlin.gradle.plugin.konan.tasks.KonanCacheTask
 import org.jetbrains.kotlin.gradle.plugin.konan.tasks.KonanInteropTask
-import org.jetbrains.kotlin.PlatformInfo
-import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.konan.target.*
 import org.jetbrains.kotlin.konan.util.*
 import org.jetbrains.kotlin.nativeDistribution.nativeDistribution
+import org.jetbrains.kotlin.nativeDistribution.nativeDistributionWithStdlib
+import org.jetbrains.kotlin.nativeDistribution.nativeDistributionWithStdlibAndRuntime
 import org.jetbrains.kotlin.platformLibs.*
 import org.jetbrains.kotlin.platformManager
 import org.jetbrains.kotlin.utils.capitalized
@@ -93,9 +92,7 @@ enabledTargets(platformManager).forEach { target ->
 
             updateDefFileTasksPerFamily[target.family]?.let { dependsOn(it) }
 
-            // Requires Native distribution with compiler JARs and stdlib klib.
-            this.compilerDistribution.set(nativeDistribution)
-            dependsOn(":kotlin-native:prepare:kotlin-native-distribution:distStdlib")
+            this.compilerDistribution.set(nativeDistributionWithStdlib)
 
             this.target.set(targetName)
             this.outputDirectory.set(layout.buildDirectory.dir("konan/libs/$targetName/${fileNamePrefix}${df.name}"))
@@ -129,7 +126,8 @@ enabledTargets(platformManager).forEach { target ->
                 val dist = nativeDistribution
 
                 // Requires Native distribution with stdlib klib and its cache for `targetName`.
-                this.compilerDistribution.set(dist)
+                // TODO: Also needs stdlib cache
+                this.compilerDistribution.set(nativeDistributionWithStdlibAndRuntime(target.withSanitizer()))
                 dependsOn(":kotlin-native:prepare:kotlin-native-distribution:crossDist${targetName.capitalized}")
 
                 dependency {

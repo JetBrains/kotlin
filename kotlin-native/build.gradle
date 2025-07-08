@@ -66,6 +66,19 @@ def nativeDistribution = NativeDistributionKt.getNativeDistribution(project)
 
 configurations {
     commonSources
+    distribution {
+        canBeConsumed = false
+        canBeResolved = true
+        attributes {
+            attribute(Usage.USAGE_ATTRIBUTE, project.objects.named(Usage, "native-distribution-component"))
+        }
+    }
+    distributionCompiler {
+        extendsFrom(distribution)
+        attributes {
+            attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, project.objects.named(LibraryElements, "compiler"))
+        }
+    }
 }
 
 apply plugin: CompilationDatabasePlugin
@@ -74,6 +87,7 @@ dependencies {
     commonSources project(path: ':kotlin-stdlib', configuration: 'metadataSourcesElements')
     commonSources project(path: ':kotlin-test', configuration: 'metadataSourcesElements')
     compilationDatabase project(":kotlin-native:runtime")
+    distribution project(":kotlin-native:prepare:kotlin-native-distribution")
 
     // declared to be included in verification-metadata.xml
     implicitDependencies("org.jetbrains.kotlin:kotlin-native-prebuilt:$bootstrapKotlinVersion:macos-aarch64@tar.gz")
@@ -122,7 +136,7 @@ tasks.register("distSources") {
 
 // TODO: Remove this
 tasks.register("distCompiler") {
-    dependsOn(":kotlin-native:prepare:kotlin-native-distribution:distCompiler")
+    dependsOn(configurations.distributionCompiler)
 }
 
 // TODO: Remove this

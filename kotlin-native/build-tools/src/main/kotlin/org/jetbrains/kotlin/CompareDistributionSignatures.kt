@@ -4,17 +4,22 @@ import kotlinBuildProperties
 import org.gradle.api.DefaultTask
 import org.gradle.api.Project
 import org.gradle.api.model.ObjectFactory
+import org.gradle.api.provider.Property
 import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.InputDirectory
+import org.gradle.api.tasks.Nested
 import org.gradle.api.tasks.PathSensitive
 import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.TaskAction
+import org.gradle.kotlin.dsl.property
 import org.gradle.process.ExecOperations
 import org.gradle.work.DisableCachingByDefault
+import org.jetbrains.kotlin.nativeDistribution.BuiltNativeDistribution
 import org.jetbrains.kotlin.nativeDistribution.NativeDistribution
 import org.jetbrains.kotlin.nativeDistribution.NativeDistributionProperty
-import org.jetbrains.kotlin.nativeDistribution.nativeDistribution
 import org.jetbrains.kotlin.nativeDistribution.nativeDistributionProperty
+import org.jetbrains.kotlin.nativeDistribution.nativeDistributionWithCompiler
+import org.jetbrains.kotlin.nativeDistribution.nativeDistributionWithStdlib
 import org.jetbrains.kotlin.utils.capitalized
 import java.io.ByteArrayOutputStream
 import java.io.File
@@ -38,6 +43,7 @@ open class CompareDistributionSignatures @Inject constructor(
             register(project, "${target}CheckPlatformAbiCompatibility") {
                 libraries = Libraries.Platform(target)
                 dependsOn(":kotlin-native:prepare:kotlin-native-distribution:distPlatformLibs${target.capitalized}") // The task configures inputs on the insides of the distribution
+                newDistribution.set(project.nativeDistributionWithCompiler) // TODO: With platform libs
             }
         }
 
@@ -45,7 +51,7 @@ open class CompareDistributionSignatures @Inject constructor(
         fun registerForStdlib(project: Project) {
             register(project, "checkStdlibAbiCompatibility") {
                 libraries = Libraries.Standard
-                dependsOn(":kotlin-native:prepare:kotlin-native-distribution:distStdlib") // The task configures inputs on the insides of the distribution
+                newDistribution.set(project.nativeDistributionWithStdlib)
             }
         }
 
@@ -57,7 +63,6 @@ open class CompareDistributionSignatures @Inject constructor(
                     // created eagerly, so checking it during configuration stage will cause errors.
                     project.file(property ?: error("'anotherDistro' property must be set in order to execute '$name' task"))
                 }).map(::NativeDistribution))
-                newDistribution.set(project.nativeDistribution)
                 configure(this)
             }
         }
@@ -67,9 +72,8 @@ open class CompareDistributionSignatures @Inject constructor(
     @get:PathSensitive(PathSensitivity.NONE)
     protected val oldDistribution: NativeDistributionProperty = objectFactory.nativeDistributionProperty()
 
-    @get:InputDirectory
-    @get:PathSensitive(PathSensitivity.NONE)
-    protected val newDistribution: NativeDistributionProperty = objectFactory.nativeDistributionProperty()
+    @get:Nested
+    protected val newDistribution: Property<BuiltNativeDistribution> = objectFactory.property(BuiltNativeDistribution::class)
 
     enum class OnMismatchMode {
         FAIL,
@@ -92,13 +96,13 @@ open class CompareDistributionSignatures @Inject constructor(
         Libraries.Standard -> KlibDiff(
                 emptyList(),
                 emptyList(),
-                listOf(RemainingLibrary(newDistribution.get().stdlib.asFile, oldDistribution.get().stdlib.asFile))
+                listOf(RemainingLibrary(newDistribution.get().dist.stdlib.asFile, oldDistribution.get().stdlib.asFile))
         )
 
         is Libraries.Platform -> {
             val oldPlatformLibs = oldDistribution.get().platformLibs(libraries.target).asFile
             val oldPlatformLibsNames = oldPlatformLibs.list().toSet()
-            val newPlatformLibs = newDistribution.get().platformLibs(libraries.target).asFile
+            val newPlatformLibs = newDistribution.get().dist.platformLibs(libraries.target).asFile
             val newPlatformLibsNames = newPlatformLibs.list().toSet()
             KlibDiff(
                     (newPlatformLibsNames - oldPlatformLibsNames).map(newPlatformLibs::resolve),
@@ -118,9 +122,9 @@ open class CompareDistributionSignatures @Inject constructor(
             Make sure to provide an absolute path to it.
             """.trimIndent()
         }
-        check(looksLikeKotlinNativeDistribution(newDistribution.get(), libraries)) {
+        check(looksLikeKotlinNativeDistribution(newDistribution.get().dist, libraries)) {
             """
-                `${newDistribution.get().root.asFile}` doesn't look like Kotlin/Native distribution.
+                `${newDistribution.get().dist.root.asFile}` doesn't look like Kotlin/Native distribution.
                 Check that $name has all required task dependencies.
             """.trimIndent()
         }
@@ -187,7 +191,7 @@ open class CompareDistributionSignatures @Inject constructor(
         val args = listOf("dump-metadata-signatures", klib.absolutePath, "-signature-version", "1")
         ByteArrayOutputStream().use { stdout ->
             execOperations.exec {
-                commandLine(newDistribution.get().klib.asFile, *args.toTypedArray())
+                commandLine(newDistribution.get().dist.klib.asFile, *args.toTypedArray())
                 this.standardOutput = stdout
             }.assertNormalExitValue()
             return stdout.toString().lines().filter { it.isNotBlank() }

@@ -192,16 +192,40 @@ val distCompilerFingerprint by tasks.registering(PrepareDistributionFingerprint:
     output = nativeDistribution.map { it.compilerFingerprint }
 }
 
-// TODO: Export this as configuration
-val distCompiler by tasks.registering {
-    dependsOn(distCompilerComponents)
-    dependsOn(distCompilerFingerprint)
+val distCompilerElements by configurations.creating {
+    isCanBeConsumed = true
+    isCanBeResolved = false
+    description = "Native Distribution: compiler component"
+    attributes {
+        attribute(Usage.USAGE_ATTRIBUTE, objects.named("native-distribution-component"))
+        attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, objects.named("compiler"))
+    }
 }
 
-// TODO: Export this as configuration
+distCompilerElements.outgoing {
+    distCompilerComponents.forEach {
+        artifact(it)
+    }
+    artifact(distCompilerFingerprint)
+}
+
 val distStdlib by tasks.registering(Sync::class) {
     from(stdlib)
     into(nativeDistribution.map { it.stdlib })
+}
+
+val distStdlibElements by configurations.creating {
+    isCanBeConsumed = true
+    isCanBeResolved = false
+    description = "Native Distribution: stdlib component"
+    attributes {
+        attribute(Usage.USAGE_ATTRIBUTE, objects.named("native-distribution-component"))
+        attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, objects.named("stdlib"))
+    }
+}
+
+distStdlibElements.outgoing {
+    artifact(distStdlib)
 }
 
 val distDef by tasks.registering(Sync::class) {
@@ -216,6 +240,18 @@ val distDef by tasks.registering(Sync::class) {
 
     into(nativeDistribution.map { it.platformLibsDefinitions })
 }
+
+val distRuntimeElements by configurations.creating {
+    isCanBeConsumed = true
+    isCanBeResolved = false
+    description = "Native Distribution: runtime component"
+    attributes {
+        attribute(Usage.USAGE_ATTRIBUTE, objects.named("native-distribution-component"))
+        attribute(LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE, objects.named("runtime"))
+    }
+}
+
+val distRuntimeElementsForAllTargets = distRuntimeElements.outgoing.variants.create("all")
 
 // TODO: Export this as configuration
 val crossDistRuntime by tasks.registering
@@ -265,6 +301,16 @@ enabledTargets(platformManager).forEach { target ->
         }
     }
 
+    val distRuntimeElementsForTarget = distRuntimeElements.outgoing.variants.create(target.name) {
+        attributes {
+            attribute(TargetWithSanitizer.TARGET_ATTRIBUTE, target.withSanitizer())
+        }
+    }
+    listOf(distRuntimeElementsForTarget, distRuntimeElementsForAllTargets).forEach {
+        it.artifact(crossDistBitcodeCopyForTarget)
+        it.artifact(crossDistRuntimeFingerprintForTarget)
+    }
+
     val stdlibCacheForTarget = if (target.name in platformManager.hostPlatform.cacheableTargets) {
         tasks.register<Sync>("stdlibCache${target.name.capitalized}") {
             from(stdlibCache.incoming.artifactView {
@@ -278,7 +324,8 @@ enabledTargets(platformManager).forEach { target ->
 
     // TODO: Export this as configuration
     val crossDistForTarget = tasks.register("crossDist${target.name.capitalized}") {
-        dependsOn(distCompiler)
+        dependsOn(distCompilerComponents)
+        dependsOn(distCompilerFingerprint)
         dependsOn(crossDistRuntimeForTarget)
         dependsOn(distDef)
         dependsOn(distStdlib)

@@ -16,6 +16,7 @@ import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.services.ServiceReference
 import org.gradle.api.tasks.*
+import org.gradle.kotlin.dsl.property
 import org.gradle.process.ExecOperations
 import org.gradle.workers.WorkAction
 import org.gradle.workers.WorkParameters
@@ -23,8 +24,8 @@ import org.gradle.workers.WorkerExecutor
 import org.jetbrains.kotlin.PlatformInfo
 import org.jetbrains.kotlin.gradle.plugin.konan.*
 import org.jetbrains.kotlin.konan.target.AbstractToolConfig
+import org.jetbrains.kotlin.nativeDistribution.BuiltNativeDistribution
 import org.jetbrains.kotlin.nativeDistribution.NativeDistributionProperty
-import org.jetbrains.kotlin.nativeDistribution.nativeDistributionProperty
 import javax.inject.Inject
 
 private val load0 = Runtime::class.java.getDeclaredMethod("load0", Class::class.java, String::class.java).also {
@@ -104,27 +105,8 @@ open class KonanInteropTask @Inject constructor(
     @get:PathSensitive(PathSensitivity.RELATIVE)
     val defFile: RegularFileProperty = objectFactory.fileProperty()
 
-    @get:Internal("Depends upon the compiler classpath, native libraries (for StubGenerator) and konan.properties (compilation flags + dependencies)")
-    val compilerDistribution: NativeDistributionProperty = objectFactory.nativeDistributionProperty()
-
-    @get:Classpath
-    @Suppress("unused")
-    protected val compilerClasspath = compilerDistribution.map { it.compilerClasspath }
-
-    @get:InputDirectory
-    @get:PathSensitive(PathSensitivity.NONE)
-    @Suppress("unused") // used only by Gradle machinery via reflection.
-    protected val indexerLibs = compilerDistribution.map { it.nativeLibs } // Only really needs to depend on stuff used by the StubGenerator
-
-    @get:InputFile
-    @get:PathSensitive(PathSensitivity.NONE)
-    @Suppress("unused") // used only by Gradle machinery via reflection.
-    protected val konanProperties = compilerDistribution.map { it.konanProperties }
-
-    @get:InputDirectory
-    @get:PathSensitive(PathSensitivity.RELATIVE)
-    @Suppress("unused") // used only by Gradle machinery via reflection.
-    protected val stdlib = compilerDistribution.map { it.stdlib }
+    @get:Nested
+    val compilerDistribution: Property<BuiltNativeDistribution> = objectFactory.property(BuiltNativeDistribution::class)
 
     @get:ServiceReference
     protected val isolatedClassLoadersService = project.gradle.sharedServices.registerIsolatedClassLoadersServiceIfAbsent()
@@ -160,13 +142,13 @@ open class KonanInteropTask @Inject constructor(
         if (allowRunningCInteropInProcess) {
             workQueue.submit(KonanInteropInProcessAction::class.java) {
                 this.isolatedClassLoadersService.set(this@KonanInteropTask.isolatedClassLoadersService)
-                this.compilerDistribution.set(this@KonanInteropTask.compilerDistribution)
+                this.compilerDistribution.set(this@KonanInteropTask.compilerDistribution.get().dist)
                 this.target.set(this@KonanInteropTask.target)
                 this.args.addAll(args)
             }
         } else {
             workQueue.submit(KonanInteropOutOfProcessAction::class.java) {
-                this.compilerDistribution.set(this@KonanInteropTask.compilerDistribution)
+                this.compilerDistribution.set(this@KonanInteropTask.compilerDistribution.get().dist)
                 this.args.addAll(args)
             }
         }

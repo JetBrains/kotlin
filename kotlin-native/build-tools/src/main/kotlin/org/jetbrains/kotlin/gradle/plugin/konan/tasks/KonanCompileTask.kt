@@ -16,6 +16,7 @@ import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.api.services.ServiceReference
 import org.gradle.api.tasks.*
+import org.gradle.kotlin.dsl.property
 import org.gradle.workers.WorkAction
 import org.gradle.workers.WorkParameters
 import org.gradle.workers.WorkerExecutor
@@ -23,6 +24,7 @@ import org.jetbrains.kotlin.gradle.plugin.konan.KonanCliRunnerIsolatedClassLoade
 import org.jetbrains.kotlin.gradle.plugin.konan.prepareAsOutput
 import org.jetbrains.kotlin.gradle.plugin.konan.registerIsolatedClassLoadersServiceIfAbsent
 import org.jetbrains.kotlin.gradle.plugin.konan.runKonanTool
+import org.jetbrains.kotlin.nativeDistribution.BuiltNativeDistribution
 import org.jetbrains.kotlin.nativeDistribution.NativeDistributionProperty
 import org.jetbrains.kotlin.nativeDistribution.nativeDistributionProperty
 import java.io.File
@@ -93,11 +95,8 @@ open class KonanCompileTask @Inject constructor(
     @get:Input
     val extraOpts: ListProperty<String> = objectFactory.listProperty(String::class.java)
 
-    @get:Internal("Depends only upon the compiler classpath, because compiles into klib only")
-    val compilerDistribution: NativeDistributionProperty = objectFactory.nativeDistributionProperty()
-
-    @get:Classpath
-    protected val compilerClasspath = compilerDistribution.map { it.compilerClasspath }
+    @get:Nested
+    val compilerDistribution: Property<BuiltNativeDistribution> = objectFactory.property(BuiltNativeDistribution::class)
 
     @get:Nested
     val sourceSets: NamedDomainObjectContainer<KotlinSourceDirectorySet> = objectFactory.domainObjectContainer(KotlinSourceDirectorySet::class.java)
@@ -135,7 +134,7 @@ open class KonanCompileTask @Inject constructor(
         val workQueue = workerExecutor.noIsolation()
         workQueue.submit(KonanCompileAction::class.java) {
             this.isolatedClassLoaderService.set(this@KonanCompileTask.isolatedClassLoadersService)
-            this.compilerClasspath.from(this@KonanCompileTask.compilerClasspath)
+            this.compilerClasspath.from(this@KonanCompileTask.compilerDistribution.get().dist.compilerClasspath)
             this.args.addAll(args)
         }
     }
