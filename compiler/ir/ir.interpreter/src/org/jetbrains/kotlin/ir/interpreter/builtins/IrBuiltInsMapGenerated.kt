@@ -25,6 +25,10 @@ internal fun interpretUnaryFunction(name: String, type: String, a: Any?): Any? {
             "kotlin.Double" -> return (a as Double).hashCode()
             "kotlin.String" -> return (a as String).hashCode()
             "kotlin.Any" -> return (a as Any).hashCode()
+            "kotlin.kotlin.UInt" -> return (a as kotlin.UInt).hashCode()
+            "kotlin.kotlin.ULong" -> return (a as kotlin.ULong).hashCode()
+            "kotlin.kotlin.UByte" -> return (a as kotlin.UByte).hashCode()
+            "kotlin.kotlin.UShort" -> return (a as kotlin.UShort).hashCode()
         }
         "not" -> when (type) {
             "kotlin.Boolean" -> return (a as Boolean).not()
@@ -40,6 +44,10 @@ internal fun interpretUnaryFunction(name: String, type: String, a: Any?): Any? {
             "kotlin.Double" -> return (a as Double).toString()
             "kotlin.String" -> return (a as String).toString()
             "kotlin.Any" -> return (a as Any).toString()
+            "kotlin.kotlin.UInt" -> return (a as kotlin.UInt).toString()
+            "kotlin.kotlin.ULong" -> return (a as kotlin.ULong).toString()
+            "kotlin.kotlin.UByte" -> return (a as kotlin.UByte).toString()
+            "kotlin.kotlin.UShort" -> return (a as kotlin.UShort).toString()
             "kotlin.Any?" -> return a?.toString() ?: "null"
             "kotlin.Unit" -> return Unit.toString()
         }
@@ -51,6 +59,10 @@ internal fun interpretUnaryFunction(name: String, type: String, a: Any?): Any? {
             "kotlin.Float" -> return (a as Float).dec()
             "kotlin.Long" -> return (a as Long).dec()
             "kotlin.Double" -> return (a as Double).dec()
+            "kotlin.kotlin.UInt" -> return (a as kotlin.UInt).dec()
+            "kotlin.kotlin.ULong" -> return (a as kotlin.ULong).dec()
+            "kotlin.kotlin.UByte" -> return (a as kotlin.UByte).dec()
+            "kotlin.kotlin.UShort" -> return (a as kotlin.UShort).dec()
         }
         "inc" -> when (type) {
             "kotlin.Char" -> return (a as Char).inc()
@@ -60,6 +72,10 @@ internal fun interpretUnaryFunction(name: String, type: String, a: Any?): Any? {
             "kotlin.Float" -> return (a as Float).inc()
             "kotlin.Long" -> return (a as Long).inc()
             "kotlin.Double" -> return (a as Double).inc()
+            "kotlin.kotlin.UInt" -> return (a as kotlin.UInt).inc()
+            "kotlin.kotlin.ULong" -> return (a as kotlin.ULong).inc()
+            "kotlin.kotlin.UByte" -> return (a as kotlin.UByte).inc()
+            "kotlin.kotlin.UShort" -> return (a as kotlin.UShort).inc()
         }
         "toByte" -> when (type) {
             "kotlin.Char" -> return (a as Char).toByte()
@@ -70,6 +86,10 @@ internal fun interpretUnaryFunction(name: String, type: String, a: Any?): Any? {
             "kotlin.Long" -> return (a as Long).toByte()
             "kotlin.Double" -> return (a as Double).toByte()
             "kotlin.Number" -> return (a as Number).toByte()
+            "kotlin.kotlin.UInt" -> return (a as kotlin.UInt).toByte()
+            "kotlin.kotlin.ULong" -> return (a as kotlin.ULong).toByte()
+            "kotlin.kotlin.UByte" -> return (a as kotlin.UByte).toByte()
+            "kotlin.kotlin.UShort" -> return (a as kotlin.UShort).toByte()
         }
         "toChar" -> when (type) {
             "kotlin.Char" -> return (a as Char).toChar()
@@ -90,6 +110,10 @@ internal fun interpretUnaryFunction(name: String, type: String, a: Any?): Any? {
             "kotlin.Long" -> return (a as Long).toDouble()
             "kotlin.Double" -> return (a as Double).toDouble()
             "kotlin.Number" -> return (a as Number).toDouble()
+            "kotlin.kotlin.UInt" -> return (a as kotlin.UInt).toDouble()
+            "kotlin.kotlin.ULong" -> return (a as kotlin.ULong).toDouble()
+            "kotlin.kotlin.UByte" -> return (a as kotlin.UByte).toDouble()
+            "kotlin.kotlin.UShort" -> return (a as kotlin.UShort).toDouble()
         }
         "toFloat" -> when (type) {
             "kotlin.Char" -> return (a as Char).toFloat()
@@ -100,6 +124,10 @@ internal fun interpretUnaryFunction(name: String, type: String, a: Any?): Any? {
             "kotlin.Long" -> return (a as Long).toFloat()
             "kotlin.Double" -> return (a as Double).toFloat()
             "kotlin.Number" -> return (a as Number).toFloat()
+            "kotlin.kotlin.UInt" -> return (a as kotlin.UInt).toFloat()
+            "kotlin.kotlin.ULong" -> return (a as kotlin.ULong).toFloat()
+            "kotlin.kotlin.UByte" -> return (a as kotlin.UByte).toFloat()
+            "kotlin.kotlin.UShort" -> return (a as kotlin.UShort).toFloat()
         }
         "toInt" -> when (type) {
             "kotlin.Char" -> return (a as Char).toInt()
@@ -110,6 +138,10 @@ internal fun interpretUnaryFunction(name: String, type: String, a: Any?): Any? {
             "kotlin.Long" -> return (a as Long).toInt()
             "kotlin.Double" -> return (a as Double).toInt()
             "kotlin.Number" -> return (a as Number).toInt()
+            "kotlin.kotlin.UInt" -> return (a as kotlin.UInt).toInt()
+            "kotlin.kotlin.ULong" -> return (a as kotlin.ULong).toInt()
+            "kotlin.kotlin.UByte" -> return (a as kotlin.UByte).toInt()
+            "kotlin.kotlin.UShort" -> return (a as kotlin.UShort).toInt()
         }
         "toLong" -> when (type) {
             "kotlin.Char" -> return (a as Char).toLong()
@@ -120,6 +152,10 @@ internal fun interpretUnaryFunction(name: String, type: String, a: Any?): Any? {
             "kotlin.Long" -> return (a as Long).toLong()
             "kotlin.Double" -> return (a as Double).toLong()
             "kotlin.Number" -> return (a as Number).toLong()
+            "kotlin.kotlin.UInt" -> return (a as kotlin.UInt).toLong()
+            "kotlin.kotlin.ULong" -> return (a as kotlin.ULong).toLong()
+            "kotlin.kotlin.UByte" -> return (a as kotlin.UByte).toLong()
+            "kotlin.kotlin.UShort" -> return (a as kotlin.UShort).toLong()
         }
         "toShort" -> when (type) {
             "kotlin.Char" -> return (a as Char).toShort()
@@ -130,6 +166,10 @@ internal fun interpretUnaryFunction(name: String, type: String, a: Any?): Any? {
             "kotlin.Long" -> return (a as Long).toShort()
             "kotlin.Double" -> return (a as Double).toShort()
             "kotlin.Number" -> return (a as Number).toShort()
+            "kotlin.kotlin.UInt" -> return (a as kotlin.UInt).toShort()
+            "kotlin.kotlin.ULong" -> return (a as kotlin.ULong).toShort()
+            "kotlin.kotlin.UByte" -> return (a as kotlin.UByte).toShort()
+            "kotlin.kotlin.UShort" -> return (a as kotlin.UShort).toShort()
         }
         "unaryMinus" -> when (type) {
             "kotlin.Byte" -> return (a as Byte).unaryMinus()
@@ -150,6 +190,10 @@ internal fun interpretUnaryFunction(name: String, type: String, a: Any?): Any? {
         "inv" -> when (type) {
             "kotlin.Int" -> return (a as Int).inv()
             "kotlin.Long" -> return (a as Long).inv()
+            "kotlin.kotlin.UInt" -> return (a as kotlin.UInt).inv()
+            "kotlin.kotlin.ULong" -> return (a as kotlin.ULong).inv()
+            "kotlin.kotlin.UByte" -> return (a as kotlin.UByte).inv()
+            "kotlin.kotlin.UShort" -> return (a as kotlin.UShort).inv()
         }
         "length" -> when (type) {
             "kotlin.String" -> return (a as String).length
@@ -183,6 +227,30 @@ internal fun interpretUnaryFunction(name: String, type: String, a: Any?): Any? {
             "kotlin.DoubleArray" -> return (a as DoubleArray).iterator()
             "kotlin.Array" -> return (a as Array<Any?>).iterator()
         }
+        "toUByte" -> when (type) {
+            "kotlin.kotlin.UInt" -> return (a as kotlin.UInt).toUByte()
+            "kotlin.kotlin.ULong" -> return (a as kotlin.ULong).toUByte()
+            "kotlin.kotlin.UByte" -> return (a as kotlin.UByte).toUByte()
+            "kotlin.kotlin.UShort" -> return (a as kotlin.UShort).toUByte()
+        }
+        "toUInt" -> when (type) {
+            "kotlin.kotlin.UInt" -> return (a as kotlin.UInt).toUInt()
+            "kotlin.kotlin.ULong" -> return (a as kotlin.ULong).toUInt()
+            "kotlin.kotlin.UByte" -> return (a as kotlin.UByte).toUInt()
+            "kotlin.kotlin.UShort" -> return (a as kotlin.UShort).toUInt()
+        }
+        "toULong" -> when (type) {
+            "kotlin.kotlin.UInt" -> return (a as kotlin.UInt).toULong()
+            "kotlin.kotlin.ULong" -> return (a as kotlin.ULong).toULong()
+            "kotlin.kotlin.UByte" -> return (a as kotlin.UByte).toULong()
+            "kotlin.kotlin.UShort" -> return (a as kotlin.UShort).toULong()
+        }
+        "toUShort" -> when (type) {
+            "kotlin.kotlin.UInt" -> return (a as kotlin.UInt).toUShort()
+            "kotlin.kotlin.ULong" -> return (a as kotlin.ULong).toUShort()
+            "kotlin.kotlin.UByte" -> return (a as kotlin.UByte).toUShort()
+            "kotlin.kotlin.UShort" -> return (a as kotlin.UShort).toUShort()
+        }
         "CHECK_NOT_NULL" -> when (type) {
             "T0?" -> return a!!
         }
@@ -199,6 +267,10 @@ internal fun interpretBinaryFunction(name: String, typeA: String, typeB: String,
             "kotlin.Boolean" -> if (typeB == "kotlin.Boolean") return (a as Boolean).and(b as Boolean)
             "kotlin.Int" -> if (typeB == "kotlin.Int") return (a as Int).and(b as Int)
             "kotlin.Long" -> if (typeB == "kotlin.Long") return (a as Long).and(b as Long)
+            "kotlin.kotlin.UInt" -> if (typeB == "kotlin.kotlin.UInt") return (a as kotlin.UInt).and(b as kotlin.UInt)
+            "kotlin.kotlin.ULong" -> if (typeB == "kotlin.kotlin.ULong") return (a as kotlin.ULong).and(b as kotlin.ULong)
+            "kotlin.kotlin.UByte" -> if (typeB == "kotlin.kotlin.UByte") return (a as kotlin.UByte).and(b as kotlin.UByte)
+            "kotlin.kotlin.UShort" -> if (typeB == "kotlin.kotlin.UShort") return (a as kotlin.UShort).and(b as kotlin.UShort)
         }
         "compareTo" -> when (typeA) {
             "kotlin.Boolean" -> if (typeB == "kotlin.Boolean") return (a as Boolean).compareTo(b as Boolean)
@@ -253,6 +325,30 @@ internal fun interpretBinaryFunction(name: String, typeA: String, typeB: String,
             }
             "kotlin.String" -> if (typeB == "kotlin.String") return (a as String).compareTo(b as String)
             "kotlin.Comparable" -> if (typeB == "T") return (a as Comparable<Any?>).compareTo(b)
+            "kotlin.kotlin.UInt" -> when (typeB) {
+                "kotlin.kotlin.UByte" -> return (a as kotlin.UInt).compareTo(b as kotlin.UByte)
+                "kotlin.kotlin.UShort" -> return (a as kotlin.UInt).compareTo(b as kotlin.UShort)
+                "kotlin.kotlin.UInt" -> return (a as kotlin.UInt).compareTo(b as kotlin.UInt)
+                "kotlin.kotlin.ULong" -> return (a as kotlin.UInt).compareTo(b as kotlin.ULong)
+            }
+            "kotlin.kotlin.ULong" -> when (typeB) {
+                "kotlin.kotlin.UByte" -> return (a as kotlin.ULong).compareTo(b as kotlin.UByte)
+                "kotlin.kotlin.UShort" -> return (a as kotlin.ULong).compareTo(b as kotlin.UShort)
+                "kotlin.kotlin.UInt" -> return (a as kotlin.ULong).compareTo(b as kotlin.UInt)
+                "kotlin.kotlin.ULong" -> return (a as kotlin.ULong).compareTo(b as kotlin.ULong)
+            }
+            "kotlin.kotlin.UByte" -> when (typeB) {
+                "kotlin.kotlin.UByte" -> return (a as kotlin.UByte).compareTo(b as kotlin.UByte)
+                "kotlin.kotlin.UShort" -> return (a as kotlin.UByte).compareTo(b as kotlin.UShort)
+                "kotlin.kotlin.UInt" -> return (a as kotlin.UByte).compareTo(b as kotlin.UInt)
+                "kotlin.kotlin.ULong" -> return (a as kotlin.UByte).compareTo(b as kotlin.ULong)
+            }
+            "kotlin.kotlin.UShort" -> when (typeB) {
+                "kotlin.kotlin.UByte" -> return (a as kotlin.UShort).compareTo(b as kotlin.UByte)
+                "kotlin.kotlin.UShort" -> return (a as kotlin.UShort).compareTo(b as kotlin.UShort)
+                "kotlin.kotlin.UInt" -> return (a as kotlin.UShort).compareTo(b as kotlin.UInt)
+                "kotlin.kotlin.ULong" -> return (a as kotlin.UShort).compareTo(b as kotlin.ULong)
+            }
         }
         "equals" -> when (typeA) {
             "kotlin.Boolean" -> if (typeB == "kotlin.Any?") return (a as Boolean).equals(b)
@@ -265,16 +361,28 @@ internal fun interpretBinaryFunction(name: String, typeA: String, typeB: String,
             "kotlin.Double" -> if (typeB == "kotlin.Any?") return (a as Double).equals(b)
             "kotlin.String" -> if (typeB == "kotlin.Any?") return (a as String).equals(b)
             "kotlin.Any" -> if (typeB == "kotlin.Any?") return (a as Any).equals(b)
+            "kotlin.kotlin.UInt" -> if (typeB == "kotlin.kotlin.Any?") return (a as kotlin.UInt).equals(b as kotlin.Any?)
+            "kotlin.kotlin.ULong" -> if (typeB == "kotlin.kotlin.Any?") return (a as kotlin.ULong).equals(b as kotlin.Any?)
+            "kotlin.kotlin.UByte" -> if (typeB == "kotlin.kotlin.Any?") return (a as kotlin.UByte).equals(b as kotlin.Any?)
+            "kotlin.kotlin.UShort" -> if (typeB == "kotlin.kotlin.Any?") return (a as kotlin.UShort).equals(b as kotlin.Any?)
         }
         "or" -> when (typeA) {
             "kotlin.Boolean" -> if (typeB == "kotlin.Boolean") return (a as Boolean).or(b as Boolean)
             "kotlin.Int" -> if (typeB == "kotlin.Int") return (a as Int).or(b as Int)
             "kotlin.Long" -> if (typeB == "kotlin.Long") return (a as Long).or(b as Long)
+            "kotlin.kotlin.UInt" -> if (typeB == "kotlin.kotlin.UInt") return (a as kotlin.UInt).or(b as kotlin.UInt)
+            "kotlin.kotlin.ULong" -> if (typeB == "kotlin.kotlin.ULong") return (a as kotlin.ULong).or(b as kotlin.ULong)
+            "kotlin.kotlin.UByte" -> if (typeB == "kotlin.kotlin.UByte") return (a as kotlin.UByte).or(b as kotlin.UByte)
+            "kotlin.kotlin.UShort" -> if (typeB == "kotlin.kotlin.UShort") return (a as kotlin.UShort).or(b as kotlin.UShort)
         }
         "xor" -> when (typeA) {
             "kotlin.Boolean" -> if (typeB == "kotlin.Boolean") return (a as Boolean).xor(b as Boolean)
             "kotlin.Int" -> if (typeB == "kotlin.Int") return (a as Int).xor(b as Int)
             "kotlin.Long" -> if (typeB == "kotlin.Long") return (a as Long).xor(b as Long)
+            "kotlin.kotlin.UInt" -> if (typeB == "kotlin.kotlin.UInt") return (a as kotlin.UInt).xor(b as kotlin.UInt)
+            "kotlin.kotlin.ULong" -> if (typeB == "kotlin.kotlin.ULong") return (a as kotlin.ULong).xor(b as kotlin.ULong)
+            "kotlin.kotlin.UByte" -> if (typeB == "kotlin.kotlin.UByte") return (a as kotlin.UByte).xor(b as kotlin.UByte)
+            "kotlin.kotlin.UShort" -> if (typeB == "kotlin.kotlin.UShort") return (a as kotlin.UShort).xor(b as kotlin.UShort)
         }
         "minus" -> when (typeA) {
             "kotlin.Char" -> when (typeB) {
@@ -329,6 +437,30 @@ internal fun interpretBinaryFunction(name: String, typeA: String, typeB: String,
                 "kotlin.Float" -> return (a as Double).minus(b as Float)
                 "kotlin.Double" -> return (a as Double).minus(b as Double)
             }
+            "kotlin.kotlin.UInt" -> when (typeB) {
+                "kotlin.kotlin.UByte" -> return (a as kotlin.UInt).minus(b as kotlin.UByte)
+                "kotlin.kotlin.UShort" -> return (a as kotlin.UInt).minus(b as kotlin.UShort)
+                "kotlin.kotlin.UInt" -> return (a as kotlin.UInt).minus(b as kotlin.UInt)
+                "kotlin.kotlin.ULong" -> return (a as kotlin.UInt).minus(b as kotlin.ULong)
+            }
+            "kotlin.kotlin.ULong" -> when (typeB) {
+                "kotlin.kotlin.UByte" -> return (a as kotlin.ULong).minus(b as kotlin.UByte)
+                "kotlin.kotlin.UShort" -> return (a as kotlin.ULong).minus(b as kotlin.UShort)
+                "kotlin.kotlin.UInt" -> return (a as kotlin.ULong).minus(b as kotlin.UInt)
+                "kotlin.kotlin.ULong" -> return (a as kotlin.ULong).minus(b as kotlin.ULong)
+            }
+            "kotlin.kotlin.UByte" -> when (typeB) {
+                "kotlin.kotlin.UByte" -> return (a as kotlin.UByte).minus(b as kotlin.UByte)
+                "kotlin.kotlin.UShort" -> return (a as kotlin.UByte).minus(b as kotlin.UShort)
+                "kotlin.kotlin.UInt" -> return (a as kotlin.UByte).minus(b as kotlin.UInt)
+                "kotlin.kotlin.ULong" -> return (a as kotlin.UByte).minus(b as kotlin.ULong)
+            }
+            "kotlin.kotlin.UShort" -> when (typeB) {
+                "kotlin.kotlin.UByte" -> return (a as kotlin.UShort).minus(b as kotlin.UByte)
+                "kotlin.kotlin.UShort" -> return (a as kotlin.UShort).minus(b as kotlin.UShort)
+                "kotlin.kotlin.UInt" -> return (a as kotlin.UShort).minus(b as kotlin.UInt)
+                "kotlin.kotlin.ULong" -> return (a as kotlin.UShort).minus(b as kotlin.ULong)
+            }
         }
         "plus" -> when (typeA) {
             "kotlin.Char" -> if (typeB == "kotlin.Int") return (a as Char).plus(b as Int)
@@ -381,6 +513,30 @@ internal fun interpretBinaryFunction(name: String, typeA: String, typeB: String,
                 "kotlin.Double" -> return (a as Double).plus(b as Double)
             }
             "kotlin.String" -> if (typeB == "kotlin.Any?") return (a as String).plus(b)
+            "kotlin.kotlin.UInt" -> when (typeB) {
+                "kotlin.kotlin.UByte" -> return (a as kotlin.UInt).plus(b as kotlin.UByte)
+                "kotlin.kotlin.UShort" -> return (a as kotlin.UInt).plus(b as kotlin.UShort)
+                "kotlin.kotlin.UInt" -> return (a as kotlin.UInt).plus(b as kotlin.UInt)
+                "kotlin.kotlin.ULong" -> return (a as kotlin.UInt).plus(b as kotlin.ULong)
+            }
+            "kotlin.kotlin.ULong" -> when (typeB) {
+                "kotlin.kotlin.UByte" -> return (a as kotlin.ULong).plus(b as kotlin.UByte)
+                "kotlin.kotlin.UShort" -> return (a as kotlin.ULong).plus(b as kotlin.UShort)
+                "kotlin.kotlin.UInt" -> return (a as kotlin.ULong).plus(b as kotlin.UInt)
+                "kotlin.kotlin.ULong" -> return (a as kotlin.ULong).plus(b as kotlin.ULong)
+            }
+            "kotlin.kotlin.UByte" -> when (typeB) {
+                "kotlin.kotlin.UByte" -> return (a as kotlin.UByte).plus(b as kotlin.UByte)
+                "kotlin.kotlin.UShort" -> return (a as kotlin.UByte).plus(b as kotlin.UShort)
+                "kotlin.kotlin.UInt" -> return (a as kotlin.UByte).plus(b as kotlin.UInt)
+                "kotlin.kotlin.ULong" -> return (a as kotlin.UByte).plus(b as kotlin.ULong)
+            }
+            "kotlin.kotlin.UShort" -> when (typeB) {
+                "kotlin.kotlin.UByte" -> return (a as kotlin.UShort).plus(b as kotlin.UByte)
+                "kotlin.kotlin.UShort" -> return (a as kotlin.UShort).plus(b as kotlin.UShort)
+                "kotlin.kotlin.UInt" -> return (a as kotlin.UShort).plus(b as kotlin.UInt)
+                "kotlin.kotlin.ULong" -> return (a as kotlin.UShort).plus(b as kotlin.ULong)
+            }
         }
         "rangeTo" -> when (typeA) {
             "kotlin.Char" -> if (typeB == "kotlin.Char") return (a as Char).rangeTo(b as Char)
@@ -408,6 +564,10 @@ internal fun interpretBinaryFunction(name: String, typeA: String, typeB: String,
                 "kotlin.Int" -> return (a as Long).rangeTo(b as Int)
                 "kotlin.Long" -> return (a as Long).rangeTo(b as Long)
             }
+            "kotlin.kotlin.UInt" -> if (typeB == "kotlin.kotlin.UInt") return (a as kotlin.UInt).rangeTo(b as kotlin.UInt)
+            "kotlin.kotlin.ULong" -> if (typeB == "kotlin.kotlin.ULong") return (a as kotlin.ULong).rangeTo(b as kotlin.ULong)
+            "kotlin.kotlin.UByte" -> if (typeB == "kotlin.kotlin.UByte") return (a as kotlin.UByte).rangeTo(b as kotlin.UByte)
+            "kotlin.kotlin.UShort" -> if (typeB == "kotlin.kotlin.UShort") return (a as kotlin.UShort).rangeTo(b as kotlin.UShort)
         }
         "div" -> when (typeA) {
             "kotlin.Byte" -> when (typeB) {
@@ -457,6 +617,30 @@ internal fun interpretBinaryFunction(name: String, typeA: String, typeB: String,
                 "kotlin.Long" -> return (a as Double).div(b as Long)
                 "kotlin.Float" -> return (a as Double).div(b as Float)
                 "kotlin.Double" -> return (a as Double).div(b as Double)
+            }
+            "kotlin.kotlin.UInt" -> when (typeB) {
+                "kotlin.kotlin.UByte" -> return (a as kotlin.UInt).div(b as kotlin.UByte)
+                "kotlin.kotlin.UShort" -> return (a as kotlin.UInt).div(b as kotlin.UShort)
+                "kotlin.kotlin.UInt" -> return (a as kotlin.UInt).div(b as kotlin.UInt)
+                "kotlin.kotlin.ULong" -> return (a as kotlin.UInt).div(b as kotlin.ULong)
+            }
+            "kotlin.kotlin.ULong" -> when (typeB) {
+                "kotlin.kotlin.UByte" -> return (a as kotlin.ULong).div(b as kotlin.UByte)
+                "kotlin.kotlin.UShort" -> return (a as kotlin.ULong).div(b as kotlin.UShort)
+                "kotlin.kotlin.UInt" -> return (a as kotlin.ULong).div(b as kotlin.UInt)
+                "kotlin.kotlin.ULong" -> return (a as kotlin.ULong).div(b as kotlin.ULong)
+            }
+            "kotlin.kotlin.UByte" -> when (typeB) {
+                "kotlin.kotlin.UByte" -> return (a as kotlin.UByte).div(b as kotlin.UByte)
+                "kotlin.kotlin.UShort" -> return (a as kotlin.UByte).div(b as kotlin.UShort)
+                "kotlin.kotlin.UInt" -> return (a as kotlin.UByte).div(b as kotlin.UInt)
+                "kotlin.kotlin.ULong" -> return (a as kotlin.UByte).div(b as kotlin.ULong)
+            }
+            "kotlin.kotlin.UShort" -> when (typeB) {
+                "kotlin.kotlin.UByte" -> return (a as kotlin.UShort).div(b as kotlin.UByte)
+                "kotlin.kotlin.UShort" -> return (a as kotlin.UShort).div(b as kotlin.UShort)
+                "kotlin.kotlin.UInt" -> return (a as kotlin.UShort).div(b as kotlin.UInt)
+                "kotlin.kotlin.ULong" -> return (a as kotlin.UShort).div(b as kotlin.ULong)
             }
         }
         "rem" -> when (typeA) {
@@ -508,6 +692,30 @@ internal fun interpretBinaryFunction(name: String, typeA: String, typeB: String,
                 "kotlin.Float" -> return (a as Double).rem(b as Float)
                 "kotlin.Double" -> return (a as Double).rem(b as Double)
             }
+            "kotlin.kotlin.UInt" -> when (typeB) {
+                "kotlin.kotlin.UByte" -> return (a as kotlin.UInt).rem(b as kotlin.UByte)
+                "kotlin.kotlin.UShort" -> return (a as kotlin.UInt).rem(b as kotlin.UShort)
+                "kotlin.kotlin.UInt" -> return (a as kotlin.UInt).rem(b as kotlin.UInt)
+                "kotlin.kotlin.ULong" -> return (a as kotlin.UInt).rem(b as kotlin.ULong)
+            }
+            "kotlin.kotlin.ULong" -> when (typeB) {
+                "kotlin.kotlin.UByte" -> return (a as kotlin.ULong).rem(b as kotlin.UByte)
+                "kotlin.kotlin.UShort" -> return (a as kotlin.ULong).rem(b as kotlin.UShort)
+                "kotlin.kotlin.UInt" -> return (a as kotlin.ULong).rem(b as kotlin.UInt)
+                "kotlin.kotlin.ULong" -> return (a as kotlin.ULong).rem(b as kotlin.ULong)
+            }
+            "kotlin.kotlin.UByte" -> when (typeB) {
+                "kotlin.kotlin.UByte" -> return (a as kotlin.UByte).rem(b as kotlin.UByte)
+                "kotlin.kotlin.UShort" -> return (a as kotlin.UByte).rem(b as kotlin.UShort)
+                "kotlin.kotlin.UInt" -> return (a as kotlin.UByte).rem(b as kotlin.UInt)
+                "kotlin.kotlin.ULong" -> return (a as kotlin.UByte).rem(b as kotlin.ULong)
+            }
+            "kotlin.kotlin.UShort" -> when (typeB) {
+                "kotlin.kotlin.UByte" -> return (a as kotlin.UShort).rem(b as kotlin.UByte)
+                "kotlin.kotlin.UShort" -> return (a as kotlin.UShort).rem(b as kotlin.UShort)
+                "kotlin.kotlin.UInt" -> return (a as kotlin.UShort).rem(b as kotlin.UInt)
+                "kotlin.kotlin.ULong" -> return (a as kotlin.UShort).rem(b as kotlin.ULong)
+            }
         }
         "times" -> when (typeA) {
             "kotlin.Byte" -> when (typeB) {
@@ -558,14 +766,42 @@ internal fun interpretBinaryFunction(name: String, typeA: String, typeB: String,
                 "kotlin.Float" -> return (a as Double).times(b as Float)
                 "kotlin.Double" -> return (a as Double).times(b as Double)
             }
+            "kotlin.kotlin.UInt" -> when (typeB) {
+                "kotlin.kotlin.UByte" -> return (a as kotlin.UInt).times(b as kotlin.UByte)
+                "kotlin.kotlin.UShort" -> return (a as kotlin.UInt).times(b as kotlin.UShort)
+                "kotlin.kotlin.UInt" -> return (a as kotlin.UInt).times(b as kotlin.UInt)
+                "kotlin.kotlin.ULong" -> return (a as kotlin.UInt).times(b as kotlin.ULong)
+            }
+            "kotlin.kotlin.ULong" -> when (typeB) {
+                "kotlin.kotlin.UByte" -> return (a as kotlin.ULong).times(b as kotlin.UByte)
+                "kotlin.kotlin.UShort" -> return (a as kotlin.ULong).times(b as kotlin.UShort)
+                "kotlin.kotlin.UInt" -> return (a as kotlin.ULong).times(b as kotlin.UInt)
+                "kotlin.kotlin.ULong" -> return (a as kotlin.ULong).times(b as kotlin.ULong)
+            }
+            "kotlin.kotlin.UByte" -> when (typeB) {
+                "kotlin.kotlin.UByte" -> return (a as kotlin.UByte).times(b as kotlin.UByte)
+                "kotlin.kotlin.UShort" -> return (a as kotlin.UByte).times(b as kotlin.UShort)
+                "kotlin.kotlin.UInt" -> return (a as kotlin.UByte).times(b as kotlin.UInt)
+                "kotlin.kotlin.ULong" -> return (a as kotlin.UByte).times(b as kotlin.ULong)
+            }
+            "kotlin.kotlin.UShort" -> when (typeB) {
+                "kotlin.kotlin.UByte" -> return (a as kotlin.UShort).times(b as kotlin.UByte)
+                "kotlin.kotlin.UShort" -> return (a as kotlin.UShort).times(b as kotlin.UShort)
+                "kotlin.kotlin.UInt" -> return (a as kotlin.UShort).times(b as kotlin.UInt)
+                "kotlin.kotlin.ULong" -> return (a as kotlin.UShort).times(b as kotlin.ULong)
+            }
         }
         "shl" -> when (typeA) {
             "kotlin.Int" -> if (typeB == "kotlin.Int") return (a as Int).shl(b as Int)
             "kotlin.Long" -> if (typeB == "kotlin.Int") return (a as Long).shl(b as Int)
+            "kotlin.kotlin.UInt" -> if (typeB == "kotlin.kotlin.Int") return (a as kotlin.UInt).shl(b as kotlin.Int)
+            "kotlin.kotlin.ULong" -> if (typeB == "kotlin.kotlin.Int") return (a as kotlin.ULong).shl(b as kotlin.Int)
         }
         "shr" -> when (typeA) {
             "kotlin.Int" -> if (typeB == "kotlin.Int") return (a as Int).shr(b as Int)
             "kotlin.Long" -> if (typeB == "kotlin.Int") return (a as Long).shr(b as Int)
+            "kotlin.kotlin.UInt" -> if (typeB == "kotlin.kotlin.Int") return (a as kotlin.UInt).shr(b as kotlin.Int)
+            "kotlin.kotlin.ULong" -> if (typeB == "kotlin.kotlin.Int") return (a as kotlin.ULong).shr(b as kotlin.Int)
         }
         "ushr" -> when (typeA) {
             "kotlin.Int" -> if (typeB == "kotlin.Int") return (a as Int).ushr(b as Int)
@@ -583,6 +819,120 @@ internal fun interpretBinaryFunction(name: String, typeA: String, typeB: String,
             "kotlin.LongArray" -> if (typeB == "kotlin.Int") return (a as LongArray).get(b as Int)
             "kotlin.DoubleArray" -> if (typeB == "kotlin.Int") return (a as DoubleArray).get(b as Int)
             "kotlin.Array" -> if (typeB == "kotlin.Int") return (a as Array<Any?>).get(b as Int)
+        }
+        "floorDiv" -> when (typeA) {
+            "kotlin.kotlin.UInt" -> when (typeB) {
+                "kotlin.kotlin.UByte" -> return (a as kotlin.UInt).floorDiv(b as kotlin.UByte)
+                "kotlin.kotlin.UShort" -> return (a as kotlin.UInt).floorDiv(b as kotlin.UShort)
+                "kotlin.kotlin.UInt" -> return (a as kotlin.UInt).floorDiv(b as kotlin.UInt)
+                "kotlin.kotlin.ULong" -> return (a as kotlin.UInt).floorDiv(b as kotlin.ULong)
+            }
+            "kotlin.kotlin.ULong" -> when (typeB) {
+                "kotlin.kotlin.UByte" -> return (a as kotlin.ULong).floorDiv(b as kotlin.UByte)
+                "kotlin.kotlin.UShort" -> return (a as kotlin.ULong).floorDiv(b as kotlin.UShort)
+                "kotlin.kotlin.UInt" -> return (a as kotlin.ULong).floorDiv(b as kotlin.UInt)
+                "kotlin.kotlin.ULong" -> return (a as kotlin.ULong).floorDiv(b as kotlin.ULong)
+            }
+            "kotlin.kotlin.UByte" -> when (typeB) {
+                "kotlin.kotlin.UByte" -> return (a as kotlin.UByte).floorDiv(b as kotlin.UByte)
+                "kotlin.kotlin.UShort" -> return (a as kotlin.UByte).floorDiv(b as kotlin.UShort)
+                "kotlin.kotlin.UInt" -> return (a as kotlin.UByte).floorDiv(b as kotlin.UInt)
+                "kotlin.kotlin.ULong" -> return (a as kotlin.UByte).floorDiv(b as kotlin.ULong)
+            }
+            "kotlin.kotlin.UShort" -> when (typeB) {
+                "kotlin.kotlin.UByte" -> return (a as kotlin.UShort).floorDiv(b as kotlin.UByte)
+                "kotlin.kotlin.UShort" -> return (a as kotlin.UShort).floorDiv(b as kotlin.UShort)
+                "kotlin.kotlin.UInt" -> return (a as kotlin.UShort).floorDiv(b as kotlin.UInt)
+                "kotlin.kotlin.ULong" -> return (a as kotlin.UShort).floorDiv(b as kotlin.ULong)
+            }
+            "kotlin.Byte" -> when (typeB) {
+                "kotlin.Byte" -> return (a as Byte).floorDiv(b as Byte)
+                "kotlin.Short" -> return (a as Byte).floorDiv(b as Short)
+                "kotlin.Int" -> return (a as Byte).floorDiv(b as Int)
+                "kotlin.Long" -> return (a as Byte).floorDiv(b as Long)
+            }
+            "kotlin.Short" -> when (typeB) {
+                "kotlin.Byte" -> return (a as Short).floorDiv(b as Byte)
+                "kotlin.Short" -> return (a as Short).floorDiv(b as Short)
+                "kotlin.Int" -> return (a as Short).floorDiv(b as Int)
+                "kotlin.Long" -> return (a as Short).floorDiv(b as Long)
+            }
+            "kotlin.Int" -> when (typeB) {
+                "kotlin.Byte" -> return (a as Int).floorDiv(b as Byte)
+                "kotlin.Short" -> return (a as Int).floorDiv(b as Short)
+                "kotlin.Int" -> return (a as Int).floorDiv(b as Int)
+                "kotlin.Long" -> return (a as Int).floorDiv(b as Long)
+            }
+            "kotlin.Long" -> when (typeB) {
+                "kotlin.Byte" -> return (a as Long).floorDiv(b as Byte)
+                "kotlin.Short" -> return (a as Long).floorDiv(b as Short)
+                "kotlin.Int" -> return (a as Long).floorDiv(b as Int)
+                "kotlin.Long" -> return (a as Long).floorDiv(b as Long)
+            }
+        }
+        "mod" -> when (typeA) {
+            "kotlin.kotlin.UInt" -> when (typeB) {
+                "kotlin.kotlin.UByte" -> return (a as kotlin.UInt).mod(b as kotlin.UByte)
+                "kotlin.kotlin.UShort" -> return (a as kotlin.UInt).mod(b as kotlin.UShort)
+                "kotlin.kotlin.UInt" -> return (a as kotlin.UInt).mod(b as kotlin.UInt)
+                "kotlin.kotlin.ULong" -> return (a as kotlin.UInt).mod(b as kotlin.ULong)
+            }
+            "kotlin.kotlin.ULong" -> when (typeB) {
+                "kotlin.kotlin.UByte" -> return (a as kotlin.ULong).mod(b as kotlin.UByte)
+                "kotlin.kotlin.UShort" -> return (a as kotlin.ULong).mod(b as kotlin.UShort)
+                "kotlin.kotlin.UInt" -> return (a as kotlin.ULong).mod(b as kotlin.UInt)
+                "kotlin.kotlin.ULong" -> return (a as kotlin.ULong).mod(b as kotlin.ULong)
+            }
+            "kotlin.kotlin.UByte" -> when (typeB) {
+                "kotlin.kotlin.UByte" -> return (a as kotlin.UByte).mod(b as kotlin.UByte)
+                "kotlin.kotlin.UShort" -> return (a as kotlin.UByte).mod(b as kotlin.UShort)
+                "kotlin.kotlin.UInt" -> return (a as kotlin.UByte).mod(b as kotlin.UInt)
+                "kotlin.kotlin.ULong" -> return (a as kotlin.UByte).mod(b as kotlin.ULong)
+            }
+            "kotlin.kotlin.UShort" -> when (typeB) {
+                "kotlin.kotlin.UByte" -> return (a as kotlin.UShort).mod(b as kotlin.UByte)
+                "kotlin.kotlin.UShort" -> return (a as kotlin.UShort).mod(b as kotlin.UShort)
+                "kotlin.kotlin.UInt" -> return (a as kotlin.UShort).mod(b as kotlin.UInt)
+                "kotlin.kotlin.ULong" -> return (a as kotlin.UShort).mod(b as kotlin.ULong)
+            }
+            "kotlin.Byte" -> when (typeB) {
+                "kotlin.Byte" -> return (a as Byte).mod(b as Byte)
+                "kotlin.Short" -> return (a as Byte).mod(b as Short)
+                "kotlin.Int" -> return (a as Byte).mod(b as Int)
+                "kotlin.Long" -> return (a as Byte).mod(b as Long)
+            }
+            "kotlin.Short" -> when (typeB) {
+                "kotlin.Byte" -> return (a as Short).mod(b as Byte)
+                "kotlin.Short" -> return (a as Short).mod(b as Short)
+                "kotlin.Int" -> return (a as Short).mod(b as Int)
+                "kotlin.Long" -> return (a as Short).mod(b as Long)
+            }
+            "kotlin.Int" -> when (typeB) {
+                "kotlin.Byte" -> return (a as Int).mod(b as Byte)
+                "kotlin.Short" -> return (a as Int).mod(b as Short)
+                "kotlin.Int" -> return (a as Int).mod(b as Int)
+                "kotlin.Long" -> return (a as Int).mod(b as Long)
+            }
+            "kotlin.Long" -> when (typeB) {
+                "kotlin.Byte" -> return (a as Long).mod(b as Byte)
+                "kotlin.Short" -> return (a as Long).mod(b as Short)
+                "kotlin.Int" -> return (a as Long).mod(b as Int)
+                "kotlin.Long" -> return (a as Long).mod(b as Long)
+            }
+            "kotlin.Float" -> when (typeB) {
+                "kotlin.Float" -> return (a as Float).mod(b as Float)
+                "kotlin.Double" -> return (a as Float).mod(b as Double)
+            }
+            "kotlin.Double" -> when (typeB) {
+                "kotlin.Float" -> return (a as Double).mod(b as Float)
+                "kotlin.Double" -> return (a as Double).mod(b as Double)
+            }
+        }
+        "rangeUntil" -> when (typeA) {
+            "kotlin.kotlin.UInt" -> if (typeB == "kotlin.kotlin.UInt") return (a as kotlin.UInt).rangeUntil(b as kotlin.UInt)
+            "kotlin.kotlin.ULong" -> if (typeB == "kotlin.kotlin.ULong") return (a as kotlin.ULong).rangeUntil(b as kotlin.ULong)
+            "kotlin.kotlin.UByte" -> if (typeB == "kotlin.kotlin.UByte") return (a as kotlin.UByte).rangeUntil(b as kotlin.UByte)
+            "kotlin.kotlin.UShort" -> if (typeB == "kotlin.kotlin.UShort") return (a as kotlin.UShort).rangeUntil(b as kotlin.UShort)
         }
         "less" -> when (typeA) {
             "kotlin.Char" -> if (typeB == "kotlin.Char") return (a as Char) < (b as Char)
@@ -635,66 +985,6 @@ internal fun interpretBinaryFunction(name: String, typeA: String, typeB: String,
         }
         "OROR" -> when (typeA) {
             "kotlin.Boolean" -> if (typeB == "kotlin.Boolean") return (a as Boolean) || (b as Boolean)
-        }
-        "mod" -> when (typeA) {
-            "kotlin.Byte" -> when (typeB) {
-                "kotlin.Byte" -> return (a as Byte).mod(b as Byte)
-                "kotlin.Short" -> return (a as Byte).mod(b as Short)
-                "kotlin.Int" -> return (a as Byte).mod(b as Int)
-                "kotlin.Long" -> return (a as Byte).mod(b as Long)
-            }
-            "kotlin.Short" -> when (typeB) {
-                "kotlin.Byte" -> return (a as Short).mod(b as Byte)
-                "kotlin.Short" -> return (a as Short).mod(b as Short)
-                "kotlin.Int" -> return (a as Short).mod(b as Int)
-                "kotlin.Long" -> return (a as Short).mod(b as Long)
-            }
-            "kotlin.Int" -> when (typeB) {
-                "kotlin.Byte" -> return (a as Int).mod(b as Byte)
-                "kotlin.Short" -> return (a as Int).mod(b as Short)
-                "kotlin.Int" -> return (a as Int).mod(b as Int)
-                "kotlin.Long" -> return (a as Int).mod(b as Long)
-            }
-            "kotlin.Long" -> when (typeB) {
-                "kotlin.Byte" -> return (a as Long).mod(b as Byte)
-                "kotlin.Short" -> return (a as Long).mod(b as Short)
-                "kotlin.Int" -> return (a as Long).mod(b as Int)
-                "kotlin.Long" -> return (a as Long).mod(b as Long)
-            }
-            "kotlin.Float" -> when (typeB) {
-                "kotlin.Float" -> return (a as Float).mod(b as Float)
-                "kotlin.Double" -> return (a as Float).mod(b as Double)
-            }
-            "kotlin.Double" -> when (typeB) {
-                "kotlin.Float" -> return (a as Double).mod(b as Float)
-                "kotlin.Double" -> return (a as Double).mod(b as Double)
-            }
-        }
-        "floorDiv" -> when (typeA) {
-            "kotlin.Byte" -> when (typeB) {
-                "kotlin.Byte" -> return (a as Byte).floorDiv(b as Byte)
-                "kotlin.Short" -> return (a as Byte).floorDiv(b as Short)
-                "kotlin.Int" -> return (a as Byte).floorDiv(b as Int)
-                "kotlin.Long" -> return (a as Byte).floorDiv(b as Long)
-            }
-            "kotlin.Short" -> when (typeB) {
-                "kotlin.Byte" -> return (a as Short).floorDiv(b as Byte)
-                "kotlin.Short" -> return (a as Short).floorDiv(b as Short)
-                "kotlin.Int" -> return (a as Short).floorDiv(b as Int)
-                "kotlin.Long" -> return (a as Short).floorDiv(b as Long)
-            }
-            "kotlin.Int" -> when (typeB) {
-                "kotlin.Byte" -> return (a as Int).floorDiv(b as Byte)
-                "kotlin.Short" -> return (a as Int).floorDiv(b as Short)
-                "kotlin.Int" -> return (a as Int).floorDiv(b as Int)
-                "kotlin.Long" -> return (a as Int).floorDiv(b as Long)
-            }
-            "kotlin.Long" -> when (typeB) {
-                "kotlin.Byte" -> return (a as Long).floorDiv(b as Byte)
-                "kotlin.Short" -> return (a as Long).floorDiv(b as Short)
-                "kotlin.Int" -> return (a as Long).floorDiv(b as Int)
-                "kotlin.Long" -> return (a as Long).floorDiv(b as Long)
-            }
         }
     }
     throw InterpreterMethodNotFoundError("Unknown function: $name($typeA, $typeB)")
