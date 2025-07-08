@@ -41,8 +41,14 @@ class FirPackageMemberScope(
         if (name in excludedNames) return
 
         val symbol = classifierCache.getOrPut(name) {
-            val unambiguousFqName = ClassId(fqName, name)
-            symbolProvider.getClassLikeSymbolByClassId(unambiguousFqName)
+            val unambiguousClassId = ClassId(fqName, name)
+
+            val possibleClassIds = symbolProvider.symbolNamesProvider.getTopLevelClassIdsByShortName(name)
+            if (possibleClassIds != null && unambiguousClassId !in possibleClassIds) {
+                return@getOrPut null
+            }
+
+            symbolProvider.getClassLikeSymbolByClassId(unambiguousClassId)
         }
 
         if (symbol != null) {
