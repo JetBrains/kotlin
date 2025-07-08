@@ -121,14 +121,12 @@ internal object CompilerArgumentMetrics : FusMetrics {
 }
 
 internal object NativeArgumentMetrics : FusMetrics {
-    fun collectMetrics(compilerArguments: List<String>, metricsConsumer: StatisticsValuesConsumer) {
-        val arguments = K2NativeCompilerArguments()
-        parseCommandLineArguments(compilerArguments, arguments)
 
-        arguments.binaryOptions
-            ?.filter { it.startsWith("gc=") }
-            ?.map { it.substring("gc=".length) }
-            ?.mapNotNull {
+    private fun getGcTypeMetrics(arguments: K2NativeCompilerArguments): BooleanMetrics? {
+        return arguments.binaryOptions
+            ?.firstOrNull { it.startsWith("gc=") }
+            ?.substring("gc=".length)
+            ?.let {
                 //Values are connected to [org.jetbrains.kotlin.backend.konan.GC], but the class can't be access from here
                 when (it) {
                     "noop" -> BooleanMetrics.ENABLED_NOOP_GC
@@ -137,7 +135,13 @@ internal object NativeArgumentMetrics : FusMetrics {
                     "cms" -> BooleanMetrics.ENABLED_CMS_GC
                     else -> null
                 }
-            }?.forEach { metricsConsumer.report(it, true) }
+            }
+    }
+
+    fun collectMetrics(compilerArguments: List<String>, metricsConsumer: StatisticsValuesConsumer) {
+        val arguments = K2NativeCompilerArguments()
+        parseCommandLineArguments(compilerArguments, arguments)
+        getGcTypeMetrics(arguments)?.let { metricsConsumer.report(it, true) }
     }
 }
 
