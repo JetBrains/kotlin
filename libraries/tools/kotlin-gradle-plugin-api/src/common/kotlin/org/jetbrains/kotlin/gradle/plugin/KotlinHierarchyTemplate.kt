@@ -35,36 +35,27 @@ sealed interface KotlinHierarchyTemplate {
          *  - Projects that define custom target names matching one of the shared source sets. For example, `kotlin.linuxX64("linux")`.
          *
          * The default hierarchy is:
-         * ```
-         *                                                                     common
-         *                                                                        |
-         *                                                      +-----------------+-------------------+
-         *                                                      |                                     |
-         *
-         *                                                    native                                 ...
-         *
-         *                                                     |
-         *                                                     |
-         *                                                     |
-         *         +----------------------+--------------------+-----------------------+
-         *         |                      |                    |                       |
-         *
-         *       apple                  linux                mingw              androidNative
-         *
-         *         |
-         *  +-----------+------------+------------+
-         *  |           |            |            |
-         *
-         * macos       ios         tvos        watchos
+         * ```text
+         *                                    common
+         *                                      │
+         *                         ┌────────────┴─────────────────┬───────────┐
+         *                         │                              │           │
+         *                       native                          web         ...
+         *                         │                              │
+         *             ┌───────┬───┴───┬───────────┐          ┌───┴───┐
+         *             │       │       │           │          │       │
+         *           apple   linux   mingw   androidNative    js    wasmJs
+         *             │
+         *   ┌──────┬──┴──┬────────┐
+         *   │      │     │        │
+         * macos   ios   tvos   watchos
          * ```
          */
         val default get() = defaultKotlinHierarchyTemplate
     }
 }
 
-/*
-EXPERIMENTAL API
- */
+//region EXPERIMENTAL API
 
 /**
  * Creates a new [KotlinHierarchyTemplate] using inputs provided via the [describe] definition.
@@ -88,9 +79,9 @@ fun KotlinHierarchyTemplate.extend(describe: KotlinHierarchyBuilder.Root.() -> U
     }
 }
 
-/*
-INTERNAL API
- */
+//endregion
+
+//region INTERNAL API
 
 /**
  * @suppress
@@ -178,5 +169,12 @@ private val defaultKotlinHierarchyTemplate = KotlinHierarchyTemplate {
                 withAndroidNative()
             }
         }
+
+        group("web") {
+            withJs()
+            withWasmJs()
+        }
     }
 }
+
+//endregion

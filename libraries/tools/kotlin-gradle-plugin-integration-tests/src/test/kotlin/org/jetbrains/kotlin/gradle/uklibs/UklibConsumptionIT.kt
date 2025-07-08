@@ -11,13 +11,7 @@ import org.jetbrains.kotlin.gradle.ExperimentalWasmDsl
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.mpp.locateOrRegisterMetadataDependencyTransformationTask
 import org.jetbrains.kotlin.gradle.testbase.*
-import org.jetbrains.kotlin.gradle.testbase.buildScriptReturn
-import org.jetbrains.kotlin.gradle.testing.ComponentPath
-import org.jetbrains.kotlin.gradle.testing.PrettyPrint
-import org.jetbrains.kotlin.gradle.testing.ResolvedComponentWithArtifacts
-import org.jetbrains.kotlin.gradle.testing.compilationResolution
-import org.jetbrains.kotlin.gradle.testing.prettyPrinted
-import org.jetbrains.kotlin.gradle.testing.resolveProjectDependencyComponentsWithArtifacts
+import org.jetbrains.kotlin.gradle.testing.*
 import org.junit.jupiter.api.DisplayName
 import java.io.File
 import java.io.Serializable
@@ -144,6 +138,9 @@ class UklibConsumptionIT : KGPBaseTest() {
                 "Producer_commonMain",
                 "Producer_androidMain",
             ),
+            "web" to listOf(
+                "Producer_webMain",
+            ),
         ).flatMap {
             listOf(
                 it.key + "Main" to it.value,
@@ -196,7 +193,7 @@ class UklibConsumptionIT : KGPBaseTest() {
                         val arguments = producerTypes.joinToString(", ") { "${it}: ${it}" }
                         it.compileSource(
                             """
-                                fun consumeIn_${it.name}(${arguments}) {}
+                            fun consumeIn_${it.name}(${arguments}) {}
                             """.trimIndent()
                         )
                     }
@@ -230,13 +227,11 @@ class UklibConsumptionIT : KGPBaseTest() {
                         configuration = "uklibApiElements",
                     ),
                     "org.jetbrains.kotlin:kotlin-dom-api-compat:${defaultBuildOptions.kotlinVersion}" to ResolvedComponentWithArtifacts(
-                        artifacts = mutableListOf(
-                        ),
+                        artifacts = mutableListOf(),
                         configuration = "commonFakeApiElements-published",
                     ),
                     "org.jetbrains.kotlin:kotlin-stdlib:${defaultBuildOptions.kotlinVersion}" to ResolvedComponentWithArtifacts(
-                        artifacts = mutableListOf(
-                        ),
+                        artifacts = mutableListOf(),
                         configuration = "nativeApiElements",
                     ),
                 ).prettyPrinted,
