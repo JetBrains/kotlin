@@ -514,6 +514,8 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
             append("-fixed_block_page_size$fixedBlockPageSize")
         if (pagedAllocator != defaultPagedAllocator)
             append("-paged_allocator${if (pagedAllocator) "TRUE" else "FALSE"}")
+        if (minidumpLocation != null)
+            append("-with_crash_dumps")
     }
 
     private val userCacheFlavorString = buildString {

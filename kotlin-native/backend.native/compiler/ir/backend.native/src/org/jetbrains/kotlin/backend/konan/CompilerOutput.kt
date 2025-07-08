@@ -125,8 +125,13 @@ private fun collectLlvmModules(generationState: NativeGenerationState, generated
         add(RuntimeModule.ALLOC_COMMON)
         add(RuntimeModule.GC_COMMON)
         add(RuntimeModule.GC_SCHEDULER_COMMON)
-        if (config.target.family == Family.OSX)
+
+        if (config.target.family == Family.OSX && config.minidumpLocation != null) {
             add(RuntimeModule.BREAKPAD)
+            add(RuntimeModule.CRASH_HANDLER_IMPL)
+        } else {
+            add(RuntimeModule.CRASH_HANDLER_NOOP)
+        }
         when (config.gcSchedulerType) {
             GCSchedulerType.MANUAL -> {
                 add(RuntimeModule.GC_SCHEDULER_MANUAL)

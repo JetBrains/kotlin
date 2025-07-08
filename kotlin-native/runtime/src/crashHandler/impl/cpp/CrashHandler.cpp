@@ -1,4 +1,4 @@
-#include "CrashHandler.hpp"
+#include "../../common/cpp/CrashHandler.hpp"
 
 #include <csignal>
 #include <cstdlib>
