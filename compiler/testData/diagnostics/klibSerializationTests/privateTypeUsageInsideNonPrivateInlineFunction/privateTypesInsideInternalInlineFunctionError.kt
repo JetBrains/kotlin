@@ -65,7 +65,7 @@ internal inline fun internalInline() {
     <!IR_PRIVATE_TYPE_USED_IN_NON_PRIVATE_INLINE_FUNCTION_ERROR!>withContext<!>.toString()
     <!IR_PRIVATE_TYPE_USED_IN_NON_PRIVATE_INLINE_FUNCTION_ERROR!>null as <!LESS_VISIBLE_TYPE_ACCESS_IN_INLINE_WARNING!>A<!><!>
     <!IR_PRIVATE_TYPE_USED_IN_NON_PRIVATE_INLINE_FUNCTION_ERROR!>null as <!LESS_VISIBLE_TYPE_ACCESS_IN_INLINE_WARNING!>A.Nested<!><!>
-    <!IR_PRIVATE_TYPE_USED_IN_NON_PRIVATE_INLINE_FUNCTION_ERROR!><!LESS_VISIBLE_TYPE_ACCESS_IN_INLINE_WARNING!>A<!>::class<!>
+    <!IR_PRIVATE_TYPE_USED_IN_NON_PRIVATE_INLINE_FUNCTION_ERROR, UNUSED_EXPRESSION!><!LESS_VISIBLE_TYPE_ACCESS_IN_INLINE_WARNING!>A<!>::class<!>
 }
 
 internal inline fun referencePrivateInsideAnonymousObject() {
@@ -81,7 +81,7 @@ internal inline fun referencePrivateInsideAnonymousObject() {
             <!IR_PRIVATE_TYPE_USED_IN_NON_PRIVATE_INLINE_FUNCTION_ERROR!>class Local : <!LESS_VISIBLE_TYPE_ACCESS_IN_INLINE_WARNING, PRIVATE_CLASS_MEMBER_FROM_INLINE!>Generic<<!LESS_VISIBLE_TYPE_ACCESS_IN_INLINE_WARNING!>A<!>><!>() {}<!>
             <!IR_PRIVATE_TYPE_USED_IN_NON_PRIVATE_INLINE_FUNCTION_ERROR!>null as <!LESS_VISIBLE_TYPE_ACCESS_IN_INLINE_WARNING!>A<!><!>
             <!IR_PRIVATE_TYPE_USED_IN_NON_PRIVATE_INLINE_FUNCTION_ERROR!>null as <!LESS_VISIBLE_TYPE_ACCESS_IN_INLINE_WARNING!>A.Nested<!><!>
-            <!IR_PRIVATE_TYPE_USED_IN_NON_PRIVATE_INLINE_FUNCTION_ERROR!><!LESS_VISIBLE_TYPE_ACCESS_IN_INLINE_WARNING!>A<!>::class<!>
+            <!IR_PRIVATE_TYPE_USED_IN_NON_PRIVATE_INLINE_FUNCTION_ERROR, UNUSED_EXPRESSION!><!LESS_VISIBLE_TYPE_ACCESS_IN_INLINE_WARNING!>A<!>::class<!>
         }
     }
 }
@@ -98,7 +98,7 @@ private class B {
         object : Generic<A>() {}
         null as A
         null as A.Nested
-        A::class
+        <!UNUSED_EXPRESSION!>A::class<!>
     }
 }
 
@@ -117,7 +117,7 @@ internal class C {
                 object : Generic<A>() {}
                 null as A
                 null as A.Nested
-                A::class
+                <!UNUSED_EXPRESSION!>A::class<!>
             }
         }
     }
@@ -146,7 +146,7 @@ internal fun inlineInsideAnonymousObject() {
             object : <!PRIVATE_CLASS_MEMBER_FROM_INLINE!>Generic<A><!>() {}
             null as A
             null as A.Nested
-            A::class
+            <!UNUSED_EXPRESSION!>A::class<!>
         }
     }.foo()
 }

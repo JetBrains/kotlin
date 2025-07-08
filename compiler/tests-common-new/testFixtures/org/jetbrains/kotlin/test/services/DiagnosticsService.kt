@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.test.services
 import org.jetbrains.kotlin.diagnostics.Severity
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives
 import org.jetbrains.kotlin.test.model.TestModule
-import org.jetbrains.kotlin.test.util.*
 
 class DiagnosticsService(val testServices: TestServices) : TestService {
     companion object {
@@ -43,8 +42,7 @@ class DiagnosticsService(val testServices: TestServices) : TestService {
 
     private fun computeDiagnosticConditionForModule(module: TestModule): DiagnosticConditions {
         val diagnosticsInDirective = module.directives[DiagnosticsDirectives.DIAGNOSTICS]
-        val enabledNames = mutableSetOf<String>()
-        val disabledNames = mutableSetOf<String>()
+        val diagnosticMap = mutableMapOf<String, Boolean>()
         val severityMap = mutableMapOf<Severity, Boolean>()
         for (diagnosticInDirective in diagnosticsInDirective) {
             val enabled = when {
@@ -57,10 +55,19 @@ class DiagnosticsService(val testServices: TestServices) : TestService {
             if (severity != null) {
                 severityMap[severity] = enabled
             } else {
-                val collection = if (enabled) enabledNames else disabledNames
-                collection += name
+                diagnosticMap[name] = enabled
             }
         }
+
+        val enabledNames = mutableSetOf<String>()
+        val disabledNames = mutableSetOf<String>()
+        for ((name, enabled) in diagnosticMap) {
+            when (enabled) {
+                true -> enabledNames += name
+                false -> disabledNames += name
+            }
+        }
+
         return DiagnosticConditions(
             enabledNames,
             disabledNames,

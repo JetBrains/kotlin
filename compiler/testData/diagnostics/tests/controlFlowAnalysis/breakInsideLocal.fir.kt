@@ -24,7 +24,7 @@ fun test() {
 
 fun test2() {
     while (true) {
-        {tag: Int ->
+        <!UNUSED_LAMBDA_EXPRESSION!>{tag: Int ->
             when(tag) {
                 0 -> <!BREAK_OR_CONTINUE_JUMPS_ACROSS_FUNCTION_BOUNDARY!>continue<!>
                 1 -> foo { <!BREAK_OR_CONTINUE_JUMPS_ACROSS_FUNCTION_BOUNDARY!>continue<!> }
@@ -32,7 +32,7 @@ fun test2() {
                 3 -> foo(fun () { <!BREAK_OR_CONTINUE_JUMPS_ACROSS_FUNCTION_BOUNDARY!>continue<!> })
                 4 -> foo(@SomeAnnotation fun () { <!BREAK_OR_CONTINUE_JUMPS_ACROSS_FUNCTION_BOUNDARY!>continue<!> })
             }
-        }
+        }<!>
     }
 }
 

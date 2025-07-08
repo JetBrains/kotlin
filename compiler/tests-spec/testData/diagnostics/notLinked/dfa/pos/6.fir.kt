@@ -289,7 +289,7 @@ fun case_14() {
 // TESTCASE NUMBER: 15
 fun case_15(x: TypealiasNullableString) {
     val y = null
-    val <!UNUSED_VARIABLE!>z<!> = if (x === null || <!SENSELESS_COMPARISON!>y == x<!> && <!SENSELESS_COMPARISON!>x === y<!> || <!SENSELESS_COMPARISON!>null === x<!>) "" else {
+    val z = if (x === null || <!SENSELESS_COMPARISON!>y == x<!> && <!SENSELESS_COMPARISON!>x === y<!> || <!SENSELESS_COMPARISON!>null === x<!>) "" else {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>x<!>.equals(null)
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>x<!>.propT
@@ -907,7 +907,7 @@ fun case_49() {
 fun case_50(x: TypealiasNullableString) {
     val z1 = null
     val z2 = null
-    val <!UNUSED_VARIABLE!>t<!> = if (x != z1 && <!SENSELESS_COMPARISON!>z2 !== x<!>) "" else {
+    val t = if (x != z1 && <!SENSELESS_COMPARISON!>z2 !== x<!>) "" else {
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String?")!>x<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String?")!>x<!>.hashCode()
     }
