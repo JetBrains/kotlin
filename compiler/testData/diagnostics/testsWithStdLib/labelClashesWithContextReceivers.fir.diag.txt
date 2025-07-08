@@ -4,7 +4,11 @@ Replace the '-Xcontext-receivers' compiler argument with '-Xcontext-parameters' 
 See the context parameters proposal for more details: https://kotl.in/context-parameters
 This warning will become an error in future releases.
 
+/labelClashesWithContextReceivers.fir.kt:(264,273): warning: Expression is unused.
+
 /labelClashesWithContextReceivers.fir.kt:(268,273): error: Ambiguous label.
+
+/labelClashesWithContextReceivers.fir.kt:(282,293): warning: Expression is unused.
 
 /labelClashesWithContextReceivers.fir.kt:(305,312): warning: Experimental context receivers are superseded by context parameters.
 Replace the '-Xcontext-receivers' compiler argument with '-Xcontext-parameters' and migrate to the new syntax.
@@ -14,4 +18,8 @@ This warning will become an error in future releases.
 
 /labelClashesWithContextReceivers.fir.kt:(358,363): error: Ambiguous label.
 
+/labelClashesWithContextReceivers.fir.kt:(460,474): warning: Expression is unused.
+
 /labelClashesWithContextReceivers.fir.kt:(464,474): error: Ambiguous label.
+
+/labelClashesWithContextReceivers.fir.kt:(516,530): warning: Expression is unused.

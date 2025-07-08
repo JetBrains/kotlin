@@ -5,6 +5,7 @@
 
 import clib.myCFunction
 
+@Suppress("UNUSED_EXPRESSION")
 object ConsumerALinuxX64 {
     init {
         ProducerACommonX

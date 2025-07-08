@@ -14,6 +14,10 @@
 
 /test.kt:(788,810): warning: Argument type mismatch: actual type is 'String?', but 'String' was expected. This will become an error in language version 2.1. See https://youtrack.jetbrains.com/issue/KT-57014.
 
+/test.kt:(823,824): warning: Expression is unused.
+
+/test.kt:(857,861): warning: Expression is unused.
+
 /test.kt:(967,989): warning: Argument type mismatch: actual type is 'String?', but 'String' was expected. This will become an error in language version 2.1. See https://youtrack.jetbrains.com/issue/KT-57014.
 
 /test.kt:(1076,1098): warning: Argument type mismatch: actual type is 'String?', but 'String' was expected. This will become an error in language version 2.1. See https://youtrack.jetbrains.com/issue/KT-57014.

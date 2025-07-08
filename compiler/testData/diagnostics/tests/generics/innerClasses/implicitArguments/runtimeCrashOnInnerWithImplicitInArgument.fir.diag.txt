@@ -1,1 +1,3 @@
 /runtimeCrashOnInnerWithImplicitInArgument.fir.kt:(298,303): error: Type parameter 'T' is declared as 'in' but occurs in 'out' position in type 'In.Inner<T (of class In<in T>)>'.
+
+/runtimeCrashOnInnerWithImplicitInArgument.fir.kt:(407,409): warning: Expression is unused.

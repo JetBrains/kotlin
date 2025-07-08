@@ -39,7 +39,7 @@ import org.jetbrains.kotlin.test.services.sourceProviders.CoroutineHelpersSource
 
 abstract class AbstractDiagnosticTest : AbstractKotlinCompilerTest() {
     companion object {
-        val DISABLED_BY_DEFAULT_UNUSED_DIAGNOSTICS = listOf(
+        val DEFAULT_UNUSED_DIAGNOSTICS = listOf(
             "UNUSED_VARIABLE",
             "UNUSED_PARAMETER",
             "UNUSED_ANONYMOUS_PARAMETER",
@@ -49,7 +49,7 @@ abstract class AbstractDiagnosticTest : AbstractKotlinCompilerTest() {
             "UNUSED_CHANGED_VALUE",
             "UNUSED_EXPRESSION",
             "UNUSED_LAMBDA_EXPRESSION",
-        ).map { "-$it" }
+        )
     }
 
     override fun configure(builder: TestConfigurationBuilder) = with(builder) {
@@ -61,6 +61,7 @@ abstract class AbstractDiagnosticTest : AbstractKotlinCompilerTest() {
 
         defaultDirectives {
             +USE_PSI_CLASS_FILES_READING
+            DIAGNOSTICS with DEFAULT_UNUSED_DIAGNOSTICS.map { "-$it" }
         }
 
         enableMetaInfoHandler()
@@ -132,9 +133,9 @@ abstract class AbstractDiagnosticTest : AbstractKotlinCompilerTest() {
             }
         }
 
-        forTestsNotMatching("compiler/testData/diagnostics/tests/controlFlowAnalysis/*") {
+        forTestsMatching("compiler/testData/diagnostics/tests/controlFlowAnalysis/*") {
             defaultDirectives {
-                DIAGNOSTICS with DISABLED_BY_DEFAULT_UNUSED_DIAGNOSTICS
+                DIAGNOSTICS with DEFAULT_UNUSED_DIAGNOSTICS.map { "+$it" }
             }
         }
 
