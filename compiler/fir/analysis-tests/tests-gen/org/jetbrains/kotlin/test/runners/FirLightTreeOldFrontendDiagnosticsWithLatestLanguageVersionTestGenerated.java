@@ -46162,6 +46162,12 @@ public class FirLightTreeOldFrontendDiagnosticsWithLatestLanguageVersionTestGene
           }
 
           @Test
+          @TestMetadata("accessorsErrorsInK2.kt")
+          public void testAccessorsErrorsInK2() {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/dsl/errors/accessorsErrorsInK2.kt");
+          }
+
+          @Test
           public void testAllFilesPresentInErrors() {
             KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithStdLib/contracts/dsl/errors"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|partialBody|fir|ll|latestLV)\\.kts?$"), true);
           }
@@ -46218,6 +46224,12 @@ public class FirLightTreeOldFrontendDiagnosticsWithLatestLanguageVersionTestGene
           @TestMetadata("notFirstStatement.kt")
           public void testNotFirstStatement() {
             runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/dsl/errors/notFirstStatement.kt");
+          }
+
+          @Test
+          @TestMetadata("operatorsErrorsInK2.kt")
+          public void testOperatorsErrorsInK2() {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/dsl/errors/operatorsErrorsInK2.kt");
           }
 
           @Test

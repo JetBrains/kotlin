@@ -47227,6 +47227,12 @@ public class PhasedJvmDiagnosticLightTreeTestGenerated extends AbstractPhasedJvm
           }
 
           @Test
+          @TestMetadata("accessorsErrorsInK2.kt")
+          public void testAccessorsErrorsInK2() {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/dsl/errors/accessorsErrorsInK2.kt");
+          }
+
+          @Test
           @TestMetadata("booleanComparisons.kt")
           public void testBooleanComparisons() {
             runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/dsl/errors/booleanComparisons.kt");
@@ -47278,6 +47284,12 @@ public class PhasedJvmDiagnosticLightTreeTestGenerated extends AbstractPhasedJvm
           @TestMetadata("notFirstStatement.kt")
           public void testNotFirstStatement() {
             runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/dsl/errors/notFirstStatement.kt");
+          }
+
+          @Test
+          @TestMetadata("operatorsErrorsInK2.kt")
+          public void testOperatorsErrorsInK2() {
+            runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/dsl/errors/operatorsErrorsInK2.kt");
           }
 
           @Test

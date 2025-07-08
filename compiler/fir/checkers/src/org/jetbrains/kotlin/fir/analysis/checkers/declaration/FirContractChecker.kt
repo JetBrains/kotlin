@@ -149,24 +149,24 @@ object FirContractChecker : FirFunctionChecker(MppCheckerKind.Common) {
 
         fun contractNotAllowed(message: String) = reporter.reportOn(source, FirErrors.CONTRACT_NOT_ALLOWED, message)
 
+        val allowedOnAccessors = LanguageFeature.AllowContractsOnPropertyAccessors.isEnabled()
+        val allowedOnSomeOperators = LanguageFeature.AllowContractsOnSomeOperators.isEnabled()
+
         when {
-            declaration is FirPropertyAccessor || declaration is FirAnonymousFunction -> {
-                if (LanguageFeature.AllowContractsOnPropertyAccessors.isEnabled()) {
-                    if (declaration is FirAnonymousFunction) contractNotAllowed("Contracts are not allowed for anonymous functions.")
-                } else {
-                    contractNotAllowed("Contracts are only allowed for functions.")
-                }
+            !allowedOnAccessors && (declaration is FirPropertyAccessor || declaration is FirAnonymousFunction) -> {
+                contractNotAllowed("Contracts are only allowed for functions.")
+            }
+            allowedOnAccessors && declaration is FirAnonymousFunction -> {
+                contractNotAllowed("Contracts are not allowed for anonymous functions.")
             }
             declaration.isAbstract || declaration.isOpen || declaration.isOverride -> {
                 contractNotAllowed("Contracts are not allowed for open or override functions.")
             }
-            declaration.isOperator -> {
-                if (LanguageFeature.AllowContractsOnSomeOperators.isEnabled()) {
-                    if (declaration.isContractOnOperatorForbidden())
-                        contractNotAllowed("Contracts are not allowed for operator ${declaration.nameOrSpecialName}.")
-                } else {
-                    contractNotAllowed("Contracts are not allowed for operator functions.")
-                }
+            !allowedOnSomeOperators && declaration.isOperator -> {
+                contractNotAllowed("Contracts are not allowed for operator functions.")
+            }
+            allowedOnSomeOperators && declaration.isOperator && declaration.isContractOnOperatorForbidden() -> {
+                contractNotAllowed("Contracts are not allowed for operator ${declaration.nameOrSpecialName}.")
             }
             declaration.symbol.callableId.isLocal || declaration.visibility == Visibilities.Local -> {
                 contractNotAllowed("Contracts are not allowed for local functions.")

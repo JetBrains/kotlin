@@ -188,25 +188,25 @@ KtFile: propertyAccessors.kt
                         NULL
                           PsiElement(null)('null')
                       PsiElement(RPAR)(')')
-                  PsiWhiteSpace('\n            ')
-                  CALL_EXPRESSION
-                    REFERENCE_EXPRESSION
-                      PsiElement(IDENTIFIER)('require')
-                    VALUE_ARGUMENT_LIST
-                      PsiElement(LPAR)('(')
-                      VALUE_ARGUMENT
-                        BINARY_EXPRESSION
-                          THIS_EXPRESSION
-                            REFERENCE_EXPRESSION
-                              PsiElement(this)('this')
-                          PsiWhiteSpace(' ')
-                          OPERATION_REFERENCE
-                            PsiElement(EXCLEQ)('!=')
-                          PsiWhiteSpace(' ')
-                          NULL
-                            PsiElement(null)('null')
-                      PsiElement(RPAR)(')')
                 PsiWhiteSpace('\n        ')
                 PsiElement(RBRACE)('}')
+        PsiWhiteSpace('\n        ')
+        CALL_EXPRESSION
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('require')
+          VALUE_ARGUMENT_LIST
+            PsiElement(LPAR)('(')
+            VALUE_ARGUMENT
+              BINARY_EXPRESSION
+                THIS_EXPRESSION
+                  REFERENCE_EXPRESSION
+                    PsiElement(this)('this')
+                PsiWhiteSpace(' ')
+                OPERATION_REFERENCE
+                  PsiElement(EXCLEQ)('!=')
+                PsiWhiteSpace(' ')
+                NULL
+                  PsiElement(null)('null')
+            PsiElement(RPAR)(')')
         PsiWhiteSpace('\n    ')
         PsiElement(RBRACE)('}')
