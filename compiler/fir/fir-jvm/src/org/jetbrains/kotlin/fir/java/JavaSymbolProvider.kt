@@ -33,12 +33,12 @@ open class JavaSymbolProvider(
     session: FirSession,
     override val javaFacade: FirJavaFacade,
 ) : FirSymbolProvider(session), FirJavaAwareSymbolProvider {
-    private class ClassCacheContext(
+    protected class ClassCacheContext(
         val parentClassSymbol: FirRegularClassSymbol? = null,
         val foundJavaClass: JavaClass? = null,
     )
 
-    private val classCache: FirCache<ClassId, FirRegularClassSymbol?, ClassCacheContext?> =
+    protected val classCache: FirCache<ClassId, FirRegularClassSymbol?, ClassCacheContext?> =
         session.firCachesFactory.createCache createValue@{ classId, context ->
             val javaClass = context?.foundJavaClass ?: javaFacade.findClass(classId) ?: return@createValue null
             val symbol = FirRegularClassSymbol(classId)
