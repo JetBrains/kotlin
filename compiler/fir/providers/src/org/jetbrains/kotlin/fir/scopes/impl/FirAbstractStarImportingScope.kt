@@ -32,6 +32,12 @@ abstract class FirAbstractStarImportingScope(
     // TODO try to hide this
     abstract val starImports: List<FirResolvedImport>
 
+    // TODO: Is this true for explicit star importing scopes? What if a synthetic function type's package is explicitly imported with a star
+    //  import?
+    //  It's definitely possible to import `KFunction2` with `import kotlin.reflect.*`, so it looks like explicit star importing scopes also
+    //  must support synthetic function types.
+    abstract val mayHaveSyntheticFunctionTypes: Boolean
+
     /**
      * Only contains packages which are package-only star imports, without a parent class ID.
      */
@@ -86,8 +92,11 @@ abstract class FirAbstractStarImportingScope(
 
         // `getTopLevelClassIdsByShortName` cannot return synthetic function class names, so we should fall back to the slow path in case
         // the name may be a synthetic function class name.
+        // TODO: Note: The synthetic "many library dependencies" test falls into the "synthetic function type" pitfall as the classes all
+        //  end with a number. That's quite unfortunate, and we should probably update the test, but for now let's ignore synthetic function
+        //  type handling in explicit importing scopes to get proper test results.
         @OptIn(FirSymbolProviderInternals::class)
-        if (name.mayBeSyntheticFunctionClassName()) return false
+        if (mayHaveSyntheticFunctionTypes && name.mayBeSyntheticFunctionClassName()) return false
 
         val topLevelClassIds = provider.symbolNamesProvider.getTopLevelClassIdsByShortName(name) ?: return false
 

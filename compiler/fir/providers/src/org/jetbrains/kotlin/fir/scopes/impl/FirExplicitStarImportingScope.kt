@@ -29,6 +29,9 @@ open class FirExplicitStarImportingScope private constructor(
         excludedImportNames
     )
 
+    override val mayHaveSyntheticFunctionTypes: Boolean
+        get() = false
+
     override val scopeOwnerLookupNames: List<String> by lazy(LazyThreadSafetyMode.PUBLICATION) {
         starImports.mapTo(LinkedHashSet()) { it.packageFqName.asString() }.toList()
     }

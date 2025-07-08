@@ -50,6 +50,9 @@ class FirSingleLevelDefaultStarImportingScope(
             } ?: emptyList()
     }
 
+    override val mayHaveSyntheticFunctionTypes: Boolean
+        get() = true
+
     override fun processFunctionsByName(name: Name, processor: (FirNamedFunctionSymbol) -> Unit) {
         if (name.isSpecial || name.identifier.isNotEmpty()) {
             for (import in starImports) {
