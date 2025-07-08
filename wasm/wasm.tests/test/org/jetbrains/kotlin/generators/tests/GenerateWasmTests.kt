@@ -172,7 +172,7 @@ fun main(args: Array<String>) {
 
         testGroup("wasm/wasm.tests/tests-gen", "compiler/testData/klib/syntheticAccessors", testRunnerMethodName = "runTest0") {
             testClass<AbstractFirWasmJsCodegenBoxWithInlinedFunInKlibTest>(
-                suiteTestClassName = "FirWasmJsKlibSyntheticAccessorsBoxTestGenerated"
+                suiteTestClassName = "WasmJsSynthAccBoxTestGenerated"
             ) {
                 model()
             }

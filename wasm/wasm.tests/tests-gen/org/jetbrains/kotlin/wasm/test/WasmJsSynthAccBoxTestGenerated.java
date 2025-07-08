@@ -19,7 +19,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("compiler/testData/klib/syntheticAccessors")
 @TestDataPath("$PROJECT_ROOT")
-public class FirWasmJsKlibSyntheticAccessorsBoxTestGenerated extends AbstractFirWasmJsCodegenBoxWithInlinedFunInKlibTest {
+public class WasmJsSynthAccBoxTestGenerated extends AbstractFirWasmJsCodegenBoxWithInlinedFunInKlibTest {
   @Test
   public void testAllFilesPresentInSyntheticAccessors() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/klib/syntheticAccessors"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.WASM, true);
