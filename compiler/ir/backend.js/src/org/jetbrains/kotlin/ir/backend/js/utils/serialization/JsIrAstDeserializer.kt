@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.JsIrProgramTestEnv
 import org.jetbrains.kotlin.ir.backend.js.utils.emptyScope
 import org.jetbrains.kotlin.js.backend.ast.*
 import org.jetbrains.kotlin.js.backend.ast.metadata.*
+import java.math.BigInteger
 import java.nio.ByteBuffer
 import java.util.*
 
@@ -46,12 +47,20 @@ private class JsIrAstDeserializer(private val source: ByteArray) {
         return buffer.double
     }
 
-    private fun readString(): String {
+    private inline fun <R> readBytes(transform: (offset: Int, length: Int) -> R): R {
         val length = readInt()
         val offset = buffer.position()
-        val result = String(source, offset, length, SerializationCharset)
+        val result = transform(offset, length)
         buffer.position(offset + length)
         return result
+    }
+
+    private fun readByteArray(): ByteArray = readBytes { offset, length ->
+        source.copyOfRange(offset, offset + length)
+    }
+
+    private fun readString(): String = readBytes { offset, length ->
+        String(source, offset, length, SerializationCharset)
     }
 
     private inline fun <reified T> readArray(readElement: () -> T): Array<T> {
@@ -315,6 +324,9 @@ private class JsIrAstDeserializer(private val source: ByteArray) {
                         }
                         DOUBLE_LITERAL -> {
                             JsDoubleLiteral(readDouble())
+                        }
+                        BIGINT_LITERAL -> {
+                            JsBigIntLiteral(BigInteger(readByteArray()))
                         }
                         ARRAY_LITERAL -> {
                             JsArrayLiteral(readList { readExpression() })
