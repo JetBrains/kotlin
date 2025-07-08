@@ -7,11 +7,12 @@ package kotlin.wasm.internal
 
 import kotlin.UnsupportedOperationException
 import kotlin.reflect.*
+import kotlin.internal.throwIrLinkageError
 
 internal abstract class KPropertyImplBase(private val reflectionTargetLinkageError: String?) {
     protected fun maybeThrowPLError(): Nothing? {
         reflectionTargetLinkageError?.let {
-            throwLinkageError(it)
+            throwIrLinkageError(it)
         }
         return null
     }

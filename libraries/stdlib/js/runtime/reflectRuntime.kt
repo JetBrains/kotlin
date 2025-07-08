@@ -24,7 +24,7 @@ internal fun getPropertyCallableRef(
     superType: dynamic,
     getter: dynamic,
     setter: dynamic,
-    linkageError: String? = null, // TODO: Remove the default argument after bootstrap advance
+    linkageError: String?,
 ): KProperty<*> {
     getter.get = getter
     getter.set = setter
@@ -72,4 +72,3 @@ private val propertyRefClassMetadataCache: Array<Array<dynamic>> = arrayOf<Array
     arrayOf<dynamic>(metadataObject(), metadataObject()), // 1
     arrayOf<dynamic>(metadataObject(), metadataObject())  // 2
 )
-

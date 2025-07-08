@@ -5,6 +5,8 @@
 
 package kotlin.wasm.internal
 
+import kotlin.internal.throwIrLinkageError
+
 internal abstract class KFunctionImpl(val flags: Int, val arity: Int, val id: String) {
     protected open fun computeReceiver(): Any? = null
 
@@ -27,9 +29,9 @@ internal abstract class KFunctionImpl(val flags: Int, val arity: Int, val id: St
 }
 
 internal abstract class KFunctionErrorImpl(val message: String) {
-    override fun equals(other: Any?): Boolean = throwLinkageError(message)
+    override fun equals(other: Any?): Boolean = throwIrLinkageError(message)
 
-    override fun hashCode(): Int = throwLinkageError(message)
+    override fun hashCode(): Int = throwIrLinkageError(message)
 
-    override fun toString(): String = throwLinkageError(message)
+    override fun toString(): String = throwIrLinkageError(message)
 }

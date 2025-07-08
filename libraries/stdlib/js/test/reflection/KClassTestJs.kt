@@ -23,7 +23,6 @@ class KClassTestJs {
     private interface I
 
     @Test
-    @Suppress("UNSUPPORTED") // TODO: Remove this suppression after bootstrap advance
     fun testIsInterface() {
         assertTrue(I::class.isInterface)
         assertFalse(KClassTestJs::class.isInterface)
