@@ -15,5 +15,5 @@ internal fun WasmFunctionInlining(
 ) = FunctionInlining(
     context = context,
     inlineMode,
-    inlineFunctionResolver = WasmInlineFunctionResolver(context, inlineMode),
+    inlineFunctionResolver = WasmInlineFunctionResolver(context),
 )

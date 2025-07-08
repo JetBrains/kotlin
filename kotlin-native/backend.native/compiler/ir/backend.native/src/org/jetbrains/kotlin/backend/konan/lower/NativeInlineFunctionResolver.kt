@@ -9,13 +9,11 @@ import org.jetbrains.kotlin.backend.common.getCompilerMessageLocation
 import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.common.lower.inline.LocalClassesInInlineLambdasLowering
 import org.jetbrains.kotlin.backend.konan.Context
-import org.jetbrains.kotlin.backend.konan.NativeGenerationState
 import org.jetbrains.kotlin.backend.konan.reportCompilationError
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
-import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.inline.*
 import org.jetbrains.kotlin.ir.irAttribute
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
@@ -26,10 +24,8 @@ private var IrFunction.wasLowered: Boolean? by irAttribute(copyByDefault = true)
 
 internal class NativeInlineFunctionResolver(
         context: Context,
-        inlineMode: InlineMode,
 ) : InlineFunctionResolverReplacingCoroutineIntrinsics<Context>(
         context = context,
-        inlineMode = inlineMode,
         callInlinerStrategy = NativeCallInlinerStrategy(context)
 ) {
     override fun getFunctionDeclaration(symbol: IrFunctionSymbol, inlineMode: InlineMode): IrFunction? {

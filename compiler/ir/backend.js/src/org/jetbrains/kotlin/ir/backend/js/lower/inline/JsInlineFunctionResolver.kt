@@ -7,9 +7,7 @@ package org.jetbrains.kotlin.ir.backend.js.lower.inline
 
 import org.jetbrains.kotlin.backend.common.LoweringContext
 import org.jetbrains.kotlin.ir.inline.InlineFunctionResolverReplacingCoroutineIntrinsics
-import org.jetbrains.kotlin.ir.inline.InlineMode
 
 internal class JsInlineFunctionResolver(
     context: LoweringContext,
-    inlineMode: InlineMode,
-) : InlineFunctionResolverReplacingCoroutineIntrinsics<LoweringContext>(context, inlineMode)
+) : InlineFunctionResolverReplacingCoroutineIntrinsics<LoweringContext>(context)

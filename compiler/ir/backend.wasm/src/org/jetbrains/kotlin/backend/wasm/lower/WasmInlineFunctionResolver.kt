@@ -7,9 +7,7 @@ package org.jetbrains.kotlin.backend.wasm.lower
 
 import org.jetbrains.kotlin.backend.common.LoweringContext
 import org.jetbrains.kotlin.ir.inline.InlineFunctionResolverReplacingCoroutineIntrinsics
-import org.jetbrains.kotlin.ir.inline.InlineMode
 
 class WasmInlineFunctionResolver(
     context: LoweringContext,
-    inlineMode: InlineMode,
-) : InlineFunctionResolverReplacingCoroutineIntrinsics<LoweringContext>(context, inlineMode)
+) : InlineFunctionResolverReplacingCoroutineIntrinsics<LoweringContext>(context)

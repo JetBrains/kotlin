@@ -79,7 +79,6 @@ abstract class InlineFunctionResolver(
 
 abstract class InlineFunctionResolverReplacingCoroutineIntrinsics<Ctx : LoweringContext>(
     protected val context: Ctx,
-    protected val inlineMode: InlineMode,
     callInlinerStrategy: CallInlinerStrategy = CallInlinerStrategy.DEFAULT,
 ) : InlineFunctionResolver(callInlinerStrategy) {
     override fun getFunctionDeclaration(symbol: IrFunctionSymbol, inlineMode: InlineMode): IrFunction? {
@@ -100,9 +99,8 @@ abstract class InlineFunctionResolverReplacingCoroutineIntrinsics<Ctx : Lowering
 
 internal class PreSerializationInlineFunctionResolver(
     context: LoweringContext,
-    inlineMode: InlineMode,
     irMangler: KotlinMangler.IrMangler,
-) : InlineFunctionResolverReplacingCoroutineIntrinsics<LoweringContext>(context, inlineMode) {
+) : InlineFunctionResolverReplacingCoroutineIntrinsics<LoweringContext>(context) {
 
     private val deserializer = NonLinkingIrInlineFunctionDeserializer(
         irBuiltIns = context.irBuiltIns,

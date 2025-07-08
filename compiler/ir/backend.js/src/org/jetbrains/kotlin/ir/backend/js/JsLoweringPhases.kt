@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.ir.backend.js
 
 import org.jetbrains.kotlin.backend.common.LoweringContext
 import org.jetbrains.kotlin.backend.common.ir.Symbols.Companion.isTypeOfIntrinsic
-import org.jetbrains.kotlin.backend.common.ir.isReifiable
 import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.common.lower.coroutines.AddContinuationToLocalSuspendFunctionsLowering
 import org.jetbrains.kotlin.backend.common.lower.coroutines.AddContinuationToNonLocalSuspendFunctionsLowering
@@ -31,7 +30,6 @@ import org.jetbrains.kotlin.ir.backend.js.lower.inline.*
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsManglerIr
 import org.jetbrains.kotlin.ir.backend.js.utils.compileSuspendAsJsGenerator
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
 import org.jetbrains.kotlin.ir.inline.*
 import org.jetbrains.kotlin.ir.interpreter.IrInterpreterConfiguration
 import org.jetbrains.kotlin.platform.js.JsPlatforms
@@ -202,7 +200,7 @@ private val inlineOnlyPrivateFunctionsPhase = makeIrModulePhase(
         FunctionInlining(
             context,
             inlineMode = InlineMode.PRIVATE_INLINE_FUNCTIONS,
-            JsInlineFunctionResolver(context, inlineMode = InlineMode.PRIVATE_INLINE_FUNCTIONS),
+            JsInlineFunctionResolver(context),
         )
     },
     name = "InlineOnlyPrivateFunctions",
@@ -229,7 +227,7 @@ private val inlineAllFunctionsPhase = makeIrModulePhase(
         FunctionInlining(
             context,
             inlineMode = InlineMode.ALL_INLINE_FUNCTIONS,
-            JsInlineFunctionResolver(context, inlineMode = InlineMode.ALL_INLINE_FUNCTIONS),
+            JsInlineFunctionResolver(context),
         )
     },
     name = "InlineAllFunctions",
