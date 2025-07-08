@@ -185,22 +185,16 @@ val distKonanProperties by tasks.registering(PrepareKonanProperties::class) {
     llvmProperties.set(llvmDistributionSource.asProperties)
 }
 
-val distCompilerFingerprint by tasks.registering(PrepareDistributionFingerprint::class) {
-    input.from(distNativeLibs)
-    input.from(distCompilerJars)
-    input.from(distKonanProperties)
+val distCompilerComponents = listOf(distNativeLibs, distCompilerJars, distTools, distBin, distSwiftExport, distKonanProperties)
 
+val distCompilerFingerprint by tasks.registering(PrepareDistributionFingerprint::class) {
+    input.from(distCompilerComponents)
     output = nativeDistribution.map { it.compilerFingerprint }
 }
 
 // TODO: Export this as configuration
 val distCompiler by tasks.registering {
-    dependsOn(distNativeLibs)
-    dependsOn(distCompilerJars)
-    dependsOn(distTools)
-    dependsOn(distBin)
-    dependsOn(distSwiftExport)
-    dependsOn(distKonanProperties)
+    dependsOn(distCompilerComponents)
     dependsOn(distCompilerFingerprint)
 }
 
@@ -210,7 +204,6 @@ val distStdlib by tasks.registering(Sync::class) {
     into(nativeDistribution.map { it.stdlib })
 }
 
-// TODO: Export this as configuration
 val distDef by tasks.registering(Sync::class) {
     dependsOn(":kotlin-native:platformLibs:updateDefFileDependencies")
 
