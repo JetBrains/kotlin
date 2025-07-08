@@ -16,6 +16,9 @@ import org.jetbrains.kotlin.generators.util.GeneratorsFileUtil
 import org.jetbrains.kotlin.ir.BuiltInOperatorNames
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.Printer
+import kotlin.reflect.full.memberFunctions
+import kotlin.reflect.KCallable
+
 import java.io.File
 
 val DESTINATION = File("compiler/ir/ir.interpreter/src/org/jetbrains/kotlin/ir/interpreter/builtins/IrBuiltInsMapGenerated.kt")
@@ -241,6 +244,18 @@ private fun getOperationMap(argumentsCount: Int): MutableList<Operation> {
                     function.valueParameters.map { it.type.toString() }
             operationMap.add(Operation(function.name.asString(), parameterTypes, function is FunctionDescriptor))
         }
+    }
+
+    // Usigned types here
+    val unsingnedClasses = listOf(UInt::class, ULong::class, UByte::class, UShort::class)
+    for (unsignedClass in unsingnedClasses) {
+        unsignedClass.memberFunctions
+            .filter { it.parameters.size == argumentsCount }
+            .forEach { function ->
+                operationMap.add(Operation(function.name, function.parameters.map {
+                    it.type.toString().removePrefix("kotlin.")
+                }))
+            }
     }
 
     return operationMap
