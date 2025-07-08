@@ -1,5 +1,6 @@
 plugins {
     kotlin("jvm")
+    kotlin("plugin.serialization")
 }
 
 dependencies {
@@ -9,6 +10,7 @@ dependencies {
     testImplementation(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
     testImplementation(projectTests(":compiler:tests-common-new"))
+    testImplementation(libs.kotlinx.serialization.json)
 }
 
 val defaultSnapshotVersion: String by extra
