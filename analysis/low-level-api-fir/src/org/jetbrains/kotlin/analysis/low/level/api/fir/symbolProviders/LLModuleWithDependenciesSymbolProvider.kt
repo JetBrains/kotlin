@@ -83,6 +83,7 @@ internal class LLModuleWithDependenciesSymbolProvider(
     ) : FirCompositeCachedSymbolNamesProvider(session, providers) {
         // TODO: Caching here or on the platform side?
         override fun getTopLevelClassIdsByShortName(shortName: Name): Set<ClassId>? {
+            // TODO: Handle resolve extensions.
             return classIdProvider.getTopLevelClassIdsByShortName(shortName)
         }
     }
@@ -174,7 +175,7 @@ internal class LLModuleWithDependenciesSymbolProvider(
 }
 
 internal class LLDependenciesSymbolProvider(
-    session: FirSession,
+    session: LLFirSession,
     val computeProviders: () -> List<FirSymbolProvider>,
 ) : FirSymbolProvider(session) {
     /**
@@ -191,7 +192,32 @@ internal class LLDependenciesSymbolProvider(
         }
     }
 
-    override val symbolNamesProvider: FirSymbolNamesProvider = FirNullSymbolNamesProvider
+    private val classIdProvider by lazy(LazyThreadSafetyMode.PUBLICATION) {
+        // TODO: The resolution scope SHOULD be equivalent to all combined content scopes of the individual symbol providers, but let's
+        //  double-check this.
+        val scope = KaResolutionScopeProvider.getInstance(session.project).getResolutionScope(session.ktModule)
+        KotlinJvmClassIdProviderFactory.getInstance(session.project).createProvider(scope)
+    }
+
+    override val symbolNamesProvider: FirSymbolNamesProvider = LLDependenciesSymbolNamesProvider()
+
+    private inner class LLDependenciesSymbolNamesProvider() : FirSymbolNamesProvider() {
+        override val hasSpecificClassifierPackageNamesComputation: Boolean get() = false
+        override fun getTopLevelClassifierNamesInPackage(packageFqName: FqName): Set<Name>? = null
+
+        override val hasSpecificCallablePackageNamesComputation: Boolean get() = false
+        override fun getTopLevelCallableNamesInPackage(packageFqName: FqName): Set<Name>? = null
+
+        override val mayHaveSyntheticFunctionTypes: Boolean get() = true
+        override fun mayHaveSyntheticFunctionType(classId: ClassId): Boolean = true
+
+        override fun mayHaveTopLevelClassifier(classId: ClassId): Boolean = true
+        override fun mayHaveTopLevelCallable(packageFqName: FqName, name: Name): Boolean = true
+
+        override fun getTopLevelClassIdsByShortName(shortName: Name): Set<ClassId>? {
+            return classIdProvider.getTopLevelClassIdsByShortName(shortName)
+        }
+    }
 
     override fun getClassLikeSymbolByClassId(classId: ClassId): FirClassLikeSymbol<*>? =
         providers.firstNotNullOfOrNull { it.getClassLikeSymbolByClassId(classId) }
