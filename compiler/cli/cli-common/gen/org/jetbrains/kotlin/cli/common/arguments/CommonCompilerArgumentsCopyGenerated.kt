@@ -11,6 +11,9 @@ fun copyCommonCompilerArguments(from: CommonCompilerArguments, to: CommonCompile
     copyCommonToolArguments(from, to)
 
     to.allowAnyScriptsInSourceRoots = from.allowAnyScriptsInSourceRoots
+    to.allowConditionImpliesReturnsContracts = from.allowConditionImpliesReturnsContracts
+    to.allowContractsOnMoreFunctions = from.allowContractsOnMoreFunctions
+    to.allowHoldsinContract = from.allowHoldsinContract
     to.allowKotlinPackage = from.allowKotlinPackage
     to.allowReifiedTypeInCatch = from.allowReifiedTypeInCatch
     to.annotationDefaultTarget = from.annotationDefaultTarget

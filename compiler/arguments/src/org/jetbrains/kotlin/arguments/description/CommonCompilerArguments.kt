@@ -984,4 +984,44 @@ default: 'first-only-warn' in language version 2.2+, 'first-only' in version 2.1
             introducedVersion = KotlinReleaseVersion.v2_2_20
         )
     }
+
+    compilerArgument {
+        name = "Xallow-contracts-on-more-functions"
+        description = "Allow contracts on some operators and accessors, and allow checks for erased types.".asReleaseDependent()
+        valueType = BooleanType.defaultFalse
+
+        additionalAnnotations(
+            Enables(LanguageFeature.AllowCheckForErasedTypesInContracts),
+            Enables(LanguageFeature.AllowContractsOnSomeOperators),
+            Enables(LanguageFeature.AllowContractsOnPropertyAccessors),
+        )
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_2_20
+        )
+    }
+
+    compilerArgument {
+        name = "Xallow-condition-implies-returns-contracts"
+        description = "Allow contracts that specify a limited conditional returns postcondition.".asReleaseDependent()
+        valueType = BooleanType.defaultFalse
+
+        additionalAnnotations(Enables(LanguageFeature.ConditionImpliesReturnsContracts))
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_2_20
+        )
+    }
+
+    compilerArgument {
+        name = "Xallow-holdsin-contract"
+        description = "Allow contracts that specify a condition that holds true inside a lambda argument.".asReleaseDependent()
+        valueType = BooleanType.defaultFalse
+
+        additionalAnnotations(Enables(LanguageFeature.HoldsInContracts))
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_2_20
+        )
+    }
 }

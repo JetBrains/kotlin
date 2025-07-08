@@ -254,6 +254,11 @@ where advanced options include:
                              default: 'first-only-warn' in language version 2.2+, 'first-only' in version 2.1 and before.
   -Xannotation-target-all    Enable experimental language support for @all: annotation use-site target.
   -Xallow-reified-type-in-catch Allow 'catch' parameters to have reified types.
+  -Xallow-contracts-on-more-functions
+                             Allow contracts on some operators and accessors, and allow checks for erased types.
+  -Xallow-condition-implies-returns-contracts
+                             Allow contracts that specify a limited conditional returns postcondition.
+  -Xallow-holdsin-contract   Allow contracts that specify a condition that holds true inside a lambda argument.
 
 Advanced options are non-standard and may be changed or removed without any notice.
 OK

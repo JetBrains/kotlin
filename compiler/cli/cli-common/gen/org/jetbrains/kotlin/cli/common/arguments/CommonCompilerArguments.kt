@@ -933,6 +933,41 @@ default: 'first-only-warn' in language version 2.2+, 'first-only' in version 2.1
             field = value
         }
 
+    @Argument(
+        value = "-Xallow-contracts-on-more-functions",
+        description = "Allow contracts on some operators and accessors, and allow checks for erased types.",
+    )
+    @Enables(LanguageFeature.AllowCheckForErasedTypesInContracts)
+    @Enables(LanguageFeature.AllowContractsOnSomeOperators)
+    @Enables(LanguageFeature.AllowContractsOnPropertyAccessors)
+    var allowContractsOnMoreFunctions: Boolean = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
+        value = "-Xallow-condition-implies-returns-contracts",
+        description = "Allow contracts that specify a limited conditional returns postcondition.",
+    )
+    @Enables(LanguageFeature.ConditionImpliesReturnsContracts)
+    var allowConditionImpliesReturnsContracts: Boolean = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
+        value = "-Xallow-holdsin-contract",
+        description = "Allow contracts that specify a condition that holds true inside a lambda argument.",
+    )
+    @Enables(LanguageFeature.HoldsInContracts)
+    var allowHoldsinContract: Boolean = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
     @get:Transient
     abstract val configurator: CommonCompilerArgumentsConfigurator
 

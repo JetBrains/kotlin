@@ -77,4 +77,18 @@ internal fun MutableMap<LanguageFeature, LanguageFeature.State>.configureCommonL
     if (arguments.allowReifiedTypeInCatch) {
         put(LanguageFeature.AllowReifiedTypeInCatchClause, LanguageFeature.State.ENABLED)
     }
+
+    if (arguments.allowContractsOnMoreFunctions) {
+        put(LanguageFeature.AllowCheckForErasedTypesInContracts, LanguageFeature.State.ENABLED)
+        put(LanguageFeature.AllowContractsOnSomeOperators, LanguageFeature.State.ENABLED)
+        put(LanguageFeature.AllowContractsOnPropertyAccessors, LanguageFeature.State.ENABLED)
+    }
+
+    if (arguments.allowConditionImpliesReturnsContracts) {
+        put(LanguageFeature.ConditionImpliesReturnsContracts, LanguageFeature.State.ENABLED)
+    }
+
+    if (arguments.allowHoldsinContract) {
+        put(LanguageFeature.HoldsInContracts, LanguageFeature.State.ENABLED)
+    }
 }
