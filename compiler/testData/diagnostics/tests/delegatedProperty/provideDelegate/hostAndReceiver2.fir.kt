@@ -10,7 +10,7 @@ object T2 {
     operator fun <T> Foo<T>.getValue(receiver: String, p: Any?): T = TODO()
 
     val String.test1: String by delegate()
-    val test2: String <!DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE!>by<!> delegate()
+    val test2: String <!DELEGATION_OPERATOR_NONE_APPLICABLE!>by<!> delegate()
 }
 
 /* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, interfaceDeclaration, nestedClass, nullableType,

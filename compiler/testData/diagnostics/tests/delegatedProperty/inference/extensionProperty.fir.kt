@@ -4,10 +4,10 @@ package foo
 import kotlin.reflect.KProperty
 
 open class A {
-    val B.w: Int <!DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE!>by<!> <!CANNOT_INFER_PARAMETER_TYPE!>MyProperty<!>()
+    val B.w: Int <!DELEGATION_OPERATOR_NONE_APPLICABLE!>by<!> <!CANNOT_INFER_PARAMETER_TYPE!>MyProperty<!>()
 }
 
-val B.r: Int <!DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE!>by<!> <!CANNOT_INFER_PARAMETER_TYPE!>MyProperty<!>()
+val B.r: Int <!DELEGATION_OPERATOR_NONE_APPLICABLE!>by<!> <!CANNOT_INFER_PARAMETER_TYPE!>MyProperty<!>()
 
 val A.e: Int by MyProperty()
 

@@ -6,14 +6,14 @@ class A {
 
 fun test() {
     val (_, _) = A()
-    val (_, _, _) = <!COMPONENT_FUNCTION_MISSING!>A()<!>
+    val (_, _, _) = <!COMPONENT_OPERATOR_MISSING!>A()<!>
 
     val (_: Int, _: String) = A()
-    val (_: String, _) = <!COMPONENT_FUNCTION_RETURN_TYPE_MISMATCH!>A()<!>
+    val (_: String, _) = <!COMPONENT_OPERATOR_RETURN_TYPE_MISMATCH!>A()<!>
 
     val f: (A) -> Int = { (_, _) -> 1 }
-    val g: (A) -> Int = { <!COMPONENT_FUNCTION_MISSING!>(_, _, _)<!> -> 2 }
-    val h: (A) -> Int = { (<!COMPONENT_FUNCTION_RETURN_TYPE_MISMATCH!>_: String<!>, _) -> 3}
+    val g: (A) -> Int = { <!COMPONENT_OPERATOR_MISSING!>(_, _, _)<!> -> 2 }
+    val h: (A) -> Int = { (<!COMPONENT_OPERATOR_RETURN_TYPE_MISMATCH!>_: String<!>, _) -> 3}
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, destructuringDeclaration, functionDeclaration, functionalType, integerLiteral,

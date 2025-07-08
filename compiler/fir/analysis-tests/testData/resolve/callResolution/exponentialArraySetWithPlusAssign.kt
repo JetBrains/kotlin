@@ -66,35 +66,35 @@ class D {
 }
 
 fun test_2(x: D) {
-    x[1] <!ASSIGN_OPERATOR_AMBIGUITY!>+=<!> {
+    x[1] <!ASSIGNMENT_OPERATOR_AMBIGUITY!>+=<!> {
         someCallInsideLambda()
-        x[1] <!ASSIGN_OPERATOR_AMBIGUITY!>+=<!> {
+        x[1] <!ASSIGNMENT_OPERATOR_AMBIGUITY!>+=<!> {
             someCallInsideLambda()
-            x[1] <!ASSIGN_OPERATOR_AMBIGUITY!>+=<!> {
+            x[1] <!ASSIGNMENT_OPERATOR_AMBIGUITY!>+=<!> {
                 someCallInsideLambda()
-                x[1] <!ASSIGN_OPERATOR_AMBIGUITY!>+=<!> {
+                x[1] <!ASSIGNMENT_OPERATOR_AMBIGUITY!>+=<!> {
                     someCallInsideLambda()
-                    x[1] <!ASSIGN_OPERATOR_AMBIGUITY!>+=<!> {
+                    x[1] <!ASSIGNMENT_OPERATOR_AMBIGUITY!>+=<!> {
                         someCallInsideLambda()
-                        x[1] <!ASSIGN_OPERATOR_AMBIGUITY!>+=<!> {
+                        x[1] <!ASSIGNMENT_OPERATOR_AMBIGUITY!>+=<!> {
                             someCallInsideLambda()
-                            x[1] <!ASSIGN_OPERATOR_AMBIGUITY!>+=<!> {
+                            x[1] <!ASSIGNMENT_OPERATOR_AMBIGUITY!>+=<!> {
                                 someCallInsideLambda()
-                                x[1] <!ASSIGN_OPERATOR_AMBIGUITY!>+=<!> {
+                                x[1] <!ASSIGNMENT_OPERATOR_AMBIGUITY!>+=<!> {
                                     someCallInsideLambda()
-                                    x[1] <!ASSIGN_OPERATOR_AMBIGUITY!>+=<!> {
+                                    x[1] <!ASSIGNMENT_OPERATOR_AMBIGUITY!>+=<!> {
                                         someCallInsideLambda()
-                                        x[1] <!ASSIGN_OPERATOR_AMBIGUITY!>+=<!> {
+                                        x[1] <!ASSIGNMENT_OPERATOR_AMBIGUITY!>+=<!> {
                                             someCallInsideLambda()
-                                            x[1] <!ASSIGN_OPERATOR_AMBIGUITY!>+=<!> {
+                                            x[1] <!ASSIGNMENT_OPERATOR_AMBIGUITY!>+=<!> {
                                                 someCallInsideLambda()
-                                                x[1] <!ASSIGN_OPERATOR_AMBIGUITY!>+=<!> {
+                                                x[1] <!ASSIGNMENT_OPERATOR_AMBIGUITY!>+=<!> {
                                                     someCallInsideLambda()
-                                                    x[1] <!ASSIGN_OPERATOR_AMBIGUITY!>+=<!> {
+                                                    x[1] <!ASSIGNMENT_OPERATOR_AMBIGUITY!>+=<!> {
                                                         someCallInsideLambda()
-                                                        x[1] <!ASSIGN_OPERATOR_AMBIGUITY!>+=<!> {
+                                                        x[1] <!ASSIGNMENT_OPERATOR_AMBIGUITY!>+=<!> {
                                                             someCallInsideLambda()
-                                                            x[1] <!ASSIGN_OPERATOR_AMBIGUITY!>+=<!> {
+                                                            x[1] <!ASSIGNMENT_OPERATOR_AMBIGUITY!>+=<!> {
                                                                 someCallInsideLambda()
                                                                 Unit
                                                             }

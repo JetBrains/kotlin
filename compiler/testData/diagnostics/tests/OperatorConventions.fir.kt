@@ -100,10 +100,10 @@ val useRangeTo = A <!NOT_FUNCTION_AS_OPERATOR!>..<!> 3
 val useRangeUntil = A <!NOT_FUNCTION_AS_OPERATOR!>..<<!> 3
 val useCompareTo = A <!NOT_FUNCTION_AS_OPERATOR!>><!> 2
 fun useIterator() {
-    for (x in <!ITERATOR_MISSING!>A<!>) { }
+    for (x in <!ITERATOR_OPERATOR_MISSING!>A<!>) { }
 }
 fun useComponentN() {
-    val (x, y) = <!COMPONENT_FUNCTION_MISSING, COMPONENT_FUNCTION_MISSING!>A<!>
+    val (x, y) = <!COMPONENT_OPERATOR_MISSING, COMPONENT_OPERATOR_MISSING!>A<!>
 }
 
 object D {
@@ -122,8 +122,8 @@ class X {
 operator fun X.<!EXTENSION_FUNCTION_SHADOWED_BY_MEMBER_PROPERTY_WITH_INVOKE!>component1<!>(): String = "Not UwU"
 
 fun useDelegate() {
-    val m <!DELEGATE_SPECIAL_FUNCTION_MISSING!>by<!> D
-    var n <!DELEGATE_SPECIAL_FUNCTION_MISSING, DELEGATE_SPECIAL_FUNCTION_MISSING!>by<!> D
+    val m <!DELEGATION_OPERATOR_MISSING!>by<!> D
+    var n <!DELEGATION_OPERATOR_MISSING, DELEGATION_OPERATOR_MISSING!>by<!> D
 }
 
 fun resolveToExtension() {

@@ -1,5 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
-val a: Int <!DELEGATE_SPECIAL_FUNCTION_MISSING!>by<!> A()
+val a: Int <!DELEGATION_OPERATOR_MISSING("getValue(Nothing?, KProperty0<*>); A; delegate")!>by<!> A()
 
 class A
 

@@ -8,7 +8,7 @@ class A<R>() {
     operator fun <T> setValue(t: Any?, p: KProperty<*>, x: T) = Unit
 }
 
-var a1: Int <!DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE, DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE!>by<!> <!CANNOT_INFER_PARAMETER_TYPE!>A<!>()
+var a1: Int <!DELEGATION_OPERATOR_NONE_APPLICABLE, DELEGATION_OPERATOR_NONE_APPLICABLE!>by<!> <!CANNOT_INFER_PARAMETER_TYPE!>A<!>()
 var a2: Int by A<String>()
 
 class B<R>() {
@@ -25,7 +25,7 @@ class C<R>() {
 }
 
 var c1: Int by C()
-var c2: Int <!DELEGATE_SPECIAL_FUNCTION_RETURN_TYPE_MISMATCH!>by<!> C<Number>()
+var c2: Int <!DELEGATION_OPERATOR_RETURN_TYPE_MISMATCH!>by<!> C<Number>()
 
 /* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, functionDeclaration, nullableType, operator,
 primaryConstructor, propertyDeclaration, propertyDelegate, setter, starProjection, typeParameter */

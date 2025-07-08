@@ -14,10 +14,10 @@ fun <T> id(x: T) = x
 
 fun main() {
     var newValue = A()
-    newValue <!ASSIGN_OPERATOR_AMBIGUITY!>+=<!> id { total -> A() }
-    newValue <!ASSIGN_OPERATOR_AMBIGUITY!>+=<!> id(fun(total) = A())
-    newValue <!ASSIGN_OPERATOR_AMBIGUITY!>+=<!> id(fun(total): A { return A() })
-    newValue <!ASSIGN_OPERATOR_AMBIGUITY!>+=<!> id(::foo)
+    newValue <!ASSIGNMENT_OPERATOR_AMBIGUITY!>+=<!> id { total -> A() }
+    newValue <!ASSIGNMENT_OPERATOR_AMBIGUITY!>+=<!> id(fun(total) = A())
+    newValue <!ASSIGNMENT_OPERATOR_AMBIGUITY!>+=<!> id(fun(total): A { return A() })
+    newValue <!ASSIGNMENT_OPERATOR_AMBIGUITY!>+=<!> id(::foo)
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, funWithExtensionReceiver, functionDeclaration, functionalType, integerLiteral,

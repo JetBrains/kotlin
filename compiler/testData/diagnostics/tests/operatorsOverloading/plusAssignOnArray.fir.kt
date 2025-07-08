@@ -24,7 +24,7 @@ fun test() {
     val c = C()
     c[0] += ""
     var c1 = C1()
-    c1[0] <!ASSIGN_OPERATOR_AMBIGUITY!>+=<!> ""
+    c1[0] <!ASSIGNMENT_OPERATOR_AMBIGUITY!>+=<!> ""
     var c2 = C2()
     c2[0] += ""
 }

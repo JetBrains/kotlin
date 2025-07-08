@@ -3,7 +3,7 @@
 
 import kotlin.reflect.KProperty
 
-var a: Int <!DELEGATE_SPECIAL_FUNCTION_MISSING!>by<!> A()
+var a: Int <!DELEGATION_OPERATOR_MISSING("setValue(Nothing?, KMutableProperty0<*>, Int); A; delegate for var (read-write property)")!>by<!> A()
 
 class A {
     operator fun getValue(t: Any?, p: KProperty<*>): Int {

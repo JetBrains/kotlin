@@ -660,15 +660,15 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<Symbol>("candidate")
         }
 
-        val HAS_NEXT_FUNCTION_NONE_APPLICABLE by error<KtExpression> {
-            parameter<Collection<FirBasedSymbol<*>>>("candidates")
+        val HAS_NEXT_OPERATOR_NONE_APPLICABLE by error<KtExpression> {
+            parameter<Collection<Symbol>>("candidates")
         }
-        val NEXT_NONE_APPLICABLE by error<KtExpression> {
-            parameter<Collection<FirBasedSymbol<*>>>("candidates")
+        val NEXT_OPERATOR_NONE_APPLICABLE by error<KtExpression> {
+            parameter<Collection<Symbol>>("candidates")
         }
-        val DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE by error<KtExpression>(PositioningStrategy.PROPERTY_DELEGATE_BY_KEYWORD) {
-            parameter<String>("expectedFunctionSignature")
-            parameter<Collection<FirBasedSymbol<*>>>("candidates")
+        val DELEGATION_OPERATOR_NONE_APPLICABLE by error<KtExpression>(PositioningStrategy.PROPERTY_DELEGATE_BY_KEYWORD) {
+            parameter<Collection<Symbol>>("candidates")
+            parameter<String>("expectedOperatorSignature")
         }
 
         val TYPE_INFERENCE_ONLY_INPUT_TYPES_ERROR by error<PsiElement> {
@@ -766,21 +766,21 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<ConeKotlinType>("expectedType")
             parameter<ConeKotlinType>("actualType")
         }
-        val COMPARE_TO_TYPE_MISMATCH by error<KtExpression>(PositioningStrategy.OPERATOR) {
+        val COMPARE_TO_OPERATOR_RETURN_TYPE_MISMATCH by error<KtExpression>(PositioningStrategy.OPERATOR) {
             parameter<ConeKotlinType>("actualType")
         }
-        val HAS_NEXT_FUNCTION_TYPE_MISMATCH by error<KtExpression> {
+        val HAS_NEXT_OPERATOR_RETURN_TYPE_MISMATCH by error<KtExpression> {
             parameter<ConeKotlinType>("actualType")
         }
-        val COMPONENT_FUNCTION_RETURN_TYPE_MISMATCH by error<KtExpression> {
+        val COMPONENT_OPERATOR_RETURN_TYPE_MISMATCH by error<KtExpression> {
             parameter<ConeKotlinType>("expectedType")
             parameter<ConeKotlinType>("actualType")
-            parameter<Name>("componentFunctionName")
+            parameter<Name>("componentOperatorName")
         }
-        val DELEGATE_SPECIAL_FUNCTION_RETURN_TYPE_MISMATCH by error<KtExpression>(PositioningStrategy.PROPERTY_DELEGATE_BY_KEYWORD) {
+        val DELEGATION_OPERATOR_RETURN_TYPE_MISMATCH by error<KtExpression>(PositioningStrategy.PROPERTY_DELEGATE_BY_KEYWORD) {
             parameter<ConeKotlinType>("expectedType")
             parameter<ConeKotlinType>("actualType")
-            parameter<Name>("delegateSpecialFunctionName")
+            parameter<String>("expectedOperatorSignature")
         }
     }
 
@@ -789,26 +789,26 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<Collection<Symbol>>("candidates")
         }
 
-        val ASSIGN_OPERATOR_AMBIGUITY by error<PsiElement>(PositioningStrategy.REFERENCED_NAME_BY_QUALIFIED) {
+        val ASSIGNMENT_OPERATOR_AMBIGUITY by error<PsiElement>(PositioningStrategy.REFERENCED_NAME_BY_QUALIFIED) {
             parameter<Collection<Symbol>>("candidates")
         }
-        val ITERATOR_AMBIGUITY by error<PsiElement>(PositioningStrategy.REFERENCE_BY_QUALIFIED) {
-            parameter<Collection<FirBasedSymbol<*>>>("candidates")
-        }
-        val HAS_NEXT_FUNCTION_AMBIGUITY by error<PsiElement>(PositioningStrategy.REFERENCE_BY_QUALIFIED) {
-            parameter<Collection<FirBasedSymbol<*>>>("candidates")
-        }
-        val NEXT_AMBIGUITY by error<PsiElement>(PositioningStrategy.REFERENCE_BY_QUALIFIED) {
-            parameter<Collection<FirBasedSymbol<*>>>("candidates")
-        }
-        val COMPONENT_FUNCTION_AMBIGUITY by error<PsiElement> {
-            parameter<Name>("functionWithAmbiguityName")
+        val ITERATOR_OPERATOR_AMBIGUITY by error<PsiElement>(PositioningStrategy.REFERENCE_BY_QUALIFIED) {
             parameter<Collection<Symbol>>("candidates")
-            parameter<ConeKotlinType>("destructingType")
         }
-        val DELEGATE_SPECIAL_FUNCTION_AMBIGUITY by error<KtExpression>(PositioningStrategy.PROPERTY_DELEGATE_BY_KEYWORD) {
-            parameter<String>("expectedFunctionSignature")
-            parameter<Collection<FirBasedSymbol<*>>>("candidates")
+        val HAS_NEXT_OPERATOR_AMBIGUITY by error<PsiElement>(PositioningStrategy.REFERENCE_BY_QUALIFIED) {
+            parameter<Collection<Symbol>>("candidates")
+        }
+        val NEXT_OPERATOR_AMBIGUITY by error<PsiElement>(PositioningStrategy.REFERENCE_BY_QUALIFIED) {
+            parameter<Collection<Symbol>>("candidates")
+        }
+        val COMPONENT_OPERATOR_AMBIGUITY by error<PsiElement> {
+            parameter<Collection<Symbol>>("candidates")
+            parameter<Name>("componentOperatorName")
+            parameter<ConeKotlinType>("componentType")
+        }
+        val DELEGATION_OPERATOR_AMBIGUITY by error<KtExpression>(PositioningStrategy.PROPERTY_DELEGATE_BY_KEYWORD) {
+            parameter<Collection<Symbol>>("candidates")
+            parameter<String>("expectedOperatorSignature")
         }
 
         val COMPILER_REQUIRED_ANNOTATION_AMBIGUITY by error<PsiElement> {
@@ -1735,10 +1735,10 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<String>("operator")
             parameter<FirExpression?>("argumentExpression")
         }
-        val ITERATOR_ON_NULLABLE by error<KtExpression>()
-        val COMPONENT_FUNCTION_ON_NULLABLE by error<KtExpression> {
-            parameter<Name>("componentFunctionName")
-            parameter<ConeKotlinType>("destructingType")
+        val ITERATOR_OPERATOR_ON_NULLABLE by error<KtExpression>()
+        val COMPONENT_OPERATOR_ON_NULLABLE by error<KtExpression> {
+            parameter<Name>("componentOperatorName")
+            parameter<ConeKotlinType>("componentType")
         }
         val UNEXPECTED_SAFE_CALL by error<PsiElement>(PositioningStrategy.SAFE_ACCESS)
         val UNNECESSARY_SAFE_CALL by warning<PsiElement>(PositioningStrategy.SAFE_ACCESS) {
@@ -1825,15 +1825,15 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
     val CONVENTIONS by object : DiagnosticGroup("Conventions") {
         val NO_GET_METHOD by error<KtArrayAccessExpression>(PositioningStrategy.ARRAY_ACCESS)
         val NO_SET_METHOD by error<KtArrayAccessExpression>(PositioningStrategy.ARRAY_ACCESS)
-        val ITERATOR_MISSING by error<KtExpression>()
-        val HAS_NEXT_MISSING by error<KtExpression>()
-        val NEXT_MISSING by error<KtExpression>()
-        val COMPONENT_FUNCTION_MISSING by error<PsiElement> {
-            parameter<Name>("missingFunctionName")
-            parameter<ConeKotlinType>("destructingType")
+        val ITERATOR_OPERATOR_MISSING by error<KtExpression>()
+        val HAS_NEXT_OPERATOR_MISSING by error<KtExpression>()
+        val NEXT_OPERATOR_MISSING by error<KtExpression>()
+        val COMPONENT_OPERATOR_MISSING by error<PsiElement> {
+            parameter<Name>("componentOperatorName")
+            parameter<ConeKotlinType>("componentType")
         }
-        val DELEGATE_SPECIAL_FUNCTION_MISSING by error<KtExpression>(PositioningStrategy.PROPERTY_DELEGATE_BY_KEYWORD) {
-            parameter<String>("expectedFunctionSignature")
+        val DELEGATION_OPERATOR_MISSING by error<KtExpression>(PositioningStrategy.PROPERTY_DELEGATE_BY_KEYWORD) {
+            parameter<String>("expectedOperatorSignature")
             parameter<ConeKotlinType>("delegateType")
             parameter<String>("description")
         }

@@ -30,7 +30,7 @@ fun ban(b: B?) {
     b?.pa[0] += 10
     (b?.pa[0]) <!UNSAFE_OPERATOR_CALL!>+=<!> 10
 
-    b?.ppa[0] <!ASSIGN_OPERATOR_AMBIGUITY!>+=<!> 10
+    b?.ppa[0] <!ASSIGNMENT_OPERATOR_AMBIGUITY!>+=<!> 10
     (b?.ppa[0]) <!UNSAFE_OPERATOR_CALL!>+=<!> 10
 }
 

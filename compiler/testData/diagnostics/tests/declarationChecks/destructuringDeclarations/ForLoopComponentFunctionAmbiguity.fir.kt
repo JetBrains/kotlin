@@ -10,7 +10,7 @@ class C {
 }
 
 fun test() {
-    for ((x, y) in <!COMPONENT_FUNCTION_AMBIGUITY!>C()<!>) {
+    for ((x, y) in <!COMPONENT_OPERATOR_AMBIGUITY!>C()<!>) {
 
     }
 }

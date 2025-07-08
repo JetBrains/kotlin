@@ -8,7 +8,7 @@ interface A {
 fun <T> foo(x: (T) -> Unit): T = TODO()
 
 fun bar1(a: A) {
-    val x <!DELEGATE_SPECIAL_FUNCTION_MISSING!>by<!> foo { x: A -> }
+    val x <!DELEGATION_OPERATOR_MISSING!>by<!> foo { x: A -> }
 }
 
 fun bar2(a: A) {
@@ -16,7 +16,7 @@ fun bar2(a: A) {
         return this
     }
 
-    val x <!DELEGATE_SPECIAL_FUNCTION_MISSING!>by<!> foo { x: A -> }
+    val x <!DELEGATION_OPERATOR_MISSING!>by<!> foo { x: A -> }
 }
 
 /* GENERATED_FIR_TAGS: funWithExtensionReceiver, functionDeclaration, functionalType, interfaceDeclaration,

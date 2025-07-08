@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// FIR_IDENTICAL
 
 class SimpleKlass {
     @Deprecated("deprecated and hidden", level = DeprecationLevel.HIDDEN)

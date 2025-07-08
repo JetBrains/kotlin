@@ -13,7 +13,7 @@ class MyClass {
         var res = 0
         m = create()
         // See KT-7428
-        for ((k, v) in <!ITERATOR_ON_NULLABLE!>m<!>)
+        for ((k, v) in <!ITERATOR_OPERATOR_ON_NULLABLE!>m<!>)
             res += (k.length + v.length)
         return res
     }

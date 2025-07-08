@@ -25,7 +25,7 @@ fun testOperatorAssignment() {
     val c = C()
     c += ""
     <!CAN_BE_VAL!>var<!> c1 = C()
-    c1 <!ASSIGN_OPERATOR_AMBIGUITY!>+=<!> ""
+    c1 <!ASSIGNMENT_OPERATOR_AMBIGUITY!>+=<!> ""
 
     var a = 1
     a += 12

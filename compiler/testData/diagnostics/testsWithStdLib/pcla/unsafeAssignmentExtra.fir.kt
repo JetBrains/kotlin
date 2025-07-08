@@ -39,7 +39,7 @@ fun main(arg: Any, condition: Boolean) {
             true -> a = 87
             false -> a = 65
         }
-        val x <!DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE!>by<!> a
+        val x <!DELEGATION_OPERATOR_NONE_APPLICABLE!>by<!> a
 
         change {
             a = 99

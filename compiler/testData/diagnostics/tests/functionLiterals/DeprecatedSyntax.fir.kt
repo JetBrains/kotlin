@@ -6,12 +6,12 @@ val receiverAndReturnType = { Int.(<!SYNTAX!><!>)<!SYNTAX!>: Int ->  5<!> }
 val receiverAndReturnTypeWithParameter = { Int.(<!UNRESOLVED_REFERENCE!>a<!><!SYNTAX!><!SYNTAX!><!>: Int): Int ->  5<!> }
 
 val returnType = { (<!SYNTAX!><!>): Int -> 5 }
-val returnTypeWithParameter = { <!COMPONENT_FUNCTION_MISSING!>(b: Int): Int<!> -> 5 }
+val returnTypeWithParameter = { <!COMPONENT_OPERATOR_MISSING!>(b: Int): Int<!> -> 5 }
 
 val receiverWithFunctionType = { ((Int)<!SYNTAX!><!> <!SYNTAX!>-> Int).() -><!> }
 
-val parenthesizedParameters = { <!COMPONENT_FUNCTION_MISSING, VALUE_PARAMETER_WITHOUT_EXPLICIT_TYPE!>(a: Int)<!> -> }
-val parenthesizedParameters2 = { <!COMPONENT_FUNCTION_MISSING, VALUE_PARAMETER_WITHOUT_EXPLICIT_TYPE!>(b)<!> -> }
+val parenthesizedParameters = { <!COMPONENT_OPERATOR_MISSING, VALUE_PARAMETER_WITHOUT_EXPLICIT_TYPE!>(a: Int)<!> -> }
+val parenthesizedParameters2 = { <!COMPONENT_OPERATOR_MISSING, VALUE_PARAMETER_WITHOUT_EXPLICIT_TYPE!>(b)<!> -> }
 
 val none = { -> }
 

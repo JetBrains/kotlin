@@ -85,7 +85,7 @@ abstract class AbstractCompilerFacilityTest : AbstractAnalysisApiBasedTest() {
                 FirErrors.UNSAFE_IMPLICIT_INVOKE_CALL,
                 FirErrors.UNSAFE_INFIX_CALL,
                 FirErrors.UNSAFE_OPERATOR_CALL,
-                FirErrors.ITERATOR_ON_NULLABLE,
+                FirErrors.ITERATOR_OPERATOR_ON_NULLABLE,
                 FirErrors.UNEXPECTED_SAFE_CALL,
                 FirErrors.DSL_SCOPE_VIOLATION,
             ).map { it.name }

@@ -499,21 +499,21 @@ KtValueArgumentList(498,500): '()'
 KtBinaryExpression(505,513): 'foo += 1'
   KaErrorCallInfo:
     candidateCalls = []
-    diagnostic = ERROR<ASSIGN_OPERATOR_AMBIGUITY: Ambiguity between assign operator candidates:
+    diagnostic = ERROR<ASSIGNMENT_OPERATOR_AMBIGUITY: This assignment is ambiguous. Applicable candidates:
     fun Test.plus(i: Int): Test
     fun Test.plusAssign(i: Int): Unit>
 
 KtNameReferenceExpression(505,508): 'foo'
   KaErrorCallInfo:
     candidateCalls = []
-    diagnostic = ERROR<ASSIGN_OPERATOR_AMBIGUITY: Ambiguity between assign operator candidates:
+    diagnostic = ERROR<ASSIGNMENT_OPERATOR_AMBIGUITY: This assignment is ambiguous. Applicable candidates:
     fun Test.plus(i: Int): Test
     fun Test.plusAssign(i: Int): Unit>
 
 KtOperationReferenceExpression(509,511): '+='
   KaErrorCallInfo:
     candidateCalls = []
-    diagnostic = ERROR<ASSIGN_OPERATOR_AMBIGUITY: Ambiguity between assign operator candidates:
+    diagnostic = ERROR<ASSIGNMENT_OPERATOR_AMBIGUITY: This assignment is ambiguous. Applicable candidates:
     fun Test.plus(i: Int): Test
     fun Test.plusAssign(i: Int): Unit>
 
@@ -523,21 +523,21 @@ KtConstantExpression(512,513): '1'
 KtBinaryExpression(518,526): 'foo -= 1'
   KaErrorCallInfo:
     candidateCalls = []
-    diagnostic = ERROR<ASSIGN_OPERATOR_AMBIGUITY: Ambiguity between assign operator candidates:
+    diagnostic = ERROR<ASSIGNMENT_OPERATOR_AMBIGUITY: This assignment is ambiguous. Applicable candidates:
     fun Test.minus(i: Int): Test
     fun Test.minusAssign(i: Int): Unit>
 
 KtNameReferenceExpression(518,521): 'foo'
   KaErrorCallInfo:
     candidateCalls = []
-    diagnostic = ERROR<ASSIGN_OPERATOR_AMBIGUITY: Ambiguity between assign operator candidates:
+    diagnostic = ERROR<ASSIGNMENT_OPERATOR_AMBIGUITY: This assignment is ambiguous. Applicable candidates:
     fun Test.minus(i: Int): Test
     fun Test.minusAssign(i: Int): Unit>
 
 KtOperationReferenceExpression(522,524): '-='
   KaErrorCallInfo:
     candidateCalls = []
-    diagnostic = ERROR<ASSIGN_OPERATOR_AMBIGUITY: Ambiguity between assign operator candidates:
+    diagnostic = ERROR<ASSIGNMENT_OPERATOR_AMBIGUITY: This assignment is ambiguous. Applicable candidates:
     fun Test.minus(i: Int): Test
     fun Test.minusAssign(i: Int): Unit>
 
@@ -547,21 +547,21 @@ KtConstantExpression(525,526): '1'
 KtBinaryExpression(531,539): 'foo /= 1'
   KaErrorCallInfo:
     candidateCalls = []
-    diagnostic = ERROR<ASSIGN_OPERATOR_AMBIGUITY: Ambiguity between assign operator candidates:
+    diagnostic = ERROR<ASSIGNMENT_OPERATOR_AMBIGUITY: This assignment is ambiguous. Applicable candidates:
     fun Test.div(i: Int): Test
     fun Test.divAssign(i: Int): Unit>
 
 KtNameReferenceExpression(531,534): 'foo'
   KaErrorCallInfo:
     candidateCalls = []
-    diagnostic = ERROR<ASSIGN_OPERATOR_AMBIGUITY: Ambiguity between assign operator candidates:
+    diagnostic = ERROR<ASSIGNMENT_OPERATOR_AMBIGUITY: This assignment is ambiguous. Applicable candidates:
     fun Test.div(i: Int): Test
     fun Test.divAssign(i: Int): Unit>
 
 KtOperationReferenceExpression(535,537): '/='
   KaErrorCallInfo:
     candidateCalls = []
-    diagnostic = ERROR<ASSIGN_OPERATOR_AMBIGUITY: Ambiguity between assign operator candidates:
+    diagnostic = ERROR<ASSIGNMENT_OPERATOR_AMBIGUITY: This assignment is ambiguous. Applicable candidates:
     fun Test.div(i: Int): Test
     fun Test.divAssign(i: Int): Unit>
 
@@ -571,21 +571,21 @@ KtConstantExpression(538,539): '1'
 KtBinaryExpression(544,552): 'foo *= 1'
   KaErrorCallInfo:
     candidateCalls = []
-    diagnostic = ERROR<ASSIGN_OPERATOR_AMBIGUITY: Ambiguity between assign operator candidates:
+    diagnostic = ERROR<ASSIGNMENT_OPERATOR_AMBIGUITY: This assignment is ambiguous. Applicable candidates:
     fun Test.times(i: Int): Test
     fun Test.timesAssign(i: Int): Unit>
 
 KtNameReferenceExpression(544,547): 'foo'
   KaErrorCallInfo:
     candidateCalls = []
-    diagnostic = ERROR<ASSIGN_OPERATOR_AMBIGUITY: Ambiguity between assign operator candidates:
+    diagnostic = ERROR<ASSIGNMENT_OPERATOR_AMBIGUITY: This assignment is ambiguous. Applicable candidates:
     fun Test.times(i: Int): Test
     fun Test.timesAssign(i: Int): Unit>
 
 KtOperationReferenceExpression(548,550): '*='
   KaErrorCallInfo:
     candidateCalls = []
-    diagnostic = ERROR<ASSIGN_OPERATOR_AMBIGUITY: Ambiguity between assign operator candidates:
+    diagnostic = ERROR<ASSIGNMENT_OPERATOR_AMBIGUITY: This assignment is ambiguous. Applicable candidates:
     fun Test.times(i: Int): Test
     fun Test.timesAssign(i: Int): Unit>
 
@@ -595,21 +595,21 @@ KtConstantExpression(551,552): '1'
 KtBinaryExpression(557,565): 'foo %= 1'
   KaErrorCallInfo:
     candidateCalls = []
-    diagnostic = ERROR<ASSIGN_OPERATOR_AMBIGUITY: Ambiguity between assign operator candidates:
+    diagnostic = ERROR<ASSIGNMENT_OPERATOR_AMBIGUITY: This assignment is ambiguous. Applicable candidates:
     fun Test.rem(i: Int): Test
     fun Test.remAssign(i: Int): Unit>
 
 KtNameReferenceExpression(557,560): 'foo'
   KaErrorCallInfo:
     candidateCalls = []
-    diagnostic = ERROR<ASSIGN_OPERATOR_AMBIGUITY: Ambiguity between assign operator candidates:
+    diagnostic = ERROR<ASSIGNMENT_OPERATOR_AMBIGUITY: This assignment is ambiguous. Applicable candidates:
     fun Test.rem(i: Int): Test
     fun Test.remAssign(i: Int): Unit>
 
 KtOperationReferenceExpression(561,563): '%='
   KaErrorCallInfo:
     candidateCalls = []
-    diagnostic = ERROR<ASSIGN_OPERATOR_AMBIGUITY: Ambiguity between assign operator candidates:
+    diagnostic = ERROR<ASSIGNMENT_OPERATOR_AMBIGUITY: This assignment is ambiguous. Applicable candidates:
     fun Test.rem(i: Int): Test
     fun Test.remAssign(i: Int): Unit>
 

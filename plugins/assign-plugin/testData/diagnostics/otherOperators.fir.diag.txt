@@ -10,17 +10,17 @@
 
 /otherOperators.fir.kt:(710,712): error: Unresolved reference 'compareTo'.
 
-/otherOperators.fir.kt:(769,772): error: No 'set' operator method providing array access.
+/otherOperators.fir.kt:(769,772): error: This indexed assignment requires a 'set' operator function.
 
-/otherOperators.fir.kt:(817,820): error: No 'set' operator method providing array access.
+/otherOperators.fir.kt:(817,820): error: This indexed assignment requires a 'set' operator function.
 
-/otherOperators.fir.kt:(882,888): error: No 'set' operator method providing array access.
+/otherOperators.fir.kt:(882,888): error: This indexed assignment requires a 'set' operator function.
 
-/otherOperators.fir.kt:(933,939): error: No 'set' operator method providing array access.
+/otherOperators.fir.kt:(933,939): error: This indexed assignment requires a 'set' operator function.
 
-/otherOperators.fir.kt:(1003,1012): error: No 'set' operator method providing array access.
+/otherOperators.fir.kt:(1003,1012): error: This indexed assignment requires a 'set' operator function.
 
-/otherOperators.fir.kt:(1057,1066): error: No 'set' operator method providing array access.
+/otherOperators.fir.kt:(1057,1066): error: This indexed assignment requires a 'set' operator function.
 
 /otherOperators.fir.kt:(1117,1130): error: 'operator' modifier is required on 'fun get(): String' defined in 'StringProperty'.
 
@@ -34,7 +34,7 @@
 
 /otherOperators.fir.kt:(1180,1182): error: Unresolved reference '+='.
 
-/otherOperators.fir.kt:(1325,1328): error: No 'set' operator method providing array access.
+/otherOperators.fir.kt:(1325,1328): error: This indexed assignment requires a 'set' operator function.
 
 /otherOperators.fir.kt:(1431,1437): error: Variable expected.
 

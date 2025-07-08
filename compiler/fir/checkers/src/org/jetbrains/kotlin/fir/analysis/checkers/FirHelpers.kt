@@ -650,7 +650,7 @@ internal fun checkCondition(condition: FirExpression) {
             condition.origin == FirFunctionCallOrigin.Operator &&
             condition.calleeReference.name == OperatorNameConventions.HAS_NEXT
         ) {
-            reporter.reportOn(condition.source, FirErrors.HAS_NEXT_FUNCTION_TYPE_MISMATCH, coneType)
+            reporter.reportOn(condition.source, FirErrors.HAS_NEXT_OPERATOR_RETURN_TYPE_MISMATCH, coneType)
         } else {
             reporter.reportOn(
                 condition.source,

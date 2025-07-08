@@ -15,15 +15,15 @@ import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.valOrVarKeyword
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.HAS_NEXT_FUNCTION_AMBIGUITY
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.HAS_NEXT_FUNCTION_NONE_APPLICABLE
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.HAS_NEXT_MISSING
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ITERATOR_AMBIGUITY
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ITERATOR_MISSING
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ITERATOR_ON_NULLABLE
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NEXT_AMBIGUITY
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NEXT_MISSING
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NEXT_NONE_APPLICABLE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.HAS_NEXT_OPERATOR_AMBIGUITY
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.HAS_NEXT_OPERATOR_MISSING
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.HAS_NEXT_OPERATOR_NONE_APPLICABLE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ITERATOR_OPERATOR_AMBIGUITY
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ITERATOR_OPERATOR_MISSING
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ITERATOR_OPERATOR_ON_NULLABLE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NEXT_OPERATOR_AMBIGUITY
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NEXT_OPERATOR_MISSING
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NEXT_OPERATOR_NONE_APPLICABLE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.OPERATOR_MODIFIER_REQUIRED
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.utils.isOperator
@@ -53,9 +53,9 @@ object FirForLoopChecker : FirBlockChecker(MppCheckerKind.Common) {
         if (checkSpecialFunctionCall(
                 iteratorCall,
                 source,
-                ITERATOR_AMBIGUITY,
-                ITERATOR_MISSING,
-                nullableReceiverFactory = ITERATOR_ON_NULLABLE
+                ITERATOR_OPERATOR_AMBIGUITY,
+                ITERATOR_OPERATOR_MISSING,
+                nullableReceiverFactory = ITERATOR_OPERATOR_ON_NULLABLE,
             )
         ) {
             return
@@ -65,9 +65,9 @@ object FirForLoopChecker : FirBlockChecker(MppCheckerKind.Common) {
         checkSpecialFunctionCall(
             hasNextCall,
             source,
-            HAS_NEXT_FUNCTION_AMBIGUITY,
-            HAS_NEXT_MISSING,
-            noneApplicableFactory = HAS_NEXT_FUNCTION_NONE_APPLICABLE
+            HAS_NEXT_OPERATOR_AMBIGUITY,
+            HAS_NEXT_OPERATOR_MISSING,
+            noneApplicableFactory = HAS_NEXT_OPERATOR_NONE_APPLICABLE,
         )
 
         val loopParameter = whileLoop.block.statements.firstOrNull() as? FirProperty ?: return
@@ -76,9 +76,9 @@ object FirForLoopChecker : FirBlockChecker(MppCheckerKind.Common) {
         checkSpecialFunctionCall(
             nextCall,
             source,
-            NEXT_AMBIGUITY,
-            NEXT_MISSING,
-            noneApplicableFactory = NEXT_NONE_APPLICABLE
+            NEXT_OPERATOR_AMBIGUITY,
+            NEXT_OPERATOR_MISSING,
+            noneApplicableFactory = NEXT_OPERATOR_NONE_APPLICABLE,
         )
 
         val loopParameterSource = loopParameter.source

@@ -125,51 +125,51 @@ object FirDestructuringDeclarationChecker : FirPropertyChecker(MppCheckerKind.Co
             is ConeUnresolvedNameError -> {
                 reporter.reportOn(
                     source,
-                    FirErrors.COMPONENT_FUNCTION_MISSING,
+                    FirErrors.COMPONENT_OPERATOR_MISSING,
                     diagnostic.name,
-                    destructuringDeclarationType
+                    destructuringDeclarationType,
                 )
             }
             is ConeHiddenCandidateError -> {
                 reporter.reportOn(
                     source,
-                    FirErrors.COMPONENT_FUNCTION_MISSING,
+                    FirErrors.COMPONENT_OPERATOR_MISSING,
                     diagnostic.candidate.callInfo.name,
-                    destructuringDeclarationType
+                    destructuringDeclarationType,
                 )
             }
             is ConeInapplicableWrongReceiver -> {
                 reporter.reportOn(
                     source,
-                    FirErrors.COMPONENT_FUNCTION_MISSING,
+                    FirErrors.COMPONENT_OPERATOR_MISSING,
                     diagnostic.candidates.first().callInfo.name,
-                    destructuringDeclarationType
+                    destructuringDeclarationType,
                 )
             }
             is ConeAmbiguityError if diagnostic.applicability.isSuccess -> {
                 reporter.reportOn(
                     source,
-                    FirErrors.COMPONENT_FUNCTION_AMBIGUITY,
-                    diagnostic.name,
+                    FirErrors.COMPONENT_OPERATOR_AMBIGUITY,
                     diagnostic.candidates.map { it.symbol },
+                    diagnostic.name,
                     destructuringDeclarationType,
                 )
             }
             is ConeAmbiguityError -> {
                 reporter.reportOn(
                     source,
-                    FirErrors.COMPONENT_FUNCTION_MISSING,
+                    FirErrors.COMPONENT_OPERATOR_MISSING,
                     diagnostic.name,
-                    destructuringDeclarationType
+                    destructuringDeclarationType,
                 )
             }
             is ConeInapplicableCandidateError -> {
                 if (destructuringDeclarationType.fullyExpandedType().isMarkedNullable) {
                     reporter.reportOn(
                         source,
-                        FirErrors.COMPONENT_FUNCTION_ON_NULLABLE,
+                        FirErrors.COMPONENT_OPERATOR_ON_NULLABLE,
                         (diagnostic.candidate.symbol as FirNamedFunctionSymbol).callableId.callableName,
-                        destructuringDeclarationType
+                        destructuringDeclarationType,
                     )
                 } else {
                     reportDefaultDiagnostics(diagnostic, componentCall)
@@ -180,9 +180,9 @@ object FirDestructuringDeclarationChecker : FirPropertyChecker(MppCheckerKind.Co
                 if (componentType is ConeErrorType) {
                     reporter.reportOn(
                         source,
-                        FirErrors.COMPONENT_FUNCTION_MISSING,
+                        FirErrors.COMPONENT_OPERATOR_MISSING,
                         diagnostic.candidates.first().callInfo.name,
-                        destructuringDeclarationType
+                        destructuringDeclarationType,
                     )
                     return
                 }
@@ -216,7 +216,7 @@ object FirDestructuringDeclarationChecker : FirPropertyChecker(MppCheckerKind.Co
                     source
             reporter.reportOn(
                 typeMismatchSource,
-                FirErrors.COMPONENT_FUNCTION_RETURN_TYPE_MISMATCH,
+                FirErrors.COMPONENT_OPERATOR_RETURN_TYPE_MISMATCH,
                 expectedType,
                 componentType,
                 componentCall.calleeReference.name,

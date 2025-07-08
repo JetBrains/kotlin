@@ -6,10 +6,10 @@ import kotlin.reflect.KProperty
 class A
 
 class B {
-  val b: Int <!DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE!>by<!> Delegate<A>()
+  val b: Int <!DELEGATION_OPERATOR_NONE_APPLICABLE!>by<!> Delegate<A>()
 }
 
-val bTopLevel: Int <!DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE!>by<!> Delegate<A>()
+val bTopLevel: Int <!DELEGATION_OPERATOR_NONE_APPLICABLE!>by<!> Delegate<A>()
 
 class C {
   val c: Int by Delegate<C>()

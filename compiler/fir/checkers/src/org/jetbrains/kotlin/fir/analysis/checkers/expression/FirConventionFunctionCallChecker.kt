@@ -54,7 +54,7 @@ object FirConventionFunctionCallChecker : FirFunctionCallChecker(MppCheckerKind.
         val diagnosticSymbol = nonFatalDiagnostics.firstIsInstanceOrNull<ConeNotFunctionAsOperator>()?.symbol ?: return false
         when {
             unwrapped.resolvedType.classId!!.shortClassName == OperatorNameConventions.ITERATOR -> {
-                reporter.reportOn(unwrapped.source, FirErrors.ITERATOR_MISSING)
+                reporter.reportOn(unwrapped.source, FirErrors.ITERATOR_OPERATOR_MISSING)
             }
             else -> {
                 // NOT_FUNCTION_AS_OPERATOR can only happen for function calls and it's reported on the receiver expression.
@@ -91,7 +91,7 @@ object FirConventionFunctionCallChecker : FirFunctionCallChecker(MppCheckerKind.
             expression.calleeReference.name == OperatorNameConventions.COMPARE_TO &&
             expression.resolvedType.fullyExpandedType().let { !it.isInt && it !is ConeDynamicType && !it.hasError() }
         ) {
-            reporter.reportOn(expression.source, FirErrors.COMPARE_TO_TYPE_MISMATCH, expression.resolvedType)
+            reporter.reportOn(expression.source, FirErrors.COMPARE_TO_OPERATOR_RETURN_TYPE_MISMATCH, expression.resolvedType)
         }
     }
 }

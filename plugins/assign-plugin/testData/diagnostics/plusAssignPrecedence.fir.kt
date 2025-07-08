@@ -98,7 +98,7 @@ fun box(): String {
 
     task.valInputWithPlus += "K"
 
-    task.varInputWithPlusAndPlusAssign <!ASSIGN_OPERATOR_AMBIGUITY!>+=<!> "K"
+    task.varInputWithPlusAndPlusAssign <!ASSIGNMENT_OPERATOR_AMBIGUITY!>+=<!> "K"
 
     return "OK"
 }

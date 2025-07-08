@@ -74,7 +74,7 @@ fun test() {
     X <!UNRESOLVED_REFERENCE!>foo<!> ""
 
     X.<!UNRESOLVED_REFERENCE!>interator<!>()
-    for (x in <!ITERATOR_MISSING!>X<!>) {}
+    for (x in <!ITERATOR_OPERATOR_MISSING!>X<!>) {}
 
     // It seems it's okay to resolve to outer X because we assign `X` to delegate field where it's not used as receiver
     val delegated by X

@@ -6,10 +6,10 @@
 import kotlin.reflect.KProperty
 
 class A {
-  var a: Int <!DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE!>by<!> Delegate()
+  var a: Int <!DELEGATION_OPERATOR_NONE_APPLICABLE!>by<!> Delegate()
 }
 
-var aTopLevel: Int <!DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE!>by<!> Delegate()
+var aTopLevel: Int <!DELEGATION_OPERATOR_NONE_APPLICABLE!>by<!> Delegate()
 
 class Delegate {
   operator fun getValue(t: Any?, p: KProperty<*>): Int {

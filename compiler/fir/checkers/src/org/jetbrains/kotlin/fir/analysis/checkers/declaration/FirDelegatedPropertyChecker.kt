@@ -73,9 +73,9 @@ object FirDelegatedPropertyChecker : FirPropertyChecker(MppCheckerKind.Common) {
                 fun reportInapplicableDiagnostics(candidates: Collection<FirBasedSymbol<*>>) {
                     reporter.reportOn(
                         source,
-                        FirErrors.DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE,
+                        FirErrors.DELEGATION_OPERATOR_NONE_APPLICABLE,
+                        candidates,
                         expectedFunctionSignature,
-                        candidates
                     )
                 }
 
@@ -83,21 +83,23 @@ object FirDelegatedPropertyChecker : FirPropertyChecker(MppCheckerKind.Common) {
                 when (diagnostic) {
                     is ConeUnresolvedNameError -> reporter.reportOn(
                         source,
-                        FirErrors.DELEGATE_SPECIAL_FUNCTION_MISSING,
+                        FirErrors.DELEGATION_OPERATOR_MISSING,
                         expectedFunctionSignature,
                         delegateType,
-                        delegateDescription
+                        delegateDescription,
                     )
 
                     is ConeAmbiguityError -> {
                         @OptIn(ApplicabilityDetail::class)
                         if (diagnostic.applicability.isSuccess) {
-                            // Match is successful but there are too many matches! So we report DELEGATE_SPECIAL_FUNCTION_AMBIGUITY.
+                            // Match is successful, but there are too many matches!
+                            // So we report DELEGATION_OPERATOR_AMBIGUITY.
                             reporter.reportOn(
                                 source,
-                                FirErrors.DELEGATE_SPECIAL_FUNCTION_AMBIGUITY,
+                                FirErrors.DELEGATION_OPERATOR_AMBIGUITY,
+                                diagnostic.candidates.map { it.symbol },
                                 expectedFunctionSignature,
-                                diagnostic.candidates.map { it.symbol })
+                            )
                         } else {
                             reportInapplicableDiagnostics(diagnostic.candidates.map { it.symbol })
                         }
@@ -105,10 +107,10 @@ object FirDelegatedPropertyChecker : FirPropertyChecker(MppCheckerKind.Common) {
 
                     is ConeInapplicableWrongReceiver -> reporter.reportOn(
                         source,
-                        FirErrors.DELEGATE_SPECIAL_FUNCTION_MISSING,
+                        FirErrors.DELEGATION_OPERATOR_MISSING,
                         expectedFunctionSignature,
                         delegateType,
-                        delegateDescription
+                        delegateDescription,
                     )
                     is ConeInapplicableCandidateError -> reportInapplicableDiagnostics(listOf(diagnostic.candidate.symbol))
                     is ConeConstraintSystemHasContradiction -> reportInapplicableDiagnostics(listOf(diagnostic.candidate.symbol))
@@ -123,13 +125,15 @@ object FirDelegatedPropertyChecker : FirPropertyChecker(MppCheckerKind.Common) {
             private fun checkReturnType(functionCall: FirFunctionCall) {
                 val returnType = functionCall.resolvedType
                 val propertyType = declaration.returnTypeRef.coneType
+                val expectedFunctionSignature =
+                    (if (isGet) "getValue" else "setValue") + "(${functionCall.arguments.joinToString(", ") { it.resolvedType.renderReadable() }})"
                 if (!AbstractTypeChecker.isSubtypeOf(context.session.typeContext, returnType, propertyType)) {
                     reporter.reportOn(
                         source,
-                        FirErrors.DELEGATE_SPECIAL_FUNCTION_RETURN_TYPE_MISMATCH,
+                        FirErrors.DELEGATION_OPERATOR_RETURN_TYPE_MISMATCH,
                         propertyType,
                         returnType,
-                        functionCall.calleeReference.name,
+                        expectedFunctionSignature,
                     )
                 }
             }

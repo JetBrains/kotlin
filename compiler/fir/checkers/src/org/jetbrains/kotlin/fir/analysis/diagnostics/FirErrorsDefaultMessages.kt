@@ -121,9 +121,9 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ASSIGNED_VALUE_IS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ASSIGNING_SINGLE_ELEMENT_TO_VARARG_IN_NAMED_FORM_ANNOTATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ASSIGNING_SINGLE_ELEMENT_TO_VARARG_IN_NAMED_FORM_FUNCTION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ASSIGNMENT_IN_EXPRESSION_CONTEXT
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ASSIGNMENT_OPERATOR_AMBIGUITY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ASSIGNMENT_OPERATOR_SHOULD_RETURN_UNIT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ASSIGNMENT_TYPE_MISMATCH
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ASSIGN_OPERATOR_AMBIGUITY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ATOMIC_REF_WITHOUT_CONSISTENT_IDENTITY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.BACKING_FIELD_FOR_DELEGATED_PROPERTY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.BACKING_FIELD_IN_INTERFACE
@@ -165,12 +165,12 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CLASS_IN_SUPERTYP
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CLASS_LITERAL_LHS_NOT_A_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.COMMA_IN_WHEN_CONDITION_WITHOUT_ARGUMENT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.COMMA_IN_WHEN_CONDITION_WITH_WHEN_GUARD
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.COMPARE_TO_TYPE_MISMATCH
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.COMPARE_TO_OPERATOR_RETURN_TYPE_MISMATCH
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.COMPILER_REQUIRED_ANNOTATION_AMBIGUITY
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.COMPONENT_FUNCTION_AMBIGUITY
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.COMPONENT_FUNCTION_MISSING
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.COMPONENT_FUNCTION_ON_NULLABLE
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.COMPONENT_FUNCTION_RETURN_TYPE_MISMATCH
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.COMPONENT_OPERATOR_AMBIGUITY
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.COMPONENT_OPERATOR_MISSING
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.COMPONENT_OPERATOR_ON_NULLABLE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.COMPONENT_OPERATOR_RETURN_TYPE_MISMATCH
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONDITION_TYPE_MISMATCH
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONFLICTING_IMPORT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.CONFLICTING_INHERITED_MEMBERS
@@ -219,13 +219,13 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DEFINITELY_NON_NU
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DELEGATED_MEMBER_HIDES_SUPERTYPE_OVERRIDE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DELEGATED_PROPERTY_INSIDE_VALUE_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DELEGATED_PROPERTY_IN_INTERFACE
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DELEGATE_SPECIAL_FUNCTION_AMBIGUITY
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DELEGATE_SPECIAL_FUNCTION_MISSING
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DELEGATE_SPECIAL_FUNCTION_RETURN_TYPE_MISMATCH
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DELEGATE_USES_EXTENSION_PROPERTY_TYPE_PARAMETER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DELEGATION_IN_INTERFACE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DELEGATION_NOT_TO_INTERFACE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DELEGATION_OPERATOR_AMBIGUITY
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DELEGATION_OPERATOR_MISSING
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DELEGATION_OPERATOR_NONE_APPLICABLE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DELEGATION_OPERATOR_RETURN_TYPE_MISMATCH
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DELEGATION_SUPER_CALL_IN_ENUM_CONSTRUCTOR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DEPRECATED_ACCESS_TO_ENTRIES_AS_QUALIFIER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DEPRECATED_ACCESS_TO_ENTRIES_PROPERTY
@@ -360,10 +360,10 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.FUN_INTERFACE_WRO
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.GENERIC_QUALIFIER_ON_CONSTRUCTOR_CALL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.GENERIC_THROWABLE_SUBCLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.GETTER_VISIBILITY_DIFFERS_FROM_PROPERTY_VISIBILITY
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.HAS_NEXT_FUNCTION_AMBIGUITY
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.HAS_NEXT_FUNCTION_NONE_APPLICABLE
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.HAS_NEXT_FUNCTION_TYPE_MISMATCH
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.HAS_NEXT_MISSING
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.HAS_NEXT_OPERATOR_AMBIGUITY
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.HAS_NEXT_OPERATOR_MISSING
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.HAS_NEXT_OPERATOR_NONE_APPLICABLE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.HAS_NEXT_OPERATOR_RETURN_TYPE_MISMATCH
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.IGNORABILITY_ANNOTATIONS_WITH_CHECKER_DISABLED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ILLEGAL_CONST_EXPRESSION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ILLEGAL_DECLARATION_IN_WHEN_SUBJECT
@@ -442,9 +442,9 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INVISIBLE_REFEREN
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INVISIBLE_SETTER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.IR_WITH_UNSTABLE_ABI_COMPILED_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.IS_ENUM_ENTRY
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ITERATOR_AMBIGUITY
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ITERATOR_MISSING
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ITERATOR_ON_NULLABLE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ITERATOR_OPERATOR_AMBIGUITY
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ITERATOR_OPERATOR_MISSING
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.ITERATOR_OPERATOR_ON_NULLABLE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.KCLASS_WITH_NULLABLE_TYPE_PARAMETER_IN_SIGNATURE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.KOTLIN_ACTUAL_ANNOTATION_HAS_NO_EFFECT_IN_KOTLIN
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.LABEL_NAME_CLASH
@@ -516,9 +516,9 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NESTED_CLASS_NOT_
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NESTED_CLASS_NOT_ALLOWED_IN_LOCAL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NEWER_VERSION_IN_SINCE_KOTLIN
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NEW_INFERENCE_ERROR
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NEXT_AMBIGUITY
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NEXT_MISSING
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NEXT_NONE_APPLICABLE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NEXT_OPERATOR_AMBIGUITY
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NEXT_OPERATOR_MISSING
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NEXT_OPERATOR_NONE_APPLICABLE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NONE_APPLICABLE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NON_ABSTRACT_FUNCTION_WITH_NO_BODY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NON_CONST_VAL_USED_IN_CONSTANT_EXPRESSION
@@ -910,7 +910,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             "Type of constant expression cannot be resolved. Make sure you have the required dependencies for unsigned types in the classpath."
         )
         map.put(DIVISION_BY_ZERO, "Division by zero.")
-        map.put(VAL_OR_VAR_ON_LOOP_PARAMETER, "''{0}'' on loop parameter is prohibited.", TO_STRING)
+        map.put(VAL_OR_VAR_ON_LOOP_PARAMETER, "''{0}'' on a ''for'' loop parameter is prohibited.", TO_STRING)
         map.put(VAL_OR_VAR_ON_FUN_PARAMETER, "''{0}'' on function parameter is prohibited.", TO_STRING)
         map.put(VAL_OR_VAR_ON_CATCH_PARAMETER, "''{0}'' on catch parameter is prohibited.", TO_STRING)
         map.put(VAL_OR_VAR_ON_SECONDARY_CONSTRUCTOR_PARAMETER, "''{0}'' on secondary constructor parameter is prohibited.", TO_STRING)
@@ -1534,13 +1534,21 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         // Applicability
         map.put(NONE_APPLICABLE, "None of the following candidates is applicable:{0}", SYMBOLS_ON_NEXT_LINES)
         map.put(INAPPLICABLE_CANDIDATE, "Inapplicable candidate(s): {0}", SYMBOL)
-        map.put(HAS_NEXT_FUNCTION_NONE_APPLICABLE, "None of the ''hasNext()'' functions is applicable for this expression. Candidates are:{0}", SYMBOLS_ON_NEXT_LINES)
-        map.put(NEXT_NONE_APPLICABLE, "None of the ''next()'' functions is applicable for this expression. Candidates are:{0}", SYMBOLS_ON_NEXT_LINES)
         map.put(
-            DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE,
-            "Property delegate must have a ''{0}'' method. None of the following functions is applicable:{1}",
-            TO_STRING,
+            HAS_NEXT_OPERATOR_NONE_APPLICABLE,
+            "None of the following ''hasNext()'' candidates is applicable for this expression:{0}",
             SYMBOLS_ON_NEXT_LINES,
+        )
+        map.put(
+            NEXT_OPERATOR_NONE_APPLICABLE,
+            "None of the following ''next()'' candidates is applicable for this expression:{0}",
+            SYMBOLS_ON_NEXT_LINES,
+        )
+        map.put(
+            DELEGATION_OPERATOR_NONE_APPLICABLE,
+            "None of the following ''{1}'' candidates is applicable for this property delegate:{0}",
+            SYMBOLS_ON_NEXT_LINES,
+            TO_STRING,
         )
         map.put(
             TYPE_INFERENCE_ONLY_INPUT_TYPES_ERROR,
@@ -1710,25 +1718,25 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             RENDER_TYPE,
         )
         map.put(
-            COMPARE_TO_TYPE_MISMATCH,
+            COMPARE_TO_OPERATOR_RETURN_TYPE_MISMATCH,
             "''compareTo(...)'' return type mismatch: expected ''Int''; actual ''{0}''.",
             RENDER_TYPE,
         )
         map.put(
-            HAS_NEXT_FUNCTION_TYPE_MISMATCH,
+            HAS_NEXT_OPERATOR_RETURN_TYPE_MISMATCH,
             "''hasNext()'' return type mismatch: expected ''Boolean''; actual ''{0}''.",
             RENDER_TYPE,
         )
         map.put(
-            COMPONENT_FUNCTION_RETURN_TYPE_MISMATCH,
+            COMPONENT_OPERATOR_RETURN_TYPE_MISMATCH,
             "''{2}()'' return type mismatch: expected ''{0}''; actual ''{1}''.",
             RENDER_TYPE,
             RENDER_TYPE,
             TO_STRING,
         )
         map.put(
-            DELEGATE_SPECIAL_FUNCTION_RETURN_TYPE_MISMATCH,
-            "''{2}()'' return type mismatch: expected ''{0}''; actual ''{1}''.",
+            DELEGATION_OPERATOR_RETURN_TYPE_MISMATCH,
+            "''{2}'' return type mismatch: expected ''{0}''; actual ''{1}''.",
             RENDER_TYPE,
             RENDER_TYPE,
             TO_STRING,
@@ -1741,37 +1749,37 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             SYMBOLS_ON_NEXT_LINES,
         )
         map.put(
-            ASSIGN_OPERATOR_AMBIGUITY,
-            "Ambiguity between assign operator candidates:{0}",
+            ASSIGNMENT_OPERATOR_AMBIGUITY,
+            "This assignment is ambiguous. Applicable candidates:{0}",
             SYMBOLS_ON_NEXT_LINES,
         )
         map.put(
-            ITERATOR_AMBIGUITY,
-            "Method ''iterator()'' is ambiguous for this expression. Applicable candidates:{0}",
+            ITERATOR_OPERATOR_AMBIGUITY,
+            "Operator call ''iterator()'' is ambiguous for this expression. Applicable candidates:{0}",
             SYMBOLS_ON_NEXT_LINES,
         )
         map.put(
-            HAS_NEXT_FUNCTION_AMBIGUITY,
-            "Method ''hasNext()'' is ambiguous for this expression. Applicable candidates:{0}",
+            HAS_NEXT_OPERATOR_AMBIGUITY,
+            "Operator call ''hasNext()'' is ambiguous for this expression. Applicable candidates:{0}",
             SYMBOLS_ON_NEXT_LINES,
         )
         map.put(
-            NEXT_AMBIGUITY,
-            "Method ''next()'' is ambiguous for this expression. Applicable candidates:{0}",
+            NEXT_OPERATOR_AMBIGUITY,
+            "Operator call ''next()'' is ambiguous for this expression. Applicable candidates:{0}",
             SYMBOLS_ON_NEXT_LINES,
         )
         map.put(
-            COMPONENT_FUNCTION_AMBIGUITY,
-            "Operator call ''{0}()'' is ambiguous for destructuring of type ''{2}''. Applicable candidates:{1}",
+            COMPONENT_OPERATOR_AMBIGUITY,
+            "Operator call ''{1}()'' is ambiguous for this destructuring of type ''{2}''. Applicable candidates:{0}",
+            SYMBOLS_ON_NEXT_LINES,
             TO_STRING,
-            SYMBOLS_ON_NEXT_LINES,
             RENDER_TYPE,
         )
         map.put(
-            DELEGATE_SPECIAL_FUNCTION_AMBIGUITY,
-            "Overload resolution ambiguity on method ''{0}'':{1}",
-            TO_STRING,
+            DELEGATION_OPERATOR_AMBIGUITY,
+            "Operator call ''{1}'' is ambiguous for this property delegate. Applicable candidates:{0}",
             SYMBOLS_ON_NEXT_LINES,
+            TO_STRING,
         )
         map.put(
             COMPILER_REQUIRED_ANNOTATION_AMBIGUITY,
@@ -2942,12 +2950,12 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             NOT_RENDERED,
         )
         map.put(
-            ITERATOR_ON_NULLABLE,
-            "Non-nullable value required to call an 'iterator()' method in a for-loop.",
+            ITERATOR_OPERATOR_ON_NULLABLE,
+            "Selected operator 'iterator()' cannot be applied to a nullable type in a 'for' loop.",
         )
         map.put(
-            COMPONENT_FUNCTION_ON_NULLABLE,
-            "Operator call ''{0}()'' cannot be applied to destructuring of nullable type ''{1}''.",
+            COMPONENT_OPERATOR_ON_NULLABLE,
+            "Selected operator ''{0}()'' cannot be applied to destructure a nullable type ''{1}''.",
             TO_STRING,
             RENDER_TYPE,
         )
@@ -3027,20 +3035,20 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(CONTRACT_NOT_ALLOWED, "{0}", TO_STRING)
 
         // Conventions
-        map.put(NO_GET_METHOD, "No 'get' operator method providing array access.")
-        map.put(NO_SET_METHOD, "No 'set' operator method providing array access.")
-        map.put(ITERATOR_MISSING, "For-loop range must have an 'iterator()' method.")
-        map.put(HAS_NEXT_MISSING, "'hasNext()' cannot be called on 'iterator()'.")
-        map.put(NEXT_MISSING, "Method 'next()' cannot be called on 'iterator()'.")
+        map.put(NO_GET_METHOD, "This indexed access requires a 'get' operator function.")
+        map.put(NO_SET_METHOD, "This indexed assignment requires a 'set' operator function.")
+        map.put(ITERATOR_OPERATOR_MISSING, "This 'for' loop requires an 'iterator()' operator function.")
+        map.put(HAS_NEXT_OPERATOR_MISSING, "This 'for' loop's 'iterator()' requires a 'hasNext()' operator function.")
+        map.put(NEXT_OPERATOR_MISSING, "This 'for' loop's 'iterator()' requires a 'next()' operator function.")
         map.put(
-            COMPONENT_FUNCTION_MISSING,
-            "Destructuring of type ''{1}'' requires operator function ''{0}()''.",
+            COMPONENT_OPERATOR_MISSING,
+            "''{1}'' cannot be destructured here due to a lack of an applicable ''{0}()'' operator function.",
             TO_STRING,
             RENDER_TYPE,
         )
         map.put(
-            DELEGATE_SPECIAL_FUNCTION_MISSING,
-            "Type ''{1}'' has no method ''{0}'', so it cannot serve as a {2}.",
+            DELEGATION_OPERATOR_MISSING,
+            "''{1}'' cannot be used as a {2} here due to a lack of an applicable ''{0}'' operator function.",
             TO_STRING,
             RENDER_TYPE,
             TO_STRING,

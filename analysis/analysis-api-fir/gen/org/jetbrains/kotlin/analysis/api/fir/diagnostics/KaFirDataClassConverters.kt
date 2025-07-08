@@ -2119,8 +2119,8 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
-    add(FirErrors.HAS_NEXT_FUNCTION_NONE_APPLICABLE) { firDiagnostic ->
-        HasNextFunctionNoneApplicableImpl(
+    add(FirErrors.HAS_NEXT_OPERATOR_NONE_APPLICABLE) { firDiagnostic ->
+        HasNextOperatorNoneApplicableImpl(
             firDiagnostic.a.map { firBasedSymbol ->
                 firSymbolBuilder.buildSymbol(firBasedSymbol)
             },
@@ -2128,8 +2128,8 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
-    add(FirErrors.NEXT_NONE_APPLICABLE) { firDiagnostic ->
-        NextNoneApplicableImpl(
+    add(FirErrors.NEXT_OPERATOR_NONE_APPLICABLE) { firDiagnostic ->
+        NextOperatorNoneApplicableImpl(
             firDiagnostic.a.map { firBasedSymbol ->
                 firSymbolBuilder.buildSymbol(firBasedSymbol)
             },
@@ -2137,12 +2137,12 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
-    add(FirErrors.DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE) { firDiagnostic ->
-        DelegateSpecialFunctionNoneApplicableImpl(
-            firDiagnostic.a,
-            firDiagnostic.b.map { firBasedSymbol ->
+    add(FirErrors.DELEGATION_OPERATOR_NONE_APPLICABLE) { firDiagnostic ->
+        DelegationOperatorNoneApplicableImpl(
+            firDiagnostic.a.map { firBasedSymbol ->
                 firSymbolBuilder.buildSymbol(firBasedSymbol)
             },
+            firDiagnostic.b,
             firDiagnostic as KtPsiDiagnostic,
             token,
         )
@@ -2361,22 +2361,22 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
-    add(FirErrors.COMPARE_TO_TYPE_MISMATCH) { firDiagnostic ->
-        CompareToTypeMismatchImpl(
+    add(FirErrors.COMPARE_TO_OPERATOR_RETURN_TYPE_MISMATCH) { firDiagnostic ->
+        CompareToOperatorReturnTypeMismatchImpl(
             firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
             firDiagnostic as KtPsiDiagnostic,
             token,
         )
     }
-    add(FirErrors.HAS_NEXT_FUNCTION_TYPE_MISMATCH) { firDiagnostic ->
-        HasNextFunctionTypeMismatchImpl(
+    add(FirErrors.HAS_NEXT_OPERATOR_RETURN_TYPE_MISMATCH) { firDiagnostic ->
+        HasNextOperatorReturnTypeMismatchImpl(
             firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
             firDiagnostic as KtPsiDiagnostic,
             token,
         )
     }
-    add(FirErrors.COMPONENT_FUNCTION_RETURN_TYPE_MISMATCH) { firDiagnostic ->
-        ComponentFunctionReturnTypeMismatchImpl(
+    add(FirErrors.COMPONENT_OPERATOR_RETURN_TYPE_MISMATCH) { firDiagnostic ->
+        ComponentOperatorReturnTypeMismatchImpl(
             firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
             firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.b),
             firDiagnostic.c,
@@ -2384,8 +2384,8 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
-    add(FirErrors.DELEGATE_SPECIAL_FUNCTION_RETURN_TYPE_MISMATCH) { firDiagnostic ->
-        DelegateSpecialFunctionReturnTypeMismatchImpl(
+    add(FirErrors.DELEGATION_OPERATOR_RETURN_TYPE_MISMATCH) { firDiagnostic ->
+        DelegationOperatorReturnTypeMismatchImpl(
             firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
             firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.b),
             firDiagnostic.c,
@@ -2402,8 +2402,8 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
-    add(FirErrors.ASSIGN_OPERATOR_AMBIGUITY) { firDiagnostic ->
-        AssignOperatorAmbiguityImpl(
+    add(FirErrors.ASSIGNMENT_OPERATOR_AMBIGUITY) { firDiagnostic ->
+        AssignmentOperatorAmbiguityImpl(
             firDiagnostic.a.map { firBasedSymbol ->
                 firSymbolBuilder.buildSymbol(firBasedSymbol)
             },
@@ -2411,8 +2411,8 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
-    add(FirErrors.ITERATOR_AMBIGUITY) { firDiagnostic ->
-        IteratorAmbiguityImpl(
+    add(FirErrors.ITERATOR_OPERATOR_AMBIGUITY) { firDiagnostic ->
+        IteratorOperatorAmbiguityImpl(
             firDiagnostic.a.map { firBasedSymbol ->
                 firSymbolBuilder.buildSymbol(firBasedSymbol)
             },
@@ -2420,8 +2420,8 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
-    add(FirErrors.HAS_NEXT_FUNCTION_AMBIGUITY) { firDiagnostic ->
-        HasNextFunctionAmbiguityImpl(
+    add(FirErrors.HAS_NEXT_OPERATOR_AMBIGUITY) { firDiagnostic ->
+        HasNextOperatorAmbiguityImpl(
             firDiagnostic.a.map { firBasedSymbol ->
                 firSymbolBuilder.buildSymbol(firBasedSymbol)
             },
@@ -2429,8 +2429,8 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
-    add(FirErrors.NEXT_AMBIGUITY) { firDiagnostic ->
-        NextAmbiguityImpl(
+    add(FirErrors.NEXT_OPERATOR_AMBIGUITY) { firDiagnostic ->
+        NextOperatorAmbiguityImpl(
             firDiagnostic.a.map { firBasedSymbol ->
                 firSymbolBuilder.buildSymbol(firBasedSymbol)
             },
@@ -2438,23 +2438,23 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
-    add(FirErrors.COMPONENT_FUNCTION_AMBIGUITY) { firDiagnostic ->
-        ComponentFunctionAmbiguityImpl(
-            firDiagnostic.a,
-            firDiagnostic.b.map { firBasedSymbol ->
+    add(FirErrors.COMPONENT_OPERATOR_AMBIGUITY) { firDiagnostic ->
+        ComponentOperatorAmbiguityImpl(
+            firDiagnostic.a.map { firBasedSymbol ->
                 firSymbolBuilder.buildSymbol(firBasedSymbol)
             },
+            firDiagnostic.b,
             firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.c),
             firDiagnostic as KtPsiDiagnostic,
             token,
         )
     }
-    add(FirErrors.DELEGATE_SPECIAL_FUNCTION_AMBIGUITY) { firDiagnostic ->
-        DelegateSpecialFunctionAmbiguityImpl(
-            firDiagnostic.a,
-            firDiagnostic.b.map { firBasedSymbol ->
+    add(FirErrors.DELEGATION_OPERATOR_AMBIGUITY) { firDiagnostic ->
+        DelegationOperatorAmbiguityImpl(
+            firDiagnostic.a.map { firBasedSymbol ->
                 firSymbolBuilder.buildSymbol(firBasedSymbol)
             },
+            firDiagnostic.b,
             firDiagnostic as KtPsiDiagnostic,
             token,
         )
@@ -5025,14 +5025,14 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
-    add(FirErrors.ITERATOR_ON_NULLABLE) { firDiagnostic ->
-        IteratorOnNullableImpl(
+    add(FirErrors.ITERATOR_OPERATOR_ON_NULLABLE) { firDiagnostic ->
+        IteratorOperatorOnNullableImpl(
             firDiagnostic as KtPsiDiagnostic,
             token,
         )
     }
-    add(FirErrors.COMPONENT_FUNCTION_ON_NULLABLE) { firDiagnostic ->
-        ComponentFunctionOnNullableImpl(
+    add(FirErrors.COMPONENT_OPERATOR_ON_NULLABLE) { firDiagnostic ->
+        ComponentOperatorOnNullableImpl(
             firDiagnostic.a,
             firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.b),
             firDiagnostic as KtPsiDiagnostic,
@@ -5288,34 +5288,34 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
-    add(FirErrors.ITERATOR_MISSING) { firDiagnostic ->
-        IteratorMissingImpl(
+    add(FirErrors.ITERATOR_OPERATOR_MISSING) { firDiagnostic ->
+        IteratorOperatorMissingImpl(
             firDiagnostic as KtPsiDiagnostic,
             token,
         )
     }
-    add(FirErrors.HAS_NEXT_MISSING) { firDiagnostic ->
-        HasNextMissingImpl(
+    add(FirErrors.HAS_NEXT_OPERATOR_MISSING) { firDiagnostic ->
+        HasNextOperatorMissingImpl(
             firDiagnostic as KtPsiDiagnostic,
             token,
         )
     }
-    add(FirErrors.NEXT_MISSING) { firDiagnostic ->
-        NextMissingImpl(
+    add(FirErrors.NEXT_OPERATOR_MISSING) { firDiagnostic ->
+        NextOperatorMissingImpl(
             firDiagnostic as KtPsiDiagnostic,
             token,
         )
     }
-    add(FirErrors.COMPONENT_FUNCTION_MISSING) { firDiagnostic ->
-        ComponentFunctionMissingImpl(
+    add(FirErrors.COMPONENT_OPERATOR_MISSING) { firDiagnostic ->
+        ComponentOperatorMissingImpl(
             firDiagnostic.a,
             firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.b),
             firDiagnostic as KtPsiDiagnostic,
             token,
         )
     }
-    add(FirErrors.DELEGATE_SPECIAL_FUNCTION_MISSING) { firDiagnostic ->
-        DelegateSpecialFunctionMissingImpl(
+    add(FirErrors.DELEGATION_OPERATOR_MISSING) { firDiagnostic ->
+        DelegationOperatorMissingImpl(
             firDiagnostic.a,
             firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.b),
             firDiagnostic.c,

@@ -4,7 +4,7 @@
 fun reproduce() {
     pcla { otvOwner ->
         otvOwner.constrain(ScopeOwner())
-        otvOwner.instance <!ASSIGN_OPERATOR_AMBIGUITY!>+=<!> ScopeOwner()
+        otvOwner.instance <!ASSIGNMENT_OPERATOR_AMBIGUITY!>+=<!> ScopeOwner()
     }
 }
 

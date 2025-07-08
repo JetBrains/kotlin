@@ -9,7 +9,7 @@ class ValueWrapper()
     fun setValue(v: Int) { backingValue = v }
 }
 
-val foo <!DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE!>by<!> ValueWrapper()
+val foo <!DELEGATION_OPERATOR_NONE_APPLICABLE!>by<!> ValueWrapper()
 
 /* GENERATED_FIR_TAGS: assignment, classDeclaration, functionDeclaration, integerLiteral, nullableType,
 primaryConstructor, propertyDeclaration, propertyDelegate, starProjection */

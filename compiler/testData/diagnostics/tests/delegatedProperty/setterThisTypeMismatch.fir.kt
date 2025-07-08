@@ -4,10 +4,10 @@
 import kotlin.reflect.KProperty
 
 class D {
-  var c: Int <!DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE!>by<!> Delegate()
+  var c: Int <!DELEGATION_OPERATOR_NONE_APPLICABLE!>by<!> Delegate()
 }
 
-var cTopLevel: Int <!DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE!>by<!> Delegate()
+var cTopLevel: Int <!DELEGATION_OPERATOR_NONE_APPLICABLE!>by<!> Delegate()
 
 class A
 

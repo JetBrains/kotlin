@@ -158,7 +158,7 @@ private fun ConeDiagnostic.toKtDiagnostic(
         else -> FirErrors.NONE_APPLICABLE.createOn(source, this.candidates.map { it.symbol }, session)
     }
 
-    is ConeOperatorAmbiguityError -> FirErrors.ASSIGN_OPERATOR_AMBIGUITY.createOn(source, this.candidateSymbols, session)
+    is ConeOperatorAmbiguityError -> FirErrors.ASSIGNMENT_OPERATOR_AMBIGUITY.createOn(source, this.candidateSymbols, session)
     is ConeVariableExpectedError -> FirErrors.VARIABLE_EXPECTED.createOn(source, session)
 
     is ConeUnexpectedTypeArgumentsError -> FirErrors.TYPE_ARGUMENTS_NOT_ALLOWED.createOn(
@@ -731,7 +731,7 @@ private fun ConstraintSystemError.toDiagnostic(
                     // - ConeExplicitTypeParameterConstraintPosition is reported as UPPER_BOUND_VIOLATED
                     // (see e.g. testCheckEnhancedUpperBounds)
                     // - ConeFixVariableConstraintPosition is occurred in delegates only,
-                    // and reported as DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE (see testSuccessfulProvideDelegateLeadsToRedGetValue)
+                    // and reported as DELEGATION_OPERATOR_NONE_APPLICABLE (see testSuccessfulProvideDelegateLeadsToRedGetValue)
                     // Finally, ConeDeclaredUpperBoundConstraintPosition never occurs here
                     else -> null to null
                 }

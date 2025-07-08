@@ -1815,24 +1815,24 @@ internal class InapplicableCandidateImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.InapplicableCandidate
 
-internal class HasNextFunctionNoneApplicableImpl(
+internal class HasNextOperatorNoneApplicableImpl(
     override val candidates: List<KaSymbol>,
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<KtExpression>(firDiagnostic, token), KaFirDiagnostic.HasNextFunctionNoneApplicable
+) : KaAbstractFirDiagnostic<KtExpression>(firDiagnostic, token), KaFirDiagnostic.HasNextOperatorNoneApplicable
 
-internal class NextNoneApplicableImpl(
+internal class NextOperatorNoneApplicableImpl(
     override val candidates: List<KaSymbol>,
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<KtExpression>(firDiagnostic, token), KaFirDiagnostic.NextNoneApplicable
+) : KaAbstractFirDiagnostic<KtExpression>(firDiagnostic, token), KaFirDiagnostic.NextOperatorNoneApplicable
 
-internal class DelegateSpecialFunctionNoneApplicableImpl(
-    override val expectedFunctionSignature: String,
+internal class DelegationOperatorNoneApplicableImpl(
     override val candidates: List<KaSymbol>,
+    override val expectedOperatorSignature: String,
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<KtExpression>(firDiagnostic, token), KaFirDiagnostic.DelegateSpecialFunctionNoneApplicable
+) : KaAbstractFirDiagnostic<KtExpression>(firDiagnostic, token), KaFirDiagnostic.DelegationOperatorNoneApplicable
 
 internal class TypeInferenceOnlyInputTypesErrorImpl(
     override val typeParameter: KaTypeParameterSymbol,
@@ -2018,33 +2018,33 @@ internal class ResultTypeMismatchImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtExpression>(firDiagnostic, token), KaFirDiagnostic.ResultTypeMismatch
 
-internal class CompareToTypeMismatchImpl(
+internal class CompareToOperatorReturnTypeMismatchImpl(
     override val actualType: KaType,
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<KtExpression>(firDiagnostic, token), KaFirDiagnostic.CompareToTypeMismatch
+) : KaAbstractFirDiagnostic<KtExpression>(firDiagnostic, token), KaFirDiagnostic.CompareToOperatorReturnTypeMismatch
 
-internal class HasNextFunctionTypeMismatchImpl(
+internal class HasNextOperatorReturnTypeMismatchImpl(
     override val actualType: KaType,
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<KtExpression>(firDiagnostic, token), KaFirDiagnostic.HasNextFunctionTypeMismatch
+) : KaAbstractFirDiagnostic<KtExpression>(firDiagnostic, token), KaFirDiagnostic.HasNextOperatorReturnTypeMismatch
 
-internal class ComponentFunctionReturnTypeMismatchImpl(
+internal class ComponentOperatorReturnTypeMismatchImpl(
     override val expectedType: KaType,
     override val actualType: KaType,
-    override val componentFunctionName: Name,
+    override val componentOperatorName: Name,
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<KtExpression>(firDiagnostic, token), KaFirDiagnostic.ComponentFunctionReturnTypeMismatch
+) : KaAbstractFirDiagnostic<KtExpression>(firDiagnostic, token), KaFirDiagnostic.ComponentOperatorReturnTypeMismatch
 
-internal class DelegateSpecialFunctionReturnTypeMismatchImpl(
+internal class DelegationOperatorReturnTypeMismatchImpl(
     override val expectedType: KaType,
     override val actualType: KaType,
-    override val delegateSpecialFunctionName: Name,
+    override val expectedOperatorSignature: String,
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<KtExpression>(firDiagnostic, token), KaFirDiagnostic.DelegateSpecialFunctionReturnTypeMismatch
+) : KaAbstractFirDiagnostic<KtExpression>(firDiagnostic, token), KaFirDiagnostic.DelegationOperatorReturnTypeMismatch
 
 internal class OverloadResolutionAmbiguityImpl(
     override val candidates: List<KaSymbol>,
@@ -2052,44 +2052,44 @@ internal class OverloadResolutionAmbiguityImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.OverloadResolutionAmbiguity
 
-internal class AssignOperatorAmbiguityImpl(
+internal class AssignmentOperatorAmbiguityImpl(
     override val candidates: List<KaSymbol>,
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.AssignOperatorAmbiguity
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.AssignmentOperatorAmbiguity
 
-internal class IteratorAmbiguityImpl(
+internal class IteratorOperatorAmbiguityImpl(
     override val candidates: List<KaSymbol>,
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.IteratorAmbiguity
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.IteratorOperatorAmbiguity
 
-internal class HasNextFunctionAmbiguityImpl(
+internal class HasNextOperatorAmbiguityImpl(
     override val candidates: List<KaSymbol>,
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.HasNextFunctionAmbiguity
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.HasNextOperatorAmbiguity
 
-internal class NextAmbiguityImpl(
+internal class NextOperatorAmbiguityImpl(
     override val candidates: List<KaSymbol>,
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.NextAmbiguity
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.NextOperatorAmbiguity
 
-internal class ComponentFunctionAmbiguityImpl(
-    override val functionWithAmbiguityName: Name,
+internal class ComponentOperatorAmbiguityImpl(
     override val candidates: List<KaSymbol>,
-    override val destructingType: KaType,
+    override val componentOperatorName: Name,
+    override val componentType: KaType,
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.ComponentFunctionAmbiguity
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.ComponentOperatorAmbiguity
 
-internal class DelegateSpecialFunctionAmbiguityImpl(
-    override val expectedFunctionSignature: String,
+internal class DelegationOperatorAmbiguityImpl(
     override val candidates: List<KaSymbol>,
+    override val expectedOperatorSignature: String,
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<KtExpression>(firDiagnostic, token), KaFirDiagnostic.DelegateSpecialFunctionAmbiguity
+) : KaAbstractFirDiagnostic<KtExpression>(firDiagnostic, token), KaFirDiagnostic.DelegationOperatorAmbiguity
 
 internal class CompilerRequiredAnnotationAmbiguityImpl(
     override val typeFromCompilerPhase: KaType,
@@ -4222,17 +4222,17 @@ internal class UnsafeOperatorCallImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtExpression>(firDiagnostic, token), KaFirDiagnostic.UnsafeOperatorCall
 
-internal class IteratorOnNullableImpl(
+internal class IteratorOperatorOnNullableImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<KtExpression>(firDiagnostic, token), KaFirDiagnostic.IteratorOnNullable
+) : KaAbstractFirDiagnostic<KtExpression>(firDiagnostic, token), KaFirDiagnostic.IteratorOperatorOnNullable
 
-internal class ComponentFunctionOnNullableImpl(
-    override val componentFunctionName: Name,
-    override val destructingType: KaType,
+internal class ComponentOperatorOnNullableImpl(
+    override val componentOperatorName: Name,
+    override val componentType: KaType,
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<KtExpression>(firDiagnostic, token), KaFirDiagnostic.ComponentFunctionOnNullable
+) : KaAbstractFirDiagnostic<KtExpression>(firDiagnostic, token), KaFirDiagnostic.ComponentOperatorOnNullable
 
 internal class UnexpectedSafeCallImpl(
     firDiagnostic: KtPsiDiagnostic,
@@ -4443,35 +4443,35 @@ internal class NoSetMethodImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtArrayAccessExpression>(firDiagnostic, token), KaFirDiagnostic.NoSetMethod
 
-internal class IteratorMissingImpl(
+internal class IteratorOperatorMissingImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<KtExpression>(firDiagnostic, token), KaFirDiagnostic.IteratorMissing
+) : KaAbstractFirDiagnostic<KtExpression>(firDiagnostic, token), KaFirDiagnostic.IteratorOperatorMissing
 
-internal class HasNextMissingImpl(
+internal class HasNextOperatorMissingImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<KtExpression>(firDiagnostic, token), KaFirDiagnostic.HasNextMissing
+) : KaAbstractFirDiagnostic<KtExpression>(firDiagnostic, token), KaFirDiagnostic.HasNextOperatorMissing
 
-internal class NextMissingImpl(
+internal class NextOperatorMissingImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<KtExpression>(firDiagnostic, token), KaFirDiagnostic.NextMissing
+) : KaAbstractFirDiagnostic<KtExpression>(firDiagnostic, token), KaFirDiagnostic.NextOperatorMissing
 
-internal class ComponentFunctionMissingImpl(
-    override val missingFunctionName: Name,
-    override val destructingType: KaType,
+internal class ComponentOperatorMissingImpl(
+    override val componentOperatorName: Name,
+    override val componentType: KaType,
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.ComponentFunctionMissing
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.ComponentOperatorMissing
 
-internal class DelegateSpecialFunctionMissingImpl(
-    override val expectedFunctionSignature: String,
+internal class DelegationOperatorMissingImpl(
+    override val expectedOperatorSignature: String,
     override val delegateType: KaType,
     override val description: String,
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<KtExpression>(firDiagnostic, token), KaFirDiagnostic.DelegateSpecialFunctionMissing
+) : KaAbstractFirDiagnostic<KtExpression>(firDiagnostic, token), KaFirDiagnostic.DelegationOperatorMissing
 
 internal class UnderscoreIsReservedImpl(
     firDiagnostic: KtPsiDiagnostic,

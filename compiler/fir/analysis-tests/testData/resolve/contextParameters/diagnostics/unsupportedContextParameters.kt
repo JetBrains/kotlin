@@ -52,7 +52,7 @@ var y: String = <!PROPERTY_INITIALIZER_NO_BACKING_FIELD!>""<!>
     <!UNSUPPORTED!>context(_: String)<!> set(v) {}
 
 <!UNSUPPORTED!>context(_: String)<!>
-var Any.d <!DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE!>by<!> ""
+var Any.d <!DELEGATION_OPERATOR_NONE_APPLICABLE!>by<!> ""
 
 context(_: String)
 var b = <!CONTEXT_PARAMETERS_WITH_BACKING_FIELD!>""<!>
