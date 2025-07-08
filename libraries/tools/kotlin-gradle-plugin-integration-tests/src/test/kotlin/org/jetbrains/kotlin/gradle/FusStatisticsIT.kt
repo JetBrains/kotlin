@@ -596,9 +596,8 @@ class FusStatisticsIT : KGPBaseTest() {
         project(
             "simpleProject", gradleVersion,
         ) {
-            build("assemble", "-Pkotlin.session.logger.root.path=$projectPath", "fus file should not be created") {
-                assertTrue(baseFusStatisticsDirectory.listDirectoryEntries().isEmpty())
-                assertOutputContains("Fus metrics won't be collected for CI build. (CI build detected via environment variable TEAMCITY_VERSION)")
+            build("assemble") {
+                assertOutputContains("BuildFusService was not registered: Fus metrics should not be reported on CI.")
             }
         }
     }

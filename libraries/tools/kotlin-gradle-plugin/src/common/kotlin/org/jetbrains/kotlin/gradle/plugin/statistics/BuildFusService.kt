@@ -107,6 +107,13 @@ abstract class BuildFusService<T : BuildFusService.Parameters> :
                     }
                 }
             } else {
+                val reason = when {
+                    project.isInIdeaSync.get() -> "Fus metric should not be reported during sync"
+                    !project.kotlinPropertiesProvider.enableFusMetricsCollection -> "Fus was disabled for the build"
+                    !project.isCustomLoggerRootPathIsProvided && isCiBuild() -> "Fus metrics should not be reported on CI"
+                    else -> "Fus service should not be created."
+                }
+                project.logger.info("BuildFusService was not registered: $reason.")
                 null
             }
 
