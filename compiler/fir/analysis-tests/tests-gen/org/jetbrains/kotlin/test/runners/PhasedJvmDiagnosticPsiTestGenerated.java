@@ -22612,6 +22612,12 @@ public class PhasedJvmDiagnosticPsiTestGenerated extends AbstractPhasedJvmDiagno
     @TestDataPath("$PROJECT_ROOT")
     public class Inline {
       @Test
+      @TestMetadata("accessingLessVisibleInAnnotation.kt")
+      public void testAccessingLessVisibleInAnnotation() {
+        runTest("compiler/testData/diagnostics/tests/inline/accessingLessVisibleInAnnotation.kt");
+      }
+
+      @Test
       @TestMetadata("anonymousObjects.kt")
       public void testAnonymousObjects() {
         runTest("compiler/testData/diagnostics/tests/inline/anonymousObjects.kt");

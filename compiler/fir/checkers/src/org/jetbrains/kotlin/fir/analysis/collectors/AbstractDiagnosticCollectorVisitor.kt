@@ -291,7 +291,9 @@ abstract class AbstractDiagnosticCollectorVisitor(
     }
 
     override fun visitAnnotationCall(annotationCall: FirAnnotationCall, data: Nothing?) {
-        visitWithCallOrAssignment(annotationCall)
+        suppressInlineFunctionBodyContext {
+            visitWithCallOrAssignment(annotationCall)
+        }
     }
 
     override fun visitVariableAssignment(variableAssignment: FirVariableAssignment, data: Nothing?) {

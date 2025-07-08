@@ -201,13 +201,9 @@ object FirInlineDeclarationChecker : FirFunctionChecker(MppCheckerKind.Common) {
             calledDeclaration: FirCallableSymbol<*>,
             source: KtSourceElement,
         ) {
-            if (// Access of backing field (e.g. from getter) is not important, see inline/property/propertyWithBackingField.kt
-                calledDeclaration.name == BACKING_FIELD ||
-                // Any annotations do not rely to visibility problems
-                context.callsOrAssignments.any { it is FirAnnotationCall }
-            ) {
-                return
-            }
+            // Access of backing field (e.g. from getter) is not important, see inline/property/propertyWithBackingField.kt
+            if (calledDeclaration.name == BACKING_FIELD) return
+
             val (isInlineFunPublicOrPublishedApi, isCalledFunPublicOrPublishedApi, calledFunEffectiveVisibility) = checkAccessedDeclaration(
                 source,
                 accessExpression,
