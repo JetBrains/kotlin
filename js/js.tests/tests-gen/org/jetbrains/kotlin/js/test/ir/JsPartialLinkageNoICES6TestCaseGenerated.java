@@ -106,6 +106,12 @@ public class JsPartialLinkageNoICES6TestCaseGenerated extends AbstractJsPartialL
   }
 
   @Test
+  @TestMetadata("inlineFunctions-withInliningInKlibsNative")
+  public void testInlineFunctions_withInliningInKlibsNative() {
+    runTest("compiler/testData/klib/partial-linkage/inlineFunctions-withInliningInKlibsNative/");
+  }
+
+  @Test
   @TestMetadata("noNonImplementedCallableFalsePositives")
   public void testNoNonImplementedCallableFalsePositives() {
     runTest("compiler/testData/klib/partial-linkage/noNonImplementedCallableFalsePositives/");

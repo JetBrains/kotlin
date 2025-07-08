@@ -345,7 +345,6 @@ fun box() = abiTest {
     expectSuccess(123) { removedInlineFunReferenceInvoke() }
 
     if (!testMode.isJs) {
-//        expectFailure(linkage("Reference to function 'removedInlineFun' can not be evaluated: No function found for symbol '/removedInlineFun'")) { removedInlineFunReferenceReturnType() }
         expectFailure(linkage("Reference to function 'removedInlineFun' can not be evaluated: No function found for symbol '/removedInlineFun'")) { removedInlineFunReferenceHashCode() }
         expectFailure(linkage("Reference to function 'removedInlineFun' can not be evaluated: No function found for symbol '/removedInlineFun'")) { removedInlineFunReferenceEquals() }
         expectFailure(linkage("Reference to function 'removedInlineFun' can not be evaluated: No function found for symbol '/removedInlineFun'")) { removedInlineFunReferenceToString() }
@@ -358,7 +357,6 @@ fun box() = abiTest {
     expectSuccess(321) { removedInlineValReferenceGet() }
 
     if (!testMode.isJs) {
-//        expectFailure(linkage("Reference to property 'removedInlineVal' can not be evaluated: No property found for symbol '/removedInlineVal'")) { removedInlineValReferenceReturnType() }
         expectFailure(linkage("Reference to property 'removedInlineVal' can not be evaluated: No property found for symbol '/removedInlineVal'")) { removedInlineValReferenceHashCode() }
         expectFailure(linkage("Reference to property 'removedInlineVal' can not be evaluated: No property found for symbol '/removedInlineVal'")) { removedInlineValReferenceEquals() }
         expectFailure(linkage("Reference to property 'removedInlineVal' can not be evaluated: No property found for symbol '/removedInlineVal'")) { removedInlineValReferenceToString() }
@@ -372,7 +370,6 @@ fun box() = abiTest {
     expectSuccess(Unit) { removedInlineVarReferenceSet() }
 
     if (!testMode.isJs) {
-//        expectFailure(linkage("Reference to property 'removedInlineVar' can not be evaluated: No property found for symbol '/removedInlineVar'")) { removedInlineVarReferenceReturnType() }
         expectFailure(linkage("Reference to property 'removedInlineVar' can not be evaluated: No property found for symbol '/removedInlineVar'")) { removedInlineVarReferenceHashCode() }
         expectFailure(linkage("Reference to property 'removedInlineVar' can not be evaluated: No property found for symbol '/removedInlineVar'")) { removedInlineVarReferenceEquals() }
         expectFailure(linkage("Reference to property 'removedInlineVar' can not be evaluated: No property found for symbol '/removedInlineVar'")) { removedInlineVarReferenceToString() }
