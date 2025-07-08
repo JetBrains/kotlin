@@ -18,7 +18,7 @@ internal fun compareTo(a: dynamic, b: dynamic): Int = when (jsTypeOf(a)) {
             primitiveCompareTo(a, b)
     }
 
-    "string", "boolean" -> primitiveCompareTo(a, b)
+    "string", "boolean", "bigint" -> primitiveCompareTo(a, b)
 
     else -> compareToDoNotIntrinsicify(a, b)
 }

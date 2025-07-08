@@ -58,7 +58,7 @@ internal fun getBooleanHashCode(value: Boolean): Int {
     return if (value) 1231 else 1237
 }
 
-private fun getBigIntHashCode(value: BigInt): Int {
+internal fun getBigIntHashCode(value: BigInt): Int {
     val shiftNumber = BigInt(32)
 
     // In Kotlin the 0xffffffff literal has the Long type, which is boxed, so we use a Double literal instead
