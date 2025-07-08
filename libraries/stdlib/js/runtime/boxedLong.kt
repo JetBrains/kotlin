@@ -398,7 +398,10 @@ internal fun Long.invert() = Long(this.low.inv(), this.high.inv())
  */
 // TODO: cache
 @BoxedLongImplementation
-internal fun fromInt(value: Int) = Long(value, if (value < 0) -1 else 0)
+internal fun fromInt(value: dynamic) = Long(value, if (value < 0) -1 else 0)
+
+@BoxedLongImplementation
+internal fun numberToLong(a: dynamic): Long = if (a is Long) a else fromNumber(a)
 
 /**
  * Converts this [Double] value to [Long].
