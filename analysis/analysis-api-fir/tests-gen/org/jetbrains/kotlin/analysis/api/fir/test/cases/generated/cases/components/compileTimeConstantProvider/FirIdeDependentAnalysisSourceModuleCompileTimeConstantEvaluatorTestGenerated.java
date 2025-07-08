@@ -434,6 +434,12 @@ public class FirIdeDependentAnalysisSourceModuleCompileTimeConstantEvaluatorTest
     }
 
     @Test
+    @TestMetadata("annotationWithNoArgument.kt")
+    public void testAnnotationWithNoArgument() {
+      runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/withErrors/annotationWithNoArgument.kt");
+    }
+
+    @Test
     @TestMetadata("constFieldWithCustomGetter.kt")
     public void testConstFieldWithCustomGetter() {
       runTest("analysis/analysis-api/testData/components/compileTimeConstantProvider/evaluate/withErrors/constFieldWithCustomGetter.kt");
