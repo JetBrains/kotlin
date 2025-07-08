@@ -39,9 +39,15 @@ class VirtualFileKotlinClass private constructor(
     override val containingLibrary: String?
         get() = file.path.split("!/").firstOrNull()
 
-    override val containingLibraryPath: Path?
+    override val containingLibraryPath: PathHolder?
         // we should return not the file itself, but the root - LibraryPathFilter later uses `startsWith`
-        get() = if (file is LibraryContainerAwareVirtualFile) file.getContainingLibraryPath() else containingLibrary?.let { Paths.get(it) }
+        get() {
+            val containingLibraryPath =
+                if (file is LibraryContainerAwareVirtualFile) file.getContainingLibraryPath() else containingLibrary?.let { Paths.get(it) }
+            return containingLibraryPath?.let {
+                PathHolder(containingLibraryPath)
+            }
+        }
 
     override fun getFileContents(): ByteArray {
         try {
