@@ -138,10 +138,19 @@ internal object NativeArgumentMetrics : FusMetrics {
             }
     }
 
+    private fun getSwiftExportMetrics(arguments: K2NativeCompilerArguments): BooleanMetrics? {
+        return if (arguments.binaryOptions?.contains("swiftExport=true") == true) {
+            BooleanMetrics.ENABLED_SWIFT_EXPORT
+        } else {
+            null
+        }
+    }
+
     fun collectMetrics(compilerArguments: List<String>, metricsConsumer: StatisticsValuesConsumer) {
         val arguments = K2NativeCompilerArguments()
         parseCommandLineArguments(compilerArguments, arguments)
         getGcTypeMetrics(arguments)?.let { metricsConsumer.report(it, true) }
+        getSwiftExportMetrics(arguments)?.let { metricsConsumer.report(it, true) }
     }
 }
 

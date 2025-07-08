@@ -64,6 +64,9 @@ enum class BooleanMetrics(val type: BooleanOverridePolicy, val anonymization: Bo
     ENABLED_PMCS_GC(OR, SAFE),
     ENABLED_CMS_GC(OR, SAFE),
 
+    // Native features
+    ENABLED_SWIFT_EXPORT(OR, SAFE),
+
     //Build reports
     FILE_BUILD_REPORT(OR, SAFE),
     BUILD_SCAN_BUILD_REPORT(OR, SAFE),
