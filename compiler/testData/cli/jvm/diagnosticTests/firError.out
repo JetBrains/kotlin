@@ -1,4 +1,4 @@
-compiler/testData/cli/jvm/diagnosticTests/firError.kt:1:13: error: 'val' on function parameter is prohibited.
+compiler/testData/cli/jvm/diagnosticTests/firError.kt:1:13: error: 'val' on a function parameter is prohibited.
 fun println(val x: Int) {}
             ^^^
 compiler/testData/cli/jvm/diagnosticTests/firError.kt:5:13: error: variable 'x' must be initialized.

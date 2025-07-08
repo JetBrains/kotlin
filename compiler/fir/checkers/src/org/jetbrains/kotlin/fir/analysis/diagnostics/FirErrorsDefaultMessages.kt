@@ -909,9 +909,9 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         )
         map.put(DIVISION_BY_ZERO, "Division by zero.")
         map.put(VAL_OR_VAR_ON_LOOP_PARAMETER, "''{0}'' on a ''for'' loop parameter is prohibited.", TO_STRING)
-        map.put(VAL_OR_VAR_ON_FUN_PARAMETER, "''{0}'' on function parameter is prohibited.", TO_STRING)
+        map.put(VAL_OR_VAR_ON_FUN_PARAMETER, "''{0}'' on a function parameter is prohibited.", TO_STRING)
         map.put(VAL_OR_VAR_ON_CATCH_PARAMETER, "''{0}'' on a ''catch'' clause parameter is prohibited.", TO_STRING)
-        map.put(VAL_OR_VAR_ON_SECONDARY_CONSTRUCTOR_PARAMETER, "''{0}'' on secondary constructor parameter is prohibited.", TO_STRING)
+        map.put(VAL_OR_VAR_ON_SECONDARY_CONSTRUCTOR_PARAMETER, "''{0}'' on a secondary constructor parameter is prohibited.", TO_STRING)
         map.put(INNER_ON_TOP_LEVEL_SCRIPT_CLASS, "Top-level script class cannot be inner.")
         map.put(
             ERROR_SUPPRESSION,
@@ -2544,7 +2544,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(CANNOT_INFER_IT_PARAMETER_TYPE, "Cannot infer type for implicit value parameter 'it'. Specify it explicitly.")
         map.put(CANNOT_INFER_RECEIVER_PARAMETER_TYPE, "Cannot infer type for receiver parameter. Specify it explicitly.")
         map.put(NO_TAIL_CALLS_FOUND, "A function is marked as tail-recursive but no tail calls are found.")
-        map.put(TAILREC_ON_VIRTUAL_MEMBER_ERROR, "Tailrec is prohibited on open members.")
+        map.put(TAILREC_ON_VIRTUAL_MEMBER_ERROR, "Open members cannot be marked as tail-recursive.")
         map.put(NON_TAIL_RECURSIVE_CALL, "Recursive call is not a tail call.")
         map.put(TAIL_RECURSION_IN_TRY_IS_NOT_SUPPORTED, "Tail recursion optimization inside 'try'/'catch'/'finally' is not supported.")
         map.put(DATA_OBJECT_CUSTOM_EQUALS_OR_HASH_CODE, "Data object cannot have a custom implementation of 'equals' or 'hashCode'.")
