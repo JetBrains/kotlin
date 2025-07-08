@@ -178,7 +178,7 @@ public actual fun Int.rotateRight(bitCount: Int): Int =
  * Counts the number of set bits in the binary representation of this [Long] number.
  */
 @SinceKotlin("1.4")
-@OptIn(BoxedLongApi::class)
+@OptIn(BoxedLongApi::class) // Long `high` and `low` properties are intrinsified when BigInt-backed Longs are enabled.
 public actual fun Long.countOneBits(): Int =
     high.countOneBits() + low.countOneBits()
 
@@ -186,7 +186,7 @@ public actual fun Long.countOneBits(): Int =
  * Counts the number of consecutive most significant bits that are zero in the binary representation of this [Long] number.
  */
 @SinceKotlin("1.4")
-@OptIn(BoxedLongApi::class)
+@OptIn(BoxedLongApi::class) // Long `high` and `low` properties are intrinsified when BigInt-backed Longs are enabled.
 public actual fun Long.countLeadingZeroBits(): Int =
     when (val high = this.high) {
         0 -> Int.SIZE_BITS + low.countLeadingZeroBits()
@@ -209,7 +209,7 @@ public actual fun Long.countTrailingZeroBits(): Int =
  * or zero, if this number is zero.
  */
 @SinceKotlin("1.4")
-@OptIn(BoxedLongApi::class)
+@OptIn(BoxedLongApi::class) // Long constructor and properties are intrinsified when BigInt-backed Longs are enabled.
 public actual fun Long.takeHighestOneBit(): Long =
     when (val high = this.high) {
         0 -> Long(low.takeHighestOneBit(), 0)
@@ -221,7 +221,7 @@ public actual fun Long.takeHighestOneBit(): Long =
  * or zero, if this number is zero.
  */
 @SinceKotlin("1.4")
-@OptIn(BoxedLongApi::class)
+@OptIn(BoxedLongApi::class) // Long constructor and properties are intrinsified when BigInt-backed Longs are enabled.
 public actual fun Long.takeLowestOneBit(): Long =
     when (val low = this.low) {
         0 -> Long(0, high.takeLowestOneBit())
@@ -239,7 +239,7 @@ public actual fun Long.takeLowestOneBit(): Long =
  * `number.rotateLeft(n) == number.rotateLeft(n % 64)`
  */
 @SinceKotlin("1.6")
-@OptIn(BoxedLongApi::class)
+@OptIn(BoxedLongApi::class) // Long constructor and properties are intrinsified when BigInt-backed Longs are enabled.
 public actual fun Long.rotateLeft(bitCount: Int): Long {
     if ((bitCount and 31) != 0) {
         val low = this.low

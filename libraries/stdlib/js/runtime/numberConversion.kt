@@ -11,7 +11,7 @@ import kotlin.js.internal.boxedLong.numberToLong
 
 internal fun numberToByte(a: dynamic): Byte = toByte(numberToInt(a))
 
-internal fun numberToDouble(@Suppress("UNUSED_PARAMETER") a: dynamic): Double = js("+a").unsafeCast<Double>()
+internal fun numberToDouble(@Suppress("UNUSED_PARAMETER") a: dynamic): Double = js("Number(a)").unsafeCast<Double>()
 
 internal fun numberToInt(a: dynamic): Int = if (a is Long) a.toInt() else doubleToInt(a)
 

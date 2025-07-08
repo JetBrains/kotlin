@@ -7,6 +7,8 @@ fun box(): String {
     val x = true
     val y = false
 
+    val longUnderlyingType = jsTypeOf(0L)
+
     val mapWithIntKeys = HashMap<Int, Int>()
     mapWithIntKeys[1] = 1
     assertEquals("number", jsTypeOf (mapWithIntKeys.keys.iterator().next()), "mapWithIntKeys")
@@ -69,7 +71,7 @@ fun box(): String {
 
     val mapWithLongKeys = HashMap<Long, Int>()
     mapWithLongKeys[1L] = 1
-    assertEquals("object", jsTypeOf (mapWithLongKeys.keys.iterator().next()), "mapWithLongKeys")
+    assertEquals(longUnderlyingType, jsTypeOf (mapWithLongKeys.keys.iterator().next()), "mapWithLongKeys")
 
     val mapWithBooleanKeys = HashMap<Boolean, Int>()
     mapWithBooleanKeys[true] = 1
@@ -81,4 +83,3 @@ fun box(): String {
 
     return "OK"
 }
-
