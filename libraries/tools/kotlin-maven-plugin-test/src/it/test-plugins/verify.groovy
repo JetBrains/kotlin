@@ -32,7 +32,7 @@ State state = buildLogFile.readLines().collect { it.replaceAll("\\u001b[^m]*m", 
             || line.startsWith("Downloading")
             || line.startsWith("[WARNING] Language version 2.0 is experimental, there are no backwards compatibility guarantees for new language and library features")
             || line.startsWith("[INFO] starting the daemon as")
-            || line.endsWith("retrying connecting to the daemon")
+            || line.contains("retrying connecting to the daemon") // may contain text on both sides
             || line.startsWith("[INFO] PERF:")) {
         // ignore line
     } else if (acc.currentPlugin == "kotlin-maven-plugin") {
