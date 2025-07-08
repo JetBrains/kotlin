@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.backend.generators
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.backend.common.implicitInvoke
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
@@ -40,17 +41,13 @@ import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.*
-import org.jetbrains.kotlin.ir.util.dump
-import org.jetbrains.kotlin.ir.util.parentAsClass
-import org.jetbrains.kotlin.ir.util.primaryConstructor
-import org.jetbrains.kotlin.ir.util.render
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
-import org.jetbrains.kotlin.ir.util.toIrConst
 
 class CallAndReferenceGenerator(
     private val c: Fir2IrComponents,
@@ -580,7 +577,11 @@ class CallAndReferenceGenerator(
                         hasExtensionReceiver = firSymbol.isExtension,
                         origin = callOrigin,
                         superQualifierSymbol = dispatchReceiver?.superQualifierSymbolForFunctionAndPropertyAccess()
-                    )
+                    ).apply {
+                        if (qualifiedAccess is FirImplicitInvokeCall) {
+                            implicitInvoke = true
+                        }
+                    }
                 }
 
                 is IrLocalDelegatedPropertySymbol -> {

@@ -13,7 +13,7 @@ assert(::property.name == "a")
 ---
 test3: ---
 assert((::property)())
-       ||
-       |val property: kotlin.Boolean
-       false
+        |          |
+        |          false
+        val property: kotlin.Boolean
 ---
