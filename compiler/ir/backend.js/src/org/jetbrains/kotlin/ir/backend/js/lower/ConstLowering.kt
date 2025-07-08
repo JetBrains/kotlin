@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.isUnsigned
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
+import org.jetbrains.kotlin.js.config.compileLongAsBigint
 
 class ConstTransformer(private val context: JsIrBackendContext) : IrElementTransformerVoid() {
     private fun <C> lowerConst(
@@ -47,8 +48,14 @@ class ConstTransformer(private val context: JsIrBackendContext) : IrElementTrans
         }
     }
 
-    private fun createLong(expression: IrConst, v: Long): IrExpression =
-        lowerConst(expression, context.intrinsics.longClassSymbol, IrConstImpl.Companion::int, v.toInt(), (v shr 32).toInt())
+    private fun createLong(expression: IrConst, v: Long): IrExpression {
+        if (context.configuration.compileLongAsBigint) {
+            // We don't just return `expression` because `expression.type` may be `ULong`,
+            // which will confuse the autoboxing lowering downstream.
+            return IrConstImpl.long(expression.startOffset, expression.endOffset, context.irBuiltIns.longType, v)
+        }
+        return lowerConst(expression, context.intrinsics.longClassSymbol, IrConstImpl.Companion::int, v.toInt(), (v shr 32).toInt())
+    }
 
     override fun visitConst(expression: IrConst): IrExpression {
         with(context.intrinsics) {

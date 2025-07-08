@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.irCall
 import org.jetbrains.kotlin.ir.util.irError
 import org.jetbrains.kotlin.ir.util.reinterpretCastIfNeededTo
+import org.jetbrains.kotlin.js.config.compileLongAsBigint
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
 
@@ -170,6 +171,8 @@ class NumberOperatorCallsTransformer(private val context: JsIrBackendContext) : 
                 isFloat() || isDouble() ->
                     // TODO introduce doubleToHashCode?
                     irCall(call, intrinsics.jsGetNumberHashCode)
+                isLong() && context.configuration.compileLongAsBigint ->
+                    irCall(call, intrinsics.jsBigIntHashCode)
                 else -> call
             }
         }
