@@ -43,7 +43,7 @@ fun t3() {
 fun t4() {
     return
 
-    (43)
+    (<!UNUSED_EXPRESSION!>43<!>)
 }
 
 fun doSmth() {}

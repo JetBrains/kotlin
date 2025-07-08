@@ -6,6 +6,8 @@
 
 /kt55179.fir.kt:(323,326): error: The signature of 'constructor(): Foo' contains 'private-in-file' type 'Foo', but is accessed from 'internal' inline declaration.
 
+/kt55179.fir.kt:(333,346): warning: Expression is unused.
+
 /kt55179.fir.kt:(337,346): error: 'private-in-file' type 'Foo.Companion' is accessed from 'internal' inline declaration.
 
 /kt55179.fir.kt:(337,346): error: Non-private inline function 'fun foo(): Unit' cannot access members of private class 'companion object Companion : Any'.

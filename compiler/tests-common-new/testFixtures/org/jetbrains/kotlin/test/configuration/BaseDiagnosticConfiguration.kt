@@ -43,6 +43,7 @@ import org.jetbrains.kotlin.test.model.AfterAnalysisChecker
 import org.jetbrains.kotlin.test.model.DependencyKind
 import org.jetbrains.kotlin.test.model.FrontendFacade
 import org.jetbrains.kotlin.test.model.FrontendKinds
+import org.jetbrains.kotlin.test.runners.AbstractDiagnosticTest.Companion.DEFAULT_UNUSED_DIAGNOSTICS
 import org.jetbrains.kotlin.test.runners.DuplicateFileNameChecker
 import org.jetbrains.kotlin.test.services.LibraryProvider
 import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
@@ -124,6 +125,7 @@ fun TestConfigurationBuilder.baseFirDiagnosticTestConfiguration(
 
     defaultDirectives {
         LANGUAGE + "+EnableDfaWarningsInK2"
+        DIAGNOSTICS with DEFAULT_UNUSED_DIAGNOSTICS.map { "-$it" }
     }
 
     enableMetaInfoHandler()
@@ -221,6 +223,7 @@ fun TestConfigurationBuilder.configureCommonDiagnosticTestPaths(
         defaultDirectives {
             RETURN_VALUE_CHECKER_MODE with ReturnValueCheckerMode.CHECKER
             +WITH_EXTRA_CHECKERS
+            DIAGNOSTICS with DEFAULT_UNUSED_DIAGNOSTICS.map { "+$it" }
             DIAGNOSTICS with "-UNUSED_VARIABLE"
             LANGUAGE with "+UnnamedLocalVariables"
         }
@@ -230,6 +233,7 @@ fun TestConfigurationBuilder.configureCommonDiagnosticTestPaths(
         defaultDirectives {
             RETURN_VALUE_CHECKER_MODE with ReturnValueCheckerMode.FULL
             +WITH_EXTRA_CHECKERS
+            DIAGNOSTICS with DEFAULT_UNUSED_DIAGNOSTICS.map { "+$it" }
             DIAGNOSTICS with "-UNUSED_VARIABLE"
             LANGUAGE with "+UnnamedLocalVariables"
         }
@@ -241,12 +245,19 @@ fun TestConfigurationBuilder.configureCommonDiagnosticTestPaths(
         }
     }
 
+    forTestsMatching("compiler/testData/diagnostics/tests/controlFlowAnalysis/*") {
+        defaultDirectives {
+            DIAGNOSTICS with DEFAULT_UNUSED_DIAGNOSTICS.map { "+$it" }
+        }
+    }
+
     forTestsMatching(
         "compiler/fir/analysis-tests/testData/resolve/extraCheckers/*" or
                 "compiler/testData/diagnostics/tests/controlFlowAnalysis/deadCode/*"
     ) {
         defaultDirectives {
             +WITH_EXTRA_CHECKERS
+            DIAGNOSTICS with DEFAULT_UNUSED_DIAGNOSTICS.map { "+$it" }
         }
     }
 

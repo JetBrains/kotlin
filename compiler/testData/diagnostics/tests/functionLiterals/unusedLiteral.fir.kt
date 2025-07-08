@@ -2,16 +2,16 @@
 // DIAGNOSTICS: +UNUSED_LAMBDA_EXPRESSION, +UNUSED_VARIABLE
 
 fun unusedLiteral(){
-    { ->
+    <!UNUSED_LAMBDA_EXPRESSION!>{ ->
         val i = 1
-    }
+    }<!>
 }
 
 
 fun unusedLiteralInDoWhile(){
-    do{ ->
+    do<!UNUSED_LAMBDA_EXPRESSION!>{ ->
             val i = 1
-    } while(false)
+    }<!> while(false)
 }
 
 /* GENERATED_FIR_TAGS: doWhileLoop, functionDeclaration, integerLiteral, lambdaLiteral, localProperty,

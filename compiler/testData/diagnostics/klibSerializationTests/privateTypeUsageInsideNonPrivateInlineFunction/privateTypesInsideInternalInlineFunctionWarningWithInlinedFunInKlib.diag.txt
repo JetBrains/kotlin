@@ -71,6 +71,8 @@ This will become an error in language version 2.2. See https://youtrack.jetbrain
 
 /privateTypesInsideInternalInlineFunctionWarningWithInlinedFunInKlib.kt:67:13: warning: 'private-in-file' type 'A.Nested' is accessed from 'internal' inline declaration. This will become an error in language version 2.4. See https://youtrack.jetbrains.com/issue/KTLC-283.
 
+/privateTypesInsideInternalInlineFunctionWarningWithInlinedFunInKlib.kt:68:5: warning: Expression is unused.
+
 /privateTypesInsideInternalInlineFunctionWarningWithInlinedFunInKlib.kt:68:5: warning: 'private-in-file' type 'A' is accessed from 'internal' inline declaration. This will become an error in language version 2.4. See https://youtrack.jetbrains.com/issue/KTLC-283.
 
 /privateTypesInsideInternalInlineFunctionWarningWithInlinedFunInKlib.kt:68:5: warning: Public-API inline function accesses a non Public-API class. This will become an error in language version 2.2. See https://youtrack.jetbrains.com/issue/KT-70916.
@@ -116,18 +118,26 @@ This will become an error in language version 2.2. See https://youtrack.jetbrain
 
 /privateTypesInsideInternalInlineFunctionWarningWithInlinedFunInKlib.kt:83:21: warning: 'private-in-file' type 'A.Nested' is accessed from 'internal' inline declaration. This will become an error in language version 2.4. See https://youtrack.jetbrains.com/issue/KTLC-283.
 
+/privateTypesInsideInternalInlineFunctionWarningWithInlinedFunInKlib.kt:84:13: warning: Expression is unused.
+
 /privateTypesInsideInternalInlineFunctionWarningWithInlinedFunInKlib.kt:84:13: warning: 'private-in-file' type 'A' is accessed from 'internal' inline declaration. This will become an error in language version 2.4. See https://youtrack.jetbrains.com/issue/KTLC-283.
 
 /privateTypesInsideInternalInlineFunctionWarningWithInlinedFunInKlib.kt:84:13: warning: Public-API inline function accesses a non Public-API class. This will become an error in language version 2.2. See https://youtrack.jetbrains.com/issue/KT-70916.
 
 /privateTypesInsideInternalInlineFunctionWarningWithInlinedFunInKlib.kt:97:9: error: Local classes are not yet supported in inline functions.
 
+/privateTypesInsideInternalInlineFunctionWarningWithInlinedFunInKlib.kt:101:9: warning: Expression is unused.
+
 /privateTypesInsideInternalInlineFunctionWarningWithInlinedFunInKlib.kt:116:17: error: Local classes are not yet supported in inline functions.
+
+/privateTypesInsideInternalInlineFunctionWarningWithInlinedFunInKlib.kt:120:17: warning: Expression is unused.
 
 /privateTypesInsideInternalInlineFunctionWarningWithInlinedFunInKlib.kt:145:13: error: Local classes are not yet supported in inline functions.
 
 /privateTypesInsideInternalInlineFunctionWarningWithInlinedFunInKlib.kt:145:27: error: Non-private inline function 'fun foo(): Unit' cannot access members of private class 'constructor<T>(): Generic<T>'.
 
 /privateTypesInsideInternalInlineFunctionWarningWithInlinedFunInKlib.kt:146:22: error: Non-private inline function 'fun foo(): Unit' cannot access members of private class 'constructor<T>(): Generic<T>'.
+
+/privateTypesInsideInternalInlineFunctionWarningWithInlinedFunInKlib.kt:149:13: warning: Expression is unused.
 
 /privateTypesInsideInternalInlineFunctionWarningWithInlinedFunInKlib.kt:158:16: warning: 'private-in-class' type 'PrivateOuter.PrivateNested?' is accessed from 'private-in-file' inline declaration. This will become an error in language version 2.4. See https://youtrack.jetbrains.com/issue/KTLC-283.

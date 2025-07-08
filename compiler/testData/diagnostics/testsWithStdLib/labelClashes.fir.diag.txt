@@ -22,6 +22,10 @@
 
 /labelClashes.fir.kt:(433,436): error: Unresolved reference 'foo'.
 
+/labelClashes.fir.kt:(615,629): warning: Expression is unused.
+
+/labelClashes.fir.kt:(671,685): warning: Expression is unused.
+
 /labelClashes.fir.kt:(744,748): error: Cannot infer type for type parameter 'R'. Specify it explicitly.
 
 /labelClashes.fir.kt:(771,776): warning: There is more than one label with such a name in this scope.
