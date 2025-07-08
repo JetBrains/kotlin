@@ -48,6 +48,8 @@
 
 /privateTypesInsideInternalInlineFunctionError.kt:67:13: warning: 'private-in-file' type 'A.Nested' is accessed from 'internal' inline declaration. This will become an error in language version 2.4. See https://youtrack.jetbrains.com/issue/KTLC-283.
 
+/privateTypesInsideInternalInlineFunctionError.kt:68:5: warning: Expression is unused.
+
 /privateTypesInsideInternalInlineFunctionError.kt:68:5: warning: 'private-in-file' type 'A' is accessed from 'internal' inline declaration. This will become an error in language version 2.4. See https://youtrack.jetbrains.com/issue/KTLC-283.
 
 /privateTypesInsideInternalInlineFunctionError.kt:68:5: error: Public-API inline function accesses a non Public-API class
@@ -88,18 +90,26 @@
 
 /privateTypesInsideInternalInlineFunctionError.kt:83:21: warning: 'private-in-file' type 'A.Nested' is accessed from 'internal' inline declaration. This will become an error in language version 2.4. See https://youtrack.jetbrains.com/issue/KTLC-283.
 
+/privateTypesInsideInternalInlineFunctionError.kt:84:13: warning: Expression is unused.
+
 /privateTypesInsideInternalInlineFunctionError.kt:84:13: warning: 'private-in-file' type 'A' is accessed from 'internal' inline declaration. This will become an error in language version 2.4. See https://youtrack.jetbrains.com/issue/KTLC-283.
 
 /privateTypesInsideInternalInlineFunctionError.kt:84:13: error: Public-API inline function accesses a non Public-API class
 
 /privateTypesInsideInternalInlineFunctionError.kt:97:9: error: Local classes are not yet supported in inline functions.
 
+/privateTypesInsideInternalInlineFunctionError.kt:101:9: warning: Expression is unused.
+
 /privateTypesInsideInternalInlineFunctionError.kt:116:17: error: Local classes are not yet supported in inline functions.
+
+/privateTypesInsideInternalInlineFunctionError.kt:120:17: warning: Expression is unused.
 
 /privateTypesInsideInternalInlineFunctionError.kt:145:13: error: Local classes are not yet supported in inline functions.
 
 /privateTypesInsideInternalInlineFunctionError.kt:145:27: error: Non-private inline function 'fun foo(): Unit' cannot access members of private class 'constructor<T>(): Generic<T>'.
 
 /privateTypesInsideInternalInlineFunctionError.kt:146:22: error: Non-private inline function 'fun foo(): Unit' cannot access members of private class 'constructor<T>(): Generic<T>'.
+
+/privateTypesInsideInternalInlineFunctionError.kt:149:13: warning: Expression is unused.
 
 /privateTypesInsideInternalInlineFunctionError.kt:158:16: warning: 'private-in-class' type 'PrivateOuter.PrivateNested?' is accessed from 'private-in-file' inline declaration. This will become an error in language version 2.4. See https://youtrack.jetbrains.com/issue/KTLC-283.
