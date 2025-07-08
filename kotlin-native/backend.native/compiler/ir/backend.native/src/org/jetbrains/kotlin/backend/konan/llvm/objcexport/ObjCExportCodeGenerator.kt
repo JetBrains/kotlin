@@ -1388,9 +1388,7 @@ private fun ObjCExportCodeGenerator.vtableIndex(irFunction: IrSimpleFunction): I
 private fun ObjCExportCodeGenerator.itablePlace(irFunction: IrSimpleFunction): ClassLayoutBuilder.InterfaceTablePlace? {
     assert(irFunction.isOverridable)
     val irClass = irFunction.parentAsClass
-    return if (irClass.isInterface
-            && (irFunction.isReal || irFunction.resolveFakeOverrideMaybeAbstract()?.parent != context.irBuiltIns.anyClass.owner)
-    ) {
+    return if (irClass.isInterface && irFunction.findOverriddenMethodOfAny() == null) {
         context.getLayoutBuilder(irClass).itablePlace(irFunction)
     } else {
         null
