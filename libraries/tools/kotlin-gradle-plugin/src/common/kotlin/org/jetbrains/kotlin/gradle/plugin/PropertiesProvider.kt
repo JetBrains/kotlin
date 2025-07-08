@@ -594,6 +594,12 @@ internal class PropertiesProvider private constructor(private val project: Proje
         }
 
     /**
+     * Emit diagnostics with "error:" and "warning:" prefixes to make sure they are displayed in the IDE build logs
+     */
+    val displayDiagnosticsInIdeBuildLog: Boolean
+        get() = booleanProperty(PropertyNames.KOTLIN_DISPLAY_DIAGNOSTICS_IN_IDE_BUILD_LOG) ?: true
+
+    /**
      * Enable workaround for KT-64115, where both main compilation exploded klib and the same compressed klib
      * could end up in the test compilation leading to the compiler warning.
      *
@@ -760,6 +766,7 @@ internal class PropertiesProvider private constructor(private val project: Proje
         val KOTLIN_KMP_STRICT_RESOLVE_IDE_DEPENDENCIES = property("${KOTLIN_INTERNAL_NAMESPACE}.kmp.strictResolveIdeDependencies")
         val KOTLIN_KMP_ISOLATED_PROJECT_SUPPORT = property("kotlin.kmp.isolated-projects.support")
         val KOTLIN_INCREMENTAL_FIR = property("kotlin.incremental.jvm.fir")
+        val KOTLIN_DISPLAY_DIAGNOSTICS_IN_IDE_BUILD_LOG = property("kotlin.displayDiagnosticsInIdeBuildLog")
         val KOTLIN_KMP_SEPARATE_COMPILATION = property("kotlin.kmp.separateCompilation")
 
         /**

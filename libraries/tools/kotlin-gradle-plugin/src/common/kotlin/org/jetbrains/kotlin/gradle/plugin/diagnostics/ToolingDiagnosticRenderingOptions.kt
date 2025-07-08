@@ -27,6 +27,7 @@ internal class ToolingDiagnosticRenderingOptions(
     val coloredOutput: Boolean,
     val ignoreWarningMode: Boolean,
     val warningMode: WarningMode,
+    val displayDiagnosticsInIdeBuildLog: Boolean,
 ) : Serializable {
     companion object {
         fun forProject(project: Project): ToolingDiagnosticRenderingOptions {
@@ -50,7 +51,8 @@ internal class ToolingDiagnosticRenderingOptions(
                     showSeverityEmoji = !project.isInIdeaEnvironment.get() && !HostManager.hostIsMingw,
                     coloredOutput = project.showColoredDiagnostics(),
                     ignoreWarningMode = internalDiagnosticsIgnoreWarningMode == true,
-                    warningMode = project.gradle.startParameter.warningMode
+                    warningMode = project.gradle.startParameter.warningMode,
+                    displayDiagnosticsInIdeBuildLog = project.kotlinPropertiesProvider.displayDiagnosticsInIdeBuildLog && project.isInIdeaEnvironment.get(),
                 )
             }
         }
