@@ -5,14 +5,56 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders
 
+import com.intellij.psi.PsiClass
+import com.intellij.psi.PsiElement
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.moduleData
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
+import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.caches.LLPsiAwareClassLikeSymbolCache
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.classIdOrError
+import org.jetbrains.kotlin.fir.caches.firCachesFactory
+import org.jetbrains.kotlin.fir.java.FirJavaFacade
 import org.jetbrains.kotlin.fir.java.FirJavaFacadeForSource
 import org.jetbrains.kotlin.fir.java.JavaSymbolProvider
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.load.java.createJavaClassFinder
+import org.jetbrains.kotlin.load.java.structure.impl.JavaClassImpl
+import org.jetbrains.kotlin.name.ClassId
 
-internal class LLFirJavaSymbolProvider(firSession: LLFirSession, val searchScope: GlobalSearchScope) : JavaSymbolProvider(
-    firSession,
-    FirJavaFacadeForSource(firSession, firSession.moduleData, firSession.project.createJavaClassFinder(searchScope))
-)
+internal class LLFirJavaSymbolProvider private constructor(
+    session: LLFirSession,
+    javaFacade: FirJavaFacade,
+    val searchScope: GlobalSearchScope
+) : JavaSymbolProvider(session, javaFacade), LLPsiAwareSymbolProvider {
+    constructor(session: LLFirSession, searchScope: GlobalSearchScope) : this(
+        session,
+        FirJavaFacadeForSource(
+            session,
+            session.moduleData,
+            session.project.createJavaClassFinder(searchScope)
+        ),
+        searchScope
+    )
+
+    private val psiAwareCache = LLPsiAwareClassLikeSymbolCache<PsiClass, FirRegularClassSymbol?, ClassCacheContext?>(
+        classCache,
+        session.firCachesFactory.createCache { psiClass, classCacheContext ->
+            computeAmbiguousClassLikeSymbolByPsi(psiClass, classCacheContext)
+        }
+    )
+
+    @ModuleSpecificSymbolProviderAccess
+    override fun getClassLikeSymbolByPsi(classId: ClassId, declaration: PsiElement): FirRegularClassSymbol? =
+        psiAwareCache.getSymbolByPsi<PsiClass>(classId, declaration) { psiClass ->
+            val parentClass = psiClass.containingClass?.let { getClassLikeSymbolByPsi(it.classIdOrError(), it) }
+            ClassCacheContext(parentClass, JavaClassImpl(psiClass))
+        }
+
+    private fun computeAmbiguousClassLikeSymbolByPsi(psiClass: PsiClass, classCacheContext: ClassCacheContext?): FirRegularClassSymbol {
+        val classId = psiClass.classIdOrError()
+        val symbol = FirRegularClassSymbol(classId)
+        val javaClass = JavaClassImpl(psiClass)
+
+        return javaFacade.convertJavaClassToFir(symbol, classCacheContext?.parentClassSymbol, javaClass).symbol
+    }
+}
