@@ -294,6 +294,7 @@ public inline fun <K, @kotlin.internal.OnlyInputTypes V> Map<K, V>.containsValue
  * Allows to overcome type-safety restriction of `remove` that requires to pass a key of type `K`.
  */
 @kotlin.internal.InlineOnly
+@IgnorableReturnValue
 public inline fun <@kotlin.internal.OnlyInputTypes K, V> MutableMap<out K, V>.remove(key: K): V? =
     @Suppress("UNCHECKED_CAST") (this as MutableMap<K, V>).remove(key)
 
@@ -409,6 +410,7 @@ public inline operator fun <K, V> MutableMap<K, V>.iterator(): MutableIterator<M
  * Populates the given [destination] map with entries having the keys of this map and the values obtained
  * by applying the [transform] function to each entry in this [Map].
  */
+@IgnorableReturnValue
 public inline fun <K, V, R, M : MutableMap<in K, in R>> Map<out K, V>.mapValuesTo(destination: M, transform: (Map.Entry<K, V>) -> R): M {
     return entries.associateByTo(destination, { it.key }, transform)
 }
@@ -420,6 +422,7 @@ public inline fun <K, V, R, M : MutableMap<in K, in R>> Map<out K, V>.mapValuesT
  * In case if any two entries are mapped to the equal keys, the value of the latter one will overwrite
  * the value associated with the former one.
  */
+@IgnorableReturnValue
 public inline fun <K, V, R, M : MutableMap<in R, in V>> Map<out K, V>.mapKeysTo(destination: M, transform: (Map.Entry<K, V>) -> R): M {
     return entries.associateByTo(destination, transform, { it.value })
 }
@@ -517,6 +520,7 @@ public inline fun <K, V> Map<out K, V>.filterValues(predicate: (V) -> Boolean): 
  * @return the destination map.
  * @sample samples.collections.Maps.Filtering.filterTo
  */
+@IgnorableReturnValue
 public inline fun <K, V, M : MutableMap<in K, in V>> Map<out K, V>.filterTo(destination: M, predicate: (Map.Entry<K, V>) -> Boolean): M {
     for (element in this) {
         if (predicate(element)) {
@@ -542,6 +546,7 @@ public inline fun <K, V> Map<out K, V>.filter(predicate: (Map.Entry<K, V>) -> Bo
  * @return the destination map.
  * @sample samples.collections.Maps.Filtering.filterNotTo
  */
+@IgnorableReturnValue
 public inline fun <K, V, M : MutableMap<in K, in V>> Map<out K, V>.filterNotTo(destination: M, predicate: (Map.Entry<K, V>) -> Boolean): M {
     for (element in this) {
         if (!predicate(element)) {
@@ -581,6 +586,7 @@ public fun <K, V> Iterable<Pair<K, V>>.toMap(): Map<K, V> {
 /**
  * Populates and returns the [destination] mutable map with key-value pairs from the given collection of pairs.
  */
+@IgnorableReturnValue
 public fun <K, V, M : MutableMap<in K, in V>> Iterable<Pair<K, V>>.toMap(destination: M): M =
     destination.apply { putAll(this@toMap) }
 
@@ -599,6 +605,7 @@ public fun <K, V> Array<out Pair<K, V>>.toMap(): Map<K, V> = when (size) {
 /**
  *  Populates and returns the [destination] mutable map with key-value pairs from the given array of pairs.
  */
+@IgnorableReturnValue
 public fun <K, V, M : MutableMap<in K, in V>> Array<out Pair<K, V>>.toMap(destination: M): M =
     destination.apply { putAll(this@toMap) }
 
@@ -613,6 +620,7 @@ public fun <K, V> Sequence<Pair<K, V>>.toMap(): Map<K, V> = toMap(LinkedHashMap<
 /**
  * Populates and returns the [destination] mutable map with key-value pairs from the given sequence of pairs.
  */
+@IgnorableReturnValue
 public fun <K, V, M : MutableMap<in K, in V>> Sequence<Pair<K, V>>.toMap(destination: M): M =
     destination.apply { putAll(this@toMap) }
 
@@ -640,6 +648,7 @@ public fun <K, V> Map<out K, V>.toMutableMap(): MutableMap<K, V> = LinkedHashMap
  * Populates and returns the [destination] mutable map with key-value pairs from the given map.
  */
 @SinceKotlin("1.1")
+@IgnorableReturnValue
 public fun <K, V, M : MutableMap<in K, in V>> Map<out K, V>.toMap(destination: M): M =
     destination.apply { putAll(this@toMap) }
 

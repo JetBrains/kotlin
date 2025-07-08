@@ -723,6 +723,7 @@ public inline fun <K, V> CharSequence.associateBy(keySelector: (Char) -> K, valu
  * 
  * @sample samples.text.Strings.associateByTo
  */
+@IgnorableReturnValue
 public inline fun <K, M : MutableMap<in K, in Char>> CharSequence.associateByTo(destination: M, keySelector: (Char) -> K): M {
     for (element in this) {
         destination.put(keySelector(element), element)
@@ -739,6 +740,7 @@ public inline fun <K, M : MutableMap<in K, in Char>> CharSequence.associateByTo(
  * 
  * @sample samples.text.Strings.associateByToWithValueTransform
  */
+@IgnorableReturnValue
 public inline fun <K, V, M : MutableMap<in K, in V>> CharSequence.associateByTo(destination: M, keySelector: (Char) -> K, valueTransform: (Char) -> V): M {
     for (element in this) {
         destination.put(keySelector(element), valueTransform(element))
@@ -754,6 +756,7 @@ public inline fun <K, V, M : MutableMap<in K, in V>> CharSequence.associateByTo(
  * 
  * @sample samples.text.Strings.associateTo
  */
+@IgnorableReturnValue
 public inline fun <K, V, M : MutableMap<in K, in V>> CharSequence.associateTo(destination: M, transform: (Char) -> Pair<K, V>): M {
     for (element in this) {
         destination += transform(element)
@@ -786,6 +789,7 @@ public inline fun <V> CharSequence.associateWith(valueSelector: (Char) -> V): Ma
  * @sample samples.text.Strings.associateWithTo
  */
 @SinceKotlin("1.3")
+@IgnorableReturnValue
 public inline fun <V, M : MutableMap<in Char, in V>> CharSequence.associateWithTo(destination: M, valueSelector: (Char) -> V): M {
     for (element in this) {
         destination.put(element, valueSelector(element))
@@ -796,6 +800,7 @@ public inline fun <V, M : MutableMap<in Char, in V>> CharSequence.associateWithT
 /**
  * Appends all characters to the given [destination] collection.
  */
+@IgnorableReturnValue
 public fun <C : MutableCollection<in Char>> CharSequence.toCollection(destination: C): C {
     for (item in this) {
         destination.add(item)

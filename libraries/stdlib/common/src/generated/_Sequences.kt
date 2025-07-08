@@ -713,6 +713,7 @@ public inline fun <T, K, V> Sequence<T>.associateBy(keySelector: (T) -> K, value
  * 
  * @sample samples.collections.Collections.Transformations.associateByTo
  */
+@IgnorableReturnValue
 public inline fun <T, K, M : MutableMap<in K, in T>> Sequence<T>.associateByTo(destination: M, keySelector: (T) -> K): M {
     for (element in this) {
         destination.put(keySelector(element), element)
@@ -731,6 +732,7 @@ public inline fun <T, K, M : MutableMap<in K, in T>> Sequence<T>.associateByTo(d
  * 
  * @sample samples.collections.Collections.Transformations.associateByToWithValueTransform
  */
+@IgnorableReturnValue
 public inline fun <T, K, V, M : MutableMap<in K, in V>> Sequence<T>.associateByTo(destination: M, keySelector: (T) -> K, valueTransform: (T) -> V): M {
     for (element in this) {
         destination.put(keySelector(element), valueTransform(element))
@@ -748,6 +750,7 @@ public inline fun <T, K, V, M : MutableMap<in K, in V>> Sequence<T>.associateByT
  * 
  * @sample samples.collections.Collections.Transformations.associateTo
  */
+@IgnorableReturnValue
 public inline fun <T, K, V, M : MutableMap<in K, in V>> Sequence<T>.associateTo(destination: M, transform: (T) -> Pair<K, V>): M {
     for (element in this) {
         destination += transform(element)
@@ -784,6 +787,7 @@ public inline fun <K, V> Sequence<K>.associateWith(valueSelector: (K) -> V): Map
  * @sample samples.collections.Collections.Transformations.associateWithTo
  */
 @SinceKotlin("1.3")
+@IgnorableReturnValue
 public inline fun <K, V, M : MutableMap<in K, in V>> Sequence<K>.associateWithTo(destination: M, valueSelector: (K) -> V): M {
     for (element in this) {
         destination.put(element, valueSelector(element))
@@ -796,6 +800,7 @@ public inline fun <K, V, M : MutableMap<in K, in V>> Sequence<K>.associateWithTo
  *
  * The operation is _terminal_.
  */
+@IgnorableReturnValue
 public fun <T, C : MutableCollection<in T>> Sequence<T>.toCollection(destination: C): C {
     for (item in this) {
         destination.add(item)

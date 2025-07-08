@@ -9241,6 +9241,7 @@ public inline fun <K, V> CharArray.associateBy(keySelector: (Char) -> K, valueTr
  * 
  * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesByTo
  */
+@IgnorableReturnValue
 public inline fun <T, K, M : MutableMap<in K, in T>> Array<out T>.associateByTo(destination: M, keySelector: (T) -> K): M {
     for (element in this) {
         destination.put(keySelector(element), element)
@@ -9257,6 +9258,7 @@ public inline fun <T, K, M : MutableMap<in K, in T>> Array<out T>.associateByTo(
  * 
  * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesByTo
  */
+@IgnorableReturnValue
 public inline fun <K, M : MutableMap<in K, in Byte>> ByteArray.associateByTo(destination: M, keySelector: (Byte) -> K): M {
     for (element in this) {
         destination.put(keySelector(element), element)
@@ -9273,6 +9275,7 @@ public inline fun <K, M : MutableMap<in K, in Byte>> ByteArray.associateByTo(des
  * 
  * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesByTo
  */
+@IgnorableReturnValue
 public inline fun <K, M : MutableMap<in K, in Short>> ShortArray.associateByTo(destination: M, keySelector: (Short) -> K): M {
     for (element in this) {
         destination.put(keySelector(element), element)
@@ -9289,6 +9292,7 @@ public inline fun <K, M : MutableMap<in K, in Short>> ShortArray.associateByTo(d
  * 
  * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesByTo
  */
+@IgnorableReturnValue
 public inline fun <K, M : MutableMap<in K, in Int>> IntArray.associateByTo(destination: M, keySelector: (Int) -> K): M {
     for (element in this) {
         destination.put(keySelector(element), element)
@@ -9305,6 +9309,7 @@ public inline fun <K, M : MutableMap<in K, in Int>> IntArray.associateByTo(desti
  * 
  * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesByTo
  */
+@IgnorableReturnValue
 public inline fun <K, M : MutableMap<in K, in Long>> LongArray.associateByTo(destination: M, keySelector: (Long) -> K): M {
     for (element in this) {
         destination.put(keySelector(element), element)
@@ -9321,6 +9326,7 @@ public inline fun <K, M : MutableMap<in K, in Long>> LongArray.associateByTo(des
  * 
  * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesByTo
  */
+@IgnorableReturnValue
 public inline fun <K, M : MutableMap<in K, in Float>> FloatArray.associateByTo(destination: M, keySelector: (Float) -> K): M {
     for (element in this) {
         destination.put(keySelector(element), element)
@@ -9337,6 +9343,7 @@ public inline fun <K, M : MutableMap<in K, in Float>> FloatArray.associateByTo(d
  * 
  * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesByTo
  */
+@IgnorableReturnValue
 public inline fun <K, M : MutableMap<in K, in Double>> DoubleArray.associateByTo(destination: M, keySelector: (Double) -> K): M {
     for (element in this) {
         destination.put(keySelector(element), element)
@@ -9353,6 +9360,7 @@ public inline fun <K, M : MutableMap<in K, in Double>> DoubleArray.associateByTo
  * 
  * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesByTo
  */
+@IgnorableReturnValue
 public inline fun <K, M : MutableMap<in K, in Boolean>> BooleanArray.associateByTo(destination: M, keySelector: (Boolean) -> K): M {
     for (element in this) {
         destination.put(keySelector(element), element)
@@ -9369,6 +9377,7 @@ public inline fun <K, M : MutableMap<in K, in Boolean>> BooleanArray.associateBy
  * 
  * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesByTo
  */
+@IgnorableReturnValue
 public inline fun <K, M : MutableMap<in K, in Char>> CharArray.associateByTo(destination: M, keySelector: (Char) -> K): M {
     for (element in this) {
         destination.put(keySelector(element), element)
@@ -9385,6 +9394,7 @@ public inline fun <K, M : MutableMap<in K, in Char>> CharArray.associateByTo(des
  * 
  * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesByToWithValueTransform
  */
+@IgnorableReturnValue
 public inline fun <T, K, V, M : MutableMap<in K, in V>> Array<out T>.associateByTo(destination: M, keySelector: (T) -> K, valueTransform: (T) -> V): M {
     for (element in this) {
         destination.put(keySelector(element), valueTransform(element))
@@ -9401,6 +9411,7 @@ public inline fun <T, K, V, M : MutableMap<in K, in V>> Array<out T>.associateBy
  * 
  * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesByToWithValueTransform
  */
+@IgnorableReturnValue
 public inline fun <K, V, M : MutableMap<in K, in V>> ByteArray.associateByTo(destination: M, keySelector: (Byte) -> K, valueTransform: (Byte) -> V): M {
     for (element in this) {
         destination.put(keySelector(element), valueTransform(element))
@@ -9417,6 +9428,7 @@ public inline fun <K, V, M : MutableMap<in K, in V>> ByteArray.associateByTo(des
  * 
  * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesByToWithValueTransform
  */
+@IgnorableReturnValue
 public inline fun <K, V, M : MutableMap<in K, in V>> ShortArray.associateByTo(destination: M, keySelector: (Short) -> K, valueTransform: (Short) -> V): M {
     for (element in this) {
         destination.put(keySelector(element), valueTransform(element))
@@ -9433,6 +9445,7 @@ public inline fun <K, V, M : MutableMap<in K, in V>> ShortArray.associateByTo(de
  * 
  * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesByToWithValueTransform
  */
+@IgnorableReturnValue
 public inline fun <K, V, M : MutableMap<in K, in V>> IntArray.associateByTo(destination: M, keySelector: (Int) -> K, valueTransform: (Int) -> V): M {
     for (element in this) {
         destination.put(keySelector(element), valueTransform(element))
@@ -9449,6 +9462,7 @@ public inline fun <K, V, M : MutableMap<in K, in V>> IntArray.associateByTo(dest
  * 
  * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesByToWithValueTransform
  */
+@IgnorableReturnValue
 public inline fun <K, V, M : MutableMap<in K, in V>> LongArray.associateByTo(destination: M, keySelector: (Long) -> K, valueTransform: (Long) -> V): M {
     for (element in this) {
         destination.put(keySelector(element), valueTransform(element))
@@ -9465,6 +9479,7 @@ public inline fun <K, V, M : MutableMap<in K, in V>> LongArray.associateByTo(des
  * 
  * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesByToWithValueTransform
  */
+@IgnorableReturnValue
 public inline fun <K, V, M : MutableMap<in K, in V>> FloatArray.associateByTo(destination: M, keySelector: (Float) -> K, valueTransform: (Float) -> V): M {
     for (element in this) {
         destination.put(keySelector(element), valueTransform(element))
@@ -9481,6 +9496,7 @@ public inline fun <K, V, M : MutableMap<in K, in V>> FloatArray.associateByTo(de
  * 
  * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesByToWithValueTransform
  */
+@IgnorableReturnValue
 public inline fun <K, V, M : MutableMap<in K, in V>> DoubleArray.associateByTo(destination: M, keySelector: (Double) -> K, valueTransform: (Double) -> V): M {
     for (element in this) {
         destination.put(keySelector(element), valueTransform(element))
@@ -9497,6 +9513,7 @@ public inline fun <K, V, M : MutableMap<in K, in V>> DoubleArray.associateByTo(d
  * 
  * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesByToWithValueTransform
  */
+@IgnorableReturnValue
 public inline fun <K, V, M : MutableMap<in K, in V>> BooleanArray.associateByTo(destination: M, keySelector: (Boolean) -> K, valueTransform: (Boolean) -> V): M {
     for (element in this) {
         destination.put(keySelector(element), valueTransform(element))
@@ -9513,6 +9530,7 @@ public inline fun <K, V, M : MutableMap<in K, in V>> BooleanArray.associateByTo(
  * 
  * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesByToWithValueTransform
  */
+@IgnorableReturnValue
 public inline fun <K, V, M : MutableMap<in K, in V>> CharArray.associateByTo(destination: M, keySelector: (Char) -> K, valueTransform: (Char) -> V): M {
     for (element in this) {
         destination.put(keySelector(element), valueTransform(element))
@@ -9528,6 +9546,7 @@ public inline fun <K, V, M : MutableMap<in K, in V>> CharArray.associateByTo(des
  * 
  * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesTo
  */
+@IgnorableReturnValue
 public inline fun <T, K, V, M : MutableMap<in K, in V>> Array<out T>.associateTo(destination: M, transform: (T) -> Pair<K, V>): M {
     for (element in this) {
         destination += transform(element)
@@ -9543,6 +9562,7 @@ public inline fun <T, K, V, M : MutableMap<in K, in V>> Array<out T>.associateTo
  * 
  * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesTo
  */
+@IgnorableReturnValue
 public inline fun <K, V, M : MutableMap<in K, in V>> ByteArray.associateTo(destination: M, transform: (Byte) -> Pair<K, V>): M {
     for (element in this) {
         destination += transform(element)
@@ -9558,6 +9578,7 @@ public inline fun <K, V, M : MutableMap<in K, in V>> ByteArray.associateTo(desti
  * 
  * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesTo
  */
+@IgnorableReturnValue
 public inline fun <K, V, M : MutableMap<in K, in V>> ShortArray.associateTo(destination: M, transform: (Short) -> Pair<K, V>): M {
     for (element in this) {
         destination += transform(element)
@@ -9573,6 +9594,7 @@ public inline fun <K, V, M : MutableMap<in K, in V>> ShortArray.associateTo(dest
  * 
  * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesTo
  */
+@IgnorableReturnValue
 public inline fun <K, V, M : MutableMap<in K, in V>> IntArray.associateTo(destination: M, transform: (Int) -> Pair<K, V>): M {
     for (element in this) {
         destination += transform(element)
@@ -9588,6 +9610,7 @@ public inline fun <K, V, M : MutableMap<in K, in V>> IntArray.associateTo(destin
  * 
  * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesTo
  */
+@IgnorableReturnValue
 public inline fun <K, V, M : MutableMap<in K, in V>> LongArray.associateTo(destination: M, transform: (Long) -> Pair<K, V>): M {
     for (element in this) {
         destination += transform(element)
@@ -9603,6 +9626,7 @@ public inline fun <K, V, M : MutableMap<in K, in V>> LongArray.associateTo(desti
  * 
  * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesTo
  */
+@IgnorableReturnValue
 public inline fun <K, V, M : MutableMap<in K, in V>> FloatArray.associateTo(destination: M, transform: (Float) -> Pair<K, V>): M {
     for (element in this) {
         destination += transform(element)
@@ -9618,6 +9642,7 @@ public inline fun <K, V, M : MutableMap<in K, in V>> FloatArray.associateTo(dest
  * 
  * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesTo
  */
+@IgnorableReturnValue
 public inline fun <K, V, M : MutableMap<in K, in V>> DoubleArray.associateTo(destination: M, transform: (Double) -> Pair<K, V>): M {
     for (element in this) {
         destination += transform(element)
@@ -9633,6 +9658,7 @@ public inline fun <K, V, M : MutableMap<in K, in V>> DoubleArray.associateTo(des
  * 
  * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesTo
  */
+@IgnorableReturnValue
 public inline fun <K, V, M : MutableMap<in K, in V>> BooleanArray.associateTo(destination: M, transform: (Boolean) -> Pair<K, V>): M {
     for (element in this) {
         destination += transform(element)
@@ -9648,6 +9674,7 @@ public inline fun <K, V, M : MutableMap<in K, in V>> BooleanArray.associateTo(de
  * 
  * @sample samples.collections.Arrays.Transformations.associateArrayOfPrimitivesTo
  */
+@IgnorableReturnValue
 public inline fun <K, V, M : MutableMap<in K, in V>> CharArray.associateTo(destination: M, transform: (Char) -> Pair<K, V>): M {
     for (element in this) {
         destination += transform(element)
@@ -9816,6 +9843,7 @@ public inline fun <V> CharArray.associateWith(valueSelector: (Char) -> V): Map<C
  * @sample samples.collections.Collections.Transformations.associateWithTo
  */
 @SinceKotlin("1.4")
+@IgnorableReturnValue
 public inline fun <K, V, M : MutableMap<in K, in V>> Array<out K>.associateWithTo(destination: M, valueSelector: (K) -> V): M {
     for (element in this) {
         destination.put(element, valueSelector(element))
@@ -9832,6 +9860,7 @@ public inline fun <K, V, M : MutableMap<in K, in V>> Array<out K>.associateWithT
  * @sample samples.collections.Collections.Transformations.associateWithTo
  */
 @SinceKotlin("1.4")
+@IgnorableReturnValue
 @kotlin.internal.InlineOnly
 public inline fun <V, M : MutableMap<in Byte, in V>> ByteArray.associateWithTo(destination: M, valueSelector: (Byte) -> V): M {
     for (element in this) {
@@ -9849,6 +9878,7 @@ public inline fun <V, M : MutableMap<in Byte, in V>> ByteArray.associateWithTo(d
  * @sample samples.collections.Collections.Transformations.associateWithTo
  */
 @SinceKotlin("1.4")
+@IgnorableReturnValue
 @kotlin.internal.InlineOnly
 public inline fun <V, M : MutableMap<in Short, in V>> ShortArray.associateWithTo(destination: M, valueSelector: (Short) -> V): M {
     for (element in this) {
@@ -9866,6 +9896,7 @@ public inline fun <V, M : MutableMap<in Short, in V>> ShortArray.associateWithTo
  * @sample samples.collections.Collections.Transformations.associateWithTo
  */
 @SinceKotlin("1.4")
+@IgnorableReturnValue
 @kotlin.internal.InlineOnly
 public inline fun <V, M : MutableMap<in Int, in V>> IntArray.associateWithTo(destination: M, valueSelector: (Int) -> V): M {
     for (element in this) {
@@ -9883,6 +9914,7 @@ public inline fun <V, M : MutableMap<in Int, in V>> IntArray.associateWithTo(des
  * @sample samples.collections.Collections.Transformations.associateWithTo
  */
 @SinceKotlin("1.4")
+@IgnorableReturnValue
 @kotlin.internal.InlineOnly
 public inline fun <V, M : MutableMap<in Long, in V>> LongArray.associateWithTo(destination: M, valueSelector: (Long) -> V): M {
     for (element in this) {
@@ -9900,6 +9932,7 @@ public inline fun <V, M : MutableMap<in Long, in V>> LongArray.associateWithTo(d
  * @sample samples.collections.Collections.Transformations.associateWithTo
  */
 @SinceKotlin("1.4")
+@IgnorableReturnValue
 @kotlin.internal.InlineOnly
 public inline fun <V, M : MutableMap<in Float, in V>> FloatArray.associateWithTo(destination: M, valueSelector: (Float) -> V): M {
     for (element in this) {
@@ -9917,6 +9950,7 @@ public inline fun <V, M : MutableMap<in Float, in V>> FloatArray.associateWithTo
  * @sample samples.collections.Collections.Transformations.associateWithTo
  */
 @SinceKotlin("1.4")
+@IgnorableReturnValue
 @kotlin.internal.InlineOnly
 public inline fun <V, M : MutableMap<in Double, in V>> DoubleArray.associateWithTo(destination: M, valueSelector: (Double) -> V): M {
     for (element in this) {
@@ -9934,6 +9968,7 @@ public inline fun <V, M : MutableMap<in Double, in V>> DoubleArray.associateWith
  * @sample samples.collections.Collections.Transformations.associateWithTo
  */
 @SinceKotlin("1.4")
+@IgnorableReturnValue
 @kotlin.internal.InlineOnly
 public inline fun <V, M : MutableMap<in Boolean, in V>> BooleanArray.associateWithTo(destination: M, valueSelector: (Boolean) -> V): M {
     for (element in this) {
@@ -9951,6 +9986,7 @@ public inline fun <V, M : MutableMap<in Boolean, in V>> BooleanArray.associateWi
  * @sample samples.collections.Collections.Transformations.associateWithTo
  */
 @SinceKotlin("1.4")
+@IgnorableReturnValue
 @kotlin.internal.InlineOnly
 public inline fun <V, M : MutableMap<in Char, in V>> CharArray.associateWithTo(destination: M, valueSelector: (Char) -> V): M {
     for (element in this) {
@@ -9962,6 +9998,7 @@ public inline fun <V, M : MutableMap<in Char, in V>> CharArray.associateWithTo(d
 /**
  * Appends all elements to the given [destination] collection.
  */
+@IgnorableReturnValue
 public fun <T, C : MutableCollection<in T>> Array<out T>.toCollection(destination: C): C {
     for (item in this) {
         destination.add(item)
@@ -9972,6 +10009,7 @@ public fun <T, C : MutableCollection<in T>> Array<out T>.toCollection(destinatio
 /**
  * Appends all elements to the given [destination] collection.
  */
+@IgnorableReturnValue
 public fun <C : MutableCollection<in Byte>> ByteArray.toCollection(destination: C): C {
     for (item in this) {
         destination.add(item)
@@ -9982,6 +10020,7 @@ public fun <C : MutableCollection<in Byte>> ByteArray.toCollection(destination: 
 /**
  * Appends all elements to the given [destination] collection.
  */
+@IgnorableReturnValue
 public fun <C : MutableCollection<in Short>> ShortArray.toCollection(destination: C): C {
     for (item in this) {
         destination.add(item)
@@ -9992,6 +10031,7 @@ public fun <C : MutableCollection<in Short>> ShortArray.toCollection(destination
 /**
  * Appends all elements to the given [destination] collection.
  */
+@IgnorableReturnValue
 public fun <C : MutableCollection<in Int>> IntArray.toCollection(destination: C): C {
     for (item in this) {
         destination.add(item)
@@ -10002,6 +10042,7 @@ public fun <C : MutableCollection<in Int>> IntArray.toCollection(destination: C)
 /**
  * Appends all elements to the given [destination] collection.
  */
+@IgnorableReturnValue
 public fun <C : MutableCollection<in Long>> LongArray.toCollection(destination: C): C {
     for (item in this) {
         destination.add(item)
@@ -10012,6 +10053,7 @@ public fun <C : MutableCollection<in Long>> LongArray.toCollection(destination: 
 /**
  * Appends all elements to the given [destination] collection.
  */
+@IgnorableReturnValue
 public fun <C : MutableCollection<in Float>> FloatArray.toCollection(destination: C): C {
     for (item in this) {
         destination.add(item)
@@ -10022,6 +10064,7 @@ public fun <C : MutableCollection<in Float>> FloatArray.toCollection(destination
 /**
  * Appends all elements to the given [destination] collection.
  */
+@IgnorableReturnValue
 public fun <C : MutableCollection<in Double>> DoubleArray.toCollection(destination: C): C {
     for (item in this) {
         destination.add(item)
@@ -10032,6 +10075,7 @@ public fun <C : MutableCollection<in Double>> DoubleArray.toCollection(destinati
 /**
  * Appends all elements to the given [destination] collection.
  */
+@IgnorableReturnValue
 public fun <C : MutableCollection<in Boolean>> BooleanArray.toCollection(destination: C): C {
     for (item in this) {
         destination.add(item)
@@ -10042,6 +10086,7 @@ public fun <C : MutableCollection<in Boolean>> BooleanArray.toCollection(destina
 /**
  * Appends all elements to the given [destination] collection.
  */
+@IgnorableReturnValue
 public fun <C : MutableCollection<in Char>> CharArray.toCollection(destination: C): C {
     for (item in this) {
         destination.add(item)

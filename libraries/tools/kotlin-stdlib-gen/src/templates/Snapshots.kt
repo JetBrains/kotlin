@@ -23,6 +23,7 @@ object Snapshots : TemplateGroupBase() {
         include(CharSequences)
     } builder {
         doc { "Appends all ${f.element.pluralize()} to the given [destination] collection." }
+        annotation("@IgnorableReturnValue")
         returns("C")
         typeParam("C : MutableCollection<in T>")
         body {
@@ -272,6 +273,7 @@ object Snapshots : TemplateGroupBase() {
             If any of two pairs would have the same key the last one gets added to the map.
             """
         }
+        annotation("@IgnorableReturnValue")
         sample(when (family) {
             CharSequences -> "samples.text.Strings.associateTo"
             ArraysOfObjects, ArraysOfPrimitives -> "samples.collections.Arrays.Transformations.associateArrayOfPrimitivesTo"
@@ -354,6 +356,7 @@ object Snapshots : TemplateGroupBase() {
             If any two ${f.element.pluralize()} would have the same key returned by [keySelector] the last one gets added to the map.
             """
         }
+        annotation("@IgnorableReturnValue")
         sample(when (family) {
             CharSequences -> "samples.text.Strings.associateByTo"
             ArraysOfObjects, ArraysOfPrimitives -> "samples.collections.Arrays.Transformations.associateArrayOfPrimitivesByTo"
@@ -441,6 +444,7 @@ object Snapshots : TemplateGroupBase() {
             If any two ${f.element.pluralize()} would have the same key returned by [keySelector] the last one gets added to the map.
             """
         }
+        annotation("@IgnorableReturnValue")
         sample(when (family) {
             CharSequences -> "samples.text.Strings.associateByToWithValueTransform"
             ArraysOfObjects, ArraysOfPrimitives -> "samples.collections.Arrays.Transformations.associateArrayOfPrimitivesByToWithValueTransform"
@@ -521,6 +525,7 @@ object Snapshots : TemplateGroupBase() {
             If any two ${f.element.pluralize()} are equal, the last one overwrites the former value in the map.
             """
         }
+        annotation("@IgnorableReturnValue")
         sample(when (family) {
             CharSequences -> "samples.text.Strings.associateWithTo"
             else -> "samples.collections.Collections.Transformations.associateWithTo"
