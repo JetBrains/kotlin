@@ -2004,12 +2004,12 @@ internal class ConditionTypeMismatchImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.ConditionTypeMismatch
 
-internal class ThrowableTypeMismatchImpl(
+internal class CatchParameterTypeMismatchImpl(
     override val actualType: KaType,
     override val isMismatchDueToNullability: Boolean,
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.ThrowableTypeMismatch
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.CatchParameterTypeMismatch
 
 internal class ResultTypeMismatchImpl(
     override val expectedType: KaType,
@@ -2303,10 +2303,10 @@ internal class CatchParameterWithDefaultValueImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.CatchParameterWithDefaultValue
 
-internal class TypeParameterInCatchClauseImpl(
+internal class TypeParameterInCatchParameterImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.TypeParameterInCatchClause
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.TypeParameterInCatchParameter
 
 internal class GenericThrowableSubclassImpl(
     firDiagnostic: KtPsiDiagnostic,
@@ -4482,11 +4482,6 @@ internal class UnderscoreUsageWithoutBackticksImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.UnderscoreUsageWithoutBackticks
-
-internal class ResolvedToUnderscoreNamedCatchParameterImpl(
-    firDiagnostic: KtPsiDiagnostic,
-    token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<KtNameReferenceExpression>(firDiagnostic, token), KaFirDiagnostic.ResolvedToUnderscoreNamedCatchParameter
 
 internal class InvalidCharactersImpl(
     override val message: String,

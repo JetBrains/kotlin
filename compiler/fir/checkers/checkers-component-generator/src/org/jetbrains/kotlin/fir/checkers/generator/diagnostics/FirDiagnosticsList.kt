@@ -757,7 +757,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<ConeKotlinType>("actualType")
             parameter<Boolean>("isMismatchDueToNullability")
         }
-        val THROWABLE_TYPE_MISMATCH by error<PsiElement> {
+        val CATCH_PARAMETER_TYPE_MISMATCH by error<PsiElement> {
             parameter<ConeKotlinType>("actualType")
             parameter<Boolean>("isMismatchDueToNullability")
         }
@@ -900,7 +900,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val VARIANCE_ON_TYPE_PARAMETER_NOT_ALLOWED by error<KtTypeParameter>(PositioningStrategy.VARIANCE_MODIFIER)
 
         val CATCH_PARAMETER_WITH_DEFAULT_VALUE by error<PsiElement>()
-        val TYPE_PARAMETER_IN_CATCH_CLAUSE by error<PsiElement>()
+        val TYPE_PARAMETER_IN_CATCH_PARAMETER by error<PsiElement>()
         val GENERIC_THROWABLE_SUBCLASS by error<KtTypeParameter>()
         val INNER_CLASS_OF_GENERIC_THROWABLE_SUBCLASS by error<KtClassOrObject>(PositioningStrategy.DECLARATION_NAME)
 
@@ -1840,7 +1840,6 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
 
         val UNDERSCORE_IS_RESERVED by error<PsiElement>(PositioningStrategy.NAME_IDENTIFIER)
         val UNDERSCORE_USAGE_WITHOUT_BACKTICKS by error<PsiElement>(PositioningStrategy.NAME_IDENTIFIER)
-        val RESOLVED_TO_UNDERSCORE_NAMED_CATCH_PARAMETER by warning<KtNameReferenceExpression>()
         val INVALID_CHARACTERS by error<PsiElement>(PositioningStrategy.NAME_IDENTIFIER) {
             parameter<String>("message")
         }

@@ -16,13 +16,13 @@ fun bar() {
 }
 
 fun <T : Throwable> tryCatch() {
-    try { } catch (<!TYPE_PARAMETER_IN_CATCH_CLAUSE!>e: T<!>) { }
+    try { } catch (<!TYPE_PARAMETER_IN_CATCH_PARAMETER!>e: T<!>) { }
 }
 
 fun <T : Nothing?> test1() {
     try {
         throw Exception()
-    } catch (<!TYPE_PARAMETER_IN_CATCH_CLAUSE!>x: T & Any<!>) {
+    } catch (<!TYPE_PARAMETER_IN_CATCH_PARAMETER!>x: T & Any<!>) {
     }
 }
 

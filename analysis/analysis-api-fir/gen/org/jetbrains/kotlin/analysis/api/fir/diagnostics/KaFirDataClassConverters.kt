@@ -2345,8 +2345,8 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
-    add(FirErrors.THROWABLE_TYPE_MISMATCH) { firDiagnostic ->
-        ThrowableTypeMismatchImpl(
+    add(FirErrors.CATCH_PARAMETER_TYPE_MISMATCH) { firDiagnostic ->
+        CatchParameterTypeMismatchImpl(
             firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
             firDiagnostic.b,
             firDiagnostic as KtPsiDiagnostic,
@@ -2712,8 +2712,8 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
-    add(FirErrors.TYPE_PARAMETER_IN_CATCH_CLAUSE) { firDiagnostic ->
-        TypeParameterInCatchClauseImpl(
+    add(FirErrors.TYPE_PARAMETER_IN_CATCH_PARAMETER) { firDiagnostic ->
+        TypeParameterInCatchParameterImpl(
             firDiagnostic as KtPsiDiagnostic,
             token,
         )
@@ -5331,12 +5331,6 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
     }
     add(FirErrors.UNDERSCORE_USAGE_WITHOUT_BACKTICKS) { firDiagnostic ->
         UnderscoreUsageWithoutBackticksImpl(
-            firDiagnostic as KtPsiDiagnostic,
-            token,
-        )
-    }
-    add(FirErrors.RESOLVED_TO_UNDERSCORE_NAMED_CATCH_PARAMETER) { firDiagnostic ->
-        ResolvedToUnderscoreNamedCatchParameterImpl(
             firDiagnostic as KtPsiDiagnostic,
             token,
         )

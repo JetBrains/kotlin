@@ -1670,8 +1670,8 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         val isMismatchDueToNullability: Boolean
     }
 
-    interface ThrowableTypeMismatch : KaFirDiagnostic<PsiElement> {
-        override val diagnosticClass get() = ThrowableTypeMismatch::class
+    interface CatchParameterTypeMismatch : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = CatchParameterTypeMismatch::class
         val actualType: KaType
         val isMismatchDueToNullability: Boolean
     }
@@ -1919,8 +1919,8 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = CatchParameterWithDefaultValue::class
     }
 
-    interface TypeParameterInCatchClause : KaFirDiagnostic<PsiElement> {
-        override val diagnosticClass get() = TypeParameterInCatchClause::class
+    interface TypeParameterInCatchParameter : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = TypeParameterInCatchParameter::class
     }
 
     interface GenericThrowableSubclass : KaFirDiagnostic<KtTypeParameter> {
@@ -3734,10 +3734,6 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
 
     interface UnderscoreUsageWithoutBackticks : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = UnderscoreUsageWithoutBackticks::class
-    }
-
-    interface ResolvedToUnderscoreNamedCatchParameter : KaFirDiagnostic<KtNameReferenceExpression> {
-        override val diagnosticClass get() = ResolvedToUnderscoreNamedCatchParameter::class
     }
 
     interface InvalidCharacters : KaFirDiagnostic<PsiElement> {

@@ -39,7 +39,7 @@ object FirCatchParameterChecker : FirTryExpressionChecker(MppCheckerKind.Common)
                 if (isReified) {
                     catchParameter.requireFeatureSupport(LanguageFeature.AllowReifiedTypeInCatchClause)
                 } else {
-                    reporter.reportOn(source, FirErrors.TYPE_PARAMETER_IN_CATCH_CLAUSE)
+                    reporter.reportOn(source, FirErrors.TYPE_PARAMETER_IN_CATCH_PARAMETER)
                 }
             }
 
@@ -47,7 +47,7 @@ object FirCatchParameterChecker : FirTryExpressionChecker(MppCheckerKind.Common)
             if (!coneType.isSubtypeOfThrowable(session) || isProhibitedNothing(coneType)) {
                 reporter.reportOn(
                     source,
-                    FirErrors.THROWABLE_TYPE_MISMATCH,
+                    FirErrors.CATCH_PARAMETER_TYPE_MISMATCH,
                     coneType,
                     context.session.typeContext.isTypeMismatchDueToNullability(
                         coneType,
