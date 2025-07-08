@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.ir.util.isAdaptedFunctionReference
 import org.jetbrains.kotlin.ir.util.isInlineParameter
 import org.jetbrains.kotlin.ir.util.setDeclarationsParent
 import org.jetbrains.kotlin.ir.visitors.*
+import org.jetbrains.kotlin.utils.addIfNotNull
 
 /**
  * Extracts local classes from inline lambdas.
@@ -69,9 +70,20 @@ class LocalClassesInInlineLambdasLowering(val context: LoweringContext) : BodyLo
 
                 val localClasses = mutableSetOf<IrClass>()
                 val localFunctions = mutableSetOf<IrFunction>()
-                val adaptedFunctions = mutableSetOf<IrSimpleFunction>()
+                val functionsToSkip = mutableSetOf<IrSimpleFunction>()
                 val transformer = this
                 for (lambda in inlineLambdas) {
+                    lambda.acceptChildrenVoid(object : IrVisitorVoid() {
+                        override fun visitElement(element: IrElement) {
+                            element.acceptChildrenVoid(this)
+                        }
+
+                        override fun visitLocalDelegatedProperty(declaration: IrLocalDelegatedProperty) {
+                            functionsToSkip.add(declaration.getter)
+                            functionsToSkip.addIfNotNull(declaration.setter)
+                        }
+                    })
+
                     lambda.acceptChildrenVoid(object : IrVisitorVoid() {
                         override fun visitElement(element: IrElement) {
                             element.acceptChildrenVoid(this)
@@ -120,7 +132,7 @@ class LocalClassesInInlineLambdasLowering(val context: LoweringContext) : BodyLo
                                 // Skip adapted function references and inline lambdas - they will be inlined later.
                                 val shouldSkip = argument != null && (argument.isAdaptedFunctionReference() || argument.isInlineLambdaBlock())
                                 if (parameter.isInlineParameter() && shouldSkip)
-                                    adaptedFunctions += (argument as IrBlock).statements[0] as IrSimpleFunction
+                                    functionsToSkip += (argument as IrBlock).statements[0] as IrSimpleFunction
                                 else
                                     argument?.acceptVoid(this)
                             }
@@ -150,7 +162,7 @@ class LocalClassesInInlineLambdasLowering(val context: LoweringContext) : BodyLo
                     // are also present in the inline lambda's parent declaration,
                     // which we will extract the local class to.
                     remapCapturedTypesInExtractedLocalDeclarations = false,
-                ).lower(irBlock, container, data, localClasses, adaptedFunctions)
+                ).lower(irBlock, container, data, localClasses, functionsToSkip)
                 irBlock.statements.addAll(0, localClasses)
 
                 for (lambda in inlineLambdas) {
