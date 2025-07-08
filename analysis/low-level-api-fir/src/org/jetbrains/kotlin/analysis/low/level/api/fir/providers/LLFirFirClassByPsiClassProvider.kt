@@ -12,7 +12,7 @@ import com.intellij.psi.impl.compiled.ClsElementImpl
 import org.jetbrains.kotlin.analysis.api.utils.errors.withClassEntry
 import org.jetbrains.kotlin.analysis.api.utils.errors.withPsiEntry
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
-import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.symbolProvider
+import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.LLModuleWithDependenciesSymbolProvider
 import org.jetbrains.kotlin.asJava.KtLightClassMarker
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.fir.java.FirJavaFacade
 import org.jetbrains.kotlin.fir.java.JavaSymbolProvider
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
+import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.load.java.structure.impl.JavaClassImpl
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
@@ -113,7 +114,7 @@ class LLFirFirClassByPsiClassProvider(private val session: LLFirSession) : FirSe
 
     private fun getFirJavaAwareSymbolProvider(): FirJavaAwareSymbolProvider {
         session.nullableJavaSymbolProvider?.let { return it }
-        return session.symbolProvider.providers.firstIsInstance<FirJavaAwareSymbolProvider>()
+        return (session.symbolProvider as LLModuleWithDependenciesSymbolProvider).providers.firstIsInstance<FirJavaAwareSymbolProvider>()
     }
 
     internal fun FirJavaAwareSymbolProvider.getClassSymbolByPsiClass(psiClass: PsiClass): FirRegularClassSymbol {

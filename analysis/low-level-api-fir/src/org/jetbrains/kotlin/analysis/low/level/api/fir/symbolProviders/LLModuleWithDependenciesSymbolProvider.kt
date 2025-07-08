@@ -235,10 +235,3 @@ internal class LLDependenciesSymbolProvider(
         facades += newFacades
     }
 }
-
-
-/**
- * Every [LLFirSession] has [LLModuleWithDependenciesSymbolProvider] as a symbol provider
- */
-internal val LLFirSession.symbolProvider: LLModuleWithDependenciesSymbolProvider
-    get() = (this as FirSession).symbolProvider as LLModuleWithDependenciesSymbolProvider
