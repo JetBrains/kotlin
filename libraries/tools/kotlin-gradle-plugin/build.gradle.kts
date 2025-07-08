@@ -592,6 +592,19 @@ if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
         }
 
         systemProperty("resourcesPath", layout.projectDirectory.dir("src/functionalTest/resources").asFile)
+
+        //region custom Maven Local directory
+        // The Maven Local dir that Gradle uses can be customised via system property `maven.repo.local`.
+        // The functional tests require artifacts are published to Maven Local.
+        // To make sure the tests uses the same `maven.repo.local` as is configured
+        // in the buildscript, forward the value of `maven.repo.local` into the test process.
+        val mavenRepoLocal = providers.systemProperty("maven.repo.local").orNull
+        if (mavenRepoLocal != null) {
+            // Only set `maven.repo.local` if it's present in the buildscript,
+            // to avoid `maven.repo.local` being `null`.
+            systemProperty("maven.repo.local", mavenRepoLocal)
+        }
+        //endregion
     }
 
     dependencies {
