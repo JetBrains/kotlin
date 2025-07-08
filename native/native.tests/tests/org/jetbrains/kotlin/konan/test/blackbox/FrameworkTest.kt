@@ -352,6 +352,13 @@ abstract class FrameworkTestBase : AbstractNativeSimpleTest() {
     }
 
     @Test
+    fun testKT78837() {
+        val testName = "kt78837"
+        val testCase = generateObjCFramework(testName)
+        compileAndRunSwift(testName, testCase)
+    }
+
+    @Test
     fun testPermanentObjects() {
         val testName = "permanentObjects"
         Assumptions.assumeFalse(testRunSettings.get<GCType>() == GCType.NOOP) { "Test requires GC to actually happen" }
