@@ -25,7 +25,7 @@ class NumberConversionCallsTransformer(context: JsIrBackendContext) : CallsTrans
             add(it, ConversionNames.TO_FLOAT, ::useDispatchReceiver)
             add(it, ConversionNames.TO_INT, ::useDispatchReceiver)
             add(it, ConversionNames.TO_SHORT, ::useDispatchReceiver)
-            add(it, ConversionNames.TO_LONG, intrinsics.jsToLong)
+            add(it, ConversionNames.TO_LONG, intrinsics.longFromInt)
         }
 
         for (type in listOf(irBuiltIns.floatType, irBuiltIns.doubleType)) {
@@ -43,7 +43,7 @@ class NumberConversionCallsTransformer(context: JsIrBackendContext) : CallsTrans
             add(it, ConversionNames.TO_FLOAT, ::useDispatchReceiver)
             add(it, ConversionNames.TO_INT, ::useDispatchReceiver)
             add(it, ConversionNames.TO_SHORT, intrinsics.jsToShort)
-            add(it, ConversionNames.TO_LONG, intrinsics.jsToLong)
+            add(it, ConversionNames.TO_LONG, intrinsics.longFromInt)
         }
 
         irBuiltIns.shortType.let {
@@ -52,7 +52,7 @@ class NumberConversionCallsTransformer(context: JsIrBackendContext) : CallsTrans
             add(it, ConversionNames.TO_FLOAT, ::useDispatchReceiver)
             add(it, ConversionNames.TO_INT, ::useDispatchReceiver)
             add(it, ConversionNames.TO_SHORT, ::useDispatchReceiver)
-            add(it, ConversionNames.TO_LONG, intrinsics.jsToLong)
+            add(it, ConversionNames.TO_LONG, intrinsics.longFromInt)
         }
 
 

@@ -7,7 +7,7 @@ package kotlin.js
 
 import kotlin.js.internal.boxedLong.BoxedLongApi
 import kotlin.js.internal.boxedLong.fromInt
-import kotlin.js.internal.boxedLong.fromNumber
+import kotlin.js.internal.boxedLong.numberToLong
 
 internal fun numberToByte(a: dynamic): Byte = toByte(numberToInt(a))
 
@@ -22,9 +22,11 @@ internal fun toByte(@Suppress("UNUSED_PARAMETER") a: dynamic): Byte = js("a << 2
 internal fun toShort(@Suppress("UNUSED_PARAMETER") a: dynamic): Short = js("a << 16 >> 16").unsafeCast<Short>()
 
 @BoxedLongApi
-internal fun numberToLong(a: dynamic): Long = if (a is Long) a else fromNumber(a)
+@Deprecated("TODO(KT-79130): Remove after 2.2.20 branching", level = DeprecationLevel.HIDDEN)
+internal fun numberToLong(a: dynamic): Long = numberToLong(a)
 
 @BoxedLongApi
+@Deprecated("TODO(KT-79130): Remove after 2.2.20 branching", level = DeprecationLevel.HIDDEN)
 internal fun toLong(a: dynamic): Long = fromInt(a)
 
 internal fun doubleToInt(a: Double): Int = when {
