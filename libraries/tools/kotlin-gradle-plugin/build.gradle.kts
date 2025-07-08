@@ -32,23 +32,23 @@ kotlin {
             )
         )
     }
+}
 
-    tasks.named<Test>("test") {
-        useJUnit {
-            exclude("**/*LincheckTest.class")
-        }
+tasks.test {
+    useJUnit {
+        exclude("**/*LincheckTest.class")
     }
+}
 
-    tasks.register<Test>("lincheckTest") {
-        javaLauncher.set(project.getToolchainLauncherFor(JdkMajorVersion.JDK_11_0))
+tasks.register<Test>("lincheckTest") {
+    javaLauncher.set(project.getToolchainLauncherFor(JdkMajorVersion.JDK_11_0))
 
-        jvmArgs(
-            "--add-opens", "java.base/jdk.internal.misc=ALL-UNNAMED",
-            "--add-exports", "java.base/jdk.internal.util=ALL-UNNAMED",
-            "--add-exports", "java.base/sun.security.action=ALL-UNNAMED"
-        )
-        filter { include("**/*LincheckTest.class") }
-    }
+    jvmArgs(
+        "--add-opens", "java.base/jdk.internal.misc=ALL-UNNAMED",
+        "--add-exports", "java.base/jdk.internal.util=ALL-UNNAMED",
+        "--add-exports", "java.base/sun.security.action=ALL-UNNAMED"
+    )
+    filter { include("**/*LincheckTest.class") }
 }
 
 binaryCompatibilityValidator {
@@ -85,7 +85,8 @@ binaryCompatibilityValidator {
     }
 }
 
-val unpublishedCompilerRuntimeDependencies = listOf( // TODO: remove in KT-70247
+val unpublishedCompilerRuntimeDependencies = listOf(
+    // TODO: remove in KT-70247
     ":compiler:cli", // for MessageRenderer, related to MessageCollector usage
     ":compiler:cli-common", // for compiler arguments setup, for logging via MessageCollector, CompilerSystemProperties, ExitCode
     ":compiler:compiler.version", // for user projects buildscripts, `loadCompilerVersion`
