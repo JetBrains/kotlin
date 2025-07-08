@@ -198,15 +198,6 @@ private fun KotlinCompilerArgumentsLevel.collectImports(info: ArgumentsInfo): Li
                 when (it) {
                     is Enables -> listOf(Enables::class.qualifiedName!!, LanguageFeature::class.qualifiedName!!)
                     is Disables -> listOf(Disables::class.qualifiedName!!, LanguageFeature::class.qualifiedName!!)
-                    is GradleOption -> listOf(
-                        GradleOption::class.qualifiedName!!,
-                        DefaultValue::class.qualifiedName!!,
-                        GradleInputTypes::class.qualifiedName!!,
-                    )
-                    is GradleDeprecatedOption -> listOf(
-                        GradleDeprecatedOption::class.qualifiedName!!,
-                        LanguageVersion::class.qualifiedName!!,
-                    )
                     is Deprecated -> emptyList()
                     else -> error("Unknown annotation ${it::class}")
                 }
@@ -281,29 +272,6 @@ private fun SmartPrinter.generateAnnotation(annotation: Annotation, kind: Annota
             val feature = annotation.feature
             val featureName = feature.name
             println("@Disables(LanguageFeature.$featureName)")
-        }
-        is GradleOption if kind == AnnotationKind.Gradle-> {
-            println("@GradleOption(")
-            withIndent {
-                println("value = DefaultValue.${annotation.value.name},")
-                println("gradleInputType = GradleInputTypes.${annotation.gradleInputType.name},")
-                if (annotation.shouldGenerateDeprecatedKotlinOptions) {
-                    println("shouldGenerateDeprecatedKotlinOptions = true,")
-                }
-                if (annotation.gradleName != "") {
-                    println("""gradleName = "${annotation.gradleName}",""")
-                }
-            }
-            println(")")
-        }
-        is GradleDeprecatedOption if kind == AnnotationKind.Gradle -> {
-            println("@GradleDeprecatedOption(")
-            withIndent {
-                println("""message = "${annotation.message}",""")
-                println("removeAfter = LanguageVersion.${annotation.removeAfter.name},")
-                println("level = DeprecationLevel.${annotation.level.name}")
-            }
-            println(")")
         }
         is Deprecated if kind == AnnotationKind.Gradle -> {
             print("@Deprecated(")

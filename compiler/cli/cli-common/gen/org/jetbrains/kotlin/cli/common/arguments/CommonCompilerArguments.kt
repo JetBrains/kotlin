@@ -6,7 +6,6 @@ package org.jetbrains.kotlin.cli.common.arguments
 
 import com.intellij.util.xmlb.annotations.Transient
 import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.config.LanguageVersion
 
 // This file was generated automatically. See generator in :compiler:cli:cli-arguments-generator
 // Please declare arguments in compiler/arguments/src/org/jetbrains/kotlin/arguments/description/CommonCompilerArguments.kt
@@ -27,11 +26,6 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
             field = value
         }
 
-    @GradleOption(
-        value = DefaultValue.LANGUAGE_VERSIONS,
-        gradleInputType = GradleInputTypes.INPUT,
-        shouldGenerateDeprecatedKotlinOptions = true,
-    )
     @Argument(
         value = "-language-version",
         valueDescription = "<version>",
@@ -43,11 +37,6 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
             field = if (value.isNullOrEmpty()) null else value
         }
 
-    @GradleOption(
-        value = DefaultValue.API_VERSIONS,
-        gradleInputType = GradleInputTypes.INPUT,
-        shouldGenerateDeprecatedKotlinOptions = true,
-    )
     @Argument(
         value = "-api-version",
         valueDescription = "<version>",
@@ -70,10 +59,6 @@ abstract class CommonCompilerArguments : CommonToolArguments() {
             field = if (value.isNullOrEmpty()) null else value
         }
 
-    @GradleOption(
-        value = DefaultValue.BOOLEAN_FALSE_DEFAULT,
-        gradleInputType = GradleInputTypes.INPUT,
-    )
     @Argument(
         value = "-progressive",
         deprecatedName = "-Xprogressive",
@@ -109,10 +94,6 @@ progressive mode enabled may cause compilation errors in progressive mode.""",
             field = value
         }
 
-    @GradleOption(
-        value = DefaultValue.EMPTY_STRING_ARRAY_DEFAULT,
-        gradleInputType = GradleInputTypes.INPUT,
-    )
     @Argument(
         value = "-opt-in",
         deprecatedName = "-Xopt-in",
@@ -472,15 +453,6 @@ They should be a subset of sources passed as free arguments.""",
             field = value
         }
 
-    @GradleOption(
-        value = DefaultValue.BOOLEAN_FALSE_DEFAULT,
-        gradleInputType = GradleInputTypes.INPUT,
-    )
-    @GradleDeprecatedOption(
-        message = "Compiler flag -Xuse-k2 is deprecated; please use language version 2.0 instead",
-        removeAfter = LanguageVersion.KOTLIN_2_2,
-        level = DeprecationLevel.HIDDEN
-    )
     @Argument(
         value = "-Xuse-k2",
         description = "Compile using the experimental K2 compiler pipeline. No compatibility guarantees are provided yet.",

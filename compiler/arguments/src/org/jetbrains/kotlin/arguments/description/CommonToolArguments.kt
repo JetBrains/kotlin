@@ -50,7 +50,7 @@ val actualCommonToolsArguments by compilerArgumentsLevel(CompilerArgumentsLevelN
 
         valueType = BooleanType.defaultFalse
 
-        additionalAnnotations(
+        additionalMetadata(
             GradleOption(
                 value = DefaultValue.BOOLEAN_FALSE_DEFAULT,
                 gradleInputType = GradleInputTypes.INTERNAL,
@@ -68,7 +68,7 @@ val actualCommonToolsArguments by compilerArgumentsLevel(CompilerArgumentsLevelN
 
         valueType = BooleanType.defaultFalse
 
-        additionalAnnotations(
+        additionalMetadata(
             GradleOption(
                 value = DefaultValue.BOOLEAN_FALSE_DEFAULT,
                 gradleInputType = GradleInputTypes.INTERNAL,
@@ -87,7 +87,7 @@ val actualCommonToolsArguments by compilerArgumentsLevel(CompilerArgumentsLevelN
 
         valueType = BooleanType.defaultFalse
 
-        additionalAnnotations(
+        additionalMetadata(
             GradleOption(
                 value = DefaultValue.BOOLEAN_FALSE_DEFAULT,
                 gradleInputType = GradleInputTypes.INPUT,
@@ -106,7 +106,7 @@ val actualCommonToolsArguments by compilerArgumentsLevel(CompilerArgumentsLevelN
 
         valueType = BooleanType.defaultFalse
 
-        additionalAnnotations(
+        additionalMetadata(
             GradleOption(
                 value = DefaultValue.BOOLEAN_FALSE_DEFAULT,
                 gradleInputType = GradleInputTypes.INPUT,

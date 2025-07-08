@@ -147,7 +147,7 @@ val actualNativeArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.
         valueType = StringType.defaultNull
         valueDescription = "<name>".asReleaseDependent()
 
-        additionalAnnotations(
+        additionalMetadata(
             GradleOption(
                 value = DefaultValue.STRING_NULL_DEFAULT,
                 gradleInputType = GradleInputTypes.INPUT

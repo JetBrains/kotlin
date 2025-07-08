@@ -7,8 +7,7 @@ package org.jetbrains.kotlin.cli.common.arguments
 
 import org.jetbrains.kotlin.config.LanguageVersion
 
-@Retention(AnnotationRetention.RUNTIME)
-annotation class GradleDeprecatedOption(
+class GradleDeprecatedOption(
     val message: String = "This option has no effect and will be removed in a future release.",
     val removeAfter: LanguageVersion,
     val level: DeprecationLevel

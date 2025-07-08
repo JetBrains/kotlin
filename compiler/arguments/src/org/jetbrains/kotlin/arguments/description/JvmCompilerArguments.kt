@@ -71,7 +71,7 @@ val actualJvmCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLevelN
         description = "Don't automatically include the Java runtime in the classpath.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
-        additionalAnnotations(
+        additionalMetadata(
             GradleOption(
                 value = DefaultValue.BOOLEAN_FALSE_DEFAULT,
                 gradleInputType = GradleInputTypes.INPUT,
@@ -127,7 +127,7 @@ val actualJvmCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLevelN
         valueType = StringType.defaultNull
         valueDescription = "<name>".asReleaseDependent()
 
-        additionalAnnotations(
+        additionalMetadata(
             GradleOption(
                 value = DefaultValue.STRING_NULL_DEFAULT,
                 gradleInputType = GradleInputTypes.INPUT,
@@ -152,7 +152,7 @@ val actualJvmCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLevelN
         )
         valueDescription = "<version>".asReleaseDependent()
 
-        additionalAnnotations(
+        additionalMetadata(
             GradleOption(
                 value = DefaultValue.JVM_TARGET_VERSIONS,
                 gradleInputType = GradleInputTypes.INPUT,
@@ -169,7 +169,7 @@ val actualJvmCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLevelN
         description = "Generate metadata for Java 1.8 reflection on method parameters.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
-        additionalAnnotations(
+        additionalMetadata(
             GradleOption(
                 value = DefaultValue.BOOLEAN_FALSE_DEFAULT,
                 gradleInputType = GradleInputTypes.INPUT,
@@ -193,7 +193,7 @@ val actualJvmCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLevelN
         valueType = StringType.defaultNull
         valueDescription = "{enable|no-compatibility|disable}".asReleaseDependent()
 
-        additionalAnnotations(
+        additionalMetadata(
             GradleOption(
                 value = DefaultValue.JVM_DEFAULT_MODES,
                 gradleInputType = GradleInputTypes.INPUT,

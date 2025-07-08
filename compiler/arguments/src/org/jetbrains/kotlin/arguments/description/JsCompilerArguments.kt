@@ -61,7 +61,7 @@ val actualJsArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.jsAr
         description = "Base name of generated files.".asReleaseDependent()
         valueType = StringType.defaultNull
 
-        additionalAnnotations(
+        additionalMetadata(
             GradleOption(
                 value = DefaultValue.STRING_NULL_DEFAULT,
                 gradleInputType = GradleInputTypes.INPUT,
@@ -88,7 +88,7 @@ val actualJsArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.jsAr
         description = "Generate a source map.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
-        additionalAnnotations(
+        additionalMetadata(
             GradleOption(
                 value = DefaultValue.BOOLEAN_FALSE_DEFAULT,
                 gradleInputType = GradleInputTypes.INPUT,
@@ -105,7 +105,7 @@ val actualJsArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.jsAr
         description = "Add the specified prefix to the paths in the source map.".asReleaseDependent()
         valueType = StringType.defaultNull
 
-        additionalAnnotations(
+        additionalMetadata(
             GradleOption(
                 value = DefaultValue.STRING_NULL_DEFAULT,
                 gradleInputType = GradleInputTypes.INPUT,
@@ -138,7 +138,7 @@ val actualJsArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.jsAr
         valueType = StringType.defaultNull
         valueDescription = "{always|never|inlining}".asReleaseDependent()
 
-        additionalAnnotations(
+        additionalMetadata(
             GradleOption(
                 value = DefaultValue.JS_SOURCE_MAP_CONTENT_MODES,
                 gradleInputType = GradleInputTypes.INPUT,
@@ -156,7 +156,7 @@ val actualJsArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.jsAr
         valueType = StringType.defaultNull
         valueDescription = "{no|simple-names|fully-qualified-names}".asReleaseDependent()
 
-        additionalAnnotations(
+        additionalMetadata(
             GradleOption(
                 value = DefaultValue.JS_SOURCE_MAP_NAMES_POLICY,
                 gradleInputType = GradleInputTypes.INPUT,
@@ -174,7 +174,7 @@ val actualJsArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.jsAr
         valueType = StringType.defaultNull
         valueDescription = "{ es5, es2015 }".asReleaseDependent()
 
-        additionalAnnotations(
+        additionalMetadata(
             GradleOption(
                 value = DefaultValue.JS_ECMA_VERSIONS,
                 gradleInputType = GradleInputTypes.INPUT,
@@ -201,7 +201,7 @@ val actualJsArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.jsAr
         valueType = StringType.defaultNull
         valueDescription = "{plain|amd|commonjs|umd|es}".asReleaseDependent()
 
-        additionalAnnotations(
+        additionalMetadata(
             GradleOption(
                 value = DefaultValue.JS_MODULE_KINDS,
                 gradleInputType = GradleInputTypes.INPUT,
@@ -219,7 +219,7 @@ val actualJsArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.jsAr
         valueType = StringType.defaultNull
         valueDescription = "{call|noCall}".asReleaseDependent()
 
-        additionalAnnotations(
+        additionalMetadata(
             GradleOption(
                 value = DefaultValue.JS_MAIN,
                 gradleInputType = GradleInputTypes.INPUT,
@@ -440,7 +440,7 @@ val actualJsArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.jsAr
         description = "Let generated JavaScript code use ES2015 classes. Enabled by default in case of ES2015 target usage".asReleaseDependent()
         valueType = BooleanType.defaultNull
 
-        additionalAnnotations(
+        additionalMetadata(
             GradleOption(
                 value = DefaultValue.BOOLEAN_NULL_DEFAULT,
                 gradleInputType = GradleInputTypes.INPUT,
@@ -501,6 +501,8 @@ It is deprecated and will be removed in a future release.""".asReleaseDependent(
 
         additionalAnnotations(
             Deprecated("It is senseless to use with IR compiler. Only for compatibility."),
+        )
+        additionalMetadata(
             GradleOption(
                 value = DefaultValue.BOOLEAN_FALSE_DEFAULT,
                 gradleInputType = GradleInputTypes.INPUT,
@@ -522,7 +524,7 @@ It is deprecated and will be removed in a future release.""".asReleaseDependent(
         description = "Disable internal declaration export.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
-        additionalAnnotations(
+        additionalMetadata(
             GradleOption(
                 value = DefaultValue.BOOLEAN_FALSE_DEFAULT,
                 gradleInputType = GradleInputTypes.INPUT,

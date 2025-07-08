@@ -5,7 +5,6 @@
 package org.jetbrains.kotlin.cli.common.arguments
 
 import com.intellij.util.xmlb.annotations.Transient
-import org.jetbrains.kotlin.config.LanguageVersion
 
 // This file was generated automatically. See generator in :compiler:cli:cli-arguments-generator
 // Please declare arguments in compiler/arguments/src/org/jetbrains/kotlin/arguments/description/JsCompilerArguments.kt
@@ -36,11 +35,6 @@ class K2JSCompilerArguments : K2WasmCompilerArguments() {
             field = if (value.isNullOrEmpty()) null else value
         }
 
-    @GradleOption(
-        value = DefaultValue.STRING_NULL_DEFAULT,
-        gradleInputType = GradleInputTypes.INPUT,
-        shouldGenerateDeprecatedKotlinOptions = true,
-    )
     @Argument(
         value = "-ir-output-name",
         description = "Base name of generated files.",
@@ -62,11 +56,6 @@ class K2JSCompilerArguments : K2WasmCompilerArguments() {
             field = if (value.isNullOrEmpty()) null else value
         }
 
-    @GradleOption(
-        value = DefaultValue.BOOLEAN_FALSE_DEFAULT,
-        gradleInputType = GradleInputTypes.INPUT,
-        shouldGenerateDeprecatedKotlinOptions = true,
-    )
     @Argument(
         value = "-source-map",
         description = "Generate a source map.",
@@ -77,11 +66,6 @@ class K2JSCompilerArguments : K2WasmCompilerArguments() {
             field = value
         }
 
-    @GradleOption(
-        value = DefaultValue.STRING_NULL_DEFAULT,
-        gradleInputType = GradleInputTypes.INPUT,
-        shouldGenerateDeprecatedKotlinOptions = true,
-    )
     @Argument(
         value = "-source-map-prefix",
         description = "Add the specified prefix to the paths in the source map.",
@@ -104,11 +88,6 @@ class K2JSCompilerArguments : K2WasmCompilerArguments() {
             field = if (value.isNullOrEmpty()) null else value
         }
 
-    @GradleOption(
-        value = DefaultValue.JS_SOURCE_MAP_CONTENT_MODES,
-        gradleInputType = GradleInputTypes.INPUT,
-        shouldGenerateDeprecatedKotlinOptions = true,
-    )
     @Argument(
         value = "-source-map-embed-sources",
         valueDescription = "{always|never|inlining}",
@@ -120,11 +99,6 @@ class K2JSCompilerArguments : K2WasmCompilerArguments() {
             field = if (value.isNullOrEmpty()) null else value
         }
 
-    @GradleOption(
-        value = DefaultValue.JS_SOURCE_MAP_NAMES_POLICY,
-        gradleInputType = GradleInputTypes.INPUT,
-        shouldGenerateDeprecatedKotlinOptions = true,
-    )
     @Argument(
         value = "-source-map-names-policy",
         valueDescription = "{no|simple-names|fully-qualified-names}",
@@ -136,11 +110,6 @@ class K2JSCompilerArguments : K2WasmCompilerArguments() {
             field = if (value.isNullOrEmpty()) null else value
         }
 
-    @GradleOption(
-        value = DefaultValue.JS_ECMA_VERSIONS,
-        gradleInputType = GradleInputTypes.INPUT,
-        shouldGenerateDeprecatedKotlinOptions = true,
-    )
     @Argument(
         value = "-target",
         valueDescription = "{ es5, es2015 }",
@@ -162,11 +131,6 @@ class K2JSCompilerArguments : K2WasmCompilerArguments() {
             field = if (value.isNullOrEmpty()) null else value
         }
 
-    @GradleOption(
-        value = DefaultValue.JS_MODULE_KINDS,
-        gradleInputType = GradleInputTypes.INPUT,
-        shouldGenerateDeprecatedKotlinOptions = true,
-    )
     @Argument(
         value = "-module-kind",
         valueDescription = "{plain|amd|commonjs|umd|es}",
@@ -178,11 +142,6 @@ class K2JSCompilerArguments : K2WasmCompilerArguments() {
             field = if (value.isNullOrEmpty()) null else value
         }
 
-    @GradleOption(
-        value = DefaultValue.JS_MAIN,
-        gradleInputType = GradleInputTypes.INPUT,
-        shouldGenerateDeprecatedKotlinOptions = true,
-    )
     @Argument(
         value = "-main",
         valueDescription = "{call|noCall}",
@@ -409,11 +368,6 @@ class K2JSCompilerArguments : K2WasmCompilerArguments() {
             field = value
         }
 
-    @GradleOption(
-        value = DefaultValue.BOOLEAN_NULL_DEFAULT,
-        gradleInputType = GradleInputTypes.INPUT,
-        shouldGenerateDeprecatedKotlinOptions = true,
-    )
     @Argument(
         value = "-Xes-classes",
         description = "Let generated JavaScript code use ES2015 classes. Enabled by default in case of ES2015 target usage",
@@ -465,16 +419,6 @@ class K2JSCompilerArguments : K2WasmCompilerArguments() {
         }
 
     @Deprecated("It is senseless to use with IR compiler. Only for compatibility.")
-    @GradleOption(
-        value = DefaultValue.BOOLEAN_FALSE_DEFAULT,
-        gradleInputType = GradleInputTypes.INPUT,
-        shouldGenerateDeprecatedKotlinOptions = true,
-    )
-    @GradleDeprecatedOption(
-        message = "Only for legacy backend.",
-        removeAfter = LanguageVersion.KOTLIN_2_2,
-        level = DeprecationLevel.ERROR
-    )
     @Argument(
         value = "-Xtyped-arrays",
         description = """This option does nothing and is left for compatibility with the legacy backend.
@@ -486,11 +430,6 @@ It is deprecated and will be removed in a future release.""",
             field = value
         }
 
-    @GradleOption(
-        value = DefaultValue.BOOLEAN_FALSE_DEFAULT,
-        gradleInputType = GradleInputTypes.INPUT,
-        shouldGenerateDeprecatedKotlinOptions = true,
-    )
     @Argument(
         value = "-Xfriend-modules-disabled",
         description = "Disable internal declaration export.",

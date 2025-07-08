@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.arguments.dsl.base
 import kotlinx.serialization.Serializable
 import org.jetbrains.kotlin.arguments.dsl.types.KotlinArgumentValueType
 import kotlin.properties.ReadOnlyProperty
+import kotlin.reflect.KClass
 
 /**
  * A Kotlin compiler argument description.
@@ -53,6 +54,9 @@ data class KotlinCompilerArgument(
 
     @kotlinx.serialization.Transient
     val isObsolete: Boolean = false,
+
+    @kotlinx.serialization.Transient
+    val additionalMetadata: List<Any> = emptyList(),
 ) : WithKotlinReleaseVersionsMetadata {
 
     // corresponds to [org.jetbrains.kotlin.cli.common.arguments.Argument.Delimiters]
@@ -128,6 +132,11 @@ internal class KotlinCompilerArgumentBuilder {
     private val additionalAnnotations: MutableList<Annotation> = mutableListOf()
 
     /**
+     * @see KotlinCompilerArgument.additionalMetadata
+     */
+    private val additionalMetadata: MutableList<Any> = mutableListOf()
+
+    /**
      * Convenient method to define this argument [KotlinReleaseVersionLifecycle] metadata.
      */
     fun lifecycle(
@@ -152,6 +161,13 @@ internal class KotlinCompilerArgumentBuilder {
     }
 
     /**
+     * Convenient method to add additional into [KotlinCompilerArgument.additionalMetadata].
+     */
+    fun additionalMetadata(vararg metadata: Any) {
+        additionalMetadata.addAll(metadata)
+    }
+
+    /**
      * Build a new instance of [KotlinCompilerArgument].
      */
     fun build(): KotlinCompilerArgument = KotlinCompilerArgument(
@@ -166,11 +182,12 @@ internal class KotlinCompilerArgumentBuilder {
         compilerName = compilerName,
         delimiter = delimiter,
         isObsolete = isObsolete,
+        additionalMetadata = additionalMetadata
     )
 }
 
 /**
- * Allows creating compiler argument definitions that are separate from the main DSL and could later be added to the main DSL.	
+ * Allows creating compiler argument definitions that are separate from the main DSL and could later be added to the main DSL.
  *
  * Usage example:
  * ```

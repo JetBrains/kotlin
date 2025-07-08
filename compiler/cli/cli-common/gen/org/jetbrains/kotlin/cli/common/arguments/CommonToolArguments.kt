@@ -42,11 +42,6 @@ abstract class CommonToolArguments : Freezable(), Serializable {
             field = value
         }
 
-    @GradleOption(
-        value = DefaultValue.BOOLEAN_FALSE_DEFAULT,
-        gradleInputType = GradleInputTypes.INTERNAL,
-        shouldGenerateDeprecatedKotlinOptions = true,
-    )
     @Argument(
         value = "-verbose",
         description = "Enable verbose logging output.",
@@ -57,11 +52,6 @@ abstract class CommonToolArguments : Freezable(), Serializable {
             field = value
         }
 
-    @GradleOption(
-        value = DefaultValue.BOOLEAN_FALSE_DEFAULT,
-        gradleInputType = GradleInputTypes.INTERNAL,
-        shouldGenerateDeprecatedKotlinOptions = true,
-    )
     @Argument(
         value = "-nowarn",
         description = "Don't generate any warnings.",
@@ -72,11 +62,6 @@ abstract class CommonToolArguments : Freezable(), Serializable {
             field = value
         }
 
-    @GradleOption(
-        value = DefaultValue.BOOLEAN_FALSE_DEFAULT,
-        gradleInputType = GradleInputTypes.INPUT,
-        shouldGenerateDeprecatedKotlinOptions = true,
-    )
     @Argument(
         value = "-Werror",
         description = "Report an error if there are any warnings.",
@@ -87,10 +72,6 @@ abstract class CommonToolArguments : Freezable(), Serializable {
             field = value
         }
 
-    @GradleOption(
-        value = DefaultValue.BOOLEAN_FALSE_DEFAULT,
-        gradleInputType = GradleInputTypes.INPUT,
-    )
     @Argument(
         value = "-Wextra",
         description = "Enable extra checkers for K2.",

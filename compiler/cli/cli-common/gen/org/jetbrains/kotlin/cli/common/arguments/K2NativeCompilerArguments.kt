@@ -139,10 +139,6 @@ Note: This option is deprecated and will be removed in one of the future release
             field = if (value.isNullOrEmpty()) null else value
         }
 
-    @GradleOption(
-        value = DefaultValue.STRING_NULL_DEFAULT,
-        gradleInputType = GradleInputTypes.INPUT,
-    )
     @Argument(
         value = "-module-name",
         deprecatedName = "-module_name",

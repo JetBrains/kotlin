@@ -25,7 +25,7 @@ val actualCommonCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLev
         )
         valueDescription = "<version>".asReleaseDependent()
 
-        additionalAnnotations(
+        additionalMetadata(
             GradleOption(
                 value = DefaultValue.LANGUAGE_VERSIONS,
                 gradleInputType = GradleInputTypes.INPUT,
@@ -45,7 +45,7 @@ val actualCommonCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLev
         )
         valueDescription = "<version>".asReleaseDependent()
 
-        additionalAnnotations(
+        additionalMetadata(
             GradleOption(
                 value = DefaultValue.API_VERSIONS,
                 gradleInputType = GradleInputTypes.INPUT,
@@ -80,7 +80,7 @@ val actualCommonCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLev
                 """.trimIndent().asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
-        additionalAnnotations(
+        additionalMetadata(
             GradleOption(
                 value = DefaultValue.BOOLEAN_FALSE_DEFAULT,
                 gradleInputType = GradleInputTypes.INPUT
@@ -118,7 +118,7 @@ val actualCommonCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLev
         valueType = StringArrayType.defaultNull
         valueDescription = "<fq.name>".asReleaseDependent()
 
-        additionalAnnotations(
+        additionalMetadata(
             GradleOption(
                 value = DefaultValue.EMPTY_STRING_ARRAY_DEFAULT,
                 gradleInputType = GradleInputTypes.INPUT
@@ -483,7 +483,7 @@ val actualCommonCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLev
             "Compile using the experimental K2 compiler pipeline. No compatibility guarantees are provided yet.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
-        additionalAnnotations(
+        additionalMetadata(
             GradleOption(
                 value = DefaultValue.BOOLEAN_FALSE_DEFAULT,
                 gradleInputType = GradleInputTypes.INPUT,
