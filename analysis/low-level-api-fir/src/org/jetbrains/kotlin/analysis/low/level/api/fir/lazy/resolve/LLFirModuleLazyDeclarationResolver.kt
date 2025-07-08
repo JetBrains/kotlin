@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.llFirMod
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.LLFirLazyResolverRunner
 import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.PartialBodyAnalysisSuspendedException
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.LLFlightRecorder
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkCanceled
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.getContainingFile
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
@@ -38,7 +39,10 @@ internal class LLFirModuleLazyDeclarationResolver(val moduleComponents: LLFirMod
      * Resolution is performed under the lock specific to each declaration that is going to be resolved.
      */
     fun lazyResolve(target: FirElementWithResolveState, toPhase: FirResolvePhase) {
-        if (target.resolvePhase >= toPhase) return
+        if (target.resolvePhase >= toPhase) {
+            LLFlightRecorder.readyPhase(target, toPhase, withCallableMembers = false)
+            return
+        }
 
         lazyResolve(target, toPhase, LLFirResolveDesignationCollector::getDesignationToResolve)
     }
@@ -52,6 +56,7 @@ internal class LLFirModuleLazyDeclarationResolver(val moduleComponents: LLFirMod
      */
     fun lazyResolveWithCallableMembers(target: FirRegularClass, toPhase: FirResolvePhase) {
         if (target.resolvePhase >= toPhase && target.declarations.all { it !is FirCallableDeclaration || it.resolvePhase >= toPhase }) {
+            LLFlightRecorder.readyPhase(target, toPhase, withCallableMembers = true)
             return
         }
 
@@ -117,11 +122,20 @@ internal class LLFirModuleLazyDeclarationResolver(val moduleComponents: LLFirMod
     }
 
     private fun resolveFileToImportsWithLock(firFile: FirFile) {
-        val lockProvider = moduleComponents.globalResolveComponents.lockProvider
-        lockProvider.withGlobalLock {
-            lockProvider.withWriteLock(firFile, FirResolvePhase.IMPORTS) {
-                firFile.transformSingle(FirImportResolveTransformer(firFile.moduleData.session), null)
+        val event = LLFlightRecorder.phase(firFile, FirResolvePhase.IMPORTS)
+
+        try {
+            val lockProvider = moduleComponents.globalResolveComponents.lockProvider
+            lockProvider.withGlobalLock {
+                lockProvider.withWriteLock(firFile, FirResolvePhase.IMPORTS) {
+                    firFile.transformSingle(FirImportResolveTransformer(firFile.moduleData.session), null)
+                }
             }
+
+            event?.end()
+        } catch (throwable: Throwable) {
+            event?.endWithFailure(throwable)
+            throw throwable
         }
     }
 
@@ -137,10 +151,15 @@ internal class LLFirModuleLazyDeclarationResolver(val moduleComponents: LLFirMod
                 currentPhase = currentPhase.next
                 checkCanceled()
 
-                LLFirLazyResolverRunner.runLazyResolverByPhase(
-                    phase = currentPhase,
-                    target = target,
-                )
+                val event = LLFlightRecorder.phase(target, currentPhase)
+
+                try {
+                    LLFirLazyResolverRunner.runLazyResolverByPhase(currentPhase, target)
+                    event?.end()
+                } catch (throwable: Throwable) {
+                    event?.endWithFailure(throwable)
+                    throw throwable
+                }
             }
         } finally {
             helper.afterLazyResolve()

@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.analysis.api.platform.KaCachedService
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSessionInvalidationService
 import org.jetbrains.kotlin.analysis.low.level.api.fir.statistics.LLStatisticsService
 import org.jetbrains.kotlin.analysis.low.level.api.fir.statistics.domains.LLAnalysisSessionStatistics
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.LLFlightRecorder
 import org.jetbrains.kotlin.utils.exceptions.rethrowIntellijPlatformExceptionIfNeeded
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.CountDownLatch
@@ -277,6 +278,7 @@ internal class KaFirStopWorldCacheCleaner(private val project: Project) : KaFirC
                 }
             } else if (existingLatch == null) {
                 LOG.trace { "K2 cache cleanup scheduled from ${Thread.currentThread()}, $analyzerCount analyses left" }
+                LLFlightRecorder.stopWorldSessionInvalidationScheduled()
                 cleanupScheduleMs = System.currentTimeMillis()
                 cleanupLatch = CountDownLatch(1)
             }
@@ -303,6 +305,8 @@ internal class KaFirStopWorldCacheCleaner(private val project: Project) : KaFirC
 
             val totalMs = System.currentTimeMillis() - cleanupScheduleMs
             LOG.trace { "K2 cache cleanup complete from ${Thread.currentThread()} in $cleanupMs ms ($totalMs ms after the request)" }
+
+            LLFlightRecorder.stopWorldSessionInvalidationComplete()
         } catch (e: Throwable) {
             rethrowIntellijPlatformExceptionIfNeeded(e)
 
