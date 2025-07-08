@@ -615,7 +615,7 @@ private class LLFirBodyTargetResolver(target: LLFirResolveTarget) : LLFirAbstrac
     override fun doResolveWithoutLock(target: FirElementWithResolveState): Boolean {
         when (target) {
             is FirRegularClass -> {
-                if (target.resolvePhase >= resolverPhase) return true
+                if (checkAnalysisReadiness(target, containingDeclarations, resolverPhase)) return true
 
                 // resolve class CFG graph here, to do this we need to have property & init blocks resoled
                 resolveMembersForControlFlowGraph(
@@ -633,7 +633,7 @@ private class LLFirBodyTargetResolver(target: LLFirResolveTarget) : LLFirAbstrac
             }
 
             is FirFile -> {
-                if (target.resolvePhase >= resolverPhase) return true
+                if (checkAnalysisReadiness(target, containingDeclarations, resolverPhase)) return true
 
                 // resolve file CFG graph here, to do this we need to have property blocks resoled
                 resolveMembersForControlFlowGraph(
@@ -651,7 +651,7 @@ private class LLFirBodyTargetResolver(target: LLFirResolveTarget) : LLFirAbstrac
             }
 
             is FirScript -> {
-                if (target.resolvePhase >= resolverPhase) return true
+                if (checkAnalysisReadiness(target, containingDeclarations, resolverPhase)) return true
 
                 // resolve properties so they are available for CFG building
                 resolveMembersForControlFlowGraph(

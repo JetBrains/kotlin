@@ -243,3 +243,60 @@ internal fun checkAnnotationIsResolved(annotation: FirAnnotation, annotationCont
         }
     }
 }
+
+/**
+ * Checks whether the given [target] is resolved at the [requestedPhase].
+ * If resolution is already complete, a [LLReadyPhaseEvent] is sent.
+ *
+ * @param target The declaration being analyzed.
+ * @param containingDeclarations The list of declarations enclosing [target] starting from the [FirFile], if available.
+ * @param requestedPhase The phase the declaration is being analyzed to.
+ *
+ * [containingDeclarations] are passed as an optimization.
+ * If the argument value is `null`, the list will be computed before the [LLReadyPhaseEvent] submission.
+ *
+ * @return `true` if the [target] is resolved at the [requestedPhase], `false` otherwise.
+ */
+internal fun checkAnalysisReadiness(
+    target: FirElementWithResolveState,
+    containingDeclarations: List<FirDeclaration>?,
+    requestedPhase: FirResolvePhase,
+    currentPhase: FirResolvePhase = target.resolvePhase
+): Boolean {
+    if (currentPhase >= requestedPhase) {
+        if (shouldRecordReadyPhaseEvent(requestedPhase)) {
+            if (containingDeclarations != null) {
+                LLFlightRecorder.readyPhase(target, containingDeclarations, requestedPhase)
+            } else {
+                LLFlightRecorder.readyPhase(target, requestedPhase)
+            }
+        }
+        return true
+    }
+
+    return false
+}
+
+private fun shouldRecordReadyPhaseEvent(requestedPhase: FirResolvePhase): Boolean {
+    return when (requestedPhase) {
+        FirResolvePhase.RAW_FIR -> false
+
+        FirResolvePhase.IMPORTS -> {
+            /**
+             * Technically, we should record here [LLFlightRecorder.readyPhase] events here. However, imports for files are requested
+             * too often. Moreover, import resolution is quite fast, so we won't be able to get any useful information from these events.
+             */
+            false
+        }
+
+        FirResolvePhase.SEALED_CLASS_INHERITORS -> {
+            /**
+             * The phase is no-op in LL FIR.
+             * @see [org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLSealedInheritorsProvider]
+             */
+            false
+        }
+
+        else -> true
+    }
+}

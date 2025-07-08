@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.throwUnexpectedFirEle
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.FirLazyBodiesCalculator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkDeprecationProviderIsResolved
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.expressionGuard
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkAnalysisReadiness
 import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.declarations.*
@@ -80,7 +81,7 @@ private class LLFirCompilerRequiredAnnotationsTargetResolver(
     inner class LLFirCompilerRequiredAnnotationsComputationSession : CompilerRequiredAnnotationsComputationSession() {
         override fun resolveAnnotationSymbol(symbol: FirRegularClassSymbol, scopeSession: ScopeSession) {
             val regularClass = symbol.fir
-            if (regularClass.resolvePhase >= resolverPhase) return
+            if (checkAnalysisReadiness(regularClass, containingDeclarations, resolverPhase)) return
 
             symbol.lazyResolveToPhase(resolverPhase.previous)
             val designation = regularClass.collectDesignation().asResolveTarget()

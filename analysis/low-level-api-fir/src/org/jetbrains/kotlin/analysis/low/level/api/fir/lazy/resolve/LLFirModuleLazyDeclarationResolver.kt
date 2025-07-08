@@ -11,8 +11,10 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.llFirMod
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.llFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.LLFirLazyResolverRunner
 import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.PartialBodyAnalysisSuspendedException
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.LLFlightRecorder
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkCanceled
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.getContainingFile
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkAnalysisReadiness
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.transformers.FirImportResolveTransformer
@@ -38,7 +40,9 @@ internal class LLFirModuleLazyDeclarationResolver(val moduleComponents: LLFirMod
      * Resolution is performed under the lock specific to each declaration that is going to be resolved.
      */
     fun lazyResolve(target: FirElementWithResolveState, toPhase: FirResolvePhase) {
-        if (target.resolvePhase >= toPhase) return
+        if (checkAnalysisReadiness(target, containingDeclarations = null, toPhase)) {
+            return
+        }
 
         lazyResolve(target, toPhase, LLFirResolveDesignationCollector::getDesignationToResolve)
     }
@@ -52,6 +56,7 @@ internal class LLFirModuleLazyDeclarationResolver(val moduleComponents: LLFirMod
      */
     fun lazyResolveWithCallableMembers(target: FirRegularClass, toPhase: FirResolvePhase) {
         if (target.resolvePhase >= toPhase && target.declarations.all { it !is FirCallableDeclaration || it.resolvePhase >= toPhase }) {
+            LLFlightRecorder.readyPhase(target, toPhase)
             return
         }
 
@@ -111,7 +116,8 @@ internal class LLFirModuleLazyDeclarationResolver(val moduleComponents: LLFirMod
     }
 
     private fun resolveContainingFileToImports(target: FirElementWithResolveState) {
-        if (target.resolvePhase >= FirResolvePhase.IMPORTS) return
+        if (checkAnalysisReadiness(target, containingDeclarations = null, FirResolvePhase.IMPORTS)) return
+
         val firFile = target.getContainingFile() ?: return
         resolveFileToImportsWithLock(firFile)
     }
@@ -127,7 +133,7 @@ internal class LLFirModuleLazyDeclarationResolver(val moduleComponents: LLFirMod
 
     private fun lazyResolveTargets(target: LLFirResolveTarget, toPhase: FirResolvePhase) {
         var currentPhase = getMinResolvePhase(target).coerceAtLeast(FirResolvePhase.IMPORTS)
-        if (currentPhase >= toPhase) return
+        if (checkAnalysisReadiness(target.target, target.path, toPhase, currentPhase)) return
 
         val helper = LLFirResolutionActivityTracker.getInstance()
         try {

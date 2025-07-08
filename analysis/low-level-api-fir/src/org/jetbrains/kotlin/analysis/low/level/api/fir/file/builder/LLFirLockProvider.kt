@@ -9,6 +9,8 @@ import com.intellij.openapi.util.registry.Registry
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.targets.partialBodyAnalysisState
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.LLFirLazyResolveContractChecker
 import org.jetbrains.kotlin.analysis.low.level.api.fir.transformers.PartialBodyAnalysisSuspendedException
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.LLPhaseSuspensionEventCompleter
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.LLFlightRecorder
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.checkCanceled
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.errorWithFirSpecificEntries
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.lockWithPCECheck
@@ -101,6 +103,8 @@ internal class LLFirLockProvider(private val checker: LLFirLazyResolveContractCh
         updatePhase: Boolean,
         action: () -> Unit,
     ) {
+        var event: LLPhaseSuspensionEventCompleter? = null
+
         while (true) {
             checkCanceled()
 
@@ -108,24 +112,32 @@ internal class LLFirLockProvider(private val checker: LLFirLazyResolveContractCh
             val stateSnapshot = resolveState
             if (stateSnapshot.resolvePhase >= toPhase) {
                 // already resolved by some other thread
+                event?.notifyCompleted()
                 return
             }
 
             when (stateSnapshot) {
                 is FirInProcessOfResolvingToPhaseStateWithoutBarrier -> {
                     // some thread is resolving the phase, so we wait until it finishes
+                    if (event == null && updatePhase) {
+                        event = LLFlightRecorder.phaseSuspension(this@withLock, toPhase)
+                    }
                     trySettingBarrier(toPhase, stateSnapshot)
                     continue
                 }
 
                 is FirInProcessOfResolvingToPhaseStateWithBarrier -> {
                     // some thread is waiting on a barrier as the declaration is being resolved, so we try too
+                    if (event == null && updatePhase) {
+                        event = LLFlightRecorder.phaseSuspension(this@withLock, toPhase)
+                    }
                     waitOnBarrier(stateSnapshot)
                     continue
                 }
 
                 is FirResolvedToPhaseState -> {
                     if (!tryLock(toPhase, stateSnapshot)) continue
+                    event?.notifyCompleted()
 
                     var exceptionOccurred = false
                     try {
@@ -158,6 +170,8 @@ internal class LLFirLockProvider(private val checker: LLFirLazyResolveContractCh
         if (this is FirDeclaration && toPhase == FirResolvePhase.BODY_RESOLVE) {
             val state = partialBodyAnalysisState
             if (state != null && !state.isFullyAnalyzed) {
+                LLFlightRecorder.partialBodyAnalyzed(this, state)
+
                 // We only update the phase to BODY_RESOLVE if all statements are resolved.
                 // Otherwise, we set (BODY_RESOLVE - 1), so the next BODY_RESOLVE phase run can finish the analysis.
                 return stateSnapshot.resolvePhase
@@ -273,6 +287,8 @@ internal class LLFirLockProvider(private val checker: LLFirLazyResolveContractCh
         actionUnderLock: () -> Unit,
         actionOnCycle: () -> Unit,
     ) {
+        var event: LLPhaseSuspensionEventCompleter? = null
+
         while (true) {
             checkCanceled()
 
@@ -280,12 +296,14 @@ internal class LLFirLockProvider(private val checker: LLFirLazyResolveContractCh
             val currentState = resolveState
             if (currentState.resolvePhase >= toPhase) {
                 // already resolved by some other thread
+                event?.notifyCompleted()
                 return
             }
 
             when (currentState) {
                 is FirResolvedToPhaseState -> {
                     if (!tryJumpingLock(toPhase, currentState)) continue
+                    event?.notifyCompleted()
 
                     var exceptionOccurred = false
                     try {
@@ -315,11 +333,17 @@ internal class LLFirLockProvider(private val checker: LLFirLazyResolveContractCh
                         while (nextState != null) {
                             if (nextState === previousState) {
                                 previousState.waitingFor = null
+
+                                event?.notifyCompleted()
                                 return actionOnCycle()
                             }
 
                             nextState = nextState.waitingFor
                         }
+                    }
+
+                    if (event == null) {
+                        event = LLFlightRecorder.phaseSuspension(this, toPhase)
                     }
 
                     try {
