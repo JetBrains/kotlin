@@ -10,7 +10,6 @@ import java.io.File
 class MutedTest(
     val key: String,
     @Suppress("unused") val issue: String?,
-    val hasFailFile: Boolean,
     val isFlaky: Boolean
 ) {
     val methodKey: String
@@ -73,21 +72,16 @@ private fun parseMutedTest(str: String): MutedTest {
 
     val testKey = resultValues[1].value
     val issue = resultValues[2].value
-    val stateStr = resultValues[3].value
     val statusStr = resultValues[4].value
 
-    val hasFailFile = when (stateStr) {
-        "MUTE", "" -> false
-        "FAIL" -> true
-        else -> throw ParseError("Invalid state (`$stateStr`), MUTE, FAIL or empty are expected: $str")
-    }
     val isFlaky = when (statusStr) {
         "FLAKY" -> true
+        "STABLE" -> false
         "" -> false
-        else -> throw ParseError("Invalid status (`$statusStr`), FLAKY or empty are expected: $str")
+        else -> throw ParseError("Invalid status (`$statusStr`), FLAKY or STABLE are expected: $str")
     }
 
-    return MutedTest(testKey, issue, hasFailFile, isFlaky)
+    return MutedTest(testKey, issue, isFlaky)
 }
 
 private class ParseError(message: String, override val cause: Throwable? = null) : IllegalArgumentException(message)
