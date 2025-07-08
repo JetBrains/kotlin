@@ -2,7 +2,7 @@
   @0:0..1:63 CLASS ANNOTATION_CLASS name:MyAnnotation modality:OPEN visibility:internal superTypes:[kotlin.Annotation]
     annotations:
       @0:0..102 CONSTRUCTOR_CALL 'public constructor <init> (vararg allowedTargets: kotlin.annotation.AnnotationTarget) [primary] declared in kotlin.annotation.Target' type=kotlin.annotation.Target origin=null
-        @0:8..33 VARARG type=kotlin.Array<out kotlin.annotation.AnnotationTarget> varargElementType=kotlin.annotation.AnnotationTarget
+        @0:8..101 VARARG type=kotlin.Array<out kotlin.annotation.AnnotationTarget> varargElementType=kotlin.annotation.AnnotationTarget
           @0:25..33 GET_ENUM 'ENUM_ENTRY IR_EXTERNAL_DECLARATION_STUB name:FUNCTION' type=kotlin.annotation.AnnotationTarget
           @0:52..67 GET_ENUM 'ENUM_ENTRY IR_EXTERNAL_DECLARATION_STUB name:PROPERTY_GETTER' type=kotlin.annotation.AnnotationTarget
           @0:86..101 GET_ENUM 'ENUM_ENTRY IR_EXTERNAL_DECLARATION_STUB name:PROPERTY_SETTER' type=kotlin.annotation.AnnotationTarget

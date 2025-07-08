@@ -772,17 +772,96 @@ open class KtFakePsiSourceElement(
     }
 }
 
-fun KtSourceElement.fakeElement(newKind: KtFakeSourceElementKind): KtSourceElement {
+@SuspiciousFakeSourceCheck
+class KtFakePsiSourceElementWithCustomOffsetStrategy(
+    psi: PsiElement,
+    kind: KtFakeSourceElementKind,
+    val strategy: KtSourceElementOffsetStrategy.Custom,
+) : KtFakePsiSourceElement(psi, kind) {
+    override val startOffset: Int
+        get() = strategy.startOffset
+
+    override val endOffset: Int
+        get() = strategy.endOffset
+
+    override fun equals(other: Any?): Boolean = this === other ||
+            other is KtFakePsiSourceElementWithCustomOffsetStrategy &&
+            super.equals(other) &&
+            strategy == other.strategy
+
+    override fun hashCode(): Int = 31 * super.hashCode() + strategy.hashCode()
+}
+
+/**
+ * Represents a strategy for getting offsets for [KtSourceElement]s.
+ *
+ * @see fakeElement
+ */
+sealed class KtSourceElementOffsetStrategy {
+    /**
+     * The default strategy, which uses offsets from the original element.
+     */
+    data object Default : KtSourceElementOffsetStrategy()
+
+    /**
+     * Represents a strategy with custom [startOffset] and [endOffset]s.
+     */
+    sealed class Custom : KtSourceElementOffsetStrategy() {
+        abstract val startOffset: Int
+        abstract val endOffset: Int
+
+        class Initialized(override val startOffset: Int, override val endOffset: Int) : Custom() {
+            override fun equals(other: Any?): Boolean = this === other ||
+                    other is Initialized &&
+                    startOffset == other.startOffset &&
+                    endOffset == other.endOffset
+
+            override fun hashCode(): Int = 31 * startOffset.hashCode() + endOffset.hashCode()
+        }
+
+        class Delegated(val startOffsetAnchor: KtSourceElement, val endOffsetAnchor: KtSourceElement) : Custom() {
+            override val startOffset: Int
+                get() = startOffsetAnchor.startOffset
+
+            override val endOffset: Int
+                get() = endOffsetAnchor.endOffset
+
+            override fun equals(other: Any?): Boolean = this === other ||
+                    other is Delegated &&
+                    startOffsetAnchor == other.startOffsetAnchor &&
+                    endOffsetAnchor == other.endOffsetAnchor
+
+            override fun hashCode(): Int = 31 * startOffsetAnchor.hashCode() + endOffsetAnchor.hashCode()
+        }
+    }
+}
+
+fun KtSourceElement.fakeElement(
+    newKind: KtFakeSourceElementKind,
+    offsetStrategy: KtSourceElementOffsetStrategy = KtSourceElementOffsetStrategy.Default,
+): KtSourceElement {
     if (kind == newKind) return this
     return when (this) {
-        is KtLightSourceElement -> KtLightSourceElement(
-            lighterASTNode,
-            startOffset,
-            endOffset,
-            treeStructure,
-            newKind
-        )
-        is KtPsiSourceElement -> KtFakePsiSourceElement(psi, newKind)
+        is KtLightSourceElement -> {
+            val (startOffset, endOffset) = if (offsetStrategy is KtSourceElementOffsetStrategy.Custom) {
+                offsetStrategy.startOffset to offsetStrategy.endOffset
+            } else {
+                startOffset to endOffset
+            }
+
+            KtLightSourceElement(
+                lighterASTNode,
+                startOffset,
+                endOffset,
+                treeStructure,
+                newKind
+            )
+        }
+
+        is KtPsiSourceElement -> when (offsetStrategy) {
+            is KtSourceElementOffsetStrategy.Default -> KtFakePsiSourceElement(psi, newKind)
+            is KtSourceElementOffsetStrategy.Custom -> KtFakePsiSourceElementWithCustomOffsetStrategy(psi, newKind, offsetStrategy)
+        }
     }
 }
 

@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.fir.resolve.transformers.body.resolve
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.KtSourceElementOffsetStrategy
 import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
@@ -43,6 +45,8 @@ internal fun remapArgumentsWithVararg(
     val varargArgument = buildVarargArgumentsExpression {
         coneElementTypeOrNull = varargElementType
         coneTypeOrNull = varargArrayType
+        var firstVarargElementSource: KtSourceElement? = null
+        var lastVarargElementSource: KtSourceElement? = null
 
         for ((i, arg) in argumentList.withIndex()) {
             val valueParameter = argumentMapping[arg]
@@ -63,9 +67,11 @@ internal fun remapArgumentsWithVararg(
                     arg
                 }
 
-                if (source == null) {
-                    source = arg.source?.fakeElement(KtFakeSourceElementKind.VarargArgument)
+                if (firstVarargElementSource == null) {
+                    firstVarargElementSource = arg.source
                 }
+
+                lastVarargElementSource = arg.source
             } else if (arguments.isEmpty()) {
                 // `arg` is BEFORE the vararg arguments.
                 newArgumentMapping[arg] = valueParameter
@@ -75,6 +81,19 @@ internal fun remapArgumentsWithVararg(
                 break
             }
         }
+
+        val strategy = when {
+            firstVarargElementSource != null && lastVarargElementSource != null -> {
+                KtSourceElementOffsetStrategy.Custom.Delegated(
+                    startOffsetAnchor = firstVarargElementSource,
+                    endOffsetAnchor = lastVarargElementSource,
+                )
+            }
+
+            else -> KtSourceElementOffsetStrategy.Default
+        }
+
+        source = firstVarargElementSource?.fakeElement(KtFakeSourceElementKind.VarargArgument, strategy)
     }
     newArgumentMapping[varargArgument] = varargParameter
 
