@@ -26,7 +26,7 @@ class BuildFusStatisticsIT : KGPDaemonsBaseTest() {
                 // on Gradle 7 with CC enabled `KotlinBuildStatsBeanService` is being instantiated in another classpath
                 .disableConfigurationCacheForGradle7(gradleVersion),
         ) {
-            build("assemble") {
+            build("assemble", "-Pkotlin.session.logger.root.path=$projectPath") {
                 //register build service for buildSrc.
                 when {
                     // until 8.0, Gradle was embedding the Kotlin version that used a slightly different approach to detect build finish,
