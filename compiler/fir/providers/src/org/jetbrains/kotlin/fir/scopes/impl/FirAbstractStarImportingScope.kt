@@ -89,13 +89,7 @@ abstract class FirAbstractStarImportingScope(
         @OptIn(FirSymbolProviderInternals::class)
         if (name.mayBeSyntheticFunctionClassName()) return false
 
-        val topLevelClassIds = provider
-            .symbolNamesProvider
-            .getTopLevelClassIdsByShortName(name)
-            // There is probably at least one `ClassId` with the name in the project. If not, we can assume that something is wrong and
-            // should abandon the fast path to retry the slow path.
-            ?.takeIf { it.isNotEmpty() }
-            ?: return false
+        val topLevelClassIds = provider.symbolNamesProvider.getTopLevelClassIdsByShortName(name) ?: return false
 
         // We don't have to iterate through all imports, but can instead just check each possible class ID against the packages imported by
         // all star imports.
