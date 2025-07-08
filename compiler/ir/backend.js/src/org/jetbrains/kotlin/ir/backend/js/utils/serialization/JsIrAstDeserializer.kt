@@ -42,6 +42,10 @@ private class JsIrAstDeserializer(private val source: ByteArray) {
         return buffer.int
     }
 
+    private fun readLong(): Long {
+        return buffer.long
+    }
+
     private fun readDouble(): Double {
         return buffer.double
     }
@@ -315,6 +319,9 @@ private class JsIrAstDeserializer(private val source: ByteArray) {
                         }
                         DOUBLE_LITERAL -> {
                             JsDoubleLiteral(readDouble())
+                        }
+                        BIGINT_LITERAL -> {
+                            JsBigIntLiteral(readLong())
                         }
                         ARRAY_LITERAL -> {
                             JsArrayLiteral(readList { readExpression() })

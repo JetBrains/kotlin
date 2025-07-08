@@ -1011,6 +1011,18 @@ public class JsToStringGenerationVisitor extends JsVisitor {
     }
 
     @Override
+    public void visitBigInt(@NotNull JsBigIntLiteral x) {
+        pushSourceInfo(x.getSource());
+        printCommentsBeforeNode(x);
+
+        p.print(x.getValue());
+        p.print('n');
+
+        printCommentsAfterNode(x);
+        popSourceInfo();
+    }
+
+    @Override
     public void visitObjectLiteral(@NotNull JsObjectLiteral objectLiteral) {
         pushSourceInfo(objectLiteral.getSource());
         printCommentsBeforeNode(objectLiteral);
@@ -1048,7 +1060,7 @@ public class JsToStringGenerationVisitor extends JsVisitor {
                     labelExpr = new JsNameRef(escaped).withMetadataFrom(stringLiteral);
                 }
                 accept(labelExpr);
-            } else if (labelExpr instanceof JsNumberLiteral) {
+            } else if (labelExpr instanceof JsNumberLiteral || labelExpr instanceof JsBigIntLiteral) {
                 accept(labelExpr);
             } else {
                 leftSquare();
@@ -1771,11 +1783,12 @@ public class JsToStringGenerationVisitor extends JsVisitor {
                    && (op2 == JsUnaryOperator.DEC || op2 == JsUnaryOperator.NEG)
                    || (op == JsBinaryOperator.ADD && op2 == JsUnaryOperator.INC);
         }
-        if (arg instanceof JsNumberLiteral && (op == JsBinaryOperator.SUB || op == JsUnaryOperator.NEG)) {
+        if ((arg instanceof JsNumberLiteral || arg instanceof JsBigIntLiteral) && (op == JsBinaryOperator.SUB || op == JsUnaryOperator.NEG)) {
             if (arg instanceof JsIntLiteral) {
                 return ((JsIntLiteral) arg).value < 0;
-            }
-            else {
+            } else if (arg instanceof JsBigIntLiteral) {
+                return ((JsBigIntLiteral) arg).getValue() < 0;
+            } else {
                 assert arg instanceof JsDoubleLiteral;
                 //noinspection CastConflictsWithInstanceof
                 return ((JsDoubleLiteral) arg).value < 0;

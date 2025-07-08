@@ -54,6 +54,10 @@ private class DataWriter {
         output.writeInt(int)
     }
 
+    fun writeLong(long: Long) {
+        output.writeLong(long)
+    }
+
     fun writeDouble(double: Double) {
         output.writeDouble(double)
     }
@@ -413,6 +417,11 @@ private class JsIrAstSerializer {
             override fun visitInt(x: JsIntLiteral) {
                 writeByte(ExpressionIds.INT_LITERAL)
                 writeInt(x.value)
+            }
+
+            override fun visitBigInt(x: JsBigIntLiteral) {
+                writeByte(ExpressionIds.BIGINT_LITERAL)
+                writeLong(x.value)
             }
 
             override fun visitDouble(x: JsDoubleLiteral) {

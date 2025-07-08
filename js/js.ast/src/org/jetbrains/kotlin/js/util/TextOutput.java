@@ -26,6 +26,8 @@ public interface TextOutput {
 
     void print(double v);
 
+    void print(long v);
+
     void print(char[] s);
 
     void print(CharSequence s);

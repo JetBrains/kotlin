@@ -85,6 +85,14 @@ public class TextOutputImpl implements TextOutput {
     }
 
     @Override
+    public void print(long value) {
+        maybeIndent();
+        int oldLength = out.length();
+        out.append(value);
+        movePosition(out.length() - oldLength);
+    }
+
+    @Override
     public void print(char c) {
         maybeIndent();
         out.append(c);
