@@ -1676,10 +1676,11 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         val isMismatchDueToNullability: Boolean
     }
 
-    interface ResultTypeMismatch : KaFirDiagnostic<KtExpression> {
-        override val diagnosticClass get() = ResultTypeMismatch::class
+    interface IncDecOperatorReturnTypeMismatch : KaFirDiagnostic<KtExpression> {
+        override val diagnosticClass get() = IncDecOperatorReturnTypeMismatch::class
         val expectedType: KaType
         val actualType: KaType
+        val operatorName: Name
     }
 
     interface CompareToOperatorReturnTypeMismatch : KaFirDiagnostic<KtExpression> {
@@ -3789,10 +3790,6 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = ImplicitBoxingInIdentityEquals::class
         val leftType: KaType
         val rightType: KaType
-    }
-
-    interface IncDecShouldNotReturnUnit : KaFirDiagnostic<KtExpression> {
-        override val diagnosticClass get() = IncDecShouldNotReturnUnit::class
     }
 
     interface AssignmentOperatorShouldReturnUnit : KaFirDiagnostic<KtExpression> {

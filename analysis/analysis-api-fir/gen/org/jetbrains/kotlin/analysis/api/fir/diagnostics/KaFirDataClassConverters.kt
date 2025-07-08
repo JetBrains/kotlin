@@ -2353,10 +2353,11 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
-    add(FirErrors.RESULT_TYPE_MISMATCH) { firDiagnostic ->
-        ResultTypeMismatchImpl(
+    add(FirErrors.INC_DEC_OPERATOR_RETURN_TYPE_MISMATCH) { firDiagnostic ->
+        IncDecOperatorReturnTypeMismatchImpl(
             firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
             firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.b),
+            firDiagnostic.c,
             firDiagnostic as KtPsiDiagnostic,
             token,
         )
@@ -5404,12 +5405,6 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
         ImplicitBoxingInIdentityEqualsImpl(
             firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
             firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.b),
-            firDiagnostic as KtPsiDiagnostic,
-            token,
-        )
-    }
-    add(FirErrors.INC_DEC_SHOULD_NOT_RETURN_UNIT) { firDiagnostic ->
-        IncDecShouldNotReturnUnitImpl(
             firDiagnostic as KtPsiDiagnostic,
             token,
         )

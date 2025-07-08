@@ -11,10 +11,10 @@ class A { }
 var a = A()
 
 val A.inc: I get() = I()
-fun useInc() { a<!NOT_FUNCTION_AS_OPERATOR, RESULT_TYPE_MISMATCH!>++<!> }
+fun useInc() { a<!INC_DEC_OPERATOR_RETURN_TYPE_MISMATCH, NOT_FUNCTION_AS_OPERATOR!>++<!> }
 
 val A.dec: I get() = I()
-fun useDec() { a<!NOT_FUNCTION_AS_OPERATOR, RESULT_TYPE_MISMATCH!>--<!> }
+fun useDec() { a<!INC_DEC_OPERATOR_RETURN_TYPE_MISMATCH, NOT_FUNCTION_AS_OPERATOR!>--<!> }
 
 val A.plusAssign: I get() = I()
 fun usePlusAssign() { a <!NOT_FUNCTION_AS_OPERATOR!>+=<!> 1 }

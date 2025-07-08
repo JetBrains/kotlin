@@ -568,17 +568,23 @@ fun checkTypeMismatch(
                 context.session.typeContext.isTypeMismatchDueToNullability(rValueType, lValueType)
             )
         }
-        source.kind is KtFakeSourceElementKind.DesugaredIncrementOrDecrement || assignment?.source?.kind is KtFakeSourceElementKind.DesugaredIncrementOrDecrement -> {
-            if (!lValueType.isMarkedOrFlexiblyNullable && rValueType.isMarkedOrFlexiblyNullable) {
-                val tempType = rValueType
-                rValueType = lValueType
-                lValueType = tempType
-            }
-            if (rValueType.isUnit) {
-                reporter.reportOn(source, FirErrors.INC_DEC_SHOULD_NOT_RETURN_UNIT)
-            } else {
-                reporter.reportOn(source, FirErrors.RESULT_TYPE_MISMATCH, lValueType, rValueType)
-            }
+        source.kind.isDesugaredIncrement || assignment?.source?.kind?.isDesugaredIncrement == true -> {
+            reporter.reportOn(
+                source,
+                FirErrors.INC_DEC_OPERATOR_RETURN_TYPE_MISMATCH,
+                lValueType,
+                rValueType,
+                OperatorNameConventions.INC,
+            )
+        }
+        source.kind.isDesugaredDecrement || assignment?.source?.kind?.isDesugaredDecrement == true -> {
+            reporter.reportOn(
+                source,
+                FirErrors.INC_DEC_OPERATOR_RETURN_TYPE_MISMATCH,
+                lValueType,
+                rValueType,
+                OperatorNameConventions.DEC,
+            )
         }
         else -> {
             reporter.reportOn(
@@ -639,6 +645,12 @@ fun ConeCapturedType.projectionKindAsString(): String {
         ProjectionKind.INVARIANT -> error("no projection")
     }
 }
+
+val KtSourceElementKind.isDesugaredIncrement: Boolean
+    get() = this is KtFakeSourceElementKind.DesugaredPrefixInc || this is KtFakeSourceElementKind.DesugaredPostfixInc
+
+val KtSourceElementKind.isDesugaredDecrement: Boolean
+    get() = this is KtFakeSourceElementKind.DesugaredPrefixDec || this is KtFakeSourceElementKind.DesugaredPostfixDec
 
 context(context: CheckerContext, reporter: DiagnosticReporter)
 internal fun checkCondition(condition: FirExpression) {

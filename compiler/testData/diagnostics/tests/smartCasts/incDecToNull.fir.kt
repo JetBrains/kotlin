@@ -6,8 +6,8 @@ class IncDec {
 
 fun foo(): IncDec {
     var x = IncDec()
-    x = x<!INC_DEC_SHOULD_NOT_RETURN_UNIT!>++<!>
-    x<!INC_DEC_SHOULD_NOT_RETURN_UNIT!>++<!>
+    x = x<!INC_DEC_OPERATOR_RETURN_TYPE_MISMATCH!>++<!>
+    x<!INC_DEC_OPERATOR_RETURN_TYPE_MISMATCH!>++<!>
     return x
 }
 

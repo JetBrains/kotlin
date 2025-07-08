@@ -2011,12 +2011,13 @@ internal class CatchParameterTypeMismatchImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.CatchParameterTypeMismatch
 
-internal class ResultTypeMismatchImpl(
+internal class IncDecOperatorReturnTypeMismatchImpl(
     override val expectedType: KaType,
     override val actualType: KaType,
+    override val operatorName: Name,
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<KtExpression>(firDiagnostic, token), KaFirDiagnostic.ResultTypeMismatch
+) : KaAbstractFirDiagnostic<KtExpression>(firDiagnostic, token), KaFirDiagnostic.IncDecOperatorReturnTypeMismatch
 
 internal class CompareToOperatorReturnTypeMismatchImpl(
     override val actualType: KaType,
@@ -4546,11 +4547,6 @@ internal class ImplicitBoxingInIdentityEqualsImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.ImplicitBoxingInIdentityEquals
-
-internal class IncDecShouldNotReturnUnitImpl(
-    firDiagnostic: KtPsiDiagnostic,
-    token: KaLifetimeToken,
-) : KaAbstractFirDiagnostic<KtExpression>(firDiagnostic, token), KaFirDiagnostic.IncDecShouldNotReturnUnit
 
 internal class AssignmentOperatorShouldReturnUnitImpl(
     override val functionSymbol: KaFunctionSymbol,

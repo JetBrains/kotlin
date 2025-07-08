@@ -407,7 +407,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INCONSISTENT_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INCORRECT_CHARACTER_LITERAL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INCORRECT_LEFT_COMPONENT_OF_INTERSECTION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INCORRECT_RIGHT_COMPONENT_OF_INTERSECTION
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INC_DEC_SHOULD_NOT_RETURN_UNIT
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INC_DEC_OPERATOR_RETURN_TYPE_MISMATCH
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INEFFICIENT_EQUALS_OVERRIDING_IN_VALUE_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INFERENCE_ERROR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INFERRED_INVISIBLE_REIFIED_TYPE_ARGUMENT
@@ -673,7 +673,6 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.RESERVED_MEMBER_F
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.RESERVED_MEMBER_INSIDE_VALUE_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.RESOLUTION_TO_CLASSIFIER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.RESTRICTED_RETENTION_FOR_EXPRESSION_ANNOTATION_ERROR
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.RESULT_TYPE_MISMATCH
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.RETURN_FOR_BUILT_IN_SUSPEND
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY_AND_IMPLICIT_TYPE
@@ -1711,10 +1710,11 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             NOT_RENDERED,
         )
         map.put(
-            RESULT_TYPE_MISMATCH,
-            "Function return type mismatch: expected ''{0}''; actual ''{1}''.",
+            INC_DEC_OPERATOR_RETURN_TYPE_MISMATCH,
+            "''{2}()'' return type mismatch: expected ''{0}''; actual ''{1}''.",
             RENDER_TYPE,
             RENDER_TYPE,
+            TO_STRING,
         )
         map.put(
             COMPARE_TO_OPERATOR_RETURN_TYPE_MISMATCH,
@@ -3114,10 +3114,6 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             "Identity equality for arguments of types ''{0}'' and ''{1}'' can be unstable because of implicit boxing.",
             RENDER_TYPE,
             RENDER_TYPE
-        )
-        map.put(
-            INC_DEC_SHOULD_NOT_RETURN_UNIT,
-            "Functions 'inc()' and 'dec()' cannot be used by the operators '++' and '--' when they return 'Unit'.",
         )
         map.put(
             ASSIGNMENT_OPERATOR_SHOULD_RETURN_UNIT,

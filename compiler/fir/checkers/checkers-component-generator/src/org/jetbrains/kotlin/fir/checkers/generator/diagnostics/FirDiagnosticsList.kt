@@ -762,9 +762,10 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<Boolean>("isMismatchDueToNullability")
         }
 
-        val RESULT_TYPE_MISMATCH by error<KtExpression> {
+        val INC_DEC_OPERATOR_RETURN_TYPE_MISMATCH by error<KtExpression> {
             parameter<ConeKotlinType>("expectedType")
             parameter<ConeKotlinType>("actualType")
+            parameter<Name>("operatorName")
         }
         val COMPARE_TO_OPERATOR_RETURN_TYPE_MISMATCH by error<KtExpression>(PositioningStrategy.OPERATOR) {
             parameter<ConeKotlinType>("actualType")
@@ -1879,7 +1880,6 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<ConeKotlinType>("rightType")
         }
 
-        val INC_DEC_SHOULD_NOT_RETURN_UNIT by error<KtExpression>(PositioningStrategy.OPERATOR)
         val ASSIGNMENT_OPERATOR_SHOULD_RETURN_UNIT by error<KtExpression>(PositioningStrategy.OPERATOR) {
             parameter<FirNamedFunctionSymbol>("functionSymbol")
             parameter<String>("operator")

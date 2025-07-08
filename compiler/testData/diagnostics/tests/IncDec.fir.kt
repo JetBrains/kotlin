@@ -24,10 +24,10 @@ class WrongIncDec() {
 
 fun testWrongIncDec() {
   var x = WrongIncDec()
-  x<!RESULT_TYPE_MISMATCH!>++<!>
-  <!RESULT_TYPE_MISMATCH!>++<!>x
-  x<!RESULT_TYPE_MISMATCH!>--<!>
-  <!RESULT_TYPE_MISMATCH!>--<!>x
+  x<!INC_DEC_OPERATOR_RETURN_TYPE_MISMATCH!>++<!>
+  <!INC_DEC_OPERATOR_RETURN_TYPE_MISMATCH!>++<!>x
+  x<!INC_DEC_OPERATOR_RETURN_TYPE_MISMATCH!>--<!>
+  <!INC_DEC_OPERATOR_RETURN_TYPE_MISMATCH!>--<!>x
 }
 
 class UnitIncDec() {
@@ -37,14 +37,14 @@ class UnitIncDec() {
 
 fun testUnitIncDec() {
   var x = UnitIncDec()
-  x<!INC_DEC_SHOULD_NOT_RETURN_UNIT!>++<!>
-  <!INC_DEC_SHOULD_NOT_RETURN_UNIT!>++<!>x
-  x<!INC_DEC_SHOULD_NOT_RETURN_UNIT!>--<!>
-  <!INC_DEC_SHOULD_NOT_RETURN_UNIT!>--<!>x
-  x = x<!INC_DEC_SHOULD_NOT_RETURN_UNIT!>++<!>
-  x = x<!INC_DEC_SHOULD_NOT_RETURN_UNIT!>--<!>
-  x = <!INC_DEC_SHOULD_NOT_RETURN_UNIT!>++<!>x
-  x = <!INC_DEC_SHOULD_NOT_RETURN_UNIT!>--<!>x
+  x<!INC_DEC_OPERATOR_RETURN_TYPE_MISMATCH!>++<!>
+  <!INC_DEC_OPERATOR_RETURN_TYPE_MISMATCH!>++<!>x
+  x<!INC_DEC_OPERATOR_RETURN_TYPE_MISMATCH!>--<!>
+  <!INC_DEC_OPERATOR_RETURN_TYPE_MISMATCH!>--<!>x
+  x = x<!INC_DEC_OPERATOR_RETURN_TYPE_MISMATCH!>++<!>
+  x = x<!INC_DEC_OPERATOR_RETURN_TYPE_MISMATCH!>--<!>
+  x = <!INC_DEC_OPERATOR_RETURN_TYPE_MISMATCH!>++<!>x
+  x = <!INC_DEC_OPERATOR_RETURN_TYPE_MISMATCH!>--<!>x
 }
 
 /* GENERATED_FIR_TAGS: assignment, classDeclaration, functionDeclaration, incrementDecrementExpression, integerLiteral,
