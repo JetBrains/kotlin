@@ -32,8 +32,8 @@ internal class NativeInlineFunctionResolver(
         inlineMode = inlineMode,
         callInlinerStrategy = NativeCallInlinerStrategy(context)
 ) {
-    override fun getFunctionDeclaration(symbol: IrFunctionSymbol): IrFunction? {
-        val function = super.getFunctionDeclaration(symbol) ?: return null
+    override fun getFunctionDeclaration(symbol: IrFunctionSymbol, inlineMode: InlineMode): IrFunction? {
+        val function = super.getFunctionDeclaration(symbol, inlineMode) ?: return null
 
         if (function.body != null) {
             // TODO this `if` check can be dropped after KT-72441

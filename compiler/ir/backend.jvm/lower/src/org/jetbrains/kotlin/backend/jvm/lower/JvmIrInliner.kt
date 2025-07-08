@@ -42,7 +42,7 @@ class JvmIrInliner(context: JvmBackendContext) : FileLoweringPass {
 }
 
 class JvmInlineFunctionResolver(private val context: JvmBackendContext) : InlineFunctionResolver() {
-    override fun getFunctionDeclaration(symbol: IrFunctionSymbol): IrFunction? {
+    override fun getFunctionDeclaration(symbol: IrFunctionSymbol, inlineMode: InlineMode): IrFunction? {
         return symbol.owner.resolveFakeOverrideOrSelf().takeIf { it.isInlineFunctionCall(context) }
     }
 }

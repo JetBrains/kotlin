@@ -152,7 +152,7 @@ internal class PreCodegenInliner(
                                 context,
                                 inlineMode = InlineMode.ALL_INLINE_FUNCTIONS,
                                 inlineFunctionResolver = object : InlineFunctionResolver() {
-                                    override fun getFunctionDeclaration(symbol: IrFunctionSymbol): IrFunction? {
+                                    override fun getFunctionDeclaration(symbol: IrFunctionSymbol, inlineMode: InlineMode): IrFunction? {
                                         return symbol.owner.takeIf { it in functionsToInline }
                                     }
 

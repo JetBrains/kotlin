@@ -80,7 +80,7 @@ class FunctionInlining @JvmIrInlineExperimental constructor(
     override fun visitFunctionAccess(expression: IrFunctionAccessExpression, data: IrDeclaration): IrExpression {
         expression.transformChildren(this, data)
 
-        val actualCallee = inlineFunctionResolver.getFunctionDeclarationToInline(expression) ?: return expression
+        val actualCallee = inlineFunctionResolver.getFunctionDeclarationToInline(expression, inlineMode) ?: return expression
         if (expression is IrCall && Symbols.isTypeOfIntrinsic(actualCallee.symbol)) {
             inlineFunctionResolver.callInlinerStrategy.at(data, expression)
             return inlineFunctionResolver.callInlinerStrategy.postProcessTypeOf(expression, expression.typeArguments[0]!!)

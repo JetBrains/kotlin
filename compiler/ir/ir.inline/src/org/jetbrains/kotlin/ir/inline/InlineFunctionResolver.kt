@@ -61,19 +61,19 @@ abstract class InlineFunctionResolver(
 ) {
     protected open fun shouldSkipBecauseOfCallSite(expression: IrFunctionAccessExpression) = false
 
-    protected abstract fun getFunctionDeclaration(symbol: IrFunctionSymbol): IrFunction?
+    protected abstract fun getFunctionDeclaration(symbol: IrFunctionSymbol, inlineMode: InlineMode): IrFunction?
 
-    fun getFunctionDeclarationToInline(expression: IrFunctionAccessExpression): IrFunction? {
+    fun getFunctionDeclarationToInline(expression: IrFunctionAccessExpression, inlineMode: InlineMode): IrFunction? {
         if (shouldSkipBecauseOfCallSite(expression)) return null
-        return getFunctionDeclaration(expression.symbol)
+        return getFunctionDeclaration(expression.symbol, inlineMode)
     }
 
-    fun needsInlining(expression: IrFunctionAccessExpression): Boolean {
-        return getFunctionDeclarationToInline(expression) != null
+    fun needsInlining(expression: IrFunctionAccessExpression, inlineMode: InlineMode): Boolean {
+        return getFunctionDeclarationToInline(expression, inlineMode) != null
     }
 
-    fun needsInlining(function: IrFunction): Boolean {
-        return getFunctionDeclaration(function.symbol) != null
+    fun needsInlining(function: IrFunction, inlineMode: InlineMode): Boolean {
+        return getFunctionDeclaration(function.symbol, inlineMode) != null
     }
 }
 
@@ -82,7 +82,7 @@ abstract class InlineFunctionResolverReplacingCoroutineIntrinsics<Ctx : Lowering
     protected val inlineMode: InlineMode,
     callInlinerStrategy: CallInlinerStrategy = CallInlinerStrategy.DEFAULT,
 ) : InlineFunctionResolver(callInlinerStrategy) {
-    override fun getFunctionDeclaration(symbol: IrFunctionSymbol): IrFunction? {
+    override fun getFunctionDeclaration(symbol: IrFunctionSymbol, inlineMode: InlineMode): IrFunction? {
         if (!symbol.isBound) return null
         val realOwner = symbol.owner.resolveFakeOverrideOrSelf()
         if (!realOwner.isInline) return null
@@ -109,8 +109,8 @@ internal class PreSerializationInlineFunctionResolver(
         signatureComputer = PublicIdSignatureComputer(irMangler)
     )
 
-    override fun getFunctionDeclaration(symbol: IrFunctionSymbol): IrFunction? {
-        val declarationMaybeFromOtherModule = super.getFunctionDeclaration(symbol) ?: return null
+    override fun getFunctionDeclaration(symbol: IrFunctionSymbol, inlineMode: InlineMode): IrFunction? {
+        val declarationMaybeFromOtherModule = super.getFunctionDeclaration(symbol, inlineMode) ?: return null
         if (declarationMaybeFromOtherModule.body != null) {
             return declarationMaybeFromOtherModule
         }
