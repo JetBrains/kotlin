@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.ir.inline
 
 import org.jetbrains.kotlin.backend.common.LoweringContext
 import org.jetbrains.kotlin.backend.common.PreSerializationLoweringContext
-import org.jetbrains.kotlin.backend.common.ir.isReifiable
 import org.jetbrains.kotlin.backend.common.lower.ArrayConstructorLowering
 import org.jetbrains.kotlin.backend.common.lower.LateinitLowering
 import org.jetbrains.kotlin.backend.common.lower.SharedVariablesLowering
@@ -20,7 +19,6 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.phaser.NamedCompilerPhase
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
-import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
 import org.jetbrains.kotlin.ir.util.KotlinMangler.IrMangler
 
 private val avoidLocalFOsInInlineFunctionsLowering = makeIrModulePhase(
@@ -57,11 +55,11 @@ private val checkInlineCallCyclesPhase = makeIrModulePhase(
 /**
  * The first phase of inlining (inline only private functions).
  */
-private val inlineOnlyPrivateFunctionsPhase = makeIrModulePhase(
+private fun inlineOnlyPrivateFunctionsPhase(irMangler: IrMangler) = makeIrModulePhase(
     { context: LoweringContext ->
         FunctionInlining(
             context,
-            PreSerializationPrivateInlineFunctionResolver(context),
+            PreSerializationInlineFunctionResolver(context, InlineMode.PRIVATE_INLINE_FUNCTIONS, irMangler),
         )
     },
     name = "InlineOnlyPrivateFunctions",
@@ -71,13 +69,13 @@ private val inlineOnlyPrivateFunctionsPhase = makeIrModulePhase(
 private val outerThisSpecialAccessorInInlineFunctionsPhase = makeIrModulePhase(
     ::OuterThisInInlineFunctionsSpecialAccessorLowering,
     name = "OuterThisInInlineFunctionsSpecialAccessorLowering",
-    prerequisite = setOf(inlineOnlyPrivateFunctionsPhase)
+    prerequisite = setOf(/* inlineOnlyPrivateFunctionsPhase */)
 )
 
-private val syntheticAccessorGenerationPhase = makeIrModulePhase(
+private val syntheticAccessorGenerationPhase = makeIrModulePhase<PreSerializationLoweringContext>(
     lowering = { SyntheticAccessorLowering(it, isExecutedOnFirstPhase = true) },
     name = "SyntheticAccessorGeneration",
-    prerequisite = setOf(inlineOnlyPrivateFunctionsPhase, outerThisSpecialAccessorInInlineFunctionsPhase),
+    prerequisite = setOf(/* inlineOnlyPrivateFunctionsPhase, outerThisSpecialAccessorInInlineFunctionsPhase*/),
 )
 
 private val validateIrAfterInliningOnlyPrivateFunctions = makeIrModulePhase(
@@ -96,15 +94,14 @@ private val validateIrAfterInliningOnlyPrivateFunctions = makeIrModulePhase(
 private val checkInlineDeclarationsAfterInliningOnlyPrivateFunctions = makeIrModulePhase(
     lowering = ::InlineDeclarationCheckerLowering,
     name = "InlineDeclarationCheckerAfterInliningOnlyPrivateFunctionsPhase",
-    prerequisite = setOf(inlineOnlyPrivateFunctionsPhase),
+    prerequisite = setOf(/* inlineOnlyPrivateFunctionsPhase*/),
 )
 
-@Suppress("unused")
 private fun inlineAllFunctionsPhase(irMangler: IrMangler) = makeIrModulePhase(
     { context: LoweringContext ->
         FunctionInlining(
             context,
-            PreSerializationNonPrivateInlineFunctionResolver(context, irMangler),
+            PreSerializationInlineFunctionResolver(context, InlineMode.ALL_INLINE_FUNCTIONS, irMangler),
         )
     },
     name = "InlineAllFunctions",
@@ -114,7 +111,7 @@ private fun inlineAllFunctionsPhase(irMangler: IrMangler) = makeIrModulePhase(
 private val inlineFunctionSerializationPreProcessing = makeIrModulePhase(
     lowering = ::InlineFunctionSerializationPreProcessing,
     name = "InlineFunctionSerializationPreProcessing",
-    prerequisite = setOf(inlineOnlyPrivateFunctionsPhase, /*inlineAllFunctionsPhase*/),
+    prerequisite = setOf(/* inlineOnlyPrivateFunctionsPhase, */ /*inlineAllFunctionsPhase*/),
 )
 
 
@@ -129,7 +126,7 @@ fun loweringsOfTheFirstPhase(
         this += localClassesInInlineLambdasPhase
         this += arrayConstructorPhase
         this += checkInlineCallCyclesPhase
-        this += inlineOnlyPrivateFunctionsPhase
+        this += inlineOnlyPrivateFunctionsPhase(irMangler)
         this += checkInlineDeclarationsAfterInliningOnlyPrivateFunctions
         this += outerThisSpecialAccessorInInlineFunctionsPhase
         this += syntheticAccessorGenerationPhase

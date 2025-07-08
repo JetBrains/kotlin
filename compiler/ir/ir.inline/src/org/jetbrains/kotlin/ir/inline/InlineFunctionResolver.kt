@@ -79,7 +79,7 @@ abstract class InlineFunctionResolver(
 
 abstract class InlineFunctionResolverReplacingCoroutineIntrinsics<Ctx : LoweringContext>(
     protected val context: Ctx,
-    private val inlineMode: InlineMode,
+    protected val inlineMode: InlineMode,
     callInlinerStrategy: CallInlinerStrategy = CallInlinerStrategy.DEFAULT,
 ) : InlineFunctionResolver(callInlinerStrategy) {
     override fun getFunctionDeclaration(symbol: IrFunctionSymbol): IrFunction? {
@@ -98,23 +98,11 @@ abstract class InlineFunctionResolverReplacingCoroutineIntrinsics<Ctx : Lowering
     }
 }
 
-/**
- * These resolvers are supposed to be run at the first compilation stage for all non-JVM targets.
- */
-internal class PreSerializationPrivateInlineFunctionResolver(
+internal class PreSerializationInlineFunctionResolver(
     context: LoweringContext,
-) : InlineFunctionResolverReplacingCoroutineIntrinsics<LoweringContext>(context, InlineMode.PRIVATE_INLINE_FUNCTIONS) {
-    override fun getFunctionDeclaration(symbol: IrFunctionSymbol): IrFunction? {
-        return super.getFunctionDeclaration(symbol)?.also { function ->
-            check(function.body != null) { "Unexpected inline function without body: ${function.render()}" }
-        }
-    }
-}
-
-internal class PreSerializationNonPrivateInlineFunctionResolver(
-    context: LoweringContext,
+    inlineMode: InlineMode,
     irMangler: KotlinMangler.IrMangler,
-) : InlineFunctionResolverReplacingCoroutineIntrinsics<LoweringContext>(context, InlineMode.ALL_INLINE_FUNCTIONS) {
+) : InlineFunctionResolverReplacingCoroutineIntrinsics<LoweringContext>(context, inlineMode) {
 
     private val deserializer = NonLinkingIrInlineFunctionDeserializer(
         irBuiltIns = context.irBuiltIns,
@@ -125,6 +113,9 @@ internal class PreSerializationNonPrivateInlineFunctionResolver(
         val declarationMaybeFromOtherModule = super.getFunctionDeclaration(symbol) ?: return null
         if (declarationMaybeFromOtherModule.body != null) {
             return declarationMaybeFromOtherModule
+        }
+        if (inlineMode == InlineMode.PRIVATE_INLINE_FUNCTIONS) {
+            error { "Unexpected inline function without body: ${declarationMaybeFromOtherModule.render()}" }
         }
         return deserializer.deserializeInlineFunction(declarationMaybeFromOtherModule)
     }
