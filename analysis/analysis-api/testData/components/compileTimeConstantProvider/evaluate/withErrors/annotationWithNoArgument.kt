@@ -1,5 +1,3 @@
-// IGNORE_FIR
-
 annotation class MyAnno(val message: String) {
     annotation class List(vararg val value: MyAnno)
 }

@@ -388,8 +388,7 @@ private class FirConstCheckVisitor(
     private fun visitConstructorCall(constructorCall: FirFunctionCall, symbol: FirConstructorSymbol): ConstantArgumentKind {
         val classKindOfParent = (symbol.getReferencedClassSymbol() as? FirClassLikeSymbol<*>)?.fullyExpandedClass(session)?.classKind
         return when {
-            classKindOfParent == ClassKind.ANNOTATION_CLASS -> ConstantArgumentKind.VALID_CONST
-            constructorCall.getExpandedType().isUnsignedType -> {
+            classKindOfParent == ClassKind.ANNOTATION_CLASS || constructorCall.getExpandedType().isUnsignedType -> {
                 constructorCall.arguments.forEach { argumentExpression ->
                     argumentExpression.accept(this, null).ifNotValidConst { return it }
                 }
