@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
-import org.jetbrains.kotlin.backend.jvm.JvmInlineFunctionResolver
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
 import org.jetbrains.kotlin.ir.declarations.IrFile
@@ -19,7 +18,7 @@ import org.jetbrains.kotlin.ir.inline.InlineCallableReferenceToLambdaPhase
 internal class JvmInlineCallableReferenceToLambdaWithDefaultsPhase(
     context: JvmBackendContext,
 ) : CommonInlineCallableReferenceToLambdaPhase(
-    context, JvmInlineFunctionResolver(context)
+    context
 ) {
     private val enabled = context.config.enableIrInliner
 
@@ -43,5 +42,5 @@ internal class JvmInlineCallableReferenceToLambdaWithDefaultsPhase(
 internal class JvmInlineCallableReferenceToLambdaPhase(
     context: JvmBackendContext,
 ) : InlineCallableReferenceToLambdaPhase(
-    context, JvmInlineFunctionResolver(context)
+    context
 )

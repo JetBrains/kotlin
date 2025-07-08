@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.ir.inline
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
-import org.jetbrains.kotlin.backend.common.InlineFunctionResolver
 import org.jetbrains.kotlin.backend.common.InlineMode
 import org.jetbrains.kotlin.backend.common.LoweringContext
 import org.jetbrains.kotlin.backend.common.ir.createExtensionReceiver
@@ -44,7 +43,6 @@ private val STUB_FOR_INLINING = Name.identifier("stub_for_inlining")
  */
 abstract class InlineCallableReferenceToLambdaPhase(
     val context: LoweringContext,
-    protected val inlineFunctionResolver: InlineFunctionResolver,
 ) : FileLoweringPass, IrTransformer<IrDeclarationParent?>() {
     override fun lower(irFile: IrFile) {
         irFile.transform(this, null)
@@ -55,7 +53,7 @@ abstract class InlineCallableReferenceToLambdaPhase(
 
     override fun visitFunctionAccess(expression: IrFunctionAccessExpression, data: IrDeclarationParent?): IrElement {
         expression.transformChildren(this, data)
-        if (inlineFunctionResolver.needsInlining(expression, InlineMode.ALL_INLINE_FUNCTIONS)) {
+        if (context.inlineResolver.needsInlining(expression, InlineMode.ALL_INLINE_FUNCTIONS)) {
             val function = expression.symbol.owner
             for (parameter in function.parameters) {
                 if (parameter.isInlineParameter()) {

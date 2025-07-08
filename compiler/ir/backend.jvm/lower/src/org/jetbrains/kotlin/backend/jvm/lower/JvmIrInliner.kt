@@ -23,7 +23,6 @@ class JvmIrInliner(context: JvmBackendContext) : FileLoweringPass {
     val inliner = FunctionInlining(
         context,
         inlineMode = InlineMode.ALL_INLINE_FUNCTIONS,
-        inlineFunctionResolver = JvmInlineFunctionResolver(context),
         regenerateInlinedAnonymousObjects = true,
         insertAdditionalImplicitCasts = false,
         produceOuterThisFields = true

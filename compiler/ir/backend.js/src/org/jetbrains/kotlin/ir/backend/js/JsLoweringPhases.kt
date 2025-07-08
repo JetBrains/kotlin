@@ -202,7 +202,6 @@ private val inlineOnlyPrivateFunctionsPhase = makeIrModulePhase(
         FunctionInlining(
             context,
             inlineMode = InlineMode.PRIVATE_INLINE_FUNCTIONS,
-            JsInlineFunctionResolver(context),
         )
     },
     name = "InlineOnlyPrivateFunctions",
@@ -229,7 +228,6 @@ private val inlineAllFunctionsPhase = makeIrModulePhase(
         FunctionInlining(
             context,
             inlineMode = InlineMode.ALL_INLINE_FUNCTIONS,
-            JsInlineFunctionResolver(context),
         )
     },
     name = "InlineAllFunctions",

@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.ir.inline
 
 import org.jetbrains.kotlin.backend.common.InlineMode
 import org.jetbrains.kotlin.backend.common.LoweringContext
-import org.jetbrains.kotlin.backend.common.PreSerializationInlineFunctionResolver
 import org.jetbrains.kotlin.backend.common.PreSerializationLoweringContext
 import org.jetbrains.kotlin.backend.common.isConsideredAsPrivateForInlining
 import org.jetbrains.kotlin.backend.common.lower.ArrayConstructorLowering
@@ -63,7 +62,6 @@ private fun inlineOnlyPrivateFunctionsPhase(irMangler: IrMangler) = makeIrModule
         FunctionInlining(
             context,
             inlineMode = InlineMode.PRIVATE_INLINE_FUNCTIONS,
-            PreSerializationInlineFunctionResolver(context, irMangler),
         )
     },
     name = "InlineOnlyPrivateFunctions",
@@ -106,7 +104,6 @@ private fun inlineAllFunctionsPhase(irMangler: IrMangler) = makeIrModulePhase(
         FunctionInlining(
             context,
             inlineMode = InlineMode.ALL_INLINE_FUNCTIONS,
-            PreSerializationInlineFunctionResolver(context, irMangler),
         )
     },
     name = "InlineAllFunctions",

@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.ir.inline
 
-import org.jetbrains.kotlin.backend.common.InlineFunctionResolver
 import org.jetbrains.kotlin.backend.common.InlineMode
 import org.jetbrains.kotlin.backend.common.LoweringContext
 import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
@@ -22,14 +21,13 @@ import org.jetbrains.kotlin.ir.util.isInlineParameter
  */
 @PhaseDescription("CommonInlineCallableReferenceToLambdaPhase")
 open class CommonInlineCallableReferenceToLambdaPhase(
-    context: LoweringContext,
-    inlineFunctionResolver: InlineFunctionResolver
-) : InlineCallableReferenceToLambdaPhase(context, inlineFunctionResolver) {
+    context: LoweringContext
+) : InlineCallableReferenceToLambdaPhase(context) {
     fun lower(function: IrFunction) = function.accept(this, function.parent)
 
     override fun visitFunction(declaration: IrFunction, data: IrDeclarationParent?): IrStatement {
         super.visitFunction(declaration, data)
-        if (inlineFunctionResolver.needsInlining(declaration, InlineMode.ALL_INLINE_FUNCTIONS)) {
+        if (context.inlineResolver.needsInlining(declaration, InlineMode.ALL_INLINE_FUNCTIONS)) {
             for (parameter in declaration.parameters) {
                 if (parameter.isInlineParameter()) {
                     val defaultExpression = parameter.defaultValue?.expression ?: continue

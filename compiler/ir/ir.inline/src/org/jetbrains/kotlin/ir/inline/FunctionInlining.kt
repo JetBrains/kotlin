@@ -38,17 +38,16 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 class FunctionInlining @JvmIrInlineExperimental constructor(
     val context: LoweringContext,
     private val inlineMode: InlineMode,
-    private val inlineFunctionResolver: InlineFunctionResolver,
+    private val inlineFunctionResolver: InlineFunctionResolver = context.inlineResolver,
     private val insertAdditionalImplicitCasts: Boolean,
     private val regenerateInlinedAnonymousObjects: Boolean,
     private val produceOuterThisFields: Boolean,
 ) : IrTransformer<IrDeclaration>(), BodyLoweringPass {
-
     @OptIn(JvmIrInlineExperimental::class)
     constructor(
         context: LoweringContext,
         inlineMode: InlineMode,
-        inlineFunctionResolver: InlineFunctionResolver,
+        inlineFunctionResolver: InlineFunctionResolver = context.inlineResolver,
     ) : this(
         context,
         inlineMode,
