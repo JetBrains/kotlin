@@ -65,16 +65,14 @@ internal fun loadMutedTests(file: File): List<MutedTest> {
 }
 
 private val COLUMN_PARSE_REGEXP = Regex("\\s*(?:(?:\"((?:[^\"]|\"\")*)\")|([^,]*))\\s*")
-private val MUTE_LINE_PARSE_REGEXP = Regex("$COLUMN_PARSE_REGEXP,$COLUMN_PARSE_REGEXP,$COLUMN_PARSE_REGEXP,$COLUMN_PARSE_REGEXP")
+private val MUTE_LINE_PARSE_REGEXP = Regex("$COLUMN_PARSE_REGEXP,$COLUMN_PARSE_REGEXP,$COLUMN_PARSE_REGEXP")
 private fun parseMutedTest(str: String): MutedTest {
     val matchResult = MUTE_LINE_PARSE_REGEXP.matchEntire(str) ?: throw ParseError("Can't parse the line: $str")
     val resultValues = matchResult.groups.filterNotNull()
 
     val testKey = resultValues[1].value
     val issue = resultValues[2].value
-    val statusStr = resultValues[4].value
-
-    val isFlaky = when (statusStr) {
+    val isFlaky = when (val statusStr = resultValues[3].value) {
         "FLAKY" -> true
         "STABLE" -> false
         "" -> false

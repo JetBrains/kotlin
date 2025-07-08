@@ -59,9 +59,9 @@ class MuteInTestWatcher : TestWatcher {
             if (mutedTest == null) {
                 println(
                     """FAILED TEST: if it's a cross-push add to mute-common.csv:
-                    ${testClass.canonicalName}.$methodKey,KT-XXXX,,STABLE
+                    ${testClass.canonicalName}.$methodKey,KT-XXXX,STABLE
                     or if you consider it's flaky:
-                    ${testClass.canonicalName}.$methodKey,KT-XXXX,,FLAKY""".trimIndent()
+                    ${testClass.canonicalName}.$methodKey,KT-XXXX,FLAKY""".trimIndent()
                 )
             }
         }

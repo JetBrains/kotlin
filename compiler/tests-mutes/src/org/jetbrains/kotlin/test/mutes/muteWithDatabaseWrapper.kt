@@ -40,9 +40,9 @@ fun wrapWithMuteInDatabase(testClass: Class<*>, methodName: String, f: () -> Uni
             } catch (e: Throwable) {
                 System.err.println(
                     """FAILED TEST: if it's a cross-push add to mute-common.csv:
-                    ${testClass.canonicalName}.$methodName,KT-XXXX,,STABLE
+                    ${testClass.canonicalName}.$methodName,KT-XXXX,STABLE
                     or if you consider it's flaky:
-                    ${testClass.canonicalName}.$methodName,KT-XXXX,,FLAKY""".trimIndent()
+                    ${testClass.canonicalName}.$methodName,KT-XXXX,FLAKY""".trimIndent()
                 )
                 throw e
             }
