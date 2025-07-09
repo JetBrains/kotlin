@@ -128,11 +128,29 @@ abstract class LibrarySpecialCompatibilityChecksTest : TestCaseWithTmpdir() {
         compileDummyLibrary(libraryVersion, compilerVersion, isWasm, isZipped = true, expectedWarningStatus)
     }
 
-    protected abstract fun MessageCollectorImpl.checkMessage(
+    protected abstract fun MessageCollectorImpl.hasJsOldLibraryError(specificVersions: Pair<TestVersion, TestVersion>? = null): Boolean
+    protected abstract fun MessageCollectorImpl.hasJsTooNewLibraryError(specificVersions: Pair<TestVersion, TestVersion>? = null): Boolean
+    protected abstract fun MessageCollectorImpl.hasWasmError(specificVersions: Pair<TestVersion, TestVersion>? = null): Boolean
+
+    private fun MessageCollectorImpl.checkMessage(
         expectedWarningStatus: WarningStatus,
         libraryVersion: TestVersion?,
         compilerVersion: TestVersion?,
-    )
+    ) {
+        val success = when (expectedWarningStatus) {
+            WarningStatus.NO_WARNINGS -> !hasJsOldLibraryError() && !hasJsTooNewLibraryError() && !hasWasmError()
+            WarningStatus.JS_OLD_LIBRARY_WARNING -> hasJsOldLibraryError(libraryVersion!! to compilerVersion!!)
+            WarningStatus.JS_TOO_NEW_LIBRARY_WARNING -> hasJsTooNewLibraryError(libraryVersion!! to compilerVersion!!)
+            WarningStatus.WASM_WARNING -> hasWasmError(libraryVersion!! to compilerVersion!!)
+        }
+        if (!success) fail(
+            buildString {
+                appendLine("Compiling with stdlib=[$libraryVersion] and compiler=[$compilerVersion]")
+                appendLine("Logger compiler messages (${messages.size} items):")
+                messages.joinTo(this, "\n")
+            }
+        )
+    }
 
     private fun compileDummyLibrary(
         libraryVersion: TestVersion?,
@@ -158,7 +176,7 @@ abstract class LibrarySpecialCompatibilityChecksTest : TestCaseWithTmpdir() {
             val expectedExitCode = if (expectedWarningStatus == WarningStatus.NO_WARNINGS) ExitCode.OK else ExitCode.COMPILATION_ERROR
             runJsCompiler(messageCollector, expectedExitCode) {
                 this.freeArgs = listOf(sourceFile.absolutePath)
-                this.libraries = fakeLibrary.absolutePath
+                this.libraries = (additionalLibraries(isWasm) + fakeLibrary.absolutePath).joinToString(File.pathSeparator)
                 this.outputDir = outputDir.absolutePath
                 this.moduleName = moduleName
                 this.irProduceKlibFile = true
@@ -173,9 +191,52 @@ abstract class LibrarySpecialCompatibilityChecksTest : TestCaseWithTmpdir() {
     private fun haveSameLanguageVersion(a: TestVersion, b: TestVersion): Boolean =
         a.basicVersion.major == b.basicVersion.major && a.basicVersion.minor == b.basicVersion.minor
 
-    protected abstract fun createFakeUnzippedLibraryWithSpecificVersion(isWasm: Boolean, version: TestVersion?): File
+    protected abstract val originalLibraryPath: String
+    protected open fun additionalLibraries(isWasm: Boolean): List<String> = listOf()
 
-    protected abstract fun createFakeZippedLibraryWithSpecificVersion(isWasm: Boolean, version: TestVersion?): File
+    private fun createFakeUnzippedLibraryWithSpecificVersion(isWasm: Boolean, version: TestVersion?): File {
+        val rawVersion = version?.toString()
+
+        val patchedLibraryDir = createDir("dependencies/fakeLib-${rawVersion ?: "unknown"}")
+        val manifestFile = patchedLibraryDir.resolve("default").resolve("manifest")
+        if (manifestFile.exists()) return patchedLibraryDir
+
+        val originalLibraryDir = File(originalLibraryPath)
+        assertTrue(originalLibraryDir.isDirectory)
+        originalLibraryDir.copyRecursively(patchedLibraryDir)
+
+        if (rawVersion != null) {
+            val jarManifestFile = patchedLibraryDir.resolve(KLIB_JAR_MANIFEST_FILE)
+            jarManifestFile.parentFile.mkdirs()
+            jarManifestFile.outputStream().use { os ->
+                with(Manifest()) {
+                    mainAttributes.putValue(KLIB_JAR_LIBRARY_VERSION, rawVersion)
+                    mainAttributes.putValue("Manifest-Version", "1.0") // some convention stuff to make Jar manifest work
+                    write(os)
+                }
+            }
+        }
+
+        if (isWasm) {
+            val properties = manifestFile.inputStream().use { Properties().apply { load(it) } }
+            properties[KLIB_PROPERTY_BUILTINS_PLATFORM] = BuiltInsPlatform.WASM.name
+            manifestFile.outputStream().use { properties.store(it, null) }
+        }
+
+        return patchedLibraryDir
+    }
+
+    private fun createFakeZippedLibraryWithSpecificVersion(isWasm: Boolean, version: TestVersion?): File {
+        val rawVersion = version?.toString()
+
+        val patchedLibraryFile = createFile("dependencies/fakeLib-${rawVersion ?: "unknown"}.klib")
+        if (patchedLibraryFile.exists()) return patchedLibraryFile
+
+        val unzippedLibraryDir = createFakeUnzippedLibraryWithSpecificVersion(isWasm, version)
+        zipDirectory(directory = unzippedLibraryDir, zipFile = patchedLibraryFile)
+
+        return patchedLibraryFile
+    }
 
     private inline fun <T> withCustomCompilerVersion(version: TestVersion?, block: () -> T): T {
         @Suppress("DEPRECATION")
@@ -222,38 +283,17 @@ private fun zipDirectory(directory: File, zipFile: File) {
 }
 
 class JsWasmStdlibSpecialCompatibilityChecksTest : LibrarySpecialCompatibilityChecksTest() {
-    override fun MessageCollectorImpl.checkMessage(
-        expectedWarningStatus: WarningStatus,
-        libraryVersion: TestVersion?,
-        compilerVersion: TestVersion?,
-    ) {
-        val success = when (expectedWarningStatus) {
-            WarningStatus.NO_WARNINGS -> !hasJsOldStdlibWarning() && !hasJsTooNewStdlibWarning() && !hasWasmWarning()
-            WarningStatus.JS_OLD_LIBRARY_WARNING -> hasJsOldStdlibWarning(libraryVersion!! to compilerVersion!!)
-            WarningStatus.JS_TOO_NEW_LIBRARY_WARNING -> hasJsTooNewStdlibWarning(libraryVersion!! to compilerVersion!!)
-            WarningStatus.WASM_WARNING -> hasWasmWarning(libraryVersion!! to compilerVersion!!)
-        }
-        if (!success) fail(
-            buildString {
-                appendLine("Compiling with stdlib=[$libraryVersion] and compiler=[$compilerVersion]")
-                appendLine("Logger compiler messages (${messages.size} items):")
-                messages.joinTo(this, "\n")
-            }
-        )
-    }
+    override val originalLibraryPath: String
+        get() = System.getProperty("kotlin.js.full.stdlib.path")
 
-    private fun MessageCollectorImpl.hasJsOldStdlibWarning(
-        specificVersions: Pair<TestVersion, TestVersion>? = null,
-    ): Boolean {
+    override fun MessageCollectorImpl.hasJsOldLibraryError(specificVersions: Pair<TestVersion, TestVersion>?): Boolean {
         val stdlibMessagePart = "Kotlin/JS standard library has an older version" + specificVersions?.first?.let { " ($it)" }.orEmpty()
         val compilerMessagePart = "than the compiler" + specificVersions?.second?.let { " ($it)" }.orEmpty()
 
         return messages.any { stdlibMessagePart in it.message && compilerMessagePart in it.message }
     }
 
-    private fun MessageCollectorImpl.hasJsTooNewStdlibWarning(
-        specificVersions: Pair<TestVersion, TestVersion>? = null,
-    ): Boolean {
+    override fun MessageCollectorImpl.hasJsTooNewLibraryError(specificVersions: Pair<TestVersion, TestVersion>?): Boolean {
         val stdlibMessagePart =
             "The Kotlin/JS standard library has a more recent version" + specificVersions?.first?.let { " ($it)" }.orEmpty()
         val compilerMessagePart = "The compiler version is " + specificVersions?.second?.toString().orEmpty()
@@ -261,56 +301,43 @@ class JsWasmStdlibSpecialCompatibilityChecksTest : LibrarySpecialCompatibilityCh
         return messages.any { stdlibMessagePart in it.message && compilerMessagePart in it.message }
     }
 
-    private fun MessageCollectorImpl.hasWasmWarning(
-        specificVersions: Pair<TestVersion, TestVersion>? = null,
-    ): Boolean {
+    override fun MessageCollectorImpl.hasWasmError(specificVersions: Pair<TestVersion, TestVersion>?): Boolean {
         val stdlibMessagePart = "The version of the Kotlin/Wasm standard library" + specificVersions?.first?.let { " ($it)" }.orEmpty()
         val compilerMessagePart = "differs from the version of the compiler" + specificVersions?.second?.let { " ($it)" }.orEmpty()
 
         return messages.any { stdlibMessagePart in it.message && compilerMessagePart in it.message }
     }
+}
 
-    override fun createFakeZippedLibraryWithSpecificVersion(isWasm: Boolean, version: TestVersion?): File {
-        val rawVersion = version?.toString()
+class JsWasmTestLibSpecialCompatibilityChecksTest : LibrarySpecialCompatibilityChecksTest() {
+    override val originalLibraryPath: String
+        get() = System.getProperty("kotlin.js.full.test.path")
 
-        val patchedStdlibFile = createFile("dependencies/stdlib-${rawVersion ?: "unknown"}.klib")
-        if (patchedStdlibFile.exists()) return patchedStdlibFile
+    override fun additionalLibraries(isWasm: Boolean): List<String> =
+        if (!isWasm) listOf(System.getProperty("kotlin.js.full.stdlib.path")) else listOf(System.getProperty("kotlin.wasm.full.stdlib.path"))
 
-        val unzippedStdlibDir = createFakeUnzippedLibraryWithSpecificVersion(isWasm, version)
-        zipDirectory(directory = unzippedStdlibDir, zipFile = patchedStdlibFile)
+    override fun MessageCollectorImpl.hasJsOldLibraryError(
+        specificVersions: Pair<TestVersion, TestVersion>?,
+    ): Boolean {
+        val stdlibMessagePart = "Kotlin/JS kotlin-test library has an older version" + specificVersions?.first?.let { " ($it)" }.orEmpty()
+        val compilerMessagePart = "than the compiler" + specificVersions?.second?.let { " ($it)" }.orEmpty()
 
-        return patchedStdlibFile
+        return messages.any { stdlibMessagePart in it.message && compilerMessagePart in it.message }
     }
 
-    override fun createFakeUnzippedLibraryWithSpecificVersion(isWasm: Boolean, version: TestVersion?): File {
-        val rawVersion = version?.toString()
+    override fun MessageCollectorImpl.hasJsTooNewLibraryError(specificVersions: Pair<TestVersion, TestVersion>?): Boolean {
+        val stdlibMessagePart =
+            "The Kotlin/JS kotlin-test library has a more recent version" + specificVersions?.first?.let { " ($it)" }.orEmpty()
+        val compilerMessagePart = "The compiler version is " + specificVersions?.second?.toString().orEmpty()
 
-        val patchedStdlibDir = createDir("dependencies/stdlib-${rawVersion ?: "unknown"}")
-        val manifestFile = patchedStdlibDir.resolve("default").resolve("manifest")
-        if (manifestFile.exists()) return patchedStdlibDir
+        return messages.any { stdlibMessagePart in it.message && compilerMessagePart in it.message }
+    }
 
-        val originalStdlibDir = File(System.getProperty("kotlin.js.full.stdlib.path"))
-        assertTrue(originalStdlibDir.isDirectory)
-        originalStdlibDir.copyRecursively(patchedStdlibDir)
+    override fun MessageCollectorImpl.hasWasmError(specificVersions: Pair<TestVersion, TestVersion>?): Boolean {
+        val stdlibMessagePart =
+            "The version of the Kotlin/Wasm kotlin-test library" + specificVersions?.first?.let { " ($it)" }.orEmpty()
+        val compilerMessagePart = "differs from the version of the compiler" + specificVersions?.second?.let { " ($it)" }.orEmpty()
 
-        if (rawVersion != null) {
-            val jarManifestFile = patchedStdlibDir.resolve(KLIB_JAR_MANIFEST_FILE)
-            jarManifestFile.parentFile.mkdirs()
-            jarManifestFile.outputStream().use { os ->
-                with(Manifest()) {
-                    mainAttributes.putValue(KLIB_JAR_LIBRARY_VERSION, rawVersion)
-                    mainAttributes.putValue("Manifest-Version", "1.0") // some convention stuff to make Jar manifest work
-                    write(os)
-                }
-            }
-        }
-
-        if (isWasm) {
-            val properties = manifestFile.inputStream().use { Properties().apply { load(it) } }
-            properties[KLIB_PROPERTY_BUILTINS_PLATFORM] = BuiltInsPlatform.WASM.name
-            manifestFile.outputStream().use { properties.store(it, null) }
-        }
-
-        return patchedStdlibDir
+        return messages.any { stdlibMessagePart in it.message && compilerMessagePart in it.message }
     }
 }
