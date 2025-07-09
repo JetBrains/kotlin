@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.cli.js.K2JSCompiler
 import org.jetbrains.kotlin.js.test.ir.AbstractJsCompilerInvocationTest.CompilerType
+import org.jetbrains.kotlin.js.test.klib.JsKlibTestSettings
 import org.jetbrains.kotlin.js.testOld.V8JsTestChecker
 import org.jetbrains.kotlin.klib.KlibCompilerEdition
 import org.jetbrains.kotlin.klib.KlibCompilerInvocationTestUtils
@@ -22,8 +23,6 @@ import org.junit.jupiter.api.AfterEach
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.PrintStream
-import java.lang.ref.SoftReference
-import java.net.URLClassLoader
 import kotlin.io.path.createTempDirectory
 
 /**
@@ -59,70 +58,12 @@ private class ModuleDetails(val name: ModuleName, val outputDir: File) {
     constructor(dependency: Dependency) : this(dependency.moduleName, dependency.libraryFile.parentFile)
 }
 
-private fun customCompilerCall(): (PrintStream, Array<String>) -> ExitCode {
-    val customCompiler = JsKlibTestSettings.customJsCompiler
-
-    val compilerClass = Class.forName("org.jetbrains.kotlin.cli.js.K2JSCompiler", true, customCompiler.classLoader)
-    val entryPoint = compilerClass.getMethod(
-        "execFullPathsInMessages",
-        PrintStream::class.java,
-        Array<String>::class.java
-    )
-
-    return { printStream: PrintStream, allCompilerArgs: Array<String> ->
-        val result = entryPoint.invoke(compilerClass.getDeclaredConstructor().newInstance(), printStream, allCompilerArgs)
-        ExitCode.valueOf(result.toString())
-    }
+private fun customCompilerCall(): (PrintStream, Array<String>) -> ExitCode = { printStream: PrintStream, allCompilerArgs: Array<String> ->
+    JsKlibTestSettings.customJsCompiler.callCompiler(args = allCompilerArgs, output = printStream)
 }
 
 private fun currentCompilerCall() = { printStream: PrintStream, args: Array<String> ->
     K2JSCompiler().execFullPathsInMessages(printStream, args)
-}
-
-internal class CustomJsCompiler(private val jsHome: CustomJsCompilerArtifacts) {
-    private var softClassLoader: SoftReference<URLClassLoader>? = null
-    val classLoader: URLClassLoader
-        get() {
-            return softClassLoader?.get() ?: synchronized(this) {
-                softClassLoader?.get() ?: createClassLoader(jsHome).also {
-                    softClassLoader = SoftReference(it)
-                }
-            }
-        }
-}
-
-private fun createClassLoader(jsHome: CustomJsCompilerArtifacts): URLClassLoader {
-    val jsClassPath = setOf(
-        jsHome.compilerEmbeddable,
-        jsHome.baseStdLib,
-    )
-        .map { it.toURI().toURL() }
-        .toTypedArray()
-
-    return URLClassLoader(jsClassPath, null)
-        .apply { setDefaultAssertionStatus(true) }
-}
-
-internal class CustomJsCompilerArtifacts(val dir: File, version: String) {
-    val compilerEmbeddable: File = dir.resolve("kotlin-compiler-embeddable-$version.jar")
-    val baseStdLib: File = dir.resolve("kotlin-stdlib-$version.jar")
-    val jsStdLib: File = dir.resolve("kotlin-stdlib-js-$version.klib")
-}
-
-internal object JsKlibTestSettings {
-    val customJsCompilerArtifacts by lazy {
-        val location = System.getProperty("kotlin.internal.js.test.compat.customCompilerArtifactsDir")
-        requireNotNull(location) { "Custom compiler location is not specified" }
-
-        val version = System.getProperty("kotlin.internal.js.test.compat.customCompilerVersion")
-        requireNotNull(version) { "Custom compiler version is not specified" }
-
-        CustomJsCompilerArtifacts(File(location), version)
-    }
-
-    val customJsCompiler by lazy {
-        CustomJsCompiler(customJsCompilerArtifacts)
-    }
 }
 
 internal class JsCompilerInvocationTestConfiguration(
