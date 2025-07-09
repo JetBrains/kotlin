@@ -1458,24 +1458,51 @@ inline fun <reified Symbol : IrSymbol> IrSymbol.unexpectedSymbolKind(): Nothing 
     throw IllegalArgumentException("Unexpected kind of ${Symbol::class.java.typeName}: $this")
 }
 
+inline fun <reified T> convertTo(value: Any): T {
+    val result: Number = when (value) {
+        is Number -> value
+        is Char -> value.code
+        is UByte -> value.toLong()
+        is UShort -> value.toLong()
+        is UInt -> value.toLong()
+        is ULong -> value.toLong()
+        else -> throw IllegalArgumentException("Cannot convert ${value::class.simpleName}")
+    }
+
+    return when (T::class) {
+        Long::class -> result.toLong() as T
+        Int::class -> result.toInt() as T
+        Short::class -> result.toShort() as T
+        Byte::class -> result.toByte() as T
+        Char::class -> result.toInt().toChar() as T
+        ULong::class -> result.toLong().toULong() as T
+        UInt::class -> result.toInt().toUInt() as T
+        UShort::class -> result.toShort().toUShort() as T
+        UByte::class -> result.toByte().toUByte() as T
+        Float::class -> result.toFloat() as T
+        Double::class -> result.toDouble() as T
+        else -> throw IllegalArgumentException("Unsupported target type: ${T::class.simpleName}")
+    }
+}
+
 private fun Any?.toIrConstOrNull(irType: IrType, startOffset: Int = SYNTHETIC_OFFSET, endOffset: Int = SYNTHETIC_OFFSET): IrConst? {
     if (this == null) return IrConstImpl.constNull(startOffset, endOffset, irType)
 
     val constType = irType.makeNotNull().removeAnnotations()
     return when (irType.getPrimitiveType()) {
         PrimitiveType.BOOLEAN -> IrConstImpl.boolean(startOffset, endOffset, constType, this as Boolean)
-        PrimitiveType.CHAR -> IrConstImpl.char(startOffset, endOffset, constType, this as Char)
-        PrimitiveType.BYTE -> IrConstImpl.byte(startOffset, endOffset, constType, (this as Number).toByte())
-        PrimitiveType.SHORT -> IrConstImpl.short(startOffset, endOffset, constType, (this as Number).toShort())
-        PrimitiveType.INT -> IrConstImpl.int(startOffset, endOffset, constType, (this as Number).toInt())
-        PrimitiveType.FLOAT -> IrConstImpl.float(startOffset, endOffset, constType, (this as Number).toFloat())
-        PrimitiveType.LONG -> IrConstImpl.long(startOffset, endOffset, constType, (this as Number).toLong())
-        PrimitiveType.DOUBLE -> IrConstImpl.double(startOffset, endOffset, constType, (this as Number).toDouble())
+        PrimitiveType.CHAR -> IrConstImpl.char(startOffset, endOffset, constType, convertTo(this))
+        PrimitiveType.BYTE -> IrConstImpl.byte(startOffset, endOffset, constType, convertTo(this))
+        PrimitiveType.SHORT -> IrConstImpl.short(startOffset, endOffset, constType, convertTo(this))
+        PrimitiveType.INT -> IrConstImpl.int(startOffset, endOffset, constType, convertTo(this))
+        PrimitiveType.FLOAT -> IrConstImpl.float(startOffset, endOffset, constType, convertTo(this))
+        PrimitiveType.LONG -> IrConstImpl.long(startOffset, endOffset, constType, convertTo(this))
+        PrimitiveType.DOUBLE -> IrConstImpl.double(startOffset, endOffset, constType, convertTo(this))
         null -> when (constType.getUnsignedType()) {
-            UnsignedType.UBYTE -> IrConstImpl.byte(startOffset, endOffset, constType, (this as Number).toByte())
-            UnsignedType.USHORT -> IrConstImpl.short(startOffset, endOffset, constType, (this as Number).toShort())
-            UnsignedType.UINT -> IrConstImpl.int(startOffset, endOffset, constType, (this as Number).toInt())
-            UnsignedType.ULONG -> IrConstImpl.long(startOffset, endOffset, constType, (this as Number).toLong())
+            UnsignedType.UBYTE -> IrConstImpl.byte(startOffset, endOffset, constType, convertTo(this))
+            UnsignedType.USHORT -> IrConstImpl.short(startOffset, endOffset, constType, convertTo(this))
+            UnsignedType.UINT -> IrConstImpl.int(startOffset, endOffset, constType, convertTo(this))
+            UnsignedType.ULONG -> IrConstImpl.long(startOffset, endOffset, constType, convertTo(this))
             null -> when {
                 constType.isString() -> IrConstImpl.string(startOffset, endOffset, constType, this as String)
                 else -> null

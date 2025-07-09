@@ -286,24 +286,6 @@ class IrInterpreter(internal val environment: IrInterpreterEnvironment, internal
     }
 
     private fun interpretConst(expression: IrConst) {
-        fun getSignedType(unsignedType: IrType): IrType? = when (unsignedType.getUnsignedType()) {
-            UnsignedType.UBYTE -> irBuiltIns.byteType
-            UnsignedType.USHORT -> irBuiltIns.shortType
-            UnsignedType.UINT -> irBuiltIns.intType
-            UnsignedType.ULONG -> irBuiltIns.longType
-            else -> null
-        }
-
-        val signedType = getSignedType(expression.type)
-        if (signedType != null) {
-            val unsignedClass = expression.type.classOrNull!!
-            val constructor = unsignedClass.constructors.single().owner
-            val constructorCall = IrConstructorCallImpl.fromSymbolOwner(constructor.returnType, constructor.symbol)
-            constructorCall.arguments[0] = expression.value.toIrConst(signedType)
-
-            return callStack.pushCompoundInstruction(constructorCall)
-        }
-
         callStack.pushState(expression.toPrimitive())
     }
 
