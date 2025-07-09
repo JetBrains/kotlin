@@ -20,16 +20,4 @@ KaUsualClassType:
 
 After:
 
-KaUsualClassType:
-  abbreviation: null
-  annotations: []
-  classId: Foo
-  qualifiers: Could not render due to org.jetbrains.kotlin.utils.exceptions.KotlinIllegalArgumentExceptionWithAttachments: ConeClassLikeTypeImpl is not resolved to symbol for on-error type
-
-  symbol: Could not render due to org.jetbrains.kotlin.utils.exceptions.KotlinIllegalArgumentExceptionWithAttachments: Class was not found
-
-  typeArguments: Could not render due to org.jetbrains.kotlin.utils.exceptions.KotlinIllegalArgumentExceptionWithAttachments: ConeClassLikeTypeImpl is not resolved to symbol for on-error type
-
-  isMarkedNullable: false
-  isNullable: false
-  hasFlexibleNullability: false
+Type pointer restoration failed

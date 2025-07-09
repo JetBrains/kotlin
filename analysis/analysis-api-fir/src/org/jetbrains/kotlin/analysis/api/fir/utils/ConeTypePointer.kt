@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.analysis.api.fir.KaSymbolByFirBuilder
 import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
 import org.jetbrains.kotlin.analysis.api.types.KaTypePointer
+import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.ProjectionKind.*
@@ -61,6 +62,8 @@ private class ConeClassLikeTypePointer(coneType: ConeClassLikeType, builder: KaS
     private val contextParameterNumber = coneType.contextParameterNumberForFunctionType
 
     override fun restore(session: KaFirSession): ConeClassLikeTypeImpl? {
+        if (lookupTag.toSymbol(session.firSession) == null) return null
+
         val typeArguments = typeArgumentPointers.map { it.restore(session) ?: return null }
         val abbreviatedType = abbreviatedTypePointer?.let { it.restore(session) ?: return null }
 
