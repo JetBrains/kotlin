@@ -81,6 +81,16 @@ public class FirIdeNormalAnalysisScriptSourceModuleDanglingFileCollectDiagnostic
   }
 
   @Nested
+  @TestMetadata("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/redeclaration")
+  @TestDataPath("$PROJECT_ROOT")
+  public class Redeclaration {
+    @Test
+    public void testAllFilesPresentInRedeclaration() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/redeclaration"), Pattern.compile("^(.+)\\.kts$"), null, true);
+    }
+  }
+
+  @Nested
   @TestMetadata("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/suppression")
   @TestDataPath("$PROJECT_ROOT")
   public class Suppression {
