@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.scopes.jvm
 
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.fir.containingClassLookupTag
+import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
@@ -45,9 +46,8 @@ fun FirFunction.computeJvmDescriptor(
         }
     }
 
-    append("(")
-    for (parameter in valueParameters) {
-        typeConversion(parameter.returnTypeRef)?.let { coneType ->
+    fun appendTypeRef(parameter: FirDeclaration, typeRef: FirTypeRef) {
+        typeConversion(typeRef)?.let { coneType ->
             try {
                 appendConeType(coneType, typeConversion, mutableSetOf())
             } catch (e: ConcurrentModificationException) {
@@ -66,6 +66,17 @@ fun FirFunction.computeJvmDescriptor(
                 }
             }
         }
+    }
+
+    append("(")
+    for (parameter in contextParameters) {
+        appendTypeRef(parameter, parameter.returnTypeRef)
+    }
+    receiverParameter?.let {
+        appendTypeRef(it, it.typeRef)
+    }
+    for (parameter in valueParameters) {
+        appendTypeRef(parameter, parameter.returnTypeRef)
     }
     append(")")
 
