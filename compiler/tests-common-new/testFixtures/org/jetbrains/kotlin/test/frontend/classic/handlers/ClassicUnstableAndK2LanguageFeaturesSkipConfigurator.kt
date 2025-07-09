@@ -27,6 +27,12 @@ class ClassicUnstableAndK2LanguageFeaturesSkipConfigurator(testServices: TestSer
             LanguageFeature.DeprecateNameMismatchInShortDestructuringWithParentheses,
             LanguageFeature.EnableNameBasedDestructuringShortForm,
         )
+
+        private val permittedK2Features = setOf(
+            // This feature existed even before v2.0.0, but was enabled only for Kotlin/JS compiler running in IR mode.
+            // In v2.0.0 the legacy mode of the Kotlin/JS compiler has been dropped, thus the feature became de-facto stable since LV 2.0.
+            LanguageFeature.JsAllowValueClassesInExternals
+        )
     }
 
     override fun shouldSkipTest(): Boolean {
@@ -35,7 +41,7 @@ class ClassicUnstableAndK2LanguageFeaturesSkipConfigurator(testServices: TestSer
         return settings.getCustomizedEffectivelyEnabledLanguageFeatures().any { feature ->
             when (val sinceVersion = feature.sinceVersion) {
                 null -> feature in unscheduledK2OnlyFeatures
-                else -> sinceVersion.usesK2
+                else -> sinceVersion.usesK2 && feature !in permittedK2Features
             }
         }
     }
