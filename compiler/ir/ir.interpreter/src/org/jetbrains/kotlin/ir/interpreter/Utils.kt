@@ -47,6 +47,10 @@ internal fun IrFunctionAccessExpression.getThisReceiver(): IrValueSymbol = this.
 internal fun IrConst.toPrimitive(): Primitive = when {
     type.isByte() -> Primitive((value as Number).toByte(), type)
     type.isShort() -> Primitive((value as Number).toShort(), type)
+    type.isUByte() -> Primitive((value as Long).toUByte(), type)
+    type.isUShort() -> Primitive((value as Long).toUShort(), type)
+    type.isUInt() -> Primitive((value as Long).toUInt(), type)
+    type.isULong() -> Primitive((value as Long).toULong(), type)
     else -> Primitive(value, type)
 }
 
