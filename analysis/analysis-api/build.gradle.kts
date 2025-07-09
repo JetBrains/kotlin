@@ -30,7 +30,7 @@ dependencies {
     testRuntimeOnly(libs.junit.jupiter.engine)
 
     testImplementation(projectTests(":compiler:psi:psi-api"))
-    testImplementation(projectTests(":compiler"))
+    testImplementation(testFixtures(project(":compiler:tests-common")))
 }
 
 kotlin {
