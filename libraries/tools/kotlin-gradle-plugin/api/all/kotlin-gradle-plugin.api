@@ -4878,7 +4878,7 @@ public abstract class org/jetbrains/kotlin/gradle/targets/js/yarn/YarnBasics : o
 }
 
 public final class org/jetbrains/kotlin/gradle/targets/js/yarn/YarnEnv : org/jetbrains/kotlin/gradle/targets/js/AbstractEnv {
-	public fun <init> (ZLjava/lang/String;ZLjava/io/File;Ljava/lang/String;Ljava/lang/String;ZLorg/jetbrains/kotlin/gradle/targets/js/yarn/YarnLockMismatchReport;ZZLjava/util/List;)V
+	public fun <init> (ZLjava/lang/String;ZLjava/io/File;Ljava/lang/String;Ljava/lang/String;ZLorg/jetbrains/kotlin/gradle/targets/js/yarn/YarnLockMismatchReport;ZZLjava/util/List;Z)V
 	public final fun component1 ()Z
 	public final fun component10 ()Z
 	public final fun component11 ()Ljava/util/List;
@@ -4890,8 +4890,8 @@ public final class org/jetbrains/kotlin/gradle/targets/js/yarn/YarnEnv : org/jet
 	public final fun component7 ()Z
 	public final fun component8 ()Lorg/jetbrains/kotlin/gradle/targets/js/yarn/YarnLockMismatchReport;
 	public final fun component9 ()Z
-	public final fun copy (ZLjava/lang/String;ZLjava/io/File;Ljava/lang/String;Ljava/lang/String;ZLorg/jetbrains/kotlin/gradle/targets/js/yarn/YarnLockMismatchReport;ZZLjava/util/List;)Lorg/jetbrains/kotlin/gradle/targets/js/yarn/YarnEnv;
-	public static synthetic fun copy$default (Lorg/jetbrains/kotlin/gradle/targets/js/yarn/YarnEnv;ZLjava/lang/String;ZLjava/io/File;Ljava/lang/String;Ljava/lang/String;ZLorg/jetbrains/kotlin/gradle/targets/js/yarn/YarnLockMismatchReport;ZZLjava/util/List;ILjava/lang/Object;)Lorg/jetbrains/kotlin/gradle/targets/js/yarn/YarnEnv;
+	public final fun copy (ZLjava/lang/String;ZLjava/io/File;Ljava/lang/String;Ljava/lang/String;ZLorg/jetbrains/kotlin/gradle/targets/js/yarn/YarnLockMismatchReport;ZZLjava/util/List;Z)Lorg/jetbrains/kotlin/gradle/targets/js/yarn/YarnEnv;
+	public static synthetic fun copy$default (Lorg/jetbrains/kotlin/gradle/targets/js/yarn/YarnEnv;ZLjava/lang/String;ZLjava/io/File;Ljava/lang/String;Ljava/lang/String;ZLorg/jetbrains/kotlin/gradle/targets/js/yarn/YarnLockMismatchReport;ZZLjava/util/List;ZILjava/lang/Object;)Lorg/jetbrains/kotlin/gradle/targets/js/yarn/YarnEnv;
 	public fun equals (Ljava/lang/Object;)Z
 	public fun getAllowInsecureProtocol ()Z
 	public fun getDir ()Ljava/io/File;
@@ -4941,9 +4941,15 @@ public final class org/jetbrains/kotlin/gradle/targets/js/yarn/YarnLockMismatchR
 
 public abstract class org/jetbrains/kotlin/gradle/targets/js/yarn/YarnLockStoreTask : org/jetbrains/kotlin/gradle/targets/js/npm/LockStoreTask {
 	public fun <init> ()V
+	public fun copy ()V
 	public final fun getReportNewYarnLock ()Lorg/gradle/api/provider/Provider;
 	public final fun getYarnLockAutoReplace ()Lorg/gradle/api/provider/Provider;
 	public final fun getYarnLockMismatchReport ()Lorg/gradle/api/provider/Provider;
+}
+
+public abstract class org/jetbrains/kotlin/gradle/targets/js/yarn/YarnLockUpgradeTask : org/jetbrains/kotlin/gradle/targets/js/yarn/YarnLockCopyTask {
+	public fun <init> ()V
+	public fun copy ()V
 }
 
 public class org/jetbrains/kotlin/gradle/targets/js/yarn/YarnPlugin : org/jetbrains/kotlin/gradle/targets/web/yarn/CommonYarnPlugin {
@@ -5940,6 +5946,7 @@ public abstract class org/jetbrains/kotlin/gradle/targets/web/yarn/BaseYarnRootE
 	public abstract fun getIgnoreScripts ()Lorg/gradle/api/provider/Property;
 	public abstract fun getReportNewYarnLock ()Lorg/gradle/api/provider/Property;
 	public abstract fun getResolutions ()Lorg/gradle/api/provider/ListProperty;
+	public abstract fun getStoreEmptyLockFile ()Lorg/gradle/api/provider/Property;
 	public abstract fun getYarnLockAutoReplace ()Lorg/gradle/api/provider/Property;
 	public abstract fun getYarnLockMismatchReport ()Lorg/gradle/api/provider/Property;
 	protected final fun produceEnv ()Lorg/gradle/api/provider/Provider;

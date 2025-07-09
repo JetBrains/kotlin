@@ -55,6 +55,16 @@ abstract class BaseYarnRootEnvSpec internal constructor() : EnvSpec<YarnEnv>() {
     abstract val yarnLockAutoReplace: Property<Boolean>
 
     /**
+     * Enable storing the `yarn.lock` file if the file is empty.
+     *
+     * The file is considered empty if it only contains comments and blank lines.
+     *
+     * Default: false
+     */
+
+    abstract val storeEmptyLockFile: Property<Boolean>
+
+    /**
      * Specify replacements of versions of installed NPM dependencies
      *
      * Details: https://classic.yarnpkg.com/lang/en/docs/selective-version-resolutions/
@@ -97,7 +107,8 @@ abstract class BaseYarnRootEnvSpec internal constructor() : EnvSpec<YarnEnv>() {
                 yarnLockMismatchReport = yarnLockMismatchReport.get(),
                 reportNewYarnLock = reportNewYarnLock.get(),
                 yarnLockAutoReplace = yarnLockAutoReplace.get(),
-                yarnResolutions = resolutions.get()
+                yarnResolutions = resolutions.get(),
+                storeEmptyLockFile = storeEmptyLockFile.get(),
             )
         }
     }
