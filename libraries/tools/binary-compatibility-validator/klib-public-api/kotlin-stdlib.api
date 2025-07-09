@@ -13746,6 +13746,9 @@ final inline fun kotlin/assert(kotlin/Boolean, kotlin/Function0<kotlin/Any>) // 
 final suspend fun <#A: kotlin/Any?> kotlin.native.internal/returnIfSuspended(kotlin/Any?): #A // kotlin.native.internal/returnIfSuspended|returnIfSuspended(kotlin.Any?){0§<kotlin.Any?>}[0]
 
 // Targets: [native]
+final suspend inline fun <#A: kotlin/Any?> kotlin.native.internal/suspendCoroutineUninterceptedOrReturn(crossinline kotlin/Function1<kotlin.coroutines/Continuation<#A>, kotlin/Any?>): #A // kotlin.native.internal/suspendCoroutineUninterceptedOrReturn|suspendCoroutineUninterceptedOrReturn(kotlin.Function1<kotlin.coroutines.Continuation<0:0>,kotlin.Any?>){0§<kotlin.Any?>}[0]
+
+// Targets: [native]
 final suspend inline fun kotlin.native.internal/getCoroutineContext(): kotlin.coroutines/CoroutineContext // kotlin.native.internal/getCoroutineContext|getCoroutineContext(){}[0]
 
 // Targets: [js, wasmJs, wasmWasi]
@@ -14138,6 +14141,9 @@ final inline fun kotlin/ulongCompare(kotlin/Long, kotlin/Long): kotlin/Int // ko
 
 // Targets: [wasmJs, wasmWasi]
 final suspend fun <#A: kotlin/Any?> kotlin.wasm.internal/returnIfSuspended(kotlin/Any?): #A // kotlin.wasm.internal/returnIfSuspended|returnIfSuspended(kotlin.Any?){0§<kotlin.Any?>}[0]
+
+// Targets: [wasmJs, wasmWasi]
+final suspend inline fun <#A: kotlin/Any?> kotlin.wasm.internal/suspendCoroutineUninterceptedOrReturn(kotlin/Function1<kotlin.coroutines/Continuation<#A>, kotlin/Any?>): #A // kotlin.wasm.internal/suspendCoroutineUninterceptedOrReturn|suspendCoroutineUninterceptedOrReturn(kotlin.Function1<kotlin.coroutines.Continuation<0:0>,kotlin.Any?>){0§<kotlin.Any?>}[0]
 
 // Targets: [wasmJs, wasmWasi]
 final suspend inline fun kotlin.wasm.internal/getCoroutineContext(): kotlin.coroutines/CoroutineContext // kotlin.wasm.internal/getCoroutineContext|getCoroutineContext(){}[0]
@@ -15324,6 +15330,9 @@ final inline fun kotlin.math/truncate(kotlin/Float): kotlin/Float // kotlin.math
 
 // Targets: [js]
 final suspend fun <#A: kotlin/Any?> kotlin.js/returnIfSuspended(kotlin/Any?): #A // kotlin.js/returnIfSuspended|returnIfSuspended(kotlin.Any?){0§<kotlin.Any?>}[0]
+
+// Targets: [js]
+final suspend inline fun <#A: kotlin/Any?> kotlin.js/suspendCoroutineUninterceptedOrReturnJS(kotlin/Function1<kotlin.coroutines/Continuation<#A>, kotlin/Any?>): #A // kotlin.js/suspendCoroutineUninterceptedOrReturnJS|suspendCoroutineUninterceptedOrReturnJS(kotlin.Function1<kotlin.coroutines.Continuation<0:0>,kotlin.Any?>){0§<kotlin.Any?>}[0]
 
 // Targets: [js]
 final suspend inline fun kotlin.js/getCoroutineContext(): kotlin.coroutines/CoroutineContext // kotlin.js/getCoroutineContext|getCoroutineContext(){}[0]
