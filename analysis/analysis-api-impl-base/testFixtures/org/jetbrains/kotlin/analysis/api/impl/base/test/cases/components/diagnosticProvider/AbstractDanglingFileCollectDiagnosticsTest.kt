@@ -5,16 +5,19 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.diagnosticProvider
 
-import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
+import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinProjectStructureProvider
+import org.jetbrains.kotlin.analysis.api.projectStructure.contextModule
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.test.services.TestServices
 
 abstract class AbstractDanglingFileCollectDiagnosticsTest : AbstractCollectDiagnosticsTest() {
-    override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
-        val ktPsiFactory = KtPsiFactory.contextual(mainFile, markGenerated = true, eventSystemEnabled = false)
-        val fakeKtFile = ktPsiFactory.createFile("fake.kt", mainFile.text)
+    override fun prepareKtFile(ktFile: KtFile, testServices: TestServices): KtFile {
+        val contextModule = KotlinProjectStructureProvider.getModule(ktFile.project, ktFile, useSiteModule = null)
+        val ktPsiFactory = KtPsiFactory.contextual(ktFile, markGenerated = true, eventSystemEnabled = false)
 
-        doTestByKtFile(fakeKtFile, testServices)
+        return ktPsiFactory.createFile("fake.kt", ktFile.text).also { ktFile ->
+            ktFile.contextModule = contextModule
+        }
     }
 }
