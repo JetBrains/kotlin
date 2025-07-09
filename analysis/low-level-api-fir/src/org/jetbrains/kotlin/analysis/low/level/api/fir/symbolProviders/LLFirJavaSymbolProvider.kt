@@ -11,7 +11,7 @@ import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.moduleData
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.caches.LLPsiAwareClassLikeSymbolCache
-import org.jetbrains.kotlin.analysis.low.level.api.fir.util.classIdOrError
+import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
 import org.jetbrains.kotlin.fir.java.FirJavaFacade
 import org.jetbrains.kotlin.fir.java.FirJavaFacadeForSource
@@ -39,22 +39,14 @@ internal class LLFirJavaSymbolProvider private constructor(
     private val psiAwareCache = LLPsiAwareClassLikeSymbolCache<PsiClass, FirRegularClassSymbol?, ClassCacheContext?>(
         classCache,
         session.firCachesFactory.createCache { psiClass, classCacheContext ->
-            computeAmbiguousClassLikeSymbolByPsi(psiClass, classCacheContext)
+            javaFacade.createPsiClassSymbol(psiClass, classCacheContext?.foundJavaClass, classCacheContext?.parentClassSymbol)
         }
     )
 
     @ModuleSpecificSymbolProviderAccess
     override fun getClassLikeSymbolByPsi(classId: ClassId, declaration: PsiElement): FirRegularClassSymbol? =
         psiAwareCache.getSymbolByPsi<PsiClass>(classId, declaration) { psiClass ->
-            val parentClass = psiClass.containingClass?.let { getClassLikeSymbolByPsi(it.classIdOrError(), it) }
+            val parentClass = getParentPsiClassSymbol(psiClass)
             ClassCacheContext(parentClass, JavaClassImpl(psiClass))
         }
-
-    private fun computeAmbiguousClassLikeSymbolByPsi(psiClass: PsiClass, classCacheContext: ClassCacheContext?): FirRegularClassSymbol {
-        val classId = psiClass.classIdOrError()
-        val symbol = FirRegularClassSymbol(classId)
-        val javaClass = JavaClassImpl(psiClass)
-
-        return javaFacade.convertJavaClassToFir(symbol, classCacheContext?.parentClassSymbol, javaClass).symbol
-    }
 }

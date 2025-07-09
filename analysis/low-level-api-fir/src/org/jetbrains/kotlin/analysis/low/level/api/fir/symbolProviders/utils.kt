@@ -5,12 +5,18 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders
 
+import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.analysis.low.level.api.fir.util.classIdOrError
 import org.jetbrains.kotlin.builtins.StandardNames
+import org.jetbrains.kotlin.fir.java.FirJavaFacade
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import org.jetbrains.kotlin.load.java.structure.JavaClass
+import org.jetbrains.kotlin.load.java.structure.impl.JavaClassImpl
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 
@@ -46,4 +52,18 @@ internal fun FirSymbolProvider.getClassLikeSymbolMatchingPsi(classId: ClassId, d
         // have a PSI source.
         symbol.hasPsi(declaration)
     }
+}
+
+@ModuleSpecificSymbolProviderAccess
+internal fun LLPsiAwareSymbolProvider.getParentPsiClassSymbol(psiClass: PsiClass): FirRegularClassSymbol? =
+    psiClass.containingClass?.let { getClassLikeSymbolByPsi(it.classIdOrError(), it) as? FirRegularClassSymbol }
+
+internal fun FirJavaFacade.createPsiClassSymbol(
+    psiClass: PsiClass,
+    javaClass: JavaClass?,
+    parentClassSymbol: FirRegularClassSymbol?,
+): FirRegularClassSymbol {
+    val classId = psiClass.classIdOrError()
+    val symbol = FirRegularClassSymbol(classId)
+    return convertJavaClassToFir(symbol, parentClassSymbol, javaClass ?: JavaClassImpl(psiClass)).symbol
 }

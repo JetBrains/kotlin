@@ -40,11 +40,13 @@ import org.jetbrains.kotlin.util.toJvmMetadataVersion
 import java.nio.file.Path
 import java.nio.file.Paths
 
-// This symbol provider loads JVM classes, reading extra info from Kotlin `@Metadata` annotations
-// if present. Use it for library and incremental compilation sessions. For source sessions use
-// `JavaSymbolProvider`, as Kotlin classes should be parsed first.
+/**
+ * This symbol provider loads JVM classes, reading extra info from Kotlin [`@Metadata`][Metadata] annotations if present. Use it for library
+ * and incremental compilation sessions. For source sessions use [JavaSymbolProvider][org.jetbrains.kotlin.fir.java.JavaSymbolProvider], as
+ * Kotlin classes should be parsed first.
+ */
 @ThreadSafeMutableState
-class JvmClassFileBasedSymbolProvider(
+open class JvmClassFileBasedSymbolProvider(
     session: FirSession,
     moduleDataProvider: ModuleDataProvider,
     kotlinScopeProvider: FirKotlinScopeProvider,
