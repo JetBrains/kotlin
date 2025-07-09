@@ -92,11 +92,8 @@ internal class DefaultCallInterceptor(override val interpreter: IrInterpreter) :
                 verify(handleIntrinsicMethods(irConstructor)) { "Unsupported intrinsic constructor: ${irConstructor.render()}" }
             }
             irClass.defaultType.isUnsignedType() -> {
-                val propertyName = irClass.inlineClassRepresentation?.underlyingPropertyName
-                val propertySymbol = irClass.declarations.filterIsInstance<IrProperty>()
-                    .single { it.name == propertyName && it.getter?.hasShape(dispatchReceiver = true) ?: true }
-                    .symbol
-                callStack.pushState(receiver.apply { this.setField(propertySymbol, args.single()) })
+                val newState = convertToPrimitive((args.single() as Primitive).value, irClass.defaultType)
+                callStack.rewriteState(constructorCall.getThisReceiver(), newState)
             }
             else -> defaultAction()
         }
@@ -201,6 +198,10 @@ internal class DefaultCallInterceptor(override val interpreter: IrInterpreter) :
             is Short -> irBuiltIns.shortType
             is Int -> irBuiltIns.intType
             is Long -> irBuiltIns.longType
+            is UByte -> irBuiltIns.ubyteType
+            is UShort -> irBuiltIns.ushortType
+            is UInt -> irBuiltIns.uintType
+            is ULong -> irBuiltIns.ulongType
             is String -> irBuiltIns.stringType
             is Float -> irBuiltIns.floatType
             is Double -> irBuiltIns.doubleType
