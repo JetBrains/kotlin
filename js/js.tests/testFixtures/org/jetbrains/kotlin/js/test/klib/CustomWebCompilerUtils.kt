@@ -107,7 +107,12 @@ class CustomWebCompiler(private val compilerClassPath: List<File>) {
         }
     }
 
-    fun callCompiler(output: PrintStream, args: Array<String>): ExitCode {
+    fun callCompiler(output: PrintStream, vararg args: List<String>?): ExitCode {
+        val allArgs = args.flatMap { it.orEmpty() }.toTypedArray()
+        return callCompiler(output, *allArgs)
+    }
+
+    fun callCompiler(output: PrintStream, vararg args: String): ExitCode {
         val isolatedClassLoader = getIsolatedClassLoader()
 
         val compilerClass = Class.forName("org.jetbrains.kotlin.cli.js.K2JSCompiler", true, isolatedClassLoader)
