@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.gradle.targets.js.npm.LockCopyTask.Companion.UPGRADE
 import org.jetbrains.kotlin.gradle.targets.js.npm.LockCopyTask.Companion.YARN_LOCK
 import org.jetbrains.kotlin.gradle.targets.js.npm.fromSrcPackageJson
 import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnPlugin
+import org.jetbrains.kotlin.gradle.targets.wasm.yarn.WasmYarnRootEnvSpec
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
@@ -24,6 +25,7 @@ import kotlin.io.path.deleteRecursively
 import kotlin.io.path.notExists
 import kotlin.io.path.readText
 import kotlin.test.assertEquals
+import kotlin.test.assertTrue
 
 class NpmGradlePluginIT : PackageManagerGradlePluginIT() {
     override val yarn: Boolean = false
@@ -160,17 +162,35 @@ class YarnGradlePluginIT : PackageManagerGradlePluginIT() {
 
     override val mismatchReportMessage: String = YarnPlugin.yarnLockMismatchMessage(upgradeTaskName)
 
-    @DisplayName("Empty yarn.lock is not persisted")
+    @DisplayName("Empty yarn.lock stored with flag, not stored by default")
     @GradleTest
     @MppGradlePluginTests
-    fun testEmptyYarnLockNotPersisted(gradleVersion: GradleVersion) {
+    fun testEmptyYarnLockStore(gradleVersion: GradleVersion) {
         project("kotlin-wasm-package-lock-project", gradleVersion) {
 
             build(":kotlinWasmStoreYarnLock") {
-                val packageLock = projectPath.resolve(KOTLIN_JS_STORE)
+                val yarnLock = projectPath.resolve(KOTLIN_JS_STORE)
                     .resolve("wasm")
                     .resolve(YARN_LOCK)
-                assertFileNotExists(packageLock)
+                assertFileNotExists(yarnLock)
+            }
+
+            buildScriptInjection {
+                project.extensions.getByType(WasmYarnRootEnvSpec::class.java).storeEmptyLockFile.set(true)
+            }
+
+            build(":kotlinWasmStoreYarnLock") {
+                val yarnLock = projectPath.resolve(KOTLIN_JS_STORE)
+                    .resolve("wasm")
+                    .resolve(YARN_LOCK)
+
+                assertFileExists(yarnLock)
+
+                assertTrue("yarn.lock file should be empty, but was: \n${yarnLock.toFile().readText()}") {
+                    yarnLock.toFile().useLines { lines ->
+                        lines.any { !it.startsWith("#") || it.isNotBlank() }
+                    }
+                }
             }
         }
     }

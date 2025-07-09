@@ -158,6 +158,9 @@ internal class YarnPluginApplier(
             task.lockFileAutoReplace.value(
                 project.provider { yarnRootExtension.requireConfigured().yarnLockAutoReplace }
             ).disallowChanges()
+            task.storeEmptyLockFile.value(
+                yarnSpec.storeEmptyLockFile
+            ).disallowChanges()
             task.mismatchMessage.value(
                 YarnPlugin.yarnLockMismatchMessage(upgradeYarnLock.name)
             )
@@ -208,6 +211,7 @@ internal class YarnPluginApplier(
         yarnLockMismatchReport.convention(objectFactory.providerWithLazyConvention { yarnRootExtension.yarnLockMismatchReport })
         reportNewYarnLock.convention(objectFactory.providerWithLazyConvention { yarnRootExtension.reportNewYarnLock })
         yarnLockAutoReplace.convention(objectFactory.providerWithLazyConvention { yarnRootExtension.yarnLockAutoReplace })
+        storeEmptyLockFile.convention(false)
         resolutions.convention(
             objectFactory.listProperty<YarnResolution>().value(
                 objectFactory.providerWithLazyConvention {
