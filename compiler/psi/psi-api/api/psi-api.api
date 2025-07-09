@@ -3942,8 +3942,6 @@ public final class org/jetbrains/kotlin/psi/psiUtil/PsiUtilsKt {
 	public static synthetic fun siblings$default (Lcom/intellij/psi/PsiElement;ZZILjava/lang/Object;)Lkotlin/sequences/Sequence;
 	public static final fun startsWithComment (Lcom/intellij/psi/PsiElement;)Z
 	public static final fun trimWhiteSpaces (Lorg/jetbrains/kotlin/psi/psiUtil/PsiChildRange;)Lorg/jetbrains/kotlin/psi/psiUtil/PsiChildRange;
-	public static final fun tryVisitFoldingStringConcatenation (Lorg/jetbrains/kotlin/psi/KtBinaryExpression;Z)Ljava/util/List;
-	public static synthetic fun tryVisitFoldingStringConcatenation$default (Lorg/jetbrains/kotlin/psi/KtBinaryExpression;ZILjava/lang/Object;)Ljava/util/List;
 	public static final fun unwrapParenthesesLabelsAndAnnotations (Lcom/intellij/psi/PsiElement;)Lcom/intellij/psi/PsiElement;
 	public static final fun unwrapParenthesesLabelsAndAnnotationsDeeply (Lcom/intellij/psi/PsiElement;)Lcom/intellij/psi/PsiElement;
 }

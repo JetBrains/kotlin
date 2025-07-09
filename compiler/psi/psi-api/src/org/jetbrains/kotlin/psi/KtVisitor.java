@@ -5,13 +5,14 @@
 
 package org.jetbrains.kotlin.psi;
 
+import com.intellij.psi.PsiElement;
 import com.intellij.psi.PsiElementVisitor;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
-import static org.jetbrains.kotlin.psi.psiUtil.PsiUtilsKt.tryVisitFoldingStringConcatenation;
+import static org.jetbrains.kotlin.psi.psiUtil.PsiUtilsKt.tryFlattenStringConcatenationDescendants;
 
 public class KtVisitor<R, D> extends PsiElementVisitor {
     public R visitKtElement(@NotNull KtElement element, D data) {
@@ -230,10 +231,14 @@ public class KtVisitor<R, D> extends PsiElementVisitor {
      * you have to override this method and write the necessary logic there.
      */
     public R visitBinaryExpression(@NotNull KtBinaryExpression expression, D data) {
-        @Nullable List<KtExpression> foldingStringConcatenationStack = tryVisitFoldingStringConcatenation(expression, false);
-        if (foldingStringConcatenationStack != null) {
-            for (KtExpression childExpression : foldingStringConcatenationStack) {
-                childExpression.accept(this, data);
+        @Nullable List<PsiElement> flattenedStringConcatenationChildren = tryFlattenStringConcatenationDescendants(expression);
+        if (flattenedStringConcatenationChildren != null) {
+            for (PsiElement childElement : flattenedStringConcatenationChildren) {
+                if (childElement instanceof KtElement) {
+                    ((KtElement) childElement).accept(this, data);
+                } else {
+                    childElement.accept(this);
+                }
             }
 
             return null;
