@@ -541,7 +541,7 @@ class FusStatisticsIT : KGPBaseTest() {
 
     // Swift export enabled only on macOS.
     @OsCondition(supportedOn = [OS.MAC], enabledOnCI = [OS.MAC])
-    @DisplayName("native swift export")
+    @DisplayName("native swift export - happy path")
     @GradleTest
     @NativeGradlePluginTests
     @GradleTestVersions(
@@ -558,12 +558,46 @@ class FusStatisticsIT : KGPBaseTest() {
                 }
             }
 
+            // Check that we generate ENABLED_SWIFT_EXPORT=true when building Swift export.
             build(
                 ":embedSwiftExportForXcode",
                 "-Pkotlin.session.logger.root.path=$projectPath",
                 environmentVariables = swiftExportEmbedAndSignEnvVariables(testBuildDir),
             ) {
                 assertFileContains(
+                    fusStatisticsPath,
+                    "ENABLED_SWIFT_EXPORT=true",
+                )
+            }
+        }
+    }
+
+    // Swift export enabled only on macOS.
+    @OsCondition(supportedOn = [OS.MAC], enabledOnCI = [OS.MAC])
+    @DisplayName("native swift export - unhappy path")
+    @GradleTest
+    @NativeGradlePluginTests
+    @GradleTestVersions(
+        additionalVersions = [TestVersions.Gradle.G_8_2],
+    )
+    fun testSwiftExportIsNotReportedWithoutNeed(gradleVersion: GradleVersion) {
+        project("empty", gradleVersion) {
+            plugins {
+                kotlin("multiplatform")
+            }
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    iosArm64 {
+                        binaries {
+                            framework()
+                        }
+                    }
+                }
+            }
+
+            // Check that we do not generate ENABLED_SWIFT_EXPORT=true when building other Native targets.
+            build(":linkDebugFrameworkIosArm64", "-Pkotlin.session.logger.root.path=$projectPath") {
+                assertFileDoesNotContain(
                     fusStatisticsPath,
                     "ENABLED_SWIFT_EXPORT=true",
                 )
