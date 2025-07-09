@@ -156,10 +156,9 @@ public actual fun Int.toString(radix: Int): String = asDynamic().toString(checkR
  *
  * @throws IllegalArgumentException when [radix] is not a valid radix for number to string conversion.
  */
-@OptIn(BoxedLongApi::class)
+@OptIn(JsIntrinsic::class)
 @SinceKotlin("1.2")
-public actual fun Long.toString(radix: Int): String =
-    this.toStringImpl(checkRadix(radix))
+public actual fun Long.toString(radix: Int): String = jsLongToString(this, checkRadix(radix))
 
 private fun String.isNaN(): Boolean = when (this.lowercase()) {
     "nan", "+nan", "-nan" -> true

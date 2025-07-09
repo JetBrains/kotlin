@@ -22,6 +22,7 @@ class CallsLowering(val context: JsIrBackendContext) : BodyLoweringPass {
     private val transformers = listOf(
         NumberOperatorCallsTransformer(context),
         NumberConversionCallsTransformer(context),
+        BoxedLongCallsTransformer(context),
         EqualityAndComparisonCallsTransformer(context),
         PrimitiveContainerMemberCallTransformer(context),
         MethodsOfAnyCallsTransformer(context),
