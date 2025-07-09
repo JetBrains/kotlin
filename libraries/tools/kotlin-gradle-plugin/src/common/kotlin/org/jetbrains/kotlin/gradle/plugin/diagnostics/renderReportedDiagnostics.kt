@@ -36,8 +36,8 @@ internal fun ToolingDiagnostic.renderReportedDiagnostic(
         fun makeIdeDisplayMultilineMessage(message: String) = message.replace("\n", "\r") + hideTrailingLineFromGeneralLog
         when (effectiveSeverity) {
             WARNING -> logger.warn("warning: ${makeIdeDisplayMultilineMessage(message)}\n")
-            ERROR -> logger.error("error: ${makeIdeDisplayMultilineMessage(message)}\n")
-            else -> {}
+            STRONG_WARNING, ERROR -> logger.error("error: ${makeIdeDisplayMultilineMessage(message)}\n")
+            FATAL -> {}
         }
     }
 
@@ -47,8 +47,8 @@ internal fun ToolingDiagnostic.renderReportedDiagnostic(
      */
     when (effectiveSeverity) {
         WARNING -> logger.warn("w: ${message}\n")
-        ERROR -> logger.error("e: ${message}\n")
-        else -> {}
+        STRONG_WARNING, ERROR -> logger.error("e: ${message}\n")
+        FATAL -> {}
     }
 
     return if (effectiveSeverity == FATAL)

@@ -5,12 +5,22 @@
 
 package org.jetbrains.kotlin.gradle.mpp
 
+import org.gradle.kotlin.dsl.kotlin
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.DiagnosticGroup
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics.PartiallyResolvedKmpDependencies.UnresolvedKmpDependency
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics.PartiallyResolvedKmpDependencies.failureMessage
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnostic
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnostic.Severity.STRONG_WARNING
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnosticFactory
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
+import org.jetbrains.kotlin.gradle.utils.appendLine
 import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.DisplayName
 import java.io.File
+import kotlin.collections.forEach
 import kotlin.io.path.appendText
 import kotlin.io.path.writeText
 
@@ -222,6 +232,38 @@ class MppDiagnosticsIt : KGPBaseTest() {
         project("errorDiagnosticUpToDateIfNoErrors", gradleVersion) {
             build("assemble") {
                 assertTasksSkipped(":checkKotlinGradlePluginConfigurationErrors")
+            }
+        }
+    }
+
+    internal object StrongWarningDiagnostic : ToolingDiagnosticFactory(STRONG_WARNING, DiagnosticGroup.Kgp.Misconfiguration) {
+        operator fun invoke() =
+            build {
+                title("Foo")
+                    .description("bar")
+                    .solution("baz")
+            }
+    }
+    @GradleTest
+    fun testStrongWarningDiagnostic(gradleVersion: GradleVersion) {
+        project("empty", gradleVersion) {
+            plugins {
+                kotlin("multiplatform")
+            }
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    jvm()
+                }
+                project.reportDiagnostic(StrongWarningDiagnostic())
+            }
+            build(":checkKotlinGradlePluginConfigurationErrors") {
+                assertHasDiagnostic(StrongWarningDiagnostic)
+                assertTasksExecuted(":checkKotlinGradlePluginConfigurationErrors")
+            }
+            build(":checkKotlinGradlePluginConfigurationErrors") {
+                assertConfigurationCacheReused()
+                assertHasDiagnostic(StrongWarningDiagnostic)
+                assertTasksExecuted(":checkKotlinGradlePluginConfigurationErrors")
             }
         }
     }

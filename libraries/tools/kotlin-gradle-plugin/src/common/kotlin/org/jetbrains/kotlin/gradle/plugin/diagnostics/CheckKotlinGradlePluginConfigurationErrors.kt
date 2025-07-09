@@ -23,6 +23,9 @@ internal abstract class CheckKotlinGradlePluginConfigurationErrors : DefaultTask
     @get:Input
     abstract val errorDiagnostics: ListProperty<ToolingDiagnostic>
 
+    @get:Input
+    abstract val strongWarningDiagnostics: ListProperty<ToolingDiagnostic>
+
     @get:Internal
     abstract val renderingOptions: Property<ToolingDiagnosticRenderingOptions>
 
@@ -31,11 +34,15 @@ internal abstract class CheckKotlinGradlePluginConfigurationErrors : DefaultTask
 
     @TaskAction
     fun checkNoErrors() {
-        val diagnostics = errorDiagnostics.get()
+        val errorDiagnostics = errorDiagnostics.get()
+        val strongWarningDiagnostics = strongWarningDiagnostics.get()
         val reporter = problemsReporter.get()
         val options = renderingOptions.get()
-        if (diagnostics.isNotEmpty()) {
-            diagnostics.reportProblems(reporter, options)
+        if (strongWarningDiagnostics.isNotEmpty()) {
+            strongWarningDiagnostics.reportProblems(reporter, options)
+        }
+        if (errorDiagnostics.isNotEmpty()) {
+            errorDiagnostics.reportProblems(reporter, options)
             throw InvalidUserCodeException("Kotlin Gradle Plugin reported errors. Check the log for details")
         }
     }
@@ -61,6 +68,13 @@ internal fun Project.locateOrRegisterCheckKotlinGradlePluginErrorsTask(): TaskPr
                     .filter { it.severity == ToolingDiagnostic.Severity.ERROR }
             }
         )
+        task.strongWarningDiagnostics.set(
+            provider {
+                kotlinToolingDiagnosticsCollector
+                    .getDiagnosticsForProject(this)
+                    .filter { it.severity == ToolingDiagnostic.Severity.STRONG_WARNING }
+            }
+        )
         task.usesService(kotlinToolingDiagnosticsCollectorProvider)
         task.problemsReporter.set(kotlinToolingDiagnosticsCollectorProvider.map { it.problemsReporter })
         task.renderingOptions.set(ToolingDiagnosticRenderingOptions.forProject(this))
@@ -69,7 +83,7 @@ internal fun Project.locateOrRegisterCheckKotlinGradlePluginErrorsTask(): TaskPr
 
         task.onlyIf("errorDiagnostics are present") {
             require(it is CheckKotlinGradlePluginConfigurationErrors)
-            !it.errorDiagnostics.orNull.isNullOrEmpty()
+            !it.errorDiagnostics.orNull.isNullOrEmpty() || !it.strongWarningDiagnostics.orNull.isNullOrEmpty()
         }
     }
 

@@ -58,6 +58,7 @@ internal data class ToolingDiagnostic(
          *
          * ATTENTION. If a diagnostic with this severity is reported, Kotlin compiler
          * will _not_ be invoked (build will appear failed, as with compilation error)
+         * see [org.jetbrains.kotlin.gradle.plugin.diagnostics.CheckKotlinGradlePluginConfigurationErrors]
          *
          * However, Gradle IDE Sync and other tasks that are not connected with
          * any of the Kotlin Compiler and tools (e.g. 'help', 'clean'), will run successfully.
@@ -65,6 +66,13 @@ internal data class ToolingDiagnostic(
          * Use for critical misconfigurations that need immediate addressing
          */
         ERROR,
+
+        /**
+         * Same display as [ERROR] but will not fail the compilation.
+         *
+         * See [org.jetbrains.kotlin.gradle.plugin.diagnostics.CheckKotlinGradlePluginConfigurationErrors]
+         */
+        STRONG_WARNING,
 
         /**
          * Aborts the progress of the current process (Gradle build/Import/...).

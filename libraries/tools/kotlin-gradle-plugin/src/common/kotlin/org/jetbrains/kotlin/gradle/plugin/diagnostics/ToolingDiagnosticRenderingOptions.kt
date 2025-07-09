@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.gradle.internal.isInIdeaEnvironment
 import org.jetbrains.kotlin.gradle.internal.isInIdeaSync
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnostic.Severity.ERROR
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnostic.Severity.STRONG_WARNING
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnostic.Severity.WARNING
 import org.jetbrains.kotlin.gradle.utils.ConfigurationCacheOpaqueValueSource
 import org.jetbrains.kotlin.konan.target.HostManager
@@ -135,6 +136,7 @@ internal fun ToolingDiagnostic.isSuppressed(options: ToolingDiagnosticRenderingO
 
         severity == WARNING -> id in options.suppressedWarningIds
 
+        severity == STRONG_WARNING -> id in options.suppressedErrorIds
         severity == ERROR -> id in options.suppressedErrorIds
 
         // NB: FATALs can not be suppressed
