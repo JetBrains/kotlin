@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.backend.common.linkage.partial
 
-import com.intellij.util.PathUtil
 import org.jetbrains.kotlin.backend.common.linkage.partial.ClassifierPartialLinkageStatus.Unusable
 import org.jetbrains.kotlin.backend.common.linkage.partial.DeclarationKind.*
 import org.jetbrains.kotlin.backend.common.linkage.partial.ExpressionKind.*
@@ -23,6 +22,7 @@ import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.util.IdSignature.*
 import org.jetbrains.kotlin.name.SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT
+import java.io.File
 import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageSources.Module as PLModule
 
 internal fun PartialLinkageCase.renderLinkageError(): String = buildString {
@@ -229,7 +229,7 @@ private fun Appendable.signature(symbol: IrSymbol): Appendable {
                     // Avoid printing full paths from FileSignature.
                     val container = it.container
                     if (container is FileSignature) {
-                        file = PathUtil.getFileName(container.fileName).takeIf(String::isNotEmpty) ?: UNKNOWN_FILE
+                        file = File(container.fileName).name.takeIf(String::isNotEmpty) ?: UNKNOWN_FILE
                         it.inner.render()
                     } else it.render()
                 }

@@ -12,8 +12,6 @@ dependencies {
     api(project(":compiler:util"))
     compileOnly(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
     compileOnly(libs.intellij.fastutil)
-
-    compileOnly(intellijCore())
 }
 
 optInToUnsafeDuringIrConstructionAPI()
