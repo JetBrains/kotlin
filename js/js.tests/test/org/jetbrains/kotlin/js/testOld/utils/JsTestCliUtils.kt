@@ -15,14 +15,17 @@ import kotlin.test.fail
 
 internal fun runJsCompiler(
     messageCollector: MessageCollectorImpl = MessageCollectorImpl(),
+    expectedExitCode: ExitCode = ExitCode.OK,
     argsBuilder: K2JSCompilerArguments.() -> Unit,
 ) {
     val args = K2JSCompilerArguments().apply(argsBuilder)
 
     val exitCode = K2JSCompiler().exec(messageCollector, Services.EMPTY, args)
-    if (exitCode != ExitCode.OK) fail(
+    if (exitCode != expectedExitCode) fail(
         buildString {
-            appendLine("Compilation failed with exit code: $exitCode")
+            appendLine("Unexpected compiler exit code:")
+            appendLine("  Expected: $expectedExitCode")
+            appendLine("  Actual:   $exitCode")
             appendLine("Command-line arguments: " + args.toArgumentStrings().joinToString(" "))
             appendLine("Compiler output:")
             appendLine(messageCollector.toString())

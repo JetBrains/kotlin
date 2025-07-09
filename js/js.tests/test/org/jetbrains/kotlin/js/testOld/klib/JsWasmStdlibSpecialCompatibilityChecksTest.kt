@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.js.testOld.klib
 import org.jetbrains.kotlin.backend.common.diagnostics.LibrarySpecialCompatibilityChecker
 import org.jetbrains.kotlin.backend.common.diagnostics.LibrarySpecialCompatibilityChecker.Companion.KLIB_JAR_LIBRARY_VERSION
 import org.jetbrains.kotlin.backend.common.diagnostics.LibrarySpecialCompatibilityChecker.Companion.KLIB_JAR_MANIFEST_FILE
+import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.messages.MessageCollectorImpl
 import org.jetbrains.kotlin.js.testOld.utils.runJsCompiler
 import org.jetbrains.kotlin.konan.file.zipDirAs
@@ -154,7 +155,8 @@ abstract class LibrarySpecialCompatibilityChecksTest : TestCaseWithTmpdir() {
             else
                 createFakeUnzippedLibraryWithSpecificVersion(isWasm, libraryVersion)
 
-            runJsCompiler(messageCollector) {
+            val expectedExitCode = if (expectedWarningStatus == WarningStatus.NO_WARNINGS) ExitCode.OK else ExitCode.COMPILATION_ERROR
+            runJsCompiler(messageCollector, expectedExitCode) {
                 this.freeArgs = listOf(sourceFile.absolutePath)
                 this.libraries = fakeLibrary.absolutePath
                 this.outputDir = outputDir.absolutePath

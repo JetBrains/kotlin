@@ -63,7 +63,7 @@ abstract class LibrarySpecialCompatibilityChecker {
 
                 val messageToReport = getMessageToReport(compilerVersion, libraryVersion)
                 if (messageToReport != null) {
-                    messageCollector.report(CompilerMessageSeverity.STRONG_WARNING, messageToReport)
+                    messageCollector.report(CompilerMessageSeverity.ERROR, messageToReport)
                 }
 
                 return

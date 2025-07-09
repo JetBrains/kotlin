@@ -83,8 +83,8 @@ class CustomK2Tests : KGPBaseTest() {
             )
         ) {
             val taskToExecute = ":compileKotlinJs"
-            build(taskToExecute) {
-                assertTasksExecuted(taskToExecute)
+            buildAndFail(taskToExecute) {
+                assertTasksFailed(taskToExecute)
             }
         }
     }
