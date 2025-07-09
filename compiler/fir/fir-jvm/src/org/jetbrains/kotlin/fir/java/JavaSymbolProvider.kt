@@ -31,8 +31,8 @@ import org.jetbrains.kotlin.utils.mapToSetOrEmpty
 // otherwise it could provoke infinity recursion because an extension provider may check if a Java class is already existed
 open class JavaSymbolProvider(
     session: FirSession,
-    override val javaFacade: FirJavaFacade,
-) : FirSymbolProvider(session), FirJavaAwareSymbolProvider {
+    protected val javaFacade: FirJavaFacade,
+) : FirSymbolProvider(session) {
     protected class ClassCacheContext(
         val parentClassSymbol: FirRegularClassSymbol? = null,
         val foundJavaClass: JavaClass? = null,

@@ -54,6 +54,22 @@ internal fun FirSymbolProvider.getClassLikeSymbolMatchingPsi(classId: ClassId, d
     }
 }
 
+internal fun FirSymbolProvider.getClassLikeSymbolByClassIdWithoutDependencies(classId: ClassId): FirClassLikeSymbol<*>? =
+    when (this) {
+        is LLModuleWithDependenciesSymbolProvider -> getClassLikeSymbolByClassIdWithoutDependencies(classId)
+        else -> getClassLikeSymbolByClassId(classId)
+    }
+
+@ModuleSpecificSymbolProviderAccess
+internal fun FirSymbolProvider.getClassLikeSymbolByPsiWithoutDependencies(
+    classId: ClassId,
+    declaration: PsiElement,
+): FirClassLikeSymbol<*>? =
+    when (this) {
+        is LLModuleWithDependenciesSymbolProvider -> getClassLikeSymbolByPsiWithoutDependencies(classId, declaration)
+        else -> getClassLikeSymbolMatchingPsi(classId, declaration)
+    }
+
 @ModuleSpecificSymbolProviderAccess
 internal fun LLPsiAwareSymbolProvider.getParentPsiClassSymbol(psiClass: PsiClass): FirRegularClassSymbol? =
     psiClass.containingClass?.let { getClassLikeSymbolByPsi(it.classIdOrError(), it) as? FirRegularClassSymbol }

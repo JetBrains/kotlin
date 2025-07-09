@@ -15,7 +15,8 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.llFirMod
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.LLModuleWithDependenciesSymbolProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.ModuleSpecificSymbolProviderAccess
-import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.getClassLikeSymbolMatchingPsi
+import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.getClassLikeSymbolByClassIdWithoutDependencies
+import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.getClassLikeSymbolByPsiWithoutDependencies
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.scopes.getFunctions
@@ -169,11 +170,7 @@ internal class FirDeclarationForCompiledElementSearcher(private val session: LLF
     }
 
     private fun findBinaryClassLikeSymbol(classId: ClassId): FirClassLikeSymbol<*>? =
-        when (val symbolProvider = session.symbolProvider) {
-            is LLModuleWithDependenciesSymbolProvider ->
-                symbolProvider.getClassLikeSymbolByClassIdWithoutDependencies(classId)
-            else -> symbolProvider.getClassLikeSymbolByClassId(classId)
-        }
+        session.symbolProvider.getClassLikeSymbolByClassIdWithoutDependencies(classId)
 
     /**
      * Note regarding [ModuleSpecificSymbolProviderAccess]: [FirDeclarationForCompiledElementSearcher] must be queried with PSI elements
@@ -182,11 +179,7 @@ internal class FirDeclarationForCompiledElementSearcher(private val session: LLF
      */
     @OptIn(ModuleSpecificSymbolProviderAccess::class)
     private fun findStubClassLikeSymbol(classId: ClassId, declaration: KtClassLikeDeclaration): FirClassLikeSymbol<*>? =
-        when (val symbolProvider = session.symbolProvider) {
-            is LLModuleWithDependenciesSymbolProvider ->
-                symbolProvider.getClassLikeSymbolByPsiWithoutDependencies(classId, declaration)
-            else -> symbolProvider.getClassLikeSymbolMatchingPsi(classId, declaration)
-        }
+        session.symbolProvider.getClassLikeSymbolByPsiWithoutDependencies(classId, declaration)
 
     private fun findConstructorOfNonLocalClass(declaration: KtConstructor<*>): FirConstructor {
         val containingClass = declaration.containingClassOrObject
