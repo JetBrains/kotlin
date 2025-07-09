@@ -25,6 +25,11 @@ fun interface ValueReferenceCleaner<V> {
      * [value] is non-null if it was removed from the cache and is still referable, or `null` if it has already been garbage-collected.
      */
     fun cleanUp(value: V?)
+
+    /**
+     * A version of [cleanUp] which allows adding additional diagnostic information.
+     */
+    fun cleanUp(value: V?, diagnosticInformation: String?) = cleanUp(value)
 }
 
 @LLFirInternals

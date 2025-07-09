@@ -120,6 +120,7 @@ class LLFirSessionCache(
     private fun checkSessionValidity(session: LLFirSession) {
         requireWithAttachment(session.isValid, { "A session acquired via `getSession` should always be valid." }) {
             withKaModuleEntry("module", session.ktModule)
+            withEntry("invalidationInformation", session.invalidationInformation)
         }
     }
 

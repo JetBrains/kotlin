@@ -45,4 +45,9 @@ internal class LLFirSessionCleaner(private val disposable: Disposable?) : ValueR
             LLFirSessionInvalidationEventPublisher.getInstance(value.project).collectSession(value)
         }
     }
+
+    override fun cleanUp(value: LLFirSession?, diagnosticInformation: String?) {
+        cleanUp(value)
+        value?.invalidationInformation = diagnosticInformation
+    }
 }

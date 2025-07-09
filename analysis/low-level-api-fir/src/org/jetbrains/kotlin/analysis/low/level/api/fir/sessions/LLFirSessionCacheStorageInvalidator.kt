@@ -45,8 +45,8 @@ class LLFirSessionCacheStorageInvalidator(
             is KotlinModuleStateModificationEvent ->
                 when (val module = event.module) {
                     is KaBuiltinsModule -> {
-                        // Modification of builtins might affect any session, so all sessions need to be invalidated.
-                        invalidateAll(includeLibraryModules = true)
+                        // Modification of fallback builtins might affect any session, so all sessions need to be invalidated.
+                        invalidateAll(includeLibraryModules = true, "builtins module state modification")
                     }
                     is KaLibraryModule -> {
                         invalidate(module)
@@ -61,10 +61,16 @@ class LLFirSessionCacheStorageInvalidator(
             // out-of-block modification.
             is KotlinModuleOutOfBlockModificationEvent -> invalidate(event.module)
 
-            is KotlinGlobalModuleStateModificationEvent -> invalidateAll(includeLibraryModules = true)
-            is KotlinGlobalSourceModuleStateModificationEvent -> invalidateAll(includeLibraryModules = false)
+            is KotlinGlobalModuleStateModificationEvent -> invalidateAll(includeLibraryModules = true, "global module state modification")
+
+            is KotlinGlobalSourceModuleStateModificationEvent ->
+                invalidateAll(includeLibraryModules = false, "source module state modification")
+
             is KotlinGlobalScriptModuleStateModificationEvent -> invalidateScriptSessions()
-            is KotlinGlobalSourceOutOfBlockModificationEvent -> invalidateAll(includeLibraryModules = false)
+
+            is KotlinGlobalSourceOutOfBlockModificationEvent ->
+                invalidateAll(includeLibraryModules = false, "global source out-of-block modification")
+
             is KotlinCodeFragmentContextModificationEvent -> invalidateContextualDanglingFileSessions(event.module)
         }
     }
@@ -164,7 +170,7 @@ class LLFirSessionCacheStorageInvalidator(
      * The method must be called in a write action, or alternatively when the caller can guarantee that no other threads can perform
      * invalidation or code analysis until the invalidation is complete.
      */
-    fun invalidateAll(includeLibraryModules: Boolean) = performInvalidation {
+    fun invalidateAll(includeLibraryModules: Boolean, diagnosticInformation: String? = null) = performInvalidation {
         if (includeLibraryModules) {
             // Builtins modules and sessions are not part of `LLFirSessionCache`, so they need to be invalidated separately. This can be
             // triggered either by a global module state modification, or a local module state modification of the builtins module itself.
@@ -180,7 +186,7 @@ class LLFirSessionCacheStorageInvalidator(
             anchorModules?.forEach(::invalidate)
         }
 
-        removeAllSessions(includeLibraryModules)
+        removeAllSessions(includeLibraryModules, diagnosticInformation)
 
         // We could take `includeLibraryModules` into account here, but this will make the global session invalidation event more
         // complicated to handle, and it isn't currently necessary for `KaFirSession` invalidation to be more granular.
@@ -262,10 +268,10 @@ class LLFirSessionCacheStorageInvalidator(
      * [removeAllSessions] must be called in a write action, or in the case if the caller can guarantee no other threads can perform
      * invalidation or code analysis until the cleanup is complete.
      */
-    private fun removeAllSessions(includeLibraryModules: Boolean) {
+    private fun removeAllSessions(includeLibraryModules: Boolean, diagnosticInformation: String? = null) {
         if (includeLibraryModules) {
-            removeAllSessionsFrom(storage.sourceCache)
-            removeAllSessionsFrom(storage.binaryCache)
+            removeAllSessionsFrom(storage.sourceCache, diagnosticInformation)
+            removeAllSessionsFrom(storage.binaryCache, diagnosticInformation)
             removeAllLibraryFallbackDependenciesSessions()
         } else {
             // `binaryCache` and `libraryFallbackDependenciesCache` can only contain library modules, so we only need to remove sessions
@@ -333,8 +339,8 @@ class LLFirSessionCacheStorageInvalidator(
         removeAllMatchingSessionsFrom(storage.sourceCache) { it is KaLibraryModule || it is KaLibrarySourceModule }
     }
 
-    private fun removeAllSessionsFrom(storage: SessionStorage) {
-        storage.clear()
+    private fun removeAllSessionsFrom(storage: SessionStorage, diagnosticInformation: String? = null) {
+        storage.clear(diagnosticInformation)
     }
 
     private inline fun removeAllMatchingSessionsFrom(storage: SessionStorage, shouldBeRemoved: (KaModule) -> Boolean) {

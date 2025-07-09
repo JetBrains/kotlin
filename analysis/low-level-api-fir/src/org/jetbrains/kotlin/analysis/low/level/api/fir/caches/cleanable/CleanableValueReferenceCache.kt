@@ -65,7 +65,7 @@ abstract class CleanableValueReferenceCache<K : Any, V : Any>(
             // If `ref` already wasn't part of the map,
             // it will have been cleaned up by a deterministic removal operation
             if (wasRemoved) {
-                ref.performCleanup()
+                ref.performCleanup("CleanableValueReferenceCache.processQueue")
             }
         }
     }
@@ -138,7 +138,7 @@ abstract class CleanableValueReferenceCache<K : Any, V : Any>(
             }
         }
 
-        removedRef?.performCleanup()
+        removedRef?.performCleanup("CleanableValueReferenceCache.compute")
         processQueue()
 
         require(newRef?.get() === newValue) {
@@ -178,7 +178,7 @@ abstract class CleanableValueReferenceCache<K : Any, V : Any>(
             createReference(key, value,)
         }
 
-        removedRef?.performCleanup()
+        removedRef?.performCleanup("CleanableValueReferenceCache.put")
         processQueue()
 
         return oldValue
@@ -190,7 +190,7 @@ abstract class CleanableValueReferenceCache<K : Any, V : Any>(
      */
     fun remove(key: K): V? {
         val ref = backingMap.remove(key)
-        ref?.performCleanup()
+        ref?.performCleanup("CleanableValueReferenceCache.remove")
 
         processQueue()
         return ref?.get()
@@ -206,9 +206,12 @@ abstract class CleanableValueReferenceCache<K : Any, V : Any>(
      * cleanup on exactly the cleared values. Because this cache implementation is used by components which operate in read and write
      * actions, requiring a write action is more economical than synchronizing on some cache-wide lock.
      */
-    fun clear() {
+    fun clear(diagnosticInformation: String? = null) {
+        val fullDiagnosticInformation =
+            diagnosticInformation?.let { "CleanableValueReferenceCache.clear ($it)" } ?: "CleanableValueReferenceCache.clear"
+
         // The backing map will not be modified by other threads during `clean` because it is executed in a write action.
-        backingMap.values.forEach { it.performCleanup() }
+        backingMap.values.forEach { it.performCleanup(fullDiagnosticInformation) }
         backingMap.clear()
 
         processQueue()
@@ -251,7 +254,7 @@ abstract class CleanableValueReferenceCache<K : Any, V : Any>(
 
     override fun toString(): String = "${this::class.simpleName} size:$size"
 
-    private fun ReferenceWithCleanup<K, V>.performCleanup() {
-        cleaner.cleanUp(get())
+    private fun ReferenceWithCleanup<K, V>.performCleanup(diagnosticInformation: String? = null) {
+        cleaner.cleanUp(get(), diagnosticInformation)
     }
 }

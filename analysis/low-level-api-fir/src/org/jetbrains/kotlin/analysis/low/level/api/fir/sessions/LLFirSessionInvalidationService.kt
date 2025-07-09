@@ -44,8 +44,8 @@ class LLFirSessionInvalidationService(private val project: Project) {
     /**
      * @see LLFirSessionCacheStorageInvalidator.invalidateAll
      */
-    fun invalidateAll(includeLibraryModules: Boolean) {
-        invalidator.invalidateAll(includeLibraryModules)
+    fun invalidateAll(includeLibraryModules: Boolean, diagnosticInformation: String? = null) {
+        invalidator.invalidateAll(includeLibraryModules, diagnosticInformation)
     }
 
     companion object {
