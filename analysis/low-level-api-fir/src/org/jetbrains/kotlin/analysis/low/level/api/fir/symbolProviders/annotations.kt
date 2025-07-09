@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders
 
 /**
- * A symbol provider function annotated with [ModuleSpecificSymbolProviderAccess] is intended to be used in the context of the specific
+ * A symbol provider function annotated with [LLModuleSpecificSymbolProviderAccess] is intended to be used in the context of the specific
  * [KaModule][org.jetbrains.kotlin.analysis.api.projectStructure.KaModule] which owns the symbol provider. It requires all PSI arguments to
  * be contained in the scope of that module.
  *
@@ -19,4 +19,4 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders
  * a valid input for the function.
  */
 @RequiresOptIn("This function must be called in the context of the symbol provider's own `KaModule`. See the KDoc for details.")
-internal annotation class ModuleSpecificSymbolProviderAccess
+internal annotation class LLModuleSpecificSymbolProviderAccess

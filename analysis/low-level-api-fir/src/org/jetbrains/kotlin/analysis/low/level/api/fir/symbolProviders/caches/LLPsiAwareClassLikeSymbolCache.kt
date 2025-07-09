@@ -9,7 +9,7 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.low.level.api.fir.caches.getNotNullValueForNotNullContext
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.LLKnownClassDeclarationSymbolProvider
-import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.ModuleSpecificSymbolProviderAccess
+import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.LLModuleSpecificSymbolProviderAccess
 import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.hasPsi
 import org.jetbrains.kotlin.fir.caches.FirCache
 import org.jetbrains.kotlin.fir.caches.firCachesFactory
@@ -59,7 +59,7 @@ internal open class LLPsiAwareClassLikeSymbolCache<E : PsiElement, V : FirClassL
      * only used to compute a symbol if it's not already cached. Furthermore, [getSymbolByClassId] must follow the contracts of
      * [LLKnownClassDeclarationSymbolProvider.getClassLikeSymbolByClassId].
      */
-    @ModuleSpecificSymbolProviderAccess
+    @LLModuleSpecificSymbolProviderAccess
     fun getSymbolByClassId(
         classId: ClassId,
         context: CONTEXT,
@@ -79,7 +79,7 @@ internal open class LLPsiAwareClassLikeSymbolCache<E : PsiElement, V : FirClassL
      *
      * [getSymbolByPsi] is a common implementation for [LLPsiAwareSymbolProvider.getClassLikeSymbolByPsi][org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.LLPsiAwareSymbolProvider.getClassLikeSymbolByPsi].
      */
-    @ModuleSpecificSymbolProviderAccess
+    @LLModuleSpecificSymbolProviderAccess
     inline fun <reified T : E> getSymbolByPsi(
         classId: ClassId,
         declaration: PsiElement,
@@ -99,7 +99,7 @@ internal open class LLPsiAwareClassLikeSymbolCache<E : PsiElement, V : FirClassL
      * In contrast to [getSymbolByPsi], this function skips [getCachedSymbolByPsi] and the [declaration] type check, allowing more
      * flexibility on the client side.
      */
-    @ModuleSpecificSymbolProviderAccess
+    @LLModuleSpecificSymbolProviderAccess
     fun getSymbolByPsi(classId: ClassId, declaration: E, context: CONTEXT): V? {
         // Fast path: Query the cache normally. The *vast majority* of class IDs will not have ambiguities, hence most symbols will be
         // contained in the main cache.

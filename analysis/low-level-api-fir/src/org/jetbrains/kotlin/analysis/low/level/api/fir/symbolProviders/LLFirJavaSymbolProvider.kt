@@ -43,7 +43,7 @@ internal class LLFirJavaSymbolProvider private constructor(
         }
     )
 
-    @ModuleSpecificSymbolProviderAccess
+    @LLModuleSpecificSymbolProviderAccess
     override fun getClassLikeSymbolByPsi(classId: ClassId, declaration: PsiElement): FirRegularClassSymbol? =
         psiAwareCache.getSymbolByPsi<PsiClass>(classId, declaration) { psiClass ->
             val parentClass = getParentPsiClassSymbol(psiClass)
