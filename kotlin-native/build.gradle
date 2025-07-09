@@ -29,7 +29,6 @@ import org.jetbrains.kotlin.nativeDistribution.NativeProtoDistributionKt
 import org.jetbrains.kotlin.nativeDistribution.PrepareDistributionFingerprint
 import org.jetbrains.kotlin.nativeDistribution.PrepareKonanProperties
 import org.jetbrains.kotlin.xcode.XcodeOverridePlugin
-import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.jetbrains.kotlin.UtilsKt
 import plugins.KotlinBuildPublishingPluginKt
 import java.security.MessageDigest
@@ -41,10 +40,6 @@ buildscript {
     repositories {
         mavenCentral()
         gradlePluginPortal()
-    }
-
-    dependencies {
-        classpath libs.shadow.gradlePlugin
     }
 }
 
@@ -76,7 +71,6 @@ def cacheableTargetNames = platformManager.hostPlatform.cacheableTargets
 def nativeDistribution = NativeDistributionKt.getNativeDistribution(project)
 
 configurations {
-    distPack
     commonSources
 
     runtimeBitcode {
@@ -112,7 +106,6 @@ configurations {
 apply plugin: CompilationDatabasePlugin
 
 dependencies {
-    distPack project(path: ':kotlin-native:utilities:cli-runner', configuration: 'runtimeElements')
     commonSources project(path: ':kotlin-stdlib', configuration: 'metadataSourcesElements')
     commonSources project(path: ':kotlin-test', configuration: 'metadataSourcesElements')
     compilationDatabase project(":kotlin-native:runtime")
@@ -181,16 +174,6 @@ tasks.register("distSources") {
     dependsOn(distNativeSources)
 }
 
-def shadowJar = tasks.register("shadowJar", ShadowJar) {
-    mergeServiceFiles()
-    destinationDirectory.set(layout.buildDirectory)
-    archiveBaseName.set("kotlin-native")
-    archiveVersion.set("")
-    archiveClassifier.set("")
-    exclude("META-INF/versions/9/module-info.class")
-    configurations = [project.configurations.distPack]
-}
-
 tasks.register("distCompiler") {
     // Workaround: make distCompiler no-op if we are using custom dist:
     // the dist is already in place and has the compiler, so we don't have to
@@ -253,7 +236,6 @@ tasks.register("distNativeLibs", Sync) {
 }
 
 tasks.register("distCompilerJars", Sync) {
-    from(shadowJar.map { it.archiveFile })
     from(configurations.embeddableJar) {
         rename {
             "kotlin-native-compiler-embeddable.jar"
