@@ -1,104 +1,109 @@
+// IGNORE_BACKEND_K1: JS_IR, JS_IR_ES6, WASM
+// IGNORE_BACKEND_K2: JS_IR, JS_IR_ES6, WASM
+// IGNORE_IR_DESERIALIZATION_TEST: NATIVE
+// ^^^ Ignore Backends that apply inliner before interpreter, which messes with the interpreter.
+//     All Backends can be enabled once it's supported in the frontend.
 // WITH_STDLIB
 fun <T> T.id() = this
 
-val compareTo1 = 1u.compareTo(2u)
-val compareTo2 = 2u.compareTo(2u)
-val compareTo3 = 3u.compareTo(2u)
-val compareTo4 = 2u.compareTo(2u.toUByte())
-val compareTo5 = 2u.compareTo(2u.toUShort())
-val compareTo6 = 2u.compareTo(2UL)
+val compareTo1 = 1u.<!EVALUATED{IR}("-1")!>compareTo(2u)<!>
+val compareTo2 = 2u.<!EVALUATED{IR}("0")!>compareTo(2u)<!>
+val compareTo3 = 3u.<!EVALUATED{IR}("1")!>compareTo(2u)<!>
+val compareTo4 = 2u.<!EVALUATED{IR}("0")!>compareTo(2u.toUByte())<!>
+val compareTo5 = 2u.<!EVALUATED{IR}("0")!>compareTo(2u.toUShort())<!>
+val compareTo6 = 2u.<!EVALUATED{IR}("0")!>compareTo(2UL)<!>
 
-val plus1 = 1u.plus(2u)
-val plus2 = 2u.plus(2u)
-val plus3 = 3u.plus(2u)
-val plus4 = 2u.plus(2u.toUByte())
-val plus5 = 2u.plus(2u.toUShort())
-val plus6 = 2u.plus(2UL)
+val plus1 = 1u.<!EVALUATED{IR}("3")!>plus(2u)<!>
+val plus2 = 2u.<!EVALUATED{IR}("4")!>plus(2u)<!>
+val plus3 = 3u.<!EVALUATED{IR}("5")!>plus(2u)<!>
+val plus4 = 2u.<!EVALUATED{IR}("4")!>plus(2u.toUByte())<!>
+val plus5 = 2u.<!EVALUATED{IR}("4")!>plus(2u.toUShort())<!>
+val plus6 = 2u.<!EVALUATED{IR}("4")!>plus(2UL)<!>
 
-val minus1 = 1u.minus(2u)
-val minus2 = 2u.minus(2u)
-val minus3 = 3u.minus(2u)
-val minus4 = 2u.minus(2u.toUByte())
-val minus5 = 2u.minus(2u.toUShort())
-val minus6 = 2u.minus(2UL)
+val minus1 = 1u.<!EVALUATED{IR}("4294967295")!>minus(2u)<!>
+val minus2 = 2u.<!EVALUATED{IR}("0")!>minus(2u)<!>
+val minus3 = 3u.<!EVALUATED{IR}("1")!>minus(2u)<!>
+val minus4 = 2u.<!EVALUATED{IR}("0")!>minus(2u.toUByte())<!>
+val minus5 = 2u.<!EVALUATED{IR}("0")!>minus(2u.toUShort())<!>
+val minus6 = 2u.<!EVALUATED{IR}("0")!>minus(2UL)<!>
 
-val times1 = 1u.times(2u)
-val times2 = 2u.times(2u)
-val times3 = 3u.times(2u)
-val times4 = 2u.times(2u.toUByte())
-val times5 = 2u.times(2u.toUShort())
-val times6 = 2u.times(2UL)
+val times1 = 1u.<!EVALUATED{IR}("2")!>times(2u)<!>
+val times2 = 2u.<!EVALUATED{IR}("4")!>times(2u)<!>
+val times3 = 3u.<!EVALUATED{IR}("6")!>times(2u)<!>
+val times4 = 2u.<!EVALUATED{IR}("4")!>times(2u.toUByte())<!>
+val times5 = 2u.<!EVALUATED{IR}("4")!>times(2u.toUShort())<!>
+val times6 = 2u.<!EVALUATED{IR}("4")!>times(2UL)<!>
 
-val div1 = 1u.div(2u)
-val div2 = 2u.div(2u)
-val div3 = 3u.div(2u)
-val div4 = 2u.div(2u.toUByte())
-val div5 = 2u.div(2u.toUShort())
-val div6 = 2u.div(2UL)
+val div1 = 1u.<!EVALUATED{IR}("0")!>div(2u)<!>
+val div2 = 2u.<!EVALUATED{IR}("1")!>div(2u)<!>
+val div3 = 3u.<!EVALUATED{IR}("1")!>div(2u)<!>
+val div4 = 2u.<!EVALUATED{IR}("1")!>div(2u.toUByte())<!>
+val div5 = 2u.<!EVALUATED{IR}("1")!>div(2u.toUShort())<!>
+val div6 = 2u.<!EVALUATED{IR}("1")!>div(2UL)<!>
 
-val floorDiv1 = 1u.floorDiv(2u)
-val floorDiv2 = 2u.floorDiv(2u)
-val floorDiv3 = 3u.floorDiv(2u)
-val floorDiv4 = 2u.floorDiv(2u.toUByte())
-val floorDiv5 = 2u.floorDiv(2u.toUShort())
-val floorDiv6 = 2u.floorDiv(2UL)
+val floorDiv1 = 1u.<!EVALUATED{IR}("0")!>floorDiv(2u)<!>
+val floorDiv2 = 2u.<!EVALUATED{IR}("1")!>floorDiv(2u)<!>
+val floorDiv3 = 3u.<!EVALUATED{IR}("1")!>floorDiv(2u)<!>
+val floorDiv4 = 2u.<!EVALUATED{IR}("1")!>floorDiv(2u.toUByte())<!>
+val floorDiv5 = 2u.<!EVALUATED{IR}("1")!>floorDiv(2u.toUShort())<!>
+val floorDiv6 = 2u.<!EVALUATED{IR}("1")!>floorDiv(2UL)<!>
 
-val rem1 = 1u.rem(2u)
-val rem2 = 2u.rem(2u)
-val rem3 = 3u.rem(2u)
-val rem4 = 2u.rem(2u.toUByte())
-val rem5 = 2u.rem(2u.toUShort())
-val rem6 = 2u.rem(2UL)
+val rem1 = 1u.<!EVALUATED{IR}("1")!>rem(2u)<!>
+val rem2 = 2u.<!EVALUATED{IR}("0")!>rem(2u)<!>
+val rem3 = 3u.<!EVALUATED{IR}("1")!>rem(2u)<!>
+val rem4 = 2u.<!EVALUATED{IR}("0")!>rem(2u.toUByte())<!>
+val rem5 = 2u.<!EVALUATED{IR}("0")!>rem(2u.toUShort())<!>
+val rem6 = 2u.<!EVALUATED{IR}("0")!>rem(2UL)<!>
 
-val mod1 = 1u.mod(2u)
-val mod2 = 2u.mod(2u)
-val mod3 = 3u.mod(2u)
-val mod4 = 2u.mod(2u.toUByte())
-val mod5 = 2u.mod(2u.toUShort())
-val mod6 = 2u.mod(2UL)
+val mod1 = 1u.<!EVALUATED{IR}("1")!>mod(2u)<!>
+val mod2 = 2u.<!EVALUATED{IR}("0")!>mod(2u)<!>
+val mod3 = 3u.<!EVALUATED{IR}("1")!>mod(2u)<!>
+val mod4 = 2u.<!EVALUATED{IR}("0")!>mod(2u.toUByte())<!>
+val mod5 = 2u.<!EVALUATED{IR}("0")!>mod(2u.toUShort())<!>
+val mod6 = 2u.<!EVALUATED{IR}("0")!>mod(2UL)<!>
 
-val and1 = 1u.and(2u)
-val and2 = 2u.and(2u)
-val and3 = 3u.and(2u)
-val and4 = 12u.and(10u)
+val and1 = 1u.<!EVALUATED{IR}("0")!>and(2u)<!>
+val and2 = 2u.<!EVALUATED{IR}("2")!>and(2u)<!>
+val and3 = 3u.<!EVALUATED{IR}("2")!>and(2u)<!>
+val and4 = 12u.<!EVALUATED{IR}("8")!>and(10u)<!>
 
-val or1 = 1u.or(2u)
-val or2 = 2u.or(2u)
-val or3 = 3u.or(2u)
-val or4 = 12u.or(10u)
+val or1 = 1u.<!EVALUATED{IR}("3")!>or(2u)<!>
+val or2 = 2u.<!EVALUATED{IR}("2")!>or(2u)<!>
+val or3 = 3u.<!EVALUATED{IR}("3")!>or(2u)<!>
+val or4 = 12u.<!EVALUATED{IR}("14")!>or(10u)<!>
 
-val xor1 = 1u.xor(2u)
-val xor2 = 2u.xor(2u)
-val xor3 = 3u.xor(2u)
-val xor4 = 12u.xor(10u)
+val xor1 = 1u.<!EVALUATED{IR}("3")!>xor(2u)<!>
+val xor2 = 2u.<!EVALUATED{IR}("0")!>xor(2u)<!>
+val xor3 = 3u.<!EVALUATED{IR}("1")!>xor(2u)<!>
+val xor4 = 12u.<!EVALUATED{IR}("6")!>xor(10u)<!>
 
-val inv1 = 0u.inv()
-val inv2 = 1u.inv()
+val inv1 = 0u.<!EVALUATED{IR}("4294967295")!>inv()<!>
+val inv2 = 1u.<!EVALUATED{IR}("4294967294")!>inv()<!>
 
-val shl1 = 1u.shl(1)
-val shl2 = 2u.shl(2)
-val shl3 = 3u.shl(2)
-val shl4 = 1u.shl(31)
-val shl5 = 1u.shl(32)
-val shl6 = 1u.shl(63)
+val shl1 = 1u.<!EVALUATED{IR}("2")!>shl(1)<!>
+val shl2 = 2u.<!EVALUATED{IR}("8")!>shl(2)<!>
+val shl3 = 3u.<!EVALUATED{IR}("12")!>shl(2)<!>
+val shl4 = 1u.<!EVALUATED{IR}("2147483648")!>shl(31)<!>
+val shl5 = 1u.<!EVALUATED{IR}("1")!>shl(32)<!>
+val shl6 = 1u.<!EVALUATED{IR}("2147483648")!>shl(63)<!>
 
-val shr1 = 1u.shr(1)
-val shr2 = 2u.shr(1)
-val shr3 = 3u.shr(1)
-val shr4 = 1u.shr(31)
-val shr5 = 1u.shr(32)
-val shr6 = 1u.shr(63)
+val shr1 = 1u.<!EVALUATED{IR}("0")!>shr(1)<!>
+val shr2 = 2u.<!EVALUATED{IR}("1")!>shr(1)<!>
+val shr3 = 3u.<!EVALUATED{IR}("1")!>shr(1)<!>
+val shr4 = 1u.<!EVALUATED{IR}("0")!>shr(31)<!>
+val shr5 = 1u.<!EVALUATED{IR}("1")!>shr(32)<!>
+val shr6 = 1u.<!EVALUATED{IR}("0")!>shr(63)<!>
 
-val convert1 = 1u.toUByte()
-val convert2 = 1u.toUShort()
-val convert3 = 1u.toUInt()
-val convert4 = 1u.toULong()
-val convert5 = 1u.toFloat()
-val convert6 = 1u.toDouble()
-val convert7 = 1u.toByte()
-val convert8 = 1u.toShort()
-val convert9 = 1u.toInt()
-val convert10 = 1u.toLong()
+val convert1 = 1u.<!EVALUATED{IR}("1")!>toUByte()<!>
+val convert2 = 1u.<!EVALUATED{IR}("1")!>toUShort()<!>
+val convert3 = 1u.<!EVALUATED{IR}("1")!>toUInt()<!>
+val convert4 = 1u.<!EVALUATED{IR}("1")!>toULong()<!>
+val convert5 = 1u.<!EVALUATED{IR}("1.0")!>toFloat()<!>
+val convert6 = 1u.<!EVALUATED{IR}("1.0")!>toDouble()<!>
+val convert7 = 1u.<!EVALUATED{IR}("1")!>toByte()<!>
+val convert8 = 1u.<!EVALUATED{IR}("1")!>toShort()<!>
+val convert9 = 1u.<!EVALUATED{IR}("1")!>toInt()<!>
+val convert10 = 1u.<!EVALUATED{IR}("1")!>toLong()<!>
 val convert11 = 1.<!EVALUATED{IR}("1")!>toByte()<!>.toUInt()
 val convert12 = 1.<!EVALUATED{IR}("1")!>toShort()<!>.toUInt()
 val convert13 = 1.toUInt()
@@ -106,17 +111,17 @@ val convert14 = 1L.toUInt()
 val convert15 = 1.0f.toUInt()
 val convert16 = 1.0.toUInt()
 
-val equals1 = 1u == 2u
-val equals2 = 2u == 2u
-val equals3 = 3u == 2u
-val equals4 = 4u == 2u
+val equals1 = <!EVALUATED{IR}("false")!>1u == 2u<!>
+val equals2 = <!EVALUATED{IR}("true")!>2u == 2u<!>
+val equals3 = <!EVALUATED{IR}("false")!>3u == 2u<!>
+val equals4 = <!EVALUATED{IR}("false")!>4u == 2u<!>
 
-val toString1 = 1u.toString()
-val toString2 = 2u.toString()
+val toString1 = 1u.<!EVALUATED{IR}("1")!>toString()<!>
+val toString2 = 2u.<!EVALUATED{IR}("2")!>toString()<!>
 
-val limits1 = 4294967294u+1u
-val limits2 = 4294967295u+1u
-val limits3 = 0u-1u
+val limits1 = <!EVALUATED{IR}("4294967295")!>4294967294u+1u<!>
+val limits2 = <!EVALUATED{IR}("0")!>4294967295u+1u<!>
+val limits3 = <!EVALUATED{IR}("4294967295")!>0u-1u<!>
 
 // STOP_EVALUATION_CHECKS
 fun box(): String {
