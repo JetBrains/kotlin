@@ -6,7 +6,7 @@ plugins {
 }
 
 dependencies {
-    testApi(projectTests(":compiler"))
+    testApi(testFixtures(project(":compiler:tests-common")))
 
     testImplementation(testFixtures(project(":compiler:test-infrastructure")))
     testImplementation(testFixtures(project(":compiler:tests-common-new")))
