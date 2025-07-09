@@ -1,14 +1,21 @@
 import kotlinx.coroutines.runBlocking
+import org.jetbrains.kotlin.scripting.compiler.plugin.SCRIPT_TEST_BASE_COMPILER_ARGUMENTS_PROPERTY
+import org.jetbrains.kotlin.scripting.compiler.plugin.impl.SCRIPT_BASE_COMPILER_ARGUMENTS_PROPERTY
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.ScriptJvmCompilerIsolated
 import org.jetbrains.kotlin.scripting.compiler.test.assertEqualsTrimmed
+import org.jetbrains.kotlin.scripting.compiler.test.dependenciesResolver
+import org.jetbrains.kotlin.test.util.JUnit4Assertions.assertTrue
+import org.junit.jupiter.api.Test
 import java.io.ByteArrayOutputStream
 import java.io.PrintStream
 import kotlin.script.experimental.api.*
 import kotlin.script.experimental.host.toScriptSource
 import kotlin.script.experimental.jvm.BasicJvmScriptEvaluator
+import kotlin.script.experimental.jvm.JvmDependency
 import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 import kotlin.script.experimental.jvm.util.renderError
-import kotlin.test.*
+import kotlin.test.assertEquals
+import kotlin.test.junit5.JUnit5Asserter.fail
 
 /*
  * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
@@ -17,6 +24,9 @@ import kotlin.test.*
 
 
 class ScriptEvaluationTest {
+
+    private val isK2 = System.getProperty(SCRIPT_BASE_COMPILER_ARGUMENTS_PROPERTY)?.contains("-language-version 1.9") != true &&
+            System.getProperty(SCRIPT_TEST_BASE_COMPILER_ARGUMENTS_PROPERTY)?.contains("-language-version 1.9") != true
 
     @Test
     fun testExceptionWithCause() {
@@ -71,6 +81,36 @@ class ScriptEvaluationTest {
         }
     }
 
+    @Test
+    fun testScriptWithDataframePlugin() {
+        if (!isK2) return
+        val dataFramePluginClasspath = System.getProperty("kotlin.script.test.kotlin.dataframe.plugin.classpath")!!
+        val dataframe = runBlocking {
+            dependenciesResolver.resolve("org.jetbrains.kotlinx:dataframe-core:1.0.0-Beta2")
+        }.valueOrThrow()
+        val compiled = checkCompile(
+            """
+                import org.jetbrains.kotlinx.dataframe.api.*
+                import org.jetbrains.kotlinx.dataframe.*
+                
+                fun foo(): Int {
+                    val df = dataFrameOf("b" to columnOf(24))
+                    return df.b[0]
+                }
+
+                val df = dataFrameOf("a" to columnOf(42))
+                df.a[0]
+            """.trimIndent().toScriptSource(),
+            ScriptCompilationConfiguration {
+                set(ScriptCompilationConfiguration.dependencies, listOf(JvmDependency(dataframe)))
+                compilerOptions(
+                    "-Xplugin=$dataFramePluginClasspath"
+                )
+            }
+        )
+        assertTrue(compiled is ResultWithDiagnostics.Failure)
+    }
+
     private fun checkEvaluateAsError(script: SourceCode, expectedOutput: String): EvaluationResult {
         val res = checkEvaluate(script)
         assert(res.returnValue is ResultValue.Error)
@@ -83,15 +123,20 @@ class ScriptEvaluationTest {
         return res
     }
 
-    private fun checkCompile(script: SourceCode): ResultWithDiagnostics<CompiledScript> {
-        val compilationConfiguration = ScriptCompilationConfiguration()
+    private fun checkCompile(
+        script: SourceCode,
+        compilationConfiguration: ScriptCompilationConfiguration = ScriptCompilationConfiguration()
+    ): ResultWithDiagnostics<CompiledScript> {
         val compiler = ScriptJvmCompilerIsolated(defaultJvmScriptingHostConfiguration)
         return compiler.compile(script, compilationConfiguration)
     }
 
-    private fun checkEvaluate(script: SourceCode): EvaluationResult {
-        val compiled = checkCompile(script).valueOrThrow()
-        val evaluationConfiguration = ScriptEvaluationConfiguration()
+    private fun checkEvaluate(
+        script: SourceCode,
+        compilationConfiguration: ScriptCompilationConfiguration = ScriptCompilationConfiguration(),
+        evaluationConfiguration: ScriptEvaluationConfiguration = ScriptEvaluationConfiguration()
+    ): EvaluationResult {
+        val compiled = checkCompile(script, compilationConfiguration).valueOrThrow()
         val evaluator = BasicJvmScriptEvaluator()
         val res = runBlocking {
             evaluator.invoke(compiled, evaluationConfiguration).valueOrThrow()
