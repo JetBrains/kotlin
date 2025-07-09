@@ -39,7 +39,7 @@ class ReplReceiver1 {
 @Suppress("unused") // Used in snippets
 class TestReplReceiver1() { fun checkReceiver(block: ReplReceiver1.() -> Any) = block(ReplReceiver1()) }
 
-private val dependenciesResolver = CompoundDependenciesResolver(FileSystemDependenciesResolver(), MavenDependenciesResolver())
+val dependenciesResolver = CompoundDependenciesResolver(FileSystemDependenciesResolver(), MavenDependenciesResolver())
 
 class CustomK2ReplTest {
 
