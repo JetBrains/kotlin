@@ -47,6 +47,18 @@ public class FirStandaloneNormalAnalysisSourceModuleTypePointerConsistencyTestGe
   }
 
   @Test
+  @TestMetadata("aliasedTypeToClass.kt")
+  public void testAliasedTypeToClass() {
+    runTest("analysis/analysis-api/testData/types/typePointers/consistency/aliasedTypeToClass.kt");
+  }
+
+  @Test
+  @TestMetadata("aliasedTypeUnrelatedModule.kt")
+  public void testAliasedTypeUnrelatedModule() {
+    runTest("analysis/analysis-api/testData/types/typePointers/consistency/aliasedTypeUnrelatedModule.kt");
+  }
+
+  @Test
   public void testAllFilesPresentInConsistency() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/types/typePointers/consistency"), Pattern.compile("^(.+)\\.kt$"), null, true);
   }
@@ -82,9 +94,33 @@ public class FirStandaloneNormalAnalysisSourceModuleTypePointerConsistencyTestGe
   }
 
   @Test
+  @TestMetadata("classTypeToTypeAlias.kt")
+  public void testClassTypeToTypeAlias() {
+    runTest("analysis/analysis-api/testData/types/typePointers/consistency/classTypeToTypeAlias.kt");
+  }
+
+  @Test
+  @TestMetadata("classTypeUnrelatedModule.kt")
+  public void testClassTypeUnrelatedModule() {
+    runTest("analysis/analysis-api/testData/types/typePointers/consistency/classTypeUnrelatedModule.kt");
+  }
+
+  @Test
   @TestMetadata("classTypeWithNestedDefinitelyNotNullType.kt")
   public void testClassTypeWithNestedDefinitelyNotNullType() {
     runTest("analysis/analysis-api/testData/types/typePointers/consistency/classTypeWithNestedDefinitelyNotNullType.kt");
+  }
+
+  @Test
+  @TestMetadata("classTypeWithTypeArgumentToAlias.kt")
+  public void testClassTypeWithTypeArgumentToAlias() {
+    runTest("analysis/analysis-api/testData/types/typePointers/consistency/classTypeWithTypeArgumentToAlias.kt");
+  }
+
+  @Test
+  @TestMetadata("classTypeWithTypeArgumentUnrelatedModule.kt")
+  public void testClassTypeWithTypeArgumentUnrelatedModule() {
+    runTest("analysis/analysis-api/testData/types/typePointers/consistency/classTypeWithTypeArgumentUnrelatedModule.kt");
   }
 
   @Test
@@ -100,6 +136,24 @@ public class FirStandaloneNormalAnalysisSourceModuleTypePointerConsistencyTestGe
   }
 
   @Test
+  @TestMetadata("errorTypeAsArgument.kt")
+  public void testErrorTypeAsArgument() {
+    runTest("analysis/analysis-api/testData/types/typePointers/consistency/errorTypeAsArgument.kt");
+  }
+
+  @Test
+  @TestMetadata("errorTypeAsArgumentToClass.kt")
+  public void testErrorTypeAsArgumentToClass() {
+    runTest("analysis/analysis-api/testData/types/typePointers/consistency/errorTypeAsArgumentToClass.kt");
+  }
+
+  @Test
+  @TestMetadata("errorTypeAsArgumentUntelatedModule.kt")
+  public void testErrorTypeAsArgumentUntelatedModule() {
+    runTest("analysis/analysis-api/testData/types/typePointers/consistency/errorTypeAsArgumentUntelatedModule.kt");
+  }
+
+  @Test
   @TestMetadata("flexibleType.kt")
   public void testFlexibleType() {
     runTest("analysis/analysis-api/testData/types/typePointers/consistency/flexibleType.kt");
@@ -109,6 +163,12 @@ public class FirStandaloneNormalAnalysisSourceModuleTypePointerConsistencyTestGe
   @TestMetadata("flexibleType2.kt")
   public void testFlexibleType2() {
     runTest("analysis/analysis-api/testData/types/typePointers/consistency/flexibleType2.kt");
+  }
+
+  @Test
+  @TestMetadata("flexibleTypeUnrelatedModule.kt")
+  public void testFlexibleTypeUnrelatedModule() {
+    runTest("analysis/analysis-api/testData/types/typePointers/consistency/flexibleTypeUnrelatedModule.kt");
   }
 
   @Test
@@ -187,6 +247,18 @@ public class FirStandaloneNormalAnalysisSourceModuleTypePointerConsistencyTestGe
   @TestMetadata("symbolNotFound.kt")
   public void testSymbolNotFound() {
     runTest("analysis/analysis-api/testData/types/typePointers/consistency/symbolNotFound.kt");
+  }
+
+  @Test
+  @TestMetadata("symbolNotFoundToClass.kt")
+  public void testSymbolNotFoundToClass() {
+    runTest("analysis/analysis-api/testData/types/typePointers/consistency/symbolNotFoundToClass.kt");
+  }
+
+  @Test
+  @TestMetadata("symbolNotFoundUnrelatedModule.kt")
+  public void testSymbolNotFoundUnrelatedModule() {
+    runTest("analysis/analysis-api/testData/types/typePointers/consistency/symbolNotFoundUnrelatedModule.kt");
   }
 
   @Test

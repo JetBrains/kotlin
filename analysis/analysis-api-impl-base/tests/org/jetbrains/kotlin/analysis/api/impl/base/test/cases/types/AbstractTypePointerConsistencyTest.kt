@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.analysis.api.types.KaTypePointer
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
+import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtTypeReference
@@ -19,6 +20,11 @@ import org.jetbrains.kotlin.test.services.assertions
 abstract class AbstractTypePointerConsistencyTest : AbstractAnalysisApiBasedTest() {
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
         val targetExpression = testServices.expressionMarkerProvider.getTopmostSelectedElementOfTypeByDirective(mainFile, mainModule)
+        val restoreAt = testServices.expressionMarkerProvider.getBottommostElementsOfTypeAtCarets<KtElement>(
+            testServices,
+            qualifier = "restoreAt"
+        ).takeIf { it.isNotEmpty() }?.single()?.first
+            ?: mainFile
 
         val renderer = DebugSymbolRenderer(renderTypeByProperties = true)
 
@@ -36,8 +42,8 @@ abstract class AbstractTypePointerConsistencyTest : AbstractAnalysisApiBasedTest
             typePointer = type.createPointer()
         }
 
-        val afterString = analyzeForTest(mainFile) {
-            val restoredType = typePointer.restore(useSiteSession)
+        val afterString = analyzeForTest(restoreAt) {
+            val restoredType = typePointer.restore()
             if (restoredType != null) {
                 renderer.renderType(useSiteSession, restoredType)
             } else {
