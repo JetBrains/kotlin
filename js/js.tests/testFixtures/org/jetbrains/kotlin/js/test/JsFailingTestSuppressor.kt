@@ -9,13 +9,23 @@ import org.jetbrains.kotlin.test.WrappedException
 import org.jetbrains.kotlin.test.model.AfterAnalysisChecker
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.moduleStructure
+import org.junit.jupiter.api.Assumptions
 
-class JsFailingTestSuppressor(testServices: TestServices) : AfterAnalysisChecker(testServices) {
+class JsFailingTestSuppressor(
+    testServices: TestServices,
+    private val suppressWithAssumption: Boolean = false
+) : AfterAnalysisChecker(testServices) {
     override fun suppressIfNeeded(failedAssertions: List<WrappedException>): List<WrappedException> {
         val testFile = testServices.moduleStructure.originalTestDataFiles.first()
-        val failFile = testFile.parentFile.resolve("${testFile.name}.fail").takeIf { it.exists() }
-            ?: return failedAssertions
-        if (failedAssertions.any { it is WrappedException.FromFacade }) return emptyList()
+        val failFile = testFile.parentFile.resolve("${testFile.name}.fail").takeIf { it.exists() } ?: return failedAssertions
+
+        if (failedAssertions.any { it is WrappedException.FromFacade }) {
+            if (suppressWithAssumption)
+                Assumptions.abort<Nothing>()
+            else
+                return emptyList()
+        }
+
         return failedAssertions + AssertionError("Fail file exists but no exception was thrown. Please remove ${failFile.name}").wrap()
     }
 }
