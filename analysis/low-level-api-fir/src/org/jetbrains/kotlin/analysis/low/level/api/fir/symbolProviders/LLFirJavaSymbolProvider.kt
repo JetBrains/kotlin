@@ -50,3 +50,5 @@ internal class LLFirJavaSymbolProvider private constructor(
             ClassCacheContext(parentClass, JavaClassImpl(psiClass))
         }
 }
+
+internal val FirSession.nullableJavaSymbolProvider: JavaSymbolProvider? by FirSession.nullableSessionComponentAccessor()

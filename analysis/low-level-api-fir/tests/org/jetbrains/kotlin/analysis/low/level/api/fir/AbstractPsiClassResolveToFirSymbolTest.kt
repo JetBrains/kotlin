@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -9,7 +9,7 @@ import com.intellij.psi.PsiClass
 import com.intellij.psi.PsiJavaFile
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
-import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.firClassByPsiClassProvider
+import org.jetbrains.kotlin.analysis.low.level.api.fir.api.resolveToFirSymbol
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirSourceTestConfigurator
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
@@ -41,7 +41,7 @@ abstract class AbstractFirClassByPsiClassProviderTest : AbstractAnalysisApiBased
         }
 
         val rendered = withResolutionFacade(mainKtModule) { resolutionFacade ->
-            val firClassSymbol = resolutionFacade.useSiteFirSession.firClassByPsiClassProvider.getFirClass(psiClassUnderCaret)
+            val firClassSymbol = psiClassUnderCaret.resolveToFirSymbol(resolutionFacade)
             firClassSymbol.fir.render()
         }
 

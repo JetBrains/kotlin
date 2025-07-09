@@ -65,8 +65,8 @@ fun ExceptionAttachmentBuilder.withModuleDataEntry(name: String, moduleData: Fir
     }
 }
 
-fun ExceptionAttachmentBuilder.withFirSymbolEntry(name: String, symbol: FirBasedSymbol<*>) {
-    withFirEntry("${name}Fir", symbol.fir)
+fun ExceptionAttachmentBuilder.withFirSymbolEntry(name: String, symbol: FirBasedSymbol<*>?) {
+    withFirEntry("${name}Fir", symbol?.fir)
 }
 
 fun ExceptionAttachmentBuilder.withConeTypeEntry(name: String, coneType: ConeKotlinType?) {

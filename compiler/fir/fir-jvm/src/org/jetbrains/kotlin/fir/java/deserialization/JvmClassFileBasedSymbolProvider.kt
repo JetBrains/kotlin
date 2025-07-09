@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.ThreadSafeMutableState
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.deserialization.*
-import org.jetbrains.kotlin.fir.java.FirJavaAwareSymbolProvider
 import org.jetbrains.kotlin.fir.java.FirJavaFacade
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
 import org.jetbrains.kotlin.fir.languageVersionSettings
@@ -52,11 +51,11 @@ open class JvmClassFileBasedSymbolProvider(
     kotlinScopeProvider: FirKotlinScopeProvider,
     private val packagePartProvider: PackagePartProvider,
     private val kotlinClassFinder: KotlinClassFinder,
-    override val javaFacade: FirJavaFacade,
+    private val javaFacade: FirJavaFacade,
     defaultDeserializationOrigin: FirDeclarationOrigin = FirDeclarationOrigin.Library
 ) : AbstractFirDeserializedSymbolProvider(
     session, moduleDataProvider, kotlinScopeProvider, defaultDeserializationOrigin, BuiltInSerializerProtocol
-), FirJavaAwareSymbolProvider {
+) {
     private val ownMetadataVersion: MetadataVersion = session.languageVersionSettings.languageVersion.toJvmMetadataVersion()
 
     private val reportErrorsOnPreReleaseDependencies = with(session.languageVersionSettings) {

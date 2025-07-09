@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirGlobalResolveCompone
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirLazyDeclarationResolver
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveComponents
 import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.*
-import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLFirFirClassByPsiClassProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLFirIdeRegisteredPluginAnnotations
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLFirLibrarySessionProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.providers.LLFirProvider
@@ -306,7 +305,6 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
             }
 
             register(DEPENDENCIES_SYMBOL_PROVIDER_QUALIFIED_KEY, dependencyProvider)
-            register(LLFirFirClassByPsiClassProvider::class, LLFirFirClassByPsiClassProvider(this))
 
             LLFirSessionConfigurator.configure(this)
 
@@ -416,7 +414,6 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
             }
 
             register(DEPENDENCIES_SYMBOL_PROVIDER_QUALIFIED_KEY, dependencyProvider)
-            register(LLFirFirClassByPsiClassProvider::class, LLFirFirClassByPsiClassProvider(this))
 
             val context = LibrarySessionCreationContext(contentScope, firProvider, dependencyProvider)
             additionalSessionConfiguration(context)
@@ -469,7 +466,6 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
                 },
             )
 
-            register(LLFirFirClassByPsiClassProvider::class, LLFirFirClassByPsiClassProvider(this))
             register(FirProvider::class, LLFirLibrarySessionProvider(symbolProvider))
             register(FirSymbolProvider::class, symbolProvider)
 
@@ -574,7 +570,6 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
             }
 
             register(DEPENDENCIES_SYMBOL_PROVIDER_QUALIFIED_KEY, dependencyProvider)
-            register(LLFirFirClassByPsiClassProvider::class, LLFirFirClassByPsiClassProvider(this))
 
             LLFirSessionConfigurator.configure(this)
 
