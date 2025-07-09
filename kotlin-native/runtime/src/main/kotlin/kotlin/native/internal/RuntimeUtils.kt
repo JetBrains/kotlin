@@ -127,6 +127,11 @@ internal fun ThrowFileFailedToInitializeException(reason: Throwable?) {
 }
 
 @ExportForCppRuntime
+internal fun ThrowRuntimeException(message: String?): Nothing {
+    throw RuntimeException(message)
+}
+
+@ExportForCppRuntime
 internal fun PrintThrowable(throwable: Throwable) {
     println(throwable)
 }
