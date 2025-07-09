@@ -1389,10 +1389,12 @@ open class PsiRawFirBuilder(
                                     isLocal = isLast,
                                 )
 
+                                initializer.isScriptTopLevelDeclaration = true
                                 declarations.add(initializer)
                             }
                             is KtDestructuringDeclaration -> {
                                 val destructuringContainerVar = buildScriptDestructuringDeclaration(declaration)
+                                destructuringContainerVar.isScriptTopLevelDeclaration = true
                                 declarations.add(destructuringContainerVar)
 
                                 addDestructuringVariables(
@@ -1405,11 +1407,13 @@ open class PsiRawFirBuilder(
                                     forceLocal = false,
                                 ) {
                                     configureScriptDestructuringDeclarationEntry(it, destructuringContainerVar)
+                                    it.isScriptTopLevelDeclaration = true
                                 }
                             }
                             else -> {
                                 val firStatement = declaration.toFirStatement()
                                 if (firStatement is FirDeclaration) {
+                                    firStatement.isScriptTopLevelDeclaration = true
                                     declarations.add(firStatement)
                                 } else {
                                     error("unexpected declaration type in script")
