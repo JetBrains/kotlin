@@ -32,7 +32,7 @@ private:
 };
 
 // Must be called during STW.
-void enableBarriers(int64_t epoch) noexcept;
+void enableBarriers(uint64_t epoch) noexcept;
 void switchToWeakProcessingBarriers() noexcept;
 void disableBarriers() noexcept;
 

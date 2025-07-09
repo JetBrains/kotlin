@@ -16,25 +16,6 @@
 
 namespace kotlin::gc::internal {
 
-class MainGCThread : private MoveOnly {
-public:
-    MainGCThread(
-            GCStateHolder& state,
-            mark::ParallelMark& markDispatcher,
-            alloc::Allocator& allocator,
-            gcScheduler::GCScheduler& gcScheduler) noexcept;
-
-private:
-    void body() noexcept;
-    void PerformFullGC(int64_t epoch) noexcept;
-
-    GCStateHolder& state_;
-    mark::ParallelMark& markDispatcher_;
-    alloc::Allocator& allocator_;
-    gcScheduler::GCScheduler& gcScheduler_;
-    UtilityThread thread_;
-};
-
 class AuxiliaryGCThreads : private MoveOnly {
 public:
     AuxiliaryGCThreads(mark::ParallelMark& markDispatcher, size_t count) noexcept;

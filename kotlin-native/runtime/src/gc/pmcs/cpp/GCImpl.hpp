@@ -7,33 +7,34 @@
 
 #include <cstddef>
 
+#include "AuxiliaryGCThreads.hpp"
 #include "Barriers.hpp"
 #include "GC.hpp"
 #include "GCState.hpp"
-#include "GCThread.hpp"
+#include "MainGCThread.hpp"
 #include "ParallelMark.hpp"
+#include "PmcsGCTraits.hpp"
 #include "ThreadData.hpp"
 
-namespace kotlin {
-namespace gc {
+namespace kotlin::gc {
 
 // Stop-the-world parallel mark + concurrent sweep. The GC runs in a separate thread, finalizers run in another thread of their own.
 class GC::Impl : private Pinned {
 public:
     Impl(alloc::Allocator& allocator, gcScheduler::GCScheduler& gcScheduler, bool mutatorsCooperate, size_t auxGCThreads) noexcept :
-        markDispatcher_(mutatorsCooperate),
-        mainThread_(state_, markDispatcher_, allocator, gcScheduler),
-        auxThreads_(markDispatcher_, auxGCThreads) {}
+        mark_(mutatorsCooperate),
+        mainThread_(state_, allocator, gcScheduler, mark_),
+        auxThreads_(mark_, auxGCThreads) {}
 
     GCStateHolder state_;
-    mark::ParallelMark markDispatcher_;
-    internal::MainGCThread mainThread_;
+    internal::PmcsGCTraits::Mark mark_;
+    internal::MainGCThread<internal::PmcsGCTraits> mainThread_;
     internal::AuxiliaryGCThreads auxThreads_;
 };
 
 class GC::ThreadData::Impl : private Pinned {
 public:
-    Impl(GC::Impl& gc, mm::ThreadData& threadData) noexcept : markDispatcher_(gc.markDispatcher_, threadData) {}
+    Impl(GC::Impl& gc, mm::ThreadData& threadData) noexcept : markDispatcher_(gc.mark_, threadData) {}
 
     BarriersThreadData barriers_;
     mark::ParallelMarkThreadData markDispatcher_;
@@ -43,5 +44,4 @@ namespace barriers {
 class ExternalRCRefReleaseGuard::Impl {};
 } // namespace barriers
 
-} // namespace gc
-} // namespace kotlin
+} // namespace kotlin::gc
