@@ -59,6 +59,48 @@ public class FirStandaloneNormalAnalysisSourceModuleHLExpressionTypeTestGenerate
   }
 
   @Test
+  @TestMetadata("arrayElementDecrement.kt")
+  public void testArrayElementDecrement() {
+    runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/arrayElementDecrement.kt");
+  }
+
+  @Test
+  @TestMetadata("arrayElementIncrement.kt")
+  public void testArrayElementIncrement() {
+    runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/arrayElementIncrement.kt");
+  }
+
+  @Test
+  @TestMetadata("arrayElementPrefixDecrement.kt")
+  public void testArrayElementPrefixDecrement() {
+    runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/arrayElementPrefixDecrement.kt");
+  }
+
+  @Test
+  @TestMetadata("arrayElementPrefixIncrement.kt")
+  public void testArrayElementPrefixIncrement() {
+    runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/arrayElementPrefixIncrement.kt");
+  }
+
+  @Test
+  @TestMetadata("arrayElementUnaryMinus.kt")
+  public void testArrayElementUnaryMinus() {
+    runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/arrayElementUnaryMinus.kt");
+  }
+
+  @Test
+  @TestMetadata("arrayElementUnaryNot.kt")
+  public void testArrayElementUnaryNot() {
+    runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/arrayElementUnaryNot.kt");
+  }
+
+  @Test
+  @TestMetadata("arrayElementUnaryPlus.kt")
+  public void testArrayElementUnaryPlus() {
+    runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/arrayElementUnaryPlus.kt");
+  }
+
+  @Test
   @TestMetadata("arrayElement_arrayOfNulls.kt")
   public void testArrayElement_arrayOfNulls() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/arrayElement_arrayOfNulls.kt");
@@ -245,6 +287,48 @@ public class FirStandaloneNormalAnalysisSourceModuleHLExpressionTypeTestGenerate
   }
 
   @Test
+  @TestMetadata("primitiveBooleanArrayElementUnaryNot.kt")
+  public void testPrimitiveBooleanArrayElementUnaryNot() {
+    runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/primitiveBooleanArrayElementUnaryNot.kt");
+  }
+
+  @Test
+  @TestMetadata("primitiveIntArrayElementDecrement.kt")
+  public void testPrimitiveIntArrayElementDecrement() {
+    runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/primitiveIntArrayElementDecrement.kt");
+  }
+
+  @Test
+  @TestMetadata("primitiveIntArrayElementIncrement.kt")
+  public void testPrimitiveIntArrayElementIncrement() {
+    runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/primitiveIntArrayElementIncrement.kt");
+  }
+
+  @Test
+  @TestMetadata("primitiveIntArrayElementPrefixDecrement.kt")
+  public void testPrimitiveIntArrayElementPrefixDecrement() {
+    runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/primitiveIntArrayElementPrefixDecrement.kt");
+  }
+
+  @Test
+  @TestMetadata("primitiveIntArrayElementPrefixIncrement.kt")
+  public void testPrimitiveIntArrayElementPrefixIncrement() {
+    runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/primitiveIntArrayElementPrefixIncrement.kt");
+  }
+
+  @Test
+  @TestMetadata("primitiveIntArrayElementUnaryMinus.kt")
+  public void testPrimitiveIntArrayElementUnaryMinus() {
+    runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/primitiveIntArrayElementUnaryMinus.kt");
+  }
+
+  @Test
+  @TestMetadata("primitiveIntArrayElementUnaryPlus.kt")
+  public void testPrimitiveIntArrayElementUnaryPlus() {
+    runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/primitiveIntArrayElementUnaryPlus.kt");
+  }
+
+  @Test
   @TestMetadata("property.kt")
   public void testProperty() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/property.kt");
@@ -308,6 +392,24 @@ public class FirStandaloneNormalAnalysisSourceModuleHLExpressionTypeTestGenerate
   @TestMetadata("typealiasedConstructorCallWithImplicitTypeArguments.kt")
   public void testTypealiasedConstructorCallWithImplicitTypeArguments() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/typealiasedConstructorCallWithImplicitTypeArguments.kt");
+  }
+
+  @Test
+  @TestMetadata("unaryMinus.kt")
+  public void testUnaryMinus() {
+    runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/unaryMinus.kt");
+  }
+
+  @Test
+  @TestMetadata("unaryNot.kt")
+  public void testUnaryNot() {
+    runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/unaryNot.kt");
+  }
+
+  @Test
+  @TestMetadata("unaryPlus.kt")
+  public void testUnaryPlus() {
+    runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/unaryPlus.kt");
   }
 
   @Test
