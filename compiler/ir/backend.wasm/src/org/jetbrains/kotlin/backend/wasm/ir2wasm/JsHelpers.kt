@@ -19,7 +19,7 @@ data class JsModuleAndQualifierReference(
 
     private val qualifierBase64 = qualifier?.let { encode(it) }.orEmpty()
 
-    val jsVariableName = module?.let { "_ref_${moduleBase64}_$qualifierBase64" } ?: "$qualifier"
+    val jsQualifierReferenceIdentifier = module?.let { "_ref_${moduleBase64}_$qualifierBase64" } ?: "$qualifier"
 
     val importVariableName = "_import_${moduleBase64}_$qualifierBase64"
 

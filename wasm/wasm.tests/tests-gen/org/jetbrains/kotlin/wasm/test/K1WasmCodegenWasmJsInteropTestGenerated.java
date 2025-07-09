@@ -140,6 +140,12 @@ public class K1WasmCodegenWasmJsInteropTestGenerated extends AbstractK1WasmCodeg
   }
 
   @Test
+  @TestMetadata("jsDirectQualifierReference.kt")
+  public void testJsDirectQualifierReference() {
+    runTest("compiler/testData/codegen/boxWasmJsInterop/jsDirectQualifierReference.kt");
+  }
+
+  @Test
   @TestMetadata("jsException.kt")
   public void testJsException() {
     runTest("compiler/testData/codegen/boxWasmJsInterop/jsException.kt");
@@ -230,6 +236,12 @@ public class K1WasmCodegenWasmJsInteropTestGenerated extends AbstractK1WasmCodeg
   }
 
   @Test
+  @TestMetadata("jsExternalLibrariesImport.kt")
+  public void testJsExternalLibrariesImport() {
+    runTest("compiler/testData/codegen/boxWasmJsInterop/jsExternalLibrariesImport.kt");
+  }
+
+  @Test
   @TestMetadata("jsModule.kt")
   public void testJsModule() {
     runTest("compiler/testData/codegen/boxWasmJsInterop/jsModule.kt");
@@ -284,12 +296,6 @@ public class K1WasmCodegenWasmJsInteropTestGenerated extends AbstractK1WasmCodeg
   }
 
   @Test
-  @TestMetadata("librariesImport.kt")
-  public void testLibrariesImport() {
-    runTest("compiler/testData/codegen/boxWasmJsInterop/librariesImport.kt");
-  }
-
-  @Test
   @TestMetadata("longStrings.kt")
   public void testLongStrings() {
     runTest("compiler/testData/codegen/boxWasmJsInterop/longStrings.kt");
@@ -317,12 +323,6 @@ public class K1WasmCodegenWasmJsInteropTestGenerated extends AbstractK1WasmCodeg
   @TestMetadata("reflectionOnExternals.kt")
   public void testReflectionOnExternals() {
     runTest("compiler/testData/codegen/boxWasmJsInterop/reflectionOnExternals.kt");
-  }
-
-  @Test
-  @TestMetadata("temporal.kt")
-  public void testTemporal() {
-    runTest("compiler/testData/codegen/boxWasmJsInterop/temporal.kt");
   }
 
   @Test

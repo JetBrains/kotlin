@@ -299,7 +299,7 @@ fun generateAsyncJsWrapper(
             val qualifier = it.qualifier
             buildString {
                 append("    const ")
-                append(it.jsVariableName)
+                append(it.jsQualifierReferenceIdentifier)
                 append(" = ")
                 if (module != null) {
                     append("imports[${module.toJsStringLiteral()}]")
@@ -443,7 +443,7 @@ fun generateEsmExportsWrapper(
             stringLiteral to if (it.qualifier != null) {
                 it.importVariableName
             } else {
-                it.jsVariableName
+                it.jsQualifierReferenceIdentifier
             }
         }
 
