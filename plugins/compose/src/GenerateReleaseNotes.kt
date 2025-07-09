@@ -7,7 +7,7 @@ import java.util.concurrent.TimeUnit
 import kotlin.system.exitProcess
 
 fun getCommits(fromRevision: String, toRevision: String): List<Commit> {
-    val cmd = "git rev-list --format=medium $fromRevision..$toRevision ."
+    val cmd = "git rev-list --cherry-pick --format=medium $fromRevision...$toRevision -- ."
     val process = ProcessBuilder(*(cmd.split(" ")).toTypedArray())
         .redirectOutput(ProcessBuilder.Redirect.PIPE)
         .redirectError(ProcessBuilder.Redirect.INHERIT)
@@ -89,6 +89,7 @@ fun main(vararg args: String) {
     val toRevision = args[1]
 
     val (fixes, features) = getCommits(fromRevision, toRevision)
+        .filterDuplicates()
         .filter {
             (it.relnote != null && !ignoreRelnotes.contains(it.relnote.lowercase())) ||
                     it.issues.isNotEmpty()
@@ -100,4 +101,14 @@ fun main(vararg args: String) {
     features.forEach { println(it.asReleaseNote()) }
     println("#### Fixes")
     fixes.forEach { println(it.asReleaseNote()) }
+}
+
+// Some commits may be duplicated, e.g. if a commit was cherry-picked from another branch with changes to tests.
+fun List<Commit>.filterDuplicates(): List<Commit> {
+    val counts = mutableMapOf<String, Int>()
+    forEach {
+        counts[it.title] = counts.getOrDefault(it.title, 0) + 1
+    }
+
+    return filter { counts[it.title] == 1 }
 }
