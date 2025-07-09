@@ -45,9 +45,9 @@ typealias DeserializedTypeAliasPostProcessor = (FirTypeAliasSymbol) -> Unit
  * [LLKotlinStubBasedLibrarySymbolProvider] deserializes FIR symbols from existing stubs, retrieving them by [ClassId]/[CallableId] from a
  * [KotlinDeclarationProvider][org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinDeclarationProvider].
  *
- * The symbol provider is currently only enabled in IDE mode. The Standalone mode uses
- * [JvmClassFileBasedSymbolProvider][org.jetbrains.kotlin.fir.java.deserialization.JvmClassFileBasedSymbolProvider], which is also used by
- * the compiler.
+ * The symbol provider is currently only enabled in IDE mode. The Standalone mode uses [LLJvmClassFileBasedSymbolProvider] whose base class
+ * [JvmClassFileBasedSymbolProvider][org.jetbrains.kotlin.fir.java.deserialization.JvmClassFileBasedSymbolProvider] is also used by the
+ * compiler.
  *
  * Because the symbol provider uses existing stubs, there is no need to keep a huge protobuf in memory, which would be the case for
  * metadata-based deserialization ([JvmClassFileBasedSymbolProvider][org.jetbrains.kotlin.fir.java.deserialization.JvmClassFileBasedSymbolProvider]).

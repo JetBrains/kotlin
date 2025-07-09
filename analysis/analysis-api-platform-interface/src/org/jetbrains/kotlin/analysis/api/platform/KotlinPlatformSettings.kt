@@ -45,7 +45,7 @@ public enum class KotlinDeserializedDeclarationsOrigin {
     /**
      * Library content is deserialized from `.class` files, KLIBs, and metadata.
      *
-     * FIR declarations deserialized from binaries don't have associated PSI elements.
+     * Kotlin FIR declarations deserialized from binaries don't have associated PSI elements.
      */
     BINARIES,
 
