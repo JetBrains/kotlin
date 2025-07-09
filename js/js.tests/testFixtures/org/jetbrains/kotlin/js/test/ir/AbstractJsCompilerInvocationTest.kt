@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.cli.js.K2JSCompiler
 import org.jetbrains.kotlin.js.test.ir.AbstractJsCompilerInvocationTest.CompilerType
-import org.jetbrains.kotlin.js.test.klib.JsKlibTestSettings
+import org.jetbrains.kotlin.js.test.klib.customJsCompilerSettings
 import org.jetbrains.kotlin.js.testOld.V8JsTestChecker
 import org.jetbrains.kotlin.klib.KlibCompilerEdition
 import org.jetbrains.kotlin.klib.KlibCompilerInvocationTestUtils
@@ -58,8 +58,8 @@ private class ModuleDetails(val name: ModuleName, val outputDir: File) {
     constructor(dependency: Dependency) : this(dependency.moduleName, dependency.libraryFile.parentFile)
 }
 
-private fun customCompilerCall(): (PrintStream, Array<String>) -> ExitCode = { printStream: PrintStream, allCompilerArgs: Array<String> ->
-    JsKlibTestSettings.customJsCompiler.callCompiler(args = allCompilerArgs, output = printStream)
+private fun customCompilerCall(): (PrintStream, Array<String>) -> ExitCode = { printStream: PrintStream, args: Array<String> ->
+    customJsCompilerSettings.customCompiler.callCompiler(printStream, args)
 }
 
 private fun currentCompilerCall() = { printStream: PrintStream, args: Array<String> ->
@@ -195,7 +195,7 @@ internal class JsCompilerInvocationTestArtifactBuilder(
         )
 
     private fun Set<Dependency>.replaceStdLib(): Set<Dependency> = mapToSetOrEmpty {
-        if (it.moduleName == "stdlib") Dependency("stdlib", JsKlibTestSettings.customJsCompilerArtifacts.jsStdLib) else it
+        if (it.moduleName == "stdlib") Dependency("stdlib", customJsCompilerSettings.stdlib) else it
     }.toSet()
 
     private fun Dependencies.toCompilerArgs(): List<String> = buildList {
