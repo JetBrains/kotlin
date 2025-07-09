@@ -199,6 +199,10 @@ void RUNTIME_NORETURN ThrowFileFailedToInitializeException(KRef reason) {
     throw std::runtime_error("Not implemented for tests");
 }
 
+void RUNTIME_NORETURN ThrowRuntimeException(KConstRef) {
+    throw std::runtime_error("Not implemented for tests");
+}
+
 void ReportUnhandledException(KRef throwable) {
     if (!reportUnhandledExceptionMock) throw std::runtime_error("Not implemented for tests");
 
