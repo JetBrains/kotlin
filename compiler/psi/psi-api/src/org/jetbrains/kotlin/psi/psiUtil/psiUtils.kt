@@ -75,8 +75,7 @@ fun KtBinaryExpression.tryVisitFoldingStringConcatenation(collectAllDescendants:
     val output = ArrayDeque<KtExpression>()
 
     while (input.isNotEmpty()) {
-        var node = input.removeLast()
-        when (node) {
+        when (val node = input.removeLast()) {
             is KtBinaryExpression -> {
                 if (node.operationToken != PLUS) {
                     return null
@@ -87,12 +86,6 @@ fun KtBinaryExpression.tryVisitFoldingStringConcatenation(collectAllDescendants:
                 }
                 input.add(node.left)
                 input.add(node.right)
-            }
-            is KtParenthesizedExpression -> {
-                if (collectAllDescendants) {
-                    output.addFirst(node)
-                }
-                input.add(node.expression)
             }
             else -> {
                 if (node !is KtStringTemplateExpression) {

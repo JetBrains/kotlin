@@ -78,9 +78,7 @@ internal class KtToFirMapping(private val elementMapper: LLElementMapper) {
         ): FirElement? {
             var current: PsiElement? = element
             var fir: FirElement? = null
-            while (fir == null &&
-                (current is KtBinaryExpression || current is KtParenthesizedExpression || current is KtOperationReferenceExpression)
-            ) {
+            while (fir == null && (current is KtBinaryExpression || current is KtOperationReferenceExpression)) {
                 fir = mapping[current]
                 if (fir is FirStringConcatenationCall && fir.isFoldedStrings) {
                     // In case of folded string literals, we have to return plus operator reference for operation reference.

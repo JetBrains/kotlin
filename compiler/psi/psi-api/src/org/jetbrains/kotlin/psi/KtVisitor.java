@@ -226,7 +226,7 @@ public class KtVisitor<R, D> extends PsiElementVisitor {
      * Visits the input expression using a stack if it's a string literals concatenation expression (to prevent potential stack overflow exception),
      * otherwise visits the expression using regular recursive calls.
 
-     * If you need to handle nested binary and parenthesized expressions inside string literals concatenation,
+     * If you need to handle nested binary expressions inside string literals concatenation,
      * you have to override this method and write the necessary logic there.
      */
     public R visitBinaryExpression(@NotNull KtBinaryExpression expression, D data) {

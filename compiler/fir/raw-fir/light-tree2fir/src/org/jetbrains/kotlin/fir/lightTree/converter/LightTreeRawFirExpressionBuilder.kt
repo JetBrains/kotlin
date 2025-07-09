@@ -311,10 +311,6 @@ class LightTreeRawFirExpressionBuilder(
                     input.add(leftNode)
                     input.add(rightNode)
                 }
-                PARENTHESIZED -> {
-                    val content = node.getExpressionInParentheses()
-                    input.add(content)
-                }
                 else -> {
                     if (node?.tokenType != STRING_TEMPLATE) {
                         return null
