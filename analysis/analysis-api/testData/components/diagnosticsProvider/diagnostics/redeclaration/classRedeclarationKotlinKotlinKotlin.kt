@@ -1,0 +1,11 @@
+// MULTI_FILE_DIAGNOSTICS_TEST
+// SUPPRESS_INDIVIDUAL_DIAGNOSTICS_CHECK
+
+// FILE: A1.kt
+class A
+
+// FILE: A2.kt
+class A
+
+// FILE: A3.kt
+class A

@@ -351,6 +351,58 @@ public class Fe10IdeNormalAnalysisSourceModuleCollectDiagnosticsTestGenerated ex
   }
 
   @Nested
+  @TestMetadata("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/redeclaration")
+  @TestDataPath("$PROJECT_ROOT")
+  public class Redeclaration {
+    @Test
+    public void testAllFilesPresentInRedeclaration() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/redeclaration"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("classRedeclarationJavaJavaKotlin.kt")
+    public void testClassRedeclarationJavaJavaKotlin() {
+      runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/redeclaration/classRedeclarationJavaJavaKotlin.kt");
+    }
+
+    @Test
+    @TestMetadata("classRedeclarationJavaKotlin.kt")
+    public void testClassRedeclarationJavaKotlin() {
+      runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/redeclaration/classRedeclarationJavaKotlin.kt");
+    }
+
+    @Test
+    @TestMetadata("classRedeclarationJavaKotlinKotlin.kt")
+    public void testClassRedeclarationJavaKotlinKotlin() {
+      runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/redeclaration/classRedeclarationJavaKotlinKotlin.kt");
+    }
+
+    @Test
+    @TestMetadata("classRedeclarationKotlinKotlinKotlin.kt")
+    public void testClassRedeclarationKotlinKotlinKotlin() {
+      runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/redeclaration/classRedeclarationKotlinKotlinKotlin.kt");
+    }
+
+    @Test
+    @TestMetadata("functionRedeclaration.kt")
+    public void testFunctionRedeclaration() {
+      runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/redeclaration/functionRedeclaration.kt");
+    }
+
+    @Test
+    @TestMetadata("multiModuleClassRedeclaration.kt")
+    public void testMultiModuleClassRedeclaration() {
+      runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/redeclaration/multiModuleClassRedeclaration.kt");
+    }
+
+    @Test
+    @TestMetadata("propertyRedeclaration.kt")
+    public void testPropertyRedeclaration() {
+      runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/redeclaration/propertyRedeclaration.kt");
+    }
+  }
+
+  @Nested
   @TestMetadata("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/suppression")
   @TestDataPath("$PROJECT_ROOT")
   public class Suppression {

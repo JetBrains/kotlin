@@ -1,0 +1,4 @@
+Diagnostics from file:
+  for PSI element of type KtClass at (11,1) - (12,8)
+    CLASSIFIER_REDECLARATION      text ranges: [(30,31)]
+      PSI: KtClass at (11,1) - (12,8)
