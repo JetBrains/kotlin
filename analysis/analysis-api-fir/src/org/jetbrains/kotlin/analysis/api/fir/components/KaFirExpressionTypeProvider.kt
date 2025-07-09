@@ -157,10 +157,20 @@ internal class KaFirExpressionTypeProvider(
     ): KaType? {
         // When we're in a call like `a[x] = y`, we want to get the `set` call's last argument's type.
         if (fir.calleeReference !is FirResolvedNamedReference || fir.calleeReference.name != OperatorNameConventions.SET) return null
-        if (expression !is KtArrayAccessExpression) return null
-        val assignment = expression.parent as? KtBinaryExpression ?: return null
-        if (assignment.operationToken !in KtTokens.ALL_ASSIGNMENTS) return null
-        if (assignment.left != expression) return null
+
+        when (expression) {
+            is KtArrayAccessExpression -> {
+                val assignment = expression.parent as? KtBinaryExpression ?: return null
+                if (assignment.operationToken !in KtTokens.ALL_ASSIGNMENTS) return null
+                if (assignment.left != expression) return null
+            }
+            is KtUnaryExpression -> {
+                if (expression.baseExpression !is KtArrayAccessExpression) return null
+                if (expression.operationToken !in KtTokens.INCREMENT_AND_DECREMENT) return null
+            }
+            else -> return null
+        }
+
         val setTargetParameterType = fir.argumentsToSubstitutedValueParameters()?.values?.lastOrNull()?.substitutedType ?: return null
         return setTargetParameterType.asKaType()
     }
