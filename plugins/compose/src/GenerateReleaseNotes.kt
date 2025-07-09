@@ -3,7 +3,6 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-import java.lang.System
 import java.util.concurrent.TimeUnit
 import kotlin.system.exitProcess
 
@@ -43,7 +42,7 @@ val matchRelnote =
         setOf(RegexOption.IGNORE_CASE, RegexOption.MULTILINE, RegexOption.DOT_MATCHES_ALL),
     )
 val matchChangeId = Regex("Change-Id:\\s+(I[0-9a-f]+)", RegexOption.IGNORE_CASE)
-val matchIssue = Regex("(?:Bug|Fixes):\\s+\\[?(\\d+)\\]?", RegexOption.IGNORE_CASE)
+val matchIssue = Regex("(?:Bug|Fixes):\\s+\\[?(\\d+|KT-\\d+)\\]?", RegexOption.IGNORE_CASE)
 
 data class Commit(
     val commit: String,
@@ -55,10 +54,17 @@ data class Commit(
 
 fun commitToGitHubUrl(commit: String) = "https://github.com/JetBrains/kotlin/commit/$commit"
 fun issueToBuganizerUrl(issue: String): String = "https://issuetracker.google.com/issues/$issue"
+fun issueToYoutrackUrl(issue: String): String = "https://youtrack.jetbrains.com/issue/$issue"
 
 fun Commit.asReleaseNote(): String {
     val commitLink = "[`${commit.take(7)}`](${commitToGitHubUrl(commit)})"
-    val issueLinks = issues.map { issue -> "[`b/$issue`](${issueToBuganizerUrl(issue)})" }.joinToString(", ")
+    val issueLinks = issues.joinToString(", ") { issue ->
+        if (issue.startsWith("KT-")) {
+            "[`$issue`](${issueToYoutrackUrl(issue)})"
+        } else {
+            "[`b/$issue`](${issueToBuganizerUrl(issue)})"
+        }
+    }
     val link = if (issueLinks.isEmpty()) commitLink else issueLinks
     val text = (relnote ?: title).split(" ").joinToString(" ") { if (it.startsWith('@')) "`$it`" else it }
     return "- $link $text"
