@@ -1,17 +1,16 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// FIR_DUMP
-// LANGUAGE: -CheckOptInOnPureEnumEntries
+// LANGUAGE: +CheckOptInOnPureEnumEntries
 @RequiresOptIn
 annotation class O
 
 enum class Enum1 @O constructor() {
     ENTRY<!OPT_IN_USAGE_ERROR!><!>(),
-    <!OPT_IN_USAGE!>ENTRY2;<!>
+    ENTRY2;
 }
 
 enum class Enum2 {
     ENTRY<!OPT_IN_USAGE_ERROR!><!>(),
-    <!OPT_IN_USAGE_ERROR!>ENTRY2,<!>
+    ENTRY2,
     ENTRY3<!OPT_IN_USAGE_ERROR!><!>(0);
 
     val x: Int

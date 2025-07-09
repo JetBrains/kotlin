@@ -210,5 +210,6 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
 
     override val enumEntryCheckers: Set<FirEnumEntryChecker> = setOf(
         FirEnumEntriesRedeclarationChecker,
+        FirOptInEnumEntryChecker,
     )
 }
