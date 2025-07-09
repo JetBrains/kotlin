@@ -245,26 +245,6 @@ internal class FunctionDFGBuilder(private val generationState: NativeGenerationS
                 if (expression.symbol == initInstanceSymbol) {
                     error("Should've been lowered: ${expression.render()}")
                 }
-                if (expression.symbol == executeImplSymbol) {
-                    // Producer and job of executeImpl are called externally, we need to reflect this somehow.
-                    val producerInvocation = IrCallImpl.fromSymbolOwner(expression.startOffset, expression.endOffset,
-                            executeImplProducerInvoke.returnType,
-                            executeImplProducerInvoke.symbol,
-                            STATEMENT_ORIGIN_PRODUCER_INVOCATION)
-                    producerInvocation.arguments[0] = expression.arguments[2]
-
-                    expressions += producerInvocation to currentLoop
-
-                    val jobFunctionReference = expression.arguments[3] as? IrRawFunctionReference
-                            ?: error("A function reference expected")
-                    val jobInvocation = IrCallImpl.fromSymbolOwner(expression.startOffset, expression.endOffset,
-                            jobFunctionReference.symbol.owner.returnType,
-                            jobFunctionReference.symbol as IrSimpleFunctionSymbol,
-                            STATEMENT_ORIGIN_JOB_INVOCATION)
-                    jobInvocation.arguments[0] = producerInvocation
-
-                    expressions += jobInvocation to currentLoop
-                }
                 if (expression.symbol == saveCoroutineState)
                     liveVariables[expression] = liveVariablesStack.peek()!!
 
@@ -408,7 +388,6 @@ internal class FunctionDFGBuilder(private val generationState: NativeGenerationS
     private val createUninitializedArraySymbol = symbols.createUninitializedArray
     private val createEmptyStringSymbol = symbols.createEmptyString
     private val initInstanceSymbol = symbols.initInstance
-    private val executeImplSymbol = symbols.executeImpl
     private val executeImplProducerClass = symbols.functionN(0).owner
     private val executeImplProducerInvoke = executeImplProducerClass.simpleFunctions()
             .single { it.name == OperatorNameConventions.INVOKE }
