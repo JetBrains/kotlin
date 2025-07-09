@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -12,8 +12,6 @@ import org.jetbrains.kotlin.descriptors.CallableMemberDescriptor
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.IrRichFunctionReference
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.Flags
 import org.jetbrains.kotlin.serialization.deserialization.ProtoEnumFlags
@@ -38,23 +36,6 @@ value class ClassFlags(val flags: Long) {
     val hasEnumEntries: Boolean get() = IrFlags.HAS_ENUM_ENTRIES.get(flags.toInt())
 
     companion object {
-        fun encode(clazz: IrClass, languageVersionSettings: LanguageVersionSettings): Long {
-            return clazz.run {
-                val hasAnnotation = annotations.isNotEmpty()
-                val visibility = ProtoEnumFlags.descriptorVisibility(visibility.normalize())
-                val modality = ProtoEnumFlags.modality(modality)
-                val kind = ProtoEnumFlags.classKind(kind, isCompanion)
-
-                val hasEnumEntries = kind == ProtoBuf.Class.Kind.ENUM_CLASS &&
-                        languageVersionSettings.supportsFeature(LanguageFeature.EnumEntries)
-                val flags = IrFlags.getClassFlags(
-                    hasAnnotation, visibility, modality, kind, isInner, isData, isExternal, isExpect, isValue, isFun, hasEnumEntries
-                )
-
-                flags.toLong()
-            }
-        }
-
         fun decode(code: Long) = ClassFlags(code)
     }
 }
@@ -79,34 +60,6 @@ value class FunctionFlags(val flags: Long) {
     private fun kind(): CallableMemberDescriptor.Kind = ProtoEnumFlags.memberKind(IrFlags.MEMBER_KIND.get(flags.toInt()))
 
     companion object {
-        fun encode(function: IrSimpleFunction): Long {
-            function.run {
-                val hasAnnotation = annotations.isNotEmpty()
-                val visibility = ProtoEnumFlags.descriptorVisibility(visibility.normalize())
-                val modality = ProtoEnumFlags.modality(modality)
-                val kind = if (isFakeOverride) ProtoBuf.MemberKind.FAKE_OVERRIDE else ProtoBuf.MemberKind.DECLARATION
-
-                val flags = IrFlags.getFunctionFlags(
-                    hasAnnotation, visibility, modality, kind,
-                    isOperator, isInfix, isInline, isTailrec, isExternal, isSuspend, isExpect,
-                    /* hasStableParameterNames = */ true, /* hasMustUseReturnValue = */ false
-                    // hasStableParameterNames/hasMustUseReturnValue do not make sense for Ir, just pass the default value
-                )
-
-                return flags.toLong()
-            }
-        }
-
-        fun encode(constructor: IrConstructor): Long {
-            constructor.run {
-                val hasAnnotation = annotations.isNotEmpty()
-                val visibility = ProtoEnumFlags.descriptorVisibility(visibility.normalize())
-                val flags = IrFlags.getConstructorFlags(hasAnnotation, visibility, isInline, isExternal, isExpect, isPrimary)
-
-                return flags.toLong()
-            }
-        }
-
         fun decode(code: Long) = FunctionFlags(code)
     }
 }
@@ -128,25 +81,6 @@ value class PropertyFlags(val flags: Long) {
     private fun kind(): CallableMemberDescriptor.Kind = ProtoEnumFlags.memberKind(IrFlags.MEMBER_KIND.get(flags.toInt()))
 
     companion object {
-        fun encode(property: IrProperty): Long {
-            return property.run {
-                val hasAnnotation = annotations.isNotEmpty()
-                val visibility = ProtoEnumFlags.descriptorVisibility(visibility.normalize())
-                val modality = ProtoEnumFlags.modality(modality)
-                val kind = if (isFakeOverride) ProtoBuf.MemberKind.FAKE_OVERRIDE else ProtoBuf.MemberKind.DECLARATION
-                val hasGetter = getter != null
-                val hasSetter = setter != null
-
-                val flags = IrFlags.getPropertyFlags(
-                    hasAnnotation, visibility, modality, kind,
-                    isVar, hasGetter, hasSetter, false, isConst, isLateinit, isExternal, isDelegated, isExpect,
-                    /* hasMustUseReturnValue = */ false
-                )
-
-                flags.toLong()
-            }
-        }
-
         fun decode(code: Long) = PropertyFlags(code)
     }
 }
@@ -160,19 +94,6 @@ value class ValueParameterFlags(val flags: Long) {
     val isAssignable: Boolean get() = IrFlags.IS_ASSIGNABLE.get(flags.toInt())
 
     companion object {
-        fun encode(param: IrValueParameter): Long {
-            return param.run {
-                IrFlags.getValueParameterFlags(
-                    annotations.isNotEmpty(),
-                    defaultValue != null,
-                    isCrossinline,
-                    isNoinline,
-                    isHidden,
-                    isAssignable
-                ).toLong()
-            }
-        }
-
         fun decode(code: Long) = ValueParameterFlags(code)
     }
 }
@@ -184,13 +105,6 @@ value class TypeAliasFlags(val flags: Long) {
     val isActual: Boolean get() = IrFlags.IS_ACTUAL.get(flags.toInt())
 
     companion object {
-        fun encode(typeAlias: IrTypeAlias): Long {
-            return typeAlias.run {
-                val visibility = ProtoEnumFlags.descriptorVisibility(visibility.normalize())
-                IrFlags.getTypeAliasFlags(annotations.isNotEmpty(), visibility, isActual).toLong()
-            }
-        }
-
         fun decode(code: Long) = TypeAliasFlags(code)
     }
 }
@@ -202,13 +116,6 @@ value class TypeParameterFlags(val flags: Long) {
     val isReified: Boolean get() = IrFlags.IS_REIFIED.get(flags.toInt())
 
     companion object {
-        fun encode(typeParameter: IrTypeParameter): Long {
-            return typeParameter.run {
-                val variance = ProtoEnumFlags.variance(variance)
-                IrFlags.getTypeParameterFlags(annotations.isNotEmpty(), variance, isReified).toLong()
-            }
-        }
-
         fun decode(code: Long) = TypeParameterFlags(code)
     }
 }
@@ -222,13 +129,6 @@ value class FieldFlags(val flags: Long) {
     val isStatic: Boolean get() = IrFlags.IS_STATIC.get(flags.toInt())
 
     companion object {
-        fun encode(field: IrField): Long {
-            return field.run {
-                val visibility = ProtoEnumFlags.descriptorVisibility(visibility.normalize())
-                IrFlags.getFieldFlags(annotations.isNotEmpty(), visibility, isFinal, isExternal, isStatic).toLong()
-            }
-        }
-
         fun decode(code: Long) = FieldFlags(code)
     }
 }
@@ -241,18 +141,6 @@ value class LocalVariableFlags(val flags: Long) {
     val isLateinit: Boolean get() = IrFlags.IS_LOCAL_LATEINIT.get(flags.toInt())
 
     companion object {
-        fun encode(variable: IrVariable): Long {
-            return variable.run {
-                IrFlags.getLocalFlags(annotations.isNotEmpty(), isVar, isConst, isLateinit).toLong()
-            }
-        }
-
-        fun encode(delegate: IrLocalDelegatedProperty): Long {
-            return delegate.run {
-                IrFlags.getLocalFlags(annotations.isNotEmpty(), isVar, false, false).toLong()
-            }
-        }
-
         fun decode(code: Long) = LocalVariableFlags(code)
     }
 }
@@ -269,15 +157,6 @@ value class RichFunctionReferenceFlags(val flags: Long) {
         val HAS_SUSPEND_CONVERSION: Flags.BooleanFlagField = Flags.FlagField.booleanAfter(HAS_UNIT_CONVERSION)
         val HAS_VARARG_CONVERSION: Flags.BooleanFlagField = Flags.FlagField.booleanAfter(HAS_SUSPEND_CONVERSION)
         val IS_RESTRICTED_SUSPENSION: Flags.BooleanFlagField = Flags.FlagField.booleanAfter(HAS_VARARG_CONVERSION)
-
-        fun encode(reference: IrRichFunctionReference): Long {
-            return reference.run {
-                HAS_UNIT_CONVERSION.toFlags(hasUnitConversion) or
-                        HAS_SUSPEND_CONVERSION.toFlags(hasSuspendConversion) or
-                        HAS_VARARG_CONVERSION.toFlags(hasVarargConversion) or
-                        IS_RESTRICTED_SUSPENSION.toFlags(isRestrictedSuspension)
-            }.toLong()
-        }
 
         fun decode(code: Long) = RichFunctionReferenceFlags(code)
     }

@@ -224,10 +224,3 @@ fun IrModuleDeserializer.findModuleDeserializerForTopLevelId(idSignature: IdSign
     if (idSignature in this) return this
     return moduleDependencies.firstOrNull { idSignature in it }
 }
-
-val ByteArray.codedInputStream: CodedInputStream
-    get() {
-        val codedInputStream = CodedInputStream.newInstance(this)
-        codedInputStream.setRecursionLimit(65535) // The default 64 is blatantly not enough for IR.
-        return codedInputStream
-    }
