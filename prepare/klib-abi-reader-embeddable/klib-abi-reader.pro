@@ -19,7 +19,7 @@
 -keep class org.jetbrains.kotlin.org.slf4j.** { *; }
 
 
--dontwarn com.intellij.**
+#-dontwarn com.intellij.**
 -dontwarn org.jetbrains.kotlin.io.opentelemetry.**
 -dontwarn org.jetbrains.kotlin.org.jdom.**
 -dontwarn org.jetbrains.annotations.**
@@ -27,3 +27,5 @@
 -dontwarn org.jetbrains.org.objectweb.asm.**
 -dontwarn org.jetbrains.kotlin.org.apache.log4j.**
 -dontwarn org.jetbrains.kotlin.cli.**
+-dontwarn org.jetbrains.kotlin.psi.**
+-dontwarn org.jetbrains.kotlin.platform.**

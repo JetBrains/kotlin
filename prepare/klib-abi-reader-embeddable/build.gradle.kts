@@ -33,17 +33,17 @@ dependencies {
         isTransitive = true
         exclude("org.jetbrains.kotlin", "kotlin-stdlib")
     }
-    embedded(project(":core:compiler.common.native")) { isTransitive = false }
-    embedded(project(":compiler:frontend")) {
+    //embedded(project(":core:compiler.common.native")) { isTransitive = false }
+    /*embedded(project(":compiler:frontend")) {
         isTransitive = true
         exclude("org.jetbrains.kotlin", "kotlin-stdlib")
-    }
+    }*/
     embedded(project(":compiler:cli-common")) { isTransitive = false }
-    embedded(project(":compiler:config.jvm")) { isTransitive = false }
+    //embedded(project(":compiler:config.jvm")) { isTransitive = false }
     embedded(libs.guava)
-    embedded(intellijCore())
     embedded(libs.intellij.fastutil)
-    embedded(commonDependency("org.jetbrains.intellij.deps:log4j")) { isTransitive = false }
+    //embedded(intellijCore())
+    //embedded(commonDependency("org.jetbrains.intellij.deps:log4j")) { isTransitive = false }
 
     proguardLibraryJars(kotlinStdlib())
     proguardLibraryJars(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
