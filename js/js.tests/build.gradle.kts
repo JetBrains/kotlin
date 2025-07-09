@@ -161,6 +161,10 @@ fun Test.setUpJsBoxTests(tags: String?) {
     dependsOn(":kotlin-stdlib:jsJar")
     systemProperty("kotlin.js.full.stdlib.path", "libraries/stdlib/build/classes/kotlin/js/main")
     inputs.dir(rootDir.resolve("libraries/stdlib/build/classes/kotlin/js/main"))
+    systemProperty("kotlin.wasm.full.stdlib.path", "libraries/stdlib/build/classes/kotlin/wasmJs/main")
+    inputs.dir(rootDir.resolve("libraries/stdlib/build/classes/kotlin/wasmJs/main"))
+    systemProperty("kotlin.js.full.test.path", "libraries/kotlin.test/build/classes/kotlin/js/main")
+    inputs.dir(rootDir.resolve("libraries/kotlin.test/build/classes/kotlin/js/main"))
 
     systemProperty("kotlin.js.stdlib.klib.path", "libraries/stdlib/build/libs/kotlin-stdlib-js-$version.klib")
     inputs.file(rootDir.resolve("libraries/stdlib/build/libs/kotlin-stdlib-js-$version.klib"))
