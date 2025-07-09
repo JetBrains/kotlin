@@ -19,6 +19,7 @@ import org.gradle.tooling.events.task.TaskFailureResult
 import org.gradle.tooling.events.task.TaskFinishEvent
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.fus.BuildUidService
+import org.jetbrains.kotlin.gradle.fus.internal.detectedCiProperty
 import org.jetbrains.kotlin.gradle.fus.internal.isCiBuild
 import org.jetbrains.kotlin.gradle.internal.isInIdeaSync
 import org.jetbrains.kotlin.gradle.internal.properties.PropertiesBuildService
@@ -108,12 +109,12 @@ abstract class BuildFusService<T : BuildFusService.Parameters> :
                 }
             } else {
                 val reason = when {
-                    project.isInIdeaSync.get() -> "Fus metric should not be reported during sync"
+                    project.isInIdeaSync.get() -> "Idea sync is in progress"
                     !project.kotlinPropertiesProvider.enableFusMetricsCollection -> "Fus was disabled for the build"
-                    !project.isCustomLoggerRootPathIsProvided && isCiBuild() -> "Fus metrics should not be reported on CI"
-                    else -> "Fus service should not be created."
+                    !project.isCustomLoggerRootPathIsProvided && isCiBuild() -> "CI build is detected via environment variable ${detectedCiProperty()}"
+                    else -> "BuildFusService should not be created."
                 }
-                project.logger.info("BuildFusService was not registered: $reason.")
+                project.logger.debug("Fus metrics won't be collected: $reason.")
                 null
             }
 

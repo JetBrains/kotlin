@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle
 
+import org.gradle.api.logging.LogLevel
 import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.build.report.metrics.GradleBuildTime
@@ -592,12 +593,16 @@ class FusStatisticsIT : KGPBaseTest() {
     @DisplayName("disable FUS on TC")
     @GradleTest
     @JvmGradlePluginTests
+    @OptIn(EnvironmentalVariablesOverride::class)
+    //This test relies on the 'TEAMCITY_VERSION' environment variable being set on TeamCity agents.
+    //To run locally, set the environment variable TEAMCITY_VERSION to any value:
+    //environmentVariables = EnvironmentalVariables("TEAMCITY_VERSION" to "1.0.0")
     fun disableFusOnTeamCity(gradleVersion: GradleVersion) {
         project(
             "simpleProject", gradleVersion,
         ) {
-            build("assemble") {
-                assertOutputContains("BuildFusService was not registered: Fus metrics should not be reported on CI.")
+            build("assemble", buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)) {
+                assertOutputContains("Fus metrics won't be collected: CI build is detected via environment variable TEAMCITY_VERSION")
             }
         }
     }
