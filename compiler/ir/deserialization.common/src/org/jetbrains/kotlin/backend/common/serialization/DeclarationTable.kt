@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.backend.common.serialization
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap
-import org.jetbrains.kotlin.backend.common.diagnostics.IdSignatureClashDetector
+import org.jetbrains.kotlin.backend.common.linkage.issues.SignatureClashDetector
 import org.jetbrains.kotlin.backend.common.serialization.signature.FileLocalIdSignatureComputer
 import org.jetbrains.kotlin.backend.common.serialization.signature.PublicIdSignatureComputer
 import org.jetbrains.kotlin.ir.IrBuiltIns
@@ -17,9 +17,11 @@ import org.jetbrains.kotlin.ir.expressions.IrReturnableBlock
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.KotlinMangler.IrMangler
 
-abstract class GlobalDeclarationTable(val mangler: IrMangler) {
+abstract class GlobalDeclarationTable(
+    val mangler: IrMangler,
+    val clashDetector: SignatureClashDetector<IdSignature, IrDeclaration>?
+) {
     val publicIdSignatureComputer = PublicIdSignatureComputer(mangler)
-    internal val clashDetector = IdSignatureClashDetector()
 
     protected val table: MutableMap<IrDeclaration, IdSignature> = Object2ObjectOpenHashMap()
 
@@ -30,7 +32,7 @@ abstract class GlobalDeclarationTable(val mangler: IrMangler) {
                 null -> computeSignatureByDeclaration(it, compatibleMode = false, recordInSignatureClashDetector = true)
                 else -> {
                     table[it] = signature
-                    clashDetector.trackDeclaration(it, signature)
+                    clashDetector?.trackDeclaration(it, signature)
                 }
             }
         }
@@ -45,7 +47,7 @@ abstract class GlobalDeclarationTable(val mangler: IrMangler) {
             publicIdSignatureComputer.computePublicIdSignature(declaration, compatibleMode)
         }.also {
             if (recordInSignatureClashDetector && it.isPubliclyVisible && !it.isLocal) {
-                clashDetector.trackDeclaration(declaration, it)
+                clashDetector?.trackDeclaration(declaration, it)
             }
         }
     }

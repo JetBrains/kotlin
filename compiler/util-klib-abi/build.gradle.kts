@@ -7,7 +7,7 @@ dependencies {
     api(kotlinStdlib())
     implementation(project(":kotlin-util-klib"))
     implementation(project(":core:compiler.common"))
-    implementation(project(":compiler:ir.serialization.common"))
+    implementation(project(":compiler:ir.deserialization.common"))
     compileOnly(libs.intellij.fastutil)
     testApi(platform(libs.junit.bom))
     testImplementation(libs.junit.jupiter.api)

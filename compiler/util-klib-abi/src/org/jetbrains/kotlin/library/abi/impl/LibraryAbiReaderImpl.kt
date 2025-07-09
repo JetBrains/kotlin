@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 import java.io.File
 import kotlin.jvm.java
 import org.jetbrains.kotlin.konan.file.File as KFile
+import org.jetbrains.kotlin.backend.common.serialization.fileEntry
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrClass as ProtoClass
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclaration as ProtoDeclaration
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationBase as ProtoDeclarationBase

@@ -127,6 +127,7 @@ include ":benchmarks",
         ":compiler:ir.backend.native",
         ":compiler:ir.actualization",
         ":compiler:ir.serialization.common",
+        ":compiler:ir.deserialization.common",
         ":compiler:ir.serialization.jvm",
         ":compiler:ir.serialization.js",
         ":compiler:ir.serialization.native",
@@ -814,6 +815,7 @@ project(':compiler:backend.jvm.lower').projectDir = "$rootDir/compiler/ir/backen
 project(':compiler:backend.jvm.codegen').projectDir = "$rootDir/compiler/ir/backend.jvm/codegen" as File
 project(':compiler:backend.jvm.entrypoint').projectDir = "$rootDir/compiler/ir/backend.jvm/entrypoint" as File
 project(':compiler:ir.serialization.common').projectDir = "$rootDir/compiler/ir/serialization.common" as File
+project(':compiler:ir.deserialization.common').projectDir = "$rootDir/compiler/ir/deserialization.common" as File
 project(':compiler:ir.serialization.jvm').projectDir = "$rootDir/compiler/ir/serialization.jvm" as File
 project(':compiler:ir.serialization.js').projectDir = "$rootDir/compiler/ir/serialization.js" as File
 project(':compiler:ir.serialization.native').projectDir = "$rootDir/compiler/ir/serialization.native" as File

@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.konan.serialization
 
+import org.jetbrains.kotlin.backend.common.diagnostics.IdSignatureClashDetector
 import org.jetbrains.kotlin.backend.common.serialization.DeclarationTable
 import org.jetbrains.kotlin.backend.common.serialization.GlobalDeclarationTable
 import org.jetbrains.kotlin.backend.common.serialization.signature.DescToIrIdSignatureComputer
@@ -14,7 +15,7 @@ import org.jetbrains.kotlin.ir.util.IdSignature
 
 class KonanGlobalDeclarationTable(
     builtIns: IrBuiltIns
-) : GlobalDeclarationTable(KonanManglerIr) {
+) : GlobalDeclarationTable(KonanManglerIr, IdSignatureClashDetector()) {
     init {
         loadKnownBuiltins(builtIns)
     }

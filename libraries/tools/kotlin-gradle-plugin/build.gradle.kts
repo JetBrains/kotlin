@@ -91,7 +91,7 @@ val unpublishedCompilerRuntimeDependencies = listOf( // TODO: remove in KT-70247
     ":compiler:compiler.version", // for user projects buildscripts, `loadCompilerVersion`
     ":compiler:config", // for CommonCompilerArguments initialization
     ":compiler:config.jvm", // for K2JVMCompilerArguments initialization
-    ":compiler:ir.serialization.common", // for PartialLinkageMode (K/N)
+    ":compiler:ir.deserialization.common", // for PartialLinkageMode (K/N)
     ":compiler:util", // for CommonCompilerArguments initialization, K/N
     ":core:compiler.common", // for FUS statistics parsing all the compiler arguments
     ":core:compiler.common.jvm", // for FUS statistics parsing all the compiler arguments

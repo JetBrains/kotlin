@@ -42,7 +42,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 class FakeOverrideGlobalDeclarationTable(
     mangler: KotlinMangler.IrMangler
-) : GlobalDeclarationTable(mangler) {
+) : GlobalDeclarationTable(mangler, null) {
     fun clear() = table.clear()
 }
 
