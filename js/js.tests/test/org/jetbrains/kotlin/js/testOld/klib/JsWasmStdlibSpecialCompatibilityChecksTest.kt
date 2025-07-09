@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.js.testOld.klib
 
-import org.jetbrains.kotlin.backend.common.diagnostics.StandardLibrarySpecialCompatibilityChecker
-import org.jetbrains.kotlin.backend.common.diagnostics.StandardLibrarySpecialCompatibilityChecker.Companion.KLIB_JAR_LIBRARY_VERSION
-import org.jetbrains.kotlin.backend.common.diagnostics.StandardLibrarySpecialCompatibilityChecker.Companion.KLIB_JAR_MANIFEST_FILE
+import org.jetbrains.kotlin.backend.common.diagnostics.LibrarySpecialCompatibilityChecker
+import org.jetbrains.kotlin.backend.common.diagnostics.LibrarySpecialCompatibilityChecker.Companion.KLIB_JAR_LIBRARY_VERSION
+import org.jetbrains.kotlin.backend.common.diagnostics.LibrarySpecialCompatibilityChecker.Companion.KLIB_JAR_MANIFEST_FILE
 import org.jetbrains.kotlin.cli.common.messages.MessageCollectorImpl
 import org.jetbrains.kotlin.js.testOld.utils.runJsCompiler
 import org.jetbrains.kotlin.konan.file.zipDirAs
@@ -178,10 +178,10 @@ abstract class LibrarySpecialCompatibilityChecksTest : TestCaseWithTmpdir() {
     private inline fun <T> withCustomCompilerVersion(version: TestVersion?, block: () -> T): T {
         @Suppress("DEPRECATION")
         return try {
-            StandardLibrarySpecialCompatibilityChecker.setUpCustomCompilerVersionForTest(version?.toString())
+            LibrarySpecialCompatibilityChecker.setUpCustomCompilerVersionForTest(version?.toString())
             block()
         } finally {
-            StandardLibrarySpecialCompatibilityChecker.resetUpCustomCompilerVersionForTest()
+            LibrarySpecialCompatibilityChecker.resetUpCustomCompilerVersionForTest()
         }
     }
 
