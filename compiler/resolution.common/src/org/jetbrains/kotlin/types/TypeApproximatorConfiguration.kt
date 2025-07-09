@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.builtins.functions.AllowedToUsedOnlyInK1
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.types.model.*
 
-open class TypeApproximatorConfiguration {
+abstract class TypeApproximatorConfiguration {
     enum class IntersectionStrategy {
         ALLOWED,
         TO_FIRST,
@@ -17,9 +17,17 @@ open class TypeApproximatorConfiguration {
         TO_UPPER_BOUND_IF_SUPERTYPE
     }
 
-    open val approximateFlexible: Boolean get() = true // simple flexible types (FlexibleTypeImpl)
-    open val approximateDynamic: Boolean get() = true // DynamicType
-    open val approximateRawTypes: Boolean get() = true // RawTypeImpl
+    // Currently, it's only `true` for sone analysis API configuration
+    // at org.jetbrains.kotlin.analysis.api.fir.types.PublicTypeApproximator.PublicApproximatorConfiguration
+    // and at org.jetbrains.kotlin.analysis.api.descriptors.utils.PublicApproximatorConfiguration
+    protected abstract val approximateAllFlexible: Boolean
+
+    // Not sure if we should remove them, but at least we see here that
+    // they're all always `approximateAllFlexible`
+    val approximateFlexible: Boolean get() = approximateAllFlexible
+    val approximateDynamic: Boolean get() = approximateAllFlexible
+    val approximateRawTypes: Boolean get() = approximateAllFlexible
+
     open val approximateErrorTypes: Boolean get() = true
 
     open val approximateIntegerLiteralConstantTypes: Boolean get() = false // IntegerLiteralTypeConstructor
@@ -58,15 +66,7 @@ open class TypeApproximatorConfiguration {
     open fun shouldApproximateCapturedType(ctx: TypeSystemInferenceExtensionContext, type: CapturedTypeMarker): Boolean =
         true  // false means that this type we can leave as is
 
-    abstract class AllFlexibleSameValue : TypeApproximatorConfiguration() {
-        abstract val approximateAllFlexible: Boolean
-
-        override val approximateFlexible: Boolean get() = approximateAllFlexible
-        override val approximateDynamic: Boolean get() = approximateAllFlexible
-        override val approximateRawTypes: Boolean get() = approximateAllFlexible
-    }
-
-    object LocalDeclaration : AllFlexibleSameValue() {
+    object LocalDeclaration : TypeApproximatorConfiguration() {
         override val approximateAllFlexible: Boolean get() = false
         override val intersectionStrategy: IntersectionStrategy get() = IntersectionStrategy.ALLOWED
         override val approximateErrorTypes: Boolean get() = false
@@ -80,7 +80,7 @@ open class TypeApproximatorConfiguration {
     open class PublicDeclaration(
         override val approximateLocalTypes: Boolean,
         override val approximateAnonymous: Boolean,
-    ) : AllFlexibleSameValue() {
+    ) : TypeApproximatorConfiguration() {
         override val approximateAllFlexible: Boolean get() = false
         override val approximateErrorTypes: Boolean get() = false
         override val approximateIntegerLiteralConstantTypes: Boolean get() = true
@@ -97,7 +97,7 @@ open class TypeApproximatorConfiguration {
      * This kind of configuration is supposed only to approximate some captured types/ILTs and doesn't approximate flexible/error ones.
      */
     sealed class AbstractCapturedTypesAndILTApproximation(private val approximatedCapturedStatus: CaptureStatus?) :
-        AllFlexibleSameValue() {
+        TypeApproximatorConfiguration() {
         override val approximateAllFlexible: Boolean get() = false
         override val approximateErrorTypes: Boolean get() = false
 
@@ -114,7 +114,7 @@ open class TypeApproximatorConfiguration {
 
     class TopLevelIntegerLiteralTypeApproximationWithExpectedType(
         override val expectedTypeForIntegerLiteralType: KotlinTypeMarker?,
-    ) : AllFlexibleSameValue() {
+    ) : TypeApproximatorConfiguration() {
         override val approximateAllFlexible: Boolean get() = false
         override val approximateIntegerLiteralConstantTypes: Boolean get() = true
         override val approximateIntegerConstantOperatorTypes: Boolean get() = true
@@ -160,7 +160,7 @@ open class TypeApproximatorConfiguration {
     }
 
     @AllowedToUsedOnlyInK1
-    object IntegerLiteralsTypesApproximation : AllFlexibleSameValue() {
+    object IntegerLiteralsTypesApproximation : TypeApproximatorConfiguration() {
         override val approximateIntegerLiteralConstantTypes: Boolean get() = true
         override val approximateAllFlexible: Boolean get() = false
         override val intersectionStrategy: IntersectionStrategy get() = IntersectionStrategy.ALLOWED
@@ -170,12 +170,12 @@ open class TypeApproximatorConfiguration {
         override fun shouldApproximateCapturedType(ctx: TypeSystemInferenceExtensionContext, type: CapturedTypeMarker): Boolean = false
     }
 
-    object UpperBoundAwareIntersectionTypeApproximator : AllFlexibleSameValue() {
+    object UpperBoundAwareIntersectionTypeApproximator : TypeApproximatorConfiguration() {
         override val approximateAllFlexible: Boolean get() = false
         override val intersectionStrategy: IntersectionStrategy get() = IntersectionStrategy.TO_UPPER_BOUND_IF_SUPERTYPE
     }
 
-    object FrontendToBackendTypesApproximation : AllFlexibleSameValue() {
+    object FrontendToBackendTypesApproximation : TypeApproximatorConfiguration() {
         override val approximateAllFlexible: Boolean get() = false
         override val approximateErrorTypes: Boolean get() = false
         override val approximateIntegerLiteralConstantTypes: Boolean get() = true

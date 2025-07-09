@@ -22,7 +22,7 @@ internal object PublicTypeApproximator {
 
     internal class PublicApproximatorConfiguration(
         override val approximateLocalTypes: Boolean
-    ) : TypeApproximatorConfiguration.AllFlexibleSameValue() {
+    ) : TypeApproximatorConfiguration() {
         override val approximateAllFlexible: Boolean get() = true
         override val approximateErrorTypes: Boolean get() = false
         override val approximateDefinitelyNotNullTypes: Boolean get() = true

@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.analysis.api.descriptors.utils
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 
 @Suppress("SpellCheckingInspection")
-internal class PublicApproximatorConfiguration(override val approximateLocalTypes: Boolean) : TypeApproximatorConfiguration.AllFlexibleSameValue() {
+internal class PublicApproximatorConfiguration(override val approximateLocalTypes: Boolean) : TypeApproximatorConfiguration() {
     override val approximateAllFlexible: Boolean get() = true
     override val approximateErrorTypes: Boolean get() = false
     override val approximateDefinitelyNotNullTypes: Boolean get() = true
