@@ -7,6 +7,9 @@
 
 package kotlin.js
 
+import kotlin.js.internal.boxedLong.BoxedLongImplementation
+import kotlin.js.internal.boxedLong.toStringImpl
+
 @RequiresOptIn(message = "Here be dragons! This is a compiler intrinsic, proceed with care!")
 @Retention(AnnotationRetention.BINARY)
 @Target(AnnotationTarget.FUNCTION)
@@ -221,3 +224,15 @@ internal fun jsIsEs6(): Boolean
 
 @JsIntrinsic
 internal fun <T> jsYield(suspendFunction: () -> T): T
+
+/**
+ * Depending on the target ES edition, calls to this function are either replaced with a call
+ * to [kotlin.js.internal.boxedLong.toStringImpl], or to [kotlin.js.internal.longAsBigInt.toStringImpl].
+ *
+ * TODO(KT-70480): Replace call sites with `value.unsafeCast<BigInt>().toString(radix)` when we drop the ES5 target
+ */
+internal fun jsLongToString(value: Long, radix: Int): String {
+    // TODO: Make bodiless after bootstrap advance and mark with @JsIntrinsic
+    @OptIn(BoxedLongImplementation::class)
+    return value.toStringImpl(radix)
+}
