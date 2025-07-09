@@ -296,22 +296,13 @@
 
 ### Compose compiler
 
-#### New features
-
-- [`7513334`](https://github.com/JetBrains/kotlin/commit/75133346c28d6036787b8bf93650762e8af962bb) Enabled PausableComposition feature flag by default
-- [`1844557`](https://github.com/JetBrains/kotlin/commit/1844557a238b5932fddc26c787e68c1c79408ac5) Enabled OptimizeNonSkippingGroups feature flag by default
-
 #### Fixes
-
 - [`b/394891628`](https://issuetracker.google.com/issues/394891628) Allow specifying target version of Compose runtime
 - [`b/424454512`](https://issuetracker.google.com/issues/424454512) Recreate FirApplierInferencer for each check
 - [`b/417406922`](https://issuetracker.google.com/issues/417406922) Restrict references to `@Composable` properties
 - [`b/282135108`](https://issuetracker.google.com/issues/282135108), [`b/349866442`](https://issuetracker.google.com/issues/349866442) [Compose] Enable applier checking when using FIR
 - [`b/408492167`](https://issuetracker.google.com/issues/408492167) Emit parameter names in Compose source information
-- [`b/420729503`](https://issuetracker.google.com/issues/420729503) Avoid copying `@Deprecated` annotations on Compose compiler stubs
-- [`b/417412949`](https://issuetracker.google.com/issues/417412949) Emit fake line number for `skipToGroupEnd` branch
 - [`b/307592552`](https://issuetracker.google.com/issues/307592552) Add BigInteger and BigDecimal to the list of known stable classes
-- [`b/412584977`](https://issuetracker.google.com/issues/412584977) Fix false positive for overriding open functions from older dependencies
 - [`b/414547195`](https://issuetracker.google.com/issues/414547195) Unwrap type casts when inferring `@Composable` call arguments
 
 ### IR. Inlining
