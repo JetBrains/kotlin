@@ -18,7 +18,8 @@ dependencies {
     testImplementation(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
 
-    testImplementation(projectTests(":compiler"))
+    testImplementation(testFixtures(project(":compiler:tests-common")))
+    testCompileOnly(intellijCore())
 }
 
 sourceSets {

@@ -44,13 +44,7 @@ class FirLightTreeOuterClassGenTest : OuterClassGenTest() {
         get() = LightTree
 }
 
-abstract class AbstractFirLightTreeCheckLocalVariablesTableTest : AbstractIrCheckLocalVariablesTableTest() {
-    override val useFir: Boolean
-        get() = true
 
-    override val firParser: FirParser
-        get() = LightTree
-}
 
 class FirLightTreePropertyGenTest : PropertyGenTest() {
     override val useFir: Boolean
