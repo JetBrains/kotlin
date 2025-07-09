@@ -79,41 +79,53 @@
     </option>
     <option name="testDataFiles">
       <array>
-        <option value="$PROJECT_DIR$/compiler/testData" />
+        <option value="$PROJECT_DIR$/analysis/analysis-api/testData" />
+        <option value="$PROJECT_DIR$/analysis/low-level-api-fir/testData" />
+        <option value="$PROJECT_DIR$/analysis/symbol-light-classes/testData" />
         <option value="$PROJECT_DIR$/compiler/fir/analysis-tests/testData" />
+        <option value="$PROJECT_DIR$/compiler/fir/raw-fir/psi2fir/testData" />
+        <option value="$PROJECT_DIR$/compiler/testData" />
         <option value="$PROJECT_DIR$/compiler/tests-spec/testData" />
         <option value="$PROJECT_DIR$/js/js.translator/testData" />
-        <option value="$PROJECT_DIR$/compiler/fir/raw-fir/psi2fir/testData" />
+        <option value="$PROJECT_DIR$/native/native.tests/cli-tests/testData" />
+        <option value="$PROJECT_DIR$/native/native.tests/testData" />
         <option value="$PROJECT_DIR$/plugins/allopen/testData" />
+        <option value="$PROJECT_DIR$/plugins/assign-plugin/testData" />
         <option value="$PROJECT_DIR$/plugins/atomicfu/atomicfu-compiler/testData" />
+        <option value="$PROJECT_DIR$/plugins/compose/compiler-hosted/testData" />
         <option value="$PROJECT_DIR$/plugins/imports-dumper/testData" />
+        <option value="$PROJECT_DIR$/plugins/js-plain-objects/compiler-plugin/testData" />
         <option value="$PROJECT_DIR$/plugins/jvm-abi-gen/testData" />
         <option value="$PROJECT_DIR$/plugins/kapt/kapt-base/testData" />
         <option value="$PROJECT_DIR$/plugins/kapt/kapt-cli/testData" />
         <option value="$PROJECT_DIR$/plugins/kapt/kapt-compiler/testData" />
-        <option value="$PROJECT_DIR$/plugins/noarg/testData" />
-        <option value="$PROJECT_DIR$/plugins/plugin-sandbox/testData" />
-        <option value="$PROJECT_DIR$/plugins/parcelize/parcelize-compiler/testData" />
-        <option value="$PROJECT_DIR$/plugins/lombok/testData" />
-        <option value="$PROJECT_DIR$/plugins/sam-with-receiver/testData" />
+        <option value="$PROJECT_DIR$/plugins/kotlin-dataframe/testData" />
         <option value="$PROJECT_DIR$/plugins/kotlinx-serialization/testData" />
-        <option value="$PROJECT_DIR$/plugins/assign-plugin/testData" />
-        <option value="$PROJECT_DIR$/plugins/power-assert/testData" />
-        <option value="$PROJECT_DIR$/analysis/analysis-api/testData" />
-        <option value="$PROJECT_DIR$/analysis/symbol-light-classes/testData" />
-        <option value="$PROJECT_DIR$/analysis/low-level-api-fir/testData" />
-        <option value="$PROJECT_DIR$/native/native.tests/testData" />
+        <option value="$PROJECT_DIR$/plugins/lombok/testData" />
+        <option value="$PROJECT_DIR$/plugins/noarg/testData" />
+        <option value="$PROJECT_DIR$/plugins/parcelize/parcelize-compiler/testData" />
+        <option value="$PROJECT_DIR$/plugins/plugin-sandbox/testData" />
         <option value="$PROJECT_DIR$/plugins/plugins-interactions-testing/testData" />
-        <option value="$PROJECT_DIR$/plugins/js-plain-objects/compiler-plugin/testData" />
-        <option value="$PROJECT_DIR$/plugins/compose/compiler-hosted/testData" />
+        <option value="$PROJECT_DIR$/plugins/power-assert/testData" />
+        <option value="$PROJECT_DIR$/plugins/sam-with-receiver/testData" />
         <option value="$PROJECT_DIR$/plugins/scripting/scripting-tests/testData" />
-        <option value="$PROJECT_DIR$/native/native.tests/cli-tests/testData" />
       </array>
     </option>
     <option name="testDataDirectories">
       <array>
-        <option value="$PROJECT_DIR$/jps/jps-plugin/testData" />
+        <option value="$PROJECT_DIR$/analysis/decompiled/decompiler-to-file-stubs/testData/additionalClsStubInfo" />
+        <option value="$PROJECT_DIR$/analysis/decompiled/decompiler-to-file-stubs/testData/clsFileStubBuilder" />
         <option value="$PROJECT_DIR$/compiler/testData/integration/ant" />
+        <option value="$PROJECT_DIR$/compiler/testData/klib/partial-linkage" />
+        <option value="$PROJECT_DIR$/jps/jps-plugin/testData" />
+        <option value="$PROJECT_DIR$/js/js.translator/testData/incremental" />
+        <option value="$PROJECT_DIR$/native/native.tests/testData/klib/header-klibs" />
+        <option value="$PROJECT_DIR$/native/swift/sir-compiler-bridge/testData" />
+        <option value="$PROJECT_DIR$/native/swift/swift-export-standalone-integration-tests/simple/testData" />
+        <option value="$PROJECT_DIR$/plugins/atomicfu/atomicfu-compiler/testData/projects" />
+        <option value="$PROJECT_DIR$/plugins/jvm-abi-gen/testData" />
+        <option value="$PROJECT_DIR$/plugins/kapt/kapt-cli/testData/integration-kapt4" />
+        <option value="$PROJECT_DIR$/plugins/plugin-sandbox/plugin-sandbox-ic-test/testData/pureKotlin" />
       </array>
     </option>
     <option name="testTags">
