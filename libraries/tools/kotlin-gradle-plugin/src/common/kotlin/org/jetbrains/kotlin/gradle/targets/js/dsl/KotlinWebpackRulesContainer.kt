@@ -10,6 +10,9 @@ import org.gradle.api.ExtensiblePolymorphicDomainObjectContainer
 import org.gradle.api.model.ObjectFactory
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackRule
 
+/**
+ *
+ */
 class KotlinWebpackRulesContainer(
     container: ExtensiblePolymorphicDomainObjectContainer<KotlinWebpackRule>,
     private val objectFactory: ObjectFactory,

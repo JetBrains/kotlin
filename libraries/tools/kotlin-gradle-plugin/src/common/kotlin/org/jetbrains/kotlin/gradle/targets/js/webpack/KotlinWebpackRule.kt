@@ -17,20 +17,42 @@ import org.jetbrains.kotlin.gradle.utils.appendLine
 import java.io.StringWriter
 import javax.inject.Inject
 
+/**
+ * A definition of a rule used by Webpack to process files.
+ * See https://webpack.js.org/configuration/module/#modulerules
+ *
+ * KGP will translate [enabled] rules into Webpack configuration.
+ *
+ * **Note:** This interface is not intended for implementation by build script or plugin authors.
+ */
 @Suppress("LeakingThis")
-abstract class KotlinWebpackRule @Inject constructor(private val name: String) : Named {
+abstract class KotlinWebpackRule
+@Inject
+constructor(
+    private val name: String,
+) : Named {
+
+    /**
+     * Controls whether this rule will be added to Webpack.
+     */
     @get:Input
     abstract val enabled: Property<Boolean>
 
     /**
-     * Raw rule `test` field value. Needs to be wrapped in quotes when using string notation.
+     * See https://webpack.js.org/configuration/module/#ruletest
      */
     @get:Input
     abstract val test: Property<String>
 
+    /**
+     * See https://webpack.js.org/configuration/module/#ruleinclude
+     */
     @get:Input
     abstract val include: ListProperty<String>
 
+    /**
+     * See https://webpack.js.org/configuration/module/#ruleexclude
+     */
     @get:Input
     abstract val exclude: ListProperty<String>
 
@@ -55,11 +77,14 @@ abstract class KotlinWebpackRule @Inject constructor(private val name: String) :
 
     /**
      * Provides a loaders sequence to apply to the rule.
+     *
+     * See https://webpack.js.org/configuration/module/#ruleuse
      */
     protected abstract fun loaders(): List<Loader>
 
     @get:Internal
     internal val active: Boolean get() = enabled.get() && validate()
+
     internal fun Appendable.appendToWebpackConfig() {
         appendLine(
             """
