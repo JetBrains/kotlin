@@ -9,7 +9,7 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.*
 internal abstract class AbstractJoin() : AbstractInterpreter<PluginDataFrameSchema>() {
     val Arguments.receiver: PluginDataFrameSchema by dataFrame()
     val Arguments.other: PluginDataFrameSchema by dataFrame()
-    val Arguments.selector: ColumnSet<*>? by arg()
+    val Arguments.selector: ColumnSet<*>? by arg(defaultValue = Present(null))
 
     fun Arguments.join(type: JoinType): PluginDataFrameSchema {
         val leftDf = receiver.asDataFrame()
