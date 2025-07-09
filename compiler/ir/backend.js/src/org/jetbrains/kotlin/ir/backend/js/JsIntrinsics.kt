@@ -273,6 +273,9 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns) {
 
     val longCompareToLong: IrSimpleFunctionSymbol = getLongHelper("compare")
 
+    val jsLongToString: IrSimpleFunctionSymbol = getInternalFunction("jsLongToString")
+    val longToStringImpl: IrSimpleFunctionSymbol = getLongHelper("toStringImpl")
+
     val charClassSymbol = irBuiltIns.charClass
 
     val stringClassSymbol = irBuiltIns.stringClass

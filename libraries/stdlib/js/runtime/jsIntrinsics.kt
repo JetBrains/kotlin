@@ -221,3 +221,12 @@ internal fun jsIsEs6(): Boolean
 
 @JsIntrinsic
 internal fun <T> jsYield(suspendFunction: () -> T): T
+
+/**
+ * Depending on the target ES edition, calls to this function are either replaced with a call
+ * to [kotlin.js.internal.boxedLong.toStringImpl], or to [kotlin.js.internal.longAsBigInt.toStringImpl].
+ *
+ * TODO(KT-70480): Replace call sites with `value.unsafeCast<BigInt>().toString(radix)` when we drop the ES5 target
+ */
+@JsIntrinsic
+internal fun jsLongToString(value: Long, radix: Int): String
