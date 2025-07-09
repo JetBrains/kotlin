@@ -1,5 +1,3 @@
-// KT-72862: No function found for symbol
-// IGNORE_NATIVE: cacheMode=STATIC_USE_HEADERS_EVERYWHERE
 // MODULE: lib
 // FILE: a.kt
 private fun String.privateExtension() = "OK"

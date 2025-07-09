@@ -129,6 +129,11 @@ internal class NativeCompilerDriver(private val performanceManager: PerformanceM
             val fir2IrOutput = performanceManager.tryMeasurePhaseTime(PhaseType.TranslationToIr) {
                 engine.runFir2Ir(frontendOutput)
             }
+            engine.runK2SpecialBackendChecks(fir2IrOutput)
+
+            val loweredIr = performanceManager.tryMeasurePhaseTime(PhaseType.IrPreLowering) {
+                engine.runPreSerializationLowerings(fir2IrOutput, environment)
+            }
             val headerKlibPath = config.headerKlibPath
             if (!headerKlibPath.isNullOrEmpty()) {
                 // Child performance manager is needed since otherwise the phase ordering is broken
@@ -136,7 +141,7 @@ internal class NativeCompilerDriver(private val performanceManager: PerformanceM
                     it?.notifyPhaseFinished(PhaseType.Initialization)
 
                     val headerKlib = it.tryMeasurePhaseTime(PhaseType.IrSerialization) {
-                        engine.runFir2IrSerializer(FirSerializerInput(fir2IrOutput, produceHeaderKlib = true))
+                        engine.runFir2IrSerializer(FirSerializerInput(loweredIr, produceHeaderKlib = true))
                     }
                     it.tryMeasurePhaseTime(PhaseType.KlibWriting) {
                         engine.writeKlib(headerKlib, headerKlibPath, produceHeaderKlib = true)
@@ -148,11 +153,6 @@ internal class NativeCompilerDriver(private val performanceManager: PerformanceM
                 if (File(config.outputPath).canonicalPath == File(headerKlibPath).canonicalPath) return null
             }
 
-            engine.runK2SpecialBackendChecks(fir2IrOutput)
-
-            val loweredIr = performanceManager.tryMeasurePhaseTime(PhaseType.IrPreLowering) {
-                engine.runPreSerializationLowerings(fir2IrOutput, environment)
-            }
             performanceManager.tryMeasurePhaseTime(PhaseType.IrSerialization) {
                 engine.runFir2IrSerializer(FirSerializerInput(loweredIr))
             }
