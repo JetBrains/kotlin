@@ -81,6 +81,7 @@ public value class ULong @kotlin.internal.IntrinsicConstEvaluation @PublishedApi
     public inline operator fun plus(other: UInt): ULong = this.plus(other.toULong())
     /** Adds the other value to this value. */
     @kotlin.internal.InlineOnly
+    @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun plus(other: ULong): ULong = ULong(this.data.plus(other.data))
 
     /** Subtracts the other value from this value. */

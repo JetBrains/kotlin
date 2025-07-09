@@ -1463,10 +1463,10 @@ private fun Any?.toIrConstOrNull(irType: IrType, startOffset: Int = SYNTHETIC_OF
         PrimitiveType.LONG -> IrConstImpl.long(startOffset, endOffset, constType, (this as Number).toLong())
         PrimitiveType.DOUBLE -> IrConstImpl.double(startOffset, endOffset, constType, (this as Number).toDouble())
         null -> when (constType.getUnsignedType()) {
-            UnsignedType.UBYTE -> IrConstImpl.byte(startOffset, endOffset, constType, (this as Number).toByte())
-            UnsignedType.USHORT -> IrConstImpl.short(startOffset, endOffset, constType, (this as Number).toShort())
-            UnsignedType.UINT -> IrConstImpl.int(startOffset, endOffset, constType, (this as Number).toInt())
-            UnsignedType.ULONG -> IrConstImpl.long(startOffset, endOffset, constType, (this as Number).toLong())
+            UnsignedType.UBYTE -> IrConstImpl.byte(startOffset, endOffset, constType, (if (this is UByte)  this.toByte() else (this as Number).toByte()))
+            UnsignedType.USHORT -> IrConstImpl.short(startOffset, endOffset, constType, (if (this is UShort)  this.toShort() else (this as Number).toShort()))
+            UnsignedType.UINT -> IrConstImpl.int(startOffset, endOffset, constType, (if (this is UInt)  this.toInt() else (this as Number).toInt()))
+            UnsignedType.ULONG -> IrConstImpl.long(startOffset, endOffset, constType, (if (this is ULong)  this.toLong() else (this as Number).toLong()))
             null -> when {
                 constType.isString() -> IrConstImpl.string(startOffset, endOffset, constType, this as String)
                 else -> null
