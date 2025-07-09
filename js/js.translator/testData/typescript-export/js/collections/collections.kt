@@ -10,6 +10,8 @@
 // MODULE: JS_TESTS
 // FILE: f1.kt
 
+import kotlin.js.Promise
+
 @JsExport
 fun provideList(): List<Int> = listOf(1, 2, 3)
 
@@ -54,3 +56,6 @@ fun consumeMutableMap(map: MutableMap<String, Int>): Boolean {
     map["g"] = 7
     return map.toString() == "{d=4, e=5, f=6, g=7}"
 }
+
+@JsExport
+fun provideListAsync(): Promise<List<Int>> = Promise.resolve(listOf(1, 2, 3))
