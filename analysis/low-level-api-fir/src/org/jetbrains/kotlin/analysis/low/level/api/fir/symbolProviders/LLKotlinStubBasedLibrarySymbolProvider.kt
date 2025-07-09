@@ -248,7 +248,7 @@ internal open class LLKotlinStubBasedLibrarySymbolProvider(
                     propertyOrigin = getDeclarationOriginFor(property.containingKtFile),
                     deserializedContainerSourceProvider = deserializedContainerSourceProvider,
                     session = session,
-                ) ?: continue
+                )
                 add(symbol)
             }
         }
@@ -462,7 +462,7 @@ internal open class LLKotlinStubBasedLibrarySymbolProvider(
             propertyOrigin: FirDeclarationOrigin,
             deserializedContainerSourceProvider: DeserializedContainerSourceProvider,
             session: FirSession,
-        ): FirPropertySymbol? {
+        ): FirPropertySymbol {
             val propertyStub = property.stub as? KotlinPropertyStubImpl ?: loadStubByElement(property)
             val propertyFile = property.containingKtFile
             val containerSource = deserializedContainerSourceProvider.getFacadeContainerSource(

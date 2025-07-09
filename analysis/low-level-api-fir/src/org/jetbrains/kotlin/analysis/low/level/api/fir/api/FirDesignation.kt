@@ -214,7 +214,7 @@ private fun collectDesignationPathWithContainingClass(
 private fun collectDesignationPathWithContainingClassFallback(
     target: FirDeclaration,
     containingClassId: ClassId?,
-): List<FirDeclaration>? {
+): List<FirDeclaration> {
     val useSiteSession = getTargetSession(target)
 
     fun resolveChunk(classId: ClassId): FirRegularClass {
