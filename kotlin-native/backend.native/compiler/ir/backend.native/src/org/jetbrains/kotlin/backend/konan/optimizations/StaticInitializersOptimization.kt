@@ -229,7 +229,6 @@ internal object StaticInitializersOptimization {
             }
         }
 
-        private val executeImplSymbol = context.symbols.executeImpl
         private val getContinuationSymbol = context.symbols.getContinuation
 
         private var dummySet = mutableSetOf<IrCall>()
@@ -457,29 +456,9 @@ internal object StaticInitializersOptimization {
                     return getResultAfterCall(actualCallee, argumentsResult)
                 }
 
-                private fun processExecuteImpl(expression: IrCall, data: BitSet): BitSet {
-                    var curData = processCall(expression, expression.symbol.owner, data)
-                    val producerInvocation = producerInvocations[expression.arguments[2]!!]!!
-                    // Producer is invoked right here in the same thread, so can update the result.
-                    // Albeit this call site is a fictitious one, it is always a virtual one, which aren't optimized for now.
-                    curData = visitCall(producerInvocation, curData)
-                    val jobInvocation = jobInvocations[producerInvocation]!!
-                    if (analysisGoal != AnalysisGoal.CollectCallSites) {
-                        require(!jobInvocation.isVirtualCall) { "Expected a static call but was: ${jobInvocation.render()}" }
-                        updateResultForFunction(jobInvocation.actualCallee,
-                                curData.copy().also { it.or(containersWithInitializedGlobals) }, // Globals (= shared) visible to other threads as well.
-                                BitSet() // A new thread is about to be created - no thread locals initialized yet.
-                        )
-                    }
-                    // Actual job could be invoked on another thread, thus can't take the result from that call.
-                    return curData
-                }
-
                 override fun visitCall(expression: IrCall, data: BitSet): BitSet {
                     if (expression.symbol.owner.isStaticInitializer)
                         return data.withSetBit(initializedContainers.containerIds[expression.symbol.owner.parent as IrDeclarationContainer]!!)
-                    if (expression.symbol == executeImplSymbol)
-                        return processExecuteImpl(expression, data)
                     if (expression.symbol == getContinuationSymbol)
                         return data
                     if (!expression.isVirtualCall)

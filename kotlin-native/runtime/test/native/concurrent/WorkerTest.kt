@@ -445,16 +445,20 @@ class WorkerTest {
 
     @Test
     fun activeWorkers() {
+        // ensure the current thread's worker is initialized
+        Worker.current
+
         val workers = Array(10) { Worker.start() }
 
         val actualWorkers = Worker.activeWorkers.toSet()
 
-        assertTrue(actualWorkers.size - workers.size == 1 || actualWorkers.size - workers.size == 2,
-                "actualWorkers.size = ${actualWorkers.size} workers.size = ${workers.size} actual size must be greater by 1 (main worker) or 2 (cleaners worker)")
+        assertTrue(actualWorkers.size - workers.size == 1,
+                "actualWorkers.size = ${actualWorkers.size} workers.size = ${workers.size} actual size must be greater by 1 (main worker)")
+
         workers.forEach {
-            actualWorkers.contains(it)
+            assertContains(actualWorkers, it)
         }
-        actualWorkers.contains(Worker.current)
+        assertContains(actualWorkers, Worker.current)
 
         val terminatedWorkers = mutableSetOf<Worker>()
         (workers.indices step 2).forEach {
