@@ -1,5 +1,3 @@
-// KT-72862: <missing declarations>
-// IGNORE_NATIVE: cacheMode=STATIC_USE_HEADERS_EVERYWHERE
 // If this test will start to fail after KT-69666, then it can be safely removed
 // MODULE: lib
 // FILE: A.kt

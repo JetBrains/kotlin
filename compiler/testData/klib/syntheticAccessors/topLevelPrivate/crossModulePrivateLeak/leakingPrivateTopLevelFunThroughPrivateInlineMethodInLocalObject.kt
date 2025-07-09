@@ -1,6 +1,3 @@
-// KT-72862: <missing declarations>
-// IGNORE_NATIVE: cacheMode=STATIC_USE_HEADERS_EVERYWHERE
-
 // MODULE: lib
 // KT-72840: java.lang.NoSuchFieldError: $f
 // IGNORE_INLINER: BYTECODE

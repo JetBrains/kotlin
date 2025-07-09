@@ -1,5 +1,3 @@
-// KT-72862: <missing declarations>
-// IGNORE_NATIVE: cacheMode=STATIC_USE_HEADERS_EVERYWHERE
 // IGNORE_BACKEND_K1: ANY
 // MODULE: lib
 // FILE: A.kt

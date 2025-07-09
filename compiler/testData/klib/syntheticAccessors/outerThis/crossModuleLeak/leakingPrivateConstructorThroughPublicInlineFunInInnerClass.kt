@@ -1,6 +1,3 @@
-// KT-72862: No constructor found for symbol
-// IGNORE_NATIVE: cacheMode=STATIC_USE_HEADERS_EVERYWHERE
-
 // MODULE: lib
 // FILE: Outer.kt
 class Outer private constructor(val s: String) {

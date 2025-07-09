@@ -4,9 +4,6 @@
 //     - `translateCall(IrCall, ...): JsExpression` processes `super.x()` call and attempts to
 //       obtain a dispatch receiver, which is missing for top level declaration.
 
-// IGNORE_NATIVE: cacheMode=STATIC_USE_HEADERS_EVERYWHERE
-// ^^^ To be fixed in KT-72862: No function found for symbol
-
 // IGNORE_BACKEND: JVM_IR
 
 // MODULE: lib
