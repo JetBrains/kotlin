@@ -201,7 +201,9 @@ class ClassStabilityTransformer(
             classStabilityInferredCollection?.addClass(cls, parameterMask)
         }
 
-        cls.addStabilityMarkerField(stableExpr)
+        if (cls.visibility.isPublicAPI || cls.isPublishedApi()) {
+            cls.addStabilityMarkerField(stableExpr)
+        }
         return result
     }
 
