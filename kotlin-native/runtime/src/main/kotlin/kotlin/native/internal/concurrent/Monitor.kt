@@ -109,6 +109,7 @@ internal open class Synchronizable {
     @Suppress("unused")
     private val monitorCleaner = monitor.cleaner()
 
+    @IgnorableReturnValue
     internal inline fun <T> synchronized(block: MonitoredSection.() -> T): T {
         contract {
             callsInPlace(block, InvocationKind.EXACTLY_ONCE)

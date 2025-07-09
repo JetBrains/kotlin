@@ -33,6 +33,7 @@ internal class PriorityQueue<T>(initialCapacity: Int, private val comparator: Co
 
     fun containsAll(elements: Collection<T>): Boolean = this.elements.containsAll(elements)
 
+    @IgnorableReturnValue
     fun add(element: T): Boolean {
         elements.add(element)
         siftUp(elements.size - 1)
@@ -58,6 +59,7 @@ internal class PriorityQueue<T>(initialCapacity: Int, private val comparator: Co
         elements.clear()
     }
 
+    @IgnorableReturnValue
     fun remove(element: T): Boolean {
         val index = elements.indexOf(element)
         if (index == -1) return false

@@ -63,7 +63,7 @@ public value class Future<T> @PublishedApi internal constructor(public val id: I
      * A [FutureState] of this future
      */
     public val state: FutureState
-        get() = FutureState.values()[stateOfFuture(id)]
+        get() = FutureState.entries[stateOfFuture(id)]
 
     override public fun toString(): String = "future $id"
 }

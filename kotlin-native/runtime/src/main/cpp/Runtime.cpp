@@ -13,7 +13,6 @@
 #include "Porting.h"
 #include "Runtime.h"
 #include "RuntimePrivate.hpp"
-#include "Worker.h"
 #include "KString.h"
 #include "CrashHandler.hpp"
 #include <atomic>
@@ -41,7 +40,6 @@ enum class RuntimeStatus {
 
 struct RuntimeState {
     MemoryState* memoryState;
-    Worker* worker;
     RuntimeStatus status = RuntimeStatus::kUninitialized;
 };
 
@@ -98,7 +96,6 @@ NO_INLINE RuntimeState* initRuntime() {
   // Switch thread state because worker and globals inits require the runnable state.
   // This call may block if GC requested suspending threads.
   ThreadStateGuard stateGuard(result->memoryState, kotlin::ThreadState::kRunnable);
-  result->worker = WorkerInit(result->memoryState);
 
   InitOrDeinitGlobalVariables(ALLOC_THREAD_LOCAL_GLOBALS, result->memoryState);
   CommitTLSStorage(result->memoryState);
@@ -129,12 +126,8 @@ void deinitRuntime(RuntimeState* state) {
   // Do not use ThreadStateGuard because memoryState will be destroyed during DeinitMemory.
   kotlin::SwitchThreadState(state->memoryState, kotlin::ThreadState::kNative);
 
-  auto workerId = GetWorkerId(state->worker);
-  WorkerDeinit(state->worker);
-
   DeinitMemory(state->memoryState);
   delete state;
-  WorkerDestroyThreadDataIfNeeded(workerId);
   ::runtimeState = kInvalidRuntime;
 }
 

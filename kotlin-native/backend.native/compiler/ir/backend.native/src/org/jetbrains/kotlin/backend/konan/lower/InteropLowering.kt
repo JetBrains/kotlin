@@ -914,35 +914,6 @@ private class InteropTransformerPart2(
             pointer
     }
 
-    private fun lowerWorkerExecute(expression: IrCall): IrExpression {
-        val staticFunctionArgument = unwrapStaticFunctionArgument(expression.arguments[3]!!)
-        require(staticFunctionArgument != null) { renderCompilerError(expression) }
-
-        builder.at(expression)
-        val targetSymbol = staticFunctionArgument.function.symbol
-        val jobPointer = IrRawFunctionReferenceImpl(
-                builder.startOffset, builder.endOffset,
-                symbols.executeImpl.owner.parameters[3].type,
-                targetSymbol)
-
-        val executeImplCall = builder.irCall(symbols.executeImpl).apply {
-            arguments[0] = expression.arguments[0]
-            arguments[1] = expression.arguments[1]
-            arguments[2] = expression.arguments[2]
-            arguments[3] = jobPointer
-        }.implicitCastTo(expression.type)
-        executeImplCall.transformChildrenVoid()
-
-        builder.at(expression)
-        return if (staticFunctionArgument.defined)
-            builder.irBlock {
-                +staticFunctionArgument.function
-                +executeImplCall
-            }
-        else
-            executeImplCall
-    }
-
     override fun visitCall(expression: IrCall): IrExpression {
         val intrinsicType = tryGetIntrinsicType(expression)
         // Need to do these intrinsics separately as otherwise [expression.transformChildrenVoid(this)] would be called
@@ -950,7 +921,6 @@ private class InteropTransformerPart2(
         when (intrinsicType) {
             IntrinsicType.OBJC_INIT_BY -> return lowerObjCInitBy(expression)
             IntrinsicType.INTEROP_STATIC_C_FUNCTION -> return lowerStaticCFunction(expression)
-            IntrinsicType.WORKER_EXECUTE -> return lowerWorkerExecute(expression)
             else -> Unit
         }
 

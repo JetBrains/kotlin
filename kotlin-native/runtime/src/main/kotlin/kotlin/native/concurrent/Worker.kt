@@ -42,7 +42,7 @@ public value class Worker @PublishedApi internal constructor(public val id: Int)
          * @return worker object, usable across multiple concurrent contexts.
          */
         public fun start(errorReporting: Boolean = true, name: String? = null): Worker
-                = Worker(startInternal(errorReporting, createRetainedExternalRCRef(name)))
+                = Worker(startInternal(errorReporting, name))
 
         /**
          * Return the current worker. Worker context is accessible to any valid Kotlin context,
@@ -110,15 +110,13 @@ public value class Worker @PublishedApi internal constructor(public val id: Int)
      *
      * @return the future with the computation result of [job].
      */
-    @Suppress("UNUSED_PARAMETER")
-    @TypedIntrinsic(IntrinsicType.WORKER_EXECUTE)
-    public fun <T1, T2> execute(mode: TransferMode, producer: () -> T1, job: (T1) -> T2): Future<T2> =
-            /*
-             * This function is a magical operation, handled by lowering in the compiler, and replaced with call to
-             *   executeImpl(worker, mode, producer, job)
-             * but first ensuring that `job` parameter  doesn't capture any state.
-             */
-            throw RuntimeException("Shall not be called directly")
+    @Suppress("UNCHECKED_CAST")
+    public fun <T1, T2> execute(mode: TransferMode, producer: () -> T1, job: (T1) -> T2): Future<T2> {
+        val futureId = executeInternal(id, producer()) {
+            job(it as T1)
+        }
+        return Future(futureId)
+    }
 
     /**
      * Plan job for further execution in the worker.
@@ -132,7 +130,7 @@ public value class Worker @PublishedApi internal constructor(public val id: Int)
      */
     public fun executeAfter(afterMicroseconds: Long = 0, operation: () -> Unit): Unit {
         if (afterMicroseconds < 0) throw IllegalArgumentException("Timeout parameter must be non-negative")
-        executeAfterInternal(id, createRetainedExternalRCRef(operation), afterMicroseconds)
+        executeAfterInternal(id, operation, afterMicroseconds)
     }
 
     /**
@@ -172,7 +170,7 @@ public value class Worker @PublishedApi internal constructor(public val id: Int)
      */
     public val name: String
         get() {
-            val customName = dereferenceExternalRCRef(getWorkerNameInternal(id)) as String?
+            val customName = getWorkerNameInternal(id)
             return if (customName == null) "worker $id" else customName
         }
 
@@ -201,7 +199,7 @@ public value class Worker @PublishedApi internal constructor(public val id: Int)
      */
     @ExperimentalStdlibApi
     public val platformThreadId: ULong
-        get() = getPlatfromThreadIdInternal(id)
+        get() = getPlatformThreadIdInternal(id)
 }
 
 /**

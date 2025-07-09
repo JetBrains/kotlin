@@ -21,7 +21,6 @@
 #include "Runtime.h"
 #include "KString.h"
 #include "Types.h"
-#include "Worker.h"
 
 #include "launcher.h"
 
