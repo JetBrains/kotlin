@@ -78,6 +78,7 @@ private abstract class AbstractToolingDiagnostic(
         if (showEmoji) {
             val iconSeverity = when (severity) {
                 WARNING -> DiagnosticIcon.WARNING
+                LENIENT_ERROR,
                 ERROR -> DiagnosticIcon.ERROR
                 FATAL -> DiagnosticIcon.FATAL
             }
@@ -179,7 +180,7 @@ private class DefaultStyledToolingDiagnostic(
 
     private fun String.applyColor(severity: ToolingDiagnostic.Severity) = when (severity) {
         WARNING -> yellow()
-        ERROR, FATAL -> red()
+        LENIENT_ERROR, ERROR, FATAL -> red()
     }
 
     private fun StringBuilder.processCodeBlocks(lines: List<String>) {
