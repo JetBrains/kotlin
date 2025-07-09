@@ -15,4 +15,3 @@ import org.junit.jupiter.params.provider.ArgumentsSource
     DefaultStrategyAgnosticCompilationTestArgumentProvider::class
 )
 annotation class DefaultStrategyAgnosticCompilationTest
-
