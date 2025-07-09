@@ -201,6 +201,10 @@ internal class DefaultCallInterceptor(override val interpreter: IrInterpreter) :
             is Short -> irBuiltIns.shortType
             is Int -> irBuiltIns.intType
             is Long -> irBuiltIns.longType
+            is UByte -> irBuiltIns.ubyteType
+            is UShort -> irBuiltIns.ushortType
+            is UInt -> irBuiltIns.uintType
+            is ULong -> irBuiltIns.ulongType
             is String -> irBuiltIns.stringType
             is Float -> irBuiltIns.floatType
             is Double -> irBuiltIns.doubleType

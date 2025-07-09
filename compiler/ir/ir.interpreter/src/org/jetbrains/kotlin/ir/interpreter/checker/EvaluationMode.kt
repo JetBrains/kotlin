@@ -155,7 +155,8 @@ sealed class EvaluationMode {
             if (isFloatingPointOptimizationDisabled && expression.type.isDoubleOrFloatWithoutNullability()) {
                 return false
             }
-            return OnlyBuiltins.canEvaluateExpression(expression) || expression is IrWhen
+
+            return expression is IrConst || expression is IrWhen || expression is IrCall
         }
     }
 }

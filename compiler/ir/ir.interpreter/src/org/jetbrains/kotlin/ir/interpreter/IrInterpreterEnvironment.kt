@@ -89,7 +89,7 @@ class IrInterpreterEnvironment(
         return when (value) {
             is Proxy -> value.state
             is State -> value
-            is Boolean, is Char, is Byte, is Short, is Int, is Long, is String, is Float, is Double, is Array<*>, is ByteArray,
+            is Boolean, is Char, is Byte, is Short, is Int, is ULong, is UByte, is UShort, is UInt, is Long,is String, is Float, is Double, is Array<*>, is ByteArray,
             is CharArray, is ShortArray, is IntArray, is LongArray, is FloatArray, is DoubleArray, is BooleanArray -> Primitive(value, irType)
             null -> Primitive.nullStateOfType(irType)
             else -> irType.classOrNull?.owner?.let { Wrapper(value, it, this) }
@@ -105,7 +105,7 @@ class IrInterpreterEnvironment(
             is Primitive -> when {
                 configuration.platform.isJs() && state.value is Float -> IrConstImpl.float(start, end, type, state.value)
                 configuration.platform.isJs() && state.value is Double -> IrConstImpl.double(start, end, type, state.value)
-                state.value == null || type.isPrimitiveType() || type.isString() -> state.value.toIrConst(type, start, end)
+                state.value == null || type.isPrimitiveType() || type.isUnsignedType() || type.isString() -> state.value.toIrConst(type, start, end)
                 else -> original // TODO support for arrays
             }
             is ExceptionState -> {
