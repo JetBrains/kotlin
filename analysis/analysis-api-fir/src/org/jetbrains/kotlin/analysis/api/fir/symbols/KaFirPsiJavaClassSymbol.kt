@@ -47,7 +47,7 @@ internal class KaFirPsiJavaClassSymbol(
         JavaElementSourceFactory.getInstance(analysisSession.project).createPsiSource(backingPsi)
     )
 
-    override val psi: PsiElement? get() = withValidityAssertion { backingPsi }
+    override val psi: PsiElement get() = withValidityAssertion { backingPsi }
 
     override val name: Name get() = withValidityAssertion { javaClass.name }
 
