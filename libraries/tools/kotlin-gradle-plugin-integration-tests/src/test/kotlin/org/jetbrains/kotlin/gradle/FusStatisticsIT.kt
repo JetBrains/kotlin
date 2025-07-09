@@ -6,13 +6,18 @@
 package org.jetbrains.kotlin.gradle
 
 import org.gradle.api.logging.configuration.WarningMode
+import org.gradle.kotlin.dsl.kotlin
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.build.report.metrics.GradleBuildTime
 import org.jetbrains.kotlin.gradle.report.BuildReportType
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.testbase.BuildOptions.IsolatedProjectsMode
+import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.jetbrains.kotlin.gradle.util.replaceText
+import org.jetbrains.kotlin.gradle.util.swiftExportEmbedAndSignEnvVariables
 import org.junit.jupiter.api.DisplayName
+import org.junit.jupiter.api.condition.OS
+import org.junit.jupiter.api.io.TempDir
 import java.nio.file.Path
 import kotlin.io.path.appendText
 import kotlin.io.path.deleteIfExists
@@ -529,6 +534,38 @@ class FusStatisticsIT : KGPBaseTest() {
                 assertFileContains(
                     fusStatisticsPath,
                     "ENABLED_NOOP_GC=true",
+                )
+            }
+        }
+    }
+
+    // Swift export enabled only on macOS.
+    @OsCondition(supportedOn = [OS.MAC], enabledOnCI = [OS.MAC])
+    @DisplayName("native swift export")
+    @GradleTest
+    @NativeGradlePluginTests
+    @GradleTestVersions(
+        additionalVersions = [TestVersions.Gradle.G_8_2],
+    )
+    fun testSwiftExportIsReported(gradleVersion: GradleVersion, @TempDir testBuildDir: Path) {
+        project("empty", gradleVersion) {
+            plugins {
+                kotlin("multiplatform")
+            }
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    iosArm64()
+                }
+            }
+
+            build(
+                ":embedSwiftExportForXcode",
+                "-Pkotlin.session.logger.root.path=$projectPath",
+                environmentVariables = swiftExportEmbedAndSignEnvVariables(testBuildDir),
+            ) {
+                assertFileContains(
+                    fusStatisticsPath,
+                    "ENABLED_SWIFT_EXPORT=true",
                 )
             }
         }
