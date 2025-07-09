@@ -132,6 +132,14 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.api.FrameCols1
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.FrameCols2
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.FullJoin
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.FullJoinWith
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Gather0
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GatherChangeType
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GatherExplodeLists
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GatherInto
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GatherKeysInto
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GatherMap
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GatherValuesInto
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GatherWhere
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GroupByAdd
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GroupByCount0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GroupByInto
@@ -569,6 +577,14 @@ internal inline fun <reified T : Interpreter<*>> String.load(isTest: Boolean): T
         "GroupByStdOf" -> GroupByStdOf()
         "DataFrameXs" -> DataFrameXs()
         "GroupByXs" -> GroupByXs()
+        "Gather0" -> Gather0()
+        "GatherInto" -> GatherInto()
+        "GatherWhere" -> GatherWhere()
+        "GatherChangeType" -> GatherChangeType()
+        "GatherMap" -> GatherMap()
+        "GatherExplodeLists" -> GatherExplodeLists()
+        "GatherValuesInto" -> GatherValuesInto()
+        "GatherKeysInto" -> GatherKeysInto()
         "ConcatWithKeys" -> ConcatWithKeys()
         "DataFrameUnfold" -> DataFrameUnfold()
         else -> if (isTest) error(this) else null

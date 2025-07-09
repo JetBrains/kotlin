@@ -260,6 +260,48 @@ public class DataFrameBlackBoxCodegenTestGenerated extends AbstractDataFrameBlac
   }
 
   @Test
+  @TestMetadata("gather.kt")
+  public void testGather() {
+    runTest("plugins/kotlin-dataframe/testData/box/gather.kt");
+  }
+
+  @Test
+  @TestMetadata("gatherColumnGroup.kt")
+  public void testGatherColumnGroup() {
+    runTest("plugins/kotlin-dataframe/testData/box/gatherColumnGroup.kt");
+  }
+
+  @Test
+  @TestMetadata("gatherExplodeLists.kt")
+  public void testGatherExplodeLists() {
+    runTest("plugins/kotlin-dataframe/testData/box/gatherExplodeLists.kt");
+  }
+
+  @Test
+  @TestMetadata("gatherIntersectColumnGroup.kt")
+  public void testGatherIntersectColumnGroup() {
+    runTest("plugins/kotlin-dataframe/testData/box/gatherIntersectColumnGroup.kt");
+  }
+
+  @Test
+  @TestMetadata("gatherMap.kt")
+  public void testGatherMap() {
+    runTest("plugins/kotlin-dataframe/testData/box/gatherMap.kt");
+  }
+
+  @Test
+  @TestMetadata("gatherNotNull.kt")
+  public void testGatherNotNull() {
+    runTest("plugins/kotlin-dataframe/testData/box/gatherNotNull.kt");
+  }
+
+  @Test
+  @TestMetadata("gatherWhere.kt")
+  public void testGatherWhere() {
+    runTest("plugins/kotlin-dataframe/testData/box/gatherWhere.kt");
+  }
+
+  @Test
   @TestMetadata("group.kt")
   public void testGroup() {
     runTest("plugins/kotlin-dataframe/testData/box/group.kt");
