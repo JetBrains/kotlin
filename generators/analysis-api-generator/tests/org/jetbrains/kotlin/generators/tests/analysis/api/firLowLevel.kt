@@ -328,8 +328,8 @@ internal fun TestGroupSuite.generateFirLowLevelApiTests() {
             model("resolveToFirSymbol")
         }
 
-        testClass<AbstractFirClassByPsiClassProviderTest> {
-            model("firClassByPsiClass")
+        testClass<AbstractPsiClassResolveToFirSymbolTest> {
+            model("resolveToFirSymbolPsiClass")
         }
 
         testClass<AbstractSourcePsiBasedContainingClassCalculatorConsistencyTest> {
