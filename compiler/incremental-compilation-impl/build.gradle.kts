@@ -21,9 +21,6 @@ dependencies {
     api(project(":daemon-common"))
     api(project(":compiler:build-tools:kotlin-build-statistics"))
     api(project(":compiler:build-tools:kotlin-build-tools-api"))
-
-    api(protobufFull())
-
     compileOnly(intellijCore())
 
     testImplementation(libs.junit4)

@@ -61,15 +61,7 @@ class KotlinClassInfo(
          * method's body).
          */
         val inlineFunctionOrAccessorSnapshots: Map<InlineFunctionOrAccessor, Long>,
-    ) {
-        fun toDebugString(): String {
-            return listOf(
-                "snapshot without fields and metadata: $classSnapshotExcludingMembers",
-                "constants: " + constantSnapshots.entries.joinToString(",") { entry -> "${entry.key}=${entry.value}" },
-                "inline: " + inlineFunctionOrAccessorSnapshots.entries.joinToString(",") { entry -> "${entry.key}=${entry.value}" },
-            ).joinToString("\n")
-        }
-    }
+    )
 
     val className: JvmClassName by lazy { JvmClassName.byClassId(classId) }
 

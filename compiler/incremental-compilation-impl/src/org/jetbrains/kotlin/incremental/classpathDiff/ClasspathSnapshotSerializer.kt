@@ -7,25 +7,16 @@ package org.jetbrains.kotlin.incremental.classpathDiff
 
 import com.intellij.util.containers.Interner
 import com.intellij.util.io.DataExternalizer
-import org.jetbrains.kotlin.backend.common.push
 import org.jetbrains.kotlin.build.report.metrics.GradleBuildPerformanceMetric
 import org.jetbrains.kotlin.incremental.KotlinClassInfo
 import org.jetbrains.kotlin.incremental.storage.*
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
-import org.jetbrains.kotlin.metadata.DebugProtoBuf
-import org.jetbrains.kotlin.metadata.jvm.DebugJvmProtoBuf
-import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf
-import org.jetbrains.kotlin.metadata.jvm.deserialization.BitEncoding
-import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil.EXTENSION_REGISTRY
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import java.io.DataInput
 import java.io.DataOutput
 import java.io.File
-
-import org.jetbrains.kotlin.protobuf.*
-import java.io.ByteArrayInputStream
 
 /** Utility to serialize a [ClasspathSnapshot]. */
 object CachedClasspathSnapshotSerializer {
@@ -171,52 +162,6 @@ internal object KotlinClassInfoExternalizer : DataExternalizer<KotlinClassInfo> 
         ListExternalizer(StringExternalizer).save(output, info.classHeaderStrings.toList())
         NullableValueExternalizer(StringExternalizer).save(output, info.multifileClassName)
         ExtraInfoExternalizer.save(output, info.extraInfo)
-
-        fun ByteArray.dump(): String {
-            return joinToString(".") { it.toString() }
-        }
-
-        println("\npart by part, raw byte arrays")
-        println("class id: ${ClassIdExternalizer.toByteArray(info.classId).dump()}")
-        println("classKind id: ${IntExternalizer.toByteArray(info.classKind.id).dump()}")
-        println("header data: ${ListExternalizer(StringExternalizer).toByteArray(info.classHeaderData.toList()).dump()}")
-        println("header strings: ${ListExternalizer(StringExternalizer).toByteArray(info.classHeaderStrings.toList()).dump()}")
-        println("mfcn: ${NullableValueExternalizer(StringExternalizer).toByteArray(info.multifileClassName ?: "").dump()}")
-        println("extras: ${ExtraInfoExternalizer.toByteArray(info.extraInfo).dump()}")
-
-//        println("saved")
-//
-        fun KotlinClassInfo.toDebugString(): String {
-            val proto: List<String> = if (classKind == KotlinClassHeader.Kind.CLASS) {
-                val out = mutableListOf<String>()
-                val input = ByteArrayInputStream(BitEncoding.decodeBytes(classHeaderData))
-
-                // same as JvmProtoBufUtil but we're creating a full-api protobuf messages instead of MessageLite
-                out.push("\n==string table:")
-                out.push(TextFormat.printToString(
-                    DebugJvmProtoBuf.StringTableTypes.parseDelimitedFrom(input, EXTENSION_REGISTRY)
-                ))
-                out.push("\n==class proto:")
-                out.push(TextFormat.printToString(
-                    DebugProtoBuf.Class.parseFrom(input, EXTENSION_REGISTRY)
-                ))
-                out
-            } else {
-                listOf("not a class")
-            }
-
-            val protoStr = proto.joinToString("\n")
-            return listOf(
-                "class id: $classId",
-                "classKind id: ${classKind.id}",
-                "proto header: $protoStr",
-                "header strings: ${classHeaderStrings.joinToString(",")}",
-                "multifile?: $multifileClassName",
-                "extra info:",
-                extraInfo.toDebugString()
-            ).joinToString("\n")
-        }
-        println(info.toDebugString())
     }
 
     override fun read(input: DataInput): KotlinClassInfo {
