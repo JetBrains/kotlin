@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.ir.inline
+package org.jetbrains.kotlin.test.backend.ir
 
 import org.jetbrains.kotlin.backend.common.*
 import org.jetbrains.kotlin.backend.common.ir.syntheticBodyIsNotSupported
@@ -24,13 +24,8 @@ import java.io.File
 /**
  * Dumps synthetic accessors and their call sites (used only for testing and debugging).
  */
-class DumpSyntheticAccessors(context: LoweringContext) : ModuleLoweringPass {
-    private val dumpDirectory: File? = getDumpDirectoryOrNull(context.configuration)
-
-    override fun lower(irModule: IrModuleFragment) {
-        val dumpDirectory = dumpDirectory ?: return // skip if there is no dump directory
-        dumpDirectory.mkdirs()
-
+object DumpSyntheticAccessors {
+    fun dump(irModule: IrModuleFragment): String = buildString {
         val fileDumps = HashMap<FileKey, HashSet<String>>()
 
         for (irFile in irModule.files) {
@@ -42,19 +37,17 @@ class DumpSyntheticAccessors(context: LoweringContext) : ModuleLoweringPass {
         }
 
         if (fileDumps.isNotEmpty() && fileDumps.values.any(Collection<*>::isNotEmpty)) {
-            getDumpFileForModule(dumpDirectory, irModule.name).printWriter().use { writer ->
-                writer.appendLine("/* MODULE name=${irModule.name.asString()} */")
-                writer.appendLine()
+            appendLine("/* MODULE name=${irModule.name.asString()} */")
+            appendLine()
 
-                fileDumps.entries.sortedBy { it.key }.forEach { (fileKey, dumps) ->
-                    if (dumps.isNotEmpty()) {
-                        writer.appendLine("/* FILE package=${fileKey.packageFqName.ifEmpty { "<root>" }} fileName=${fileKey.fileName} */")
-                        writer.appendLine()
-                        for (fileDump in dumps.sorted()) {
-                            writer.appendLine(fileDump)
-                        }
-                        writer.appendLine()
+            fileDumps.entries.sortedBy { it.key }.forEach { (fileKey, dumps) ->
+                if (dumps.isNotEmpty()) {
+                    appendLine("/* FILE package=${fileKey.packageFqName.ifEmpty { "<root>" }} fileName=${fileKey.fileName} */")
+                    appendLine()
+                    for (fileDump in dumps.sorted()) {
+                        appendLine(fileDump)
                     }
+                    appendLine()
                 }
             }
         }
@@ -122,15 +115,6 @@ class DumpSyntheticAccessors(context: LoweringContext) : ModuleLoweringPass {
         constructor(irFile: IrFile) : this(irFile.packageFqName.asString(), irFile.name)
 
         override fun compareTo(other: FileKey) = compareValuesBy(this, other, FileKey::packageFqName, FileKey::fileName)
-    }
-
-    companion object {
-        fun getDumpDirectoryOrNull(configuration: CompilerConfiguration): File? =
-            configuration[KlibConfigurationKeys.SYNTHETIC_ACCESSORS_DUMP_DIR]?.let(::File)
-
-        fun getDumpFileForModule(dumpDirectory: File, moduleName: Name): File =
-            dumpDirectory.resolve("synthetic-accessors-dump-${moduleName.asStringStripSpecialMarkers()}.kt")
-
     }
 }
 

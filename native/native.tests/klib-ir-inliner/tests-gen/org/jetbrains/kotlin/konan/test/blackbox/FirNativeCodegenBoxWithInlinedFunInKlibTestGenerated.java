@@ -31965,12 +31965,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
           runTest("compiler/testData/codegen/box/multiplatform/k2/starImportOfExpectEnumWithActualTypeAlias.kt");
         }
 
-        @Test
-        @TestMetadata("unsignedArrayForLoop.kt")
-        public void testUnsignedArrayForLoop() {
-          runTest("compiler/testData/codegen/box/multiplatform/k2/unsignedArrayForLoop.kt");
-        }
-
         @Nested
         @TestMetadata("compiler/testData/codegen/box/multiplatform/k2/annotations")
         @TestDataPath("$PROJECT_ROOT")
@@ -43880,12 +43874,6 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @TestMetadata("differingNumberOfGenericTypeParameters.kt")
       public void testDifferingNumberOfGenericTypeParameters() {
         runTest("compiler/testData/codegen/box/sameFileInSourceAndDependencies/differingNumberOfGenericTypeParameters.kt");
-      }
-
-      @Test
-      @TestMetadata("propertyDeclaration.kt")
-      public void testPropertyDeclaration() {
-        runTest("compiler/testData/codegen/box/sameFileInSourceAndDependencies/propertyDeclaration.kt");
       }
     }
 

@@ -40,7 +40,7 @@ class FirKlibSerializerCliWebFacade(
 
     override fun transform(module: TestModule, inputArtifact: IrBackendInput): BinaryArtifacts.KLib? {
         require(inputArtifact is Fir2IrCliBasedOutputArtifact<*>) {
-            "FirKlibSerializerCliWebFacade expects Fir2IrCliBasedWebOutputArtifact as input"
+            "FirKlibSerializerCliWebFacade expects Fir2IrCliBasedWebOutputArtifact as input, got ${inputArtifact::class.simpleName}"
         }
         val cliArtifact = inputArtifact.cliArtifact
         require(cliArtifact is JsFir2IrPipelineArtifact) {

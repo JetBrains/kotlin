@@ -2,13 +2,13 @@
 
 /* FILE package=<root> fileName=A.kt */
 
+/* TARGET declaration */ private fun privateFun(): String
 public inline fun publicInlineFunction(): KFunction0<String>
     /* LOCAL declaration @0 */ local fun privateFun(): String
         /* ACCESSOR use-site */ access$privateFun$tAKt()
     /* INVOKE @0 */ local fun privateFun(): String
 /* ACCESSOR declaration */ public fun access$privateFun$tAKt(): String
     /* TARGET use-site */ privateFun()
-/* TARGET declaration */ private fun privateFun(): String
 
 
 /* MODULE name=<main> */
@@ -16,7 +16,6 @@ public inline fun publicInlineFunction(): KFunction0<String>
 /* FILE package=<root> fileName=main.kt */
 
 public fun box(): String
-    val tmp0: Any? =
-        /* LOCAL declaration @0 */ local fun privateFun(): String
-            /* ACCESSOR use-site */ access$privateFun$tAKt()
-        /* INVOKE @0 */ local fun privateFun(): String
+    /* LOCAL declaration @0 */ local fun privateFun(): String
+        /* ACCESSOR use-site */ access$privateFun$tAKt()
+    /* INVOKE @0 */ local fun privateFun(): String

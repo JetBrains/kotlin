@@ -686,7 +686,6 @@ class ExecutableCompilation(
         }
         applyPartialLinkageArgs(partialLinkageConfig)
         applyFileCheckArgs(expectedArtifact.fileCheckStage, expectedArtifact.fileCheckDump)
-        applyDumpSyntheticAccessorsArgs(expectedArtifact)
         super.applySpecificArgs(argsBuilder)
     }
 
@@ -726,13 +725,6 @@ class ExecutableCompilation(
                 add("-Xsave-llvm-ir-after=$it")
                 add("-Xsave-llvm-ir-directory=${fileCheckDump!!.parent}")
             }
-
-        internal fun ArgsBuilder.applyDumpSyntheticAccessorsArgs(executable: Executable) {
-            val syntheticAccessorsDumpDir = executable.syntheticAccessorsDumpDir
-            if (syntheticAccessorsDumpDir != null) {
-                add("-Xdump-synthetic-accessors-to=${syntheticAccessorsDumpDir.path}")
-            }
-        }
     }
 }
 
