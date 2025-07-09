@@ -20,9 +20,10 @@ val customCompilerArtifacts: Configuration by configurations.creating
 dependencies {
     customCompilerArtifacts("org.jetbrains.kotlin:kotlin-compiler-embeddable:$customCompilerVersion")
     customCompilerArtifacts("org.jetbrains.kotlin:kotlin-stdlib-js:$customCompilerVersion") {
-        attributes {
-            attribute(KotlinJsCompilerAttribute.jsCompilerAttribute, KotlinJsCompilerAttribute.ir)
-        }
+        attributes { attribute(KotlinJsCompilerAttribute.jsCompilerAttribute, KotlinJsCompilerAttribute.ir) }
+    }
+    customCompilerArtifacts("org.jetbrains.kotlin:kotlin-test-js:$customCompilerVersion") {
+        attributes { attribute(KotlinJsCompilerAttribute.jsCompilerAttribute, KotlinJsCompilerAttribute.ir) }
     }
 }
 
