@@ -17,8 +17,7 @@ import org.jetbrains.kotlin.gradle.plugin.SubpluginEnvironment
 import org.jetbrains.kotlin.gradle.plugin.launchInStage
 import org.jetbrains.kotlin.gradle.plugin.mpp.AbstractKotlinNativeCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMetadataCompilation
-import org.jetbrains.kotlin.gradle.plugin.mpp.enabledOnCurrentHostForBinariesCompilation
-import org.jetbrains.kotlin.gradle.plugin.mpp.enabledOnCurrentHostForKlibCompilation
+import org.jetbrains.kotlin.gradle.plugin.mpp.crossCompilationOnCurrentHostSupported
 import org.jetbrains.kotlin.gradle.targets.native.toolchain.chooseKotlinNativeProvider
 import org.jetbrains.kotlin.gradle.tasks.KotlinNativeCompile
 import org.jetbrains.kotlin.gradle.tasks.dependsOn
@@ -42,8 +41,9 @@ internal val KotlinCreateNativeCompileTasksSideEffect = KotlinCompilationSideEff
         task.group = BasePlugin.BUILD_GROUP
         task.description = "Compiles a klibrary from the '${compilationInfo.compilationName}' " +
                 "compilation in target '${compilationInfo.targetDisambiguationClassifier}'."
-        val enabledOnCurrentHost = compilation.target.enabledOnCurrentHostForKlibCompilation
-        task.enabled = enabledOnCurrentHost
+        val enabledOnCurrentHost = compilation.crossCompilationOnCurrentHostSupported
+        task.enabled = enabledOnCurrentHost.get()
+        task.onlyIf { enabledOnCurrentHost.get() }
 
         task.destinationDirectory.set(project.klibOutputDirectory(compilationInfo).dir("klib"))
         task.runViaBuildToolsApi.value(false).disallowChanges() // K/N is not yet supported
@@ -61,11 +61,10 @@ internal val KotlinCreateNativeCompileTasksSideEffect = KotlinCompilationSideEff
         ).finalizeValueOnRead()
         task.kotlinNativeProvider.set(
             task.chooseKotlinNativeProvider(
-                enabledOnCurrentHost,
+                enabledOnCurrentHost.get(),
                 compilation.konanTarget
             )
         )
-        task.enabledOnCurrentHostForKlibCompilationProperty.set(enabledOnCurrentHost)
         task.kotlinCompilerArgumentsLogLevel
             .value(project.kotlinPropertiesProvider.kotlinCompilerArgumentsLogLevel)
             .finalizeValueOnRead()

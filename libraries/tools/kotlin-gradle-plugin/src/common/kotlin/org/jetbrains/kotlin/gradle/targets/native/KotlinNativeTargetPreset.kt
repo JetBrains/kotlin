@@ -9,9 +9,9 @@
 package org.jetbrains.kotlin.gradle.plugin.mpp
 
 import org.gradle.api.Project
+import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.internal.properties.nativeProperties
 import org.jetbrains.kotlin.gradle.plugin.*
-import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.targets.android.internal.InternalKotlinTargetPreset
 import org.jetbrains.kotlin.gradle.targets.native.internal.setupCInteropCommonizerDependencies
 import org.jetbrains.kotlin.gradle.targets.native.internal.setupCInteropPropagatedDependencies
@@ -118,6 +118,7 @@ internal val KonanTarget.isCurrentHost: Boolean
  *
  * Ideally, these APIs should be in [HostManager] instead of KGP-side wrappers. Refer to KT-64512 for that
  */
+@Deprecated("Use crossCompilationOnCurrentHostSupported instead.", level = DeprecationLevel.WARNING)
 internal fun KonanTarget.enabledOnCurrentHostForKlibCompilation(
     provider: PropertiesProvider
 ) = if (provider.enableKlibsCrossCompilation) {
@@ -128,14 +129,10 @@ internal fun KonanTarget.enabledOnCurrentHostForKlibCompilation(
     HostManager().isEnabled(this)
 }
 
-internal val KotlinTarget.enabledOnCurrentHostForKlibCompilation: Boolean
+internal val AbstractKotlinNativeCompilation.crossCompilationOnCurrentHostSupported: Provider<Boolean>
     get() = when (this) {
-        is KotlinNativeTarget -> {
-            konanTarget.enabledOnCurrentHostForKlibCompilation(
-                project.kotlinPropertiesProvider
-            )
-        }
-        else -> true
+        is KotlinNativeCompilation -> crossCompilationOnCurrentHostSupported
+        else -> project.provider { true }
     }
 
 internal val KonanTarget.enabledOnCurrentHostForBinariesCompilation

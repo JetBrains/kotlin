@@ -1392,6 +1392,7 @@ public class org/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeCompilation : or
 	public final fun getCinterops ()Lorg/gradle/api/NamedDomainObjectContainer;
 	public synthetic fun getCompilerOptions ()Lorg/jetbrains/kotlin/gradle/plugin/HasCompilerOptions;
 	public fun getCompilerOptions ()Lorg/jetbrains/kotlin/gradle/targets/native/NativeCompilerOptions;
+	public final fun getCrossCompilationOnCurrentHostSupported ()Lorg/gradle/api/provider/Provider;
 	public final fun getProcessResourcesTaskName ()Ljava/lang/String;
 	public synthetic fun getTarget ()Lorg/jetbrains/kotlin/gradle/plugin/KotlinTarget;
 	public final fun getTarget ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget;
@@ -1417,6 +1418,7 @@ public abstract class org/jetbrains/kotlin/gradle/plugin/mpp/KotlinNativeTarget 
 	public fun getBinaries ()Lorg/jetbrains/kotlin/gradle/dsl/KotlinNativeBinaryContainer;
 	public synthetic fun getCompilerOptions ()Lorg/jetbrains/kotlin/gradle/dsl/KotlinCommonCompilerOptions;
 	public fun getCompilerOptions ()Lorg/jetbrains/kotlin/gradle/dsl/KotlinNativeCompilerOptions;
+	public final fun getCrossCompilationOnCurrentHostSupported ()Lorg/gradle/api/provider/Provider;
 	public final fun getDEBUG ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/NativeBuildType;
 	public final fun getDYNAMIC ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/NativeOutputKind;
 	public final fun getEXECUTABLE ()Lorg/jetbrains/kotlin/gradle/plugin/mpp/NativeOutputKind;
@@ -6033,7 +6035,7 @@ public abstract class org/jetbrains/kotlin/gradle/tasks/AbstractKotlinCompileToo
 }
 
 public abstract class org/jetbrains/kotlin/gradle/tasks/AbstractKotlinNativeCompile : org/jetbrains/kotlin/gradle/tasks/AbstractKotlinCompileTool, org/jetbrains/kotlin/gradle/internal/tasks/ProducesKlib {
-	public fun <init> (Lorg/gradle/api/model/ObjectFactory;)V
+	public fun <init> (Lorg/gradle/api/model/ObjectFactory;Lorg/gradle/api/provider/ProviderFactory;)V
 	public abstract fun getAdditionalCompilerOptions ()Lorg/gradle/api/provider/Provider;
 	public final fun getArtifactVersion ()Ljava/lang/String;
 	public abstract fun getBaseName ()Ljava/lang/String;
