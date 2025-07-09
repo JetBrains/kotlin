@@ -5,16 +5,20 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.diagnosticProvider
 
-import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
 import org.jetbrains.kotlin.psi.KtElement
-import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.test.services.TestServices
 import java.io.File
 
 abstract class AbstractCodeFragmentCollectDiagnosticsTest : AbstractCollectDiagnosticsTest() {
-    override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
+    // We have to override `doTest` instead of `doTestByMainFile` because `AbstractCollectDiagnosticsTest` already overrides `doTest`.
+    override fun doTest(testServices: TestServices) {
+        val (mainFile, mainModule) = findMainFileAndModule(testServices)
+        if (mainFile == null) {
+            error("`${AbstractCodeFragmentCollectDiagnosticsTest::class.simpleName}` does not support multiple use-site files.")
+        }
+
         val contextElement = testServices.expressionMarkerProvider.getBottommostElementOfTypeAtCaret<KtElement>(mainFile)
 
         val fragmentText = mainModule.testModule.files.single().originalFile
@@ -30,6 +34,6 @@ abstract class AbstractCodeFragmentCollectDiagnosticsTest : AbstractCollectDiagn
             else -> factory.createExpressionCodeFragment(fragmentText, contextElement)
         }
 
-        super.doTestByMainFile(codeFragment, mainModule, testServices)
+        doTestByKtFiles(listOf(codeFragment), testServices)
     }
 }
