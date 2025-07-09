@@ -3539,6 +3539,10 @@ public abstract interface annotation class kotlin/js/ExperimentalJsStatic : java
 public abstract interface annotation class kotlin/jvm/ImplicitlyActualizedByJvmDeclaration : java/lang/annotation/Annotation {
 }
 
+public abstract interface annotation class kotlin/jvm/IntroducedAt : java/lang/annotation/Annotation {
+	public abstract fun version ()Ljava/lang/String;
+}
+
 public final class kotlin/jvm/JvmClassMappingKt {
 	public static final fun getAnnotationClass (Ljava/lang/annotation/Annotation;)Lkotlin/reflect/KClass;
 	public static final fun getJavaClass (Ljava/lang/Object;)Ljava/lang/Class;
