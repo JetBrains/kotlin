@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.analysis.api.platform.declarations.KotlinDeclaration
 import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.LLEmptyKotlinSymbolProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.LLKotlinSourceSymbolProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.LLKotlinSymbolProvider
-import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.ModuleSpecificSymbolProviderAccess
+import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.LLModuleSpecificSymbolProviderAccess
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.LLContainingClassCalculator
 import org.jetbrains.kotlin.fir.ThreadSafeMutableState
 import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
@@ -49,12 +49,12 @@ internal class LLFirProvider(
 
     /**
      * @param classLikeDeclaration The [KtClassLikeDeclaration] must be contained in the module associated with this [LLFirProvider]. See
-     *  [ModuleSpecificSymbolProviderAccess] for details.
+     *  [LLModuleSpecificSymbolProviderAccess] for details.
      */
     fun getFirClassifierByDeclaration(classLikeDeclaration: KtClassLikeDeclaration): FirClassLikeDeclaration? {
         val classId = classLikeDeclaration.getClassId() ?: return null
 
-        @OptIn(ModuleSpecificSymbolProviderAccess::class)
+        @OptIn(LLModuleSpecificSymbolProviderAccess::class)
         return symbolProvider.getClassLikeSymbolByPsi(classId, classLikeDeclaration)?.fir
     }
 

@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.containin
 import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.llFirModuleData
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.LLModuleWithDependenciesSymbolProvider
-import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.ModuleSpecificSymbolProviderAccess
+import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.LLModuleSpecificSymbolProviderAccess
 import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.getClassLikeSymbolByClassIdWithoutDependencies
 import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.getClassLikeSymbolByPsiWithoutDependencies
 import org.jetbrains.kotlin.fir.declarations.*
@@ -173,11 +173,11 @@ internal class FirDeclarationForCompiledElementSearcher(private val session: LLF
         session.symbolProvider.getClassLikeSymbolByClassIdWithoutDependencies(classId)
 
     /**
-     * Note regarding [ModuleSpecificSymbolProviderAccess]: [FirDeclarationForCompiledElementSearcher] must be queried with PSI elements
+     * Note regarding [LLModuleSpecificSymbolProviderAccess]: [FirDeclarationForCompiledElementSearcher] must be queried with PSI elements
      * that are contained in the compiled element searcher's module. As such, it's also legal to call module-specific symbol provider
      * functions on that module's symbol provider.
      */
-    @OptIn(ModuleSpecificSymbolProviderAccess::class)
+    @OptIn(LLModuleSpecificSymbolProviderAccess::class)
     private fun findStubClassLikeSymbol(classId: ClassId, declaration: KtClassLikeDeclaration): FirClassLikeSymbol<*>? =
         session.symbolProvider.getClassLikeSymbolByPsiWithoutDependencies(classId, declaration)
 

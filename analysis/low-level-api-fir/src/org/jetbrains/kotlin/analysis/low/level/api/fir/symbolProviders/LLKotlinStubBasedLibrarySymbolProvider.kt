@@ -268,7 +268,7 @@ internal open class LLKotlinStubBasedLibrarySymbolProvider(
 
         // We can assume that the outer class is in the scope since we're deserializing it with this symbol provider. Since the nested class
         // is in the same file as its outer class, it's definitely also in the scope of the symbol provider.
-        @OptIn(ModuleSpecificSymbolProviderAccess::class)
+        @OptIn(LLModuleSpecificSymbolProviderAccess::class)
         return classCache.getSymbolByPsi(classId, declaration, parentContext)
     }
 
@@ -354,16 +354,16 @@ internal open class LLKotlinStubBasedLibrarySymbolProvider(
     }
 
     private fun getClass(classId: ClassId): FirRegularClassSymbol? {
-        @OptIn(ModuleSpecificSymbolProviderAccess::class)
+        @OptIn(LLModuleSpecificSymbolProviderAccess::class)
         return classCache.getSymbolByClassId(classId, context = null)
     }
 
     private fun getTypeAlias(classId: ClassId): FirTypeAliasSymbol? {
-        @OptIn(ModuleSpecificSymbolProviderAccess::class)
+        @OptIn(LLModuleSpecificSymbolProviderAccess::class)
         return typeAliasCache.getSymbolByClassId(classId, context = null)
     }
 
-    @ModuleSpecificSymbolProviderAccess
+    @LLModuleSpecificSymbolProviderAccess
     override fun getClassLikeSymbolByClassId(classId: ClassId, classLikeDeclaration: KtClassLikeDeclaration): FirClassLikeSymbol<*>? {
         val cache = if (classLikeDeclaration is KtClassOrObject) classCache else typeAliasCache
         cache.getCachedSymbolByClassId(classId)?.let { return it }
@@ -380,7 +380,7 @@ internal open class LLKotlinStubBasedLibrarySymbolProvider(
         return cache.getSymbolByClassId(classId, createClassLikeDeserializationContext(classId, classLikeDeclaration))
     }
 
-    @ModuleSpecificSymbolProviderAccess
+    @LLModuleSpecificSymbolProviderAccess
     override fun getClassLikeSymbolByPsi(classId: ClassId, declaration: PsiElement): FirClassLikeSymbol<*>? {
         if (declaration !is KtClassLikeDeclaration) return null
 

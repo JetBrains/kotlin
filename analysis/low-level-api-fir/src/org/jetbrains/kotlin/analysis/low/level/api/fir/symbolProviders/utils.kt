@@ -41,7 +41,7 @@ internal fun FirBasedSymbol<*>.hasPsi(element: PsiElement): Boolean = fir.psi ==
  * If the symbol provider is not an [LLPsiAwareSymbolProvider], the function falls back to [FirSymbolProvider.getClassLikeSymbolByClassId],
  * but still ensures that the resulting symbol matches [declaration].
  */
-@ModuleSpecificSymbolProviderAccess
+@LLModuleSpecificSymbolProviderAccess
 internal fun FirSymbolProvider.getClassLikeSymbolMatchingPsi(classId: ClassId, declaration: PsiElement): FirClassLikeSymbol<*>? {
     if (this is LLPsiAwareSymbolProvider) {
         return getClassLikeSymbolByPsi(classId, declaration)
@@ -60,7 +60,7 @@ internal fun FirSymbolProvider.getClassLikeSymbolByClassIdWithoutDependencies(cl
         else -> getClassLikeSymbolByClassId(classId)
     }
 
-@ModuleSpecificSymbolProviderAccess
+@LLModuleSpecificSymbolProviderAccess
 internal fun FirSymbolProvider.getClassLikeSymbolByPsiWithoutDependencies(
     classId: ClassId,
     declaration: PsiElement,
@@ -70,7 +70,7 @@ internal fun FirSymbolProvider.getClassLikeSymbolByPsiWithoutDependencies(
         else -> getClassLikeSymbolMatchingPsi(classId, declaration)
     }
 
-@ModuleSpecificSymbolProviderAccess
+@LLModuleSpecificSymbolProviderAccess
 internal fun LLPsiAwareSymbolProvider.getParentPsiClassSymbol(psiClass: PsiClass): FirRegularClassSymbol? =
     psiClass.containingClass?.let { getClassLikeSymbolByPsi(it.classIdOrError(), it) as? FirRegularClassSymbol }
 

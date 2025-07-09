@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.analysis.api.platform.caches.withStatsCounter
 import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.LLKotlinSymbolProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.statistics.LLStatisticsService
-import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.ModuleSpecificSymbolProviderAccess
+import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.LLModuleSpecificSymbolProviderAccess
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.resolve.providers.FirCompositeCachedSymbolNamesProvider
@@ -77,7 +77,7 @@ internal class LLCombinedKotlinSymbolProvider private constructor(
         val (ktClass, provider) = selectFirstElementInClasspathOrder(candidates) { it } ?: return null
 
         // We've picked the symbol provider via the `ktClass`, so `ktClass` must be contained in the symbol provider's module.
-        @OptIn(ModuleSpecificSymbolProviderAccess::class)
+        @OptIn(LLModuleSpecificSymbolProviderAccess::class)
         return provider.getClassLikeSymbolByClassId(classId, ktClass)
     }
 

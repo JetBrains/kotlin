@@ -14,16 +14,16 @@ import org.jetbrains.kotlin.name.ClassId
  * specific PSI elements.
  *
  * This interface only needs to be implemented by symbol providers whose scope might contain multiple PSI elements with the same [ClassId]
- * (class ID ambiguities). Furthermore, such a symbol provider must also be eligible for [ModuleSpecificSymbolProviderAccess]. For example,
- * combined symbol providers cannot be accessed in such a manner (they are always dependency symbol providers), and thus don't need to
- * implement [LLPsiAwareSymbolProvider].
+ * (class ID ambiguities). Furthermore, such a symbol provider must also be eligible for [LLModuleSpecificSymbolProviderAccess]. For
+ * example, combined symbol providers cannot be accessed in such a manner (they are always dependency symbol providers), and thus don't need
+ * to implement [LLPsiAwareSymbolProvider].
  */
 internal interface LLPsiAwareSymbolProvider {
     /**
      * Returns a [FirClassLikeSymbol] for the specific [declaration], or `null` if there is no symbol that matches [declaration]. Symbols
      * without associated PSI are not considered as results.
      *
-     * As per the contract of [ModuleSpecificSymbolProviderAccess], the given [declaration] must be in the scope of the symbol provider's
+     * As per the contract of [LLModuleSpecificSymbolProviderAccess], the given [declaration] must be in the scope of the symbol provider's
      * module.
      *
      * In contrast to [getClassLikeSymbolByClassId][org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider.getClassLikeSymbolByClassId],
@@ -31,6 +31,6 @@ internal interface LLPsiAwareSymbolProvider {
      *
      * @see getClassLikeSymbolMatchingPsi
      */
-    @ModuleSpecificSymbolProviderAccess
+    @LLModuleSpecificSymbolProviderAccess
     fun getClassLikeSymbolByPsi(classId: ClassId, declaration: PsiElement): FirClassLikeSymbol<*>?
 }

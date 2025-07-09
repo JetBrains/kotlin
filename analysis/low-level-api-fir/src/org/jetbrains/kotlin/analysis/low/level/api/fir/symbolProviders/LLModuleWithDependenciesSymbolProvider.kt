@@ -81,7 +81,7 @@ internal class LLModuleWithDependenciesSymbolProvider(
     fun getClassLikeSymbolByClassIdWithoutDependencies(classId: ClassId): FirClassLikeSymbol<*>? =
         providers.firstNotNullOfOrNull { it.getClassLikeSymbolByClassId(classId) }
 
-    @ModuleSpecificSymbolProviderAccess
+    @LLModuleSpecificSymbolProviderAccess
     fun getClassLikeSymbolByPsiWithoutDependencies(
         classId: ClassId,
         declaration: PsiElement,

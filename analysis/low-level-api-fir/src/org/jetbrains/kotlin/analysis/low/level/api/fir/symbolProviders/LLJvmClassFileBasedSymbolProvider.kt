@@ -50,7 +50,7 @@ internal class LLJvmClassFileBasedSymbolProvider(
             javaFacade.createPsiClassSymbol(psiClass, JavaClassImpl(psiClass), parentClassSymbol)
         }
 
-    @ModuleSpecificSymbolProviderAccess
+    @LLModuleSpecificSymbolProviderAccess
     override fun getClassLikeSymbolByPsi(classId: ClassId, declaration: PsiElement): FirClassLikeSymbol<*>? {
         getClassLikeSymbolByClassId(classId)
             ?.takeIf { it.hasPsi(declaration) }

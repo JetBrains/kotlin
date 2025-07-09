@@ -71,14 +71,14 @@ internal class LLNativeForwardDeclarationsSymbolProvider(
         return classCache.getValue(classId, context = null)
     }
 
-    @ModuleSpecificSymbolProviderAccess
+    @LLModuleSpecificSymbolProviderAccess
     override fun getClassLikeSymbolByClassId(
         classId: ClassId,
         classLikeDeclaration: KtClassLikeDeclaration,
     ): FirClassLikeSymbol<*>? =
         classCache.getValue(classId, classLikeDeclaration)
 
-    @ModuleSpecificSymbolProviderAccess
+    @LLModuleSpecificSymbolProviderAccess
     override fun getClassLikeSymbolByPsi(classId: ClassId, declaration: PsiElement): FirClassLikeSymbol<*>? {
         if (declaration !is KtClassLikeDeclaration) return null
 

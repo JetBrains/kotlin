@@ -20,7 +20,7 @@ internal interface LLKnownClassDeclarationSymbolProvider<E : PsiElement> {
      * Returns the [FirClassLikeSymbol] with the given [classId] for a known [classLikeDeclaration].
      *
      * As [classLikeDeclaration] is already known, this function is optimized to avoid a search for the corresponding PSI declaration.
-     * As per the contract of [ModuleSpecificSymbolProviderAccess], the declaration must be in the scope of the symbol provider's module.
+     * As per the contract of [LLModuleSpecificSymbolProviderAccess], the declaration must be in the scope of the symbol provider's module.
      *
      * Furthermore, the function does not guarantee that a symbol for exactly [classLikeDeclaration] will be returned, as this parameter is
      * only used for optimization. This is in line with the contracts of [FirSymbolProvider.getClassLikeSymbolByClassId], which only
@@ -29,6 +29,6 @@ internal interface LLKnownClassDeclarationSymbolProvider<E : PsiElement> {
      *
      * To find a symbol for a specific PSI declaration, use [LLPsiAwareSymbolProvider.getClassLikeSymbolByPsi].
      */
-    @ModuleSpecificSymbolProviderAccess
+    @LLModuleSpecificSymbolProviderAccess
     fun getClassLikeSymbolByClassId(classId: ClassId, classLikeDeclaration: E): FirClassLikeSymbol<*>?
 }

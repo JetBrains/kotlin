@@ -117,11 +117,11 @@ internal class LLKotlinSourceSymbolProvider private constructor(
         return getClassLikeSymbolByClassIdAndDeclaration(classId, classLikeDeclaration = null)
     }
 
-    @ModuleSpecificSymbolProviderAccess
+    @LLModuleSpecificSymbolProviderAccess
     override fun getClassLikeSymbolByClassId(classId: ClassId, classLikeDeclaration: KtClassLikeDeclaration): FirClassLikeSymbol<*>? =
         getClassLikeSymbolByClassIdAndDeclaration(classId, classLikeDeclaration)
 
-    @OptIn(ModuleSpecificSymbolProviderAccess::class)
+    @OptIn(LLModuleSpecificSymbolProviderAccess::class)
     private fun getClassLikeSymbolByClassIdAndDeclaration(
         classId: ClassId,
         classLikeDeclaration: KtClassLikeDeclaration?,
@@ -144,7 +144,7 @@ internal class LLKotlinSourceSymbolProvider private constructor(
         }
     }
 
-    @ModuleSpecificSymbolProviderAccess
+    @LLModuleSpecificSymbolProviderAccess
     override fun getClassLikeSymbolByPsi(classId: ClassId, declaration: PsiElement): FirClassLikeSymbol<*>? {
         if (!classId.isAccepted()) return null
         return classLikeCache.getSymbolByPsi<KtClassLikeDeclaration>(classId, declaration) { it }
