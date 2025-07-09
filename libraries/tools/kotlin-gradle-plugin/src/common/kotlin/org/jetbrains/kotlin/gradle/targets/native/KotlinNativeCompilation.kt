@@ -11,7 +11,6 @@ import org.gradle.api.NamedDomainObjectContainer
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.TaskProvider
 import org.jetbrains.kotlin.gradle.dsl.KotlinNativeCompilerOptions
-import org.jetbrains.kotlin.gradle.internal.properties.nativeProperties
 import org.jetbrains.kotlin.gradle.plugin.*
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl.KotlinCompilationImpl
@@ -79,7 +78,10 @@ open class KotlinNativeCompilation @Inject internal constructor(
 
     fun cinterops(action: Action<NamedDomainObjectContainer<DefaultCInteropSettings>>) = action.execute(cinterops)
 
-    internal val compilationSupported: Provider<Boolean> = project.provider {
+    /**
+     * Indicates whether cross-compilation is supported on the current host for this Kotlin/Native compilation.
+     */
+    val crossCompilationOnCurrentHostSupported: Provider<Boolean> = project.provider {
         val crossCompilationEnabled = project.kotlinPropertiesProvider.enableKlibsCrossCompilation
         val isSupportedHost = HostManager().isEnabled(konanTarget)
 

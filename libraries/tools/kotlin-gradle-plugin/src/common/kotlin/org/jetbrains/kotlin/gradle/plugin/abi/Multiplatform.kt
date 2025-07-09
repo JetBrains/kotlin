@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.plugin.abi
 
+import org.gradle.api.DomainObjectCollection
 import org.gradle.api.NamedDomainObjectCollection
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
@@ -13,7 +14,7 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
-import org.jetbrains.kotlin.gradle.plugin.mpp.enabledOnCurrentHostForKlibCompilation
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 
 /**
  * Finalizes the configuration of the report variant for the Kotlin Multiplatform Gradle Plugin.
@@ -34,8 +35,8 @@ internal fun AbiValidationMultiplatformVariantSpec.finalizeMultiplatformVariant(
 
 
 private fun Project.processJvmKindTargets(
-    targets: Iterable<KotlinTarget>,
-    abiValidationTaskSet: AbiValidationTaskSet
+    targets: DomainObjectCollection<KotlinTarget>,
+    abiValidationTaskSet: AbiValidationTaskSet,
 ) {
     // if there is only one JVM target then we will follow the shortcut
     val singleJvmTarget = targets.singleOrNull { target -> target.platformType == KotlinPlatformType.jvm }
@@ -50,9 +51,8 @@ private fun Project.processJvmKindTargets(
     }
 
     targets
-        .asSequence()
-        .filter { target -> target.platformType == KotlinPlatformType.jvm }
-        .forEach { target ->
+        .matching { target -> target.platformType == KotlinPlatformType.jvm }
+        .configureEach { target ->
             val classfiles = files()
             abiValidationTaskSet.addJvmTarget(target.targetName, classfiles)
 
@@ -62,10 +62,9 @@ private fun Project.processJvmKindTargets(
         }
 
     targets
-        .asSequence()
-        .filter { target -> target.platformType == KotlinPlatformType.androidJvm }
-        .filterIsInstance<KotlinAndroidTarget>()
-        .forEach { target ->
+        .matching { target -> target.platformType == KotlinPlatformType.androidJvm }
+        .withType(KotlinAndroidTarget::class.java)
+        .configureEach { target ->
             val classfiles = files()
             abiValidationTaskSet.addJvmTarget(target.targetName, classfiles)
 
@@ -80,17 +79,16 @@ private fun Project.processJvmKindTargets(
 
 
 private fun Project.processNonJvmTargets(
-    targets: Iterable<KotlinTarget>,
-    abiValidationTaskSet: AbiValidationTaskSet
+    targets: DomainObjectCollection<KotlinTarget>,
+    abiValidationTaskSet: AbiValidationTaskSet,
 ) {
     val bannedInTests = bannedCanonicalTargetsInTest()
     targets
-        .asSequence()
-        .filter { target -> target.emitsKlib }
-        .forEach { target ->
+        .matching { target -> target.emitsKlib }
+        .configureEach { target ->
             val klibTarget = target.toKlibTarget()
 
-            if (target.enabledOnCurrentHostForKlibCompilation && klibTarget.configurableName !in bannedInTests) {
+            if (target.targetIsSupported && klibTarget.configurableName !in bannedInTests) {
                 target.compilations.withMainCompilationIfExists {
                     abiValidationTaskSet.addKlibTarget(klibTarget, output.classesDirs)
                 }
@@ -99,6 +97,12 @@ private fun Project.processNonJvmTargets(
             }
         }
 }
+
+private val KotlinTarget.targetIsSupported: Boolean
+    get() = when (this) {
+        is KotlinNativeTarget -> crossCompilationOnCurrentHostSupported.get()
+        else -> true
+    }
 
 private fun Project.bannedCanonicalTargetsInTest(): Set<String> {
     val prop = kotlinPropertiesProvider.abiValidationBannedTargets

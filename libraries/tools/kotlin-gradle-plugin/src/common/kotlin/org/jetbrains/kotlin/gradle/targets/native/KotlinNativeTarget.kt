@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.targets.metadata.isNativeSourceSet
 import org.jetbrains.kotlin.gradle.targets.native.*
 import org.jetbrains.kotlin.gradle.utils.dashSeparatedName
+import org.jetbrains.kotlin.gradle.utils.getValue
 import org.jetbrains.kotlin.gradle.utils.klibModuleName
 import org.jetbrains.kotlin.gradle.utils.newInstance
 import org.jetbrains.kotlin.konan.target.HostManager
@@ -41,6 +42,22 @@ abstract class KotlinNativeTarget @Inject constructor(
     }
 
     internal val hostSpecificMetadataElementsConfigurationName get() = disambiguateName("MetadataElements")
+
+    /**
+     * Indicates whether cross-compilation is supported on the current host for the associated Kotlin Native Target.
+     */
+    val crossCompilationOnCurrentHostSupported: Provider<Boolean> = project.provider {
+        val crossCompilationEnabled = project.kotlinPropertiesProvider.enableKlibsCrossCompilation
+        val isSupportedHost = hostManager.isEnabled(konanTarget)
+
+        // Supported hosts can always compile
+        if (isSupportedHost) return@provider true
+
+        // Unsupported hosts require cross-compilation enabled and no cinterops
+        crossCompilationEnabled && binaries.toSet().all { binary ->
+            binary.compilation.crossCompilationOnCurrentHostSupported.get()
+        }
+    }
 
     override val kotlinComponents: Set<KotlinTargetComponent> by lazy {
 
@@ -84,7 +101,7 @@ abstract class KotlinNativeTarget @Inject constructor(
         setOf(result)
     }
 
-    override val binaries =
+    override val binaries: KotlinNativeBinaryContainer =
         // Use newInstance to allow accessing binaries by their names in Groovy using the extension mechanism.
         project.objects.newInstance(
             KotlinNativeBinaryContainer::class.java,
@@ -95,8 +112,7 @@ abstract class KotlinNativeTarget @Inject constructor(
     override val artifactsTaskName: String
         get() = disambiguateName("binaries")
 
-    override val publishable: Boolean
-        get() = enabledOnCurrentHostForKlibCompilation
+    override val publishable: Boolean by crossCompilationOnCurrentHostSupported
 
     override val compilerOptions: KotlinNativeCompilerOptions = project.objects
         .newInstance<KotlinNativeCompilerOptionsDefault>()
@@ -107,19 +123,6 @@ abstract class KotlinNativeTarget @Inject constructor(
                 )
             )
         }
-
-    internal val compilationSupported: Provider<Boolean> = project.provider {
-        val crossCompilationEnabled = project.kotlinPropertiesProvider.enableKlibsCrossCompilation
-        val isSupportedHost = hostManager.isEnabled(konanTarget)
-
-        // Supported hosts can always compile
-        if (isSupportedHost) return@provider true
-
-        // Unsupported hosts require cross-compilation enabled and no cinterops
-        crossCompilationEnabled && binaries.toList().all { binary ->
-            binary.compilation.compilationSupported.get()
-        }
-    }
 
     // User-visible constants
     val DEBUG = NativeBuildType.DEBUG
