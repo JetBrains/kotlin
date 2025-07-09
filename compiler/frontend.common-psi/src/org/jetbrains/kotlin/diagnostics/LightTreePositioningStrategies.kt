@@ -850,7 +850,7 @@ object LightTreePositioningStrategies {
                     val nodeToMark = tree.findChildByType(node, KtTokenSets.INSIDE_DIRECTIVE_EXPRESSIONS) ?: node
                     return markElement(nodeToMark, startOffset, endOffset, tree, node)
                 }
-                node.tokenType == KtNodeTypes.CLASS || node.tokenType == KtNodeTypes.OBJECT_DECLARATION -> {
+                node.tokenType == KtNodeTypes.CLASS || node.tokenType == KtNodeTypes.OBJECT_DECLARATION || node.tokenType == KtNodeTypes.ENUM_ENTRY -> {
                     val nameIdentifier = tree.nameIdentifier(node)
                     if (nameIdentifier != null) {
                         val startElement = findStartingASTNodeForDeclarationName(tree, node)

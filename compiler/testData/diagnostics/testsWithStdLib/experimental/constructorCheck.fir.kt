@@ -19,7 +19,7 @@ class Other(val x: Int) {
 
 enum class Enumeration @Marker constructor() {
     ENTRY<!OPT_IN_USAGE_ERROR!><!>(),
-    <!OPT_IN_USAGE!>ENTRY2;<!>
+    <!OPT_IN_USAGE!>ENTRY2<!>;
 }
 
 fun foo(some: <!OPT_IN_USAGE_ERROR!>Some<!>? = null) {}
