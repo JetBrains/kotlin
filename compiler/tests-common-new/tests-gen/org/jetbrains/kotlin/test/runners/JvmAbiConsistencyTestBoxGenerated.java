@@ -10494,6 +10494,12 @@ public class JvmAbiConsistencyTestBoxGenerated extends AbstractJvmAbiConsistency
     }
 
     @Test
+    @TestMetadata("falsePositiveAccidentalOverrides.kt")
+    public void testFalsePositiveAccidentalOverrides() {
+      runTest("compiler/testData/codegen/box/contextParameters/falsePositiveAccidentalOverrides.kt");
+    }
+
+    @Test
     @TestMetadata("functionalType.kt")
     public void testFunctionalType() {
       runTest("compiler/testData/codegen/box/contextParameters/functionalType.kt");
