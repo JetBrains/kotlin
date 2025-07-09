@@ -39,7 +39,7 @@ class FirApproximationTest : AbstractFirPsiDiagnosticTest() {
 
             val approximatedType = session.typeApproximator.approximateToSuperType(
                 intersectionType,
-                TypeApproximatorConfiguration.IntegerLiteralsTypesApproximation
+                TypeApproximatorConfiguration.IntermediateApproximationToSupertypeAfterCompletionInK2
             ) as ConeIntersectionType
 
             assertTrue(approximatedType.intersectedTypes.none { it is ConeIntegerLiteralConstantType })

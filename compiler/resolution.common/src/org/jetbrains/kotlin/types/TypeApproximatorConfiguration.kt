@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.types
 
+import org.jetbrains.kotlin.builtins.functions.AllowedToUsedOnlyInK1
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.types.model.*
 
@@ -158,6 +159,7 @@ open class TypeApproximatorConfiguration {
         override val approximateIntersectionTypesInContravariantPositions: Boolean get() = true
     }
 
+    @AllowedToUsedOnlyInK1
     object IntegerLiteralsTypesApproximation : AllFlexibleSameValue() {
         override val approximateIntegerLiteralConstantTypes: Boolean get() = true
         override val approximateAllFlexible: Boolean get() = false
