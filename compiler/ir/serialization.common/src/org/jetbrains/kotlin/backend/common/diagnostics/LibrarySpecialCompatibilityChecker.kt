@@ -17,7 +17,7 @@ import java.io.IOException
 import java.util.jar.Manifest
 
 /** See KT-68322 for details. */
-abstract class StandardLibrarySpecialCompatibilityChecker {
+abstract class LibrarySpecialCompatibilityChecker {
     protected class Version(
         private val comparableVersion: MavenComparableVersion,
         private val languageVersion: LanguageVersion,
@@ -57,11 +57,11 @@ abstract class StandardLibrarySpecialCompatibilityChecker {
         val compilerVersion = Version.parseVersion(getRawCompilerVersion()) ?: return
 
         for (library in libraries) {
-            if (isStdlib(library)) {
+            if (shouldCheckLibrary(library)) {
                 val jarManifest = library.getJarManifest() ?: return
-                val stdlibVersion = Version.parseVersion(jarManifest.mainAttributes.getValue(KLIB_JAR_LIBRARY_VERSION)) ?: return
+                val libraryVersion = Version.parseVersion(jarManifest.mainAttributes.getValue(KLIB_JAR_LIBRARY_VERSION)) ?: return
 
-                val messageToReport = getMessageToReport(compilerVersion, stdlibVersion)
+                val messageToReport = getMessageToReport(compilerVersion, libraryVersion)
                 if (messageToReport != null) {
                     messageCollector.report(CompilerMessageSeverity.STRONG_WARNING, messageToReport)
                 }
@@ -87,8 +87,8 @@ abstract class StandardLibrarySpecialCompatibilityChecker {
         return customCompilerVersionForTest?.let { return it.version } ?: KotlinCompilerVersion.getVersion()
     }
 
-    protected abstract fun isStdlib(library: KotlinLibrary): Boolean
-    protected abstract fun getMessageToReport(compilerVersion: Version, stdlibVersion: Version): String?
+    protected abstract fun shouldCheckLibrary(library: KotlinLibrary): Boolean
+    protected abstract fun getMessageToReport(compilerVersion: Version, libraryVersion: Version): String?
 
     companion object {
         private class CustomCompilerVersionForTest(val version: String?)

@@ -5,20 +5,20 @@
 
 package org.jetbrains.kotlin.ir.backend.js.checkers
 
-import org.jetbrains.kotlin.backend.common.diagnostics.StandardLibrarySpecialCompatibilityChecker
+import org.jetbrains.kotlin.backend.common.diagnostics.LibrarySpecialCompatibilityChecker
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.isJsStdlib
 
-object JsStandardLibrarySpecialCompatibilityChecker : StandardLibrarySpecialCompatibilityChecker() {
-    override fun isStdlib(library: KotlinLibrary) = library.isJsStdlib
+object JsStandardLibrarySpecialCompatibilityChecker : LibrarySpecialCompatibilityChecker() {
+    override fun shouldCheckLibrary(library: KotlinLibrary) = library.isJsStdlib
 
-    override fun getMessageToReport(compilerVersion: Version, stdlibVersion: Version): String? {
+    override fun getMessageToReport(compilerVersion: Version, libraryVersion: Version): String? {
         val rootCause = when {
-            stdlibVersion < compilerVersion ->
-                "The Kotlin/JS standard library has an older version ($stdlibVersion) than the compiler ($compilerVersion). Such a configuration is not supported."
+            libraryVersion < compilerVersion ->
+                "The Kotlin/JS standard library has an older version ($libraryVersion) than the compiler ($compilerVersion). Such a configuration is not supported."
 
-            !stdlibVersion.hasSameLanguageVersion(compilerVersion) ->
-                "The Kotlin/JS standard library has a more recent version ($stdlibVersion) than the compiler supports. The compiler version is $compilerVersion."
+            !libraryVersion.hasSameLanguageVersion(compilerVersion) ->
+                "The Kotlin/JS standard library has a more recent version ($libraryVersion) than the compiler supports. The compiler version is $compilerVersion."
 
             else -> return null
         }
