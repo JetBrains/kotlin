@@ -410,6 +410,12 @@ public class DataFrameBlackBoxCodegenTestGenerated extends AbstractDataFrameBlac
   }
 
   @Test
+  @TestMetadata("joinDefault.kt")
+  public void testJoinDefault() {
+    runTest("plugins/kotlin-dataframe/testData/box/joinDefault.kt");
+  }
+
+  @Test
   @TestMetadata("joinKinds.kt")
   public void testJoinKinds() {
     runTest("plugins/kotlin-dataframe/testData/box/joinKinds.kt");
