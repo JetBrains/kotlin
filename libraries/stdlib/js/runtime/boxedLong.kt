@@ -54,10 +54,6 @@ internal fun hashCode(l: Long) = l.low xor l.high
 
 @BoxedLongImplementation
 internal fun Long.toStringImpl(radix: Int): String {
-    if (radix < 2 || 36 < radix) {
-        throw Exception("radix out of range: $radix")
-    }
-
     if (isZero()) {
         return "0"
     }
