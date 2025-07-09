@@ -1,2 +1,2 @@
 expression: ++a[0]
-type: kotlin.Unit
+type: kotlin.Int
