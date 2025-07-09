@@ -59,6 +59,30 @@ public class FirStandaloneNormalAnalysisSourceModuleHLExpressionTypeTestGenerate
   }
 
   @Test
+  @TestMetadata("arrayElementDecrement.kt")
+  public void testArrayElementDecrement() {
+    runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/arrayElementDecrement.kt");
+  }
+
+  @Test
+  @TestMetadata("arrayElementIncrement.kt")
+  public void testArrayElementIncrement() {
+    runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/arrayElementIncrement.kt");
+  }
+
+  @Test
+  @TestMetadata("arrayElementPrefixDecrement.kt")
+  public void testArrayElementPrefixDecrement() {
+    runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/arrayElementPrefixDecrement.kt");
+  }
+
+  @Test
+  @TestMetadata("arrayElementPrefixIncrement.kt")
+  public void testArrayElementPrefixIncrement() {
+    runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/arrayElementPrefixIncrement.kt");
+  }
+
+  @Test
   @TestMetadata("arrayElement_arrayOfNulls.kt")
   public void testArrayElement_arrayOfNulls() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/arrayElement_arrayOfNulls.kt");
