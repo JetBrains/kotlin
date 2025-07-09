@@ -19,6 +19,7 @@ private fun AnalysisApiTestGroup.generateTests() {
     generateAnalysisApiTests()
     suiteBasedTests {
         generateFirLowLevelApiTests()
+        generateStandaloneFirLowLevelTests()
         generateDecompiledTests()
         generateStubsTests()
         generateSymbolLightClassesTests()
