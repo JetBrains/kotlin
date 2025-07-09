@@ -17,6 +17,8 @@ import org.jetbrains.kotlin.ir.interpreter.state.*
 import org.jetbrains.kotlin.ir.interpreter.state.reflection.ReflectionState
 import org.jetbrains.kotlin.ir.types.isArray
 import org.jetbrains.kotlin.ir.types.isFloat
+import org.jetbrains.kotlin.ir.util.defaultType
+import org.jetbrains.kotlin.ir.util.isUnsigned
 import org.jetbrains.kotlin.name.Name
 import java.lang.invoke.MethodType
 
@@ -40,7 +42,20 @@ internal fun State.wrap(callInterceptor: CallInterceptor, remainArraysAsIs: Bool
             this.type.isArray() || this.type.isPrimitiveArray() -> if (remainArraysAsIs) this else this.value
             else -> this.value
         }
-        is Common -> this.asProxy(callInterceptor, extendFrom)
+        is Common -> {
+            when {
+                irClass.defaultType.isUnsigned() -> {
+                    when (val value = (this.fields.values.single() as Primitive).value) {
+                        is Byte -> value.toUByte()
+                        is Short -> value.toUShort()
+                        is Int -> value.toUInt()
+                        is Long -> value.toULong()
+                        else -> error("Unknown unsigned type")
+                    }
+                }
+                else -> this.asProxy(callInterceptor, extendFrom)
+            }
+        }
         is ReflectionState -> this.asProxy(callInterceptor)
         else -> throw AssertionError("${this::class} is unsupported as argument for wrap function")
     }

@@ -7,7 +7,9 @@ package org.jetbrains.kotlin.ir.interpreter
 
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
+import org.jetbrains.kotlin.ir.declarations.inlineClassRepresentation
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrErrorExpressionImpl
@@ -19,6 +21,7 @@ import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.defaultType
+import org.jetbrains.kotlin.ir.util.hasShape
 import org.jetbrains.kotlin.ir.util.properties
 import org.jetbrains.kotlin.ir.util.toIrConst
 import org.jetbrains.kotlin.platform.isJs
@@ -86,11 +89,30 @@ class IrInterpreterEnvironment(
      * Convert object from outer world to state
      */
     internal fun convertToState(value: Any?, irType: IrType): State {
+        fun getSignedValue(unsigned: Any): Any {
+            return when (unsigned) {
+                is UByte -> unsigned.toByte()
+                is UShort -> unsigned.toShort()
+                is UInt -> unsigned.toInt()
+                is ULong -> unsigned.toLong()
+                else -> throw AssertionError("Unknown unsigned type ${unsigned::class}")
+            }
+        }
+
         return when (value) {
             is Proxy -> value.state
             is State -> value
             is Boolean, is Char, is Byte, is Short, is Int, is Long, is String, is Float, is Double, is Array<*>, is ByteArray,
             is CharArray, is ShortArray, is IntArray, is LongArray, is FloatArray, is DoubleArray, is BooleanArray -> Primitive(value, irType)
+            is ULong, is UByte, is UShort, is UInt -> {
+                val irClass = irType.classOrFail.owner
+                val propertyName = irClass.inlineClassRepresentation?.underlyingPropertyName
+                val propertySymbol = irClass.declarations.filterIsInstance<IrProperty>()
+                    .single { it.name == propertyName && it.getter?.hasShape(dispatchReceiver = true) ?: true }
+                    .symbol
+                val signedState = convertToState(getSignedValue(value), propertySymbol.owner.getter!!.returnType)
+                Common(irClass).apply { setField(propertySymbol, signedState) }
+            }
             null -> Primitive.nullStateOfType(irType)
             else -> irType.classOrNull?.owner?.let { Wrapper(value, it, this) }
                 ?: Wrapper(value, this.javaClassToIrClass[value::class.java]!!, this)

@@ -1,106 +1,111 @@
+// IGNORE_BACKEND_K1: JS_IR, JS_IR_ES6, WASM
+// IGNORE_BACKEND_K2: JS_IR, JS_IR_ES6, WASM
+// IGNORE_IR_DESERIALIZATION_TEST: NATIVE
+// ^^^ Ignore Backends that apply inliner before interpreter, which messes with the interpreter.
+//     All Backends can be enabled once it's supported in the frontend.
 // WITH_STDLIB
 fun <T> T.id() = this
 
-val compareTo1 = 1u.toUByte().compareTo(2u.toUByte())
-val compareTo2 = 2u.toUByte().compareTo(2u.toUByte())
-val compareTo3 = 3u.toUByte().compareTo(2u.toUByte())
-val compareTo4 = 2u.toUByte().compareTo(2u.toUShort())
-val compareTo5 = 2u.toUByte().compareTo(2u)
-val compareTo6 = 2u.toUByte().compareTo(2UL)
+val compareTo1 = 1u.toUByte().<!EVALUATED{IR}("-1")!>compareTo(2u.toUByte())<!>
+val compareTo2 = 2u.toUByte().<!EVALUATED{IR}("0")!>compareTo(2u.toUByte())<!>
+val compareTo3 = 3u.toUByte().<!EVALUATED{IR}("1")!>compareTo(2u.toUByte())<!>
+val compareTo4 = 2u.toUByte().<!EVALUATED{IR}("0")!>compareTo(2u.toUShort())<!>
+val compareTo5 = 2u.toUByte().<!EVALUATED{IR}("0")!>compareTo(2u)<!>
+val compareTo6 = 2u.toUByte().<!EVALUATED{IR}("0")!>compareTo(2UL)<!>
 
-val plus1 = 1u.toUByte().plus(2u.toUByte())
-val plus2 = 2u.toUByte().plus(2u.toUByte())
-val plus3 = 3u.toUByte().plus(2u.toUByte())
-val plus4 = 2u.toUByte().plus(2u.toUShort())
-val plus5 = 2u.toUByte().plus(2u)
-val plus6 = 2u.toUByte().plus(2UL)
+val plus1 = 1u.toUByte().<!EVALUATED{IR}("3")!>plus(2u.toUByte())<!>
+val plus2 = 2u.toUByte().<!EVALUATED{IR}("4")!>plus(2u.toUByte())<!>
+val plus3 = 3u.toUByte().<!EVALUATED{IR}("5")!>plus(2u.toUByte())<!>
+val plus4 = 2u.toUByte().<!EVALUATED{IR}("4")!>plus(2u.toUShort())<!>
+val plus5 = 2u.toUByte().<!EVALUATED{IR}("4")!>plus(2u)<!>
+val plus6 = 2u.toUByte().<!EVALUATED{IR}("4")!>plus(2UL)<!>
 
-val minus1 = 1u.toUByte().minus(2u.toUByte())
-val minus2 = 2u.toUByte().minus(2u.toUByte())
-val minus3 = 3u.toUByte().minus(2u.toUByte())
-val minus4 = 2u.toUByte().minus(2u.toUShort())
-val minus5 = 2u.toUByte().minus(2u)
-val minus6 = 2u.toUByte().minus(2UL)
+val minus1 = 1u.toUByte().<!EVALUATED{IR}("4294967295")!>minus(2u.toUByte())<!>
+val minus2 = 2u.toUByte().<!EVALUATED{IR}("0")!>minus(2u.toUByte())<!>
+val minus3 = 3u.toUByte().<!EVALUATED{IR}("1")!>minus(2u.toUByte())<!>
+val minus4 = 2u.toUByte().<!EVALUATED{IR}("0")!>minus(2u.toUShort())<!>
+val minus5 = 2u.toUByte().<!EVALUATED{IR}("0")!>minus(2u)<!>
+val minus6 = 2u.toUByte().<!EVALUATED{IR}("0")!>minus(2UL)<!>
 
-val times1 = 1u.toUByte().times(2u.toUByte())
-val times2 = 2u.toUByte().times(2u.toUByte())
-val times3 = 3u.toUByte().times(2u.toUByte())
-val times4 = 2u.toUByte().times(2u.toUShort())
-val times5 = 2u.toUByte().times(2u)
-val times6 = 2u.toUByte().times(2UL)
+val times1 = 1u.toUByte().<!EVALUATED{IR}("2")!>times(2u.toUByte())<!>
+val times2 = 2u.toUByte().<!EVALUATED{IR}("4")!>times(2u.toUByte())<!>
+val times3 = 3u.toUByte().<!EVALUATED{IR}("6")!>times(2u.toUByte())<!>
+val times4 = 2u.toUByte().<!EVALUATED{IR}("4")!>times(2u.toUShort())<!>
+val times5 = 2u.toUByte().<!EVALUATED{IR}("4")!>times(2u)<!>
+val times6 = 2u.toUByte().<!EVALUATED{IR}("4")!>times(2UL)<!>
 
-val div1 = 1u.toUByte().div(2u.toUByte())
-val div2 = 2u.toUByte().div(2u.toUByte())
-val div3 = 3u.toUByte().div(2u.toUByte())
-val div4 = 2u.toUByte().div(2u.toUShort())
-val div5 = 2u.toUByte().div(2u)
-val div6 = 2u.toUByte().div(2UL)
+val div1 = 1u.toUByte().<!EVALUATED{IR}("0")!>div(2u.toUByte())<!>
+val div2 = 2u.toUByte().<!EVALUATED{IR}("1")!>div(2u.toUByte())<!>
+val div3 = 3u.toUByte().<!EVALUATED{IR}("1")!>div(2u.toUByte())<!>
+val div4 = 2u.toUByte().<!EVALUATED{IR}("1")!>div(2u.toUShort())<!>
+val div5 = 2u.toUByte().<!EVALUATED{IR}("1")!>div(2u)<!>
+val div6 = 2u.toUByte().<!EVALUATED{IR}("1")!>div(2UL)<!>
 
-val floorDiv1 = 1u.toUByte().floorDiv(2u.toUByte())
-val floorDiv2 = 2u.toUByte().floorDiv(2u.toUByte())
-val floorDiv3 = 3u.toUByte().floorDiv(2u.toUByte())
-val floorDiv4 = 2u.toUByte().floorDiv(2u.toUShort())
-val floorDiv5 = 2u.toUByte().floorDiv(2u)
-val floorDiv6 = 2u.toUByte().floorDiv(2UL)
+val floorDiv1 = 1u.toUByte().<!EVALUATED{IR}("0")!>floorDiv(2u.toUByte())<!>
+val floorDiv2 = 2u.toUByte().<!EVALUATED{IR}("1")!>floorDiv(2u.toUByte())<!>
+val floorDiv3 = 3u.toUByte().<!EVALUATED{IR}("1")!>floorDiv(2u.toUByte())<!>
+val floorDiv4 = 2u.toUByte().<!EVALUATED{IR}("1")!>floorDiv(2u.toUShort())<!>
+val floorDiv5 = 2u.toUByte().<!EVALUATED{IR}("1")!>floorDiv(2u)<!>
+val floorDiv6 = 2u.toUByte().<!EVALUATED{IR}("1")!>floorDiv(2UL)<!>
 
-val rem1 = 1u.toUByte().rem(2u.toUByte())
-val rem2 = 2u.toUByte().rem(2u.toUByte())
-val rem3 = 3u.toUByte().rem(2u.toUByte())
-val rem4 = 2u.toUByte().rem(2u.toUShort())
-val rem5 = 2u.toUByte().rem(2u)
-val rem6 = 2u.toUByte().rem(2UL)
+val rem1 = 1u.toUByte().<!EVALUATED{IR}("1")!>rem(2u.toUByte())<!>
+val rem2 = 2u.toUByte().<!EVALUATED{IR}("0")!>rem(2u.toUByte())<!>
+val rem3 = 3u.toUByte().<!EVALUATED{IR}("1")!>rem(2u.toUByte())<!>
+val rem4 = 2u.toUByte().<!EVALUATED{IR}("0")!>rem(2u.toUShort())<!>
+val rem5 = 2u.toUByte().<!EVALUATED{IR}("0")!>rem(2u)<!>
+val rem6 = 2u.toUByte().<!EVALUATED{IR}("0")!>rem(2UL)<!>
 
-val mod1 = 1u.toUByte().mod(2u.toUByte())
-val mod2 = 2u.toUByte().mod(2u.toUByte())
-val mod3 = 3u.toUByte().mod(2u.toUByte())
-val mod4 = 2u.toUByte().mod(2u.toUShort())
-val mod5 = 2u.toUByte().mod(2u)
-val mod6 = 2u.toUByte().mod(2UL)
+val mod1 = 1u.toUByte().<!EVALUATED{IR}("1")!>mod(2u.toUByte())<!>
+val mod2 = 2u.toUByte().<!EVALUATED{IR}("0")!>mod(2u.toUByte())<!>
+val mod3 = 3u.toUByte().<!EVALUATED{IR}("1")!>mod(2u.toUByte())<!>
+val mod4 = 2u.toUByte().<!EVALUATED{IR}("0")!>mod(2u.toUShort())<!>
+val mod5 = 2u.toUByte().<!EVALUATED{IR}("0")!>mod(2u)<!>
+val mod6 = 2u.toUByte().<!EVALUATED{IR}("0")!>mod(2UL)<!>
 
-val and1 = 1u.toUByte().and(2u.toUByte())
-val and2 = 2u.toUByte().and(2u.toUByte())
-val and3 = 3u.toUByte().and(2u.toUByte())
-val and4 = 12u.toUByte().and(10u.toUByte())
+val and1 = 1u.toUByte().<!EVALUATED{IR}("0")!>and(2u.toUByte())<!>
+val and2 = 2u.toUByte().<!EVALUATED{IR}("2")!>and(2u.toUByte())<!>
+val and3 = 3u.toUByte().<!EVALUATED{IR}("2")!>and(2u.toUByte())<!>
+val and4 = 12u.toUByte().<!EVALUATED{IR}("8")!>and(10u.toUByte())<!>
 
-val or1 = 1u.toUByte().or(2u.toUByte())
-val or2 = 2u.toUByte().or(2u.toUByte())
-val or3 = 3u.toUByte().or(2u.toUByte())
-val or4 = 12u.toUByte().or(10u.toUByte())
+val or1 = 1u.toUByte().<!EVALUATED{IR}("3")!>or(2u.toUByte())<!>
+val or2 = 2u.toUByte().<!EVALUATED{IR}("2")!>or(2u.toUByte())<!>
+val or3 = 3u.toUByte().<!EVALUATED{IR}("3")!>or(2u.toUByte())<!>
+val or4 = 12u.toUByte().<!EVALUATED{IR}("14")!>or(10u.toUByte())<!>
 
-val xor1 = 1u.toUByte().xor(2u.toUByte())
-val xor2 = 2u.toUByte().xor(2u.toUByte())
-val xor3 = 3u.toUByte().xor(2u.toUByte())
-val xor4 = 12u.toUByte().xor(10u.toUByte())
+val xor1 = 1u.toUByte().<!EVALUATED{IR}("3")!>xor(2u.toUByte())<!>
+val xor2 = 2u.toUByte().<!EVALUATED{IR}("0")!>xor(2u.toUByte())<!>
+val xor3 = 3u.toUByte().<!EVALUATED{IR}("1")!>xor(2u.toUByte())<!>
+val xor4 = 12u.toUByte().<!EVALUATED{IR}("6")!>xor(10u.toUByte())<!>
 
-val inv1 = 0u.toUByte().inv()
-val inv2 = 1u.toUByte().inv()
+val inv1 = 0u.toUByte().<!EVALUATED{IR}("255")!>inv()<!>
+val inv2 = 1u.toUByte().<!EVALUATED{IR}("254")!>inv()<!>
 
-val convert1 = 1u.toUByte().toUByte()
-val convert2 = 1u.toUByte().toUShort()
-val convert3 = 1u.toUByte().toUInt()
-val convert4 = 1u.toUByte().toULong()
-val convert5 = 1u.toUByte().toFloat()
-val convert6 = 1u.toUByte().toDouble()
-val convert7 = 1u.toUByte().toByte()
-val convert8 = 1u.toUByte().toShort()
-val convert9 = 1u.toUByte().toInt()
-val convert10 = 1u.toUByte().toLong()
+val convert1 = 1u.toUByte().<!EVALUATED{IR}("1")!>toUByte()<!>
+val convert2 = 1u.toUByte().<!EVALUATED{IR}("1")!>toUShort()<!>
+val convert3 = 1u.toUByte().<!EVALUATED{IR}("1")!>toUInt()<!>
+val convert4 = 1u.toUByte().<!EVALUATED{IR}("1")!>toULong()<!>
+val convert5 = 1u.toUByte().<!EVALUATED{IR}("1.0")!>toFloat()<!>
+val convert6 = 1u.toUByte().<!EVALUATED{IR}("1.0")!>toDouble()<!>
+val convert7 = 1u.toUByte().<!EVALUATED{IR}("1")!>toByte()<!>
+val convert8 = 1u.toUByte().<!EVALUATED{IR}("1")!>toShort()<!>
+val convert9 = 1u.toUByte().<!EVALUATED{IR}("1")!>toInt()<!>
+val convert10 = 1u.toUByte().<!EVALUATED{IR}("1")!>toLong()<!>
 val convert11 = 1.<!EVALUATED{IR}("1")!>toByte()<!>.toUByte()
 val convert12 = 1.<!EVALUATED{IR}("1")!>toShort()<!>.toUByte()
 val convert13 = 1.toUByte()
 val convert14 = 1L.toUByte()
 
-val equals1 = 1u.toUByte() == 2u.toUByte()
-val equals2 = 2u.toUByte() == 2u.toUByte()
-val equals3 = 3u.toUByte() == 2u.toUByte()
-val equals4 = 4u.toUByte() == 2u.toUByte()
+val equals1 = <!EVALUATED{IR}("false")!>1u.toUByte() == 2u.toUByte()<!>
+val equals2 = <!EVALUATED{IR}("true")!>2u.toUByte() == 2u.toUByte()<!>
+val equals3 = <!EVALUATED{IR}("false")!>3u.toUByte() == 2u.toUByte()<!>
+val equals4 = <!EVALUATED{IR}("false")!>4u.toUByte() == 2u.toUByte()<!>
 
-val toString1 = 1u.toUByte().toString()
-val toString2 = 2u.toUByte().toString()
+val toString1 = 1u.toUByte().<!EVALUATED{IR}("1")!>toString()<!>
+val toString2 = 2u.toUByte().<!EVALUATED{IR}("2")!>toString()<!>
 
-val limits1 = 254u.toUByte()+1u.toUByte()
-val limits2 = 255u.toUByte()+1u.toUByte()
-val limits3 = 0u.toUByte()-1u.toUByte()
+val limits1 = <!EVALUATED{IR}("255")!>254u.toUByte()+1u.toUByte()<!>
+val limits2 = <!EVALUATED{IR}("256")!>255u.toUByte()+1u.toUByte()<!>
+val limits3 = <!EVALUATED{IR}("4294967295")!>0u.toUByte()-1u.toUByte()<!>
 
 // STOP_EVALUATION_CHECKS
 fun box(): String {

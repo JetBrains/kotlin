@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.util.isNullable
 import org.jetbrains.kotlin.util.OperatorNameConventions
+import kotlin.math.exp
 
 class IrInterpreter(internal val environment: IrInterpreterEnvironment, internal val bodyMap: Map<IdSignature, IrBody> = emptyMap()) {
     val irBuiltIns: IrBuiltIns
@@ -286,22 +287,16 @@ class IrInterpreter(internal val environment: IrInterpreterEnvironment, internal
     }
 
     private fun interpretConst(expression: IrConst) {
-        fun getSignedType(unsignedType: IrType): IrType? = when (unsignedType.getUnsignedType()) {
-            UnsignedType.UBYTE -> irBuiltIns.byteType
-            UnsignedType.USHORT -> irBuiltIns.shortType
-            UnsignedType.UINT -> irBuiltIns.intType
-            UnsignedType.ULONG -> irBuiltIns.longType
-            else -> null
-        }
+        if (expression.type.getUnsignedType() in UnsignedType.values()) {
+            val irClass = expression.type.getClass()!!
+            val propertyName = irClass.inlineClassRepresentation?.underlyingPropertyName
+            val propertySymbol = irClass.declarations.filterIsInstance<IrProperty>()
+                .single { it.name == propertyName && it.getter?.hasShape(dispatchReceiver = true) ?: true }
+                .symbol
 
-        val signedType = getSignedType(expression.type)
-        if (signedType != null) {
-            val unsignedClass = expression.type.classOrNull!!
-            val constructor = unsignedClass.constructors.single().owner
-            val constructorCall = IrConstructorCallImpl.fromSymbolOwner(constructor.returnType, constructor.symbol)
-            constructorCall.arguments[0] = expression.value.toIrConst(signedType)
-
-            return callStack.pushCompoundInstruction(constructorCall)
+            val primitive = environment.convertToState(expression.value, expression.type)
+            val state = Common(expression.type.getClass()!!).apply { setField(propertySymbol, primitive) }
+            return callStack.pushState(state)
         }
 
         callStack.pushState(expression.toPrimitive())
