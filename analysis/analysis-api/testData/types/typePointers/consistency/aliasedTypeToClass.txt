@@ -34,32 +34,4 @@ KaUsualClassType:
 
 After:
 
-KaUsualClassType:
-  abbreviation: KaUsualClassType:
-    abbreviation: null
-    annotations: []
-    classId: MyString
-    qualifiers: [
-      KaResolvedClassTypeQualifier:
-        name: MyString
-        symbol: KaNamedClassSymbol(MyString)
-        typeArguments: []
-    ]
-    symbol: KaNamedClassSymbol(MyString)
-    typeArguments: []
-    isMarkedNullable: false
-    isNullable: false
-    hasFlexibleNullability: false
-  annotations: []
-  classId: kotlin/String
-  qualifiers: [
-    KaResolvedClassTypeQualifier:
-      name: String
-      symbol: KaNamedClassSymbol(kotlin/String)
-      typeArguments: []
-  ]
-  symbol: KaNamedClassSymbol(kotlin/String)
-  typeArguments: []
-  isMarkedNullable: false
-  isNullable: false
-  hasFlexibleNullability: false
+Type pointer restoration failed
