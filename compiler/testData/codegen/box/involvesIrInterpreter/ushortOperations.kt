@@ -1,101 +1,103 @@
+// TARGET_BACKEND: JVM_IR
+// IGNORE_IR_DESERIALIZATION_TEST: NATIVE
 // WITH_STDLIB
 fun <T> T.id() = this
 
-val compareTo1 = 1u.toUShort().compareTo(2u.toUShort())
-val compareTo2 = 2u.toUShort().compareTo(2u.toUShort())
-val compareTo3 = 3u.toUShort().compareTo(2u.toUShort())
-val compareTo4 = 2u.toUShort().compareTo(2u.toUByte())
-val compareTo5 = 2u.toUShort().compareTo(2u)
-val compareTo6 = 2u.toUShort().compareTo(2UL)
+val compareTo1 = 1u.toUShort().<!EVALUATED{IR}("-1")!>compareTo(2u.toUShort())<!>
+val compareTo2 = 2u.toUShort().<!EVALUATED{IR}("0")!>compareTo(2u.toUShort())<!>
+val compareTo3 = 3u.toUShort().<!EVALUATED{IR}("1")!>compareTo(2u.toUShort())<!>
+val compareTo4 = 2u.toUShort().<!EVALUATED{IR}("0")!>compareTo(2u.toUByte())<!>
+val compareTo5 = 2u.toUShort().<!EVALUATED{IR}("0")!>compareTo(2u)<!>
+val compareTo6 = 2u.toUShort().<!EVALUATED{IR}("0")!>compareTo(2UL)<!>
 
-val plus1 = 1u.toUShort().plus(2u.toUShort())
-val plus2 = 2u.toUShort().plus(2u.toUShort())
-val plus3 = 3u.toUShort().plus(2u.toUShort())
-val plus4 = 2u.toUShort().plus(2u.toUByte())
-val plus5 = 2u.toUShort().plus(2u)
-val plus6 = 2u.toUShort().plus(2UL)
+val plus1 = 1u.toUShort().<!EVALUATED{IR}("3")!>plus(2u.toUShort())<!>
+val plus2 = 2u.toUShort().<!EVALUATED{IR}("4")!>plus(2u.toUShort())<!>
+val plus3 = 3u.toUShort().<!EVALUATED{IR}("5")!>plus(2u.toUShort())<!>
+val plus4 = 2u.toUShort().<!EVALUATED{IR}("4")!>plus(2u.toUByte())<!>
+val plus5 = 2u.toUShort().<!EVALUATED{IR}("4")!>plus(2u)<!>
+val plus6 = 2u.toUShort().<!EVALUATED{IR}("4")!>plus(2UL)<!>
 
-val minus1 = 2u.toUShort().minus(2u.toUShort())
-val minus2 = 3u.toUShort().minus(2u.toUShort())
-val minus3 = 2u.toUShort().minus(2u.toUByte())
-val minus4 = 2u.toUShort().minus(2u)
-val minus5 = 2u.toUShort().minus(2u.toULong())
+val minus1 = 2u.toUShort().<!EVALUATED{IR}("0")!>minus(2u.toUShort())<!>
+val minus2 = 3u.toUShort().<!EVALUATED{IR}("1")!>minus(2u.toUShort())<!>
+val minus3 = 2u.toUShort().<!EVALUATED{IR}("0")!>minus(2u.toUByte())<!>
+val minus4 = 2u.toUShort().<!EVALUATED{IR}("0")!>minus(2u)<!>
+val minus5 = 2u.toUShort().<!EVALUATED{IR}("0")!>minus(2u.toULong())<!>
 
-val times1 = 1u.toUShort().times(2u.toUShort())
-val times2 = 2u.toUShort().times(2u.toUShort())
-val times3 = 3u.toUShort().times(2u.toUShort())
-val times4 = 2u.toUShort().times(2u.toUByte())
-val times5 = 2u.toUShort().times(2u)
-val times6 = 2u.toUShort().times(2u.toULong())
+val times1 = 1u.toUShort().<!EVALUATED{IR}("2")!>times(2u.toUShort())<!>
+val times2 = 2u.toUShort().<!EVALUATED{IR}("4")!>times(2u.toUShort())<!>
+val times3 = 3u.toUShort().<!EVALUATED{IR}("6")!>times(2u.toUShort())<!>
+val times4 = 2u.toUShort().<!EVALUATED{IR}("4")!>times(2u.toUByte())<!>
+val times5 = 2u.toUShort().<!EVALUATED{IR}("4")!>times(2u)<!>
+val times6 = 2u.toUShort().<!EVALUATED{IR}("4")!>times(2u.toULong())<!>
 
-val div1 = 1u.toUShort().div(2u.toUShort())
-val div2 = 2u.toUShort().div(2u.toUShort())
-val div3 = 3u.toUShort().div(2u.toUShort())
-val div4 = 2u.toUShort().div(2u.toUByte())
-val div5 = 2u.toUShort().div(2u)
-val div6 = 2u.toUShort().div(2u.toULong())
+val div1 = 1u.toUShort().<!EVALUATED{IR}("0")!>div(2u.toUShort())<!>
+val div2 = 2u.toUShort().<!EVALUATED{IR}("1")!>div(2u.toUShort())<!>
+val div3 = 3u.toUShort().<!EVALUATED{IR}("1")!>div(2u.toUShort())<!>
+val div4 = 2u.toUShort().<!EVALUATED{IR}("1")!>div(2u.toUByte())<!>
+val div5 = 2u.toUShort().<!EVALUATED{IR}("1")!>div(2u)<!>
+val div6 = 2u.toUShort().<!EVALUATED{IR}("1")!>div(2u.toULong())<!>
 
-val floorDiv1 = 1u.toUShort().floorDiv(2u.toUShort())
-val floorDiv2 = 2u.toUShort().floorDiv(2u.toUShort())
-val floorDiv3 = 3u.toUShort().floorDiv(2u.toUShort())
-val floorDiv4 = 2u.toUShort().floorDiv(2u.toUByte())
-val floorDiv5 = 2u.toUShort().floorDiv(2u)
-val floorDiv6 = 2u.toUShort().floorDiv(2u.toULong())
+val floorDiv1 = 1u.toUShort().<!EVALUATED{IR}("0")!>floorDiv(2u.toUShort())<!>
+val floorDiv2 = 2u.toUShort().<!EVALUATED{IR}("1")!>floorDiv(2u.toUShort())<!>
+val floorDiv3 = 3u.toUShort().<!EVALUATED{IR}("1")!>floorDiv(2u.toUShort())<!>
+val floorDiv4 = 2u.toUShort().<!EVALUATED{IR}("1")!>floorDiv(2u.toUByte())<!>
+val floorDiv5 = 2u.toUShort().<!EVALUATED{IR}("1")!>floorDiv(2u)<!>
+val floorDiv6 = 2u.toUShort().<!EVALUATED{IR}("1")!>floorDiv(2u.toULong())<!>
 
-val rem1 = 1u.toUShort().rem(2u.toUShort())
-val rem2 = 2u.toUShort().rem(2u.toUShort())
-val rem3 = 3u.toUShort().rem(2u.toUShort())
-val rem4 = 2u.toUShort().rem(2u.toUByte())
-val rem5 = 2u.toUShort().rem(2u)
-val rem6 = 2u.toUShort().rem(2u.toULong())
+val rem1 = 1u.toUShort().<!EVALUATED{IR}("1")!>rem(2u.toUShort())<!>
+val rem2 = 2u.toUShort().<!EVALUATED{IR}("0")!>rem(2u.toUShort())<!>
+val rem3 = 3u.toUShort().<!EVALUATED{IR}("1")!>rem(2u.toUShort())<!>
+val rem4 = 2u.toUShort().<!EVALUATED{IR}("0")!>rem(2u.toUByte())<!>
+val rem5 = 2u.toUShort().<!EVALUATED{IR}("0")!>rem(2u)<!>
+val rem6 = 2u.toUShort().<!EVALUATED{IR}("0")!>rem(2u.toULong())<!>
 
-val mod1 = 1u.toUShort().mod(2u.toUShort())
-val mod2 = 2u.toUShort().mod(2u.toUShort())
-val mod3 = 3u.toUShort().mod(2u.toUShort())
-val mod4 = 2u.toUShort().mod(2u.toUByte())
-val mod5 = 2u.toUShort().mod(2u)
-val mod6 = 2u.toUShort().mod(2u.toULong())
+val mod1 = 1u.toUShort().<!EVALUATED{IR}("1")!>mod(2u.toUShort())<!>
+val mod2 = 2u.toUShort().<!EVALUATED{IR}("0")!>mod(2u.toUShort())<!>
+val mod3 = 3u.toUShort().<!EVALUATED{IR}("1")!>mod(2u.toUShort())<!>
+val mod4 = 2u.toUShort().<!EVALUATED{IR}("0")!>mod(2u.toUByte())<!>
+val mod5 = 2u.toUShort().<!EVALUATED{IR}("0")!>mod(2u)<!>
+val mod6 = 2u.toUShort().<!EVALUATED{IR}("0")!>mod(2u.toULong())<!>
 
-val and1 = 1u.toUShort().and(1u.toUShort())
-val and2 = 2u.toUShort().and(2u.toUShort())
-val and3 = 3u.toUShort().and(2u.toUShort())
-val and4 = 12u.toUShort().and(10u.toUShort())
+val and1 = 1u.toUShort().<!EVALUATED{IR}("1")!>and(1u.toUShort())<!>
+val and2 = 2u.toUShort().<!EVALUATED{IR}("2")!>and(2u.toUShort())<!>
+val and3 = 3u.toUShort().<!EVALUATED{IR}("2")!>and(2u.toUShort())<!>
+val and4 = 12u.toUShort().<!EVALUATED{IR}("8")!>and(10u.toUShort())<!>
 
-val or1 = 1u.toUShort().or(1u.toUShort())
-val or2 = 2u.toUShort().or(2u.toUShort())
-val or3 = 3u.toUShort().or(2u.toUShort())
-val or4 = 12u.toUShort().or(10u.toUShort())
+val or1 = 1u.toUShort().<!EVALUATED{IR}("1")!>or(1u.toUShort())<!>
+val or2 = 2u.toUShort().<!EVALUATED{IR}("2")!>or(2u.toUShort())<!>
+val or3 = 3u.toUShort().<!EVALUATED{IR}("3")!>or(2u.toUShort())<!>
+val or4 = 12u.toUShort().<!EVALUATED{IR}("14")!>or(10u.toUShort())<!>
 
-val xor1 = 1u.toUShort().xor(1u.toUShort())
-val xor2 = 2u.toUShort().xor(2u.toUShort())
-val xor3 = 3u.toUShort().xor(2u.toUShort())
-val xor4 = 12u.toUShort().xor(10u.toUShort())
+val xor1 = 1u.toUShort().<!EVALUATED{IR}("0")!>xor(1u.toUShort())<!>
+val xor2 = 2u.toUShort().<!EVALUATED{IR}("0")!>xor(2u.toUShort())<!>
+val xor3 = 3u.toUShort().<!EVALUATED{IR}("1")!>xor(2u.toUShort())<!>
+val xor4 = 12u.toUShort().<!EVALUATED{IR}("6")!>xor(10u.toUShort())<!>
 
-val inv1 = 0u.toUShort().inv()
-val inv2 = 1u.toUShort().inv()
+val inv1 = 0u.toUShort().<!EVALUATED{IR}("65535")!>inv()<!>
+val inv2 = 1u.toUShort().<!EVALUATED{IR}("65534")!>inv()<!>
 
-val convert1 = 1u.toUShort().toUByte()
-val convert2 = 1u.toUShort().toUShort()
-val convert3 = 1u.toUShort().toUInt()
-val convert4 = 1u.toUShort().toULong()
-val convert5 = 1u.toUShort().toFloat()
-val convert6 = 1u.toUShort().toDouble()
-val convert7 = 1u.toUShort().toByte()
-val convert8 = 1u.toUShort().toShort()
-val convert9 = 1u.toUShort().toInt()
-val convert10 = 1u.toUShort().toLong()
+val convert1 = 1u.toUShort().<!EVALUATED{IR}("1")!>toUByte()<!>
+val convert2 = 1u.toUShort().<!EVALUATED{IR}("1")!>toUShort()<!>
+val convert3 = 1u.toUShort().<!EVALUATED{IR}("1")!>toUInt()<!>
+val convert4 = 1u.toUShort().<!EVALUATED{IR}("1")!>toULong()<!>
+val convert5 = 1u.toUShort().<!EVALUATED{IR}("1.0")!>toFloat()<!>
+val convert6 = 1u.toUShort().<!EVALUATED{IR}("1.0")!>toDouble()<!>
+val convert7 = 1u.toUShort().<!EVALUATED{IR}("1")!>toByte()<!>
+val convert8 = 1u.toUShort().<!EVALUATED{IR}("1")!>toShort()<!>
+val convert9 = 1u.toUShort().<!EVALUATED{IR}("1")!>toInt()<!>
+val convert10 = 1u.toUShort().<!EVALUATED{IR}("1")!>toLong()<!>
 
-val equals1 = 1u.toUShort() == 2u.toUShort()
-val equals2 = 2u.toUShort() == 2u.toUShort()
-val equals3 = 3u.toUShort() == 2u.toUShort()
-val equals4 = 4u.toUShort() == 2u.toUShort()
+val equals1 = <!EVALUATED{IR}("false")!>1u.toUShort() == 2u.toUShort()<!>
+val equals2 = <!EVALUATED{IR}("true")!>2u.toUShort() == 2u.toUShort()<!>
+val equals3 = <!EVALUATED{IR}("false")!>3u.toUShort() == 2u.toUShort()<!>
+val equals4 = <!EVALUATED{IR}("false")!>4u.toUShort() == 2u.toUShort()<!>
 
-val toString1 = 1u.toUShort().toString()
-val toString2 = 2u.toUShort().toString()
+val toString1 = 1u.toUShort().<!EVALUATED{IR}("1")!>toString()<!>
+val toString2 = 2u.toUShort().<!EVALUATED{IR}("2")!>toString()<!>
 
-val limits1 = 65534u.toUShort()+1u.toUShort()
-val limits2 = 65535u.toUShort()+1u.toUShort()
-val limits3 = 0u.toUShort()-1u.toUShort()
+val limits1 = <!EVALUATED{IR}("65535")!>65534u.toUShort()+1u.toUShort()<!>
+val limits2 = <!EVALUATED{IR}("65536")!>65535u.toUShort()+1u.toUShort()<!>
+val limits3 = <!EVALUATED{IR}("4294967295")!>0u.toUShort()-1u.toUShort()<!>
 
 // STOP_EVALUATION_CHECKS
 fun box(): String {
