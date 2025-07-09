@@ -423,7 +423,7 @@ private fun SmartPrinter.generateFreeArgsAndErrors() {
 private val KotlinCompilerArgument.defaultValueInArgs: String
     get() {
         @Suppress("UNCHECKED_CAST")
-        val valueType = valueType as KotlinArgumentValueType<Any?>
+        val valueType = valueType as KotlinArgumentValueType<Any>
         return valueType.stringRepresentation(valueType.defaultValue.current) ?: "null"
     }
 
