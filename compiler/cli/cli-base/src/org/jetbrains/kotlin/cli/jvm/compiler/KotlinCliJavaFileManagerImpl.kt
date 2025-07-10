@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.load.java.structure.impl.source.JavaElementSourceFac
 import org.jetbrains.kotlin.load.kotlin.PackagePartProvider
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.jvm.KotlinCliJavaFileManager
 import org.jetbrains.kotlin.util.PerformanceManager
 import org.jetbrains.kotlin.util.PhaseSideType
@@ -252,9 +253,18 @@ class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJ
         if (!found) return null
 
         return object : PsiPackageImpl(myPsiManager, packageName) {
+            private val packageInfoClassId = ClassId(packageFqName, Name.identifier(PACKAGE_INFO_CLASS))
+            private val packageInfoVirtualFile = singleJavaFileRootsIndex.findJavaSourceClass(packageInfoClassId)
+            private val packageInfoPsiFile = packageInfoVirtualFile?.let { myPsiManager.findFile(it) } as? PsiJavaFile
+            private val packageInfoAnnotations = packageInfoPsiFile?.packageStatement?.annotationList
+
             // Do not check validness for packages we just made sure are actually present
             // It might be important for source roots that have non-trivial package prefix
             override fun isValid() = true
+
+            override fun getAnnotationList(): PsiModifierList? {
+                return packageInfoAnnotations ?: super.getAnnotationList()
+            }
         }
     }
 
