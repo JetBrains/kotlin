@@ -319,7 +319,7 @@ class JsWasmTestLibSpecialCompatibilityChecksTest : LibrarySpecialCompatibilityC
     override fun MessageCollectorImpl.hasJsOldLibraryError(
         specificVersions: Pair<TestVersion, TestVersion>?,
     ): Boolean {
-        val stdlibMessagePart = "Kotlin/JS test library has an older version" + specificVersions?.first?.let { " ($it)" }.orEmpty()
+        val stdlibMessagePart = "Kotlin/JS kotlin-test library has an older version" + specificVersions?.first?.let { " ($it)" }.orEmpty()
         val compilerMessagePart = "than the compiler" + specificVersions?.second?.let { " ($it)" }.orEmpty()
 
         return messages.any { stdlibMessagePart in it.message && compilerMessagePart in it.message }
@@ -327,7 +327,7 @@ class JsWasmTestLibSpecialCompatibilityChecksTest : LibrarySpecialCompatibilityC
 
     override fun MessageCollectorImpl.hasJsTooNewLibraryError(specificVersions: Pair<TestVersion, TestVersion>?): Boolean {
         val stdlibMessagePart =
-            "The Kotlin/JS test library has a more recent version" + specificVersions?.first?.let { " ($it)" }.orEmpty()
+            "The Kotlin/JS kotlin-test library has a more recent version" + specificVersions?.first?.let { " ($it)" }.orEmpty()
         val compilerMessagePart = "The compiler version is " + specificVersions?.second?.toString().orEmpty()
 
         return messages.any { stdlibMessagePart in it.message && compilerMessagePart in it.message }
@@ -335,7 +335,7 @@ class JsWasmTestLibSpecialCompatibilityChecksTest : LibrarySpecialCompatibilityC
 
     override fun MessageCollectorImpl.hasWasmError(specificVersions: Pair<TestVersion, TestVersion>?): Boolean {
         val stdlibMessagePart =
-            "The version of the Kotlin/Wasm test library" + specificVersions?.first?.let { " ($it)" }.orEmpty()
+            "The version of the Kotlin/Wasm kotlin-test library" + specificVersions?.first?.let { " ($it)" }.orEmpty()
         val compilerMessagePart = "differs from the version of the compiler" + specificVersions?.second?.let { " ($it)" }.orEmpty()
 
         return messages.any { stdlibMessagePart in it.message && compilerMessagePart in it.message }
