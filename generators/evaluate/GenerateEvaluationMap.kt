@@ -247,9 +247,9 @@ private fun getOperationMap(argumentsCount: Int): MutableList<Operation> {
     }
 
     // Usigned types here
-    val unsingnedClasses = listOf(UInt::class, ULong::class, UByte::class, UShort::class)
+    val unsingnedClasses = listOf(UInt::class, ULong::class, UByte::class, UShort::class )
     for (unsignedClass in unsingnedClasses) {
-        unsignedClass.memberFunctions
+         unsignedClass.memberFunctions
             .filter { it.parameters.size == argumentsCount }
             .forEach { function ->
                 operationMap.add(Operation(function.name, function.parameters.map {

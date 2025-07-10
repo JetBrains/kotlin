@@ -219,7 +219,6 @@ class UnsignedTypeGenerator(val type: UnsignedType, out: PrintWriter) : BuiltIns
         fun convert(name: String) = if (rangeElementType == type) name else "$name.to${rangeElementType.capitalized}()"
         out.println("    /** Creates a range from this value to the specified [other] value. */")
         out.println("    @kotlin.internal.InlineOnly")
-        out.println("    @kotlin.internal.IntrinsicConstEvaluation")
         out.println("    public inline operator fun rangeTo(other: $className): $rangeType = $rangeType(${convert("this")}, ${convert("other")})")
         out.println()
     }
@@ -236,7 +235,6 @@ class UnsignedTypeGenerator(val type: UnsignedType, out: PrintWriter) : BuiltIns
         out.println("    @SinceKotlin(\"1.9\")")
         out.println("    @WasExperimental(ExperimentalStdlibApi::class)")
         out.println("    @kotlin.internal.InlineOnly")
-        out.println("    @kotlin.internal.IntrinsicConstEvaluation")
         out.println("    public inline operator fun rangeUntil(other: $className): $rangeType = ${convert("this")} until ${convert("other")}")
         out.println()
     }

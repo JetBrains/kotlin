@@ -267,7 +267,6 @@ public value class UByte @kotlin.internal.IntrinsicConstEvaluation @PublishedApi
 
     /** Creates a range from this value to the specified [other] value. */
     @kotlin.internal.InlineOnly
-    @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun rangeTo(other: UByte): UIntRange = UIntRange(this.toUInt(), other.toUInt())
 
     /**
@@ -278,7 +277,6 @@ public value class UByte @kotlin.internal.IntrinsicConstEvaluation @PublishedApi
     @SinceKotlin("1.9")
     @WasExperimental(ExperimentalStdlibApi::class)
     @kotlin.internal.InlineOnly
-    @kotlin.internal.IntrinsicConstEvaluation
     public inline operator fun rangeUntil(other: UByte): UIntRange = this.toUInt() until other.toUInt()
 
     /** Performs a bitwise AND operation between the two values. */
