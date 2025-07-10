@@ -112,6 +112,10 @@ object CommonConfigurationKeys {
     @JvmField
     val DONT_SORT_SOURCE_FILES = CompilerConfigurationKey.create<Boolean>("don't sort source files in FS order")
 
+    // Internal for passing configuration in the scripting pipeline, impossible to set via compiler arguments
+    @JvmField
+    val SCRIPTING_HOST_CONFIGURATION = CompilerConfigurationKey.create<Any>("scripting host configuration")
+
 }
 
 var CompilerConfiguration.languageVersionSettings: LanguageVersionSettings
@@ -229,4 +233,8 @@ var CompilerConfiguration.dontCreateSeparateSessionForScripts: Boolean
 var CompilerConfiguration.dontSortSourceFiles: Boolean
     get() = getBoolean(CommonConfigurationKeys.DONT_SORT_SOURCE_FILES)
     set(value) { put(CommonConfigurationKeys.DONT_SORT_SOURCE_FILES, value) }
+
+var CompilerConfiguration.scriptingHostConfiguration: Any?
+    get() = get(CommonConfigurationKeys.SCRIPTING_HOST_CONFIGURATION)
+    set(value) { put(CommonConfigurationKeys.SCRIPTING_HOST_CONFIGURATION, requireNotNull(value) { "nullable values are not allowed" }) }
 
