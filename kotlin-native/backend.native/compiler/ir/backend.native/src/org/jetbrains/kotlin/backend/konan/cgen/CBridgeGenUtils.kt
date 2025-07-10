@@ -106,7 +106,7 @@ internal class KotlinBridgeBuilder(
         bridge.returnType = type
     }
 
-    fun build(): IrSimpleFunction = bridge
+    fun getBridge(): IrSimpleFunction = bridge
 }
 
 private fun createKotlinBridge(
@@ -170,7 +170,7 @@ internal class KotlinCBridgeBuilder(
 
     fun buildCSignature(name: String): String = cBridgeBuilder.buildSignature(name, stubs.language)
 
-    fun getKotlinBridge() = kotlinBridgeBuilder.build()
+    fun getKotlinBridge() = kotlinBridgeBuilder.getBridge()
 }
 
 internal class KotlinCallBuilder(private val irBuilder: IrBuilderWithScope, private val symbols: KonanSymbols) {
