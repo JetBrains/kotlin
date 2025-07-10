@@ -87,7 +87,8 @@ sealed class EvaluationMode {
         )
 
         private val allowedExtensionFunctions = setOf(
-            "floorDiv", "mod", "NumbersKt.floorDiv", "NumbersKt.mod", "<get-code>"
+            "floorDiv", "mod", "NumbersKt.floorDiv", "NumbersKt.mod", "<get-code>",
+            *OperatorNameConventions.UNSIGNED_CONVERSIONS.map(Name::asString).toTypedArray(),
         ).map { StandardClassIds.BASE_KOTLIN_PACKAGE.child(Name.identifier(it)) }.toSet()
 
         private val allowedBuiltinExtensionFunctions = listOf(

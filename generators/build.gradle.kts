@@ -27,7 +27,6 @@ fun extraSourceSet(name: String, extendMain: Boolean = true, jpsKind: String? = 
 
 val (builtinsSourceSet, builtinsApi) = extraSourceSet("builtins", extendMain = false)
 val (evaluateSourceSet, evaluateApi) = extraSourceSet("evaluate")
-val (interpreterSourceSet, interpreterApi) = extraSourceSet("interpreter")
 val (protobufSourceSet, protobufApi) = extraSourceSet("protobuf")
 val (protobufCompareSourceSet, protobufCompareApi) = extraSourceSet("protobufCompare", jpsKind = SourceSet.TEST_SOURCE_SET_NAME)
 val (wasmSourceSet, wasmApi) = extraSourceSet("wasm")
@@ -41,18 +40,16 @@ dependencies {
     }
 
     builtinsApi("org.jetbrains.kotlin:kotlin-stdlib:$bootstrapKotlinVersion") { isTransitive = false }
-    evaluateApi(project(":core:deserialization"))
     wasmApi(project(":wasm:wasm.ir"))
     wasmApi(kotlinStdlib())
-    interpreterApi(project(":compiler:ir.tree"))
-    interpreterApi(commonDependency("org.jetbrains.kotlin:kotlin-reflect"))
+    evaluateApi(project(":compiler:ir.tree"))
+    evaluateApi(commonDependency("org.jetbrains.kotlin:kotlin-reflect"))
     protobufApi(kotlinStdlib())
     protobufCompareApi(projectTests(":kotlin-build-common"))
     nativeInteropRuntimeApi(kotlinStdlib())
 
     testApi(builtinsSourceSet.output)
     testApi(evaluateSourceSet.output)
-    testApi(interpreterSourceSet.output)
     testApi(protobufSourceSet.output)
     testApi(protobufCompareSourceSet.output)
 
@@ -117,8 +114,7 @@ val generateGradleOptions by generator("org.jetbrains.kotlin.generators.argument
 val generateKeywordStrings by generator("org.jetbrains.kotlin.generators.frontend.GenerateKeywordStrings")
 
 val generateBuiltins by generator("org.jetbrains.kotlin.generators.builtins.generateBuiltIns.GenerateBuiltInsKt", builtinsSourceSet)
-val generateOperationsMap by generator("org.jetbrains.kotlin.generators.evaluate.GenerateOperationsMapKt", evaluateSourceSet)
-val generateInterpreterMap by generator("org.jetbrains.kotlin.generators.interpreter.GenerateInterpreterMapKt", interpreterSourceSet)
+val generateEvaluationMap by generator("org.jetbrains.kotlin.generators.evaluate.GenerateEvaluationMapKt", evaluateSourceSet)
 val generateWasmIntrinsics by generator("org.jetbrains.kotlin.generators.wasm.WasmIntrinsicGeneratorKt", wasmSourceSet)
 
 val generateNativeInteropRuntime by generator(

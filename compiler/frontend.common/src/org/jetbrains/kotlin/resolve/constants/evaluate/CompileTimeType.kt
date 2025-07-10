@@ -15,5 +15,18 @@ enum class CompileTimeType {
     CHAR,
     BOOLEAN,
     STRING,
-    ANY
+    ANY,
+}
+
+fun CompileTimeType.toKotlinTypeName(): String = when (this) {
+    CompileTimeType.BYTE -> "kotlin.Byte"
+    CompileTimeType.SHORT -> "kotlin.Short"
+    CompileTimeType.INT -> "kotlin.Int"
+    CompileTimeType.LONG -> "kotlin.Long"
+    CompileTimeType.DOUBLE -> "kotlin.Double"
+    CompileTimeType.FLOAT -> "kotlin.Float"
+    CompileTimeType.CHAR -> "kotlin.Char"
+    CompileTimeType.BOOLEAN -> "kotlin.Boolean"
+    CompileTimeType.STRING -> "kotlin.String"
+    CompileTimeType.ANY -> "kotlin.Any"
 }
