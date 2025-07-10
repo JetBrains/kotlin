@@ -14,9 +14,9 @@ import kotlin.wasm.WasmImport
 
 external <!WASI_EXTERNAL_NOT_TOP_LEVEL_FUNCTION!>object AC<!>
 
-@WasmImport("a", "b")
+@<!OPT_IN_USAGE!>WasmImport<!>("a", "b")
 external fun importedFoo(): Int
 
 <!EXTERNAL_DECLARATION_WITH_CONTEXT_PARAMETERS!>context(x: Int)
-@WasmImport("a", "b")
+@<!OPT_IN_USAGE!>WasmImport<!>("a", "b")
 external fun importedBoo(): Int<!>
