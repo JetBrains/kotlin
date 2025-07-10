@@ -138,4 +138,4 @@ projectTest(
     useJUnitPlatform()
 }
 
-testsJar()
+testsJarToBeUsedAlongWithFixtures()
