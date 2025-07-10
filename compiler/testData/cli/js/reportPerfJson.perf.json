@@ -1,4 +1,5 @@
 {
+  "name": "reportPerfK2",
   "timeStampMs": $UINT$,
   "platform": "JS",
   "compilerType": "K2",

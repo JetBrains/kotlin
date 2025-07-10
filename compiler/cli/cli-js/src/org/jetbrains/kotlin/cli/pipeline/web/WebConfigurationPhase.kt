@@ -14,6 +14,9 @@ import org.jetbrains.kotlin.cli.common.*
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.cli.common.config.addKotlinSourceRoot
+import org.jetbrains.kotlin.cli.common.createPhaseConfig
+import org.jetbrains.kotlin.cli.common.incrementalCompilationIsEnabledForJs
+import org.jetbrains.kotlin.cli.common.setupCommonKlibArguments
 import org.jetbrains.kotlin.cli.js.*
 import org.jetbrains.kotlin.cli.pipeline.AbstractConfigurationPhase
 import org.jetbrains.kotlin.cli.pipeline.ArgumentsPipelineArtifact
@@ -241,6 +244,7 @@ object CommonWebConfigurationUpdater : ConfigurationUpdater<K2JSCompilerArgument
             return
         }
         configuration.moduleName = moduleName
+        configuration.perfManager?.targetDescription = moduleName
         configuration.allowKotlinPackage = arguments.allowKotlinPackage
     }
 }
