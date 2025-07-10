@@ -445,6 +445,7 @@ enum class LanguageFeature(
     ForbidGetSetValueWithTooManyParameters(KOTLIN_2_4, issue = "KT-77131"),
     ForbidReturnInExpressionBodyWithoutExplicitTypeEdgeCases(KOTLIN_2_4, enabledInProgressiveMode = true, "KTLC-288"),
     CheckOptInOnPureEnumEntries(KOTLIN_2_4, enabledInProgressiveMode = true, "KTLC-359"),
+    ForbidExposingPackagePrivateInInternal(KOTLIN_2_4, enabledInProgressiveMode = true, "KTLC-271"),
 
     // 2.5
 
