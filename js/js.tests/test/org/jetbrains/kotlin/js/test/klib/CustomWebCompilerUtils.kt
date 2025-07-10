@@ -27,6 +27,19 @@ val customJsCompilerSettings: CustomWebCompilerSettings by lazy {
 }
 
 /**
+ * An accessor to "custom" (alternative) Kotlin/Wasm compiler and the relevant artifacts (stdlib, kotlin-test)
+ * which are used in KLIB backward/forward compatibility tests.
+ */
+val customWasmJsCompilerSettings: CustomWebCompilerSettings by lazy {
+    createCustomWebCompilerSettings(
+        artifactsDirPropertyName = "kotlin.internal.wasm.test.compat.customCompilerArtifactsDir",
+        versionPropertyName = "kotlin.internal.wasm.test.compat.customCompilerVersion",
+        stdlibArtifactName = "kotlin-stdlib-wasm-js",
+        kotlinTestArtifactName = "kotlin-test-wasm-js",
+    )
+}
+
+/**
  * A "custom" (alternative) Kotlin/JS or Kotlin/Wasm compiler and the relevant artifacts (stdlib, kotlin-test)
  * which are used in KLIB backward/forward compatibility tests.
  */
