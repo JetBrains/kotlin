@@ -646,9 +646,24 @@ open class SupertypeComputationSession {
     }
 
     /**
+     * The main purpose of this function is to find and report loops in supertypes for combined class / typealias hierarchy.
+     *
+     * In principle, we solve here a classic task of finding loops in an oriented graph, with some specifics:
+     *
+     * - there are two types of vertices: classes and typealiases
+     * - there are two types of edges: "solid" describes subtyping or typealias main classifier, "dotted" describes type arguments
+     * - an oriented loop consisting of "solid" edges only is important for us anyway
+     * - an oriented loop including "dotted" edges is important for us if all vertices are typealiases
+     *
+     * You can find some green examples in testData/diagnostics/tests/cyclicHierarchy/withTypeAlias0.kt.
+     * You can find some red examples in testData/diagnostics/tests/cyclicHierarchy/withTypeAlias.kt, withTypeAlias2.kt.
+     *
      * @param declaration declaration to be checked for loops
-     * @param visited visited declarations during the current loop search
+     * @param visited visited declarations during the current loop search (DFS tree)
      * @param looped declarations inside loop
+     * @param pathSet declaration set on a current path (DFS branch)
+     * @param path declarations on a current path (DFS branch)
+     * @param localClassesNavigationInfo auxiliary parameter to find local classes parents
      */
     protected fun breakLoopFor(
         declaration: FirClassLikeDeclaration,
@@ -662,6 +677,13 @@ open class SupertypeComputationSession {
         require(path.isEmpty()) { "Path should be empty" }
         require(pathSet.isEmpty()) { "Path set should be empty" }
 
+        /**
+         * Local function that operates as a DFS node during loop search.
+         *
+         * @param classLikeDeclaration DFS node declaration, if any
+         * @param wasSubtypingInvolved loop contains at least one class
+         * @param wereTypeArgumentsInvolved loop contains at least one "dotted" edge
+         */
         fun checkIsInLoop(
             classLikeDeclaration: FirClassLikeDeclaration?,
             wasSubtypingInvolved: Boolean,
@@ -716,6 +738,8 @@ open class SupertypeComputationSession {
             if (wereTypeArgumentsInvolved && isSubtypingCurrentlyInvolved) {
                 path.removeAt(path.size - 1)
                 pathSet.remove(classLikeDeclaration)
+                // This declaration can be visited once more, for example, to find loops beginning with it
+                visited.remove(classLikeDeclaration)
                 return
             }
 
@@ -724,10 +748,11 @@ open class SupertypeComputationSession {
             val resultSupertypeRefs = mutableListOf<FirResolvedTypeRef>()
             for (supertypeRef in supertypeRefs) {
                 if (isTypeAlias) {
+                    // For case like typealias S = @S SomeAnnotation
                     for (annotation in supertypeRef.annotations) {
                         val resolvedType = annotation.resolvedType as? ConeClassLikeType ?: continue
-                        val typeArgumentClassLikeDeclaration = resolvedType.lookupTag.toSymbol(session)?.fir
-                        checkIsInLoop(typeArgumentClassLikeDeclaration, wasSubtypingInvolved, wereTypeArgumentsInvolved)
+                        val annotationClassLikeDeclaration = resolvedType.lookupTag.toSymbol(session)?.fir
+                        checkIsInLoop(annotationClassLikeDeclaration, wasSubtypingInvolved, wereTypeArgumentsInvolved)
                     }
                 }
 
