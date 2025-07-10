@@ -54,8 +54,10 @@ internal class InteropLowering(val context: Context, val fileLowerState: FileLow
     }
 }
 
-private class CounterHolder {
-    var counter = 0
+private class NameCounter {
+    private var counter = 0
+
+    fun getNext() = ++counter
 }
 
 private abstract class BaseInteropIrTransformer(
@@ -66,13 +68,13 @@ private abstract class BaseInteropIrTransformer(
     protected val symbols = context.symbols
 
     protected inline fun <T : IrDeclaration> generateDeclarationWithStubs(
-            counterHolder: CounterHolder,
+            nameCounter: NameCounter,
             owner: IrDeclarationContainer,
             element: IrElement? = null,
             block: KotlinStubs.() -> T
     ): T {
         val addedDeclarations = mutableListOf<IrDeclaration>()
-        val result = createKotlinStubs(counterHolder, element) {
+        val result = createKotlinStubs(nameCounter, element) {
             it.parent = owner
             addedDeclarations += it
         }.block()
@@ -88,7 +90,7 @@ private abstract class BaseInteropIrTransformer(
             block: KotlinStubs.() -> IrExpression
     ): IrExpression {
         val addedDeclarations = mutableListOf<IrDeclaration>()
-        val result = createKotlinStubs(CounterHolder(), element) {
+        val result = createKotlinStubs(NameCounter(), element) {
             it.parent = parent
             addedDeclarations += it
         }.block()
@@ -106,7 +108,7 @@ private abstract class BaseInteropIrTransformer(
         }
     }
 
-    private fun createKotlinStubs(counterHolder: CounterHolder, element: IrElement?, addKotlin: (IrDeclaration) -> Unit): KotlinStubs {
+    private fun createKotlinStubs(nameCounter: NameCounter, element: IrElement?, addKotlin: (IrDeclaration) -> Unit): KotlinStubs {
         return object : KotlinStubs {
 
             override val irBuiltIns get() = context.irBuiltIns
@@ -126,7 +128,7 @@ private abstract class BaseInteropIrTransformer(
                 addKotlin(declaration)
             }
 
-            override fun getUniqueCName(prefix: String) = "\$$prefix${++counterHolder.counter}\$"
+            override fun getUniqueCName(prefix: String) = "\$$prefix${nameCounter.getNext()}\$"
 
             override fun getUniqueKotlinFunctionReferenceClassName(prefix: String) =
                     fileLowerState.getFunctionReferenceImplUniqueName(prefix)
@@ -723,7 +725,7 @@ private class InteropTransformerPart2(
     override fun visitClass(declaration: IrClass): IrStatement {
         super.visitClass(declaration)
         if (declaration.isKotlinObjCClass()) {
-            val counterHolder = CounterHolder()
+            val nameCounter = NameCounter()
             val uniq = mutableSetOf<String>()  // remove duplicates [KT-38234]
             val imps = declaration.simpleFunctions().filter { it.isReal }.flatMap { function ->
                 function.overriddenSymbols.mapNotNull {
@@ -732,7 +734,7 @@ private class InteropTransformerPart2(
                         null
                     } else {
                         uniq += selector
-                        generateDeclarationWithStubs(counterHolder, declaration, it.owner) {
+                        generateDeclarationWithStubs(nameCounter, declaration, it.owner) {
                             generateCFunctionAndFakeKotlinExternalFunction(
                                     function,
                                     it.owner,
