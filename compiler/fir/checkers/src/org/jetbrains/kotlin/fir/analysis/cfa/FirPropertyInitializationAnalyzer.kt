@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirSyntheticPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
+import org.jetbrains.kotlin.fir.types.isMarkedNullable
 
 object FirPropertyInitializationAnalyzer : AbstractFirPropertyInitializationChecker(MppCheckerKind.Common) {
     context(reporter: DiagnosticReporter, context: CheckerContext)
@@ -74,6 +75,12 @@ fun ControlFlowGraph.nearestNonInPlaceGraph(): ControlFlowGraph =
 @OptIn(SymbolInternals::class)
 fun FirPropertySymbol.requiresInitialization(isForInitialization: Boolean): Boolean {
     val hasImplicitBackingField = !hasExplicitBackingField && hasBackingField
+    
+    // Nullable properties don't require initialization
+    if (resolvedReturnTypeRef.coneType.isMarkedNullable) {
+        return false
+    }
+    
     return when {
         this is FirSyntheticPropertySymbol -> false
         isForInitialization -> hasDelegate || hasImplicitBackingField
