@@ -42,6 +42,7 @@ public open class WasmArgumentsImpl : CommonKlibBasedArgumentsImpl(), WasmArgume
 
   @Suppress("DEPRECATION")
   public fun toCompilerArguments(arguments: K2WasmCompilerArguments): K2WasmCompilerArguments {
+    super.toCompilerArguments(arguments)
     if ("X_WASM" in optionsMap) { arguments.wasm = get(X_WASM) }
     if ("X_WASM_TARGET" in optionsMap) { arguments.wasmTarget = get(X_WASM_TARGET) }
     if ("X_WASM_DEBUG_INFO" in optionsMap) { arguments.wasmDebug = get(X_WASM_DEBUG_INFO) }

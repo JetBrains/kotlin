@@ -29,6 +29,7 @@ public class MetadataArgumentsImpl : CommonCompilerArgumentsImpl(), MetadataArgu
 
   @Suppress("DEPRECATION")
   public fun toCompilerArguments(arguments: K2MetadataCompilerArguments = K2MetadataCompilerArguments()): K2MetadataCompilerArguments {
+    super.toCompilerArguments(arguments)
     if ("D" in optionsMap) { arguments.destination = get(D) }
     if ("CLASSPATH" in optionsMap) { arguments.classpath = get(CLASSPATH) }
     if ("MODULE_NAME" in optionsMap) { arguments.moduleName = get(MODULE_NAME) }

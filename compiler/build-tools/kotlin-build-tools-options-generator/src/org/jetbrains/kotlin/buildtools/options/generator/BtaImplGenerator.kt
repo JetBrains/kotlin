@@ -49,6 +49,9 @@ class BtaImplGenerator(val genDir: Path) : BtaGenerator {
                         annotation<Suppress> {
                             addMember("%S", "DEPRECATION")
                         }
+                        if (parentClass != null) {
+                            addStatement("super.toCompilerArguments(arguments)")
+                        }
                         returns(compilerArgumentsClass)
                     }
 

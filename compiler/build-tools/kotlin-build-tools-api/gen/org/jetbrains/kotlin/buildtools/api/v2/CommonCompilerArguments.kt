@@ -461,6 +461,13 @@ public interface CommonCompilerArguments : CommonToolArguments {
         CommonCompilerArgument("X_NON_LOCAL_BREAK_CONTINUE")
 
     /**
+     * Enable `when` exhaustiveness improvements that rely on data-flow analysis.
+     */
+    @JvmField
+    public val _XDATA_FLOW_BASED_EXHAUSTIVENESS: CommonCompilerArgument<Boolean> =
+        CommonCompilerArgument("_XDATA_FLOW_BASED_EXHAUSTIVENESS")
+
+    /**
      * Enable experimental multi-dollar interpolation.
      *
      * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
