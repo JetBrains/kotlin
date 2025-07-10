@@ -27,6 +27,8 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.realPsi
 import org.jetbrains.kotlin.fir.SessionAndScopeSessionHolder
+import org.jetbrains.kotlin.fir.declarations.utils.isScriptTopLevelDeclaration
+import org.jetbrains.kotlin.fir.extensions.scriptResolutionHacksComponent
 import org.jetbrains.kotlin.fir.resolve.SessionHolderImpl
 import org.jetbrains.kotlin.fir.resolve.calls.ImplicitValue
 import org.jetbrains.kotlin.fir.resolve.dfa.DataFlowAnalyzerContext
@@ -828,7 +830,8 @@ private class ContextCollectorVisitor(
 
     /**
      * Executes [f] wrapped with [BodyResolveContext.forPropertyInitializer] if the [property] is not local.
-     * Note that [BodyResolveContext.forPropertyInitializer] performs the tower data cleanup in the [BodyResolveContext].
+     * Note that [BodyResolveContext.forPropertyInitializer] performs the tower data cleanup in the [BodyResolveContext], unless
+     * the [skipCleanup] is set to `true`.
      *
      * Otherwise, just calls [f] with no the cleanup.
      *
@@ -837,7 +840,10 @@ private class ContextCollectorVisitor(
      */
     private fun BodyResolveContext.forPropertyInitializerIfNonLocal(property: FirProperty, f: () -> Unit) {
         if (!property.isLocal) {
-            forPropertyInitializer(f)
+            // TODO: the [skipCleanup] hack should be reverted on fixing KT-79107
+            val skipCleanup = property.isScriptTopLevelDeclaration == true &&
+                    getSessionHolder(property).session.scriptResolutionHacksComponent?.skipTowerDataCleanupForTopLevelInitializers == true
+            forPropertyInitializer(skipCleanup, f)
         } else {
             f()
         }

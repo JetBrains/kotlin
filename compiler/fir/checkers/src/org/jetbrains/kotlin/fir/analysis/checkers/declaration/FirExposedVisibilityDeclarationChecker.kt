@@ -26,7 +26,9 @@ import org.jetbrains.kotlin.fir.declarations.utils.effectiveVisibility
 import org.jetbrains.kotlin.fir.declarations.utils.expandedConeType
 import org.jetbrains.kotlin.fir.declarations.utils.fromPrimaryConstructor
 import org.jetbrains.kotlin.fir.declarations.utils.isFromSealedClass
+import org.jetbrains.kotlin.fir.declarations.utils.isScriptTopLevelDeclaration
 import org.jetbrains.kotlin.fir.declarations.utils.visibility
+import org.jetbrains.kotlin.fir.extensions.scriptResolutionHacksComponent
 import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
@@ -169,7 +171,12 @@ object FirExposedVisibilityDeclarationChecker : FirBasicDeclarationChecker(MppCh
         if (declaration.source?.kind == KtFakeSourceElementKind.EnumGeneratedDeclaration) return
         val propertyVisibility = declaration.effectiveVisibility
 
-        if (propertyVisibility == EffectiveVisibility.Local || declaration.origin == FirDeclarationOrigin.ScriptCustomization.ResultProperty) {
+        if (propertyVisibility == EffectiveVisibility.Local
+            || declaration.origin == FirDeclarationOrigin.ScriptCustomization.ResultProperty
+            // TODO: the following check should be dropped on fixing KT-79107
+            || (declaration.isScriptTopLevelDeclaration == true &&
+                    context.session.scriptResolutionHacksComponent?.skipTowerDataCleanupForTopLevelInitializers == true)
+        ) {
             return
         }
 
