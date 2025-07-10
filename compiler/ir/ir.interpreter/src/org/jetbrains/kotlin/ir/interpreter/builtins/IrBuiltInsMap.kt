@@ -22,14 +22,14 @@ fun interpretUnaryFunction(name: String, type: String, a: Any?): Any? {
 }
 
 internal fun interpretBinaryFunction(name: String, typeA: String, typeB: String, a: Any?, b: Any?): Any? {
-    if (name == "EQEQEQ")  {
+    if (name == "EQEQEQ") {
         when (typeA) {
             "kotlin.Any?" -> if (typeB == "kotlin.Any?") return if (a is Proxy && b is Proxy) a.state === b.state else a === b
         }
     }
 
     try {
-        return evalBinaryFunction(name, typeA, typeB,  a, b);
+        return evalBinaryFunction(name, typeA, typeB, a, b);
     } catch (e: EvalMethodNotFoundException) {
         throw InterpreterMethodNotFoundError("Unknown function: $name($typeA, $typeB)")
     }
@@ -37,7 +37,7 @@ internal fun interpretBinaryFunction(name: String, typeA: String, typeB: String,
 
 internal fun interpretTernaryFunction(name: String, typeA: String, typeB: String, typeC: String, a: Any?, b: Any?, c: Any?): Any {
     try {
-        return evalTernaryFunction(name, typeA, typeB, typeC, a, b,c);
+        return evalTernaryFunction(name, typeA, typeB, typeC, a, b, c);
     } catch (e: EvalMethodNotFoundException) {
         throw InterpreterMethodNotFoundError("Unknown function: $name($typeA, $typeB, $typeC)")
     }

@@ -24,10 +24,10 @@ fun evalUnaryFunction(name: String, type: String, a: Any?): Any? {
             "kotlin.Double" -> return (a as Double).hashCode()
             "kotlin.String" -> return (a as String).hashCode()
             "kotlin.Any" -> return (a as Any).hashCode()
-            "kotlin.UInt" -> return (a as UInt).hashCode()
-            "kotlin.ULong" -> return (a as ULong).hashCode()
             "kotlin.UByte" -> return (a as UByte).hashCode()
             "kotlin.UShort" -> return (a as UShort).hashCode()
+            "kotlin.UInt" -> return (a as UInt).hashCode()
+            "kotlin.ULong" -> return (a as ULong).hashCode()
         }
         "not" -> when (type) {
             "kotlin.Boolean" -> return (a as Boolean).not()
@@ -43,10 +43,10 @@ fun evalUnaryFunction(name: String, type: String, a: Any?): Any? {
             "kotlin.Double" -> return (a as Double).toString()
             "kotlin.String" -> return (a as String).toString()
             "kotlin.Any" -> return (a as Any).toString()
-            "kotlin.UInt" -> return (a as UInt).toString()
-            "kotlin.ULong" -> return (a as ULong).toString()
             "kotlin.UByte" -> return (a as UByte).toString()
             "kotlin.UShort" -> return (a as UShort).toString()
+            "kotlin.UInt" -> return (a as UInt).toString()
+            "kotlin.ULong" -> return (a as ULong).toString()
             "kotlin.Any?" -> return a?.toString() ?: "null"
             "kotlin.Unit" -> return Unit.toString()
         }
@@ -58,10 +58,10 @@ fun evalUnaryFunction(name: String, type: String, a: Any?): Any? {
             "kotlin.Float" -> return (a as Float).dec()
             "kotlin.Long" -> return (a as Long).dec()
             "kotlin.Double" -> return (a as Double).dec()
-            "kotlin.UInt" -> return (a as UInt).dec()
-            "kotlin.ULong" -> return (a as ULong).dec()
             "kotlin.UByte" -> return (a as UByte).dec()
             "kotlin.UShort" -> return (a as UShort).dec()
+            "kotlin.UInt" -> return (a as UInt).dec()
+            "kotlin.ULong" -> return (a as ULong).dec()
         }
         "inc" -> when (type) {
             "kotlin.Char" -> return (a as Char).inc()
@@ -71,10 +71,10 @@ fun evalUnaryFunction(name: String, type: String, a: Any?): Any? {
             "kotlin.Float" -> return (a as Float).inc()
             "kotlin.Long" -> return (a as Long).inc()
             "kotlin.Double" -> return (a as Double).inc()
-            "kotlin.UInt" -> return (a as UInt).inc()
-            "kotlin.ULong" -> return (a as ULong).inc()
             "kotlin.UByte" -> return (a as UByte).inc()
             "kotlin.UShort" -> return (a as UShort).inc()
+            "kotlin.UInt" -> return (a as UInt).inc()
+            "kotlin.ULong" -> return (a as ULong).inc()
         }
         "toByte" -> when (type) {
             "kotlin.Char" -> return (a as Char).toByte()
@@ -85,10 +85,10 @@ fun evalUnaryFunction(name: String, type: String, a: Any?): Any? {
             "kotlin.Long" -> return (a as Long).toByte()
             "kotlin.Double" -> return (a as Double).toByte()
             "kotlin.Number" -> return (a as Number).toByte()
-            "kotlin.UInt" -> return (a as UInt).toByte()
-            "kotlin.ULong" -> return (a as ULong).toByte()
             "kotlin.UByte" -> return (a as UByte).toByte()
             "kotlin.UShort" -> return (a as UShort).toByte()
+            "kotlin.UInt" -> return (a as UInt).toByte()
+            "kotlin.ULong" -> return (a as ULong).toByte()
         }
         "toChar" -> when (type) {
             "kotlin.Char" -> return (a as Char).toChar()
@@ -109,10 +109,10 @@ fun evalUnaryFunction(name: String, type: String, a: Any?): Any? {
             "kotlin.Long" -> return (a as Long).toDouble()
             "kotlin.Double" -> return (a as Double).toDouble()
             "kotlin.Number" -> return (a as Number).toDouble()
-            "kotlin.UInt" -> return (a as UInt).toDouble()
-            "kotlin.ULong" -> return (a as ULong).toDouble()
             "kotlin.UByte" -> return (a as UByte).toDouble()
             "kotlin.UShort" -> return (a as UShort).toDouble()
+            "kotlin.UInt" -> return (a as UInt).toDouble()
+            "kotlin.ULong" -> return (a as ULong).toDouble()
         }
         "toFloat" -> when (type) {
             "kotlin.Char" -> return (a as Char).toFloat()
@@ -123,10 +123,10 @@ fun evalUnaryFunction(name: String, type: String, a: Any?): Any? {
             "kotlin.Long" -> return (a as Long).toFloat()
             "kotlin.Double" -> return (a as Double).toFloat()
             "kotlin.Number" -> return (a as Number).toFloat()
-            "kotlin.UInt" -> return (a as UInt).toFloat()
-            "kotlin.ULong" -> return (a as ULong).toFloat()
             "kotlin.UByte" -> return (a as UByte).toFloat()
             "kotlin.UShort" -> return (a as UShort).toFloat()
+            "kotlin.UInt" -> return (a as UInt).toFloat()
+            "kotlin.ULong" -> return (a as ULong).toFloat()
         }
         "toInt" -> when (type) {
             "kotlin.Char" -> return (a as Char).toInt()
@@ -137,10 +137,10 @@ fun evalUnaryFunction(name: String, type: String, a: Any?): Any? {
             "kotlin.Long" -> return (a as Long).toInt()
             "kotlin.Double" -> return (a as Double).toInt()
             "kotlin.Number" -> return (a as Number).toInt()
-            "kotlin.UInt" -> return (a as UInt).toInt()
-            "kotlin.ULong" -> return (a as ULong).toInt()
             "kotlin.UByte" -> return (a as UByte).toInt()
             "kotlin.UShort" -> return (a as UShort).toInt()
+            "kotlin.UInt" -> return (a as UInt).toInt()
+            "kotlin.ULong" -> return (a as ULong).toInt()
         }
         "toLong" -> when (type) {
             "kotlin.Char" -> return (a as Char).toLong()
@@ -151,10 +151,10 @@ fun evalUnaryFunction(name: String, type: String, a: Any?): Any? {
             "kotlin.Long" -> return (a as Long).toLong()
             "kotlin.Double" -> return (a as Double).toLong()
             "kotlin.Number" -> return (a as Number).toLong()
-            "kotlin.UInt" -> return (a as UInt).toLong()
-            "kotlin.ULong" -> return (a as ULong).toLong()
             "kotlin.UByte" -> return (a as UByte).toLong()
             "kotlin.UShort" -> return (a as UShort).toLong()
+            "kotlin.UInt" -> return (a as UInt).toLong()
+            "kotlin.ULong" -> return (a as ULong).toLong()
         }
         "toShort" -> when (type) {
             "kotlin.Char" -> return (a as Char).toShort()
@@ -165,10 +165,10 @@ fun evalUnaryFunction(name: String, type: String, a: Any?): Any? {
             "kotlin.Long" -> return (a as Long).toShort()
             "kotlin.Double" -> return (a as Double).toShort()
             "kotlin.Number" -> return (a as Number).toShort()
-            "kotlin.UInt" -> return (a as UInt).toShort()
-            "kotlin.ULong" -> return (a as ULong).toShort()
             "kotlin.UByte" -> return (a as UByte).toShort()
             "kotlin.UShort" -> return (a as UShort).toShort()
+            "kotlin.UInt" -> return (a as UInt).toShort()
+            "kotlin.ULong" -> return (a as ULong).toShort()
         }
         "unaryMinus" -> when (type) {
             "kotlin.Byte" -> return (a as Byte).unaryMinus()
@@ -189,10 +189,10 @@ fun evalUnaryFunction(name: String, type: String, a: Any?): Any? {
         "inv" -> when (type) {
             "kotlin.Int" -> return (a as Int).inv()
             "kotlin.Long" -> return (a as Long).inv()
-            "kotlin.UInt" -> return (a as UInt).inv()
-            "kotlin.ULong" -> return (a as ULong).inv()
             "kotlin.UByte" -> return (a as UByte).inv()
             "kotlin.UShort" -> return (a as UShort).inv()
+            "kotlin.UInt" -> return (a as UInt).inv()
+            "kotlin.ULong" -> return (a as ULong).inv()
         }
         "length" -> when (type) {
             "kotlin.String" -> return (a as String).length
@@ -227,28 +227,28 @@ fun evalUnaryFunction(name: String, type: String, a: Any?): Any? {
             "kotlin.Array" -> return (a as Array<Any?>).iterator()
         }
         "toUByte" -> when (type) {
-            "kotlin.UInt" -> return (a as UInt).toUByte()
-            "kotlin.ULong" -> return (a as ULong).toUByte()
             "kotlin.UByte" -> return (a as UByte).toUByte()
             "kotlin.UShort" -> return (a as UShort).toUByte()
+            "kotlin.UInt" -> return (a as UInt).toUByte()
+            "kotlin.ULong" -> return (a as ULong).toUByte()
         }
         "toUInt" -> when (type) {
-            "kotlin.UInt" -> return (a as UInt).toUInt()
-            "kotlin.ULong" -> return (a as ULong).toUInt()
             "kotlin.UByte" -> return (a as UByte).toUInt()
             "kotlin.UShort" -> return (a as UShort).toUInt()
+            "kotlin.UInt" -> return (a as UInt).toUInt()
+            "kotlin.ULong" -> return (a as ULong).toUInt()
         }
         "toULong" -> when (type) {
-            "kotlin.UInt" -> return (a as UInt).toULong()
-            "kotlin.ULong" -> return (a as ULong).toULong()
             "kotlin.UByte" -> return (a as UByte).toULong()
             "kotlin.UShort" -> return (a as UShort).toULong()
+            "kotlin.UInt" -> return (a as UInt).toULong()
+            "kotlin.ULong" -> return (a as ULong).toULong()
         }
         "toUShort" -> when (type) {
-            "kotlin.UInt" -> return (a as UInt).toUShort()
-            "kotlin.ULong" -> return (a as ULong).toUShort()
             "kotlin.UByte" -> return (a as UByte).toUShort()
             "kotlin.UShort" -> return (a as UShort).toUShort()
+            "kotlin.UInt" -> return (a as UInt).toUShort()
+            "kotlin.ULong" -> return (a as ULong).toUShort()
         }
         "CHECK_NOT_NULL" -> when (type) {
             "T0?" -> return a!!
@@ -266,10 +266,10 @@ fun evalBinaryFunction(name: String, typeA: String, typeB: String, a: Any?, b: A
             "kotlin.Boolean" -> if (typeB == "kotlin.Boolean") return (a as Boolean).and(b as Boolean)
             "kotlin.Int" -> if (typeB == "kotlin.Int") return (a as Int).and(b as Int)
             "kotlin.Long" -> if (typeB == "kotlin.Long") return (a as Long).and(b as Long)
-            "kotlin.UInt" -> if (typeB == "kotlin.UInt") return (a as UInt).and(b as UInt)
-            "kotlin.ULong" -> if (typeB == "kotlin.ULong") return (a as ULong).and(b as ULong)
             "kotlin.UByte" -> if (typeB == "kotlin.UByte") return (a as UByte).and(b as UByte)
             "kotlin.UShort" -> if (typeB == "kotlin.UShort") return (a as UShort).and(b as UShort)
+            "kotlin.UInt" -> if (typeB == "kotlin.UInt") return (a as UInt).and(b as UInt)
+            "kotlin.ULong" -> if (typeB == "kotlin.ULong") return (a as ULong).and(b as ULong)
         }
         "compareTo" -> when (typeA) {
             "kotlin.Boolean" -> if (typeB == "kotlin.Boolean") return (a as Boolean).compareTo(b as Boolean)
@@ -324,18 +324,6 @@ fun evalBinaryFunction(name: String, typeA: String, typeB: String, a: Any?, b: A
             }
             "kotlin.String" -> if (typeB == "kotlin.String") return (a as String).compareTo(b as String)
             "kotlin.Comparable" -> if (typeB == "T") return (a as Comparable<Any?>).compareTo(b)
-            "kotlin.UInt" -> when (typeB) {
-                "kotlin.UByte" -> return (a as UInt).compareTo(b as UByte)
-                "kotlin.UShort" -> return (a as UInt).compareTo(b as UShort)
-                "kotlin.UInt" -> return (a as UInt).compareTo(b as UInt)
-                "kotlin.ULong" -> return (a as UInt).compareTo(b as ULong)
-            }
-            "kotlin.ULong" -> when (typeB) {
-                "kotlin.UByte" -> return (a as ULong).compareTo(b as UByte)
-                "kotlin.UShort" -> return (a as ULong).compareTo(b as UShort)
-                "kotlin.UInt" -> return (a as ULong).compareTo(b as UInt)
-                "kotlin.ULong" -> return (a as ULong).compareTo(b as ULong)
-            }
             "kotlin.UByte" -> when (typeB) {
                 "kotlin.UByte" -> return (a as UByte).compareTo(b as UByte)
                 "kotlin.UShort" -> return (a as UByte).compareTo(b as UShort)
@@ -347,6 +335,18 @@ fun evalBinaryFunction(name: String, typeA: String, typeB: String, a: Any?, b: A
                 "kotlin.UShort" -> return (a as UShort).compareTo(b as UShort)
                 "kotlin.UInt" -> return (a as UShort).compareTo(b as UInt)
                 "kotlin.ULong" -> return (a as UShort).compareTo(b as ULong)
+            }
+            "kotlin.UInt" -> when (typeB) {
+                "kotlin.UByte" -> return (a as UInt).compareTo(b as UByte)
+                "kotlin.UShort" -> return (a as UInt).compareTo(b as UShort)
+                "kotlin.UInt" -> return (a as UInt).compareTo(b as UInt)
+                "kotlin.ULong" -> return (a as UInt).compareTo(b as ULong)
+            }
+            "kotlin.ULong" -> when (typeB) {
+                "kotlin.UByte" -> return (a as ULong).compareTo(b as UByte)
+                "kotlin.UShort" -> return (a as ULong).compareTo(b as UShort)
+                "kotlin.UInt" -> return (a as ULong).compareTo(b as UInt)
+                "kotlin.ULong" -> return (a as ULong).compareTo(b as ULong)
             }
         }
         "equals" -> when (typeA) {
@@ -360,28 +360,28 @@ fun evalBinaryFunction(name: String, typeA: String, typeB: String, a: Any?, b: A
             "kotlin.Double" -> if (typeB == "kotlin.Any?") return (a as Double).equals(b)
             "kotlin.String" -> if (typeB == "kotlin.Any?") return (a as String).equals(b)
             "kotlin.Any" -> if (typeB == "kotlin.Any?") return (a as Any).equals(b)
-            "kotlin.UInt" -> if (typeB == "kotlin.Any?") return (a as UInt).equals(b)
-            "kotlin.ULong" -> if (typeB == "kotlin.Any?") return (a as ULong).equals(b)
             "kotlin.UByte" -> if (typeB == "kotlin.Any?") return (a as UByte).equals(b)
             "kotlin.UShort" -> if (typeB == "kotlin.Any?") return (a as UShort).equals(b)
+            "kotlin.UInt" -> if (typeB == "kotlin.Any?") return (a as UInt).equals(b)
+            "kotlin.ULong" -> if (typeB == "kotlin.Any?") return (a as ULong).equals(b)
         }
         "or" -> when (typeA) {
             "kotlin.Boolean" -> if (typeB == "kotlin.Boolean") return (a as Boolean).or(b as Boolean)
             "kotlin.Int" -> if (typeB == "kotlin.Int") return (a as Int).or(b as Int)
             "kotlin.Long" -> if (typeB == "kotlin.Long") return (a as Long).or(b as Long)
-            "kotlin.UInt" -> if (typeB == "kotlin.UInt") return (a as UInt).or(b as UInt)
-            "kotlin.ULong" -> if (typeB == "kotlin.ULong") return (a as ULong).or(b as ULong)
             "kotlin.UByte" -> if (typeB == "kotlin.UByte") return (a as UByte).or(b as UByte)
             "kotlin.UShort" -> if (typeB == "kotlin.UShort") return (a as UShort).or(b as UShort)
+            "kotlin.UInt" -> if (typeB == "kotlin.UInt") return (a as UInt).or(b as UInt)
+            "kotlin.ULong" -> if (typeB == "kotlin.ULong") return (a as ULong).or(b as ULong)
         }
         "xor" -> when (typeA) {
             "kotlin.Boolean" -> if (typeB == "kotlin.Boolean") return (a as Boolean).xor(b as Boolean)
             "kotlin.Int" -> if (typeB == "kotlin.Int") return (a as Int).xor(b as Int)
             "kotlin.Long" -> if (typeB == "kotlin.Long") return (a as Long).xor(b as Long)
-            "kotlin.UInt" -> if (typeB == "kotlin.UInt") return (a as UInt).xor(b as UInt)
-            "kotlin.ULong" -> if (typeB == "kotlin.ULong") return (a as ULong).xor(b as ULong)
             "kotlin.UByte" -> if (typeB == "kotlin.UByte") return (a as UByte).xor(b as UByte)
             "kotlin.UShort" -> if (typeB == "kotlin.UShort") return (a as UShort).xor(b as UShort)
+            "kotlin.UInt" -> if (typeB == "kotlin.UInt") return (a as UInt).xor(b as UInt)
+            "kotlin.ULong" -> if (typeB == "kotlin.ULong") return (a as ULong).xor(b as ULong)
         }
         "minus" -> when (typeA) {
             "kotlin.Char" -> when (typeB) {
@@ -436,18 +436,6 @@ fun evalBinaryFunction(name: String, typeA: String, typeB: String, a: Any?, b: A
                 "kotlin.Float" -> return (a as Double).minus(b as Float)
                 "kotlin.Double" -> return (a as Double).minus(b as Double)
             }
-            "kotlin.UInt" -> when (typeB) {
-                "kotlin.UByte" -> return (a as UInt).minus(b as UByte)
-                "kotlin.UShort" -> return (a as UInt).minus(b as UShort)
-                "kotlin.UInt" -> return (a as UInt).minus(b as UInt)
-                "kotlin.ULong" -> return (a as UInt).minus(b as ULong)
-            }
-            "kotlin.ULong" -> when (typeB) {
-                "kotlin.UByte" -> return (a as ULong).minus(b as UByte)
-                "kotlin.UShort" -> return (a as ULong).minus(b as UShort)
-                "kotlin.UInt" -> return (a as ULong).minus(b as UInt)
-                "kotlin.ULong" -> return (a as ULong).minus(b as ULong)
-            }
             "kotlin.UByte" -> when (typeB) {
                 "kotlin.UByte" -> return (a as UByte).minus(b as UByte)
                 "kotlin.UShort" -> return (a as UByte).minus(b as UShort)
@@ -459,6 +447,18 @@ fun evalBinaryFunction(name: String, typeA: String, typeB: String, a: Any?, b: A
                 "kotlin.UShort" -> return (a as UShort).minus(b as UShort)
                 "kotlin.UInt" -> return (a as UShort).minus(b as UInt)
                 "kotlin.ULong" -> return (a as UShort).minus(b as ULong)
+            }
+            "kotlin.UInt" -> when (typeB) {
+                "kotlin.UByte" -> return (a as UInt).minus(b as UByte)
+                "kotlin.UShort" -> return (a as UInt).minus(b as UShort)
+                "kotlin.UInt" -> return (a as UInt).minus(b as UInt)
+                "kotlin.ULong" -> return (a as UInt).minus(b as ULong)
+            }
+            "kotlin.ULong" -> when (typeB) {
+                "kotlin.UByte" -> return (a as ULong).minus(b as UByte)
+                "kotlin.UShort" -> return (a as ULong).minus(b as UShort)
+                "kotlin.UInt" -> return (a as ULong).minus(b as UInt)
+                "kotlin.ULong" -> return (a as ULong).minus(b as ULong)
             }
         }
         "plus" -> when (typeA) {
@@ -512,18 +512,6 @@ fun evalBinaryFunction(name: String, typeA: String, typeB: String, a: Any?, b: A
                 "kotlin.Double" -> return (a as Double).plus(b as Double)
             }
             "kotlin.String" -> if (typeB == "kotlin.Any?") return (a as String).plus(b)
-            "kotlin.UInt" -> when (typeB) {
-                "kotlin.UByte" -> return (a as UInt).plus(b as UByte)
-                "kotlin.UShort" -> return (a as UInt).plus(b as UShort)
-                "kotlin.UInt" -> return (a as UInt).plus(b as UInt)
-                "kotlin.ULong" -> return (a as UInt).plus(b as ULong)
-            }
-            "kotlin.ULong" -> when (typeB) {
-                "kotlin.UByte" -> return (a as ULong).plus(b as UByte)
-                "kotlin.UShort" -> return (a as ULong).plus(b as UShort)
-                "kotlin.UInt" -> return (a as ULong).plus(b as UInt)
-                "kotlin.ULong" -> return (a as ULong).plus(b as ULong)
-            }
             "kotlin.UByte" -> when (typeB) {
                 "kotlin.UByte" -> return (a as UByte).plus(b as UByte)
                 "kotlin.UShort" -> return (a as UByte).plus(b as UShort)
@@ -535,6 +523,18 @@ fun evalBinaryFunction(name: String, typeA: String, typeB: String, a: Any?, b: A
                 "kotlin.UShort" -> return (a as UShort).plus(b as UShort)
                 "kotlin.UInt" -> return (a as UShort).plus(b as UInt)
                 "kotlin.ULong" -> return (a as UShort).plus(b as ULong)
+            }
+            "kotlin.UInt" -> when (typeB) {
+                "kotlin.UByte" -> return (a as UInt).plus(b as UByte)
+                "kotlin.UShort" -> return (a as UInt).plus(b as UShort)
+                "kotlin.UInt" -> return (a as UInt).plus(b as UInt)
+                "kotlin.ULong" -> return (a as UInt).plus(b as ULong)
+            }
+            "kotlin.ULong" -> when (typeB) {
+                "kotlin.UByte" -> return (a as ULong).plus(b as UByte)
+                "kotlin.UShort" -> return (a as ULong).plus(b as UShort)
+                "kotlin.UInt" -> return (a as ULong).plus(b as UInt)
+                "kotlin.ULong" -> return (a as ULong).plus(b as ULong)
             }
         }
         "rangeTo" -> when (typeA) {
@@ -563,10 +563,10 @@ fun evalBinaryFunction(name: String, typeA: String, typeB: String, a: Any?, b: A
                 "kotlin.Int" -> return (a as Long).rangeTo(b as Int)
                 "kotlin.Long" -> return (a as Long).rangeTo(b as Long)
             }
-            "kotlin.UInt" -> if (typeB == "kotlin.UInt") return (a as UInt).rangeTo(b as UInt)
-            "kotlin.ULong" -> if (typeB == "kotlin.ULong") return (a as ULong).rangeTo(b as ULong)
             "kotlin.UByte" -> if (typeB == "kotlin.UByte") return (a as UByte).rangeTo(b as UByte)
             "kotlin.UShort" -> if (typeB == "kotlin.UShort") return (a as UShort).rangeTo(b as UShort)
+            "kotlin.UInt" -> if (typeB == "kotlin.UInt") return (a as UInt).rangeTo(b as UInt)
+            "kotlin.ULong" -> if (typeB == "kotlin.ULong") return (a as ULong).rangeTo(b as ULong)
         }
         "div" -> when (typeA) {
             "kotlin.Byte" -> when (typeB) {
@@ -617,18 +617,6 @@ fun evalBinaryFunction(name: String, typeA: String, typeB: String, a: Any?, b: A
                 "kotlin.Float" -> return (a as Double).div(b as Float)
                 "kotlin.Double" -> return (a as Double).div(b as Double)
             }
-            "kotlin.UInt" -> when (typeB) {
-                "kotlin.UByte" -> return (a as UInt).div(b as UByte)
-                "kotlin.UShort" -> return (a as UInt).div(b as UShort)
-                "kotlin.UInt" -> return (a as UInt).div(b as UInt)
-                "kotlin.ULong" -> return (a as UInt).div(b as ULong)
-            }
-            "kotlin.ULong" -> when (typeB) {
-                "kotlin.UByte" -> return (a as ULong).div(b as UByte)
-                "kotlin.UShort" -> return (a as ULong).div(b as UShort)
-                "kotlin.UInt" -> return (a as ULong).div(b as UInt)
-                "kotlin.ULong" -> return (a as ULong).div(b as ULong)
-            }
             "kotlin.UByte" -> when (typeB) {
                 "kotlin.UByte" -> return (a as UByte).div(b as UByte)
                 "kotlin.UShort" -> return (a as UByte).div(b as UShort)
@@ -640,6 +628,18 @@ fun evalBinaryFunction(name: String, typeA: String, typeB: String, a: Any?, b: A
                 "kotlin.UShort" -> return (a as UShort).div(b as UShort)
                 "kotlin.UInt" -> return (a as UShort).div(b as UInt)
                 "kotlin.ULong" -> return (a as UShort).div(b as ULong)
+            }
+            "kotlin.UInt" -> when (typeB) {
+                "kotlin.UByte" -> return (a as UInt).div(b as UByte)
+                "kotlin.UShort" -> return (a as UInt).div(b as UShort)
+                "kotlin.UInt" -> return (a as UInt).div(b as UInt)
+                "kotlin.ULong" -> return (a as UInt).div(b as ULong)
+            }
+            "kotlin.ULong" -> when (typeB) {
+                "kotlin.UByte" -> return (a as ULong).div(b as UByte)
+                "kotlin.UShort" -> return (a as ULong).div(b as UShort)
+                "kotlin.UInt" -> return (a as ULong).div(b as UInt)
+                "kotlin.ULong" -> return (a as ULong).div(b as ULong)
             }
         }
         "rem" -> when (typeA) {
@@ -691,18 +691,6 @@ fun evalBinaryFunction(name: String, typeA: String, typeB: String, a: Any?, b: A
                 "kotlin.Float" -> return (a as Double).rem(b as Float)
                 "kotlin.Double" -> return (a as Double).rem(b as Double)
             }
-            "kotlin.UInt" -> when (typeB) {
-                "kotlin.UByte" -> return (a as UInt).rem(b as UByte)
-                "kotlin.UShort" -> return (a as UInt).rem(b as UShort)
-                "kotlin.UInt" -> return (a as UInt).rem(b as UInt)
-                "kotlin.ULong" -> return (a as UInt).rem(b as ULong)
-            }
-            "kotlin.ULong" -> when (typeB) {
-                "kotlin.UByte" -> return (a as ULong).rem(b as UByte)
-                "kotlin.UShort" -> return (a as ULong).rem(b as UShort)
-                "kotlin.UInt" -> return (a as ULong).rem(b as UInt)
-                "kotlin.ULong" -> return (a as ULong).rem(b as ULong)
-            }
             "kotlin.UByte" -> when (typeB) {
                 "kotlin.UByte" -> return (a as UByte).rem(b as UByte)
                 "kotlin.UShort" -> return (a as UByte).rem(b as UShort)
@@ -714,6 +702,18 @@ fun evalBinaryFunction(name: String, typeA: String, typeB: String, a: Any?, b: A
                 "kotlin.UShort" -> return (a as UShort).rem(b as UShort)
                 "kotlin.UInt" -> return (a as UShort).rem(b as UInt)
                 "kotlin.ULong" -> return (a as UShort).rem(b as ULong)
+            }
+            "kotlin.UInt" -> when (typeB) {
+                "kotlin.UByte" -> return (a as UInt).rem(b as UByte)
+                "kotlin.UShort" -> return (a as UInt).rem(b as UShort)
+                "kotlin.UInt" -> return (a as UInt).rem(b as UInt)
+                "kotlin.ULong" -> return (a as UInt).rem(b as ULong)
+            }
+            "kotlin.ULong" -> when (typeB) {
+                "kotlin.UByte" -> return (a as ULong).rem(b as UByte)
+                "kotlin.UShort" -> return (a as ULong).rem(b as UShort)
+                "kotlin.UInt" -> return (a as ULong).rem(b as UInt)
+                "kotlin.ULong" -> return (a as ULong).rem(b as ULong)
             }
         }
         "times" -> when (typeA) {
@@ -765,18 +765,6 @@ fun evalBinaryFunction(name: String, typeA: String, typeB: String, a: Any?, b: A
                 "kotlin.Float" -> return (a as Double).times(b as Float)
                 "kotlin.Double" -> return (a as Double).times(b as Double)
             }
-            "kotlin.UInt" -> when (typeB) {
-                "kotlin.UByte" -> return (a as UInt).times(b as UByte)
-                "kotlin.UShort" -> return (a as UInt).times(b as UShort)
-                "kotlin.UInt" -> return (a as UInt).times(b as UInt)
-                "kotlin.ULong" -> return (a as UInt).times(b as ULong)
-            }
-            "kotlin.ULong" -> when (typeB) {
-                "kotlin.UByte" -> return (a as ULong).times(b as UByte)
-                "kotlin.UShort" -> return (a as ULong).times(b as UShort)
-                "kotlin.UInt" -> return (a as ULong).times(b as UInt)
-                "kotlin.ULong" -> return (a as ULong).times(b as ULong)
-            }
             "kotlin.UByte" -> when (typeB) {
                 "kotlin.UByte" -> return (a as UByte).times(b as UByte)
                 "kotlin.UShort" -> return (a as UByte).times(b as UShort)
@@ -788,6 +776,18 @@ fun evalBinaryFunction(name: String, typeA: String, typeB: String, a: Any?, b: A
                 "kotlin.UShort" -> return (a as UShort).times(b as UShort)
                 "kotlin.UInt" -> return (a as UShort).times(b as UInt)
                 "kotlin.ULong" -> return (a as UShort).times(b as ULong)
+            }
+            "kotlin.UInt" -> when (typeB) {
+                "kotlin.UByte" -> return (a as UInt).times(b as UByte)
+                "kotlin.UShort" -> return (a as UInt).times(b as UShort)
+                "kotlin.UInt" -> return (a as UInt).times(b as UInt)
+                "kotlin.ULong" -> return (a as UInt).times(b as ULong)
+            }
+            "kotlin.ULong" -> when (typeB) {
+                "kotlin.UByte" -> return (a as ULong).times(b as UByte)
+                "kotlin.UShort" -> return (a as ULong).times(b as UShort)
+                "kotlin.UInt" -> return (a as ULong).times(b as UInt)
+                "kotlin.ULong" -> return (a as ULong).times(b as ULong)
             }
         }
         "shl" -> when (typeA) {
@@ -820,18 +820,6 @@ fun evalBinaryFunction(name: String, typeA: String, typeB: String, a: Any?, b: A
             "kotlin.Array" -> if (typeB == "kotlin.Int") return (a as Array<Any?>).get(b as Int)
         }
         "floorDiv" -> when (typeA) {
-            "kotlin.UInt" -> when (typeB) {
-                "kotlin.UByte" -> return (a as UInt).floorDiv(b as UByte)
-                "kotlin.UShort" -> return (a as UInt).floorDiv(b as UShort)
-                "kotlin.UInt" -> return (a as UInt).floorDiv(b as UInt)
-                "kotlin.ULong" -> return (a as UInt).floorDiv(b as ULong)
-            }
-            "kotlin.ULong" -> when (typeB) {
-                "kotlin.UByte" -> return (a as ULong).floorDiv(b as UByte)
-                "kotlin.UShort" -> return (a as ULong).floorDiv(b as UShort)
-                "kotlin.UInt" -> return (a as ULong).floorDiv(b as UInt)
-                "kotlin.ULong" -> return (a as ULong).floorDiv(b as ULong)
-            }
             "kotlin.UByte" -> when (typeB) {
                 "kotlin.UByte" -> return (a as UByte).floorDiv(b as UByte)
                 "kotlin.UShort" -> return (a as UByte).floorDiv(b as UShort)
@@ -843,6 +831,18 @@ fun evalBinaryFunction(name: String, typeA: String, typeB: String, a: Any?, b: A
                 "kotlin.UShort" -> return (a as UShort).floorDiv(b as UShort)
                 "kotlin.UInt" -> return (a as UShort).floorDiv(b as UInt)
                 "kotlin.ULong" -> return (a as UShort).floorDiv(b as ULong)
+            }
+            "kotlin.UInt" -> when (typeB) {
+                "kotlin.UByte" -> return (a as UInt).floorDiv(b as UByte)
+                "kotlin.UShort" -> return (a as UInt).floorDiv(b as UShort)
+                "kotlin.UInt" -> return (a as UInt).floorDiv(b as UInt)
+                "kotlin.ULong" -> return (a as UInt).floorDiv(b as ULong)
+            }
+            "kotlin.ULong" -> when (typeB) {
+                "kotlin.UByte" -> return (a as ULong).floorDiv(b as UByte)
+                "kotlin.UShort" -> return (a as ULong).floorDiv(b as UShort)
+                "kotlin.UInt" -> return (a as ULong).floorDiv(b as UInt)
+                "kotlin.ULong" -> return (a as ULong).floorDiv(b as ULong)
             }
             "kotlin.Byte" -> when (typeB) {
                 "kotlin.Byte" -> return (a as Byte).floorDiv(b as Byte)
@@ -870,18 +870,6 @@ fun evalBinaryFunction(name: String, typeA: String, typeB: String, a: Any?, b: A
             }
         }
         "mod" -> when (typeA) {
-            "kotlin.UInt" -> when (typeB) {
-                "kotlin.UByte" -> return (a as UInt).mod(b as UByte)
-                "kotlin.UShort" -> return (a as UInt).mod(b as UShort)
-                "kotlin.UInt" -> return (a as UInt).mod(b as UInt)
-                "kotlin.ULong" -> return (a as UInt).mod(b as ULong)
-            }
-            "kotlin.ULong" -> when (typeB) {
-                "kotlin.UByte" -> return (a as ULong).mod(b as UByte)
-                "kotlin.UShort" -> return (a as ULong).mod(b as UShort)
-                "kotlin.UInt" -> return (a as ULong).mod(b as UInt)
-                "kotlin.ULong" -> return (a as ULong).mod(b as ULong)
-            }
             "kotlin.UByte" -> when (typeB) {
                 "kotlin.UByte" -> return (a as UByte).mod(b as UByte)
                 "kotlin.UShort" -> return (a as UByte).mod(b as UShort)
@@ -893,6 +881,18 @@ fun evalBinaryFunction(name: String, typeA: String, typeB: String, a: Any?, b: A
                 "kotlin.UShort" -> return (a as UShort).mod(b as UShort)
                 "kotlin.UInt" -> return (a as UShort).mod(b as UInt)
                 "kotlin.ULong" -> return (a as UShort).mod(b as ULong)
+            }
+            "kotlin.UInt" -> when (typeB) {
+                "kotlin.UByte" -> return (a as UInt).mod(b as UByte)
+                "kotlin.UShort" -> return (a as UInt).mod(b as UShort)
+                "kotlin.UInt" -> return (a as UInt).mod(b as UInt)
+                "kotlin.ULong" -> return (a as UInt).mod(b as ULong)
+            }
+            "kotlin.ULong" -> when (typeB) {
+                "kotlin.UByte" -> return (a as ULong).mod(b as UByte)
+                "kotlin.UShort" -> return (a as ULong).mod(b as UShort)
+                "kotlin.UInt" -> return (a as ULong).mod(b as UInt)
+                "kotlin.ULong" -> return (a as ULong).mod(b as ULong)
             }
             "kotlin.Byte" -> when (typeB) {
                 "kotlin.Byte" -> return (a as Byte).mod(b as Byte)
@@ -928,12 +928,16 @@ fun evalBinaryFunction(name: String, typeA: String, typeB: String, a: Any?, b: A
             }
         }
         "rangeUntil" -> when (typeA) {
-            "kotlin.UInt" -> if (typeB == "kotlin.UInt") return (a as UInt).rangeUntil(b as UInt)
-            "kotlin.ULong" -> if (typeB == "kotlin.ULong") return (a as ULong).rangeUntil(b as ULong)
             "kotlin.UByte" -> if (typeB == "kotlin.UByte") return (a as UByte).rangeUntil(b as UByte)
             "kotlin.UShort" -> if (typeB == "kotlin.UShort") return (a as UShort).rangeUntil(b as UShort)
+            "kotlin.UInt" -> if (typeB == "kotlin.UInt") return (a as UInt).rangeUntil(b as UInt)
+            "kotlin.ULong" -> if (typeB == "kotlin.ULong") return (a as ULong).rangeUntil(b as ULong)
         }
         "less" -> when (typeA) {
+            "kotlin.UByte" -> if (typeB == "kotlin.UByte") return (a as UByte) < (b as UByte)
+            "kotlin.UShort" -> if (typeB == "kotlin.UShort") return (a as UShort) < (b as UShort)
+            "kotlin.UInt" -> if (typeB == "kotlin.UInt") return (a as UInt) < (b as UInt)
+            "kotlin.ULong" -> if (typeB == "kotlin.ULong") return (a as ULong) < (b as ULong)
             "kotlin.Char" -> if (typeB == "kotlin.Char") return (a as Char) < (b as Char)
             "kotlin.Byte" -> if (typeB == "kotlin.Byte") return (a as Byte) < (b as Byte)
             "kotlin.Short" -> if (typeB == "kotlin.Short") return (a as Short) < (b as Short)
@@ -943,6 +947,10 @@ fun evalBinaryFunction(name: String, typeA: String, typeB: String, a: Any?, b: A
             "kotlin.Double" -> if (typeB == "kotlin.Double") return (a as Double) < (b as Double)
         }
         "lessOrEqual" -> when (typeA) {
+            "kotlin.UByte" -> if (typeB == "kotlin.UByte") return (a as UByte) <= (b as UByte)
+            "kotlin.UShort" -> if (typeB == "kotlin.UShort") return (a as UShort) <= (b as UShort)
+            "kotlin.UInt" -> if (typeB == "kotlin.UInt") return (a as UInt) <= (b as UInt)
+            "kotlin.ULong" -> if (typeB == "kotlin.ULong") return (a as ULong) <= (b as ULong)
             "kotlin.Char" -> if (typeB == "kotlin.Char") return (a as Char) <= (b as Char)
             "kotlin.Byte" -> if (typeB == "kotlin.Byte") return (a as Byte) <= (b as Byte)
             "kotlin.Short" -> if (typeB == "kotlin.Short") return (a as Short) <= (b as Short)
@@ -952,6 +960,10 @@ fun evalBinaryFunction(name: String, typeA: String, typeB: String, a: Any?, b: A
             "kotlin.Double" -> if (typeB == "kotlin.Double") return (a as Double) <= (b as Double)
         }
         "greater" -> when (typeA) {
+            "kotlin.UByte" -> if (typeB == "kotlin.UByte") return (a as UByte) > (b as UByte)
+            "kotlin.UShort" -> if (typeB == "kotlin.UShort") return (a as UShort) > (b as UShort)
+            "kotlin.UInt" -> if (typeB == "kotlin.UInt") return (a as UInt) > (b as UInt)
+            "kotlin.ULong" -> if (typeB == "kotlin.ULong") return (a as ULong) > (b as ULong)
             "kotlin.Char" -> if (typeB == "kotlin.Char") return (a as Char) > (b as Char)
             "kotlin.Byte" -> if (typeB == "kotlin.Byte") return (a as Byte) > (b as Byte)
             "kotlin.Short" -> if (typeB == "kotlin.Short") return (a as Short) > (b as Short)
@@ -961,6 +973,10 @@ fun evalBinaryFunction(name: String, typeA: String, typeB: String, a: Any?, b: A
             "kotlin.Double" -> if (typeB == "kotlin.Double") return (a as Double) > (b as Double)
         }
         "greaterOrEqual" -> when (typeA) {
+            "kotlin.UByte" -> if (typeB == "kotlin.UByte") return (a as UByte) >= (b as UByte)
+            "kotlin.UShort" -> if (typeB == "kotlin.UShort") return (a as UShort) >= (b as UShort)
+            "kotlin.UInt" -> if (typeB == "kotlin.UInt") return (a as UInt) >= (b as UInt)
+            "kotlin.ULong" -> if (typeB == "kotlin.ULong") return (a as ULong) >= (b as ULong)
             "kotlin.Char" -> if (typeB == "kotlin.Char") return (a as Char) >= (b as Char)
             "kotlin.Byte" -> if (typeB == "kotlin.Byte") return (a as Byte) >= (b as Byte)
             "kotlin.Short" -> if (typeB == "kotlin.Short") return (a as Short) >= (b as Short)
@@ -1016,28 +1032,28 @@ fun legacyK1EvalBinaryBigIntFunction(name: String, typeA: String, typeB: String,
             "kotlin.Boolean" -> if (typeB == "kotlin.Boolean") return a.and(b)
             "kotlin.Int" -> if (typeB == "kotlin.Int") return a.and(b)
             "kotlin.Long" -> if (typeB == "kotlin.Long") return a.and(b)
-            "kotlin.UInt" -> if (typeB == "kotlin.UInt") return a.and(b)
-            "kotlin.ULong" -> if (typeB == "kotlin.ULong") return a.and(b)
             "kotlin.UByte" -> if (typeB == "kotlin.UByte") return a.and(b)
             "kotlin.UShort" -> if (typeB == "kotlin.UShort") return a.and(b)
+            "kotlin.UInt" -> if (typeB == "kotlin.UInt") return a.and(b)
+            "kotlin.ULong" -> if (typeB == "kotlin.ULong") return a.and(b)
         }
         "or" -> when (typeA) {
             "kotlin.Boolean" -> if (typeB == "kotlin.Boolean") return a.or(b)
             "kotlin.Int" -> if (typeB == "kotlin.Int") return a.or(b)
             "kotlin.Long" -> if (typeB == "kotlin.Long") return a.or(b)
-            "kotlin.UInt" -> if (typeB == "kotlin.UInt") return a.or(b)
-            "kotlin.ULong" -> if (typeB == "kotlin.ULong") return a.or(b)
             "kotlin.UByte" -> if (typeB == "kotlin.UByte") return a.or(b)
             "kotlin.UShort" -> if (typeB == "kotlin.UShort") return a.or(b)
+            "kotlin.UInt" -> if (typeB == "kotlin.UInt") return a.or(b)
+            "kotlin.ULong" -> if (typeB == "kotlin.ULong") return a.or(b)
         }
         "xor" -> when (typeA) {
             "kotlin.Boolean" -> if (typeB == "kotlin.Boolean") return a.xor(b)
             "kotlin.Int" -> if (typeB == "kotlin.Int") return a.xor(b)
             "kotlin.Long" -> if (typeB == "kotlin.Long") return a.xor(b)
-            "kotlin.UInt" -> if (typeB == "kotlin.UInt") return a.xor(b)
-            "kotlin.ULong" -> if (typeB == "kotlin.ULong") return a.xor(b)
             "kotlin.UByte" -> if (typeB == "kotlin.UByte") return a.xor(b)
             "kotlin.UShort" -> if (typeB == "kotlin.UShort") return a.xor(b)
+            "kotlin.UInt" -> if (typeB == "kotlin.UInt") return a.xor(b)
+            "kotlin.ULong" -> if (typeB == "kotlin.ULong") return a.xor(b)
         }
         "minus" -> when (typeA) {
             "kotlin.Char" -> when (typeB) {
@@ -1092,18 +1108,6 @@ fun legacyK1EvalBinaryBigIntFunction(name: String, typeA: String, typeB: String,
                 "kotlin.Float" -> return a.subtract(b)
                 "kotlin.Double" -> return a.subtract(b)
             }
-            "kotlin.UInt" -> when (typeB) {
-                "kotlin.UByte" -> return a.subtract(b)
-                "kotlin.UShort" -> return a.subtract(b)
-                "kotlin.UInt" -> return a.subtract(b)
-                "kotlin.ULong" -> return a.subtract(b)
-            }
-            "kotlin.ULong" -> when (typeB) {
-                "kotlin.UByte" -> return a.subtract(b)
-                "kotlin.UShort" -> return a.subtract(b)
-                "kotlin.UInt" -> return a.subtract(b)
-                "kotlin.ULong" -> return a.subtract(b)
-            }
             "kotlin.UByte" -> when (typeB) {
                 "kotlin.UByte" -> return a.subtract(b)
                 "kotlin.UShort" -> return a.subtract(b)
@@ -1111,6 +1115,18 @@ fun legacyK1EvalBinaryBigIntFunction(name: String, typeA: String, typeB: String,
                 "kotlin.ULong" -> return a.subtract(b)
             }
             "kotlin.UShort" -> when (typeB) {
+                "kotlin.UByte" -> return a.subtract(b)
+                "kotlin.UShort" -> return a.subtract(b)
+                "kotlin.UInt" -> return a.subtract(b)
+                "kotlin.ULong" -> return a.subtract(b)
+            }
+            "kotlin.UInt" -> when (typeB) {
+                "kotlin.UByte" -> return a.subtract(b)
+                "kotlin.UShort" -> return a.subtract(b)
+                "kotlin.UInt" -> return a.subtract(b)
+                "kotlin.ULong" -> return a.subtract(b)
+            }
+            "kotlin.ULong" -> when (typeB) {
                 "kotlin.UByte" -> return a.subtract(b)
                 "kotlin.UShort" -> return a.subtract(b)
                 "kotlin.UInt" -> return a.subtract(b)
@@ -1168,18 +1184,6 @@ fun legacyK1EvalBinaryBigIntFunction(name: String, typeA: String, typeB: String,
                 "kotlin.Double" -> return a.add(b)
             }
             "kotlin.String" -> if (typeB == "kotlin.Any?") return a.add(b)
-            "kotlin.UInt" -> when (typeB) {
-                "kotlin.UByte" -> return a.add(b)
-                "kotlin.UShort" -> return a.add(b)
-                "kotlin.UInt" -> return a.add(b)
-                "kotlin.ULong" -> return a.add(b)
-            }
-            "kotlin.ULong" -> when (typeB) {
-                "kotlin.UByte" -> return a.add(b)
-                "kotlin.UShort" -> return a.add(b)
-                "kotlin.UInt" -> return a.add(b)
-                "kotlin.ULong" -> return a.add(b)
-            }
             "kotlin.UByte" -> when (typeB) {
                 "kotlin.UByte" -> return a.add(b)
                 "kotlin.UShort" -> return a.add(b)
@@ -1187,6 +1191,18 @@ fun legacyK1EvalBinaryBigIntFunction(name: String, typeA: String, typeB: String,
                 "kotlin.ULong" -> return a.add(b)
             }
             "kotlin.UShort" -> when (typeB) {
+                "kotlin.UByte" -> return a.add(b)
+                "kotlin.UShort" -> return a.add(b)
+                "kotlin.UInt" -> return a.add(b)
+                "kotlin.ULong" -> return a.add(b)
+            }
+            "kotlin.UInt" -> when (typeB) {
+                "kotlin.UByte" -> return a.add(b)
+                "kotlin.UShort" -> return a.add(b)
+                "kotlin.UInt" -> return a.add(b)
+                "kotlin.ULong" -> return a.add(b)
+            }
+            "kotlin.ULong" -> when (typeB) {
                 "kotlin.UByte" -> return a.add(b)
                 "kotlin.UShort" -> return a.add(b)
                 "kotlin.UInt" -> return a.add(b)
@@ -1242,18 +1258,6 @@ fun legacyK1EvalBinaryBigIntFunction(name: String, typeA: String, typeB: String,
                 "kotlin.Float" -> return a.divide(b)
                 "kotlin.Double" -> return a.divide(b)
             }
-            "kotlin.UInt" -> when (typeB) {
-                "kotlin.UByte" -> return a.divide(b)
-                "kotlin.UShort" -> return a.divide(b)
-                "kotlin.UInt" -> return a.divide(b)
-                "kotlin.ULong" -> return a.divide(b)
-            }
-            "kotlin.ULong" -> when (typeB) {
-                "kotlin.UByte" -> return a.divide(b)
-                "kotlin.UShort" -> return a.divide(b)
-                "kotlin.UInt" -> return a.divide(b)
-                "kotlin.ULong" -> return a.divide(b)
-            }
             "kotlin.UByte" -> when (typeB) {
                 "kotlin.UByte" -> return a.divide(b)
                 "kotlin.UShort" -> return a.divide(b)
@@ -1261,6 +1265,18 @@ fun legacyK1EvalBinaryBigIntFunction(name: String, typeA: String, typeB: String,
                 "kotlin.ULong" -> return a.divide(b)
             }
             "kotlin.UShort" -> when (typeB) {
+                "kotlin.UByte" -> return a.divide(b)
+                "kotlin.UShort" -> return a.divide(b)
+                "kotlin.UInt" -> return a.divide(b)
+                "kotlin.ULong" -> return a.divide(b)
+            }
+            "kotlin.UInt" -> when (typeB) {
+                "kotlin.UByte" -> return a.divide(b)
+                "kotlin.UShort" -> return a.divide(b)
+                "kotlin.UInt" -> return a.divide(b)
+                "kotlin.ULong" -> return a.divide(b)
+            }
+            "kotlin.ULong" -> when (typeB) {
                 "kotlin.UByte" -> return a.divide(b)
                 "kotlin.UShort" -> return a.divide(b)
                 "kotlin.UInt" -> return a.divide(b)
@@ -1316,18 +1332,6 @@ fun legacyK1EvalBinaryBigIntFunction(name: String, typeA: String, typeB: String,
                 "kotlin.Float" -> return a.rem(b)
                 "kotlin.Double" -> return a.rem(b)
             }
-            "kotlin.UInt" -> when (typeB) {
-                "kotlin.UByte" -> return a.rem(b)
-                "kotlin.UShort" -> return a.rem(b)
-                "kotlin.UInt" -> return a.rem(b)
-                "kotlin.ULong" -> return a.rem(b)
-            }
-            "kotlin.ULong" -> when (typeB) {
-                "kotlin.UByte" -> return a.rem(b)
-                "kotlin.UShort" -> return a.rem(b)
-                "kotlin.UInt" -> return a.rem(b)
-                "kotlin.ULong" -> return a.rem(b)
-            }
             "kotlin.UByte" -> when (typeB) {
                 "kotlin.UByte" -> return a.rem(b)
                 "kotlin.UShort" -> return a.rem(b)
@@ -1335,6 +1339,18 @@ fun legacyK1EvalBinaryBigIntFunction(name: String, typeA: String, typeB: String,
                 "kotlin.ULong" -> return a.rem(b)
             }
             "kotlin.UShort" -> when (typeB) {
+                "kotlin.UByte" -> return a.rem(b)
+                "kotlin.UShort" -> return a.rem(b)
+                "kotlin.UInt" -> return a.rem(b)
+                "kotlin.ULong" -> return a.rem(b)
+            }
+            "kotlin.UInt" -> when (typeB) {
+                "kotlin.UByte" -> return a.rem(b)
+                "kotlin.UShort" -> return a.rem(b)
+                "kotlin.UInt" -> return a.rem(b)
+                "kotlin.ULong" -> return a.rem(b)
+            }
+            "kotlin.ULong" -> when (typeB) {
                 "kotlin.UByte" -> return a.rem(b)
                 "kotlin.UShort" -> return a.rem(b)
                 "kotlin.UInt" -> return a.rem(b)
@@ -1390,18 +1406,6 @@ fun legacyK1EvalBinaryBigIntFunction(name: String, typeA: String, typeB: String,
                 "kotlin.Float" -> return a.multiply(b)
                 "kotlin.Double" -> return a.multiply(b)
             }
-            "kotlin.UInt" -> when (typeB) {
-                "kotlin.UByte" -> return a.multiply(b)
-                "kotlin.UShort" -> return a.multiply(b)
-                "kotlin.UInt" -> return a.multiply(b)
-                "kotlin.ULong" -> return a.multiply(b)
-            }
-            "kotlin.ULong" -> when (typeB) {
-                "kotlin.UByte" -> return a.multiply(b)
-                "kotlin.UShort" -> return a.multiply(b)
-                "kotlin.UInt" -> return a.multiply(b)
-                "kotlin.ULong" -> return a.multiply(b)
-            }
             "kotlin.UByte" -> when (typeB) {
                 "kotlin.UByte" -> return a.multiply(b)
                 "kotlin.UShort" -> return a.multiply(b)
@@ -1409,6 +1413,18 @@ fun legacyK1EvalBinaryBigIntFunction(name: String, typeA: String, typeB: String,
                 "kotlin.ULong" -> return a.multiply(b)
             }
             "kotlin.UShort" -> when (typeB) {
+                "kotlin.UByte" -> return a.multiply(b)
+                "kotlin.UShort" -> return a.multiply(b)
+                "kotlin.UInt" -> return a.multiply(b)
+                "kotlin.ULong" -> return a.multiply(b)
+            }
+            "kotlin.UInt" -> when (typeB) {
+                "kotlin.UByte" -> return a.multiply(b)
+                "kotlin.UShort" -> return a.multiply(b)
+                "kotlin.UInt" -> return a.multiply(b)
+                "kotlin.ULong" -> return a.multiply(b)
+            }
+            "kotlin.ULong" -> when (typeB) {
                 "kotlin.UByte" -> return a.multiply(b)
                 "kotlin.UShort" -> return a.multiply(b)
                 "kotlin.UInt" -> return a.multiply(b)

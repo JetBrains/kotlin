@@ -16,16 +16,13 @@ import org.jetbrains.kotlin.generators.util.GeneratorsFileUtil
 import org.jetbrains.kotlin.ir.BuiltInOperatorNames
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.utils.Printer
-import kotlin.reflect.full.memberFunctions
-
 import java.io.File
-import kotlin.collections.component1
-import kotlin.collections.component2
-import kotlin.collections.iterator
+import kotlin.reflect.full.memberFunctions
 
 val DESTINATION = File("core/compiler.common/src/org/jetbrains/kotlin/builtins/EvaluationMap.kt")
 
-private val integerTypes = listOf(PrimitiveType.BYTE, PrimitiveType.SHORT, PrimitiveType.INT, PrimitiveType.LONG).map { it.typeName.asString() }
+private val integerTypes =
+    listOf(PrimitiveType.BYTE, PrimitiveType.SHORT, PrimitiveType.INT, PrimitiveType.LONG).map { it.typeName.asString() }
 private val fpTypes = listOf(PrimitiveType.FLOAT, PrimitiveType.DOUBLE).map { it.typeName.asString() }
 private val numericTypes = PrimitiveType.NUMBER_TYPES.map { it.typeName.asString() }
 
@@ -302,14 +299,22 @@ private fun getOperationMap(argumentsCount: Int): MutableList<Operation> {
         }
     }
 
-    val unsingnedClasses = listOf(UInt::class, ULong::class, UByte::class, UShort::class )
+    val unsingnedClasses = listOf(UByte::class, UShort::class, UInt::class, ULong::class)
     for (unsignedClass in unsingnedClasses) {
-         unsignedClass.memberFunctions
+        unsignedClass.memberFunctions
             .filter { it.parameters.size == argumentsCount }
             .forEach { function ->
-            operationMap.add(Operation(function.name, function.parameters.map {
-                it.type.toString().removePrefix("kotlin.")
-            }))
+                operationMap.add(Operation(function.name, function.parameters.map {
+                    it.type.toString().removePrefix("kotlin.")
+                }))
+            }
+
+        if (argumentsCount == 2) {
+            val type = unsignedClass.simpleName ?: error("Unexpected unsigned class: $unsignedClass")
+            operationMap.add(Operation("less", listOf(type, type), false, "(a as ${type}) < (b as ${type})"))
+            operationMap.add(Operation("lessOrEqual", listOf(type, type), false, "(a as ${type}) <= (b as ${type})"))
+            operationMap.add(Operation("greater", listOf(type, type), false, "(a as ${type}) > (b as ${type})"))
+            operationMap.add(Operation("greaterOrEqual", listOf(type, type), false, "(a as ${type}) >= (b as ${type})"))
         }
     }
 
