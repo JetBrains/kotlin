@@ -97,4 +97,4 @@ if (kotlinBuildProperties.isTeamcityBuild) {
     tasks.register("nightlyTests")
 }
 
-testsJar()
+testsJarToBeUsedAlongWithFixtures()

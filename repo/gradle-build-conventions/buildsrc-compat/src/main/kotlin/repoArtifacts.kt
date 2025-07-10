@@ -10,6 +10,7 @@ import org.gradle.api.artifacts.ConfigurationContainer
 import org.gradle.api.artifacts.ModuleDependency
 import org.gradle.api.artifacts.PublishArtifact
 import org.gradle.api.artifacts.component.ProjectComponentIdentifier
+import org.gradle.api.attributes.Usage
 import org.gradle.api.component.AdhocComponentWithVariants
 import org.gradle.api.file.ArchiveOperations
 import org.gradle.api.file.DuplicatesStrategy
@@ -47,6 +48,36 @@ fun Project.testsJar(body: Jar.() -> Unit = {}): TaskProvider<Jar> {
         body()
     }.also {
         project.addArtifact(testsJarCfg.name, it)
+    }
+}
+
+/**
+ * This is a dirty hack that allows depending both on tests and test-fixture
+ * of the module from some other module. Please don't use it.
+ *
+ * The proper approach should be implemented in the scope of KTI-2521.
+ */
+fun Project.testsJarToBeUsedAlongWithFixtures() {
+    // Define a test jar task.
+    val testsJar by tasks.registering(Jar::class) {
+        archiveClassifier.set("tests")
+        from(sourceSets["test"].output)
+    }
+
+    // Create a consumable, non-resolvable configuration with a unique capability.
+    val testsJarConfig by configurations.creating {
+        isCanBeConsumed = true
+        isCanBeResolved = false
+        attributes {
+            attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage.JAVA_RUNTIME))
+        }
+        outgoing.capabilities.clear()
+        outgoing.capability("org.jetbrains.kotlin:${project.name}-tests-jar:${project.version}")
+    }
+
+    // Publish the test jar artifact only to this configuration (not to testImplementation/testRuntime)
+    artifacts {
+        add(testsJarConfig.name, testsJar)
     }
 }
 
