@@ -1,5 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-59333
+// LANGUAGE: +ForbidUpperBoundsViolationOnTypeOperatorAndParameterBounds
 
 interface MyInterface {
     val value: String

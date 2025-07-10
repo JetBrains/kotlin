@@ -18,7 +18,6 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
         FirConflictsDeclarationChecker,
         FirTypeConstraintsChecker,
         FirReservedUnderscoreDeclarationChecker,
-        FirUpperBoundViolatedDeclarationChecker,
         FirExposedVisibilityDeclarationChecker,
         FirCyclicTypeBoundsChecker,
         FirExpectActualDeclarationChecker,

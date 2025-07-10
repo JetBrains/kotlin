@@ -25,6 +25,7 @@ object CommonTypeCheckers : TypeCheckers() {
         FirContextualFunctionTypeChecker,
         FirKotlinActualAnnotationHasNoEffectInKotlinTypeChecker,
         FirProjectionRelationChecker,
+        FirUpperBoundViolatedTypeChecker,
         FirArrayOfNothingTypeChecker,
         FirInlineExposedLessVisibleTypeChecker,
         RedundantNullableChecker,
