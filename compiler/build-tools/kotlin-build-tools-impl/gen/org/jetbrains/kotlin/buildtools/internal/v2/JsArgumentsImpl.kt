@@ -68,6 +68,7 @@ public class JsArgumentsImpl : WasmArgumentsImpl(), JsArguments {
 
   @Suppress("DEPRECATION")
   public fun toCompilerArguments(arguments: K2JSCompilerArguments = K2JSCompilerArguments()): K2JSCompilerArguments {
+    super.toCompilerArguments(arguments)
     if ("OUTPUT" in optionsMap) { arguments.outputFile = get(OUTPUT) }
     if ("IR_OUTPUT_DIR" in optionsMap) { arguments.outputDir = get(IR_OUTPUT_DIR) }
     if ("IR_OUTPUT_NAME" in optionsMap) { arguments.moduleName = get(IR_OUTPUT_NAME) }

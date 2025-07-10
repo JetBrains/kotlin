@@ -112,6 +112,7 @@ public class NativeArgumentsImpl : CommonKlibBasedArgumentsImpl(), NativeArgumen
 
   @Suppress("DEPRECATION")
   public fun toCompilerArguments(arguments: K2NativeCompilerArguments = K2NativeCompilerArguments()): K2NativeCompilerArguments {
+    super.toCompilerArguments(arguments)
     if ("ENABLE_ASSERTIONS" in optionsMap) { arguments.enableAssertions = get(ENABLE_ASSERTIONS) }
     if ("G" in optionsMap) { arguments.debug = get(G) }
     if ("GENERATE_TEST_RUNNER" in optionsMap) { arguments.generateTestRunner = get(GENERATE_TEST_RUNNER) }

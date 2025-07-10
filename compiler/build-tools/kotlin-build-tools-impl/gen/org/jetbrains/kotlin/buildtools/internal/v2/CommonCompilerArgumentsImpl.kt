@@ -66,6 +66,7 @@ import org.jetbrains.kotlin.buildtools.api.v2.CommonCompilerArguments.Companion.
 import org.jetbrains.kotlin.buildtools.api.v2.CommonCompilerArguments.Companion.X_VERIFY_IR_VISIBILITY
 import org.jetbrains.kotlin.buildtools.api.v2.CommonCompilerArguments.Companion.X_WARNING_LEVEL
 import org.jetbrains.kotlin.buildtools.api.v2.CommonCompilerArguments.Companion.X_WHEN_GUARDS
+import org.jetbrains.kotlin.buildtools.api.v2.CommonCompilerArguments.Companion._XDATA_FLOW_BASED_EXHAUSTIVENESS
 import org.jetbrains.kotlin.buildtools.api.v2.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.v2.CommonCompilerArguments as V2CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments as CommonCompilerArguments
@@ -83,6 +84,7 @@ public open class CommonCompilerArgumentsImpl : CommonToolArgumentsImpl(),
 
   @Suppress("DEPRECATION")
   public fun toCompilerArguments(arguments: CommonCompilerArguments): CommonCompilerArguments {
+    super.toCompilerArguments(arguments)
     if ("LANGUAGE_VERSION" in optionsMap) { arguments.languageVersion = get(LANGUAGE_VERSION)?.stringValue }
     if ("API_VERSION" in optionsMap) { arguments.apiVersion = get(API_VERSION)?.stringValue }
     if ("KOTLIN_HOME" in optionsMap) { arguments.kotlinHome = get(KOTLIN_HOME) }
@@ -128,6 +130,7 @@ public open class CommonCompilerArgumentsImpl : CommonToolArgumentsImpl(),
     if ("X_CONTEXT_PARAMETERS" in optionsMap) { arguments.contextParameters = get(X_CONTEXT_PARAMETERS) }
     if ("X_CONTEXT_SENSITIVE_RESOLUTION" in optionsMap) { arguments.contextSensitiveResolution = get(X_CONTEXT_SENSITIVE_RESOLUTION) }
     if ("X_NON_LOCAL_BREAK_CONTINUE" in optionsMap) { arguments.nonLocalBreakContinue = get(X_NON_LOCAL_BREAK_CONTINUE) }
+    if ("_XDATA_FLOW_BASED_EXHAUSTIVENESS" in optionsMap) { arguments.xdataFlowBasedExhaustiveness = get(_XDATA_FLOW_BASED_EXHAUSTIVENESS) }
     if ("X_MULTI_DOLLAR_INTERPOLATION" in optionsMap) { arguments.multiDollarInterpolation = get(X_MULTI_DOLLAR_INTERPOLATION) }
     if ("X_RENDER_INTERNAL_DIAGNOSTIC_NAMES" in optionsMap) { arguments.renderInternalDiagnosticNames = get(X_RENDER_INTERNAL_DIAGNOSTIC_NAMES) }
     if ("X_ALLOW_ANY_SCRIPTS_IN_SOURCE_ROOTS" in optionsMap) { arguments.allowAnyScriptsInSourceRoots = get(X_ALLOW_ANY_SCRIPTS_IN_SOURCE_ROOTS) }
