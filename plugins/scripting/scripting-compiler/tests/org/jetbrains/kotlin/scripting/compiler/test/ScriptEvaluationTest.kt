@@ -1,5 +1,8 @@
 import kotlinx.coroutines.runBlocking
+import org.jetbrains.kotlin.fir.SessionConfiguration
+import org.jetbrains.kotlin.fir.extensions.FirScriptResolutionHacksComponent
 import org.jetbrains.kotlin.scripting.compiler.plugin.SCRIPT_TEST_BASE_COMPILER_ARGUMENTS_PROPERTY
+import org.jetbrains.kotlin.scripting.compiler.plugin.configureFirSession
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.SCRIPT_BASE_COMPILER_ARGUMENTS_PROPERTY
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.ScriptJvmCompilerIsolated
 import org.jetbrains.kotlin.scripting.compiler.test.assertEqualsTrimmed
@@ -9,6 +12,7 @@ import org.junit.jupiter.api.Test
 import java.io.ByteArrayOutputStream
 import java.io.PrintStream
 import kotlin.script.experimental.api.*
+import kotlin.script.experimental.host.ScriptingHostConfiguration
 import kotlin.script.experimental.host.toScriptSource
 import kotlin.script.experimental.jvm.BasicJvmScriptEvaluator
 import kotlin.script.experimental.jvm.JvmDependency
@@ -81,6 +85,8 @@ class ScriptEvaluationTest {
         }
     }
 
+    // TODO: the test should be dropped while fixing KT-79107
+    @OptIn(SessionConfiguration::class)
     @Test
     fun testScriptWithDataframePlugin() {
         if (!isK2) return
@@ -88,6 +94,16 @@ class ScriptEvaluationTest {
         val dataframe = runBlocking {
             dependenciesResolver.resolve("org.jetbrains.kotlinx:dataframe-core:1.0.0-Beta2")
         }.valueOrThrow()
+        val hostConfiguration = ScriptingHostConfiguration(defaultJvmScriptingHostConfiguration) {
+            configureFirSession {
+                register(
+                    FirScriptResolutionHacksComponent::class,
+                    object : FirScriptResolutionHacksComponent() {
+                        override val skipTowerDataCleanupForTopLevelInitializers: Boolean = true
+                    }
+                )
+            }
+        }
         val compiled = checkCompile(
             """
                 import org.jetbrains.kotlinx.dataframe.api.*
@@ -106,9 +122,15 @@ class ScriptEvaluationTest {
                 compilerOptions(
                     "-Xplugin=$dataFramePluginClasspath"
                 )
-            }
+            },
+            hostConfiguration
         )
-        assertTrue(compiled is ResultWithDiagnostics.Failure)
+        assertTrue(compiled is ResultWithDiagnostics.Success)
+        val evaluator = BasicJvmScriptEvaluator()
+        val res = runBlocking {
+            evaluator.invoke(compiled.valueOrThrow()).valueOrThrow()
+        }
+        assertEquals(42, (res.returnValue as ResultValue.Value).value)
     }
 
     private fun checkEvaluateAsError(script: SourceCode, expectedOutput: String): EvaluationResult {
@@ -125,9 +147,10 @@ class ScriptEvaluationTest {
 
     private fun checkCompile(
         script: SourceCode,
-        compilationConfiguration: ScriptCompilationConfiguration = ScriptCompilationConfiguration()
+        compilationConfiguration: ScriptCompilationConfiguration = ScriptCompilationConfiguration(),
+        hostConfiguration: ScriptingHostConfiguration = defaultJvmScriptingHostConfiguration,
     ): ResultWithDiagnostics<CompiledScript> {
-        val compiler = ScriptJvmCompilerIsolated(defaultJvmScriptingHostConfiguration)
+        val compiler = ScriptJvmCompilerIsolated(hostConfiguration)
         return compiler.compile(script, compilationConfiguration)
     }
 
@@ -144,3 +167,4 @@ class ScriptEvaluationTest {
         return res
     }
 }
+
