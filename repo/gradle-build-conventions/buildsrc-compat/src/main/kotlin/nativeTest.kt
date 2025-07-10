@@ -17,6 +17,7 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.tasks.*
 import org.gradle.api.tasks.testing.Test
+import org.gradle.kotlin.dsl.dependencies
 import org.gradle.kotlin.dsl.environment
 import org.gradle.kotlin.dsl.named
 import org.gradle.kotlin.dsl.newInstance
@@ -153,13 +154,13 @@ private open class NativeArgsProvider @Inject constructor(
     @get:Optional
     val customCompilerDist: DirectoryProperty = objects.directoryProperty()
 
-    @get:InputDirectory
-    @get:PathSensitive(PathSensitivity.RELATIVE)
-    val nativeHome: DirectoryProperty = objects.directoryProperty()
+    @get:InputFiles
+    @get:PathSensitive(PathSensitivity.RELATIVE) // input is expected to be a single directory
+    val nativeHome: ConfigurableFileCollection = objects.fileCollection()
 
     @Classpath
     protected val compilerClasspath: ConfigurableFileCollection = objects.fileCollection().apply {
-        from(nativeHome.file("konan/lib/kotlin-native-compiler-embeddable.jar"))
+        from(nativeHome.elements.map { it.single().asFile.resolve("konan/lib/kotlin-native-compiler-embeddable.jar") })
         from(customCompilerDependencies)
     }
 
@@ -199,7 +200,7 @@ private open class NativeArgsProvider @Inject constructor(
     override fun asArguments(): Iterable<String> {
         val customKlibs = customTestDependencies.files + xcTestConfiguration.files
         return listOfNotNull(
-            "-D${KOTLIN_NATIVE_HOME.fullName}=${nativeHome.get().asFile.absolutePath}",
+            "-D${KOTLIN_NATIVE_HOME.fullName}=${nativeHome.singleFile.absolutePath}",
             "-D${COMPILER_CLASSPATH.fullName}=${compilerClasspath.files.takeIf { it.isNotEmpty() }?.joinToString(File.pathSeparator) { it.absolutePath }}",
             "-D${COMPILER_PLUGINS.fullName}=${compilerPluginDependencies.files.joinToString(File.pathSeparator) { it.absolutePath }}".takeIf { !compilerPluginDependencies.isEmpty },
             testKind.orNull?.let { "-D${TEST_KIND.fullName}=$it" },
@@ -264,25 +265,24 @@ private open class NativeTestPrepareCompilerDistribution @Inject constructor(
     @get:Classpath
     protected val compilerCacheInvalidator = objectFactory.fileCollection().apply {
         if (project.kotlinBuildProperties.isKotlinNativeEnabled) {
-            from(
-                project.configurations.detachedConfiguration(
-                    project.dependencies.project(":kotlin-native:tools:compiler-cache-invalidator").apply {
-                        attributes {
-                            attribute(
-                                Category.CATEGORY_ATTRIBUTE,
-                                objectFactory.named(Category.LIBRARY)
-                            )
-                            attribute(
-                                LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE,
-                                objectFactory.named(LibraryElements.JAR)
-                            )
-                            attribute(
-                                Usage.USAGE_ATTRIBUTE,
-                                objectFactory.named(Usage.JAVA_RUNTIME)
-                            )
-                        }
-                    })
-            )
+            val configurationName = "compilerCacheInvalidatorTool"
+            from(project.configurations.findByName(configurationName) ?: project.configurations.create(configurationName) {
+                attributes {
+                    attribute(
+                        Category.CATEGORY_ATTRIBUTE,
+                        objectFactory.named(Category.LIBRARY)
+                    )
+                    attribute(
+                        LibraryElements.LIBRARY_ELEMENTS_ATTRIBUTE,
+                        objectFactory.named(LibraryElements.JAR)
+                    )
+                    attribute(
+                        Usage.USAGE_ATTRIBUTE,
+                        objectFactory.named(Usage.JAVA_RUNTIME)
+                    )
+                }
+                dependencies.add(project.dependencies.project(":kotlin-native:tools:compiler-cache-invalidator"))
+            })
         }
     }
 
@@ -290,15 +290,22 @@ private open class NativeTestPrepareCompilerDistribution @Inject constructor(
     @get:PathSensitive(PathSensitivity.NONE) // calculated manually
     protected val nativeDistributionInput
         get() = nativeDistributionRoot.asFileTree.matching {
-            if (!requirePlatformLibs.get()) {
-                exclude("klib/platform")
-                exclude("klib/cache/*/org.jetbrains.kotlin.native.platform.*-cache")
+            include("bin/")
+            include("klib/cache/${testTarget.get()}-gSTATIC-system/stdlib-cache/")
+            if (requirePlatformLibs.get()) {
+                include("klib/cache/${testTarget.get()}-gSTATIC-system/org.jetbrains.kotlin.native.platform.*-cache/")
             }
-            val excludedTargets = KonanTarget.predefinedTargets.keys - setOf(testTarget.get())
-            excludedTargets.forEach { target ->
-                exclude("konan/targets/$target")
-                exclude("klib/platform/$target")
+            include("klib/common/")
+            if (requirePlatformLibs.get()) {
+                include("klib/platform/${testTarget.get()}/")
             }
+            include("konan/lib/")
+            include("konan/nativelib/")
+            include("konan/swift_export/")
+            include("konan/targets/${testTarget.get()}/")
+            include("konan/compiler.fingerprint")
+            include("konan/konan.properties")
+            include("tools/")
         }
 
     @get:Input
@@ -412,8 +419,8 @@ fun Project.nativeTest(
             // additional stack frames more compared to the old one because of another launcher, etc. and it turns out this is not enough.
             jvmArgs("-Xss2m")
 
-            jvmArgumentProviders.add(objects.newInstance<NativeArgsProvider>(testTarget).apply {
-                this.nativeHome.set(nativeDistribution.flatMap { it.output })
+            jvmArgumentProviders.add(objects.newInstance<NativeArgsProvider>(testTarget.get()).apply {
+                this.nativeHome.from(nativeDistribution)
                 this.customCompilerDependencies.from(customCompilerDependencies)
                 this.compilerPluginDependencies.from(compilerPluginDependencies)
                 this.customTestDependencies.from(customTestDependencies)
