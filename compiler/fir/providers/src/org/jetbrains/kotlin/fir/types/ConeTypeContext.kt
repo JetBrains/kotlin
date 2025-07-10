@@ -403,7 +403,7 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
             is ConeIntegerLiteralType -> true
             is ConeStubType -> true
             is ConeDefinitelyNotNullType -> true
-            is ConeErrorUnionType -> false
+            is ConeErrorUnionType -> isTypeParameter()
         }
     }
 
@@ -631,16 +631,25 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
         return this is ConeValueType
     }
 
-    override fun ErrorUnionTypeMarker.valueType(): ValueTypeMarker {
-        return (this as ConeErrorUnionType).valueType
+    override fun RigidTypeMarker.valueType(): ValueTypeMarker {
+        this as ConeRigidType
+        return when (this) {
+            is ConeErrorUnionType -> valueType
+            is ConeValueType -> this
+        }
     }
 
-    override fun ErrorUnionTypeMarker.errorType(): ErrorTypeMarker {
-        return (this as ConeErrorUnionType).errorType
+    override fun RigidTypeMarker.errorType(): ErrorTypeMarker {
+        this as ConeRigidType
+        return when (this) {
+            is ConeErrorUnionType -> errorType
+            is ConeValueType -> CEBotType
+        }
     }
 
     override fun KotlinTypeMarker.projectOnValue(): KotlinTypeMarker {
         return when (this) {
+            is ConeDynamicType -> this
             is ConeFlexibleType -> {
                 val lb = lowerBound.projectOnValue() as ConeRigidType
                 val ub = upperBound.projectOnValue() as ConeRigidType
@@ -654,10 +663,10 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
     override fun KotlinTypeMarker.projectOnError(): KotlinTypeMarker {
         return when (this) {
             is ConeFlexibleType -> {
-                val lb = lowerBound.projectOnError() as ConeErrorType
-                val ub = upperBound.projectOnError() as ConeErrorType
+                val lb = lowerBound.projectOnError() as? ConeErrorUnionType
+                val ub = upperBound.projectOnError() as? ConeErrorUnionType
                 if (lb == ub) {
-                    return lb
+                    return lb ?: StandardTypes.Nothing
                 } else {
                     error("Flexible of errors??")
                     // ConeFlexibleType(lb, ub, isTrivial)
@@ -667,7 +676,7 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
                 if (valueType.isNothing) {
                     this
                 } else {
-                    ConeErrorUnionType(StandardTypes.Nothing, errorType)
+                    ConeErrorUnionType.create(StandardTypes.Nothing, errorType)
                 }
             }
             else -> StandardTypes.Nothing
@@ -717,8 +726,19 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
         if (other is CETopType) return true
         return when (this) {
             is CEBotType -> true
-            is CELookupTagBasedType -> this == other
             is CETopType -> false
+            is CETypeParameterType -> {
+                lookupTag.bounds().any { bound ->
+                    val errorProjection = bound.coneType.projectOnError()
+                    when {
+                        errorProjection.isNothing() -> true
+                        errorProjection is ConeErrorUnionType ->
+                            errorProjection.errorType.isSubtypeOf(other)
+                        else -> error("unexpected")
+                    }
+                }
+            }
+            is CELookupTagBasedType -> this == other
             is CETypeVariableType -> this == other
             is CEUnionType -> error("Not atomic")
         }
@@ -735,7 +755,7 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
         return col
     }
 
-    override fun ErrorTypeMarker.isSubtypeOf(other: ErrorTypeMarker): Boolean {
+    fun ErrorTypeMarker.isSubtypeOf(other: ErrorTypeMarker): Boolean {
         // TODO: RE: MID: for better and faster subtyping we should initially store them in some kind of sets
         val subTs = (this as CEType).collectAtomics(mutableListOf())
         val superTs = (other as CEType).collectAtomics(mutableListOf())
@@ -750,7 +770,10 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
         val subTs = (lowerType as CEType).collectAtomics(mutableListOf())
         val superTs = (upperType as CEType).collectAtomics(mutableListOf())
 
-        val unsatisfiedSubTs = subTs.filter { subTs -> superTs.none { superTs -> subTs.isSubtypeOfAtomic(superTs) } }
+        val unsatisfiedSubTs = subTs.filter { subTs ->
+            superTs.none { superTs -> subTs.isSubtypeOfAtomic(superTs) } &&
+                    !subTs.isSubtypeOfAtomic(CEBotType)
+        }
 
         return unsatisfiedSubTs.map { it to upperType }
     }
@@ -787,14 +810,13 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
         }
 
         atomicTypes.map { it.filter { atom -> resultingTypes.any { resAtom -> !atom.isSubtypeOfAtomic(resAtom) } } }
-        if (atomicTypes.any { types -> types.any { it is CETypeVariableType || it is CETypeParameterType } }) {
+        if (atomicTypes.any { types -> types.count { it is CETypeVariableType || it is CETypeParameterType } > 1 }) {
             error("This should not happen. Intersection for different type variables is not supported yet.")
         }
 
         return when (resultingTypes.size) {
             0 -> CEBotType
-            1 -> resultingTypes.single()
-            else -> CEUnionType(resultingTypes)
+            else -> CEUnionType.create(resultingTypes)
         }
     }
 
@@ -900,23 +922,51 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
         // TODO: RE: Simplify current solution
 
         return RichErrorsSystemSolution(
-            currentSolution.mapValues { (_, types) -> CEUnionType(types) },
+            currentSolution.mapValues { (_, types) -> CEUnionType.create(types) },
             impossibleConstraints.isNotEmpty()
         )
     }
 
     override fun KotlinTypeMarker.addErrorComponent(errorType: ErrorTypeMarker): KotlinTypeMarker {
         errorType as CEType
+        if (errorType == CEBotType) return this
 
         return when (this) {
             is ConeFlexibleType -> {
-                val lowerBound = ConeErrorUnionType(lowerBound as ConeValueType, errorType)
-                val upperBound = ConeErrorUnionType(upperBound as ConeValueType, errorType)
+                val lowerBound = ConeErrorUnionType.createNormalized(lowerBound as ConeValueType, errorType)
+                val upperBound = ConeErrorUnionType.createNormalized(upperBound as ConeValueType, errorType)
                 ConeFlexibleType(lowerBound, upperBound, isTrivial)
             }
             is ConeErrorUnionType -> error("unexpected")
-            is ConeValueType -> ConeErrorUnionType(this, errorType)
+            is ConeValueType -> ConeErrorUnionType.createNormalized(this, errorType)
             else -> error("Unexpected")
         }
+    }
+
+    fun CEType.typeConstructor(): TypeConstructorMarker {
+        return when (this) {
+            is CEBotType -> error("Unexpected")
+            is CELookupTagBasedType -> lookupTag
+            is CETopType -> error("Unexpected")
+            is CETypeVariableType -> typeConstructor
+            is CEUnionType -> error("Unexpected")
+        }
+    }
+
+    override fun botTypeOfErrors(): ErrorTypeMarker {
+        return CEBotType
+    }
+
+    override fun KotlinTypeMarker.isDefinitelyNotNullType(): Boolean {
+        this as ConeKotlinType
+        val rigid = if (this is ConeFlexibleType) lowerBound else this
+        val value = if (rigid is ConeErrorUnionType) rigid.valueType else rigid
+        return value is ConeDefinitelyNotNullType
+    }
+
+    override fun RigidTypeMarker.isDefinitelyNotNullType(): Boolean {
+        this as ConeRigidType
+        val value = if (this is ConeErrorUnionType) valueType else this
+        return value is ConeDefinitelyNotNullType
     }
 }

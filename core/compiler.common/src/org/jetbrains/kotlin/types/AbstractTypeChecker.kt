@@ -70,6 +70,11 @@ open class TypeCheckerState(
         isFromNullabilityConstraint: Boolean = false
     ): Boolean? = null
 
+    open fun addCESubtypeConstraint(
+        subType: ErrorTypeMarker,
+        superType: ErrorTypeMarker,
+    ): Boolean? = null
+
     // Handling cases like A<Int> & A<T> <: A<F_var>
     // There are two possible solutions for F_var (Int and T) and both of them may work well or not with other constrains
     // Effectively, we need to fork constraint system to two copies: one with F_var=Int and the other with F_var=T
@@ -309,7 +314,7 @@ object AbstractTypeChecker {
             return completeIsSubTypeOf(
                 state,
                 preparedSubType.asFlexibleType()!!.lowerBound(),
-                preparedSuperType.asRigidType()!!.originalIfDefinitelyNotNullable(),
+                preparedSuperType.asRigidType()!!.valueType().originalIfDefinitelyNotNullable(),
                 isFromNullabilityConstraint
             )
         }
@@ -339,7 +344,14 @@ object AbstractTypeChecker {
                 )
             }
             preparedSubTypeLb is ErrorUnionTypeMarker && preparedSuperTypeUb is ValueTypeMarker -> {
-                false
+                completeIsSubTypeOfValues(
+                    state,
+                    preparedSubTypeLb.valueType(),
+                    preparedSuperTypeUb,
+                    preparedSubType.projectOnValue(),
+                    preparedSuperType.projectOnValue(),
+                    isFromNullabilityConstraint
+                ) && completeIsSubTypeOfErrors(state, preparedSubTypeLb.errorType(), botTypeOfErrors())
             }
             preparedSubTypeLb is ErrorUnionTypeMarker && preparedSuperTypeUb is ErrorUnionTypeMarker -> {
                 completeIsSubTypeOfValues(
@@ -378,8 +390,12 @@ object AbstractTypeChecker {
         subType: ErrorTypeMarker,
         superType: ErrorTypeMarker,
     ): Boolean = with(state.typeSystemContext) {
-        // TODO: RE: call addSubtypeConstraint
-        subType.isSubtypeOf(superType)
+        val unsatisfiedSubs = simplifyAndIncorporateSubtyping(subType, superType)
+        var allSatisfied = true
+        for (it in unsatisfiedSubs) {
+            allSatisfied = allSatisfied && (state.addCESubtypeConstraint(it.first, it.second) ?: return false)
+        }
+        return allSatisfied
     }
 
     private fun checkSubtypeForIntegerLiteralType(

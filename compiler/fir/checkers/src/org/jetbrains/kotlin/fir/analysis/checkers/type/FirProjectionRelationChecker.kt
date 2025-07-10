@@ -158,7 +158,7 @@ object FirProjectionRelationChecker : FirResolvedTypeRefChecker(MppCheckerKind.C
             val unsubstitutedType = argument.type ?: continue
             collectPotentiallyProblematicArguments(unsubstitutedType, previousSubstitutor, parametersToSources, result, session)
 
-            if (unsubstitutedType !is ConeTypeParameterType) {
+            if (!unsubstitutedType.isTypeParameter()) {
                 continue
             }
 

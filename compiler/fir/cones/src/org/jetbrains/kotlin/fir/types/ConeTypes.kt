@@ -54,24 +54,42 @@ sealed class ConeRigidType : ConeKotlinType(), RigidTypeMarker
 
 sealed class ConeValueType : ConeRigidType(), ValueTypeMarker
 
-data class ConeErrorUnionType(
+@ConsistentCopyVisibility
+data class ConeErrorUnionType private constructor(
     val valueType: ConeValueType,
-    val errorType: CEType
+    val errorType: CEType,
 ) : ConeRigidType(), ErrorUnionTypeMarker {
     override val typeArguments: Array<out ConeTypeProjection>
         get() = EMPTY_ARRAY
     override val attributes: ConeAttributes
-        get() = ConeAttributes.Empty
+        get() = valueType.attributes
 
     fun replaceValueType(newValueType: ConeValueType): ConeErrorUnionType {
-        if (newValueType == valueType) return this
+        if (newValueType === valueType) return this
         return ConeErrorUnionType(newValueType, errorType)
     }
 
     fun replaceValueTypeUnsafe(newValueType: ConeKotlinType): ConeErrorUnionType {
-        if (newValueType == valueType) return this
-        if (newValueType !is ConeValueType) error("Boom, it happened. It's time to investigate")
+        if (newValueType === valueType) return this
+        if (newValueType !is ConeValueType) error("Boom, it happened. It's time to investigate: $newValueType")
         return ConeErrorUnionType(newValueType, errorType)
+    }
+
+    companion object {
+        fun create(valueType: ConeValueType, errorType: CEType): ConeErrorUnionType {
+            if (valueType is ConeClassLikeType && !valueType.isNothing && errorType is CETypeVariableType) {
+                error("")
+            }
+            return ConeErrorUnionType(valueType, errorType)
+        }
+
+        fun createNormalized(valueType: ConeValueType, errorType: CEType): ConeRigidType {
+            if (valueType is ConeClassLikeType && !valueType.isNothing && errorType is CETypeVariableType) {
+                error("")
+            }
+            if (errorType is CEBotType) return valueType
+            return ConeErrorUnionType(valueType, errorType)
+        }
     }
 }
 
@@ -96,9 +114,22 @@ data class CEClassifierType(
     override val lookupTag: ConeClassLikeLookupTag,
 ) : CELookupTagBasedType()
 
-data class CEUnionType(
+@ConsistentCopyVisibility
+data class CEUnionType private constructor(
     val types: List<CEType>,
-) : CEType()
+) : CEType() {
+    companion object {
+        fun create(types: List<CEType>): CEType {
+            if (types.isEmpty()) return CEBotType
+            val nonTopTypes = if (types.any { it is CETopType }) types else types.filter { it !is CETopType }
+            return when (nonTopTypes.size) {
+                0 -> CETopType
+                1 -> nonTopTypes.single()
+                else -> CEUnionType(nonTopTypes)
+            }
+        }
+    }
+}
 
 /**
  * Normally should represent a type with one related constructor that does not require unwrapping.
@@ -178,6 +209,13 @@ open class ConeFlexibleType(
      */
     val isTrivial: Boolean,
 ) : ConeKotlinType(), FlexibleTypeMarker {
+
+    init {
+        if (lowerBound.isNothing && upperBound.isNullableAny && this !is ConeDynamicType) {
+            print("hi")
+        }
+    }
+
     final override val typeArguments: Array<out ConeTypeProjection>
         get() = lowerBound.typeArguments
 

@@ -405,7 +405,7 @@ open class FirSupertypeResolverVisitor(
         return resolveSpecificClassLikeSupertypes(classLikeDeclaration) { transformer, configuration ->
             supertypeRefs.mapTo(mutableListOf()) {
                 val superTypeRef = it.transform<FirTypeRef, TypeResolutionConfiguration>(transformer, configuration)
-                val typeParameterType = superTypeRef.coneTypeSafe<ConeTypeParameterType>()
+                val typeParameterLookupTag = superTypeRef.coneType.lookupTagIfTypeParameter()
                 val typealiasSymbol = superTypeRef.coneTypeSafe<ConeClassLikeType>()?.toTypeAliasSymbol(session)
                 if (resolveRecursively && typealiasSymbol != null) {
                     // Jump to typealiases in supertypes of class-like types.
@@ -414,10 +414,10 @@ open class FirSupertypeResolverVisitor(
                     visitTypeAlias(typealiasSymbol.fir, null)
                 }
                 when {
-                    typeParameterType != null ->
+                    typeParameterLookupTag != null ->
                         buildErrorTypeRef {
                             source = superTypeRef.source
-                            diagnostic = ConeTypeParameterSupertype(typeParameterType.lookupTag.typeParameterSymbol)
+                            diagnostic = ConeTypeParameterSupertype(typeParameterLookupTag.typeParameterSymbol)
                         }
                     superTypeRef !is FirResolvedTypeRef ->
                         createErrorTypeRef(

@@ -56618,6 +56618,12 @@ public class PhasedJvmDiagnosticPsiTestGenerated extends AbstractPhasedJvmDiagno
       }
 
       @Test
+      @TestMetadata("play.kt")
+      public void testPlay() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/rich-errors/play.kt");
+      }
+
+      @Test
       @TestMetadata("simpleCalls.kt")
       public void testSimpleCalls() {
         runTest("compiler/fir/analysis-tests/testData/resolve/rich-errors/simpleCalls.kt");

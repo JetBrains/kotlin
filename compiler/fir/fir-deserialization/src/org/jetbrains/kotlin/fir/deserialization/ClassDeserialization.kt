@@ -295,7 +295,7 @@ fun FirRegularClassBuilder.addCloneForArrayIfNeeded(classId: ClassId, dispatchRe
         returnTypeRef = buildResolvedTypeRef {
             val typeArguments = if (classId.shortClassName == ARRAY) {
                 arrayOf(
-                    ConeTypeParameterTypeImpl(
+                    ConeTypeParameterTypeImpl.create(
                         ConeTypeParameterLookupTag(this@addCloneForArrayIfNeeded.typeParameters.first().symbol), isMarkedNullable = false
                     )
                 )

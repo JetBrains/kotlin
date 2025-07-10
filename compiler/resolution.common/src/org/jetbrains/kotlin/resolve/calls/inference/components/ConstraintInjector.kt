@@ -45,6 +45,7 @@ class ConstraintInjector(
         val atCompletionState: Boolean
 
         fun addInitialConstraint(initialConstraint: InitialConstraint)
+        fun addErrorConstraint(errorConstraint: ErrorConstraint)
         fun addError(error: ConstraintSystemError)
 
         fun resolveForkPointsConstraints()
@@ -58,13 +59,35 @@ class ConstraintInjector(
     }
 
     fun addInitialSubtypeConstraint(c: Context, lowerType: KotlinTypeMarker, upperType: KotlinTypeMarker, position: ConstraintPosition) {
-        val initialConstraint = InitialConstraint(lowerType, upperType, UPPER, position).also { c.addInitialConstraint(it) }
+        val (valueLowerType, valueUpperType) = lowerType to upperType
+
+        val initialConstraint = InitialConstraint(valueLowerType, valueUpperType, UPPER, position).also { c.addInitialConstraint(it) }
         val typeCheckerState = TypeCheckerStateForConstraintInjector(c, IncorporationConstraintPosition(initialConstraint))
 
-        updateAllowedTypeDepth(c, lowerType)
-        updateAllowedTypeDepth(c, upperType)
+        updateAllowedTypeDepth(c, valueLowerType)
+        updateAllowedTypeDepth(c, valueUpperType)
 
-        addSubTypeConstraintAndIncorporateIt(c, lowerType, upperType, typeCheckerState)
+        addSubTypeConstraintAndIncorporateIt(c, valueLowerType, valueUpperType, typeCheckerState)
+    }
+
+    private fun processErrorComponentForSubtypeConstraint(
+        c: Context,
+        lowerType: KotlinTypeMarker,
+        upperType: KotlinTypeMarker,
+        position: ConstraintPosition,
+    ): Pair<KotlinTypeMarker, KotlinTypeMarker> = with (c) {
+        if (lowerType.containsErrorComponent() || upperType.containsErrorComponent()) {
+            c.addErrorConstraint(
+                ErrorConstraint(
+                    lowerType.projectOnError().disableFlexibilityForErrorType(),
+                    upperType.projectOnError().disableFlexibilityForErrorType(),
+                    position
+                )
+            )
+            lowerType.projectOnValue() to upperType.projectOnValue()
+        } else {
+            lowerType to upperType
+        }
     }
 
     private fun Context.addInitialEqualityConstraintThroughSubtyping(
@@ -78,7 +101,8 @@ class ConstraintInjector(
         addSubTypeConstraintAndIncorporateIt(this, b, a, typeCheckerState)
     }
 
-    fun addInitialEqualityConstraint(c: Context, a: KotlinTypeMarker, b: KotlinTypeMarker, position: ConstraintPosition) = with(c) {
+    fun addInitialEqualityConstraint(c: Context, preA: KotlinTypeMarker, preB: KotlinTypeMarker, position: ConstraintPosition) = with(c) {
+        val (a, b) = processErrorComponentForEqualityConstraint(c, preA, preB, position)
         val (typeVariable, equalType) = when {
             a.typeConstructor(c) is TypeVariableTypeConstructorMarker -> a to b
             b.typeConstructor(c) is TypeVariableTypeConstructorMarker -> b to a
@@ -95,6 +119,23 @@ class ConstraintInjector(
 
         updateAllowedTypeDepth(c, equalType)
         addEqualityConstraintAndIncorporateIt(c, typeVariable, equalType, typeCheckerState)
+    }
+
+    private fun processErrorComponentForEqualityConstraint(
+        c: Context,
+        lowerType: KotlinTypeMarker,
+        upperType: KotlinTypeMarker,
+        position: ConstraintPosition,
+    ): Pair<KotlinTypeMarker, KotlinTypeMarker> = with (c) {
+        if (lowerType.containsErrorComponent() || upperType.containsErrorComponent()) {
+            val lt = lowerType.projectOnError().disableFlexibilityForErrorType()
+            val ut = upperType.projectOnError().disableFlexibilityForErrorType()
+            c.addErrorConstraint(ErrorConstraint(lt, ut, position))
+            c.addErrorConstraint(ErrorConstraint(ut, lt, position))
+            lowerType.projectOnValue() to upperType.projectOnValue()
+        } else {
+            lowerType to upperType
+        }
     }
 
     private fun addSubTypeConstraintAndIncorporateIt(
@@ -400,8 +441,18 @@ class ConstraintInjector(
         }
 
         // from AbstractTypeCheckerContextForConstraintSystem
-        override fun isMyTypeVariable(type: RigidTypeMarker): Boolean =
-            c.allTypeVariables.containsKey(type.typeConstructor().unwrapStubTypeVariableConstructor())
+        override fun isMyTypeVariable(type: RigidTypeMarker): Boolean {
+            return c.allTypeVariables.containsKey(type.typeConstructor().unwrapStubTypeVariableConstructor())
+        }
+
+        override fun addCESubtypeConstraint(subType: ErrorTypeMarker, superType: ErrorTypeMarker): Boolean? = with(c) {
+            if (!subType.isPossibleSubtypeOf(superType)) {
+                return false
+            }
+
+            addErrorConstraint(ErrorConstraint(subType, superType, position))
+            return true
+        }
 
         override fun addUpperConstraint(typeVariable: TypeConstructorMarker, superType: KotlinTypeMarker) =
             addConstraint(typeVariable, superType, UPPER)

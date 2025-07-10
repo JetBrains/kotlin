@@ -145,7 +145,7 @@ class FirCallCompleter(
                     // Frankly speaking, this is some sort of hack, which currently I don't know how to resolve properly.
                     val storage = candidate.system.currentStorage()
                     val finalSubstitutor = storage
-                        .buildCurrentSubstitutor(session.typeContext, emptyMap(), candidate.system.errorTypeSystem.currentSolution) as ConeSubstitutor
+                        .buildCurrentSubstitutor(session.typeContext, emptyMap()) as ConeSubstitutor
                     call.transformSingle(
                         createCompletionResultsWriter(finalSubstitutor),
                         null
@@ -309,7 +309,7 @@ class FirCallCompleter(
         atom: ConeResolvedLambdaAtom,
         candidate: Candidate,
     ) {
-        val returnVariable = ConeTypeVariableForLambdaReturnType(atom.anonymousFunction, "_R", true)
+        val returnVariable = ConeTypeVariableForLambdaReturnType(atom.anonymousFunction, "_R")
         val csBuilder = candidate.system.getBuilder()
         csBuilder.registerVariable(returnVariable)
         val functionalType = csBuilder.buildCurrentSubstitutor()
@@ -603,7 +603,7 @@ class FirCallCompleter(
         isReceiver: Boolean,
         isRootLambdaForPCLASession: Boolean,
     ): Boolean {
-        if (this !is ConeTypeVariableType) return false
+        val typeConstructor = typeConstructorIfTypeVariableType() ?: return false
 
         // Receivers are expected to be fixed both for PCLA/nonPCLA lambdas, so just build error type
         if (isReceiver) return true

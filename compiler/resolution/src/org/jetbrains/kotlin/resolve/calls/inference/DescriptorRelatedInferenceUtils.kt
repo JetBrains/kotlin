@@ -15,6 +15,8 @@ import org.jetbrains.kotlin.resolve.calls.model.LHSResult
 import org.jetbrains.kotlin.resolve.calls.model.SubKotlinCallArgument
 import org.jetbrains.kotlin.resolve.descriptorUtil.builtIns
 import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.model.ErrorTypeMarker
+import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 import org.jetbrains.kotlin.types.model.TypeSystemInferenceExtensionContext
 
 fun ConstraintStorage.buildResultingSubstitutor(

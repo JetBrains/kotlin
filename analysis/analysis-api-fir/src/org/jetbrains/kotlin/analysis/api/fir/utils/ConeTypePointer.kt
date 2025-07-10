@@ -86,7 +86,7 @@ private class ConeTypeParameterTypePointer(
         val typeParameterSymbol = typeParameterPointer.restoreSymbol(session) ?: return null
 
         val lookupTag = ConeTypeParameterLookupTag(typeParameterSymbol.firSymbol)
-        return ConeTypeParameterTypeImpl(lookupTag, isNullable)
+        return ConeTypeParameterTypeImpl.createUnknown(lookupTag, isNullable)
     }
 }
 

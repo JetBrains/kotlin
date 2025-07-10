@@ -162,6 +162,18 @@ private fun StringBuilder.appendConeType(
         }
         is ConeDefinitelyNotNullType -> appendConeType(coneType.original, typeConversion, visitedTypeParameters)
         is ConeFlexibleType -> appendConeType(coneType.lowerBound, typeConversion, visitedTypeParameters)
+        is ConeErrorUnionType -> {
+            val valueTypeUnwrapped = when (val valueType = coneType.valueType) {
+                is ConeTypeParameterType -> valueType
+                is ConeDefinitelyNotNullType -> valueType.original
+                else -> error("Unexpected type: $valueType")
+            }
+            val errorType = coneType.errorType
+            check(errorType is CETypeParameterType)
+            check(valueTypeUnwrapped is ConeTypeParameterType)
+            check(errorType.lookupTag == valueTypeUnwrapped.lookupTag)
+            appendConeType(valueTypeUnwrapped, typeConversion, visitedTypeParameters)
+        }
         else -> Unit // TODO: throw an error? should check that Java type conversion/enhancement can only produce these cone types
     }
 }

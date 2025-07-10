@@ -100,6 +100,33 @@ private fun ConeRigidType.enhanceInflexibleType(
     isFromDefinitelyNotNullType: Boolean,
     convertErrorToWarning: Boolean,
 ): ConeRigidType? {
+    when (this) {
+        is ConeErrorUnionType -> {
+            check(lookupTagIfTypeParameterIgnoringDnn() != null)
+            return valueType.enhanceInflexibleType(
+                session, position, qualifiers, index, subtreeSizes,
+                precomputedTypeArguments, isFromDefinitelyNotNullType, convertErrorToWarning,
+            )
+        }
+        is ConeValueType -> {
+            return enhanceInflexibleType(
+                session, position, qualifiers, index, subtreeSizes,
+                precomputedTypeArguments, isFromDefinitelyNotNullType, convertErrorToWarning,
+            )
+        }
+    }
+}
+
+private fun ConeValueType.enhanceInflexibleType(
+    session: FirSession,
+    position: TypeComponentPosition,
+    qualifiers: IndexedJavaTypeQualifiers,
+    index: Int,
+    subtreeSizes: List<Int>,
+    precomputedTypeArguments: Array<out ConeTypeProjection>?,
+    isFromDefinitelyNotNullType: Boolean,
+    convertErrorToWarning: Boolean,
+): ConeRigidType? {
     if (this is ConeDefinitelyNotNullType) {
         return original.enhanceInflexibleType(
             session, position, qualifiers, index, subtreeSizes,

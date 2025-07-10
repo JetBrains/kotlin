@@ -212,7 +212,7 @@ fun <T : ConeKotlinType> T.withAttributes(attributes: ConeAttributes): T {
         is ConeErrorType -> ConeErrorType(diagnostic, isUninferredParameter, delegatedType, typeArguments, attributes, nullable, lookupTag)
         is ConeClassLikeTypeImpl -> ConeClassLikeTypeImpl(lookupTag, typeArguments, isMarkedNullable, attributes)
         is ConeDefinitelyNotNullType -> ConeDefinitelyNotNullType(original.withAttributes(attributes))
-        is ConeTypeParameterTypeImpl -> ConeTypeParameterTypeImpl(lookupTag, isMarkedNullable, attributes)
+        is ConeTypeParameterTypeImpl -> ConeTypeParameterTypeImpl.createPure(lookupTag, isMarkedNullable, attributes)
         is ConeRawType -> ConeRawType.create(lowerBound.withAttributes(attributes), upperBound.withAttributes(attributes))
         is ConeDynamicType -> ConeDynamicType(lowerBound.withAttributes(attributes), upperBound.withAttributes(attributes))
         is ConeFlexibleType -> ConeFlexibleType(lowerBound.withAttributes(attributes), upperBound.withAttributes(attributes), isTrivial)
@@ -273,7 +273,7 @@ fun <T : ConeKotlinType> T.withNullability(
     return when (this) {
         is ConeErrorType -> ConeErrorType(diagnostic, isUninferredParameter, delegatedType, typeArguments, theAttributes, nullable, lookupTag)
         is ConeClassLikeTypeImpl -> ConeClassLikeTypeImpl(lookupTag, typeArguments, nullable, theAttributes)
-        is ConeTypeParameterTypeImpl -> ConeTypeParameterTypeImpl(lookupTag, nullable, theAttributes)
+        is ConeTypeParameterTypeImpl -> ConeTypeParameterTypeImpl.createPure(lookupTag, nullable, theAttributes)
         is ConeDynamicType -> this
         is ConeFlexibleType -> {
             if (isTrivial) {
@@ -1024,11 +1024,7 @@ fun ConeKotlinType.canBeNull(session: FirSession): Boolean {
         }
         is ConeStubType -> {
             if (isMarkedNullable) return true
-            val typeConstructor = when (val defaultType = constructor.variable.defaultType) {
-                is ConeErrorUnionType -> (defaultType.valueType as ConeTypeVariableType).typeConstructor
-                is ConeTypeVariableType -> defaultType.typeConstructor
-                else -> error("unreachable")
-            }
+            val typeConstructor = constructor.variable.defaultValueType.typeConstructor
             (typeConstructor.originalTypeParameter as? ConeTypeParameterLookupTag)?.symbol.let {
                 it == null || it.allBoundsAreNullableOrUnresolved(session)
             }
@@ -1052,7 +1048,7 @@ private fun FirTypeParameterSymbol.allBoundsAreNullableOrUnresolved(session: Fir
 }
 
 fun FirIntersectionTypeRef.isLeftValidForDefinitelyNotNullable(session: FirSession): Boolean =
-    leftType.coneType.let { it is ConeTypeParameterType && it.canBeNull(session) && !it.isMarkedNullable }
+    leftType.coneType.let { it.isTypeParameter() && it.canBeNull(session) && !it.isMarkedNullable }
 
 val FirIntersectionTypeRef.isRightValidForDefinitelyNotNullable: Boolean get() = rightType.coneType.isAny
 

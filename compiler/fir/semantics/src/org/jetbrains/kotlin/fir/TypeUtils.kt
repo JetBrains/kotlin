@@ -78,8 +78,8 @@ fun ConeKotlinType?.collectUpperBounds(): Set<ConeRigidType> {
                 collect(type.valueType).map {
                     when (it) {
                         is ConeClassLikeType -> {
-                            ConeErrorUnionType(
-                                it, CEUnionType(errorTypes)
+                            ConeErrorUnionType.create(
+                                it, CEUnionType.create(errorTypes)
                             )
                         }
                         is ConeErrorUnionType -> {
@@ -87,7 +87,9 @@ fun ConeKotlinType?.collectUpperBounds(): Set<ConeRigidType> {
                                 is CEUnionType -> errorTypes + et.types
                                 else -> errorTypes + et
                             }
-                            it.copy(errorType = CEUnionType(unitedErrorTypes))
+                            ConeErrorUnionType.create(
+                                it.valueType, CEUnionType.create(unitedErrorTypes)
+                            )
                         }
                         else -> error("unexpected")
                     }
@@ -97,7 +99,7 @@ fun ConeKotlinType?.collectUpperBounds(): Set<ConeRigidType> {
     }
 
     val upperBounds = mutableSetOf<ConeRigidType>()
-    collect(this)
+    collect(this).forEach { upperBounds.add(it) }
     return upperBounds
 }
 

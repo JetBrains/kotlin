@@ -518,7 +518,7 @@ open class FirDeclarationsResolveTransformer(
             val substitutor = ChainedSubstitutor(
                 provideDelegateCandidate.substitutor,
                 (context.inferenceSession as FirDelegatedPropertyInferenceSession).currentConstraintStorage.buildCurrentSubstitutor(
-                    session.typeContext, additionalBinding?.let(::mapOf) ?: emptyMap(), emptyMap()
+                    session.typeContext, additionalBinding?.let(::mapOf) ?: emptyMap()
                 ) as ConeSubstitutor
             )
 

@@ -351,7 +351,13 @@ class Fir2IrDataClassGeneratedMemberBodyGenerator(private val irBuiltins: IrBuil
                     .getProperties(property.name)
                     .first { (it as FirPropertySymbol).fromPrimaryConstructor } as FirPropertySymbol
 
-                val type = firProperty.resolvedReturnType.fullyExpandedType(session)
+                val preType = firProperty.resolvedReturnType.fullyExpandedType(session)
+                val type = if (preType is ConeErrorUnionType) {
+                    // TODO: RE: Handle error union type
+                    preType.valueType
+                } else {
+                    preType
+                }
                 val (symbol, hasDispatchReceiver) = when {
                     type.isArrayOrPrimitiveArray(checkUnsignedArrays = false) -> context.irBuiltIns.dataClassArrayMemberHashCodeSymbol to false
                     else -> {

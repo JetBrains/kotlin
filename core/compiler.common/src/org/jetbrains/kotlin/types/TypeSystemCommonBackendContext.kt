@@ -38,7 +38,7 @@ interface TypeSystemCommonBackendContext : TypeSystemContext {
 
     fun KotlinTypeMarker.getUnsubstitutedUnderlyingType(): KotlinTypeMarker?
     fun typeSubstitutorForUnderlyingType(map: Map<TypeConstructorMarker, KotlinTypeMarker>): TypeSubstitutorMarker =
-        typeSubstitutorByTypeConstructor(map)
+        typeSubstitutorByTypeConstructor(map, emptyMap())
 
     fun KotlinTypeMarker.makeNullable(): KotlinTypeMarker =
         asRigidType()?.withNullability(true) ?: this
@@ -54,27 +54,27 @@ interface TypeSystemCommonBackendContext : TypeSystemContext {
     fun KotlinTypeMarker.isInterfaceOrAnnotationClass(): Boolean
 
     override fun RigidTypeMarker.isErrorUnion(): Boolean {
-        error("unexpected for non-cone type system")
+        return false
     }
 
     override fun RigidTypeMarker.isValueType(): Boolean {
         error("unexpected for non-cone type system")
     }
 
-    override fun ErrorUnionTypeMarker.valueType(): ValueTypeMarker {
+    override fun RigidTypeMarker.valueType(): ValueTypeMarker {
         error("unexpected for non-cone type system")
     }
 
-    override fun ErrorUnionTypeMarker.errorType(): ErrorTypeMarker {
+    override fun RigidTypeMarker.errorType(): ErrorTypeMarker {
         error("unexpected for non-cone type system")
     }
 
-    override fun ErrorTypeMarker.isSubtypeOf(other: ErrorTypeMarker): Boolean {
+    override fun botTypeOfErrors(): ErrorTypeMarker {
         error("unexpected for non-cone type system")
     }
 
     override fun KotlinTypeMarker.projectOnValue(): KotlinTypeMarker {
-        error("unexpected for non-cone type system")
+        return this
     }
 
     override fun KotlinTypeMarker.projectOnError(): KotlinTypeMarker {
@@ -103,6 +103,9 @@ interface TypeSystemCommonBackendContext : TypeSystemContext {
     }
 
     override fun RichErrorsSystemState<ErrorTypeMarker>.solveSystem(): RichErrorsSystemSolution<ErrorTypeMarker> {
+        if (constraints.isEmpty()) {
+            return RichErrorsSystemSolution(emptyMap(), false)
+        }
         error("unexpected for non-cone type system")
     }
 

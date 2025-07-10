@@ -96,6 +96,24 @@ class FirWhenExhaustivenessTransformer(private val bodyResolveComponents: BodyRe
                 this is ConeDefinitelyNotNullType && session.languageVersionSettings.supportsFeature(LanguageFeature.ImprovedExhaustivenessChecksIn21)
                     -> original.unwrapTypeParameterAndIntersectionTypes(session)
                     .map { it.makeConeTypeDefinitelyNotNullOrNotNull(session.typeContext) }
+                this is ConeErrorUnionType && session.languageVersionSettings.supportsFeature(LanguageFeature.ImprovedExhaustivenessChecksIn21)
+                    -> buildList {
+                    lookupTagIfTypeParameter()?.let { lookupTag ->
+                        lookupTag.typeParameterSymbol.resolvedBounds.flatMapTo(this) {
+                            it.coneType.unwrapTypeParameterAndIntersectionTypes(session)
+                        }
+                        add(this@unwrapTypeParameterAndIntersectionTypes)
+                        return@buildList
+                    }
+                    lookupTagIfTypeParameterIgnoringDnn()?.let { lookupTag ->
+                        lookupTag.typeParameterSymbol.resolvedBounds.flatMapTo(this) {
+                            it.coneType.unwrapTypeParameterAndIntersectionTypes(session)
+                                .map { it.makeConeTypeDefinitelyNotNullOrNotNull(session.typeContext) }
+                        }
+                        add(this@unwrapTypeParameterAndIntersectionTypes)
+                        return@buildList
+                    }
+                }
                 else -> listOf(this)
             }
         }

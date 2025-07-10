@@ -561,7 +561,7 @@ class FirSignatureEnhancement(
                 containingDeclarationSymbol = functionSymbol
             } else typeParameter
             if (typeParameter is FirTypeParameter) {
-                typeParameterSubstitutionMap[typeParameter.symbol] = ConeTypeParameterTypeImpl(
+                typeParameterSubstitutionMap[typeParameter.symbol] = ConeTypeParameterTypeImpl.create(
                     newTypeParameter.symbol.toLookupTag(), isMarkedNullable = false
                 )
             }
@@ -810,10 +810,10 @@ class FirSignatureEnhancement(
         val typeParameterCount = typeParameters.size
         val parametersAsTypeProjections = when {
             typeParameterCount == supertypeParameterCount ->
-                typeParameters.map { ConeTypeParameterTypeImpl(ConeTypeParameterLookupTag(it.symbol), isMarkedNullable = false) }
+                typeParameters.map { ConeTypeParameterTypeImpl.create(ConeTypeParameterLookupTag(it.symbol), isMarkedNullable = false) }
             typeParameterCount == 1 && supertypeParameterCount > 1 && purelyImplementedClassIdFromAnnotation == null -> {
                 val projection =
-                    ConeTypeParameterTypeImpl(ConeTypeParameterLookupTag(typeParameters.first().symbol), isMarkedNullable = false)
+                    ConeTypeParameterTypeImpl.create(ConeTypeParameterLookupTag(typeParameters.first().symbol), isMarkedNullable = false)
                 (1..supertypeParameterCount).map { projection }
             }
             else -> return null

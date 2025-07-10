@@ -125,8 +125,9 @@ object FirClassLiteralChecker : FirGetClassCallChecker(MppCheckerKind.Common) {
                 } else
                     typeArguments.isEmpty()
             }
-            is ConeTypeParameterType -> this.lookupTag.typeParameterSymbol.isReified
-            else -> false
+            else -> {
+                lookupTagIfTypeParameter()?.typeParameterSymbol?.isReified == true
+            }
         }
 }
 

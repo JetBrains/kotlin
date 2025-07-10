@@ -845,7 +845,7 @@ object FirFakeOverrideGenerator {
             useSiteSession: FirSession,
         ): ConeSubstitutor = substitutorByMap(
             pairs.associate { (originalTypeParameter, new) ->
-                Pair(originalTypeParameter.symbol, ConeTypeParameterTypeImpl(new.symbol.toLookupTag(), isMarkedNullable = false))
+                Pair(originalTypeParameter.symbol, ConeTypeParameterTypeImpl.create(new.symbol.toLookupTag(), isMarkedNullable = false))
             },
             useSiteSession
         )

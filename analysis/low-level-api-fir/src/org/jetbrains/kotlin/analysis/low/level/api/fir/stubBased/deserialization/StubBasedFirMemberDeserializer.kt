@@ -612,7 +612,7 @@ internal class StubBasedFirMemberDeserializer(
         val delegatedSelfType = buildResolvedTypeRef {
             coneType = ConeClassLikeTypeImpl(
                 classBuilder.symbol.toLookupTag(),
-                typeParameters.map { ConeTypeParameterTypeImpl(it.symbol.toLookupTag(), false) }.toTypedArray(),
+                typeParameters.map { ConeTypeParameterTypeImpl.createPure(it.symbol.toLookupTag(), false) }.toTypedArray(),
                 false
             )
             source = KtFakePsiSourceElement(classOrObject, KtFakeSourceElementKind.ClassSelfTypeRef)

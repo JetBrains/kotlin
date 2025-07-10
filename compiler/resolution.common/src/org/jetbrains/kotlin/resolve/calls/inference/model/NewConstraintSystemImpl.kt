@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.resolve.calls.components.PostponedArgumentsAnalyzerContext
 import org.jetbrains.kotlin.resolve.calls.inference.*
 import org.jetbrains.kotlin.resolve.calls.inference.components.*
-import org.jetbrains.kotlin.resolve.calls.inference.richerrors.RichErrorsConstraintSystem
+import org.jetbrains.kotlin.resolve.calls.inference.richerrors.hasContradiction
 import org.jetbrains.kotlin.resolve.checkers.EmptyIntersectionTypeInfo
 import org.jetbrains.kotlin.types.AbstractTypeApproximator
 import org.jetbrains.kotlin.types.AbstractTypeChecker
@@ -42,8 +42,6 @@ class NewConstraintSystemImpl(
     private val properTypesCache: MutableSet<KotlinTypeMarker> = SmartSet.create()
     private val notProperTypesCache: MutableSet<KotlinTypeMarker> = SmartSet.create()
     private val intersectionTypesCache: MutableMap<Collection<KotlinTypeMarker>, EmptyIntersectionTypeInfo?> = mutableMapOf()
-
-    val errorTypeSystem: RichErrorsConstraintSystem = RichErrorsConstraintSystem(typeSystemContext)
 
     // Cached value that should be reset on each new constraint or fork point
     private var hasContradictionInForkPointsCache: Boolean? = null
@@ -211,49 +209,21 @@ class NewConstraintSystemImpl(
         storage.builtFunctionalTypesForPostponedArgumentsByExpectedTypeVariables[expectedTypeVariable]
 
     override fun addSubtypeConstraint(lowerType: KotlinTypeMarker, upperType: KotlinTypeMarker, position: ConstraintPosition) {
-        if (lowerType.containsErrorComponent() || upperType.containsErrorComponent()) {
-            constraintInjector.addInitialSubtypeConstraint(
-                apply { checkState(State.BUILDING, State.COMPLETION, State.TRANSACTION) },
-                lowerType.projectOnValue(),
-                upperType.projectOnValue(),
-                position
-            )
-            errorTypeSystem.addSubtypeConstraint(
-                lowerType.projectOnError().disableFlexibilityForErrorType(),
-                upperType.projectOnError().disableFlexibilityForErrorType(),
-                position
-            )
-        } else {
-            constraintInjector.addInitialSubtypeConstraint(
-                apply { checkState(State.BUILDING, State.COMPLETION, State.TRANSACTION) },
-                lowerType,
-                upperType,
-                position
-            )
-        }
+        constraintInjector.addInitialSubtypeConstraint(
+            apply { checkState(State.BUILDING, State.COMPLETION, State.TRANSACTION) },
+            lowerType,
+            upperType,
+            position
+        )
     }
 
     override fun addEqualityConstraint(a: KotlinTypeMarker, b: KotlinTypeMarker, position: ConstraintPosition) {
-        if (a.containsErrorComponent() || b.containsErrorComponent()) {
-            constraintInjector.addInitialEqualityConstraint(
-                apply { checkState(State.BUILDING, State.COMPLETION, State.TRANSACTION) },
-                a.projectOnValue(),
-                b.projectOnValue(),
-                position
-            )
-            errorTypeSystem.addEqualityConstraint(
-                a.projectOnError().disableFlexibilityForErrorType(),
-                b.projectOnError().disableFlexibilityForErrorType(),
-                position
-            )
-        } else {
-            constraintInjector.addInitialEqualityConstraint(
-                apply { checkState(State.BUILDING, State.COMPLETION, State.TRANSACTION) },
-                a,
-                b,
-                position
-            )
-        }
+        constraintInjector.addInitialEqualityConstraint(
+            apply { checkState(State.BUILDING, State.COMPLETION, State.TRANSACTION) },
+            a,
+            b,
+            position
+        )
     }
 
     override fun getProperSuperTypeConstructors(type: KotlinTypeMarker): List<TypeConstructorMarker> {
@@ -282,6 +252,7 @@ class NewConstraintSystemImpl(
     private inner class TransactionState(
         private val beforeState: State,
         private val beforeInitialConstraintCount: Int,
+        private val beforeErrorConstraintCount: Int,
         private val beforeErrorsCount: Int,
         private val beforeMaxTypeDepthFromInitialConstraints: Int,
         private val beforeTypeVariablesTransactionSize: Int,
@@ -302,6 +273,7 @@ class NewConstraintSystemImpl(
             }
             storage.maxTypeDepthFromInitialConstraints = beforeMaxTypeDepthFromInitialConstraints
             storage.errors.trimToSize(beforeErrorsCount)
+            storage.errorConstraints.trimToSize(beforeErrorConstraintCount)
             storage.missedConstraints.trimToSize(beforeMissedConstraintsCount)
             storage.constraintsFromAllForkPoints.trimToSize(beforeConstraintsFromAllForks)
 
@@ -328,6 +300,7 @@ class NewConstraintSystemImpl(
         return TransactionState(
             beforeState = state,
             beforeInitialConstraintCount = storage.initialConstraints.size,
+            beforeErrorConstraintCount = storage.errorConstraints.size,
             beforeErrorsCount = storage.errors.size,
             beforeMaxTypeDepthFromInitialConstraints = storage.maxTypeDepthFromInitialConstraints,
             beforeTypeVariablesTransactionSize = typeVariablesTransaction.size,
@@ -350,7 +323,6 @@ class NewConstraintSystemImpl(
             )
 
             if (storage.hasContradiction) return true
-            if (errorTypeSystem.hasContradiction) return true
 
             if (!languageVersionSettings.supportsFeature(LanguageFeature.ConsiderForkPointsWhenCheckingContradictions)) return false
 
@@ -561,6 +533,14 @@ class NewConstraintSystemImpl(
     override fun addInitialConstraint(initialConstraint: InitialConstraint) {
         checkState(State.BUILDING, State.COMPLETION, State.TRANSACTION)
         storage.initialConstraints.add(initialConstraint)
+    }
+
+    override fun addErrorConstraint(errorConstraint: ErrorConstraint) {
+        checkState(State.BUILDING, State.COMPLETION, State.TRANSACTION)
+        simplifyAndIncorporateSubtyping(errorConstraint.lower, errorConstraint.upper).forEach { (lt, ut) ->
+            storage.errorConstraints.add(ErrorConstraint(lt, ut, errorConstraint.position))
+        }
+        storage.errorsHasContradiction = storage.errorConstraints.hasContradiction(this)
     }
 
     // ConstraintInjector.Context, FixationOrderCalculator.Context
@@ -867,7 +847,7 @@ class NewConstraintSystemImpl(
 
     override fun buildCurrentSubstitutor(additionalBindings: Map<TypeConstructorMarker, KotlinTypeMarker>): TypeSubstitutorMarker {
         checkState(State.BUILDING, State.COMPLETION, State.TRANSACTION)
-        return storage.buildCurrentSubstitutor(this, additionalBindings, errorTypeSystem.currentSolution)
+        return storage.buildCurrentSubstitutor(this, additionalBindings)
     }
 
     override fun buildNotFixedVariablesToStubTypesSubstitutor(): TypeSubstitutorMarker {

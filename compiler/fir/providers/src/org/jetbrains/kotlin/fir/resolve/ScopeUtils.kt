@@ -96,14 +96,14 @@ private fun ConeKotlinType.scope(
     is ConeErrorType -> null
     is ConeClassLikeType -> classScope(useSiteSession, scopeSession, requiredMembersPhase, lookupTag)
     is ConeTypeParameterType -> {
-        val symbol = lookupTag.symbol
-        scopeSession.getOrBuild(symbol, TYPE_PARAMETER_SCOPE_KEY) {
-            val intersectionType = ConeTypeIntersector.intersectTypes(
-                useSiteSession.typeContext,
-                symbol.resolvedBounds.map { it.coneType }
-            )
-
-            intersectionType.scope(useSiteSession, scopeSession, requiredMembersPhase) ?: FirTypeScope.Empty
+        lookupTag.symbol.scope(scopeSession, useSiteSession, requiredMembersPhase)
+    }
+    is ConeErrorUnionType -> {
+        val lookupTag = lookupTagIfTypeParameter()
+        if (lookupTag != null) {
+            lookupTag.symbol.scope(scopeSession, useSiteSession, requiredMembersPhase)
+        } else {
+            valueType.scope(useSiteSession, scopeSession, requiredMembersPhase)
         }
     }
     is ConeRawType -> lowerBound.scope(useSiteSession, scopeSession, requiredMembersPhase)
@@ -131,6 +131,19 @@ private fun ConeKotlinType.scope(
     else -> null
 }
 
+private fun FirTypeParameterSymbol.scope(
+    scopeSession: ScopeSession,
+    useSiteSession: FirSession,
+    requiredMembersPhase: FirResolvePhase?,
+): FirTypeScope = scopeSession.getOrBuild(this, TYPE_PARAMETER_SCOPE_KEY) {
+    val intersectionType = ConeTypeIntersector.intersectTypes(
+        useSiteSession.typeContext,
+        resolvedBounds.map { it.coneType }
+    )
+
+    intersectionType.scope(useSiteSession, scopeSession, requiredMembersPhase) ?: FirTypeScope.Empty
+}
+
 private fun ConeClassLikeType.classScope(
     useSiteSession: FirSession,
     scopeSession: ScopeSession,
@@ -154,7 +167,7 @@ fun FirClassLikeSymbol<*>.defaultType(): ConeRigidType = fir.defaultType()
 
 fun FirClassLikeDeclaration.defaultType(): ConeRigidType =
     if (status.isError) {
-        ConeErrorUnionType(
+        ConeErrorUnionType.create(
             StandardTypes.Nothing,
             CEClassifierType(symbol.toLookupTag())
         )
@@ -162,7 +175,7 @@ fun FirClassLikeDeclaration.defaultType(): ConeRigidType =
         ConeClassLikeTypeImpl(
             symbol.toLookupTag(),
             typeParameters.map {
-                ConeTypeParameterTypeImpl(
+                ConeTypeParameterTypeImpl.create(
                     it.symbol.toLookupTag(),
                     isMarkedNullable = false
                 )
@@ -180,7 +193,7 @@ fun FirClassLikeDeclaration.defaultTypeExpectValue(): ConeClassLikeType =
         ConeClassLikeTypeImpl(
             symbol.toLookupTag(),
             typeParameters.map {
-                ConeTypeParameterTypeImpl(
+                ConeTypeParameterTypeImpl.create(
                     it.symbol.toLookupTag(),
                     isMarkedNullable = false
                 )
@@ -202,7 +215,7 @@ fun ClassId.defaultType(parameters: List<FirTypeParameterSymbol>): ConeClassLike
     ConeClassLikeTypeImpl(
         this.toLookupTag(),
         parameters.map {
-            ConeTypeParameterTypeImpl(
+            ConeTypeParameterTypeImpl.create(
                 it.toLookupTag(),
                 isMarkedNullable = false
             )

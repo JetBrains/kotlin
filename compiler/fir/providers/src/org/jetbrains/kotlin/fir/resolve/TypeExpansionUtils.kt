@@ -155,6 +155,10 @@ fun createParametersSubstitutor(
     useSiteSession: FirSession,
     typeAliasMap: Map<FirTypeParameterSymbol, ConeTypeProjection>,
 ): ConeSubstitutor = object : AbstractConeSubstitutor(useSiteSession.typeContext) {
+    override fun substituteCEType(type: CEType): CEType {
+        return type
+    }
+
     override fun substituteType(type: ConeKotlinType): ConeKotlinType? {
         return null
     }
@@ -164,7 +168,7 @@ fun createParametersSubstitutor(
         // TODO: Consider making code more generic and "ready" to any kind of types (KT-68497)
         // TODO: RE: consider the comment below again
         val symbol =
-            (type.unwrapToSimpleTypeUsingLowerBound() as? ConeTypeParameterType)?.lookupTag?.symbol
+            type.lowerBoundIfFlexible().lookupTagIfTypeParameterIgnoringDnn()?.symbol
                 ?: return super.substituteArgument(projection, index)
         val mappedProjection = typeAliasMap[symbol] ?: return super.substituteArgument(projection, index)
 

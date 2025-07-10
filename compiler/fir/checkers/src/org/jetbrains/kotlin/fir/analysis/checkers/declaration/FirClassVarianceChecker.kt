@@ -135,9 +135,9 @@ object FirClassVarianceChecker : FirClassChecker(MppCheckerKind.Common) {
         source: KtSourceElement? = null,
         isInAbbreviation: Boolean = false
     ) {
-        if (type is ConeTypeParameterType) {
+        type.lookupTagIfTypeParameter()?.let { lookupTag ->
             val fullyExpandedType = type.fullyExpandedType(context.session)
-            val typeParameterSymbol = type.lookupTag.typeParameterSymbol
+            val typeParameterSymbol = lookupTag.typeParameterSymbol
             val resultSource = source ?: typeRef?.source
             if (resultSource != null &&
                 !typeParameterSymbol.variance.allowsPosition(variance) &&

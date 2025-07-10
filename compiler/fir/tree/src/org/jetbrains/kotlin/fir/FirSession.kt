@@ -99,6 +99,6 @@ class BuiltinTypes {
     val charIteratorType: FirImplicitCharIteratorTypeRef = FirImplicitCharIteratorTypeRef(null)
 
     val nullableAnyOrErrorType: FirResolvedTypeRef = buildResolvedTypeRef {
-        coneType = ConeErrorUnionType(StandardTypes.NullableAny, CETopType)
+        coneType = ConeErrorUnionType.create(StandardTypes.NullableAny, CETopType)
     }
 }

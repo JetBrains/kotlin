@@ -11,10 +11,14 @@ import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirProperty
+import org.jetbrains.kotlin.fir.types.ConeErrorUnionType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.ConeTypeParameterType
+import org.jetbrains.kotlin.fir.types.ConeValueType
 import org.jetbrains.kotlin.fir.types.coneType
+import org.jetbrains.kotlin.fir.types.lowerBoundIfFlexible
 import org.jetbrains.kotlin.fir.types.type
+import org.jetbrains.kotlin.fir.types.unwrapDefinitelyNotNull
 import org.jetbrains.kotlin.fir.types.unwrapToSimpleTypeUsingLowerBound
 
 object FirPropertyTypeParametersChecker : FirPropertyChecker(MppCheckerKind.Common) {
@@ -28,12 +32,16 @@ object FirPropertyTypeParametersChecker : FirPropertyChecker(MppCheckerKind.Comm
 
         fun collectAllTypes(type: ConeKotlinType) {
             // TODO: RE: LOW: handle errors
-            type.unwrapToSimpleTypeUsingLowerBound()?.let { unwrappedType ->
-                if (usedTypes.add(unwrappedType)) {
-                    unwrappedType.typeArguments.forEach { it.type?.let(::collectAllTypes) }
-                    if (unwrappedType is ConeTypeParameterType) {
-                        boundsByName[unwrappedType.lookupTag.name]?.forEach { collectAllTypes(it.coneType) }
-                    }
+            val rigidType = type.lowerBoundIfFlexible()
+            val valueType = if (rigidType is ConeErrorUnionType) {
+                rigidType.valueType
+            } else {
+                rigidType as ConeValueType
+            }.unwrapDefinitelyNotNull()
+            if (usedTypes.add(valueType)) {
+                valueType.typeArguments.forEach { it.type?.let(::collectAllTypes) }
+                if (valueType is ConeTypeParameterType) {
+                    boundsByName[valueType.lookupTag.name]?.forEach { collectAllTypes(it.coneType) }
                 }
             }
         }

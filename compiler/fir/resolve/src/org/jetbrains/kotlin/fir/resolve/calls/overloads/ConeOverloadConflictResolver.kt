@@ -617,7 +617,7 @@ class ConeSimpleConstraintSystemImpl(val system: NewConstraintSystemImpl, val se
         val csBuilder = system.getBuilder()
         val substitutionMap = typeParameters.associateBy({ (it as ConeTypeParameterLookupTag).typeParameterSymbol }) {
             require(it is ConeTypeParameterLookupTag)
-            val variable = ConeTypeParameterBasedTypeVariable(it.typeParameterSymbol, it.symbol.mayHaveErrorComponent())
+            val variable = ConeTypeParameterBasedTypeVariable(it.typeParameterSymbol)
             csBuilder.registerVariable(variable)
 
             variable.defaultType

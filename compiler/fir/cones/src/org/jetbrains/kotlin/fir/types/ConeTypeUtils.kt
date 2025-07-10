@@ -107,6 +107,7 @@ private fun ConeKotlinType.contains(predicate: (ConeKotlinType) -> Boolean, visi
         is ConeFlexibleType -> lowerBound.contains(predicate, visited) || !isTrivial && upperBound.contains(predicate, visited)
         is ConeDefinitelyNotNullType -> original.contains(predicate, visited)
         is ConeIntersectionType -> intersectedTypes.any { it.contains(predicate, visited) }
+        is ConeErrorUnionType -> valueType.contains(predicate, visited)
         else -> typeArguments.any { it is ConeKotlinTypeProjection && it.type.contains(predicate, visited) }
     }
 }
@@ -209,5 +210,24 @@ fun ConeRigidType.getConstructor(): TypeConstructorMarker {
         is ConeIntegerLiteralType -> this
         // TODO: RE: suspicious place
         is ConeErrorUnionType -> valueType.getConstructor()
+    }
+}
+
+fun ConeKotlinType.splitIntoValueAndError(): Pair<ConeKotlinType, CEType> {
+    return when (this) {
+        is ConeFlexibleType -> {
+            val lb = lowerBound
+            val ub = upperBound
+            when {
+                ub is ConeValueType && lb is ConeValueType -> this to CEBotType
+                ub is ConeErrorUnionType && lb is ConeErrorUnionType -> {
+                    check(ub.errorType == lb.errorType) { "ub: $ub, lb: $lb" }
+                    ConeFlexibleType(lb.valueType, ub.valueType, isTrivial) to lb.errorType
+                }
+                else -> error("Unexpected flexible type: $this")
+            }
+        }
+        is ConeErrorUnionType -> valueType to errorType
+        else -> this to CEBotType
     }
 }

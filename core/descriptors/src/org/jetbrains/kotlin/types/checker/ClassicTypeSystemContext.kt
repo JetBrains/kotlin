@@ -619,7 +619,10 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
         errorSupportedOnlyInTypeInference()
     }
 
-    override fun typeSubstitutorByTypeConstructor(map: Map<TypeConstructorMarker, KotlinTypeMarker>): TypeSubstitutorMarker {
+    override fun typeSubstitutorByTypeConstructor(
+        map: Map<TypeConstructorMarker, KotlinTypeMarker>,
+        errorsMap: Map<TypeConstructorMarker, ErrorTypeMarker>
+    ): TypeSubstitutorMarker {
         errorSupportedOnlyInTypeInference()
     }
 

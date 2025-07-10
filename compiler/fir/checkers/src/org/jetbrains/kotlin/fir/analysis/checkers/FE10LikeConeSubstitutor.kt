@@ -10,6 +10,9 @@ import org.jetbrains.kotlin.fir.resolve.substitution.AbstractConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.wrapProjection
 import org.jetbrains.kotlin.fir.resolve.withCombinedAttributesFrom
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
+import org.jetbrains.kotlin.fir.types.CETopType
+import org.jetbrains.kotlin.fir.types.CEType
+import org.jetbrains.kotlin.fir.types.CETypeParameterType
 import org.jetbrains.kotlin.fir.types.ConeAttribute
 import org.jetbrains.kotlin.fir.types.ConeAttributes
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
@@ -19,6 +22,7 @@ import org.jetbrains.kotlin.fir.types.ConeTypeProjection
 import org.jetbrains.kotlin.fir.types.ProjectionKind
 import org.jetbrains.kotlin.fir.types.constructClassLikeType
 import org.jetbrains.kotlin.fir.types.isStarProjection
+import org.jetbrains.kotlin.fir.types.splitIntoValueAndError
 import org.jetbrains.kotlin.fir.types.type
 import org.jetbrains.kotlin.fir.types.typeContext
 import org.jetbrains.kotlin.fir.types.withAttributes
@@ -39,6 +43,17 @@ internal class FE10LikeConeSubstitutor(
         useSiteSession: FirSession
     ) : this(typeParameters.zip(typeArguments).toMap(), useSiteSession)
 
+    override fun substituteCEType(type: CEType): CEType {
+        if (type !is CETypeParameterType) return type
+        val projection = substitution[type.lookupTag.symbol] ?: return type
+
+        if (projection.isStarProjection) {
+            return CETopType
+        }
+
+        return projection.type!!.splitIntoValueAndError().second
+    }
+
     override fun substituteType(type: ConeKotlinType): ConeKotlinType? {
         if (type !is ConeTypeParameterType) return null
         val projection = substitution[type.lookupTag.symbol] ?: return null
@@ -47,7 +62,7 @@ internal class FE10LikeConeSubstitutor(
             return StandardClassIds.Any.constructClassLikeType(emptyArray(), isMarkedNullable = true).withProjection(projection)
         }
 
-        val result = projection.type!!.updateNullabilityIfNeeded(type).withCombinedAttributesFrom(type)
+        val result = projection.type!!.splitIntoValueAndError().first.updateNullabilityIfNeeded(type).withCombinedAttributesFrom(type)
 
         return result.withProjection(projection)
     }

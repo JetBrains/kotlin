@@ -6,11 +6,11 @@ FILE: main.kt
             super<R|kotlin/Any|>()
         }
 
-        public final fun foo(x: R|Promise<T & Any>|): R|kotlin/Unit| {
+        public final fun foo(x: R|Promise<T & Any | T>|): R|kotlin/Unit| {
             this@R|/D|.R|/D.bar|((R|<local>/x| as R|KotlinCancellablePromise<T & Any>|))
         }
 
-        public final fun bar(x: R|KotlinCancellablePromise<T & Any>|): R|kotlin/Unit| {
+        public final fun bar(x: R|KotlinCancellablePromise<T & Any | T>|): R|kotlin/Unit| {
         }
 
     }

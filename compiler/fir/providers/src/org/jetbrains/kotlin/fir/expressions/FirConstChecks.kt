@@ -249,7 +249,7 @@ private class FirConstCheckVisitor(
 
         val argument = getClassCall.argument
         return when {
-            coneType is ConeTypeParameterType -> ConstantArgumentKind.KCLASS_LITERAL_OF_TYPE_PARAMETER_ERROR
+            coneType.isTypeParameter() -> ConstantArgumentKind.KCLASS_LITERAL_OF_TYPE_PARAMETER_ERROR
             argument is FirResolvedQualifier -> ConstantArgumentKind.VALID_CONST
             argument is FirClassReferenceExpression -> ConstantArgumentKind.VALID_CONST
             else -> ConstantArgumentKind.NOT_KCLASS_LITERAL

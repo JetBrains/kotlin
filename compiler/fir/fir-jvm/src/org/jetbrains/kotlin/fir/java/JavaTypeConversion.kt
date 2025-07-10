@@ -130,6 +130,14 @@ private fun JavaType?.toConeTypeProjection(
                         // It should not affect semantics, since it would be still a valid type anyway
                         avoidComprehensiveCheck = true,
                     ) ?: lowerBound
+                lowerBound.isTypeParameter() -> {
+                    lowerBound as ConeErrorUnionType
+                    lowerBound.replaceValueType(
+                        ConeDefinitelyNotNullType.create(
+                            lowerBound.valueType, session.typeContext, avoidComprehensiveCheck = true
+                        ) ?: lowerBound.valueType
+                    )
+                }
 
                 else -> lowerBound
             }
@@ -203,8 +211,16 @@ private fun JavaClassifierType.toConeKotlinTypeForFlexibleBound(
     mode: FirJavaTypeConversionMode,
     attributes: ConeAttributes,
     source: KtSourceElement?,
-    lowerBound: ConeLookupTagBasedType? = null
-): ConeLookupTagBasedType {
+    lowerBound: ConeRigidType? = null
+): ConeRigidType {
+    val lowerBoundLookupTag = when (lowerBound) {
+        is ConeLookupTagBasedType -> lowerBound.lookupTag
+        is ConeErrorUnionType -> {
+            lowerBound.lookupTagIfTypeParameter() ?: error("")
+        }
+        null -> null
+        else -> error("")
+    }
     return when (val classifier = classifier) {
         is JavaClass -> {
             var classId = if (mode.insideAnnotation) {
@@ -234,7 +250,7 @@ private fun JavaClassifierType.toConeKotlinTypeForFlexibleBound(
                     }
                 }
 
-                lookupTag != lowerBound?.lookupTag && typeArguments.isNotEmpty() -> {
+                lookupTag != lowerBoundLookupTag && typeArguments.isNotEmpty() -> {
                     val typeParameterSymbols =
                         lookupTag.takeIf { mode != FirJavaTypeConversionMode.TYPE_PARAMETER_BOUND_FIRST_ROUND }
                             ?.toRegularClassSymbol(session)?.typeParameterSymbols
@@ -256,7 +272,7 @@ private fun JavaClassifierType.toConeKotlinTypeForFlexibleBound(
         is JavaTypeParameter -> {
             val symbol = javaTypeParameterStack[classifier]
             if (symbol != null) {
-                ConeTypeParameterTypeImpl(symbol.toLookupTag(), isMarkedNullable = lowerBound != null, attributes)
+                ConeTypeParameterTypeImpl.create(symbol.toLookupTag(), isMarkedNullable = lowerBound != null, attributes)
             } else {
                 ConeErrorType(ConeUnresolvedNameError(classifier.name))
             }

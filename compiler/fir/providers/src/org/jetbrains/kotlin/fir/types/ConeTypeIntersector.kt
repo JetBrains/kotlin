@@ -39,29 +39,27 @@ object ConeTypeIntersector {
         }
 
         val errorIntersection = with(context) {
-            inputTypes.map { (it as ConeRigidType).errorComponent() }.intersectErrorTypes()
+            inputTypes.mapNotNull { (it as? ConeRigidType)?.errorComponent() }.intersectErrorTypes()
         }
 
         val valueIntersection = with(context) {
-            intersectValueTypes(context, inputTypes.map { (it as ConeRigidType).valueComponent() })
+            intersectValueTypes(context, inputTypes.map { (it as? ConeRigidType)?.valueComponent() ?: it })
         }
 
-        return if (errorIntersection is CEBotType) {
-            return valueIntersection
-        } else {
-            ConeErrorUnionType(valueIntersection, errorIntersection)
+        return with(context) {
+            valueIntersection.addErrorComponent(errorIntersection) as ConeKotlinType
         }
     }
 
     private fun intersectValueTypes(
         context: ConeInferenceContext,
-        inputTypes: Collection<ConeValueType>
-    ): ConeValueType {
+        inputTypes: Collection<ConeKotlinType>
+    ): ConeKotlinType {
         val isResultNotNullable = with(context) {
             inputTypes.any { !it.isNullableType() }
         }
         val inputTypesMadeNotNullIfNeeded = inputTypes.mapTo(LinkedHashSet()) {
-            (if (isResultNotNullable) it.makeConeTypeDefinitelyNotNullOrNotNull(context) else it) as ConeValueType
+            (if (isResultNotNullable) it.makeConeTypeDefinitelyNotNullOrNotNull(context) else it)
         }
         if (inputTypesMadeNotNullIfNeeded.size == 1) return inputTypesMadeNotNullIfNeeded.single()
 
@@ -87,7 +85,7 @@ object ConeTypeIntersector {
         return resultList.singleOrNull() ?: ConeIntersectionType(resultList)
     }
 
-    private fun MutableCollection<ConeValueType>.removeIfNonSingleErrorOrInRelation(
+    private fun MutableCollection<ConeKotlinType>.removeIfNonSingleErrorOrInRelation(
         predicate: (candidate: ConeKotlinType, other: ConeKotlinType) -> Boolean
     ) {
         val iterator = iterator()

@@ -143,7 +143,7 @@ internal class StubBasedFirTypeDeserializer(
                 val lookupTag =
                     typeParametersByName[type.typeParameterName]?.toLookupTag() ?: parent?.typeParameterSymbol(type.typeParameterName)
                     ?: return null
-                return ConeTypeParameterTypeImpl(lookupTag, isMarkedNullable = type.nullable).let {
+                return ConeTypeParameterTypeImpl.create(lookupTag, isMarkedNullable = type.nullable).let {
                     if (type.definitelyNotNull)
                         ConeDefinitelyNotNullType.create(it, moduleData.session.typeContext, avoidComprehensiveCheck = true) ?: it
                     else
@@ -243,7 +243,7 @@ internal class StubBasedFirTypeDeserializer(
         val constructor = typeSymbol(typeReference) ?: return null
         val isNullable = typeReference.typeElement is KtNullableType
         if (constructor is ConeTypeParameterLookupTag) {
-            return ConeTypeParameterTypeImpl(constructor, isMarkedNullable = isNullable, attributes).let {
+            return ConeTypeParameterTypeImpl.create(constructor, isMarkedNullable = isNullable, attributes).let {
                 if (typeReference.typeElement?.unwrapNullability() is KtIntersectionType) {
                     ConeDefinitelyNotNullType.create(it, moduleData.session.typeContext, avoidComprehensiveCheck = true) ?: it
                 } else it

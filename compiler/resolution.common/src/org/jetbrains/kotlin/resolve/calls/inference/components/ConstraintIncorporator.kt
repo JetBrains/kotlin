@@ -356,7 +356,16 @@ class ConstraintIncorporator(
         }
 
     private fun KotlinTypeMarker.substitute(c: Context, typeVariable: TypeVariableMarker, value: KotlinTypeMarker): KotlinTypeMarker {
-        val substitutor = c.typeSubstitutorByTypeConstructor(mapOf(typeVariable.freshTypeConstructor(c) to value))
+        val substitutor = with(c) {
+            val typeConstructor = typeVariable.freshTypeConstructor(c)
+            if (value.containsErrorComponent()) {
+                val valueType = value.projectOnValue()
+                val errorType = value.projectOnError().disableFlexibilityForErrorType()
+                c.typeSubstitutorByTypeConstructor(mapOf(typeConstructor to valueType), mapOf(typeConstructor to errorType))
+            } else {
+                c.typeSubstitutorByTypeConstructor(mapOf(typeConstructor to value), mapOf(typeConstructor to with(c) { botTypeOfErrors() }))
+            }
+        }
         return substitutor.safeSubstitute(c, this)
     }
 

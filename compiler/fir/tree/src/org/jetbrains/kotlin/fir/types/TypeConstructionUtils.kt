@@ -19,9 +19,9 @@ fun ConeClassifierLookupTag.constructType(
     typeArguments: Array<out ConeTypeProjection> = ConeTypeProjection.EMPTY_ARRAY,
     isMarkedNullable: Boolean = false,
     attributes: ConeAttributes = ConeAttributes.Empty
-): ConeLookupTagBasedType {
+): ConeRigidType {
     return when (this) {
-        is ConeTypeParameterLookupTag -> ConeTypeParameterTypeImpl(this, isMarkedNullable, attributes)
+        is ConeTypeParameterLookupTag -> ConeTypeParameterTypeImpl.create(this, isMarkedNullable, attributes)
         is ConeClassLikeLookupTag -> this.constructClassType(typeArguments, isMarkedNullable, attributes)
         else -> error("! ${this::class}")
     }
@@ -51,8 +51,8 @@ fun FirTypeParameterSymbol.constructType(
     typeArguments: Array<ConeTypeProjection> = ConeTypeProjection.EMPTY_ARRAY,
     isMarkedNullable: Boolean = false,
     attributes: ConeAttributes = ConeAttributes.Empty
-): ConeTypeParameterType {
-    return ConeTypeParameterTypeImpl(this.toLookupTag(), isMarkedNullable, attributes)
+): ConeErrorUnionType {
+    return ConeTypeParameterTypeImpl.create(this.toLookupTag(), isMarkedNullable, attributes)
 }
 
 fun FirClassifierSymbol<*>.constructType(
@@ -63,8 +63,10 @@ fun FirClassifierSymbol<*>.constructType(
     status: FirDeclarationStatus? = null
 ): ConeRigidType {
     return when (this) {
-        is FirTypeParameterSymbol -> ConeTypeParameterTypeImpl(this.toLookupTag(), isMarkedNullable, attributes)
-        is FirClassLikeSymbol<*> if (status ?: fir.status).isError -> constructErrorType(typeArguments, isMarkedNullable)
+        is FirTypeParameterSymbol -> {
+            ConeTypeParameterTypeImpl.create(toLookupTag(), isMarkedNullable, attributes)
+        }
+        is FirClassLikeSymbol<*> if (status ?: fir.status).isError -> constructErrorUnionType(typeArguments, isMarkedNullable)
         is FirClassLikeSymbol<*> -> constructType(typeArguments, isMarkedNullable, attributes)
     }
 }
@@ -77,13 +79,13 @@ private fun FirClassLikeSymbol<*>.constructType(
     return ConeClassLikeTypeImpl(this.toLookupTag(), typeArguments, isMarkedNullable, attributes)
 }
 
-private fun FirClassLikeSymbol<*>.constructErrorType(
+private fun FirClassLikeSymbol<*>.constructErrorUnionType(
     typeArguments: Array<ConeTypeProjection> = ConeTypeProjection.EMPTY_ARRAY,
     isMarkedNullable: Boolean = false,
 ): ConeErrorUnionType {
     check(!isMarkedNullable)
     check(typeArguments.isEmpty())
-    return ConeErrorUnionType(
+    return ConeErrorUnionType.create(
         StandardTypes.Nothing,
         CEClassifierType(this.toLookupTag())
     )
@@ -94,7 +96,7 @@ fun FirClassSymbol<*>.constructStarProjectedType(
     isMarkedNullable: Boolean = false,
 ): ConeRigidType {
     return if (isError) {
-        ConeErrorUnionType(
+        ConeErrorUnionType.create(
             StandardTypes.Nothing,
             CEClassifierType(toLookupTag())
         )

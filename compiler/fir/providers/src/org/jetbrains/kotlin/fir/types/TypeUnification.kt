@@ -22,6 +22,7 @@ fun FirSession.doUnify(
     typeWithParametersProjection: ConeTypeProjection,
     targetTypeParameters: Set<FirTypeParameterSymbol>,
     result: MutableMap<FirTypeParameterSymbol, ConeTypeProjection>,
+    resultCe: MutableMap<FirTypeParameterSymbol, CEType>,
 ): Boolean {
     val originalType = originalTypeProjection.type?.lowerBoundIfFlexible()?.fullyExpandedType(this)
     val typeWithParameters = typeWithParametersProjection.type?.lowerBoundIfFlexible()?.fullyExpandedType(this)
@@ -34,7 +35,8 @@ fun FirSession.doUnify(
         val intersectionResult = mutableMapOf<FirTypeParameterSymbol, ConeTypeProjection>()
         for (intersectedType in originalType.intersectedTypes) {
             val localResult = mutableMapOf<FirTypeParameterSymbol, ConeTypeProjection>()
-            if (!doUnify(intersectedType, typeWithParametersProjection, targetTypeParameters, localResult)) return false
+            // TODO: RE: MID: We should replicate the behaviour for value types
+            if (!doUnify(intersectedType, typeWithParametersProjection, targetTypeParameters, localResult, resultCe)) return false
             for ((typeParameter, typeProjection) in localResult) {
                 val existingTypeProjection = intersectionResult[typeParameter]
                 if (existingTypeProjection == null
@@ -52,10 +54,26 @@ fun FirSession.doUnify(
         return true
     }
 
+    if (typeWithParameters is ConeErrorUnionType) {
+        val valueType: ConeTypeProjection
+        val errorType: CEType
+        if (originalType is ConeErrorUnionType) {
+            valueType = originalType.valueType
+            errorType = originalType.errorType
+        } else {
+            valueType = originalType ?: originalTypeProjection
+            errorType = CEBotType
+        }
+        if (!doUnify(valueType, typeWithParameters.valueType, targetTypeParameters, result, resultCe)) return false
+        if (!doUnifyCe(errorType, typeWithParameters.errorType, targetTypeParameters, resultCe)) return false
+        return true
+    }
+
     // in Foo ~ in X  =>  Foo ~ X
     if (originalTypeProjection.kind == typeWithParametersProjection.kind &&
-        originalTypeProjection.kind != ProjectionKind.INVARIANT && originalTypeProjection.kind != ProjectionKind.STAR) {
-        return doUnify(originalType!!, typeWithParameters!!, targetTypeParameters, result)
+        originalTypeProjection.kind != ProjectionKind.INVARIANT && originalTypeProjection.kind != ProjectionKind.STAR
+    ) {
+        return doUnify(originalType!!, typeWithParameters!!, targetTypeParameters, result, resultCe)
     }
 
     // Foo? ~ X?  =>  Foo ~ X
@@ -63,7 +81,7 @@ fun FirSession.doUnify(
         return doUnify(
             originalTypeProjection.removeQuestionMark(this),
             typeWithParametersProjection.removeQuestionMark(this),
-            targetTypeParameters, result,
+            targetTypeParameters, result, resultCe
         )
     }
 
@@ -77,7 +95,7 @@ fun FirSession.doUnify(
         return doUnify(
             originalTypeProjection,
             typeWithParametersProjection.replaceType(typeWithParameters.original),
-            targetTypeParameters, result,
+            targetTypeParameters, result, resultCe
         )
     }
 
@@ -117,7 +135,7 @@ fun FirSession.doUnify(
 
     // Foo<...> ~ Foo<...>
     for ((originalTypeArgument, typeWithParametersArgument) in originalType.typeArguments.zip(typeWithParameters.typeArguments)) {
-        if (!doUnify(originalTypeArgument, typeWithParametersArgument, targetTypeParameters, result)) return false
+        if (!doUnify(originalTypeArgument, typeWithParametersArgument, targetTypeParameters, result, resultCe)) return false
     }
 
     return true
@@ -139,3 +157,93 @@ private fun ConeTypeProjection.replaceType(newType: ConeKotlinType): ConeTypePro
         ProjectionKind.OUT -> ConeKotlinTypeProjectionOut(newType)
         ProjectionKind.STAR -> error("Should not be a star projection")
     }
+
+// TODO: RE: MID: I was not fiully sure in the expected behaviour of this function
+private fun FirSession.doUnifyCe(
+    originalTypeProjection: CEType,
+    typeWithParametersProjection: CEType,
+    targetTypeParameters: Set<FirTypeParameterSymbol>,
+    resultCe: MutableMap<FirTypeParameterSymbol, CEType>,
+): Boolean {
+    val originalAtoms = when (originalTypeProjection) {
+        is CEUnionType -> originalTypeProjection.types.toMutableSet()
+        else -> mutableSetOf(originalTypeProjection)
+    }
+    val typeWithParametersAtoms = when (typeWithParametersProjection) {
+        is CEUnionType -> typeWithParametersProjection.types
+        else -> listOf(typeWithParametersProjection)
+    }.filter {
+        if (it in originalAtoms) {
+            originalAtoms.remove(it)
+            false
+        } else true
+    }
+
+    if (originalAtoms.isEmpty() && typeWithParametersAtoms.isEmpty()) {
+        return true
+    }
+
+//    val parameter = if (typeWithParametersAtoms.size == 1) {
+//        val singleAtom = typeWithParametersAtoms.single()
+//        if (singleAtom !is CETypeParameterType) {
+//            return false
+//        }
+//        val parameterSymbol = singleAtom.lookupTag.typeParameterSymbol
+//        if (parameterSymbol !in targetTypeParameters) {
+//            return false
+//        }
+//        parameterSymbol
+//    } else {
+//        return false
+//    }
+
+    val parameterType = typeWithParametersAtoms.find { it is CETypeParameterType } ?: return true
+    val parameter = (parameterType as CETypeParameterType).lookupTag.typeParameterSymbol
+    if (parameter !in targetTypeParameters) return true
+
+    val mappedType = if (originalAtoms.isEmpty()) {
+        CEBotType
+    } else {
+        CEUnionType.create(originalAtoms.toList())
+    }
+    val existingMappedType = resultCe[parameter]
+    return when {
+        existingMappedType == null -> {
+            resultCe[parameter] = mappedType
+            true
+        }
+        existingMappedType.isEqualTo(mappedType) -> true
+        else -> false
+    }
+}
+
+private fun CEType.isEqualTo(other: CEType): Boolean {
+    return when (this) {
+        is CEBotType -> other is CEBotType
+        is CETopType -> other is CETopType
+        is CELookupTagBasedType -> {
+            if (other !is CELookupTagBasedType) return false
+            lookupTag == other.lookupTag
+        }
+        is CETypeVariableType -> {
+            if (other !is CETypeVariableType) return false
+            typeConstructor == other.typeConstructor
+        }
+        is CEUnionType -> {
+            if (other !is CEUnionType) return false
+            val otherSet = other.types.toMutableSet()
+            for (type in types) {
+                var found = false
+                for (otherType in otherSet) {
+                    if (type.isEqualTo(otherType)) {
+                        otherSet.remove(otherType)
+                        found = true
+                        break
+                    }
+                }
+                if (!found) return false
+            }
+            otherSet.isEmpty()
+        }
+    }
+}

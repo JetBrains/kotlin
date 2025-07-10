@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.types.ConeErrorUnionType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.ConeLookupTagBasedType
 import org.jetbrains.kotlin.fir.types.isNothing
+import org.jetbrains.kotlin.fir.types.lookupTagIfTypeParameter
 import org.jetbrains.kotlin.fir.types.lowerBoundIfFlexible
 import org.jetbrains.kotlin.name.ClassId
 
@@ -91,6 +92,9 @@ fun ConeKotlinType.toSymbol(session: FirSession): FirClassifierSymbol<*>? {
         is ConeLookupTagBasedType -> lb.lookupTag.toSymbol(session)
         is ConeErrorUnionType if lb.valueType.isNothing && lb.errorType is CEClassifierType -> {
             (lb.errorType as CEClassifierType).lookupTag.toSymbol(session)
+        }
+        is ConeErrorUnionType -> {
+            lookupTagIfTypeParameter()?.symbol
         }
         else -> null
     }

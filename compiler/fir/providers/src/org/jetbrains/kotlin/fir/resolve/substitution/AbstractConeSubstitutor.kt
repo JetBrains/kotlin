@@ -13,6 +13,11 @@ import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 abstract class AbstractConeSubstitutor(protected val typeContext: ConeTypeContext) : ConeSubstitutor() {
     abstract fun substituteType(type: ConeKotlinType): ConeKotlinType?
+
+    open fun substituteCEType(type: CEType): CEType {
+        error("Not implemented for ${this::class.simpleName}")
+    }
+
     override fun substituteArgument(projection: ConeTypeProjection, index: Int): ConeTypeProjection? {
         val type = (projection as? ConeKotlinTypeProjection)?.type ?: return null
         val newType = substituteOrNull(type) ?: return null
@@ -65,6 +70,16 @@ abstract class AbstractConeSubstitutor(protected val typeContext: ConeTypeContex
         }
     }
 
+    private fun CEType.substituteRecursive(): CEType {
+        return when (this) {
+            is CEUnionType -> CEUnionType.create(types.map { it.substituteRecursive() })
+            is CEBotType -> substituteCEType(this)
+            is CELookupTagBasedType -> substituteCEType(this)
+            is CETopType -> substituteCEType(this)
+            is CETypeVariableType -> substituteCEType(this)
+        }
+    }
+
     private fun ConeKotlinType.substituteRecursive(): ConeKotlinType? {
         return when (this) {
             is ConeClassLikeType -> this.substituteArguments()
@@ -75,7 +90,20 @@ abstract class AbstractConeSubstitutor(protected val typeContext: ConeTypeContex
             is ConeIntersectionType -> this.substituteIntersectedTypes()
             is ConeStubType -> return null
             is ConeIntegerLiteralType -> return null
-            is ConeErrorUnionType -> valueType.substituteRecursive()?.let { replaceValueTypeUnsafe(it) }
+            is ConeErrorUnionType -> {
+                val valueType = substituteOrNull(valueType)
+                val errorType = errorType.substituteRecursive()
+                if (errorType == CEBotType) return valueType
+                if (valueType == null) return null
+                if (valueType is ConeFlexibleType) {
+                    return ConeFlexibleType(
+                        ConeErrorUnionType.createNormalized(valueType.lowerBound as ConeValueType, errorType),
+                        ConeErrorUnionType.createNormalized(valueType.upperBound as ConeValueType, errorType),
+                        valueType.isTrivial
+                    )
+                }
+                ConeErrorUnionType.createNormalized(valueType as ConeValueType, errorType)
+            }
         }
     }
 

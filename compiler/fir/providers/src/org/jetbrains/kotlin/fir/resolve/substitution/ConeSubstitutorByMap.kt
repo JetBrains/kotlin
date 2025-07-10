@@ -16,15 +16,39 @@ import org.jetbrains.kotlin.fir.types.*
  */
 fun substitutorByMap(
     substitution: Map<FirTypeParameterSymbol, ConeKotlinType>,
+    ceSubstitution: Map<FirTypeParameterSymbol, CEType>,
     useSiteSession: FirSession,
     allowIdenticalSubstitution: Boolean = false,
 ): ConeSubstitutor {
-    return ConeSubstitutorByMap.create(substitution, useSiteSession, allowIdenticalSubstitution)
+    return ConeSubstitutorByMap.create(substitution, ceSubstitution, useSiteSession, allowIdenticalSubstitution)
+}
+
+fun substitutorByMap(
+    substitution: Map<FirTypeParameterSymbol, ConeKotlinType>,
+    useSiteSession: FirSession,
+    allowIdenticalSubstitution: Boolean = false,
+): ConeSubstitutor {
+    val valueSubstitution = mutableMapOf<FirTypeParameterSymbol, ConeKotlinType>()
+    val ceSubstitution = mutableMapOf<FirTypeParameterSymbol, CEType>()
+    for ((typeParameter, type) in substitution) {
+        with (useSiteSession.typeContext) {
+            val vt = type.projectOnValue() as ConeKotlinType
+            valueSubstitution[typeParameter] = vt
+            val cet = type.projectOnError()
+            if (cet is ConeErrorUnionType) {
+                ceSubstitution[typeParameter] = cet.errorType
+            } else {
+                ceSubstitution[typeParameter] = CEBotType // TODO: RE: suspicious place
+            }
+        }
+    }
+    return substitutorByMap(valueSubstitution, ceSubstitution, useSiteSession, allowIdenticalSubstitution)
 }
 
 class ConeSubstitutorByMap private constructor(
     // Used only for sake of optimizations at org.jetbrains.kotlin.analysis.api.fir.types.KtFirMapBackedSubstitutor
     val substitution: Map<FirTypeParameterSymbol, ConeKotlinType>,
+    val ceSubstitution: Map<FirTypeParameterSymbol, CEType>,
     private val useSiteSession: FirSession
 ) : AbstractConeSubstitutor(useSiteSession.typeContext) {
     companion object {
@@ -33,26 +57,35 @@ class ConeSubstitutorByMap private constructor(
          */
         fun create(
             substitution: Map<FirTypeParameterSymbol, ConeKotlinType>,
+            ceSubstitution: Map<FirTypeParameterSymbol, CEType>,
             useSiteSession: FirSession,
             allowIdenticalSubstitution: Boolean,
         ): ConeSubstitutor {
-            if (substitution.isEmpty()) return Empty
+            if (substitution.isEmpty() && ceSubstitution.isEmpty()) return Empty
 
             if (!allowIdenticalSubstitution) {
                 // If all arguments match parameters, then substitutor isn't needed
                 val substitutionIsIdentical = substitution.all { (parameterSymbol, argumentType) ->
                     (argumentType as? ConeTypeParameterType)?.lookupTag?.typeParameterSymbol == parameterSymbol && !argumentType.isMarkedNullable
                 }
-                if (substitutionIsIdentical) {
+                val ceSubstitutionIsIdentical = ceSubstitution.all { (parameterSymbol, argumentType) ->
+                    (argumentType as? CETypeParameterType)?.lookupTag?.typeParameterSymbol == parameterSymbol
+                }
+                if (substitutionIsIdentical && ceSubstitutionIsIdentical) {
                     return Empty
                 }
             }
-            return ConeSubstitutorByMap(substitution, useSiteSession)
+            return ConeSubstitutorByMap(substitution, ceSubstitution, useSiteSession)
         }
     }
 
     private val hashCode: Int by lazy(LazyThreadSafetyMode.PUBLICATION) {
-        substitution.hashCode()
+        substitution.hashCode() + ceSubstitution.hashCode() * 31
+    }
+
+    override fun substituteCEType(type: CEType): CEType {
+        if (type !is CETypeParameterType) return type
+        return ceSubstitution[type.lookupTag.symbol] ?: return type
     }
 
     override fun substituteType(type: ConeKotlinType): ConeKotlinType? {
@@ -68,6 +101,7 @@ class ConeSubstitutorByMap private constructor(
 
         if (hashCode != other.hashCode) return false
         if (substitution != other.substitution) return false
+        if (ceSubstitution != other.ceSubstitution) return false
         if (useSiteSession != other.useSiteSession) return false
 
         return true

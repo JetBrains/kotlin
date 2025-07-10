@@ -515,83 +515,91 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         callResolutionMode: CallResolutionMode,
     ): FirStatement =
         whileAnalysing(session, functionCall) {
-            val calleeReference = functionCall.calleeReference
-            if (
-                (calleeReference is FirResolvedNamedReference || calleeReference is FirErrorNamedReference) &&
-                !functionCall.isResolved
-            ) {
-                storeTypeFromCallee(functionCall, isLhsOfAssignment = false)
-            }
-            if (calleeReference is FirNamedReferenceWithCandidate) return functionCall
-            if (calleeReference !is FirSimpleNamedReference) {
-                // The callee reference can be resolved as an error very early, e.g., `super` as a callee during raw FIR creation.
-                // We still need to visit/transform other parts, e.g., call arguments, to check if any other errors are there.
-                if (calleeReference !is FirResolvedNamedReference) {
-                    functionCall.transformChildren(transformer, ResolutionMode.ContextIndependent)
-                }
-                return functionCall
-            }
-            functionCall.transformAnnotations(transformer, data)
-            functionCall.replaceLambdaArgumentInvocationKinds(session)
-            functionCall.transformTypeArguments(transformer, ResolutionMode.ContextIndependent)
-            val choosingOptionForAugmentedAssignment = callResolutionMode == CallResolutionMode.OPTION_FOR_AUGMENTED_ASSIGNMENT
-            val withTransformedArguments = if (!choosingOptionForAugmentedAssignment) {
-                dataFlowAnalyzer.enterCallArguments(functionCall, functionCall.arguments)
-                // In provideDelegate mode the explicitReceiver is already resolved
-                // E.g. we have val some by someDelegate
-                // At 1st stage of delegate inference we resolve someDelegate itself,
-                // at 2nd stage in provideDelegate mode we are trying to resolve someDelegate.provideDelegate(),
-                // and 'someDelegate' explicit receiver is resolved at 1st stage
-                // See also FirDeclarationsResolveTransformer.transformWrappedDelegateExpression
-                val withResolvedExplicitReceiver = when (callResolutionMode) {
-                    CallResolutionMode.PROVIDE_DELEGATE -> functionCall
-                    else -> transformExplicitReceiverOf(functionCall)
-                }
-                withResolvedExplicitReceiver.also {
-                    dataFlowAnalyzer.exitCallExplicitReceiver()
-
-                    if (enableArrayOfCallTransformation && data is ResolutionMode.WithExpectedType) {
-                        transformCallArgumentsInsideAnnotationContext(functionCall, data)
-                    } else {
-                        it.replaceArgumentList(it.argumentList.transform(this, ResolutionMode.ContextDependent))
-                    }
-                    dataFlowAnalyzer.exitCallArguments()
-                }
-            } else {
-                functionCall
-            }
-
-            val resultExpression = callResolver.resolveCallAndSelectCandidate(withTransformedArguments, data)
-
-            if (!choosingOptionForAugmentedAssignment) {
-                dataFlowAnalyzer.enterFunctionCall(resultExpression)
-            }
-            val completeInference = callCompleter.completeCall(
-                resultExpression, data,
-                skipEvenPartialCompletion = choosingOptionForAugmentedAssignment,
-            )
-            var result = completeInference.transformToIntegerOperatorCallOrApproximateItIfNeeded(data)
-            if (!choosingOptionForAugmentedAssignment) {
-                dataFlowAnalyzer.exitFunctionCall(result, data.forceFullCompletion)
-            }
-            @OptIn(FirExtensionApiInternals::class)
-            if (callRefinementExtensions != null) {
-                val reference = result.calleeReference
-                if (reference is FirResolvedNamedReference) {
-                    val callData = reference.resolvedSymbol.fir.originalCallDataForPluginRefinedCall
-                    if (callData != null) {
-                        result = callData.extension.transform(result, callData.originalSymbol)
-                    }
-                }
-            }
-
-            context.addReceiversFromExtensions(result, components)
-
-            if (enableArrayOfCallTransformation) {
-                return arrayOfCallTransformer.transformFunctionCall(result, session)
-            }
-            return result
+            return transformFunctionCallInternal2(functionCall, data, callResolutionMode)
         }
+
+    private fun transformFunctionCallInternal2(
+        functionCall: FirFunctionCall,
+        data: ResolutionMode,
+        callResolutionMode: CallResolutionMode,
+    ): FirStatement {
+        val calleeReference = functionCall.calleeReference
+        if (
+            (calleeReference is FirResolvedNamedReference || calleeReference is FirErrorNamedReference) &&
+            !functionCall.isResolved
+        ) {
+            storeTypeFromCallee(functionCall, isLhsOfAssignment = false)
+        }
+        if (calleeReference is FirNamedReferenceWithCandidate) return functionCall
+        if (calleeReference !is FirSimpleNamedReference) {
+            // The callee reference can be resolved as an error very early, e.g., `super` as a callee during raw FIR creation.
+            // We still need to visit/transform other parts, e.g., call arguments, to check if any other errors are there.
+            if (calleeReference !is FirResolvedNamedReference) {
+                functionCall.transformChildren(transformer, ContextIndependent)
+            }
+            return functionCall
+        }
+        functionCall.transformAnnotations(transformer, data)
+        functionCall.replaceLambdaArgumentInvocationKinds(session)
+        functionCall.transformTypeArguments(transformer, ContextIndependent)
+        val choosingOptionForAugmentedAssignment = callResolutionMode == CallResolutionMode.OPTION_FOR_AUGMENTED_ASSIGNMENT
+        val withTransformedArguments = if (!choosingOptionForAugmentedAssignment) {
+            dataFlowAnalyzer.enterCallArguments(functionCall, functionCall.arguments)
+            // In provideDelegate mode the explicitReceiver is already resolved
+            // E.g. we have val some by someDelegate
+            // At 1st stage of delegate inference we resolve someDelegate itself,
+            // at 2nd stage in provideDelegate mode we are trying to resolve someDelegate.provideDelegate(),
+            // and 'someDelegate' explicit receiver is resolved at 1st stage
+            // See also FirDeclarationsResolveTransformer.transformWrappedDelegateExpression
+            val withResolvedExplicitReceiver = when (callResolutionMode) {
+                CallResolutionMode.PROVIDE_DELEGATE -> functionCall
+                else -> transformExplicitReceiverOf(functionCall)
+            }
+            withResolvedExplicitReceiver.also {
+                dataFlowAnalyzer.exitCallExplicitReceiver()
+
+                if (enableArrayOfCallTransformation && data is ResolutionMode.WithExpectedType) {
+                    transformCallArgumentsInsideAnnotationContext(functionCall, data)
+                } else {
+                    it.replaceArgumentList(it.argumentList.transform(this, ResolutionMode.ContextDependent))
+                }
+                dataFlowAnalyzer.exitCallArguments()
+            }
+        } else {
+            functionCall
+        }
+
+        val resultExpression = callResolver.resolveCallAndSelectCandidate(withTransformedArguments, data)
+
+        if (!choosingOptionForAugmentedAssignment) {
+            dataFlowAnalyzer.enterFunctionCall(resultExpression)
+        }
+        val completeInference = callCompleter.completeCall(
+            resultExpression, data,
+            skipEvenPartialCompletion = choosingOptionForAugmentedAssignment,
+        )
+        var result = completeInference.transformToIntegerOperatorCallOrApproximateItIfNeeded(data)
+        if (!choosingOptionForAugmentedAssignment) {
+            dataFlowAnalyzer.exitFunctionCall(result, data.forceFullCompletion)
+        }
+        @OptIn(FirExtensionApiInternals::class)
+        if (callRefinementExtensions != null) {
+            val reference = result.calleeReference
+            if (reference is FirResolvedNamedReference) {
+                val callData = reference.resolvedSymbol.fir.originalCallDataForPluginRefinedCall
+                if (callData != null) {
+                    result = callData.extension.transform(result, callData.originalSymbol)
+                }
+            }
+        }
+
+        context.addReceiversFromExtensions(result, components)
+
+        if (enableArrayOfCallTransformation) {
+            return arrayOfCallTransformer.transformFunctionCall(result, session)
+        }
+        return result
+    }
 
     /**
      * Transforms the value arguments of some call inside the context of an annotation call.

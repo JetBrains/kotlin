@@ -88,7 +88,7 @@ open class ConeTypeRenderer(
         type: ConeKotlinType,
         nullabilityMarker: String = if (type !is ConeFlexibleType && type.isMarkedNullable) "?" else "",
     ) {
-        if (type !is ConeFlexibleType && type !is ConeDefinitelyNotNullType) {
+        if (type !is ConeFlexibleType && type !is ConeDefinitelyNotNullType && type !is ConeErrorUnionType) {
             // We don't render attributes for flexible/definitely not null types here,
             // because bounds duplicate these attributes often
             type.renderAttributes()
@@ -172,18 +172,36 @@ open class ConeTypeRenderer(
     }
 
     private fun ConeFlexibleType.renderForSameLookupTags(): Boolean {
-        if (lowerBound is ConeLookupTagBasedType && upperBound is ConeLookupTagBasedType &&
-            lowerBound.lookupTag == upperBound.lookupTag &&
-            !lowerBound.isMarkedNullable && upperBound.isMarkedNullable
-        ) {
+        fun renderForLookupTagBasedBounds(lowerBound: ConeLookupTagBasedType, upperBound: ConeLookupTagBasedType): Boolean {
             if (lowerBound !is ConeClassLikeType || lowerBound.typeArguments.isEmpty()) {
                 if (upperBound !is ConeClassLikeType || upperBound.typeArguments.isEmpty()) {
                     render(lowerBound, nullabilityMarker = "!")
                     return true
                 }
             }
+            return false
         }
-        return false
+
+        fun renderForBounds(lowerBound: ConeRigidType, upperBound: ConeRigidType): Boolean {
+            if (lowerBound is ConeLookupTagBasedType && upperBound is ConeLookupTagBasedType &&
+                lowerBound.lookupTag == upperBound.lookupTag &&
+                !lowerBound.isMarkedNullable && upperBound.isMarkedNullable
+            ) {
+                return renderForLookupTagBasedBounds(lowerBound, upperBound)
+            }
+            return false
+        }
+
+        return renderForBounds(lowerBound, upperBound) || (
+                lowerBound is ConeErrorUnionType &&
+                        lowerBound.valueType is ConeLookupTagBasedType && lowerBound.errorType is CELookupTagBasedType &&
+                        lowerBound.valueType.lookupTag == lowerBound.valueType.lookupTag &&
+                        upperBound is ConeErrorUnionType &&
+                        upperBound.valueType is ConeLookupTagBasedType && upperBound.errorType is CELookupTagBasedType &&
+                        upperBound.valueType.lookupTag == upperBound.valueType.lookupTag &&
+                        !lowerBound.valueType.isMarkedNullable && upperBound.valueType.isMarkedNullable &&
+                        renderForLookupTagBasedBounds(lowerBound.valueType, upperBound.valueType)
+                )
     }
 
     protected open fun render(flexibleType: ConeFlexibleType) {
@@ -265,8 +283,22 @@ open class ConeTypeRenderer(
     }
 
     protected open fun render(type: ConeErrorUnionType) {
-        this.render(type.valueType)
-        this.render(type.errorType)
+        if (type.valueType is ConeLookupTagBasedType && type.errorType is CELookupTagBasedType
+            && type.errorType.lookupTag == type.valueType.lookupTag
+        ) {
+            // case for split type parameter
+            render(type.valueType)
+            return
+        }
+        if (type.valueType is ConeTypeVariableType && type.errorType is CETypeVariableType
+            && type.errorType.typeConstructor == type.valueType.typeConstructor
+        ) {
+            // case for split type parameter
+            render(type.valueType)
+            return
+        }
+        render(type.valueType)
+        render(type.errorType)
     }
 
     protected open fun render(type: CEType) {

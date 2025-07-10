@@ -48,6 +48,7 @@ import org.jetbrains.kotlin.psi.KtLambdaExpression
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementType
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import org.jetbrains.kotlin.resolve.calls.inference.model.*
+import org.jetbrains.kotlin.resolve.calls.inference.richerrors.currentSolution
 import org.jetbrains.kotlin.resolve.calls.tower.ApplicabilityDetail
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
@@ -818,8 +819,12 @@ private fun ConeKotlinType.substituteTypeVariableTypes(
     candidate: AbstractCallCandidate<*>,
     typeContext: ConeTypeContext,
 ): ConeKotlinType {
-    val nonErrorSubstitutionMap = candidate.system.asReadOnlyStorage().fixedTypeVariables.filterValues { it !is ConeErrorType }
-    val substitutor = typeContext.typeSubstitutorByTypeConstructor(nonErrorSubstitutionMap) as ConeSubstitutor
+    val storage = candidate.system.asReadOnlyStorage()
+    val nonErrorSubstitutionMap = storage.fixedTypeVariables.filterValues { it !is ConeErrorType }
+    val substitutor = typeContext.typeSubstitutorByTypeConstructor(
+        nonErrorSubstitutionMap,
+        storage.errorConstraints.currentSolution(typeContext)
+    ) as ConeSubstitutor
 
     return substitutor.substituteOrSelf(this).removeTypeVariableTypes(typeContext, TypeVariableReplacement.ErrorType)
 }

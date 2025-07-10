@@ -520,7 +520,7 @@ private fun rebindPropertyRef(
             source = expression.source
             variance = Variance.INVARIANT
             typeRef = buildResolvedTypeRef {
-                coneType = ConeTypeParameterTypeImpl(it.symbol.toLookupTag(), false)
+                coneType = ConeTypeParameterTypeImpl.create(it.symbol.toLookupTag(), false)
             }
         }
     })

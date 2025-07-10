@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.resolve.calls.inference.model
 
 import org.jetbrains.kotlin.resolve.calls.inference.ForkPointData
 import org.jetbrains.kotlin.types.AbstractTypeChecker
+import org.jetbrains.kotlin.types.model.ErrorTypeMarker
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.TypeCheckerProviderContext
 import org.jetbrains.kotlin.types.model.TypeConstructorMarker
@@ -39,6 +40,7 @@ interface ConstraintStorage {
     val notFixedTypeVariables: Map<TypeConstructorMarker, VariableWithConstraints>
     val missedConstraints: List<Pair<IncorporationConstraintPosition, List<Pair<TypeVariableMarker, Constraint>>>>
     val initialConstraints: List<InitialConstraint>
+    val errorConstraints: List<ErrorConstraint>
     val maxTypeDepthFromInitialConstraints: Int
     val errors: List<ConstraintSystemError>
     val hasContradiction: Boolean
@@ -83,6 +85,7 @@ interface ConstraintStorage {
         override val notFixedTypeVariables: Map<TypeConstructorMarker, VariableWithConstraints> get() = emptyMap()
         override val missedConstraints: List<Pair<IncorporationConstraintPosition, List<Pair<TypeVariableMarker, Constraint>>>> get() = emptyList()
         override val initialConstraints: List<InitialConstraint> get() = emptyList()
+        override val errorConstraints: List<ErrorConstraint> get() = emptyList()
         override val maxTypeDepthFromInitialConstraints: Int get() = 1
         override val errors: List<ConstraintSystemError> get() = emptyList()
         override val hasContradiction: Boolean get() = false
@@ -182,6 +185,12 @@ class InitialConstraint(
         return "$a $sign $b"
     }
 }
+
+data class ErrorConstraint(
+    val lower: ErrorTypeMarker,
+    val upper: ErrorTypeMarker,
+    val position: ConstraintPosition,
+)
 
 //fun InitialConstraint.checkConstraint(substitutor: TypeSubstitutor): Boolean {
 //    val newA = substitutor.substitute(a)

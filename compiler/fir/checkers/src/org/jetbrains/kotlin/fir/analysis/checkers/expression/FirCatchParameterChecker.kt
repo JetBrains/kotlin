@@ -21,6 +21,8 @@ import org.jetbrains.kotlin.fir.types.ConeTypeParameterType
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.isNothing
 import org.jetbrains.kotlin.fir.types.isTypeMismatchDueToNullability
+import org.jetbrains.kotlin.fir.types.lookupTagIfTypeParameter
+import org.jetbrains.kotlin.fir.types.lookupTagIfTypeParameterIgnoringDnn
 import org.jetbrains.kotlin.fir.types.typeContext
 
 object FirCatchParameterChecker : FirTryExpressionChecker(MppCheckerKind.Common) {
@@ -39,10 +41,8 @@ object FirCatchParameterChecker : FirTryExpressionChecker(MppCheckerKind.Common)
             }
 
             val coneType = catchParameter.returnTypeRef.coneType
-            if (coneType is ConeTypeParameterType || coneType is ConeDefinitelyNotNullType) {
-                val isReified = with(context.session.typeContext) {
-                    (coneType.originalIfDefinitelyNotNullable() as? ConeTypeParameterType)?.lookupTag?.typeParameterSymbol?.isReified == true
-                }
+            coneType.lookupTagIfTypeParameterIgnoringDnn()?.let { lookupTag ->
+                val isReified = lookupTag.typeParameterSymbol.isReified
 
                 if (isReified) {
                     reporter.reportOn(source, FirErrors.REIFIED_TYPE_IN_CATCH_CLAUSE)

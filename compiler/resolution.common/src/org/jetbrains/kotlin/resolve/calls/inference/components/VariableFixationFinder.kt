@@ -365,6 +365,9 @@ class VariableFixationFinder(
 
     private fun Context.variableHasProperArgumentConstraints(variable: TypeConstructorMarker): Boolean {
         val constraints = notFixedTypeVariables[variable]?.constraints ?: return false
+
+//        if (constraints.isEmpty() && this.)
+
         // temporary hack to fail calls which contain callable references resolved though OI with uninferred type parameters
         val areThereConstraintsWithUninferredTypeParameter = constraints.any { c -> c.type.contains { it.isUninferredParameter() } }
         return constraints.any { isProperArgumentConstraint(it) } && !areThereConstraintsWithUninferredTypeParameter

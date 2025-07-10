@@ -208,7 +208,7 @@ internal object CreateFreshTypeVariableSubstitutorStage : ResolutionStage() {
         val typeParameters = declaration.typeParameters
 
         val freshTypeVariables = typeParameters.map { typeParameter ->
-            ConeTypeParameterBasedTypeVariable(typeParameter.symbol, typeParameter.symbol.mayHaveErrorComponent())
+            ConeTypeParameterBasedTypeVariable(typeParameter.symbol)
         }
 
         val toFreshVariables = substitutorByMap(freshTypeVariables.associate { it.typeParameterSymbol to it.defaultType }, context.session)
@@ -226,15 +226,9 @@ internal object CreateFreshTypeVariableSubstitutorStage : ResolutionStage() {
         }
 
         fun ConeTypeParameterBasedTypeVariable.addSubtypeConstraint(
-        upperBound: ConeKotlinType//,
-            //position: DeclaredUpperBoundConstraintPosition
+            upperBound: ConeKotlinType,
+            //position: DeclaredUpperBoundConstraintPosition,
         ) {
-            if (upperBound.lowerBoundIfFlexible().classLikeLookupTagIfAny?.classId == StandardClassIds.Any &&
-                upperBound.upperBoundIfFlexible().isMarkedNullable
-            ) {
-                return
-            }
-
             csBuilder.addSubtypeConstraint(
                 defaultType,
                 toFreshVariables.substituteOrSelf(upperBound),

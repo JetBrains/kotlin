@@ -149,7 +149,7 @@ object FirContextParametersDeclarationChecker : FirBasicDeclarationChecker(MppCh
             return type.withArguments(type.typeArguments.map {
                 when {
                     it.isStarProjection -> it
-                    it.type!! is ConeTypeParameterType -> ConeStarProjection
+                    it.type!!.isTypeParameter() -> ConeStarProjection
                     it.type!! is ConeClassLikeType -> replaceTypeParametersByStarProjections(it.type as ConeClassLikeType)
                     else -> it
                 }
