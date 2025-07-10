@@ -13537,6 +13537,18 @@ public class PhasedJvmDiagnosticPsiTestGenerated extends AbstractPhasedJvmDiagno
       }
 
       @Test
+      @TestMetadata("exposingPackagePrivateInInternal.kt")
+      public void testExposingPackagePrivateInInternal() {
+        runTest("compiler/testData/diagnostics/tests/exposed/exposingPackagePrivateInInternal.kt");
+      }
+
+      @Test
+      @TestMetadata("exposingPackagePrivateInInternalAfter.kt")
+      public void testExposingPackagePrivateInInternalAfter() {
+        runTest("compiler/testData/diagnostics/tests/exposed/exposingPackagePrivateInInternalAfter.kt");
+      }
+
+      @Test
       @TestMetadata("functional.kt")
       public void testFunctional() {
         runTest("compiler/testData/diagnostics/tests/exposed/functional.kt");
@@ -22717,6 +22729,18 @@ public class PhasedJvmDiagnosticPsiTestGenerated extends AbstractPhasedJvmDiagno
       @TestMetadata("exposingObjectsAfter.kt")
       public void testExposingObjectsAfter() {
         runTest("compiler/testData/diagnostics/tests/inline/exposingObjectsAfter.kt");
+      }
+
+      @Test
+      @TestMetadata("exposingPackagePrivateTypeInInternal.kt")
+      public void testExposingPackagePrivateTypeInInternal() {
+        runTest("compiler/testData/diagnostics/tests/inline/exposingPackagePrivateTypeInInternal.kt");
+      }
+
+      @Test
+      @TestMetadata("exposingPackagePrivateTypeInInternalAfter.kt")
+      public void testExposingPackagePrivateTypeInInternalAfter() {
+        runTest("compiler/testData/diagnostics/tests/inline/exposingPackagePrivateTypeInInternalAfter.kt");
       }
 
       @Test
