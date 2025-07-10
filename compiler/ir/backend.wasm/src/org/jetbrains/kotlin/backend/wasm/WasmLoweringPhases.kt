@@ -450,6 +450,11 @@ private val staticMembersLoweringPhase = makeIrModulePhase(
     name = "StaticMembersLowering",
 )
 
+private val fieldInitializersLowering = makeIrModulePhase(
+    ::FieldInitializersLowering,
+    name = "FieldInitializersLowering",
+)
+
 private val classReferenceLoweringPhase = makeIrModulePhase(
     ::WasmClassReferenceLowering,
     name = "WasmClassReferenceLowering",
@@ -724,6 +729,8 @@ fun getWasmLowerings(
 
         objectUsageLoweringPhase,
         purifyObjectInstanceGettersLoweringPhase.takeIf { !isIncremental && !isDebugFriendlyCompilation },
+
+        fieldInitializersLowering,
 
         explicitlyCastExternalTypesPhase,
         typeOperatorLoweringPhase,

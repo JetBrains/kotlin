@@ -601,7 +601,6 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
         jsModuleImports = deserializeJsModuleImports(),
         exports = deserializeExports(),
         stringPoolSize = deserializeNullableIntSymbol(),
-        fieldInitializers = deserializeFieldInitializers(),
         mainFunctionWrappers = deserializeMainFunctionWrappers(),
         testFunctionDeclarators = deserializeTestFunctionDeclarators(),
         equivalentFunctions = deserializeClosureCallExports(),
@@ -610,6 +609,9 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
         builtinIdSignatures = deserializeBuiltinIdSignatures(),
         specialITableTypes = deserializeInterfaceTableTypes(),
         rttiElements = deserializeRttiElements(),
+        objectInstanceFieldInitializers = deserializeList(::deserializeIdSignature),
+        stringPoolFieldInitializer = deserializeNullable(::deserializeIdSignature),
+        nonConstantFieldInitializers = deserializeList(::deserializeIdSignature),
     )
 
     private fun deserializeFunctions() = deserializeReferencableAndDefinable(::deserializeIdSignature, ::deserializeFunction)
@@ -626,7 +628,6 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
     private fun deserializeJsModuleImports() = deserializeMap(::deserializeIdSignature, ::deserializeString)
     private fun deserializeExports() = deserializeList(::deserializeExport)
     private fun deserializeNullableIntSymbol() = deserializeNullable { deserializeSymbol(::deserializeInt) }
-    private fun deserializeFieldInitializers(): MutableList<FieldInitializer> = deserializeList(::deserializeFieldInitializer)
     private fun deserializeMainFunctionWrappers() = deserializeList(::deserializeIdSignature)
     private fun deserializeTestFunctionDeclarators() = deserializeList(::deserializeIdSignature)
     private fun deserializeClosureCallExports() = deserializeList { deserializePair(::deserializeString, ::deserializeIdSignature) }
@@ -673,13 +674,6 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
                 rttiType = rttiType,
             )
         }
-
-    private fun deserializeFieldInitializer(): FieldInitializer = withFlags {
-        val field = deserializeIdSignature()
-        val initializer = deserializeList(::deserializeInstr)
-        val isObjectInstanceField = it.consume()
-        FieldInitializer(field, initializer, isObjectInstanceField)
-    }
 
     private fun deserializeAssociatedObject(): AssociatedObject = withFlags {
         val obj = deserializeLong()

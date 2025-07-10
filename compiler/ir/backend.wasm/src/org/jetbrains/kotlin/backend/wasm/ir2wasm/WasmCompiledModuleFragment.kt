@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.ir.util.getPackageFragment
-import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.wasm.ir.*
 import org.jetbrains.kotlin.wasm.ir.source.location.SourceLocation
 
@@ -63,7 +62,6 @@ class WasmCompiledFileFragment(
     val jsModuleImports: MutableMap<IdSignature, String> = mutableMapOf(),
     val exports: MutableList<WasmExport<*>> = mutableListOf(),
     var stringPoolSize: WasmSymbol<Int>? = null,
-    val fieldInitializers: MutableList<FieldInitializer> = mutableListOf(),
     val mainFunctionWrappers: MutableList<IdSignature> = mutableListOf(),
     var testFunctionDeclarators: MutableList<IdSignature> = mutableListOf(),
     val equivalentFunctions: MutableList<Pair<String, IdSignature>> = mutableListOf(),
@@ -72,6 +70,10 @@ class WasmCompiledFileFragment(
     var builtinIdSignatures: BuiltinIdSignatures? = null,
     var specialITableTypes: SpecialITableTypes? = null,
     var rttiElements: RttiElements? = null,
+
+    val objectInstanceFieldInitializers: MutableList<IdSignature> = mutableListOf(),
+    var stringPoolFieldInitializer: IdSignature? = null,
+    val nonConstantFieldInitializers: MutableList<IdSignature> = mutableListOf(),
 ) : IrICProgramFragment()
 
 class WasmCompiledModuleFragment(
@@ -460,27 +462,32 @@ class WasmCompiledModuleFragment(
     private fun createFieldInitializerFunction(): WasmFunction.Defined {
         val fieldInitializerFunction = WasmFunction.Defined("_fieldInitialize", WasmSymbol(parameterlessNoReturnFunctionType))
         with(WasmExpressionBuilder(fieldInitializerFunction.instructions)) {
-            var stringPoolInitializer: Pair<FieldInitializer, WasmSymbol<WasmGlobal>>? = null
+            var stringPoolInitializer: WasmSymbol<WasmFunction>? = null
             wasmCompiledFileFragments.forEach { fragment ->
-                fragment.fieldInitializers.forEach { initializer ->
-                    val fieldSymbol = WasmSymbol(fragment.globalFields.defined[initializer.field])
-                    if (fieldSymbol.owner.name == "kotlin.wasm.internal.stringPool") {
-                        stringPoolInitializer = initializer to fieldSymbol
-                    } else {
-                        if (initializer.isObjectInstanceField) {
-                            expression.add(0, WasmInstrWithoutLocation(WasmOp.GLOBAL_SET, listOf(WasmImmediate.GlobalIdx(fieldSymbol))))
-                            expression.addAll(0, initializer.instructions)
-                        } else {
-                            expression.addAll(initializer.instructions)
-                            buildSetGlobal(fieldSymbol, serviceCodeLocation)
-                        }
-                    }
+                stringPoolInitializer = stringPoolInitializer
+                    ?: fragment.stringPoolFieldInitializer?.let { WasmSymbol(fragment.functions.defined[it]) }
+
+                fragment.objectInstanceFieldInitializers.forEach { objectInitializer ->
+                    val functionSymbol = WasmSymbol(fragment.functions.defined[objectInitializer]!!)
+                    expression.add(
+                        index = 0,
+                        element = WasmInstrWithoutLocation(WasmOp.CALL, listOf(WasmImmediate.FuncIdx(functionSymbol)))
+                    )
+                }
+                fragment.nonConstantFieldInitializers.forEach { nonConstantInitializer ->
+                    val functionSymbol = WasmSymbol(fragment.functions.defined[nonConstantInitializer]!!)
+                    buildCall(
+                        symbol = functionSymbol,
+                        location = serviceCodeLocation
+                    )
                 }
             }
-            stringPoolInitializer?.let {
-                expression.add(0, WasmInstrWithoutLocation(WasmOp.GLOBAL_SET, listOf(WasmImmediate.GlobalIdx(it.second))))
-                expression.addAll(0, it.first.instructions)
-            } ?: compilationException("stringPool initializer not found!", type = null)
+
+            stringPoolInitializer ?: compilationException("stringPool initializer not found!", type = null)
+            expression.add(
+                0,
+                WasmInstrWithoutLocation(WasmOp.CALL, listOf(WasmImmediate.FuncIdx(stringPoolInitializer)))
+            )
         }
         return fieldInitializerFunction
     }
@@ -651,12 +658,6 @@ fun alignUp(x: Int, alignment: Int): Int {
     assert(alignment and (alignment - 1) == 0) { "power of 2 expected" }
     return (x + alignment - 1) and (alignment - 1).inv()
 }
-
-class FieldInitializer(
-    val field: IdSignature,
-    val instructions: List<WasmInstr>,
-    val isObjectInstanceField: Boolean
-)
 
 data class ClassAssociatedObjects(
     val klass: Long,

@@ -622,7 +622,6 @@ class WasmSerializer(outputStream: OutputStream) {
             serializeMap(jsModuleImports, ::serializeIdSignature, ::serializeString)
             serializeList(exports, ::serializeWasmExport)
             serializeNullable(stringPoolSize) { serializeWasmSymbolReadOnly(it, ::serializeInt) }
-            serializeList(fieldInitializers, ::serializeFieldInitializer)
             serializeList(mainFunctionWrappers, ::serializeIdSignature)
             serializeList(testFunctionDeclarators, ::serializeIdSignature)
             serializeList(equivalentFunctions) { serializePair(it, ::serializeString, ::serializeIdSignature) }
@@ -631,6 +630,9 @@ class WasmSerializer(outputStream: OutputStream) {
             serializeNullable(builtinIdSignatures, ::serializeBuiltinIdSignatures)
             serializeNullable(specialITableTypes, ::serializeInterfaceTableTypes)
             serializeNullable(rttiElements, ::serializeRttiElements)
+            serializeList(objectInstanceFieldInitializers, ::serializeIdSignature)
+            serializeNullable(stringPoolFieldInitializer, ::serializeIdSignature)
+            serializeList(nonConstantFieldInitializers, ::serializeIdSignature)
         }
 
     private fun serializeRttiElements(rttiElements: RttiElements) {
@@ -660,13 +662,6 @@ class WasmSerializer(outputStream: OutputStream) {
         serializeNullable(builtinIdSignatures.jsToKotlinAnyAdapter, ::serializeIdSignature)
         serializeNullable(builtinIdSignatures.unitGetInstance, ::serializeIdSignature)
         serializeNullable(builtinIdSignatures.runRootSuites, ::serializeIdSignature)
-    }
-
-    private fun serializeFieldInitializer(fieldInitializer: FieldInitializer) {
-        withFlags(fieldInitializer.isObjectInstanceField) {
-            serializeIdSignature(fieldInitializer.field)
-            serializeList(fieldInitializer.instructions, ::serializeWasmInstr)
-        }
     }
 
     private fun serializeClassAssociatedObjects(classAssociatedObjects: ClassAssociatedObjects) {

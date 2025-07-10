@@ -105,6 +105,15 @@ private fun compileIrFile(
     fileContext.jsToKotlinClosures.forEach { (exportSignature, function) ->
         wasmFileCodegenContext.addEquivalentFunction("<4>_$exportSignature", function.symbol)
     }
+    fileContext.objectInstanceFieldInitializer?.apply {
+        wasmFileCodegenContext.addObjectInstanceFieldInitializer(symbol)
+    }
+    fileContext.stringPoolFieldInitializer?.apply {
+        wasmFileCodegenContext.setStringPoolFieldInitializer(symbol)
+    }
+    fileContext.nonConstantFieldInitializer?.apply {
+        wasmFileCodegenContext.addNonConstantFieldInitializers(symbol)
+    }
 
     fileContext.classAssociatedObjects.forEach { (klass, associatedObjects) ->
         val associatedObjectsInstanceGetters = associatedObjects.map { (key, obj) ->

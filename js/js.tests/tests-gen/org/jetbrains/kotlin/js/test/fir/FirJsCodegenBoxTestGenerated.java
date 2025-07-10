@@ -32694,6 +32694,12 @@ public class FirJsCodegenBoxTestGenerated extends AbstractFirJsCodegenBoxTest {
     }
 
     @Test
+    @TestMetadata("kt78962.kt")
+    public void testKt78962() {
+      runTest("compiler/testData/codegen/box/properties/kt78962.kt");
+    }
+
+    @Test
     @TestMetadata("kt8928.kt")
     public void testKt8928() {
       runTest("compiler/testData/codegen/box/properties/kt8928.kt");

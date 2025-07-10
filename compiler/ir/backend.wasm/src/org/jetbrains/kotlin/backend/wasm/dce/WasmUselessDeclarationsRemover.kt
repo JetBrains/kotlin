@@ -7,10 +7,17 @@ package org.jetbrains.kotlin.backend.wasm.dce
 
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.backend.js.utils.isObjectInstanceField
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationContainer
+import org.jetbrains.kotlin.ir.declarations.IrField
 import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
+import org.jetbrains.kotlin.ir.expressions.IrBlockBody
+import org.jetbrains.kotlin.ir.expressions.IrSetField
+import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
+import org.jetbrains.kotlin.ir.util.file
 import org.jetbrains.kotlin.ir.util.transformFlat
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
@@ -25,16 +32,34 @@ class WasmUselessDeclarationsRemover(
     }
 
     override fun visitFile(declaration: IrFile) {
-        process(declaration)
+        val fileContext = context.fileContexts[declaration]
+        val objectInstanceFieldInitializer = fileContext?.objectInstanceFieldInitializer
+
+        process(declaration, objectInstanceFieldInitializer)
+
+        if (objectInstanceFieldInitializer != null) {
+            val statements = (objectInstanceFieldInitializer.body as IrBlockBody).statements
+            statements.removeIf {
+                val field = (it as? IrSetField)?.symbol?.owner ?: error("Expected IrSetField but got ${it::class.simpleName}")
+                field !in usefulDeclarations
+            }
+            if (statements.isEmpty()) {
+                declaration.declarations.remove(objectInstanceFieldInitializer)
+                fileContext.objectInstanceFieldInitializer = null
+            }
+        }
     }
 
     override fun visitClass(declaration: IrClass) {
-        process(declaration)
+        process(declaration, null)
     }
 
     // TODO bring back the primary constructor fix
-    private fun process(container: IrDeclarationContainer) {
+    private fun process(container: IrDeclarationContainer, objectInstanceFieldInitializer: IrSimpleFunction?) {
         container.declarations.transformFlat { member ->
+            if (objectInstanceFieldInitializer != null && objectInstanceFieldInitializer == member) {
+                return@transformFlat null
+            }
             if (member !in usefulDeclarations) {
                 emptyList()
             } else {
