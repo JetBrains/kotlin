@@ -47,13 +47,11 @@ internal class GeneratorCoroutineImpl(val resultContinuation: Continuation<Any?>
 
     public override val context: CoroutineContext get() = _context!!
 
-    @InlineOnly
-    public inline fun dropLastIterator() {
+    public fun dropLastIterator() {
         jsIterators.asDynamic().pop()
     }
 
-    @InlineOnly
-    public inline fun addNewIterator(iterator: JsIterator<Any?>) {
+    public fun addNewIterator(iterator: JsIterator<Any?>) {
         jsIterators.asDynamic().push(iterator)
     }
 
@@ -63,8 +61,7 @@ internal class GeneratorCoroutineImpl(val resultContinuation: Continuation<Any?>
     @InlineOnly
     private inline fun getLastIterator(): JsIterator<Any?> = jsIterators[jsIterators.size - 1]
 
-    @InlineOnly
-    public inline fun shouldResumeImmediately(): Boolean = unknown.value !== savedResult.value
+    public fun shouldResumeImmediately(): Boolean = unknown.value !== savedResult.value
 
     override fun resumeWith(result: Result<Any?>) {
         if (unknown.value === savedResult.value) savedResult = result
