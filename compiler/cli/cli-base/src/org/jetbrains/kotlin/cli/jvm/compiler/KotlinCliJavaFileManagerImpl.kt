@@ -252,9 +252,20 @@ class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJ
         if (!found) return null
 
         return object : PsiPackageImpl(myPsiManager, packageName) {
+            private val packageInfoAnnotations by lazy {
+                val packageInfoClassId = ClassId(packageFqName, SingleJavaFileRootsIndex.PACKAGE_INFO_CLASS_NAME)
+                val packageInfoVirtualFile = singleJavaFileRootsIndex.findJavaSourceClass(packageInfoClassId)
+                val packageInfoPsiFile = packageInfoVirtualFile?.let { myPsiManager.findFile(it) } as? PsiJavaFile
+                packageInfoPsiFile?.packageStatement?.annotationList
+            }
+
             // Do not check validness for packages we just made sure are actually present
             // It might be important for source roots that have non-trivial package prefix
             override fun isValid() = true
+
+            override fun getAnnotationList(): PsiModifierList? {
+                return packageInfoAnnotations ?: super.getAnnotationList()
+            }
         }
     }
 
