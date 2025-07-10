@@ -1233,6 +1233,12 @@ public class FirBytecodeTextTestWithInlineScopesGenerated extends AbstractFirByt
     }
 
     @Test
+    @TestMetadata("kt12211_accessorForDelegatedPropertySetter.kt")
+    public void testKt12211_accessorForDelegatedPropertySetter() {
+      runTest("compiler/testData/codegen/bytecodeText/companion/kt12211_accessorForDelegatedPropertySetter.kt");
+    }
+
+    @Test
     @TestMetadata("kt14258_1.kt")
     public void testKt14258_1() {
       runTest("compiler/testData/codegen/bytecodeText/companion/kt14258_1.kt");
