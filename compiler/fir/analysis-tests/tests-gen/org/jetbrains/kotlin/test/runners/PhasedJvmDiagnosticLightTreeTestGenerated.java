@@ -18206,6 +18206,18 @@ public class PhasedJvmDiagnosticLightTreeTestGenerated extends AbstractPhasedJvm
         }
 
         @Test
+        @TestMetadata("nestedCaptureTypeCaseFromIj.kt")
+        public void testNestedCaptureTypeCaseFromIj() {
+          runTest("compiler/testData/diagnostics/tests/inference/capturedTypes/nestedCaptureTypeCaseFromIj.kt");
+        }
+
+        @Test
+        @TestMetadata("nestedCaptureTypeCaseFromIjSimplified.kt")
+        public void testNestedCaptureTypeCaseFromIjSimplified() {
+          runTest("compiler/testData/diagnostics/tests/inference/capturedTypes/nestedCaptureTypeCaseFromIjSimplified.kt");
+        }
+
+        @Test
         @TestMetadata("noCaptureTypeErrorForNonTopLevel.kt")
         public void testNoCaptureTypeErrorForNonTopLevel() {
           runTest("compiler/testData/diagnostics/tests/inference/capturedTypes/noCaptureTypeErrorForNonTopLevel.kt");
@@ -56416,6 +56428,17 @@ public class PhasedJvmDiagnosticLightTreeTestGenerated extends AbstractPhasedJvm
       @TestMetadata("unitUpperBound.kt")
       public void testUnitUpperBound() {
         runTest("compiler/fir/analysis-tests/testData/resolve/inference/unitUpperBound.kt");
+      }
+
+      @Nested
+      @TestMetadata("compiler/fir/analysis-tests/testData/resolve/inference/capturedTypes")
+      @TestDataPath("$PROJECT_ROOT")
+      public class CapturedTypes {
+        @Test
+        @TestMetadata("hugeMixedCapturedType.kt")
+        public void testHugeMixedCapturedType() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/inference/capturedTypes/hugeMixedCapturedType.kt");
+        }
       }
 
       @Nested
