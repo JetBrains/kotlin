@@ -9,16 +9,24 @@ import org.jetbrains.kotlin.backend.js.TsCompilationStrategy
 import org.jetbrains.kotlin.ir.backend.js.export.TypeScriptFragment
 import org.jetbrains.kotlin.ir.backend.js.export.toTypeScript
 import org.jetbrains.kotlin.js.backend.ast.ESM_EXTENSION
+import org.jetbrains.kotlin.js.backend.ast.ESM_TS_DEFINITION_EXTENSION
 import org.jetbrains.kotlin.js.backend.ast.JsProgram
 import org.jetbrains.kotlin.js.backend.ast.REGULAR_EXTENSION
+import org.jetbrains.kotlin.js.backend.ast.TS_DEFINITION_EXTENSION
 import org.jetbrains.kotlin.serialization.js.ModuleKind
 import java.io.File
 import java.nio.file.Files
 
-val ModuleKind.extension: String
+val ModuleKind.jsExtension: String
     get() = when (this) {
         ModuleKind.ES -> ESM_EXTENSION
         else -> REGULAR_EXTENSION
+    }
+
+val ModuleKind.dtsExtension: String
+    get() = when (this) {
+        ModuleKind.ES -> ESM_TS_DEFINITION_EXTENSION
+        else -> TS_DEFINITION_EXTENSION
     }
 
 abstract class CompilationOutputs {
@@ -46,21 +54,21 @@ abstract class CompilationOutputs {
             writtenFiles += jsMapFile
 
             out.tsDefinitions.takeIf { dtsStrategy == TsCompilationStrategy.EACH_FILE }?.let {
-                val tsFile = jsFile.dtsForJsFile
+                val tsFile = jsFile.createDtsForJsFile(moduleKind)
                 tsFile.writeText(listOf(it).toTypeScript(name, moduleKind))
                 writtenFiles += tsFile
             }
         }
 
         dependencies.forEach { (name, content) ->
-            outputDir.resolve("$name${moduleKind.extension}").writeAsJsFile(content)
+            outputDir.resolve("$name${moduleKind.jsExtension}").writeAsJsFile(content)
         }
 
-        val outputJsFile = outputDir.resolve("$outputName${moduleKind.extension}")
+        val outputJsFile = outputDir.resolve("$outputName${moduleKind.jsExtension}")
         outputJsFile.writeAsJsFile(this)
 
         if (dtsStrategy == TsCompilationStrategy.MERGED) {
-            val dtsFile = outputJsFile.dtsForJsFile
+            val dtsFile = outputJsFile.createDtsForJsFile(moduleKind)
             dtsFile.writeText(getFullTsDefinition(moduleName, moduleKind))
             writtenFiles += dtsFile
         }
@@ -87,8 +95,8 @@ abstract class CompilationOutputs {
     protected val File.mapForJsFile
         get() = resolveSibling("$name.map").normalizedAbsoluteFile
 
-    protected val File.dtsForJsFile
-        get() = resolveSibling("$nameWithoutExtension.d.ts").normalizedAbsoluteFile
+    protected fun File.createDtsForJsFile(moduleKind: ModuleKind) =
+        resolveSibling("$nameWithoutExtension${moduleKind.dtsExtension}").normalizedAbsoluteFile
 }
 
 private fun File.copyModificationTimeFrom(from: File) {
