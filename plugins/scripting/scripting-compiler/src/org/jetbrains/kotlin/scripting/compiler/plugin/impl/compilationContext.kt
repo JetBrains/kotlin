@@ -327,6 +327,8 @@ private fun createInitialCompilerConfiguration(
         } else {
             loadPluginsFromClassloader(CompilerConfiguration::class.java.classLoader)
         }
+
+        scriptingHostConfiguration = hostConfiguration
     }
 }
 

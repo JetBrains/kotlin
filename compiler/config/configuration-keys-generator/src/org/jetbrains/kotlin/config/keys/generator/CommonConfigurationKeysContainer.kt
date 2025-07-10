@@ -65,4 +65,9 @@ object CommonConfigurationKeysContainer : KeysContainer("org.jetbrains.kotlin.co
         description = "don't sort source files in FS order",
         comment = "Should be used only in tests, impossible to set via compiler arguments",
     )
+
+    val SCRIPTING_HOST_CONFIGURATION by key<Any>(
+        description = "scripting host configuration",
+        comment = "Internal for passing configuration in the scripting pipeline, impossible to set via compiler arguments"
+    )
 }
