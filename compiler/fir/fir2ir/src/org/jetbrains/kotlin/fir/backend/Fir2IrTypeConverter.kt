@@ -114,6 +114,18 @@ class Fir2IrTypeConverter(
                 }
             }
             is ConeErrorUnionType -> {
+                if (valueType is ConeTypeParameterType && errorType is CETypeParameterType &&
+                    (valueType as ConeTypeParameterType).lookupTag == (errorType as CETypeParameterType).lookupTag
+                ) {
+                    return valueType.toIrType(
+                        typeOrigin,
+                        annotations,
+                        hasFlexibleNullability,
+                        hasFlexibleMutability,
+                        hasFlexibleArrayElementVariance,
+                        addRawTypeAnnotation
+                    )
+                }
                 // TODO: RE: revisit translation
                 IrSimpleTypeImpl(
                     StandardClassIds.Any.toSymbol(c.session)?.toIrSymbol()!!,

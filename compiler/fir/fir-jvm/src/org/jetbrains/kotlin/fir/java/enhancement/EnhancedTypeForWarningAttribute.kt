@@ -90,6 +90,10 @@ class EnhancedForWarningConeSubstitutor(
         return enhancedTopLevel?.let(::substituteOrSelf)
     }
 
+    override fun substituteCEType(type: CEType): CEType {
+        return type
+    }
+
     private fun ConeKotlinType.replacementTopLevelTypeOrNull(): ConeKotlinType? {
         return enhancedTypeForWarning
             ?: attributes.explicitTypeArgumentIfMadeFlexibleSynthetically

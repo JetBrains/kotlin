@@ -6,13 +6,13 @@ FILE: hashSet.kt
         public set(_: R|kotlin/collections/MutableSet<kotlin/String>?|): R|kotlin/Unit| {
             F|/b| = R|java/util/HashSet.HashSet|<R|kotlin/String|>()
         }
-    public final var <T> R|kotlin/collections/MutableSet<T>|.d: R|T?|
-        public get(): R|T?| {
+    public final var <T> R|kotlin/collections/MutableSet<T | T>|.d: R|T? | T|
+        public get(): R|T? | T| {
             ^ Null(null)
         }
-        public set(_: R|T?|): R|kotlin/Unit| {
+        public set(_: R|T? | T|): R|kotlin/Unit| {
         }
-    public final fun <T> produce(): R|T| {
+    public final fun <T> produce(): R|T | T| {
         ^produce R|kotlin/TODO|()
     }
     public final fun foo(): R|kotlin/Unit| {

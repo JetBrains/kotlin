@@ -51,7 +51,7 @@ fun isCastErased(supertype: ConeKotlinType, subtype: ConeKotlinType, context: Ch
     // downcasting to a non-reified type parameter is always erased
     if (isNonReifiedTypeParameter) return true
     // downcasting to a reified type parameter is never erased
-    else if (subtype is ConeTypeParameterType) return false
+    else if (subtype.isTypeParameter()) return false
 
     val regularClassSymbol = subtype.toRegularClassSymbol(context.session) ?: return true
 
@@ -127,6 +127,7 @@ fun findStaticallyKnownSubtype(
     }
 
     val resultSubstitution = mutableMapOf<FirTypeParameterSymbol, ConeKotlinType>()
+    val resultCeSubstitution = mutableMapOf<FirTypeParameterSymbol, CEType>()
 
     for (normalizedType in normalizedTypes) {
         val supertypeWithVariables =
@@ -141,13 +142,16 @@ fun findStaticallyKnownSubtype(
         val substitution = if (supertypeWithVariables != null) {
             // Now, let's try to unify Collection<T> and Collection<Foo> solution is a map from T to Foo
             val result = mutableMapOf<FirTypeParameterSymbol, ConeTypeProjection>()
+            val resultCe = mutableMapOf<FirTypeParameterSymbol, CEType>()
             if (context.session.doUnify(
                     supertype,
                     supertypeWithVariables as ConeKotlinTypeProjection,
                     variables.toSet(),
-                    result
+                    result,
+                    resultCe,
                 )
             ) {
+                resultCeSubstitution.putAll(resultCe)
                 result
             } else {
                 mutableMapOf()
@@ -162,7 +166,7 @@ fun findStaticallyKnownSubtype(
             val resultValue = when (val value = substitution[variable]) {
                 null -> null
                 is ConeStarProjection -> {
-                    ConeStubTypeForTypeVariableInSubtyping(ConeTypeVariable("", true, null), isMarkedNullable = true)
+                    ConeStubTypeForTypeVariableInSubtyping(ConeTypeVariable("", null), isMarkedNullable = true)
                 }
                 else -> value.type
             }
@@ -174,13 +178,12 @@ fun findStaticallyKnownSubtype(
 
     // At this point we have values for all type parameters of List
     // Let's make a type by substituting them: List<T> -> List<Foo>
-    val substitutor = substitutorByMap(resultSubstitution, session)
+    val substitutor = substitutorByMap(resultSubstitution, resultCeSubstitution, session)
     return substitutor.substituteOrSelf(subtypeWithVariablesType)
 }
 
-fun ConeKotlinType.isNonReifiedTypeParameter(): Boolean {
-    return this is ConeTypeParameterType && !this.lookupTag.typeParameterSymbol.isReified
-}
+fun ConeKotlinType.isNonReifiedTypeParameter(): Boolean =
+    !(this.lookupTagIfTypeParameter()?.typeParameterSymbol?.isReified ?: true)
 
 fun isUpcast(context: CheckerContext, candidateType: ConeKotlinType, targetType: ConeKotlinType): Boolean =
     AbstractTypeChecker.isSubtypeOf(context.session.typeContext, candidateType, targetType, stubTypesEqualToAnything = false)

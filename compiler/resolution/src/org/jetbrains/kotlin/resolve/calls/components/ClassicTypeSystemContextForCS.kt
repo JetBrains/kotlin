@@ -56,7 +56,10 @@ class ClassicTypeSystemContextForCS(
         )
     }
 
-    override fun typeSubstitutorByTypeConstructor(map: Map<TypeConstructorMarker, KotlinTypeMarker>): TypeSubstitutorMarker {
+    override fun typeSubstitutorByTypeConstructor(
+        map: Map<TypeConstructorMarker, KotlinTypeMarker>,
+        errorsMap: Map<TypeConstructorMarker, ErrorTypeMarker>
+    ): TypeSubstitutorMarker {
         if (map.isEmpty()) return createEmptySubstitutor()
         @Suppress("UNCHECKED_CAST")
         return NewTypeSubstitutorByConstructorMap(map as Map<TypeConstructor, UnwrappedType>)

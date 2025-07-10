@@ -211,7 +211,7 @@ class FirTypeDeserializer(
     private fun rigidType(proto: ProtoBuf.Type, attributes: ConeAttributes): ConeRigidType? {
         val constructor = typeSymbol(proto) ?: return null
         if (constructor is ConeTypeParameterLookupTag) {
-            return ConeTypeParameterTypeImpl(constructor, isMarkedNullable = proto.nullable, attributes).let {
+            return ConeTypeParameterTypeImpl.create(constructor, isMarkedNullable = proto.nullable, attributes).let {
                 if (Flags.DEFINITELY_NOT_NULL_TYPE.get(proto.flags))
                     ConeDefinitelyNotNullType.create(it, moduleData.session.typeContext, avoidComprehensiveCheck = true) ?: it
                 else

@@ -38,7 +38,7 @@ interface TypeSystemCommonBackendContext : TypeSystemContext {
 
     fun KotlinTypeMarker.getUnsubstitutedUnderlyingType(): KotlinTypeMarker?
     fun typeSubstitutorForUnderlyingType(map: Map<TypeConstructorMarker, KotlinTypeMarker>): TypeSubstitutorMarker =
-        typeSubstitutorByTypeConstructor(map)
+        typeSubstitutorByTypeConstructor(map, emptyMap())
 
     fun KotlinTypeMarker.makeNullable(): KotlinTypeMarker =
         asRigidType()?.withNullability(true) ?: this
@@ -54,7 +54,7 @@ interface TypeSystemCommonBackendContext : TypeSystemContext {
     fun KotlinTypeMarker.isInterfaceOrAnnotationClass(): Boolean
 
     override fun RigidTypeMarker.isErrorUnion(): Boolean {
-        error("unexpected for non-cone type system")
+        return false
     }
 
     override fun RigidTypeMarker.isValueType(): Boolean {
@@ -73,8 +73,16 @@ interface TypeSystemCommonBackendContext : TypeSystemContext {
         error("unexpected for non-cone type system")
     }
 
-    override fun KotlinTypeMarker.projectOnValue(): KotlinTypeMarker {
+    override fun ErrorTypeMarker.isSubtypeOfBot(): Boolean {
         error("unexpected for non-cone type system")
+    }
+
+    override fun botTypeOfErrors(): ErrorTypeMarker {
+        error("unexpected for non-cone type system")
+    }
+
+    override fun KotlinTypeMarker.projectOnValue(): KotlinTypeMarker {
+        return this
     }
 
     override fun KotlinTypeMarker.projectOnError(): KotlinTypeMarker {
@@ -103,10 +111,17 @@ interface TypeSystemCommonBackendContext : TypeSystemContext {
     }
 
     override fun RichErrorsSystemState<ErrorTypeMarker>.solveSystem(): RichErrorsSystemSolution<ErrorTypeMarker> {
+        if (constraints.isEmpty()) {
+            return RichErrorsSystemSolution(emptyMap(), false)
+        }
         error("unexpected for non-cone type system")
     }
 
     override fun KotlinTypeMarker.addErrorComponent(errorType: ErrorTypeMarker): KotlinTypeMarker {
+        error("unexpected for non-cone type system")
+    }
+
+    override fun ErrorTypeMarker.typeConstructor(): TypeConstructorMarker {
         error("unexpected for non-cone type system")
     }
 }

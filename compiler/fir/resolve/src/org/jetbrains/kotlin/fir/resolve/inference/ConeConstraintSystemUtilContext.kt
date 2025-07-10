@@ -143,7 +143,7 @@ object ConeConstraintSystemUtilContext : ConstraintSystemUtilContext {
     }
 
     override fun createTypeVariableForLambdaReturnType(): TypeVariableMarker {
-        return ConeTypeVariableForPostponedAtom(PostponedArgumentInputTypesResolver.TYPE_VARIABLE_NAME_FOR_LAMBDA_RETURN_TYPE, true)
+        return ConeTypeVariableForPostponedAtom(PostponedArgumentInputTypesResolver.TYPE_VARIABLE_NAME_FOR_LAMBDA_RETURN_TYPE)
     }
 
     override fun createTypeVariableForLambdaParameterType(
@@ -152,7 +152,6 @@ object ConeConstraintSystemUtilContext : ConstraintSystemUtilContext {
     ): TypeVariableMarker {
         return ConeTypeVariableForLambdaParameterType(
             PostponedArgumentInputTypesResolver.TYPE_VARIABLE_NAME_PREFIX_FOR_LAMBDA_PARAMETER_TYPE + index,
-            true
         )
     }
 
@@ -162,12 +161,11 @@ object ConeConstraintSystemUtilContext : ConstraintSystemUtilContext {
     ): TypeVariableMarker {
         return ConeTypeVariableForPostponedAtom(
             PostponedArgumentInputTypesResolver.TYPE_VARIABLE_NAME_PREFIX_FOR_CR_PARAMETER_TYPE + index,
-            true
         )
     }
 
     override fun createTypeVariableForCallableReferenceReturnType(): TypeVariableMarker {
-        return ConeTypeVariableForPostponedAtom(PostponedArgumentInputTypesResolver.TYPE_VARIABLE_NAME_FOR_LAMBDA_RETURN_TYPE, true)
+        return ConeTypeVariableForPostponedAtom(PostponedArgumentInputTypesResolver.TYPE_VARIABLE_NAME_FOR_LAMBDA_RETURN_TYPE)
     }
 
     override val isForcedAllowForkingInferenceSystem: Boolean

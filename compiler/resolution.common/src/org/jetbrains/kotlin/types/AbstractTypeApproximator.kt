@@ -484,6 +484,7 @@ abstract class AbstractTypeApproximator(
     private fun approximateSimpleToSubType(type: RigidTypeMarker, conf: TypeApproximatorConfiguration, depth: Int) =
         approximateTo(type, conf, toSuper = false, depth = depth)
 
+
     private fun approximateTo(
         type: RigidTypeMarker,
         conf: TypeApproximatorConfiguration,
@@ -494,6 +495,24 @@ abstract class AbstractTypeApproximator(
             return approximateParametrizedType(type, conf, toSuper, depth + 1)
         }
 
+        if (type.isErrorUnion()) {
+            type as ErrorUnionTypeMarker
+            // TODO: RE: HIGH: approximation for error types
+            val et = type.errorType()
+            val vt = approximateValueTypeTo(type.valueType(), conf, toSuper, depth)
+            return vt?.addErrorComponent(et)
+        } else {
+            return approximateValueTypeTo(type as ValueTypeMarker, conf, toSuper, depth)
+        }
+    }
+
+
+    private fun approximateValueTypeTo(
+        type: ValueTypeMarker,
+        conf: TypeApproximatorConfiguration,
+        toSuper: Boolean,
+        depth: Int
+    ): KotlinTypeMarker? {
         val definitelyNotNullType = type.asDefinitelyNotNullType()
         if (definitelyNotNullType != null) {
             return approximateDefinitelyNotNullType(definitelyNotNullType, conf, toSuper, depth)

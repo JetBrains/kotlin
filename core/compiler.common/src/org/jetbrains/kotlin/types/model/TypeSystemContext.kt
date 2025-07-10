@@ -411,8 +411,12 @@ interface TypeSystemContext : TypeSystemOptimizationContext {
     fun ErrorUnionTypeMarker.valueType(): ValueTypeMarker
     fun ErrorUnionTypeMarker.errorType(): ErrorTypeMarker
 
+    fun ErrorTypeMarker.typeConstructor(): TypeConstructorMarker
+
     fun ErrorTypeMarker.isSubtypeOf(other: ErrorTypeMarker): Boolean
+    fun ErrorTypeMarker.isSubtypeOfBot(): Boolean
     fun ErrorTypeMarker.isPossibleSubtypeOf(other: ErrorTypeMarker): Boolean
+    fun botTypeOfErrors(): ErrorTypeMarker
 
     fun KotlinTypeMarker.projectOnValue(): KotlinTypeMarker
     fun KotlinTypeMarker.projectOnError(): KotlinTypeMarker
@@ -448,7 +452,12 @@ interface TypeSystemContext : TypeSystemOptimizationContext {
 
     @Deprecated(level = DeprecationLevel.ERROR, message = "This call does effectively nothing, please drop it")
     fun CapturedTypeMarker.asCapturedTypeUnwrappingDnn(): CapturedTypeMarker = this
-    fun RigidTypeMarker.asCapturedTypeUnwrappingDnn(): CapturedTypeMarker? = originalIfDefinitelyNotNullable().asCapturedType()
+    fun RigidTypeMarker.asCapturedTypeUnwrappingDnn(): CapturedTypeMarker? = try {
+        originalIfDefinitelyNotNullable().asCapturedType()
+    } catch (e: ClassCastException) {
+        // TODO: RE: HIGH: requires logic rewriting in all use-sites
+        null
+    }
 
     fun KotlinTypeMarker.isCapturedType() = asRigidType()?.asCapturedTypeUnwrappingDnn() != null
 
@@ -651,7 +660,11 @@ interface TypeSystemContext : TypeSystemOptimizationContext {
 
     fun KotlinTypeMarker.isTypeVariableType(): Boolean
 
-    fun typeSubstitutorByTypeConstructor(map: Map<TypeConstructorMarker, KotlinTypeMarker>): TypeSubstitutorMarker
+    fun typeSubstitutorByTypeConstructor(
+        map: Map<TypeConstructorMarker, KotlinTypeMarker>,
+        errorsMap: Map<TypeConstructorMarker, ErrorTypeMarker>,
+    ): TypeSubstitutorMarker
+
     fun createEmptySubstitutor(): TypeSubstitutorMarker
 
     /**

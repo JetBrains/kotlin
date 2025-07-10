@@ -155,6 +155,10 @@ fun createParametersSubstitutor(
     useSiteSession: FirSession,
     typeAliasMap: Map<FirTypeParameterSymbol, ConeTypeProjection>,
 ): ConeSubstitutor = object : AbstractConeSubstitutor(useSiteSession.typeContext) {
+    override fun substituteCEType(type: CEType): CEType {
+        return type
+    }
+
     override fun substituteType(type: ConeKotlinType): ConeKotlinType? {
         return null
     }

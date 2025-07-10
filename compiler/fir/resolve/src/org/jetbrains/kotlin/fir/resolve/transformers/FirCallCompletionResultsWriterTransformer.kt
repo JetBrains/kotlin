@@ -441,6 +441,7 @@ class FirCallCompletionResultsWriterTransformer(
 
         val baseSubstitutor = finalSubstitutor
         val overridingMap = mutableMapOf<TypeConstructorMarker, ConeKotlinType>()
+        val overridingMapErrors = mutableMapOf<TypeConstructorMarker, CEType>()
 
         for ((index, freshVariable) in freshVariables.withIndex()) {
             val baseTypeArgument = baseSubstitutor.substituteOrNull(freshVariable.defaultType) ?: continue
@@ -450,14 +451,39 @@ class FirCallCompletionResultsWriterTransformer(
             if (typeArgument is FirPlaceholderProjection) continue
             val explicitArgument = typeArgument.toConeTypeProjection().type ?: continue
 
+            val baseTypeArgumentValue: ConeFlexibleType
+            val baseTypeArgumentError: CEType
+            val lowerBound = baseTypeArgument.lowerBound
+            val upperBound = baseTypeArgument.upperBound
+            if (upperBound is ConeErrorUnionType) {
+                check(lowerBound is ConeErrorUnionType)
+                check(lowerBound.errorType == upperBound.errorType)
+                baseTypeArgumentValue = ConeFlexibleType(
+                    lowerBound.valueType,
+                    upperBound.valueType,
+                    baseTypeArgument.isTrivial
+                )
+                baseTypeArgumentError = lowerBound.errorType
+            } else {
+                baseTypeArgumentValue = baseTypeArgument
+                baseTypeArgumentError = CEBotType
+            }
+
             overridingMap[freshVariable.typeConstructor] =
-                baseTypeArgument.withNullabilityOf(explicitArgument, session.typeContext)
+                baseTypeArgumentValue.withNullabilityOf(explicitArgument, session.typeContext)
+
+            overridingMapErrors[freshVariable.typeConstructor] = baseTypeArgumentError
         }
 
         if (overridingMap.isEmpty()) return null
 
         return ChainedSubstitutor(
-            createTypeSubstitutorByTypeConstructor(overridingMap, session.typeContext, approximateIntegerLiterals = false),
+            createTypeSubstitutorByTypeConstructor(
+                overridingMap,
+                overridingMapErrors,
+                session.typeContext,
+                approximateIntegerLiterals = false
+            ),
             baseSubstitutor,
         )
     }
@@ -934,7 +960,7 @@ class FirCallCompletionResultsWriterTransformer(
         val declaration = candidate.symbol.fir as? FirCallableDeclaration ?: return emptyList()
 
         return declaration.typeParameters.map {
-            val typeParameter = ConeTypeParameterTypeImpl(it.symbol.toLookupTag(), false)
+            val typeParameter = ConeTypeParameterTypeImpl.create(it.symbol.toLookupTag(), false)
             val substitution = candidate.substitutor.substituteOrSelf(typeParameter)
             finallySubstituteOrSelf(substitution).let { substitutedType ->
                 typeApproximator.approximateToSuperType(

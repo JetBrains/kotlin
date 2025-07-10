@@ -452,11 +452,7 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
                         add(type.errorType)
                     }
                 }
-                val type = when (errorTypes.size) {
-                    0 -> error("is this possible?")
-                    1 -> ConeErrorUnionType(valueType, errorTypes.single())
-                    else -> ConeErrorUnionType(valueType, CEUnionType(errorTypes))
-                }
+                val type = ConeErrorUnionType.createNormalized(valueType, CEUnionType.create(errorTypes))
                 FirTypeResolutionResult(type, diagnostic = null)
             }
             else -> error(typeRef.render())

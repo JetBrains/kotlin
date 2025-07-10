@@ -265,8 +265,15 @@ open class ConeTypeRenderer(
     }
 
     protected open fun render(type: ConeErrorUnionType) {
-        this.render(type.valueType)
-        this.render(type.errorType)
+        if (type.valueType is ConeLookupTagBasedType && type.errorType is CELookupTagBasedType
+            && type.errorType.lookupTag == type.valueType.lookupTag
+        ) {
+            // case for split type parameter
+            render(type.valueType)
+            return
+        }
+        render(type.valueType)
+        render(type.errorType)
     }
 
     protected open fun render(type: CEType) {

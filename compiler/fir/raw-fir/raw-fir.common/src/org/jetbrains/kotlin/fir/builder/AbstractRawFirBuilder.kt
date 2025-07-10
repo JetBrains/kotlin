@@ -343,11 +343,11 @@ abstract class AbstractRawFirBuilder<T : Any>(val baseSession: FirSession, val c
     ): FirResolvedTypeRef {
         val type = if (status.isError) {
             check(typeParameters.isEmpty())
-            ConeErrorUnionType(StandardTypes.Nothing, CEClassifierType(symbol.toLookupTag()))
+            ConeErrorUnionType.create(StandardTypes.Nothing, CEClassifierType(symbol.toLookupTag()))
         } else {
             ConeClassLikeTypeImpl(
                 symbol.toLookupTag(),
-                typeParameters.map { ConeTypeParameterTypeImpl(it.symbol.toLookupTag(), false) }.toTypedArray(),
+                typeParameters.map { ConeTypeParameterTypeImpl.create(it.symbol.toLookupTag(), false) }.toTypedArray(),
                 false
             )
         }

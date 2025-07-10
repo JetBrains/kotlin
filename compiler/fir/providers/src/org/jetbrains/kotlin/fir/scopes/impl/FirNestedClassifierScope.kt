@@ -136,14 +136,7 @@ fun FirTypeParameterRef.toConeType(): ConeRigidType = symbol.toConeType()
 fun FirTypeParameterSymbol.toConeType(): ConeRigidType = toConeType(false)
 
 fun FirTypeParameterSymbol.toConeType(isNullable: Boolean): ConeRigidType =
-    if (mayHaveErrorComponent()) {
-        ConeErrorUnionType(
-            ConeTypeParameterTypeImpl(ConeTypeParameterLookupTag(this), isNullable),
-            CETypeParameterType(ConeTypeParameterLookupTag(this))
-        )
-    } else {
-        ConeTypeParameterTypeImpl(ConeTypeParameterLookupTag(this), isNullable)
-    }
+    ConeTypeParameterTypeImpl.create(ConeTypeParameterLookupTag(this), isNullable)
 
 fun FirTypeParameterSymbol.mayHaveErrorComponent(): Boolean {
     fun ConeKotlinType.mayHaveErrorComponent(): Boolean = when (this) {

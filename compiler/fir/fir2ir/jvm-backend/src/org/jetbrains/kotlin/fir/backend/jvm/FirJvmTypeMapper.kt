@@ -254,7 +254,7 @@ class ConeTypeSystemCommonBackendContextForTypeMapping(
     override fun TypeConstructorMarker.defaultType(): ConeSimpleKotlinType {
         require(this is ConeClassifierLookupTag)
         return when (this) {
-            is ConeTypeParameterLookupTag -> ConeTypeParameterTypeImpl(this, isMarkedNullable = false)
+            is ConeTypeParameterLookupTag -> ConeTypeParameterTypeImpl.createPure(this, isMarkedNullable = false)
             is ConeClassLikeLookupTag -> {
                 val symbol = toClassSymbol(session)
                     ?: return ConeErrorType(ConeUnresolvedSymbolError(classId))

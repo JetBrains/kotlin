@@ -1,10 +1,10 @@
 FILE: typeParameterDerived.kt
-    public final inline fun <K, V, VA : R|V|> R|kotlin/collections/MutableMap<K, V>|.getOrPut(key: R|K|, defaultValue: R|(K) -> VA|, postCompute: R|(VA) -> kotlin/Unit|): R|V| {
-        lval value: R|V?| = this@R|/getOrPut|.R|SubstitutionOverride<kotlin/collections/MutableMap.get: R|V?|>|(R|<local>/key|)
+    public final inline fun <K, V, VA : R|V | V|> R|kotlin/collections/MutableMap<K | K, V | V>|.getOrPut(key: R|K | K|, defaultValue: R|(K | K) -> VA | VA|, postCompute: R|(VA | VA) -> kotlin/Unit|): R|V | V| {
+        lval value: R|V? | V| = this@R|/getOrPut|.R|SubstitutionOverride<kotlin/collections/MutableMap.get: R|V? | V|>|(R|<local>/key|)
         ^getOrPut when () {
             ==(R|<local>/value|, Null(null)) ->  {
-                lval answer: R|VA| = R|<local>/defaultValue|.R|SubstitutionOverride<kotlin/Function1.invoke: R|VA|>|(R|<local>/key|)
-                this@R|/getOrPut|.R|SubstitutionOverride<kotlin/collections/MutableMap.put: R|V?|>|(R|<local>/key|, R|<local>/answer|)
+                lval answer: R|VA | VA| = R|<local>/defaultValue|.R|SubstitutionOverride<kotlin/Function1.invoke: R|VA | VA|>|(R|<local>/key|)
+                this@R|/getOrPut|.R|SubstitutionOverride<kotlin/collections/MutableMap.put: R|V? | V|>|(R|<local>/key|, R|<local>/answer|)
                 R|<local>/postCompute|.R|SubstitutionOverride<kotlin/Function1.invoke: R|kotlin/Unit|>|(R|<local>/answer|)
                 R|<local>/answer|
             }

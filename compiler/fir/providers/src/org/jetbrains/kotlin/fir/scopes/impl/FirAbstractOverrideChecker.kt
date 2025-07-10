@@ -29,7 +29,7 @@ fun buildSubstitutorForOverridesCheck(
 
     if (baseDeclaration.typeParameters.isEmpty()) return ConeSubstitutor.Empty
     val types = baseDeclaration.typeParameters.map {
-        ConeTypeParameterTypeImpl(it.symbol.toLookupTag(), false)
+        ConeTypeParameterTypeImpl.create(it.symbol.toLookupTag(), false)
     }
     return substitutorByMap(overrideCandidate.typeParameters.map { it.symbol }.zip(types).toMap(), useSiteSession)
 }

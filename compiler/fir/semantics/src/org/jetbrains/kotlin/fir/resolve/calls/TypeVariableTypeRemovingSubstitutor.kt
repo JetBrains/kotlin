@@ -22,6 +22,18 @@ fun ConeKotlinType.removeTypeVariableTypes(typeContext: ConeTypeContext, replace
 }
 
 private class TypeVariableTypeRemovingSubstitutor(typeContext: ConeTypeContext, private val replacement: TypeVariableReplacement) : AbstractConeSubstitutor(typeContext) {
+    override fun substituteCEType(type: CEType): CEType {
+        if (type !is CETypeVariableType) return type
+        return when (replacement) {
+            TypeVariableReplacement.TypeParameter -> {
+                val originalTypeParameter = type.typeConstructor.originalTypeParameter
+                check(originalTypeParameter is ConeTypeParameterLookupTag)
+                CETypeParameterType(originalTypeParameter)
+            }
+            TypeVariableReplacement.ErrorType -> CEBotType // TODO: RE: MID
+        }
+    }
+
     override fun substituteType(type: ConeKotlinType): ConeKotlinType? = when (type) {
         is ConeTypeVariableType -> convertTypeVariableType(type)
         else -> null
@@ -31,7 +43,7 @@ private class TypeVariableTypeRemovingSubstitutor(typeContext: ConeTypeContext, 
         val originalTypeParameter = type.typeConstructor.originalTypeParameter
         if (originalTypeParameter != null) {
             check(originalTypeParameter is ConeTypeParameterLookupTag)
-            val typeParameterType = ConeTypeParameterTypeImpl(originalTypeParameter, type.isMarkedNullable, type.attributes)
+            val typeParameterType = ConeTypeParameterTypeImpl.createPure(originalTypeParameter, type.isMarkedNullable, type.attributes)
             return if (replacement == TypeVariableReplacement.ErrorType) {
                 ConeErrorType(
                     ConeCannotInferTypeParameterType(typeParameter = originalTypeParameter.typeParameterSymbol),

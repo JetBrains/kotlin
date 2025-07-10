@@ -321,7 +321,7 @@ class FirSyntheticCallGenerator(
         } as ArgumentTypeMismatch? ?: return false
 
         val storage = if (candidate.usedOuterCs) candidate.system.currentStorage() else candidate.system.asReadOnlyStorage()
-        val substitutor = storage.buildCurrentSubstitutor(components.session.typeContext, emptyMap(), candidate.system.errorTypeSystem.currentSolution)
+        val substitutor = storage.buildCurrentSubstitutor(components.session.typeContext, emptyMap())
 
         anonymousFunction.replaceTypeRef(
             anonymousFunction.typeRef.withReplacedConeType(
@@ -549,7 +549,7 @@ class FirSyntheticCallGenerator(
                 }
             }
 
-        val typeParameterType = ConeTypeParameterTypeImpl(typeParameterSymbol.toLookupTag(), false)
+        val typeParameterType = ConeTypeParameterTypeImpl.create(typeParameterSymbol.toLookupTag(), false)
         return typeParameter to typeParameterType
     }
 

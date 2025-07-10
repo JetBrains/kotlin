@@ -16,7 +16,7 @@ class ConeTypeApproximator(inferenceContext: ConeInferenceContext, languageVersi
         if (type.fastPathSkipApproximation(conf)) return null
         return if (type is ConeErrorUnionType) {
             // TODO: RE: MID: approximation for error type?
-            (super.approximateToSuperType(type.valueType, conf) as ConeValueType?)?.let { type.copy(valueType = it) }
+            (super.approximateToSuperType(type.valueType, conf) as ConeValueType?)?.let { type.replaceValueType(it) }
         } else {
             super.approximateToSuperType(type, conf) as ConeKotlinType?
         }
@@ -26,7 +26,7 @@ class ConeTypeApproximator(inferenceContext: ConeInferenceContext, languageVersi
         if (type.fastPathSkipApproximation(conf)) return null
         return if (type is ConeErrorUnionType) {
             // TODO: RE: MID: approximation for error type?
-            (super.approximateToSubType(type.valueType, conf) as ConeValueType?)?.let { type.copy(valueType = it) }
+            (super.approximateToSubType(type.valueType, conf) as ConeValueType?)?.let { type.replaceValueType(it) }
         } else {
             super.approximateToSubType(type, conf) as ConeKotlinType?
         }

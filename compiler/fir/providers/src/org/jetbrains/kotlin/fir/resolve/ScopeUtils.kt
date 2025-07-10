@@ -154,7 +154,7 @@ fun FirClassLikeSymbol<*>.defaultType(): ConeRigidType = fir.defaultType()
 
 fun FirClassLikeDeclaration.defaultType(): ConeRigidType =
     if (status.isError) {
-        ConeErrorUnionType(
+        ConeErrorUnionType.create(
             StandardTypes.Nothing,
             CEClassifierType(symbol.toLookupTag())
         )
@@ -162,7 +162,7 @@ fun FirClassLikeDeclaration.defaultType(): ConeRigidType =
         ConeClassLikeTypeImpl(
             symbol.toLookupTag(),
             typeParameters.map {
-                ConeTypeParameterTypeImpl(
+                ConeTypeParameterTypeImpl.create(
                     it.symbol.toLookupTag(),
                     isMarkedNullable = false
                 )
@@ -180,7 +180,7 @@ fun FirClassLikeDeclaration.defaultTypeExpectValue(): ConeClassLikeType =
         ConeClassLikeTypeImpl(
             symbol.toLookupTag(),
             typeParameters.map {
-                ConeTypeParameterTypeImpl(
+                ConeTypeParameterTypeImpl.create(
                     it.symbol.toLookupTag(),
                     isMarkedNullable = false
                 )
@@ -202,7 +202,7 @@ fun ClassId.defaultType(parameters: List<FirTypeParameterSymbol>): ConeClassLike
     ConeClassLikeTypeImpl(
         this.toLookupTag(),
         parameters.map {
-            ConeTypeParameterTypeImpl(
+            ConeTypeParameterTypeImpl.create(
                 it.toLookupTag(),
                 isMarkedNullable = false
             )

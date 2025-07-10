@@ -12,24 +12,19 @@ import org.jetbrains.kotlin.name.SpecialNames
 
 class ConeTypeVariableForPostponedAtom(
     name: String,
-    containsErrorComponent: Boolean,
-) : ConeTypeVariable(name, containsErrorComponent)
+) : ConeTypeVariable(name)
 
 class ConeTypeVariableForLambdaParameterType(
     name: String,
-    containsErrorComponent: Boolean,
-) : ConeTypeVariable(name, containsErrorComponent)
+) : ConeTypeVariable(name)
 
 class ConeTypeVariableForLambdaReturnType(
     val argument: FirAnonymousFunction, name: String,
-    containsErrorComponent: Boolean,
-) : ConeTypeVariable(name, containsErrorComponent)
+) : ConeTypeVariable(name)
 
 class ConeTypeParameterBasedTypeVariable(
     val typeParameterSymbol: FirTypeParameterSymbol,
-    containsErrorComponent: Boolean,
 ) : ConeTypeVariable(
     SpecialNames.safeIdentifier(typeParameterSymbol.name).identifier,
-    containsErrorComponent,
     typeParameterSymbol.toLookupTag()
 )

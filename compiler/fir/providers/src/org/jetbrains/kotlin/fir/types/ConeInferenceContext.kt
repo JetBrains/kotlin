@@ -127,7 +127,7 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
                 nullable,
                 coneAttributes,
             )
-            is ConeTypeParameterLookupTag -> ConeTypeParameterTypeImpl(
+            is ConeTypeParameterLookupTag -> ConeTypeParameterTypeImpl.createUnknown(
                 constructor,
                 nullable,
                 coneAttributes
@@ -411,10 +411,16 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
         return this.original
     }
 
-    override fun typeSubstitutorByTypeConstructor(map: Map<TypeConstructorMarker, KotlinTypeMarker>): ConeSubstitutor {
+    override fun typeSubstitutorByTypeConstructor(
+        map: Map<TypeConstructorMarker, KotlinTypeMarker>,
+        errorsMap: Map<TypeConstructorMarker, ErrorTypeMarker>,
+    ): ConeSubstitutor {
         @Suppress("UNCHECKED_CAST")
         return createTypeSubstitutorByTypeConstructor(
-            map as Map<TypeConstructorMarker, ConeKotlinType>, this, approximateIntegerLiterals = false
+            map as Map<TypeConstructorMarker, ConeKotlinType>,
+            errorsMap as Map<TypeConstructorMarker, CEType>,
+            this,
+            approximateIntegerLiterals = false
         )
     }
 

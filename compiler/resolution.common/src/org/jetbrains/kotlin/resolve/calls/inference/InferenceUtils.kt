@@ -8,26 +8,14 @@ package org.jetbrains.kotlin.resolve.calls.inference
 import org.jetbrains.kotlin.resolve.calls.inference.components.extractProjectionsForAllCapturedTypes
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage
 import org.jetbrains.kotlin.resolve.calls.inference.model.NewConstraintSystemImpl
+import org.jetbrains.kotlin.resolve.calls.inference.richerrors.currentSolution
 import org.jetbrains.kotlin.types.model.*
 
 fun ConstraintStorage.buildCurrentSubstitutor(
     context: TypeSystemInferenceExtensionContext,
     additionalBindings: Map<TypeConstructorMarker, KotlinTypeMarker>,
-    errorBindings: Map<TypeConstructorMarker, ErrorTypeMarker>,
 ): TypeSubstitutorMarker {
-    val bindings = with(context) {
-        val result = mutableMapOf<TypeConstructorMarker, KotlinTypeMarker>()
-        for ((variableConstructor, type) in additionalBindings) {
-            val errorType = errorBindings[variableConstructor]
-            result[variableConstructor] = if (errorType == null) type else type.addErrorComponent(errorType)
-        }
-        for ((variableConstructor, type) in fixedTypeVariables) {
-            val errorType = errorBindings[variableConstructor]
-            result[variableConstructor] = if (errorType == null) type else type.addErrorComponent(errorType)
-        }
-        result
-    }
-    return context.typeSubstitutorByTypeConstructor(bindings)
+    return context.typeSubstitutorByTypeConstructor(fixedTypeVariables + additionalBindings, emptyMap())
 }
 
 fun ConstraintStorage.buildAbstractResultingSubstitutor(
@@ -47,14 +35,22 @@ fun ConstraintStorage.buildAbstractResultingSubstitutor(
             freshTypeConstructor to typeVariable.typeVariable.defaultType(this)
         }
     }
-    return context.typeSubstitutorByTypeConstructor(fixedTypeVariables + uninferredSubstitutorMap)
+
+    val ceSolution = errorConstraints.currentSolution(context)
+    val ceSubstitution = context.typeSubstitutorByTypeConstructor(emptyMap(), ceSolution)
+    val substitution = (fixedTypeVariables + uninferredSubstitutorMap).mapValues { (k, v) ->
+        ceSubstitution.safeSubstitute(v)
+    }
+
+    return context.typeSubstitutorByTypeConstructor(substitution, ceSolution)
 }
 
 fun ConstraintStorage.buildNotFixedVariablesToNonSubtypableTypesSubstitutor(
     context: TypeSystemInferenceExtensionContext
 ): TypeSubstitutorMarker {
     return context.typeSubstitutorByTypeConstructor(
-        notFixedTypeVariables.mapValues { context.createStubTypeForTypeVariablesInSubtyping(it.value.typeVariable) }
+        notFixedTypeVariables.mapValues { context.createStubTypeForTypeVariablesInSubtyping(it.value.typeVariable) },
+        emptyMap() // TODO: RE: LOW: It will throw when it will lead to problems
     )
 }
 

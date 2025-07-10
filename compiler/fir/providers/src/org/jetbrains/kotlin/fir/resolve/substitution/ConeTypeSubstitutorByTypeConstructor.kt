@@ -13,18 +13,25 @@ import org.jetbrains.kotlin.types.model.typeConstructor
 
 fun createTypeSubstitutorByTypeConstructor(
     map: Map<TypeConstructorMarker, ConeKotlinType>,
+    mapErrors: Map<TypeConstructorMarker, CEType>,
     context: ConeTypeContext,
     approximateIntegerLiterals: Boolean
 ): ConeSubstitutor {
-    if (map.isEmpty()) return ConeSubstitutor.Empty
-    return ConeTypeSubstitutorByTypeConstructor(map, context, approximateIntegerLiterals)
+    if (map.isEmpty() && mapErrors.isEmpty()) return ConeSubstitutor.Empty
+    return ConeTypeSubstitutorByTypeConstructor(map, mapErrors, context, approximateIntegerLiterals)
 }
 
 private class ConeTypeSubstitutorByTypeConstructor(
     private val map: Map<TypeConstructorMarker, ConeKotlinType>,
+    private val mapErrors: Map<TypeConstructorMarker, CEType>,
     typeContext: ConeTypeContext,
     private val approximateIntegerLiterals: Boolean
 ) : AbstractConeSubstitutor(typeContext), TypeSubstitutorMarker {
+
+    override fun substituteCEType(type: CEType): CEType {
+        if (type !is CELookupTagBasedType && type !is CETypeVariableType) return type
+        return mapErrors[with(typeContext) { type.typeConstructor() }] ?: type
+    }
 
     override fun substituteType(type: ConeKotlinType): ConeKotlinType? {
         if (type !is ConeLookupTagBasedType && type !is ConeStubType && type !is ConeTypeVariableType) return null

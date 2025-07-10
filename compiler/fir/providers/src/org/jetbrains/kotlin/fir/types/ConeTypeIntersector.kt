@@ -46,11 +46,7 @@ object ConeTypeIntersector {
             intersectValueTypes(context, inputTypes.map { (it as ConeRigidType).valueComponent() })
         }
 
-        return if (errorIntersection is CEBotType) {
-            return valueIntersection
-        } else {
-            ConeErrorUnionType(valueIntersection, errorIntersection)
-        }
+        return ConeErrorUnionType.createNormalized(valueIntersection, errorIntersection)
     }
 
     private fun intersectValueTypes(

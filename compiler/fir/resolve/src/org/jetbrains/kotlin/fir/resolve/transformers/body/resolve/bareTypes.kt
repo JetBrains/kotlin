@@ -55,8 +55,9 @@ fun BodyResolveComponents.computeRepresentativeTypeForBareType(type: ConeClassLi
     }
 
     val substitution = mutableMapOf<FirTypeParameterSymbol, ConeTypeProjection>()
+    val substitutionCe = mutableMapOf<FirTypeParameterSymbol, CEType>()
     val typeParameters = castClass.typeParameters.mapTo(mutableSetOf()) { it.symbol }
-    if (!session.doUnify(originalType, superTypeWithParameters, typeParameters, substitution)) return null
+    if (!session.doUnify(originalType, superTypeWithParameters, typeParameters, substitution, substitutionCe)) return null
 
     val newArguments = castClass.typeParameters.map { substitution[it.symbol] ?: return@computeRepresentativeTypeForBareType null }
     return expandedCastType.withArguments(newArguments.toTypedArray())
@@ -74,7 +75,7 @@ private fun canBeUsedAsBareType(firTypeAlias: FirTypeAlias): Boolean {
         if (argument.kind != ProjectionKind.INVARIANT) return false
 
         val type = argument.type!!
-        val typeParameter = (type as? ConeTypeParameterType)?.lookupTag?.typeParameterSymbol?.fir ?: return false
+        val typeParameter = type.lookupTagIfTypeParameter()?.typeParameterSymbol?.fir ?: return false
         if (typeParameter !in typeAliasParameters || typeParameter in usedTypeParameters) return false
 
         usedTypeParameters.add(typeParameter)

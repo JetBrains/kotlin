@@ -7,14 +7,19 @@ package org.jetbrains.kotlin.util
 
 import org.jetbrains.kotlin.resolve.calls.components.KotlinResolutionCallbacks
 import org.jetbrains.kotlin.resolve.calls.inference.NewConstraintSystem
+import org.jetbrains.kotlin.resolve.calls.inference.model.NewConstraintSystemImpl
 import org.jetbrains.kotlin.resolve.calls.inference.model.TypeVariableTypeConstructor
 import org.jetbrains.kotlin.resolve.calls.inference.model.typeForTypeVariable
+import org.jetbrains.kotlin.resolve.calls.inference.richerrors.currentSolution
 import org.jetbrains.kotlin.types.model.TypeSubstitutorMarker
 
-fun NewConstraintSystem.buildNotFixedVariablesToPossibleResultType(resolutionCallbacks: KotlinResolutionCallbacks): TypeSubstitutorMarker =
+fun NewConstraintSystem.buildNotFixedVariablesToPossibleResultType(resolutionCallbacks: KotlinResolutionCallbacks): TypeSubstitutorMarker {
+    val storage = getBuilder().currentStorage()
     asConstraintSystemCompleterContext().typeSubstitutorByTypeConstructor(
-        getBuilder().currentStorage().notFixedTypeVariables.mapValues {
+        storage.notFixedTypeVariables.mapValues {
             val typeVariable = it.key as TypeVariableTypeConstructor
             resolutionCallbacks.findResultType(this, typeVariable) ?: typeVariable.typeForTypeVariable()
-        }
-)
+        },
+        TODO()
+    )
+}

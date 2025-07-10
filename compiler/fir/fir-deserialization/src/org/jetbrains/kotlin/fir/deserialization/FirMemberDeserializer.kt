@@ -708,7 +708,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
         val delegatedSelfType = buildResolvedTypeRef {
             coneType = ConeClassLikeTypeImpl(
                 classBuilder.symbol.toLookupTag(),
-                typeParameters.map { ConeTypeParameterTypeImpl(it.symbol.toLookupTag(), false) }.toTypedArray(),
+                typeParameters.map { ConeTypeParameterTypeImpl.create(it.symbol.toLookupTag(), false) }.toTypedArray(),
                 false
             )
         }

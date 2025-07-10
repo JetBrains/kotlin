@@ -570,7 +570,10 @@ interface IrTypeSystemContext : TypeSystemContext, TypeSystemCommonSuperTypesCon
         return false
     }
 
-    override fun typeSubstitutorByTypeConstructor(map: Map<TypeConstructorMarker, KotlinTypeMarker>): TypeSubstitutorMarker {
+    override fun typeSubstitutorByTypeConstructor(
+        map: Map<TypeConstructorMarker, KotlinTypeMarker>,
+        errorsMap: Map<TypeConstructorMarker, ErrorTypeMarker>
+    ): TypeSubstitutorMarker {
         @Suppress("UNCHECKED_CAST")
         return IrTypeSubstitutor(map as Map<IrTypeParameterSymbol, IrTypeArgument>)
     }
