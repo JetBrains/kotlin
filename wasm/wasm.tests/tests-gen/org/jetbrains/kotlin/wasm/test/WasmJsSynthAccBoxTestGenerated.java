@@ -1432,6 +1432,24 @@ public class WasmJsSynthAccBoxTestGenerated extends AbstractFirWasmJsCodegenBoxW
       }
 
       @Test
+      @TestMetadata("usePrivateTopLevelFunWithAnonymousFunDefaultValueThroughInternalInlineFun.kt")
+      public void testUsePrivateTopLevelFunWithAnonymousFunDefaultValueThroughInternalInlineFun() {
+        runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossFilePrivateLeak/usePrivateTopLevelFunWithAnonymousFunDefaultValueThroughInternalInlineFun.kt");
+      }
+
+      @Test
+      @TestMetadata("usePrivateTopLevelFunWithLambdaDefaultValueThroughInternalInlineFun.kt")
+      public void testUsePrivateTopLevelFunWithLambdaDefaultValueThroughInternalInlineFun() {
+        runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossFilePrivateLeak/usePrivateTopLevelFunWithLambdaDefaultValueThroughInternalInlineFun.kt");
+      }
+
+      @Test
+      @TestMetadata("usePrivateTopLevelFunWithReferenceDefaultValueThroughInternalInlineFun.kt")
+      public void testUsePrivateTopLevelFunWithReferenceDefaultValueThroughInternalInlineFun() {
+        runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossFilePrivateLeak/usePrivateTopLevelFunWithReferenceDefaultValueThroughInternalInlineFun.kt");
+      }
+
+      @Test
       @TestMetadata("usePrivateTopLevelFunWithVarargThroughInternalInlineFun.kt")
       public void testUsePrivateTopLevelFunWithVarargThroughInternalInlineFun() {
         runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossFilePrivateLeak/usePrivateTopLevelFunWithVarargThroughInternalInlineFun.kt");
@@ -1682,6 +1700,24 @@ public class WasmJsSynthAccBoxTestGenerated extends AbstractFirWasmJsCodegenBoxW
       }
 
       @Test
+      @TestMetadata("usePrivateTopLevelFunWithAnonymousFunDefaultValueThroughInternalInlineFun.kt")
+      public void testUsePrivateTopLevelFunWithAnonymousFunDefaultValueThroughInternalInlineFun() {
+        runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossModulePrivateLeak/usePrivateTopLevelFunWithAnonymousFunDefaultValueThroughInternalInlineFun.kt");
+      }
+
+      @Test
+      @TestMetadata("usePrivateTopLevelFunWithLambdaDefaultValueThroughInternalInlineFun.kt")
+      public void testUsePrivateTopLevelFunWithLambdaDefaultValueThroughInternalInlineFun() {
+        runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossModulePrivateLeak/usePrivateTopLevelFunWithLambdaDefaultValueThroughInternalInlineFun.kt");
+      }
+
+      @Test
+      @TestMetadata("usePrivateTopLevelFunWithReferenceDefaultValueThroughInternalInlineFun.kt")
+      public void testUsePrivateTopLevelFunWithReferenceDefaultValueThroughInternalInlineFun() {
+        runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossModulePrivateLeak/usePrivateTopLevelFunWithReferenceDefaultValueThroughInternalInlineFun.kt");
+      }
+
+      @Test
       @TestMetadata("usePrivateTopLevelFunWithVarargThroughInternalInlineFun.kt")
       public void testUsePrivateTopLevelFunWithVarargThroughInternalInlineFun() {
         runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossModulePrivateLeak/usePrivateTopLevelFunWithVarargThroughInternalInlineFun.kt");
@@ -1824,9 +1860,27 @@ public class WasmJsSynthAccBoxTestGenerated extends AbstractFirWasmJsCodegenBoxW
       }
 
       @Test
+      @TestMetadata("usePrivateTopLevelFunWithAnonymousFunDefaultValueThroughInternalInlineFun.kt")
+      public void testUsePrivateTopLevelFunWithAnonymousFunDefaultValueThroughInternalInlineFun() {
+        runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/singleFile/usePrivateTopLevelFunWithAnonymousFunDefaultValueThroughInternalInlineFun.kt");
+      }
+
+      @Test
       @TestMetadata("usePrivateTopLevelFunWithDifferentVisibility.kt")
       public void testUsePrivateTopLevelFunWithDifferentVisibility() {
         runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/singleFile/usePrivateTopLevelFunWithDifferentVisibility.kt");
+      }
+
+      @Test
+      @TestMetadata("usePrivateTopLevelFunWithLambdaDefaultValueThroughInternalInlineFun.kt")
+      public void testUsePrivateTopLevelFunWithLambdaDefaultValueThroughInternalInlineFun() {
+        runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/singleFile/usePrivateTopLevelFunWithLambdaDefaultValueThroughInternalInlineFun.kt");
+      }
+
+      @Test
+      @TestMetadata("usePrivateTopLevelFunWithReferenceDefaultValueThroughInternalInlineFun.kt")
+      public void testUsePrivateTopLevelFunWithReferenceDefaultValueThroughInternalInlineFun() {
+        runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/singleFile/usePrivateTopLevelFunWithReferenceDefaultValueThroughInternalInlineFun.kt");
       }
 
       @Test
