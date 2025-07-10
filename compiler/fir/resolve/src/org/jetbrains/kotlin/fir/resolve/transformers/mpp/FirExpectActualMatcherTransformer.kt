@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.resolve.transformers.mpp
 
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expectActualMatchingContextFactory
@@ -56,7 +57,7 @@ open class FirExpectActualMatcherTransformer(
 
     override fun transformRegularClass(regularClass: FirRegularClass, data: Nothing?): FirStatement {
         transformMemberDeclaration(regularClass)
-        regularClass.transformChildren(this, data)
+        regularClass.transformDeclarations(this, data)
         return regularClass
     }
 
@@ -85,8 +86,16 @@ open class FirExpectActualMatcherTransformer(
     }
 
     // --------------------------- other ---------------------------
-    override fun transformAnonymousInitializer(anonymousInitializer: FirAnonymousInitializer, data: Nothing?): FirAnonymousInitializer {
-        return anonymousInitializer
+
+    override fun transformFile(file: FirFile, data: Nothing?): FirFile {
+        file.transformDeclarations(this, data)
+        return file
+    }
+
+    override fun <E : FirElement> transformElement(element: E, data: Nothing?): E {
+        // To prevent entering anonymous initializer's body, delegate field's body,
+        // and other unnecessary elements
+        return element
     }
 
     // ------------------------------------------------------
