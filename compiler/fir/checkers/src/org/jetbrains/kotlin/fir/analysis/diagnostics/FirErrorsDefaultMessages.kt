@@ -324,6 +324,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPLICIT_BACKING_
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPLICIT_DELEGATION_CALL_REQUIRED
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPLICIT_TYPE_ARGUMENTS_IN_PROPERTY_ACCESS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPOSED_FUNCTION_RETURN_TYPE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPOSED_PACKAGE_PRIVATE_TYPE_FROM_INTERNAL_WARNING
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPOSED_PARAMETER_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPOSED_PROPERTY_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.EXPOSED_PROPERTY_TYPE_IN_CONSTRUCTOR_ERROR
@@ -1458,6 +1459,15 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(
             EXPOSED_TYPE_PARAMETER_BOUND_DEPRECATION_WARNING,
             "''{0}'' generic exposes its ''{3}'' parameter bound type{2} ''{1}''. This will be prohibited in the future.",
+            TO_STRING,
+            DECLARATION_NAME,
+            TO_STRING,
+            TO_STRING,
+        )
+        map.put(
+            EXPOSED_PACKAGE_PRIVATE_TYPE_FROM_INTERNAL_WARNING,
+            "''{0}'' declaration exposes ''{3}'' type{2} ''{1}''."
+                .toDeprecationWarningMessage(LanguageFeature.ForbidExposingPackagePrivateInInternal),
             TO_STRING,
             DECLARATION_NAME,
             TO_STRING,

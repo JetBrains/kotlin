@@ -16,12 +16,15 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory2
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.SessionHolder
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
+import org.jetbrains.kotlin.fir.analysis.checkers.PermissivenessWithMigration
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.checkers.directOverriddenSymbolsSafe
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.isDataClassCopy
 import org.jetbrains.kotlin.fir.analysis.checkers.inlineCheckerExtension
 import org.jetbrains.kotlin.fir.analysis.checkers.isInlineOnly
+import org.jetbrains.kotlin.fir.analysis.checkers.relationWithMigration
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.containingClassLookupTag
 import org.jetbrains.kotlin.fir.declarations.*
@@ -58,8 +61,8 @@ object FirInlineDeclarationChecker : FirFunctionChecker(MppCheckerKind.Common) {
     class InlineFunctionBodyContext(
         val inlineFunction: FirFunction,
         val inlineFunEffectiveVisibility: EffectiveVisibility,
-        val session: FirSession,
-    ) {
+        override val session: FirSession,
+    ) : SessionHolder {
         private val isEffectivelyPrivateApiFunction: Boolean = inlineFunEffectiveVisibility.privateApi
 
         private fun accessedDeclarationEffectiveVisibility(
@@ -291,8 +294,8 @@ object FirInlineDeclarationChecker : FirFunctionChecker(MppCheckerKind.Common) {
 
         fun isLessVisibleThanInlineFunction(visibility: EffectiveVisibility): Boolean {
             if (visibility == EffectiveVisibility.Local && inlineFunEffectiveVisibility.privateApi) return false
-            val relation = visibility.relation(inlineFunEffectiveVisibility, session.typeContext)
-            return relation == EffectiveVisibility.Permissiveness.LESS || relation == EffectiveVisibility.Permissiveness.UNKNOWN
+            val relation = visibility.relationWithMigration(inlineFunEffectiveVisibility)
+            return relation == PermissivenessWithMigration.LESS || relation == PermissivenessWithMigration.UNKNOWN || relation == PermissivenessWithMigration.UNKNOW_WITH_MIGRATION
         }
     }
 

@@ -71,6 +71,10 @@ private fun KotlinType.dependentDescriptors(types: Set<KotlinType>, ownRelation:
 private fun Set<DescriptorWithRelation>.leastPermissive(base: EffectiveVisibility): DescriptorWithRelation? {
     for (descriptorWithRelation in this) {
         val currentVisibility = descriptorWithRelation.effectiveVisibility()
+
+        // Keep old behavior in K1 after KT-58988.
+        if (currentVisibility is EffectiveVisibility.InternalOrPackage && base is EffectiveVisibility.InternalOrPackage) continue
+
         when (currentVisibility.relation(base, SimpleClassicTypeSystemContext)) {
             EffectiveVisibility.Permissiveness.LESS, EffectiveVisibility.Permissiveness.UNKNOWN -> {
                 return descriptorWithRelation

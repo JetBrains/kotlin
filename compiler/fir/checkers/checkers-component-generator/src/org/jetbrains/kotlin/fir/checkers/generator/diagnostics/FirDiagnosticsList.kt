@@ -539,6 +539,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
         val EXPOSED_SUPER_CLASS by exposedVisibilityError<KtElement>()
         val EXPOSED_TYPE_PARAMETER_BOUND by exposedVisibilityError<KtElement>()
         val EXPOSED_TYPE_PARAMETER_BOUND_DEPRECATION_WARNING by exposedVisibilityWarning<KtElement>()
+        val EXPOSED_PACKAGE_PRIVATE_TYPE_FROM_INTERNAL_WARNING by exposedVisibilityWarning<KtElement>()
     }
 
     val MODIFIERS by object : DiagnosticGroup("Modifiers") {
