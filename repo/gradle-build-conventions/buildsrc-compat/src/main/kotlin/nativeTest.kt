@@ -7,7 +7,6 @@ import org.gradle.api.attributes.Category
 import org.gradle.api.attributes.LibraryElements
 import org.gradle.api.attributes.Usage
 import org.gradle.api.file.ConfigurableFileCollection
-import org.gradle.api.file.ConfigurableFileTree
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.FileCollection
 import org.gradle.api.file.FileSystemOperations
@@ -20,6 +19,7 @@ import org.gradle.api.tasks.*
 import org.gradle.api.tasks.testing.Test
 import org.gradle.kotlin.dsl.environment
 import org.gradle.kotlin.dsl.named
+import org.gradle.kotlin.dsl.newInstance
 import org.gradle.kotlin.dsl.project
 import org.gradle.kotlin.dsl.property
 import org.gradle.kotlin.dsl.register
@@ -71,14 +71,11 @@ private enum class TestProperty(shortName: String) {
 }
 
 private open class NativeArgsProvider @Inject constructor(
+    @get:Input val testTarget: String,
     project: Project,
     objects: ObjectFactory,
     providers: ProviderFactory,
 ) : CommandLineArgumentProvider {
-    @get:Input
-    @get:Optional
-    protected val testTarget = providers.testProperty(TEST_TARGET)
-
     @get:Input
     @get:Optional
     protected val testMode = providers.testProperty(TEST_MODE)
@@ -156,9 +153,6 @@ private open class NativeArgsProvider @Inject constructor(
     @get:Optional
     val customCompilerDist: DirectoryProperty = objects.directoryProperty()
 
-    @get:Input
-    val testTargetWithDefault = testTarget.orElse(HostManager.hostName)
-
     @get:InputDirectory
     @get:PathSensitive(PathSensitivity.RELATIVE)
     val nativeHome: DirectoryProperty = objects.directoryProperty()
@@ -172,15 +166,14 @@ private open class NativeArgsProvider @Inject constructor(
     @get:Classpath
     val xcTestConfiguration: ConfigurableFileCollection = objects.fileCollection().apply {
         val xcTestEnabled = xctestFramework.map { it == "true" }.orElse(false)
-        val isAppleTarget: Provider<Boolean> =
-            testTargetWithDefault.map { KonanTarget.predefinedTargets[it]?.family?.isAppleFamily ?: false }.orElse(false)
-        if (xcTestEnabled.get() && isAppleTarget.get()) {
+        val isAppleTarget = KonanTarget.predefinedTargets[testTarget]!!.family.isAppleFamily
+        if (xcTestEnabled.get() && isAppleTarget) {
             from(project.configurations.create("kotlinTestNativeXCTest") {
                 isTransitive = false
                 attributes {
                     attribute(Usage.USAGE_ATTRIBUTE, objects.named(KotlinUsages.KOTLIN_API))
                     attribute(KotlinPlatformType.attribute, KotlinPlatformType.native)
-                    attribute(KotlinNativeTarget.konanTargetAttribute, testTargetWithDefault.get())
+                    attribute(KotlinNativeTarget.konanTargetAttribute, testTarget)
                 }
                 dependencies.add(project.dependencies.project(path = ":native:kotlin-test-native-xctest"))
             })
@@ -212,7 +205,7 @@ private open class NativeArgsProvider @Inject constructor(
             testKind.orNull?.let { "-D${TEST_KIND.fullName}=$it" },
             "-D${TEAMCITY.fullName}=$teamcity",
             customCompilerDist.orNull?.let { "-D${CUSTOM_KOTLIN_NATIVE_HOME.fullName}=${it.asFile.absolutePath}" },
-            testTarget.orNull?.let { "-D${TEST_TARGET.fullName}=$it" },
+            "-D${TEST_TARGET.fullName}=$testTarget",
             testMode.orNull?.let { "-D${TEST_MODE.fullName}=$it" },
             compileOnly.orNull?.let { "-D${COMPILE_ONLY.fullName}=$it" },
             optimizationMode.orNull?.let { "-D${OPTIMIZATION_MODE.fullName}=$it" },
@@ -262,6 +255,9 @@ private open class NativeTestPrepareCompilerDistribution @Inject constructor(
     @get:Input
     val requirePlatformLibs: Property<Boolean> = objectFactory.property(Boolean::class)
 
+    @get:Input
+    val testTarget: Property<String> = objectFactory.property(String::class)
+
     /**
      * compiler-cache-invalidator tool
      */
@@ -297,6 +293,11 @@ private open class NativeTestPrepareCompilerDistribution @Inject constructor(
             if (!requirePlatformLibs.get()) {
                 exclude("klib/platform")
                 exclude("klib/cache/*/org.jetbrains.kotlin.native.platform.*-cache")
+            }
+            val excludedTargets = KonanTarget.predefinedTargets.keys - setOf(testTarget.get())
+            excludedTargets.forEach { target ->
+                exclude("konan/targets/$target")
+                exclude("klib/platform/$target")
             }
         }
 
@@ -358,26 +359,23 @@ fun Project.nativeTest(
     defineJDKEnvVariables: List<JdkMajorVersion> = emptyList(),
     body: Test.() -> Unit = {},
 ): TaskProvider<Test> {
+    val testTarget = providers.testProperty(TEST_TARGET).orElse(HostManager.hostName)
     val nativeDistribution = tasks.register<NativeTestPrepareCompilerDistribution>("$taskName-dist") {
         this.requirePlatformLibs.set(requirePlatformLibs)
+        this.testTarget.set(testTarget)
         val customNativeHome = providers.testProperty(KOTLIN_NATIVE_HOME)
         if (customNativeHome.isPresent) {
             nativeDistributionRoot.from(customNativeHome)
         } else {
-            val testTarget = providers.testProperty(TEST_TARGET)
             val nativeHomeBuiltBy: Provider<List<String>> = testTarget.map {
                 listOfNotNull(
                     ":kotlin-native:${it}CrossDist",
                     if (requirePlatformLibs) ":kotlin-native:${it}PlatformLibs" else null,
                 )
-            }.orElse(
-                listOfNotNull(
-                    ":kotlin-native:dist",
-                    if (requirePlatformLibs) ":kotlin-native:distPlatformLibs" else null,
-                )
-            )
+            }
 
-            nativeDistributionRoot.from(project.project(":kotlin-native").isolated.projectDirectory.dir("dist")).builtBy(nativeHomeBuiltBy.get())
+            nativeDistributionRoot.from(project.project(":kotlin-native").isolated.projectDirectory.dir("dist"))
+                .builtBy(nativeHomeBuiltBy.get())
         }
     }
     return projectTest(
@@ -397,15 +395,15 @@ fun Project.nativeTest(
             javaLauncher.set(project.getToolchainLauncherFor(JdkMajorVersion.JDK_11_0))
 
             // Using JDK 11 instead of JDK 8 (project default) makes some tests take 15-25% more time.
-        // This seems to be caused by the fact that JDK 11 uses G1 GC by default, while JDK 8 uses Parallel GC.
-        // Switch back to Parallel GC to mitigate the test execution time degradation:
-        jvmArgs("-XX:+UseParallelGC")
-        // Another reason for switching back to Parallel GC is CLI tests:
-        // some of them validate the compiler performance report.
-        // The latter contains GC statistics, and the format varies per GC.
-        // So using G1 GC makes those tests fail because they expect the format of Parallel GC statistics.
+            // This seems to be caused by the fact that JDK 11 uses G1 GC by default, while JDK 8 uses Parallel GC.
+            // Switch back to Parallel GC to mitigate the test execution time degradation:
+            jvmArgs("-XX:+UseParallelGC")
+            // Another reason for switching back to Parallel GC is CLI tests:
+            // some of them validate the compiler performance report.
+            // The latter contains GC statistics, and the format varies per GC.
+            // So using G1 GC makes those tests fail because they expect the format of Parallel GC statistics.
 
-        // Effectively remove the limit for the amount of stack trace elements in Throwable.
+            // Effectively remove the limit for the amount of stack trace elements in Throwable.
             jvmArgs("-XX:MaxJavaStackTraceDepth=1000000")
 
             // Double the stack size. This is needed to compile some marginal tests with extra-deep IR tree, which requires a lot of stack frames
@@ -414,7 +412,7 @@ fun Project.nativeTest(
             // additional stack frames more compared to the old one because of another launcher, etc. and it turns out this is not enough.
             jvmArgs("-Xss2m")
 
-            jvmArgumentProviders.add(objects.newInstance(NativeArgsProvider::class.java).apply {
+            jvmArgumentProviders.add(objects.newInstance<NativeArgsProvider>(testTarget).apply {
                 this.nativeHome.set(nativeDistribution.flatMap { it.output })
                 this.customCompilerDependencies.from(customCompilerDependencies)
                 this.compilerPluginDependencies.from(compilerPluginDependencies)

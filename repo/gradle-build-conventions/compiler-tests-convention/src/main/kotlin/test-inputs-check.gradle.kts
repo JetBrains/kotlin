@@ -137,7 +137,6 @@ tasks.withType<Test>().names.forEach { taskName ->
                                         """permission java.io.FilePermission "$konanDataDir/-", "read,write,delete,execute";""",
                                         """permission java.io.FilePermission "$konanDataDir", "read";""",
                                         """permission java.io.FilePermission "/bin/sh", "execute";""",
-                                        """permission java.io.FilePermission "${nativeHome.getOrElse(nativeHomeDefault.get().asFile.absolutePath)}/-" , "read,write,delete";""",
                                     )
                                     if (testInputsCheck.useXcode.get()) {
                                         // Should we consider those files inputs? I need to think about the execute permission
