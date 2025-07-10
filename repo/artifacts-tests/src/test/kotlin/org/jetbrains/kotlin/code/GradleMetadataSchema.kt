@@ -49,7 +49,7 @@ data class Component(
 
 @Serializable
 data class ComponentAttributes(
-    @SerialName("org.gradle.status") val orgGradleStatus: String,
+    @SerialName("org.gradle.status") var orgGradleStatus: String,
 )
 
 @Serializable

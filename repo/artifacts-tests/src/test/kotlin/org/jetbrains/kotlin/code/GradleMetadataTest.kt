@@ -26,6 +26,9 @@ class GradleMetadataTest {
                         val expectedMetadataString =
                             expectedGradleMetadataPath.toFile().readText().replace("ArtifactsTest.version", kotlinVersion)
                         val expectedMetadata = Json.decodeFromString<GradleMetadata>(expectedMetadataString)
+                        if (isTeamCityBuild) {
+                            expectedMetadata.component.attributes?.orgGradleStatus = "release"
+                        }
                         val actualString = actual.toFile().readText()
                         val actualMetadata = Json.decodeFromString<GradleMetadata>(actualString)
                         assertTrue(
