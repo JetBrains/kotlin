@@ -21,7 +21,9 @@ dependencies {
         embedded(project(it)) { isTransitive = false }
     }
     testModules.forEach {
-        embedded(projectTests(it)) { isTransitive = false }
+        embedded(testFixtures(project(it))) {
+            if (this is ModuleDependency) isTransitive = false
+        }
     }
 }
 
