@@ -181,14 +181,14 @@
 /compiler/tests/ @JetBrains/kotlin-frontend @JetBrains/kotlin-jvm @JetBrains/kotlin-native @JetBrains/kotlin-wasm @JetBrains/kotlin-common-backend @JetBrains/kotlin-js
 /compiler/tests-against-klib/ @JetBrains/kotlin-jvm
 /compiler/tests-common/ @JetBrains/kotlin-frontend @JetBrains/kotlin-jvm @JetBrains/kotlin-native @JetBrains/kotlin-wasm @JetBrains/kotlin-common-backend @JetBrains/kotlin-js
-/compiler/tests-common/tests/org/jetbrains/kotlin/asJava/ @JetBrains/kotlin-analysis-api
+/compiler/tests-common/testFixtures/org/jetbrains/kotlin/asJava/ @JetBrains/kotlin-analysis-api
 /compiler/tests-common-new/ @JetBrains/kotlin-frontend
 /compiler/tests-common-new/tests-gen/org/jetbrains/kotlin/test/runners/codegen/ @JetBrains/kotlin-frontend @JetBrains/kotlin-jvm @JetBrains/kotlin-js @JetBrains/kotlin-native @JetBrains/kotlin-wasm
 /compiler/tests-common-new/tests-gen/org/jetbrains/kotlin/test/runners/ir/ @JetBrains/kotlin-frontend @JetBrains/kotlin-jvm @JetBrains/kotlin-js @JetBrains/kotlin-native @JetBrains/kotlin-wasm
-/compiler/tests-common-new/tests/org/jetbrains/kotlin/test/directives/WasmEnvironmentConfigurationDirectives.kt @JetBrains/kotlin-wasm
-/compiler/tests-common-new/tests/org/jetbrains/kotlin/test/services/configuration/WasmEnvironmentConfigurator.kt @JetBrains/kotlin-wasm
-/compiler/tests-common-new/tests/org/jetbrains/kotlin/test/directives/JsEnvironmentConfigurationDirectives.kt @JetBrains/kotlin-js
-/compiler/tests-common-new/tests/org/jetbrains/kotlin/test/services/configuration/JsEnvironmentConfigurator.kt @JetBrains/kotlin-js
+/compiler/tests-common-new/testFixtures/org/jetbrains/kotlin/test/directives/WasmEnvironmentConfigurationDirectives.kt @JetBrains/kotlin-wasm
+/compiler/tests-common-new/testFixtures/org/jetbrains/kotlin/test/services/configuration/WasmEnvironmentConfigurator.kt @JetBrains/kotlin-wasm
+/compiler/tests-common-new/testFixtures/org/jetbrains/kotlin/test/directives/JsEnvironmentConfigurationDirectives.kt @JetBrains/kotlin-js
+/compiler/tests-common-new/testFixtures/org/jetbrains/kotlin/test/services/configuration/JsEnvironmentConfigurator.kt @JetBrains/kotlin-js
 /compiler/tests-compiler-utils/ @JetBrains/kotlin-frontend @JetBrains/kotlin-common-backend @JetBrains/kotlin-jvm @JetBrains/kotlin-native @JetBrains/kotlin-wasm @JetBrains/kotlin-js
 /compiler/tests-integration/ @JetBrains/kotlin-frontend @JetBrains/kotlin-common-backend @JetBrains/kotlin-jvm @JetBrains/kotlin-native @JetBrains/kotlin-wasm @JetBrains/kotlin-js
 /compiler/tests-integration/tests/org/jetbrains/kotlin/klib/ @JetBrains/kotlin-common-backend
