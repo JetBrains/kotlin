@@ -1,5 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-59333
+// LANGUAGE: +ForbidUpperBoundsViolationOnTypeOperatorAndParameterBounds
 
 interface MyInterface {
     val value: String
@@ -15,7 +16,7 @@ enum class CorrectTypeEnum(override val value: String) : MyInterface {
     CorrectEnum2("2"),
 }
 
-fun <T : Enum<out MyInterface>> myFunction(arg: T) {}
+fun <T : Enum<<!UPPER_BOUND_VIOLATED_IN_TYPE_OPERATOR_OR_PARAMETER_BOUNDS_ERROR!>out MyInterface<!>>> myFunction(arg: T) {}
 
 class MyClass<T : Enum<<!UPPER_BOUND_VIOLATED!>out MyInterface<!>>>(val arg: T)
 
