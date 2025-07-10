@@ -61,7 +61,7 @@ public actual class String internal @WasmPrimitiveConstructor constructor(
         leftIfInSum = null
     }
 
-    internal inline val chars: WasmCharArray get() {
+    internal val chars: WasmCharArray get() {
         if (leftIfInSum != null) {
             foldChars()
         }
