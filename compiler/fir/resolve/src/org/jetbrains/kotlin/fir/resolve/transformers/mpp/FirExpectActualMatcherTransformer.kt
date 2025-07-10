@@ -40,7 +40,7 @@ class FirExpectActualMatcherProcessor(
  */
 open class FirExpectActualMatcherTransformer(
     final override val session: FirSession,
-    private val actualScopeSession: ScopeSession,
+    actualScopeSession: ScopeSession,
 ) : FirAbstractTreeTransformer<Nothing?>(FirResolvePhase.EXPECT_ACTUAL_MATCHING) {
 
     private val expectActualMatchingContext = session.expectActualMatchingContextFactory.create(
