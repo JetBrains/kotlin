@@ -659,7 +659,7 @@ class AppleFrameworkIT : KGPBaseTest() {
                 "baseName = \"sdk\"",
                 """
                     baseName = "sdk"
-                    exportKdoc = false
+                    exportKdoc.set(false)
                 """.trimIndent()
             )
 
