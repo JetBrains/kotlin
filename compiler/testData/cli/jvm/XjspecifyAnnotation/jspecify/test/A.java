@@ -1,4 +1,5 @@
-@org.jspecify.annotations.NullMarked
+package test;
+
 public class A {
     public void foo(String x) {}
 

@@ -1081,6 +1081,11 @@ public class CliTestGenerated extends AbstractCliTest {
       runTest("compiler/testData/cli/jvm/XjspecifyAnnotation/jspecifyDefault.args");
     }
 
+    @TestMetadata("jspecifyFileRoots.args")
+    public void testJspecifyFileRoots() {
+      runTest("compiler/testData/cli/jvm/XjspecifyAnnotation/jspecifyFileRoots.args");
+    }
+
     @TestMetadata("jspecifyIgnore.args")
     public void testJspecifyIgnore() {
       runTest("compiler/testData/cli/jvm/XjspecifyAnnotation/jspecifyIgnore.args");
