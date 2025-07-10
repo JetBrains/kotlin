@@ -724,10 +724,11 @@ open class SupertypeComputationSession {
             val resultSupertypeRefs = mutableListOf<FirResolvedTypeRef>()
             for (supertypeRef in supertypeRefs) {
                 if (isTypeAlias) {
+                    // For case like typealias S = @S SomeAnnotation
                     for (annotation in supertypeRef.annotations) {
                         val resolvedType = annotation.resolvedType as? ConeClassLikeType ?: continue
-                        val typeArgumentClassLikeDeclaration = resolvedType.lookupTag.toSymbol(session)?.fir
-                        checkIsInLoop(typeArgumentClassLikeDeclaration, wasSubtypingInvolved, wereTypeArgumentsInvolved)
+                        val annotationClassLikeDeclaration = resolvedType.lookupTag.toSymbol(session)?.fir
+                        checkIsInLoop(annotationClassLikeDeclaration, wasSubtypingInvolved, wereTypeArgumentsInvolved)
                     }
                 }
 
@@ -745,10 +746,15 @@ open class SupertypeComputationSession {
                         visitedTypes += type
                         for (typeArgument in type.typeArguments) {
                             val typeToCheck = typeArgument.type?.lowerBoundIfFlexible() as? ConeClassLikeType ?: continue
-                            checkIsInLoop(
-                                typeToCheck.lookupTag.toSymbol(session)?.fir,
-                                wasSubtypingInvolved, areTypeArgumentsCurrentlyInvolved,
-                            )
+                            val classLikeDeclarationToCheck = typeToCheck.lookupTag.toSymbol(session)?.fir
+                            // Loops in type arguments are dangerous only for a chain of type aliases
+                            // (but we still have to check them recursively, even for classes)
+                            if (classLikeDeclarationToCheck is FirTypeAlias) {
+                                checkIsInLoop(
+                                    classLikeDeclarationToCheck,
+                                    wasSubtypingInvolved, areTypeArgumentsCurrentlyInvolved,
+                                )
+                            }
                             checkTypeArgumentsRecursively(typeToCheck, visitedTypes)
                         }
                     }

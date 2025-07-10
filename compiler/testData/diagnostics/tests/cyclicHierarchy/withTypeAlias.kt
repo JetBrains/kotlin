@@ -1,0 +1,8 @@
+// RUN_PIPELINE_TILL: FRONTEND
+// ISSUE: KT-78909
+
+typealias T = A.() -> Unit
+
+class A() : <!CYCLIC_INHERITANCE_HIERARCHY, FINAL_SUPERTYPE, SUPERTYPE_NOT_INITIALIZED!>A<!> {}
+
+/* GENERATED_FIR_TAGS: classDeclaration, primaryConstructor */
