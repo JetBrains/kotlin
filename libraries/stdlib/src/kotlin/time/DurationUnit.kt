@@ -88,13 +88,13 @@ internal fun durationUnitByShortName(shortName: String, throwExceptionOnInvalidD
 internal fun durationUnitByIsoChar(
     isoChar: Char,
     isTimeComponent: Boolean,
-    throwExceptionOnInvalidDuration: Boolean = true,
+    throwExceptionOnInvalidDurationUnit: Boolean = true,
 ): DurationUnit? =
     when {
         !isTimeComponent -> {
             when (isoChar) {
                 'D' -> DurationUnit.DAYS
-                else -> if (throwExceptionOnInvalidDuration) throw IllegalArgumentException("Invalid or unsupported duration ISO non-time unit: $isoChar") else null
+                else -> if (throwExceptionOnInvalidDurationUnit) throw IllegalArgumentException("Invalid or unsupported duration ISO non-time unit: $isoChar") else null
             }
         }
         else -> {
@@ -102,7 +102,7 @@ internal fun durationUnitByIsoChar(
                 'H' -> DurationUnit.HOURS
                 'M' -> DurationUnit.MINUTES
                 'S' -> DurationUnit.SECONDS
-                else -> if (throwExceptionOnInvalidDuration) throw IllegalArgumentException("Invalid duration ISO time unit: $isoChar") else null
+                else -> if (throwExceptionOnInvalidDurationUnit) throw IllegalArgumentException("Invalid duration ISO time unit: $isoChar") else null
             }
         }
     }
