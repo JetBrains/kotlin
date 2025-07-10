@@ -703,15 +703,12 @@ internal class PartiallyLinkedIrTreePatcher(
         // Never patch instance initializers. Otherwise, this will break a lot of lowerings.
         override fun visitInstanceInitializerCall(expression: IrInstanceInitializerCall) = expression
 
-        override fun visitInlinedFunctionBlock(inlinedBlock: IrInlinedFunctionBlock): IrExpression {
-            inlinedBlock.transformChildrenVoid(this)
-
+        override fun visitInlinedFunctionBlock(inlinedBlock: IrInlinedFunctionBlock): IrExpression = inlinedBlock.maybeThrowLinkageError {
             val error = inlinedBlock.checkReferencedDeclaration(inlinedBlock.inlinedFunctionSymbol)
             if (error != null) {
                 inlinedBlock.inlinedFunctionSymbol = null
             }
-
-            return inlinedBlock
+            null
         }
 
         override fun visitExpression(expression: IrExpression) = expression.maybeThrowLinkageError { null }
