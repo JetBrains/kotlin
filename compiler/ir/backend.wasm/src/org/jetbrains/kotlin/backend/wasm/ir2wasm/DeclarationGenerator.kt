@@ -546,42 +546,15 @@ class DeclarationGenerator(
         val wasmExpressionGenerator = WasmExpressionBuilder(initBody, skipCommentInstructions = skipCommentInstructions)
 
         val initValue: IrExpression? = declaration.initializer?.expression
-        if (initValue != null) {
+        if (initValue is IrConst && initValue.kind !is IrConstKind.String) {
             val sourceFile = declaration.getSourceFile()!!
-            if (initValue is IrConst && initValue.kind !is IrConstKind.String) {
-                generateConstExpression(
-                    initValue,
-                    wasmExpressionGenerator,
-                    wasmFileCodegenContext,
-                    backendContext,
-                    initValue.getSourceLocation(declaration.symbol, sourceFile)
-                )
-            } else {
-                val stubFunction = WasmFunction.Defined("static_fun_stub", WasmSymbol())
-                val functionCodegenContext = WasmFunctionCodegenContext(
-                    null,
-                    stubFunction,
-                    backendContext,
-                    wasmFileCodegenContext,
-                    wasmModuleTypeTransformer,
-                    sourceFile,
-                    skipCommentInstructions,
-                )
-                val bodyGenerator = BodyGenerator(
-                    backendContext,
-                    wasmFileCodegenContext,
-                    functionCodegenContext,
-                    wasmModuleMetadataCache,
-                    wasmModuleTypeTransformer,
-                )
-                bodyGenerator.generateExpression(initValue)
-                wasmFileCodegenContext.addFieldInitializer(
-                    declaration.symbol,
-                    stubFunction.instructions,
-                    declaration.isObjectInstanceField()
-                )
-                generateDefaultInitializerForType(wasmType, wasmExpressionGenerator)
-            }
+            generateConstExpression(
+                initValue,
+                wasmExpressionGenerator,
+                wasmFileCodegenContext,
+                backendContext,
+                initValue.getSourceLocation(declaration.symbol, sourceFile)
+            )
         } else {
             generateDefaultInitializerForType(wasmType, wasmExpressionGenerator)
         }

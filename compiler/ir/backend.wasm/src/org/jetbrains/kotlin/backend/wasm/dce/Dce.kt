@@ -94,6 +94,11 @@ private fun buildRoots(modules: List<IrModuleFragment>, context: WasmBackendCont
         add(context.wasmSymbols.jsRelatedSymbols.throwValue.owner)
     }
 
+    context.fileContexts.values.forEach { crossFileContext ->
+        crossFileContext.stringPoolFieldInitializer?.let { add(it) }
+        crossFileContext.nonConstantFieldInitializer?.let { add(it) }
+    }
+
     // Remove all functions used to call a kotlin closure from JS side, reachable ones will be added back later.
     context.fileContexts.values.forEach {
         removeAll(it.closureCallExports.values)

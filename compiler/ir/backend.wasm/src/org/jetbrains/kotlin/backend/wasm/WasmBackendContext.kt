@@ -75,6 +75,10 @@ class WasmBackendContext(
         val classAssociatedObjects: MutableMap<IrClass, MutableList<Pair<IrClass, IrClass>>> = mutableMapOf()
 
         var testFunctionDeclarator: IrSimpleFunction? = null
+
+        var objectInstanceFieldInitializer: IrSimpleFunction? = null
+        var stringPoolFieldInitializer: IrSimpleFunction? = null
+        var nonConstantFieldInitializer: IrSimpleFunction? = null
     }
 
     val fileContexts = mutableMapOf<IrFile, CrossFileContext>()

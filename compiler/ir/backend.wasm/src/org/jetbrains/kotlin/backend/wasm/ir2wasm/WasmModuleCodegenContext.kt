@@ -103,8 +103,16 @@ class WasmFileCodegenContext(
         get() = wasmFileFragment.stringPoolSize
             ?: WasmSymbol<Int>().also { wasmFileFragment.stringPoolSize = it }
 
-    fun addFieldInitializer(irField: IrFieldSymbol, instructions: List<WasmInstr>, isObjectInstanceField: Boolean) {
-        wasmFileFragment.fieldInitializers.add(FieldInitializer(irField.getReferenceKey(), instructions, isObjectInstanceField))
+    fun addObjectInstanceFieldInitializer(initializer: IrFunctionSymbol) {
+        wasmFileFragment.objectInstanceFieldInitializers.add(initializer.getReferenceKey())
+    }
+
+    fun setStringPoolFieldInitializer(initializer: IrFunctionSymbol) {
+        wasmFileFragment.stringPoolFieldInitializer = initializer.getReferenceKey()
+    }
+
+    fun addNonConstantFieldInitializers(initializer: IrFunctionSymbol) {
+        wasmFileFragment.nonConstantFieldInitializers.add(initializer.getReferenceKey())
     }
 
     fun addMainFunctionWrapper(mainFunctionWrapper: IrFunctionSymbol) {
