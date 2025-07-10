@@ -548,7 +548,11 @@ class EnumSyntheticFunctionsAndPropertiesLowering(
                     } memoryOptimizedPlus irElseBranch(irBlock {
                         +irCall(irClass.initEntryInstancesFun!!)
                         +irCall(throwIAESymbol).apply {
-                            arguments[0] = irString("No enum constant ${nameParameter.name.identifier}.")
+                            arguments[0] = irConcat().apply {
+                                addArgument(irString("No enum constant "))
+                                addArgument(irGet(nameParameter))
+                                addArgument(irString("."))
+                            }
                         }
                     })
                 )
