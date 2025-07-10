@@ -29,7 +29,6 @@ data class TestMode(
     val isNative: Boolean = false,
     val isWasm: Boolean = false,
     val staticCache: Scope = Scope.NOWHERE,
-    val lazyIr: Scope = Scope.NOWHERE
 ) {
     enum class Scope {
         NOWHERE, DISTRIBUTION, EVERYWHERE;
@@ -42,11 +41,9 @@ data class TestMode(
     init {
         check(isJs xor isNative xor isWasm)
         check(isNative || staticCache.notUsed)
-        check(isNative || lazyIr.notUsed)
     }
 }
 
-enum class LazyIrMode { NO, }
 
 fun abiTest(init: TestBuilder.() -> Unit): String {
     val builder = TestBuilderImpl()

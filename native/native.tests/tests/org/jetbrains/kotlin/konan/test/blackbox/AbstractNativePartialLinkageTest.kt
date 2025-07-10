@@ -54,14 +54,8 @@ private class NativePartialLinkageTestStructureExtractor(private val settings: S
 
         val cacheMode = settings.get<CacheMode>()
         when {
-            cacheMode.useStaticCacheForUserLibraries -> {
-                this["staticCache"] = "TestMode.Scope.EVERYWHERE"
-                this["lazyIr"] = "TestMode.Scope.NOWHERE" // by default LazyIR is disabled
-            }
-            cacheMode.useStaticCacheForDistributionLibraries -> {
-                this["staticCache"] = "TestMode.Scope.DISTRIBUTION"
-                this["lazyIr"] = "TestMode.Scope.NOWHERE" // by default LazyIR is disabled
-            }
+            cacheMode.useStaticCacheForUserLibraries -> this["staticCache"] = "TestMode.Scope.EVERYWHERE"
+            cacheMode.useStaticCacheForDistributionLibraries -> this["staticCache"] = "TestMode.Scope.DISTRIBUTION"
         }
     }
 
