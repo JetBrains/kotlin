@@ -24,7 +24,7 @@ import org.jetbrains.kotlin.test.utils.inferencelogs.MarkdownInferenceLogsDumper
 import org.jetbrains.kotlin.test.utils.inferencelogs.MermaidInferenceLogsDumper
 import org.jetbrains.kotlin.test.utils.originalTestDataFile
 import org.jetbrains.kotlin.test.utils.withExtension
-import java.io.File
+import java.nio.file.Path
 
 class FirInferenceLogsHandler(
     testServices: TestServices
@@ -65,7 +65,7 @@ class FirInferenceLogsHandler(
         }
     }
 
-    private val InferenceLogsFormat.file: File
+    private val InferenceLogsFormat.file: Path
         get() {
             // K1 doesn't support constraint dumps, no need to care about ".fir.inference.md"
             val originalFile = testServices.moduleStructure.originalTestDataFiles.first().originalTestDataFile

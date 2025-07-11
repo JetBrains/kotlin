@@ -11,6 +11,9 @@ import org.jetbrains.kotlin.test.model.BinaryArtifacts
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.getOrCreateTempDirectory
+import kotlin.io.path.listDirectoryEntries
+import kotlin.io.path.name
+import kotlin.io.path.nameWithoutExtension
 
 class PhasedIrDumpHandler(testServices: TestServices) : JvmBinaryArtifactHandler(testServices) {
     override fun processModule(module: TestModule, info: BinaryArtifacts.Jvm) {
@@ -18,7 +21,7 @@ class PhasedIrDumpHandler(testServices: TestServices) : JvmBinaryArtifactHandler
         val dumpDirectory = testServices.getOrCreateTempDirectory(DUMPED_IR_FOLDER_NAME)
         val dumpFiles = dumpDirectory.resolve(module.name).listFiles()?.filter { it.name.contains(AFTER_PREFIX) } ?: return
         val testFile = module.files.first()
-        val testDirectory = testFile.originalFile.parentFile
+        val testDirectory = testFile.originalFile.parent
         val visitedFiles = mutableListOf<String>()
         for (actualFile in dumpFiles) {
             val expectedFileName = testFile.originalFile.nameWithoutExtension + actualFile.name.removeRange(0, 2)
@@ -28,8 +31,8 @@ class PhasedIrDumpHandler(testServices: TestServices) : JvmBinaryArtifactHandler
 
         // check that all expected files has their actual counterpart
         val remainFiles = testDirectory
-            .listFiles { _, name -> name.startsWith("${testFile.originalFile.nameWithoutExtension}_") }
-            ?.filter { it.name !in visitedFiles } ?: return
+            .listDirectoryEntries()
+            .filter { it.name.startsWith("${testFile.originalFile.nameWithoutExtension}_") && it.name !in visitedFiles }
         assertions.assertTrue(remainFiles.isEmpty()) {
             "There are some files in test directory (${remainFiles.joinToString { it.name }}) that don't have actual dump"
         }

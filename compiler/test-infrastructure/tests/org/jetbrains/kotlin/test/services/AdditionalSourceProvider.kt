@@ -10,9 +10,12 @@ import org.jetbrains.kotlin.test.directives.model.SimpleDirective
 import org.jetbrains.kotlin.test.model.ServicesAndDirectivesContainer
 import org.jetbrains.kotlin.test.model.TestFile
 import org.jetbrains.kotlin.test.model.TestModule
+import org.jetbrains.kotlin.test.model.toResourcePath
 import java.io.File
 import java.net.URL
-import java.nio.file.Paths
+import java.nio.file.*
+import kotlin.io.path.name
+import kotlin.io.path.useLines
 
 abstract class AdditionalSourceProvider(val testServices: TestServices) : ServicesAndDirectivesContainer {
     abstract fun produceAdditionalFiles(
@@ -26,17 +29,14 @@ abstract class AdditionalSourceProvider(val testServices: TestServices) : Servic
     }
 
     protected fun URL.toTestFile(): TestFile {
-        return TestFile(
-            this.file.substringAfterLast("/"),
-            this.readText(),
-            originalFile = File("resource"),
-            startLineNumberInOriginalFile = 0,
-            isAdditional = true,
-            directives = RegisteredDirectives.Empty
-        )
+        return toURI().toResourcePath().toTestFile()
     }
 
     protected fun File.toTestFile(relativePath: String? = null): TestFile {
+        return toPath().toTestFile(relativePath)
+    }
+
+    protected fun Path.toTestFile(relativePath: String? = null): TestFile {
         return TestFile(
             relativePath?.let(Paths::get)?.resolve(name)?.toString() ?: name,
             this.useLines { it.joinToString("\n") },
@@ -47,4 +47,3 @@ abstract class AdditionalSourceProvider(val testServices: TestServices) : Servic
         )
     }
 }
-

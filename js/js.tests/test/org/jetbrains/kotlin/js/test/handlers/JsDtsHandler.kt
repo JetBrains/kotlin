@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.utils.fileUtils.withReplacedExtensionOrNull
+import kotlin.io.path.writeText
 
 class JsDtsHandler(testServices: TestServices) : JsBinaryArtifactHandler(testServices) {
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {}

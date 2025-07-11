@@ -6,12 +6,14 @@
 package org.jetbrains.kotlin.fir.lightTree
 
 import java.io.File
+import java.nio.file.Path
+import kotlin.io.path.*
 
-fun String.walkTopDown(f: (File) -> Unit) {
-    val root = File(this)
-    for (file in root.walkTopDown()) {
-        if (file.isDirectory) continue
-        val path = file.path
+fun String.walkTopDown(f: (Path) -> Unit) {
+    val root = Path(this)
+    for (file in root.walk()) {
+        if (file.isDirectory()) continue
+        val path = file.pathString
         if (
             path.contains("kotlin-native") ||
             path.contains("testData") ||
@@ -27,10 +29,10 @@ fun String.walkTopDown(f: (File) -> Unit) {
     }
 }
 
-fun String.walkTopDownWithTestData(f: (File) -> Unit) {
-    val root = File(this)
-    for (file in root.walkTopDown()) {
-        if (file.isDirectory) continue
+fun String.walkTopDownWithTestData(f: (Path) -> Unit) {
+    val root = Path(this)
+    for (file in root.walk()) {
+        if (file.isDirectory()) continue
         if (file.extension != "kt") continue
 
         f(file)

@@ -22,8 +22,6 @@ class CompilerTestMessageRenderer(private val module: TestModule) : PlainTextMes
             .files
             .find { it.relativePath == sanitizedDiagnosticPath }
             ?.originalFile
-            ?.absoluteFile
-            ?.toPath()
             ?.toUri()
             ?.toString()
             ?: location.path

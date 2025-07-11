@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.test.services.sourceProviders.MainFunctionForBlackBo
 import org.jetbrains.kotlin.test.utils.*
 import java.io.File
 import java.net.URL
+import java.nio.file.Path
 
 private val EXCLUDED_PACKAGES = listOf("java.*", "sun.*", "kotlin.*", "jdk.internal.*", "com.azul.*")
 
@@ -30,7 +31,7 @@ abstract class DebugRunner(testServices: TestServices) : JvmBoxRunner(testServic
         val BOX_MAIN_FILE_CLASS_NAME = BOX_MAIN_FILE_NAME.replace(".kt", "Kt")
     }
 
-    private lateinit var wholeFile: File
+    private lateinit var wholeFile: Path
     private val backend: TargetBackend = testServices.defaultsProvider.targetBackend!!
     private val frontend: FrontendKind<*> = testServices.defaultsProvider.frontendKind
 

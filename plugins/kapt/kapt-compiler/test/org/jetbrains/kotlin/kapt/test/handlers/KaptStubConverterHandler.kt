@@ -24,6 +24,8 @@ import org.jetbrains.kotlin.test.services.defaultsProvider
 import org.jetbrains.kotlin.test.util.trimTrailingWhitespacesAndAddNewlineAtEOF
 import org.jetbrains.kotlin.test.utils.withExtension
 import java.util.*
+import kotlin.io.path.exists
+import kotlin.io.path.readText
 
 class KaptStubConverterHandler(testServices: TestServices) : BaseKaptHandler(testServices) {
     companion object {

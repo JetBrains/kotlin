@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.test.services.isMjsFile
 import org.jetbrains.kotlin.test.services.moduleStructure
 import java.io.File
 import kotlin.io.invariantSeparatorsPath
+import kotlin.io.path.name
 
 private const val PATH_TO_ROOT_TOKEN = "@PATH_TO_ROOT"
 

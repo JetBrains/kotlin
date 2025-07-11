@@ -76,6 +76,8 @@ import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import org.jetbrains.kotlin.utils.DummyDelegate
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
+import kotlin.io.path.exists
+import kotlin.io.path.nameWithoutExtension
 import kotlin.properties.ReadOnlyProperty
 import kotlin.reflect.KProperty
 
@@ -87,7 +89,7 @@ class FullDiagnosticsRenderer(private val directive: SimpleDirective) {
         if (USE_LATEST_LANGUAGE_VERSION in directives) return
 
         val testDataFile = testServices.moduleStructure.originalTestDataFiles.first()
-        val expectedFile = testDataFile.parentFile.resolve("${testDataFile.nameWithoutExtension.removeSuffix(".fir")}$expectedExtension")
+        val expectedFile = testDataFile.parent.resolve("${testDataFile.nameWithoutExtension.removeSuffix(".fir")}$expectedExtension")
 
         if (directive !in directives) {
             if (DiagnosticsDirectives.RENDER_ALL_DIAGNOSTICS_FULL_TEXT !in directives) {

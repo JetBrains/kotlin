@@ -10,7 +10,8 @@ import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.utils.MultiModuleInfoDumper
-import java.io.File
+import java.nio.file.Path
+import kotlin.io.path.nameWithoutExtension
 
 class SyntheticAccessorsDumpHandler(
     testServices: TestServices,
@@ -33,7 +34,7 @@ class SyntheticAccessorsDumpHandler(
     }
 
     companion object {
-        private fun dumpFile(testDataFile: File): File {
+        private fun dumpFile(testDataFile: Path): Path {
             val dumpFileName = testDataFile.nameWithoutExtension + ".accessors.txt"
             return testDataFile.resolveSibling(dumpFileName)
         }

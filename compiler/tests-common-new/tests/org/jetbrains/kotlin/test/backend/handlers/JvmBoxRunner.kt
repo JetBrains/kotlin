@@ -39,6 +39,7 @@ import java.lang.reflect.Method
 import java.net.URL
 import java.net.URLClassLoader
 import java.util.concurrent.TimeUnit
+import kotlin.io.path.exists
 
 open class JvmBoxRunner(testServices: TestServices) : JvmBinaryArtifactHandler(testServices) {
     companion object {

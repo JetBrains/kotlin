@@ -12,7 +12,8 @@ import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectiv
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.moduleStructure
-import org.jetbrains.kotlin.utils.fileUtils.withReplacedExtensionOrNull
+import kotlin.io.path.exists
+import kotlin.io.path.pathString
 
 class WasmDtsHandler(testServices: TestServices) : WasmBinaryArtifactHandler(testServices) {
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {}
@@ -21,9 +22,9 @@ class WasmDtsHandler(testServices: TestServices) : WasmBinaryArtifactHandler(tes
         val globalDirectives = testServices.moduleStructure.allDirectives
         if (WasmEnvironmentConfigurationDirectives.CHECK_TYPESCRIPT_DECLARATIONS !in globalDirectives) return
 
-        val referenceDtsFile = module.files.first().originalFile.parentFile
+        val referenceDtsFile = module.files.first().originalFile.parent
             .resolve("index.d.mts")
-            .run { takeIf { it.exists() } ?: error("'${path}' doesn't exist") }
+            .run { takeIf { it.exists() } ?: error("'${pathString}' doesn't exist") }
 
         val generatedDts = info.compilerResult.dts
             ?: error("Can't find generated .d.ts file")

@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurato
 import org.jetbrains.kotlin.test.services.libraryProvider
 import org.jetbrains.kotlin.test.services.moduleStructure
 import java.io.File
+import kotlin.io.path.pathString
 
 /**
  * The sourcemaps generated for test files contain relative paths that don't resolve anywhere.
@@ -50,7 +51,7 @@ class JsSourceMapPathRewriter(testServices: TestServices) : AbstractJsArtifactsC
         val testFile = allTestFiles.find { it.name == sourceMapPath }
             ?: allTestFiles.find { "/${it.name}" == sourceMapPath }
             ?: return null
-        return testFile.originalFile.absolutePath
+        return testFile.originalFile.toAbsolutePath().pathString
     }
 
     /**

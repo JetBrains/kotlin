@@ -29,6 +29,9 @@ import org.jetbrains.kotlin.test.utils.originalTestDataFile
 import org.jetbrains.kotlin.test.utils.partialBodyTestDataFile
 import org.jetbrains.kotlin.test.utils.reversedTestDataFile
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
+import kotlin.io.path.exists
+import kotlin.io.path.extension
+import kotlin.io.path.readText
 
 class PhasedPipelineChecker(
     testServices: TestServices,

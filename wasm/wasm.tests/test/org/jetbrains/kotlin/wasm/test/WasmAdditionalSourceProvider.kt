@@ -15,7 +15,11 @@ import org.jetbrains.kotlin.test.services.AdditionalSourceProvider
 import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
 import java.io.File
-import java.io.FileFilter
+import java.nio.file.Path
+import kotlin.io.path.Path
+import kotlin.io.path.exists
+import kotlin.io.path.isDirectory
+import kotlin.io.path.listDirectoryEntries
 
 class WasmWasiBoxTestHelperSourceProvider(testServices: TestServices) : AdditionalSourceProvider(testServices) {
     override fun produceAdditionalFiles(
@@ -46,23 +50,21 @@ class WasmAdditionalSourceProvider(testServices: TestServices) : AdditionalSourc
     companion object {
         private const val COMMON_FILES_NAME = "_common"
         private const val COMMON_FILES_DIR = "_commonFiles/"
-        private const val COMMON_FILES_DIR_PATH = "wasm/wasm.tests/$COMMON_FILES_DIR"
+        private val COMMON_FILES_DIR_PATH = Path("wasm/wasm.tests/$COMMON_FILES_DIR")
 
-        private fun getFilesInDirectoryByExtension(directory: String, extension: String): List<String> {
-            val dir = File(directory)
-            if (!dir.isDirectory) return emptyList()
-
-            return dir.listFiles(FileFilter { it.extension == extension })?.map { it.absolutePath } ?: emptyList()
+        private fun getFilesInDirectoryByExtension(directory: Path, extension: String): List<Path> {
+            if (!directory.isDirectory()) return emptyList()
+            return directory.listDirectoryEntries("*.$extension")
         }
 
-        private fun getAdditionalFiles(directory: String, extension: String): List<File> {
-            val globalCommonFiles = getFilesInDirectoryByExtension(COMMON_FILES_DIR_PATH, extension).map { File(it) }
-            val localCommonFilePath = "$directory/$COMMON_FILES_NAME.$extension"
-            val localCommonFile = File(localCommonFilePath).takeIf { it.exists() } ?: return globalCommonFiles
-            return globalCommonFiles + localCommonFile
+        private fun getAdditionalFiles(directory: Path, extension: String): List<Path> {
+            val globalCommonFiles = getFilesInDirectoryByExtension(COMMON_FILES_DIR_PATH, extension)
+            val localCommonFilePath = "$directory/${COMMON_FILES_NAME}.$extension"
+            val localCommonFile = Path(localCommonFilePath).takeIf { it.exists() } ?: return globalCommonFiles
+            return globalCommonFiles.plusElement(localCommonFile)
         }
 
-        fun getAdditionalKotlinFiles(directory: String): List<File> {
+        fun getAdditionalKotlinFiles(directory: Path): List<Path> {
             return getAdditionalFiles(directory, KotlinFileType.EXTENSION)
         }
     }

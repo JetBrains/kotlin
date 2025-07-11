@@ -30,6 +30,8 @@ import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.utils.MultiModuleInfoDumper
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
 import java.io.File
+import java.nio.file.Path
+import kotlin.io.path.nameWithoutExtension
 
 fun BinaryArtifactHandler<*>.reportKtDiagnostics(module: TestModule, ktDiagnosticReporter: BaseDiagnosticsCollector) {
     if (IGNORE_BACKEND_DIAGNOSTICS in module.directives) {
@@ -98,7 +100,7 @@ fun BinaryArtifactHandler<*>.checkFullDiagnosticRender() {
         }
     }
 
-    val expectedFile = File(FileUtil.getNameWithoutExtension(moduleStructure.originalTestDataFiles.first().absolutePath) + ".diag.txt")
+    val expectedFile = moduleStructure.originalTestDataFiles.first().let { it.parent.resolve(it.nameWithoutExtension + ".diag.txt") }
     if (needToVerifyDiagnostics) {
         testServices.assertions.assertEqualsToFile(
             expectedFile,
@@ -119,6 +121,10 @@ private fun renderDiagnosticMessage(fileName: String, severity: Severity, messag
 }
 
 fun Assertions.assertFileDoesntExist(file: File, directive: Directive) {
+    assertFileDoesntExist(file) { "Dump file detected but no '$directive' directive specified or nothing to dump." }
+}
+
+fun Assertions.assertFileDoesntExist(file: Path, directive: Directive) {
     assertFileDoesntExist(file) { "Dump file detected but no '$directive' directive specified or nothing to dump." }
 }
 

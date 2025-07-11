@@ -47,7 +47,8 @@ import org.jetbrains.kotlin.test.utils.MultiModuleInfoDumper
 import org.jetbrains.kotlin.utils.bind
 import org.junit.jupiter.api.Assumptions.assumeTrue
 import org.junit.jupiter.api.Tag
-import java.io.File
+import java.nio.file.Path
+import kotlin.io.path.nameWithoutExtension
 
 /**
  * This test works in the following way:
@@ -169,11 +170,11 @@ private class NativeKlibCrossCompilationIdentityHandler(testServices: TestServic
     }
 
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
-        val (testDataDir: File, baseName: String) = testServices
+        val (testDataDir: Path, baseName: String) = testServices
             .moduleStructure
             .originalTestDataFiles
             .first()
-            .let { it.parentFile to it.nameWithoutExtension }
+            .let { it.parent to it.nameWithoutExtension }
 
         fun MultiModuleInfoDumper.checkGoldenData(goldenDataFileExtension: String): () -> Unit = {
             assertions.assertEqualsToFile(

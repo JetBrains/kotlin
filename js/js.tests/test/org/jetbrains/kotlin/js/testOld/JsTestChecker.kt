@@ -12,8 +12,11 @@ import org.jetbrains.kotlin.js.engine.loadFiles
 import org.jetbrains.kotlin.js.test.utils.KOTLIN_TEST_INTERNAL
 import org.jetbrains.kotlin.test.utils.withSuffixAndExtension
 import org.junit.Assert
-import java.io.File
 import java.util.concurrent.atomic.AtomicInteger
+import kotlin.io.path.Path
+import kotlin.io.path.pathString
+import kotlin.io.path.readText
+import kotlin.io.path.writeText
 
 internal const val TEST_DATA_DIR_PATH = "js/js.translator/testData/"
 private const val ESM_EXTENSION = ".mjs"
@@ -102,12 +105,12 @@ object V8JsTestChecker {
         val newFiles = files
             .mapIndexed { index, s ->
                 if (index == files.size - 1) {
-                    val file = File(s)
+                    val file = Path(s)
                     val lines = file.readText().lines().toMutableList()
                     lines.add(lines.size - 6, JS_IR_OUTPUT_REWRITE)
                     val newFile = file.withSuffixAndExtension("_modified", "js")
                     newFile.writeText(lines.joinToString("\n"))
-                    newFile.absolutePath
+                    newFile.toAbsolutePath().pathString
                 } else {
                     s
                 }

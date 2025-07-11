@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.util.joinToArrayString
 import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 import java.io.File
+import kotlin.io.path.pathString
 
 class JsEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigurator(testServices) {
     override val directiveContainers: List<DirectivesContainer>
@@ -178,7 +179,7 @@ class JsEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigu
         val multiModule = testServices.moduleStructure.modules.size > 1
         configuration.put(JSConfigurationKeys.META_INFO, multiModule)
 
-        val sourceDirs = module.files.mapNotNull { it.originalFile.parent }.distinct()
+        val sourceDirs = module.files.map { it.originalFile.parent.pathString }.distinct()
         configuration.put(JSConfigurationKeys.SOURCE_MAP_SOURCE_ROOTS, sourceDirs)
         configuration.put(JSConfigurationKeys.SOURCE_MAP, true)
 

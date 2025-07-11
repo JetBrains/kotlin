@@ -14,6 +14,11 @@ import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.moduleStructure
 import java.io.File
+import java.nio.file.Path
+import kotlin.io.path.exists
+import kotlin.io.path.name
+import kotlin.io.path.nameWithoutExtension
+import kotlin.io.path.readText
 
 abstract class AbstractWasmArtifactsCollector(testServices: TestServices) : WasmBinaryArtifactHandler(testServices) {
     val modulesToArtifact = mutableMapOf<TestModule, BinaryArtifacts.Wasm>()
@@ -22,7 +27,7 @@ abstract class AbstractWasmArtifactsCollector(testServices: TestServices) : Wasm
         modulesToArtifact[module] = info
     }
 
-    protected fun collectJsArtifacts(originalFile: File): JsArtifacts {
+    protected fun collectJsArtifacts(originalFile: Path): JsArtifacts {
         val jsFiles = mutableListOf<AdditionalFile>()
         val mjsFiles = mutableListOf<AdditionalFile>()
         var entryMjs: String? = "test.mjs"
@@ -44,20 +49,20 @@ abstract class AbstractWasmArtifactsCollector(testServices: TestServices) : Wasm
             }
         }
 
-        originalFile.parentFile.resolve(originalFile.nameWithoutExtension + JavaScript.DOT_EXTENSION)
+        originalFile.parent.resolve(originalFile.nameWithoutExtension + JavaScript.DOT_EXTENSION)
             .takeIf { it.exists() }
             ?.let {
                 jsFiles += AdditionalFile(it.name, it.readText())
             }
 
-        originalFile.parentFile.resolve(originalFile.nameWithoutExtension + JavaScript.DOT_MODULE_EXTENSION)
+        originalFile.parent.resolve(originalFile.nameWithoutExtension + JavaScript.DOT_MODULE_EXTENSION)
             .takeIf { it.exists() }
             ?.let {
                 mjsFiles += AdditionalFile(it.name, it.readText())
             }
 
 
-        originalFile.parentFile.resolve(originalFile.nameWithoutExtension + "__main${JavaScript.DOT_EXTENSION}")
+        originalFile.parent.resolve(originalFile.nameWithoutExtension + "__main${JavaScript.DOT_EXTENSION}")
             .takeIf { it.exists() }
             ?.let {
                 entryMjs = it.name
@@ -114,7 +119,7 @@ fun TestServices.getWasmTestOutputDirectory(): File {
 
     val testGroupOutputDir = File(File(pathToRootOutputDir, "out"), testGroupDirPrefix)
     val stopFile = File(pathToTestDir)
-    return generateSequence(originalFile.parentFile) { it.parentFile }
+    return generateSequence(originalFile.parent) { it.parent }
         .takeWhile { it != stopFile }
         .map { it.name }
         .toList().asReversed()

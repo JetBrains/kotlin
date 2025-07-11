@@ -34,6 +34,8 @@ import org.jetbrains.kotlin.test.utils.MultiModuleInfoDumper
 import org.jetbrains.kotlin.utils.keysToMap
 import java.util.function.Predicate
 import java.util.regex.Pattern
+import kotlin.io.path.exists
+import kotlin.io.path.nameWithoutExtension
 
 /**
  * Compares dump of descriptors if with expected
@@ -67,7 +69,7 @@ class DeclarationsDumpHandler(
             else -> ""
         }
         val expectedFileName = "${testDataFile.nameWithoutExtension}$prefix.txt"
-        val expectedFile = testDataFile.parentFile.resolve(expectedFileName)
+        val expectedFile = testDataFile.parent.resolve(expectedFileName)
         if (!expectedFile.exists()) return
         assertions.assertEqualsToFile(expectedFile, resultDump)
     }

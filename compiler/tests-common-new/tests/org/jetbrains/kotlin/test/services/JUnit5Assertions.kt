@@ -14,10 +14,12 @@ import org.opentest4j.FileInfo
 import java.io.File
 import java.io.IOException
 import java.nio.charset.StandardCharsets
+import java.nio.file.Path
+import kotlin.io.path.*
 import org.junit.jupiter.api.Assertions as JUnit5PlatformAssertions
 
 object JUnit5Assertions : AssertionsService() {
-    override fun doesEqualToFile(expectedFile: File, actual: String, sanitizer: (String) -> String): Boolean {
+    override fun doesEqualToFile(expectedFile: Path, actual: String, sanitizer: (String) -> String): Boolean {
         return doesEqualToFile(
             expectedFile,
             actual,
@@ -26,7 +28,7 @@ object JUnit5Assertions : AssertionsService() {
             fileNotFoundMessageLocal = { "Expected data file did not exist. Generating: $expectedFile" }).first
     }
 
-    override fun assertEqualsToFile(expectedFile: File, actual: String, sanitizer: (String) -> String, message: () -> String) {
+    override fun assertEqualsToFile(expectedFile: Path, actual: String, sanitizer: (String) -> String, message: () -> String) {
         assertEqualsToFile(
             expectedFile,
             actual,
@@ -37,21 +39,21 @@ object JUnit5Assertions : AssertionsService() {
     }
 
     private fun doesEqualToFile(
-        expectedFile: File,
+        expectedFile: Path,
         actual: String,
         sanitizer: (String) -> String,
-        fileNotFoundMessageTeamCity: (File) -> String,
-        fileNotFoundMessageLocal: (File) -> String,
+        fileNotFoundMessageTeamCity: () -> String,
+        fileNotFoundMessageLocal: () -> String,
     ): Pair<Boolean, String> {
         try {
             val actualText = actual.trim { it <= ' ' }.convertLineSeparators().trimTrailingWhitespacesAndAddNewlineAtEOF()
             if (!expectedFile.exists()) {
                 if (isTeamCityBuild) {
-                    org.junit.jupiter.api.fail(fileNotFoundMessageTeamCity(expectedFile))
+                    org.junit.jupiter.api.fail(fileNotFoundMessageTeamCity())
                 } else {
-                    expectedFile.parentFile.mkdirs()
+                    expectedFile.createDirectories()
                     expectedFile.writeText(actualText)
-                    org.junit.jupiter.api.fail(fileNotFoundMessageLocal(expectedFile))
+                    org.junit.jupiter.api.fail(fileNotFoundMessageLocal())
                 }
             }
             val expected = expectedFile.readText().convertLineSeparators()
@@ -70,12 +72,36 @@ object JUnit5Assertions : AssertionsService() {
         fileNotFoundMessageTeamCity: (File) -> String,
         fileNotFoundMessageLocal: (File) -> String,
     ) {
+        assertEqualsToFile(
+            expectedFile.toPath(),
+            actual,
+            sanitizer,
+            differenceObtainedMessage,
+            fileNotFoundMessageTeamCity = { fileNotFoundMessageTeamCity(expectedFile) },
+            fileNotFoundMessageLocal = { fileNotFoundMessageLocal(expectedFile) },
+        )
+    }
+
+    fun assertEqualsToFile(
+        expectedFile: Path,
+        actual: String,
+        sanitizer: (String) -> String,
+        differenceObtainedMessage: () -> String,
+        fileNotFoundMessageTeamCity: (Path) -> String,
+        fileNotFoundMessageLocal: (Path) -> String,
+    ) {
         val (equalsToFile, expected) =
-            doesEqualToFile(expectedFile, actual, sanitizer, fileNotFoundMessageTeamCity, fileNotFoundMessageLocal)
+            doesEqualToFile(
+                expectedFile,
+                actual,
+                sanitizer,
+                fileNotFoundMessageTeamCity = { fileNotFoundMessageTeamCity(expectedFile) },
+                fileNotFoundMessageLocal = { fileNotFoundMessageLocal(expectedFile) },
+            )
         if (!equalsToFile) {
             throw AssertionFailedError(
                 "${differenceObtainedMessage()}: ${expectedFile.name}",
-                FileInfo(expectedFile.absolutePath, expected.toByteArray(StandardCharsets.UTF_8)),
+                FileInfo(expectedFile.toAbsolutePath().toString(), expected.toByteArray(StandardCharsets.UTF_8)),
                 actual,
             )
         }

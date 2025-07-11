@@ -18,7 +18,10 @@ import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.util.joinToArrayString
 import org.jetbrains.kotlin.utils.DFS
-import java.io.File
+import java.nio.file.Path
+import kotlin.io.path.Path
+import kotlin.io.path.name
+import kotlin.io.path.readLines
 
 /*
  * Rules of directives resolving:
@@ -50,7 +53,7 @@ class ModuleStructureExtractorImpl(
         testDataFileName: String,
         directivesContainer: DirectivesContainer,
     ): TestModuleStructure {
-        val testDataFile = File(testDataFileName)
+        val testDataFile = Path(testDataFileName)
         val extractor = ModuleStructureExtractorWorker(listOf(testDataFile), directivesContainer)
         var result = extractor.splitTestDataByModules()
         for (transformer in moduleStructureTransformers) {
@@ -64,7 +67,7 @@ class ModuleStructureExtractorImpl(
     }
 
     private inner class ModuleStructureExtractorWorker(
-        private val testDataFiles: List<File>,
+        private val testDataFiles: List<Path>,
         private val directivesContainer: DirectivesContainer,
     ) {
         private val assertions: Assertions
@@ -73,7 +76,7 @@ class ModuleStructureExtractorImpl(
         private val defaultsProvider: DefaultsProvider
             get() = testServices.defaultsProvider
 
-        private lateinit var currentTestDataFile: File
+        private lateinit var currentTestDataFile: Path
 
         private val defaultFileName: String
             get() = currentTestDataFile.name

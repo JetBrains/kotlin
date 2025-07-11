@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.test.util.RecursiveDescriptorComparator
 import org.jetbrains.kotlin.test.util.RecursiveDescriptorComparator.RECURSIVE_ALL
 import org.jetbrains.kotlin.test.utils.MultiModuleInfoDumper
 import org.jetbrains.kotlin.test.utils.withExtension
+import kotlin.io.path.exists
 
 class DynamicCallsDumpHandler(testServices: TestServices) : ClassicFrontendAnalysisHandler(testServices) {
     companion object {

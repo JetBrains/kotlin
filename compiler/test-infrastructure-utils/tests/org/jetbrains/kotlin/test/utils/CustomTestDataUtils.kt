@@ -5,7 +5,9 @@
 
 package org.jetbrains.kotlin.test.utils
 
-import java.io.File
+import java.nio.file.Path
+import kotlin.io.path.extension
+import kotlin.io.path.name
 
 // Prefixes are chosen such that LL FIR test data cannot be mistaken for FIR test data.
 private const val FIR_PREFIX = ".fir"
@@ -16,36 +18,36 @@ private const val PARTIAL_BODY_PREFIX = ".partialBody"
 
 const val CUSTOM_TEST_DATA_EXTENSION_PATTERN = "^(.+)\\.(reversed|partialBody|fir|ll|latestLV)\\.kts?\$"
 
-val File.isFirTestData: Boolean
+val Path.isFirTestData: Boolean
     get() = isCustomTestDataWithPrefix(FIR_PREFIX)
 
-val File.isLatestLVTestData: Boolean
+val Path.isLatestLVTestData: Boolean
     get() = isCustomTestDataWithPrefix(LATEST_LV_PREFIX)
 
 /**
- * @see File.llFirTestDataFile
+ * @see Path.llFirTestDataFile
  */
-val File.isLLFirTestData: Boolean
+val Path.isLLFirTestData: Boolean
     get() = isCustomTestDataWithPrefix(LL_FIR_PREFIX)
 
-val File.isLLFirSpecializedTestData: Boolean
+val Path.isLLFirSpecializedTestData: Boolean
     get() = isCustomTestDataWithPrefix(REVERSED_PREFIX) || isCustomTestDataWithPrefix(PARTIAL_BODY_PREFIX)
 
-val File.isCustomTestData: Boolean
+val Path.isCustomTestData: Boolean
     get() = isFirTestData || isLLFirTestData || isLatestLVTestData
 
-private fun File.isCustomTestDataWithPrefix(prefix: String): Boolean = name.endsWith("$prefix$extensionWithDot")
+private fun Path.isCustomTestDataWithPrefix(prefix: String): Boolean = name.endsWith("$prefix$extensionWithDot")
 
-val File.firTestDataFile: File
+val Path.firTestDataFile: Path
     get() = getCustomTestDataFileWithPrefix(FIR_PREFIX)
 
-val File.latestLVTestDataFile: File
+val Path.latestLVTestDataFile: Path
     get() = getCustomTestDataFileWithPrefix(LATEST_LV_PREFIX)
 
-val File.reversedTestDataFile: File
+val Path.reversedTestDataFile: Path
     get() = getCustomTestDataFileWithPrefix(REVERSED_PREFIX)
 
-val File.partialBodyTestDataFile: File
+val Path.partialBodyTestDataFile: Path
     get() = getCustomTestDataFileWithPrefix(PARTIAL_BODY_PREFIX)
 
 /**
@@ -53,10 +55,10 @@ val File.partialBodyTestDataFile: File
  * legally diverge from the output of the K2 compiler, such as when the compiler's error behavior is deliberately unspecified. (For an
  * example, see `kotlinJavaKotlinCycle.ll.kt`.)
  */
-val File.llFirTestDataFile: File
+val Path.llFirTestDataFile: Path
     get() = getCustomTestDataFileWithPrefix(LL_FIR_PREFIX)
 
-private fun File.getCustomTestDataFileWithPrefix(prefix: String): File =
+private fun Path.getCustomTestDataFileWithPrefix(prefix: String): Path =
     if (isCustomTestDataWithPrefix(prefix)) this
     else {
         // Because `File` can be `.ll.kt` or `.fir.kt` test data, we have to go off `originalTestDataFileName`, which removes the prefix
@@ -64,16 +66,16 @@ private fun File.getCustomTestDataFileWithPrefix(prefix: String): File =
         val originalName = originalTestDataFileName
         val extension = extensionWithDot
         val customName = "${originalName.removeSuffix(extension)}$prefix$extension"
-        parentFile.resolve(customName)
+        parent.resolve(customName)
     }
 
-val File.originalTestDataFile: File
+val Path.originalTestDataFile: Path
     get() {
         val originalName = originalTestDataFileName
-        return if (originalName != name) parentFile.resolve(originalName) else this
+        return if (originalName != name) parent.resolve(originalName) else this
     }
 
-val File.originalTestDataFileName: String
+val Path.originalTestDataFileName: String
     get() {
         val prefix = when {
             isLLFirTestData -> LL_FIR_PREFIX
@@ -84,9 +86,9 @@ val File.originalTestDataFileName: String
         return getOriginalTestDataFileNameFromPrefix(prefix)
     }
 
-private fun File.getOriginalTestDataFileNameFromPrefix(prefix: String): String {
+private fun Path.getOriginalTestDataFileNameFromPrefix(prefix: String): String {
     val extension = extensionWithDot
     return "${name.removeSuffix("$prefix$extension")}$extension"
 }
 
-private val File.extensionWithDot: String get() = ".$extension"
+private val Path.extensionWithDot: String get() = ".$extension"

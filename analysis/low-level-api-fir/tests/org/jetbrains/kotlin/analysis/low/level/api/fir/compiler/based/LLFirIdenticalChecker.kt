@@ -9,7 +9,9 @@ import org.jetbrains.kotlin.test.frontend.fir.handlers.AbstractFirIdenticalCheck
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 import org.jetbrains.kotlin.test.utils.isLLFirTestData
-import java.io.File
+import java.nio.file.Path
+import kotlin.io.path.exists
+import kotlin.io.path.name
 
 /**
  * `.ll.kt` test data should not be identical to its base `.fir.kt`/`.kt` test data. If a base `.fir.kt` file does not exist, the base file
@@ -19,7 +21,7 @@ import java.io.File
  * LL FIR file's content to the base file's content.
  */
 class LLFirIdenticalChecker(testServices: TestServices) : AbstractFirIdenticalChecker(testServices) {
-    override fun checkTestDataFile(testDataFile: File) {
+    override fun checkTestDataFile(testDataFile: Path) {
         if (!testDataFile.isLLFirTestData) return
 
         val helper = Helper()

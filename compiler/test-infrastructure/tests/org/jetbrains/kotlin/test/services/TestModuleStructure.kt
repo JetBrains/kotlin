@@ -11,12 +11,12 @@ import org.jetbrains.kotlin.test.model.DependencyDescription
 import org.jetbrains.kotlin.test.model.DependencyRelation
 import org.jetbrains.kotlin.test.model.DependencyRelation.*
 import org.jetbrains.kotlin.test.model.TestModule
-import java.io.File
+import java.nio.file.Path
 
 abstract class TestModuleStructure : TestService {
     abstract val modules: List<TestModule>
     abstract val allDirectives: RegisteredDirectives
-    abstract val originalTestDataFiles: List<File>
+    abstract val originalTestDataFiles: List<Path>
 }
 
 val TestServices.moduleStructure: TestModuleStructure by TestServices.testServiceAccessor()

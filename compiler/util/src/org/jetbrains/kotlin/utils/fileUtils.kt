@@ -20,6 +20,9 @@ import java.io.File
 import java.io.IOException
 import java.nio.file.Path
 import java.nio.file.Paths
+import kotlin.io.path.Path
+import kotlin.io.path.name
+import kotlin.io.path.pathString
 
 fun File.withReplacedExtensionOrNull(oldExt: String, newExt: String): File? {
     if (name.endsWith(oldExt)) {
@@ -27,6 +30,17 @@ fun File.withReplacedExtensionOrNull(oldExt: String, newExt: String): File? {
         val pathWithoutExt = path.substring(0, path.length - oldExt.length)
         val pathWithNewExt = pathWithoutExt + newExt
         return File(pathWithNewExt)
+    }
+
+    return null
+}
+
+fun Path.withReplacedExtensionOrNull(oldExt: String, newExt: String): Path? {
+    if (name.endsWith(oldExt)) {
+        val path = pathString
+        val pathWithoutExt = path.substring(0, path.length - oldExt.length)
+        val pathWithNewExt = pathWithoutExt + newExt
+        return Path(pathWithNewExt)
     }
 
     return null

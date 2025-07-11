@@ -17,6 +17,8 @@ import org.jetbrains.kotlin.spec.utils.parsers.CommonParser
 import org.jetbrains.kotlin.spec.utils.parsers.LinkedSpecTestPatterns
 import org.jetbrains.kotlin.test.utils.isCustomTestData
 import java.io.File
+import java.nio.file.Path
+import kotlin.io.path.*
 
 object TestsJsonMapGenerator {
 
@@ -46,12 +48,12 @@ object TestsJsonMapGenerator {
         }
     }
 
-    private fun getTestInfo(test: LinkedSpecTest, testFile: File? = null, linkType: LinkType = LinkType.MAIN) =
+    private fun getTestInfo(test: LinkedSpecTest, testFile: Path? = null, linkType: LinkType = LinkType.MAIN) =
         JsonObject().apply {
             addProperty("specVersion", test.specVersion)
             addProperty("casesNumber", test.cases.byNumbers.size)
             addProperty("description", test.description)
-            addProperty("path", testFile?.path)
+            addProperty("path", testFile?.pathString)
             addProperty(
                 "unexpectedBehaviour",
                 test.unexpectedBehavior || test.cases.byNumbers.any { it.value.unexpectedBehavior }
@@ -67,14 +69,14 @@ object TestsJsonMapGenerator {
     ) {
         val isImplementationTest = testOrigin == TestOrigin.IMPLEMENTATION
         TestArea.entries.forEach { testArea ->
-            File(testOrigin.getFilePath(testArea)).walkTopDown()
+            Path(testOrigin.getFilePath(testArea)).walk()
                 .forEach testFiles@{ file ->
-                    if (!file.isFile || file.extension != "kt" || file.isCustomTestData) return@testFiles
+                    if (!file.isRegularFile() || file.extension != "kt" || file.isCustomTestData) return@testFiles
                     if (isImplementationTest && !LinkedSpecTestPatterns.testInfoPattern.matcher(file.readText()).find())
                         return@testFiles
 
                     val (specTest, _) = CommonParser.parseSpecTest(
-                        file.canonicalPath,
+                        file.normalize().pathString,
                         mapOf("main.kt" to file.readText()),
                         isImplementationTest
                     )
@@ -86,7 +88,7 @@ object TestsJsonMapGenerator {
     }
 
     private fun collectInfoFromTest(
-        testsMap: JsonObject, specTest: LinkedSpecTest, file: File
+        testsMap: JsonObject, specTest: LinkedSpecTest, file: Path
     ) {
 
         if (specTest.mainLink != null)

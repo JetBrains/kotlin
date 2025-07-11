@@ -9,29 +9,34 @@ import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.model.Directive
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
-import java.io.File
+import java.nio.file.Files
+import java.nio.file.Path
+import kotlin.io.path.deleteIfExists
+import kotlin.io.path.readLines
+import kotlin.io.path.readText
+import kotlin.io.path.writer
 
 abstract class FirIdenticalCheckerHelper(private val testServices: TestServices) {
     companion object {
         val isTeamCityBuild: Boolean = System.getenv("TEAMCITY_VERSION") != null
     }
 
-    abstract fun getClassicFileToCompare(testDataFile: File): File?
-    abstract fun getFirFileToCompare(testDataFile: File): File?
+    abstract fun getClassicFileToCompare(testDataFile: Path): Path?
+    abstract fun getFirFileToCompare(testDataFile: Path): Path?
 
-    fun firAndClassicContentsAreEquals(testDataFile: File, trimLines: Boolean = false): Boolean {
+    fun firAndClassicContentsAreEquals(testDataFile: Path, trimLines: Boolean = false): Boolean {
         val classicFile = getClassicFileToCompare(testDataFile) ?: return false
         val firFile = getFirFileToCompare(testDataFile) ?: return true
         return contentsAreEquals(classicFile, firFile, trimLines)
     }
 
-    fun contentsAreEquals(classicFile: File, firFile: File, trimLines: Boolean = false): Boolean {
+    fun contentsAreEquals(classicFile: Path, firFile: Path, trimLines: Boolean = false): Boolean {
         val classicFileContent = readContent(classicFile, trimLines)
         val firFileContent = readContent(firFile, trimLines)
         return classicFileContent == firFileContent
     }
 
-    fun readContent(file: File, trimLines: Boolean): String {
+    fun readContent(file: Path, trimLines: Boolean): String {
         return if (trimLines) {
             file.readLines().joinToString("\n") { it.trimEnd() }.trim()
         } else {
@@ -39,7 +44,7 @@ abstract class FirIdenticalCheckerHelper(private val testServices: TestServices)
         }
     }
 
-    fun addDirectiveToClassicFileAndAssert(testDataFile: File, directiveToAdd: Directive = FirDiagnosticsDirectives.FIR_IDENTICAL) {
+    fun addDirectiveToClassicFileAndAssert(testDataFile: Path, directiveToAdd: Directive = FirDiagnosticsDirectives.FIR_IDENTICAL) {
         if (!isTeamCityBuild) {
             val classicFileContent = testDataFile.readText()
             testDataFile.writer().use {
@@ -64,7 +69,7 @@ abstract class FirIdenticalCheckerHelper(private val testServices: TestServices)
     }
 
     fun removeDirectiveFromClassicFileAndAssert(
-        testDataFile: File,
+        testDataFile: Path,
         directiveToRemove: Directive,
         header: String = "Dumps via FIR & via old FE are the same",
     ) {
@@ -94,10 +99,10 @@ abstract class FirIdenticalCheckerHelper(private val testServices: TestServices)
         }
     }
 
-    fun deleteFirFileToCompareAndAssertIfExists(testDataFile: File, suppressAssertion: Boolean = false) {
-        val firFileToCompare = getFirFileToCompare(testDataFile)?.takeIf(File::exists) ?: return
+    fun deleteFirFileToCompareAndAssertIfExists(testDataFile: Path, suppressAssertion: Boolean = false) {
+        val firFileToCompare = getFirFileToCompare(testDataFile)?.takeIf(Files::exists) ?: return
         if (!isTeamCityBuild) {
-            firFileToCompare.delete()
+            firFileToCompare.deleteIfExists()
         }
 
         if (suppressAssertion) {
@@ -105,9 +110,9 @@ abstract class FirIdenticalCheckerHelper(private val testServices: TestServices)
         }
 
         val message = if (isTeamCityBuild) {
-            "Please remove `${testDataFile.path}`"
+            "Please remove `${testDataFile}`"
         } else {
-            "Deleted `${testDataFile.path}`"
+            "Deleted `${testDataFile}`"
         }
 
         testServices.assertions.fail {

@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.test.utils.MultiModuleInfoDumper
 import org.jetbrains.kotlin.test.utils.withExtension
 import org.jetbrains.org.objectweb.asm.ClassReader
 import java.io.File
+import kotlin.io.path.exists
 import kotlin.metadata.jvm.KotlinClassMetadata
 import kotlin.metadata.jvm.KotlinModuleMetadata
 import kotlin.metadata.jvm.UnstableMetadataApi

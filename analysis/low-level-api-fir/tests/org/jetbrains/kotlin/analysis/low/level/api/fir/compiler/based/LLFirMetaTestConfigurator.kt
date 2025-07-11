@@ -8,14 +8,16 @@ package org.jetbrains.kotlin.analysis.low.level.api.fir.compiler.based
 import org.jetbrains.kotlin.test.services.MetaTestConfigurator
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.utils.llFirTestDataFile
-import java.io.File
+import kotlin.io.path.Path
+import kotlin.io.path.exists
+import kotlin.io.path.pathString
 
 /**
  * Uses `.ll.kt` test data if available.
  */
 class LLFirMetaTestConfigurator(testServices: TestServices) : MetaTestConfigurator(testServices) {
     override fun transformTestDataPath(testDataFileName: String): String {
-        val llFirFile = File(testDataFileName).llFirTestDataFile
-        return if (llFirFile.exists()) llFirFile.path else testDataFileName
+        val llFirFile = Path(testDataFileName).llFirTestDataFile
+        return if (llFirFile.exists()) llFirFile.pathString else testDataFileName
     }
 }

@@ -10,11 +10,11 @@ import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.model.TestArtifactKind
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.moduleStructure
-import java.io.File
+import java.nio.file.Path
 
 class ClassicFrontendFailingTestSuppressor(testServices: TestServices) : AbstractFailingFacadeSuppressor(testServices) {
 
-    override fun testFile(): File {
+    override fun testFile(): Path {
         return testServices.moduleStructure.originalTestDataFiles.first()
     }
 

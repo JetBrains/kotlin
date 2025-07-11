@@ -23,20 +23,23 @@ import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.JUnit3RunnerWithInners
 import org.jetbrains.kotlin.test.utils.isCustomTestData
 import org.junit.runner.RunWith
-import java.io.File
+import java.nio.file.Path
+import kotlin.io.path.inputStream
+import kotlin.io.path.pathString
+import kotlin.io.path.readText
 
 @TestDataPath("\$PROJECT_ROOT")
 @RunWith(JUnit3RunnerWithInners::class)
 class TreesCompareTest : AbstractRawFirBuilderTestCase() {
-    private fun compareBase(path: String, withTestData: Boolean, compareFir: (File) -> Boolean) {
+    private fun compareBase(path: String, withTestData: Boolean, compareFir: (Path) -> Boolean) {
         var counter = 0
         var errorCounter = 0
-        val differentFiles = mutableListOf<File>()
+        val differentFiles = mutableListOf<Path>()
 
-        val onEachFile: (File) -> Unit = { file ->
+        val onEachFile: (Path) -> Unit = { file ->
             if (!compareFir(file)) {
                 errorCounter++
-                differentFiles += file
+                differentFiles.add(file)
             }
             if (!file.isCustomTestData) {
                 counter++
@@ -69,7 +72,7 @@ class TreesCompareTest : AbstractRawFirBuilderTestCase() {
             val (text, linesMapping) = with(file.inputStream().reader(Charsets.UTF_8)) {
                 this.readSourceFileWithMapping()
             }
-            splitText(file.path, text.toString().trim()).forEach { pair ->
+            splitText(file.pathString, text.toString().trim()).forEach { pair ->
                 val (filePath, fileText) = pair
 
                 //psi
@@ -79,7 +82,7 @@ class TreesCompareTest : AbstractRawFirBuilderTestCase() {
                     .replace("<ERROR TYPE REF:.*?>".toRegex(), "<ERROR TYPE REF>")
 
                 //light tree
-                val firFileFromLightTree = lightTreeConverter.buildFirFile(text, KtIoFileSourceFile(file), linesMapping)
+                val firFileFromLightTree = lightTreeConverter.buildFirFile(text, KtIoFileSourceFile(file.toFile()), linesMapping)
                 val treeFromLightTree = FirRenderer().renderElementAsString(firFileFromLightTree)
                     .replace("<ERROR TYPE REF:.*?>".toRegex(), "<ERROR TYPE REF>")
 
@@ -104,7 +107,7 @@ class TreesCompareTest : AbstractRawFirBuilderTestCase() {
             if (file.isCustomTestData) {
                 return@compareBase true
             }
-            when (file.path.replace("\\", "/")) {
+            when (file.pathString.replace("\\", "/")) {
                 "compiler/testData/diagnostics/tests/constantEvaluator/constant/strings.kt" -> {
                     // `DIAGNOSTIC_IN_TESTDATA_PATTERN` fails to correctly strip diagnostics from this file
                     return@compareBase true
@@ -115,10 +118,10 @@ class TreesCompareTest : AbstractRawFirBuilderTestCase() {
                 }
             }
 
-            val notEditedText = FileUtil.loadFile(file, CharsetToolkit.UTF8, true).trim()
+            val notEditedText = file.readText().trim()
             val text = notEditedText.replace(DIAGNOSTIC_IN_TESTDATA_PATTERN, "").replaceAfter(".java", "")
 
-            splitText(file.path, text).forEach { pair ->
+            splitText(file.pathString, text).forEach { pair ->
                 val (filePath, fileText) = pair
                 //psi
                 val fileName = PathUtil.getFileName(filePath)

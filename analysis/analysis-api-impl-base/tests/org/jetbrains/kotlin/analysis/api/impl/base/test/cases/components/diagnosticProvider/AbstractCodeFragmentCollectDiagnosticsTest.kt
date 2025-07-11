@@ -11,14 +11,16 @@ import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtPsiFactory
 import org.jetbrains.kotlin.test.services.TestServices
-import java.io.File
+import kotlin.io.path.extension
+import kotlin.io.path.nameWithoutExtension
+import kotlin.io.path.readText
 
 abstract class AbstractCodeFragmentCollectDiagnosticsTest : AbstractCollectDiagnosticsTest() {
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
         val contextElement = testServices.expressionMarkerProvider.getBottommostElementOfTypeAtCaret<KtElement>(mainFile)
 
         val fragmentText = mainModule.testModule.files.single().originalFile
-            .run { File(parent, "$nameWithoutExtension.fragment.$extension") }
+            .run { parent.resolve("$nameWithoutExtension.fragment.$extension") }
             .readText()
 
         val project = mainFile.project

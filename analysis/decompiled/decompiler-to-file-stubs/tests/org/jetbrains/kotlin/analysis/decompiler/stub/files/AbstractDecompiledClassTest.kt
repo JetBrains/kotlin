@@ -29,6 +29,7 @@ import java.nio.file.Files
 import java.nio.file.Path
 import java.util.stream.Collectors
 import kotlin.io.path.absolutePathString
+import kotlin.io.path.exists
 import kotlin.io.path.name
 import kotlin.io.path.readText
 
@@ -126,7 +127,7 @@ internal data class TestData(
 
     fun getExpectedFile(useK2: Boolean): Path {
         if (useK2) {
-            IdenticalCheckerHelper.getFirFileToCompare(expectedFile.toFile()).takeIf { it.exists() }?.let { return it.toPath() }
+            IdenticalCheckerHelper.getFirFileToCompare(expectedFile).takeIf { it.exists() }?.let { return it }
         }
         return expectedFile
     }
@@ -136,9 +137,9 @@ internal data class TestData(
             return
         }
         if (useK2) {
-            if (IdenticalCheckerHelper.firAndClassicContentsAreEquals(expectedFile.toFile())) {
-                IdenticalCheckerHelper.deleteFirFileToCompareAndAssertIfExists(expectedFile.toFile(), suppressAssertion = true)
-                IdenticalCheckerHelper.addDirectiveToClassicFileAndAssert(mainKotlinFile.toFile())
+            if (IdenticalCheckerHelper.firAndClassicContentsAreEquals(expectedFile)) {
+                IdenticalCheckerHelper.deleteFirFileToCompareAndAssertIfExists(expectedFile, suppressAssertion = true)
+                IdenticalCheckerHelper.addDirectiveToClassicFileAndAssert(mainKotlinFile)
             }
         }
     }
@@ -168,18 +169,16 @@ internal data class TestData(
             register(AssertionsService::class, JUnit5Assertions)
         }
     ) {
-        override fun getClassicFileToCompare(testDataFile: File): File {
-            val path = testDataFile.toPath()
-            val fileNameWithoutExtension = path.fileName.toString()
+        override fun getClassicFileToCompare(testDataFile: Path): Path {
+            val fileNameWithoutExtension = testDataFile.fileName.toString()
                 .removeSuffix(DECOMPILED_TEST_DATA_K2_SUFFIX).removeSuffix(DECOMPILED_TEST_DATA_SUFFIX)
-            return path.parent.resolve("$fileNameWithoutExtension$DECOMPILED_TEST_DATA_SUFFIX").toFile()
+            return testDataFile.parent.resolve("$fileNameWithoutExtension$DECOMPILED_TEST_DATA_SUFFIX")
         }
 
-        override fun getFirFileToCompare(testDataFile: File): File {
-            val path = testDataFile.toPath()
-            val fileNameWithoutExtension = path.fileName.toString()
+        override fun getFirFileToCompare(testDataFile: Path): Path {
+            val fileNameWithoutExtension = testDataFile.fileName.toString()
                 .removeSuffix(DECOMPILED_TEST_DATA_K2_SUFFIX).removeSuffix(DECOMPILED_TEST_DATA_SUFFIX)
-            return path.parent.resolve("$fileNameWithoutExtension$DECOMPILED_TEST_DATA_K2_SUFFIX").toFile()
+            return testDataFile.parent.resolve("$fileNameWithoutExtension$DECOMPILED_TEST_DATA_K2_SUFFIX")
         }
     }
 }

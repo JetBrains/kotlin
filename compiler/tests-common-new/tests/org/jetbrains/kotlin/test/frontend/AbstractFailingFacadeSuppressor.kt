@@ -11,11 +11,14 @@ import org.jetbrains.kotlin.test.model.TestArtifactKind
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.test.utils.isLLFirTestData
-import java.io.File
+import java.nio.file.Path
+import kotlin.io.path.exists
+import kotlin.io.path.name
+import kotlin.io.path.nameWithoutExtension
 
 abstract class AbstractFailingFacadeSuppressor(testServices: TestServices) : AfterAnalysisChecker(testServices) {
 
-    protected abstract fun testFile(): File
+    protected abstract fun testFile(): Path
 
     protected abstract val facadeKind: TestArtifactKind<*>
 
@@ -23,7 +26,7 @@ abstract class AbstractFailingFacadeSuppressor(testServices: TestServices) : Aft
         get() = Order.P5
 
     override fun suppressIfNeeded(failedAssertions: List<WrappedException>): List<WrappedException> {
-        val failFile = testFile().parentFile.resolve("${testFile().nameWithoutExtension}.fail").takeIf { it.exists() }
+        val failFile = testFile().parent.resolve("${testFile().nameWithoutExtension}.fail").takeIf { it.exists() }
             ?: return failedAssertions
         val (suppressible, notSuppressible) = failedAssertions.partition {
             when (it) {

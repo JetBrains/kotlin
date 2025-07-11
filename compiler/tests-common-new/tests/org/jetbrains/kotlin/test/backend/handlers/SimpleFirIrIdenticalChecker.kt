@@ -13,7 +13,8 @@ import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.test.utils.FirIdenticalCheckerHelper
 import org.jetbrains.kotlin.test.utils.withExtension
-import java.io.File
+import java.nio.file.Path
+import kotlin.io.path.exists
 
 /**
  * Use this checker as a base class if you need to check if K1 and K2 dumps are the same
@@ -39,11 +40,11 @@ abstract class SimpleFirIrIdenticalChecker(
         get() = listOf(FirDiagnosticsDirectives)
 
     protected val simpleChecker = object : FirIdenticalCheckerHelper(testServices) {
-        override fun getClassicFileToCompare(testDataFile: File): File? {
+        override fun getClassicFileToCompare(testDataFile: Path): Path? {
             return testDataFile.withExtension(dumpExtension).takeIf { it.exists() }
         }
 
-        override fun getFirFileToCompare(testDataFile: File): File? {
+        override fun getFirFileToCompare(testDataFile: Path): Path? {
             return testDataFile.withExtension("fir.${dumpExtension}").takeIf { it.exists() }
         }
     }
@@ -70,7 +71,7 @@ abstract class SimpleFirIrIdenticalChecker(
         return FirDiagnosticsDirectives.FIR_IDENTICAL in testServices.moduleStructure.allDirectives
     }
 
-    protected open fun processClassicFileIfContentIsIdentical(testDataFile: File) {
+    protected open fun processClassicFileIfContentIsIdentical(testDataFile: Path) {
         simpleChecker.addDirectiveToClassicFileAndAssert(testDataFile)
     }
 }

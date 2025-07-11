@@ -12,10 +12,11 @@ import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.test.utils.*
-import java.io.File
+import java.nio.file.Path
+import kotlin.io.path.exists
 
 class FirIdenticalChecker(testServices: TestServices) : AbstractFirIdenticalChecker(testServices) {
-    override fun checkTestDataFile(testDataFile: File) {
+    override fun checkTestDataFile(testDataFile: Path) {
         // Skip `.ll.kt` test files, which are instead checked by `LLFirIdenticalChecker`.
         if (testDataFile.isLLFirTestData) return
         if (testDataFile.isLatestLVTestData) return
@@ -40,12 +41,12 @@ class LatestLVIdenticalChecker(testServices: TestServices) : AbstractFirIdentica
         private const val message: String = "Dumps with latest and latest stable LV are the same"
     }
 
-    private inner class Helper(val originalFile: File) : FirIdenticalCheckerHelper(testServices) {
-        override fun getClassicFileToCompare(testDataFile: File): File = originalFile
-        override fun getFirFileToCompare(testDataFile: File): File = testDataFile.latestLVTestDataFile
+    private inner class Helper(val originalFile: Path) : FirIdenticalCheckerHelper(testServices) {
+        override fun getClassicFileToCompare(testDataFile: Path): Path = originalFile
+        override fun getFirFileToCompare(testDataFile: Path): Path = testDataFile.latestLVTestDataFile
     }
 
-    override fun checkTestDataFile(testDataFile: File) {
+    override fun checkTestDataFile(testDataFile: Path) {
         if (!testDataFile.isLatestLVTestData) return
         val directives = testServices.moduleStructure.allDirectives
         val (originalFile, additionalFile) = when {

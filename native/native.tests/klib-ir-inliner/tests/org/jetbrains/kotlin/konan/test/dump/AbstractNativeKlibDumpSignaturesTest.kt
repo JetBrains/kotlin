@@ -80,7 +80,7 @@ abstract class AbstractNativeKlibDumpSignaturesTest : AbstractNativeSimpleTest()
     }
 
     internal fun compileCInteropDependencies(testDataFile: File): List<TestCompilationDependency<KLIB>> {
-        val defFile = testDataFile.withExtension(".lib.def")
+        val defFile = testDataFile.toPath().withExtension(".lib.def").toFile()
         if (!defFile.exists()) return emptyList()
 
         assertTrue(defFile.isFile) { "Def file does not exist: $defFile" }
