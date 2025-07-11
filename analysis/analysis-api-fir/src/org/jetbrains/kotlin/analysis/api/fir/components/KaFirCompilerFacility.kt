@@ -856,7 +856,11 @@ internal class KaFirCompilerFacility(
             ?.getRegisteredExtensions(unwrappedModule, IrGenerationExtension)
             .orEmpty()
 
-        return moduleExtensions + projectExtensions
+        val allExtensions = moduleExtensions + projectExtensions
+        return allExtensions.filter {
+            // Hacky hotfix for KT-78890: we do not need a serialization plugin for evaluation in most cases.
+            it.javaClass.name != "org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationLoweringExtension"
+        }
     }
 
     private fun compileChunk(
