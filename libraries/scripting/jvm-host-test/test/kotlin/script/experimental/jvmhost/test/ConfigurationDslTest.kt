@@ -21,6 +21,7 @@ import kotlin.test.assertNull
 
 class ConfigurationDslTest {
 
+    @Suppress("DEPRECATION")
     @Test
     fun testComposableRefinementHandlers() {
         val baseConfig = createJvmCompilationConfigurationFromTemplate<SimpleScript> {

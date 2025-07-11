@@ -158,6 +158,7 @@ object CompileTimeFibonacciConfiguration : ScriptCompilationConfiguration(
             dependenciesFromCurrentContext(wholeClasspath = true)
         }
         refineConfiguration {
+            @Suppress("DEPRECATION")
             onAnnotations(Fib::class) { context: ScriptConfigurationRefinementContext ->
                 val maxFibonacciNumber = context
                     .collectedData

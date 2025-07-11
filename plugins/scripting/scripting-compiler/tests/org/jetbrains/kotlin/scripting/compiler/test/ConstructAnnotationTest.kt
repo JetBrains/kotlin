@@ -125,6 +125,7 @@ class ConstructAnnotationTest {
             defaultImports(*classes)
             jvm {
                 refineConfiguration {
+                    @Suppress("DEPRECATION")
                     onAnnotations(*classes) {
                         it.compilationConfiguration.asSuccess()
                     }

@@ -329,6 +329,7 @@ class ReplTest {
         val compilationConfiguration2 = compilationConfiguration.with {
             refineConfiguration {
 //                defaultImports(NewAnn::class) // TODO: fix support for default imports
+                @Suppress("DEPRECATION")
                 onAnnotations<NewAnn> {
                     handlerInvoked = true
                     it.compilationConfiguration.asSuccess()
