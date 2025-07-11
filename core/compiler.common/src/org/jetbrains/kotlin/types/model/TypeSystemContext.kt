@@ -326,23 +326,6 @@ interface TypeSystemInferenceExtensionContext : TypeSystemContext, TypeSystemBui
         }
 
     /**
-     * For case Foo <: (T..T?) return LowerConstraint for new constraint LowerConstraint <: T
-     * In K1, in case nullable it was just Foo?, so constraint was Foo? <: T
-     * But it's not 100% correct because prevent having not-nullable upper constraint on T while initial (Foo? <: (T..T?)) is not violated
-     *
-     * In K2 (with +JavaTypeParameterDefaultRepresentationWithDNN), we try to have a correct one: (Foo & Any..Foo?) <: T
-     *
-     * The same logic applies for T! <: UpperConstraint, as well
-     * In K1, it was reduced to T <: UpperConstraint..UpperConstraint?
-     * In K2 (with +JavaTypeParameterDefaultRepresentationWithDNN), we use UpperConstraint & Any..UpperConstraint?
-     *
-     * In future once we have only K2 (or FE 1.0 behavior is fixed) this method should be inlined to the use-site
-     * TODO: Get rid of this function once KT-59138 is fixed and the relevant feature for disabling it will be removed
-     * In fact it may be done during the fix of KT-76065 (dropping JavaTypeParameterDefaultRepresentationWithDNN)
-     */
-    fun useRefinedBoundsForTypeVariableInFlexiblePosition(): Boolean
-
-    /**
      * This flag handles the LowerConstraint returned for the case Foo(?) <: (T..T?)
      *
      * With this flag (K2 +PreciseSimplificationFlexibleLowerConstraint),

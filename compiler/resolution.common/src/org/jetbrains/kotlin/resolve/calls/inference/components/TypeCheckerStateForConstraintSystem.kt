@@ -318,11 +318,6 @@ abstract class TypeCheckerStateForConstraintSystem(
                 when (subType) {
                     is RigidTypeMarker ->
                         when {
-                            useRefinedBoundsForTypeVariableInFlexiblePosition() ->
-                                // TODO: delete me as a part of KT-76065
-                                createTrivialFlexibleTypeOrSelf(
-                                    subType.makeDefinitelyNotNullOrNotNull(),
-                                )
                             usePreciseSimplificationToFlexibleLowerConstraint() ->
                                 // Foo <: T! -- (Foo!! .. Foo) <: T
                                 // Foo? <: T! -- (Foo!! .. Foo?) <: T
@@ -335,17 +330,8 @@ abstract class TypeCheckerStateForConstraintSystem(
                         }
 
                     is FlexibleTypeMarker ->
-                        when {
-                            useRefinedBoundsForTypeVariableInFlexiblePosition() ->
-                                // (Foo..Bar) <: T! -- (Foo!! .. Bar?) <: T
-                                createFlexibleType(
-                                    subType.lowerBound().makeDefinitelyNotNullOrNotNull(),
-                                    subType.upperBound().withNullability(true)
-                                )
-                            else ->
-                                // (Foo..Bar) <: T! -- (Foo!! .. Bar) <: T
-                                makeLowerBoundDefinitelyNotNullOrNotNull(subType)
-                        }
+                        // (Foo..Bar) <: T! -- (Foo!! .. Bar) <: T
+                        makeLowerBoundDefinitelyNotNullOrNotNull(subType)
 
                     else -> error("sealed")
                 }
@@ -436,12 +422,6 @@ abstract class TypeCheckerStateForConstraintSystem(
         val typeVariableLowerBound = typeVariable.lowerBoundIfFlexible()
 
         val simplifiedSuperType = when {
-            typeVariable.isFlexible() && useRefinedBoundsForTypeVariableInFlexiblePosition() ->
-                createFlexibleType(
-                    superType.lowerBoundIfFlexible().makeDefinitelyNotNullOrNotNull(),
-                    superType.upperBoundIfFlexible().withNullability(true)
-                )
-
             typeVariableLowerBound.isDefinitelyNotNullType() -> {
                 superType.withNullability(true)
             }
