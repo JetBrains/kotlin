@@ -5630,37 +5630,6 @@
                                 }
                             },
                             {
-                                "name": "Xir-inliner",
-                                "shortName": null,
-                                "deprecatedName": null,
-                                "description": {
-                                    "current": "Inline functions using the IR inliner instead of the bytecode inliner.",
-                                    "valueInVersions": []
-                                },
-                                "delimiter": null,
-                                "valueType": {
-                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
-                                    "isNullable": {
-                                        "current": false,
-                                        "valueInVersions": []
-                                    },
-                                    "defaultValue": {
-                                        "current": false,
-                                        "valueInVersions": []
-                                    }
-                                },
-                                "valueDescription": {
-                                    "current": null,
-                                    "valueInVersions": []
-                                },
-                                "releaseVersionsMetadata": {
-                                    "introducedVersion": "1.4.0",
-                                    "stabilizedVersion": "1.4.0",
-                                    "deprecatedVersion": null,
-                                    "removedVersion": null
-                                }
-                            },
-                            {
                                 "name": "Xuse-inline-scopes-numbers",
                                 "shortName": null,
                                 "deprecatedName": null,

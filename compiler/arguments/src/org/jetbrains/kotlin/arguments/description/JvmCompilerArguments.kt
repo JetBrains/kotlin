@@ -835,16 +835,6 @@ inside suspend functions and lambdas to distinguish them from user code by debug
     }
 
     compilerArgument {
-        name = "Xir-inliner"
-        compilerName = "enableIrInliner"
-        description = "Inline functions using the IR inliner instead of the bytecode inliner.".asReleaseDependent()
-        valueType = BooleanType.defaultFalse
-
-        @OptIn(TemporaryCompilerArgumentLifecycle::class)
-        stubLifecycle()
-    }
-
-    compilerArgument {
         name = "Xuse-inline-scopes-numbers"
         description = "Use inline scopes numbers for inline marker variables.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
