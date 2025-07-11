@@ -1,14 +1,15 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.ir.inline
+package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
-import org.jetbrains.kotlin.backend.common.LoweringContext
 import org.jetbrains.kotlin.backend.common.ir.createExtensionReceiver
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
+import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
+import org.jetbrains.kotlin.backend.jvm.ir.isInlineFunctionCall
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
@@ -41,8 +42,7 @@ private val STUB_FOR_INLINING = Name.identifier("stub_for_inlining")
  * `foo(::smth)` is transformed to `foo { a -> smth(a) }`.
  */
 abstract class InlineCallableReferenceToLambdaPhase(
-    val context: LoweringContext,
-    protected val inlineFunctionResolver: InlineFunctionResolver,
+    val context: JvmBackendContext,
 ) : FileLoweringPass, IrTransformer<IrDeclarationParent?>() {
     override fun lower(irFile: IrFile) {
         irFile.transform(this, null)
@@ -53,7 +53,8 @@ abstract class InlineCallableReferenceToLambdaPhase(
 
     override fun visitFunctionAccess(expression: IrFunctionAccessExpression, data: IrDeclarationParent?): IrElement {
         expression.transformChildren(this, data)
-        if (inlineFunctionResolver.needsInlining(expression)) {
+        val function = expression.symbol.owner
+        if (function.resolveFakeOverrideOrSelf().isInlineFunctionCall(context)) {
             val function = expression.symbol.owner
             for (parameter in function.parameters) {
                 if (parameter.isInlineParameter()) {

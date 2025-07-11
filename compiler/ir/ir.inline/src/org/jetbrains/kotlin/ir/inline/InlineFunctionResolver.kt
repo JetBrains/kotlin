@@ -40,14 +40,6 @@ abstract class InlineFunctionResolver() {
         if (shouldSkipBecauseOfCallSite(expression)) return null
         return getFunctionDeclaration(expression.symbol)
     }
-
-    fun needsInlining(expression: IrMemberAccessExpression<IrFunctionSymbol>): Boolean {
-        return getFunctionDeclarationToInline(expression) != null
-    }
-
-    fun needsInlining(function: IrFunction): Boolean {
-        return getFunctionDeclaration(function.symbol) != null
-    }
 }
 
 abstract class InlineFunctionResolverReplacingCoroutineIntrinsics<Ctx : LoweringContext>(
