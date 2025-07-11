@@ -12,7 +12,7 @@ class C<T> {
 }
 
 fun test(a: C<out CharSequence>) {
-    a[1] = <!MEMBER_PROJECTED_OUT("C<out CharSequence>; out; fun set(x: @A() Int, y: @A() T): Unit")!>25<!>
+    a[1] = <!MEMBER_PROJECTED_OUT("C<out CharSequence>; out; fun set(x: Int, y: T): Unit")!>25<!>
 }
 
 /* GENERATED_FIR_TAGS: annotationDeclaration, assignment, classDeclaration, functionDeclaration, integerLiteral,

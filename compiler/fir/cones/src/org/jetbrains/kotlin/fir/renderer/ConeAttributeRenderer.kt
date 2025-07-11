@@ -28,4 +28,10 @@ abstract class ConeAttributeRenderer {
                 } ?: ""
         }
     }
+
+    object None : ConeAttributeRenderer() {
+        override fun render(attributes: Iterable<ConeAttribute<*>>): String {
+            return ""
+        }
+    }
 }

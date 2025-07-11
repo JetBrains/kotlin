@@ -18,12 +18,12 @@ interface B {
     fun foo(@An a: @An Int = @An 2)
 }
 
-<!MULTIPLE_DEFAULTS_INHERITED_FROM_SUPERTYPES_WHEN_NO_EXPLICIT_OVERRIDE("foo; a: @An() Int;     fun foo(a: @An() Int = ...): Unit, defined in A    fun foo(a: @An() Int = ...): Unit, defined in B")!>class AB1<!> : A, B
+<!MULTIPLE_DEFAULTS_INHERITED_FROM_SUPERTYPES_WHEN_NO_EXPLICIT_OVERRIDE("foo; a: Int;     fun foo(a: Int = ...): Unit, defined in A    fun foo(a: Int = ...): Unit, defined in B")!>class AB1<!> : A, B
 
 @An
 class AB2 : A, B {
     @An
-    override fun foo(<!MULTIPLE_DEFAULTS_INHERITED_FROM_SUPERTYPES("foo; a: @An() Int;     fun foo(a: @An() Int = ...): Unit, defined in A    fun foo(a: @An() Int = ...): Unit, defined in B")!>@An a: @An Int<!>) {}
+    override fun foo(<!MULTIPLE_DEFAULTS_INHERITED_FROM_SUPERTYPES("foo; a: Int;     fun foo(a: Int = ...): Unit, defined in A    fun foo(a: Int = ...): Unit, defined in B")!>@An a: @An Int<!>) {}
 }
 
 /* GENERATED_FIR_TAGS: annotationDeclaration, classDeclaration, functionDeclaration, integerLiteral,
