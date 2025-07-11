@@ -152,9 +152,6 @@ class JvmSymbols(
             addValueParameter("message", irBuiltIns.stringType)
         }
         klass.addFunction("throwNpe", irBuiltIns.unitType, isStatic = true)
-        klass.addFunction("singleArgumentInlineFunction", irBuiltIns.unitType, isStatic = true, isInline = true).apply {
-            addValueParameter("arg", irBuiltIns.functionClass.defaultType)
-        }
 
         klass.declarations.add(irFactory.buildClass {
             name = Name.identifier("Kotlin")
@@ -174,13 +171,6 @@ class JvmSymbols(
         klass.addFunction("checkCOROUTINE_SUSPENDED", irBuiltIns.unitType, isStatic = true, isInline = true)
         klass.addFunction("unreachable", irBuiltIns.unitType, isStatic = true, isInline = true)
     }
-
-    /**
-     * This function is used only with the IR inliner. It is needed to ensure that all local declarations inside lambda will be generated,
-     * because after inline these lambdas can be dropped.
-     */
-    val singleArgumentInlineFunction: IrSimpleFunctionSymbol =
-        intrinsicsClass.functions.single { it.owner.name.asString() == "singleArgumentInlineFunction" }
 
     val checkExpressionValueIsNotNull: IrSimpleFunctionSymbol =
         intrinsicsClass.functions.single { it.owner.name.asString() == "checkExpressionValueIsNotNull" }

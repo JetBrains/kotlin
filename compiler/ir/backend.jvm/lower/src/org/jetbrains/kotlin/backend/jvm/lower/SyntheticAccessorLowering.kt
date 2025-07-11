@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin.JVM_STATIC_W
 import org.jetbrains.kotlin.backend.jvm.JvmSyntheticAccessorGenerator
 import org.jetbrains.kotlin.backend.jvm.ir.IrInlineScopeResolver
 import org.jetbrains.kotlin.backend.jvm.ir.findInlineCallSites
-import org.jetbrains.kotlin.backend.jvm.ir.inlineDeclaration
 import org.jetbrains.kotlin.backend.jvm.ir.isAssertionsDisabledField
 import org.jetbrains.kotlin.backend.jvm.lower.SyntheticAccessorLowering.Companion.isAccessible
 import org.jetbrains.kotlin.codegen.AsmUtil
@@ -120,20 +119,9 @@ private class SyntheticAccessorTransformer(
 ) : IrElementTransformerVoidWithContext() {
     private val accessorGenerator = JvmSyntheticAccessorGenerator(context)
     private val inlineScopeResolver: IrInlineScopeResolver = irFile.findInlineCallSites(context)
-    private var processingIrInlinedFun = false
-
-    private inline fun <T> withinIrInlinedFun(block: () -> T): T {
-        val oldProcessingInline = processingIrInlinedFun
-        try {
-            processingIrInlinedFun = true
-            return block()
-        } finally {
-            processingIrInlinedFun = oldProcessingInline
-        }
-    }
 
     private fun <T : IrFunction> T.save(): T {
-        assert(fileOrNull == irFile || processingIrInlinedFun) {
+        assert(fileOrNull == irFile) {
             "SyntheticAccessorLowering should not attempt to modify other files!\n" +
                     "While lowering this file: ${irFile.render()}\n" +
                     "Trying to add this accessor: ${render()}"
@@ -339,30 +327,6 @@ private class SyntheticAccessorTransformer(
         }
 
         return super.visitFunctionReference(expression)
-    }
-
-    override fun visitInlinedFunctionBlock(inlinedBlock: IrInlinedFunctionBlock): IrExpression {
-        if (inlinedBlock.isFunctionInlining()) {
-            val callee = inlinedBlock.inlineDeclaration
-            val parentClass = callee.parentClassOrNull ?: return super.visitInlinedFunctionBlock(inlinedBlock)
-            return withinIrInlinedFun {
-                withinScope(parentClass) {
-                    withinScope(callee) {
-                        super.visitInlinedFunctionBlock(inlinedBlock)
-                    }
-                }
-            }
-        }
-        return super.visitInlinedFunctionBlock(inlinedBlock)
-    }
-
-    override fun visitBlock(expression: IrBlock): IrExpression {
-        if (expression.origin == IrStatementOrigin.INLINE_ARGS_CONTAINER) {
-            return withinIrInlinedFun {
-                super.visitBlock(expression)
-            }
-        }
-        return super.visitBlock(expression)
     }
 }
 
