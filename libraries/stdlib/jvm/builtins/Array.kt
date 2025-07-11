@@ -43,8 +43,7 @@ public actual class Array<T> {
      * value = array[index]
      * ```
      *
-     * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException] except in Kotlin/JS
-     * where the behavior is unspecified.
+     * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException].
      */
     public actual operator fun get(index: Int): T
 
@@ -56,8 +55,7 @@ public actual class Array<T> {
      * array[index] = value
      * ```
      *
-     * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException] except in Kotlin/JS
-     * where the behavior is unspecified.
+     * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException].
      */
     public actual operator fun set(index: Int, value: T): Unit
 

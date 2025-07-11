@@ -34,8 +34,9 @@ public actual class String internal @WasmPrimitiveConstructor constructor(
     /**
      * Returns the character of this string at the specified [index].
      *
-     * If the [index] is out of bounds of this string, throws an [IndexOutOfBoundsException] except in Kotlin/JS
-     * where the behavior is unspecified.
+     * In Kotlin/Wasm, a trap will be raised if the [index] is out of bounds of this string,
+     * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
+     * With `-Xwasm-enable-array-range-checks` flag, [IndexOutOfBoundsException] will be thrown.
      */
     @kotlin.internal.IntrinsicConstEvaluation
     public actual override fun get(index: Int): Char {

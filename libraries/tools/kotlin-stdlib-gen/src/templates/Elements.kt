@@ -1132,7 +1132,8 @@ object Elements : TemplateGroupBase() {
                     Returns ${getOrdinal(n)} *element* from the ${f.collection}.
             
                     If $condition, throws an [IndexOutOfBoundsException] except in Kotlin/JS 
-                    where the behavior is unspecified.
+                    where the behavior is unspecified, and in Kotlin/Wasm where a trap will be raised instead,
+                    unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
                     """
                 }
             }

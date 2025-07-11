@@ -30,8 +30,7 @@ public actual class String : Comparable<String>, CharSequence {
     /**
      * Returns the character of this string at the specified [index].
      *
-     * If the [index] is out of bounds of this string, throws an [IndexOutOfBoundsException] except in Kotlin/JS
-     * where the behavior is unspecified.
+     * If the [index] is out of bounds of this string, throws an [IndexOutOfBoundsException].
      */
     @kotlin.internal.IntrinsicConstEvaluation
     public actual override fun get(index: Int): Char

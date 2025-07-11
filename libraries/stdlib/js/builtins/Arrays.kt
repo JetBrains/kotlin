@@ -42,8 +42,7 @@ public actual constructor(size: Int) {
      * value = array[index]
      * ```
      *
-     * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException] except in Kotlin/JS
-     * where the behavior is unspecified.
+     * If the [index] is out of bounds of this array, the behavior is unspecified
      */
     @Suppress("NON_ABSTRACT_FUNCTION_WITH_NO_BODY")
     public actual operator fun get(index: Int): Byte
@@ -56,8 +55,7 @@ public actual constructor(size: Int) {
      * array[index] = value
      * ```
      *
-     * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException] except in Kotlin/JS
-     * where the behavior is unspecified.
+     * If the [index] is out of bounds of this array, the behavior is unspecified
      */
     @Suppress("NON_ABSTRACT_FUNCTION_WITH_NO_BODY")
     public actual operator fun set(index: Int, value: Byte): Unit
@@ -105,8 +103,7 @@ public actual constructor(size: Int) {
      * value = array[index]
      * ```
      *
-     * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException] except in Kotlin/JS
-     * where the behavior is unspecified.
+     * If the [index] is out of bounds of this array, the behavior is unspecified
      */
     @Suppress("NON_ABSTRACT_FUNCTION_WITH_NO_BODY")
     public actual operator fun get(index: Int): Char
@@ -119,8 +116,7 @@ public actual constructor(size: Int) {
      * array[index] = value
      * ```
      *
-     * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException] except in Kotlin/JS
-     * where the behavior is unspecified.
+     * If the [index] is out of bounds of this array, the behavior is unspecified
      */
     @Suppress("NON_ABSTRACT_FUNCTION_WITH_NO_BODY")
     public actual operator fun set(index: Int, value: Char): Unit
@@ -168,8 +164,7 @@ public actual constructor(size: Int) {
      * value = array[index]
      * ```
      *
-     * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException] except in Kotlin/JS
-     * where the behavior is unspecified.
+     * If the [index] is out of bounds of this array, the behavior is unspecified
      */
     @Suppress("NON_ABSTRACT_FUNCTION_WITH_NO_BODY")
     public actual operator fun get(index: Int): Short
@@ -182,8 +177,7 @@ public actual constructor(size: Int) {
      * array[index] = value
      * ```
      *
-     * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException] except in Kotlin/JS
-     * where the behavior is unspecified.
+     * If the [index] is out of bounds of this array, the behavior is unspecified
      */
     @Suppress("NON_ABSTRACT_FUNCTION_WITH_NO_BODY")
     public actual operator fun set(index: Int, value: Short): Unit
@@ -231,8 +225,7 @@ public actual constructor(size: Int) {
      * value = array[index]
      * ```
      *
-     * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException] except in Kotlin/JS
-     * where the behavior is unspecified.
+     * If the [index] is out of bounds of this array, the behavior is unspecified
      */
     @Suppress("NON_ABSTRACT_FUNCTION_WITH_NO_BODY")
     public actual operator fun get(index: Int): Int
@@ -245,8 +238,7 @@ public actual constructor(size: Int) {
      * array[index] = value
      * ```
      *
-     * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException] except in Kotlin/JS
-     * where the behavior is unspecified.
+     * If the [index] is out of bounds of this array, the behavior is unspecified
      */
     @Suppress("NON_ABSTRACT_FUNCTION_WITH_NO_BODY")
     public actual operator fun set(index: Int, value: Int): Unit
@@ -294,8 +286,7 @@ public actual constructor(size: Int) {
      * value = array[index]
      * ```
      *
-     * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException] except in Kotlin/JS
-     * where the behavior is unspecified.
+     * If the [index] is out of bounds of this array, the behavior is unspecified
      */
     @Suppress("NON_ABSTRACT_FUNCTION_WITH_NO_BODY")
     public actual operator fun get(index: Int): Long
@@ -308,8 +299,7 @@ public actual constructor(size: Int) {
      * array[index] = value
      * ```
      *
-     * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException] except in Kotlin/JS
-     * where the behavior is unspecified.
+     * If the [index] is out of bounds of this array, the behavior is unspecified
      */
     @Suppress("NON_ABSTRACT_FUNCTION_WITH_NO_BODY")
     public actual operator fun set(index: Int, value: Long): Unit
@@ -357,8 +347,7 @@ public actual constructor(size: Int) {
      * value = array[index]
      * ```
      *
-     * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException] except in Kotlin/JS
-     * where the behavior is unspecified.
+     * If the [index] is out of bounds of this array, the behavior is unspecified
      */
     @Suppress("NON_ABSTRACT_FUNCTION_WITH_NO_BODY")
     public actual operator fun get(index: Int): Float
@@ -371,8 +360,7 @@ public actual constructor(size: Int) {
      * array[index] = value
      * ```
      *
-     * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException] except in Kotlin/JS
-     * where the behavior is unspecified.
+     * If the [index] is out of bounds of this array, the behavior is unspecified
      */
     @Suppress("NON_ABSTRACT_FUNCTION_WITH_NO_BODY")
     public actual operator fun set(index: Int, value: Float): Unit
@@ -420,8 +408,7 @@ public actual constructor(size: Int) {
      * value = array[index]
      * ```
      *
-     * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException] except in Kotlin/JS
-     * where the behavior is unspecified.
+     * If the [index] is out of bounds of this array, the behavior is unspecified
      */
     @Suppress("NON_ABSTRACT_FUNCTION_WITH_NO_BODY")
     public actual operator fun get(index: Int): Double
@@ -434,8 +421,7 @@ public actual constructor(size: Int) {
      * array[index] = value
      * ```
      *
-     * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException] except in Kotlin/JS
-     * where the behavior is unspecified.
+     * If the [index] is out of bounds of this array, the behavior is unspecified
      */
     @Suppress("NON_ABSTRACT_FUNCTION_WITH_NO_BODY")
     public actual operator fun set(index: Int, value: Double): Unit
@@ -483,8 +469,7 @@ public actual constructor(size: Int) {
      * value = array[index]
      * ```
      *
-     * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException] except in Kotlin/JS
-     * where the behavior is unspecified.
+     * If the [index] is out of bounds of this array, the behavior is unspecified
      */
     @Suppress("NON_ABSTRACT_FUNCTION_WITH_NO_BODY")
     public actual operator fun get(index: Int): Boolean
@@ -497,8 +482,7 @@ public actual constructor(size: Int) {
      * array[index] = value
      * ```
      *
-     * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException] except in Kotlin/JS
-     * where the behavior is unspecified.
+     * If the [index] is out of bounds of this array, the behavior is unspecified
      */
     @Suppress("NON_ABSTRACT_FUNCTION_WITH_NO_BODY")
     public actual operator fun set(index: Int, value: Boolean): Unit
