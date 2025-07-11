@@ -7,15 +7,10 @@ package org.jetbrains.kotlin.test.backend.ir
 
 import org.jetbrains.kotlin.test.WrappedException
 import org.jetbrains.kotlin.test.backend.BlackBoxCodegenSuppressor
-import org.jetbrains.kotlin.test.backend.TargetInliner
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.IGNORE_BACKEND
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.IGNORE_BACKEND_K1
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.IGNORE_BACKEND_K2
-import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.IGNORE_INLINER
-import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.IGNORE_INLINER_K1
-import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.IGNORE_INLINER_K2
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.JVM_ABI_K1_K2_DIFF
-import org.jetbrains.kotlin.test.directives.tryRetrieveIgnoredInliner
 import org.jetbrains.kotlin.test.model.AfterAnalysisChecker
 import org.jetbrains.kotlin.test.services.ServiceRegistrationData
 import org.jetbrains.kotlin.test.services.TestServices
@@ -26,7 +21,7 @@ import org.jetbrains.kotlin.utils.bind
 class AbiCheckerSuppressor(testServices: TestServices) : AfterAnalysisChecker(testServices) {
 
     companion object {
-        fun ignoredByBackendOrInliner(testServices: TestServices) = testServices.ignoredByBackend || testServices.ignoredByInliner
+        fun ignoredByBackendOrInliner(testServices: TestServices) = testServices.ignoredByBackend
     }
 
     override val additionalServices: List<ServiceRegistrationData>
@@ -55,6 +50,3 @@ private val TestServices.suppressionChecker: BlackBoxCodegenSuppressor.Suppressi
 private val TestServices.ignoredByBackend: Boolean
     get() = listOf(IGNORE_BACKEND, IGNORE_BACKEND_K1, IGNORE_BACKEND_K2)
         .any { suppressionChecker.failuresInModuleAreIgnored(moduleStructure.modules.first(), it).testMuted }
-
-private val TestServices.ignoredByInliner: Boolean
-    get() = listOf(IGNORE_INLINER, IGNORE_INLINER_K1, IGNORE_INLINER_K2).any { tryRetrieveIgnoredInliner(it) == TargetInliner.BYTECODE }
