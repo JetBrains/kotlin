@@ -59,10 +59,7 @@ import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeCre
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeInfoProvider.AbstractDoubleColonReceiverTypeTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeInfoProvider.AbstractFunctionClassKindTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeInfoProvider.AbstractIsDenotableTest
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeProvider.AbstractAnalysisApiGetSuperTypesTest
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeProvider.AbstractDefaultTypeTest
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeProvider.AbstractHasCommonSubtypeTest
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeProvider.AbstractTypeReferenceTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeProvider.*
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeRelationChecker.*
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.visibilityChecker.AbstractVisibilityCheckerTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.references.AbstractIsReferenceToTest
@@ -581,6 +578,10 @@ private fun AnalysisApiTestGroup.generateAnalysisApiComponentsTests() {
 
         test<AbstractDefaultTypeTest> {
             model(it, "defaultType")
+        }
+
+        test<AbstractVarargArrayTypeTest> {
+            model(it, "varargArrayType")
         }
     }
 

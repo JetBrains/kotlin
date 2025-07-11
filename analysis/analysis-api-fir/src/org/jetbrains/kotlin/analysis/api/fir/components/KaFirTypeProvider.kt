@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.analysis.api.fir.components
 
 import com.intellij.openapi.diagnostic.logger
 import org.jetbrains.kotlin.analysis.api.components.KaBuiltinTypes
-import org.jetbrains.kotlin.analysis.api.components.KaTypeProvider
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirSymbol
 import org.jetbrains.kotlin.analysis.api.fir.symbols.dispatchReceiverType
@@ -18,7 +17,7 @@ import org.jetbrains.kotlin.analysis.api.fir.utils.ConeSupertypeCalculationMode
 import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
 import org.jetbrains.kotlin.analysis.api.fir.utils.getAllStrictSupertypes
 import org.jetbrains.kotlin.analysis.api.fir.utils.getDirectSupertypes
-import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSessionComponent
+import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseTypeProvider
 import org.jetbrains.kotlin.analysis.api.impl.base.components.withPsiValidityAssertion
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
@@ -55,7 +54,7 @@ import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 
 internal class KaFirTypeProvider(
     override val analysisSessionProvider: () -> KaFirSession,
-) : KaBaseSessionComponent<KaFirSession>(), KaTypeProvider, KaFirSessionComponent {
+) : KaBaseTypeProvider<KaFirSession>(), KaFirSessionComponent {
     override val builtinTypes: KaBuiltinTypes by lazy {
         KaFirBuiltInTypes(rootModuleSession.builtinTypes, firSymbolBuilder, token)
     }
