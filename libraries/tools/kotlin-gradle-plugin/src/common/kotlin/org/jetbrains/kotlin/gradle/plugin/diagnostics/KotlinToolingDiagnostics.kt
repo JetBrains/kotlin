@@ -117,7 +117,7 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
-    object CrossCompilationWithCinterops : ToolingDiagnosticFactory(ERROR, DiagnosticGroup.Kgp.Misconfiguration) {
+    object CrossCompilationWithCinterops : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Misconfiguration) {
         operator fun invoke(target: String, interops: List<String>, hostname: String) =
             build {
                 title("Cross Compilation with Cinterop Not Supported")
