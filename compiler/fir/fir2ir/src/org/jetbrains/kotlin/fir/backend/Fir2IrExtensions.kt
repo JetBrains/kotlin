@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.backend
 
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.backend.utils.CodeFragmentConversionData
 import org.jetbrains.kotlin.fir.backend.utils.InjectedValue
@@ -40,6 +41,8 @@ interface Fir2IrExtensions {
      */
     fun hasBackingField(property: FirProperty, session: FirSession): Boolean
 
+    fun specialBackingFieldVisibility(firProperty: FirProperty, session: FirSession): Visibility?
+
     fun initializeIrBuiltInsAndSymbolTable(irBuiltIns: IrBuiltIns, symbolTable: SymbolTable)
 
     fun shouldGenerateDelegatedMember(delegateMemberFromBaseType: IrOverridableDeclaration<*>): Boolean
@@ -64,5 +67,6 @@ interface Fir2IrExtensions {
         override fun hasBackingField(property: FirProperty, session: FirSession): Boolean = property.hasBackingField
         override fun initializeIrBuiltInsAndSymbolTable(irBuiltIns: IrBuiltIns, symbolTable: SymbolTable) {}
         override fun shouldGenerateDelegatedMember(delegateMemberFromBaseType: IrOverridableDeclaration<*>): Boolean = true
+        override fun specialBackingFieldVisibility(firProperty: FirProperty, session: FirSession): Visibility? = null
     }
 }

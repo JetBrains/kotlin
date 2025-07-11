@@ -85,7 +85,10 @@ internal class ActualizerSymbolRemapper(private val expectActualMap: IrExpectAct
     }
 }
 
-internal open class ActualizerVisitor(private val symbolRemapper: SymbolRemapper) : DeepCopyIrTreeWithSymbols(symbolRemapper) {
+internal open class ActualizerVisitor(
+    private val symbolRemapper: SymbolRemapper,
+    private val membersActualization: Boolean,
+) : DeepCopyIrTreeWithSymbols(symbolRemapper) {
     // All callables inside an expect declaration marked with `@OptionalExpectation` annotation should be actualized anyway.
     private var insideDeclarationWithOptionalExpectation = false
 
@@ -235,6 +238,7 @@ internal open class ActualizerVisitor(private val symbolRemapper: SymbolRemapper
      */
     private fun IrMutableAnnotationContainer.actualizeAnnotations() {
         transformAnnotations(this)
+        if (!membersActualization) return
         val newAnnotations = annotations.memoryOptimizedMapNotNull { annotation ->
             val annotationClass = annotation.symbol.owner.constructedClass
             when {

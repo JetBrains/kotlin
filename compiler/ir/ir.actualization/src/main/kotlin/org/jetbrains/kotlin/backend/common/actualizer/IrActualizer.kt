@@ -69,7 +69,7 @@ class IrActualizer(
                 return symbol
             }
         }
-        dependentFragments.forEach { it.transform(ActualizerVisitor(classSymbolRemapper), null) }
+        dependentFragments.forEach { it.transform(ActualizerVisitor(classSymbolRemapper, membersActualization = false), null) }
     }
 
     fun actualizeCallablesAndMergeModules(): IrExpectActualMap {
@@ -81,7 +81,7 @@ class IrActualizer(
         FunctionDefaultParametersActualizer(symbolRemapper, expectActualMap).actualize()
 
         // 3. Actualize expect calls in dependent fragments using info obtained in the previous steps
-        val actualizerVisitor = ActualizerVisitor(symbolRemapper)
+        val actualizerVisitor = ActualizerVisitor(symbolRemapper, membersActualization = true)
         dependentFragments.forEach { it.transform(actualizerVisitor, data = null) }
 
         // 4. Actualize property accessors actualized by java fields

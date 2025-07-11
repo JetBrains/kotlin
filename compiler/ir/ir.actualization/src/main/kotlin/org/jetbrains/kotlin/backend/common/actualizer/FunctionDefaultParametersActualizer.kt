@@ -37,7 +37,7 @@ internal class FunctionDefaultParametersActualizer(
     }
 }
 
-private class FunctionDefaultParametersActualizerVisitor(private val symbolRemapper: SymbolRemapper) : ActualizerVisitor(symbolRemapper) {
+private class FunctionDefaultParametersActualizerVisitor(private val symbolRemapper: SymbolRemapper) : ActualizerVisitor(symbolRemapper, membersActualization = true) {
     override fun visitGetValue(expression: IrGetValue): IrGetValue {
         // It performs actualization of dispatch/extension receivers
         // It's actual only for default parameter values of expect functions because expect functions don't have bodies

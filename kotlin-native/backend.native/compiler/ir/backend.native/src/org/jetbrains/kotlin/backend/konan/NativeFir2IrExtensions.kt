@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.konan
 
+import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
 import org.jetbrains.kotlin.fir.backend.Fir2IrConversionScope
@@ -34,6 +35,8 @@ internal object NativeFir2IrExtensions : Fir2IrExtensions {
             Fir2IrExtensions.Default.hasBackingField(property, session)
         }
     }
+
+    override fun specialBackingFieldVisibility(firProperty: FirProperty, session: FirSession): Visibility? = null
 
     override fun initializeIrBuiltInsAndSymbolTable(irBuiltIns: IrBuiltIns, symbolTable: SymbolTable) {}
     override fun shouldGenerateDelegatedMember(delegateMemberFromBaseType: IrOverridableDeclaration<*>): Boolean = true

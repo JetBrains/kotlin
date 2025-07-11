@@ -507,9 +507,13 @@ class Fir2IrCallableDeclarationsGenerator(private val c: Fir2IrComponents) : Fir
         get() = when {
             hasExplicitBackingField -> backingField?.visibility ?: status.visibility
             isConst -> status.visibility
-            hasJvmFieldAnnotation(session) -> status.visibility
-            origin == FirDeclarationOrigin.ScriptCustomization.ResultProperty -> status.visibility
-            else -> Visibilities.Private
+            else -> {
+                extensions.specialBackingFieldVisibility(this, session)?.let { return it }
+                when {
+                    origin == FirDeclarationOrigin.ScriptCustomization.ResultProperty -> status.visibility
+                    else -> Visibilities.Private
+                }
+            }
         }
 
     internal fun createIrField(
