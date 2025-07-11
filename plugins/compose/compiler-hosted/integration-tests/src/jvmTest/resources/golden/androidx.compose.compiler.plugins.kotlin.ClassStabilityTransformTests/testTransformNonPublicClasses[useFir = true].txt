@@ -13,7 +13,9 @@ internal class PublishedFoo(val value: Int)
 
 private class PrivateFoo(val value: Int)
 @StabilityInferred(parameters = 1)
-internal class InternalFoo(val value: Int)
+internal class InternalFoo(val value: Int) {
+  static val %stable: Int = 0
+}
 @PublishedApi
 @StabilityInferred(parameters = 1)
 internal class PublishedFoo(val value: Int) {
