@@ -821,16 +821,6 @@ inside suspend functions and lambdas to distinguish them from user code by debug
         }
 
     @Argument(
-        value = "-Xir-inliner",
-        description = "Inline functions using the IR inliner instead of the bytecode inliner.",
-    )
-    var enableIrInliner: Boolean = false
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
-    @Argument(
         value = "-Xuse-inline-scopes-numbers",
         description = "Use inline scopes numbers for inline marker variables.",
     )

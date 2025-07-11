@@ -5660,10 +5660,10 @@
                                     "valueInVersions": []
                                 },
                                 "releaseVersionsMetadata": {
-                                    "introducedVersion": "1.4.0",
-                                    "stabilizedVersion": "1.4.0",
+                                    "introducedVersion": "1.9.0",
+                                    "stabilizedVersion": null,
                                     "deprecatedVersion": null,
-                                    "removedVersion": null
+                                    "removedVersion": "2.3.0"
                                 }
                             },
                             {
