@@ -81,11 +81,7 @@ class ConstraintIncorporator(
     // A <:(=) \alpha <:(=) B => A <: B
     context(c: Context)
     private fun directWithVariable(typeVariable: TypeVariableMarker, constraint: Constraint) {
-        val shouldBeTypeVariableFlexible =
-            if (c.useRefinedBoundsForTypeVariableInFlexiblePosition())
-                false
-            else
-                with(utilContext) { typeVariable.shouldBeFlexible() }
+        val shouldBeTypeVariableFlexible = with(utilContext) { typeVariable.shouldBeFlexible() }
 
         // \alpha <: constraint.type
         if (constraint.kind != ConstraintKind.LOWER) {
