@@ -9779,6 +9779,12 @@ public class FirLightTreeOldFrontendDiagnosticsWithLatestLanguageVersionTestGene
       }
 
       @Test
+      @TestMetadata("noConflictOnMultipleMainDeclarations.kt")
+      public void testNoConflictOnMultipleMainDeclarations() {
+        runTest("compiler/testData/diagnostics/tests/crvFull/noConflictOnMultipleMainDeclarations.kt");
+      }
+
+      @Test
       @TestMetadata("nonCompilerAnnotations.kt")
       public void testNonCompilerAnnotations() {
         runTest("compiler/testData/diagnostics/tests/crvFull/nonCompilerAnnotations.kt");
