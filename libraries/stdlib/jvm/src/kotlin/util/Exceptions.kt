@@ -10,7 +10,6 @@ package kotlin
 
 import java.io.PrintStream
 import java.io.PrintWriter
-import java.io.StringWriter
 import kotlin.internal.*
 
 /**
@@ -52,11 +51,11 @@ public val Throwable.stackTrace: Array<StackTraceElement>
  */
 @SinceKotlin("1.4")
 public actual fun Throwable.stackTraceToString(): String {
-    val sw = StringWriter()
-    val pw = PrintWriter(sw)
+    val buf = StringBuilder()
+    val pw = PrintWriter(buf.asWriter())
     printStackTrace(pw)
     pw.flush()
-    return sw.toString()
+    return buf.toString()
 }
 
 /**
