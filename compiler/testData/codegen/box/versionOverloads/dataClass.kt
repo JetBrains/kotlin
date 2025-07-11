@@ -3,7 +3,7 @@
 // WITH_STDLIB
 @file:OptIn(ExperimentalStdlibApi::class)
 
-import kotlin.jvm.IntroducedAt
+import kotlin.experimental.IntroducedAt
 
 data class C (
     val a : Int = 1,

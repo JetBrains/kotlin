@@ -6294,6 +6294,45 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.INVALID_VERSIONING_ON_NON_OPTIONAL) { firDiagnostic ->
+        InvalidVersioningOnNonOptionalImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.NONFINAL_VERSIONED_FUNCTION) { firDiagnostic ->
+        NonfinalVersionedFunctionImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.INVALID_DEFAULT_VALUE_DEPENDENCY) { firDiagnostic ->
+        InvalidDefaultValueDependencyImpl(
+            firSymbolBuilder.callableBuilder.buildCallableSymbol(firDiagnostic.a),
+            firDiagnostic.b,
+            firDiagnostic.c,
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.CONFLICT_WITH_JVM_OVERLOADS_ANNOTATION) { firDiagnostic ->
+        ConflictWithJvmOverloadsAnnotationImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.INVALID_NON_OPTIONAL_PARAMETER_POSITION) { firDiagnostic ->
+        InvalidNonOptionalParameterPositionImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.NON_ASCENDING_VERSION_ANNOTATION) { firDiagnostic ->
+        NonAscendingVersionAnnotationImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirJvmErrors.OVERRIDE_CANNOT_BE_STATIC) { firDiagnostic ->
         OverrideCannotBeStaticImpl(
             firDiagnostic as KtPsiDiagnostic,
@@ -6903,45 +6942,6 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
     add(FirJvmErrors.SUSPENSION_POINT_INSIDE_CRITICAL_SECTION) { firDiagnostic ->
         SuspensionPointInsideCriticalSectionImpl(
             firSymbolBuilder.callableBuilder.buildCallableSymbol(firDiagnostic.a),
-            firDiagnostic as KtPsiDiagnostic,
-            token,
-        )
-    }
-    add(FirJvmErrors.INVALID_VERSIONING_ON_NON_OPTIONAL) { firDiagnostic ->
-        InvalidVersioningOnNonOptionalImpl(
-            firDiagnostic as KtPsiDiagnostic,
-            token,
-        )
-    }
-    add(FirJvmErrors.NONFINAL_VERSIONED_FUNCTION) { firDiagnostic ->
-        NonfinalVersionedFunctionImpl(
-            firDiagnostic as KtPsiDiagnostic,
-            token,
-        )
-    }
-    add(FirJvmErrors.INVALID_DEFAULT_VALUE_DEPENDENCY) { firDiagnostic ->
-        InvalidDefaultValueDependencyImpl(
-            firSymbolBuilder.callableBuilder.buildCallableSymbol(firDiagnostic.a),
-            firDiagnostic.b,
-            firDiagnostic.c,
-            firDiagnostic as KtPsiDiagnostic,
-            token,
-        )
-    }
-    add(FirJvmErrors.CONFLICT_WITH_JVM_OVERLOADS_ANNOTATION) { firDiagnostic ->
-        ConflictWithJvmOverloadsAnnotationImpl(
-            firDiagnostic as KtPsiDiagnostic,
-            token,
-        )
-    }
-    add(FirJvmErrors.INVALID_NON_OPTIONAL_PARAMETER_POSITION) { firDiagnostic ->
-        InvalidNonOptionalParameterPositionImpl(
-            firDiagnostic as KtPsiDiagnostic,
-            token,
-        )
-    }
-    add(FirJvmErrors.NON_ASCENDING_VERSION_ANNOTATION) { firDiagnostic ->
-        NonAscendingVersionAnnotationImpl(
             firDiagnostic as KtPsiDiagnostic,
             token,
         )

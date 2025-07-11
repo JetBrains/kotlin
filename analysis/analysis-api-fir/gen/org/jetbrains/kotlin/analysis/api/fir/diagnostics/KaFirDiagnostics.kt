@@ -4409,6 +4409,33 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         val containingDeclarationName: Name
     }
 
+    interface InvalidVersioningOnNonOptional : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = InvalidVersioningOnNonOptional::class
+    }
+
+    interface NonfinalVersionedFunction : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = NonfinalVersionedFunction::class
+    }
+
+    interface InvalidDefaultValueDependency : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = InvalidDefaultValueDependency::class
+        val dependOn: KaCallableSymbol
+        val dependOnVersion: String
+        val maxVersion: String
+    }
+
+    interface ConflictWithJvmOverloadsAnnotation : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = ConflictWithJvmOverloadsAnnotation::class
+    }
+
+    interface InvalidNonOptionalParameterPosition : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = InvalidNonOptionalParameterPosition::class
+    }
+
+    interface NonAscendingVersionAnnotation : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = NonAscendingVersionAnnotation::class
+    }
+
     interface OverrideCannotBeStatic : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = OverrideCannotBeStatic::class
     }
@@ -4830,33 +4857,6 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
     interface SuspensionPointInsideCriticalSection : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = SuspensionPointInsideCriticalSection::class
         val function: KaCallableSymbol
-    }
-
-    interface InvalidVersioningOnNonOptional : KaFirDiagnostic<PsiElement> {
-        override val diagnosticClass get() = InvalidVersioningOnNonOptional::class
-    }
-
-    interface NonfinalVersionedFunction : KaFirDiagnostic<PsiElement> {
-        override val diagnosticClass get() = NonfinalVersionedFunction::class
-    }
-
-    interface InvalidDefaultValueDependency : KaFirDiagnostic<PsiElement> {
-        override val diagnosticClass get() = InvalidDefaultValueDependency::class
-        val dependOn: KaCallableSymbol
-        val dependOnVersion: String
-        val maxVersion: String
-    }
-
-    interface ConflictWithJvmOverloadsAnnotation : KaFirDiagnostic<PsiElement> {
-        override val diagnosticClass get() = ConflictWithJvmOverloadsAnnotation::class
-    }
-
-    interface InvalidNonOptionalParameterPosition : KaFirDiagnostic<PsiElement> {
-        override val diagnosticClass get() = InvalidNonOptionalParameterPosition::class
-    }
-
-    interface NonAscendingVersionAnnotation : KaFirDiagnostic<PsiElement> {
-        override val diagnosticClass get() = NonAscendingVersionAnnotation::class
     }
 
     interface InapplicableJvmField : KaFirDiagnostic<KtAnnotationEntry> {

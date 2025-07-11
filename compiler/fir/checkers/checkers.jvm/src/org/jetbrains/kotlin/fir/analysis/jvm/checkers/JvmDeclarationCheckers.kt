@@ -58,7 +58,6 @@ object JvmDeclarationCheckers : DeclarationCheckers() {
     override val functionCheckers: Set<FirFunctionChecker>
         get() = setOf(
             FirSynchronizedAnnotationChecker,
-            FirVersionOverloadsChecker,
             FirOverloadsChecker,
             FirJvmThrowsChecker,
         )

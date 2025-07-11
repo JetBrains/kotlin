@@ -3,7 +3,7 @@
 // WITH_STDLIB
 @file:OptIn(ExperimentalStdlibApi::class)
 
-import kotlin.jvm.IntroducedAt
+import kotlin.experimental.IntroducedAt
 import kotlin.jvm.JvmOverloads
 
 class X {

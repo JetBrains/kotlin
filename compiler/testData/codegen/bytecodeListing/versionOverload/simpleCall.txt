@@ -3,13 +3,13 @@ public final class SimpleCallKt {
     // source: 'simpleCall.kt'
     public synthetic static method foo2$default(p0: int, p1: java.lang.String, p2: java.lang.String, p3: float, p4: kotlin.jvm.functions.Function0, p5: int, p6: java.lang.Object): void
     public synthetic deprecated static method foo2$default(p0: int, p1: java.lang.String, p2: java.lang.String, p3: kotlin.jvm.functions.Function0, p4: int, p5: java.lang.Object): void
-    public final static method foo2(p0: int, @org.jetbrains.annotations.NotNull p1: java.lang.String, @org.jetbrains.annotations.NotNull p2: java.lang.String, p3: float, @org.jetbrains.annotations.NotNull p4: kotlin.jvm.functions.Function0): void
-    public synthetic deprecated final static @kotlin.Deprecated(message="Deprecated", level=HIDDEN) method foo2(p0: int, p1: java.lang.String, p2: java.lang.String, p3: kotlin.jvm.functions.Function0): void
+    public final static method foo2(p0: int, @kotlin.experimental.IntroducedAt(version="1") @org.jetbrains.annotations.NotNull p1: java.lang.String, @kotlin.experimental.IntroducedAt(version="1") @org.jetbrains.annotations.NotNull p2: java.lang.String, @kotlin.experimental.IntroducedAt(version="2") p3: float, @org.jetbrains.annotations.NotNull p4: kotlin.jvm.functions.Function0): void
+    public synthetic deprecated final static @kotlin.Deprecated(message="Deprecated", level=HIDDEN) method foo2(p0: int, @kotlin.experimental.IntroducedAt(version="1") p1: java.lang.String, @kotlin.experimental.IntroducedAt(version="1") p2: java.lang.String, p3: kotlin.jvm.functions.Function0): void
     public synthetic deprecated final static @kotlin.Deprecated(message="Deprecated", level=HIDDEN) method foo2(p0: int, p1: kotlin.jvm.functions.Function0): void
     public synthetic static method mid2$default(p0: int, p1: int, p2: java.lang.String, p3: float, p4: kotlin.jvm.functions.Function0, p5: int, p6: java.lang.Object): void
     public synthetic deprecated static method mid2$default(p0: int, p1: java.lang.String, p2: float, p3: kotlin.jvm.functions.Function0, p4: int, p5: java.lang.Object): void
-    public final static method mid2(p0: int, p1: int, @org.jetbrains.annotations.NotNull p2: java.lang.String, p3: float, @org.jetbrains.annotations.NotNull p4: kotlin.jvm.functions.Function0): void
-    public synthetic deprecated final static @kotlin.Deprecated(message="Deprecated", level=HIDDEN) method mid2(p0: int, p1: java.lang.String, p2: float, p3: kotlin.jvm.functions.Function0): void
+    public synthetic deprecated final static @kotlin.Deprecated(message="Deprecated", level=HIDDEN) method mid2(p0: int, @kotlin.experimental.IntroducedAt(version="1") p1: java.lang.String, @kotlin.experimental.IntroducedAt(version="1") p2: float, p3: kotlin.jvm.functions.Function0): void
+    public final static method mid2(p0: int, @kotlin.experimental.IntroducedAt(version="2") p1: int, @kotlin.experimental.IntroducedAt(version="1") @org.jetbrains.annotations.NotNull p2: java.lang.String, @kotlin.experimental.IntroducedAt(version="1") p3: float, @org.jetbrains.annotations.NotNull p4: kotlin.jvm.functions.Function0): void
     public synthetic deprecated final static @kotlin.Deprecated(message="Deprecated", level=HIDDEN) method mid2(p0: int, p1: kotlin.jvm.functions.Function0): void
 }
 
@@ -20,11 +20,11 @@ public final class X {
     public synthetic static method foo$default(p0: X, p1: int, p2: java.lang.String, p3: java.lang.String, p4: float, p5: int, p6: java.lang.Object): void
     public synthetic deprecated static method foo$default(p0: X, p1: int, p2: java.lang.String, p3: java.lang.String, p4: int, p5: java.lang.Object): void
     public synthetic deprecated final @kotlin.Deprecated(message="Deprecated", level=HIDDEN) method foo(p0: int): void
-    public final method foo(p0: int, @org.jetbrains.annotations.NotNull p1: java.lang.String, @org.jetbrains.annotations.NotNull p2: java.lang.String, p3: float): void
-    public synthetic deprecated final @kotlin.Deprecated(message="Deprecated", level=HIDDEN) method foo(p0: int, p1: java.lang.String, p2: java.lang.String): void
+    public final method foo(p0: int, @kotlin.experimental.IntroducedAt(version="1") @org.jetbrains.annotations.NotNull p1: java.lang.String, @kotlin.experimental.IntroducedAt(version="1") @org.jetbrains.annotations.NotNull p2: java.lang.String, @kotlin.experimental.IntroducedAt(version="2") p3: float): void
+    public synthetic deprecated final @kotlin.Deprecated(message="Deprecated", level=HIDDEN) method foo(p0: int, @kotlin.experimental.IntroducedAt(version="1") p1: java.lang.String, @kotlin.experimental.IntroducedAt(version="1") p2: java.lang.String): void
     public synthetic static method mid$default(p0: X, p1: int, p2: int, p3: java.lang.String, p4: float, p5: int, p6: java.lang.Object): void
     public synthetic deprecated static method mid$default(p0: X, p1: int, p2: java.lang.String, p3: float, p4: int, p5: java.lang.Object): void
     public synthetic deprecated final @kotlin.Deprecated(message="Deprecated", level=HIDDEN) method mid(p0: int): void
-    public final method mid(p0: int, p1: int, @org.jetbrains.annotations.NotNull p2: java.lang.String, p3: float): void
-    public synthetic deprecated final @kotlin.Deprecated(message="Deprecated", level=HIDDEN) method mid(p0: int, p1: java.lang.String, p2: float): void
+    public synthetic deprecated final @kotlin.Deprecated(message="Deprecated", level=HIDDEN) method mid(p0: int, @kotlin.experimental.IntroducedAt(version="1") p1: java.lang.String, @kotlin.experimental.IntroducedAt(version="1") p2: float): void
+    public final method mid(p0: int, @kotlin.experimental.IntroducedAt(version="2") p1: int, @kotlin.experimental.IntroducedAt(version="1") @org.jetbrains.annotations.NotNull p2: java.lang.String, @kotlin.experimental.IntroducedAt(version="1") p3: float): void
 }
