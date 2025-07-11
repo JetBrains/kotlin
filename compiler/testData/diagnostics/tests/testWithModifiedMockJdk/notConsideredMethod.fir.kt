@@ -8,7 +8,7 @@ interface A : MutableCollection<String> {
 }
 
 fun foo(x: MutableCollection<Int>, y: Collection<String>, z: A) {
-    x.<!UNRESOLVED_REFERENCE!>nonExistingMethod<!>(1).<!CANNOT_INFER_PARAMETER_TYPE, UNRESOLVED_REFERENCE_WRONG_RECEIVER!>checkType<!> { <!INAPPLICABLE_CANDIDATE!>_<!><<!CANNOT_INFER_PARAMETER_TYPE!>String<!>>() }
+    x.<!UNRESOLVED_REFERENCE!>nonExistingMethod<!>(1).<!CANNOT_INFER_PARAMETER_TYPE, UNRESOLVED_REFERENCE_WRONG_RECEIVER!>checkType<!> { <!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>_<!><<!CANNOT_INFER_PARAMETER_TYPE!>String<!>>() }
     y.<!UNRESOLVED_REFERENCE!>nonExistingMethod<!>("")
     z.<!DEPRECATION!>nonExistingMethod<!>("")
 }
