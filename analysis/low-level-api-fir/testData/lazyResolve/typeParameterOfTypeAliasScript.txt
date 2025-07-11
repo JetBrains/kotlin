@@ -4,14 +4,14 @@ FILE: [ResolvedTo(RAW_FIR)] typeParameterOfTypeAliasScript.kts
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-typeParameterOfTypeAliasScript.kts>] class X<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-typeParameterOfTypeAliasScript.kts>, ScriptTopLevelDeclaration=true] class X<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] constructor<[ResolvedTo(RAW_FIR)] T>(): R|X<T>| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final [ResolvedTo(RAW_FIR)] typealias Alias<[ResolvedTo(RAW_FIR)] TypeParam> = X<TypeParam>
+        public final [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] typealias Alias<[ResolvedTo(RAW_FIR)] TypeParam> = X<TypeParam>
 
 
 IMPORTS:
@@ -20,14 +20,14 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfTypeAliasScript.kts
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-typeParameterOfTypeAliasScript.kts>] class X<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-typeParameterOfTypeAliasScript.kts>, ScriptTopLevelDeclaration=true] class X<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] constructor<[ResolvedTo(RAW_FIR)] T>(): R|X<T>| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final [ResolvedTo(RAW_FIR)] typealias Alias<[ResolvedTo(RAW_FIR)] TypeParam> = X<TypeParam>
+        public final [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] typealias Alias<[ResolvedTo(RAW_FIR)] TypeParam> = X<TypeParam>
 
 
 COMPILER_REQUIRED_ANNOTATIONS:
@@ -36,14 +36,14 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfTypeAliasScript.kts
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-typeParameterOfTypeAliasScript.kts>] class X<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-typeParameterOfTypeAliasScript.kts>, ScriptTopLevelDeclaration=true] class X<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] constructor<[ResolvedTo(RAW_FIR)] T>(): R|X<T>| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] typealias Alias<[ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] TypeParam> = X<TypeParam>
+        public final [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ScriptTopLevelDeclaration=true] typealias Alias<[ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] TypeParam> = X<TypeParam>
 
 
 COMPANION_GENERATION:
@@ -52,14 +52,14 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfTypeAliasScript.kts
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-typeParameterOfTypeAliasScript.kts>] class X<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-typeParameterOfTypeAliasScript.kts>, ScriptTopLevelDeclaration=true] class X<[ResolvedTo(RAW_FIR)] T> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] constructor<[ResolvedTo(RAW_FIR)] T>(): R|X<T>| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final [ResolvedTo(COMPANION_GENERATION)] typealias Alias<[ResolvedTo(COMPANION_GENERATION)] TypeParam> = X<TypeParam>
+        public final [ResolvedTo(COMPANION_GENERATION)] [ScriptTopLevelDeclaration=true] typealias Alias<[ResolvedTo(COMPANION_GENERATION)] TypeParam> = X<TypeParam>
 
 
 SUPER_TYPES:
@@ -68,14 +68,14 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfTypeAliasScript.kts
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-typeParameterOfTypeAliasScript.kts>] class X<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {
+        public final? [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-typeParameterOfTypeAliasScript.kts>, ScriptTopLevelDeclaration=true] class X<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] constructor<[ResolvedTo(SUPER_TYPES)] T>(): R|X<T>| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final [ResolvedTo(SUPER_TYPES)] typealias Alias<[ResolvedTo(SUPER_TYPES)] TypeParam> = R|X<TypeParam>|
+        public final [ResolvedTo(SUPER_TYPES)] [ScriptTopLevelDeclaration=true] typealias Alias<[ResolvedTo(SUPER_TYPES)] TypeParam> = R|X<TypeParam>|
 
 
 TYPES:
@@ -84,14 +84,14 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfTypeAliasScript.kts
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-typeParameterOfTypeAliasScript.kts>] class X<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {
+        public final? [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-typeParameterOfTypeAliasScript.kts>, ScriptTopLevelDeclaration=true] class X<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] constructor<[ResolvedTo(SUPER_TYPES)] T>(): R|X<T>| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final [ResolvedTo(TYPES)] typealias Alias<[ResolvedTo(TYPES)] TypeParam> = R|X<TypeParam>|
+        public final [ResolvedTo(TYPES)] [ScriptTopLevelDeclaration=true] typealias Alias<[ResolvedTo(TYPES)] TypeParam> = R|X<TypeParam>|
 
 
 STATUS:
@@ -100,14 +100,14 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfTypeAliasScript.kts
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-typeParameterOfTypeAliasScript.kts>] class X<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {
+        public final? [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-typeParameterOfTypeAliasScript.kts>, ScriptTopLevelDeclaration=true] class X<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] constructor<[ResolvedTo(SUPER_TYPES)] T>(): R|X<T>| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final [ResolvedTo(STATUS)] typealias Alias<[ResolvedTo(STATUS)] TypeParam> = R|X<TypeParam>|
+        public final [ResolvedTo(STATUS)] [ScriptTopLevelDeclaration=true] typealias Alias<[ResolvedTo(STATUS)] TypeParam> = R|X<TypeParam>|
 
 
 EXPECT_ACTUAL_MATCHING:
@@ -116,14 +116,14 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfTypeAliasScript.kts
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-typeParameterOfTypeAliasScript.kts>] class X<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {
+        public final? [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-typeParameterOfTypeAliasScript.kts>, ScriptTopLevelDeclaration=true] class X<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] constructor<[ResolvedTo(SUPER_TYPES)] T>(): R|X<T>| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] typealias Alias<[ResolvedTo(EXPECT_ACTUAL_MATCHING)] TypeParam> = R|X<TypeParam>|
+        public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ScriptTopLevelDeclaration=true] typealias Alias<[ResolvedTo(EXPECT_ACTUAL_MATCHING)] TypeParam> = R|X<TypeParam>|
 
 
 CONTRACTS:
@@ -132,14 +132,14 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfTypeAliasScript.kts
         [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-typeParameterOfTypeAliasScript.kts>] class X<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {
+        public final? [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-typeParameterOfTypeAliasScript.kts>, ScriptTopLevelDeclaration=true] class X<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] constructor<[ResolvedTo(SUPER_TYPES)] T>(): R|X<T>| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final [ResolvedTo(CONTRACTS)] typealias Alias<[ResolvedTo(CONTRACTS)] TypeParam> = R|X<TypeParam>|
+        public final [ResolvedTo(CONTRACTS)] [ScriptTopLevelDeclaration=true] typealias Alias<[ResolvedTo(CONTRACTS)] TypeParam> = R|X<TypeParam>|
 
 
 IMPLICIT_TYPES_BODY_RESOLVE:
@@ -148,14 +148,14 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfTypeAliasScript.kts
         [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-typeParameterOfTypeAliasScript.kts>] class X<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {
+        public final? [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-typeParameterOfTypeAliasScript.kts>, ScriptTopLevelDeclaration=true] class X<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] constructor<[ResolvedTo(SUPER_TYPES)] T>(): R|X<T>| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] typealias Alias<[ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] TypeParam> = R|X<TypeParam>|
+        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] typealias Alias<[ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] TypeParam> = R|X<TypeParam>|
 
 
 CONSTANT_EVALUATION:
@@ -164,14 +164,14 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfTypeAliasScript.kts
         [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-typeParameterOfTypeAliasScript.kts>] class X<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {
+        public final? [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-typeParameterOfTypeAliasScript.kts>, ScriptTopLevelDeclaration=true] class X<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] constructor<[ResolvedTo(SUPER_TYPES)] T>(): R|X<T>| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final [ResolvedTo(CONSTANT_EVALUATION)] typealias Alias<[ResolvedTo(CONSTANT_EVALUATION)] TypeParam> = R|X<TypeParam>|
+        public final [ResolvedTo(CONSTANT_EVALUATION)] [ScriptTopLevelDeclaration=true] typealias Alias<[ResolvedTo(CONSTANT_EVALUATION)] TypeParam> = R|X<TypeParam>|
 
 
 ANNOTATION_ARGUMENTS:
@@ -180,14 +180,14 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfTypeAliasScript.kts
         [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-typeParameterOfTypeAliasScript.kts>] class X<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {
+        public final? [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-typeParameterOfTypeAliasScript.kts>, ScriptTopLevelDeclaration=true] class X<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] constructor<[ResolvedTo(SUPER_TYPES)] T>(): R|X<T>| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] typealias Alias<[ResolvedTo(ANNOTATION_ARGUMENTS)] TypeParam> = R|X<TypeParam>|
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ScriptTopLevelDeclaration=true] typealias Alias<[ResolvedTo(ANNOTATION_ARGUMENTS)] TypeParam> = R|X<TypeParam>|
 
 
 BODY_RESOLVE:
@@ -196,14 +196,14 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterOfTypeAliasScript.kts
         [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-typeParameterOfTypeAliasScript.kts>] class X<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {
+        public final? [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-typeParameterOfTypeAliasScript.kts>, ScriptTopLevelDeclaration=true] class X<[ResolvedTo(SUPER_TYPES)] T> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=X] constructor<[ResolvedTo(SUPER_TYPES)] T>(): R|X<T>| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final [ResolvedTo(BODY_RESOLVE)] typealias Alias<[ResolvedTo(BODY_RESOLVE)] TypeParam> = R|X<TypeParam>|
+        public final [ResolvedTo(BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] typealias Alias<[ResolvedTo(BODY_RESOLVE)] TypeParam> = R|X<TypeParam>|
 
 
 FILE RAW TO BODY:
@@ -212,12 +212,12 @@ FILE: [ResolvedTo(BODY_RESOLVE)] typeParameterOfTypeAliasScript.kts
         [ResolvedTo(BODY_RESOLVE)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol <script-typeParameterOfTypeAliasScript.kts>] class X<[ResolvedTo(BODY_RESOLVE)] T> : R|kotlin/Any| {
+        public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol <script-typeParameterOfTypeAliasScript.kts>, ScriptTopLevelDeclaration=true] class X<[ResolvedTo(BODY_RESOLVE)] T> : R|kotlin/Any| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=X] constructor<[ResolvedTo(BODY_RESOLVE)] T>(): R|X<T>| {
                 super<R|kotlin/Any|>()
             }
 
         }
 
-        public final [ResolvedTo(BODY_RESOLVE)] typealias Alias<[ResolvedTo(BODY_RESOLVE)] TypeParam> = R|X<TypeParam>|
+        public final [ResolvedTo(BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] typealias Alias<[ResolvedTo(BODY_RESOLVE)] TypeParam> = R|X<TypeParam>|
 

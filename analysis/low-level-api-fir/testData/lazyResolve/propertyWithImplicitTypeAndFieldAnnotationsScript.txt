@@ -4,7 +4,7 @@ FILE: [ResolvedTo(RAW_FIR)] propertyWithImplicitTypeAndFieldAnnotationsScript.kt
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol myPack.<script-propertyWithImplicitTypeAndFieldAnnotationsScript.kts>] annotation class Anno : R|kotlin/Annotation| {
+        @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol myPack.<script-propertyWithImplicitTypeAndFieldAnnotationsScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=myPack/Anno.number] number: Int): R|myPack/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -14,22 +14,22 @@ FILE: [ResolvedTo(RAW_FIR)] propertyWithImplicitTypeAndFieldAnnotationsScript.kt
 
         }
 
-        @Anno[Unresolved](LAZY_EXPRESSION) public? final? const [ResolvedTo(RAW_FIR)] val propertyProperty: <implicit> = LAZY_EXPRESSION
+        @Anno[Unresolved](LAZY_EXPRESSION) public? final? const [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val propertyProperty: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        @Anno[Unresolved](LAZY_EXPRESSION) public? final? const [ResolvedTo(RAW_FIR)] val getterProperty: <implicit> = LAZY_EXPRESSION
+        @Anno[Unresolved](LAZY_EXPRESSION) public? final? const [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val getterProperty: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        @Anno[Unresolved](LAZY_EXPRESSION) public? final? const [ResolvedTo(RAW_FIR)] val setterProperty: <implicit> = LAZY_EXPRESSION
+        @Anno[Unresolved](LAZY_EXPRESSION) public? final? const [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val setterProperty: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        @Anno[Unresolved](LAZY_EXPRESSION) public? final? const [ResolvedTo(RAW_FIR)] val setterParameterProperty: <implicit> = LAZY_EXPRESSION
+        @Anno[Unresolved](LAZY_EXPRESSION) public? final? const [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val setterParameterProperty: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        @Anno[Unresolved](LAZY_EXPRESSION) public? final? const [ResolvedTo(RAW_FIR)] val fieldProperty: <implicit> = LAZY_EXPRESSION
+        @Anno[Unresolved](LAZY_EXPRESSION) public? final? const [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val fieldProperty: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        @Anno[Unresolved](LAZY_EXPRESSION) field:@FIELD:Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] var variableToResolve: <implicit> = LAZY_EXPRESSION
+        @Anno[Unresolved](LAZY_EXPRESSION) field:@FIELD:Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] var variableToResolve: <implicit> = LAZY_EXPRESSION
             @Anno[Unresolved](LAZY_EXPRESSION) public? [ResolvedTo(RAW_FIR)] get(): <implicit> { LAZY_BLOCK }
             @Anno[Unresolved](LAZY_EXPRESSION) public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] @Anno[Unresolved](LAZY_EXPRESSION) value: <implicit>): R|kotlin/Unit| { LAZY_BLOCK }
 
@@ -40,7 +40,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithImplicitTypeAndFieldAnnotationsScript.kt
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol myPack.<script-propertyWithImplicitTypeAndFieldAnnotationsScript.kts>] annotation class Anno : R|kotlin/Annotation| {
+        @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol myPack.<script-propertyWithImplicitTypeAndFieldAnnotationsScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=myPack/Anno.number] number: Int): R|myPack/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -50,22 +50,22 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithImplicitTypeAndFieldAnnotationsScript.kt
 
         }
 
-        @Anno[Unresolved](LAZY_EXPRESSION) public? final? const [ResolvedTo(RAW_FIR)] val propertyProperty: <implicit> = LAZY_EXPRESSION
+        @Anno[Unresolved](LAZY_EXPRESSION) public? final? const [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val propertyProperty: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        @Anno[Unresolved](LAZY_EXPRESSION) public? final? const [ResolvedTo(RAW_FIR)] val getterProperty: <implicit> = LAZY_EXPRESSION
+        @Anno[Unresolved](LAZY_EXPRESSION) public? final? const [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val getterProperty: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        @Anno[Unresolved](LAZY_EXPRESSION) public? final? const [ResolvedTo(RAW_FIR)] val setterProperty: <implicit> = LAZY_EXPRESSION
+        @Anno[Unresolved](LAZY_EXPRESSION) public? final? const [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val setterProperty: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        @Anno[Unresolved](LAZY_EXPRESSION) public? final? const [ResolvedTo(RAW_FIR)] val setterParameterProperty: <implicit> = LAZY_EXPRESSION
+        @Anno[Unresolved](LAZY_EXPRESSION) public? final? const [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val setterParameterProperty: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        @Anno[Unresolved](LAZY_EXPRESSION) public? final? const [ResolvedTo(RAW_FIR)] val fieldProperty: <implicit> = LAZY_EXPRESSION
+        @Anno[Unresolved](LAZY_EXPRESSION) public? final? const [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val fieldProperty: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        @Anno[Unresolved](LAZY_EXPRESSION) field:@FIELD:Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] var variableToResolve: <implicit> = LAZY_EXPRESSION
+        @Anno[Unresolved](LAZY_EXPRESSION) field:@FIELD:Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] var variableToResolve: <implicit> = LAZY_EXPRESSION
             @Anno[Unresolved](LAZY_EXPRESSION) public? [ResolvedTo(RAW_FIR)] get(): <implicit> { LAZY_BLOCK }
             @Anno[Unresolved](LAZY_EXPRESSION) public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] @Anno[Unresolved](LAZY_EXPRESSION) value: <implicit>): R|kotlin/Unit| { LAZY_BLOCK }
 
@@ -76,7 +76,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithImplicitTypeAndFieldAnnotationsScript.kt
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol myPack.<script-propertyWithImplicitTypeAndFieldAnnotationsScript.kts>] annotation class Anno : R|kotlin/Annotation| {
+        @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol myPack.<script-propertyWithImplicitTypeAndFieldAnnotationsScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=myPack/Anno.number] number: Int): R|myPack/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -86,22 +86,22 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithImplicitTypeAndFieldAnnotationsScript.kt
 
         }
 
-        @Anno[Unresolved](LAZY_EXPRESSION) public? final? const [ResolvedTo(RAW_FIR)] val propertyProperty: <implicit> = LAZY_EXPRESSION
+        @Anno[Unresolved](LAZY_EXPRESSION) public? final? const [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val propertyProperty: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        @Anno[Unresolved](LAZY_EXPRESSION) public? final? const [ResolvedTo(RAW_FIR)] val getterProperty: <implicit> = LAZY_EXPRESSION
+        @Anno[Unresolved](LAZY_EXPRESSION) public? final? const [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val getterProperty: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        @Anno[Unresolved](LAZY_EXPRESSION) public? final? const [ResolvedTo(RAW_FIR)] val setterProperty: <implicit> = LAZY_EXPRESSION
+        @Anno[Unresolved](LAZY_EXPRESSION) public? final? const [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val setterProperty: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        @Anno[Unresolved](LAZY_EXPRESSION) public? final? const [ResolvedTo(RAW_FIR)] val setterParameterProperty: <implicit> = LAZY_EXPRESSION
+        @Anno[Unresolved](LAZY_EXPRESSION) public? final? const [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val setterParameterProperty: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        @Anno[Unresolved](LAZY_EXPRESSION) public? final? const [ResolvedTo(RAW_FIR)] val fieldProperty: <implicit> = LAZY_EXPRESSION
+        @Anno[Unresolved](LAZY_EXPRESSION) public? final? const [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val fieldProperty: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        @Anno[Unresolved](LAZY_EXPRESSION) field:@FIELD:Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] var variableToResolve: <implicit> = LAZY_EXPRESSION
+        @Anno[Unresolved](LAZY_EXPRESSION) field:@FIELD:Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ScriptTopLevelDeclaration=true] var variableToResolve: <implicit> = LAZY_EXPRESSION
             @Anno[Unresolved](LAZY_EXPRESSION) public? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] get(): <implicit> { LAZY_BLOCK }
             @Anno[Unresolved](LAZY_EXPRESSION) public? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] set([ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] @Anno[Unresolved](LAZY_EXPRESSION) value: <implicit>): R|kotlin/Unit| { LAZY_BLOCK }
 
@@ -112,7 +112,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithImplicitTypeAndFieldAnnotationsScript.kt
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol myPack.<script-propertyWithImplicitTypeAndFieldAnnotationsScript.kts>] annotation class Anno : R|kotlin/Annotation| {
+        @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol myPack.<script-propertyWithImplicitTypeAndFieldAnnotationsScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=myPack/Anno.number] number: Int): R|myPack/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -122,22 +122,22 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithImplicitTypeAndFieldAnnotationsScript.kt
 
         }
 
-        @Anno[Unresolved](LAZY_EXPRESSION) public? final? const [ResolvedTo(RAW_FIR)] val propertyProperty: <implicit> = LAZY_EXPRESSION
+        @Anno[Unresolved](LAZY_EXPRESSION) public? final? const [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val propertyProperty: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        @Anno[Unresolved](LAZY_EXPRESSION) public? final? const [ResolvedTo(RAW_FIR)] val getterProperty: <implicit> = LAZY_EXPRESSION
+        @Anno[Unresolved](LAZY_EXPRESSION) public? final? const [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val getterProperty: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        @Anno[Unresolved](LAZY_EXPRESSION) public? final? const [ResolvedTo(RAW_FIR)] val setterProperty: <implicit> = LAZY_EXPRESSION
+        @Anno[Unresolved](LAZY_EXPRESSION) public? final? const [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val setterProperty: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        @Anno[Unresolved](LAZY_EXPRESSION) public? final? const [ResolvedTo(RAW_FIR)] val setterParameterProperty: <implicit> = LAZY_EXPRESSION
+        @Anno[Unresolved](LAZY_EXPRESSION) public? final? const [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val setterParameterProperty: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        @Anno[Unresolved](LAZY_EXPRESSION) public? final? const [ResolvedTo(RAW_FIR)] val fieldProperty: <implicit> = LAZY_EXPRESSION
+        @Anno[Unresolved](LAZY_EXPRESSION) public? final? const [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val fieldProperty: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        @Anno[Unresolved](LAZY_EXPRESSION) field:@FIELD:Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(COMPANION_GENERATION)] var variableToResolve: <implicit> = LAZY_EXPRESSION
+        @Anno[Unresolved](LAZY_EXPRESSION) field:@FIELD:Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(COMPANION_GENERATION)] [ScriptTopLevelDeclaration=true] var variableToResolve: <implicit> = LAZY_EXPRESSION
             @Anno[Unresolved](LAZY_EXPRESSION) public? [ResolvedTo(COMPANION_GENERATION)] get(): <implicit> { LAZY_BLOCK }
             @Anno[Unresolved](LAZY_EXPRESSION) public? [ResolvedTo(COMPANION_GENERATION)] set([ResolvedTo(COMPANION_GENERATION)] @Anno[Unresolved](LAZY_EXPRESSION) value: <implicit>): R|kotlin/Unit| { LAZY_BLOCK }
 
@@ -148,7 +148,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithImplicitTypeAndFieldAnnotationsScript.kt
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol myPack.<script-propertyWithImplicitTypeAndFieldAnnotationsScript.kts>] annotation class Anno : R|kotlin/Annotation| {
+        @Target[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol myPack.<script-propertyWithImplicitTypeAndFieldAnnotationsScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=myPack/Anno.number] number: Int): R|myPack/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -158,22 +158,22 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithImplicitTypeAndFieldAnnotationsScript.kt
 
         }
 
-        @Anno[Unresolved](LAZY_EXPRESSION) public? final? const [ResolvedTo(RAW_FIR)] val propertyProperty: <implicit> = LAZY_EXPRESSION
+        @Anno[Unresolved](LAZY_EXPRESSION) public? final? const [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val propertyProperty: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        @Anno[Unresolved](LAZY_EXPRESSION) public? final? const [ResolvedTo(RAW_FIR)] val getterProperty: <implicit> = LAZY_EXPRESSION
+        @Anno[Unresolved](LAZY_EXPRESSION) public? final? const [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val getterProperty: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        @Anno[Unresolved](LAZY_EXPRESSION) public? final? const [ResolvedTo(RAW_FIR)] val setterProperty: <implicit> = LAZY_EXPRESSION
+        @Anno[Unresolved](LAZY_EXPRESSION) public? final? const [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val setterProperty: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        @Anno[Unresolved](LAZY_EXPRESSION) public? final? const [ResolvedTo(RAW_FIR)] val setterParameterProperty: <implicit> = LAZY_EXPRESSION
+        @Anno[Unresolved](LAZY_EXPRESSION) public? final? const [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val setterParameterProperty: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        @Anno[Unresolved](LAZY_EXPRESSION) public? final? const [ResolvedTo(RAW_FIR)] val fieldProperty: <implicit> = LAZY_EXPRESSION
+        @Anno[Unresolved](LAZY_EXPRESSION) public? final? const [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val fieldProperty: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        @Anno[Unresolved](LAZY_EXPRESSION) field:@FIELD:Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(SUPER_TYPES)] var variableToResolve: <implicit> = LAZY_EXPRESSION
+        @Anno[Unresolved](LAZY_EXPRESSION) field:@FIELD:Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(SUPER_TYPES)] [ScriptTopLevelDeclaration=true] var variableToResolve: <implicit> = LAZY_EXPRESSION
             @Anno[Unresolved](LAZY_EXPRESSION) public? [ResolvedTo(SUPER_TYPES)] get(): <implicit> { LAZY_BLOCK }
             @Anno[Unresolved](LAZY_EXPRESSION) public? [ResolvedTo(SUPER_TYPES)] set([ResolvedTo(SUPER_TYPES)] @Anno[Unresolved](LAZY_EXPRESSION) value: <implicit>): R|kotlin/Unit| { LAZY_BLOCK }
 
@@ -184,7 +184,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithImplicitTypeAndFieldAnnotationsScript.kt
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol myPack.<script-propertyWithImplicitTypeAndFieldAnnotationsScript.kts>] annotation class Anno : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol myPack.<script-propertyWithImplicitTypeAndFieldAnnotationsScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=myPack/Anno.number] number: Int): R|myPack/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -194,22 +194,22 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithImplicitTypeAndFieldAnnotationsScript.kt
 
         }
 
-        @Anno[Unresolved](LAZY_EXPRESSION) public? final? const [ResolvedTo(RAW_FIR)] val propertyProperty: <implicit> = LAZY_EXPRESSION
+        @Anno[Unresolved](LAZY_EXPRESSION) public? final? const [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val propertyProperty: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        @Anno[Unresolved](LAZY_EXPRESSION) public? final? const [ResolvedTo(RAW_FIR)] val getterProperty: <implicit> = LAZY_EXPRESSION
+        @Anno[Unresolved](LAZY_EXPRESSION) public? final? const [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val getterProperty: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        @Anno[Unresolved](LAZY_EXPRESSION) public? final? const [ResolvedTo(RAW_FIR)] val setterProperty: <implicit> = LAZY_EXPRESSION
+        @Anno[Unresolved](LAZY_EXPRESSION) public? final? const [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val setterProperty: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        @Anno[Unresolved](LAZY_EXPRESSION) public? final? const [ResolvedTo(RAW_FIR)] val setterParameterProperty: <implicit> = LAZY_EXPRESSION
+        @Anno[Unresolved](LAZY_EXPRESSION) public? final? const [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val setterParameterProperty: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        @Anno[Unresolved](LAZY_EXPRESSION) public? final? const [ResolvedTo(RAW_FIR)] val fieldProperty: <implicit> = LAZY_EXPRESSION
+        @Anno[Unresolved](LAZY_EXPRESSION) public? final? const [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val fieldProperty: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        @R|myPack/Anno|[Types](LAZY_EXPRESSION) field:@FIELD:R|myPack/Anno|[Types](LAZY_EXPRESSION) public? final? [ResolvedTo(TYPES)] var variableToResolve: <implicit> = LAZY_EXPRESSION
+        @R|myPack/Anno|[Types](LAZY_EXPRESSION) field:@FIELD:R|myPack/Anno|[Types](LAZY_EXPRESSION) public? final? [ResolvedTo(TYPES)] [ScriptTopLevelDeclaration=true] var variableToResolve: <implicit> = LAZY_EXPRESSION
             @R|myPack/Anno|[Types](LAZY_EXPRESSION) public? [ResolvedTo(TYPES)] get(): <implicit> { LAZY_BLOCK }
             @R|myPack/Anno|[Types](LAZY_EXPRESSION) public? [ResolvedTo(TYPES)] set([ResolvedTo(TYPES)] @R|myPack/Anno|[Types](LAZY_EXPRESSION) value: <implicit>): R|kotlin/Unit| { LAZY_BLOCK }
 
@@ -220,7 +220,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithImplicitTypeAndFieldAnnotationsScript.kt
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol myPack.<script-propertyWithImplicitTypeAndFieldAnnotationsScript.kts>] annotation class Anno : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol myPack.<script-propertyWithImplicitTypeAndFieldAnnotationsScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=myPack/Anno.number] number: Int): R|myPack/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -230,22 +230,22 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithImplicitTypeAndFieldAnnotationsScript.kt
 
         }
 
-        @Anno[Unresolved](LAZY_EXPRESSION) public? final? const [ResolvedTo(RAW_FIR)] val propertyProperty: <implicit> = LAZY_EXPRESSION
+        @Anno[Unresolved](LAZY_EXPRESSION) public? final? const [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val propertyProperty: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        @Anno[Unresolved](LAZY_EXPRESSION) public? final? const [ResolvedTo(RAW_FIR)] val getterProperty: <implicit> = LAZY_EXPRESSION
+        @Anno[Unresolved](LAZY_EXPRESSION) public? final? const [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val getterProperty: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        @Anno[Unresolved](LAZY_EXPRESSION) public? final? const [ResolvedTo(RAW_FIR)] val setterProperty: <implicit> = LAZY_EXPRESSION
+        @Anno[Unresolved](LAZY_EXPRESSION) public? final? const [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val setterProperty: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        @Anno[Unresolved](LAZY_EXPRESSION) public? final? const [ResolvedTo(RAW_FIR)] val setterParameterProperty: <implicit> = LAZY_EXPRESSION
+        @Anno[Unresolved](LAZY_EXPRESSION) public? final? const [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val setterParameterProperty: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        @Anno[Unresolved](LAZY_EXPRESSION) public? final? const [ResolvedTo(RAW_FIR)] val fieldProperty: <implicit> = LAZY_EXPRESSION
+        @Anno[Unresolved](LAZY_EXPRESSION) public? final? const [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val fieldProperty: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        @R|myPack/Anno|[Types](LAZY_EXPRESSION) field:@FIELD:R|myPack/Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(STATUS)] var variableToResolve: <implicit> = LAZY_EXPRESSION
+        @R|myPack/Anno|[Types](LAZY_EXPRESSION) field:@FIELD:R|myPack/Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(STATUS)] [ScriptTopLevelDeclaration=true] var variableToResolve: <implicit> = LAZY_EXPRESSION
             @R|myPack/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(STATUS)] get(): <implicit> { LAZY_BLOCK }
             @R|myPack/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(STATUS)] set([ResolvedTo(STATUS)] @R|myPack/Anno|[Types](LAZY_EXPRESSION) value: <implicit>): R|kotlin/Unit| { LAZY_BLOCK }
 
@@ -256,7 +256,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithImplicitTypeAndFieldAnnotationsScript.kt
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol myPack.<script-propertyWithImplicitTypeAndFieldAnnotationsScript.kts>] annotation class Anno : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol myPack.<script-propertyWithImplicitTypeAndFieldAnnotationsScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=myPack/Anno.number] number: Int): R|myPack/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -266,22 +266,22 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithImplicitTypeAndFieldAnnotationsScript.kt
 
         }
 
-        @Anno[Unresolved](LAZY_EXPRESSION) public? final? const [ResolvedTo(RAW_FIR)] val propertyProperty: <implicit> = LAZY_EXPRESSION
+        @Anno[Unresolved](LAZY_EXPRESSION) public? final? const [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val propertyProperty: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        @Anno[Unresolved](LAZY_EXPRESSION) public? final? const [ResolvedTo(RAW_FIR)] val getterProperty: <implicit> = LAZY_EXPRESSION
+        @Anno[Unresolved](LAZY_EXPRESSION) public? final? const [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val getterProperty: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        @Anno[Unresolved](LAZY_EXPRESSION) public? final? const [ResolvedTo(RAW_FIR)] val setterProperty: <implicit> = LAZY_EXPRESSION
+        @Anno[Unresolved](LAZY_EXPRESSION) public? final? const [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val setterProperty: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        @Anno[Unresolved](LAZY_EXPRESSION) public? final? const [ResolvedTo(RAW_FIR)] val setterParameterProperty: <implicit> = LAZY_EXPRESSION
+        @Anno[Unresolved](LAZY_EXPRESSION) public? final? const [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val setterParameterProperty: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        @Anno[Unresolved](LAZY_EXPRESSION) public? final? const [ResolvedTo(RAW_FIR)] val fieldProperty: <implicit> = LAZY_EXPRESSION
+        @Anno[Unresolved](LAZY_EXPRESSION) public? final? const [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val fieldProperty: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        @R|myPack/Anno|[Types](LAZY_EXPRESSION) field:@FIELD:R|myPack/Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] var variableToResolve: <implicit> = LAZY_EXPRESSION
+        @R|myPack/Anno|[Types](LAZY_EXPRESSION) field:@FIELD:R|myPack/Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ScriptTopLevelDeclaration=true] var variableToResolve: <implicit> = LAZY_EXPRESSION
             @R|myPack/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] get(): <implicit> { LAZY_BLOCK }
             @R|myPack/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] set([ResolvedTo(EXPECT_ACTUAL_MATCHING)] @R|myPack/Anno|[Types](LAZY_EXPRESSION) value: <implicit>): R|kotlin/Unit| { LAZY_BLOCK }
 
@@ -292,7 +292,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithImplicitTypeAndFieldAnnotationsScript.kt
         [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol myPack.<script-propertyWithImplicitTypeAndFieldAnnotationsScript.kts>] annotation class Anno : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol myPack.<script-propertyWithImplicitTypeAndFieldAnnotationsScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=myPack/Anno.number] number: Int): R|myPack/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -302,22 +302,22 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithImplicitTypeAndFieldAnnotationsScript.kt
 
         }
 
-        @Anno[Unresolved](LAZY_EXPRESSION) public? final? const [ResolvedTo(RAW_FIR)] val propertyProperty: <implicit> = LAZY_EXPRESSION
+        @Anno[Unresolved](LAZY_EXPRESSION) public? final? const [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val propertyProperty: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        @Anno[Unresolved](LAZY_EXPRESSION) public? final? const [ResolvedTo(RAW_FIR)] val getterProperty: <implicit> = LAZY_EXPRESSION
+        @Anno[Unresolved](LAZY_EXPRESSION) public? final? const [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val getterProperty: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        @Anno[Unresolved](LAZY_EXPRESSION) public? final? const [ResolvedTo(RAW_FIR)] val setterProperty: <implicit> = LAZY_EXPRESSION
+        @Anno[Unresolved](LAZY_EXPRESSION) public? final? const [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val setterProperty: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        @Anno[Unresolved](LAZY_EXPRESSION) public? final? const [ResolvedTo(RAW_FIR)] val setterParameterProperty: <implicit> = LAZY_EXPRESSION
+        @Anno[Unresolved](LAZY_EXPRESSION) public? final? const [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val setterParameterProperty: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        @Anno[Unresolved](LAZY_EXPRESSION) public? final? const [ResolvedTo(RAW_FIR)] val fieldProperty: <implicit> = LAZY_EXPRESSION
+        @Anno[Unresolved](LAZY_EXPRESSION) public? final? const [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val fieldProperty: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        @R|myPack/Anno|[Types](LAZY_EXPRESSION) field:@FIELD:R|myPack/Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(CONTRACTS)] var variableToResolve: <implicit> = LAZY_EXPRESSION
+        @R|myPack/Anno|[Types](LAZY_EXPRESSION) field:@FIELD:R|myPack/Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(CONTRACTS)] [ScriptTopLevelDeclaration=true] var variableToResolve: <implicit> = LAZY_EXPRESSION
             @R|myPack/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(CONTRACTS)] get(): <implicit> { LAZY_BLOCK }
             @R|myPack/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(CONTRACTS)] set([ResolvedTo(CONTRACTS)] @R|myPack/Anno|[Types](LAZY_EXPRESSION) value: <implicit>): R|kotlin/Unit| { LAZY_BLOCK }
 
@@ -328,7 +328,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithImplicitTypeAndFieldAnnotationsScript.kt
         [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol myPack.<script-propertyWithImplicitTypeAndFieldAnnotationsScript.kts>] annotation class Anno : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol myPack.<script-propertyWithImplicitTypeAndFieldAnnotationsScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=myPack/Anno.number] number: Int): R|myPack/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -338,22 +338,22 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithImplicitTypeAndFieldAnnotationsScript.kt
 
         }
 
-        @Anno[Unresolved](LAZY_EXPRESSION) public? final? const [ResolvedTo(RAW_FIR)] val propertyProperty: <implicit> = LAZY_EXPRESSION
+        @Anno[Unresolved](LAZY_EXPRESSION) public? final? const [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val propertyProperty: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        @Anno[Unresolved](LAZY_EXPRESSION) public? final? const [ResolvedTo(RAW_FIR)] val getterProperty: <implicit> = LAZY_EXPRESSION
+        @Anno[Unresolved](LAZY_EXPRESSION) public? final? const [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val getterProperty: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        @Anno[Unresolved](LAZY_EXPRESSION) public? final? const [ResolvedTo(RAW_FIR)] val setterProperty: <implicit> = LAZY_EXPRESSION
+        @Anno[Unresolved](LAZY_EXPRESSION) public? final? const [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val setterProperty: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        @Anno[Unresolved](LAZY_EXPRESSION) public? final? const [ResolvedTo(RAW_FIR)] val setterParameterProperty: <implicit> = LAZY_EXPRESSION
+        @Anno[Unresolved](LAZY_EXPRESSION) public? final? const [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val setterParameterProperty: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        @Anno[Unresolved](LAZY_EXPRESSION) public? final? const [ResolvedTo(RAW_FIR)] val fieldProperty: <implicit> = LAZY_EXPRESSION
+        @Anno[Unresolved](LAZY_EXPRESSION) public? final? const [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val fieldProperty: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        @R|myPack/Anno|[Types](LAZY_EXPRESSION) field:@FIELD:R|myPack/Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] var variableToResolve: R|kotlin/String| = <strcat>(Int(42))
+        @R|myPack/Anno|[Types](LAZY_EXPRESSION) field:@FIELD:R|myPack/Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] var variableToResolve: R|kotlin/String| = <strcat>(Int(42))
             @R|myPack/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/String| {
                 ^ field#.plus#(String(str))
             }
@@ -368,7 +368,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithImplicitTypeAndFieldAnnotationsScript.kt
         [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol myPack.<script-propertyWithImplicitTypeAndFieldAnnotationsScript.kts>] annotation class Anno : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol myPack.<script-propertyWithImplicitTypeAndFieldAnnotationsScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=myPack/Anno.number] number: Int): R|myPack/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -378,22 +378,22 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithImplicitTypeAndFieldAnnotationsScript.kt
 
         }
 
-        @Anno[Unresolved](LAZY_EXPRESSION) public? final? const [ResolvedTo(RAW_FIR)] val propertyProperty: <implicit> = LAZY_EXPRESSION
+        @Anno[Unresolved](LAZY_EXPRESSION) public? final? const [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val propertyProperty: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        @Anno[Unresolved](LAZY_EXPRESSION) public? final? const [ResolvedTo(RAW_FIR)] val getterProperty: <implicit> = LAZY_EXPRESSION
+        @Anno[Unresolved](LAZY_EXPRESSION) public? final? const [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val getterProperty: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        @Anno[Unresolved](LAZY_EXPRESSION) public? final? const [ResolvedTo(RAW_FIR)] val setterProperty: <implicit> = LAZY_EXPRESSION
+        @Anno[Unresolved](LAZY_EXPRESSION) public? final? const [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val setterProperty: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        @Anno[Unresolved](LAZY_EXPRESSION) public? final? const [ResolvedTo(RAW_FIR)] val setterParameterProperty: <implicit> = LAZY_EXPRESSION
+        @Anno[Unresolved](LAZY_EXPRESSION) public? final? const [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val setterParameterProperty: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        @Anno[Unresolved](LAZY_EXPRESSION) public? final? const [ResolvedTo(RAW_FIR)] val fieldProperty: <implicit> = LAZY_EXPRESSION
+        @Anno[Unresolved](LAZY_EXPRESSION) public? final? const [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val fieldProperty: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        @R|myPack/Anno|[Types](LAZY_EXPRESSION) field:@FIELD:R|myPack/Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(CONSTANT_EVALUATION)] var variableToResolve: R|kotlin/String| = <strcat>(Int(42))
+        @R|myPack/Anno|[Types](LAZY_EXPRESSION) field:@FIELD:R|myPack/Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(CONSTANT_EVALUATION)] [ScriptTopLevelDeclaration=true] var variableToResolve: R|kotlin/String| = <strcat>(Int(42))
             @R|myPack/Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(CONSTANT_EVALUATION)] get(): R|kotlin/String| {
                 ^ field#.plus#(String(str))
             }
@@ -408,7 +408,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithImplicitTypeAndFieldAnnotationsScript.kt
         [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|) public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol myPack.<script-propertyWithImplicitTypeAndFieldAnnotationsScript.kts>] annotation class Anno : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|) public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol myPack.<script-propertyWithImplicitTypeAndFieldAnnotationsScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=myPack/Anno.number] number: R|kotlin/Int|): R|myPack/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -418,22 +418,22 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithImplicitTypeAndFieldAnnotationsScript.kt
 
         }
 
-        @R|myPack/Anno|[Types](LAZY_EXPRESSION) public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val propertyProperty: R|kotlin/Int| = Int(42)
+        @R|myPack/Anno|[Types](LAZY_EXPRESSION) public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] val propertyProperty: R|kotlin/Int| = Int(42)
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
 
-        @R|myPack/Anno|[Types](LAZY_EXPRESSION) public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val getterProperty: R|kotlin/Int| = Int(42)
+        @R|myPack/Anno|[Types](LAZY_EXPRESSION) public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] val getterProperty: R|kotlin/Int| = Int(42)
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
 
-        @R|myPack/Anno|[Types](LAZY_EXPRESSION) public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val setterProperty: R|kotlin/Int| = Int(42)
+        @R|myPack/Anno|[Types](LAZY_EXPRESSION) public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] val setterProperty: R|kotlin/Int| = Int(42)
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
 
-        @R|myPack/Anno|[Types](LAZY_EXPRESSION) public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val setterParameterProperty: R|kotlin/Int| = Int(42)
+        @R|myPack/Anno|[Types](LAZY_EXPRESSION) public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] val setterParameterProperty: R|kotlin/Int| = Int(42)
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
 
-        @R|myPack/Anno|[Types](LAZY_EXPRESSION) public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val fieldProperty: R|kotlin/Int| = Int(42)
+        @R|myPack/Anno|[Types](LAZY_EXPRESSION) public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] val fieldProperty: R|kotlin/Int| = Int(42)
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
 
-        @R|myPack/Anno|[Types](number = R|myPack/propertyProperty|) field:@FIELD:R|myPack/Anno|[Types](number = R|myPack/fieldProperty|) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] var variableToResolve: R|kotlin/String| = <strcat>(Int(42))
+        @R|myPack/Anno|[Types](number = R|myPack/propertyProperty|) field:@FIELD:R|myPack/Anno|[Types](number = R|myPack/fieldProperty|) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ScriptTopLevelDeclaration=true] var variableToResolve: R|kotlin/String| = <strcat>(Int(42))
             @R|myPack/Anno|[Types](number = R|myPack/getterProperty|) public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|kotlin/String| {
                 ^ field#.plus#(String(str))
             }
@@ -448,7 +448,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithImplicitTypeAndFieldAnnotationsScript.kt
         [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|) public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol myPack.<script-propertyWithImplicitTypeAndFieldAnnotationsScript.kts>] annotation class Anno : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|) public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol myPack.<script-propertyWithImplicitTypeAndFieldAnnotationsScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=myPack/Anno.number] number: R|kotlin/Int|): R|myPack/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -458,22 +458,22 @@ FILE: [ResolvedTo(IMPORTS)] propertyWithImplicitTypeAndFieldAnnotationsScript.kt
 
         }
 
-        @R|myPack/Anno|[Types](LAZY_EXPRESSION) public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val propertyProperty: R|kotlin/Int| = Int(42)
+        @R|myPack/Anno|[Types](LAZY_EXPRESSION) public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] val propertyProperty: R|kotlin/Int| = Int(42)
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
 
-        @R|myPack/Anno|[Types](LAZY_EXPRESSION) public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val getterProperty: R|kotlin/Int| = Int(42)
+        @R|myPack/Anno|[Types](LAZY_EXPRESSION) public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] val getterProperty: R|kotlin/Int| = Int(42)
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
 
-        @R|myPack/Anno|[Types](LAZY_EXPRESSION) public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val setterProperty: R|kotlin/Int| = Int(42)
+        @R|myPack/Anno|[Types](LAZY_EXPRESSION) public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] val setterProperty: R|kotlin/Int| = Int(42)
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
 
-        @R|myPack/Anno|[Types](LAZY_EXPRESSION) public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val setterParameterProperty: R|kotlin/Int| = Int(42)
+        @R|myPack/Anno|[Types](LAZY_EXPRESSION) public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] val setterParameterProperty: R|kotlin/Int| = Int(42)
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
 
-        @R|myPack/Anno|[Types](LAZY_EXPRESSION) public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val fieldProperty: R|kotlin/Int| = Int(42)
+        @R|myPack/Anno|[Types](LAZY_EXPRESSION) public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] val fieldProperty: R|kotlin/Int| = Int(42)
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
 
-        @R|myPack/Anno|[Types](number = R|myPack/propertyProperty|) field:@FIELD:R|myPack/Anno|[Types](number = R|myPack/fieldProperty|) public final [ResolvedTo(BODY_RESOLVE)] [IsReferredViaField=true] var variableToResolve: R|kotlin/String| = <strcat>(Int(42))
+        @R|myPack/Anno|[Types](number = R|myPack/propertyProperty|) field:@FIELD:R|myPack/Anno|[Types](number = R|myPack/fieldProperty|) public final [ResolvedTo(BODY_RESOLVE)] [IsReferredViaField=true, ScriptTopLevelDeclaration=true] var variableToResolve: R|kotlin/String| = <strcat>(Int(42))
             @R|myPack/Anno|[Types](number = R|myPack/getterProperty|) public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String| {
                 ^ F|myPack/variableToResolve|.R|kotlin/String.plus|(String(str))
             }
@@ -488,7 +488,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] propertyWithImplicitTypeAndFieldAnnotationsScri
         [ResolvedTo(BODY_RESOLVE)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|)) public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol myPack.<script-propertyWithImplicitTypeAndFieldAnnotationsScript.kts>] annotation class Anno : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|)) public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol myPack.<script-propertyWithImplicitTypeAndFieldAnnotationsScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=myPack/Anno.number] number: R|kotlin/Int|): R|myPack/Anno| {
                 super<R|kotlin/Any|>()
             }
@@ -498,22 +498,22 @@ FILE: [ResolvedTo(BODY_RESOLVE)] propertyWithImplicitTypeAndFieldAnnotationsScri
 
         }
 
-        @R|myPack/Anno|[Types](number = R|myPack/propertyProperty|) public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=Int(42)] val propertyProperty: R|kotlin/Int| = Int(42)
+        @R|myPack/Anno|[Types](number = R|myPack/propertyProperty|) public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=Int(42), ScriptTopLevelDeclaration=true] val propertyProperty: R|kotlin/Int| = Int(42)
             public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
 
-        @R|myPack/Anno|[Types](number = R|myPack/getterProperty|) public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=Int(42)] val getterProperty: R|kotlin/Int| = Int(42)
+        @R|myPack/Anno|[Types](number = R|myPack/getterProperty|) public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=Int(42), ScriptTopLevelDeclaration=true] val getterProperty: R|kotlin/Int| = Int(42)
             public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
 
-        @R|myPack/Anno|[Types](number = R|myPack/setterProperty|) public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=Int(42)] val setterProperty: R|kotlin/Int| = Int(42)
+        @R|myPack/Anno|[Types](number = R|myPack/setterProperty|) public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=Int(42), ScriptTopLevelDeclaration=true] val setterProperty: R|kotlin/Int| = Int(42)
             public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
 
-        @R|myPack/Anno|[Types](number = R|myPack/setterParameterProperty|) public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=Int(42)] val setterParameterProperty: R|kotlin/Int| = Int(42)
+        @R|myPack/Anno|[Types](number = R|myPack/setterParameterProperty|) public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=Int(42), ScriptTopLevelDeclaration=true] val setterParameterProperty: R|kotlin/Int| = Int(42)
             public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
 
-        @R|myPack/Anno|[Types](number = R|myPack/fieldProperty|) public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=Int(42)] val fieldProperty: R|kotlin/Int| = Int(42)
+        @R|myPack/Anno|[Types](number = R|myPack/fieldProperty|) public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=Int(42), ScriptTopLevelDeclaration=true] val fieldProperty: R|kotlin/Int| = Int(42)
             public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int|
 
-        @R|myPack/Anno|[Types](number = R|myPack/propertyProperty|) field:@FIELD:R|myPack/Anno|[Types](number = R|myPack/fieldProperty|) public final [ResolvedTo(BODY_RESOLVE)] [IsReferredViaField=true] var variableToResolve: R|kotlin/String| = <strcat>(Int(42))
+        @R|myPack/Anno|[Types](number = R|myPack/propertyProperty|) field:@FIELD:R|myPack/Anno|[Types](number = R|myPack/fieldProperty|) public final [ResolvedTo(BODY_RESOLVE)] [IsReferredViaField=true, ScriptTopLevelDeclaration=true] var variableToResolve: R|kotlin/String| = <strcat>(Int(42))
             @R|myPack/Anno|[Types](number = R|myPack/getterProperty|) public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String| {
                 ^ F|myPack/variableToResolve|.R|kotlin/String.plus|(String(str))
             }

@@ -3,7 +3,7 @@ FIR element: FirAnonymousInitializerImpl
 FIR source kind: KtRealSourceElementKind
 
 FIR element rendered:
-[ResolvedTo(BODY_RESOLVE)] init {
+[ResolvedTo(BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] init {
     R|/i| = R|/i|.R|kotlin/Int.plus|(Int(1))
 }
 
@@ -13,10 +13,10 @@ FILE: [ResolvedTo(IMPORTS)] compoundAssignOnVarScript.kts
         [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] var i: R|kotlin/Int| = Int(1)
+        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] var i: R|kotlin/Int| = Int(1)
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int|
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] set([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] value: R|kotlin/Int|): R|kotlin/Unit|
 
-        [ResolvedTo(BODY_RESOLVE)] init {
+        [ResolvedTo(BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] init {
             R|/i| = R|/i|.R|kotlin/Int.plus|(Int(1))
         }

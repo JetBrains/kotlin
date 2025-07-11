@@ -18,4 +18,3 @@ FILE: scriptStatementLevelDestructuringWithAnnotationAsLastStatement.kts
             }
 
         }
-

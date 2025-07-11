@@ -3,7 +3,7 @@ FIR element: FirAnonymousInitializerImpl
 FIR source kind: KtRealSourceElementKind
 
 FIR element rendered:
-[ResolvedTo(BODY_RESOLVE)] init {
+[ResolvedTo(BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] init {
     R|/bar|()
 }
 
@@ -13,12 +13,12 @@ FILE: [ResolvedTo(IMPORTS)] secondStatement.kts
         [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] fun foo(): <implicit> { LAZY_BLOCK }
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] fun foo(): <implicit> { LAZY_BLOCK }
 
-        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+        [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] init { LAZY_BLOCK }
 
-        [ResolvedTo(BODY_RESOLVE)] init {
+        [ResolvedTo(BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] init {
             R|/bar|()
         }
 
-        public final [ResolvedTo(CONTRACTS)] fun bar(): R|kotlin/Unit| { LAZY_BLOCK }
+        public final [ResolvedTo(CONTRACTS)] [ScriptTopLevelDeclaration=true] fun bar(): R|kotlin/Unit| { LAZY_BLOCK }

@@ -76,4 +76,3 @@ FILE: script.kts
         init {
             builder#.execute#()
         }
-

@@ -4,7 +4,7 @@ FILE: [ResolvedTo(RAW_FIR)] propagationBetweenLocalMemberPropertiesImplicitBodyS
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-propagationBetweenLocalMemberPropertiesImplicitBodyScript.kts>] annotation class Anno : R|kotlin/Annotation| {
+        @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-propagationBetweenLocalMemberPropertiesImplicitBodyScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Anno.str] str: String): R|util/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -14,12 +14,12 @@ FILE: [ResolvedTo(RAW_FIR)] propagationBetweenLocalMemberPropertiesImplicitBodyS
 
         }
 
-        public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
+        public? final? const [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val prop: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public? final? [ResolvedTo(RAW_FIR)] fun lambda([ResolvedTo(RAW_FIR)] action: ( () -> Unit )): <implicit> { LAZY_BLOCK }
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] fun lambda([ResolvedTo(RAW_FIR)] action: ( () -> Unit )): <implicit> { LAZY_BLOCK }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun foo(): <implicit> { LAZY_BLOCK }
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] fun foo(): <implicit> { LAZY_BLOCK }
 
 
 IMPORTS:
@@ -28,7 +28,7 @@ FILE: [ResolvedTo(IMPORTS)] propagationBetweenLocalMemberPropertiesImplicitBodyS
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-propagationBetweenLocalMemberPropertiesImplicitBodyScript.kts>] annotation class Anno : R|kotlin/Annotation| {
+        @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-propagationBetweenLocalMemberPropertiesImplicitBodyScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Anno.str] str: String): R|util/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -38,12 +38,12 @@ FILE: [ResolvedTo(IMPORTS)] propagationBetweenLocalMemberPropertiesImplicitBodyS
 
         }
 
-        public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
+        public? final? const [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val prop: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public? final? [ResolvedTo(RAW_FIR)] fun lambda([ResolvedTo(RAW_FIR)] action: ( () -> Unit )): <implicit> { LAZY_BLOCK }
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] fun lambda([ResolvedTo(RAW_FIR)] action: ( () -> Unit )): <implicit> { LAZY_BLOCK }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun foo(): <implicit> { LAZY_BLOCK }
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] fun foo(): <implicit> { LAZY_BLOCK }
 
 
 COMPILER_REQUIRED_ANNOTATIONS:
@@ -52,7 +52,7 @@ FILE: [ResolvedTo(IMPORTS)] propagationBetweenLocalMemberPropertiesImplicitBodyS
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-propagationBetweenLocalMemberPropertiesImplicitBodyScript.kts>] annotation class Anno : R|kotlin/Annotation| {
+        @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-propagationBetweenLocalMemberPropertiesImplicitBodyScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Anno.str] str: String): R|util/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -62,12 +62,12 @@ FILE: [ResolvedTo(IMPORTS)] propagationBetweenLocalMemberPropertiesImplicitBodyS
 
         }
 
-        public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
+        public? final? const [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val prop: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public? final? [ResolvedTo(RAW_FIR)] fun lambda([ResolvedTo(RAW_FIR)] action: ( () -> Unit )): <implicit> { LAZY_BLOCK }
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] fun lambda([ResolvedTo(RAW_FIR)] action: ( () -> Unit )): <implicit> { LAZY_BLOCK }
 
-        public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] fun foo(): <implicit> { LAZY_BLOCK }
+        public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ScriptTopLevelDeclaration=true] fun foo(): <implicit> { LAZY_BLOCK }
 
 
 COMPANION_GENERATION:
@@ -76,7 +76,7 @@ FILE: [ResolvedTo(IMPORTS)] propagationBetweenLocalMemberPropertiesImplicitBodyS
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-propagationBetweenLocalMemberPropertiesImplicitBodyScript.kts>] annotation class Anno : R|kotlin/Annotation| {
+        @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-propagationBetweenLocalMemberPropertiesImplicitBodyScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Anno.str] str: String): R|util/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -86,12 +86,12 @@ FILE: [ResolvedTo(IMPORTS)] propagationBetweenLocalMemberPropertiesImplicitBodyS
 
         }
 
-        public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
+        public? final? const [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val prop: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public? final? [ResolvedTo(RAW_FIR)] fun lambda([ResolvedTo(RAW_FIR)] action: ( () -> Unit )): <implicit> { LAZY_BLOCK }
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] fun lambda([ResolvedTo(RAW_FIR)] action: ( () -> Unit )): <implicit> { LAZY_BLOCK }
 
-        public? final? [ResolvedTo(COMPANION_GENERATION)] fun foo(): <implicit> { LAZY_BLOCK }
+        public? final? [ResolvedTo(COMPANION_GENERATION)] [ScriptTopLevelDeclaration=true] fun foo(): <implicit> { LAZY_BLOCK }
 
 
 SUPER_TYPES:
@@ -100,7 +100,7 @@ FILE: [ResolvedTo(IMPORTS)] propagationBetweenLocalMemberPropertiesImplicitBodyS
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-propagationBetweenLocalMemberPropertiesImplicitBodyScript.kts>] annotation class Anno : R|kotlin/Annotation| {
+        @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-propagationBetweenLocalMemberPropertiesImplicitBodyScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Anno.str] str: String): R|util/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -110,12 +110,12 @@ FILE: [ResolvedTo(IMPORTS)] propagationBetweenLocalMemberPropertiesImplicitBodyS
 
         }
 
-        public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
+        public? final? const [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val prop: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public? final? [ResolvedTo(RAW_FIR)] fun lambda([ResolvedTo(RAW_FIR)] action: ( () -> Unit )): <implicit> { LAZY_BLOCK }
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] fun lambda([ResolvedTo(RAW_FIR)] action: ( () -> Unit )): <implicit> { LAZY_BLOCK }
 
-        public? final? [ResolvedTo(SUPER_TYPES)] fun foo(): <implicit> { LAZY_BLOCK }
+        public? final? [ResolvedTo(SUPER_TYPES)] [ScriptTopLevelDeclaration=true] fun foo(): <implicit> { LAZY_BLOCK }
 
 
 TYPES:
@@ -124,7 +124,7 @@ FILE: [ResolvedTo(IMPORTS)] propagationBetweenLocalMemberPropertiesImplicitBodyS
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-propagationBetweenLocalMemberPropertiesImplicitBodyScript.kts>] annotation class Anno : R|kotlin/Annotation| {
+        @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-propagationBetweenLocalMemberPropertiesImplicitBodyScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Anno.str] str: String): R|util/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -134,12 +134,12 @@ FILE: [ResolvedTo(IMPORTS)] propagationBetweenLocalMemberPropertiesImplicitBodyS
 
         }
 
-        public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
+        public? final? const [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val prop: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public? final? [ResolvedTo(RAW_FIR)] fun lambda([ResolvedTo(RAW_FIR)] action: ( () -> Unit )): <implicit> { LAZY_BLOCK }
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] fun lambda([ResolvedTo(RAW_FIR)] action: ( () -> Unit )): <implicit> { LAZY_BLOCK }
 
-        public? final? [ResolvedTo(TYPES)] fun foo(): <implicit> { LAZY_BLOCK }
+        public? final? [ResolvedTo(TYPES)] [ScriptTopLevelDeclaration=true] fun foo(): <implicit> { LAZY_BLOCK }
 
 
 STATUS:
@@ -148,7 +148,7 @@ FILE: [ResolvedTo(IMPORTS)] propagationBetweenLocalMemberPropertiesImplicitBodyS
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-propagationBetweenLocalMemberPropertiesImplicitBodyScript.kts>] annotation class Anno : R|kotlin/Annotation| {
+        @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-propagationBetweenLocalMemberPropertiesImplicitBodyScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Anno.str] str: String): R|util/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -158,12 +158,12 @@ FILE: [ResolvedTo(IMPORTS)] propagationBetweenLocalMemberPropertiesImplicitBodyS
 
         }
 
-        public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
+        public? final? const [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val prop: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public? final? [ResolvedTo(RAW_FIR)] fun lambda([ResolvedTo(RAW_FIR)] action: ( () -> Unit )): <implicit> { LAZY_BLOCK }
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] fun lambda([ResolvedTo(RAW_FIR)] action: ( () -> Unit )): <implicit> { LAZY_BLOCK }
 
-        public final [ResolvedTo(STATUS)] fun foo(): <implicit> { LAZY_BLOCK }
+        public final [ResolvedTo(STATUS)] [ScriptTopLevelDeclaration=true] fun foo(): <implicit> { LAZY_BLOCK }
 
 
 EXPECT_ACTUAL_MATCHING:
@@ -172,7 +172,7 @@ FILE: [ResolvedTo(IMPORTS)] propagationBetweenLocalMemberPropertiesImplicitBodyS
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-propagationBetweenLocalMemberPropertiesImplicitBodyScript.kts>] annotation class Anno : R|kotlin/Annotation| {
+        @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-propagationBetweenLocalMemberPropertiesImplicitBodyScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Anno.str] str: String): R|util/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -182,12 +182,12 @@ FILE: [ResolvedTo(IMPORTS)] propagationBetweenLocalMemberPropertiesImplicitBodyS
 
         }
 
-        public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
+        public? final? const [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val prop: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public? final? [ResolvedTo(RAW_FIR)] fun lambda([ResolvedTo(RAW_FIR)] action: ( () -> Unit )): <implicit> { LAZY_BLOCK }
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] fun lambda([ResolvedTo(RAW_FIR)] action: ( () -> Unit )): <implicit> { LAZY_BLOCK }
 
-        public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun foo(): <implicit> { LAZY_BLOCK }
+        public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ScriptTopLevelDeclaration=true] fun foo(): <implicit> { LAZY_BLOCK }
 
 
 CONTRACTS:
@@ -196,7 +196,7 @@ FILE: [ResolvedTo(IMPORTS)] propagationBetweenLocalMemberPropertiesImplicitBodyS
         [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-propagationBetweenLocalMemberPropertiesImplicitBodyScript.kts>] annotation class Anno : R|kotlin/Annotation| {
+        @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-propagationBetweenLocalMemberPropertiesImplicitBodyScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Anno.str] str: String): R|util/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -206,12 +206,12 @@ FILE: [ResolvedTo(IMPORTS)] propagationBetweenLocalMemberPropertiesImplicitBodyS
 
         }
 
-        public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
+        public? final? const [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val prop: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public? final? [ResolvedTo(RAW_FIR)] fun lambda([ResolvedTo(RAW_FIR)] action: ( () -> Unit )): <implicit> { LAZY_BLOCK }
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] fun lambda([ResolvedTo(RAW_FIR)] action: ( () -> Unit )): <implicit> { LAZY_BLOCK }
 
-        public final [ResolvedTo(CONTRACTS)] fun foo(): <implicit> { LAZY_BLOCK }
+        public final [ResolvedTo(CONTRACTS)] [ScriptTopLevelDeclaration=true] fun foo(): <implicit> { LAZY_BLOCK }
 
 
 IMPLICIT_TYPES_BODY_RESOLVE:
@@ -220,7 +220,7 @@ FILE: [ResolvedTo(IMPORTS)] propagationBetweenLocalMemberPropertiesImplicitBodyS
         [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol util.<script-propagationBetweenLocalMemberPropertiesImplicitBodyScript.kts>] annotation class Anno : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol util.<script-propagationBetweenLocalMemberPropertiesImplicitBodyScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=util/Anno.str] str: R|kotlin/String|): R|util/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -230,14 +230,14 @@ FILE: [ResolvedTo(IMPORTS)] propagationBetweenLocalMemberPropertiesImplicitBodyS
 
         }
 
-        public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val prop: R|kotlin/String| = String(str)
+        public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] val prop: R|kotlin/String| = String(str)
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/String|
 
-        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun lambda([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] action: R|() -> kotlin/Unit|): R|kotlin/Unit| {
+        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] fun lambda([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] action: R|() -> kotlin/Unit|): R|kotlin/Unit| {
             ^lambda R|<local>/action|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
         }
 
-        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun foo(): R|kotlin/Unit| {
+        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] fun foo(): R|kotlin/Unit| {
             ^foo R|util/lambda|(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Function0<kotlin/Unit>] lambda@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
                 local final [ResolvedTo(RAW_FIR)] class Local : R|kotlin/Any| {
                     public [ResolvedTo(RAW_FIR)] [ContainingClassKey=Local] constructor(): R|<local>/Local| {
@@ -270,7 +270,7 @@ FILE: [ResolvedTo(IMPORTS)] propagationBetweenLocalMemberPropertiesImplicitBodyS
         [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol util.<script-propagationBetweenLocalMemberPropertiesImplicitBodyScript.kts>] annotation class Anno : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol util.<script-propagationBetweenLocalMemberPropertiesImplicitBodyScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=util/Anno.str] str: R|kotlin/String|): R|util/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -280,14 +280,14 @@ FILE: [ResolvedTo(IMPORTS)] propagationBetweenLocalMemberPropertiesImplicitBodyS
 
         }
 
-        public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val prop: R|kotlin/String| = String(str)
+        public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] val prop: R|kotlin/String| = String(str)
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/String|
 
-        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun lambda([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] action: R|() -> kotlin/Unit|): R|kotlin/Unit| {
+        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] fun lambda([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] action: R|() -> kotlin/Unit|): R|kotlin/Unit| {
             ^lambda R|<local>/action|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
         }
 
-        public final [ResolvedTo(CONSTANT_EVALUATION)] fun foo(): R|kotlin/Unit| {
+        public final [ResolvedTo(CONSTANT_EVALUATION)] [ScriptTopLevelDeclaration=true] fun foo(): R|kotlin/Unit| {
             ^foo R|util/lambda|(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Function0<kotlin/Unit>] lambda@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
                 local final [ResolvedTo(RAW_FIR)] class Local : R|kotlin/Any| {
                     public [ResolvedTo(RAW_FIR)] [ContainingClassKey=Local] constructor(): R|<local>/Local| {
@@ -320,7 +320,7 @@ FILE: [ResolvedTo(IMPORTS)] propagationBetweenLocalMemberPropertiesImplicitBodyS
         [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol util.<script-propagationBetweenLocalMemberPropertiesImplicitBodyScript.kts>] annotation class Anno : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol util.<script-propagationBetweenLocalMemberPropertiesImplicitBodyScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=util/Anno.str] str: R|kotlin/String|): R|util/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -330,14 +330,14 @@ FILE: [ResolvedTo(IMPORTS)] propagationBetweenLocalMemberPropertiesImplicitBodyS
 
         }
 
-        public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val prop: R|kotlin/String| = String(str)
+        public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] val prop: R|kotlin/String| = String(str)
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/String|
 
-        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun lambda([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] action: R|() -> kotlin/Unit|): R|kotlin/Unit| {
+        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] fun lambda([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] action: R|() -> kotlin/Unit|): R|kotlin/Unit| {
             ^lambda R|<local>/action|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
         }
 
-        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun foo(): R|kotlin/Unit| {
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ScriptTopLevelDeclaration=true] fun foo(): R|kotlin/Unit| {
             ^foo R|util/lambda|(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Function0<kotlin/Unit>] lambda@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
                 local final [ResolvedTo(RAW_FIR)] class Local : R|kotlin/Any| {
                     public [ResolvedTo(RAW_FIR)] [ContainingClassKey=Local] constructor(): R|<local>/Local| {
@@ -370,7 +370,7 @@ FILE: [ResolvedTo(IMPORTS)] propagationBetweenLocalMemberPropertiesImplicitBodyS
         [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol util.<script-propagationBetweenLocalMemberPropertiesImplicitBodyScript.kts>] annotation class Anno : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol util.<script-propagationBetweenLocalMemberPropertiesImplicitBodyScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=util/Anno.str] str: R|kotlin/String|): R|util/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -380,14 +380,14 @@ FILE: [ResolvedTo(IMPORTS)] propagationBetweenLocalMemberPropertiesImplicitBodyS
 
         }
 
-        public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val prop: R|kotlin/String| = String(str)
+        public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] val prop: R|kotlin/String| = String(str)
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/String|
 
-        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun lambda([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] action: R|() -> kotlin/Unit|): R|kotlin/Unit| {
+        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] fun lambda([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] action: R|() -> kotlin/Unit|): R|kotlin/Unit| {
             ^lambda R|<local>/action|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
         }
 
-        public final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Unit| {
+        public final [ResolvedTo(BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] fun foo(): R|kotlin/Unit| {
             ^foo R|util/lambda|(<L> = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=kotlin/Function0<kotlin/Unit>] lambda@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
                 local final [ResolvedTo(BODY_RESOLVE)] class Local : R|kotlin/Any| {
                     public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Local] constructor(): R|<local>/Local| {
@@ -420,7 +420,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] propagationBetweenLocalMemberPropertiesImplicit
         [ResolvedTo(BODY_RESOLVE)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)) public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol util.<script-propagationBetweenLocalMemberPropertiesImplicitBodyScript.kts>] annotation class Anno : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)) public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol util.<script-propagationBetweenLocalMemberPropertiesImplicitBodyScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=util/Anno.str] str: R|kotlin/String|): R|util/Anno| {
                 super<R|kotlin/Any|>()
             }
@@ -430,14 +430,14 @@ FILE: [ResolvedTo(BODY_RESOLVE)] propagationBetweenLocalMemberPropertiesImplicit
 
         }
 
-        public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=String(str)] val prop: R|kotlin/String| = String(str)
+        public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=String(str), ScriptTopLevelDeclaration=true] val prop: R|kotlin/String| = String(str)
             public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String|
 
-        public final [ResolvedTo(BODY_RESOLVE)] fun lambda([ResolvedTo(BODY_RESOLVE)] action: R|() -> kotlin/Unit|): R|kotlin/Unit| {
+        public final [ResolvedTo(BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] fun lambda([ResolvedTo(BODY_RESOLVE)] action: R|() -> kotlin/Unit|): R|kotlin/Unit| {
             ^lambda R|<local>/action|.R|SubstitutionOverride<kotlin/Function0.invoke: R|kotlin/Unit|>|()
         }
 
-        public final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Unit| {
+        public final [ResolvedTo(BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] fun foo(): R|kotlin/Unit| {
             ^foo R|util/lambda|(<L> = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=kotlin/Function0<kotlin/Unit>] lambda@fun <anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
                 local final [ResolvedTo(BODY_RESOLVE)] class Local : R|kotlin/Any| {
                     public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Local] constructor(): R|<local>/Local| {

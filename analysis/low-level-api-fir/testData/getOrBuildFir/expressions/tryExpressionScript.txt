@@ -17,7 +17,7 @@ FILE: [ResolvedTo(IMPORTS)] tryExpressionScript.kts
         [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(BODY_RESOLVE)] fun x(): R|kotlin/Unit| {
+        public final [ResolvedTo(BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] fun x(): R|kotlin/Unit| {
             try {
                 Int(1)
             }

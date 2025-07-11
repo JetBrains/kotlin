@@ -4,20 +4,20 @@ FILE: [ResolvedTo(RAW_FIR)] resolveSuperTypeFromLocalClassScript.kts
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.two.<script-resolveSuperTypeFromLocalClassScript.kts>] class UnusedClass : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.two.<script-resolveSuperTypeFromLocalClassScript.kts>, ScriptTopLevelDeclaration=true] class UnusedClass : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UnusedClass] constructor(): R|one/two/UnusedClass| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.two.<script-resolveSuperTypeFromLocalClassScript.kts>] interface UsedInterface2 : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.two.<script-resolveSuperTypeFromLocalClassScript.kts>, ScriptTopLevelDeclaration=true] interface UsedInterface2 : R|kotlin/Any| {
         }
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.two.<script-resolveSuperTypeFromLocalClassScript.kts>] interface UsedInterface : UsedInterface2 {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.two.<script-resolveSuperTypeFromLocalClassScript.kts>, ScriptTopLevelDeclaration=true] interface UsedInterface : UsedInterface2 {
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
 
 IMPORTS:
@@ -26,20 +26,20 @@ FILE: [ResolvedTo(IMPORTS)] resolveSuperTypeFromLocalClassScript.kts
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.two.<script-resolveSuperTypeFromLocalClassScript.kts>] class UnusedClass : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.two.<script-resolveSuperTypeFromLocalClassScript.kts>, ScriptTopLevelDeclaration=true] class UnusedClass : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UnusedClass] constructor(): R|one/two/UnusedClass| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.two.<script-resolveSuperTypeFromLocalClassScript.kts>] interface UsedInterface2 : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.two.<script-resolveSuperTypeFromLocalClassScript.kts>, ScriptTopLevelDeclaration=true] interface UsedInterface2 : R|kotlin/Any| {
         }
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.two.<script-resolveSuperTypeFromLocalClassScript.kts>] interface UsedInterface : UsedInterface2 {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.two.<script-resolveSuperTypeFromLocalClassScript.kts>, ScriptTopLevelDeclaration=true] interface UsedInterface : UsedInterface2 {
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
 
 COMPILER_REQUIRED_ANNOTATIONS:
@@ -48,20 +48,20 @@ FILE: [ResolvedTo(IMPORTS)] resolveSuperTypeFromLocalClassScript.kts
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.two.<script-resolveSuperTypeFromLocalClassScript.kts>] class UnusedClass : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.two.<script-resolveSuperTypeFromLocalClassScript.kts>, ScriptTopLevelDeclaration=true] class UnusedClass : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UnusedClass] constructor(): R|one/two/UnusedClass| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.two.<script-resolveSuperTypeFromLocalClassScript.kts>] interface UsedInterface2 : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.two.<script-resolveSuperTypeFromLocalClassScript.kts>, ScriptTopLevelDeclaration=true] interface UsedInterface2 : R|kotlin/Any| {
         }
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.two.<script-resolveSuperTypeFromLocalClassScript.kts>] interface UsedInterface : UsedInterface2 {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.two.<script-resolveSuperTypeFromLocalClassScript.kts>, ScriptTopLevelDeclaration=true] interface UsedInterface : UsedInterface2 {
         }
 
-        public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+        public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ScriptTopLevelDeclaration=true] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
 
 COMPANION_GENERATION:
@@ -70,20 +70,20 @@ FILE: [ResolvedTo(IMPORTS)] resolveSuperTypeFromLocalClassScript.kts
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.two.<script-resolveSuperTypeFromLocalClassScript.kts>] class UnusedClass : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.two.<script-resolveSuperTypeFromLocalClassScript.kts>, ScriptTopLevelDeclaration=true] class UnusedClass : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UnusedClass] constructor(): R|one/two/UnusedClass| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.two.<script-resolveSuperTypeFromLocalClassScript.kts>] interface UsedInterface2 : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.two.<script-resolveSuperTypeFromLocalClassScript.kts>, ScriptTopLevelDeclaration=true] interface UsedInterface2 : R|kotlin/Any| {
         }
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.two.<script-resolveSuperTypeFromLocalClassScript.kts>] interface UsedInterface : UsedInterface2 {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.two.<script-resolveSuperTypeFromLocalClassScript.kts>, ScriptTopLevelDeclaration=true] interface UsedInterface : UsedInterface2 {
         }
 
-        public? final? [ResolvedTo(COMPANION_GENERATION)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+        public? final? [ResolvedTo(COMPANION_GENERATION)] [ScriptTopLevelDeclaration=true] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
 
 SUPER_TYPES:
@@ -92,20 +92,20 @@ FILE: [ResolvedTo(IMPORTS)] resolveSuperTypeFromLocalClassScript.kts
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.two.<script-resolveSuperTypeFromLocalClassScript.kts>] class UnusedClass : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.two.<script-resolveSuperTypeFromLocalClassScript.kts>, ScriptTopLevelDeclaration=true] class UnusedClass : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UnusedClass] constructor(): R|one/two/UnusedClass| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.two.<script-resolveSuperTypeFromLocalClassScript.kts>] interface UsedInterface2 : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.two.<script-resolveSuperTypeFromLocalClassScript.kts>, ScriptTopLevelDeclaration=true] interface UsedInterface2 : R|kotlin/Any| {
         }
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.two.<script-resolveSuperTypeFromLocalClassScript.kts>] interface UsedInterface : UsedInterface2 {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.two.<script-resolveSuperTypeFromLocalClassScript.kts>, ScriptTopLevelDeclaration=true] interface UsedInterface : UsedInterface2 {
         }
 
-        public? final? [ResolvedTo(SUPER_TYPES)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+        public? final? [ResolvedTo(SUPER_TYPES)] [ScriptTopLevelDeclaration=true] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
 
 TYPES:
@@ -114,20 +114,20 @@ FILE: [ResolvedTo(IMPORTS)] resolveSuperTypeFromLocalClassScript.kts
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.two.<script-resolveSuperTypeFromLocalClassScript.kts>] class UnusedClass : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.two.<script-resolveSuperTypeFromLocalClassScript.kts>, ScriptTopLevelDeclaration=true] class UnusedClass : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UnusedClass] constructor(): R|one/two/UnusedClass| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.two.<script-resolveSuperTypeFromLocalClassScript.kts>] interface UsedInterface2 : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.two.<script-resolveSuperTypeFromLocalClassScript.kts>, ScriptTopLevelDeclaration=true] interface UsedInterface2 : R|kotlin/Any| {
         }
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.two.<script-resolveSuperTypeFromLocalClassScript.kts>] interface UsedInterface : UsedInterface2 {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.two.<script-resolveSuperTypeFromLocalClassScript.kts>, ScriptTopLevelDeclaration=true] interface UsedInterface : UsedInterface2 {
         }
 
-        public? final? [ResolvedTo(TYPES)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+        public? final? [ResolvedTo(TYPES)] [ScriptTopLevelDeclaration=true] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
 
 STATUS:
@@ -136,20 +136,20 @@ FILE: [ResolvedTo(IMPORTS)] resolveSuperTypeFromLocalClassScript.kts
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.two.<script-resolveSuperTypeFromLocalClassScript.kts>] class UnusedClass : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.two.<script-resolveSuperTypeFromLocalClassScript.kts>, ScriptTopLevelDeclaration=true] class UnusedClass : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UnusedClass] constructor(): R|one/two/UnusedClass| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.two.<script-resolveSuperTypeFromLocalClassScript.kts>] interface UsedInterface2 : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.two.<script-resolveSuperTypeFromLocalClassScript.kts>, ScriptTopLevelDeclaration=true] interface UsedInterface2 : R|kotlin/Any| {
         }
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.two.<script-resolveSuperTypeFromLocalClassScript.kts>] interface UsedInterface : UsedInterface2 {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.two.<script-resolveSuperTypeFromLocalClassScript.kts>, ScriptTopLevelDeclaration=true] interface UsedInterface : UsedInterface2 {
         }
 
-        public final [ResolvedTo(STATUS)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+        public final [ResolvedTo(STATUS)] [ScriptTopLevelDeclaration=true] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
 
 EXPECT_ACTUAL_MATCHING:
@@ -158,20 +158,20 @@ FILE: [ResolvedTo(IMPORTS)] resolveSuperTypeFromLocalClassScript.kts
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.two.<script-resolveSuperTypeFromLocalClassScript.kts>] class UnusedClass : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.two.<script-resolveSuperTypeFromLocalClassScript.kts>, ScriptTopLevelDeclaration=true] class UnusedClass : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UnusedClass] constructor(): R|one/two/UnusedClass| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.two.<script-resolveSuperTypeFromLocalClassScript.kts>] interface UsedInterface2 : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.two.<script-resolveSuperTypeFromLocalClassScript.kts>, ScriptTopLevelDeclaration=true] interface UsedInterface2 : R|kotlin/Any| {
         }
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.two.<script-resolveSuperTypeFromLocalClassScript.kts>] interface UsedInterface : UsedInterface2 {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.two.<script-resolveSuperTypeFromLocalClassScript.kts>, ScriptTopLevelDeclaration=true] interface UsedInterface : UsedInterface2 {
         }
 
-        public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+        public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ScriptTopLevelDeclaration=true] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
 
 CONTRACTS:
@@ -180,20 +180,20 @@ FILE: [ResolvedTo(IMPORTS)] resolveSuperTypeFromLocalClassScript.kts
         [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.two.<script-resolveSuperTypeFromLocalClassScript.kts>] class UnusedClass : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.two.<script-resolveSuperTypeFromLocalClassScript.kts>, ScriptTopLevelDeclaration=true] class UnusedClass : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UnusedClass] constructor(): R|one/two/UnusedClass| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.two.<script-resolveSuperTypeFromLocalClassScript.kts>] interface UsedInterface2 : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.two.<script-resolveSuperTypeFromLocalClassScript.kts>, ScriptTopLevelDeclaration=true] interface UsedInterface2 : R|kotlin/Any| {
         }
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.two.<script-resolveSuperTypeFromLocalClassScript.kts>] interface UsedInterface : UsedInterface2 {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.two.<script-resolveSuperTypeFromLocalClassScript.kts>, ScriptTopLevelDeclaration=true] interface UsedInterface : UsedInterface2 {
         }
 
-        public final [ResolvedTo(CONTRACTS)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+        public final [ResolvedTo(CONTRACTS)] [ScriptTopLevelDeclaration=true] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
 
 IMPLICIT_TYPES_BODY_RESOLVE:
@@ -202,20 +202,20 @@ FILE: [ResolvedTo(IMPORTS)] resolveSuperTypeFromLocalClassScript.kts
         [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.two.<script-resolveSuperTypeFromLocalClassScript.kts>] class UnusedClass : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.two.<script-resolveSuperTypeFromLocalClassScript.kts>, ScriptTopLevelDeclaration=true] class UnusedClass : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UnusedClass] constructor(): R|one/two/UnusedClass| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.two.<script-resolveSuperTypeFromLocalClassScript.kts>] interface UsedInterface2 : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.two.<script-resolveSuperTypeFromLocalClassScript.kts>, ScriptTopLevelDeclaration=true] interface UsedInterface2 : R|kotlin/Any| {
         }
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.two.<script-resolveSuperTypeFromLocalClassScript.kts>] interface UsedInterface : UsedInterface2 {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.two.<script-resolveSuperTypeFromLocalClassScript.kts>, ScriptTopLevelDeclaration=true] interface UsedInterface : UsedInterface2 {
         }
 
-        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
 
 CONSTANT_EVALUATION:
@@ -224,20 +224,20 @@ FILE: [ResolvedTo(IMPORTS)] resolveSuperTypeFromLocalClassScript.kts
         [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.two.<script-resolveSuperTypeFromLocalClassScript.kts>] class UnusedClass : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.two.<script-resolveSuperTypeFromLocalClassScript.kts>, ScriptTopLevelDeclaration=true] class UnusedClass : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UnusedClass] constructor(): R|one/two/UnusedClass| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.two.<script-resolveSuperTypeFromLocalClassScript.kts>] interface UsedInterface2 : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.two.<script-resolveSuperTypeFromLocalClassScript.kts>, ScriptTopLevelDeclaration=true] interface UsedInterface2 : R|kotlin/Any| {
         }
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.two.<script-resolveSuperTypeFromLocalClassScript.kts>] interface UsedInterface : UsedInterface2 {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.two.<script-resolveSuperTypeFromLocalClassScript.kts>, ScriptTopLevelDeclaration=true] interface UsedInterface : UsedInterface2 {
         }
 
-        public final [ResolvedTo(CONSTANT_EVALUATION)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+        public final [ResolvedTo(CONSTANT_EVALUATION)] [ScriptTopLevelDeclaration=true] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
 
 ANNOTATION_ARGUMENTS:
@@ -246,20 +246,20 @@ FILE: [ResolvedTo(IMPORTS)] resolveSuperTypeFromLocalClassScript.kts
         [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.two.<script-resolveSuperTypeFromLocalClassScript.kts>] class UnusedClass : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.two.<script-resolveSuperTypeFromLocalClassScript.kts>, ScriptTopLevelDeclaration=true] class UnusedClass : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UnusedClass] constructor(): R|one/two/UnusedClass| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.two.<script-resolveSuperTypeFromLocalClassScript.kts>] interface UsedInterface2 : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.two.<script-resolveSuperTypeFromLocalClassScript.kts>, ScriptTopLevelDeclaration=true] interface UsedInterface2 : R|kotlin/Any| {
         }
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.two.<script-resolveSuperTypeFromLocalClassScript.kts>] interface UsedInterface : UsedInterface2 {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.two.<script-resolveSuperTypeFromLocalClassScript.kts>, ScriptTopLevelDeclaration=true] interface UsedInterface : UsedInterface2 {
         }
 
-        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ScriptTopLevelDeclaration=true] fun resolveMe(): R|kotlin/Unit| { LAZY_BLOCK }
 
 
 BODY_RESOLVE:
@@ -268,20 +268,20 @@ FILE: [ResolvedTo(IMPORTS)] resolveSuperTypeFromLocalClassScript.kts
         [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.two.<script-resolveSuperTypeFromLocalClassScript.kts>] class UnusedClass : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol one.two.<script-resolveSuperTypeFromLocalClassScript.kts>, ScriptTopLevelDeclaration=true] class UnusedClass : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=UnusedClass] constructor(): R|one/two/UnusedClass| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol one.two.<script-resolveSuperTypeFromLocalClassScript.kts>] interface UsedInterface2 : R|kotlin/Any| {
+        public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol one.two.<script-resolveSuperTypeFromLocalClassScript.kts>, ScriptTopLevelDeclaration=true] interface UsedInterface2 : R|kotlin/Any| {
         }
 
-        public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol one.two.<script-resolveSuperTypeFromLocalClassScript.kts>] interface UsedInterface : R|one/two/UsedInterface2| {
+        public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol one.two.<script-resolveSuperTypeFromLocalClassScript.kts>, ScriptTopLevelDeclaration=true] interface UsedInterface : R|one/two/UsedInterface2| {
         }
 
-        public final [ResolvedTo(BODY_RESOLVE)] fun resolveMe(): R|kotlin/Unit| {
+        public final [ResolvedTo(BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] fun resolveMe(): R|kotlin/Unit| {
             local final [ResolvedTo(BODY_RESOLVE)] class Local : R|one/two/UsedInterface| {
                 public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Local] constructor(): R|<local>/Local| {
                     super<R|kotlin/Any|>()
@@ -298,20 +298,20 @@ FILE: [ResolvedTo(BODY_RESOLVE)] resolveSuperTypeFromLocalClassScript.kts
         [ResolvedTo(BODY_RESOLVE)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol one.two.<script-resolveSuperTypeFromLocalClassScript.kts>] class UnusedClass : R|kotlin/Any| {
+        public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol one.two.<script-resolveSuperTypeFromLocalClassScript.kts>, ScriptTopLevelDeclaration=true] class UnusedClass : R|kotlin/Any| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=UnusedClass] constructor(): R|one/two/UnusedClass| {
                 super<R|kotlin/Any|>()
             }
 
         }
 
-        public abstract [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol one.two.<script-resolveSuperTypeFromLocalClassScript.kts>] interface UsedInterface2 : R|kotlin/Any| {
+        public abstract [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol one.two.<script-resolveSuperTypeFromLocalClassScript.kts>, ScriptTopLevelDeclaration=true] interface UsedInterface2 : R|kotlin/Any| {
         }
 
-        public abstract [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol one.two.<script-resolveSuperTypeFromLocalClassScript.kts>] interface UsedInterface : R|one/two/UsedInterface2| {
+        public abstract [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol one.two.<script-resolveSuperTypeFromLocalClassScript.kts>, ScriptTopLevelDeclaration=true] interface UsedInterface : R|one/two/UsedInterface2| {
         }
 
-        public final [ResolvedTo(BODY_RESOLVE)] fun resolveMe(): R|kotlin/Unit| {
+        public final [ResolvedTo(BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] fun resolveMe(): R|kotlin/Unit| {
             local final [ResolvedTo(BODY_RESOLVE)] class Local : R|one/two/UsedInterface| {
                 public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Local] constructor(): R|<local>/Local| {
                     super<R|kotlin/Any|>()

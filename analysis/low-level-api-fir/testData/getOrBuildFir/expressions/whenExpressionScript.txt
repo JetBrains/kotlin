@@ -18,7 +18,7 @@ FILE: [ResolvedTo(IMPORTS)] whenExpressionScript.kts
         [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(BODY_RESOLVE)] fun foo([ResolvedTo(BODY_RESOLVE)] x: R|kotlin/Any|): R|kotlin/String| {
+        public final [ResolvedTo(BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] fun foo([ResolvedTo(BODY_RESOLVE)] x: R|kotlin/Any|): R|kotlin/String| {
             ^foo when ([ResolvedTo(BODY_RESOLVE)] lval <when-subject>: R|kotlin/Any| = R|<local>/x|) {
                 ($subj$ is R|kotlin/String|) ->  {
                     String(1)

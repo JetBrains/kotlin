@@ -4,14 +4,14 @@ FILE: [ResolvedTo(RAW_FIR)] annotationArgumentsMixScript.kts
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-annotationArgumentsMixScript.kts>] annotation class AnotherAnnotation : R|kotlin/Annotation| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-annotationArgumentsMixScript.kts>, ScriptTopLevelDeclaration=true] annotation class AnotherAnnotation : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherAnnotation] constructor(): R|AnotherAnnotation| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-annotationArgumentsMixScript.kts>] enum class EnumClass : R|kotlin/Enum<EnumClass>| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-annotationArgumentsMixScript.kts>, ScriptTopLevelDeclaration=true] enum class EnumClass : R|kotlin/Enum<EnumClass>| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass] constructor(): R|EnumClass| {
                 LAZY_super<R|kotlin/Enum<EnumClass>|>
             }
@@ -29,7 +29,7 @@ FILE: [ResolvedTo(RAW_FIR)] annotationArgumentsMixScript.kts
 
         }
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-annotationArgumentsMixScript.kts>] annotation class Anno : R|kotlin/Annotation| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-annotationArgumentsMixScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.str] str: String, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.ann] ann: AnotherAnnotation, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.c] c: KClass<*>, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.entry] entry: EnumClass): R|Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -48,7 +48,7 @@ FILE: [ResolvedTo(RAW_FIR)] annotationArgumentsMixScript.kts
 
         }
 
-        @Deprecated[Unresolved](LAZY_EXPRESSION) @Anno[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+        @Deprecated[Unresolved](LAZY_EXPRESSION) @Anno[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
 
 IMPORTS:
@@ -57,14 +57,14 @@ FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMixScript.kts
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-annotationArgumentsMixScript.kts>] annotation class AnotherAnnotation : R|kotlin/Annotation| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-annotationArgumentsMixScript.kts>, ScriptTopLevelDeclaration=true] annotation class AnotherAnnotation : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherAnnotation] constructor(): R|AnotherAnnotation| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-annotationArgumentsMixScript.kts>] enum class EnumClass : R|kotlin/Enum<EnumClass>| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-annotationArgumentsMixScript.kts>, ScriptTopLevelDeclaration=true] enum class EnumClass : R|kotlin/Enum<EnumClass>| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass] constructor(): R|EnumClass| {
                 LAZY_super<R|kotlin/Enum<EnumClass>|>
             }
@@ -82,7 +82,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMixScript.kts
 
         }
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-annotationArgumentsMixScript.kts>] annotation class Anno : R|kotlin/Annotation| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-annotationArgumentsMixScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.str] str: String, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.ann] ann: AnotherAnnotation, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.c] c: KClass<*>, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.entry] entry: EnumClass): R|Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -101,7 +101,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMixScript.kts
 
         }
 
-        @Deprecated[Unresolved](LAZY_EXPRESSION) @Anno[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+        @Deprecated[Unresolved](LAZY_EXPRESSION) @Anno[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
 
 COMPILER_REQUIRED_ANNOTATIONS:
@@ -110,14 +110,14 @@ FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMixScript.kts
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-annotationArgumentsMixScript.kts>] annotation class AnotherAnnotation : R|kotlin/Annotation| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-annotationArgumentsMixScript.kts>, ScriptTopLevelDeclaration=true] annotation class AnotherAnnotation : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherAnnotation] constructor(): R|AnotherAnnotation| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-annotationArgumentsMixScript.kts>] enum class EnumClass : R|kotlin/Enum<EnumClass>| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-annotationArgumentsMixScript.kts>, ScriptTopLevelDeclaration=true] enum class EnumClass : R|kotlin/Enum<EnumClass>| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass] constructor(): R|EnumClass| {
                 LAZY_super<R|kotlin/Enum<EnumClass>|>
             }
@@ -135,7 +135,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMixScript.kts
 
         }
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-annotationArgumentsMixScript.kts>] annotation class Anno : R|kotlin/Annotation| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-annotationArgumentsMixScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.str] str: String, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.ann] ann: AnotherAnnotation, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.c] c: KClass<*>, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.entry] entry: EnumClass): R|Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -154,7 +154,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMixScript.kts
 
         }
 
-        @R|kotlin/Deprecated|[CompilerRequiredAnnotations](boo#()) @Anno[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+        @R|kotlin/Deprecated|[CompilerRequiredAnnotations](boo#()) @Anno[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ScriptTopLevelDeclaration=true] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
 
 COMPANION_GENERATION:
@@ -163,14 +163,14 @@ FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMixScript.kts
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-annotationArgumentsMixScript.kts>] annotation class AnotherAnnotation : R|kotlin/Annotation| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-annotationArgumentsMixScript.kts>, ScriptTopLevelDeclaration=true] annotation class AnotherAnnotation : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherAnnotation] constructor(): R|AnotherAnnotation| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-annotationArgumentsMixScript.kts>] enum class EnumClass : R|kotlin/Enum<EnumClass>| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-annotationArgumentsMixScript.kts>, ScriptTopLevelDeclaration=true] enum class EnumClass : R|kotlin/Enum<EnumClass>| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass] constructor(): R|EnumClass| {
                 LAZY_super<R|kotlin/Enum<EnumClass>|>
             }
@@ -188,7 +188,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMixScript.kts
 
         }
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-annotationArgumentsMixScript.kts>] annotation class Anno : R|kotlin/Annotation| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-annotationArgumentsMixScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.str] str: String, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.ann] ann: AnotherAnnotation, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.c] c: KClass<*>, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.entry] entry: EnumClass): R|Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -207,7 +207,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMixScript.kts
 
         }
 
-        @R|kotlin/Deprecated|[CompilerRequiredAnnotations](boo#()) @Anno[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public? final? [ResolvedTo(COMPANION_GENERATION)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+        @R|kotlin/Deprecated|[CompilerRequiredAnnotations](boo#()) @Anno[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public? final? [ResolvedTo(COMPANION_GENERATION)] [ScriptTopLevelDeclaration=true] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
 
 SUPER_TYPES:
@@ -216,14 +216,14 @@ FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMixScript.kts
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-annotationArgumentsMixScript.kts>] annotation class AnotherAnnotation : R|kotlin/Annotation| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-annotationArgumentsMixScript.kts>, ScriptTopLevelDeclaration=true] annotation class AnotherAnnotation : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherAnnotation] constructor(): R|AnotherAnnotation| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-annotationArgumentsMixScript.kts>] enum class EnumClass : R|kotlin/Enum<EnumClass>| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-annotationArgumentsMixScript.kts>, ScriptTopLevelDeclaration=true] enum class EnumClass : R|kotlin/Enum<EnumClass>| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass] constructor(): R|EnumClass| {
                 LAZY_super<R|kotlin/Enum<EnumClass>|>
             }
@@ -241,7 +241,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMixScript.kts
 
         }
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-annotationArgumentsMixScript.kts>] annotation class Anno : R|kotlin/Annotation| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-annotationArgumentsMixScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.str] str: String, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.ann] ann: AnotherAnnotation, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.c] c: KClass<*>, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.entry] entry: EnumClass): R|Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -260,7 +260,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMixScript.kts
 
         }
 
-        @R|kotlin/Deprecated|[CompilerRequiredAnnotations](boo#()) @Anno[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public? final? [ResolvedTo(SUPER_TYPES)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+        @R|kotlin/Deprecated|[CompilerRequiredAnnotations](boo#()) @Anno[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public? final? [ResolvedTo(SUPER_TYPES)] [ScriptTopLevelDeclaration=true] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
 
 TYPES:
@@ -269,14 +269,14 @@ FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMixScript.kts
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-annotationArgumentsMixScript.kts>] annotation class AnotherAnnotation : R|kotlin/Annotation| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-annotationArgumentsMixScript.kts>, ScriptTopLevelDeclaration=true] annotation class AnotherAnnotation : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherAnnotation] constructor(): R|AnotherAnnotation| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-annotationArgumentsMixScript.kts>] enum class EnumClass : R|kotlin/Enum<EnumClass>| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-annotationArgumentsMixScript.kts>, ScriptTopLevelDeclaration=true] enum class EnumClass : R|kotlin/Enum<EnumClass>| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass] constructor(): R|EnumClass| {
                 LAZY_super<R|kotlin/Enum<EnumClass>|>
             }
@@ -294,7 +294,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMixScript.kts
 
         }
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-annotationArgumentsMixScript.kts>] annotation class Anno : R|kotlin/Annotation| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-annotationArgumentsMixScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.str] str: String, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.ann] ann: AnotherAnnotation, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.c] c: KClass<*>, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.entry] entry: EnumClass): R|Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -313,7 +313,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMixScript.kts
 
         }
 
-        @R|kotlin/Deprecated|[Types](boo#()) @R|Anno|[Types](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public? final? [ResolvedTo(TYPES)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+        @R|kotlin/Deprecated|[Types](boo#()) @R|Anno|[Types](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public? final? [ResolvedTo(TYPES)] [ScriptTopLevelDeclaration=true] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
 
 STATUS:
@@ -322,14 +322,14 @@ FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMixScript.kts
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-annotationArgumentsMixScript.kts>] annotation class AnotherAnnotation : R|kotlin/Annotation| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-annotationArgumentsMixScript.kts>, ScriptTopLevelDeclaration=true] annotation class AnotherAnnotation : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherAnnotation] constructor(): R|AnotherAnnotation| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-annotationArgumentsMixScript.kts>] enum class EnumClass : R|kotlin/Enum<EnumClass>| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-annotationArgumentsMixScript.kts>, ScriptTopLevelDeclaration=true] enum class EnumClass : R|kotlin/Enum<EnumClass>| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass] constructor(): R|EnumClass| {
                 LAZY_super<R|kotlin/Enum<EnumClass>|>
             }
@@ -347,7 +347,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMixScript.kts
 
         }
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-annotationArgumentsMixScript.kts>] annotation class Anno : R|kotlin/Annotation| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-annotationArgumentsMixScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.str] str: String, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.ann] ann: AnotherAnnotation, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.c] c: KClass<*>, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.entry] entry: EnumClass): R|Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -366,7 +366,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMixScript.kts
 
         }
 
-        @R|kotlin/Deprecated|[Types](boo#()) @R|Anno|[Types](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+        @R|kotlin/Deprecated|[Types](boo#()) @R|Anno|[Types](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final [ResolvedTo(STATUS)] [ScriptTopLevelDeclaration=true] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
 
 EXPECT_ACTUAL_MATCHING:
@@ -375,14 +375,14 @@ FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMixScript.kts
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-annotationArgumentsMixScript.kts>] annotation class AnotherAnnotation : R|kotlin/Annotation| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-annotationArgumentsMixScript.kts>, ScriptTopLevelDeclaration=true] annotation class AnotherAnnotation : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherAnnotation] constructor(): R|AnotherAnnotation| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-annotationArgumentsMixScript.kts>] enum class EnumClass : R|kotlin/Enum<EnumClass>| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-annotationArgumentsMixScript.kts>, ScriptTopLevelDeclaration=true] enum class EnumClass : R|kotlin/Enum<EnumClass>| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass] constructor(): R|EnumClass| {
                 LAZY_super<R|kotlin/Enum<EnumClass>|>
             }
@@ -400,7 +400,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMixScript.kts
 
         }
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-annotationArgumentsMixScript.kts>] annotation class Anno : R|kotlin/Annotation| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-annotationArgumentsMixScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.str] str: String, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.ann] ann: AnotherAnnotation, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.c] c: KClass<*>, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.entry] entry: EnumClass): R|Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -419,7 +419,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMixScript.kts
 
         }
 
-        @R|kotlin/Deprecated|[Types](boo#()) @R|Anno|[Types](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+        @R|kotlin/Deprecated|[Types](boo#()) @R|Anno|[Types](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ScriptTopLevelDeclaration=true] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
 
 CONTRACTS:
@@ -428,14 +428,14 @@ FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMixScript.kts
         [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-annotationArgumentsMixScript.kts>] annotation class AnotherAnnotation : R|kotlin/Annotation| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-annotationArgumentsMixScript.kts>, ScriptTopLevelDeclaration=true] annotation class AnotherAnnotation : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherAnnotation] constructor(): R|AnotherAnnotation| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-annotationArgumentsMixScript.kts>] enum class EnumClass : R|kotlin/Enum<EnumClass>| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-annotationArgumentsMixScript.kts>, ScriptTopLevelDeclaration=true] enum class EnumClass : R|kotlin/Enum<EnumClass>| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass] constructor(): R|EnumClass| {
                 LAZY_super<R|kotlin/Enum<EnumClass>|>
             }
@@ -453,7 +453,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMixScript.kts
 
         }
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-annotationArgumentsMixScript.kts>] annotation class Anno : R|kotlin/Annotation| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-annotationArgumentsMixScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.str] str: String, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.ann] ann: AnotherAnnotation, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.c] c: KClass<*>, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.entry] entry: EnumClass): R|Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -472,7 +472,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMixScript.kts
 
         }
 
-        @R|kotlin/Deprecated|[Types](boo#()) @R|Anno|[Types](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final [ResolvedTo(CONTRACTS)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+        @R|kotlin/Deprecated|[Types](boo#()) @R|Anno|[Types](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final [ResolvedTo(CONTRACTS)] [ScriptTopLevelDeclaration=true] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
 
 IMPLICIT_TYPES_BODY_RESOLVE:
@@ -481,14 +481,14 @@ FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMixScript.kts
         [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-annotationArgumentsMixScript.kts>] annotation class AnotherAnnotation : R|kotlin/Annotation| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-annotationArgumentsMixScript.kts>, ScriptTopLevelDeclaration=true] annotation class AnotherAnnotation : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherAnnotation] constructor(): R|AnotherAnnotation| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-annotationArgumentsMixScript.kts>] enum class EnumClass : R|kotlin/Enum<EnumClass>| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-annotationArgumentsMixScript.kts>, ScriptTopLevelDeclaration=true] enum class EnumClass : R|kotlin/Enum<EnumClass>| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass] constructor(): R|EnumClass| {
                 LAZY_super<R|kotlin/Enum<EnumClass>|>
             }
@@ -506,7 +506,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMixScript.kts
 
         }
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-annotationArgumentsMixScript.kts>] annotation class Anno : R|kotlin/Annotation| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-annotationArgumentsMixScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.str] str: String, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.ann] ann: AnotherAnnotation, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.c] c: KClass<*>, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.entry] entry: EnumClass): R|Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -525,7 +525,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMixScript.kts
 
         }
 
-        @R|kotlin/Deprecated|[Types](boo#()) @R|Anno|[Types](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+        @R|kotlin/Deprecated|[Types](boo#()) @R|Anno|[Types](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
 
 CONSTANT_EVALUATION:
@@ -534,14 +534,14 @@ FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMixScript.kts
         [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-annotationArgumentsMixScript.kts>] annotation class AnotherAnnotation : R|kotlin/Annotation| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-annotationArgumentsMixScript.kts>, ScriptTopLevelDeclaration=true] annotation class AnotherAnnotation : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherAnnotation] constructor(): R|AnotherAnnotation| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-annotationArgumentsMixScript.kts>] enum class EnumClass : R|kotlin/Enum<EnumClass>| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-annotationArgumentsMixScript.kts>, ScriptTopLevelDeclaration=true] enum class EnumClass : R|kotlin/Enum<EnumClass>| {
             private [ResolvedTo(RAW_FIR)] [ContainingClassKey=EnumClass] constructor(): R|EnumClass| {
                 LAZY_super<R|kotlin/Enum<EnumClass>|>
             }
@@ -559,7 +559,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMixScript.kts
 
         }
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-annotationArgumentsMixScript.kts>] annotation class Anno : R|kotlin/Annotation| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-annotationArgumentsMixScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.str] str: String, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.ann] ann: AnotherAnnotation, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.c] c: KClass<*>, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.entry] entry: EnumClass): R|Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -578,7 +578,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMixScript.kts
 
         }
 
-        @R|kotlin/Deprecated|[Types](boo#()) @R|Anno|[Types](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final [ResolvedTo(CONSTANT_EVALUATION)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+        @R|kotlin/Deprecated|[Types](boo#()) @R|Anno|[Types](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final [ResolvedTo(CONSTANT_EVALUATION)] [ScriptTopLevelDeclaration=true] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
 
 ANNOTATION_ARGUMENTS:
@@ -587,14 +587,14 @@ FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMixScript.kts
         [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-annotationArgumentsMixScript.kts>] annotation class AnotherAnnotation : R|kotlin/Annotation| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-annotationArgumentsMixScript.kts>, ScriptTopLevelDeclaration=true] annotation class AnotherAnnotation : R|kotlin/Annotation| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=AnotherAnnotation] constructor(): R|AnotherAnnotation| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-annotationArgumentsMixScript.kts>] enum class EnumClass : R|kotlin/Enum<EnumClass>| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-annotationArgumentsMixScript.kts>, ScriptTopLevelDeclaration=true] enum class EnumClass : R|kotlin/Enum<EnumClass>| {
             private [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] constructor(): R|EnumClass| {
                 LAZY_super<R|kotlin/Enum<EnumClass>|>
             }
@@ -612,7 +612,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMixScript.kts
 
         }
 
-        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-annotationArgumentsMixScript.kts>] annotation class Anno : R|kotlin/Annotation| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-annotationArgumentsMixScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.str] str: R|kotlin/String|, [ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.ann] ann: R|AnotherAnnotation|, [ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.c] c: R|kotlin/reflect/KClass<*>|, [ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.entry] entry: R|EnumClass|): R|Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -631,7 +631,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMixScript.kts
 
         }
 
-        @R|kotlin/Deprecated|[Types](message = <Unresolved name: boo>#()) @R|Anno|[Types](str = String(123), ann = R|/AnotherAnnotation.AnotherAnnotation|(), c = <getClass>(Q|AnotherAnnotation|), entry = Q|EnumClass|.R|/EnumClass.Second|) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
+        @R|kotlin/Deprecated|[Types](message = <Unresolved name: boo>#()) @R|Anno|[Types](str = String(123), ann = R|/AnotherAnnotation.AnotherAnnotation|(), c = <getClass>(Q|AnotherAnnotation|), entry = Q|EnumClass|.R|/EnumClass.Second|) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ScriptTopLevelDeclaration=true] fun foo(): R|kotlin/Unit| { LAZY_BLOCK }
 
 
 BODY_RESOLVE:
@@ -640,14 +640,14 @@ FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMixScript.kts
         [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-annotationArgumentsMixScript.kts>] annotation class AnotherAnnotation : R|kotlin/Annotation| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-annotationArgumentsMixScript.kts>, ScriptTopLevelDeclaration=true] annotation class AnotherAnnotation : R|kotlin/Annotation| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=AnotherAnnotation] constructor(): R|AnotherAnnotation| {
                 LAZY_super<R|kotlin/Any|>
             }
 
         }
 
-        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-annotationArgumentsMixScript.kts>] enum class EnumClass : R|kotlin/Enum<EnumClass>| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-annotationArgumentsMixScript.kts>, ScriptTopLevelDeclaration=true] enum class EnumClass : R|kotlin/Enum<EnumClass>| {
             private [ResolvedTo(STATUS)] [ContainingClassKey=EnumClass] constructor(): R|EnumClass| {
                 LAZY_super<R|kotlin/Enum<EnumClass>|>
             }
@@ -665,7 +665,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMixScript.kts
 
         }
 
-        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-annotationArgumentsMixScript.kts>] annotation class Anno : R|kotlin/Annotation| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-annotationArgumentsMixScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.str] str: R|kotlin/String|, [ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.ann] ann: R|AnotherAnnotation|, [ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.c] c: R|kotlin/reflect/KClass<*>|, [ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.entry] entry: R|EnumClass|): R|Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -684,7 +684,7 @@ FILE: [ResolvedTo(IMPORTS)] annotationArgumentsMixScript.kts
 
         }
 
-        @R|kotlin/Deprecated|[Types](message = <Unresolved name: boo>#()) @R|Anno|[Types](str = String(123), ann = R|/AnotherAnnotation.AnotherAnnotation|(), c = <getClass>(Q|AnotherAnnotation|), entry = Q|EnumClass|.R|/EnumClass.Second|) public final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Unit| {
+        @R|kotlin/Deprecated|[Types](message = <Unresolved name: boo>#()) @R|Anno|[Types](str = String(123), ann = R|/AnotherAnnotation.AnotherAnnotation|(), c = <getClass>(Q|AnotherAnnotation|), entry = Q|EnumClass|.R|/EnumClass.Second|) public final [ResolvedTo(BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] fun foo(): R|kotlin/Unit| {
         }
 
 
@@ -694,14 +694,14 @@ FILE: [ResolvedTo(BODY_RESOLVE)] annotationArgumentsMixScript.kts
         [ResolvedTo(BODY_RESOLVE)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol <script-annotationArgumentsMixScript.kts>] annotation class AnotherAnnotation : R|kotlin/Annotation| {
+        public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol <script-annotationArgumentsMixScript.kts>, ScriptTopLevelDeclaration=true] annotation class AnotherAnnotation : R|kotlin/Annotation| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=AnotherAnnotation] constructor(): R|AnotherAnnotation| {
                 super<R|kotlin/Any|>()
             }
 
         }
 
-        public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol <script-annotationArgumentsMixScript.kts>] enum class EnumClass : R|kotlin/Enum<EnumClass>| {
+        public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol <script-annotationArgumentsMixScript.kts>, ScriptTopLevelDeclaration=true] enum class EnumClass : R|kotlin/Enum<EnumClass>| {
             private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=EnumClass] constructor(): R|EnumClass| {
                 super<R|kotlin/Enum<EnumClass>|>()
             }
@@ -719,7 +719,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] annotationArgumentsMixScript.kts
 
         }
 
-        public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol <script-annotationArgumentsMixScript.kts>] annotation class Anno : R|kotlin/Annotation| {
+        public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol <script-annotationArgumentsMixScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/Anno.str] str: R|kotlin/String|, [ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/Anno.ann] ann: R|AnotherAnnotation|, [ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/Anno.c] c: R|kotlin/reflect/KClass<*>|, [ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/Anno.entry] entry: R|EnumClass|): R|Anno| {
                 super<R|kotlin/Any|>()
             }
@@ -738,6 +738,6 @@ FILE: [ResolvedTo(BODY_RESOLVE)] annotationArgumentsMixScript.kts
 
         }
 
-        @R|kotlin/Deprecated|[Types](message = <Unresolved name: boo>#()) @R|Anno|[Types](str = String(123), ann = R|/AnotherAnnotation.AnotherAnnotation|(), c = <getClass>(Q|AnotherAnnotation|), entry = Q|EnumClass|.R|/EnumClass.Second|) public final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Unit| {
+        @R|kotlin/Deprecated|[Types](message = <Unresolved name: boo>#()) @R|Anno|[Types](str = String(123), ann = R|/AnotherAnnotation.AnotherAnnotation|(), c = <getClass>(Q|AnotherAnnotation|), entry = Q|EnumClass|.R|/EnumClass.Second|) public final [ResolvedTo(BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] fun foo(): R|kotlin/Unit| {
         }
 

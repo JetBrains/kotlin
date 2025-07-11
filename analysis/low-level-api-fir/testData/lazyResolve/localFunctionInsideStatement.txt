@@ -4,7 +4,7 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideStatement.kts
         [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-localFunctionInsideStatement.kts>] class Builder : R|kotlin/Any| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-localFunctionInsideStatement.kts>, ScriptTopLevelDeclaration=true] class Builder : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Builder] constructor(): R|Builder| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -17,7 +17,7 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionInsideStatement.kts
 
         }
 
-        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun build([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] action: R|Builder.() -> kotlin/Unit|): R|Builder| {
+        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] fun build([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] action: R|Builder.() -> kotlin/Unit|): R|Builder| {
             ^build R|/Builder.Builder|().R|kotlin/apply|<R|Builder|>(R|<local>/action|)
         }
 
@@ -45,7 +45,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] localFunctionInsideStatement.kts
         [ResolvedTo(BODY_RESOLVE)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol <script-localFunctionInsideStatement.kts>] class Builder : R|kotlin/Any| {
+        public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol <script-localFunctionInsideStatement.kts>, ScriptTopLevelDeclaration=true] class Builder : R|kotlin/Any| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Builder] constructor(): R|Builder| {
                 super<R|kotlin/Any|>()
             }
@@ -60,7 +60,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] localFunctionInsideStatement.kts
 
         }
 
-        public final [ResolvedTo(BODY_RESOLVE)] fun build([ResolvedTo(BODY_RESOLVE)] action: R|Builder.() -> kotlin/Unit|): R|Builder| {
+        public final [ResolvedTo(BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] fun build([ResolvedTo(BODY_RESOLVE)] action: R|Builder.() -> kotlin/Unit|): R|Builder| {
             ^build R|/Builder.Builder|().R|kotlin/apply|<R|Builder|>(R|<local>/action|)
         }
 

@@ -13,7 +13,7 @@ FILE: [ResolvedTo(IMPORTS)] localFunctionScript.kts
         [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(BODY_RESOLVE)] fun y(): R|kotlin/Unit| {
+        public final [ResolvedTo(BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] fun y(): R|kotlin/Unit| {
             local final [ResolvedTo(BODY_RESOLVE)] fun x(): R|kotlin/String| {
                 ^x String()
             }

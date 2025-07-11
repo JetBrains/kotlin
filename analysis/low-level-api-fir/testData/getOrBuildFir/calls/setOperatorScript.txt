@@ -13,7 +13,7 @@ FILE: [ResolvedTo(IMPORTS)] setOperatorScript.kts
         [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol test.<script-setOperatorScript.kts>] class B : R|kotlin/Any| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol test.<script-setOperatorScript.kts>, ScriptTopLevelDeclaration=true] class B : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=B] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=test/B.n] n: R|kotlin/Int|): R|test/B| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -29,7 +29,7 @@ FILE: [ResolvedTo(IMPORTS)] setOperatorScript.kts
 
         }
 
-        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] var a: R|test/B| = R|test/B.B|(Int(1))
+        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] var a: R|test/B| = R|test/B.B|(Int(1))
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|test/B|
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] set([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] value: R|test/B|): R|kotlin/Unit|
 

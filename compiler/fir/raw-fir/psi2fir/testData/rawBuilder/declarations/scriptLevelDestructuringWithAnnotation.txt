@@ -14,4 +14,3 @@ FILE: scriptLevelDestructuringWithAnnotation.kts
 
         @SecondRightAnno(<strcat>(String(d ), prop#)) public final [DestructuringDeclarationContainerVariableKey=<local>/<destruct>] val d: <implicit> = R|<local>/<destruct>|.component2#()
             public get(): <implicit>
-

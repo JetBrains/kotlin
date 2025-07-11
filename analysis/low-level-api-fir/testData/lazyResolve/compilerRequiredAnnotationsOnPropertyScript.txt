@@ -4,7 +4,7 @@ FILE: [ResolvedTo(RAW_FIR)] compilerRequiredAnnotationsOnPropertyScript.kts
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-compilerRequiredAnnotationsOnPropertyScript.kts>] annotation class Anno : R|kotlin/Annotation| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-compilerRequiredAnnotationsOnPropertyScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -14,7 +14,7 @@ FILE: [ResolvedTo(RAW_FIR)] compilerRequiredAnnotationsOnPropertyScript.kts
 
         }
 
-        @Deprecated[Unresolved](LAZY_EXPRESSION) @Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] var memberProperty: <implicit> = LAZY_EXPRESSION
+        @Deprecated[Unresolved](LAZY_EXPRESSION) @Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] var memberProperty: <implicit> = LAZY_EXPRESSION
             @Deprecated[Unresolved](LAZY_EXPRESSION) @Anno[Unresolved](LAZY_EXPRESSION) public? [ResolvedTo(RAW_FIR)] get(): <implicit> { LAZY_BLOCK }
             @PROPERTY_SETTER:Deprecated[Unresolved](LAZY_EXPRESSION) @Anno[Unresolved](LAZY_EXPRESSION) @SETTER_PARAMETER:Deprecated[Unresolved](LAZY_EXPRESSION) @SETTER_PARAMETER:Anno[Unresolved](LAZY_EXPRESSION) public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: <implicit>): R|kotlin/Unit| { LAZY_BLOCK }
 
@@ -25,7 +25,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnPropertyScript.kts
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-compilerRequiredAnnotationsOnPropertyScript.kts>] annotation class Anno : R|kotlin/Annotation| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-compilerRequiredAnnotationsOnPropertyScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -35,7 +35,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnPropertyScript.kts
 
         }
 
-        @Deprecated[Unresolved](LAZY_EXPRESSION) @Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] var memberProperty: <implicit> = LAZY_EXPRESSION
+        @Deprecated[Unresolved](LAZY_EXPRESSION) @Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] var memberProperty: <implicit> = LAZY_EXPRESSION
             @Deprecated[Unresolved](LAZY_EXPRESSION) @Anno[Unresolved](LAZY_EXPRESSION) public? [ResolvedTo(RAW_FIR)] get(): <implicit> { LAZY_BLOCK }
             @PROPERTY_SETTER:Deprecated[Unresolved](LAZY_EXPRESSION) @Anno[Unresolved](LAZY_EXPRESSION) @SETTER_PARAMETER:Deprecated[Unresolved](LAZY_EXPRESSION) @SETTER_PARAMETER:Anno[Unresolved](LAZY_EXPRESSION) public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: <implicit>): R|kotlin/Unit| { LAZY_BLOCK }
 
@@ -46,7 +46,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnPropertyScript.kts
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-compilerRequiredAnnotationsOnPropertyScript.kts>] annotation class Anno : R|kotlin/Annotation| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-compilerRequiredAnnotationsOnPropertyScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -56,7 +56,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnPropertyScript.kts
 
         }
 
-        @R|kotlin/Deprecated|[CompilerRequiredAnnotations](String(property)) @Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] var memberProperty: <implicit> = LAZY_EXPRESSION
+        @R|kotlin/Deprecated|[CompilerRequiredAnnotations](String(property)) @Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ScriptTopLevelDeclaration=true] var memberProperty: <implicit> = LAZY_EXPRESSION
             @R|kotlin/Deprecated|[CompilerRequiredAnnotations](String(getter)) @Anno[Unresolved](LAZY_EXPRESSION) public? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] get(): <implicit> { LAZY_BLOCK }
             @PROPERTY_SETTER:R|kotlin/Deprecated|[CompilerRequiredAnnotations](String(setter)) @Anno[Unresolved](LAZY_EXPRESSION) @SETTER_PARAMETER:R|kotlin/Deprecated|[CompilerRequiredAnnotations](String(setparam)) @SETTER_PARAMETER:Anno[Unresolved](LAZY_EXPRESSION) public? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] set([ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] value: <implicit>): R|kotlin/Unit| { LAZY_BLOCK }
 
@@ -67,7 +67,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnPropertyScript.kts
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-compilerRequiredAnnotationsOnPropertyScript.kts>] annotation class Anno : R|kotlin/Annotation| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-compilerRequiredAnnotationsOnPropertyScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -77,7 +77,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnPropertyScript.kts
 
         }
 
-        @R|kotlin/Deprecated|[CompilerRequiredAnnotations](String(property)) @Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(COMPANION_GENERATION)] var memberProperty: <implicit> = LAZY_EXPRESSION
+        @R|kotlin/Deprecated|[CompilerRequiredAnnotations](String(property)) @Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(COMPANION_GENERATION)] [ScriptTopLevelDeclaration=true] var memberProperty: <implicit> = LAZY_EXPRESSION
             @R|kotlin/Deprecated|[CompilerRequiredAnnotations](String(getter)) @Anno[Unresolved](LAZY_EXPRESSION) public? [ResolvedTo(COMPANION_GENERATION)] get(): <implicit> { LAZY_BLOCK }
             @PROPERTY_SETTER:R|kotlin/Deprecated|[CompilerRequiredAnnotations](String(setter)) @Anno[Unresolved](LAZY_EXPRESSION) @SETTER_PARAMETER:R|kotlin/Deprecated|[CompilerRequiredAnnotations](String(setparam)) @SETTER_PARAMETER:Anno[Unresolved](LAZY_EXPRESSION) public? [ResolvedTo(COMPANION_GENERATION)] set([ResolvedTo(COMPANION_GENERATION)] value: <implicit>): R|kotlin/Unit| { LAZY_BLOCK }
 
@@ -88,7 +88,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnPropertyScript.kts
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-compilerRequiredAnnotationsOnPropertyScript.kts>] annotation class Anno : R|kotlin/Annotation| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-compilerRequiredAnnotationsOnPropertyScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -98,7 +98,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnPropertyScript.kts
 
         }
 
-        @R|kotlin/Deprecated|[CompilerRequiredAnnotations](String(property)) @Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(SUPER_TYPES)] var memberProperty: <implicit> = LAZY_EXPRESSION
+        @R|kotlin/Deprecated|[CompilerRequiredAnnotations](String(property)) @Anno[Unresolved](LAZY_EXPRESSION) public? final? [ResolvedTo(SUPER_TYPES)] [ScriptTopLevelDeclaration=true] var memberProperty: <implicit> = LAZY_EXPRESSION
             @R|kotlin/Deprecated|[CompilerRequiredAnnotations](String(getter)) @Anno[Unresolved](LAZY_EXPRESSION) public? [ResolvedTo(SUPER_TYPES)] get(): <implicit> { LAZY_BLOCK }
             @PROPERTY_SETTER:R|kotlin/Deprecated|[CompilerRequiredAnnotations](String(setter)) @Anno[Unresolved](LAZY_EXPRESSION) @SETTER_PARAMETER:R|kotlin/Deprecated|[CompilerRequiredAnnotations](String(setparam)) @SETTER_PARAMETER:Anno[Unresolved](LAZY_EXPRESSION) public? [ResolvedTo(SUPER_TYPES)] set([ResolvedTo(SUPER_TYPES)] value: <implicit>): R|kotlin/Unit| { LAZY_BLOCK }
 
@@ -109,7 +109,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnPropertyScript.kts
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-compilerRequiredAnnotationsOnPropertyScript.kts>] annotation class Anno : R|kotlin/Annotation| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-compilerRequiredAnnotationsOnPropertyScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -119,7 +119,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnPropertyScript.kts
 
         }
 
-        @R|kotlin/Deprecated|[Types](String(property)) @R|Anno|[Types](LAZY_EXPRESSION) public? final? [ResolvedTo(TYPES)] var memberProperty: <implicit> = LAZY_EXPRESSION
+        @R|kotlin/Deprecated|[Types](String(property)) @R|Anno|[Types](LAZY_EXPRESSION) public? final? [ResolvedTo(TYPES)] [ScriptTopLevelDeclaration=true] var memberProperty: <implicit> = LAZY_EXPRESSION
             @R|kotlin/Deprecated|[Types](String(getter)) @R|Anno|[Types](LAZY_EXPRESSION) public? [ResolvedTo(TYPES)] get(): <implicit> { LAZY_BLOCK }
             @PROPERTY_SETTER:R|kotlin/Deprecated|[Types](String(setter)) @R|Anno|[Types](LAZY_EXPRESSION) @SETTER_PARAMETER:R|kotlin/Deprecated|[Types](String(setparam)) @SETTER_PARAMETER:R|Anno|[Types](LAZY_EXPRESSION) public? [ResolvedTo(TYPES)] set([ResolvedTo(TYPES)] value: <implicit>): R|kotlin/Unit| { LAZY_BLOCK }
 
@@ -130,7 +130,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnPropertyScript.kts
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-compilerRequiredAnnotationsOnPropertyScript.kts>] annotation class Anno : R|kotlin/Annotation| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-compilerRequiredAnnotationsOnPropertyScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -140,7 +140,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnPropertyScript.kts
 
         }
 
-        @R|kotlin/Deprecated|[Types](String(property)) @R|Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(STATUS)] var memberProperty: <implicit> = LAZY_EXPRESSION
+        @R|kotlin/Deprecated|[Types](String(property)) @R|Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(STATUS)] [ScriptTopLevelDeclaration=true] var memberProperty: <implicit> = LAZY_EXPRESSION
             @R|kotlin/Deprecated|[Types](String(getter)) @R|Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(STATUS)] get(): <implicit> { LAZY_BLOCK }
             @PROPERTY_SETTER:R|kotlin/Deprecated|[Types](String(setter)) @R|Anno|[Types](LAZY_EXPRESSION) @SETTER_PARAMETER:R|kotlin/Deprecated|[Types](String(setparam)) @SETTER_PARAMETER:R|Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(STATUS)] set([ResolvedTo(STATUS)] value: <implicit>): R|kotlin/Unit| { LAZY_BLOCK }
 
@@ -151,7 +151,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnPropertyScript.kts
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-compilerRequiredAnnotationsOnPropertyScript.kts>] annotation class Anno : R|kotlin/Annotation| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-compilerRequiredAnnotationsOnPropertyScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -161,7 +161,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnPropertyScript.kts
 
         }
 
-        @R|kotlin/Deprecated|[Types](String(property)) @R|Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] var memberProperty: <implicit> = LAZY_EXPRESSION
+        @R|kotlin/Deprecated|[Types](String(property)) @R|Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ScriptTopLevelDeclaration=true] var memberProperty: <implicit> = LAZY_EXPRESSION
             @R|kotlin/Deprecated|[Types](String(getter)) @R|Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] get(): <implicit> { LAZY_BLOCK }
             @PROPERTY_SETTER:R|kotlin/Deprecated|[Types](String(setter)) @R|Anno|[Types](LAZY_EXPRESSION) @SETTER_PARAMETER:R|kotlin/Deprecated|[Types](String(setparam)) @SETTER_PARAMETER:R|Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] set([ResolvedTo(EXPECT_ACTUAL_MATCHING)] value: <implicit>): R|kotlin/Unit| { LAZY_BLOCK }
 
@@ -172,7 +172,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnPropertyScript.kts
         [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-compilerRequiredAnnotationsOnPropertyScript.kts>] annotation class Anno : R|kotlin/Annotation| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-compilerRequiredAnnotationsOnPropertyScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -182,7 +182,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnPropertyScript.kts
 
         }
 
-        @R|kotlin/Deprecated|[Types](String(property)) @R|Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(CONTRACTS)] var memberProperty: <implicit> = LAZY_EXPRESSION
+        @R|kotlin/Deprecated|[Types](String(property)) @R|Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(CONTRACTS)] [ScriptTopLevelDeclaration=true] var memberProperty: <implicit> = LAZY_EXPRESSION
             @R|kotlin/Deprecated|[Types](String(getter)) @R|Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(CONTRACTS)] get(): <implicit> { LAZY_BLOCK }
             @PROPERTY_SETTER:R|kotlin/Deprecated|[Types](String(setter)) @R|Anno|[Types](LAZY_EXPRESSION) @SETTER_PARAMETER:R|kotlin/Deprecated|[Types](String(setparam)) @SETTER_PARAMETER:R|Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(CONTRACTS)] set([ResolvedTo(CONTRACTS)] value: <implicit>): R|kotlin/Unit| { LAZY_BLOCK }
 
@@ -193,7 +193,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnPropertyScript.kts
         [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-compilerRequiredAnnotationsOnPropertyScript.kts>] annotation class Anno : R|kotlin/Annotation| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-compilerRequiredAnnotationsOnPropertyScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -203,7 +203,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnPropertyScript.kts
 
         }
 
-        @R|kotlin/Deprecated|[Types](String(property)) @R|Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] var memberProperty: R|kotlin/Int| = Int(32)
+        @R|kotlin/Deprecated|[Types](String(property)) @R|Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] var memberProperty: R|kotlin/Int| = Int(32)
             @R|kotlin/Deprecated|[Types](String(getter)) @R|Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/Int| {
                 ^ field#
             }
@@ -218,7 +218,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnPropertyScript.kts
         [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-compilerRequiredAnnotationsOnPropertyScript.kts>] annotation class Anno : R|kotlin/Annotation| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-compilerRequiredAnnotationsOnPropertyScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -228,7 +228,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnPropertyScript.kts
 
         }
 
-        @R|kotlin/Deprecated|[Types](String(property)) @R|Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(CONSTANT_EVALUATION)] var memberProperty: R|kotlin/Int| = Int(32)
+        @R|kotlin/Deprecated|[Types](String(property)) @R|Anno|[Types](LAZY_EXPRESSION) public final [ResolvedTo(CONSTANT_EVALUATION)] [ScriptTopLevelDeclaration=true] var memberProperty: R|kotlin/Int| = Int(32)
             @R|kotlin/Deprecated|[Types](String(getter)) @R|Anno|[Types](LAZY_EXPRESSION) public [ResolvedTo(CONSTANT_EVALUATION)] get(): R|kotlin/Int| {
                 ^ field#
             }
@@ -243,7 +243,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnPropertyScript.kts
         [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-compilerRequiredAnnotationsOnPropertyScript.kts>] annotation class Anno : R|kotlin/Annotation| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-compilerRequiredAnnotationsOnPropertyScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.s] s: R|kotlin/String|): R|Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -253,7 +253,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnPropertyScript.kts
 
         }
 
-        @R|kotlin/Deprecated|[Types](message = String(property)) @R|Anno|[Types](s = String(property)) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] var memberProperty: R|kotlin/Int| = Int(32)
+        @R|kotlin/Deprecated|[Types](message = String(property)) @R|Anno|[Types](s = String(property)) public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ScriptTopLevelDeclaration=true] var memberProperty: R|kotlin/Int| = Int(32)
             @R|kotlin/Deprecated|[Types](message = String(getter)) @R|Anno|[Types](s = String(getter)) public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): R|kotlin/Int| {
                 ^ field#
             }
@@ -268,7 +268,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnPropertyScript.kts
         [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-compilerRequiredAnnotationsOnPropertyScript.kts>] annotation class Anno : R|kotlin/Annotation| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-compilerRequiredAnnotationsOnPropertyScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.s] s: R|kotlin/String|): R|Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -278,7 +278,7 @@ FILE: [ResolvedTo(IMPORTS)] compilerRequiredAnnotationsOnPropertyScript.kts
 
         }
 
-        @R|kotlin/Deprecated|[Types](message = String(property)) @R|Anno|[Types](s = String(property)) public final [ResolvedTo(BODY_RESOLVE)] [IsReferredViaField=true] var memberProperty: R|kotlin/Int| = Int(32)
+        @R|kotlin/Deprecated|[Types](message = String(property)) @R|Anno|[Types](s = String(property)) public final [ResolvedTo(BODY_RESOLVE)] [IsReferredViaField=true, ScriptTopLevelDeclaration=true] var memberProperty: R|kotlin/Int| = Int(32)
             @R|kotlin/Deprecated|[Types](message = String(getter)) @R|Anno|[Types](s = String(getter)) public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int| {
                 ^ F|/memberProperty|
             }
@@ -293,7 +293,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] compilerRequiredAnnotationsOnPropertyScript.kts
         [ResolvedTo(BODY_RESOLVE)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol <script-compilerRequiredAnnotationsOnPropertyScript.kts>] annotation class Anno : R|kotlin/Annotation| {
+        public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol <script-compilerRequiredAnnotationsOnPropertyScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/Anno.s] s: R|kotlin/String|): R|Anno| {
                 super<R|kotlin/Any|>()
             }
@@ -303,7 +303,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] compilerRequiredAnnotationsOnPropertyScript.kts
 
         }
 
-        @R|kotlin/Deprecated|[Types](message = String(property)) @R|Anno|[Types](s = String(property)) public final [ResolvedTo(BODY_RESOLVE)] [IsReferredViaField=true] var memberProperty: R|kotlin/Int| = Int(32)
+        @R|kotlin/Deprecated|[Types](message = String(property)) @R|Anno|[Types](s = String(property)) public final [ResolvedTo(BODY_RESOLVE)] [IsReferredViaField=true, ScriptTopLevelDeclaration=true] var memberProperty: R|kotlin/Int| = Int(32)
             @R|kotlin/Deprecated|[Types](message = String(getter)) @R|Anno|[Types](s = String(getter)) public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/Int| {
                 ^ F|/memberProperty|
             }

@@ -11,7 +11,7 @@ FILE: [ResolvedTo(IMPORTS)] assignment.kts
         [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-assignment.kts>] class Builder : R|kotlin/Any| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-assignment.kts>, ScriptTopLevelDeclaration=true] class Builder : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Builder] constructor(): R|Builder| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -24,20 +24,20 @@ FILE: [ResolvedTo(IMPORTS)] assignment.kts
 
         }
 
-        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun build([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] action: R|Builder.() -> kotlin/Unit|): R|Builder| {
+        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] fun build([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] action: R|Builder.() -> kotlin/Unit|): R|Builder| {
             ^build R|/Builder.Builder|().R|kotlin/apply|<R|Builder|>(R|<local>/action|)
         }
 
-        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+        [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] init { LAZY_BLOCK }
 
-        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val builder: R|Builder| = R|/build|(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=@ExtensionFunctionType kotlin/Function1<Builder, kotlin/Unit>] build@fun [ResolvedTo(RAW_FIR)] R|Builder|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] val builder: R|Builder| = R|/build|(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=@ExtensionFunctionType kotlin/Function1<Builder, kotlin/Unit>] build@fun [ResolvedTo(RAW_FIR)] R|Builder|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
             this@R|special/anonymous|.R|/Builder.version| = String(321)
         }
         )
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|Builder|
 
-        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+        [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] init { LAZY_BLOCK }
 
-        [ResolvedTo(BODY_RESOLVE)] init {
+        [ResolvedTo(BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] init {
             R|/builder|.R|/Builder.version| = String()
         }

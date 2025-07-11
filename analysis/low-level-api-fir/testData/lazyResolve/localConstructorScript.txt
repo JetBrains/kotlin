@@ -4,9 +4,9 @@ FILE: [ResolvedTo(RAW_FIR)] localConstructorScript.kts
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] T> magic(): T { LAZY_BLOCK }
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] fun <[ResolvedTo(RAW_FIR)] T> magic(): T { LAZY_BLOCK }
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-localConstructorScript.kts>] class Q : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-localConstructorScript.kts>, ScriptTopLevelDeclaration=true] class Q : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Q] constructor(): R|Q| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -22,9 +22,9 @@ FILE: [ResolvedTo(IMPORTS)] localConstructorScript.kts
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] T> magic(): T { LAZY_BLOCK }
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] fun <[ResolvedTo(RAW_FIR)] T> magic(): T { LAZY_BLOCK }
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-localConstructorScript.kts>] class Q : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-localConstructorScript.kts>, ScriptTopLevelDeclaration=true] class Q : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Q] constructor(): R|Q| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -40,9 +40,9 @@ FILE: [ResolvedTo(IMPORTS)] localConstructorScript.kts
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] T> magic(): T { LAZY_BLOCK }
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] fun <[ResolvedTo(RAW_FIR)] T> magic(): T { LAZY_BLOCK }
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-localConstructorScript.kts>] class Q : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-localConstructorScript.kts>, ScriptTopLevelDeclaration=true] class Q : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Q] constructor(): R|Q| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -58,9 +58,9 @@ FILE: [ResolvedTo(IMPORTS)] localConstructorScript.kts
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] T> magic(): T { LAZY_BLOCK }
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] fun <[ResolvedTo(RAW_FIR)] T> magic(): T { LAZY_BLOCK }
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-localConstructorScript.kts>] class Q : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-localConstructorScript.kts>, ScriptTopLevelDeclaration=true] class Q : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Q] constructor(): R|Q| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -76,9 +76,9 @@ FILE: [ResolvedTo(IMPORTS)] localConstructorScript.kts
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] T> magic(): T { LAZY_BLOCK }
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] fun <[ResolvedTo(RAW_FIR)] T> magic(): T { LAZY_BLOCK }
 
-        public final? [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-localConstructorScript.kts>] class Q : R|kotlin/Any| {
+        public final? [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-localConstructorScript.kts>, ScriptTopLevelDeclaration=true] class Q : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Q] constructor(): R|Q| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -94,9 +94,9 @@ FILE: [ResolvedTo(IMPORTS)] localConstructorScript.kts
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] T> magic(): T { LAZY_BLOCK }
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] fun <[ResolvedTo(RAW_FIR)] T> magic(): T { LAZY_BLOCK }
 
-        public final? [ResolvedTo(TYPES)] [ContainingScriptKey=FirScriptSymbol <script-localConstructorScript.kts>] class Q : R|kotlin/Any| {
+        public final? [ResolvedTo(TYPES)] [ContainingScriptKey=FirScriptSymbol <script-localConstructorScript.kts>, ScriptTopLevelDeclaration=true] class Q : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Q] constructor(): R|Q| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -112,9 +112,9 @@ FILE: [ResolvedTo(IMPORTS)] localConstructorScript.kts
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] T> magic(): T { LAZY_BLOCK }
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] fun <[ResolvedTo(RAW_FIR)] T> magic(): T { LAZY_BLOCK }
 
-        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-localConstructorScript.kts>] class Q : R|kotlin/Any| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-localConstructorScript.kts>, ScriptTopLevelDeclaration=true] class Q : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Q] constructor(): R|Q| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -130,9 +130,9 @@ FILE: [ResolvedTo(IMPORTS)] localConstructorScript.kts
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] T> magic(): T { LAZY_BLOCK }
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] fun <[ResolvedTo(RAW_FIR)] T> magic(): T { LAZY_BLOCK }
 
-        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-localConstructorScript.kts>] class Q : R|kotlin/Any| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-localConstructorScript.kts>, ScriptTopLevelDeclaration=true] class Q : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Q] constructor(): R|Q| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -148,9 +148,9 @@ FILE: [ResolvedTo(IMPORTS)] localConstructorScript.kts
         [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public? final? [ResolvedTo(RAW_FIR)] fun <[ResolvedTo(RAW_FIR)] T> magic(): T { LAZY_BLOCK }
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] fun <[ResolvedTo(RAW_FIR)] T> magic(): T { LAZY_BLOCK }
 
-        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-localConstructorScript.kts>] class Q : R|kotlin/Any| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-localConstructorScript.kts>, ScriptTopLevelDeclaration=true] class Q : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Q] constructor(): R|Q| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -166,9 +166,9 @@ FILE: [ResolvedTo(IMPORTS)] localConstructorScript.kts
         [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(CONTRACTS)] fun <[ResolvedTo(CONTRACTS)] T> magic(): R|T| { LAZY_BLOCK }
+        public final [ResolvedTo(CONTRACTS)] [ScriptTopLevelDeclaration=true] fun <[ResolvedTo(CONTRACTS)] T> magic(): R|T| { LAZY_BLOCK }
 
-        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-localConstructorScript.kts>] class Q : R|kotlin/Any| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-localConstructorScript.kts>, ScriptTopLevelDeclaration=true] class Q : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Q] constructor(): R|Q| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -205,9 +205,9 @@ FILE: [ResolvedTo(IMPORTS)] localConstructorScript.kts
         [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(CONTRACTS)] fun <[ResolvedTo(CONTRACTS)] T> magic(): R|T| { LAZY_BLOCK }
+        public final [ResolvedTo(CONTRACTS)] [ScriptTopLevelDeclaration=true] fun <[ResolvedTo(CONTRACTS)] T> magic(): R|T| { LAZY_BLOCK }
 
-        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-localConstructorScript.kts>] class Q : R|kotlin/Any| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-localConstructorScript.kts>, ScriptTopLevelDeclaration=true] class Q : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Q] constructor(): R|Q| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -244,9 +244,9 @@ FILE: [ResolvedTo(IMPORTS)] localConstructorScript.kts
         [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(CONTRACTS)] fun <[ResolvedTo(CONTRACTS)] T> magic(): R|T| { LAZY_BLOCK }
+        public final [ResolvedTo(CONTRACTS)] [ScriptTopLevelDeclaration=true] fun <[ResolvedTo(CONTRACTS)] T> magic(): R|T| { LAZY_BLOCK }
 
-        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-localConstructorScript.kts>] class Q : R|kotlin/Any| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-localConstructorScript.kts>, ScriptTopLevelDeclaration=true] class Q : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Q] constructor(): R|Q| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -283,9 +283,9 @@ FILE: [ResolvedTo(IMPORTS)] localConstructorScript.kts
         [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(CONTRACTS)] fun <[ResolvedTo(CONTRACTS)] T> magic(): R|T| { LAZY_BLOCK }
+        public final [ResolvedTo(CONTRACTS)] [ScriptTopLevelDeclaration=true] fun <[ResolvedTo(CONTRACTS)] T> magic(): R|T| { LAZY_BLOCK }
 
-        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-localConstructorScript.kts>] class Q : R|kotlin/Any| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-localConstructorScript.kts>, ScriptTopLevelDeclaration=true] class Q : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Q] constructor(): R|Q| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -322,11 +322,11 @@ FILE: [ResolvedTo(BODY_RESOLVE)] localConstructorScript.kts
         [ResolvedTo(BODY_RESOLVE)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(BODY_RESOLVE)] fun <[ResolvedTo(BODY_RESOLVE)] T> magic(): R|T| {
+        public final [ResolvedTo(BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] fun <[ResolvedTo(BODY_RESOLVE)] T> magic(): R|T| {
             ^magic Null(null)!!
         }
 
-        public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol <script-localConstructorScript.kts>] class Q : R|kotlin/Any| {
+        public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol <script-localConstructorScript.kts>, ScriptTopLevelDeclaration=true] class Q : R|kotlin/Any| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Q] constructor(): R|Q| {
                 super<R|kotlin/Any|>()
             }

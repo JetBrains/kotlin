@@ -75,7 +75,7 @@ FILE: [ResolvedTo(IMPORTS)] propagationToLocalMemberFunctionScript.kts
         [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol util.<script-propagationToLocalMemberFunctionScript.kts>] annotation class Anno : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol util.<script-propagationToLocalMemberFunctionScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=util/Anno.str] str: R|kotlin/String|): R|util/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -85,12 +85,12 @@ FILE: [ResolvedTo(IMPORTS)] propagationToLocalMemberFunctionScript.kts
 
         }
 
-        public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val prop: R|kotlin/String| = String(str)
+        public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] val prop: R|kotlin/String| = String(str)
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/String|
 
-        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun bar(): R|@R|util/Anno|(str = <strcat>(String(bar ), R|util/prop|))  kotlin/collections/List<@R|util/Anno|(str = <strcat>(String(nested bar ), R|util/prop|))  kotlin/collections/Collection<@R|util/Anno|(str = <strcat>(String(nested nested bar ), R|util/prop|))  kotlin/Int>>?| { LAZY_BLOCK }
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ScriptTopLevelDeclaration=true] fun bar(): R|@R|util/Anno|(str = <strcat>(String(bar ), R|util/prop|))  kotlin/collections/List<@R|util/Anno|(str = <strcat>(String(nested bar ), R|util/prop|))  kotlin/collections/Collection<@R|util/Anno|(str = <strcat>(String(nested nested bar ), R|util/prop|))  kotlin/Int>>?| { LAZY_BLOCK }
 
-        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol util.<script-propagationToLocalMemberFunctionScript.kts>] class A : R|kotlin/Any| {
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol util.<script-propagationToLocalMemberFunctionScript.kts>, ScriptTopLevelDeclaration=true] class A : R|kotlin/Any| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=A] constructor(): R|util/A| {
                 super<R|kotlin/Any|>()
                 local final [ResolvedTo(BODY_RESOLVE)] class OuterIntoLocal : R|kotlin/Any| {

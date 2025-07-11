@@ -4,7 +4,7 @@ FILE: [ResolvedTo(RAW_FIR)] implicitTypeFromIncorrectSetterPropagationScript.kts
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol low.<script-implicitTypeFromIncorrectSetterPropagationScript.kts>] annotation class Anno : R|kotlin/Annotation| {
+        @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol low.<script-implicitTypeFromIncorrectSetterPropagationScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=low/Anno.position] position: String): R|low/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -14,13 +14,13 @@ FILE: [ResolvedTo(RAW_FIR)] implicitTypeFromIncorrectSetterPropagationScript.kts
 
         }
 
-        public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
+        public? final? const [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val prop: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public? final? [ResolvedTo(RAW_FIR)] val resolveMe: <implicit> = LAZY_EXPRESSION
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val resolveMe: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public? final? [ResolvedTo(RAW_FIR)] var incorrectProperty: <implicit>
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] var incorrectProperty: <implicit>
             public? [ResolvedTo(RAW_FIR)] get(): <implicit> { LAZY_BLOCK }
             public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) String>>): R|kotlin/Unit| { LAZY_BLOCK }
 
@@ -31,7 +31,7 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeFromIncorrectSetterPropagationScript.kts
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol low.<script-implicitTypeFromIncorrectSetterPropagationScript.kts>] annotation class Anno : R|kotlin/Annotation| {
+        @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol low.<script-implicitTypeFromIncorrectSetterPropagationScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=low/Anno.position] position: String): R|low/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -41,13 +41,13 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeFromIncorrectSetterPropagationScript.kts
 
         }
 
-        public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
+        public? final? const [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val prop: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public? final? [ResolvedTo(RAW_FIR)] val resolveMe: <implicit> = LAZY_EXPRESSION
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val resolveMe: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public? final? [ResolvedTo(RAW_FIR)] var incorrectProperty: <implicit>
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] var incorrectProperty: <implicit>
             public? [ResolvedTo(RAW_FIR)] get(): <implicit> { LAZY_BLOCK }
             public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) String>>): R|kotlin/Unit| { LAZY_BLOCK }
 
@@ -58,7 +58,7 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeFromIncorrectSetterPropagationScript.kts
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol low.<script-implicitTypeFromIncorrectSetterPropagationScript.kts>] annotation class Anno : R|kotlin/Annotation| {
+        @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol low.<script-implicitTypeFromIncorrectSetterPropagationScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=low/Anno.position] position: String): R|low/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -68,13 +68,13 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeFromIncorrectSetterPropagationScript.kts
 
         }
 
-        public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
+        public? final? const [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val prop: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] val resolveMe: <implicit> = LAZY_EXPRESSION
+        public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ScriptTopLevelDeclaration=true] val resolveMe: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] get(): <implicit>
 
-        public? final? [ResolvedTo(RAW_FIR)] var incorrectProperty: <implicit>
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] var incorrectProperty: <implicit>
             public? [ResolvedTo(RAW_FIR)] get(): <implicit> { LAZY_BLOCK }
             public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) String>>): R|kotlin/Unit| { LAZY_BLOCK }
 
@@ -85,7 +85,7 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeFromIncorrectSetterPropagationScript.kts
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol low.<script-implicitTypeFromIncorrectSetterPropagationScript.kts>] annotation class Anno : R|kotlin/Annotation| {
+        @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol low.<script-implicitTypeFromIncorrectSetterPropagationScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=low/Anno.position] position: String): R|low/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -95,13 +95,13 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeFromIncorrectSetterPropagationScript.kts
 
         }
 
-        public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
+        public? final? const [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val prop: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public? final? [ResolvedTo(COMPANION_GENERATION)] val resolveMe: <implicit> = LAZY_EXPRESSION
+        public? final? [ResolvedTo(COMPANION_GENERATION)] [ScriptTopLevelDeclaration=true] val resolveMe: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(COMPANION_GENERATION)] get(): <implicit>
 
-        public? final? [ResolvedTo(RAW_FIR)] var incorrectProperty: <implicit>
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] var incorrectProperty: <implicit>
             public? [ResolvedTo(RAW_FIR)] get(): <implicit> { LAZY_BLOCK }
             public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) String>>): R|kotlin/Unit| { LAZY_BLOCK }
 
@@ -112,7 +112,7 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeFromIncorrectSetterPropagationScript.kts
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol low.<script-implicitTypeFromIncorrectSetterPropagationScript.kts>] annotation class Anno : R|kotlin/Annotation| {
+        @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol low.<script-implicitTypeFromIncorrectSetterPropagationScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=low/Anno.position] position: String): R|low/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -122,13 +122,13 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeFromIncorrectSetterPropagationScript.kts
 
         }
 
-        public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
+        public? final? const [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val prop: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public? final? [ResolvedTo(SUPER_TYPES)] val resolveMe: <implicit> = LAZY_EXPRESSION
+        public? final? [ResolvedTo(SUPER_TYPES)] [ScriptTopLevelDeclaration=true] val resolveMe: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(SUPER_TYPES)] get(): <implicit>
 
-        public? final? [ResolvedTo(RAW_FIR)] var incorrectProperty: <implicit>
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] var incorrectProperty: <implicit>
             public? [ResolvedTo(RAW_FIR)] get(): <implicit> { LAZY_BLOCK }
             public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) String>>): R|kotlin/Unit| { LAZY_BLOCK }
 
@@ -139,7 +139,7 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeFromIncorrectSetterPropagationScript.kts
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol low.<script-implicitTypeFromIncorrectSetterPropagationScript.kts>] annotation class Anno : R|kotlin/Annotation| {
+        @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol low.<script-implicitTypeFromIncorrectSetterPropagationScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=low/Anno.position] position: String): R|low/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -149,13 +149,13 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeFromIncorrectSetterPropagationScript.kts
 
         }
 
-        public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
+        public? final? const [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val prop: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public? final? [ResolvedTo(TYPES)] val resolveMe: <implicit> = LAZY_EXPRESSION
+        public? final? [ResolvedTo(TYPES)] [ScriptTopLevelDeclaration=true] val resolveMe: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(TYPES)] get(): <implicit>
 
-        public? final? [ResolvedTo(RAW_FIR)] var incorrectProperty: <implicit>
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] var incorrectProperty: <implicit>
             public? [ResolvedTo(RAW_FIR)] get(): <implicit> { LAZY_BLOCK }
             public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) String>>): R|kotlin/Unit| { LAZY_BLOCK }
 
@@ -166,7 +166,7 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeFromIncorrectSetterPropagationScript.kts
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol low.<script-implicitTypeFromIncorrectSetterPropagationScript.kts>] annotation class Anno : R|kotlin/Annotation| {
+        @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol low.<script-implicitTypeFromIncorrectSetterPropagationScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=low/Anno.position] position: String): R|low/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -176,13 +176,13 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeFromIncorrectSetterPropagationScript.kts
 
         }
 
-        public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
+        public? final? const [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val prop: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final [ResolvedTo(STATUS)] val resolveMe: <implicit> = LAZY_EXPRESSION
+        public final [ResolvedTo(STATUS)] [ScriptTopLevelDeclaration=true] val resolveMe: <implicit> = LAZY_EXPRESSION
             public [ResolvedTo(STATUS)] get(): <implicit>
 
-        public? final? [ResolvedTo(RAW_FIR)] var incorrectProperty: <implicit>
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] var incorrectProperty: <implicit>
             public? [ResolvedTo(RAW_FIR)] get(): <implicit> { LAZY_BLOCK }
             public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) String>>): R|kotlin/Unit| { LAZY_BLOCK }
 
@@ -193,7 +193,7 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeFromIncorrectSetterPropagationScript.kts
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol low.<script-implicitTypeFromIncorrectSetterPropagationScript.kts>] annotation class Anno : R|kotlin/Annotation| {
+        @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol low.<script-implicitTypeFromIncorrectSetterPropagationScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=low/Anno.position] position: String): R|low/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -203,13 +203,13 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeFromIncorrectSetterPropagationScript.kts
 
         }
 
-        public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
+        public? final? const [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val prop: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] val resolveMe: <implicit> = LAZY_EXPRESSION
+        public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ScriptTopLevelDeclaration=true] val resolveMe: <implicit> = LAZY_EXPRESSION
             public [ResolvedTo(EXPECT_ACTUAL_MATCHING)] get(): <implicit>
 
-        public? final? [ResolvedTo(RAW_FIR)] var incorrectProperty: <implicit>
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] var incorrectProperty: <implicit>
             public? [ResolvedTo(RAW_FIR)] get(): <implicit> { LAZY_BLOCK }
             public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) String>>): R|kotlin/Unit| { LAZY_BLOCK }
 
@@ -220,7 +220,7 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeFromIncorrectSetterPropagationScript.kts
         [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol low.<script-implicitTypeFromIncorrectSetterPropagationScript.kts>] annotation class Anno : R|kotlin/Annotation| {
+        @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol low.<script-implicitTypeFromIncorrectSetterPropagationScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=low/Anno.position] position: String): R|low/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -230,13 +230,13 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeFromIncorrectSetterPropagationScript.kts
 
         }
 
-        public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
+        public? final? const [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val prop: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final [ResolvedTo(CONTRACTS)] val resolveMe: <implicit> = LAZY_EXPRESSION
+        public final [ResolvedTo(CONTRACTS)] [ScriptTopLevelDeclaration=true] val resolveMe: <implicit> = LAZY_EXPRESSION
             public [ResolvedTo(CONTRACTS)] get(): <implicit>
 
-        public? final? [ResolvedTo(RAW_FIR)] var incorrectProperty: <implicit>
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] var incorrectProperty: <implicit>
             public? [ResolvedTo(RAW_FIR)] get(): <implicit> { LAZY_BLOCK }
             public? [ResolvedTo(RAW_FIR)] set([ResolvedTo(RAW_FIR)] value: @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) String>>): R|kotlin/Unit| { LAZY_BLOCK }
 
@@ -247,7 +247,7 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeFromIncorrectSetterPropagationScript.kts
         [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol low.<script-implicitTypeFromIncorrectSetterPropagationScript.kts>] annotation class Anno : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol low.<script-implicitTypeFromIncorrectSetterPropagationScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=low/Anno.position] position: String): R|low/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -257,13 +257,13 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeFromIncorrectSetterPropagationScript.kts
 
         }
 
-        public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
+        public? final? const [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val prop: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val resolveMe: <ERROR TYPE REF: Unresolved name: field> = R|low/incorrectProperty|
+        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] val resolveMe: <ERROR TYPE REF: Unresolved name: field> = R|low/incorrectProperty|
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): <ERROR TYPE REF: Unresolved name: field>
 
-        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] var incorrectProperty: <ERROR TYPE REF: Unresolved name: field>
+        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] var incorrectProperty: <ERROR TYPE REF: Unresolved name: field>
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): <ERROR TYPE REF: Unresolved name: field> {
                 ^ <Unresolved name: field>#
             }
@@ -278,7 +278,7 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeFromIncorrectSetterPropagationScript.kts
         [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol low.<script-implicitTypeFromIncorrectSetterPropagationScript.kts>] annotation class Anno : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol low.<script-implicitTypeFromIncorrectSetterPropagationScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=low/Anno.position] position: String): R|low/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -288,13 +288,13 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeFromIncorrectSetterPropagationScript.kts
 
         }
 
-        public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
+        public? final? const [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val prop: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final [ResolvedTo(CONSTANT_EVALUATION)] val resolveMe: <ERROR TYPE REF: Unresolved name: field> = R|low/incorrectProperty|
+        public final [ResolvedTo(CONSTANT_EVALUATION)] [ScriptTopLevelDeclaration=true] val resolveMe: <ERROR TYPE REF: Unresolved name: field> = R|low/incorrectProperty|
             public [ResolvedTo(CONSTANT_EVALUATION)] get(): <ERROR TYPE REF: Unresolved name: field>
 
-        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] var incorrectProperty: <ERROR TYPE REF: Unresolved name: field>
+        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] var incorrectProperty: <ERROR TYPE REF: Unresolved name: field>
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): <ERROR TYPE REF: Unresolved name: field> {
                 ^ <Unresolved name: field>#
             }
@@ -309,7 +309,7 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeFromIncorrectSetterPropagationScript.kts
         [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol low.<script-implicitTypeFromIncorrectSetterPropagationScript.kts>] annotation class Anno : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol low.<script-implicitTypeFromIncorrectSetterPropagationScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=low/Anno.position] position: String): R|low/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -319,13 +319,13 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeFromIncorrectSetterPropagationScript.kts
 
         }
 
-        public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
+        public? final? const [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val prop: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val resolveMe: <ERROR TYPE REF: Unresolved name: field> = R|low/incorrectProperty|
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ScriptTopLevelDeclaration=true] val resolveMe: <ERROR TYPE REF: Unresolved name: field> = R|low/incorrectProperty|
             public [ResolvedTo(ANNOTATION_ARGUMENTS)] get(): <ERROR TYPE REF: Unresolved name: field>
 
-        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] var incorrectProperty: <ERROR TYPE REF: Unresolved name: field>
+        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] var incorrectProperty: <ERROR TYPE REF: Unresolved name: field>
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): <ERROR TYPE REF: Unresolved name: field> {
                 ^ <Unresolved name: field>#
             }
@@ -340,7 +340,7 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeFromIncorrectSetterPropagationScript.kts
         [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol low.<script-implicitTypeFromIncorrectSetterPropagationScript.kts>] annotation class Anno : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol low.<script-implicitTypeFromIncorrectSetterPropagationScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=low/Anno.position] position: String): R|low/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -350,13 +350,13 @@ FILE: [ResolvedTo(IMPORTS)] implicitTypeFromIncorrectSetterPropagationScript.kts
 
         }
 
-        public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
+        public? final? const [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val prop: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final [ResolvedTo(BODY_RESOLVE)] val resolveMe: <ERROR TYPE REF: Unresolved name: field> = R|low/incorrectProperty|
+        public final [ResolvedTo(BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] val resolveMe: <ERROR TYPE REF: Unresolved name: field> = R|low/incorrectProperty|
             public [ResolvedTo(BODY_RESOLVE)] get(): <ERROR TYPE REF: Unresolved name: field>
 
-        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] var incorrectProperty: <ERROR TYPE REF: Unresolved name: field>
+        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] var incorrectProperty: <ERROR TYPE REF: Unresolved name: field>
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): <ERROR TYPE REF: Unresolved name: field> {
                 ^ <Unresolved name: field>#
             }
@@ -371,7 +371,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] implicitTypeFromIncorrectSetterPropagationScrip
         [ResolvedTo(BODY_RESOLVE)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)) public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol low.<script-implicitTypeFromIncorrectSetterPropagationScript.kts>] annotation class Anno : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)) public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol low.<script-implicitTypeFromIncorrectSetterPropagationScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=low/Anno.position] position: R|kotlin/String|): R|low/Anno| {
                 super<R|kotlin/Any|>()
             }
@@ -381,13 +381,13 @@ FILE: [ResolvedTo(BODY_RESOLVE)] implicitTypeFromIncorrectSetterPropagationScrip
 
         }
 
-        public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=String(str)] val prop: R|kotlin/String| = String(str)
+        public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=String(str), ScriptTopLevelDeclaration=true] val prop: R|kotlin/String| = String(str)
             public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String|
 
-        public final [ResolvedTo(BODY_RESOLVE)] val resolveMe: <ERROR TYPE REF: Unresolved name: field> = R|low/incorrectProperty|
+        public final [ResolvedTo(BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] val resolveMe: <ERROR TYPE REF: Unresolved name: field> = R|low/incorrectProperty|
             public [ResolvedTo(BODY_RESOLVE)] get(): <ERROR TYPE REF: Unresolved name: field>
 
-        public final [ResolvedTo(BODY_RESOLVE)] var incorrectProperty: <ERROR TYPE REF: Unresolved name: field>
+        public final [ResolvedTo(BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] var incorrectProperty: <ERROR TYPE REF: Unresolved name: field>
             public [ResolvedTo(BODY_RESOLVE)] get(): <ERROR TYPE REF: Unresolved name: field> {
                 ^ <Unresolved name: field>#
             }

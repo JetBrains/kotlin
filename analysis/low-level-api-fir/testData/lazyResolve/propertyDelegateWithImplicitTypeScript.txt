@@ -8,7 +8,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyDelegateWithImplicitTypeScript.kts
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol second.<script-propertyDelegateWithImplicitTypeScript.kts>] annotation class Anno : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol second.<script-propertyDelegateWithImplicitTypeScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=second/Anno.position] position: String): R|second/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -18,10 +18,10 @@ FILE: [ResolvedTo(IMPORTS)] propertyDelegateWithImplicitTypeScript.kts
 
         }
 
-        public? final? const [ResolvedTo(RAW_FIR)] val constant: <implicit> = LAZY_EXPRESSION
+        public? final? const [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val constant: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol second.<script-propertyDelegateWithImplicitTypeScript.kts>, DelegateFieldsMapKey={0=FirFieldSymbol second/Aaa.$$delegate_0}] class Aaa : R|second/Interface| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol second.<script-propertyDelegateWithImplicitTypeScript.kts>, DelegateFieldsMapKey={0=FirFieldSymbol second/Aaa.$$delegate_0}, ScriptTopLevelDeclaration=true] class Aaa : R|second/Interface| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Aaa] constructor([ResolvedTo(STATUS)] i: R|second/Interface|): R|second/Aaa| {
                 LAZY_super<<implicit>>
             }
@@ -30,7 +30,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyDelegateWithImplicitTypeScript.kts
 
         }
 
-        public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol second.<script-propertyDelegateWithImplicitTypeScript.kts>] interface Interface : R|kotlin/Any| {
+        public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol second.<script-propertyDelegateWithImplicitTypeScript.kts>, ScriptTopLevelDeclaration=true] interface Interface : R|kotlin/Any| {
             public open [ResolvedTo(STATUS)] fun explicitType(): R|kotlin/String?| { LAZY_BLOCK }
 
             @PROPERTY:R|second/Anno|[Types](LAZY_EXPRESSION) field:@FIELD:R|second/Anno|[Types](LAZY_EXPRESSION) public open [ResolvedTo(STATUS)] var resolveMe: <implicit> = LAZY_EXPRESSION
@@ -50,7 +50,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyDelegateWithImplicitTypeScript.kts
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol second.<script-propertyDelegateWithImplicitTypeScript.kts>] annotation class Anno : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol second.<script-propertyDelegateWithImplicitTypeScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=second/Anno.position] position: String): R|second/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -60,10 +60,10 @@ FILE: [ResolvedTo(IMPORTS)] propertyDelegateWithImplicitTypeScript.kts
 
         }
 
-        public? final? const [ResolvedTo(RAW_FIR)] val constant: <implicit> = LAZY_EXPRESSION
+        public? final? const [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val constant: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol second.<script-propertyDelegateWithImplicitTypeScript.kts>, DelegateFieldsMapKey={0=FirFieldSymbol second/Aaa.$$delegate_0}] class Aaa : R|second/Interface| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol second.<script-propertyDelegateWithImplicitTypeScript.kts>, DelegateFieldsMapKey={0=FirFieldSymbol second/Aaa.$$delegate_0}, ScriptTopLevelDeclaration=true] class Aaa : R|second/Interface| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Aaa] constructor([ResolvedTo(STATUS)] i: R|second/Interface|): R|second/Aaa| {
                 LAZY_super<<implicit>>
             }
@@ -72,7 +72,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyDelegateWithImplicitTypeScript.kts
 
         }
 
-        public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol second.<script-propertyDelegateWithImplicitTypeScript.kts>] interface Interface : R|kotlin/Any| {
+        public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol second.<script-propertyDelegateWithImplicitTypeScript.kts>, ScriptTopLevelDeclaration=true] interface Interface : R|kotlin/Any| {
             public open [ResolvedTo(STATUS)] fun explicitType(): R|kotlin/String?| { LAZY_BLOCK }
 
             @PROPERTY:R|second/Anno|[Types](LAZY_EXPRESSION) field:@FIELD:R|second/Anno|[Types](LAZY_EXPRESSION) public open [ResolvedTo(EXPECT_ACTUAL_MATCHING)] var resolveMe: <implicit> = LAZY_EXPRESSION
@@ -92,7 +92,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyDelegateWithImplicitTypeScript.kts
         [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol second.<script-propertyDelegateWithImplicitTypeScript.kts>] annotation class Anno : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol second.<script-propertyDelegateWithImplicitTypeScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=second/Anno.position] position: String): R|second/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -102,10 +102,10 @@ FILE: [ResolvedTo(IMPORTS)] propertyDelegateWithImplicitTypeScript.kts
 
         }
 
-        public? final? const [ResolvedTo(RAW_FIR)] val constant: <implicit> = LAZY_EXPRESSION
+        public? final? const [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val constant: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol second.<script-propertyDelegateWithImplicitTypeScript.kts>, DelegateFieldsMapKey={0=FirFieldSymbol second/Aaa.$$delegate_0}] class Aaa : R|second/Interface| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol second.<script-propertyDelegateWithImplicitTypeScript.kts>, DelegateFieldsMapKey={0=FirFieldSymbol second/Aaa.$$delegate_0}, ScriptTopLevelDeclaration=true] class Aaa : R|second/Interface| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Aaa] constructor([ResolvedTo(STATUS)] i: R|second/Interface|): R|second/Aaa| {
                 LAZY_super<<implicit>>
             }
@@ -114,7 +114,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyDelegateWithImplicitTypeScript.kts
 
         }
 
-        public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol second.<script-propertyDelegateWithImplicitTypeScript.kts>] interface Interface : R|kotlin/Any| {
+        public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol second.<script-propertyDelegateWithImplicitTypeScript.kts>, ScriptTopLevelDeclaration=true] interface Interface : R|kotlin/Any| {
             public open [ResolvedTo(STATUS)] fun explicitType(): R|kotlin/String?| { LAZY_BLOCK }
 
             @PROPERTY:R|second/Anno|[Types](LAZY_EXPRESSION) field:@FIELD:R|second/Anno|[Types](LAZY_EXPRESSION) public open [ResolvedTo(CONTRACTS)] var resolveMe: <implicit> = LAZY_EXPRESSION
@@ -134,7 +134,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyDelegateWithImplicitTypeScript.kts
         [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol second.<script-propertyDelegateWithImplicitTypeScript.kts>] annotation class Anno : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol second.<script-propertyDelegateWithImplicitTypeScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=second/Anno.position] position: String): R|second/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -144,10 +144,10 @@ FILE: [ResolvedTo(IMPORTS)] propertyDelegateWithImplicitTypeScript.kts
 
         }
 
-        public? final? const [ResolvedTo(RAW_FIR)] val constant: <implicit> = LAZY_EXPRESSION
+        public? final? const [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val constant: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol second.<script-propertyDelegateWithImplicitTypeScript.kts>, DelegateFieldsMapKey={0=FirFieldSymbol second/Aaa.$$delegate_0}] class Aaa : R|second/Interface| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol second.<script-propertyDelegateWithImplicitTypeScript.kts>, DelegateFieldsMapKey={0=FirFieldSymbol second/Aaa.$$delegate_0}, ScriptTopLevelDeclaration=true] class Aaa : R|second/Interface| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Aaa] constructor([ResolvedTo(STATUS)] i: R|second/Interface|): R|second/Aaa| {
                 LAZY_super<<implicit>>
             }
@@ -156,7 +156,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyDelegateWithImplicitTypeScript.kts
 
         }
 
-        public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol second.<script-propertyDelegateWithImplicitTypeScript.kts>] interface Interface : R|kotlin/Any| {
+        public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol second.<script-propertyDelegateWithImplicitTypeScript.kts>, ScriptTopLevelDeclaration=true] interface Interface : R|kotlin/Any| {
             public open [ResolvedTo(CONTRACTS)] fun explicitType(): R|kotlin/String?| { LAZY_BLOCK }
 
             @PROPERTY:R|second/Anno|[Types](LAZY_EXPRESSION) field:@FIELD:R|second/Anno|[Types](LAZY_EXPRESSION) public open [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] var resolveMe: R|kotlin/String?| = this@R|second/Interface|.R|second/Interface.explicitType|()
@@ -176,7 +176,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyDelegateWithImplicitTypeScript.kts
         [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol second.<script-propertyDelegateWithImplicitTypeScript.kts>] annotation class Anno : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol second.<script-propertyDelegateWithImplicitTypeScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=second/Anno.position] position: String): R|second/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -186,10 +186,10 @@ FILE: [ResolvedTo(IMPORTS)] propertyDelegateWithImplicitTypeScript.kts
 
         }
 
-        public? final? const [ResolvedTo(RAW_FIR)] val constant: <implicit> = LAZY_EXPRESSION
+        public? final? const [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val constant: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol second.<script-propertyDelegateWithImplicitTypeScript.kts>, DelegateFieldsMapKey={0=FirFieldSymbol second/Aaa.$$delegate_0}] class Aaa : R|second/Interface| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol second.<script-propertyDelegateWithImplicitTypeScript.kts>, DelegateFieldsMapKey={0=FirFieldSymbol second/Aaa.$$delegate_0}, ScriptTopLevelDeclaration=true] class Aaa : R|second/Interface| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Aaa] constructor([ResolvedTo(STATUS)] i: R|second/Interface|): R|second/Aaa| {
                 LAZY_super<<implicit>>
             }
@@ -198,7 +198,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyDelegateWithImplicitTypeScript.kts
 
         }
 
-        public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol second.<script-propertyDelegateWithImplicitTypeScript.kts>] interface Interface : R|kotlin/Any| {
+        public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol second.<script-propertyDelegateWithImplicitTypeScript.kts>, ScriptTopLevelDeclaration=true] interface Interface : R|kotlin/Any| {
             public open [ResolvedTo(CONTRACTS)] fun explicitType(): R|kotlin/String?| { LAZY_BLOCK }
 
             @PROPERTY:R|second/Anno|[Types](LAZY_EXPRESSION) field:@FIELD:R|second/Anno|[Types](LAZY_EXPRESSION) public open [ResolvedTo(CONSTANT_EVALUATION)] var resolveMe: R|kotlin/String?| = this@R|second/Interface|.R|second/Interface.explicitType|()
@@ -218,7 +218,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyDelegateWithImplicitTypeScript.kts
         [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|) public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol second.<script-propertyDelegateWithImplicitTypeScript.kts>] annotation class Anno : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|) public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol second.<script-propertyDelegateWithImplicitTypeScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=second/Anno.position] position: R|kotlin/String|): R|second/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -228,10 +228,10 @@ FILE: [ResolvedTo(IMPORTS)] propertyDelegateWithImplicitTypeScript.kts
 
         }
 
-        public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val constant: R|kotlin/String| = String(str)
+        public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] val constant: R|kotlin/String| = String(str)
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/String|
 
-        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol second.<script-propertyDelegateWithImplicitTypeScript.kts>, DelegateFieldsMapKey={0=FirFieldSymbol second/Aaa.$$delegate_0}] class Aaa : R|second/Interface| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol second.<script-propertyDelegateWithImplicitTypeScript.kts>, DelegateFieldsMapKey={0=FirFieldSymbol second/Aaa.$$delegate_0}, ScriptTopLevelDeclaration=true] class Aaa : R|second/Interface| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Aaa] constructor([ResolvedTo(STATUS)] i: R|second/Interface|): R|second/Aaa| {
                 LAZY_super<<implicit>>
             }
@@ -240,7 +240,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyDelegateWithImplicitTypeScript.kts
 
         }
 
-        public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol second.<script-propertyDelegateWithImplicitTypeScript.kts>] interface Interface : R|kotlin/Any| {
+        public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol second.<script-propertyDelegateWithImplicitTypeScript.kts>, ScriptTopLevelDeclaration=true] interface Interface : R|kotlin/Any| {
             public open [ResolvedTo(CONTRACTS)] fun explicitType(): R|kotlin/String?| { LAZY_BLOCK }
 
             @PROPERTY:R|second/Anno|[Types](position = <strcat>(String(property ), R|second/constant|)) field:@FIELD:R|second/Anno|[Types](position = <strcat>(String(field ), R|second/constant|)) public open [ResolvedTo(ANNOTATION_ARGUMENTS)] var resolveMe: R|kotlin/String?| = this@R|second/Interface|.R|second/Interface.explicitType|()
@@ -260,7 +260,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyDelegateWithImplicitTypeScript.kts
         [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|) public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol second.<script-propertyDelegateWithImplicitTypeScript.kts>] annotation class Anno : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|) public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol second.<script-propertyDelegateWithImplicitTypeScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=second/Anno.position] position: R|kotlin/String|): R|second/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -270,10 +270,10 @@ FILE: [ResolvedTo(IMPORTS)] propertyDelegateWithImplicitTypeScript.kts
 
         }
 
-        public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val constant: R|kotlin/String| = String(str)
+        public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] val constant: R|kotlin/String| = String(str)
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/String|
 
-        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol second.<script-propertyDelegateWithImplicitTypeScript.kts>, DelegateFieldsMapKey={0=FirFieldSymbol second/Aaa.$$delegate_0}] class Aaa : R|second/Interface| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol second.<script-propertyDelegateWithImplicitTypeScript.kts>, DelegateFieldsMapKey={0=FirFieldSymbol second/Aaa.$$delegate_0}, ScriptTopLevelDeclaration=true] class Aaa : R|second/Interface| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Aaa] constructor([ResolvedTo(STATUS)] i: R|second/Interface|): R|second/Aaa| {
                 LAZY_super<<implicit>>
             }
@@ -282,7 +282,7 @@ FILE: [ResolvedTo(IMPORTS)] propertyDelegateWithImplicitTypeScript.kts
 
         }
 
-        public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol second.<script-propertyDelegateWithImplicitTypeScript.kts>] interface Interface : R|kotlin/Any| {
+        public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol second.<script-propertyDelegateWithImplicitTypeScript.kts>, ScriptTopLevelDeclaration=true] interface Interface : R|kotlin/Any| {
             public open [ResolvedTo(CONTRACTS)] fun explicitType(): R|kotlin/String?| { LAZY_BLOCK }
 
             @PROPERTY:R|second/Anno|[Types](position = <strcat>(String(property ), R|second/constant|)) field:@FIELD:R|second/Anno|[Types](position = <strcat>(String(field ), R|second/constant|)) public open [ResolvedTo(ANNOTATION_ARGUMENTS)] var resolveMe: R|kotlin/String?| = this@R|second/Interface|.R|second/Interface.explicitType|()
@@ -298,7 +298,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] propertyDelegateWithImplicitTypeScript.kts
         [ResolvedTo(BODY_RESOLVE)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|)) public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol second.<script-propertyDelegateWithImplicitTypeScript.kts>] annotation class Anno : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.VALUE_PARAMETER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_SETTER|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY_GETTER|)) public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol second.<script-propertyDelegateWithImplicitTypeScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=second/Anno.position] position: R|kotlin/String|): R|second/Anno| {
                 super<R|kotlin/Any|>()
             }
@@ -308,10 +308,10 @@ FILE: [ResolvedTo(BODY_RESOLVE)] propertyDelegateWithImplicitTypeScript.kts
 
         }
 
-        public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=String(str)] val constant: R|kotlin/String| = String(str)
+        public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=String(str), ScriptTopLevelDeclaration=true] val constant: R|kotlin/String| = String(str)
             public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String|
 
-        public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol second.<script-propertyDelegateWithImplicitTypeScript.kts>, DelegateFieldsMapKey={0=FirFieldSymbol second/Aaa.$$delegate_0}] class Aaa : R|second/Interface| {
+        public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol second.<script-propertyDelegateWithImplicitTypeScript.kts>, DelegateFieldsMapKey={0=FirFieldSymbol second/Aaa.$$delegate_0}, ScriptTopLevelDeclaration=true] class Aaa : R|second/Interface| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Aaa] constructor([ResolvedTo(BODY_RESOLVE)] i: R|second/Interface|): R|second/Aaa| {
                 super<R|kotlin/Any|>()
             }
@@ -320,7 +320,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] propertyDelegateWithImplicitTypeScript.kts
 
         }
 
-        public abstract [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol second.<script-propertyDelegateWithImplicitTypeScript.kts>] interface Interface : R|kotlin/Any| {
+        public abstract [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol second.<script-propertyDelegateWithImplicitTypeScript.kts>, ScriptTopLevelDeclaration=true] interface Interface : R|kotlin/Any| {
             public open [ResolvedTo(BODY_RESOLVE)] fun explicitType(): R|kotlin/String?| {
                 ^explicitType Null(null)
             }

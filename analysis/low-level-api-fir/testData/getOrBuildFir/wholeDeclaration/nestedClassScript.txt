@@ -18,7 +18,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedClassScript.kts
         [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-nestedClassScript.kts>] class Y : R|kotlin/Any| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-nestedClassScript.kts>, ScriptTopLevelDeclaration=true] class Y : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Y] constructor(): R|Y| {
                 LAZY_super<R|kotlin/Any|>
             }

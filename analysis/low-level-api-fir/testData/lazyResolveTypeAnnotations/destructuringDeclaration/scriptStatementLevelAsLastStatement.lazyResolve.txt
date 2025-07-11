@@ -4,7 +4,7 @@ FILE: [ResolvedTo(RAW_FIR)] scriptStatementLevelAsLastStatement.kts
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-scriptStatementLevelAsLastStatement.kts>] annotation class Anno : R|kotlin/Annotation| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-scriptStatementLevelAsLastStatement.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Anno.str] str: String): R|util/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -14,10 +14,10 @@ FILE: [ResolvedTo(RAW_FIR)] scriptStatementLevelAsLastStatement.kts
 
         }
 
-        public? final? const [ResolvedTo(RAW_FIR)] val constant: <implicit> = LAZY_EXPRESSION
+        public? final? const [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val constant: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final? data [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-scriptStatementLevelAsLastStatement.kts>] class Pair : R|kotlin/Any| {
+        public final? data [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-scriptStatementLevelAsLastStatement.kts>, ScriptTopLevelDeclaration=true] class Pair : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Pair] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Pair.a] a: @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) String>>?, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Pair.b] b: @Anno[Unresolved](LAZY_EXPRESSION) Array<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>>?): R|util/Pair| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -36,7 +36,7 @@ FILE: [ResolvedTo(RAW_FIR)] scriptStatementLevelAsLastStatement.kts
 
         }
 
-        public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
+        public? final? const [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val prop: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
         public final [ResolvedTo(RAW_FIR)] val $$result: <implicit> = when () {
@@ -59,7 +59,7 @@ FILE: [ResolvedTo(IMPORTS)] scriptStatementLevelAsLastStatement.kts
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-scriptStatementLevelAsLastStatement.kts>] annotation class Anno : R|kotlin/Annotation| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-scriptStatementLevelAsLastStatement.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Anno.str] str: String): R|util/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -69,10 +69,10 @@ FILE: [ResolvedTo(IMPORTS)] scriptStatementLevelAsLastStatement.kts
 
         }
 
-        public? final? const [ResolvedTo(RAW_FIR)] val constant: <implicit> = LAZY_EXPRESSION
+        public? final? const [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val constant: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final? data [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-scriptStatementLevelAsLastStatement.kts>] class Pair : R|kotlin/Any| {
+        public final? data [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-scriptStatementLevelAsLastStatement.kts>, ScriptTopLevelDeclaration=true] class Pair : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Pair] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Pair.a] a: @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) String>>?, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Pair.b] b: @Anno[Unresolved](LAZY_EXPRESSION) Array<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>>?): R|util/Pair| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -91,7 +91,7 @@ FILE: [ResolvedTo(IMPORTS)] scriptStatementLevelAsLastStatement.kts
 
         }
 
-        public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
+        public? final? const [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val prop: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
         public final [ResolvedTo(RAW_FIR)] val $$result: <implicit> = when () {
@@ -114,7 +114,7 @@ FILE: [ResolvedTo(IMPORTS)] scriptStatementLevelAsLastStatement.kts
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-scriptStatementLevelAsLastStatement.kts>] annotation class Anno : R|kotlin/Annotation| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-scriptStatementLevelAsLastStatement.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Anno.str] str: String): R|util/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -124,10 +124,10 @@ FILE: [ResolvedTo(IMPORTS)] scriptStatementLevelAsLastStatement.kts
 
         }
 
-        public? final? const [ResolvedTo(RAW_FIR)] val constant: <implicit> = LAZY_EXPRESSION
+        public? final? const [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val constant: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final? data [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-scriptStatementLevelAsLastStatement.kts>] class Pair : R|kotlin/Any| {
+        public final? data [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-scriptStatementLevelAsLastStatement.kts>, ScriptTopLevelDeclaration=true] class Pair : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Pair] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Pair.a] a: @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) String>>?, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Pair.b] b: @Anno[Unresolved](LAZY_EXPRESSION) Array<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>>?): R|util/Pair| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -146,7 +146,7 @@ FILE: [ResolvedTo(IMPORTS)] scriptStatementLevelAsLastStatement.kts
 
         }
 
-        public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
+        public? final? const [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val prop: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
         public final [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] val $$result: <implicit> = when () {
@@ -169,7 +169,7 @@ FILE: [ResolvedTo(IMPORTS)] scriptStatementLevelAsLastStatement.kts
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-scriptStatementLevelAsLastStatement.kts>] annotation class Anno : R|kotlin/Annotation| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-scriptStatementLevelAsLastStatement.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Anno.str] str: String): R|util/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -179,10 +179,10 @@ FILE: [ResolvedTo(IMPORTS)] scriptStatementLevelAsLastStatement.kts
 
         }
 
-        public? final? const [ResolvedTo(RAW_FIR)] val constant: <implicit> = LAZY_EXPRESSION
+        public? final? const [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val constant: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final? data [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-scriptStatementLevelAsLastStatement.kts>] class Pair : R|kotlin/Any| {
+        public final? data [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-scriptStatementLevelAsLastStatement.kts>, ScriptTopLevelDeclaration=true] class Pair : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Pair] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Pair.a] a: @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) String>>?, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Pair.b] b: @Anno[Unresolved](LAZY_EXPRESSION) Array<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>>?): R|util/Pair| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -201,7 +201,7 @@ FILE: [ResolvedTo(IMPORTS)] scriptStatementLevelAsLastStatement.kts
 
         }
 
-        public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
+        public? final? const [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val prop: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
         public final [ResolvedTo(COMPANION_GENERATION)] val $$result: <implicit> = when () {
@@ -224,7 +224,7 @@ FILE: [ResolvedTo(IMPORTS)] scriptStatementLevelAsLastStatement.kts
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-scriptStatementLevelAsLastStatement.kts>] annotation class Anno : R|kotlin/Annotation| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-scriptStatementLevelAsLastStatement.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Anno.str] str: String): R|util/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -234,10 +234,10 @@ FILE: [ResolvedTo(IMPORTS)] scriptStatementLevelAsLastStatement.kts
 
         }
 
-        public? final? const [ResolvedTo(RAW_FIR)] val constant: <implicit> = LAZY_EXPRESSION
+        public? final? const [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val constant: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final? data [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-scriptStatementLevelAsLastStatement.kts>] class Pair : R|kotlin/Any| {
+        public final? data [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-scriptStatementLevelAsLastStatement.kts>, ScriptTopLevelDeclaration=true] class Pair : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Pair] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Pair.a] a: @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) String>>?, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Pair.b] b: @Anno[Unresolved](LAZY_EXPRESSION) Array<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>>?): R|util/Pair| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -256,7 +256,7 @@ FILE: [ResolvedTo(IMPORTS)] scriptStatementLevelAsLastStatement.kts
 
         }
 
-        public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
+        public? final? const [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val prop: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
         public final [ResolvedTo(SUPER_TYPES)] val $$result: <implicit> = when () {
@@ -279,7 +279,7 @@ FILE: [ResolvedTo(IMPORTS)] scriptStatementLevelAsLastStatement.kts
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-scriptStatementLevelAsLastStatement.kts>] annotation class Anno : R|kotlin/Annotation| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-scriptStatementLevelAsLastStatement.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Anno.str] str: String): R|util/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -289,10 +289,10 @@ FILE: [ResolvedTo(IMPORTS)] scriptStatementLevelAsLastStatement.kts
 
         }
 
-        public? final? const [ResolvedTo(RAW_FIR)] val constant: <implicit> = LAZY_EXPRESSION
+        public? final? const [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val constant: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final? data [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-scriptStatementLevelAsLastStatement.kts>] class Pair : R|kotlin/Any| {
+        public final? data [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-scriptStatementLevelAsLastStatement.kts>, ScriptTopLevelDeclaration=true] class Pair : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Pair] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Pair.a] a: @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) String>>?, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Pair.b] b: @Anno[Unresolved](LAZY_EXPRESSION) Array<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>>?): R|util/Pair| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -311,7 +311,7 @@ FILE: [ResolvedTo(IMPORTS)] scriptStatementLevelAsLastStatement.kts
 
         }
 
-        public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
+        public? final? const [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val prop: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
         public final [ResolvedTo(TYPES)] val $$result: <implicit> = when () {
@@ -334,7 +334,7 @@ FILE: [ResolvedTo(IMPORTS)] scriptStatementLevelAsLastStatement.kts
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-scriptStatementLevelAsLastStatement.kts>] annotation class Anno : R|kotlin/Annotation| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-scriptStatementLevelAsLastStatement.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Anno.str] str: String): R|util/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -344,10 +344,10 @@ FILE: [ResolvedTo(IMPORTS)] scriptStatementLevelAsLastStatement.kts
 
         }
 
-        public? final? const [ResolvedTo(RAW_FIR)] val constant: <implicit> = LAZY_EXPRESSION
+        public? final? const [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val constant: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final? data [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-scriptStatementLevelAsLastStatement.kts>] class Pair : R|kotlin/Any| {
+        public final? data [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-scriptStatementLevelAsLastStatement.kts>, ScriptTopLevelDeclaration=true] class Pair : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Pair] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Pair.a] a: @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) String>>?, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Pair.b] b: @Anno[Unresolved](LAZY_EXPRESSION) Array<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>>?): R|util/Pair| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -366,7 +366,7 @@ FILE: [ResolvedTo(IMPORTS)] scriptStatementLevelAsLastStatement.kts
 
         }
 
-        public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
+        public? final? const [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val prop: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
         public final [ResolvedTo(STATUS)] val $$result: <implicit> = when () {
@@ -389,7 +389,7 @@ FILE: [ResolvedTo(IMPORTS)] scriptStatementLevelAsLastStatement.kts
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-scriptStatementLevelAsLastStatement.kts>] annotation class Anno : R|kotlin/Annotation| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-scriptStatementLevelAsLastStatement.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Anno.str] str: String): R|util/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -399,10 +399,10 @@ FILE: [ResolvedTo(IMPORTS)] scriptStatementLevelAsLastStatement.kts
 
         }
 
-        public? final? const [ResolvedTo(RAW_FIR)] val constant: <implicit> = LAZY_EXPRESSION
+        public? final? const [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val constant: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final? data [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-scriptStatementLevelAsLastStatement.kts>] class Pair : R|kotlin/Any| {
+        public final? data [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-scriptStatementLevelAsLastStatement.kts>, ScriptTopLevelDeclaration=true] class Pair : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Pair] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Pair.a] a: @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) String>>?, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Pair.b] b: @Anno[Unresolved](LAZY_EXPRESSION) Array<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>>?): R|util/Pair| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -421,7 +421,7 @@ FILE: [ResolvedTo(IMPORTS)] scriptStatementLevelAsLastStatement.kts
 
         }
 
-        public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
+        public? final? const [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val prop: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
         public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] val $$result: <implicit> = when () {
@@ -444,7 +444,7 @@ FILE: [ResolvedTo(IMPORTS)] scriptStatementLevelAsLastStatement.kts
         [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-scriptStatementLevelAsLastStatement.kts>] annotation class Anno : R|kotlin/Annotation| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-scriptStatementLevelAsLastStatement.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Anno.str] str: String): R|util/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -454,10 +454,10 @@ FILE: [ResolvedTo(IMPORTS)] scriptStatementLevelAsLastStatement.kts
 
         }
 
-        public? final? const [ResolvedTo(RAW_FIR)] val constant: <implicit> = LAZY_EXPRESSION
+        public? final? const [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val constant: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final? data [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-scriptStatementLevelAsLastStatement.kts>] class Pair : R|kotlin/Any| {
+        public final? data [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol util.<script-scriptStatementLevelAsLastStatement.kts>, ScriptTopLevelDeclaration=true] class Pair : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Pair] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Pair.a] a: @Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Collection<@Anno[Unresolved](LAZY_EXPRESSION) String>>?, [ResolvedTo(RAW_FIR)] [CorrespondingProperty=util/Pair.b] b: @Anno[Unresolved](LAZY_EXPRESSION) Array<@Anno[Unresolved](LAZY_EXPRESSION) List<@Anno[Unresolved](LAZY_EXPRESSION) Int>>?): R|util/Pair| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -476,7 +476,7 @@ FILE: [ResolvedTo(IMPORTS)] scriptStatementLevelAsLastStatement.kts
 
         }
 
-        public? final? const [ResolvedTo(RAW_FIR)] val prop: <implicit> = LAZY_EXPRESSION
+        public? final? const [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val prop: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
         public final [ResolvedTo(CONTRACTS)] val $$result: <implicit> = when () {
@@ -499,7 +499,7 @@ FILE: [ResolvedTo(IMPORTS)] scriptStatementLevelAsLastStatement.kts
         [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol util.<script-scriptStatementLevelAsLastStatement.kts>] annotation class Anno : R|kotlin/Annotation| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol util.<script-scriptStatementLevelAsLastStatement.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=util/Anno.str] str: R|kotlin/String|): R|util/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -509,10 +509,10 @@ FILE: [ResolvedTo(IMPORTS)] scriptStatementLevelAsLastStatement.kts
 
         }
 
-        public? final? const [ResolvedTo(RAW_FIR)] val constant: <implicit> = LAZY_EXPRESSION
+        public? final? const [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val constant: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final data [ResolvedTo(CONTRACTS)] [ContainingScriptKey=FirScriptSymbol util.<script-scriptStatementLevelAsLastStatement.kts>] class Pair : R|kotlin/Any| {
+        public final data [ResolvedTo(CONTRACTS)] [ContainingScriptKey=FirScriptSymbol util.<script-scriptStatementLevelAsLastStatement.kts>, ScriptTopLevelDeclaration=true] class Pair : R|kotlin/Any| {
             public [ResolvedTo(CONTRACTS)] [ContainingClassKey=Pair] constructor([ResolvedTo(CONTRACTS)] [CorrespondingProperty=util/Pair.a] a: R|@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/Collection<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/String>>?|, [ResolvedTo(CONTRACTS)] [CorrespondingProperty=util/Pair.b] b: R|@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Array<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>>?|): R|util/Pair| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -531,7 +531,7 @@ FILE: [ResolvedTo(IMPORTS)] scriptStatementLevelAsLastStatement.kts
 
         }
 
-        public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val prop: R|kotlin/String| = String(str)
+        public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] val prop: R|kotlin/String| = String(str)
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/String|
 
         public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [PostponedSymbolsForAnnotationResolutionKey=[FirConstructorSymbol util/Pair.Pair]] val $$result: R|kotlin/Unit| = when () {
@@ -554,7 +554,7 @@ FILE: [ResolvedTo(IMPORTS)] scriptStatementLevelAsLastStatement.kts
         [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol util.<script-scriptStatementLevelAsLastStatement.kts>] annotation class Anno : R|kotlin/Annotation| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol util.<script-scriptStatementLevelAsLastStatement.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=util/Anno.str] str: R|kotlin/String|): R|util/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -564,10 +564,10 @@ FILE: [ResolvedTo(IMPORTS)] scriptStatementLevelAsLastStatement.kts
 
         }
 
-        public? final? const [ResolvedTo(RAW_FIR)] val constant: <implicit> = LAZY_EXPRESSION
+        public? final? const [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val constant: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        public final data [ResolvedTo(CONTRACTS)] [ContainingScriptKey=FirScriptSymbol util.<script-scriptStatementLevelAsLastStatement.kts>] class Pair : R|kotlin/Any| {
+        public final data [ResolvedTo(CONTRACTS)] [ContainingScriptKey=FirScriptSymbol util.<script-scriptStatementLevelAsLastStatement.kts>, ScriptTopLevelDeclaration=true] class Pair : R|kotlin/Any| {
             public [ResolvedTo(CONTRACTS)] [ContainingClassKey=Pair] constructor([ResolvedTo(CONTRACTS)] [CorrespondingProperty=util/Pair.a] a: R|@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/Collection<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/String>>?|, [ResolvedTo(CONTRACTS)] [CorrespondingProperty=util/Pair.b] b: R|@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Array<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/collections/List<@R|util/Anno|(LAZY_EXPRESSION)  kotlin/Int>>?|): R|util/Pair| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -586,7 +586,7 @@ FILE: [ResolvedTo(IMPORTS)] scriptStatementLevelAsLastStatement.kts
 
         }
 
-        public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val prop: R|kotlin/String| = String(str)
+        public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] val prop: R|kotlin/String| = String(str)
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/String|
 
         public final [ResolvedTo(CONSTANT_EVALUATION)] [PostponedSymbolsForAnnotationResolutionKey=[FirConstructorSymbol util/Pair.Pair]] val $$result: R|kotlin/Unit| = when () {
@@ -609,7 +609,7 @@ FILE: [ResolvedTo(IMPORTS)] scriptStatementLevelAsLastStatement.kts
         [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol util.<script-scriptStatementLevelAsLastStatement.kts>] annotation class Anno : R|kotlin/Annotation| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol util.<script-scriptStatementLevelAsLastStatement.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=util/Anno.str] str: R|kotlin/String|): R|util/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -619,10 +619,10 @@ FILE: [ResolvedTo(IMPORTS)] scriptStatementLevelAsLastStatement.kts
 
         }
 
-        public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val constant: R|kotlin/String| = String(s)
+        public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] val constant: R|kotlin/String| = String(s)
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/String|
 
-        public final data [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol util.<script-scriptStatementLevelAsLastStatement.kts>] class Pair : R|kotlin/Any| {
+        public final data [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol util.<script-scriptStatementLevelAsLastStatement.kts>, ScriptTopLevelDeclaration=true] class Pair : R|kotlin/Any| {
             public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=Pair] constructor([ResolvedTo(ANNOTATION_ARGUMENTS)] [CorrespondingProperty=util/Pair.a] a: R|@R|util/Anno|(str = <strcat>(String(a type ), R|util/constant|))  kotlin/collections/List<@R|util/Anno|(str = <strcat>(String(a nested type ), R|util/constant|))  kotlin/collections/Collection<@R|util/Anno|(str = <strcat>(String(a nested nested type ), R|util/constant|))  kotlin/String>>?|, [ResolvedTo(ANNOTATION_ARGUMENTS)] [CorrespondingProperty=util/Pair.b] b: R|@R|util/Anno|(str = <strcat>(String(b type ), R|util/constant|))  kotlin/Array<@R|util/Anno|(str = <strcat>(String(b nested type ), R|util/constant|))  kotlin/collections/List<@R|util/Anno|(str = <strcat>(String(b nested nested type ), R|util/constant|))  kotlin/Int>>?|): R|util/Pair| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -641,7 +641,7 @@ FILE: [ResolvedTo(IMPORTS)] scriptStatementLevelAsLastStatement.kts
 
         }
 
-        public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val prop: R|kotlin/String| = String(str)
+        public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] val prop: R|kotlin/String| = String(str)
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/String|
 
         public final [ResolvedTo(ANNOTATION_ARGUMENTS)] val $$result: R|kotlin/Unit| = when () {
@@ -664,7 +664,7 @@ FILE: [ResolvedTo(IMPORTS)] scriptStatementLevelAsLastStatement.kts
         [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol util.<script-scriptStatementLevelAsLastStatement.kts>] annotation class Anno : R|kotlin/Annotation| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol util.<script-scriptStatementLevelAsLastStatement.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=util/Anno.str] str: R|kotlin/String|): R|util/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -674,10 +674,10 @@ FILE: [ResolvedTo(IMPORTS)] scriptStatementLevelAsLastStatement.kts
 
         }
 
-        public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val constant: R|kotlin/String| = String(s)
+        public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] val constant: R|kotlin/String| = String(s)
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/String|
 
-        public final data [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol util.<script-scriptStatementLevelAsLastStatement.kts>] class Pair : R|kotlin/Any| {
+        public final data [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingScriptKey=FirScriptSymbol util.<script-scriptStatementLevelAsLastStatement.kts>, ScriptTopLevelDeclaration=true] class Pair : R|kotlin/Any| {
             public [ResolvedTo(ANNOTATION_ARGUMENTS)] [ContainingClassKey=Pair] constructor([ResolvedTo(ANNOTATION_ARGUMENTS)] [CorrespondingProperty=util/Pair.a] a: R|@R|util/Anno|(str = <strcat>(String(a type ), R|util/constant|))  kotlin/collections/List<@R|util/Anno|(str = <strcat>(String(a nested type ), R|util/constant|))  kotlin/collections/Collection<@R|util/Anno|(str = <strcat>(String(a nested nested type ), R|util/constant|))  kotlin/String>>?|, [ResolvedTo(ANNOTATION_ARGUMENTS)] [CorrespondingProperty=util/Pair.b] b: R|@R|util/Anno|(str = <strcat>(String(b type ), R|util/constant|))  kotlin/Array<@R|util/Anno|(str = <strcat>(String(b nested type ), R|util/constant|))  kotlin/collections/List<@R|util/Anno|(str = <strcat>(String(b nested nested type ), R|util/constant|))  kotlin/Int>>?|): R|util/Pair| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -696,7 +696,7 @@ FILE: [ResolvedTo(IMPORTS)] scriptStatementLevelAsLastStatement.kts
 
         }
 
-        public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] val prop: R|kotlin/String| = String(str)
+        public final const [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] val prop: R|kotlin/String| = String(str)
             public [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] get(): R|kotlin/String|
 
         public final [ResolvedTo(BODY_RESOLVE)] val $$result: R|kotlin/Unit| = when () {
@@ -719,7 +719,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] scriptStatementLevelAsLastStatement.kts
         [ResolvedTo(BODY_RESOLVE)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol util.<script-scriptStatementLevelAsLastStatement.kts>] annotation class Anno : R|kotlin/Annotation| {
+        public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol util.<script-scriptStatementLevelAsLastStatement.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=util/Anno.str] str: R|kotlin/String|): R|util/Anno| {
                 super<R|kotlin/Any|>()
             }
@@ -729,10 +729,10 @@ FILE: [ResolvedTo(BODY_RESOLVE)] scriptStatementLevelAsLastStatement.kts
 
         }
 
-        public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=String(s)] val constant: R|kotlin/String| = String(s)
+        public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=String(s), ScriptTopLevelDeclaration=true] val constant: R|kotlin/String| = String(s)
             public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String|
 
-        public final data [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol util.<script-scriptStatementLevelAsLastStatement.kts>] class Pair : R|kotlin/Any| {
+        public final data [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol util.<script-scriptStatementLevelAsLastStatement.kts>, ScriptTopLevelDeclaration=true] class Pair : R|kotlin/Any| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Pair] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=util/Pair.a] a: R|@R|util/Anno|(str = <strcat>(String(a type ), R|util/constant|))  kotlin/collections/List<@R|util/Anno|(str = <strcat>(String(a nested type ), R|util/constant|))  kotlin/collections/Collection<@R|util/Anno|(str = <strcat>(String(a nested nested type ), R|util/constant|))  kotlin/String>>?|, [ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=util/Pair.b] b: R|@R|util/Anno|(str = <strcat>(String(b type ), R|util/constant|))  kotlin/Array<@R|util/Anno|(str = <strcat>(String(b nested type ), R|util/constant|))  kotlin/collections/List<@R|util/Anno|(str = <strcat>(String(b nested nested type ), R|util/constant|))  kotlin/Int>>?|): R|util/Pair| {
                 super<R|kotlin/Any|>()
             }
@@ -751,7 +751,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] scriptStatementLevelAsLastStatement.kts
 
         }
 
-        public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=String(str)] val prop: R|kotlin/String| = String(str)
+        public final const [ResolvedTo(BODY_RESOLVE)] [EvaluatedValue=String(str), ScriptTopLevelDeclaration=true] val prop: R|kotlin/String| = String(str)
             public [ResolvedTo(BODY_RESOLVE)] get(): R|kotlin/String|
 
         public final [ResolvedTo(BODY_RESOLVE)] val $$result: R|kotlin/Unit| = when () {

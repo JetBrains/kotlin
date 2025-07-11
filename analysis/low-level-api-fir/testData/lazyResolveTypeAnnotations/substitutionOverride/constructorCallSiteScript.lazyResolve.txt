@@ -4,7 +4,7 @@ FILE: [ResolvedTo(RAW_FIR)] constructorCallSiteScript.kts
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-constructorCallSiteScript.kts>] annotation class Anno : R|kotlin/Annotation| {
+        @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-constructorCallSiteScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.str] str: String): R|Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -14,7 +14,7 @@ FILE: [ResolvedTo(RAW_FIR)] constructorCallSiteScript.kts
 
         }
 
-        public open [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-constructorCallSiteScript.kts>] class P1<[ResolvedTo(RAW_FIR)] T1> : R|kotlin/Any| {
+        public open [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-constructorCallSiteScript.kts>, ScriptTopLevelDeclaration=true] class P1<[ResolvedTo(RAW_FIR)] T1> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=P1] constructor<[ResolvedTo(RAW_FIR)] T1>(): R|P1<T1>| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -39,7 +39,7 @@ FILE: [ResolvedTo(IMPORTS)] constructorCallSiteScript.kts
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-constructorCallSiteScript.kts>] annotation class Anno : R|kotlin/Annotation| {
+        @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-constructorCallSiteScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.str] str: String): R|Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -49,7 +49,7 @@ FILE: [ResolvedTo(IMPORTS)] constructorCallSiteScript.kts
 
         }
 
-        public open [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-constructorCallSiteScript.kts>] class P1<[ResolvedTo(RAW_FIR)] T1> : R|kotlin/Any| {
+        public open [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-constructorCallSiteScript.kts>, ScriptTopLevelDeclaration=true] class P1<[ResolvedTo(RAW_FIR)] T1> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=P1] constructor<[ResolvedTo(RAW_FIR)] T1>(): R|P1<T1>| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -74,7 +74,7 @@ FILE: [ResolvedTo(IMPORTS)] constructorCallSiteScript.kts
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-constructorCallSiteScript.kts>] annotation class Anno : R|kotlin/Annotation| {
+        @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-constructorCallSiteScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.str] str: String): R|Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -84,7 +84,7 @@ FILE: [ResolvedTo(IMPORTS)] constructorCallSiteScript.kts
 
         }
 
-        public open [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-constructorCallSiteScript.kts>] class P1<[ResolvedTo(RAW_FIR)] T1> : R|kotlin/Any| {
+        public open [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-constructorCallSiteScript.kts>, ScriptTopLevelDeclaration=true] class P1<[ResolvedTo(RAW_FIR)] T1> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=P1] constructor<[ResolvedTo(RAW_FIR)] T1>(): R|P1<T1>| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -109,7 +109,7 @@ FILE: [ResolvedTo(IMPORTS)] constructorCallSiteScript.kts
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-constructorCallSiteScript.kts>] annotation class Anno : R|kotlin/Annotation| {
+        @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-constructorCallSiteScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.str] str: String): R|Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -119,7 +119,7 @@ FILE: [ResolvedTo(IMPORTS)] constructorCallSiteScript.kts
 
         }
 
-        public open [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-constructorCallSiteScript.kts>] class P1<[ResolvedTo(RAW_FIR)] T1> : R|kotlin/Any| {
+        public open [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-constructorCallSiteScript.kts>, ScriptTopLevelDeclaration=true] class P1<[ResolvedTo(RAW_FIR)] T1> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=P1] constructor<[ResolvedTo(RAW_FIR)] T1>(): R|P1<T1>| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -144,7 +144,7 @@ FILE: [ResolvedTo(IMPORTS)] constructorCallSiteScript.kts
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-constructorCallSiteScript.kts>] annotation class Anno : R|kotlin/Annotation| {
+        @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-constructorCallSiteScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.str] str: String): R|Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -154,7 +154,7 @@ FILE: [ResolvedTo(IMPORTS)] constructorCallSiteScript.kts
 
         }
 
-        public open [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-constructorCallSiteScript.kts>] class P1<[ResolvedTo(SUPER_TYPES)] T1> : R|kotlin/Any| {
+        public open [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-constructorCallSiteScript.kts>, ScriptTopLevelDeclaration=true] class P1<[ResolvedTo(SUPER_TYPES)] T1> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=P1] constructor<[ResolvedTo(SUPER_TYPES)] T1>(): R|P1<T1>| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -179,7 +179,7 @@ FILE: [ResolvedTo(IMPORTS)] constructorCallSiteScript.kts
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol <script-constructorCallSiteScript.kts>] annotation class Anno : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol <script-constructorCallSiteScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.str] str: String): R|Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -189,7 +189,7 @@ FILE: [ResolvedTo(IMPORTS)] constructorCallSiteScript.kts
 
         }
 
-        public open [ResolvedTo(TYPES)] [ContainingScriptKey=FirScriptSymbol <script-constructorCallSiteScript.kts>] class P1<[ResolvedTo(TYPES)] T1> : R|kotlin/Any| {
+        public open [ResolvedTo(TYPES)] [ContainingScriptKey=FirScriptSymbol <script-constructorCallSiteScript.kts>, ScriptTopLevelDeclaration=true] class P1<[ResolvedTo(TYPES)] T1> : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=P1] constructor<[ResolvedTo(TYPES)] T1>(): R|P1<T1>| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -214,7 +214,7 @@ FILE: [ResolvedTo(IMPORTS)] constructorCallSiteScript.kts
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol <script-constructorCallSiteScript.kts>] annotation class Anno : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol <script-constructorCallSiteScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.str] str: String): R|Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -224,7 +224,7 @@ FILE: [ResolvedTo(IMPORTS)] constructorCallSiteScript.kts
 
         }
 
-        public open [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-constructorCallSiteScript.kts>] class P1<[ResolvedTo(STATUS)] T1> : R|kotlin/Any| {
+        public open [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-constructorCallSiteScript.kts>, ScriptTopLevelDeclaration=true] class P1<[ResolvedTo(STATUS)] T1> : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=P1] constructor<[ResolvedTo(STATUS)] T1>(): R|P1<T1>| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -249,7 +249,7 @@ FILE: [ResolvedTo(IMPORTS)] constructorCallSiteScript.kts
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol <script-constructorCallSiteScript.kts>] annotation class Anno : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol <script-constructorCallSiteScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.str] str: String): R|Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -259,7 +259,7 @@ FILE: [ResolvedTo(IMPORTS)] constructorCallSiteScript.kts
 
         }
 
-        public open [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-constructorCallSiteScript.kts>] class P1<[ResolvedTo(STATUS)] T1> : R|kotlin/Any| {
+        public open [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-constructorCallSiteScript.kts>, ScriptTopLevelDeclaration=true] class P1<[ResolvedTo(STATUS)] T1> : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=P1] constructor<[ResolvedTo(STATUS)] T1>(): R|P1<T1>| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -284,7 +284,7 @@ FILE: [ResolvedTo(IMPORTS)] constructorCallSiteScript.kts
         [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol <script-constructorCallSiteScript.kts>] annotation class Anno : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol <script-constructorCallSiteScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.str] str: String): R|Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -294,7 +294,7 @@ FILE: [ResolvedTo(IMPORTS)] constructorCallSiteScript.kts
 
         }
 
-        public open [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-constructorCallSiteScript.kts>] class P1<[ResolvedTo(STATUS)] T1> : R|kotlin/Any| {
+        public open [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-constructorCallSiteScript.kts>, ScriptTopLevelDeclaration=true] class P1<[ResolvedTo(STATUS)] T1> : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=P1] constructor<[ResolvedTo(STATUS)] T1>(): R|P1<T1>| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -319,7 +319,7 @@ FILE: [ResolvedTo(IMPORTS)] constructorCallSiteScript.kts
         [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol <script-constructorCallSiteScript.kts>] annotation class Anno : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol <script-constructorCallSiteScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.str] str: String): R|Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -329,7 +329,7 @@ FILE: [ResolvedTo(IMPORTS)] constructorCallSiteScript.kts
 
         }
 
-        public open [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-constructorCallSiteScript.kts>] class P1<[ResolvedTo(STATUS)] T1> : R|kotlin/Any| {
+        public open [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-constructorCallSiteScript.kts>, ScriptTopLevelDeclaration=true] class P1<[ResolvedTo(STATUS)] T1> : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=P1] constructor<[ResolvedTo(STATUS)] T1>(): R|P1<T1>| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -354,7 +354,7 @@ FILE: [ResolvedTo(IMPORTS)] constructorCallSiteScript.kts
         [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol <script-constructorCallSiteScript.kts>] annotation class Anno : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[CompilerRequiredAnnotations](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ContainingScriptKey=FirScriptSymbol <script-constructorCallSiteScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.str] str: String): R|Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -364,7 +364,7 @@ FILE: [ResolvedTo(IMPORTS)] constructorCallSiteScript.kts
 
         }
 
-        public open [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-constructorCallSiteScript.kts>] class P1<[ResolvedTo(STATUS)] T1> : R|kotlin/Any| {
+        public open [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-constructorCallSiteScript.kts>, ScriptTopLevelDeclaration=true] class P1<[ResolvedTo(STATUS)] T1> : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=P1] constructor<[ResolvedTo(STATUS)] T1>(): R|P1<T1>| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -389,7 +389,7 @@ FILE: [ResolvedTo(IMPORTS)] constructorCallSiteScript.kts
         [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-constructorCallSiteScript.kts>] annotation class Anno : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-constructorCallSiteScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.str] str: R|kotlin/String|): R|Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -399,7 +399,7 @@ FILE: [ResolvedTo(IMPORTS)] constructorCallSiteScript.kts
 
         }
 
-        public open [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-constructorCallSiteScript.kts>] class P1<[ResolvedTo(STATUS)] T1> : R|kotlin/Any| {
+        public open [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-constructorCallSiteScript.kts>, ScriptTopLevelDeclaration=true] class P1<[ResolvedTo(STATUS)] T1> : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=P1] constructor<[ResolvedTo(STATUS)] T1>(): R|P1<T1>| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -424,7 +424,7 @@ FILE: [ResolvedTo(IMPORTS)] constructorCallSiteScript.kts
         [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-constructorCallSiteScript.kts>] annotation class Anno : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-constructorCallSiteScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.str] str: R|kotlin/String|): R|Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -434,7 +434,7 @@ FILE: [ResolvedTo(IMPORTS)] constructorCallSiteScript.kts
 
         }
 
-        public open [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-constructorCallSiteScript.kts>] class P1<[ResolvedTo(STATUS)] T1> : R|kotlin/Any| {
+        public open [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-constructorCallSiteScript.kts>, ScriptTopLevelDeclaration=true] class P1<[ResolvedTo(STATUS)] T1> : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=P1] constructor<[ResolvedTo(STATUS)] T1>(): R|P1<T1>| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -461,7 +461,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] constructorCallSiteScript.kts
         [ResolvedTo(BODY_RESOLVE)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)) public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol <script-constructorCallSiteScript.kts>] annotation class Anno : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|)) public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol <script-constructorCallSiteScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/Anno.str] str: R|kotlin/String|): R|Anno| {
                 super<R|kotlin/Any|>()
             }
@@ -471,7 +471,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] constructorCallSiteScript.kts
 
         }
 
-        public open [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol <script-constructorCallSiteScript.kts>] class P1<[ResolvedTo(BODY_RESOLVE)] T1> : R|kotlin/Any| {
+        public open [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol <script-constructorCallSiteScript.kts>, ScriptTopLevelDeclaration=true] class P1<[ResolvedTo(BODY_RESOLVE)] T1> : R|kotlin/Any| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=P1] constructor<[ResolvedTo(BODY_RESOLVE)] T1>(): R|P1<T1>| {
                 super<R|kotlin/Any|>()
             }

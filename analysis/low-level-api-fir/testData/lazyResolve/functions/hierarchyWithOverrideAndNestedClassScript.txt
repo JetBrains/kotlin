@@ -4,7 +4,7 @@ FILE: [ResolvedTo(RAW_FIR)] hierarchyWithOverrideAndNestedClassScript.kts
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideAndNestedClassScript.kts>] interface Foo1 : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideAndNestedClassScript.kts>, ScriptTopLevelDeclaration=true] interface Foo1 : R|kotlin/Any| {
             public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit|
 
             public? final? [ResolvedTo(RAW_FIR)] fun bar(): R|kotlin/Unit|
@@ -21,7 +21,7 @@ FILE: [ResolvedTo(RAW_FIR)] hierarchyWithOverrideAndNestedClassScript.kts
 
         }
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideAndNestedClassScript.kts>] interface Foo2 : Foo1 {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideAndNestedClassScript.kts>, ScriptTopLevelDeclaration=true] interface Foo2 : Foo1 {
             public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] i: Int): R|kotlin/Unit|
 
             public? final? [ResolvedTo(RAW_FIR)] fun bar([ResolvedTo(RAW_FIR)] s: String): R|kotlin/Unit|
@@ -31,7 +31,7 @@ FILE: [ResolvedTo(RAW_FIR)] hierarchyWithOverrideAndNestedClassScript.kts
 
         }
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideAndNestedClassScript.kts>] interface Foo3 : Foo1 {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideAndNestedClassScript.kts>, ScriptTopLevelDeclaration=true] interface Foo3 : Foo1 {
             public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] i: Int): R|kotlin/Unit|
 
             public? final? [ResolvedTo(RAW_FIR)] fun bar([ResolvedTo(RAW_FIR)] s: String): R|kotlin/Unit|
@@ -41,7 +41,7 @@ FILE: [ResolvedTo(RAW_FIR)] hierarchyWithOverrideAndNestedClassScript.kts
 
         }
 
-        public abstract [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideAndNestedClassScript.kts>] class OuterClass : Foo1 {
+        public abstract [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideAndNestedClassScript.kts>, ScriptTopLevelDeclaration=true] class OuterClass : Foo1 {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OuterClass] constructor(): R|OuterClass| {
                 LAZY_super<<implicit>>
             }
@@ -82,7 +82,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClassScript.kts
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideAndNestedClassScript.kts>] interface Foo1 : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideAndNestedClassScript.kts>, ScriptTopLevelDeclaration=true] interface Foo1 : R|kotlin/Any| {
             public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit|
 
             public? final? [ResolvedTo(RAW_FIR)] fun bar(): R|kotlin/Unit|
@@ -99,7 +99,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClassScript.kts
 
         }
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideAndNestedClassScript.kts>] interface Foo2 : Foo1 {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideAndNestedClassScript.kts>, ScriptTopLevelDeclaration=true] interface Foo2 : Foo1 {
             public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] i: Int): R|kotlin/Unit|
 
             public? final? [ResolvedTo(RAW_FIR)] fun bar([ResolvedTo(RAW_FIR)] s: String): R|kotlin/Unit|
@@ -109,7 +109,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClassScript.kts
 
         }
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideAndNestedClassScript.kts>] interface Foo3 : Foo1 {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideAndNestedClassScript.kts>, ScriptTopLevelDeclaration=true] interface Foo3 : Foo1 {
             public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] i: Int): R|kotlin/Unit|
 
             public? final? [ResolvedTo(RAW_FIR)] fun bar([ResolvedTo(RAW_FIR)] s: String): R|kotlin/Unit|
@@ -119,7 +119,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClassScript.kts
 
         }
 
-        public abstract [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideAndNestedClassScript.kts>] class OuterClass : Foo1 {
+        public abstract [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideAndNestedClassScript.kts>, ScriptTopLevelDeclaration=true] class OuterClass : Foo1 {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OuterClass] constructor(): R|OuterClass| {
                 LAZY_super<<implicit>>
             }
@@ -160,7 +160,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClassScript.kts
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideAndNestedClassScript.kts>] interface Foo1 : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideAndNestedClassScript.kts>, ScriptTopLevelDeclaration=true] interface Foo1 : R|kotlin/Any| {
             public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit|
 
             public? final? [ResolvedTo(RAW_FIR)] fun bar(): R|kotlin/Unit|
@@ -177,7 +177,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClassScript.kts
 
         }
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideAndNestedClassScript.kts>] interface Foo2 : Foo1 {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideAndNestedClassScript.kts>, ScriptTopLevelDeclaration=true] interface Foo2 : Foo1 {
             public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] i: Int): R|kotlin/Unit|
 
             public? final? [ResolvedTo(RAW_FIR)] fun bar([ResolvedTo(RAW_FIR)] s: String): R|kotlin/Unit|
@@ -187,7 +187,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClassScript.kts
 
         }
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideAndNestedClassScript.kts>] interface Foo3 : Foo1 {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideAndNestedClassScript.kts>, ScriptTopLevelDeclaration=true] interface Foo3 : Foo1 {
             public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] i: Int): R|kotlin/Unit|
 
             public? final? [ResolvedTo(RAW_FIR)] fun bar([ResolvedTo(RAW_FIR)] s: String): R|kotlin/Unit|
@@ -197,7 +197,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClassScript.kts
 
         }
 
-        public abstract [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideAndNestedClassScript.kts>] class OuterClass : Foo1 {
+        public abstract [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideAndNestedClassScript.kts>, ScriptTopLevelDeclaration=true] class OuterClass : Foo1 {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OuterClass] constructor(): R|OuterClass| {
                 LAZY_super<<implicit>>
             }
@@ -238,7 +238,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClassScript.kts
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideAndNestedClassScript.kts>] interface Foo1 : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideAndNestedClassScript.kts>, ScriptTopLevelDeclaration=true] interface Foo1 : R|kotlin/Any| {
             public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit|
 
             public? final? [ResolvedTo(RAW_FIR)] fun bar(): R|kotlin/Unit|
@@ -255,7 +255,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClassScript.kts
 
         }
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideAndNestedClassScript.kts>] interface Foo2 : Foo1 {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideAndNestedClassScript.kts>, ScriptTopLevelDeclaration=true] interface Foo2 : Foo1 {
             public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] i: Int): R|kotlin/Unit|
 
             public? final? [ResolvedTo(RAW_FIR)] fun bar([ResolvedTo(RAW_FIR)] s: String): R|kotlin/Unit|
@@ -265,7 +265,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClassScript.kts
 
         }
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideAndNestedClassScript.kts>] interface Foo3 : Foo1 {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideAndNestedClassScript.kts>, ScriptTopLevelDeclaration=true] interface Foo3 : Foo1 {
             public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] i: Int): R|kotlin/Unit|
 
             public? final? [ResolvedTo(RAW_FIR)] fun bar([ResolvedTo(RAW_FIR)] s: String): R|kotlin/Unit|
@@ -275,7 +275,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClassScript.kts
 
         }
 
-        public abstract [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideAndNestedClassScript.kts>] class OuterClass : Foo1 {
+        public abstract [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideAndNestedClassScript.kts>, ScriptTopLevelDeclaration=true] class OuterClass : Foo1 {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OuterClass] constructor(): R|OuterClass| {
                 LAZY_super<<implicit>>
             }
@@ -316,7 +316,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClassScript.kts
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideAndNestedClassScript.kts>] interface Foo1 : R|kotlin/Any| {
+        public final? [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideAndNestedClassScript.kts>, ScriptTopLevelDeclaration=true] interface Foo1 : R|kotlin/Any| {
             public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit|
 
             public? final? [ResolvedTo(RAW_FIR)] fun bar(): R|kotlin/Unit|
@@ -333,7 +333,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClassScript.kts
 
         }
 
-        public final? [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideAndNestedClassScript.kts>] interface Foo2 : R|Foo1| {
+        public final? [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideAndNestedClassScript.kts>, ScriptTopLevelDeclaration=true] interface Foo2 : R|Foo1| {
             public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] i: Int): R|kotlin/Unit|
 
             public? final? [ResolvedTo(RAW_FIR)] fun bar([ResolvedTo(RAW_FIR)] s: String): R|kotlin/Unit|
@@ -343,7 +343,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClassScript.kts
 
         }
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideAndNestedClassScript.kts>] interface Foo3 : Foo1 {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideAndNestedClassScript.kts>, ScriptTopLevelDeclaration=true] interface Foo3 : Foo1 {
             public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] i: Int): R|kotlin/Unit|
 
             public? final? [ResolvedTo(RAW_FIR)] fun bar([ResolvedTo(RAW_FIR)] s: String): R|kotlin/Unit|
@@ -353,7 +353,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClassScript.kts
 
         }
 
-        public abstract [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideAndNestedClassScript.kts>] class OuterClass : R|Foo1| {
+        public abstract [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideAndNestedClassScript.kts>, ScriptTopLevelDeclaration=true] class OuterClass : R|Foo1| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OuterClass] constructor(): R|OuterClass| {
                 LAZY_super<<implicit>>
             }
@@ -394,7 +394,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClassScript.kts
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideAndNestedClassScript.kts>] interface Foo1 : R|kotlin/Any| {
+        public final? [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideAndNestedClassScript.kts>, ScriptTopLevelDeclaration=true] interface Foo1 : R|kotlin/Any| {
             public? final? [ResolvedTo(RAW_FIR)] fun foo(): R|kotlin/Unit|
 
             public? final? [ResolvedTo(RAW_FIR)] fun bar(): R|kotlin/Unit|
@@ -411,7 +411,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClassScript.kts
 
         }
 
-        public final? [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideAndNestedClassScript.kts>] interface Foo2 : R|Foo1| {
+        public final? [ResolvedTo(SUPER_TYPES)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideAndNestedClassScript.kts>, ScriptTopLevelDeclaration=true] interface Foo2 : R|Foo1| {
             public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] i: Int): R|kotlin/Unit|
 
             public? final? [ResolvedTo(RAW_FIR)] fun bar([ResolvedTo(RAW_FIR)] s: String): R|kotlin/Unit|
@@ -421,7 +421,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClassScript.kts
 
         }
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideAndNestedClassScript.kts>] interface Foo3 : Foo1 {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideAndNestedClassScript.kts>, ScriptTopLevelDeclaration=true] interface Foo3 : Foo1 {
             public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] i: Int): R|kotlin/Unit|
 
             public? final? [ResolvedTo(RAW_FIR)] fun bar([ResolvedTo(RAW_FIR)] s: String): R|kotlin/Unit|
@@ -431,7 +431,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClassScript.kts
 
         }
 
-        public abstract [ResolvedTo(TYPES)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideAndNestedClassScript.kts>] class OuterClass : R|Foo1| {
+        public abstract [ResolvedTo(TYPES)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideAndNestedClassScript.kts>, ScriptTopLevelDeclaration=true] class OuterClass : R|Foo1| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=OuterClass] constructor(): R|OuterClass| {
                 LAZY_super<<implicit>>
             }
@@ -472,7 +472,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClassScript.kts
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideAndNestedClassScript.kts>] interface Foo1 : R|kotlin/Any| {
+        public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideAndNestedClassScript.kts>, ScriptTopLevelDeclaration=true] interface Foo1 : R|kotlin/Any| {
             public abstract [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit|
 
             public abstract [ResolvedTo(STATUS)] fun bar(): R|kotlin/Unit|
@@ -489,7 +489,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClassScript.kts
 
         }
 
-        public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideAndNestedClassScript.kts>] interface Foo2 : R|Foo1| {
+        public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideAndNestedClassScript.kts>, ScriptTopLevelDeclaration=true] interface Foo2 : R|Foo1| {
             public abstract [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] i: R|kotlin/Int|): R|kotlin/Unit|
 
             public abstract [ResolvedTo(STATUS)] fun bar([ResolvedTo(STATUS)] s: R|kotlin/String|): R|kotlin/Unit|
@@ -499,7 +499,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClassScript.kts
 
         }
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideAndNestedClassScript.kts>] interface Foo3 : Foo1 {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideAndNestedClassScript.kts>, ScriptTopLevelDeclaration=true] interface Foo3 : Foo1 {
             public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] i: Int): R|kotlin/Unit|
 
             public? final? [ResolvedTo(RAW_FIR)] fun bar([ResolvedTo(RAW_FIR)] s: String): R|kotlin/Unit|
@@ -509,7 +509,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClassScript.kts
 
         }
 
-        public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideAndNestedClassScript.kts>] class OuterClass : R|Foo1| {
+        public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideAndNestedClassScript.kts>, ScriptTopLevelDeclaration=true] class OuterClass : R|Foo1| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=OuterClass] constructor(): R|OuterClass| {
                 LAZY_super<<implicit>>
             }
@@ -550,7 +550,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClassScript.kts
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideAndNestedClassScript.kts>] interface Foo1 : R|kotlin/Any| {
+        public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideAndNestedClassScript.kts>, ScriptTopLevelDeclaration=true] interface Foo1 : R|kotlin/Any| {
             public abstract [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit|
 
             public abstract [ResolvedTo(STATUS)] fun bar(): R|kotlin/Unit|
@@ -567,7 +567,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClassScript.kts
 
         }
 
-        public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideAndNestedClassScript.kts>] interface Foo2 : R|Foo1| {
+        public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideAndNestedClassScript.kts>, ScriptTopLevelDeclaration=true] interface Foo2 : R|Foo1| {
             public abstract [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] i: R|kotlin/Int|): R|kotlin/Unit|
 
             public abstract [ResolvedTo(STATUS)] fun bar([ResolvedTo(STATUS)] s: R|kotlin/String|): R|kotlin/Unit|
@@ -577,7 +577,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClassScript.kts
 
         }
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideAndNestedClassScript.kts>] interface Foo3 : Foo1 {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideAndNestedClassScript.kts>, ScriptTopLevelDeclaration=true] interface Foo3 : Foo1 {
             public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] i: Int): R|kotlin/Unit|
 
             public? final? [ResolvedTo(RAW_FIR)] fun bar([ResolvedTo(RAW_FIR)] s: String): R|kotlin/Unit|
@@ -587,7 +587,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClassScript.kts
 
         }
 
-        public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideAndNestedClassScript.kts>] class OuterClass : R|Foo1| {
+        public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideAndNestedClassScript.kts>, ScriptTopLevelDeclaration=true] class OuterClass : R|Foo1| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=OuterClass] constructor(): R|OuterClass| {
                 LAZY_super<<implicit>>
             }
@@ -628,7 +628,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClassScript.kts
         [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideAndNestedClassScript.kts>] interface Foo1 : R|kotlin/Any| {
+        public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideAndNestedClassScript.kts>, ScriptTopLevelDeclaration=true] interface Foo1 : R|kotlin/Any| {
             public abstract [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit|
 
             public abstract [ResolvedTo(STATUS)] fun bar(): R|kotlin/Unit|
@@ -645,7 +645,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClassScript.kts
 
         }
 
-        public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideAndNestedClassScript.kts>] interface Foo2 : R|Foo1| {
+        public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideAndNestedClassScript.kts>, ScriptTopLevelDeclaration=true] interface Foo2 : R|Foo1| {
             public abstract [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] i: R|kotlin/Int|): R|kotlin/Unit|
 
             public abstract [ResolvedTo(STATUS)] fun bar([ResolvedTo(STATUS)] s: R|kotlin/String|): R|kotlin/Unit|
@@ -655,7 +655,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClassScript.kts
 
         }
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideAndNestedClassScript.kts>] interface Foo3 : Foo1 {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideAndNestedClassScript.kts>, ScriptTopLevelDeclaration=true] interface Foo3 : Foo1 {
             public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] i: Int): R|kotlin/Unit|
 
             public? final? [ResolvedTo(RAW_FIR)] fun bar([ResolvedTo(RAW_FIR)] s: String): R|kotlin/Unit|
@@ -665,7 +665,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClassScript.kts
 
         }
 
-        public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideAndNestedClassScript.kts>] class OuterClass : R|Foo1| {
+        public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideAndNestedClassScript.kts>, ScriptTopLevelDeclaration=true] class OuterClass : R|Foo1| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=OuterClass] constructor(): R|OuterClass| {
                 LAZY_super<<implicit>>
             }
@@ -706,7 +706,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClassScript.kts
         [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideAndNestedClassScript.kts>] interface Foo1 : R|kotlin/Any| {
+        public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideAndNestedClassScript.kts>, ScriptTopLevelDeclaration=true] interface Foo1 : R|kotlin/Any| {
             public abstract [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit|
 
             public abstract [ResolvedTo(STATUS)] fun bar(): R|kotlin/Unit|
@@ -723,7 +723,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClassScript.kts
 
         }
 
-        public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideAndNestedClassScript.kts>] interface Foo2 : R|Foo1| {
+        public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideAndNestedClassScript.kts>, ScriptTopLevelDeclaration=true] interface Foo2 : R|Foo1| {
             public abstract [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] i: R|kotlin/Int|): R|kotlin/Unit|
 
             public abstract [ResolvedTo(STATUS)] fun bar([ResolvedTo(STATUS)] s: R|kotlin/String|): R|kotlin/Unit|
@@ -733,7 +733,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClassScript.kts
 
         }
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideAndNestedClassScript.kts>] interface Foo3 : Foo1 {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideAndNestedClassScript.kts>, ScriptTopLevelDeclaration=true] interface Foo3 : Foo1 {
             public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] i: Int): R|kotlin/Unit|
 
             public? final? [ResolvedTo(RAW_FIR)] fun bar([ResolvedTo(RAW_FIR)] s: String): R|kotlin/Unit|
@@ -743,7 +743,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClassScript.kts
 
         }
 
-        public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideAndNestedClassScript.kts>] class OuterClass : R|Foo1| {
+        public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideAndNestedClassScript.kts>, ScriptTopLevelDeclaration=true] class OuterClass : R|Foo1| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=OuterClass] constructor(): R|OuterClass| {
                 LAZY_super<<implicit>>
             }
@@ -784,7 +784,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClassScript.kts
         [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideAndNestedClassScript.kts>] interface Foo1 : R|kotlin/Any| {
+        public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideAndNestedClassScript.kts>, ScriptTopLevelDeclaration=true] interface Foo1 : R|kotlin/Any| {
             public abstract [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit|
 
             public abstract [ResolvedTo(STATUS)] fun bar(): R|kotlin/Unit|
@@ -801,7 +801,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClassScript.kts
 
         }
 
-        public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideAndNestedClassScript.kts>] interface Foo2 : R|Foo1| {
+        public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideAndNestedClassScript.kts>, ScriptTopLevelDeclaration=true] interface Foo2 : R|Foo1| {
             public abstract [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] i: R|kotlin/Int|): R|kotlin/Unit|
 
             public abstract [ResolvedTo(STATUS)] fun bar([ResolvedTo(STATUS)] s: R|kotlin/String|): R|kotlin/Unit|
@@ -811,7 +811,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClassScript.kts
 
         }
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideAndNestedClassScript.kts>] interface Foo3 : Foo1 {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideAndNestedClassScript.kts>, ScriptTopLevelDeclaration=true] interface Foo3 : Foo1 {
             public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] i: Int): R|kotlin/Unit|
 
             public? final? [ResolvedTo(RAW_FIR)] fun bar([ResolvedTo(RAW_FIR)] s: String): R|kotlin/Unit|
@@ -821,7 +821,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClassScript.kts
 
         }
 
-        public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideAndNestedClassScript.kts>] class OuterClass : R|Foo1| {
+        public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideAndNestedClassScript.kts>, ScriptTopLevelDeclaration=true] class OuterClass : R|Foo1| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=OuterClass] constructor(): R|OuterClass| {
                 LAZY_super<<implicit>>
             }
@@ -862,7 +862,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClassScript.kts
         [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideAndNestedClassScript.kts>] interface Foo1 : R|kotlin/Any| {
+        public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideAndNestedClassScript.kts>, ScriptTopLevelDeclaration=true] interface Foo1 : R|kotlin/Any| {
             public abstract [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit|
 
             public abstract [ResolvedTo(STATUS)] fun bar(): R|kotlin/Unit|
@@ -879,7 +879,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClassScript.kts
 
         }
 
-        public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideAndNestedClassScript.kts>] interface Foo2 : R|Foo1| {
+        public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideAndNestedClassScript.kts>, ScriptTopLevelDeclaration=true] interface Foo2 : R|Foo1| {
             public abstract [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] i: R|kotlin/Int|): R|kotlin/Unit|
 
             public abstract [ResolvedTo(STATUS)] fun bar([ResolvedTo(STATUS)] s: R|kotlin/String|): R|kotlin/Unit|
@@ -889,7 +889,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClassScript.kts
 
         }
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideAndNestedClassScript.kts>] interface Foo3 : Foo1 {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideAndNestedClassScript.kts>, ScriptTopLevelDeclaration=true] interface Foo3 : Foo1 {
             public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] i: Int): R|kotlin/Unit|
 
             public? final? [ResolvedTo(RAW_FIR)] fun bar([ResolvedTo(RAW_FIR)] s: String): R|kotlin/Unit|
@@ -899,7 +899,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClassScript.kts
 
         }
 
-        public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideAndNestedClassScript.kts>] class OuterClass : R|Foo1| {
+        public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideAndNestedClassScript.kts>, ScriptTopLevelDeclaration=true] class OuterClass : R|Foo1| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=OuterClass] constructor(): R|OuterClass| {
                 LAZY_super<<implicit>>
             }
@@ -940,7 +940,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClassScript.kts
         [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideAndNestedClassScript.kts>] interface Foo1 : R|kotlin/Any| {
+        public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideAndNestedClassScript.kts>, ScriptTopLevelDeclaration=true] interface Foo1 : R|kotlin/Any| {
             public abstract [ResolvedTo(STATUS)] fun foo(): R|kotlin/Unit|
 
             public abstract [ResolvedTo(STATUS)] fun bar(): R|kotlin/Unit|
@@ -957,7 +957,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClassScript.kts
 
         }
 
-        public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideAndNestedClassScript.kts>] interface Foo2 : R|Foo1| {
+        public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideAndNestedClassScript.kts>, ScriptTopLevelDeclaration=true] interface Foo2 : R|Foo1| {
             public abstract [ResolvedTo(STATUS)] fun foo([ResolvedTo(STATUS)] i: R|kotlin/Int|): R|kotlin/Unit|
 
             public abstract [ResolvedTo(STATUS)] fun bar([ResolvedTo(STATUS)] s: R|kotlin/String|): R|kotlin/Unit|
@@ -967,7 +967,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClassScript.kts
 
         }
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideAndNestedClassScript.kts>] interface Foo3 : Foo1 {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideAndNestedClassScript.kts>, ScriptTopLevelDeclaration=true] interface Foo3 : Foo1 {
             public? final? [ResolvedTo(RAW_FIR)] fun foo([ResolvedTo(RAW_FIR)] i: Int): R|kotlin/Unit|
 
             public? final? [ResolvedTo(RAW_FIR)] fun bar([ResolvedTo(RAW_FIR)] s: String): R|kotlin/Unit|
@@ -977,7 +977,7 @@ FILE: [ResolvedTo(IMPORTS)] hierarchyWithOverrideAndNestedClassScript.kts
 
         }
 
-        public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideAndNestedClassScript.kts>] class OuterClass : R|Foo1| {
+        public abstract [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideAndNestedClassScript.kts>, ScriptTopLevelDeclaration=true] class OuterClass : R|Foo1| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=OuterClass] constructor(): R|OuterClass| {
                 LAZY_super<<implicit>>
             }
@@ -1019,7 +1019,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] hierarchyWithOverrideAndNestedClassScript.kts
         [ResolvedTo(BODY_RESOLVE)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public abstract [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideAndNestedClassScript.kts>] interface Foo1 : R|kotlin/Any| {
+        public abstract [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideAndNestedClassScript.kts>, ScriptTopLevelDeclaration=true] interface Foo1 : R|kotlin/Any| {
             public abstract [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Unit|
 
             public abstract [ResolvedTo(BODY_RESOLVE)] fun bar(): R|kotlin/Unit|
@@ -1036,7 +1036,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] hierarchyWithOverrideAndNestedClassScript.kts
 
         }
 
-        public abstract [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideAndNestedClassScript.kts>] interface Foo2 : R|Foo1| {
+        public abstract [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideAndNestedClassScript.kts>, ScriptTopLevelDeclaration=true] interface Foo2 : R|Foo1| {
             public abstract [ResolvedTo(BODY_RESOLVE)] fun foo([ResolvedTo(BODY_RESOLVE)] i: R|kotlin/Int|): R|kotlin/Unit|
 
             public abstract [ResolvedTo(BODY_RESOLVE)] fun bar([ResolvedTo(BODY_RESOLVE)] s: R|kotlin/String|): R|kotlin/Unit|
@@ -1046,7 +1046,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] hierarchyWithOverrideAndNestedClassScript.kts
 
         }
 
-        public abstract [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideAndNestedClassScript.kts>] interface Foo3 : R|Foo1| {
+        public abstract [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideAndNestedClassScript.kts>, ScriptTopLevelDeclaration=true] interface Foo3 : R|Foo1| {
             public abstract [ResolvedTo(BODY_RESOLVE)] fun foo([ResolvedTo(BODY_RESOLVE)] i: R|kotlin/Int|): R|kotlin/Unit|
 
             public abstract [ResolvedTo(BODY_RESOLVE)] fun bar([ResolvedTo(BODY_RESOLVE)] s: R|kotlin/String|): R|kotlin/Unit|
@@ -1056,7 +1056,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] hierarchyWithOverrideAndNestedClassScript.kts
 
         }
 
-        public abstract [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideAndNestedClassScript.kts>] class OuterClass : R|Foo1| {
+        public abstract [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol <script-hierarchyWithOverrideAndNestedClassScript.kts>, ScriptTopLevelDeclaration=true] class OuterClass : R|Foo1| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=OuterClass] constructor(): R|OuterClass| {
                 super<R|kotlin/Any|>()
             }

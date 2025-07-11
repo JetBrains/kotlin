@@ -75,7 +75,7 @@ FILE: [ResolvedTo(IMPORTS)] localImplicitTypeUnavailableInImplicitBodyScript.kts
         [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol second.<script-localImplicitTypeUnavailableInImplicitBodyScript.kts>] annotation class Anno : R|kotlin/Annotation| {
+        @R|kotlin/annotation/Target|[Types](Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.TYPE|) public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol second.<script-localImplicitTypeUnavailableInImplicitBodyScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=second/Anno.str] str: R|kotlin/reflect/KClass<*>|): R|second/Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -85,9 +85,9 @@ FILE: [ResolvedTo(IMPORTS)] localImplicitTypeUnavailableInImplicitBodyScript.kts
 
         }
 
-        public final [ResolvedTo(CONTRACTS)] fun <[ResolvedTo(CONTRACTS)] T> lambda([ResolvedTo(CONTRACTS)] action: R|() -> T|): R|T| { LAZY_BLOCK }
+        public final [ResolvedTo(CONTRACTS)] [ScriptTopLevelDeclaration=true] fun <[ResolvedTo(CONTRACTS)] T> lambda([ResolvedTo(CONTRACTS)] action: R|() -> T|): R|T| { LAZY_BLOCK }
 
-        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun check(): R|@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/collections/List<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/collections/Collection<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/String>>?| {
+        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] fun check(): R|@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/collections/List<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/collections/Collection<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/String>>?| {
             ^check R|second/lambda|<R|@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/collections/List<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/collections/Collection<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/String>>?|>(<L> = [ResolvedTo(RAW_FIR)] [MatchingParameterFunctionTypeKey=kotlin/Function0<TypeVariable(T)>] lambda@fun <anonymous>(): R|@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/collections/List<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/collections/Collection<@R|second/Anno|(str = <getClass>(Q|<local>/A.B.C|))  kotlin/String>>?| <inline=NoInline>  {
                 local final [ResolvedTo(RAW_FIR)] class A : R|kotlin/Any| {
                     public [ResolvedTo(RAW_FIR)] [ContainingClassKey=A] constructor(): R|<local>/A| {

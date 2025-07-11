@@ -11,14 +11,14 @@ FILE: [ResolvedTo(IMPORTS)] firstStatementCall.kts
         [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun foo(): R|kotlin/Int| {
+        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] fun foo(): R|kotlin/Int| {
             ^foo Int(4)
         }
 
-        [ResolvedTo(BODY_RESOLVE)] init {
+        [ResolvedTo(BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] init {
             R|/foo|()
         }
 
-        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+        [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] init { LAZY_BLOCK }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun bar(): R|kotlin/Unit| { LAZY_BLOCK }
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] fun bar(): R|kotlin/Unit| { LAZY_BLOCK }

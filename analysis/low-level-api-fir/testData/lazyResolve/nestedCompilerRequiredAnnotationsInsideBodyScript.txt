@@ -4,7 +4,7 @@ FILE: [ResolvedTo(RAW_FIR)] nestedCompilerRequiredAnnotationsInsideBodyScript.kt
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-nestedCompilerRequiredAnnotationsInsideBodyScript.kts>] annotation class Anno : R|kotlin/Annotation| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-nestedCompilerRequiredAnnotationsInsideBodyScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -14,9 +14,9 @@ FILE: [ResolvedTo(RAW_FIR)] nestedCompilerRequiredAnnotationsInsideBodyScript.kt
 
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun test(): R|kotlin/Unit| { LAZY_BLOCK }
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] fun test(): R|kotlin/Unit| { LAZY_BLOCK }
 
-        @Deprecated[Unresolved](LAZY_EXPRESSION) @Anno[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-nestedCompilerRequiredAnnotationsInsideBodyScript.kts>] class AnotherClass : R|kotlin/Any| {
+        @Deprecated[Unresolved](LAZY_EXPRESSION) @Anno[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-nestedCompilerRequiredAnnotationsInsideBodyScript.kts>, ScriptTopLevelDeclaration=true] class AnotherClass : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherClass] constructor(): R|AnotherClass| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -32,7 +32,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedCompilerRequiredAnnotationsInsideBodyScript.kt
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-nestedCompilerRequiredAnnotationsInsideBodyScript.kts>] annotation class Anno : R|kotlin/Annotation| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-nestedCompilerRequiredAnnotationsInsideBodyScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -42,9 +42,9 @@ FILE: [ResolvedTo(IMPORTS)] nestedCompilerRequiredAnnotationsInsideBodyScript.kt
 
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun test(): R|kotlin/Unit| { LAZY_BLOCK }
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] fun test(): R|kotlin/Unit| { LAZY_BLOCK }
 
-        @Deprecated[Unresolved](LAZY_EXPRESSION) @Anno[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-nestedCompilerRequiredAnnotationsInsideBodyScript.kts>] class AnotherClass : R|kotlin/Any| {
+        @Deprecated[Unresolved](LAZY_EXPRESSION) @Anno[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-nestedCompilerRequiredAnnotationsInsideBodyScript.kts>, ScriptTopLevelDeclaration=true] class AnotherClass : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherClass] constructor(): R|AnotherClass| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -60,7 +60,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedCompilerRequiredAnnotationsInsideBodyScript.kt
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-nestedCompilerRequiredAnnotationsInsideBodyScript.kts>] annotation class Anno : R|kotlin/Annotation| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-nestedCompilerRequiredAnnotationsInsideBodyScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -70,9 +70,9 @@ FILE: [ResolvedTo(IMPORTS)] nestedCompilerRequiredAnnotationsInsideBodyScript.kt
 
         }
 
-        public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] fun test(): R|kotlin/Unit| { LAZY_BLOCK }
+        public? final? [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ScriptTopLevelDeclaration=true] fun test(): R|kotlin/Unit| { LAZY_BLOCK }
 
-        @Deprecated[Unresolved](LAZY_EXPRESSION) @Anno[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-nestedCompilerRequiredAnnotationsInsideBodyScript.kts>] class AnotherClass : R|kotlin/Any| {
+        @Deprecated[Unresolved](LAZY_EXPRESSION) @Anno[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-nestedCompilerRequiredAnnotationsInsideBodyScript.kts>, ScriptTopLevelDeclaration=true] class AnotherClass : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherClass] constructor(): R|AnotherClass| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -88,7 +88,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedCompilerRequiredAnnotationsInsideBodyScript.kt
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-nestedCompilerRequiredAnnotationsInsideBodyScript.kts>] annotation class Anno : R|kotlin/Annotation| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-nestedCompilerRequiredAnnotationsInsideBodyScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -98,9 +98,9 @@ FILE: [ResolvedTo(IMPORTS)] nestedCompilerRequiredAnnotationsInsideBodyScript.kt
 
         }
 
-        public? final? [ResolvedTo(COMPANION_GENERATION)] fun test(): R|kotlin/Unit| { LAZY_BLOCK }
+        public? final? [ResolvedTo(COMPANION_GENERATION)] [ScriptTopLevelDeclaration=true] fun test(): R|kotlin/Unit| { LAZY_BLOCK }
 
-        @Deprecated[Unresolved](LAZY_EXPRESSION) @Anno[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-nestedCompilerRequiredAnnotationsInsideBodyScript.kts>] class AnotherClass : R|kotlin/Any| {
+        @Deprecated[Unresolved](LAZY_EXPRESSION) @Anno[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-nestedCompilerRequiredAnnotationsInsideBodyScript.kts>, ScriptTopLevelDeclaration=true] class AnotherClass : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherClass] constructor(): R|AnotherClass| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -116,7 +116,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedCompilerRequiredAnnotationsInsideBodyScript.kt
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-nestedCompilerRequiredAnnotationsInsideBodyScript.kts>] annotation class Anno : R|kotlin/Annotation| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-nestedCompilerRequiredAnnotationsInsideBodyScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -126,9 +126,9 @@ FILE: [ResolvedTo(IMPORTS)] nestedCompilerRequiredAnnotationsInsideBodyScript.kt
 
         }
 
-        public? final? [ResolvedTo(SUPER_TYPES)] fun test(): R|kotlin/Unit| { LAZY_BLOCK }
+        public? final? [ResolvedTo(SUPER_TYPES)] [ScriptTopLevelDeclaration=true] fun test(): R|kotlin/Unit| { LAZY_BLOCK }
 
-        @Deprecated[Unresolved](LAZY_EXPRESSION) @Anno[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-nestedCompilerRequiredAnnotationsInsideBodyScript.kts>] class AnotherClass : R|kotlin/Any| {
+        @Deprecated[Unresolved](LAZY_EXPRESSION) @Anno[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-nestedCompilerRequiredAnnotationsInsideBodyScript.kts>, ScriptTopLevelDeclaration=true] class AnotherClass : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherClass] constructor(): R|AnotherClass| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -144,7 +144,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedCompilerRequiredAnnotationsInsideBodyScript.kt
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-nestedCompilerRequiredAnnotationsInsideBodyScript.kts>] annotation class Anno : R|kotlin/Annotation| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-nestedCompilerRequiredAnnotationsInsideBodyScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -154,9 +154,9 @@ FILE: [ResolvedTo(IMPORTS)] nestedCompilerRequiredAnnotationsInsideBodyScript.kt
 
         }
 
-        public? final? [ResolvedTo(TYPES)] fun test(): R|kotlin/Unit| { LAZY_BLOCK }
+        public? final? [ResolvedTo(TYPES)] [ScriptTopLevelDeclaration=true] fun test(): R|kotlin/Unit| { LAZY_BLOCK }
 
-        @Deprecated[Unresolved](LAZY_EXPRESSION) @Anno[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-nestedCompilerRequiredAnnotationsInsideBodyScript.kts>] class AnotherClass : R|kotlin/Any| {
+        @Deprecated[Unresolved](LAZY_EXPRESSION) @Anno[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-nestedCompilerRequiredAnnotationsInsideBodyScript.kts>, ScriptTopLevelDeclaration=true] class AnotherClass : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherClass] constructor(): R|AnotherClass| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -172,7 +172,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedCompilerRequiredAnnotationsInsideBodyScript.kt
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-nestedCompilerRequiredAnnotationsInsideBodyScript.kts>] annotation class Anno : R|kotlin/Annotation| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-nestedCompilerRequiredAnnotationsInsideBodyScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -182,9 +182,9 @@ FILE: [ResolvedTo(IMPORTS)] nestedCompilerRequiredAnnotationsInsideBodyScript.kt
 
         }
 
-        public final [ResolvedTo(STATUS)] fun test(): R|kotlin/Unit| { LAZY_BLOCK }
+        public final [ResolvedTo(STATUS)] [ScriptTopLevelDeclaration=true] fun test(): R|kotlin/Unit| { LAZY_BLOCK }
 
-        @Deprecated[Unresolved](LAZY_EXPRESSION) @Anno[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-nestedCompilerRequiredAnnotationsInsideBodyScript.kts>] class AnotherClass : R|kotlin/Any| {
+        @Deprecated[Unresolved](LAZY_EXPRESSION) @Anno[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-nestedCompilerRequiredAnnotationsInsideBodyScript.kts>, ScriptTopLevelDeclaration=true] class AnotherClass : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherClass] constructor(): R|AnotherClass| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -200,7 +200,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedCompilerRequiredAnnotationsInsideBodyScript.kt
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-nestedCompilerRequiredAnnotationsInsideBodyScript.kts>] annotation class Anno : R|kotlin/Annotation| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-nestedCompilerRequiredAnnotationsInsideBodyScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -210,9 +210,9 @@ FILE: [ResolvedTo(IMPORTS)] nestedCompilerRequiredAnnotationsInsideBodyScript.kt
 
         }
 
-        public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] fun test(): R|kotlin/Unit| { LAZY_BLOCK }
+        public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ScriptTopLevelDeclaration=true] fun test(): R|kotlin/Unit| { LAZY_BLOCK }
 
-        @Deprecated[Unresolved](LAZY_EXPRESSION) @Anno[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-nestedCompilerRequiredAnnotationsInsideBodyScript.kts>] class AnotherClass : R|kotlin/Any| {
+        @Deprecated[Unresolved](LAZY_EXPRESSION) @Anno[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-nestedCompilerRequiredAnnotationsInsideBodyScript.kts>, ScriptTopLevelDeclaration=true] class AnotherClass : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherClass] constructor(): R|AnotherClass| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -228,7 +228,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedCompilerRequiredAnnotationsInsideBodyScript.kt
         [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-nestedCompilerRequiredAnnotationsInsideBodyScript.kts>] annotation class Anno : R|kotlin/Annotation| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-nestedCompilerRequiredAnnotationsInsideBodyScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -238,9 +238,9 @@ FILE: [ResolvedTo(IMPORTS)] nestedCompilerRequiredAnnotationsInsideBodyScript.kt
 
         }
 
-        public final [ResolvedTo(CONTRACTS)] fun test(): R|kotlin/Unit| { LAZY_BLOCK }
+        public final [ResolvedTo(CONTRACTS)] [ScriptTopLevelDeclaration=true] fun test(): R|kotlin/Unit| { LAZY_BLOCK }
 
-        @Deprecated[Unresolved](LAZY_EXPRESSION) @Anno[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-nestedCompilerRequiredAnnotationsInsideBodyScript.kts>] class AnotherClass : R|kotlin/Any| {
+        @Deprecated[Unresolved](LAZY_EXPRESSION) @Anno[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-nestedCompilerRequiredAnnotationsInsideBodyScript.kts>, ScriptTopLevelDeclaration=true] class AnotherClass : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherClass] constructor(): R|AnotherClass| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -256,7 +256,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedCompilerRequiredAnnotationsInsideBodyScript.kt
         [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-nestedCompilerRequiredAnnotationsInsideBodyScript.kts>] annotation class Anno : R|kotlin/Annotation| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-nestedCompilerRequiredAnnotationsInsideBodyScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -266,9 +266,9 @@ FILE: [ResolvedTo(IMPORTS)] nestedCompilerRequiredAnnotationsInsideBodyScript.kt
 
         }
 
-        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun test(): R|kotlin/Unit| { LAZY_BLOCK }
+        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] fun test(): R|kotlin/Unit| { LAZY_BLOCK }
 
-        @Deprecated[Unresolved](LAZY_EXPRESSION) @Anno[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-nestedCompilerRequiredAnnotationsInsideBodyScript.kts>] class AnotherClass : R|kotlin/Any| {
+        @Deprecated[Unresolved](LAZY_EXPRESSION) @Anno[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-nestedCompilerRequiredAnnotationsInsideBodyScript.kts>, ScriptTopLevelDeclaration=true] class AnotherClass : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherClass] constructor(): R|AnotherClass| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -284,7 +284,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedCompilerRequiredAnnotationsInsideBodyScript.kt
         [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-nestedCompilerRequiredAnnotationsInsideBodyScript.kts>] annotation class Anno : R|kotlin/Annotation| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-nestedCompilerRequiredAnnotationsInsideBodyScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -294,9 +294,9 @@ FILE: [ResolvedTo(IMPORTS)] nestedCompilerRequiredAnnotationsInsideBodyScript.kt
 
         }
 
-        public final [ResolvedTo(CONSTANT_EVALUATION)] fun test(): R|kotlin/Unit| { LAZY_BLOCK }
+        public final [ResolvedTo(CONSTANT_EVALUATION)] [ScriptTopLevelDeclaration=true] fun test(): R|kotlin/Unit| { LAZY_BLOCK }
 
-        @Deprecated[Unresolved](LAZY_EXPRESSION) @Anno[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-nestedCompilerRequiredAnnotationsInsideBodyScript.kts>] class AnotherClass : R|kotlin/Any| {
+        @Deprecated[Unresolved](LAZY_EXPRESSION) @Anno[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-nestedCompilerRequiredAnnotationsInsideBodyScript.kts>, ScriptTopLevelDeclaration=true] class AnotherClass : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherClass] constructor(): R|AnotherClass| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -312,7 +312,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedCompilerRequiredAnnotationsInsideBodyScript.kt
         [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-nestedCompilerRequiredAnnotationsInsideBodyScript.kts>] annotation class Anno : R|kotlin/Annotation| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-nestedCompilerRequiredAnnotationsInsideBodyScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Anno] constructor([ResolvedTo(RAW_FIR)] [CorrespondingProperty=/Anno.s] s: String): R|Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -322,9 +322,9 @@ FILE: [ResolvedTo(IMPORTS)] nestedCompilerRequiredAnnotationsInsideBodyScript.kt
 
         }
 
-        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] fun test(): R|kotlin/Unit| { LAZY_BLOCK }
+        public final [ResolvedTo(ANNOTATION_ARGUMENTS)] [ScriptTopLevelDeclaration=true] fun test(): R|kotlin/Unit| { LAZY_BLOCK }
 
-        @Deprecated[Unresolved](LAZY_EXPRESSION) @Anno[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-nestedCompilerRequiredAnnotationsInsideBodyScript.kts>] class AnotherClass : R|kotlin/Any| {
+        @Deprecated[Unresolved](LAZY_EXPRESSION) @Anno[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-nestedCompilerRequiredAnnotationsInsideBodyScript.kts>, ScriptTopLevelDeclaration=true] class AnotherClass : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherClass] constructor(): R|AnotherClass| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -340,7 +340,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedCompilerRequiredAnnotationsInsideBodyScript.kt
         [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-nestedCompilerRequiredAnnotationsInsideBodyScript.kts>] annotation class Anno : R|kotlin/Annotation| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-nestedCompilerRequiredAnnotationsInsideBodyScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.s] s: R|kotlin/String|): R|Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -350,7 +350,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedCompilerRequiredAnnotationsInsideBodyScript.kt
 
         }
 
-        public final [ResolvedTo(BODY_RESOLVE)] fun test(): R|kotlin/Unit| {
+        public final [ResolvedTo(BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] fun test(): R|kotlin/Unit| {
             @R|kotlin/Deprecated|[Types](message = String(FirstClass)) @R|Anno|[Types](s = String(FirstClass)) local final [ResolvedTo(BODY_RESOLVE)] class FirstClass : R|kotlin/Any| {
                 @R|kotlin/Deprecated|[Types](message = String(constructor)) @R|Anno|[Types](s = String(constructor)) public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=FirstClass] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=<local>/a] @R|Anno|[Types](s = String(constructorProperty)) a: R|kotlin/Int|): R|<local>/FirstClass| {
                     super<R|kotlin/Any|>()
@@ -372,7 +372,7 @@ FILE: [ResolvedTo(IMPORTS)] nestedCompilerRequiredAnnotationsInsideBodyScript.kt
 
         }
 
-        @Deprecated[Unresolved](LAZY_EXPRESSION) @Anno[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-nestedCompilerRequiredAnnotationsInsideBodyScript.kts>] class AnotherClass : R|kotlin/Any| {
+        @Deprecated[Unresolved](LAZY_EXPRESSION) @Anno[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-nestedCompilerRequiredAnnotationsInsideBodyScript.kts>, ScriptTopLevelDeclaration=true] class AnotherClass : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnotherClass] constructor(): R|AnotherClass| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -388,7 +388,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] nestedCompilerRequiredAnnotationsInsideBodyScri
         [ResolvedTo(BODY_RESOLVE)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol <script-nestedCompilerRequiredAnnotationsInsideBodyScript.kts>] annotation class Anno : R|kotlin/Annotation| {
+        public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol <script-nestedCompilerRequiredAnnotationsInsideBodyScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Anno] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=/Anno.s] s: R|kotlin/String|): R|Anno| {
                 super<R|kotlin/Any|>()
             }
@@ -398,7 +398,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] nestedCompilerRequiredAnnotationsInsideBodyScri
 
         }
 
-        public final [ResolvedTo(BODY_RESOLVE)] fun test(): R|kotlin/Unit| {
+        public final [ResolvedTo(BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] fun test(): R|kotlin/Unit| {
             @R|kotlin/Deprecated|[Types](message = String(FirstClass)) @R|Anno|[Types](s = String(FirstClass)) local final [ResolvedTo(BODY_RESOLVE)] class FirstClass : R|kotlin/Any| {
                 @R|kotlin/Deprecated|[Types](message = String(constructor)) @R|Anno|[Types](s = String(constructor)) public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=FirstClass] constructor([ResolvedTo(BODY_RESOLVE)] [CorrespondingProperty=<local>/a] @R|Anno|[Types](s = String(constructorProperty)) a: R|kotlin/Int|): R|<local>/FirstClass| {
                     super<R|kotlin/Any|>()
@@ -420,7 +420,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] nestedCompilerRequiredAnnotationsInsideBodyScri
 
         }
 
-        @R|kotlin/Deprecated|[Types](message = String(AnotherClass)) @R|Anno|[Types](s = String(AnotherClass)) public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol <script-nestedCompilerRequiredAnnotationsInsideBodyScript.kts>] class AnotherClass : R|kotlin/Any| {
+        @R|kotlin/Deprecated|[Types](message = String(AnotherClass)) @R|Anno|[Types](s = String(AnotherClass)) public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol <script-nestedCompilerRequiredAnnotationsInsideBodyScript.kts>, ScriptTopLevelDeclaration=true] class AnotherClass : R|kotlin/Any| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=AnotherClass] constructor(): R|AnotherClass| {
                 super<R|kotlin/Any|>()
             }

@@ -11,6 +11,6 @@ FILE: [ResolvedTo(IMPORTS)] invokeCallArgumentListScript.kts
         [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(BODY_RESOLVE)] fun foo([ResolvedTo(BODY_RESOLVE)] f: R|(kotlin/Int, kotlin/String) -> kotlin/Unit|): R|kotlin/Unit| {
+        public final [ResolvedTo(BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] fun foo([ResolvedTo(BODY_RESOLVE)] f: R|(kotlin/Int, kotlin/String) -> kotlin/Unit|): R|kotlin/Unit| {
             R|<local>/f|.R|SubstitutionOverride<kotlin/Function2.invoke: R|kotlin/Unit|>|(Int(1), String(2))
         }

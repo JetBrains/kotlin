@@ -4,7 +4,7 @@ FILE: [ResolvedTo(RAW_FIR)] statement.kts
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-statement.kts>] class Builder : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-statement.kts>, ScriptTopLevelDeclaration=true] class Builder : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Builder] constructor(): R|Builder| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -17,16 +17,16 @@ FILE: [ResolvedTo(RAW_FIR)] statement.kts
 
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun build([ResolvedTo(RAW_FIR)] action: ( Builder.() -> Unit )): <implicit> { LAZY_BLOCK }
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] fun build([ResolvedTo(RAW_FIR)] action: ( Builder.() -> Unit )): <implicit> { LAZY_BLOCK }
 
-        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+        [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] init { LAZY_BLOCK }
 
-        public? final? [ResolvedTo(RAW_FIR)] val builder: <implicit> = LAZY_EXPRESSION
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val builder: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+        [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] init { LAZY_BLOCK }
 
-        [ResolvedTo(RAW_FIR)] init {
+        [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] init {
             builder#.version# = String()
         }
 
@@ -37,7 +37,7 @@ FILE: [ResolvedTo(IMPORTS)] statement.kts
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-statement.kts>] class Builder : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-statement.kts>, ScriptTopLevelDeclaration=true] class Builder : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Builder] constructor(): R|Builder| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -50,16 +50,16 @@ FILE: [ResolvedTo(IMPORTS)] statement.kts
 
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun build([ResolvedTo(RAW_FIR)] action: ( Builder.() -> Unit )): <implicit> { LAZY_BLOCK }
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] fun build([ResolvedTo(RAW_FIR)] action: ( Builder.() -> Unit )): <implicit> { LAZY_BLOCK }
 
-        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+        [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] init { LAZY_BLOCK }
 
-        public? final? [ResolvedTo(RAW_FIR)] val builder: <implicit> = LAZY_EXPRESSION
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val builder: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+        [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] init { LAZY_BLOCK }
 
-        [ResolvedTo(RAW_FIR)] init {
+        [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] init {
             builder#.version# = String()
         }
 
@@ -70,7 +70,7 @@ FILE: [ResolvedTo(IMPORTS)] statement.kts
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-statement.kts>] class Builder : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-statement.kts>, ScriptTopLevelDeclaration=true] class Builder : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Builder] constructor(): R|Builder| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -83,16 +83,16 @@ FILE: [ResolvedTo(IMPORTS)] statement.kts
 
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun build([ResolvedTo(RAW_FIR)] action: ( Builder.() -> Unit )): <implicit> { LAZY_BLOCK }
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] fun build([ResolvedTo(RAW_FIR)] action: ( Builder.() -> Unit )): <implicit> { LAZY_BLOCK }
 
-        [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] init { LAZY_BLOCK }
+        [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] [ScriptTopLevelDeclaration=true] init { LAZY_BLOCK }
 
-        public? final? [ResolvedTo(RAW_FIR)] val builder: <implicit> = LAZY_EXPRESSION
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val builder: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+        [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] init { LAZY_BLOCK }
 
-        [ResolvedTo(RAW_FIR)] init {
+        [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] init {
             builder#.version# = String()
         }
 
@@ -103,7 +103,7 @@ FILE: [ResolvedTo(IMPORTS)] statement.kts
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-statement.kts>] class Builder : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-statement.kts>, ScriptTopLevelDeclaration=true] class Builder : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Builder] constructor(): R|Builder| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -116,16 +116,16 @@ FILE: [ResolvedTo(IMPORTS)] statement.kts
 
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun build([ResolvedTo(RAW_FIR)] action: ( Builder.() -> Unit )): <implicit> { LAZY_BLOCK }
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] fun build([ResolvedTo(RAW_FIR)] action: ( Builder.() -> Unit )): <implicit> { LAZY_BLOCK }
 
-        [ResolvedTo(COMPANION_GENERATION)] init { LAZY_BLOCK }
+        [ResolvedTo(COMPANION_GENERATION)] [ScriptTopLevelDeclaration=true] init { LAZY_BLOCK }
 
-        public? final? [ResolvedTo(RAW_FIR)] val builder: <implicit> = LAZY_EXPRESSION
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val builder: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+        [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] init { LAZY_BLOCK }
 
-        [ResolvedTo(RAW_FIR)] init {
+        [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] init {
             builder#.version# = String()
         }
 
@@ -136,7 +136,7 @@ FILE: [ResolvedTo(IMPORTS)] statement.kts
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-statement.kts>] class Builder : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-statement.kts>, ScriptTopLevelDeclaration=true] class Builder : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Builder] constructor(): R|Builder| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -149,16 +149,16 @@ FILE: [ResolvedTo(IMPORTS)] statement.kts
 
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun build([ResolvedTo(RAW_FIR)] action: ( Builder.() -> Unit )): <implicit> { LAZY_BLOCK }
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] fun build([ResolvedTo(RAW_FIR)] action: ( Builder.() -> Unit )): <implicit> { LAZY_BLOCK }
 
-        [ResolvedTo(SUPER_TYPES)] init { LAZY_BLOCK }
+        [ResolvedTo(SUPER_TYPES)] [ScriptTopLevelDeclaration=true] init { LAZY_BLOCK }
 
-        public? final? [ResolvedTo(RAW_FIR)] val builder: <implicit> = LAZY_EXPRESSION
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val builder: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+        [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] init { LAZY_BLOCK }
 
-        [ResolvedTo(RAW_FIR)] init {
+        [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] init {
             builder#.version# = String()
         }
 
@@ -169,7 +169,7 @@ FILE: [ResolvedTo(IMPORTS)] statement.kts
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-statement.kts>] class Builder : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-statement.kts>, ScriptTopLevelDeclaration=true] class Builder : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Builder] constructor(): R|Builder| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -182,16 +182,16 @@ FILE: [ResolvedTo(IMPORTS)] statement.kts
 
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun build([ResolvedTo(RAW_FIR)] action: ( Builder.() -> Unit )): <implicit> { LAZY_BLOCK }
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] fun build([ResolvedTo(RAW_FIR)] action: ( Builder.() -> Unit )): <implicit> { LAZY_BLOCK }
 
-        [ResolvedTo(TYPES)] init { LAZY_BLOCK }
+        [ResolvedTo(TYPES)] [ScriptTopLevelDeclaration=true] init { LAZY_BLOCK }
 
-        public? final? [ResolvedTo(RAW_FIR)] val builder: <implicit> = LAZY_EXPRESSION
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val builder: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+        [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] init { LAZY_BLOCK }
 
-        [ResolvedTo(RAW_FIR)] init {
+        [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] init {
             builder#.version# = String()
         }
 
@@ -202,7 +202,7 @@ FILE: [ResolvedTo(IMPORTS)] statement.kts
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-statement.kts>] class Builder : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-statement.kts>, ScriptTopLevelDeclaration=true] class Builder : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Builder] constructor(): R|Builder| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -215,16 +215,16 @@ FILE: [ResolvedTo(IMPORTS)] statement.kts
 
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun build([ResolvedTo(RAW_FIR)] action: ( Builder.() -> Unit )): <implicit> { LAZY_BLOCK }
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] fun build([ResolvedTo(RAW_FIR)] action: ( Builder.() -> Unit )): <implicit> { LAZY_BLOCK }
 
-        [ResolvedTo(STATUS)] init { LAZY_BLOCK }
+        [ResolvedTo(STATUS)] [ScriptTopLevelDeclaration=true] init { LAZY_BLOCK }
 
-        public? final? [ResolvedTo(RAW_FIR)] val builder: <implicit> = LAZY_EXPRESSION
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val builder: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+        [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] init { LAZY_BLOCK }
 
-        [ResolvedTo(RAW_FIR)] init {
+        [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] init {
             builder#.version# = String()
         }
 
@@ -235,7 +235,7 @@ FILE: [ResolvedTo(IMPORTS)] statement.kts
         [ResolvedTo(RAW_FIR)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(RAW_FIR)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-statement.kts>] class Builder : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-statement.kts>, ScriptTopLevelDeclaration=true] class Builder : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Builder] constructor(): R|Builder| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -248,16 +248,16 @@ FILE: [ResolvedTo(IMPORTS)] statement.kts
 
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun build([ResolvedTo(RAW_FIR)] action: ( Builder.() -> Unit )): <implicit> { LAZY_BLOCK }
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] fun build([ResolvedTo(RAW_FIR)] action: ( Builder.() -> Unit )): <implicit> { LAZY_BLOCK }
 
-        [ResolvedTo(EXPECT_ACTUAL_MATCHING)] init { LAZY_BLOCK }
+        [ResolvedTo(EXPECT_ACTUAL_MATCHING)] [ScriptTopLevelDeclaration=true] init { LAZY_BLOCK }
 
-        public? final? [ResolvedTo(RAW_FIR)] val builder: <implicit> = LAZY_EXPRESSION
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val builder: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+        [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] init { LAZY_BLOCK }
 
-        [ResolvedTo(RAW_FIR)] init {
+        [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] init {
             builder#.version# = String()
         }
 
@@ -268,7 +268,7 @@ FILE: [ResolvedTo(IMPORTS)] statement.kts
         [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-statement.kts>] class Builder : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-statement.kts>, ScriptTopLevelDeclaration=true] class Builder : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Builder] constructor(): R|Builder| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -281,16 +281,16 @@ FILE: [ResolvedTo(IMPORTS)] statement.kts
 
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun build([ResolvedTo(RAW_FIR)] action: ( Builder.() -> Unit )): <implicit> { LAZY_BLOCK }
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] fun build([ResolvedTo(RAW_FIR)] action: ( Builder.() -> Unit )): <implicit> { LAZY_BLOCK }
 
-        [ResolvedTo(CONTRACTS)] init { LAZY_BLOCK }
+        [ResolvedTo(CONTRACTS)] [ScriptTopLevelDeclaration=true] init { LAZY_BLOCK }
 
-        public? final? [ResolvedTo(RAW_FIR)] val builder: <implicit> = LAZY_EXPRESSION
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val builder: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+        [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] init { LAZY_BLOCK }
 
-        [ResolvedTo(RAW_FIR)] init {
+        [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] init {
             builder#.version# = String()
         }
 
@@ -301,7 +301,7 @@ FILE: [ResolvedTo(IMPORTS)] statement.kts
         [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-statement.kts>] class Builder : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-statement.kts>, ScriptTopLevelDeclaration=true] class Builder : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Builder] constructor(): R|Builder| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -314,16 +314,16 @@ FILE: [ResolvedTo(IMPORTS)] statement.kts
 
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun build([ResolvedTo(RAW_FIR)] action: ( Builder.() -> Unit )): <implicit> { LAZY_BLOCK }
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] fun build([ResolvedTo(RAW_FIR)] action: ( Builder.() -> Unit )): <implicit> { LAZY_BLOCK }
 
-        [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] init { LAZY_BLOCK }
+        [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] init { LAZY_BLOCK }
 
-        public? final? [ResolvedTo(RAW_FIR)] val builder: <implicit> = LAZY_EXPRESSION
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val builder: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+        [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] init { LAZY_BLOCK }
 
-        [ResolvedTo(RAW_FIR)] init {
+        [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] init {
             builder#.version# = String()
         }
 
@@ -334,7 +334,7 @@ FILE: [ResolvedTo(IMPORTS)] statement.kts
         [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-statement.kts>] class Builder : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-statement.kts>, ScriptTopLevelDeclaration=true] class Builder : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Builder] constructor(): R|Builder| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -347,16 +347,16 @@ FILE: [ResolvedTo(IMPORTS)] statement.kts
 
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun build([ResolvedTo(RAW_FIR)] action: ( Builder.() -> Unit )): <implicit> { LAZY_BLOCK }
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] fun build([ResolvedTo(RAW_FIR)] action: ( Builder.() -> Unit )): <implicit> { LAZY_BLOCK }
 
-        [ResolvedTo(CONSTANT_EVALUATION)] init { LAZY_BLOCK }
+        [ResolvedTo(CONSTANT_EVALUATION)] [ScriptTopLevelDeclaration=true] init { LAZY_BLOCK }
 
-        public? final? [ResolvedTo(RAW_FIR)] val builder: <implicit> = LAZY_EXPRESSION
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val builder: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+        [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] init { LAZY_BLOCK }
 
-        [ResolvedTo(RAW_FIR)] init {
+        [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] init {
             builder#.version# = String()
         }
 
@@ -367,7 +367,7 @@ FILE: [ResolvedTo(IMPORTS)] statement.kts
         [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-statement.kts>] class Builder : R|kotlin/Any| {
+        public final? [ResolvedTo(RAW_FIR)] [ContainingScriptKey=FirScriptSymbol <script-statement.kts>, ScriptTopLevelDeclaration=true] class Builder : R|kotlin/Any| {
             public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Builder] constructor(): R|Builder| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -380,16 +380,16 @@ FILE: [ResolvedTo(IMPORTS)] statement.kts
 
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] fun build([ResolvedTo(RAW_FIR)] action: ( Builder.() -> Unit )): <implicit> { LAZY_BLOCK }
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] fun build([ResolvedTo(RAW_FIR)] action: ( Builder.() -> Unit )): <implicit> { LAZY_BLOCK }
 
-        [ResolvedTo(ANNOTATION_ARGUMENTS)] init { LAZY_BLOCK }
+        [ResolvedTo(ANNOTATION_ARGUMENTS)] [ScriptTopLevelDeclaration=true] init { LAZY_BLOCK }
 
-        public? final? [ResolvedTo(RAW_FIR)] val builder: <implicit> = LAZY_EXPRESSION
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val builder: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+        [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] init { LAZY_BLOCK }
 
-        [ResolvedTo(RAW_FIR)] init {
+        [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] init {
             builder#.version# = String()
         }
 
@@ -400,7 +400,7 @@ FILE: [ResolvedTo(IMPORTS)] statement.kts
         [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-statement.kts>] class Builder : R|kotlin/Any| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-statement.kts>, ScriptTopLevelDeclaration=true] class Builder : R|kotlin/Any| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Builder] constructor(): R|Builder| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -413,11 +413,11 @@ FILE: [ResolvedTo(IMPORTS)] statement.kts
 
         }
 
-        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] fun build([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] action: R|Builder.() -> kotlin/Unit|): R|Builder| {
+        public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] fun build([ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] action: R|Builder.() -> kotlin/Unit|): R|Builder| {
             ^build R|/Builder.Builder|().R|kotlin/apply|<R|Builder|>(R|<local>/action|)
         }
 
-        [ResolvedTo(BODY_RESOLVE)] init {
+        [ResolvedTo(BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] init {
             R|/build|(<L> = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=@ExtensionFunctionType kotlin/Function1<Builder, kotlin/Unit>] build@fun [ResolvedTo(BODY_RESOLVE)] R|Builder|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
                 this@R|special/anonymous|.R|/Builder.version| = String(123)
                 local final [ResolvedTo(BODY_RESOLVE)] class A : R|kotlin/Any| {
@@ -435,12 +435,12 @@ FILE: [ResolvedTo(IMPORTS)] statement.kts
             )
         }
 
-        public? final? [ResolvedTo(RAW_FIR)] val builder: <implicit> = LAZY_EXPRESSION
+        public? final? [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] val builder: <implicit> = LAZY_EXPRESSION
             public? [ResolvedTo(RAW_FIR)] get(): <implicit>
 
-        [ResolvedTo(RAW_FIR)] init { LAZY_BLOCK }
+        [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] init { LAZY_BLOCK }
 
-        [ResolvedTo(RAW_FIR)] init {
+        [ResolvedTo(RAW_FIR)] [ScriptTopLevelDeclaration=true] init {
             builder#.version# = String()
         }
 
@@ -451,7 +451,7 @@ FILE: [ResolvedTo(BODY_RESOLVE)] statement.kts
         [ResolvedTo(BODY_RESOLVE)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(BODY_RESOLVE)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol <script-statement.kts>] class Builder : R|kotlin/Any| {
+        public final [ResolvedTo(BODY_RESOLVE)] [ContainingScriptKey=FirScriptSymbol <script-statement.kts>, ScriptTopLevelDeclaration=true] class Builder : R|kotlin/Any| {
             public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Builder] constructor(): R|Builder| {
                 super<R|kotlin/Any|>()
             }
@@ -466,11 +466,11 @@ FILE: [ResolvedTo(BODY_RESOLVE)] statement.kts
 
         }
 
-        public final [ResolvedTo(BODY_RESOLVE)] fun build([ResolvedTo(BODY_RESOLVE)] action: R|Builder.() -> kotlin/Unit|): R|Builder| {
+        public final [ResolvedTo(BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] fun build([ResolvedTo(BODY_RESOLVE)] action: R|Builder.() -> kotlin/Unit|): R|Builder| {
             ^build R|/Builder.Builder|().R|kotlin/apply|<R|Builder|>(R|<local>/action|)
         }
 
-        [ResolvedTo(BODY_RESOLVE)] init {
+        [ResolvedTo(BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] init {
             R|/build|(<L> = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=@ExtensionFunctionType kotlin/Function1<Builder, kotlin/Unit>] build@fun [ResolvedTo(BODY_RESOLVE)] R|Builder|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
                 this@R|special/anonymous|.R|/Builder.version| = String(123)
                 local final [ResolvedTo(BODY_RESOLVE)] class A : R|kotlin/Any| {
@@ -488,17 +488,17 @@ FILE: [ResolvedTo(BODY_RESOLVE)] statement.kts
             )
         }
 
-        public final [ResolvedTo(BODY_RESOLVE)] val builder: R|Builder| = R|/build|(<L> = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=@ExtensionFunctionType kotlin/Function1<Builder, kotlin/Unit>] build@fun [ResolvedTo(BODY_RESOLVE)] R|Builder|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
+        public final [ResolvedTo(BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] val builder: R|Builder| = R|/build|(<L> = [ResolvedTo(BODY_RESOLVE)] [MatchingParameterFunctionTypeKey=@ExtensionFunctionType kotlin/Function1<Builder, kotlin/Unit>] build@fun [ResolvedTo(BODY_RESOLVE)] R|Builder|.<anonymous>(): R|kotlin/Unit| <inline=NoInline>  {
             this@R|special/anonymous|.R|/Builder.version| = String(321)
         }
         )
             public [ResolvedTo(BODY_RESOLVE)] get(): R|Builder|
 
-        [ResolvedTo(BODY_RESOLVE)] init {
+        [ResolvedTo(BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] init {
             R|/builder|.R|/Builder.execute|()
         }
 
-        [ResolvedTo(BODY_RESOLVE)] init {
+        [ResolvedTo(BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] init {
             R|/builder|.R|/Builder.version| = String()
         }
 

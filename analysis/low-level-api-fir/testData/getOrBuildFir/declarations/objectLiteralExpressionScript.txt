@@ -16,7 +16,7 @@ FILE: [ResolvedTo(IMPORTS)] objectLiteralExpressionScript.kts
         [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(BODY_RESOLVE)] fun test(): R|kotlin/Unit| {
+        public final [ResolvedTo(BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] fun test(): R|kotlin/Unit| {
             object : R|kotlin/Any| {
                 private [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=<anonymous>] constructor(): R|<anonymous>| {
                     super<R|kotlin/Any|>()

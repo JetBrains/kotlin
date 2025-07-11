@@ -51,7 +51,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterAnnotationsInLocalClassScript.kts
         [ResolvedTo(TYPES)] <script receiver parameter>: R|kotlin/script/templates/standard/ScriptTemplateWithArgs|
         [ResolvedTo(TYPES)] lval args: R|kotlin/Array<kotlin/String>|
 
-        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-typeParameterAnnotationsInLocalClassScript.kts>] annotation class Anno : R|kotlin/Annotation| {
+        public final [ResolvedTo(STATUS)] [ContainingScriptKey=FirScriptSymbol <script-typeParameterAnnotationsInLocalClassScript.kts>, ScriptTopLevelDeclaration=true] annotation class Anno : R|kotlin/Annotation| {
             public [ResolvedTo(STATUS)] [ContainingClassKey=Anno] constructor([ResolvedTo(STATUS)] [CorrespondingProperty=/Anno.position] position: R|kotlin/String|): R|Anno| {
                 LAZY_super<R|kotlin/Any|>
             }
@@ -61,7 +61,7 @@ FILE: [ResolvedTo(IMPORTS)] typeParameterAnnotationsInLocalClassScript.kts
 
         }
 
-        public final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Unit| {
+        public final [ResolvedTo(BODY_RESOLVE)] [ScriptTopLevelDeclaration=true] fun foo(): R|kotlin/Unit| {
             local final [ResolvedTo(BODY_RESOLVE)] class OriginalClass : R|kotlin/Any| {
                 public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=OriginalClass] constructor(): R|<local>/OriginalClass| {
                     super<R|kotlin/Any|>()
