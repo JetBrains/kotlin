@@ -58,15 +58,13 @@ abstract class LibrarySpecialCompatibilityChecker {
 
         for (library in libraries) {
             if (shouldCheckLibrary(library)) {
-                val jarManifest = library.getJarManifest() ?: return
-                val libraryVersion = Version.parseVersion(jarManifest.mainAttributes.getValue(KLIB_JAR_LIBRARY_VERSION)) ?: return
+                val jarManifest = library.getJarManifest() ?: continue
+                val libraryVersion = Version.parseVersion(jarManifest.mainAttributes.getValue(KLIB_JAR_LIBRARY_VERSION)) ?: continue
 
-                val messageToReport = getMessageToReport(compilerVersion, libraryVersion)
+                val messageToReport = getMessageToReport(compilerVersion, libraryVersion, library)
                 if (messageToReport != null) {
                     messageCollector.report(CompilerMessageSeverity.ERROR, messageToReport)
                 }
-
-                return
             }
         }
     }
@@ -88,7 +86,7 @@ abstract class LibrarySpecialCompatibilityChecker {
     }
 
     protected abstract fun shouldCheckLibrary(library: KotlinLibrary): Boolean
-    protected abstract fun getMessageToReport(compilerVersion: Version, libraryVersion: Version): String?
+    protected abstract fun getMessageToReport(compilerVersion: Version, libraryVersion: Version, library: KotlinLibrary): String?
 
     companion object {
         private class CustomCompilerVersionForTest(val version: String?)

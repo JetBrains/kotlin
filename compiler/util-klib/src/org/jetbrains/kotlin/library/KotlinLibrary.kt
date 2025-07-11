@@ -138,6 +138,14 @@ val BaseKotlinLibrary.isWasmStdlib: Boolean
 val BaseKotlinLibrary.isAnyPlatformStdlib: Boolean
     get() = isNativeStdlib || isJsStdlib || isWasmStdlib
 
+/** Whether [this] is a Kotlin/JS kotlin-test. */
+val BaseKotlinLibrary.isJsKotlinTest: Boolean
+    get() = uniqueName == KOTLINTEST_MODULE_NAME && builtInsPlatform == BuiltInsPlatform.JS
+
+/** Whether [this] is a Kotlin/Wasm kotlin-test. */
+val BaseKotlinLibrary.isWasmKotlinTest: Boolean
+    get() = uniqueName == KOTLINTEST_MODULE_NAME && builtInsPlatform == BuiltInsPlatform.WASM
+
 val BaseKotlinLibrary.uniqueName: String
     get() = manifestProperties.getProperty(KLIB_PROPERTY_UNIQUE_NAME)!!
 

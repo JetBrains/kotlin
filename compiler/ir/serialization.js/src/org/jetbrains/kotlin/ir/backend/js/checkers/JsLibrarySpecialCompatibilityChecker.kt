@@ -7,15 +7,18 @@ package org.jetbrains.kotlin.ir.backend.js.checkers
 
 import org.jetbrains.kotlin.backend.common.diagnostics.LibrarySpecialCompatibilityChecker
 import org.jetbrains.kotlin.library.KotlinLibrary
-import org.jetbrains.kotlin.library.builtInsPlatform
-import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
-import org.jetbrains.kotlin.library.uniqueName
+import org.jetbrains.kotlin.library.isJsKotlinTest
+import org.jetbrains.kotlin.library.isJsStdlib
 
-class JsLibrarySpecialCompatibilityChecker(val libraryUniqueName: String, val libraryDisplayName: String) : LibrarySpecialCompatibilityChecker() {
-    override fun shouldCheckLibrary(library: KotlinLibrary) =
-        library.uniqueName == libraryUniqueName && library.builtInsPlatform == BuiltInsPlatform.JS
+class JsLibrarySpecialCompatibilityChecker() : LibrarySpecialCompatibilityChecker() {
+    override fun shouldCheckLibrary(library: KotlinLibrary) = library.isJsStdlib || library.isJsKotlinTest
 
-    override fun getMessageToReport(compilerVersion: Version, libraryVersion: Version): String? {
+    override fun getMessageToReport(compilerVersion: Version, libraryVersion: Version, library: KotlinLibrary): String? {
+        val libraryDisplayName = when {
+            library.isJsStdlib -> "standard"
+            library.isJsKotlinTest -> "kotlin-test"
+            else -> null
+        }
         val rootCause = when {
             libraryVersion < compilerVersion ->
                 "The Kotlin/JS $libraryDisplayName library has an older version ($libraryVersion) than the compiler ($compilerVersion). Such a configuration is not supported."

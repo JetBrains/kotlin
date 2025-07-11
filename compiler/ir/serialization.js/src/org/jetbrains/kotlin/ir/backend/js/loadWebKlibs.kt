@@ -17,9 +17,6 @@ import org.jetbrains.kotlin.js.config.friendLibraries
 import org.jetbrains.kotlin.js.config.includes
 import org.jetbrains.kotlin.js.config.libraries
 import org.jetbrains.kotlin.js.config.zipFileSystemAccessor
-import org.jetbrains.kotlin.library.KOTLINTEST_MODULE_NAME
-import org.jetbrains.kotlin.library.KOTLIN_JS_STDLIB_NAME
-import org.jetbrains.kotlin.library.KOTLIN_WASM_STDLIB_NAME
 import org.jetbrains.kotlin.library.KotlinAbiVersion
 import org.jetbrains.kotlin.library.loader.KlibLoader
 import org.jetbrains.kotlin.library.loader.KlibPlatformChecker
@@ -45,17 +42,8 @@ fun loadWebKlibsInProductionPipeline(
     )
 
     val isWasm = platformChecker is KlibPlatformChecker.Wasm
-    val stdlibUniqueName = if (isWasm) KOTLIN_WASM_STDLIB_NAME else KOTLIN_JS_STDLIB_NAME
-    val librariesToCheck = listOf(
-        stdlibUniqueName to "standard",
-        KOTLINTEST_MODULE_NAME to "kotlin-test",
-    )
-    librariesToCheck.forEach { (uniqueName, displayName) ->
-        val checker =
-            if (isWasm) WasmLibrarySpecialCompatibilityChecker(uniqueName, displayName)
-            else JsLibrarySpecialCompatibilityChecker(uniqueName, displayName)
-        checker.check(klibs.all, configuration.messageCollector)
-    }
+    val checker = if (isWasm) WasmLibrarySpecialCompatibilityChecker() else JsLibrarySpecialCompatibilityChecker()
+    checker.check(klibs.all, configuration.messageCollector)
 
     return klibs
 }
