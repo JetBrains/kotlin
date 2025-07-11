@@ -886,7 +886,7 @@ abstract class AbstractComposeLowering(
             startOffset = SYNTHETIC_OFFSET
             endOffset = SYNTHETIC_OFFSET
             name = propName
-            visibility = DescriptorVisibilities.PUBLIC
+            visibility = this@buildStabilityProp.visibility
         }.also { property ->
             property.parent = parent
             stabilityField.correspondingPropertySymbol = property.symbol
@@ -914,7 +914,7 @@ abstract class AbstractComposeLowering(
             endOffset = this@buildStabilityGetter.endOffset
             name = getterName
             returnType = stabilityField.type
-            visibility = DescriptorVisibilities.PUBLIC
+            visibility = this@buildStabilityGetter.visibility
             origin = IrDeclarationOrigin.GeneratedByPlugin(ComposeCompilerKey)
         }.also { fn ->
             fn.parent = parent
