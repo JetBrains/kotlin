@@ -52,7 +52,6 @@ import org.jetbrains.kotlin.buildtools.api.v2.NativeArguments.Companion.X_COMPIL
 import org.jetbrains.kotlin.buildtools.api.v2.NativeArguments.Companion.X_DEBUG_INFO_VERSION
 import org.jetbrains.kotlin.buildtools.api.v2.NativeArguments.Companion.X_DEBUG_PREFIX_MAP
 import org.jetbrains.kotlin.buildtools.api.v2.NativeArguments.Companion.X_DESTROY_RUNTIME_MODE
-import org.jetbrains.kotlin.buildtools.api.v2.NativeArguments.Companion.X_DUMP_SYNTHETIC_ACCESSORS_TO
 import org.jetbrains.kotlin.buildtools.api.v2.NativeArguments.Companion.X_DUMP_TESTS_TO
 import org.jetbrains.kotlin.buildtools.api.v2.NativeArguments.Companion.X_EMIT_LAZY_OBJC_HEADER
 import org.jetbrains.kotlin.buildtools.api.v2.NativeArguments.Companion.X_EXPORT_KDOC
@@ -200,7 +199,6 @@ public class NativeArgumentsImpl : CommonKlibBasedArgumentsImpl(), NativeArgumen
     if ("X_LLVM_MODULE_PASSES" in optionsMap) { arguments.llvmModulePasses = get(X_LLVM_MODULE_PASSES) }
     if ("X_LLVM_LTO_PASSES" in optionsMap) { arguments.llvmLTOPasses = get(X_LLVM_LTO_PASSES) }
     if ("X_MANIFEST_NATIVE_TARGETS" in optionsMap) { arguments.manifestNativeTargets = get(X_MANIFEST_NATIVE_TARGETS) }
-    if ("X_DUMP_SYNTHETIC_ACCESSORS_TO" in optionsMap) { arguments.dumpSyntheticAccessorsTo = get(X_DUMP_SYNTHETIC_ACCESSORS_TO) }
     return arguments
   }
 }

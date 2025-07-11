@@ -14,6 +14,9 @@ import org.jetbrains.kotlin.buildtools.api.v2.CommonCompilerArguments.Companion.
 import org.jetbrains.kotlin.buildtools.api.v2.CommonCompilerArguments.Companion.OPT_IN
 import org.jetbrains.kotlin.buildtools.api.v2.CommonCompilerArguments.Companion.PROGRESSIVE
 import org.jetbrains.kotlin.buildtools.api.v2.CommonCompilerArguments.Companion.X_ALLOW_ANY_SCRIPTS_IN_SOURCE_ROOTS
+import org.jetbrains.kotlin.buildtools.api.v2.CommonCompilerArguments.Companion.X_ALLOW_CONDITION_IMPLIES_RETURNS_CONTRACTS
+import org.jetbrains.kotlin.buildtools.api.v2.CommonCompilerArguments.Companion.X_ALLOW_CONTRACTS_ON_MORE_FUNCTIONS
+import org.jetbrains.kotlin.buildtools.api.v2.CommonCompilerArguments.Companion.X_ALLOW_HOLDSIN_CONTRACT
 import org.jetbrains.kotlin.buildtools.api.v2.CommonCompilerArguments.Companion.X_ALLOW_REIFIED_TYPE_IN_CATCH
 import org.jetbrains.kotlin.buildtools.api.v2.CommonCompilerArguments.Companion.X_ANNOTATION_DEFAULT_TARGET
 import org.jetbrains.kotlin.buildtools.api.v2.CommonCompilerArguments.Companion.X_ANNOTATION_TARGET_ALL
@@ -144,6 +147,9 @@ public open class CommonCompilerArgumentsImpl : CommonToolArgumentsImpl(),
     if ("X_ANNOTATION_DEFAULT_TARGET" in optionsMap) { arguments.annotationDefaultTarget = get(X_ANNOTATION_DEFAULT_TARGET) }
     if ("X_ANNOTATION_TARGET_ALL" in optionsMap) { arguments.annotationTargetAll = get(X_ANNOTATION_TARGET_ALL) }
     if ("X_ALLOW_REIFIED_TYPE_IN_CATCH" in optionsMap) { arguments.allowReifiedTypeInCatch = get(X_ALLOW_REIFIED_TYPE_IN_CATCH) }
+    if ("X_ALLOW_CONTRACTS_ON_MORE_FUNCTIONS" in optionsMap) { arguments.allowContractsOnMoreFunctions = get(X_ALLOW_CONTRACTS_ON_MORE_FUNCTIONS) }
+    if ("X_ALLOW_CONDITION_IMPLIES_RETURNS_CONTRACTS" in optionsMap) { arguments.allowConditionImpliesReturnsContracts = get(X_ALLOW_CONDITION_IMPLIES_RETURNS_CONTRACTS) }
+    if ("X_ALLOW_HOLDSIN_CONTRACT" in optionsMap) { arguments.allowHoldsinContract = get(X_ALLOW_HOLDSIN_CONTRACT) }
     return arguments
   }
 }
