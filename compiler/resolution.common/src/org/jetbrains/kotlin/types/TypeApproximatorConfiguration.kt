@@ -77,7 +77,7 @@ abstract class TypeApproximatorConfiguration {
         override fun shouldApproximateTypeVariableBasedType(marker: TypeVariableTypeConstructorMarker, isK2: Boolean): Boolean = !isK2
     }
 
-    open class PublicDeclaration(
+    abstract class PublicDeclaration(
         override val approximateLocalTypes: Boolean,
         override val approximateAnonymous: Boolean,
     ) : TypeApproximatorConfiguration() {
