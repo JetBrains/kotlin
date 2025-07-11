@@ -164,11 +164,7 @@ internal class KaFirExpressionTypeProvider(
                 if (assignment.operationToken !in KtTokens.ALL_ASSIGNMENTS) return null
                 if (assignment.left != expression) return null
             }
-            is KtPostfixExpression -> {
-                if (expression.baseExpression !is KtArrayAccessExpression) return null
-                if (expression.operationToken !in KtTokens.INCREMENT_AND_DECREMENT) return null
-            }
-            is KtPrefixExpression -> {
+            is KtUnaryExpression -> {
                 if (expression.baseExpression !is KtArrayAccessExpression) return null
                 if (expression.operationToken !in KtTokens.INCREMENT_AND_DECREMENT) return null
             }
