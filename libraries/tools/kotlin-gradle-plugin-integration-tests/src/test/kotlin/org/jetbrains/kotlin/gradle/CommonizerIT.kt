@@ -328,7 +328,6 @@ open class CommonizerIT : KGPBaseTest() {
         nativeProject(
             "commonize-kt-46248-singleNativeTargetPropagation",
             gradleVersion,
-            buildOptions = defaultBuildOptions.disableKlibsCrossCompilation()
         ) {
             build(":p1:listNativeMainDependencies") {
                 assertOutputContains(posixDependencyRegex)
@@ -649,7 +648,6 @@ open class CommonizerIT : KGPBaseTest() {
 
             buildAndFail(
                 ":compileNativeMainKotlinMetadata",
-                buildOptions = defaultBuildOptions.disableKlibsCrossCompilation()
             ) {
                 assertTasksFailed(":compileNativeMainKotlinMetadata")
                 assertOutputContains("Unresolved reference 'linux'")
@@ -703,7 +701,7 @@ open class CommonizerIT : KGPBaseTest() {
 
             if (HostManager.hostIsMac) {
                 build(
-                    "commonizeCInterop", buildOptions = defaultBuildOptions.disableKlibsCrossCompilation()
+                    "commonizeCInterop"
                 ) {
                     checkCommonizedMetadataBuildOnMac()
                 }
@@ -712,7 +710,7 @@ open class CommonizerIT : KGPBaseTest() {
                 }
             } else {
                 build(
-                    "commonizeCInterop", buildOptions = defaultBuildOptions.disableKlibsCrossCompilation()
+                    "commonizeCInterop"
                 ) {
                     checkCommonizedMetadataBuildOnNonMac()
                 }
@@ -803,12 +801,9 @@ open class CommonizerIT : KGPBaseTest() {
         gradleVersion: GradleVersion,
         testSourceSetsDependingOnMain: Boolean,
     ) {
-        val buildOptions = defaultBuildOptions.disableKlibsCrossCompilation()
-
         nativeProject(
             "commonizeMultipleCInteropsWithTests",
             gradleVersion,
-            buildOptions = buildOptions
         ) {
 
             val isMac = HostManager.hostIsMac
@@ -819,10 +814,7 @@ open class CommonizerIT : KGPBaseTest() {
             }
 
             val testSourceSetsDependingOnMainParameterOption = defaultBuildOptions.copy(
-                freeArgs = listOf("-PtestSourceSetsDependingOnMain=$testSourceSetsDependingOnMain"),
-                nativeOptions = defaultBuildOptions.nativeOptions.copy(
-                    enableKlibsCrossCompilation = false
-                )
+                freeArgs = listOf("-PtestSourceSetsDependingOnMain=$testSourceSetsDependingOnMain")
             )
 
             reportSourceSetCommonizerDependencies(options = testSourceSetsDependingOnMainParameterOption) {

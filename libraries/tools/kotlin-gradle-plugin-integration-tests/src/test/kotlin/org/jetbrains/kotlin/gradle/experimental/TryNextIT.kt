@@ -223,7 +223,7 @@ class TryNextIT : KGPBaseTest() {
         project(
             "commonizeHierarchically",
             gradleVersion,
-            buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG).disableKlibsCrossCompilation()
+            buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)
         ) {
             enableTryNext()
 
@@ -332,7 +332,6 @@ class TryNextIT : KGPBaseTest() {
         project(
             "native-configuration-cache",
             gradleVersion,
-            buildOptions = defaultBuildOptions.disableKlibsCrossCompilation(),
         ) {
             enableTryNext()
             build("build") {

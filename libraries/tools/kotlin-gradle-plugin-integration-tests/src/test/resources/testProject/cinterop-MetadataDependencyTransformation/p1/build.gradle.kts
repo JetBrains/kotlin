@@ -76,12 +76,12 @@ kotlin {
         }
     }
 
-    targets.withType<KotlinNativeTarget>().forEach { target ->
-        target.compilations.getByName("main").cinterops.create("withPosix") {
+    targets.withType<KotlinNativeTarget>().configureEach {
+        compilations.getByName("main").cinterops.create("withPosix") {
             this.packageName = "withPosix"
             header(file("libs/withPosix.h"))
         }
-        target.compilations.getByName("main").cinterops.create("simple") {
+        compilations.getByName("main").cinterops.create("simple") {
             header(file("libs/simple.h"))
         }
     }
