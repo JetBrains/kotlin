@@ -45,3 +45,6 @@ fun box(): String = "OK"
 
 fun asyncList(): Promise<List<Int>> =
     Promise.resolve(listOf(1, 2))
+
+fun arrayOfLists(): Array<List<Int>> =
+    arrayOf(listOf(1, 2))
