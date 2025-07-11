@@ -105,22 +105,22 @@ class JsContinuousBuildIT : KGPDaemonsBaseTest() {
                 val expectedMessage = if (gradleVersion != GradleVersion.version(TestVersions.Gradle.G_8_12)) {
                     // language=text
                     """
-                    |[ExecAsyncHandle webpack webpack/bin/webpack.js jsmain] started
-                    |[ExecAsyncHandle webpack webpack/bin/webpack.js jsmain] finished {exitValue=?, failure=null}
-                    |[ExecAsyncHandle webpack webpack/bin/webpack.js jsmain] aborted
+                    |[ExecAsyncHandle webpack webpack/bin/webpack.js jsMain] started
+                    |[ExecAsyncHandle webpack webpack/bin/webpack.js jsMain] finished {exitValue=?, failure=null}
+                    |[ExecAsyncHandle webpack webpack/bin/webpack.js jsMain] aborted
                     """.trimMargin()
                 } else {
                     // language=text
                     """
-                    |[ExecAsyncHandle webpack webpack/bin/webpack.js jsmain] started
-                    |[ExecAsyncHandle webpack webpack/bin/webpack.js jsmain] aborted
-                    |[ExecAsyncHandle webpack webpack/bin/webpack.js jsmain] failed org.gradle.internal.UncheckedException: java.lang.InterruptedException
+                    |[ExecAsyncHandle webpack webpack/bin/webpack.js jsMain] started
+                    |[ExecAsyncHandle webpack webpack/bin/webpack.js jsMain] aborted
+                    |[ExecAsyncHandle webpack webpack/bin/webpack.js jsMain] failed org.gradle.internal.UncheckedException: java.lang.InterruptedException
                     """.trimMargin()
                 }
                 assertEquals(
                     expectedMessage,
                     output
-                        .filterLinesStartingWith("[ExecAsyncHandle webpack webpack/bin/webpack.js jsmain]")
+                        .filterLinesStartingWith("[ExecAsyncHandle webpack webpack/bin/webpack.js jsMain]")
                         // For some reason webpack doesn't close with a consistent exit code.
                         // We don't really care about the exit code, only that it _does_ exit.
                         // So, replace the exit code with a '?' to make the assertion stable.
@@ -131,8 +131,8 @@ class JsContinuousBuildIT : KGPDaemonsBaseTest() {
                 assertEquals(
                     // language=text
                     """
-                    |[:jsBrowserDevelopmentRun] webpack-dev-server started webpack webpack/bin/webpack.js jsmain
-                    |[:jsBrowserDevelopmentRun] webpack-dev-server stopped webpack webpack/bin/webpack.js jsmain
+                    |[:jsBrowserDevelopmentRun] webpack-dev-server started webpack webpack/bin/webpack.js jsMain
+                    |[:jsBrowserDevelopmentRun] webpack-dev-server stopped webpack webpack/bin/webpack.js jsMain
                     """.trimMargin(),
                     output.filterLinesStartingWith("[:jsBrowserDevelopmentRun] webpack")
                 )

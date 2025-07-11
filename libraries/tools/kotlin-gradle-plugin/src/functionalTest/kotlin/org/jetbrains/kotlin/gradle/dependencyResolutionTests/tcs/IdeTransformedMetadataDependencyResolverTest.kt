@@ -10,8 +10,11 @@ package org.jetbrains.kotlin.gradle.dependencyResolutionTests.tcs
 import org.jetbrains.kotlin.gradle.dependencyResolutionTests.mavenCentralCacheRedirector
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinBinaryDependency
+import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinUnresolvedBinaryDependency
+import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.IdeaKotlinDependencyMatcher
 import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.assertMatches
 import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.binaryCoordinates
+import org.jetbrains.kotlin.gradle.idea.testFixtures.utils.*
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
 import org.jetbrains.kotlin.gradle.plugin.ide.dependencyResolvers.IdeTransformedMetadataDependencyResolver
@@ -47,18 +50,22 @@ class IdeTransformedMetadataDependencyResolverTest {
 
         project.evaluate()
 
+        val unresolvedDependenciesDiagnosticMatcher = unresolvedDependenciesDiagnosticMatcher("com.arkivanov.mvikotlin:mvikotlin")
+
         IdeTransformedMetadataDependencyResolver.resolve(commonMain)
             .assertMatches(
                 binaryCoordinates("com.arkivanov.mvikotlin:mvikotlin:commonMain:3.0.2"),
                 binaryCoordinates("com.arkivanov.essenty:lifecycle:commonMain:0.4.2"),
-                binaryCoordinates("com.arkivanov.essenty:instance-keeper:commonMain:0.4.2")
+                binaryCoordinates("com.arkivanov.essenty:instance-keeper:commonMain:0.4.2"),
+                unresolvedDependenciesDiagnosticMatcher,
             )
 
         IdeTransformedMetadataDependencyResolver.resolve(commonTest)
             .assertMatches(
                 binaryCoordinates("com.arkivanov.mvikotlin:mvikotlin:commonMain:3.0.2"),
                 binaryCoordinates("com.arkivanov.essenty:lifecycle:commonMain:0.4.2"),
-                binaryCoordinates("com.arkivanov.essenty:instance-keeper:commonMain:0.4.2")
+                binaryCoordinates("com.arkivanov.essenty:instance-keeper:commonMain:0.4.2"),
+                unresolvedDependenciesDiagnosticMatcher,
             )
 
         IdeTransformedMetadataDependencyResolver.resolve(linuxMain)
@@ -66,7 +73,8 @@ class IdeTransformedMetadataDependencyResolverTest {
                 binaryCoordinates("com.arkivanov.mvikotlin:mvikotlin:commonMain:3.0.2"),
                 binaryCoordinates("com.arkivanov.mvikotlin:mvikotlin:jsNativeMain:3.0.2"),
                 binaryCoordinates("com.arkivanov.essenty:lifecycle:commonMain:0.4.2"),
-                binaryCoordinates("com.arkivanov.essenty:instance-keeper:commonMain:0.4.2")
+                binaryCoordinates("com.arkivanov.essenty:instance-keeper:commonMain:0.4.2"),
+                unresolvedDependenciesDiagnosticMatcher
             )
     }
 

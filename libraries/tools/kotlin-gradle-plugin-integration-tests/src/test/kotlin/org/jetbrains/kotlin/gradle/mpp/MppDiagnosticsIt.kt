@@ -9,18 +9,14 @@ import org.gradle.kotlin.dsl.kotlin
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.DiagnosticGroup
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
-import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics.PartiallyResolvedKmpDependencies.UnresolvedKmpDependency
-import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics.PartiallyResolvedKmpDependencies.failureMessage
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnostic
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnostic.Severity.STRONG_WARNING
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnosticFactory
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
-import org.jetbrains.kotlin.gradle.utils.appendLine
 import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.DisplayName
 import java.io.File
-import kotlin.collections.forEach
 import kotlin.io.path.appendText
 import kotlin.io.path.writeText
 
@@ -240,9 +236,18 @@ class MppDiagnosticsIt : KGPBaseTest() {
         operator fun invoke() =
             build {
                 title("Foo")
-                    .description("bar")
+                    .descriptionBuilder {
+                        if (org.slf4j.LoggerFactory.getLogger(StrongWarningDiagnostic::class.java).isInfoEnabled) {
+                            info
+                        } else {
+                            standard
+                        }
+                    }
                     .solution("baz")
             }
+
+        val standard = "StrongWarningDiagnostic_STANDARD"
+        val info = "StrongWarningDiagnostic_INFO"
     }
     @GradleTest
     fun testStrongWarningDiagnostic(gradleVersion: GradleVersion) {
@@ -256,14 +261,22 @@ class MppDiagnosticsIt : KGPBaseTest() {
                 }
                 project.reportDiagnostic(StrongWarningDiagnostic())
             }
-            build(":checkKotlinGradlePluginConfigurationErrors") {
+            build(
+                ":checkKotlinGradlePluginConfigurationErrors",
+                buildOptions = defaultBuildOptions.copy(logLevel = org.gradle.api.logging.LogLevel.LIFECYCLE),
+            ) {
                 assertHasDiagnostic(StrongWarningDiagnostic)
                 assertTasksExecuted(":checkKotlinGradlePluginConfigurationErrors")
+                assertOutputContains(StrongWarningDiagnostic.standard)
             }
-            build(":checkKotlinGradlePluginConfigurationErrors") {
+            build(
+                ":checkKotlinGradlePluginConfigurationErrors",
+                buildOptions = defaultBuildOptions.copy(logLevel = org.gradle.api.logging.LogLevel.INFO),
+            ) {
                 assertConfigurationCacheReused()
                 assertHasDiagnostic(StrongWarningDiagnostic)
                 assertTasksExecuted(":checkKotlinGradlePluginConfigurationErrors")
+                assertOutputContains(StrongWarningDiagnostic.info)
             }
         }
     }

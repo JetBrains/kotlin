@@ -70,7 +70,8 @@ private abstract class AbstractToolingDiagnostic(
     val severity: ToolingDiagnostic.Severity
 ) : ToolingDiagnosticOutput {
     override val name: String by lazy { buildName() }
-    override val message: String by lazy { buildMessage() }
+    override val message: String
+        get() = buildMessage()
     override val solution: String? by lazy { buildSolution() }
     override val documentation: String? by lazy { buildDocumentation() }
 

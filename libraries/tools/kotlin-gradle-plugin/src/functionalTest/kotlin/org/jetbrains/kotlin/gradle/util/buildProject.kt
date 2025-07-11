@@ -205,3 +205,11 @@ fun Project.enableKmpProjectIsolationSupport(enabled: Boolean = true) {
 fun Project.enableNonPackedKlibsUsage(enabled: Boolean = true) {
     project.propertiesExtension.set(PropertiesProvider.PropertyNames.KOTLIN_USE_NON_PACKED_KLIBS, enabled.toString())
 }
+
+fun Project.enableEagerUnresolvedDependenciesDiagnostic(enabled: Boolean = true) {
+    project.propertiesExtension.set(PropertiesProvider.PropertyNames.KOTLIN_KMP_EAGER_UNRESOLVED_DEPENDENCIES_DIAGNOSTIC, enabled.toString())
+}
+
+fun Project.enableUnresolvedDependenciesDiagnostic(enabled: Boolean = true) {
+    project.propertiesExtension.set(PropertiesProvider.PropertyNames.KOTLIN_KMP_UNRESOLVED_DEPENDENCIES_DIAGNOSTIC, enabled.toString())
+}

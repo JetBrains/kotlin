@@ -126,6 +126,7 @@ internal object ToolingDiagnostics {
     interface DescriptionStep {
         fun description(value: String): SolutionStep
         fun description(value: () -> String): SolutionStep
+        fun descriptionBuilder(value: () -> String): SolutionStep
     }
 
     interface SolutionStep {
@@ -148,7 +149,7 @@ internal object ToolingDiagnostics {
         val severity: ToolingDiagnostic.Severity,
         val throwable: Throwable?,
         val title: String? = null,
-        val description: String? = null,
+        val descriptionBuilder: (() -> String)? = null,
         val solutions: List<String> = emptyList(),
         val documentation: ToolingDiagnostic.Documentation? = null,
     ) {
@@ -178,7 +179,10 @@ internal object ToolingDiagnostics {
 
         override fun description(value: () -> String) = description(value())
         override fun description(value: String) = apply {
-            state = state.copy(description = value)
+            state = state.copy(descriptionBuilder = { value })
+        }
+        override fun descriptionBuilder(value: () -> String) = apply {
+            state = state.copy(descriptionBuilder = value)
         }
 
         override fun solution(value: () -> String) = solution(value())
@@ -208,7 +212,7 @@ internal object ToolingDiagnostics {
                 checkNotNull(state.title) { "Title is required for diagnostic with ID ${state.id}" },
                 state.group
             ),
-            message = checkNotNull(state.description) { "Description is required for diagnostic with ID ${state.id}" },
+            messageBuilder = checkNotNull(state.descriptionBuilder) { "Description is required for diagnostic with ID ${state.id}" },
             severity = checkNotNull(state.severity) { "Severity is required for diagnostic with ID ${state.id}" },
             solutions = state.solutions,
             documentation = state.documentation,

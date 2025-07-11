@@ -230,6 +230,7 @@ class SeparateKmpCompilationIT : KGPBaseTest() {
                 // ensures no unexpected task dependencies are added
                 val libraryTasks = setOf(
                     ":library:allMetadataJar",
+                    ":library:kmpPartiallyResolvedDependenciesChecker",
                     ":library:checkKotlinGradlePluginConfigurationErrors",
                     ":library:commonizeNativeDistribution",
                     ":library:compileCommonMainKotlinMetadata",
@@ -264,6 +265,7 @@ class SeparateKmpCompilationIT : KGPBaseTest() {
                     ":library:transformNativeMainDependenciesMetadata",
                 )
                 val thisProjectTasks = setOf(
+                    ":kmpPartiallyResolvedDependenciesChecker",
                     ":checkKotlinGradlePluginConfigurationErrors",
                     ":commonizeNativeDistribution",
                     ":compileCommonMainKotlinMetadata",

@@ -15,14 +15,55 @@ package org.jetbrains.kotlin.gradle.plugin.diagnostics
  * @property documentation Optional documentation providing additional context or resources.
  * @property throwable Optional exception related to the diagnostic issue if applicable.
  */
-internal data class ToolingDiagnostic(
+internal class ToolingDiagnostic(
     val identifier: ID,
-    val message: String,
+    val messageBuilder: () -> String,
     val severity: Severity,
     val solutions: List<String>,
     val documentation: Documentation? = null,
     val throwable: Throwable? = null,
 ) {
+    constructor(
+        identifier: ID,
+        message: String,
+        severity: Severity,
+        solutions: List<String>,
+        documentation: Documentation? = null,
+        throwable: Throwable? = null,
+    ) : this(
+        identifier = identifier,
+        messageBuilder = { message },
+        severity = severity,
+        solutions = solutions,
+        documentation = documentation,
+        throwable = throwable,
+    )
+
+    val message: String
+        get() = messageBuilder()
+
+    private data class ToolingDiagnosticSnapshot(
+        val identifier: ID,
+        val message: String,
+        val severity: Severity,
+        val solutions: List<String>,
+        val documentation: Documentation?,
+        val throwable: Throwable?,
+    ) {
+        constructor(diagnostic: ToolingDiagnostic) : this(
+            identifier = diagnostic.identifier,
+            message = diagnostic.message,
+            severity = diagnostic.severity,
+            solutions = diagnostic.solutions,
+            documentation = diagnostic.documentation,
+            throwable = diagnostic.throwable,
+        )
+    }
+
+    override fun equals(other: Any?): Boolean = other is ToolingDiagnostic
+            && ToolingDiagnosticSnapshot(this) == ToolingDiagnosticSnapshot(other)
+    override fun hashCode(): Int = ToolingDiagnosticSnapshot(this).hashCode()
+
     /**
      * Represents an identifier associated with a [ToolingDiagnostic].
      *
