@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.ir.builders.declarations.*
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
-import org.jetbrains.kotlin.backend.common.originalBeforeInline
 import org.jetbrains.kotlin.ir.irFlag
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.IrSimpleType
@@ -99,14 +98,6 @@ internal class PropertyReferenceLowering(val context: JvmBackendContext) : IrEle
         get() = generateSequence(this) { it.parent as? IrDeclaration }
 
     private fun IrLocalDelegatedPropertyReference.findClassOwner(): IrClass {
-        val originalBeforeInline = originalBeforeInline
-        if (originalBeforeInline != null) {
-            require(originalBeforeInline is IrLocalDelegatedPropertyReference) {
-                "Original for local delegated property ${render()} has another type: ${originalBeforeInline.render()}"
-            }
-            return originalBeforeInline.findClassOwner()
-        }
-
         val containingClasses = symbol.owner.parentsWithSelf.filterIsInstance<IrClass>()
         // Prefer to attach metadata to non-synthetic classes, similarly to how it's done in rememberLocalProperty.
         return containingClasses.firstOrNull { !it.isSynthetic } ?: containingClasses.first()

@@ -26,7 +26,6 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.declarations.IrParameterKind
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
-import org.jetbrains.kotlin.backend.common.originalBeforeInline
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
@@ -102,24 +101,7 @@ class FunctionInlining @JvmIrInlineExperimental constructor(
             produceOuterThisFields
         ).inline(
             callSite = expression,
-        ).markAsRegenerated()
-    }
-
-    private fun IrBlock.markAsRegenerated(): IrBlock {
-        if (!regenerateInlinedAnonymousObjects) return this
-        acceptVoid(object : IrVisitorVoid() {
-            private fun IrElement.setUpCorrectAttributeOwner() {
-                if (this.attributeOwnerId == this) return
-                this.originalBeforeInline = this.attributeOwnerId
-                this.attributeOwnerId = this
-            }
-
-            override fun visitElement(element: IrElement) {
-                if (element !is IrInlinedFunctionBlock) element.setUpCorrectAttributeOwner()
-                element.acceptChildrenVoid(this)
-            }
-        })
-        return this
+        )
     }
 }
 

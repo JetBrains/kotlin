@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.backend.jvm.codegen
 
-import org.jetbrains.kotlin.backend.jvm.ir.fileParentBeforeInline
+import org.jetbrains.kotlin.backend.jvm.ir.fileParent
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.org.objectweb.asm.Label
 import kotlin.contracts.ExperimentalContracts
@@ -17,7 +17,7 @@ import kotlin.contracts.contract
  */
 class LineNumberMapper(private val expressionCodegen: ExpressionCodegen) {
     private val irFunction = expressionCodegen.irFunction
-    private val fileEntry = irFunction.fileParentBeforeInline.fileEntry
+    private val fileEntry = irFunction.fileParent.fileEntry
 
     private var lastLineNumber: Int = -1
     private var noLineNumberScope: Boolean = false

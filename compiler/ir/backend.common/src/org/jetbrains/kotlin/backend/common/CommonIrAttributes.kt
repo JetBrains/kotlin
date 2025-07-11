@@ -5,21 +5,11 @@
 
 package org.jetbrains.kotlin.backend.common
 
-import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.irAttribute
 import org.jetbrains.kotlin.ir.irFlag
 import org.jetbrains.kotlin.name.Name
-
-/**
- * Original element before inlining. Useful only with IR
- * inliner. `null` if the element wasn't inlined. Unlike [attributeOwnerId], doesn't have the
- * idempotence invariant and can contain a chain of declarations.
- *
- * `null` <=> `this` element wasn't inlined.
- */
-var IrElement.originalBeforeInline: IrElement? by irAttribute(copyByDefault = true)
 
 var IrFunction.defaultArgumentsDispatchFunction: IrFunction? by irAttribute(copyByDefault = false)
 
