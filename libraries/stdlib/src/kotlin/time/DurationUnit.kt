@@ -73,7 +73,7 @@ internal fun DurationUnit.shortName(): String = when (this) {
 }
 
 @SinceKotlin("1.5")
-internal fun durationUnitByShortName(shortName: String, throwExceptionOnInvalidDuration: Boolean = true): DurationUnit? = when (shortName) {
+internal fun durationUnitByShortName(shortName: String, fillInStackTrace: Boolean = true): DurationUnit = when (shortName) {
     "ns" -> DurationUnit.NANOSECONDS
     "us" -> DurationUnit.MICROSECONDS
     "ms" -> DurationUnit.MILLISECONDS
@@ -81,20 +81,20 @@ internal fun durationUnitByShortName(shortName: String, throwExceptionOnInvalidD
     "m" -> DurationUnit.MINUTES
     "h" -> DurationUnit.HOURS
     "d" -> DurationUnit.DAYS
-    else -> if (throwExceptionOnInvalidDuration) throw IllegalArgumentException("Unknown duration unit short name: $shortName") else null
+    else -> throw if (fillInStackTrace) IllegalArgumentException("Unknown duration unit short name: $shortName") else preinstalledException
 }
 
 @SinceKotlin("1.5")
 internal fun durationUnitByIsoChar(
     isoChar: Char,
     isTimeComponent: Boolean,
-    throwExceptionOnInvalidDurationUnit: Boolean = true,
-): DurationUnit? =
+    fillInStackTrace: Boolean = true,
+): DurationUnit =
     when {
         !isTimeComponent -> {
             when (isoChar) {
                 'D' -> DurationUnit.DAYS
-                else -> if (throwExceptionOnInvalidDurationUnit) throw IllegalArgumentException("Invalid or unsupported duration ISO non-time unit: $isoChar") else null
+                else -> throw if (fillInStackTrace) IllegalArgumentException("Invalid or unsupported duration ISO non-time unit: $isoChar") else preinstalledException
             }
         }
         else -> {
@@ -102,7 +102,7 @@ internal fun durationUnitByIsoChar(
                 'H' -> DurationUnit.HOURS
                 'M' -> DurationUnit.MINUTES
                 'S' -> DurationUnit.SECONDS
-                else -> if (throwExceptionOnInvalidDurationUnit) throw IllegalArgumentException("Invalid duration ISO time unit: $isoChar") else null
+                else -> throw if (fillInStackTrace) throw IllegalArgumentException("Invalid duration ISO time unit: $isoChar") else preinstalledException
             }
         }
     }
