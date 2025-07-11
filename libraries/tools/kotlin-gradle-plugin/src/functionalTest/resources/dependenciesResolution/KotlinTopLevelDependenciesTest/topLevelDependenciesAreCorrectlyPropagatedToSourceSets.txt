@@ -57,3 +57,13 @@ nativeTest
   test:top-level-implementation:1.0
   test:top-level-test-compileOnly:1.0
   test:top-level-test-implementation:1.0
+webMain
+  test:top-level-api:1.0
+  test:top-level-compileOnly:1.0
+  test:top-level-implementation:1.0
+webTest
+  test:top-level-api:1.0
+  test:top-level-compileOnly:1.0
+  test:top-level-implementation:1.0
+  test:top-level-test-compileOnly:1.0
+  test:top-level-test-implementation:1.0
