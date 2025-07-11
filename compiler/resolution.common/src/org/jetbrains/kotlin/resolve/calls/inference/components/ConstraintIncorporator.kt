@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.progress.ProgressIndicatorAndCompilationCanceledStatus
 import org.jetbrains.kotlin.resolve.calls.inference.model.*
 import org.jetbrains.kotlin.types.AbstractTypeApproximator
+import org.jetbrains.kotlin.types.TypeApproximatorCachesPerConfiguration
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
 import org.jetbrains.kotlin.types.model.*
 import org.jetbrains.kotlin.utils.SmartList
@@ -60,6 +61,8 @@ class ConstraintIncorporator(
         )
 
         fun addNewIncorporatedConstraint(typeVariable: TypeVariableMarker, type: KotlinTypeMarker, constraintContext: ConstraintContext)
+
+        val approximatorCaches: TypeApproximatorCachesPerConfiguration
     }
 
     // \alpha is typeVariable, \beta -- other type variable registered in ConstraintStorage
@@ -387,9 +390,18 @@ class ConstraintIncorporator(
         return substitutor.safeSubstitute(c, this)
     }
 
+    context(c: Context)
     private fun approximateCapturedTypes(type: KotlinTypeMarker, toSuper: Boolean): KotlinTypeMarker =
-        if (toSuper) typeApproximator.approximateToSuperType(type, TypeApproximatorConfiguration.IncorporationConfiguration) ?: type
-        else typeApproximator.approximateToSubType(type, TypeApproximatorConfiguration.IncorporationConfiguration) ?: type
+        when {
+            toSuper -> typeApproximator.approximateToSuperType(
+                type, TypeApproximatorConfiguration.IncorporationConfiguration,
+                c.approximatorCaches,
+            ) ?: type
+            else -> typeApproximator.approximateToSubType(
+                type, TypeApproximatorConfiguration.IncorporationConfiguration,
+                c.approximatorCaches,
+            ) ?: type
+        }
 }
 
 context(c: TypeSystemInferenceExtensionContext)

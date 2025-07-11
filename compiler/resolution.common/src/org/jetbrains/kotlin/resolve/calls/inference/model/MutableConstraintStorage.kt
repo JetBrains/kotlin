@@ -13,10 +13,14 @@ import org.jetbrains.kotlin.resolve.calls.inference.components.withOrigins
 import org.jetbrains.kotlin.resolve.calls.inference.extractAllContainingTypeVariables
 import org.jetbrains.kotlin.resolve.calls.tower.ApplicabilityDetail
 import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
-import org.jetbrains.kotlin.types.model.*
+import org.jetbrains.kotlin.types.TypeApproximatorCachesPerConfiguration
+import org.jetbrains.kotlin.types.model.DefinitelyNotNullTypeMarker
+import org.jetbrains.kotlin.types.model.KotlinTypeMarker
+import org.jetbrains.kotlin.types.model.TypeConstructorMarker
+import org.jetbrains.kotlin.types.model.TypeVariableMarker
 import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.addToStdlib.trimToSize
-import java.util.IdentityHashMap
+import java.util.*
 
 private typealias Context = ConstraintSystemMarker
 
@@ -331,6 +335,8 @@ internal class MutableConstraintStorage : ConstraintStorage {
     override var outerSystemVariablesPrefixSize: Int = 0
 
     override var usesOuterCs: Boolean = false
+
+    override val approximatorCaches: TypeApproximatorCachesPerConfiguration = mutableMapOf()
 
     @AssertionsOnly
     internal var outerCS: ConstraintStorage? = null

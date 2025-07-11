@@ -13,10 +13,7 @@ import org.jetbrains.kotlin.resolve.calls.inference.ForkPointData
 import org.jetbrains.kotlin.resolve.calls.inference.extractAllContainingTypeVariables
 import org.jetbrains.kotlin.resolve.calls.inference.model.*
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintKind.*
-import org.jetbrains.kotlin.types.AbstractTypeApproximator
-import org.jetbrains.kotlin.types.AbstractTypeChecker
-import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
-import org.jetbrains.kotlin.types.TypeCheckerState
+import org.jetbrains.kotlin.types.*
 import org.jetbrains.kotlin.types.model.*
 import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.addIfNotNull
@@ -51,6 +48,8 @@ class ConstraintInjector(
          * @see org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintStorage.typeVariableDependencies
          */
         val typeVariableDependencies: Map<TypeConstructorMarker, Set<TypeConstructorMarker>>
+
+        val approximatorCaches: TypeApproximatorCachesPerConfiguration
 
         val atCompletionState: Boolean
 
@@ -570,6 +569,9 @@ class ConstraintInjector(
 
         override val allTypeVariablesWithConstraints: Collection<VariableWithConstraints>
             get() = c.notFixedTypeVariables.values
+
+        override val approximatorCaches: TypeApproximatorCachesPerConfiguration
+            get() = c.approximatorCaches
 
         override fun getVariablesWithConstraintsContainingGivenTypeVariable(
             variableConstructorMarker: TypeConstructorMarker
