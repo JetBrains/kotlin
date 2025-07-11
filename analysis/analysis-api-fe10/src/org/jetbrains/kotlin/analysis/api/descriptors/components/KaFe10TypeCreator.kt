@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.descriptors.components
 
+import org.jetbrains.kotlin.analysis.api.components.KaArrayTypeBuilder
 import org.jetbrains.kotlin.analysis.api.components.KaClassTypeBuilder
 import org.jetbrains.kotlin.analysis.api.components.KaTypeParameterTypeBuilder
 import org.jetbrains.kotlin.analysis.api.descriptors.KaFe10Session
@@ -14,21 +15,20 @@ import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.bas
 import org.jetbrains.kotlin.analysis.api.descriptors.types.KaFe10ClassErrorType
 import org.jetbrains.kotlin.analysis.api.descriptors.types.KaFe10UsualClassType
 import org.jetbrains.kotlin.analysis.api.descriptors.types.base.KaFe10Type
+import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseArrayTypeBuilder
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseClassTypeBuilder
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseTypeCreator
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseTypeParameterTypeBuilder
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
-import org.jetbrains.kotlin.analysis.api.types.KaStarTypeProjection
-import org.jetbrains.kotlin.analysis.api.types.KaType
-import org.jetbrains.kotlin.analysis.api.types.KaTypeArgumentWithVariance
-import org.jetbrains.kotlin.analysis.api.types.KaTypeParameterType
+import org.jetbrains.kotlin.analysis.api.types.*
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.descriptors.findClassAcrossModuleDependencies
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.SpecialNames
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.SimpleType
 import org.jetbrains.kotlin.types.StarProjectionImpl
 import org.jetbrains.kotlin.types.TypeProjectionImpl
@@ -85,6 +85,34 @@ internal class KaFe10TypeCreator(
 
         val typeWithNullability = TypeUtils.makeNullableAsSpecified(type, builder.isMarkedNullable)
         return KaFe10UsualClassType(typeWithNullability as SimpleType, descriptor, analysisContext)
+    }
+
+    override fun buildArrayType(
+        elementType: KaType,
+        init: KaArrayTypeBuilder.() -> Unit,
+    ): KaType = withValidityAssertion {
+        with(analysisSession) {
+            val builder = KaBaseArrayTypeBuilder.ByElementType(elementType, token).apply(init)
+
+            val builderElementType = builder.elementType
+
+            if (builderElementType is KaClassType && builder.shouldPreferPrimitiveTypes && !builderElementType.isMarkedNullable) {
+                val classId = builderElementType.classId
+                val primitiveArrayId =
+                    StandardClassIds.primitiveArrayTypeByElementType[classId]
+                        ?: StandardClassIds.unsignedArrayTypeByElementType[classId]
+                if (primitiveArrayId != null) {
+                    return buildClassType(primitiveArrayId) {
+                        isMarkedNullable = builder.isMarkedNullable
+                    }
+                }
+            }
+
+            return buildClassType(StandardClassIds.Array) {
+                isMarkedNullable = builder.isMarkedNullable
+                argument(builderElementType, builder.variance)
+            }
+        }
     }
 
     override fun buildTypeParameterType(symbol: KaTypeParameterSymbol, init: KaTypeParameterTypeBuilder.() -> Unit): KaTypeParameterType {

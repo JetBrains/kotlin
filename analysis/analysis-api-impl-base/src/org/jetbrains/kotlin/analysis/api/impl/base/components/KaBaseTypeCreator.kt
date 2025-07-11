@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.api.impl.base.components
 
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.components.KaArrayTypeBuilder
 import org.jetbrains.kotlin.analysis.api.components.KaClassTypeBuilder
 import org.jetbrains.kotlin.analysis.api.components.KaTypeCreator
 import org.jetbrains.kotlin.analysis.api.components.KaTypeParameterTypeBuilder
@@ -26,6 +27,12 @@ import org.jetbrains.kotlin.types.Variance
 @KaImplementationDetail
 abstract class KaBaseTypeCreator<T : KaSession> : KaBaseSessionComponent<T>(), KaTypeCreator {
     override fun buildStarTypeProjection(): KaStarTypeProjection = KaBaseStarTypeProjection(token)
+
+    override fun buildVarargArrayType(elementType: KaType): KaType = withValidityAssertion {
+        buildArrayType(elementType) {
+            variance = Variance.OUT_VARIANCE
+        }
+    }
 }
 
 @KaImplementationDetail
@@ -70,6 +77,37 @@ sealed class KaBaseClassTypeBuilder : KaClassTypeBuilder {
 
     class BySymbol(symbol: KaClassLikeSymbol, override val token: KaLifetimeToken) : KaBaseClassTypeBuilder() {
         val symbol: KaClassLikeSymbol by validityAsserted(symbol)
+    }
+}
+
+@KaImplementationDetail
+sealed class KaBaseArrayTypeBuilder : KaArrayTypeBuilder {
+    override var isMarkedNullable: Boolean = false
+        get() = withValidityAssertion { field }
+        set(value) {
+            withValidityAssertion {
+                field = value
+            }
+        }
+
+    override var shouldPreferPrimitiveTypes: Boolean = true
+        get() = withValidityAssertion { field }
+        set(value) {
+            withValidityAssertion {
+                field = value
+            }
+        }
+
+    override var variance: Variance = Variance.INVARIANT
+        get() = withValidityAssertion { field }
+        set(value) {
+            withValidityAssertion {
+                field = value
+            }
+        }
+
+    class ByElementType(elementType: KaType, override val token: KaLifetimeToken) : KaBaseArrayTypeBuilder() {
+        val elementType: KaType by validityAsserted(elementType)
     }
 }
 

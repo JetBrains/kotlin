@@ -5,10 +5,12 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.components
 
+import org.jetbrains.kotlin.analysis.api.components.KaArrayTypeBuilder
 import org.jetbrains.kotlin.analysis.api.components.KaClassTypeBuilder
 import org.jetbrains.kotlin.analysis.api.components.KaTypeParameterTypeBuilder
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
+import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseArrayTypeBuilder
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseClassTypeBuilder
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseTypeCreator
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseTypeParameterTypeBuilder
@@ -55,6 +57,20 @@ internal class KaFirTypeCreator(
         ) as ConeClassLikeType
 
         return coneType.asKaType()
+    }
+
+    override fun buildArrayType(
+        elementType: KaType,
+        init: KaArrayTypeBuilder.() -> Unit,
+    ): KaType = withValidityAssertion {
+        val builder = KaBaseArrayTypeBuilder.ByElementType(elementType, token).apply(init)
+
+        val coneType = builder.elementType.coneType.toTypeProjection(builder.variance)
+
+        return coneType.createArrayType(
+            nullable = builder.isMarkedNullable,
+            createPrimitiveArrayTypeIfPossible = builder.shouldPreferPrimitiveTypes
+        ).asKaType()
     }
 
     override fun buildTypeParameterType(symbol: KaTypeParameterSymbol, init: KaTypeParameterTypeBuilder.() -> Unit): KaTypeParameterType {
