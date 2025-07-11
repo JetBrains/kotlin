@@ -134,7 +134,6 @@ where advanced options include:
   -Xno-new-java-annotation-targets
                              Don't generate Java 1.8+ targets for Kotlin annotation classes.
   -Xvalue-classes            Enable experimental value classes.
-  -Xir-inliner               Inline functions using the IR inliner instead of the bytecode inliner.
   -Xuse-inline-scopes-numbers Use inline scopes numbers for inline marker variables.
   -Xuse-k2-kapt              Enable the experimental support for K2 KAPT.
   -Xcompile-builtins-as-part-of-stdlib

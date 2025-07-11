@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.cli.common.arguments.DefaultValue
 import org.jetbrains.kotlin.cli.common.arguments.Enables
 import org.jetbrains.kotlin.cli.common.arguments.GradleInputTypes
 import org.jetbrains.kotlin.cli.common.arguments.GradleOption
+import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.config.LanguageFeature
 
 val actualJvmCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.jvmCompilerArguments) {
@@ -926,6 +927,7 @@ inside suspend functions and lambdas to distinguish them from user code by debug
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_9_0,
+            removedVersion = KotlinReleaseVersion.v2_3_0
         )
     }
 

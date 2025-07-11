@@ -700,15 +700,6 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
         JvmCompilerArgument("X_VALUE_CLASSES")
 
     /**
-     * Inline functions using the IR inliner instead of the bytecode inliner.
-     *
-     * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
-     */
-    @JvmField
-    @ExperimentalCompilerArgument
-    public val X_IR_INLINER: JvmCompilerArgument<Boolean> = JvmCompilerArgument("X_IR_INLINER")
-
-    /**
      * Use inline scopes numbers for inline marker variables.
      *
      * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.

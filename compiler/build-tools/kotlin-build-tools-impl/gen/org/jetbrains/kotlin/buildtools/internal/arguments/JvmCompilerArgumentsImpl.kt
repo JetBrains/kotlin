@@ -40,7 +40,6 @@ import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments.Compan
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments.Companion.X_GENERATE_STRICT_METADATA_VERSION
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments.Companion.X_INDY_ALLOW_ANNOTATED_LAMBDAS
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments.Companion.X_IR_DO_NOT_CLEAR_BINDING_CONTEXT
-import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments.Companion.X_IR_INLINER
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments.Companion.X_JAVA_PACKAGE_PREFIX
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments.Companion.X_JAVA_SOURCE_ROOTS
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments.Companion.X_JDK_RELEASE
@@ -164,7 +163,6 @@ public class JvmCompilerArgumentsImpl : CommonCompilerArgumentsImpl(), JvmCompil
     if ("X_ENHANCED_COROUTINES_DEBUGGING" in optionsMap) { arguments.enhancedCoroutinesDebugging = get(X_ENHANCED_COROUTINES_DEBUGGING) }
     if ("X_NO_NEW_JAVA_ANNOTATION_TARGETS" in optionsMap) { arguments.noNewJavaAnnotationTargets = get(X_NO_NEW_JAVA_ANNOTATION_TARGETS) }
     if ("X_VALUE_CLASSES" in optionsMap) { arguments.valueClasses = get(X_VALUE_CLASSES) }
-    if ("X_IR_INLINER" in optionsMap) { arguments.enableIrInliner = get(X_IR_INLINER) }
     if ("X_USE_INLINE_SCOPES_NUMBERS" in optionsMap) { arguments.useInlineScopesNumbers = get(X_USE_INLINE_SCOPES_NUMBERS) }
     if ("X_USE_K2_KAPT" in optionsMap) { arguments.useK2Kapt = get(X_USE_K2_KAPT) }
     if ("X_COMPILE_BUILTINS_AS_PART_OF_STDLIB" in optionsMap) { arguments.expectBuiltinsAsPartOfStdlib = get(X_COMPILE_BUILTINS_AS_PART_OF_STDLIB) }
