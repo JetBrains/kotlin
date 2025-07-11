@@ -33,33 +33,12 @@ class FirStatusResolver(
     override val scopeSession: ScopeSession
 ) : SessionAndScopeSessionHolder {
     companion object {
-        private val NOT_INHERITED_MODIFIERS: List<FirDeclarationStatusImpl.Modifier> = listOf(
-            FirDeclarationStatusImpl.Modifier.ACTUAL,
-            FirDeclarationStatusImpl.Modifier.EXPECT,
-            FirDeclarationStatusImpl.Modifier.CONST,
-            FirDeclarationStatusImpl.Modifier.LATEINIT,
-            FirDeclarationStatusImpl.Modifier.TAILREC,
-            FirDeclarationStatusImpl.Modifier.EXTERNAL,
-            FirDeclarationStatusImpl.Modifier.OVERRIDE,
-            FirDeclarationStatusImpl.Modifier.SUSPEND,
-            FirDeclarationStatusImpl.Modifier.INLINE,
-        )
-
         private val MODIFIERS_FROM_OVERRIDDEN: List<FirDeclarationStatusImpl.Modifier> = listOf(
-            FirDeclarationStatusImpl.Modifier.EXPECT,
-            FirDeclarationStatusImpl.Modifier.ACTUAL,
-            FirDeclarationStatusImpl.Modifier.OVERRIDE,
             FirDeclarationStatusImpl.Modifier.OPERATOR,
             FirDeclarationStatusImpl.Modifier.INFIX,
-            FirDeclarationStatusImpl.Modifier.INLINE,
-            FirDeclarationStatusImpl.Modifier.TAILREC,
-            FirDeclarationStatusImpl.Modifier.EXTERNAL,
-            FirDeclarationStatusImpl.Modifier.CONST,
-            FirDeclarationStatusImpl.Modifier.LATEINIT,
             FirDeclarationStatusImpl.Modifier.INNER,
             FirDeclarationStatusImpl.Modifier.COMPANION,
             FirDeclarationStatusImpl.Modifier.DATA,
-            FirDeclarationStatusImpl.Modifier.SUSPEND,
             FirDeclarationStatusImpl.Modifier.STATIC,
             FirDeclarationStatusImpl.Modifier.FROM_SEALED,
             FirDeclarationStatusImpl.Modifier.FROM_ENUM,
@@ -67,7 +46,7 @@ class FirStatusResolver(
             FirDeclarationStatusImpl.Modifier.HAS_STABLE_PARAMETER_NAMES,
             FirDeclarationStatusImpl.Modifier.VALUE,
             FirDeclarationStatusImpl.Modifier.HAS_MUST_USE_RETURN_VALUE,
-        ) - NOT_INHERITED_MODIFIERS
+        )
     }
 
     private val extensionStatusTransformers = session.extensionService.statusTransformerExtensions
