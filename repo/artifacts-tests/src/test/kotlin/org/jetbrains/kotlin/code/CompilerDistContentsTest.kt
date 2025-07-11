@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.code
 
+import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertEqualsToFile
 import org.junit.jupiter.api.Test
 import java.io.File
 import java.nio.file.Files
@@ -13,22 +14,20 @@ import java.nio.file.Paths
 import java.nio.file.attribute.BasicFileAttributes
 import kotlin.io.path.relativeTo
 import kotlin.streams.asSequence
-import kotlin.test.assertEquals
 
-class KotlincDistContentsTest {
+class CompilerDistContentsTest {
     private val kotlincPath = System.getProperty("kotlinc.dist.path").let { Paths.get(it) }
+
+    private val expectedDataFile = File("repo/artifacts-tests/src/test/resources/compiler-dist-contents.txt")
 
     @Test
     fun checkDistContents() {
-        assertEquals(getExpectedContent(), getActualContent())
+        assertEqualsToFile(expectedDataFile, getActualContent().sorted().joinToString("\n"))
     }
-
-    private fun getExpectedContent() = File("repo/artifacts-tests/src/test/resources/kotlinc-dist-contents.txt")
-        .reader().readLines().toSet()
 
     private fun getActualContent() = Files.find(
         kotlincPath,
         Integer.MAX_VALUE,
         { path: Path, fileAttributes: BasicFileAttributes -> fileAttributes.isRegularFile }
-    ).asSequence().map { it.toAbsolutePath().relativeTo(kotlincPath).toString() }.toSet()
+    ).asSequence().map { it.toAbsolutePath().relativeTo(kotlincPath).toString() }
 }
