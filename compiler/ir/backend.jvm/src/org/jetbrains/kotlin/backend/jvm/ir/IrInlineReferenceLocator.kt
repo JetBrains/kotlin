@@ -12,10 +12,8 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
-import org.jetbrains.kotlin.ir.expressions.IrInlinedFunctionBlock
 import org.jetbrains.kotlin.ir.util.isBuiltInSuspendCoroutine
 import org.jetbrains.kotlin.ir.util.isBuiltInSuspendCoroutineUninterceptedOrReturn
-import org.jetbrains.kotlin.ir.util.isFunctionInlining
 import org.jetbrains.kotlin.ir.visitors.IrVisitor
 
 /**
@@ -109,17 +107,6 @@ class IrInlineScopeResolver(context: JvmBackendContext) : IrInlineReferenceLocat
             (privateInlineFunctionCallSites.getOrPut(callee) { mutableSetOf() } as MutableSet).add(data)
         }
         super.visitCall(expression, data)
-    }
-
-    override fun visitInlinedFunctionBlock(inlinedBlock: IrInlinedFunctionBlock, data: IrDeclaration?) {
-        if (inlinedBlock.isFunctionInlining()) {
-            val callee = inlinedBlock.inlineDeclaration
-            if (callee is IrSimpleFunction && callee.isPrivateInline && data != null) {
-                (privateInlineFunctionCallSites.getOrPut(callee) { mutableSetOf() } as MutableSet).add(data)
-            }
-        }
-
-        super.visitInlinedFunctionBlock(inlinedBlock, data)
     }
 
     private inline val IrSimpleFunction.isPrivateInline

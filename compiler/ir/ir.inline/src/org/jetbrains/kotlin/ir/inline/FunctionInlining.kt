@@ -34,7 +34,7 @@ import org.jetbrains.kotlin.name.Name.identifier
 import org.jetbrains.kotlin.util.OperatorNameConventions
 
 @PhaseDescription("FunctionInlining")
-class FunctionInlining @JvmIrInlineExperimental constructor(
+class FunctionInlining constructor(
     val context: LoweringContext,
     private val inlineFunctionResolver: InlineFunctionResolver,
     private val insertAdditionalImplicitCasts: Boolean,
@@ -42,7 +42,6 @@ class FunctionInlining @JvmIrInlineExperimental constructor(
     private val produceOuterThisFields: Boolean,
 ) : IrTransformer<IrDeclaration>(), BodyLoweringPass {
 
-    @OptIn(JvmIrInlineExperimental::class)
     constructor(
         context: LoweringContext,
         inlineFunctionResolver: InlineFunctionResolver,
@@ -179,11 +178,6 @@ private class CallInlining(
                         }
                     }
                 }
-                // `inlineCall` and `inlinedElement` is required only for JVM backend only, but this inliner is common, so we need opt-in.
-                @OptIn(JvmIrInlineExperimental::class)
-                inlinedFunctionBlock.inlineCall = callSite
-                @OptIn(JvmIrInlineExperimental::class)
-                inlinedFunctionBlock.inlinedElement = originalInlinedElement
                 val transformer = InlinePostprocessor(
                     substituteMap, returnType, copiedCallee.symbol,
                     returnableBlockSymbol
