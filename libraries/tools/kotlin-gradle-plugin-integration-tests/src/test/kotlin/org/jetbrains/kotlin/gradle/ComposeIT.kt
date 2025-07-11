@@ -35,7 +35,7 @@ class ComposeIT : KGPBaseTest() {
             projectName = "AndroidSimpleApp",
             gradleVersion = gradleVersion,
             buildJdk = providedJdk.location,
-            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion).suppressWarningFromAgpWithGradle813(gradleVersion)
+            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
         ) {
             buildGradle.modify { originalBuildScript ->
                 """
@@ -144,7 +144,7 @@ class ComposeIT : KGPBaseTest() {
             projectName = "AndroidSimpleComposeApp",
             gradleVersion = gradleVersion,
             buildJdk = providedJdk.location,
-            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion).suppressWarningFromAgpWithGradle813(gradleVersion)
+            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
         ) {
             build("assembleDebug") {
                 assertOutputContains("Detected Android Gradle Plugin compose compiler configuration")
@@ -179,7 +179,6 @@ class ComposeIT : KGPBaseTest() {
 
         project1.build(
             "assembleDebug",
-            buildOptions = project1.buildOptions.suppressWarningFromAgpWithGradle813(gradleVersion)
         ) {
             assertTasksExecuted(":compileDebugKotlin")
         }
@@ -311,7 +310,7 @@ class ComposeIT : KGPBaseTest() {
             projectName = "AndroidSimpleApp",
             gradleVersion = gradleVersion,
             buildJdk = providedJdk.location,
-            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion).suppressWarningFromAgpWithGradle813(gradleVersion)
+            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
         ) {
             buildGradle.modify { originalBuildScript ->
                 """
@@ -363,7 +362,7 @@ class ComposeIT : KGPBaseTest() {
             projectName = "AndroidSimpleApp",
             gradleVersion = gradleVersion,
             buildJdk = providedJdk.location,
-            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion).suppressWarningFromAgpWithGradle813(gradleVersion),
+            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
             dependencyManagement = DependencyManagement.DefaultDependencyManagement(
                 additionalRepos = setOf("https://androidx.dev/snapshots/builds/${composeSnapshotId}/artifacts/repository")
             )
@@ -420,7 +419,11 @@ class ComposeIT : KGPBaseTest() {
             buildJdk = providedJdk.location,
             buildOptions = defaultBuildOptions
                 .copy(androidVersion = agpVersion, kotlinVersion = "1.9.21")
-                .suppressWarningFromAgpWithGradle813(gradleVersion)
+                .suppressDeprecationWarningsSinceGradleVersion(
+                    TestVersions.Gradle.G_8_13,
+                    gradleVersion,
+                    "Old Kotlin release produces deprecation warning"
+                )
         ) {
             val composeBase = projectPath.resolve("src/main/kotlin/com/example/Compose.kt").createFile()
             composeBase.writeText(
@@ -450,7 +453,7 @@ class ComposeIT : KGPBaseTest() {
             projectName = "composeMultiModule",
             gradleVersion = gradleVersion,
             buildJdk = providedJdk.location,
-            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion).suppressWarningFromAgpWithGradle813(gradleVersion),
+            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
             dependencyManagement = DependencyManagement.DefaultDependencyManagement(
                 additionalRepos = setOf("https://androidx.dev/snapshots/builds/${composeSnapshotId}/artifacts/repository")
             )
@@ -533,7 +536,7 @@ class ComposeIT : KGPBaseTest() {
             projectName = "composeMultiModule",
             gradleVersion = gradleVersion,
             buildJdk = providedJdk.location,
-            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion).suppressWarningFromAgpWithGradle813(gradleVersion),
+            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
             dependencyManagement = DependencyManagement.DefaultDependencyManagement()
         ) {
             buildGradleKts.appendComposePlugin()

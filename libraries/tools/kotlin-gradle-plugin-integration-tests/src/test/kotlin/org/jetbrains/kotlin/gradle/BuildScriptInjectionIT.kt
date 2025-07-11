@@ -11,18 +11,15 @@ import org.gradle.api.InvalidUserCodeException
 import org.gradle.api.JavaVersion
 import org.gradle.api.attributes.Usage
 import org.gradle.api.file.RegularFileProperty
-import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.api.provider.Provider
 import org.gradle.api.tasks.OutputFile
 import org.gradle.api.plugins.UnknownPluginException
 import org.gradle.kotlin.dsl.*
-import org.gradle.kotlin.dsl.project
 import org.gradle.plugin.devel.GradlePluginDevelopmentExtension
 import org.gradle.testkit.runner.UnexpectedBuildSuccess
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
-import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.testbase.BuildOptions.ConfigurationCacheValue
@@ -549,21 +546,8 @@ class BuildScriptInjectionIT : KGPBaseTest() {
         project(
             template,
             version,
-            defaultBuildOptions
-                .copy(androidVersion = agpVersion)
-                .suppressWarningFromAgpWithGradle813(version)
+            defaultBuildOptions.copy(androidVersion = agpVersion)
         ) {
-            // FIXME: KT-77831 - because of "suppressWarningFromAgpWithGradle813", we fail the build due to GradleWarningsDetectorPlugin not
-            // being applied. Fix GradleWarningsDetectorPlugin and/or WarningMode checks, remove this "induceWarnings" and enable CC
-            val induceWarnings = "induceWarnings"
-            buildScriptInjection {
-                project.tasks.register(induceWarnings) {
-                    it.doLast {
-                        // induce a warning on Task.project access at execution time
-                        it.project
-                    }
-                }
-            }
             assertTrue(
                 buildScriptReturn {
                     try {
@@ -572,10 +556,7 @@ class BuildScriptInjectionIT : KGPBaseTest() {
                         return@buildScriptReturn true
                     }
                     return@buildScriptReturn false
-                }.buildAndReturn(
-                    induceWarnings,
-                    configurationCache = ConfigurationCacheValue.DISABLED
-                ),
+                }.buildAndReturn(),
                 "Build script is not supposed to see AGP classes at this point",
             )
             plugins {
@@ -592,10 +573,7 @@ class BuildScriptInjectionIT : KGPBaseTest() {
                     this.javaClass.classLoader.loadClass(LibraryExtension::class.java.name).isInstance(
                         project.extensions.getByName("android")
                     )
-                }.buildAndReturn(
-                    induceWarnings,
-                    configurationCache = ConfigurationCacheValue.DISABLED
-                ),
+                }.buildAndReturn(),
                 "At this point the plugin is expected to be applied and the extension must inherit from the relevant class",
             )
         }

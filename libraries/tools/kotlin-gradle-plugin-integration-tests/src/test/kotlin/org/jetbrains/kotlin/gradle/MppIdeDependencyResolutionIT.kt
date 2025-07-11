@@ -706,7 +706,7 @@ class MppIdeDependencyResolutionIT : KGPBaseTest() {
             "base-kotlin-multiplatform-android-library",
             gradleVersion,
             buildJdk = jdkVersion.location,
-            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion).suppressWarningFromAgpWithGradle813(gradleVersion),
+            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
         ) {
             buildScriptInjection {
                 applyDefaultAndroidLibraryConfiguration()
