@@ -188,6 +188,14 @@ fun createStdLibVersionedDocTask(version: String, isLatest: Boolean) =
                 sourceRoots.from("$kotlin_stdlib_dir/wasm/js/builtins")
                 sourceRoots.from("$kotlin_stdlib_dir/wasm/js/internal")
                 sourceRoots.from("$kotlin_stdlib_dir/wasm/js/src")
+
+                // builtin sources that are copied from common builtins during Wasm stdlib build
+                listOf(
+                    "Annotation.kt",
+                    "CharSequence.kt",
+                    "Comparable.kt",
+                    "Number.kt",
+                ).forEach { sourceRoots.from("$kotlin_stdlib_dir/jvm/builtins/$it") }
             }
             register("wasm-wasi") {
                 platform.set(Platform.wasm)
@@ -202,6 +210,14 @@ fun createStdLibVersionedDocTask(version: String, isLatest: Boolean) =
                 sourceRoots.from("$kotlin_stdlib_dir/wasm/stubs")
                 sourceRoots.from("$kotlin_stdlib_dir/wasm/wasi/builtins")
                 sourceRoots.from("$kotlin_stdlib_dir/wasm/wasi/src")
+
+                // builtin sources that are copied from common builtins during Wasm stdlib build
+                listOf(
+                    "Annotation.kt",
+                    "CharSequence.kt",
+                    "Comparable.kt",
+                    "Number.kt",
+                ).forEach { sourceRoots.from("$kotlin_stdlib_dir/jvm/builtins/$it") }
             }
             configureEach {
                 documentedVisibilities.set(setOf(DokkaConfiguration.Visibility.PUBLIC, DokkaConfiguration.Visibility.PROTECTED))

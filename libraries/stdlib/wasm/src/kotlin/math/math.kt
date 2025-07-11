@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -36,7 +36,7 @@ public actual fun tan(x: Double): Double = kotlin.math.fdlibm.tan(x)
  * the returned value is an angle in the range from `-PI/2` to `PI/2` radians.
  *
  * Special cases:
- *    - `asin(x)` is `NaN`, when `abs(x) > 1` or x is `NaN`
+ *   - `asin(x)` is `NaN`, when `abs(x) > 1` or x is `NaN`
  */
 @SinceKotlin("1.2")
 public actual fun asin(x: Double): Double = kotlin.math.fdlibm.__ieee754_asin(x)
@@ -46,7 +46,7 @@ public actual fun asin(x: Double): Double = kotlin.math.fdlibm.__ieee754_asin(x)
  * the returned value is an angle in the range from `0.0` to `PI` radians.
  *
  * Special cases:
- *    - `acos(x)` is `NaN`, when `abs(x) > 1` or x is `NaN`fasin
+ *   - `acos(x)` is `NaN`, when `abs(x) > 1` or x is `NaN`
  */
 @SinceKotlin("1.2")
 public actual fun acos(x: Double): Double = kotlin.math.fdlibm.__ieee754_acos(x)
@@ -559,7 +559,7 @@ public actual fun tan(x: Float): Float = kotlin.math.fdlibm.tan(x.toDouble()).to
  * the returned value is an angle in the range from `-PI/2` to `PI/2` radians.
  *
  * Special cases:
- *    - `asin(x)` is `NaN`, when `abs(x) > 1` or x is `NaN`
+ *   - `asin(x)` is `NaN`, when `abs(x) > 1` or x is `NaN`
  */
 @SinceKotlin("1.2")
 public actual fun asin(x: Float): Float = kotlin.math.fdlibm.__ieee754_asin(x.toDouble()).toFloat()
@@ -569,7 +569,7 @@ public actual fun asin(x: Float): Float = kotlin.math.fdlibm.__ieee754_asin(x.to
  * the returned value is an angle in the range from `0.0` to `PI` radians.
  *
  * Special cases:
- *    - `acos(x)` is `NaN`, when `abs(x) > 1` or x is `NaN`
+ *   - `acos(x)` is `NaN`, when `abs(x) > 1` or x is `NaN`
  */
 @SinceKotlin("1.2")
 public actual fun acos(x: Float): Float = kotlin.math.fdlibm.__ieee754_acos(x.toDouble()).toFloat()

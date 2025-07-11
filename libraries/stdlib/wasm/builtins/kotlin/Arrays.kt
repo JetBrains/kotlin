@@ -13,7 +13,7 @@ package kotlin
 import kotlin.wasm.internal.*
 
 /**
- * An array of bytes. When targeting the JVM, instances of this class are represented as `byte[]`.
+ * An array of bytes.
  *
  * See [Kotlin language documentation](https://kotlinlang.org/docs/arrays.html)
  * for more information on arrays.
@@ -97,7 +97,7 @@ private class ByteArrayIterator constructor(val array: ByteArray) : ByteIterator
 }
 
 /**
- * An array of chars. When targeting the JVM, instances of this class are represented as `char[]`.
+ * An array of chars.
  *
  * See [Kotlin language documentation](https://kotlinlang.org/docs/arrays.html)
  * for more information on arrays.
@@ -181,7 +181,7 @@ private class CharArrayIterator constructor(val array: CharArray) : CharIterator
 }
 
 /**
- * An array of shorts. When targeting the JVM, instances of this class are represented as `short[]`.
+ * An array of shorts.
  *
  * See [Kotlin language documentation](https://kotlinlang.org/docs/arrays.html)
  * for more information on arrays.
@@ -265,7 +265,7 @@ private class ShortArrayIterator constructor(val array: ShortArray) : ShortItera
 }
 
 /**
- * An array of ints. When targeting the JVM, instances of this class are represented as `int[]`.
+ * An array of ints.
  *
  * See [Kotlin language documentation](https://kotlinlang.org/docs/arrays.html)
  * for more information on arrays.
@@ -349,7 +349,7 @@ private class IntArrayIterator constructor(val array: IntArray) : IntIterator() 
 }
 
 /**
- * An array of longs. When targeting the JVM, instances of this class are represented as `long[]`.
+ * An array of longs.
  *
  * See [Kotlin language documentation](https://kotlinlang.org/docs/arrays.html)
  * for more information on arrays.
@@ -433,7 +433,7 @@ private class LongArrayIterator constructor(val array: LongArray) : LongIterator
 }
 
 /**
- * An array of floats. When targeting the JVM, instances of this class are represented as `float[]`.
+ * An array of floats.
  *
  * See [Kotlin language documentation](https://kotlinlang.org/docs/arrays.html)
  * for more information on arrays.
@@ -517,7 +517,7 @@ private class FloatArrayIterator constructor(val array: FloatArray) : FloatItera
 }
 
 /**
- * An array of doubles. When targeting the JVM, instances of this class are represented as `double[]`.
+ * An array of doubles.
  *
  * See [Kotlin language documentation](https://kotlinlang.org/docs/arrays.html)
  * for more information on arrays.
@@ -601,7 +601,7 @@ private class DoubleArrayIterator constructor(val array: DoubleArray) : DoubleIt
 }
 
 /**
- * An array of booleans. When targeting the JVM, instances of this class are represented as `boolean[]`.
+ * An array of booleans.
  *
  * See [Kotlin language documentation](https://kotlinlang.org/docs/arrays.html)
  * for more information on arrays.
