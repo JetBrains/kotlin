@@ -271,7 +271,7 @@ abstract class AbstractTypeApproximator(
          *   constructor returns `Invariant<Captured(in Number)>`
          */
         return if (ctx.isK2) {
-            (approximateTo(result, TypeApproximatorConfiguration.SubtypeCapturedTypesApproximation, toSuper, depth) ?: result) as RigidTypeMarker?
+            (approximateTo(result, conf, toSuper, depth) ?: result) as RigidTypeMarker?
         } else {
             result
         }
