@@ -21,11 +21,13 @@ val projectsUsedInIntelliJKotlinPlugin: Array<String> by rootProject.extra
 val kotlinApiVersionForProjectsUsedInIntelliJKotlinPlugin: String by rootProject.extra
 
 tasks.withType<KotlinJvmCompile>().configureEach {
+    @Suppress("DEPRECATION")
     compilerOptions {
         if (project.path !in projectsUsedInIntelliJKotlinPlugin || KotlinVersion.fromVersion(kotlinApiVersionForProjectsUsedInIntelliJKotlinPlugin) > KotlinVersion.KOTLIN_2_0) {
             // check the `configureKotlinCompilationOptions` in `common-configurations.gradle.kts` out
             apiVersion.set(KotlinVersion.KOTLIN_2_0)
         }
         languageVersion.set(KotlinVersion.KOTLIN_2_0)
+        freeCompilerArgs.add("-Xsuppress-version-warnings")
     }
 }
