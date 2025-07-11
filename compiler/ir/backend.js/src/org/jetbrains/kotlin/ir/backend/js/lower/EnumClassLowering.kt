@@ -549,9 +549,8 @@ class EnumSyntheticFunctionsAndPropertiesLowering(
                         +irCall(irClass.initEntryInstancesFun!!)
                         +irCall(throwIAESymbol).apply {
                             arguments[0] = irConcat().apply {
-                                addArgument(irString("No enum constant "))
+                                addArgument(irString("No enum constant ${irClass.kotlinFqName}."))
                                 addArgument(irGet(nameParameter))
-                                addArgument(irString("."))
                             }
                         }
                     })
