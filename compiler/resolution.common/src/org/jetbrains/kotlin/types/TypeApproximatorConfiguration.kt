@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.types
 
 import org.jetbrains.kotlin.builtins.functions.AllowedToUsedOnlyInK1
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.types.TypeApproximatorConfiguration.IntermediateApproximationToSupertypeAfterCompletionInK2.convertToNonRawVersionAfterApproximationInK2
 import org.jetbrains.kotlin.types.model.*
 
 abstract class TypeApproximatorConfiguration {
@@ -77,7 +78,7 @@ abstract class TypeApproximatorConfiguration {
         override fun shouldApproximateTypeVariableBasedType(marker: TypeVariableTypeConstructorMarker, isK2: Boolean): Boolean = !isK2
     }
 
-    open class PublicDeclaration(
+    abstract class PublicDeclaration(
         override val approximateLocalTypes: Boolean,
         override val approximateAnonymous: Boolean,
     ) : TypeApproximatorConfiguration() {
