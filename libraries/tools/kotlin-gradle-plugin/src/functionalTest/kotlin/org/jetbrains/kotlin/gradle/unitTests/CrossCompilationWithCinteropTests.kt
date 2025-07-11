@@ -50,19 +50,21 @@ class CrossCompilationWithCinteropTests {
         assertNotNull(cinteropDummyLinuxX64, "cinteropDummyLinuxX64 task should be present")
         assertNotNull(cinteropDummyMacosX64, "cinteropDummyMacosX64 task should be present")
 
-        assert(compileKotlinMacosX64.enabled) {
-            "compileKotlinMacosX64 task should be enabled"
-        }
-
         if (HostManager.hostIsMac) {
             project.assertNoDiagnostics(KotlinToolingDiagnostics.CrossCompilationWithCinterops)
             assert(cinteropDummyMacosX64.enabled) {
                 "cinteropDummyMacosX64 task should be enabled on macOS"
             }
+            assert(compileKotlinMacosX64.enabled) {
+                "compileKotlinMacosX64 task should be enabled on macOS"
+            }
         } else {
             project.assertContainsDiagnostic(KotlinToolingDiagnostics.CrossCompilationWithCinterops)
             assert(!cinteropDummyMacosX64.enabled) {
                 "cinteropDummyMacosX64 task should be disabled on non-macOS"
+            }
+            assert(!compileKotlinMacosX64.enabled) {
+                "compileKotlinMacosX64 task should be disabled on non-macOS"
             }
         }
     }
