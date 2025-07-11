@@ -18,7 +18,11 @@ import org.jetbrains.kotlin.test.services.assertions
 import org.jetbrains.kotlin.test.utils.firTestDataFile
 import org.jetbrains.kotlin.test.utils.llFirTestDataFile
 import org.jetbrains.kotlin.utils.bind
-import java.io.File
+import java.nio.file.Files
+import java.nio.file.Path
+import kotlin.io.path.Path
+import kotlin.io.path.name
+import kotlin.io.path.pathString
 
 /**
  * Checks diagnostics in the test data with reversed resolution order.
@@ -53,12 +57,12 @@ internal fun reversedDiagnosticsConfigurator(testServices: TestServices): MetaTe
 }
 
 class ReversedFirIdenticalChecker(testServices: TestServices) : AbstractFirIdenticalChecker(testServices) {
-    override fun checkTestDataFile(testDataFile: File) {
-        if (".reversed." !in testDataFile.path) return
+    override fun checkTestDataFile(testDataFile: Path) {
+        if (".reversed." !in testDataFile.pathString) return
         val helper = Helper()
-        val originalFile = helper.getClassicFileToCompare(testDataFile).path.replace(".reversed", "").let(::File)
-        val baseFile = originalFile.llFirTestDataFile.takeIf(File::exists)
-            ?: originalFile.firTestDataFile.takeIf(File::exists)
+        val originalFile = helper.getClassicFileToCompare(testDataFile).pathString.replace(".reversed", "").let(::Path)
+        val baseFile = originalFile.llFirTestDataFile.takeIf(Files::exists)
+            ?: originalFile.firTestDataFile.takeIf(Files::exists)
             ?: originalFile
 
         val baseContent = helper.readContent(baseFile, trimLines = false)

@@ -10,6 +10,8 @@ import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.model.FrontendOutputHandler
 import org.jetbrains.kotlin.test.services.TestServices
 import java.io.File
+import java.nio.file.Path
+import kotlin.io.path.nameWithoutExtension
 
 abstract class FirAnalysisHandler(
     testServices: TestServices,
@@ -21,6 +23,6 @@ abstract class FirAnalysisHandler(
     failureDisablesNextSteps,
     doNotRunIfThereWerePreviousFailures
 ) {
-    protected val File.nameWithoutFirExtension: String
+    protected val Path.nameWithoutFirExtension: String
         get() = nameWithoutExtension.removeSuffix(".fir")
 }

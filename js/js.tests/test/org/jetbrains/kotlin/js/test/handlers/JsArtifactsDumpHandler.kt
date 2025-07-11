@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurato
 import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.utils.addToStdlib.unreachableBranch
 import java.io.File
+import kotlin.io.path.name
 
 /**
  * Copy JS artifacts from the temporary directory to the `js/js.tests/build/out` directory.
@@ -86,7 +87,7 @@ class JsArtifactsDumpHandler(testServices: TestServices) : AfterAnalysisChecker(
 
         val testGroupOutputDir = File("$pathToRootOutputDir$prefix/$testGroupOutputDirPrefix")
 
-        return generateSequence(originalFile.parentFile) { it.parentFile }
+        return generateSequence(originalFile.parent) { it.parent }
             .takeWhile { it != stopFile }
             .map { it.name }
             .toList().asReversed()

@@ -10,11 +10,13 @@ import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.model.TestFile
 import org.jetbrains.kotlin.test.model.TestModule
+import org.jetbrains.kotlin.test.model.getResourceAsPath
 import org.jetbrains.kotlin.test.services.AdditionalSourceProvider
 import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import java.io.File
+import kotlin.io.path.*
 
 class IrInterpreterHelpersSourceFilesProvider(testServices: TestServices) : AdditionalSourceProvider(testServices) {
     companion object {
@@ -46,34 +48,29 @@ class IrInterpreterHelpersSourceFilesProvider(testServices: TestServices) : Addi
         private val EXCLUDES = listOf(
             "src/kotlin/UStrings.kt", "src/kotlin/UMath.kt", "src/kotlin/UNumbers.kt", "src/kotlin/reflect/TypesJVM.kt",
             "stdlib/unsigned/src/kotlin/UnsignedCommon.kt",
-        ).map(::File)
+        )
     }
 
     override val directiveContainers: List<DirectivesContainer> =
         listOf(AdditionalFilesDirectives)
 
     private fun getTestFilesForEachDirectory(vararg directories: String): List<TestFile> {
-        val stdlibPath = File(this::class.java.classLoader.getResource(STDLIB_PATH)!!.toURI())
+        val stdlibPath = this::class.java.classLoader.getResourceAsPath(STDLIB_PATH)
 
         return directories.flatMap { directory ->
-            val resourceUri = this::class.java.classLoader.getResource(directory)!!.toURI()
-            when (resourceUri.scheme) {
-                "file" -> {
-                    File(resourceUri).walkTopDown()
-                        .mapNotNull { file ->
-                            val canonicalPath = file.parentFile.canonicalPath
-                            val relativePath = runIf(canonicalPath.startsWith(stdlibPath.canonicalPath)) {
-                                canonicalPath.removePrefix(stdlibPath.canonicalPath + File.separatorChar)
-                            }
-                            file.takeIf { it.isFile }
-                                ?.takeUnless { EXCLUDES.any { file.endsWith(it) } }
-                                ?.toTestFile(relativePath)
-                        }
-                        .toList()
+            this::class.java.classLoader.getResourceAsPath(directory)
+                .walk()
+                .mapNotNull { file ->
+                    val stdlibPath = stdlibPath.normalize().invariantSeparatorsPathString
+                    val canonicalPath = file.parent.normalize().invariantSeparatorsPathString
+                    val relativePath = runIf(canonicalPath.startsWith(stdlibPath)) {
+                        canonicalPath.removePrefix(stdlibPath + File.separatorChar)
+                    }
+                    file.takeIf { it.isRegularFile() }
+                        ?.takeUnless { EXCLUDES.any { file.endsWith(it) } }
+                        ?.toTestFile(relativePath)
                 }
-                // TODO(KT-76305) add support for resources in jars
-                else -> throw UnsupportedOperationException("Unsupported URI scheme: ${resourceUri.scheme}")
-            }
+                .toList()
         }
     }
 

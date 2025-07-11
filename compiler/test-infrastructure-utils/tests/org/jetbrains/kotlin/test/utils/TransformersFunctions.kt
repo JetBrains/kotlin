@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.test.utils
 
-import java.io.File
+import java.nio.file.Path
 
 object TransformersFunctions {
     @JvmStatic
@@ -21,7 +21,7 @@ object TransformersFunctions {
         val forAll: List<(String) -> String> = listOf(
             replaceOptionalJvmInlineAnnotationWithReal,
         )
-        val forSpecificFile: Map<File, (String) -> String> = mapOf(
+        val forSpecificFile: Map<Path, (String) -> String> = mapOf(
         )
     }
 }

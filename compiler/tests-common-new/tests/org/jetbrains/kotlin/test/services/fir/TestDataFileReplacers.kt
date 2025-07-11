@@ -12,11 +12,12 @@ import org.jetbrains.kotlin.test.utils.firTestDataFile
 import org.jetbrains.kotlin.test.utils.isCustomTestData
 import org.jetbrains.kotlin.test.utils.isLLFirSpecializedTestData
 import org.jetbrains.kotlin.test.utils.latestLVTestDataFile
-import java.io.File
+import java.nio.file.Path
+import kotlin.io.path.*
 
 abstract class TestDataFileReplacer(testServices: TestServices) : MetaTestConfigurator(testServices) {
     override fun transformTestDataPath(testDataFileName: String): String {
-        val originalFile = File(testDataFileName)
+        val originalFile = Path(testDataFileName)
 
         // If the original file is already not just `.kt`, then it was processed by another replacer
         if (originalFile.isCustomTestData) return testDataFileName
@@ -29,32 +30,32 @@ abstract class TestDataFileReplacer(testServices: TestServices) : MetaTestConfig
         if (!newFile.exists()) {
             originalFile.copyTo(newFile)
         }
-        return newFile.absolutePath
+        return newFile.toAbsolutePath().pathString
     }
 
-    protected abstract fun shouldReplaceFile(originalFile: File): Boolean
+    protected abstract fun shouldReplaceFile(originalFile: Path): Boolean
 
-    protected abstract val File.newFile: File
+    protected abstract val Path.newFile: Path
 }
 
 class FirOldFrontendMetaConfigurator(testServices: TestServices) : TestDataFileReplacer(testServices) {
-    override fun shouldReplaceFile(originalFile: File): Boolean {
+    override fun shouldReplaceFile(originalFile: Path): Boolean {
         return originalFile.useLines { lines ->
             lines.none { it == "// ${FirDiagnosticsDirectives.FIR_IDENTICAL.name}" }
         }
     }
 
-    override val File.newFile: File
+    override val Path.newFile: Path
         get() = this.firTestDataFile
 }
 
 class LatestLanguageVersionMetaConfigurator(testServices: TestServices) : TestDataFileReplacer(testServices) {
-    override fun shouldReplaceFile(originalFile: File): Boolean {
+    override fun shouldReplaceFile(originalFile: Path): Boolean {
         return originalFile.useLines { lines ->
             lines.any { it == "// ${FirDiagnosticsDirectives.LATEST_LV_DIFFERENCE.name}" }
         }
     }
 
-    override val File.newFile: File
+    override val Path.newFile: Path
         get() = this.latestLVTestDataFile
 }

@@ -7,31 +7,50 @@ package org.jetbrains.kotlin.test
 
 import java.io.File
 import java.nio.file.Path
+import kotlin.io.path.deleteIfExists
+import kotlin.io.path.exists
 
 abstract class Assertions {
     val isTeamCityBuild: Boolean = System.getenv("TEAMCITY_VERSION") != null
 
     fun assertEqualsToFile(expectedFile: File, actual: String, sanitizer: (String) -> String = { it }) {
+        assertEqualsToFile(expectedFile.toPath(), actual, sanitizer)
+    }
+
+    fun assertEqualsToFile(expectedFile: Path, actual: String, sanitizer: (String) -> String = { it }) {
         assertEqualsToFile(expectedFile, actual, sanitizer) { "Actual data differs from file content" }
     }
 
-    abstract fun doesEqualToFile(expectedFile: File, actual: String, sanitizer: (String) -> String = { it }): Boolean
-
-    fun assertEqualsToFile(expectedFile: Path, actual: String, sanitizer: (String) -> String = { it }) {
-        assertEqualsToFile(expectedFile.toFile(), actual, sanitizer)
+    fun doesEqualToFile(expectedFile: File, actual: String, sanitizer: (String) -> String = { it }): Boolean {
+        return doesEqualToFile(expectedFile.toPath(), actual, sanitizer)
     }
 
-    abstract fun assertEqualsToFile(
+    abstract fun doesEqualToFile(expectedFile: Path, actual: String, sanitizer: (String) -> String = { it }): Boolean
+
+    fun assertEqualsToFile(
         expectedFile: File,
         actual: String,
         sanitizer: (String) -> String = { it },
         message: (() -> String)
+    ) {
+        assertEqualsToFile(expectedFile.toPath(), actual, sanitizer, message)
+    }
+
+    abstract fun assertEqualsToFile(
+        expectedFile: Path,
+        actual: String,
+        sanitizer: (String) -> String = { it },
+        message: (() -> String),
     )
 
     fun assertFileDoesntExist(file: File, errorMessage: () -> String) {
+        assertFileDoesntExist(file.toPath(), errorMessage)
+    }
+
+    fun assertFileDoesntExist(file: Path, errorMessage: () -> String) {
         if (file.exists()) {
             if (!isTeamCityBuild) {
-                file.delete()
+                file.deleteIfExists()
             }
             fail(errorMessage)
         }

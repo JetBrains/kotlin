@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.test.utils.MultiModuleInfoDumper
 import java.io.File
+import kotlin.io.path.pathString
 
 @OptIn(DirectDeclarationsAccess::class)
 class FirDumpHandler(
@@ -91,7 +92,7 @@ class FirDumpHandler(
         // TODO: change according to multiple testdata files
         val testDataFile = testServices.moduleStructure.originalTestDataFiles.first()
         val extension = if (byteCodeListingEnabled) ".fir2.txt" else ".fir.txt"
-        val originalExpectedFilePath = testDataFile.parentFile.resolve("${testDataFile.nameWithoutFirExtension}$extension").path
+        val originalExpectedFilePath = testDataFile.parent.resolve("${testDataFile.nameWithoutFirExtension}$extension").pathString
 
         @OptIn(TestInfrastructureInternals::class)
         val expectedFilePath = testServices.testConfiguration

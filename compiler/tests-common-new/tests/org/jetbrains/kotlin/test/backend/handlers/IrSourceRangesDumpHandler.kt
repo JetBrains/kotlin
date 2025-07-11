@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.test.utils.MultiModuleInfoDumper
 import org.jetbrains.kotlin.test.utils.withExtension
 import org.jetbrains.kotlin.utils.Printer
-import java.io.File
+import java.nio.file.Path
 
 class IrSourceRangesDumpHandler(
     testServices: TestServices,
@@ -56,7 +56,7 @@ class IrSourceRangesDumpHandler(
     }
 
     private val baseDumper = MultiModuleInfoDumper()
-    private val buildersForSeparateFileDumps: MutableMap<File, StringBuilder> = mutableMapOf()
+    private val buildersForSeparateFileDumps: MutableMap<Path, StringBuilder> = mutableMapOf()
 
     override fun processModule(module: TestModule, info: IrBackendInput) {
         if (DUMP_SOURCE_RANGES_IR !in module.directives) return
@@ -130,7 +130,7 @@ class IrSourceRangesDumpHandler(
         buildersForSeparateFileDumps.entries.forEach { (expectedFile, dump) -> checkOneExpectedFile(expectedFile, dump.toString()) }
     }
 
-    private fun checkOneExpectedFile(expectedFile: File, actualDump: String) {
+    private fun checkOneExpectedFile(expectedFile: Path, actualDump: String) {
         if (actualDump.isNotEmpty()) {
             assertions.assertEqualsToFile(expectedFile, actualDump)
         } else {

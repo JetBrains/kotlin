@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
+import kotlin.io.path.pathString
 
 class WasmEnvironmentConfiguratorJs(testServices: TestServices) : WasmEnvironmentConfigurator(testServices) {
     override fun configureCompilerConfiguration(configuration: CompilerConfiguration, module: TestModule) {
@@ -92,7 +93,7 @@ abstract class WasmEnvironmentConfigurator(testServices: TestServices) : Environ
         configuration.put(WasmConfigurationKeys.WASM_ENABLE_ASSERTS, true)
         configuration.put(WasmConfigurationKeys.WASM_ENABLE_ARRAY_RANGE_CHECKS, true)
 
-        val sourceDirs = module.files.map { it.originalFile.parent }.distinct()
+        val sourceDirs = module.files.map { it.originalFile.parent.pathString }.distinct()
         configuration.put(JSConfigurationKeys.SOURCE_MAP_SOURCE_ROOTS, sourceDirs)
         configuration.put(JSConfigurationKeys.SOURCE_MAP, true)
         configuration.put(JSConfigurationKeys.SOURCE_MAP_INCLUDE_MAPPINGS_FROM_UNAVAILABLE_FILES, SOURCE_MAP_INCLUDE_MAPPINGS_FROM_UNAVAILABLE_FILES in registeredDirectives)

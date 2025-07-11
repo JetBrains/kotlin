@@ -45,7 +45,7 @@ class FirVFirDumpHandler(
 
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
         val testDataFile = testServices.moduleStructure.originalTestDataFiles.first()
-        val expectedFile = testDataFile.parentFile.resolve("${testDataFile.nameWithoutFirExtension}.vfir.txt")
+        val expectedFile = testDataFile.parent.resolve("${testDataFile.nameWithoutFirExtension}.vfir.txt")
 
         if (dumper.isEmpty()) {
             assertions.assertFileDoesntExist(expectedFile, FirDiagnosticsDirectives.DUMP_VFIR)

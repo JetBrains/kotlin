@@ -19,28 +19,29 @@ import org.jetbrains.kotlin.test.services.defaultsProvider
 import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.test.utils.FirIdenticalCheckerHelper
 import org.jetbrains.kotlin.test.utils.withExtension
-import java.io.File
+import java.nio.file.Path
+import kotlin.io.path.exists
 
 class FirIrDumpIdenticalChecker(testServices: TestServices) : AfterAnalysisChecker(testServices) {
     override val directiveContainers: List<DirectivesContainer>
         get() = listOf(FirDiagnosticsDirectives)
 
     private val simpleDumpChecker = object : FirIdenticalCheckerHelper(testServices) {
-        override fun getClassicFileToCompare(testDataFile: File): File? {
+        override fun getClassicFileToCompare(testDataFile: Path): Path? {
             return testDataFile.withExtension(IrTextDumpHandler.DUMP_EXTENSION).takeIf { it.exists() }
         }
 
-        override fun getFirFileToCompare(testDataFile: File): File? {
+        override fun getFirFileToCompare(testDataFile: Path): Path? {
             return testDataFile.withExtension("fir.${IrTextDumpHandler.DUMP_EXTENSION}").takeIf { it.exists() }
         }
     }
 
     private val prettyDumpChecker = object : FirIdenticalCheckerHelper(testServices) {
-        override fun getClassicFileToCompare(testDataFile: File): File? {
+        override fun getClassicFileToCompare(testDataFile: Path): Path? {
             return testDataFile.withExtension(IrPrettyKotlinDumpHandler.DUMP_EXTENSION).takeIf { it.exists() }
         }
 
-        override fun getFirFileToCompare(testDataFile: File): File? {
+        override fun getFirFileToCompare(testDataFile: Path): Path? {
             return testDataFile.withExtension("fir.${IrPrettyKotlinDumpHandler.DUMP_EXTENSION}").takeIf { it.exists() }
         }
     }

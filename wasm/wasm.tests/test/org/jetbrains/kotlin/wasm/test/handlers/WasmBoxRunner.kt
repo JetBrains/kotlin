@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.wasm.test.tools.WasmVM
 import java.io.File
+import kotlin.io.path.readText
 
 class WasmBoxRunner(
     testServices: TestServices

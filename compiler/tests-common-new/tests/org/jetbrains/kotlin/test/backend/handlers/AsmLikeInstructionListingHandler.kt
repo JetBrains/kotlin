@@ -32,6 +32,9 @@ import org.jetbrains.org.objectweb.asm.util.Printer
 import org.jetbrains.org.objectweb.asm.util.Textifier
 import org.jetbrains.org.objectweb.asm.util.TraceFieldVisitor
 import org.jetbrains.org.objectweb.asm.util.TraceMethodVisitor
+import kotlin.io.path.exists
+import kotlin.io.path.name
+import kotlin.io.path.readText
 
 class AsmLikeInstructionListingHandler(testServices: TestServices) : JvmBinaryArtifactHandler(testServices) {
     companion object {

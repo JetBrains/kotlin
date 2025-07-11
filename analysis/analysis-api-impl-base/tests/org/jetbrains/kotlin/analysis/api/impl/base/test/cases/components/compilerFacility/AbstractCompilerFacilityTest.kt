@@ -63,6 +63,10 @@ import java.io.File
 import java.io.PrintWriter
 import java.io.StringWriter
 import java.util.jar.JarFile
+import kotlin.io.path.exists
+import kotlin.io.path.extension
+import kotlin.io.path.nameWithoutExtension
+import kotlin.io.path.readText
 import kotlin.reflect.jvm.jvmName
 
 abstract class AbstractFirPluginPrototypeMultiModuleCompilerFacilityTest : AbstractCompilerFacilityTest() {
@@ -307,7 +311,7 @@ private class CompilerFacilityEnvironmentConfigurator(testServices: TestServices
 
 internal fun createCodeFragment(ktFile: KtFile, module: TestModule, testServices: TestServices): KtCodeFragment? {
     val ioFile = module.files.single { it.name == ktFile.name }.originalFile
-    val ioFragmentFile = File(ioFile.parent, "${ioFile.nameWithoutExtension}.fragment.${ioFile.extension}")
+    val ioFragmentFile = ioFile.parent.resolve("${ioFile.nameWithoutExtension}.fragment.${ioFile.extension}")
 
     if (!ioFragmentFile.exists()) {
         return null

@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.analysis.low.level.api.fir.compiler.based
 
 import java.io.File
+import java.nio.file.Path
+import kotlin.io.path.useLines
 
 private const val LL_FIR_DIVERGENCE_DIRECTIVE = "LL_FIR_DIVERGENCE"
 private const val LL_FIR_DIVERGENCE_DIRECTIVE_COMMENT = "// $LL_FIR_DIVERGENCE_DIRECTIVE"
@@ -13,7 +15,7 @@ private const val LL_FIR_DIVERGENCE_DIRECTIVE_COMMENT = "// $LL_FIR_DIVERGENCE_D
 /**
  * Checks whether the [File] contains a legal `LL_FIR_DIVERGENCE` directive without reading the whole file.
  */
-fun File.hasLlFirDivergenceDirective(): Boolean = useLines { findDirectiveInLines(it.iterator()) }
+fun Path.hasLlFirDivergenceDirective(): Boolean = useLines { findDirectiveInLines(it.iterator()) }
 
 fun String.removeLlFirDivergenceDirective(trimLines: Boolean): String {
     // To ignore `LL_FIR_DIVERGENCE`, we advance `iterator` with `findDirectiveInLines` and then concatenate the rest of the lines.

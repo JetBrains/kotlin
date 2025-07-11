@@ -44,8 +44,9 @@ import org.jetbrains.kotlin.test.utils.withExtension
 import org.jetbrains.kotlin.utils.Printer
 import org.jetbrains.kotlin.utils.addToStdlib.same
 import org.opentest4j.AssertionFailedError
-import java.io.File
 import java.io.FileNotFoundException
+import java.nio.file.Path
+import kotlin.io.path.readText
 
 private const val CHECK_MARKER = "// CHECK"
 
@@ -125,7 +126,7 @@ class IrMangledNameAndSignatureDumpHandler(
             return separateSignatureDirectiveNotPresent(testServices)
         }
 
-        override fun processClassicFileIfContentIsIdentical(testDataFile: File) {
+        override fun processClassicFileIfContentIsIdentical(testDataFile: Path) {
             simpleChecker.removeDirectiveFromClassicFileAndAssert(testDataFile, SEPARATE_SIGNATURE_DUMP_FOR_K2)
         }
     }
@@ -146,7 +147,7 @@ class IrMangledNameAndSignatureDumpHandler(
     /**
      * The file that stores the expected signatures of the test file.
      */
-    private val expectedFile: File by lazy {
+    private val expectedFile: Path by lazy {
         testServices.moduleStructure.originalTestDataFiles.first().withExtension(computeDumpExtension())
     }
 

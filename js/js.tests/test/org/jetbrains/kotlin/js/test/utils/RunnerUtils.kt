@@ -32,6 +32,8 @@ import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurato
 import org.jetbrains.kotlin.utils.DFS.topologicalOrder
 import org.jetbrains.kotlin.utils.filterIsInstanceAnd
 import java.io.File
+import java.nio.file.Path
+import kotlin.io.path.*
 
 const val MODULE_EMULATION_FILE = "${JsEnvironmentConfigurator.TEST_DATA_DIR_PATH}/moduleEmulation.js"
 
@@ -72,61 +74,61 @@ private fun extractJsFiles(
 }
 
 fun getAdditionalFilePaths(testServices: TestServices, mode: TranslationMode = TranslationMode.FULL_DEV): List<String> {
-    return getAdditionalFiles(testServices, mode, true).map { it.absolutePath }
+    return getAdditionalFiles(testServices, mode, true).map { it.toAbsolutePath().pathString }
 }
 
 fun getAdditionalFiles(
     testServices: TestServices,
     mode: TranslationMode = TranslationMode.FULL_DEV,
     shouldCopyFiles: Boolean = false
-): List<File> {
+): List<Path> {
     val originalFile = testServices.moduleStructure.originalTestDataFiles.first()
 
     val withModuleSystem = testWithModuleSystem(testServices)
 
-    val additionalFiles = mutableListOf<File>()
-    if (withModuleSystem) additionalFiles += File(MODULE_EMULATION_FILE)
+    val additionalFiles = mutableListOf<Path>()
+    if (withModuleSystem) additionalFiles.add(Path(MODULE_EMULATION_FILE))
 
-    originalFile.parentFile.resolve(originalFile.nameWithoutExtension + JavaScript.DOT_EXTENSION)
+    originalFile.parent.resolve(originalFile.nameWithoutExtension + JavaScript.DOT_EXTENSION)
         .takeIf { it.exists() }
-        ?.let { additionalFiles += it }
+        ?.let { additionalFiles.add(it) }
 
-    originalFile.parentFile.resolve(originalFile.nameWithoutExtension + JavaScript.DOT_MODULE_EXTENSION)
+    originalFile.parent.resolve(originalFile.nameWithoutExtension + JavaScript.DOT_MODULE_EXTENSION)
         .takeIf { it.exists() }
         ?.let {
-            File(JsEnvironmentConfigurator.getJsArtifactsOutputDir(testServices, mode), it.name).apply {
-                if (shouldCopyFiles) it.copyTo(this, true)
+            JsEnvironmentConfigurator.getJsArtifactsOutputDir(testServices, mode).toPath().resolve(it.name).apply {
+                if (shouldCopyFiles) it.copyTo(this, overwrite = true)
             }
         }
-        ?.let { additionalFiles += it }
+        ?.let { additionalFiles.add(it) }
 
     return additionalFiles
 }
 
 fun getAdditionalMainFilePaths(testServices: TestServices, mode: TranslationMode = TranslationMode.FULL_DEV): List<String> {
-    return getAdditionalMainFiles(testServices, mode, shouldCopyFiles = true).map { it.absolutePath }
+    return getAdditionalMainFiles(testServices, mode, shouldCopyFiles = true).map { it.toAbsolutePath().pathString }
 }
 
 fun getAdditionalMainFiles(
     testServices: TestServices,
     mode: TranslationMode = TranslationMode.FULL_DEV,
     shouldCopyFiles: Boolean = false
-): List<File> {
+): List<Path> {
     val originalFile = testServices.moduleStructure.originalTestDataFiles.first()
-    val additionalFiles = mutableListOf<File>()
+    val additionalFiles = mutableListOf<Path>()
 
-    originalFile.parentFile.resolve(originalFile.nameWithoutExtension + "__main.js")
+    originalFile.parent.resolve(originalFile.nameWithoutExtension + "__main.js")
         .takeIf { it.exists() }
-        ?.let { additionalFiles += it }
+        ?.let { additionalFiles.add(it) }
 
-    originalFile.parentFile.resolve(originalFile.nameWithoutExtension + "__main.mjs")
+    originalFile.parent.resolve(originalFile.nameWithoutExtension + "__main.mjs")
         .takeIf { it.exists() }
         ?.let {
-            File(JsEnvironmentConfigurator.getJsArtifactsOutputDir(testServices, mode), it.name).apply {
-                if (shouldCopyFiles) it.copyTo(this, true)
+            JsEnvironmentConfigurator.getJsArtifactsOutputDir(testServices, mode).toPath().resolve(it.name).apply {
+                if (shouldCopyFiles) it.copyTo(this, overwrite = true)
             }
         }
-        ?.let { additionalFiles += it }
+        ?.let { additionalFiles.add(it) }
 
     return additionalFiles
 }
@@ -147,7 +149,7 @@ fun getAllFilesForRunner(
 ): Map<TranslationMode, List<String>> {
     val originalFile = testServices.moduleStructure.originalTestDataFiles.first()
 
-    val commonFiles = JsAdditionalSourceProvider.getAdditionalJsFiles(originalFile.parent).map { it.absolutePath }
+    val commonFiles = JsAdditionalSourceProvider.getAdditionalJsFiles(originalFile.parent).map { it.toAbsolutePath().pathString }
 
     if (modulesToArtifact.values.any { it is BinaryArtifacts.Js.JsIrArtifact }) {
         // JS IR

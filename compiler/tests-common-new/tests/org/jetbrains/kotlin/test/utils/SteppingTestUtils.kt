@@ -13,7 +13,8 @@ import org.jetbrains.kotlin.test.model.FrontendKind
 import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertEqualsToFile
 import org.jetbrains.kotlin.test.services.impl.valueOfOrNull
-import java.io.File
+import java.nio.file.Path
+import kotlin.io.path.readLines
 
 data class SteppingTestLoggedData(val line: Int, val isSynthetic: Boolean, val expectation: String)
 
@@ -83,7 +84,7 @@ data class BackendWithDirectives(val backend: TargetBackend) {
 fun checkSteppingTestResult(
     frontendKind: FrontendKind<*>,
     targetBackend: TargetBackend,
-    wholeFile: File,
+    wholeFile: Path,
     loggedItems: List<SteppingTestLoggedData>,
     directives: RegisteredDirectives
 ) {

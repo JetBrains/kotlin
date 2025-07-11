@@ -10,6 +10,7 @@ import com.intellij.openapi.Disposable;
 import com.intellij.openapi.project.Project;
 import com.intellij.openapi.util.io.FileUtil;
 import com.intellij.openapi.util.text.StringUtil;
+import com.intellij.openapi.util.text.StringUtilRt;
 import com.intellij.openapi.vfs.CharsetToolkit;
 import com.intellij.psi.PsiElement;
 import com.intellij.testFramework.TestDataFile;
@@ -58,6 +59,7 @@ import java.io.IOException;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -246,7 +248,15 @@ public class KotlinTestUtils {
         assertEqualsToFile(message, expectedFile, actual, s -> s);
     }
 
+    public static void assertEqualsToFile(@NotNull String message, @NotNull Path expectedFile, @NotNull String actual) {
+        assertEqualsToFile(message, expectedFile, actual, s -> s);
+    }
+
     public static void assertEqualsToFile(@NotNull File expectedFile, @NotNull String actual, @NotNull Function1<String, String> sanitizer) {
+        assertEqualsToFile(ACTUAL_DATA_DIFFERS_FROM_FILE_CONTENT, expectedFile, actual, sanitizer);
+    }
+
+    public static void assertEqualsToFile(@NotNull Path expectedFile, @NotNull String actual, @NotNull Function1<String, String> sanitizer) {
         assertEqualsToFile(ACTUAL_DATA_DIFFERS_FROM_FILE_CONTENT, expectedFile, actual, sanitizer);
     }
 
@@ -261,7 +271,7 @@ public class KotlinTestUtils {
                         sanitizer.generateSanitizedActualTextBasedOnExpectPlaceholders(expectedSanitizedText), s -> s);
 
         KotlinTestUtils.FileComparisonResult comparisonResult = new KotlinTestUtils.FileComparisonResult(
-                expectedFile,
+                expectedFile.toPath(),
                 expectedText,
                 expectedSanitizedText,
                 sanitizedActualBasedOnExpectPlaceholders
@@ -271,6 +281,15 @@ public class KotlinTestUtils {
     }
 
     public static FileComparisonResult compareExpectFileWithActualText(@NotNull File expectedFile, @NotNull String actual, @NotNull Function1<String, String> sanitizer) {
+        Function0<String> getActualSanitizedText = () -> applyDefaultAndCustomSanitizer(actual, sanitizer);
+
+        String expectedText = tryLoadExpectedFile(expectedFile, getActualSanitizedText);
+        String expectedSanitizedText = applyDefaultAndCustomSanitizer(expectedText, sanitizer);
+
+        return new FileComparisonResult(expectedFile.toPath(), expectedText, expectedSanitizedText, getActualSanitizedText.invoke());
+    }
+
+    public static FileComparisonResult compareExpectFileWithActualText(@NotNull Path expectedFile, @NotNull String actual, @NotNull Function1<String, String> sanitizer) {
         Function0<String> getActualSanitizedText = () -> applyDefaultAndCustomSanitizer(actual, sanitizer);
 
         String expectedText = tryLoadExpectedFile(expectedFile, getActualSanitizedText);
@@ -296,15 +315,33 @@ public class KotlinTestUtils {
         }
     }
 
+    public static String tryLoadExpectedFile(@NotNull Path expectedFile, @NotNull Function0<String> getSanitizedActualText) {
+        try {
+            if (!Files.exists(expectedFile)) {
+                if (KtUsefulTestCase.IS_UNDER_TEAMCITY) {
+                    Assert.fail("Expected data file " + expectedFile + " did not exist");
+                } else {
+                    Files.write(expectedFile, getSanitizedActualText.invoke().getBytes(StandardCharsets.UTF_8));
+                    Assert.fail("Expected data file did not exist. Generating: " + expectedFile);
+                }
+            }
+            String s = new String(Files.readAllBytes(expectedFile));
+            return StringUtilRt.convertLineSeparators(s);
+        }
+        catch (IOException e) {
+            throw ExceptionUtilsKt.rethrow(e);
+        }
+    }
+
     public static class FileComparisonResult {
-        public final @NotNull File expectedFile;
+        public final @NotNull Path expectedFile;
         public final @NotNull String expectedText;
         public final @NotNull String expectedSanitizedText;
         public final @NotNull String actualSanitizedText;
         public final boolean doesEqual;
 
         public FileComparisonResult(
-                @NotNull File expectedFile,
+                @NotNull Path expectedFile,
                 @NotNull String expectedText,
                 @NotNull String expectedSanitizedText,
                 @NotNull String actualSanitizedText
@@ -326,11 +363,16 @@ public class KotlinTestUtils {
         failIfNotEqual(message, compareExpectFileWithActualText(expectedFile, actual, sanitizer));
     }
 
+    public static void assertEqualsToFile(@NotNull String message, @NotNull Path expectedFile, @NotNull String actual, @NotNull Function1<String, String> sanitizer) {
+        failIfNotEqual(message, compareExpectFileWithActualText(expectedFile, actual, sanitizer));
+    }
+
     public static void failIfNotEqual(@NotNull String message, FileComparisonResult fileComparisonResult) {
         if (!fileComparisonResult.doesEqual) {
+            Path file = fileComparisonResult.expectedFile;
             throw new AssertionFailedError(
-                    message + ": " + fileComparisonResult.expectedFile.getName(),
-                    new FileInfo(fileComparisonResult.expectedFile.getAbsolutePath(), fileComparisonResult.expectedText.getBytes(StandardCharsets.UTF_8)),
+                    message + ": " + file.getName(file.getNameCount() - 1),
+                    new FileInfo(file.toAbsolutePath().toString(), fileComparisonResult.expectedText.getBytes(StandardCharsets.UTF_8)),
                     fileComparisonResult.actualSanitizedText
             );
         }

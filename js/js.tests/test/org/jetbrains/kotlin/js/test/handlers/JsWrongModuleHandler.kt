@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.test.services.assertions
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.moduleStructure
 import java.io.File
+import kotlin.io.path.nameWithoutExtension
 
 class JsWrongModuleHandler(testServices: TestServices) : JsBinaryArtifactHandler(testServices) {
     override fun processModule(module: TestModule, info: BinaryArtifacts.Js) {}

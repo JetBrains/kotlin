@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.test.utils.withExtension
 import org.jetbrains.kotlin.test.utils.withSuffixAndExtension
 import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 import java.io.File
+import java.nio.file.Path
 
 class IrTextDumpHandler(
     testServices: TestServices,
@@ -113,7 +114,7 @@ class IrTextDumpHandler(
         get() = listOf(::FirIrDumpIdenticalChecker)
 
     private val baseDumper = MultiModuleInfoDumper()
-    private val buildersForSeparateFileDumps: MutableMap<File, StringBuilder> = mutableMapOf()
+    private val buildersForSeparateFileDumps: MutableMap<Path, StringBuilder> = mutableMapOf()
 
     private var byteCodeListingEnabled = false
 
@@ -182,7 +183,7 @@ class IrTextDumpHandler(
         buildersForSeparateFileDumps.entries.forEach { (expectedFile, dump) -> checkOneExpectedFile(expectedFile, dump.toString()) }
     }
 
-    private fun checkOneExpectedFile(expectedFile: File, actualDump: String) {
+    private fun checkOneExpectedFile(expectedFile: Path, actualDump: String) {
         if (actualDump.isNotEmpty()) {
             assertions.assertEqualsToFile(expectedFile, actualDump)
         } else {

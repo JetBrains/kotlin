@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.test.utils.MultiModuleInfoDumper
 import org.jetbrains.kotlin.test.utils.withExtension
 import java.io.File
+import kotlin.io.path.*
 
 class SMAPDumpHandler(testServices: TestServices) : JvmBinaryArtifactHandler(testServices) {
     companion object {
@@ -98,8 +99,8 @@ class SMAPDumpHandler(testServices: TestServices) : JvmBinaryArtifactHandler(tes
             if (expectedText == otherFile.readText()) {
                 val smapFile = expectedFile.withExtension(SMAP_EXT)
                 smapFile.writeText(expectedText)
-                expectedFile.delete()
-                otherFile.delete()
+                expectedFile.deleteIfExists()
+                otherFile.deleteIfExists()
                 assertions.fail {
                     """
                     Contents of ${expectedFile.name} and ${otherFile.name} are equals, so they are deleted

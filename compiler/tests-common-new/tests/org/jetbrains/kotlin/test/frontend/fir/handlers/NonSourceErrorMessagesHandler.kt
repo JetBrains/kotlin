@@ -22,6 +22,8 @@ import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.test.services.temporaryDirectoryManager
 import org.jetbrains.kotlin.test.utils.MessageCollectorForCompilerTests
 import org.jetbrains.kotlin.test.utils.withExtension
+import kotlin.io.path.exists
+import kotlin.io.path.readText
 
 /**
  * This handler checks all message collectors from all modules for diagnostics not attached to specific source location

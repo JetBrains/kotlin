@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.test.KotlinTestUtils;
 import org.jetbrains.kotlin.test.TargetBackend;
 import org.junit.runners.model.MultipleFailureException;
 
-import java.io.File;
+import java.nio.file.Path;
 import java.util.*;
 import java.util.regex.Pattern;
 import java.util.regex.Matcher;
@@ -103,7 +103,7 @@ public class DirectiveTestUtils {
         void processEntry(@NotNull JsNode ast, @NotNull ArgumentsHelper arguments) throws Exception {
             List<String> functionNames = StringUtil.split(arguments.getNamedArgument("function"), ";");
             String expected = arguments.getNamedArgument("expect");
-            File expectedFile = new File(arguments.sourceFile.getParentFile(), expected);
+            Path expectedFile = arguments.sourceFile.getParent().resolve(expected);
             StringBuilder code = new StringBuilder();
             for (String functionName : functionNames) {
                 code.append(AstSearchUtil.getFunction(ast, functionName));
@@ -523,7 +523,7 @@ public class DirectiveTestUtils {
 
     public static void processDirectives(
             @NotNull JsNode ast,
-            @NotNull File sourceFile,
+            @NotNull Path sourceFile,
             @NotNull String sourceCode,
             @NotNull TargetBackend targetBackend
     ) throws Exception {
@@ -661,7 +661,7 @@ public class DirectiveTestUtils {
          * @see ArgumentsHelper for arguments format
          */
         void process(@NotNull JsNode ast,
-                @NotNull File sourceFile,
+                @NotNull Path sourceFile,
                 @NotNull String sourceCode,
                 @NotNull TargetBackend targetBackend,
                 List<Throwable> assertionErrors
@@ -707,8 +707,8 @@ public class DirectiveTestUtils {
         private final Map<String, String> namedArguments = new HashMap<>();
         private final String entry;
         private final Pattern argumentsPattern = Pattern.compile("[\\w$_;\\.]+(=((\".*?\")|[\\w$_;\\.]+))?");
-        final File sourceFile;
-        ArgumentsHelper(@NotNull String directiveEntry, @NotNull File directiveSourceFile) {
+        final Path sourceFile;
+        ArgumentsHelper(@NotNull String directiveEntry, @NotNull Path directiveSourceFile) {
             entry = directiveEntry;
             sourceFile = directiveSourceFile;
 

@@ -73,7 +73,7 @@ abstract class AbstractNativeCInteropLibraryAbiReaderTest : AbstractNativeSimple
 
         assumeTrue(targets.hostTarget.family.isAppleFamily) // ObjC tests can run only on Apple targets.
 
-        val defFile = sourceFile.withExtension(".def")
+        val defFile = sourceFile.toPath().withExtension(".def").toFile()
         assertTrue(defFile.isFile) { "Def file does not exist: $defFile" }
 
         return listOf(

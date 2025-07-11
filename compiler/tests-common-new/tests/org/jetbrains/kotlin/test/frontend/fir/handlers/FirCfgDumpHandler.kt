@@ -19,6 +19,10 @@ import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.test.utils.FirIdenticalCheckerHelper.Companion.isTeamCityBuild
+import kotlin.io.path.deleteIfExists
+import kotlin.io.path.exists
+import kotlin.io.path.pathString
+import kotlin.io.path.readText
 
 // TODO: adapt to multifile and multimodule tests
 class FirCfgDumpHandler(testServices: TestServices) : FirAnalysisHandler(testServices) {
@@ -42,11 +46,11 @@ class FirCfgDumpHandler(testServices: TestServices) : FirAnalysisHandler(testSer
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
         val testDataFile = testServices.moduleStructure.originalTestDataFiles.first()
         val nameWithoutExtension = testDataFile.nameWithoutFirExtension
-        val basicExpectedFile = testDataFile.parentFile.resolve("$nameWithoutExtension.dot")
+        val basicExpectedFile = testDataFile.parent.resolve("$nameWithoutExtension.dot")
 
         val expectedFile =
             if (USE_LATEST_LANGUAGE_VERSION in testServices.moduleStructure.allDirectives)
-                testDataFile.parentFile.resolve("$nameWithoutExtension.latestLV.dot").takeIf { it.exists() }
+                testDataFile.parent.resolve("$nameWithoutExtension.latestLV.dot").takeIf { it.exists() }
                     ?: basicExpectedFile
             else
                 basicExpectedFile
@@ -59,13 +63,13 @@ class FirCfgDumpHandler(testServices: TestServices) : FirAnalysisHandler(testSer
 
         if (basicExpectedFile != expectedFile && basicExpectedFile.readText().trim() == expectedFile.readText().trim()) {
             if (!isTeamCityBuild) {
-                expectedFile.delete()
+                expectedFile.deleteIfExists()
             }
 
             val message = if (isTeamCityBuild) {
-                "Please remove `${expectedFile.path}`"
+                "Please remove `${expectedFile.pathString}`"
             } else {
-                "Deleted `${expectedFile.path}`"
+                "Deleted `${expectedFile.pathString}`"
             }
 
             testServices.assertions.fail {

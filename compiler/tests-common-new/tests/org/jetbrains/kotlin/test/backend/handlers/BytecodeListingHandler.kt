@@ -26,6 +26,8 @@ import org.jetbrains.kotlin.test.utils.withExtension
 import org.jetbrains.org.objectweb.asm.ClassReader
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.tree.ClassNode
+import kotlin.io.path.exists
+import kotlin.io.path.readText
 
 class BytecodeListingHandler(testServices: TestServices) : JvmBinaryArtifactHandler(testServices) {
     override val directiveContainers: List<DirectivesContainer>

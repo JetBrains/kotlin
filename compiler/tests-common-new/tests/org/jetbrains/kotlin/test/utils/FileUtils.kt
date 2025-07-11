@@ -6,27 +6,28 @@
 package org.jetbrains.kotlin.test.utils
 
 import org.jetbrains.kotlin.test.directives.model.Directive
-import java.io.File
+import java.nio.file.Path
+import kotlin.io.path.*
 
-fun File.withExtension(extension: String): File {
+fun Path.withExtension(extension: String): Path {
     return withSuffixAndExtension(suffix = "", extension)
 }
 
-fun File.withSuffixAndExtension(suffix: String, extension: String): File {
+fun Path.withSuffixAndExtension(suffix: String, extension: String): Path {
     @Suppress("NAME_SHADOWING")
     val extension = extension.removePrefix(".")
-    return parentFile.resolve("$nameWithoutExtension$suffix.$extension")
+    return parent.resolve("$nameWithoutExtension$suffix.$extension")
 }
 
 /*
  * Please use this method only in places where `TestModule` is not accessible
  * In other cases use testModule.directives
  */
-fun File.isDirectiveDefined(directive: String): Boolean = this.useLines { line ->
+fun Path.isDirectiveDefined(directive: String): Boolean = this.useLines { line ->
     line.any { it == directive }
 }
 
-fun File.removeDirectiveFromFile(directive: Directive) {
+fun Path.removeDirectiveFromFile(directive: Directive) {
     if (!exists()) return
 
     val directiveName = directive.name

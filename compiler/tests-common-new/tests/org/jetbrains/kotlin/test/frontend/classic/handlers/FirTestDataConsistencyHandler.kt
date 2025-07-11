@@ -14,15 +14,16 @@ import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.model.AfterAnalysisChecker
 import org.jetbrains.kotlin.test.model.TestFile
-import org.jetbrains.kotlin.test.runners.AbstractFirPsiDiagnosticsTestWithJvmIrBackend
 import org.jetbrains.kotlin.test.runners.AbstractFirPsiDiagnosticTest
+import org.jetbrains.kotlin.test.runners.AbstractFirPsiDiagnosticsTestWithJvmIrBackend
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerTest
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.utils.firTestDataFile
 import org.jetbrains.kotlin.test.utils.isFirTestData
 import org.jetbrains.kotlin.test.utils.isLatestLVTestData
 import org.jetbrains.kotlin.test.utils.originalTestDataFile
-import java.io.File
+import java.nio.file.Path
+import kotlin.io.path.*
 
 open class FirTestDataConsistencyHandler(testServices: TestServices) : AfterAnalysisChecker(testServices) {
     override val directiveContainers: List<DirectivesContainer>
@@ -41,7 +42,7 @@ open class FirTestDataConsistencyHandler(testServices: TestServices) : AfterAnal
         }
     }
 
-    private fun checkK1AndFirTestData(testData: File) {
+    private fun checkK1AndFirTestData(testData: Path) {
         val (firTestData, originalTestData) = when {
             testData.isFirTestData -> testData to testData.originalTestDataFile
             else -> testData.firTestDataFile to testData
@@ -53,7 +54,7 @@ open class FirTestDataConsistencyHandler(testServices: TestServices) : AfterAnal
         checkTwoFiles(originalTestData, firTestData, "Original and FIR test data aren't identical. ")
     }
 
-    private fun checkFirAndLatestLVTestData(latestLVTestData: File, directives: RegisteredDirectives) {
+    private fun checkFirAndLatestLVTestData(latestLVTestData: Path, directives: RegisteredDirectives) {
         val firTestData = when {
             TEST_ALONGSIDE_K1_TESTDATA in directives && FIR_IDENTICAL !in directives -> latestLVTestData.firTestDataFile
             else -> latestLVTestData.originalTestDataFile
@@ -61,7 +62,7 @@ open class FirTestDataConsistencyHandler(testServices: TestServices) : AfterAnal
         checkTwoFiles(firTestData, latestLVTestData, "Original and Latest Stable LV testdata aren't identical. ")
     }
 
-    private fun checkTwoFiles(originalTestData: File, secondTestData: File, message: String) {
+    private fun checkTwoFiles(originalTestData: Path, secondTestData: Path, message: String) {
         val secondPreprocessedTextData = secondTestData.preprocessSource()
         val originalPreprocessedTextData = originalTestData.preprocessSource()
         testServices.assertions.assertEquals(secondPreprocessedTextData, originalPreprocessedTextData) {
@@ -69,9 +70,9 @@ open class FirTestDataConsistencyHandler(testServices: TestServices) : AfterAnal
         }
     }
 
-    private fun File.preprocessSource(): String {
+    private fun Path.preprocessSource(): String {
         val content = testServices.sourceFileProvider.getContentOfSourceFile(
-            TestFile(path, readText().trim(), this, 0, isAdditional = false, RegisteredDirectives.Empty)
+            TestFile(pathString, readText().trim(), this, 0, isAdditional = false, RegisteredDirectives.Empty)
         )
         // Note: convertLineSeparators() does not work on Windows properly (\r\n are left intact for some reason)
         if (System.lineSeparator() != "\n") {
@@ -80,11 +81,11 @@ open class FirTestDataConsistencyHandler(testServices: TestServices) : AfterAnal
         return content
     }
 
-    private fun runFirTestAndGeneratedTestData(testData: File, firTestData: File) {
+    private fun runFirTestAndGeneratedTestData(testData: Path, firTestData: Path) {
         firTestData.writeText(testData.preprocessSource())
         val test = correspondingFirTest()
         test.initTestInfo(testServices.testInfo.copy(className = "${testServices.testInfo.className}_fir_anonymous"))
-        test.runTest(firTestData.absolutePath)
+        test.runTest(firTestData.toAbsolutePath().pathString)
     }
 
     protected open fun correspondingFirTest(): AbstractKotlinCompilerTest {

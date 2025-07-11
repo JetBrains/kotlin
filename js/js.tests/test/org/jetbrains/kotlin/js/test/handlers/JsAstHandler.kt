@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 import org.jetbrains.kotlin.test.services.defaultsProvider
 import org.jetbrains.kotlin.test.services.isKtFile
-import java.io.File
+import java.nio.file.Path
 
 class JsAstHandler(testServices: TestServices) : JsBinaryArtifactHandler(testServices) {
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {}
@@ -32,7 +32,7 @@ class JsAstHandler(testServices: TestServices) : JsBinaryArtifactHandler(testSer
         processJsProgram(jsProgram, ktFiles, testServices.defaultsProvider.targetBackend!!)
     }
 
-    private fun processJsProgram(program: JsProgram, psiFiles: Map<File, String>, targetBackend: TargetBackend) {
+    private fun processJsProgram(program: JsProgram, psiFiles: Map<Path, String>, targetBackend: TargetBackend) {
         psiFiles.forEach { DirectiveTestUtils.processDirectives(program, it.key, it.value, targetBackend) }
         program.verifyAst()
     }

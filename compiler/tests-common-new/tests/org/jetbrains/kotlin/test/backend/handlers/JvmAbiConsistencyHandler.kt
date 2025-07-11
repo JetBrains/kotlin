@@ -25,8 +25,9 @@ import org.jetbrains.org.objectweb.asm.ClassReader
 import org.jetbrains.org.objectweb.asm.tree.ClassNode
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
-import java.io.File
 import java.io.PrintWriter
+import java.nio.file.Path
+import kotlin.io.path.exists
 
 class JvmAbiConsistencyHandler(testServices: TestServices) : AnalysisHandler<BinaryArtifacts.JvmFromK1AndK2>(testServices, true, true) {
     override val artifactKind: TestArtifactKind<BinaryArtifacts.JvmFromK1AndK2>
@@ -150,7 +151,7 @@ class JvmAbiConsistencyHandler(testServices: TestServices) : AnalysisHandler<Bin
         }
     }
 
-    private fun fileNotFoundMessageBuilder(isTeamCityVersion: Boolean, isDiffExplained: Boolean): ((File) -> String) = {
+    private fun fileNotFoundMessageBuilder(isTeamCityVersion: Boolean, isDiffExplained: Boolean): ((Path) -> String) = {
         buildString {
             if (isTeamCityVersion) {
                 append("Expected data file did not exist `$it`")

@@ -53,7 +53,8 @@ import org.jetbrains.kotlin.test.util.trimTrailingWhitespacesAndRemoveRedundantE
 import org.jetbrains.kotlin.test.utils.MultiModuleInfoDumper
 import org.jetbrains.kotlin.test.utils.withExtension
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
-import java.io.File
+import java.nio.file.Path
+import kotlin.io.path.*
 
 class JvmLoadedMetadataDumpHandler(testServices: TestServices) : AbstractLoadedMetadataDumpHandler<BinaryArtifacts.Jvm>(
     testServices,
@@ -280,10 +281,10 @@ abstract class AbstractLoadedMetadataDumpHandler<A : ResultingArtifact.Binary<A>
         }
 
     private fun checkDumpsIdentity(
-        testDataFile: File,
-        file1: File,
-        file2: File,
-        commonFile: File,
+        testDataFile: Path,
+        file1: Path,
+        file2: Path,
+        commonFile: Path,
         postProcessTestData: ((String) -> String)? = null
     ) {
         if (!file1.exists() || !file2.exists()) return
@@ -291,8 +292,8 @@ abstract class AbstractLoadedMetadataDumpHandler<A : ResultingArtifact.Binary<A>
         val dump2 = file2.readText().trimTrailingWhitespacesAndRemoveRedundantEmptyLinesAtTheEnd()
         if (dump1 == dump2) {
             commonFile.writeText(dump1)
-            file1.delete()
-            file2.delete()
+            file1.deleteIfExists()
+            file2.deleteIfExists()
             if (postProcessTestData != null) {
                 testDataFile.writeText(postProcessTestData(testDataFile.readText()))
             }

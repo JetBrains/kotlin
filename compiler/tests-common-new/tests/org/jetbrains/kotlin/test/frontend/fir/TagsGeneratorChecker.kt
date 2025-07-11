@@ -106,7 +106,8 @@ import org.jetbrains.kotlin.test.utils.originalTestDataFile
 import org.jetbrains.kotlin.test.utils.reversedTestDataFile
 import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.types.Variance
-import java.io.File
+import java.nio.file.Path
+import kotlin.io.path.*
 
 class TagsGeneratorChecker(testServices: TestServices) : AfterAnalysisChecker(testServices) {
     override fun check(failedAssertions: List<WrappedException>) {
@@ -129,7 +130,7 @@ class TagsGeneratorChecker(testServices: TestServices) : AfterAnalysisChecker(te
     }
 
     fun addTagsToTestDataFiles(
-        testDataFiles: List<File>,
+        testDataFiles: List<Path>,
         firFiles: List<FirFile>,
     ) {
         for (testDataFile in testDataFiles) {

@@ -33,7 +33,7 @@ sourceSets {
 }
 
 projectTest(jUnitMode = JUnitMode.JUnit5) {
-    dependsOn(":plugins:plugin-sandbox:plugin-annotations:jar")
+    dependsOn(":plugins:plugin-sandbox:plugin-annotations:jvmJar")
     workingDir = rootDir
     useJUnitPlatform()
 }

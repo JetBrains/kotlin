@@ -9,14 +9,14 @@ import org.jetbrains.kotlin.test.Assertions
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.jetbrains.kotlin.test.testFramework.KtUsefulTestCase
 import org.junit.Assert
-import java.io.File
+import java.nio.file.Path
 
 object JUnit4Assertions : Assertions() {
-    override fun doesEqualToFile(expectedFile: File, actual: String, sanitizer: (String) -> String): Boolean {
+    override fun doesEqualToFile(expectedFile: Path, actual: String, sanitizer: (String) -> String): Boolean {
         return KotlinTestUtils.compareExpectFileWithActualText(expectedFile, actual, sanitizer).doesEqual;
     }
 
-    override fun assertEqualsToFile(expectedFile: File, actual: String, sanitizer: (String) -> String, message: () -> String) {
+    override fun assertEqualsToFile(expectedFile: Path, actual: String, sanitizer: (String) -> String, message: () -> String) {
         KotlinTestUtils.assertEqualsToFile(expectedFile, actual, sanitizer)
     }
 

@@ -12,19 +12,20 @@ import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.test.utils.FirIdenticalCheckerHelper
 import org.jetbrains.kotlin.test.utils.firTestDataFile
 import org.jetbrains.kotlin.test.utils.originalTestDataFile
-import java.io.File
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.model.TestFile
 import org.jetbrains.kotlin.test.services.assertions
 import org.jetbrains.kotlin.test.services.sourceFileProvider
+import java.nio.file.Path
+import kotlin.io.path.pathString
 
 abstract class AbstractFirIdenticalChecker(testServices: TestServices) : AfterAnalysisChecker(testServices) {
     protected inner class Helper : FirIdenticalCheckerHelper(testServices) {
-        override fun getClassicFileToCompare(testDataFile: File): File = testDataFile.originalTestDataFile
-        override fun getFirFileToCompare(testDataFile: File): File = testDataFile.firTestDataFile
+        override fun getClassicFileToCompare(testDataFile: Path): Path = testDataFile.originalTestDataFile
+        override fun getFirFileToCompare(testDataFile: Path): Path = testDataFile.firTestDataFile
     }
 
-    protected abstract fun checkTestDataFile(testDataFile: File)
+    protected abstract fun checkTestDataFile(testDataFile: Path)
 
     override val order: Order
         get() = Order.P5
@@ -54,15 +55,15 @@ abstract class AbstractFirIdenticalChecker(testServices: TestServices) : AfterAn
      */
     protected fun assertPreprocessedTestDataAreEqual(
         testServices: TestServices,
-        baseFile: File,
+        baseFile: Path,
         baseContent: String,
-        customFile: File,
+        customFile: Path,
         customContent: String,
         message: () -> String,
     ) {
         val processedBaseContent = testServices.sourceFileProvider.getContentOfSourceFile(
             TestFile(
-                baseFile.path,
+                baseFile.pathString,
                 baseContent,
                 baseFile,
                 startLineNumberInOriginalFile = 0,
@@ -72,7 +73,7 @@ abstract class AbstractFirIdenticalChecker(testServices: TestServices) : AfterAn
         ).replace("\r", "")
         val processedLlContent = testServices.sourceFileProvider.getContentOfSourceFile(
             TestFile(
-                customFile.path,
+                customFile.pathString,
                 customContent,
                 customFile,
                 startLineNumberInOriginalFile = 0,

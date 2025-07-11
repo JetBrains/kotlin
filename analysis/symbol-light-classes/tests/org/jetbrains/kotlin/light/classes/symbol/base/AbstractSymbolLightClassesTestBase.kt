@@ -36,9 +36,9 @@ import org.jetbrains.kotlin.test.services.assertions
 import org.jetbrains.kotlin.test.services.service
 import org.jetbrains.kotlin.test.utils.FirIdenticalCheckerHelper
 import org.jetbrains.kotlin.utils.addToStdlib.safeAs
-import java.io.File
 import java.nio.file.Path
 import kotlin.io.path.exists
+import kotlin.io.path.name
 
 // Same as LightProjectDescriptor.TEST_MODULE_NAME
 private const val TEST_MODULE_NAME = "light_idea_test_case"
@@ -184,19 +184,19 @@ abstract class AbstractSymbolLightClassesTestBase(
         val firJava = currentResultPath()
         if (!firJava.exists()) return
         val identicalCheckerHelper = IdenticalCheckerHelper(testServices)
-        if (identicalCheckerHelper.contentsAreEquals(java.toFile(), firJava.toFile(), trimLines = true)) {
-            identicalCheckerHelper.deleteFirFileToCompareAndAssertIfExists(java.toFile())
+        if (identicalCheckerHelper.contentsAreEquals(java, firJava, trimLines = true)) {
+            identicalCheckerHelper.deleteFirFileToCompareAndAssertIfExists(java)
         }
     }
 
     private inner class IdenticalCheckerHelper(testServices: TestServices) : FirIdenticalCheckerHelper(testServices) {
-        override fun getClassicFileToCompare(testDataFile: File): File {
+        override fun getClassicFileToCompare(testDataFile: Path): Path {
             return if (testDataFile.name.endsWith(EXTENSIONS.FIR_JAVA))
                 testDataFile.resolveSibling(testDataFile.name.removeSuffix(currentExtension) + EXTENSIONS.JAVA)
             else testDataFile
         }
 
-        override fun getFirFileToCompare(testDataFile: File): File {
+        override fun getFirFileToCompare(testDataFile: Path): Path {
             return if (testDataFile.name.endsWith(EXTENSIONS.FIR_JAVA))
                 testDataFile
             else testDataFile.resolveSibling(testDataFile.name.removeSuffix(EXTENSIONS.JAVA) + currentExtension)

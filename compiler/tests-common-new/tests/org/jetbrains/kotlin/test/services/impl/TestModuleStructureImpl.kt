@@ -14,11 +14,11 @@ import org.jetbrains.kotlin.test.directives.model.ComposedRegisteredDirectives
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.services.TestModuleStructure
-import java.io.File
+import java.nio.file.Path
 
 class TestModuleStructureImpl(
     override val modules: List<TestModule>,
-    override val originalTestDataFiles: List<File>
+    override val originalTestDataFiles: List<Path>
 ) : TestModuleStructure() {
     override val allDirectives: RegisteredDirectives = ComposedRegisteredDirectives(modules.map { it.directives })
 

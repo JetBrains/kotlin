@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.assertions
 import org.jetbrains.kotlin.test.services.moduleStructure
 import org.jetbrains.kotlin.test.utils.isLLFirTestData
+import kotlin.io.path.name
 
 class LLFirDivergenceCommentChecker(testServices: TestServices) : AfterAnalysisChecker(testServices) {
     override fun check(failedAssertions: List<WrappedException>) {
