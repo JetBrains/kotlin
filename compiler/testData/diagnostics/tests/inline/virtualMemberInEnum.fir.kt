@@ -1,7 +1,7 @@
 // RUN_PIPELINE_TILL: FRONTEND
 enum class Some {
     A {
-        override <!OVERRIDE_BY_INLINE!>fun foo(s: () -> String): String<!> {
+        override fun foo(s: () -> String): String {
             return s() + s()
         }
     };
