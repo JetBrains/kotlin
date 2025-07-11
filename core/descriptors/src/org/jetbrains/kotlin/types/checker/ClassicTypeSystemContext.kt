@@ -902,8 +902,6 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
         return (baseType.memberScope as? SubstitutingScope)?.substitutor
     }
 
-    override fun useRefinedBoundsForTypeVariableInFlexiblePosition(): Boolean = false
-
     override fun usePreciseSimplificationToFlexibleLowerConstraint(): Boolean = false
 
     override fun substitutionSupertypePolicy(type: RigidTypeMarker): TypeCheckerState.SupertypesPolicy {
