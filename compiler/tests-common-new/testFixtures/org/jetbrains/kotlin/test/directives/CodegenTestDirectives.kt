@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.test.directives
 
 import org.jetbrains.kotlin.test.TargetBackend
-import org.jetbrains.kotlin.test.backend.TargetInliner
 import org.jetbrains.kotlin.test.backend.handlers.*
 import org.jetbrains.kotlin.test.backend.ir.JvmIrBackendFacade
 import org.jetbrains.kotlin.test.directives.model.DirectiveApplicability.File
@@ -17,7 +16,6 @@ import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.defaultsProvider
-import org.jetbrains.kotlin.test.services.moduleStructure
 
 object CodegenTestDirectives : SimpleDirectivesContainer() {
     val IGNORE_BACKEND by enumDirective<TargetBackend>(
@@ -42,21 +40,6 @@ object CodegenTestDirectives : SimpleDirectivesContainer() {
 
     val IGNORE_BACKEND_K2_MULTI_MODULE by enumDirective<TargetBackend>(
         description = "Ignore failures of multimodule test on target backend if test uses K2 frontend",
-        applicability = Global
-    )
-
-    val IGNORE_INLINER by enumDirective<TargetInliner>(
-        description = "Ignore failures of tests with given inliner for all frontend kinds",
-        applicability = Global
-    )
-
-    val IGNORE_INLINER_K1 by enumDirective<TargetInliner>(
-        description = "Ignore failures of tests with given inliner for K1 compiler",
-        applicability = Global
-    )
-
-    val IGNORE_INLINER_K2 by enumDirective<TargetInliner>(
-        description = "Ignore failures of tests with given inliner for K2 compiler",
         applicability = Global
     )
 
@@ -299,11 +282,3 @@ fun extractIgnoredDirectiveForTargetBackend(
         }
     }
 
-fun TestServices.tryRetrieveIgnoredInliner(directive: ValueDirective<TargetInliner>): TargetInliner? {
-    val directiveName = directive.name
-    val ignoreDirectives = moduleStructure.allDirectives[directive].distinct()
-    if (ignoreDirectives.size > 1) {
-        throw IllegalArgumentException("Directive $directiveName should contain only one value")
-    }
-    return ignoreDirectives.singleOrNull()
-}
