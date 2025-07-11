@@ -1,0 +1,3 @@
+KtNameReferenceExpression(102,110): 'FooAlias'
+  KtSimpleNameReference:
+    (in test) typealias FooAlias = test.Foo

@@ -3039,6 +3039,12 @@ public class Fe10IdeNormalAnalysisSourceModuleResolveCandidatesTestGenerated ext
       }
 
       @Test
+      @TestMetadata("companionObject_typeAliased.kt")
+      public void testCompanionObject_typeAliased() {
+        runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/invoke/onObjects/companionObject_typeAliased.kt");
+      }
+
+      @Test
       @TestMetadata("nestedObject1.kt")
       public void testNestedObject1() {
         runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/invoke/onObjects/nestedObject1.kt");
@@ -3072,6 +3078,12 @@ public class Fe10IdeNormalAnalysisSourceModuleResolveCandidatesTestGenerated ext
       @TestMetadata("simpleObject2.kt")
       public void testSimpleObject2() {
         runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/invoke/onObjects/simpleObject2.kt");
+      }
+
+      @Test
+      @TestMetadata("simpleObject_typeAliased.kt")
+      public void testSimpleObject_typeAliased() {
+        runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/invoke/onObjects/simpleObject_typeAliased.kt");
       }
     }
 

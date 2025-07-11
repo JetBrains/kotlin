@@ -1,0 +1,19 @@
+KtNameReferenceExpression(156,164): 'FooAlias'
+  KaInapplicableCallCandidateInfo:
+    candidate = KaSimpleFunctionCall:
+      argumentMapping = {}
+      isImplicitInvoke = false
+      partiallyAppliedSymbol = KaPartiallyAppliedSymbol:
+        contextArguments = []
+        dispatchReceiver = null
+        extensionReceiver = null
+        signature = KaFunctionSignature:
+          receiverType = null
+          returnType = test.Foo
+          symbol = <constructor>(): test.Foo
+          valueParameters = []
+          contextParameters = []
+          callableId = null
+      typeArgumentsMapping = {}
+    diagnostic = ERROR<OTHER_ERROR: Inapplicable candidate>
+    isInBestCandidates = false
