@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.test.runners.codegen
 import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.backend.BlackBoxCodegenSuppressor
-import org.jetbrains.kotlin.test.backend.BlackBoxInlinerCodegenSuppressor
 import org.jetbrains.kotlin.test.backend.handlers.SteppingDebugRunner
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
@@ -47,7 +46,7 @@ abstract class AbstractSteppingTestBase<R : ResultingArtifact.FrontendOutput<R>>
             useHandlers(::SteppingDebugRunner)
         }
 
-        useAfterAnalysisCheckers(::BlackBoxCodegenSuppressor, ::BlackBoxInlinerCodegenSuppressor)
+        useAfterAnalysisCheckers(::BlackBoxCodegenSuppressor)
 
         defaultDirectives {
             +REPORT_ONLY_EXPLICITLY_DEFINED_DEBUG_INFO

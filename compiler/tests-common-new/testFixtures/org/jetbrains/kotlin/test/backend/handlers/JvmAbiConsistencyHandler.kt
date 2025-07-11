@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.abicmp.tasks.ModuleMetadataTask
 import org.jetbrains.kotlin.abicmp.tasks.checkerConfiguration
 import org.jetbrains.kotlin.codegen.getClassFiles
 import org.jetbrains.kotlin.codegen.getKotlinModuleFile
-import org.jetbrains.kotlin.test.backend.ir.AbiCheckerSuppressor
+import org.jetbrains.kotlin.test.backend.ir.ignoredByBackend
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.services.JUnit5Assertions
@@ -169,7 +169,7 @@ class JvmAbiConsistencyHandler(testServices: TestServices) : AnalysisHandler<Bin
     }
 
     override fun processModule(module: TestModule, info: BinaryArtifacts.JvmFromK1AndK2) {
-        if (AbiCheckerSuppressor.ignoredByBackendOrInliner(testServices)) return
+        if (testServices.ignoredByBackend) return
         val classesFromK1 = info.fromK1.classFileFactory.getClassFiles().associate { it.relativePath to it.asByteArray() }
         val classesFromK2 = info.fromK2.classFileFactory.getClassFiles().associate { it.relativePath to it.asByteArray() }
         val missingInK2 = Sets.difference(classesFromK1.keys, classesFromK2.keys).toMutableSet()
