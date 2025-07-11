@@ -145,9 +145,9 @@ open class AbstractFirJsCodegenInlineTest(
     testGroupOutputDirPrefix = testGroupOutputDirPrefix
 )
 
-open class AbstractFirJsCodegenInlineWithInlinedFunInKlibTest : AbstractFirJsCodegenInlineTest(
-    testGroupOutputDirPrefix = "codegen/firBoxInlineInlined/"
-) {
+open class AbstractFirJsCodegenInlineWithInlinedFunInKlibTest(
+    testGroupOutputDirPrefix: String = "codegen/firBoxInlineWithInlinedFun/"
+) : AbstractFirJsCodegenInlineTest(testGroupOutputDirPrefix) {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         with(builder) {
@@ -158,7 +158,9 @@ open class AbstractFirJsCodegenInlineWithInlinedFunInKlibTest : AbstractFirJsCod
     }
 }
 
-open class AbstractFirJsCodegenSplittingInlineWithInlinedFunInKlibTest : AbstractFirJsCodegenInlineWithInlinedFunInKlibTest() {
+open class AbstractFirJsCodegenSplittingInlineWithInlinedFunInKlibTest : AbstractFirJsCodegenInlineWithInlinedFunInKlibTest(
+    testGroupOutputDirPrefix = "codegen/firBoxSplittingInlined/"
+) {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         @OptIn(TestInfrastructureInternals::class)
