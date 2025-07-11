@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOverloadabilityHelper.ContextParameterShadowing.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl.Companion.DEFAULT_STATUS_FOR_STATUSLESS_DECLARATIONS
-import org.jetbrains.kotlin.fir.declarations.impl.FirResolvedDeclarationStatusImpl.Companion.DEFAULT_STATUS_FOR_SUSPEND_MAIN_FUNCTION
 import org.jetbrains.kotlin.fir.declarations.impl.modifiersRepresentation
 import org.jetbrains.kotlin.fir.declarations.utils.isReplSnippetDeclaration
 import org.jetbrains.kotlin.fir.declarations.utils.nameOrSpecialName
@@ -45,15 +44,16 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.utils.SmartSet
 
-val DEFAULT_STATUS_FOR_NORMAL_MAIN_FUNCTION: FirResolvedDeclarationStatus = DEFAULT_STATUS_FOR_STATUSLESS_DECLARATIONS
-
-private val FirNamedFunctionSymbol.hasMainFunctionStatus
-    get() = when (resolvedStatus.modifiersRepresentation) {
-        DEFAULT_STATUS_FOR_NORMAL_MAIN_FUNCTION.modifiersRepresentation,
-        DEFAULT_STATUS_FOR_SUSPEND_MAIN_FUNCTION.modifiersRepresentation,
-        -> true
-        else -> false
-    }
+private fun FirResolvedDeclarationStatus.isAllowedForMainFunction(): Boolean {
+    val defaultStatusForMain = DEFAULT_STATUS_FOR_STATUSLESS_DECLARATIONS
+    if (visibility != defaultStatusForMain.visibility && modality != defaultStatusForMain.modality && effectiveVisibility != defaultStatusForMain.effectiveVisibility) return false
+    val cleanedStatus = this.copy(
+        // main() function is allowed but not obliged to have the following flags:
+        isSuspend = false,
+        hasMustUseReturnValue = false
+    )
+    return cleanedStatus.modifiersRepresentation == defaultStatusForMain.modifiersRepresentation
+}
 
 private val CallableId.isTopLevel get() = className == null
 
@@ -488,7 +488,7 @@ private fun FirDeclarationCollector<FirBasedSymbol<*>>.collectTopLevelConflict(
 }
 
 private fun FirNamedFunctionSymbol.representsMainFunctionAllowingConflictingOverloads(session: FirSession): Boolean {
-    if (name != StandardNames.MAIN || !callableId.isTopLevel || !hasMainFunctionStatus) return false
+    if (name != StandardNames.MAIN || !callableId.isTopLevel || !resolvedStatus.isAllowedForMainFunction()) return false
     if (receiverParameterSymbol != null || typeParameterSymbols.isNotEmpty() || hasContextParameters) return false
     val returnType = resolvedReturnType.fullyExpandedType(session)
     if (!returnType.isUnit) return false

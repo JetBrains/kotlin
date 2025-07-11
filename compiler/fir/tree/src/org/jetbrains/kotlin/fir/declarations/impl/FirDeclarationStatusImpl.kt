@@ -241,7 +241,7 @@ class FirDeclarationStatusWithAlteredDefaults(
 }
 
 @OptIn(FirImplementationDetail::class)
-val FirDeclarationStatus.modifiersRepresentation: Any
+val FirDeclarationStatus.modifiersRepresentation: Int
     get() = when (this) {
         is FirDeclarationStatusImpl -> rawFlags
         else -> error("Generating modifier representations for ${this::class.simpleName} is not supported")
