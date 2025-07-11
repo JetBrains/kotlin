@@ -7,12 +7,10 @@ package org.jetbrains.kotlin.fir.java
 
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
-import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.java.enhancement.readOnlyToMutable
-import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedNameError
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.types.*
@@ -119,30 +117,15 @@ private fun JavaType?.toConeTypeProjection(
             if (mode.insideAnnotation) {
                 return lowerBound
             }
-            // TODO: simplify as a part of KT-76065 (dropping JavaTypeParameterDefaultRepresentationWithDNN)
-            val finalLowerBound = when {
-                !session.languageVersionSettings.supportsFeature(LanguageFeature.JavaTypeParameterDefaultRepresentationWithDNN) ->
-                    lowerBound
-                lowerBound is ConeTypeParameterType ->
-                    ConeDefinitelyNotNullType.create(
-                        lowerBound, session.typeContext,
-                        // Upper bounds might be not initialized properly yet, so we force creating DefinitelyNotNullType
-                        // It should not affect semantics, since it would be still a valid type anyway
-                        avoidComprehensiveCheck = true,
-                    ) ?: lowerBound
-
-                else -> lowerBound
-            }
-
-            if (!isRaw && finalLowerBound is ConeLookupTagBasedType && classifier?.isTriviallyFlexible() == true) {
-                finalLowerBound.toTrivialFlexibleType(session.typeContext)
+            if (!isRaw && classifier?.isTriviallyFlexible() == true) {
+                lowerBound.toTrivialFlexibleType(session.typeContext)
             } else {
                 val upperBound = toConeKotlinTypeForFlexibleBound(session, javaTypeParameterStack, mode, attributes, source, lowerBound)
 
                 if (isRaw) {
-                    ConeRawType.create(finalLowerBound, upperBound)
+                    ConeRawType.create(lowerBound, upperBound)
                 } else {
-                    ConeFlexibleType(finalLowerBound, upperBound, isTrivial = false)
+                    ConeFlexibleType(lowerBound, upperBound, isTrivial = false)
                 }
             }
         }
