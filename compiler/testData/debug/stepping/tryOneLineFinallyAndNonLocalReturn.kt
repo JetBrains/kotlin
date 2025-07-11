@@ -1,5 +1,5 @@
 // TARGET_BACKEND: JVM
-// IGNORE_INLINER: IR
+
 
 // FILE: test.kt
 

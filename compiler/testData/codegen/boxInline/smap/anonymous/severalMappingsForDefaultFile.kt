@@ -1,4 +1,4 @@
-// IGNORE_INLINER_K2: IR
+
 // FILE: 1.kt
 // NO_SMAP_DUMP
 package test

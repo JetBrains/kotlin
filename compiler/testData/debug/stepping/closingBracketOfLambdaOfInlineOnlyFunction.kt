@@ -1,5 +1,5 @@
 // See KT-64725
-// IGNORE_INLINER_K2: IR
+
 // WITH_STDLIB
 // FILE: test.kt
 
