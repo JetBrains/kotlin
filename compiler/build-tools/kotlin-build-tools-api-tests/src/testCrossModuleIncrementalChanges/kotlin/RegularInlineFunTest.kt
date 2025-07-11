@@ -6,9 +6,7 @@
 package org.jetbrains.kotlin.buildtools.api.tests.compilation
 
 import org.jetbrains.kotlin.buildtools.api.CompilerExecutionStrategyConfiguration
-import org.jetbrains.kotlin.buildtools.api.jvm.ClassSnapshotGranularity
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.DefaultStrategyAgnosticCompilationTest
-import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.SnapshotConfig
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.scenario.scenario
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.util.compile
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.util.execute
@@ -47,6 +45,38 @@ class RegularInlineFunTest : BaseCompilationTest() {
             lib.compile(expectedDirtySet = setOf("com/example/ictest/inlineFun.kt"))
             app.compile(expectedDirtySet = setOf("com/example/ictest/callSite.kt"))
             app.execute(mainClass = "com.example.ictest.CallSiteKt", exactOutput = "foo")
+        }
+    }
+
+    @DefaultStrategyAgnosticCompilationTest
+    @DisplayName("Recompilation of call site affected by an inline fun in a value class")
+    @TestMetadata("ic-scenarios/inline-fun-in-value-class/lib")
+    fun testJvmInlineValueClass(strategyConfig: CompilerExecutionStrategyConfiguration) {
+        scenario(strategyConfig) {
+            val lib = module("ic-scenarios/inline-fun-in-value-class/lib")
+            val app = module(
+                "ic-scenarios/inline-fun-in-value-class/app",
+                dependencies = listOf(lib),
+            )
+            app.execute(mainClass = "CallSiteKt", exactOutput = "bar_123")
+
+            lib.replaceFileWithVersion("callable.kt", "changeConstant")
+
+            lib.compile(expectedDirtySet = setOf("callable.kt"))
+            app.compile(expectedDirtySet = setOf("callSite.kt"))
+            app.execute(mainClass = "CallSiteKt", exactOutput = "foo_bar_123")
+
+            lib.replaceFileWithVersion("callable.kt", "withChainOfInlineFuns")
+
+            lib.compile(expectedDirtySet = setOf("callable.kt"))
+            app.compile(expectedDirtySet = setOf("callSite.kt"))
+            app.execute(mainClass = "CallSiteKt", exactOutput = "123_bar")
+
+            lib.replaceFileWithVersion("callable.kt", "withChainOfInlineFunsAndNewConstant")
+
+            lib.compile(expectedDirtySet = setOf("callable.kt"))
+            app.compile(expectedDirtySet = setOf("callSite.kt"))
+            app.execute(mainClass = "CallSiteKt", exactOutput = "123_foo_bar")
         }
     }
 }
