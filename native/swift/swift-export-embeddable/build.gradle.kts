@@ -203,7 +203,7 @@ val unarchivedStandaloneExternalITClasses = tasks.register<Sync>("unarchivedStan
     into(layout.buildDirectory.dir("unarchivedStandaloneExternalITClasses"))
 }
 
-nativeTest("testSimpleITWithEmbeddable", null) {
+nativeTest("testSimpleITWithEmbeddable", null, requirePlatformLibs = true) {
     classpath = files(
         // swift-export-embeddable and its runtime dependencies is what KGP will see in SwiftExportAction
         swiftExportEmbeddableJar,
