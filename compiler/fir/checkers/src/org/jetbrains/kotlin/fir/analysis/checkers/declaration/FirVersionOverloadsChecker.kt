@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.MavenComparableVersion
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
@@ -26,15 +27,11 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.isSomeFunctionType
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
-import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 
 object FirVersionOverloadsChecker : FirFunctionChecker(MppCheckerKind.Common) {
     private val versionArgument = Name.identifier("version")
-    private val copyMethodName = Name.identifier("copy")
-    private val JvmOverloadsClassId =  ClassId.topLevel(FqName("kotlin.jvm.JvmOverloads"))
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirFunction) {
@@ -81,9 +78,9 @@ object FirVersionOverloadsChecker : FirFunctionChecker(MppCheckerKind.Common) {
             }
         }
 
-        val jvmOverloadAnnotation = declaration.getAnnotationByClassId(JvmOverloadsClassId, context.session)
-        if (jvmOverloadAnnotation != null && paramVersions.isNotEmpty()) {
-            reporter.reportOn(jvmOverloadAnnotation.source, FirErrors.CONFLICT_WITH_JVM_OVERLOADS_ANNOTATION)
+        val jvmOverloadsAnnotation = declaration.getAnnotationByClassId(StandardClassIds.Annotations.jvmOverloads, context.session)
+        if (jvmOverloadsAnnotation != null && paramVersions.isNotEmpty()) {
+            reporter.reportOn(jvmOverloadsAnnotation.source, FirErrors.CONFLICT_WITH_JVM_OVERLOADS_ANNOTATION)
         }
 
         checkDependency(declaration, paramVersions)
@@ -146,5 +143,5 @@ object FirVersionOverloadsChecker : FirFunctionChecker(MppCheckerKind.Common) {
 
     private fun FirFunction.isOverridable(): Boolean = !isFinal || getContainingClassSymbol()?.isFinal == false
 
-    private fun FirFunction.isCopyMethod(): Boolean = nameOrSpecialName == copyMethodName && getContainingClassSymbol()?.isData == true
+    private fun FirFunction.isCopyMethod(): Boolean = nameOrSpecialName == StandardNames.DATA_CLASS_COPY && getContainingClassSymbol()?.isData == true
 }
