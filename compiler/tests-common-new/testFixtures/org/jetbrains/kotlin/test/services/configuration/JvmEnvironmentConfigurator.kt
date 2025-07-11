@@ -51,7 +51,6 @@ import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.ALLOW_KOT
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.DISABLE_CALL_ASSERTIONS
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.DISABLE_PARAM_ASSERTIONS
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.EMIT_JVM_TYPE_ANNOTATIONS
-import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.ENABLE_JVM_IR_INLINER
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.ENABLE_JVM_PREVIEW
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.JDK_RELEASE
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LINK_VIA_SIGNATURES_K1
@@ -199,7 +198,6 @@ open class JvmEnvironmentConfigurator(testServices: TestServices) : EnvironmentC
         register(ENHANCED_COROUTINES_DEBUGGING, JVMConfigurationKeys.ENHANCED_COROUTINES_DEBUGGING)
         register(NO_NEW_JAVA_ANNOTATION_TARGETS, JVMConfigurationKeys.NO_NEW_JAVA_ANNOTATION_TARGETS)
         register(LINK_VIA_SIGNATURES_K1, JVMConfigurationKeys.LINK_VIA_SIGNATURES)
-        register(ENABLE_JVM_IR_INLINER, JVMConfigurationKeys.ENABLE_IR_INLINER)
         register(USE_INLINE_SCOPES_NUMBERS, JVMConfigurationKeys.USE_INLINE_SCOPES_NUMBERS)
         register(USE_PSI_CLASS_FILES_READING, JVMConfigurationKeys.USE_PSI_CLASS_FILES_READING)
         register(ALLOW_KOTLIN_PACKAGE, CLIConfigurationKeys.ALLOW_KOTLIN_PACKAGE)

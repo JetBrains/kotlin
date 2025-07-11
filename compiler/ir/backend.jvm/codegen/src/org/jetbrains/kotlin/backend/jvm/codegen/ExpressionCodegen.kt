@@ -677,15 +677,6 @@ class ExpressionCodegen(
     override fun visitVariable(declaration: IrVariable, data: BlockInfo): PromisedValue {
         val varType = typeMapper.mapType(declaration)
         val index = frameMap.enter(declaration.symbol, varType)
-        val name = declaration.name.asString()
-
-        if (state.configuration.getBoolean(JVMConfigurationKeys.USE_INLINE_SCOPES_NUMBERS) &&
-            state.configuration.getBoolean(JVMConfigurationKeys.ENABLE_IR_INLINER) &&
-            JvmAbi.isFakeLocalVariableForInline(name) &&
-            name.contains(INLINE_SCOPE_NUMBER_SEPARATOR)
-        ) {
-            declaration.name = Name.identifier(updateCallSiteLineNumber(name, lineNumberMapper.getLineNumber()))
-        }
 
         val initializer = declaration.initializer
         if (initializer != null) {
