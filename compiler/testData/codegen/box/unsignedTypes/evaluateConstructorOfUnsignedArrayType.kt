@@ -6,21 +6,21 @@ annotation class AnnoUS(val us: UShortArray)
 annotation class AnnoUI(val ui: UIntArray)
 annotation class AnnoUL(val ul: ULongArray)
 
-@Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
+@Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE", "ARGUMENT_TYPE_MISMATCH")
 const val ub0 = UByte(1)
-@Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
+@Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE", "ARGUMENT_TYPE_MISMATCH")
 const val us0 = UShort(2)
-@Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
+@Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE", "ARGUMENT_TYPE_MISMATCH")
 const val ul0 = ULong(3)
 
-@Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
+@Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE", "ARGUMENT_TYPE_MISMATCH")
 const val ui0 = UInt(-1)
-@Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
+@Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE", "ARGUMENT_TYPE_MISMATCH")
 const val ui1 = UInt(0)
-@Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
+@Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE", "ARGUMENT_TYPE_MISMATCH")
 const val ui2 = UInt(40 + 2)
 
-@Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
+@Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE", "ARGUMENT_TYPE_MISMATCH")
 object Foo {
     @AnnoUB([UByte(1), ub0])
     fun f0() {}
@@ -40,7 +40,7 @@ fun <T> check(ann: Annotation, f: T.() -> Boolean) {
     if (!result) throw RuntimeException("fail for $ann")
 }
 
-@Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
+@Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE", "ARGUMENT_TYPE_MISMATCH")
 fun box(): String {
     if (ub0.toByte() != 1.toByte()) return "fail"
     if (us0.toShort() != 2.toShort()) return "fail"

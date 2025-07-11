@@ -7,7 +7,8 @@ fun foo(x: ClassWithWrongAbiVersion) {
 compiler/testData/cli/jvm/wrongAbiVersion.kt:4:5: error: unresolved reference 'bar'.
     bar()
     ^^^
-compiler/testData/cli/jvm/wrongAbiVersion.kt:6:24: error: too many arguments for 'fun String.replaceIndent(newIndent: String = ...): String'.
+compiler/testData/cli/jvm/wrongAbiVersion.kt:6:7: error: unresolved reference. None of the following candidates is applicable because of a receiver type mismatch:
+fun String.replaceIndent(newIndent: String = ...): String
     1.replaceIndent(2, 3)
-                       ^
+      ^^^^^^^^^^^^^
 COMPILATION_ERROR

@@ -14,7 +14,7 @@ fun <F : String?> bar(x: F) {
     <!INAPPLICABLE_CANDIDATE!>foo1<!><<!UPPER_BOUND_VIOLATED!>F<!>>(x)
 
     x<!UNSAFE_CALL!>.<!>foo2()
-    x.<!INAPPLICABLE_CANDIDATE!>foo2<!><<!UPPER_BOUND_VIOLATED!>F<!>>()
+    x.<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>foo2<!><F>()
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, dnnType, funWithExtensionReceiver, functionDeclaration, nullableType,

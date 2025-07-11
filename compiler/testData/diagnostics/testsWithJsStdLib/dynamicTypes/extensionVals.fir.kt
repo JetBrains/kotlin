@@ -24,7 +24,7 @@ fun test(d: dynamic) {
     (d as String).onStringVal
     (d as Any).onAnyVal
     (d as Any?).onNullableAnyVal
-    (d as Any).<!DYNAMIC_RECEIVER_EXPECTED_BUT_WAS_NON_DYNAMIC!>onDynamicVal<!>
+    (d as Any).<!UNRESOLVED_REFERENCE!>onDynamicVal<!>
 }
 
 fun testReassignmentWithSafeCall(d: dynamic) {
@@ -35,7 +35,7 @@ fun testReassignmentWithStaticCalls(d: dynamic) {
     (d as String).<!VAL_REASSIGNMENT!>onStringVal<!> = 1
     (d as Any).<!VAL_REASSIGNMENT!>onAnyVal<!> = 1
     (d as Any?).<!VAL_REASSIGNMENT!>onNullableAnyVal<!> = 1
-    (d as Any).<!DYNAMIC_RECEIVER_EXPECTED_BUT_WAS_NON_DYNAMIC, VAL_REASSIGNMENT!>onDynamicVal<!> = 1
+    (d as Any).<!UNRESOLVED_REFERENCE!>onDynamicVal<!> = 1
 }
 
 val Any.onAnyVal: Int get() = 1

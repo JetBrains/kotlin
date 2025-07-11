@@ -21,8 +21,8 @@ fun test(d: dynamic, a: Any?) {
         println(item)
     }
 
-    a.<!DYNAMIC_RECEIVER_EXPECTED_BUT_WAS_NON_DYNAMIC!>onDynamicFun<!>()
-    a.<!DYNAMIC_RECEIVER_EXPECTED_BUT_WAS_NON_DYNAMIC!>onDynamicProperty<!>
+    a.<!UNRESOLVED_REFERENCE!>onDynamicFun<!>()
+    a.<!UNRESOLVED_REFERENCE!>onDynamicProperty<!>
 }
 
 fun <T> eatT(t: T) {}

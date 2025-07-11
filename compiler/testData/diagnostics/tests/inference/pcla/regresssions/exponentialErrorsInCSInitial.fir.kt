@@ -19,7 +19,7 @@ public fun <E> List<E>.permutations1(k: Int = size) {
         val currentElements = <!UNRESOLVED_REFERENCE!>MutableList234<!>(k) { collection[<!UNRESOLVED_REFERENCE!>it<!>] }
 
         fun addStartMark(): Int {
-            val index = <!CANNOT_INFER_PARAMETER_TYPE, CANNOT_INFER_PARAMETER_TYPE!><!BUILDER_INFERENCE_STUB_RECEIVER!>references<!>[<!ARGUMENT_TYPE_MISMATCH!>1<!>]<!>
+            val index = <!CANNOT_INFER_PARAMETER_TYPE, CANNOT_INFER_PARAMETER_TYPE, UNRESOLVED_REFERENCE_WRONG_RECEIVER!>references[1]<!>
             references<!NO_SET_METHOD!>[1]<!> = references[<!MEMBER_PROJECTED_OUT!>index<!>]
             references<!NO_SET_METHOD!>[index]<!> = 1
             return index
