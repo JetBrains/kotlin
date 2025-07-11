@@ -8,14 +8,10 @@ package org.jetbrains.kotlin.ir.inline
 import org.jetbrains.kotlin.backend.common.LoweringContext
 import org.jetbrains.kotlin.backend.common.serialization.NonLinkingIrInlineFunctionDeserializer
 import org.jetbrains.kotlin.backend.common.serialization.signature.PublicIdSignatureComputer
-import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrFunction
-import org.jetbrains.kotlin.ir.expressions.IrCall
-import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.overrides.isEffectivelyPrivate
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
-import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.*
 
 /**
@@ -43,14 +39,6 @@ abstract class InlineFunctionResolver() {
     fun getFunctionDeclarationToInline(expression: IrFunctionAccessExpression): IrFunction? {
         if (shouldSkipBecauseOfCallSite(expression)) return null
         return getFunctionDeclaration(expression.symbol)
-    }
-
-    fun needsInlining(expression: IrFunctionAccessExpression): Boolean {
-        return getFunctionDeclarationToInline(expression) != null
-    }
-
-    fun needsInlining(function: IrFunction): Boolean {
-        return getFunctionDeclaration(function.symbol) != null
     }
 }
 
