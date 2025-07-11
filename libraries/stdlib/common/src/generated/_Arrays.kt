@@ -22,7 +22,8 @@ import kotlin.ranges.reversed
  * Returns 1st *element* from the array.
  * 
  * If the size of this array is less than 1, throws an [IndexOutOfBoundsException] except in Kotlin/JS
- * where the behavior is unspecified.
+ * where the behavior is unspecified, and in Kotlin/Wasm where a trap will be raised instead,
+ * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
  */
 @kotlin.internal.InlineOnly
 public inline operator fun <T> Array<out T>.component1(): T {
@@ -33,7 +34,8 @@ public inline operator fun <T> Array<out T>.component1(): T {
  * Returns 1st *element* from the array.
  * 
  * If the size of this array is less than 1, throws an [IndexOutOfBoundsException] except in Kotlin/JS
- * where the behavior is unspecified.
+ * where the behavior is unspecified, and in Kotlin/Wasm where a trap will be raised instead,
+ * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
  */
 @kotlin.internal.InlineOnly
 public inline operator fun ByteArray.component1(): Byte {
@@ -44,7 +46,8 @@ public inline operator fun ByteArray.component1(): Byte {
  * Returns 1st *element* from the array.
  * 
  * If the size of this array is less than 1, throws an [IndexOutOfBoundsException] except in Kotlin/JS
- * where the behavior is unspecified.
+ * where the behavior is unspecified, and in Kotlin/Wasm where a trap will be raised instead,
+ * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
  */
 @kotlin.internal.InlineOnly
 public inline operator fun ShortArray.component1(): Short {
@@ -55,7 +58,8 @@ public inline operator fun ShortArray.component1(): Short {
  * Returns 1st *element* from the array.
  * 
  * If the size of this array is less than 1, throws an [IndexOutOfBoundsException] except in Kotlin/JS
- * where the behavior is unspecified.
+ * where the behavior is unspecified, and in Kotlin/Wasm where a trap will be raised instead,
+ * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
  */
 @kotlin.internal.InlineOnly
 public inline operator fun IntArray.component1(): Int {
@@ -66,7 +70,8 @@ public inline operator fun IntArray.component1(): Int {
  * Returns 1st *element* from the array.
  * 
  * If the size of this array is less than 1, throws an [IndexOutOfBoundsException] except in Kotlin/JS
- * where the behavior is unspecified.
+ * where the behavior is unspecified, and in Kotlin/Wasm where a trap will be raised instead,
+ * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
  */
 @kotlin.internal.InlineOnly
 public inline operator fun LongArray.component1(): Long {
@@ -77,7 +82,8 @@ public inline operator fun LongArray.component1(): Long {
  * Returns 1st *element* from the array.
  * 
  * If the size of this array is less than 1, throws an [IndexOutOfBoundsException] except in Kotlin/JS
- * where the behavior is unspecified.
+ * where the behavior is unspecified, and in Kotlin/Wasm where a trap will be raised instead,
+ * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
  */
 @kotlin.internal.InlineOnly
 public inline operator fun FloatArray.component1(): Float {
@@ -88,7 +94,8 @@ public inline operator fun FloatArray.component1(): Float {
  * Returns 1st *element* from the array.
  * 
  * If the size of this array is less than 1, throws an [IndexOutOfBoundsException] except in Kotlin/JS
- * where the behavior is unspecified.
+ * where the behavior is unspecified, and in Kotlin/Wasm where a trap will be raised instead,
+ * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
  */
 @kotlin.internal.InlineOnly
 public inline operator fun DoubleArray.component1(): Double {
@@ -99,7 +106,8 @@ public inline operator fun DoubleArray.component1(): Double {
  * Returns 1st *element* from the array.
  * 
  * If the size of this array is less than 1, throws an [IndexOutOfBoundsException] except in Kotlin/JS
- * where the behavior is unspecified.
+ * where the behavior is unspecified, and in Kotlin/Wasm where a trap will be raised instead,
+ * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
  */
 @kotlin.internal.InlineOnly
 public inline operator fun BooleanArray.component1(): Boolean {
@@ -110,7 +118,8 @@ public inline operator fun BooleanArray.component1(): Boolean {
  * Returns 1st *element* from the array.
  * 
  * If the size of this array is less than 1, throws an [IndexOutOfBoundsException] except in Kotlin/JS
- * where the behavior is unspecified.
+ * where the behavior is unspecified, and in Kotlin/Wasm where a trap will be raised instead,
+ * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
  */
 @kotlin.internal.InlineOnly
 public inline operator fun CharArray.component1(): Char {
@@ -121,7 +130,8 @@ public inline operator fun CharArray.component1(): Char {
  * Returns 2nd *element* from the array.
  * 
  * If the size of this array is less than 2, throws an [IndexOutOfBoundsException] except in Kotlin/JS
- * where the behavior is unspecified.
+ * where the behavior is unspecified, and in Kotlin/Wasm where a trap will be raised instead,
+ * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
  */
 @kotlin.internal.InlineOnly
 public inline operator fun <T> Array<out T>.component2(): T {
@@ -132,7 +142,8 @@ public inline operator fun <T> Array<out T>.component2(): T {
  * Returns 2nd *element* from the array.
  * 
  * If the size of this array is less than 2, throws an [IndexOutOfBoundsException] except in Kotlin/JS
- * where the behavior is unspecified.
+ * where the behavior is unspecified, and in Kotlin/Wasm where a trap will be raised instead,
+ * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
  */
 @kotlin.internal.InlineOnly
 public inline operator fun ByteArray.component2(): Byte {
@@ -143,7 +154,8 @@ public inline operator fun ByteArray.component2(): Byte {
  * Returns 2nd *element* from the array.
  * 
  * If the size of this array is less than 2, throws an [IndexOutOfBoundsException] except in Kotlin/JS
- * where the behavior is unspecified.
+ * where the behavior is unspecified, and in Kotlin/Wasm where a trap will be raised instead,
+ * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
  */
 @kotlin.internal.InlineOnly
 public inline operator fun ShortArray.component2(): Short {
@@ -154,7 +166,8 @@ public inline operator fun ShortArray.component2(): Short {
  * Returns 2nd *element* from the array.
  * 
  * If the size of this array is less than 2, throws an [IndexOutOfBoundsException] except in Kotlin/JS
- * where the behavior is unspecified.
+ * where the behavior is unspecified, and in Kotlin/Wasm where a trap will be raised instead,
+ * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
  */
 @kotlin.internal.InlineOnly
 public inline operator fun IntArray.component2(): Int {
@@ -165,7 +178,8 @@ public inline operator fun IntArray.component2(): Int {
  * Returns 2nd *element* from the array.
  * 
  * If the size of this array is less than 2, throws an [IndexOutOfBoundsException] except in Kotlin/JS
- * where the behavior is unspecified.
+ * where the behavior is unspecified, and in Kotlin/Wasm where a trap will be raised instead,
+ * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
  */
 @kotlin.internal.InlineOnly
 public inline operator fun LongArray.component2(): Long {
@@ -176,7 +190,8 @@ public inline operator fun LongArray.component2(): Long {
  * Returns 2nd *element* from the array.
  * 
  * If the size of this array is less than 2, throws an [IndexOutOfBoundsException] except in Kotlin/JS
- * where the behavior is unspecified.
+ * where the behavior is unspecified, and in Kotlin/Wasm where a trap will be raised instead,
+ * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
  */
 @kotlin.internal.InlineOnly
 public inline operator fun FloatArray.component2(): Float {
@@ -187,7 +202,8 @@ public inline operator fun FloatArray.component2(): Float {
  * Returns 2nd *element* from the array.
  * 
  * If the size of this array is less than 2, throws an [IndexOutOfBoundsException] except in Kotlin/JS
- * where the behavior is unspecified.
+ * where the behavior is unspecified, and in Kotlin/Wasm where a trap will be raised instead,
+ * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
  */
 @kotlin.internal.InlineOnly
 public inline operator fun DoubleArray.component2(): Double {
@@ -198,7 +214,8 @@ public inline operator fun DoubleArray.component2(): Double {
  * Returns 2nd *element* from the array.
  * 
  * If the size of this array is less than 2, throws an [IndexOutOfBoundsException] except in Kotlin/JS
- * where the behavior is unspecified.
+ * where the behavior is unspecified, and in Kotlin/Wasm where a trap will be raised instead,
+ * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
  */
 @kotlin.internal.InlineOnly
 public inline operator fun BooleanArray.component2(): Boolean {
@@ -209,7 +226,8 @@ public inline operator fun BooleanArray.component2(): Boolean {
  * Returns 2nd *element* from the array.
  * 
  * If the size of this array is less than 2, throws an [IndexOutOfBoundsException] except in Kotlin/JS
- * where the behavior is unspecified.
+ * where the behavior is unspecified, and in Kotlin/Wasm where a trap will be raised instead,
+ * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
  */
 @kotlin.internal.InlineOnly
 public inline operator fun CharArray.component2(): Char {
@@ -220,7 +238,8 @@ public inline operator fun CharArray.component2(): Char {
  * Returns 3rd *element* from the array.
  * 
  * If the size of this array is less than 3, throws an [IndexOutOfBoundsException] except in Kotlin/JS
- * where the behavior is unspecified.
+ * where the behavior is unspecified, and in Kotlin/Wasm where a trap will be raised instead,
+ * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
  */
 @kotlin.internal.InlineOnly
 public inline operator fun <T> Array<out T>.component3(): T {
@@ -231,7 +250,8 @@ public inline operator fun <T> Array<out T>.component3(): T {
  * Returns 3rd *element* from the array.
  * 
  * If the size of this array is less than 3, throws an [IndexOutOfBoundsException] except in Kotlin/JS
- * where the behavior is unspecified.
+ * where the behavior is unspecified, and in Kotlin/Wasm where a trap will be raised instead,
+ * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
  */
 @kotlin.internal.InlineOnly
 public inline operator fun ByteArray.component3(): Byte {
@@ -242,7 +262,8 @@ public inline operator fun ByteArray.component3(): Byte {
  * Returns 3rd *element* from the array.
  * 
  * If the size of this array is less than 3, throws an [IndexOutOfBoundsException] except in Kotlin/JS
- * where the behavior is unspecified.
+ * where the behavior is unspecified, and in Kotlin/Wasm where a trap will be raised instead,
+ * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
  */
 @kotlin.internal.InlineOnly
 public inline operator fun ShortArray.component3(): Short {
@@ -253,7 +274,8 @@ public inline operator fun ShortArray.component3(): Short {
  * Returns 3rd *element* from the array.
  * 
  * If the size of this array is less than 3, throws an [IndexOutOfBoundsException] except in Kotlin/JS
- * where the behavior is unspecified.
+ * where the behavior is unspecified, and in Kotlin/Wasm where a trap will be raised instead,
+ * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
  */
 @kotlin.internal.InlineOnly
 public inline operator fun IntArray.component3(): Int {
@@ -264,7 +286,8 @@ public inline operator fun IntArray.component3(): Int {
  * Returns 3rd *element* from the array.
  * 
  * If the size of this array is less than 3, throws an [IndexOutOfBoundsException] except in Kotlin/JS
- * where the behavior is unspecified.
+ * where the behavior is unspecified, and in Kotlin/Wasm where a trap will be raised instead,
+ * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
  */
 @kotlin.internal.InlineOnly
 public inline operator fun LongArray.component3(): Long {
@@ -275,7 +298,8 @@ public inline operator fun LongArray.component3(): Long {
  * Returns 3rd *element* from the array.
  * 
  * If the size of this array is less than 3, throws an [IndexOutOfBoundsException] except in Kotlin/JS
- * where the behavior is unspecified.
+ * where the behavior is unspecified, and in Kotlin/Wasm where a trap will be raised instead,
+ * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
  */
 @kotlin.internal.InlineOnly
 public inline operator fun FloatArray.component3(): Float {
@@ -286,7 +310,8 @@ public inline operator fun FloatArray.component3(): Float {
  * Returns 3rd *element* from the array.
  * 
  * If the size of this array is less than 3, throws an [IndexOutOfBoundsException] except in Kotlin/JS
- * where the behavior is unspecified.
+ * where the behavior is unspecified, and in Kotlin/Wasm where a trap will be raised instead,
+ * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
  */
 @kotlin.internal.InlineOnly
 public inline operator fun DoubleArray.component3(): Double {
@@ -297,7 +322,8 @@ public inline operator fun DoubleArray.component3(): Double {
  * Returns 3rd *element* from the array.
  * 
  * If the size of this array is less than 3, throws an [IndexOutOfBoundsException] except in Kotlin/JS
- * where the behavior is unspecified.
+ * where the behavior is unspecified, and in Kotlin/Wasm where a trap will be raised instead,
+ * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
  */
 @kotlin.internal.InlineOnly
 public inline operator fun BooleanArray.component3(): Boolean {
@@ -308,7 +334,8 @@ public inline operator fun BooleanArray.component3(): Boolean {
  * Returns 3rd *element* from the array.
  * 
  * If the size of this array is less than 3, throws an [IndexOutOfBoundsException] except in Kotlin/JS
- * where the behavior is unspecified.
+ * where the behavior is unspecified, and in Kotlin/Wasm where a trap will be raised instead,
+ * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
  */
 @kotlin.internal.InlineOnly
 public inline operator fun CharArray.component3(): Char {
@@ -319,7 +346,8 @@ public inline operator fun CharArray.component3(): Char {
  * Returns 4th *element* from the array.
  * 
  * If the size of this array is less than 4, throws an [IndexOutOfBoundsException] except in Kotlin/JS
- * where the behavior is unspecified.
+ * where the behavior is unspecified, and in Kotlin/Wasm where a trap will be raised instead,
+ * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
  */
 @kotlin.internal.InlineOnly
 public inline operator fun <T> Array<out T>.component4(): T {
@@ -330,7 +358,8 @@ public inline operator fun <T> Array<out T>.component4(): T {
  * Returns 4th *element* from the array.
  * 
  * If the size of this array is less than 4, throws an [IndexOutOfBoundsException] except in Kotlin/JS
- * where the behavior is unspecified.
+ * where the behavior is unspecified, and in Kotlin/Wasm where a trap will be raised instead,
+ * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
  */
 @kotlin.internal.InlineOnly
 public inline operator fun ByteArray.component4(): Byte {
@@ -341,7 +370,8 @@ public inline operator fun ByteArray.component4(): Byte {
  * Returns 4th *element* from the array.
  * 
  * If the size of this array is less than 4, throws an [IndexOutOfBoundsException] except in Kotlin/JS
- * where the behavior is unspecified.
+ * where the behavior is unspecified, and in Kotlin/Wasm where a trap will be raised instead,
+ * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
  */
 @kotlin.internal.InlineOnly
 public inline operator fun ShortArray.component4(): Short {
@@ -352,7 +382,8 @@ public inline operator fun ShortArray.component4(): Short {
  * Returns 4th *element* from the array.
  * 
  * If the size of this array is less than 4, throws an [IndexOutOfBoundsException] except in Kotlin/JS
- * where the behavior is unspecified.
+ * where the behavior is unspecified, and in Kotlin/Wasm where a trap will be raised instead,
+ * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
  */
 @kotlin.internal.InlineOnly
 public inline operator fun IntArray.component4(): Int {
@@ -363,7 +394,8 @@ public inline operator fun IntArray.component4(): Int {
  * Returns 4th *element* from the array.
  * 
  * If the size of this array is less than 4, throws an [IndexOutOfBoundsException] except in Kotlin/JS
- * where the behavior is unspecified.
+ * where the behavior is unspecified, and in Kotlin/Wasm where a trap will be raised instead,
+ * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
  */
 @kotlin.internal.InlineOnly
 public inline operator fun LongArray.component4(): Long {
@@ -374,7 +406,8 @@ public inline operator fun LongArray.component4(): Long {
  * Returns 4th *element* from the array.
  * 
  * If the size of this array is less than 4, throws an [IndexOutOfBoundsException] except in Kotlin/JS
- * where the behavior is unspecified.
+ * where the behavior is unspecified, and in Kotlin/Wasm where a trap will be raised instead,
+ * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
  */
 @kotlin.internal.InlineOnly
 public inline operator fun FloatArray.component4(): Float {
@@ -385,7 +418,8 @@ public inline operator fun FloatArray.component4(): Float {
  * Returns 4th *element* from the array.
  * 
  * If the size of this array is less than 4, throws an [IndexOutOfBoundsException] except in Kotlin/JS
- * where the behavior is unspecified.
+ * where the behavior is unspecified, and in Kotlin/Wasm where a trap will be raised instead,
+ * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
  */
 @kotlin.internal.InlineOnly
 public inline operator fun DoubleArray.component4(): Double {
@@ -396,7 +430,8 @@ public inline operator fun DoubleArray.component4(): Double {
  * Returns 4th *element* from the array.
  * 
  * If the size of this array is less than 4, throws an [IndexOutOfBoundsException] except in Kotlin/JS
- * where the behavior is unspecified.
+ * where the behavior is unspecified, and in Kotlin/Wasm where a trap will be raised instead,
+ * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
  */
 @kotlin.internal.InlineOnly
 public inline operator fun BooleanArray.component4(): Boolean {
@@ -407,7 +442,8 @@ public inline operator fun BooleanArray.component4(): Boolean {
  * Returns 4th *element* from the array.
  * 
  * If the size of this array is less than 4, throws an [IndexOutOfBoundsException] except in Kotlin/JS
- * where the behavior is unspecified.
+ * where the behavior is unspecified, and in Kotlin/Wasm where a trap will be raised instead,
+ * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
  */
 @kotlin.internal.InlineOnly
 public inline operator fun CharArray.component4(): Char {
@@ -418,7 +454,8 @@ public inline operator fun CharArray.component4(): Char {
  * Returns 5th *element* from the array.
  * 
  * If the size of this array is less than 5, throws an [IndexOutOfBoundsException] except in Kotlin/JS
- * where the behavior is unspecified.
+ * where the behavior is unspecified, and in Kotlin/Wasm where a trap will be raised instead,
+ * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
  */
 @kotlin.internal.InlineOnly
 public inline operator fun <T> Array<out T>.component5(): T {
@@ -429,7 +466,8 @@ public inline operator fun <T> Array<out T>.component5(): T {
  * Returns 5th *element* from the array.
  * 
  * If the size of this array is less than 5, throws an [IndexOutOfBoundsException] except in Kotlin/JS
- * where the behavior is unspecified.
+ * where the behavior is unspecified, and in Kotlin/Wasm where a trap will be raised instead,
+ * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
  */
 @kotlin.internal.InlineOnly
 public inline operator fun ByteArray.component5(): Byte {
@@ -440,7 +478,8 @@ public inline operator fun ByteArray.component5(): Byte {
  * Returns 5th *element* from the array.
  * 
  * If the size of this array is less than 5, throws an [IndexOutOfBoundsException] except in Kotlin/JS
- * where the behavior is unspecified.
+ * where the behavior is unspecified, and in Kotlin/Wasm where a trap will be raised instead,
+ * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
  */
 @kotlin.internal.InlineOnly
 public inline operator fun ShortArray.component5(): Short {
@@ -451,7 +490,8 @@ public inline operator fun ShortArray.component5(): Short {
  * Returns 5th *element* from the array.
  * 
  * If the size of this array is less than 5, throws an [IndexOutOfBoundsException] except in Kotlin/JS
- * where the behavior is unspecified.
+ * where the behavior is unspecified, and in Kotlin/Wasm where a trap will be raised instead,
+ * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
  */
 @kotlin.internal.InlineOnly
 public inline operator fun IntArray.component5(): Int {
@@ -462,7 +502,8 @@ public inline operator fun IntArray.component5(): Int {
  * Returns 5th *element* from the array.
  * 
  * If the size of this array is less than 5, throws an [IndexOutOfBoundsException] except in Kotlin/JS
- * where the behavior is unspecified.
+ * where the behavior is unspecified, and in Kotlin/Wasm where a trap will be raised instead,
+ * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
  */
 @kotlin.internal.InlineOnly
 public inline operator fun LongArray.component5(): Long {
@@ -473,7 +514,8 @@ public inline operator fun LongArray.component5(): Long {
  * Returns 5th *element* from the array.
  * 
  * If the size of this array is less than 5, throws an [IndexOutOfBoundsException] except in Kotlin/JS
- * where the behavior is unspecified.
+ * where the behavior is unspecified, and in Kotlin/Wasm where a trap will be raised instead,
+ * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
  */
 @kotlin.internal.InlineOnly
 public inline operator fun FloatArray.component5(): Float {
@@ -484,7 +526,8 @@ public inline operator fun FloatArray.component5(): Float {
  * Returns 5th *element* from the array.
  * 
  * If the size of this array is less than 5, throws an [IndexOutOfBoundsException] except in Kotlin/JS
- * where the behavior is unspecified.
+ * where the behavior is unspecified, and in Kotlin/Wasm where a trap will be raised instead,
+ * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
  */
 @kotlin.internal.InlineOnly
 public inline operator fun DoubleArray.component5(): Double {
@@ -495,7 +538,8 @@ public inline operator fun DoubleArray.component5(): Double {
  * Returns 5th *element* from the array.
  * 
  * If the size of this array is less than 5, throws an [IndexOutOfBoundsException] except in Kotlin/JS
- * where the behavior is unspecified.
+ * where the behavior is unspecified, and in Kotlin/Wasm where a trap will be raised instead,
+ * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
  */
 @kotlin.internal.InlineOnly
 public inline operator fun BooleanArray.component5(): Boolean {
@@ -506,7 +550,8 @@ public inline operator fun BooleanArray.component5(): Boolean {
  * Returns 5th *element* from the array.
  * 
  * If the size of this array is less than 5, throws an [IndexOutOfBoundsException] except in Kotlin/JS
- * where the behavior is unspecified.
+ * where the behavior is unspecified, and in Kotlin/Wasm where a trap will be raised instead,
+ * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
  */
 @kotlin.internal.InlineOnly
 public inline operator fun CharArray.component5(): Char {
@@ -581,63 +626,81 @@ public operator fun CharArray.contains(element: Char): Boolean {
 }
 
 /**
- * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
+ * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this array,
+ * expect in Kotlin/Wasm, where a trap will be raised, unless `-Xwasm-enable-array-range-checks` compiler flag
+ * was specified when linking an executable.
  * 
  * @sample samples.collections.Collections.Elements.elementAt
  */
 public expect fun <T> Array<out T>.elementAt(index: Int): T
 
 /**
- * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
+ * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this array,
+ * expect in Kotlin/Wasm, where a trap will be raised, unless `-Xwasm-enable-array-range-checks` compiler flag
+ * was specified when linking an executable.
  * 
  * @sample samples.collections.Collections.Elements.elementAt
  */
 public expect fun ByteArray.elementAt(index: Int): Byte
 
 /**
- * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
+ * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this array,
+ * expect in Kotlin/Wasm, where a trap will be raised, unless `-Xwasm-enable-array-range-checks` compiler flag
+ * was specified when linking an executable.
  * 
  * @sample samples.collections.Collections.Elements.elementAt
  */
 public expect fun ShortArray.elementAt(index: Int): Short
 
 /**
- * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
+ * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this array,
+ * expect in Kotlin/Wasm, where a trap will be raised, unless `-Xwasm-enable-array-range-checks` compiler flag
+ * was specified when linking an executable.
  * 
  * @sample samples.collections.Collections.Elements.elementAt
  */
 public expect fun IntArray.elementAt(index: Int): Int
 
 /**
- * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
+ * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this array,
+ * expect in Kotlin/Wasm, where a trap will be raised, unless `-Xwasm-enable-array-range-checks` compiler flag
+ * was specified when linking an executable.
  * 
  * @sample samples.collections.Collections.Elements.elementAt
  */
 public expect fun LongArray.elementAt(index: Int): Long
 
 /**
- * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
+ * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this array,
+ * expect in Kotlin/Wasm, where a trap will be raised, unless `-Xwasm-enable-array-range-checks` compiler flag
+ * was specified when linking an executable.
  * 
  * @sample samples.collections.Collections.Elements.elementAt
  */
 public expect fun FloatArray.elementAt(index: Int): Float
 
 /**
- * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
+ * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this array,
+ * expect in Kotlin/Wasm, where a trap will be raised, unless `-Xwasm-enable-array-range-checks` compiler flag
+ * was specified when linking an executable.
  * 
  * @sample samples.collections.Collections.Elements.elementAt
  */
 public expect fun DoubleArray.elementAt(index: Int): Double
 
 /**
- * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
+ * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this array,
+ * expect in Kotlin/Wasm, where a trap will be raised, unless `-Xwasm-enable-array-range-checks` compiler flag
+ * was specified when linking an executable.
  * 
  * @sample samples.collections.Collections.Elements.elementAt
  */
 public expect fun BooleanArray.elementAt(index: Int): Boolean
 
 /**
- * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
+ * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this array,
+ * expect in Kotlin/Wasm, where a trap will be raised, unless `-Xwasm-enable-array-range-checks` compiler flag
+ * was specified when linking an executable.
  * 
  * @sample samples.collections.Collections.Elements.elementAt
  */

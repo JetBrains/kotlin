@@ -17,7 +17,9 @@ import kotlin.contracts.*
 import kotlin.random.*
 
 /**
- * Returns a character at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this char sequence.
+ * Returns a character at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this char sequence,
+ * expect in Kotlin/Wasm, where a trap will be raised, unless `-Xwasm-enable-array-range-checks` compiler flag
+ * was specified when linking an executable.
  * 
  * @sample samples.collections.Collections.Elements.elementAt
  */
