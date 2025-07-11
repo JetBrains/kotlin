@@ -1,4 +1,4 @@
-FILE: override.fir.kt
+FILE: override.kt
     public open class Foo : R|kotlin/Any| {
         public constructor(): R|Foo| {
             super<R|kotlin/Any|>()
@@ -14,7 +14,7 @@ FILE: override.fir.kt
             super<R|Foo|>()
         }
 
-        public open override inline fun bar(): R|kotlin/String| {
+        public open override fun bar(): R|kotlin/String| {
             ^bar String(Hello, Kotlin!)
         }
 
