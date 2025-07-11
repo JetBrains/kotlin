@@ -18,6 +18,8 @@ import java.util.concurrent.ConcurrentHashMap
 private typealias FunctionTypeForRigidTypeApproximation =
         context(TypeApproximatorConfiguration, AbstractTypeApproximator.Cache) (RigidTypeMarker, Int) -> KotlinTypeMarker?
 
+typealias TypeApproximatorCachesPerConfiguration = MutableMap<TypeApproximatorConfiguration, AbstractTypeApproximator.Cache>
+
 abstract class AbstractTypeApproximator(
     val ctx: TypeSystemInferenceExtensionContext,
     protected val languageVersionSettings: LanguageVersionSettings,
@@ -60,24 +62,42 @@ abstract class AbstractTypeApproximator(
         // Non-trivial lower bounds are always brought via explicitly specified/inferred `in` projection where no recursion should happen.
         @AssertionsOnly
         val capturedTypesBeingApproximatedToSubtype = mutableSetOf<CapturedTypeMarker>()
+
+        operator fun plusAssign(other: Cache) {
+            resultsForSupertype += other.resultsForSupertype
+            resultsForSubtype += other.resultsForSubtype
+
+            @OptIn(AssertionsOnly::class)
+            check(other.capturedTypesBeingApproximatedToSupertype.isEmpty() && other.capturedTypesBeingApproximatedToSubtype.isEmpty()) {
+                "Combination of caches/Constraint storages is not expected to happen during type approximation"
+            }
+        }
     }
 
     // null means that this input type is the result, i.e. input type not contains not-allowed kind of types
     // type <: resultType
-    fun approximateToSuperType(type: KotlinTypeMarker, conf: TypeApproximatorConfiguration): KotlinTypeMarker? {
+    fun approximateToSuperType(
+        type: KotlinTypeMarker,
+        conf: TypeApproximatorConfiguration,
+        caches: TypeApproximatorCachesPerConfiguration? = null,
+    ): KotlinTypeMarker? {
         // TODO: Replace with context(conf) { ... } once it's possible
         return with(conf) {
-            with(Cache()) {
+            with(caches?.getOrPut(conf, ::Cache) ?: Cache()) {
                 approximateToSuperType(type, -type.typeDepthForApproximation())
             }
         }
     }
 
     // resultType <: type
-    fun approximateToSubType(type: KotlinTypeMarker, conf: TypeApproximatorConfiguration): KotlinTypeMarker? {
+    fun approximateToSubType(
+        type: KotlinTypeMarker,
+        conf: TypeApproximatorConfiguration,
+        caches: TypeApproximatorCachesPerConfiguration? = null,
+    ): KotlinTypeMarker? {
         // TODO: Replace with context(conf) { ... } once it's possible
         return with(conf) {
-            with(Cache()) {
+            with(caches?.getOrPut(conf, ::Cache) ?: Cache()) {
                 approximateToSubType(type, -type.typeDepthForApproximation())
             }
         }
