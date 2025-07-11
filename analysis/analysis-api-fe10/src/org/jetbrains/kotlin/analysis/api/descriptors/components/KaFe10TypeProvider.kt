@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.analysis.api.descriptors.components
 
 import org.jetbrains.kotlin.analysis.api.components.KaBuiltinTypes
-import org.jetbrains.kotlin.analysis.api.components.KaTypeProvider
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisFacade.AnalysisMode
 import org.jetbrains.kotlin.analysis.api.descriptors.KaFe10Session
@@ -16,7 +15,7 @@ import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.bas
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.psiBased.base.getResolutionScope
 import org.jetbrains.kotlin.analysis.api.descriptors.types.base.KaFe10Type
 import org.jetbrains.kotlin.analysis.api.descriptors.utils.PublicApproximatorConfiguration
-import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSessionComponent
+import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseTypeProvider
 import org.jetbrains.kotlin.analysis.api.impl.base.components.withPsiValidityAssertion
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
 import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
@@ -51,7 +50,7 @@ import org.jetbrains.kotlin.util.containingNonLocalDeclaration
 
 internal class KaFe10TypeProvider(
     override val analysisSessionProvider: () -> KaFe10Session,
-) : KaBaseSessionComponent<KaFe10Session>(), KaTypeProvider, KaFe10SessionComponent {
+) : KaBaseTypeProvider<KaFe10Session>(), KaFe10SessionComponent {
     @Suppress("SpellCheckingInspection")
     private val typeApproximator by lazy {
         TypeApproximator(

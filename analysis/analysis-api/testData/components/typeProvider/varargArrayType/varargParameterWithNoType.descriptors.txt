@@ -1,0 +1,8 @@
+KaUsualClassType:
+  annotations: []
+  typeArguments: [
+    out KaErrorType:
+      annotations: []
+      type: ERROR_TYPE
+  ]
+  type: kotlin/Array<out ERROR_TYPE>

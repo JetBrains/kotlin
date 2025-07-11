@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassifierSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaValueParameterSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaFlexibleType
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.psi.KtDoubleColonExpression
@@ -104,6 +105,15 @@ public interface KaTypeProvider : KaSessionComponent {
      * @see KaTypeCreator
      */
     public val KaClassifierSymbol.defaultType: KaType
+
+    /**
+     * If [this] is a [vararg](https://kotlinlang.org/docs/functions.html#variable-number-of-arguments-varargs) parameter,
+     * returns the array type used to represent arguments passed to this parameter.
+     *
+     * If [this] is not a `vararg` parameter, returns `null`.
+     */
+    @KaExperimentalApi
+    public val KaValueParameterSymbol.varargArrayType: KaType?
 
     @Deprecated("Use `defaultType` from `KaClassifierSymbol` directly", level = DeprecationLevel.HIDDEN)
     public val KaNamedClassSymbol.defaultType: KaType get() = defaultType

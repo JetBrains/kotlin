@@ -1,0 +1,1 @@
+fun foo(vararg xx: Int, vararg yy: Stri<caret>ng) {}
