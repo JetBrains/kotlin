@@ -885,7 +885,7 @@ public actual fun CharSequence.repeat(n: Int): String {
 @ExperimentalStdlibApi
 @JvmOverloads
 public fun CharArray.asCharSequence(startIndex: Int = 0, endIndex: Int = this.size): CharSequence =
-    CharArraySequenceView(this, startIndex, endIndex)
+    if (startIndex == endIndex) "" else CharArraySequenceView(this, startIndex, endIndex)
 
 private class CharArraySequenceView(
     val charArray: CharArray,
