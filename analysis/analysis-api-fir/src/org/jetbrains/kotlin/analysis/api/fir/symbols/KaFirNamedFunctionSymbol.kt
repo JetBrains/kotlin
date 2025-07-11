@@ -126,8 +126,17 @@ internal class KaFirNamedFunctionSymbol private constructor(
      * if [backingPsi] is not null and the symbol is not [isOverride].
      */
     private fun psiHasModifierIfNotInherited(modifierToken: KtModifierKeywordToken): Boolean? {
-        if (backingPsi == null || isOverride) return null
-        return backingPsi.hasModifier(modifierToken)
+        if (backingPsi == null) return null
+
+        val hasModifier = backingPsi.hasModifier(modifierToken)
+        return when {
+            // The modifier is explicitly declared, so it shouldn't be changed
+            hasModifier -> true
+            // The modifier is inherited, so it might be changed
+            isOverride -> null
+            // The modifier is not explicitly declared and not inherited, so it should be false
+            else -> false
+        }
     }
 
     override val isOverride: Boolean
