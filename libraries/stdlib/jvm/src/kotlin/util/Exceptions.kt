@@ -52,11 +52,11 @@ public val Throwable.stackTrace: Array<StackTraceElement>
  */
 @SinceKotlin("1.4")
 public actual fun Throwable.stackTraceToString(): String {
-    val sw = StringWriter()
-    val pw = PrintWriter(sw)
+    val sb = StringBuilder()
+    val pw = PrintWriter(sb.asWriter())
     printStackTrace(pw)
     pw.flush()
-    return sw.toString()
+    return sb.toString()
 }
 
 /**

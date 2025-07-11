@@ -107,7 +107,7 @@ private class LinesSequence(private val reader: BufferedReader) : Sequence<Strin
  * @return the string with corresponding file content.
  */
 public fun Reader.readText(): String {
-    val buffer = StringWriter()
+    val buffer = StringBuilder().asWriter()
     copyTo(buffer)
     return buffer.toString()
 }
@@ -160,48 +160,49 @@ public fun URL.readBytes(): ByteArray = openStream().use { it.readBytes() }
  * @return a [Writer] wrapping the specified [Appendable], not thread-safe.
  */
 internal fun Appendable.asWriter(): Writer =
-    this as? Writer ?: object : Writer() {
-        private val appendable: Appendable = this@asWriter
+    this as? Writer ?: AppendableWriter(this)
 
-        // Closeable
-        override fun close() {
-            (appendable as? Closeable)?.close()
-        }
+private class AppendableWriter(private val appendable: Appendable) : Writer() {
 
-        // Flushable
-        override fun flush() {
-            (appendable as? Flushable)?.flush()
-        }
-
-        // Appendable
-        override fun append(csq: CharSequence?) = apply { appendable.append(csq) }
-        override fun append(c: Char) = apply { appendable.append(c) }
-        override fun append(csq: CharSequence?, start: Int, end: Int) = apply { appendable.append(csq, start, end) }
-
-        // Writer
-        override fun write(c: Int) {
-            appendable.append(c.toChar())
-        }
-
-        override fun write(str: String, off: Int, len: Int) {
-            if (off < 0 || len < 0 || off + len !in 0..str.length)
-                throw IndexOutOfBoundsException("off=$off, len=$len, str.size=${str.length}")
-
-            appendable.append(str, off, len)
-        }
-
-        override fun write(str: String) {
-            appendable.append(str)
-        }
-
-        override fun write(cbuf: CharArray, off: Int, len: Int) {
-            if (off < 0 || len < 0 || off + len !in 0..cbuf.size)
-                throw IndexOutOfBoundsException("off=$off, len=$len, cbuf.size=${cbuf.size}")
-
-            appendable.append(cbuf.asCharSequence(off, off + len))
-        }
-
-        override fun write(cbuf: CharArray) {
-            appendable.append(cbuf.asCharSequence())
-        }
+    // Closeable
+    override fun close() {
+        (appendable as? Closeable)?.close()
     }
+
+    // Flushable
+    override fun flush() {
+        (appendable as? Flushable)?.flush()
+    }
+
+    // Appendable
+    override fun append(csq: CharSequence?) = apply { appendable.append(csq) }
+    override fun append(c: Char) = apply { appendable.append(c) }
+    override fun append(csq: CharSequence?, start: Int, end: Int) = apply { appendable.append(csq, start, end) }
+
+    // Writer
+    override fun write(c: Int) {
+        appendable.append(c.toChar())
+    }
+
+    override fun write(str: String, off: Int, len: Int) {
+        if (off < 0 || len < 0 || off + len !in 0..str.length)
+            throw IndexOutOfBoundsException("off=$off, len=$len, str.size=${str.length}")
+
+        appendable.append(str, off, len)
+    }
+
+    override fun write(str: String) {
+        appendable.append(str)
+    }
+
+    override fun write(cbuf: CharArray, off: Int, len: Int) {
+        if (off < 0 || len < 0 || off + len !in 0..cbuf.size)
+            throw IndexOutOfBoundsException("off=$off, len=$len, cbuf.size=${cbuf.size}")
+
+        appendable.append(cbuf.asCharSequence(off, off + len))
+    }
+
+    override fun write(cbuf: CharArray) {
+        appendable.append(cbuf.asCharSequence())
+    }
+}
