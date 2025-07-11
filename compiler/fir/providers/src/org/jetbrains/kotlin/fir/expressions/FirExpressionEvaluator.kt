@@ -423,6 +423,10 @@ private fun ConstantValueKind.toCompileTimeType(): CompileTimeType {
         ConstantValueKind.Short -> CompileTimeType.SHORT
         ConstantValueKind.Int -> CompileTimeType.INT
         ConstantValueKind.Long -> CompileTimeType.LONG
+        ConstantValueKind.UnsignedByte -> CompileTimeType.UBYTE
+        ConstantValueKind.UnsignedShort -> CompileTimeType.USHORT
+        ConstantValueKind.UnsignedInt -> CompileTimeType.UINT
+        ConstantValueKind.UnsignedLong -> CompileTimeType.ULONG
         ConstantValueKind.Double -> CompileTimeType.DOUBLE
         ConstantValueKind.Float -> CompileTimeType.FLOAT
         ConstantValueKind.Char -> CompileTimeType.CHAR

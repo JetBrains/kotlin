@@ -80,6 +80,19 @@ sealed class EvaluationMode {
             Name.identifier("greater"), Name.identifier("greaterOrEqual"),
         )
 
+        private val allowedMethodsOnUnsigned = setOf<Name>(
+            *OperatorNameConventions.SIMPLE_BINARY_OPERATION_NAMES.toTypedArray(),
+            *OperatorNameConventions.SIMPLE_BITWISE_OPERATION_NAMES.toTypedArray(),
+            OperatorNameConventions.TO_STRING, OperatorNameConventions.EQUALS, OperatorNameConventions.COMPARE_TO,
+            *OperatorNameConventions.NUMBER_CONVERSIONS.toTypedArray(),
+            *OperatorNameConventions.UNSIGNED_CONVERSIONS.toTypedArray(),
+            Name.identifier("less"), Name.identifier("lessOrEqual"),
+            Name.identifier("greater"), Name.identifier("greaterOrEqual"),
+            Name.identifier("inv"),
+            Name.identifier("floorDiv"),
+            Name.identifier("mod"),
+        )
+
         private val allowedMethodsOnStrings = setOf(
             Name.special("<get-length>"),
             OperatorNameConventions.PLUS, OperatorNameConventions.GET, OperatorNameConventions.COMPARE_TO,
@@ -113,18 +126,17 @@ sealed class EvaluationMode {
                 parentType.isPrimitiveType() -> function.name in allowedMethodsOnPrimitives
                 parentType.isString() -> function.name in allowedMethodsOnStrings
                 parent.isObject -> parent.parentClassOrNull?.defaultType?.let { it.isPrimitiveType() || it.isUnsigned() } == true
-                parentType.isUnsignedType() && function is IrConstructor -> true
+                parentType.isUnsignedType() ->  function is IrConstructor || function.name in allowedMethodsOnUnsigned
                 else -> fqName in allowedExtensionFunctions || fqName in allowedBuiltinExtensionFunctions
             }
         }
 
         override fun canEvaluateBlock(block: IrBlock): Boolean = block.statements.size == 1
         override fun canEvaluateExpression(expression: IrExpression): Boolean {
-            return when {
-                expression is IrConst -> true
-                expression is IrWhen -> expression.origin in allowedOriginsForWhen
-                expression !is IrCall -> false
-                expression.hasUnsignedArgs() -> expression.symbol.owner.fqNameWhenAvailable?.asString() == "kotlin.String.plus"
+            return when (expression) {
+                is IrConst -> true
+                is IrWhen -> expression.origin in allowedOriginsForWhen
+                !is IrCall -> false
                 else -> true
             }
         }
