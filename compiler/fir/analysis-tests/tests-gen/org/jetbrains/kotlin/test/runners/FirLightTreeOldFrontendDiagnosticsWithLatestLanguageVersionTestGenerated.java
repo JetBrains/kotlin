@@ -29811,6 +29811,12 @@ public class FirLightTreeOldFrontendDiagnosticsWithLatestLanguageVersionTestGene
       }
 
       @Test
+      @TestMetadata("unrelatedInvoke.kt")
+      public void testUnrelatedInvoke() {
+        runTest("compiler/testData/diagnostics/tests/operatorsOverloading/unrelatedInvoke.kt");
+      }
+
+      @Test
       @TestMetadata("unresolvedOperator.kt")
       public void testUnresolvedOperator() {
         runTest("compiler/testData/diagnostics/tests/operatorsOverloading/unresolvedOperator.kt");
