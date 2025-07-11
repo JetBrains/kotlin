@@ -1,0 +1,4 @@
+ARRAY_TYPE
+   KaType: kotlin.Array<in ERROR(No type for parameter)>?
+VARARG_ARRAY_TYPE
+   KaType: kotlin.Array<out ERROR(No type for parameter)>
