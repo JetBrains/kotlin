@@ -43,7 +43,7 @@ public actual annotation class JsExport {
 }
 
 /**
- * Specifies JavaScript name for external and imported declarations
+ * Gives a declaration (a function, a property or a class) specific name in JavaScript.
  */
 // TODO: ExperimentalJsInteropApi
 @Retention(AnnotationRetention.BINARY)
