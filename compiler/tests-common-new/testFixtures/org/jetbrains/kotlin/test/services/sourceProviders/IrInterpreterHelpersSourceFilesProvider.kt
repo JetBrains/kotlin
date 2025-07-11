@@ -15,6 +15,10 @@ import org.jetbrains.kotlin.test.services.TestModuleStructure
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import java.io.File
+import java.net.URI
+import java.nio.file.*
+import kotlin.io.path.isRegularFile
+import kotlin.io.path.walk
 
 class IrInterpreterHelpersSourceFilesProvider(testServices: TestServices) : AdditionalSourceProvider(testServices) {
     companion object {
@@ -46,19 +50,20 @@ class IrInterpreterHelpersSourceFilesProvider(testServices: TestServices) : Addi
         private val EXCLUDES = listOf(
             "src/kotlin/UStrings.kt", "src/kotlin/UMath.kt", "src/kotlin/UNumbers.kt", "src/kotlin/reflect/TypesJVM.kt",
             "stdlib/unsigned/src/kotlin/UnsignedCommon.kt",
-        ).map(::File)
+        )
     }
 
     override val directiveContainers: List<DirectivesContainer> =
         listOf(AdditionalFilesDirectives)
 
     private fun getTestFilesForEachDirectory(vararg directories: String): List<TestFile> {
-        val stdlibPath = File(this::class.java.classLoader.getResource(STDLIB_PATH)!!.toURI())
+        val stdlibUri = this::class.java.classLoader.getResource(STDLIB_PATH)!!.toURI()
 
         return directories.flatMap { directory ->
             val resourceUri = this::class.java.classLoader.getResource(directory)!!.toURI()
             when (resourceUri.scheme) {
                 "file" -> {
+                    val stdlibPath = File(stdlibUri)
                     File(resourceUri).walkTopDown()
                         .mapNotNull { file ->
                             val canonicalPath = file.parentFile.canonicalPath
@@ -69,10 +74,23 @@ class IrInterpreterHelpersSourceFilesProvider(testServices: TestServices) : Addi
                                 ?.takeUnless { EXCLUDES.any { file.endsWith(it) } }
                                 ?.toTestFile(relativePath)
                         }
-                        .toList()
                 }
-                // TODO(KT-76305) add support for resources in jars
-                else -> throw UnsupportedOperationException("Unsupported URI scheme: ${resourceUri.scheme}")
+                else -> {
+                    val stdlibPath = stdlibUri.toResourcePath()
+                    resourceUri.toResourcePath()
+                        .walk()
+                        .mapNotNull { path ->
+                            val canonicalPath = path.parent
+                            val relativePath = runIf(canonicalPath.startsWith(stdlibPath)) {
+                                canonicalPath.toString().removePrefix(stdlibPath.toString() + File.separatorChar)
+                            }
+                            path.takeIf { it.isRegularFile() }
+                                ?.takeUnless { EXCLUDES.any { path.endsWith(it) } }
+                                ?.toUri()
+                                ?.toURL()
+                                ?.toTestFile(relativePath)
+                        }
+                }
             }
         }
     }
@@ -89,5 +107,17 @@ class IrInterpreterHelpersSourceFilesProvider(testServices: TestServices) : Addi
             *ANNOTATIONS_PATHS,
             REFLECT_PATH
         )
+    }
+}
+
+private fun URI.toResourcePath(): Path {
+    return try {
+        Paths.get(this)
+    } catch (_: FileSystemNotFoundException) {
+        try {
+            FileSystems.newFileSystem(this, emptyMap<String, Any>())
+        } catch (_: FileSystemAlreadyExistsException) {
+        }
+        Paths.get(this)
     }
 }

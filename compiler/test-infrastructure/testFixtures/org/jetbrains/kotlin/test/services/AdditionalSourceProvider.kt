@@ -25,10 +25,12 @@ abstract class AdditionalSourceProvider(val testServices: TestServices) : Servic
         return globalDirectives.contains(directive) || module.directives.contains(directive)
     }
 
-    protected fun URL.toTestFile(): TestFile {
+    protected fun URL.toTestFile(relativePath: String? = null): TestFile {
+        val name = this.file.substringAfterLast("/")
         return TestFile(
-            this.file.substringAfterLast("/"),
-            this.readText(),
+            relativePath = relativePath?.let(Paths::get)?.resolve(name)?.toString() ?: name,
+            originalContent = this.readText(),
+            // TODO(KT-76305) add support for resources in jars
             originalFile = File("resource"),
             startLineNumberInOriginalFile = 0,
             isAdditional = true,
@@ -38,8 +40,8 @@ abstract class AdditionalSourceProvider(val testServices: TestServices) : Servic
 
     protected fun File.toTestFile(relativePath: String? = null): TestFile {
         return TestFile(
-            relativePath?.let(Paths::get)?.resolve(name)?.toString() ?: name,
-            this.useLines { it.joinToString("\n") },
+            relativePath = relativePath?.let(Paths::get)?.resolve(name)?.toString() ?: name,
+            originalContent = this.useLines { it.joinToString("\n") },
             originalFile = this,
             startLineNumberInOriginalFile = 0,
             isAdditional = true,
