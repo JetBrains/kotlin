@@ -5,6 +5,7 @@
 
 package kotlin.wasm.internal
 
+@OptIn(ExperimentalJsInteropApi::class)
 internal external fun getCachedJsObject(
     ref: JsAny,
     ifNotCached: JsAny

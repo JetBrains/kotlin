@@ -11,10 +11,13 @@ import kotlin.wasm.internal.kotlinBooleanToExternRefAdapter
 
 /** JavaScript primitive boolean */
 @JsPrimitive("boolean")
+@ExperimentalJsInteropApi
 public external class JsBoolean internal constructor() : JsAny
 
+@ExperimentalJsInteropApi
 public fun JsBoolean.toBoolean(): Boolean =
     externRefToKotlinBooleanAdapter(this)
 
+@ExperimentalJsInteropApi
 public fun Boolean.toJsBoolean(): JsBoolean =
     kotlinBooleanToExternRefAdapter(this)

@@ -13,16 +13,21 @@ import kotlin.wasm.internal.kotlinIntToExternRefAdapter
 
 /** JavaScript primitive number */
 @JsPrimitive("number")
+@ExperimentalJsInteropApi
 public external class JsNumber internal constructor() : JsAny
 
+@ExperimentalJsInteropApi
 public fun JsNumber.toDouble(): Double =
     externRefToKotlinDoubleAdapter(this)
 
+@ExperimentalJsInteropApi
 public fun Double.toJsNumber(): JsNumber =
     kotlinDoubleToExternRefAdapter(this)
 
+@ExperimentalJsInteropApi
 public fun JsNumber.toInt(): Int =
     externRefToKotlinIntAdapter(this)
 
+@ExperimentalJsInteropApi
 public fun Int.toJsNumber(): JsNumber =
     kotlinIntToExternRefAdapter(this)

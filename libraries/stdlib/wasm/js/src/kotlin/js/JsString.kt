@@ -10,7 +10,9 @@ import kotlin.wasm.internal.kotlinToJsStringAdapter
 
 /** JavaScript primitive string */
 @JsPrimitive("string")
+@ExperimentalJsInteropApi
 public external class JsString internal constructor() : JsAny
 
+@ExperimentalJsInteropApi
 public fun String.toJsString(): JsString =
     kotlinToJsStringAdapter(this)!!

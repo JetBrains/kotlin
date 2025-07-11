@@ -14,4 +14,5 @@ import kotlin.wasm.internal.ExternalInterfaceType
 // Reference type operators
 
 @WasmOp(WasmOp.REF_IS_NULL)
+@OptIn(ExperimentalJsInteropApi::class)
 internal external fun wasm_externref_is_null(a: ExternalInterfaceType?): Boolean

@@ -4,6 +4,7 @@
  */
 
 @file:Suppress("UNUSED_PARAMETER") // TODO: Remove after bootstrap update
+@file:OptIn(ExperimentalJsInteropApi::class)
 
 package kotlin.wasm.internal
 

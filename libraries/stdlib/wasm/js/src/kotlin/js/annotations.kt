@@ -6,6 +6,21 @@
 package kotlin.js
 
 /**
+ * Marks experimental JS interoperability API.
+ *
+ * Note that the behavior of such API may be changed in the future.
+ *
+ * Usages of such annotations will be reported as warnings unless an explicit opt-in with
+ * the [OptIn] annotation, e.g. `@OptIn(ExperimentalJsInteropApi::class)`,
+ * or with the `-opt-in=kotlin.js.ExperimentalJsInteropApi` compiler option is given.
+ */
+@RequiresOptIn(level = RequiresOptIn.Level.WARNING)
+@MustBeDocumented
+@Retention(AnnotationRetention.BINARY)
+@SinceKotlin("2.2")
+public annotation class ExperimentalJsInteropApi
+
+/**
  * Exports top-level declaration on JS platform.
  *
  * Can only be applied to top-level functions.
@@ -30,6 +45,7 @@ public actual annotation class JsExport {
 /**
  * Specifies JavaScript name for external and imported declarations
  */
+// TODO: ExperimentalJsInteropApi
 @Retention(AnnotationRetention.BINARY)
 @Target(
     AnnotationTarget.CLASS,
@@ -64,6 +80,7 @@ public actual annotation class JsName(actual val name: String)
  * @property import name of a module to import declaration from.
  *           It is not interpreted by the Kotlin compiler, it's passed as is directly to the target module system.
  */
+@ExperimentalJsInteropApi
 @Retention(AnnotationRetention.BINARY)
 @Target(AnnotationTarget.CLASS, AnnotationTarget.PROPERTY, AnnotationTarget.FUNCTION, AnnotationTarget.FILE)
 public annotation class JsModule(val import: String)
@@ -98,6 +115,7 @@ public annotation class JsModule(val import: String)
  *
  * @see JsModule
  */
+@ExperimentalJsInteropApi
 @Retention(AnnotationRetention.BINARY)
 @Target(AnnotationTarget.FILE)
 public annotation class JsQualifier(val value: String)
