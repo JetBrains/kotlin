@@ -67,3 +67,4 @@ export declare namespace Parent.$metadata$ {
 }
 export declare function box(): string;
 export declare function asyncList(): Promise<KtList<number>>;
+export declare function arrayOfLists(): Array<KtList<number>>;
