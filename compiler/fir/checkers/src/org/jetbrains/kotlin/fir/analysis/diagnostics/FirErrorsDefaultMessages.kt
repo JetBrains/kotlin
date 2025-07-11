@@ -989,7 +989,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(INNER_ON_TOP_LEVEL_SCRIPT_CLASS, "Top-level script class cannot be inner.")
         map.put(
             ERROR_SUPPRESSION,
-            "This code uses error suppression for ''{0}''. While it might compile and work, the compiler behavior is UNSPECIFIED and WILL NOT BE PRESERVED. Please report your use case to the Kotlin issue tracker instead: https://kotl.in/issue",
+            "Suppression of error ''{0}'' might compile and work, but the compiler behavior is UNSPECIFIED and WILL NOT BE PRESERVED. Please report your use case to the Kotlin issue tracker instead: https://kotl.in/issue",
             TO_STRING
         )
         map.put(MISSING_CONSTRUCTOR_KEYWORD, "Use the 'constructor' keyword after the modifiers of the primary constructor.")
