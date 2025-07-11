@@ -1489,6 +1489,7 @@ open class IrFileSerializer(
 
     private fun skipIfPrivate(declaration: IrDeclaration) =
         settings.publicAbiOnly
+                && !declaration.isLocal
                 && (declaration as? IrDeclarationWithVisibility)?.let { !it.visibility.isPublicAPI && it.visibility != INTERNAL } == true
                 // Always keep private interfaces and type aliases as they can be part of public type hierarchies.
                 && (declaration as? IrClass)?.isInterface != true && declaration !is IrTypeAlias
