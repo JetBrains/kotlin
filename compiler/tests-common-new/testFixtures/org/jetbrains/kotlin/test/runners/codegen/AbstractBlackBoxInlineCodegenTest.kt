@@ -7,20 +7,11 @@ package org.jetbrains.kotlin.test.runners.codegen
 
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.configuration.useInlineHandlers
-import org.jetbrains.kotlin.test.configuration.useIrInliner
 
 open class AbstractIrBlackBoxInlineCodegenWithBytecodeInlinerTest : AbstractIrBlackBoxCodegenTest() {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         builder.useInlineHandlers()
-    }
-}
-
-open class AbstractIrBlackBoxInlineCodegenWithIrInlinerTest : AbstractIrBlackBoxCodegenTest() {
-    override fun configure(builder: TestConfigurationBuilder) {
-        super.configure(builder)
-        builder.useInlineHandlers()
-        builder.useIrInliner()
     }
 }
 
@@ -31,27 +22,10 @@ open class AbstractFirLightTreeBlackBoxInlineCodegenWithBytecodeInlinerTest : Ab
     }
 }
 
-open class AbstractFirLightTreeBlackBoxInlineCodegenWithIrInlinerTest : AbstractFirLightTreeBlackBoxCodegenTest() {
-    override fun configure(builder: TestConfigurationBuilder) {
-        super.configure(builder)
-        builder.useInlineHandlers()
-        builder.useIrInliner()
-    }
-}
-
 @FirPsiCodegenTest
 open class AbstractFirPsiBlackBoxInlineCodegenWithBytecodeInlinerTest : AbstractFirPsiBlackBoxCodegenTest() {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         builder.useInlineHandlers()
-    }
-}
-
-@FirPsiCodegenTest
-open class AbstractFirPsiBlackBoxInlineCodegenWithIrInlinerTest : AbstractFirPsiBlackBoxCodegenTest() {
-    override fun configure(builder: TestConfigurationBuilder) {
-        super.configure(builder)
-        builder.useInlineHandlers()
-        builder.useIrInliner()
     }
 }

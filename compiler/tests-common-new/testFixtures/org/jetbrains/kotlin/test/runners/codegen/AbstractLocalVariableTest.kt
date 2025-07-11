@@ -12,15 +12,12 @@ import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.backend.ir.JvmIrBackendFacade
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.configuration.configureDumpHandlersForCodegenTest
-import org.jetbrains.kotlin.test.configuration.useIrInliner
 import org.jetbrains.kotlin.test.directives.configureFirParser
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontend2IrConverter
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendFacade
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendOutputArtifact
 import org.jetbrains.kotlin.test.frontend.fir.Fir2IrCliJvmFacade
-import org.jetbrains.kotlin.test.frontend.fir.Fir2IrResultsConverter
 import org.jetbrains.kotlin.test.frontend.fir.FirCliJvmFacade
-import org.jetbrains.kotlin.test.frontend.fir.FirFrontendFacade
 import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
 import org.jetbrains.kotlin.test.model.BackendFacade
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
@@ -45,12 +42,6 @@ open class AbstractIrLocalVariableTest : AbstractLocalVariableTestBase<ClassicFr
 }
 
 open class AbstractIrLocalVariableBytecodeInlinerTest : AbstractIrLocalVariableTest()
-open class AbstractIrLocalVariableIrInlinerTest : AbstractIrLocalVariableTest() {
-    override fun configure(builder: TestConfigurationBuilder) {
-        super.configure(builder)
-        builder.useIrInliner()
-    }
-}
 
 open class AbstractFirLocalVariableTestBase(val parser: FirParser) : AbstractLocalVariableTestBase<FirOutputArtifact>(FrontendKinds.FIR) {
     override val frontendFacade: Constructor<FrontendFacade<FirOutputArtifact>>

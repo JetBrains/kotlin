@@ -115,15 +115,6 @@ fun TestConfigurationBuilder.useInlineHandlers() {
 }
 
 /**
- * Enables IR inliner for JVM backend
- */
-fun TestConfigurationBuilder.useIrInliner() {
-    defaultDirectives {
-        +LanguageSettingsDirectives.ENABLE_JVM_IR_INLINER
-    }
-}
-
-/**
  * Enables inline scope numbers for debugger-related tests
  */
 fun TestConfigurationBuilder.useInlineScopesNumbers() {

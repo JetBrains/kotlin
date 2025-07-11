@@ -109,24 +109,12 @@ fun generateJUnit5CompilerTests(args: Array<String>, mainClassName: String?) {
                 model("codegen/script", pattern = "^(.*)\\.kts?$", excludedPattern = excludedCustomTestdataPattern)
             }
 
-            testClass<AbstractIrBlackBoxCodegenWithIrInlinerTest> {
-                model("codegen/box", excludeDirs = k2BoxTestDir)
-            }
-
             testClass<AbstractIrSteppingWithBytecodeInlinerTest> {
-                model("debug/stepping")
-            }
-
-            testClass<AbstractIrSteppingWithIrInlinerTest> {
                 model("debug/stepping")
             }
 
             testClass<AbstractIrLocalVariableBytecodeInlinerTest> {
                 model("debug/localVariables")
-            }
-
-            testClass<AbstractIrLocalVariableIrInlinerTest> {
-                model("debug/localVariables", excludeDirs = inlineScopesTestDir)
             }
 
             testClass<AbstractIrBlackBoxCodegenTest>("IrBlackBoxModernJdkCodegenTestGenerated") {
@@ -149,11 +137,6 @@ fun generateJUnit5CompilerTests(args: Array<String>, mainClassName: String?) {
             }
 
             testClass<AbstractIrBlackBoxInlineCodegenWithBytecodeInlinerTest> {
-                model("codegen/boxInline")
-                model("klib/syntheticAccessors")
-            }
-
-            testClass<AbstractIrBlackBoxInlineCodegenWithIrInlinerTest> {
                 model("codegen/boxInline")
                 model("klib/syntheticAccessors")
             }
@@ -200,24 +183,12 @@ fun generateJUnit5CompilerTests(args: Array<String>, mainClassName: String?) {
                 model("debug/stepping")
             }
 
-            testClass<AbstractFirSteppingWithIrInlinerTestWithInlineScopes> {
-                model("debug/stepping")
-            }
-
             testClass<AbstractFirLocalVariableBytecodeInlinerTestWithInlineScopes> {
                 model("debug/localVariables", excludeDirs = inlineScopesNewFormatToOld)
             }
 
-            testClass<AbstractFirLocalVariableIrInlinerTestWithInlineScopes> {
-                model("debug/localVariables", excludeDirs = inlineScopesTestDir)
-            }
-
             testClass<AbstractFirBlackBoxInlineCodegenWithBytecodeInlinerTestWithInlineScopes> {
                 model("codegen/boxInline", excludeDirs = k2BoxTestDir)
-            }
-
-            testClass<AbstractFirBlackBoxInlineCodegenWithIrInlinerTestWithInlineScopes> {
-                model("codegen/boxInline")
             }
 
             testClass<AbstractFirSerializeCompileKotlinAgainstInlineKotlinTestWithInlineScopes> {
@@ -336,16 +307,7 @@ fun generateJUnit5CompilerTests(args: Array<String>, mainClassName: String?) {
                 model("codegen/boxInline")
             }
 
-            testClass<AbstractFirPsiBlackBoxInlineCodegenWithIrInlinerTest> {
-                model("codegen/boxInline")
-            }
-
             testClass<AbstractFirLightTreeBlackBoxInlineCodegenWithBytecodeInlinerTest> {
-                model("codegen/boxInline")
-                model("klib/syntheticAccessors")
-            }
-
-            testClass<AbstractFirLightTreeBlackBoxInlineCodegenWithIrInlinerTest> {
                 model("codegen/boxInline")
                 model("klib/syntheticAccessors")
             }
