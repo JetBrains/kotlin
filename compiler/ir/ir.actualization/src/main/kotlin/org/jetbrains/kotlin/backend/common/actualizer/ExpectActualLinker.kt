@@ -16,8 +16,10 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrPropertyFakeOverrideSymbol
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.util.DeepCopyIrTreeWithSymbols
 import org.jetbrains.kotlin.ir.util.SymbolRemapper
+import org.jetbrains.kotlin.ir.util.constructedClass
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.utils.memoryOptimizedMap
+import org.jetbrains.kotlin.utils.memoryOptimizedMapNotNull
 import org.jetbrains.kotlin.utils.setSize
 
 internal class ActualizerSymbolRemapper(private val expectActualMap: IrExpectActualMap) : SymbolRemapper.Empty() {
@@ -100,7 +102,7 @@ internal open class ActualizerVisitor(private val symbolRemapper: SymbolRemapper
     override fun visitFile(declaration: IrFile): IrFile =
         declaration.also {
             it.transformChildren(this, null)
-            it.transformAnnotations(declaration)
+            it.actualizeAnnotations()
         }
 
     override fun visitScript(declaration: IrScript): IrScript =
@@ -117,7 +119,7 @@ internal open class ActualizerVisitor(private val symbolRemapper: SymbolRemapper
             if (declaration.isExpect && !insideDeclarationWithOptionalExpectation) return@also
             it.superTypes = it.superTypes.map { superType -> superType.remapType() }
             it.transformChildren(this, null)
-            it.transformAnnotations(declaration)
+            it.actualizeAnnotations()
             it.valueClassRepresentation = it.valueClassRepresentation?.mapUnderlyingType { type ->
                 type.remapType() as? IrSimpleType ?: error("Value class underlying type is not a simple type: ${it.render()}")
             }
@@ -139,7 +141,7 @@ internal open class ActualizerVisitor(private val symbolRemapper: SymbolRemapper
             if (declaration.isExpect && !insideDeclarationWithOptionalExpectation) return@also
             it.returnType = it.returnType.remapType()
             it.transformChildren(this, null)
-            it.transformAnnotations(declaration)
+            it.actualizeAnnotations()
         }
 
     override fun visitProperty(declaration: IrProperty): IrProperty =
@@ -149,14 +151,14 @@ internal open class ActualizerVisitor(private val symbolRemapper: SymbolRemapper
             it.overriddenSymbols = it.overriddenSymbols.memoryOptimizedMap { symbol ->
                 symbolRemapper.getReferencedProperty(symbol)
             }
-            it.transformAnnotations(declaration)
+            it.actualizeAnnotations()
         }
 
     override fun visitField(declaration: IrField): IrField =
         declaration.also {
             it.type = it.type.remapType()
             it.transformChildren(this, null)
-            it.transformAnnotations(declaration)
+            it.actualizeAnnotations()
         }
 
     override fun visitLocalDelegatedProperty(declaration: IrLocalDelegatedProperty): IrLocalDelegatedProperty =
@@ -168,14 +170,14 @@ internal open class ActualizerVisitor(private val symbolRemapper: SymbolRemapper
     override fun visitEnumEntry(declaration: IrEnumEntry): IrEnumEntry =
         declaration.also {
             it.transformChildren(this, null)
-            it.transformAnnotations(declaration)
+            it.actualizeAnnotations()
         }
 
     override fun visitTypeParameter(declaration: IrTypeParameter): IrTypeParameter =
         declaration.also {
             it.superTypes = it.superTypes.map { superType -> superType.remapType() }
             it.transformChildren(this, null)
-            it.transformAnnotations(declaration)
+            it.actualizeAnnotations()
         }
 
     override fun visitValueParameter(declaration: IrValueParameter): IrValueParameter =
@@ -183,7 +185,7 @@ internal open class ActualizerVisitor(private val symbolRemapper: SymbolRemapper
             it.type = it.type.remapType()
             it.varargElementType = it.varargElementType?.remapType()
             it.transformChildren(this, null)
-            it.transformAnnotations(declaration)
+            it.actualizeAnnotations()
         }
 
     override fun visitAnonymousInitializer(declaration: IrAnonymousInitializer): IrAnonymousInitializer =
@@ -193,14 +195,14 @@ internal open class ActualizerVisitor(private val symbolRemapper: SymbolRemapper
         declaration.also {
             it.type = it.type.remapType()
             it.transformChildren(this, null)
-            it.transformAnnotations(declaration)
+            it.actualizeAnnotations()
         }
 
     override fun visitTypeAlias(declaration: IrTypeAlias): IrTypeAlias =
         declaration.also {
             it.expandedType = it.expandedType.remapType()
             it.transformChildren(this, null)
-            it.transformAnnotations(declaration)
+            it.actualizeAnnotations()
         }
 
     override fun visitConstructorCall(expression: IrConstructorCall): IrConstructorCall {
@@ -225,6 +227,23 @@ internal open class ActualizerVisitor(private val symbolRemapper: SymbolRemapper
             if (constructorSymbol.isBound) {
                 arguments.setSize(constructorSymbol.owner.parameters.size)
             }
+        }
+    }
+
+    /**
+     * Actualizes annotation calls and removes optional expectation annotations which don't have an actual pair
+     */
+    private fun IrMutableAnnotationContainer.actualizeAnnotations() {
+        transformAnnotations(this)
+        val newAnnotations = annotations.memoryOptimizedMapNotNull { annotation ->
+            val annotationClass = annotation.symbol.owner.constructedClass
+            when {
+                annotationClass.isExpect && annotationClass.containsOptionalExpectation() -> null
+                else -> annotation
+            }
+        }
+        if (newAnnotations.size != annotations.size) {
+            annotations = newAnnotations
         }
     }
 }
