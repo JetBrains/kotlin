@@ -241,6 +241,7 @@ object StandardClassIds {
 
         val jvmStatic = "JvmStatic".jvmId()
         val jvmName = "JvmName".jvmId()
+        val jvmOverloads = "JvmOverloads".jvmId()
         val Transient = "Transient".jvmId()
 
         val jsExport = "JsExport".jsId()

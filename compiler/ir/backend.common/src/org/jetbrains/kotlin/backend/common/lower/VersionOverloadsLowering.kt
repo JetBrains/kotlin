@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.ClassLoweringPass
 import org.jetbrains.kotlin.backend.common.LoweringContext
 import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.common.push
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.MavenComparableVersion
 import org.jetbrains.kotlin.ir.InternalSymbolFinderAPI
 import org.jetbrains.kotlin.ir.builders.declarations.buildConstructor
@@ -51,7 +52,6 @@ import org.jetbrains.kotlin.ir.util.isAnnotation
 import org.jetbrains.kotlin.ir.util.remapSymbolParent
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.utils.memoryOptimizedMapNotNull
 import org.jetbrains.kotlin.utils.memoryOptimizedPlus
@@ -63,9 +63,6 @@ import java.util.SortedMap
 class VersionOverloadsLowering(val context: LoweringContext) : ClassLoweringPass {
     private val irFactory = context.irFactory
     private val irBuiltIns = context.irBuiltIns
-    private val deprecationBuilder = DeprecationBuilder(context, level=DeprecationLevel.HIDDEN)
-
-    private val CopyMethodName = Name.identifier("copy")
 
     override fun lower(irClass: IrClass) {
         val functions = irClass.declarations.filterIsInstance<IrFunction>()
@@ -78,16 +75,14 @@ class VersionOverloadsLowering(val context: LoweringContext) : ClassLoweringPass
     )
 
     fun generateVersionOverloads(target: IrFunction, irClass: IrClass, copyMethodVersions: CopyMethodVersions) {
-        val isDataClass = irClass.isData
-
         val versionParamIndexes = when {
-            isDataClass && target.name == CopyMethodName -> copyMethodVersions.versions
+            irClass.isData && target.name == StandardNames.DATA_CLASS_COPY -> copyMethodVersions.versions
             else -> getSortedVersionParameterIndexes(target)
         }
 
         generateVersions(target, irClass, versionParamIndexes)
 
-        if (isDataClass && target is IrConstructor && target.isPrimary && versionParamIndexes != null) {
+        if (irClass.isData && target is IrConstructor && target.isPrimary && versionParamIndexes != null) {
             versionParamIndexes.forEach { (_, params) -> params.indices.forEach { params[it] += 1 } }
             versionParamIndexes[null]?.add(0)
             copyMethodVersions.versions = versionParamIndexes
@@ -202,15 +197,13 @@ class VersionOverloadsLowering(val context: LoweringContext) : ClassLoweringPass
 
     private fun IrFunction.setOverloadAnnotationsWith(source: IrFunction) {
         annotations = annotations memoryOptimizedPlus
-                deprecationBuilder.buildAnnotationCall() memoryOptimizedPlus
+                buildDeprecationCall(DeprecationLevel.HIDDEN) memoryOptimizedPlus
                 source.copyNonJvmOverloadsAnnotations()
     }
 
-    private val JvmOverloadsClassFqName = FqName("kotlin.jvm.JvmOverloads")
-
     private fun IrAnnotationContainer.copyNonJvmOverloadsAnnotations(): List<IrConstructorCall> =
         annotations.memoryOptimizedMapNotNull {
-            if (it.isAnnotation(JvmOverloadsClassFqName))
+            if (it.isAnnotation(StandardClassIds.Annotations.jvmOverloads.asSingleFqName()))
                 null
             else
                 it.transform(DeepCopyIrTreeWithSymbols(SymbolRemapper.EMPTY), null) as IrConstructorCall
@@ -251,30 +244,27 @@ class VersionOverloadsLowering(val context: LoweringContext) : ClassLoweringPass
     }
 
     @OptIn(InternalSymbolFinderAPI::class)
-    private class DeprecationBuilder(private val context: LoweringContext, level: DeprecationLevel) {
-        private val classSymbol = context.irBuiltIns.symbolFinder.findClass(StandardClassIds.Annotations.Deprecated)!!
-        private val deprecationLevelClass = context.irBuiltIns.symbolFinder.findClass(StandardClassIds.DeprecationLevel)!!
-        private val levelSymbol = deprecationLevelClass.owner.declarations
+    fun buildDeprecationCall(level: DeprecationLevel): IrConstructorCall {
+        val levelSymbol = context.irBuiltIns.deprecationLevelSymbol.owner.declarations
             .filterIsInstance<IrEnumEntry>()
             .single { it.name.toString() == level.name }.symbol
 
-        fun buildAnnotationCall(): IrConstructorCall =
-            IrConstructorCallImpl.fromSymbolOwner(
-                SYNTHETIC_OFFSET,
-                SYNTHETIC_OFFSET,
-                classSymbol.defaultType,
-                classSymbol.constructors.first()
-            ).apply {
-                arguments[0] =
-                    IrConstImpl.string(
-                        SYNTHETIC_OFFSET, SYNTHETIC_OFFSET,
-                        context.irBuiltIns.stringType, "Deprecated"
-                    )
-                arguments[2] =
-                    IrGetEnumValueImpl(
-                        SYNTHETIC_OFFSET, SYNTHETIC_OFFSET,
-                        deprecationLevelClass.defaultType, levelSymbol
-                    )
-            }
+        return IrConstructorCallImpl.fromSymbolOwner(
+            SYNTHETIC_OFFSET,
+            SYNTHETIC_OFFSET,
+            context.irBuiltIns.deprecatedSymbol.defaultType,
+            context.irBuiltIns.deprecatedSymbol.constructors.first()
+        ).apply {
+            arguments[0] =
+                IrConstImpl.string(
+                    SYNTHETIC_OFFSET, SYNTHETIC_OFFSET,
+                    context.irBuiltIns.stringType, "Deprecated"
+                )
+            arguments[2] =
+                IrGetEnumValueImpl(
+                    SYNTHETIC_OFFSET, SYNTHETIC_OFFSET,
+                    context.irBuiltIns.deprecationLevelSymbol.defaultType, levelSymbol
+                )
+        }
     }
 }
