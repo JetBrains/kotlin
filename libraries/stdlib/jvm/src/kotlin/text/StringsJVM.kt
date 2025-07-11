@@ -882,9 +882,8 @@ public actual fun CharSequence.repeat(n: Int): String {
  * @return a [CharSequence] representing given [CharArray].
  * @throws IndexOutOfBoundsException if [startIndex] or [endIndex] is out of bounds, or [startIndex] is greater than [endIndex].
  */
-@ExperimentalStdlibApi
 @JvmOverloads
-public fun CharArray.asCharSequence(startIndex: Int = 0, endIndex: Int = this.size): CharSequence =
+internal fun CharArray.asCharSequence(startIndex: Int = 0, endIndex: Int = this.size): CharSequence =
     if (startIndex == endIndex) "" else CharArraySequenceView(this, startIndex, endIndex)
 
 private class CharArraySequenceView(

@@ -159,8 +159,7 @@ public fun URL.readBytes(): ByteArray = openStream().use { it.readBytes() }
  *
  * @return a [Writer] wrapping the specified [Appendable], not thread-safe.
  */
-@ExperimentalStdlibApi
-public fun Appendable.asWriter(): Writer =
+internal fun Appendable.asWriter(): Writer =
     this as? Writer ?: object : Writer() {
         private val appendable: Appendable = this@asWriter
 
