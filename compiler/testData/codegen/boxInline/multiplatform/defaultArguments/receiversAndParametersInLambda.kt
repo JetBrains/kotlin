@@ -7,7 +7,6 @@
 //  otherwise DCE keeps members of expect D referenced from lambdas in default arguments instead of members of actual D
 // IGNORE_BACKEND: JS_IR
 // IGNORE_BACKEND: JS_IR_ES6
-// IGNORE_INLINER_K1: IR
 // IGNORE_IR_DESERIALIZATION_TEST: JS_IR NATIVE
 // ^^^ IR serialization/deserialization is not tested with K1.
 

@@ -1,4 +1,4 @@
-// IGNORE_INLINER: IR
+
 // SKIP_INLINE_CHECK_IN: lParams$default
 // FILE: 1.kt
 

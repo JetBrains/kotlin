@@ -1,4 +1,4 @@
-// IGNORE_INLINER_K1: IR
+
 // FILE: 1.kt
 package zzz
 
