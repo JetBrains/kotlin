@@ -257,6 +257,7 @@ extern "C" const char* Kotlin_callsCheckerGoodFunctionNames[] = {
         "llvm.objc.autorelease",
         "llvm.objc.autoreleaseReturnValue",
         "llvm.objc.retain",
+        "llvm.vector.*",
 
         // Not used in Runnable state, but this would be ok.
         // If we don't include it to the good functions list, the code generator will emit redundant state check at the callsite,
