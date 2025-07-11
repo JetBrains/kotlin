@@ -1,5 +1,3 @@
-// KT-72862: Undefined symbols
-// IGNORE_NATIVE: cacheMode=STATIC_EVERYWHERE
 // KT-72862: No function found for symbol
 // IGNORE_NATIVE: cacheMode=STATIC_USE_HEADERS_EVERYWHERE
 
