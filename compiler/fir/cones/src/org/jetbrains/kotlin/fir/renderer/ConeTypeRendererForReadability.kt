@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.types.model.TypeConstructorMarker
 open class ConeTypeRendererForReadability(
     private val preRenderedConstructors: Map<TypeConstructorMarker, String>? = null,
     private val idRendererCreator: () -> ConeIdRenderer,
-) : ConeTypeRendererForDebugInfo() {
+) : ConeTypeRendererForDebugInfo(ConeAttributeRenderer.None) {
     constructor(
         builder: StringBuilder,
         preRenderedConstructors: Map<TypeConstructorMarker, String>? = null,

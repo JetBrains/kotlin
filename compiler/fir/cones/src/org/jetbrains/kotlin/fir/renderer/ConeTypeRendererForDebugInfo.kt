@@ -10,7 +10,9 @@ import org.jetbrains.kotlin.fir.types.ConeIntegerLiteralType
 import org.jetbrains.kotlin.fir.types.ConeIntersectionType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 
-open class ConeTypeRendererForDebugInfo protected constructor() : ConeTypeRenderer(ConeAttributeRenderer.ForReadability) {
+open class ConeTypeRendererForDebugInfo protected constructor(
+    coneAttributeRendererForReadability: ConeAttributeRenderer = ConeAttributeRenderer.ForReadability
+) : ConeTypeRenderer(coneAttributeRendererForReadability) {
     constructor(builder: StringBuilder) : this() {
         this.builder = builder
         idRenderer = ConeIdRendererForDiagnostics()
