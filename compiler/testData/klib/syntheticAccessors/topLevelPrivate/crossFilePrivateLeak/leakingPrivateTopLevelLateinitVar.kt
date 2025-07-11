@@ -1,5 +1,3 @@
-// IGNORE_INLINER_K2: IR
-
 // FILE: A.kt
 fun wrapper(block: () -> Unit) { block() }
 

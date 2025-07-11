@@ -1,4 +1,4 @@
-// IGNORE_INLINER: IR
+
 // WITH_STDLIB
 // API_VERSION: LATEST
 // FILE: test.kt

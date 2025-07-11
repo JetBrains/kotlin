@@ -2,11 +2,6 @@
 // WITH_REFLECT
 // WITH_STDLIB
 
-// IGNORE_INLINER: IR
-// java.lang.UnsupportedOperationException
-// (this function has a reified type parameter and thus can only be inlined at compilation time, not called directly)
-// at Klass.<init>(DelegationByFunctionWithEnumUpperBound.kt:23)
-
 import kotlin.properties.ReadWriteProperty
 import kotlin.reflect.KProperty
 

@@ -1,5 +1,4 @@
 // ISSUE: KT-78321
-// IGNORE_INLINER: IR
 // IGNORE_BACKEND: JS_IR, JS_IR_ES6
 // ^^^ Wrong box result: C C B B
 // IGNORE_BACKEND: WASM

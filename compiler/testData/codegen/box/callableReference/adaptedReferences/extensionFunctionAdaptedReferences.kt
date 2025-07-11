@@ -1,4 +1,3 @@
-// IGNORE_INLINER: IR
 fun foo1(a:Int, vararg b: String, c: Int = 0): Int = 0
 fun Int.foo2(vararg b: String, c: Int = 0): Int  = 0
 
