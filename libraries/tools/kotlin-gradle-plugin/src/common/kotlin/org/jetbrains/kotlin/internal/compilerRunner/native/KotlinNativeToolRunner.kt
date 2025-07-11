@@ -299,24 +299,28 @@ internal abstract class KotlinNativeToolRunner @Inject constructor(
         try {
             val unitStats = gson.fromJson(jsonFile.readText(), UnitStats::class.java)
 
-            unitStats.forEachPhaseMeasurement { type, time ->
+            unitStats.forEachPhaseMeasurement { phaseType, time ->
                 if (time == null) return@forEachPhaseMeasurement
 
-                val gradleBuildTime = when (type) {
-                    PhaseType.Initialization -> GradleBuildTime.COMPILER_INITIALIZATION
-                    PhaseType.Analysis -> GradleBuildTime.CODE_ANALYSIS
-                    PhaseType.TranslationToIr -> GradleBuildTime.TRANSLATION_TO_IR
-                    PhaseType.IrPreLowering -> GradleBuildTime.IR_PRE_LOWERING
-                    PhaseType.IrSerialization -> GradleBuildTime.IR_SERIALIZATION
-                    PhaseType.KlibWriting -> GradleBuildTime.KLIB_WRITING
-                    PhaseType.IrLowering -> GradleBuildTime.IR_LOWERING
-                    PhaseType.Backend -> GradleBuildTime.BACKEND
-                }
+                addTimeMetricNs(phaseType.toGradleBuildTime(), time.nanos)
+            }
 
-                addTimeMetricNs(gradleBuildTime, time.nanos)
+            unitStats.dynamicStats?.forEach { (parentPhaseType, name, time) ->
+                addDynamicTimeMetricNs(name, parentPhaseType.toGradleBuildTime(), time.nanos)
             }
         } catch (e: Exception) {
             errorMessageCollector.report(FusMetricRetrievalException("Failed to parse metrics from file ${jsonFile.absolutePath}", e), location = null)
         }
     }
+}
+
+private fun PhaseType.toGradleBuildTime() = when (this) {
+    PhaseType.Initialization -> GradleBuildTime.COMPILER_INITIALIZATION
+    PhaseType.Analysis -> GradleBuildTime.CODE_ANALYSIS
+    PhaseType.TranslationToIr -> GradleBuildTime.TRANSLATION_TO_IR
+    PhaseType.IrPreLowering -> GradleBuildTime.IR_PRE_LOWERING
+    PhaseType.IrSerialization -> GradleBuildTime.IR_SERIALIZATION
+    PhaseType.KlibWriting -> GradleBuildTime.KLIB_WRITING
+    PhaseType.IrLowering -> GradleBuildTime.IR_LOWERING
+    PhaseType.Backend -> GradleBuildTime.BACKEND
 }

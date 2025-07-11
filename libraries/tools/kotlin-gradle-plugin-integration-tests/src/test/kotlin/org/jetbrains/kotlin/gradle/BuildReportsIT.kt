@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle
 
 import org.gradle.api.logging.LogLevel
 import org.gradle.util.GradleVersion
+import org.jetbrains.kotlin.build.report.metrics.DynamicBuildTimeKey
 import org.jetbrains.kotlin.build.report.metrics.GradleBuildTime
 import org.jetbrains.kotlin.build.report.statistics.formatSize
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
@@ -852,6 +853,12 @@ class BuildReportsIT : KGPBaseTest() {
                     expected,
                     reportedCompilerMetrics.sorted()
                 )
+
+                assertTrue {
+                    jsonReport.aggregatedMetrics.buildTimes.dynamicBuildTimesMapMs().keys.contains(
+                        DynamicBuildTimeKey("AvoidLocalFOsInInlineFunctionsLowering", GradleBuildTime.IR_PRE_LOWERING)
+                    )
+                }
             }
         }
     }

@@ -11,7 +11,7 @@ data class DynamicBuildTimeKey(val name: String, val parent: BuildTime) : Serial
 
 class BuildTimes<T : BuildTime> : Serializable {
     private val buildTimesNs = HashMap<T, Long>()
-    private val dynamicBuildTimesNs = HashMap<DynamicBuildTimeKey, Long>()
+    private val dynamicBuildTimesNs = LinkedHashMap<DynamicBuildTimeKey, Long>()
 
     fun addAll(other: BuildTimes<T>) {
         for ((buildTime, timeNs) in other.buildTimesNs) {
