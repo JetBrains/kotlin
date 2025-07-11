@@ -24,6 +24,7 @@ class DependenciesResolverTransformationTest : TestCase() {
 
         val configurationA = ScriptCompilationConfiguration {
             val data = RefineConfigurationOnAnnotationsData(emptyList(), DummyConfigurator(resolverA))
+            @Suppress("DEPRECATION")
             refineConfigurationOnAnnotations.append(data)
         }
         val configurationB = configurationA.withTransformedResolvers { resolverB }
@@ -50,6 +51,7 @@ class DependenciesResolverTransformationTest : TestCase() {
     private inline fun ScriptCompilationConfiguration.checkHandler(
         check: (RefineScriptCompilationConfigurationHandler) -> Unit,
     ) {
+        @Suppress("DEPRECATION")
         val handler = this[ScriptCompilationConfiguration.refineConfigurationOnAnnotations]?.firstOrNull()?.handler ?: return
         check(handler)
     }

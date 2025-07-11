@@ -17,6 +17,7 @@ interface ConfiguratorWithDependencyResolver<C : RefineScriptCompilationConfigur
 fun ScriptCompilationConfiguration.withTransformedResolvers(
     transform: (ExternalDependenciesResolver) -> ExternalDependenciesResolver,
 ) = ScriptCompilationConfiguration(this) {
+    @Suppress("DEPRECATION")
     refineConfigurationOnAnnotations.transform {
         val handler = it.handler as? ConfiguratorWithDependencyResolver<*> ?: return@transform it
         RefineConfigurationOnAnnotationsData(it.annotations, handler.transformResolver(transform))

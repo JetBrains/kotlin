@@ -90,6 +90,7 @@ private class ExampleRepl(val replConfiguration: ReplConfiguration, rootDisposab
             listOf("org.jetbrains.kotlin.scripting.test.repl.example.DependsOn")
         )
         refineConfiguration {
+            @Suppress("DEPRECATION")
             onAnnotations(DependsOn::class, handler = ::onAnnotationsHandler)
         }
     }

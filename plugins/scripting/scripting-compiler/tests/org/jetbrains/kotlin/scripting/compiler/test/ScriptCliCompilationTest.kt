@@ -150,6 +150,7 @@ object TestScriptWithRequireConfiguration : ScriptCompilationConfiguration(
             dependenciesFromCurrentContext(wholeClasspath = true)
         }
         refineConfiguration {
+            @Suppress("DEPRECATION")
             onAnnotations(Import::class, DependsOn::class) { context: ScriptConfigurationRefinementContext ->
                 val scriptBaseDir = (context.script as? FileBasedScriptSource)?.file?.parentFile
                 val sources = context.collectedData?.get(ScriptCollectedData.foundAnnotations)

@@ -160,7 +160,14 @@ val ScriptCompilationConfigurationKeys.refineConfigurationBeforeParsing by Prope
 /**
  * The callback that will be called on the script compilation after parsing script file annotations
  */
+@Deprecated("Will be obsolete soon, rewrite using refineConfigurationOnAST instead", level = DeprecationLevel.WARNING)
 val ScriptCompilationConfigurationKeys.refineConfigurationOnAnnotations by PropertiesCollection.key<List<RefineConfigurationOnAnnotationsData>>(isTransient = true)
+
+/**
+ * The callback that will be called on the script compilation after parsing the script into AST representation. See the examples of AST
+ * processing in compiler plugins.
+ */
+val ScriptCompilationConfigurationKeys.refineConfigurationOnAST by PropertiesCollection.key<List<RefineConfigurationUnconditionallyData>>(isTransient = true)
 
 /**
  * The callback that will be called on the script compilation immediately before starting the compilation
@@ -206,9 +213,19 @@ class RefineConfigurationBuilder : PropertiesCollection.Builder() {
      * @param annotations the list of annotations to trigger the callback on
      * @param handler the callback that will be called
      */
+    @Deprecated("Will be obsolete soon, rewrite using refineOnAST instead", level = DeprecationLevel.WARNING)
     fun onAnnotations(annotations: List<KotlinType>, handler: RefineScriptCompilationConfigurationHandler) {
-        // TODO: implement handlers composition
+        @Suppress("DEPRECATION")
         ScriptCompilationConfiguration.refineConfigurationOnAnnotations.append(RefineConfigurationOnAnnotationsData(annotations, handler))
+    }
+
+    /**
+     * The callback that will be called on the script compilation after parsing the script into AST representation. See the examples of AST
+     * processing in compiler plugins.
+     * @param handler the callback that will be called
+     */
+    fun onAST(handler: RefineScriptCompilationConfigurationHandler) {
+        ScriptCompilationConfiguration.refineConfigurationOnAST.append(RefineConfigurationUnconditionallyData(handler))
     }
 
     /**
@@ -216,7 +233,9 @@ class RefineConfigurationBuilder : PropertiesCollection.Builder() {
      * @param annotations the list of annotations to trigger the callback on
      * @param handler the callback that will be called
      */
+    @Deprecated("Will be obsolete soon, rewrite using refineConfigurationOnAST instead", level = DeprecationLevel.WARNING)
     fun onAnnotations(vararg annotations: KotlinType, handler: RefineScriptCompilationConfigurationHandler) {
+        @Suppress("DEPRECATION")
         onAnnotations(annotations.asList(), handler)
     }
 
@@ -225,7 +244,9 @@ class RefineConfigurationBuilder : PropertiesCollection.Builder() {
      * @param T the annotation to trigger the callback on
      * @param handler the callback that will be called
      */
+    @Deprecated("Will be obsolete soon, rewrite using refineConfigurationOnAST instead", level = DeprecationLevel.WARNING)
     inline fun <reified T : Annotation> onAnnotations(noinline handler: RefineScriptCompilationConfigurationHandler) {
+        @Suppress("DEPRECATION")
         onAnnotations(listOf(KotlinType(T::class)), handler)
     }
 
@@ -234,7 +255,9 @@ class RefineConfigurationBuilder : PropertiesCollection.Builder() {
      * @param annotations the list of annotations to trigger the callback on
      * @param handler the callback that will be called
      */
+    @Deprecated("Will be obsolete soon, rewrite using refineConfigurationOnAST instead", level = DeprecationLevel.WARNING)
     fun onAnnotations(vararg annotations: KClass<out Annotation>, handler: RefineScriptCompilationConfigurationHandler) {
+        @Suppress("DEPRECATION")
         onAnnotations(annotations.map { KotlinType(it) }, handler)
     }
 
@@ -243,7 +266,9 @@ class RefineConfigurationBuilder : PropertiesCollection.Builder() {
      * @param annotations the list of annotations to trigger the callback on
      * @param handler the callback that will be called
      */
+    @Deprecated("Will be obsolete soon, rewrite using refineConfigurationOnAST instead", level = DeprecationLevel.WARNING)
     fun onAnnotations(annotations: Iterable<KClass<out Annotation>>, handler: RefineScriptCompilationConfigurationHandler) {
+        @Suppress("DEPRECATION")
         onAnnotations(annotations.map { KotlinType(it) }, handler)
     }
 
@@ -294,6 +319,14 @@ fun ScriptCompilationConfiguration.refineBeforeParsing(
         refineData.handler.invoke(ScriptConfigurationRefinementContext(script, config, collectedData))
     }
 
+fun ScriptCompilationConfiguration.refineOnAST(
+    script: SourceCode,
+    collectedData: ScriptCollectedData?
+): ResultWithDiagnostics<ScriptCompilationConfiguration> =
+    simpleRefineImpl(ScriptCompilationConfiguration.refineConfigurationOnAST) { config, refineData ->
+        refineData.handler.invoke(ScriptConfigurationRefinementContext(script, config, collectedData))
+    }
+
 fun ScriptCompilationConfiguration.refineOnAnnotations(
     script: SourceCode,
     collectedData: ScriptCollectedData
@@ -306,6 +339,7 @@ fun ScriptCompilationConfiguration.refineOnAnnotations(
     if (foundAnnotationNames.isEmpty() && !isFromLegacy) return this.asSuccess()
 
     val thisResult: ResultWithDiagnostics<ScriptCompilationConfiguration> = this.asSuccess()
+    @Suppress("DEPRECATION")
     return this[ScriptCompilationConfiguration.refineConfigurationOnAnnotations]
         ?.fold(thisResult) { config, (annotations, handler) ->
             config.onSuccess {

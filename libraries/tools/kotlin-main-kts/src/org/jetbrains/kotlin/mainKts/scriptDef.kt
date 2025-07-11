@@ -49,7 +49,9 @@ class MainKtsScriptDefinition : ScriptCompilationConfiguration(
             dependenciesFromClassContext(MainKtsScriptDefinition::class, "kotlin-main-kts", "kotlin-stdlib", "kotlin-reflect")
         }
         refineConfiguration {
+            @Suppress("DEPRECATION")
             onAnnotations(DependsOn::class, Repository::class, Import::class, CompilerOptions::class, handler = MainKtsConfigurator())
+            @Suppress("DEPRECATION")
             onAnnotations(ScriptFileLocation::class, handler = ScriptFileLocationCustomConfigurator())
             beforeCompiling(::configureScriptFileLocationPathVariablesForCompilation)
             beforeCompiling(::configureProvidedPropertiesFromJsr223Context)
