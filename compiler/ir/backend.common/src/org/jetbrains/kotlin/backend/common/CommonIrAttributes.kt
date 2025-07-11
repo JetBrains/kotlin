@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.name.Name
  *
  * `null` <=> `this` element wasn't inlined.
  */
-var IrElement.originalBeforeInline: IrElement? by irAttribute(copyByDefault = true)
 
 var IrFunction.defaultArgumentsDispatchFunction: IrFunction? by irAttribute(copyByDefault = false)
 
