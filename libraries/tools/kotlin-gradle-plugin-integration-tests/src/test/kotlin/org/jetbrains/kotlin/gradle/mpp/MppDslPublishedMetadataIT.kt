@@ -25,7 +25,6 @@ class MppDslPublishedMetadataIT : KGPBaseTest() {
             projectName = "new-mpp-lib-and-app/sample-lib",
             gradleVersion = gradleVersion,
             localRepoDir = localRepoDir,
-            buildOptions = defaultBuildOptions.disableKlibsCrossCompilation()
         ) {
             val publishedVariants = MPPNativeTargets.supported
             val nonPublishedVariants = MPPNativeTargets.unsupported

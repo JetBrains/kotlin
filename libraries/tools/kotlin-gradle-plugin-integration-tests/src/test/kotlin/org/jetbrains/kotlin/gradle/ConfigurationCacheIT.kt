@@ -99,8 +99,6 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
         project(
             "native-configuration-cache",
             gradleVersion,
-            buildOptions = defaultBuildOptions
-                .disableKlibsCrossCompilation()
         ) {
             val commonizeNativeDistributionTask = ":lib:commonizeNativeDistribution"
             val cleanNativeDistributionCommonizationTask = ":lib:cleanNativeDistributionCommonization"
@@ -137,7 +135,7 @@ class ConfigurationCacheIT : AbstractConfigurationCacheIT() {
     @TestMetadata("native-configuration-cache")
     fun testWithDownloadingKotlinNativeAndDependencies(gradleVersion: GradleVersion, @TempDir konanTempDir: Path) {
         // with Configuration Cache we currently have such a problem KT-66423
-        val buildOptions = buildOptionsToAvoidKT66423(gradleVersion, konanTempDir).disableKlibsCrossCompilation()
+        val buildOptions = buildOptionsToAvoidKT66423(gradleVersion, konanTempDir)
         project("native-configuration-cache", gradleVersion, buildOptions = buildOptions) {
 
             build(":lib:compileCommonMainKotlinMetadata") {

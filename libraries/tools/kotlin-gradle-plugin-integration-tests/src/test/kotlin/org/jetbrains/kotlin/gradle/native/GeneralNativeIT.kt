@@ -786,7 +786,7 @@ class GeneralNativeIT : KGPBaseTest() {
     @OsCondition(supportedOn = [OS.LINUX, OS.WINDOWS])
     @TestMetadata("new-mpp-lib-and-app/sample-lib")
     fun testIgnoreDisabledNativeTargets(gradleVersion: GradleVersion) {
-        nativeProject("new-mpp-lib-and-app/sample-lib", gradleVersion, buildOptions = defaultBuildOptions.disableKlibsCrossCompilation()) {
+        nativeProject("new-mpp-lib-and-app/sample-lib", gradleVersion) {
             build {
                 assertHasDiagnostic(KotlinToolingDiagnostics.DisabledKotlinNativeTargets)
             }
