@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
-import org.jetbrains.kotlin.ir.inline.InlineCallableReferenceToLambdaPhase
 
 /**
  * Transforms callable references to inline lambdas, marks inline lambdas for later passes.
@@ -16,5 +15,5 @@ import org.jetbrains.kotlin.ir.inline.InlineCallableReferenceToLambdaPhase
 internal class JvmInlineCallableReferenceToLambdaPhase(
     context: JvmBackendContext,
 ) : InlineCallableReferenceToLambdaPhase(
-    context, JvmInlineFunctionResolver(context)
+    context
 )
