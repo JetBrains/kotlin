@@ -138,4 +138,10 @@ enum class KotlinVersion(
             introducedVersion = KotlinReleaseVersion.v2_2_20,
         )
     ),
+    v2_5(
+        versionName = "2.5",
+        releaseVersionsMetadata = KotlinReleaseVersionLifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_2_20,
+        )
+    ),
 }
