@@ -78,13 +78,3 @@ fun IrDeclarationWithVisibility.isEffectivelyInlineOnly(): Boolean =
 
 fun IrFunction.isPrivateInlineSuspend(): Boolean =
     isSuspend && isInline && visibility == DescriptorVisibilities.PRIVATE
-
-@OptIn(JvmIrInlineExperimental::class)
-val IrInlinedFunctionBlock.inlineDeclaration: IrDeclaration
-    get() = when (val element = inlinedElement) {
-        is IrFunction -> element
-        is IrFunctionExpression -> element.function
-        is IrFunctionReference -> element.symbol.owner
-        is IrPropertyReference -> element.symbol.owner
-        else -> throw AssertionError("Not supported ir element for inlining ${element?.dump()}")
-    }
