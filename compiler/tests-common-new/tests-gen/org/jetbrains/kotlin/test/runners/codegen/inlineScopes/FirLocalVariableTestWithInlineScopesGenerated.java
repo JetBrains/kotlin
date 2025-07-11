@@ -19,7 +19,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("compiler/testData/debug/localVariables")
 @TestDataPath("$PROJECT_ROOT")
-public class FirLocalVariableBytecodeInlinerTestWithInlineScopesGenerated extends AbstractFirLocalVariableBytecodeInlinerTestWithInlineScopes {
+public class FirLocalVariableTestWithInlineScopesGenerated extends AbstractFirLocalVariableTestWithInlineScopes {
   @Test
   public void testAllFilesPresentInLocalVariables() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/debug/localVariables"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "inlineScopes/newFormatToOld");

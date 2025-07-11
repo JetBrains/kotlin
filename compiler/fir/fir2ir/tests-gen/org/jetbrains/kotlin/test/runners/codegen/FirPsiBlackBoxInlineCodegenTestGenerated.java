@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.test.runners.codegen.inlineScopes;
+package org.jetbrains.kotlin.test.runners.codegen;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
@@ -19,10 +19,10 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("compiler/testData/codegen/boxInline")
 @TestDataPath("$PROJECT_ROOT")
-public class FirBlackBoxInlineCodegenWithBytecodeInlinerTestWithInlineScopesGenerated extends AbstractFirBlackBoxInlineCodegenWithBytecodeInlinerTestWithInlineScopes {
+public class FirPsiBlackBoxInlineCodegenTestGenerated extends AbstractFirPsiBlackBoxInlineCodegenTest {
   @Test
   public void testAllFilesPresentInBoxInline() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "multiplatform/k2");
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
   }
 
   @Nested
@@ -3319,7 +3319,7 @@ public class FirBlackBoxInlineCodegenWithBytecodeInlinerTestWithInlineScopesGene
   public class Multiplatform {
     @Test
     public void testAllFilesPresentInMultiplatform() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/multiplatform"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true, "k2");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/boxInline/multiplatform"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
     }
 
     @Nested

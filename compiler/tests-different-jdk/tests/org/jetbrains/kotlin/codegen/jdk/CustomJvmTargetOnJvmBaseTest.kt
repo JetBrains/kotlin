@@ -19,15 +19,15 @@ import org.junit.platform.suite.api.Suite
 @Suite
 @SelectClasses(
     IrBlackBoxCodegenTestGenerated::class,
-    IrBlackBoxInlineCodegenWithBytecodeInlinerTestGenerated::class,
+    IrBlackBoxInlineCodegenTestGenerated::class,
     IrCompileKotlinAgainstInlineKotlinTestGenerated::class,
 
     FirLightTreeBlackBoxCodegenTestGenerated::class,
-    FirLightTreeBlackBoxInlineCodegenWithBytecodeInlinerTestGenerated::class,
+    FirLightTreeBlackBoxInlineCodegenTestGenerated::class,
     FirLightTreeSerializeCompileKotlinAgainstInlineKotlinTestGenerated::class,
 
     FirPsiBlackBoxCodegenTestGenerated::class,
-    FirPsiBlackBoxInlineCodegenWithBytecodeInlinerTestGenerated::class,
+    FirPsiBlackBoxInlineCodegenTestGenerated::class,
     FirPsiSerializeCompileKotlinAgainstInlineKotlinTestGenerated::class,
 
     CoreJrtFsTest::class
