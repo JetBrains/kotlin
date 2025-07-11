@@ -1,5 +1,5 @@
 // KT-72840: java.lang.AssertionError: AFTER mandatory stack transformations: incorrect bytecode
-// IGNORE_INLINER: BYTECODE
+// IGNORE_BACKEND: JVM_IR
 // IGNORE_BACKEND: ANDROID
 
 class A {
