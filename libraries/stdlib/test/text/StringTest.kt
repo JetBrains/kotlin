@@ -422,6 +422,30 @@ class StringTest {
 
     }
 
+    @Test fun substringWithInvalidIndices() {
+        // String.substring behavior on JS diverges from other targets: KT-17831
+        if (TestPlatform.current == TestPlatform.Js) return
+
+        assertFailsWith<IndexOutOfBoundsException> { "think positive".substring(-3, -1) }
+        assertFailsWith<IndexOutOfBoundsException> { "think positive".substring(-1, 3) }
+        assertFailsWith<IndexOutOfBoundsException> { "think positive".substring(-1) }
+        assertFailsWith<IndexOutOfBoundsException> { "too short to be a substring".substring(0, 42) }
+        assertFailsWith<IndexOutOfBoundsException> { "too short to be a substring".substring(42, 43) }
+        assertFailsWith<IndexOutOfBoundsException> { "too short to be a substring".substring(42) }
+        assertFailsWith<IndexOutOfBoundsException> { "dlrow olleh".substring(3, 1) }
+    }
+
+    @Test fun subsequenceWithInvalidIndices() {
+        // String.subSequence behavior on JS diverges from other targets: KT-17831
+        if (TestPlatform.current == TestPlatform.Js) return
+
+        assertFailsWith<IndexOutOfBoundsException> { "think positive".subSequence(-3, -1) }
+        assertFailsWith<IndexOutOfBoundsException> { "think positive".subSequence(-1, 3) }
+        assertFailsWith<IndexOutOfBoundsException> { "too short to be a substring".subSequence(0, 42) }
+        assertFailsWith<IndexOutOfBoundsException> { "too short to be a substring".subSequence(42, 43) }
+        assertFailsWith<IndexOutOfBoundsException> { "dlrow olleh".subSequence(3, 1) }
+    }
+
     @Test fun replaceDelimited() {
         val s = "/user/folder/file.extension"
         // chars

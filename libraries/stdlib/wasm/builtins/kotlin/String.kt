@@ -69,13 +69,20 @@ public actual class String internal @WasmPrimitiveConstructor constructor(
     }
 
     public actual override fun subSequence(startIndex: Int, endIndex: Int): CharSequence {
-        val actualStartIndex = startIndex.coerceAtLeast(0)
-        val actualEndIndex = endIndex.coerceAtMost(this.length)
-        val newLength = actualEndIndex - actualStartIndex
-        if (newLength <= 0) return ""
+        checkStringBounds(startIndex, endIndex, length)
+        val newLength = endIndex - startIndex
         val newChars = WasmCharArray(newLength)
-        copyWasmArray(chars, newChars, actualStartIndex, 0, newLength)
+        copyWasmArray(chars, newChars, startIndex, 0, newLength)
         return newChars.createString()
+    }
+
+    private fun checkStringBounds(startIndex: Int, endIndex: Int, length: Int) {
+        if (startIndex < 0 || endIndex > length) {
+            throw IndexOutOfBoundsException("startIndex: $startIndex, endIndex: $endIndex, length: $length")
+        }
+        if (startIndex > endIndex) {
+            throw IndexOutOfBoundsException("startIndex: $startIndex > endIndex: $endIndex")
+        }
     }
 
     @kotlin.internal.IntrinsicConstEvaluation
