@@ -36,16 +36,6 @@ class FirStatusResolver(
         private val MODIFIERS_FROM_OVERRIDDEN: List<FirDeclarationStatusImpl.Modifier> = listOf(
             FirDeclarationStatusImpl.Modifier.OPERATOR,
             FirDeclarationStatusImpl.Modifier.INFIX,
-            FirDeclarationStatusImpl.Modifier.INNER,
-            FirDeclarationStatusImpl.Modifier.COMPANION,
-            FirDeclarationStatusImpl.Modifier.DATA,
-            FirDeclarationStatusImpl.Modifier.STATIC,
-            FirDeclarationStatusImpl.Modifier.FROM_SEALED,
-            FirDeclarationStatusImpl.Modifier.FROM_ENUM,
-            FirDeclarationStatusImpl.Modifier.FUN,
-            FirDeclarationStatusImpl.Modifier.HAS_STABLE_PARAMETER_NAMES,
-            FirDeclarationStatusImpl.Modifier.VALUE,
-            FirDeclarationStatusImpl.Modifier.HAS_MUST_USE_RETURN_VALUE,
         )
     }
 
