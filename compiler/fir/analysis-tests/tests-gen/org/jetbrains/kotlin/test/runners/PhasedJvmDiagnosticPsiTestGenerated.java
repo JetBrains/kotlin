@@ -2974,6 +2974,12 @@ public class PhasedJvmDiagnosticPsiTestGenerated extends AbstractPhasedJvmDiagno
       }
 
       @Test
+      @TestMetadata("localAnnotationWithTarget.kt")
+      public void testLocalAnnotationWithTarget() {
+        runTest("compiler/testData/diagnostics/tests/annotations/localAnnotationWithTarget.kt");
+      }
+
+      @Test
       @TestMetadata("localImplicitTypeUnavailable.kt")
       public void testLocalImplicitTypeUnavailable() {
         runTest("compiler/testData/diagnostics/tests/annotations/localImplicitTypeUnavailable.kt");
