@@ -291,18 +291,24 @@ private open class NativeTestPrepareCompilerDistribution @Inject constructor(
     protected val nativeDistributionInput
         get() = nativeDistributionRoot.asFileTree.matching {
             include("bin/")
-            include("klib/cache/${testTarget.get()}-gSTATIC-system/stdlib-cache/")
+            val testTarget = testTarget.get()
+            val hostTarget = HostManager.hostName
+            include("klib/cache/$testTarget-gSTATIC-system/stdlib-cache/")
+            include("klib/cache/$hostTarget-gSTATIC-system/stdlib-cache/")
             if (requirePlatformLibs.get()) {
-                include("klib/cache/${testTarget.get()}-gSTATIC-system/org.jetbrains.kotlin.native.platform.*-cache/")
+                include("klib/cache/$testTarget-gSTATIC-system/org.jetbrains.kotlin.native.platform.*-cache/")
+                include("klib/cache/$hostTarget-gSTATIC-system/org.jetbrains.kotlin.native.platform.*-cache/")
             }
             include("klib/common/")
             if (requirePlatformLibs.get()) {
-                include("klib/platform/${testTarget.get()}/")
+                include("klib/platform/$testTarget/")
+                include("klib/platform/$hostTarget/")
             }
             include("konan/lib/")
             include("konan/nativelib/")
             include("konan/swift_export/")
-            include("konan/targets/${testTarget.get()}/")
+            include("konan/targets/$testTarget/")
+            include("konan/targets/$hostTarget/")
             include("konan/compiler.fingerprint")
             include("konan/konan.properties")
             include("tools/")
