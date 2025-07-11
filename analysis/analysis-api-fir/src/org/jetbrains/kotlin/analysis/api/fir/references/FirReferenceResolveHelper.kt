@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.fir.scopes.processClassifiersByName
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirReceiverParameterSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.lexer.KtTokens
@@ -621,10 +622,10 @@ internal object FirReferenceResolveHelper {
         session: FirSession,
         symbolBuilder: KaSymbolByFirBuilder,
     ): Collection<KaSymbol> {
-        val referencedSymbol = if (fir.resolvedToCompanionObject) {
-            fir.symbol?.fullyExpandedClass(session)?.companionObjectSymbol
-        } else {
-            fir.symbol
+        val referencedSymbol = when (val symbol = fir.symbol) {
+            // Note: we want to consider the companion object only for regular class qualifiers (and not for typealiased ones)
+            is FirRegularClassSymbol if (fir.resolvedToCompanionObject) -> symbol.companionObjectSymbol
+            else -> symbol
         }
         if (referencedSymbol == null) {
             // If referencedSymbol is null, it means the reference goes to a package.
