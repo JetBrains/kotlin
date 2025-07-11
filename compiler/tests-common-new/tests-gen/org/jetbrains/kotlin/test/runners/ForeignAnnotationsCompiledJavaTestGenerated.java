@@ -749,12 +749,6 @@ public class ForeignAnnotationsCompiledJavaTestGenerated extends AbstractForeign
         }
 
         @Test
-        @TestMetadata("AnnotatedTypeParameterBoundsInNullUnmarkedContext.kt")
-        public void testAnnotatedTypeParameterBoundsInNullUnmarkedContext() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/AnnotatedTypeParameterBoundsInNullUnmarkedContext.kt");
-        }
-
-        @Test
         @TestMetadata("Captured.kt")
         public void testCaptured() {
           runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/Captured.kt");
@@ -932,12 +926,6 @@ public class ForeignAnnotationsCompiledJavaTestGenerated extends AbstractForeign
         @TestMetadata("NullUnmarkedVsPackageNullMarked.kt")
         public void testNullUnmarkedVsPackageNullMarked() {
           runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/NullUnmarkedVsPackageNullMarked.kt");
-        }
-
-        @Test
-        @TestMetadata("NullUnmarkedVsParametricNullness.kt")
-        public void testNullUnmarkedVsParametricNullness() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/strictMode/NullUnmarkedVsParametricNullness.kt");
         }
 
         @Test
@@ -1218,12 +1206,6 @@ public class ForeignAnnotationsCompiledJavaTestGenerated extends AbstractForeign
         @TestMetadata("NullUnmarkedVsPackageNullMarked.kt")
         public void testNullUnmarkedVsPackageNullMarked() {
           runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/NullUnmarkedVsPackageNullMarked.kt");
-        }
-
-        @Test
-        @TestMetadata("NullUnmarkedVsParametricNullness.kt")
-        public void testNullUnmarkedVsParametricNullness() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/NullUnmarkedVsParametricNullness.kt");
         }
 
         @Test
