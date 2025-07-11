@@ -35389,6 +35389,24 @@ public class FirWasmJsCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       }
 
       @Test
+      @TestMetadata("ubyteOperations.kt")
+      public void testUbyteOperations() {
+        runTest("compiler/testData/codegen/box/involvesIrInterpreter/ubyteOperations.kt");
+      }
+
+      @Test
+      @TestMetadata("uintOperations.kt")
+      public void testUintOperations() {
+        runTest("compiler/testData/codegen/box/involvesIrInterpreter/uintOperations.kt");
+      }
+
+      @Test
+      @TestMetadata("ulongOperations.kt")
+      public void testUlongOperations() {
+        runTest("compiler/testData/codegen/box/involvesIrInterpreter/ulongOperations.kt");
+      }
+
+      @Test
       @TestMetadata("unsignedConst.kt")
       public void testUnsignedConst() {
         runTest("compiler/testData/codegen/box/involvesIrInterpreter/unsignedConst.kt");
@@ -35398,6 +35416,12 @@ public class FirWasmJsCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       @TestMetadata("useCorrectToString.kt")
       public void testUseCorrectToString() {
         runTest("compiler/testData/codegen/box/involvesIrInterpreter/useCorrectToString.kt");
+      }
+
+      @Test
+      @TestMetadata("ushortOperations.kt")
+      public void testUshortOperations() {
+        runTest("compiler/testData/codegen/box/involvesIrInterpreter/ushortOperations.kt");
       }
 
       @Nested
