@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.backend.ir.JvmIrBackendFacade
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.configuration.configureDumpHandlersForCodegenTest
-import org.jetbrains.kotlin.test.configuration.useIrInliner
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontend2IrConverter
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendFacade
 import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendOutputArtifact
@@ -33,12 +32,5 @@ open class AbstractIrBlackBoxCodegenTest : AbstractJvmBlackBoxCodegenTestBase<Cl
         with(builder) {
             configureDumpHandlersForCodegenTest()
         }
-    }
-}
-
-open class AbstractIrBlackBoxCodegenWithIrInlinerTest : AbstractIrBlackBoxCodegenTest() {
-    override fun configure(builder: TestConfigurationBuilder) {
-        super.configure(builder)
-        builder.useIrInliner()
     }
 }
