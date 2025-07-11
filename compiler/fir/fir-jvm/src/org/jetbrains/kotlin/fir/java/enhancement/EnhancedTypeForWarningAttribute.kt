@@ -49,7 +49,6 @@ val ConeKotlinType.isEnhancedTypeForWarningDeprecation: Boolean
 class EnhancedForWarningConeSubstitutor(
     typeContext: ConeTypeContext,
     // TODO: drop me after disabling of DontMakeExplicitJavaTypeArgumentsFlexible will be no longer supported
-    // In fact it may be done earlier during the fix of KT-76065 (dropping JavaTypeParameterDefaultRepresentationWithDNN)
     private val useExplicitTypeArgumentIfMadeFlexibleSyntheticallyWithFeature: LanguageFeature? = null,
 ) : AbstractConeSubstitutor(typeContext) {
     override fun substituteType(type: ConeKotlinType): ConeKotlinType? {

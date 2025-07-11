@@ -133,8 +133,7 @@ internal object CreateFreshTypeVariableSubstitutorStage : ResolutionStage() {
      * }
      * ```
      *
-     * TODO: Get rid of this function once KT-59138 is fixed and the relevant feature for disabling it will be removed
-     * Also we should get rid of it once [LanguageFeature.DontMakeExplicitJavaTypeArgumentsFlexible] is removed
+     * TODO: Get rid of this function once [LanguageFeature.DontMakeExplicitJavaTypeArgumentsFlexible] is removed
      *
      * @return type which is chosen for EQUALS constraint
      */

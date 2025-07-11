@@ -177,10 +177,12 @@ private fun reportUpperBoundViolationWarningIfNecessary(
 ) {
     if (additionalUpperBoundsProvider == null) return
     val additionalUpperBound = additionalUpperBoundsProvider.getAdditionalUpperBound(upperBound) ?: return
-    // While [org.jetbrains.kotlin.fir.resolve.calls.CreateFreshTypeVariableSubstitutorStage.getTypePreservingFlexibilityWrtTypeVariable]
-    // is here, to obtain original explicit type arguments, we need to look into special attribute.
-    // TODO: Get rid of this unwrapping once KT-59138 is fixed and the relevant feature for disabling it will be removed
-    // Also we should get rid of it once LanguageFeature.DontMakeExplicitJavaTypeArgumentsFlexible is removed
+
+    /**
+     * While [LanguageFeature.DontMakeExplicitJavaTypeArgumentsFlexible]
+     * is here, to obtain original explicit type arguments, we need to look into special attribute.
+     * TODO: Get rid of this unwrapping once [LanguageFeature.DontMakeExplicitJavaTypeArgumentsFlexible] is removed
+     */
     val properArgumentType =
         argumentType.attributes.explicitTypeArgumentIfMadeFlexibleSynthetically?.coneType ?: argumentType
 

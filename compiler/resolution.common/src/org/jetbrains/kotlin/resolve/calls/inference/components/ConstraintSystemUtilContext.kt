@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.resolve.calls.inference.components
 
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.resolve.calls.inference.model.ArgumentConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.inference.model.FixVariableConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.model.PostponedAtomWithRevisableExpectedType
@@ -18,10 +19,11 @@ import org.jetbrains.kotlin.types.model.TypeVariableMarker
  */
 interface ConstraintSystemUtilContext {
     /**
-     * DNN-related hack that softens slightly restrictions in runIsSubtypeOf
+     * DNN-related hack that softens slightly restrictions in
+     * [org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintInjector.TypeCheckerStateForConstraintInjector.runIsSubtypeOf]
      *
-     * TODO: Get rid of this function once KT-59138 is fixed and the relevant feature for disabling it will be removed
-     * Also we should get rid of it once LanguageFeature.DontMakeExplicitJavaTypeArgumentsFlexible is removed
+     * TODO: get rid of this function once [LanguageFeature.DontMakeExplicitJavaTypeArgumentsFlexible] is removed
+     * Use-sites should be treated as always returning false
      */
     fun TypeVariableMarker.shouldBeFlexible(): Boolean
     fun TypeVariableMarker.hasOnlyInputTypesAttribute(): Boolean
