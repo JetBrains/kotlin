@@ -490,58 +490,6 @@ class ExpressionCodegen(
         }
     }
 
-    override fun visitInlinedFunctionBlock(inlinedBlock: IrInlinedFunctionBlock, data: BlockInfo): PromisedValue {
-        val info = BlockInfo(data)
-
-        val inlineCall = inlinedBlock.inlineCall!!
-        val callee = inlinedBlock.inlineDeclaration as? IrFunction
-
-        lineNumberMapper.beforeIrInline(inlinedBlock)
-
-        lineNumberMapper.noLineNumberScopeWithCondition(inlinedBlock.inlineDeclaration.isInlineOnly()) {
-            inlineCall.markLineNumber(startOffset = true)
-            mv.nop()
-
-            lineNumberMapper.buildSmapFor(inlinedBlock)
-
-            if (inlineCall.usesDefaultArguments()) {
-                // $default function has first LN pointing to original callee
-                callee?.markLineNumber(startOffset = true)
-                mv.nop()
-            }
-
-            val result = inlinedBlock.statements.fold(unitValue) { prev, exp ->
-                prev.discard()
-                exp.accept(this, info)
-            }
-
-            if (callee != null && (inlinedBlock.inlinedElement !is IrCallableReference<*> || callee.isInline)) {
-                setExtraLineNumberForVoidReturningFunction(callee)
-            }
-
-            // After `ReturnableBlockLowering` last return could transform, but we still need to place new LN there
-            val lastStatement = callee?.body?.statements?.lastOrNull()
-            if (lastStatement is IrReturn) {
-                val returnTarget = lastStatement.returnTargetSymbol.owner
-                if (returnTarget.attributeOwnerId == inlinedBlock.inlineDeclaration) {
-                    // if return is implicit we must put new LN at the end of expression
-                    inlinedBlock.statements.last().markLineNumber(startOffset = lastStatement.startOffset != lastStatement.endOffset)
-                    mv.nop()
-                }
-            }
-
-            lineNumberMapper.dropCurrentSmap()
-
-            return result.materialized().also {
-                if (info.variables.isNotEmpty()) {
-                    writeLocalVariablesInTable(info, markNewLabel())
-                }
-                // This block must be executed after `writeLocalVariablesInTable`
-                lineNumberMapper.afterIrInline(inlinedBlock)
-            }
-        }
-    }
-
     private fun visitStatementContainer(container: IrStatementContainer, data: BlockInfo): PromisedValue {
         return container.statements.fold(unitValue) { prev, exp ->
             prev.discard()
@@ -1281,10 +1229,6 @@ class ExpressionCodegen(
         mv.nop()
         val endLabel = Label()
         val stackElement = unwindBlockStack(endLabel, data) { it.loop == jump.loop }
-        if ((jump.loop.body as? IrBlock)?.statements?.singleOrNull() is IrInlinedFunctionBlock) {
-            // There must be another line number because this jump is actually return from inlined function
-            jump.markLineNumber(startOffset = true)
-        }
         if (stackElement == null) {
             generateGlobalReturnFlagIfPossible(jump, jump.loop.nonLocalReturnLabel(jump is IrBreak))
             mv.areturn(Type.VOID_TYPE)
