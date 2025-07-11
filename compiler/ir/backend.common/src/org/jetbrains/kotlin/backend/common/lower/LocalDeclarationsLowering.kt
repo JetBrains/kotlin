@@ -128,7 +128,6 @@ open class LocalDeclarationsLowering(
     val compatibilityModeForInlinedLocalDelegatedPropertyAccessors: Boolean = false, // Keep old names because of KT-49030
     val forceFieldsForInlineCaptures: Boolean = false, // See `LocalClassContext`
     val remapCapturedTypesInExtractedLocalDeclarations: Boolean = true,
-    val allConstructorsWithCapturedConstructorCreated: MutableSet<IrConstructor>? = null,
     val closureBuilders: MutableMap<IrDeclaration, ClosureBuilder> = mutableMapOf<IrDeclaration, ClosureBuilder>(),
     val transformedDeclarations: MutableMap<IrSymbolOwner, IrDeclaration> = mutableMapOf<IrSymbolOwner, IrDeclaration>(),
     val newParameterToCaptured: MutableMap<IrValueParameter, IrValueSymbol> = mutableMapOf(),
@@ -191,21 +190,6 @@ open class LocalDeclarationsLowering(
             classesToLower,
             functionsToSkip
         ).lowerLocalDeclarations()
-    }
-
-    fun lowerWithoutActualChange(irBody: IrBody, container: IrDeclaration) {
-        val oldCapturedConstructors = allConstructorsWithCapturedConstructorCreated?.mapNotNull { it.capturedConstructor }
-        LocalDeclarationsTransformer(
-            irBody,
-            container,
-            transformedDeclarations,
-            newParameterToCaptured,
-            newParameterToOld,
-            oldParameterToNew
-        ).cacheLocalConstructors()
-        oldCapturedConstructors?.forEach {
-            it.capturedConstructor = null
-        }
     }
 
     open fun getReplacementSymbolForCaptured(container: IrDeclaration, symbol: IrValueSymbol): IrValueSymbol = symbol
@@ -1110,7 +1094,6 @@ open class LocalDeclarationsLowering(
 
             transformedDeclarations[oldDeclaration] = newDeclaration
             oldDeclaration.capturedConstructor = newDeclaration
-            allConstructorsWithCapturedConstructorCreated?.add(oldDeclaration)
         }
 
         private fun createFieldsForCapturedValues(localClassContext: LocalClassContext): List<IrField> {

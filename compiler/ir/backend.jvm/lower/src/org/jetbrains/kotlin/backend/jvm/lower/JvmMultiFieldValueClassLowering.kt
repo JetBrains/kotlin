@@ -1420,13 +1420,6 @@ private fun findNearestBlocksForVariables(variables: Set<IrVariable>, body: Bloc
         }
 
         override fun visitBlock(expression: IrBlock) {
-            // This is a workaround.
-            // We process IrInlinedFunctionBlock on codegen in a special way by processing composite blocks with arguments evaluation first.
-            // Thus, we don't want IrInlinedFunctionBlock to contain variable declarations before this composite blocks.
-            // That is why we move variable declarations from IrInlinedFunctionBlock to the outer block.
-            if (expression is IrInlinedFunctionBlock) {
-                return super.visitBlock(expression)
-            }
             currentStackElement()?.let { childrenBlocks.getOrPut(it) { mutableListOf() }.add(Block(expression)) }
             stack.add(Block(expression))
             super.visitBlock(expression)
