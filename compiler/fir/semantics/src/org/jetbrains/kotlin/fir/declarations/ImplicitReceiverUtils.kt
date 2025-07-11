@@ -237,7 +237,7 @@ class FirTowerDataContext private constructor(
         val implicitValueMapper = object : ImplicitValueMapper {
             val implicitValueCache = HashMap<ImplicitValue<*>, ImplicitValue<*>>()
 
-            override fun <S, T : ImplicitValue<S>> invoke(value: T): T where S: FirThisOwnerSymbol<*>, S : FirBasedSymbol<*> {
+            override fun <S, T : ImplicitValue<S>> invoke(value: T): T where S : FirThisOwnerSymbol<*>, S : FirBasedSymbol<*> {
                 @Suppress("UNCHECKED_CAST")
                 return implicitValueCache.getOrPut(value) { value.createSnapshot(keepMutable) } as T
             }
