@@ -3,6 +3,7 @@ package org.jetbrains.kotlinx.dataframe.plugin.extensions
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.toClassLikeSymbol
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
+import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.builder.buildTypeParameter
 import org.jetbrains.kotlin.fir.declarations.declaredProperties
 import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
@@ -100,6 +101,7 @@ class TopLevelExtensionsGenerator(session: FirSession) : FirDeclarationGeneratio
                 }
                 buildTypeParameter {
                     moduleData = session.moduleData
+                    resolvePhase = FirResolvePhase.BODY_RESOLVE
                     origin = FirDeclarationOrigin.Plugin(DataFramePlugin)
                     this.name = it.name
                     this.symbol = propertyTypeParameterSymbol
