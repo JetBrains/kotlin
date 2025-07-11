@@ -40,7 +40,7 @@ class ConstraintIncorporator(
             variableConstructorMarker: TypeConstructorMarker,
         ): Collection<VariableWithConstraints>
 
-        // if such type variable is fixed then it is error
+        // if such a type variable is fixed then it is error
         fun getTypeVariable(typeConstructor: TypeConstructorMarker): TypeVariableMarker?
 
         fun getConstraintsForVariable(typeVariable: TypeVariableMarker): List<Constraint>
@@ -92,13 +92,14 @@ class ConstraintIncorporator(
                         typeVariable, constraint,
                     ) {
                         c.processNewInitialConstraintFromIncorporation(
-                            lowerType =it.type,
-                            upperType =constraint.type,
-                            shouldTryUseDifferentFlexibilityForUpperType =shouldBeTypeVariableFlexible,
-                            newDerivedFrom =constraint.computeNewDerivedFrom(it),
+                            lowerType = it.type,
+                            upperType = constraint.type,
+                            shouldTryUseDifferentFlexibilityForUpperType = shouldBeTypeVariableFlexible,
+                            newDerivedFrom = constraint.computeNewDerivedFrom(it),
                             isFromNullabilityConstraint = it.isNullabilityConstraint,
-                        isFromDeclaredUpperBound = false,
-                        isNoInfer = constraint.isNoInfer || it.isNoInfer,)
+                            isFromDeclaredUpperBound = false,
+                            isNoInfer = constraint.isNoInfer || it.isNoInfer,
+                        )
                     }
                 }
             }
@@ -116,13 +117,14 @@ class ConstraintIncorporator(
                         typeVariable, it,
                     ) {
                         c.processNewInitialConstraintFromIncorporation(
-                            lowerType =constraint.type,
-                            upperType =it.type,
-                            shouldTryUseDifferentFlexibilityForUpperType =shouldBeTypeVariableFlexible,
-                            newDerivedFrom =constraint.computeNewDerivedFrom(it),
+                            lowerType = constraint.type,
+                            upperType = it.type,
+                            shouldTryUseDifferentFlexibilityForUpperType = shouldBeTypeVariableFlexible,
+                            newDerivedFrom = constraint.computeNewDerivedFrom(it),
                             isFromDeclaredUpperBound = isFromDeclaredUpperBound,
-                        isFromNullabilityConstraint = false,
-                        isNoInfer = constraint.isNoInfer || it.isNoInfer,)
+                            isFromNullabilityConstraint = false,
+                            isNoInfer = constraint.isNoInfer || it.isNoInfer,
+                        )
                     }
                 }
             }
@@ -255,18 +257,15 @@ class ConstraintIncorporator(
                  *      incorporatedConstraint = Approx(CapturedType(out Number)) <: TypeVariable(A) => Nothing <: TypeVariable(A)
                  * TODO: implement this for generics and captured types
                  */
-                when {
-                    otherConstraint.kind == ConstraintKind.LOWER && !isBaseGenericType && !isBaseOrOtherCapturedType ->
-                        c.nothingType() to false
-                    otherConstraint.kind == ConstraintKind.UPPER && !isBaseGenericType && !isBaseOrOtherCapturedType ->
-                        causeOfIncorporationConstraint.type to false
-                    else ->
-                        c.createCapturedType(
-                            c.createTypeArgument(causeOfIncorporationConstraint.type, TypeVariance.OUT),
-                            listOf(causeOfIncorporationConstraint.type),
-                            null,
-                            CaptureStatus.FOR_INCORPORATION
-                        ) to true
+                when (otherConstraint.kind) {
+                    ConstraintKind.LOWER if !isBaseGenericType && !isBaseOrOtherCapturedType -> c.nothingType() to false
+                    ConstraintKind.UPPER if !isBaseGenericType && !isBaseOrOtherCapturedType -> causeOfIncorporationConstraint.type to false
+                    else -> c.createCapturedType(
+                        c.createTypeArgument(causeOfIncorporationConstraint.type, TypeVariance.OUT),
+                        listOf(causeOfIncorporationConstraint.type),
+                        null,
+                        CaptureStatus.FOR_INCORPORATION
+                    ) to true
                 }
             }
             ConstraintKind.LOWER -> {
@@ -279,18 +278,15 @@ class ConstraintIncorporator(
                  *      incorporatedConstraint = TypeVariable(A) <: Approx(CapturedType(in Number)) => TypeVariable(A) <: Any?
                  * TODO: implement this for generics and captured types
                  */
-                when {
-                    otherConstraint.kind == ConstraintKind.UPPER && !isBaseGenericType && !isBaseOrOtherCapturedType ->
-                        c.nullableAnyType() to false
-                    otherConstraint.kind == ConstraintKind.LOWER && !isBaseGenericType && !isBaseOrOtherCapturedType ->
-                        causeOfIncorporationConstraint.type to false
-                    else ->
-                        c.createCapturedType(
-                            c.createTypeArgument(causeOfIncorporationConstraint.type, TypeVariance.IN),
-                            emptyList(),
-                            causeOfIncorporationConstraint.type,
-                            CaptureStatus.FOR_INCORPORATION
-                        ) to true
+                when (otherConstraint.kind) {
+                    ConstraintKind.UPPER if !isBaseGenericType && !isBaseOrOtherCapturedType -> c.nullableAnyType() to false
+                    ConstraintKind.LOWER if !isBaseGenericType && !isBaseOrOtherCapturedType -> causeOfIncorporationConstraint.type to false
+                    else -> c.createCapturedType(
+                        c.createTypeArgument(causeOfIncorporationConstraint.type, TypeVariance.IN),
+                        emptyList(),
+                        causeOfIncorporationConstraint.type,
+                        CaptureStatus.FOR_INCORPORATION
+                    ) to true
                 }
             }
         }
@@ -380,8 +376,8 @@ class ConstraintIncorporator(
 
     context(c: Context)
     private fun KotlinTypeMarker.getNestedTypeVariables(): List<TypeVariableMarker> {
-        return getNestedArguments().mapNotNullTo(SmartList()) {
-            it.getType()?.let { c.getTypeVariable(it.typeConstructor().unwrapStubTypeVariableConstructor()) }
+        return getNestedArguments().mapNotNullTo(SmartList()) { typeArgument ->
+            typeArgument.getType()?.let { c.getTypeVariable(it.typeConstructor().unwrapStubTypeVariableConstructor()) }
         }
     }
 
