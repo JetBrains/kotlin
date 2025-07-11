@@ -109,7 +109,7 @@ fun generateJUnit5CompilerTests(args: Array<String>, mainClassName: String?) {
                 model("codegen/script", pattern = "^(.*)\\.kts?$", excludedPattern = excludedCustomTestdataPattern)
             }
 
-            testClass<AbstractIrSteppingWithBytecodeInlinerTest> {
+            testClass<AbstractIrSteppingTest> {
                 model("debug/stepping")
             }
 
@@ -136,7 +136,7 @@ fun generateJUnit5CompilerTests(args: Array<String>, mainClassName: String?) {
                 model("codegen/bytecodeText")
             }
 
-            testClass<AbstractIrBlackBoxInlineCodegenWithBytecodeInlinerTest> {
+            testClass<AbstractIrBlackBoxInlineCodegenTest> {
                 model("codegen/boxInline")
                 model("klib/syntheticAccessors")
             }
@@ -179,7 +179,7 @@ fun generateJUnit5CompilerTests(args: Array<String>, mainClassName: String?) {
                 model("codegen/bytecodeText")
             }
 
-            testClass<AbstractFirSteppingWithBytecodeInlinerTestWithInlineScopes> {
+            testClass<AbstractFirSteppingTestWithInlineScopes> {
                 model("debug/stepping")
             }
 
@@ -187,7 +187,7 @@ fun generateJUnit5CompilerTests(args: Array<String>, mainClassName: String?) {
                 model("debug/localVariables", excludeDirs = inlineScopesNewFormatToOld)
             }
 
-            testClass<AbstractFirBlackBoxInlineCodegenWithBytecodeInlinerTestWithInlineScopes> {
+            testClass<AbstractFirBlackBoxInlineCodegenTestWithInlineScopes> {
                 model("codegen/boxInline", excludeDirs = k2BoxTestDir)
             }
 
@@ -303,11 +303,11 @@ fun generateJUnit5CompilerTests(args: Array<String>, mainClassName: String?) {
                 model("codegen/boxModernJdk")
             }
 
-            testClass<AbstractFirPsiBlackBoxInlineCodegenWithBytecodeInlinerTest> {
+            testClass<AbstractFirPsiBlackBoxInlineCodegenTest> {
                 model("codegen/boxInline")
             }
 
-            testClass<AbstractFirLightTreeBlackBoxInlineCodegenWithBytecodeInlinerTest> {
+            testClass<AbstractFirLightTreeBlackBoxInlineCodegenTest> {
                 model("codegen/boxInline")
                 model("klib/syntheticAccessors")
             }
