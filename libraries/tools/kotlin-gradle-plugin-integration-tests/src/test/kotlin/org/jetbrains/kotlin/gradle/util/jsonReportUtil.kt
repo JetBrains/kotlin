@@ -4,14 +4,9 @@
  */
 package org.jetbrains.kotlin.gradle.util
 
-import com.google.gson.GsonBuilder
-import com.google.gson.JsonDeserializationContext
-import com.google.gson.JsonDeserializer
-import com.google.gson.JsonElement
+import com.google.gson.*
 import com.google.gson.stream.JsonReader
-import org.jetbrains.kotlin.build.report.metrics.BuildMetrics
-import org.jetbrains.kotlin.build.report.metrics.GradleBuildPerformanceMetric
-import org.jetbrains.kotlin.build.report.metrics.GradleBuildTime
+import org.jetbrains.kotlin.build.report.metrics.*
 import org.jetbrains.kotlin.build.report.statistics.StatTag
 import org.jetbrains.kotlin.buildtools.api.SourcesChanges
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
@@ -68,6 +63,69 @@ internal fun readJsonReport(jsonReport: Path): BuildExecutionData {
             ): File? {
                 val path: String? = context?.deserialize(/* json = */ json, /* typeOfT = */ String::class.java)
                 return path?.let { File(it) }//ignore source changes right now
+            }
+        })
+        // Add custom deserializer for BuildTimes class to handle dynamicBuildTimesNs properly
+        .registerTypeAdapter(BuildTimes::class.java, object : JsonDeserializer<BuildTimes<GradleBuildTime>> {
+            override fun deserialize(
+                json: JsonElement?,
+                typeOfT: Type?,
+                context: JsonDeserializationContext?
+            ): BuildTimes<GradleBuildTime>? {
+                if (json == null || !json.isJsonObject) {
+                    throw JsonParseException("Expected JsonObject for BuildTimes")
+                }
+
+                val jsonObject = json.asJsonObject
+                val buildTimes = BuildTimes<GradleBuildTime>()
+
+                // Handle buildTimesNs
+                if (jsonObject.has("buildTimesNs") && jsonObject.get("buildTimesNs").isJsonObject) {
+                    val buildTimesNsObj = jsonObject.getAsJsonObject("buildTimesNs")
+                    for (entry in buildTimesNsObj.entrySet()) {
+                        try {
+                            val buildTime = GradleBuildTime.valueOf(entry.key)
+                            val timeNs = entry.value.asLong
+                            buildTimes.addTimeNs(buildTime, timeNs)
+                        } catch (e: Exception) {
+                            // Skip invalid entries
+                        }
+                    }
+                }
+
+                // Handle dynamicBuildTimesNs
+                if (jsonObject.has("dynamicBuildTimesNs")) {
+                    val dynamicElement = jsonObject.get("dynamicBuildTimesNs")
+                    if (dynamicElement.isJsonObject) {
+                        val dynamicObj = dynamicElement.asJsonObject
+                        for (entry in dynamicObj.entrySet()) {
+                            val keyStr = entry.key
+                            val value = entry.value.asLong
+
+                            // Parse DynamicBuildTimeKey from string representation
+                            if (keyStr.startsWith("DynamicBuildTimeKey")) {
+                                val nameMatch = "name=([^,)]+)".toRegex().find(keyStr)
+                                val parentMatch = "parent=([^,)]+)".toRegex().find(keyStr)
+
+                                if (nameMatch != null && parentMatch != null) {
+                                    val name = nameMatch.groupValues[1]
+                                    val parentStr = parentMatch.groupValues[1]
+                                    val parent = try {
+                                        GradleBuildTime.valueOf(parentStr)
+                                    } catch (e: IllegalArgumentException) {
+                                        // If we can't parse the parent, just use a placeholder
+                                        GradleBuildTime.GRADLE_TASK
+                                    }
+
+                                    val key = DynamicBuildTimeKey(name, parent)
+                                    buildTimes.addDynamicTimeNs(key, value)
+                                }
+                            }
+                        }
+                    }
+                }
+
+                return buildTimes
             }
         })
 

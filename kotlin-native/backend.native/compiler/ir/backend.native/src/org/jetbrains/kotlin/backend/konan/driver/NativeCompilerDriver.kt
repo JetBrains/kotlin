@@ -151,7 +151,7 @@ internal class NativeCompilerDriver(private val performanceManager: PerformanceM
             engine.runK2SpecialBackendChecks(fir2IrOutput)
 
             val loweredIr = performanceManager.tryMeasurePhaseTime(PhaseType.IrPreLowering) {
-                engine.runPreSerializationLowerings(fir2IrOutput, environment)
+                engine.runPreSerializationLowerings(fir2IrOutput, environment, performanceManager)
             }
             performanceManager.tryMeasurePhaseTime(PhaseType.IrSerialization) {
                 engine.runFir2IrSerializer(FirSerializerInput(loweredIr))

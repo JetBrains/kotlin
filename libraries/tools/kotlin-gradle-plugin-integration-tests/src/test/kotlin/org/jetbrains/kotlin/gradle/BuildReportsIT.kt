@@ -845,7 +845,7 @@ class BuildReportsIT : KGPBaseTest() {
 
                 val compilerMetrics = GradleBuildTime.COMPILER_PERFORMANCE.allChildrenMetrics()
                 val reportedCompilerMetrics = jsonReport.aggregatedMetrics.buildTimes.buildTimesMapMs().keys.filter { it in compilerMetrics }
-
+                // TODO: check dynamic perf here
                 // Recursively (only two levels) gather leaves of subtree under COMPILER_PERFORMANCE, excluding nodes like CODE_GENERATION
                 val expected = GradleBuildTime.COMPILER_PERFORMANCE.children()?.flatMap { it.children() ?: listOf(it) }
                 assertEquals(

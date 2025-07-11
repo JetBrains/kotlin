@@ -315,6 +315,20 @@ internal abstract class KotlinNativeToolRunner @Inject constructor(
 
                 addTimeMetricNs(gradleBuildTime, time.nanos)
             }
+
+            unitStats.dynamicStats?.forEach { (parentPhaseType, name, time) ->
+                val gradleBuildTime = when (parentPhaseType) {
+                    PhaseType.Initialization -> GradleBuildTime.COMPILER_INITIALIZATION
+                    PhaseType.Analysis -> GradleBuildTime.CODE_ANALYSIS
+                    PhaseType.TranslationToIr -> GradleBuildTime.TRANSLATION_TO_IR
+                    PhaseType.IrPreLowering -> GradleBuildTime.IR_PRE_LOWERING
+                    PhaseType.IrSerialization -> GradleBuildTime.IR_SERIALIZATION
+                    PhaseType.KlibWriting -> GradleBuildTime.KLIB_WRITING
+                    PhaseType.IrLowering -> GradleBuildTime.IR_LOWERING
+                    PhaseType.Backend -> GradleBuildTime.BACKEND
+                }
+                addDynamicTimeMetricNs(name, gradleBuildTime, time.nanos)
+            }
         } catch (e: Exception) {
             errorMessageCollector.report(FusMetricRetrievalException("Failed to parse metrics from file ${jsonFile.absolutePath}", e), location = null)
         }
