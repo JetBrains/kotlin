@@ -1,39 +1,44 @@
 // WITH_STDLIB
 fun <T> T.id() = this
 
-val compareTo1 = 1u.<!EVALUATED{IR}("-1")!>compareTo(2u)<!>
-val compareTo2 = 2u.<!EVALUATED{IR}("0")!>compareTo(2u)<!>
-val compareTo3 = 3u.<!EVALUATED{IR}("1")!>compareTo(2u)<!>
-val compareTo4 = 2u.<!EVALUATED{IR}("0")!>compareTo(2u.toUByte())<!>
-val compareTo5 = 2u.<!EVALUATED{IR}("0")!>compareTo(2u.toUShort())<!>
-val compareTo6 = 2u.<!EVALUATED{IR}("0")!>compareTo(2UL)<!>
+const val oneVal = <!EVALUATED("1")!>1u<!>
+const val twoVal = <!EVALUATED("2")!>2u<!>
+const val threeVal = <!EVALUATED("3")!>3u<!>
+const val fourVal = <!EVALUATED("4")!>4u<!>
 
-val plus1 = 1u.<!EVALUATED{IR}("3")!>plus(2u)<!>
-val plus2 = 2u.<!EVALUATED{IR}("4")!>plus(2u)<!>
-val plus3 = 3u.<!EVALUATED{IR}("5")!>plus(2u)<!>
-val plus4 = 2u.<!EVALUATED{IR}("4")!>plus(2u.toUByte())<!>
-val plus5 = 2u.<!EVALUATED{IR}("4")!>plus(2u.toUShort())<!>
-val plus6 = 2u.<!EVALUATED{IR}("4")!>plus(2UL)<!>
+const val compareTo1 = oneVal.<!EVALUATEDtoUByte()("-1")!>compareTo(twoVal)<!>
+const val compareTo2 = 2u.<!EVALUATEDtoUByte()("0")!>compareTo(2u)<!>
+const val compareTo3 = 3u.<!EVALUATEDtoUByte()("1")!>compareTo(2u)<!>
+const val compareTo4 = 2u.<!EVALUATEDtoUByte()("0")!>compareTo(2u.toUByte())<!>
+const val compareTo5 = 2u.<!EVALUATEDtoUByte()("0")!>compareTo(2u.toUShort())<!>
+const val compareTo6 = 2u.<!EVALUATEDtoUByte()("0")!>compareTo(2UL)<!>
 
-val minus1 = 2u.<!EVALUATED{IR}("0")!>minus(2u)<!>
-val minus2 = 3u.<!EVALUATED{IR}("1")!>minus(2u)<!>
-val minus3 = 2u.<!EVALUATED{IR}("0")!>minus(2u.toUByte())<!>
-val minus4 = 2u.<!EVALUATED{IR}("0")!>minus(2u.toUShort())<!>
-val minus5 = 2u.<!EVALUATED{IR}("0")!>minus(2u.toULong())<!>
+const val plus1 = 1u.<!EVALUATEDtoUByte()("3")!>plus(2u)<!>
+const val plus2 = 2u.<!EVALUATEDtoUByte()("4")!>plus(2u)<!>
+const val plus3 = 3u.<!EVALUATEDtoUByte()("5")!>plus(2u)<!>
+const val plus4 = 2u.<!EVALUATEDtoUByte()("4")!>plus(2u.toUByte())<!>
+const val plus5 = 2u.<!EVALUATEDtoUByte()("4")!>plus(2u.toUShort())<!>
+const val plus6 = 2u.<!EVALUATEDtoUByte()("4")!>plus(2UL)<!>
 
-val times1 = 1u.<!EVALUATED{IR}("2")!>times(2u)<!>
-val times2 = 2u.<!EVALUATED{IR}("4")!>times(2u)<!>
-val times3 = 3u.<!EVALUATED{IR}("6")!>times(2u)<!>
-val times4 = 2u.<!EVALUATED{IR}("4")!>times(2u.toUByte())<!>
-val times5 = 2u.<!EVALUATED{IR}("4")!>times(2u.toUShort())<!>
-val times6 = 2u.<!EVALUATED{IR}("4")!>times(2u.toULong())<!>
+const val minus1 = 2u.<!EVALUATEDtoUByte()("0")!>minus(2u)<!>
+const val minus2 = 3u.<!EVALUATEDtoUByte()("1")!>minus(2u)<!>
+const val minus3 = 2u.<!EVALUATEDtoUByte()("0")!>minus(2u.toUByte())<!>
+const val minus4 = 2u.<!EVALUATEDtoUByte()("0")!>minus(2u.toUShort())<!>
+const val minus5 = 2u.<!EVALUATEDtoUByte()("0")!>minus(2u.toULong())<!>
 
-val div1 = 1u.<!EVALUATED{IR}("0")!>div(2u)<!>
-val div2 = 2u.<!EVALUATED{IR}("1")!>div(2u)<!>
-val div3 = 3u.<!EVALUATED{IR}("1")!>div(2u)<!>
-val div4 = 2u.<!EVALUATED{IR}("1")!>div(2u.toUByte())<!>
-val div5 = 2u.<!EVALUATED{IR}("1")!>div(2u.toUShort())<!>
-val div6 = 2u.<!EVALUATED{IR}("1")!>div(2u.toULong())<!>
+const val times1 = 1u.<!EVALUATEDtoUByte()("2")!>times(2u)<!>
+const val times2 = 2u.<!EVALUATEDtoUByte()("4")!>times(2u)<!>
+const val times3 = 3u.<!EVALUATEDtoUByte()("6")!>times(2u)<!>
+const val times4 = 2u.<!EVALUATEDtoUByte()("4")!>times(2u.toUByte())<!>
+const val times5 = 2u.<!EVALUATEDtoUByte()("4")!>times(2u.toUShort())<!>
+const val times6 = 2u.<!EVALUATEDtoUByte()("4")!>times(2u.toULong())<!>
+
+const val div1 = 1u.<!EVALUATEDtoUByte()("0")!>div(2u)<!>
+const val div2 = 2u.<!EVALUATEDtoUByte()("1")!>div(2u)<!>
+const val div3 = 3u.<!EVALUATEDtoUByte()("1")!>div(2u)<!>
+const val div4 = 2u.<!EVALUATEDtoUByte()("1")!>div(2u.toUByte())<!>
+const val div5 = 2u.<!EVALUATEDtoUByte()("1")!>div(2u.toUShort())<!>
+const val div6 = 2u.<!EVALUATEDtoUByte()("1")!>div(2u.toULong())<!>
 
 val floorDiv1 = 1u.<!EVALUATED{IR}("0")!>floorDiv(2u)<!>
 val floorDiv2 = 2u.<!EVALUATED{IR}("1")!>floorDiv(2u)<!>
@@ -42,12 +47,13 @@ val floorDiv4 = 2u.<!EVALUATED{IR}("1")!>floorDiv(2u.toUByte())<!>
 val floorDiv5 = 2u.<!EVALUATED{IR}("1")!>floorDiv(2u.toUShort())<!>
 val floorDiv6 = 2u.<!EVALUATED{IR}("1")!>floorDiv(2u.toULong())<!>
 
-val rem1 = 1u.<!EVALUATED{IR}("1")!>rem(2u)<!>
-val rem2 = 2u.<!EVALUATED{IR}("0")!>rem(2u)<!>
-val rem3 = 3u.<!EVALUATED{IR}("1")!>rem(2u)<!>
-val rem4 = 2u.<!EVALUATED{IR}("0")!>rem(2u.toUByte())<!>
-val rem5 = 2u.<!EVALUATED{IR}("0")!>rem(2u.toUShort())<!>
-val rem6 = 2u.<!EVALUATED{IR}("0")!>rem(2u.toULong())<!>
+
+const val rem1 = 1u.<!EVALUATEDtoUByte()("1")!>rem(2u)<!>
+const val rem2 = 2u.<!EVALUATEDtoUByte()("0")!>rem(2u)<!>
+const val rem3 = 3u.<!EVALUATEDtoUByte()("1")!>rem(2u)<!>
+const val rem4 = 2u.<!EVALUATEDtoUByte()("0")!>rem(2u.toUByte())<!>
+const val rem5 = 2u.<!EVALUATEDtoUByte()("0")!>rem(2u.toUShort())<!>
+const val rem6 = 2u.<!EVALUATEDtoUByte()("0")!>rem(2u.toULong())<!>
 
 val mod1 = 1u.<!EVALUATED{IR}("1")!>mod(2u)<!>
 val mod2 = 2u.<!EVALUATED{IR}("0")!>mod(2u)<!>
@@ -88,28 +94,28 @@ val shr4 = 1u.<!EVALUATED{IR}("0")!>shr(31)<!>
 val shr5 = 1u.<!EVALUATED{IR}("1")!>shr(32)<!>
 val shr6 = 1u.<!EVALUATED{IR}("0")!>shr(63)<!>
 
-val convert1 = 1u.<!EVALUATED{IR}("1")!>toUByte()<!>
-val convert2 = 1u.<!EVALUATED{IR}("1")!>toUShort()<!>
-val convert3 = 1u.<!EVALUATED{IR}("1")!>toUInt()<!>
-val convert4 = 1u.<!EVALUATED{IR}("1")!>toULong()<!>
-val convert5 = 1u.<!EVALUATED{IR}("1.0")!>toFloat()<!>
-val convert6 = 1u.<!EVALUATED{IR}("1.0")!>toDouble()<!>
-val convert7 = 1u.<!EVALUATED{IR}("1")!>toByte()<!>
-val convert8 = 1u.<!EVALUATED{IR}("1")!>toShort()<!>
-val convert9 = 1u.<!EVALUATED{IR}("1")!>toInt()<!>
-val convert10 = 1u.<!EVALUATED{IR}("1")!>toLong()<!>
+const val convert1 = 1u.<!EVALUATEDtoUByte()("1")!>toUByte()<!>
+const val convert2 = 1u.<!EVALUATEDtoUByte()("1")!>toUShort()<!>
+const val convert3 = 1u.<!EVALUATEDtoUByte()("1")!>toUInt()<!>
+const val convert4 = 1u.<!EVALUATEDtoUByte()("1")!>toULong()<!>
+const val convert5 = 1u.<!EVALUATEDtoUByte()("1.0")!>toFloat()<!>
+const val convert6 = 1u.<!EVALUATEDtoUByte()("1.0")!>toDouble()<!>
+const val convert7 = 1u.<!EVALUATEDtoUByte()("1")!>toByte()<!>
+const val convert8 = 1u.<!EVALUATEDtoUByte()("1")!>toShort()<!>
+const val convert9 = 1u.<!EVALUATEDtoUByte()("1")!>toInt()<!>
+const val convert10 = 1u.<!EVALUATEDtoUByte()("1")!>toLong()<!>
 
-val equals1 = <!EVALUATED{IR}("false")!>1u == 2u<!>
-val equals2 = <!EVALUATED{IR}("true")!>2u == 2u<!>
-val equals3 = <!EVALUATED{IR}("false")!>3u == 2u<!>
-val equals4 = <!EVALUATED{IR}("false")!>4u == 2u<!>
+const val equals1 = <!EVALUATEDtoUByte()("false")!>1u == 2u<!>
+const val equals2 = <!EVALUATEDtoUByte()("true")!>2u == 2u<!>
+const val equals3 = <!EVALUATEDtoUByte()("false")!>3u == 2u<!>
+const val equals4 = <!EVALUATEDtoUByte()("false")!>4u == 2u<!>
 
-val toString1 = 1u.<!EVALUATED{IR}("1")!>toString()<!>
-val toString2 = 2u.<!EVALUATED{IR}("2")!>toString()<!>
+const val toString1 = 1u.<!EVALUATEDtoUByte()("1")!>toString()<!>
+const val toString2 = 2u.<!EVALUATEDtoUByte()("2")!>toString()<!>
 
-val limits1 = <!EVALUATED{IR}("4294967295")!>4294967294u+1u<!>
-val limits2 = <!EVALUATED{IR}("0")!>4294967295u+1u<!>
-val limits3 = <!EVALUATED{IR}("4294967295")!>0u-1u<!>
+const val limits1 = <!EVALUATEDtoUByte()("4294967295")!>4294967294u+1u<!>
+const val limits2 = <!EVALUATEDtoUByte()("0")!>4294967295u+1u<!>
+const val limits3 = <!EVALUATEDtoUByte()("4294967295")!>0u-1u<!>
 
 // STOP_EVALUATION_CHECKS
 fun box(): String {

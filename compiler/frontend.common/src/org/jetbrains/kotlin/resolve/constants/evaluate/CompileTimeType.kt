@@ -10,6 +10,10 @@ enum class CompileTimeType {
     SHORT,
     INT,
     LONG,
+    UBYTE,
+    USHORT,
+    UINT,
+    ULONG,
     DOUBLE,
     FLOAT,
     CHAR,
@@ -23,6 +27,10 @@ fun CompileTimeType.toKotlinTypeName(): String = when (this) {
     CompileTimeType.SHORT -> "kotlin.Short"
     CompileTimeType.INT -> "kotlin.Int"
     CompileTimeType.LONG -> "kotlin.Long"
+    CompileTimeType.UBYTE -> "kotlin.UByte"
+    CompileTimeType.USHORT -> "kotlin.UShort"
+    CompileTimeType.UINT -> "kotlin.UInt"
+    CompileTimeType.ULONG -> "kotlin.ULong"
     CompileTimeType.DOUBLE -> "kotlin.Double"
     CompileTimeType.FLOAT -> "kotlin.Float"
     CompileTimeType.CHAR -> "kotlin.Char"
