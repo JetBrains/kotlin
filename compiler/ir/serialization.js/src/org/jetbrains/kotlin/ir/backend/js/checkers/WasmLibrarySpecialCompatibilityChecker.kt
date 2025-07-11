@@ -18,8 +18,7 @@ class WasmLibrarySpecialCompatibilityChecker(val libraryUniqueName: String, val 
 
     override fun getMessageToReport(compilerVersion: Version, libraryVersion: Version): String? {
         return runUnless(libraryVersion == compilerVersion) {
-            "The version of the Kotlin/Wasm $libraryDisplayName library ($libraryVersion) differs from the version of the compiler ($compilerVersion). " +
-                    "Please, note that while Kotlin/Wasm is in active development phase only matching versions are supported.\n" +
+            "The version of the Kotlin/Wasm $libraryDisplayName library ($libraryVersion) differs from the version of the compiler ($compilerVersion).\n" +
                     "Please, make sure that the $libraryDisplayName library has the same version as the compiler. " +
                     "Adjust your project's settings if necessary."
         }
