@@ -36,6 +36,7 @@ func kt56233() {
     for _ in 0..<count {
         _ = Kt56233.SimpleEnum.two.ordinal
     }
+    print(unsafeBitCast(0, to: UnsafePointer<Int>.self).pointee)
 }
 
 // -------- Execution of the test --------
