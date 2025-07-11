@@ -119,6 +119,5 @@ const val limits1 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>254u.toUByte()+oneVa
 const val limits2 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>255u.toUByte()+oneVal<!>
 const val limits3 = <!CONST_VAL_WITH_NON_CONST_INITIALIZER!>zeroVal-oneVal<!>
 
-
 /* GENERATED_FIR_TAGS: additiveExpression, const, equalityExpression, integerLiteral, propertyDeclaration,
 unsignedLiteral */
