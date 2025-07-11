@@ -106,13 +106,13 @@ class Test1 {
             <!VAL_REASSIGNMENT!>a<!> += "allowed"
         }
         crossinlineMe {
-            <!NON_INLINE_MEMBER_VAL_INITIALIZATION!>b<!> += "not allowed"
+            <!VAL_REASSIGNMENT!>b<!> += "not allowed"
         }
         noinlineMe {
-            <!NON_INLINE_MEMBER_VAL_INITIALIZATION!>c<!> += "not allowed"
+            <!VAL_REASSIGNMENT!>c<!> += "not allowed"
         }
         notinline {
-            <!NON_INLINE_MEMBER_VAL_INITIALIZATION!>d<!> += "not allowed"
+            <!VAL_REASSIGNMENT!>d<!> += "not allowed"
         }
     }
 }
