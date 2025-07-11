@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.ClassLoweringPass
+import org.jetbrains.kotlin.backend.common.lower.VersionOverloadsLowering
 import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
@@ -22,8 +23,8 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
 import org.jetbrains.kotlin.ir.expressions.impl.fromSymbolOwner
 import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.util.*
-import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_INTRODUCED_AT_CLASS_ID
 import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_OVERLOADS_FQ_NAME
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
 
 /**
@@ -34,7 +35,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
  */
 @PhaseDescription(
     name = "JvmOverloadsAnnotation",
-    prerequisite = [VersionOverloadsAnnotationLowering::class],
+    prerequisite = [VersionOverloadsLowering::class],
 )
 internal class JvmOverloadsAnnotationLowering(val context: JvmBackendContext) : ClassLoweringPass {
 
@@ -50,7 +51,7 @@ internal class JvmOverloadsAnnotationLowering(val context: JvmBackendContext) : 
 
     private fun generateWrappers(target: IrFunction, irClass: IrClass) {
         val numDefaultParameters = target.parameters.count { it.defaultValue != null }
-        val hasIntroducedAt = target.parameters.any { it.hasAnnotation(JVM_INTRODUCED_AT_CLASS_ID) }
+        val hasIntroducedAt = target.parameters.any { it.hasAnnotation(StandardClassIds.Annotations.IntroducedAt.asSingleFqName()) }
 
         for (i in numDefaultParameters - 1 downTo 0) {
             val wrapper = generateWrapper(target, i)

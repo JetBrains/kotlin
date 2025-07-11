@@ -252,20 +252,6 @@ object JVM_DIAGNOSTICS_LIST : DiagnosticList("FirJvmErrors") {
         }
     }
 
-    val VERSION_OVERLOADS by object : DiagnosticGroup("Version Overloads") {
-        val INVALID_VERSIONING_ON_NON_OPTIONAL by error<PsiElement>()
-        val NONFINAL_VERSIONED_FUNCTION by error<PsiElement>()
-        val INVALID_DEFAULT_VALUE_DEPENDENCY by error<PsiElement>() {
-            parameter<FirCallableSymbol<*>>("dependOn")
-            parameter<String>("dependOnVersion")
-            parameter<String>("maxVersion")
-        }
-
-        val CONFLICT_WITH_JVM_OVERLOADS_ANNOTATION by warning<PsiElement>()
-        val INVALID_NON_OPTIONAL_PARAMETER_POSITION by warning<PsiElement>()
-        val NON_ASCENDING_VERSION_ANNOTATION by warning<PsiElement>()
-    }
-
     val MISC by object : DiagnosticGroup("Misc") {
         val INAPPLICABLE_JVM_FIELD by error<KtAnnotationEntry> {
             parameter<String>("message")

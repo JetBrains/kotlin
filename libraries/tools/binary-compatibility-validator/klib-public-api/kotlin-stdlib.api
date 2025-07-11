@@ -65,6 +65,13 @@ open annotation class kotlin.experimental/ExperimentalTypeInference : kotlin/Ann
     constructor <init>() // kotlin.experimental/ExperimentalTypeInference.<init>|<init>(){}[0]
 }
 
+open annotation class kotlin.experimental/IntroducedAt : kotlin/Annotation { // kotlin.experimental/IntroducedAt|null[0]
+    constructor <init>(kotlin/String) // kotlin.experimental/IntroducedAt.<init>|<init>(kotlin.String){}[0]
+
+    final val version // kotlin.experimental/IntroducedAt.version|{}version[0]
+        final fun <get-version>(): kotlin/String // kotlin.experimental/IntroducedAt.version.<get-version>|<get-version>(){}[0]
+}
+
 open annotation class kotlin.io.encoding/ExperimentalEncodingApi : kotlin/Annotation { // kotlin.io.encoding/ExperimentalEncodingApi|null[0]
     constructor <init>() // kotlin.io.encoding/ExperimentalEncodingApi.<init>|<init>(){}[0]
 }
@@ -91,13 +98,6 @@ open annotation class kotlin.js/ExperimentalJsStatic : kotlin/Annotation { // ko
 
 open annotation class kotlin.jvm/ImplicitlyActualizedByJvmDeclaration : kotlin/Annotation { // kotlin.jvm/ImplicitlyActualizedByJvmDeclaration|null[1]
     constructor <init>() // kotlin.jvm/ImplicitlyActualizedByJvmDeclaration.<init>|<init>(){}[1]
-}
-
-open annotation class kotlin.jvm/IntroducedAt : kotlin/Annotation { // kotlin.jvm/IntroducedAt|null[1]
-    constructor <init>(kotlin/String) // kotlin.jvm/IntroducedAt.<init>|<init>(kotlin.String){}[1]
-
-    final val version // kotlin.jvm/IntroducedAt.version|{}version[1]
-        final fun <get-version>(): kotlin/String // kotlin.jvm/IntroducedAt.version.<get-version>|<get-version>(){}[1]
 }
 
 open annotation class kotlin.jvm/JvmExposeBoxed : kotlin/Annotation { // kotlin.jvm/JvmExposeBoxed|null[1]

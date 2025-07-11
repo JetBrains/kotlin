@@ -3,20 +3,21 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.backend.jvm.lower
+package org.jetbrains.kotlin.backend.common.lower
 
 import org.jetbrains.kotlin.backend.common.ClassLoweringPass
+import org.jetbrains.kotlin.backend.common.LoweringContext
 import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.common.push
-import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
-import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.config.MavenComparableVersion
+import org.jetbrains.kotlin.ir.InternalSymbolFinderAPI
 import org.jetbrains.kotlin.ir.builders.declarations.buildConstructor
 import org.jetbrains.kotlin.ir.builders.declarations.buildFun
 import org.jetbrains.kotlin.ir.builders.setSourceRange
 import org.jetbrains.kotlin.ir.declarations.IrAnnotationContainer
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrConstructor
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrEnumEntry
 import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.declarations.IrFunction
@@ -49,8 +50,7 @@ import org.jetbrains.kotlin.ir.util.getAnnotation
 import org.jetbrains.kotlin.ir.util.isAnnotation
 import org.jetbrains.kotlin.ir.util.remapSymbolParent
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
-import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_INTRODUCED_AT_FQ_NAME
-import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_OVERLOADS_FQ_NAME
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.utils.memoryOptimizedMapNotNull
@@ -58,49 +58,39 @@ import org.jetbrains.kotlin.utils.memoryOptimizedPlus
 import java.util.SortedMap
 
 @PhaseDescription(
-    name = "VersionOverloadsAnnotation"
+    name = "VersionOverloadsLowering"
 )
-internal class VersionOverloadsAnnotationLowering(val context: JvmBackendContext) : ClassLoweringPass {
+class VersionOverloadsLowering(val context: LoweringContext) : ClassLoweringPass {
     private val irFactory = context.irFactory
     private val irBuiltIns = context.irBuiltIns
     private val deprecationBuilder = DeprecationBuilder(context, level=DeprecationLevel.HIDDEN)
 
-    companion object {
-        private val COPY_METHOD_NAME = Name.identifier("copy")
-    }
+    private val CopyMethodName = Name.identifier("copy")
 
     override fun lower(irClass: IrClass) {
         val functions = irClass.declarations.filterIsInstance<IrFunction>()
-        val loweringContext = LoweringContext(irClass)
-        functions.forEach { generateVersionOverloads(it, loweringContext) }
+        val copyMethodVersions = CopyMethodVersions()
+        functions.forEach { generateVersionOverloads(it, irClass, copyMethodVersions) }
     }
 
-
-    class LoweringContext(
-        val irClass: IrClass,
-        var copyMethodVersions: SortedMap<MavenComparableVersion?, MutableList<Int>>? = null
+    class CopyMethodVersions(
+        var versions: SortedMap<MavenComparableVersion?, MutableList<Int>>? = null,
     )
 
-    fun generateVersionOverloads(target: IrFunction, loweringContext: LoweringContext) {
-        val isDataClass = loweringContext.irClass.isData
-        val versionParamIndexes =
-            if (isDataClass && target.name == COPY_METHOD_NAME) {
-                loweringContext.copyMethodVersions
-            } else {
-                getSortedVersionParameterIndexes(target)
-            }
+    fun generateVersionOverloads(target: IrFunction, irClass: IrClass, copyMethodVersions: CopyMethodVersions) {
+        val isDataClass = irClass.isData
 
-        generateVersions(target, loweringContext.irClass, versionParamIndexes)
+        val versionParamIndexes = when {
+            isDataClass && target.name == CopyMethodName -> copyMethodVersions.versions
+            else -> getSortedVersionParameterIndexes(target)
+        }
+
+        generateVersions(target, irClass, versionParamIndexes)
 
         if (isDataClass && target is IrConstructor && target.isPrimary && versionParamIndexes != null) {
-            versionParamIndexes.forEach { entry ->
-                for (i in entry.value.indices) {
-                    entry.value[i] += 1
-                }
-            }
-
+            versionParamIndexes.forEach { (_, params) -> params.indices.forEach { params[it] += 1 } }
             versionParamIndexes[null]?.add(0)
-            loweringContext.copyMethodVersions = versionParamIndexes
+            copyMethodVersions.versions = versionParamIndexes
         }
     }
 
@@ -113,36 +103,29 @@ internal class VersionOverloadsAnnotationLowering(val context: JvmBackendContext
 
         val lastIncludedParameters = BooleanArray(func.parameters.size) { true }
 
-        versionParamIndexes.asIterable().forEachIndexed { i, (_, paramIndexes) ->
-            if (i > 0) {
-                containingClass.addMember(generateWrapper(func, lastIncludedParameters))
+        var first = true
+        versionParamIndexes.forEach { (_, params) ->
+            when {
+                first -> first = false
+                else -> containingClass.addMember(generateWrapper(func, lastIncludedParameters))
             }
-
-            paramIndexes.forEach {
-                lastIncludedParameters[it] = false
-            }
+            params.forEach { lastIncludedParameters[it] = false }
         }
     }
 
-    private fun getSortedVersionParameterIndexes(func: IrFunction): SortedMap<MavenComparableVersion?, MutableList<Int>> {
-        val versionIndexes = sortedMapOf<MavenComparableVersion?, MutableList<Int>>(nullsLast(compareByDescending { it }))
-
-        func.parameters.forEachIndexed { i, param ->
-            val versionNumber = param.getVersionNumber()
-
-            if (versionIndexes.containsKey(versionNumber)) {
-                versionIndexes[versionNumber]!!.add(i)
-            } else {
-                versionIndexes[versionNumber] = mutableListOf(i)
+    private fun getSortedVersionParameterIndexes(func: IrFunction): SortedMap<MavenComparableVersion?, MutableList<Int>> =
+        sortedMapOf<MavenComparableVersion?, MutableList<Int>>(nullsLast(compareByDescending { it }))
+            .apply {
+                func.parameters.forEachIndexed { i, param ->
+                    val versionNumber = param.getVersionNumber()
+                    putIfAbsent(versionNumber, mutableListOf())
+                    this[versionNumber]!!.add(i)
+                }
             }
-        }
 
-        return versionIndexes
-    }
-
-    private fun IrValueParameter.getVersionNumber() : MavenComparableVersion? {
+    private fun IrValueParameter.getVersionNumber(): MavenComparableVersion? {
         if (kind != IrParameterKind.Regular || defaultValue == null) return null
-        val annotation = getAnnotation(JVM_INTRODUCED_AT_FQ_NAME) ?: return null
+        val annotation = getAnnotation(StandardClassIds.Annotations.IntroducedAt.asSingleFqName()) ?: return null
         val versionString = (annotation.arguments.first() as? IrConst)?.value as? String ?: return null
 
         return MavenComparableVersion(versionString)
@@ -152,14 +135,12 @@ internal class VersionOverloadsAnnotationLowering(val context: JvmBackendContext
         val wrapperIrFunction = irFactory.generateWrapperHeader(original, includedParams)
 
         val call = when (original) {
-            is IrConstructor ->
-                IrDelegatingConstructorCallImpl.fromSymbolOwner(
-                    SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, irBuiltIns.unitType, original.symbol
-                )
-            is IrSimpleFunction ->
-                IrCallImpl.fromSymbolOwner(
-                    SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, original.returnType, original.symbol
-                )
+            is IrConstructor -> IrDelegatingConstructorCallImpl.fromSymbolOwner(
+                SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, irBuiltIns.unitType, original.symbol
+            )
+            is IrSimpleFunction -> IrCallImpl.fromSymbolOwner(
+                SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, original.returnType, original.symbol
+            )
         }
 
         for (arg in wrapperIrFunction.allTypeParameters) {
@@ -180,12 +161,8 @@ internal class VersionOverloadsAnnotationLowering(val context: JvmBackendContext
         }
 
         wrapperIrFunction.body = when (original) {
-            is IrConstructor -> {
-                irFactory.createBlockBody(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, listOf(call))
-            }
-            is IrSimpleFunction -> {
-                irFactory.createExpressionBody(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, call)
-            }
+            is IrConstructor -> irFactory.createBlockBody(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, listOf(call))
+            is IrSimpleFunction -> irFactory.createExpressionBody(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, call)
         }
 
         return wrapperIrFunction
@@ -196,7 +173,7 @@ internal class VersionOverloadsAnnotationLowering(val context: JvmBackendContext
             is IrConstructor -> {
                 buildConstructor {
                     setSourceRange(original)
-                    origin = JvmLoweredDeclarationOrigin.VERSION_OVERLOAD_WRAPPER
+                    origin = IrDeclarationOrigin.VERSION_OVERLOAD_WRAPPER
                     name = original.name
                     visibility = original.visibility
                     returnType = original.returnType
@@ -206,7 +183,7 @@ internal class VersionOverloadsAnnotationLowering(val context: JvmBackendContext
             }
             is IrSimpleFunction -> buildFun {
                 setSourceRange(original)
-                origin = JvmLoweredDeclarationOrigin.VERSION_OVERLOAD_WRAPPER
+                origin = IrDeclarationOrigin.VERSION_OVERLOAD_WRAPPER
                 name = original.name
                 visibility = original.visibility
                 modality = original.modality
@@ -229,9 +206,11 @@ internal class VersionOverloadsAnnotationLowering(val context: JvmBackendContext
                 source.copyNonJvmOverloadsAnnotations()
     }
 
+    private val JvmOverloadsClassFqName = FqName("kotlin.jvm.JvmOverloads")
+
     private fun IrAnnotationContainer.copyNonJvmOverloadsAnnotations(): List<IrConstructorCall> =
         annotations.memoryOptimizedMapNotNull {
-            if (it.isAnnotation(JVM_OVERLOADS_FQ_NAME))
+            if (it.isAnnotation(JvmOverloadsClassFqName))
                 null
             else
                 it.transform(DeepCopyIrTreeWithSymbols(SymbolRemapper.EMPTY), null) as IrConstructorCall
@@ -271,15 +250,16 @@ internal class VersionOverloadsAnnotationLowering(val context: JvmBackendContext
         }
     }
 
-    private class DeprecationBuilder(private val context: JvmBackendContext, level: DeprecationLevel) {
-        private val classSymbol = context.irPluginContext?.referenceClass(StandardClassIds.Annotations.Deprecated)!!
-        private val deprecationLevelClass = context.irPluginContext?.referenceClass(StandardClassIds.DeprecationLevel)!!
+    @OptIn(InternalSymbolFinderAPI::class)
+    private class DeprecationBuilder(private val context: LoweringContext, level: DeprecationLevel) {
+        private val classSymbol = context.irBuiltIns.symbolFinder.findClass(StandardClassIds.Annotations.Deprecated)!!
+        private val deprecationLevelClass = context.irBuiltIns.symbolFinder.findClass(StandardClassIds.DeprecationLevel)!!
         private val levelSymbol = deprecationLevelClass.owner.declarations
             .filterIsInstance<IrEnumEntry>()
             .single { it.name.toString() == level.name }.symbol
 
-        fun buildAnnotationCall() : IrConstructorCall {
-            return IrConstructorCallImpl.fromSymbolOwner(
+        fun buildAnnotationCall(): IrConstructorCall =
+            IrConstructorCallImpl.fromSymbolOwner(
                 SYNTHETIC_OFFSET,
                 SYNTHETIC_OFFSET,
                 classSymbol.defaultType,
@@ -290,13 +270,11 @@ internal class VersionOverloadsAnnotationLowering(val context: JvmBackendContext
                         SYNTHETIC_OFFSET, SYNTHETIC_OFFSET,
                         context.irBuiltIns.stringType, "Deprecated"
                     )
-
                 arguments[2] =
                     IrGetEnumValueImpl(
                         SYNTHETIC_OFFSET, SYNTHETIC_OFFSET,
                         deprecationLevelClass.defaultType, levelSymbol
                     )
             }
-        }
     }
 }

@@ -3,7 +3,7 @@
 // DIAGNOSTICS: -UNUSED_PARAMETER
 @file:OptIn(ExperimentalStdlibApi::class)
 
-import kotlin.jvm.IntroducedAt
+import kotlin.experimental.IntroducedAt
 
 class C {
     fun foo(

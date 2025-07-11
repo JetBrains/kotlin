@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.fir.analysis.jvm.checkers.declaration
+package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
 import org.jetbrains.kotlin.config.MavenComparableVersion
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
@@ -11,8 +11,8 @@ import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirFunctionChecker
-import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors
+import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClassSymbol
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirFunction
 import org.jetbrains.kotlin.fir.declarations.getAnnotationByClassId
 import org.jetbrains.kotlin.fir.declarations.getStringArgument
@@ -22,18 +22,19 @@ import org.jetbrains.kotlin.fir.declarations.utils.nameOrSpecialName
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.toResolvedCallableSymbol
-import org.jetbrains.kotlin.fir.resolve.getContainingClass
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.isSomeFunctionType
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
-import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_INTRODUCED_AT_CLASS_ID
-import org.jetbrains.kotlin.name.JvmStandardClassIds.JVM_OVERLOADS_CLASS_ID
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.StandardClassIds
 
 object FirVersionOverloadsChecker : FirFunctionChecker(MppCheckerKind.Common) {
     private val versionArgument = Name.identifier("version")
     private val copyMethodName = Name.identifier("copy")
+    private val JvmOverloadsClassId =  ClassId.topLevel(FqName("kotlin.jvm.JvmOverloads"))
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirFunction) {
@@ -46,7 +47,7 @@ object FirVersionOverloadsChecker : FirFunctionChecker(MppCheckerKind.Common) {
         val paramVersions = mutableMapOf<FirCallableSymbol<*>, MavenComparableVersion>()
 
         for ((i, param) in declaration.valueParameters.withIndex()) {
-            val versionAnnotation = param.getAnnotationByClassId(JVM_INTRODUCED_AT_CLASS_ID, context.session)
+            val versionAnnotation = param.getAnnotationByClassId(StandardClassIds.Annotations.IntroducedAt, context.session)
 
             if (param.defaultValue == null) {
                 val isTrailingLambda = (i == declaration.valueParameters.lastIndex) &&
@@ -54,10 +55,10 @@ object FirVersionOverloadsChecker : FirFunctionChecker(MppCheckerKind.Common) {
 
                 when {
                     versionAnnotation != null ->
-                        reporter.reportOn(versionAnnotation.source, FirJvmErrors.INVALID_VERSIONING_ON_NON_OPTIONAL)
+                        reporter.reportOn(versionAnnotation.source, FirErrors.INVALID_VERSIONING_ON_NON_OPTIONAL)
 
                     inVersionedPart && !isTrailingLambda ->
-                        reporter.reportOn(param.source, FirJvmErrors.INVALID_NON_OPTIONAL_PARAMETER_POSITION)
+                        reporter.reportOn(param.source, FirErrors.INVALID_NON_OPTIONAL_PARAMETER_POSITION)
                 }
 
                 continue
@@ -68,7 +69,7 @@ object FirVersionOverloadsChecker : FirFunctionChecker(MppCheckerKind.Common) {
             inVersionedPart = true
             val versionString = versionAnnotation.getStringArgument(versionArgument, context.session) ?: continue
 
-            if (inOverridableFunction) reporter.reportOn(versionAnnotation.source, FirJvmErrors.NONFINAL_VERSIONED_FUNCTION)
+            if (inOverridableFunction) reporter.reportOn(versionAnnotation.source, FirErrors.NONFINAL_VERSIONED_FUNCTION)
 
             val version = MavenComparableVersion(versionString)
             paramVersions[param.symbol] = version
@@ -76,13 +77,13 @@ object FirVersionOverloadsChecker : FirFunctionChecker(MppCheckerKind.Common) {
             if (lastVersionNumber.lessThanEqual(version)) {
                 lastVersionNumber = version
             } else {
-                reporter.reportOn(versionAnnotation.source, FirJvmErrors.NON_ASCENDING_VERSION_ANNOTATION)
+                reporter.reportOn(versionAnnotation.source, FirErrors.NON_ASCENDING_VERSION_ANNOTATION)
             }
         }
 
-        val jvmOverloadAnnotation = declaration.getAnnotationByClassId(JVM_OVERLOADS_CLASS_ID, context.session)
+        val jvmOverloadAnnotation = declaration.getAnnotationByClassId(JvmOverloadsClassId, context.session)
         if (jvmOverloadAnnotation != null && paramVersions.isNotEmpty()) {
-            reporter.reportOn(jvmOverloadAnnotation.source, FirJvmErrors.CONFLICT_WITH_JVM_OVERLOADS_ANNOTATION)
+            reporter.reportOn(jvmOverloadAnnotation.source, FirErrors.CONFLICT_WITH_JVM_OVERLOADS_ANNOTATION)
         }
 
         checkDependency(declaration, paramVersions)
@@ -119,16 +120,15 @@ object FirVersionOverloadsChecker : FirFunctionChecker(MppCheckerKind.Common) {
 
             val dependOnSymbol = qualifiedAccessExpression.toResolvedCallableSymbol() ?: return
             val dependVersion = symbolVersions[dependOnSymbol] ?: return
-            val maxVersion = data
 
-            if (!dependVersion.lessThanEqual(maxVersion)) {
+            if (!dependVersion.lessThanEqual(data)) {
                 with(context) {
                     reporter.reportOn(
                         qualifiedAccessExpression.source,
-                        FirJvmErrors.INVALID_DEFAULT_VALUE_DEPENDENCY,
+                        FirErrors.INVALID_DEFAULT_VALUE_DEPENDENCY,
                         dependOnSymbol,
                         dependVersion.renderString(),
-                        maxVersion.renderString(),
+                        data.renderString(),
                     )
                 }
             }
@@ -144,7 +144,7 @@ object FirVersionOverloadsChecker : FirFunctionChecker(MppCheckerKind.Common) {
 
     private fun MavenComparableVersion?.renderString() = this?.toString() ?: "base version"
 
-    private fun FirFunction.isOverridable(): Boolean = !isFinal || getContainingClass()?.isFinal == false
+    private fun FirFunction.isOverridable(): Boolean = !isFinal || getContainingClassSymbol()?.isFinal == false
 
-    private fun FirFunction.isCopyMethod(): Boolean = nameOrSpecialName == copyMethodName && getContainingClass()?.isData == true
+    private fun FirFunction.isCopyMethod(): Boolean = nameOrSpecialName == copyMethodName && getContainingClassSymbol()?.isData == true
 }
