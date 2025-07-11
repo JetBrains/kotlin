@@ -13,7 +13,6 @@ import java.net.URL
 import java.util.NoSuchElementException
 import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
-import kotlin.internal.*
 
 
 /** Returns a buffered reader wrapping this Reader, or this Reader itself if it is already buffered. */
@@ -154,3 +153,56 @@ public inline fun URL.readText(charset: Charset = Charsets.UTF_8): String = read
  */
 public fun URL.readBytes(): ByteArray = openStream().use { it.readBytes() }
 
+/**
+ * Returns a [Writer] that wraps the specified [Appendable]. If it's already a [Writer], it is returned as is.
+ * If it also implements [Flushable] or [Closeable], the returned [Writer] will delegate to it.
+ *
+ * @return a [Writer] wrapping the specified [Appendable], not thread-safe.
+ */
+@ExperimentalStdlibApi
+public fun Appendable.asWriter(): Writer =
+    this as? Writer ?: object : Writer() {
+        private val appendable: Appendable = this@asWriter
+
+        // Closeable
+        override fun close() {
+            (appendable as? Closeable)?.close()
+        }
+
+        // Flushable
+        override fun flush() {
+            (appendable as? Flushable)?.flush()
+        }
+
+        // Appendable
+        override fun append(csq: CharSequence?) = apply { appendable.append(csq) }
+        override fun append(c: Char) = apply { appendable.append(c) }
+        override fun append(csq: CharSequence?, start: Int, end: Int) = apply { appendable.append(csq, start, end) }
+
+        // Writer
+        override fun write(c: Int) {
+            appendable.append(c.toChar())
+        }
+
+        override fun write(str: String, off: Int, len: Int) {
+            if (off < 0 || len < 0 || off + len !in 0..str.length)
+                throw IndexOutOfBoundsException("off=$off, len=$len, str.size=${str.length}")
+
+            appendable.append(str, off, len)
+        }
+
+        override fun write(str: String) {
+            appendable.append(str)
+        }
+
+        override fun write(cbuf: CharArray, off: Int, len: Int) {
+            if (off < 0 || len < 0 || off + len !in 0..cbuf.size)
+                throw IndexOutOfBoundsException("off=$off, len=$len, cbuf.size=${cbuf.size}")
+
+            appendable.append(cbuf.asCharSequence(off, off + len))
+        }
+
+        override fun write(cbuf: CharArray) {
+            appendable.append(cbuf.asCharSequence())
+        }
+    }

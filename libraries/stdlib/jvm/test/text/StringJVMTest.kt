@@ -157,3 +157,106 @@ class StringJVMTest {
         assertTrue(platformNull<String>().equals(platformNull<String>(), ignoreCase = false))
     }
 }
+
+class CharArraySequenceViewTest {
+
+    private val testArray = charArrayOf('a', 'b', 'c', 'd', 'e')
+
+    @Test
+    fun normalInit() {
+        val sequence = testArray.asCharSequence()
+
+        assertEquals(5, sequence.length)
+        assertEquals('a', sequence[0])
+        assertEquals('e', sequence[4])
+    }
+
+    @Test
+    fun normalInitWithRange() {
+        val sequence = testArray.asCharSequence(1, 4)
+
+        assertEquals(3, sequence.length)
+        assertEquals('b', sequence[0])
+        assertEquals('d', sequence[2])
+    }
+
+    @Test
+    fun reflectChanges() {
+        val array = charArrayOf('x', 'y', 'z')
+        val sequence = array.asCharSequence()
+
+        array[1] = 'w'
+
+        assertEquals('w', sequence[1])
+    }
+
+    @Test
+    fun illegalInit() {
+        assertFailsWith<IndexOutOfBoundsException> {
+            testArray.asCharSequence(startIndex = -1)
+        }
+
+        assertFailsWith<IndexOutOfBoundsException> {
+            testArray.asCharSequence(endIndex = 6)
+        }
+
+        assertFailsWith<IndexOutOfBoundsException> {
+            testArray.asCharSequence(startIndex = 3, endIndex = 2)
+        }
+    }
+
+    @Test
+    fun subSequenceRelatesToOriginal() {
+        val parent = testArray.asCharSequence(1, 5) // 'b', 'c', 'd', 'e'
+        val sub = parent.subSequence(1, 3) // 'c', 'd'
+
+        assertEquals(2, sub.length)
+        assertEquals('c', sub[0])
+        assertEquals('d', sub[1])
+    }
+
+    @Test
+    fun illegalSubSequence() {
+        val parent = testArray.asCharSequence(1, 4)
+
+        assertFailsWith<IndexOutOfBoundsException> {
+            parent.subSequence(-1, 2)
+        }
+
+        assertFailsWith<IndexOutOfBoundsException> {
+            parent.subSequence(1, 4)
+        }
+
+        assertFailsWith<IndexOutOfBoundsException> {
+            parent.subSequence(2, 1)
+        }
+    }
+
+    @Test
+    fun illegalCharAt() {
+        val sequence = testArray.asCharSequence(1, 3)
+
+        assertFailsWith<IndexOutOfBoundsException> {
+            sequence[-1]
+        }
+
+        assertFailsWith<IndexOutOfBoundsException> {
+            sequence[2]
+        }
+    }
+
+    @Test
+    fun emptyArrayInit() {
+        val emptyArray = charArrayOf()
+        val sequence = emptyArray.asCharSequence()
+
+        assertEquals(0, sequence.length)
+    }
+
+    @Test
+    fun emptyRangeInit() {
+        val sequence = testArray.asCharSequence(2, 2)
+
+        assertEquals(0, sequence.length)
+    }
+}
