@@ -603,5 +603,35 @@ public interface CommonCompilerArguments : CommonToolArguments {
     @ExperimentalCompilerArgument
     public val X_ALLOW_REIFIED_TYPE_IN_CATCH: CommonCompilerArgument<Boolean> =
         CommonCompilerArgument("X_ALLOW_REIFIED_TYPE_IN_CATCH")
+
+    /**
+     * Allow contracts on some operators and accessors, and allow checks for erased types.
+     *
+     * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     */
+    @JvmField
+    @ExperimentalCompilerArgument
+    public val X_ALLOW_CONTRACTS_ON_MORE_FUNCTIONS: CommonCompilerArgument<Boolean> =
+        CommonCompilerArgument("X_ALLOW_CONTRACTS_ON_MORE_FUNCTIONS")
+
+    /**
+     * Allow contracts that specify a limited conditional returns postcondition.
+     *
+     * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     */
+    @JvmField
+    @ExperimentalCompilerArgument
+    public val X_ALLOW_CONDITION_IMPLIES_RETURNS_CONTRACTS: CommonCompilerArgument<Boolean> =
+        CommonCompilerArgument("X_ALLOW_CONDITION_IMPLIES_RETURNS_CONTRACTS")
+
+    /**
+     * Allow contracts that specify a condition that holds true inside a lambda argument.
+     *
+     * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     */
+    @JvmField
+    @ExperimentalCompilerArgument
+    public val X_ALLOW_HOLDSIN_CONTRACT: CommonCompilerArgument<Boolean> =
+        CommonCompilerArgument("X_ALLOW_HOLDSIN_CONTRACT")
   }
 }

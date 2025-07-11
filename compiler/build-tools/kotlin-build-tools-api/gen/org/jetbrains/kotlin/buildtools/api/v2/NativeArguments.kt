@@ -762,15 +762,5 @@ public interface NativeArguments : CommonKlibBasedArguments {
     @ExperimentalCompilerArgument
     public val X_MANIFEST_NATIVE_TARGETS: NativeArgument<Array<String>?> =
         NativeArgument("X_MANIFEST_NATIVE_TARGETS")
-
-    /**
-     * Path to a directory to dump synthetic accessors and their use sites.
-     *
-     * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
-     */
-    @JvmField
-    @ExperimentalCompilerArgument
-    public val X_DUMP_SYNTHETIC_ACCESSORS_TO: NativeArgument<String?> =
-        NativeArgument("X_DUMP_SYNTHETIC_ACCESSORS_TO")
   }
 }

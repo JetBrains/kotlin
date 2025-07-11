@@ -174,6 +174,9 @@ public abstract interface class org/jetbrains/kotlin/buildtools/api/v2/CommonCom
 	public static final field OPT_IN Lorg/jetbrains/kotlin/buildtools/api/v2/CommonCompilerArguments$CommonCompilerArgument;
 	public static final field PROGRESSIVE Lorg/jetbrains/kotlin/buildtools/api/v2/CommonCompilerArguments$CommonCompilerArgument;
 	public static final field X_ALLOW_ANY_SCRIPTS_IN_SOURCE_ROOTS Lorg/jetbrains/kotlin/buildtools/api/v2/CommonCompilerArguments$CommonCompilerArgument;
+	public static final field X_ALLOW_CONDITION_IMPLIES_RETURNS_CONTRACTS Lorg/jetbrains/kotlin/buildtools/api/v2/CommonCompilerArguments$CommonCompilerArgument;
+	public static final field X_ALLOW_CONTRACTS_ON_MORE_FUNCTIONS Lorg/jetbrains/kotlin/buildtools/api/v2/CommonCompilerArguments$CommonCompilerArgument;
+	public static final field X_ALLOW_HOLDSIN_CONTRACT Lorg/jetbrains/kotlin/buildtools/api/v2/CommonCompilerArguments$CommonCompilerArgument;
 	public static final field X_ALLOW_REIFIED_TYPE_IN_CATCH Lorg/jetbrains/kotlin/buildtools/api/v2/CommonCompilerArguments$CommonCompilerArgument;
 	public static final field X_ANNOTATION_DEFAULT_TARGET Lorg/jetbrains/kotlin/buildtools/api/v2/CommonCompilerArguments$CommonCompilerArgument;
 	public static final field X_ANNOTATION_TARGET_ALL Lorg/jetbrains/kotlin/buildtools/api/v2/CommonCompilerArguments$CommonCompilerArgument;
@@ -226,6 +229,7 @@ public abstract interface class org/jetbrains/kotlin/buildtools/api/v2/CommonCom
 	public static final field X_VERIFY_IR_VISIBILITY Lorg/jetbrains/kotlin/buildtools/api/v2/CommonCompilerArguments$CommonCompilerArgument;
 	public static final field X_WARNING_LEVEL Lorg/jetbrains/kotlin/buildtools/api/v2/CommonCompilerArguments$CommonCompilerArgument;
 	public static final field X_WHEN_GUARDS Lorg/jetbrains/kotlin/buildtools/api/v2/CommonCompilerArguments$CommonCompilerArgument;
+	public static final field _XDATA_FLOW_BASED_EXHAUSTIVENESS Lorg/jetbrains/kotlin/buildtools/api/v2/CommonCompilerArguments$CommonCompilerArgument;
 	public abstract fun get (Lorg/jetbrains/kotlin/buildtools/api/v2/CommonCompilerArguments$CommonCompilerArgument;)Ljava/lang/Object;
 	public abstract fun set (Lorg/jetbrains/kotlin/buildtools/api/v2/CommonCompilerArguments$CommonCompilerArgument;Ljava/lang/Object;)V
 }
@@ -493,7 +497,6 @@ public abstract interface class org/jetbrains/kotlin/buildtools/api/v2/NativeArg
 	public static final field X_DEBUG_INFO_VERSION Lorg/jetbrains/kotlin/buildtools/api/v2/NativeArguments$NativeArgument;
 	public static final field X_DEBUG_PREFIX_MAP Lorg/jetbrains/kotlin/buildtools/api/v2/NativeArguments$NativeArgument;
 	public static final field X_DESTROY_RUNTIME_MODE Lorg/jetbrains/kotlin/buildtools/api/v2/NativeArguments$NativeArgument;
-	public static final field X_DUMP_SYNTHETIC_ACCESSORS_TO Lorg/jetbrains/kotlin/buildtools/api/v2/NativeArguments$NativeArgument;
 	public static final field X_DUMP_TESTS_TO Lorg/jetbrains/kotlin/buildtools/api/v2/NativeArguments$NativeArgument;
 	public static final field X_EMIT_LAZY_OBJC_HEADER Lorg/jetbrains/kotlin/buildtools/api/v2/NativeArguments$NativeArgument;
 	public static final field X_EXPORT_KDOC Lorg/jetbrains/kotlin/buildtools/api/v2/NativeArguments$NativeArgument;
@@ -556,7 +559,6 @@ public abstract interface class org/jetbrains/kotlin/buildtools/api/v2/WasmArgum
 	public static final field X_IR_DCE_DUMP_REACHABILITY_INFO_TO_FILE Lorg/jetbrains/kotlin/buildtools/api/v2/WasmArguments$WasmArgument;
 	public static final field X_IR_DUMP_DECLARATION_IR_SIZES_TO_FILE Lorg/jetbrains/kotlin/buildtools/api/v2/WasmArguments$WasmArgument;
 	public static final field X_WASM Lorg/jetbrains/kotlin/buildtools/api/v2/WasmArguments$WasmArgument;
-	public static final field X_WASM_ATTACH_JS_EXCEPTION Lorg/jetbrains/kotlin/buildtools/api/v2/WasmArguments$WasmArgument;
 	public static final field X_WASM_DEBUGGER_CUSTOM_FORMATTERS Lorg/jetbrains/kotlin/buildtools/api/v2/WasmArguments$WasmArgument;
 	public static final field X_WASM_DEBUG_FRIENDLY Lorg/jetbrains/kotlin/buildtools/api/v2/WasmArguments$WasmArgument;
 	public static final field X_WASM_DEBUG_INFO Lorg/jetbrains/kotlin/buildtools/api/v2/WasmArguments$WasmArgument;
@@ -566,6 +568,7 @@ public abstract interface class org/jetbrains/kotlin/buildtools/api/v2/WasmArgum
 	public static final field X_WASM_GENERATE_WAT Lorg/jetbrains/kotlin/buildtools/api/v2/WasmArguments$WasmArgument;
 	public static final field X_WASM_IC_CACHE_READONLY Lorg/jetbrains/kotlin/buildtools/api/v2/WasmArguments$WasmArgument;
 	public static final field X_WASM_KCLASS_FQN Lorg/jetbrains/kotlin/buildtools/api/v2/WasmArguments$WasmArgument;
+	public static final field X_WASM_NO_JSTAG Lorg/jetbrains/kotlin/buildtools/api/v2/WasmArguments$WasmArgument;
 	public static final field X_WASM_PRESERVE_IC_ORDER Lorg/jetbrains/kotlin/buildtools/api/v2/WasmArguments$WasmArgument;
 	public static final field X_WASM_SOURCE_MAP_INCLUDE_MAPPINGS_FROM_UNAVAILABLE_SOURCES Lorg/jetbrains/kotlin/buildtools/api/v2/WasmArguments$WasmArgument;
 	public static final field X_WASM_TARGET Lorg/jetbrains/kotlin/buildtools/api/v2/WasmArguments$WasmArgument;
