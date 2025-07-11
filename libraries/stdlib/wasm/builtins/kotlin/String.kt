@@ -13,10 +13,10 @@ import kotlin.math.min
  * implemented as instances of this class.
  */
 public actual class String internal @WasmPrimitiveConstructor constructor(
-    private var leftIfInSum: String?,
+    internal var leftIfInSum: String?,
     @kotlin.internal.IntrinsicConstEvaluation
     public actual override val length: Int,
-    private var _chars: WasmCharArray,
+    internal var _chars: WasmCharArray,
 ) : Comparable<String>, CharSequence {
     public actual companion object {}
 
