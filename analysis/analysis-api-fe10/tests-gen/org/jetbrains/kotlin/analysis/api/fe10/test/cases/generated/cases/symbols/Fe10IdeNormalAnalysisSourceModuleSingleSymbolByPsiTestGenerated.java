@@ -884,6 +884,12 @@ public class Fe10IdeNormalAnalysisSourceModuleSingleSymbolByPsiTestGenerated ext
     }
 
     @Test
+    @TestMetadata("inheritedSuspend.kt")
+    public void testInheritedSuspend() {
+      runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/errors/inheritedSuspend.kt");
+    }
+
+    @Test
     @TestMetadata("initWithAnnotations.kt")
     public void testInitWithAnnotations() {
       runTest("analysis/analysis-api/testData/symbols/singleSymbolByPsi/errors/initWithAnnotations.kt");

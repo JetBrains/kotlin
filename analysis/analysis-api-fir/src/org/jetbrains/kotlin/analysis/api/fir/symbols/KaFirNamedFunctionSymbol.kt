@@ -115,9 +115,7 @@ internal class KaFirNamedFunctionSymbol private constructor(
         get() = withValidityAssertion { psiOrSymbolAnnotationList() }
 
     override val isSuspend: Boolean
-        get() = withValidityAssertion {
-            psiHasModifierIfNotInherited(KtTokens.SUSPEND_KEYWORD) ?: firSymbol.isSuspend
-        }
+        get() = withValidityAssertion { backingPsi?.hasModifier(KtTokens.SUSPEND_KEYWORD) ?: firSymbol.isSuspend }
 
     /**
      * Some modifiers can be inherited, so we cannot check them by PSI in this case.
