@@ -22894,6 +22894,12 @@ public class PhasedJvmDiagnosticLightTreeTestGenerated extends AbstractPhasedJvm
       }
 
       @Test
+      @TestMetadata("override.kt")
+      public void testOverride() {
+        runTest("compiler/testData/diagnostics/tests/inline/override.kt");
+      }
+
+      @Test
       @TestMetadata("overrideWithInline.kt")
       public void testOverrideWithInline() {
         runTest("compiler/testData/diagnostics/tests/inline/overrideWithInline.kt");
