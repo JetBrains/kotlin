@@ -13,6 +13,10 @@ import org.gradle.api.provider.Property
 import org.gradle.api.tasks.*
 import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.gradle.work.DisableCachingByDefault
+import org.jetbrains.kotlin.gradle.dsl.multiplatformExtensionOrNull
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers.KmpPartiallyResolvedDependenciesCheckerProjectsEvaluated
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers.isPartiallyResolvedDependenciesCheckerEnabled
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers.locateOrRegisterPartiallyResolvedDependenciesCheckerTask
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompileTool
 import org.jetbrains.kotlin.gradle.tasks.withType
 
@@ -57,10 +61,16 @@ private const val DESCRIPTION =
             "This task always runs before compileKotlin* or similar tasks."
 
 internal fun Project.locateOrRegisterCheckKotlinGradlePluginErrorsTask(): TaskProvider<CheckKotlinGradlePluginConfigurationErrors> {
+    val partiallyResolvedDependenciesCheckerProjectsEvaluated = if (project.isPartiallyResolvedDependenciesCheckerEnabled) {
+        locateOrRegisterPartiallyResolvedDependenciesCheckerTask()
+    } else null
     val taskProvider = tasks.register(
         CheckKotlinGradlePluginConfigurationErrors.TASK_NAME,
-        CheckKotlinGradlePluginConfigurationErrors::class.java
+        CheckKotlinGradlePluginConfigurationErrors::class.java,
     ) { task ->
+        partiallyResolvedDependenciesCheckerProjectsEvaluated?.let {
+            task.dependsOn(it)
+        }
         task.errorDiagnostics.set(
             provider {
                 kotlinToolingDiagnosticsCollector

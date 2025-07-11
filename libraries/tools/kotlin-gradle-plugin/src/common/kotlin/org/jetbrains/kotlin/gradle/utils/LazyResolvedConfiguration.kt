@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.tooling.core.withClosure
 internal class LazyResolvedConfiguration private constructor(
     private val resolvedComponentsRootProvider: Lazy<ResolvedComponentResult>,
     private val artifactCollection: ArtifactCollection,
-    private val configurationName: String,
+    val configurationName: String,
 ) {
 
     /**

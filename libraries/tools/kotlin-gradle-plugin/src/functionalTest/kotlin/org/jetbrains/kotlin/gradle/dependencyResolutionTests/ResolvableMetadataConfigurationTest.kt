@@ -12,6 +12,8 @@ import org.gradle.api.artifacts.component.ModuleComponentIdentifier
 import org.gradle.api.artifacts.result.ResolvedDependencyResult
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinBinaryDependency
+import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinUnresolvedBinaryDependency
+import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.IdeaKotlinDependencyMatcher
 import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.assertMatches
 import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.binaryCoordinates
 import org.jetbrains.kotlin.gradle.plugin.ide.kotlinIdeMultiplatformImport
@@ -19,8 +21,8 @@ import org.jetbrains.kotlin.gradle.plugin.kotlinToolingVersion
 import org.jetbrains.kotlin.gradle.plugin.mpp.resolvableMetadataConfiguration
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
 import org.jetbrains.kotlin.gradle.util.*
+import org.junit.Test
 import kotlin.test.Ignore
-import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.fail
 
@@ -72,11 +74,24 @@ class ResolvableMetadataConfigurationTest : SourceSetDependenciesResolution() {
                 }
         }
 
+        val unresolvedOkioDependencyDiagnosticMatcher = IdeaKotlinDependencyMatcher("Unresolved linuxArm64 dependency") { dependency ->
+            dependency is IdeaKotlinUnresolvedBinaryDependency
+                    && "Unresolved platforms:" in dependency.cause.orEmpty()
+                    && "Dependency 'com.squareup.okio:okio'" in dependency.cause.orEmpty()
+        }
+        val unresolvedMVIKotlinDependencyDiagnosticMatcher = IdeaKotlinDependencyMatcher("Unresolved linuxArm64 dependency") { dependency ->
+            dependency is IdeaKotlinUnresolvedBinaryDependency
+                    && "Unresolved platforms:" in dependency.cause.orEmpty()
+                    && "Dependency 'com.arkivanov.mvikotlin:mvikotlin'" in dependency.cause.orEmpty()
+        }
+
         /* Check IDE resolution for commonMain */
         project.kotlinIdeMultiplatformImport.resolveDependencies("commonMain")
             .assertMatches(
                 binaryCoordinates(Regex("com.squareup.okio:okio(-.*)?:.*:3.3.0")),
-                binaryCoordinates("org.jetbrains.kotlin:kotlin-stdlib:commonMain:${project.kotlinToolingVersion}")
+                binaryCoordinates("org.jetbrains.kotlin:kotlin-stdlib:commonMain:${project.kotlinToolingVersion}"),
+                unresolvedOkioDependencyDiagnosticMatcher,
+                unresolvedMVIKotlinDependencyDiagnosticMatcher,
             )
 
         /* Check IDE resolution for nativeMain */
@@ -86,6 +101,8 @@ class ResolvableMetadataConfigurationTest : SourceSetDependenciesResolution() {
             .assertMatches(
                 binaryCoordinates(Regex("com.squareup.okio:okio(-.*)?:.*:3.3.0")),
                 binaryCoordinates(Regex("com.arkivanov.mvikotlin:mvikotlin(-*)?:.*:3.0.2")),
+                unresolvedOkioDependencyDiagnosticMatcher,
+                unresolvedMVIKotlinDependencyDiagnosticMatcher,
             )
     }
 

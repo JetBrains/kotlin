@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.util
 
 import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinResolvedBinaryDependency
+import org.jetbrains.kotlin.gradle.idea.tcs.IdeaKotlinUnresolvedBinaryDependency
 import org.jetbrains.kotlin.gradle.idea.tcs.extras.isNativeDistribution
 import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.IdeaKotlinDependencyMatcher
 import org.jetbrains.kotlin.gradle.idea.testFixtures.tcs.binaryCoordinates
@@ -16,4 +17,8 @@ val jetbrainsAnnotationDependencies = binaryCoordinates(Regex("org\\.jetbrains:a
 
 val kotlinNativeDistributionDependencies = IdeaKotlinDependencyMatcher("native distribution") { dependency ->
     dependency is IdeaKotlinResolvedBinaryDependency && dependency.isNativeDistribution
+}
+
+val unresolvedDependenciesDiagnosticMatcher = IdeaKotlinDependencyMatcher("Unresolved dependency: producer") { dependency ->
+    dependency is IdeaKotlinUnresolvedBinaryDependency && "Unresolved platforms:" in dependency.cause.orEmpty()
 }

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.plugin.diagnostics
 
 import org.gradle.api.Project
+import org.gradle.api.artifacts.component.ComponentIdentifier
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.Uklib
 import org.jetbrains.kotlin.gradle.dsl.KotlinSourceSetConvention.isAccessedByKotlinSourceSetConventionAt
@@ -22,11 +23,12 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLI
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_NATIVE_ENABLE_KLIBS_CROSSCOMPILATION
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_NATIVE_IGNORE_DISABLED_TARGETS
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_NATIVE_SUPPRESS_EXPERIMENTAL_ARTIFACTS_DSL_WARNING
+import org.jetbrains.kotlin.gradle.plugin.diagnostics.checkers.UnresolvedKmpDependency.*
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.ToolingDiagnostic.Severity.*
-import org.jetbrains.kotlin.gradle.plugin.mpp.MinSupportedGradleVersionWithDependencyCollectors
 import org.jetbrains.kotlin.gradle.plugin.sources.android.multiplatformAndroidSourceSetLayoutV1
 import org.jetbrains.kotlin.gradle.plugin.sources.android.multiplatformAndroidSourceSetLayoutV2
 import org.jetbrains.kotlin.gradle.targets.jvm.JAVA_TEST_FIXTURES_PLUGIN_ID
+import org.jetbrains.kotlin.gradle.utils.appendLine
 import org.jetbrains.kotlin.gradle.utils.prettyName
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 import org.jetbrains.kotlin.utils.addToStdlib.flatGroupBy
@@ -115,6 +117,52 @@ internal object KotlinToolingDiagnostics {
                 )
                 .solution("Make sure '${sourceSet.name}' forms a compliant structure using https://kotl.in/hierarchy-template or by declaring dependsOn edges. Let us know in https://kotl.in/uklib-source-set-structure if this is not possible in your project")
         }
+    }
+
+    object PartiallyResolvedKmpDependencies : ToolingDiagnosticFactory(LENIENT_ERROR, DiagnosticGroup.Kgp.Misconfiguration) {
+        data class UnresolvedKmpDependency(
+            val displayName: String,
+            var resolvedMetadataComponentIdentifier: ComponentIdentifier?,
+            val unresolvedComponents: List<UnresolvedComponent>,
+            val resolvedVariants: List<ResolvedVariant>,
+        )
+
+        fun failureMessage(
+            unresolvedDependency: UnresolvedKmpDependency,
+        ): String = buildString {
+            appendLine("Dependency '${unresolvedDependency.displayName}':")
+            appendLine("Unresolved platforms:".prependIndent(" ".repeat(2)))
+            unresolvedDependency.unresolvedComponents.forEach {
+                appendLine("Compilation ${it.compilationName} resolved configuration '${it.configurationName}' with resolution failure: ${it.failure}".prependIndent(" ".repeat(4)))
+            }
+            if (unresolvedDependency.resolvedVariants.isNotEmpty()) {
+                appendLine("Resolved platforms:".prependIndent(" ".repeat(2)))
+                unresolvedDependency.resolvedVariants.forEach {
+                    appendLine("Compilation ${it.compilationName} resolved configuration '${it.configurationName}' with variant: ${it.variant}".prependIndent(" ".repeat(4)))
+                }
+            }
+        }
+
+        operator fun invoke(
+            sourceSetName: String,
+            unresolvedDependencies: List<UnresolvedKmpDependency>
+        ) =
+            build {
+                title("KMP Dependencies Resolution Failure")
+                    .description(
+                        buildString {
+                            appendLine("Source set '${sourceSetName}' couldn't resolve dependencies for all target platforms")
+                            unresolvedDependencies.forEach {
+                                append(failureMessage(it))
+                            }
+                        }
+                    )
+                    .solution(
+                        """
+                        Use an applicable source set to specify dependencies: https://kotl.in/57b2-source-set-dependencies
+                        """.trimIndent()
+                    )
+            }
     }
 
     object CrossCompilationWithCinterops : ToolingDiagnosticFactory(ERROR, DiagnosticGroup.Kgp.Misconfiguration) {

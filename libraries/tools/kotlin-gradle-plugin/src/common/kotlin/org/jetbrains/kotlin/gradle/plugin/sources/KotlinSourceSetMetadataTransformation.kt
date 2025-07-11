@@ -37,7 +37,6 @@ internal val InternalKotlinSourceSet.metadataTransformation: GranularMetadataTra
     val granularMetadataTransformation = GranularMetadataTransformation(
         params = GranularMetadataTransformation.Params(project, this, transformProjectDependencies = false),
         parentSourceSetVisibilityProvider = parentSourceSetVisibilityProvider,
-        kotlinToolingDiagnosticsCollector = PreparedKotlinToolingDiagnosticsCollector.create(project)
     )
 
     @Suppress("DEPRECATION_ERROR")

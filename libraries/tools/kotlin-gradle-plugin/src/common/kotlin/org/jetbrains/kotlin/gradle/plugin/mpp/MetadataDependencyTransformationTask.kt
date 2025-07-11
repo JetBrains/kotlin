@@ -20,7 +20,6 @@ import org.gradle.api.provider.SetProperty
 import org.gradle.api.tasks.*
 import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
-import org.jetbrains.kotlin.gradle.plugin.diagnostics.PreparedKotlinToolingDiagnosticsCollector
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.UsesKotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.mpp.uklibs.consumption.KmpResolutionStrategy
 import org.jetbrains.kotlin.gradle.targets.metadata.dependsOnClosureWithInterCompilationDependencies
@@ -172,7 +171,6 @@ abstract class MetadataDependencyTransformationTask
                 val serializableKey = identifier.serializableUniqueKey
                 visibleParentSourceSetsByModuleId[serializableKey].orEmpty().filterNotNull().toSet()
             },
-            kotlinToolingDiagnosticsCollector = PreparedKotlinToolingDiagnosticsCollector.create(this)
         )
 
         if (outputsDir.isDirectory) {

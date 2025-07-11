@@ -10,6 +10,7 @@ import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.internals.MULTIPLATFORM_PROJECT_METADATA_JSON_FILE_NAME
 import org.jetbrains.kotlin.gradle.internals.parseKotlinSourceSetMetadataFromJson
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinProjectStructureMetadata
 import org.jetbrains.kotlin.gradle.plugin.mpp.ModuleDependencyIdentifier
 import org.jetbrains.kotlin.gradle.plugin.mpp.SourceSetMetadataLayout
@@ -1196,7 +1197,7 @@ open class HierarchicalMppIT : KGPBaseTest() {
     @DisplayName("KT-51940: Configurations should not resolved during configuration phase")
     fun `test configurations should not resolved during configuration phase`(gradleVersion: GradleVersion) {
         project("kt-51940-hmpp-resolves-configurations-during-configuration", gradleVersion = gradleVersion) {
-            build("assemble", "--dry-run") {
+            build("assemble", "--dry-run", "-P${PropertiesProvider.PropertyNames.KOTLIN_KMP_UNRESOLVED_DEPENDENCIES_DIAGNOSTIC}=false") {
                 assertOutputDoesNotContain("Configuration Resolved")
             }
         }

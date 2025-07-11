@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.gradle.uklibs
 
 import org.gradle.api.Project
 import org.gradle.api.artifacts.repositories.MavenArtifactRepository
+import org.gradle.api.initialization.ConfigurableIncludedBuild
 import org.gradle.api.plugins.ExtraPropertiesExtension
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
@@ -238,11 +239,14 @@ fun TestProject.include(
 
 fun TestProject.includeBuild(
     subproject: TestProject,
+    configure: ConfigurableIncludedBuild.() -> Unit = {},
 ) {
     val includeBuildIdentifier = "included_${generateIdentifier()}"
     Files.createSymbolicLink(projectPath.resolve(includeBuildIdentifier), subproject.projectPath)
     settingsBuildScriptInjection {
-        settings.includeBuild(includeBuildIdentifier)
+        settings.includeBuild(includeBuildIdentifier) {
+            it.configure()
+        }
     }
 }
 

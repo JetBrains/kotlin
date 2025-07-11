@@ -600,6 +600,18 @@ internal class PropertiesProvider private constructor(private val project: Proje
         get() = booleanProperty(PropertyNames.KOTLIN_DISPLAY_DIAGNOSTICS_IN_IDE_BUILD_LOG) ?: true
 
     /**
+     * Emit a diagnostic when KMP dependencies resolved partially
+     */
+    val unresolvedDependenciesDiagnostic: Boolean
+        get() = booleanProperty(PropertyNames.KOTLIN_KMP_UNRESOLVED_DEPENDENCIES_DIAGNOSTIC) ?: true
+
+    /**
+     * Always emit the diagnostic when KMP dependencies resolved partially regardless of the materialized task graph
+     */
+    val eagerUnresolvedDependenciesDiagnostic: Boolean
+        get() = booleanProperty(PropertyNames.KOTLIN_KMP_EAGER_UNRESOLVED_DEPENDENCIES_DIAGNOSTIC) ?: true
+
+    /**
      * Enable workaround for KT-64115, where both main compilation exploded klib and the same compressed klib
      * could end up in the test compilation leading to the compiler warning.
      *
@@ -766,6 +778,8 @@ internal class PropertiesProvider private constructor(private val project: Proje
         val KOTLIN_KMP_STRICT_RESOLVE_IDE_DEPENDENCIES = property("${KOTLIN_INTERNAL_NAMESPACE}.kmp.strictResolveIdeDependencies")
         val KOTLIN_KMP_ISOLATED_PROJECT_SUPPORT = property("kotlin.kmp.isolated-projects.support")
         val KOTLIN_INCREMENTAL_FIR = property("kotlin.incremental.jvm.fir")
+        val KOTLIN_KMP_UNRESOLVED_DEPENDENCIES_DIAGNOSTIC = property("kotlin.kmp.unresolvedDependenciesDiagnostic")
+        val KOTLIN_KMP_EAGER_UNRESOLVED_DEPENDENCIES_DIAGNOSTIC = property("kotlin.kmp.eagerUnresolvedDependenciesDiagnostic")
         val KOTLIN_DISPLAY_DIAGNOSTICS_IN_IDE_BUILD_LOG = property("kotlin.displayDiagnosticsInIdeBuildLog")
         val KOTLIN_KMP_SEPARATE_COMPILATION = property("kotlin.kmp.separateCompilation")
 
