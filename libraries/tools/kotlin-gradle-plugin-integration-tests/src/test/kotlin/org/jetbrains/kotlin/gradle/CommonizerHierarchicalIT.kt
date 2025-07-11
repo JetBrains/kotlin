@@ -22,8 +22,6 @@ open class CommonizerHierarchicalIT : KGPBaseTest() {
         nativeProject(
             "commonizeHierarchically",
             gradleVersion,
-            buildOptions = defaultBuildOptions
-                .disableKlibsCrossCompilation(),
         ) {
             if (HostManager.hostIsMac) {
                 build(":p1:compileIosMainKotlinMetadata") {
@@ -65,8 +63,6 @@ open class CommonizerHierarchicalIT : KGPBaseTest() {
         nativeProject(
             "commonizeHierarchically",
             gradleVersion,
-            buildOptions = defaultBuildOptions
-                .disableKlibsCrossCompilation()
         ) {
             if (HostManager.hostIsMac) {
                 build(":p1:iosArm64MainKlibrary", ":p1:iosX64MainKlibrary", ":p1:macosX64MainKlibrary", ":p1:macosArm64MainKLibrary") {
@@ -99,8 +95,7 @@ open class CommonizerHierarchicalIT : KGPBaseTest() {
                 "assemble",
                 // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
                 buildOptions = defaultBuildOptions
-                    .disableIsolatedProjects()
-                    .disableKlibsCrossCompilation(),
+                    .disableIsolatedProjects(),
             ) {
                 assertTasksExecuted(":p1:commonizeCInterop")
                 assertTasksExecuted(":p2:commonizeCInterop")
