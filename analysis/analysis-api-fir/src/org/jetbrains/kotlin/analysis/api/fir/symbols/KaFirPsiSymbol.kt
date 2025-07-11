@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.utils.isOverride
 import org.jetbrains.kotlin.fir.extensions.declarationGenerators
 import org.jetbrains.kotlin.fir.extensions.extensionService
+import org.jetbrains.kotlin.fir.extensions.statusTransformerExtensions
 import org.jetbrains.kotlin.fir.extensions.supertypeGenerators
 import org.jetbrains.kotlin.fir.realPsi
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
@@ -153,6 +154,15 @@ internal fun KaFirSession.hasDeclarationGeneratorCompilerPlugin(declaration: KtC
     val declarationSiteModule = getModule(declaration)
     val declarationSiteSession = resolutionFacade.getSessionFor(declarationSiteModule)
     return declarationSiteSession.extensionService.declarationGenerators.isNotEmpty()
+}
+
+/**
+ * We cannot optimize the status by psi if at least one compiler plugin may transform it
+ */
+internal fun KaFirSession.hasDeclarationStatusCompilerPlugin(declaration: KtDeclaration): Boolean {
+    val declarationSiteModule = getModule(declaration)
+    val declarationSiteSession = resolutionFacade.getSessionFor(declarationSiteModule)
+    return declarationSiteSession.extensionService.statusTransformerExtensions.isNotEmpty()
 }
 
 internal fun KaFirKtBasedSymbol<KtClassOrObject, FirClassSymbol<*>>.createSuperTypes(): List<KaType> {
@@ -314,14 +324,16 @@ internal val KaFirKtBasedSymbol<KtCallableDeclaration, FirCallableSymbol<*>>.isO
             return false
         }
 
-        ifSource {
-            if (backingPsi?.hasModifier(KtTokens.OVERRIDE_KEYWORD) == true) {
-                return true
+        val isOverride = ifSource { backingPsi }?.let { declaration ->
+            val hasModifier = declaration.hasModifier(KtTokens.OVERRIDE_KEYWORD)
+            when {
+                hasModifier -> true
+                !analysisSession.hasDeclarationStatusCompilerPlugin(declaration) -> false
+                else -> null
             }
-        }
+        } ?: firSymbol.isOverride // Resolved status is needed as compiler plugins might add the modifier
 
-        // Resolved status is needed as compiler plugins might add the modifier
-        return firSymbol.isOverride || origin == KaSymbolOrigin.LIBRARY && with(analysisSession) {
+        return isOverride || origin == KaSymbolOrigin.LIBRARY && with(analysisSession) {
             // A workaround for the case when the library declaration is analyzed as sources
             directlyOverriddenSymbols.any()
         }
