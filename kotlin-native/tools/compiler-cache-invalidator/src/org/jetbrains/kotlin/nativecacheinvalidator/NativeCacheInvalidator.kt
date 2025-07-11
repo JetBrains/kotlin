@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.backend.konan.util.systemCacheRootDirectory
 import org.jetbrains.kotlin.konan.target.Distribution
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import java.io.File
+import java.io.FileNotFoundException
 import java.util.logging.Logger
 
 private class FingerprintedDistribution(private val distribution: Distribution) {
@@ -27,10 +28,14 @@ private class FingerprintedDistribution(private val distribution: Distribution) 
         distribution.compilerFingerprint
     }
 
-    private val runtimeFingerprints = mutableMapOf<KonanTarget, String>()
+    private val runtimeFingerprints = mutableMapOf<KonanTarget, String?>()
 
-    fun runtimeFingerprint(target: KonanTarget): String = runtimeFingerprints.computeIfAbsent(target) {
-        distribution.runtimeFingerprint(target)
+    fun runtimeFingerprint(target: KonanTarget): String? = runtimeFingerprints.computeIfAbsent(target) {
+        try {
+            distribution.runtimeFingerprint(target)
+        } catch (_: FileNotFoundException) {
+            null
+        }
     }
 }
 
@@ -69,14 +74,19 @@ private fun FingerprintedDistribution.validateStaleCache(cache: Cache): Boolean 
         return false
     }
     cache.metadata.runtimeFingerprint?.let { cacheRuntimeFingerprint ->
-        val distributionRuntimeFingerprint = runtimeFingerprint(cache.metadata.target)
-        if (cacheRuntimeFingerprint != distributionRuntimeFingerprint) {
-            logger.info("""
-            |Cache at ${cache.rootDir.toRelativeString(distributionRoot)} is invalid. Runtime fingerprint mismatch (for ${cache.metadata.target}).
-            |    distribution: $distributionRuntimeFingerprint
-            |    cache:        $cacheRuntimeFingerprint
-        """.trimMargin())
-            return false
+        // If there's no fingerprint for the given target, we don't know if caches for it are valid or not.
+        // Also, we're not going to use this target at all: if we got the distribution w/o runtime for the given target, we weren't
+        // preparing to build for that target. If, later, the distribution gets this target and we rerun the tool, it would prune
+        // invalid caches. So let's keep these caches in as an optimization.
+        runtimeFingerprint(cache.metadata.target)?.let { distributionRuntimeFingerprint ->
+            if (cacheRuntimeFingerprint != distributionRuntimeFingerprint) {
+                logger.info("""
+                |Cache at ${cache.rootDir.toRelativeString(distributionRoot)} is invalid. Runtime fingerprint mismatch (for ${cache.metadata.target}).
+                |    distribution: $distributionRuntimeFingerprint
+                |    cache:        $cacheRuntimeFingerprint
+            """.trimMargin())
+                return false
+            }
         }
     }
     return true
