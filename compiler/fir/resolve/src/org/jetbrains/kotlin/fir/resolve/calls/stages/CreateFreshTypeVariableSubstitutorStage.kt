@@ -184,9 +184,7 @@ internal object CreateFreshTypeVariableSubstitutorStage : ResolutionStage() {
     context(context: ResolutionContext)
     private fun FirTypeParameterRef.shouldBeFlexible(): Boolean {
         val languageVersionSettings = context.session.languageVersionSettings
-        if (languageVersionSettings.supportsFeature(LanguageFeature.DontMakeExplicitJavaTypeArgumentsFlexible) ||
-            languageVersionSettings.supportsFeature(LanguageFeature.JavaTypeParameterDefaultRepresentationWithDNN)
-        ) {
+        if (languageVersionSettings.supportsFeature(LanguageFeature.DontMakeExplicitJavaTypeArgumentsFlexible)) {
             return false
         }
         return symbol.resolvedBounds.any {
