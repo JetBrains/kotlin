@@ -14,8 +14,8 @@ import org.jetbrains.kotlin.test.runners.codegen.*
  * in the JVM backend and their execution result shouldn't be affected by the parser.
  */
 
-open class AbstractFirBlackBoxInlineCodegenWithBytecodeInlinerTestWithInlineScopes :
-    AbstractFirLightTreeBlackBoxInlineCodegenWithBytecodeInlinerTest() {
+open class AbstractFirBlackBoxInlineCodegenTestWithInlineScopes :
+    AbstractFirLightTreeBlackBoxInlineCodegenTest() {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         builder.useInlineScopesNumbers()
@@ -36,7 +36,7 @@ open class AbstractFirBytecodeTextTestWithInlineScopes : AbstractFirLightTreeByt
     }
 }
 
-open class AbstractFirLocalVariableBytecodeInlinerTestWithInlineScopes : AbstractFirLightTreeLocalVariableTest() {
+open class AbstractFirLocalVariableTestWithInlineScopes : AbstractFirLightTreeLocalVariableTest() {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         builder.useInlineScopesNumbers()
@@ -51,7 +51,7 @@ open class AbstractFirSerializeCompileKotlinAgainstInlineKotlinTestWithInlineSco
     }
 }
 
-open class AbstractFirSteppingWithBytecodeInlinerTestWithInlineScopes : AbstractFirLightTreeSteppingTest() {
+open class AbstractFirSteppingTestWithInlineScopes : AbstractFirLightTreeSteppingTest() {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         builder.useInlineScopesNumbers()

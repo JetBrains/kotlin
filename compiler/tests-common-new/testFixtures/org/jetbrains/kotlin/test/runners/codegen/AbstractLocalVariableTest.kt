@@ -41,8 +41,6 @@ open class AbstractIrLocalVariableTest : AbstractLocalVariableTestBase<ClassicFr
     }
 }
 
-open class AbstractIrLocalVariableBytecodeInlinerTest : AbstractIrLocalVariableTest()
-
 open class AbstractFirLocalVariableTestBase(val parser: FirParser) : AbstractLocalVariableTestBase<FirOutputArtifact>(FrontendKinds.FIR) {
     override val frontendFacade: Constructor<FrontendFacade<FirOutputArtifact>>
         get() = ::FirCliJvmFacade

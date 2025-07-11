@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.test.frontend.fir.FirCliJvmFacade
 import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
 import org.jetbrains.kotlin.test.model.*
 
-open class AbstractIrSteppingWithBytecodeInlinerTest() : AbstractSteppingTestBase<ClassicFrontendOutputArtifact>(FrontendKinds.ClassicFrontend) {
+open class AbstractIrSteppingTest() : AbstractSteppingTestBase<ClassicFrontendOutputArtifact>(FrontendKinds.ClassicFrontend) {
     override val frontendFacade: Constructor<FrontendFacade<ClassicFrontendOutputArtifact>>
         get() = ::ClassicFrontendFacade
 

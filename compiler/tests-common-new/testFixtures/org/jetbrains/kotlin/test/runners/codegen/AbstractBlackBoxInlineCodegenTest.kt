@@ -8,14 +8,14 @@ package org.jetbrains.kotlin.test.runners.codegen
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.configuration.useInlineHandlers
 
-open class AbstractIrBlackBoxInlineCodegenWithBytecodeInlinerTest : AbstractIrBlackBoxCodegenTest() {
+open class AbstractIrBlackBoxInlineCodegenTest : AbstractIrBlackBoxCodegenTest() {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         builder.useInlineHandlers()
     }
 }
 
-open class AbstractFirLightTreeBlackBoxInlineCodegenWithBytecodeInlinerTest : AbstractFirLightTreeBlackBoxCodegenTest() {
+open class AbstractFirLightTreeBlackBoxInlineCodegenTest : AbstractFirLightTreeBlackBoxCodegenTest() {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         builder.useInlineHandlers()
@@ -23,7 +23,7 @@ open class AbstractFirLightTreeBlackBoxInlineCodegenWithBytecodeInlinerTest : Ab
 }
 
 @FirPsiCodegenTest
-open class AbstractFirPsiBlackBoxInlineCodegenWithBytecodeInlinerTest : AbstractFirPsiBlackBoxCodegenTest() {
+open class AbstractFirPsiBlackBoxInlineCodegenTest : AbstractFirPsiBlackBoxCodegenTest() {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         builder.useInlineHandlers()
