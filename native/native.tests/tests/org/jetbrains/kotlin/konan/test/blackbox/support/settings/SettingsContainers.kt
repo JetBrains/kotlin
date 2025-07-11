@@ -73,17 +73,3 @@ val Settings.configurables: Configurables
         )
         return PlatformManager(distribution).platform(get<KotlinNativeTargets>().testTarget).configurables
     }
-
-internal fun Settings.withCustomCompiler(compiler: ReleasedCompiler): Settings {
-    return object : Settings(
-        parent = this,
-        settings = listOf(
-            compiler.nativeHome,
-            LLDB(compiler.nativeHome),
-            KotlinNativeClassLoader(lazyClassLoader = compiler.lazyClassloader),
-            PipelineType.DEFAULT,
-            GCType(null),
-            ThreadStateChecker.DISABLED
-        )
-    ) {}
-}
