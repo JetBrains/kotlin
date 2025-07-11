@@ -12213,6 +12213,12 @@ public class JvmAbiConsistencyTestRestGenerated extends AbstractJvmAbiConsistenc
       }
 
       @Test
+      @TestMetadata("noNullCheckOnPrivateFunctionParameter.kt")
+      public void testNoNullCheckOnPrivateFunctionParameter() {
+        runTest("compiler/testData/codegen/bytecodeText/nullCheckOptimization/noNullCheckOnPrivateFunctionParameter.kt");
+      }
+
+      @Test
       @TestMetadata("notNullAsNotNullable.kt")
       public void testNotNullAsNotNullable() {
         runTest("compiler/testData/codegen/bytecodeText/nullCheckOptimization/notNullAsNotNullable.kt");
