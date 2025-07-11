@@ -99,8 +99,6 @@ class JvmBackendConfig(configuration: CompilerConfiguration) {
 
     val enhancedCoroutinesDebugging = configuration.getBoolean(JVMConfigurationKeys.ENHANCED_COROUTINES_DEBUGGING)
 
-    val enableIrInliner: Boolean = configuration.getBoolean(JVMConfigurationKeys.ENABLE_IR_INLINER)
-
     val useFir: Boolean = configuration.getBoolean(CommonConfigurationKeys.USE_FIR)
 
     val emitJvmTypeAnnotations: Boolean = configuration.getBoolean(JVMConfigurationKeys.EMIT_JVM_TYPE_ANNOTATIONS)

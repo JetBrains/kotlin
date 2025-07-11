@@ -37,9 +37,6 @@ open class AbstractIrSteppingWithBytecodeInlinerTest(
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         builder.configureDumpHandlersForCodegenTest()
-        if (useIrInliner) {
-            builder.defaultDirectives { +LanguageSettingsDirectives.ENABLE_JVM_IR_INLINER }
-        }
     }
 }
 

@@ -47,10 +47,9 @@ class BlackBoxInlinerCodegenSuppressor(testServices: TestServices) : AfterAnalys
         directive: ValueDirective<TargetInliner>,
     ): List<WrappedException>? {
         val ignoreDirective = testServices.tryRetrieveIgnoredInliner(directive)
-        val enabledIrInliner = LanguageSettingsDirectives.ENABLE_JVM_IR_INLINER in testServices.moduleStructure.allDirectives
         val unmuteError = listOf(AssertionError("Looks like this test can be unmuted. Please remove ${directive.name} directive.").wrap())
 
-        if (ignoreDirective == TargetInliner.IR && enabledIrInliner || ignoreDirective == TargetInliner.BYTECODE && !enabledIrInliner) {
+        if (ignoreDirective == TargetInliner.BYTECODE) {
             return if (failedAssertions.isNotEmpty()) emptyList() else unmuteError
         }
 
