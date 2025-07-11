@@ -14,7 +14,9 @@ import kotlin.ranges.contains
 import kotlin.ranges.reversed
 
 /**
- * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
+ * Returns an element at the given [index] or either raises a trap (by default), or throws [IndexOutOfBoundsException]
+ * if the [index] is out of bounds of this array,
+ * depending on `-Xwasm-enable-array-range-checks` compiler flag presence when linking an executable.
  * 
  * @sample samples.collections.Collections.Elements.elementAt
  */
@@ -24,7 +26,9 @@ public actual inline fun <T> Array<out T>.elementAt(index: Int): T {
 }
 
 /**
- * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
+ * Returns an element at the given [index] or either raises a trap (by default), or throws [IndexOutOfBoundsException]
+ * if the [index] is out of bounds of this array,
+ * depending on `-Xwasm-enable-array-range-checks` compiler flag presence when linking an executable.
  * 
  * @sample samples.collections.Collections.Elements.elementAt
  */
@@ -34,7 +38,9 @@ public actual inline fun ByteArray.elementAt(index: Int): Byte {
 }
 
 /**
- * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
+ * Returns an element at the given [index] or either raises a trap (by default), or throws [IndexOutOfBoundsException]
+ * if the [index] is out of bounds of this array,
+ * depending on `-Xwasm-enable-array-range-checks` compiler flag presence when linking an executable.
  * 
  * @sample samples.collections.Collections.Elements.elementAt
  */
@@ -44,7 +50,9 @@ public actual inline fun ShortArray.elementAt(index: Int): Short {
 }
 
 /**
- * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
+ * Returns an element at the given [index] or either raises a trap (by default), or throws [IndexOutOfBoundsException]
+ * if the [index] is out of bounds of this array,
+ * depending on `-Xwasm-enable-array-range-checks` compiler flag presence when linking an executable.
  * 
  * @sample samples.collections.Collections.Elements.elementAt
  */
@@ -54,7 +62,9 @@ public actual inline fun IntArray.elementAt(index: Int): Int {
 }
 
 /**
- * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
+ * Returns an element at the given [index] or either raises a trap (by default), or throws [IndexOutOfBoundsException]
+ * if the [index] is out of bounds of this array,
+ * depending on `-Xwasm-enable-array-range-checks` compiler flag presence when linking an executable.
  * 
  * @sample samples.collections.Collections.Elements.elementAt
  */
@@ -64,7 +74,9 @@ public actual inline fun LongArray.elementAt(index: Int): Long {
 }
 
 /**
- * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
+ * Returns an element at the given [index] or either raises a trap (by default), or throws [IndexOutOfBoundsException]
+ * if the [index] is out of bounds of this array,
+ * depending on `-Xwasm-enable-array-range-checks` compiler flag presence when linking an executable.
  * 
  * @sample samples.collections.Collections.Elements.elementAt
  */
@@ -74,7 +86,9 @@ public actual inline fun FloatArray.elementAt(index: Int): Float {
 }
 
 /**
- * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
+ * Returns an element at the given [index] or either raises a trap (by default), or throws [IndexOutOfBoundsException]
+ * if the [index] is out of bounds of this array,
+ * depending on `-Xwasm-enable-array-range-checks` compiler flag presence when linking an executable.
  * 
  * @sample samples.collections.Collections.Elements.elementAt
  */
@@ -84,7 +98,9 @@ public actual inline fun DoubleArray.elementAt(index: Int): Double {
 }
 
 /**
- * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
+ * Returns an element at the given [index] or either raises a trap (by default), or throws [IndexOutOfBoundsException]
+ * if the [index] is out of bounds of this array,
+ * depending on `-Xwasm-enable-array-range-checks` compiler flag presence when linking an executable.
  * 
  * @sample samples.collections.Collections.Elements.elementAt
  */
@@ -94,7 +110,9 @@ public actual inline fun BooleanArray.elementAt(index: Int): Boolean {
 }
 
 /**
- * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
+ * Returns an element at the given [index] or either raises a trap (by default), or throws [IndexOutOfBoundsException]
+ * if the [index] is out of bounds of this array,
+ * depending on `-Xwasm-enable-array-range-checks` compiler flag presence when linking an executable.
  * 
  * @sample samples.collections.Collections.Elements.elementAt
  */
