@@ -51,7 +51,7 @@ class KT50161AndroidBuildCacheTest : KGPBaseTest() {
 
             enableLocalBuildCache(localBuildCacheDir)
 
-            build("assembleDebug", buildOptions = buildOptions.suppressWarningFromAgpWithGradle813(gradleVersion)) {
+            build("assembleDebug") {
                 assertTasksExecuted(":app:assembleDebug")
                 getCompileKotlinTasks().forEach { task ->
                     assertTasksExecuted(task.path)

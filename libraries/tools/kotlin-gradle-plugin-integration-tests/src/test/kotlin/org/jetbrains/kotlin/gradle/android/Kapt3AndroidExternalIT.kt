@@ -95,7 +95,7 @@ open class Kapt3AndroidExternalIT : Kapt3BaseIT() {
         project(
             "android-dbflow".withPrefix,
             gradleVersion,
-            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion).suppressWarningFromAgpWithGradle813(gradleVersion),
+            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
             buildJdk = jdkVersion.location,
             dependencyManagement = DependencyManagement.DefaultDependencyManagement(
                 setOf("https://jitpack.io")
@@ -126,8 +126,7 @@ open class Kapt3AndroidExternalIT : Kapt3BaseIT() {
             "android-realm".withPrefix,
             gradleVersion,
             buildOptions = defaultBuildOptions
-                .copy(androidVersion = agpVersion, freeArgs = listOf("-Prealm_version=$realmVersion"))
-                .suppressWarningFromAgpWithGradle813(gradleVersion),
+                .copy(androidVersion = agpVersion, freeArgs = listOf("-Prealm_version=$realmVersion")),
             buildJdk = jdkVersion.location,
         ) {
             if (gradleVersion <= GradleVersion.version(TestVersions.Gradle.G_7_6)) {
@@ -162,7 +161,7 @@ open class Kapt3AndroidExternalIT : Kapt3BaseIT() {
         project(
             "android-databinding".withPrefix,
             gradleVersion,
-            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion).suppressWarningFromAgpWithGradle813(gradleVersion),
+            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
             // remove the `if` when we drop support for [TestVersions.AGP.AGP_42]
             buildJdk = if (jdkVersion.version >= JavaVersion.VERSION_11) jdkVersion.location else jdk11Info.javaHome
         ) {
@@ -200,7 +199,7 @@ open class Kapt3AndroidExternalIT : Kapt3BaseIT() {
         project(
             "androidx-navigation-safe-args".withPrefix,
             gradleVersion,
-            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion).suppressWarningFromAgpWithGradle813(gradleVersion),
+            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
             buildJdk = jdkVersion.location
         ) {
             val safeArgsVersion = "2.5.3"
@@ -221,7 +220,7 @@ open class Kapt3AndroidExternalIT : Kapt3BaseIT() {
         project(
             "android-databinding-androidX".withPrefix,
             gradleVersion,
-            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion).suppressWarningFromAgpWithGradle813(gradleVersion),
+            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
             buildJdk = jdkVersion.location
         ) {
             build("kaptDebugKotlin") {
@@ -241,8 +240,7 @@ open class Kapt3AndroidExternalIT : Kapt3BaseIT() {
             "mpp-android-kapt".withPrefix,
             gradleVersion,
             buildOptions = defaultBuildOptions
-                .copy(androidVersion = agpVersion, logLevel = LogLevel.DEBUG)
-                .suppressWarningFromAgpWithGradle813(gradleVersion),
+                .copy(androidVersion = agpVersion, logLevel = LogLevel.DEBUG),
             buildJdk = jdkVersion.location
         ) {
             build(":shared:compileDebugKotlinAndroid") {

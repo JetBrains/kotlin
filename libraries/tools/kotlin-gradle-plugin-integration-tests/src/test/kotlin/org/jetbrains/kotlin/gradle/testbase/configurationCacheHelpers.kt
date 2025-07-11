@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.gradle.testbase.BuildOptions.ConfigurationCacheProbl
 fun TestProject.assertSimpleConfigurationCacheScenarioWorks(
     vararg buildArguments: String,
     buildOptions: BuildOptions,
-    suppressAgpWarnings: Boolean = false,
     executedTaskNames: List<String>? = null,
     checkUpToDateOnRebuild: Boolean = true,
 ) {
@@ -23,13 +22,7 @@ fun TestProject.assertSimpleConfigurationCacheScenarioWorks(
 
     val executedTask: List<String> = executedTaskNames ?: buildArguments.toList()
 
-    val buildOptionsWithSuppression = if (suppressAgpWarnings) {
-        buildOptions.suppressWarningFromAgpWithGradle813(gradleVersion)
-    } else {
-        buildOptions
-    }
-
-    build(*buildArguments, buildOptions = buildOptionsWithSuppression) {
+    build(*buildArguments, buildOptions = buildOptions) {
         assertTasksExecuted(*executedTask.toTypedArray())
         if (gradleVersion < GradleVersion.version(TestVersions.Gradle.G_8_5)) {
             assertOutputContains(

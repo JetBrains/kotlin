@@ -134,8 +134,7 @@ class KotlinSpecificDependenciesIT : KGPBaseTest() {
             buildOptions = defaultBuildOptions
                 .copy(
                     androidVersion = agpVersion,
-                )
-                .suppressWarningFromAgpWithGradle813(gradleVersion),
+                ),
             buildJdk = jdkVersion.location
         ) {
             removeDependencies(buildGradle)

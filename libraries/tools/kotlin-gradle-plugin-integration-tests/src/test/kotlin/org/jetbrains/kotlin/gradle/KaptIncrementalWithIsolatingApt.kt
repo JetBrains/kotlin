@@ -323,7 +323,6 @@ open class KaptIncrementalWithIsolatingApt : KaptIncrementalIT() {
             build(
                 "clean",
                 ":mylibrary:assembleDebug",
-                buildOptions = buildOptions.suppressWarningFromAgpWithGradle813(gradleVersion)
             )
 
             subProject("baseLibrary")

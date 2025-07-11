@@ -465,20 +465,6 @@ fun BuildOptions.disableIsolatedProjectsBecauseOfSubprojectGroupAccessInPublicat
         else IsolatedProjectsMode.DISABLED
 )
 
-fun BuildOptions.suppressWarningFromAgpWithGradle813(
-    currentGradleVersion: GradleVersion
-) = suppressDeprecationWarningsSinceGradleVersion(
-    gradleVersion = TestVersions.Gradle.G_8_13,
-    currentGradleVersion = currentGradleVersion,
-    reason =
-        """
-        AGP <8.11.0-alpha01 produced is* Groovy property deprecations warning. Remove this once AGP versions in tests is bump to those
-        containing the fix.
-        AGP issue: https://issuetracker.google.com/399393875
-        Relevant our issue: https://youtrack.jetbrains.com/issue/KT-71879 
-        """.trimIndent()
-)
-
 fun BuildOptions.suppressWarningForOldKotlinVersion(
     currentGradleVersion: GradleVersion
 ) = suppressDeprecationWarningsSinceGradleVersion(

@@ -23,7 +23,7 @@ class MultiplatformAndroidSourceSetLayoutV2IT : KGPBaseTest() {
             defaultBuildOptions.copy(androidVersion = agpVersion),
             buildJdk = jdkVersion.location
         ) {
-            build("test", buildOptions = buildOptions.suppressWarningFromAgpWithGradle813(gradleVersion)) {
+            build("test") {
                 assertTasksExecuted(":testUsaPaidReleaseUnitTest")
                 assertTasksExecuted(":testUsaPaidDebugUnitTest")
                 assertTasksExecuted(":testUsaFreeReleaseUnitTest")

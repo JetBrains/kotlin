@@ -47,7 +47,6 @@ class MultiplatformResourcesConsumptionIT : KGPBaseTest() {
                 gradleVersion,
                 providedJdk,
                 androidVersion,
-                suppressAgpWarning = true,
             ).forEach {
                 addPublishedProjectToRepositories(it)
             }
@@ -104,9 +103,10 @@ class MultiplatformResourcesConsumptionIT : KGPBaseTest() {
                 publication.resolveResources(kotlinMultiplatform.linuxArm64())
             }.buildAndReturn("linuxArm64ResolveResources")
             assert(
-                linuxArm64ResourcesDirectory.list().isEmpty(),
-                { "linuxArm64 resources resolution is expected to produce an empty directory or a resolution failure because dependencies of test project don't contain linuxArm64 resources" }
-            )
+                linuxArm64ResourcesDirectory.list().isEmpty()
+            ) {
+                "linuxArm64 resources resolution is expected to produce an empty directory or a resolution failure because dependencies of test project don't contain linuxArm64 resources"
+            }
         }
     }
 
@@ -149,10 +149,9 @@ class MultiplatformResourcesConsumptionIT : KGPBaseTest() {
         gradleVersion: GradleVersion,
         providedJdk: JdkVersions.ProvidedJdk,
         androidVersion: String,
-        suppressAgpWarning: Boolean = false,
     ): List<PublishedProject> {
         val publishedProjects = mutableMapOf<String, PublishedProject>()
-        dependencies.reversed().forEachIndexed { index, dependencyProject ->
+        dependencies.reversed().forEach { dependencyProject ->
             val published = resourceProducer(
                 gradleVersion,
                 providedJdk,
@@ -176,13 +175,7 @@ class MultiplatformResourcesConsumptionIT : KGPBaseTest() {
             }.publish(
                 publisherConfiguration = PublisherConfiguration(group = "test"),
                 deriveBuildOptions = {
-                    if (suppressAgpWarning && index == 0) {
-                        buildOptions
-                            .copy(androidVersion = androidVersion)
-                            .suppressWarningFromAgpWithGradle813(gradleVersion)
-                    } else {
-                        buildOptions.copy(androidVersion = androidVersion)
-                    }
+                    buildOptions.copy(androidVersion = androidVersion)
                 }
             )
             publishedProjects[dependencyProject.name] = published

@@ -29,7 +29,7 @@ open class KotlinAndroidIncrementalIT : KGPBaseTest() {
             buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
             buildJdk = jdkVersion.location
         ) {
-            build("assembleDebug", buildOptions = buildOptions.suppressWarningFromAgpWithGradle813(gradleVersion))
+            build("assembleDebug")
 
             val modifiedSrc = subProject("app").kotlinSourcesDir().resolve("com/example/getSomething.kt")
             modifiedSrc.writeText(
@@ -163,7 +163,7 @@ open class KotlinAndroidIncrementalIT : KGPBaseTest() {
                 """.trimIndent()
             )
 
-            build("assembleDebug", buildOptions = buildOptions.suppressWarningFromAgpWithGradle813(gradleVersion)) {
+            build("assembleDebug") {
                 assertFileInProjectExists("libAndroid/build/tmp/kotlin-classes/debug/META-INF/custom_path_debug.kotlin_module")
             }
 

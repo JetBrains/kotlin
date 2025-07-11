@@ -39,7 +39,6 @@ class AndroidMultiplatformResourcesIT : KGPBaseTest() {
             androidVersion
         ).publish(
             publisherConfiguration = PublisherConfiguration(),
-            deriveBuildOptions = { buildOptions.suppressWarningFromAgpWithGradle813(gradleVersion) }
         )
 
         val projectDependency = project(
@@ -61,7 +60,7 @@ class AndroidMultiplatformResourcesIT : KGPBaseTest() {
             "multiplatformResources/android",
             gradleVersion,
             buildJdk = providedJdk.location,
-            buildOptions = defaultBuildOptions.copy(androidVersion = androidVersion).suppressWarningFromAgpWithGradle813(gradleVersion),
+            buildOptions = defaultBuildOptions.copy(androidVersion = androidVersion),
         ) {
             include(projectDependency, subprojectDependencyName)
             addPublishedProjectToRepositories(publishedResourcesProducer)
