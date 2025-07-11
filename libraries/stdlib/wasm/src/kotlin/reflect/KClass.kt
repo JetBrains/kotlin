@@ -23,6 +23,10 @@ public actual interface KClass<T : Any> : KClassifier {
     /**
      * The fully qualified dot-separated name of the class,
      * or `null` if the class is local or a class of an anonymous object.
+     *
+     * By default, this property is not supported in Kotlin/Wasm and using it will result in a compilation error.
+     * To enable fully qualified names, `-Xwasm-kclass-fqn` compiler flag should be specified.
+     * That, however, may increase the size of the linked executable.
      */
     public actual val qualifiedName: String?
 
