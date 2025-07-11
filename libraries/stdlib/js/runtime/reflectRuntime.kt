@@ -24,7 +24,7 @@ internal fun getPropertyCallableRef(
     superType: dynamic,
     getter: dynamic,
     setter: dynamic,
-    linkageError: String?,
+    linkageError: String? = null, // TODO(KT-79108): Remove the default argument after 2.2.20 branching
 ): KProperty<*> {
     getter.get = getter
     getter.set = setter
