@@ -34027,6 +34027,12 @@ public class FirLightTreeOldFrontendDiagnosticsWithLatestLanguageVersionTestGene
       }
 
       @Test
+      @TestMetadata("functionCallExpectedWrongReceiver.kt")
+      public void testFunctionCallExpectedWrongReceiver() {
+        runTest("compiler/testData/diagnostics/tests/resolve/functionCallExpectedWrongReceiver.kt");
+      }
+
+      @Test
       @TestMetadata("functionalConstraintDuringCompletion.kt")
       public void testFunctionalConstraintDuringCompletion() {
         runTest("compiler/testData/diagnostics/tests/resolve/functionalConstraintDuringCompletion.kt");
