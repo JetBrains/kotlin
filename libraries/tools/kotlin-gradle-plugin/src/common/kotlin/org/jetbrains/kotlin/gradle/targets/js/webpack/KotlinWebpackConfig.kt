@@ -129,6 +129,7 @@ data class KotlinWebpackConfig(
             val pathRewrite: MutableMap<String, String>? = null,
             val secure: Boolean? = null,
             val changeOrigin: Boolean? = null,
+            val ws: Boolean? = null,
         ) : Serializable
     }
 
