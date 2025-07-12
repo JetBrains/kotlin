@@ -1,0 +1,19 @@
+// KT-66096: java.lang.IllegalAccessError: tried to access field a.E$Inner.this$0 from class MainKt
+// WITH_STDLIB
+// FILE: lib.kt
+
+package a
+
+class E(val x: String) {
+    inner class Inner {
+        inline fun foo(y: String) = x + y
+    }
+}
+
+// FILE: main.kt
+
+import a.*
+
+fun box(): String {
+    return E("O").Inner().foo("K")
+}
