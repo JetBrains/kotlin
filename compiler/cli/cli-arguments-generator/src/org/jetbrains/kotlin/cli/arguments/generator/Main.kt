@@ -170,7 +170,8 @@ private fun SmartPrinter.generateArgumentsClass(
     withIndent {
         generateAdditionalSyntheticArguments(info)
         for (argument in level.arguments) {
-            if (argument.releaseVersionsMetadata.removedVersion != null) continue
+            // While "Xuse-k2" is considered to be removed - we need to keep it with hidden visibility for IDEA
+            if (argument.name != "Xuse-k2" && argument.releaseVersionsMetadata.removedVersion != null) continue
             generateGradleAnnotations(argument)
             generateArgumentAnnotation(argument)
             generateFeatureAnnotations(argument)
