@@ -12,8 +12,10 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.WhenMissingCase
 import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.checkers.fullyExpandedClassId
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.utils.isEnumClass
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
@@ -22,8 +24,12 @@ import org.jetbrains.kotlin.fir.expressions.ExhaustivenessStatus
 import org.jetbrains.kotlin.fir.expressions.FirWhenExpression
 import org.jetbrains.kotlin.fir.expressions.impl.FirElseIfTrueCondition
 import org.jetbrains.kotlin.fir.expressions.impl.FirEmptyExpressionBlock
+import org.jetbrains.kotlin.fir.moduleData
+import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.isBooleanOrNullableBoolean
 
 object FirExhaustiveWhenChecker : FirWhenExpressionChecker(MppCheckerKind.Common) {
@@ -125,9 +131,22 @@ object FirExhaustiveWhenChecker : FirWhenExpressionChecker(MppCheckerKind.Common
         if (whenExpression.exhaustivenessStatus == ExhaustivenessStatus.RedundantlyExhaustive) {
             for (branch in whenExpression.branches) {
                 if (branch.source == null || branch.condition !is FirElseIfTrueCondition) continue
-                reporter.reportOn(branch.source, FirErrors.REDUNDANT_ELSE_IN_WHEN)
+
+                val subjectConeType = whenExpression.subjectVariable?.returnTypeRef?.coneType
+                if (subjectConeType == null ||
+                    subjectConeType.isBooleanOrNullableBoolean || // Values are known
+                    subjectConeType.getModuleDataOrNull() == context.session.moduleData // Subject is from the same module
+                ) {
+                    reporter.reportOn(branch.source, FirErrors.REDUNDANT_ELSE_IN_WHEN)
+                }
             }
         }
+    }
+
+    context(context: CheckerContext)
+    private fun ConeKotlinType.getModuleDataOrNull(): FirModuleData? {
+        val classId = fullyExpandedClassId(context.session) ?: return null
+        return context.session.symbolProvider.getClassLikeSymbolByClassId(classId)?.moduleData
     }
 
     private val KtSourceElement.isIfExpression: Boolean
