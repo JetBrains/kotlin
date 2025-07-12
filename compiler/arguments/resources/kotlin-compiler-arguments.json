@@ -134,6 +134,12 @@
             "patch": 70
         },
         {
+            "name": "1.3.71",
+            "major": 1,
+            "minor": 3,
+            "patch": 71
+        },
+        {
             "name": "1.3.72",
             "major": 1,
             "minor": 3,
@@ -10879,8 +10885,8 @@
                                     "valueInVersions": []
                                 },
                                 "releaseVersionsMetadata": {
-                                    "introducedVersion": "1.4.0",
-                                    "stabilizedVersion": "1.4.0",
+                                    "introducedVersion": "1.1.0",
+                                    "stabilizedVersion": "1.1.0",
                                     "deprecatedVersion": null,
                                     "removedVersion": null
                                 }
@@ -10910,8 +10916,8 @@
                                     "valueInVersions": []
                                 },
                                 "releaseVersionsMetadata": {
-                                    "introducedVersion": "1.4.0",
-                                    "stabilizedVersion": "1.4.0",
+                                    "introducedVersion": "1.1.0",
+                                    "stabilizedVersion": "1.1.0",
                                     "deprecatedVersion": null,
                                     "removedVersion": null
                                 }
@@ -10941,8 +10947,8 @@
                                     "valueInVersions": []
                                 },
                                 "releaseVersionsMetadata": {
-                                    "introducedVersion": "1.4.0",
-                                    "stabilizedVersion": "1.4.0",
+                                    "introducedVersion": "1.2.20",
+                                    "stabilizedVersion": "1.2.20",
                                     "deprecatedVersion": null,
                                     "removedVersion": null
                                 }
@@ -10972,8 +10978,8 @@
                                     "valueInVersions": []
                                 },
                                 "releaseVersionsMetadata": {
-                                    "introducedVersion": "1.4.0",
-                                    "stabilizedVersion": "1.4.0",
+                                    "introducedVersion": "1.3.71",
+                                    "stabilizedVersion": null,
                                     "deprecatedVersion": null,
                                     "removedVersion": null
                                 }
@@ -11004,7 +11010,7 @@
                                 },
                                 "releaseVersionsMetadata": {
                                     "introducedVersion": "1.4.0",
-                                    "stabilizedVersion": "1.4.0",
+                                    "stabilizedVersion": null,
                                     "deprecatedVersion": null,
                                     "removedVersion": null
                                 }
@@ -11034,8 +11040,8 @@
                                     "valueInVersions": []
                                 },
                                 "releaseVersionsMetadata": {
-                                    "introducedVersion": "1.4.0",
-                                    "stabilizedVersion": "1.4.0",
+                                    "introducedVersion": "2.1.0",
+                                    "stabilizedVersion": null,
                                     "deprecatedVersion": null,
                                     "removedVersion": null
                                 }
