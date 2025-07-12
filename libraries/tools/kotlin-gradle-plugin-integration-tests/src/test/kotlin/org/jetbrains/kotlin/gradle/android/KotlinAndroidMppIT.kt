@@ -562,6 +562,7 @@ class KotlinAndroidMppIT : KGPBaseTest() {
             gradleVersion,
             buildOptions = defaultBuildOptions
                 .copy(androidVersion = agpVersion)
+                .suppressAgpWarningSinceGradle814(gradleVersion, WarningMode.None)
                 // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
                 .disableIsolatedProjects(),
             buildJdk = jdkVersion.location
@@ -814,6 +815,7 @@ class KotlinAndroidMppIT : KGPBaseTest() {
             gradleVersion,
             buildOptions = defaultBuildOptions
                 .copy(androidVersion = agpVersion)
+                .suppressAgpWarningSinceGradle814(gradleVersion, WarningMode.None)
                 // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
                 .disableIsolatedProjects(),
             buildJdk = jdkVersion.location

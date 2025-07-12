@@ -65,7 +65,7 @@ interface TestVersions {
         const val AGP_88 = "8.8.2"
         const val AGP_89 = "8.9.3"
         const val AGP_810 = "8.10.1"
-        const val AGP_811 = "8.11.1"
+        const val AGP_811 = "8.11.1" //  Remove suppressAgpWarningSinceGradle814 once AGP 8.12 is default
 
         // Should be in sync with KotlinMultiplatformAndroidGradlePluginCompatibilityHealthCheck
         const val MIN_SUPPORTED = AGP_73 // AgpCompatibilityCheck.minimalSupportedAgpVersion

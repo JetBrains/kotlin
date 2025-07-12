@@ -546,20 +546,8 @@ class BuildScriptInjectionIT : KGPBaseTest() {
         project(
             template,
             version,
-            defaultBuildOptions
-                .copy(androidVersion = agpVersion)
+            defaultBuildOptions.copy(androidVersion = agpVersion)
         ) {
-            // FIXME: KT-77831 - because of "suppressWarningFromAgpWithGradle813", we fail the build due to GradleWarningsDetectorPlugin not
-            // being applied. Fix GradleWarningsDetectorPlugin and/or WarningMode checks, remove this "induceWarnings" and enable CC
-            val induceWarnings = "induceWarnings"
-            buildScriptInjection {
-                project.tasks.register(induceWarnings) {
-                    it.doLast {
-                        // induce a warning on Task.project access at execution time
-                        it.project
-                    }
-                }
-            }
             assertTrue(
                 buildScriptReturn {
                     try {
@@ -568,10 +556,7 @@ class BuildScriptInjectionIT : KGPBaseTest() {
                         return@buildScriptReturn true
                     }
                     return@buildScriptReturn false
-                }.buildAndReturn(
-                    induceWarnings,
-                    configurationCache = ConfigurationCacheValue.DISABLED
-                ),
+                }.buildAndReturn(),
                 "Build script is not supposed to see AGP classes at this point",
             )
             plugins {
@@ -588,10 +573,7 @@ class BuildScriptInjectionIT : KGPBaseTest() {
                     this.javaClass.classLoader.loadClass(LibraryExtension::class.java.name).isInstance(
                         project.extensions.getByName("android")
                     )
-                }.buildAndReturn(
-                    induceWarnings,
-                    configurationCache = ConfigurationCacheValue.DISABLED
-                ),
+                }.buildAndReturn(),
                 "At this point the plugin is expected to be applied and the extension must inherit from the relevant class",
             )
         }

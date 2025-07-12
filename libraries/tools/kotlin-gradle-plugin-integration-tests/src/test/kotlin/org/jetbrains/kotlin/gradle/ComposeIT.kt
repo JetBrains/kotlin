@@ -419,6 +419,11 @@ class ComposeIT : KGPBaseTest() {
             buildJdk = providedJdk.location,
             buildOptions = defaultBuildOptions
                 .copy(androidVersion = agpVersion, kotlinVersion = "1.9.21")
+                .suppressDeprecationWarningsSinceGradleVersion(
+                    TestVersions.Gradle.G_8_13,
+                    gradleVersion,
+                    "Old Kotlin release produces deprecation warning"
+                )
         ) {
             val composeBase = projectPath.resolve("src/main/kotlin/com/example/Compose.kt").createFile()
             composeBase.writeText(

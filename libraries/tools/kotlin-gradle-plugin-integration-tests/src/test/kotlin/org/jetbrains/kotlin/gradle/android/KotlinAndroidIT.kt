@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.gradle.android
 
 import org.gradle.api.logging.LogLevel
+import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.testbase.*
@@ -179,7 +180,9 @@ class KotlinAndroidIT : KGPBaseTest() {
         project(
             "AndroidProject",
             gradleVersion,
-            buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion),
+            buildOptions = defaultBuildOptions
+                .copy(androidVersion = agpVersion)
+                .suppressAgpWarningSinceGradle814(gradleVersion, WarningMode.None),
             buildJdk = jdkVersion.location
         ) {
             buildGradle.modify {
@@ -338,11 +341,13 @@ class KotlinAndroidIT : KGPBaseTest() {
                 """.trimMargin()
             )
 
-            gradleProperties.appendText(
-                """
+            if (gradleVersion < GradleVersion.version(TestVersions.Gradle.G_8_0)) {
+                gradleProperties.appendText(
+                    """
                 systemProp.org.gradle.kotlin.dsl.precompiled.accessors.strict=true
                 """.trimIndent()
-            )
+                )
+            }
 
             build("help")
         }
