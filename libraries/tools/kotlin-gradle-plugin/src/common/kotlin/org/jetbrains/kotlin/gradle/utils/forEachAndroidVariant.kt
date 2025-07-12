@@ -5,9 +5,14 @@
 
 package org.jetbrains.kotlin.gradle.utils
 
+import com.android.build.api.variant.AndroidComponentsExtension
+import com.android.build.api.variant.Component
 import com.android.build.gradle.*
 import org.gradle.api.Project
 
+/**
+ * Uses the legacy Variant API
+ */
 internal fun Project.forAllAndroidVariants(
     @Suppress("TYPEALIAS_EXPANSION_DEPRECATION") action: (DeprecatedAndroidBaseVariant) -> Unit,
 ) {
@@ -23,5 +28,16 @@ internal fun Project.forAllAndroidVariants(
     if (androidExtension is TestedExtension) {
         androidExtension.testVariants.all(action)
         androidExtension.unitTestVariants.all(action)
+    }
+}
+
+/**
+ * Uses the new Variant API
+ */
+internal fun Project.configureAndroidVariants(action: (Component) -> Unit) {
+    val androidComponentsExtension = this.extensions.getByType(AndroidComponentsExtension::class.java)
+    androidComponentsExtension.onVariants { variant ->
+        action(variant)
+        variant.nestedComponents.forEach { action(it) }
     }
 }
