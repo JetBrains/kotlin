@@ -1982,12 +1982,6 @@ public class JvmAbiConsistencyTestBoxGenerated extends AbstractJvmAbiConsistency
     }
 
     @Test
-    @TestMetadata("k42000_1.kt")
-    public void testK42000_1() {
-      runTest("compiler/testData/codegen/box/basics/k42000_1.kt");
-    }
-
-    @Test
     @TestMetadata("k42000_2.kt")
     public void testK42000_2() {
       runTest("compiler/testData/codegen/box/basics/k42000_2.kt");
@@ -2081,12 +2075,6 @@ public class JvmAbiConsistencyTestBoxGenerated extends AbstractJvmAbiConsistency
     @TestMetadata("unchecked_cast12.kt")
     public void testUnchecked_cast12() {
       runTest("compiler/testData/codegen/box/basics/unchecked_cast12.kt");
-    }
-
-    @Test
-    @TestMetadata("unchecked_cast13.kt")
-    public void testUnchecked_cast13() {
-      runTest("compiler/testData/codegen/box/basics/unchecked_cast13.kt");
     }
 
     @Test
@@ -2591,12 +2579,6 @@ public class JvmAbiConsistencyTestBoxGenerated extends AbstractJvmAbiConsistency
     @TestMetadata("boxing9.kt")
     public void testBoxing9() {
       runTest("compiler/testData/codegen/box/boxing/boxing9.kt");
-    }
-
-    @Test
-    @TestMetadata("kt53100_casts.kt")
-    public void testKt53100_casts() {
-      runTest("compiler/testData/codegen/box/boxing/kt53100_casts.kt");
     }
   }
 
@@ -6284,24 +6266,6 @@ public class JvmAbiConsistencyTestBoxGenerated extends AbstractJvmAbiConsistency
     }
 
     @Test
-    @TestMetadata("arrayDowncastingContravariant.kt")
-    public void testArrayDowncastingContravariant() {
-      runTest("compiler/testData/codegen/box/casts/arrayDowncastingContravariant.kt");
-    }
-
-    @Test
-    @TestMetadata("arrayDowncatingInvariant.kt")
-    public void testArrayDowncatingInvariant() {
-      runTest("compiler/testData/codegen/box/casts/arrayDowncatingInvariant.kt");
-    }
-
-    @Test
-    @TestMetadata("arrayDownctingCovariant.kt")
-    public void testArrayDownctingCovariant() {
-      runTest("compiler/testData/codegen/box/casts/arrayDownctingCovariant.kt");
-    }
-
-    @Test
     @TestMetadata("as.kt")
     public void testAs() {
       runTest("compiler/testData/codegen/box/casts/as.kt");
@@ -6446,12 +6410,6 @@ public class JvmAbiConsistencyTestBoxGenerated extends AbstractJvmAbiConsistency
     }
 
     @Test
-    @TestMetadata("kt53677.kt")
-    public void testKt53677() {
-      runTest("compiler/testData/codegen/box/casts/kt53677.kt");
-    }
-
-    @Test
     @TestMetadata("kt54318.kt")
     public void testKt54318() {
       runTest("compiler/testData/codegen/box/casts/kt54318.kt");
@@ -6461,24 +6419,6 @@ public class JvmAbiConsistencyTestBoxGenerated extends AbstractJvmAbiConsistency
     @TestMetadata("kt54581.kt")
     public void testKt54581() {
       runTest("compiler/testData/codegen/box/casts/kt54581.kt");
-    }
-
-    @Test
-    @TestMetadata("kt54707.kt")
-    public void testKt54707() {
-      runTest("compiler/testData/codegen/box/casts/kt54707.kt");
-    }
-
-    @Test
-    @TestMetadata("kt54802.kt")
-    public void testKt54802() {
-      runTest("compiler/testData/codegen/box/casts/kt54802.kt");
-    }
-
-    @Test
-    @TestMetadata("kt55005.kt")
-    public void testKt55005() {
-      runTest("compiler/testData/codegen/box/casts/kt55005.kt");
     }
 
     @Test
@@ -6497,12 +6437,6 @@ public class JvmAbiConsistencyTestBoxGenerated extends AbstractJvmAbiConsistency
     @TestMetadata("kt65197.kt")
     public void testKt65197() {
       runTest("compiler/testData/codegen/box/casts/kt65197.kt");
-    }
-
-    @Test
-    @TestMetadata("kt68509.kt")
-    public void testKt68509() {
-      runTest("compiler/testData/codegen/box/casts/kt68509.kt");
     }
 
     @Test
@@ -6854,12 +6788,6 @@ public class JvmAbiConsistencyTestBoxGenerated extends AbstractJvmAbiConsistency
       @TestMetadata("safeAsWithMutable.kt")
       public void testSafeAsWithMutable() {
         runTest("compiler/testData/codegen/box/casts/mutableCollections/safeAsWithMutable.kt");
-      }
-
-      @Test
-      @TestMetadata("weirdMutableCasts.kt")
-      public void testWeirdMutableCasts() {
-        runTest("compiler/testData/codegen/box/casts/mutableCollections/weirdMutableCasts.kt");
       }
     }
 
@@ -7507,12 +7435,6 @@ public class JvmAbiConsistencyTestBoxGenerated extends AbstractJvmAbiConsistency
     @TestMetadata("kt1976.kt")
     public void testKt1976() {
       runTest("compiler/testData/codegen/box/classes/kt1976.kt");
-    }
-
-    @Test
-    @TestMetadata("kt1980.kt")
-    public void testKt1980() {
-      runTest("compiler/testData/codegen/box/classes/kt1980.kt");
     }
 
     @Test
@@ -12777,12 +12699,6 @@ public class JvmAbiConsistencyTestBoxGenerated extends AbstractJvmAbiConsistency
     @TestMetadata("generate.kt")
     public void testGenerate() {
       runTest("compiler/testData/codegen/box/coroutines/generate.kt");
-    }
-
-    @Test
-    @TestMetadata("genericSignatureForSuspendImpl.kt")
-    public void testGenericSignatureForSuspendImpl() {
-      runTest("compiler/testData/codegen/box/coroutines/genericSignatureForSuspendImpl.kt");
     }
 
     @Test
@@ -22274,12 +22190,6 @@ public class JvmAbiConsistencyTestBoxGenerated extends AbstractJvmAbiConsistency
     }
 
     @Test
-    @TestMetadata("returnNullFromInlined.kt")
-    public void testReturnNullFromInlined() {
-      runTest("compiler/testData/codegen/box/finally/returnNullFromInlined.kt");
-    }
-
-    @Test
     @TestMetadata("someStuff.kt")
     public void testSomeStuff() {
       runTest("compiler/testData/codegen/box/finally/someStuff.kt");
@@ -22719,12 +22629,6 @@ public class JvmAbiConsistencyTestBoxGenerated extends AbstractJvmAbiConsistency
     @TestMetadata("nestedClassTypeParameterDeserialization.kt")
     public void testNestedClassTypeParameterDeserialization() {
       runTest("compiler/testData/codegen/box/fir/nestedClassTypeParameterDeserialization.kt");
-    }
-
-    @Test
-    @TestMetadata("noInfer.kt")
-    public void testNoInfer() {
-      runTest("compiler/testData/codegen/box/fir/noInfer.kt");
     }
 
     @Test
@@ -24539,12 +24443,6 @@ public class JvmAbiConsistencyTestBoxGenerated extends AbstractJvmAbiConsistency
     @TestMetadata("greaterFloat_properIeeeComparisons.kt")
     public void testGreaterFloat_properIeeeComparisons() {
       runTest("compiler/testData/codegen/box/ieee754/greaterFloat_properIeeeComparisons.kt");
-    }
-
-    @Test
-    @TestMetadata("inline.kt")
-    public void testInline() {
-      runTest("compiler/testData/codegen/box/ieee754/inline.kt");
     }
 
     @Test
@@ -26590,12 +26488,6 @@ public class JvmAbiConsistencyTestBoxGenerated extends AbstractJvmAbiConsistency
     }
 
     @Test
-    @TestMetadata("changingCapturedLocal.kt")
-    public void testChangingCapturedLocal() {
-      runTest("compiler/testData/codegen/box/inline/changingCapturedLocal.kt");
-    }
-
-    @Test
     @TestMetadata("classDeclarationInsideInline.kt")
     public void testClassDeclarationInsideInline() {
       runTest("compiler/testData/codegen/box/inline/classDeclarationInsideInline.kt");
@@ -26608,45 +26500,15 @@ public class JvmAbiConsistencyTestBoxGenerated extends AbstractJvmAbiConsistency
     }
 
     @Test
-    @TestMetadata("correctOrderFunctionReference.kt")
-    public void testCorrectOrderFunctionReference() {
-      runTest("compiler/testData/codegen/box/inline/correctOrderFunctionReference.kt");
-    }
-
-    @Test
-    @TestMetadata("crossModuleTypeOf.kt")
-    public void testCrossModuleTypeOf() {
-      runTest("compiler/testData/codegen/box/inline/crossModuleTypeOf.kt");
-    }
-
-    @Test
-    @TestMetadata("crossinlineLambdaAllocation.kt")
-    public void testCrossinlineLambdaAllocation() {
-      runTest("compiler/testData/codegen/box/inline/crossinlineLambdaAllocation.kt");
-    }
-
-    @Test
-    @TestMetadata("defaultArgs.kt")
-    public void testDefaultArgs() {
-      runTest("compiler/testData/codegen/box/inline/defaultArgs.kt");
-    }
-
-    @Test
     @TestMetadata("defaultArgsLowering.kt")
     public void testDefaultArgsLowering() {
       runTest("compiler/testData/codegen/box/inline/defaultArgsLowering.kt");
     }
 
     @Test
-    @TestMetadata("defaultArgsMultipleModules.kt")
-    public void testDefaultArgsMultipleModules() {
-      runTest("compiler/testData/codegen/box/inline/defaultArgsMultipleModules.kt");
-    }
-
-    @Test
-    @TestMetadata("genericFunctionReference.kt")
-    public void testGenericFunctionReference() {
-      runTest("compiler/testData/codegen/box/inline/genericFunctionReference.kt");
+    @TestMetadata("defaultArgsLoweringSingleModule.kt")
+    public void testDefaultArgsLoweringSingleModule() {
+      runTest("compiler/testData/codegen/box/inline/defaultArgsLoweringSingleModule.kt");
     }
 
     @Test
@@ -26656,159 +26518,9 @@ public class JvmAbiConsistencyTestBoxGenerated extends AbstractJvmAbiConsistency
     }
 
     @Test
-    @TestMetadata("inline0.kt")
-    public void testInline0() {
-      runTest("compiler/testData/codegen/box/inline/inline0.kt");
-    }
-
-    @Test
-    @TestMetadata("inline1.kt")
-    public void testInline1() {
-      runTest("compiler/testData/codegen/box/inline/inline1.kt");
-    }
-
-    @Test
-    @TestMetadata("inline10.kt")
-    public void testInline10() {
-      runTest("compiler/testData/codegen/box/inline/inline10.kt");
-    }
-
-    @Test
-    @TestMetadata("inline11.kt")
-    public void testInline11() {
-      runTest("compiler/testData/codegen/box/inline/inline11.kt");
-    }
-
-    @Test
-    @TestMetadata("inline12.kt")
-    public void testInline12() {
-      runTest("compiler/testData/codegen/box/inline/inline12.kt");
-    }
-
-    @Test
-    @TestMetadata("inline13.kt")
-    public void testInline13() {
-      runTest("compiler/testData/codegen/box/inline/inline13.kt");
-    }
-
-    @Test
-    @TestMetadata("inline14.kt")
-    public void testInline14() {
-      runTest("compiler/testData/codegen/box/inline/inline14.kt");
-    }
-
-    @Test
-    @TestMetadata("inline15.kt")
-    public void testInline15() {
-      runTest("compiler/testData/codegen/box/inline/inline15.kt");
-    }
-
-    @Test
-    @TestMetadata("inline16.kt")
-    public void testInline16() {
-      runTest("compiler/testData/codegen/box/inline/inline16.kt");
-    }
-
-    @Test
-    @TestMetadata("inline17.kt")
-    public void testInline17() {
-      runTest("compiler/testData/codegen/box/inline/inline17.kt");
-    }
-
-    @Test
     @TestMetadata("inline19.kt")
     public void testInline19() {
       runTest("compiler/testData/codegen/box/inline/inline19.kt");
-    }
-
-    @Test
-    @TestMetadata("inline2.kt")
-    public void testInline2() {
-      runTest("compiler/testData/codegen/box/inline/inline2.kt");
-    }
-
-    @Test
-    @TestMetadata("inline20.kt")
-    public void testInline20() {
-      runTest("compiler/testData/codegen/box/inline/inline20.kt");
-    }
-
-    @Test
-    @TestMetadata("inline21.kt")
-    public void testInline21() {
-      runTest("compiler/testData/codegen/box/inline/inline21.kt");
-    }
-
-    @Test
-    @TestMetadata("inline22.kt")
-    public void testInline22() {
-      runTest("compiler/testData/codegen/box/inline/inline22.kt");
-    }
-
-    @Test
-    @TestMetadata("inline23.kt")
-    public void testInline23() {
-      runTest("compiler/testData/codegen/box/inline/inline23.kt");
-    }
-
-    @Test
-    @TestMetadata("inline24.kt")
-    public void testInline24() {
-      runTest("compiler/testData/codegen/box/inline/inline24.kt");
-    }
-
-    @Test
-    @TestMetadata("inline25.kt")
-    public void testInline25() {
-      runTest("compiler/testData/codegen/box/inline/inline25.kt");
-    }
-
-    @Test
-    @TestMetadata("inline26.kt")
-    public void testInline26() {
-      runTest("compiler/testData/codegen/box/inline/inline26.kt");
-    }
-
-    @Test
-    @TestMetadata("inline3.kt")
-    public void testInline3() {
-      runTest("compiler/testData/codegen/box/inline/inline3.kt");
-    }
-
-    @Test
-    @TestMetadata("inline4.kt")
-    public void testInline4() {
-      runTest("compiler/testData/codegen/box/inline/inline4.kt");
-    }
-
-    @Test
-    @TestMetadata("inline5.kt")
-    public void testInline5() {
-      runTest("compiler/testData/codegen/box/inline/inline5.kt");
-    }
-
-    @Test
-    @TestMetadata("inline6.kt")
-    public void testInline6() {
-      runTest("compiler/testData/codegen/box/inline/inline6.kt");
-    }
-
-    @Test
-    @TestMetadata("inline7.kt")
-    public void testInline7() {
-      runTest("compiler/testData/codegen/box/inline/inline7.kt");
-    }
-
-    @Test
-    @TestMetadata("inline8.kt")
-    public void testInline8() {
-      runTest("compiler/testData/codegen/box/inline/inline8.kt");
-    }
-
-    @Test
-    @TestMetadata("inline9.kt")
-    public void testInline9() {
-      runTest("compiler/testData/codegen/box/inline/inline9.kt");
     }
 
     @Test
@@ -26818,63 +26530,9 @@ public class JvmAbiConsistencyTestBoxGenerated extends AbstractJvmAbiConsistency
     }
 
     @Test
-    @TestMetadata("inlinedLambdaWithErasedParamType.kt")
-    public void testInlinedLambdaWithErasedParamType() {
-      runTest("compiler/testData/codegen/box/inline/inlinedLambdaWithErasedParamType.kt");
-    }
-
-    @Test
-    @TestMetadata("innerInlineFunCapturesOuter.kt")
-    public void testInnerInlineFunCapturesOuter() {
-      runTest("compiler/testData/codegen/box/inline/innerInlineFunCapturesOuter.kt");
-    }
-
-    @Test
     @TestMetadata("kt66017.kt")
     public void testKt66017() {
       runTest("compiler/testData/codegen/box/inline/kt66017.kt");
-    }
-
-    @Test
-    @TestMetadata("kt66017_inlineFromTheSameModule.kt")
-    public void testKt66017_inlineFromTheSameModule() {
-      runTest("compiler/testData/codegen/box/inline/kt66017_inlineFromTheSameModule.kt");
-    }
-
-    @Test
-    @TestMetadata("kt67024.kt")
-    public void testKt67024() {
-      runTest("compiler/testData/codegen/box/inline/kt67024.kt");
-    }
-
-    @Test
-    @TestMetadata("kt67866.kt")
-    public void testKt67866() {
-      runTest("compiler/testData/codegen/box/inline/kt67866.kt");
-    }
-
-    @Test
-    @TestMetadata("kt69041.kt")
-    public void testKt69041() {
-      runTest("compiler/testData/codegen/box/inline/kt69041.kt");
-    }
-
-    @Test
-    @TestMetadata("lambdaAsAny.kt")
-    public void testLambdaAsAny() {
-      runTest("compiler/testData/codegen/box/inline/lambdaAsAny.kt");
-    }
-
-    @Test
-    @TestMetadata("lambdaInDefaultValue.kt")
-    public void testLambdaInDefaultValue() {
-      runTest("compiler/testData/codegen/box/inline/lambdaInDefaultValue.kt");
-    }
-
-    @Test
-    @TestMetadata("lateinitProperty.kt")
-    public void testLateinitProperty() {
-      runTest("compiler/testData/codegen/box/inline/lateinitProperty.kt");
     }
 
     @Test
@@ -26884,21 +26542,9 @@ public class JvmAbiConsistencyTestBoxGenerated extends AbstractJvmAbiConsistency
     }
 
     @Test
-    @TestMetadata("localFunctionInInitializerBlock.kt")
-    public void testLocalFunctionInInitializerBlock() {
-      runTest("compiler/testData/codegen/box/inline/localFunctionInInitializerBlock.kt");
-    }
-
-    @Test
     @TestMetadata("localObjectReturnedFromWhen.kt")
     public void testLocalObjectReturnedFromWhen() {
       runTest("compiler/testData/codegen/box/inline/localObjectReturnedFromWhen.kt");
-    }
-
-    @Test
-    @TestMetadata("multipleInheritanceClash.kt")
-    public void testMultipleInheritanceClash() {
-      runTest("compiler/testData/codegen/box/inline/multipleInheritanceClash.kt");
     }
 
     @Test
@@ -26908,57 +26554,9 @@ public class JvmAbiConsistencyTestBoxGenerated extends AbstractJvmAbiConsistency
     }
 
     @Test
-    @TestMetadata("redundantCoercionsCleaner.kt")
-    public void testRedundantCoercionsCleaner() {
-      runTest("compiler/testData/codegen/box/inline/redundantCoercionsCleaner.kt");
-    }
-
-    @Test
-    @TestMetadata("redundantCoercionsCleanerKT48876.kt")
-    public void testRedundantCoercionsCleanerKT48876() {
-      runTest("compiler/testData/codegen/box/inline/redundantCoercionsCleanerKT48876.kt");
-    }
-
-    @Test
-    @TestMetadata("redundantCoercionsCleanerKT49356.kt")
-    public void testRedundantCoercionsCleanerKT49356() {
-      runTest("compiler/testData/codegen/box/inline/redundantCoercionsCleanerKT49356.kt");
-    }
-
-    @Test
-    @TestMetadata("returnLocalClassFromBlock.kt")
-    public void testReturnLocalClassFromBlock() {
-      runTest("compiler/testData/codegen/box/inline/returnLocalClassFromBlock.kt");
-    }
-
-    @Test
-    @TestMetadata("sharedVar.kt")
-    public void testSharedVar() {
-      runTest("compiler/testData/codegen/box/inline/sharedVar.kt");
-    }
-
-    @Test
     @TestMetadata("statementAsLastExprInBlock.kt")
     public void testStatementAsLastExprInBlock() {
       runTest("compiler/testData/codegen/box/inline/statementAsLastExprInBlock.kt");
-    }
-
-    @Test
-    @TestMetadata("twiceInlinedObject.kt")
-    public void testTwiceInlinedObject() {
-      runTest("compiler/testData/codegen/box/inline/twiceInlinedObject.kt");
-    }
-
-    @Test
-    @TestMetadata("typeParameterSymbolIsUnbound.kt")
-    public void testTypeParameterSymbolIsUnbound() {
-      runTest("compiler/testData/codegen/box/inline/typeParameterSymbolIsUnbound.kt");
-    }
-
-    @Test
-    @TestMetadata("typeSubstitutionInFakeOverride.kt")
-    public void testTypeSubstitutionInFakeOverride() {
-      runTest("compiler/testData/codegen/box/inline/typeSubstitutionInFakeOverride.kt");
     }
   }
 
@@ -35676,18 +35274,6 @@ public class JvmAbiConsistencyTestBoxGenerated extends AbstractJvmAbiConsistency
     }
 
     @Test
-    @TestMetadata("recursiveGeneric.kt")
-    public void testRecursiveGeneric() {
-      runTest("compiler/testData/codegen/box/ir/recursiveGeneric.kt");
-    }
-
-    @Test
-    @TestMetadata("recursiveGeneric2.kt")
-    public void testRecursiveGeneric2() {
-      runTest("compiler/testData/codegen/box/ir/recursiveGeneric2.kt");
-    }
-
-    @Test
     @TestMetadata("simple.kt")
     public void testSimple() {
       runTest("compiler/testData/codegen/box/ir/simple.kt");
@@ -35804,12 +35390,6 @@ public class JvmAbiConsistencyTestBoxGenerated extends AbstractJvmAbiConsistency
       @TestMetadata("enumEntryArguments.kt")
       public void testEnumEntryArguments() {
         runTest("compiler/testData/codegen/box/ir/privateSignatures/enumEntryArguments.kt");
-      }
-
-      @Test
-      @TestMetadata("privateLeakThroughInline.kt")
-      public void testPrivateLeakThroughInline() {
-        runTest("compiler/testData/codegen/box/ir/privateSignatures/privateLeakThroughInline.kt");
       }
     }
 
@@ -37241,16 +36821,6 @@ public class JvmAbiConsistencyTestBoxGenerated extends AbstractJvmAbiConsistency
     @Test
     public void testAllFilesPresentInJs() {
       KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/js"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
-    }
-
-    @Nested
-    @TestMetadata("compiler/testData/codegen/box/js/inlinedReturnBreakContinue")
-    @TestDataPath("$PROJECT_ROOT")
-    public class InlinedReturnBreakContinue {
-      @Test
-      public void testAllFilesPresentInInlinedReturnBreakContinue() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/js/inlinedReturnBreakContinue"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
-      }
     }
   }
 
@@ -39176,12 +38746,6 @@ public class JvmAbiConsistencyTestBoxGenerated extends AbstractJvmAbiConsistency
     public void testKClassEnumArgument() {
       runTest("compiler/testData/codegen/box/kclass/kClassEnumArgument.kt");
     }
-
-    @Test
-    @TestMetadata("kclass1.kt")
-    public void testKclass1() {
-      runTest("compiler/testData/codegen/box/kclass/kclass1.kt");
-    }
   }
 
   @Nested
@@ -39210,18 +38774,6 @@ public class JvmAbiConsistencyTestBoxGenerated extends AbstractJvmAbiConsistency
     }
 
     @Test
-    @TestMetadata("ktype1_basics1.kt")
-    public void testKtype1_basics1() {
-      runTest("compiler/testData/codegen/box/ktype/ktype1_basics1.kt");
-    }
-
-    @Test
-    @TestMetadata("ktype1_inner.kt")
-    public void testKtype1_inner() {
-      runTest("compiler/testData/codegen/box/ktype/ktype1_inner.kt");
-    }
-
-    @Test
     @TestMetadata("nonReified_class.kt")
     public void testNonReified_class() {
       runTest("compiler/testData/codegen/box/ktype/nonReified_class.kt");
@@ -39237,18 +38789,6 @@ public class JvmAbiConsistencyTestBoxGenerated extends AbstractJvmAbiConsistency
     @TestMetadata("nonReified_fun.kt")
     public void testNonReified_fun() {
       runTest("compiler/testData/codegen/box/ktype/nonReified_fun.kt");
-    }
-
-    @Test
-    @TestMetadata("nonReified_recursionInReified.kt")
-    public void testNonReified_recursionInReified() {
-      runTest("compiler/testData/codegen/box/ktype/nonReified_recursionInReified.kt");
-    }
-
-    @Test
-    @TestMetadata("nonReified_reifiedUpperBound.kt")
-    public void testNonReified_reifiedUpperBound() {
-      runTest("compiler/testData/codegen/box/ktype/nonReified_reifiedUpperBound.kt");
     }
   }
 
@@ -39413,12 +38953,6 @@ public class JvmAbiConsistencyTestBoxGenerated extends AbstractJvmAbiConsistency
     @TestMetadata("lambda_kt49360_trivial.kt")
     public void testLambda_kt49360_trivial() {
       runTest("compiler/testData/codegen/box/lambda/lambda_kt49360_trivial.kt");
-    }
-
-    @Test
-    @TestMetadata("lambda_kt49360_withFlow.kt")
-    public void testLambda_kt49360_withFlow() {
-      runTest("compiler/testData/codegen/box/lambda/lambda_kt49360_withFlow.kt");
     }
 
     @Test
@@ -41288,12 +40822,6 @@ public class JvmAbiConsistencyTestBoxGenerated extends AbstractJvmAbiConsistency
     }
 
     @Test
-    @TestMetadata("compoundAssignmentToObjectFromCall.kt")
-    public void testCompoundAssignmentToObjectFromCall() {
-      runTest("compiler/testData/codegen/box/objects/compoundAssignmentToObjectFromCall.kt");
-    }
-
-    @Test
     @TestMetadata("compoundAssignmentToPropertyImportedFromObject.kt")
     public void testCompoundAssignmentToPropertyImportedFromObject() {
       runTest("compiler/testData/codegen/box/objects/compoundAssignmentToPropertyImportedFromObject.kt");
@@ -41486,12 +41014,6 @@ public class JvmAbiConsistencyTestBoxGenerated extends AbstractJvmAbiConsistency
     }
 
     @Test
-    @TestMetadata("kt52540.kt")
-    public void testKt52540() {
-      runTest("compiler/testData/codegen/box/objects/kt52540.kt");
-    }
-
-    @Test
     @TestMetadata("kt535.kt")
     public void testKt535() {
       runTest("compiler/testData/codegen/box/objects/kt535.kt");
@@ -41567,12 +41089,6 @@ public class JvmAbiConsistencyTestBoxGenerated extends AbstractJvmAbiConsistency
     @TestMetadata("objectLiteralInClass.kt")
     public void testObjectLiteralInClass() {
       runTest("compiler/testData/codegen/box/objects/objectLiteralInClass.kt");
-    }
-
-    @Test
-    @TestMetadata("objectVsClassInitialization_kt5291.kt")
-    public void testObjectVsClassInitialization_kt5291() {
-      runTest("compiler/testData/codegen/box/objects/objectVsClassInitialization_kt5291.kt");
     }
 
     @Test
@@ -41741,24 +41257,6 @@ public class JvmAbiConsistencyTestBoxGenerated extends AbstractJvmAbiConsistency
       }
 
       @Test
-      @TestMetadata("kt27117.kt")
-      public void testKt27117() {
-        runTest("compiler/testData/codegen/box/objects/companionObjectAccess/kt27117.kt");
-      }
-
-      @Test
-      @TestMetadata("kt27117_lv12.kt")
-      public void testKt27117_lv12() {
-        runTest("compiler/testData/codegen/box/objects/companionObjectAccess/kt27117_lv12.kt");
-      }
-
-      @Test
-      @TestMetadata("kt27117_lv13.kt")
-      public void testKt27117_lv13() {
-        runTest("compiler/testData/codegen/box/objects/companionObjectAccess/kt27117_lv13.kt");
-      }
-
-      @Test
       @TestMetadata("kt27121.kt")
       public void testKt27121() {
         runTest("compiler/testData/codegen/box/objects/companionObjectAccess/kt27121.kt");
@@ -41792,12 +41290,6 @@ public class JvmAbiConsistencyTestBoxGenerated extends AbstractJvmAbiConsistency
       @TestMetadata("privateCompanionObjectAccessedFromInitBlockOfNestedClass.kt")
       public void testPrivateCompanionObjectAccessedFromInitBlockOfNestedClass() {
         runTest("compiler/testData/codegen/box/objects/companionObjectAccess/privateCompanionObjectAccessedFromInitBlockOfNestedClass.kt");
-      }
-
-      @Test
-      @TestMetadata("privateCompanionObjectAccessedFromInlineLambdaInNestedClass.kt")
-      public void testPrivateCompanionObjectAccessedFromInlineLambdaInNestedClass() {
-        runTest("compiler/testData/codegen/box/objects/companionObjectAccess/privateCompanionObjectAccessedFromInlineLambdaInNestedClass.kt");
       }
 
       @Test
@@ -44777,12 +44269,6 @@ public class JvmAbiConsistencyTestBoxGenerated extends AbstractJvmAbiConsistency
       runTest("compiler/testData/codegen/box/ranges/multiAssignmentIterationOverIntRange.kt");
     }
 
-    @Test
-    @TestMetadata("safeCallRangeTo.kt")
-    public void testSafeCallRangeTo() {
-      runTest("compiler/testData/codegen/box/ranges/safeCallRangeTo.kt");
-    }
-
     @Nested
     @TestMetadata("compiler/testData/codegen/box/ranges/contains")
     @TestDataPath("$PROJECT_ROOT")
@@ -44802,60 +44288,6 @@ public class JvmAbiConsistencyTestBoxGenerated extends AbstractJvmAbiConsistency
       @TestMetadata("comparisonWithRangeBoundEliminated.kt")
       public void testComparisonWithRangeBoundEliminated() {
         runTest("compiler/testData/codegen/box/ranges/contains/comparisonWithRangeBoundEliminated.kt");
-      }
-
-      @Test
-      @TestMetadata("evaluationOrderForCollection.kt")
-      public void testEvaluationOrderForCollection() {
-        runTest("compiler/testData/codegen/box/ranges/contains/evaluationOrderForCollection.kt");
-      }
-
-      @Test
-      @TestMetadata("evaluationOrderForComparableRange.kt")
-      public void testEvaluationOrderForComparableRange() {
-        runTest("compiler/testData/codegen/box/ranges/contains/evaluationOrderForComparableRange.kt");
-      }
-
-      @Test
-      @TestMetadata("evaluationOrderForDownTo.kt")
-      public void testEvaluationOrderForDownTo() {
-        runTest("compiler/testData/codegen/box/ranges/contains/evaluationOrderForDownTo.kt");
-      }
-
-      @Test
-      @TestMetadata("evaluationOrderForDownToReversed.kt")
-      public void testEvaluationOrderForDownToReversed() {
-        runTest("compiler/testData/codegen/box/ranges/contains/evaluationOrderForDownToReversed.kt");
-      }
-
-      @Test
-      @TestMetadata("evaluationOrderForNullableArgument.kt")
-      public void testEvaluationOrderForNullableArgument() {
-        runTest("compiler/testData/codegen/box/ranges/contains/evaluationOrderForNullableArgument.kt");
-      }
-
-      @Test
-      @TestMetadata("evaluationOrderForRangeLiteral.kt")
-      public void testEvaluationOrderForRangeLiteral() {
-        runTest("compiler/testData/codegen/box/ranges/contains/evaluationOrderForRangeLiteral.kt");
-      }
-
-      @Test
-      @TestMetadata("evaluationOrderForRangeLiteralReversed.kt")
-      public void testEvaluationOrderForRangeLiteralReversed() {
-        runTest("compiler/testData/codegen/box/ranges/contains/evaluationOrderForRangeLiteralReversed.kt");
-      }
-
-      @Test
-      @TestMetadata("evaluationOrderForUntil.kt")
-      public void testEvaluationOrderForUntil() {
-        runTest("compiler/testData/codegen/box/ranges/contains/evaluationOrderForUntil.kt");
-      }
-
-      @Test
-      @TestMetadata("evaluationOrderForUntilReversed.kt")
-      public void testEvaluationOrderForUntilReversed() {
-        runTest("compiler/testData/codegen/box/ranges/contains/evaluationOrderForUntilReversed.kt");
       }
 
       @Test
@@ -45873,12 +45305,6 @@ public class JvmAbiConsistencyTestBoxGenerated extends AbstractJvmAbiConsistency
       }
 
       @Test
-      @TestMetadata("indexOfLast.kt")
-      public void testIndexOfLast() {
-        runTest("compiler/testData/codegen/box/ranges/forInIndices/indexOfLast.kt");
-      }
-
-      @Test
       @TestMetadata("kt12983_forInGenericArrayIndices.kt")
       public void testKt12983_forInGenericArrayIndices() {
         runTest("compiler/testData/codegen/box/ranges/forInIndices/kt12983_forInGenericArrayIndices.kt");
@@ -45924,12 +45350,6 @@ public class JvmAbiConsistencyTestBoxGenerated extends AbstractJvmAbiConsistency
       @TestMetadata("kt43159_ArrayUpperBound.kt")
       public void testKt43159_ArrayUpperBound() {
         runTest("compiler/testData/codegen/box/ranges/forInIndices/kt43159_ArrayUpperBound.kt");
-      }
-
-      @Test
-      @TestMetadata("kt43159_GenericArray.kt")
-      public void testKt43159_GenericArray() {
-        runTest("compiler/testData/codegen/box/ranges/forInIndices/kt43159_GenericArray.kt");
       }
     }
 
@@ -55564,237 +54984,15 @@ public class JvmAbiConsistencyTestBoxGenerated extends AbstractJvmAbiConsistency
     }
 
     @Test
-    @TestMetadata("anonymousObject.kt")
-    public void testAnonymousObject() {
-      runTest("compiler/testData/codegen/box/reified/anonymousObject.kt");
-    }
-
-    @Test
-    @TestMetadata("anonymousObjectNoPropagate.kt")
-    public void testAnonymousObjectNoPropagate() {
-      runTest("compiler/testData/codegen/box/reified/anonymousObjectNoPropagate.kt");
-    }
-
-    @Test
-    @TestMetadata("anonymousObjectReifiedSupertype.kt")
-    public void testAnonymousObjectReifiedSupertype() {
-      runTest("compiler/testData/codegen/box/reified/anonymousObjectReifiedSupertype.kt");
-    }
-
-    @Test
-    @TestMetadata("approximateCapturedTypes.kt")
-    public void testApproximateCapturedTypes() {
-      runTest("compiler/testData/codegen/box/reified/approximateCapturedTypes.kt");
-    }
-
-    @Test
-    @TestMetadata("asOnPlatformType.kt")
-    public void testAsOnPlatformType() {
-      runTest("compiler/testData/codegen/box/reified/asOnPlatformType.kt");
-    }
-
-    @Test
-    @TestMetadata("callableReferenceInlinedFun.kt")
-    public void testCallableReferenceInlinedFun() {
-      runTest("compiler/testData/codegen/box/reified/callableReferenceInlinedFun.kt");
-    }
-
-    @Test
-    @TestMetadata("callableReferenceInlinedFunFromOtherModule.kt")
-    public void testCallableReferenceInlinedFunFromOtherModule() {
-      runTest("compiler/testData/codegen/box/reified/callableReferenceInlinedFunFromOtherModule.kt");
-    }
-
-    @Test
-    @TestMetadata("checkcast.kt")
-    public void testCheckcast() {
-      runTest("compiler/testData/codegen/box/reified/checkcast.kt");
-    }
-
-    @Test
-    @TestMetadata("copyToArray.kt")
-    public void testCopyToArray() {
-      runTest("compiler/testData/codegen/box/reified/copyToArray.kt");
-    }
-
-    @Test
-    @TestMetadata("DIExample.kt")
-    public void testDIExample() {
-      runTest("compiler/testData/codegen/box/reified/DIExample.kt");
-    }
-
-    @Test
-    @TestMetadata("defaultJavaClass.kt")
-    public void testDefaultJavaClass() {
-      runTest("compiler/testData/codegen/box/reified/defaultJavaClass.kt");
-    }
-
-    @Test
-    @TestMetadata("expectedTypeFromCast.kt")
-    public void testExpectedTypeFromCast() {
-      runTest("compiler/testData/codegen/box/reified/expectedTypeFromCast.kt");
-    }
-
-    @Test
-    @TestMetadata("filterIsInstance.kt")
-    public void testFilterIsInstance() {
-      runTest("compiler/testData/codegen/box/reified/filterIsInstance.kt");
-    }
-
-    @Test
-    @TestMetadata("innerAnonymousObject.kt")
-    public void testInnerAnonymousObject() {
-      runTest("compiler/testData/codegen/box/reified/innerAnonymousObject.kt");
-    }
-
-    @Test
-    @TestMetadata("instanceof.kt")
-    public void testInstanceof() {
-      runTest("compiler/testData/codegen/box/reified/instanceof.kt");
-    }
-
-    @Test
-    @TestMetadata("isOnPlatformType.kt")
-    public void testIsOnPlatformType() {
-      runTest("compiler/testData/codegen/box/reified/isOnPlatformType.kt");
-    }
-
-    @Test
-    @TestMetadata("javaClass.kt")
-    public void testJavaClass() {
-      runTest("compiler/testData/codegen/box/reified/javaClass.kt");
-    }
-
-    @Test
-    @TestMetadata("kt16445.kt")
-    public void testKt16445() {
-      runTest("compiler/testData/codegen/box/reified/kt16445.kt");
-    }
-
-    @Test
-    @TestMetadata("kt36237.kt")
-    public void testKt36237() {
-      runTest("compiler/testData/codegen/box/reified/kt36237.kt");
-    }
-
-    @Test
-    @TestMetadata("kt39256_privateInlineWithAnonymousObject.kt")
-    public void testKt39256_privateInlineWithAnonymousObject() {
-      runTest("compiler/testData/codegen/box/reified/kt39256_privateInlineWithAnonymousObject.kt");
-    }
-
-    @Test
-    @TestMetadata("nestedReified.kt")
-    public void testNestedReified() {
-      runTest("compiler/testData/codegen/box/reified/nestedReified.kt");
-    }
-
-    @Test
-    @TestMetadata("nestedReifiedSignature.kt")
-    public void testNestedReifiedSignature() {
-      runTest("compiler/testData/codegen/box/reified/nestedReifiedSignature.kt");
-    }
-
-    @Test
-    @TestMetadata("newArrayInt.kt")
-    public void testNewArrayInt() {
-      runTest("compiler/testData/codegen/box/reified/newArrayInt.kt");
-    }
-
-    @Test
-    @TestMetadata("nonInlineableLambdaInReifiedFunction.kt")
-    public void testNonInlineableLambdaInReifiedFunction() {
-      runTest("compiler/testData/codegen/box/reified/nonInlineableLambdaInReifiedFunction.kt");
-    }
-
-    @Test
     @TestMetadata("nullableNothingArrayAsStringArray.kt")
     public void testNullableNothingArrayAsStringArray() {
       runTest("compiler/testData/codegen/box/reified/nullableNothingArrayAsStringArray.kt");
     }
 
     @Test
-    @TestMetadata("overrideResolution.kt")
-    public void testOverrideResolution() {
-      runTest("compiler/testData/codegen/box/reified/overrideResolution.kt");
-    }
-
-    @Test
-    @TestMetadata("overrideResolutionWithInlinedFunInKlib.kt")
-    public void testOverrideResolutionWithInlinedFunInKlib() {
-      runTest("compiler/testData/codegen/box/reified/overrideResolutionWithInlinedFunInKlib.kt");
-    }
-
-    @Test
-    @TestMetadata("recursiveInnerAnonymousObject.kt")
-    public void testRecursiveInnerAnonymousObject() {
-      runTest("compiler/testData/codegen/box/reified/recursiveInnerAnonymousObject.kt");
-    }
-
-    @Test
-    @TestMetadata("recursiveNewArray.kt")
-    public void testRecursiveNewArray() {
-      runTest("compiler/testData/codegen/box/reified/recursiveNewArray.kt");
-    }
-
-    @Test
-    @TestMetadata("recursiveNonInlineableLambda.kt")
-    public void testRecursiveNonInlineableLambda() {
-      runTest("compiler/testData/codegen/box/reified/recursiveNonInlineableLambda.kt");
-    }
-
-    @Test
-    @TestMetadata("reifiedChain.kt")
-    public void testReifiedChain() {
-      runTest("compiler/testData/codegen/box/reified/reifiedChain.kt");
-    }
-
-    @Test
     @TestMetadata("reifiedInlineFunOfObject.kt")
     public void testReifiedInlineFunOfObject() {
       runTest("compiler/testData/codegen/box/reified/reifiedInlineFunOfObject.kt");
-    }
-
-    @Test
-    @TestMetadata("reifiedInlineFunOfObjectWithinReified.kt")
-    public void testReifiedInlineFunOfObjectWithinReified() {
-      runTest("compiler/testData/codegen/box/reified/reifiedInlineFunOfObjectWithinReified.kt");
-    }
-
-    @Test
-    @TestMetadata("reifiedInlineIntoNonInlineableLambda.kt")
-    public void testReifiedInlineIntoNonInlineableLambda() {
-      runTest("compiler/testData/codegen/box/reified/reifiedInlineIntoNonInlineableLambda.kt");
-    }
-
-    @Test
-    @TestMetadata("reifiedIntersectionType.kt")
-    public void testReifiedIntersectionType() {
-      runTest("compiler/testData/codegen/box/reified/reifiedIntersectionType.kt");
-    }
-
-    @Test
-    @TestMetadata("reifiedIntersectionTypeArgument.kt")
-    public void testReifiedIntersectionTypeArgument() {
-      runTest("compiler/testData/codegen/box/reified/reifiedIntersectionTypeArgument.kt");
-    }
-
-    @Test
-    @TestMetadata("reifiedIntersectionTypeArgumentCrossModule.kt")
-    public void testReifiedIntersectionTypeArgumentCrossModule() {
-      runTest("compiler/testData/codegen/box/reified/reifiedIntersectionTypeArgumentCrossModule.kt");
-    }
-
-    @Test
-    @TestMetadata("reifiedNullableNothing1.kt")
-    public void testReifiedNullableNothing1() {
-      runTest("compiler/testData/codegen/box/reified/reifiedNullableNothing1.kt");
-    }
-
-    @Test
-    @TestMetadata("reifiedNullableNothing2.kt")
-    public void testReifiedNullableNothing2() {
-      runTest("compiler/testData/codegen/box/reified/reifiedNullableNothing2.kt");
     }
 
     @Test
@@ -55819,122 +55017,6 @@ public class JvmAbiConsistencyTestBoxGenerated extends AbstractJvmAbiConsistency
     @TestMetadata("reifiedTypeArgumentWithRecursion.kt")
     public void testReifiedTypeArgumentWithRecursion() {
       runTest("compiler/testData/codegen/box/reified/reifiedTypeArgumentWithRecursion.kt");
-    }
-
-    @Test
-    @TestMetadata("safecast.kt")
-    public void testSafecast() {
-      runTest("compiler/testData/codegen/box/reified/safecast.kt");
-    }
-
-    @Test
-    @TestMetadata("sameIndexRecursive.kt")
-    public void testSameIndexRecursive() {
-      runTest("compiler/testData/codegen/box/reified/sameIndexRecursive.kt");
-    }
-
-    @Test
-    @TestMetadata("spreads.kt")
-    public void testSpreads() {
-      runTest("compiler/testData/codegen/box/reified/spreads.kt");
-    }
-
-    @Test
-    @TestMetadata("typeTokenWrapper.kt")
-    public void testTypeTokenWrapper() {
-      runTest("compiler/testData/codegen/box/reified/typeTokenWrapper.kt");
-    }
-
-    @Test
-    @TestMetadata("varargs.kt")
-    public void testVarargs() {
-      runTest("compiler/testData/codegen/box/reified/varargs.kt");
-    }
-
-    @Nested
-    @TestMetadata("compiler/testData/codegen/box/reified/arraysReification")
-    @TestDataPath("$PROJECT_ROOT")
-    public class ArraysReification {
-      @Test
-      public void testAllFilesPresentInArraysReification() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reified/arraysReification"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
-      }
-
-      @Test
-      @TestMetadata("instanceOf.kt")
-      public void testInstanceOf() {
-        runTest("compiler/testData/codegen/box/reified/arraysReification/instanceOf.kt");
-      }
-
-      @Test
-      @TestMetadata("instanceOfArrays.kt")
-      public void testInstanceOfArrays() {
-        runTest("compiler/testData/codegen/box/reified/arraysReification/instanceOfArrays.kt");
-      }
-
-      @Test
-      @TestMetadata("jClass.kt")
-      public void testJClass() {
-        runTest("compiler/testData/codegen/box/reified/arraysReification/jClass.kt");
-      }
-
-      @Test
-      @TestMetadata("jaggedArray.kt")
-      public void testJaggedArray() {
-        runTest("compiler/testData/codegen/box/reified/arraysReification/jaggedArray.kt");
-      }
-
-      @Test
-      @TestMetadata("jaggedArrayOfNulls.kt")
-      public void testJaggedArrayOfNulls() {
-        runTest("compiler/testData/codegen/box/reified/arraysReification/jaggedArrayOfNulls.kt");
-      }
-
-      @Test
-      @TestMetadata("jaggedDeep.kt")
-      public void testJaggedDeep() {
-        runTest("compiler/testData/codegen/box/reified/arraysReification/jaggedDeep.kt");
-      }
-    }
-
-    @Nested
-    @TestMetadata("compiler/testData/codegen/box/reified/catchParameter")
-    @TestDataPath("$PROJECT_ROOT")
-    public class CatchParameter {
-      @Test
-      public void testAllFilesPresentInCatchParameter() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reified/catchParameter"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
-      }
-
-      @Test
-      @TestMetadata("nestedReifiedCatch.kt")
-      public void testNestedReifiedCatch() {
-        runTest("compiler/testData/codegen/box/reified/catchParameter/nestedReifiedCatch.kt");
-      }
-
-      @Test
-      @TestMetadata("nullableExceptionType.kt")
-      public void testNullableExceptionType() {
-        runTest("compiler/testData/codegen/box/reified/catchParameter/nullableExceptionType.kt");
-      }
-
-      @Test
-      @TestMetadata("nullableNothing.kt")
-      public void testNullableNothing() {
-        runTest("compiler/testData/codegen/box/reified/catchParameter/nullableNothing.kt");
-      }
-
-      @Test
-      @TestMetadata("reificationClash.kt")
-      public void testReificationClash() {
-        runTest("compiler/testData/codegen/box/reified/catchParameter/reificationClash.kt");
-      }
-
-      @Test
-      @TestMetadata("tryCatchReifiedType.kt")
-      public void testTryCatchReifiedType() {
-        runTest("compiler/testData/codegen/box/reified/catchParameter/tryCatchReifiedType.kt");
-      }
     }
   }
 
@@ -56421,12 +55503,6 @@ public class JvmAbiConsistencyTestBoxGenerated extends AbstractJvmAbiConsistency
     @TestMetadata("receiverEvaluatedOnce.kt")
     public void testReceiverEvaluatedOnce() {
       runTest("compiler/testData/codegen/box/sam/receiverEvaluatedOnce.kt");
-    }
-
-    @Test
-    @TestMetadata("recordSubstitutedTypeForCallableSamParameter.kt")
-    public void testRecordSubstitutedTypeForCallableSamParameter() {
-      runTest("compiler/testData/codegen/box/sam/recordSubstitutedTypeForCallableSamParameter.kt");
     }
 
     @Test
@@ -59910,12 +58986,6 @@ public class JvmAbiConsistencyTestBoxGenerated extends AbstractJvmAbiConsistency
     }
 
     @Test
-    @TestMetadata("returnsDifferentTypes.kt")
-    public void testReturnsDifferentTypes() {
-      runTest("compiler/testData/codegen/box/try/returnsDifferentTypes.kt");
-    }
-
-    @Test
     @TestMetadata("try1.kt")
     public void testTry1() {
       runTest("compiler/testData/codegen/box/try/try1.kt");
@@ -61280,12 +60350,6 @@ public class JvmAbiConsistencyTestBoxGenerated extends AbstractJvmAbiConsistency
     }
 
     @Test
-    @TestMetadata("spreadCopiesArray.kt")
-    public void testSpreadCopiesArray() {
-      runTest("compiler/testData/codegen/box/vararg/spreadCopiesArray.kt");
-    }
-
-    @Test
     @TestMetadata("useSuspendFunResultAsVararg.kt")
     public void testUseSuspendFunResultAsVararg() {
       runTest("compiler/testData/codegen/box/vararg/useSuspendFunResultAsVararg.kt");
@@ -61517,12 +60581,6 @@ public class JvmAbiConsistencyTestBoxGenerated extends AbstractJvmAbiConsistency
     @TestMetadata("kt47365.kt")
     public void testKt47365() {
       runTest("compiler/testData/codegen/box/when/kt47365.kt");
-    }
-
-    @Test
-    @TestMetadata("kt47475.kt")
-    public void testKt47475() {
-      runTest("compiler/testData/codegen/box/when/kt47475.kt");
     }
 
     @Test
