@@ -56,7 +56,9 @@ public interface KaConstructorSymbolRenderer {
                         {
                             symbol.containingDeclaration?.name?.let { printer.append(it.render()) }
                             printer.printCollection(symbol.valueParameters, prefix = "(", postfix = ")") {
-                                declarationRenderer.typeRenderer.renderType(analysisSession, it.returnType, printer)
+                                withPrefix(if (it.isVararg) "vararg " else "") {
+                                    declarationRenderer.typeRenderer.renderType(analysisSession, it.returnType, printer)
+                                }
                             }
                         }
                     )
