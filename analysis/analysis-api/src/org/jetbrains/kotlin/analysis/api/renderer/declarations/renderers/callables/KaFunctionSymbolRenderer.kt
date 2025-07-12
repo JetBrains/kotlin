@@ -56,7 +56,9 @@ public interface KaNamedFunctionSymbolRenderer {
                 declarationRenderer.nameRenderer.renderName(analysisSession, symbol, declarationRenderer, printer)
 
                 printer.printCollection(symbol.valueParameters, prefix = "(", postfix = ")") {
-                    declarationRenderer.typeRenderer.renderType(analysisSession, it.returnType, printer)
+                    withSuffix(if (it.isVararg) Typography.ellipsis.toString() else "") {
+                        declarationRenderer.typeRenderer.renderType(analysisSession, it.returnType, printer)
+                    }
                 }
 
                 withPrefix(": ") {
