@@ -628,8 +628,8 @@
                     "valueInVersions": []
                 },
                 "releaseVersionsMetadata": {
-                    "introducedVersion": "1.4.0",
-                    "stabilizedVersion": "1.4.0",
+                    "introducedVersion": "1.0.0",
+                    "stabilizedVersion": "1.0.0",
                     "deprecatedVersion": null,
                     "removedVersion": null
                 }
@@ -659,8 +659,8 @@
                     "valueInVersions": []
                 },
                 "releaseVersionsMetadata": {
-                    "introducedVersion": "1.4.0",
-                    "stabilizedVersion": "1.4.0",
+                    "introducedVersion": "1.0.0",
+                    "stabilizedVersion": "1.0.0",
                     "deprecatedVersion": null,
                     "removedVersion": null
                 }
@@ -690,8 +690,8 @@
                     "valueInVersions": []
                 },
                 "releaseVersionsMetadata": {
-                    "introducedVersion": "1.4.0",
-                    "stabilizedVersion": "1.4.0",
+                    "introducedVersion": "1.0.0",
+                    "stabilizedVersion": "1.0.0",
                     "deprecatedVersion": null,
                     "removedVersion": null
                 }
@@ -721,8 +721,8 @@
                     "valueInVersions": []
                 },
                 "releaseVersionsMetadata": {
-                    "introducedVersion": "1.4.0",
-                    "stabilizedVersion": "1.4.0",
+                    "introducedVersion": "1.0.0",
+                    "stabilizedVersion": "1.0.0",
                     "deprecatedVersion": null,
                     "removedVersion": null
                 }
@@ -752,8 +752,8 @@
                     "valueInVersions": []
                 },
                 "releaseVersionsMetadata": {
-                    "introducedVersion": "1.4.0",
-                    "stabilizedVersion": "1.4.0",
+                    "introducedVersion": "1.0.0",
+                    "stabilizedVersion": "1.0.0",
                     "deprecatedVersion": null,
                     "removedVersion": null
                 }
@@ -783,8 +783,8 @@
                     "valueInVersions": []
                 },
                 "releaseVersionsMetadata": {
-                    "introducedVersion": "1.4.0",
-                    "stabilizedVersion": "1.4.0",
+                    "introducedVersion": "1.2.0",
+                    "stabilizedVersion": "1.2.0",
                     "deprecatedVersion": null,
                     "removedVersion": null
                 }
@@ -814,8 +814,8 @@
                     "valueInVersions": []
                 },
                 "releaseVersionsMetadata": {
-                    "introducedVersion": "1.4.0",
-                    "stabilizedVersion": "1.4.0",
+                    "introducedVersion": "2.1.0",
+                    "stabilizedVersion": "2.1.0",
                     "deprecatedVersion": null,
                     "removedVersion": null
                 }
