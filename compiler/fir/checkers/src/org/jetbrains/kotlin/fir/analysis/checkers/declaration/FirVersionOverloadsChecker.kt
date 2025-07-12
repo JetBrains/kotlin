@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.MavenComparableVersion
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
+import org.jetbrains.kotlin.fir.FirAnnotationContainer
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
@@ -20,6 +21,7 @@ import org.jetbrains.kotlin.fir.declarations.getStringArgument
 import org.jetbrains.kotlin.fir.declarations.utils.isData
 import org.jetbrains.kotlin.fir.declarations.utils.isFinal
 import org.jetbrains.kotlin.fir.declarations.utils.nameOrSpecialName
+import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.toResolvedCallableSymbol
@@ -27,6 +29,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.isSomeFunctionType
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitor
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
 
@@ -38,47 +41,44 @@ object FirVersionOverloadsChecker : FirFunctionChecker(MppCheckerKind.Common) {
         // skip checking copy method because it is equivalent to the constructor
         if (declaration.isCopyMethod()) return
 
-        val inOverridableFunction = declaration.isOverridable()
         var inVersionedPart = false
-        var lastVersionNumber: MavenComparableVersion? = null
+        var highestVersionNumberUntilNow: MavenComparableVersion? = null
         val paramVersions = mutableMapOf<FirCallableSymbol<*>, MavenComparableVersion>()
 
         for ((i, param) in declaration.valueParameters.withIndex()) {
-            val versionAnnotation = param.getAnnotationByClassId(StandardClassIds.Annotations.IntroducedAt, context.session)
+            val versionAnnotation = param.getAnnotationByClassId(StandardClassIds.Annotations.IntroducedAt)
+            val isTrailingLambda =
+                (i == declaration.valueParameters.lastIndex) && param.returnTypeRef.coneType.isSomeFunctionType(context.session)
 
-            if (param.defaultValue == null) {
-                val isTrailingLambda = (i == declaration.valueParameters.lastIndex) &&
-                        param.returnTypeRef.coneType.isSomeFunctionType(context.session)
+            when {
+                param.defaultValue == null && versionAnnotation != null ->
+                    reporter.reportOn(versionAnnotation.source, FirErrors.INVALID_VERSIONING_ON_NON_OPTIONAL)
 
-                when {
-                    versionAnnotation != null ->
-                        reporter.reportOn(versionAnnotation.source, FirErrors.INVALID_VERSIONING_ON_NON_OPTIONAL)
+                param.defaultValue == null && inVersionedPart && !isTrailingLambda ->
+                    reporter.reportOn(param.source, FirErrors.INVALID_NON_OPTIONAL_PARAMETER_POSITION)
 
-                    inVersionedPart && !isTrailingLambda ->
-                        reporter.reportOn(param.source, FirErrors.INVALID_NON_OPTIONAL_PARAMETER_POSITION)
+                versionAnnotation == null -> {}
+
+                else -> {
+                    inVersionedPart = true
+
+                    if (declaration.isOverridable())
+                        reporter.reportOn(versionAnnotation.source, FirErrors.NONFINAL_VERSIONED_FUNCTION)
+
+                    val version =
+                        versionAnnotation.getStringArgument(versionArgument, context.session)?.let(::MavenComparableVersion) ?: continue
+                    paramVersions[param.symbol] = version
+
+                    if (highestVersionNumberUntilNow.lessThanEqual(version)) {
+                        highestVersionNumberUntilNow = version
+                    } else {
+                        reporter.reportOn(versionAnnotation.source, FirErrors.NON_ASCENDING_VERSION_ANNOTATION)
+                    }
                 }
-
-                continue
-            }
-
-            if (versionAnnotation == null) continue
-
-            inVersionedPart = true
-            val versionString = versionAnnotation.getStringArgument(versionArgument, context.session) ?: continue
-
-            if (inOverridableFunction) reporter.reportOn(versionAnnotation.source, FirErrors.NONFINAL_VERSIONED_FUNCTION)
-
-            val version = MavenComparableVersion(versionString)
-            paramVersions[param.symbol] = version
-
-            if (lastVersionNumber.lessThanEqual(version)) {
-                lastVersionNumber = version
-            } else {
-                reporter.reportOn(versionAnnotation.source, FirErrors.NON_ASCENDING_VERSION_ANNOTATION)
             }
         }
 
-        val jvmOverloadsAnnotation = declaration.getAnnotationByClassId(StandardClassIds.Annotations.jvmOverloads, context.session)
+        val jvmOverloadsAnnotation = declaration.getAnnotationByClassId(StandardClassIds.Annotations.jvmOverloads)
         if (jvmOverloadsAnnotation != null && paramVersions.isNotEmpty()) {
             reporter.reportOn(jvmOverloadsAnnotation.source, FirErrors.CONFLICT_WITH_JVM_OVERLOADS_ANNOTATION)
         }
@@ -91,7 +91,7 @@ object FirVersionOverloadsChecker : FirFunctionChecker(MppCheckerKind.Common) {
         declaration: FirFunction,
         paramVersions: Map<FirCallableSymbol<*>, MavenComparableVersion>
     ) {
-        val visitor = DependencyChecker(context, reporter,paramVersions)
+        val visitor = DependencyChecker(context, reporter, paramVersions)
 
         for (param in declaration.valueParameters) {
             val defaultValue = param.defaultValue ?: continue
@@ -143,5 +143,10 @@ object FirVersionOverloadsChecker : FirFunctionChecker(MppCheckerKind.Common) {
 
     private fun FirFunction.isOverridable(): Boolean = !isFinal || getContainingClassSymbol()?.isFinal == false
 
-    private fun FirFunction.isCopyMethod(): Boolean = nameOrSpecialName == StandardNames.DATA_CLASS_COPY && getContainingClassSymbol()?.isData == true
+    private fun FirFunction.isCopyMethod(): Boolean =
+        nameOrSpecialName == StandardNames.DATA_CLASS_COPY && getContainingClassSymbol()?.isData == true
+
+    context(context: CheckerContext)
+    fun FirAnnotationContainer.getAnnotationByClassId(classId: ClassId): FirAnnotation? =
+        getAnnotationByClassId(classId, context.session)
 }
