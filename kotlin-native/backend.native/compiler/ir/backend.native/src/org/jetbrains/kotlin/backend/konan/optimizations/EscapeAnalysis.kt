@@ -12,9 +12,6 @@ import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.DirectedGraphCondensationBuilder
 import org.jetbrains.kotlin.backend.konan.DirectedGraphMultiNode
-import org.jetbrains.kotlin.backend.konan.ir.annotations.Escapes
-import org.jetbrains.kotlin.backend.konan.ir.annotations.PointsTo
-import org.jetbrains.kotlin.backend.konan.ir.annotations.PointsToKind
 import org.jetbrains.kotlin.backend.konan.ir.isBuiltInOperator
 import org.jetbrains.kotlin.backend.konan.llvm.Lifetime
 import org.jetbrains.kotlin.backend.konan.logMultiple
@@ -24,6 +21,9 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.util.constructedClass
 import org.jetbrains.kotlin.ir.util.getAllSuperclasses
+import org.jetbrains.kotlin.native.internal.Escapes
+import org.jetbrains.kotlin.native.internal.PointsTo
+import org.jetbrains.kotlin.native.internal.PointsToKind
 import org.jetbrains.kotlin.utils.atMostOne
 
 private val DataFlowIR.Node.ir

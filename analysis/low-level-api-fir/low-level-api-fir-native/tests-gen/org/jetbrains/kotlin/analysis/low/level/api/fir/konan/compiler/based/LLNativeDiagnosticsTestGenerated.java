@@ -63,6 +63,30 @@ public class LLNativeDiagnosticsTestGenerated extends AbstractLLNativeDiagnostic
   }
 
   @Test
+  @TestMetadata("escapeAnalysisBasic.kt")
+  public void testEscapeAnalysisBasic() {
+    runTest("compiler/testData/diagnostics/nativeTests/escapeAnalysisBasic.kt");
+  }
+
+  @Test
+  @TestMetadata("escapeAnalysisDfgAndIntrinsics.kt")
+  public void testEscapeAnalysisDfgAndIntrinsics() {
+    runTest("compiler/testData/diagnostics/nativeTests/escapeAnalysisDfgAndIntrinsics.kt");
+  }
+
+  @Test
+  @TestMetadata("escapeAnalysisPackages.kt")
+  public void testEscapeAnalysisPackages() {
+    runTest("compiler/testData/diagnostics/nativeTests/escapeAnalysisPackages.kt");
+  }
+
+  @Test
+  @TestMetadata("escapeAnalysisPointsTo.kt")
+  public void testEscapeAnalysisPointsTo() {
+    runTest("compiler/testData/diagnostics/nativeTests/escapeAnalysisPointsTo.kt");
+  }
+
+  @Test
   @TestMetadata("externalNonFunctions.kt")
   public void testExternalNonFunctions() {
     runTest("compiler/testData/diagnostics/nativeTests/externalNonFunctions.kt");

@@ -48,6 +48,20 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.NON_
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.PROPERTY_MUST_BE_VAR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.REDUNDANT_SWIFT_REFINEMENT
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.SUBTYPE_OF_HIDDEN_FROM_OBJC
+import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.CONFLICTING_ESCAPES_AND_ESCAPES_NOTHING
+import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.ESCAPES_MARKED_ON_NON_ESCAPING_TYPE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.ESCAPES_NOT_MARKED_ON_MUST_ESCAPE_TYPE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.INVALID_ESCAPES_VALUE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.INVALID_POINTS_TO_INDEX
+import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.INVALID_POINTS_TO_VALUE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.MISSING_ESCAPE_ANALYSIS_ANNOTATION
+import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.MISSING_ESCAPES_FOR_MUST_ESCAPE_TYPE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.POINTS_TO_FROM_NON_ESCAPING_TYPE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.POINTS_TO_KIND_1_ONLY_FOR_RETURN
+import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.POINTS_TO_TO_NON_ESCAPING_TYPE
+import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.UNUSED_ESCAPES_ANNOTATION
+import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.UNUSED_ESCAPES_NOTHING_ANNOTATION
+import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.UNUSED_POINTS_TO_ANNOTATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.THROWS_LIST_EMPTY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.TWO_OR_LESS_PARAMETERS_ARE_SUPPORTED_HERE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.native.FirNativeErrors.UNCHECKED_CAST_TO_FORWARD_DECLARATION
@@ -175,6 +189,80 @@ object FirNativeErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             IDENTITY_HASH_CODE_ON_VALUE_TYPE,
             "Call to ''kotlin.native.identityHashCode'' on an instance of value type ''{0}'' can have unexpected behavior.",
             RENDER_TYPE,
+        )
+        
+        // Escape analysis annotation messages
+        map.put(
+            UNUSED_ESCAPES_ANNOTATION,
+            "Unused '@Escapes': {0}",
+            TO_STRING
+        )
+        map.put(
+            UNUSED_ESCAPES_NOTHING_ANNOTATION,
+            "Unused '@Escapes.Nothing': {0}",
+            TO_STRING
+        )
+        map.put(
+            UNUSED_POINTS_TO_ANNOTATION,
+            "Unused '@PointsTo': {0}",
+            TO_STRING
+        )
+        map.put(
+            CONFLICTING_ESCAPES_AND_ESCAPES_NOTHING,
+            "Conflicting '@Escapes' and '@Escapes.Nothing'"
+        )
+        map.put(
+            MISSING_ESCAPE_ANALYSIS_ANNOTATION,
+            "External function with parameters that may escape requires '@Escapes' or '@Escapes.Nothing' or '@PointsTo'"
+        )
+        map.put(
+            MISSING_ESCAPES_FOR_MUST_ESCAPE_TYPE,
+            "External function with parameters that must always escape is not marked by '@Escapes'"
+        )
+        map.put(
+            INVALID_ESCAPES_VALUE,
+            "@Escapes value is invalid: {0}",
+            TO_STRING
+        )
+        map.put(
+            ESCAPES_MARKED_ON_NON_ESCAPING_TYPE,
+            "{0} is marked as escaping by '@Escapes', but the type cannot escape to the heap",
+            TO_STRING
+        )
+        map.put(
+            ESCAPES_NOT_MARKED_ON_MUST_ESCAPE_TYPE,
+            "{0} is not marked as escaping by '@Escapes', but the type must always escape to the heap",
+            TO_STRING
+        )
+        map.put(
+            INVALID_POINTS_TO_VALUE,
+            "@PointsTo value is invalid: {0}",
+            TO_STRING
+        )
+        map.put(
+            INVALID_POINTS_TO_INDEX,
+            "@PointsTo value is invalid at index {0} nibble {1}: {2}",
+            TO_STRING,
+            TO_STRING,
+            TO_STRING
+        )
+        map.put(
+            POINTS_TO_KIND_1_ONLY_FOR_RETURN,
+            "{0} is marked as pointing to {1} by '@PointsTo' with kind 1, but kind 1 is only allowed for the return value",
+            TO_STRING,
+            TO_STRING
+        )
+        map.put(
+            POINTS_TO_FROM_NON_ESCAPING_TYPE,
+            "{0} is marked as pointing to {1} by '@PointsTo', but {0}''s type cannot escape to the heap",
+            TO_STRING,
+            TO_STRING
+        )
+        map.put(
+            POINTS_TO_TO_NON_ESCAPING_TYPE,
+            "{0} is marked as pointing to {1} by '@PointsTo', but {1}''s type cannot escape to the heap",
+            TO_STRING,
+            TO_STRING
         )
     }
 }

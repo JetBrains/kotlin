@@ -5,12 +5,8 @@
 
 package org.jetbrains.kotlin.backend.konan
 
-import org.jetbrains.kotlin.builtins.konan.KonanBuiltIns
-import org.jetbrains.kotlin.descriptors.ClassDescriptor
-import org.jetbrains.kotlin.incremental.components.NoLookupLocation
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.scopes.MemberScope
 
 object InteropFqNames {
 
@@ -91,23 +87,3 @@ object InteropFqNames {
 }
 
 private fun FqName.child(nameIdent: String) = child(Name.identifier(nameIdent))
-
-@InternalKotlinNativeApi
-class InteropBuiltIns(builtIns: KonanBuiltIns) {
-
-    private val packageScope = builtIns.builtInsModule.getPackage(InteropFqNames.packageName).memberScope
-
-    internal fun getContributedVariables(name: String) = packageScope.getContributedVariables(name)
-    internal fun getContributedFunctions(name: String) = packageScope.getContributedFunctions(name)
-    internal fun getContributedClass(name: String) = packageScope.getContributedClass(name)
-}
-
-private fun MemberScope.getContributedVariables(name: String) =
-    this.getContributedVariables(Name.identifier(name), NoLookupLocation.FROM_BUILTINS)
-
-internal fun MemberScope.getContributedClass(name: String): ClassDescriptor =
-    this.getContributedClassifier(Name.identifier(name), NoLookupLocation.FROM_BUILTINS) as ClassDescriptor
-
-private fun MemberScope.getContributedFunctions(name: String) =
-    this.getContributedFunctions(Name.identifier(name), NoLookupLocation.FROM_BUILTINS)
-

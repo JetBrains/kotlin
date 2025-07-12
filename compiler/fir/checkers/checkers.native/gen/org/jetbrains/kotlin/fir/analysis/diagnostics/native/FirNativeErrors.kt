@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.diagnostics.*
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory0
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory1
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory2
+import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory3
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactoryForDeprecation1
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticsContainer
 import org.jetbrains.kotlin.diagnostics.Severity.ERROR
@@ -72,6 +73,20 @@ object FirNativeErrors : KtDiagnosticsContainer() {
     val INAPPLICABLE_OBJC_OVERRIDE: KtDiagnosticFactory0 = KtDiagnosticFactory0("INAPPLICABLE_OBJC_OVERRIDE", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())
     val NATIVE_SPECIFIC_ATOMIC: KtDiagnosticFactory1<Name> = KtDiagnosticFactory1("NATIVE_SPECIFIC_ATOMIC", WARNING, SourceElementPositioningStrategies.DEFAULT, KtTypeReference::class, getRendererFactory())
     val IDENTITY_HASH_CODE_ON_VALUE_TYPE: KtDiagnosticFactory1<ConeKotlinType> = KtDiagnosticFactory1("IDENTITY_HASH_CODE_ON_VALUE_TYPE", WARNING, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
+    val UNUSED_ESCAPES_ANNOTATION: KtDiagnosticFactory1<String> = KtDiagnosticFactory1("UNUSED_ESCAPES_ANNOTATION", WARNING, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
+    val UNUSED_ESCAPES_NOTHING_ANNOTATION: KtDiagnosticFactory1<String> = KtDiagnosticFactory1("UNUSED_ESCAPES_NOTHING_ANNOTATION", WARNING, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
+    val UNUSED_POINTS_TO_ANNOTATION: KtDiagnosticFactory1<String> = KtDiagnosticFactory1("UNUSED_POINTS_TO_ANNOTATION", WARNING, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
+    val CONFLICTING_ESCAPES_AND_ESCAPES_NOTHING: KtDiagnosticFactory0 = KtDiagnosticFactory0("CONFLICTING_ESCAPES_AND_ESCAPES_NOTHING", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
+    val MISSING_ESCAPE_ANALYSIS_ANNOTATION: KtDiagnosticFactory0 = KtDiagnosticFactory0("MISSING_ESCAPE_ANALYSIS_ANNOTATION", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
+    val MISSING_ESCAPES_FOR_MUST_ESCAPE_TYPE: KtDiagnosticFactory0 = KtDiagnosticFactory0("MISSING_ESCAPES_FOR_MUST_ESCAPE_TYPE", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
+    val INVALID_ESCAPES_VALUE: KtDiagnosticFactory1<String> = KtDiagnosticFactory1("INVALID_ESCAPES_VALUE", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
+    val ESCAPES_MARKED_ON_NON_ESCAPING_TYPE: KtDiagnosticFactory1<String> = KtDiagnosticFactory1("ESCAPES_MARKED_ON_NON_ESCAPING_TYPE", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
+    val ESCAPES_NOT_MARKED_ON_MUST_ESCAPE_TYPE: KtDiagnosticFactory1<String> = KtDiagnosticFactory1("ESCAPES_NOT_MARKED_ON_MUST_ESCAPE_TYPE", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
+    val INVALID_POINTS_TO_VALUE: KtDiagnosticFactory1<String> = KtDiagnosticFactory1("INVALID_POINTS_TO_VALUE", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
+    val INVALID_POINTS_TO_INDEX: KtDiagnosticFactory3<Int, Int, String> = KtDiagnosticFactory3("INVALID_POINTS_TO_INDEX", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
+    val POINTS_TO_KIND_1_ONLY_FOR_RETURN: KtDiagnosticFactory2<String, String> = KtDiagnosticFactory2("POINTS_TO_KIND_1_ONLY_FOR_RETURN", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
+    val POINTS_TO_FROM_NON_ESCAPING_TYPE: KtDiagnosticFactory2<String, String> = KtDiagnosticFactory2("POINTS_TO_FROM_NON_ESCAPING_TYPE", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
+    val POINTS_TO_TO_NON_ESCAPING_TYPE: KtDiagnosticFactory2<String, String> = KtDiagnosticFactory2("POINTS_TO_TO_NON_ESCAPING_TYPE", ERROR, SourceElementPositioningStrategies.DEFAULT, KtElement::class, getRendererFactory())
 
     override fun getRendererFactory(): BaseDiagnosticRendererFactory = FirNativeErrorsDefaultMessages
 }

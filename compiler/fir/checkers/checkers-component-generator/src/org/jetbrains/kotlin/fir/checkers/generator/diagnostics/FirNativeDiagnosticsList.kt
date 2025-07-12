@@ -115,5 +115,48 @@ object NATIVE_DIAGNOSTICS_LIST : DiagnosticList("FirNativeErrors") {
         val IDENTITY_HASH_CODE_ON_VALUE_TYPE by warning<KtElement> {
             parameter<ConeKotlinType>("type")
         }
+        
+        // Escape analysis annotation diagnostics
+        val UNUSED_ESCAPES_ANNOTATION by warning<KtElement> {
+            parameter<String>("reason")
+        }
+        val UNUSED_ESCAPES_NOTHING_ANNOTATION by warning<KtElement> {
+            parameter<String>("reason")
+        }
+        val UNUSED_POINTS_TO_ANNOTATION by warning<KtElement> {
+            parameter<String>("reason")
+        }
+        val CONFLICTING_ESCAPES_AND_ESCAPES_NOTHING by error<KtElement>()
+        val MISSING_ESCAPE_ANALYSIS_ANNOTATION by error<KtElement>()
+        val MISSING_ESCAPES_FOR_MUST_ESCAPE_TYPE by error<KtElement>()
+        val INVALID_ESCAPES_VALUE by error<KtElement> {
+            parameter<String>("message")
+        }
+        val ESCAPES_MARKED_ON_NON_ESCAPING_TYPE by error<KtElement> {
+            parameter<String>("parameterName")
+        }
+        val ESCAPES_NOT_MARKED_ON_MUST_ESCAPE_TYPE by error<KtElement> {
+            parameter<String>("parameterName")
+        }
+        val INVALID_POINTS_TO_VALUE by error<KtElement> {
+            parameter<String>("message")
+        }
+        val INVALID_POINTS_TO_INDEX by error<KtElement> {
+            parameter<Int>("fromIndex")
+            parameter<Int>("toIndex")
+            parameter<String>("message")
+        }
+        val POINTS_TO_KIND_1_ONLY_FOR_RETURN by error<KtElement> {
+            parameter<String>("fromName")
+            parameter<String>("toName")
+        }
+        val POINTS_TO_FROM_NON_ESCAPING_TYPE by error<KtElement> {
+            parameter<String>("fromName")
+            parameter<String>("toName")
+        }
+        val POINTS_TO_TO_NON_ESCAPING_TYPE by error<KtElement> {
+            parameter<String>("fromName")
+            parameter<String>("toName")
+        }
     }
 }
