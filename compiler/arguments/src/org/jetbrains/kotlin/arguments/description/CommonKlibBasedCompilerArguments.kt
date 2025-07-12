@@ -5,12 +5,10 @@
 
 package org.jetbrains.kotlin.arguments.description
 
-import org.jetbrains.kotlin.arguments.dsl.TemporaryCompilerArgumentLifecycle
 import org.jetbrains.kotlin.arguments.dsl.base.*
 import org.jetbrains.kotlin.arguments.dsl.defaultFalse
 import org.jetbrains.kotlin.arguments.dsl.defaultNull
 import org.jetbrains.kotlin.arguments.dsl.defaultTrue
-import org.jetbrains.kotlin.arguments.dsl.stubLifecycle
 import org.jetbrains.kotlin.arguments.dsl.types.BooleanType
 import org.jetbrains.kotlin.arguments.dsl.types.StringArrayType
 import org.jetbrains.kotlin.arguments.dsl.types.StringType
@@ -22,8 +20,9 @@ val actualCommonKlibBasedArguments by compilerArgumentsLevel(CompilerArgumentsLe
         description = "Provide a base path to compute the source's relative paths in klib (default is empty).".asReleaseDependent()
         valueType = StringArrayType.defaultNull
 
-        @OptIn(TemporaryCompilerArgumentLifecycle::class)
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_0_20,
+        )
     }
 
     compilerArgument {
@@ -32,8 +31,9 @@ val actualCommonKlibBasedArguments by compilerArgumentsLevel(CompilerArgumentsLe
         description = "Normalize absolute paths in klibs.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
-        @OptIn(TemporaryCompilerArgumentLifecycle::class)
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_0_20,
+        )
     }
 
     compilerArgument {
@@ -42,8 +42,9 @@ val actualCommonKlibBasedArguments by compilerArgumentsLevel(CompilerArgumentsLe
         description = "Enable signature uniqueness checks.".asReleaseDependent()
         valueType = BooleanType.defaultTrue
 
-        @OptIn(TemporaryCompilerArgumentLifecycle::class)
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_0_20,
+        )
     }
 
     compilerArgument {
@@ -53,8 +54,9 @@ val actualCommonKlibBasedArguments by compilerArgumentsLevel(CompilerArgumentsLe
         valueType = StringType.defaultNull
         valueDescription = "{enable|disable}".asReleaseDependent()
 
-        @OptIn(TemporaryCompilerArgumentLifecycle::class)
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_0_20,
+        )
     }
 
     compilerArgument {
@@ -64,8 +66,9 @@ val actualCommonKlibBasedArguments by compilerArgumentsLevel(CompilerArgumentsLe
         valueType = StringType.defaultNull
         valueDescription = "{info|warning|error}".asReleaseDependent()
 
-        @OptIn(TemporaryCompilerArgumentLifecycle::class)
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_0_20,
+        )
     }
 
     compilerArgument {
@@ -75,8 +78,9 @@ val actualCommonKlibBasedArguments by compilerArgumentsLevel(CompilerArgumentsLe
         valueType = StringType.defaultNull
         valueDescription = "{deny|allow-all-with-warning|allow-first-with-warning}".asReleaseDependent()
 
-        @OptIn(TemporaryCompilerArgumentLifecycle::class)
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_1_0,
+        )
     }
 
     compilerArgument {
@@ -85,8 +89,9 @@ val actualCommonKlibBasedArguments by compilerArgumentsLevel(CompilerArgumentsLe
         description = "Enable experimental support to invoke IR Inliner before Klib serialization.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
-        @OptIn(TemporaryCompilerArgumentLifecycle::class)
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_1_20,
+        )
     }
 
     compilerArgument {
@@ -98,7 +103,8 @@ The only observable effect is that a custom ABI version is written to KLIB manif
         valueType = StringType.defaultNull
         valueDescription = "<version>".asReleaseDependent()
 
-        @OptIn(TemporaryCompilerArgumentLifecycle::class)
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_2_0,
+        )
     }
 }
