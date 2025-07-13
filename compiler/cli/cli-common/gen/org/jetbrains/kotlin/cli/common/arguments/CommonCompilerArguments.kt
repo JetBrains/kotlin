@@ -456,6 +456,7 @@ They should be a subset of sources passed as free arguments.""",
     @Argument(
         value = "-Xuse-k2",
         description = "Compile using the experimental K2 compiler pipeline. No compatibility guarantees are provided yet.",
+        isObsolete = true,
     )
     var useK2: Boolean = false
         set(value) {

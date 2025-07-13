@@ -118,7 +118,6 @@ where advanced options include:
   -Xverify-ir-visibility     Check for visibility violations in IR when validating it before running any lowerings. Only has effect if '-Xverify-ir' is not 'none'.
   -Xprofile-phases           Profile backend phases.
   -Xcheck-phase-conditions   Check pre- and postconditions of IR lowering phases.
-  -Xuse-k2                   Compile using the experimental K2 compiler pipeline. No compatibility guarantees are provided yet.
   -Xuse-fir-experimental-checkers
                              Enable experimental frontend IR checkers that are not yet ready for production.
   -Xuse-fir-ic               Compile using frontend IR internal incremental compilation.

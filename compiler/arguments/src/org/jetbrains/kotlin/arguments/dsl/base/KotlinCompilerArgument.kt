@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.arguments.dsl.base
 import kotlinx.serialization.Serializable
 import org.jetbrains.kotlin.arguments.dsl.types.KotlinArgumentValueType
 import kotlin.properties.ReadOnlyProperty
-import kotlin.reflect.KClass
 
 /**
  * A Kotlin compiler argument description.
@@ -26,9 +25,6 @@ import kotlin.reflect.KClass
  * see [ReleaseDependent] on how to define the description for older versions.
  * @param additionalAnnotations additional annotations that should be added for the Kotlin compiler argument representation (e.g. [Deprecated]).
  * @param compilerName alternative property name in the generated Kotlin compiler argument representation
- * @param isObsolete if `true` - still add this argument to the generated Kotlin compiler argument representation and emit a warning that
- * this argument is unknown.
- * **Note**: Please avoid using this option - it is planned to be removed in future updates.
  *
  * Usually compiler arguments should either be defined via compiler argument level builder [KotlinCompilerArgumentsLevelBuilder.compilerArgument]
  * or via special standalone builder DSL - [compilerArgument].
@@ -116,12 +112,6 @@ internal class KotlinCompilerArgumentBuilder {
     var delimiter: KotlinCompilerArgument.Delimiter? = null
 
     /**
-     * @see KotlinCompilerArgument.isObsolete
-     */
-    var isObsolete: Boolean = false
-
-
-    /**
      * @see KotlinCompilerArgument.releaseVersionsMetadata
      */
     private lateinit var releaseVersionsMetadata: KotlinReleaseVersionLifecycle
@@ -181,8 +171,7 @@ internal class KotlinCompilerArgumentBuilder {
         additionalAnnotations = additionalAnnotations,
         compilerName = compilerName,
         delimiter = delimiter,
-        isObsolete = isObsolete,
-        additionalMetadata = additionalMetadata
+        additionalMetadata = additionalMetadata,
     )
 }
 

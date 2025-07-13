@@ -117,6 +117,12 @@ val levelToClassNameMap = listOf(
     ),
 ).associateBy { it.levelName }
 
+// Removed arguments which are still needed in CLI classes but should be hidden
+private val hiddenArguments = setOf(
+    CompilerArgumentsLevelNames.jsArguments to "output", // Needed by IDEA
+    CompilerArgumentsLevelNames.commonCompilerArguments to "Xuse-k2", // Needed by IDEA
+)
+
 private fun generateArgumentsClass(
     genDir: File,
     level: KotlinCompilerArgumentsLevel,
@@ -170,10 +176,13 @@ private fun SmartPrinter.generateArgumentsClass(
     withIndent {
         generateAdditionalSyntheticArguments(info)
         for (argument in level.arguments) {
-            // While "Xuse-k2" is considered to be removed - we need to keep it with hidden visibility for IDEA
-            if (argument.name != "Xuse-k2" && argument.releaseVersionsMetadata.removedVersion != null) continue
+            if (
+                hiddenArguments.none { (argLevelName, name) ->
+                    argLevelName == level.name && argument.name == name
+                } && argument.releaseVersionsMetadata.removedVersion != null
+            ) continue
             generateGradleAnnotations(argument)
-            generateArgumentAnnotation(argument)
+            generateArgumentAnnotation(argument, level)
             generateFeatureAnnotations(argument)
             generateProperty(argument)
             println()
@@ -221,7 +230,10 @@ private fun SmartPrinter.generateAdditionalSyntheticArguments(info: ArgumentsInf
     }
 }
 
-private fun SmartPrinter.generateArgumentAnnotation(argument: KotlinCompilerArgument) {
+private fun SmartPrinter.generateArgumentAnnotation(
+    argument: KotlinCompilerArgument,
+    level: KotlinCompilerArgumentsLevel,
+) {
     println("@Argument(")
     withIndent {
         println("""value = "-${argument.name}",""")
@@ -236,7 +248,11 @@ private fun SmartPrinter.generateArgumentAnnotation(argument: KotlinCompilerArgu
         }
         println("description = $description,")
         argument.delimiter?.let { println("delimiter = Argument.Delimiters.${it.constantName},") }
-        if (argument.isObsolete) {
+
+        if (hiddenArguments.any { (levelName, argName) ->
+                level.name == levelName && argument.name == argName
+            }
+        ) {
             println("isObsolete = true,")
         }
     }
