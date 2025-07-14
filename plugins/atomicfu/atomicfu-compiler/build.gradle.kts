@@ -92,7 +92,7 @@ dependencies {
     testFixturesApi(project(":compiler:incremental-compilation-impl"))
     testFixturesApi(projectTests(":compiler:incremental-compilation-impl"))
 
-    testFixturesApi(projectTests(":js:js.tests"))
+    testFixturesApi(testFixtures(project(":js:js.tests")))
     testFixturesImplementation(libs.junit4)
     testFixturesApi(kotlinTest())
 

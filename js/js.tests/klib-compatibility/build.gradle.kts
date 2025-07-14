@@ -11,7 +11,7 @@ dependencies {
     testRuntimeOnly(libs.junit.jupiter.engine)
     testRuntimeOnly(libs.junit.vintage.engine)
 
-    testImplementation(projectTests(":js:js.tests"))
+    testImplementation(testFixtures(project(":js:js.tests")))
 }
 
 val customCompilerVersion = findProperty("kotlin.internal.js.test.compat.customCompilerVersion") as String
