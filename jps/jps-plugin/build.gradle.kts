@@ -21,7 +21,7 @@ val generateTests by generator("org.jetbrains.kotlin.jps.GenerateJpsPluginTestsK
 
 dependencies {
     compileOnly(project(":jps:jps-platform-api-signatures"))
-    testImplementation(projectTests(":generators:test-generator"))
+    testImplementation(testFixtures(project(":generators:test-generator")))
 
     @Suppress("UNCHECKED_CAST")
     rootProject.extra["kotlinJpsPluginEmbeddedDependencies"]
