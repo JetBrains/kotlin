@@ -53,12 +53,12 @@ internal class KaFirVisibilityChecker(
 
         val dispatchReceiver = receiverExpression?.getOrBuildFirSafe<FirExpression>(analysisSession.resolutionFacade)
         val positionModule = resolutionFacade.moduleProvider.getModule(position)
-        val effectiveContainers = collectEffectiveContainers(position)
+        val containingDeclarations = collectContainingDeclarations(position)
 
         KaFirUseSiteVisibilityChecker(
             position,
             positionModule,
-            effectiveContainers,
+            containingDeclarations,
             dispatchReceiver,
             useSiteFile,
             analysisSession,
@@ -66,7 +66,7 @@ internal class KaFirVisibilityChecker(
         )
     }
 
-    private fun collectEffectiveContainers(position: PsiElement): List<FirDeclaration> {
+    private fun collectContainingDeclarations(position: PsiElement): List<FirDeclaration> {
         val nonLocalLazilyResolvedContainers = collectUseSiteContainers(position, resolutionFacade).orEmpty()
         val closestNonLocalElement = nonLocalLazilyResolvedContainers.lastOrNull()?.psi ?: return nonLocalLazilyResolvedContainers
         val localFullyResolvedContainers = position.parentsOfType<KtClassOrObject>()
@@ -112,7 +112,7 @@ internal class KaFirVisibilityChecker(
 private class KaFirUseSiteVisibilityChecker(
     private val position: PsiElement,
     private val positionModule: KaModule,
-    private val effectiveContainers: List<FirDeclaration>,
+    private val containingDeclarations: List<FirDeclaration>,
     private val dispatchReceiver: FirExpression?,
     private val useSiteFile: KaFirFileSymbol,
     private val analysisSession: KaFirSession,
@@ -135,7 +135,7 @@ private class KaFirUseSiteVisibilityChecker(
                 candidateDeclaration,
                 targetSession,
                 useSiteFile.firSymbol.fir,
-                effectiveContainers,
+                containingDeclarations,
                 explicitDispatchReceiver
             )
         ) {
