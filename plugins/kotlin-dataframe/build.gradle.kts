@@ -25,7 +25,7 @@ dependencies {
     testFixturesApi(project(":compiler:fir:plugin-utils"))
     testFixturesApi(testFixtures(project(":analysis:analysis-api-fir")))
     testFixturesApi(testFixtures(project(":analysis:analysis-api-impl-base")))
-    testFixturesApi(projectTests(":analysis:low-level-api-fir"))
+    testFixturesApi(testFixtures(project(":analysis:low-level-api-fir")))
 
     dataframeRuntimeClasspath(libs.dataframe.core.dev)
     dataframeRuntimeClasspath(libs.dataframe.csv.dev)

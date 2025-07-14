@@ -29,7 +29,7 @@ dependencies {
     testRuntimeOnly(libs.junit.jupiter.engine)
     testImplementation(libs.junit.jupiter.api)
 
-    testRuntimeOnly(projectTests(":analysis:low-level-api-fir"))
+    testRuntimeOnly(testFixtures(project(":analysis:low-level-api-fir")))
     testRuntimeOnly(testFixtures(project(":analysis:analysis-api-impl-base")))
     testImplementation(testFixtures(project(":analysis:analysis-api-fir")))
     testImplementation(testFixtures(project(":analysis:analysis-test-framework")))
