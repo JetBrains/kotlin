@@ -39,7 +39,6 @@ import org.jetbrains.kotlin.fir.visibilityChecker
 import org.jetbrains.kotlin.psi.KtClassOrObject
 import org.jetbrains.kotlin.psi.KtElement
 import org.jetbrains.kotlin.psi.KtExpression
-import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 internal class KaFirVisibilityChecker(
     override val analysisSessionProvider: () -> KaFirSession,
@@ -126,9 +125,8 @@ private class KaFirUseSiteVisibilityChecker(
         }
 
         val candidateDeclaration = candidateSymbol.firSymbol.fir as? FirMemberDeclaration ?: return true
-
         val dispatchReceiverCanBeExplicit = candidateSymbol is KaCallableSymbol && !candidateSymbol.isExtension
-        val explicitDispatchReceiver = runIf(dispatchReceiverCanBeExplicit) { dispatchReceiver }
+        val explicitDispatchReceiver = dispatchReceiver.takeIf { dispatchReceiverCanBeExplicit }
         val targetSession = getTargetSession(candidateDeclaration)
 
         if (targetSession.visibilityChecker.isVisible(
