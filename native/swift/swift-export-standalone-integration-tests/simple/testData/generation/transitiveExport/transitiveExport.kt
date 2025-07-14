@@ -50,3 +50,7 @@ import oh.my.kotlin.FeatureB
 fun foo(): FeatureB {
     return FeatureB()
 }
+
+fun bar(): Array<String> {
+    return TODO()
+}

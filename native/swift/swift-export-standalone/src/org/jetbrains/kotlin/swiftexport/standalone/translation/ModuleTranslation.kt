@@ -234,14 +234,17 @@ internal class TranslationResult(
 private fun SirAndKaSession.deepTouch(container: SirDeclarationContainer) {
     container
         .allCallables()
+        .toList()
         .forEach {
             it.allParameters
             it.returnType
         }
     container
         .allVariables()
+        .toList()
         .forEach { it.type }
     container
         .allContainers()
+        .toList()
         .forEach { deepTouch(it) }
 }
