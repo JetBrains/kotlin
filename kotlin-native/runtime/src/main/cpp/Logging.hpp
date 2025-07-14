@@ -41,8 +41,9 @@ enum class Tag : int32_t {
     kGCMark = 9,
     kGCScheduler = 10,
     kMemoryDump = 11,
+    kHotReloader = 12,
 
-    kEnumSize = 12
+    kEnumSize = 13
 };
 
 namespace internal {
@@ -71,6 +72,7 @@ inline const char* name(Tag tag) {
         case Tag::kGCMark: return "gcMark";
         case Tag::kGCScheduler: return "gcScheduler";
         case Tag::kMemoryDump: return "memoryDump";
+        case Tag::kHotReloader: return "hotReloader";
 
         case Tag::kEnumSize: break;
     }
@@ -138,6 +140,7 @@ inline constexpr auto kTagGC = logging::Tag::kGC;
 inline constexpr auto kTagMM = logging::Tag::kMM;
 inline constexpr auto kTagTLS = logging::Tag::kTLS;
 inline constexpr auto kTagBalancing = logging::Tag::kBalancing;
+inline constexpr auto kTagHotReloader = logging::Tag::kHotReloader;
 
 } // namespace kotlin
 

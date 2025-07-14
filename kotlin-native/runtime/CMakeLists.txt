@@ -92,6 +92,7 @@ add_executable(runtime
 target_compile_definitions(runtime PUBLIC "-DKONAN_OSX=1")
 target_compile_definitions(runtime PUBLIC "-DKONAN_MACOSX=1")
 target_compile_definitions(runtime PUBLIC "-DKONAN_X64=1")
+target_compile_definitions(runtime PUBLIC "-DKONAN_HOT_RELOAD")
 target_compile_definitions(runtime PUBLIC "-DKONAN_OBJC_INTEROP")
 target_compile_definitions(runtime PUBLIC "-DKONAN_CORE_SYMBOLICATION=1")
 target_compile_definitions(runtime PUBLIC "-DKONAN_HAS_CXX11_EXCEPTION_FUNCTIONS=1")

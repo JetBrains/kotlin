@@ -45,6 +45,7 @@ fun KonanTarget.supportsGccUnwind(): Boolean = family == Family.ANDROID || famil
 // MINGW_X64 target does not support GCC unwind, since its sysroot contains libgcc version < 12 having misfeature, see KT-49240
 fun KonanTarget.supportsWinAPIUnwind(): Boolean = this is KonanTarget.MINGW_X64
 
+fun KonanTarget.supportsHotReload(): Boolean = family.isAppleFamily
 fun KonanTarget.supportsObjcInterop(): Boolean = family.isAppleFamily
 fun KonanTarget.hasFoundationFramework(): Boolean = family.isAppleFamily
 fun KonanTarget.hasUIKitFramework(): Boolean = family == Family.IOS || family == Family.TVOS

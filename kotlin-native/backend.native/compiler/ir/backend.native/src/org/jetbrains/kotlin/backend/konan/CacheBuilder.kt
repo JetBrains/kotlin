@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.metadata.resolver.TopologicalLibraryOrder
 import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
+import org.jetbrains.kotlin.config.nativeBinaryOptions.BinaryOptions
 import org.jetbrains.kotlin.konan.library.isFromKotlinNativeDistribution
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.library.isNativeStdlib
@@ -463,6 +464,9 @@ class CacheBuilder(
             put(KonanConfigKeys.CACHED_LIBRARIES, cachedLibraries)
             put(KonanConfigKeys.CACHE_DIRECTORIES, listOf(libraryCacheDirectory.absolutePath))
             put(KonanConfigKeys.MAKE_PER_FILE_CACHE, makePerFileCache)
+            // Used for symbols visibility produced by incremental compilation
+            put(BinaryOptions.hotReload, konanConfig.hotReloadEnabled)
+
             if (filesToCache.isNotEmpty())
                 put(KonanConfigKeys.FILES_TO_CACHE, filesToCache)
         }

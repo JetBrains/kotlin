@@ -166,6 +166,9 @@ internal interface ContextUtils : RuntimeAware {
     }
 
     fun linkageOf(irFunction: IrSimpleFunction): LLVMLinkage {
+        if (context.config.hotReloadEnabled) {
+            return LLVMLinkage.LLVMExternalLinkage
+        }
         if (isExternal(irFunction) || irFunction.isExported())
             return LLVMLinkage.LLVMExternalLinkage
         if (context.config.producePerFileCache) {

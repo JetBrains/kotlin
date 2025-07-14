@@ -33,6 +33,17 @@ fun makeVisibilityHiddenLikeLlvmInternalizePass(module: LLVMModuleRef) {
             }
 }
 
+fun LLVMModuleRef.setSymbolsVisibilityToDefault() {
+    val alwaysPreserved = getLlvmUsed(this)
+    val symbols = getFunctions(this) + getGlobals(this) + getGlobalAliases(this)
+    symbols
+            .filter { LLVMIsDeclaration(it) == 0 }
+            .minus(alwaysPreserved)
+            .forEach {
+                LLVMSetVisibility(it, LLVMVisibility.LLVMDefaultVisibility)
+            }
+}
+
 private fun getLlvmUsed(module: LLVMModuleRef): Set<LLVMValueRef> {
     val llvmUsed = LLVMGetNamedGlobal(module, "llvm.used") ?: return emptySet()
     val llvmUsedValue = LLVMGetInitializer(llvmUsed) ?: return emptySet()

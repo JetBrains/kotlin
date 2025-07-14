@@ -29,6 +29,7 @@ extern "C" const int32_t Kotlin_concurrentWeakSweep;
 extern "C" const int32_t Kotlin_gcMarkSingleThreaded;
 extern "C" const int32_t Kotlin_fixedBlockPageSize;
 extern "C" const int32_t Kotlin_pagedAllocator;
+extern "C" const int32_t Kotlin_hotReload;
 
 class SourceInfo;
 
@@ -83,6 +84,9 @@ ALWAYS_INLINE inline bool pagedAllocator() noexcept {
     return Kotlin_pagedAllocator != 0;
 }
 
+ALWAYS_INLINE inline bool hotReloadEnabled() noexcept {
+    return Kotlin_hotReload != 0;
+}
 
 bool gcMutatorsCooperate() noexcept;
 uint32_t auxGCThreads() noexcept;

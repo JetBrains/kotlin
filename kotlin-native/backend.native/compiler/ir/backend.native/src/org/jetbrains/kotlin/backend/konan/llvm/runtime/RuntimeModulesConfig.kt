@@ -16,6 +16,9 @@ class RuntimeModulesConfig(private val config: KonanConfig) {
     internal val containsDebuggingRuntime: Boolean
         get() = config.debug
 
+    internal val containsHotReloadRuntime: Boolean
+        get() = config.hotReloadEnabled
+
     private val RuntimeModule.absolutePath: String
         get() = File(config.distribution.defaultNatives(config.target)).child(filename).absolutePath
 

@@ -128,6 +128,7 @@ private fun collectLlvmModules(generationState: NativeGenerationState, generated
 
     val runtimeBitcodeFiles = buildList<String> {
         if (runtimeModulesConfig.containsDebuggingRuntime) add(RuntimeModule.DEBUG)
+        if (runtimeModulesConfig.containsHotReloadRuntime) add(RuntimeModule.HOT_RELOAD)
         add(RuntimeModule.MAIN)
         add(RuntimeModule.MM)
         add(RuntimeModule.ALLOC_COMMON)
