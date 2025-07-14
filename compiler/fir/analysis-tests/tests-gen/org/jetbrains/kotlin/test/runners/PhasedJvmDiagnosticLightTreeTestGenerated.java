@@ -57006,6 +57006,12 @@ public class PhasedJvmDiagnosticLightTreeTestGenerated extends AbstractPhasedJvm
       }
 
       @Test
+      @TestMetadata("localTypeAliases.kt")
+      public void testLocalTypeAliases() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/nestedTypeAliases/localTypeAliases.kt");
+      }
+
+      @Test
       @TestMetadata("overrides.kt")
       public void testOverrides() {
         runTest("compiler/fir/analysis-tests/testData/resolve/nestedTypeAliases/overrides.kt");

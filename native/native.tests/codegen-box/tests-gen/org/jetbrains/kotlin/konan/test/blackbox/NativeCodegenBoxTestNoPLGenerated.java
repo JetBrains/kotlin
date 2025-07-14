@@ -47267,6 +47267,12 @@ public class NativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenBoxT
       }
 
       @Test
+      @TestMetadata("localTypeAliases.kt")
+      public void testLocalTypeAliases() {
+        runTest("compiler/testData/codegen/box/typealias/localTypeAliases.kt");
+      }
+
+      @Test
       @TestMetadata("nestedTypeAliasesAndStaticScope.kt")
       public void testNestedTypeAliasesAndStaticScope() {
         runTest("compiler/testData/codegen/box/typealias/nestedTypeAliasesAndStaticScope.kt");
