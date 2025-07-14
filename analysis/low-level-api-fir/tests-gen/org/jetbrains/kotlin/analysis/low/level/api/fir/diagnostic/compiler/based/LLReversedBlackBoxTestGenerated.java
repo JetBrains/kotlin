@@ -55378,6 +55378,24 @@ public class LLReversedBlackBoxTestGenerated extends AbstractLLReversedBlackBoxT
       }
 
       @Test
+      @TestMetadata("contextParametersCall.kt")
+      public void testContextParametersCall() {
+        runTest("compiler/testData/codegen/box/reflection/parameters/contextParametersCall.kt");
+      }
+
+      @Test
+      @TestMetadata("contextParametersCallSuspend.kt")
+      public void testContextParametersCallSuspend() {
+        runTest("compiler/testData/codegen/box/reflection/parameters/contextParametersCallSuspend.kt");
+      }
+
+      @Test
+      @TestMetadata("contextParametersGet.kt")
+      public void testContextParametersGet() {
+        runTest("compiler/testData/codegen/box/reflection/parameters/contextParametersGet.kt");
+      }
+
+      @Test
       @TestMetadata("findParameterByName.kt")
       public void testFindParameterByName() {
         runTest("compiler/testData/codegen/box/reflection/parameters/findParameterByName.kt");

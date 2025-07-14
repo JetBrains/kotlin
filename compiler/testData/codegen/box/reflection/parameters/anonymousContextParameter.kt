@@ -9,12 +9,12 @@ import kotlin.reflect.KParameter.Kind.*
 import kotlin.test.assertEquals
 
 class Z {
-    context(_: String, _: Number)
+    context(_: String, named: Int, _: Number)
     fun f() {}
 }
 
 fun box(): String {
     val f = Z::class.members.single { it.name == "f" }
-    assertEquals(listOf(null, null, null), f.parameters.map { it.name })
+    assertEquals(listOf(null, null, "named", null), f.parameters.map { it.name })
     return "OK"
 }
