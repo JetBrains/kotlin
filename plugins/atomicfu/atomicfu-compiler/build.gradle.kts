@@ -8,6 +8,7 @@ description = "Atomicfu Compiler Plugin"
 
 plugins {
     kotlin("jvm")
+    id("java-test-fixtures")
     id("jps-compatible")
     id("d8-configuration")
 }
@@ -81,41 +82,41 @@ dependencies {
 
     compileOnly(kotlinStdlib())
 
-    testApi(projectTests(":compiler:tests-common"))
-    testApi(projectTests(":compiler:test-infrastructure"))
-    testApi(projectTests(":compiler:test-infrastructure-utils"))
-    testApi(projectTests(":compiler:tests-compiler-utils"))
-    testApi(projectTests(":compiler:tests-common-new"))
-    testImplementation(projectTests(":generators:test-generator"))
-    testApi(project(":plugins:plugin-sandbox"))
-    testApi(project(":compiler:incremental-compilation-impl"))
-    testApi(projectTests(":compiler:incremental-compilation-impl"))
+    testFixturesApi(projectTests(":compiler:tests-common"))
+    testFixturesApi(projectTests(":compiler:test-infrastructure"))
+    testFixturesApi(projectTests(":compiler:test-infrastructure-utils"))
+    testFixturesApi(projectTests(":compiler:tests-compiler-utils"))
+    testFixturesApi(projectTests(":compiler:tests-common-new"))
+    testFixturesImplementation(projectTests(":generators:test-generator"))
+    testFixturesApi(project(":plugins:plugin-sandbox"))
+    testFixturesApi(project(":compiler:incremental-compilation-impl"))
+    testFixturesApi(projectTests(":compiler:incremental-compilation-impl"))
 
-    testImplementation(projectTests(":js:js.tests"))
-    testImplementation(libs.junit4)
-    testApi(kotlinTest())
+    testFixturesApi(projectTests(":js:js.tests"))
+    testFixturesImplementation(libs.junit4)
+    testFixturesApi(kotlinTest())
 
     // Dependencies for Kotlin/Native test infra:
     if (!kotlinBuildProperties.isInIdeaSync) {
-        testImplementation(projectTests(":native:native.tests"))
+        testFixturesApi(projectTests(":native:native.tests"))
     }
-    testImplementation(project(":compiler:ir.backend.native"))
-    testImplementation(project(":native:kotlin-native-utils"))
-    testImplementation(projectTests(":native:native.tests:klib-ir-inliner"))
-    testImplementation(project(":kotlin-util-klib-abi"))
-    testImplementation(commonDependency("org.jetbrains.teamcity:serviceMessages"))
+    testFixturesImplementation(project(":compiler:ir.backend.native"))
+    testFixturesImplementation(project(":native:kotlin-native-utils"))
+    testFixturesImplementation(projectTests(":native:native.tests:klib-ir-inliner"))
+    testFixturesImplementation(project(":kotlin-util-klib-abi"))
+    testFixturesImplementation(commonDependency("org.jetbrains.teamcity:serviceMessages"))
 
     // todo: remove unnecessary dependencies
-    testImplementation(project(":kotlin-compiler-runner-unshaded"))
+    testFixturesImplementation(project(":kotlin-compiler-runner-unshaded"))
 
-    testImplementation(commonDependency("commons-lang:commons-lang"))
-    testImplementation(projectTests(":compiler:tests-common"))
-    testImplementation(projectTests(":compiler:tests-common-new"))
-    testImplementation(projectTests(":compiler:test-infrastructure"))
+    testFixturesImplementation(commonDependency("commons-lang:commons-lang"))
+    testFixturesApi(projectTests(":compiler:tests-common"))
+    testFixturesApi(projectTests(":compiler:tests-common-new"))
+    testFixturesApi(projectTests(":compiler:test-infrastructure"))
     testCompileOnly("org.jetbrains.kotlinx:atomicfu:0.25.0")
 
-    testApi(platform(libs.junit.bom))
-    testImplementation(libs.junit.jupiter.api)
+    testFixturesApi(platform(libs.junit.bom))
+    testFixturesImplementation(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
 
     testRuntimeOnly(kotlinStdlib())
@@ -164,7 +165,7 @@ dependencies {
         isTransitive = false
     }
 
-    testImplementation("org.jetbrains.kotlinx:atomicfu:0.25.0")
+    testFixturesImplementation("org.jetbrains.kotlinx:atomicfu:0.25.0")
 
     testRuntimeOnly(libs.junit.vintage.engine)
 }
@@ -175,8 +176,10 @@ optInToUnsafeDuringIrConstructionAPI()
 sourceSets {
     "main" { projectDefault() }
     "test" {
-        projectDefault()
         generatedTestDir()
+    }
+    "testFixtures" {
+        projectDefault()
     }
 }
 
