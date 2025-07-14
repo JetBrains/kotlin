@@ -23,7 +23,7 @@ dependencies {
     testRuntimeOnly(commonDependency("org.codehaus.woodstox:stax2-api"))
     testRuntimeOnly(commonDependency("com.fasterxml:aalto-xml"))
 
-    scriptingTestDefinition(projectTests(":plugins:scripting:test-script-definition"))
+    scriptingTestDefinition(testFixtures(project(":plugins:scripting:test-script-definition")))
 }
 
 sourceSets {

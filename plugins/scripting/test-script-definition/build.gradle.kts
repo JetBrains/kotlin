@@ -1,16 +1,18 @@
 
 plugins {
     kotlin("jvm")
+    id("java-test-fixtures")
 }
 
 dependencies {
-    testApi(project(":kotlin-scripting-jvm"))
-    testApi(project(":kotlin-scripting-compiler-impl"))
+    testFixturesApi(project(":kotlin-scripting-jvm"))
+    testFixturesApi(project(":kotlin-scripting-compiler-impl"))
 }
 
 sourceSets {
     "main" {}
-    "test" { projectDefault() }
+    "test" { none() }
+    "testFixtures" { projectDefault() }
 }
 
 testsJar()
