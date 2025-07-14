@@ -17,7 +17,7 @@ dependencies {
     testImplementation(projectTests(":generators:analysis-api-generator"))
 
     testImplementation(projectTests(":analysis:low-level-api-fir"))
-    testImplementation(projectTests(":analysis:low-level-api-fir:low-level-api-fir-native"))
+    testImplementation(testFixtures(project(":analysis:low-level-api-fir:low-level-api-fir-native")))
 
     testImplementation(intellijCore())
     testApi(platform(libs.junit.bom))
