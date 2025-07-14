@@ -19,7 +19,7 @@ fun check() {
     val x = null!!
 }
 
-fun <!IMPLICIT_NOTHING_RETURN_TYPE!>nonLocalReturn<!>() = run { <!RETURN_TYPE_MISMATCH!>return<!> }
+fun <!IMPLICIT_NOTHING_RETURN_TYPE!>nonLocalReturn<!>() = run { <!RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY_WARNING, RETURN_TYPE_MISMATCH!>return<!> }
 
 class Klass {
     fun <!IMPLICIT_NOTHING_RETURN_TYPE!>bar<!>() = null!!
