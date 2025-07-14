@@ -16,7 +16,7 @@ dependencies {
 
     testFixturesApi(testFixtures(project(":compiler:test-infrastructure")))
     testFixturesApi(projectTests(":compiler:test-infrastructure-utils"))
-    testFixturesApi(projectTests(":compiler:tests-compiler-utils"))
+    testFixturesApi(testFixtures(project(":compiler:tests-compiler-utils")))
     testFixturesApi(testFixtures(project(":compiler:tests-common-new")))
     testFixturesApi(project(":compiler:cli"))
     testFixturesApi(project(":compiler:fir:checkers"))

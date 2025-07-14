@@ -21,7 +21,7 @@ dependencies {
     testImplementation(libs.junit4)
     testApi(testFixtures(project(":compiler:test-infrastructure")))
     testApi(projectTests(":compiler:test-infrastructure-utils"))
-    testApi(projectTests(":compiler:tests-compiler-utils"))
+    testApi(testFixtures(project(":compiler:tests-compiler-utils")))
     testApi(testFixtures(project(":compiler:tests-common-new")))
 
     testApi(jpsModel())
