@@ -37,7 +37,7 @@ dependencies {
     testImplementation(projectTests(":compiler:tests-common-new"))
 
     if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
-        testApi(projectTests(":native:native.tests"))
+        testApi(testFixtures(project(":native:native.tests")))
     }
 }
 

@@ -11,7 +11,7 @@ dependencies {
     api(project(":native:swift:swift-export-standalone"))
 
     if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
-        api(projectTests(":native:native.tests"))
+        api(testFixtures(project(":native:native.tests")))
     }
 }
 

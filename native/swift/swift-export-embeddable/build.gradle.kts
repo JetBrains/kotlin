@@ -142,7 +142,7 @@ val intransitiveTestDependenciesJars = configurations.detachedConfiguration().ap
     dependencies.add(project.dependencies.project(":kotlin-test"))
     dependencies.add(project.dependencies.project(":native:external-projects-test-utils"))
 
-    dependencies.add(project.dependencies.projectTests(":native:native.tests"))
+    dependencies.add(project.dependencies.testFixtures(project(":native:native.tests")))
     dependencies.add(project.dependencies.projectTests(":compiler:tests-compiler-utils"))
     dependencies.add(project.dependencies.projectTests(":compiler:tests-common"))
     dependencies.add(project.dependencies.projectTests(":compiler:tests-common-new"))
