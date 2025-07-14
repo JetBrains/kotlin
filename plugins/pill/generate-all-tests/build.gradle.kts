@@ -8,12 +8,12 @@ val dependency = arrayOf(
     ":generators",
     ":compiler",
     ":compiler:tests-for-compiler-generator",
-    ":compiler:tests-java8",
     ":core:descriptors.runtime",
     ":generators:analysis-api-generator"
 )
 
 val dependencyFixturesProjects = arrayOf(
+    ":compiler:tests-java8",
     ":js:js.tests",
     ":compiler:tests-common-new",
     ":compiler:test-infrastructure",
