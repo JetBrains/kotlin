@@ -11,7 +11,7 @@ namespace kotlin::alloc {
 
 struct ExtraObjectCell {
     static constexpr AllocationSize size() {
-        return AllocationSize::bytesExactly(sizeof(ExtraObjectCell));
+        return AllocationSize::bytesAtLeast(sizeof(ExtraObjectCell));
     }
 
     static ExtraObjectCell* fromExtraObject(mm::ExtraObjectData* extraObjectData) {
@@ -26,5 +26,8 @@ struct ExtraObjectCell {
         uint8_t data_[sizeof(mm::ExtraObjectData)];
     };
 };
+
+// ensure const-evaluatable
+static_assert(ExtraObjectCell::size().inCells() > 0);
 
 } // namespace kotlin::alloc
