@@ -12,7 +12,7 @@ dependencies {
     api(kotlinStdlib("jdk8"))
 
     testImplementation(projectTests(":generators:test-generator"))
-    testImplementation(projectTests(":compiler:tests-common"))
+    testImplementation(testFixtures(project(":compiler:tests-common")))
     testImplementation(projectTests(":compiler:tests-spec"))
     testImplementation(projectTests(":analysis:low-level-api-fir"))
     testImplementation(projectTests(":analysis:analysis-api-fir"))

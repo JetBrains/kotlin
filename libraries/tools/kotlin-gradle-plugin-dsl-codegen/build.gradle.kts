@@ -13,7 +13,7 @@ dependencies {
     }
     implementation(project(":core:util.runtime"))
     testImplementation(platform(libs.junit.bom))
-    testImplementation(projectTests(":compiler:tests-common"))
+    testImplementation(testFixtures(project(":compiler:tests-common")))
     testImplementation(kotlin("test"))
 }
 
