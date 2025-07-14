@@ -153,7 +153,6 @@ internal object ElementContextRenderer {
     private fun StringBuilder.renderScope(scope: FirScope) {
         when (scope) {
             is FirDefaultSimpleImportingScope, is FirDefaultStarImportingScope -> {
-                Unit
                 // Skip to avoid fixing default imports in an unrelated test
             }
             is FirPackageMemberScope -> {

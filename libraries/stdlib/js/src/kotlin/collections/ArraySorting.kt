@@ -102,7 +102,6 @@ private fun <T> mergeSort(array: Array<T>, buffer: Array<T>, start: Int, end: In
             else /* rightIndex <= end */ -> {
                 target[i] = right[rightIndex]
                 rightIndex++
-                Unit  // TODO: Fix KT-31506
             }
         }
     }

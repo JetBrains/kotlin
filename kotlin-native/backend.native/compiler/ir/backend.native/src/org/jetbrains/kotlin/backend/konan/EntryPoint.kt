@@ -86,7 +86,6 @@ internal fun makeEntryPoint(generationState: NativeGenerationState): IrFunction 
                         }
                     }
             )
-            Unit
         }
     }
 

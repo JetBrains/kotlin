@@ -1262,7 +1262,6 @@ class HtmlFirDump internal constructor(private var linkResolver: FirLinkResolver
                         else -> {
                             ident()
                             callDiagnostic::class.qualifiedName?.let { +it }
-                            Unit
                         }
                     }
                     br
