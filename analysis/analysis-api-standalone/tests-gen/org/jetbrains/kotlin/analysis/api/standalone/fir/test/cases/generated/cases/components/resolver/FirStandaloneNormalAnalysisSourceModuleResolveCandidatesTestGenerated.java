@@ -5448,6 +5448,12 @@ public class FirStandaloneNormalAnalysisSourceModuleResolveCandidatesTestGenerat
     }
 
     @Test
+    @TestMetadata("binaryExpressionWithDeclarationRHS.kt")
+    public void testBinaryExpressionWithDeclarationRHS() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/withErrors/binaryExpressionWithDeclarationRHS.kt");
+    }
+
+    @Test
     @TestMetadata("builderInference.kt")
     public void testBuilderInference() {
       runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/withErrors/builderInference.kt");
@@ -5739,6 +5745,12 @@ public class FirStandaloneNormalAnalysisSourceModuleResolveCandidatesTestGenerat
     @TestMetadata("InSecondClassObject.kt")
     public void testInSecondClassObject() {
       runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/withErrors/InSecondClassObject.kt");
+    }
+
+    @Test
+    @TestMetadata("incompleteBinaryExpression.kt")
+    public void testIncompleteBinaryExpression() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/withErrors/incompleteBinaryExpression.kt");
     }
 
     @Test
