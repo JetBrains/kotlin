@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.generators.tests.analysis.api
 
+import org.jetbrains.kotlin.analysis.decompiler.psi.AbstractDecompiledTextTest
 import org.jetbrains.kotlin.analysis.stubs.AbstractCompiledStubsTest
 import org.jetbrains.kotlin.analysis.stubs.AbstractDecompiledStubsTest
 import org.jetbrains.kotlin.analysis.stubs.AbstractSourceStubsTest
@@ -22,6 +23,10 @@ internal fun TestGroupSuite.generateStubsTests() {
         }
 
         testClass<AbstractDecompiledStubsTest> {
+            model("psi", pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME)
+        }
+
+        testClass<AbstractDecompiledTextTest> {
             model("psi", pattern = TestGeneratorUtil.KT_WITHOUT_DOTS_IN_NAME)
         }
     }
