@@ -1,5 +1,3 @@
-// TARGET_BACKEND: JVM
-
 // WITH_STDLIB
 @file:OptIn(ExperimentalStdlibApi::class)
 
