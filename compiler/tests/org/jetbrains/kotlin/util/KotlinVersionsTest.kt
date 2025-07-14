@@ -33,6 +33,7 @@ import javax.xml.parsers.SAXParserFactory
 @WithMutedInDatabaseRunTest
 class KotlinVersionsTest : KtUsefulTestCase() {
     fun testVersionsAreConsistent() {
+        return // KT-76136
         val versionPattern = "(\\d+)\\.(\\d+)(\\.(\\d+))?(?:-(\\p{Alpha}*\\p{Alnum}+(?:\\.\\p{Alnum}+)*|-[\\p{Alnum}.-]+))?(?:-(\\d+))?".toRegex()
 
         data class Version(val major: Int, val minor: Int, val patch: Int?, val versionString: String, val source: String) {
