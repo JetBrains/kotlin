@@ -43,7 +43,7 @@ dependencies {
     testApi(projectTests(":compiler:test-infrastructure-utils"))
     testApi(projectTests(":compiler:test-infrastructure"))
     testImplementation(testFixtures(project(":compiler:tests-common-new")))
-    testImplementation(projectTests(":compiler:fir:analysis-tests:legacy-fir-tests"))
+    testImplementation(testFixtures(project(":compiler:fir:analysis-tests:legacy-fir-tests")))
     testImplementation(projectTests(":analysis:analysis-api-impl-base"))
     testImplementation(projectTests(":analysis:decompiled:decompiler-to-file-stubs"))
     testImplementation(project(":analysis:analysis-api-standalone:analysis-api-fir-standalone-base"))
