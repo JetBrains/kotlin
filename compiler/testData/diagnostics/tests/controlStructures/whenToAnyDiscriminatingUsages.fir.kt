@@ -28,7 +28,7 @@ fun testResultOfLambda2() =
 
 fun <!IMPLICIT_NOTHING_RETURN_TYPE!>testReturn1<!>() =
         run {
-            return <!RETURN_TYPE_MISMATCH!>when {
+            <!RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY_WARNING!>return<!> <!RETURN_TYPE_MISMATCH!>when {
                 true -> 42
                 else -> println()
             }<!>
@@ -36,7 +36,7 @@ fun <!IMPLICIT_NOTHING_RETURN_TYPE!>testReturn1<!>() =
 
 fun <!IMPLICIT_NOTHING_RETURN_TYPE!>testReturn2<!>() =
         run {
-            return <!RETURN_TYPE_MISMATCH!>when {
+            <!RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY_WARNING!>return<!> <!RETURN_TYPE_MISMATCH!>when {
                 true -> 42
                 else ->
                     when {

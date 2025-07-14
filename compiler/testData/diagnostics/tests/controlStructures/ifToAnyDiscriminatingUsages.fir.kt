@@ -34,13 +34,13 @@ fun testReturnFromAnonFun() =
 
 fun <!IMPLICIT_NOTHING_RETURN_TYPE!>testReturn1<!>() =
         run {
-            return <!RETURN_TYPE_MISMATCH!>if (true) 42
+            <!RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY_WARNING!>return<!> <!RETURN_TYPE_MISMATCH!>if (true) 42
                    else println()<!>
         }
 
 fun <!IMPLICIT_NOTHING_RETURN_TYPE!>testReturn2<!>() =
         run {
-            return <!RETURN_TYPE_MISMATCH!>if (true) 42
+            <!RETURN_IN_FUNCTION_WITH_EXPRESSION_BODY_WARNING!>return<!> <!RETURN_TYPE_MISMATCH!>if (true) 42
                    else if (true) 42
                    else println()<!>
         }
