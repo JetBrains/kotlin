@@ -47,6 +47,7 @@ abstract class AbstractAtomicfuFirCheckerTest : AbstractFirPsiDiagnosticTest() {
     }
 }
 
+// TODO temporarily disabled generation of FIR dumping tests, see: KT-79199
 open class AbstractAtomicfuNativeIrTextTest : AbstractFirLightTreeNativeIrTextTest() {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)

@@ -28,15 +28,6 @@ fun main(args: Array<String>) {
     }
 
     generateTestGroupSuiteWithJUnit5 {
-        testGroup("plugins/atomicfu/atomicfu-compiler/tests-gen", "plugins/atomicfu/atomicfu-compiler/testData/box") {
-            testClass<AbstractAtomicfuNativeIrTextTest>(
-                suiteTestClassName = "AtomicfuNativeIrTextTestGenerated",
-                annotations = listOf(*atomicfuNative(), provider<UseExtTestCaseGroupProvider>())
-            ) {
-                model()
-            }
-        }
-
         // Atomicfu compiler plugin native tests.
         testGroup("plugins/atomicfu/atomicfu-compiler/tests-gen", "plugins/atomicfu/atomicfu-compiler/testData/box") {
             testClass<AbstractNativeCodegenBoxTest>(
