@@ -1,6 +1,5 @@
 // RUN_PIPELINE_TILL: BACKEND
 // LANGUAGE: +UnrestrictedBuilderInference
-// LATEST_LV_DIFFERENCE
 // DIAGNOSTICS: -UNUSED_PARAMETER -DEPRECATION -OPT_IN_IS_NOT_ENABLED -UNUSED_VARIABLE
 // WITH_STDLIB
 // ISSUE: KT-64802 (K2/PCLA difference)
@@ -77,8 +76,8 @@ fun test() {
         emit(if (true) "" else null)
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String?")!>select2(get(), getIn())<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String?")!>select2(get(), Test.foo(getIn()))<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String?")!>select2(Test.foo(get()), Test.foo(getIn()))<!>
-        <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String?")!>select2(Test.foo(get()), getIn())<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("(kotlin.String..kotlin.String?)")!>select2(Test.foo(get()), Test.foo(getIn()))<!>
+        <!DEBUG_INFO_EXPRESSION_TYPE("(kotlin.String..kotlin.String?)")!>select2(Test.foo(get()), getIn())<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>select3(get(), getIn())<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>select3(get(), Test.foo(getIn()))<!>
         <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.String")!>select3(Test.foo(get()), Test.foo(getIn()))<!>
