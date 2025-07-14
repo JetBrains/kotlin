@@ -83,7 +83,7 @@ dependencies {
     testImplementation(project(":compiler:cli:cli-arguments-generator"))
     testImplementation(projectTests(":compiler:test-infrastructure-utils"))
     testImplementation(projectTests(":compiler:test-infrastructure"))
-    testImplementation(projectTests(":compiler:tests-common-new"))
+    testImplementation(testFixtures(project(":compiler:tests-common-new")))
     testImplementation(testFixtures(project(":js:js.tests")))
     testImplementation(project(":kotlin-gradle-compiler-types"))
     testImplementation(project(":jps:jps-common"))

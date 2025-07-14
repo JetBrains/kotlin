@@ -11,7 +11,7 @@ dependencies {
     testRuntimeOnly(libs.junit.jupiter.engine)
     testImplementation(projectTests(":compiler:tests-common"))
     testImplementation(projectTests(":compiler:test-infrastructure"))
-    testImplementation(projectTests(":compiler:tests-common-new"))
+    testImplementation(testFixtures(project(":compiler:tests-common-new")))
     testImplementation(projectTests(":compiler:tests-integration"))
     testImplementation(projectTests(":compiler"))
     testImplementation(projectTests(":compiler:fir:raw-fir:psi2fir"))

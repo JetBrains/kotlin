@@ -26,7 +26,7 @@ dependencies {
     testFixturesApi(project(":compiler:backend.jvm"))
     testFixturesApi(project(":compiler:cli"))
 
-    testFixturesApi(projectTests(":compiler:tests-common-new"))
+    testFixturesApi(testFixtures(project(":compiler:tests-common-new")))
     testFixturesApi(projectTests(":compiler:test-infrastructure"))
     testFixturesApi(projectTests(":compiler:test-infrastructure-utils"))
     testFixturesApi(libs.junit.jupiter.api)

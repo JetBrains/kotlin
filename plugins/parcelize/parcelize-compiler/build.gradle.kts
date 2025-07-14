@@ -39,7 +39,7 @@ dependencies {
     testFixturesApi(project(":plugins:parcelize:parcelize-runtime"))
     testFixturesApi(kotlinTest())
 
-    testFixturesApi(projectTests(":compiler:tests-common-new"))
+    testFixturesApi(testFixtures(project(":compiler:tests-common-new")))
     testFixturesApi(projectTests(":compiler:test-infrastructure"))
     testFixturesApi(projectTests(":compiler:test-infrastructure-utils"))
 

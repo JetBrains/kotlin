@@ -9,7 +9,7 @@ dependencies {
     testApi(projectTests(":compiler"))
 
     testImplementation(projectTests(":compiler:test-infrastructure"))
-    testImplementation(projectTests(":compiler:tests-common-new"))
+    testImplementation(testFixtures(project(":compiler:tests-common-new")))
 
     testApi(commonDependency("com.google.code.gson:gson"))
     testApi(intellijJDom())

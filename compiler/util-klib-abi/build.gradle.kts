@@ -15,7 +15,7 @@ dependencies {
     testImplementation(libs.junit.jupiter.params)
     testImplementation(intellijCore())
     testImplementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
-    testImplementation(projectTests(":compiler:tests-common-new"))
+    testImplementation(testFixtures(project(":compiler:tests-common-new")))
     testImplementation(projectTests(":generators:test-generator"))
     testImplementation(testFixtures(project(":js:js.tests")))
 }
