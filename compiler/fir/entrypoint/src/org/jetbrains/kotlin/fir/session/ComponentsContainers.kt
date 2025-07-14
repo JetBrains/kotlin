@@ -207,11 +207,14 @@ fun FirSession.registerDefaultComponents() {
  * Resolve components which are same on all platforms
  */
 @OptIn(SessionConfiguration::class)
-fun FirSession.registerResolveComponents(lookupTracker: LookupTracker? = null, enumWhenTracker: EnumWhenTracker? = null, importTracker: ImportTracker? = null) {
+fun FirSession.registerResolveComponents(
+    lookupTracker: LookupTracker? = null,
+    enumWhenTracker: EnumWhenTracker? = null,
+    importTracker: ImportTracker? = null,
+) {
     register(FirQualifierResolver::class, FirQualifierResolverImpl(this))
     register(FirTypeResolver::class, FirTypeResolverImpl(this))
     register(CheckersComponent::class, CheckersComponent())
-    register(FirNameConflictsTracker::class, FirNameConflictsTrackerImpl())
     register(FirModuleVisibilityChecker::class, FirModuleVisibilityChecker.Standard(this))
     register(SourcesToPathsMapper::class, SourcesToPathsMapper())
     if (lookupTracker != null) {
@@ -236,6 +239,11 @@ fun FirSession.registerResolveComponents(lookupTracker: LookupTracker? = null, e
         )
     }
     register(FirExpectActualMatchingContextFactory::class, FirExpectActualMatchingContextImpl.Factory)
+}
+
+@OptIn(SessionConfiguration::class)
+fun FirSession.registerCliCompilerOnlyResolveComponents() {
+    register(FirNameConflictsTracker::class, FirNameConflictsTrackerImpl())
 }
 
 @OptIn(SessionConfiguration::class)

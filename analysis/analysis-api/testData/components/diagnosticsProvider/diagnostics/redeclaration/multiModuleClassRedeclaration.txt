@@ -1,4 +1,7 @@
 Diagnostics from A1.kt:
+  for PSI element of type KtClass at (4,1) - (6,8)
+    CLASSIFIER_REDECLARATION      text ranges: [(108,109)]
+      PSI: KtClass at (4,1) - (6,8)
 Diagnostics from A2.kt:
   for PSI element of type KtClass at (8,1) - (9,8)
     CLASSIFIER_REDECLARATION      text ranges: [(28,29)]

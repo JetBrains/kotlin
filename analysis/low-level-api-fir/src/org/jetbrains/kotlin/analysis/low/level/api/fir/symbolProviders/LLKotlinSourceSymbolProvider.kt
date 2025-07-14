@@ -71,7 +71,7 @@ internal class LLKotlinSourceSymbolProvider private constructor(
     extensionTool: LLFirResolveExtensionTool?,
     canContainKotlinPackage: Boolean,
     declarationProviderFactory: (GlobalSearchScope) -> KotlinDeclarationProvider?,
-) : LLKotlinSymbolProvider(session) {
+) : LLKotlinSymbolProvider(session), LLMultiClassLikeSymbolProvider {
     constructor(
         session: LLFirSession,
         moduleComponents: LLFirModuleResolveComponents,
@@ -148,6 +148,15 @@ internal class LLKotlinSourceSymbolProvider private constructor(
     override fun getClassLikeSymbolByPsi(classId: ClassId, declaration: PsiElement): FirClassLikeSymbol<*>? {
         if (!classId.isAccepted()) return null
         return classLikeCache.getSymbolByPsi<KtClassLikeDeclaration>(classId, declaration) { it }
+    }
+
+    override fun getAllClassLikeSymbolsByClassId(classId: ClassId): List<FirClassLikeSymbol<*>> {
+        val declarations = declarationProvider.getAllClassesByClassId(classId) + declarationProvider.getAllTypeAliasesByClassId(classId)
+
+        // We're specifically taking the declarations from the declaration provider, so they're guaranteed to be in the symbol provider's
+        // module.
+        @OptIn(LLModuleSpecificSymbolProviderAccess::class)
+        return declarations.mapNotNull { getClassLikeSymbolByPsi(classId, it) }
     }
 
     private fun ClassId.isAccepted(): Boolean = !isLocal && (allowKotlinPackage || !isKotlinPackage())
