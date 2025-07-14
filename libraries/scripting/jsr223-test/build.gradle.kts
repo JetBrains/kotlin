@@ -26,7 +26,7 @@ dependencies {
     testCompileOnly(project(":compiler:cli"))
     testCompileOnly(project(":core:util.runtime"))
 
-    testImplementation(projectTests(":compiler:test-infrastructure-utils"))
+    testImplementation(testFixtures(project(":compiler:test-infrastructure-utils")))
     testImplementation(projectTests(":kotlin-scripting-compiler"))
 
     testRuntimeOnly(project(":kotlin-scripting-jsr223-unshaded"))

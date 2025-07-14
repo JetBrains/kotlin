@@ -9,7 +9,7 @@ dependencies {
     testFixturesApi(project(":compiler:cli"))
     testFixturesApi(intellijCore())
 
-    testFixturesApi(projectTests(":compiler:test-infrastructure-utils"))
+    testFixturesApi(testFixtures(project(":compiler:test-infrastructure-utils")))
 
     testRuntimeOnly(commonDependency("org.jetbrains.intellij.deps.jna:jna"))
 }

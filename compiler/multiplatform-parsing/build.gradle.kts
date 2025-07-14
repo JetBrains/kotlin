@@ -34,7 +34,7 @@ kotlin {
                 implementation(intellijCore())
                 runtimeOnly(libs.intellij.fastutil)
                 runtimeOnly(commonDependency("com.fasterxml:aalto-xml"))
-                implementation(projectTests(":compiler:test-infrastructure-utils"))
+                implementation(project.dependencies.testFixtures(project(":compiler:test-infrastructure-utils")))
                 implementation(project(":compiler:cli"))
                 implementation(libs.junit.jupiter.api)
                 runtimeOnly(libs.junit.jupiter.engine)
