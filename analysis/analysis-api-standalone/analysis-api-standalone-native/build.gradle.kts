@@ -8,7 +8,7 @@ dependencies {
     testImplementation(testFixtures(project(":compiler:tests-common")))
     testImplementation(project(":analysis:analysis-api-standalone"))
     testImplementation(testFixtures(project(":analysis:analysis-api-standalone")))
-    testImplementation(projectTests(":analysis:analysis-test-framework"))
+    testImplementation(testFixtures(project(":analysis:analysis-test-framework")))
     testImplementation(testFixtures(project(":native:native.tests")))
     testImplementation(project(":native:kotlin-native-utils"))
 
