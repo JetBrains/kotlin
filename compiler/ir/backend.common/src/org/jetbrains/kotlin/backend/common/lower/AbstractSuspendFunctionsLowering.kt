@@ -92,18 +92,8 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
     }
 
     protected fun buildCoroutine(function: IrSimpleFunction, isSuspendLambdaInvokeMethod: Boolean): IrClass {
-        val coroutine = CoroutineBuilder(function, isSuspendLambdaInvokeMethod).build()
-        if (!isSuspendLambdaInvokeMethod) {
-            replaceBodyWithCoroutineClassInstantiation(function, coroutine.stateMachineFunction, coroutine.coroutineConstructor)
-        }
-        return coroutine.coroutineClass
+        return CoroutineBuilder(function, isSuspendLambdaInvokeMethod).build()
     }
-
-    protected class BuiltCoroutine(
-        val coroutineClass: IrClass,
-        val coroutineConstructor: IrConstructor,
-        val stateMachineFunction: IrFunction,
-    )
 
     private inner class CoroutineBuilder(val function: IrSimpleFunction, private val isSuspendLambda: Boolean) {
         private val functionParameters = if (isSuspendLambda) function.nonDispatchParameters else function.parameters
@@ -140,15 +130,12 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
             else buildNewCoroutineClass(function)
         }
 
-        fun build(): BuiltCoroutine {
+        fun build(): IrClass {
             val coroutineConstructor = buildConstructor()
-
-            val implementedMembers = ArrayList<IrSimpleFunction>(2)
 
             val superInvokeSuspendFunction = coroutineBaseClass.owner.simpleFunctions().single { it.name == stateMachineMethodName }
             val invokeSuspendMethod = buildInvokeSuspendMethod(superInvokeSuspendFunction)
 
-            implementedMembers.add(invokeSuspendMethod)
 
             if (isSuspendLambda) {
                 // Suspend lambda - create factory methods.
@@ -156,16 +143,15 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
                     .atMostOne { it.name == CREATE_METHOD_NAME && it.parameters.size == function.parameters.size + 1 }
 
                 val createMethod = buildCreateMethod(createFunction, coroutineConstructor)
-                implementedMembers.add(createMethod)
 
                 replaceBodyWithCoroutineClassInstantiation(function, invokeSuspendMethod, createMethod)
             } else {
                 coroutineClass.superTypes = coroutineClass.superTypes memoryOptimizedPlus coroutineBaseClass.defaultType
+                replaceBodyWithCoroutineClassInstantiation(function, invokeSuspendMethod, coroutineConstructor)
             }
 
-            coroutineClass.addFakeOverrides(context.typeSystem, implementedMembers)
-
-            return BuiltCoroutine(coroutineClass, coroutineConstructor, invokeSuspendMethod)
+            coroutineClass.addFakeOverrides(context.typeSystem)
+            return coroutineClass
         }
 
         private fun buildConstructor(): IrConstructor {
