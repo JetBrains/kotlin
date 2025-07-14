@@ -21,6 +21,7 @@ license/third_party/karma_LICENSE.txt
 license/third_party/gwt_license.txt
 license/third_party/lodash_LICENSE.txt
 license/third_party/power_assert_license.txt
+license/third_party/gradle_custom_user_plugin_license.txt
 license/third_party/jgit_license.txt
 license/third_party/mocha-teamcity-reporter_LICENSE.txt
 license/third_party/gradle-node-plugin_LICENSE.txt
