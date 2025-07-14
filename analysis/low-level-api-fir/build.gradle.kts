@@ -60,7 +60,7 @@ dependencies {
     testImplementation(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
     testImplementation(project(":analysis:symbol-light-classes"))
-    testImplementation(projectTests(":plugins:scripting:scripting-tests"))
+    testImplementation(testFixtures(project(":plugins:scripting:scripting-tests")))
     testImplementation(project(":kotlin-scripting-common"))
 
     testRuntimeOnly(project(":core:descriptors.runtime"))
