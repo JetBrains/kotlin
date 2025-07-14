@@ -16,7 +16,7 @@ dependencies {
 
     testImplementation(testFixtures(project(":compiler:tests-common")))
     testImplementation(testFixtures(project(":compiler:tests-common-new")))
-    testImplementation(projectTests(":analysis:analysis-test-framework"))
+    testImplementation(testFixtures(project(":analysis:analysis-test-framework")))
     testImplementation(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
 }

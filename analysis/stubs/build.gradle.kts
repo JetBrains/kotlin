@@ -10,7 +10,7 @@ dependencies {
 
     testImplementation(testFixtures(project(":compiler:tests-common")))
     testImplementation(testFixtures(project(":compiler:tests-common-new")))
-    testImplementation(projectTests(":analysis:analysis-test-framework"))
+    testImplementation(testFixtures(project(":analysis:analysis-test-framework")))
     testImplementation(testFixtures(project(":analysis:analysis-api-impl-base")))
     testImplementation(projectTests(":analysis:low-level-api-fir"))
     testImplementation(projectTests(":analysis:decompiled:decompiler-to-file-stubs"))

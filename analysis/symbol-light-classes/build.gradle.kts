@@ -19,7 +19,7 @@ dependencies {
     implementation(kotlinxCollectionsImmutable())
 
     testImplementation(project(":analysis:decompiled:decompiler-to-file-stubs"))
-    testImplementation(projectTests(":analysis:analysis-test-framework"))
+    testImplementation(testFixtures(project(":analysis:analysis-test-framework")))
     testImplementation(projectTests(":analysis:decompiled:decompiler-to-file-stubs"))
     testImplementation(testFixtures(project(":analysis:analysis-api-impl-base")))
     testImplementation(testFixtures(project(":analysis:analysis-api-fir")))
