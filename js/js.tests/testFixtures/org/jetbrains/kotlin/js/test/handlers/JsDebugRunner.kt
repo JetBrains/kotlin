@@ -196,7 +196,7 @@ class JsDebugRunner(testServices: TestServices, private val localVariables: Bool
 private class NodeJsDebuggerFacade(jsFilePath: String, private val localVariables: Boolean) {
 
     private val inspector =
-        NodeJsInspectorClient("js/js.tests/test/org/jetbrains/kotlin/js/test/debugger/stepping_test_executor.js", listOf(jsFilePath))
+        NodeJsInspectorClient("js/js.tests/testFixtures/org/jetbrains/kotlin/js/test/debugger/stepping_test_executor.js", listOf(jsFilePath))
 
     private val scriptUrls = mutableMapOf<Runtime.ScriptId, String>()
 

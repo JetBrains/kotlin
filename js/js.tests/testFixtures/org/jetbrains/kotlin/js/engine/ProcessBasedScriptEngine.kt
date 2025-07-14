@@ -97,7 +97,7 @@ abstract class ProcessBasedScriptEngine(
             println("Started repl.js #${counter.getAndIncrement()} in thread ${Thread.currentThread().id}")
         val builder = ProcessBuilder(
             executablePath,
-            "js/js.tests/test/org/jetbrains/kotlin/js/engine/repl.js",
+            "js/js.tests/testFixtures/org/jetbrains/kotlin/js/engine/repl.js",
         )
         return builder.start().also {
             process = it

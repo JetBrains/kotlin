@@ -153,7 +153,7 @@ fun Test.setUpJsBoxTests(tags: String?) {
     setupNodeJs()
     dependsOn(npmInstall)
 
-    inputs.files(rootDir.resolve("js/js.tests/test/org/jetbrains/kotlin/js/engine/repl.js"))
+    inputs.files(rootDir.resolve("js/js.tests/testFixtures/org/jetbrains/kotlin/js/engine/repl.js"))
 
     dependsOn(":dist")
     dependsOn(generateTypeScriptTests)
