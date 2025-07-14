@@ -26,14 +26,14 @@ if (HostManager.host == KonanTarget.MACOS_ARM64) {
     project.configureJvmToolchain(JdkMajorVersion.JDK_17_0)
 }
 
+val breakpadLocationNoDependency = layout.buildDirectory.dir("breakpad")
+
 val downloadBreakpad = tasks.register<GitDownloadTask>("downloadBreakpad") {
     description = "Retrieves Breakpad sources"
     repository.set(URI.create("https://github.com/google/breakpad.git"))
     revision.set("v2024.02.16")
-    outputDirectory.set(layout.buildDirectory.dir("breakpad"))
+    outputDirectory.set(breakpadLocationNoDependency)
 }
-
-val breakpadLocation = downloadBreakpad.flatMap { it.outputDirectory }
 
 val breakpadSources by configurations.creating {
     isCanBeConsumed = true
@@ -45,7 +45,7 @@ val breakpadSources by configurations.creating {
 }
 
 artifacts {
-    add(breakpadSources.name, breakpadLocation)
+    add(breakpadSources.name, downloadBreakpad)
 }
 
 googletest {
@@ -66,26 +66,9 @@ bitcode {
                     if (sanitizer == null) {
                         outputFile.set(layout.buildDirectory.file("bitcode/main/$target/runtime.bc"))
                     }
-                    // Fix Gradle Configuration Cache: this task depends on headers from breakpad; support this task being configured
-                    // before breakpad is actually downloaded.
-                    compileTask.configure {
-                        dependsOn(downloadBreakpad)
-                    }
                 }
-                testFixtures {
-                    // Fix Gradle Configuration Cache: this task depends on headers from breakpad; support this task being configured
-                    // before breakpad is actually downloaded.
-                    compileTask.configure {
-                        dependsOn(downloadBreakpad)
-                    }
-                }
-                test {
-                    // Fix Gradle Configuration Cache: this task depends on headers from breakpad; support this task being configured
-                    // before breakpad is actually downloaded.
-                    compileTask.configure {
-                        dependsOn(downloadBreakpad)
-                    }
-                }
+                testFixtures {}
+                test {}
             }
         }
 
@@ -102,7 +85,7 @@ bitcode {
         }
 
         module("breakpad") {
-            srcRoot.set(breakpadLocation)
+            srcRoot.set(downloadBreakpad.flatMap { it.outputDirectory })
             val sources = listOf(
                     "client/mac/crash_generation/crash_generation_client.cc",
                     "client/mac/handler/breakpad_nlist_64.cc",
@@ -127,15 +110,11 @@ bitcode {
                 main {
                     inputFiles.from(srcRoot.dir("src"))
                     inputFiles.setIncludes(sources)
-                    headersDirs.setFrom(srcRoot.dir("src"), project.layout.projectDirectory.dir("src/breakpad/cpp"))
-                    // Fix Gradle Configuration Cache: support this task being configured before breakpad sources are actually downloaded.
-                    compileTask.configure {
-                        inputFiles.setFrom(sources.map { breakpadLocation.get().dir("src").file(it) })
-                        dependsOn(downloadBreakpad)
-                    }
+                    headersDirs.setFrom(project.layout.projectDirectory.dir("src/breakpad/cpp"))
                 }
             }
-
+            // Make sure breakpad sources are downloaded when building the corresponding compilation database entry
+            dependencies.add(downloadBreakpad)
             compilerArgs.set(listOf(
                     "-std=c++17",
                     "-DHAVE_MACH_O_NLIST_H",
@@ -477,10 +456,12 @@ bitcode {
 
         module("impl_crashHandler") {
             srcRoot.set(layout.projectDirectory.dir("src/crashHandler/impl"))
-            headersDirs.from("src/main/cpp", "src/breakpad/cpp", breakpadLocation.get().dir("src"))
+            // Cannot use output of `downloadBreakpad` to support Gradle Configuration Cache working before `downloadBreakpad`
+            // actually had a chance to run.
+            headersDirs.from("src/main/cpp", "src/breakpad/cpp", breakpadLocationNoDependency.get().dir("src"))
             sourceSets {
                 main {
-                    // Fix Gradle Configuration Cache: support this task being configured before breakpad sources are actually downloaded.
+                    // This task depends on breakpad headers being present.
                     compileTask.configure {
                         dependsOn(downloadBreakpad)
                     }
