@@ -46,7 +46,7 @@ dependencies {
     wasmApi(kotlinStdlib())
     interpreterApi(project(":compiler:ir.tree"))
     protobufApi(kotlinStdlib())
-    protobufCompareApi(projectTests(":kotlin-build-common"))
+    protobufCompareApi(testFixtures(project(":kotlin-build-common")))
     nativeInteropRuntimeApi(kotlinStdlib())
 
     testApi(builtinsSourceSet.output)
