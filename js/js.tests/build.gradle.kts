@@ -57,7 +57,7 @@ dependencies {
     testFixturesApi(project(":js:js.translator"))
     testFixturesApi(project(":compiler:incremental-compilation-impl"))
     testImplementation(libs.junit4)
-    testFixturesApi(projectTests(":kotlin-build-common"))
+    testFixturesApi(testFixtures(project(":kotlin-build-common")))
     testFixturesApi(testFixtures(project(":generators:test-generator")))
 
     testFixturesApi(intellijCore())
