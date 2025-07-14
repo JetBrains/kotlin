@@ -67,7 +67,7 @@ dependencies {
     testApi(projectTests(":kotlin-power-assert-compiler-plugin"))
     testApi(projectTests(":kotlin-sam-with-receiver-compiler-plugin"))
     testApi(projectTests(":kotlin-assignment-compiler-plugin"))
-    testApi(projectTests(":kotlinx-serialization-compiler-plugin"))
+    testApi(testFixtures(project(":kotlinx-serialization-compiler-plugin")))
     testApi(projectTests(":kotlin-atomicfu-compiler-plugin"))
     testApi(projectTests(":kotlin-dataframe-compiler-plugin"))
     testImplementation(projectTests(":analysis:analysis-api-impl-base"))
