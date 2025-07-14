@@ -18,7 +18,7 @@ dependencies {
     testImplementation(testFixtures(project(":analysis:analysis-api-fir")))
     testImplementation(testFixtures(project(":analysis:analysis-api-fe10")))
     testImplementation(projectTests(":analysis:analysis-api-standalone"))
-    testImplementation(projectTests(":analysis:analysis-api-impl-base"))
+    testImplementation(testFixtures(project(":analysis:analysis-api-impl-base")))
     testImplementation(projectTests(":analysis:decompiled:decompiler-to-file-stubs"))
     testImplementation(projectTests(":analysis:decompiled:decompiler-to-psi"))
     testImplementation(projectTests(":analysis:stubs"))
