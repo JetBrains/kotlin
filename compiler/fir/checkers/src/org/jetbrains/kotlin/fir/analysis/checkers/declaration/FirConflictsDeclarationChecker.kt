@@ -182,22 +182,29 @@ object FirConflictsDeclarationChecker : FirBasicDeclarationChecker(MppCheckerKin
 }
 
 class FirNameConflictsTrackerImpl : FirNameConflictsTracker() {
-    data class ClassifierWithFile(
-        val classifier: FirClassLikeSymbol<*>,
-        val file: FirFile?,
-    )
+    data class ClassifierRedeclarationImpl(
+        override val classifierSymbol: FirClassLikeSymbol<*>,
+        override val containingFile: FirFile?,
+    ) : ClassifierRedeclaration()
 
-    private val _redeclaredClassifiers: MutableMap<ClassId, Set<ClassifierWithFile>> = HashMap()
-    val redeclaredClassifiers: Map<ClassId, Set<ClassifierWithFile>>
-        get() = _redeclaredClassifiers
+    private val redeclaredClassifiers: MutableMap<ClassId, Set<ClassifierRedeclarationImpl>> = HashMap()
+
+    override fun getClassifierRedeclarations(classId: ClassId): Collection<ClassifierRedeclaration> =
+        redeclaredClassifiers[classId].orEmpty()
 
     override fun registerClassifierRedeclaration(
         classId: ClassId,
-        newSymbol: FirClassLikeSymbol<*>, newSymbolFile: FirFile,
-        prevSymbol: FirClassLikeSymbol<*>, prevSymbolFile: FirFile?,
+        newSymbol: FirClassLikeSymbol<*>,
+        newSymbolFile: FirFile,
+        prevSymbol: FirClassLikeSymbol<*>,
+        prevSymbolFile: FirFile?,
     ) {
-        _redeclaredClassifiers.merge(
-            classId, linkedSetOf(ClassifierWithFile(newSymbol, newSymbolFile), ClassifierWithFile(prevSymbol, prevSymbolFile))
+        redeclaredClassifiers.merge(
+            classId,
+            linkedSetOf(
+                ClassifierRedeclarationImpl(newSymbol, newSymbolFile),
+                ClassifierRedeclarationImpl(prevSymbol, prevSymbolFile),
+            ),
         ) { a, b -> a + b }
     }
 }
