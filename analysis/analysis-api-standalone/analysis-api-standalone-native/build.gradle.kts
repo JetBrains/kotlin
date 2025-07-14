@@ -9,7 +9,7 @@ dependencies {
     testImplementation(project(":analysis:analysis-api-standalone"))
     testImplementation(projectTests(":analysis:analysis-api-standalone"))
     testImplementation(projectTests(":analysis:analysis-test-framework"))
-    testImplementation(projectTests(":native:native.tests"))
+    testImplementation(testFixtures(project(":native:native.tests")))
     testImplementation(project(":native:kotlin-native-utils"))
 
     testImplementation(platform(libs.junit.bom))

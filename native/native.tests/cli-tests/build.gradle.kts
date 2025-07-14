@@ -12,7 +12,7 @@ dependencies {
 
     testImplementation(project(":native:cli-native"))
 
-    testImplementation(projectTests(":native:native.tests"))
+    testImplementation(testFixtures(project(":native:native.tests")))
 }
 
 sourceSets {
