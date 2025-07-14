@@ -116,8 +116,11 @@ class EqualityAndComparisonCallsTransformer(context: JsIrBackendContext) : Calls
             lhsJsType == rhsJsType && lhsJsType.canBeUsedWithJsEq() ->
                 chooseEqualityOperatorForPrimitiveTypes(call)
 
-            lhs.type.isLong() && rhs.type.isLong() ->
-                irCall(call, intrinsics.longEquals)
+            lhs.type.isLong() && rhs.type.isLong() -> if (longAsBigInt) {
+                chooseEqualityOperatorForPrimitiveTypes(call)
+            } else {
+                irCall(call, intrinsics.longEquals!!)
+            }
 
             !lhsJsType.isBuiltin() && !lhs.type.isNullable() && equalsMethod != null ->
                 irCall(call, equalsMethod.symbol)

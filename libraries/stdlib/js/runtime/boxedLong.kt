@@ -136,9 +136,6 @@ private fun Long.isNegative() = high < 0
 @BoxedLongApi
 private fun Long.isOdd() = low and 1 == 1
 
-/**
- * @see kotlin.js.internal.longAsBigInt.equalsLong
- */
 @BoxedLongApi
 internal fun Long.equalsLong(other: Long) = high == other.high && low == other.low
 
@@ -425,27 +422,15 @@ internal fun Long.shiftRightUnsigned(numBits: Int): Long {
     }
 }
 
-/**
- * @see kotlin.js.internal.longAsBigInt.bitwiseAnd
- */
 @BoxedLongApi
 internal fun Long.bitwiseAnd(other: Long) = Long(this.low and other.low, this.high and other.high)
 
-/**
- * @see kotlin.js.internal.longAsBigInt.bitwiseOr
- */
 @BoxedLongApi
 internal fun Long.bitwiseOr(other: Long) = Long(this.low or other.low, this.high or other.high)
 
-/**
- * @see kotlin.js.internal.longAsBigInt.bitwiseXor
- */
 @BoxedLongApi
 internal fun Long.bitwiseXor(other: Long) = Long(this.low xor other.low, this.high xor other.high)
 
-/**
- * @see kotlin.js.internal.longAsBigInt.invert
- */
 @BoxedLongApi
 internal fun Long.invert() = Long(this.low.inv(), this.high.inv())
 

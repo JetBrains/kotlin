@@ -104,10 +104,10 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, private val configuration
     val jsBitShiftRU = getInternalFunction("jsBitShiftRU")
     val jsBitShiftL = getInternalFunction("jsBitShiftL")
 
-    val longAnd = getLongHelper("bitwiseAnd")!!
-    val longOr = getLongHelper("bitwiseOr")!!
-    val longXor = getLongHelper("bitwiseXor")!!
-    val longInv = getLongHelper("invert")!!
+    val longAnd = getLongHelper("bitwiseAnd")
+    val longOr = getLongHelper("bitwiseOr")
+    val longXor = getLongHelper("bitwiseXor")
+    val longInv = getLongHelper("invert")
     val longShiftLeft = getLongHelper("shiftLeft")!!
     val longShiftRight = getLongHelper("shiftRight")!!
     val longShiftRightUnsigned = getLongHelper("shiftRightUnsigned")!!
@@ -210,7 +210,7 @@ class JsIntrinsics(private val irBuiltIns: IrBuiltIns, private val configuration
     val jsEmptyObject = getInternalFunction("emptyObject")
     val jsOpenInitializerBox = getInternalFunction("openInitializerBox")
 
-    val longEquals = getLongHelper("equalsLong")!!
+    val longEquals = getLongHelper("equalsLong")
 
     val jsImul = getInternalFunction("imul")
 

@@ -54,15 +54,9 @@ internal inline operator fun BigInt.rem(other: BigInt): BigInt = jsMod(this, oth
 
 internal inline infix fun BigInt.and(other: BigInt): BigInt = jsBitwiseAnd(this, other).unsafeCast<BigInt>()
 
-internal inline infix fun BigInt.or(other: BigInt): BigInt = jsBitwiseOr(this, other).unsafeCast<BigInt>()
-
-internal inline infix fun BigInt.xor(other: BigInt): BigInt = jsBitXor(this, other).unsafeCast<BigInt>()
-
 internal inline infix fun BigInt.shl(other: BigInt): BigInt = jsBitShiftL(this, other).unsafeCast<BigInt>()
 
 internal inline infix fun BigInt.shr(other: BigInt): BigInt = jsBitShiftR(this, other).unsafeCast<BigInt>()
-
-internal inline fun BigInt.inv(): BigInt = jsBitNot(this).unsafeCast<BigInt>()
 
 internal inline val BigInt.isNegative: Boolean
     get() = jsLt(this, 0)
