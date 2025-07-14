@@ -117,15 +117,20 @@ class IrFakeOverrideBuilder(
     }
 
     /**
-     * This function builds all missing fake overrides, assuming that already existing members have correct overriden symbols.
+     * This function builds all missing fake overrides, assuming that already existing members have correct overridden symbols.
      *
-     * In particular, if a member of super class can be overridden, but none of the members have it in their overriddenSymbols,
-     * fake override would be created.
+     * In particular, if a member of a super class can be overridden, but none of the members have it in their overriddenSymbols,
+     *  a fake override would be created.
+     *
+     * This function is intended to be used for synthetic classes during lowerings. As lowerings can
+     * process classes in different orders, it is possible that declarations inside super classes,
+     * are already lowered to a later stage. To workaround this lowering can provide cached list of
+     * declarations at correct stage using [overrideParentDeclarationsList].
      */
     fun buildFakeOverridesForClassUsingOverriddenSymbols(
         clazz: IrClass,
+        overrideParentDeclarationsList: Map<IrClass, List<IrDeclaration>>,
         compatibilityMode: Boolean,
-        ignoredParentSymbols: List<IrSymbol> = emptyList()
     ): List<IrOverridableMember> {
         val overriddenMembers = (clazz.declarations.filterIsInstance<IrOverridableMember>())
             .flatMap { member -> member.overriddenSymbols.map { it.owner } }
@@ -133,9 +138,9 @@ class IrFakeOverrideBuilder(
 
         val unoverriddenSuperMembers = clazz.superTypes.flatMap { superType ->
             val superClass = superType.getClass() ?: error("Unexpected super type: $superType")
-            superClass.declarations
+            (overrideParentDeclarationsList[superClass] ?: superClass.declarations)
                 .filterIsInstanceAnd<IrOverridableMember> {
-                    it !in overriddenMembers && it.symbol !in ignoredParentSymbols && !it.isStaticMember
+                    it !in overriddenMembers && !it.isStaticMember
                 }
                 .mapNotNull { overriddenMember ->
                     val fakeOverride = strategy.fakeOverrideMember(superType, overriddenMember, clazz) ?: return@mapNotNull null
