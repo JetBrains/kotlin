@@ -260,14 +260,14 @@ class VariableFixationFinder(
 
     context(c: Context)
     private fun TypeConstructorMarker.hasDependencyToOtherTypeVariables(): Boolean {
-        for (constraint in c.notFixedTypeVariables[this]?.constraints ?: return false) {
-            val dependencyPresenceCondition = { type: KotlinTypeMarker ->
-                type.typeConstructor() != this && c.notFixedTypeVariables.containsKey(type.typeConstructor())
-            }
-            if (constraint.type.lowerBoundIfFlexible().argumentsCount() != 0 && constraint.type.contains(dependencyPresenceCondition))
-                return true
-        }
-        return false
+        val constraints = c.notFixedTypeVariables[this]?.constraints ?: return false
+        return constraints.any { it.hasDependencyToOtherTypeVariable(this) }
+    }
+
+    context(c: Context)
+    private fun Constraint.hasDependencyToOtherTypeVariable(ownerTypeVariable: TypeConstructorMarker): Boolean {
+        return type.lowerBoundIfFlexible().argumentsCount() != 0 &&
+                type.contains { it.typeConstructor() != ownerTypeVariable && c.notFixedTypeVariables.containsKey(it.typeConstructor()) }
     }
 
     context(c: Context)
@@ -337,10 +337,11 @@ class VariableFixationFinder(
     }
 
     context(c: Context)
-    private fun Constraint.isSelfTypeConstraint(): Boolean {
+    private fun Constraint.isProperSelfTypeConstraint(ownerTypeVariable: TypeConstructorMarker): Boolean {
         val typeConstructor = type.typeConstructor()
         return position.from is DeclaredUpperBoundConstraintPosition<*>
                 && (typeConstructor.hasRecursiveTypeParametersWithGivenSelfType() || typeConstructor.isRecursiveTypeParameter())
+                && !hasDependencyToOtherTypeVariable(ownerTypeVariable)
     }
 
     context(c: Context)
@@ -351,7 +352,7 @@ class VariableFixationFinder(
         var hasOtherProperConstraint = false
 
         for (constraint in constraints) {
-            if (constraint.isSelfTypeConstraint()) {
+            if (constraint.isProperSelfTypeConstraint(this)) {
                 hasSelfTypeConstraint = true
             }
             if (constraint.isProperArgumentConstraint()) {
