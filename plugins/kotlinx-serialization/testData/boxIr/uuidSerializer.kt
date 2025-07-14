@@ -1,6 +1,5 @@
 // WITH_STDLIB
 // API_VERSION: LATEST
-// OPT_IN: kotlin.ExperimentalStdlibApi
 // OPT_IN: kotlin.uuid.ExperimentalUuidApi
 
 // FILE: serializer.kt

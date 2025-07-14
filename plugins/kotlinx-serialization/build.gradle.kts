@@ -1,6 +1,9 @@
 import org.gradle.api.publish.internal.PublicationInternal
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
 import org.jetbrains.kotlin.gradle.targets.js.KotlinJsCompilerAttribute
+import org.jetbrains.kotlin.konan.target.HostManager
 import plugins.KotlinBuildPublishingPlugin.Companion.ADHOC_COMPONENT_NAME
 import plugins.configureKotlinPomAttributes
 
@@ -26,6 +29,31 @@ val coreJsIrRuntimeForTests: Configuration by configurations.creating {
         attribute(KotlinJsCompilerAttribute.jsCompilerAttribute, KotlinJsCompilerAttribute.ir)
     }
 }
+
+// WARNING: Native target is host-dependent. Re-running the same build on another host OS may bring to a different result.
+val nativeTargetName = HostManager.host.name
+
+val coreNativeRuntimeForTests by configurations.creating {
+    attributes {
+        attribute(KotlinPlatformType.attribute, KotlinPlatformType.native)
+        // WARNING: Native target is host-dependent. Re-running the same build on another host OS may bring to a different result.
+        attribute(KotlinNativeTarget.konanTargetAttribute, nativeTargetName)
+        attribute(Usage.USAGE_ATTRIBUTE, objects.named(KotlinUsages.KOTLIN_API))
+        attribute(KotlinPlatformType.attribute, KotlinPlatformType.native)
+    }
+}
+
+val jsonNativeRuntimeForTests by configurations.creating {
+    attributes {
+        attribute(KotlinPlatformType.attribute, KotlinPlatformType.native)
+        // WARNING: Native target is host-dependent. Re-running the same build on another host OS may bring to a different result.
+        attribute(KotlinNativeTarget.konanTargetAttribute, nativeTargetName)
+        attribute(Usage.USAGE_ATTRIBUTE, objects.named(KotlinUsages.KOTLIN_API))
+        attribute(KotlinPlatformType.attribute, KotlinPlatformType.native)
+    }
+}
+
+val serializationPluginForTests by configurations.creating
 
 dependencies {
     embedded(project(":kotlinx-serialization-compiler-plugin.common")) { isTransitive = false }
@@ -64,11 +92,72 @@ dependencies {
 
     coreJsIrRuntimeForTests("org.jetbrains.kotlinx:kotlinx-serialization-core:1.7.0") { isTransitive = false }
     jsonJsIrRuntimeForTests("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.0") { isTransitive = false }
+    coreNativeRuntimeForTests("org.jetbrains.kotlinx:kotlinx-serialization-core:1.7.0") { isTransitive = false }
+    jsonNativeRuntimeForTests("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.0") { isTransitive = false }
+    serializationPluginForTests(project(":kotlinx-serialization-compiler-plugin"))
 
     testRuntimeOnly(intellijCore())
     testRuntimeOnly(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
     testRuntimeOnly(project(":core:descriptors.runtime"))
     testRuntimeOnly(project(":compiler:fir:fir-serialization"))
+
+    // Dependencies for Kotlin/Native test infra:
+    if (!kotlinBuildProperties.isInIdeaSync) {
+        testImplementation(projectTests(":native:native.tests"))
+    }
+
+    // Implicit dependencies on CORE native artifacts to run native tests on CI
+    implicitDependencies("org.jetbrains.kotlinx:kotlinx-serialization-core-linuxx64:1.7.0") {
+        attributes {
+            attribute(Usage.USAGE_ATTRIBUTE, objects.named(KotlinUsages.KOTLIN_API))
+        }
+    }
+    implicitDependencies("org.jetbrains.kotlinx:kotlinx-serialization-core-macosarm64:1.7.0"){
+        attributes {
+            attribute(Usage.USAGE_ATTRIBUTE, objects.named(KotlinUsages.KOTLIN_API))
+        }
+    }
+    implicitDependencies("org.jetbrains.kotlinx:kotlinx-serialization-core-macosx64:1.7.0"){
+        attributes {
+            attribute(Usage.USAGE_ATTRIBUTE, objects.named(KotlinUsages.KOTLIN_API))
+        }
+    }
+    implicitDependencies("org.jetbrains.kotlinx:kotlinx-serialization-core-iossimulatorarm64:1.7.0"){
+        attributes {
+            attribute(Usage.USAGE_ATTRIBUTE, objects.named(KotlinUsages.KOTLIN_API))
+        }
+    }
+    implicitDependencies("org.jetbrains.kotlinx:kotlinx-serialization-core-mingwx64:1.7.0"){
+        attributes {
+            attribute(Usage.USAGE_ATTRIBUTE, objects.named(KotlinUsages.KOTLIN_API))
+        }
+    }
+    // Implicit dependencies on JSON native artifacts to run native tests on CI
+    implicitDependencies("org.jetbrains.kotlinx:kotlinx-serialization-json-linuxx64:1.7.0") {
+        attributes {
+            attribute(Usage.USAGE_ATTRIBUTE, objects.named(KotlinUsages.KOTLIN_API))
+        }
+    }
+    implicitDependencies("org.jetbrains.kotlinx:kotlinx-serialization-json-macosarm64:1.7.0"){
+        attributes {
+            attribute(Usage.USAGE_ATTRIBUTE, objects.named(KotlinUsages.KOTLIN_API))
+        }
+    }
+    implicitDependencies("org.jetbrains.kotlinx:kotlinx-serialization-json-macosx64:1.7.0"){
+        attributes {
+            attribute(Usage.USAGE_ATTRIBUTE, objects.named(KotlinUsages.KOTLIN_API))
+        }
+    }
+    implicitDependencies("org.jetbrains.kotlinx:kotlinx-serialization-json-iossimulatorarm64:1.7.0"){
+        attributes {
+            attribute(Usage.USAGE_ATTRIBUTE, objects.named(KotlinUsages.KOTLIN_API))
+        }
+    }
+    implicitDependencies("org.jetbrains.kotlinx:kotlinx-serialization-json-mingwx64:1.7.0"){
+        attributes {
+            attribute(Usage.USAGE_ATTRIBUTE, objects.named(KotlinUsages.KOTLIN_API))
+        }
+    }
 }
 
 optInToExperimentalCompilerApi()
@@ -121,11 +210,24 @@ artifacts {
 }
 
 projectTest(parallel = true, jUnitMode = JUnitMode.JUnit5) {
+    useJUnitPlatform {
+        // Exclude all tests with the "serialization-native" tag. They should be launched by another test task.
+        excludeTags("serialization-native")
+    }
+
     dependsOn(":dist")
     workingDir = rootDir
     useJUnitPlatform()
     setUpJsIrBoxTests()
 }
+
+val nativeTest = nativeTest(
+    taskName = "nativeTest",
+    tag = "serialization-native", // Include all tests with the "serialization-native" tag
+    requirePlatformLibs = false,
+    customTestDependencies = listOf(coreNativeRuntimeForTests, jsonNativeRuntimeForTests),
+    compilerPluginDependencies = listOf(serializationPluginForTests)
+)
 
 val generateTests by generator("org.jetbrains.kotlinx.serialization.TestGeneratorKt")
 
