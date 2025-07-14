@@ -46,7 +46,7 @@ dependencies {
     testFixturesImplementation(testFixtures(project(":compiler:tests-common-new")))
     testFixturesImplementation(testFixtures(project(":compiler:fir:analysis-tests:legacy-fir-tests")))
     testFixturesApi(testFixtures(project(":analysis:analysis-api-impl-base")))
-    testFixturesImplementation(projectTests(":analysis:decompiled:decompiler-to-file-stubs"))
+    testFixturesImplementation(testFixtures(project(":analysis:decompiled:decompiler-to-file-stubs")))
     testFixturesImplementation(project(":analysis:analysis-api-standalone:analysis-api-fir-standalone-base"))
     testFixturesImplementation(project(":analysis:decompiled:decompiler-to-file-stubs"))
     testFixturesImplementation(project(":analysis:decompiled:decompiler-to-psi"))

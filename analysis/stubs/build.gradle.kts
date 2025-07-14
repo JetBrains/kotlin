@@ -13,7 +13,7 @@ dependencies {
     testImplementation(testFixtures(project(":analysis:analysis-test-framework")))
     testImplementation(testFixtures(project(":analysis:analysis-api-impl-base")))
     testImplementation(projectTests(":analysis:low-level-api-fir"))
-    testImplementation(projectTests(":analysis:decompiled:decompiler-to-file-stubs"))
+    testImplementation(testFixtures(project(":analysis:decompiled:decompiler-to-file-stubs")))
     testImplementation(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
 }
