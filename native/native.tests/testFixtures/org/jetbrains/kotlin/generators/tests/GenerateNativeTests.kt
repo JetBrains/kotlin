@@ -518,7 +518,7 @@ fun frontendClassic() = arrayOf(
 private fun debugger() = annotation(Tag::class.java, "debugger")
 private fun infrastructure() = annotation(Tag::class.java, "infrastructure")
 private fun litmusktNative() = annotation(Tag::class.java, "litmuskt-native")
-private fun standalone() = arrayOf(
+fun standalone() = arrayOf(
     annotation(Tag::class.java, "standalone"),
     annotation(
         EnforcedProperty::class.java,
@@ -549,4 +549,4 @@ private fun stress() = arrayOf(
     )
 )
 private fun codegenBox() = annotation(Tag::class.java, "codegen-box")
-private fun klibIrInliner() = annotation(Tag::class.java, KLIB_IR_INLINER)
+fun klibIrInliner() = annotation(Tag::class.java, KLIB_IR_INLINER)

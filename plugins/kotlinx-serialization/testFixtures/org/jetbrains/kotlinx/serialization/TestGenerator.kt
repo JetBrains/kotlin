@@ -7,10 +7,18 @@ package org.jetbrains.kotlinx.serialization
 
 import org.jetbrains.kotlin.generators.TestGroup
 import org.jetbrains.kotlin.generators.generateTestGroupSuiteWithJUnit5
+import org.jetbrains.kotlin.generators.model.annotation
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
+import org.jetbrains.kotlin.generators.tests.klibIrInliner
+import org.jetbrains.kotlin.generators.tests.provider
+import org.jetbrains.kotlin.generators.tests.standalone
+import org.jetbrains.kotlin.konan.test.blackbox.AbstractNativeCodegenBoxTest
+import org.jetbrains.kotlin.konan.test.blackbox.support.group.UseExtTestCaseGroupProvider
+import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlinx.serialization.matrix.cases.enumsTestMatrix
 import org.jetbrains.kotlinx.serialization.matrix.testMatrix
 import org.jetbrains.kotlinx.serialization.runners.*
+import org.junit.jupiter.api.Tag
 
 fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
@@ -76,6 +84,21 @@ fun main(args: Array<String>) {
             testClass<AbstractSerializationFirJsBoxWithInlinedFunInKlibTest> {
                 model("boxIr")
             }
+
+            // Serialization compiler plugin native tests.
+            testClass<AbstractNativeCodegenBoxTest>(
+                suiteTestClassName = "SerializationNativeTestGenerated",
+                annotations = listOf(*standalone(), *serializationNative(), provider<UseExtTestCaseGroupProvider>())
+            ) {
+                model("boxIr", targetBackend = TargetBackend.NATIVE)
+            }
+            testClass<AbstractNativeCodegenBoxTest>(
+                suiteTestClassName = "SerializationNativeWithInlinedFunInKlibTestGenerated",
+                annotations = listOf(*standalone(), klibIrInliner(), *serializationNative(), provider<UseExtTestCaseGroupProvider>())
+            ) {
+                model("boxIr", targetBackend = TargetBackend.NATIVE)
+            }
+
             // ------------------------------- code compile -------------------------------
 
             testClass<AbstractCompilerFacilityTestForSerialization> {
@@ -120,3 +143,7 @@ fun main(args: Array<String>) {
         }
     }
 }
+
+private fun serializationNative() = arrayOf(
+    annotation(Tag::class.java, "serialization-native"),
+)
