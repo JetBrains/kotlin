@@ -4,6 +4,7 @@ plugins {
     kotlin("jvm")
     id("jps-compatible")
     id("generated-sources")
+    id("java-test-fixtures")
 }
 
 dependencies {
@@ -37,25 +38,27 @@ dependencies {
     implementation(libs.caffeine)
     implementation(libs.opentelemetry.api)
 
+    testFixturesImplementation(projectTests(":analysis:low-level-api-fir"))
+    testFixturesApi(project(":analysis:analysis-api-standalone:analysis-api-standalone-base"))
+    testFixturesImplementation(testFixtures(project(":compiler:tests-common")))
+    testFixturesApi(testFixtures(project(":compiler:test-infrastructure-utils")))
+    testFixturesApi(testFixtures(project(":compiler:test-infrastructure")))
+    testFixturesImplementation(testFixtures(project(":compiler:tests-common-new")))
+    testFixturesImplementation(testFixtures(project(":compiler:fir:analysis-tests:legacy-fir-tests")))
+    testFixturesApi(projectTests(":analysis:analysis-api-impl-base"))
+    testFixturesImplementation(projectTests(":analysis:decompiled:decompiler-to-file-stubs"))
+    testFixturesImplementation(project(":analysis:analysis-api-standalone:analysis-api-fir-standalone-base"))
+    testFixturesImplementation(project(":analysis:decompiled:decompiler-to-file-stubs"))
+    testFixturesImplementation(project(":analysis:decompiled:decompiler-to-psi"))
+    testFixturesImplementation(kotlinTest("junit"))
+    testFixturesApi(projectTests(":analysis:analysis-test-framework"))
+
     testImplementation(projectTests(":analysis:low-level-api-fir"))
-    testImplementation(project(":analysis:analysis-api-standalone:analysis-api-standalone-base"))
-    testImplementation(testFixtures(project(":compiler:tests-common")))
-    testApi(testFixtures(project(":compiler:test-infrastructure-utils")))
-    testApi(testFixtures(project(":compiler:test-infrastructure")))
-    testImplementation(testFixtures(project(":compiler:tests-common-new")))
-    testImplementation(testFixtures(project(":compiler:fir:analysis-tests:legacy-fir-tests")))
-    testImplementation(projectTests(":analysis:analysis-api-impl-base"))
-    testImplementation(projectTests(":analysis:decompiled:decompiler-to-file-stubs"))
-    testImplementation(project(":analysis:analysis-api-standalone:analysis-api-fir-standalone-base"))
-    testImplementation(project(":analysis:decompiled:decompiler-to-file-stubs"))
-    testImplementation(project(":analysis:decompiled:decompiler-to-psi"))
-    testImplementation(kotlinTest("junit"))
-    testApi(projectTests(":analysis:analysis-test-framework"))
 
     testCompileOnly(toolsJarApi())
     testRuntimeOnly(toolsJar())
-    testApi(platform(libs.junit.bom))
-    testImplementation(libs.junit.jupiter.api)
+    testFixturesApi(platform(libs.junit.bom))
+    testFixturesImplementation(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
 }
 
@@ -65,6 +68,7 @@ sourceSets {
         projectDefault()
         generatedTestDir()
     }
+    "testFixtures" { projectDefault() }
 }
 
 optInToUnsafeDuringIrConstructionAPI()

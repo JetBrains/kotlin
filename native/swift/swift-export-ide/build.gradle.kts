@@ -24,7 +24,7 @@ dependencies {
 
     testImplementation(projectTests(":analysis:analysis-api-impl-base"))
     testImplementation(projectTests(":analysis:analysis-test-framework"))
-    testImplementation(projectTests(":analysis:analysis-api-fir"))
+    testImplementation(testFixtures(project(":analysis:analysis-api-fir")))
     testRuntimeOnly(projectTests(":analysis:low-level-api-fir"))
 }
 

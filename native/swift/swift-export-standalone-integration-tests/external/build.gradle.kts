@@ -16,7 +16,7 @@ dependencies {
     testImplementation(project(":native:external-projects-test-utils"))
     testRuntimeOnly(projectTests(":analysis:low-level-api-fir"))
     testRuntimeOnly(projectTests(":analysis:analysis-api-impl-base"))
-    testImplementation(projectTests(":analysis:analysis-api-fir"))
+    testImplementation(testFixtures(project(":analysis:analysis-api-fir")))
     testImplementation(projectTests(":analysis:analysis-test-framework"))
     testImplementation(testFixtures(project(":compiler:tests-common")))
     testImplementation(testFixtures(project(":compiler:tests-common-new")))
