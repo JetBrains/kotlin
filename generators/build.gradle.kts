@@ -77,7 +77,7 @@ dependencies {
     testApi(projectTests(":plugins:plugins-interactions-testing"))
     testApi(projectTests(":generators:test-generator"))
     testApi(projectTests(":generators:analysis-api-generator"))
-    testApi(projectTests(":plugins:scripting:scripting-tests"))
+    testApi(testFixtures(project(":plugins:scripting:scripting-tests")))
     testImplementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
     testImplementation(project(":compiler:arguments"))
     testImplementation(project(":compiler:cli:cli-arguments-generator"))
