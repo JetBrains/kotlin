@@ -82,7 +82,7 @@ dependencies {
 
     compileOnly(kotlinStdlib())
 
-    testFixturesApi(projectTests(":compiler:tests-common"))
+    testFixturesApi(testFixtures(project(":compiler:tests-common")))
     testFixturesApi(testFixtures(project(":compiler:test-infrastructure")))
     testFixturesApi(projectTests(":compiler:test-infrastructure-utils"))
     testFixturesApi(projectTests(":compiler:tests-compiler-utils"))
@@ -110,7 +110,7 @@ dependencies {
     testFixturesImplementation(project(":kotlin-compiler-runner-unshaded"))
 
     testFixturesImplementation(commonDependency("commons-lang:commons-lang"))
-    testFixturesApi(projectTests(":compiler:tests-common"))
+    testFixturesApi(testFixtures(project(":compiler:tests-common")))
     testFixturesApi(testFixtures(project(":compiler:tests-common-new")))
     testFixturesApi(testFixtures(project(":compiler:test-infrastructure")))
     testCompileOnly("org.jetbrains.kotlinx:atomicfu:0.25.0")

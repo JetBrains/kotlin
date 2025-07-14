@@ -17,7 +17,7 @@ dependencies {
     testImplementation(project(":compiler:psi:psi-api"))
     testImplementation(project(":analysis:kt-references"))
     testApi(testFixtures(project(":compiler:tests-common-new")))
-    testApi(projectTests(":compiler:tests-common"))
+    testApi(testFixtures(project(":compiler:tests-common")))
     testImplementation(project(":analysis:analysis-api-platform-interface"))
     testImplementation(project(":analysis:analysis-api"))
     testApi(project(":analysis:analysis-api-standalone:analysis-api-standalone-base"))

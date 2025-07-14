@@ -14,7 +14,7 @@ dependencies {
 
     api(intellijCore())
 
-    testImplementation(projectTests(":compiler:tests-common"))
+    testImplementation(testFixtures(project(":compiler:tests-common")))
     testImplementation(testFixtures(project(":compiler:tests-common-new")))
     testImplementation(projectTests(":analysis:analysis-test-framework"))
     testImplementation(libs.junit.jupiter.api)

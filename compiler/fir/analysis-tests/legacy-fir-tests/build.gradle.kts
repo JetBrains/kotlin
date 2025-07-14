@@ -12,7 +12,7 @@ plugins {
 dependencies {
     testFixturesApi(libs.junit4)
     testFixturesCompileOnly(kotlinTest("junit"))
-    testFixturesApi(projectTests(":compiler:tests-common"))
+    testFixturesApi(testFixtures(project(":compiler:tests-common")))
     testFixturesApi(project(":compiler:fir:checkers"))
     testFixturesApi(project(":compiler:fir:checkers:checkers.jvm"))
     testFixturesApi(project(":compiler:fir:checkers:checkers.js"))
