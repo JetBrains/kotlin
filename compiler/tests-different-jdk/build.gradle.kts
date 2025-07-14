@@ -7,7 +7,6 @@ plugins {
 dependencies {
     testImplementation(projectTests(":compiler:tests-common-new"))
     testImplementation(projectTests(":compiler:fir:fir2ir"))
-    testRuntimeOnly(projectTests(":compiler"))
 
     testImplementation(libs.junit4)
     testImplementation(kotlinStdlib())
