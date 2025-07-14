@@ -45,22 +45,22 @@ class JsonTest {
         val second = org.jetbrains.kotlin.js.parser.sourcemaps.parseJson(first.toString())
 
         val expected = JsonObject(
-                "a" to JsonArray(
-                        JsonNumber(1.0),
-                        JsonNumber(2.0),
-                        JsonObject("x" to JsonNumber(3.0)),
-                        JsonArray(JsonNumber(5.0))
-                ),
-                "b" to JsonNumber(1.0),
-                "c" to JsonObject(
-                        "foo" to JsonNull,
-                        "bar" to JsonBoolean.TRUE,
-                        "baz" to JsonBoolean.FALSE
-                ),
-                "d" to JsonNull,
-                "e" to JsonString("qwe"),
-                "f" to JsonNumber(1.2),
-                "g" to JsonArray(JsonArray(), JsonObject())
+            "a" to JsonArray(
+                JsonNumber(1.0),
+                JsonNumber(2.0),
+                JsonObject("x" to JsonNumber(3.0)),
+                JsonArray(JsonNumber(5.0))
+            ),
+            "b" to JsonNumber(1.0),
+            "c" to JsonObject(
+                "foo" to JsonNull,
+                "bar" to JsonBoolean.TRUE,
+                "baz" to JsonBoolean.FALSE
+            ),
+            "d" to JsonNull,
+            "e" to JsonString("qwe"),
+            "f" to JsonNumber(1.2),
+            "g" to JsonArray(JsonArray(), JsonObject())
         )
 
         assertJsonEquals(expected, first)
