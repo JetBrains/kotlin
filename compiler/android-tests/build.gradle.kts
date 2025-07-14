@@ -19,7 +19,7 @@ dependencies {
     testApi(kotlinStdlib())
     testApi(projectTests(":compiler:tests-common"))
     testImplementation(libs.junit4)
-    testApi(projectTests(":compiler:test-infrastructure"))
+    testApi(testFixtures(project(":compiler:test-infrastructure")))
     testApi(projectTests(":compiler:test-infrastructure-utils"))
     testApi(projectTests(":compiler:tests-compiler-utils"))
     testApi(testFixtures(project(":compiler:tests-common-new")))
