@@ -11,6 +11,7 @@ plugins {
     id("jps-compatible")
     alias(libs.plugins.gradle.node)
     id("d8-configuration")
+    id("java-test-fixtures")
 }
 
 val cacheRedirectorEnabled = findProperty("cacheRedirectorEnabled")?.toString()?.toBoolean() == true
@@ -34,35 +35,35 @@ val testJsRuntime by configurations.creating {
 }
 
 dependencies {
-    testApi(platform(libs.junit.bom))
+    testFixturesApi(platform(libs.junit.bom))
     testImplementation(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
     testRuntimeOnly(libs.junit.vintage.engine)
 
-    testApi(protobufFull())
-    testApi(projectTests(":compiler:tests-common"))
-    testApi(projectTests(":compiler:test-infrastructure"))
-    testApi(projectTests(":compiler:test-infrastructure-utils"))
-    testApi(projectTests(":compiler:tests-compiler-utils"))
-    testApi(projectTests(":compiler:tests-common-new"))
-    testImplementation(projectTests(":compiler:fir:analysis-tests"))
+    testFixturesApi(protobufFull())
+    testFixturesApi(projectTests(":compiler:tests-common"))
+    testFixturesApi(projectTests(":compiler:test-infrastructure"))
+    testFixturesApi(projectTests(":compiler:test-infrastructure-utils"))
+    testFixturesApi(projectTests(":compiler:tests-compiler-utils"))
+    testFixturesApi(projectTests(":compiler:tests-common-new"))
+    testFixturesApi(projectTests(":compiler:fir:analysis-tests"))
 
     testCompileOnly(project(":compiler:frontend"))
     testCompileOnly(project(":compiler:cli"))
     testCompileOnly(project(":compiler:cli-js"))
     testCompileOnly(project(":compiler:util"))
     testCompileOnly(intellijCore())
-    testApi(project(":compiler:backend.js"))
-    testApi(project(":js:js.translator"))
-    testApi(project(":compiler:incremental-compilation-impl"))
+    testFixturesApi(project(":compiler:backend.js"))
+    testFixturesApi(project(":js:js.translator"))
+    testFixturesApi(project(":compiler:incremental-compilation-impl"))
     testImplementation(libs.junit4)
-    testApi(projectTests(":kotlin-build-common"))
-    testApi(projectTests(":generators:test-generator"))
+    testFixturesApi(projectTests(":kotlin-build-common"))
+    testFixturesApi(projectTests(":generators:test-generator"))
 
-    testApi(intellijCore())
-    testApi(project(":compiler:frontend"))
-    testApi(project(":compiler:cli"))
-    testApi(project(":compiler:util"))
+    testFixturesApi(intellijCore())
+    testFixturesApi(project(":compiler:frontend"))
+    testFixturesApi(project(":compiler:cli"))
+    testFixturesApi(project(":compiler:util"))
 
     testRuntimeOnly(libs.guava)
     testRuntimeOnly(intellijJDom())
@@ -79,10 +80,18 @@ dependencies {
 
     testRuntimeOnly(libs.junit.vintage.engine)
 
-    testImplementation(libs.kotlinx.serialization.json)
-    testImplementation(libs.ktor.client.cio)
-    testImplementation(libs.ktor.client.core)
-    testImplementation(libs.ktor.client.websockets)
+    // these dependencies shouldn't be exposed to other modules
+    // to avoid potential clashes in cases when another module
+    // also needs one of these dependencies but of different
+    // version (e.g. tests of kotlinx.serialization)
+    testFixturesCompileOnly(libs.kotlinx.serialization.json)
+    testFixturesCompileOnly(libs.ktor.client.cio)
+    testFixturesCompileOnly(libs.ktor.client.core)
+    testFixturesCompileOnly(libs.ktor.client.websockets)
+    testRuntimeOnly(libs.kotlinx.serialization.json)
+    testRuntimeOnly(libs.ktor.client.cio)
+    testRuntimeOnly(libs.ktor.client.core)
+    testRuntimeOnly(libs.ktor.client.websockets)
 }
 
 optInToExperimentalCompilerApi()
@@ -94,6 +103,7 @@ sourceSets {
         projectDefault()
         generatedTestDir()
     }
+    "testFixtures" { projectDefault() }
 }
 
 val testDataDir = project(":js:js.translator").projectDir.resolve("testData")

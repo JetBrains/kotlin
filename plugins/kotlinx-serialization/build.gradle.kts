@@ -44,7 +44,7 @@ dependencies {
     testFixturesApi(projectTests(":compiler:tests-common-new"))
     testFixturesApi(project(":compiler:fir:plugin-utils"))
     testFixturesImplementation(projectTests(":generators:test-generator"))
-    testFixturesApi(projectTests(":js:js.tests"))
+    testFixturesApi(testFixtures(project(":js:js.tests")))
     testFixturesApi(projectTests(":analysis:analysis-api-fir"))
     testFixturesApi(projectTests(":analysis:analysis-api-impl-base"))
     testFixturesApi(projectTests(":analysis:low-level-api-fir"))

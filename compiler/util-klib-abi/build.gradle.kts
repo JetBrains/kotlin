@@ -17,7 +17,7 @@ dependencies {
     testImplementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
     testImplementation(projectTests(":compiler:tests-common-new"))
     testImplementation(projectTests(":generators:test-generator"))
-    testImplementation(projectTests(":js:js.tests"))
+    testImplementation(testFixtures(project(":js:js.tests")))
 }
 
 sourceSets {

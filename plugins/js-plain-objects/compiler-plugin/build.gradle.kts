@@ -34,7 +34,7 @@ dependencies {
     testFixturesApi(projectTests(":compiler:tests-compiler-utils"))
     testFixturesApi(projectTests(":compiler:tests-common-new"))
 
-    testFixturesApi(projectTests(":js:js.tests"))
+    testFixturesApi(testFixtures(project(":js:js.tests")))
     testFixturesImplementation(projectTests(":generators:test-generator"))
 
     testFixturesApi(platform(libs.junit.bom))

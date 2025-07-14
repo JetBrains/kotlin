@@ -10,7 +10,6 @@ val depenencyProjects = arrayOf(
     ":compiler:test-infrastructure",
     ":compiler:tests-common-new",
     ":compiler:tests-for-compiler-generator",
-    ":js:js.tests",
     ":compiler:tests-java8",
     ":core:descriptors.runtime",
     ":generators:analysis-api-generator"
@@ -21,6 +20,8 @@ dependencies {
         testApi(projectTests(it))
         jpsTest(project(it, configuration = "jpsTest"))
     }
+
+    testApi(testFixtures(project(":js:js.tests")))
 
     testRuntimeOnly(files("${rootProject.projectDir}/dist/kotlinc/lib/kotlin-reflect.jar"))
     testRuntimeOnly(platform(libs.junit.bom))
