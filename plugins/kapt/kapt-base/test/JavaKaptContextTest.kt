@@ -8,8 +8,9 @@ package org.jetbrains.kotlin.kapt.base.test
 import org.jetbrains.kotlin.kapt.base.*
 import org.jetbrains.kotlin.kapt.base.incremental.DeclaredProcType
 import org.jetbrains.kotlin.kapt.base.incremental.IncrementalProcessor
+import org.jetbrains.kotlin.kapt.base.test.JavaKaptContextUtils.logger
+import org.jetbrains.kotlin.kapt.base.test.JavaKaptContextUtils.simpleProcessor
 import org.jetbrains.kotlin.kapt.base.util.KaptBaseError
-import org.jetbrains.kotlin.kapt.base.util.WriterBackedKaptLogger
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
@@ -22,36 +23,6 @@ import javax.lang.model.element.TypeElement
 class JavaKaptContextTest {
     companion object {
         private val TEST_DATA_DIR = File("plugins/kapt/kapt-base/testData/runner")
-        val logger = WriterBackedKaptLogger(isVerbose = true)
-
-        fun simpleProcessor() = IncrementalProcessor(
-            object : AbstractProcessor() {
-                override fun process(annotations: Set<TypeElement>, roundEnv: RoundEnvironment): Boolean {
-                    for (annotation in annotations) {
-                        val annotationName = annotation.simpleName.toString()
-                        val annotatedElements = roundEnv.getElementsAnnotatedWith(annotation)
-
-                        for (annotatedElement in annotatedElements) {
-                            val generatedClassName = annotatedElement.simpleName.toString().replaceFirstChar(Char::uppercaseChar) +
-                                    annotationName.replaceFirstChar(Char::uppercaseChar)
-                            val file = processingEnv.filer.createSourceFile("generated.$generatedClassName")
-                            file.openWriter().use {
-                                it.write(
-                                    """
-                            package generated;
-                            class $generatedClassName {}
-                            """.trimIndent()
-                                )
-                            }
-                        }
-                    }
-
-                    return true
-                }
-
-                override fun getSupportedAnnotationTypes() = setOf("test.MyAnnotation")
-            }, DeclaredProcType.NON_INCREMENTAL, logger
-        )
     }
 
     private fun doAnnotationProcessing(

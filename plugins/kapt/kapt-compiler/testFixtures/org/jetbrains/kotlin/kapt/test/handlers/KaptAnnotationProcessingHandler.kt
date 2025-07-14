@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.kapt.test.handlers
 
 import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.kapt.base.doAnnotationProcessing
-import org.jetbrains.kotlin.kapt.base.test.JavaKaptContextTest
+import org.jetbrains.kotlin.kapt.base.test.JavaKaptContextUtils
 import org.jetbrains.kotlin.kapt.test.KaptContextBinaryArtifact
 import org.jetbrains.kotlin.kapt.test.handlers.KaptStubConverterHandler.Companion.FILE_SEPARATOR
 import org.jetbrains.kotlin.test.model.TestModule
@@ -21,7 +21,7 @@ class KaptAnnotationProcessingHandler(testServices: TestServices) : BaseKaptHand
         val compilationUnits = convert(module, kaptContext, generateNonExistentClass = false)
         kaptContext.doAnnotationProcessing(
             emptyList(),
-            listOf(JavaKaptContextTest.simpleProcessor()),
+            listOf(JavaKaptContextUtils.simpleProcessor()),
             additionalSources = compilationUnits
         )
 
