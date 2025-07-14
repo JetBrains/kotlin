@@ -58,7 +58,7 @@ dependencies {
     testApi(project(":compiler:cli"))
     testApi(projectTests(":compiler:incremental-compilation-impl"))
     testApi(testFixtures(project(":plugins:jvm-abi-gen")))
-    testApi(projectTests(":plugins:parcelize:parcelize-compiler"))
+    testApi(testFixtures(project(":plugins:parcelize:parcelize-compiler")))
     testApi(testFixtures(project(":kotlin-annotation-processing-cli")))
     testApi(testFixtures(project(":kotlin-annotation-processing")))
     testApi(testFixtures(project(":kotlin-allopen-compiler-plugin")))
