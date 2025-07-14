@@ -77,7 +77,7 @@ object Init {
 }
 
 fun vmStateSnapshot(): VMCounters {
-    Init
+    @Suppress("UNUSED_EXPRESSION") Init
     val threadMXBean = ManagementFactoryHelper.getThreadMXBean()
     val hotspotRuntimeMBean = ManagementFactoryHelper.getHotspotRuntimeMBean()
 

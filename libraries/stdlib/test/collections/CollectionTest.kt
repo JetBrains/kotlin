@@ -942,8 +942,7 @@ class CollectionTest {
         assertEquals(result, resultOrNull)
 
         assertEquals(null, emptyList<Int>().minOfWithOrNull(naturalOrder()) { it })
-        // TODO: investigate why no unit-coercion happens here and an explicit 'Unit' is required
-        assertFailsWith<NoSuchElementException> { emptyList<Int>().minOfWith(naturalOrder()) { it }; Unit }
+        assertFailsWith<NoSuchElementException> { emptyList<Int>().minOfWith(naturalOrder()) { it } }
     }
 
     @Test fun maxOf() {
@@ -970,8 +969,7 @@ class CollectionTest {
         assertEquals(result, resultOrNull)
 
         assertEquals(null, emptyList<Int>().maxOfWithOrNull(naturalOrder()) { it })
-        // TODO: investigate why no unit-coercion happens here and an explicit 'Unit' is required
-        assertFailsWith<NoSuchElementException> { emptyList<Int>().maxOfWith(naturalOrder()) { it }; Unit }
+        assertFailsWith<NoSuchElementException> { emptyList<Int>().maxOfWith(naturalOrder()) { it } }
     }
 
 

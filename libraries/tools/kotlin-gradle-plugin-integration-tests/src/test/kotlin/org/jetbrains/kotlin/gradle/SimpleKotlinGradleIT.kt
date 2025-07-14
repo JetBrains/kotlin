@@ -309,7 +309,7 @@ class SimpleKotlinGradleIT : KGPBaseTest() {
                 }
                 """.trimIndent()
             )
-            KotlinSourceSet::customSourceFilesExtensions // ensure the accessed property is available on KotlinSourceSet
+            @Suppress("UNUSED_EXPRESSION") KotlinSourceSet::customSourceFilesExtensions // ensure the accessed property is available on KotlinSourceSet
             buildAndFail("help") {
                 assertOutputContains("Could not get unknown property 'customSourceFilesExtensions' for source set 'main' ")
             }

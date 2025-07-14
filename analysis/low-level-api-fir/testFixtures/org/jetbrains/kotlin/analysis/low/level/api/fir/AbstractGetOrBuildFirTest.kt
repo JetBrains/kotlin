@@ -212,7 +212,6 @@ abstract class AbstractInterruptingGetOrBuildFirTest : AbstractGetOrBuildFirTest
                     block()
                     throw IllegalStateException("Analysis should be interrupted")
                 } catch (_: AnalysisInterruptedException) {
-                    null
                 }
             }
             return null
