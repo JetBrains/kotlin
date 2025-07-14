@@ -217,6 +217,19 @@ val tags = buildString {
         append("&($inputTags)")
     }
 }
+
+open class NativeTestCommandLineArgumentProvider @Inject constructor(
+    objectFactory: ObjectFactory,
+) : CommandLineArgumentProvider {
+    @get:InputFiles
+    @get:PathSensitive(PathSensitivity.NONE)
+    val atomicFuNativeKlib: ConfigurableFileCollection = objectFactory.fileCollection()
+
+    override fun asArguments() = buildList {
+        add("-DatomicfuNative.classpath=${atomicFuNativeKlib.asPath}")
+    }
+}
+
 val nativeTest = nativeTest(
     taskName = "nativeTest",
     tag = tags,
@@ -225,10 +238,9 @@ val nativeTest = nativeTest(
     customTestDependencies = listOf(atomicfuNativeKlib),
     compilerPluginDependencies = listOf(atomicfuCompilerPluginForTests)
 ) {
-    val localAtomicfuNativeKlib: FileCollection = atomicfuNativeKlib
-    doFirst {
-        systemProperty("atomicfuNative.classpath", localAtomicfuNativeKlib.asPath)
-    }
+    jvmArgumentProviders.add(objects.newInstance<NativeTestCommandLineArgumentProvider>().apply {
+        atomicFuNativeKlib.from(atomicfuNativeKlib)
+    })
 
     // To workaround KTI-2421, we make these tests run on JDK 11 instead of the project-default JDK 8.
     // Kotlin test infra uses reflection to access JDK internals.
