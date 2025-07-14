@@ -17,7 +17,7 @@ dependencies {
     testFixturesApi(project(":kotlin-assignment-compiler-plugin.cli"))
     testFixturesImplementation(project(":kotlin-scripting-jvm-host-unshaded"))
 
-    testFixturesApi(projectTests(":compiler:tests-common-new"))
+    testFixturesApi(testFixtures(project(":compiler:tests-common-new")))
 
     testFixturesImplementation(projectTests(":compiler:tests-common"))
     testFixturesImplementation(libs.junit.jupiter.api)

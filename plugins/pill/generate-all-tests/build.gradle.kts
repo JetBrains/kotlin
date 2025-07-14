@@ -4,24 +4,31 @@ plugins {
     id("jps-compatible")
 }
 
-val depenencyProjects = arrayOf(
+val dependency = arrayOf(
     ":generators",
     ":compiler",
     ":compiler:test-infrastructure",
-    ":compiler:tests-common-new",
     ":compiler:tests-for-compiler-generator",
     ":compiler:tests-java8",
     ":core:descriptors.runtime",
     ":generators:analysis-api-generator"
 )
 
+val dependencyFixturesProjects = arrayOf(
+    ":js:js.tests",
+    ":compiler:tests-common-new",
+)
+
 dependencies {
-    depenencyProjects.forEach {
+    dependency.forEach {
         testApi(projectTests(it))
         jpsTest(project(it, configuration = "jpsTest"))
     }
 
-    testApi(testFixtures(project(":js:js.tests")))
+    dependencyFixturesProjects.forEach {
+        testApi(testFixtures(project(it)))
+        jpsTest(project(it, configuration = "jpsTest"))
+    }
 
     testRuntimeOnly(files("${rootProject.projectDir}/dist/kotlinc/lib/kotlin-reflect.jar"))
     testRuntimeOnly(platform(libs.junit.bom))

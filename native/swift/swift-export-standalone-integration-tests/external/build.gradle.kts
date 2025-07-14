@@ -19,7 +19,7 @@ dependencies {
     testImplementation(projectTests(":analysis:analysis-api-fir"))
     testImplementation(projectTests(":analysis:analysis-test-framework"))
     testImplementation(projectTests(":compiler:tests-common"))
-    testImplementation(projectTests(":compiler:tests-common-new"))
+    testImplementation(testFixtures(project(":compiler:tests-common-new")))
 }
 
 sourceSets {
