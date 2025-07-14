@@ -14,7 +14,7 @@ dependencies {
     testFixturesApi(project(":compiler:test-infrastructure"))
     testFixturesApi(project(":kotlin-util-klib-abi"))
     testFixturesApi(testFixtures(project(":native:native.tests")))
-    testFixturesApi(projectTests(":kotlin-util-klib-abi"))
+    testFixturesApi(testFixtures(project(":kotlin-util-klib-abi")))
 }
 
 sourceSets {
