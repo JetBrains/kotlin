@@ -10,7 +10,7 @@ dependencies {
     api(kotlinStdlib())
     testFixturesApi(projectTests(":generators:test-generator"))
     testFixturesApi(testFixtures(project(":compiler:tests-common")))
-    testFixturesApi(projectTests(":compiler:tests-integration"))
+    testFixturesApi(testFixtures(project(":compiler:tests-integration")))
 
     testFixturesCompileOnly(intellijCore())
     testRuntimeOnly(intellijCore())

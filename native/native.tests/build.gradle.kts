@@ -13,7 +13,7 @@ dependencies {
     testFixturesApi(commonDependency("org.jetbrains.teamcity:serviceMessages"))
     testFixturesApi(project(":kotlin-compiler-runner-unshaded"))
     testFixturesApi(testFixtures(project(":compiler:tests-common")))
-    testFixturesApi(projectTests(":compiler:tests-integration"))
+    testFixturesApi(testFixtures(project(":compiler:tests-integration")))
     testFixturesApi(testFixtures(project(":compiler:tests-common-new")))
     testFixturesApi(testFixtures(project(":compiler:test-infrastructure")))
     testFixturesApi(project(":native:kotlin-native-utils"))
