@@ -51,7 +51,7 @@ dependencies {
     testCompileOnly(toolsJarApi())
     testRuntimeOnly(toolsJar())
     testImplementation(projectTests(":compiler:tests-common"))
-    testImplementation(projectTests(":compiler:fir:analysis-tests:legacy-fir-tests"))
+    testImplementation(testFixtures(project(":compiler:fir:analysis-tests:legacy-fir-tests")))
     testImplementation(projectTests(":analysis:analysis-test-framework"))
     testImplementation(projectTests(":analysis:analysis-api-impl-base"))
     testImplementation(projectTests(":compiler:fir:raw-fir:psi2fir"))

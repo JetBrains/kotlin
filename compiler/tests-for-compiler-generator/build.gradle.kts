@@ -17,7 +17,7 @@ dependencies {
     testImplementation(projectTests(":compiler:fir:raw-fir:psi2fir"))
     testImplementation(projectTests(":compiler:fir:raw-fir:light-tree2fir"))
     testImplementation(projectTests(":compiler:fir:fir2ir"))
-    testImplementation(projectTests(":compiler:fir:analysis-tests:legacy-fir-tests"))
+    testImplementation(testFixtures(project(":compiler:fir:analysis-tests:legacy-fir-tests")))
     testImplementation(testFixtures(project(":js:js.tests")))
     testImplementation(projectTests(":generators:test-generator"))
 }
