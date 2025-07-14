@@ -110,8 +110,19 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
                 parameter.type.kotlinToJsAdapterIfNeeded(isReturn = false)
             }
         }
+        val isAdapterNull: Boolean
+        val signature = function.returnType.classifierOrNull?.signature
+        if (signature != null) {
+            isAdapterNull = signature.toString().contains("JsStringRef")
+        } else {
+            isAdapterNull = false
+        }
+
         val resultAdapter =
-            function.returnType.jsToKotlinAdapterIfNeeded(isReturn = true)
+            if (isAdapterNull)
+                null
+            else
+                function.returnType.jsToKotlinAdapterIfNeeded(isReturn = true)
 
         if (resultAdapter == null && valueParametersAdapters.all { it == null })
             return null
