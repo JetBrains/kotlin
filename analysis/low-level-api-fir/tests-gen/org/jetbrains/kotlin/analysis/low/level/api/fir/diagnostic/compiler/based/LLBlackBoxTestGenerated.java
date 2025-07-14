@@ -52656,6 +52656,18 @@ public class LLBlackBoxTestGenerated extends AbstractLLBlackBoxTest {
       }
 
       @Test
+      @TestMetadata("contextParameters.kt")
+      public void testContextParameters() {
+        runTest("compiler/testData/codegen/box/reflection/call/contextParameters.kt");
+      }
+
+      @Test
+      @TestMetadata("contextParametersSuspend.kt")
+      public void testContextParametersSuspend() {
+        runTest("compiler/testData/codegen/box/reflection/call/contextParametersSuspend.kt");
+      }
+
+      @Test
       @TestMetadata("disallowNullValueForNotNullField.kt")
       public void testDisallowNullValueForNotNullField() {
         runTest("compiler/testData/codegen/box/reflection/call/disallowNullValueForNotNullField.kt");
@@ -53281,6 +53293,18 @@ public class LLBlackBoxTestGenerated extends AbstractLLBlackBoxTest {
       @TestMetadata("companionObject.kt")
       public void testCompanionObject() {
         runTest("compiler/testData/codegen/box/reflection/callBy/companionObject.kt");
+      }
+
+      @Test
+      @TestMetadata("contextParameters.kt")
+      public void testContextParameters() {
+        runTest("compiler/testData/codegen/box/reflection/callBy/contextParameters.kt");
+      }
+
+      @Test
+      @TestMetadata("contextParametersSuspend.kt")
+      public void testContextParametersSuspend() {
+        runTest("compiler/testData/codegen/box/reflection/callBy/contextParametersSuspend.kt");
       }
 
       @Test
@@ -55517,6 +55541,12 @@ public class LLBlackBoxTestGenerated extends AbstractLLBlackBoxTest {
       @TestMetadata("callPrivatePropertyFromGetProperties.kt")
       public void testCallPrivatePropertyFromGetProperties() {
         runTest("compiler/testData/codegen/box/reflection/properties/callPrivatePropertyFromGetProperties.kt");
+      }
+
+      @Test
+      @TestMetadata("contextParametersGet.kt")
+      public void testContextParametersGet() {
+        runTest("compiler/testData/codegen/box/reflection/properties/contextParametersGet.kt");
       }
 
       @Test
