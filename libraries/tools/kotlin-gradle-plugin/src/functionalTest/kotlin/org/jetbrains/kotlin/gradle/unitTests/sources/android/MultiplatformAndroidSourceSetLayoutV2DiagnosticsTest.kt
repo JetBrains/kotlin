@@ -16,7 +16,10 @@ import org.jetbrains.kotlin.gradle.plugin.diagnostics.kotlinToolingDiagnosticsCo
 import org.jetbrains.kotlin.gradle.plugin.sources.android.findAndroidSourceSet
 import org.jetbrains.kotlin.gradle.plugin.sources.android.multiplatformAndroidSourceSetLayoutV2
 import org.jetbrains.kotlin.gradle.util.*
+import org.jetbrains.kotlin.util.assertThrows
 import org.junit.Test
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 class MultiplatformAndroidSourceSetLayoutV2DiagnosticsTest {
 
@@ -101,5 +104,34 @@ class MultiplatformAndroidSourceSetLayoutV2DiagnosticsTest {
         project.evaluate()
         project.checkCreatedSourceSets()
         project.checkDiagnostics("v1LayoutStyleSourceDirUsage")
+    }
+
+    @Test
+    fun `KT-78993 - MultiplatformLayoutV2AndroidStyleSourceDirUsageChecker materializes lazy provider on plugin application`() {
+        var isSrcDirProviderMaterialized = false
+        val project = buildMinimalAndroidMultiplatformProject {
+            pluginManager.withPlugin("org.jetbrains.kotlin.multiplatform") {
+                pluginManager.withPlugin("com.android.library") {
+                    project.multiplatformExtension.sourceSets.all {
+                        it.kotlin.srcDir(
+                            project.provider {
+                                isSrcDirProviderMaterialized = true
+                                project.configurations.getByName(
+                                    project.multiplatformExtension.sourceSets.getByName("commonMain").implementationConfigurationName
+                                ).allDependencies
+                                project.files()
+                            }
+                        )
+                    }
+                }
+            }
+        }
+        assertTrue(isSrcDirProviderMaterialized, "Provider is materialized by MultiplatformLayoutV2AndroidStyleSourceDirUsageChecker")
+        assertThrows<java.lang.IllegalStateException> {
+            project.multiplatformExtension.dependencies {
+                implementation.add("foo:bar")
+            }
+        }
+        project.evaluate()
     }
 }
