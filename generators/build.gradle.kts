@@ -72,7 +72,7 @@ dependencies {
     testApi(projectTests(":kotlin-dataframe-compiler-plugin"))
     testImplementation(projectTests(":analysis:analysis-api-impl-base"))
     testImplementation(projectTests(":analysis:analysis-test-framework"))
-    testApi(projectTests(":plugins:plugin-sandbox"))
+    testApi(testFixtures(project(":plugins:plugin-sandbox")))
     testApi(projectTests(":plugins:plugin-sandbox:plugin-sandbox-ic-test"))
     testApi(projectTests(":plugins:plugins-interactions-testing"))
     testApi(projectTests(":generators:test-generator"))
