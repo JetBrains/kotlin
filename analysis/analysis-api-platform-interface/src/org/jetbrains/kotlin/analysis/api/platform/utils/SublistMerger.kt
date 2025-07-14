@@ -27,8 +27,8 @@ public class SublistMerger<A : Any>(
         this.remainingElements = remainingElements
     }
 
-    public inline fun <reified R : A> merge(isTarget: (R) -> Boolean, create: (List<R>) -> A?) {
-        val (specificElements, remainingElements) = this.remainingElements.partition { it is R && isTarget(it) }
+    public inline fun <reified R : A> merge(isApplicable: (R) -> Boolean, create: (List<R>) -> A?) {
+        val (specificElements, remainingElements) = this.remainingElements.partition { it is R && isApplicable(it) }
 
         @Suppress("UNCHECKED_CAST")
         destination.addIfNotNull(create(specificElements as List<R>))

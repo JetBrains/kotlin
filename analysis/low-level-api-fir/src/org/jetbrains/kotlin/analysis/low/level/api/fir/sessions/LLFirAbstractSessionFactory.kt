@@ -737,10 +737,9 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
             // have multiple symbol providers associated with the same module. Combined symbol providers require each `KaModule` to be
             // unique.
             merge<LLKotlinSymbolProvider>(
-                { it is LLKotlinSourceSymbolProvider || it is LLKotlinStubBasedLibrarySymbolProvider },
-            ) { providers ->
-                LLCombinedKotlinSymbolProvider.merge(session, project, providers)
-            }
+                isApplicable = { it is LLKotlinSourceSymbolProvider || it is LLKotlinStubBasedLibrarySymbolProvider },
+                create = { providers -> LLCombinedKotlinSymbolProvider.merge(session, project, providers) },
+            )
             merge<LLFirJavaSymbolProvider> { LLCombinedJavaSymbolProvider.merge(session, project, it) }
             merge<FirExtensionSyntheticFunctionInterfaceProvider> { LLCombinedSyntheticFunctionSymbolProvider.merge(session, it) }
         }
