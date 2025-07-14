@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrDelegatingConstructorCallImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetEnumValueImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrGetValueImpl
+import org.jetbrains.kotlin.ir.expressions.impl.IrReturnImpl
 import org.jetbrains.kotlin.ir.expressions.impl.fromSymbolOwner
 import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.util.DeepCopyIrTreeWithSymbols
@@ -157,36 +158,29 @@ class VersionOverloadsLowering(val context: LoweringContext) : ClassLoweringPass
 
         wrapperIrFunction.body = when (original) {
             is IrConstructor -> irFactory.createBlockBody(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, listOf(call))
-            is IrSimpleFunction -> irFactory.createExpressionBody(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET, call)
+            else -> irFactory.createBlockBody(SYNTHETIC_OFFSET, SYNTHETIC_OFFSET) {
+                statements += IrReturnImpl(
+                    SYNTHETIC_OFFSET, SYNTHETIC_OFFSET,
+                    wrapperIrFunction.returnType,
+                    wrapperIrFunction.symbol,
+                    call
+                )
+            }
         }
 
         return wrapperIrFunction
     }
 
     private fun IrFactory.generateWrapperHeader(original: IrFunction, includedParams: BooleanArray): IrFunction {
-        return when (original) {
-            is IrConstructor -> {
-                buildConstructor {
-                    setSourceRange(original)
-                    origin = IrDeclarationOrigin.VERSION_OVERLOAD_WRAPPER
-                    name = original.name
-                    visibility = original.visibility
-                    returnType = original.returnType
-                    isInline = original.isInline
-                    containerSource = original.containerSource
-                }
-            }
-            is IrSimpleFunction -> buildFun {
-                setSourceRange(original)
-                origin = IrDeclarationOrigin.VERSION_OVERLOAD_WRAPPER
-                name = original.name
-                visibility = original.visibility
-                modality = original.modality
-                returnType = original.returnType
-                isInline = original.isInline
-                isSuspend = original.isSuspend
-                containerSource = original.containerSource
-            }
+        val builder = when (original) {
+            is IrConstructor -> ::buildConstructor
+            else -> ::buildFun
+        }
+        return builder {
+            updateFrom(original)
+            name = original.name
+            origin = IrDeclarationOrigin.VERSION_OVERLOAD_WRAPPER
+            returnType = original.returnType
         }.apply {
             parent = original.parent
             setOverloadAnnotationsWith(original)
