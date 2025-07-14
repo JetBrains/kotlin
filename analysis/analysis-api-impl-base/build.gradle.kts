@@ -31,7 +31,7 @@ dependencies {
     testFixturesImplementation(testFixtures(project(":plugins:plugin-sandbox")))
     testFixturesImplementation(testFixtures(project(":compiler:tests-common-new")))
     testFixturesImplementation(project(":analysis:symbol-light-classes"))
-    testFixturesImplementation(projectTests(":analysis:decompiled:decompiler-to-file-stubs"))
+    testFixturesImplementation(testFixtures(project(":analysis:decompiled:decompiler-to-file-stubs")))
     testFixturesImplementation(project(":analysis:decompiled:decompiler-to-file-stubs"))
     testFixturesImplementation(project(":analysis:decompiled:light-classes-for-decompiled"))
     testFixturesImplementation(project(":analysis:decompiled:decompiler-native"))
