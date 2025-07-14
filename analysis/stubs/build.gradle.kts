@@ -9,7 +9,7 @@ dependencies {
     implementation(intellijCore())
 
     testImplementation(projectTests(":compiler:tests-common"))
-    testImplementation(projectTests(":compiler:tests-common-new"))
+    testImplementation(testFixtures(project(":compiler:tests-common-new")))
     testImplementation(projectTests(":analysis:analysis-test-framework"))
     testImplementation(projectTests(":analysis:analysis-api-impl-base"))
     testImplementation(projectTests(":analysis:low-level-api-fir"))

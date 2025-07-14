@@ -7,6 +7,7 @@ import org.gradle.api.Task
 import org.gradle.api.artifacts.ConfigurablePublishArtifact
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.ConfigurationContainer
+import org.gradle.api.artifacts.ModuleDependency
 import org.gradle.api.artifacts.PublishArtifact
 import org.gradle.api.artifacts.component.ProjectComponentIdentifier
 import org.gradle.api.component.AdhocComponentWithVariants
@@ -327,12 +328,12 @@ fun Project.publishJarsForIde(projects: List<String>, libraryDependencies: List<
     }
 }
 
-fun Project.publishTestJarsForIde(projectNames: List<String>) {
+fun Project.publishTestJarsForIde(projectNames: List<String>, projectWithFixturesNames: List<String> = emptyList()) {
     idePluginDependency {
         // Compiler test infrastructure should not affect test running in IDE.
         // If required, the components should be registered on the IDE plugin side.
         val excludedPaths = listOf("junit-platform.properties", "META-INF/services/**/*")
-        publishTestJar(projectNames, excludedPaths)
+        publishTestJar(projectNames, projectWithFixturesNames, excludedPaths)
     }
     configurations.all {
         // Don't allow `ideaIC` from compiler to leak into Kotlin plugin modules. Compiler and
@@ -342,6 +343,9 @@ fun Project.publishTestJarsForIde(projectNames: List<String>) {
     dependencies {
         for (projectName in projectNames) {
             jpsLikeJarDependency(projectTests(projectName), JpsDepScope.COMPILE, exported = true)
+        }
+        for (projectName in projectWithFixturesNames) {
+            jpsLikeJarDependency(testFixtures(project(projectName)), JpsDepScope.COMPILE, exported = true)
         }
     }
 }
@@ -391,7 +395,7 @@ fun Project.publishProjectJars(projects: List<String>, libraryDependencies: List
     javadocJar()
 }
 
-fun Project.publishTestJar(projects: List<String>, excludedPaths: List<String>) {
+fun Project.publishTestJar(projects: List<String>, projectWithFixturesNames: List<String>, excludedPaths: List<String>) {
     apply<JavaPlugin>()
 
     val fatJarContents by configurations.creating
@@ -399,6 +403,10 @@ fun Project.publishTestJar(projects: List<String>, excludedPaths: List<String>) 
     dependencies {
         for (projectName in projects) {
             fatJarContents(project(projectName, configuration = "tests-jar")) { isTransitive = false }
+        }
+
+        for (projectName in projectWithFixturesNames) {
+            fatJarContents(testFixtures(project(projectName)) as ModuleDependency) { isTransitive = false }
         }
     }
 

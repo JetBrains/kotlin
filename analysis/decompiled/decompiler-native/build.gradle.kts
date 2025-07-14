@@ -32,7 +32,7 @@ dependencies {
     testImplementation(libs.junit4)
     testCompileOnly(libs.junit.jupiter.api) // the annotations are misused and have no effect
     testImplementation(projectTests(":compiler:tests-common"))
-    testImplementation(projectTests(":compiler:tests-common-new"))
+    testImplementation(testFixtures(project(":compiler:tests-common-new")))
     testImplementation(projectTests(":analysis:decompiled:decompiler-to-file-stubs"))
 }
 

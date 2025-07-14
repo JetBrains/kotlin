@@ -8,7 +8,7 @@ dependencies {
     testApi(platform(libs.junit.bom))
     testImplementation(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
-    testImplementation(projectTests(":compiler:tests-common-new"))
+    testImplementation(testFixtures(project(":compiler:tests-common-new")))
 }
 
 val defaultSnapshotVersion: String by extra

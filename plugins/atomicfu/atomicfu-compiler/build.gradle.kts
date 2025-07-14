@@ -86,7 +86,7 @@ dependencies {
     testFixturesApi(projectTests(":compiler:test-infrastructure"))
     testFixturesApi(projectTests(":compiler:test-infrastructure-utils"))
     testFixturesApi(projectTests(":compiler:tests-compiler-utils"))
-    testFixturesApi(projectTests(":compiler:tests-common-new"))
+    testFixturesApi(testFixtures(project(":compiler:tests-common-new")))
     testFixturesImplementation(projectTests(":generators:test-generator"))
     testFixturesApi(project(":plugins:plugin-sandbox"))
     testFixturesApi(project(":compiler:incremental-compilation-impl"))
@@ -111,7 +111,7 @@ dependencies {
 
     testFixturesImplementation(commonDependency("commons-lang:commons-lang"))
     testFixturesApi(projectTests(":compiler:tests-common"))
-    testFixturesApi(projectTests(":compiler:tests-common-new"))
+    testFixturesApi(testFixtures(project(":compiler:tests-common-new")))
     testFixturesApi(projectTests(":compiler:test-infrastructure"))
     testCompileOnly("org.jetbrains.kotlinx:atomicfu:0.25.0")
 
