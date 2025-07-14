@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.util.isNullable
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
+import org.jetbrains.kotlin.name.FqName
 
 
 class WasmTypeOperatorLowering(val context: WasmBackendContext) : FileLoweringPass {
@@ -41,6 +42,7 @@ class WasmBaseTypeOperatorTransformer(val context: WasmBackendContext) : IrEleme
     private val builtIns = context.irBuiltIns
     private val jsToKotlinAnyAdapter get() = symbols.jsRelatedSymbols.jsInteropAdapters.jsToKotlinAnyAdapter
     private val kotlinToJsAnyAdapter get() = symbols.jsRelatedSymbols.jsInteropAdapters.kotlinToJsAnyAdapter
+    private val wasmCharArrayFqName = FqName("kotlin.wasm.internal.WasmCharArray")
 
     private lateinit var builder: DeclarationIrBuilder
 
@@ -284,7 +286,7 @@ class WasmBaseTypeOperatorTransformer(val context: WasmBackendContext) : IrEleme
 
     private fun lowerCast(
         expression: IrTypeOperatorCall,
-        isSafe: Boolean
+        isSafe: Boolean,
     ): IrExpression {
         val toType = expression.typeOperand
         val fromType = expression.argument.type
@@ -318,12 +320,35 @@ class WasmBaseTypeOperatorTransformer(val context: WasmBackendContext) : IrEleme
         }
     }
 
-    private fun lowerImplicitCast(expression: IrTypeOperatorCall): IrExpression =
-        narrowType(
-            fromType = expression.argument.type,
-            toType = expression.typeOperand,
-            value = expression.argument
-        )
+    private fun isTypeParameterCastsToRegularType(expression: IrExpression, toType: IrType): Boolean {
+        if (toType.isNullableAny()) return false
+        if (toType.isTypeParameter()) return false
+
+        val argumentType = when (expression) {
+            is IrCall -> expression.symbol.owner.returnType
+            is IrGetField -> expression.symbol.owner.type
+            else -> expression.type
+        }
+        return argumentType.isTypeParameter()
+    }
+
+    private fun lowerImplicitCast(expression: IrTypeOperatorCall): IrExpression {
+        return if (
+            expression.typeOperand.classFqName != wasmCharArrayFqName &&
+            isTypeParameterCastsToRegularType(expression.argument, expression.typeOperand)
+        ) {
+            lowerCast(
+                expression = expression,
+                isSafe = false
+            )
+        } else {
+            narrowType(
+                fromType = expression.argument.type,
+                toType = expression.typeOperand,
+                value = expression.argument
+            )
+        }
+    }
 
     private fun generateTypeCheckWithTypeParameter(argument: IrExpression, toType: IrType): IrExpression {
         val typeParameter = toType.classifierOrNull?.owner as? IrTypeParameter
