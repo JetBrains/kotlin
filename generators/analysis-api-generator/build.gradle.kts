@@ -20,7 +20,7 @@ dependencies {
     testImplementation(testFixtures(project(":analysis:analysis-api-standalone")))
     testImplementation(testFixtures(project(":analysis:analysis-api-impl-base")))
     testImplementation(testFixtures(project(":analysis:decompiled:decompiler-to-file-stubs")))
-    testImplementation(projectTests(":analysis:decompiled:decompiler-to-psi"))
+    testImplementation(testFixtures(project(":analysis:decompiled:decompiler-to-psi")))
     testImplementation(projectTests(":analysis:stubs"))
     testImplementation(projectTests(":analysis:symbol-light-classes"))
     testImplementation(testFixtures(project(":analysis:decompiled:decompiler-native")))
