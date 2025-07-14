@@ -47,3 +47,9 @@ internal fun FirSymbolProvider.getClassLikeSymbolMatchingPsi(classId: ClassId, d
         symbol.hasPsi(declaration)
     }
 }
+
+internal fun FirSymbolProvider.getAllClassLikeSymbolsByClassIdOrSingle(classId: ClassId): List<FirClassLikeSymbol<*>> =
+    when (this) {
+        is LLMultiClassLikeSymbolProvider -> getAllClassLikeSymbolsByClassId(classId)
+        else -> listOfNotNull(getClassLikeSymbolByClassId(classId))
+    }

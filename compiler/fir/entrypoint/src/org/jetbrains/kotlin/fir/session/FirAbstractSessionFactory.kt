@@ -245,6 +245,7 @@ abstract class FirAbstractSessionFactory<LIBRARY_CONTEXT, SOURCE_CONTEXT> {
                 configuration.enumWhenTracker,
                 configuration.importTracker
             )
+            registerCliCompilerOnlyResolveComponents()
             registerSourceSessionComponents(context)
 
             val kotlinScopeProvider = createKotlinScopeProviderForSourceSession(moduleData, languageVersionSettings)
