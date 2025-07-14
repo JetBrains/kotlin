@@ -15,7 +15,7 @@ dependencies {
     testFixturesApi(projectTests(":compiler:tests-common"))
     testFixturesApi(projectTests(":compiler:tests-integration"))
     testFixturesApi(testFixtures(project(":compiler:tests-common-new")))
-    testFixturesApi(projectTests(":compiler:test-infrastructure"))
+    testFixturesApi(testFixtures(project(":compiler:test-infrastructure")))
     testFixturesApi(project(":native:kotlin-native-utils"))
     testFixturesApi(project(":native:executors"))
 

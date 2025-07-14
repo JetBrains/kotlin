@@ -40,7 +40,7 @@ dependencies {
     testFixturesApi(kotlinTest())
 
     testFixturesApi(testFixtures(project(":compiler:tests-common-new")))
-    testFixturesApi(projectTests(":compiler:test-infrastructure"))
+    testFixturesApi(testFixtures(project(":compiler:test-infrastructure")))
     testFixturesApi(projectTests(":compiler:test-infrastructure-utils"))
 
     // FIR dependencies

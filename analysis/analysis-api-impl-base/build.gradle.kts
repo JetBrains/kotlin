@@ -27,7 +27,7 @@ dependencies {
     testImplementation(project(":analysis:analysis-api-standalone:analysis-api-standalone-base"))
     testImplementation(projectTests(":compiler:tests-common"))
     testApi(projectTests(":compiler:test-infrastructure-utils"))
-    testApi(projectTests(":compiler:test-infrastructure"))
+    testApi(testFixtures(project(":compiler:test-infrastructure")))
     testImplementation(testFixtures(project(":plugins:plugin-sandbox")))
     testImplementation(testFixtures(project(":compiler:tests-common-new")))
     testImplementation(project(":analysis:symbol-light-classes"))

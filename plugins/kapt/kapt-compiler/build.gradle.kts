@@ -33,7 +33,7 @@ dependencies {
     testFixturesApi(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
     testFixturesApi(testFixtures(project(":compiler:tests-common-new")))
-    testFixturesApi(projectTests(":compiler:test-infrastructure"))
+    testFixturesApi(testFixtures(project(":compiler:test-infrastructure")))
     testFixturesApi(projectTests(":compiler:test-infrastructure-utils"))
 
     testFixturesApi(project(":kotlin-annotation-processing-base"))

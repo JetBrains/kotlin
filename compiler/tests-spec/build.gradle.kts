@@ -8,7 +8,7 @@ plugins {
 dependencies {
     testApi(projectTests(":compiler"))
 
-    testImplementation(projectTests(":compiler:test-infrastructure"))
+    testImplementation(testFixtures(project(":compiler:test-infrastructure")))
     testImplementation(testFixtures(project(":compiler:tests-common-new")))
 
     testApi(commonDependency("com.google.code.gson:gson"))

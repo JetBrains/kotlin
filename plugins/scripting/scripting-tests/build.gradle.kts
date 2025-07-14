@@ -10,7 +10,7 @@ val scriptingTestDefinition by configurations.creating
 dependencies {
     testFixturesApi(project(":kotlin-scripting-jvm"))
     testFixturesApi(project(":kotlin-scripting-compiler-impl"))
-    testFixturesApi(projectTests(":compiler:test-infrastructure"))
+    testFixturesApi(testFixtures(project(":compiler:test-infrastructure")))
     testFixturesApi(projectTests(":compiler:test-infrastructure-utils"))
     testFixturesApi(projectTests(":compiler:tests-compiler-utils"))
     testFixturesApi(testFixtures(project(":compiler:tests-common-new")))
