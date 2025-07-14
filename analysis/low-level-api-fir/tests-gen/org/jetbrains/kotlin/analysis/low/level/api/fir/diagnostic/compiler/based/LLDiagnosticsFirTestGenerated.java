@@ -2024,6 +2024,12 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
       }
 
       @Test
+      @TestMetadata("receiverShadowed2.kt")
+      public void testReceiverShadowed2() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/receiverShadowed2.kt");
+      }
+
+      @Test
       @TestMetadata("receiverShadowedSubtype.kt")
       public void testReceiverShadowedSubtype() {
         runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/receiverShadowedSubtype.kt");

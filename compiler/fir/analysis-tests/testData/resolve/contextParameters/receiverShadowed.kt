@@ -1,5 +1,3 @@
-import kotlin.plus
-
 // RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: +ContextParameters
 // ISSUE: KT-78866

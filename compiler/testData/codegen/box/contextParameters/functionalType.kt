@@ -12,7 +12,6 @@ class K {
 context(o: O)
 fun <T> K.f(g: context(O) K.(Param) -> T) = g(o, this, Param())
 
-@Suppress("RECEIVER_SHADOWED_BY_CONTEXT_PARAMETER")
 fun box() = with(O()) {
-    K().f { o + k }
+    K().f { (@Suppress("RECEIVER_SHADOWED_BY_CONTEXT_PARAMETER") o) + k }
 }
