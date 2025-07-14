@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
-import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirNameConflictsTracker
+import org.jetbrains.kotlin.fir.analysis.checkers.declaration.FirNameConflictsTrackerImpl
 import org.jetbrains.kotlin.fir.analysis.checkers.declaration.isEffectivelyFinal
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.*
@@ -412,7 +412,7 @@ fun FirDeclarationCollector<FirBasedSymbol<*>>.collectTopLevel(
             }
 
             // session.nameConflictsTracker will contain more classifiers with the same name.
-            session.nameConflictsTracker?.let { it as? FirNameConflictsTracker }
+            session.nameConflictsTracker?.let { it as? FirNameConflictsTrackerImpl }
                 ?.redeclaredClassifiers?.get(ClassId(file.packageFqName, declarationName))?.forEach {
                     collectFromClassifierSource(conflictingSymbol = it.classifier, conflictingFile = it.file)
                 }
