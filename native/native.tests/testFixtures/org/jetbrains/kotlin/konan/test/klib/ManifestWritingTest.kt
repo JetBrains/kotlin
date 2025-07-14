@@ -13,12 +13,9 @@ import org.jetbrains.kotlin.konan.properties.propertyList
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.test.blackbox.AbstractNativeSimpleTest
 import org.jetbrains.kotlin.konan.test.blackbox.compileLibrary
-import org.jetbrains.kotlin.konan.test.blackbox.support.ClassLevelProperty
-import org.jetbrains.kotlin.konan.test.blackbox.support.EnforcedProperty
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationArtifact
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationResult
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationResult.Companion.assertSuccess
-import org.jetbrains.kotlin.konan.test.blackbox.support.group.ClassicPipeline
 import org.jetbrains.kotlin.konan.test.blackbox.targets
 import org.jetbrains.kotlin.konan.test.blackbox.toOutput
 import org.jetbrains.kotlin.konan.test.klib.KlibCrossCompilationOutputTest.Companion.DEPRECATED_K1_LANGUAGE_VERSIONS_DIAGNOSTIC_REGEX
@@ -201,12 +198,4 @@ abstract class ManifestWritingTest : AbstractNativeSimpleTest() {
                 require(it.exists()) { "Missing stub.kt-file, looked at: ${it.absolutePath}" }
             }
     }
-}
-
-@ClassicPipeline()
-@EnforcedProperty(ClassLevelProperty.COMPILER_OUTPUT_INTERCEPTOR, "NONE")
-class ClassicFEManifestWritingTest : ManifestWritingTest()
-
-@EnforcedProperty(ClassLevelProperty.COMPILER_OUTPUT_INTERCEPTOR, "NONE")
-class FirFEManifestWritingTest : ManifestWritingTest() {
 }
