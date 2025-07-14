@@ -25,7 +25,7 @@ dependencies {
     testFixturesApi(projectTests(":compiler:test-infrastructure-utils"))
     testFixturesApi(projectTests(":compiler:tests-compiler-utils"))
     testFixturesApi(testFixtures(project(":compiler:tests-common-new")))
-    testFixturesApi(projectTests(":compiler:fir:analysis-tests"))
+    testFixturesApi(testFixtures(project(":compiler:fir:analysis-tests")))
 
     testApi(platform(libs.junit.bom))
     testImplementation(libs.junit.jupiter.api)
