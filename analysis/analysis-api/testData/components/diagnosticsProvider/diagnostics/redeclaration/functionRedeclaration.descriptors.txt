@@ -1,23 +1,23 @@
 Diagnostics from foo1.kt:
-  for PSI element of type KtNamedFunction at (4,1) - (5,33)
-    CONFLICTING_OVERLOADS      text ranges: [(90,117)]
-      PSI: KtNamedFunction at (4,1) - (5,33)
-  for PSI element of type KtParameter at (5,9-19)
-    UNUSED_PARAMETER      text ranges: [(98,103)]
-      PSI: KtParameter at (5,9-19)
+  for PSI element of type KtNamedFunction at (7,1) - (8,33)
+    CONFLICTING_OVERLOADS      text ranges: [(128,155)]
+      PSI: KtNamedFunction at (7,1) - (8,33)
+  for PSI element of type KtParameter at (8,9-19)
+    UNUSED_PARAMETER      text ranges: [(136,141)]
+      PSI: KtParameter at (8,9-19)
 Diagnostics from foo2.kt:
-  for PSI element of type KtParameter at (8,9-22)
-    UNUSED_PARAMETER      text ranges: [(31,36)]
-      PSI: KtParameter at (8,9-22)
-Diagnostics from foo3.kt:
-  for PSI element of type KtNamedFunction at (10,1) - (11,33)
-    CONFLICTING_OVERLOADS      text ranges: [(26,53)]
-      PSI: KtNamedFunction at (10,1) - (11,33)
-  for PSI element of type KtParameter at (11,9-19)
+  for PSI element of type KtParameter at (11,9-22)
     UNUSED_PARAMETER      text ranges: [(34,39)]
-      PSI: KtParameter at (11,9-19)
+      PSI: KtParameter at (11,9-22)
+Diagnostics from foo3.kt:
+  for PSI element of type KtNamedFunction at (13,1) - (14,33)
+    CONFLICTING_OVERLOADS      text ranges: [(29,56)]
+      PSI: KtNamedFunction at (13,1) - (14,33)
+  for PSI element of type KtParameter at (14,9-19)
+    UNUSED_PARAMETER      text ranges: [(37,42)]
+      PSI: KtParameter at (14,9-19)
 Diagnostics from foo4.kt:
 Diagnostics from foo5.kt:
-  for PSI element of type KtNamedFunction at (16,1) - (17,37)
-    CONFLICTING_OVERLOADS      text ranges: [(32,56)]
-      PSI: KtNamedFunction at (16,1) - (17,37)
+  for PSI element of type KtNamedFunction at (19,1) - (20,37)
+    CONFLICTING_OVERLOADS      text ranges: [(35,59)]
+      PSI: KtNamedFunction at (19,1) - (20,37)

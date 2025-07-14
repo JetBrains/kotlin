@@ -1,14 +1,14 @@
 Diagnostics from A1.kt:
-  for PSI element of type KtClass at (8,1) - (9,8)
-    CLASSIFIER_REDECLARATION      text ranges: [(28,29)]
-      PSI: KtClass at (8,1) - (9,8)
-  for PSI element of type KtClass at (8,1) - (9,8)
-    CLASSIFIER_REDECLARATION      text ranges: [(28,29)]
-      PSI: KtClass at (8,1) - (9,8)
+  for PSI element of type KtClass at (11,1) - (12,8)
+    CLASSIFIER_REDECLARATION      text ranges: [(31,32)]
+      PSI: KtClass at (11,1) - (12,8)
+  for PSI element of type KtClass at (11,1) - (12,8)
+    CLASSIFIER_REDECLARATION      text ranges: [(31,32)]
+      PSI: KtClass at (11,1) - (12,8)
 Diagnostics from A2.kt:
-  for PSI element of type KtClass at (11,1) - (12,8)
-    CLASSIFIER_REDECLARATION      text ranges: [(31,32)]
-      PSI: KtClass at (11,1) - (12,8)
-  for PSI element of type KtClass at (11,1) - (12,8)
-    CLASSIFIER_REDECLARATION      text ranges: [(31,32)]
-      PSI: KtClass at (11,1) - (12,8)
+  for PSI element of type KtClass at (14,1) - (15,8)
+    CLASSIFIER_REDECLARATION      text ranges: [(34,35)]
+      PSI: KtClass at (14,1) - (15,8)
+  for PSI element of type KtClass at (14,1) - (15,8)
+    CLASSIFIER_REDECLARATION      text ranges: [(34,35)]
+      PSI: KtClass at (14,1) - (15,8)
