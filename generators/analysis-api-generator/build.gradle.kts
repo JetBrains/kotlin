@@ -16,7 +16,7 @@ dependencies {
     testImplementation(projectTests(":compiler:tests-spec"))
     testImplementation(projectTests(":analysis:low-level-api-fir"))
     testImplementation(projectTests(":analysis:analysis-api-fir"))
-    testImplementation(projectTests(":analysis:analysis-api-fe10"))
+    testImplementation(testFixtures(project(":analysis:analysis-api-fe10")))
     testImplementation(projectTests(":analysis:analysis-api-standalone"))
     testImplementation(projectTests(":analysis:analysis-api-impl-base"))
     testImplementation(projectTests(":analysis:decompiled:decompiler-to-file-stubs"))
