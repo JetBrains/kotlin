@@ -2,22 +2,23 @@
 plugins {
     kotlin("jvm")
     id("jps-compatible")
+    id("java-test-fixtures")
 }
 
 val scriptingTestDefinition by configurations.creating
 
 dependencies {
-    testApi(project(":kotlin-scripting-jvm"))
-    testApi(project(":kotlin-scripting-compiler-impl"))
-    testApi(projectTests(":compiler:test-infrastructure"))
-    testApi(projectTests(":compiler:test-infrastructure-utils"))
-    testApi(projectTests(":compiler:tests-compiler-utils"))
-    testApi(projectTests(":compiler:tests-common-new"))
-    testApi(project(":compiler:fir:tree"))
+    testFixturesApi(project(":kotlin-scripting-jvm"))
+    testFixturesApi(project(":kotlin-scripting-compiler-impl"))
+    testFixturesApi(projectTests(":compiler:test-infrastructure"))
+    testFixturesApi(projectTests(":compiler:test-infrastructure-utils"))
+    testFixturesApi(projectTests(":compiler:tests-compiler-utils"))
+    testFixturesApi(projectTests(":compiler:tests-common-new"))
+    testFixturesApi(project(":compiler:fir:tree"))
 
-    testApi(platform(libs.junit.bom))
+    testFixturesApi(platform(libs.junit.bom))
     testCompileOnly(project(":compiler:plugin-api"))
-    testImplementation(libs.junit.jupiter.api)
+    testFixturesApi(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
     testRuntimeOnly(commonDependency("org.codehaus.woodstox:stax2-api"))
     testRuntimeOnly(commonDependency("com.fasterxml:aalto-xml"))
@@ -31,6 +32,7 @@ sourceSets {
         projectDefault()
         generatedTestDir()
     }
+    "testFixtures" { projectDefault() }
 }
 
 
