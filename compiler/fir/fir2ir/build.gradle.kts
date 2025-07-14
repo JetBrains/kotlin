@@ -1,8 +1,7 @@
-import org.jetbrains.kotlin.ideaExt.idea
-
 plugins {
     kotlin("jvm")
     id("jps-compatible")
+    id("java-test-fixtures")
 }
 
 dependencies {
@@ -22,11 +21,11 @@ dependencies {
     compileOnly(intellijCore())
 
     testCompileOnly(kotlinTest("junit"))
-    testApi(projectTests(":compiler:test-infrastructure"))
-    testApi(projectTests(":compiler:test-infrastructure-utils"))
-    testApi(projectTests(":compiler:tests-compiler-utils"))
-    testApi(testFixtures(project(":compiler:tests-common-new")))
-    testApi(projectTests(":compiler:fir:analysis-tests"))
+    testFixturesApi(projectTests(":compiler:test-infrastructure"))
+    testFixturesApi(projectTests(":compiler:test-infrastructure-utils"))
+    testFixturesApi(projectTests(":compiler:tests-compiler-utils"))
+    testFixturesApi(testFixtures(project(":compiler:tests-common-new")))
+    testFixturesApi(projectTests(":compiler:fir:analysis-tests"))
 
     testApi(platform(libs.junit.bom))
     testImplementation(libs.junit.jupiter.api)
@@ -55,10 +54,8 @@ optInToObsoleteDescriptorBasedAPI()
 
 sourceSets {
     "main" { projectDefault() }
-    "test" {
-        projectDefault()
-        generatedTestDir()
-    }
+    "test" { generatedTestDir() }
+    "testFixtures" { projectDefault() }
 }
 
 fun Test.configure(configureJUnit: JUnitPlatformOptions.() -> Unit = {}) {
