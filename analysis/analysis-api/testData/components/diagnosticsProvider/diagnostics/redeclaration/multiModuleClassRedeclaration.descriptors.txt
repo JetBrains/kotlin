@@ -1,9 +1,9 @@
 Diagnostics from A1.kt:
-  for PSI element of type KtClass at (4,1) - (6,8)
-    PACKAGE_OR_CLASSIFIER_REDECLARATION      text ranges: [(108,109)]
-      PSI: KtClass at (4,1) - (6,8)
+  for PSI element of type KtClass at (7,1) - (9,8)
+    PACKAGE_OR_CLASSIFIER_REDECLARATION      text ranges: [(146,147)]
+      PSI: KtClass at (7,1) - (9,8)
 Diagnostics from A2.kt:
-  for PSI element of type KtClass at (8,1) - (9,8)
-    PACKAGE_OR_CLASSIFIER_REDECLARATION      text ranges: [(28,29)]
-      PSI: KtClass at (8,1) - (9,8)
+  for PSI element of type KtClass at (11,1) - (12,8)
+    PACKAGE_OR_CLASSIFIER_REDECLARATION      text ranges: [(31,32)]
+      PSI: KtClass at (11,1) - (12,8)
 Diagnostics from A3.kt:
