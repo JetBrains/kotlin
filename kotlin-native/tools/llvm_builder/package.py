@@ -161,6 +161,12 @@ def construct_cmake_flags(
                 '-DCOMPILER_RT_ENABLE_WATCHOS=OFF',
                 '-DCOMPILER_RT_ENABLE_TVOS=OFF',
             ])
+        else:
+            # Append arguments needed for hot-reload if we're targeting a darwin platform
+            cmake_args.extend([
+                '-DLLVM_ENABLE_RTTI=ON',
+                '-DLLVM_BUILD_KOTLIN_JIT_DYLIB=ON',
+            ])
 
     if install_path is not None:
         cmake_args.append('-DCMAKE_INSTALL_PREFIX=' + install_path)
