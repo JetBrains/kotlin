@@ -63,7 +63,7 @@ dependencies {
     testApi(testFixtures(project(":kotlin-annotation-processing")))
     testApi(testFixtures(project(":kotlin-allopen-compiler-plugin")))
     testApi(projectTests(":kotlin-noarg-compiler-plugin"))
-    testApi(projectTests(":kotlin-lombok-compiler-plugin"))
+    testApi(testFixtures(project(":kotlin-lombok-compiler-plugin")))
     testApi(projectTests(":kotlin-power-assert-compiler-plugin"))
     testApi(projectTests(":kotlin-sam-with-receiver-compiler-plugin"))
     testApi(testFixtures(project(":kotlin-assignment-compiler-plugin")))

@@ -9,7 +9,7 @@ dependencies {
     testImplementation(testFixtures(project(":kotlin-allopen-compiler-plugin")))
     testImplementation(testFixtures(project(":kotlin-assignment-compiler-plugin")))
     testImplementation(testFixtures(project(":kotlinx-serialization-compiler-plugin")))
-    testImplementation(projectTests(":kotlin-lombok-compiler-plugin"))
+    testImplementation(testFixtures(project(":kotlin-lombok-compiler-plugin")))
     testImplementation(projectTests(":kotlin-noarg-compiler-plugin"))
     testImplementation(projectTests(":plugins:parcelize:parcelize-compiler"))
 
