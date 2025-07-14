@@ -2,17 +2,17 @@
 // FILE: Example.kt
 
 fun test() {
-    val v1 = <!CANNOT_INFER_PARAMETER_TYPE!>doX<!>()
-    <!CANNOT_INFER_PARAMETER_TYPE!>doX<!>().multiply(<!ARGUMENT_TYPE_MISMATCH!>v1<!>)
+    val v1 = <!CANNOT_INFER_PARAMETER_TYPE, CANNOT_INFER_PARAMETER_TYPE!>doX<!>()
+    <!CANNOT_INFER_PARAMETER_TYPE, CANNOT_INFER_PARAMETER_TYPE!>doX<!>().multiply(v1)
 
-    val v2 = doX<String, _>()
-    <!CANNOT_INFER_PARAMETER_TYPE!>doX<!>().multiply(<!ARGUMENT_TYPE_MISMATCH!>v2<!>)
+    val v2 = doX<String, <!CANNOT_INFER_PARAMETER_TYPE!>_<!>>()
+    <!CANNOT_INFER_PARAMETER_TYPE, CANNOT_INFER_PARAMETER_TYPE!>doX<!>().multiply(v2)
 
-    val v3 = doX<<!CANNOT_INFER_PARAMETER_TYPE!>_<!>, _>()
-    <!CANNOT_INFER_PARAMETER_TYPE!>doX<!>().multiply(<!ARGUMENT_TYPE_MISMATCH!>v3<!>)
+    val v3 = doX<<!CANNOT_INFER_PARAMETER_TYPE!>_<!>, <!CANNOT_INFER_PARAMETER_TYPE!>_<!>>()
+    <!CANNOT_INFER_PARAMETER_TYPE, CANNOT_INFER_PARAMETER_TYPE!>doX<!>().multiply(v3)
 
-    val v4 = doX("")
-    <!CANNOT_INFER_PARAMETER_TYPE!>doX<!>().multiply(<!ARGUMENT_TYPE_MISMATCH!>v4<!>)
+    val v4 = <!CANNOT_INFER_PARAMETER_TYPE!>doX<!>("")
+    <!CANNOT_INFER_PARAMETER_TYPE, CANNOT_INFER_PARAMETER_TYPE!>doX<!>().multiply(v4)
 }
 
 fun <T, Q : Foo<T, Q>> doX(): Bar<T, Q> = TODO()
