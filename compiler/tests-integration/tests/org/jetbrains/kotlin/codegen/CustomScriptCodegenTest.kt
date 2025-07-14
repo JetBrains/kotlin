@@ -70,7 +70,8 @@ open class CustomScriptCodegenTest : CodegenTestCase() {
 
         additionalDependencies =
             scriptCompilationClasspathFromContextOrStdlib("tests-common", "kotlin-stdlib") +
-                    File(TestScriptWithReceivers::class.java.protectionDomain.codeSource.location.toURI().path) +
+                    containingDependencyPath<TestScriptWithReceivers>() +
+                    containingDependencyPath<TestScriptWithAnnotatedBaseClass>() +
                     with(PathUtil.kotlinPathsForDistDirectory) {
                         arrayOf(
                             KOTLIN_SCRIPTING_COMPILER_PLUGIN_JAR, KOTLIN_SCRIPTING_COMPILER_IMPL_JAR,
@@ -99,6 +100,10 @@ open class CustomScriptCodegenTest : CodegenTestCase() {
             testRootDisposable, configuration, EnvironmentConfigFiles.JVM_CONFIG_FILES
         )
     }
+}
+
+private inline fun <reified T> containingDependencyPath(): File? {
+    return File(T::class.java.protectionDomain.codeSource.location.toURI().path)
 }
 
 @Suppress("UNCHECKED_CAST")

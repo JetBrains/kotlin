@@ -12,7 +12,7 @@ dependencies {
     testImplementation(testFixtures(project(":compiler:tests-common")))
     testImplementation(testFixtures(project(":compiler:test-infrastructure")))
     testImplementation(testFixtures(project(":compiler:tests-common-new")))
-    testImplementation(projectTests(":compiler:tests-integration"))
+    testImplementation(testFixtures(project(":compiler:tests-integration")))
     testImplementation(projectTests(":compiler"))
     testImplementation(testFixtures(project(":compiler:fir:raw-fir:psi2fir")))
     testImplementation(testFixtures(project(":compiler:fir:raw-fir:light-tree2fir")))
