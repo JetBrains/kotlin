@@ -38,7 +38,7 @@ dependencies {
     testFixturesApi(project(":compiler:cli"))
     testFixturesApi(project(":kotlinx-serialization-compiler-plugin.cli"))
 
-    testFixturesApi(projectTests(":compiler:test-infrastructure"))
+    testFixturesApi(testFixtures(project(":compiler:test-infrastructure")))
     testFixturesApi(projectTests(":compiler:test-infrastructure-utils"))
     testFixturesApi(projectTests(":compiler:tests-compiler-utils"))
     testFixturesApi(testFixtures(project(":compiler:tests-common-new")))

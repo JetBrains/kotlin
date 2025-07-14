@@ -43,7 +43,7 @@ dependencies {
     api(intellijCore())
 
     testApi(projectTests(":compiler:test-infrastructure-utils"))
-    testApi(projectTests(":compiler:test-infrastructure"))
+    testApi(testFixtures(project(":compiler:test-infrastructure")))
     testImplementation(testFixtures(project(":compiler:tests-common-new")))
 
     testImplementation(libs.opentest4j)

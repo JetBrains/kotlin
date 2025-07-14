@@ -21,7 +21,7 @@ dependencies {
     compileOnly(intellijCore())
 
     testCompileOnly(kotlinTest("junit"))
-    testFixturesApi(projectTests(":compiler:test-infrastructure"))
+    testFixturesApi(testFixtures(project(":compiler:test-infrastructure")))
     testFixturesApi(projectTests(":compiler:test-infrastructure-utils"))
     testFixturesApi(projectTests(":compiler:tests-compiler-utils"))
     testFixturesApi(testFixtures(project(":compiler:tests-common-new")))

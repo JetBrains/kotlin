@@ -10,7 +10,7 @@ dependencies {
     testImplementation(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
     testImplementation(projectTests(":compiler:tests-common"))
-    testImplementation(projectTests(":compiler:test-infrastructure"))
+    testImplementation(testFixtures(project(":compiler:test-infrastructure")))
     testImplementation(testFixtures(project(":compiler:tests-common-new")))
     testImplementation(projectTests(":compiler:tests-integration"))
     testImplementation(projectTests(":compiler"))
