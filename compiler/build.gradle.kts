@@ -19,7 +19,7 @@ dependencies {
     testImplementation(libs.junit4)
     testApi(projectTests(":compiler:tests-common"))
     testApi(testFixtures(project(":compiler:tests-common-new")))
-    testApi(projectTests(":compiler:fir:raw-fir:psi2fir"))
+    testApi(testFixtures(project(":compiler:fir:raw-fir:psi2fir")))
     testApi(testFixtures(project(":compiler:fir:raw-fir:light-tree2fir")))
     testApi(testFixtures(project(":compiler:fir:analysis-tests:legacy-fir-tests")))
     testApi(projectTests(":generators:test-generator"))
