@@ -2,9 +2,6 @@
 // WASM_MUTE_REASON: UNSUPPORTED_JS_INTEROP
 // KJS_WITH_FULL_RUNTIME
 
-// IGNORE_BACKEND: JS_IR_ES6
-// ^ Date constructor doesn't support BigInt values
-
 // Test that APIs expecting Number behave correctly with Long values.
 
 import kotlin.js.Date
