@@ -32,7 +32,7 @@ dependencies {
     testCompileOnly(libs.junit.jupiter.api) // the annotations are misused and have no effect
     testFixturesApi(testFixtures(project(":compiler:tests-common")))
     testFixturesApi(testFixtures(project(":compiler:tests-common-new")))
-    testFixturesApi(projectTests(":analysis:decompiled:decompiler-to-file-stubs"))
+    testFixturesApi(testFixtures(project(":analysis:decompiled:decompiler-to-file-stubs")))
 }
 
 optInToK1Deprecation()
