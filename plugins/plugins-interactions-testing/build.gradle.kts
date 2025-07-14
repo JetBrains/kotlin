@@ -6,7 +6,7 @@ plugins {
 }
 
 dependencies {
-    testImplementation(projectTests(":kotlin-allopen-compiler-plugin"))
+    testImplementation(testFixtures(project(":kotlin-allopen-compiler-plugin")))
     testImplementation(projectTests(":kotlin-assignment-compiler-plugin"))
     testImplementation(testFixtures(project(":kotlinx-serialization-compiler-plugin")))
     testImplementation(projectTests(":kotlin-lombok-compiler-plugin"))
