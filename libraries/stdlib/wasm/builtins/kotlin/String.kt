@@ -34,7 +34,8 @@ public actual class String internal @WasmPrimitiveConstructor constructor(
     /**
      * Returns the character of this string at the specified [index].
      *
-     * In Kotlin/Wasm, a trap will be raised if the [index] is out of bounds of this string,
+     * In Kotlin/Wasm, a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap)
+     * will be raised if the [index] is out of bounds of this string,
      * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
      * With `-Xwasm-enable-array-range-checks` flag, [IndexOutOfBoundsException] will be thrown.
      */

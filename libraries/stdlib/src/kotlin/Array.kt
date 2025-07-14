@@ -39,7 +39,7 @@ public expect class Array<T> {
      * ```
      *
      * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException] except in Kotlin/JS
-     * where the behavior is unspecified, and in Kotlin/Wasm where a trap will be raised instead,
+     * where the behavior is unspecified, and in Kotlin/Wasm where a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) will be raised instead,
      * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
      */
     public operator fun get(index: Int): T
@@ -53,7 +53,7 @@ public expect class Array<T> {
      * ```
      *
      * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException] except in Kotlin/JS
-     * where the behavior is unspecified, and in Kotlin/Wasm where a trap will be raised instead,
+     * where the behavior is unspecified, and in Kotlin/Wasm where a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) will be raised instead,
      * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
      */
     public operator fun set(index: Int, value: T): Unit

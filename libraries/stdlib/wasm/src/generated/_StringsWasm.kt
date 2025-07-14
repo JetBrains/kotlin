@@ -12,8 +12,8 @@ package kotlin.text
 
 
 /**
- * Returns a character at the given [index] or either raises a trap (by default), or throws [IndexOutOfBoundsException]
- * if the [index] is out of bounds of this char sequence,
+ * Returns a character at the given [index] or either raises a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) (by default),
+ * or throws [IndexOutOfBoundsException] if the [index] is out of bounds of this char sequence,
  * depending on `-Xwasm-enable-array-range-checks` compiler flag presence when linking an executable.
  * 
  * @sample samples.collections.Collections.Elements.elementAt

@@ -223,7 +223,7 @@ class GenerateCommonArrays(writer: PrintWriter, primitiveArrays: Boolean) : Gene
             generateRuntimeTypeAppendix = { type -> appendDoc("When targeting the JVM, instances of this class are represented as `$type`.") },
             generateOutOfBoundsBehaviorNote = {
                 appendDoc("If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException] except in Kotlin/JS")
-                appendDoc("where the behavior is unspecified, and in Kotlin/Wasm where a trap will be raised instead,")
+                appendDoc("where the behavior is unspecified, and in Kotlin/Wasm where a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) will be raised instead,")
                 appendDoc("unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.")
             }
         ) {
@@ -289,7 +289,7 @@ class GenerateWasmArrays(writer: PrintWriter, primitiveArrays: Boolean) : Genera
     }
 
     override fun arrayBuilder(kind: PrimitiveType?): ArrayBuilder = object : ArrayBuilder(kind, generateOutOfBoundsBehaviorNote = {
-        appendDoc("If the [index] is out of bounds of this array, a trap will be raised")
+        appendDoc("If the [index] is out of bounds of this array, a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) will be raised")
         appendDoc("unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.")
         appendDoc("With the `-Xwasm-enable-array-range-checks` an [IndexOutOfBoundsException] will be thrown.")
     }) {

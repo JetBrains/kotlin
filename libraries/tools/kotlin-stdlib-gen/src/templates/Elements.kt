@@ -298,11 +298,12 @@ object Elements : TemplateGroupBase() {
                     append("Returns ${f.element.prefixWithArticle()} at the given [index] ")
                     if (target == KotlinTarget.Common) {
                         appendLine("or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this ${f.collection},")
-                        appendLine("expect in Kotlin/Wasm, where a trap will be raised, unless `-Xwasm-enable-array-range-checks` compiler flag")
+                        appendLine("expect in Kotlin/Wasm, where a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap)")
+                        appendLine("will be raised, unless `-Xwasm-enable-array-range-checks` compiler flag")
                         append("was specified when linking an executable.")
                     } else if (target == KotlinTarget.WASM) {
-                        appendLine("or either raises a trap (by default), or throws [IndexOutOfBoundsException] ")
-                        appendLine("if the [index] is out of bounds of this ${f.collection}, ")
+                        appendLine("or either raises a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) (by default),")
+                        appendLine("or throws [IndexOutOfBoundsException] if the [index] is out of bounds of this ${f.collection}, ")
                         append("depending on `-Xwasm-enable-array-range-checks` compiler flag presence when linking an executable.")
                     } else {
                         append("or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this ${f.collection}.")
@@ -1152,7 +1153,8 @@ object Elements : TemplateGroupBase() {
                     Returns ${getOrdinal(n)} *element* from the ${f.collection}.
             
                     If $condition, throws an [IndexOutOfBoundsException] except in Kotlin/JS 
-                    where the behavior is unspecified, and in Kotlin/Wasm where a trap will be raised instead,
+                    where the behavior is unspecified, and in Kotlin/Wasm where 
+                    a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) will be raised instead,
                     unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
                     """
                 }
