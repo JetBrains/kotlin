@@ -8,6 +8,7 @@ plugins {
     kotlin("jvm")
     id("jps-compatible")
     id("d8-configuration")
+    id("java-test-fixtures")
 }
 
 val jsoIrRuntimeForTests by configurations.creating {
@@ -24,20 +25,20 @@ dependencies {
     embedded(project(":plugins:js-plain-objects:compiler-plugin:js-plain-objects.backend")) { isTransitive = false }
     embedded(project(":plugins:js-plain-objects:compiler-plugin:js-plain-objects.cli")) { isTransitive = false }
 
-    testApi(project(":compiler:backend"))
-    testApi(project(":compiler:cli"))
-    testApi(project(":plugins:js-plain-objects:compiler-plugin:js-plain-objects.cli"))
+    testFixturesApi(project(":compiler:backend"))
+    testFixturesApi(project(":compiler:cli"))
+    testFixturesApi(project(":plugins:js-plain-objects:compiler-plugin:js-plain-objects.cli"))
 
-    testApi(projectTests(":compiler:test-infrastructure"))
-    testApi(projectTests(":compiler:test-infrastructure-utils"))
-    testApi(projectTests(":compiler:tests-compiler-utils"))
-    testApi(projectTests(":compiler:tests-common-new"))
+    testFixturesApi(projectTests(":compiler:test-infrastructure"))
+    testFixturesApi(projectTests(":compiler:test-infrastructure-utils"))
+    testFixturesApi(projectTests(":compiler:tests-compiler-utils"))
+    testFixturesApi(projectTests(":compiler:tests-common-new"))
 
-    testImplementation(projectTests(":js:js.tests"))
-    testImplementation(projectTests(":generators:test-generator"))
+    testFixturesApi(projectTests(":js:js.tests"))
+    testFixturesImplementation(projectTests(":generators:test-generator"))
 
-    testApi(platform(libs.junit.bom))
-    testImplementation(libs.junit.jupiter.api)
+    testFixturesApi(platform(libs.junit.bom))
+    testFixturesImplementation(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
 
     if (!project.kotlinBuildProperties.isInJpsBuildIdeaSync) {
@@ -60,10 +61,8 @@ optInToExperimentalCompilerApi()
 
 sourceSets {
     "main" { none() }
-    "test" {
-        projectDefault()
-        generatedTestDir()
-    }
+    "test" { generatedTestDir() }
+    "testFixtures" { projectDefault() }
 }
 
 publish {
