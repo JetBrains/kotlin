@@ -10,6 +10,8 @@ package kotlin.wasm.internal
 import kotlin.wasm.internal.reftypes.anyref
 import kotlin.wasm.unsafe.withScopedMemoryAllocator
 import kotlin.wasm.unsafe.UnsafeWasmMemoryApi
+import kotlin.wasm.JsBuiltin
+import kotlin.wasm.internal.WasmCharArray
 
 internal typealias ExternalInterfaceType = JsAny
 
@@ -190,6 +192,67 @@ internal fun importStringFromWasm(address: Int, length: Int, prefix: ExternalInt
     """)
 }
 
+//@WasmImport("wasm:js-string", "fromCharCodeArray")
+@Suppress("WRONG_JS_INTEROP_TYPE")
+@JsBuiltin(
+    "js-string",
+    "fromCharCodeArray",
+    """export function fromCharCodeArray(array, start, end) {
+    const module = new WebAssembly.Module(new Uint8Array([
+        0,   97,  115, 109, 1,   0,   0,   0,   1,   21,  4,   94,  119, 1,   96,
+        1,   111, 1,   127, 96,  2,   111, 127, 1,   127, 96,  3,   111, 127, 127,
+        0,   3,   4,   3,   1,   2,   3,   7,   33,  3,   9,   97,  114, 114, 97,
+        121, 95,  108, 101, 110, 0,   0,   7,   97,  49,  54,  95,  103, 101, 116,
+        0,   1,   7,   97,  49,  54,  95,  115, 101, 116, 0,   2,   10,  45,  3,
+        11,  0,   32,  0,   251, 26,  251, 22,  106, 251, 15,  11,  14,  0,   32,
+        0,   251, 26,  251, 22,  0,   32,  1,   251, 13,  0,   11,  16,  0,   32,
+        0,   251, 26,  251, 22,  0,   32,  1,   32,  2,   251, 14,  0,   11,  0,
+        37,  4,   110, 97,  109, 101, 1,   30,  3,   0,   9,   97,  114, 114, 97,
+        121, 95,  108, 101, 110, 1,   7,   97,  49,  54,  95,  103, 101, 116, 2,
+        7,   97,  49,  54,  95,  115, 101, 116
+    ]));
+    const StringPolyfillHelpers = new WebAssembly.Instance(module).exports;
+    start >>>= 0;
+    end >>>= 0;
+    let result = [];
+    for (let i = start; i < end; i++) {
+        result.push(String.fromCharCode(StringPolyfillHelpers.a16_get(array, i)));
+    }
+    return result.join("");
+}
+"""
+)
+internal external fun fromCharCodeArray(array: WasmCharArray, start: Int, end: Int): JsStringRef
+
+@Suppress("WRONG_JS_INTEROP_TYPE")
+@JsBuiltin(
+    "js-string",
+    "intoCharCodeArray",
+    """export function intoCharCodeArray(s, array, start) {
+    const module = new WebAssembly.Module(new Uint8Array([
+        0,   97,  115, 109, 1,   0,   0,   0,   1,   21,  4,   94,  119, 1,   96,
+        1,   111, 1,   127, 96,  2,   111, 127, 1,   127, 96,  3,   111, 127, 127,
+        0,   3,   4,   3,   1,   2,   3,   7,   33,  3,   9,   97,  114, 114, 97,
+        121, 95,  108, 101, 110, 0,   0,   7,   97,  49,  54,  95,  103, 101, 116,
+        0,   1,   7,   97,  49,  54,  95,  115, 101, 116, 0,   2,   10,  45,  3,
+        11,  0,   32,  0,   251, 26,  251, 22,  106, 251, 15,  11,  14,  0,   32,
+        0,   251, 26,  251, 22,  0,   32,  1,   251, 13,  0,   11,  16,  0,   32,
+        0,   251, 26,  251, 22,  0,   32,  1,   32,  2,   251, 14,  0,   11,  0,
+        37,  4,   110, 97,  109, 101, 1,   30,  3,   0,   9,   97,  114, 114, 97,
+        121, 95,  108, 101, 110, 1,   7,   97,  49,  54,  95,  103, 101, 116, 2,
+        7,   97,  49,  54,  95,  115, 101, 116
+    ]));
+    const StringPolyfillHelpers = new WebAssembly.Instance(module).exports;
+    start >>>= 0;
+    for (let i = 0; i < s.length; i++) {
+      StringPolyfillHelpers.a16_set(array, start + i, s.charCodeAt(i));
+    }
+    return s.length;
+}
+"""
+)
+internal external fun intoCharCodeArray(string: ExternalInterfaceType, array: WasmCharArray, start: Int): Int
+
 internal fun kotlinToJsStringAdapter(x: String?): JsString? {
     // Using nullable String to represent default value
     // for parameters with default values
@@ -198,23 +261,7 @@ internal fun kotlinToJsStringAdapter(x: String?): JsString? {
 
     val srcArray = x.chars
     val stringLength = srcArray.len()
-    val maxStringLength = STRING_INTEROP_MEM_BUFFER_SIZE / CHAR_SIZE_BYTES
-
-    @OptIn(UnsafeWasmMemoryApi::class)
-    withScopedMemoryAllocator { allocator ->
-        val memBuffer = allocator.allocate(stringLength.coerceAtMost(maxStringLength) * CHAR_SIZE_BYTES).address.toInt()
-
-        var result: ExternalInterfaceType? = null
-        var srcStartIndex = 0
-        while (srcStartIndex < stringLength - maxStringLength) {
-            unsafeWasmCharArrayToRawMemory(srcArray, srcStartIndex, maxStringLength, memBuffer)
-            result = importStringFromWasm(memBuffer, maxStringLength, result)
-            srcStartIndex += maxStringLength
-        }
-
-        unsafeWasmCharArrayToRawMemory(srcArray, srcStartIndex, stringLength - srcStartIndex, memBuffer)
-        return importStringFromWasm(memBuffer, stringLength - srcStartIndex, result)
-    }
+    return fromCharCodeArray(srcArray, 0, stringLength)
 }
 
 internal fun jsCheckIsNullOrUndefinedAdapter(x: ExternalInterfaceType?): ExternalInterfaceType? =
@@ -241,26 +288,7 @@ private const val STRING_INTEROP_MEM_BUFFER_SIZE = 65_536 // 1 page 4KiB
 internal fun jsToKotlinStringAdapter(x: ExternalInterfaceType): String {
     val stringLength = stringLength(x)
     val dstArray = WasmCharArray(stringLength)
-    if (stringLength == 0) {
-        return dstArray.createString()
-    }
-
-    @OptIn(UnsafeWasmMemoryApi::class)
-    withScopedMemoryAllocator { allocator ->
-        val maxStringLength = STRING_INTEROP_MEM_BUFFER_SIZE / CHAR_SIZE_BYTES
-        val memBuffer = allocator.allocate(stringLength.coerceAtMost(maxStringLength) * CHAR_SIZE_BYTES).address.toInt()
-
-        var srcStartIndex = 0
-        while (srcStartIndex < stringLength - maxStringLength) {
-            jsExportStringToWasm(x, srcStartIndex, maxStringLength, memBuffer)
-            unsafeRawMemoryToWasmCharArray(memBuffer, srcStartIndex, maxStringLength, dstArray)
-            srcStartIndex += maxStringLength
-        }
-
-        jsExportStringToWasm(x, srcStartIndex, stringLength - srcStartIndex, memBuffer)
-        unsafeRawMemoryToWasmCharArray(memBuffer, srcStartIndex, stringLength - srcStartIndex, dstArray)
-    }
-
+    intoCharCodeArray(x, dstArray, 0)
     return dstArray.createString()
 }
 
