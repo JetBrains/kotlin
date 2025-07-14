@@ -126,11 +126,9 @@ class MultiplatformAndroidSourceSetLayoutV2DiagnosticsTest {
                 }
             }
         }
-        assertTrue(isSrcDirProviderMaterialized, "Provider is materialized by MultiplatformLayoutV2AndroidStyleSourceDirUsageChecker")
-        assertThrows<java.lang.IllegalStateException> {
-            project.multiplatformExtension.dependencies {
-                implementation.add("foo:bar")
-            }
+        assertFalse(isSrcDirProviderMaterialized, "Provider is not supposed to be materialized at plugin application time")
+        project.multiplatformExtension.dependencies {
+            implementation.add("foo:bar")
         }
         project.evaluate()
     }
