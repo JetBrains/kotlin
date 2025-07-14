@@ -8,7 +8,7 @@ plugins {
 
 dependencies {
     api(kotlinStdlib())
-    testFixturesApi(projectTests(":generators:test-generator"))
+    testFixturesApi(testFixtures(project(":generators:test-generator")))
     testFixturesApi(testFixtures(project(":compiler:tests-common")))
     testFixturesApi(testFixtures(project(":compiler:tests-integration")))
 

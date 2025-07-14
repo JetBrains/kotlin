@@ -22,7 +22,7 @@ dependencies {
     testApi(testFixtures(project(":compiler:fir:raw-fir:psi2fir")))
     testApi(testFixtures(project(":compiler:fir:raw-fir:light-tree2fir")))
     testApi(testFixtures(project(":compiler:fir:analysis-tests:legacy-fir-tests")))
-    testApi(projectTests(":generators:test-generator"))
+    testApi(testFixtures(project(":generators:test-generator")))
     testApi(project(":compiler:ir.tree")) // used for deepCopyWithSymbols call that is removed by proguard from the compiler TODO: make it more straightforward
     testApi(project(":kotlin-scripting-compiler"))
 
