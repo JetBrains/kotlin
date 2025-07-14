@@ -40166,9 +40166,21 @@ public class NativeIrDeserializationWithInlinedFunInKlibTestGenerated extends Ab
       }
 
       @Test
+      @TestMetadata("reifiedTypeArgumentWithIntersectionTypeAsTypeArgumentMultiModule.kt")
+      public void testReifiedTypeArgumentWithIntersectionTypeAsTypeArgumentMultiModule() {
+        runTest("compiler/testData/codegen/box/reified/reifiedTypeArgumentWithIntersectionTypeAsTypeArgumentMultiModule.kt");
+      }
+
+      @Test
       @TestMetadata("reifiedTypeArgumentWithRecursion.kt")
       public void testReifiedTypeArgumentWithRecursion() {
         runTest("compiler/testData/codegen/box/reified/reifiedTypeArgumentWithRecursion.kt");
+      }
+
+      @Test
+      @TestMetadata("reifiedTypeArgumentWithRecursionMultiModule.kt")
+      public void testReifiedTypeArgumentWithRecursionMultiModule() {
+        runTest("compiler/testData/codegen/box/reified/reifiedTypeArgumentWithRecursionMultiModule.kt");
       }
     }
 
