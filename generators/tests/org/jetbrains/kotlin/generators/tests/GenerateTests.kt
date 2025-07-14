@@ -241,42 +241,6 @@ fun main(args: Array<String>) {
             }
         }
 
-        testGroup(
-            "plugins/atomicfu/atomicfu-compiler/tests-gen",
-            "plugins/atomicfu/atomicfu-compiler/testData",
-            testRunnerMethodName = "runTest0"
-        ) {
-            testClass<AbstractAtomicfuJsIrTest> {
-                model(relativeRootPath = "box/", excludeDirs = listOf("context_parameters"))
-            }
-
-            testClass<AbstractAtomicfuJsFirTest> {
-                model("box/")
-            }
-
-            testClass<AbstractAtomicfuJsFirWithInlinedFunInKlibTest> {
-                model("box/")
-            }
-        }
-
-        testGroup(
-            "plugins/atomicfu/atomicfu-compiler/tests-gen",
-            "plugins/atomicfu/atomicfu-compiler/testData",
-            testRunnerMethodName = "runTest0"
-        ) {
-            testClass<AbstractAtomicfuFirCheckerTest> {
-                model("diagnostics/")
-            }
-
-            testClass<AbstractAtomicfuJvmIrTest> {
-                model(relativeRootPath = "box/", excludeDirs = listOf("context_parameters"))
-            }
-
-            testClass<AbstractAtomicfuJvmFirLightTreeTest> {
-                model("box/")
-            }
-        }
-
         testGroup("plugins/allopen/tests-gen", "plugins/allopen/testData") {
             testClass<AbstractIrBytecodeListingTestForAllOpen> {
                 model("bytecodeListing", excludedPattern = excludedFirTestdataPattern)
