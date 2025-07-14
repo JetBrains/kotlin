@@ -116,6 +116,9 @@ object SetOps : TemplateGroupBase() {
             Those elements of the [other] collection that are unique are iterated in the end
             in the order of the [other] collection.
             
+            The returned set uses structural equality (`==`) to distinguish elements, meaning there will be no two
+            structurally equal, but otherwise different elements in it.
+            
             To get a set containing all elements that are contained in both collections use [intersect].
             """
         }
@@ -138,6 +141,9 @@ object SetOps : TemplateGroupBase() {
             Returns a set containing all elements that are contained by both this ${f.collection} and the specified collection.
 
             The returned set preserves the element iteration order of the original ${f.collection}.
+            
+            The returned set uses structural equality (`==`) to distinguish elements, meaning there will be no two
+            structurally equal, but otherwise different elements in it.
             
             To get a set containing all elements that are contained at least in one of these collections use [union].
             """
@@ -181,6 +187,9 @@ object SetOps : TemplateGroupBase() {
             Returns a set containing all elements that are contained by this ${f.collection} and not contained by the specified collection.
 
             The returned set preserves the element iteration order of the original ${f.collection}.
+            
+            The returned set uses structural equality (`==`) to distinguish elements, meaning there will be no two
+            structurally equal, but otherwise different elements in it.
             """
         }
         returns("Set<T>")
