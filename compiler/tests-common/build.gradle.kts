@@ -48,7 +48,7 @@ dependencies {
     testFixturesApi(project(":js:js.frontend"))
     testFixturesApi(project(":native:frontend.native"))
     testFixturesApi(projectTests(":generators:test-generator"))
-    testFixturesApi(projectTests(":compiler:tests-compiler-utils"))
+    testFixturesApi(testFixtures(project(":compiler:tests-compiler-utils")))
     testFixturesApi(kotlinTest())
     testFixturesApi(project(":kotlin-scripting-compiler-impl"))
     testFixturesApi(projectTests(":compiler:test-infrastructure-utils"))
