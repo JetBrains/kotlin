@@ -8,11 +8,14 @@ package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.visibi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.impl.KaDeclarationRendererForDebug
 import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaFileSymbol
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.services.ExpressionMarkerProvider
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
 import org.jetbrains.kotlin.analysis.test.framework.targets.getSingleTestTargetSymbolOfType
+import org.jetbrains.kotlin.analysis.utils.printer.parentOfType
+import org.jetbrains.kotlin.psi.KtDotQualifiedExpression
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtNamedDeclaration
@@ -46,23 +49,29 @@ abstract class AbstractVisibilityCheckerTest : AbstractAnalysisApiBasedTest() {
         val actualText = copyAwareAnalyzeForTest(mainFile) { contextFile ->
             val declarationSymbol = findTargetSymbol(contextFile, testServices.expressionMarkerProvider)
             val useSiteElement = findUseSiteElement(contextFile, testServices.expressionMarkerProvider)
+            val receiverExpression = useSiteElement.parentOfType<KtDotQualifiedExpression>()?.receiverExpression
             val useSiteFileSymbol = contextFile.symbol
-            val visibleByUseSiteVisibilityChecker =
-                createUseSiteVisibilityChecker(useSiteFileSymbol, null, useSiteElement).isVisible(declarationSymbol)
 
-            @Suppress("DEPRECATION")
-            val isVisibleByDeprecatedVisibilityFunction =
-                isVisible(declarationSymbol, useSiteFileSymbol, null, useSiteElement)
+            val resultWithoutReceiver = checkVisibilityAndBuildResult(
+                declarationSymbol,
+                useSiteElement,
+                useSiteFileSymbol,
+                receiverExpression = null,
+                testServices,
+            )
 
-            testServices.assertions.assertEquals(isVisibleByDeprecatedVisibilityFunction, visibleByUseSiteVisibilityChecker) {
-                "createUseSiteVisibilityChecker(..).isVisible(..) returning $visibleByUseSiteVisibilityChecker is inconsistent with isVisible(...) returning $isVisibleByDeprecatedVisibilityFunction"
+            if (receiverExpression == null) {
+                return@copyAwareAnalyzeForTest resultWithoutReceiver
             }
 
-            """
-                Declaration: ${declarationSymbol.render(KaDeclarationRendererForDebug.WITH_QUALIFIED_NAMES)}
-                At usage site: ${useSiteElement.text}
-                Is visible: $visibleByUseSiteVisibilityChecker
-            """.trimIndent()
+            val resultWithReceiver = checkVisibilityAndBuildResult(
+                declarationSymbol,
+                useSiteElement,
+                useSiteFileSymbol,
+                receiverExpression,
+                testServices,
+            )
+            resultWithoutReceiver + "\n\n" + resultWithReceiver
         }
 
         testServices.assertions.assertEqualsToTestOutputFile(actualText)
@@ -77,5 +86,36 @@ abstract class AbstractVisibilityCheckerTest : AbstractAnalysisApiBasedTest() {
         return provider.getBottommostElementOfTypeAtCaretOrNull<KtExpression>(contextFile)
             ?: contextFile.findDescendantOfType<KtNamedDeclaration> { it.name?.lowercase() == USE_SITE_ELEMENT_NAME }
             ?: error("Cannot find use-site element to check visibility at.")
+    }
+
+    private fun KaSession.checkVisibilityAndBuildResult(
+        declarationSymbol: KaDeclarationSymbol,
+        useSiteElement: KtExpression,
+        useSiteFileSymbol: KaFileSymbol,
+        receiverExpression: KtExpression?,
+        testServices: TestServices,
+    ): String {
+        val visibleByUseSiteVisibilityChecker = createUseSiteVisibilityChecker(
+            useSiteFileSymbol,
+            receiverExpression,
+            useSiteElement,
+        ).isVisible(declarationSymbol)
+
+        @Suppress("DEPRECATION")
+        val isVisibleByDeprecatedVisibilityFunction =
+            isVisible(declarationSymbol, useSiteFileSymbol, receiverExpression, useSiteElement)
+
+        testServices.assertions.assertEquals(isVisibleByDeprecatedVisibilityFunction, visibleByUseSiteVisibilityChecker) {
+            val receiverDescription = if (receiverExpression != null) " with receiver" else ""
+            "createUseSiteVisibilityChecker(..).isVisible(..)$receiverDescription returning $visibleByUseSiteVisibilityChecker" +
+                    " is inconsistent with isVisible(...) returning $isVisibleByDeprecatedVisibilityFunction"
+        }
+
+        return """
+            Declaration: ${declarationSymbol.render(KaDeclarationRendererForDebug.WITH_QUALIFIED_NAMES)}
+            At usage site: ${useSiteElement.text}
+            Is visible: $visibleByUseSiteVisibilityChecker
+            Receiver expression: ${receiverExpression?.text}
+        """.trimIndent()
     }
 }

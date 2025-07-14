@@ -1,3 +1,4 @@
 Declaration: abstract fun foo()
 At usage site: println
 Is visible: true
+Receiver expression: null
