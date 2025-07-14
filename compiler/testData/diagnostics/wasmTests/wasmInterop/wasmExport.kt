@@ -1,7 +1,10 @@
 // DIAGNOSTICS: -UNUSED_PARAMETER
 // LANGUAGE: +ContextParameters
 
+@file:OptIn(ExperimentalWasmInteropApi::class)
+
 import kotlin.wasm.WasmExport
+import kotlin.wasm.ExperimentalWasmInteropApi
 
 <!WASM_EXPORT_ON_EXTERNAL_DECLARATION!>@WasmExport("a")<!>
 external fun foo0(): Unit

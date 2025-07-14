@@ -1,5 +1,7 @@
 // LANGUAGE: +ContextParameters
 
+@file:OptIn(ExperimentalWasmInteropApi::class)
+
 import kotlin.wasm.WasmImport
 
 <!WASI_EXTERNAL_FUNCTION_WITHOUT_IMPORT!>external fun foo(): Int<!>
@@ -14,9 +16,9 @@ import kotlin.wasm.WasmImport
 
 external <!WASI_EXTERNAL_NOT_TOP_LEVEL_FUNCTION!>object AC<!>
 
-@<!OPT_IN_USAGE!>WasmImport<!>("a", "b")
+@WasmImport("a", "b")
 external fun importedFoo(): Int
 
 <!EXTERNAL_DECLARATION_WITH_CONTEXT_PARAMETERS!>context(x: Int)
-@<!OPT_IN_USAGE!>WasmImport<!>("a", "b")
+@WasmImport("a", "b")
 external fun importedBoo(): Int<!>

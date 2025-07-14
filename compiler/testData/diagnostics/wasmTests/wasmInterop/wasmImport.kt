@@ -1,6 +1,9 @@
 // LANGUAGE: +ContextParameters
 
+@file:OptIn(ExperimentalWasmInteropApi::class)
+
 import kotlin.wasm.WasmImport
+import kotlin.wasm.ExperimentalWasmInteropApi
 
 @WasmImport("a", "b")
 external fun foo0(): Unit
