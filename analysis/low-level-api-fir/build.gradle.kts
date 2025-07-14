@@ -52,7 +52,7 @@ dependencies {
     testRuntimeOnly(toolsJar())
     testImplementation(testFixtures(project(":compiler:tests-common")))
     testImplementation(testFixtures(project(":compiler:fir:analysis-tests:legacy-fir-tests")))
-    testImplementation(projectTests(":analysis:analysis-test-framework"))
+    testImplementation(testFixtures(project(":analysis:analysis-test-framework")))
     testImplementation(testFixtures(project(":analysis:analysis-api-impl-base")))
     testImplementation(testFixtures(project(":compiler:fir:raw-fir:psi2fir")))
     testImplementation(kotlinTest("junit"))

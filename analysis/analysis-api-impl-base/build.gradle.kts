@@ -35,7 +35,7 @@ dependencies {
     testFixturesImplementation(project(":analysis:decompiled:decompiler-to-file-stubs"))
     testFixturesImplementation(project(":analysis:decompiled:light-classes-for-decompiled"))
     testFixturesImplementation(project(":analysis:decompiled:decompiler-native"))
-    testFixturesImplementation(projectTests(":analysis:analysis-test-framework"))
+    testFixturesImplementation(testFixtures(project(":analysis:analysis-test-framework")))
     testFixturesImplementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
     testFixturesCompileOnly(toolsJarApi())
 }

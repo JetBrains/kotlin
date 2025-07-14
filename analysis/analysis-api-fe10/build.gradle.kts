@@ -31,7 +31,7 @@ dependencies {
     testFixturesApi(testFixtures(project(":compiler:test-infrastructure")))
     testFixturesImplementation(testFixtures(project(":compiler:tests-common-new")))
     testFixturesApi(testFixtures(project(":analysis:analysis-api-impl-base")))
-    testFixturesApi(projectTests(":analysis:analysis-test-framework"))
+    testFixturesApi(testFixtures(project(":analysis:analysis-test-framework")))
 
 }
 

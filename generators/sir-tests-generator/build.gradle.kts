@@ -11,7 +11,7 @@ dependencies {
     implementation(projectTests(":native:swift:swift-export-ide"))
     implementation(testFixtures(project(":generators:test-generator")))
     implementation(projectTests(":generators:analysis-api-generator"))
-    implementation(projectTests(":analysis:analysis-test-framework"))
+    implementation(testFixtures(project(":analysis:analysis-test-framework")))
     implementation(testFixtures(project(":analysis:analysis-api-impl-base")))
 
     implementation(testFixtures(project(":analysis:analysis-api-fir")))
