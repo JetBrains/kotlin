@@ -11,6 +11,7 @@ plugins {
     id("d8-configuration")
     id("binaryen-configuration")
     id("nodejs-configuration")
+    id("java-test-fixtures")
 }
 
 node {
@@ -102,12 +103,12 @@ val wasmEdge by configurations.creating {
 }
 
 dependencies {
-    testApi(projectTests(":compiler:tests-common"))
-    testApi(projectTests(":compiler:tests-common-new"))
-    testImplementation(testFixtures(project(":js:js.tests")))
-    testApi(intellijCore())
-    testApi(platform(libs.junit.bom))
-    testImplementation(libs.junit.jupiter.api)
+    testFixturesApi(projectTests(":compiler:tests-common"))
+    testFixturesApi(projectTests(":compiler:tests-common-new"))
+    testFixturesApi(testFixtures(project(":js:js.tests")))
+    testFixturesApi(intellijCore())
+    testFixturesApi(platform(libs.junit.bom))
+    testFixturesApi(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
 
     jsShell("org.mozilla:jsshell:$jsShellVersion:$jsShellSuffix@zip")
@@ -132,6 +133,7 @@ sourceSets {
         projectDefault()
         generatedTestDir()
     }
+    "testFixtures" { projectDefault() }
 }
 
 fun Test.setupWasmStdlib(target: String) {
