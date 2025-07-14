@@ -74,7 +74,7 @@ dependencies {
     testImplementation(testFixtures(project(":analysis:analysis-test-framework")))
     testApi(testFixtures(project(":plugins:plugin-sandbox")))
     testApi(testFixtures(project(":plugins:plugin-sandbox:plugin-sandbox-ic-test")))
-    testApi(projectTests(":plugins:plugins-interactions-testing"))
+    testApi(testFixtures(project(":plugins:plugins-interactions-testing")))
     testApi(testFixtures(project(":generators:test-generator")))
     testApi(projectTests(":generators:analysis-api-generator"))
     testApi(testFixtures(project(":plugins:scripting:scripting-tests")))

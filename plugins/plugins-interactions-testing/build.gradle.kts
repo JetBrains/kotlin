@@ -3,18 +3,19 @@ description = "Kotlin SamWithReceiver Compiler Plugin"
 plugins {
     kotlin("jvm")
     id("jps-compatible")
+    id("java-test-fixtures")
 }
 
 dependencies {
-    testImplementation(testFixtures(project(":kotlin-allopen-compiler-plugin")))
-    testImplementation(testFixtures(project(":kotlin-assignment-compiler-plugin")))
-    testImplementation(testFixtures(project(":kotlinx-serialization-compiler-plugin")))
-    testImplementation(testFixtures(project(":kotlin-lombok-compiler-plugin")))
-    testImplementation(testFixtures(project(":kotlin-noarg-compiler-plugin")))
-    testImplementation(testFixtures(project(":plugins:parcelize:parcelize-compiler")))
+    testFixturesApi(testFixtures(project(":kotlin-allopen-compiler-plugin")))
+    testFixturesApi(testFixtures(project(":kotlin-assignment-compiler-plugin")))
+    testFixturesApi(testFixtures(project(":kotlinx-serialization-compiler-plugin")))
+    testFixturesApi(testFixtures(project(":kotlin-lombok-compiler-plugin")))
+    testFixturesApi(testFixtures(project(":kotlin-noarg-compiler-plugin")))
+    testFixturesApi(testFixtures(project(":plugins:parcelize:parcelize-compiler")))
 
-    testImplementation(platform(libs.junit.bom))
-    testImplementation(libs.junit.jupiter.api)
+    testFixturesApi(platform(libs.junit.bom))
+    testFixturesApi(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
     testRuntimeOnly(libs.junit.vintage.engine)
 
@@ -30,10 +31,8 @@ optInToExperimentalCompilerApi()
 
 sourceSets {
     "main" { none() }
-    "test" {
-        projectDefault()
-        generatedTestDir()
-    }
+    "test" { generatedTestDir() }
+    "testFixtures" { projectDefault() }
 }
 
 runtimeJar()
