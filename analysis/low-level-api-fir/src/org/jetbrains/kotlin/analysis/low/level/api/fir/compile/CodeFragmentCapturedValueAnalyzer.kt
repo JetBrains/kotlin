@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isInline
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.extensions.captureValueInAnalyze
 import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.fir.references.FirThisReference
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
@@ -189,7 +190,7 @@ private class CodeFragmentCapturedValueVisitor(
                                 }
                             }
                         }
-                        is FirReceiverParameterSymbol -> {
+                        is FirReceiverParameterSymbol if symbol.captureValueInAnalyze -> {
                             val receiverParameter = symbol.fir
                             val labelName = element.labelName
                                 ?: (receiverParameter.containingDeclarationSymbol as? FirAnonymousFunctionSymbol)?.label?.name
