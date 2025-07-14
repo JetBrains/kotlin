@@ -22,7 +22,8 @@ import org.jetbrains.kotlin.ir.backend.js.ic.CacheUpdater
 import org.jetbrains.kotlin.ir.backend.js.ic.JsExecutableProducer
 import org.jetbrains.kotlin.ir.backend.js.ic.JsModuleArtifact
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.CompilationOutputs
-import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.extension
+import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.dtsExtension
+import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.jsExtension
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
 import org.jetbrains.kotlin.js.testOld.V8JsTestChecker
 import org.jetbrains.kotlin.name.FqName
@@ -187,7 +188,7 @@ abstract class JsAbstractInvalidationTest(
             try {
                 V8JsTestChecker.checkWithTestFunctionArgs(
                     files = jsFiles,
-                    testModuleName = "./$mainModuleName${projectInfo.moduleKind.extension}",
+                    testModuleName = "./$mainModuleName${projectInfo.moduleKind.jsExtension}",
                     testPackageName = null,
                     testFunctionName = BOX_FUNCTION_NAME,
                     testFunctionArgs = "$stepId, false",
@@ -203,22 +204,24 @@ abstract class JsAbstractInvalidationTest(
         }
 
         private fun verifyDTS(stepId: Int, testInfo: List<TestStepInfo>) {
+            val dtsFileExtension = projectInfo.moduleKind.dtsExtension
+
             for (info in testInfo) {
                 val moduleName = File(info.modulePath).nameWithoutExtension
                 val expectedDTS = info.expectedDTS ?: continue
                 val dtsFilePath = when (granularity) {
-                    JsGenerationGranularity.PER_FILE -> "$moduleName/${expectedDTS.name.substringBefore('.')}.export.d.ts"
-                    else -> "$moduleName.d.ts"
+                    JsGenerationGranularity.PER_FILE -> "$moduleName/${expectedDTS.name.substringBefore('.')}.export$dtsFileExtension"
+                    else -> "$moduleName$dtsFileExtension"
                 }
 
                 val dtsFile = jsDir.resolve(dtsFilePath)
                 JUnit4Assertions.assertTrue(dtsFile.exists()) {
-                    "Cannot find d.ts (${dtsFile.absolutePath}) file for module ${info.moduleName} at step $stepId"
+                    "Cannot find $dtsFileExtension (${dtsFile.absolutePath}) file for module ${info.moduleName} at step $stepId"
                 }
 
                 val gotDTS = dtsFile.readText()
                 JUnit4Assertions.assertEquals(expectedDTS.content, gotDTS) {
-                    "Mismatched d.ts for module ${info.moduleName} at step $stepId"
+                    "Mismatched $$dtsFileExtension for module ${info.moduleName} at step $stepId"
                 }
             }
         }

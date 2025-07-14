@@ -518,7 +518,7 @@ fun writeCompilationResult(
     }
 
     if (result.dts != null) {
-        File(dir, "$fileNameBase.d.ts").writeText(result.dts)
+        File(dir, "$fileNameBase.d.mts").writeText(result.dts)
     }
 }
 

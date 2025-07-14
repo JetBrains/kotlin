@@ -95,9 +95,9 @@ class JsIrLoweringFacade(
 
         if (JsEnvironmentConfigurator.incrementalEnabled(testServices)) {
             val outputFile = if (firstTimeCompilation) {
-                File(JsEnvironmentConfigurator.getJsModuleArtifactPath(testServices, module.name) + module.kind.extension)
+                File(JsEnvironmentConfigurator.getJsModuleArtifactPath(testServices, module.name) + module.kind.jsExtension)
             } else {
-                File(JsEnvironmentConfigurator.getRecompiledJsModuleArtifactPath(testServices, module.name) + module.kind.extension)
+                File(JsEnvironmentConfigurator.getRecompiledJsModuleArtifactPath(testServices, module.name) + module.kind.jsExtension)
             }
 
             val compiledModule = CompilerResult(
@@ -219,7 +219,7 @@ class JsIrLoweringFacade(
                 ?: error("[${tsFiles.values.joinToString { it.name }}] make different TypeScript")
 
             outputFile
-                .withReplacedExtensionOrNull("_v5${moduleKind.extension}", ".d.ts")!!
+                .withReplacedExtensionOrNull("_v5${moduleKind.jsExtension}", ".d.ts")!!
                 .write(tsDefinitions)
         }
 
@@ -287,7 +287,7 @@ fun String.augmentWithModuleName(moduleName: String): String {
 }
 
 fun String.finalizePath(moduleKind: ModuleKind): String {
-    return plus(moduleKind.extension).minifyIfNeed()
+    return plus(moduleKind.jsExtension).minifyIfNeed()
 }
 
 // D8 ignores Windows settings related to extending of maximum path symbols count

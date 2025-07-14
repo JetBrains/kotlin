@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin.Companion.
 import org.jetbrains.kotlin.gradle.targets.js.npm.tasks.KotlinPackageJsonTask
 import org.jetbrains.kotlin.gradle.targets.js.webTargetVariant
 import org.jetbrains.kotlin.gradle.utils.getFile
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import java.io.Serializable
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsPlugin.Companion.kotlinNodeJsEnvSpec as wasmKotlinNodeJsEnvSpec
 import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNodeJsRootPlugin.Companion.kotlinNodeJsRootExtension as wasmKotlinNodeJsRootExtension
@@ -91,10 +92,20 @@ open class NpmProject(@Transient val compilation: KotlinJsIrCompilation) : Seria
         "${DIST_FOLDER}/$name.$ext"
     }
 
-    val typesFileName: Provider<String> = name
-        .zip(compilation.target.shouldGenerateTypeScriptDefinitions) { name, shouldGenerateTypeScriptDefinitions ->
-            if (shouldGenerateTypeScriptDefinitions) "$name.d.ts" else null
+    private val typesFileExtension = extension
+        .zip(compilation.target.shouldGenerateTypeScriptDefinitions) { extension, shouldGenerateTypeScriptDefinitions ->
+            runIf(shouldGenerateTypeScriptDefinitions) {
+                when (extension) {
+                    "mjs" -> "d.mts"
+                    "js" -> "d.ts"
+                    else -> error("Illegal JS-file extension provided: $extension")
+                }
+            }
         }
+
+    val typesFileName: Provider<String> = name.zip(typesFileExtension) { name, extension ->
+        "$name.$extension"
+    }
 
     val typesFilePath: Provider<String> = typesFileName.map { "$DIST_FOLDER/$it" }
 

@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.js.test.utils
 import com.intellij.openapi.util.text.StringUtil
 import org.jetbrains.kotlin.backend.js.JsGenerationGranularity
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.TranslationMode
-import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.extension
+import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.jsExtension
 import org.jetbrains.kotlin.ir.backend.js.transformers.irToJs.safeModuleName
 import org.jetbrains.kotlin.js.JavaScript
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
@@ -62,10 +62,10 @@ private fun extractJsFiles(
         .filter { it.second.isJsFile || it.second.isMjsFile }
 
     val after = inputJsFiles
-        .filter { (module, inputJsFile) -> inputJsFile.name.endsWith("__after${module.kind.extension}") }
+        .filter { (module, inputJsFile) -> inputJsFile.name.endsWith("__after${module.kind.jsExtension}") }
         .map { (module, inputJsFile) -> copyInputJsFile(module, inputJsFile) }
     val before = inputJsFiles
-        .filterNot { (module, inputJsFile) -> inputJsFile.name.endsWith("__after${module.kind.extension}") }
+        .filterNot { (module, inputJsFile) -> inputJsFile.name.endsWith("__after${module.kind.jsExtension}") }
         .map { (module, inputJsFile) -> copyInputJsFile(module, inputJsFile) }
 
     return before to after
