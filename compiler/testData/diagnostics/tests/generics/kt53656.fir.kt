@@ -12,7 +12,7 @@ fun <E, R : SecuredEntity<E>> SecurityCodeAware<E, R>.secured() : R where E : En
 class Order : Entity<Int>
 class SecuredOrder(order: Order) : <!INAPPLICABLE_CANDIDATE!>SecuredEntity<<!UPPER_BOUND_VIOLATED!>Order<!>><!>(order)
 fun main() {
-    val securedOrder = Order().<!UNRESOLVED_REFERENCE_WRONG_RECEIVER!>secured<!>()
+    val securedOrder = Order().<!CANNOT_INFER_PARAMETER_TYPE, CANNOT_INFER_PARAMETER_TYPE, UNRESOLVED_REFERENCE_WRONG_RECEIVER!>secured<!>()
 }
 
 /* GENERATED_FIR_TAGS: checkNotNullCall, classDeclaration, funWithExtensionReceiver, functionDeclaration,
