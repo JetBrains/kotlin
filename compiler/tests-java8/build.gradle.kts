@@ -19,7 +19,7 @@ dependencies {
     testImplementation("org.junit.jupiter:junit-jupiter:${libs.versions.junit5.get()}")
     testRuntimeOnly(libs.junit.vintage.engine)
     testRuntimeOnly(libs.junit.platform.launcher)
-    testFixturesApi(projectTests(":generators:test-generator"))
+    testFixturesApi(testFixtures(project(":generators:test-generator")))
     testRuntimeOnly(toolsJar())
 }
 

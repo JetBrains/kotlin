@@ -75,7 +75,7 @@ dependencies {
     testApi(testFixtures(project(":plugins:plugin-sandbox")))
     testApi(projectTests(":plugins:plugin-sandbox:plugin-sandbox-ic-test"))
     testApi(projectTests(":plugins:plugins-interactions-testing"))
-    testApi(projectTests(":generators:test-generator"))
+    testApi(testFixtures(project(":generators:test-generator")))
     testApi(projectTests(":generators:analysis-api-generator"))
     testApi(testFixtures(project(":plugins:scripting:scripting-tests")))
     testImplementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }

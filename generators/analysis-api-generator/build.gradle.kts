@@ -11,7 +11,7 @@ sourceSets {
 dependencies {
     api(kotlinStdlib("jdk8"))
 
-    testImplementation(projectTests(":generators:test-generator"))
+    testImplementation(testFixtures(project(":generators:test-generator")))
     testImplementation(testFixtures(project(":compiler:tests-common")))
     testImplementation(projectTests(":compiler:tests-spec"))
     testImplementation(projectTests(":analysis:low-level-api-fir"))

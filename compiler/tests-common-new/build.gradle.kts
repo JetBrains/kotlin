@@ -22,7 +22,7 @@ dependencies {
 
     testRuntimeOnly(project(":core:descriptors.runtime"))
 
-    testFixturesImplementation(projectTests(":generators:test-generator"))
+    testFixturesImplementation(testFixtures(project(":generators:test-generator")))
 
     testFixturesApi(platform(libs.junit.bom))
     testFixturesApi(libs.junit.jupiter.api)

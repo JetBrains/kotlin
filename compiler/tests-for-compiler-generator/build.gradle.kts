@@ -18,7 +18,7 @@ dependencies {
     testImplementation(testFixtures(project(":compiler:fir:raw-fir:light-tree2fir")))
     testImplementation(testFixtures(project(":compiler:fir:analysis-tests:legacy-fir-tests")))
     testImplementation(testFixtures(project(":js:js.tests")))
-    testImplementation(projectTests(":generators:test-generator"))
+    testImplementation(testFixtures(project(":generators:test-generator")))
 }
 
 sourceSets {
