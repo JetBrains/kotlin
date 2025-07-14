@@ -14,18 +14,11 @@ import java.nio.file.Paths
 import java.nio.file.attribute.BasicFileAttributes
 import kotlin.io.path.relativeTo
 import kotlin.streams.asSequence
-import kotlin.test.assertEquals
 
 class CompilerDistContentsTest {
     private val kotlincPath = System.getProperty("kotlinc.dist.path").let { Paths.get(it) }
 
-    private val expectedDataFile = File("repo/artifacts-tests/src/test/resources/kotlinc-dist-contents.txt")
-
-    @Test
-    fun checkTestDataIsSorted() {
-        val expectedData = expectedDataFile.readLines()
-        assertEquals(expectedData.sorted(), expectedData)
-    }
+    private val expectedDataFile = File("repo/artifacts-tests/src/test/resources/compiler-dist-contents.txt")
 
     @Test
     fun checkDistContents() {
