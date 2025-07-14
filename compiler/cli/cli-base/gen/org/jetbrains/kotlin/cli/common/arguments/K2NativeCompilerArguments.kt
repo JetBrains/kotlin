@@ -329,6 +329,23 @@ This library must be one of the ones passed with '-library'.""",
         }
 
     @Argument(
+        value = "-Xhot-reload-split",
+        valueDescription = "host|guest|guest-ic",
+        description = """Enable split compilation for hot-code reloading.
+Values:
+  host     - Produce both host executable and bootstrap object (full build)
+  guest    - Produce only bootstrap object (fast incremental builds using IC)
+  guest-ic - Per-file incremental: only recompile changed files (fastest iteration)
+Use 'host' for the initial build, then 'guest' or 'guest-ic' for rapid iterations.
+The bootstrap object is hot-reloaded via JITLink without restarting the host.""",
+    )
+    var hotReloadSplit: String? = null
+        set(value) {
+            checkFrozen()
+            field = if (value.isNullOrEmpty()) null else value
+        }
+
+    @Argument(
         value = "-Xic-cache-dir",
         valueDescription = "<path>",
         description = "Path to the directory where incremental build caches should be put.",

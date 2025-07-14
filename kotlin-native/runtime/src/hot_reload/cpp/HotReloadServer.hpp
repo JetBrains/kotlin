@@ -1,0 +1,204 @@
+/**
+* Copyright 2010-2025 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
+ * that can be found in the LICENSE file.
+*/
+
+#ifndef HOTRELOADSERVER_HPP
+#define HOTRELOADSERVER_HPP
+
+#ifdef KONAN_HOT_RELOAD
+
+#include <vector>
+#include <string>
+#include <thread>
+
+#include <unistd.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+
+#include "HotReloadUtility.hpp"
+
+using namespace kotlin::hot;
+
+class HotReloadServer {
+public:
+    static int32_t GetDefaultPort() {
+        if (const auto* portEnv = getenv(kKonanHotReloadPortEnvVar); portEnv != nullptr) {
+            try {
+                const auto port = std::stoi(std::string(portEnv));
+                if (port <= 0 || port > std::numeric_limits<uint16_t>::max())
+                    throw std::out_of_range("Port number out of range");
+                return port;
+            } catch (std::invalid_argument&) {
+                HRLogWarning("Parsed invalid server port, falling back to the default one");
+                return kDefaultServerPort;
+            } catch (std::out_of_range&) {
+                HRLogWarning("Out of range server port, falling back to the default one");
+                return kDefaultServerPort;
+            }
+        }
+        return kDefaultServerPort;
+    }
+
+    explicit HotReloadServer(const int32_t port) : port(port) {}
+
+    explicit HotReloadServer() {
+        port = GetDefaultPort();
+    }
+
+    ~HotReloadServer() { stop(); }
+
+    bool start() {
+        // Create socket
+        serverFd = socket(AF_INET, SOCK_STREAM, 0);
+        if (serverFd == -1) {
+            HRLogError("Server failed to create TCP socket for reload requests");
+            return false;
+        }
+
+        // Set socket options to reuse address
+        int opt = 1;
+        if (setsockopt(serverFd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) < 0) {
+            HRLogError("Server failed to set socket options");
+            close(serverFd);
+            return false;
+        }
+
+        // Bind to localhost
+        sockaddr_in address;
+        address.sin_family = AF_INET;
+        address.sin_addr.s_addr = inet_addr(kServerEndpoint);
+        address.sin_port = htons(port);
+
+        if (bind(serverFd, reinterpret_cast<sockaddr*>(&address), sizeof(address)) < 0) {
+            HRLogError("Server failed to bind to port %s:%d", kServerEndpoint, port);
+            close(serverFd);
+            return false;
+        }
+
+        // Listen for connections
+        if (listen(serverFd, 3) < 0) {
+            HRLogError("Server failed to listen on socket");
+            close(serverFd);
+            return false;
+        }
+
+        running = true;
+        HRLogInfo("Server listening on %s:%d", kServerEndpoint, port);
+        return true;
+    }
+
+    template <typename F>
+    void run(F&& onReloadMessageCallback) {
+        /// We can only handle one request at time (for the moment).
+
+        runningThread = std::make_unique<std::thread>([this, onReloadMessageCallback]() {
+#if KONAN_APPLE
+            pthread_setname_np("Hot-Reload Listener Thread");
+#endif
+
+            if (!running) {
+                HRLogError("Server not started!");
+                return;
+            }
+
+            sockaddr_in clientAddress;
+            socklen_t clientLen = sizeof(clientAddress);
+
+            while (running) {
+                const int clientSocket = accept(serverFd, reinterpret_cast<struct sockaddr*>(&clientAddress), &clientLen);
+                if (clientSocket < 0) {
+                    if (running) {
+                        HRLogError("Server failed to accept connection, moving to next one...");
+                    }
+                    continue;
+                }
+
+                HRLogDebug("Server started accepting incoming client");
+                handleReloadMessage(clientSocket, onReloadMessageCallback);
+                close(clientSocket);
+            }
+        });
+    }
+
+    void stop() {
+        if (running) {
+            running = false;
+            if (serverFd != -1) {
+                close(serverFd);
+                serverFd = -1;
+            }
+            HRLogInfo("(HotReloadServer) Stopping server...");
+            if (runningThread != nullptr) {
+                runningThread->join();
+            }
+        }
+    }
+
+private:
+    static constexpr auto kKonanHotReloadPortEnvVar = "KONAN_HOT_RELOAD_PORT";
+    static constexpr auto kServerEndpoint = "127.0.0.1";
+    static constexpr auto kDefaultServerPort = 5567;
+
+    int serverFd{0};
+    int32_t port{0};
+    std::atomic_bool running{false};
+    std::unique_ptr<std::thread> runningThread{nullptr};
+
+    static bool readExact(const int socket, void* buffer, const size_t bytes) {
+        size_t totalRead = 0;
+        const auto buf = static_cast<char*>(buffer);
+
+        while (totalRead < bytes) {
+            const ssize_t readBytes = recv(socket, buf + totalRead, bytes - totalRead, 0);
+            if (readBytes <= 0) {
+                return false; // Connection closed or error
+            }
+            totalRead += readBytes;
+        }
+        return true;
+    }
+
+    template <typename F>
+    static void handleReloadMessage(const int clientSocket, F&& onReloadCallback) {
+        uint32_t numDylibs{0};
+        if (!readExact(clientSocket, &numDylibs, sizeof(numDylibs))) {
+            HRLogError("(HotReloadServer) Failed to read number of dylibs");
+            return;
+        }
+
+        // Read each dylib path
+        std::vector<std::string> dylibPaths;
+        for (uint32_t i = 0; i < numDylibs; i++) {
+            // Read path length
+            uint32_t pathLength;
+            if (!readExact(clientSocket, &pathLength, sizeof(pathLength))) {
+                HRLogError("(HotReloadServer) Failed to read path length for dylib %u", i);
+                return;
+            }
+
+            // Read path string
+            std::vector<char> pathBuffer(pathLength);
+            if (!readExact(clientSocket, pathBuffer.data(), pathLength)) {
+                HRLogError("Failed to read path for dylib %u", i);
+                return;
+            }
+
+            std::string path(pathBuffer.data(), pathLength);
+            // Remove null terminator if present
+            if (!path.empty() && path.back() == '\0') {
+                path.pop_back();
+            }
+
+            dylibPaths.push_back(path);
+        }
+
+        onReloadCallback(dylibPaths);
+    }
+};
+
+#endif
+
+
+#endif // HOTRELOADSERVER_HPP

@@ -15,6 +15,7 @@
 #include "RuntimePrivate.hpp"
 #include "Worker.h"
 #include "KString.h"
+
 #include "CrashHandler.hpp"
 #include <atomic>
 #include <cstdint>
@@ -173,6 +174,20 @@ RUNTIME_NOTHROW void AppendToInitializersTail(InitNode *next) {
     initTailNode->next = next;
   }
   initTailNode = next;
+}
+
+void ReinitializeGlobalVariablesAndTLS() {
+  auto* memoryState = kotlin::mm::GetMemoryState();
+  // Reopen TLS so new records can be added by the newly registered InitNodes.
+  ReopenTLSStorage(memoryState);
+  // Re-run ALLOC: new InitNodes register their TLS keys; existing keys are skipped (duplicate check).
+  InitOrDeinitGlobalVariables(ALLOC_THREAD_LOCAL_GLOBALS, memoryState);
+  // Re-commit: storage vector grows to accommodate new entries; existing data preserved.
+  CommitTLSStorage(memoryState);
+  // Re-run INIT_GLOBALS: already-initialized globals are skipped via per-file state checks.
+  InitOrDeinitGlobalVariables(INIT_GLOBALS, memoryState);
+  // Re-run INIT_THREAD_LOCAL_GLOBALS: initializes newly added thread-locals.
+  InitOrDeinitGlobalVariables(INIT_THREAD_LOCAL_GLOBALS, memoryState);
 }
 
 PERFORMANCE_INLINE RUNTIME_NOTHROW void Kotlin_initRuntimeIfNeeded() {

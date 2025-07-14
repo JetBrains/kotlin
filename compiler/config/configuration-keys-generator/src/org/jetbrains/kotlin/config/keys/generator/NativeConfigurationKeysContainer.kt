@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.config.keys.generator
 
 import org.jetbrains.kotlin.backend.konan.AllocationMode
+import org.jetbrains.kotlin.backend.konan.HotReloadSplitMode
 import org.jetbrains.kotlin.backend.konan.LlvmVariant
 import org.jetbrains.kotlin.backend.konan.TestRunnerKind
 import org.jetbrains.kotlin.config.keys.generator.model.KeysContainer
@@ -86,6 +87,7 @@ object NativeConfigurationKeysContainer : KeysContainer("org.jetbrains.kotlin.ko
     val SAVE_LLVM_IR_DIRECTORY by key<String>("Directory to store LLVM IR from phases.")
     val KONAN_DATA_DIR by key<String>("Directory for storing konan dependencies, cache and prebuilds.")
     val KONAN_MANIFEST_NATIVE_TARGETS by key<List<KonanTarget>>("Value of native_targets property to write in manifest.")
+    val HOT_RELOAD_SPLIT by key<HotReloadSplitMode>("Hot reload split compilation mode.")
     val LLVM_MODULE_PASSES by key<String>("LLVM passes to run instead of module optimization pipeline.")
     val LLVM_LTO_PASSES by key<String>("LLVM passes to run instead of LTO optimization pipeline.")
 }

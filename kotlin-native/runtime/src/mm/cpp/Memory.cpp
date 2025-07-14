@@ -212,6 +212,12 @@ extern "C" RUNTIME_NOTHROW void CommitTLSStorage(MemoryState* memory) {
     threadData->tls().Commit();
 }
 
+extern "C" RUNTIME_NOTHROW void ReopenTLSStorage(MemoryState* memory) {
+    auto* threadData = memory->GetThreadData();
+    AssertThreadState(threadData, ThreadState::kRunnable);
+    threadData->tls().Reopen();
+}
+
 extern "C" RUNTIME_NOTHROW void ClearTLS(MemoryState* memory) {
     auto* threadData = memory->GetThreadData();
     AssertThreadState(threadData, ThreadState::kRunnable);

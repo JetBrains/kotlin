@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.konan.driver.NativeBackendPhaseContext
 import org.jetbrains.kotlin.backend.konan.llvm.*
 import org.jetbrains.kotlin.backend.konan.llvm.objc.patchObjCRuntimeModule
 import org.jetbrains.kotlin.backend.konan.llvm.runtime.RuntimeModule
+import org.jetbrains.kotlin.backend.konan.llvm.runtime.RuntimeModulesConfig
 import org.jetbrains.kotlin.backend.konan.llvm.runtime.linkRuntimeModules
 import org.jetbrains.kotlin.backend.konan.serialization.CacheDeserializationStrategy
 import org.jetbrains.kotlin.config.nativeBinaryOptions.CCallMode
@@ -101,6 +102,10 @@ private fun collectLlvmModules(generationState: NativeGenerationState, generated
     val config = generationState.config
     val runtimeModulesConfig = generationState.runtimeModulesConfig
 
+    // IMPORTANT: Access llvm FIRST to allow it to add dependencies during initialization,
+    // BEFORE we access bitcodeToLink which seals the dependencies tracker.
+    val additionalProducedBitcodeFiles = generationState.llvm.additionalProducedBitcodeFiles
+
     val (bitcodePartOfStdlib, bitcodeLibraries) = generationState.dependenciesTracker.bitcodeToLink
             .filterNot { it.isCInteropLibrary() && config.cCallMode == CCallMode.Direct }
             .partition { it.isNativeStdlib && generationState.producedLlvmModuleContainsStdlib }
@@ -117,7 +122,7 @@ private fun collectLlvmModules(generationState: NativeGenerationState, generated
             add(RuntimeModule.LAUNCHER)
         }
         addAll(generatedBitcodeFiles)
-        addAll(generationState.llvm.additionalProducedBitcodeFiles)
+        addAll(additionalProducedBitcodeFiles)
         addAll(bitcodeLibraries)
         if (config.produce == CompilerOutputKind.DYNAMIC_CACHE) {
             add(RuntimeModule.EXCEPTIONS_SUPPORT)
@@ -127,63 +132,7 @@ private fun collectLlvmModules(generationState: NativeGenerationState, generated
         }
     }
 
-    val runtimeBitcodeFiles = buildList<String> {
-        if (runtimeModulesConfig.containsDebuggingRuntime) add(RuntimeModule.DEBUG)
-        add(RuntimeModule.MAIN)
-        add(RuntimeModule.MM)
-        add(RuntimeModule.ALLOC_COMMON)
-        add(RuntimeModule.GC_COMMON)
-        add(RuntimeModule.GC_SCHEDULER_COMMON)
-
-        if (config.target.family == Family.OSX && config.minidumpLocation != null) {
-            add(RuntimeModule.BREAKPAD)
-            add(RuntimeModule.CRASH_HANDLER_IMPL)
-        } else {
-            add(RuntimeModule.CRASH_HANDLER_NOOP)
-        }
-        when (config.gcSchedulerType) {
-            GCSchedulerType.MANUAL -> {
-                add(RuntimeModule.GC_SCHEDULER_MANUAL)
-            }
-            GCSchedulerType.ADAPTIVE -> {
-                add(RuntimeModule.GC_SCHEDULER_ADAPTIVE)
-            }
-            GCSchedulerType.AGGRESSIVE -> {
-                add(RuntimeModule.GC_SCHEDULER_AGGRESSIVE)
-            }
-            GCSchedulerType.DISABLED, GCSchedulerType.WITH_TIMER, GCSchedulerType.ON_SAFE_POINTS -> {
-                throw IllegalStateException("Deprecated options must have already been handled")
-            }
-        }
-        when (config.gc) {
-            GC.STOP_THE_WORLD_MARK_AND_SWEEP -> add(RuntimeModule.GC_STOP_THE_WORLD_MARK_AND_SWEEP)
-            GC.NOOP -> add(RuntimeModule.GC_NOOP)
-            GC.PARALLEL_MARK_CONCURRENT_SWEEP -> add(RuntimeModule.GC_PARALLEL_MARK_CONCURRENT_SWEEP)
-            GC.CONCURRENT_MARK_AND_SWEEP -> add(RuntimeModule.GC_CONCURRENT_MARK_AND_SWEEP)
-        }
-        if (config.target.supportsCoreSymbolication()) {
-            add(RuntimeModule.SOURCE_INFO_CORE_SYMBOLICATION)
-        }
-        if (config.target.supportsLibBacktrace()) {
-            add(RuntimeModule.SOURCE_INFO_LIBBACKTRACE)
-            add(RuntimeModule.LIBBACKTRACE)
-        }
-        when (config.allocationMode) {
-            AllocationMode.STD -> {
-                add(RuntimeModule.ALLOC_LEGACY)
-                add(RuntimeModule.ALLOC_STD)
-            }
-            AllocationMode.CUSTOM -> {
-                add(RuntimeModule.ALLOC_CUSTOM)
-            }
-        }
-        when (config.checkStateAtExternalCalls) {
-            true -> add(RuntimeModule.EXTERNAL_CALLS_CHECKER_IMPL)
-            false -> add(RuntimeModule.EXTERNAL_CALLS_CHECKER_NOOP)
-        }
-        // Bitcode parts of stdlib are considered part of the runtime
-        addAll(bitcodePartOfStdlib)
-    }
+    val runtimeBitcodeFiles = resolveRuntimeModules(runtimeModulesConfig, config) + bitcodePartOfStdlib
 
     fun parseBitcodeFiles(files: List<String>): List<LLVMModuleRef> = files.map { bitcodeFile ->
         val parsedModule = parseBitcodeFile(generationState, generationState.messageCollector, generationState.llvmContext, bitcodeFile)
@@ -203,14 +152,79 @@ private fun collectLlvmModules(generationState: NativeGenerationState, generated
     )
 }
 
+internal fun resolveRuntimeModules(
+        runtimeModulesConfig: RuntimeModulesConfig,
+        config: NativeSecondStageCompilationConfig,
+): List<String> = buildList {
+
+    fun MutableList<String>.add(module: RuntimeModule) = add(runtimeModulesConfig.absolutePathFor(module))
+
+    if (runtimeModulesConfig.containsDebuggingRuntime) add(RuntimeModule.DEBUG)
+    if (runtimeModulesConfig.containsHotReloadRuntime) add(RuntimeModule.HOT_RELOAD)
+    add(RuntimeModule.MAIN)
+    add(RuntimeModule.MM)
+    add(RuntimeModule.ALLOC_COMMON)
+    add(RuntimeModule.GC_COMMON)
+    add(RuntimeModule.GC_SCHEDULER_COMMON)
+
+    if (config.target.family == Family.OSX && config.minidumpLocation != null) {
+        add(RuntimeModule.BREAKPAD)
+        add(RuntimeModule.CRASH_HANDLER_IMPL)
+    } else {
+        add(RuntimeModule.CRASH_HANDLER_NOOP)
+    }
+    when (config.gcSchedulerType) {
+        GCSchedulerType.MANUAL -> {
+            add(RuntimeModule.GC_SCHEDULER_MANUAL)
+        }
+        GCSchedulerType.ADAPTIVE -> {
+            add(RuntimeModule.GC_SCHEDULER_ADAPTIVE)
+        }
+        GCSchedulerType.AGGRESSIVE -> {
+            add(RuntimeModule.GC_SCHEDULER_AGGRESSIVE)
+        }
+        GCSchedulerType.DISABLED, GCSchedulerType.WITH_TIMER, GCSchedulerType.ON_SAFE_POINTS -> {
+            throw IllegalStateException("Deprecated options must have already been handled")
+        }
+    }
+    when (config.gc) {
+        GC.STOP_THE_WORLD_MARK_AND_SWEEP -> add(RuntimeModule.GC_STOP_THE_WORLD_MARK_AND_SWEEP)
+        GC.NOOP -> add(RuntimeModule.GC_NOOP)
+        GC.PARALLEL_MARK_CONCURRENT_SWEEP -> add(RuntimeModule.GC_PARALLEL_MARK_CONCURRENT_SWEEP)
+        GC.CONCURRENT_MARK_AND_SWEEP -> add(RuntimeModule.GC_CONCURRENT_MARK_AND_SWEEP)
+    }
+    if (config.target.supportsCoreSymbolication()) {
+        add(RuntimeModule.SOURCE_INFO_CORE_SYMBOLICATION)
+    }
+    if (config.target.supportsLibBacktrace()) {
+        add(RuntimeModule.SOURCE_INFO_LIBBACKTRACE)
+        add(RuntimeModule.LIBBACKTRACE)
+    }
+    when (config.allocationMode) {
+        AllocationMode.STD -> {
+            add(RuntimeModule.ALLOC_LEGACY)
+            add(RuntimeModule.ALLOC_STD)
+        }
+        AllocationMode.CUSTOM -> {
+            add(RuntimeModule.ALLOC_CUSTOM)
+        }
+    }
+    when (config.checkStateAtExternalCalls) {
+        true -> add(RuntimeModule.EXTERNAL_CALLS_CHECKER_IMPL)
+        false -> add(RuntimeModule.EXTERNAL_CALLS_CHECKER_NOOP)
+    }
+}
+
 private fun linkAllDependencies(generationState: NativeGenerationState, generatedBitcodeFiles: List<String>) {
     val (runtimeModules, additionalModules) = collectLlvmModules(generationState, generatedBitcodeFiles)
     // TODO: Possibly slow, maybe to a separate phase?
     val optimizedRuntimeModules = linkRuntimeModules(generationState, runtimeModules)
 
+    val modules = optimizedRuntimeModules + additionalModules
+
     // When the main module `generationState.llvmModule` is very large it is much faster to
     // link all the auxiliary modules together first before linking with the main module.
-    val linkedModules = (optimizedRuntimeModules + additionalModules).reduceOrNull { acc, module ->
+    val linkedModules = modules.reduceOrNull { acc, module ->
         val failed = llvmLinkModules2(generationState, acc, module)
         if (failed != 0) {
             error("Failed to link ${module.getName()}")
@@ -252,7 +266,7 @@ internal fun linkBitcodeDependencies(generationState: NativeGenerationState,
 
 }
 
-private fun parseAndLinkBitcodeFile(generationState: NativeGenerationState, llvmModule: LLVMModuleRef, path: String) {
+internal fun parseAndLinkBitcodeFile(generationState: NativeGenerationState, llvmModule: LLVMModuleRef, path: String) {
     val parsedModule = parseBitcodeFile(generationState, generationState.messageCollector, generationState.llvmContext, path)
     if (!generationState.shouldUseDebugInfoFromNativeLibs()) {
         LLVMStripModuleDebugInfo(parsedModule)

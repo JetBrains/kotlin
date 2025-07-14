@@ -673,7 +673,7 @@ internal class CodeGeneratorVisitor(
             val llvmFunction: LlvmCallable) : InnerScopeImpl() {
 
         constructor(declaration: IrSimpleFunction, functionGenerationContext: FunctionGenerationContext) :
-                this(functionGenerationContext, declaration, codegen.llvmFunction(declaration))
+                this(functionGenerationContext, declaration, codegen.llvmFunctionDefinition(declaration))
 
         constructor(llvmFunction: LlvmCallable, functionGenerationContext: FunctionGenerationContext) :
                 this(functionGenerationContext, null, llvmFunction)
@@ -826,7 +826,7 @@ internal class CodeGeneratorVisitor(
 
 
         if (declaration.retainAnnotation(context.config.target)) {
-            llvm.usedFunctions.add(codegen.llvmFunction(declaration))
+            llvm.usedFunctions.add(codegen.llvmFunctionDefinition(declaration))
         }
 
         if (context.shouldVerifyBitCode())
@@ -2271,12 +2271,13 @@ internal class CodeGeneratorVisitor(
         if (!context.shouldContainLocationDebugInfo())
             return null
 
+        // Debug info should be attached to the definition
         val functionLlvmValue = when {
             isReifiedInline -> null
             // TODO: May be tie up inline lambdas to their outer function?
             codegen.isExternal(this) && !KonanBinaryInterface.isExported(this) -> null
-            isSuspend -> this.getOrCreateFunctionWithContinuationStub(context).let { codegen.llvmFunctionOrNull(it) }
-            else -> codegen.llvmFunctionOrNull(this)
+            isSuspend -> this.getOrCreateFunctionWithContinuationStub(context).let { codegen.llvmFunctionDefinitionOrNull(it) }
+            else -> codegen.llvmFunctionDefinitionOrNull(this)
         }
         return with(debugInfo) {
             val f = this@scope
@@ -2810,6 +2811,14 @@ internal class CodeGeneratorVisitor(
                 listOf(
                     appendStaticInitializers(ctorProto(ctorName), listOfNotNull(initializer) + otherInitializers)
                 )
+            } else if (generationState.llvmModuleSpecification.isLibraryExcludedForHotReload(library)) {
+                // Library is in the hot reload host module.
+                // Just declare the initializer as external - it will be resolved from the host via JITLink.
+                check(initializer == null) {
+                    "found initializer from ${library.libraryFile}, which is not included into compilation (hot reload)"
+                }
+                // Declare the library's constructor as external - it's in the host module
+                listOf(codegen.addFunction(ctorProto(ctorName)))
             } else {
                 // A cached library.
                 check(initializer == null) {
@@ -2936,10 +2945,10 @@ internal fun NativeGenerationState.generateRuntimeConstantsModule() : LLVMModule
     LLVMSetDataLayout(llvmModule, runtime.dataLayout)
     val static = StaticData(llvmModule, llvm)
 
-    fun setRuntimeConstGlobal(name: String, value: ConstValue) {
+    fun setRuntimeConstGlobal(name: String, value: ConstValue, linkage: LLVMLinkage = LLVMLinkage.LLVMExternalLinkage) {
         val global = static.placeGlobal(name, value)
         global.setConstant(true)
-        global.setLinkage(LLVMLinkage.LLVMExternalLinkage)
+        global.setLinkage(linkage)
     }
 
     setRuntimeConstGlobal("Kotlin_needDebugInfo", llvm.constInt32(if (shouldContainDebugInfo()) 1 else 0))
@@ -2949,11 +2958,17 @@ internal fun NativeGenerationState.generateRuntimeConstantsModule() : LLVMModule
     val runtimeLogs = ConstArray(llvm.int32Type, LoggingTag.entries.sortedBy { it.ord }.map {
         config.runtimeLogs[it]!!.ord.let { llvm.constInt32(it) }
     })
-    setRuntimeConstGlobal("Kotlin_runtimeLogs", runtimeLogs)
+    // Use weak linkage for Kotlin_runtimeLogs when building caches, so user code can override with strong linkage
+    val isCache = config.produce == CompilerOutputKind.STATIC_CACHE || config.produce == CompilerOutputKind.DYNAMIC_CACHE
+    val runtimeLogsLinkage = if (isCache) LLVMLinkage.LLVMWeakAnyLinkage else LLVMLinkage.LLVMExternalLinkage
+    setRuntimeConstGlobal("Kotlin_runtimeLogs", runtimeLogs, runtimeLogsLinkage)
     setRuntimeConstGlobal("Kotlin_concurrentWeakSweep", llvm.constInt32(if (context.config.concurrentWeakSweep) 1 else 0))
     setRuntimeConstGlobal("Kotlin_gcMarkSingleThreaded", llvm.constInt32(if (config.gcMarkSingleThreaded) 1 else 0))
     setRuntimeConstGlobal("Kotlin_fixedBlockPageSize", llvm.constInt32(config.fixedBlockPageSize.toInt()))
     setRuntimeConstGlobal("Kotlin_pagedAllocator", llvm.constInt32(if (config.pagedAllocator) 1 else 0))
+    setRuntimeConstGlobal("Kotlin_hotReload", llvm.constInt32(if (config.hotReloadEnabled) 1 else 0))
+
+
 
     return llvmModule
 }
