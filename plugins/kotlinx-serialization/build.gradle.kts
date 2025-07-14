@@ -46,7 +46,7 @@ dependencies {
     testFixturesImplementation(testFixtures(project(":generators:test-generator")))
     testFixturesApi(testFixtures(project(":js:js.tests")))
     testFixturesApi(testFixtures(project(":analysis:analysis-api-fir")))
-    testFixturesApi(projectTests(":analysis:analysis-api-impl-base"))
+    testFixturesApi(testFixtures(project(":analysis:analysis-api-impl-base")))
     testFixturesApi(projectTests(":analysis:low-level-api-fir"))
 
     testFixturesApi(platform(libs.junit.bom))

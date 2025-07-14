@@ -3,6 +3,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 plugins {
     kotlin("jvm")
     id("jps-compatible")
+    id("java-test-fixtures")
 }
 
 dependencies {
@@ -19,31 +20,30 @@ dependencies {
     implementation(project(":analysis:analysis-internal-utils"))
     implementation(libs.caffeine)
 
-    testApi(platform(libs.junit.bom))
-    testImplementation(libs.junit.jupiter.api)
-    testRuntimeOnly(libs.junit.jupiter.engine)
-    testImplementation(kotlinTest("junit"))
-    testImplementation(project(":analysis:analysis-api"))
-    testImplementation(project(":analysis:analysis-api-standalone:analysis-api-standalone-base"))
-    testImplementation(testFixtures(project(":compiler:tests-common")))
-    testApi(testFixtures(project(":compiler:test-infrastructure-utils")))
-    testApi(testFixtures(project(":compiler:test-infrastructure")))
-    testImplementation(testFixtures(project(":plugins:plugin-sandbox")))
-    testImplementation(testFixtures(project(":compiler:tests-common-new")))
-    testImplementation(project(":analysis:symbol-light-classes"))
-    testImplementation(projectTests(":analysis:decompiled:decompiler-to-file-stubs"))
-    testImplementation(project(":analysis:decompiled:decompiler-to-file-stubs"))
-    testImplementation(project(":analysis:decompiled:light-classes-for-decompiled"))
-    testImplementation(project(":analysis:decompiled:decompiler-native"))
-    testImplementation(projectTests(":analysis:analysis-test-framework"))
-    testImplementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
-    testCompileOnly(toolsJarApi())
-    testRuntimeOnly(toolsJar())
+    testFixturesApi(platform(libs.junit.bom))
+    testFixturesImplementation(libs.junit.jupiter.api)
+    testFixturesImplementation(kotlinTest("junit"))
+    testFixturesImplementation(project(":analysis:analysis-api"))
+    testFixturesImplementation(project(":analysis:analysis-api-standalone:analysis-api-standalone-base"))
+    testFixturesImplementation(testFixtures(project(":compiler:tests-common")))
+    testFixturesApi(testFixtures(project(":compiler:test-infrastructure-utils")))
+    testFixturesApi(testFixtures(project(":compiler:test-infrastructure")))
+    testFixturesImplementation(testFixtures(project(":plugins:plugin-sandbox")))
+    testFixturesImplementation(testFixtures(project(":compiler:tests-common-new")))
+    testFixturesImplementation(project(":analysis:symbol-light-classes"))
+    testFixturesImplementation(projectTests(":analysis:decompiled:decompiler-to-file-stubs"))
+    testFixturesImplementation(project(":analysis:decompiled:decompiler-to-file-stubs"))
+    testFixturesImplementation(project(":analysis:decompiled:light-classes-for-decompiled"))
+    testFixturesImplementation(project(":analysis:decompiled:decompiler-native"))
+    testFixturesImplementation(projectTests(":analysis:analysis-test-framework"))
+    testFixturesImplementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
+    testFixturesCompileOnly(toolsJarApi())
 }
 
 sourceSets {
     "main" { projectDefault() }
     "test" { projectDefault() }
+    "testFixtures" { projectDefault() }
 }
 
 tasks.withType<KotlinJvmCompile>().configureEach {

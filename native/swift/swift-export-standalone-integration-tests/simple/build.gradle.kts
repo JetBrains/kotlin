@@ -18,7 +18,7 @@ dependencies {
 
     testImplementation(project(":native:swift:swift-export-standalone-integration-tests"))
     testRuntimeOnly(projectTests(":analysis:low-level-api-fir"))
-    testRuntimeOnly(projectTests(":analysis:analysis-api-impl-base"))
+    testRuntimeOnly(testFixtures(project(":analysis:analysis-api-impl-base")))
     testImplementation(testFixtures(project(":analysis:analysis-api-fir")))
     testImplementation(projectTests(":analysis:analysis-test-framework"))
     testImplementation(testFixtures(project(":compiler:tests-common")))

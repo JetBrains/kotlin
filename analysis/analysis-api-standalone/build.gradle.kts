@@ -15,7 +15,7 @@ dependencies {
     api(project(":analysis:analysis-api-standalone:analysis-api-standalone-base"))
     implementation(project(":analysis:analysis-api-standalone:analysis-api-fir-standalone-base"))
     testImplementation(testFixtures(project(":analysis:analysis-api-fir")))
-    testImplementation(projectTests(":analysis:analysis-api-impl-base"))
+    testImplementation(testFixtures(project(":analysis:analysis-api-impl-base")))
     testImplementation(projectTests(":analysis:analysis-test-framework"))
     testImplementation(projectTests(":analysis:low-level-api-fir"))
 

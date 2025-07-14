@@ -7,7 +7,7 @@ dependencies {
     testImplementation(project(":analysis:analysis-api-standalone:analysis-api-fir-standalone-base"))
     testImplementation(testFixtures(project(":compiler:tests-common")))
     testImplementation(projectTests(":analysis:analysis-test-framework"))
-    testImplementation(projectTests(":analysis:analysis-api-impl-base"))
+    testImplementation(testFixtures(project(":analysis:analysis-api-impl-base")))
     testImplementation(projectTests(":analysis:low-level-api-fir"))
 
     testImplementation(platform(libs.junit.bom))

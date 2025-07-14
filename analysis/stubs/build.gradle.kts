@@ -11,7 +11,7 @@ dependencies {
     testImplementation(testFixtures(project(":compiler:tests-common")))
     testImplementation(testFixtures(project(":compiler:tests-common-new")))
     testImplementation(projectTests(":analysis:analysis-test-framework"))
-    testImplementation(projectTests(":analysis:analysis-api-impl-base"))
+    testImplementation(testFixtures(project(":analysis:analysis-api-impl-base")))
     testImplementation(projectTests(":analysis:low-level-api-fir"))
     testImplementation(projectTests(":analysis:decompiled:decompiler-to-file-stubs"))
     testImplementation(libs.junit.jupiter.api)
