@@ -11,13 +11,13 @@ plugins {
 
 val projectsToInclude = listOf(
     ":compiler:incremental-compilation-impl",
-    ":kotlin-build-common"
 )
 
 val fixturesToInclude = listOf(
     ":compiler:test-infrastructure-utils",
     ":compiler:tests-common",
     ":compiler:tests-compiler-utils",
+    ":kotlin-build-common",
 )
 
 fun Dependency.unsetTransitive() {
