@@ -73,7 +73,7 @@ dependencies {
     testRuntimeOnly(intellijJDom())
     testRuntimeOnly(libs.kotlinx.coroutines.core.jvm)
 
-    testImplementation(projectTests(":compiler:incremental-compilation-impl"))
+    testImplementation(testFixtures(project(":compiler:incremental-compilation-impl")))
     testImplementation(jpsBuild())
 
     compilerModules.forEach {

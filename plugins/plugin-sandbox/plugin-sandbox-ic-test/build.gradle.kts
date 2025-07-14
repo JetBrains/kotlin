@@ -8,7 +8,7 @@ plugins {
 dependencies {
     testApi(project(":plugins:plugin-sandbox"))
     testApi(project(":compiler:incremental-compilation-impl"))
-    testApi(projectTests(":compiler:incremental-compilation-impl"))
+    testApi(testFixtures(project(":compiler:incremental-compilation-impl")))
     testImplementation(libs.junit.jupiter.api)
 
     testCompileOnly(intellijCore())

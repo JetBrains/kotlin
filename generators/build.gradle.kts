@@ -56,7 +56,7 @@ dependencies {
     testApi(protobufCompareSourceSet.output)
 
     testApi(project(":compiler:cli"))
-    testApi(projectTests(":compiler:incremental-compilation-impl"))
+    testApi(testFixtures(project(":compiler:incremental-compilation-impl")))
     testApi(testFixtures(project(":plugins:jvm-abi-gen")))
     testApi(testFixtures(project(":plugins:parcelize:parcelize-compiler")))
     testApi(testFixtures(project(":kotlin-annotation-processing-cli")))
