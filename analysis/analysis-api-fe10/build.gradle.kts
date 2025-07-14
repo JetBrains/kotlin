@@ -26,7 +26,7 @@ dependencies {
     testImplementation(project(":analysis:analysis-api-platform-interface"))
     testImplementation(project(":analysis:analysis-api-standalone:analysis-api-standalone-base"))
     testImplementation(testFixtures(project(":compiler:tests-common")))
-    testApi(projectTests(":compiler:test-infrastructure-utils"))
+    testApi(testFixtures(project(":compiler:test-infrastructure-utils")))
     testApi(testFixtures(project(":compiler:test-infrastructure")))
     testImplementation(testFixtures(project(":compiler:tests-common-new")))
     testImplementation(projectTests(":analysis:analysis-api-impl-base"))
