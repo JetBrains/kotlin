@@ -35,7 +35,7 @@ dependencies {
     testRuntimeOnly(libs.junit.vintage.engine)
     testImplementation(testFixtures(project(":analysis:analysis-api-fe10")))
     testImplementation(testFixtures(project(":analysis:analysis-api-fir")))
-    testImplementation(projectTests(":analysis:analysis-api-standalone"))
+    testImplementation(testFixtures(project(":analysis:analysis-api-standalone")))
     testImplementation(testFixtures(project(":analysis:analysis-api-impl-base")))
     testImplementation(projectTests(":analysis:analysis-test-framework"))
     testImplementation(projectTests(":analysis:low-level-api-fir"))
