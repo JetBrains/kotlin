@@ -102,7 +102,7 @@ dependencies {
     }
     testFixturesImplementation(project(":compiler:ir.backend.native"))
     testFixturesImplementation(project(":native:kotlin-native-utils"))
-    testFixturesImplementation(projectTests(":native:native.tests:klib-ir-inliner"))
+    testFixturesImplementation(testFixtures(project(":native:native.tests:klib-ir-inliner")))
     testFixturesImplementation(project(":kotlin-util-klib-abi"))
     testFixturesImplementation(commonDependency("org.jetbrains.teamcity:serviceMessages"))
 
