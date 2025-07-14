@@ -72,7 +72,7 @@ dependencies {
     testFixturesApi(project(":plugins:plugin-sandbox"))
     testFixturesApi(testFixtures(project(":plugins:plugin-sandbox")))
 
-    scriptingTestDefinition(projectTests(":plugins:scripting:test-script-definition"))
+    scriptingTestDefinition(testFixtures(project(":plugins:scripting:test-script-definition")))
 }
 
 sourceSets {
