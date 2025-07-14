@@ -71,7 +71,7 @@ dependencies {
     testApi(testFixtures(project(":kotlin-atomicfu-compiler-plugin")))
     testApi(testFixtures(project(":kotlin-dataframe-compiler-plugin")))
     testImplementation(testFixtures(project(":analysis:analysis-api-impl-base")))
-    testImplementation(projectTests(":analysis:analysis-test-framework"))
+    testImplementation(testFixtures(project(":analysis:analysis-test-framework")))
     testApi(testFixtures(project(":plugins:plugin-sandbox")))
     testApi(projectTests(":plugins:plugin-sandbox:plugin-sandbox-ic-test"))
     testApi(projectTests(":plugins:plugins-interactions-testing"))

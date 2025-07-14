@@ -51,7 +51,7 @@ dependencies {
     testFixturesImplementation(project(":analysis:decompiled:decompiler-to-file-stubs"))
     testFixturesImplementation(project(":analysis:decompiled:decompiler-to-psi"))
     testFixturesImplementation(kotlinTest("junit"))
-    testFixturesApi(projectTests(":analysis:analysis-test-framework"))
+    testFixturesApi(testFixtures(project(":analysis:analysis-test-framework")))
 
     testImplementation(projectTests(":analysis:low-level-api-fir"))
 
