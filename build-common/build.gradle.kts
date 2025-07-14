@@ -22,7 +22,7 @@ dependencies {
     compileOnly(project(":compiler:build-tools:kotlin-build-statistics"))
 
     testCompileOnly(project(":compiler:cli-common"))
-    testApi(projectTests(":compiler:tests-common"))
+    testApi(testFixtures(project(":compiler:tests-common")))
     testApi(platform(libs.junit.bom))
     testImplementation(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)

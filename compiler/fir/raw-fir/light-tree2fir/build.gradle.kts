@@ -24,7 +24,7 @@ dependencies {
     compileOnly(libs.guava)
 
     testFixturesApi(libs.junit4)
-    testFixturesApi(projectTests(":compiler:tests-common"))
+    testFixturesApi(testFixtures(project(":compiler:tests-common")))
     testFixturesApi(testFixtures(project(":compiler:fir:raw-fir:psi2fir")))
 
     testCompileOnly(kotlinTest("junit"))

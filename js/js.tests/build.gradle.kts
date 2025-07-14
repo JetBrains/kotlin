@@ -41,7 +41,7 @@ dependencies {
     testRuntimeOnly(libs.junit.vintage.engine)
 
     testFixturesApi(protobufFull())
-    testFixturesApi(projectTests(":compiler:tests-common"))
+    testFixturesApi(testFixtures(project(":compiler:tests-common")))
     testFixturesApi(testFixtures(project(":compiler:test-infrastructure")))
     testFixturesApi(projectTests(":compiler:test-infrastructure-utils"))
     testFixturesApi(projectTests(":compiler:tests-compiler-utils"))

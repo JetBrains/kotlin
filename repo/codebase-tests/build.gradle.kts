@@ -5,7 +5,7 @@ plugins {
 
 dependencies {
     testImplementation(intellijCore())
-    testImplementation(projectTests(":compiler:tests-common"))
+    testImplementation(testFixtures(project(":compiler:tests-common")))
 
     testImplementation(libs.jackson.dataformat.xml)
     testImplementation(libs.jackson.module.kotlin)

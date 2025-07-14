@@ -19,7 +19,7 @@ repositories {
 dependencies {
     api(kotlinStdlib())
     api(project(":compiler:frontend"))
-    api(projectTests(":compiler:tests-common"))
+    api(testFixtures(project(":compiler:tests-common")))
     api(project(":compiler:cli"))
     api(intellijCore())
     api(jpsModel())
