@@ -14,7 +14,7 @@ dependencies {
     implementation(project(":kotlin-util-klib-metadata"))
     implementation(intellijCore())
 
-    testImplementation(projectTests(":compiler:tests-common"))
+    testImplementation(testFixtures(project(":compiler:tests-common")))
     testImplementation(testFixtures(project(":compiler:tests-common-new")))
     testImplementation(projectTests(":analysis:decompiled:decompiler-to-file-stubs"))
     testImplementation(libs.junit.jupiter.api)

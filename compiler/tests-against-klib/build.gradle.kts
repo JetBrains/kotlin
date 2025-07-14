@@ -8,7 +8,7 @@ plugins {
 dependencies {
     api(kotlinStdlib())
     testApi(projectTests(":generators:test-generator"))
-    testApi(projectTests(":compiler:tests-common"))
+    testApi(testFixtures(project(":compiler:tests-common")))
     testApi(projectTests(":compiler:tests-integration"))
 
     testCompileOnly(intellijCore())

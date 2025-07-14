@@ -33,7 +33,7 @@ dependencies {
     testRuntimeOnly(projectTests(":analysis:analysis-api-impl-base"))
     testImplementation(projectTests(":analysis:analysis-api-fir"))
     testImplementation(projectTests(":analysis:analysis-test-framework"))
-    testImplementation(projectTests(":compiler:tests-common"))
+    testImplementation(testFixtures(project(":compiler:tests-common")))
     testImplementation(testFixtures(project(":compiler:tests-common-new")))
 
     if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {

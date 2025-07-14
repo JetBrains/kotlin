@@ -9,7 +9,7 @@ plugins {
 
 dependencies {
     testApi(project(":kotlin-scripting-compiler"))
-    testApi(projectTests(":compiler:tests-common"))
+    testApi(testFixtures(project(":compiler:tests-common")))
     testImplementation(intellijCore())
     testApi(platform(libs.junit.bom))
     testCompileOnly(libs.junit4)

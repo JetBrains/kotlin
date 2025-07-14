@@ -17,7 +17,7 @@ dependencies {
     testApi(kotlinTest())
     testCompileOnly(kotlinTest("junit"))
     testImplementation(libs.junit4)
-    testApi(projectTests(":compiler:tests-common"))
+    testApi(testFixtures(project(":compiler:tests-common")))
     testApi(testFixtures(project(":compiler:tests-common-new")))
     testApi(testFixtures(project(":compiler:fir:raw-fir:psi2fir")))
     testApi(testFixtures(project(":compiler:fir:raw-fir:light-tree2fir")))

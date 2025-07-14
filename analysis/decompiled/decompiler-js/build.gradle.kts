@@ -22,7 +22,7 @@ dependencies {
 
     compileOnly(intellijCore())
 
-    testImplementation(projectTests(":compiler:tests-common"))
+    testImplementation(testFixtures(project(":compiler:tests-common")))
     testImplementation(testFixtures(project(":compiler:tests-common-new")))
 }
 

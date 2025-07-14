@@ -19,7 +19,7 @@ dependencies {
 
     testFixturesApi(testFixtures(project(":compiler:tests-common-new")))
 
-    testFixturesImplementation(projectTests(":compiler:tests-common"))
+    testFixturesImplementation(testFixtures(project(":compiler:tests-common")))
     testFixturesImplementation(libs.junit.jupiter.api)
 
     testFixturesImplementation(project(":kotlin-reflect"))

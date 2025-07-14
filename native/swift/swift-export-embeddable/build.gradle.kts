@@ -144,7 +144,7 @@ val intransitiveTestDependenciesJars = configurations.detachedConfiguration().ap
 
     dependencies.add(project.dependencies.testFixtures(project(":native:native.tests")))
     dependencies.add(project.dependencies.projectTests(":compiler:tests-compiler-utils"))
-    dependencies.add(project.dependencies.projectTests(":compiler:tests-common"))
+    dependencies.add(project.dependencies.testFixtures(project(":compiler:tests-common")))
     dependencies.add(project.dependencies.testFixtures(project(":compiler:tests-common-new")))
     dependencies.add(project.dependencies.testFixtures(project(":compiler:test-infrastructure")))
     dependencies.add(project.dependencies.projectTests(":compiler:test-infrastructure-utils"))

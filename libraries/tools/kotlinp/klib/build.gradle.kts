@@ -15,7 +15,7 @@ dependencies {
     testCompileOnly(project(":kotlinx-metadata-klib"))
 
     testImplementation(libs.junit4)
-    testImplementation(projectTests(":compiler:tests-common"))
+    testImplementation(testFixtures(project(":compiler:tests-common")))
     testImplementation(projectTests(":generators:test-generator"))
 
     testRuntimeOnly(project(":kotlinx-metadata-klib"))

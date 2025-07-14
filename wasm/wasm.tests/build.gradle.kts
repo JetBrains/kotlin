@@ -103,7 +103,7 @@ val wasmEdge by configurations.creating {
 }
 
 dependencies {
-    testFixturesApi(projectTests(":compiler:tests-common"))
+    testFixturesApi(testFixtures(project(":compiler:tests-common")))
     testFixturesApi(testFixtures(project(":compiler:tests-common-new")))
     testFixturesApi(testFixtures(project(":js:js.tests")))
     testFixturesApi(intellijCore())

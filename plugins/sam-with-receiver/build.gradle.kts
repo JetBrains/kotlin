@@ -26,7 +26,7 @@ dependencies {
     testFixturesApi(testFixtures(project(":compiler:test-infrastructure")))
     testFixturesApi(projectTests(":compiler:test-infrastructure-utils"))
 
-    testFixturesApi(projectTests(":compiler:tests-common"))
+    testFixturesApi(testFixtures(project(":compiler:tests-common")))
     testFixturesApi(libs.junit4)
 
     testRuntimeOnly(project(":core:descriptors.runtime"))

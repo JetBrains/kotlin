@@ -15,7 +15,7 @@ dependencies {
     implementation(project(":native:kotlin-native-utils"))
     testImplementation(kotlinTest("junit"))
     testImplementation(libs.junit4)
-    testImplementation(projectTests(":compiler:tests-common"))
+    testImplementation(testFixtures(project(":compiler:tests-common")))
     testRuntimeOnly(project(":native:kotlin-klib-commonizer"))
     testImplementation(project(":kotlin-gradle-plugin"))
     testImplementation(project(":kotlin-gradle-statistics"))

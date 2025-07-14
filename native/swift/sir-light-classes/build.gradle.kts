@@ -22,8 +22,9 @@ dependencies {
     testApi(platform(libs.junit.bom))
     testRuntimeOnly(libs.junit.jupiter.engine)
     testImplementation(libs.junit.jupiter.api)
+    testImplementation(kotlinTest())
     testImplementation(project(":native:analysis-api-based-test-utils"))
-    testImplementation(project(":compiler:tests-common", "tests-jar"))
+    testImplementation(testFixtures(project(":compiler:tests-common")))
 }
 
 nativeTest("test", null) {

@@ -5,7 +5,7 @@ plugins {
 }
 
 dependencies {
-    testImplementation(projectTests(":compiler:tests-common"))
+    testImplementation(testFixtures(project(":compiler:tests-common")))
     testImplementation(project(":analysis:analysis-api-standalone"))
     testImplementation(projectTests(":analysis:analysis-api-standalone"))
     testImplementation(projectTests(":analysis:analysis-test-framework"))

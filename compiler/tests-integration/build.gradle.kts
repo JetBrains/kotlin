@@ -26,7 +26,7 @@ dependencies {
     testRuntimeOnly(libs.junit.jupiter.engine)
     testRuntimeOnly(libs.junit.vintage.engine)
 
-    testApi(projectTests(":compiler:tests-common"))
+    testApi(testFixtures(project(":compiler:tests-common")))
     testApi(testFixtures(project(":compiler:tests-common-new")))
     testApi(testFixtures(project(":compiler:fir:raw-fir:psi2fir")))
     testApi(testFixtures(project(":compiler:fir:raw-fir:light-tree2fir")))

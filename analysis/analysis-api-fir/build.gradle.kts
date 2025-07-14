@@ -39,7 +39,7 @@ dependencies {
 
     testImplementation(projectTests(":analysis:low-level-api-fir"))
     testImplementation(project(":analysis:analysis-api-standalone:analysis-api-standalone-base"))
-    testImplementation(projectTests(":compiler:tests-common"))
+    testImplementation(testFixtures(project(":compiler:tests-common")))
     testApi(projectTests(":compiler:test-infrastructure-utils"))
     testApi(testFixtures(project(":compiler:test-infrastructure")))
     testImplementation(testFixtures(project(":compiler:tests-common-new")))
