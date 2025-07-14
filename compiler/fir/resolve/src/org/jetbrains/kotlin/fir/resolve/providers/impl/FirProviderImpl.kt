@@ -120,7 +120,7 @@ class FirProviderImpl(val session: FirSession, val kotlinScopeProvider: FirKotli
     private class FirRecorderData(
         val state: State,
         val file: FirFile,
-        val nameConflictsTracker: FirNameConflictsTrackerComponent?
+        val nameConflictsTracker: FirNameConflictsTracker?
     )
 
     private object FirRecorder : FirDefaultVisitor<Unit, FirRecorderData>() {

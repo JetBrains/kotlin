@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.name.ClassId
 
-abstract class FirNameConflictsTrackerComponent : FirSessionComponent {
+abstract class FirNameConflictsTracker : FirSessionComponent {
     abstract fun registerClassifierRedeclaration(
         classId: ClassId,
         newSymbol: FirClassLikeSymbol<*>, newSymbolFile: FirFile,
@@ -17,4 +17,4 @@ abstract class FirNameConflictsTrackerComponent : FirSessionComponent {
     )
 }
 
-val FirSession.nameConflictsTracker: FirNameConflictsTrackerComponent? by FirSession.nullableSessionComponentAccessor()
+val FirSession.nameConflictsTracker: FirNameConflictsTracker? by FirSession.nullableSessionComponentAccessor()

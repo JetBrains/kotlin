@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory1
 import org.jetbrains.kotlin.diagnostics.reportOn
-import org.jetbrains.kotlin.fir.FirNameConflictsTrackerComponent
+import org.jetbrains.kotlin.fir.FirNameConflictsTracker
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
 import org.jetbrains.kotlin.fir.analysis.checkers.*
@@ -181,8 +181,7 @@ object FirConflictsDeclarationChecker : FirBasicDeclarationChecker(MppCheckerKin
     }
 }
 
-class FirNameConflictsTracker : FirNameConflictsTrackerComponent() {
-
+class FirNameConflictsTrackerImpl : FirNameConflictsTracker() {
     data class ClassifierWithFile(
         val classifier: FirClassLikeSymbol<*>,
         val file: FirFile?,
@@ -202,5 +201,3 @@ class FirNameConflictsTracker : FirNameConflictsTrackerComponent() {
         ) { a, b -> a + b }
     }
 }
-
-
