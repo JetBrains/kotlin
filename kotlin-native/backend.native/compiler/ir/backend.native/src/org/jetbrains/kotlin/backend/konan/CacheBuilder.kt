@@ -73,7 +73,7 @@ class CacheBuilder(
 
     fun needToBuild() = config.ignoreCacheReason == null
             && (config.isFinalBinary || config.produce.isFullCache)
-            && (autoCacheableFrom.isNotEmpty() || icEnabled)
+            && (autoCacheableFrom.isNotEmpty() || icEnabled || config.hotReloadHostMode)
 
     private val allLibraries by lazy { config.resolvedLibraries.getFullList().legacyKlibReverseTopoSort() }
     private val uniqueNameToLibrary by lazy { allLibraries.associateBy { it.uniqueName } }
@@ -105,6 +105,13 @@ class CacheBuilder(
 
     private val KotlinLibrary.isExternal
         get() = autoCacheableFrom.any { libraryFile.canonicalFile.startsWith(it.canonicalFile) }
+
+    /**
+     * After [build], contains absolute paths to per-file `.a` archives that were (re)built.
+     * Used by hot reload GUEST-IC to generate the .knhr_manifest.
+     */
+    var lastBuildRebuiltArchives: List<String> = emptyList()
+        private set
 
     fun build() {
         val externalLibrariesToCache = mutableListOf<KotlinLibrary>()
@@ -237,6 +244,8 @@ class CacheBuilder(
             configuration.report(CompilerMessageSeverity.LOGGING, "        $it")
         }
 
+        val rebuiltArchives = mutableListOf<String>()
+
         for (library in icedLibraries) {
             val filesToCache = groupedDirtyFiles[library]?.let { libraryFiles ->
                 val filesWithFqNames = libraryFilesWithFqNames[library]!!.associateBy {
@@ -245,11 +254,41 @@ class CacheBuilder(
                 libraryFiles.map { filesWithFqNames[it.file]!!.filePath }
             }.orEmpty()
 
+            // CInterop libraries use monolithic caches (no per-file archives, no IR component).
+            val isCInterop = library.isCInteropLibrary()
+
             when {
-                library in needFullRebuild -> buildLibraryCache(library, false, emptyList())
-                caches[library] == null || filesToCache.isNotEmpty() -> buildLibraryCache(library, false, filesToCache)
+                library in needFullRebuild -> {
+                    buildLibraryCache(library, false, emptyList())
+                    if (!isCInterop) {
+                        val cacheRoot = cacheRootDirectories[library]!!
+                        library.getFilesWithFqNames().forEach {
+                            val fileId = CacheSupport.cacheFileId(it.fqName, it.filePath)
+                            rebuiltArchives.add("$cacheRoot/$fileId/bin/lib$fileId.a")
+                        }
+                    }
+                }
+                caches[library] == null || filesToCache.isNotEmpty() -> {
+                    buildLibraryCache(library, false, filesToCache)
+                    if (!isCInterop) {
+                        val cacheRoot = cacheRootDirectories[library]!!
+                        if (caches[library] == null) {
+                            // First build — all files
+                            library.getFilesWithFqNames().forEach {
+                                val fileId = CacheSupport.cacheFileId(it.fqName, it.filePath)
+                                rebuiltArchives.add("$cacheRoot/$fileId/bin/lib$fileId.a")
+                            }
+                        } else {
+                            groupedDirtyFiles[library]?.forEach {
+                                rebuiltArchives.add("$cacheRoot/${it.file}/bin/lib${it.file}.a")
+                            }
+                        }
+                    }
+                }
             }
         }
+
+        lastBuildRebuiltArchives = rebuiltArchives
     }
 
     private val sleepPeriod = 1_000L // 1 second.

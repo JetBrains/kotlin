@@ -1059,4 +1059,22 @@ The default value is 1.""".asReleaseDependent()
             introducedVersion = KotlinReleaseVersion.v2_0_20,
         )
     }
+
+    compilerArgument {
+        name = "Xhot-reload-split"
+        compilerName = "hotReloadSplit"
+        description = """Enable split compilation for hot-code reloading.
+Values:
+  host     - Produce both host executable and bootstrap object (full build)
+  guest    - Produce only bootstrap object (fast incremental builds using IC)
+  guest-ic - Per-file incremental: only recompile changed files (fastest iteration)
+Use 'host' for the initial build, then 'guest' or 'guest-ic' for rapid iterations.
+The bootstrap object is hot-reloaded via JITLink without restarting the host.""".asReleaseDependent()
+        valueType = StringType.defaultNull
+        valueDescription = "host|guest|guest-ic".asReleaseDependent()
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_1_20,
+        )
+    }
 }

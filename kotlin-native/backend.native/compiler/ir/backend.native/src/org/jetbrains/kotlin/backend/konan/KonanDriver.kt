@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.konan.config.generateTestRunner
 import org.jetbrains.kotlin.konan.config.konanIncludedLibraries
 import org.jetbrains.kotlin.konan.config.konanLibraries
 import org.jetbrains.kotlin.konan.config.konanLibraryToAddToCache
+import org.jetbrains.kotlin.konan.config.NativeConfigurationKeys
 import org.jetbrains.kotlin.konan.config.listTargets
 import org.jetbrains.kotlin.konan.config.makePerFileCache
 import org.jetbrains.kotlin.konan.target.CompilerOutputKind
@@ -45,6 +46,12 @@ private val softDeprecatedTargets = setOf(
         KonanTarget.TVOS_X64,
         KonanTarget.WATCHOS_X64,
 )
+
+/**
+ * Manifest file containing all the object files produced by static-cache that
+ * are going to be reloaded as guest code by the Hot-Reload runtime.
+ */
+private const val HR_MANIFEST_EXT = "knhr_manifest"
 
 private const val DEPRECATION_LINK = "https://kotl.in/native-targets-tiers"
 
@@ -148,11 +155,29 @@ class KonanDriver(
             config = NativeSecondStageCompilationConfig(project, configuration) // TODO: Just set freshly built caches.
         }
 
+        // GUEST-IC mode: write .knhr_manifest listing rebuilt per-file archives and exit.
+        // The normal static-cache IC pipeline has already produced the per-file .a files;
+        // the manifest tells the hot-reload runtime which ones need to be reloaded.
+        if (config.hotReloadGuestICMode) {
+            dumpHotReloadManifestToDisk(cacheBuilder)
+            return
+        }
+
         if (!config.produce.isHeaderCache) {
             config.cacheSupport.checkConsistency()
         }
 
         NativeCompilerDriver(performanceManager).run(config, environment)
+    }
+
+    private fun dumpHotReloadManifestToDisk(cacheBuilder: CacheBuilder) {
+        val outputPath = configuration.get(NativeConfigurationKeys.KONAN_OUTPUT_PATH) ?: "output"
+        val manifestFile = java.io.File("$outputPath.$HR_MANIFEST_EXT").apply {
+            val archives = cacheBuilder.lastBuildRebuiltArchives
+            val manifestContent = if (archives.isEmpty()) "" else archives.joinToString("\n") + "\n"
+            writeText(manifestContent)
+        }
+        configuration.report(CompilerMessageSeverity.STRONG_WARNING, "GUEST-IC: wrote ${cacheBuilder.lastBuildRebuiltArchives.size} archive path(s) to ${manifestFile.absolutePath}")
     }
 
     private fun ensureModuleName(config: NativeSecondStageCompilationConfig) {

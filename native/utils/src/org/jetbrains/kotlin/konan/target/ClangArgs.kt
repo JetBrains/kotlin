@@ -49,6 +49,7 @@ sealed class ClangArgs(
                     "NO_UNALIGNED_ACCESS".takeUnless { target.supportsUnalignedAccess() },
                     "FORBID_BUILTIN_MUL_OVERFLOW".takeUnless { target.supports64BitMulOverflow() },
 
+                    "HOT_RELOAD".takeIf { target.supportsHotReload() },
                     "OBJC_INTEROP".takeIf { target.supportsObjcInterop() },
                     "HAS_FOUNDATION_FRAMEWORK".takeIf { target.hasFoundationFramework() },
                     "HAS_UIKIT_FRAMEWORK".takeIf { target.hasUIKitFramework() },

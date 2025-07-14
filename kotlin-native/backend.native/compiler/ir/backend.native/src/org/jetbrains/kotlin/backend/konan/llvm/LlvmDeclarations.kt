@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.backend.konan.serialization.CacheDeserializationStra
 import org.jetbrains.kotlin.backend.konan.serialization.isFromCInteropLibrary
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.declarations.impl.IrFieldImpl
 import org.jetbrains.kotlin.ir.objcinterop.*
 import org.jetbrains.kotlin.ir.symbols.IrFieldSymbol
 import org.jetbrains.kotlin.ir.util.*
@@ -189,6 +190,12 @@ private class DeclarationsGeneratorVisitor(override val generationState: NativeG
     }
 
     override fun visitClass(declaration: IrClass) {
+        // Skip external classes - their declarations come from the host module
+        // (e.g., stdlib classes in hot reload bootstrap)
+        if (isExternal(declaration)) {
+            super.visitClass(declaration)
+            return
+        }
         if (declaration.requiresRtti()) {
             val classLlvmDeclarations = createClassDeclarations(declaration)
             declaration.metadata = KonanMetadata.Class(declaration, classLlvmDeclarations, context.getLayoutBuilder(declaration))
@@ -395,6 +402,7 @@ private class DeclarationsGeneratorVisitor(override val generationState: NativeG
 
         val containingClass = declaration.parent as? IrClass
         if (containingClass != null && !declaration.isStatic) {
+            if (isExternal(containingClass)) return
             if (!containingClass.requiresRtti()) return
             val classDeclarations = (containingClass.metadata as? KonanMetadata.Class)?.llvm
                     ?: error(containingClass.render())
@@ -452,7 +460,7 @@ private class DeclarationsGeneratorVisitor(override val generationState: NativeG
                     }
                 }
             } else {
-                if (!context.config.producePerFileCache)
+                if (!context.config.producePerFileCache || context.config.hotReloadEnabled)
                     "${KonanBinaryInterface.MANGLE_FUN_PREFIX}:${qualifyInternalName(declaration)}"
                 else {
                     val containerName = declaration.parentClassOrNull?.fqNameForIrSerialization?.asString()

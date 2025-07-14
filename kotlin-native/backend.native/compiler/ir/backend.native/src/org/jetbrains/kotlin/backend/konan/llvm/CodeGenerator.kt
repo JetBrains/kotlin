@@ -37,6 +37,21 @@ internal class CodeGenerator(override val generationState: NativeGenerationState
     fun llvmFunctionOrNull(function: IrSimpleFunction): LlvmCallable? =
             function.llvmFunctionOrNull
 
+    /**
+     * Returns the LLVM function definition from llvmDeclarations.
+     * Use this when generating function bodies.
+     */
+    fun llvmFunctionDefinition(function: IrSimpleFunction): LlvmCallable =
+            llvmDeclarations.forFunctionOrNull(function)
+                    ?: error("no function definition for ${function.name} in ${function.file.packageFqName}")
+
+    /**
+     * Returns the LLVM function definition from llvmDeclarations, or null if not found.
+     * Use this when generating function bodies or debug info.
+     */
+    fun llvmFunctionDefinitionOrNull(function: IrSimpleFunction): LlvmCallable? =
+            llvmDeclarations.forFunctionOrNull(function)
+
     val llvmDeclarations = generationState.llvmDeclarations
     val intPtrType = LLVMIntPtrTypeInContext(llvm.llvmContext, llvmTargetData)!!
     internal val immOneIntPtrType = LLVMConstInt(intPtrType, 1, 1)!!
@@ -48,7 +63,7 @@ internal class CodeGenerator(override val generationState: NativeGenerationState
 
     fun typeInfoValue(irClass: IrClass): LLVMValueRef = irClass.llvmTypeInfoPtr
 
-    fun param(fn: IrSimpleFunction, i: Int) = fn.llvmFunction.param(i)
+    fun param(fn: IrSimpleFunction, i: Int) = llvmFunctionDefinition(fn).param(i)
 
     fun functionEntryPointAddress(function: IrSimpleFunction) = function.entryPointAddress.llvm
 
@@ -110,7 +125,7 @@ internal inline fun generateFunction(
         endLocation: LocationInfo?,
         code: FunctionGenerationContext.() -> Unit
 ) {
-    val llvmFunction = codegen.llvmFunction(function)
+    val llvmFunction = codegen.llvmFunctionDefinition(function)
 
     val isCToKotlinBridge = function.origin == CBridgeOrigin.C_TO_KOTLIN_BRIDGE
             // TODO: Alternative approach: lowering that changes origin of such functions to C_TO_KOTLIN_BRIDGE?

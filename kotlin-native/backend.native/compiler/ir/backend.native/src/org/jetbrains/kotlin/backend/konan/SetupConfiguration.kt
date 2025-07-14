@@ -171,6 +171,38 @@ fun CompilerConfiguration.setupFromArguments(arguments: K2NativeCompilerArgument
         putIfNotNull(BinaryOptions.memoryModel, memoryModelFromArgument)
     }
 
+    // Handle the --hot-reload-split argument (accepts "host", "guest", or "guest-ic")
+    arguments.hotReloadSplit?.let { modeString ->
+        val mode = HotReloadSplitMode.fromString(modeString)
+        if (mode == null) {
+            report(ERROR, "Invalid --hot-reload-split value: '$modeString'. Expected 'host', 'guest', or 'guest-ic'.")
+        } else if (mode != HotReloadSplitMode.NONE) {
+            put(NativeConfigurationKeys.HOT_RELOAD_SPLIT, mode)
+            report(STRONG_WARNING, "hot-code reload split compilation is an experimental feature, some code may not work as expected!")
+
+            val debug = getBoolean(NativeConfigurationKeys.DEBUG)
+            if (!debug) {
+                report(ERROR, "hot-code reloading cannot work without debug info. Please compile with debug info enabled (i.e., `-g`.)")
+            }
+
+            // Check IC flags directly from arguments (config keys are set later in this function)
+            val hasIncrementalCompilation = arguments.incrementalCompilation == true && arguments.incrementalCacheDir != null
+
+            // Guest mode works best with incremental compilation for fast builds
+            if ((mode == HotReloadSplitMode.GUEST || mode == HotReloadSplitMode.GUEST_IC) && !hasIncrementalCompilation) {
+                report(STRONG_WARNING, "Guest mode works best with incremental compilation enabled. Consider adding: -Xenable-incremental-compilation -Xic-cache-dir=<cache-directory>")
+            }
+
+            if (mode == HotReloadSplitMode.GUEST_IC) {
+                report(STRONG_WARNING, """
+                    GUEST-IC mode is experimental: per-file incremental compilation for hot reload. Per-file mode requires klib input (-Xinclude=<klib>); 
+                    source compilation falls back to GUEST mode. 
+                    In per-file mode, cross-file inline functions (including reified) are not inlined and require a HOST rebuild.
+                """.trimIndent())
+            }
+        }
+    }
+
     get(BinaryOptions.memoryModel)?.also {
         if (it != MemoryModel.EXPERIMENTAL) {
             report(ERROR, "Legacy MM is deprecated and no longer works.")

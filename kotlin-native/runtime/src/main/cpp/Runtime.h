@@ -36,6 +36,11 @@ RUNTIME_NOTHROW void AppendToInitializersTail(struct InitNode*);
 void CallInitGlobalPossiblyLock(uintptr_t* state, void (*init)());
 void CallInitThreadLocal(uintptr_t volatile* globalState, uintptr_t* localState, void (*init)());
 
+// Re-run global variable and TLS initialization after new InitNodes have been registered
+// (e.g. after JIT-loading code that calls AppendToInitializersTail).
+// Reopens TLS, re-runs ALLOC/COMMIT/INIT phases. Already-initialized entries are skipped.
+void ReinitializeGlobalVariablesAndTLS();
+
 #ifdef __cplusplus
 } // extern "C"
 #endif

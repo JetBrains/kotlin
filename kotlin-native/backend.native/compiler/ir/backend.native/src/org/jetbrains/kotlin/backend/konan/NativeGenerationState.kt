@@ -93,6 +93,7 @@ internal class NativeGenerationState(
     lateinit var objCExport: ObjCExport
 
     fun hasDebugInfo() = debugInfoDelegate.isInitialized()
+    fun hasObjCExport() = ::objCExport.isInitialized
 
     private var isDisposed = false
 

@@ -13,6 +13,7 @@ package org.jetbrains.kotlin.konan.config
  */
 
 import org.jetbrains.kotlin.backend.konan.AllocationMode
+import org.jetbrains.kotlin.backend.konan.HotReloadSplitMode
 import org.jetbrains.kotlin.backend.konan.LlvmVariant
 import org.jetbrains.kotlin.backend.konan.TestRunnerKind
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -273,6 +274,10 @@ object NativeConfigurationKeys {
     // Value of native_targets property to write in manifest.
     @JvmField
     val KONAN_MANIFEST_NATIVE_TARGETS = CompilerConfigurationKey.create<List<KonanTarget>>("KONAN_MANIFEST_NATIVE_TARGETS")
+
+    // Hot reload split compilation mode.
+    @JvmField
+    val HOT_RELOAD_SPLIT = CompilerConfigurationKey.create<HotReloadSplitMode>("HOT_RELOAD_SPLIT")
 
     // LLVM passes to run instead of module optimization pipeline.
     @JvmField
@@ -575,6 +580,10 @@ var CompilerConfiguration.konanDataDir: String?
 var CompilerConfiguration.konanManifestNativeTargets: List<KonanTarget>
     get() = getList(NativeConfigurationKeys.KONAN_MANIFEST_NATIVE_TARGETS)
     set(value) { put(NativeConfigurationKeys.KONAN_MANIFEST_NATIVE_TARGETS, value) }
+
+var CompilerConfiguration.hotReloadSplit: HotReloadSplitMode?
+    get() = get(NativeConfigurationKeys.HOT_RELOAD_SPLIT)
+    set(value) { put(NativeConfigurationKeys.HOT_RELOAD_SPLIT, requireNotNull(value) { "nullable values are not allowed" }) }
 
 var CompilerConfiguration.llvmModulePasses: String?
     get() = get(NativeConfigurationKeys.LLVM_MODULE_PASSES)

@@ -36,4 +36,6 @@ enum class RuntimeModule(val filename: String) {
     BREAKPAD("breakpad.bc"),
     CRASH_HANDLER_IMPL("impl_crashHandler.bc"),
     CRASH_HANDLER_NOOP("noop_crashHandler.bc"),
+    HOT_RELOAD("hot_reload.bc"),
+    HOT_RELOAD_LAUNCHER("hot_reload_launcher.bc"),
 }

@@ -71,6 +71,8 @@ interface Configurables : TargetableExternalStorage, RelocationModeFlags {
     val linkerDynamicFlags get() = targetList("linkerDynamicFlags")
     val targetSysRoot get() = targetString("targetSysRoot")
 
+    val llvmJitLibs get() = targetList("llvmJitLibs")
+
     // Notice: these ones are host-target.
     val targetToolchain get() = hostTargetString("targetToolchain")
 

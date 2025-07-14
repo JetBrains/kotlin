@@ -7,10 +7,10 @@ package org.jetbrains.kotlin.backend.konan
 
 import kotlinx.cinterop.*
 import llvm.*
-import org.jetbrains.kotlin.config.LoggingContext
 import org.jetbrains.kotlin.backend.common.reportCompilationWarning
 import org.jetbrains.kotlin.backend.konan.driver.NativeBackendPhaseContext
 import org.jetbrains.kotlin.backend.konan.llvm.*
+import org.jetbrains.kotlin.config.LoggingContext
 import org.jetbrains.kotlin.config.nativeBinaryOptions.StackProtectorMode
 import org.jetbrains.kotlin.konan.target.*
 import org.jetbrains.kotlin.util.PerformanceManager
@@ -49,6 +49,7 @@ data class LlvmPipelineConfig(
         val modulePasses: String? = null,
         val ltoPasses: String? = null,
         val sspMode: StackProtectorMode = StackProtectorMode.NO,
+        val hotReloadEnabled: Boolean = false
 )
 
 private fun getCpuModel(context: NativeBackendPhaseContext): String {
@@ -113,10 +114,10 @@ internal fun createLTOPipelineConfigForRuntime(generationState: NativeGeneration
  * but for release binaries we rely on "closed" world and enable a lot of optimizations.
  */
 internal fun createLTOFinalPipelineConfig(
-    context: NativeBackendPhaseContext,
-    targetTriple: String,
-    closedWorld: Boolean,
-    timePasses: Boolean = false,
+        context: NativeBackendPhaseContext,
+        targetTriple: String,
+        closedWorld: Boolean,
+        timePasses: Boolean = false,
 ): LlvmPipelineConfig {
     val config = context.config
     val target = config.target
@@ -149,7 +150,10 @@ internal fun createLTOFinalPipelineConfig(
     // similar to DCE enabled by internalize but later:
     //
     // Important for binary size, workarounds references to undefined symbols from interop libraries.
-    val makeDeclarationsHidden = config.produce == CompilerOutputKind.STATIC_CACHE
+    // NOTE: Disabled for STATIC_CACHE to support hot reload - symbols need to be visible
+    // so they can be resolved from the host process when loading bootstrap via JITLink/dlopen.
+    // TODO: Add a dedicated flag for hot-reload-compatible caches to avoid impact on non-hot-reload builds.
+    val makeDeclarationsHidden = false // was: config.produce == CompilerOutputKind.STATIC_CACHE
     val objcPasses = configurables is AppleConfigurables
 
     // Null value means that LLVM should use default inliner params
@@ -178,6 +182,7 @@ internal fun createLTOFinalPipelineConfig(
             modulePasses = config.llvmModulePasses,
             ltoPasses = config.llvmLTOPasses,
             sspMode = config.stackProtectorMode,
+            hotReloadEnabled = config.hotReloadEnabled
     )
 }
 
@@ -291,8 +296,9 @@ class MandatoryOptimizationPipeline(config: LlvmPipelineConfig, performanceManag
     }
 
     override fun executeCustomPreprocessing(config: LlvmPipelineConfig, module: LLVMModuleRef) {
-        if (config.makeDeclarationsHidden) {
-            makeVisibilityHiddenLikeLlvmInternalizePass(module)
+        when {
+            config.makeDeclarationsHidden -> makeVisibilityHiddenLikeLlvmInternalizePass(module)
+            config.hotReloadEnabled -> module.setSymbolsVisibilityToDefault()
         }
     }
 }
@@ -309,7 +315,7 @@ class LTOOptimizationPipeline(config: LlvmPipelineConfig, performanceManager: Pe
     override val passes =
             if (config.ltoPasses != null) listOf(config.ltoPasses)
             else buildList {
-                if (config.internalize) {
+                if (!config.hotReloadEnabled && config.internalize) {
                     add("internalize")
                 }
 

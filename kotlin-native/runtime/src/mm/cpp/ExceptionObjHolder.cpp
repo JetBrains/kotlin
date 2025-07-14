@@ -9,6 +9,11 @@
 
 using namespace kotlin;
 
+// Define the destructor here to make it the "key function" for ExceptionObjHolder.
+// This ensures the typeinfo (__ZTI18ExceptionObjHolder) is emitted in this translation
+// unit with proper linkage and visibility, rather than as a weak symbol in every TU.
+ExceptionObjHolder::~ExceptionObjHolder() = default;
+
 namespace {
 
 class ExceptionObjHolderImpl : public ExceptionObjHolder, private Pinned {
