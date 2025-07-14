@@ -13,7 +13,7 @@ dependencies {
     compileOnly(project(":core:descriptors.jvm"))
 
     testApi(testFixtures(project(":compiler:tests-common")))
-    testApi(projectTests(":generators:test-generator"))
+    testApi(testFixtures(project(":generators:test-generator")))
 
     testApi(intellijCore())
     testApi(platform(libs.junit.bom))

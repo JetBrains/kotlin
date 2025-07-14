@@ -26,7 +26,7 @@ dependencies {
     testImplementation(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
     testApi(testFixtures(project(":compiler:tests-common-new")))
-    testImplementation(projectTests(":generators:test-generator"))
+    testImplementation(testFixtures(project(":generators:test-generator")))
 
     testRuntimeOnly(project(":kotlin-metadata-jvm"))
 

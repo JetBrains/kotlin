@@ -17,7 +17,7 @@ dependencies {
     testFixturesApi(intellijCore())
     testFixturesApi(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
     testFixturesApi(testFixtures(project(":compiler:tests-common-new")))
-    testFixturesApi(projectTests(":generators:test-generator"))
+    testFixturesApi(testFixtures(project(":generators:test-generator")))
     testFixturesApi(testFixtures(project(":js:js.tests")))
 }
 

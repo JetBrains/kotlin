@@ -87,7 +87,7 @@ dependencies {
     testFixturesApi(testFixtures(project(":compiler:test-infrastructure-utils")))
     testFixturesApi(testFixtures(project(":compiler:tests-compiler-utils")))
     testFixturesApi(testFixtures(project(":compiler:tests-common-new")))
-    testFixturesImplementation(projectTests(":generators:test-generator"))
+    testFixturesImplementation(testFixtures(project(":generators:test-generator")))
     testFixturesApi(project(":plugins:plugin-sandbox"))
     testFixturesApi(project(":compiler:incremental-compilation-impl"))
     testFixturesApi(testFixtures(project(":compiler:incremental-compilation-impl")))
