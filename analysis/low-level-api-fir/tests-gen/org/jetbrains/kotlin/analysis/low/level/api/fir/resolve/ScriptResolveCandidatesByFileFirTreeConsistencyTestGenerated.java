@@ -47,6 +47,16 @@ public class ScriptResolveCandidatesByFileFirTreeConsistencyTestGenerated extend
   }
 
   @Nested
+  @TestMetadata("analysis/analysis-api/testData/components/resolver/allByPsi/typeAlias")
+  @TestDataPath("$PROJECT_ROOT")
+  public class TypeAlias {
+    @Test
+    public void testAllFilesPresentInTypeAlias() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/allByPsi/typeAlias"), Pattern.compile("^(.+)\\.(kts)$"), null, true);
+    }
+  }
+
+  @Nested
   @TestMetadata("analysis/analysis-api/testData/components/resolver/allByPsi/withErrors")
   @TestDataPath("$PROJECT_ROOT")
   public class WithErrors {

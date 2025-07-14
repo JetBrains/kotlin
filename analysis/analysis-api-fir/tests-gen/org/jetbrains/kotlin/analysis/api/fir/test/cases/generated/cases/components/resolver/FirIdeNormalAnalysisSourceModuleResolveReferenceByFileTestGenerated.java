@@ -363,6 +363,28 @@ public class FirIdeNormalAnalysisSourceModuleResolveReferenceByFileTestGenerated
   }
 
   @Nested
+  @TestMetadata("analysis/analysis-api/testData/components/resolver/allByPsi/typeAlias")
+  @TestDataPath("$PROJECT_ROOT")
+  public class TypeAlias {
+    @Test
+    public void testAllFilesPresentInTypeAlias() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/allByPsi/typeAlias"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("TypeAliasedCompanionObjectAsQualifier.kt")
+    public void testTypeAliasedCompanionObjectAsQualifier() {
+      runTest("analysis/analysis-api/testData/components/resolver/allByPsi/typeAlias/TypeAliasedCompanionObjectAsQualifier.kt");
+    }
+
+    @Test
+    @TestMetadata("TypeAliasedObjectAsQualifier.kt")
+    public void testTypeAliasedObjectAsQualifier() {
+      runTest("analysis/analysis-api/testData/components/resolver/allByPsi/typeAlias/TypeAliasedObjectAsQualifier.kt");
+    }
+  }
+
+  @Nested
   @TestMetadata("analysis/analysis-api/testData/components/resolver/allByPsi/withErrors")
   @TestDataPath("$PROJECT_ROOT")
   public class WithErrors {
