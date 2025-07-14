@@ -1,6 +1,7 @@
 plugins {
     kotlin("jvm")
     id("jps-compatible")
+    id("java-test-fixtures")
 }
 
 dependencies {
@@ -8,21 +9,19 @@ dependencies {
     implementation(project(":analysis:decompiled:decompiler-to-file-stubs"))
     implementation(intellijCore())
 
-    testImplementation(testFixtures(project(":compiler:tests-common")))
-    testImplementation(testFixtures(project(":compiler:tests-common-new")))
-    testImplementation(testFixtures(project(":analysis:analysis-test-framework")))
-    testImplementation(testFixtures(project(":analysis:analysis-api-impl-base")))
-    testImplementation(testFixtures(project(":analysis:low-level-api-fir")))
-    testImplementation(testFixtures(project(":analysis:decompiled:decompiler-to-file-stubs")))
-    testImplementation(libs.junit.jupiter.api)
+    testFixturesApi(testFixtures(project(":compiler:tests-common")))
+    testFixturesApi(testFixtures(project(":compiler:tests-common-new")))
+    testFixturesApi(testFixtures(project(":analysis:analysis-test-framework")))
+    testFixturesApi(testFixtures(project(":analysis:analysis-api-impl-base")))
+    testFixturesApi(testFixtures(project(":analysis:low-level-api-fir")))
+    testFixturesApi(testFixtures(project(":analysis:decompiled:decompiler-to-file-stubs")))
+    testFixturesApi(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
 }
 
 sourceSets {
-    "test" {
-        projectDefault()
-        generatedTestDir()
-    }
+    "test" { generatedTestDir() }
+    "testFixtures" { projectDefault() }
 }
 
 projectTest(jUnitMode = JUnitMode.JUnit5) {
