@@ -1,11 +1,13 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.konan.test.blackbox
 
 import com.intellij.openapi.util.io.FileUtil
+import org.jetbrains.kotlin.cli.AbstractCliTest
+import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.konan.test.blackbox.support.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationResult.Companion.assertSuccess
@@ -14,6 +16,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunChecks
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.Binaries
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.KotlinNativeTargets
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.PipelineType
+import org.jetbrains.kotlin.konan.test.blackbox.support.settings.Settings
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.Timeouts
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.DEFAULT_MODULE_NAME
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.LAUNCHER_MODULE_NAME
@@ -370,3 +373,39 @@ internal fun AbstractNativeSimpleTest.firIdentical(testDataFile: File) =
 internal fun AbstractNativeSimpleTest.freeCompilerArgs(testDataFile: File) = freeCompilerArgs(FileUtil.loadFile(testDataFile))
 internal fun AbstractNativeSimpleTest.freeCompilerArgs(testDataFileContents: String) =
     directiveValues(testDataFileContents, TestDirectives.FREE_COMPILER_ARGS.name)
+
+internal fun TestCompilationResult<*>.toOutput(): String {
+    check(this is TestCompilationResult.ImmediateResult<*>) { this }
+    val loggedData = this.loggedData
+    check(loggedData is LoggedData.CompilationToolCall) { loggedData::class }
+    return normalizeOutput(loggedData.toolOutput, loggedData.exitCode)
+}
+
+private fun normalizeOutput(output: String, exitCode: ExitCode): String {
+    val dir = "native/native.tests/testData/compilerOutput/"
+    return AbstractCliTest.getNormalizedCompilerOutput(
+        output,
+        exitCode,
+        dir,
+        dir
+    )
+}
+
+internal fun AbstractNativeSimpleTest.compileLibrary(
+    settings: Settings,
+    source: File,
+    freeCompilerArgs: List<String> = emptyList(),
+    dependencies: List<TestCompilationArtifact.KLIB> = emptyList(),
+    packed: Boolean = true,
+): TestCompilationResult<out TestCompilationArtifact.KLIB> {
+    val testCompilerArgs = if (packed) TestCompilerArgs(freeCompilerArgs) else TestCompilerArgs(freeCompilerArgs + "-nopack")
+    val testCase = generateTestCaseWithSingleModule(source, testCompilerArgs)
+    val compilation = LibraryCompilation(
+        settings = settings,
+        freeCompilerArgs = testCase.freeCompilerArgs,
+        sourceModules = testCase.modules,
+        dependencies = dependencies.map { it.asLibraryDependency() },
+        expectedArtifact = getLibraryArtifact(testCase, buildDir, packed)
+    )
+    return compilation.result
+}

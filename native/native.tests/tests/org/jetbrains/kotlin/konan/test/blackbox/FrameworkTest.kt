@@ -85,10 +85,10 @@ abstract class FrameworkTestBase : AbstractNativeSimpleTest() {
             val shortOutText = result.stdout.lines().take(100)
             val shortErrText = result.stderr.lines().take(100)
             fail("FileCheck matching of ${fileCheckDump.absolutePath}\n" +
-                        "with '--check-prefixes ${testCase.checks.fileCheckMatcher.prefixes}'\n" +
-                        "failed with result=$result:\n" +
-                        shortOutText.joinToString("\n") + "\n" +
-                        shortErrText.joinToString("\n")
+                         "with '--check-prefixes ${testCase.checks.fileCheckMatcher.prefixes}'\n" +
+                         "failed with result=$result:\n" +
+                         shortOutText.joinToString("\n") + "\n" +
+                         shortErrText.joinToString("\n")
             )
         }
     }
