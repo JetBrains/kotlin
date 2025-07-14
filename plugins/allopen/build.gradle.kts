@@ -29,7 +29,7 @@ dependencies {
     testRuntimeOnly(libs.junit.jupiter.engine)
     testFixturesApi(testFixtures(project(":compiler:tests-common-new")))
     testFixturesApi(testFixtures(project(":compiler:test-infrastructure")))
-    testFixturesApi(projectTests(":compiler:test-infrastructure-utils"))
+    testFixturesApi(testFixtures(project(":compiler:test-infrastructure-utils")))
     testFixturesImplementation(project(":compiler:fir:checkers"))
     testRuntimeOnly(project(":compiler:fir:fir-serialization"))
 
