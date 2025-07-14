@@ -90,7 +90,7 @@ dependencies {
     testFixturesImplementation(projectTests(":generators:test-generator"))
     testFixturesApi(project(":plugins:plugin-sandbox"))
     testFixturesApi(project(":compiler:incremental-compilation-impl"))
-    testFixturesApi(projectTests(":compiler:incremental-compilation-impl"))
+    testFixturesApi(testFixtures(project(":compiler:incremental-compilation-impl")))
 
     testFixturesApi(testFixtures(project(":js:js.tests")))
     testFixturesImplementation(libs.junit4)

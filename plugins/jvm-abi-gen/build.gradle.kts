@@ -48,7 +48,7 @@ dependencies {
 
     testFixturesApi(libs.junit4)
     testFixturesApi(testFixtures(project(":compiler:tests-common")))
-    testFixturesApi(projectTests(":compiler:incremental-compilation-impl"))
+    testFixturesApi(testFixtures(project(":compiler:incremental-compilation-impl")))
 }
 
 optInToExperimentalCompilerApi()
