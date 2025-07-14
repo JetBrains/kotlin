@@ -307,7 +307,7 @@ fun frontendClassic() = arrayOf(
 )
 
 private fun klib() = annotation(Tag::class.java, "klib")
-private fun klibIrInliner() = annotation(Tag::class.java, KLIB_IR_INLINER)
+fun klibIrInliner() = annotation(Tag::class.java, KLIB_IR_INLINER)
 private fun klibSyntheticAccessors() = arrayOf(
     annotation(
         EnforcedProperty::class.java,

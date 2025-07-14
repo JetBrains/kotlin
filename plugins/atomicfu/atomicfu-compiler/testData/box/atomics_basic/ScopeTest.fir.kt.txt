@@ -18,17 +18,17 @@ class AA {
   }
 
   fun manyProperties(affected: Any): Boolean {
-    compareAndSetField<Any?>(/* <this> = AtomicStateaffected as AtomicState::state$volatile, */ expectedValue = <this>, newValue = <this>.<get-c>().<get-d>().<get-e>()) /*~> Unit */
+    compareAndSetField<Any?>(/* <this> = affected as AtomicState::state$volatile, */ expectedValue = <this>, newValue = <this>.<get-c>().<get-d>().<get-e>()) /*~> Unit */
     return when {
-      atomicGetField<Any?>(/* <this> = AtomicStateaffected /*as AtomicState */::state$volatile */) as Any? is E -> EQEQ(arg0 = atomicGetField<Any?>(/* <this> = AtomicStateaffected /*as AtomicState */::state$volatile */) as Any? as E.<get-x>(), arg1 = <this>.<get-value>().plus(other = 1))
+      atomicGetField<Any?>(/* <this> = affected /*as AtomicState */::state$volatile */) as Any? is E -> EQEQ(arg0 = atomicGetField<Any?>(/* <this> = affected /*as AtomicState */::state$volatile */) as Any? as E.<get-x>(), arg1 = <this>.<get-value>().plus(other = 1))
       else -> false
     }
   }
 
   fun updateToB(affected: Any): Boolean {
-    compareAndSetField<Any?>(/* <this> = AtomicStateaffected as AtomicState::state$volatile, */ expectedValue = <this>, newValue = <this>.<get-b>()) /*~> Unit */
+    compareAndSetField<Any?>(/* <this> = affected as AtomicState::state$volatile, */ expectedValue = <this>, newValue = <this>.<get-b>()) /*~> Unit */
     return when {
-      atomicGetField<Any?>(/* <this> = AtomicStateaffected /*as AtomicState */::state$volatile */) as Any? is B -> EQEQ(arg0 = atomicGetField<Any?>(/* <this> = AtomicStateaffected /*as AtomicState */::state$volatile */) as Any? as B.<get-value>(), arg1 = <this>.<get-value>().plus(other = 1))
+      atomicGetField<Any?>(/* <this> = affected /*as AtomicState */::state$volatile */) as Any? is B -> EQEQ(arg0 = atomicGetField<Any?>(/* <this> = affected /*as AtomicState */::state$volatile */) as Any? as B.<get-value>(), arg1 = <this>.<get-value>().plus(other = 1))
       else -> false
     }
   }
@@ -128,3 +128,4 @@ fun box(): String {
   testClass.scopeTest()
   return "OK"
 }
+

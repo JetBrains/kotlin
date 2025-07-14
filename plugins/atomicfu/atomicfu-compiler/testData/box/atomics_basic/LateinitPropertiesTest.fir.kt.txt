@@ -63,11 +63,11 @@ class LateinitPropertiesTest {
   }
 
   fun test() {
-    assertEquals<Int>(expected = 0, actual = atomicGetField<Int>(/* <this> = LateinitPropertiesTest<this>::a$volatile */) as Int)
-    assertTrue(actual = compareAndSetField<Any?>(/* <this> = LateinitPropertiesTest<this>::head$volatile, */ expectedValue = "AAA", newValue = "BBB"))
-    assertEquals<String>(expected = "BBB", actual = atomicGetField<Any?>(/* <this> = LateinitPropertiesTest<this>::head$volatile */) as Any?)
+    assertEquals<Int>(expected = 0, actual = atomicGetField<Int>(/* <this> = <this>::a$volatile */) as Int)
+    assertTrue(actual = compareAndSetField<Any?>(/* <this> = <this>::head$volatile, */ expectedValue = "AAA", newValue = "BBB"))
+    assertEquals<String>(expected = "BBB", actual = atomicGetField<Any?>(/* <this> = <this>::head$volatile */) as Any?)
     assertEquals<Int>(expected = 0, actual = <this>.<get-lateIntArr>().get(index = 35) as Int)
-    assertEquals<Int>(expected = 77, actual = atomicGetField<Any?>(/* <this> = LateinitPropertiesTest<this>::dataRef$volatile */) as Any?.<get-n>())
+    assertEquals<Int>(expected = 77, actual = atomicGetField<Any?>(/* <this> = <this>::dataRef$volatile */) as Any?.<get-n>())
     assertEquals<String?>(expected = null, actual = <this>.<get-lateRefArr>().get(index = 5) as Any?)
   }
 
@@ -78,3 +78,4 @@ fun box(): String {
   testClass.test()
   return "OK"
 }
+

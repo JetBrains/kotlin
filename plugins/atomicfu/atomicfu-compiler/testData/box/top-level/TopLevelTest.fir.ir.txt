@@ -314,7 +314,7 @@ FILE fqName:<root> fileName:/TopLevelTest.kt
             then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.ANode'
               CONST Boolean type=kotlin.Boolean value=false
         VAR IR_TEMPORARY_VARIABLE name:tmp_0 type:<root>.ANode<T of <root>.ANode> [val]
-          TYPE_OP type=<root>.ANode<T of <root>.ANode> origin=CAST typeOperand=<root>.ANode<T of <root>.ANode>
+          TYPE_OP type=<root>.ANode<T of <root>.ANode> origin=IMPLICIT_CAST typeOperand=<root>.ANode<T of <root>.ANode>
             GET_VAR 'other: kotlin.Any? declared in <root>.ANode.equals' type=kotlin.Any? origin=null
         WHEN type=kotlin.Unit origin=null
           BRANCH
@@ -414,7 +414,7 @@ FILE fqName:<root> fileName:/TopLevelTest.kt
             then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.BNode'
               CONST Boolean type=kotlin.Boolean value=false
         VAR IR_TEMPORARY_VARIABLE name:tmp_1 type:<root>.BNode<T of <root>.BNode> [val]
-          TYPE_OP type=<root>.BNode<T of <root>.BNode> origin=CAST typeOperand=<root>.BNode<T of <root>.BNode>
+          TYPE_OP type=<root>.BNode<T of <root>.BNode> origin=IMPLICIT_CAST typeOperand=<root>.BNode<T of <root>.BNode>
             GET_VAR 'other: kotlin.Any? declared in <root>.BNode.equals' type=kotlin.Any? origin=null
         WHEN type=kotlin.Unit origin=null
           BRANCH
@@ -512,7 +512,7 @@ FILE fqName:<root> fileName:/TopLevelTest.kt
             then: RETURN type=kotlin.Nothing from='public open fun equals (other: kotlin.Any?): kotlin.Boolean declared in <root>.CNode'
               CONST Boolean type=kotlin.Boolean value=false
         VAR IR_TEMPORARY_VARIABLE name:tmp_2 type:<root>.CNode [val]
-          TYPE_OP type=<root>.CNode origin=CAST typeOperand=<root>.CNode
+          TYPE_OP type=<root>.CNode origin=IMPLICIT_CAST typeOperand=<root>.CNode
             GET_VAR 'other: kotlin.Any? declared in <root>.CNode.equals' type=kotlin.Any? origin=null
         WHEN type=kotlin.Unit origin=null
           BRANCH

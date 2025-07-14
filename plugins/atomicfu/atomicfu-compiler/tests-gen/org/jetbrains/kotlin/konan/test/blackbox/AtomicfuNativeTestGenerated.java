@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.konan.test.blackbox;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.junit.jupiter.api.Tag;
+import org.jetbrains.kotlin.konan.test.blackbox.support.EnforcedHostTarget;
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.ClassicPipeline;
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.UseExtTestCaseGroupProvider;
 import org.jetbrains.kotlin.test.TargetBackend;
@@ -23,6 +24,7 @@ import java.util.regex.Pattern;
 @TestMetadata("plugins/atomicfu/atomicfu-compiler/testData/box")
 @TestDataPath("$PROJECT_ROOT")
 @Tag("atomicfu-native")
+@EnforcedHostTarget()
 @ClassicPipeline()
 @UseExtTestCaseGroupProvider()
 public class AtomicfuNativeTestGenerated extends AbstractNativeCodegenBoxTest {
@@ -35,6 +37,7 @@ public class AtomicfuNativeTestGenerated extends AbstractNativeCodegenBoxTest {
   @TestMetadata("plugins/atomicfu/atomicfu-compiler/testData/box/atomic_extensions")
   @TestDataPath("$PROJECT_ROOT")
   @Tag("atomicfu-native")
+  @EnforcedHostTarget()
   @ClassicPipeline()
   @UseExtTestCaseGroupProvider()
   public class Atomic_extensions {
@@ -108,6 +111,7 @@ public class AtomicfuNativeTestGenerated extends AbstractNativeCodegenBoxTest {
   @TestMetadata("plugins/atomicfu/atomicfu-compiler/testData/box/atomics_basic")
   @TestDataPath("$PROJECT_ROOT")
   @Tag("atomicfu-native")
+  @EnforcedHostTarget()
   @ClassicPipeline()
   @UseExtTestCaseGroupProvider()
   public class Atomics_basic {
@@ -211,6 +215,7 @@ public class AtomicfuNativeTestGenerated extends AbstractNativeCodegenBoxTest {
   @TestMetadata("plugins/atomicfu/atomicfu-compiler/testData/box/delegated")
   @TestDataPath("$PROJECT_ROOT")
   @Tag("atomicfu-native")
+  @EnforcedHostTarget()
   @ClassicPipeline()
   @UseExtTestCaseGroupProvider()
   public class Delegated {
@@ -230,6 +235,7 @@ public class AtomicfuNativeTestGenerated extends AbstractNativeCodegenBoxTest {
   @TestMetadata("plugins/atomicfu/atomicfu-compiler/testData/box/locks")
   @TestDataPath("$PROJECT_ROOT")
   @Tag("atomicfu-native")
+  @EnforcedHostTarget()
   @ClassicPipeline()
   @UseExtTestCaseGroupProvider()
   public class Locks {
@@ -255,6 +261,7 @@ public class AtomicfuNativeTestGenerated extends AbstractNativeCodegenBoxTest {
   @TestMetadata("plugins/atomicfu/atomicfu-compiler/testData/box/top-level")
   @TestDataPath("$PROJECT_ROOT")
   @Tag("atomicfu-native")
+  @EnforcedHostTarget()
   @ClassicPipeline()
   @UseExtTestCaseGroupProvider()
   public class Top_level {
@@ -280,6 +287,7 @@ public class AtomicfuNativeTestGenerated extends AbstractNativeCodegenBoxTest {
   @TestMetadata("plugins/atomicfu/atomicfu-compiler/testData/box/trace")
   @TestDataPath("$PROJECT_ROOT")
   @Tag("atomicfu-native")
+  @EnforcedHostTarget()
   @ClassicPipeline()
   @UseExtTestCaseGroupProvider()
   public class Trace {

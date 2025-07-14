@@ -161,7 +161,7 @@ class LoopTest {
   private inline fun extensionLoopMixedReceivers$atomicfu$ATOMIC_ARRAY$Int(handler$atomicfu: AtomicIntArray, index$atomicfu: Int, first: Int, second: Int): Int {
     <this>.loop$atomicfu$ATOMIC_ARRAY$Int(handler$atomicfu = handler$atomicfu, index$atomicfu = index$atomicfu, action$atomicfu = local fun <anonymous>(cur: Int) {
       handler$atomicfu.compareAndSet(index = index$atomicfu, expectedValue = cur, newValue = first) /*~> Unit */
-      compareAndSetField<Int>(/* <this> = LoopTest<this>::a$volatile, */ expectedValue = first, newValue = second) /*~> Unit */
+      compareAndSetField<Int>(/* <this> = <this>::a$volatile, */ expectedValue = first, newValue = second) /*~> Unit */
       return handler$atomicfu.get(index = index$atomicfu) as Int
     }
 )
@@ -170,7 +170,7 @@ class LoopTest {
   private inline fun extensionLoopMixedReceivers$atomicfu$NATIVE_PROPERTY_REF$Int(crossinline handler$atomicfu: Function0<KMutableProperty0<Int>>, first: Int, second: Int): Int {
     <this>.loop$atomicfu$NATIVE_PROPERTY_REF$Int(handler$atomicfu = handler$atomicfu, action$atomicfu = local fun <anonymous>(cur: Int) {
       compareAndSetField<Int>(/* <this> = handler$atomicfu.invoke(), */ expectedValue = cur, newValue = first) /*~> Unit */
-      compareAndSetField<Int>(/* <this> = LoopTest<this>::a$volatile, */ expectedValue = first, newValue = second) /*~> Unit */
+      compareAndSetField<Int>(/* <this> = <this>::a$volatile, */ expectedValue = first, newValue = second) /*~> Unit */
       return atomicGetField<Int>(/* <this> = handler$atomicfu.invoke() */) as Int
     }
 )
@@ -180,7 +180,7 @@ class LoopTest {
     <this>.loop$atomicfu$ATOMIC_ARRAY$Int(handler$atomicfu = handler$atomicfu, index$atomicfu = index$atomicfu, action$atomicfu = local fun <anonymous>(cur: Int) {
       handler$atomicfu.compareAndSet(index = index$atomicfu, expectedValue = cur, newValue = to) /*~> Unit */
       <this>.extensionLoop$atomicfu$NATIVE_PROPERTY_REF$Int(handler$atomicfu = local inline fun <a$volatile-getter>(): KMutableProperty0<Int> {
-        return LoopTest<this>::a$volatile
+        return <this>::a$volatile
       }
 , to = 5) /*~> Unit */
       return handler$atomicfu.get(index = index$atomicfu) as Int
@@ -192,7 +192,7 @@ class LoopTest {
     <this>.loop$atomicfu$NATIVE_PROPERTY_REF$Int(handler$atomicfu = handler$atomicfu, action$atomicfu = local fun <anonymous>(cur: Int) {
       compareAndSetField<Int>(/* <this> = handler$atomicfu.invoke(), */ expectedValue = cur, newValue = to) /*~> Unit */
       <this>.extensionLoop$atomicfu$NATIVE_PROPERTY_REF$Int(handler$atomicfu = local inline fun <a$volatile-getter>(): KMutableProperty0<Int> {
-        return LoopTest<this>::a$volatile
+        return <this>::a$volatile
       }
 , to = 5) /*~> Unit */
       return atomicGetField<Int>(/* <this> = handler$atomicfu.invoke() */) as Int
@@ -236,11 +236,11 @@ class LoopTest {
 
   private inline fun casLoop(to: Int): Int {
     <this>.loop$atomicfu$NATIVE_PROPERTY_REF$Int(handler$atomicfu = local inline fun <a$volatile-getter>(): KMutableProperty0<Int> {
-      return LoopTest<this>::a$volatile
+      return <this>::a$volatile
     }
 , action$atomicfu = local fun <anonymous>(cur: Int) {
       when {
-        compareAndSetField<Int>(/* <this> = LoopTest<this>::a$volatile, */ expectedValue = cur, newValue = to) -> return atomicGetField<Int>(/* <this> = LoopTest<this>::a$volatile */) as Int
+        compareAndSetField<Int>(/* <this> = <this>::a$volatile, */ expectedValue = cur, newValue = to) -> return atomicGetField<Int>(/* <this> = <this>::a$volatile */) as Int
       }
       return 777
     }
@@ -249,11 +249,11 @@ class LoopTest {
 
   private inline fun casLoopExpression(to: Int): Int {
     return <this>.loop$atomicfu$NATIVE_PROPERTY_REF$Int(handler$atomicfu = local inline fun <a$volatile-getter>(): KMutableProperty0<Int> {
-      return LoopTest<this>::a$volatile
+      return <this>::a$volatile
     }
 , action$atomicfu = local fun <anonymous>(cur: Int) {
       when {
-        compareAndSetField<Int>(/* <this> = LoopTest<this>::a$volatile, */ expectedValue = cur, newValue = to) -> return atomicGetField<Int>(/* <this> = LoopTest<this>::a$volatile */) as Int
+        compareAndSetField<Int>(/* <this> = <this>::a$volatile, */ expectedValue = cur, newValue = to) -> return atomicGetField<Int>(/* <this> = <this>::a$volatile */) as Int
       }
       return 777
     }
@@ -264,23 +264,23 @@ class LoopTest {
     assertEquals<Int>(expected = 5, actual = <this>.casLoop(to = 5))
     assertEquals<Int>(expected = 6, actual = <this>.casLoopExpression(to = 6))
     assertEquals<Int>(expected = 66, actual = <this>.extensionLoop$atomicfu$NATIVE_PROPERTY_REF$Int(handler$atomicfu = local inline fun <a$volatile-getter>(): KMutableProperty0<Int> {
-      return LoopTest<this>::a$volatile
+      return <this>::a$volatile
     }
 , to = 66))
     assertEquals<Int>(expected = 77, actual = <this>.extensionLoopExpression$atomicfu$NATIVE_PROPERTY_REF$Int(handler$atomicfu = local inline fun <a$volatile-getter>(): KMutableProperty0<Int> {
-      return LoopTest<this>::a$volatile
+      return <this>::a$volatile
     }
 , to = 777))
     assertEquals<Int>(expected = 99, actual = <this>.extensionLoopMixedReceivers$atomicfu$NATIVE_PROPERTY_REF$Int(handler$atomicfu = local inline fun <a$volatile-getter>(): KMutableProperty0<Int> {
-      return LoopTest<this>::a$volatile
+      return <this>::a$volatile
     }
 , first = 88, second = 99))
     assertEquals<Int>(expected = 5, actual = <this>.extensionLoopRecursive$atomicfu$NATIVE_PROPERTY_REF$Int(handler$atomicfu = local inline fun <a$volatile-getter>(): KMutableProperty0<Int> {
-      return LoopTest<this>::a$volatile
+      return <this>::a$volatile
     }
 , to = 100))
     assertEquals<Int>(expected = 777, actual = <this>.bar$atomicfu$NATIVE_PROPERTY_REF$Int(handler$atomicfu = local inline fun <a$volatile-getter>(): KMutableProperty0<Int> {
-      return LoopTest<this>::a$volatile
+      return <this>::a$volatile
     }
 , delta = 100))
   }
@@ -435,3 +435,4 @@ fun testTopLevelExtensionLoop() {
   }
 , to = "ttt"))
 }
+

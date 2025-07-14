@@ -550,7 +550,8 @@ FILE fqName:<root> fileName:/ArrayLoopTest.kt
                 then: CALL 'public final fun let <T, R> (<this>: T of kotlin.let, block: kotlin.Function1<T of kotlin.let, R of kotlin.let>): R of kotlin.let declared in kotlin' type=<root>.ArrayLoopTest.Box origin=null
                   TYPE_ARG T: <root>.ArrayLoopTest.Box
                   TYPE_ARG R: <root>.ArrayLoopTest.Box
-                  ARG <this>: GET_VAR 'val tmp_28: <root>.ArrayLoopTest.Box? declared in <root>.ArrayLoopTest.action' type=<root>.ArrayLoopTest.Box? origin=null
+                  ARG <this>: TYPE_OP type=<root>.ArrayLoopTest.Box origin=IMPLICIT_CAST typeOperand=<root>.ArrayLoopTest.Box
+                    GET_VAR 'val tmp_28: <root>.ArrayLoopTest.Box? declared in <root>.ArrayLoopTest.action' type=<root>.ArrayLoopTest.Box? origin=null
                   ARG block: FUN_EXPR type=kotlin.Function1<<root>.ArrayLoopTest.Box, <root>.ArrayLoopTest.Box> origin=LAMBDA
                     FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:<root>.ArrayLoopTest.Box
                       VALUE_PARAMETER kind:Regular name:it index:0 type:<root>.ArrayLoopTest.Box
@@ -559,7 +560,8 @@ FILE fqName:<root> fileName:/ArrayLoopTest.kt
                           CONSTRUCTOR_CALL 'public constructor <init> (n: kotlin.Int) declared in <root>.ArrayLoopTest.Box' type=<root>.ArrayLoopTest.Box origin=null
                             ARG n: CALL 'public final fun times (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=MUL
                               ARG <this>: CALL 'public final fun <get-n> (): kotlin.Int declared in <root>.ArrayLoopTest.Box' type=kotlin.Int origin=GET_PROPERTY
-                                ARG <this>: GET_VAR 'cur: <root>.ArrayLoopTest.Box? declared in <root>.ArrayLoopTest.action' type=<root>.ArrayLoopTest.Box? origin=null
+                                ARG <this>: TYPE_OP type=<root>.ArrayLoopTest.Box origin=IMPLICIT_CAST typeOperand=<root>.ArrayLoopTest.Box
+                                  GET_VAR 'cur: <root>.ArrayLoopTest.Box? declared in <root>.ArrayLoopTest.action' type=<root>.ArrayLoopTest.Box? origin=null
                               ARG other: CONST Int type=kotlin.Int value=10
     FUN name:atomicBooleanArrLoopTest visibility:public modality:FINAL returnType:kotlin.Boolean
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.ArrayLoopTest
@@ -1114,7 +1116,8 @@ FILE fqName:<root> fileName:/ArrayLoopTest.kt
               BRANCH
                 if: CONST Boolean type=kotlin.Boolean value=true
                 then: CALL 'public final fun <get-n> (): kotlin.Int declared in <root>.ArrayLoopTest.Box' type=kotlin.Int origin=GET_PROPERTY
-                  ARG <this>: GET_VAR 'val tmp_29: <root>.ArrayLoopTest.Box? declared in <root>.ArrayLoopTest.atomicRefArrUpdateTest' type=<root>.ArrayLoopTest.Box? origin=null
+                  ARG <this>: TYPE_OP type=<root>.ArrayLoopTest.Box origin=IMPLICIT_CAST typeOperand=<root>.ArrayLoopTest.Box
+                    GET_VAR 'val tmp_29: <root>.ArrayLoopTest.Box? declared in <root>.ArrayLoopTest.atomicRefArrUpdateTest' type=<root>.ArrayLoopTest.Box? origin=null
         CALL 'public final fun set (index: kotlin.Int, newValue: T of kotlin.concurrent.AtomicArray): kotlin.Unit declared in kotlin.concurrent.AtomicArray' type=kotlin.Unit origin=null
           ARG <this>: CALL 'private final fun <get-refArr> (): kotlin.concurrent.AtomicArray<T of kotlin.concurrent.AtomicArray> declared in <root>.ArrayLoopTest' type=kotlin.concurrent.AtomicArray<T of kotlin.concurrent.AtomicArray> origin=null
             ARG <this>: GET_VAR '<this>: <root>.ArrayLoopTest declared in <root>.ArrayLoopTest.atomicRefArrUpdateTest' type=<root>.ArrayLoopTest origin=IMPLICIT_ARGUMENT
@@ -1145,7 +1148,8 @@ FILE fqName:<root> fileName:/ArrayLoopTest.kt
                         then: CALL 'public final fun let <T, R> (<this>: T of kotlin.let, block: kotlin.Function1<T of kotlin.let, R of kotlin.let>): R of kotlin.let declared in kotlin' type=<root>.ArrayLoopTest.Box origin=null
                           TYPE_ARG T: <root>.ArrayLoopTest.Box
                           TYPE_ARG R: <root>.ArrayLoopTest.Box
-                          ARG <this>: GET_VAR 'val tmp_30: <root>.ArrayLoopTest.Box? declared in <root>.ArrayLoopTest.atomicRefArrUpdateTest.<anonymous>' type=<root>.ArrayLoopTest.Box? origin=null
+                          ARG <this>: TYPE_OP type=<root>.ArrayLoopTest.Box origin=IMPLICIT_CAST typeOperand=<root>.ArrayLoopTest.Box
+                            GET_VAR 'val tmp_30: <root>.ArrayLoopTest.Box? declared in <root>.ArrayLoopTest.atomicRefArrUpdateTest.<anonymous>' type=<root>.ArrayLoopTest.Box? origin=null
                           ARG block: FUN_EXPR type=kotlin.Function1<<root>.ArrayLoopTest.Box, <root>.ArrayLoopTest.Box> origin=LAMBDA
                             FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:<root>.ArrayLoopTest.Box
                               VALUE_PARAMETER kind:Regular name:it index:0 type:<root>.ArrayLoopTest.Box
@@ -1154,7 +1158,8 @@ FILE fqName:<root> fileName:/ArrayLoopTest.kt
                                   CONSTRUCTOR_CALL 'public constructor <init> (n: kotlin.Int) declared in <root>.ArrayLoopTest.Box' type=<root>.ArrayLoopTest.Box origin=null
                                     ARG n: CALL 'public final fun times (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=MUL
                                       ARG <this>: CALL 'public final fun <get-n> (): kotlin.Int declared in <root>.ArrayLoopTest.Box' type=kotlin.Int origin=GET_PROPERTY
-                                        ARG <this>: GET_VAR 'cur: <root>.ArrayLoopTest.Box? declared in <root>.ArrayLoopTest.atomicRefArrUpdateTest.<anonymous>' type=<root>.ArrayLoopTest.Box? origin=null
+                                        ARG <this>: TYPE_OP type=<root>.ArrayLoopTest.Box origin=IMPLICIT_CAST typeOperand=<root>.ArrayLoopTest.Box
+                                          GET_VAR 'cur: <root>.ArrayLoopTest.Box? declared in <root>.ArrayLoopTest.atomicRefArrUpdateTest.<anonymous>' type=<root>.ArrayLoopTest.Box? origin=null
                                       ARG other: CONST Int type=kotlin.Int value=10
         CALL 'public final fun assertEquals <T> (expected: T of kotlin.test.assertEquals, actual: T of kotlin.test.assertEquals, message: kotlin.String?): kotlin.Unit declared in kotlin.test' type=kotlin.Unit origin=null
           TYPE_ARG T: kotlin.Int

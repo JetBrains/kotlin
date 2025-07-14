@@ -151,15 +151,15 @@ class LoopTest {
 
   private inline fun embeddedLoops(to: Int): Int {
     return <this>.loop$atomicfu$NATIVE_PROPERTY_REF$Int(handler$atomicfu = local inline fun <a$volatile-getter>(): KMutableProperty0<Int> {
-      return LoopTest<this>::a$volatile
+      return <this>::a$volatile
     }
 , action$atomicfu = local fun <anonymous>(aValue: Int) {
       <this>.loop$atomicfu$NATIVE_PROPERTY_REF$Int(handler$atomicfu = local inline fun <b$volatile-getter>(): KMutableProperty0<Int> {
-        return LoopTest<this>::b$volatile
+        return <this>::b$volatile
       }
 , action$atomicfu = local fun <anonymous>(bValue: Int) {
         when {
-          compareAndSetField<Int>(/* <this> = LoopTest<this>::b$volatile, */ expectedValue = bValue, newValue = to) -> return aValue.plus(other = bValue)
+          compareAndSetField<Int>(/* <this> = <this>::b$volatile, */ expectedValue = bValue, newValue = to) -> return aValue.plus(other = bValue)
         }
       }
 )
@@ -169,12 +169,12 @@ class LoopTest {
 
   private inline fun embeddedUpdate(to: Int): Int {
     return <this>.loop$atomicfu$NATIVE_PROPERTY_REF$Int(handler$atomicfu = local inline fun <a$volatile-getter>(): KMutableProperty0<Int> {
-      return LoopTest<this>::a$volatile
+      return <this>::a$volatile
     }
 , action$atomicfu = local fun <anonymous>(aValue: Int) {
-      compareAndSetField<Int>(/* <this> = LoopTest<this>::a$volatile, */ expectedValue = aValue, newValue = to) /*~> Unit */
+      compareAndSetField<Int>(/* <this> = <this>::a$volatile, */ expectedValue = aValue, newValue = to) /*~> Unit */
       return <this>.updateAndGet$atomicfu$NATIVE_PROPERTY_REF$Int(handler$atomicfu = local inline fun <a$volatile-getter>(): KMutableProperty0<Int> {
-        return LoopTest<this>::a$volatile
+        return <this>::a$volatile
       }
 , action$atomicfu = local fun <anonymous>(cur: Int): Int {
         return cur.plus(other = 100)
@@ -187,13 +187,13 @@ class LoopTest {
   fun test() {
     assertEquals<Int>(expected = 21, actual = <this>.embeddedLoops(to = 12))
     assertEquals<Int>(expected = 77, actual = <this>.extensionEmbeddedLoops$atomicfu$NATIVE_PROPERTY_REF$Int(handler$atomicfu = local inline fun <c$volatile-getter>(): KMutableProperty0<Int> {
-      return LoopTest<this>::c$volatile
+      return <this>::c$volatile
     }
 , to = 77))
     assertEquals<Int>(expected = 66, actual = <this>.extensionEmbeddedLoops$atomicfu$ATOMIC_ARRAY$Int(handler$atomicfu = <this>.<get-intArr>(), index$atomicfu = 0, to = 66))
     assertEquals<Int>(expected = 166, actual = <this>.embeddedUpdate(to = 66))
     assertEquals<String>(expected = "bbbAAA", actual = <this>.extesntionEmbeddedRefUpdate$atomicfu$NATIVE_PROPERTY_REF$Any(handler$atomicfu = local inline fun <r$volatile-getter>(): KMutableProperty0<Any?> {
-      return LoopTest<this>::r$volatile
+      return <this>::r$volatile
     }
 , to = "bbb"))
   }
@@ -205,3 +205,4 @@ fun box(): String {
   testClass.test()
   return "OK"
 }
+

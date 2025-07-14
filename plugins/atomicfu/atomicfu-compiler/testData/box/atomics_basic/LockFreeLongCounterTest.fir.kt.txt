@@ -16,7 +16,7 @@ class LockFreeLongCounter {
     }
 
     fun getFromOuter(): Long {
-      return atomicGetField<Long>(/* <this> = LockFreeLongCounter<this>::counter$volatile */) as Long
+      return atomicGetField<Long>(/* <this> = <this>::counter$volatile */) as Long
     }
 
   }
@@ -28,11 +28,11 @@ class LockFreeLongCounter {
   }
 
   fun add2(): Long {
-    return getAndAddField(/* <this> = LockFreeLongCounter<this>::counter$volatile, */ delta = 2L /*as Long */)
+    return getAndAddField(/* <this> = <this>::counter$volatile, */ delta = 2L /*as Long */)
   }
 
   fun get(): Long {
-    return atomicGetField<Long>(/* <this> = LockFreeLongCounter<this>::counter$volatile */) as Long
+    return atomicGetField<Long>(/* <this> = <this>::counter$volatile */) as Long
   }
 
   fun getInner(): Long {
@@ -40,11 +40,11 @@ class LockFreeLongCounter {
   }
 
   fun increment(): Long {
-    return getAndAddField(/* <this> = LockFreeLongCounter<this>::counter$volatile, */ delta = 1L /*as Long */).plus(other = 1L)
+    return getAndAddField(/* <this> = <this>::counter$volatile, */ delta = 1L /*as Long */).plus(other = 1L)
   }
 
   fun setM2() {
-    atomicSetField<Long>(/* <this> = LockFreeLongCounter<this>::counter$volatile, */ newValue = 2L.unaryMinus())
+    atomicSetField<Long>(/* <this> = <this>::counter$volatile, */ newValue = 2L.unaryMinus())
   }
 
 }
@@ -103,3 +103,4 @@ fun box(): String {
   testClass.testGetInner()
   return "OK"
 }
+

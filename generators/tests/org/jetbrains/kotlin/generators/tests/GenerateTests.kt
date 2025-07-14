@@ -43,8 +43,6 @@ import org.jetbrains.kotlin.samWithReceiver.*
 import org.jetbrains.kotlin.scripting.test.*
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.utils.CUSTOM_TEST_DATA_EXTENSION_PATTERN
-import org.jetbrains.kotlinx.atomicfu.incremental.AbstractIncrementalK2JVMWithAtomicfuRunnerTest
-import org.jetbrains.kotlinx.atomicfu.runners.*
 
 private class ExcludePattern {
     companion object {
@@ -182,12 +180,6 @@ fun main(args: Array<String>) {
                 model("pureKotlin", extension = null, recursive = false, targetBackend = TargetBackend.JVM_IR)
             }
         }
-
-        testGroup("plugins/atomicfu/atomicfu-compiler/tests-gen", "plugins/atomicfu/atomicfu-compiler/testData/") {
-            testClass<AbstractIncrementalK2JVMWithAtomicfuRunnerTest> {
-                model("projects/", extension = null, recursive = false, targetBackend = TargetBackend.JVM_IR)
-            }
-        }
     }
 
     generateTestGroupSuiteWithJUnit5 {
@@ -238,42 +230,6 @@ fun main(args: Array<String>) {
 
             testClass<AbstractFirMetadataPluginSandboxTest> {
                 model("metadata")
-            }
-        }
-
-        testGroup(
-            "plugins/atomicfu/atomicfu-compiler/tests-gen",
-            "plugins/atomicfu/atomicfu-compiler/testData",
-            testRunnerMethodName = "runTest0"
-        ) {
-            testClass<AbstractAtomicfuJsIrTest> {
-                model(relativeRootPath = "box/", excludeDirs = listOf("context_parameters"))
-            }
-
-            testClass<AbstractAtomicfuJsFirTest> {
-                model("box/")
-            }
-
-            testClass<AbstractAtomicfuJsFirWithInlinedFunInKlibTest> {
-                model("box/")
-            }
-        }
-
-        testGroup(
-            "plugins/atomicfu/atomicfu-compiler/tests-gen",
-            "plugins/atomicfu/atomicfu-compiler/testData",
-            testRunnerMethodName = "runTest0"
-        ) {
-            testClass<AbstractAtomicfuFirCheckerTest> {
-                model("diagnostics/")
-            }
-
-            testClass<AbstractAtomicfuJvmIrTest> {
-                model(relativeRootPath = "box/", excludeDirs = listOf("context_parameters"))
-            }
-
-            testClass<AbstractAtomicfuJvmFirLightTreeTest> {
-                model("box/")
             }
         }
 

@@ -202,12 +202,15 @@ FILE fqName:<root> fileName:/LockFreeStackTest.kt
                       TYPE_ARG T: kotlin.Any?
                       ARG <this>: PROPERTY_REFERENCE 'private final top$volatile: kotlin.Any? declared in <root>.LockFreeStack' field='FIELD ATOMICFU_GENERATED_FIELD name:top$volatile type:kotlin.Any? visibility:private declared in <root>.LockFreeStack' getter='private final fun <get-top$volatile> (): kotlin.Any? declared in <root>.LockFreeStack' setter='private final fun <set-top$volatile> (value: kotlin.Any?): kotlin.Unit declared in <root>.LockFreeStack' type=kotlin.reflect.KMutableProperty0<kotlin.Any?> origin=null
                         ARG 1: GET_VAR '<this>: <root>.LockFreeStack<T of <root>.LockFreeStack> declared in <root>.LockFreeStack.popLoop' type=<root>.LockFreeStack<T of <root>.LockFreeStack> origin=IMPLICIT_ARGUMENT
-                      ARG expectedValue: GET_VAR 'cur: <root>.LockFreeStack.Node<T of <root>.LockFreeStack>? declared in <root>.LockFreeStack.popLoop.<anonymous>' type=<root>.LockFreeStack.Node<T of <root>.LockFreeStack>? origin=null
+                      ARG expectedValue: TYPE_OP type=<root>.LockFreeStack.Node<T of <root>.LockFreeStack> origin=IMPLICIT_CAST typeOperand=<root>.LockFreeStack.Node<T of <root>.LockFreeStack>
+                        GET_VAR 'cur: <root>.LockFreeStack.Node<T of <root>.LockFreeStack>? declared in <root>.LockFreeStack.popLoop.<anonymous>' type=<root>.LockFreeStack.Node<T of <root>.LockFreeStack>? origin=null
                       ARG newValue: CALL 'public final fun <get-next> (): <root>.LockFreeStack.Node<T of <root>.LockFreeStack.Node>? declared in <root>.LockFreeStack.Node' type=<root>.LockFreeStack.Node<T of <root>.LockFreeStack>? origin=GET_PROPERTY
-                        ARG <this>: GET_VAR 'cur: <root>.LockFreeStack.Node<T of <root>.LockFreeStack>? declared in <root>.LockFreeStack.popLoop.<anonymous>' type=<root>.LockFreeStack.Node<T of <root>.LockFreeStack>? origin=null
+                        ARG <this>: TYPE_OP type=<root>.LockFreeStack.Node<T of <root>.LockFreeStack> origin=IMPLICIT_CAST typeOperand=<root>.LockFreeStack.Node<T of <root>.LockFreeStack>
+                          GET_VAR 'cur: <root>.LockFreeStack.Node<T of <root>.LockFreeStack>? declared in <root>.LockFreeStack.popLoop.<anonymous>' type=<root>.LockFreeStack.Node<T of <root>.LockFreeStack>? origin=null
                     then: RETURN type=kotlin.Nothing from='public final fun popLoop (): T of <root>.LockFreeStack? declared in <root>.LockFreeStack'
                       CALL 'public final fun <get-value> (): T of <root>.LockFreeStack.Node declared in <root>.LockFreeStack.Node' type=T of <root>.LockFreeStack origin=GET_PROPERTY
-                        ARG <this>: GET_VAR 'cur: <root>.LockFreeStack.Node<T of <root>.LockFreeStack>? declared in <root>.LockFreeStack.popLoop.<anonymous>' type=<root>.LockFreeStack.Node<T of <root>.LockFreeStack>? origin=null
+                        ARG <this>: TYPE_OP type=<root>.LockFreeStack.Node<T of <root>.LockFreeStack> origin=IMPLICIT_CAST typeOperand=<root>.LockFreeStack.Node<T of <root>.LockFreeStack>
+                          GET_VAR 'cur: <root>.LockFreeStack.Node<T of <root>.LockFreeStack>? declared in <root>.LockFreeStack.popLoop.<anonymous>' type=<root>.LockFreeStack.Node<T of <root>.LockFreeStack>? origin=null
     FUN name:popUpdate visibility:public modality:FINAL returnType:T of <root>.LockFreeStack?
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.LockFreeStack<T of <root>.LockFreeStack>
       BLOCK_BODY
@@ -239,7 +242,8 @@ FILE fqName:<root> fileName:/LockFreeStackTest.kt
                             BRANCH
                               if: CONST Boolean type=kotlin.Boolean value=true
                               then: CALL 'public final fun <get-next> (): <root>.LockFreeStack.Node<T of <root>.LockFreeStack.Node>? declared in <root>.LockFreeStack.Node' type=<root>.LockFreeStack.Node<T of <root>.LockFreeStack>? origin=GET_PROPERTY
-                                ARG <this>: GET_VAR 'val tmp_6: <root>.LockFreeStack.Node<T of <root>.LockFreeStack>? declared in <root>.LockFreeStack.popUpdate.<anonymous>' type=<root>.LockFreeStack.Node<T of <root>.LockFreeStack>? origin=null
+                                ARG <this>: TYPE_OP type=<root>.LockFreeStack.Node<T of <root>.LockFreeStack> origin=IMPLICIT_CAST typeOperand=<root>.LockFreeStack.Node<T of <root>.LockFreeStack>
+                                  GET_VAR 'val tmp_6: <root>.LockFreeStack.Node<T of <root>.LockFreeStack>? declared in <root>.LockFreeStack.popUpdate.<anonymous>' type=<root>.LockFreeStack.Node<T of <root>.LockFreeStack>? origin=null
             WHEN type=T of <root>.LockFreeStack? origin=null
               BRANCH
                 if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
@@ -249,7 +253,8 @@ FILE fqName:<root> fileName:/LockFreeStackTest.kt
               BRANCH
                 if: CONST Boolean type=kotlin.Boolean value=true
                 then: CALL 'public final fun <get-value> (): T of <root>.LockFreeStack.Node declared in <root>.LockFreeStack.Node' type=T of <root>.LockFreeStack origin=GET_PROPERTY
-                  ARG <this>: GET_VAR 'val tmp_5: <root>.LockFreeStack.Node<T of <root>.LockFreeStack>? declared in <root>.LockFreeStack.popUpdate' type=<root>.LockFreeStack.Node<T of <root>.LockFreeStack>? origin=null
+                  ARG <this>: TYPE_OP type=<root>.LockFreeStack.Node<T of <root>.LockFreeStack> origin=IMPLICIT_CAST typeOperand=<root>.LockFreeStack.Node<T of <root>.LockFreeStack>
+                    GET_VAR 'val tmp_5: <root>.LockFreeStack.Node<T of <root>.LockFreeStack>? declared in <root>.LockFreeStack.popUpdate' type=<root>.LockFreeStack.Node<T of <root>.LockFreeStack>? origin=null
     FUN name:pushLoop visibility:public modality:FINAL returnType:kotlin.Unit
       VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.LockFreeStack<T of <root>.LockFreeStack>
       VALUE_PARAMETER kind:Regular name:value index:1 type:T of <root>.LockFreeStack

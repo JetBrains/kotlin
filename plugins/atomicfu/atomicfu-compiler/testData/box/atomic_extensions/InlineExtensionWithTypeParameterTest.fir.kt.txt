@@ -54,7 +54,7 @@ class InlineExtensionWithTypeParameterTest {
   fun testInlineExtensionWithTypeParameter() {
     val s: SemaphoreSegment = SemaphoreSegment(id = 77)
     assertEquals<Int>(expected = 77, actual = <this>.foo$atomicfu$NATIVE_PROPERTY_REF$Any<SemaphoreSegment>(handler$atomicfu = local inline fun <sref$volatile-getter>(): KMutableProperty0<Any?> {
-      return InlineExtensionWithTypeParameterTest<this>::sref$volatile
+      return <this>::sref$volatile
     }
 , id = 0, startFrom = s))
   }
@@ -66,3 +66,4 @@ fun box(): String {
   testClass.testInlineExtensionWithTypeParameter()
   return "OK"
 }
+

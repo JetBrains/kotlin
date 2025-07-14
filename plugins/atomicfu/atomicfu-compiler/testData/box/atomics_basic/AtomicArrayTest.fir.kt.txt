@@ -24,7 +24,7 @@ data class ARef {
     when {
       other !is ARef -> return false
     }
-    val tmp_0: ARef = other as ARef
+    val tmp_0: ARef = other /*as ARef */
     when {
       EQEQ(arg0 = <this>.#n, arg1 = tmp_0.#n).not() -> return false
     }
@@ -196,7 +196,7 @@ class AtomicArrayTest {
     val r0: ARef? = A.<get-refArr>().get(index = 0) as Any?
     A.<get-refArr>().set(index = 3, newValue = r0)
     assertEquals<Int>(expected = 3, actual = CHECK_NOT_NULL<ARef>(arg0 = A.<get-refArr>().get(index = 3) as Any?).<get-n>())
-    val a: ARef = atomicGetField<Any?>(/* <this> = AtomicArrayClassA::a$volatile */) as Any?
+    val a: ARef = atomicGetField<Any?>(/* <this> = A::a$volatile */) as Any?
     assertTrue(actual = A.<get-refArr>().compareAndSet(index = 3, expectedValue = a3, newValue = a))
   }
 
@@ -211,3 +211,4 @@ fun box(): String {
   testClass.testAnyArray()
   return "OK"
 }
+

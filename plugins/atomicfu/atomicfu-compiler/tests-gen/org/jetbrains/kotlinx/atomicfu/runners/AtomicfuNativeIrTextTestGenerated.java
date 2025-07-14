@@ -8,7 +8,6 @@ package org.jetbrains.kotlinx.atomicfu.runners;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.junit.jupiter.api.Tag;
-import org.jetbrains.kotlin.konan.test.blackbox.support.group.FirPipeline;
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.UseExtTestCaseGroupProvider;
 import org.jetbrains.kotlin.test.TargetBackend;
 import org.jetbrains.kotlin.test.TestMetadata;
@@ -23,7 +22,6 @@ import java.util.regex.Pattern;
 @TestMetadata("plugins/atomicfu/atomicfu-compiler/testData/box")
 @TestDataPath("$PROJECT_ROOT")
 @Tag("atomicfu-native")
-@FirPipeline()
 @UseExtTestCaseGroupProvider()
 public class AtomicfuNativeIrTextTestGenerated extends AbstractAtomicfuNativeIrTextTest {
   @Test
@@ -35,7 +33,6 @@ public class AtomicfuNativeIrTextTestGenerated extends AbstractAtomicfuNativeIrT
   @TestMetadata("plugins/atomicfu/atomicfu-compiler/testData/box/atomic_extensions")
   @TestDataPath("$PROJECT_ROOT")
   @Tag("atomicfu-native")
-  @FirPipeline()
   @UseExtTestCaseGroupProvider()
   public class Atomic_extensions {
     @Test
@@ -108,7 +105,6 @@ public class AtomicfuNativeIrTextTestGenerated extends AbstractAtomicfuNativeIrT
   @TestMetadata("plugins/atomicfu/atomicfu-compiler/testData/box/atomics_basic")
   @TestDataPath("$PROJECT_ROOT")
   @Tag("atomicfu-native")
-  @FirPipeline()
   @UseExtTestCaseGroupProvider()
   public class Atomics_basic {
     @Test
@@ -138,6 +134,12 @@ public class AtomicfuNativeIrTextTestGenerated extends AbstractAtomicfuNativeIrT
     @TestMetadata("InitializationOrderTest.kt")
     public void testInitializationOrderTest() {
       runTest("plugins/atomicfu/atomicfu-compiler/testData/box/atomics_basic/InitializationOrderTest.kt");
+    }
+
+    @Test
+    @TestMetadata("inliningAndSMAP.kt")
+    public void testInliningAndSMAP() {
+      runTest("plugins/atomicfu/atomicfu-compiler/testData/box/atomics_basic/inliningAndSMAP.kt");
     }
 
     @Test
@@ -202,10 +204,21 @@ public class AtomicfuNativeIrTextTestGenerated extends AbstractAtomicfuNativeIrT
   }
 
   @Nested
+  @TestMetadata("plugins/atomicfu/atomicfu-compiler/testData/box/context_parameters")
+  @TestDataPath("$PROJECT_ROOT")
+  @Tag("atomicfu-native")
+  @UseExtTestCaseGroupProvider()
+  public class Context_parameters {
+    @Test
+    public void testAllFilesPresentInContext_parameters() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/atomicfu/atomicfu-compiler/testData/box/context_parameters"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+    }
+  }
+
+  @Nested
   @TestMetadata("plugins/atomicfu/atomicfu-compiler/testData/box/delegated")
   @TestDataPath("$PROJECT_ROOT")
   @Tag("atomicfu-native")
-  @FirPipeline()
   @UseExtTestCaseGroupProvider()
   public class Delegated {
     @Test
@@ -224,7 +237,6 @@ public class AtomicfuNativeIrTextTestGenerated extends AbstractAtomicfuNativeIrT
   @TestMetadata("plugins/atomicfu/atomicfu-compiler/testData/box/locks")
   @TestDataPath("$PROJECT_ROOT")
   @Tag("atomicfu-native")
-  @FirPipeline()
   @UseExtTestCaseGroupProvider()
   public class Locks {
     @Test
@@ -249,7 +261,6 @@ public class AtomicfuNativeIrTextTestGenerated extends AbstractAtomicfuNativeIrT
   @TestMetadata("plugins/atomicfu/atomicfu-compiler/testData/box/top-level")
   @TestDataPath("$PROJECT_ROOT")
   @Tag("atomicfu-native")
-  @FirPipeline()
   @UseExtTestCaseGroupProvider()
   public class Top_level {
     @Test
@@ -274,7 +285,6 @@ public class AtomicfuNativeIrTextTestGenerated extends AbstractAtomicfuNativeIrT
   @TestMetadata("plugins/atomicfu/atomicfu-compiler/testData/box/trace")
   @TestDataPath("$PROJECT_ROOT")
   @Tag("atomicfu-native")
-  @FirPipeline()
   @UseExtTestCaseGroupProvider()
   public class Trace {
     @Test
