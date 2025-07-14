@@ -46,4 +46,6 @@ public class SirTrampolineVariable(
             }
         }
     }
+
+    override val bridges: List<SirBridge> get() = source.bridges
 }

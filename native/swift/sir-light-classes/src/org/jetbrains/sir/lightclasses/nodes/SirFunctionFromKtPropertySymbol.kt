@@ -11,18 +11,22 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaPropertySetterSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaPropertySymbol
 import org.jetbrains.kotlin.analysis.api.symbols.isTopLevel
 import org.jetbrains.kotlin.sir.SirAttribute
+import org.jetbrains.kotlin.sir.SirBridge
 import org.jetbrains.kotlin.sir.SirDeclarationParent
 import org.jetbrains.kotlin.sir.SirFixity
 import org.jetbrains.kotlin.sir.SirFunction
 import org.jetbrains.kotlin.sir.SirFunctionBody
 import org.jetbrains.kotlin.sir.SirModality
+import org.jetbrains.kotlin.sir.SirModule
 import org.jetbrains.kotlin.sir.SirOrigin
 import org.jetbrains.kotlin.sir.SirParameter
 import org.jetbrains.kotlin.sir.SirType
 import org.jetbrains.kotlin.sir.SirVisibility
 import org.jetbrains.kotlin.sir.providers.SirSession
+import org.jetbrains.kotlin.sir.providers.impl.BridgeProvider.BridgeFunctionProxy
 import org.jetbrains.kotlin.sir.providers.source.KotlinPropertyAccessorOrigin
 import org.jetbrains.kotlin.sir.providers.utils.throwsAnnotation
+import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 import org.jetbrains.sir.lightclasses.SirFromKtSymbol
 import org.jetbrains.sir.lightclasses.extensions.documentation
 import org.jetbrains.sir.lightclasses.extensions.lazyWithSessions
@@ -30,6 +34,8 @@ import org.jetbrains.sir.lightclasses.extensions.sirModality
 import org.jetbrains.sir.lightclasses.extensions.withSessions
 import org.jetbrains.sir.lightclasses.utils.OverrideStatus
 import org.jetbrains.sir.lightclasses.utils.computeIsOverride
+import org.jetbrains.sir.lightclasses.utils.forBridge
+import org.jetbrains.sir.lightclasses.utils.selfType
 import org.jetbrains.sir.lightclasses.utils.translateExtensionParameter
 import org.jetbrains.sir.lightclasses.utils.translateParameters
 import org.jetbrains.sir.lightclasses.utils.translateReturnType
@@ -94,5 +100,57 @@ internal class SirFunctionFromKtPropertySymbol(
 
     override val errorType: SirType get() = if (ktPropertySymbol.throwsAnnotation != null) SirType.any else SirType.never
 
-    override var body: SirFunctionBody? = null
+    private val bridgeProxy: BridgeFunctionProxy? by lazyWithSessions {
+        val fqName = ktPropertySymbol
+            .callableId?.asSingleFqName()
+            ?.pathSegments()?.map { it.toString() }
+            ?: return@lazyWithSessions null
+
+        val suffix = when (ktSymbol) {
+            is KaPropertyGetterSymbol -> "_get"
+            is KaPropertySetterSymbol -> "_set"
+        }
+
+        val baseName = fqName.forBridge.joinToString("_") + suffix
+
+        val extensionReceiverParameter = extensionReceiverParameter?.let {
+            SirParameter("", "receiver", it.type)
+        }
+
+        generateFunctionBridge(
+            baseBridgeName = baseName,
+            explicitParameters = listOfNotNull(extensionReceiverParameter) + parameters,
+            returnType = returnType,
+            kotlinFqName = fqName,
+            selfParameter = (parent !is SirModule && isInstance).ifTrue {
+                SirParameter("", "self", selfType ?: error("Only a member can have a self parameter"))
+            },
+            extensionReceiverParameter = extensionReceiverParameter,
+            errorParameter = errorType.takeIf { it != SirType.never }?.let {
+                SirParameter("", "_out_error", it)
+            },
+        )
+    }
+
+    override val bridges: List<SirBridge> by lazyWithSessions {
+        listOfNotNull(bridgeProxy?.createSirBridge {
+            val args = argNames
+            when(ktSymbol) {
+                is KaPropertyGetterSymbol -> {
+                    val expectedParameters = if (extensionReceiverParameter != null) 1 else 0
+                    require(args.size == expectedParameters) { "Received an extension getter $name with ${args.size} parameters instead of a $expectedParameters, aborting" }
+                    buildCall("")
+                }
+                is KaPropertySetterSymbol -> {
+                    val expectedParameters = if (extensionReceiverParameter != null) 2 else 1
+                    require(args.size == expectedParameters) { "Received an extension getter $name with ${args.size} parameters instead of a $expectedParameters, aborting" }
+                    buildCall(" = ${args.last()}")
+                }
+            }
+        })
+    }
+
+    override var body: SirFunctionBody?
+        set(value) {}
+        get() = bridgeProxy?.createSwiftInvocation { "return $it" }?.let(::SirFunctionBody)
 }

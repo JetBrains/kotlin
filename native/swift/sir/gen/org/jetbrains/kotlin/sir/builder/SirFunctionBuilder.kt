@@ -20,6 +20,7 @@ class SirFunctionBuilder {
     var visibility: SirVisibility = SirVisibility.PUBLIC
     var documentation: String? = null
     val attributes: MutableList<SirAttribute> = mutableListOf()
+    val bridges: MutableList<SirBridge> = mutableListOf()
     var body: SirFunctionBody? = null
     var errorType: SirType = SirType.never
     var isOverride: Boolean = false
@@ -37,6 +38,7 @@ class SirFunctionBuilder {
             visibility,
             documentation,
             attributes,
+            bridges,
             body,
             errorType,
             isOverride,
@@ -70,6 +72,7 @@ inline fun buildFunctionCopy(original: SirFunction, init: SirFunctionBuilder.() 
     copyBuilder.visibility = original.visibility
     copyBuilder.documentation = original.documentation
     copyBuilder.attributes.addAll(original.attributes)
+    copyBuilder.bridges.addAll(original.bridges)
     copyBuilder.body = original.body
     copyBuilder.errorType = original.errorType
     copyBuilder.isOverride = original.isOverride

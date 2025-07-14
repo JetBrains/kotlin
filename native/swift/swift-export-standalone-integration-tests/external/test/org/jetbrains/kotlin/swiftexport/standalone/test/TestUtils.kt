@@ -23,7 +23,8 @@ internal fun KlibExportSettings.createConfig(outputPath: Path): SwiftExportConfi
     return SwiftExportConfig(
         distribution = Distribution(KonanHome.konanHomePath),
         outputPath = outputPath,
-        konanTarget = konanTarget
+        konanTarget = konanTarget,
+        stableDeclarationsOrder = false,
     )
 }
 

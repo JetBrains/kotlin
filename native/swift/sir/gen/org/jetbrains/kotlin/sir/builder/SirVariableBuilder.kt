@@ -23,6 +23,7 @@ class SirVariableBuilder {
     var isOverride: Boolean = false
     var isInstance: Boolean = true
     var modality: SirModality = SirModality.UNSPECIFIED
+    val bridges: MutableList<SirBridge> = mutableListOf()
     lateinit var name: String
     lateinit var type: SirType
     lateinit var getter: SirGetter
@@ -37,6 +38,7 @@ class SirVariableBuilder {
             isOverride,
             isInstance,
             modality,
+            bridges,
             name,
             type,
             getter,
@@ -67,6 +69,7 @@ inline fun buildVariableCopy(original: SirVariable, init: SirVariableBuilder.() 
     copyBuilder.isOverride = original.isOverride
     copyBuilder.isInstance = original.isInstance
     copyBuilder.modality = original.modality
+    copyBuilder.bridges.addAll(original.bridges)
     copyBuilder.name = original.name
     copyBuilder.type = original.type
     copyBuilder.getter = original.getter

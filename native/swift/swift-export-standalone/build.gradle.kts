@@ -16,7 +16,7 @@ dependencies {
     compileOnly(kotlinStdlib())
 
     implementation(project(":native:swift:sir"))
-    implementation(project(":native:swift:sir-compiler-bridge"))
+    implementation(project(":native:swift:sir-providers"))
     implementation(project(":native:swift:sir-light-classes"))
     implementation(project(":native:swift:sir-printer"))
 

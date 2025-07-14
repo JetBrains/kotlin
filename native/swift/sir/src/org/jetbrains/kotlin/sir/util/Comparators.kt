@@ -39,6 +39,23 @@ object Comparators {
     }.thenComparing(stableInitComparator)
         .thenComparing(stableFunctionComparator)
 
+    val stableBridgeComparator: Comparator<SirBridge> = Comparator<SirBridge> { lhs, rhs ->
+        when (lhs) {
+            is SirFunctionBridge -> {
+                when (rhs) {
+                    is SirFunctionBridge -> lhs.name.compareTo(rhs.name)
+                    is SirTypeBindingBridge -> 1
+                }
+            }
+            is SirTypeBindingBridge -> {
+                when (rhs) {
+                    is SirFunctionBridge -> -1
+                    is SirTypeBindingBridge -> lhs.name.compareTo(rhs.name)
+                }
+            }
+        }
+    }
+
     private fun mangleParameters(params: List<SirParameter>): String =
         params.joinToString { "${it.parameterName}-${it.argumentName}:${it.type.swift}" }
 

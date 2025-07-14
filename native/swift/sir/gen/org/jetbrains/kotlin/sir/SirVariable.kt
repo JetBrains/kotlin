@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.sir.util.*
 /**
  * Generated from: [org.jetbrains.kotlin.sir.tree.generator.SwiftIrTree.variable]
  */
-abstract class SirVariable : SirElementBase(), SirDeclaration, SirDeclarationParent, SirClassMemberDeclaration {
+abstract class SirVariable : SirBridged(), SirDeclaration, SirDeclarationParent, SirClassMemberDeclaration {
     abstract override val origin: SirOrigin
     abstract override val visibility: SirVisibility
     abstract override val documentation: String?
@@ -22,6 +22,7 @@ abstract class SirVariable : SirElementBase(), SirDeclaration, SirDeclarationPar
     abstract override val isOverride: Boolean
     abstract override val isInstance: Boolean
     abstract override val modality: SirModality
+    abstract override val bridges: List<SirBridge>
     abstract val name: String
     abstract val type: SirType
     abstract val getter: SirGetter

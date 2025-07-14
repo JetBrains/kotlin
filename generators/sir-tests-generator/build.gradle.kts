@@ -7,7 +7,6 @@ sourceSets {
 }
 
 dependencies {
-    implementation(projectTests(":native:swift:sir-compiler-bridge"))
     implementation(project(":native:swift:swift-export-standalone-integration-tests"))
     implementation(projectTests(":native:swift:swift-export-ide"))
     implementation(projectTests(":generators:test-generator"))

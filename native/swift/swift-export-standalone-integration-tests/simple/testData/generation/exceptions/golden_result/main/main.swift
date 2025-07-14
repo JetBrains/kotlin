@@ -11,7 +11,7 @@ public final class Object: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._Kotli
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
         var __error: UnsafeMutableRawPointer? = nil
         __root___Object_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Bool__(__kt, arg, &__error)
-        guard __error == .none else { throw KotlinError(wrapped: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: __error)) }
+        guard __error == nil else { throw KotlinError(wrapped: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: __error)) }
     }
     public init(
         arg: Swift.Unicode.UTF16.CodeUnit
@@ -21,7 +21,7 @@ public final class Object: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._Kotli
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
         var __error: UnsafeMutableRawPointer? = nil
         __root___Object_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Unicode_UTF16_CodeUnit__(__kt, arg, &__error)
-        guard __error == .none else { throw KotlinError(wrapped: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: __error)) }
+        guard __error == nil else { throw KotlinError(wrapped: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: __error)) }
     }
     public init(
         arg: Swift.Double
@@ -31,7 +31,7 @@ public final class Object: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._Kotli
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
         var __error: UnsafeMutableRawPointer? = nil
         __root___Object_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Double__(__kt, arg, &__error)
-        guard __error == .none else { throw KotlinError(wrapped: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: __error)) }
+        guard __error == nil else { throw KotlinError(wrapped: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: __error)) }
     }
     public init(
         arg: Swift.Int32
@@ -41,7 +41,7 @@ public final class Object: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._Kotli
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
         var __error: UnsafeMutableRawPointer? = nil
         __root___Object_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32__(__kt, arg, &__error)
-        guard __error == .none else { throw KotlinError(wrapped: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: __error)) }
+        guard __error == nil else { throw KotlinError(wrapped: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: __error)) }
     }
     public init(
         arg: KotlinRuntime.KotlinBase
@@ -51,7 +51,7 @@ public final class Object: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._Kotli
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
         var __error: UnsafeMutableRawPointer? = nil
         __root___Object_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_KotlinRuntime_KotlinBase__(__kt, arg.__externalRCRef(), &__error)
-        guard __error == .none else { throw KotlinError(wrapped: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: __error)) }
+        guard __error == nil else { throw KotlinError(wrapped: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: __error)) }
     }
     public init(
         arg: main.Object
@@ -61,7 +61,7 @@ public final class Object: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._Kotli
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
         var __error: UnsafeMutableRawPointer? = nil
         __root___Object_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_main_Object__(__kt, arg.__externalRCRef(), &__error)
-        guard __error == .none else { throw KotlinError(wrapped: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: __error)) }
+        guard __error == nil else { throw KotlinError(wrapped: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: __error)) }
     }
     public init(
         arg: KotlinRuntime.KotlinBase?
@@ -71,7 +71,7 @@ public final class Object: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._Kotli
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
         var __error: UnsafeMutableRawPointer? = nil
         __root___Object_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_KotlinRuntime_KotlinBase___(__kt, arg.map { it in it.__externalRCRef() } ?? nil, &__error)
-        guard __error == .none else { throw KotlinError(wrapped: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: __error)) }
+        guard __error == nil else { throw KotlinError(wrapped: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: __error)) }
     }
     package override init(
         __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,

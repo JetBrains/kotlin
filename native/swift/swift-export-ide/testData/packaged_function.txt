@@ -4,6 +4,6 @@ public extension ExportedKotlinPackages.namespace {
     public static func foo(
         arg: Swift.Int32
     ) -> ExportedKotlinPackages.namespace.Foo {
-        fatalError()
+        return ExportedKotlinPackages.namespace.Foo.__createClassWrapper(externalRCRef: namespace_foo__TypesOfArguments__Swift_Int32__(arg))
     }
 }

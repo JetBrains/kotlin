@@ -22,12 +22,13 @@ import org.jetbrains.kotlin.sir.providers.utils.containingModule
 import org.jetbrains.kotlin.sir.providers.utils.updateImport
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
-import org.jetbrains.sir.lightclasses.BindableBridgedType
+import org.jetbrains.kotlin.sir.util.swiftFqName
 import org.jetbrains.sir.lightclasses.SirFromKtSymbol
 import org.jetbrains.sir.lightclasses.extensions.documentation
 import org.jetbrains.sir.lightclasses.extensions.lazyWithSessions
 import org.jetbrains.sir.lightclasses.extensions.withSessions
 import org.jetbrains.sir.lightclasses.utils.decapitalizeNameSemantically
+import org.jetbrains.sir.lightclasses.utils.objcClassSymbolName
 import org.jetbrains.sir.lightclasses.utils.relocatedDeclarationNamePrefix
 import org.jetbrains.sir.lightclasses.utils.translatedAttributes
 
@@ -108,6 +109,8 @@ internal open class SirProtocolFromKtSymbol(
             }
         }
     }
+
+    override val bridges: List<SirBridge> = emptyList()
 }
 
 /**
@@ -118,7 +121,7 @@ internal open class SirProtocolFromKtSymbol(
  */
 internal class SirMarkerProtocolFromKtSymbol(
     val target: SirProtocolFromKtSymbol
-) : SirProtocol(), SirFromKtSymbol<KaNamedClassSymbol>, BindableBridgedType {
+) : SirProtocol(), SirFromKtSymbol<KaNamedClassSymbol> {
     override val ktSymbol: KaNamedClassSymbol get() = target.ktSymbol
     override val sirSession: SirSession get() = target.sirSession
 
@@ -131,6 +134,14 @@ internal class SirMarkerProtocolFromKtSymbol(
     override val declarations: MutableList<SirDeclaration> get() = mutableListOf()
     override val superClass: SirNominalType? get() = null
     override val protocols: List<SirProtocol> get() = target.protocols.filterIsInstance<SirProtocolFromKtSymbol>().map { it.existentialMarker }
+
+    override val bridges: List<SirBridge> by lazyWithSessions {
+        listOfNotNull(sirSession.generateTypeBridge(
+            ktSymbol.classId?.asSingleFqName()?.pathSegments()?.map { it.toString() } ?: emptyList(),
+            swiftFqName = swiftFqName,
+            swiftSymbolName = objcClassSymbolName,
+        ))
+    }
 }
 
 /**
@@ -217,6 +228,11 @@ private class SirRelocatedFunction(
     override val parameters: List<SirParameter> get() = source.parameters
     override val errorType: SirType get() = source.errorType
 
+    override val bridges: List<SirBridge> get() {
+            val result = source.bridges
+            return result
+        }
+
     override var body: SirFunctionBody?
         get() = source.body
         set(newValue) { source.body = newValue }
@@ -244,6 +260,7 @@ private class SirRelocatedVariable(
     override val attributes: List<SirAttribute> get() = source.attributes
     override val getter: SirGetter get() = source.getter
     override val setter: SirSetter? get() = source.setter
+    override val bridges: List<SirBridge> get() = source.bridges
 }
 
 /**

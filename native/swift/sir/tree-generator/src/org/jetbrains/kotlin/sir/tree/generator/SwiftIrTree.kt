@@ -18,6 +18,12 @@ object SwiftIrTree : AbstractSwiftIrTreeBuilder() {
         kDoc = "The root interface of the Swift IR tree."
     }
 
+    val bridged by sealedElement {
+        customParentInVisitor = rootElement
+
+        +listField("bridges", bridgeType)
+    }
+
     val declarationParent by sealedElement()
 
     val declarationContainer by sealedElement {
@@ -117,6 +123,7 @@ object SwiftIrTree : AbstractSwiftIrTreeBuilder() {
         parent(mutableDeclarationContainer)
         parent(classInhertingDeclaration)
         parent(protocolConformingDeclaration)
+        parent(bridged)
     }
 
     val `class`: Element by element {
@@ -125,6 +132,7 @@ object SwiftIrTree : AbstractSwiftIrTreeBuilder() {
         parent(declarationContainer)
         parent(classInhertingDeclaration)
         parent(protocolConformingDeclaration)
+        parent(bridged)
 
         +field("modality", modalityKind)
     }
@@ -138,6 +146,7 @@ object SwiftIrTree : AbstractSwiftIrTreeBuilder() {
 
     val callable by sealedElement {
         parent(declaration)
+        parent(bridged)
 
         +field("body", functionBodyType, nullable = true, mutable = true)
 
@@ -190,6 +199,7 @@ object SwiftIrTree : AbstractSwiftIrTreeBuilder() {
         parent(declaration)
         parent(declarationParent)
         parent(classMemberDeclaration)
+        parent(bridged)
 
         +field("name", string)
         +field("type", typeType)

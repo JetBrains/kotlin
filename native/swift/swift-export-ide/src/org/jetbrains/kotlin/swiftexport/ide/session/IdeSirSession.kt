@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.sir.SirModule
 import org.jetbrains.kotlin.sir.providers.*
 import org.jetbrains.kotlin.sir.providers.impl.*
+import org.jetbrains.kotlin.sir.providers.impl.BridgeProvider.SirBridgeProviderImpl
 import org.jetbrains.kotlin.sir.providers.utils.UnsupportedDeclarationReporter
 import org.jetbrains.sir.lightclasses.SirDeclarationFromKtSymbolProvider
 import org.jetbrains.sir.lightclasses.StubbingSirDeclarationProvider
@@ -57,4 +58,6 @@ public class IdeSirSession(
 
     override val trampolineDeclarationsProvider: SirTrampolineDeclarationsProvider =
         SirTrampolineDeclarationsProviderImpl(sirSession, targetPackageFqName)
+
+    override val bridgeProvider: SirBridgeProvider = SirBridgeProviderImpl(this, SirTypeNamer())
 }

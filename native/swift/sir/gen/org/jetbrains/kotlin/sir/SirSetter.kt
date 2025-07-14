@@ -19,6 +19,7 @@ abstract class SirSetter : SirAccessor() {
     abstract override val documentation: String?
     abstract override var parent: SirDeclarationParent
     abstract override val attributes: List<SirAttribute>
+    abstract override val bridges: List<SirBridge>
     abstract override var body: SirFunctionBody?
     abstract override val errorType: SirType
     abstract val parameterName: String

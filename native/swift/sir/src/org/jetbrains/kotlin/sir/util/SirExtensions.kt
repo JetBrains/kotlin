@@ -36,6 +36,12 @@ val SirVariable.accessors: List<SirAccessor>
         setter,
     )
 
+val SirSubscript.accessors: List<SirAccessor>
+    get() = listOfNotNull(
+        getter,
+        setter,
+    )
+
 val SirParameter.name: String? get() = parameterName ?: argumentName
 
 val SirType.isVoid: Boolean get() = this is SirNominalType && this.typeDeclaration == SirSwiftModule.void

@@ -11,19 +11,18 @@ import org.jetbrains.kotlin.analysis.api.export.utilities.isCloneable
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.types.KaClassType
 import org.jetbrains.kotlin.sir.*
-import org.jetbrains.kotlin.sir.builder.buildGetter
 import org.jetbrains.kotlin.sir.builder.buildInitCopy
-import org.jetbrains.kotlin.sir.builder.buildVariable
 import org.jetbrains.kotlin.sir.providers.SirSession
 import org.jetbrains.kotlin.sir.providers.source.KotlinSource
 import org.jetbrains.kotlin.sir.providers.utils.KotlinRuntimeModule
 import org.jetbrains.kotlin.sir.providers.utils.KotlinRuntimeSupportModule
 import org.jetbrains.kotlin.sir.providers.utils.containingModule
 import org.jetbrains.kotlin.sir.providers.utils.updateImport
+import org.jetbrains.kotlin.sir.providers.utils.throwsAnnotation
 import org.jetbrains.kotlin.sir.util.SirSwiftModule
+import org.jetbrains.kotlin.sir.util.swiftFqName
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.filterIsInstanceAnd
-import org.jetbrains.sir.lightclasses.BindableBridgedType
 import org.jetbrains.sir.lightclasses.SirFromKtSymbol
 import org.jetbrains.sir.lightclasses.extensions.documentation
 import org.jetbrains.sir.lightclasses.extensions.lazyWithSessions
@@ -33,6 +32,7 @@ import org.jetbrains.sir.lightclasses.utils.OverrideStatus
 import org.jetbrains.sir.lightclasses.utils.computeIsOverride
 import org.jetbrains.sir.lightclasses.utils.superClassDeclaration
 import org.jetbrains.sir.lightclasses.utils.translatedAttributes
+import kotlin.getValue
 
 internal fun createSirClassFromKtSymbol(
     ktSymbol: KaNamedClassSymbol,
@@ -86,7 +86,7 @@ internal class SirEnumClassFromKtSymbol(
 internal abstract class SirAbstractClassFromKtSymbol(
     override val ktSymbol: KaNamedClassSymbol,
     override val sirSession: SirSession,
-) : SirClass(), SirFromKtSymbol<KaNamedClassSymbol>, BindableBridgedType {
+) : SirClass(), SirFromKtSymbol<KaNamedClassSymbol> {
 
     override val origin: KotlinSource by lazy {
         KotlinSource(ktSymbol)
@@ -147,23 +147,16 @@ internal abstract class SirAbstractClassFromKtSymbol(
         origin = SirOrigin.KotlinBaseInitOverride(`for` = KotlinSource(ktSymbol))
         visibility = SirVisibility.PACKAGE // Hide from users, but not from other Swift Export modules.
         isOverride = true
+        body = SirFunctionBody(listOf(
+                "super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)"
+            ))
     }.also { it.parent = this }
 
     private fun syntheticDeclarations(): List<SirDeclaration> = when (ktSymbol.classKind) {
         KaClassKind.OBJECT, KaClassKind.COMPANION_OBJECT -> listOf(
             kotlinBaseInitDeclaration(),
-            SirObjectSyntheticInit(ktSymbol = ktSymbol),
-            buildVariable {
-                origin = SirOrigin.ObjectAccessor(`for` = KotlinSource(ktSymbol))
-                visibility = SirVisibility.PUBLIC
-                type = SirNominalType(this@SirAbstractClassFromKtSymbol)
-                name = "shared"
-                isInstance = false
-                modality = SirModality.FINAL
-                getter = buildGetter {}
-            }.also {
-                it.getter.parent = it
-            }
+            SirObjectSyntheticInit(ktSymbol, sirSession),
+            SirObjectAccessorVariableFromKtSymbol(ktSymbol, sirSession)
         ).onEach { it.parent = this }
 
         else -> listOf(
@@ -192,11 +185,20 @@ internal abstract class SirAbstractClassFromKtSymbol(
                 }
             }
     }
+
+    override val bridges: List<SirBridge> by lazyWithSessions {
+        listOfNotNull(sirSession.generateTypeBridge(
+            ktSymbol.classId?.asSingleFqName()?.pathSegments()?.map { it.toString() } ?: emptyList(),
+            swiftFqName = swiftFqName,
+            swiftSymbolName = objcClassSymbolName,
+        ))
+    }
 }
 
 internal class SirObjectSyntheticInit(
-    ktSymbol: KaNamedClassSymbol,
-) : SirInit() {
+    override val ktSymbol: KaNamedClassSymbol,
+    override val sirSession: SirSession,
+) : SirInit(), SirFromKtSymbol<KaNamedClassSymbol> {
     override val origin: SirOrigin = SirOrigin.PrivateObjectInit(`for` = KotlinSource(ktSymbol))
     override val visibility: SirVisibility = SirVisibility.PRIVATE
     override val isFailable: Boolean = false
@@ -213,7 +215,72 @@ internal class SirObjectSyntheticInit(
         )
     }
     override val errorType: SirType get() = SirType.never
-    override var body: SirFunctionBody? = null
+
+    override val bridges: List<SirBridge> get() = emptyList()
+    override var body: SirFunctionBody?
+        get() = null
+        set(_) = Unit
+}
+
+internal class SirObjectAccessorVariableFromKtSymbol(
+    override val ktSymbol: KaNamedClassSymbol,
+    override val sirSession: SirSession,
+) : SirVariable(), SirFromKtSymbol<KaNamedClassSymbol> {
+    private class SirObjectAccessorGetterFromKtSymbol(
+        override val ktSymbol: KaNamedClassSymbol,
+        sirSession: SirSession,
+    ) : SirAbstractGetter(sirSession), SirFromKtSymbol<KaNamedClassSymbol> {
+        override val origin: SirOrigin by lazy { KotlinSource(ktSymbol) }
+        override val documentation: String? by lazy { ktSymbol.documentation() }
+        override val attributes: List<SirAttribute> by lazy { this.translatedAttributes }
+        override val errorType: SirType get() = if (ktSymbol.throwsAnnotation != null) SirType.any else SirType.never
+
+        override val fqName: List<String>? by lazyWithSessions {
+            ktSymbol
+                .classId?.asSingleFqName()
+                ?.pathSegments()?.map { it.toString() }
+                ?: return@lazyWithSessions null
+        }
+    }
+
+    override lateinit var parent: SirDeclarationParent
+
+    override val name: String get() = "shared"
+
+    override val origin: SirOrigin = SirOrigin.ObjectAccessor(KotlinSource(ktSymbol))
+
+    override val isInstance: Boolean get() = false
+
+    override val visibility: SirVisibility get() = SirVisibility.PUBLIC
+
+    override val type: SirType by lazyWithSessions {
+        ktSymbol.toSir().primaryDeclaration?.let { it as? SirNamedDeclaration }?.let { SirNominalType(it) }
+            ?: error("Failed to translate object accessor base type $ktSymbol")
+    }
+
+    override val getter: SirGetter by lazy {
+        SirObjectAccessorGetterFromKtSymbol(ktSymbol, sirSession).also {
+            it.parent = this@SirObjectAccessorVariableFromKtSymbol
+        }
+    }
+    override val setter: SirSetter? get() = null
+
+    override val documentation: String? by lazy {
+        ktSymbol.documentation()
+    }
+
+    override val attributes: List<SirAttribute> by lazy {
+        this.translatedAttributes + listOfNotNull(SirAttribute.NonOverride.takeIf { overrideStatus is OverrideStatus.Conflicts })
+    }
+
+    override val isOverride: Boolean
+        get() = overrideStatus is OverrideStatus.Overrides
+
+    private val overrideStatus: OverrideStatus<SirVariable>? by lazy { computeIsOverride() }
+
+    override val modality: SirModality = SirModality.FINAL
+
+    override val bridges: List<SirBridge> = emptyList()
 }
 
 private val KaClassType.isRegularClass: Boolean

@@ -12,7 +12,6 @@ val validateSwiftExportEmbeddable by tasks.registering
 
 dependencies {
     embedded(project(":native:swift:sir")) { isTransitive = false }
-    embedded(project(":native:swift:sir-compiler-bridge")) { isTransitive = false }
     embedded(project(":native:swift:sir-light-classes")) { isTransitive = false }
     embedded(project(":native:swift:sir-printer")) { isTransitive = false }
     embedded(project(":native:swift:sir-providers")) { isTransitive = false }

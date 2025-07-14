@@ -7,6 +7,7 @@ package org.jetbrains.sir.lightclasses.nodes
 
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedFunctionSymbol
 import org.jetbrains.kotlin.sir.SirAttribute
+import org.jetbrains.kotlin.sir.SirBridge
 import org.jetbrains.kotlin.sir.SirDeclarationParent
 import org.jetbrains.kotlin.sir.SirFixity
 import org.jetbrains.kotlin.sir.SirFunction
@@ -27,6 +28,8 @@ import org.jetbrains.kotlin.sir.providers.SirSession
 import org.jetbrains.kotlin.sir.util.SirSwiftModule
 import org.jetbrains.kotlin.sir.util.allParameters
 import org.jetbrains.kotlin.sir.util.name
+import org.jetbrains.sir.lightclasses.extensions.lazyWithSessions
+import kotlin.getValue
 
 internal open class SirRenamedFunction(
     override val ktSymbol: KaNamedFunctionSymbol,
@@ -61,6 +64,8 @@ internal abstract class SirClassOperatorTrampolineFunction(
 
     override val fixity: SirFixity?
         get() = SirFixity.INFIX
+
+    override val bridges: List<SirBridge> get() = emptyList()
 
     override var body: SirFunctionBody?
         get() = SirFunctionBody(

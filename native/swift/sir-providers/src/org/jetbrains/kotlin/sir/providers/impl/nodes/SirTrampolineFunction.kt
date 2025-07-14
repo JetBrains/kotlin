@@ -41,6 +41,8 @@ public class SirTrampolineFunction(
 
     override val errorType: SirType get() = source.errorType
 
+    override val bridges: List<SirBridge> = emptyList()
+
     override var body: SirFunctionBody?
         get() = SirFunctionBody(
             listOf(

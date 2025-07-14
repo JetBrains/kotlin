@@ -13,12 +13,13 @@ import org.jetbrains.kotlin.sir.util.*
 /**
  * Generated from: [org.jetbrains.kotlin.sir.tree.generator.SwiftIrTree.accessor]
  */
-sealed class SirAccessor : SirElementBase(), SirCallable {
+sealed class SirAccessor : SirCallable() {
     abstract override val origin: SirOrigin
     abstract override val visibility: SirVisibility
     abstract override val documentation: String?
     abstract override var parent: SirDeclarationParent
     abstract override val attributes: List<SirAttribute>
+    abstract override val bridges: List<SirBridge>
     abstract override var body: SirFunctionBody?
     abstract override val errorType: SirType
     override fun toString(): String {

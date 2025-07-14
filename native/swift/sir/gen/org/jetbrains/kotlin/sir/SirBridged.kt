@@ -8,9 +8,14 @@
 
 package org.jetbrains.kotlin.sir
 
+import org.jetbrains.kotlin.sir.util.*
+
 /**
- * Generated from: [org.jetbrains.kotlin.sir.tree.generator.SwiftIrTree.mutableDeclarationContainer]
+ * Generated from: [org.jetbrains.kotlin.sir.tree.generator.SwiftIrTree.bridged]
  */
-sealed interface SirMutableDeclarationContainer : SirDeclarationParent, SirDeclarationContainer {
-    override val declarations: MutableList<SirDeclaration>
+sealed class SirBridged : SirElementBase(), SirElement {
+    abstract val bridges: List<SirBridge>
+    override fun toString(): String {
+        return this.debugString
+    }
 }

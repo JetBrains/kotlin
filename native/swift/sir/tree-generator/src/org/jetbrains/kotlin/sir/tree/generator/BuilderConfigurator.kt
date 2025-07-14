@@ -47,6 +47,10 @@ class BuilderConfigurator(model: Model) : AbstractSwiftIrTreeBuilderConfigurator
             default(it, "SirType.never")
         }
 
+        configureFieldInAllLeafBuilders("bridges") {
+            default(it, "emptyList()")
+        }
+
         builder(setter) {
             default("parameterName", "\"newValue\"")
         }

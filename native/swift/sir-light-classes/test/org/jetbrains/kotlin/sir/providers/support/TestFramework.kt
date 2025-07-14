@@ -8,10 +8,10 @@ package org.jetbrains.kotlin.sir.providers.support
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.analyze
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
-import org.jetbrains.kotlin.analysis.api.symbols.KaFileSymbol
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.sir.SirDeclaration
 import org.jetbrains.kotlin.sir.builder.buildModule
+import org.jetbrains.kotlin.sir.providers.SirBridgeProvider
 import org.jetbrains.kotlin.sir.providers.SirChildrenProvider
 import org.jetbrains.kotlin.sir.providers.SirDeclarationNamer
 import org.jetbrains.kotlin.sir.providers.SirDeclarationProvider
@@ -20,9 +20,11 @@ import org.jetbrains.kotlin.sir.providers.SirModuleProvider
 import org.jetbrains.kotlin.sir.providers.SirParentProvider
 import org.jetbrains.kotlin.sir.providers.SirSession
 import org.jetbrains.kotlin.sir.providers.SirTrampolineDeclarationsProvider
+import org.jetbrains.kotlin.sir.providers.SirTypeNamer
 import org.jetbrains.kotlin.sir.providers.SirTypeProvider
 import org.jetbrains.kotlin.sir.providers.SirVisibilityChecker
 import org.jetbrains.kotlin.sir.providers.impl.*
+import org.jetbrains.kotlin.sir.providers.impl.BridgeProvider.SirBridgeProviderImpl
 import org.jetbrains.kotlin.sir.providers.utils.SilentUnsupportedDeclarationReporter
 import org.jetbrains.sir.lightclasses.SirDeclarationFromKtSymbolProvider
 
@@ -62,6 +64,9 @@ class TestSirSession(
 
     override val trampolineDeclarationsProvider: SirTrampolineDeclarationsProvider =
         SirTrampolineDeclarationsProviderImpl(sirSession, null)
+
+    override val bridgeProvider: SirBridgeProvider
+        get() = SirBridgeProviderImpl(this, SirTypeNamer())
 }
 
 inline fun <R> translate(

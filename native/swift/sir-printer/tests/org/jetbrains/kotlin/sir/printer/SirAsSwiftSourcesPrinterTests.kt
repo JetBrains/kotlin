@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.sir.util.SirSwiftModule
 import org.jetbrains.kotlin.sir.util.addChild
 import org.jetbrains.kotlin.test.services.JUnit5Assertions
 import org.jetbrains.kotlin.test.util.KtTestUtil
-import org.jetbrains.sir.printer.SirAsSwiftSourcesPrinter
+import org.jetbrains.sir.printer.impl.SirAsSwiftSourcesPrinter
 import org.junit.jupiter.api.Test
 import java.io.File
 
