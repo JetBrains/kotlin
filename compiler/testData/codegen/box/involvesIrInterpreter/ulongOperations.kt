@@ -1,115 +1,132 @@
 // WITH_STDLIB
 fun <T> T.id() = this
 
-val compareTo1 = 1UL.<!EVALUATED{IR}("-1")!>compareTo(2UL)<!>
-val compareTo2 = 2UL.<!EVALUATED{IR}("0")!>compareTo(2UL)<!>
-val compareTo3 = 3UL.<!EVALUATED{IR}("1")!>compareTo(2UL)<!>
-val compareTo4 = 2UL.<!EVALUATED{IR}("0")!>compareTo(2u.toUByte())<!>
-val compareTo5 = 2UL.<!EVALUATED{IR}("0")!>compareTo(2u.toUShort())<!>
-val compareTo6 = 2UL.<!EVALUATED{IR}("0")!>compareTo(2u)<!>
+const val zeroVal = <!EVALUATED("0")!>0UL<!>
+const val oneVal = <!EVALUATED("1")!>1UL<!>
+const val twoVal = <!EVALUATED("2")!>2UL<!>
+const val threeVal = <!EVALUATED("3")!>3UL<!>
+const val fourVal = <!EVALUATED("4")!>4UL<!>
 
-val plus1 = 1UL.<!EVALUATED{IR}("3")!>plus(2UL)<!>
-val plus2 = 2UL.<!EVALUATED{IR}("4")!>plus(2UL)<!>
-val plus3 = 3UL.<!EVALUATED{IR}("5")!>plus(2UL)<!>
-val plus4 = 2UL.<!EVALUATED{IR}("4")!>plus(2u.toUByte())<!>
-val plus5 = 2UL.<!EVALUATED{IR}("4")!>plus(2u.toUShort())<!>
-val plus6 = 2UL.<!EVALUATED{IR}("4")!>plus(2u)<!>
+const val byteVal = 2.<!EVALUATED("2")!>toByte()<!>
+const val shortVal = 2.<!EVALUATED("2")!>toShort()<!>
+const val intVal = <!EVALUATED("2")!>2<!>
+const val longVal = <!EVALUATED("2")!>2L<!>
+const val ubyteVal = 2u.<!EVALUATED("2")!>toUByte()<!>
+const val ushortVal = 2u.<!EVALUATED("2")!>toUShort()<!>
+const val uintVal = <!EVALUATED("2")!>2u<!>
+const val ulongVal = <!EVALUATED("2")!>2UL<!>
+const val floatVal = <!EVALUATED("2.0")!>2.0f<!>
+const val doubleVal = <!EVALUATED("2.0")!>2.0<!>
 
-val minus1 = 2UL.<!EVALUATED{IR}("0")!>minus(2UL)<!>
-val minus2 = 3UL.<!EVALUATED{IR}("1")!>minus(2UL)<!>
-val minus3 = 2UL.<!EVALUATED{IR}("0")!>minus(2u.toUByte())<!>
-val minus4 = 2UL.<!EVALUATED{IR}("0")!>minus(2u.toUShort())<!>
-val minus5 = 2UL.<!EVALUATED{IR}("0")!>minus(2u)<!>
+const val compareTo1 = oneVal.<!EVALUATED("-1")!>compareTo(twoVal)<!>
+const val compareTo2 = twoVal.<!EVALUATED("0")!>compareTo(twoVal)<!>
+const val compareTo3 = threeVal.<!EVALUATED("1")!>compareTo(twoVal)<!>
+const val compareTo4 = twoVal.<!EVALUATED("0")!>compareTo(ubyteVal)<!>
+const val compareTo5 = twoVal.<!EVALUATED("0")!>compareTo(ushortVal)<!>
+const val compareTo6 = twoVal.<!EVALUATED("0")!>compareTo(uintVal)<!>
 
-val times1 = 1UL.<!EVALUATED{IR}("2")!>times(2UL)<!>
-val times2 = 2UL.<!EVALUATED{IR}("4")!>times(2UL)<!>
-val times3 = 3UL.<!EVALUATED{IR}("6")!>times(2UL)<!>
-val times4 = 2UL.<!EVALUATED{IR}("4")!>times(2u.toUByte())<!>
-val times5 = 2UL.<!EVALUATED{IR}("4")!>times(2u.toUShort())<!>
-val times6 = 2UL.<!EVALUATED{IR}("4")!>times(2u)<!>
+const val plus1 = oneVal.<!EVALUATED("3")!>plus(twoVal)<!>
+const val plus2 = twoVal.<!EVALUATED("4")!>plus(twoVal)<!>
+const val plus3 = threeVal.<!EVALUATED("5")!>plus(twoVal)<!>
+const val plus4 = twoVal.<!EVALUATED("4")!>plus(ubyteVal)<!>
+const val plus5 = twoVal.<!EVALUATED("4")!>plus(ushortVal)<!>
+const val plus6 = twoVal.<!EVALUATED("4")!>plus(uintVal)<!>
 
-val div1 = 1UL.<!EVALUATED{IR}("0")!>div(2UL)<!>
-val div2 = 2UL.<!EVALUATED{IR}("1")!>div(2UL)<!>
-val div3 = 3UL.<!EVALUATED{IR}("1")!>div(2UL)<!>
-val div4 = 2UL.<!EVALUATED{IR}("1")!>div(2u.toUByte())<!>
-val div5 = 2UL.<!EVALUATED{IR}("1")!>div(2u.toUShort())<!>
-val div6 = 2UL.<!EVALUATED{IR}("1")!>div(2u)<!>
+const val minus1 = twoVal.<!EVALUATED("0")!>minus(twoVal)<!>
+const val minus2 = threeVal.<!EVALUATED("1")!>minus(twoVal)<!>
+const val minus3 = twoVal.<!EVALUATED("0")!>minus(ubyteVal)<!>
+const val minus4 = twoVal.<!EVALUATED("0")!>minus(ushortVal)<!>
+const val minus5 = twoVal.<!EVALUATED("0")!>minus(uintVal)<!>
 
-val floorDiv1 = 1UL.<!EVALUATED{IR}("0")!>floorDiv(2UL)<!>
-val floorDiv2 = 2UL.<!EVALUATED{IR}("1")!>floorDiv(2UL)<!>
-val floorDiv3 = 3UL.<!EVALUATED{IR}("1")!>floorDiv(2UL)<!>
-val floorDiv4 = 2UL.<!EVALUATED{IR}("1")!>floorDiv(2u.toUByte())<!>
-val floorDiv5 = 2UL.<!EVALUATED{IR}("1")!>floorDiv(2u.toUShort())<!>
-val floorDiv6 = 2UL.<!EVALUATED{IR}("1")!>floorDiv(2u)<!>
+const val times1 = oneVal.<!EVALUATED("2")!>times(twoVal)<!>
+const val times2 = twoVal.<!EVALUATED("4")!>times(twoVal)<!>
+const val times3 = threeVal.<!EVALUATED("6")!>times(twoVal)<!>
+const val times4 = twoVal.<!EVALUATED("4")!>times(ubyteVal)<!>
+const val times5 = twoVal.<!EVALUATED("4")!>times(ushortVal)<!>
+const val times6 = twoVal.<!EVALUATED("4")!>times(uintVal)<!>
 
-val rem1 = 1UL.<!EVALUATED{IR}("1")!>rem(2UL)<!>
-val rem2 = 2UL.<!EVALUATED{IR}("0")!>rem(2UL)<!>
-val rem3 = 3UL.<!EVALUATED{IR}("1")!>rem(2UL)<!>
-val rem4 = 2UL.<!EVALUATED{IR}("0")!>rem(2u.toUByte())<!>
-val rem5 = 2UL.<!EVALUATED{IR}("0")!>rem(2u.toUShort())<!>
-val rem6 = 2UL.<!EVALUATED{IR}("0")!>rem(2u)<!>
+const val div1 = oneVal.<!EVALUATED("0")!>div(twoVal)<!>
+const val div2 = twoVal.<!EVALUATED("1")!>div(twoVal)<!>
+const val div3 = threeVal.<!EVALUATED("1")!>div(twoVal)<!>
+const val div4 = twoVal.<!EVALUATED("1")!>div(ubyteVal)<!>
+const val div5 = twoVal.<!EVALUATED("1")!>div(ushortVal)<!>
+const val div6 = twoVal.<!EVALUATED("1")!>div(uintVal)<!>
 
-val mod1 = 1UL.<!EVALUATED{IR}("1")!>mod(2UL)<!>
-val mod2 = 2UL.<!EVALUATED{IR}("0")!>mod(2UL)<!>
-val mod3 = 3UL.<!EVALUATED{IR}("1")!>mod(2UL)<!>
-val mod4 = 2UL.<!EVALUATED{IR}("0")!>mod(2u.toUByte())<!>
-val mod5 = 2UL.<!EVALUATED{IR}("0")!>mod(2u.toUShort())<!>
-val mod6 = 2UL.<!EVALUATED{IR}("0")!>mod(2u.toULong())<!>
+const val floorDiv1 = oneVal.<!EVALUATED("0")!>floorDiv(twoVal)<!>
+const val floorDiv2 = twoVal.<!EVALUATED("1")!>floorDiv(twoVal)<!>
+const val floorDiv3 = threeVal.<!EVALUATED("1")!>floorDiv(twoVal)<!>
+const val floorDiv4 = twoVal.<!EVALUATED("1")!>floorDiv(ubyteVal)<!>
+const val floorDiv5 = twoVal.<!EVALUATED("1")!>floorDiv(ushortVal)<!>
+const val floorDiv6 = twoVal.<!EVALUATED("1")!>floorDiv(uintVal)<!>
 
-val and1 = 1UL.<!EVALUATED{IR}("1")!>and(1UL)<!>
-val and2 = 2UL.<!EVALUATED{IR}("2")!>and(2UL)<!>
-val and3 = 3UL.<!EVALUATED{IR}("2")!>and(2UL)<!>
-val and4 = 12UL.<!EVALUATED{IR}("8")!>and(10UL)<!>
+const val rem1 = oneVal.<!EVALUATED("1")!>rem(twoVal)<!>
+const val rem2 = twoVal.<!EVALUATED("0")!>rem(twoVal)<!>
+const val rem3 = threeVal.<!EVALUATED("1")!>rem(twoVal)<!>
+const val rem4 = twoVal.<!EVALUATED("0")!>rem(ubyteVal)<!>
+const val rem5 = twoVal.<!EVALUATED("0")!>rem(ushortVal)<!>
+const val rem6 = twoVal.<!EVALUATED("0")!>rem(uintVal)<!>
 
-val or1 = 1UL.<!EVALUATED{IR}("1")!>or(1UL)<!>
-val or2 = 2UL.<!EVALUATED{IR}("2")!>or(2UL)<!>
-val or3 = 3UL.<!EVALUATED{IR}("3")!>or(2UL)<!>
-val or4 = 12UL.<!EVALUATED{IR}("14")!>or(10UL)<!>
+const val mod1 = oneVal.<!EVALUATED("1")!>mod(twoVal)<!>
+const val mod2 = twoVal.<!EVALUATED("0")!>mod(twoVal)<!>
+const val mod3 = threeVal.<!EVALUATED("1")!>mod(twoVal)<!>
+const val mod4 = twoVal.<!EVALUATED("0")!>mod(ubyteVal)<!>
+const val mod5 = twoVal.<!EVALUATED("0")!>mod(ushortVal)<!>
+const val mod6 = twoVal.<!EVALUATED("0")!>mod(uintVal)<!>
 
-val xor1 = 1UL.<!EVALUATED{IR}("0")!>xor(1UL)<!>
-val xor2 = 2UL.<!EVALUATED{IR}("0")!>xor(2UL)<!>
-val xor3 = 3UL.<!EVALUATED{IR}("1")!>xor(2UL)<!>
-val xor4 = 12UL.<!EVALUATED{IR}("6")!>xor(10UL)<!>
+const val and1 = oneVal.<!EVALUATED("1")!>and(oneVal)<!>
+const val and2 = twoVal.<!EVALUATED("2")!>and(twoVal)<!>
+const val and3 = threeVal.<!EVALUATED("2")!>and(twoVal)<!>
+const val and4 = 12UL.<!EVALUATED("8")!>and(10UL)<!>
 
-val inv1 = 0UL.<!EVALUATED{IR}("18446744073709551615")!>inv()<!>
-val inv2 = 1UL.<!EVALUATED{IR}("18446744073709551614")!>inv()<!>
+const val or1 = oneVal.<!EVALUATED("1")!>or(oneVal)<!>
+const val or2 = twoVal.<!EVALUATED("2")!>or(twoVal)<!>
+const val or3 = threeVal.<!EVALUATED("3")!>or(twoVal)<!>
+const val or4 = 12UL.<!EVALUATED("14")!>or(10UL)<!>
 
-val shl1 = 1UL.<!EVALUATED{IR}("2")!>shl(1)<!>
-val shl2 = 2UL.<!EVALUATED{IR}("8")!>shl(2)<!>
-val shl3 = 3UL.<!EVALUATED{IR}("12")!>shl(2)<!>
-val shl4 = 1UL.<!EVALUATED{IR}("9223372036854775808")!>shl(63)<!>
-val shl5 = 1UL.<!EVALUATED{IR}("1")!>shl(64)<!>
-val shl6 = 1UL.<!EVALUATED{IR}("9223372036854775808")!>shl(127)<!>
+const val xor1 = oneVal.<!EVALUATED("0")!>xor(oneVal)<!>
+const val xor2 = twoVal.<!EVALUATED("0")!>xor(twoVal)<!>
+const val xor3 = threeVal.<!EVALUATED("1")!>xor(twoVal)<!>
+const val xor4 = 12UL.<!EVALUATED("6")!>xor(10UL)<!>
 
-val shr1 = 1UL.<!EVALUATED{IR}("0")!>shr(1)<!>
-val shr2 = 2UL.<!EVALUATED{IR}("1")!>shr(1)<!>
-val shr3 = 3UL.<!EVALUATED{IR}("1")!>shr(1)<!>
-val shr4 = 1UL.<!EVALUATED{IR}("0")!>shr(63)<!>
-val shr5 = 1UL.<!EVALUATED{IR}("1")!>shr(64)<!>
-val shr6 = 1UL.<!EVALUATED{IR}("0")!>shr(127)<!>
+const val inv1 = zeroVal.<!EVALUATED("18446744073709551615")!>inv()<!>
+const val inv2 = oneVal.<!EVALUATED("18446744073709551614")!>inv()<!>
 
-val convert1 = 1UL.<!EVALUATED{IR}("1")!>toUByte()<!>
-val convert2 = 1UL.<!EVALUATED{IR}("1")!>toUShort()<!>
-val convert3 = 1UL.<!EVALUATED{IR}("1")!>toUInt()<!>
-val convert4 = 1UL.<!EVALUATED{IR}("1")!>toULong()<!>
-val convert5 = 1UL.<!EVALUATED{IR}("1.0")!>toFloat()<!>
-val convert6 = 1UL.<!EVALUATED{IR}("1.0")!>toDouble()<!>
-val convert7 = 1UL.<!EVALUATED{IR}("1")!>toByte()<!>
-val convert8 = 1UL.<!EVALUATED{IR}("1")!>toShort()<!>
-val convert9 = 1UL.<!EVALUATED{IR}("1")!>toInt()<!>
-val convert10 = 1UL.<!EVALUATED{IR}("1")!>toLong()<!>
+const val shl1 = oneVal.<!EVALUATED("2")!>shl(1)<!>
+const val shl2 = twoVal.<!EVALUATED("8")!>shl(2)<!>
+const val shl3 = threeVal.<!EVALUATED("12")!>shl(2)<!>
+const val shl4 = oneVal.<!EVALUATED("9223372036854775808")!>shl(63)<!>
+const val shl5 = oneVal.<!EVALUATED("1")!>shl(64)<!>
+const val shl6 = oneVal.<!EVALUATED("9223372036854775808")!>shl(127)<!>
 
-val equals1 = <!EVALUATED{IR}("false")!>1UL == 2UL<!>
-val equals2 = <!EVALUATED{IR}("true")!>2UL == 2UL<!>
-val equals3 = <!EVALUATED{IR}("false")!>3UL == 2UL<!>
-val equals4 = <!EVALUATED{IR}("false")!>4UL == 2UL<!>
+const val shr1 = oneVal.<!EVALUATED("0")!>shr(1)<!>
+const val shr2 = twoVal.<!EVALUATED("1")!>shr(1)<!>
+const val shr3 = threeVal.<!EVALUATED("1")!>shr(1)<!>
+const val shr4 = oneVal.<!EVALUATED("0")!>shr(63)<!>
+const val shr5 = oneVal.<!EVALUATED("1")!>shr(64)<!>
+const val shr6 = oneVal.<!EVALUATED("0")!>shr(127)<!>
 
-val toString1 = 1UL.<!EVALUATED{IR}("1")!>toString()<!>
-val toString2 = 2UL.<!EVALUATED{IR}("2")!>toString()<!>
+const val convert1 = oneVal.<!EVALUATED("1")!>toUByte()<!>
+const val convert2 = oneVal.<!EVALUATED("1")!>toUShort()<!>
+const val convert3 = oneVal.<!EVALUATED("1")!>toUInt()<!>
+const val convert4 = oneVal.<!EVALUATED("1")!>toULong()<!>
+const val convert5 = oneVal.<!EVALUATED("1.0")!>toFloat()<!>
+const val convert6 = oneVal.<!EVALUATED("1.0")!>toDouble()<!>
+const val convert7 = oneVal.<!EVALUATED("1")!>toByte()<!>
+const val convert8 = oneVal.<!EVALUATED("1")!>toShort()<!>
+const val convert9 = oneVal.<!EVALUATED("1")!>toInt()<!>
+const val convert10 = oneVal.<!EVALUATED("1")!>toLong()<!>
 
-val limits1 = <!EVALUATED{IR}("18446744073709551615")!>18446744073709551614UL+1UL<!>
-val limits2 = <!EVALUATED{IR}("0")!>18446744073709551615UL+1UL<!>
-val limits3 = <!EVALUATED{IR}("18446744073709551615")!>0UL-1UL<!>
+const val equals1 = <!EVALUATED("false")!>oneVal == twoVal<!>
+const val equals2 = <!EVALUATED("true")!>twoVal == twoVal<!>
+const val equals3 = <!EVALUATED("false")!>threeVal == twoVal<!>
+const val equals4 = <!EVALUATED("false")!>4UL == twoVal<!>
+
+const val toString1 = oneVal.<!EVALUATED("1")!>toString()<!>
+const val toString2 = twoVal.<!EVALUATED("2")!>toString()<!>
+
+const val limits1 = <!EVALUATED("18446744073709551615")!>18446744073709551614UL+oneVal<!>
+const val limits2 = <!EVALUATED("0")!>18446744073709551615UL+oneVal<!>
+const val limits3 = <!EVALUATED("18446744073709551615")!>0UL-oneVal<!>
 
 // STOP_EVALUATION_CHECKS
 fun box(): String {

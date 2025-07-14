@@ -480,7 +480,8 @@ private class FirConstCheckVisitor(
             name in compileTimeFunctions ||
             name in compileTimeExtensionFunctions ||
             name == OperatorNameConventions.TO_STRING ||
-            name in OperatorNameConventions.NUMBER_CONVERSIONS
+            name in OperatorNameConventions.NUMBER_CONVERSIONS ||
+            name in OperatorNameConventions.UNSIGNED_CONVERSIONS
         ) return true
 
         if (calleeReference.name == OperatorNameConventions.GET && receiverClassId == StandardClassIds.String) return true

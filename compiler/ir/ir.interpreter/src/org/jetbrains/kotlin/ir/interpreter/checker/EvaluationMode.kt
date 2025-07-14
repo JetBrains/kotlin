@@ -85,8 +85,12 @@ sealed class EvaluationMode {
             *OperatorNameConventions.SIMPLE_BITWISE_OPERATION_NAMES.toTypedArray(),
             OperatorNameConventions.TO_STRING, OperatorNameConventions.EQUALS, OperatorNameConventions.COMPARE_TO,
             *OperatorNameConventions.NUMBER_CONVERSIONS.toTypedArray(),
+            *OperatorNameConventions.UNSIGNED_CONVERSIONS.toTypedArray(),
             Name.identifier("less"), Name.identifier("lessOrEqual"),
             Name.identifier("greater"), Name.identifier("greaterOrEqual"),
+            Name.identifier("inv"),
+            Name.identifier("floorDiv"),
+            Name.identifier("mod"),
         )
 
         private val allowedMethodsOnStrings = setOf(
@@ -94,9 +98,8 @@ sealed class EvaluationMode {
             OperatorNameConventions.PLUS, OperatorNameConventions.GET, OperatorNameConventions.COMPARE_TO,
             OperatorNameConventions.EQUALS, OperatorNameConventions.TO_STRING,
         )
-
         private val allowedExtensionFunctions = setOf(
-            "floorDiv", "mod", "NumbersKt.floorDiv", "NumbersKt.mod", "<get-code>"
+            "floorDiv", "mod", "NumbersKt.floorDiv", "NumbersKt.mod", "<get-code>",
         ).map { StandardClassIds.BASE_KOTLIN_PACKAGE.child(Name.identifier(it)) }.toSet()
 
         private val allowedBuiltinExtensionFunctions = listOf(
