@@ -86,7 +86,7 @@ fun TestSuspend(crossinline content: SuspendFunction0<Unit>, %composer: Composer
   sourceInformationMarkerStart(%composer, <>, "CC(TestSuspend)N(content)<Lazy>,<Box>:Test.kt")
   Box({
     Lazy({
-      val items = suspend {
+      val items = {
         content()
       }
     }, %composer, 0)
