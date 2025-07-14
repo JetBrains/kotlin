@@ -24,15 +24,16 @@ fun SourceSet.none() {
 
 val SourceSet.projectDefault: Project.() -> Unit
     get() = {
-        when (this@projectDefault.name) {
+        when (val name = this@projectDefault.name) {
             "main" -> {
                 java.srcDirs("src")
                 this@projectDefault.resources.srcDir("resources")
             }
             "test" -> {
-                java.srcDirs("test", "tests")
-                this@projectDefault.resources.srcDir("testResources")
+                java.srcDirs("test", "tests", "testFixtures")
+                this@projectDefault.resources.srcDirs("testResources", "testFixturesResources")
             }
+            else -> error("Unknown source set $name")
         }
     }
 
