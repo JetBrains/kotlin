@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.analysis.api.types.symbol
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.getOrBuildFirSafe
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.resolveToFirSymbol
 import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.llFirModuleData
+import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.util.collectUseSiteContainers
 import org.jetbrains.kotlin.analysis.utils.printer.parentOfType
 import org.jetbrains.kotlin.analysis.utils.printer.parentsOfType
@@ -128,20 +129,11 @@ private class KaFirUseSiteVisibilityChecker(
 
         val dispatchReceiverCanBeExplicit = candidateSymbol is KaCallableSymbol && !candidateSymbol.isExtension
         val explicitDispatchReceiver = runIf(dispatchReceiverCanBeExplicit) { dispatchReceiver }
+        val targetSession = getTargetSession(candidateDeclaration)
 
-        val candidateModule = candidateDeclaration.llFirModuleData.ktModule
-
-        val effectiveSession = if (positionModule is KaDanglingFileModule && candidateModule != positionModule) {
-            @Suppress("USELESS_CAST") // Smart cast is only available in K2
-            val contextModule = (positionModule as KaDanglingFileModule).contextModule
-            analysisSession.resolutionFacade.getSessionFor(contextModule)
-        } else {
-            analysisSession.resolutionFacade.getSessionFor(positionModule)
-        }
-
-        if (effectiveSession.visibilityChecker.isVisible(
+        if (targetSession.visibilityChecker.isVisible(
                 candidateDeclaration,
-                effectiveSession,
+                targetSession,
                 useSiteFile.firSymbol.fir,
                 effectiveContainers,
                 explicitDispatchReceiver
@@ -151,6 +143,16 @@ private class KaFirUseSiteVisibilityChecker(
         }
 
         return isVisibleFromSuperInterfaceOfImplicitReceiver(candidateSymbol, explicitDispatchReceiver)
+    }
+
+    private fun getTargetSession(candidateDeclaration: FirMemberDeclaration): LLFirSession {
+        val candidateModule = candidateDeclaration.llFirModuleData.ktModule
+        val targetModule = if (positionModule is KaDanglingFileModule && candidateModule != positionModule) {
+            positionModule.contextModule
+        } else {
+            positionModule
+        }
+        return analysisSession.resolutionFacade.getSessionFor(targetModule)
     }
 
     /**
