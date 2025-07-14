@@ -14,7 +14,7 @@ dependencies {
     testImplementation(testFixtures(project(":generators:test-generator")))
     testImplementation(testFixtures(project(":compiler:tests-common")))
     testImplementation(projectTests(":compiler:tests-spec"))
-    testImplementation(projectTests(":generators:analysis-api-generator"))
+    testImplementation(testFixtures(project(":generators:analysis-api-generator")))
 
     testImplementation(testFixtures(project(":analysis:low-level-api-fir")))
     testImplementation(testFixtures(project(":analysis:low-level-api-fir:low-level-api-fir-native")))
