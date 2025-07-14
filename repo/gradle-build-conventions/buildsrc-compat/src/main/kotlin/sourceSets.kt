@@ -30,8 +30,12 @@ val SourceSet.projectDefault: Project.() -> Unit
                 this@projectDefault.resources.srcDir("resources")
             }
             "test" -> {
-                java.srcDirs("test", "tests", "testFixtures")
-                this@projectDefault.resources.srcDirs("testResources", "testFixturesResources")
+                java.srcDirs("test", "tests")
+                this@projectDefault.resources.srcDir("testResources")
+            }
+            "testFixtures" -> {
+                java.srcDirs("testFixtures")
+                this@projectDefault.resources.srcDir("testFixturesResources")
             }
             else -> error("Unknown source set $name")
         }
