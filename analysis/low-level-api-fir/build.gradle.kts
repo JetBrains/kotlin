@@ -68,7 +68,7 @@ dependencies {
 
     // We use 'api' instead of 'implementation' because other modules might be using these jars indirectly
     testApi(project(":plugins:plugin-sandbox"))
-    testApi(projectTests(":plugins:plugin-sandbox"))
+    testApi(testFixtures(project(":plugins:plugin-sandbox")))
 
     scriptingTestDefinition(projectTests(":plugins:scripting:test-script-definition"))
 }
