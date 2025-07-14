@@ -47,6 +47,7 @@ license/third_party/stax2-api.txt
 license/third_party/assemblyscript_license.txt
 license/third_party/rhino_LICENSE.txt
 license/third_party/jshashtable_license.txt
+license/third_party/gradle_custom_user_plugin_license.txt
 license/LICENSE.txt
 bin/kotlinc-jvm
 bin/kotlinc-js
