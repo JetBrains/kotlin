@@ -1187,11 +1187,10 @@ private object LoweringsFakeOverrideBuilderStrategy : FakeOverrideBuilderStrateg
 
 fun IrClass.addFakeOverrides(
     typeSystem: IrTypeSystemContext,
-    implementedMembers: List<IrOverridableMember> = emptyList(),
     ignoredParentSymbols: List<IrSymbol> = emptyList()
 ) {
     val fakeOverrides = IrFakeOverrideBuilder(typeSystem, LoweringsFakeOverrideBuilderStrategy, emptyList())
-        .buildFakeOverridesForClassUsingOverriddenSymbols(this, implementedMembers, compatibilityMode = false, ignoredParentSymbols)
+        .buildFakeOverridesForClassUsingOverriddenSymbols(this, compatibilityMode = false, ignoredParentSymbols)
     for (fakeOverride in fakeOverrides) {
         addChild(fakeOverride)
     }

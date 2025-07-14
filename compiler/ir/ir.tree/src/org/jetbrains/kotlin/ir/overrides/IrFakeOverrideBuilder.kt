@@ -124,11 +124,10 @@ class IrFakeOverrideBuilder(
      */
     fun buildFakeOverridesForClassUsingOverriddenSymbols(
         clazz: IrClass,
-        implementedMembers: List<IrOverridableMember> = emptyList(),
         compatibilityMode: Boolean,
         ignoredParentSymbols: List<IrSymbol> = emptyList()
     ): List<IrOverridableMember> {
-        val overriddenMembers = (clazz.declarations.filterIsInstance<IrOverridableMember>() + implementedMembers)
+        val overriddenMembers = (clazz.declarations.filterIsInstance<IrOverridableMember>())
             .flatMap { member -> member.overriddenSymbols.map { it.owner } }
             .toSet()
 
