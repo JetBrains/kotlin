@@ -73,12 +73,6 @@ internal fun Long.negate(): Long =
     BigInt.asIntN(Long.SIZE_BITS, -unsafeCast<BigInt>()).unsafeCast<Long>()
 
 /**
- * @see kotlin.js.internal.boxedLong.equalsLong
- */
-@LongAsBigIntApi
-internal fun Long.equalsLong(other: Long): Boolean = unsafeCast<BigInt>() == other.unsafeCast<BigInt>() // TODO(KT-79184): Intrinsify further
-
-/**
  * @see kotlin.js.internal.boxedLong.add
  */
 @LongAsBigIntApi
@@ -132,33 +126,6 @@ internal fun Long.shiftRightUnsigned(numBits: Int): Long = wrappingArithmetic(th
     // BigInt doesn't natively support unsigned shift right.
     BigInt.asUintN(Long.SIZE_BITS, lhs) shr rhs
 }
-
-/**
- * @see kotlin.js.internal.boxedLong.bitwiseAnd
- */
-@LongAsBigIntApi
-internal fun Long.bitwiseAnd(other: Long): Long =
-    (unsafeCast<BigInt>() and other.unsafeCast<BigInt>()).unsafeCast<Long>() // TODO(KT-79184): Intrinsify further
-
-/**
- * @see kotlin.js.internal.boxedLong.bitwiseOr
- */
-@LongAsBigIntApi
-internal fun Long.bitwiseOr(other: Long): Long =
-    (unsafeCast<BigInt>() or other.unsafeCast<BigInt>()).unsafeCast<Long>() // TODO(KT-79184): Intrinsify further
-
-/**
- * @see kotlin.js.internal.boxedLong.bitwiseXor
- */
-@LongAsBigIntApi
-internal fun Long.bitwiseXor(other: Long): Long =
-    (unsafeCast<BigInt>() xor other.unsafeCast<BigInt>()).unsafeCast<Long>() // TODO(KT-79184): Intrinsify further
-
-/**
- * @see kotlin.js.internal.boxedLong.invert
- */
-@LongAsBigIntApi
-internal fun Long.invert(): Long = unsafeCast<BigInt>().inv().unsafeCast<Long>() // TODO(KT-79184): Intrinsify further
 
 /**
  * @see kotlin.js.internal.boxedLong.fromInt

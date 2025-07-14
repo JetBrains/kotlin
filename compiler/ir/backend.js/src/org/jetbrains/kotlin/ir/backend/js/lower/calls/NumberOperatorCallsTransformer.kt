@@ -5,17 +5,14 @@
 
 package org.jetbrains.kotlin.ir.backend.js.lower.calls
 
-import org.jetbrains.kotlin.ir.UNDEFINED_OFFSET
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.ir.JsIrBuilder
-import org.jetbrains.kotlin.ir.backend.js.lower.ConstTransformer
 import org.jetbrains.kotlin.ir.backend.js.utils.OperatorNames
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.expressions.copyTypeArgumentsFrom
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
-import org.jetbrains.kotlin.ir.expressions.impl.IrConstImpl
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.irCall
@@ -97,10 +94,10 @@ class NumberOperatorCallsTransformer(private val context: JsIrBackendContext) : 
             add(type, OperatorNames.SHL, intrinsics.longShiftLeft)
             add(type, OperatorNames.SHR, intrinsics.longShiftRight)
             add(type, OperatorNames.SHRU, intrinsics.longShiftRightUnsigned)
-            add(type, OperatorNames.AND, intrinsics.longAnd)
-            add(type, OperatorNames.OR, intrinsics.longOr)
-            add(type, OperatorNames.XOR, intrinsics.longXor)
-            add(type, OperatorNames.INV, intrinsics.longInv)
+            add(type, OperatorNames.AND, intrinsifiedLongBitOp(intrinsics.jsBitAnd, intrinsics.longAnd))
+            add(type, OperatorNames.OR, intrinsifiedLongBitOp(intrinsics.jsBitOr, intrinsics.longOr))
+            add(type, OperatorNames.XOR, intrinsifiedLongBitOp(intrinsics.jsBitXor, intrinsics.longXor))
+            add(type, OperatorNames.INV, intrinsifiedLongBitOp(intrinsics.jsBitNot, intrinsics.longInv))
 
             add(type, OperatorNameConventions.RANGE_TO, ::transformRangeTo)
             add(type, OperatorNameConventions.RANGE_UNTIL, ::transformRangeUntil)
@@ -187,6 +184,19 @@ class NumberOperatorCallsTransformer(private val context: JsIrBackendContext) : 
         if (toInt32)
             return toInt32(newCall)
         return newCall
+    }
+
+    private fun intrinsifiedLongBitOp(
+        jsOperatorIntrinsic: IrSimpleFunctionSymbol,
+        longRuntimeFunction: IrSimpleFunctionSymbol?,
+    ) = { call: IrFunctionAccessExpression ->
+        irCall(
+            call,
+            if (context.configuration.compileLongAsBigint)
+                jsOperatorIntrinsic
+            else
+                longRuntimeFunction!!
+        )
     }
 
     class BinaryOp(call: IrFunctionAccessExpression) {
