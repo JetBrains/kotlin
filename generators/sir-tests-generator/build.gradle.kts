@@ -14,7 +14,7 @@ dependencies {
     implementation(projectTests(":analysis:analysis-test-framework"))
     implementation(projectTests(":analysis:analysis-api-impl-base"))
 
-    implementation(projectTests(":analysis:analysis-api-fir"))
+    implementation(testFixtures(project(":analysis:analysis-api-fir")))
 
     runtimeOnly(libs.junit.jupiter.api)
 }
