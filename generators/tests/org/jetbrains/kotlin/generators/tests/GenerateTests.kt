@@ -43,8 +43,6 @@ import org.jetbrains.kotlin.samWithReceiver.*
 import org.jetbrains.kotlin.scripting.test.*
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.utils.CUSTOM_TEST_DATA_EXTENSION_PATTERN
-import org.jetbrains.kotlinx.atomicfu.incremental.AbstractIncrementalK2JVMWithAtomicfuRunnerTest
-import org.jetbrains.kotlinx.atomicfu.runners.*
 
 private class ExcludePattern {
     companion object {
@@ -180,12 +178,6 @@ fun main(args: Array<String>) {
         testGroup("plugins/plugin-sandbox/plugin-sandbox-ic-test/tests-gen", "plugins/plugin-sandbox/plugin-sandbox-ic-test/testData") {
             testClass<AbstractIncrementalK2JvmWithPluginCompilerRunnerTest> {
                 model("pureKotlin", extension = null, recursive = false, targetBackend = TargetBackend.JVM_IR)
-            }
-        }
-
-        testGroup("plugins/atomicfu/atomicfu-compiler/tests-gen", "plugins/atomicfu/atomicfu-compiler/testData/") {
-            testClass<AbstractIncrementalK2JVMWithAtomicfuRunnerTest> {
-                model("projects/", extension = null, recursive = false, targetBackend = TargetBackend.JVM_IR)
             }
         }
     }
