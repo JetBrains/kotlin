@@ -13,7 +13,7 @@ dependencies {
     testFixturesApi(projectTests(":compiler:test-infrastructure"))
     testFixturesApi(projectTests(":compiler:test-infrastructure-utils"))
     testFixturesApi(projectTests(":compiler:tests-compiler-utils"))
-    testFixturesApi(projectTests(":compiler:tests-common-new"))
+    testFixturesApi(testFixtures(project(":compiler:tests-common-new")))
     testFixturesApi(project(":compiler:fir:tree"))
 
     testFixturesApi(platform(libs.junit.bom))

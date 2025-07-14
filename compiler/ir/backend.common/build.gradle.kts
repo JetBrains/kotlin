@@ -14,7 +14,7 @@ dependencies {
     compileOnly(intellijCore())
 
     testImplementation(kotlinTest("junit"))
-    testImplementation(projectTests(":compiler:tests-common-new"))
+    testImplementation(testFixtures(project(":compiler:tests-common-new")))
 }
 
 optInToUnsafeDuringIrConstructionAPI()

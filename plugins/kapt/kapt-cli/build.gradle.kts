@@ -11,7 +11,7 @@ dependencies {
 
     testFixturesImplementation(intellijCore())
     testFixturesApi(projectTests(":compiler:test-infrastructure-utils"))
-    testFixturesApi(projectTests(":compiler:tests-common-new"))
+    testFixturesApi(testFixtures(project(":compiler:tests-common-new")))
     testFixturesApi(platform(libs.junit.bom))
     testFixturesApi(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)

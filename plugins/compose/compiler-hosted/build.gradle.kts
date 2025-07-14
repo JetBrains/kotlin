@@ -42,7 +42,7 @@ dependencies {
     testImplementation(projectTests(":compiler:test-infrastructure"))
     testImplementation(projectTests(":generators:analysis-api-generator"))
     testApi(project(":compiler:plugin-api"))
-    testImplementation(projectTests(":compiler:tests-common-new"))
+    testImplementation(testFixtures(project(":compiler:tests-common-new")))
 
     // runtime tests
     testImplementation(composeRuntime()) { isTransitive = false }

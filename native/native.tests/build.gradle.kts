@@ -14,7 +14,7 @@ dependencies {
     testFixturesApi(project(":kotlin-compiler-runner-unshaded"))
     testFixturesApi(projectTests(":compiler:tests-common"))
     testFixturesApi(projectTests(":compiler:tests-integration"))
-    testFixturesApi(projectTests(":compiler:tests-common-new"))
+    testFixturesApi(testFixtures(project(":compiler:tests-common-new")))
     testFixturesApi(projectTests(":compiler:test-infrastructure"))
     testFixturesApi(project(":native:kotlin-native-utils"))
     testFixturesApi(project(":native:executors"))
