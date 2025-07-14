@@ -12,7 +12,7 @@ dependencies {
     implementation(testFixtures(project(":generators:test-generator")))
     implementation(projectTests(":generators:analysis-api-generator"))
     implementation(projectTests(":analysis:analysis-test-framework"))
-    implementation(projectTests(":analysis:analysis-api-impl-base"))
+    implementation(testFixtures(project(":analysis:analysis-api-impl-base")))
 
     implementation(testFixtures(project(":analysis:analysis-api-fir")))
 
