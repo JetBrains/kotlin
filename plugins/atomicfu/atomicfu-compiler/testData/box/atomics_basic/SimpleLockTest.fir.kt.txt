@@ -24,19 +24,19 @@ class SimpleLock {
   fun <T : Any?> withLock(res: T): T {
     try { // BLOCK
       <this>.loop$atomicfu$NATIVE_PROPERTY_REF$Int(handler$atomicfu = local inline fun <_locked$volatile-getter>(): KMutableProperty0<Int> {
-        return SimpleLock<this>::_locked$volatile
+        return <this>::_locked$volatile
       }
 , action$atomicfu = local fun <anonymous>(locked: Int) {
         check(value = EQEQ(arg0 = locked, arg1 = 0))
         when {
-          compareAndSetField<Int>(/* <this> = SimpleLock<this>::_locked$volatile, */ expectedValue = 0, newValue = 1).not() -> return Unit
+          compareAndSetField<Int>(/* <this> = <this>::_locked$volatile, */ expectedValue = 0, newValue = 1).not() -> return Unit
         }
         return res
       }
 )
     }
     finally { // BLOCK
-      atomicSetField<Int>(/* <this> = SimpleLock<this>::_locked$volatile, */ newValue = 0)
+      atomicSetField<Int>(/* <this> = <this>::_locked$volatile, */ newValue = 0)
     }
   }
 
@@ -62,3 +62,4 @@ fun box(): String {
   testClass.withLock()
   return "OK"
 }
+

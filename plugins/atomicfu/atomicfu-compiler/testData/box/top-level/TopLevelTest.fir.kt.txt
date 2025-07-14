@@ -150,7 +150,7 @@ data class ANode<T : Any?> {
     when {
       other !is ANode<T> -> return false
     }
-    val tmp_0: ANode<T> = other as ANode<T>
+    val tmp_0: ANode<T> = other /*as ANode<T> */
     when {
       EQEQ(arg0 = <this>.#b, arg1 = tmp_0.#b).not() -> return false
     }
@@ -196,7 +196,7 @@ data class BNode<T : Any?> {
     when {
       other !is BNode<T> -> return false
     }
-    val tmp_1: BNode<T> = other as BNode<T>
+    val tmp_1: BNode<T> = other /*as BNode<T> */
     when {
       EQEQ(arg0 = <this>.#c, arg1 = tmp_1.#c).not() -> return false
     }
@@ -242,7 +242,7 @@ data class CNode {
     when {
       other !is CNode -> return false
     }
-    val tmp_2: CNode = other as CNode
+    val tmp_2: CNode = other /*as CNode */
     when {
       EQEQ(arg0 = <this>.#d, arg1 = tmp_2.#d).not() -> return false
     }

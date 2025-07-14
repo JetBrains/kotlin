@@ -48,7 +48,7 @@ class LockFreeIntBits {
 
   private inline fun bitUpdate(check: Function1<Int, Boolean>, upd: Function1<Int, Int>): Boolean {
     <this>.update$atomicfu$NATIVE_PROPERTY_REF$Int(handler$atomicfu = local inline fun <bits$volatile-getter>(): KMutableProperty0<Int> {
-      return LockFreeIntBits<this>::bits$volatile
+      return <this>::bits$volatile
     }
 , action$atomicfu = local fun <anonymous>(it: Int): Int {
       when {
@@ -61,7 +61,7 @@ class LockFreeIntBits {
   }
 
   operator fun get(index: Int): Boolean {
-    return EQEQ(arg0 = atomicGetField<Int>(/* <this> = LockFreeIntBits<this>::bits$volatile */) as Int.and(other = <this>.mask(/* <this> = index */)), arg1 = 0).not()
+    return EQEQ(arg0 = atomicGetField<Int>(/* <this> = <this>::bits$volatile */) as Int.and(other = <this>.mask(/* <this> = index */)), arg1 = 0).not()
   }
 
   private fun Int.mask(): Int {
@@ -101,3 +101,4 @@ fun box(): String {
   testClass.testBasic()
   return "OK"
 }
+

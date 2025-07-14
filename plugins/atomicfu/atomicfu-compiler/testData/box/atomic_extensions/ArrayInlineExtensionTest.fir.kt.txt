@@ -250,7 +250,7 @@ class AtomicIntArrayInlineExtensionTest {
     <this>.loop$atomicfu$ATOMIC_ARRAY$Int(handler$atomicfu = handler$atomicfu, index$atomicfu = index$atomicfu, action$atomicfu = local fun <anonymous>(cur: Int) {
       handler$atomicfu.compareAndSet(index = index$atomicfu, expectedValue = cur, newValue = to) /*~> Unit */
       <this>.extensionLoop$atomicfu$NATIVE_PROPERTY_REF$Int(handler$atomicfu = local inline fun <a$volatile-getter>(): KMutableProperty0<Int> {
-        return AtomicIntArrayInlineExtensionTest<this>::a$volatile
+        return <this>::a$volatile
       }
 , to = 5) /*~> Unit */
       return handler$atomicfu.get(index = index$atomicfu) as Int
@@ -262,7 +262,7 @@ class AtomicIntArrayInlineExtensionTest {
     <this>.loop$atomicfu$NATIVE_PROPERTY_REF$Int(handler$atomicfu = handler$atomicfu, action$atomicfu = local fun <anonymous>(cur: Int) {
       compareAndSetField<Int>(/* <this> = handler$atomicfu.invoke(), */ expectedValue = cur, newValue = to) /*~> Unit */
       <this>.extensionLoop$atomicfu$NATIVE_PROPERTY_REF$Int(handler$atomicfu = local inline fun <a$volatile-getter>(): KMutableProperty0<Int> {
-        return AtomicIntArrayInlineExtensionTest<this>::a$volatile
+        return <this>::a$volatile
       }
 , to = 5) /*~> Unit */
       return atomicGetField<Int>(/* <this> = handler$atomicfu.invoke() */) as Int
@@ -431,7 +431,7 @@ class AtomicLongArrayInlineExtensionTest {
     <this>.loop$atomicfu$ATOMIC_ARRAY$Long(handler$atomicfu = handler$atomicfu, index$atomicfu = index$atomicfu, action$atomicfu = local fun <anonymous>(cur: Long) {
       handler$atomicfu.compareAndSet(index = index$atomicfu, expectedValue = cur, newValue = to) /*~> Unit */
       <this>.extensionLoop$atomicfu$NATIVE_PROPERTY_REF$Long(handler$atomicfu = local inline fun <a$volatile-getter>(): KMutableProperty0<Long> {
-        return AtomicLongArrayInlineExtensionTest<this>::a$volatile
+        return <this>::a$volatile
       }
 , to = 5L) /*~> Unit */
       return handler$atomicfu.get(index = index$atomicfu) as Long
@@ -443,7 +443,7 @@ class AtomicLongArrayInlineExtensionTest {
     <this>.loop$atomicfu$NATIVE_PROPERTY_REF$Long(handler$atomicfu = handler$atomicfu, action$atomicfu = local fun <anonymous>(cur: Long) {
       compareAndSetField<Long>(/* <this> = handler$atomicfu.invoke(), */ expectedValue = cur, newValue = to) /*~> Unit */
       <this>.extensionLoop$atomicfu$NATIVE_PROPERTY_REF$Long(handler$atomicfu = local inline fun <a$volatile-getter>(): KMutableProperty0<Long> {
-        return AtomicLongArrayInlineExtensionTest<this>::a$volatile
+        return <this>::a$volatile
       }
 , to = 5L) /*~> Unit */
       return atomicGetField<Long>(/* <this> = handler$atomicfu.invoke() */) as Long
@@ -649,3 +649,4 @@ fun box(): String {
   AtomicRefArrayInlineExtensionTest().test()
   return "OK"
 }
+

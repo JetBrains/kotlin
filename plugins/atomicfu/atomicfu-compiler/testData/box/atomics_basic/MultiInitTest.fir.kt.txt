@@ -36,11 +36,11 @@ class MultiInit {
   }
 
   fun incA(): Int {
-    return getAndAddField(/* <this> = MultiInit<this>::a$volatile, */ delta = 1).plus(other = 1)
+    return getAndAddField(/* <this> = <this>::a$volatile, */ delta = 1).plus(other = 1)
   }
 
   fun incB(): Int {
-    return getAndAddField(/* <this> = MultiInit<this>::b$volatile, */ delta = 1).plus(other = 1)
+    return getAndAddField(/* <this> = <this>::b$volatile, */ delta = 1).plus(other = 1)
   }
 
 }
@@ -67,3 +67,4 @@ fun box(): String {
   testClass.testBasic()
   return "OK"
 }
+

@@ -100,25 +100,25 @@ class DelegatedProperties {
 
   fun testDelegatedAtomicBoolean() {
     assertEquals<Boolean>(expected = false, actual = <this>.<get-b>())
-    atomicSetField<Boolean>(/* <this> = DelegatedProperties<this>::_b$volatile, */ newValue = true)
+    atomicSetField<Boolean>(/* <this> = <this>::_b$volatile, */ newValue = true)
     assertEquals<Boolean>(expected = true, actual = <this>.<get-b>())
     <this>.<set-b>(<set-?> = false)
-    assertTrue(actual = compareAndSetField<Boolean>(/* <this> = DelegatedProperties<this>::_b$volatile, */ expectedValue = false, newValue = true))
-    assertEquals<Boolean>(expected = true, actual = atomicGetField<Boolean>(/* <this> = DelegatedProperties<this>::_b$volatile */) as Boolean)
+    assertTrue(actual = compareAndSetField<Boolean>(/* <this> = <this>::_b$volatile, */ expectedValue = false, newValue = true))
+    assertEquals<Boolean>(expected = true, actual = atomicGetField<Boolean>(/* <this> = <this>::_b$volatile */) as Boolean)
     assertEquals<Boolean>(expected = true, actual = <this>.<get-b>())
   }
 
   fun testDelegatedAtomicInt() {
     assertEquals<Int>(expected = 42, actual = <this>.<get-a>())
     assertEquals<Int>(expected = 42, actual = <this>.<get-privateA>())
-    compareAndSetField<Int>(/* <this> = DelegatedProperties<this>::_a$volatile, */ expectedValue = 42, newValue = 56) /*~> Unit */
+    compareAndSetField<Int>(/* <this> = <this>::_a$volatile, */ expectedValue = 42, newValue = 56) /*~> Unit */
     assertEquals<Int>(expected = 56, actual = <this>.<get-a>())
     assertEquals<Int>(expected = 56, actual = <this>.<get-privateA>())
     <this>.<set-a>(<set-?> = 77)
-    compareAndSetField<Int>(/* <this> = DelegatedProperties<this>::_a$volatile, */ expectedValue = 77, newValue = 66) /*~> Unit */
+    compareAndSetField<Int>(/* <this> = <this>::_a$volatile, */ expectedValue = 77, newValue = 66) /*~> Unit */
     <this>.<set-privateA>(<set-?> = 88)
-    compareAndSetField<Int>(/* <this> = DelegatedProperties<this>::_a$volatile, */ expectedValue = 88, newValue = 66) /*~> Unit */
-    assertEquals<Int>(expected = 66, actual = atomicGetField<Int>(/* <this> = DelegatedProperties<this>::_a$volatile */) as Int)
+    compareAndSetField<Int>(/* <this> = <this>::_a$volatile, */ expectedValue = 88, newValue = 66) /*~> Unit */
+    assertEquals<Int>(expected = 66, actual = atomicGetField<Int>(/* <this> = <this>::_a$volatile */) as Int)
     assertEquals<Int>(expected = 66, actual = <this>.<get-a>())
     assertEquals<Int>(expected = 66, actual = <this>.<get-privateA>())
     val aValue: Int = <this>.<get-a>().plus(other = <this>.<get-privateA>())
@@ -127,27 +127,27 @@ class DelegatedProperties {
 
   fun testDelegatedAtomicLong() {
     assertEquals<Long>(expected = 55555555555L, actual = <this>.<get-l>())
-    getAndAddField(/* <this> = DelegatedProperties<this>::_l$volatile, */ delta = 1L /*as Long */) /*~> Unit */
+    getAndAddField(/* <this> = <this>::_l$volatile, */ delta = 1L /*as Long */) /*~> Unit */
     assertEquals<Long>(expected = 55555555556L, actual = <this>.<get-l>())
     <this>.<set-l>(<set-?> = 7777777777777L)
-    assertTrue(actual = compareAndSetField<Long>(/* <this> = DelegatedProperties<this>::_l$volatile, */ expectedValue = 7777777777777L, newValue = 66666666666L))
-    assertEquals<Long>(expected = 66666666666L, actual = atomicGetField<Long>(/* <this> = DelegatedProperties<this>::_l$volatile */) as Long)
+    assertTrue(actual = compareAndSetField<Long>(/* <this> = <this>::_l$volatile, */ expectedValue = 7777777777777L, newValue = 66666666666L))
+    assertEquals<Long>(expected = 66666666666L, actual = atomicGetField<Long>(/* <this> = <this>::_l$volatile */) as Long)
     assertEquals<Long>(expected = 66666666666L, actual = <this>.<get-l>())
   }
 
   fun testDelegatedAtomicRef() {
     assertEquals<Int>(expected = 77, actual = <this>.<get-ref>().<get-b>().<get-n>())
-    atomicSetField<Any?>(/* <this> = DelegatedProperties<this>::_ref$volatile, */ newValue = A(b = B(n = 66)))
+    atomicSetField<Any?>(/* <this> = <this>::_ref$volatile, */ newValue = A(b = B(n = 66)))
     assertEquals<Int>(expected = 66, actual = <this>.<get-ref>().<get-b>().<get-n>())
-    assertTrue(actual = compareAndSetField<Any?>(/* <this> = DelegatedProperties<this>::_ref$volatile, */ expectedValue = atomicGetField<Any?>(/* <this> = DelegatedProperties<this>::_ref$volatile */) as Any?, newValue = A(b = B(n = 56))))
+    assertTrue(actual = compareAndSetField<Any?>(/* <this> = <this>::_ref$volatile, */ expectedValue = atomicGetField<Any?>(/* <this> = <this>::_ref$volatile */) as Any?, newValue = A(b = B(n = 56))))
     assertEquals<Int>(expected = 56, actual = <this>.<get-ref>().<get-b>().<get-n>())
     <this>.<set-ref>(<set-?> = A(b = B(n = 99)))
-    assertEquals<Int>(expected = 99, actual = atomicGetField<Any?>(/* <this> = DelegatedProperties<this>::_ref$volatile */) as Any?.<get-b>().<get-n>())
+    assertEquals<Int>(expected = 99, actual = atomicGetField<Any?>(/* <this> = <this>::_ref$volatile */) as Any?.<get-b>().<get-n>())
   }
 
   fun testDelegatedVariablesFlow() {
-    atomicSetField<Int>(/* <this> = DelegatedProperties<this>::_a$volatile, */ newValue = 55)
-    assertEquals<Int>(expected = 55, actual = atomicGetField<Int>(/* <this> = DelegatedProperties<this>::_a$volatile */) as Int)
+    atomicSetField<Int>(/* <this> = <this>::_a$volatile, */ newValue = 55)
+    assertEquals<Int>(expected = 55, actual = atomicGetField<Int>(/* <this> = <this>::_a$volatile */) as Int)
     assertEquals<Int>(expected = 55, actual = <this>.<get-a>())
     var aValue: Int = <this>.<get-a>()
     assertEquals<Int>(expected = 55, actual = aValue)
@@ -290,3 +290,4 @@ private var topLevelVolatile: Int /* by */
   private set(<set-?>: Int) {
     return #topLevelVolatile$volatile = <set-?>
   }
+

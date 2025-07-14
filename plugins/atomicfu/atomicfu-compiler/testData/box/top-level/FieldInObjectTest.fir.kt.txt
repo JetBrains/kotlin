@@ -96,11 +96,11 @@ private object Provider {
   }
 
   fun getL(): Long {
-    return getAndAddField(/* <this> = Provider<this>::_l$volatile, */ delta = 1L /*as Long */).plus(other = 1L)
+    return getAndAddField(/* <this> = <this>::_l$volatile, */ delta = 1L /*as Long */).plus(other = 1L)
   }
 
   fun next(): Int {
-    return getAndAddField(/* <this> = Provider<this>::port$volatile, */ delta = 1).plus(other = 1)
+    return getAndAddField(/* <this> = <this>::port$volatile, */ delta = 1).plus(other = 1)
   }
 
 }
@@ -113,11 +113,11 @@ fun box(): String {
 
 private fun testDelegatedPropertiesInObject() {
   assertEquals<Int>(expected = 42, actual = DelegatedProvider.<get-a>())
-  compareAndSetField<Int>(/* <this> = DelegatedProviderDelegatedProvider::_a$volatile, */ expectedValue = 42, newValue = 56) /*~> Unit */
+  compareAndSetField<Int>(/* <this> = DelegatedProvider::_a$volatile, */ expectedValue = 42, newValue = 56) /*~> Unit */
   assertEquals<Int>(expected = 56, actual = DelegatedProvider.<get-a>())
   DelegatedProvider.<set-a>(<set-?> = 77)
-  compareAndSetField<Int>(/* <this> = DelegatedProviderDelegatedProvider::_a$volatile, */ expectedValue = 77, newValue = 66) /*~> Unit */
-  assertEquals<Int>(expected = 66, actual = atomicGetField<Int>(/* <this> = DelegatedProviderDelegatedProvider::_a$volatile */) as Int)
+  compareAndSetField<Int>(/* <this> = DelegatedProvider::_a$volatile, */ expectedValue = 77, newValue = 66) /*~> Unit */
+  assertEquals<Int>(expected = 66, actual = atomicGetField<Int>(/* <this> = DelegatedProvider::_a$volatile */) as Int)
   assertEquals<Int>(expected = 66, actual = DelegatedProvider.<get-a>())
   assertEquals<Int>(expected = 77, actual = DelegatedProvider.<get-vInt>())
   DelegatedProvider.<set-vInt>(<set-?> = 55)
@@ -128,13 +128,14 @@ private fun testFieldInObject() {
   val port: Int = Provider.next()
   assertEquals<Int>(expected = port.plus(other = 1), actual = Provider.next())
   assertEquals<Long>(expected = 2424920024888888849L, actual = Provider.getL())
-  compareAndSetField<Any?>(/* <this> = ProviderProvider::_ref$volatile, */ expectedValue = null, newValue = "abc") /*~> Unit */
-  assertEquals<String?>(expected = "abc", actual = atomicGetField<Any?>(/* <this> = ProviderProvider::_ref$volatile */) as Any?)
-  assertFalse(actual = atomicGetField<Boolean>(/* <this> = ProviderProvider::_x$volatile */) as Boolean)
+  compareAndSetField<Any?>(/* <this> = Provider::_ref$volatile, */ expectedValue = null, newValue = "abc") /*~> Unit */
+  assertEquals<String?>(expected = "abc", actual = atomicGetField<Any?>(/* <this> = Provider::_ref$volatile */) as Any?)
+  assertFalse(actual = atomicGetField<Boolean>(/* <this> = Provider::_x$volatile */) as Boolean)
   Provider.<get-intArr>().set(index = 8, newValue = 454)
   assertEquals<Int>(expected = 455, actual = Provider.<get-intArr>().incrementAndGet(index = 8))
   Provider.<get-longArr>().set(index = 8, newValue = 4544096409680468L)
   assertEquals<Long>(expected = 4544096409680470L, actual = Provider.<get-longArr>().addAndGet(index = 8, delta = 2L))
-  Provider.<get-refArr>().set(index = 1, newValue = atomicGetField<Any?>(/* <this> = ProviderProvider::_ref$volatile */) as Any?)
+  Provider.<get-refArr>().set(index = 1, newValue = atomicGetField<Any?>(/* <this> = Provider::_ref$volatile */) as Any?)
   assertEquals<Any?>(expected = "abc", actual = Provider.<get-refArr>().get(index = 1) as Any?)
 }
+

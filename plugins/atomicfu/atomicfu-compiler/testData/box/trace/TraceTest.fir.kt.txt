@@ -80,41 +80,41 @@ class TraceTest {
   }
 
   fun testDefaultTrace() {
-    val oldValue: Int = atomicGetField<Int>(/* <this> = TraceTest<this>::a1$volatile */) as Int
-    val res: Boolean = compareAndSetField<Int>(/* <this> = TraceTest<this>::a1$volatile, */ expectedValue = oldValue, newValue = oldValue.times(other = 10))
-    val newValue: Int = atomicGetField<Int>(/* <this> = TraceTest<this>::a1$volatile */) as Int
+    val oldValue: Int = atomicGetField<Int>(/* <this> = <this>::a1$volatile */) as Int
+    val res: Boolean = compareAndSetField<Int>(/* <this> = <this>::a1$volatile, */ expectedValue = oldValue, newValue = oldValue.times(other = 10))
+    val newValue: Int = atomicGetField<Int>(/* <this> = <this>::a1$volatile */) as Int
   }
 
   fun testMultipleAppend() {
     val i: Int = 1
-    assertEquals<Int>(expected = 0, actual = atomicGetField<Int>(/* <this> = TraceTest<this>::a$volatile */) as Int)
-    getAndAddField(/* <this> = TraceTest<this>::a$volatile, */ delta = 1).plus(other = 1) /*~> Unit */
-    assertEquals<Int>(expected = 1, actual = atomicGetField<Int>(/* <this> = TraceTest<this>::a$volatile */) as Int)
-    atomicSetField<Int>(/* <this> = TraceTest<this>::a$volatile, */ newValue = 10)
-    assertEquals<Int>(expected = 10, actual = atomicGetField<Int>(/* <this> = TraceTest<this>::a$volatile */) as Int)
+    assertEquals<Int>(expected = 0, actual = atomicGetField<Int>(/* <this> = <this>::a$volatile */) as Int)
+    getAndAddField(/* <this> = <this>::a$volatile, */ delta = 1).plus(other = 1) /*~> Unit */
+    assertEquals<Int>(expected = 1, actual = atomicGetField<Int>(/* <this> = <this>::a$volatile */) as Int)
+    atomicSetField<Int>(/* <this> = <this>::a$volatile, */ newValue = 10)
+    assertEquals<Int>(expected = 10, actual = atomicGetField<Int>(/* <this> = <this>::a$volatile */) as Int)
   }
 
   fun testNamedTrace() {
-    atomicSetField<Int>(/* <this> = TraceTest<this>::s$volatile, */ newValue = 5)
-    compareAndSetField<Int>(/* <this> = TraceTest<this>::s$volatile, */ expectedValue = 5, newValue = -2) /*~> Unit */
-    assertEquals<Int>(expected = -2, actual = atomicGetField<Int>(/* <this> = TraceTest<this>::s$volatile */) as Int)
+    atomicSetField<Int>(/* <this> = <this>::s$volatile, */ newValue = 5)
+    compareAndSetField<Int>(/* <this> = <this>::s$volatile, */ expectedValue = 5, newValue = -2) /*~> Unit */
+    assertEquals<Int>(expected = -2, actual = atomicGetField<Int>(/* <this> = <this>::s$volatile */) as Int)
   }
 
   fun testTraceInBlock() {
-    atomicSetField<Int>(/* <this> = TraceTest<this>::a1$volatile, */ newValue = 5)
+    atomicSetField<Int>(/* <this> = <this>::a1$volatile, */ newValue = 5)
     when {
-      EQEQ(arg0 = atomicGetField<Int>(/* <this> = TraceTest<this>::a1$volatile */) as Int, arg1 = 5) -> { // BLOCK
+      EQEQ(arg0 = atomicGetField<Int>(/* <this> = <this>::a1$volatile */) as Int, arg1 = 5) -> { // BLOCK
         when {
-          compareAndSetField<Int>(/* <this> = TraceTest<this>::a1$volatile, */ expectedValue = 5, newValue = 10) -> { // BLOCK
+          compareAndSetField<Int>(/* <this> = <this>::a1$volatile, */ expectedValue = 5, newValue = 10) -> { // BLOCK
           }
         }
       }
     }
-    assertEquals<Int>(expected = 10, actual = atomicGetField<Int>(/* <this> = TraceTest<this>::a1$volatile */) as Int)
+    assertEquals<Int>(expected = 10, actual = atomicGetField<Int>(/* <this> = <this>::a1$volatile */) as Int)
     while (true) { // BLOCK
       when {
-        EQEQ(arg0 = atomicGetField<Int>(/* <this> = TraceTest<this>::a1$volatile */) as Int, arg1 = 10) -> { // BLOCK
-          atomicSetField<Int>(/* <this> = TraceTest<this>::a1$volatile, */ newValue = 15)
+        EQEQ(arg0 = atomicGetField<Int>(/* <this> = <this>::a1$volatile */) as Int, arg1 = 10) -> { // BLOCK
+          atomicSetField<Int>(/* <this> = <this>::a1$volatile, */ newValue = 15)
           break
         }
         else -> { // BLOCK
@@ -124,17 +124,17 @@ class TraceTest {
   }
 
   fun testTraceWithFormat() {
-    val oldValue: Int = atomicGetField<Int>(/* <this> = TraceTest<this>::a3$volatile */) as Int
-    assertTrue(actual = compareAndSetField<Int>(/* <this> = TraceTest<this>::a3$volatile, */ expectedValue = oldValue, newValue = oldValue.times(other = 10)))
-    getAndAddField(/* <this> = TraceTest<this>::a3$volatile, */ delta = -1) /*~> Unit */
-    assertEquals<Int>(expected = 19, actual = atomicGetField<Int>(/* <this> = TraceTest<this>::a3$volatile */) as Int)
+    val oldValue: Int = atomicGetField<Int>(/* <this> = <this>::a3$volatile */) as Int
+    assertTrue(actual = compareAndSetField<Int>(/* <this> = <this>::a3$volatile, */ expectedValue = oldValue, newValue = oldValue.times(other = 10)))
+    getAndAddField(/* <this> = <this>::a3$volatile, */ delta = -1) /*~> Unit */
+    assertEquals<Int>(expected = 19, actual = atomicGetField<Int>(/* <this> = <this>::a3$volatile */) as Int)
   }
 
   fun testTraceWithSize() {
-    val oldValue: Int = atomicGetField<Int>(/* <this> = TraceTest<this>::a2$volatile */) as Int
-    assertTrue(actual = compareAndSetField<Int>(/* <this> = TraceTest<this>::a2$volatile, */ expectedValue = oldValue, newValue = oldValue.times(other = 10)))
-    getAndAddField(/* <this> = TraceTest<this>::a2$volatile, */ delta = -1) /*~> Unit */
-    assertEquals<Int>(expected = 9, actual = atomicGetField<Int>(/* <this> = TraceTest<this>::a2$volatile */) as Int)
+    val oldValue: Int = atomicGetField<Int>(/* <this> = <this>::a2$volatile */) as Int
+    assertTrue(actual = compareAndSetField<Int>(/* <this> = <this>::a2$volatile, */ expectedValue = oldValue, newValue = oldValue.times(other = 10)))
+    getAndAddField(/* <this> = <this>::a2$volatile, */ delta = -1) /*~> Unit */
+    assertEquals<Int>(expected = 9, actual = atomicGetField<Int>(/* <this> = <this>::a2$volatile */) as Int)
   }
 
 }
@@ -143,3 +143,4 @@ fun box(): String {
   TraceTest().test()
   return "OK"
 }
+

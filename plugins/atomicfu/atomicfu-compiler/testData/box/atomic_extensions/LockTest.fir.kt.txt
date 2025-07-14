@@ -18,7 +18,7 @@ class LockTest {
     var result: String = ""
     when {
       tryAcquire$atomicfu$NATIVE_PROPERTY_REF$Boolean(handler$atomicfu = local inline fun <inProgressLock$volatile-getter>(): KMutableProperty0<Boolean> {
-        return LockTest<this>::inProgressLock$volatile
+        return <this>::inProgressLock$volatile
       }
 ) -> { // BLOCK
         result = "OK"
@@ -53,3 +53,4 @@ fun box(): String {
 fun <AA : Any?, BB : Number> String.reflectionTest(mapParam: Map<in AA, BB>): List<BB> {
   return error(message = "no impl")
 }
+
