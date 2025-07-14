@@ -46,7 +46,7 @@ dependencies {
     testFixturesApi(projectTests(":compiler:test-infrastructure-utils"))
     testFixturesApi(projectTests(":compiler:tests-compiler-utils"))
     testFixturesApi(testFixtures(project(":compiler:tests-common-new")))
-    testFixturesApi(projectTests(":compiler:fir:analysis-tests"))
+    testFixturesApi(testFixtures(project(":compiler:fir:analysis-tests")))
 
     testCompileOnly(project(":compiler:frontend"))
     testCompileOnly(project(":compiler:cli"))
