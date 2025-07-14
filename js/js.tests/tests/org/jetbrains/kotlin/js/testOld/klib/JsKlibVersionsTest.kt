@@ -3,27 +3,17 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.wasm.test.klib
+package org.jetbrains.kotlin.js.testOld.klib
 
-import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.cliArgument
 import org.jetbrains.kotlin.cli.js.K2JSCompiler
-import org.jetbrains.kotlin.js.testOld.klib.AbstractWebKlibVersionsTest
-import org.jetbrains.kotlin.platform.wasm.WasmTarget
-import org.jetbrains.kotlin.test.services.configuration.WasmEnvironmentConfigurator
+import org.jetbrains.kotlin.test.services.StandardLibrariesPathProviderForKotlinProject
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.PrintStream
 
-class WasmJsKlibVersionsTest : AbstractWebKlibVersionsTest() {
-    // TODO: Move to helpers in compiler/tests-common-new/tests/org/jetbrains/kotlin/test/services/KotlinStandardLibrariesPathProvider.kt
-    private fun fullWasmJsStdlib(): File {
-        val stdlibPath = WasmEnvironmentConfigurator.stdlibPath(WasmTarget.JS)
-        return File(stdlibPath).also {
-            assert(it.exists()) { "stdlib is not found at $stdlibPath" }
-        }
-    }
-
+class JsKlibVersionsTest : AbstractWebKlibVersionsTest() {
     override fun compileKlib(
         sourceFile: File,
         dependencies: Array<File>,
@@ -31,12 +21,11 @@ class WasmJsKlibVersionsTest : AbstractWebKlibVersionsTest() {
         extraArgs: Array<String>,
     ): CompilationResult {
         val libraries = listOfNotNull(
-            fullWasmJsStdlib(), *dependencies
+            StandardLibrariesPathProviderForKotlinProject.fullJsStdlib(),
+            *dependencies
         ).joinToString(File.pathSeparator) { it.absolutePath }
 
         val args = arrayOf(
-            K2JSCompilerArguments::wasm.cliArgument,
-            K2JSCompilerArguments::wasmTarget.cliArgument("wasm-js"),
             K2JSCompilerArguments::irProduceKlibDir.cliArgument,
             K2JSCompilerArguments::libraries.cliArgument, libraries,
             K2JSCompilerArguments::outputDir.cliArgument, outputFile.absolutePath,
@@ -55,13 +44,11 @@ class WasmJsKlibVersionsTest : AbstractWebKlibVersionsTest() {
 
     override fun compileToBinary(entryModuleKlib: File, dependency: File?, outputFile: File): CompilationResult {
         val libraries = listOfNotNull(
-            fullWasmJsStdlib(),
+            StandardLibrariesPathProviderForKotlinProject.fullJsStdlib(),
             dependency
         ).joinToString(File.pathSeparator) { it.absolutePath }
 
         val args = arrayOf(
-            K2JSCompilerArguments::wasm.cliArgument,
-            K2JSCompilerArguments::wasmTarget.cliArgument("wasm-js"),
             K2JSCompilerArguments::irProduceJs.cliArgument,
             K2JSCompilerArguments::includes.cliArgument(entryModuleKlib.absolutePath),
             K2JSCompilerArguments::libraries.cliArgument, libraries,
@@ -77,4 +64,6 @@ class WasmJsKlibVersionsTest : AbstractWebKlibVersionsTest() {
 
         return CompilationResult(exitCode, compilerXmlOutput.toString())
     }
+
+
 }
