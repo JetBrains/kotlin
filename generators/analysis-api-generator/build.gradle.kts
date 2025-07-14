@@ -22,7 +22,7 @@ dependencies {
     testImplementation(testFixtures(project(":analysis:decompiled:decompiler-to-file-stubs")))
     testImplementation(testFixtures(project(":analysis:decompiled:decompiler-to-psi")))
     testImplementation(testFixtures(project(":analysis:stubs")))
-    testImplementation(projectTests(":analysis:symbol-light-classes"))
+    testImplementation(testFixtures(project(":analysis:symbol-light-classes")))
     testImplementation(testFixtures(project(":analysis:decompiled:decompiler-native")))
     testImplementation(intellijCore())
     testApi(platform(libs.junit.bom))
