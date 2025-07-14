@@ -30,7 +30,7 @@ dependencies {
     testFixturesApi(libs.junit.platform.launcher)
     testFixturesApi(testFixtures(project(":compiler:test-infrastructure")))
     testFixturesApi(projectTests(":compiler:test-infrastructure-utils"))
-    testFixturesApi(projectTests(":compiler:tests-compiler-utils"))
+    testFixturesApi(testFixtures(project(":compiler:tests-compiler-utils")))
     testFixturesApi(project(":libraries:tools:abi-comparator"))
     testFixturesApi(project(":compiler:tests-mutes:mutes-junit5"))
 
