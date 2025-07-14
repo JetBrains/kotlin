@@ -9,7 +9,6 @@ val dependency = arrayOf(
     ":compiler",
     ":compiler:tests-for-compiler-generator",
     ":core:descriptors.runtime",
-    ":generators:analysis-api-generator"
 )
 
 val dependencyFixturesProjects = arrayOf(
@@ -17,6 +16,7 @@ val dependencyFixturesProjects = arrayOf(
     ":js:js.tests",
     ":compiler:tests-common-new",
     ":compiler:test-infrastructure",
+    ":generators:analysis-api-generator",
 )
 
 dependencies {
