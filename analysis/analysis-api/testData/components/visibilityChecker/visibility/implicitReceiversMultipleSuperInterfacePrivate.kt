@@ -21,7 +21,7 @@ fun main() {
     scope {
         with(Any()) {
             with(Unit) {
-                p<caret>rintln()
+                this@scope.<caret>foo()
             }
         }
     }

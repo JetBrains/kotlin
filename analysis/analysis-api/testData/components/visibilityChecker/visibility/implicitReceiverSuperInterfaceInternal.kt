@@ -19,7 +19,7 @@ import lib.scope
 
 fun main() {
     scope {
-        p<caret>rintln()
+        this.<caret>foo()
     }
 }
 
