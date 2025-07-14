@@ -1210,6 +1210,30 @@ public class WasmJsSynthAccBoxTestGenerated extends AbstractFirWasmJsCodegenBoxW
       }
 
       @Test
+      @TestMetadata("contextSensitiveResolutionCallArgumentPositionWithCopyOfDefaultValue.kt")
+      public void testContextSensitiveResolutionCallArgumentPositionWithCopyOfDefaultValue() {
+        runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossFilePrivateLeak/contextSensitiveResolutionCallArgumentPositionWithCopyOfDefaultValue.kt");
+      }
+
+      @Test
+      @TestMetadata("contextSensitiveResolutionTypePosition.kt")
+      public void testContextSensitiveResolutionTypePosition() {
+        runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossFilePrivateLeak/contextSensitiveResolutionTypePosition.kt");
+      }
+
+      @Test
+      @TestMetadata("contextSensitiveResolutionTypePositionWithCopyOfDefaultValue.kt")
+      public void testContextSensitiveResolutionTypePositionWithCopyOfDefaultValue() {
+        runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossFilePrivateLeak/contextSensitiveResolutionTypePositionWithCopyOfDefaultValue.kt");
+      }
+
+      @Test
+      @TestMetadata("contextSensitiveResolutionСallArgumentPosition.kt")
+      public void testContextSensitiveResolutionСallArgumentPosition() {
+        runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossFilePrivateLeak/contextSensitiveResolutionСallArgumentPosition.kt");
+      }
+
+      @Test
       @TestMetadata("leakingLateinitIsInitializedFromInternalInline.kt")
       public void testLeakingLateinitIsInitializedFromInternalInline() {
         runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossFilePrivateLeak/leakingLateinitIsInitializedFromInternalInline.kt");
@@ -1463,6 +1487,30 @@ public class WasmJsSynthAccBoxTestGenerated extends AbstractFirWasmJsCodegenBoxW
       @Test
       public void testAllFilesPresentInCrossModulePrivateLeak() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossModulePrivateLeak"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.WASM, true);
+      }
+
+      @Test
+      @TestMetadata("contextSensitiveResolutionCallArgumentPositionWithCopyOfDefaultValue.kt")
+      public void testContextSensitiveResolutionCallArgumentPositionWithCopyOfDefaultValue() {
+        runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossModulePrivateLeak/contextSensitiveResolutionCallArgumentPositionWithCopyOfDefaultValue.kt");
+      }
+
+      @Test
+      @TestMetadata("contextSensitiveResolutionTypePosition.kt")
+      public void testContextSensitiveResolutionTypePosition() {
+        runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossModulePrivateLeak/contextSensitiveResolutionTypePosition.kt");
+      }
+
+      @Test
+      @TestMetadata("contextSensitiveResolutionTypePositionWithCopyOfDefaultValue.kt")
+      public void testContextSensitiveResolutionTypePositionWithCopyOfDefaultValue() {
+        runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossModulePrivateLeak/contextSensitiveResolutionTypePositionWithCopyOfDefaultValue.kt");
+      }
+
+      @Test
+      @TestMetadata("contextSensitiveResolutionСallArgumentPosition.kt")
+      public void testContextSensitiveResolutionСallArgumentPosition() {
+        runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/crossModulePrivateLeak/contextSensitiveResolutionСallArgumentPosition.kt");
       }
 
       @Test
@@ -1731,6 +1779,30 @@ public class WasmJsSynthAccBoxTestGenerated extends AbstractFirWasmJsCodegenBoxW
       @Test
       public void testAllFilesPresentInSingleFile() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/klib/syntheticAccessors/topLevelPrivate/singleFile"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.WASM, true);
+      }
+
+      @Test
+      @TestMetadata("contextSensitiveResolutionCallArgumentPositionWithCopyOfDefaultValue.kt")
+      public void testContextSensitiveResolutionCallArgumentPositionWithCopyOfDefaultValue() {
+        runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/singleFile/contextSensitiveResolutionCallArgumentPositionWithCopyOfDefaultValue.kt");
+      }
+
+      @Test
+      @TestMetadata("contextSensitiveResolutionTypePosition.kt")
+      public void testContextSensitiveResolutionTypePosition() {
+        runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/singleFile/contextSensitiveResolutionTypePosition.kt");
+      }
+
+      @Test
+      @TestMetadata("contextSensitiveResolutionTypePositionWithCopyOfDefaultValue.kt")
+      public void testContextSensitiveResolutionTypePositionWithCopyOfDefaultValue() {
+        runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/singleFile/contextSensitiveResolutionTypePositionWithCopyOfDefaultValue.kt");
+      }
+
+      @Test
+      @TestMetadata("contextSensitiveResolutionСallArgumentPosition.kt")
+      public void testContextSensitiveResolutionСallArgumentPosition() {
+        runTest("compiler/testData/klib/syntheticAccessors/topLevelPrivate/singleFile/contextSensitiveResolutionСallArgumentPosition.kt");
       }
 
       @Test
