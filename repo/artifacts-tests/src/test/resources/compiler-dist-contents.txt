@@ -5,7 +5,6 @@ bin/kotlin.bat
 bin/kotlinc
 bin/kotlinc-js
 bin/kotlinc-js.bat
-bin/kotlinc-jvm
 bin/kotlinc-jvm.bat
 bin/kotlinc.bat
 build.txt
