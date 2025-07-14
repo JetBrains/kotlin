@@ -1,20 +1,20 @@
 plugins {
     kotlin("jvm")
     id("jps-compatible")
+    id("java-test-fixtures")
 }
 
 dependencies {
-    testImplementation(project(":compiler:fir:entrypoint"))
-    testImplementation(project(":compiler:cli"))
-    testImplementation(intellijCore())
-    testImplementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
-
-    testRuntimeOnly(project(":core:descriptors.runtime"))
+    testFixturesImplementation(project(":compiler:fir:entrypoint"))
+    testFixturesImplementation(project(":compiler:cli"))
+    testFixturesImplementation(intellijCore())
+    testFixturesImplementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
 }
 
 sourceSets {
     "main" { none() }
-    "test" { projectDefault() }
+    "test" { none() }
+    "testFixtures" { projectDefault() }
 }
 
 testsJar()

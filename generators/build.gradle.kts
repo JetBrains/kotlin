@@ -81,7 +81,7 @@ dependencies {
     testImplementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
     testImplementation(project(":compiler:arguments"))
     testImplementation(project(":compiler:cli:cli-arguments-generator"))
-    testImplementation(projectTests(":compiler:test-infrastructure-utils"))
+    testImplementation(testFixtures(project(":compiler:test-infrastructure-utils")))
     testImplementation(testFixtures(project(":compiler:test-infrastructure")))
     testImplementation(testFixtures(project(":compiler:tests-common-new")))
     testImplementation(testFixtures(project(":js:js.tests")))

@@ -30,7 +30,7 @@ dependencies {
     testFixturesApi(project(":plugins:js-plain-objects:compiler-plugin:js-plain-objects.cli"))
 
     testFixturesApi(testFixtures(project(":compiler:test-infrastructure")))
-    testFixturesApi(projectTests(":compiler:test-infrastructure-utils"))
+    testFixturesApi(testFixtures(project(":compiler:test-infrastructure-utils")))
     testFixturesApi(testFixtures(project(":compiler:tests-compiler-utils")))
     testFixturesApi(testFixtures(project(":compiler:tests-common-new")))
 

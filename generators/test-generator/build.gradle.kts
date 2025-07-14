@@ -6,7 +6,7 @@ plugins {
 
 dependencies {
     testApi(project(":core:util.runtime"))
-    testApi(projectTests(":compiler:test-infrastructure-utils"))
+    testApi(testFixtures(project(":compiler:test-infrastructure-utils")))
     testApi(kotlinStdlib())
     testImplementation(libs.junit4)
     testApi(platform(libs.junit.bom))

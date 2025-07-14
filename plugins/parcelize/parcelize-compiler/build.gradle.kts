@@ -41,7 +41,7 @@ dependencies {
 
     testFixturesApi(testFixtures(project(":compiler:tests-common-new")))
     testFixturesApi(testFixtures(project(":compiler:test-infrastructure")))
-    testFixturesApi(projectTests(":compiler:test-infrastructure-utils"))
+    testFixturesApi(testFixtures(project(":compiler:test-infrastructure-utils")))
 
     // FIR dependencies
     testFixturesApi(project(":compiler:fir:plugin-utils"))
