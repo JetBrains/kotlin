@@ -65,7 +65,8 @@ class CacheSupport(
         autoCacheDirectory: File,
         incrementalCacheDirectory: File?,
         target: KonanTarget,
-        val produce: CompilerOutputKind
+        val produce: CompilerOutputKind,
+        hotReloadEnabled: Boolean = false,
 ) {
     private val allLibraries = resolvedLibraries.getFullList()
 
@@ -83,8 +84,8 @@ class CacheSupport(
             add(File(it).takeIf { it.isDirectory }
                     ?: configuration.reportCompilationErrorAndThrow("cache directory $it is not found or is not a directory"))
         }
-        systemCacheDirectory.takeIf { autoCacheableFrom.isNotEmpty() || incrementalCacheDirectory != null }?.let { add(it) }
-        autoCacheDirectory.takeIf { autoCacheableFrom.isNotEmpty() }?.let { add(it) }
+        systemCacheDirectory.takeIf { autoCacheableFrom.isNotEmpty() || incrementalCacheDirectory != null || hotReloadEnabled }?.let { add(it) }
+        autoCacheDirectory.takeIf { autoCacheableFrom.isNotEmpty() || hotReloadEnabled }?.let { add(it) }
         incrementalCacheDirectory?.let { add(it) }
     }
 

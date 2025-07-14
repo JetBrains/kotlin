@@ -43,6 +43,9 @@ public:
     void AddRecord(Key key, int size) noexcept;
     // Prepare storage for records added by `AddRecord`.
     void Commit() noexcept;
+    // Reopen committed storage for adding new records (e.g. after JIT-loading new code).
+    // Existing records and storage are preserved; new records can be added and re-committed.
+    void Reopen() noexcept;
     // Clear storage. Can only be called after `Commit`.
     void Clear() noexcept;
     // Lookup value in storage. Can only be called after `Commit`.

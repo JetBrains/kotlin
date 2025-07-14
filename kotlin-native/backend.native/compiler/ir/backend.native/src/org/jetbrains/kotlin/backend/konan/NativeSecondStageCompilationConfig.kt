@@ -109,6 +109,37 @@ class NativeSecondStageCompilationConfig(
         }
         explicit ?: target.needSmallBinary()
     }
+
+    /**
+     * The hot reload split compilation mode.
+     * - NONE: Normal compilation (no hot reload split)
+     * - HOST: Produce both host executable and bootstrap object (full build)
+     * - GUEST: Produce only bootstrap object (fast incremental builds)
+     */
+    val hotReloadSplitMode: HotReloadSplitMode = configuration.get(NativeConfigurationKeys.HOT_RELOAD_SPLIT) ?: HotReloadSplitMode.NONE
+
+    /**
+     * Whether any hot reload split mode is enabled (HOST, GUEST, or GUEST_IC).
+     */
+    val hotReloadEnabled: Boolean get() = hotReloadSplitMode != HotReloadSplitMode.NONE
+
+    /**
+     * Whether we're compiling in HOST mode (full build with both host and bootstrap).
+     */
+    val hotReloadHostMode: Boolean get() = hotReloadSplitMode == HotReloadSplitMode.HOST
+
+    /**
+     * Whether we're compiling in GUEST mode (bootstrap-only, fast incremental).
+     */
+    val hotReloadGuestMode: Boolean get() = hotReloadSplitMode == HotReloadSplitMode.GUEST || hotReloadSplitMode == HotReloadSplitMode.GUEST_IC
+
+    /**
+     * Whether we're compiling in GUEST-IC mode (per-file incremental compilation).
+     * GUEST-IC fingerprints each file in the klib, compares with saved fingerprints,
+     * and only recompiles files with changed fingerprints.
+     */
+    val hotReloadGuestICMode: Boolean get() = hotReloadSplitMode == HotReloadSplitMode.GUEST_IC
+
     val inlineForPerformance get() = !debug && !smallBinary
 
     val assertsEnabled = configuration.enableAssertions
@@ -574,7 +605,9 @@ class NativeSecondStageCompilationConfig(
 
     internal val ignoreCacheReason = when {
         optimizationsEnabled -> "for optimized compilation"
-        runtimeLogsEnabled -> "with runtime logs"
+        // Hot reload handles runtime logs via a strong symbol override in the host module (generateRuntimeLogsModule),
+        // so caching is still safe. Without this exemption, -Xruntime-logs disables ALL cache building/reading.
+        runtimeLogsEnabled && !hotReloadEnabled -> "with runtime logs"
         forceNativeThreadStateForFunctions != defaultForceNativeThreadStateForFunctions -> "with non-default forceNativeThreadStateForFunctions"
         else -> null
     }
@@ -587,7 +620,8 @@ class NativeSecondStageCompilationConfig(
             autoCacheDirectory = autoCacheDirectory,
             incrementalCacheDirectory = incrementalCacheDirectory,
             target = target,
-            produce = produce
+            produce = produce,
+            hotReloadEnabled = hotReloadEnabled,
     )
 
     internal val cachedLibraries: CachedLibraries

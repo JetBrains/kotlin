@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.config.LoggingContext
 import org.jetbrains.kotlin.backend.common.reportCompilationWarning
 import org.jetbrains.kotlin.backend.konan.driver.NativeBackendPhaseContext
 import org.jetbrains.kotlin.backend.konan.llvm.*
+import org.jetbrains.kotlin.config.LoggingContext
 import org.jetbrains.kotlin.config.nativeBinaryOptions.StackProtectorMode
 import org.jetbrains.kotlin.konan.config.saveLlvmIr
 import org.jetbrains.kotlin.konan.target.*
@@ -53,6 +54,7 @@ data class LlvmPipelineConfig(
         val sspMode: StackProtectorMode = StackProtectorMode.NO,
         val saveIrAfterPasses: List<String> = emptyList(),
         val saveIrDirectory: java.io.File? = null,
+        val hotReloadEnabled: Boolean = false
 ) {
     /**
      * Create a copy of [LlvmPipelineConfig] setting up options to dump IR
@@ -184,6 +186,9 @@ internal fun createLTOFinalPipelineConfig(
     // similar to DCE enabled by internalize but later:
     //
     // Important for binary size, workarounds references to undefined symbols from interop libraries.
+    // NOTE: Disabled for STATIC_CACHE to support hot reload - symbols need to be visible
+    // so they can be resolved from the host process when loading bootstrap via JITLink/dlopen.
+    // TODO: Add a dedicated flag for hot-reload-compatible caches to avoid impact on non-hot-reload builds.
     val makeDeclarationsHidden = config.produce == CompilerOutputKind.STATIC_CACHE
     val objcPasses = configurables is AppleConfigurables
 
@@ -213,6 +218,7 @@ internal fun createLTOFinalPipelineConfig(
             modulePasses = config.llvmModulePasses,
             ltoPasses = config.llvmLTOPasses,
             sspMode = config.stackProtectorMode,
+            hotReloadEnabled = config.hotReloadEnabled
     )
 }
 
@@ -331,8 +337,9 @@ class MandatoryOptimizationPipeline(config: LlvmPipelineConfig, performanceManag
     }
 
     override fun executeCustomPreprocessing(config: LlvmPipelineConfig, module: LLVMModuleRef) {
-        if (config.makeDeclarationsHidden) {
-            makeVisibilityHiddenLikeLlvmInternalizePass(module)
+        when {
+            config.makeDeclarationsHidden -> makeVisibilityHiddenLikeLlvmInternalizePass(module)
+            config.hotReloadEnabled -> module.setSymbolsVisibilityToDefault()
         }
     }
 }
@@ -349,7 +356,7 @@ class LTOOptimizationPipeline(config: LlvmPipelineConfig, performanceManager: Pe
     override val passes =
             if (config.ltoPasses != null) listOf(config.ltoPasses)
             else buildList {
-                if (config.internalize) {
+                if (!config.hotReloadEnabled && config.internalize) {
                     add("internalize")
                 }
 

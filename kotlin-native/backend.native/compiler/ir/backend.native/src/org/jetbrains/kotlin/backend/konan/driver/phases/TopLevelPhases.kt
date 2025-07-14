@@ -193,7 +193,6 @@ internal fun <C : NativeBackendPhaseContext> PhaseEngine<C>.runBackend(backendCo
             try {
                 fragment.performanceManager?.notifyPhaseStarted(PhaseType.Backend)
                 backendEngine.useContext(generationState, copyState = true) { generationStateEngine ->
-                    val bitcodeFile = tempFiles.create(generationState.llvmModuleName, ".bc").javaFile()
                     val cExportFiles = if (config.produceCInterface) {
                         CExportFiles(
                                 cppAdapter = tempFiles.create("api", ".cpp").javaFile(),
@@ -202,21 +201,90 @@ internal fun <C : NativeBackendPhaseContext> PhaseEngine<C>.runBackend(backendCo
                                 def = if (config.target.family == Family.MINGW) outputFiles.cAdapterDef.javaFile() else null,
                         )
                     } else null
-                    // TODO: Make this work if we first compile all the fragments and only after that run the link phases.
-                    generationStateEngine.compileModule(fragment.irModule, backendContext.irBuiltIns, bitcodeFile, cExportFiles)
-                    // Split here
-                    val dependenciesTrackingResult = generationState.dependenciesTracker.collectResult()
-                    val depsFilePath = config.writeSerializedDependencies
-                    if (!depsFilePath.isNullOrEmpty()) {
-                        depsFilePath.File().writeLines(DependenciesTrackingResult.serialize(dependenciesTrackingResult))
+
+                    when {
+                        config.isCompilingHostCode -> {
+                            val hostBitcodeFile = tempFiles.create("host", ".bc").javaFile()
+                            val bootstrapBitcodeFile = tempFiles.create("bootstrap", ".bc").javaFile()
+
+                            generationStateEngine.compileModuleForHotReload(
+                                    fragment.irModule,
+                                    backendContext.irBuiltIns,
+                                    hostBitcodeFile,
+                                    bootstrapBitcodeFile,
+                                    cExportFiles
+                            )
+
+                            // Collect dependencies AFTER compilation for hot reload
+                            val dependenciesTrackingResult = generationState.dependenciesTracker.collectResult()
+                            val depsFilePath = config.writeSerializedDependencies
+                            if (!depsFilePath.isNullOrEmpty()) {
+                                depsFilePath.File().writeLines(DependenciesTrackingResult.serialize(dependenciesTrackingResult))
+                            }
+
+                            val hotReloadOutput = HotReloadModuleCompilationOutput(
+                                    hostBitcodeFile,
+                                    bootstrapBitcodeFile,
+                                    dependenciesTrackingResult
+                            )
+
+                            generationStateEngine.compileAndLinkForHotReload(
+                                    hotReloadOutput,
+                                    outputFiles,
+                                    tempFiles,
+                            )
+                        }
+
+                        config.isCompilingGuestCodeOnly -> {
+
+                            val bootstrapBitcodeFile = tempFiles.create("bootstrap", ".bc").javaFile()
+
+                            generationStateEngine.compileModuleForHotReloadGuest(
+                                    fragment.irModule,
+                                    backendContext.irBuiltIns,
+                                    bootstrapBitcodeFile,
+                                    cExportFiles
+                            )
+
+                            // Collect dependencies AFTER compilation
+                            val dependenciesTrackingResult = generationState.dependenciesTracker.collectResult()
+                            val depsFilePath = config.writeSerializedDependencies
+                            if (!depsFilePath.isNullOrEmpty()) {
+                                depsFilePath.File().writeLines(DependenciesTrackingResult.serialize(dependenciesTrackingResult))
+                            }
+
+                            val guestOutput = HotReloadGuestCompilationOutput(
+                                    bootstrapBitcodeFile,
+                                    dependenciesTrackingResult
+                            )
+
+                            generationStateEngine.compileAndLinkForHotReloadGuest(
+                                    guestOutput,
+                                    outputFiles,
+                                    tempFiles,
+                            )
+                        }
+
+                        else -> {
+                            val bitcodeFile = tempFiles.create(generationState.llvmModuleName, ".bc").javaFile()
+
+                            generationStateEngine.compileModule(fragment.irModule, backendContext.irBuiltIns, bitcodeFile, cExportFiles)
+
+                            val dependenciesTrackingResult = generationState.dependenciesTracker.collectResult()
+                            val depsFilePath = config.writeSerializedDependencies
+                            if (!depsFilePath.isNullOrEmpty()) {
+                                depsFilePath.File().writeLines(DependenciesTrackingResult.serialize(dependenciesTrackingResult))
+                            }
+
+                            val moduleCompilationOutput = ModuleCompilationOutput(bitcodeFile, dependenciesTrackingResult)
+                            generationStateEngine.compileAndLink(
+                                    moduleCompilationOutput,
+                                    outputFiles.mainFileName,
+                                    outputFiles,
+                                    tempFiles,
+                            )
+                        }
                     }
-                    val moduleCompilationOutput = ModuleCompilationOutput(bitcodeFile, dependenciesTrackingResult)
-                    generationStateEngine.compileAndLink(
-                            moduleCompilationOutput,
-                            outputFiles.mainFileName,
-                            outputFiles,
-                            tempFiles,
-                    )
                 }
             } finally {
                 tempFiles.dispose()
@@ -345,6 +413,10 @@ private fun PhaseEngine<out Context>.splitIntoFragments(
         val llvmModuleSpecification = if (config.produce.isCache) {
             val containsStdlib = config.libraryToCache!!.klib == context.stdlibModule.konanLibrary
             CacheLlvmModuleSpecification(config.cachedLibraries, context.config.libraryToCache!!, containsStdlib = containsStdlib)
+        } else if (config.hotReloadEnabled && config.produce == CompilerOutputKind.PROGRAM) {
+            val stdlibLibrary = context.stdlibModule.konanLibrary
+            val excludedLibraries = setOfNotNull(stdlibLibrary)
+            HotReloadBootstrapLlvmModuleSpecification(config.cachedLibraries, excludedLibraries)
         } else {
             DefaultLlvmModuleSpecification(config.cachedLibraries)
         }
@@ -508,7 +580,7 @@ internal fun <Context, Output, P> PhaseEngine<Context>.runAndMeasurePhase(phase:
  * Compile lowered [module] to object file.
  * @return absolute path to object file.
  */
-private fun PhaseEngine<NativeGenerationState>.runCodegen(module: IrModuleFragment, irBuiltIns: IrBuiltIns) {
+internal fun PhaseEngine<NativeGenerationState>.runCodegen(module: IrModuleFragment, irBuiltIns: IrBuiltIns) {
     val optimize = context.shouldOptimize()
     val enablePreCodegenInliner = context.config.preCodegenInlineThreshold != 0U && optimize
     module.files.forEach {

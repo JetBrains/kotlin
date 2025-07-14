@@ -72,3 +72,61 @@ internal class CacheLlvmModuleSpecification(
                 ?.filePath.let { it == null || it == declaration.fileOrNull?.path }
     }
 }
+
+/**
+ * LLVM module specification for hot reload bootstrap module.
+ *
+ * The bootstrap module contains user code AND platform libraries, but NOT stdlib.
+ * This ensures that:
+ * - TypeInfos for stdlib classes (String, Array, boxed primitives, etc.) are NOT generated in bootstrap
+ * - References to stdlib TypeInfos are imported as external symbols
+ * - The actual stdlib TypeInfos are defined in host (via stdlib-cache.a) and resolved via JITLink at runtime
+ * - Platform library code IS generated in bootstrap (they reference stdlib types as external)
+ *
+ * This enables the hot reload architecture where:
+ * - Host: C++ runtime + Kotlin stdlib (from stdlib-cache.a with all TypeInfos)
+ * - Bootstrap: User code + Platform libraries (references stdlib types as external)
+ *
+ * Platform libraries (AppKit, Foundation, etc.) are included in bootstrap because:
+ * 1. They don't have pre-compiled caches like stdlib
+ * 2. Their code must be compiled along with user code that uses them
+ * 3. They reference stdlib types which become external symbols resolved from host
+ *
+ * @param cachedLibraries The cached libraries configuration
+ * @param excludedLibraries Libraries to exclude from this module (typically ONLY stdlib)
+ */
+internal class HotReloadBootstrapLlvmModuleSpecification(
+        cachedLibraries: CachedLibraries,
+        private val excludedLibraries: Set<KotlinLibrary>,
+) : LlvmModuleSpecificationBase(cachedLibraries) {
+
+    // For hot reload bootstrap: Exclude ONLY stdlib (which has pre-compiled cache).
+    // Platform libraries (isFromKotlinNativeDistribution) are INCLUDED in bootstrap
+    // because they don't have caches and their code must be compiled with user code.
+    //
+    // Architecture:
+    // - Stdlib types (Any, String, etc.) → imported as external (from stdlib-cache.a in host)
+    // - Platform library types → generated in bootstrap (they reference stdlib as external)
+    // - User types → generated in bootstrap
+    //
+    // This way platform library code compiles successfully because:
+    // - Their IR is merged into the module (in finalizeLowerings)
+    // - Their TypeInfos are generated (they're not excluded)
+    // - Stdlib references become external symbols (resolved via JITLink from host)
+
+    override val isFinal = true
+
+    /**
+     * A library is contained if it's NOT cached AND NOT in the excluded list.
+     * For hot reload bootstrap, excluded libraries are stdlib and distribution libs.
+     */
+    override fun containsLibrary(library: KotlinLibrary): Boolean =
+            !cachedLibraries.isLibraryCached(library) && library !in excludedLibraries
+
+    /**
+     * Returns true if the library is in the excluded list.
+     * These libraries are in the host module and will be resolved via JITLink.
+     */
+    override fun isLibraryExcludedForHotReload(library: KotlinLibrary): Boolean =
+            library in excludedLibraries
+}

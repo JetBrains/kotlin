@@ -238,6 +238,8 @@ void CheckCurrentFrame(ObjHeader** frame) RUNTIME_NOTHROW;
 void AddTLSRecord(MemoryState* memory, void** key, int size) RUNTIME_NOTHROW;
 // Allocate storage for TLS. `AddTLSRecord` cannot be called after this.
 void CommitTLSStorage(MemoryState* memory) RUNTIME_NOTHROW;
+// Reopen committed TLS storage so new records can be added and re-committed.
+void ReopenTLSStorage(MemoryState* memory) RUNTIME_NOTHROW;
 // Clear TLS object storage.
 void ClearTLS(MemoryState* memory) RUNTIME_NOTHROW;
 // Lookup element in TLS object storage.
@@ -310,6 +312,9 @@ class ObjHolder {
    ObjHeader* obj_;
 };
 
+// NOTE: The destructor is declared here but defined in ExceptionObjHolder.cpp to serve as
+// the "key function". This ensures the typeinfo is emitted exactly once (in that .cpp file)
+// with proper linkage, rather than being emitted as weak in every translation unit.
 class ExceptionObjHolder {
 public:
     static void Throw(ObjHeader* exception) RUNTIME_NORETURN;
@@ -317,7 +322,8 @@ public:
     ObjHeader* GetExceptionObject() noexcept;
 
     // Exceptions are not on a hot path, so having virtual dispatch is fine.
-    virtual ~ExceptionObjHolder() = default;
+    // Destructor is defined in ExceptionObjHolder.cpp (key function for typeinfo emission).
+    virtual ~ExceptionObjHolder();
 };
 
 namespace kotlin {
