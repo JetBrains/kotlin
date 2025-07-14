@@ -24,7 +24,7 @@ enum JavaEnum {
 // TESTCASE NUMBER: 1
 fun case1() {
     val z = JavaEnum.Val_1
-    val when2 = <!NO_ELSE_IN_WHEN!>when<!> (z) {
+    val when2 = when (z) {
         JavaEnum.Val_1 -> { }
         <!DUPLICATE_BRANCH_CONDITION_IN_WHEN!>JavaEnum.Val_1<!> -> { }
     }
