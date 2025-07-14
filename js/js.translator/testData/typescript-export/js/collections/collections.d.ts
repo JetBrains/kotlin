@@ -111,4 +111,5 @@ declare namespace JS_TESTS {
     function consumeMutableSet(list: kotlin.collections.KtMutableSet<number>): boolean;
     function consumeMap(map: kotlin.collections.KtMap<string, number>): boolean;
     function consumeMutableMap(map: kotlin.collections.KtMutableMap<string, number>): boolean;
+    function provideListAsync(): Promise<kotlin.collections.KtList<number>>;
 }

@@ -6,11 +6,14 @@
 // INFER_MAIN_MODULE
 // MODULE: JS_TESTS
 // MODULE_KIND: ES
+// WITH_STDLIB
 // FILE: esm.kt
 
 @file:JsExport
 
 package foo
+
+import kotlin.js.Promise
 
 
 val value = 10
@@ -38,3 +41,11 @@ object Parent {
 
 
 fun box(): String = "OK"
+
+
+fun asyncList(): Promise<List<Int>> =
+    Promise.resolve(listOf(1, 2))
+
+
+fun arrayOfLists(): Array<List<Int>> =
+    arrayOf(listOf(1, 2))
