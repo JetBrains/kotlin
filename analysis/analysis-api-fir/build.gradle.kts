@@ -38,7 +38,7 @@ dependencies {
     implementation(libs.caffeine)
     implementation(libs.opentelemetry.api)
 
-    testFixturesImplementation(projectTests(":analysis:low-level-api-fir"))
+    testFixturesImplementation(testFixtures(project(":analysis:low-level-api-fir")))
     testFixturesApi(project(":analysis:analysis-api-standalone:analysis-api-standalone-base"))
     testFixturesImplementation(testFixtures(project(":compiler:tests-common")))
     testFixturesApi(testFixtures(project(":compiler:test-infrastructure-utils")))
@@ -53,7 +53,7 @@ dependencies {
     testFixturesImplementation(kotlinTest("junit"))
     testFixturesApi(testFixtures(project(":analysis:analysis-test-framework")))
 
-    testImplementation(projectTests(":analysis:low-level-api-fir"))
+    testImplementation(testFixtures(project(":analysis:low-level-api-fir")))
 
     testCompileOnly(toolsJarApi())
     testRuntimeOnly(toolsJar())

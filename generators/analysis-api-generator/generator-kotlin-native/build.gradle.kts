@@ -16,7 +16,7 @@ dependencies {
     testImplementation(projectTests(":compiler:tests-spec"))
     testImplementation(projectTests(":generators:analysis-api-generator"))
 
-    testImplementation(projectTests(":analysis:low-level-api-fir"))
+    testImplementation(testFixtures(project(":analysis:low-level-api-fir")))
     testImplementation(testFixtures(project(":analysis:low-level-api-fir:low-level-api-fir-native")))
 
     testImplementation(intellijCore())
