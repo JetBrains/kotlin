@@ -1,6 +1,8 @@
 #include "../../common/cpp/CrashHandler.hpp"
 
 #include <csignal>
+#include <cerrno>
+#include <cstring>
 #include <cstdlib>
 #include <array>
 #include <mutex>
@@ -57,6 +59,7 @@ namespace {
             konan::consoleErrorf("Minidump written to \"%s/%s.dmp\"\n", dump_dir, minidump_id);
         } else {
             konan::consoleErrorf("Failed to write minidump to \"%s/%s.dmp\"\n", dump_dir, minidump_id);
+            konan::consoleErrorf("%s\n", std::strerror(errno));
         }
         return false; // false -> do not abort the process and let other handlers to be called
     }
