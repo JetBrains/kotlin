@@ -4,6 +4,8 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.SerialName
 import org.jetbrains.kotlin.utils.addToStdlib.sequenceOfLazyValues
 
+private const val ORG_JETBRAINS_KOTLIN = "org.jetbrains.kotlin"
+
 fun Sequence<Int>.firstNonZeroOrZero() = firstOrNull { it != 0 } ?: 0
 
 private fun <T : Comparable<T>> compareLists(
@@ -50,6 +52,11 @@ data class GradleMetadata(
         variants.forEach { it.sortListsRecursively() }
     }
 
+    fun replaceKotlinVersion(oldVersion: String, newVersion: String) {
+        component.replaceKotlinVersion(oldVersion, newVersion)
+        variants.forEach { it.replaceKotlinVersion(oldVersion, newVersion) }
+    }
+
     override fun compareTo(other: GradleMetadata): Int {
         return sequenceOf(
             compareValuesBy(this, other, { it.formatVersion }, { it.component }, { it.createdBy }),
@@ -60,12 +67,19 @@ data class GradleMetadata(
 
 @Serializable
 data class Component(
-    val url: String? = null,
+    var url: String? = null,
     val group: String,
     val module: String,
-    val version: String,
+    var version: String,
     val attributes: ComponentAttributes? = null,
 ) : Comparable<Component> {
+    fun replaceKotlinVersion(oldVersion: String, newVersion: String) {
+        if (group == ORG_JETBRAINS_KOTLIN) {
+            url = url?.replace(oldVersion, newVersion)
+            version = version.replace(oldVersion, newVersion)
+        }
+    }
+
     override fun compareTo(other: Component): Int {
         return compareValuesBy(
             this, other,
@@ -115,6 +129,14 @@ data class Variant(
     val files: MutableList<File>? = null,
     val capabilities: MutableList<Capability>? = null,
 ) : Comparable<Variant> {
+    fun replaceKotlinVersion(oldVersion: String, newVersion: String) {
+        files?.forEach { it.replaceKotlinVersion(oldVersion, newVersion) }
+        capabilities?.forEach { it.replaceKotlinVersion(oldVersion, newVersion) }
+        dependencies?.forEach { it.replaceKotlinVersion(oldVersion, newVersion) }
+        dependencyConstraints?.forEach { it.replaceKotlinVersion(oldVersion, newVersion) }
+        availableAt?.replaceKotlinVersion(oldVersion, newVersion)
+    }
+
     fun removeFilesFingerprint() {
         files?.forEach { it.removeFingerprint() }
     }
@@ -195,6 +217,12 @@ data class Dependency(
         requestedCapabilities?.sort()
     }
 
+    fun replaceKotlinVersion(oldVersion: String, newVersion: String) {
+        if (group == ORG_JETBRAINS_KOTLIN) {
+            version.requires = version.requires.replace(oldVersion, newVersion)
+        }
+    }
+
     override fun compareTo(other: Dependency): Int {
         return sequenceOfLazyValues(
             {
@@ -215,7 +243,7 @@ data class Dependency(
 
 @Serializable
 data class Version(
-    val requires: String,
+    var requires: String,
 ) : Comparable<Version> {
     override fun compareTo(other: Version): Int {
         return compareValuesBy(this, other, { it.requires })
@@ -253,8 +281,8 @@ data class RequestedCapability(
 
 @Serializable
 data class File(
-    val name: String,
-    val url: String,
+    var name: String,
+    var url: String,
     var size: Int?,
     var sha512: String?,
     var sha256: String?,
@@ -267,6 +295,11 @@ data class File(
         sha256 = null
         sha1 = null
         md5 = null
+    }
+
+    fun replaceKotlinVersion(oldVersion: String, newVersion: String) {
+        name = name.replace(oldVersion, newVersion)
+        url = url.replace(oldVersion, newVersion)
     }
 
     override fun compareTo(other: File) = compareValuesBy(
@@ -285,9 +318,15 @@ data class File(
 data class Capability(
     val group: String,
     val name: String,
-    val version: String,
+    var version: String,
 ) : Comparable<Capability> {
     override fun compareTo(other: Capability): Int {
         return compareValuesBy(this, other, { it.group }, { it.name }, { it.version })
+    }
+
+    fun replaceKotlinVersion(oldVersion: String, newVersion: String) {
+        if (group == ORG_JETBRAINS_KOTLIN) {
+            version = version.replace(oldVersion, newVersion)
+        }
     }
 }
