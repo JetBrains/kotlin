@@ -8,11 +8,11 @@ package kotlin.uuid
 import kotlin.random.wasiRawRandomGet
 import kotlin.wasm.WasiError
 import kotlin.wasm.WasiErrorCode
-import kotlin.wasm.ExperimentalWasmInteropApi
+import kotlin.wasm.ExperimentalWasmInterop
 import kotlin.wasm.unsafe.withScopedMemoryAllocator
 
 @ExperimentalUuidApi
-@OptIn(ExperimentalWasmInteropApi::class)
+@OptIn(ExperimentalWasmInterop::class)
 internal actual fun secureRandomUuid(): Uuid {
     withScopedMemoryAllocator { allocator ->
         var memory = allocator.allocate(Uuid.SIZE_BYTES)

@@ -6,19 +6,19 @@
 package kotlin.wasm
 
 /**
- * Marks experimental Wasm interoperability API.
+ * Marks API related to interoperability with the Wasm platform as experimental.
  *
  * Note that the behavior of annotated API may likely be changed in the future.
  *
  * Usages of such API will be reported as warnings unless an explicit opt-in with
- * the [OptIn] annotation, e.g. `@OptIn(ExperimentalWasmInteropApi::class)`,
- * or with the `-opt-in=kotlin.js.ExperimentalWasmInteropApi` compiler option is given.
+ * the [OptIn] annotation, e.g. `@OptIn(ExperimentalWasmInterop::class)`,
+ * or with the `-opt-in=kotlin.js.ExperimentalWasmInterop` compiler option is given.
  */
 @MustBeDocumented
 @Retention(AnnotationRetention.BINARY)
 @SinceKotlin("2.2")
 @RequiresOptIn(level = RequiresOptIn.Level.WARNING)
-public annotation class ExperimentalWasmInteropApi
+public annotation class ExperimentalWasmInterop
 
 /**
  * Imports a function from the given [module] with the given optional [name].
@@ -28,7 +28,7 @@ public annotation class ExperimentalWasmInteropApi
  *
  * The annotated function will be imported into Wasm module without type adapters.
  */
-@ExperimentalWasmInteropApi
+@ExperimentalWasmInterop
 @Target(AnnotationTarget.FUNCTION)
 public annotation class WasmImport(
     val module: String,
@@ -43,7 +43,7 @@ public annotation class WasmImport(
  *
  * The annotated function will be exported from Wasm module without type adapters.
  */
-@ExperimentalWasmInteropApi
+@ExperimentalWasmInterop
 @Target(AnnotationTarget.FUNCTION)
 public annotation class WasmExport(
     val name: String = ""

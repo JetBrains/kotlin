@@ -1,6 +1,6 @@
 // LANGUAGE: +ContextParameters
 
-@file:OptIn(ExperimentalWasmInteropApi::class)
+@file:OptIn(ExperimentalWasmInterop::class)
 
 import kotlin.wasm.WasmImport
 

@@ -13950,8 +13950,8 @@ open annotation class kotlin.wasm.unsafe/UnsafeWasmMemoryApi : kotlin/Annotation
 }
 
 // Targets: [wasmJs, wasmWasi]
-open annotation class kotlin.wasm/ExperimentalWasmInteropApi : kotlin/Annotation { // kotlin.wasm/ExperimentalWasmInteropApi|null[0]
-    constructor <init>() // kotlin.wasm/ExperimentalWasmInteropApi.<init>|<init>(){}[0]
+open annotation class kotlin.wasm/ExperimentalWasmInterop : kotlin/Annotation { // kotlin.wasm/ExperimentalWasmInterop|null[0]
+    constructor <init>() // kotlin.wasm/ExperimentalWasmInterop.<init>|<init>(){}[0]
 }
 
 // Targets: [wasmJs, wasmWasi]
