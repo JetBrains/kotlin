@@ -14,9 +14,7 @@ import kotlin.ranges.contains
 import kotlin.ranges.reversed
 
 /**
- * Returns an element at the given [index] or either raises a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) (by default),
- * or throws [IndexOutOfBoundsException] if the [index] is out of bounds of this array,
- * depending on `-Xwasm-enable-array-range-checks` compiler flag presence when linking an executable.
+ * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
  * 
  * @sample samples.collections.Collections.Elements.elementAt
  */
@@ -28,9 +26,7 @@ public actual inline fun UIntArray.elementAt(index: Int): UInt {
 }
 
 /**
- * Returns an element at the given [index] or either raises a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) (by default),
- * or throws [IndexOutOfBoundsException] if the [index] is out of bounds of this array,
- * depending on `-Xwasm-enable-array-range-checks` compiler flag presence when linking an executable.
+ * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
  * 
  * @sample samples.collections.Collections.Elements.elementAt
  */
@@ -42,9 +38,7 @@ public actual inline fun ULongArray.elementAt(index: Int): ULong {
 }
 
 /**
- * Returns an element at the given [index] or either raises a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) (by default),
- * or throws [IndexOutOfBoundsException] if the [index] is out of bounds of this array,
- * depending on `-Xwasm-enable-array-range-checks` compiler flag presence when linking an executable.
+ * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
  * 
  * @sample samples.collections.Collections.Elements.elementAt
  */
@@ -56,9 +50,7 @@ public actual inline fun UByteArray.elementAt(index: Int): UByte {
 }
 
 /**
- * Returns an element at the given [index] or either raises a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) (by default),
- * or throws [IndexOutOfBoundsException] if the [index] is out of bounds of this array,
- * depending on `-Xwasm-enable-array-range-checks` compiler flag presence when linking an executable.
+ * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
  * 
  * @sample samples.collections.Collections.Elements.elementAt
  */

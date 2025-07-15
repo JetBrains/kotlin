@@ -290,28 +290,7 @@ object Elements : TemplateGroupBase() {
         include(CharSequences, Lists, ArraysOfUnsigned)
     } builder {
         val index = '$' + "index"
-
         doc { "Returns ${f.element.prefixWithArticle()} at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this ${f.collection}." }
-        specialFor(CharSequences, ArraysOfObjects, ArraysOfPrimitives, ArraysOfUnsigned) {
-            doc {
-                buildString {
-                    append("Returns ${f.element.prefixWithArticle()} at the given [index] ")
-                    if (target == KotlinTarget.Common) {
-                        appendLine("or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this ${f.collection},")
-                        appendLine("expect in Kotlin/Wasm, where a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap)")
-                        appendLine("will be raised, unless `-Xwasm-enable-array-range-checks` compiler flag")
-                        append("was specified when linking an executable.")
-                    } else if (target == KotlinTarget.WASM) {
-                        appendLine("or either raises a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) (by default),")
-                        appendLine("or throws [IndexOutOfBoundsException] if the [index] is out of bounds of this ${f.collection}, ")
-                        append("depending on `-Xwasm-enable-array-range-checks` compiler flag presence when linking an executable.")
-                    } else {
-                        append("or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this ${f.collection}.")
-                    }
-                }
-            }
-        }
-
         sample("samples.collections.Collections.Elements.elementAt")
         returns("T")
         body {

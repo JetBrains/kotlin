@@ -671,90 +671,63 @@ public operator fun CharArray.contains(element: Char): Boolean {
 }
 
 /**
- * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this array,
- * expect in Kotlin/Wasm, where a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap)
- * will be raised, unless `-Xwasm-enable-array-range-checks` compiler flag
- * was specified when linking an executable.
+ * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
  * 
  * @sample samples.collections.Collections.Elements.elementAt
  */
 public expect fun <T> Array<out T>.elementAt(index: Int): T
 
 /**
- * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this array,
- * expect in Kotlin/Wasm, where a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap)
- * will be raised, unless `-Xwasm-enable-array-range-checks` compiler flag
- * was specified when linking an executable.
+ * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
  * 
  * @sample samples.collections.Collections.Elements.elementAt
  */
 public expect fun ByteArray.elementAt(index: Int): Byte
 
 /**
- * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this array,
- * expect in Kotlin/Wasm, where a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap)
- * will be raised, unless `-Xwasm-enable-array-range-checks` compiler flag
- * was specified when linking an executable.
+ * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
  * 
  * @sample samples.collections.Collections.Elements.elementAt
  */
 public expect fun ShortArray.elementAt(index: Int): Short
 
 /**
- * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this array,
- * expect in Kotlin/Wasm, where a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap)
- * will be raised, unless `-Xwasm-enable-array-range-checks` compiler flag
- * was specified when linking an executable.
+ * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
  * 
  * @sample samples.collections.Collections.Elements.elementAt
  */
 public expect fun IntArray.elementAt(index: Int): Int
 
 /**
- * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this array,
- * expect in Kotlin/Wasm, where a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap)
- * will be raised, unless `-Xwasm-enable-array-range-checks` compiler flag
- * was specified when linking an executable.
+ * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
  * 
  * @sample samples.collections.Collections.Elements.elementAt
  */
 public expect fun LongArray.elementAt(index: Int): Long
 
 /**
- * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this array,
- * expect in Kotlin/Wasm, where a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap)
- * will be raised, unless `-Xwasm-enable-array-range-checks` compiler flag
- * was specified when linking an executable.
+ * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
  * 
  * @sample samples.collections.Collections.Elements.elementAt
  */
 public expect fun FloatArray.elementAt(index: Int): Float
 
 /**
- * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this array,
- * expect in Kotlin/Wasm, where a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap)
- * will be raised, unless `-Xwasm-enable-array-range-checks` compiler flag
- * was specified when linking an executable.
+ * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
  * 
  * @sample samples.collections.Collections.Elements.elementAt
  */
 public expect fun DoubleArray.elementAt(index: Int): Double
 
 /**
- * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this array,
- * expect in Kotlin/Wasm, where a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap)
- * will be raised, unless `-Xwasm-enable-array-range-checks` compiler flag
- * was specified when linking an executable.
+ * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
  * 
  * @sample samples.collections.Collections.Elements.elementAt
  */
 public expect fun BooleanArray.elementAt(index: Int): Boolean
 
 /**
- * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this array,
- * expect in Kotlin/Wasm, where a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap)
- * will be raised, unless `-Xwasm-enable-array-range-checks` compiler flag
- * was specified when linking an executable.
+ * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
  * 
  * @sample samples.collections.Collections.Elements.elementAt
  */

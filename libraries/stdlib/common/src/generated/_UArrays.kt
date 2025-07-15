@@ -320,10 +320,7 @@ public inline operator fun UShortArray.component5(): UShort {
 }
 
 /**
- * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this array,
- * expect in Kotlin/Wasm, where a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap)
- * will be raised, unless `-Xwasm-enable-array-range-checks` compiler flag
- * was specified when linking an executable.
+ * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
  * 
  * @sample samples.collections.Collections.Elements.elementAt
  */
@@ -332,10 +329,7 @@ public inline operator fun UShortArray.component5(): UShort {
 public expect fun UIntArray.elementAt(index: Int): UInt
 
 /**
- * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this array,
- * expect in Kotlin/Wasm, where a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap)
- * will be raised, unless `-Xwasm-enable-array-range-checks` compiler flag
- * was specified when linking an executable.
+ * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
  * 
  * @sample samples.collections.Collections.Elements.elementAt
  */
@@ -344,10 +338,7 @@ public expect fun UIntArray.elementAt(index: Int): UInt
 public expect fun ULongArray.elementAt(index: Int): ULong
 
 /**
- * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this array,
- * expect in Kotlin/Wasm, where a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap)
- * will be raised, unless `-Xwasm-enable-array-range-checks` compiler flag
- * was specified when linking an executable.
+ * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
  * 
  * @sample samples.collections.Collections.Elements.elementAt
  */
@@ -356,10 +347,7 @@ public expect fun ULongArray.elementAt(index: Int): ULong
 public expect fun UByteArray.elementAt(index: Int): UByte
 
 /**
- * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this array,
- * expect in Kotlin/Wasm, where a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap)
- * will be raised, unless `-Xwasm-enable-array-range-checks` compiler flag
- * was specified when linking an executable.
+ * Returns an element at the given [index] or throws an [IndexOutOfBoundsException] if the [index] is out of bounds of this array.
  * 
  * @sample samples.collections.Collections.Elements.elementAt
  */
