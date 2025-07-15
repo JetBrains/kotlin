@@ -10,6 +10,21 @@ package kotlin.js
  */
 @Suppress("NOT_DOCUMENTED")
 public external class Date() {
+    public constructor(milliseconds: Byte)
+
+    public constructor(milliseconds: Short)
+
+    public constructor(milliseconds: Int)
+
+    public constructor(milliseconds: Float)
+
+    public constructor(milliseconds: Double)
+
+    @Deprecated(
+        message = "Number-accepting Date constructors are deprecated",
+        replaceWith = ReplaceWith("Date(milliseconds.toDouble())"),
+    )
+    @DeprecatedSinceKotlin(warningSince = "2.3", errorSince = "2.4")
     public constructor(milliseconds: Number)
 
     public constructor(dateString: String)
@@ -24,6 +39,21 @@ public external class Date() {
 
     public constructor(year: Int, month: Int, day: Int, hour: Int, minute: Int, second: Int)
 
+    public constructor(year: Int, month: Int, day: Int, hour: Int, minute: Int, second: Int, millisecond: Byte)
+
+    public constructor(year: Int, month: Int, day: Int, hour: Int, minute: Int, second: Int, millisecond: Short)
+
+    public constructor(year: Int, month: Int, day: Int, hour: Int, minute: Int, second: Int, millisecond: Int)
+
+    public constructor(year: Int, month: Int, day: Int, hour: Int, minute: Int, second: Int, millisecond: Float)
+
+    public constructor(year: Int, month: Int, day: Int, hour: Int, minute: Int, second: Int, millisecond: Double)
+
+    @Deprecated(
+        message = "Number-accepting Date constructors are deprecated",
+        replaceWith = ReplaceWith("Date(year, month, day, hour, minute, second, millisecond.toDouble())"),
+    )
+    @DeprecatedSinceKotlin(warningSince = "2.3", errorSince = "2.4")
     public constructor(year: Int, month: Int, day: Int, hour: Int, minute: Int, second: Int, millisecond: Number)
 
     public fun getDate(): Int
@@ -99,6 +129,21 @@ public external class Date() {
 
         public fun UTC(year: Int, month: Int, day: Int, hour: Int, minute: Int, second: Int): Double
 
+        public fun UTC(year: Int, month: Int, day: Int, hour: Int, minute: Int, second: Int, millisecond: Byte): Double
+
+        public fun UTC(year: Int, month: Int, day: Int, hour: Int, minute: Int, second: Int, millisecond: Short): Double
+
+        public fun UTC(year: Int, month: Int, day: Int, hour: Int, minute: Int, second: Int, millisecond: Int): Double
+
+        public fun UTC(year: Int, month: Int, day: Int, hour: Int, minute: Int, second: Int, millisecond: Float): Double
+
+        public fun UTC(year: Int, month: Int, day: Int, hour: Int, minute: Int, second: Int, millisecond: Double): Double
+
+        @Deprecated(
+            message = "Number-accepting Date constructors are deprecated",
+            replaceWith = ReplaceWith("UTC(year, month, day, hour, minute, second, millisecond.toDouble())"),
+        )
+        @DeprecatedSinceKotlin(warningSince = "2.3", errorSince = "2.4")
         public fun UTC(year: Int, month: Int, day: Int, hour: Int, minute: Int, second: Int, millisecond: Number): Double
     }
 
