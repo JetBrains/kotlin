@@ -260,6 +260,9 @@ public value class Duration internal constructor(private val rawValue: Long) : C
          */
         public fun parseIsoStringOrNull(value: String): Duration? =
             parseDuration(value, strictIso = true, throwExceptionOnParsingError = false)
+
+        internal val SUMMING_INFINITE_DURATIONS_OF_DIFFERENT_SIGN_ERROR_MESSAGE =
+            "Summing infinite durations of different signs yields an undefined result."
     }
 
     // arithmetic operators
@@ -274,7 +277,17 @@ public value class Duration internal constructor(private val rawValue: Long) : C
      * e.g. when adding infinite durations of different sign.
      */
     public operator fun plus(other: Duration): Duration {
-        return plus(other, throwException = true)!!
+        when {
+            this.isInfinite() -> {
+                return if (other.isFinite() || (this.rawValue xor other.rawValue >= 0))
+                    this
+                else
+                    throw IllegalArgumentException(SUMMING_INFINITE_DURATIONS_OF_DIFFERENT_SIGN_ERROR_MESSAGE)
+            }
+            other.isInfinite() -> return other
+        }
+
+        return addFiniteDurations(other)
     }
 
     internal fun plus(other: Duration, throwException: Boolean): Duration? {
@@ -283,11 +296,15 @@ public value class Duration internal constructor(private val rawValue: Long) : C
                 return if (other.isFinite() || (this.rawValue xor other.rawValue >= 0))
                     this
                 else
-                    if (throwException) throw IllegalArgumentException("Summing infinite durations of different signs yields an undefined result.") else null
+                    if (throwException) throw IllegalArgumentException(SUMMING_INFINITE_DURATIONS_OF_DIFFERENT_SIGN_ERROR_MESSAGE) else null
             }
             other.isInfinite() -> return other
         }
 
+        return addFiniteDurations(other)
+    }
+
+    private fun addFiniteDurations(other: Duration): Duration {
         return when {
             this.unitDiscriminator == other.unitDiscriminator -> {
                 val result = this.value + other.value // never overflows long, but can overflow long63
