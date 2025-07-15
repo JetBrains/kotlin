@@ -499,7 +499,7 @@ internal class KaFirSymbolRelationProvider(
          * fun foo(ints: IntArray)
          * ```
          */
-        if (!containingModule.targetPlatform.isJvm()) {
+        if (!thisContainingModule.targetPlatform.isJvm()) {
             if (thisFirSymbol.typeParameterSymbols.isEmpty() != otherFirSymbol.typeParameterSymbols.isEmpty()) {
                 return false
             }
