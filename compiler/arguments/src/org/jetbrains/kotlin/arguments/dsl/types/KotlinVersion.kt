@@ -95,6 +95,7 @@ enum class KotlinVersion(
             introducedVersion = KotlinReleaseVersion.v1_6_20,
             stabilizedVersion = KotlinReleaseVersion.v1_8_0,
             deprecatedVersion = KotlinReleaseVersion.v2_2_0,
+            removedVersion = KotlinReleaseVersion.v2_3_0,
         )
     ),
     v1_9(
