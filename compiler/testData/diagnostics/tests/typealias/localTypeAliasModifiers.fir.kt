@@ -2,7 +2,7 @@
 // DIAGNOSTICS: -UNUSED_VARIABLE -UNUSED_PARAMETER -TOPLEVEL_TYPEALIASES_ONLY
 
 fun outer() {
-    <!UNSUPPORTED!><!WRONG_MODIFIER_TARGET!>companion<!> typealias TestLocal = Any<!>
+    <!UNSUPPORTED_FEATURE!><!WRONG_MODIFIER_TARGET!>companion<!> typealias TestLocal = Any<!>
 }
 
 /* GENERATED_FIR_TAGS: functionDeclaration, typeAliasDeclaration */

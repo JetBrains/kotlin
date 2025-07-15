@@ -4,12 +4,12 @@
 fun <T> emptyList(): List<T> = null!!
 
 fun <T> foo() {
-    <!UNSUPPORTED!>typealias LT = List<T><!>
+    <!UNSUPPORTED_FEATURE!>typealias LT = <!TYPEALIAS_EXPANSION_CAPTURES_OUTER_TYPE_PARAMETERS!>List<T><!><!>
 
     val a: LT = emptyList()
 
     fun localFun(): LT {
-        <!UNSUPPORTED!>typealias LLT = List<T><!>
+        <!UNSUPPORTED_FEATURE!>typealias LLT = <!TYPEALIAS_EXPANSION_CAPTURES_OUTER_TYPE_PARAMETERS!>List<T><!><!>
 
         val b: LLT = a
 
