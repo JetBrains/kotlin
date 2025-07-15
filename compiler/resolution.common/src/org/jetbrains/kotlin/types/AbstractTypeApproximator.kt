@@ -674,28 +674,17 @@ abstract class AbstractTypeApproximator(
                         approximatedToSubType ?: continue@loop
                     }
 
-                    if (
-                        conf.intersectionStrategy != TypeApproximatorConfiguration.IntersectionStrategy.ALLOWED &&
-                        effectiveVariance == TypeVariance.OUT &&
-                        argumentType.typeConstructor().isIntersection()
-                    ) {
-                        var shouldReplaceWithStar = false
-                        for (upperBoundIndex in 0 until parameter.upperBoundCount()) {
-                            if (!AbstractTypeChecker.isSubtypeOf(ctx, approximatedArgument, parameter.getUpperBound(upperBoundIndex))) {
-                                shouldReplaceWithStar = true
-                                break
-                            }
-                        }
-                        if (shouldReplaceWithStar) {
-                            newArguments[index] = createStarProjection(parameter)
-                            continue@loop
-                        }
-                    }
+                    newArguments[index] = when {
+                        useStarProjectionInCaseIntersectionApproximatedWithUpperBoundViolation(
+                            effectiveVariance, parameter, argumentType, approximatedArgument,
+                        ) ->
+                            createStarProjection(parameter)
 
-                    if (parameter.getVariance() == TypeVariance.INV) {
-                        newArguments[index] = createTypeArgument(approximatedArgument, effectiveVariance)
-                    } else {
-                        newArguments[index] = approximatedArgument.asTypeArgument()
+                        parameter.getVariance() == TypeVariance.INV ->
+                            createTypeArgument(approximatedArgument, effectiveVariance)
+
+                        else ->
+                            approximatedArgument.asTypeArgument()
                     }
                 }
                 TypeVariance.INV -> {
@@ -764,6 +753,28 @@ abstract class AbstractTypeApproximator(
         val newArgumentsList = List(type.argumentsCount()) { index -> newArguments[index] ?: type.getArgument(index) }
         val approximatedType = type.replaceArguments(newArgumentsList)
         return approximateLocalTypes(approximatedType, toSuper, depth) ?: approximatedType
+    }
+
+    context(conf: TypeApproximatorConfiguration)
+    private fun useStarProjectionInCaseIntersectionApproximatedWithUpperBoundViolation(
+        effectiveVariance: TypeVariance,
+        parameter: TypeParameterMarker,
+        argumentType: KotlinTypeMarker,
+        approximatedArgument: KotlinTypeMarker,
+    ): Boolean {
+        if (conf.intersectionStrategy == TypeApproximatorConfiguration.IntersectionStrategy.ALLOWED) return false
+        if (effectiveVariance != TypeVariance.OUT) return false
+        if (!argumentType.typeConstructor().isIntersection()) return false
+
+        var shouldReplaceWithStar = false
+        for (upperBoundIndex in 0 until parameter.upperBoundCount()) {
+            if (!AbstractTypeChecker.isSubtypeOf(ctx, approximatedArgument, parameter.getUpperBound(upperBoundIndex))) {
+                shouldReplaceWithStar = true
+                break
+            }
+        }
+
+        return shouldReplaceWithStar
     }
 
     context(conf: TypeApproximatorConfiguration)
