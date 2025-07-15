@@ -34,6 +34,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtCallableDeclaration
+import java.time.Duration
 
 /**
  * [LLCombinedKotlinSymbolProvider] combines multiple [LLKotlinSymbolProvider]s with the following advantages:
@@ -67,19 +68,19 @@ internal class LLCombinedKotlinSymbolProvider private constructor(
 
     private val classifierCache = NullableCaffeineCache<ClassId, FirClassLikeSymbol<*>> {
         it
-            .maximumSize(500)
+            .maximumSize(1000)
             .withStatsCounter(LLStatisticsService.getInstance(project)?.symbolProviders?.combinedSymbolProviderClassCacheStatsCounter)
     }
 
     private val functionCache =
         Caffeine.newBuilder()
-            .maximumSize(250)
+            .expireAfterAccess(Duration.ofSeconds(5))
             .withStatsCounter(LLStatisticsService.getInstance(project)?.symbolProviders?.combinedSymbolProviderCallableCacheStatsCounter)
             .build<CallableId, List<FirNamedFunctionSymbol>>()
 
     private val propertyCache =
         Caffeine.newBuilder()
-            .maximumSize(250)
+            .expireAfterAccess(Duration.ofSeconds(5))
             .withStatsCounter(LLStatisticsService.getInstance(project)?.symbolProviders?.combinedSymbolProviderCallableCacheStatsCounter)
             .build<CallableId, List<FirPropertySymbol>>()
 
