@@ -9791,6 +9791,12 @@ public class LLPartialDiagnosticsFe10TestGenerated extends AbstractLLPartialDiag
       }
 
       @Test
+      @TestMetadata("delegates.kt")
+      public void testDelegates() {
+        runTest("compiler/testData/diagnostics/tests/crvFull/delegates.kt");
+      }
+
+      @Test
       @TestMetadata("nestedClasses.kt")
       public void testNestedClasses() {
         runTest("compiler/testData/diagnostics/tests/crvFull/nestedClasses.kt");

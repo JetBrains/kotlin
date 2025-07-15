@@ -9791,6 +9791,12 @@ public class LLDiagnosticsFe10TestGenerated extends AbstractLLDiagnosticsTest {
       }
 
       @Test
+      @TestMetadata("delegates.kt")
+      public void testDelegates() {
+        runTest("compiler/testData/diagnostics/tests/crvFull/delegates.kt");
+      }
+
+      @Test
       @TestMetadata("nestedClasses.kt")
       public void testNestedClasses() {
         runTest("compiler/testData/diagnostics/tests/crvFull/nestedClasses.kt");
