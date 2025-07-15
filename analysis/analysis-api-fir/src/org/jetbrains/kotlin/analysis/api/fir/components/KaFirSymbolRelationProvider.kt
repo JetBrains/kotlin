@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.analysis.api.lifetime.withValidityAssertion
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileResolutionMode
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.baseContextModuleOrSelf
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.utils.errors.withKaModuleEntry
 import org.jetbrains.kotlin.analysis.low.level.api.fir.compile.isForeignValue
@@ -462,8 +463,8 @@ internal class KaFirSymbolRelationProvider(
         }
 
     override fun KaFunctionSymbol.hasConflictingSignatureWith(other: KaFunctionSymbol): Boolean {
-        val thisContainingModule = this.containingModule
-        val otherContainingModule = other.containingModule
+        val thisContainingModule = containingModule.baseContextModuleOrSelf
+        val otherContainingModule = other.containingModule.baseContextModuleOrSelf
         if (thisContainingModule != otherContainingModule) {
             errorWithAttachment(
                 "Expected symbols to be from the same module"
@@ -473,9 +474,7 @@ internal class KaFirSymbolRelationProvider(
             }
         }
 
-        val containingModule = this.containingModule
-
-        val thisFirSymbol = this.firSymbol
+        val thisFirSymbol = firSymbol
         val otherFirSymbol = other.firSymbol
 
         val thisHasLowPriority = hasLowPriorityAnnotation(thisFirSymbol.resolvedAnnotationsWithClassIds)
@@ -484,12 +483,28 @@ internal class KaFirSymbolRelationProvider(
             return false
         }
 
+        /**
+         * [FirDeclarationOverloadabilityHelper] performs signature comparison only from JVM platform perspective.
+         * However, as the API needs to be more generic than that, here we perform manual signature comparison
+         * before calling [FirDeclarationOverloadabilityHelper].
+         * This is done to handle cases which are considered conflicting on JVM but completely valid on other platforms:
+         * - Overloads by type parameters
+         * ```kotlin
+         * fun <T> foo() // Conflicting on JVM, valid on other platforms
+         * fun foo()
+         * ```
+         * - Overloads by vararg/array parameters
+         * ```kotlin
+         * fun foo(vararg ints: Int) // Conflicting on JVM, valid on other platforms
+         * fun foo(ints: IntArray)
+         * ```
+         */
         if (!containingModule.targetPlatform.isJvm()) {
             if (thisFirSymbol.typeParameterSymbols.isEmpty() != otherFirSymbol.typeParameterSymbols.isEmpty()) {
                 return false
             }
 
-            val thisVarargParameterPosition = this.valueParameters.indexOfFirst { it.isVararg }
+            val thisVarargParameterPosition = valueParameters.indexOfFirst { it.isVararg }
             val otherVarargParameterPosition = other.valueParameters.indexOfFirst { it.isVararg }
             if (thisVarargParameterPosition != otherVarargParameterPosition) {
                 return false

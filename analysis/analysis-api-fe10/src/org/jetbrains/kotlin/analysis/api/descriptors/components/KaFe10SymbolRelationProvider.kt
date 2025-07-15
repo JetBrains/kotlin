@@ -268,7 +268,7 @@ internal class KaFe10SymbolRelationProvider(
         }
 
     override fun KaFunctionSymbol.hasConflictingSignatureWith(other: KaFunctionSymbol): Boolean = withValidityAssertion {
-        val thisContainingModule = this.containingModule
+        val thisContainingModule = containingModule
         val otherContainingModule = other.containingModule
         if (thisContainingModule != otherContainingModule) {
             errorWithAttachment(
@@ -279,8 +279,7 @@ internal class KaFe10SymbolRelationProvider(
             }
         }
 
-        val containingModule = this.containingModule
-        val thisDescriptor = this.getDescriptor() ?: return false
+        val thisDescriptor = getDescriptor() ?: return false
         val otherDescriptor = other.getDescriptor() ?: return false
 
         val targetPlatform = containingModule.targetPlatform

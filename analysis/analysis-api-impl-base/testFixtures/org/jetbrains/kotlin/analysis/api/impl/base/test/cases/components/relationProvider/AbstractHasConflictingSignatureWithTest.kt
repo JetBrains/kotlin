@@ -18,12 +18,11 @@ import org.jetbrains.kotlin.test.services.assertions
 abstract class AbstractHasConflictingSignatureWithTest : AbstractAnalysisApiBasedTest() {
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
         val actual = executeOnPooledThreadInReadAction {
-            val currentDeclaration = testServices.expressionMarkerProvider
-                .getBottommostElementOfTypeAtCaret<KtFunction>(mainFile, "1")
-            val otherDeclaration = testServices.expressionMarkerProvider
-                .getBottommostElementOfTypeAtCaret<KtFunction>(mainFile, "2")
-
-            copyAwareAnalyzeForTest(mainFile) { _ ->
+            copyAwareAnalyzeForTest(mainFile) { contextFile ->
+                val currentDeclaration = testServices.expressionMarkerProvider
+                    .getBottommostElementOfTypeAtCaret<KtFunction>(contextFile, "1")
+                val otherDeclaration = testServices.expressionMarkerProvider
+                    .getBottommostElementOfTypeAtCaret<KtFunction>(contextFile, "2")
                 val currentSymbol = currentDeclaration.symbol as KaFunctionSymbol
                 val otherSymbol = otherDeclaration.symbol as KaFunctionSymbol
 
