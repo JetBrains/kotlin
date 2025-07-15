@@ -12,11 +12,11 @@ fun <T> funWithGenericParam() {
     <!UNSUPPORTED!>typealias LocalTAWithCapturingRHS = Generic<T><!> // Prohibited
     <!UNSUPPORTED!>typealias LocalTAWithUnresolvedTypeArg = Generic<<!UNRESOLVED_REFERENCE!>K<!>><!> // Prohibited
 
-    <!UNSUPPORTED!>typealias Recursive = <!UNRESOLVED_REFERENCE!>Recursive<!><!>
+    <!UNSUPPORTED!>typealias Recursive = <!RECURSIVE_TYPEALIAS_EXPANSION!>Recursive<!><!>
 
-    val localClass = <!UNRESOLVED_REFERENCE!>LocalTA<!>() // Check there is no a crash
-    val generic = <!UNRESOLVED_REFERENCE!>LocalTAWithCapturingRHS<!>() // Check there is no a crash
-    val genericWithUnresolvedTypeArg = <!UNRESOLVED_REFERENCE!>LocalTAWithUnresolvedTypeArg<!>() // Check there is no a crash
+    val localClass = <!CANNOT_INFER_PARAMETER_TYPE!>LocalTA<!>() // Check there is no a crash
+    val generic = <!CANNOT_INFER_PARAMETER_TYPE!>LocalTAWithCapturingRHS<!>() // Check there is no a crash
+    val genericWithUnresolvedTypeArg = <!CANNOT_INFER_PARAMETER_TYPE!>LocalTAWithUnresolvedTypeArg<!>() // Check there is no a crash
 
     fun <K> localFunWithGenericParam() {
         <!UNSUPPORTED!>typealias LocalLocalTA1 = Generic<T><!> // Prohibited
@@ -42,12 +42,12 @@ fun regularFun() {
     <!UNSUPPORTED!>typealias LocalTAToGenericWithSubstitutedTypeParameter = Generic<String><!> // Allowed
     <!UNSUPPORTED!>typealias LocalTAWithTypeParameter<T> = Generic<T><!> // Allowed
 
-    val anonObject = object : <!UNRESOLVED_REFERENCE!>LocalTA<!>() {
+    val anonObject = object : LocalTA() {
     }
 
-    val localClass = <!UNRESOLVED_REFERENCE!>LocalTA<!>()
-    val genericString = <!UNRESOLVED_REFERENCE!>LocalTAToGenericWithSubstitutedTypeParameter<!>()
-    val generic = <!UNRESOLVED_REFERENCE!>LocalTAWithTypeParameter<!><String>()
+    val localClass = LocalTA()
+    val genericString = LocalTAToGenericWithSubstitutedTypeParameter()
+    val generic = LocalTAWithTypeParameter<String>()
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, localClass, localProperty, nullableType,
