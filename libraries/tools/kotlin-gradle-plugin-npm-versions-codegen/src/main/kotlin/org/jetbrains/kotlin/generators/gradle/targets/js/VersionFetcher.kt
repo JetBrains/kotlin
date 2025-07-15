@@ -66,7 +66,7 @@ class VersionFetcher : AutoCloseable {
             else
                 encodeURIComponent(packageName)
 
-        return client.get("http://registry.npmjs.org/$packagePath").bodyAsText()
+        return client.get("https://registry.npmjs.org/$packagePath").bodyAsText()
     }
 
     override fun close() {
