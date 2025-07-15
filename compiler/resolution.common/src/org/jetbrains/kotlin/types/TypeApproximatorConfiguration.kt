@@ -14,6 +14,8 @@ abstract class TypeApproximatorConfiguration {
         ALLOWED,
         TO_FIRST,
         TO_COMMON_SUPERTYPE,
+
+        @AllowedToUsedOnlyInK1
         TO_UPPER_BOUND_IF_SUPERTYPE
     }
 
@@ -170,6 +172,7 @@ abstract class TypeApproximatorConfiguration {
         override fun shouldApproximateCapturedType(ctx: TypeSystemInferenceExtensionContext, type: CapturedTypeMarker): Boolean = false
     }
 
+    @AllowedToUsedOnlyInK1
     object UpperBoundAwareIntersectionTypeApproximator : TypeApproximatorConfiguration() {
         override val approximateAllFlexible: Boolean get() = false
         override val intersectionStrategy: IntersectionStrategy get() = IntersectionStrategy.TO_UPPER_BOUND_IF_SUPERTYPE
