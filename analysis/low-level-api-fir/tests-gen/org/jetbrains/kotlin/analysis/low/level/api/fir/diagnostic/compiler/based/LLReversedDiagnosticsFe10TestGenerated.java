@@ -33625,6 +33625,12 @@ public class LLReversedDiagnosticsFe10TestGenerated extends AbstractLLReversedDi
       }
 
       @Test
+      @TestMetadata("overrideOfBadSuperType.kt")
+      public void testOverrideOfBadSuperType() {
+        runTest("compiler/testData/diagnostics/tests/override/overrideOfBadSuperType.kt");
+      }
+
+      @Test
       @TestMetadata("OverrideWithErrors.kt")
       public void testOverrideWithErrors() {
         runTest("compiler/testData/diagnostics/tests/override/OverrideWithErrors.kt");
