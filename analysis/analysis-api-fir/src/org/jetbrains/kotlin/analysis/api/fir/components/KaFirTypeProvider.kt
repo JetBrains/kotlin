@@ -106,7 +106,7 @@ internal class KaFirTypeProvider(
             val firFile = position.containingKtFile.getOrBuildFirFile(resolutionFacade)
             val scopeContext = ContextCollector.process(resolutionFacade, firFile, position)
             val scopeClassifiers = scopeContext?.towerDataContext?.localScopes?.map { localScope ->
-                localScope.classes
+                localScope.classLikeSymbols
             }
 
             /**
@@ -132,7 +132,7 @@ internal class KaFirTypeProvider(
              * It iterates through all the scopes from the outermost to the localmost and puts all named classifiers into the map.
              * If there is already some classifier stored for a given name, then another more local classifier shadows the previous one in the map.
              */
-            val allAccessibleClassifiers = HashMap<Name, FirRegularClassSymbol>().apply {
+            val allAccessibleClassifiers = HashMap<Name, FirClassLikeSymbol<*>>().apply {
                 scopeClassifiers?.forEach { currentScope ->
                     this.putAll(currentScope)
                 }

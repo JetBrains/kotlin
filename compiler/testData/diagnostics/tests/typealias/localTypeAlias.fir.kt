@@ -6,12 +6,12 @@ fun <T> emptyList(): List<T> = null!!
 fun <T> foo() {
     <!UNSUPPORTED!>typealias LT = List<T><!>
 
-    val a: <!UNRESOLVED_REFERENCE!>LT<!> = <!CANNOT_INFER_PARAMETER_TYPE!>emptyList<!>()
+    val a: LT = emptyList()
 
-    fun localFun(): <!UNRESOLVED_REFERENCE!>LT<!> {
+    fun localFun(): LT {
         <!UNSUPPORTED!>typealias LLT = List<T><!>
 
-        val b: <!UNRESOLVED_REFERENCE!>LLT<!> = a
+        val b: LLT = a
 
         return b
     }

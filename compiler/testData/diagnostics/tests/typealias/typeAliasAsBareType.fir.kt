@@ -32,7 +32,7 @@ fun <T> testLocal(x: Any) {
     class C
     <!UNSUPPORTED!>typealias CA = C<!>
     if (x is <!CANNOT_CHECK_FOR_ERASED!>C<!>) {}
-    if (x is <!UNRESOLVED_REFERENCE!>CA<!>) {}
+    if (x is <!CANNOT_CHECK_FOR_ERASED!>CA<!>) {}
 }
 
 /* GENERATED_FIR_TAGS: asExpression, classDeclaration, functionDeclaration, ifExpression, inProjection, isExpression,

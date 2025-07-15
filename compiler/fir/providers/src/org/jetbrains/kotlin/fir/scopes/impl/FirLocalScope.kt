@@ -9,45 +9,53 @@ import kotlinx.collections.immutable.PersistentMap
 import kotlinx.collections.immutable.persistentMapOf
 import org.jetbrains.kotlin.builtins.StandardNames.BACKING_FIELD
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
+import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
 import org.jetbrains.kotlin.fir.declarations.FirVariable
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.scopes.DelicateScopeAPI
 import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassifierSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.util.PersistentMultimap
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
 class FirLocalScope private constructor(
     val properties: PersistentMap<Name, FirVariableSymbol<*>>,
     val functions: PersistentMultimap<Name, FirNamedFunctionSymbol>,
-    val classes: PersistentMap<Name, FirRegularClassSymbol>,
+    val classLikeSymbols: PersistentMap<Name, FirClassLikeSymbol<*>>,
     val useSiteSession: FirSession
 ) : FirContainingNamesAwareScope() {
     constructor(session: FirSession) : this(persistentMapOf(), PersistentMultimap(), persistentMapOf(), session)
 
-    fun storeClass(klass: FirRegularClass, session: FirSession): FirLocalScope {
+    fun storeClassOrTypeAlias(classLikeDeclaration: FirClassLikeDeclaration, session: FirSession): FirLocalScope {
+        val name = when (classLikeDeclaration) {
+            is FirRegularClass -> classLikeDeclaration.name
+            is FirTypeAlias -> classLikeDeclaration.name
+            else -> shouldNotBeCalled()
+        }
         return FirLocalScope(
-            properties, functions, classes.put(klass.name, klass.symbol), session
+            properties, functions, classLikeSymbols.put(name, classLikeDeclaration.symbol), session
         )
     }
 
     fun storeFunction(function: FirSimpleFunction, session: FirSession): FirLocalScope {
         return FirLocalScope(
-            properties, functions.put(function.name, function.symbol), classes, session
+            properties, functions.put(function.name, function.symbol), classLikeSymbols, session
         )
     }
 
     fun storeVariable(variable: FirVariable, session: FirSession): FirLocalScope {
         return FirLocalScope(
-            properties.put(variable.name, variable.symbol), functions, classes, session
+            properties.put(variable.name, variable.symbol), functions, classLikeSymbols, session
         )
     }
 
@@ -59,7 +67,7 @@ class FirLocalScope private constructor(
         return FirLocalScope(
             enhancedProperties ?: properties,
             functions,
-            classes,
+            classLikeSymbols,
             session
         )
     }
@@ -78,19 +86,19 @@ class FirLocalScope private constructor(
     }
 
     override fun processClassifiersByNameWithSubstitution(name: Name, processor: (FirClassifierSymbol<*>, ConeSubstitutor) -> Unit) {
-        val klass = classes[name]
-        if (klass != null) {
-            val substitution = klass.typeParameterSymbols.associateWith { it.toConeType() }
-            processor(klass, substitutorByMap(substitution, useSiteSession, allowIdenticalSubstitution = true))
+        val classLikeSymbol = classLikeSymbols[name]
+        if (classLikeSymbol != null) {
+            val substitution = classLikeSymbol.typeParameterSymbols.associateWith { it.toConeType() }
+            processor(classLikeSymbol, substitutorByMap(substitution, useSiteSession, allowIdenticalSubstitution = true))
         }
     }
 
     override fun mayContainName(name: Name): Boolean {
-        return properties.containsKey(name) || functions[name].isNotEmpty() || classes.containsKey(name)
+        return properties.containsKey(name) || functions[name].isNotEmpty() || classLikeSymbols.containsKey(name)
     }
 
     override fun getCallableNames(): Set<Name> = properties.keys + functions.keys
-    override fun getClassifierNames(): Set<Name> = classes.keys
+    override fun getClassifierNames(): Set<Name> = classLikeSymbols.keys
 
     @DelicateScopeAPI
     override fun withReplacedSessionOrNull(newSession: FirSession, newScopeSession: ScopeSession): FirLocalScope? {

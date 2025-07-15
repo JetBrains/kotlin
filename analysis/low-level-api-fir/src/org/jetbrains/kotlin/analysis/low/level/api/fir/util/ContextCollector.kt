@@ -624,7 +624,7 @@ private class ContextCollectorVisitor(
         }
 
         if (regularClass.isLocal) {
-            context.storeClassIfNotNested(regularClass, regularClass.moduleData.session)
+            context.storeClassOrTypealiasIfNotNested(regularClass, regularClass.moduleData.session)
         }
     }
 

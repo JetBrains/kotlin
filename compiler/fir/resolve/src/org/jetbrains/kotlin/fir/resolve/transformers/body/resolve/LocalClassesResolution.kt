@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.resolve.transformers.body.resolve
 import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirResolvedDeclarationStatus
+import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
 import org.jetbrains.kotlin.fir.resolve.ResolutionMode
 import org.jetbrains.kotlin.fir.resolve.createCurrentScopeList
 import org.jetbrains.kotlin.fir.resolve.transformers.plugin.runCompanionGenerationPhaseForLocalClass
@@ -17,13 +18,13 @@ import org.jetbrains.kotlin.fir.resolve.transformers.runSupertypeResolvePhaseFor
 import org.jetbrains.kotlin.fir.resolve.transformers.runTypeResolvePhaseForLocalClass
 
 /** @see org.jetbrains.kotlin.fir.resolve.transformers.FirJumpingPhaseComputationSessionForLocalClassesProvider */
-fun <F : FirClassLikeDeclaration> F.runAllPhasesForLocalClass(
+fun <F : FirClassLikeDeclaration> F.runAllPhasesForLocalClassLikeDeclarations(
     components: FirAbstractBodyResolveTransformer.BodyResolveTransformerComponents,
     resolutionMode: ResolutionMode,
 ): F {
     if (status is FirResolvedDeclarationStatus) return this
-    if (this is FirRegularClass) {
-        components.context.storeClassIfNotNested(this, components.session)
+    if (this is FirRegularClass || this is FirTypeAlias) {
+        components.context.storeClassOrTypealiasIfNotNested(this, components.session)
     }
 
     val localClassesNavigationInfo = collectLocalClassesNavigationInfo()

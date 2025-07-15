@@ -807,7 +807,7 @@ open class FirDeclarationsResolveTransformer(
         context.withContainingClass(regularClass) {
             val isLocal = regularClass.isLocal
             if (isLocal && regularClass !in context.targetedLocalClasses) {
-                return regularClass.runAllPhasesForLocalClass(components, data)
+                return regularClass.runAllPhasesForLocalClassLikeDeclarations(components, data)
             }
 
             if (isLocal || !implicitTypeOnly) {
@@ -873,7 +873,7 @@ open class FirDeclarationsResolveTransformer(
     override fun transformTypeAlias(typeAlias: FirTypeAlias, data: ResolutionMode): FirTypeAlias = whileAnalysing(session, typeAlias) {
         if (implicitTypeOnly) return typeAlias
         if (typeAlias.isLocal && typeAlias !in context.targetedLocalClasses) {
-            return typeAlias.runAllPhasesForLocalClass(components, data)
+            return typeAlias.runAllPhasesForLocalClassLikeDeclarations(components, data)
         }
 
         @OptIn(PrivateForInline::class)
@@ -944,7 +944,7 @@ open class FirDeclarationsResolveTransformer(
     ): FirAnonymousObject = whileAnalysing(session, anonymousObject) {
         context.withContainingClass(anonymousObject) {
             if (anonymousObject !in context.targetedLocalClasses) {
-                return anonymousObject.runAllPhasesForLocalClass(components, data)
+                return anonymousObject.runAllPhasesForLocalClassLikeDeclarations(components, data)
             }
 
             require(anonymousObject.controlFlowGraphReference == null)
