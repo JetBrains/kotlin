@@ -7,7 +7,7 @@ PsiJetFileStubImpl[package=]
       ENUM_ENTRY[classId=null, fqName=A.X, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=true, isInterface=false, isLocal=false, isTopLevel=false, name=X, superNames=[]]
       ENUM_ENTRY[classId=null, fqName=A.Y, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=true, isInterface=false, isLocal=false, isTopLevel=false, name=Y, superNames=[]]
   CLASS[classId=/B, fqName=B, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=B, superNames=[]]
-    MODIFIER_LIST[enum private]
+    MODIFIER_LIST[private enum]
     CLASS_BODY
       ENUM_ENTRY[classId=null, fqName=B.X, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=true, isInterface=false, isLocal=false, isTopLevel=false, name=X, superNames=[]]
       ENUM_ENTRY[classId=null, fqName=B.Y, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=true, isInterface=false, isLocal=false, isTopLevel=false, name=Y, superNames=[]]

@@ -7,7 +7,7 @@ MyBuilder.class:
       MODIFIER_LIST[public]
       CLASS_BODY
         PROPERTY[fqName=test.MyBuilder.name, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=name]
-          MODIFIER_LIST[abstract public]
+          MODIFIER_LIST[public abstract]
           TYPE_REFERENCE
             USER_TYPE
               USER_TYPE

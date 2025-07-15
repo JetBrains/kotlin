@@ -6,7 +6,7 @@ MyInterface.class:
       MODIFIER_LIST[public]
       CLASS_BODY
         PROPERTY[fqName=MyInterface.property, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=property]
-          MODIFIER_LIST[abstract public]
+          MODIFIER_LIST[public abstract]
             ANNOTATION_ENTRY[hasValueArguments=false, shortName=RegularAnno]
               CONSTRUCTOR_CALLEE
                 TYPE_REFERENCE
@@ -24,7 +24,7 @@ MyInterface.class:
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=String]
         FUN[fqName=MyInterface.function, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=function]
-          MODIFIER_LIST[abstract public]
+          MODIFIER_LIST[public abstract]
             ANNOTATION_ENTRY[hasValueArguments=false, shortName=RegularAnno]
               CONSTRUCTOR_CALLEE
                 TYPE_REFERENCE

@@ -73,5 +73,5 @@ PsiJetFileStubImpl[package=]
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=Int]
         PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=false, isGetter=true, mayHaveContract=false]
-          MODIFIER_LIST[open private]
+          MODIFIER_LIST[private open]
           VALUE_PARAMETER_LIST

@@ -6,7 +6,7 @@ A.class:
       MODIFIER_LIST[public]
       CLASS_BODY
         FUN[fqName=A.foo, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=foo]
-          MODIFIER_LIST[abstract public]
+          MODIFIER_LIST[public abstract]
           VALUE_PARAMETER_LIST
           TYPE_REFERENCE
             USER_TYPE

@@ -61,7 +61,7 @@ KotlinStub$CLASS[classId=pack/MultiFieldValueClassWithTypeAlias, fqName=pack.Mul
             KotlinStub$REFERENCE_EXPRESSION[referencedName=kotlin]
           KotlinStub$REFERENCE_EXPRESSION[referencedName=String]
     KotlinStub$FUN[fqName=pack.MultiFieldValueClassWithTypeAlias.equals, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=equals]
-      KotlinStub$MODIFIER_LIST[open public operator]
+      KotlinStub$MODIFIER_LIST[public open operator]
       KotlinStub$VALUE_PARAMETER_LIST
         KotlinStub$VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=other]
           KotlinStub$TYPE_REFERENCE
@@ -76,7 +76,7 @@ KotlinStub$CLASS[classId=pack/MultiFieldValueClassWithTypeAlias, fqName=pack.Mul
             KotlinStub$REFERENCE_EXPRESSION[referencedName=kotlin]
           KotlinStub$REFERENCE_EXPRESSION[referencedName=Boolean]
     KotlinStub$FUN[fqName=pack.MultiFieldValueClassWithTypeAlias.hashCode, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=hashCode]
-      KotlinStub$MODIFIER_LIST[open public]
+      KotlinStub$MODIFIER_LIST[public open]
       KotlinStub$VALUE_PARAMETER_LIST
       KotlinStub$TYPE_REFERENCE
         KotlinStub$USER_TYPE
@@ -84,7 +84,7 @@ KotlinStub$CLASS[classId=pack/MultiFieldValueClassWithTypeAlias, fqName=pack.Mul
             KotlinStub$REFERENCE_EXPRESSION[referencedName=kotlin]
           KotlinStub$REFERENCE_EXPRESSION[referencedName=Int]
     KotlinStub$FUN[fqName=pack.MultiFieldValueClassWithTypeAlias.toString, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=toString]
-      KotlinStub$MODIFIER_LIST[open public]
+      KotlinStub$MODIFIER_LIST[public open]
       KotlinStub$VALUE_PARAMETER_LIST
       KotlinStub$TYPE_REFERENCE
         KotlinStub$USER_TYPE

@@ -12,7 +12,7 @@ PsiJetFileStubImpl[package=test]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=Int]
         VALUE_PARAMETER[fqName=test.ClassMembers.p2, hasDefaultValue=false, hasValOrVar=true, isMutable=true, name=p2]
-          MODIFIER_LIST[open public]
+          MODIFIER_LIST[public open]
           TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=String]

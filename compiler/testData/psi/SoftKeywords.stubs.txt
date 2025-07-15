@@ -9,7 +9,7 @@ PsiJetFileStubImpl[package=foo.bar.goo]
     IMPORT_DIRECTIVE[importedFqName=foo, isAllUnder=false, isValid=true]
       REFERENCE_EXPRESSION[referencedName=foo]
   CLASS[classId=foo/bar/goo/Bar, fqName=foo.bar.goo.Bar, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=Bar, superNames=[A]]
-    MODIFIER_LIST[abstract open override private public internal protected out in annotation suspend]
+    MODIFIER_LIST[public protected private internal open abstract override suspend annotation out in]
     TYPE_PARAMETER_LIST
       TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=abstract]
       TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=enum]
@@ -20,7 +20,7 @@ PsiJetFileStubImpl[package=foo.bar.goo]
       TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=true, name=open]
         MODIFIER_LIST[out]
       TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=open]
-        MODIFIER_LIST[abstract enum open override private public internal protected annotation]
+        MODIFIER_LIST[public protected private internal open abstract override enum annotation]
     PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Bar]
       VALUE_PARAMETER_LIST
         VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=a]
@@ -35,7 +35,7 @@ PsiJetFileStubImpl[package=foo.bar.goo]
         REFERENCE_EXPRESSION[referencedName=b]
     CLASS_BODY
       PROPERTY[fqName=foo.bar.goo.Bar.abstract, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=abstract]
-        MODIFIER_LIST[private public internal protected]
+        MODIFIER_LIST[public protected private internal]
       PROPERTY[fqName=foo.bar.goo.Bar.open, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=open]
       PROPERTY[fqName=foo.bar.goo.Bar.enum, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=enum]
       PROPERTY[fqName=foo.bar.goo.Bar.open, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=open]
@@ -77,7 +77,7 @@ PsiJetFileStubImpl[package=foo.bar.goo]
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=s]
       FUN[fqName=foo.bar.goo.Bar.abstract, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=abstract]
-        MODIFIER_LIST[private public internal protected]
+        MODIFIER_LIST[public protected private internal]
         VALUE_PARAMETER_LIST
         TYPE_REFERENCE
           USER_TYPE
@@ -350,7 +350,7 @@ PsiJetFileStubImpl[package=foo.bar.goo]
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=t]
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=open]
-            MODIFIER_LIST[abstract enum open override private public internal protected annotation]
+            MODIFIER_LIST[public protected private internal open abstract override enum annotation]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=t]
@@ -482,7 +482,7 @@ PsiJetFileStubImpl[package=foo.bar.goo]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=t]
         VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=open]
-          MODIFIER_LIST[abstract enum open override private public internal protected annotation]
+          MODIFIER_LIST[public protected private internal open abstract override enum annotation]
           TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=b]

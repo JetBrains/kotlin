@@ -3,7 +3,7 @@ PsiJetFileStubImpl[package=test]
     REFERENCE_EXPRESSION[referencedName=test]
   IMPORT_LIST
   CLASS[classId=test/AnnotatedParameterInEnumConstructor, fqName=test.AnnotatedParameterInEnumConstructor, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=AnnotatedParameterInEnumConstructor, superNames=[Enum]]
-    MODIFIER_LIST[enum public final]
+    MODIFIER_LIST[public final enum]
     PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=AnnotatedParameterInEnumConstructor]
       MODIFIER_LIST[private]
       VALUE_PARAMETER_LIST
