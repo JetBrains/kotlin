@@ -62,6 +62,7 @@
         <maven.compiler.target>1.8</maven.compiler.target>
         <deploy-snapshot-repo>sonatype-nexus-staging</deploy-snapshot-repo>
         <deploy-snapshot-url>https://oss.sonatype.org/content/repositories/snapshots/</deploy-snapshot-url>
+        <local-bootstrap-url>invalid-bootstrap-url</local-bootstrap-url>
     </properties>
 
     <prerequisites>
@@ -386,5 +387,16 @@
                 <module>examples/kotlin-java-example</module>
             </modules>
         </profile>
+      <profile>
+        <id>local-bootstrap</id>
+        <repositories>
+          <repository>
+            <id>local-boostrap</id>
+            <name>Local boostrap</name>
+            <url>${local-bootstrap-url}</url>
+            <snapshots/>
+          </repository>
+        </repositories>
+      </profile>
     </profiles>
 </project>
