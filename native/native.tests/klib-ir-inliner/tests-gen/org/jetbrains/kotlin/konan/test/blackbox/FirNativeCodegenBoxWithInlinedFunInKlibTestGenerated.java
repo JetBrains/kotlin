@@ -34541,6 +34541,12 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
       }
 
       @Test
+      @TestMetadata("kt52230.kt")
+      public void testKt52230() {
+        runTest("compiler/testData/codegen/box/primitiveTypes/kt52230.kt");
+      }
+
+      @Test
       @TestMetadata("kt6590_identityEquals.kt")
       public void testKt6590_identityEquals() {
         runTest("compiler/testData/codegen/box/primitiveTypes/kt6590_identityEquals.kt");
