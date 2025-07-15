@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.util.replaceText
 import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.Timeout
+import org.junit.jupiter.api.condition.OS
 import java.io.PipedInputStream
 import java.io.PipedOutputStream
 import java.util.concurrent.TimeUnit
@@ -28,6 +29,7 @@ import kotlin.test.assertEquals
  *- A bug (in KGP, or configuration of the external processes) could cause the Gradle build, and thus daemon, to hang.
  *  Using independent daemons per-test means one hanging test won't affect others.
  */
+@OsCondition(supportedOn = [OS.LINUX, OS.MAC]) // TODO KT-79233 fix windows
 class JsContinuousBuildIT : KGPDaemonsBaseTest() {
 
     override val defaultBuildOptions: BuildOptions
