@@ -18,7 +18,7 @@ import kotlin.reflect.KClass
  */
 data class ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute(
     val coneType: ConeKotlinType,
-    val relevantFeature: LanguageFeature,
+    val relevantFeature: LanguageFeature? = null,
 ) : ConeAttribute<ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute>() {
     // Those methods should not matter too much because it's only assumed to be used for explicit type arguments
     // for which we don't expect to perform complex operations

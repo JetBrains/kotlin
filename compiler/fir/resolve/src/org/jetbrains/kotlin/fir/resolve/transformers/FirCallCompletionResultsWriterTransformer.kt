@@ -916,7 +916,6 @@ class FirCallCompletionResultsWriterTransformer(
             attributes.add(
                 ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute(
                     argument.typeRef.coneType.fullyExpandedType(),
-                    LanguageFeature.JavaTypeParameterDefaultRepresentationWithDNN
                 )
             )
         )
