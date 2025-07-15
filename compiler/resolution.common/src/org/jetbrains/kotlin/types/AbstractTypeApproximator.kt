@@ -731,27 +731,29 @@ abstract class AbstractTypeApproximator(
                         }
                     }
 
-                    // Example with non-trivial both type approximations:
-                    //  Inv<In<C>> where C = Captured(in Int)
-                    //  Inv<In<C>> <: Inv<out In<Int>>
-                    //  Inv<In<C>> <: Inv<in In<Any?>>
-                    //
-                    // So, both of the options are possible, but since such case is rare we will chose Inv<out In<Int>> for now
                     // Hopefully, this variable might be removed once smart casts for lazy would work (KT-27325)
                     val approximatedToSuperType = approximatedToSuperType
                         ?: continue@loop // null means that this type we can leave as is
-                    if (approximatedToSuperType.isTrivialSuper()) {
-                        if (approximatedToSubType == null) continue@loop // seems like this is never null
-                        if (!approximatedToSubType!!.isTrivialSub()) {
-                            newArguments[index] = createTypeArgument(approximatedToSubType!!, TypeVariance.IN)
-                            continue@loop
-                        }
-                    }
 
-                    if (AbstractTypeChecker.equalTypes(this, argumentType, approximatedToSuperType)) {
-                        newArguments[index] = approximatedToSuperType.asTypeArgument()
-                    } else {
-                        newArguments[index] = createTypeArgument(approximatedToSuperType, TypeVariance.OUT)
+                    val isTrivialSuper = approximatedToSuperType.isTrivialSuper()
+                    newArguments[index] = when {
+                        isTrivialSuper && approximatedToSubType == null -> continue@loop // seems like this is never null
+
+                        // Example with non-trivial both types approximations:
+                        //  Inv<In<C>> where C = Captured(in Int)
+                        //  Inv<In<C>> <: Inv<out In<Int>>
+                        //  Inv<In<C>> <: Inv<in In<Any?>>
+                        //
+                        // So, both of the options are possible, but since such a case is rare,
+                        // we will choose Inv<out In<Int>> for now
+                        isTrivialSuper && approximatedToSubType?.isTrivialSub() == false ->
+                            createTypeArgument(approximatedToSubType!!, TypeVariance.IN)
+
+                        AbstractTypeChecker.equalTypes(this, argumentType, approximatedToSuperType) ->
+                            approximatedToSuperType.asTypeArgument()
+
+                        else ->
+                            createTypeArgument(approximatedToSuperType, TypeVariance.OUT)
                     }
                 }
             }
