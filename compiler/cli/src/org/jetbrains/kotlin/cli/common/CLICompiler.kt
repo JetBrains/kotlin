@@ -78,14 +78,13 @@ abstract class CLICompiler<A : CommonCompilerArguments> {
         return exec(errStream, Services.EMPTY, MessageRenderer.PLAIN_FULL_PATHS, args)
     }
 
-    protected open fun shouldRunK2(messageCollector: MessageCollector, arguments: A): Boolean {
-        val languageVersion = arguments.languageVersion?.let { LanguageVersion.fromVersionString(arguments.languageVersion) }
-            ?: LanguageVersion.LATEST_STABLE
+    private fun shouldRunK2(arguments: A): Boolean {
+        val languageVersion = arguments.languageVersion?.let(LanguageVersion::fromVersionString) ?: LanguageVersion.LATEST_STABLE
         return languageVersion.usesK2
     }
 
     private fun execImpl(messageCollector: MessageCollector, services: Services, arguments: A): ExitCode {
-        val shouldRunK2 = shouldRunK2(messageCollector, arguments)
+        val shouldRunK2 = shouldRunK2(arguments)
         if (shouldRunK2) {
             val code = doExecutePhased(arguments, services, messageCollector)
             if (code != null) return code

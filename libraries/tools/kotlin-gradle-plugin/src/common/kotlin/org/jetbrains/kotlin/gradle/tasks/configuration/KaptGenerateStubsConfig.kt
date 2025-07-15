@@ -53,7 +53,6 @@ internal class KaptGenerateStubsConfig : BaseKotlinCompileConfig<KaptGenerateStu
             if (kaptExtension is KaptExtension) {
                 task.pluginOptions.add(buildOptions(kaptExtension, task))
             }
-            task.useK2Kapt.value(KaptProperties.isUseK2(project)).finalizeValueOnRead()
 
             if (!isIncludeCompileClasspath(kaptExtension)) {
                 task.onlyIf {

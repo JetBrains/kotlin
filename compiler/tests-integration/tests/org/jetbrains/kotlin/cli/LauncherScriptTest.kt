@@ -657,9 +657,7 @@ Caused by: java.lang.AssertionError: assert
         val k1 = "warning: language version 1.9 is deprecated and its support will be removed in a future version of Kotlin\n"
 
         runProcess("kapt", "-version", expectedStderr = info)
-        runProcess("kapt", "-Xuse-k2-kapt=true", "-version", expectedStderr = info)
         runProcess("kapt", "-language-version", "1.9", "-version", expectedStderr = info + k1)
         runProcess("kapt", "-language-version=1.9", "-version", expectedStderr = info + k1)
-        runProcess("kapt", "-Xuse-k2-kapt=false", "-version", expectedStderr = info + k1)
     }
 }

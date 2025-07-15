@@ -5,15 +5,9 @@
 
 package org.jetbrains.kotlin.gradle.android
 
-import org.jetbrains.kotlin.gradle.forceK2Kapt
-import org.jetbrains.kotlin.gradle.testbase.TestProject
 import org.junit.jupiter.api.DisplayName
 
 @DisplayName("android with kapt4 tests")
 class Kapt4AndroidIT : Kapt3AndroidIT() {
     override val defaultBuildOptions = super.defaultBuildOptions.copyEnsuringK2()
-
-    override fun TestProject.customizeProject() {
-        forceK2Kapt()
-    }
 }

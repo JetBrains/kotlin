@@ -9,8 +9,6 @@ import org.gradle.api.Project
 import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.gradle.internal.properties.PropertiesBuildService.*
 import org.jetbrains.kotlin.gradle.internal.properties.propertiesService
-import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
-import org.jetbrains.kotlin.gradle.plugin.diagnostics.reportDiagnosticOncePerProject
 
 internal object KaptProperties {
     private val KAPT_VERBOSE = BooleanGradleProperty("kapt.verbose", false)
@@ -23,7 +21,6 @@ internal object KaptProperties {
     private val KAPT_INFO_AS_WARNINGS = BooleanGradleProperty("kapt.info.as.warnings", false)
     private val KAPT_INCLUDE_COMPILE_CLASSPATH = BooleanGradleProperty("kapt.include.compile.classpath", true)
     private val KAPT_KEEP_KDOC_COMMENTS_IN_STUBS = BooleanGradleProperty("kapt.keep.kdoc.comments.in.stubs", true)
-    private val KAPT_USE_K2 = BooleanGradleProperty("kapt.use.k2", true)
     private val KAPT_DONT_WARN_ANNOTATION_PROCESSOR_DEPENDENCIES = BooleanGradleProperty(
         "kapt.dont.warn.annotationProcessor.dependencies",
         false
@@ -49,14 +46,6 @@ internal object KaptProperties {
 
     fun isKaptKeepKdocCommentsInStubs(project: Project): Provider<Boolean> = project.propertiesService.flatMap {
         it.property(KAPT_KEEP_KDOC_COMMENTS_IN_STUBS, project)
-    }
-
-    fun isUseK2(project: Project): Provider<Boolean> = project.propertiesService.flatMap {
-        it.property(KAPT_USE_K2, project).map { propValue ->
-            if (!propValue)
-                project.reportDiagnosticOncePerProject(KotlinToolingDiagnostics.WarnKaptK1IsDeprecated())
-            propValue
-        }
     }
 
     fun isKaptDontWarnAnnotationProcessorDependencies(project: Project): Provider<Boolean> = project.propertiesService.flatMap {

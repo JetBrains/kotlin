@@ -103,8 +103,6 @@ fun KGPBaseTest.project(
     localRepoDir?.let { testProject.configureLocalRepository(localRepoDir) }
     if (buildJdk != null) testProject.setupNonDefaultJdk(buildJdk)
 
-    testProject.customizeProject()
-
     val result = runCatching {
         testProject.test()
     }
