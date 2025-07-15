@@ -11,6 +11,7 @@ import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 import kotlin.coroutines.*
 import kotlin.internal.InlineOnly
+import kotlin.internal.getContinuation
 
 /**
  * Invoke 'invoke' method of suspend super type

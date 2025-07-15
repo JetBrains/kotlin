@@ -10,7 +10,7 @@ import kotlin.contracts.InvocationKind
 import kotlin.contracts.contract
 import kotlin.coroutines.*
 import kotlin.internal.InlineOnly
-import kotlin.wasm.internal.getContinuation
+import kotlin.internal.getContinuation
 import kotlin.wasm.internal.returnIfSuspended
 
 /**

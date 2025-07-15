@@ -13,7 +13,7 @@ import kotlin.coroutines.native.internal.ContinuationImpl
 import kotlin.coroutines.native.internal.RestrictedContinuationImpl
 import kotlin.coroutines.native.internal.probeCoroutineCreated
 import kotlin.internal.InlineOnly
-import kotlin.native.internal.getContinuation
+import kotlin.internal.getContinuation
 import kotlin.native.internal.returnIfSuspended
 
 /**
