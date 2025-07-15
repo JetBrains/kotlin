@@ -5,9 +5,9 @@ FILE: [ResolvedTo(BODY_RESOLVE)] annotationArguments.kt
         }
 
     }
-    @<ERROR TYPE REF: Symbol not found for Arrays>[Types](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final [ResolvedTo(CONSTANT_EVALUATION)] class WithExplicitArrays : R|kotlin/Any| {
-        public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=WithExplicitArrays] constructor(): R|WithExplicitArrays| {
-            LAZY_super<R|kotlin/Any|>
+    @<ERROR TYPE REF: Symbol not found for Arrays>[Types]() public final [ResolvedTo(BODY_RESOLVE)] class WithExplicitArrays : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=WithExplicitArrays] constructor(): R|WithExplicitArrays| {
+            super<R|kotlin/Any|>()
         }
 
     }
@@ -47,15 +47,15 @@ FILE: [ResolvedTo(BODY_RESOLVE)] annotationArguments.kt
         }
 
     }
-    @<ERROR TYPE REF: Symbol not found for Outer>[Types](LAZY_EXPRESSION, LAZY_EXPRESSION) public final [ResolvedTo(CONSTANT_EVALUATION)] class WithNested : R|kotlin/Any| {
-        public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=WithNested] constructor(): R|WithNested| {
-            LAZY_super<R|kotlin/Any|>
+    @<ERROR TYPE REF: Symbol not found for Outer>[Types]() public final [ResolvedTo(BODY_RESOLVE)] class WithNested : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=WithNested] constructor(): R|WithNested| {
+            super<R|kotlin/Any|>()
         }
 
     }
-    @<ERROR TYPE REF: Symbol not found for Outer>[Types](LAZY_EXPRESSION, LAZY_EXPRESSION) public final [ResolvedTo(CONSTANT_EVALUATION)] class WithQualifiedNested : R|kotlin/Any| {
-        public [ResolvedTo(CONSTANT_EVALUATION)] [ContainingClassKey=WithQualifiedNested] constructor(): R|WithQualifiedNested| {
-            LAZY_super<R|kotlin/Any|>
+    @<ERROR TYPE REF: Symbol not found for Outer>[Types]() public final [ResolvedTo(BODY_RESOLVE)] class WithQualifiedNested : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=WithQualifiedNested] constructor(): R|WithQualifiedNested| {
+            super<R|kotlin/Any|>()
         }
 
     }
@@ -131,9 +131,9 @@ FILE: [ResolvedTo(BODY_RESOLVE)] annotationArguments.kt
         }
 
     }
-    @Deprecated[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] class Another : R|kotlin/Any| {
-        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Another] constructor(): R|Another| {
-            LAZY_super<R|kotlin/Any|>
+    @R|kotlin/Deprecated|[Types](message = String(Deprecated), replaceWith = R|kotlin/ReplaceWith.ReplaceWith|(String(NewClass), vararg(String(foo.bar.baz.NewClass))), level = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.HIDDEN|) public final [ResolvedTo(BODY_RESOLVE)] class Another : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Another] constructor(): R|Another| {
+            super<R|kotlin/Any|>()
         }
 
     }
@@ -143,9 +143,9 @@ FILE: [ResolvedTo(BODY_RESOLVE)] annotationArguments.kt
         }
 
     }
-    @kotlin.Deprecated[Unresolved](LAZY_EXPRESSION, LAZY_EXPRESSION, LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] class Qualified : R|kotlin/Any| {
-        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=Qualified] constructor(): R|Qualified| {
-            LAZY_super<R|kotlin/Any|>
+    @R|kotlin/Deprecated|[Types](message = String(Deprecated), replaceWith = Q|kotlin|.R|kotlin/ReplaceWith.ReplaceWith|(String(NewClass), vararg(String(foo.bar.baz.NewClass))), level = Q|kotlin/DeprecationLevel|.R|kotlin/DeprecationLevel.HIDDEN|) public final [ResolvedTo(BODY_RESOLVE)] class Qualified : R|kotlin/Any| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=Qualified] constructor(): R|Qualified| {
+            super<R|kotlin/Any|>()
         }
 
     }

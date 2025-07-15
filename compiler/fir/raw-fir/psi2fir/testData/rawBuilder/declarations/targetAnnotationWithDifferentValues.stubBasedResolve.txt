@@ -17,21 +17,21 @@ FILE: [ResolvedTo(BODY_RESOLVE)] targetAnnotationWithDifferentValues.kt
         }
 
     }
-    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class AnnotationWithArrayOf : R|kotlin/Annotation| {
-        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnotationWithArrayOf] constructor(): R|AnnotationWithArrayOf| {
-            LAZY_super<R|kotlin/Any|>
+    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(*<implicitArrayOf>(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|))) public final [ResolvedTo(BODY_RESOLVE)] annotation class AnnotationWithArrayOf : R|kotlin/Annotation| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=AnnotationWithArrayOf] constructor(): R|AnnotationWithArrayOf| {
+            super<R|kotlin/Any|>()
         }
 
     }
-    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class AnnotationWithArrayOfAndSpreadOperator : R|kotlin/Annotation| {
-        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnotationWithArrayOfAndSpreadOperator] constructor(): R|AnnotationWithArrayOfAndSpreadOperator| {
-            LAZY_super<R|kotlin/Any|>
+    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(*<implicitArrayOf>(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|))) public final [ResolvedTo(BODY_RESOLVE)] annotation class AnnotationWithArrayOfAndSpreadOperator : R|kotlin/Annotation| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=AnnotationWithArrayOfAndSpreadOperator] constructor(): R|AnnotationWithArrayOfAndSpreadOperator| {
+            super<R|kotlin/Any|>()
         }
 
     }
-    @Target[Unresolved](LAZY_EXPRESSION) public final? [ResolvedTo(RAW_FIR)] annotation class AnnotationWithArrayOfWithoutSpreadOperator : R|kotlin/Annotation| {
-        public? [ResolvedTo(RAW_FIR)] [ContainingClassKey=AnnotationWithArrayOfWithoutSpreadOperator] constructor(): R|AnnotationWithArrayOfWithoutSpreadOperator| {
-            LAZY_super<R|kotlin/Any|>
+    @R|kotlin/annotation/Target|[Types](allowedTargets = vararg(<implicitArrayOf>(Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.PROPERTY|, Q|kotlin/annotation/AnnotationTarget|.R|kotlin/annotation/AnnotationTarget.FIELD|))) public final [ResolvedTo(BODY_RESOLVE)] annotation class AnnotationWithArrayOfWithoutSpreadOperator : R|kotlin/Annotation| {
+        public [ResolvedTo(BODY_RESOLVE)] [ContainingClassKey=AnnotationWithArrayOfWithoutSpreadOperator] constructor(): R|AnnotationWithArrayOfWithoutSpreadOperator| {
+            super<R|kotlin/Any|>()
         }
 
     }

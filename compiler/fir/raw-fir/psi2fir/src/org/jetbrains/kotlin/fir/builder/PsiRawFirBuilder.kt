@@ -3371,12 +3371,15 @@ open class PsiRawFirBuilder(
         // In non-erroneous code, it's either `f()` (without explicit receiver) or `(expr)()` which is transformed to `expr.invoke()`
         override fun visitCallExpression(expression: KtCallExpression, data: FirElement?): FirElement {
             // TODO(KT-22765) drop workaround when suspend modifier for lambdas is implemented
-            if (imitateLambdaSuspendModifier &&
-                expression.calleeExpression.let { it is KtNameReferenceExpression && it.getReferencedNameElement().text == StandardClassIds.Callables.suspend.callableName.identifier } &&
+            val calleeExpressionToCheck = expression.takeIf { imitateLambdaSuspendModifier }?.calleeExpression
+            if (calleeExpressionToCheck is KtNameReferenceExpression &&
+                calleeExpressionToCheck.getReferencedName() == StandardClassIds.Callables.suspend.callableName.identifier &&
                 !expression.parent.let { it.selectorExpression == expression && it.receiverExpression != null } &&
                 expression.valueArgumentList == null &&
                 expression.lambdaArguments.size == 1 &&
-                expression.typeArgumentList == null
+                expression.typeArgumentList == null &&
+                // Additional name check as the name might be wrapped by backticks
+                calleeExpressionToCheck.getReferencedNameElement().text?.startsWith('`') == false
             ) {
                 expression.lambdaArguments.single().let {
                     return buildOrLazyExpression(it.toFirSourceElement()) {
