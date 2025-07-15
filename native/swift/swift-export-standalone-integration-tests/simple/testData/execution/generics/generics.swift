@@ -28,4 +28,12 @@ func primitiveBox() throws {
     try #require(ib.t == 3)
 }
 
+@Test
+func genericInterface() throws {
+    let a: MyInterface = MyInterfaceImpl(p: Foo(i: 5))
+    try #require((a.produce() as! Foo).i == 5)
+
+    let b = produceMyInterface()
+    try #require(b is MyInterfaceImpl)
+}
 

@@ -175,7 +175,7 @@ internal abstract class SirAbstractClassFromKtSymbol(
             .filterIsInstance<KaClassType>()
             .mapNotNull { it.expandedSymbol }
             .filter { it.classKind == KaClassKind.INTERFACE }
-            .filter { it.typeParameters.isEmpty() } //Exclude generics
+//            .filter { it.typeParameters.isEmpty() } //Exclude generics
             .filterNot { it.isCloneable }
             .flatMap {
                 it.toSir().allDeclarations.filterIsInstance<SirProtocol>().also {

@@ -16,3 +16,23 @@ class TripleBox(i: Int): Box<Box<Box<Foo>>>(DefaultBox(DefaultBox(Foo(i)))) {
         t.t.t = Foo(newValue)
     }
 }
+
+interface MyInterface<T> {
+    fun accept(param: T)
+
+    fun produce(): T
+}
+
+class MyInterfaceImpl<T>(private var p: T) : MyInterface<T> {
+    override fun produce(): T {
+        return p
+    }
+
+    override fun accept(param: T) {
+        p = param
+    }
+}
+
+fun produceMyInterface(): MyInterface<Any> {
+    return MyInterfaceImpl(Any())
+}
