@@ -14,7 +14,7 @@ enum class KotlinVersion(val version: String) {
     @Deprecated("Unsupported", level = DeprecationLevel.ERROR) KOTLIN_1_5("1.5"),
     @Deprecated("Unsupported", level = DeprecationLevel.ERROR) KOTLIN_1_6("1.6"),
     @Deprecated("Unsupported", level = DeprecationLevel.ERROR) KOTLIN_1_7("1.7"),
-    @Deprecated("Will be removed soon") KOTLIN_1_8("1.8"),
+    @Deprecated("Unsupported", level = DeprecationLevel.ERROR) KOTLIN_1_8("1.8"),
     @Deprecated("Will be removed soon") KOTLIN_1_9("1.9"),
     @Deprecated("Will be removed soon") KOTLIN_2_0("2.0"),
     KOTLIN_2_1("2.1"),
