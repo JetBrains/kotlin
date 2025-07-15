@@ -315,7 +315,7 @@ abstract class AbstractTypeApproximator(
 
         if (toSuper && upperBoundForApproximation != null &&
             (conf.intersectionStrategy == TypeApproximatorConfiguration.IntersectionStrategy.TO_COMMON_SUPERTYPE ||
-                    conf.intersectionStrategy == TypeApproximatorConfiguration.IntersectionStrategy.TO_UPPER_BOUND_IF_SUPERTYPE)
+                    conf.intersectionStrategy == @OptIn(AllowedToUsedOnlyInK1::class) TypeApproximatorConfiguration.IntersectionStrategy.TO_UPPER_BOUND_IF_SUPERTYPE)
         ) {
             return approximateToSuperType(upperBoundForApproximation, depth) ?: upperBoundForApproximation
         }
@@ -344,6 +344,8 @@ abstract class AbstractTypeApproximator(
             TypeApproximatorConfiguration.IntersectionStrategy.TO_FIRST -> if (toSuper) newTypes.first() else return type.defaultResult(toSuper = false)
             // commonSupertypeCalculator should handle flexible types correctly
             TypeApproximatorConfiguration.IntersectionStrategy.TO_COMMON_SUPERTYPE,
+
+            @OptIn(AllowedToUsedOnlyInK1::class)
             TypeApproximatorConfiguration.IntersectionStrategy.TO_UPPER_BOUND_IF_SUPERTYPE -> {
                 if (!toSuper) return type.defaultResult(toSuper = false)
                 val resultType = commonSuperType(newTypes)
@@ -638,12 +640,7 @@ abstract class AbstractTypeApproximator(
                     } else type.defaultResult(toSuper)
                 }
                 TypeVariance.OUT, TypeVariance.IN -> {
-                    if (
-                        conf.approximateIntersectionTypesInContravariantPositions &&
-                        effectiveVariance == TypeVariance.IN &&
-                        argumentType.typeConstructor().isIntersection() &&
-                        isIntersectionTypeEffectivelyNothing(argumentType.typeConstructor() as IntersectionTypeConstructorMarker)
-                    ) {
+                    if (shouldApproximateIntersectionContravariantlyPlacedArgumentTypeToStar(argumentType, effectiveVariance)) {
                         newArguments[index] = createStarProjection(parameter)
                         continue@loop
                     }
@@ -659,18 +656,11 @@ abstract class AbstractTypeApproximator(
                         val approximatedType = approximateToSuperType(argumentType, depth)
                             ?.makeApproximatedFlexibleNotNullIfUpperBoundNotNull(argumentType, parameter)
 
-                        if (conf.intersectionStrategy == TypeApproximatorConfiguration.IntersectionStrategy.TO_UPPER_BOUND_IF_SUPERTYPE
-                            && argumentType.typeConstructor().isIntersection()
-                            && parameter.getUpperBounds().all { AbstractTypeChecker.isSubtypeOf(ctx, argumentType, it) }
+                        if (!isK2 &&
+                            @OptIn(AllowedToUsedOnlyInK1::class) needK1SpecialHandlingForIntersectionType(argumentType, parameter)
                         ) {
-                            val intersectedUpperBounds = intersectTypes(parameter.getUpperBounds())
-                            if (approximatedType == null
-                                || !AbstractTypeChecker.isSubtypeOf(ctx, approximatedType, intersectedUpperBounds)
-                            ) {
-                                intersectedUpperBounds
-                            } else {
-                                approximatedType
-                            }
+                            @OptIn(AllowedToUsedOnlyInK1::class)
+                            specialK1HandlingOfIntersectionType(approximatedType, parameter)
                         } else {
                             approximatedType ?: continue@loop
                         }
@@ -767,6 +757,40 @@ abstract class AbstractTypeApproximator(
         val newArgumentsList = List(type.argumentsCount()) { index -> newArguments[index] ?: type.getArgument(index) }
         val approximatedType = type.replaceArguments(newArgumentsList)
         return approximateLocalTypes(approximatedType, toSuper, depth) ?: approximatedType
+    }
+
+    context(conf: TypeApproximatorConfiguration)
+    private fun shouldApproximateIntersectionContravariantlyPlacedArgumentTypeToStar(
+        argumentType: KotlinTypeMarker,
+        effectiveVariance: TypeVariance,
+    ): Boolean {
+        return conf.approximateIntersectionTypesInContravariantPositions && effectiveVariance == TypeVariance.IN &&
+                argumentType.typeConstructor().isIntersection() &&
+                isIntersectionTypeEffectivelyNothing(argumentType.typeConstructor() as IntersectionTypeConstructorMarker)
+    }
+
+    @AllowedToUsedOnlyInK1
+    private fun specialK1HandlingOfIntersectionType(
+        approximatedType: KotlinTypeMarker?,
+        parameter: TypeParameterMarker,
+    ): KotlinTypeMarker {
+        val intersectedUpperBounds = intersectTypes(parameter.getUpperBounds())
+        return if (approximatedType == null || !AbstractTypeChecker.isSubtypeOf(ctx, approximatedType, intersectedUpperBounds)) {
+            intersectedUpperBounds
+        } else {
+            approximatedType
+        }
+    }
+
+    @AllowedToUsedOnlyInK1
+    context(conf: TypeApproximatorConfiguration)
+    private fun needK1SpecialHandlingForIntersectionType(
+        argumentType: KotlinTypeMarker,
+        parameter: TypeParameterMarker,
+    ): Boolean {
+        if (conf.intersectionStrategy != TypeApproximatorConfiguration.IntersectionStrategy.TO_UPPER_BOUND_IF_SUPERTYPE) return false
+        if (!argumentType.typeConstructor().isIntersection()) return false
+        return parameter.getUpperBounds().all { AbstractTypeChecker.isSubtypeOf(ctx, argumentType, it) }
     }
 
     context(conf: TypeApproximatorConfiguration)
