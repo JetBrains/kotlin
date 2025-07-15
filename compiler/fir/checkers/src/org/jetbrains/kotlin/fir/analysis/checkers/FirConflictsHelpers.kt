@@ -259,13 +259,13 @@ private val FirClassifierSymbol<*>.name: Name
 context(context: CheckerContext)
 fun collectConflictingLocalFunctionsFrom(
     block: FirBlock
-): Map<FirFunctionSymbol<*>, Set<FirBasedSymbol<*>>> {
+): FirDeclarationCollector<FirFunctionSymbol<*>>? {
     val collectables =
         block.statements.filter {
             (it is FirSimpleFunction || it is FirRegularClass) && (it as FirDeclaration).symbol.isCollectable()
         }
 
-    if (collectables.isEmpty()) return emptyMap()
+    if (collectables.isEmpty()) return null
 
     val inspector = FirDeclarationCollector<FirFunctionSymbol<*>>(context)
     val functionDeclarations = mutableMapOf<String, MutableSet<FirFunctionSymbol<*>>>()
@@ -285,7 +285,7 @@ fun collectConflictingLocalFunctionsFrom(
         }
     }
 
-    return inspector.declarationConflictingSymbols
+    return inspector
 }
 
 private fun <D : FirBasedSymbol<*>, S : D> FirDeclarationCollector<D>.collect(
