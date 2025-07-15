@@ -8,6 +8,7 @@
 package kotlin.wasm.internal
 
 import kotlin.coroutines.*
+import kotlin.internal.getContinuation
 
 @PublishedApi
 @ExcludedFromCodegen
