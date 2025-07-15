@@ -8,7 +8,9 @@
 package kotlin.wasm.internal
 
 import kotlin.coroutines.*
+import kotlin.internal.getContinuation
 
+// TODO: remove after compiler bootstrap
 @PublishedApi
 @ExcludedFromCodegen
 internal fun <T> getContinuation(): Continuation<T> =
