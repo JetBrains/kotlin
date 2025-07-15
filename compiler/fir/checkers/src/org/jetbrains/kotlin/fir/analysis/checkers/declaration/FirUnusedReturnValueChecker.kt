@@ -82,7 +82,7 @@ object FirUnusedReturnValueChecker : FirUnusedCheckerBase() {
         val calleeReference = expression.toReference(context.session)
         val resolvedReference = calleeReference?.resolved
 
-        val resolvedSymbol = resolvedReference?.toResolvedCallableSymbol()?.originalOrSelf()
+        val resolvedSymbol = resolvedReference?.toResolvedCallableSymbol()
 
         if (resolvedSymbol != null && !resolvedSymbol.isSubjectToCheck()) return false
 

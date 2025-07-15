@@ -110,6 +110,44 @@ object FirFakeOverrideGenerator {
         derivedClassLookupTag: ConeClassLikeLookupTag?,
         session: FirSession,
         origin: FirDeclarationOrigin,
+        newDispatchReceiverType: ConeSimpleKotlinType?,
+        newParameterTypes: List<ConeKotlinType?>? = null,
+        newTypeParameters: List<FirTypeParameterRef>? = null,
+        newReceiverType: ConeKotlinType? = null,
+        newContextParameterTypes: List<ConeKotlinType?>? = null,
+        newReturnType: ConeKotlinType? = null,
+        deferredReturnTypeCalculation: DeferredCallableCopyReturnType? = null,
+        newSource: KtSourceElement? = derivedClassLookupTag?.toSymbol(session)?.source ?: baseFunction.source,
+        newStatus: () -> FirDeclarationStatus,
+    ): FirSimpleFunction {
+        return buildSimpleFunction {
+            source = newSource
+            moduleData = session.nullableModuleData ?: baseFunction.moduleData
+            this.origin = origin
+            name = baseFunction.name
+            status = newStatus()
+            symbol = newSymbol
+            resolvePhase = origin.resolvePhaseForCopy
+
+            dispatchReceiverType = newDispatchReceiverType
+            attributes = baseFunction.attributes.copy()
+            typeParameters += configureAnnotationsTypeParametersAndSignature(
+                session, baseFunction, newParameterTypes, newTypeParameters,
+                newReceiverType, newContextParameterTypes, newReturnType, deferredReturnTypeCalculation, newSymbol,
+                copyDefaultValues = false,
+            ).filterIsInstance<FirTypeParameter>()
+            deprecationsProvider = baseFunction.deprecationsProvider
+        }.apply {
+            containingClassForStaticMemberAttr = derivedClassLookupTag.takeIf { shouldOverrideSetContainingClass(baseFunction) }
+        }
+    }
+
+    fun createCopyForFirFunction(
+        newSymbol: FirNamedFunctionSymbol,
+        baseFunction: FirSimpleFunction,
+        derivedClassLookupTag: ConeClassLikeLookupTag?,
+        session: FirSession,
+        origin: FirDeclarationOrigin,
         isExpect: Boolean = baseFunction.isExpect,
         newDispatchReceiverType: ConeSimpleKotlinType?,
         newParameterTypes: List<ConeKotlinType?>? = null,
@@ -122,30 +160,27 @@ object FirFakeOverrideGenerator {
         deferredReturnTypeCalculation: DeferredCallableCopyReturnType? = null,
         newSource: KtSourceElement? = derivedClassLookupTag?.toSymbol(session)?.source ?: baseFunction.source,
         markAsOverride: Boolean,
-    ): FirSimpleFunction = buildSimpleFunction {
-        source = newSource
-        moduleData = session.nullableModuleData ?: baseFunction.moduleData
-        this.origin = origin
-        name = baseFunction.name
-        status = baseFunction.status.copy(
+    ): FirSimpleFunction = createCopyForFirFunction(
+        newSymbol,
+        baseFunction,
+        derivedClassLookupTag,
+        session,
+        origin,
+        newDispatchReceiverType,
+        newParameterTypes,
+        newTypeParameters,
+        newReceiverType,
+        newContextParameterTypes,
+        newReturnType,
+        deferredReturnTypeCalculation,
+        newSource
+    ) {
+        baseFunction.status.copy(
             newVisibility,
             newModality,
             isExpect = isExpect,
             isOverride = if (markAsOverride) true else baseFunction.status.isOverride
         )
-        symbol = newSymbol
-        resolvePhase = origin.resolvePhaseForCopy
-
-        dispatchReceiverType = newDispatchReceiverType
-        attributes = baseFunction.attributes.copy()
-        typeParameters += configureAnnotationsTypeParametersAndSignature(
-            session, baseFunction, newParameterTypes, newTypeParameters,
-            newReceiverType, newContextParameterTypes, newReturnType, deferredReturnTypeCalculation, newSymbol,
-            copyDefaultValues = false,
-        ).filterIsInstance<FirTypeParameter>()
-        deprecationsProvider = baseFunction.deprecationsProvider
-    }.apply {
-        containingClassForStaticMemberAttr = derivedClassLookupTag.takeIf { shouldOverrideSetContainingClass(baseFunction) }
     }
 
     fun createCopyForFirConstructor(

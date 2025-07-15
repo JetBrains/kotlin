@@ -9468,6 +9468,24 @@ public class PhasedJvmDiagnosticLightTreeTestGenerated extends AbstractPhasedJvm
       public void testHalfEnabled() {
         runTest("compiler/testData/diagnostics/tests/crvDifferent/halfEnabled.kt");
       }
+
+      @Test
+      @TestMetadata("intersectionAndNarrowing.kt")
+      public void testIntersectionAndNarrowing() {
+        runTest("compiler/testData/diagnostics/tests/crvDifferent/intersectionAndNarrowing.kt");
+      }
+
+      @Test
+      @TestMetadata("intersections.kt")
+      public void testIntersections() {
+        runTest("compiler/testData/diagnostics/tests/crvDifferent/intersections.kt");
+      }
+
+      @Test
+      @TestMetadata("simpleNarrowing.kt")
+      public void testSimpleNarrowing() {
+        runTest("compiler/testData/diagnostics/tests/crvDifferent/simpleNarrowing.kt");
+      }
     }
 
     @Nested
@@ -9498,15 +9516,15 @@ public class PhasedJvmDiagnosticLightTreeTestGenerated extends AbstractPhasedJvm
       }
 
       @Test
-      @TestMetadata("jInterop.kt")
-      public void testJInterop() {
-        runTest("compiler/testData/diagnostics/tests/crvFull/jInterop.kt");
-      }
-
-      @Test
       @TestMetadata("delegates.kt")
       public void testDelegates() {
         runTest("compiler/testData/diagnostics/tests/crvFull/delegates.kt");
+      }
+
+      @Test
+      @TestMetadata("jInterop.kt")
+      public void testJInterop() {
+        runTest("compiler/testData/diagnostics/tests/crvFull/jInterop.kt");
       }
 
       @Test

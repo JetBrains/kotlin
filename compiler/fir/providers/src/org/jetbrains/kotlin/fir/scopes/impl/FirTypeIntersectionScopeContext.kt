@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.caches.*
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.declarations.utils.modality
+import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.resolve.toSymbol
@@ -355,14 +356,19 @@ class FirTypeIntersectionScopeContext(
         FirFakeOverrideGenerator.createCopyForFirFunction(
             newSymbol, keyFir, derivedClassLookupTag = null, session,
             FirDeclarationOrigin.IntersectionOverride,
-            isExpect = isReceiverClassExpect || keyFir.isExpect,
-            newModality = newModality,
-            newVisibility = newVisibility,
             newDispatchReceiverType = dispatchReceiverType,
             deferredReturnTypeCalculation = deferredReturnTypeCalculation,
             newReturnType = if (!forClassUseSiteScope && deferredReturnTypeCalculation == null) intersectReturnTypes(mostSpecific) else null,
             newSource = dispatchReceiverType.toSymbol(session)?.source,
-            markAsOverride = true
+            newStatus = {
+                keyFir.status.copy(
+                    newVisibility,
+                    newModality,
+                    isExpect = isReceiverClassExpect || keyFir.isExpect,
+                    isOverride = true,
+                    hasMustUseReturnValue = overrides.any { it.resolvedStatus.hasMustUseReturnValue }
+                )
+            }
         ).apply {
             originalForIntersectionOverrideAttr = keyFir
         }

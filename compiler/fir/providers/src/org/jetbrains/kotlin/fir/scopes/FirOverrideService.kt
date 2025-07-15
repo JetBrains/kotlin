@@ -72,7 +72,7 @@ class FirOverrideService(val session: FirSession) : FirSessionComponent {
                 if (c >= 0) {
                     skip = true
                 }
-                c < 0
+                c < 0 // If c == 0, we could've added this to the list as well.
             }
             maximums.removeFlagged(toRemove)
             if (!skip) {
