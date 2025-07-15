@@ -14,7 +14,15 @@ internal class LLSymbolProviderStatistics(statisticsService: LLStatisticsService
     private val meter = statisticsService.openTelemetry.getMeter(LLStatisticsScopes.SymbolProviders)
 
     /**
-     * A global [Caffeine stats counter][com.github.benmanes.caffeine.cache.stats.StatsCounter] for combined symbol provider caches.
+     * A global [Caffeine stats counter][com.github.benmanes.caffeine.cache.stats.StatsCounter] for combined symbol provider *class* caches.
      */
-    val combinedSymbolProviderCacheStatsCounter = LLCaffeineStatsCounter(meter, LLStatisticsScopes.SymbolProviders.Combined)
+    val combinedSymbolProviderClassCacheStatsCounter =
+        LLCaffeineStatsCounter(meter, LLStatisticsScopes.SymbolProviders.Combined.Classes)
+
+    /**
+     * A global [Caffeine stats counter][com.github.benmanes.caffeine.cache.stats.StatsCounter] for combined symbol provider *callable*
+     * caches.
+     */
+    val combinedSymbolProviderCallableCacheStatsCounter =
+        LLCaffeineStatsCounter(meter, LLStatisticsScopes.SymbolProviders.Combined.Callables)
 }
