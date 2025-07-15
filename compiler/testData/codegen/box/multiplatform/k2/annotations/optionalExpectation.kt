@@ -31,7 +31,9 @@ package usage
 
 import a.B
 
-@B("OK")
+const val s = "OK"
+
+@B(s)
 @B.C(true)
 fun ok() = "OK"
 
