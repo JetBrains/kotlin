@@ -558,6 +558,11 @@ sealed class KtFakeSourceElementKind(final override val shouldSkipErrorTypeRepor
     object ErrorExpressionForTopLevelLambda : KtFakeSourceElementKind()
 
     /**
+     * Arbitrary error expression for which we failed to build the real PSI.
+     */
+    object ErrorExpression : KtFakeSourceElementKind()
+
+    /**
      * When resolving ENTRY as `MyEnum.ENTRY` this is used for the `MyEnum` part
      */
     object QualifierForContextSensitiveResolution : KtFakeSourceElementKind()

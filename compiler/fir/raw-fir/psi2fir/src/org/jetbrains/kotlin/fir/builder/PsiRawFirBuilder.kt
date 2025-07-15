@@ -346,7 +346,10 @@ open class PsiRawFirBuilder(
             diagnosticFn: (missing: Boolean) -> ConeDiagnostic,
         ): FirExpression {
             if (this == null) {
-                return buildErrorExpression(source = sourceWhenInvalidExpression.toFirSourceElement(), diagnosticFn(true))
+                return buildErrorExpression(
+                    source = sourceWhenInvalidExpression.toFirSourceElement(kind = KtFakeSourceElementKind.ErrorExpression),
+                    diagnosticFn(true)
+                )
             }
 
             return when (val fir = convertElement(this, null)) {
@@ -355,7 +358,8 @@ open class PsiRawFirBuilder(
                     else -> buildErrorExpression {
                         nonExpressionElement = fir
                         diagnostic = diagnosticFn(false)
-                        source = fir.source?.realElement() ?: sourceWhenInvalidExpression.toFirSourceElement()
+                        source = fir.source?.realElement()
+                            ?: sourceWhenInvalidExpression.toFirSourceElement(kind = KtFakeSourceElementKind.ErrorExpression)
                     }
                 }
                 else -> buildErrorExpression {

@@ -95,16 +95,23 @@ class LightTreeRawFirExpressionBuilder(
             converted is R -> when {
                 isValidExpression(converted) -> converted
                 else -> buildErrorExpression(
-                    converted.source?.realElement() ?: expression?.toFirSourceElement() ?: sourceWhenInvalidExpression.toFirSourceElement(),
-                    ConeSimpleDiagnostic(errorReason, DiagnosticKind.ExpressionExpected),
-                    converted,
+                    source = converted.source?.realElement()
+                        ?: expression?.toFirSourceElement()
+                        ?: sourceWhenInvalidExpression.toFirSourceElement(kind = KtFakeSourceElementKind.ErrorExpression),
+                    diagnostic = ConeSimpleDiagnostic(errorReason, DiagnosticKind.ExpressionExpected),
+                    element = converted,
                 )
             }
             else -> buildErrorExpression(
-                converted?.source?.realElement() ?: expression?.toFirSourceElement() ?: sourceWhenInvalidExpression.toFirSourceElement(),
-                if (expression == null) ConeSyntaxDiagnostic(errorReason)
-                else ConeSimpleDiagnostic(errorReason, DiagnosticKind.ExpressionExpected),
-                converted,
+                source = converted?.source?.realElement()
+                    ?: expression?.toFirSourceElement()
+                    ?: sourceWhenInvalidExpression.toFirSourceElement(kind = KtFakeSourceElementKind.ErrorExpression),
+                diagnostic = if (expression == null) {
+                    ConeSyntaxDiagnostic(errorReason)
+                } else {
+                    ConeSimpleDiagnostic(errorReason, DiagnosticKind.ExpressionExpected)
+                },
+                element = converted,
             )
         } as R
     }
