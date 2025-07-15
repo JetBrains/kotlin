@@ -41,7 +41,7 @@ SecondaryConstructors.class:
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=Int]
         CLASS[classId=test/SecondaryConstructors.Inner, fqName=test.SecondaryConstructors.Inner, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=Inner, superNames=[]]
-          MODIFIER_LIST[inner public final]
+          MODIFIER_LIST[public final inner]
           TYPE_PARAMETER_LIST
             TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T]
               TYPE_REFERENCE

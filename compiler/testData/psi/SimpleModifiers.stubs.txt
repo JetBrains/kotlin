@@ -7,10 +7,10 @@ PsiJetFileStubImpl[package=foo.bar.goo]
       REFERENCE_EXPRESSION[referencedName=goo]
   IMPORT_LIST
   CLASS[classId=foo/bar/goo/Bar, fqName=foo.bar.goo.Bar, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=Bar, superNames=[]]
-    MODIFIER_LIST[abstract open override private public internal protected out in annotation]
+    MODIFIER_LIST[public protected private internal open abstract override annotation out in]
     TYPE_PARAMETER_LIST
       TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=true, name=T]
-        MODIFIER_LIST[abstract enum open override private public internal protected out in annotation]
+        MODIFIER_LIST[public protected private internal open abstract override enum annotation out in]
     CLASS_BODY
       PROPERTY[fqName=foo.bar.goo.Bar.abstract, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=abstract]
       PROPERTY[fqName=foo.bar.goo.Bar.open, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=open]

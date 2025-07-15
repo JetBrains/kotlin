@@ -6,21 +6,21 @@ PsiJetFileStubImpl[package=a]
     MODIFIER_LIST[public]
     CLASS_BODY
       PROPERTY[fqName=a.DefaultImplsInInterface.isVisible, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=isVisible]
-        MODIFIER_LIST[abstract public]
+        MODIFIER_LIST[public abstract]
         TYPE_REFERENCE
           USER_TYPE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Boolean]
       PROPERTY[fqName=a.DefaultImplsInInterface.isPersistent, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=isPersistent]
-        MODIFIER_LIST[abstract public]
+        MODIFIER_LIST[public abstract]
         TYPE_REFERENCE
           USER_TYPE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Boolean]
       FUN[fqName=a.DefaultImplsInInterface.show, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=show]
-        MODIFIER_LIST[abstract public suspend]
+        MODIFIER_LIST[public abstract suspend]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=mutatePriority]
             TYPE_REFERENCE
@@ -34,7 +34,7 @@ PsiJetFileStubImpl[package=a]
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Unit]
       FUN[fqName=a.DefaultImplsInInterface.dismiss, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=dismiss]
-        MODIFIER_LIST[abstract public]
+        MODIFIER_LIST[public abstract]
         VALUE_PARAMETER_LIST
         TYPE_REFERENCE
           USER_TYPE
@@ -42,7 +42,7 @@ PsiJetFileStubImpl[package=a]
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Unit]
       FUN[fqName=a.DefaultImplsInInterface.onDispose, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=onDispose]
-        MODIFIER_LIST[abstract public]
+        MODIFIER_LIST[public abstract]
         VALUE_PARAMETER_LIST
         TYPE_REFERENCE
           USER_TYPE

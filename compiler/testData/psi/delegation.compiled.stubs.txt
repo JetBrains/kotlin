@@ -14,14 +14,14 @@ A.class:
               REFERENCE_EXPRESSION[referencedName=T]
       CLASS_BODY
         PROPERTY[fqName=A.g, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=g]
-          MODIFIER_LIST[open public]
+          MODIFIER_LIST[public open]
           TYPE_REFERENCE
             USER_TYPE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Int]
         FUN[fqName=A.f, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=f]
-          MODIFIER_LIST[open public]
+          MODIFIER_LIST[public open]
           VALUE_PARAMETER_LIST
           TYPE_REFERENCE
             USER_TYPE
@@ -64,7 +64,7 @@ Delegation.class:
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Int]
         PROPERTY[fqName=Delegation.g, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=g]
-          MODIFIER_LIST[open public]
+          MODIFIER_LIST[public open]
           TYPE_REFERENCE
             USER_TYPE
               USER_TYPE
@@ -79,7 +79,7 @@ Delegation.class:
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Int]
         FUN[fqName=Delegation.f, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=f]
-          MODIFIER_LIST[open public]
+          MODIFIER_LIST[public open]
           VALUE_PARAMETER_LIST
           TYPE_REFERENCE
             USER_TYPE
@@ -96,14 +96,14 @@ T.class:
       MODIFIER_LIST[public]
       CLASS_BODY
         PROPERTY[fqName=T.g, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=g]
-          MODIFIER_LIST[abstract public]
+          MODIFIER_LIST[public abstract]
           TYPE_REFERENCE
             USER_TYPE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Int]
         FUN[fqName=T.f, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=f]
-          MODIFIER_LIST[abstract public]
+          MODIFIER_LIST[public abstract]
           VALUE_PARAMETER_LIST
           TYPE_REFERENCE
             USER_TYPE

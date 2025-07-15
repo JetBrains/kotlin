@@ -33,6 +33,6 @@ PsiJetFileStubImpl[package=]
           FUN[fqName=Objects.OtherObject.f, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=f]
             VALUE_PARAMETER_LIST
       CLASS[classId=/Objects.NestedClass, fqName=Objects.NestedClass, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=NestedClass, superNames=[]]
-        MODIFIER_LIST[open public]
+        MODIFIER_LIST[public open]
   CLASS[classId=/A, fqName=A, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=true, isLocal=false, isTopLevel=true, name=A, superNames=[]]
     CLASS_BODY

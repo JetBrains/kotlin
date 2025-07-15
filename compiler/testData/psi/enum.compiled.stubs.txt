@@ -40,7 +40,7 @@ Enum.class:
         REFERENCE_EXPRESSION[referencedName=enum]
     IMPORT_LIST
     CLASS[classId=a/b/c/test/enum/Enum, fqName=a.b.c.test.enum.Enum, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=Enum, superNames=[Enum]]
-      MODIFIER_LIST[enum public final]
+      MODIFIER_LIST[public final enum]
       PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Enum]
         MODIFIER_LIST[private]
         VALUE_PARAMETER_LIST
@@ -99,7 +99,7 @@ Enum.class:
                     REFERENCE_EXPRESSION[referencedName=kotlin]
                   REFERENCE_EXPRESSION[referencedName=Int]
         FUN[fqName=a.b.c.test.enum.Enum.f, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=f]
-          MODIFIER_LIST[open public]
+          MODIFIER_LIST[public open]
           VALUE_PARAMETER_LIST
           TYPE_REFERENCE
             USER_TYPE

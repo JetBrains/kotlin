@@ -2,7 +2,7 @@ PsiJetFileStubImpl[package=]
   PACKAGE_DIRECTIVE
   IMPORT_LIST
   FUN[fqName=bar, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=bar]
-    MODIFIER_LIST[data noinline tailrec external annotation]
+    MODIFIER_LIST[external tailrec annotation data noinline]
     VALUE_PARAMETER_LIST
       VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=x]
         MODIFIER_LIST[data]
@@ -10,7 +10,7 @@ PsiJetFileStubImpl[package=]
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=Int]
     CLASS[classId=null, fqName=null, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=true, isTopLevel=false, name=A, superNames=[]]
-      MODIFIER_LIST[data inline noinline]
+      MODIFIER_LIST[inline data noinline]
     FUN[fqName=null, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=foo]
       MODIFIER_LIST[inline]
       VALUE_PARAMETER_LIST
@@ -21,14 +21,14 @@ PsiJetFileStubImpl[package=]
   FUN[fqName=foo2, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo2]
     VALUE_PARAMETER_LIST
   CLASS[classId=/A, fqName=A, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=A, superNames=[]]
-    MODIFIER_LIST[public data inline]
+    MODIFIER_LIST[public inline data]
     CLASS_BODY
       PROPERTY[fqName=A.x, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=x]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=Int]
         PROPERTY_ACCESSOR[hasBody=false, hasNoExpressionBody=true, isGetter=false, mayHaveContract=false]
-          MODIFIER_LIST[data inline]
+          MODIFIER_LIST[inline data]
         PROPERTY_ACCESSOR[hasBody=false, hasNoExpressionBody=true, isGetter=true, mayHaveContract=false]
           MODIFIER_LIST[noinline]
       PROPERTY[fqName=A.y, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=y]

@@ -11,7 +11,7 @@ PsiJetFileStubImpl[package=]
       PROPERTY[fqName=A.<no name provided>, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=null]
         MODIFIER_LIST[private]
       FUN[fqName=A.foo2, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=foo2]
-        MODIFIER_LIST[abstract private inline]
+        MODIFIER_LIST[private abstract inline]
         VALUE_PARAMETER_LIST
       PROPERTY[fqName=A.<no name provided>, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=null]
         MODIFIER_LIST[private]

@@ -81,7 +81,7 @@ PsiJetFileStubImpl[package=a.b.c]
               REFERENCE_EXPRESSION[referencedName=c]
             REFERENCE_EXPRESSION[referencedName=DataClass]
       FUN[fqName=a.b.c.DataClass.equals, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=equals]
-        MODIFIER_LIST[open public operator]
+        MODIFIER_LIST[public open operator]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=other]
             TYPE_REFERENCE
@@ -104,7 +104,7 @@ PsiJetFileStubImpl[package=a.b.c]
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Int]
       FUN[fqName=a.b.c.DataClass.hashCode, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=hashCode]
-        MODIFIER_LIST[open public]
+        MODIFIER_LIST[public open]
         VALUE_PARAMETER_LIST
         TYPE_REFERENCE
           USER_TYPE
@@ -112,7 +112,7 @@ PsiJetFileStubImpl[package=a.b.c]
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Int]
       FUN[fqName=a.b.c.DataClass.toString, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=toString]
-        MODIFIER_LIST[open public]
+        MODIFIER_LIST[public open]
         VALUE_PARAMETER_LIST
         TYPE_REFERENCE
           USER_TYPE

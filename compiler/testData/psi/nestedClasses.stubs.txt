@@ -55,7 +55,7 @@ PsiJetFileStubImpl[package=test]
                       USER_TYPE
                         REFERENCE_EXPRESSION[referencedName=TNI]
       CLASS[classId=test/NestedClasses.Inner, fqName=test.NestedClasses.Inner, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=Inner, superNames=[]]
-        MODIFIER_LIST[inner public]
+        MODIFIER_LIST[public inner]
         TYPE_PARAMETER_LIST
           TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=TI]
             TYPE_REFERENCE
@@ -69,7 +69,7 @@ PsiJetFileStubImpl[package=test]
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=TI]
           CLASS[classId=test/NestedClasses.Inner.II, fqName=test.NestedClasses.Inner.II, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=II, superNames=[]]
-            MODIFIER_LIST[inner private]
+            MODIFIER_LIST[private inner]
             TYPE_PARAMETER_LIST
               TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=TII]
             CLASS_BODY

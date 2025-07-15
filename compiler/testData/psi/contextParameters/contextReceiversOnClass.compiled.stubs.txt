@@ -41,7 +41,7 @@ ContextReceiversOnClass.class:
     PACKAGE_DIRECTIVE
     IMPORT_LIST
     CLASS[classId=/ContextReceiversOnClass, fqName=ContextReceiversOnClass, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=ContextReceiversOnClass, superNames=[]]
-      MODIFIER_LIST[open private]
+      MODIFIER_LIST[private open]
         CONTEXT_RECEIVER_LIST
           CONTEXT_RECEIVER[label=null]
             TYPE_REFERENCE

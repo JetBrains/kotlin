@@ -9,7 +9,7 @@ PsiJetFileStubImpl[package=a]
       VALUE_PARAMETER_LIST
     CLASS_BODY
       CLASS[classId=a/InheritingClasses.A, fqName=a.InheritingClasses.A, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=A, superNames=[C]]
-        MODIFIER_LIST[abstract public]
+        MODIFIER_LIST[public abstract]
         PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=A]
           MODIFIER_LIST[public]
           VALUE_PARAMETER_LIST
@@ -31,28 +31,28 @@ PsiJetFileStubImpl[package=a]
                 REFERENCE_EXPRESSION[referencedName=C]
         CLASS_BODY
           PROPERTY[fqName=a.InheritingClasses.A.ap, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=ap]
-            MODIFIER_LIST[abstract public]
+            MODIFIER_LIST[public abstract]
             TYPE_REFERENCE
               USER_TYPE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Int]
           PROPERTY[fqName=a.InheritingClasses.A.c, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=c]
-            MODIFIER_LIST[open public]
+            MODIFIER_LIST[public open]
             TYPE_REFERENCE
               USER_TYPE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Int]
           PROPERTY[fqName=a.InheritingClasses.A.op, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=op]
-            MODIFIER_LIST[open public]
+            MODIFIER_LIST[public open]
             TYPE_REFERENCE
               USER_TYPE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Int]
           FUN[fqName=a.InheritingClasses.A.af, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=af]
-            MODIFIER_LIST[abstract public]
+            MODIFIER_LIST[public abstract]
             VALUE_PARAMETER_LIST
             TYPE_REFERENCE
               USER_TYPE
@@ -60,7 +60,7 @@ PsiJetFileStubImpl[package=a]
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Int]
           FUN[fqName=a.InheritingClasses.A.of, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=of]
-            MODIFIER_LIST[open public]
+            MODIFIER_LIST[public open]
             VALUE_PARAMETER_LIST
             TYPE_REFERENCE
               USER_TYPE
@@ -68,7 +68,7 @@ PsiJetFileStubImpl[package=a]
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Int]
       CLASS[classId=a/InheritingClasses.B, fqName=a.InheritingClasses.B, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=B, superNames=[A]]
-        MODIFIER_LIST[open public]
+        MODIFIER_LIST[public open]
         PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=B]
           MODIFIER_LIST[public]
           VALUE_PARAMETER_LIST
@@ -83,21 +83,21 @@ PsiJetFileStubImpl[package=a]
                 REFERENCE_EXPRESSION[referencedName=A]
         CLASS_BODY
           PROPERTY[fqName=a.InheritingClasses.B.ap, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=ap]
-            MODIFIER_LIST[open public]
+            MODIFIER_LIST[public open]
             TYPE_REFERENCE
               USER_TYPE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Int]
           PROPERTY[fqName=a.InheritingClasses.B.op, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=op]
-            MODIFIER_LIST[open public]
+            MODIFIER_LIST[public open]
             TYPE_REFERENCE
               USER_TYPE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Int]
           FUN[fqName=a.InheritingClasses.B.af, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=af]
-            MODIFIER_LIST[open public]
+            MODIFIER_LIST[public open]
             VALUE_PARAMETER_LIST
             TYPE_REFERENCE
               USER_TYPE
@@ -105,7 +105,7 @@ PsiJetFileStubImpl[package=a]
                   REFERENCE_EXPRESSION[referencedName=kotlin]
                 REFERENCE_EXPRESSION[referencedName=Int]
           FUN[fqName=a.InheritingClasses.B.of, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=of]
-            MODIFIER_LIST[open public]
+            MODIFIER_LIST[public open]
             VALUE_PARAMETER_LIST
             TYPE_REFERENCE
               USER_TYPE
@@ -116,7 +116,7 @@ PsiJetFileStubImpl[package=a]
         MODIFIER_LIST[public]
         CLASS_BODY
           PROPERTY[fqName=a.InheritingClasses.C.c, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=c]
-            MODIFIER_LIST[abstract public]
+            MODIFIER_LIST[public abstract]
             TYPE_REFERENCE
               USER_TYPE
                 USER_TYPE
@@ -137,7 +137,7 @@ PsiJetFileStubImpl[package=a]
                 REFERENCE_EXPRESSION[referencedName=C]
         CLASS_BODY
           PROPERTY[fqName=a.InheritingClasses.D.c, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=c]
-            MODIFIER_LIST[abstract public]
+            MODIFIER_LIST[public abstract]
             TYPE_REFERENCE
               USER_TYPE
                 USER_TYPE
@@ -317,7 +317,7 @@ PsiJetFileStubImpl[package=a]
                     REFERENCE_EXPRESSION[referencedName=SomeTrait]
             CLASS_BODY
       CLASS[classId=a/InheritingClasses.InheritFunctionType, fqName=a.InheritingClasses.InheritFunctionType, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=InheritFunctionType, superNames=[]]
-        MODIFIER_LIST[abstract public]
+        MODIFIER_LIST[public abstract]
         PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=InheritFunctionType]
           MODIFIER_LIST[public]
           VALUE_PARAMETER_LIST
