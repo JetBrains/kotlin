@@ -855,6 +855,66 @@ class BuildReportsIT : KGPBaseTest() {
         }
     }
 
+    @DisplayName("Verify that the metric for native in-process compilation with IR Inliner on 1st phase")
+    @NativeGradlePluginTests
+    @GradleTest
+    @GradleTestVersions(
+        additionalVersions = [TestVersions.Gradle.G_8_2],
+    )
+    fun testMetricForNativeProjectWithInilnedFunInKlibInProcess(gradleVersion: GradleVersion) {
+        nativeProject(
+            "native-incremental-simple", gradleVersion, buildOptions = defaultBuildOptions.copy(
+                nativeOptions = defaultBuildOptions.nativeOptions.copy(
+                    incremental = true
+                ),
+                buildReport = listOf(BuildReportType.JSON)
+            )
+        ) {
+            buildGradleKts.appendText(
+                """
+                |
+                |kotlin {
+                |    tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinNativeCompile>().configureEach {
+                |        compilerOptions {
+                |            freeCompilerArgs.add("-XXLanguage:+IrInlinerBeforeKlibSerialization")
+                |        }
+                |    }
+                |}
+                """.trimMargin()
+            )
+            build("linkDebugExecutableHost", "-Pkotlin.build.report.json.directory=${projectPath.resolve("report").pathString}") {
+                val jsonReportFile = projectPath.getSingleFileInDir("report")
+                assertTrue { jsonReportFile.exists() }
+                val jsonReport = readJsonReport(jsonReportFile)
+                val bulidTimesKeys = jsonReport.aggregatedMetrics.buildTimes.buildTimesMapMs().keys
+                assertContains(bulidTimesKeys, GradleBuildTime.NATIVE_IN_PROCESS)
+
+                val compilerMetrics = GradleBuildTime.COMPILER_PERFORMANCE.allChildrenMetrics()
+                val reportedCompilerMetrics = bulidTimesKeys.filter { it in compilerMetrics }
+
+                // Recursively (only two levels) gather leaves of subtree under COMPILER_PERFORMANCE, excluding nodes like CODE_GENERATION
+                val expected = GradleBuildTime.COMPILER_PERFORMANCE.children()?.flatMap { it.children() ?: listOf(it) }
+                assertEquals(
+                    expected,
+                    reportedCompilerMetrics.sorted()
+                )
+
+                assertEquals(
+                    listOf(
+                        "UpgradeCallableReferences",
+                        "AssertionWrapperLowering",
+                        "AvoidLocalFOsInInlineFunctionsLowering",
+                        "LateinitLowering", // first lowering in K/N 1st phase lowerings, specific for `+IrInlinerBeforeKlibSerialization` feature
+                    ),
+                    jsonReport.aggregatedMetrics.buildTimes.dynamicBuildTimesMapMs().keys
+                        .filter { it.parent == GradleBuildTime.IR_PRE_LOWERING }
+                        .map { it.name }
+                        .take(4)
+                )
+            }
+        }
+    }
+
     companion object {
         private const val CAN_NOT_ADD_CUSTOM_VALUES_TO_BUILD_SCAN_MESSAGE = "Can't add any more custom values into build scan"
     }
