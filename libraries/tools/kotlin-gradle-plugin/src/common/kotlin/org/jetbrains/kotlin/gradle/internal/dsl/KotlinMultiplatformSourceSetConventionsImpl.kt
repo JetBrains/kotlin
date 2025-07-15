@@ -58,6 +58,10 @@ internal object KotlinMultiplatformSourceSetConventionsImpl : KotlinMultiplatfor
 
     override val NamedDomainObjectContainer<KotlinSourceSet>.androidNativeTest by KotlinSourceSetConvention
 
+    override val NamedDomainObjectContainer<KotlinSourceSet>.webMain by KotlinSourceSetConvention
+
+    override val NamedDomainObjectContainer<KotlinSourceSet>.webTest by KotlinSourceSetConvention
+
     // endregion
 
     // region Non-Native Source Set Accessors
