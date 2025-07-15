@@ -72,9 +72,6 @@ abstract class KaptGenerateStubsTask @Inject constructor(
     @get:Input
     abstract val verbose: Property<Boolean>
 
-    @get:Input
-    abstract val useK2Kapt: Property<Boolean>
-
     /**
      * Changes in this additional sources will trigger stubs regeneration,
      * but the sources themselves will not be used to find kapt annotations and generate stubs.
@@ -134,8 +131,6 @@ abstract class KaptGenerateStubsTask @Inject constructor(
 
             args.verbose = verbose.get()
             args.destinationAsFile = destinationDirectory.get().asFile
-
-            args.freeArgs += "-Xuse-k2-kapt=${useK2Kapt.get()}"
         }
 
         pluginClasspath { args ->

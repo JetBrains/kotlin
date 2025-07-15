@@ -1772,14 +1772,6 @@ internal object KotlinToolingDiagnostics {
         }
     }
 
-    internal object WarnKaptK1IsDeprecated : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Misconfiguration) {
-        operator fun invoke() = build {
-            title("Kapt K1 mode is deprecated")
-                .description("Kotlin Kapt compatibility with Kotlin Compiler K1 is deprecated and scheduled to be removed in the next release.")
-                .solution("Please remove 'kapt.use.k2' Gradle property from 'gradle.properties' file.")
-        }
-    }
-
     internal object PomMisconfigured : ToolingDiagnosticFactory(FATAL, DiagnosticGroup.Kgp.Misconfiguration) {
         operator fun invoke(description: String, solution: String, link: String? = null) = build {
             title("There was a problem with the Maven POM file configuration.")
