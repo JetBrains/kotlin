@@ -562,6 +562,97 @@ class KotlinHierarchyDslTest {
         )
     }
 
+    @Test
+    fun `verify all default hierarchy SourceSets have static accessors`() {
+        kotlin.apply {
+            enableAllKotlinTargets()
+            applyDefaultHierarchyTemplate()
+        }
+
+        val actualAccessorNames = kotlin.sourceSets.names.toList().sorted()
+
+        val expectedAccessorNames =
+            kotlin.run {
+                sourceSets.run {
+                    listOf(
+                        commonMain,
+                        jvmMain,
+                        nativeMain,
+                        androidNativeMain,
+                        androidNativeArm32Main,
+                        androidNativeArm64Main,
+                        androidNativeX64Main,
+                        androidNativeX86Main,
+                        appleMain,
+                        iosMain,
+                        iosArm64Main,
+                        iosSimulatorArm64Main,
+                        iosX64Main,
+                        macosMain,
+                        macosArm64Main,
+                        macosX64Main,
+                        tvosMain,
+                        tvosArm64Main,
+                        tvosSimulatorArm64Main,
+                        tvosX64Main,
+                        watchosMain,
+                        watchosArm32Main,
+                        watchosArm64Main,
+                        watchosDeviceArm64Main,
+                        watchosSimulatorArm64Main,
+                        watchosX64Main,
+                        linuxMain,
+                        linuxArm64Main,
+                        linuxX64Main,
+                        mingwMain,
+                        mingwX64Main,
+                        wasmWasiMain,
+                        webMain,
+                        jsMain,
+                        wasmJsMain,
+
+                        commonTest,
+                        jvmTest,
+                        nativeTest,
+                        androidNativeTest,
+                        androidNativeArm32Test,
+                        androidNativeArm64Test,
+                        androidNativeX64Test,
+                        androidNativeX86Test,
+                        appleTest,
+                        iosTest,
+                        iosArm64Test,
+                        iosSimulatorArm64Test,
+                        iosX64Test,
+                        macosTest,
+                        macosArm64Test,
+                        macosX64Test,
+                        tvosTest,
+                        tvosArm64Test,
+                        tvosSimulatorArm64Test,
+                        tvosX64Test,
+                        watchosTest,
+                        watchosArm32Test,
+                        watchosArm64Test,
+                        watchosDeviceArm64Test,
+                        watchosSimulatorArm64Test,
+                        watchosX64Test,
+                        linuxTest,
+                        linuxArm64Test,
+                        linuxX64Test,
+                        mingwTest,
+                        mingwX64Test,
+                        wasmWasiTest,
+                        webTest,
+                        jsTest,
+                        wasmJsTest,
+                    )
+                }
+            }.map { it.name }.sorted()
+
+        assertEquals(expectedAccessorNames, actualAccessorNames)
+    }
+
     companion object {
         private fun KotlinMultiplatformExtension.enableAllKotlinTargets(
             excludedTargets: Set<String> = setOf(
