@@ -224,7 +224,7 @@ private fun Project.sourceSetModuleDependencies(
                 configurations.sourceSetDependencyConfigurationByScope(hierarchySourceSet, scope).allDependencies.toList()
             }
         }
-        sourceSet.name to sourceSetExportedDependencies.map { ModuleIds.fromDependency(it) }.toSet()
+        sourceSet.name to sourceSetExportedDependencies.map { ModuleIds.fromDependency(sourceSet.project, it) }.toSet()
     }
 }
 
