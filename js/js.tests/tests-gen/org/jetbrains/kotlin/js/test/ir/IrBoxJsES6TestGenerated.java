@@ -9142,6 +9142,12 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
     }
 
     @Test
+    @TestMetadata("externalLong.kt")
+    public void testExternalLong() {
+      runTest("js/js.translator/testData/box/native/externalLong.kt");
+    }
+
+    @Test
     @TestMetadata("externalNestedEnum.kt")
     public void testExternalNestedEnum() {
       runTest("js/js.translator/testData/box/native/externalNestedEnum.kt");

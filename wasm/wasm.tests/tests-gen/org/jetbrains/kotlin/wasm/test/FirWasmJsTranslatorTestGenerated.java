@@ -134,6 +134,12 @@ public class FirWasmJsTranslatorTestGenerated extends AbstractFirWasmJsTranslato
     }
 
     @Test
+    @TestMetadata("externalLong.kt")
+    public void testExternalLong() {
+      runTest("js/js.translator/testData/box/native/externalLong.kt");
+    }
+
+    @Test
     @TestMetadata("externalValWithOverridenVar.kt")
     public void testExternalValWithOverridenVar() {
       runTest("js/js.translator/testData/box/native/externalValWithOverridenVar.kt");
