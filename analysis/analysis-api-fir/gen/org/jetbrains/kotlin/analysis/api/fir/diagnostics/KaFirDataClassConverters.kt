@@ -2870,8 +2870,8 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
-    add(FirErrors.TYPE_PARAMETER_OF_PROPERTY_NOT_USED_IN_RECEIVER) { firDiagnostic ->
-        TypeParameterOfPropertyNotUsedInReceiverImpl(
+    add(FirErrors.INCORRECT_TYPE_PARAMETER_OF_PROPERTY) { firDiagnostic ->
+        IncorrectTypeParameterOfPropertyImpl(
             firDiagnostic as KtPsiDiagnostic,
             token,
         )

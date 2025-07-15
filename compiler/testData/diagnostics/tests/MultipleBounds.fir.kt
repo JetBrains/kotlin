@@ -10,9 +10,9 @@ interface B {
 }
 
 interface G<X> {
-    val <<!TYPE_PARAMETER_OF_PROPERTY_NOT_USED_IN_RECEIVER!>X<!>> boo: Double  where X : A, X : B
-    val <<!TYPE_PARAMETER_OF_PROPERTY_NOT_USED_IN_RECEIVER!>A<!>> bal: Double  where A : B
-    val <<!TYPE_PARAMETER_OF_PROPERTY_NOT_USED_IN_RECEIVER!>Y<!>> bas: Double where Y : B, <!NAME_IN_CONSTRAINT_IS_NOT_A_TYPE_PARAMETER!>X<!> : B
+    val <<!INCORRECT_TYPE_PARAMETER_OF_PROPERTY!>X<!>> boo: Double  where X : A, X : B
+    val <<!INCORRECT_TYPE_PARAMETER_OF_PROPERTY!>A<!>> bal: Double  where A : B
+    val <<!INCORRECT_TYPE_PARAMETER_OF_PROPERTY!>Y<!>> bas: Double where Y : B, <!NAME_IN_CONSTRAINT_IS_NOT_A_TYPE_PARAMETER!>X<!> : B
 }
 
 class C() : A(), B
@@ -67,7 +67,7 @@ val t1 = <!INAPPLICABLE_CANDIDATE!>test2<!><<!UPPER_BOUND_VIOLATED!>A<!>>(A())
 val t2 = <!INAPPLICABLE_CANDIDATE!>test2<!><<!UPPER_BOUND_VIOLATED!>B<!>>(C())
 val t3 = test2<C>(C())
 
-val <<!TYPE_PARAMETER_OF_PROPERTY_NOT_USED_IN_RECEIVER!>T<!>, <!TYPE_PARAMETER_OF_PROPERTY_NOT_USED_IN_RECEIVER!>B : T<!>> x : Int = 0
+val <<!INCORRECT_TYPE_PARAMETER_OF_PROPERTY!>T<!>, <!INCORRECT_TYPE_PARAMETER_OF_PROPERTY!>B : T<!>> x : Int = 0
 
 /* GENERATED_FIR_TAGS: classDeclaration, companionObject, functionDeclaration, integerLiteral, interfaceDeclaration,
 nullableType, objectDeclaration, primaryConstructor, propertyDeclaration, typeConstraint, typeParameter */
