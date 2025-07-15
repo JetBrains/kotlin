@@ -61,4 +61,20 @@
             </plugins>
         </pluginManagement>
     </build>
+
+  <profiles>
+    <profile>
+      <id>no-integration-test</id>
+      <activation>
+        <activeByDefault>false</activeByDefault>
+        <property>
+          <name>skipTests</name>
+          <value>true</value>
+        </property>
+      </activation>
+      <properties>
+        <archetype.test.skip>true</archetype.test.skip>
+      </properties>
+    </profile>
+  </profiles>
 </project>
