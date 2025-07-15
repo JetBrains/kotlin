@@ -6,10 +6,14 @@ package org.jetbrains.kotlin.gradle.mpp
 
 import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.api.publish.maven.MavenPublication
+import org.gradle.kotlin.dsl.apply
+import org.gradle.kotlin.dsl.kotlin
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.plugin.mpp.KmpIsolatedProjectsSupport
 import org.jetbrains.kotlin.gradle.plugin.sources.METADATA_CONFIGURATION_NAME_SUFFIX
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
+import org.jetbrains.kotlin.gradle.uklibs.include
 import org.jetbrains.kotlin.gradle.util.replaceText
 import org.jetbrains.kotlin.gradle.util.testResolveAllConfigurations
 import org.jetbrains.kotlin.test.TestMetadata
@@ -209,6 +213,45 @@ class MppMetadataResolutionIT : KGPBaseTest() {
             }
 
             build(":lib3:metadataCommonMainClasses", buildOptions = buildOptions)
+        }
+    }
+
+    @Test
+    fun `KT-77843 - ProjectDependency Project access in pre-PI KGP support`() {
+        val gradleVersion = GradleVersion.version("9.0.0-rc-2")
+        fun projectWithPSM(): TestProject {
+            return project("empty", gradleVersion) {
+                plugins {
+                    kotlin("multiplatform")
+                }
+                buildScriptInjection {
+                    project.applyMultiplatform {
+                        linuxX64()
+                        linuxArm64()
+                        sourceSets.commonMain.get().compileStubSourceWithSourceSetName()
+                    }
+                }
+            }
+        }
+        val producer = projectWithPSM()
+        val consumer = projectWithPSM()
+        consumer.include(producer, "producer")
+        consumer.buildScriptInjection {
+            project.applyMultiplatform {
+                sourceSets.commonMain.dependencies {
+                    implementation(project(":producer"))
+                }
+            }
+        }
+        consumer.buildAndFail(
+            "generateProjectStructureMetadata",
+            buildOptions = defaultBuildOptions.copy(
+                configurationCache = BuildOptions.ConfigurationCacheValue.DISABLED,
+                isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED,
+                kmpIsolatedProjectsSupport = KmpIsolatedProjectsSupport.DISABLE,
+            ),
+        ) {
+            assertOutputContains("java.lang.NoSuchMethodError")
         }
     }
 }
