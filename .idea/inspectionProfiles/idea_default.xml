@@ -461,23 +461,7 @@
       <option name="ignoreLazyOperators" value="true" />
       <option name="ignoreObscureOperators" value="true" />
     </inspection_tool>
-    <inspection_tool class="SSBasedInspection" enabled="true" level="WARNING" enabled_by_default="true" editorAttributes="DEPRECATED_ATTRIBUTES">
-      <searchConfiguration name="Deprecated compiler API usage" uuid="fa590a8d-4fac-48d3-b2bb-81756ba56c6e" suppressId="DEPRECATED_COMPILER_API" text="$Reference$" recursive="true" caseInsensitive="true" type="Kotlin" pattern_context="default">
-        <constraint name="__context__" within="" contains="" />
-        <constraint name="Reference" reference="Deprecated compiler API - class" within="" contains="" />
-      </searchConfiguration>
-      <searchConfiguration name="Deprecated compiler API usage" uuid="fa590a8d-4fac-48d3-b2bb-81756ba56c6e" text="$Reference$" recursive="true" caseInsensitive="true" type="Kotlin" pattern_context="default">
-        <constraint name="__context__" within="" contains="" />
-        <constraint name="Reference" reference="Deprecated compiler API - function" within="" contains="" />
-      </searchConfiguration>
-      <searchConfiguration name="Deprecated compiler API usage" uuid="fa590a8d-4fac-48d3-b2bb-81756ba56c6e" text="$Reference$" recursive="true" caseInsensitive="true" type="Kotlin" pattern_context="default">
-        <constraint name="__context__" within="" contains="" />
-        <constraint name="Reference" reference="Deprecated compiler API - property" within="" contains="" />
-      </searchConfiguration>
-      <searchConfiguration name="Deprecated compiler API usage" uuid="fa590a8d-4fac-48d3-b2bb-81756ba56c6e" text="$Reference$" recursive="true" caseInsensitive="true" type="Kotlin" pattern_context="default">
-        <constraint name="__context__" within="" contains="" />
-        <constraint name="Reference" reference="Deprecated compiler API - interface" within="" contains="" />
-      </searchConfiguration>
+    <inspection_tool class="SSBasedInspection" enabled="true" level="WARNING" enabled_by_default="true">
     </inspection_tool>
     <inspection_tool class="SameParameterValue" enabled="true" level="WEAK WARNING" enabled_by_default="true" />
     <inspection_tool class="SetReplaceableByEnumSet" enabled="true" level="WARNING" enabled_by_default="true" />
@@ -573,7 +557,5 @@
     <inspection_tool class="WhileLoopSpinsOnField" enabled="true" level="WARNING" enabled_by_default="true">
       <option name="ignoreNonEmtpyLoops" value="false" />
     </inspection_tool>
-    <inspection_tool class="fa590a8d-4fac-48d3-b2bb-81756ba56c6e" enabled="true" level="WARNING" enabled_by_default="true" editorAttributes="DEPRECATED_ATTRIBUTES" />
-    <inspection_tool class="e11eeaf1-b3a1-41ab-8f7f-1348991e97fa" enabled="true" level="WARNING" enabled_by_default="true" editorAttributes="DEPRECATED_ATTRIBUTES" />
   </profile>
 </component>
