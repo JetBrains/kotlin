@@ -129,14 +129,14 @@ internal fun <C : PhaseContext> PhaseEngine<C>.runBackend(backendContext: Contex
         fun NativeGenerationState.runSpecifiedLowerings(fragment: BackendJobFragment, loweringsToLaunch: LoweringList) {
             runEngineForLowerings {
                 val module = fragment.irModule
-                partiallyLowerModuleWithDependencies(module, loweringsToLaunch)
+                partiallyLowerModuleWithDependencies(module, loweringsToLaunch, performanceManager)
             }
         }
 
         fun NativeGenerationState.runSpecifiedLowerings(fragment: BackendJobFragment, moduleLowering: ModuleLowering) {
             runEngineForLowerings {
                 val module = fragment.irModule
-                partiallyLowerModuleWithDependencies(module, moduleLowering)
+                partiallyLowerModuleWithDependencies(module, moduleLowering, performanceManager)
             }
         }
 
@@ -436,22 +436,30 @@ internal fun <C : PhaseContext> PhaseEngine<C>.compileAndLink(
     }
 }
 
-internal fun PhaseEngine<NativeGenerationState>.partiallyLowerModuleWithDependencies(module: IrModuleFragment, loweringList: LoweringList) {
+internal fun PhaseEngine<NativeGenerationState>.partiallyLowerModuleWithDependencies(
+        module: IrModuleFragment,
+        loweringList: LoweringList,
+        performanceManager: PerformanceManager?,
+) {
     val dependenciesToCompile = findDependenciesToCompile()
     // TODO: KonanLibraryResolver.TopologicalLibraryOrder actually returns libraries in the reverse topological order.
     // TODO: Does the order of files really matter with the new MM? (and with lazy top-levels initialization?)
     val allModulesToLower = listOf(module) + dependenciesToCompile.reversed()
 
-    runLowerings(loweringList, allModulesToLower)
+    runLowerings(loweringList, allModulesToLower, performanceManager)
 }
 
-internal fun PhaseEngine<NativeGenerationState>.partiallyLowerModuleWithDependencies(module: IrModuleFragment, lowering: ModuleLowering) {
+internal fun PhaseEngine<NativeGenerationState>.partiallyLowerModuleWithDependencies(
+        module: IrModuleFragment,
+        lowering: ModuleLowering,
+        performanceManager: PerformanceManager?,
+) {
     val dependenciesToCompile = findDependenciesToCompile()
     // TODO: KonanLibraryResolver.TopologicalLibraryOrder actually returns libraries in the reverse topological order.
     // TODO: Does the order of files really matter with the new MM? (and with lazy top-levels initialization?)
     val allModulesToLower = listOf(module) + dependenciesToCompile.reversed()
 
-    runModuleWisePhase(lowering, allModulesToLower)
+    runModuleWisePhase(lowering, allModulesToLower, performanceManager)
 }
 
 internal fun PhaseEngine<NativeGenerationState>.runBackendCodegen(module: IrModuleFragment, irBuiltIns: IrBuiltIns, cExportFiles: CExportFiles?) {
