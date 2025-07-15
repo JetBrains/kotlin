@@ -68,17 +68,19 @@ internal class LLCombinedKotlinSymbolProvider private constructor(
     private val classifierCache = NullableCaffeineCache<ClassId, FirClassLikeSymbol<*>> {
         it
             .maximumSize(500)
-            .withStatsCounter(LLStatisticsService.getInstance(project)?.symbolProviders?.combinedSymbolProviderCacheStatsCounter)
+            .withStatsCounter(LLStatisticsService.getInstance(project)?.symbolProviders?.combinedSymbolProviderClassCacheStatsCounter)
     }
 
     private val functionCache =
         Caffeine.newBuilder()
             .maximumSize(250)
+            .withStatsCounter(LLStatisticsService.getInstance(project)?.symbolProviders?.combinedSymbolProviderCallableCacheStatsCounter)
             .build<CallableId, List<FirNamedFunctionSymbol>>()
 
     private val propertyCache =
         Caffeine.newBuilder()
             .maximumSize(250)
+            .withStatsCounter(LLStatisticsService.getInstance(project)?.symbolProviders?.combinedSymbolProviderCallableCacheStatsCounter)
             .build<CallableId, List<FirPropertySymbol>>()
 
     override fun getClassLikeSymbolByClassId(classId: ClassId): FirClassLikeSymbol<*>? {

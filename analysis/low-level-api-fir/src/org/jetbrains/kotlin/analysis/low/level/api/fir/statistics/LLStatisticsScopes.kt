@@ -32,14 +32,26 @@ internal object LLStatisticsScopes : LLStatisticsScope("kotlin.analysis") {
     }
 
     object SymbolProviders : LLStatisticsScope("$name.symbolProviders") {
-        object Combined : LLStatisticsScope("$name.combined"), LLCaffeineStatisticsScope {
-            object Hits : LLStatisticsScope("$name.hits")
-            object Misses : LLStatisticsScope("$name.misses")
-            object Evictions : LLStatisticsScope("$name.evictions")
+        object Combined : LLStatisticsScope("$name.combined") {
+            object Classes : LLStatisticsScope("$name.classes"), LLCaffeineStatisticsScope {
+                object Hits : LLStatisticsScope("$name.hits")
+                object Misses : LLStatisticsScope("$name.misses")
+                object Evictions : LLStatisticsScope("$name.evictions")
 
-            override val hits: LLStatisticsScope get() = Hits
-            override val misses: LLStatisticsScope get() = Misses
-            override val evictions: LLStatisticsScope get() = Evictions
+                override val hits: LLStatisticsScope get() = Hits
+                override val misses: LLStatisticsScope get() = Misses
+                override val evictions: LLStatisticsScope get() = Evictions
+            }
+
+            object Callables : LLStatisticsScope("$name.callables"), LLCaffeineStatisticsScope {
+                object Hits : LLStatisticsScope("$name.hits")
+                object Misses : LLStatisticsScope("$name.misses")
+                object Evictions : LLStatisticsScope("$name.evictions")
+
+                override val hits: LLStatisticsScope get() = Hits
+                override val misses: LLStatisticsScope get() = Misses
+                override val evictions: LLStatisticsScope get() = Evictions
+            }
         }
     }
 }
