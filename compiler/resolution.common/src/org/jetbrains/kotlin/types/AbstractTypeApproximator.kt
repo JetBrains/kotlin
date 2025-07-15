@@ -612,6 +612,15 @@ abstract class AbstractTypeApproximator(
 
             val argumentType = argument.getType() ?: continue
 
+            val approximatedToSuperType: KotlinTypeMarker? by lazy(LazyThreadSafetyMode.NONE) {
+                approximateToSuperType(argumentType, depth)
+                    ?.makeApproximatedFlexibleNotNullIfUpperBoundNotNull(argumentType, parameter)
+            }
+
+            val approximatedToSubType: KotlinTypeMarker? by lazy(LazyThreadSafetyMode.NONE) {
+                approximateToSubType(argumentType, depth)
+            }
+
             val effectiveVariance = AbstractTypeChecker.effectiveVariance(parameter.getVariance(), argument.getVariance())
 
             val capturedType = argumentType.lowerBoundIfFlexible().asCapturedTypeUnwrappingDnn()
@@ -653,19 +662,16 @@ abstract class AbstractTypeApproximator(
                      * Inv<in Foo> <: Inv<in subType(Foo)>
                      */
                     val approximatedArgument = if (isApproximateDirectionToSuper(effectiveVariance, toSuper)) {
-                        val approximatedType = approximateToSuperType(argumentType, depth)
-                            ?.makeApproximatedFlexibleNotNullIfUpperBoundNotNull(argumentType, parameter)
-
                         if (!isK2 &&
                             @OptIn(AllowedToUsedOnlyInK1::class) needK1SpecialHandlingForIntersectionType(argumentType, parameter)
                         ) {
                             @OptIn(AllowedToUsedOnlyInK1::class)
-                            specialK1HandlingOfIntersectionType(approximatedType, parameter)
+                            specialK1HandlingOfIntersectionType(approximatedToSuperType, parameter)
                         } else {
-                            approximatedType ?: continue@loop
+                            approximatedToSuperType ?: continue@loop
                         }
                     } else {
-                        approximateToSubType(argumentType, depth) ?: continue@loop
+                        approximatedToSubType ?: continue@loop
                     }
 
                     if (
@@ -695,7 +701,7 @@ abstract class AbstractTypeApproximator(
                 TypeVariance.INV -> {
                     if (!toSuper) {
                         // Inv<Foo> cannot be approximated to subType
-                        val toSubType = approximateToSubType(argumentType, depth) ?: continue@loop
+                        val toSubType = approximatedToSubType ?: continue@loop
 
                         // Inv<Foo!> is supertype for Inv<Foo?>
                         if (!AbstractTypeChecker.equalTypes(
@@ -731,22 +737,21 @@ abstract class AbstractTypeApproximator(
                     //  Inv<In<C>> <: Inv<in In<Any?>>
                     //
                     // So, both of the options are possible, but since such case is rare we will chose Inv<out In<Int>> for now
-                    val approximatedSuperType = approximateToSuperType(argumentType, depth)
-                        ?.makeApproximatedFlexibleNotNullIfUpperBoundNotNull(argumentType, parameter)
+                    // Hopefully, this variable might be removed once smart casts for lazy would work (KT-27325)
+                    val approximatedToSuperType = approximatedToSuperType
                         ?: continue@loop // null means that this type we can leave as is
-                    if (approximatedSuperType.isTrivialSuper()) {
-                        val approximatedSubType =
-                            approximateToSubType(argumentType, depth) ?: continue@loop // seems like this is never null
-                        if (!approximatedSubType.isTrivialSub()) {
-                            newArguments[index] = createTypeArgument(approximatedSubType, TypeVariance.IN)
+                    if (approximatedToSuperType.isTrivialSuper()) {
+                        if (approximatedToSubType == null) continue@loop // seems like this is never null
+                        if (!approximatedToSubType!!.isTrivialSub()) {
+                            newArguments[index] = createTypeArgument(approximatedToSubType!!, TypeVariance.IN)
                             continue@loop
                         }
                     }
 
-                    if (AbstractTypeChecker.equalTypes(this, argumentType, approximatedSuperType)) {
-                        newArguments[index] = approximatedSuperType.asTypeArgument()
+                    if (AbstractTypeChecker.equalTypes(this, argumentType, approximatedToSuperType)) {
+                        newArguments[index] = approximatedToSuperType.asTypeArgument()
                     } else {
-                        newArguments[index] = createTypeArgument(approximatedSuperType, TypeVariance.OUT)
+                        newArguments[index] = createTypeArgument(approximatedToSuperType, TypeVariance.OUT)
                     }
                 }
             }
