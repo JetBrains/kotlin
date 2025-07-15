@@ -509,7 +509,7 @@ class ClassCodegen private constructor(
 
         for (klass in innerClasses.sortedBy { it.fqNameWhenAvailable?.asString() }) {
             val innerJavaClassId = klass.mapToJava()
-            val innerClass = innerJavaClassId?.internalName ?: typeMapper.classInternalName(klass)
+            val innerClass = innerJavaClassId?.internalName ?: typeMapper.classLikeDeclarationInternalName(klass)
             val outerClass =
                 if (klass.isSamWrapper || klass.isAnnotationImplementation || klass.isEnclosedInConstructor)
                     null
@@ -520,7 +520,7 @@ class ClassCodegen private constructor(
                             if (innerJavaClassId?.packageFqName != outerJavaClassId?.packageFqName) {
                                 continue
                             }
-                            outerJavaClassId?.internalName ?: typeMapper.classInternalName(parent)
+                            outerJavaClassId?.internalName ?: typeMapper.classLikeDeclarationInternalName(parent)
                         }
 
                         else -> null
