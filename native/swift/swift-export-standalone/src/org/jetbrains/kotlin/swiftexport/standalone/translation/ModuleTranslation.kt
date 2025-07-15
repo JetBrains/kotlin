@@ -154,7 +154,7 @@ private fun forceComputeSupertypes(container: SirDeclarationContainer) {
         is SirClassInhertingDeclaration -> container.superClass
         else -> {}
     }
-    container.allContainers().forEach { forceComputeSupertypes(it) }
+    container.allContainers().toList().forEach { forceComputeSupertypes(it) }
 }
 
 private fun SirSession.createTranslationResult(

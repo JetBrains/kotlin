@@ -35,8 +35,13 @@ internal object StandaloneSirTypeNamer : SirTypeNamer {
         is SirErrorType, is SirFunctionalType, is SirUnsupportedType -> error("Type $type can not be named")
     }
 
-    private fun kotlinParametrizedName(type: SirType): String =
-        (type as? SirNominalType)?.typeDeclaration?.kaSymbolOrNull<KaClassLikeSymbol>()?.parametrisedTypeName() ?: kotlinFqName(type)
+    private fun kotlinParametrizedName(type: SirType): String {
+        return when (type) {
+            is SirNominalType -> type.typeDeclaration.kaSymbolOrNull<KaClassLikeSymbol>()?.parametrisedTypeName()
+            is SirExistentialType -> type.protocols.firstNotNullOfOrNull { it.kaSymbolOrNull<KaClassLikeSymbol>() }?.parametrisedTypeName()
+            else -> null
+        } ?: kotlinFqName(type)
+    }
 
     private fun kotlinFqName(type: SirExistentialType): String = type.protocols.single().let {
         it.kaSymbolOrNull<KaClassLikeSymbol>()!!.classId!!.asFqNameString()
