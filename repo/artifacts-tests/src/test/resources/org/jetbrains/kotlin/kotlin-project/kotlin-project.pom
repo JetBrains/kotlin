@@ -57,6 +57,8 @@
         <kotlin-dist>${project-root}/dist</kotlin-dist>
         <kotlin-sdk>${kotlin-dist}/kotlinc</kotlin-sdk>
         <kotlin.compiler.jdkHome>${jdk_1_8}</kotlin.compiler.jdkHome>
+        <!-- Should be in sync with kotlin-daemon-config.settings.gradle.kts -->
+        <kotlin.compiler.daemon.jvmArgs>Xmx3g</kotlin.compiler.daemon.jvmArgs>
 
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
