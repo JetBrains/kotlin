@@ -1,7 +1,11 @@
 package org.jetbrains.kotlin.gradle
 
 import org.gradle.util.GradleVersion
-import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.gradle.testbase.BuildOptions
+import org.jetbrains.kotlin.gradle.testbase.GradleTest
+import org.jetbrains.kotlin.gradle.testbase.OtherGradlePluginTests
+import org.jetbrains.kotlin.gradle.testbase.assertFileInProjectExists
+import org.jetbrains.kotlin.gradle.testbase.build
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import kotlin.io.path.createDirectories
@@ -12,9 +16,8 @@ import kotlin.test.assertEquals
 @DisplayName("K2Kapt incremental compilation")
 @OtherGradlePluginTests
 open class Kapt4IncrementalIT : KaptIncrementalIT() {
-    override fun TestProject.customizeProject() {
-        forceK2Kapt()
-    }
+    override val defaultBuildOptions: BuildOptions = super.defaultBuildOptions
+        .copyEnsuringK2()
 
     @Disabled("KT-71786: K2KAPT task does not fail")
     @GradleTest

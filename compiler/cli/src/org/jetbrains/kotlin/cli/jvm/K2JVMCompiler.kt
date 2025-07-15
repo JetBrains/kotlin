@@ -13,13 +13,9 @@ import org.jetbrains.kotlin.cli.common.ExitCode.*
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.extensions.ScriptEvaluationExtension
 import org.jetbrains.kotlin.cli.common.extensions.ShellExtension
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
+import org.jetbrains.kotlin.cli.common.messages.*
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.*
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity.Companion.VERBOSE
-import org.jetbrains.kotlin.cli.common.messages.FilteringMessageCollector
-import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import org.jetbrains.kotlin.cli.common.messages.MessageUtil
-import org.jetbrains.kotlin.cli.common.messages.OutputMessageUtil
 import org.jetbrains.kotlin.cli.common.modules.ModuleBuilder
 import org.jetbrains.kotlin.cli.common.modules.ModuleChunk
 import org.jetbrains.kotlin.cli.common.profiling.ProfilingCompilerPerformanceManager
@@ -38,38 +34,13 @@ import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import org.jetbrains.kotlin.util.PerformanceManager
-import org.jetbrains.kotlin.utils.KotlinPaths
 import org.jetbrains.kotlin.util.PhaseType
+import org.jetbrains.kotlin.utils.KotlinPaths
 import java.io.File
 
 class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
     override val platform: TargetPlatform
         get() = JvmPlatforms.defaultJvmPlatform
-
-    override fun shouldRunK2(
-        messageCollector: MessageCollector,
-        arguments: K2JVMCompilerArguments,
-    ): Boolean {
-        val isK2 = super.shouldRunK2(messageCollector, arguments)
-        if (kaptIsEnabled(arguments)) {
-            if (isK2 && arguments.useK2Kapt == false) {
-                arguments.languageVersion = LanguageVersion.KOTLIN_1_9.versionString
-                if (arguments.apiVersion?.startsWith("2") == true) {
-                    arguments.apiVersion = ApiVersion.KOTLIN_1_9.versionString
-                }
-                arguments.skipMetadataVersionCheck = true
-                arguments.skipPrereleaseCheck = true
-                arguments.allowUnstableDependencies = true
-                return false
-            }
-            if (!isK2 && arguments.useK2Kapt == true) {
-                messageCollector.report(STRONG_WARNING, "K2 kapt cannot be enabled in K1. Update language version to 2.0 or newer.")
-                return false
-            }
-        }
-
-        return isK2
-    }
 
     override fun doExecutePhased(
         arguments: K2JVMCompilerArguments,
@@ -272,10 +243,6 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
             perfManager?.addSourcesStats(sourceFiles.size, environment.countLinesOfCode(sourceFiles))
 
             return if (messageCollector.hasErrors()) null else environment
-        }
-
-        internal fun kaptIsEnabled(arguments: K2JVMCompilerArguments): Boolean {
-            return arguments.pluginOptions?.any { it.startsWith("plugin:org.jetbrains.kotlin.kapt3") } == true
         }
 
         internal fun createCustomPerformanceManagerOrNull(
