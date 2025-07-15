@@ -20,7 +20,6 @@ val npmPackages = listOf(
     NpmPackage("mocha"),
     NpmPackage("karma"),
     NpmPackage("karma-chrome-launcher"),
-    NpmPackage("karma-phantomjs-launcher"),
     NpmPackage("karma-firefox-launcher"),
     NpmPackage("karma-opera-launcher"),
     NpmPackage("karma-ie-launcher"),
