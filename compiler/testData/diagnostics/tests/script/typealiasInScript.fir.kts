@@ -6,7 +6,7 @@ class C {
 }
 
 fun foo() {
-    <!UNSUPPORTED!>typealias Local = String<!>
+    <!UNSUPPORTED_FEATURE!>typealias Local = String<!>
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, localProperty, propertyDeclaration, typeAliasDeclaration */

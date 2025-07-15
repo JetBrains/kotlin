@@ -18,9 +18,9 @@ fun box(): String {
         val p: String
             get() = "OK"
 
-        <!UNSUPPORTED!>typealias LocalTAtoLocal = Local<!>
-        <!UNSUPPORTED!>typealias LocaTAtoLocal2<K> = Local2<K><!>
-        <!UNSUPPORTED!>typealias LocalTA2toLocal2 = Local2<String><!>
+        typealias LocalTAtoLocal = Local
+        typealias LocaTAtoLocal2<K> = Local2<K>
+        typealias LocalTA2toLocal2 = Local2<String>
 
         fun test(): String {
             if (LocalTAtoLocal().p != "OK") return "FAIL"
@@ -30,12 +30,12 @@ fun box(): String {
         }
     }
 
-    <!UNSUPPORTED!>typealias TAtoLocal = Local<!>
-    <!UNSUPPORTED!>typealias TAtoLocal2<K> = Local2<K><!>
-    <!UNSUPPORTED!>typealias TA2toLocal2 = Local2<String><!>
+    typealias TAtoLocal = Local
+    typealias TAtoLocal2<K> = Local2<K>
+    typealias TA2toLocal2 = Local2<String>
 
-    <!UNSUPPORTED!>typealias TAtoGeneric<K> = Generic<K><!>
-    <!UNSUPPORTED!>typealias TAtoInner<K, L> = Generic<K>.Inner<L><!>
+    typealias TAtoGeneric<K> = Generic<K>
+    typealias TAtoInner<K, L> = Generic<K>.Inner<L>
 
     if (TAtoLocal().p != "OK") return "FAIL"
     if (TAtoLocal2("OK").p != "OK") return "FAIL"

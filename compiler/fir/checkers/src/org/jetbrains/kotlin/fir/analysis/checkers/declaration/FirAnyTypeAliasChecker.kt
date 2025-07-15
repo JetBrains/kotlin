@@ -15,13 +15,10 @@ import org.jetbrains.kotlin.fir.analysis.checkers.checkTypeRefForUnderscore
 import org.jetbrains.kotlin.fir.analysis.checkers.isMalformedExpandedType
 import org.jetbrains.kotlin.fir.analysis.checkers.isTopLevel
 import org.jetbrains.kotlin.fir.analysis.checkers.requireFeatureSupport
-import org.jetbrains.kotlin.fir.declarations.FirOuterClassTypeParameterRef
 import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
 import org.jetbrains.kotlin.fir.declarations.utils.isInner
-import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
-import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.resolve.toTypeParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
@@ -33,11 +30,7 @@ object FirAnyTypeAliasChecker : FirTypeAliasChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirTypeAlias) {
         if (!context.isTopLevel) {
-            if (declaration.isLocal) {
-                reporter.reportOn(declaration.source, FirErrors.UNSUPPORTED, "Local type aliases are unsupported.")
-            } else {
-                declaration.requireFeatureSupport(LanguageFeature.NestedTypeAliases)
-            }
+            declaration.requireFeatureSupport(LanguageFeature.NestedTypeAliases)
         }
 
         val expandedTypeRef = declaration.expandedTypeRef
@@ -65,28 +58,23 @@ object FirAnyTypeAliasChecker : FirTypeAliasChecker(MppCheckerKind.Common) {
         fullyExpandedType: ConeKotlinType,
         expandedTypeRef: FirTypeRef,
     ) {
-        if (context.isTopLevel || isInner || isLocal) return
+        if (context.isTopLevel || isInner) return
 
         val unsubstitutedOuterTypeParameters = mutableSetOf<FirTypeParameterSymbol>()
 
-        fun ConeKotlinType.checkRecursively() {
-            for (typeArgument in typeArguments) {
-                typeArgument.type?.fullyExpandedType()?.checkRecursively()
+        fun checkRecursively(coneType: ConeKotlinType) {
+            for (typeArgument in coneType.typeArguments) {
+                typeArgument.type?.fullyExpandedType()?.let { checkRecursively(it) }
             }
 
-            val regularClassSymbol = toRegularClassSymbol(context.session) ?: return
+            val typeParameterSymbol = coneType.toTypeParameterSymbol(context.session) ?: return
 
-            val outerTypeParameterRefs = regularClassSymbol.fir.typeParameters.filterIsInstance<FirOuterClassTypeParameterRef>()
-                .takeIf { it.isNotEmpty() } ?: return
-
-            for (outerTypeParameterRef in outerTypeParameterRefs) {
-                if (typeArguments.any { it.type?.toTypeParameterSymbol(context.session) == outerTypeParameterRef.symbol }) {
-                    unsubstitutedOuterTypeParameters.add(outerTypeParameterRef.symbol)
-                }
+            if (symbol != typeParameterSymbol.containingDeclarationSymbol) {
+                unsubstitutedOuterTypeParameters.add(typeParameterSymbol)
             }
         }
 
-        fullyExpandedType.checkRecursively()
+        checkRecursively(fullyExpandedType)
 
         if (unsubstitutedOuterTypeParameters.isNotEmpty()) {
             reporter.reportOn(

@@ -6,22 +6,22 @@ open class Generic<T>
 fun <T> funWithGenericParam() {
     class LocalClass
 
-    <!UNSUPPORTED!>typealias TAbeforRHSdeclaration = <!UNRESOLVED_REFERENCE!>LocalTA<!><!> // Unresolved
+    typealias TAbeforRHSdeclaration = <!UNRESOLVED_REFERENCE!>LocalTA<!> // Unresolved
 
-    <!UNSUPPORTED!><!WRONG_MODIFIER_CONTAINING_DECLARATION!>protected<!> typealias LocalTA = LocalClass<!> // Prohibited
-    <!UNSUPPORTED!>typealias LocalTAWithCapturingRHS = Generic<T><!> // Prohibited
-    <!UNSUPPORTED!>typealias LocalTAWithUnresolvedTypeArg = Generic<<!UNRESOLVED_REFERENCE!>K<!>><!> // Prohibited
+    <!WRONG_MODIFIER_CONTAINING_DECLARATION!>protected<!> typealias LocalTA = <!TYPEALIAS_EXPANSION_CAPTURES_OUTER_TYPE_PARAMETERS!>LocalClass<!> // Prohibited
+    typealias LocalTAWithCapturingRHS = <!TYPEALIAS_EXPANSION_CAPTURES_OUTER_TYPE_PARAMETERS!>Generic<T><!> // Prohibited
+    typealias LocalTAWithUnresolvedTypeArg = Generic<<!UNRESOLVED_REFERENCE!>K<!>> // Prohibited
 
-    <!UNSUPPORTED!>typealias Recursive = <!RECURSIVE_TYPEALIAS_EXPANSION!>Recursive<!><!>
+    typealias Recursive = <!RECURSIVE_TYPEALIAS_EXPANSION!>Recursive<!>
 
     val localClass = <!CANNOT_INFER_PARAMETER_TYPE!>LocalTA<!>() // Check there is no a crash
     val generic = <!CANNOT_INFER_PARAMETER_TYPE!>LocalTAWithCapturingRHS<!>() // Check there is no a crash
     val genericWithUnresolvedTypeArg = <!CANNOT_INFER_PARAMETER_TYPE!>LocalTAWithUnresolvedTypeArg<!>() // Check there is no a crash
 
     fun <K> localFunWithGenericParam() {
-        <!UNSUPPORTED!>typealias LocalLocalTA1 = Generic<T><!> // Prohibited
-        <!UNSUPPORTED!>typealias LocalLocalTA2 = Generic<K><!> // Prohibited
-        <!UNSUPPORTED!>typealias LocalLocalTA3 = LocalClass<!> // Prohibited
+        typealias LocalLocalTA1 = <!TYPEALIAS_EXPANSION_CAPTURES_OUTER_TYPE_PARAMETERS!>Generic<T><!> // Prohibited
+        typealias LocalLocalTA2 = <!TYPEALIAS_EXPANSION_CAPTURES_OUTER_TYPE_PARAMETERS!>Generic<K><!> // Prohibited
+        typealias LocalLocalTA3 = <!TYPEALIAS_EXPANSION_CAPTURES_OUTER_TYPE_PARAMETERS!>LocalClass<!> // Prohibited
     }
 }
 
@@ -29,18 +29,18 @@ fun regularFun() {
     open class LocalClass {
         <!NESTED_CLASS_NOT_ALLOWED!>class LocalClass2<!>
 
-        <!UNSUPPORTED!>typealias LocalTA2 = LocalClass2<!> // Disallowed (NESTED_CLASS_NOT_ALLOWED)
-        <!UNSUPPORTED!>typealias LocalTAToGenericWithSubstitutedTypeParameter2 = Generic<String><!> // Allowed
-        <!UNSUPPORTED!>typealias LocalTAWithTypeParameter2<T> = Generic<T><!> // Allowed
+        typealias LocalTA2 = LocalClass2 // Disallowed (NESTED_CLASS_NOT_ALLOWED)
+        typealias LocalTAToGenericWithSubstitutedTypeParameter2 = Generic<String> // Allowed
+        typealias LocalTAWithTypeParameter2<T> = Generic<T> // Allowed
 
         val localClass2 = LocalTA2()
         val genericString2 = LocalTAToGenericWithSubstitutedTypeParameter2()
         val generic2 = LocalTAWithTypeParameter2<String>()
     }
 
-    <!UNSUPPORTED!>typealias LocalTA = LocalClass<!> // Allowed
-    <!UNSUPPORTED!>typealias LocalTAToGenericWithSubstitutedTypeParameter = Generic<String><!> // Allowed
-    <!UNSUPPORTED!>typealias LocalTAWithTypeParameter<T> = Generic<T><!> // Allowed
+    typealias LocalTA = LocalClass // Allowed
+    typealias LocalTAToGenericWithSubstitutedTypeParameter = Generic<String> // Allowed
+    typealias LocalTAWithTypeParameter<T> = Generic<T> // Allowed
 
     val anonObject = object : LocalTA() {
     }
