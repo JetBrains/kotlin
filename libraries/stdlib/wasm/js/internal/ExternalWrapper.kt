@@ -8,8 +8,6 @@
 package kotlin.wasm.internal
 
 import kotlin.wasm.internal.reftypes.anyref
-import kotlin.wasm.unsafe.withScopedMemoryAllocator
-import kotlin.wasm.unsafe.UnsafeWasmMemoryApi
 import kotlin.wasm.JsBuiltin
 import kotlin.wasm.internal.WasmCharArray
 
@@ -182,16 +180,6 @@ internal fun anyToExternRef(x: Any): ExternalInterfaceType {
 internal fun stringLength(x: ExternalInterfaceType): Int =
     js("x.length")
 
-// kotlin string to js string export
-// TODO Uint16Array may work with byte endian different with Wasm (i.e. little endian)
-internal fun importStringFromWasm(address: Int, length: Int, prefix: ExternalInterfaceType?): JsString {
-    js("""
-    const mem16 = new Uint16Array(wasmExports.memory.buffer, address, length);
-    const str = String.fromCharCode.apply(null, mem16);
-    return (prefix == null) ? str : prefix + str;
-    """)
-}
-
 //@WasmImport("wasm:js-string", "fromCharCodeArray")
 @Suppress("WRONG_JS_INTEROP_TYPE")
 @JsBuiltin(
@@ -224,6 +212,21 @@ internal fun importStringFromWasm(address: Int, length: Int, prefix: ExternalInt
 )
 internal external fun fromCharCodeArray(array: WasmCharArray, start: Int, end: Int): JsStringRef
 
+internal fun kotlinToJsStringAdapter(x: String?): JsString? {
+    // Using nullable String to represent default value
+    // for parameters with default values
+    if (x == null) return null
+    if (x.isEmpty()) return jsEmptyString
+
+    val srcArray = x.chars
+    val stringLength = srcArray.len()
+    return fromCharCodeArray(srcArray, 0, stringLength)
+}
+
+internal fun jsCheckIsNullOrUndefinedAdapter(x: ExternalInterfaceType?): ExternalInterfaceType? =
+    // We deliberately avoid usage of `takeIf` here as type erase on the inlining stage leads to infinite recursion
+    if (isNullish(x)) null else x
+
 @Suppress("WRONG_JS_INTEROP_TYPE")
 @JsBuiltin(
     "js-string",
@@ -252,38 +255,6 @@ internal external fun fromCharCodeArray(array: WasmCharArray, start: Int, end: I
 """
 )
 internal external fun intoCharCodeArray(string: ExternalInterfaceType, array: WasmCharArray, start: Int): Int
-
-internal fun kotlinToJsStringAdapter(x: String?): JsString? {
-    // Using nullable String to represent default value
-    // for parameters with default values
-    if (x == null) return null
-    if (x.isEmpty()) return jsEmptyString
-
-    val srcArray = x.chars
-    val stringLength = srcArray.len()
-    return fromCharCodeArray(srcArray, 0, stringLength)
-}
-
-internal fun jsCheckIsNullOrUndefinedAdapter(x: ExternalInterfaceType?): ExternalInterfaceType? =
-    // We deliberately avoid usage of `takeIf` here as type erase on the inlining stage leads to infinite recursion
-    if (isNullish(x)) null else x
-
-// js string to kotlin string import
-// TODO Uint16Array may work with byte endian different with Wasm (i.e. little endian)
-internal fun jsExportStringToWasm(src: ExternalInterfaceType, srcOffset: Int, srcLength: Int, dstAddr: Int) {
-    js("""
-    const mem16 = new Uint16Array(wasmExports.memory.buffer, dstAddr, srcLength);
-    let arrayIndex = 0;
-    let srcIndex = srcOffset;
-    while (arrayIndex < srcLength) {
-        mem16.set([src.charCodeAt(srcIndex)], arrayIndex);
-        srcIndex++;
-        arrayIndex++;
-    }     
-    """)
-}
-
-private const val STRING_INTEROP_MEM_BUFFER_SIZE = 65_536 // 1 page 4KiB
 
 internal fun jsToKotlinStringAdapter(x: ExternalInterfaceType): String {
     val stringLength = stringLength(x)
