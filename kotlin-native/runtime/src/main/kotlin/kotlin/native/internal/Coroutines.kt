@@ -7,15 +7,12 @@ package kotlin.native.internal
 
 import kotlin.coroutines.*
 import kotlin.native.internal.escapeAnalysis.Escapes
+import kotlin.internal.getContinuation
 
 @kotlin.internal.InlineOnly
 @PublishedApi
 internal inline suspend fun <T> suspendCoroutineUninterceptedOrReturn(crossinline block: (Continuation<T>) -> Any?): T =
         returnIfSuspended<T>(block(getContinuation<T>()))
-
-@TypedIntrinsic(IntrinsicType.GET_CONTINUATION)
-@PublishedApi
-internal external fun <T> getContinuation(): Continuation<T>
 
 @kotlin.internal.InlineOnly
 @PublishedApi

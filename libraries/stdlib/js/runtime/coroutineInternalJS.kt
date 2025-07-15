@@ -7,8 +7,9 @@
 package kotlin.js
 
 import kotlin.coroutines.*
+import kotlin.internal.getContinuation
 
-
+// TODO: remove after compiler bootstrap
 @PublishedApi
 internal fun <T> getContinuation(): Continuation<T> { throw Exception("Implemented as intrinsic") }
 // Do we really need this intrinsic in JS?

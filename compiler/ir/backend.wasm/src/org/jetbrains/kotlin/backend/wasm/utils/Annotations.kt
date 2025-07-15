@@ -19,7 +19,8 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.wasm.ir.WasmImportDescriptor
 import org.jetbrains.kotlin.wasm.ir.WasmSymbol
 
-private val excludedFromCodegenFqName = FqName("kotlin.wasm.internal.ExcludedFromCodegen")
+private val excludedFromCodegenFqName = FqName("kotlin.internal.ExcludedFromCodegen")
+private val wasmExcludedFromCodegenFqName = FqName("kotlin.wasm.internal.ExcludedFromCodegen")
 private val wasmImportFqName: FqName = FqName("kotlin.wasm.WasmImport")
 private val wasmOpFqName = FqName("kotlin.wasm.internal.WasmOp")
 private val wasmNoOpCastFqName = FqName("kotlin.wasm.internal.WasmNoOpCast")
@@ -31,7 +32,7 @@ private val jsPrimitiveFqName = FqName("kotlin.wasm.internal.JsPrimitive")
 private val wasmExportFqName = FqName("kotlin.wasm.WasmExport")
 
 fun IrAnnotationContainer.hasExcludedFromCodegenAnnotation(): Boolean =
-    hasAnnotation(excludedFromCodegenFqName)
+    hasAnnotation(excludedFromCodegenFqName) || hasAnnotation(wasmExcludedFromCodegenFqName)
 
 fun IrFunction.getWasmImportDescriptor(): WasmImportDescriptor? {
     val annotation = getAnnotation(wasmImportFqName)

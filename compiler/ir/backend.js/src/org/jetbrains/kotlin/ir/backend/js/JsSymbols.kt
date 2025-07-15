@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.ir.util.hasShape
 import org.jetbrains.kotlin.ir.util.kotlinPackageFqn
 import org.jetbrains.kotlin.name.JsStandardClassIds.BASE_JS_PACKAGE
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.StandardClassIds.BASE_INTERNAL_PACKAGE
 
 abstract class JsCommonSymbols(
     irBuiltIns: IrBuiltIns,
@@ -81,7 +82,7 @@ class JsSymbols(
     override val arraysContentEquals: Map<IrType, IrSimpleFunctionSymbol>
         get() = _arraysContentEquals.associateBy { it.owner.parameters[0].type.makeNotNull() }
 
-    override val getContinuation = symbolFinder.topLevelFunction(BASE_JS_PACKAGE, "getContinuation")
+    override val getContinuation = symbolFinder.topLevelFunction(BASE_INTERNAL_PACKAGE, "getContinuation")
 
     override val continuationClass = coroutineSymbols.continuationClass
 
