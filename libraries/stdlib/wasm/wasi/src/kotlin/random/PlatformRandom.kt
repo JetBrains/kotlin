@@ -34,5 +34,4 @@ private fun wasiRandomGet(): Long {
     }
 }
 
-@OptIn(ExperimentalWasmInterop::class)
 internal actual fun defaultPlatformRandom(): Random = Random(wasiRandomGet())
