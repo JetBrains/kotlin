@@ -396,7 +396,6 @@ public interface KtTokens {
                     OPERATOR_KEYWORD,
                     DATA_KEYWORD,
 
-                    CONTRACT_KEYWORD,
                     OUT_KEYWORD, IN_KEYWORD,
                     REIFIED_KEYWORD,
                     NOINLINE_KEYWORD,
