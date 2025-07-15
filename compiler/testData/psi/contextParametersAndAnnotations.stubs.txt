@@ -30,7 +30,7 @@ PsiJetFileStubImpl[package=]
               REFERENCE_EXPRESSION[referencedName=String]
     VALUE_PARAMETER_LIST
   FUN[fqName=foo3, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo3]
-    MODIFIER_LIST[private public inline]
+    MODIFIER_LIST[public private inline]
       CONTEXT_RECEIVER_LIST
         VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=_]
           TYPE_REFERENCE
@@ -82,7 +82,7 @@ PsiJetFileStubImpl[package=]
     PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=false, isGetter=true, mayHaveContract=false]
       VALUE_PARAMETER_LIST
   PROPERTY[fqName=foo3, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=foo3]
-    MODIFIER_LIST[private public inline]
+    MODIFIER_LIST[public private inline]
       CONTEXT_RECEIVER_LIST
         VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=_]
           TYPE_REFERENCE

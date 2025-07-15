@@ -3,7 +3,7 @@ PsiJetFileStubImpl[package=test]
     REFERENCE_EXPRESSION[referencedName=test]
   IMPORT_LIST
   CLASS[classId=test/ClassMembers, fqName=test.ClassMembers, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=ClassMembers, superNames=[]]
-    MODIFIER_LIST[abstract public]
+    MODIFIER_LIST[public abstract]
     PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=ClassMembers]
       MODIFIER_LIST[public]
       VALUE_PARAMETER_LIST
@@ -41,7 +41,7 @@ PsiJetFileStubImpl[package=test]
           REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
     CLASS_BODY
       PROPERTY[fqName=test.ClassMembers.abstractVar, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=true, name=abstractVar]
-        MODIFIER_LIST[abstract public]
+        MODIFIER_LIST[public abstract]
         TYPE_REFERENCE
           USER_TYPE
             USER_TYPE
@@ -55,7 +55,7 @@ PsiJetFileStubImpl[package=test]
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Int]
       PROPERTY[fqName=test.ClassMembers.openVal, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=openVal]
-        MODIFIER_LIST[open public]
+        MODIFIER_LIST[public open]
         TYPE_REFERENCE
           USER_TYPE
             USER_TYPE
@@ -69,7 +69,7 @@ PsiJetFileStubImpl[package=test]
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Int]
       PROPERTY[fqName=test.ClassMembers.p2, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=true, name=p2]
-        MODIFIER_LIST[open public]
+        MODIFIER_LIST[public open]
         TYPE_REFERENCE
           USER_TYPE
             USER_TYPE
@@ -83,7 +83,7 @@ PsiJetFileStubImpl[package=test]
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=String]
       FUN[fqName=test.ClassMembers.abstractFun, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=abstractFun]
-        MODIFIER_LIST[abstract public]
+        MODIFIER_LIST[public abstract]
         VALUE_PARAMETER_LIST
         TYPE_REFERENCE
           USER_TYPE
@@ -99,7 +99,7 @@ PsiJetFileStubImpl[package=test]
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Int]
       FUN[fqName=test.ClassMembers.openFun, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=openFun]
-        MODIFIER_LIST[open public]
+        MODIFIER_LIST[public open]
         VALUE_PARAMETER_LIST
         TYPE_REFERENCE
           USER_TYPE

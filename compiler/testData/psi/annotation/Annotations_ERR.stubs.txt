@@ -7,7 +7,7 @@ PsiJetFileStubImpl[package=foo.bar.goo]
       REFERENCE_EXPRESSION[referencedName=goo]
   IMPORT_LIST
   CLASS[classId=foo/bar/goo/Bar, fqName=foo.bar.goo.Bar, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=Bar, superNames=[]]
-    MODIFIER_LIST[abstract enum open override private public internal protected out in annotation]
+    MODIFIER_LIST[public protected private internal open abstract override enum annotation out in]
       ANNOTATION
       ANNOTATION
         ANNOTATION_ENTRY[hasValueArguments=true, shortName=foo]
@@ -93,7 +93,7 @@ PsiJetFileStubImpl[package=foo.bar.goo]
                 REFERENCE_EXPRESSION[referencedName=d]
     TYPE_PARAMETER_LIST
       TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=true, name=T]
-        MODIFIER_LIST[abstract enum open override private public internal protected out in annotation]
+        MODIFIER_LIST[public protected private internal open abstract override enum annotation out in]
           ANNOTATION
             ANNOTATION_ENTRY[hasValueArguments=false, shortName=sdfsd]
               CONSTRUCTOR_CALLEE

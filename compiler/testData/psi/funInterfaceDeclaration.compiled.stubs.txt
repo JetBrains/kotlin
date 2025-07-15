@@ -12,7 +12,7 @@ PsiJetFileStubImpl[package=test]
         MODIFIER_LIST[public fun]
         CLASS_BODY
           FUN[fqName=test.FunInterfaceDeclaration.KRunnable.invoke, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=invoke]
-            MODIFIER_LIST[abstract public]
+            MODIFIER_LIST[public abstract]
             VALUE_PARAMETER_LIST
             TYPE_REFERENCE
               USER_TYPE
@@ -26,7 +26,7 @@ PsiJetFileStubImpl[package=test]
           TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=R]
         CLASS_BODY
           FUN[fqName=test.FunInterfaceDeclaration.GenericKRunnable.invoke, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=invoke]
-            MODIFIER_LIST[abstract public]
+            MODIFIER_LIST[public abstract]
             VALUE_PARAMETER_LIST
               VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=t]
                 TYPE_REFERENCE

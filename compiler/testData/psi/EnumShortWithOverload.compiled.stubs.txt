@@ -2,7 +2,7 @@ PsiJetFileStubImpl[package=]
   PACKAGE_DIRECTIVE
   IMPORT_LIST
   CLASS[classId=/Color, fqName=Color, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=Color, superNames=[Enum]]
-    MODIFIER_LIST[enum public final]
+    MODIFIER_LIST[public final enum]
     PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Color]
       MODIFIER_LIST[private]
       VALUE_PARAMETER_LIST
@@ -36,7 +36,7 @@ PsiJetFileStubImpl[package=]
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Int]
       FUN[fqName=Color.foo, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=foo]
-        MODIFIER_LIST[abstract public]
+        MODIFIER_LIST[public abstract]
         VALUE_PARAMETER_LIST
         TYPE_REFERENCE
           USER_TYPE

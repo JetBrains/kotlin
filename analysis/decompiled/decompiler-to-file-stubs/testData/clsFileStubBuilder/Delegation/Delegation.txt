@@ -31,14 +31,14 @@ PsiJetFileStubImpl[package=]
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Int]
       PROPERTY[fqName=Delegation.g, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=g]
-        MODIFIER_LIST[open public]
+        MODIFIER_LIST[public open]
         TYPE_REFERENCE
           USER_TYPE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Int]
       FUN[fqName=Delegation.f, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=f]
-        MODIFIER_LIST[open public]
+        MODIFIER_LIST[public open]
         VALUE_PARAMETER_LIST
         TYPE_REFERENCE
           USER_TYPE

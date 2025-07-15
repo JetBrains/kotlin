@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.lexer;
@@ -375,19 +364,43 @@ public interface KtTokens {
                                              VALUE_KEYWORD, CONTEXT_KEYWORD
     );
 
-    /*
-        This array is used in stub serialization:
-        1. Do not change order.
-        2. If you add an entry or change order, increase stub version.
+    /**
+     * Canonically ordered array of all modifier keywords.
+     * <p>
+     * <b>IMPORTANT:</b> modifiers are used in stub serialization, so
+     * <ul>
+     *   <li>Do <b>NOT</b> change the order of this array unless necessary</li>
+     *   <li>If you add an entry or rearrange the order, be sure to increase {@link org.jetbrains.kotlin.psi.stubs.KotlinStubVersions the stub version}.</li>
+     * </ul>
+     *
+     * @see org.jetbrains.kotlin.psi.stubs.KotlinStubVersions
      */
     KtModifierKeywordToken[] MODIFIER_KEYWORDS_ARRAY =
             new KtModifierKeywordToken[] {
-                    ABSTRACT_KEYWORD, ENUM_KEYWORD, CONTRACT_KEYWORD, OPEN_KEYWORD, INNER_KEYWORD, OVERRIDE_KEYWORD, PRIVATE_KEYWORD,
-                    PUBLIC_KEYWORD, INTERNAL_KEYWORD, PROTECTED_KEYWORD, OUT_KEYWORD, IN_KEYWORD, FINAL_KEYWORD, VARARG_KEYWORD,
-                    REIFIED_KEYWORD, COMPANION_KEYWORD, SEALED_KEYWORD, LATEINIT_KEYWORD,
-                    DATA_KEYWORD, INLINE_KEYWORD, NOINLINE_KEYWORD, TAILREC_KEYWORD, EXTERNAL_KEYWORD, ANNOTATION_KEYWORD, CROSSINLINE_KEYWORD,
-                    CONST_KEYWORD, OPERATOR_KEYWORD, INFIX_KEYWORD, SUSPEND_KEYWORD,
-                    EXPECT_KEYWORD, ACTUAL_KEYWORD, FUN_KEYWORD, VALUE_KEYWORD
+                    PUBLIC_KEYWORD, PROTECTED_KEYWORD, PRIVATE_KEYWORD, INTERNAL_KEYWORD,
+                    EXPECT_KEYWORD, ACTUAL_KEYWORD,
+                    FINAL_KEYWORD, OPEN_KEYWORD, ABSTRACT_KEYWORD, SEALED_KEYWORD,
+                    CONST_KEYWORD,
+                    EXTERNAL_KEYWORD,
+                    OVERRIDE_KEYWORD,
+                    LATEINIT_KEYWORD,
+                    TAILREC_KEYWORD,
+                    VARARG_KEYWORD,
+                    SUSPEND_KEYWORD,
+                    INNER_KEYWORD,
+                    ENUM_KEYWORD, ANNOTATION_KEYWORD, FUN_KEYWORD,
+                    COMPANION_KEYWORD,
+                    INLINE_KEYWORD,
+                    VALUE_KEYWORD,
+                    INFIX_KEYWORD,
+                    OPERATOR_KEYWORD,
+                    DATA_KEYWORD,
+
+                    CONTRACT_KEYWORD,
+                    OUT_KEYWORD, IN_KEYWORD,
+                    REIFIED_KEYWORD,
+                    NOINLINE_KEYWORD,
+                    CROSSINLINE_KEYWORD,
             };
 
     TokenSet MODIFIER_KEYWORDS = TokenSet.create(MODIFIER_KEYWORDS_ARRAY);
