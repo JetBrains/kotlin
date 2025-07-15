@@ -178,8 +178,9 @@ internal object ReflectionObjectRenderer {
         return fqName
     }
 
-    private fun StringBuilder.renderFunctionType(type: KType) {
+    private fun StringBuilder.renderFunctionType(type: AbstractKType) {
         if (type.isMarkedNullable) append("(")
+        if (type.isSuspendFunctionType) append("suspend ")
         type.arguments.dropLast(1).joinTo(this, prefix = "(", postfix = ") -> ")
         append(type.arguments.last())
         if (type.isMarkedNullable) append(")?")

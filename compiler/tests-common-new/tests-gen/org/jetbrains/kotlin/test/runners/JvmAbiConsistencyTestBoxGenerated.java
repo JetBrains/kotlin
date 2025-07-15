@@ -54839,6 +54839,12 @@ public class JvmAbiConsistencyTestBoxGenerated extends AbstractJvmAbiConsistency
       }
 
       @Test
+      @TestMetadata("functionTypes.kt")
+      public void testFunctionTypes() {
+        runTest("compiler/testData/codegen/box/reflection/types/functionTypes.kt");
+      }
+
+      @Test
       @TestMetadata("innerGenericArguments.kt")
       public void testInnerGenericArguments() {
         runTest("compiler/testData/codegen/box/reflection/types/innerGenericArguments.kt");

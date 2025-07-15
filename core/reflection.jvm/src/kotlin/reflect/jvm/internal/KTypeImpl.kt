@@ -17,6 +17,7 @@
 package kotlin.reflect.jvm.internal
 
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.builtins.isSuspendFunctionType
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMapper
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.NotFoundClasses
@@ -160,6 +161,9 @@ internal class KTypeImpl(
 
     override val isMutableCollectionType: Boolean
         get() = (type.constructor.declarationDescriptor as? ClassDescriptor)?.let(JavaToKotlinClassMapper::isMutable) == true
+
+    override val isSuspendFunctionType: Boolean
+        get() = type.isSuspendFunctionType
 
     override fun lowerBoundIfFlexible(): AbstractKType? =
         when (val unwrapped = type.unwrap()) {
