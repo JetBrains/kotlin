@@ -638,6 +638,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PROPERTY_WITH_NO_
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PROTECTED_CALL_FROM_PUBLIC_INLINE_ERROR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PROTECTED_CONSTRUCTOR_CALL_FROM_PUBLIC_INLINE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PROTECTED_CONSTRUCTOR_NOT_IN_SUPER_CALL
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.RECEIVER_SHADOWED_BY_CONTEXT_PARAMETER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.RECURSION_IN_IMPLICIT_TYPES
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.RECURSION_IN_INLINE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.RECURSIVE_TYPEALIAS_EXPANSION
@@ -3044,6 +3045,11 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(
             DSL_SCOPE_VIOLATION,
             "''{0}'' cannot be called in this context with an implicit receiver. Use an explicit receiver if necessary.",
+            SYMBOL
+        )
+        map.put(
+            RECEIVER_SHADOWED_BY_CONTEXT_PARAMETER,
+            "''{0}'' uses an implicit receiver shadowed by a context parameter. Make the receiver explicit using ''this'' or ''contextOf''.",
             SYMBOL
         )
 

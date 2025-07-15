@@ -4586,6 +4586,12 @@ internal class DslScopeViolationImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.DslScopeViolation
 
+internal class ReceiverShadowedByContextParameterImpl(
+    override val calleeSymbol: KaSymbol,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.ReceiverShadowedByContextParameter
+
 internal class ToplevelTypealiasesOnlyImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,

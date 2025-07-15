@@ -920,6 +920,7 @@ object FirErrors : KtDiagnosticsContainer() {
     val ASSIGNMENT_OPERATOR_SHOULD_RETURN_UNIT: KtDiagnosticFactory2<FirNamedFunctionSymbol, String> = KtDiagnosticFactory2("ASSIGNMENT_OPERATOR_SHOULD_RETURN_UNIT", ERROR, SourceElementPositioningStrategies.OPERATOR, KtExpression::class, getRendererFactory())
     val NOT_FUNCTION_AS_OPERATOR: KtDiagnosticFactory2<String, FirBasedSymbol<*>> = KtDiagnosticFactory2("NOT_FUNCTION_AS_OPERATOR", ERROR, SourceElementPositioningStrategies.OPERATOR, PsiElement::class, getRendererFactory())
     val DSL_SCOPE_VIOLATION: KtDiagnosticFactory1<FirBasedSymbol<*>> = KtDiagnosticFactory1("DSL_SCOPE_VIOLATION", ERROR, SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED, PsiElement::class, getRendererFactory())
+    val RECEIVER_SHADOWED_BY_CONTEXT_PARAMETER: KtDiagnosticFactory1<FirBasedSymbol<*>> = KtDiagnosticFactory1("RECEIVER_SHADOWED_BY_CONTEXT_PARAMETER", ERROR, SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED, PsiElement::class, getRendererFactory())
 
     // Type alias
     val TOPLEVEL_TYPEALIASES_ONLY: KtDiagnosticFactory0 = KtDiagnosticFactory0("TOPLEVEL_TYPEALIASES_ONLY", ERROR, SourceElementPositioningStrategies.DEFAULT, KtTypeAlias::class, getRendererFactory())
