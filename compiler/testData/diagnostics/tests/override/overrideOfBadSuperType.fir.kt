@@ -6,7 +6,7 @@ interface A<T> {
 
 
 class B : <!WRONG_NUMBER_OF_TYPE_ARGUMENTS!>A<!> {
-    <!NOTHING_TO_OVERRIDE!>override<!> fun foo() {
+    override fun foo() {
     }
 }
 
