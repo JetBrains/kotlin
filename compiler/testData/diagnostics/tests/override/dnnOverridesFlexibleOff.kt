@@ -1,5 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: -JavaTypeParameterDefaultRepresentationWithDNN -AllowDnnTypeOverridingFlexibleType
+// LANGUAGE: -AllowDnnTypeOverridingFlexibleType
 // FIR_IDENTICAL
 // ISSUE: KT-58933
 // FILE: J.java

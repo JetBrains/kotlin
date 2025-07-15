@@ -1,4 +1,4 @@
-// LANGUAGE: -JavaTypeParameterDefaultRepresentationWithDNN +AllowDnnTypeOverridingFlexibleType
+// LANGUAGE: +AllowDnnTypeOverridingFlexibleType
 // JSPECIFY_STATE: warn
 // ISSUE: KT-58933
 // FILE: J.java

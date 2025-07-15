@@ -1023,12 +1023,6 @@ public class FirPsiOldFrontendForeignAnnotationsCompiledJavaTestGenerated extend
         }
 
         @Test
-        @TestMetadata("AnnotatedTypeParameterBoundsInNullUnmarkedContext.kt")
-        public void testAnnotatedTypeParameterBoundsInNullUnmarkedContext() {
-          runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/AnnotatedTypeParameterBoundsInNullUnmarkedContext.kt");
-        }
-
-        @Test
         @TestMetadata("Captured.kt")
         public void testCaptured() {
           runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jspecify/warnMode/Captured.kt");

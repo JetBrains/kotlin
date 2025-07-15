@@ -1,6 +1,6 @@
 // RUN_PIPELINE_TILL: BACKEND
 // FIR_DUMP
-// LANGUAGE: -JavaTypeParameterDefaultRepresentationWithDNN -DontMakeExplicitJavaTypeArgumentsFlexible
+// LANGUAGE: -DontMakeExplicitJavaTypeArgumentsFlexible
 // ISSUE: KT-67999
 
 // FILE: J.java

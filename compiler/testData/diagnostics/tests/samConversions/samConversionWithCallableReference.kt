@@ -1,5 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: -JavaTypeParameterDefaultRepresentationWithDNN -PreciseSimplificationToFlexibleLowerConstraint
+// LANGUAGE: -PreciseSimplificationToFlexibleLowerConstraint
 
 // FILE: Consumer.java
 public interface Consumer<T> {

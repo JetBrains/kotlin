@@ -25681,12 +25681,6 @@ public class FirLightTreeOldFrontendDiagnosticsWithLatestLanguageVersionTestGene
       }
 
       @Test
-      @TestMetadata("overrideWithTypeParameterAfter.kt")
-      public void testOverrideWithTypeParameterAfter() {
-        runTest("compiler/testData/diagnostics/tests/j+k/overrideWithTypeParameterAfter.kt");
-      }
-
-      @Test
       @TestMetadata("overrideWithTypeParameterNoFlexible.kt")
       public void testOverrideWithTypeParameterNoFlexible() {
         runTest("compiler/testData/diagnostics/tests/j+k/overrideWithTypeParameterNoFlexible.kt");
@@ -25696,12 +25690,6 @@ public class FirLightTreeOldFrontendDiagnosticsWithLatestLanguageVersionTestGene
       @TestMetadata("overrideWithTypeParameterReverse.kt")
       public void testOverrideWithTypeParameterReverse() {
         runTest("compiler/testData/diagnostics/tests/j+k/overrideWithTypeParameterReverse.kt");
-      }
-
-      @Test
-      @TestMetadata("overrideWithTypeParameterReverseAfter.kt")
-      public void testOverrideWithTypeParameterReverseAfter() {
-        runTest("compiler/testData/diagnostics/tests/j+k/overrideWithTypeParameterReverseAfter.kt");
       }
 
       @Test
@@ -30304,12 +30292,6 @@ public class FirLightTreeOldFrontendDiagnosticsWithLatestLanguageVersionTestGene
       @TestMetadata("dnnOverridesFlexible.kt")
       public void testDnnOverridesFlexible() {
         runTest("compiler/testData/diagnostics/tests/override/dnnOverridesFlexible.kt");
-      }
-
-      @Test
-      @TestMetadata("dnnOverridesFlexibleDnnRepresentation.kt")
-      public void testDnnOverridesFlexibleDnnRepresentation() {
-        runTest("compiler/testData/diagnostics/tests/override/dnnOverridesFlexibleDnnRepresentation.kt");
       }
 
       @Test
@@ -35330,12 +35312,6 @@ public class FirLightTreeOldFrontendDiagnosticsWithLatestLanguageVersionTestGene
       @TestMetadata("samWithLambda.kt")
       public void testSamWithLambda() {
         runTest("compiler/testData/diagnostics/tests/samConversions/samWithLambda.kt");
-      }
-
-      @Test
-      @TestMetadata("samWithLambdaDnnRepresentation.kt")
-      public void testSamWithLambdaDnnRepresentation() {
-        runTest("compiler/testData/diagnostics/tests/samConversions/samWithLambdaDnnRepresentation.kt");
       }
 
       @Test

@@ -1,5 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// LANGUAGE: -JavaTypeParameterDefaultRepresentationWithDNN +ProhibitReturningIncorrectNullabilityValuesFromSamConstructorLambdaOfJdkInterfaces +DontMakeExplicitJavaTypeArgumentsFlexible
+// LANGUAGE: +ProhibitReturningIncorrectNullabilityValuesFromSamConstructorLambdaOfJdkInterfaces +DontMakeExplicitJavaTypeArgumentsFlexible
 // ISSUE: KT-57014, KT-66730
 // FULL_JDK
 // JVM_TARGET: 1.8

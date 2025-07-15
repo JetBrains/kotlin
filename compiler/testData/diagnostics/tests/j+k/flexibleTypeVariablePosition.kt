@@ -1,6 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-// LANGUAGE: -JavaTypeParameterDefaultRepresentationWithDNN -PreciseSimplificationToFlexibleLowerConstraint
+// LANGUAGE: -PreciseSimplificationToFlexibleLowerConstraint
 // ISSUE: KT-59138
 // SKIP_TXT
 // FILE: JavaClass.java
