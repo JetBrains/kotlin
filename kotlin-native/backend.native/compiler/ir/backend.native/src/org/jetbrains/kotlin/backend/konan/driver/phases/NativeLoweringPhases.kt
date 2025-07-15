@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.CompilationException
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.ir.Symbols
-import org.jetbrains.kotlin.backend.common.ir.isReifiable
 import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.common.lower.coroutines.AddContinuationToNonLocalSuspendFunctionsLowering
 import org.jetbrains.kotlin.backend.common.lower.inline.LocalClassesInInlineLambdasLowering
@@ -36,17 +35,26 @@ import org.jetbrains.kotlin.ir.inline.*
 import org.jetbrains.kotlin.backend.konan.lower.NativeAssertionWrapperLowering
 import org.jetbrains.kotlin.backend.konan.optimizations.CastsOptimization
 import org.jetbrains.kotlin.ir.interpreter.IrInterpreterConfiguration
+import org.jetbrains.kotlin.util.PerformanceManager
+import org.jetbrains.kotlin.util.PhaseType
+import org.jetbrains.kotlin.util.tryMeasureDynamicPhaseTime
 import org.jetbrains.kotlin.utils.KotlinExceptionWithAttachments
 
 internal typealias LoweringList = List<NamedCompilerPhase<NativeGenerationState, IrFile, IrFile>>
 internal typealias ModuleLowering = NamedCompilerPhase<NativeGenerationState, IrModuleFragment, Unit>
 
-internal fun PhaseEngine<NativeGenerationState>.runLowerings(lowerings: LoweringList, modules: List<IrModuleFragment>) {
+internal fun PhaseEngine<NativeGenerationState>.runLowerings(
+        lowerings: LoweringList,
+        modules: List<IrModuleFragment>,
+        performanceManager: PerformanceManager?,
+) {
     for (module in modules) {
         for (file in module.files) {
             context.fileLowerState = FileLowerState()
             lowerings.fold(file) { loweredFile, lowering ->
-                runPhase(lowering, loweredFile)
+                performanceManager.tryMeasureDynamicPhaseTime(lowering.name, PhaseType.IrLowering) {
+                    runPhase(lowering, loweredFile)
+                }
             }
         }
     }
@@ -54,10 +62,13 @@ internal fun PhaseEngine<NativeGenerationState>.runLowerings(lowerings: Lowering
 
 internal fun PhaseEngine<NativeGenerationState>.runModuleWisePhase(
         lowering: ModuleLowering,
-        modules: List<IrModuleFragment>
+        modules: List<IrModuleFragment>,
+        performanceManager: PerformanceManager?,
 ) {
-    for (module in modules) {
-        runPhase(lowering, module)
+    performanceManager.tryMeasureDynamicPhaseTime(lowering.name, PhaseType.IrLowering) {
+        for (module in modules) {
+            runPhase(lowering, module)
+        }
     }
 }
 
