@@ -21,3 +21,11 @@ Either add `deployVersion=99.0.255-KotlinVersionPlaceholder` to `gradle.properti
 ```shell
 ./gradlew :repo:artifacts-tests:test --tests "org.jetbrains.kotlin.code.GradleMetadataTest" -PdeployVersion=99.0.255-KotlinVersionPlaceholder
 ```
+
+## Generating test data for the Gradle metadata test
+
+To generate Gradle metadata template, build artifacts using the command above, then run the following from the root of the repository.
+
+```shell
+./repo/artifacts-tests/generate-gradle-metadata-template.sh build/repo/org/jetbrains/kotlin/ repo/artifacts-tests/src/test/resources/org/jetbrains/kotlin/ '99.0.255-KotlinVersionPlaceholder' 'ArtifactsTest.version'
+```
