@@ -2,7 +2,6 @@
 // FIR_IDENTICAL
 // ISSUE: KT-64102
 // DIAGNOSTICS: -DEBUG_INFO_SMARTCAST
-// LANGUAGE: +ForbidUsingExtensionPropertyTypeParameterInDelegate
 // WITH_REFLECT
 
 import kotlin.reflect.KProperty

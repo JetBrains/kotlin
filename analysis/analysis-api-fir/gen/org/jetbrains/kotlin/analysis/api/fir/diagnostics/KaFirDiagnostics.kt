@@ -2925,11 +2925,6 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         val usedTypeParameter: KaTypeParameterSymbol
     }
 
-    interface DelegateUsesExtensionPropertyTypeParameterWarning : KaFirDiagnostic<KtProperty> {
-        override val diagnosticClass get() = DelegateUsesExtensionPropertyTypeParameterWarning::class
-        val usedTypeParameter: KaTypeParameterSymbol
-    }
-
     interface GetterVisibilityDiffersFromPropertyVisibility : KaFirDiagnostic<KtModifierListOwner> {
         override val diagnosticClass get() = GetterVisibilityDiffersFromPropertyVisibility::class
     }
