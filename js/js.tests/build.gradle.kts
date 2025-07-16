@@ -259,12 +259,14 @@ val generateTests by generator("org.jetbrains.kotlin.generators.tests.GenerateJs
 
 val testJsFile = testDataDir.resolve("test.js")
 val packageJsonFile = testDataDir.resolve("package.json")
+val packageLockJsonFile = testDataDir.resolve("package-lock.json")
 
 val prepareNpmTestData by task<Copy> {
-    inputs.files(testJsFile, packageJsonFile)
+    inputs.files(testJsFile, packageJsonFile, packageLockJsonFile)
 
     from(testJsFile)
     from(packageJsonFile)
+    from(packageLockJsonFile)
     into(node.nodeProjectDir)
 }
 tasks.named("npmSetRegistry").configure {
