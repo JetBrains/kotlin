@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
 import org.jetbrains.kotlin.backend.wasm.instanceCheckForExternalClass
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.getRuntimeClass
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.isExternalType
+import org.jetbrains.kotlin.backend.wasm.utils.hasExcludedFromCodegenAnnotation
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
@@ -295,6 +296,16 @@ class WasmBaseTypeOperatorTransformer(val context: WasmBackendContext) : IrEleme
         if (toType != context.irBuiltIns.nothingType &&
             fromType.erasedUpperBound.isSubclassOf(expressionType.erasedUpperBound)
         ) {
+            return narrowType(fromType, expressionType, expression.argument)
+        }
+
+        // Check if the current function or its containing file has the ExcludedFromCodegen annotation
+        val currentFunctionElement = currentFunction?.irElement
+        val isExcludedFromCodegen = currentFunctionElement?.hasExcludedFromCodegenAnnotation() == true || 
+                                    currentFile.hasExcludedFromCodegenAnnotation()
+
+        // If excluded from codegen, skip CCE generation and keep the implicit cast
+        if (isExcludedFromCodegen && !isSafe) {
             return narrowType(fromType, expressionType, expression.argument)
         }
 
