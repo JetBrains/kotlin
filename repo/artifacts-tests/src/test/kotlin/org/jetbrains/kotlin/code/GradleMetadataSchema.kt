@@ -4,22 +4,61 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import org.jetbrains.kotlin.utils.addToStdlib.sequenceOfLazyValues
 
 private val jsonFormatter = Json { prettyPrint = true }
+
+fun Sequence<Int>.firstNonZeroOrZero() = firstOrNull { it != 0 } ?: 0
+
+private fun <T : Comparable<T>> compareLists(
+    lhs: MutableList<T>,
+    rhs: MutableList<T>,
+): Int {
+    for (i in 0 until minOf(lhs.size, rhs.size)) {
+        val cmp = lhs[i].compareTo(rhs[i])
+        if (cmp != 0) return cmp
+    }
+    return lhs.size.compareTo(rhs.size)
+}
+
+private fun <T : Comparable<T>> compareNullableLists(
+    lhs: MutableList<T>?,
+    rhs: MutableList<T>?,
+): Int {
+    return when {
+        lhs == null && rhs == null -> 0
+        lhs == null -> -1
+        rhs == null -> 1
+        else -> compareLists(lhs, rhs)
+    }
+}
+
 
 @Serializable
 data class GradleMetadata(
     val formatVersion: String,
     val component: Component,
     val createdBy: CreatedBy,
-    val variants: List<Variant>,
-) {
+    val variants: MutableList<Variant>,
+) : Comparable<GradleMetadata> {
     fun removeFilesFingerprint() {
         variants.forEach { it.removeFilesFingerprint() }
     }
 
+    fun sortListsRecursively() {
+        variants.sort()
+        variants.forEach { it.sortListsRecursively() }
+    }
+
     override fun toString(): String {
         return jsonFormatter.encodeToString(this)
+    }
+
+    override fun compareTo(other: GradleMetadata): Int {
+        return sequenceOf(
+            compareValuesBy(this, other, { it.formatVersion }, { it.component }, { it.createdBy }),
+            compareLists(this.variants, other.variants)
+        ).firstNonZeroOrZero()
     }
 }
 
@@ -30,35 +69,84 @@ data class Component(
     val module: String,
     val version: String,
     val attributes: ComponentAttributes? = null,
-)
+) : Comparable<Component> {
+    override fun compareTo(other: Component): Int {
+        return compareValuesBy(
+            this, other,
+            { it.url },
+            { it.group },
+            { it.module },
+            { it.version },
+            { it.attributes }
+        )
+    }
+}
 
 @Serializable
 data class ComponentAttributes(
     @SerialName("org.gradle.status") var orgGradleStatus: String,
-)
+) : Comparable<ComponentAttributes> {
+    override fun compareTo(other: ComponentAttributes): Int {
+        return compareValuesBy(this, other, { it.orgGradleStatus })
+    }
+}
 
 @Serializable
 data class CreatedBy(
     val gradle: Gradle,
-)
+) : Comparable<CreatedBy> {
+    override fun compareTo(other: CreatedBy): Int {
+        return compareValuesBy(this, other, { it.gradle })
+    }
+}
 
 @Serializable
 data class Gradle(
     val version: String,
-)
+) : Comparable<Gradle> {
+    override fun compareTo(other: Gradle): Int {
+        return compareValuesBy(this, other, { it.version })
+    }
+}
 
 @Serializable
 data class Variant(
     val name: String,
     val attributes: VariantAttributes,
     @SerialName("available-at") val availableAt: Component? = null,
-    val dependencies: List<Dependency>? = null,
-    val dependencyConstraints: List<Dependency>? = null,
-    val files: List<File>? = null,
-    val capabilities: List<Capability>? = null,
-) {
+    val dependencies: MutableList<Dependency>? = null,
+    val dependencyConstraints: MutableList<Dependency>? = null,
+    val files: MutableList<File>? = null,
+    val capabilities: MutableList<Capability>? = null,
+) : Comparable<Variant> {
     fun removeFilesFingerprint() {
         files?.forEach { it.removeFingerprint() }
+    }
+
+    fun sortListsRecursively() {
+        dependencies?.sort()
+        dependencies?.forEach { it.sortListsRecursively() }
+        dependencyConstraints?.sort()
+        dependencyConstraints?.forEach { it.sortListsRecursively() }
+        files?.sort()
+        capabilities?.sort()
+    }
+
+    override fun compareTo(other: Variant): Int {
+        return sequenceOfLazyValues(
+            {
+                compareValuesBy(
+                    this, other,
+                    { it.name },
+                    { it.attributes },
+                    { it.availableAt }
+                )
+            },
+            { compareNullableLists(this.dependencies, other.dependencies) },
+            { compareNullableLists(this.dependencyConstraints, other.dependencyConstraints) },
+            { compareNullableLists(this.files, other.files) },
+            { compareNullableLists(this.capabilities, other.capabilities) },
+        ).firstOrNull { it != 0 } ?: 0
     }
 }
 
@@ -76,20 +164,56 @@ data class VariantAttributes(
     @SerialName("org.jetbrains.kotlin.klib.packaging") val orgJetbrainsKotlinKlibPackaging: String? = null,
     @SerialName("org.jetbrains.kotlin.js.compiler") val orgJetbrainsKotlinJsCompiler: String? = null,
     @SerialName("org.jetbrains.kotlin.wasm.target") val orgJetbrainsKotlinWasmTarget: String? = null,
-)
+) : Comparable<VariantAttributes> {
+    override fun compareTo(other: VariantAttributes): Int {
+        return compareValuesBy(
+            this, other,
+            { it.orgGradleCategory },
+            { it.orgGradleDependencyBundling },
+            { it.orgGradleDocstype },
+            { it.orgGradleUsage },
+            { it.orgGradleJvmEnvironment },
+            { it.orgGradleJvmVersion },
+            { it.orgGradleLibraryelements },
+            { it.orgGradlePluginApiVersion },
+            { it.orgJetbrainsKotlinPlatformType },
+            { it.orgJetbrainsKotlinKlibPackaging },
+            { it.orgJetbrainsKotlinJsCompiler },
+            { it.orgJetbrainsKotlinWasmTarget }
+        )
+    }
+}
 
 @Serializable
 data class Dependency(
     val group: String,
     val module: String,
     val version: Version,
-    val excludes: List<Exclude>? = null,
     val attributes: DependencyAttributes? = null,
     val endorseStrictVersions: Boolean? = null,
-    val requestedCapabilities: List<RequestedCapability>? = null,
+    val excludes: MutableList<Exclude>? = null,
+    val requestedCapabilities: MutableList<RequestedCapability>? = null,
 ) : Comparable<Dependency> {
+    fun sortListsRecursively() {
+        excludes?.sort()
+        requestedCapabilities?.sort()
+    }
+
     override fun compareTo(other: Dependency): Int {
-        return compareValuesBy(this, other, { it.group }, { it.module }, { it.version })
+        return sequenceOfLazyValues(
+            {
+                compareValuesBy(
+                    this, other,
+                    { it.group },
+                    { it.module },
+                    { it.version },
+                    { it.attributes },
+                    { it.endorseStrictVersions }
+                )
+            },
+            { compareNullableLists(this.excludes, other.excludes) },
+            { compareNullableLists(this.requestedCapabilities, other.requestedCapabilities) },
+        ).firstNonZeroOrZero()
     }
 }
 
@@ -106,18 +230,30 @@ data class Version(
 data class Exclude(
     val group: String,
     val module: String,
-)
+) : Comparable<Exclude> {
+    override fun compareTo(other: Exclude): Int {
+        return compareValuesBy(this, other, { it.group }, { it.module })
+    }
+}
 
 @Serializable
 data class DependencyAttributes(
     @SerialName("org.gradle.category") val orgGradleCategory: String,
-)
+) : Comparable<DependencyAttributes> {
+    override fun compareTo(other: DependencyAttributes): Int {
+        return compareValuesBy(this, other, { it.orgGradleCategory })
+    }
+}
 
 @Serializable
 data class RequestedCapability(
     val group: String,
     val name: String,
-)
+) : Comparable<RequestedCapability> {
+    override fun compareTo(other: RequestedCapability): Int {
+        return compareValuesBy(this, other, { it.group }, { it.name })
+    }
+}
 
 @Serializable
 data class File(
@@ -128,7 +264,7 @@ data class File(
     var sha256: String?,
     var sha1: String?,
     var md5: String?,
-) {
+) : Comparable<File> {
     fun removeFingerprint() {
         size = null
         sha512 = null
@@ -136,6 +272,17 @@ data class File(
         sha1 = null
         md5 = null
     }
+
+    override fun compareTo(other: File) = compareValuesBy(
+        this, other,
+        { it.name },
+        { it.url },
+        { it.size },
+        { it.sha512 },
+        { it.sha256 },
+        { it.sha1 },
+        { it.md5 },
+    )
 }
 
 @Serializable
@@ -143,4 +290,8 @@ data class Capability(
     val group: String,
     val name: String,
     val version: String,
-)
+) : Comparable<Capability> {
+    override fun compareTo(other: Capability): Int {
+        return compareValuesBy(this, other, { it.group }, { it.name }, { it.version })
+    }
+}

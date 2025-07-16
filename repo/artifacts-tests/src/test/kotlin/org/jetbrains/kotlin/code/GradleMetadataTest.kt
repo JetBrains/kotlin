@@ -27,8 +27,10 @@ class GradleMetadataTest {
                         val actualString = actual.toFile().readText()
                         val expectedWithVersion = expectedGradleMetadataPath.toFile().readText().replace("ArtifactsTest.version", kotlinVersion)
                         val expectedObject = Json.decodeFromString<GradleMetadata>(expectedWithVersion)
+                        expectedObject.sortListsRecursively()
                         val actualObject = Json.decodeFromString<GradleMetadata>(actualString)
                         actualObject.removeFilesFingerprint()
+                        actualObject.sortListsRecursively()
                         assertEquals(expectedObject, actualObject)
                     }
                 } else {
