@@ -1,5 +1,6 @@
 // ISSUE: KT-57192
 // OPT_IN: kotlin.js.ExperimentalJsExport
+// OPT_IN: kotlin.js.ExperimentalWasmJsInterop
 
 import kotlin.js.Promise
 

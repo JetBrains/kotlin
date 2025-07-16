@@ -1,4 +1,6 @@
 // FIR_IDENTICAL
+// OPT_IN: kotlin.js.ExperimentalWasmJsInterop
+
 external fun foo(): Int = definedExternally
 
 external fun bar(): Unit {

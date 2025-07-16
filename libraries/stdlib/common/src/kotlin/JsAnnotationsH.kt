@@ -10,6 +10,8 @@ import kotlin.reflect.KClass
 
 /**
  * Gives a declaration (a function, a property or a class) specific name in JavaScript.
+ *
+ * In Kotlin/Wasm, interoperability with JavaScript is experimental, and the behavior of this annotation may change in the future.
  */
 @Target(CLASS, FUNCTION, PROPERTY, CONSTRUCTOR, PROPERTY_GETTER, PROPERTY_SETTER)
 @OptionalExpectation

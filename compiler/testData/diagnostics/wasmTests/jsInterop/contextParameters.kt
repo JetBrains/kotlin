@@ -1,5 +1,6 @@
 // DIAGNOSTICS: -UNREACHABLE_CODE -UNUSED_PARAMETER
 // LANGUAGE: +ContextParameters
+// OPT_IN: kotlin.js.ExperimentalWasmJsInterop
 
 <!CONTEXT_PARAMETERS_UNSUPPORTED!>context(x: <!DEBUG_INFO_MISSING_UNRESOLVED!>Int<!>)<!>
 fun d(): Unit = js("console.log(x)")

@@ -33,6 +33,7 @@ import kotlin.wasm.internal.ExcludedFromCodegen
  * external val prop: Float = definedExternally
  * ```
  */
+@ExperimentalWasmJsInterop
 @ExcludedFromCodegen
 @Suppress("WRONG_JS_INTEROP_TYPE")
 public external val definedExternally: Nothing
@@ -67,6 +68,7 @@ public external val definedExternally: Nothing
  * You can use parameters of calling function in JavaScript [code].
  * However, other Kotlin declarations are not visible inside the [code] block.
  */
+@ExperimentalWasmJsInterop
 @ExcludedFromCodegen
 @SinceKotlin("1.9")
 public external fun js(code: String): Nothing

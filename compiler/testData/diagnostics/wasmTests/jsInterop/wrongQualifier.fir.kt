@@ -1,3 +1,5 @@
+// OPT_IN: kotlin.js.ExperimentalWasmJsInterop
+
 // FILE: a.kt
 @file:JsQualifier(<!WRONG_JS_QUALIFIER!>""<!>)
 

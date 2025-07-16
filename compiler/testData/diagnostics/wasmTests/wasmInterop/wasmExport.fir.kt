@@ -1,5 +1,6 @@
 // DIAGNOSTICS: -UNUSED_PARAMETER
 // LANGUAGE: +ContextParameters
+// OPT_IN: kotlin.js.ExperimentalWasmJsInterop
 
 import kotlin.wasm.WasmExport
 

@@ -17,6 +17,7 @@ package kotlin
  *
  * This is a temporary annotation because K/Wasm <-> JS interop is not designed yet.
  */
+@ExperimentalWasmJsInterop
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER)
 @Retention(AnnotationRetention.BINARY)
 public annotation class JsFun(val code: String)

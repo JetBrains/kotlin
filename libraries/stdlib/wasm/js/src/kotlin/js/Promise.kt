@@ -10,6 +10,7 @@ import kotlin.internal.LowPriorityInOverloadResolution
 /**
  * Exposes the JavaScript [Promise object](https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Promise) to Kotlin.
  */
+@ExperimentalWasmJsInterop
 public external class Promise<out T : JsAny?>(executor: (resolve: (T) -> Unit, reject: (JsAny) -> Unit) -> Unit) : JsAny {
     @LowPriorityInOverloadResolution
     public fun <S : JsAny?> then(onFulfilled: ((T) -> S)?): Promise<S>

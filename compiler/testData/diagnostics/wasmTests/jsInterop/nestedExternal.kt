@@ -1,4 +1,6 @@
 // FIR_IDENTICAL
+// OPT_IN: kotlin.js.ExperimentalWasmJsInterop
+
 object O
 
 class TopLevel {

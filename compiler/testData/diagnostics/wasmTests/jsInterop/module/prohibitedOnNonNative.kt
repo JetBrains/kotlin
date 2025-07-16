@@ -1,3 +1,5 @@
+// OPT_IN: kotlin.js.ExperimentalWasmJsInterop
+
 package foo
 
 @JsModule("A")
