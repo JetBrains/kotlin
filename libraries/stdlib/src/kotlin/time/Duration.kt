@@ -959,7 +959,7 @@ private fun parseDuration(value: String, strictIso: Boolean, throwExceptionOnPar
                 if (unit == DurationUnit.SECONDS && dotIndex > 0) {
                     val whole = component.substring(0, dotIndex)
                     result = result.plus(
-                        parseOverLongIsoComponent(whole, throwExceptionOnParsingError)?.toDuration(unit) ?: return null,
+                        (parseOverLongIsoComponent(whole, throwExceptionOnParsingError) ?: return null).toDuration(unit),
                         throwExceptionOnParsingError
                     )?.plus(
                         component.substring(dotIndex)
@@ -969,7 +969,7 @@ private fun parseDuration(value: String, strictIso: Boolean, throwExceptionOnPar
                     ) ?: return null
                 } else {
                     result = result.plus(
-                        parseOverLongIsoComponent(component, throwExceptionOnParsingError)?.toDuration(unit) ?: return null,
+                        (parseOverLongIsoComponent(component, throwExceptionOnParsingError) ?: return null).toDuration(unit),
                         throwExceptionOnParsingError
                     ) ?: return null
                 }
