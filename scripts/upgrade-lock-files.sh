@@ -2,20 +2,13 @@
 
 root_dir=$(pwd)
 
-NPM_REGISTRY="https://cache-redirector.jetbrains.com/registry.npmjs.org"
-
-# cache-redirector.jetbrains.com can't be used to upgrade lock files because NPM makes uncacheable API calls during the upgrade.
-# We need to ensure the default registry is used during the upgrade. The default registry can be overridden later by a registry set in .npmrc
+# cache-redirector can't be used to upgrade lock files because NPM makes uncacheable API calls during the upgrade.
+# We need to ensure the default registry is used during the upgrade so can be overridden later by a registry set in .npmrc
 ./gradlew cleanNpmRc
 
 # Upgrade kotlin-js-store/yarn.lock
 echo "Start upgrade 'kotlin-js-store/yarn.lock'"
 rm -rf kotlin-js-store && ./gradlew :kotlinUpgradeYarnLock -PcacheRedirectorEnabled=false
-
-# yarn 1.x doesn't and won't support overriding registry used in yarn.lock, so we need to replace it manually
-# https://github.com/yarnpkg/yarn/issues/6436#issuecomment-426728911
-sed -i -e "s#https://registry.yarnpkg.com#${NPM_REGISTRY}#g" kotlin-js-store/yarn.lock
-
 echo "End upgrade 'kotlin-js-store/yarn.lock'"
 
 # Upgrade js/js.translator/testData/package-lock.json

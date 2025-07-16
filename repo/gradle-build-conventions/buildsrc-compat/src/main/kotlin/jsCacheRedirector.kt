@@ -13,6 +13,7 @@ import org.gradle.kotlin.dsl.the
 import org.gradle.kotlin.dsl.withType
 import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnLockMismatchReport
 
+const val DEFAULT_YARN_REGISTRY = "https://registry.yarnpkg.com"
 const val NPM_REGISTRY = "https://cache-redirector.jetbrains.com/registry.npmjs.org"
 const val NODE_DIST = "https://cache-redirector.jetbrains.com/nodejs.org/dist"
 const val YARN_DIST = "https://cache-redirector.jetbrains.com/github.com/yarnpkg/yarn/releases/download"
@@ -65,6 +66,17 @@ fun Project.configureJsCacheRedirector() {
     plugins.withType(org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin::class) {
         extensions.configure(org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsEnvSpec::class.java) {
             downloadBaseUrl.set(NODE_DIST)
+        }
+    }
+
+    rootProject.plugins.withType(org.jetbrains.kotlin.gradle.targets.js.yarn.YarnPlugin::class.java) {
+        rootProject.the<org.jetbrains.kotlin.gradle.targets.js.yarn.YarnRootExtension>().restoreYarnLockTaskProvider.configure {
+            doLast {
+                // yarn 1.x doesn't and won't support overriding registry used in yarn.lock, so we need to replace it manually
+                // https://github.com/yarnpkg/yarn/issues/6436#issuecomment-426728911
+                val lockFile = outputFile.get()
+                lockFile.writeText(lockFile.readText().replace(DEFAULT_YARN_REGISTRY, NPM_REGISTRY))
+            }
         }
     }
 
