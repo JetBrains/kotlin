@@ -91,6 +91,7 @@ class KmpPartiallyResolvedDependenciesCheckerTests {
         transitiveProducer.evaluate()
         directProducer.evaluate()
         consumer.evaluate()
+        consumer.gradle.buildListenerBroadcaster.projectsEvaluated(consumer.gradle)
 
         val commonMainTransformationParameters = consumer.locateOrRegisterMetadataDependencyTransformationTask(
             consumer.multiplatformExtension.sourceSets.commonMain.get()
@@ -176,6 +177,7 @@ class KmpPartiallyResolvedDependenciesCheckerTests {
 
         directProducer.evaluate()
         consumer.evaluate()
+        consumer.gradle.buildListenerBroadcaster.projectsEvaluated(consumer.gradle)
 
         val commonMainTransformationParameters = consumer.locateOrRegisterMetadataDependencyTransformationTask(
             consumer.multiplatformExtension.sourceSets.commonMain.get()
@@ -241,6 +243,7 @@ class KmpPartiallyResolvedDependenciesCheckerTests {
 
         directProducer.evaluate()
         consumer.evaluate()
+        consumer.gradle.buildListenerBroadcaster.projectsEvaluated(consumer.gradle)
 
         consumer.assertNoDiagnostics()
 
@@ -287,6 +290,7 @@ class KmpPartiallyResolvedDependenciesCheckerTests {
 
         directProducer.evaluate()
         consumer.evaluate()
+        consumer.gradle.buildListenerBroadcaster.projectsEvaluated(consumer.gradle)
 
         consumer.assertNoDiagnostics()
 
@@ -326,6 +330,7 @@ class KmpPartiallyResolvedDependenciesCheckerTests {
 
         directProducer.evaluate()
         consumer.evaluate()
+        consumer.gradle.buildListenerBroadcaster.projectsEvaluated(consumer.gradle)
 
         // FIXME: KT-79205
         consumer.assertNoDiagnostics()
@@ -346,6 +351,7 @@ class KmpPartiallyResolvedDependenciesCheckerTests {
             }
         }
         consumer.evaluate()
+        consumer.gradle.buildListenerBroadcaster.projectsEvaluated(consumer.gradle)
 
         consumer.assertNoDiagnostics()
 

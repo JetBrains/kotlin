@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.tasks.withType
 import org.jetbrains.kotlin.gradle.utils.LazyResolvedConfiguration
 import org.jetbrains.kotlin.gradle.utils.future
+import java.util.concurrent.atomic.AtomicBoolean
 
 @DisableCachingByDefault(because = "This task is not intended for execution")
 internal abstract class KmpPartiallyResolvedDependenciesCheckerProjectsEvaluated : DefaultTask() {
@@ -64,25 +65,31 @@ internal object KmpPartiallyResolvedDependenciesChecker : KotlinGradleProjectChe
          */
         val hasIncludedBuilds = project.gradle.includedBuilds.isNotEmpty()
         /**
-         * Wait as much as possible before resolving these configurations. Otherwise, we will explode code that is configuring secondary
-         * variants
+         * Suppress this diagnostic during build scripts evaluation, and only run it during task graph construction. This prevents
+         * cross-project configurations in coroutines and serialization from mutating finalized by resolution dependencies and other issues
+         * like KT-79315.
          */
         KotlinPluginLifecycle.Stage.ReadyForExecution.await()
+        val projectsEvaluationPhasePassed = AtomicBoolean(false)
+        project.gradle.projectsEvaluated {
+            projectsEvaluationPhasePassed.set(true)
+        }
         if (project.kotlinPropertiesProvider.eagerUnresolvedDependenciesDiagnostic) {
-            /**
-             * Don't resolve configuration during build scripts evaluation, but resolve it during task graph construction. This prevents
-             * cross-project configurations in coroutines and serialization from mutating finalized by resolution dependencies
-             */
             val postProjectsEvaluationExecutionTask = project.locateOrRegisterPartiallyResolvedDependenciesCheckerTask()
             postProjectsEvaluationExecutionTask.configure { task ->
-                val metadataTransformations = project.future {
-                    project.multiplatformExtension.metadataTarget.publishedMetadataCompilations().map { compilation ->
-                        GranularMetadataTransformation.Params(
-                            project = project,
-                            kotlinSourceSet = compilation.defaultSourceSet,
-                        )
-                    }
-                }.getOrThrow()
+                if (!projectsEvaluationPhasePassed.get()) {
+                    return@configure
+                }
+                val metadataTransformations = runCatching {
+                    project.future {
+                        project.multiplatformExtension.metadataTarget.publishedMetadataCompilations().map { compilation ->
+                            GranularMetadataTransformation.Params(
+                                project = project,
+                                kotlinSourceSet = compilation.defaultSourceSet,
+                            )
+                        }
+                    }.getOrThrow()
+                }.getOrNull() ?: return@configure
                 val validate = {
                     metadataTransformations.forEach { transformationParameters ->
                         project.validateNoTargetPlatformsResolvedPartially(
@@ -108,6 +115,9 @@ internal object KmpPartiallyResolvedDependenciesChecker : KotlinGradleProjectChe
             }
         } else {
             project.tasks.withType<MetadataDependencyTransformationTask>().configureEach {
+                if (!projectsEvaluationPhasePassed.get()) {
+                    return@configureEach
+                }
                 val validate = {
                     project.validateNoTargetPlatformsResolvedPartially(
                         sourceSetName = it.transformationParameters.sourceSetName,
