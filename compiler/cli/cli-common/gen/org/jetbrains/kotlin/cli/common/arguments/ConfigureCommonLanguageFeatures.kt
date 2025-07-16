@@ -70,6 +70,18 @@ internal fun MutableMap<LanguageFeature, LanguageFeature.State>.configureCommonL
         put(LanguageFeature.NestedTypeAliases, LanguageFeature.State.ENABLED)
     }
 
+    if (arguments.annotationDefaultTarget == "first-only-warn") {
+        put(LanguageFeature.AnnotationDefaultTargetMigrationWarning, LanguageFeature.State.ENABLED)
+        put(LanguageFeature.PropertyParamAnnotationDefaultTargetMode, LanguageFeature.State.DISABLED)
+    }
+    if (arguments.annotationDefaultTarget == "param-property") {
+        put(LanguageFeature.PropertyParamAnnotationDefaultTargetMode, LanguageFeature.State.ENABLED)
+    }
+    if (arguments.annotationDefaultTarget == "first-only") {
+        put(LanguageFeature.AnnotationDefaultTargetMigrationWarning, LanguageFeature.State.DISABLED)
+        put(LanguageFeature.PropertyParamAnnotationDefaultTargetMode, LanguageFeature.State.DISABLED)
+    }
+
     if (arguments.annotationTargetAll) {
         put(LanguageFeature.AnnotationAllUseSiteTarget, LanguageFeature.State.ENABLED)
     }
