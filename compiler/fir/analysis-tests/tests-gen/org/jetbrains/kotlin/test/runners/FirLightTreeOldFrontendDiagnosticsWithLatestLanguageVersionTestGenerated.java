@@ -32661,6 +32661,12 @@ public class FirLightTreeOldFrontendDiagnosticsWithLatestLanguageVersionTestGene
       }
 
       @Test
+      @TestMetadata("privateNestedClasses.kt")
+      public void testPrivateNestedClasses() {
+        runTest("compiler/testData/diagnostics/tests/redeclarations/privateNestedClasses.kt");
+      }
+
+      @Test
       @TestMetadata("PropertyAndFunInClass.kt")
       public void testPropertyAndFunInClass() {
         runTest("compiler/testData/diagnostics/tests/redeclarations/PropertyAndFunInClass.kt");
