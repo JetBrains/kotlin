@@ -333,10 +333,7 @@ private fun SmartPrinter.generateAnnotation(annotation: Annotation, kind: Annota
 }
 
 private fun SmartPrinter.generateProperty(argument: KotlinCompilerArgument) {
-    val name = argument.compilerName ?: argument.name
-        .removePrefix("X").removePrefix("X")
-        .split("-").joinToString("") { it.replaceFirstChar(Char::uppercaseChar) }
-        .replaceFirstChar(Char::lowercaseChar)
+    val name = argument.calculateName()
     val type = when (val type = argument.valueType) {
         is BooleanType -> when (type.isNullable.current) {
             true -> "Boolean?"
@@ -351,6 +348,11 @@ private fun SmartPrinter.generateProperty(argument: KotlinCompilerArgument) {
     println("var $name: $type = ${argument.defaultValueInArgs}")
     generateSetter(type, argument)
 }
+
+fun KotlinCompilerArgument.calculateName(): String = compilerName ?: name
+    .removePrefix("X").removePrefix("X")
+    .split("-").joinToString("") { it.replaceFirstChar(Char::uppercaseChar) }
+    .replaceFirstChar(Char::lowercaseChar)
 
 private fun SmartPrinter.generateSetter(type: String, argument: KotlinCompilerArgument?) {
     withIndent {
