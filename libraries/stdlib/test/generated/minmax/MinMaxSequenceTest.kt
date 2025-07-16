@@ -52,13 +52,13 @@ class MinMaxSequenceTest {
         val zeroes = sequenceOf(0.0, -0.0).shuffled()
         val NaNs = sequenceOf(0.0, Double.NaN).shuffled()
 
-        assertIsNegativeZero(zeroes.min().toDouble())
-        assertIsNegativeZero(zeroes.minOrNull()!!.toDouble())
+        assertIsNegativeZero(zeroes.min())
+        assertIsNegativeZero(zeroes.minOrNull()!!)
         assertTrue(NaNs.min().isNaN())
         assertTrue(NaNs.minOrNull()!!.isNaN())
 
-        assertIsPositiveZero(zeroes.max().toDouble())
-        assertIsPositiveZero(zeroes.maxOrNull()!!.toDouble())
+        assertIsPositiveZero(zeroes.max())
+        assertIsPositiveZero(zeroes.maxOrNull()!!)
         assertTrue(NaNs.max().isNaN())
         assertTrue(NaNs.maxOrNull()!!.isNaN())             
 

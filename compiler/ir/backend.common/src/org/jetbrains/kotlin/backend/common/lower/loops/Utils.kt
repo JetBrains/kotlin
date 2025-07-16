@@ -148,7 +148,7 @@ internal fun IrExpression.castIfNecessary(targetClass: IrClass) =
                 PrimitiveType.BYTE -> IrConstImpl.byte(startOffset, endOffset, targetType, longOrSmallerValue!!.toByte())
                 PrimitiveType.SHORT -> IrConstImpl.short(startOffset, endOffset, targetType, longOrSmallerValue!!.toShort())
                 PrimitiveType.INT -> IrConstImpl.int(startOffset, endOffset, targetType, longOrSmallerValue!!.toInt())
-                PrimitiveType.LONG -> IrConstImpl.long(startOffset, endOffset, targetType, longOrSmallerValue!!.toLong())
+                PrimitiveType.LONG -> IrConstImpl.long(startOffset, endOffset, targetType, longOrSmallerValue!!)
                 PrimitiveType.FLOAT -> {
                     val floatValue = when (val value = value) {
                         is Float -> value

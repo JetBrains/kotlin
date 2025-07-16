@@ -125,9 +125,9 @@ class MinMaxULongArrayTest {
     
     @Test
     fun minMaxOf() {
-        expectMinMaxOf((0u - 1UL).toULong(), (0u - 1UL).toULong(), ulongArrayOf(1UL), { (0u - it).toULong() })
-        expectMinMaxOf((0u - 2UL).toULong(), (0u - 1UL).toULong(), ulongArrayOf(1UL, 2UL), { (0u - it).toULong() })
-        expectMinMaxOf((0u - ULong.MAX_VALUE).toULong(), (0u - 1UL).toULong(), ulongArrayOf(1UL, 2UL, ULong.MAX_VALUE), { (0u - it).toULong() })
+        expectMinMaxOf(0u - 1UL, 0u - 1UL, ulongArrayOf(1UL), { 0u - it })
+        expectMinMaxOf(0u - 2UL, 0u - 1UL, ulongArrayOf(1UL, 2UL), { 0u - it })
+        expectMinMaxOf(0u - ULong.MAX_VALUE, 0u - 1UL, ulongArrayOf(1UL, 2UL, ULong.MAX_VALUE), { 0u - it })
 
     }
     
@@ -195,9 +195,9 @@ class MinMaxULongArrayTest {
     
     @Test
     fun minMaxOfWith() {
-        expectMinMaxOfWith((0u - 1UL).toULong(), (0u - 1UL).toULong(), ulongArrayOf(1UL), reverseOrder(), { (0u - it).toULong() })
-        expectMinMaxOfWith((0u - 1UL).toULong(), (0u - 2UL).toULong(), ulongArrayOf(1UL, 2UL), reverseOrder(), { (0u - it).toULong() })
-        expectMinMaxOfWith((0u - 1UL).toULong(), (0u - ULong.MAX_VALUE).toULong(), ulongArrayOf(1UL, 2UL, ULong.MAX_VALUE), reverseOrder(), { (0u - it).toULong() })
+        expectMinMaxOfWith(0u - 1UL, 0u - 1UL, ulongArrayOf(1UL), reverseOrder(), { 0u - it })
+        expectMinMaxOfWith(0u - 1UL, 0u - 2UL, ulongArrayOf(1UL, 2UL), reverseOrder(), { 0u - it })
+        expectMinMaxOfWith(0u - 1UL, 0u - ULong.MAX_VALUE, ulongArrayOf(1UL, 2UL, ULong.MAX_VALUE), reverseOrder(), { 0u - it })
 
     }
     

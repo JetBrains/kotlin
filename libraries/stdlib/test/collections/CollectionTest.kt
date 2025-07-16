@@ -985,9 +985,9 @@ class CollectionTest {
     }
 
     @Test fun sumOf() {
-        assertEquals(0, emptyList<Nothing>().sumOf { 1.toInt() })
+        assertEquals(0, emptyList<Nothing>().sumOf { 1 })
         assertEquals(0L, emptyList<Nothing>().sumOf { 1L })
-        assertEquals(0U, emptyList<Nothing>().sumOf { 1U.toUInt() })
+        assertEquals(0U, emptyList<Nothing>().sumOf { 1U })
         assertEquals(0UL, emptyList<Nothing>().sumOf { 1UL })
         assertEquals(0.0, emptyList<Nothing>().sumOf { 1.0 })
 

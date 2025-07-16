@@ -93,8 +93,12 @@ fun generate(): String {
         p.println("${type.asString()} -> when (name) {")
         p.pushIndent()
         for ((name, _, isFunction) in operations) {
-            val parenthesesOrBlank = if (isFunction) "()" else ""
-            p.println("\"$name\" -> return (value as ${type.typeName}).$name$parenthesesOrBlank")
+            val evalConversion = if (name.substringAfter("to") == type.typeName) {
+                ""
+            } else {
+                ".$name${if (isFunction) "()" else ""}"
+            }
+            p.println("\"$name\" -> return (value as ${type.typeName})$evalConversion")
         }
         p.popIndent()
         p.println("}")

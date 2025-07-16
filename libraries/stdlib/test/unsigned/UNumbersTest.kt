@@ -76,8 +76,8 @@ class NumbersTest {
             assertEquals(oneBits, value.countOneBits())
             assertEquals(leadingZeroes, value.countLeadingZeroBits())
             assertEquals(trailingZeroes, value.countTrailingZeroBits())
-            val highestBit = if (leadingZeroes < ULong.SIZE_BITS) 1uL.shl(ULong.SIZE_BITS - leadingZeroes - 1).toULong() else 0u
-            val lowestBit = if (trailingZeroes < ULong.SIZE_BITS) 1uL.shl(trailingZeroes).toULong() else 0u
+            val highestBit = if (leadingZeroes < ULong.SIZE_BITS) 1uL.shl(ULong.SIZE_BITS - leadingZeroes - 1) else 0u
+            val lowestBit = if (trailingZeroes < ULong.SIZE_BITS) 1uL.shl(trailingZeroes) else 0u
             assertEquals(highestBit, value.takeHighestOneBit())
             assertEquals(lowestBit, value.takeLowestOneBit())
         }

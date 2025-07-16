@@ -173,13 +173,15 @@ private data class Operation(
                 }
                 else -> buildString {
                     append(receiver)
-                    append(".")
-                    append(name)
-                    if (isFunction) append("(")
-                    parameterTypes.withIndex().drop(1).joinTo(this) { (index, type) ->
-                        castValue(('a' + index).toString(), type)
+                    if (name.substringAfter("to") != parameterTypes[0]) {
+                        append(".")
+                        append(name)
+                        if (isFunction) append("(")
+                        parameterTypes.withIndex().drop(1).joinTo(this) { (index, type) ->
+                            castValue(('a' + index).toString(), type)
+                        }
+                        if (isFunction) append(")")
                     }
-                    if (isFunction) append(")")
                 }
             }
         }

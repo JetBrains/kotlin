@@ -38,7 +38,7 @@ internal fun interpretUnaryFunction(name: String, type: String, a: Any?): Any? {
             "kotlin.Float" -> return (a as Float).toString()
             "kotlin.Long" -> return (a as Long).toString()
             "kotlin.Double" -> return (a as Double).toString()
-            "kotlin.String" -> return (a as String).toString()
+            "kotlin.String" -> return (a as String)
             "kotlin.Any" -> return (a as Any).toString()
             "kotlin.Any?" -> return a?.toString() ?: "null"
             "kotlin.Unit" -> return Unit.toString()
@@ -63,7 +63,7 @@ internal fun interpretUnaryFunction(name: String, type: String, a: Any?): Any? {
         }
         "toByte" -> when (type) {
             "kotlin.Char" -> return (a as Char).toByte()
-            "kotlin.Byte" -> return (a as Byte).toByte()
+            "kotlin.Byte" -> return (a as Byte)
             "kotlin.Short" -> return (a as Short).toByte()
             "kotlin.Int" -> return (a as Int).toByte()
             "kotlin.Float" -> return (a as Float).toByte()
@@ -72,7 +72,7 @@ internal fun interpretUnaryFunction(name: String, type: String, a: Any?): Any? {
             "kotlin.Number" -> return (a as Number).toByte()
         }
         "toChar" -> when (type) {
-            "kotlin.Char" -> return (a as Char).toChar()
+            "kotlin.Char" -> return (a as Char)
             "kotlin.Byte" -> return (a as Byte).toChar()
             "kotlin.Short" -> return (a as Short).toChar()
             "kotlin.Int" -> return (a as Int).toChar()
@@ -88,7 +88,7 @@ internal fun interpretUnaryFunction(name: String, type: String, a: Any?): Any? {
             "kotlin.Int" -> return (a as Int).toDouble()
             "kotlin.Float" -> return (a as Float).toDouble()
             "kotlin.Long" -> return (a as Long).toDouble()
-            "kotlin.Double" -> return (a as Double).toDouble()
+            "kotlin.Double" -> return (a as Double)
             "kotlin.Number" -> return (a as Number).toDouble()
         }
         "toFloat" -> when (type) {
@@ -96,7 +96,7 @@ internal fun interpretUnaryFunction(name: String, type: String, a: Any?): Any? {
             "kotlin.Byte" -> return (a as Byte).toFloat()
             "kotlin.Short" -> return (a as Short).toFloat()
             "kotlin.Int" -> return (a as Int).toFloat()
-            "kotlin.Float" -> return (a as Float).toFloat()
+            "kotlin.Float" -> return (a as Float)
             "kotlin.Long" -> return (a as Long).toFloat()
             "kotlin.Double" -> return (a as Double).toFloat()
             "kotlin.Number" -> return (a as Number).toFloat()
@@ -105,7 +105,7 @@ internal fun interpretUnaryFunction(name: String, type: String, a: Any?): Any? {
             "kotlin.Char" -> return (a as Char).toInt()
             "kotlin.Byte" -> return (a as Byte).toInt()
             "kotlin.Short" -> return (a as Short).toInt()
-            "kotlin.Int" -> return (a as Int).toInt()
+            "kotlin.Int" -> return (a as Int)
             "kotlin.Float" -> return (a as Float).toInt()
             "kotlin.Long" -> return (a as Long).toInt()
             "kotlin.Double" -> return (a as Double).toInt()
@@ -117,14 +117,14 @@ internal fun interpretUnaryFunction(name: String, type: String, a: Any?): Any? {
             "kotlin.Short" -> return (a as Short).toLong()
             "kotlin.Int" -> return (a as Int).toLong()
             "kotlin.Float" -> return (a as Float).toLong()
-            "kotlin.Long" -> return (a as Long).toLong()
+            "kotlin.Long" -> return (a as Long)
             "kotlin.Double" -> return (a as Double).toLong()
             "kotlin.Number" -> return (a as Number).toLong()
         }
         "toShort" -> when (type) {
             "kotlin.Char" -> return (a as Char).toShort()
             "kotlin.Byte" -> return (a as Byte).toShort()
-            "kotlin.Short" -> return (a as Short).toShort()
+            "kotlin.Short" -> return (a as Short)
             "kotlin.Int" -> return (a as Int).toShort()
             "kotlin.Float" -> return (a as Float).toShort()
             "kotlin.Long" -> return (a as Long).toShort()

@@ -18,7 +18,7 @@ fun evalUnaryOp(name: String, type: CompileTimeType, value: Any): Any? {
             "toString" -> return (value as Boolean).toString()
         }
         BYTE -> when (name) {
-            "toByte" -> return (value as Byte).toByte()
+            "toByte" -> return (value as Byte)
             "toChar" -> return (value as Byte).toChar()
             "toDouble" -> return (value as Byte).toDouble()
             "toFloat" -> return (value as Byte).toFloat()
@@ -31,7 +31,7 @@ fun evalUnaryOp(name: String, type: CompileTimeType, value: Any): Any? {
         }
         CHAR -> when (name) {
             "toByte" -> return (value as Char).toByte()
-            "toChar" -> return (value as Char).toChar()
+            "toChar" -> return (value as Char)
             "toDouble" -> return (value as Char).toDouble()
             "toFloat" -> return (value as Char).toFloat()
             "toInt" -> return (value as Char).toInt()
@@ -43,7 +43,7 @@ fun evalUnaryOp(name: String, type: CompileTimeType, value: Any): Any? {
         DOUBLE -> when (name) {
             "toByte" -> return (value as Double).toByte()
             "toChar" -> return (value as Double).toChar()
-            "toDouble" -> return (value as Double).toDouble()
+            "toDouble" -> return (value as Double)
             "toFloat" -> return (value as Double).toFloat()
             "toInt" -> return (value as Double).toInt()
             "toLong" -> return (value as Double).toLong()
@@ -56,7 +56,7 @@ fun evalUnaryOp(name: String, type: CompileTimeType, value: Any): Any? {
             "toByte" -> return (value as Float).toByte()
             "toChar" -> return (value as Float).toChar()
             "toDouble" -> return (value as Float).toDouble()
-            "toFloat" -> return (value as Float).toFloat()
+            "toFloat" -> return (value as Float)
             "toInt" -> return (value as Float).toInt()
             "toLong" -> return (value as Float).toLong()
             "toShort" -> return (value as Float).toShort()
@@ -70,7 +70,7 @@ fun evalUnaryOp(name: String, type: CompileTimeType, value: Any): Any? {
             "toChar" -> return (value as Int).toChar()
             "toDouble" -> return (value as Int).toDouble()
             "toFloat" -> return (value as Int).toFloat()
-            "toInt" -> return (value as Int).toInt()
+            "toInt" -> return (value as Int)
             "toLong" -> return (value as Int).toLong()
             "toShort" -> return (value as Int).toShort()
             "toString" -> return (value as Int).toString()
@@ -84,7 +84,7 @@ fun evalUnaryOp(name: String, type: CompileTimeType, value: Any): Any? {
             "toDouble" -> return (value as Long).toDouble()
             "toFloat" -> return (value as Long).toFloat()
             "toInt" -> return (value as Long).toInt()
-            "toLong" -> return (value as Long).toLong()
+            "toLong" -> return (value as Long)
             "toShort" -> return (value as Long).toShort()
             "toString" -> return (value as Long).toString()
             "unaryMinus" -> return (value as Long).unaryMinus()
@@ -97,14 +97,14 @@ fun evalUnaryOp(name: String, type: CompileTimeType, value: Any): Any? {
             "toFloat" -> return (value as Short).toFloat()
             "toInt" -> return (value as Short).toInt()
             "toLong" -> return (value as Short).toLong()
-            "toShort" -> return (value as Short).toShort()
+            "toShort" -> return (value as Short)
             "toString" -> return (value as Short).toString()
             "unaryMinus" -> return (value as Short).unaryMinus()
             "unaryPlus" -> return (value as Short).unaryPlus()
         }
         STRING -> when (name) {
             "length" -> return (value as String).length
-            "toString" -> return (value as String).toString()
+            "toString" -> return (value as String)
         }
         else -> {}
     }

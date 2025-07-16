@@ -52,13 +52,13 @@ class MinMaxArrayTest {
         val zeroes = arrayOf(0.0, -0.0).apply { shuffle() }
         val NaNs = arrayOf(0.0, Double.NaN).apply { shuffle() }
 
-        assertIsNegativeZero(zeroes.min().toDouble())
-        assertIsNegativeZero(zeroes.minOrNull()!!.toDouble())
+        assertIsNegativeZero(zeroes.min())
+        assertIsNegativeZero(zeroes.minOrNull()!!)
         assertTrue(NaNs.min().isNaN())
         assertTrue(NaNs.minOrNull()!!.isNaN())
 
-        assertIsPositiveZero(zeroes.max().toDouble())
-        assertIsPositiveZero(zeroes.maxOrNull()!!.toDouble())
+        assertIsPositiveZero(zeroes.max())
+        assertIsPositiveZero(zeroes.maxOrNull()!!)
         assertTrue(NaNs.max().isNaN())
         assertTrue(NaNs.maxOrNull()!!.isNaN())             
 

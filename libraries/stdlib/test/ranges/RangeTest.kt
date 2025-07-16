@@ -69,7 +69,7 @@ public class RangeTest {
 
 
         assertTrue(1.toShort() in range)
-        assertTrue(1.toInt() in range)
+        assertTrue(1 in range)
         assertTrue(1.toLong() in range)
 
         assertFalse(Long.MAX_VALUE in range)
@@ -103,7 +103,7 @@ public class RangeTest {
         assertFalse(range.isEmpty())
 
         assertTrue(1.toByte() in range)
-        assertTrue(1.toInt() in range)
+        assertTrue(1 in range)
         assertTrue(1.toLong() in range)
 
         assertFalse(Long.MAX_VALUE in range)
@@ -140,7 +140,7 @@ public class RangeTest {
 
         assertTrue(1.toByte() in range)
         assertTrue(1.toShort() in range)
-        assertTrue(1.toInt() in range)
+        assertTrue(1 in range)
 
         assertFalse(null in range)
         assertTrue(1L as Long? in range)

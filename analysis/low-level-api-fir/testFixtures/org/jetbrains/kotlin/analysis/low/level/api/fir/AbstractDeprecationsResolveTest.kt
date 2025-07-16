@@ -98,7 +98,7 @@ abstract class AbstractDeprecationsResolveTest : AbstractFirLazyDeclarationResol
             renderFirElement(rootSymbolFir.fir),
             extension = ".${name}.after.txt"
         )
-        testServices.assertions.assertEqualsToTestOutputFile(deprecationStatus.toString(), extension = ".${name}.out.txt")
+        testServices.assertions.assertEqualsToTestOutputFile(deprecationStatus, extension = ".${name}.out.txt")
     }
 
     private fun getFirSymbol(kaSymbol: KaSymbol): FirBasedSymbol<*> {

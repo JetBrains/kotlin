@@ -125,9 +125,9 @@ class MinMaxUIntArrayTest {
     
     @Test
     fun minMaxOf() {
-        expectMinMaxOf((0u - 1U).toUInt(), (0u - 1U).toUInt(), uintArrayOf(1U), { (0u - it).toUInt() })
-        expectMinMaxOf((0u - 2U).toUInt(), (0u - 1U).toUInt(), uintArrayOf(1U, 2U), { (0u - it).toUInt() })
-        expectMinMaxOf((0u - UInt.MAX_VALUE).toUInt(), (0u - 1U).toUInt(), uintArrayOf(1U, 2U, UInt.MAX_VALUE), { (0u - it).toUInt() })
+        expectMinMaxOf(0u - 1U, 0u - 1U, uintArrayOf(1U), { 0u - it })
+        expectMinMaxOf(0u - 2U, 0u - 1U, uintArrayOf(1U, 2U), { 0u - it })
+        expectMinMaxOf(0u - UInt.MAX_VALUE, 0u - 1U, uintArrayOf(1U, 2U, UInt.MAX_VALUE), { 0u - it })
 
     }
     
@@ -195,9 +195,9 @@ class MinMaxUIntArrayTest {
     
     @Test
     fun minMaxOfWith() {
-        expectMinMaxOfWith((0u - 1U).toUInt(), (0u - 1U).toUInt(), uintArrayOf(1U), reverseOrder(), { (0u - it).toUInt() })
-        expectMinMaxOfWith((0u - 1U).toUInt(), (0u - 2U).toUInt(), uintArrayOf(1U, 2U), reverseOrder(), { (0u - it).toUInt() })
-        expectMinMaxOfWith((0u - 1U).toUInt(), (0u - UInt.MAX_VALUE).toUInt(), uintArrayOf(1U, 2U, UInt.MAX_VALUE), reverseOrder(), { (0u - it).toUInt() })
+        expectMinMaxOfWith(0u - 1U, 0u - 1U, uintArrayOf(1U), reverseOrder(), { 0u - it })
+        expectMinMaxOfWith(0u - 1U, 0u - 2U, uintArrayOf(1U, 2U), reverseOrder(), { 0u - it })
+        expectMinMaxOfWith(0u - 1U, 0u - UInt.MAX_VALUE, uintArrayOf(1U, 2U, UInt.MAX_VALUE), reverseOrder(), { 0u - it })
 
     }
     
