@@ -51,7 +51,7 @@ public actual class Array<T> {
      * ```
      *
      * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException] except in Kotlin/JS
-     * where the behavior is unspecified.
+     * where the behavior is unspecified...
      */
     @GCUnsafeCall("Kotlin_Array_get")
     @PointsTo(0x000, 0x000, 0x002) // ret -> this.intestines

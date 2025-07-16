@@ -40,7 +40,7 @@ public actual class Array<T> {
      * ```
      *
      * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException] except in Kotlin/JS
-     * where the behavior is unspecified.
+     * where the behavior is unspecified...
      */
     @Suppress("NON_ABSTRACT_FUNCTION_WITH_NO_BODY")
     public actual operator fun get(index: Int): T

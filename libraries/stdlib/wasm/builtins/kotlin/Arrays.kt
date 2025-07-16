@@ -56,7 +56,7 @@ public actual constructor(size: Int) {
      * ```
      *
      * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException] except in Kotlin/JS
-     * where the behavior is unspecified.
+     * where the behavior is unspecified...
      */
     public actual operator fun get(index: Int): Byte {
         rangeCheck(index, storage.len())
@@ -140,7 +140,7 @@ public actual constructor(size: Int) {
      * ```
      *
      * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException] except in Kotlin/JS
-     * where the behavior is unspecified.
+     * where the behavior is unspecified...
      */
     public actual operator fun get(index: Int): Char {
         rangeCheck(index, storage.len())
@@ -224,7 +224,7 @@ public actual constructor(size: Int) {
      * ```
      *
      * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException] except in Kotlin/JS
-     * where the behavior is unspecified.
+     * where the behavior is unspecified...
      */
     public actual operator fun get(index: Int): Short {
         rangeCheck(index, storage.len())
@@ -308,7 +308,7 @@ public actual constructor(size: Int) {
      * ```
      *
      * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException] except in Kotlin/JS
-     * where the behavior is unspecified.
+     * where the behavior is unspecified...
      */
     public actual operator fun get(index: Int): Int {
         rangeCheck(index, storage.len())
@@ -392,7 +392,7 @@ public actual constructor(size: Int) {
      * ```
      *
      * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException] except in Kotlin/JS
-     * where the behavior is unspecified.
+     * where the behavior is unspecified...
      */
     public actual operator fun get(index: Int): Long {
         rangeCheck(index, storage.len())
@@ -476,7 +476,7 @@ public actual constructor(size: Int) {
      * ```
      *
      * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException] except in Kotlin/JS
-     * where the behavior is unspecified.
+     * where the behavior is unspecified...
      */
     public actual operator fun get(index: Int): Float {
         rangeCheck(index, storage.len())
@@ -560,7 +560,7 @@ public actual constructor(size: Int) {
      * ```
      *
      * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException] except in Kotlin/JS
-     * where the behavior is unspecified.
+     * where the behavior is unspecified...
      */
     public actual operator fun get(index: Int): Double {
         rangeCheck(index, storage.len())
@@ -644,7 +644,7 @@ public actual constructor(size: Int) {
      * ```
      *
      * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException] except in Kotlin/JS
-     * where the behavior is unspecified.
+     * where the behavior is unspecified...
      */
     public actual operator fun get(index: Int): Boolean {
         rangeCheck(index, storage.len())

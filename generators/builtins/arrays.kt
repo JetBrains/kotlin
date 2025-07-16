@@ -133,7 +133,7 @@ abstract class GenerateArrays(val writer: PrintWriter, val primitiveArrays: Bool
                 appendDoc("```")
                 appendDoc("")
                 appendDoc("If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException] except in Kotlin/JS")
-                appendDoc("where the behavior is unspecified.")
+                appendDoc("where the behavior is unspecified...")
                 signature {
                     methodName = "get"
                     isOperator = true

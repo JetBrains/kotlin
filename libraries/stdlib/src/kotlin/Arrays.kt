@@ -42,7 +42,7 @@ public constructor(size: Int) {
      * ```
      *
      * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException] except in Kotlin/JS
-     * where the behavior is unspecified.
+     * where the behavior is unspecified...
      */
     public operator fun get(index: Int): Byte
 
@@ -102,7 +102,7 @@ public constructor(size: Int) {
      * ```
      *
      * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException] except in Kotlin/JS
-     * where the behavior is unspecified.
+     * where the behavior is unspecified...
      */
     public operator fun get(index: Int): Char
 
@@ -162,7 +162,7 @@ public constructor(size: Int) {
      * ```
      *
      * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException] except in Kotlin/JS
-     * where the behavior is unspecified.
+     * where the behavior is unspecified...
      */
     public operator fun get(index: Int): Short
 
@@ -222,7 +222,7 @@ public constructor(size: Int) {
      * ```
      *
      * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException] except in Kotlin/JS
-     * where the behavior is unspecified.
+     * where the behavior is unspecified...
      */
     public operator fun get(index: Int): Int
 
@@ -282,7 +282,7 @@ public constructor(size: Int) {
      * ```
      *
      * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException] except in Kotlin/JS
-     * where the behavior is unspecified.
+     * where the behavior is unspecified...
      */
     public operator fun get(index: Int): Long
 
@@ -342,7 +342,7 @@ public constructor(size: Int) {
      * ```
      *
      * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException] except in Kotlin/JS
-     * where the behavior is unspecified.
+     * where the behavior is unspecified...
      */
     public operator fun get(index: Int): Float
 
@@ -402,7 +402,7 @@ public constructor(size: Int) {
      * ```
      *
      * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException] except in Kotlin/JS
-     * where the behavior is unspecified.
+     * where the behavior is unspecified...
      */
     public operator fun get(index: Int): Double
 
@@ -462,7 +462,7 @@ public constructor(size: Int) {
      * ```
      *
      * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException] except in Kotlin/JS
-     * where the behavior is unspecified.
+     * where the behavior is unspecified...
      */
     public operator fun get(index: Int): Boolean
 

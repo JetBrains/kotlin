@@ -50,7 +50,7 @@ public actual constructor(size: Int) {
      * ```
      *
      * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException] except in Kotlin/JS
-     * where the behavior is unspecified.
+     * where the behavior is unspecified...
      */
     @GCUnsafeCall("Kotlin_ByteArray_get")
     @Escapes.Nothing
@@ -131,7 +131,7 @@ public actual constructor(size: Int) {
      * ```
      *
      * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException] except in Kotlin/JS
-     * where the behavior is unspecified.
+     * where the behavior is unspecified...
      */
     @GCUnsafeCall("Kotlin_CharArray_get")
     @Escapes.Nothing
@@ -212,7 +212,7 @@ public actual constructor(size: Int) {
      * ```
      *
      * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException] except in Kotlin/JS
-     * where the behavior is unspecified.
+     * where the behavior is unspecified...
      */
     @GCUnsafeCall("Kotlin_ShortArray_get")
     @Escapes.Nothing
@@ -293,7 +293,7 @@ public actual constructor(size: Int) {
      * ```
      *
      * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException] except in Kotlin/JS
-     * where the behavior is unspecified.
+     * where the behavior is unspecified...
      */
     @GCUnsafeCall("Kotlin_IntArray_get")
     @Escapes.Nothing
@@ -374,7 +374,7 @@ public actual constructor(size: Int) {
      * ```
      *
      * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException] except in Kotlin/JS
-     * where the behavior is unspecified.
+     * where the behavior is unspecified...
      */
     @GCUnsafeCall("Kotlin_LongArray_get")
     @Escapes.Nothing
@@ -455,7 +455,7 @@ public actual constructor(size: Int) {
      * ```
      *
      * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException] except in Kotlin/JS
-     * where the behavior is unspecified.
+     * where the behavior is unspecified...
      */
     @GCUnsafeCall("Kotlin_FloatArray_get")
     @Escapes.Nothing
@@ -536,7 +536,7 @@ public actual constructor(size: Int) {
      * ```
      *
      * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException] except in Kotlin/JS
-     * where the behavior is unspecified.
+     * where the behavior is unspecified...
      */
     @GCUnsafeCall("Kotlin_DoubleArray_get")
     @Escapes.Nothing
@@ -617,7 +617,7 @@ public actual constructor(size: Int) {
      * ```
      *
      * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException] except in Kotlin/JS
-     * where the behavior is unspecified.
+     * where the behavior is unspecified...
      */
     @GCUnsafeCall("Kotlin_BooleanArray_get")
     @Escapes.Nothing
