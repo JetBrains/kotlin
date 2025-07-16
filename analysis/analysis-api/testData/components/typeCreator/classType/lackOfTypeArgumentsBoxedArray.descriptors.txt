@@ -1,4 +1,4 @@
 CLASS_TYPE_BY_CLASS_ID
-   KaType: ERROR_TYPE(Unresolved class kotlin/Array)
+   KaType: kotlin.Array<T>
 CLASS_TYPE_BY_SYMBOL
    KaType: kotlin.Array<T>
