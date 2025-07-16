@@ -44,6 +44,7 @@ public abstract class KtModifierList extends KtElementImplStub<KotlinModifierLis
         return visitor.visitModifierList(this, data);
     }
 
+    @Override
     @NotNull
     public List<KtAnnotation> getAnnotations() {
         return getStubOrPsiChildrenAsList(KtStubBasedElementTypes.ANNOTATION);
@@ -65,6 +66,7 @@ public abstract class KtModifierList extends KtElementImplStub<KotlinModifierLis
         return getStubOrPsiChildrenAsList(KtStubBasedElementTypes.CONTEXT_RECEIVER_LIST);
     }
 
+    @Override
     @NotNull
     public List<KtAnnotationEntry> getAnnotationEntries() {
         return KtPsiUtilKt.collectAnnotationEntriesFromStubOrPsi(this);

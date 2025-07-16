@@ -5,11 +5,11 @@ public final class Foo public constructor() {
 
     public final fun wrongTrue(x: kotlin.String?): kotlin.Boolean { contract { /* compiled contract */ }; /* compiled code */ }
 
-    public final fun nullableConstant(x: kotlin.String?): kotlin.Any? { /* compiled code */ }
+    public final fun nullableConstant(x: kotlin.String?): kotlin.Any? { contract { /* compiled contract */ }; /* compiled code */ }
 
     public final fun string(): kotlin.String { /* compiled code */ }
 
-    public final fun nullableReturn(x: kotlin.String?): kotlin.Any? { /* compiled code */ }
+    public final fun nullableReturn(x: kotlin.String?): kotlin.Any? { contract { /* compiled contract */ }; /* compiled code */ }
 
     public final fun returnsNull(x: kotlin.String?): kotlin.Any? { contract { /* compiled contract */ }; /* compiled code */ }
 

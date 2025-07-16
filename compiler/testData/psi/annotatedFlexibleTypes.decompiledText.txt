@@ -6,7 +6,7 @@ package test
 public final class AnnotatedFlexibleTypes public constructor(javaClass: d.JavaClass) {
     public final val javaClass: d.JavaClass /* compiled code */ /* hasBackingField: true */
 
-    public final val bar: kotlin.collections.MutableCollection<kotlin.Int> /* platform type */ /* compiled code */ /* hasBackingField: true */
+    public final val bar: kotlin.collections.MutableCollection<kotlin.Int /* platform type */> /* platform type */ /* compiled code */ /* hasBackingField: true */
 
     public final fun foo(): kotlin.Int /* platform type */ { /* compiled code */ }
 }

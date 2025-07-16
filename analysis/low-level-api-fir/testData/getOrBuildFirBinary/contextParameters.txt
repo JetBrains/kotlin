@@ -6,7 +6,7 @@ public final class C public constructor() {
 
     context(kotlin.String) public final fun foo(): kotlin.Unit { /* compiled code */ }
 
-    public final fun baz(l1: context(kotlin.String) () -> kotlin.Unit, l2: @A context(kotlin.String) () -> kotlin.Unit, l3: @A() (context(kotlin.String) () -> kotlin.Unit)?, l4: suspend context(kotlin.String) () -> kotlin.Unit, l5: @A suspend context(kotlin.String) () -> kotlin.Unit, l6: (@A suspend context(kotlin.String) () -> kotlin.Unit)?): kotlin.Unit { /* compiled code */ }
+    public final fun baz(l1: context(kotlin.String) () -> kotlin.Unit, l2: @A context(kotlin.String) () -> kotlin.Unit, l3: @A (context(kotlin.String) () -> kotlin.Unit)?, l4: suspend context(kotlin.String) () -> kotlin.Unit, l5: @A suspend context(kotlin.String) () -> kotlin.Unit, l6: (@A suspend context(kotlin.String) () -> kotlin.Unit)?): kotlin.Unit { /* compiled code */ }
 }
 FIR element: FirRegularClassImpl
 FIR source kind: KtRealSourceElementKind

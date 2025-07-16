@@ -40,11 +40,13 @@ public class KtFileAnnotationList extends KtElementImplStub<KotlinPlaceHolderStu
         return visitor.visitFileAnnotationList(this, data);
     }
 
+    @Override
     @NotNull
     public List<KtAnnotation> getAnnotations() {
         return getStubOrPsiChildrenAsList(KtStubBasedElementTypes.ANNOTATION);
     }
 
+    @Override
     @NotNull
     public List<KtAnnotationEntry> getAnnotationEntries() {
         return KtPsiUtilKt.collectAnnotationEntriesFromStubOrPsi(this);

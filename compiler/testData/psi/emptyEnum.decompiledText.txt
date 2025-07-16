@@ -2,5 +2,7 @@
 // Implementation of methods is not available
 
 public final enum class EmptyEnum private constructor() : kotlin.Enum<EmptyEnum> {
+    ;
+
     public final fun foo(): kotlin.Int { /* compiled code */ }
 }

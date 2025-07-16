@@ -1,6 +1,6 @@
 KT element: KtNamedFunction
 KT element text:
-public inline fun kotlin.Any?.asDynamic(): dynamic /* platform type */ { /* compiled code */ }
+public inline fun kotlin.Any?.asDynamic(): dynamic { /* compiled code */ }
 FIR element: FirSimpleFunctionImpl
 FIR source kind: KtRealSourceElementKind
 

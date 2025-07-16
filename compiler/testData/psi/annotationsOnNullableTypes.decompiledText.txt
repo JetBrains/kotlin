@@ -10,7 +10,7 @@ AnnotationsOnNullableTypes.class:
   // Implementation of methods is not available
 
   public final class AnnotationsOnNullableTypes public constructor() {
-      public final val lambdaType: @A() (() -> C)? /* compiled code */ /* hasBackingField: true */
+      public final val lambdaType: @A (() -> C)? /* compiled code */ /* hasBackingField: true */
 
       public final val lambdaParameter: (@A C?) -> C /* compiled code */ /* hasBackingField: true */
 
@@ -18,7 +18,7 @@ AnnotationsOnNullableTypes.class:
 
       public final val lambdaReceiver: (@A C?).() -> C /* compiled code */ /* hasBackingField: true */
 
-      public final val lambdaTypeWithNullableReceiver: @A() (C?.() -> C) /* compiled code */ /* hasBackingField: true */
+      public final val lambdaTypeWithNullableReceiver: @A C?.() -> C /* compiled code */ /* hasBackingField: true */
 
       public final fun B<@A C?>.receiverArgument(): kotlin.Unit { /* compiled code */ }
 
@@ -36,9 +36,9 @@ AnnotationsOnNullableTypes.class:
 
       public final fun @A kotlin.String?.foo(): kotlin.Unit { /* compiled code */ }
 
-      public final fun @receiver:A (() -> kotlin.Unit?).functionWithAnnotatedReceiver2(): kotlin.Unit { /* compiled code */ }
+      public final fun (@receiver:A () -> kotlin.Unit?).functionWithAnnotatedReceiver2(): kotlin.Unit { /* compiled code */ }
 
-      public final fun @receiver:A (() -> kotlin.Unit)?.functionWithAnnotatedReceiver3(): kotlin.Unit { /* compiled code */ }
+      public final fun (@receiver:A (() -> kotlin.Unit)?).functionWithAnnotatedReceiver3(): kotlin.Unit { /* compiled code */ }
   }
 
 B.class:
@@ -54,4 +54,3 @@ C.class:
 
   public interface C {
   }
-

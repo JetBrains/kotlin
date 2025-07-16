@@ -1,12 +1,18 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.analysis.decompiler.konan
 
+import com.intellij.openapi.extensions.LoadingOrder
+import com.intellij.openapi.fileTypes.BinaryFileTypeDecompilers
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.psi.PsiManager
+import com.intellij.psi.compiled.ClassFileDecompilers
+import com.intellij.psi.impl.compiled.ClassFileDecompiler
+import com.intellij.psi.impl.compiled.ClassFileStubBuilder
+import com.intellij.psi.stubs.BinaryFileStubBuilders
 import com.intellij.util.indexing.FileContentImpl
 import org.jetbrains.kotlin.analysis.decompiler.stub.files.serializeToString
 import org.jetbrains.kotlin.psi.stubs.elements.KtFileStubBuilder
@@ -33,6 +39,17 @@ abstract class AbstractDecompiledKnmStubConsistencyTest : AbstractDecompiledKnmF
         }
     }
 
+    override fun setUp() {
+        super.setUp()
+        BinaryFileTypeDecompilers.getInstance().addExplicitExtension(KlibMetaFileType, ClassFileDecompiler(), testRootDisposable)
+        BinaryFileStubBuilders.INSTANCE.addExplicitExtension(KlibMetaFileType, ClassFileStubBuilder(), testRootDisposable)
+        ClassFileDecompilers.getInstance().EP_NAME.point.registerExtension(
+            knmTestSupport.createDecompiler(),
+            LoadingOrder.FIRST,
+            testRootDisposable
+        )
+    }
+
     private fun checkKnmStubConsistency(knmFile: VirtualFile) {
         val decompiler = knmTestSupport.createDecompiler()
         val stubTreeBinaryFile = decompiler.stubBuilder.buildFileStub(FileContentImpl.createByFile(knmFile, environment.project))!!
@@ -49,8 +66,8 @@ abstract class AbstractDecompiledKnmStubConsistencyTest : AbstractDecompiledKnmF
 
         Assert.assertEquals(
             "PSI and deserialized stubs don't match",
+            stubTreeBinaryFile.serializeToString(),
             stubTreeForDecompiledFile.serializeToString(),
-            stubTreeBinaryFile.serializeToString()
         )
     }
 }

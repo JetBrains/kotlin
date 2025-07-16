@@ -5,11 +5,11 @@ public fun wrongFalse(x: kotlin.String?): kotlin.Boolean { contract { /* compile
 
 public fun wrongTrue(x: kotlin.String?): kotlin.Boolean { contract { /* compiled contract */ }; /* compiled code */ }
 
-public fun nullableConstant(x: kotlin.String?): kotlin.Any? { /* compiled code */ }
+public fun nullableConstant(x: kotlin.String?): kotlin.Any? { contract { /* compiled contract */ }; /* compiled code */ }
 
 public fun string(): kotlin.String { /* compiled code */ }
 
-public fun nullableReturn(x: kotlin.String?): kotlin.Any? { /* compiled code */ }
+public fun nullableReturn(x: kotlin.String?): kotlin.Any? { contract { /* compiled contract */ }; /* compiled code */ }
 
 public fun returnsNull(x: kotlin.String?): kotlin.Any? { contract { /* compiled contract */ }; /* compiled code */ }
 

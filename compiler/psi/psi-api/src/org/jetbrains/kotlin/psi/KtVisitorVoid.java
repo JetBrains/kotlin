@@ -37,6 +37,10 @@ public class KtVisitorVoid extends KtVisitor<Void, Void> {
         super.visitClassOrObject(classOrObject, null);
     }
 
+    public void visitConstructor(@NotNull KtConstructor<?> constructor) {
+        super.visitConstructor(constructor, null);
+    }
+
     public void visitSecondaryConstructor(@NotNull KtSecondaryConstructor constructor) {
         super.visitSecondaryConstructor(constructor, null);
     }
@@ -147,6 +151,10 @@ public class KtVisitorVoid extends KtVisitor<Void, Void> {
 
     public void visitContextReceiverList(@NotNull KtContextReceiverList contextReceiverList) {
         super.visitContextReceiverList(contextReceiverList, null);
+    }
+
+    public void visitContextReceiver(@NotNull KtContextReceiver contextReceiver) {
+        super.visitContextReceiver(contextReceiver, null);
     }
 
     public void visitConstructorDelegationCall(@NotNull KtConstructorDelegationCall call) {
@@ -475,6 +483,12 @@ public class KtVisitorVoid extends KtVisitor<Void, Void> {
     }
 
     @Override
+    public Void visitConstructor(@NotNull KtConstructor<?> constructor, Void data) {
+        visitConstructor(constructor);
+        return null;
+    }
+
+    @Override
     public final Void visitSecondaryConstructor(@NotNull KtSecondaryConstructor constructor, Void data) {
         visitSecondaryConstructor(constructor);
         return null;
@@ -635,6 +649,12 @@ public class KtVisitorVoid extends KtVisitor<Void, Void> {
     @Override
     public final Void visitContextReceiverList(@NotNull KtContextReceiverList contextReceiverList, Void data) {
         visitContextReceiverList(contextReceiverList);
+        return null;
+    }
+
+    @Override
+    public Void visitContextReceiver(@NotNull KtContextReceiver contextReceiver, Void data) {
+        visitContextReceiver(contextReceiver);
         return null;
     }
 
