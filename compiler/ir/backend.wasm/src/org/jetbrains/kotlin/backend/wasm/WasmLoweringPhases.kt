@@ -590,12 +590,7 @@ val constEvaluationPhase = makeIrModulePhase(
 fun wasmLoweringsOfTheFirstPhase(
     languageVersionSettings: LanguageVersionSettings,
 ): List<NamedCompilerPhase<WasmPreSerializationLoweringContext, IrModuleFragment, IrModuleFragment>> = buildList {
-    // TODO: after the fix of KT-76260 this condition should be simplified to just the check of `IrRichCallableReferencesInKlibs` feature
-    val supportsIrInliner = languageVersionSettings.supportsFeature(LanguageFeature.IrInlinerBeforeKlibSerialization)
-    val enableRichReferences = languageVersionSettings.supportsFeature(LanguageFeature.IrRichCallableReferencesInKlibs) ||
-            supportsIrInliner
-
-    if (enableRichReferences) {
+    if (languageVersionSettings.supportsFeature(LanguageFeature.IrRichCallableReferencesInKlibs)) {
         this += upgradeCallableReferences
     }
     this += loweringsOfTheFirstPhase(JsManglerIr, languageVersionSettings)
