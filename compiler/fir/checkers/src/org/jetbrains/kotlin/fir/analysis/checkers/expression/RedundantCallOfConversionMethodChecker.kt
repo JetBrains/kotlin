@@ -15,44 +15,38 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
-import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
-import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.types.ConeFlexibleType
 import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.types.isMarkedNullable
 import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.StandardClassIds
-import org.jetbrains.kotlin.psi.KtSafeQualifiedExpression
 
-object RedundantCallOfConversionMethod : FirQualifiedAccessExpressionChecker(MppCheckerKind.Common) {
+object RedundantCallOfConversionMethodChecker : FirFunctionCallChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
-    override fun check(expression: FirQualifiedAccessExpression) {
-        if (expression !is FirFunctionCall) return
+    override fun check(expression: FirFunctionCall) {
         val functionName = expression.calleeReference.name.asString()
-        val qualifiedType = targetClassMap[functionName] ?: return
+        val qualifiedTypeId = targetClassMap[functionName] ?: return
 
-        if (expression.explicitReceiver?.isRedundant(qualifiedType, context.session) == true) {
+        if (expression.explicitReceiver?.isRedundant(qualifiedTypeId, context.session) == true) {
             reporter.reportOn(expression.source, FirErrors.REDUNDANT_CALL_OF_CONVERSION_METHOD)
         }
     }
 
     private fun FirExpression.isRedundant(qualifiedClassId: ClassId, session: FirSession): Boolean {
-        val thisType = if (this is FirLiteralExpression) {
-            this.resolvedType.classId
+        val thisTypeId = if (this is FirLiteralExpression) {
+            resolvedType.classId
         } else {
             when {
                 resolvedType is ConeFlexibleType -> null
-                psi?.parent !is KtSafeQualifiedExpression
-                        && (psi is KtSafeQualifiedExpression || resolvedType.isMarkedNullable) -> null
-                this.resolvedType.isMarkedNullable -> null
-                else -> this.resolvedType.fullyExpandedClassId(session)
+                resolvedType.isMarkedNullable -> null
+                else -> resolvedType.fullyExpandedClassId(session)
             }
         }
-        return thisType == qualifiedClassId
+        return thisTypeId == qualifiedClassId
     }
 
-    private val targetClassMap = hashMapOf(
+    private val targetClassMap: HashMap<String, ClassId> = hashMapOf(
         "toString" to StandardClassIds.String,
         "toDouble" to StandardClassIds.Double,
         "toFloat" to StandardClassIds.Float,

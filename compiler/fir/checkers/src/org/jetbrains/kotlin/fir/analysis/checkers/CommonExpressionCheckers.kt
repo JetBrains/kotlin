@@ -55,7 +55,6 @@ object CommonExpressionCheckers : ExpressionCheckers() {
         FirPrivateToThisAccessChecker,
         FirContextParameterInCalledSignatureChecker,
         FirInlineExposedLessVisibleTypeQualifiedAccessChecker,
-        RedundantCallOfConversionMethod,
     )
 
     override val callCheckers: Set<FirCallChecker> = setOf(
@@ -79,6 +78,7 @@ object CommonExpressionCheckers : ExpressionCheckers() {
         FirGenericQualifierOnConstructorCallChecker,
         FirVarargWithNonTrivialUpperBoundInferredToNothingChecker,
         PlatformClassMappedToKotlinConstructorCallChecker,
+        RedundantCallOfConversionMethodChecker,
     )
 
     override val propertyAccessExpressionCheckers: Set<FirPropertyAccessExpressionChecker> = setOf(
