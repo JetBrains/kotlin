@@ -9,6 +9,7 @@ import kotlinx.coroutines.runBlocking
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.cliArgument
+import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.CompiledScriptClassLoader
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.KJvmCompiledModuleInMemoryImpl
 import org.jetbrains.kotlin.scripting.compiler.plugin.impl.SCRIPT_BASE_COMPILER_ARGUMENTS_PROPERTY
@@ -676,7 +677,8 @@ class ScriptingHostTest {
         """.trimIndent()
         val compilationConfiguration1 = createJvmCompilationConfigurationFromTemplate<SimpleScriptTemplate> {
             compilerOptions(
-                CommonCompilerArguments::languageVersion.cliArgument, "1.8",
+                CommonCompilerArguments::languageVersion.cliArgument,
+                LanguageVersion.FIRST_SUPPORTED.versionString,
                 CommonCompilerArguments::suppressVersionWarnings.cliArgument,
                 CommonCompilerArguments::whenGuards.cliArgument,
             )

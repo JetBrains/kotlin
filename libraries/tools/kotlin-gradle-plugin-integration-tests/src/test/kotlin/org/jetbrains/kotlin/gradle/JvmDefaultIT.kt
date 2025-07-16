@@ -201,9 +201,9 @@ internal class JvmDefaultIT : KGPBaseTest() {
                         project.tasks.named("compileKotlin", KotlinJvmCompile::class.java) {
                             it.compilerOptions {
                                 @Suppress("DEPRECATION")
-                                languageVersion.set(KotlinVersion.KOTLIN_1_8)
+                                languageVersion.set(KotlinVersion.KOTLIN_2_0)
                                 @Suppress("DEPRECATION")
-                                apiVersion.set(KotlinVersion.KOTLIN_1_8)
+                                apiVersion.set(KotlinVersion.KOTLIN_2_0)
                             }
                         }
                     }
