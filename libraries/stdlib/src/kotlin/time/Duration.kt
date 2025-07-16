@@ -950,7 +950,7 @@ private fun parseDuration(value: String, strictIso: Boolean, throwExceptionOnPar
                 val component = value.substringWhile(index) { it in '0'..'9' || it in nonDigitSymbols }
                 if (component.isEmpty()) return throwExceptionOrNull()
                 index += component.length
-                val unitChar = value.getOrElse(index) { return throwExceptionOrNull() }
+                val unitChar = value.getOrElse(index) { return throwExceptionOrNull("Missing unit for value $component") }
                 index++
                 val unit = durationUnitByIsoChar(unitChar, isTimeComponent, throwExceptionOnParsingError) ?: return null
                 if (prevUnit != null && prevUnit <= unit) return throwExceptionOrNull("Unexpected order of duration components")
