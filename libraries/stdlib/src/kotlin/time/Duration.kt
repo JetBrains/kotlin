@@ -279,8 +279,8 @@ public value class Duration internal constructor(private val rawValue: Long) : C
     public operator fun plus(other: Duration): Duration {
         when {
             this.isInfinite() -> {
-                return if (other.isFinite() || (this.rawValue xor other.rawValue >= 0))
-                    this
+                if (other.isFinite() || (this.rawValue xor other.rawValue >= 0))
+                    return this
                 else
                     throw IllegalArgumentException(SUMMING_INFINITE_DURATIONS_OF_DIFFERENT_SIGN_ERROR_MESSAGE)
             }
@@ -293,10 +293,10 @@ public value class Duration internal constructor(private val rawValue: Long) : C
     internal fun plus(other: Duration, throwException: Boolean): Duration? {
         when {
             this.isInfinite() -> {
-                return if (other.isFinite() || (this.rawValue xor other.rawValue >= 0))
-                    this
+                if (other.isFinite() || (this.rawValue xor other.rawValue >= 0))
+                    return this
                 else
-                    if (throwException) throw IllegalArgumentException(SUMMING_INFINITE_DURATIONS_OF_DIFFERENT_SIGN_ERROR_MESSAGE) else null
+                    if (throwException) throw IllegalArgumentException(SUMMING_INFINITE_DURATIONS_OF_DIFFERENT_SIGN_ERROR_MESSAGE) else return null
             }
             other.isInfinite() -> return other
         }
