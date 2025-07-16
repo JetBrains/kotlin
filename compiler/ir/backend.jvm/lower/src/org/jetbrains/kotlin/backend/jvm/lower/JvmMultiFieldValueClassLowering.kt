@@ -1132,7 +1132,7 @@ internal class JvmMultiFieldValueClassLowering(context: JvmBackendContext) : Jvm
             }
             return false
         }
-        recur(block)
+        val _ = recur(block)
         return resultVariables.map { irGet(it) } + standaloneExpressions.asReversed()
     }
 

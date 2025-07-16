@@ -111,7 +111,7 @@ object ByDescriptorIndexer {
     private fun typeParametersMatch(declaration: KtCallableDeclaration, descriptor: CallableDescriptor): Boolean {
         if (declaration.typeParameters.size != declaration.typeParameters.size) return false
         val boundsByName = declaration.typeConstraints.groupBy { it.subjectTypeParameterName?.getReferencedName() }
-        descriptor.typeParameters.zip(declaration.typeParameters) { descriptorTypeParam, psiTypeParameter ->
+        val _ = descriptor.typeParameters.zip(declaration.typeParameters) { descriptorTypeParam, psiTypeParameter ->
             if (descriptorTypeParam.name.toString() != psiTypeParameter.name) return false
             val psiBounds = mutableListOf<KtTypeReference>()
             psiBounds.addIfNotNull(psiTypeParameter.extendsBound)

@@ -86,7 +86,7 @@ fun FirLookupTrackerComponent.recordTypeResolveAsLookup(typeRef: FirTypeRef, sou
 
 fun FirLookupTrackerComponent.recordUserTypeRefLookup(typeRef: FirUserTypeRef, inScopes: Iterable<String>, fileSource: KtSourceElement?) {
     inScopes.forEach { scope ->
-        typeRef.qualifier.fold(FqName(scope)) { result, suffix ->
+        val _ = typeRef.qualifier.fold(FqName(scope)) { result, suffix ->
             recordLookup(suffix.name.asString(), result.asString(), typeRef.source, fileSource)
             result.child(suffix.name)
         }

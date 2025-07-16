@@ -165,6 +165,7 @@ private inline fun CallableId.ifTypealiasedJvmCollection(nonIgnorableCollectionM
             "LinkedHashSet",
             "HashMap",
             "LinkedHashMap",
+            "ArrayDeque"
         )
     ) return
     nonIgnorableCollectionMethod(

@@ -706,7 +706,7 @@ class ControlFlowGraphBuilder private constructor(
         }
 
         for ((ctor, graph) in secondaryConstructors) {
-            ctor.computeDelegationLevel()
+            val _ = ctor.computeDelegationLevel()
             val delegatesTo = constructorDelegation[ctor]
             val delegatedNodeRange = secondaryConstructors[delegatesTo]?.let {
                 // constructor(A) : this(B) <-- class enter -> [constructor(A) enter -> B -> constructor(B) -> rest of constructor(A)]

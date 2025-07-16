@@ -1607,7 +1607,7 @@ class FirElementSerializer private constructor(
                 this.pluginId = stringTable.getStringIndex(pluginId)
                 this.data = ByteString.copyFrom(data)
             }
-            addCompilerPluginData(pluginData)
+            val _ = addCompilerPluginData(pluginData)
         }
     }
 }

@@ -155,7 +155,7 @@ object MetadataFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifa
         outputs.runPlatformCheckers(diagnosticsReporter)
 
         when (configuration.useLightTree) {
-            true -> outputs.all { checkKotlinPackageUsageForLightTree(configuration, it.fir) }
+            true -> { val _ = outputs.all { checkKotlinPackageUsageForLightTree(configuration, it.fir) } }
             false -> checkKotlinPackageUsageForPsi(configuration, sourceFiles.asKtFilesList())
         }
 

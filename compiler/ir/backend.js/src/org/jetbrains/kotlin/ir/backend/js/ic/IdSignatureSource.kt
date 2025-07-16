@@ -83,7 +83,7 @@ private fun collectImplementedSymbol(deserializedSymbols: Map<IdSignature, IrSym
             fun addNestedDeclarations(irClass: IrClass) {
                 for (decl in irClass.declarations) {
                     when (decl) {
-                        is IrSimpleFunction -> addSymbol(decl)
+                        is IrSimpleFunction -> { val _ = addSymbol(decl) }
                         is IrProperty -> {
                             decl.getter?.let(::addSymbol)
                             decl.setter?.let(::addSymbol)

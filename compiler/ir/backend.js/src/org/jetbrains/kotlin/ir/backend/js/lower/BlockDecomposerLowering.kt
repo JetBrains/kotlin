@@ -419,7 +419,7 @@ class BlockDecomposerTransformer(
             val block = IrBlockImpl(expression.startOffset, expression.endOffset, unitType, expression.origin)
 
             // TODO: consider decomposing only when it is really required
-            results.foldIndexed(block) { i, appendBlock, (cond, res, orig) ->
+            val _ = results.foldIndexed(block) { i, appendBlock, (cond, res, orig) ->
                 val condStatements = destructureComposite(cond)
                 val condValue = condStatements.last() as IrExpression
 

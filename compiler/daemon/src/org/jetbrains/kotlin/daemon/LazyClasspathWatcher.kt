@@ -56,7 +56,7 @@ class LazyClasspathWatcher(classpath: Iterable<String>,
     init {
         // locking before entering thread in order to avoid racing with isChanged
         fileIdsLock.acquire()
-        thread(isDaemon = true, start = true) {
+        val _ = thread(isDaemon = true, start = true) {
             try {
                 fileIds = classpath
                         .map(::File)
@@ -125,4 +125,3 @@ fun File.md5Digest(): ByteArray {
     }
     return md.digest()
 }
-

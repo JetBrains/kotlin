@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.IrTypeParametersContainer
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
-import java.util.*
 
 interface TypeParametersResolver {
     fun enterTypeParameterScope(typeParametersContainer: IrTypeParametersContainer)

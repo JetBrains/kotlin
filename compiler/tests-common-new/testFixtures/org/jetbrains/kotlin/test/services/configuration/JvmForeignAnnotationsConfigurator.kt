@@ -86,6 +86,7 @@ open class JvmForeignAnnotationsConfigurator(testServices: TestServices) : Envir
         )
     }
 
+    @Suppress("RETURN_VALUE_NOT_USED")
     override fun configureCompilerConfiguration(configuration: CompilerConfiguration, module: TestModule) {
         val registeredDirectives = module.directives
         if (ENABLE_FOREIGN_ANNOTATIONS !in registeredDirectives) return
@@ -162,7 +163,7 @@ open class JvmForeignAnnotationsConfigurator(testServices: TestServices) : Envir
 
     private fun createJsr305Jar(configuration: CompilerConfiguration): File {
         val jsr305FilesDir = createTempDirectory().toFile().also {
-            File(JavaForeignAnnotationType.Jsr305.path).copyRecursively(it)
+            val _ = File(JavaForeignAnnotationType.Jsr305.path).copyRecursively(it)
         }
 
         return MockLibraryUtil.compileJavaFilesLibraryToJar(

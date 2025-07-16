@@ -94,7 +94,7 @@ class KaptCommandLineProcessor : CommandLineProcessor {
             apply(keyValuePair[0], keyValuePair[1])
         }
 
-        @Suppress("DEPRECATION")
+        @Suppress("DEPRECATION", "RETURN_VALUE_NOT_USED")
         when (option) {
             SOURCE_OUTPUT_DIR_OPTION -> sourcesOutputDir = File(value)
             CLASS_OUTPUT_DIR_OPTION -> classesOutputDir = File(value)

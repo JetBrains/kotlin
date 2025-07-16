@@ -51,7 +51,7 @@ class FunctionClassDescriptor(
             ))
         }
 
-        (1..arity).map { i ->
+        (1..arity).forEach { i ->
             typeParameter(Variance.IN_VARIANCE, "P$i")
         }
 

@@ -750,7 +750,7 @@ class LightTreeRawFirDeclarationBuilder(
                         }
                     }
 
-                    superTypeRefs.ifEmpty {
+                    val _ = superTypeRefs.ifEmpty {
                         superTypeRefs += implicitAnyType
                         delegatedSuperTypeRef = implicitAnyType
                     }

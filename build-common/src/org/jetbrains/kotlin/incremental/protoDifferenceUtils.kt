@@ -204,6 +204,7 @@ class DifferenceCalculatorForClass(
             return calcDifferenceForMembers(oldMembers, newMembers)
         }
 
+        @Suppress("RETURN_VALUE_NOT_USED")
         for (kind in diff) {
             when (kind!!) {
                 ProtoBufClassKind.COMPANION_OBJECT_NAME -> {

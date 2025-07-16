@@ -416,7 +416,7 @@ class QualifiedExpressionResolver(val languageVersionSettings: LanguageVersionSe
             if (addQualifierPart(expression)) break
             if (expression !is KtQualifiedExpression) break
 
-            addQualifierPart(expression.selectorExpression)
+            val _ = addQualifierPart(expression.selectorExpression)
 
             expression = expression.receiverExpression
         }
@@ -709,7 +709,7 @@ class QualifiedExpressionResolver(val languageVersionSettings: LanguageVersionSe
         trace: BindingTrace,
         position: QualifierPosition
     ) {
-        path.foldRight(packageView) { qualifierPart, currentView ->
+        val _ = path.foldRight(packageView) { qualifierPart, currentView ->
             storeResult(trace, qualifierPart.expression, currentView, shouldBeVisibleFrom = null, position = position)
             currentView.containingDeclaration
                 ?: error(

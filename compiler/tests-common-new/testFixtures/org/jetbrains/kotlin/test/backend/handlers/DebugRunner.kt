@@ -71,6 +71,7 @@ abstract class DebugRunner(testServices: TestServices) : JvmBoxRunner(testServic
     }
 
     // Debug event loop to step through a test program.
+    @Suppress("RETURN_VALUE_NOT_USED")
     private fun runDebugEventLoop(virtualMachine: VirtualMachine) {
         val manager = virtualMachine.eventRequestManager()
         val loggedItems = ArrayList<SteppingTestLoggedData>()

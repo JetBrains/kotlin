@@ -71,7 +71,7 @@ fun getExpectedTypePredicate(
     val pseudocode = value.createdAt?.owner ?: return AllTypes
     val typePredicates = LinkedHashSet<TypePredicate?>()
 
-    fun addSubtypesOf(kotlinType: KotlinType?) = typePredicates.add(kotlinType?.getSubtypesPredicate())
+    fun addSubtypesOf(kotlinType: KotlinType?): Unit { typePredicates.add(kotlinType?.getSubtypesPredicate()) }
 
     fun addByExplicitReceiver(resolvedCall: ResolvedCall<*>?) {
         val receiverValue = (resolvedCall ?: return).getExplicitReceiverValue()
@@ -147,7 +147,7 @@ fun getExpectedTypePredicate(
                             element.getStrictParentOfType<KtWhileExpression>()?.condition -> addSubtypesOf(builtIns.booleanType)
                             is KtProperty -> {
                                 val propertyDescriptor = bindingContext[BindingContext.DECLARATION_TO_DESCRIPTOR, element] as? PropertyDescriptor
-                                propertyDescriptor?.accessors?.map {
+                                val _ = propertyDescriptor?.accessors?.map {
                                     addByExplicitReceiver(bindingContext[BindingContext.DELEGATED_PROPERTY_RESOLVED_CALL, it])
                                 }
                             }

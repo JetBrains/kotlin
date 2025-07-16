@@ -205,7 +205,7 @@ object KotlinCompileDaemon : KotlinCompileDaemonBase() {
                                                  onShutdown = {
                                                      if (daemonOptions.forceShutdownTimeoutMilliseconds != COMPILE_DAEMON_TIMEOUT_INFINITE_MS) {
                                                          // running a watcher thread that ensures that if the daemon is not exited normally (may be due to RMI leftovers), it's forced to exit
-                                                         timer.schedule(daemonOptions.forceShutdownTimeoutMilliseconds) {
+                                                         val _ = timer.schedule(daemonOptions.forceShutdownTimeoutMilliseconds) {
                                                              cancel()
                                                              log.info("force JVM shutdown")
                                                              exitProcess(0)

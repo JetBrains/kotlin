@@ -217,6 +217,7 @@ abstract class Kotlinp(protected val settings: Settings) {
     @OptIn(ExperimentalContracts::class)
     private fun renderEffect(effect: KmEffect, printer: Printer) {
         // If there are several arguments, only the first is taken, see ContractDeserializerImpl.deserializeSimpleEffect
+        @IgnorableReturnValue
         fun Printer.appendMeaningfulConstructorArgument(effect: KmEffect): Printer {
             effect.constructorArguments.firstOrNull()?.let { append(printEffectExpression(it)) }
             return this

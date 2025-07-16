@@ -161,7 +161,7 @@ private inline fun <T : FirCallableSymbol<*>> T.firstOverriddenCallable(
     noinline predicate: (T) -> Boolean,
 ): T? {
     var result: T? = null
-    containingScope.processFunction(this) { symbol ->
+    val _ = containingScope.processFunction(this) { symbol ->
         if (predicate(symbol)) {
             result = symbol
             ProcessorAction.STOP

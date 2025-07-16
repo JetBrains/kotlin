@@ -190,7 +190,7 @@ class AnonymousObjectTransformer(
             method.visitEnd()
             if (continuationToRemove != null && coroutineTransformer.safeToRemoveContinuationClass(method.intermediate)) {
                 transformationResult.addClassToRemove(continuationToRemove)
-                innerClassNodes.removeIf { it.name == oldContinuationName }
+                val _ = innerClassNodes.removeIf { it.name == oldContinuationName }
             }
         }
 

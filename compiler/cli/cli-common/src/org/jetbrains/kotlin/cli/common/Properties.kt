@@ -69,7 +69,7 @@ enum class CompilerSystemProperties(val property: String, val alwaysDirectAccess
             return getProperFunction(systemPropertyGetter, System::getProperty)(property)
         }
         set(value) {
-            getProperFunction(systemPropertySetter, System::setProperty)(property, value!!)
+            val _ = getProperFunction(systemPropertySetter, System::setProperty)(property, value!!)
         }
 
     val safeValue

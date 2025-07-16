@@ -416,16 +416,16 @@ class OptInUsageChecker : CallChecker {
             )
 
             // Returns true if fqName resolves to a valid opt-in requirement marker.
-            fun checkAnnotation(fqName: String): Boolean {
+            fun checkAnnotation(fqName: String) {
                 val descriptor = module.resolveClassByFqName(FqName(fqName), NoLookupLocation.FOR_NON_TRACKED_SCOPE)
                 if (descriptor == null) {
                     reportWarning("Opt-in requirement marker $fqName is unresolved. Please make sure it's present in the module dependencies")
-                    return false
+                    return
                 }
 
                 if (descriptor.loadOptInForMarkerAnnotation() == null) {
                     reportWarning("Class $fqName is not an opt-in requirement marker")
-                    return false
+                    return
                 }
 
                 for (deprecation in deprecationResolver.getDeprecations(descriptor)) {
@@ -435,7 +435,7 @@ class OptInUsageChecker : CallChecker {
                     }
                     report("Opt-in requirement marker $fqName is deprecated" + deprecation.message?.let { ". $it" }.orEmpty())
                 }
-                return true
+                return
             }
 
             languageVersionSettings.getFlag(AnalysisFlags.optIn).forEach { fqName ->

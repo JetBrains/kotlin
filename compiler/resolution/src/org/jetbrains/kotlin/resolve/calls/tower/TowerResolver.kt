@@ -302,12 +302,12 @@ class TowerResolver {
             }
 
             if (implicitScopeTower.implicitsResolutionFilter === ImplicitsExtensionsResolutionFilter.Default) {
-                processScopes(implicitScopeTower.lexicalScope.parentsWithSelf) { true }
+                val _ = processScopes(implicitScopeTower.lexicalScope.parentsWithSelf) { true }
             } else {
                 val scopeInfos = implicitScopeTower.allScopesWithImplicitsResolutionInfo()
                 val scopeToResolveExtensionsForImplicitReceiverMap =
                     scopeInfos.map { it.scope to it.resolveExtensionsForImplicitReceiver }.toMap()
-                processScopes(scopeInfos.map { it.scope }) { scopeToResolveExtensionsForImplicitReceiverMap[it] ?: false }
+                val _ = processScopes(scopeInfos.map { it.scope }) { scopeToResolveExtensionsForImplicitReceiverMap[it] ?: false }
             }
 
             recordLookups()

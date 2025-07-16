@@ -601,7 +601,7 @@ class InferenceFunctionDeclaration(
             function.annotations = updatedAnnotations(function.annotations, scheme)
         } else {
             function.annotations = updatedAnnotations(function.annotations, scheme.target)
-            parameters().zip(scheme.parameters) { parameter, parameterScheme ->
+            val _ = parameters().zip(scheme.parameters) { parameter, parameterScheme ->
                 parameter.updateScheme(parameterScheme)
             }
         }

@@ -112,7 +112,9 @@ fun checkSteppingTestResult(
     for (line in lineIterator) {
         if (line.startsWith(EXPECTATIONS_MARKER)) {
             // Rewind the iterator to the first '// EXPECTATIONS' line
-            if (lineIterator.hasPrevious()) lineIterator.previous()
+            if (lineIterator.hasPrevious()) {
+                val _ = lineIterator.previous()
+            }
             break
         }
         actual.add(line)

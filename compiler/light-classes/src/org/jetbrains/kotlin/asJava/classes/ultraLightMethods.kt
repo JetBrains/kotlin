@@ -331,7 +331,7 @@ internal class KtUltraLightMethodForDescriptor(
 
         //We should force computations on all lazy delegates to release descriptor on the end of ctor call
         with(lazyInitializers) {
-            forEach { it.value }
+            forEach { val _ = it.value }
             clear()
         }
     }

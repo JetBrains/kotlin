@@ -308,6 +308,7 @@ private sealed interface CauseRendering {
     }
 }
 
+@Suppress("RETURN_VALUE_NOT_USED")
 private fun Appendable.unusableClassifier(
     cause: Unusable,
     rendering: CauseRendering,

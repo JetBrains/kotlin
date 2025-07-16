@@ -260,7 +260,7 @@ open class FirTypeResolveTransformer(
 
     private fun setAccessorTypesByPropertyType(property: FirProperty) {
         property.getter?.replaceReturnTypeRef(property.returnTypeRef)
-        property.setter?.valueParameters?.map { it.replaceReturnTypeRef(property.returnTypeRef) }
+        property.setter?.valueParameters?.forEach { it.replaceReturnTypeRef(property.returnTypeRef) }
     }
 
     override fun transformField(field: FirField, data: Any?): FirField = whileAnalysing(session, field) {

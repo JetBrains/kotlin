@@ -98,7 +98,7 @@ class CliJavaModuleFinder(
         get() = jdkRelease == null || jdkRelease == compilationJdkVersion
 
     fun addUserModule(module: JavaModule) {
-        userModules.putIfAbsent(module.name, module)
+        val _ = userModules.putIfAbsent(module.name, module)
     }
 
     val allObservableModules: Sequence<JavaModule>

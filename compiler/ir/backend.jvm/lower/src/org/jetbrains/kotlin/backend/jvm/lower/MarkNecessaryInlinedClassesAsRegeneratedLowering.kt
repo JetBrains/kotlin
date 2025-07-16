@@ -177,8 +177,8 @@ internal class MarkNecessaryInlinedClassesAsRegeneratedLowering(val context: Jvm
                 inlinableParameters.addAll(additionalInlinableParameters)
                 reifiedArguments.addAll(additionalTypeArguments)
                 super.visitContainerExpression(inlinedBlock)
-                inlinableParameters.dropLast(additionalInlinableParameters.size)
-                reifiedArguments.dropLast(additionalTypeArguments.size)
+                inlinableParameters.removeAll(additionalInlinableParameters)
+                reifiedArguments.removeAll(additionalTypeArguments)
             }
         })
         return classesToRegenerate

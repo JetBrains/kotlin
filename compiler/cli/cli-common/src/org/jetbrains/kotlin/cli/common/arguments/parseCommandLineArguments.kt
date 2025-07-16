@@ -195,7 +195,7 @@ private fun <A : CommonToolArguments> parsePreprocessedCommandLineArguments(
                     } else {
                         val newInternalArgument = parser.parseInternalArgument(arg, errors.value) ?: continue
                         // Manual language feature setting overrides the previous value of the same feature setting, if it exists.
-                        internalArguments.removeIf {
+                        val _ = internalArguments.removeIf {
                             (it as? ManualLanguageFeatureSetting)?.languageFeature ==
                                     (newInternalArgument as? ManualLanguageFeatureSetting)?.languageFeature
                         }
@@ -329,4 +329,3 @@ fun validateArguments(errors: ArgumentParseErrors?): String? {
     }
     return null
 }
-

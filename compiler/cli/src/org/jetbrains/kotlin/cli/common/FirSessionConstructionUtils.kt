@@ -322,7 +322,7 @@ object SessionConstructionUtils {
         val hmppModuleStructure = configuration.get(CommonConfigurationKeys.HMPP_MODULE_STRUCTURE)
 
         val sharedLibrarySession = createSharedLibrarySession()
-        createLibrarySession(sharedLibrarySession)
+        val _ = createLibrarySession(sharedLibrarySession)
         val extraAnalysisMode = configuration.useFirExtraCheckers
         val experimentalAnalysisMode = configuration.useFirExperimentalCheckers
         val sessionConfigurator: FirSessionConfigurator.() -> Unit = {

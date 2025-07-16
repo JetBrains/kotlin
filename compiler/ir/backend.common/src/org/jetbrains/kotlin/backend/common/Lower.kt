@@ -258,7 +258,7 @@ interface DeclarationTransformer : FileLoweringPass {
 
             val visitor = this
 
-            fun IrDeclaration.replaceInContainer(container: MutableList<in IrDeclaration>, result: List<IrDeclaration>): Boolean {
+            fun IrDeclaration.replaceInContainer(container: MutableList<in IrDeclaration>, result: List<IrDeclaration>) {
                 var index = container.indexOf(this)
                 if (index == -1) {
                     index = container.indexOf(declaration)
@@ -266,7 +266,6 @@ interface DeclarationTransformer : FileLoweringPass {
                     container.removeAt(index)
                     --index
                 }
-                return container.addAll(index + 1, result)
             }
 
             fun IrDeclaration.transform() {

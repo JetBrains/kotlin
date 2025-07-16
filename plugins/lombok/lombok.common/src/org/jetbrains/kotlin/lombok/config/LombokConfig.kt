@@ -77,11 +77,11 @@ class ConfigBuilder {
     }
 
     fun plusValue(name: String, value: String) {
-        state.merge(normalizeKey(name), listOf(value)) { a, b -> a + b }
+        val _ = state.merge(normalizeKey(name), listOf(value)) { a, b -> a + b }
     }
 
     fun minusValue(name: String, value: String) {
-        state.merge(normalizeKey(name), listOf(value)) { a, b -> a - b }
+        val _ = state.merge(normalizeKey(name), listOf(value)) { a, b -> a - b }
     }
 
     fun build(): LombokConfig = LombokConfig(state)
@@ -89,5 +89,3 @@ class ConfigBuilder {
 
 //lombok config keys are case insensitive
 private fun normalizeKey(key: String): String = key.lowercase()
-
-

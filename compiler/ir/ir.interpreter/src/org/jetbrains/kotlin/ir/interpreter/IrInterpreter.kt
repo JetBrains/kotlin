@@ -69,7 +69,7 @@ class IrInterpreter(internal val environment: IrInterpreterEnvironment, internal
     internal fun withNewCallStack(call: IrCall, init: IrInterpreter.() -> Any?): State {
         return with(IrInterpreter(environment.copyWithNewCallStack(), bodyMap)) {
             callStack.newFrame(call.symbol.owner)
-            init()
+            val _ = init()
 
             while (!callStack.hasNoInstructions()) {
                 callStack.popInstruction().handle()

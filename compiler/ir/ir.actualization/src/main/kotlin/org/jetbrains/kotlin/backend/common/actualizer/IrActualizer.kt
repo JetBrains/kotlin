@@ -158,4 +158,3 @@ class IrActualizer(
         mainFragment.files.addAll(newFiles)
     }
 }
-

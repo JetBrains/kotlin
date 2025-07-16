@@ -192,6 +192,6 @@ object ImplicitNothingAsTypeParameterCallChecker : CallChecker {
     }
 
     override fun check(resolvedCall: ResolvedCall<*>, reportOn: PsiElement, context: CallCheckerContext) {
-        checkByReturnPositionWithoutExpected(resolvedCall, reportOn, context) || checkAgainstNotNothingExpectedType(resolvedCall, context)
+        val _ = checkByReturnPositionWithoutExpected(resolvedCall, reportOn, context) || checkAgainstNotNothingExpectedType(resolvedCall, context)
     }
 }

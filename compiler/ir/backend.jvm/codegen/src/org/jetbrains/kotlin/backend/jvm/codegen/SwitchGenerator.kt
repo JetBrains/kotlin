@@ -245,7 +245,7 @@ class SwitchGenerator(private val expression: IrWhen, private val data: BlockInf
 
     private fun ArrayList<ExpressionToLabel>.removeUnreachableLabels(cases: List<ValueToLabel>) {
         val reachableLabels = HashSet(cases.map { it.label })
-        removeIf { it.label !in reachableLabels }
+        val _ = removeIf { it.label !in reachableLabels }
     }
 
     abstract inner class Switch(

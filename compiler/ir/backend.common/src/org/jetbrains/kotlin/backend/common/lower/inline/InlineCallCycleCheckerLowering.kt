@@ -54,11 +54,11 @@ class InlineCallCycleCheckerLowering<Context : PreSerializationLoweringContext>(
         val completed = mutableSetOf<CallNode>()
         val inlineCallsStack = mutableListOf<CallEdge>()
 
-        fun reportInlineCallCycle(caller: IrFunction, callee: CallEdge) = callee.call?.let { call ->
+        fun reportInlineCallCycle(caller: IrFunction, callee: CallEdge): Unit { callee.call?.let { call ->
             callsInInlineCycle.add(call)
             diagnosticReporter.at(call, caller.file).report(CommonBackendErrors.INLINE_CALL_CYCLE, callee.callNode.function)
 
-        }
+        } }
 
         fun CallNode.dfs(call: IrCall?) {
             if (visited.contains(this)) {

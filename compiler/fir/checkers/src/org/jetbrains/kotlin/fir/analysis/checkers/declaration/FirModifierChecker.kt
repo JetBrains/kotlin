@@ -144,7 +144,7 @@ object FirModifierChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
         }
 
         if (checkModifier(FirErrors.DEPRECATED_MODIFIER_FOR_TARGET)) {
-            checkModifier(FirErrors.REDUNDANT_MODIFIER_FOR_TARGET)
+            val _ = checkModifier(FirErrors.REDUNDANT_MODIFIER_FOR_TARGET)
         }
 
         return true

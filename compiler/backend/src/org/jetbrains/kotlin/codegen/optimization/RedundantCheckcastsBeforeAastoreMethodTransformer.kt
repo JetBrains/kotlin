@@ -20,7 +20,7 @@ object RedundantCheckcastsBeforeAastoreMethodTransformer : MethodTransformer() {
                 iter.remove()
                 if (isReified) {
                     for (i in 1..3) {
-                        iter.previous()
+                        val _ = iter.previous()
                         iter.remove()
                     }
                 }

@@ -243,7 +243,7 @@ class RedundantBoxingMethodTransformer(private val generationState: GenerationSt
             val size = valueDescriptor.getTotalUnboxSize()
             if (size < 2) continue
             for (index in valueDescriptor.getVariablesIndexes()) {
-                wideVars2SizeMinusOne.merge(index, size - 1, ::maxOf)
+                val _ = wideVars2SizeMinusOne.merge(index, size - 1, ::maxOf)
             }
         }
 

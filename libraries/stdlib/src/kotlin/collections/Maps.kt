@@ -379,6 +379,7 @@ public fun <K, V> Map<K, V>.getValue(key: K): V = getOrImplicitDefault(key)
  *
  * @sample samples.collections.Maps.Usage.getOrPut
  */
+@IgnorableReturnValue
 public inline fun <K, V> MutableMap<K, V>.getOrPut(key: K, defaultValue: () -> V): V {
     val value = get(key)
     return if (value == null) {

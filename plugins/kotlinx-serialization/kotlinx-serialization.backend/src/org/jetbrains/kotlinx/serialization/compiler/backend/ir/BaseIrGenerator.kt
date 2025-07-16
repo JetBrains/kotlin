@@ -406,7 +406,7 @@ abstract class BaseIrGenerator(private val currentClass: IrClass, final override
 
     internal fun IrClass.addCachedChildSerializersProperty(cacheableSerializers: List<IrExpression?>): IrProperty? {
         // if all child serializers are null (non-cacheable) we don't need to create a property
-        cacheableSerializers.firstOrNull { it != null } ?: return null
+        val _ = cacheableSerializers.firstOrNull { it != null } ?: return null
 
         val kSerializerType = kSerializerType(compilerContext.irBuiltIns.anyType)
         val elementType = lazyType(kSerializerType)

@@ -128,7 +128,7 @@ class KotlinScriptExpressionExplainTransformer(
         val symbol = currentScope!!.scope.scopeOwnerSymbol
         val builder = DeclarationIrBuilder(context, symbol, expression.startOffset, expression.endOffset)
         return builder.irExplain(expression, sourceFile) { variables ->
-            variables.last()
+            val _ = variables.last()
         }
     }
 }

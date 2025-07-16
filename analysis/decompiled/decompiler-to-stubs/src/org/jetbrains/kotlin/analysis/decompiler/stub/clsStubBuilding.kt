@@ -170,7 +170,7 @@ fun createStubForTypeName(
         val lastSegment = segments[level]
         val userTypeStub = KotlinUserTypeStubImpl(current, upperBoundFun?.invoke(level), abbreviatedType.takeIf { level == 0 })
         if (level + 1 < segments.size) {
-            recCreateStubForType(userTypeStub, level + 1)
+            val _ = recCreateStubForType(userTypeStub, level + 1)
         }
         KotlinNameReferenceExpressionStubImpl(userTypeStub, lastSegment.ref(), level < classesNestedLevel)
         if (!substituteWithAny) {

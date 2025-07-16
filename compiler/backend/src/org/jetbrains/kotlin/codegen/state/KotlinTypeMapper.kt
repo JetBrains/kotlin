@@ -714,7 +714,7 @@ class KotlinTypeMapper @JvmOverloads constructor(
                 },
                 processTypeArgument = { _, type, projectionKind, _, newMode ->
                     signatureVisitor.writeTypeArgument(projectionKind)
-                    mapType(type, signatureVisitor, newMode)
+                    val _ = mapType(type, signatureVisitor, newMode)
                     signatureVisitor.writeTypeArgumentEnd()
                 }
             )
@@ -793,7 +793,7 @@ class KotlinTypeMapper @JvmOverloads constructor(
             for (i in 0 until typeParameter.upperBoundCount()) {
                 val type = typeParameter.getUpperBound(i)
                 if (type.typeConstructor().getTypeParameterClassifier() == null && !type.isInterfaceOrAnnotationClass()) {
-                    mapType(type, TypeMappingMode.GENERIC_ARGUMENT)
+                    val _ = mapType(type, TypeMappingMode.GENERIC_ARGUMENT)
                     break
                 }
             }
@@ -809,7 +809,7 @@ class KotlinTypeMapper @JvmOverloads constructor(
                 val type = typeParameter.getUpperBound(i)
                 if (type.typeConstructor().getTypeParameterClassifier() != null || type.isInterfaceOrAnnotationClass()) {
                     sw.writeInterfaceBound()
-                    mapType(type, TypeMappingMode.GENERIC_ARGUMENT)
+                    val _ = mapType(type, TypeMappingMode.GENERIC_ARGUMENT)
                     sw.writeInterfaceBoundEnd()
                 }
             }

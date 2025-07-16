@@ -35,7 +35,6 @@ fun MutableContextInfo.toDataFlowInfo(languageVersionSettings: LanguageVersionSe
         if (rightDfv != null) {
             resultingDataFlowInfo = resultingDataFlowInfo.equate(leftDfv, rightDfv, false, languageVersionSettings)
         }
-        IntArray(42) { it }
     }
 
     extractDataFlowStatements(notEqualValues, builtIns) { leftDfv, rightValue ->

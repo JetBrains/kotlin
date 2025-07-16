@@ -243,7 +243,7 @@ abstract class DeserializedMemberScope protected constructor(
         private fun Map<Name, Collection<AbstractMessageLite>>.packToByteArray(): Map<Name, ByteArray> =
             mapValues { entry ->
                 val byteArrayOutputStream = ByteArrayOutputStream()
-                entry.value.map { proto -> proto.writeDelimitedTo(byteArrayOutputStream) }
+                entry.value.forEach { proto -> proto.writeDelimitedTo(byteArrayOutputStream) }
                 byteArrayOutputStream.toByteArray()
             }
 

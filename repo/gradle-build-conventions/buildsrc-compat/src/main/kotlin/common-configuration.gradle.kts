@@ -111,6 +111,7 @@ fun Project.configureKotlinCompilationOptions() {
             "-Xwhen-guards", // KT-13626
             "-Xnon-local-break-continue", // KT-1436
             "-Xcontext-parameters", // KT-72222
+            "-Xreturn-value-checker=check"
         )
 
         val kotlinLanguageVersion: String by rootProject.extra
