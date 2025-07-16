@@ -26968,12 +26968,6 @@ public class FirLightTreeOldFrontendDiagnosticsWithLatestLanguageVersionTestGene
       }
 
       @Test
-      @TestMetadata("abstractBaseClassMemberNotImplemented_15.kt")
-      public void testAbstractBaseClassMemberNotImplemented_15() {
-        runTest("compiler/testData/diagnostics/tests/java8Overrides/abstractBaseClassMemberNotImplemented_15.kt");
-      }
-
-      @Test
       @TestMetadata("abstractFakeOverrideSuperCall.kt")
       public void testAbstractFakeOverrideSuperCall() {
         runTest("compiler/testData/diagnostics/tests/java8Overrides/abstractFakeOverrideSuperCall.kt");
