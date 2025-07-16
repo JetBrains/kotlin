@@ -103,7 +103,7 @@ bool kotlin::alloc::ExtraDataSweepTraits::trySweepElement(uint8_t* element, Fina
 }
 
 kotlin::alloc::AllocationSize kotlin::alloc::ExtraDataSweepTraits::elementSize(uint8_t*) {
-    return AllocationSize::bytesExactly(sizeof(ExtraObjectCell));
+    return ExtraObjectCell::size();
 }
 
 void* kotlin::alloc::SafeAlloc(uint64_t size) noexcept {
