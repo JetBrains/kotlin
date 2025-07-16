@@ -20,7 +20,7 @@ FILE: structuralCast.kt
     public final fun checkAny(df: R|org/jetbrains/kotlinx/dataframe/DataFrame<*>|): R|kotlin/Unit| {
         R|<local>/df|.R|org/jetbrains/kotlinx/dataframe/api/cast|<R|org/jetbrains/kotlinx/dataframe/B|>()
     }
-FILE: __GENERATED DECLARATIONS__.kt
+FILE: org/jetbrains/kotlinx/dataframe/__GENERATED__CALLABLES__.kt
     package org.jetbrains.kotlinx.dataframe
 
     public final val R|org/jetbrains/kotlinx/dataframe/DataRow<org/jetbrains/kotlinx/dataframe/A>|.a: R|kotlin/Int|

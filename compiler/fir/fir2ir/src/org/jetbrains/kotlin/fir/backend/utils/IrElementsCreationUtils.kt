@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.backend.Fir2IrConversionScope
 import org.jetbrains.kotlin.fir.backend.toIrType
 import org.jetbrains.kotlin.fir.builder.buildPackageDirective
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.builder.FirFileBuilder
 import org.jetbrains.kotlin.fir.declarations.builder.buildFile
 import org.jetbrains.kotlin.fir.declarations.utils.isInlineOrValue
 import org.jetbrains.kotlin.fir.extensions.FirExtensionApiInternals
@@ -149,15 +150,44 @@ fun FirSession.createFilesWithGeneratedDeclarations(): List<FirFile> {
     val symbolProvider = generatedDeclarationsSymbolProvider ?: return emptyList()
     val declarationGenerators = extensionService.declarationGenerators
 
-    return createSyntheticFiles(
-        this@createFilesWithGeneratedDeclarations.moduleData,
-        "__GENERATED DECLARATIONS__.kt",
-        FirDeclarationOrigin.Synthetic.PluginFile,
-        symbolProvider,
-        topLevelClasses = declarationGenerators.flatMap { it.topLevelClassIdsCache.getValue() }.groupBy { it.packageFqName },
-        topLevelCallables = declarationGenerators.flatMap { it.topLevelCallableIdsCache.getValue() }.groupBy { it.packageName },
-    )
+    val fileModuleData = this@createFilesWithGeneratedDeclarations.moduleData
+
+    return buildList {
+        val generatedClasses = declarationGenerators.flatMap { it.topLevelClassIdsCache.getValue() }
+            .mapNotNull { symbolProvider.getClassLikeSymbolByClassId(it)?.fir }
+
+        // classes go to a specific file each
+        for (firClass in generatedClasses) {
+            val classId = firClass.symbol.classId
+            this += createSyntheticFile(
+                fileName = "${classId.packageFqName.toPath()}/${classId.relativeClassName.asString()}.kt",
+                packageFqName = classId.packageFqName,
+                fileModuleData,
+                FirDeclarationOrigin.Synthetic.PluginFile,
+            ) {
+                declarations += firClass
+            }
+        }
+
+        // callables are grouped per package
+        val generatedCallables = declarationGenerators.flatMap { it.topLevelCallableIdsCache.getValue() }
+            .flatMap { symbolProvider.getTopLevelCallableSymbols(it.packageName, it.callableName) }
+
+        val generatedCallablesPerPackage = generatedCallables.groupBy { it.callableId.packageName }
+        for ((packageName, packageGeneratedCallables) in generatedCallablesPerPackage) {
+            this += createSyntheticFile(
+                fileName = "${packageName.toPath()}/__GENERATED__CALLABLES__.kt",
+                packageFqName = packageName,
+                fileModuleData,
+                FirDeclarationOrigin.Synthetic.PluginFile,
+            ) {
+                declarations += packageGeneratedCallables.map { it.fir }
+            }
+        }
+    }
 }
+
+private fun FqName.toPath(): String = this.asString().replace('.', '/')
 
 const val generatedBuiltinsDeclarationsFileName: String = "__GENERATED BUILTINS DECLARATIONS__.kt"
 
@@ -171,40 +201,33 @@ fun FirSession.createFilesWithBuiltinsSyntheticDeclarationsIfNeeded(): List<FirF
     }
     val symbolProvider = syntheticFunctionInterfacesSymbolProvider
 
-    return createSyntheticFiles(
-        this@createFilesWithBuiltinsSyntheticDeclarationsIfNeeded.moduleData,
-        generatedBuiltinsDeclarationsFileName,
-        FirDeclarationOrigin.Synthetic.Builtins,
-        symbolProvider,
-        topLevelClasses = symbolProvider.generatedClassIds.groupBy { it.packageFqName },
-        topLevelCallables = emptyMap(),
-    )
+    return symbolProvider.generatedClassIds.groupBy { it.packageFqName }.map { (packageFqName, classIds) ->
+        createSyntheticFile(
+            fileName = generatedBuiltinsDeclarationsFileName,
+            packageFqName = packageFqName,
+            fileModuleData = moduleData,
+            fileOrigin = FirDeclarationOrigin.Synthetic.Builtins,
+        ) {
+            declarations += classIds.mapNotNull { symbolProvider.getClassLikeSymbolByClassId(it)?.fir }
+        }
+    }
 }
 
-private fun createSyntheticFiles(
-    fileModuleData: FirModuleData,
+private fun createSyntheticFile(
     fileName: String,
+    packageFqName: FqName,
+    fileModuleData: FirModuleData,
     fileOrigin: FirDeclarationOrigin,
-    symbolProvider: FirSymbolProvider,
-    topLevelClasses: Map<FqName, List<ClassId>>,
-    topLevelCallables: Map<FqName, List<CallableId>>,
-): List<FirFile> {
-    return buildList {
-        for (packageFqName in (topLevelClasses.keys + topLevelCallables.keys)) {
-            this += buildFile {
-                origin = fileOrigin
-                moduleData = fileModuleData
-                packageDirective = buildPackageDirective {
-                    this.packageFqName = packageFqName
-                }
-                name = fileName
-                declarations += topLevelCallables.getOrDefault(packageFqName, emptyList())
-                    .flatMap { symbolProvider.getTopLevelCallableSymbols(packageFqName, it.callableName) }
-                    .map { it.fir }
-                declarations += topLevelClasses.getOrDefault(packageFqName, emptyList())
-                    .mapNotNull { symbolProvider.getClassLikeSymbolByClassId(it)?.fir }
-            }
+    init: FirFileBuilder.() -> Unit,
+): FirFile {
+    return buildFile {
+        origin = fileOrigin
+        moduleData = fileModuleData
+        packageDirective = buildPackageDirective {
+            this.packageFqName = packageFqName
         }
+        name = fileName
+        init()
     }
 }
 
