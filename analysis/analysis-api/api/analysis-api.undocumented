@@ -599,7 +599,6 @@ org.jetbrains.kotlin.analysis.api.types.KaErrorType.presentableText
 org.jetbrains.kotlin.analysis.api.types.KaResolvedClassTypeQualifier.symbol
 org.jetbrains.kotlin.analysis.api.types.KaType.createPointer()
 org.jetbrains.kotlin.analysis.api.types.KaTypeNullability.Companion.create(Boolean)
-org.jetbrains.kotlin.analysis.api.types.KaTypePointer.restore(KaSession)
 org.jetbrains.kotlin.analysis.api.utils.errors.withClassEntry(String, Any?)
 org.jetbrains.kotlin.analysis.api.utils.errors.withKaModuleEntry(String, KaModule?)
 org.jetbrains.kotlin.analysis.api.utils.errors.withPsiEntry(String, PsiElement?, (PsiElement) -> KaModule)

@@ -29,6 +29,12 @@ import org.jetbrains.kotlin.name.Name
 @KaExperimentalApi
 @SubclassOptInRequired(KaImplementationDetail::class)
 public interface KaTypePointer<out T : KaType> {
+    /**
+     * Returns the restored [KaType] (possibly a new type instance) if the pointer is still valid, or `null` otherwise.
+     *
+     * Do not use this function directly, as it is an implementation detail.
+     * Use [KaSession.restore][org.jetbrains.kotlin.analysis.api.KaSession.restore] instead.
+     */
     @KaImplementationDetail
     public fun restore(session: KaSession): T?
 }
