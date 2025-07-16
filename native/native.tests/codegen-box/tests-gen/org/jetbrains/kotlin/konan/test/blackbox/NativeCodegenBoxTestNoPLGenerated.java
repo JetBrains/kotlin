@@ -34987,6 +34987,12 @@ public class NativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenBoxT
         runTest("compiler/testData/codegen/box/primitiveTypes/unboxComparable.kt");
       }
 
+      @Test
+      @TestMetadata("virtualCallToCustomNumber.kt")
+      public void testVirtualCallToCustomNumber() {
+        runTest("compiler/testData/codegen/box/primitiveTypes/virtualCallToCustomNumber.kt");
+      }
+
       @Nested
       @TestMetadata("compiler/testData/codegen/box/primitiveTypes/equalityWithObject")
       @TestDataPath("$PROJECT_ROOT")
