@@ -1,5 +1,9 @@
 # `KotlinAbiVersion` (KLIB ABI version) change history
 
+##### Bump 2.2.0 -> 2.3.0
+- Commit: `300cafe539bc5c81a801a5891b58f7ca30ed481d 2025-06-16 [Build] Switch the default language version to 2.3`
+- The regular ABI version bump aligned with the language version bump.
+
 ##### Bump 1.201.0 -> 2.2.0
 - Commit: `c6121a331c863b23d0ced9a9701b8a5481633d8c 2025-01-24 Bump KLIB ABI version: 1.201.0 -> 2.2.0`
 - The bump is caused by:
