@@ -237,12 +237,6 @@ public class IrJsSteppingTestGenerated extends AbstractIrJsSteppingTest {
   }
 
   @Test
-  @TestMetadata("functionCallWithDefault.kt")
-  public void testFunctionCallWithDefault() {
-    runTest("compiler/testData/debug/stepping/functionCallWithDefault.kt");
-  }
-
-  @Test
   @TestMetadata("functionCallWithInlinedLambdaParam.kt")
   public void testFunctionCallWithInlinedLambdaParam() {
     runTest("compiler/testData/debug/stepping/functionCallWithInlinedLambdaParam.kt");
@@ -540,12 +534,6 @@ public class IrJsSteppingTestGenerated extends AbstractIrJsSteppingTest {
   @TestMetadata("simpleInlineDefaultArg.kt")
   public void testSimpleInlineDefaultArg() {
     runTest("compiler/testData/debug/stepping/simpleInlineDefaultArg.kt");
-  }
-
-  @Test
-  @TestMetadata("simpleSmap.kt")
-  public void testSimpleSmap() {
-    runTest("compiler/testData/debug/stepping/simpleSmap.kt");
   }
 
   @Test
