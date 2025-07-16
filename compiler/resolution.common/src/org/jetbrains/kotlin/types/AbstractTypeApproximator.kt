@@ -880,6 +880,14 @@ abstract class AbstractTypeApproximator(
         return shouldReplaceWithStar
     }
 
+    /**
+     * This functions checks if it is semantically correct to approximate Captured(*) type argument just as star projection.
+     * Generally, it shouldn't drastically change semantics, but the result like List<*> is much clearer than List<out Any?>,
+     * especially when the type parameter's upper bound is not that trivial.
+     *
+     * NB: It doesn't 100% prevent from loops when approximating recursive types, for that see
+     * local fun approximateToSuperTypeWithRecursionPrevention at [approximateParametrizedType]
+     */
     context(conf: TypeApproximatorConfiguration)
     private fun shouldApproximateStarBasedCapturedTypeArgumentAsItsProjection(
         capturedType: CapturedTypeMarker?,
@@ -888,11 +896,32 @@ abstract class AbstractTypeApproximator(
         toSuper: Boolean,
     ): Boolean {
         if (capturedType?.typeConstructorProjection()?.isStarProjection() != true) return false
-        if (capturedType.typeParameter() != parameter) return false
-        if (isK2 && !conf.shouldApproximateCapturedType(ctx, capturedType)) return false
+        // SomeClass<Captured(*)> cannot be approximated to subtype as SomeClass<*>
         if (!toSuper) return false
+        // We should leave the captured type as is
+        if (isK2 && !conf.shouldApproximateCapturedType(ctx, capturedType)) return false
 
-        return effectiveVariance == TypeVariance.OUT || effectiveVariance == TypeVariance.INV
+        // In<Captured(*)> is nicer to approximate to In<*> than In<Nothing>, independently
+        // of the relation between type parameters (see below).
+        // It's not a critical thing, though, both options are correct
+        if (capturedTypeApproximationReworked &&
+            capturedType.lowerType()?.isTrivialSub() != false &&
+            parameter.getVariance() == TypeVariance.IN
+        ) {
+            return true
+        }
+
+        // In case like
+        // `class A<T : CharSequence>` and C1 = Captured(*) from A<*>
+        // List<C1> should be approximated to List<out CharSequence> rather than List<*>
+        if (capturedType.typeParameter() != parameter) return false
+
+        if (effectiveVariance == TypeVariance.OUT || effectiveVariance == TypeVariance.INV) return true
+
+        // In<Captured(*)> from In<*> is reasonable to approximate as In<*>
+        // Though, we temporarily leave it for only for `capturedTypeApproximationReworked` until the relevant LF is removed
+        // Potentially, this line and the one above might be replaced with just `return true`
+        return capturedTypeApproximationReworked /* || (effectiveVariance == TypeVariance.IN) -- always true */
     }
 
     context(conf: TypeApproximatorConfiguration)
