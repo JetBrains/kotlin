@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.api.services.LLFirElement
 import org.jetbrains.kotlin.analysis.low.level.api.fir.element.builder.containingDeclaration
 import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.LLFirModuleData
 import org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.llFirModuleData
+import org.jetbrains.kotlin.analysis.low.level.api.fir.services.LLMismatchedPsiFirElementByPsiElementChooser
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirBuiltinsAndCloneableSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.LLFirSession
 import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.LLModuleWithDependenciesSymbolProvider
@@ -48,6 +49,20 @@ internal class FirDeclarationForCompiledElementSearcher(private val session: LLF
     private val firElementByPsiElementChooser by lazy(LazyThreadSafetyMode.PUBLICATION) {
         LLFirElementByPsiElementChooser.getInstance(project)
     }
+
+    /**
+     * Workaround for KT-75256 in IntelliJ 2025.2: If we cannot find a function/property symbol with the regular
+     * [firElementByPsiElementChooser], we choose a candidate based on the signature alone, ignoring the PSI. In other words, the requested
+     * PSI element and the FIR element's PSI are allowed to mismatch.
+     *
+     * This solves a problem where [findNonLocalClassLikeDeclaration] returns a FIR element with mismatched PSI, and we cannot find a member
+     * function/property with the requested PSI. For the workaround, it's better to return something than throw an exception.
+     *
+     * The workaround also has to be extended to other declarations which derive from the class. For example, we have to pick value
+     * parameters by signature as well since the wrong FIR class can lead to the wrong FIR function, and then we cannot pick the right
+     * parameter by PSI alone.
+     */
+    private val mismatchedPsiFirElementChooser = LLMismatchedPsiFirElementByPsiElementChooser()
 
     fun findNonLocalDeclaration(ktDeclaration: KtDeclaration): FirDeclaration = when (ktDeclaration) {
         is KtEnumEntry -> findNonLocalEnumEntry(ktDeclaration)
@@ -110,9 +125,15 @@ internal class FirDeclarationForCompiledElementSearcher(private val session: LLF
             fir = firDeclaration,
         )
 
-        return firTypeParameterRefOwner.typeParameters.find { typeParameterRef ->
-            firElementByPsiElementChooser.isMatchingTypeParameter(param, typeParameterRef.symbol.fir)
-        } as FirDeclaration
+        val typeParameters = firTypeParameterRefOwner.typeParameters
+        val typeParameter =
+            typeParameters.firstOrNull { firElementByPsiElementChooser.isMatchingTypeParameter(param, it.symbol.fir) }
+                ?: typeParameters.firstOrNull { mismatchedPsiFirElementChooser.isMatchingTypeParameter(param, it.symbol.fir) }
+                ?: errorWithFirSpecificEntries("No fir type parameter found", psi = param) {
+                    withCandidates(typeParameters.map { it.symbol })
+                }
+
+        return typeParameter as FirDeclaration
     }
 
     private fun findParameter(param: KtParameter): FirDeclaration {
@@ -126,6 +147,7 @@ internal class FirDeclarationForCompiledElementSearcher(private val session: LLF
             )
 
             firCallable.contextParameters.find { firElementByPsiElementChooser.isMatchingValueParameter(param, it) }
+                ?: firCallable.contextParameters.find { mismatchedPsiFirElementChooser.isMatchingValueParameter(param, it) }
                 ?: errorWithFirSpecificEntries("No fir value parameter found", psi = param, fir = firCallable)
         } else {
             val firFunction = firDeclaration as? FirFunction ?: errorWithFirSpecificEntries(
@@ -135,6 +157,7 @@ internal class FirDeclarationForCompiledElementSearcher(private val session: LLF
             )
 
             firFunction.valueParameters.find { firElementByPsiElementChooser.isMatchingValueParameter(param, it) }
+                ?: firFunction.valueParameters.find { mismatchedPsiFirElementChooser.isMatchingValueParameter(param, it) }
                 ?: errorWithFirSpecificEntries("No fir value parameter found", psi = param, fir = firFunction)
         }
     }
@@ -143,9 +166,15 @@ internal class FirDeclarationForCompiledElementSearcher(private val session: LLF
         val classCandidate = declaration.containingClassOrObject?.let(::findNonLocalClassLikeDeclaration)
             ?: errorWithFirSpecificEntries("Enum entry must have containing class", psi = declaration)
 
-        return (classCandidate as FirRegularClass).declarations.first {
-            it is FirEnumEntry && firElementByPsiElementChooser.isMatchingEnumEntry(declaration, it)
-        } as FirEnumEntry
+        val declarations = (classCandidate as FirRegularClass).declarations
+        val enumEntry =
+            declarations.firstOrNull { it is FirEnumEntry && firElementByPsiElementChooser.isMatchingEnumEntry(declaration, it) }
+                ?: declarations.firstOrNull { it is FirEnumEntry && mismatchedPsiFirElementChooser.isMatchingEnumEntry(declaration, it) }
+                ?: errorWithFirSpecificEntries("We should be able to find an enum entry", psi = declaration) {
+                    withCandidates(declarations.filterIsInstance<FirEnumEntry>().map { it.symbol })
+                }
+
+        return enumEntry as FirEnumEntry
     }
 
     private fun findNonLocalClassLikeDeclaration(declaration: KtClassLikeDeclaration): FirClassLikeDeclaration {
@@ -195,9 +224,11 @@ internal class FirDeclarationForCompiledElementSearcher(private val session: LLF
             ?: errorWithFirSpecificEntries("Constructor must have outer class", psi = declaration)
 
         val containingFirClass = findNonLocalClassLikeDeclaration(containingClass) as FirClass
-        val constructorCandidate = containingFirClass.constructors(session)
-            .singleOrNull { firElementByPsiElementChooser.isMatchingCallableDeclaration(declaration, it.fir) }
-            ?: errorWithFirSpecificEntries("We should be able to find a constructor", psi = declaration, fir = containingFirClass)
+        val constructors = containingFirClass.constructors(session)
+        val constructorCandidate =
+            constructors.singleOrNull { firElementByPsiElementChooser.isMatchingCallableDeclaration(declaration, it.fir) }
+                ?: constructors.singleOrNull { mismatchedPsiFirElementChooser.isMatchingCallableDeclaration(declaration, it.fir) }
+                ?: errorWithFirSpecificEntries("We should be able to find a constructor", psi = declaration, fir = containingFirClass)
 
         return constructorCandidate.fir
     }
@@ -206,10 +237,12 @@ internal class FirDeclarationForCompiledElementSearcher(private val session: LLF
         require(!declaration.isLocal)
 
         val candidates = findFunctionCandidates(declaration)
-        val functionCandidate = candidates.firstOrNull { firElementByPsiElementChooser.isMatchingCallableDeclaration(declaration, it.fir) }
-            ?: errorWithFirSpecificEntries("We should be able to find a symbol for function", psi = declaration) {
-                withCandidates(candidates)
-            }
+        val functionCandidate =
+            candidates.firstOrNull { firElementByPsiElementChooser.isMatchingCallableDeclaration(declaration, it.fir) }
+                ?: candidates.firstOrNull { mismatchedPsiFirElementChooser.isMatchingCallableDeclaration(declaration, it.fir) }
+                ?: errorWithFirSpecificEntries("We should be able to find a symbol for function", psi = declaration) {
+                    withCandidates(candidates)
+                }
 
         return functionCandidate.fir
     }
@@ -218,10 +251,12 @@ internal class FirDeclarationForCompiledElementSearcher(private val session: LLF
         require(!declaration.isLocal)
 
         val candidates = findPropertyCandidates(declaration)
-        val propertyCandidate = candidates.firstOrNull { firElementByPsiElementChooser.isMatchingCallableDeclaration(declaration, it.fir) }
-            ?: errorWithFirSpecificEntries("We should be able to find a symbol for property", psi = declaration) {
-                withCandidates(candidates)
-            }
+        val propertyCandidate =
+            candidates.firstOrNull { firElementByPsiElementChooser.isMatchingCallableDeclaration(declaration, it.fir) }
+                ?: candidates.firstOrNull { mismatchedPsiFirElementChooser.isMatchingCallableDeclaration(declaration, it.fir) }
+                ?: errorWithFirSpecificEntries("We should be able to find a symbol for property", psi = declaration) {
+                    withCandidates(candidates)
+                }
 
         return propertyCandidate.fir
     }
