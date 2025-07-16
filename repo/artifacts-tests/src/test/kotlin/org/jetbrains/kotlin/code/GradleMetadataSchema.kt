@@ -2,6 +2,10 @@ package org.jetbrains.kotlin.code
 
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.SerialName
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
+
+private val jsonFormatter = Json { prettyPrint = true }
 
 @Serializable
 data class GradleMetadata(
@@ -12,6 +16,10 @@ data class GradleMetadata(
 ) {
     fun removeFilesFingerprint() {
         variants.forEach { it.removeFilesFingerprint() }
+    }
+
+    override fun toString(): String {
+        return jsonFormatter.encodeToString(this)
     }
 }
 
