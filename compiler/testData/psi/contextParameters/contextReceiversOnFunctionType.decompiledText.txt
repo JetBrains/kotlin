@@ -20,7 +20,7 @@ ContextReceiversOnFunctionTypeKt.class:
 
   public fun f1(g: context(A, B) kotlin.Int.(kotlin.Int) -> kotlin.Int): kotlin.Unit { /* compiled code */ }
 
-  public fun f2(g: @MyAnnotation() (context(A, B) kotlin.Int.(kotlin.Int) -> kotlin.Int)): kotlin.Unit { /* compiled code */ }
+  public fun f2(g: @MyAnnotation context(A, B) kotlin.Int.(kotlin.Int) -> kotlin.Int): kotlin.Unit { /* compiled code */ }
 
   public fun f3(g: (context(A, B) kotlin.Int.(kotlin.Int) -> kotlin.Int)?): kotlin.Unit { /* compiled code */ }
 

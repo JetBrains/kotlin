@@ -9,5 +9,5 @@ Lifetime.class:
   // Implementation of methods is not available
 
   public final class Lifetime public constructor() {
-      public final val attached: java.util.ArrayList<() -> kotlin.Unit> /* from: kotlin.collections.ArrayList<() -> kotlin.Unit> */ /* compiled code */ /* hasBackingField: true */
+      public final val attached: java.util.ArrayList<() -> kotlin.Unit> /* from: kotlin.collections.ArrayList<kotlin.Function0<kotlin.Unit>> */ /* compiled code */ /* hasBackingField: true */
   }

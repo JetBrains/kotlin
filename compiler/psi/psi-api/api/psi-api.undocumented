@@ -302,9 +302,6 @@ org.jetbrains.kotlin.psi.KotlinReferenceProvidersService.Companion.getInstance(P
 org.jetbrains.kotlin.psi.KotlinReferenceProvidersService.Companion.getReferencesFromProviders(PsiElement)
 org.jetbrains.kotlin.psi.KotlinReferenceProvidersService.getReferences(PsiElement)
 org.jetbrains.kotlin.psi.KotlinStringLiteralTextEscaper
-org.jetbrains.kotlin.psi.KtAnnotated
-org.jetbrains.kotlin.psi.KtAnnotated:getAnnotationEntries()
-org.jetbrains.kotlin.psi.KtAnnotated:getAnnotations()
 org.jetbrains.kotlin.psi.KtAnnotatedExpression
 org.jetbrains.kotlin.psi.KtAnnotatedExpression:constructor(ASTNode)
 org.jetbrains.kotlin.psi.KtAnnotatedExpression:getBaseExpression()
@@ -324,7 +321,6 @@ org.jetbrains.kotlin.psi.KtAnnotationUseSiteTarget
 org.jetbrains.kotlin.psi.KtAnnotationUseSiteTarget.getAnnotationUseSiteTarget()
 org.jetbrains.kotlin.psi.KtAnnotationUseSiteTarget:constructor(ASTNode)
 org.jetbrains.kotlin.psi.KtAnnotationUseSiteTarget:constructor(KotlinAnnotationUseSiteTargetStub)
-org.jetbrains.kotlin.psi.KtAnnotationsContainer
 org.jetbrains.kotlin.psi.KtAnonymousInitializer
 org.jetbrains.kotlin.psi.KtAnonymousInitializer.body
 org.jetbrains.kotlin.psi.KtAnonymousInitializer.containingDeclaration
@@ -625,8 +621,6 @@ org.jetbrains.kotlin.psi.KtFile.Companion.FILE_DECLARATION_TYPES
 org.jetbrains.kotlin.psi.KtFileAnnotationList
 org.jetbrains.kotlin.psi.KtFileAnnotationList:constructor(ASTNode)
 org.jetbrains.kotlin.psi.KtFileAnnotationList:constructor(KotlinPlaceHolderStub<KtFileAnnotationList>)
-org.jetbrains.kotlin.psi.KtFileAnnotationList:getAnnotationEntries()
-org.jetbrains.kotlin.psi.KtFileAnnotationList:getAnnotations()
 org.jetbrains.kotlin.psi.KtFileClassProvider
 org.jetbrains.kotlin.psi.KtFileClassProvider.getFileClasses(KtFile)
 org.jetbrains.kotlin.psi.KtFinallySection
@@ -745,8 +739,6 @@ org.jetbrains.kotlin.psi.KtLoopExpression:getRightParenthesis()
 org.jetbrains.kotlin.psi.KtModifierList
 org.jetbrains.kotlin.psi.KtModifierList:constructor(ASTNode)
 org.jetbrains.kotlin.psi.KtModifierList:constructor(KotlinModifierListStub, IStubElementType)
-org.jetbrains.kotlin.psi.KtModifierList:getAnnotationEntries()
-org.jetbrains.kotlin.psi.KtModifierList:getAnnotations()
 org.jetbrains.kotlin.psi.KtModifierList:getModifier(KtModifierKeywordToken)
 org.jetbrains.kotlin.psi.KtModifierList:getModifier(TokenSet)
 org.jetbrains.kotlin.psi.KtModifierList:getOwner()
@@ -1347,8 +1339,10 @@ org.jetbrains.kotlin.psi.KtVisitor:visitClassLiteralExpression(KtClassLiteralExp
 org.jetbrains.kotlin.psi.KtVisitor:visitClassOrObject(KtClassOrObject, D)
 org.jetbrains.kotlin.psi.KtVisitor:visitCollectionLiteralExpression(KtCollectionLiteralExpression, D)
 org.jetbrains.kotlin.psi.KtVisitor:visitConstantExpression(KtConstantExpression, D)
+org.jetbrains.kotlin.psi.KtVisitor:visitConstructor(KtConstructor<?>, D)
 org.jetbrains.kotlin.psi.KtVisitor:visitConstructorCalleeExpression(KtConstructorCalleeExpression, D)
 org.jetbrains.kotlin.psi.KtVisitor:visitConstructorDelegationCall(KtConstructorDelegationCall, D)
+org.jetbrains.kotlin.psi.KtVisitor:visitContextReceiver(KtContextReceiver, D)
 org.jetbrains.kotlin.psi.KtVisitor:visitContextReceiverList(KtContextReceiverList, D)
 org.jetbrains.kotlin.psi.KtVisitor:visitContinueExpression(KtContinueExpression, D)
 org.jetbrains.kotlin.psi.KtVisitor:visitDeclaration(KtDeclaration, D)
@@ -1456,8 +1450,10 @@ org.jetbrains.kotlin.psi.KtVisitorVoid:visitClassLiteralExpression(KtClassLitera
 org.jetbrains.kotlin.psi.KtVisitorVoid:visitClassOrObject(KtClassOrObject)
 org.jetbrains.kotlin.psi.KtVisitorVoid:visitCollectionLiteralExpression(KtCollectionLiteralExpression)
 org.jetbrains.kotlin.psi.KtVisitorVoid:visitConstantExpression(KtConstantExpression)
+org.jetbrains.kotlin.psi.KtVisitorVoid:visitConstructor(KtConstructor<?>)
 org.jetbrains.kotlin.psi.KtVisitorVoid:visitConstructorCalleeExpression(KtConstructorCalleeExpression)
 org.jetbrains.kotlin.psi.KtVisitorVoid:visitConstructorDelegationCall(KtConstructorDelegationCall)
+org.jetbrains.kotlin.psi.KtVisitorVoid:visitContextReceiver(KtContextReceiver)
 org.jetbrains.kotlin.psi.KtVisitorVoid:visitContextReceiverList(KtContextReceiverList)
 org.jetbrains.kotlin.psi.KtVisitorVoid:visitContinueExpression(KtContinueExpression)
 org.jetbrains.kotlin.psi.KtVisitorVoid:visitDeclaration(KtDeclaration)
@@ -2290,6 +2286,7 @@ org.jetbrains.kotlin.psi.stubs.impl.KotlinImportDirectiveStubImpl
 org.jetbrains.kotlin.psi.stubs.impl.KotlinModifierListStubImpl
 org.jetbrains.kotlin.psi.stubs.impl.KotlinModifierListStubImpl:constructor(StubElement, long, KtModifierListElementType<?>)
 org.jetbrains.kotlin.psi.stubs.impl.KotlinModifierListStubImpl:getMask()
+org.jetbrains.kotlin.psi.stubs.impl.KotlinModifierListStubImpl:hasAnyModifier()
 org.jetbrains.kotlin.psi.stubs.impl.KotlinNameReferenceExpressionStubImpl
 org.jetbrains.kotlin.psi.stubs.impl.KotlinNameReferenceExpressionStubImpl:constructor(StubElement, StringRef)
 org.jetbrains.kotlin.psi.stubs.impl.KotlinNameReferenceExpressionStubImpl:constructor(StubElement<?>, StringRef, boolean)

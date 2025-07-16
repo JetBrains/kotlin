@@ -52,7 +52,7 @@ MultifileClass__MultifileClassKt.class:
 
   public var p1Var: kotlin.Int /* compiled code */ /* hasBackingField: true */
 
-  @kotlin.Deprecated public const val annotatedConstVal: kotlin.Int = COMPILED_CODE /* compiled code */ /* hasBackingField: true */
+  @kotlin.Deprecated public const val annotatedConstVal: kotlin.Int /* compiled code */ /* hasBackingField: true */
 
   public fun p1Fun(): kotlin.Unit { /* compiled code */ }
 

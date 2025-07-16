@@ -33,6 +33,7 @@ public final class ClassObject public constructor() {
                             public final fun f(): kotlin.Unit { /* compiled code */ }
 
                             public final enum class En private constructor() : kotlin.Enum<test.class_object.ClassObject.B.Companion.C.Companion.D.Companion.En> {
+                                ;
                             }
 
                             public final annotation class Anno public constructor() : kotlin.Annotation {

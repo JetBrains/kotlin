@@ -109,6 +109,13 @@
         key="kotlin.analysis.validate.psi.input"
         restartRequired="false"
     />
+
+    <registryKey
+        defaultValue="true"
+        description="Enables stub-based Kotlin decompiler"
+        key="kotlin.analysis.stub.based.decompiler"
+        restartRequired="true"
+    />
   </extensions>
 
   <extensions defaultExtensionNs="org.jetbrains.kotlin">

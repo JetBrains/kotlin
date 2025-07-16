@@ -3,7 +3,7 @@ KT element text:
 public final class KotlinClass<T> public constructor(block: () -> T) {
     private final val block: () -> T /* compiled code */ /* hasBackingField: true */
 
-    public final val propertyWithFlexibleDnnImplicitType: java.util.function.Function<kotlin.String, T & Any> /* platform type */ /* compiled code */ /* hasBackingField: true */
+    public final val propertyWithFlexibleDnnImplicitType: java.util.function.Function<kotlin.String /* platform type */, T /* platform type */ & Any> /* platform type */ /* compiled code */ /* hasBackingField: true */
 }
 FIR element: FirRegularClassImpl
 FIR source kind: KtRealSourceElementKind

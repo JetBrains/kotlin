@@ -40,4 +40,8 @@ public class KotlinModifierListStubImpl extends KotlinStubBaseImpl<KtDeclaration
     public String toString() {
         return super.toString() + ModifierMaskUtils.maskToString(mask);
     }
+
+    public boolean hasAnyModifier() {
+        return mask != 0;
+    }
 }

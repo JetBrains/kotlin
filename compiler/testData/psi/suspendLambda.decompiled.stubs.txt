@@ -249,12 +249,36 @@ SuspendLambda.class:
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=Unit]
-        FUN[fqName=test.SuspendLambda.<no name provided>, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=false, mayHaveContract=false, name=null]
+        FUN[fqName=test.SuspendLambda.createCoroutineAnother, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=true, isTopLevel=false, mayHaveContract=false, name=createCoroutineAnother]
           MODIFIER_LIST[public final]
           TYPE_PARAMETER_LIST
             TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=R]
             TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T]
-        FUN[fqName=test.SuspendLambda.<no name provided>, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=null]
+          TYPE_REFERENCE
+            MODIFIER_LIST[suspend]
+              ANNOTATION_ENTRY[hasValueArguments=false, shortName=A]
+                ANNOTATION_TARGET[useSiteTarget=RECEIVER]
+                CONSTRUCTOR_CALLEE
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION[referencedName=test]
+                      REFERENCE_EXPRESSION[referencedName=A]
+            FUNCTION_TYPE
+              FUNCTION_TYPE_RECEIVER
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=R]
+              VALUE_PARAMETER_LIST
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=T]
+          VALUE_PARAMETER_LIST
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=kotlin]
+              REFERENCE_EXPRESSION[referencedName=Unit]
         FUN[fqName=test.SuspendLambda.testCoroutine, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=false, mayHaveContract=false, name=testCoroutine]
           MODIFIER_LIST[public final]
           TYPE_PARAMETER_LIST

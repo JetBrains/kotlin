@@ -55,7 +55,7 @@ SuspendLambda.class:
 
       public final fun <R, T> (suspend R.() -> T).createCoroutine2(receiver: R, completion: test.Continuation<T>): kotlin.Unit { /* compiled code */ }
 
-      public final fun <R, T> @receiver:test.A (suspend R.() -> T).createCoroutineAnother(): kotlin.Unit { /* compiled code */ }
+      public final fun <R, T> (@receiver:test.A suspend R.() -> T).createCoroutineAnother(): kotlin.Unit { /* compiled code */ }
 
       public final fun <T> testCoroutine(f: suspend (kotlin.Int) -> T?): kotlin.Unit { /* compiled code */ }
 

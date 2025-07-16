@@ -1,6 +1,4 @@
 KtFile: suspendLambda.kt
-  PsiComment(EOL_COMMENT)('// TODO: should be fixed for FIR, see KT-60764')
-  PsiWhiteSpace('\n\n')
   PACKAGE_DIRECTIVE
     PsiElement(package)('package')
     PsiWhiteSpace(' ')

@@ -212,7 +212,7 @@ MultifileClass__MultifileClassKt.class:
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Int]
-    PROPERTY[fqName=test.annotatedConstVal, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=annotatedConstVal]
+    PROPERTY[fqName=test.annotatedConstVal, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=annotatedConstVal]
       MODIFIER_LIST[public const]
         ANNOTATION_ENTRY[hasValueArguments=false, shortName=Deprecated]
           CONSTRUCTOR_CALLEE
@@ -226,7 +226,6 @@ MultifileClass__MultifileClassKt.class:
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=kotlin]
           REFERENCE_EXPRESSION[referencedName=Int]
-      REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
     FUN[fqName=test.p1Fun, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=p1Fun]
       MODIFIER_LIST[public]
       VALUE_PARAMETER_LIST
