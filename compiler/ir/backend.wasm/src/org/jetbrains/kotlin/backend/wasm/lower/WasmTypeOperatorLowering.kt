@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
 import org.jetbrains.kotlin.backend.wasm.instanceCheckForExternalClass
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.getRuntimeClass
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.isExternalType
+import org.jetbrains.kotlin.backend.wasm.utils.hasExcludedFromCodegenAnnotation
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
@@ -107,6 +108,10 @@ class WasmBaseTypeOperatorTransformer(val context: WasmBackendContext) : IrEleme
     private fun generateCCE(valueProvider: () -> IrExpression, fromType: IrType, toType: IrType): IrExpression {
         val klass = toType.erasedUpperBound
 
+        if (klass.hasExcludedFromCodegenAnnotation()) {
+            return valueProvider()  // succeed silently
+        }
+
         if (klass.isEffectivelyExternal() && klass.isInterface) {
             return builder.irCall(context.symbols.throwTypeCastException)
         }
@@ -178,6 +183,7 @@ class WasmBaseTypeOperatorTransformer(val context: WasmBackendContext) : IrEleme
         assert(!toType.isMarkedNullable())
         val classOrInterface = toType.erasedUpperBound
         return when {
+            classOrInterface.hasExcludedFromCodegenAnnotation() -> builder.irTrue()
             classOrInterface.isExternal -> {
                 if (classOrInterface.kind == ClassKind.INTERFACE)
                     builder.irTrue()
