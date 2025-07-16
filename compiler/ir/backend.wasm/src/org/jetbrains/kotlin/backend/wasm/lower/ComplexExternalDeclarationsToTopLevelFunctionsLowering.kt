@@ -455,7 +455,7 @@ class ComplexExternalDeclarationsToTopLevelFunctionsLowering(val context: WasmBa
         if (module != null) {
             context.getFileContext(currentFile).jsModuleAndQualifierReferences += qualifierReference
         }
-        return name?.toSavePropertyAccess(qualifierReference.jsQualifierReferenceIdentifier) ?: qualifierReference.jsQualifierReferenceIdentifier
+        return name?.toSavePropertyAccess(qualifierReference.jsReference) ?: qualifierReference.jsReference
     }
 }
 
