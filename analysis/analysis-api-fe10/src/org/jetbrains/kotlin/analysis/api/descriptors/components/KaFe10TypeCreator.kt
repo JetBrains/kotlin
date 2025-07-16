@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.analysis.api.types.KaTypeArgumentWithVariance
 import org.jetbrains.kotlin.analysis.api.types.KaTypeParameterType
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
-import org.jetbrains.kotlin.incremental.components.NoLookupLocation
+import org.jetbrains.kotlin.descriptors.findClassAcrossModuleDependencies
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.types.SimpleType
@@ -35,7 +35,6 @@ import org.jetbrains.kotlin.types.TypeProjectionImpl
 import org.jetbrains.kotlin.types.TypeUtils
 import org.jetbrains.kotlin.types.error.ErrorTypeKind
 import org.jetbrains.kotlin.types.error.ErrorUtils
-import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
 internal class KaFe10TypeCreator(
     override val analysisSessionProvider: () -> KaFe10Session
@@ -51,10 +50,7 @@ internal class KaFe10TypeCreator(
     private fun buildClassType(builder: KaBaseClassTypeBuilder): KaType {
         val descriptor: ClassDescriptor? = when (builder) {
             is KaBaseClassTypeBuilder.ByClassId -> {
-                val fqName = builder.classId.asSingleFqName()
-                analysisContext.resolveSession
-                    .getTopLevelClassifierDescriptors(fqName, NoLookupLocation.FROM_IDE)
-                    .firstIsInstanceOrNull()
+                analysisContext.resolveSession.moduleDescriptor.findClassAcrossModuleDependencies(builder.classId)
             }
             is KaBaseClassTypeBuilder.BySymbol -> {
                 getSymbolDescriptor(builder.symbol) as? ClassDescriptor
