@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.backend.common.serialization
 import org.jetbrains.kotlin.backend.common.serialization.encodings.*
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrSimpleTypeNullability
 import org.jetbrains.kotlin.config.KlibAbiCompatibilityLevel
-import org.jetbrains.kotlin.config.KlibAbiCompatibilityLevel.ABI_LEVEL_2_2
 import org.jetbrains.kotlin.config.KlibAbiCompatibilityLevel.ABI_LEVEL_2_3
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities.INTERNAL
@@ -576,22 +575,8 @@ open class IrFileSerializer(
 
         val proto = ProtoMemberAccessCommon.newBuilder()
 
-        if (settings.abiCompatibilityLevel.isAtLeast(ABI_LEVEL_2_2)) {
-            for (arg in call.arguments) {
-                proto.addArgument(buildProtoNullableIrExpression(arg))
-            }
-        } else { // KLIB ABI 2.1:
-            val callableSymbol = call.symbol
-            require(callableSymbol.isBound) { callableSymbol }
-
-            for ((parameter, arg) in call.getAllArgumentsWithIr()) {
-                when (parameter.kind) {
-                    IrParameterKind.DispatchReceiver -> if (arg != null) proto.dispatchReceiver = serializeExpression(arg)
-                    IrParameterKind.ExtensionReceiver -> if (arg != null) proto.extensionReceiver = serializeExpression(arg)
-                    IrParameterKind.Context -> serializationNotSupportedAtCurrentAbiLevel({ "Context parameter" }) { callableSymbol.owner }
-                    IrParameterKind.Regular -> proto.addRegularArgument(buildProtoNullableIrExpression(arg))
-                }
-            }
+        for (arg in call.arguments) {
+            proto.addArgument(buildProtoNullableIrExpression(arg))
         }
 
         for (typeArg in call.typeArguments) {
@@ -1570,12 +1555,7 @@ open class IrFileSerializer(
             }
 
         val includeLineStartOffsets = !settings.publicAbiOnly || fileContainsInline
-        if (settings.abiCompatibilityLevel.isAtLeast(ABI_LEVEL_2_2)) {
-            // KLIBs with ABI version >= 2.2.0 have `fileEntries.knf` file with `file entries` table.
-            proto.setFileEntryId(serializeFileEntryId(file.fileEntry, includeLineStartOffsets = includeLineStartOffsets))
-        } else {
-            proto.setFileEntry(serializeFileEntry(file.fileEntry, includeLineStartOffsets = includeLineStartOffsets))
-        }
+        proto.setFileEntryId(serializeFileEntryId(file.fileEntry, includeLineStartOffsets = includeLineStartOffsets))
 
         // TODO: is it Konan specific?
 
@@ -1603,7 +1583,6 @@ open class IrFileSerializer(
             backendSpecificMetadata = backendSpecificMetadata(file)?.toByteArray(),
             fileEntries = with(protoIrFileEntryArray) {
                 if (isNotEmpty()) {
-                    requireAbiAtLeast(ABI_LEVEL_2_2, { "IR file entries table" }) { file }
                     IrArrayWriter(protoIrFileEntryArray.map { it.toByteArray() }).writeIntoMemory()
                 } else {
                     null
