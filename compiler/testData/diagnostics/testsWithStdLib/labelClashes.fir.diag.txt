@@ -26,6 +26,8 @@
 
 /labelClashes.fir.kt:(771,776): warning: There is more than one label with such a name in this scope.
 
+/labelClashes.fir.kt:(777,787): warning: Redundant call of conversion method.
+
 /labelClashes.fir.kt:(804,809): warning: There is more than one label with such a name in this scope.
 
 /labelClashes.fir.kt:(833,838): warning: There is more than one label with such a name in this scope.
@@ -33,3 +35,5 @@
 /labelClashes.fir.kt:(839,842): error: Unresolved reference 'inc'.
 
 /labelClashes.fir.kt:(941,946): warning: There is more than one label with such a name in this scope.
+
+/labelClashes.fir.kt:(947,957): warning: Redundant call of conversion method.

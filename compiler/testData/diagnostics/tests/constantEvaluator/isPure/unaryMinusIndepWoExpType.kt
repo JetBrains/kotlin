@@ -11,7 +11,7 @@ package test
 <!DEBUG_INFO_CONSTANT_VALUE("false")!>val p3 = -1.toByte()<!>
 
 // val p4: false
-<!DEBUG_INFO_CONSTANT_VALUE("false")!>val p4 = -1.toInt()<!>
+<!DEBUG_INFO_CONSTANT_VALUE("false")!>val p4 = -1L.toInt()<!>
 
 // val p5: false
 <!DEBUG_INFO_CONSTANT_VALUE("false")!>val p5 = -1.toShort()<!>

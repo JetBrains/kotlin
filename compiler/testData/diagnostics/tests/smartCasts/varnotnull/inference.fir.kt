@@ -7,7 +7,7 @@ fun f() {
   if (<!SENSELESS_COMPARISON!>s != null<!>) {    // Redundant
     s1.length
     // We can do smartcast here and below
-    s1 = s.toString() // return String?
+    s1 = s.<!REDUNDANT_CALL_OF_CONVERSION_METHOD!>toString()<!> // return String?
     s1.length
     s1 = s
     s1.length
@@ -16,7 +16,7 @@ fun f() {
     // But smartcast can be done here
     s2.length
     // And also here
-    val s3 = s.toString()
+    val s3 = s.<!REDUNDANT_CALL_OF_CONVERSION_METHOD!>toString()<!>
     s3.length
   }
 }
