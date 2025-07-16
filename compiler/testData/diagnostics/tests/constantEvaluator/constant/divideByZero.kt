@@ -17,7 +17,7 @@ package test
 <!DEBUG_INFO_CONSTANT_VALUE("null")!>val prop5 = <!DIVISION_BY_ZERO!>1 / 0.toLong()<!><!>
 
 // val prop6: Infinity.toDouble()
-<!DEBUG_INFO_CONSTANT_VALUE("Infinity.toDouble()")!>val prop6 = <!DIVISION_BY_ZERO!>1.0 / 0.toInt()<!><!>
+<!DEBUG_INFO_CONSTANT_VALUE("Infinity.toDouble()")!>val prop6 = <!DIVISION_BY_ZERO!>1.0 / 0L.toInt()<!><!>
 
 // val prop7: Infinity.toDouble()
 <!DEBUG_INFO_CONSTANT_VALUE("Infinity.toDouble()")!>val prop7 = <!DIVISION_BY_ZERO!>1.0 / 0.toLong()<!><!>

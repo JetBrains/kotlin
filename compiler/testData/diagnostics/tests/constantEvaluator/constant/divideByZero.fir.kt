@@ -17,7 +17,7 @@ val prop4 = 1 / 0.1
 val prop5 = 1 / 0.toLong()
 
 // val prop6: Infinity.toDouble()
-val prop6 = 1.0 / 0.toInt()
+val prop6 = 1.0 / 0L.toInt()
 
 // val prop7: Infinity.toDouble()
 val prop7 = 1.0 / 0.toLong()

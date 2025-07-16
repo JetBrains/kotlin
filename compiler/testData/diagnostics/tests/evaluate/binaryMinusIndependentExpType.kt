@@ -14,10 +14,10 @@ val b2: Int = 1 - 1.toByte()
 val b3: Long = <!TYPE_MISMATCH!>1 - 1.toByte()<!>
 val b4: Short = <!INTEGER_OPERATOR_RESOLVE_WILL_CHANGE, TYPE_MISMATCH!>1 - 1.toByte()<!>
 
-val i1: Byte = <!INTEGER_OPERATOR_RESOLVE_WILL_CHANGE, TYPE_MISMATCH!>1 - 1.toInt()<!>
-val i2: Int = 1 - 1.toInt()
-val i3: Long = <!TYPE_MISMATCH!>1 - 1.toInt()<!>
-val i4: Short = <!INTEGER_OPERATOR_RESOLVE_WILL_CHANGE, TYPE_MISMATCH!>1 - 1.toInt()<!>
+val i1: Byte = <!INTEGER_OPERATOR_RESOLVE_WILL_CHANGE, TYPE_MISMATCH!>1 - 1L.toInt()<!>
+val i2: Int = 1 - 1L.toInt()
+val i3: Long = <!TYPE_MISMATCH!>1 - 1L.toInt()<!>
+val i4: Short = <!INTEGER_OPERATOR_RESOLVE_WILL_CHANGE, TYPE_MISMATCH!>1 - 1L.toInt()<!>
 
 val s1: Byte = <!INTEGER_OPERATOR_RESOLVE_WILL_CHANGE, TYPE_MISMATCH!>1 - 1.toShort()<!>
 val s2: Int = 1 - 1.toShort()

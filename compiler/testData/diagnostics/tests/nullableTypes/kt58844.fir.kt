@@ -8,8 +8,8 @@ fun main(args: Array<String>) {
     var intVar: Int? = 1
     var byteVar: Byte? = 1
 
-    intFun(<!ARGUMENT_TYPE_MISMATCH("Int?; Int")!>intVar?.toInt()<!>)
-    byteFun(<!ARGUMENT_TYPE_MISMATCH("Byte?; Byte")!>byteVar?.toByte()<!>)
+    intFun(<!ARGUMENT_TYPE_MISMATCH("Int?; Int")!>intVar<!>)
+    byteFun(<!ARGUMENT_TYPE_MISMATCH("Byte?; Byte")!>byteVar<!>)
 }
 
 /* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, localProperty, nullableType, propertyDeclaration, safeCall */

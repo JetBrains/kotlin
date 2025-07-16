@@ -17,7 +17,7 @@ fun main() {
     generate {
         // No non-trivial constraints, thus cannot be semi-fixed
         get().<!UNRESOLVED_REFERENCE!>length<!>
-        <!BUILDER_INFERENCE_STUB_RECEIVER!>get()<!>.toString()
+        <!BUILDER_INFERENCE_STUB_RECEIVER!>get()<!>.<!REDUNDANT_CALL_OF_CONVERSION_METHOD!>toString()<!>
 
         prop.call("")
     }

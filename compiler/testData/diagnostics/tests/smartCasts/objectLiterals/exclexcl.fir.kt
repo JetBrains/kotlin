@@ -9,7 +9,7 @@ fun foo(): Int {
     if (c is Int) {
         val k = object: Runnable() {
             init {
-                a!!.toInt()
+                a!!
             }
             override fun run() = Unit
         }
