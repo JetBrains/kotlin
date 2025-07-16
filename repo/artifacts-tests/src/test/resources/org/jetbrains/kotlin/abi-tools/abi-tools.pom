@@ -40,8 +40,14 @@
     </dependency>
     <dependency>
       <groupId>org.jetbrains.kotlin</groupId>
-      <artifactId>kotlin-compiler-embeddable</artifactId>
+      <artifactId>kotlin-klib-abi-reader</artifactId>
       <version>ArtifactsTest.version</version>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.jetbrains.intellij.deps</groupId>
+      <artifactId>asm-all</artifactId>
+      <version>9.6.1</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
