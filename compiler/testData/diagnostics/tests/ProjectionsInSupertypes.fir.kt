@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: FRONTEND
-// WITH_EXTRA_CHECKERS
 interface A<T> {}
 interface B<T> {}
 interface C<T> {}
