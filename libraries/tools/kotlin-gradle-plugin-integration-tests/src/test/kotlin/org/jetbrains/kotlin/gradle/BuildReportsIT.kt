@@ -186,7 +186,7 @@ class BuildReportsIT : KGPBaseTest() {
                 assertBuildReportPathIsPrinted()
             }
             //Should contain build metrics for all compile kotlin tasks
-            validateBuildReportFile(KotlinVersion.DEFAULT.version, expectedReportLines)
+            validateBuildReportFile(nonIncrementalBuildFileExpectedContents(KotlinVersion.DEFAULT.version), expectedReportLines)
         }
 
         project(project, gradleVersion, buildOptions = buildOptions.copy(languageVersion = languageVersion)) {
@@ -196,7 +196,7 @@ class BuildReportsIT : KGPBaseTest() {
                 assertBuildReportPathIsPrinted()
             }
             //Should contain build metrics for all compile kotlin tasks
-            validateBuildReportFile(languageVersion, expectedReportLines)
+            validateBuildReportFile(nonIncrementalBuildFileExpectedContents(languageVersion), expectedReportLines)
         }
     }
 
@@ -214,25 +214,103 @@ class BuildReportsIT : KGPBaseTest() {
         }
     }
 
-    private fun TestProject.validateBuildReportFile(kotlinLanguageVersion: String, additionalReportLines: List<String>) {
+    @DisplayName("Build metrics produces valid report for lowerings in Native project")
+    @GradleTestVersions(
+        additionalVersions = [TestVersions.Gradle.G_8_0],
+    )
+    @GradleTest
+    @TestMetadata("native-incremental-simple")
+    @JvmGradlePluginTests
+    fun testLoweringsBuildMetricsForNativeProject(gradleVersion: GradleVersion) {
+        testNativeBuildReportInFile(
+            "native-incremental-simple",
+            "build",
+            gradleVersion,
+            // KT-75899 Support Gradle Project Isolation in KGP JS & Wasm
+            disableIsolatedProjects = true,
+            freeCompilerArgs = listOf("-XXLanguage:+IrInlinerBeforeKlibSerialization"),
+            additionalReportLines = listOf(
+                "InlineFunctionSerializationPreProcessing",
+            ),
+        )
+    }
+
+    private fun testNativeBuildReportInFile(
+        project: String,
+        task: String,
+        gradleVersion: GradleVersion,
+        disableIsolatedProjects: Boolean = false,
+        freeCompilerArgs: List<String> = listOf(),
+        additionalReportLines: List<String> = listOf(),
+    ) {
+        val buildOptions = if (disableIsolatedProjects) defaultBuildOptions.copy(
+            isolatedProjects = IsolatedProjectsMode.DISABLED
+        ) else defaultBuildOptions
+
+        nativeProject(project, gradleVersion, buildOptions = buildOptions) {
+            addNativeCompilerArgs(freeCompilerArgs)
+            build(task) {
+                assertBuildReportPathIsPrinted()
+            }
+            //Should contain build metrics for all compile kotlin tasks
+            validateBuildReportFile(nativeBuildFileExpectedContents, additionalReportLines, doValidateSizeMetrics = false)
+        }
+    }
+
+    private fun TestProject.addNativeCompilerArgs(args: List<String>) {
+        if (args.isNotEmpty()) {
+            buildGradleKts.appendText(
+                """
+                    
+                kotlin {
+                    tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinNativeCompile>().configureEach {
+                        compilerOptions {
+                            freeCompilerArgs.add(${args.joinToString { "\"$it\"" }})
+                        }
+                    }
+                }
+                """.trimIndent()
+            )
+        }
+    }
+
+    val nativeBuildFileExpectedContents = listOf(
+        "Time metrics:",
+        "Run compilation",
+        "Run native in process:",
+        "Compiler IR pre-lowering:",
+        "InlineFunctionSerializationPreProcessing",
+        "Compiler IR Serialization:",
+        "Compiler IR lowering:",
+        "ValidateIrBeforeLowering:",
+        "ValidateIrAfterLowering:",
+        "Compiler backend:",
+        "Size metrics:",
+    )
+
+    private fun nonIncrementalBuildFileExpectedContents(kotlinLanguageVersion: String) = listOf(
+        "Time metrics:",
+        "Run compilation:",
+        "Incremental compilation in daemon:",
+        "Size metrics:",
+        "Total size of the cache directory:",
+        "Total compiler iteration:",
+        "ABI snapshot size:",
+        //for non-incremental builds
+        "Build attributes:",
+        "REBUILD_REASON:",
+        //gc metrics
+        "GC count:",
+        "GC time:",
+        //task info
+        "Task info:",
+        "Kotlin language version: $kotlinLanguageVersion",
+    )
+
+    private fun TestProject.validateBuildReportFile(expectedReportLines: List<String>, additionalReportLines: List<String>, doValidateSizeMetrics: Boolean = true) {
         val fileContents = assertFileContains(
             reportFile,
-            "Time metrics:",
-            "Run compilation:",
-            "Incremental compilation in daemon:",
-            "Size metrics:",
-            "Total size of the cache directory:",
-            "Total compiler iteration:",
-            "ABI snapshot size:",
-            //for non-incremental builds
-            "Build attributes:",
-            "REBUILD_REASON:",
-            //gc metrics
-            "GC count:",
-            "GC time:",
-            //task info
-            "Task info:",
-            "Kotlin language version: $kotlinLanguageVersion",
+            *expectedReportLines.toTypedArray(),
             *additionalReportLines.toTypedArray()
         )
 
@@ -264,8 +342,10 @@ class BuildReportsIT : KGPBaseTest() {
             assertEquals(formatSize(actualSnapshotSize), reportedSnapshotSize)
         }
 
-        validateTotalCachesSizeMetric()
-        validateSnapshotSizeMetric()
+        if (doValidateSizeMetrics) {
+            validateTotalCachesSizeMetric()
+            validateSnapshotSizeMetric()
+        }
     }
 
     @DisplayName("Compiler build metrics report is produced")
@@ -811,6 +891,46 @@ class BuildReportsIT : KGPBaseTest() {
                 assertOutputDoesNotContain("The following functionality has been deprecated and will be removed in the next major release of the Develocity Gradle plugin.")
                 assertOutputContains("Build metrics are stored into build scan for")
                 assertOutputContains("[com.gradle.develocity.agent.gradle.DevelocityPlugin] Publishing build scan...")
+            }
+        }
+    }
+
+    @DisplayName("Verify metrics for for 2nd phase native in-process compilation")
+    @NativeGradlePluginTests
+    @GradleTest
+    @GradleTestVersions(
+        additionalVersions = [TestVersions.Gradle.G_8_2],
+    )
+    fun testMetricFor2ndPhaseNativeProjectInProcess(gradleVersion: GradleVersion) {
+        nativeProject(
+            "native-incremental-simple", gradleVersion, buildOptions = defaultBuildOptions.copy(
+                nativeOptions = defaultBuildOptions.nativeOptions.copy(
+                    incremental = true
+                ),
+                buildReport = listOf(BuildReportType.JSON)
+            )
+        ) {
+            build("linkDebugExecutableHost", "-Pkotlin.build.report.json.directory=${projectPath.resolve("report").pathString}") {
+                val jsonReportFile = projectPath.getSingleFileInDir("report")
+                assertTrue { jsonReportFile.exists() }
+                val jsonReport = readJsonReport(jsonReportFile)
+                val bulidTimesKeys = jsonReport.aggregatedMetrics.buildTimes.buildTimesMapMs().keys
+                assertContains(bulidTimesKeys, GradleBuildTime.NATIVE_IN_PROCESS)
+
+                val dynamicBuildTimesKeys = jsonReport.aggregatedMetrics.buildTimes.dynamicBuildTimesMapMs().keys
+                    .filter { it.parent == GradleBuildTime.IR_LOWERING }
+                    .map { it.name }
+                val expectedDynamicBuildTimesNames = listOf(
+                    "ValidateIrBeforeLowering",
+                    "TestProcessor",
+                    "UpgradeCallableReferences",
+                    "Autobox",
+                    "ConstructorsLowering",
+                    "ValidateIrAfterLowering",
+                )
+                expectedDynamicBuildTimesNames.forEach {
+                    assertContains(dynamicBuildTimesKeys, it)
+                }
             }
         }
     }
