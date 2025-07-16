@@ -1,14 +1,14 @@
 warning: ATTENTION!
 This build uses unsafe internal compiler arguments:
 
--XXLanguage:-RangeUntilOperator
+-XXLanguage:-NullableNothingInReifiedPosition
 
 This mode is not recommended for production use,
 as no stability/compatibility guarantees are given on
 compiler or generated code. Use it at your own risk!
 
-warning: language version 1.9 is deprecated and its support will be removed in a future version of Kotlin
-compiler/testData/cli/jvm/readingConfigFromEnvironment/overridingXx.kt:3:19: error: the feature "range until operator" is disabled
-    for (x in 100 ..< 1) {
-                  ^^^
+warning: language version 2.0 is deprecated and its support will be removed in a future version of Kotlin
+compiler/testData/cli/jvm/readingConfigFromEnvironment/overridingXx.kt:18:5: error: cannot use 'Nothing?' as reified type parameter.
+    foo(b)
+    ^^^
 COMPILATION_ERROR
