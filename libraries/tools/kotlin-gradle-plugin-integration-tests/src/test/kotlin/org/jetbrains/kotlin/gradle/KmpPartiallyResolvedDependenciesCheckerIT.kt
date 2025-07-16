@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.gradle.testbase.GradleTest
 import org.jetbrains.kotlin.gradle.testbase.KGPBaseTest
 import org.jetbrains.kotlin.gradle.testbase.MppGradlePluginTests
 import org.jetbrains.kotlin.gradle.testbase.assertHasDiagnostic
+import org.jetbrains.kotlin.gradle.testbase.assertNoDiagnostic
 import org.jetbrains.kotlin.gradle.testbase.assertOutputContains
 import org.jetbrains.kotlin.gradle.testbase.assertTasksExecuted
 import org.jetbrains.kotlin.gradle.testbase.build
@@ -359,7 +360,7 @@ class KmpPartiallyResolvedDependenciesCheckerIT : KGPBaseTest() {
                         }
                     }
                     project.tasks.all {
-                        // Force all tasks to materialize eagerly
+                        // Force all tasks (including the checker task) to materialize eagerly
                     }
                 }
             }
@@ -383,7 +384,8 @@ class KmpPartiallyResolvedDependenciesCheckerIT : KGPBaseTest() {
                 isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED,
             )
         ) {
-            assertOutputContains("Project#afterEvaluate(Action) on project ':b' cannot be executed in the current context.")
+            // The fact that we don't emit the diagnostic is not desirable, but it's a consequence of suppressing this check before projectsEvaluated
+            assertNoDiagnostic(KotlinToolingDiagnostics.PartiallyResolvedKmpDependencies)
         }
         parent.build(
             ":a:compileKotlinJvm",
@@ -391,7 +393,7 @@ class KmpPartiallyResolvedDependenciesCheckerIT : KGPBaseTest() {
                 isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED,
             )
         ) {
-            assertOutputContains("Project#afterEvaluate(Action) on project ':b' cannot be executed in the current context.")
+            assertNoDiagnostic(KotlinToolingDiagnostics.PartiallyResolvedKmpDependencies)
         }
     }
 
