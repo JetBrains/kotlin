@@ -11,7 +11,7 @@ annotation class AllOpen
 annotation class AllOpen2
 annotation class AddSupertype(val value: KClass<*>)
 
-annotation class DummyFunction
+annotation class DummyFunction(val fileName: String = "")
 
 @Target(AnnotationTarget.FUNCTION)
 annotation class TestTopLevelPrivateSuspendFun

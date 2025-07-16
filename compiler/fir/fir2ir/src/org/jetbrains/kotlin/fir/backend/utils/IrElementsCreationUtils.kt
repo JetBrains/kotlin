@@ -15,12 +15,12 @@ import org.jetbrains.kotlin.fir.builder.buildPackageDirective
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.builder.FirFileBuilder
 import org.jetbrains.kotlin.fir.declarations.builder.buildFile
+import org.jetbrains.kotlin.fir.declarations.utils.fileNameForPluginGeneratedCallable
 import org.jetbrains.kotlin.fir.declarations.utils.isInlineOrValue
 import org.jetbrains.kotlin.fir.extensions.FirExtensionApiInternals
 import org.jetbrains.kotlin.fir.extensions.declarationGenerators
 import org.jetbrains.kotlin.fir.extensions.extensionService
 import org.jetbrains.kotlin.fir.extensions.generatedDeclarationsSymbolProvider
-import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.impl.syntheticFunctionInterfacesSymbolProvider
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
@@ -175,13 +175,19 @@ fun FirSession.createFilesWithGeneratedDeclarations(): List<FirFile> {
 
         val generatedCallablesPerPackage = generatedCallables.groupBy { it.callableId.packageName }
         for ((packageName, packageGeneratedCallables) in generatedCallablesPerPackage) {
-            this += createSyntheticFile(
-                fileName = "${packageName.toPath()}/__GENERATED__CALLABLES__.kt",
-                packageFqName = packageName,
-                fileModuleData,
-                FirDeclarationOrigin.Synthetic.PluginFile,
-            ) {
-                declarations += packageGeneratedCallables.map { it.fir }
+            val callablesPerFileName = packageGeneratedCallables.groupBy {
+                val name = it.fir.fileNameForPluginGeneratedCallable ?: "__GENERATED__CALLABLES__.kt"
+                if (name.endsWith(".kt")) name else "$name.kt"
+            }
+            for ((fileName, callables) in callablesPerFileName) {
+                this += createSyntheticFile(
+                    fileName = "${packageName.toPath()}/$fileName",
+                    packageFqName = packageName,
+                    fileModuleData,
+                    FirDeclarationOrigin.Synthetic.PluginFile,
+                ) {
+                    declarations += callables.map { it.fir }
+                }
             }
         }
     }

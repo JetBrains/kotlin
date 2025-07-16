@@ -40,6 +40,7 @@ private object HasBackingFieldKey : FirDeclarationDataKey()
 private object IsDeserializedPropertyFromAnnotation : FirDeclarationDataKey()
 private object IsDelegatedProperty : FirDeclarationDataKey()
 private object LambdaArgumentHoldsInTruths : FirDeclarationDataKey()
+private object FileNameForPluginGeneratedCallable : FirDeclarationDataKey()
 
 var FirProperty.isFromVararg: Boolean? by FirDeclarationDataRegistry.data(IsFromVarargKey)
 var FirProperty.isReferredViaField: Boolean? by FirDeclarationDataRegistry.data(IsReferredViaField)
@@ -50,6 +51,7 @@ var FirRegularClass.moduleName: String? by FirDeclarationDataRegistry.data(Modul
 var FirDeclaration.compilerPluginMetadata: Map<String, ByteArray>? by FirDeclarationDataRegistry.data(CompilerPluginMetadata)
 var FirDeclaration.originalReplSnippetSymbol: FirReplSnippetSymbol? by FirDeclarationDataRegistry.data(OriginalReplSnippet)
 var FirAnonymousFunction.lambdaArgumentParent: FirQualifiedAccessExpression? by FirDeclarationDataRegistry.data(LambdaArgumentHoldsInTruths)
+var FirCallableDeclaration.fileNameForPluginGeneratedCallable: String? by FirDeclarationDataRegistry.data(FileNameForPluginGeneratedCallable)
 
 var FirDeclaration.isScriptTopLevelDeclaration: Boolean? by FirDeclarationDataRegistry.data(ScriptTopLevelDeclaration)
 
