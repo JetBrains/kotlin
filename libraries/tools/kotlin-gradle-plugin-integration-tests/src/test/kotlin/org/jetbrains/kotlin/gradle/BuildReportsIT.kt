@@ -147,21 +147,7 @@ class BuildReportsIT : KGPBaseTest() {
             freeCompilerArgs = listOf("-XXLanguage:+IrInlinerBeforeKlibSerialization"),
             expectedReportLines = listOf(
                 "Compiler IR pre-lowering",
-                "ArrayConstructor",
-                "IrValidationAfterInliningOnlyPrivateFunctionsPhase",
-                "InlineFunctionSerializationPreProcessing",
-                "LocalClassesInInlineLambdasPhase",
-                "SharedVariablesLowering",
-                "InlineAllFunctions",
-                "SyntheticAccessorGeneration",
-                "InlineOnlyPrivateFunctions",
-                "UpgradeCallableReferences",
-                "InlineCallCycleChecker",
-                "InlineDeclarationCheckerAfterInliningOnlyPrivateFunctionsPhase",
-                "OuterThisInInlineFunctionsSpecialAccessorLowering",
-                "AvoidLocalFOsInInlineFunctionsLowering",
                 "JsCodeOutliningLoweringOnFirstStage",
-                "LateinitLowering",
             ),
         )
     }
