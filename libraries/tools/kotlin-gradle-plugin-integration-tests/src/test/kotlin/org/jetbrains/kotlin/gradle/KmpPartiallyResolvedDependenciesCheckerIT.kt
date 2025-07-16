@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.gradle.testbase.GradleTest
 import org.jetbrains.kotlin.gradle.testbase.KGPBaseTest
 import org.jetbrains.kotlin.gradle.testbase.MppGradlePluginTests
 import org.jetbrains.kotlin.gradle.testbase.assertHasDiagnostic
+import org.jetbrains.kotlin.gradle.testbase.assertOutputContains
 import org.jetbrains.kotlin.gradle.testbase.assertTasksExecuted
 import org.jetbrains.kotlin.gradle.testbase.build
 import org.jetbrains.kotlin.gradle.testbase.buildAndFail
@@ -332,6 +333,65 @@ class KmpPartiallyResolvedDependenciesCheckerIT : KGPBaseTest() {
             )
         ) {
             assertHasDiagnostic(KotlinToolingDiagnostics.PartiallyResolvedKmpDependencies)
+        }
+    }
+
+    @GradleTest
+    fun `KT-79315 - cross-project configuration that materializes other projects doesn't explode with the checker`(gradleVersion: GradleVersion) {
+        val parent = project("empty", gradleVersion) {
+            plugins {
+                kotlin("multiplatform").apply(false)
+            }
+            buildScriptInjection {
+                project.allprojects {
+                    it.plugins.apply("org.jetbrains.kotlin.multiplatform")
+                }
+            }
+            val a = project("empty", gradleVersion) {
+                buildScriptInjection {
+                    project.applyMultiplatform {
+                        jvm()
+                        iosArm64()
+                        iosX64()
+                        sourceSets.getByName("commonMain").compileStubSourceWithSourceSetName()
+                        sourceSets.commonMain.dependencies {
+                            implementation(project(":b"))
+                        }
+                    }
+                    project.tasks.all {
+                        // Force all tasks to materialize eagerly
+                    }
+                }
+            }
+            val b = project("empty", gradleVersion) {
+                buildScriptInjection {
+                    project.applyMultiplatform {
+                        jvm()
+                        iosArm64()
+                        sourceSets.getByName("commonMain").compileStubSourceWithSourceSetName()
+                    }
+                }
+            }
+
+            include(a, "a")
+            include(b, "b")
+        }
+
+        parent.buildAndFail(
+            ":a:assemble",
+            buildOptions = defaultBuildOptions.copy(
+                isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED,
+            )
+        ) {
+            assertOutputContains("Project#afterEvaluate(Action) on project ':b' cannot be executed in the current context.")
+        }
+        parent.build(
+            ":a:compileKotlinJvm",
+            buildOptions = defaultBuildOptions.copy(
+                isolatedProjects = BuildOptions.IsolatedProjectsMode.DISABLED,
+            )
+        ) {
+            assertOutputContains("Project#afterEvaluate(Action) on project ':b' cannot be executed in the current context.")
         }
     }
 
