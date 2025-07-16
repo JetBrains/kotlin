@@ -81,11 +81,12 @@ abstract class AbstractKDocCoverageTest : KtUsefulTestCase() {
             }.sorted().joinToString("\n")
 
             val expectedFile = File(homeDir, outputFilePath)
-            KotlinTestUtils.assertEqualsToFile(
-                "Some newer public declarations from `$roots` are undocumented. Please, consider either documenting them or adding them to `$outputFilePath`",
-                expectedFile,
-                actualText
-            )
+            val errorMessage = """
+                The list of public undocumented declarations in `$roots` does not match the expected list in `$outputFilePath`.
+                If you added new undocumented declarations, please document them or add them to the exclusion list.
+                Otherwise, update the exclusion list accordingly.
+            """.trimIndent()
+            KotlinTestUtils.assertEqualsToFile(errorMessage, expectedFile, actualText)
         }
     }
 
