@@ -3487,12 +3487,6 @@ public class ClassicJsIrTextTestGenerated extends AbstractClassicJsIrTextTest {
     }
 
     @Test
-    @TestMetadata("genericDelegatedDeepProperty.kt")
-    public void testGenericDelegatedDeepProperty() {
-      runTest("compiler/testData/ir/irText/types/genericDelegatedDeepProperty.kt");
-    }
-
-    @Test
     @TestMetadata("genericFunWithStar.kt")
     public void testGenericFunWithStar() {
       runTest("compiler/testData/ir/irText/types/genericFunWithStar.kt");

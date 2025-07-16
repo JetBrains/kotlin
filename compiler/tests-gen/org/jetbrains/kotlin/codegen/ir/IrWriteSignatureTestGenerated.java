@@ -40,11 +40,6 @@ public class IrWriteSignatureTestGenerated extends AbstractIrWriteSignatureTest 
     runTest("compiler/testData/writeSignature/ArrayOfInt.kt");
   }
 
-  @TestMetadata("backingFieldForGenericDelegated.kt")
-  public void testBackingFieldForGenericDelegated() {
-    runTest("compiler/testData/writeSignature/backingFieldForGenericDelegated.kt");
-  }
-
   @TestMetadata("Comparable.kt")
   public void testComparable() {
     runTest("compiler/testData/writeSignature/Comparable.kt");

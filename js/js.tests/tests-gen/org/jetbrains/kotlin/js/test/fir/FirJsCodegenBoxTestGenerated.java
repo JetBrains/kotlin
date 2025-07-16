@@ -4505,12 +4505,6 @@ public class FirJsCodegenBoxTestGenerated extends AbstractFirJsCodegenBoxTest {
       }
 
       @Test
-      @TestMetadata("genericProperty.kt")
-      public void testGenericProperty() {
-        runTest("compiler/testData/codegen/box/callableReference/property/genericProperty.kt");
-      }
-
-      @Test
       @TestMetadata("inEnum.kt")
       public void testInEnum() {
         runTest("compiler/testData/codegen/box/callableReference/property/inEnum.kt");
@@ -26997,21 +26991,9 @@ public class FirJsCodegenBoxTestGenerated extends AbstractFirJsCodegenBoxTest {
       }
 
       @Test
-      @TestMetadata("deepGenericDelegatedProperty.kt")
-      public void testDeepGenericDelegatedProperty() {
-        runTest("compiler/testData/codegen/box/ir/serializationRegressions/deepGenericDelegatedProperty.kt");
-      }
-
-      @Test
       @TestMetadata("dispatchReceiverValue.kt")
       public void testDispatchReceiverValue() {
         runTest("compiler/testData/codegen/box/ir/serializationRegressions/dispatchReceiverValue.kt");
-      }
-
-      @Test
-      @TestMetadata("genericProperty.kt")
-      public void testGenericProperty() {
-        runTest("compiler/testData/codegen/box/ir/serializationRegressions/genericProperty.kt");
       }
 
       @Test
