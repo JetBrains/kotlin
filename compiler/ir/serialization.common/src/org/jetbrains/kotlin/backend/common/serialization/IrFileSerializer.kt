@@ -225,13 +225,6 @@ open class IrFileSerializer(
             return
         }
 
-        if (IrStatementOrigin.IMPLICIT_ARGUMENT == origin && settings.abiCompatibilityLevel == KlibAbiCompatibilityLevel.ABI_LEVEL_2_1) {
-            // Kotlin compiler version 2.1.x fails in an attempt to deserialize unknown statement origins.
-            // So, as a workaround, we try to avoid serializing such statements when exporting to KLIB ABI level 2.1.
-            // For details, see KT-76131, KT-75624, KT-75393.
-            return
-        }
-
         val originIndex = serializeString(origin.debugName)
         saveOriginIndex(originIndex)
     }
