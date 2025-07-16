@@ -1029,11 +1029,6 @@ private fun parseDuration(value: String, strictIso: Boolean, throwExceptionOnPar
     return if (isNegative) -result else result
 }
 
-
-private fun parseOverLongIsoComponent(value: String): Long {
-    return parseOverLongIsoComponent(value, throwException = true)!!
-}
-
 private fun parseOverLongIsoComponent(value: String, throwException: Boolean): Long? {
     val length = value.length
     var startIndex = 0
