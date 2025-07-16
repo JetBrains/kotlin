@@ -2,6 +2,6 @@ $TESTDATA_DIR$/languageVersion.kt
 -d
 $TEMP_DIR$
 -language-version
-1.9
--XXLanguage\:+GenericInlineClassParameter
--XXLanguage\:-GenericInlineClassParameter
+2.2
+-XXLanguage\:+NullableNothingInReifiedPosition
+-XXLanguage\:-NullableNothingInReifiedPosition
