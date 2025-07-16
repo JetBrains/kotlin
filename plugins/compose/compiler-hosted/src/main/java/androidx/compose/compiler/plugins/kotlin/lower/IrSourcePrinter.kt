@@ -379,15 +379,15 @@ class IrSourcePrinterVisitor(
                     print(" $opSymbol ")
                     expression.arguments[1]?.print()
                 }
-                "iterator", "hasNext", "next",
-                "noWhenBranchMatchedException" -> {
+                "iterator", "hasNext", "next" -> {
                     expression.printReceiver()
                     print(".")
                     print(opSymbol)
                     print("()")
                 }
-                "THROW_ISE" -> {
+                "THROW_ISE", "noWhenBranchMatchedException" -> {
                     print(opSymbol)
+                    print("()")
                 }
                 else -> {
                     if (name.startsWith("component")) {
@@ -625,7 +625,7 @@ class IrSourcePrinterVisitor(
             IrTypeOperator.INSTANCEOF -> {
                 expression.argument.print()
                 print(" is ")
-                print(expression.type.renderSrc())
+                print(expression.typeOperand.renderSrc())
             }
             else -> error("Unknown type operator: ${expression.operator}")
         }
