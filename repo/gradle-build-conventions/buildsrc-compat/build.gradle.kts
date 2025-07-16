@@ -1,4 +1,6 @@
 import org.jetbrains.kotlin.gradle.plugin.getKotlinPluginVersion
+import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 
 buildscript {
     // workaround for KGP build metrics reports: https://github.com/gradle/gradle/issues/20001
@@ -62,12 +64,22 @@ repositories {
 }
 
 kotlin {
-    jvmToolchain(8)
+    @OptIn(ExperimentalKotlinGradlePluginApi::class, ExperimentalBuildToolsApi::class)
+    compilerVersion = libs.versions.kotlin.`for`.gradle.plugins.compilation
+    jvmToolchain(11)
 
     compilerOptions {
         allWarningsAsErrors.set(true)
         optIn.add("kotlin.ExperimentalStdlibApi")
-        freeCompilerArgs.add("-Xsuppress-version-warnings")
+    }
+}
+
+afterEvaluate {
+    afterEvaluate {
+        tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile>().configureEach {
+            // Required to be able to use bootstrap metadata version in the build scripts and Gradle Kotlin runtime version
+            compilerOptions.freeCompilerArgs.add("-Xskip-metadata-version-check")
+        }
     }
 }
 
@@ -106,9 +118,10 @@ dependencies {
     compileOnly(project(":android-sdk-provisioner"))
 
     implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:${project.bootstrapKotlinVersion}")
-    implementation("org.jetbrains.kotlin:kotlin-stdlib:${project.bootstrapKotlinVersion}")
-    implementation("org.jetbrains.kotlin:kotlin-reflect:${project.bootstrapKotlinVersion}")
-    implementation("org.jetbrains.kotlin:kotlin-metadata-jvm:${project.bootstrapKotlinVersion}")
+    //implementation("org.jetbrains.kotlin:kotlin-metadata-jvm:${libs.versions.kotlin.`for`.gradle.plugins.compilation.get()}")
+    implementation("org.jetbrains.kotlin:kotlin-metadata-jvm:${project.bootstrapKotlinVersion}") {
+        isTransitive = false
+    }
     implementation(libs.gson)
     implementation(project(":d8-configuration"))
 }
