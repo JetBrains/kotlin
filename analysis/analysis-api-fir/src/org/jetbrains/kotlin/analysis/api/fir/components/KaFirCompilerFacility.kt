@@ -166,11 +166,29 @@ internal class KaFirCompilerFacility(
         target: KaCompilerTarget,
         allowedErrorFilter: (KaDiagnostic) -> Boolean
     ): KaCompilationResult = withPsiValidityAssertion(file) {
-        try {
-            return compileUnsafe(file, configuration, target as KaCompilerTarget.Jvm, allowedErrorFilter)
-        } catch (e: Throwable) {
-            rethrowIntellijPlatformExceptionIfNeeded(e)
-            throw KaCodeCompilationException(e)
+        compileWithRetry(file, configuration, target, allowedErrorFilter)
+    }
+
+    private fun compileWithRetry(
+        file: KtFile,
+        configuration: CompilerConfiguration,
+        target: KaCompilerTarget,
+        allowedErrorFilter: (KaDiagnostic) -> Boolean,
+    ): KaCompilationResult {
+        val disabledIrExtensions = mutableListOf<Class<out IrGenerationExtension>>()
+        while (true) {
+            try {
+                return compileUnsafe(file, configuration, target as KaCompilerTarget.Jvm, allowedErrorFilter, disabledIrExtensions)
+            } catch (e: IrGenerationExtensionException) {
+                val extensionClass = e.extensionClass
+                if (disabledIrExtensions.contains(extensionClass)) {
+                    throw KaCodeCompilationException(e) // very strange
+                }
+                disabledIrExtensions.add(extensionClass)
+            } catch (e: Throwable) {
+                rethrowIntellijPlatformExceptionIfNeeded(e)
+                throw KaCodeCompilationException(e)
+            }
         }
     }
 
@@ -178,7 +196,8 @@ internal class KaFirCompilerFacility(
         mainFile: KtFile,
         configuration: CompilerConfiguration,
         target: KaCompilerTarget.Jvm,
-        allowedErrorFilter: (KaDiagnostic) -> Boolean
+        allowedErrorFilter: (KaDiagnostic) -> Boolean,
+        disabledIrExtensions: List<Class<out IrGenerationExtension>>,
     ): KaCompilationResult {
         val syntaxErrors = SyntaxErrorReportingVisitor(analysisSession.firSession) { it.asKaDiagnostic() }
             .also(mainFile::accept).diagnostics
@@ -255,6 +274,7 @@ internal class KaFirCompilerFacility(
                 generateClassFilter,
                 KaFirDelegatingCompiledCodeProvider(registeredCodeProviders),
                 contextDeclarationCache,
+                disabledIrExtensions,
             )
 
             when (result) {
@@ -870,6 +890,7 @@ internal class KaFirCompilerFacility(
         generateClassFilter: GenerationState.GenerateClassFilter,
         compiledCodeProvider: CompiledCodeProvider,
         contextDeclarationCache: CodeFragmentContextDeclarationCache?,
+        disabledIrExtensions: List<Class<out IrGenerationExtension>>,
     ): KaCompilationResult {
         val session = resolutionFacade.sessionProvider.getResolvableSession(module)
         val configuration = baseConfiguration.copy().apply {
@@ -894,13 +915,15 @@ internal class KaFirCompilerFacility(
 
         val commonMemberStorage = contextDeclarationCache?.customCommonMemberStorage ?: Fir2IrCommonMemberStorage()
 
+        val irGeneratorExtensions = getIrGenerationExtensions(module).filter { !disabledIrExtensions.contains(it.javaClass) }
+
         val fir2IrResult = runFir2Ir(
             session = session,
             firFiles = chunk.files.map { it.firFile },
             fir2IrExtensions = fir2IrExtensions,
             diagnosticReporter = diagnosticReporter,
             effectiveConfiguration = configuration,
-            irGeneratorExtensions = getIrGenerationExtensions(module),
+            irGeneratorExtensions = irGeneratorExtensions,
             commonMemberStorage = commonMemberStorage
         )
 

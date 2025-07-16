@@ -43,6 +43,8 @@ import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
+import org.jetbrains.kotlin.utils.exceptions.rethrowIntellijPlatformExceptionIfNeeded
+import kotlin.reflect.KClass
 
 data class FirResult(val outputs: List<ModuleCompilerAnalyzedOutput>)
 
@@ -488,6 +490,9 @@ private fun IrPluginContext.runMandatoryIrValidation(
     }
 }
 
+class IrGenerationExtensionException(cause: Throwable, val extensionClass: Class<out IrGenerationExtension>) :
+    RuntimeException(cause.message, cause)
+
 fun IrPluginContext.applyIrGenerationExtensions(
     fir2IrConfiguration: Fir2IrConfiguration,
     irModuleFragment: IrModuleFragment,
@@ -495,7 +500,12 @@ fun IrPluginContext.applyIrGenerationExtensions(
 ) {
     runMandatoryIrValidation(null, irModuleFragment, fir2IrConfiguration)
     for (extension in irGenerationExtensions) {
-        extension.generate(irModuleFragment, this)
-        runMandatoryIrValidation(extension, irModuleFragment, fir2IrConfiguration)
+        try {
+            extension.generate(irModuleFragment, this)
+            runMandatoryIrValidation(extension, irModuleFragment, fir2IrConfiguration)
+        } catch (e: Throwable) {
+            rethrowIntellijPlatformExceptionIfNeeded(e)
+            throw IrGenerationExtensionException(e, extension::class.java)
+        }
     }
 }
