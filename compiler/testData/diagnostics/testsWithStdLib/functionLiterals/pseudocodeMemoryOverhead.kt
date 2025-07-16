@@ -1,5 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
+// DIAGNOSTICS: -REDUNDANT_CALL_OF_CONVERSION_METHOD
 import java.util.HashMap
 
 private fun <A> unaryOperation(

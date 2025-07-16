@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.fir.analysis.checkers.extra.*
 
 object ExtraExpressionCheckers : ExpressionCheckers() {
     override val qualifiedAccessExpressionCheckers: Set<FirQualifiedAccessExpressionChecker> = setOf(
-        RedundantCallOfConversionMethod,
         UselessCallOnNotNullChecker,
     )
 

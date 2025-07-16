@@ -23,7 +23,7 @@ val prop6: Float = 1.0.toFloat() + 1
 val prop7: Double = 1.0 + 1.0
 
 // val prop8: 2.0.toDouble()
-val prop8: Float = <!INITIALIZER_TYPE_MISMATCH!>1.0.toDouble() + 1.0<!>
+val prop8: Float = <!INITIALIZER_TYPE_MISMATCH!>1.0f.toDouble() + 1.0<!>
 
 // val prop9: -2.0.toDouble()
 val prop9: Double = -2.0

@@ -3,7 +3,7 @@ public fun foo(p: String?, y: String?): Int {
     do {
         // After the check, smart cast should work
         if (y == null) {
-            "null".toString()
+            "null"
             break
         }
         y.length

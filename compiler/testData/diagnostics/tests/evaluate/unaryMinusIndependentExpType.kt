@@ -19,10 +19,10 @@ val b2: Int = -1.toByte()
 val b3: Long = <!TYPE_MISMATCH!>-1.toByte()<!>
 val b4: Short = <!TYPE_MISMATCH!>-1.toByte()<!>
 
-val i1: Byte = <!TYPE_MISMATCH!>-1.toInt()<!>
-val i2: Int = -1.toInt()
-val i3: Long = <!TYPE_MISMATCH!>-1.toInt()<!>
-val i4: Short = <!TYPE_MISMATCH!>-1.toInt()<!>
+val i1: Byte = <!TYPE_MISMATCH!>-1L.toInt()<!>
+val i2: Int = -1L.toInt()
+val i3: Long = <!TYPE_MISMATCH!>-1L.toInt()<!>
+val i4: Short = <!TYPE_MISMATCH!>-1L.toInt()<!>
 
 val s1: Byte = <!TYPE_MISMATCH!>-1.toShort()<!>
 val s2: Int = -1.toShort()

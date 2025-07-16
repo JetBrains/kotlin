@@ -9,7 +9,7 @@ class A {
     fun foo(w: Boolean) {
         if (w) {
             val message = ""
-            message.toString()
+            message
         } else {
             message.append() // message here should relate to the class-level property
         }

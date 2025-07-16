@@ -8,8 +8,8 @@ fun main(args: Array<String>) {
     var intVar: Int? = 1
     var byteVar: Byte? = 1
 
-    intFun(<!TYPE_MISMATCH!>intVar?.toInt()<!>)
-    byteFun(<!TYPE_MISMATCH!>byteVar?.toByte()<!>)
+    intFun(<!TYPE_MISMATCH!>intVar<!>)
+    byteFun(<!TYPE_MISMATCH!>byteVar<!>)
 }
 
 /* GENERATED_FIR_TAGS: functionDeclaration, integerLiteral, localProperty, nullableType, propertyDeclaration, safeCall */

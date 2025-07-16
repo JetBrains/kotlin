@@ -40,16 +40,16 @@ val b4: Short = <!INITIALIZER_TYPE_MISMATCH!>-1.toByte()<!>
 
 
 // val i1: false
-val i1: Byte = <!INITIALIZER_TYPE_MISMATCH!>-1.toInt()<!>
+val i1: Byte = <!INITIALIZER_TYPE_MISMATCH!>-1L.toInt()<!>
 
 // val i2: false
-val i2: Int = -1.toInt()
+val i2: Int = -1L.toInt()
 
 // val i3: false
-val i3: Long = <!INITIALIZER_TYPE_MISMATCH!>-1.toInt()<!>
+val i3: Long = <!INITIALIZER_TYPE_MISMATCH!>-1L.toInt()<!>
 
 // val i4: false
-val i4: Short = <!INITIALIZER_TYPE_MISMATCH!>-1.toInt()<!>
+val i4: Short = <!INITIALIZER_TYPE_MISMATCH!>-1L.toInt()<!>
 
 // val s1: false
 val s1: Byte = <!INITIALIZER_TYPE_MISMATCH!>-1.toShort()<!>

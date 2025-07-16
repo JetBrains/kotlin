@@ -5,7 +5,7 @@ package test
 val prop1 = 1.toLong() + 1
 
 // val prop2: false
-val prop2 = -1.toInt()
+val prop2 = -1L.toInt()
 
 // val prop3: false
 val prop3 = 1 + 1.toByte()
