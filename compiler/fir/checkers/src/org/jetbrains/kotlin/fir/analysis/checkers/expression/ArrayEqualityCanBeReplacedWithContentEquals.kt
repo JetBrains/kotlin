@@ -18,23 +18,25 @@ import org.jetbrains.kotlin.fir.expressions.arguments
 import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.name.StandardClassIds
 
-private val ARRAY_CLASS_IDS = listOf(StandardClassIds.Array)
-    .plus(StandardClassIds.primitiveArrayTypeByElementType.values)
-    .plus(StandardClassIds.unsignedArrayTypeByElementType.values)
-
 object ArrayEqualityCanBeReplacedWithContentEquals : FirBasicExpressionChecker(MppCheckerKind.Common) {
+    private val ARRAY_CLASS_IDS = buildList {
+        add(StandardClassIds.Array)
+        addAll(StandardClassIds.primitiveArrayTypeByElementType.values)
+        addAll(StandardClassIds.unsignedArrayTypeByElementType.values)
+    }
+
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(expression: FirStatement) {
         if (expression !is FirEqualityOperatorCall) return
-        if (expression.operation != FirOperation.EQ && expression.operation != FirOperation.NOT_EQ) return
+        if (expression.operation.let { it != FirOperation.EQ && it != FirOperation.NOT_EQ }) return
         val arguments = expression.arguments
         val left = arguments.getOrNull(0) ?: return
         val right = arguments.getOrNull(1) ?: return
 
-        val leftClassId = ARRAY_CLASS_IDS.indexOf(left.resolvedType.fullyExpandedClassId(context.session))
+        val leftClassId = ARRAY_CLASS_IDS.indexOf(left.resolvedType.fullyExpandedClassId(context.session)).takeIf { it != -1 }
         val rightClassId = ARRAY_CLASS_IDS.indexOf(right.resolvedType.fullyExpandedClassId(context.session))
 
-        if (leftClassId != -1 && leftClassId == rightClassId) {
+        if (leftClassId == rightClassId) {
             reporter.reportOn(expression.source, ARRAY_EQUALITY_OPERATOR_CAN_BE_REPLACED_WITH_CONTENT_EQUALS)
         }
     }
