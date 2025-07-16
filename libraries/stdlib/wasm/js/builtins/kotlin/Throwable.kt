@@ -5,7 +5,6 @@
 
 package kotlin
 
-import kotlin.wasm.internal.ExternalInterfaceType
 import kotlin.wasm.internal.jsToKotlinStringAdapter
 import kotlin.wasm.internal.wasmGetObjectRtti
 import kotlin.wasm.internal.getSimpleName
@@ -16,6 +15,7 @@ import kotlin.wasm.internal.getSimpleName
  * @param message the detail message string.
  * @param cause the cause of this throwable.
  */
+@OptIn(ExperimentalWasmJsInterop::class)
 public actual open class Throwable internal constructor(
     public actual open val message: String?,
     public actual open val cause: kotlin.Throwable?,
@@ -68,5 +68,6 @@ internal actual var Throwable.suppressedExceptionsList: MutableList<Throwable>?
 
 internal actual val Throwable.stack: String get() = this.stack
 
+@OptIn(ExperimentalWasmJsInterop::class)
 internal fun createJsError(message: String?, cause: JsError?): JsError =
     js("new Error(message, { cause })")

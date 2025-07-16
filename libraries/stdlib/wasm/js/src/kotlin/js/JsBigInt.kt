@@ -10,10 +10,13 @@ import kotlin.wasm.internal.JsPrimitive
 
 /** JavaScript primitive bigint */
 @JsPrimitive("bigint")
+@ExperimentalWasmJsInterop
 public external class JsBigInt internal constructor() : JsAny
 
+@ExperimentalWasmJsInterop
 public fun JsBigInt.toLong(): Long =
     externRefToKotlinLongAdapter(this)
 
+@ExperimentalWasmJsInterop
 public fun Long.toJsBigInt(): JsBigInt =
     kotlinLongToExternRefAdapter(this)

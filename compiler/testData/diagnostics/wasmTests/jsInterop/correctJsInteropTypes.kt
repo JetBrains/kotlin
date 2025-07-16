@@ -2,6 +2,7 @@
 
 // OPT_IN: kotlin.js.ExperimentalJsExport
 // OPT_IN: kotlin.ExperimentalUnsignedTypes
+// OPT_IN: kotlin.js.ExperimentalWasmJsInterop
 // DIAGNOSTICS: -FINAL_UPPER_BOUND, -UNUSED_PARAMETER
 // DIAGNOSTICS: -INLINE_CLASS_IN_EXTERNAL_DECLARATION, -NON_EXPORTABLE_TYPE
 
