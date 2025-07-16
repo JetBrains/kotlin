@@ -3428,6 +3428,37 @@
                             "deprecatedVersion": null,
                             "removedVersion": null
                         }
+                    },
+                    {
+                        "name": "Xnew-destructuring",
+                        "shortName": null,
+                        "deprecatedName": null,
+                        "description": {
+                            "current": "Enables new destructuring features:\n-Xnew-destructuring=only-syntax:   Enables syntax for positional destructuring with square brackets and the full form of name-based destructuring with parentheses;\n-Xnew-destructuring=name-mismatch: Reports warnings when short form positional destructuring of data classes uses names that don't match the property names;\n-Xnew-destructuring=complete:      Enables short-form name-based destructuring with parentheses;",
+                            "valueInVersions": []
+                        },
+                        "delimiter": null,
+                        "valueType": {
+                            "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
+                            "isNullable": {
+                                "current": true,
+                                "valueInVersions": []
+                            },
+                            "defaultValue": {
+                                "current": null,
+                                "valueInVersions": []
+                            }
+                        },
+                        "valueDescription": {
+                            "current": "only-syntax|name-mismatch|complete",
+                            "valueInVersions": []
+                        },
+                        "releaseVersionsMetadata": {
+                            "introducedVersion": "2.3.0",
+                            "stabilizedVersion": null,
+                            "deprecatedVersion": null,
+                            "removedVersion": null
+                        }
                     }
                 ],
                 "nestedLevels": [

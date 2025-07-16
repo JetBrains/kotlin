@@ -55,6 +55,7 @@ fun copyCommonCompilerArguments(from: CommonCompilerArguments, to: CommonCompile
     to.multiDollarInterpolation = from.multiDollarInterpolation
     to.multiPlatform = from.multiPlatform
     to.nestedTypeAliases = from.nestedTypeAliases
+    to.newDestructuring = from.newDestructuring
     to.newInference = from.newInference
     to.noCheckActual = from.noCheckActual
     to.noInline = from.noInline
