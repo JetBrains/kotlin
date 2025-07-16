@@ -406,6 +406,11 @@ enum class LanguageFeature(
     AllowExpectDeclarationsInJsExport(KOTLIN_2_2, "KT-64951"),
     DoNotRunSuspendConversionForLambdaReturnStatements(KOTLIN_2_2, enabledInProgressiveMode = true, "KT-74932"),
 
+    // It's not a fully blown LF, but mostly a way to manage potential unexpected semantic changes.
+    // We enable it for already released 2.2 because it's a bug fix, and we'd like to make it work in the IDE as fast as possible.
+    // Even though this LF is not expected to be necessarily released via 2.2.x.
+    CapturedTypeApproximationReworked(KOTLIN_2_2, "KT-79451"),
+
     // 2.3
 
     ForbidCompanionInLocalInnerClass(KOTLIN_2_3, enabledInProgressiveMode = true, "KT-47289"),
