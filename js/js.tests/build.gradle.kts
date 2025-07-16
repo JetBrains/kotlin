@@ -108,7 +108,7 @@ val installTsDependencies by task<NpmTask> {
     outputs.upToDateWhen { nodeModules.exists() }
 
     workingDir.set(testDataDir)
-    args.set(listOf("ci"))
+    npmCommand.set(listOf("ci"))
 }
 
 fun generateTypeScriptTestFor(dir: String): TaskProvider<NpmTask> = tasks.register<NpmTask>("generate-ts-for-$dir") {
@@ -283,7 +283,7 @@ val npmInstall by tasks.getting(NpmTask::class) {
 
     workingDir.fileProvider(node.nodeProjectDir.asFile)
     dependsOn(prepareNpmTestData)
-    args.set(listOf("ci"))
+    npmCommand.set(listOf("ci"))
 }
 
 projectTest("invalidationTest", jUnitMode = JUnitMode.JUnit5) {
