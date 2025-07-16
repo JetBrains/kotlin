@@ -14,13 +14,20 @@ import com.intellij.openapi.application.ApplicationManager
  * [analyze][org.jetbrains.kotlin.analysis.api.analyze] call.
  */
 internal class KaBaseWriteActionStartedChecker(parentDisposable: Disposable) {
+    private val hasEncounteredIllegalWriteAction = ThreadLocal.withInitial { false }
+
     private val currentAnalyzeCallDepth = ThreadLocal.withInitial { 0 }
 
     init {
+        /**
+         * Since IJPL-160901, exceptions from the event dispatcher are not propagated upwards (see
+         * `EventDispatcher.isEventDispatcherErrorPropagationEnabled`). Therefore, we only use the listener to track whether an illegal
+         * write action was started, and throw the exception from `afterLeavingAnalysis` later.
+         */
         val listener = object : ApplicationListener {
             override fun writeActionFinished(action: Any) {
                 if (currentAnalyzeCallDepth.get() > 0) {
-                    throw WriteActionStartedInAnalysisContextException()
+                    hasEncounteredIllegalWriteAction.set(true)
                 }
             }
         }
@@ -33,6 +40,11 @@ internal class KaBaseWriteActionStartedChecker(parentDisposable: Disposable) {
 
     fun afterLeavingAnalysis() {
         currentAnalyzeCallDepth.set(currentAnalyzeCallDepth.get() - 1)
+
+        if (hasEncounteredIllegalWriteAction.get()) {
+            hasEncounteredIllegalWriteAction.remove()
+            throw WriteActionStartedInAnalysisContextException()
+        }
     }
 }
 

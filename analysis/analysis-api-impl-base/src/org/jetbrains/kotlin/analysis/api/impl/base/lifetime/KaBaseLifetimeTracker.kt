@@ -24,7 +24,9 @@ internal class KaBaseLifetimeTracker : KaLifetimeTracker {
     fun afterLeavingAnalysis(session: KaSession) {
         val stack = lifetimeOwnersStack.get()
         val last = stack.last()
-        check(last == session.token)
+        check(last == session.token) {
+            "The last token on the stack should be the same as the one from the outgoing session."
+        }
         lifetimeOwnersStack.set(stack.removeAt(stack.lastIndex))
     }
 
