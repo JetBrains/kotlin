@@ -49,6 +49,7 @@ import org.jetbrains.kotlin.fir.references.impl.FirPropertyFromParameterResolved
 import org.jetbrains.kotlin.fir.references.resolved
 import org.jetbrains.kotlin.fir.references.toResolvedEnumEntrySymbol
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedError
+import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.transformers.PackageResolutionResult
@@ -95,8 +96,6 @@ import org.jetbrains.kotlin.resolve.descriptorUtil.fqNameSafe
 import org.jetbrains.kotlin.resolve.descriptorUtil.isCompanionObject
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
-import org.jetbrains.kotlin.kapt.util.replaceAnonymousTypeWithSuperType
-import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.resolve.source.getPsi
 import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.types.KotlinType
@@ -1572,7 +1571,8 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
         return treeMaker.Select(typeExpression, treeMaker.name("class"))
     }
 
-    private fun convertFirType(type: ConeKotlinType): JCExpression? {
+    private fun convertFirType(originalType: ConeKotlinType): JCExpression? {
+        val type = originalType.fullyExpandedType(kaptContext.firSession!!)
         val fqName = when (type) {
             is ConeErrorType -> (type.diagnostic as? ConeUnresolvedError)?.qualifier
             is ConeLookupTagBasedType -> {
