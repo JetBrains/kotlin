@@ -2611,4 +2611,29 @@ class ControlFlowTransformTests(useFir: Boolean) : AbstractControlFlowTransformT
             }
         """
     )
+
+    @Test
+    fun exhaustiveWhen() = verifyGoldenComposeIrTransform(
+        source = """
+            import androidx.compose.runtime.*
+
+            @Composable
+            fun <T> Test(alpha: Alpha<T>): Float =
+                when (alpha) {
+                    is Alpha.A -> 0f
+                    is Alpha.B -> 1f
+                }
+        """,
+        extra = """
+            sealed interface Alpha<T> {
+                data class A<T>(
+                    val unused: Unit = Unit,
+                ) : Alpha<T>
+
+                data class B<T>(
+                    val unused: Unit = Unit,
+                ) : Alpha<T>
+            }
+        """
+    )
 }
