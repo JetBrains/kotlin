@@ -6,7 +6,6 @@
 package plugins
 
 import capitalize
-import org.gradle.api.GradleException
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.api.attributes.Usage
@@ -160,9 +159,6 @@ fun Project.configureDefaultPublishing(
                 name = KotlinBuildPublishingPlugin.REPOSITORY_NAME
 
                 val repo: String? = project.properties["kotlin.build.deploy-repo"]?.toString() ?: project.properties["deploy-repo"]?.toString()
-                if (repo?.contains("sonatype") == true) {
-                    throw GradleException("Do not publish to Sonatype with Gradle. Publish to Space/local maven repository and use a TeamCity deployment.")
-                }
 
                 val deployRepoUrl = (project.properties["kotlin.build.deploy-url"] ?: project.properties["deploy-url"])?.toString()?.takeIf { it.isNotBlank() }
 
