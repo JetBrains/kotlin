@@ -91,7 +91,7 @@ fun usage() {
     with(null) {
         test8()
     }
-    <!PLATFORM_CLASS_MAPPED_TO_KOTLIN!>with<!>(Object()) <!PLATFORM_CLASS_MAPPED_TO_KOTLIN!>{
+    <!PLATFORM_CLASS_MAPPED_TO_KOTLIN!>with<!>(<!PLATFORM_CLASS_MAPPED_TO_KOTLIN!>Object<!>()) <!PLATFORM_CLASS_MAPPED_TO_KOTLIN!>{
         test9()
     }<!>
     with(JavaClass<String>()){
