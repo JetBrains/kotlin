@@ -80,13 +80,10 @@ class K2JVMCompilerArgumentsConfigurator : CommonCompilerArgumentsConfigurator()
         // If a JVM default mode is enabled via `-jvm-default` or `-Xjvm-default`, also forcibly enable a few flags that fix incomplete
         // error reporting in some cases.
         // Note that this won't have effect if a JVM default mode is enabled by other means, specifically if:
-        // * language version is 1.9+, and `JvmDefaultEnableByDefault` is either enabled manually or automatically (if LV is 2.2+).
+        // * `JvmDefaultEnableByDefault` is either enabled manually or automatically (if LV is 2.2+).
         //   In this case, both flags will be enabled simply because their `sinceVersion` is <= 1.9.
-        // * language version is 1.8 or earlier, and `JvmDefaultEnableByDefault` is enabled manually. In this case, the flags will not be
-        //   enabled, but that is fine because manually enabling language features is an advanced use case without any guarantees.
         if (configureJvmDefaultMode(null)?.isEnabled == true) {
             result[LanguageFeature.ForbidSuperDelegationToAbstractFakeOverride] = LanguageFeature.State.ENABLED
-            result[LanguageFeature.AbstractClassMemberNotImplementedWithIntermediateAbstractClass] = LanguageFeature.State.ENABLED
         }
 
         return result

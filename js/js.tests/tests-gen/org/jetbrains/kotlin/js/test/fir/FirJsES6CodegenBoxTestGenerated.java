@@ -2182,27 +2182,9 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     }
 
     @Test
-    @TestMetadata("fakeOverrideFromInterfaceThroughIntermediateClass.kt")
-    public void testFakeOverrideFromInterfaceThroughIntermediateClass() {
-      runTest("compiler/testData/codegen/box/bridges/fakeOverrideFromInterfaceThroughIntermediateClass.kt");
-    }
-
-    @Test
-    @TestMetadata("fakeOverrideMultiFile.kt")
-    public void testFakeOverrideMultiFile() {
-      runTest("compiler/testData/codegen/box/bridges/fakeOverrideMultiFile.kt");
-    }
-
-    @Test
     @TestMetadata("fakeOverrideOfTraitImpl.kt")
     public void testFakeOverrideOfTraitImpl() {
       runTest("compiler/testData/codegen/box/bridges/fakeOverrideOfTraitImpl.kt");
-    }
-
-    @Test
-    @TestMetadata("fakeOverrideThroughGenericSuperclass.kt")
-    public void testFakeOverrideThroughGenericSuperclass() {
-      runTest("compiler/testData/codegen/box/bridges/fakeOverrideThroughGenericSuperclass.kt");
     }
 
     @Test
