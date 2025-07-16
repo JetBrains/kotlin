@@ -11,12 +11,6 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 
 description = "Kotlin Full Reflection Library"
 
-buildscript {
-    dependencies {
-        classpath("org.jetbrains.kotlin:kotlin-metadata-jvm:${project.bootstrapKotlinVersion}")
-    }
-}
-
 plugins {
     kotlin("jvm")
 }
