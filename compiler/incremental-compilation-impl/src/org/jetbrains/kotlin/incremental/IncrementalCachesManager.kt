@@ -48,6 +48,17 @@ abstract class IncrementalCachesManager<PlatformCache : AbstractIncrementalCache
     override fun close() {
         check(!isClosed) { "This cache storage has already been closed" }
 
+        val jvmCache = platformCache as? IncrementalJvmCache
+        jvmCache?.run {
+            complementaryFilesMap.flush()
+            println("complementary files:")
+            println(complementaryFilesMap.dump())
+
+            internalNameToSource.flush()
+            println("internal name to source:")
+            println(internalNameToSource.dump())
+        }
+
         val closer = Closer.create()
         caches.forEach {
             closer.register(it)
@@ -56,7 +67,6 @@ abstract class IncrementalCachesManager<PlatformCache : AbstractIncrementalCache
 
         isClosed = true
     }
-
 }
 
 open class IncrementalJvmCachesManager(

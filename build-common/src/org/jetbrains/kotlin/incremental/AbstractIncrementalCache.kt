@@ -100,7 +100,7 @@ abstract class AbstractIncrementalCache<ClassName>(
      * about missing parts.
      * TODO: provide a better solution (maintain an index of expect/actual declarations akin to IncrementalPackagePartProvider)
      */
-    private val complementaryFilesMap = registerMap(ComplementarySourceFilesMap(COMPLEMENTARY_FILES.storageFile, icContext))
+    val complementaryFilesMap = registerMap(ComplementarySourceFilesMap(COMPLEMENTARY_FILES.storageFile, icContext))
 
     /**
      * In lenient mode, we track all files of expect declarations for which we generate stubs. These files are always part of the dirty set.
