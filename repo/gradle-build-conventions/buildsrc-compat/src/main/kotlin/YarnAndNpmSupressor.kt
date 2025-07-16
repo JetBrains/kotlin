@@ -55,23 +55,27 @@ private fun tasksGraphString(taskGraph: TaskExecutionGraph, ident: String = "", 
 }
 
 val Project.checkYarnAndNPMSuppressed: Action<TaskExecutionGraph> get() {
-    return Action<TaskExecutionGraph> {
-        val disableNpmYarnCheck = providers.gradleProperty("kotlin.build.disable.npmyarn.suppress.check")
-            .orNull?.toBoolean() ?: false
+        return Action<TaskExecutionGraph> {
+            val disablePropertyName = "kotlin.build.disable.npmyarn.suppress.check"
+            val disableNpmYarnCheck = providers.gradleProperty(disablePropertyName)
+                .orNull?.toBoolean() ?: false
 
-        if (disableNpmYarnCheck) return@Action
+            if (disableNpmYarnCheck) return@Action
 
-        val executeTaskNames = allTasks.filter { it.enabled }.map { it.name }.toSet()
+            val executeTaskNames = allTasks.filter { it.enabled }.map { it.name }.toSet()
 
-        val npmYarnTasks = rootNpmRelatedTasks.filter { it in executeTaskNames }
-        val allowedTask = allowImplicitDependOnNpmForTasks.filter { it in executeTaskNames }
+            val npmYarnTasks = rootNpmRelatedTasks.filter { it in executeTaskNames }
+            val allowedTask = allowImplicitDependOnNpmForTasks.filter { it in executeTaskNames }
 
-        if (npmYarnTasks.isNotEmpty()) {
-            if (allowedTask.isEmpty()) {
-                error("$npmYarnTasks tasks shouldn't be present in the task graph: $npmYarnTasks " +
-                              "as $allowImplicitDependOnNpmForTasks tasks were not activated\n" +
-                              "Graph:\n${tasksGraphString(this)}")
+            if (npmYarnTasks.isNotEmpty()) {
+                if (allowedTask.isEmpty()) {
+                    error(
+                        "$npmYarnTasks tasks shouldn't be present in the task graph: $npmYarnTasks " +
+                                "as $allowImplicitDependOnNpmForTasks tasks were not activated\n" +
+                                "use '-P$disablePropertyName=true' to disable this check\n" +
+                                "Graph:\n${tasksGraphString(this)}"
+                    )
+                }
             }
         }
     }
-}
