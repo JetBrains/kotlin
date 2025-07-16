@@ -11,7 +11,7 @@ import com.intellij.openapi.application.ApplicationManager
 
 /**
  * Ensures that a [WriteActionStartedInAnalysisContextException] is thrown if a write action was started *inside* an
- * [analyze][org.jetbrains.kotlin.analysis.api.analyze] call.
+ * [analyze][org.jetbrains.kotlin.analysis.api.analyze] call (unless the first `analyze` was already called inside a write action).
  */
 internal class KaBaseWriteActionStartedChecker(parentDisposable: Disposable) {
     private val hasEncounteredIllegalWriteAction = ThreadLocal.withInitial { false }
@@ -25,7 +25,12 @@ internal class KaBaseWriteActionStartedChecker(parentDisposable: Disposable) {
          * write action was started, and throw the exception from `afterLeavingAnalysis` later.
          */
         val listener = object : ApplicationListener {
-            override fun writeActionFinished(action: Any) {
+            override fun beforeWriteActionStart(action: Any) {
+                // When the first `analyze` call is already inside a write action, it's legal to start another write action inside
+                // `analyze`. Note that `beforeWriteActionStart` is executed *before* the write action is entered, so `isWriteAccessAllowed`
+                // will only be true when there is an outer write action.
+                if (ApplicationManager.getApplication().isWriteAccessAllowed) return
+
                 if (currentAnalyzeCallDepth.get() > 0) {
                     hasEncounteredIllegalWriteAction.set(true)
                 }
