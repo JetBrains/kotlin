@@ -504,6 +504,9 @@ enum class LanguageFeature(
     PropertyParamAnnotationDefaultTargetMode(sinceVersion = null, "KT-73255"),
     AnnotationAllUseSiteTarget(sinceVersion = null, "KT-73256"),
     ImplicitJvmExposeBoxed(sinceVersion = null, forcesPreReleaseBinaries = true, issue = "KT-73466"),
+    NewDestructuringSyntax(sinceVersion = null, "KT-19627"),
+    DeprecateNameMismatchInShortDestructuringWithParentheses(sinceVersion = null, "KT-19627"),
+    EnableNameBasedDestructuringShortForm(sinceVersion = null, "KT-19627"),
 
     // K1 support only. We keep it, as we may want to support it also in K2
     UnitConversionsOnArbitraryExpressions(sinceVersion = null, NO_ISSUE_SPECIFIED),
