@@ -45,6 +45,7 @@ import org.jetbrains.kotlin.fir.resolve.transformers.unwrapAtoms
 import org.jetbrains.kotlin.fir.scopes.impl.isWrappedIntegerOperator
 import org.jetbrains.kotlin.fir.scopes.impl.isWrappedIntegerOperatorForUnsignedType
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirCodeFragmentSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.*
@@ -2059,7 +2060,11 @@ private fun FirFunctionCall.setIndexedAccessAugmentedAssignSource(fakeSourceElem
 @OptIn(PrivateForInline::class)
 fun BodyResolveContext.addReceiversFromExtensions(functionCall: FirFunctionCall, sessionHolder: SessionAndScopeSessionHolder) {
     val extensions = sessionHolder.session.extensionService.expressionResolutionExtensions.takeIf { it.isNotEmpty() } ?: return
-    val boundSymbol = this.containerIfAny?.symbol as? FirCallableSymbol<*> ?: return
+    val boundSymbol = when (val symbol = this.containerIfAny?.symbol) {
+        is FirCallableSymbol<*> -> symbol
+        is FirCodeFragmentSymbol -> symbol
+        else -> return
+    }
 
     for (extension in extensions) {
         for (receiverValue in extension.addNewImplicitReceivers(functionCall, sessionHolder, boundSymbol)) {

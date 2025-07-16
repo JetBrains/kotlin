@@ -12,8 +12,8 @@ import org.jetbrains.kotlin.fir.declarations.FirDeclarationDataRegistry
 import org.jetbrains.kotlin.fir.declarations.FirReceiverParameter
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.resolve.calls.ImplicitExtensionReceiverValue
-import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirReceiverParameterSymbol
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import kotlin.reflect.KClass
 
 abstract class FirExpressionResolutionExtension(session: FirSession) : FirExtension(session) {
@@ -29,7 +29,7 @@ abstract class FirExpressionResolutionExtension(session: FirSession) : FirExtens
     abstract fun addNewImplicitReceivers(
         functionCall: FirFunctionCall,
         sessionHolder: SessionAndScopeSessionHolder,
-        containingCallableSymbol: FirCallableSymbol<*>,
+        containingCallableSymbol: FirBasedSymbol<*>,
     ): List<ImplicitExtensionReceiverValue>
 
     fun interface Factory : FirExtension.Factory<FirExpressionResolutionExtension>
