@@ -111,7 +111,21 @@ abstract class TypeApproximatorConfiguration {
         override fun shouldApproximateTypeVariableBasedType(marker: TypeVariableTypeConstructorMarker, isK2: Boolean): Boolean = false
     }
 
-    object IncorporationConfiguration : AbstractCapturedTypesAndILTApproximation(CaptureStatus.FOR_INCORPORATION)
+    object IncorporationConfiguration : AbstractCapturedTypesAndILTApproximation(CaptureStatus.FOR_INCORPORATION) {
+        override fun shouldApproximateCapturedType(
+            ctx: TypeSystemInferenceExtensionContext,
+            type: CapturedTypeMarker,
+        ): Boolean {
+            if (super.shouldApproximateCapturedType(ctx, type)) return true
+
+            if (!ctx.isK2) return false
+
+            return with(ctx) {
+                type.contains { nested -> nested is CapturedTypeMarker && super.shouldApproximateCapturedType(ctx, nested) }
+            }
+        }
+    }
+
     object SubtypeCapturedTypesApproximation : AbstractCapturedTypesAndILTApproximation(CaptureStatus.FOR_SUBTYPING)
 
     class TopLevelIntegerLiteralTypeApproximationWithExpectedType(

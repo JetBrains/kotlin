@@ -529,7 +529,12 @@ abstract class AbstractTypeApproximator(
              * TODO remove workaround when we can create captured types with external identity KT-65228.
              * todo handle flexible types
              */
-            if (approximatedSuperType == null && approximatedSubType == null) {
+            if (capturedTypeApproximationReworked || approximatedSuperType == null && approximatedSubType == null) {
+                // Avoid avoiding approximation bounds of a captured type while one shouldn't be approximated itself doesn't look
+                // universally correct. Though by construction of different captured kinds, currently it's only relevant
+                // to a situation when some FOR_INCORPORATION is put into another captured type with a kind FROM_EXPRESSION and that
+                // case is handled via IncorporationConfiguration.
+                // TODO: consider replacing content of the captured types together with KT-65228
                 return null
             }
         }
