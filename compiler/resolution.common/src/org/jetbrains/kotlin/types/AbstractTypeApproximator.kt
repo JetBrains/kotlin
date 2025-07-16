@@ -625,17 +625,9 @@ abstract class AbstractTypeApproximator(
 
             val capturedType = argumentType.lowerBoundIfFlexible().asCapturedTypeUnwrappingDnn()
 
-            val capturedStarProjectionOrNull =
-                capturedType?.typeConstructorProjection()?.takeIf { it.isStarProjection() }
-
-            if (capturedStarProjectionOrNull != null &&
-                (effectiveVariance == TypeVariance.OUT || effectiveVariance == TypeVariance.INV) &&
-                toSuper &&
-                capturedType.typeParameter() == parameter &&
-                (!isK2 || conf.shouldApproximateCapturedType(ctx, capturedType))
-            ) {
-                newArguments[index] = capturedStarProjectionOrNull
-                continue@loop
+            if (shouldApproximateStarBasedCapturedTypeArgumentAsItsProjection(capturedType, parameter, effectiveVariance, toSuper)) {
+                newArguments[index] = capturedType?.typeConstructorProjection()
+                continue
             }
 
             when (effectiveVariance) {
@@ -775,6 +767,21 @@ abstract class AbstractTypeApproximator(
         }
 
         return shouldReplaceWithStar
+    }
+
+    context(conf: TypeApproximatorConfiguration)
+    private fun shouldApproximateStarBasedCapturedTypeArgumentAsItsProjection(
+        capturedType: CapturedTypeMarker?,
+        parameter: TypeParameterMarker,
+        effectiveVariance: TypeVariance?,
+        toSuper: Boolean,
+    ): Boolean {
+        if (capturedType?.typeConstructorProjection()?.isStarProjection() != true) return false
+        if (capturedType.typeParameter() != parameter) return false
+        if (isK2 && !conf.shouldApproximateCapturedType(ctx, capturedType)) return false
+        if (!toSuper) return false
+
+        return effectiveVariance == TypeVariance.OUT || effectiveVariance == TypeVariance.INV
     }
 
     context(conf: TypeApproximatorConfiguration)
