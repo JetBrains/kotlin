@@ -23295,7 +23295,7 @@ public inline fun CharArray.sumOf(selector: (Char) -> Double): Double {
 @kotlin.jvm.JvmName("sumOfInt")
 @kotlin.internal.InlineOnly
 public inline fun <T> Array<out T>.sumOf(selector: (T) -> Int): Int {
-    var sum: Int = 0.toInt()
+    var sum: Int = 0
     for (element in this) {
         sum += selector(element)
     }
@@ -23309,7 +23309,7 @@ public inline fun <T> Array<out T>.sumOf(selector: (T) -> Int): Int {
 @kotlin.jvm.JvmName("sumOfInt")
 @kotlin.internal.InlineOnly
 public inline fun ByteArray.sumOf(selector: (Byte) -> Int): Int {
-    var sum: Int = 0.toInt()
+    var sum: Int = 0
     for (element in this) {
         sum += selector(element)
     }
@@ -23323,7 +23323,7 @@ public inline fun ByteArray.sumOf(selector: (Byte) -> Int): Int {
 @kotlin.jvm.JvmName("sumOfInt")
 @kotlin.internal.InlineOnly
 public inline fun ShortArray.sumOf(selector: (Short) -> Int): Int {
-    var sum: Int = 0.toInt()
+    var sum: Int = 0
     for (element in this) {
         sum += selector(element)
     }
@@ -23337,7 +23337,7 @@ public inline fun ShortArray.sumOf(selector: (Short) -> Int): Int {
 @kotlin.jvm.JvmName("sumOfInt")
 @kotlin.internal.InlineOnly
 public inline fun IntArray.sumOf(selector: (Int) -> Int): Int {
-    var sum: Int = 0.toInt()
+    var sum: Int = 0
     for (element in this) {
         sum += selector(element)
     }
@@ -23351,7 +23351,7 @@ public inline fun IntArray.sumOf(selector: (Int) -> Int): Int {
 @kotlin.jvm.JvmName("sumOfInt")
 @kotlin.internal.InlineOnly
 public inline fun LongArray.sumOf(selector: (Long) -> Int): Int {
-    var sum: Int = 0.toInt()
+    var sum: Int = 0
     for (element in this) {
         sum += selector(element)
     }
@@ -23365,7 +23365,7 @@ public inline fun LongArray.sumOf(selector: (Long) -> Int): Int {
 @kotlin.jvm.JvmName("sumOfInt")
 @kotlin.internal.InlineOnly
 public inline fun FloatArray.sumOf(selector: (Float) -> Int): Int {
-    var sum: Int = 0.toInt()
+    var sum: Int = 0
     for (element in this) {
         sum += selector(element)
     }
@@ -23379,7 +23379,7 @@ public inline fun FloatArray.sumOf(selector: (Float) -> Int): Int {
 @kotlin.jvm.JvmName("sumOfInt")
 @kotlin.internal.InlineOnly
 public inline fun DoubleArray.sumOf(selector: (Double) -> Int): Int {
-    var sum: Int = 0.toInt()
+    var sum: Int = 0
     for (element in this) {
         sum += selector(element)
     }
@@ -23393,7 +23393,7 @@ public inline fun DoubleArray.sumOf(selector: (Double) -> Int): Int {
 @kotlin.jvm.JvmName("sumOfInt")
 @kotlin.internal.InlineOnly
 public inline fun BooleanArray.sumOf(selector: (Boolean) -> Int): Int {
-    var sum: Int = 0.toInt()
+    var sum: Int = 0
     for (element in this) {
         sum += selector(element)
     }
@@ -23407,7 +23407,7 @@ public inline fun BooleanArray.sumOf(selector: (Boolean) -> Int): Int {
 @kotlin.jvm.JvmName("sumOfInt")
 @kotlin.internal.InlineOnly
 public inline fun CharArray.sumOf(selector: (Char) -> Int): Int {
-    var sum: Int = 0.toInt()
+    var sum: Int = 0
     for (element in this) {
         sum += selector(element)
     }

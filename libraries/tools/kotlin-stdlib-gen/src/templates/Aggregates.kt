@@ -284,7 +284,7 @@ object Aggregates : TemplateGroupBase() {
             returns(selectorType)
             body {
                 """
-                var sum: $selectorType = 0.to$typeShortName()
+                var sum: $selectorType = 0${if (typeShortName == "Int") "" else ".to$typeShortName()"}
                 for (element in this) {
                     sum += selector(element)
                 }

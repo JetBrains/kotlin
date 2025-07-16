@@ -144,11 +144,11 @@ object RangeOps : TemplateGroupBase() {
                 // <= instead of == for JS
                 """
                 if (to <= $minValue) return $progressionType.EMPTY
-                return $fromExpr .. (to - 1$u).to$elementType()
+                return $fromExpr..to - 1$u
                 """
             }
         } else {
-            body { "return $fromExpr .. (to.to$elementType() - 1$u).to$elementType()" }
+            body { "return $fromExpr..to.to$elementType() - 1$u" }
         }
     }
 

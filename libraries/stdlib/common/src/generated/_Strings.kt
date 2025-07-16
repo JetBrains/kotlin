@@ -2229,7 +2229,7 @@ public inline fun CharSequence.sumOf(selector: (Char) -> Double): Double {
 @kotlin.jvm.JvmName("sumOfInt")
 @kotlin.internal.InlineOnly
 public inline fun CharSequence.sumOf(selector: (Char) -> Int): Int {
-    var sum: Int = 0.toInt()
+    var sum: Int = 0
     for (element in this) {
         sum += selector(element)
     }

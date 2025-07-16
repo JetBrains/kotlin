@@ -63,7 +63,7 @@ internal constructor(
     step: Int
 ) : Iterable<UInt> {
     init {
-        if (step == 0.toInt()) throw kotlin.IllegalArgumentException("Step must be non-zero.")
+        if (step == 0) throw kotlin.IllegalArgumentException("Step must be non-zero.")
         if (step == Int.MIN_VALUE) throw kotlin.IllegalArgumentException("Step must be greater than Int.MIN_VALUE to avoid overflow on negation.")
     }
 
@@ -97,7 +97,7 @@ internal constructor(
                 first == other.first && last == other.last && step == other.step)
 
     override fun hashCode(): Int =
-        if (isEmpty()) -1 else (31 * (31 * first.toInt() + last.toInt()) + step.toInt())
+        if (isEmpty()) -1 else (31 * (31 * first.toInt() + last.toInt()) + step)
 
     override fun toString(): String = if (step > 0) "$first..$last step $step" else "$first downTo $last step ${-step}"
 

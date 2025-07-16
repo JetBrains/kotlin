@@ -128,7 +128,7 @@ internal class ScopedMemoryAllocator(
 
     @PublishedApi
     internal fun createChild(): ScopedMemoryAllocator {
-        val child = ScopedMemoryAllocator(availableAddress.toInt(), parent = this)
+        val child = ScopedMemoryAllocator(availableAddress, parent = this)
         suspended = true
         return child
     }

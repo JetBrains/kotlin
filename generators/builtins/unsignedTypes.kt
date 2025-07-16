@@ -551,8 +551,14 @@ class UnsignedRangeGenerator(val type: UnsignedType, out: PrintWriter) : BuiltIn
     override fun getPackage(): String = "kotlin.ranges"
 
     override fun generateBody() {
-        fun hashCodeConversion(name: String, isSigned: Boolean = false) =
-            if (type == UnsignedType.ULONG) "($name xor ($name ${if (isSigned) "u" else ""}shr 32))" else name
+        fun hashCodeConversion(name: String): String {
+            val isStep = name == "step"
+            return when {
+                type == UnsignedType.ULONG -> "($name xor ($name ${if (isStep) "u" else ""}shr 32)).toInt()"
+                !isStep || stepType != "Int" -> "$name.toInt()"
+                else -> name
+            }
+        }
 
         out.println(
             """
@@ -589,7 +595,7 @@ public class ${elementType}Range(start: $elementType, endInclusive: $elementType
                 first == other.first && last == other.last)
 
     override fun hashCode(): Int =
-        if (isEmpty()) -1 else (31 * ${hashCodeConversion("first")}.toInt() + ${hashCodeConversion("last")}.toInt())
+        if (isEmpty()) -1 else (31 * ${hashCodeConversion("first")} + ${hashCodeConversion("last")})
 
     override fun toString(): String = "${'$'}first..${'$'}last"
 
@@ -610,7 +616,7 @@ internal constructor(
     step: $stepType
 ) : Iterable<$elementType> {
     init {
-        if (step == 0.to$stepType()) throw kotlin.IllegalArgumentException("Step must be non-zero.")
+        if (step == 0${if (stepType == "Int") "" else ".to${stepType}()"}) throw kotlin.IllegalArgumentException("Step must be non-zero.")
         if (step == $stepMinValue) throw kotlin.IllegalArgumentException("Step must be greater than $stepMinValue to avoid overflow on negation.")
     }
 
@@ -644,7 +650,7 @@ internal constructor(
                 first == other.first && last == other.last && step == other.step)
 
     override fun hashCode(): Int =
-        if (isEmpty()) -1 else (31 * (31 * ${hashCodeConversion("first")}.toInt() + ${hashCodeConversion("last")}.toInt()) + ${hashCodeConversion("step", isSigned = true)}.toInt())
+        if (isEmpty()) -1 else (31 * (31 * ${hashCodeConversion("first")} + ${hashCodeConversion("last")}) + ${hashCodeConversion("step")})
 
     override fun toString(): String = if (step > 0) "${'$'}first..${'$'}last step ${'$'}step" else "${'$'}first downTo ${'$'}last step ${'$'}{-step}"
 

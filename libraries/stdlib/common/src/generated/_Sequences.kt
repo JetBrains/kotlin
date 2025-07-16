@@ -2614,7 +2614,7 @@ public inline fun <T> Sequence<T>.sumOf(selector: (T) -> Double): Double {
 @kotlin.jvm.JvmName("sumOfInt")
 @kotlin.internal.InlineOnly
 public inline fun <T> Sequence<T>.sumOf(selector: (T) -> Int): Int {
-    var sum: Int = 0.toInt()
+    var sum: Int = 0
     for (element in this) {
         sum += selector(element)
     }

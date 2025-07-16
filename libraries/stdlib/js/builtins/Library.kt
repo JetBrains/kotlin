@@ -21,7 +21,7 @@ public actual fun Any?.toString(): String = this?.toString() ?: "null"
  * or the [other] object are null, they are represented as the string "null".
  */
 public actual operator fun String?.plus(other: Any?): String =
-    (this?.toString() ?: "null").plus(other?.toString() ?: "null")
+    (this ?: "null").plus(other?.toString() ?: "null")
 
 /**
  * Returns an array of objects of the given type with the given [size], initialized with null values.
