@@ -140,9 +140,9 @@ public class K1WasmCodegenWasmJsInteropTestGenerated extends AbstractK1WasmCodeg
   }
 
   @Test
-  @TestMetadata("jsDirectQualifierReference.kt")
-  public void testJsDirectQualifierReference() {
-    runTest("compiler/testData/codegen/boxWasmJsInterop/jsDirectQualifierReference.kt");
+  @TestMetadata("jsDelayedRuntimeQualifier.kt")
+  public void testJsDelayedRuntimeQualifier() {
+    runTest("compiler/testData/codegen/boxWasmJsInterop/jsDelayedRuntimeQualifier.kt");
   }
 
   @Test

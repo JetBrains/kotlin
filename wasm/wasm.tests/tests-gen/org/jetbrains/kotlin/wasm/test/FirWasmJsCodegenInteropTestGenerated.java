@@ -140,9 +140,9 @@ public class FirWasmJsCodegenInteropTestGenerated extends AbstractFirWasmJsCodeg
   }
 
   @Test
-  @TestMetadata("jsDirectQualifierReference.kt")
-  public void testJsDirectQualifierReference() {
-    runTest("compiler/testData/codegen/boxWasmJsInterop/jsDirectQualifierReference.kt");
+  @TestMetadata("jsDelayedRuntimeQualifier.kt")
+  public void testJsDelayedRuntimeQualifier() {
+    runTest("compiler/testData/codegen/boxWasmJsInterop/jsDelayedRuntimeQualifier.kt");
   }
 
   @Test
