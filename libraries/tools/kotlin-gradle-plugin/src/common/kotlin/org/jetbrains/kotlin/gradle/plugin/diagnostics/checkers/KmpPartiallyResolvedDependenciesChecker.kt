@@ -69,6 +69,7 @@ internal object KmpPartiallyResolvedDependenciesChecker : KotlinGradleProjectChe
          * cross-project configurations in coroutines and serialization from mutating finalized by resolution dependencies and other issues
          * like KT-79315.
          */
+        KotlinPluginLifecycle.Stage.ReadyForExecution.await()
         val projectsEvaluationPhasePassed = AtomicBoolean(false)
         project.gradle.projectsEvaluated {
             projectsEvaluationPhasePassed.set(true)
@@ -79,14 +80,16 @@ internal object KmpPartiallyResolvedDependenciesChecker : KotlinGradleProjectChe
                 if (!projectsEvaluationPhasePassed.get()) {
                     return@configure
                 }
-                val metadataTransformations = project.future {
-                    project.multiplatformExtension.metadataTarget.publishedMetadataCompilations().map { compilation ->
-                        GranularMetadataTransformation.Params(
-                            project = project,
-                            kotlinSourceSet = compilation.defaultSourceSet,
-                        )
-                    }
-                }.getOrThrow()
+                val metadataTransformations = runCatching {
+                    project.future {
+                        project.multiplatformExtension.metadataTarget.publishedMetadataCompilations().map { compilation ->
+                            GranularMetadataTransformation.Params(
+                                project = project,
+                                kotlinSourceSet = compilation.defaultSourceSet,
+                            )
+                        }
+                    }.getOrThrow()
+                }.getOrNull() ?: return@configure
                 val validate = {
                     metadataTransformations.forEach { transformationParameters ->
                         project.validateNoTargetPlatformsResolvedPartially(
