@@ -72,21 +72,7 @@ KaFunctionType:
           isMarkedNullable: false
           isNullable: false
           hasFlexibleNullability: false
-        KaUsualClassType:
-          abbreviation: null
-          annotations: []
-          classId: kotlin/Nothing
-          qualifiers: [
-            KaResolvedClassTypeQualifier:
-              name: Nothing
-              symbol: KaNamedClassSymbol(kotlin/Nothing)
-              typeArguments: []
-          ]
-          symbol: KaNamedClassSymbol(kotlin/Nothing)
-          typeArguments: []
-          isMarkedNullable: false
-          isNullable: false
-          hasFlexibleNullability: false
+        *
         KaUsualClassType:
           abbreviation: null
           annotations: []
@@ -141,21 +127,7 @@ KaFunctionType:
       isMarkedNullable: false
       isNullable: false
       hasFlexibleNullability: false
-    KaUsualClassType:
-      abbreviation: null
-      annotations: []
-      classId: kotlin/Nothing
-      qualifiers: [
-        KaResolvedClassTypeQualifier:
-          name: Nothing
-          symbol: KaNamedClassSymbol(kotlin/Nothing)
-          typeArguments: []
-      ]
-      symbol: KaNamedClassSymbol(kotlin/Nothing)
-      typeArguments: []
-      isMarkedNullable: false
-      isNullable: false
-      hasFlexibleNullability: false
+    *
     KaUsualClassType:
       abbreviation: null
       annotations: []
@@ -177,4 +149,4 @@ KaFunctionType:
   hasFlexibleNullability: false
 
 Rendered type:
-kotlin.reflect.KFunction2<A<*>, kotlin.Nothing, kotlin.Unit>
+kotlin.reflect.KFunction2<A<*>, *, kotlin.Unit>

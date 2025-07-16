@@ -19,7 +19,7 @@ interface I3<G> where G : I3<G> {
 
 fun test(a: I2<*>, b: I3<*>) {
     val x = a.foo()
-    <!DEBUG_INFO_EXPRESSION_TYPE("I2<kotlin.Nothing>")!>x<!>
+    <!DEBUG_INFO_EXPRESSION_TYPE("I2<*>")!>x<!>
     a.bar()
     val y = b.foo()
     <!DEBUG_INFO_EXPRESSION_TYPE("I3<*>")!>y<!>

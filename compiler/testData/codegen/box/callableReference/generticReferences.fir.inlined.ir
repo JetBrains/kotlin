@@ -398,7 +398,7 @@ FILE fqName:<root> fileName:/generticReferences.kt
                   TYPE_ARG T: kotlin.Int
                   ARG <this>: GET_VAR 'p0: <root>.A<kotlin.Int> declared in <root>.box.foo' type=<root>.A<kotlin.Int> origin=null
                   ARG x: GET_VAR 'p1: @[ParameterName(name = "x")] kotlin.Int declared in <root>.box.foo' type=@[ParameterName(name = "x")] kotlin.Int origin=null
-      VAR name:r3 type:@[ExtensionFunctionType] kotlin.reflect.KFunction2<<root>.A<*>, kotlin.Nothing, kotlin.Any?> [val]
+      VAR name:r3 type:@[ExtensionFunctionType] kotlin.reflect.KFunction2<<root>.A<*>, *, kotlin.Any?> [val]
         RICH_FUNCTION_REFERENCE type=@[ExtensionFunctionType] kotlin.reflect.KFunction2<<root>.A<*>, kotlin.Any?, kotlin.Any?> origin=null reflectionTarget='public final fun foo <T> (<this>: <root>.A<T of <root>.foo>, x: T of <root>.foo): T of <root>.foo declared in <root>'
           overriddenFunctionSymbol: public abstract fun invoke (p1: P1 of kotlin.reflect.KFunction2, p2: P2 of kotlin.reflect.KFunction2): R of kotlin.reflect.KFunction2 declared in kotlin.reflect.KFunction2
           invoke: FUN LOCAL_FUNCTION_FOR_LAMBDA name:foo visibility:local modality:FINAL returnType:kotlin.Any?
@@ -422,7 +422,7 @@ FILE fqName:<root> fileName:/generticReferences.kt
                 CALL 'public final fun bar (x: T of <root>.A): T of <root>.A declared in <root>.A' type=kotlin.Int origin=null
                   ARG <this>: GET_VAR 'p0: <root>.A<kotlin.Int> declared in <root>.box.bar' type=<root>.A<kotlin.Int> origin=null
                   ARG x: GET_VAR 'p1: @[ParameterName(name = "x")] kotlin.Int declared in <root>.box.bar' type=@[ParameterName(name = "x")] kotlin.Int origin=null
-      VAR name:r5 type:kotlin.reflect.KFunction2<<root>.A<*>, kotlin.Nothing, kotlin.Any?> [val]
+      VAR name:r5 type:kotlin.reflect.KFunction2<<root>.A<*>, *, kotlin.Any?> [val]
         RICH_FUNCTION_REFERENCE type=kotlin.reflect.KFunction2<<root>.A<*>, kotlin.Any?, kotlin.Any?> origin=null reflectionTarget='public final fun bar (x: T of <root>.A): T of <root>.A declared in <root>.A'
           overriddenFunctionSymbol: public abstract fun invoke (p1: P1 of kotlin.reflect.KFunction2, p2: P2 of kotlin.reflect.KFunction2): R of kotlin.reflect.KFunction2 declared in kotlin.reflect.KFunction2
           invoke: FUN LOCAL_FUNCTION_FOR_LAMBDA name:bar visibility:local modality:FINAL returnType:kotlin.Any?
@@ -455,7 +455,7 @@ FILE fqName:<root> fileName:/generticReferences.kt
                   TYPE_ARG T: kotlin.String
                   ARG <this>: GET_VAR 'p0: <root>.A2<kotlin.String> declared in <root>.box.foo2' type=<root>.A2<kotlin.String> origin=null
                   ARG x: GET_VAR 'p1: @[ParameterName(name = "x")] kotlin.String declared in <root>.box.foo2' type=@[ParameterName(name = "x")] kotlin.String origin=null
-      VAR name:s3 type:@[ExtensionFunctionType] kotlin.reflect.KFunction2<<root>.A2<*>, kotlin.Nothing, kotlin.CharSequence> [val]
+      VAR name:s3 type:@[ExtensionFunctionType] kotlin.reflect.KFunction2<<root>.A2<*>, *, kotlin.CharSequence> [val]
         RICH_FUNCTION_REFERENCE type=@[ExtensionFunctionType] kotlin.reflect.KFunction2<<root>.A2<*>, kotlin.CharSequence, kotlin.CharSequence> origin=null reflectionTarget='public final fun foo2 <T> (<this>: <root>.A2<T of <root>.foo2>, x: T of <root>.foo2): T of <root>.foo2 declared in <root>'
           overriddenFunctionSymbol: public abstract fun invoke (p1: P1 of kotlin.reflect.KFunction2, p2: P2 of kotlin.reflect.KFunction2): R of kotlin.reflect.KFunction2 declared in kotlin.reflect.KFunction2
           invoke: FUN LOCAL_FUNCTION_FOR_LAMBDA name:foo2 visibility:local modality:FINAL returnType:kotlin.CharSequence
@@ -479,7 +479,7 @@ FILE fqName:<root> fileName:/generticReferences.kt
                 CALL 'public final fun bar2 (x: T of <root>.A2): T of <root>.A2 declared in <root>.A2' type=kotlin.String origin=null
                   ARG <this>: GET_VAR 'p0: <root>.A2<kotlin.String> declared in <root>.box.bar2' type=<root>.A2<kotlin.String> origin=null
                   ARG x: GET_VAR 'p1: @[ParameterName(name = "x")] kotlin.String declared in <root>.box.bar2' type=@[ParameterName(name = "x")] kotlin.String origin=null
-      VAR name:s5 type:kotlin.reflect.KFunction2<<root>.A2<*>, kotlin.Nothing, kotlin.CharSequence> [val]
+      VAR name:s5 type:kotlin.reflect.KFunction2<<root>.A2<*>, *, kotlin.CharSequence> [val]
         RICH_FUNCTION_REFERENCE type=kotlin.reflect.KFunction2<<root>.A2<*>, kotlin.CharSequence, kotlin.CharSequence> origin=null reflectionTarget='public final fun bar2 (x: T of <root>.A2): T of <root>.A2 declared in <root>.A2'
           overriddenFunctionSymbol: public abstract fun invoke (p1: P1 of kotlin.reflect.KFunction2, p2: P2 of kotlin.reflect.KFunction2): R of kotlin.reflect.KFunction2 declared in kotlin.reflect.KFunction2
           invoke: FUN LOCAL_FUNCTION_FOR_LAMBDA name:bar2 visibility:local modality:FINAL returnType:kotlin.CharSequence
@@ -512,7 +512,7 @@ FILE fqName:<root> fileName:/generticReferences.kt
                   TYPE_ARG T: kotlin.String
                   ARG <this>: GET_VAR 'p0: <root>.A3<kotlin.String> declared in <root>.box.foo3' type=<root>.A3<kotlin.String> origin=null
                   ARG x: GET_VAR 'p1: @[ParameterName(name = "x")] kotlin.String declared in <root>.box.foo3' type=@[ParameterName(name = "x")] kotlin.String origin=null
-      VAR name:t3 type:@[ExtensionFunctionType] kotlin.reflect.KFunction2<<root>.A3<*>, kotlin.Nothing, kotlin.Comparable<*>> [val]
+      VAR name:t3 type:@[ExtensionFunctionType] kotlin.reflect.KFunction2<<root>.A3<*>, *, kotlin.Comparable<*>> [val]
         RICH_FUNCTION_REFERENCE type=@[ExtensionFunctionType] kotlin.reflect.KFunction2<<root>.A3<*>, kotlin.Comparable<*>, kotlin.Comparable<*>> origin=null reflectionTarget='public final fun foo3 <T> (<this>: <root>.A3<T of <root>.foo3>, x: T of <root>.foo3): T of <root>.foo3 declared in <root>'
           overriddenFunctionSymbol: public abstract fun invoke (p1: P1 of kotlin.reflect.KFunction2, p2: P2 of kotlin.reflect.KFunction2): R of kotlin.reflect.KFunction2 declared in kotlin.reflect.KFunction2
           invoke: FUN LOCAL_FUNCTION_FOR_LAMBDA name:foo3 visibility:local modality:FINAL returnType:kotlin.Comparable<*>
@@ -536,7 +536,7 @@ FILE fqName:<root> fileName:/generticReferences.kt
                 CALL 'public final fun bar3 (x: T of <root>.A3): T of <root>.A3 declared in <root>.A3' type=kotlin.String origin=null
                   ARG <this>: GET_VAR 'p0: <root>.A3<kotlin.String> declared in <root>.box.bar3' type=<root>.A3<kotlin.String> origin=null
                   ARG x: GET_VAR 'p1: @[ParameterName(name = "x")] kotlin.String declared in <root>.box.bar3' type=@[ParameterName(name = "x")] kotlin.String origin=null
-      VAR name:t5 type:kotlin.reflect.KFunction2<<root>.A3<*>, kotlin.Nothing, kotlin.Comparable<*>> [val]
+      VAR name:t5 type:kotlin.reflect.KFunction2<<root>.A3<*>, *, kotlin.Comparable<*>> [val]
         RICH_FUNCTION_REFERENCE type=kotlin.reflect.KFunction2<<root>.A3<*>, kotlin.Comparable<*>, kotlin.Comparable<*>> origin=null reflectionTarget='public final fun bar3 (x: T of <root>.A3): T of <root>.A3 declared in <root>.A3'
           overriddenFunctionSymbol: public abstract fun invoke (p1: P1 of kotlin.reflect.KFunction2, p2: P2 of kotlin.reflect.KFunction2): R of kotlin.reflect.KFunction2 declared in kotlin.reflect.KFunction2
           invoke: FUN LOCAL_FUNCTION_FOR_LAMBDA name:bar3 visibility:local modality:FINAL returnType:kotlin.Comparable<*>
