@@ -649,5 +649,18 @@ public interface CommonCompilerArguments : CommonToolArguments {
     @ExperimentalCompilerArgument
     public val X_ALLOW_HOLDSIN_CONTRACT: CommonCompilerArgument<Boolean> =
         CommonCompilerArgument("X_ALLOW_HOLDSIN_CONTRACT")
+
+    /**
+     * Enables the following destructuring features:
+     * -Xname-based-destructuring=only-syntax:   Enables syntax for positional destructuring with square brackets and the full form of name-based destructuring with parentheses;
+     * -Xname-based-destructuring=name-mismatch: Reports warnings when short form positional destructuring of data classes uses names that don't match the property names;
+     * -Xname-based-destructuring=complete:      Enables short-form name-based destructuring with parentheses;
+     *
+     * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     */
+    @JvmField
+    @ExperimentalCompilerArgument
+    public val X_NAME_BASED_DESTRUCTURING: CommonCompilerArgument<String?> =
+        CommonCompilerArgument("X_NAME_BASED_DESTRUCTURING")
   }
 }

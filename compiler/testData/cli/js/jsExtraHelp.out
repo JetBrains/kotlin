@@ -191,6 +191,11 @@ where advanced options include:
   -Xallow-condition-implies-returns-contracts
                              Allow contracts that specify a limited conditional returns postcondition.
   -Xallow-holdsin-contract   Allow contracts that specify a condition that holds true inside a lambda argument.
+  -Xname-based-destructuring=only-syntax|name-mismatch|complete
+                             Enables the following destructuring features:
+                             -Xname-based-destructuring=only-syntax:   Enables syntax for positional destructuring with square brackets and the full form of name-based destructuring with parentheses;
+                             -Xname-based-destructuring=name-mismatch: Reports warnings when short form positional destructuring of data classes uses names that don't match the property names;
+                             -Xname-based-destructuring=complete:      Enables short-form name-based destructuring with parentheses;
 
 Advanced options are non-standard and may be changed or removed without any notice.
 OK

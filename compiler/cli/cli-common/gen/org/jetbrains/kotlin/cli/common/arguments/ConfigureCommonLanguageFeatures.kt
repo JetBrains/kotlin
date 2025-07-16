@@ -103,4 +103,17 @@ internal fun MutableMap<LanguageFeature, LanguageFeature.State>.configureCommonL
     if (arguments.allowHoldsinContract) {
         put(LanguageFeature.HoldsInContracts, LanguageFeature.State.ENABLED)
     }
+
+    if (arguments.nameBasedDestructuring == "only-syntax") {
+        put(LanguageFeature.NameBasedDestructuring, LanguageFeature.State.ENABLED)
+    }
+    if (arguments.nameBasedDestructuring == "name-mismatch") {
+        put(LanguageFeature.NameBasedDestructuring, LanguageFeature.State.ENABLED)
+        put(LanguageFeature.DeprecateNameMismatchInShortDestructuringWithParentheses, LanguageFeature.State.ENABLED)
+    }
+    if (arguments.nameBasedDestructuring == "complete") {
+        put(LanguageFeature.NameBasedDestructuring, LanguageFeature.State.ENABLED)
+        put(LanguageFeature.DeprecateNameMismatchInShortDestructuringWithParentheses, LanguageFeature.State.ENABLED)
+        put(LanguageFeature.EnableNameBasedDestructuringShortForm, LanguageFeature.State.ENABLED)
+    }
 }

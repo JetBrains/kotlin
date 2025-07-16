@@ -39,6 +39,7 @@ import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments.Com
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments.Companion.X_METADATA_KLIB
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments.Companion.X_METADATA_VERSION
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments.Companion.X_MULTI_DOLLAR_INTERPOLATION
+import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments.Companion.X_NAME_BASED_DESTRUCTURING
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments.Companion.X_NESTED_TYPE_ALIASES
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments.Companion.X_NEW_INFERENCE
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments.Companion.X_NON_LOCAL_BREAK_CONTINUE
@@ -150,6 +151,7 @@ public open class CommonCompilerArgumentsImpl : CommonToolArgumentsImpl(),
     if ("X_ALLOW_CONTRACTS_ON_MORE_FUNCTIONS" in optionsMap) { arguments.allowContractsOnMoreFunctions = get(X_ALLOW_CONTRACTS_ON_MORE_FUNCTIONS) }
     if ("X_ALLOW_CONDITION_IMPLIES_RETURNS_CONTRACTS" in optionsMap) { arguments.allowConditionImpliesReturnsContracts = get(X_ALLOW_CONDITION_IMPLIES_RETURNS_CONTRACTS) }
     if ("X_ALLOW_HOLDSIN_CONTRACT" in optionsMap) { arguments.allowHoldsinContract = get(X_ALLOW_HOLDSIN_CONTRACT) }
+    if ("X_NAME_BASED_DESTRUCTURING" in optionsMap) { arguments.nameBasedDestructuring = get(X_NAME_BASED_DESTRUCTURING) }
     return arguments
   }
 }

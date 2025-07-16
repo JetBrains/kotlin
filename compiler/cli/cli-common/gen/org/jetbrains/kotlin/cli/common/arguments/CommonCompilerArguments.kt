@@ -946,6 +946,26 @@ default: 'first-only-warn' in language version 2.2+, 'first-only' in version 2.1
             field = value
         }
 
+    @Argument(
+        value = "-Xname-based-destructuring",
+        valueDescription = "only-syntax|name-mismatch|complete",
+        description = """Enables the following destructuring features:
+-Xname-based-destructuring=only-syntax:   Enables syntax for positional destructuring with square brackets and the full form of name-based destructuring with parentheses;
+-Xname-based-destructuring=name-mismatch: Reports warnings when short form positional destructuring of data classes uses names that don't match the property names;
+-Xname-based-destructuring=complete:      Enables short-form name-based destructuring with parentheses;""",
+    )
+    @Enables(LanguageFeature.NameBasedDestructuring, "only-syntax")
+    @Enables(LanguageFeature.NameBasedDestructuring, "name-mismatch")
+    @Enables(LanguageFeature.NameBasedDestructuring, "complete")
+    @Enables(LanguageFeature.DeprecateNameMismatchInShortDestructuringWithParentheses, "name-mismatch")
+    @Enables(LanguageFeature.DeprecateNameMismatchInShortDestructuringWithParentheses, "complete")
+    @Enables(LanguageFeature.EnableNameBasedDestructuringShortForm, "complete")
+    var nameBasedDestructuring: String? = null
+        set(value) {
+            checkFrozen()
+            field = if (value.isNullOrEmpty()) null else value
+        }
+
     @get:Transient
     abstract val configurator: CommonCompilerArgumentsConfigurator
 
