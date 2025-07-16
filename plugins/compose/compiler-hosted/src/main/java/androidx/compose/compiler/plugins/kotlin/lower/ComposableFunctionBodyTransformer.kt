@@ -3894,6 +3894,8 @@ class ComposableFunctionBodyTransformer(
             resultScopes.add(Scope.BranchScope())
             transformed.branches.add(
                 irElseBranch(
+                    startOffset = expression.endOffset,
+                    endOffset = expression.endOffset,
                     expression = irBlock(
                         type = context.irBuiltIns.unitType,
                         statements = emptyList()

@@ -1,0 +1,23 @@
+//
+// Source
+// ------------------------------------------
+
+class Test {
+    val lambda = @Composable {
+        println("hello")
+    }
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+Test {
+    file: Test.kt
+}
+
+ComposableSingletons$TestKt {
+    file: Test.kt
+    lambda__1246884903$lambda$0(Landroidx/compose/runtime/Composer;I)Lkotlin/Unit;
+        NoGroup { key: -1246884903, line: -1 }
+}

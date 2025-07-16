@@ -10,6 +10,7 @@ import org.gradle.api.logging.LogLevel
 import org.gradle.api.provider.Provider
 import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
 import org.jetbrains.kotlin.compose.compiler.gradle.internal.ComposeWithAgpConfig
+import org.jetbrains.kotlin.compose.compiler.gradle.internal.configureComposeMappingFile
 import org.jetbrains.kotlin.compose.compiler.gradle.model.builder.ComposeCompilerModelBuilder
 import org.jetbrains.kotlin.gradle.plugin.*
 import javax.inject.Inject
@@ -38,6 +39,7 @@ class ComposeCompilerGradleSubplugin
     override fun apply(target: Project) {
         composeExtension = target.extensions.create("composeCompiler", ComposeCompilerGradlePluginExtension::class.java)
         registry.register(ComposeCompilerModelBuilder())
+        target.configureComposeMappingFile()
     }
 
     override fun isApplicable(kotlinCompilation: KotlinCompilation<*>): Boolean {

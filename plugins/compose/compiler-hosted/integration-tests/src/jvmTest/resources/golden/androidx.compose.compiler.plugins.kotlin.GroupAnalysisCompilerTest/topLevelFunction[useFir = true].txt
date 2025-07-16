@@ -1,0 +1,16 @@
+//
+// Source
+// ------------------------------------------
+
+@Composable
+fun Test() {}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+TestKt {
+    file: Test.kt
+    Test(Landroidx/compose/runtime/Composer;I)V
+        RestartGroup { key: -1794342280, line: 5 }
+}
