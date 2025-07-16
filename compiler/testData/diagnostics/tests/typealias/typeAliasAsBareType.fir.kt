@@ -13,7 +13,7 @@ fun testL4(x: Collection<Int>?): List<Int>? = x as? L
 
 fun testNL1(x: Collection<Int>?): Boolean = x is NL
 fun testNL2(x: Collection<Int>?): List<Int>? = x as NL
-fun testNL3(x: Collection<Int>?): List<Int>? = x as NL?
+fun testNL3(x: Collection<Int>?): List<Int>? = x as NL<!REDUNDANT_NULLABLE!>?<!>
 
 fun testLStar(x: Collection<Int>): List<Int> = x as LStar
 fun testMyList(x: Collection<Int>): List<Int> = x as MyList
