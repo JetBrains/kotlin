@@ -282,13 +282,17 @@ private fun SmartPrinter.generateAnnotation(annotation: Annotation, kind: Annota
     when (annotation) {
         is Enables if kind == AnnotationKind.LanguageFeature -> {
             val feature = annotation.feature
+            val ifValue = annotation.ifValueIs
             val featureName = feature.name
-            println("@Enables(LanguageFeature.$featureName)")
+            val optionalValue = if (ifValue.isNotBlank()) ", \"$ifValue\"" else ""
+            println("@Enables(LanguageFeature.$featureName$optionalValue)")
         }
         is Disables if kind == AnnotationKind.LanguageFeature-> {
             val feature = annotation.feature
+            val ifValue = annotation.ifValueIs
             val featureName = feature.name
-            println("@Disables(LanguageFeature.$featureName)")
+            val optionalValue = if (ifValue.isNotBlank()) ", \"$ifValue\"" else ""
+            println("@Disables(LanguageFeature.$featureName$optionalValue)")
         }
         is Deprecated if kind == AnnotationKind.Gradle -> {
             print("@Deprecated(")

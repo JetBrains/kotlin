@@ -33,9 +33,6 @@ public interface JsArguments : WasmArguments {
   )
 
   public companion object {
-    @JvmField
-    public val OUTPUT: JsArgument<String?> = JsArgument("OUTPUT")
-
     /**
      * Destination for generated files.
      */

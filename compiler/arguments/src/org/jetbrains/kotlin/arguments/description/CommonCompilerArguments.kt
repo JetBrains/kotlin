@@ -1015,6 +1015,15 @@ The argument should be used only if the new compilation scheme is enabled with -
 default: 'first-only-warn' in language version 2.2+, 'first-only' in version 2.1 and before.""".asReleaseDependent()
         valueDescription = "first-only|first-only-warn|param-property".asReleaseDependent()
         valueType = StringType.defaultNull
+        additionalAnnotations(
+            Disables(LanguageFeature.AnnotationDefaultTargetMigrationWarning, "first-only"),
+            Enables(LanguageFeature.AnnotationDefaultTargetMigrationWarning, "first-only-warn"),
+
+            Disables(LanguageFeature.PropertyParamAnnotationDefaultTargetMode, "first-only"),
+            Disables(LanguageFeature.PropertyParamAnnotationDefaultTargetMode, "first-only-warn"),
+
+            Enables(LanguageFeature.PropertyParamAnnotationDefaultTargetMode, "param-property"),
+        )
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_1_20,

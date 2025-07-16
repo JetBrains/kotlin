@@ -858,6 +858,11 @@ The argument should be used only if the new compilation scheme is enabled with -
 -Xannotation-default-target=param-property:  use '@param:' target if applicable, and also use the first of either '@property:' or '@field:';
 default: 'first-only-warn' in language version 2.2+, 'first-only' in version 2.1 and before.""",
     )
+    @Disables(LanguageFeature.AnnotationDefaultTargetMigrationWarning, "first-only")
+    @Enables(LanguageFeature.AnnotationDefaultTargetMigrationWarning, "first-only-warn")
+    @Disables(LanguageFeature.PropertyParamAnnotationDefaultTargetMode, "first-only")
+    @Disables(LanguageFeature.PropertyParamAnnotationDefaultTargetMode, "first-only-warn")
+    @Enables(LanguageFeature.PropertyParamAnnotationDefaultTargetMode, "param-property")
     var annotationDefaultTarget: String? = null
         set(value) {
             checkFrozen()
