@@ -17,7 +17,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("native/native.tests/testData/klib/dump-ir")
 @TestDataPath("$PROJECT_ROOT")
-public class FirNativeKlibDumpIrTestGenerated extends AbstractNativeKlibDumpIrTest {
+public class NativeKlibDumpIrTestGenerated extends AbstractNativeKlibDumpIrTest {
   @Test
   public void testAllFilesPresentInDump_ir() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/klib/dump-ir"), Pattern.compile("^([^_](.+)).kt$"), null, true);

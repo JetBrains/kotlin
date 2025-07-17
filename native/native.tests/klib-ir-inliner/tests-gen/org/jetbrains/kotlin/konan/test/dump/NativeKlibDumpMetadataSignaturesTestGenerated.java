@@ -17,10 +17,10 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("native/native.tests/testData/klib/dump-signatures")
 @TestDataPath("$PROJECT_ROOT")
-public class FirNativeKlibDumpIrSignaturesTestGenerated extends AbstractNativeKlibDumpIrSignaturesTest {
+public class NativeKlibDumpMetadataSignaturesTestGenerated extends AbstractNativeKlibDumpMetadataSignaturesTest {
   @Test
   public void testAllFilesPresentInDump_signatures() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/klib/dump-signatures"), Pattern.compile("^([^_](.+)).kt$"), null, true);
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/klib/dump-signatures"), Pattern.compile("^([^_](.+)).(kt|def)$"), null, true);
   }
 
   @Test
@@ -42,9 +42,27 @@ public class FirNativeKlibDumpIrSignaturesTestGenerated extends AbstractNativeKl
   }
 
   @Test
+  @TestMetadata("imported_from_cinterop.lib.def")
+  public void testImported_from_cinterop_lib() {
+    runTest("native/native.tests/testData/klib/dump-signatures/imported_from_cinterop.lib.def");
+  }
+
+  @Test
   @TestMetadata("inlineFunctions.kt")
   public void testInlineFunctions() {
     runTest("native/native.tests/testData/klib/dump-signatures/inlineFunctions.kt");
+  }
+
+  @Test
+  @TestMetadata("just_cinterop_c.def")
+  public void testJust_cinterop_c() {
+    runTest("native/native.tests/testData/klib/dump-signatures/just_cinterop_c.def");
+  }
+
+  @Test
+  @TestMetadata("just_cinterop_objc.def")
+  public void testJust_cinterop_objc() {
+    runTest("native/native.tests/testData/klib/dump-signatures/just_cinterop_objc.def");
   }
 
   @Test

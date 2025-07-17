@@ -18,7 +18,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("native/native.tests/testData/klib/dump-metadata")
 @TestDataPath("$PROJECT_ROOT")
-public class FirNativeKlibDumpMetadataTestGenerated extends AbstractNativeKlibDumpMetadataTest {
+public class NativeKlibDumpMetadataTestGenerated extends AbstractNativeKlibDumpMetadataTest {
   @Test
   @TestMetadata("Accessors.kt")
   public void testAccessors() {
