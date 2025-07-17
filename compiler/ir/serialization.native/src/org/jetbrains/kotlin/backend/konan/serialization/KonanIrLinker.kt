@@ -92,7 +92,7 @@ class KonanIrLinker(
                 else -> CacheDeserializationStrategy.WholeModule
             }
             KonanPartialModuleDeserializer(
-                this, moduleDescriptor, klib, stubGenerator, strategyResolver, deserializationStrategy
+                this, moduleDescriptor, klib, strategyResolver, deserializationStrategy
             ).also {
                 moduleDeserializers[moduleDescriptor] = it
                 klibToModuleDeserializerMap[klib] = it
