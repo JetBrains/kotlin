@@ -18,7 +18,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("compiler/testData/diagnostics/nativeTests")
 @TestDataPath("$PROJECT_ROOT")
-public class FirLightTreeOldFrontendNativeDiagnosticsTestGenerated extends AbstractFirLightTreeNativeDiagnosticsTest {
+public class LightTreeOldFrontendNativeDiagnosticsTestGenerated extends AbstractLightTreeNativeDiagnosticsTest {
   @Test
   public void testAllFilesPresentInNativeTests() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/nativeTests"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.(reversed|partialBody|fir|ll|latestLV)\\.kts?$"), true);

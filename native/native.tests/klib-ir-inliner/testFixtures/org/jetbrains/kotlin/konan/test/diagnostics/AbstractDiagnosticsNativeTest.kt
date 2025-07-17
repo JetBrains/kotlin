@@ -19,15 +19,10 @@ import org.jetbrains.kotlin.test.backend.BlackBoxCodegenSuppressor
 import org.jetbrains.kotlin.test.backend.handlers.KlibBackendDiagnosticsHandler
 import org.jetbrains.kotlin.test.backend.ir.IrDiagnosticsHandler
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
-import org.jetbrains.kotlin.test.builders.classicFrontendHandlersStep
 import org.jetbrains.kotlin.test.builders.loweredIrHandlersStep
 import org.jetbrains.kotlin.test.builders.klibArtifactsHandlersStep
 import org.jetbrains.kotlin.test.directives.*
 import org.jetbrains.kotlin.test.directives.NativeEnvironmentConfigurationDirectives.WITH_PLATFORM_LIBS
-import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendFacade
-import org.jetbrains.kotlin.test.frontend.classic.ClassicFrontendOutputArtifact
-import org.jetbrains.kotlin.test.frontend.classic.handlers.ClassicDiagnosticsHandler
-import org.jetbrains.kotlin.test.frontend.classic.handlers.DeclarationsDumpHandler
 import org.jetbrains.kotlin.test.frontend.fir.FirFrontendFacade
 import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
 import org.jetbrains.kotlin.test.model.*
@@ -39,9 +34,15 @@ import org.jetbrains.kotlin.test.services.LibraryProvider
 import org.junit.jupiter.api.Assumptions
 import java.io.File
 
-abstract class AbstractDiagnosticsNativeTestBase<R : ResultingArtifact.FrontendOutput<R>> : AbstractKotlinCompilerTest() {
-    abstract val targetFrontend: FrontendKind<R>
-    abstract val frontend: Constructor<FrontendFacade<R>>
+abstract class AbstractDiagnosticsNativeTestBase(
+    private val parser: FirParser
+) : AbstractKotlinCompilerTest() {
+
+    val targetFrontend: FrontendKind<FirOutputArtifact>
+        get() = FrontendKinds.FIR
+
+    val frontend: Constructor<FrontendFacade<FirOutputArtifact>>
+        get() = ::FirFrontendFacade
 
     override fun configure(builder: TestConfigurationBuilder) = with(builder) {
         globalDefaults {
@@ -51,6 +52,19 @@ abstract class AbstractDiagnosticsNativeTestBase<R : ResultingArtifact.FrontendO
         }
         useAfterAnalysisCheckers(::BlackBoxCodegenSuppressor)
         baseNativeDiagnosticTestConfiguration(frontend)
+
+        configureFirParser(parser)
+
+        baseFirNativeDiagnosticTestConfiguration()
+        enableLazyResolvePhaseChecking()
+
+        forTestsMatching("compiler/testData/diagnostics/*") {
+            configurationForClassicAndFirTestsAlongside()
+        }
+
+        defaultDirectives {
+            LANGUAGE + "+EnableDfaWarningsInK2"
+        }
     }
 
     override fun runTest(filePath: String) {
@@ -66,34 +80,7 @@ abstract class AbstractDiagnosticsNativeTestBase<R : ResultingArtifact.FrontendO
     }
 }
 
-abstract class AbstractFirNativeDiagnosticsTestBase(
-    private val parser: FirParser
-) : AbstractDiagnosticsNativeTestBase<FirOutputArtifact>() {
-    override val targetFrontend: FrontendKind<FirOutputArtifact>
-        get() = FrontendKinds.FIR
-
-    override val frontend: Constructor<FrontendFacade<FirOutputArtifact>>
-        get() = ::FirFrontendFacade
-
-    override fun configure(builder: TestConfigurationBuilder) = with(builder) {
-        super.configure(builder)
-
-        configureFirParser(parser)
-
-        baseFirNativeDiagnosticTestConfiguration()
-        enableLazyResolvePhaseChecking()
-
-        forTestsMatching("compiler/testData/diagnostics/*") {
-            configurationForClassicAndFirTestsAlongside()
-        }
-
-        defaultDirectives {
-            LanguageSettingsDirectives.LANGUAGE + "+EnableDfaWarningsInK2"
-        }
-    }
-}
-
-abstract class AbstractFirNativeDiagnosticsWithBackendTestBase(parser: FirParser) : AbstractFirNativeDiagnosticsTestBase(parser) {
+abstract class AbstractNativeDiagnosticsWithBackendTestBase(parser: FirParser) : AbstractDiagnosticsNativeTestBase(parser) {
     override fun configure(builder: TestConfigurationBuilder) = with(builder) {
         super.configure(builder)
 
@@ -114,7 +101,7 @@ abstract class AbstractFirNativeDiagnosticsWithBackendTestBase(parser: FirParser
     }
 }
 
-abstract class AbstractFirNativeDiagnosticsWithBackendWithInlinedFunInKlibTestBase : AbstractFirNativeDiagnosticsWithBackendTestBase(FirParser.LightTree) {
+abstract class AbstractNativeDiagnosticsWithBackendWithInlinedFunInKlibTestBase : AbstractNativeDiagnosticsWithBackendTestBase(FirParser.LightTree) {
     override fun configure(builder: TestConfigurationBuilder) = with(builder) {
         super.configure(builder)
         defaultDirectives {
@@ -123,8 +110,8 @@ abstract class AbstractFirNativeDiagnosticsWithBackendWithInlinedFunInKlibTestBa
     }
 }
 
-abstract class AbstractFirPsiNativeDiagnosticsTest : AbstractFirNativeDiagnosticsTestBase(FirParser.Psi)
-abstract class AbstractFirLightTreeNativeDiagnosticsTest : AbstractFirNativeDiagnosticsTestBase(FirParser.LightTree)
+abstract class AbstractPsiNativeDiagnosticsTest : AbstractDiagnosticsNativeTestBase(FirParser.Psi)
+abstract class AbstractLightTreeNativeDiagnosticsTest : AbstractDiagnosticsNativeTestBase(FirParser.LightTree)
 
-abstract class AbstractFirPsiNativeDiagnosticsWithBackendTestBase : AbstractFirNativeDiagnosticsWithBackendTestBase(FirParser.Psi)
-abstract class AbstractFirLightTreeNativeDiagnosticsWithBackendTestBase : AbstractFirNativeDiagnosticsWithBackendTestBase(FirParser.LightTree)
+abstract class AbstractPsiNativeDiagnosticsWithBackendTestBase : AbstractNativeDiagnosticsWithBackendTestBase(FirParser.Psi)
+abstract class AbstractLightTreeNativeDiagnosticsWithBackendTestBase : AbstractNativeDiagnosticsWithBackendTestBase(FirParser.LightTree)
