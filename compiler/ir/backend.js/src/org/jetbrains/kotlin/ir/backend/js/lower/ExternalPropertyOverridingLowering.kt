@@ -91,8 +91,18 @@ class ExternalPropertyOverridingLowering(private val context: JsIrBackendContext
 
         if (overriddenExternalPropertyAccessors.isEmpty()) return null
 
-        val externalPropertyAccessorsTransformer =
-            ExternalPropertySuperAccessTransformer(context, declaration, overriddenExternalPropertyAccessors)
+        val classPrimaryConstructor = declaration.primaryConstructor
+            ?: declaration.syntheticPrimaryConstructor
+            ?: compilationException("Unexpected primary constructor for processing irClass", declaration)
+
+        if (classPrimaryConstructor.body == null) return null
+
+        val externalPropertyAccessorsTransformer = ExternalPropertySuperAccessTransformer(
+            context,
+            declaration,
+            classPrimaryConstructor,
+            overriddenExternalPropertyAccessors
+        )
 
         declaration.transformChildren(externalPropertyAccessorsTransformer, null)
 
@@ -135,16 +145,13 @@ class ExternalPropertyOverridingLowering(private val context: JsIrBackendContext
     private class ExternalPropertySuperAccessTransformer(
         private val context: JsIrBackendContext,
         private val irClass: IrClass,
+        private val primaryConstructor: IrConstructor,
         private val overriddenExternalPropertiesAccessor: Set<IrSimpleFunctionSymbol>,
     ) : IrTransformer<IrFunction?>() {
         val superAccessMap = mutableMapOf<IrProperty, ExternalPropertySuperAccess>()
 
-        val parentClassPrimaryConstructor = irClass.primaryConstructor
-            ?: irClass.syntheticPrimaryConstructor
-            ?: compilationException("Unexpected primary constructor for processing irClass", irClass)
-
-        val primaryConstructorBody = parentClassPrimaryConstructor.body as? IrBlockBody
-            ?: compilationException("Unexpected body of primary constructor for processing irClass", parentClassPrimaryConstructor)
+        val primaryConstructorBody = primaryConstructor.body as? IrBlockBody
+            ?: compilationException("Unexpected body of primary constructor for processing irClass", primaryConstructor)
 
         val parentClassDispatchReceiver = irClass.thisReceiver ?: compilationException("Unexpected thisReceiver of class", irClass)
 
@@ -197,7 +204,7 @@ class ExternalPropertyOverridingLowering(private val context: JsIrBackendContext
         private fun IrCall.createVariableWithExternalPropertyValue() =
             JsIrBuilder.buildVar(
                 type = type,
-                parent = parentClassPrimaryConstructor,
+                parent = primaryConstructor,
                 origin = EXTERNAL_SUPER_ACCESSORS_ORIGIN,
                 initializer = symbol.createExternalSuperFieldAccess()
             )
