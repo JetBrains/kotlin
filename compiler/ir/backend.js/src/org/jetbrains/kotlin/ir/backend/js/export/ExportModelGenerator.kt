@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.ir.backend.js.export
 
+import org.jetbrains.kotlin.backend.common.report
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.ir.util.isExpect
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
@@ -28,6 +30,7 @@ import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.util.isNullable
+import org.jetbrains.kotlin.js.config.compileLongAsBigint
 import org.jetbrains.kotlin.utils.*
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
@@ -84,8 +87,8 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
                 val realOverrideTarget = function.realOverrideTarget
                 ExportedFunction(
                     function.getExportedIdentifier(),
-                    returnType = exportType(function.returnType),
-                    typeParameters = function.typeParameters.memoryOptimizedMap(::exportTypeParameter),
+                    returnType = exportType(function.returnType, function),
+                    typeParameters = function.typeParameters.memoryOptimizedMap { exportTypeParameter(it, function) },
                     isMember = parent is IrClass,
                     isStatic = function.isStaticMethod,
                     isAbstract = parent is IrClass && !parent.isInterface && function.modality == Modality.ABSTRACT,
@@ -122,7 +125,7 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
 
         return ExportedParameter(
             parameterName,
-            exportType(parameter.type),
+            exportType(parameter.type, parameter),
             hasDefaultValue
         )
     }
@@ -155,7 +158,7 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
 
         return ExportedProperty(
             name = property.getExportedIdentifier(),
-            type = specializeType ?: exportType(property.getter!!.returnType),
+            type = specializeType ?: exportType(property.getter!!.returnType, property),
             mutable = property.isVar,
             isMember = parentClass != null,
             isAbstract = parentClass?.isInterface == false && property.modality == Modality.ABSTRACT,
@@ -234,7 +237,7 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
     }
 
     private fun exportDeclarationImplicitly(klass: IrClass, superTypes: Iterable<IrType>): ExportedDeclaration {
-        val typeParameters = klass.typeParameters.memoryOptimizedMap(::exportTypeParameter)
+        val typeParameters = klass.typeParameters.memoryOptimizedMap { exportTypeParameter(it, klass) }
         val superInterfaces = superTypes
             .filter { (it.classifierOrFail.owner as? IrDeclaration)?.isExportedImplicitlyOrExplicitly(context) ?: false }
             .map { exportType(it) }
@@ -451,16 +454,16 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
         members: List<ExportedDeclaration>,
         nestedClasses: List<ExportedClass>,
     ): ExportedDeclaration {
-        val typeParameters = klass.typeParameters.memoryOptimizedMap(::exportTypeParameter)
+        val typeParameters = klass.typeParameters.memoryOptimizedMap { exportTypeParameter(it, klass) }
 
         val superClasses = superTypes
             .filter { !it.classifierOrFail.isInterface && it.canBeUsedAsSuperTypeOfExportedClasses() }
-            .map { exportType(it, false) }
+            .map { exportType(it, shouldCalculateExportedSupertypeForImplicit = false) }
             .memoryOptimizedFilter { it !is ExportedType.ErrorType }
 
         val superInterfaces = superTypes
             .filter { it.shouldPresentInsideImplementsClause() }
-            .map { exportType(it, false) }
+            .map { exportType(it, shouldCalculateExportedSupertypeForImplicit = false) }
             .memoryOptimizedFilter { it !is ExportedType.ErrorType }
 
         val name = klass.getExportedIdentifierForClass()
@@ -540,18 +543,18 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
                 classifierOrNull != context.irBuiltIns.enumClass &&
                 (classifierOrNull?.owner as? IrDeclaration)?.isJsImplicitExport() != true
 
-    private fun exportTypeArgument(type: IrTypeArgument): ExportedType {
+    private fun exportTypeArgument(type: IrTypeArgument, typeOwner: IrDeclaration?): ExportedType {
         if (type is IrTypeProjection)
-            return exportType(type.type)
+            return exportType(type.type, typeOwner)
 
         return ExportedType.ErrorType("UnknownType ${type.render()}")
     }
 
-    fun exportTypeParameter(typeParameter: IrTypeParameter): ExportedType.TypeParameter {
+    fun exportTypeParameter(typeParameter: IrTypeParameter, typeOwner: IrDeclaration?): ExportedType.TypeParameter {
         val constraint = typeParameter.superTypes.asSequence()
             .filter { it != context.irBuiltIns.anyNType }
             .map {
-                val exportedType = exportType(it)
+                val exportedType = exportType(it, typeOwner)
                 if (exportedType is ExportedType.ImplicitlyExportedType && exportedType.exportedSupertype == ExportedType.Primitive.Any) {
                     exportedType.copy(exportedSupertype = ExportedType.Primitive.Unknown)
                 } else {
@@ -575,7 +578,11 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
 
     private val currentlyProcessedTypes = hashSetOf<IrType>()
 
-    private fun exportType(type: IrType, shouldCalculateExportedSupertypeForImplicit: Boolean = true): ExportedType {
+    private fun exportType(
+        type: IrType,
+        typeOwner: IrDeclaration? = null,
+        shouldCalculateExportedSupertypeForImplicit: Boolean = true,
+    ): ExportedType {
         if (type is IrDynamicType || type in currentlyProcessedTypes)
             return ExportedType.Primitive.Any
 
@@ -590,7 +597,18 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
 
         val exportedType = when {
             nonNullType.isBoolean() -> ExportedType.Primitive.Boolean
-            nonNullType.isPrimitiveType() && (!nonNullType.isLong() && !nonNullType.isChar()) ->
+            nonNullType.isLong() || nonNullType.isULong() -> {
+                if (!context.configuration.compileLongAsBigint) {
+                    context.report(
+                        CompilerMessageSeverity.ERROR,
+                        typeOwner,
+                        typeOwner?.file,
+                        "Long can't be exported without using of the bigint type. Add -Xes-long-as-bigint compiler argument or set target to 'es2015'"
+                    )
+                }
+                ExportedType.Primitive.BigInt
+            }
+            nonNullType.isPrimitiveType() && !nonNullType.isChar() ->
                 ExportedType.Primitive.Number
 
             nonNullType.isByteArray() -> ExportedType.Primitive.ByteArray
@@ -601,6 +619,7 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
 
             // TODO: Cover these in frontend
             nonNullType.isBooleanArray() -> ExportedType.ErrorType("BooleanArray")
+            // TODO: Add BigInt64Array usage (KT-79284)
             nonNullType.isLongArray() -> ExportedType.ErrorType("LongArray")
             nonNullType.isCharArray() -> ExportedType.ErrorType("CharArray")
 
@@ -609,11 +628,11 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
             nonNullType.isAny() -> ExportedType.Primitive.Any  // TODO: Should we wrap Any in a Nullable type?
             nonNullType.isUnit() -> ExportedType.Primitive.Unit
             nonNullType.isNothing() -> ExportedType.Primitive.Nothing
-            nonNullType.isArray() -> ExportedType.Array(exportTypeArgument(nonNullType.arguments[0]))
+            nonNullType.isArray() -> ExportedType.Array(exportTypeArgument(nonNullType.arguments[0], typeOwner))
             nonNullType.isSuspendFunction() -> ExportedType.ErrorType("Suspend functions are not supported")
             nonNullType.isFunction() -> ExportedType.Function(
-                parameterTypes = nonNullType.arguments.dropLast(1).memoryOptimizedMap { exportTypeArgument(it) },
-                returnType = exportTypeArgument(nonNullType.arguments.last())
+                parameterTypes = nonNullType.arguments.dropLast(1).memoryOptimizedMap { exportTypeArgument(it, typeOwner) },
+                returnType = exportTypeArgument(nonNullType.arguments.last(), typeOwner)
             )
 
             classifier is IrTypeParameterSymbol -> ExportedType.TypeParameter(classifier.owner.name.identifier)
@@ -628,7 +647,9 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
                 val exportedSupertype = runIf(shouldCalculateExportedSupertypeForImplicit && isImplicitlyExported) {
                     val transitiveExportedType = nonNullType.collectSuperTransitiveHierarchy()
                     if (transitiveExportedType.isEmpty()) return@runIf null
-                    transitiveExportedType.memoryOptimizedMap(::exportType).reduce(ExportedType::IntersectionType)
+                    transitiveExportedType
+                        .memoryOptimizedMap { exportType(it, typeOwner) }
+                        .reduce(ExportedType::IntersectionType)
                 } ?: ExportedType.Primitive.Any
 
                 when (klass.kind) {
@@ -643,7 +664,7 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
                     ClassKind.ENUM_CLASS,
                     ClassKind.INTERFACE -> ExportedType.ClassType(
                         name,
-                        type.arguments.memoryOptimizedMap { exportTypeArgument(it) },
+                        type.arguments.memoryOptimizedMap { exportTypeArgument(it, typeOwner) },
                         klass
                     )
                 }.withImplicitlyExported(isImplicitlyExported, exportedSupertype)

@@ -474,6 +474,38 @@ public class FirJsTypeScriptExportTestGenerated extends AbstractFirJsTypeScriptE
   }
 
   @Nested
+  @TestMetadata("js/js.translator/testData/typescript-export/js/long-type")
+  @TestDataPath("$PROJECT_ROOT")
+  public class Long_type {
+    @Test
+    public void testAllFilesPresentInLong_type() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/typescript-export/js/long-type"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
+    }
+
+    @Test
+    @TestMetadata("long-type.kt")
+    public void testLong_type() {
+      runTest("js/js.translator/testData/typescript-export/js/long-type/long-type.kt");
+    }
+  }
+
+  @Nested
+  @TestMetadata("js/js.translator/testData/typescript-export/js/long-type-in-exported-file")
+  @TestDataPath("$PROJECT_ROOT")
+  public class Long_type_in_exported_file {
+    @Test
+    public void testAllFilesPresentInLong_type_in_exported_file() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("js/js.translator/testData/typescript-export/js/long-type-in-exported-file"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.JS_IR, true);
+    }
+
+    @Test
+    @TestMetadata("long-type.kt")
+    public void testLong_type() {
+      runTest("js/js.translator/testData/typescript-export/js/long-type-in-exported-file/long-type.kt");
+    }
+  }
+
+  @Nested
   @TestMetadata("js/js.translator/testData/typescript-export/js/member-properties")
   @TestDataPath("$PROJECT_ROOT")
   public class Member_properties {
