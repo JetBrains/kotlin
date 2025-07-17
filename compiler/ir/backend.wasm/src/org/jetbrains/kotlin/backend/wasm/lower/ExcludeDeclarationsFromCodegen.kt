@@ -40,7 +40,7 @@ class ExcludeDeclarationsFromCodegen(private val context: WasmBackendContext) : 
                 if (isExcluded(d)) {
                     it.remove()
                     // Move to "excluded" package fragment preserving fq-name
-                    context.getExcludedPackageFragment(file.packageFqName).addChild(d)
+                    context.getExcludedPackageFragmentOrCreate(file.packageFqName).addChild(d)
                 }
             }
         }
