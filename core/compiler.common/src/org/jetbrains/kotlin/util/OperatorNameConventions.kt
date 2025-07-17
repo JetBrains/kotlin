@@ -33,6 +33,7 @@ object OperatorNameConventions {
     @JvmField val SET = Name.identifier("set")
     @JvmField val NEXT = Name.identifier("next")
     @JvmField val HAS_NEXT = Name.identifier("hasNext")
+    @JvmField val OF = Name.identifier("of")
 
     @JvmField val TO_STRING = Name.identifier("toString")
 
