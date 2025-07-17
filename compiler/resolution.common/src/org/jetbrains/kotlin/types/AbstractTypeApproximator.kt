@@ -621,7 +621,9 @@ abstract class AbstractTypeApproximator(
                 approximateToSubType(argumentType, depth)
             }
 
-            val effectiveVariance = AbstractTypeChecker.effectiveVariance(parameter.getVariance(), argument.getVariance())
+            val effectiveVariance =
+                AbstractTypeChecker.effectiveVariance(parameter.getVariance(), argument.getVariance())
+                    ?: return createApproximatedResultForInconsistentArgumentVariance(type, parameter, argument, index, toSuper)
 
             val capturedType = argumentType.lowerBoundIfFlexible().asCapturedTypeUnwrappingDnn()
 
@@ -631,15 +633,6 @@ abstract class AbstractTypeApproximator(
             }
 
             when (effectiveVariance) {
-                null -> {
-                    return if (!conf.approximateErrorTypes) {
-                        createErrorType(
-                            "Inconsistent type: $type ($index parameter has declared variance: ${parameter.getVariance()}, " +
-                                    "but argument variance is ${argument.getVariance()})",
-                            type
-                        )
-                    } else type.defaultResult(toSuper)
-                }
                 TypeVariance.OUT, TypeVariance.IN -> {
                     if (shouldApproximateIntersectionContravariantlyPlacedArgumentTypeToStar(argumentType, effectiveVariance)) {
                         newArguments[index] = createStarProjection(parameter)
@@ -773,7 +766,7 @@ abstract class AbstractTypeApproximator(
     private fun shouldApproximateStarBasedCapturedTypeArgumentAsItsProjection(
         capturedType: CapturedTypeMarker?,
         parameter: TypeParameterMarker,
-        effectiveVariance: TypeVariance?,
+        effectiveVariance: TypeVariance,
         toSuper: Boolean,
     ): Boolean {
         if (capturedType?.typeConstructorProjection()?.isStarProjection() != true) return false
@@ -816,6 +809,23 @@ abstract class AbstractTypeApproximator(
         if (conf.intersectionStrategy != TypeApproximatorConfiguration.IntersectionStrategy.TO_UPPER_BOUND_IF_SUPERTYPE) return false
         if (!argumentType.typeConstructor().isIntersection()) return false
         return parameter.getUpperBounds().all { AbstractTypeChecker.isSubtypeOf(ctx, argumentType, it) }
+    }
+
+    context(conf: TypeApproximatorConfiguration)
+    private fun createApproximatedResultForInconsistentArgumentVariance(
+        type: RigidTypeMarker,
+        parameter: TypeParameterMarker,
+        argument: TypeArgumentMarker,
+        index: Int,
+        toSuper: Boolean,
+    ): RigidTypeMarker {
+        if (conf.approximateErrorTypes) return type.defaultResult(toSuper)
+
+        return createErrorType(
+            "Inconsistent type: $type ($index parameter has declared variance: ${parameter.getVariance()}, " +
+                    "but argument variance is ${argument.getVariance()})",
+            type
+        )
     }
 
     context(conf: TypeApproximatorConfiguration)
