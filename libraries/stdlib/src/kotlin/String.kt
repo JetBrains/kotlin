@@ -28,7 +28,9 @@ public expect class String : Comparable<String>, CharSequence {
      * Returns the character of this string at the specified [index].
      *
      * If the [index] is out of bounds of this string, throws an [IndexOutOfBoundsException] except in Kotlin/JS
-     * where the behavior is unspecified.
+     * where the behavior is unspecified, and in Kotlin/Wasm where
+     * a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) will be raised instead,
+     * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
      */
     @kotlin.internal.IntrinsicConstEvaluation
     public override fun get(index: Int): Char

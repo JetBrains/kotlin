@@ -54,8 +54,9 @@ internal constructor(size: Int) {
      * value = array[index]
      * ```
      *
-     * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException] except in Kotlin/JS
-     * where the behavior is unspecified.
+     * If the [index] is out of bounds of this array, a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) will be raised
+     * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
+     * With the `-Xwasm-enable-array-range-checks` an [IndexOutOfBoundsException] will be thrown.
      */
     public actual operator fun get(index: Int): T {
         rangeCheck(index, storage.len())
@@ -70,8 +71,9 @@ internal constructor(size: Int) {
      * array[index] = value
      * ```
      *
-     * If the [index] is out of bounds of this array, throws an [IndexOutOfBoundsException] except in Kotlin/JS
-     * where the behavior is unspecified.
+     * If the [index] is out of bounds of this array, a [trap](https://webassembly.github.io/spec/core/intro/overview.html#trap) will be raised
+     * unless `-Xwasm-enable-array-range-checks` compiler flag was specified when linking an executable.
+     * With the `-Xwasm-enable-array-range-checks` an [IndexOutOfBoundsException] will be thrown.
      */
     public actual operator fun set(index: Int, value: T): Unit {
         rangeCheck(index, storage.len())
