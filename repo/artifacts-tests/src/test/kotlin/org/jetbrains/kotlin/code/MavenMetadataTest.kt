@@ -19,7 +19,7 @@ import kotlin.streams.asStream
 import kotlin.test.assertTrue
 import kotlin.test.fail
 
-class ArtifactsTest {
+class MavenMetadataTest {
 
     private val kotlinVersion = System.getProperty("kotlin.version")
     private val mavenLocal = System.getProperty("maven.repo.local")
