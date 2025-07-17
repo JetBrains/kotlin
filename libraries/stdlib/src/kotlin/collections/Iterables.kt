@@ -67,3 +67,57 @@ public fun <T, R> Iterable<Pair<T, R>>.unzip(): Pair<List<T>, List<R>> {
     }
     return listT to listR
 }
+
+/**
+ * Returns `true` if the elements in this iterable are sorted according to the specified [comparator].
+ *
+ * Note that an empty or single-element iterable is always considered sorted.
+ */
+public fun <T> Iterable<T>.isSortedWith(comparator: Comparator<in T>): Boolean {
+    if (this is Collection<T> && size < 2) return true
+    val iterator = iterator()
+    if (!iterator.hasNext()) return true
+    var current = iterator.next()
+    while (iterator.hasNext()) {
+        val next = iterator.next()
+        if (comparator.compare(current, next) > 0) return false
+        current = next
+    }
+    return true
+}
+
+/**
+ * Returns `true` if the elements in this iterable are sorted according to natural sort order of the value returned by specified [selector] function.
+ *
+ * Note that an empty or single-element iterable is always considered sorted.
+ */
+public inline fun <T, R : Comparable<R>> Iterable<T>.isSortedBy(crossinline selector: (T) -> R?): Boolean {
+    return isSortedWith(compareBy(selector))
+}
+
+/**
+ * Returns `true` if the elements in this iterable are sorted according to their natural sort order.
+ *
+ * Note that an empty or single-element iterable is always considered sorted.
+ */
+public fun <T : Comparable<T>> Iterable<T>.isSorted(): Boolean {
+    return isSortedWith(naturalOrder())
+}
+
+/**
+ * Returns `true` if the elements in this iterable are sorted descending according to their natural sort order.
+ *
+ * Note that an empty or single-element iterable is always considered sorted.
+ */
+public fun <T : Comparable<T>> Iterable<T>.isSortedDescending(): Boolean {
+    return isSortedWith(reverseOrder())
+}
+
+/**
+ * Returns `true` if the elements in this iterable are sorted descending according to natural sort order of the value returned by specified [selector] function.
+ *
+ * Note that an empty or single-element iterable is always considered sorted.
+ */
+public inline fun <T, R : Comparable<R>> Iterable<T>.isSortedByDescending(crossinline selector: (T) -> R?): Boolean {
+    return isSortedWith(compareByDescending(selector))
+}

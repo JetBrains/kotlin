@@ -543,7 +543,6 @@ abstract class IterableTests<T : Iterable<String>>(val createFrom: (Array<out St
     }
 
     @Test
-    @Suppress("USELESS_CAST") // remove suppress and casts when tests are finally compiled only with K2
     fun minusAssign() {
         // lets use a mutable variable
         var result: Iterable<String> = data
@@ -560,6 +559,82 @@ abstract class IterableTests<T : Iterable<String>>(val createFrom: (Array<out St
         assertEquals(listOf("bar"), result as? List)
     }
 
+    @Test
+    fun isSorted() {
+        // Empty and single-element iterables are always sorted
+        assertTrue(empty.isSorted())
+        assertTrue(createFrom("a").isSorted())
+
+        // Test sorted iterables
+        assertTrue(createFrom("a", "b", "c").isSorted())
+        assertTrue(createFrom("a", "a", "b").isSorted())
+
+        // Test unsorted iterables
+        assertFalse(createFrom("b", "a", "c").isSorted())
+        assertFalse(createFrom("c", "b", "a").isSorted())
+    }
+
+    @Test
+    fun isSortedDescending() {
+        // Empty and single-element iterables are always sorted
+        assertTrue(empty.isSortedDescending())
+        assertTrue(createFrom("a").isSortedDescending())
+
+        // Test sorted iterables
+        assertTrue(createFrom("c", "b", "a").isSortedDescending())
+        assertTrue(createFrom("c", "b", "b").isSortedDescending())
+
+        // Test unsorted iterables
+        assertFalse(createFrom("a", "c", "b").isSortedDescending())
+        assertFalse(createFrom("a", "b", "c").isSortedDescending())
+    }
+
+    @Test
+    fun isSortedBy() {
+        // Empty and single-element iterables are always sorted
+        assertTrue(empty.isSortedBy { it.length })
+        assertTrue(createFrom("a").isSortedBy { it.length })
+
+        // Test sorted iterables
+        assertTrue(createFrom("a", "bb", "ccc").isSortedBy { it.length })
+        assertTrue(createFrom("a", "b", "cc").isSortedBy { it.length })
+
+        // Test unsorted iterables
+        assertFalse(createFrom("bb", "a", "ccc").isSortedBy { it.length })
+        assertFalse(createFrom("ccc", "bb", "a").isSortedBy { it.length })
+    }
+
+    @Test
+    fun isSortedByDescending() {
+        // Empty and single-element iterables are always sorted
+        assertTrue(empty.isSortedByDescending { it.length })
+        assertTrue(createFrom("a").isSortedByDescending { it.length })
+
+        // Test sorted iterables
+        assertTrue(createFrom("ccc", "bb", "a").isSortedByDescending { it.length })
+        assertTrue(createFrom("ccc", "bb", "b").isSortedByDescending { it.length })
+
+        // Test unsorted iterables
+        assertFalse(createFrom("a", "ccc", "bb").isSortedByDescending { it.length })
+        assertFalse(createFrom("a", "bb", "ccc").isSortedByDescending { it.length })
+    }
+
+    @Test
+    fun isSortedWith() {
+        val comparator = compareBy<String> { it.length }.thenBy { it }
+        
+        // Empty and single-element iterables are always sorted
+        assertTrue(empty.isSortedWith(comparator))
+        assertTrue(createFrom("a").isSortedWith(comparator))
+
+        // Test sorted iterables
+        assertTrue(createFrom("a", "b", "cc").isSortedWith(comparator))
+        assertTrue(createFrom("a", "b", "cc", "dd").isSortedWith(comparator))
+
+        // Test unsorted iterables
+        assertFalse(createFrom("cc", "a", "b").isSortedWith(comparator))
+        assertFalse(createFrom("b", "a", "cc").isSortedWith(comparator))
+    }
 }
 
 
