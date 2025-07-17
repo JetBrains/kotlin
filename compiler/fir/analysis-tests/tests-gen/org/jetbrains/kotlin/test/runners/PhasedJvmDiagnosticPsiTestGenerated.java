@@ -25446,6 +25446,35 @@ public class PhasedJvmDiagnosticPsiTestGenerated extends AbstractPhasedJvmDiagno
       }
 
       @Nested
+      @TestMetadata("compiler/testData/diagnostics/tests/j+k/kt79138_javaClassAnnotatedWithMetadata")
+      @TestDataPath("$PROJECT_ROOT")
+      public class Kt79138_javaClassAnnotatedWithMetadata {
+        @Test
+        @TestMetadata("differentModulesEmpty.kt")
+        public void testDifferentModulesEmpty() {
+          runTest("compiler/testData/diagnostics/tests/j+k/kt79138_javaClassAnnotatedWithMetadata/differentModulesEmpty.kt");
+        }
+
+        @Test
+        @TestMetadata("differentModulesWithKind.kt")
+        public void testDifferentModulesWithKind() {
+          runTest("compiler/testData/diagnostics/tests/j+k/kt79138_javaClassAnnotatedWithMetadata/differentModulesWithKind.kt");
+        }
+
+        @Test
+        @TestMetadata("sameModuleEmpty.kt")
+        public void testSameModuleEmpty() {
+          runTest("compiler/testData/diagnostics/tests/j+k/kt79138_javaClassAnnotatedWithMetadata/sameModuleEmpty.kt");
+        }
+
+        @Test
+        @TestMetadata("sameModuleWithKind.kt")
+        public void testSameModuleWithKind() {
+          runTest("compiler/testData/diagnostics/tests/j+k/kt79138_javaClassAnnotatedWithMetadata/sameModuleWithKind.kt");
+        }
+      }
+
+      @Nested
       @TestMetadata("compiler/testData/diagnostics/tests/j+k/polymorphicSignature")
       @TestDataPath("$PROJECT_ROOT")
       public class PolymorphicSignature {
