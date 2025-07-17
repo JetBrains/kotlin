@@ -487,6 +487,12 @@ public class IrSteppingWithIrInlinerTestGenerated extends AbstractIrSteppingWith
   }
 
   @Test
+  @TestMetadata("noninlineParameter.kt")
+  public void testNoninlineParameter() {
+    runTest("compiler/testData/debug/stepping/noninlineParameter.kt");
+  }
+
+  @Test
   @TestMetadata("nullcheck.kt")
   public void testNullcheck() {
     runTest("compiler/testData/debug/stepping/nullcheck.kt");
