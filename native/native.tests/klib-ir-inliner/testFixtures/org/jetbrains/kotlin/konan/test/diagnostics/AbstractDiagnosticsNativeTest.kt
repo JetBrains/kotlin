@@ -66,26 +66,6 @@ abstract class AbstractDiagnosticsNativeTestBase<R : ResultingArtifact.FrontendO
     }
 }
 
-abstract class AbstractDiagnosticsNativeTest : AbstractDiagnosticsNativeTestBase<ClassicFrontendOutputArtifact>() {
-    override val targetFrontend: FrontendKind<ClassicFrontendOutputArtifact>
-        get() = FrontendKinds.ClassicFrontend
-
-    override val frontend: Constructor<FrontendFacade<ClassicFrontendOutputArtifact>>
-        get() = ::ClassicFrontendFacade
-
-    override fun configure(builder: TestConfigurationBuilder) = with(builder) {
-        super.configure(builder)
-
-        classicFrontendHandlersStep {
-            useHandlers(
-                ::DeclarationsDumpHandler,
-                ::ClassicDiagnosticsHandler,
-            )
-        }
-        useAdditionalService(::LibraryProvider)
-    }
-}
-
 abstract class AbstractFirNativeDiagnosticsTestBase(
     private val parser: FirParser
 ) : AbstractDiagnosticsNativeTestBase<FirOutputArtifact>() {
