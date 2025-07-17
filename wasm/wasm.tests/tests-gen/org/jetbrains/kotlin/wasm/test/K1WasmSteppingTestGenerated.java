@@ -475,6 +475,12 @@ public class K1WasmSteppingTestGenerated extends AbstractK1WasmSteppingTest {
   }
 
   @Test
+  @TestMetadata("noinlineParameter.kt")
+  public void testNoinlineParameter() {
+    runTest("compiler/testData/debug/stepping/noinlineParameter.kt");
+  }
+
+  @Test
   @TestMetadata("nullcheck.kt")
   public void testNullcheck() {
     runTest("compiler/testData/debug/stepping/nullcheck.kt");
