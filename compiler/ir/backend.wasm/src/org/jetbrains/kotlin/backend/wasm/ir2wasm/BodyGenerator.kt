@@ -1084,6 +1084,14 @@ class BodyGenerator(
                     location = location,
                 )
             }
+            wasmSymbols.refCast -> {
+                generateRefCast(
+                    fromType = call.arguments[0]!!.type,
+                    toType = call.typeArguments[0]!!,
+                    isRefNullCast = false,
+                    location = location,
+                )
+            }
 
             wasmSymbols.refTest -> {
                 generateRefTest(

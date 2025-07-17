@@ -230,6 +230,15 @@ class WasmBaseTypeOperatorTransformer(val context: WasmBackendContext) : IrEleme
         val toClass = toType.erasedUpperBound
 
         if (fromClass.isExternal && toClass.isExternal) {
+//            if (fromType.isNullable() && !toType.isNullable()) {
+//                return builder.irCall(
+//                    context.wasmSymbols.refCast,
+//                    toType
+//                ).also {
+//                    it.arguments[0] = value
+//                    it.typeArguments[0] = toType
+//                }
+//            }
             return value
         }
 
@@ -276,7 +285,12 @@ class WasmBaseTypeOperatorTransformer(val context: WasmBackendContext) : IrEleme
             }
         }
 
-        return builder.irCall(symbols.refCastNull, type = toType).apply {
+        return builder.irCall(
+            when (toType.isNullable()) {
+                true -> context.wasmSymbols.refCastNull
+                false -> context.wasmSymbols.refCast
+            }, type = toType
+        ).apply {
             typeArguments[0] = toType
             arguments[0] = value
         }

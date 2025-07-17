@@ -110,19 +110,21 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
                 parameter.type.kotlinToJsAdapterIfNeeded(isReturn = false)
             }
         }
-        val isAdapterNull: Boolean
-        val signature = function.returnType.classifierOrNull?.signature
-        if (signature != null) {
-            isAdapterNull = signature.toString().contains("JsStringRef")
-        } else {
-            isAdapterNull = false
-        }
+//        val isAdapterNull: Boolean
+//        val signature = function.returnType.classifierOrNull?.signature
+//        if (signature != null) {
+//            isAdapterNull = signature.toString().contains("JsStringRef")
+//        } else {
+//            isAdapterNull = false
+//        }
 
+//        val resultAdapter =
+//            if (isAdapterNull)
+//                null
+//            else
+//                function.returnType.jsToKotlinAdapterIfNeeded(isReturn = true)
         val resultAdapter =
-            if (isAdapterNull)
-                null
-            else
-                function.returnType.jsToKotlinAdapterIfNeeded(isReturn = true)
+            function.returnType.jsToKotlinAdapterIfNeeded(isReturn = true)
 
         if (resultAdapter == null && valueParametersAdapters.all { it == null })
             return null
@@ -809,7 +811,12 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
     ) : InteropTypeAdapter {
         override val fromType: IrType = context.wasmSymbols.wasmStructRefType
         override fun adapt(expression: IrExpression, builder: IrBuilderWithScope): IrExpression {
-            val call = builder.irCall(context.wasmSymbols.refCastNull)
+            val call = builder.irCall(
+                when (toType.isNullable()) {
+                    true -> context.wasmSymbols.refCastNull
+                    false -> context.wasmSymbols.refCast
+                }
+            )
             call.arguments[0] = expression
             call.typeArguments[0] = toType
             return call
@@ -828,13 +835,38 @@ class JsInteropFunctionsLowering(val context: WasmBackendContext) : DeclarationT
         override val toType: IrType = type.makeNotNull()
         override fun adapt(expression: IrExpression, builder: IrBuilderWithScope): IrExpression {
             return builder.irComposite {
+//                val tmp = irTemporary(expression)
+//                val argCall = builder.irIfNull(
+//                    type = fromType,
+//                    subject = irGet(tmp),
+//                    thenPart = builder.irCall(symbols.throwNullPointerException),
+//                    elsePart = irGet(tmp)
+//                )
+//                +argCall
+//                val call = builder.irCall(this@JsInteropFunctionsLowering.context.wasmSymbols.refCast)
+//                call.arguments[0] = argCall
+//                call.typeArguments[0] = toType
+//                +call
                 val tmp = irTemporary(expression)
                 +irIfNull(
                     type = toType,
                     subject = irGet(tmp),
                     thenPart = builder.irCall(symbols.throwNullPointerException),
-                    elsePart = irGet(tmp)
+                    elsePart = builder.irComposite {
+                        val arg = irGet(tmp)
+                        val call = builder.irCall(this@JsInteropFunctionsLowering.context.wasmSymbols.refCast)
+                        call.arguments[0] = arg
+                        call.typeArguments[0] = toType
+                        +call
+                    }
                 )
+//                val tmp = irTemporary(expression)
+//                +irIfNull(
+//                    type = toType,
+//                    subject = irGet(tmp),
+//                    thenPart = builder.irCall(symbols.throwNullPointerException),
+//                    elsePart = irGet(tmp)
+//                )
             }
         }
     }

@@ -210,6 +210,7 @@ class WasmSymbols(
     val refIsNull = getInternalFunction("wasm_ref_is_null")
     val refTest = getInternalFunction("wasm_ref_test")
     val refCastNull = getInternalFunction("wasm_ref_cast_null")
+    val refCast = getFunction("wasm_ref_cast", kotlinJsPackageFqName)
     val wasmArrayCopy = getInternalFunction("wasm_array_copy")
     val wasmArrayNewData0 = getInternalFunction("array_new_data0")
 

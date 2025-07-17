@@ -207,7 +207,7 @@ export function fromCharCodeArray(array, start, end) {
 }
 """
 )
-internal external fun fromCharCodeArray(array: WasmCharArray, start: Int, end: Int): JsStringRef
+internal external fun fromCharCodeArray(array: WasmCharArray, start: Int, end: Int): JsString
 
 internal fun kotlinToJsStringAdapter(x: String?): JsString? {
     // Using nullable String to represent default value
@@ -248,7 +248,7 @@ export function intoCharCodeArray(s, array, start) {
 }
 """
 )
-internal external fun intoCharCodeArray(string: ExternalInterfaceType, array: WasmCharArray, start: Int): Int
+internal external fun intoCharCodeArray(string: ExternalInterfaceType?, array: WasmCharArray, start: Int): Int
 
 internal fun jsToKotlinStringAdapter(x: ExternalInterfaceType): String {
     val stringLength = stringLength(x)

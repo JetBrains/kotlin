@@ -21,3 +21,7 @@ public external interface JsAny
 @ExcludedFromCodegen
 public fun <T : JsAny> JsAny.unsafeCast(): T =
     implementedAsIntrinsic
+
+@Suppress("REIFIED_TYPE_PARAMETER_NO_INLINE")
+internal fun <reified To> wasm_ref_cast(a: JsAny?): To =
+    implementedAsIntrinsic

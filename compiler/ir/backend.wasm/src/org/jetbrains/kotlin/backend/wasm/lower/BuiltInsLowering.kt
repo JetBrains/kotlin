@@ -74,7 +74,7 @@ class BuiltInsLowering(val context: WasmBackendContext) : FileLoweringPass {
                     ) {
                         error("Unexpected external refs in wasi mode")
                     }
-                    val refIsNull = if (expr.type.erasedUpperBound.isExternal) symbols.jsRelatedSymbols.externRefIsNull else symbols.refIsNull
+                    val refIsNull = if (expr.type.erasedUpperBound.isExternal && expr.type.isNullable()) symbols.jsRelatedSymbols.externRefIsNull else symbols.refIsNull
                     return builder.irCall(refIsNull).apply { arguments[0] = expr }
                 }
 

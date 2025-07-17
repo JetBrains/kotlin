@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.util.erasedUpperBound
 import org.jetbrains.kotlin.ir.util.isInterface
+import org.jetbrains.kotlin.ir.util.isNullable
 import org.jetbrains.kotlin.ir.util.packageFqName
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.wasm.ir.*
@@ -46,8 +47,14 @@ class WasmTypeTransformer(
                 toWasmValueType()
         }
 
-    private fun IrType.toWasmGcRefType(): WasmType =
-        WasmRefNullType(WasmHeapType.Type(wasmFileCodegenContext.referenceGcType(getRuntimeClass(backendContext.irBuiltIns).symbol)))
+    private fun IrType.toWasmGcRefType(): WasmType {
+        return if (this.isNullable() || !this.erasedUpperBound.isExternal) {
+            WasmRefNullType(WasmHeapType.Type(wasmFileCodegenContext.referenceGcType(getRuntimeClass(backendContext.irBuiltIns).symbol)))
+        } else {
+//            WasmRefType(WasmHeapType.Simple.Extern)
+            WasmRefType(WasmHeapType.Type(wasmFileCodegenContext.referenceGcType(getRuntimeClass(backendContext.irBuiltIns).symbol)))
+        }
+    }
 
     fun IrType.toBoxedInlineClassType(): WasmType =
         toWasmGcRefType()
@@ -98,11 +105,17 @@ class WasmTypeTransformer(
                 val ic = backendContext.inlineClassesUtils.getInlinedClass(this)
 
                 if (klass.isExternal) {
-                    if (klass.name.identifier != "JsStringRef") {
+                    if (this.isNullable()) {
                         WasmExternRef
                     } else {
+//                        WasmRefType(WasmHeapType.Type(wasmFileCodegenContext.referenceGcType(getRuntimeClass(backendContext.irBuiltIns).symbol)))
                         WasmRefType(WasmHeapType.Simple.Extern)
                     }
+//                    if (klass.name.identifier != "JsStringRef") {
+//                        WasmExternRef
+//                    } else {
+//                        WasmRefType(WasmHeapType.Simple.Extern)
+//                    }
                 } else if (isBuiltInWasmRefType(this)) {
                     when (val name = klass.name.identifier) {
                         "anyref" -> WasmAnyRef
