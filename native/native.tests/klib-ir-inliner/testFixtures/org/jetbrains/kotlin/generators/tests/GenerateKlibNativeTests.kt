@@ -47,20 +47,20 @@ fun main() {
 
         // New frontend test infrastructure tests
         testGroup(testsRoot = "native/native.tests/klib-ir-inliner/tests-gen", testDataRoot = "compiler/testData/diagnostics") {
-            testClass<AbstractFirPsiNativeDiagnosticsTest>(
-                suiteTestClassName = "FirPsiOldFrontendNativeDiagnosticsTestGenerated",
+            testClass<AbstractPsiNativeDiagnosticsTest>(
+                suiteTestClassName = "PsiOldFrontendNativeDiagnosticsTestGenerated",
             ) {
                 model("nativeTests", excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN)
             }
 
-            testClass<AbstractFirLightTreeNativeDiagnosticsTest>(
-                suiteTestClassName = "FirLightTreeOldFrontendNativeDiagnosticsTestGenerated",
+            testClass<AbstractLightTreeNativeDiagnosticsTest>(
+                suiteTestClassName = "LightTreeOldFrontendNativeDiagnosticsTestGenerated",
             ) {
                 model("nativeTests", excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN)
             }
 
-            testClass<AbstractFirPsiNativeDiagnosticsWithBackendTestBase>(
-                suiteTestClassName = "FirPsiNativeKlibDiagnosticsTestGenerated",
+            testClass<AbstractPsiNativeDiagnosticsWithBackendTestBase>(
+                suiteTestClassName = "PsiNativeKlibDiagnosticsTestGenerated",
                 annotations = listOf(klib())
             ) {
                 model("klibSerializationTests")
@@ -68,8 +68,8 @@ fun main() {
                 model("nativeTests/specialBackendChecks")
             }
 
-            testClass<AbstractFirLightTreeNativeDiagnosticsWithBackendTestBase>(
-                suiteTestClassName = "FirLightTreeNativeKlibDiagnosticsTestGenerated",
+            testClass<AbstractLightTreeNativeDiagnosticsWithBackendTestBase>(
+                suiteTestClassName = "LightTreeNativeKlibDiagnosticsTestGenerated",
                 annotations = listOf(klib())
             ) {
                 model("klibSerializationTests")
@@ -77,8 +77,8 @@ fun main() {
                 model("nativeTests/specialBackendChecks")
             }
 
-            testClass<AbstractFirNativeDiagnosticsWithBackendWithInlinedFunInKlibTestBase>(
-                suiteTestClassName = "FirNativeKlibDiagnosticsWithInlinedFunInKlibTestGenerated",
+            testClass<AbstractNativeDiagnosticsWithBackendWithInlinedFunInKlibTestBase>(
+                suiteTestClassName = "NativeKlibDiagnosticsWithInlinedFunInKlibTestGenerated",
                 annotations = listOf(klib())
             ) {
                 model("klibSerializationTests")
