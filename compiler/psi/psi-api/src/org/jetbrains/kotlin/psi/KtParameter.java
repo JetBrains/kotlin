@@ -117,7 +117,7 @@ public class KtParameter extends KtNamedDeclarationStub<KotlinParameterStub> imp
         if (stub != null && !stub.hasValOrVar()) {
             return null;
         }
-        return findChildByType(VAL_VAR_TOKEN_SET);
+        return findChildByType(KtTokens.VAL_VAR);
     }
 
     @Nullable
@@ -128,7 +128,11 @@ public class KtParameter extends KtNamedDeclarationStub<KotlinParameterStub> imp
         return findChildByType(KtNodeTypes.DESTRUCTURING_DECLARATION);
     }
 
-    public static final TokenSet VAL_VAR_TOKEN_SET = TokenSet.create(KtTokens.VAL_KEYWORD, KtTokens.VAR_KEYWORD);
+    /**
+     * @deprecated use {@link KtTokens#VAL_VAR} instead.
+     */
+    @Deprecated
+    public static final TokenSet VAL_VAR_TOKEN_SET = KtTokens.VAL_VAR;
 
     @Override
     public ItemPresentation getPresentation() {

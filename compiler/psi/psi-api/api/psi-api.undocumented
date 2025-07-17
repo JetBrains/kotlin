@@ -817,7 +817,6 @@ org.jetbrains.kotlin.psi.KtPackageDirective:getQualifiedName()
 org.jetbrains.kotlin.psi.KtPackageDirective:isRoot()
 org.jetbrains.kotlin.psi.KtPackageDirective:setFqName(FqName)
 org.jetbrains.kotlin.psi.KtParameter
-org.jetbrains.kotlin.psi.KtParameter:VAL_VAR_TOKEN_SET
 org.jetbrains.kotlin.psi.KtParameter:constructor(ASTNode)
 org.jetbrains.kotlin.psi.KtParameter:constructor(KotlinParameterStub)
 org.jetbrains.kotlin.psi.KtParameter:getDefaultValue()

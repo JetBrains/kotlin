@@ -11,7 +11,6 @@ import com.intellij.navigation.ItemPresentationProviders;
 import com.intellij.openapi.diagnostic.Logger;
 import com.intellij.psi.PsiElement;
 import com.intellij.psi.tree.IElementType;
-import com.intellij.psi.tree.TokenSet;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -322,12 +321,10 @@ public class KtProperty extends KtTypeParameterListOwnerStub<KotlinPropertyStub>
     @Override
     @NotNull
     public PsiElement getValOrVarKeyword() {
-        PsiElement element = findChildByType(VAL_VAR_TOKEN_SET);
+        PsiElement element = findChildByType(KtTokens.VAL_VAR);
         assert element != null : "Val or var should always exist for property" + this.getText();
         return element;
     }
-
-    private static final TokenSet VAL_VAR_TOKEN_SET = TokenSet.create(KtTokens.VAL_KEYWORD, KtTokens.VAR_KEYWORD);
 
     @Override
     public ItemPresentation getPresentation() {

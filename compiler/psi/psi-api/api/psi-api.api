@@ -697,6 +697,7 @@ public abstract interface class org/jetbrains/kotlin/lexer/KtTokens {
 	public static final field VALUE_KEYWORD_Id I
 	public static final field VAL_KEYWORD Lorg/jetbrains/kotlin/lexer/KtKeywordToken;
 	public static final field VAL_KEYWORD_Id I
+	public static final field VAL_VAR Lcom/intellij/psi/tree/TokenSet;
 	public static final field VARARG_KEYWORD Lorg/jetbrains/kotlin/lexer/KtModifierKeywordToken;
 	public static final field VARARG_KEYWORD_Id I
 	public static final field VAR_KEYWORD Lorg/jetbrains/kotlin/lexer/KtKeywordToken;

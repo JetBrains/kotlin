@@ -18,7 +18,6 @@ package org.jetbrains.kotlin.psi;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
-import com.intellij.psi.tree.TokenSet;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -31,7 +30,6 @@ import java.util.List;
 import static org.jetbrains.kotlin.lexer.KtTokens.*;
 
 public class KtDestructuringDeclaration extends KtDeclarationImpl implements KtValVarKeywordOwner, KtDeclarationWithInitializer {
-    private static final TokenSet VAL_VAR_KEYWORDS = TokenSet.create(VAL_KEYWORD, VAR_KEYWORD);
 
     public KtDestructuringDeclaration(@NotNull ASTNode node) {
         super(node);
@@ -69,7 +67,7 @@ public class KtDestructuringDeclaration extends KtDeclarationImpl implements KtV
     @Override
     @Nullable
     public PsiElement getValOrVarKeyword() {
-        return findChildByType(VAL_VAR_KEYWORDS);
+        return findChildByType(VAL_VAR);
     }
 
     @Nullable

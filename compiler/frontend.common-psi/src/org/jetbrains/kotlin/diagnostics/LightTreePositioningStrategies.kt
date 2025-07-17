@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.lexer.KtTokens.*
-import org.jetbrains.kotlin.psi.KtParameter.VAL_VAR_TOKEN_SET
 import org.jetbrains.kotlin.psi.psiUtil.getAssignmentLhsIfUnwrappable
 import org.jetbrains.kotlin.psi.stubs.elements.KtTokenSets
 import org.jetbrains.kotlin.util.getChildren
@@ -357,7 +356,7 @@ object LightTreePositioningStrategies {
                     return markRange(startElement, endOfSignatureElement, startOffset, endOffset, tree, node)
                 }
                 KtNodeTypes.PROPERTY -> {
-                    val start = tree.findChildByType(node, TokenSet.create(VAL_KEYWORD, VAR_KEYWORD)) ?: node
+                    val start = tree.findChildByType(node, VAL_VAR) ?: node
                     val endOfSignatureElement = tree.typeReference(node) ?: tree.nameIdentifier(node) ?: node
                     return markRange(start, endOfSignatureElement, startOffset, endOffset, tree, node)
                 }
@@ -1509,7 +1508,7 @@ private fun FlyweightCapableTreeStructure<LighterASTNode>.objectKeyword(node: Li
     findChildByType(node, OBJECT_KEYWORD)
 
 fun FlyweightCapableTreeStructure<LighterASTNode>.valOrVarKeyword(node: LighterASTNode): LighterASTNode? =
-    findChildByType(node, VAL_VAR_TOKEN_SET)
+    findChildByType(node, VAL_VAR)
 
 fun FlyweightCapableTreeStructure<LighterASTNode>.visibilityModifier(declaration: LighterASTNode): LighterASTNode? =
     modifierList(declaration)?.let { findChildByType(it, VISIBILITY_MODIFIERS) }
