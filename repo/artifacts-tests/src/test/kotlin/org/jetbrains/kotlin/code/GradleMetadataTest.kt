@@ -5,14 +5,17 @@
 
 package org.jetbrains.kotlin.code
 
+import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertEqualsToFile
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.isTeamCityBuild
 import org.junit.jupiter.api.DynamicTest
 import org.junit.jupiter.api.TestFactory
+import java.io.File
 import java.util.stream.Stream
 import kotlin.io.path.absolute
+import kotlin.io.path.pathString
 import kotlin.streams.asStream
-import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 import kotlin.test.fail
 
@@ -28,10 +31,12 @@ class GradleMetadataTest {
                         val expectedWithVersion = expectedGradleMetadataPath.toFile().readText().replace("ArtifactsTest.version", kotlinVersion)
                         val expectedObject = Json.decodeFromString<GradleMetadata>(expectedWithVersion)
                         expectedObject.sortListsRecursively()
+                        val tempExpectedFile = File(expectedGradleMetadataPath.pathString + ".tmp").also { it.createNewFile() }
+                        tempExpectedFile.writeText(Json.encodeToString(expectedObject))
                         val actualObject = Json.decodeFromString<GradleMetadata>(actualString)
                         actualObject.removeFilesFingerprint()
                         actualObject.sortListsRecursively()
-                        assertEquals(expectedObject, actualObject)
+                        assertEqualsToFile(tempExpectedFile, actualObject.toString())
                     }
                 } else {
                     if (isTeamCityBuild) fail("Excluded project in actual artifacts: $actual")
