@@ -3,18 +3,23 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package androidx.compose.compiler.group.analysis
+package androidx.compose.compiler.mapping
 
-object ComposeMapping {
-    fun fromBytecode(bytecode: ByteArray): String = buildString {
-        val cls = ClassInfo(bytecode)
-        cls.methods.forEach { method ->
-            method.groups.forEach { group ->
-                if (group.key != null) {
-                    appendEntry(cls, method, group)
-                    appendLine()
-                }
-            }
+import androidx.compose.compiler.mapping.group.GroupInfo
+
+class ComposeMapping private constructor(
+    private val entries: List<Entry>
+) {
+    private class Entry(
+        val cls: ClassInfo,
+        val method: MethodInfo,
+        val group: GroupInfo
+    )
+
+    fun asProguardMapping(): String = buildString {
+        entries.forEach { entry ->
+            appendEntry(entry.cls, entry.method, entry.group)
+            appendLine()
         }
     }
 
@@ -34,7 +39,7 @@ object ComposeMapping {
         append(group.line)
         append(" -> ")
         append("m$")
-        append(group.key.key.toString())
+        append(group.key.toString())
     }
 
     private fun descriptorToProguardString(name: String, descriptor: String): String {
@@ -90,5 +95,21 @@ object ComposeMapping {
             prefix = "${descriptorToJavaType(returnType)} $name(",
             postfix = ")",
         )
+    }
+
+    companion object {
+        fun fromBytecode(reporter: ComposeMappingErrorReporter, bytecode: ByteArray): ComposeMapping {
+            val cls = with(reporter) { ClassInfo(bytecode) }
+            val entries = buildList {
+                cls.methods.forEach { method ->
+                    method.groups.forEach { group ->
+                        if (group.key != null) {
+                            add(Entry(cls, method, group))
+                        }
+                    }
+                }
+            }
+            return ComposeMapping(entries)
+        }
     }
 }

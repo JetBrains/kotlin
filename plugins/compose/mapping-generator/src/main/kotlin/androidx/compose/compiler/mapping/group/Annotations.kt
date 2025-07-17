@@ -3,8 +3,9 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package androidx.compose.compiler.group.analysis
+package androidx.compose.compiler.mapping.group
 
+import androidx.compose.compiler.mapping.ComposeIds
 import org.objectweb.asm.tree.AnnotationNode
 import org.objectweb.asm.tree.MethodNode
 
@@ -14,7 +15,7 @@ private val MethodNode.allAnnotations: List<AnnotationNode>
         addAll(invisibleAnnotations.orEmpty())
     }
 
-internal fun MethodNode.readFunctionKeyMetaAnnotation(): ComposeGroupKey? {
+internal fun MethodNode.readFunctionKeyMetaAnnotation(): Int? {
     val functionKeyAnnotation = allAnnotations.find { annotationNode ->
         annotationNode.desc == ComposeIds.FunctionKeyMeta.classId.descriptor
     } ?: return null
@@ -25,16 +26,15 @@ internal fun MethodNode.readFunctionKeyMetaAnnotation(): ComposeGroupKey? {
     }
 
     val functionKey = functionKeyAnnotation.values[keyIndex + 1] as? Int ?: return null
-    return ComposeGroupKey(functionKey)
+    return functionKey
 }
 
-internal fun MethodNode.hasComposableAnnotation(): Boolean {
-    return allAnnotations.any {
-        ClassId.fromDesc(it.desc) in COMPOSE_FUNCTION_ANNOTATIONS
+internal fun MethodNode.hasComposableAnnotation(): Boolean =
+    allAnnotations.any {
+        it.desc == ComposeIds.Composable.classId.descriptor
     }
-}
 
-private val COMPOSE_FUNCTION_ANNOTATIONS = setOf(
-    ComposeIds.Composable.classId,
-    ComposeIds.FunctionKeyMeta.classId,
-)
+internal fun MethodNode.hasFunctionKeyMetaAnnotation(): Boolean =
+    allAnnotations.any {
+        it.desc == ComposeIds.FunctionKeyMeta.classId.descriptor
+    }

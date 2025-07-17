@@ -1,0 +1,27 @@
+//
+// Source
+// ------------------------------------------
+
+@Composable
+fun Test(text: String) {
+    if (text.isEmpty()) return
+    Text(text)
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+TestKt {
+    file: Test.kt
+    Test(Ljava/lang/String;Landroidx/compose/runtime/Composer;I)V
+        RestartGroup { key: -1971298841, line: 5 }
+}
+
+TestKt$Test$1 {
+    file: Test.kt
+}
+
+TestKt$Test$2 {
+    file: Test.kt
+}

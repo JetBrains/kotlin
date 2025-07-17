@@ -5,7 +5,8 @@
 
 package org.jetbrains.kotlin.compose.compiler.gradle.internal
 
-import androidx.compose.compiler.group.analysis.ComposeMapping
+import androidx.compose.compiler.mapping.ComposeMapping
+import androidx.compose.compiler.mapping.ComposeMappingErrorReporter
 import com.android.build.api.artifact.ScopedArtifact
 import com.android.build.api.artifact.SingleArtifact
 import com.android.build.api.variant.ApplicationAndroidComponentsExtension
@@ -30,7 +31,7 @@ internal fun Project.configureComposeMappingFile() {
 
             val produceTaskName = "produce${variant.name.capitalize()}ComposeMapping"
             val taskProvider = project.tasks.register<ProduceMappingFileTask>(produceTaskName) {
-                output.set(project.layout.buildDirectory.file("intermediates/$produceTaskName/compose-mapping.txt"))
+                output.set(project.layout.buildDirectory.file("intermediates/compose_mapping/${variant.name}/compose-mapping.txt"))
             }
 
             variant.artifacts
@@ -79,7 +80,9 @@ internal abstract class MergeMappingFileTask : DefaultTask() {
     @TaskAction
     fun taskAction() {
         // todo: fix previous mapping file hash
-        output.get().asFile.bufferedWriter().use { writer ->
+        val outputFile = output.get().asFile
+        outputFile.parentFile.mkdirs()
+        outputFile.bufferedWriter().use { writer ->
             originalFile.orNull?.let { writer.write(it.asFile.readText()) }
             composeMapping.orNull?.let { writer.write(it.asFile.readText()) }
         }
@@ -87,7 +90,7 @@ internal abstract class MergeMappingFileTask : DefaultTask() {
 }
 
 @CacheableTask
-internal abstract class ProduceMappingFileTask : DefaultTask() {
+internal abstract class ProduceMappingFileTask() : DefaultTask() {
     @get:OutputFile
     abstract val output: RegularFileProperty
 
@@ -105,15 +108,19 @@ internal abstract class ProduceMappingFileTask : DefaultTask() {
 
     @TaskAction
     fun taskAction() {
-        output.get().asFile.bufferedWriter().use { writer ->
-            writer.write("ComposeStackTrace -> ${"$$"}compose:\n")
+        val reporter = object : ComposeMappingErrorReporter {
+            override fun reportError(e: Throwable) {
+                throw e // todo: figure out how to report errors in Gradle
+            }
+        }
 
+        val mappings = buildList {
             projectJars.get().forEach { jar ->
                 val contents = files.zipTree(jar)
                 contents.forEach { file ->
                     if (file.name.endsWith(".class")) {
-                        val mapping = ComposeMapping.fromBytecode(file.readBytes())
-                        writer.write(mapping)
+                        val mapping = ComposeMapping.fromBytecode(reporter, file.readBytes())
+                        add(mapping)
                     }
                 }
             }
@@ -122,10 +129,17 @@ internal abstract class ProduceMappingFileTask : DefaultTask() {
                 val contents = files.fileTree(it)
                 contents.forEach { file ->
                     if (file.name.endsWith(".class")) {
-                        val mapping = ComposeMapping.fromBytecode(file.readBytes())
-                        writer.write(mapping)
+                        val mapping = ComposeMapping.fromBytecode(reporter, file.readBytes())
+                        add(mapping)
                     }
                 }
+            }
+        }
+
+        output.get().asFile.bufferedWriter().use { writer ->
+            writer.write("ComposeStackTrace -> ${"$$"}compose:\n")
+            mappings.forEach {
+                writer.write(it.asProguardMapping())
             }
         }
     }

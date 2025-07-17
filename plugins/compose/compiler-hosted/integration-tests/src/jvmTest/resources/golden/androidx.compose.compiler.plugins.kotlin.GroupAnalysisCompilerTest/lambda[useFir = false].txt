@@ -1,0 +1,23 @@
+//
+// Source
+// ------------------------------------------
+
+val a = @Composable {}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+ComposableSingletons$TestKt {
+    file: Test.kt
+}
+
+ComposableSingletons$TestKt$lambda$-486040309$1 {
+    file: Test.kt
+    invoke(Landroidx/compose/runtime/Composer;I)V
+        Root { key: -486040309, line: 4 }
+}
+
+TestKt {
+    file: Test.kt
+}

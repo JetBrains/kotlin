@@ -5,17 +5,23 @@
 
 package androidx.compose.compiler.plugins.kotlin
 
-import androidx.compose.compiler.group.analysis.ClassInfo
-import androidx.compose.compiler.group.analysis.render
+import androidx.compose.compiler.mapping.ClassInfo
+import androidx.compose.compiler.mapping.ComposeMappingErrorReporter
+import androidx.compose.compiler.mapping.render
 import androidx.compose.compiler.plugins.kotlin.facade.SourceFile
 import androidx.compose.compiler.plugins.kotlin.lower.dumpSrc
 import org.intellij.lang.annotations.Language
+import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.junit.Rule
 import kotlin.test.Test
 
 class GroupAnalysisCompilerTest(
     useFir: Boolean
 ) : AbstractCompilerTest(useFir) {
+
+    override fun CompilerConfiguration.updateConfiguration() {
+        // TODO test without function meta and optimize skipping groups flags
+    }
 
     @Test
     fun topLevelFunction() {
@@ -94,9 +100,98 @@ class GroupAnalysisCompilerTest(
             fun getState(): State = TODO()
             @Composable fun SubcomposeAsyncImageContent() {}
             """,
-            dumpIr = true
         )
     }
+
+    @Test
+    fun earlyReturn() = groups(
+        """
+            @Composable
+            fun Test(text: String) {
+                if (text.isEmpty()) return
+                Text(text)
+            }
+        """,
+        """
+            @Composable fun Text(text: String) {}
+        """,
+    )
+
+    @Test
+    fun endToMarker() = groups(
+        """
+            @Composable
+            fun Test(text: String) {
+                Wrapper {
+                    if (text.isEmpty()) return@Test
+                    Text(text)
+                }
+            }
+        """,
+        """
+            @Composable inline fun Wrapper(content: @Composable () -> Unit) = content()
+            @Composable fun Text(text: String) {}
+        """,
+    )
+
+    @Test
+    fun endToMarkerNested() = groups(
+        """
+            @Composable
+            fun Test(text: String) {
+                Wrapper {
+                    if (text.isEmpty()) return@Test
+                    Text(text)
+
+                    SecondWrapper {
+                        if (text.isEmpty()) return@Wrapper
+                        Text(text)
+                    }
+                }
+            }
+        """,
+        """
+            @Composable inline fun Wrapper(content: @Composable () -> Unit) = content()
+            @Composable inline fun SecondWrapper(content: @Composable () -> Unit) = content()
+            @Composable fun Text(text: String) {}
+        """,
+    )
+
+    @Test
+    fun earlyReturnCurrent() = groups(
+        """
+            @Composable fun Test(text: String) {
+                if (Local.current) return
+                if (text.isEmpty()) return
+
+                Text(text)
+            }
+        """,
+        """
+            val Local = compositionLocalOf { false }
+            @Composable fun Text(text: String) {}
+        """,
+    )
+
+    @Test
+    fun replaceableGroup() = groups(
+        """
+            @Composable fun <T> Test(text: T): T {
+                Text(text.toString())
+                return text
+            }
+        """,
+        """
+            @Composable fun Text(text: String) {}
+        """,
+    )
+
+    @Test
+    fun lambda() = groups(
+        """
+            val a = @Composable {}
+        """
+    )
 
     @JvmField
     @Rule
@@ -119,7 +214,9 @@ class GroupAnalysisCompilerTest(
             .allGeneratedFiles
             .filter { it.relativePath.endsWith(".class") }
             .mapNotNull { file ->
-                ClassInfo(file.asByteArray())
+                with(ComposeMappingErrorReporter.Default) {
+                    ClassInfo(file.asByteArray()).takeIf { it.fileName == "Test.kt" }
+                }
             }
 
 
@@ -133,7 +230,7 @@ class GroupAnalysisCompilerTest(
 
     private fun wrapWithImports(source: String) =
         """
-            import androidx.compose.runtime.Composable
+            import androidx.compose.runtime.*
 
             $source
         """.trimIndent()

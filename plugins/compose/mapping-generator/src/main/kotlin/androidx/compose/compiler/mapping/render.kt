@@ -3,8 +3,9 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package androidx.compose.compiler.group.analysis
+package androidx.compose.compiler.mapping
 
+import androidx.compose.compiler.mapping.group.GroupInfo
 import org.jetbrains.annotations.TestOnly
 
 @TestOnly
@@ -37,7 +38,7 @@ private fun GroupInfo.render(): String = buildString {
     append(type)
     append(" { ")
     append("key: ")
-    append(key?.key)
+    append(key)
     append(", ")
     append("line: ")
     append(line)

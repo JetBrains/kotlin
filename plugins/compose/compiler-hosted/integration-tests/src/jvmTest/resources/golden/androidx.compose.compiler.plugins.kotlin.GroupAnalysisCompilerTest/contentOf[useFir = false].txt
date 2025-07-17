@@ -34,7 +34,7 @@ ComposableSingletons$TestKt {
 ComposableSingletons$TestKt$lambda$-1311044554$1 {
     file: Test.kt
     invoke(Landroidx/compose/runtime/Composer;I)V
-        NoGroup { key: -1311044554, line: -1 }
+        Root { key: -1311044554, line: 21 }
 }
 
 TestKt {
@@ -45,42 +45,12 @@ TestKt$contentOf$1 {
     file: Test.kt
     invoke(Landroidx/compose/runtime/Composer;I)V
         ReplaceGroup { key: 870084930, line: 13 }
-        ReplaceGroup { key: 1202356213, line: 13 }
+        ReplaceGroup { key: 1202849237, line: 13 }
         ReplaceGroup { key: 870087938, line: 14 }
-        ReplaceGroup { key: 1202356213, line: 14 }
+        ReplaceGroup { key: 1202942485, line: 14 }
         ReplaceGroup { key: 870090754, line: 15 }
-        ReplaceGroup { key: 1202356213, line: 15 }
+        ReplaceGroup { key: 1203029781, line: 15 }
         ReplaceGroup { key: 870095210, line: 18 }
-        ReplaceGroup { key: 1202356213, line: 18 }
-        NoGroup { key: -1018087891, line: -1 }
-}
-
-State {
-    file: Extra.kt
-}
-
-State$Empty {
-    file: Extra.kt
-}
-
-State$Loading {
-    file: Extra.kt
-}
-
-State$Success {
-    file: Extra.kt
-}
-
-State$Error {
-    file: Extra.kt
-}
-
-ExtraKt {
-    file: Extra.kt
-    SubcomposeAsyncImageContent(Landroidx/compose/runtime/Composer;I)V
-        RestartGroup { key: 738339482, line: 11 }
-}
-
-ExtraKt$SubcomposeAsyncImageContent$1 {
-    file: Extra.kt
+        ReplaceGroup { key: 1203175605, line: 18 }
+        Root { key: -1018087891, line: 11 }
 }
