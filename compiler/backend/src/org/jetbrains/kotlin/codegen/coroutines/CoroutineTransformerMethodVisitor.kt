@@ -26,6 +26,7 @@ import org.jetbrains.org.objectweb.asm.tree.analysis.Frame
 import kotlin.math.max
 
 private const val COROUTINES_DEBUG_METADATA_VERSION = 2
+private const val COROUTINES_DEBUG_METADATA_VERSION_BEFORE_2_3 = 1
 
 private const val COROUTINES_METADATA_SOURCE_FILE_JVM_NAME = "f"
 private const val COROUTINES_METADATA_LINE_NUMBERS_JVM_NAME = "l"
@@ -413,11 +414,14 @@ class CoroutineTransformerMethodVisitor(
         spilledToLocalMapping: List<List<SpilledVariableAndField>>
     ) {
         val lines = suspensionPointLineNumbers.map { it?.line ?: -1 }
-        val nextLines = suspensionPointNextLineNumbers.map { it?.line ?: -1 }
         val metadata = classBuilderForCoroutineState.newAnnotation(DEBUG_METADATA_ANNOTATION_ASM_TYPE.descriptor, true)
         metadata.visit(COROUTINES_METADATA_SOURCE_FILE_JVM_NAME, sourceFile)
         metadata.visit(COROUTINES_METADATA_LINE_NUMBERS_JVM_NAME, lines.toIntArray())
-        metadata.visit(COROUTINES_METADATA_NEXT_LINE_NUMBERS_JVM_NAME, nextLines.toIntArray())
+
+        if (config.generateDebugMetadataV2) {
+            val nextLines = suspensionPointNextLineNumbers.map { it?.line ?: -1 }
+            metadata.visit(COROUTINES_METADATA_NEXT_LINE_NUMBERS_JVM_NAME, nextLines.toIntArray())
+        }
 
         val debugIndexToLabel = spilledToLocalMapping.withIndex().flatMap { (labelIndex, list) ->
             list.map { labelIndex }
@@ -432,7 +436,10 @@ class CoroutineTransformerMethodVisitor(
         }.visitEnd()
         metadata.visit(COROUTINES_METADATA_METHOD_NAME_JVM_NAME, methodNode.name)
         metadata.visit(COROUTINES_METADATA_CLASS_NAME_JVM_NAME, Type.getObjectType(containingClassInternalName).className)
-        metadata.visit(COROUTINES_METADATA_VERSION_JVM_NAME, COROUTINES_DEBUG_METADATA_VERSION)
+        metadata.visit(
+            COROUTINES_METADATA_VERSION_JVM_NAME,
+            if (config.generateDebugMetadataV2) COROUTINES_DEBUG_METADATA_VERSION else COROUTINES_DEBUG_METADATA_VERSION_BEFORE_2_3
+        )
         metadata.visitEnd()
     }
 

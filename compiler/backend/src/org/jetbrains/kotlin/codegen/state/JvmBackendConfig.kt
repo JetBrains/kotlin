@@ -114,4 +114,6 @@ class JvmBackendConfig(configuration: CompilerConfiguration) {
         if (target.majorVersion >= JvmTarget.JVM_21.majorVersion)
             configuration.get(JVMConfigurationKeys.WHEN_GENERATION_SCHEME, JvmWhenGenerationScheme.INLINE)
         else JvmWhenGenerationScheme.INLINE
+
+    val generateDebugMetadataV2: Boolean = languageVersionSettings.apiVersion >= ApiVersion.KOTLIN_2_3
 }
