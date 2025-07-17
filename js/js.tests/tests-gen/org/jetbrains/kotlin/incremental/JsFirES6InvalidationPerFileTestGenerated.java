@@ -183,6 +183,12 @@ public class JsFirES6InvalidationPerFileTestGenerated extends AbstractJsFirES6In
   }
 
   @Test
+  @TestMetadata("externalOverriddenProperty")
+  public void testExternalOverriddenProperty() {
+    runTest("js/js.translator/testData/incremental/invalidation/externalOverriddenProperty/");
+  }
+
+  @Test
   @TestMetadata("fakeOverrideClassFunctionQualifiers")
   public void testFakeOverrideClassFunctionQualifiers() {
     runTest("js/js.translator/testData/incremental/invalidation/fakeOverrideClassFunctionQualifiers/");
