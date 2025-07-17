@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.name.StandardClassIds
 
 class ConeRawScopeSubstitutor(private val useSiteSession: FirSession) : AbstractConeSubstitutor(useSiteSession.typeContext) {
     override fun substituteCEType(type: CEType): CEType = with(useSiteSession.typeContext) {
-        // TODO: RE: LOW: suspicious place (who cares about raw types)
+        // TODO: RE: LOW: suspicious place
         if (type !is CETypeParameterType) return type
         return type.lookupTag.typeParameterSymbol.resolvedBounds.map { it.coneType.splitIntoValueAndError().second }.intersectErrorTypes()
     }

@@ -714,7 +714,7 @@ val ConeRigidType.lookupTagOfDispatchReceiver: ConeClassLikeLookupTag
         else -> error("Unexpected receiver type: $this")
     }
 
-// these function is intended to easily find added cast places (as they should be removed/adjusted later)
+// this function is intended to easily find added cast places (as they should be removed/adjusted later)
 val ConeRigidType.expectNonErrorClassSoft: ConeClassLikeType
     get() = when (this) {
         is ConeClassLikeType -> this

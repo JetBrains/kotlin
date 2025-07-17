@@ -262,7 +262,7 @@ object ConeTypeCompatibilityChecker {
             }
             is ConeErrorUnionType -> {
                 // TODO: RE: idk what is expected here, so:
-                error("boom")
+                error("Unexpected failure. Report with stacktrace if you see this message.")
             }
         }
     }

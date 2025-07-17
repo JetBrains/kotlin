@@ -166,7 +166,6 @@ fun createParametersSubstitutor(
     override fun substituteArgument(projection: ConeTypeProjection, index: Int): ConeTypeProjection? {
         val type = (projection as? ConeKotlinTypeProjection)?.type ?: return null
         // TODO: Consider making code more generic and "ready" to any kind of types (KT-68497)
-        // TODO: RE: consider the comment below again
         val symbol =
             type.lowerBoundIfFlexible().lookupTagIfTypeParameterIgnoringDnn()?.symbol
                 ?: return super.substituteArgument(projection, index)

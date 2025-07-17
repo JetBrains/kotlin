@@ -658,7 +658,7 @@ internal fun ConeTypeContext.captureFromExpressionInternal(type: ConeKotlinType)
                 is ConeTypeVariableType,
                     -> null
                 null -> {
-                    // TODO: RE: suspicious place
+                    // TODO: RE: LOW: Very indirect handling
                     captureErrorUnionInternal(type.lowerBound as ConeErrorUnionType)
                 }
             }
@@ -680,7 +680,7 @@ internal fun ConeTypeContext.captureFromExpressionInternal(type: ConeKotlinType)
 }
 
 internal fun ConeTypeContext.captureErrorUnionInternal(type: ConeErrorUnionType): ConeErrorUnionType? {
-    // TODO: RE: capture error component (probable, not needed as there are not type arguments)
+    // TODO: RE: capture error component (probably, not needed as there are no type arguments)
     return captureFromExpressionInternal(type.valueType)?.let { type.replaceValueTypeUnsafe(it) }
 }
 

@@ -132,11 +132,9 @@ private fun JavaType?.toConeTypeProjection(
                     ) ?: lowerBound
                 lowerBound.isTypeParameter() -> {
                     lowerBound as ConeErrorUnionType
-                    lowerBound.replaceValueType(
-                        ConeDefinitelyNotNullType.create(
-                            lowerBound.valueType, session.typeContext, avoidComprehensiveCheck = true
-                        ) ?: lowerBound.valueType
-                    )
+                    ConeDefinitelyNotNullType.create(
+                        lowerBound.valueType, session.typeContext, avoidComprehensiveCheck = true
+                    )?.let { lowerBound.replaceValueType(it) } ?: lowerBound
                 }
 
                 else -> lowerBound
@@ -216,10 +214,10 @@ private fun JavaClassifierType.toConeKotlinTypeForFlexibleBound(
     val lowerBoundLookupTag = when (lowerBound) {
         is ConeLookupTagBasedType -> lowerBound.lookupTag
         is ConeErrorUnionType -> {
-            lowerBound.lookupTagIfTypeParameter() ?: error("")
+            lowerBound.lookupTagIfTypeParameter() ?: error("Unexpected failure. Report with stacktrace if you see this message.")
         }
         null -> null
-        else -> error("")
+        else -> error("Unexpected failure. Report with stacktrace if you see this message.")
     }
     return when (val classifier = classifier) {
         is JavaClass -> {

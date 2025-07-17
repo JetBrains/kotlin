@@ -59,7 +59,7 @@ object ConeTypeIntersector {
             inputTypes.any { !it.isNullableType() }
         }
         val inputTypesMadeNotNullIfNeeded = inputTypes.mapTo(LinkedHashSet()) {
-            (if (isResultNotNullable) it.makeConeTypeDefinitelyNotNullOrNotNull(context) else it)
+            if (isResultNotNullable) it.makeConeTypeDefinitelyNotNullOrNotNull(context) else it
         }
         if (inputTypesMadeNotNullIfNeeded.size == 1) return inputTypesMadeNotNullIfNeeded.single()
 

@@ -77,16 +77,10 @@ data class ConeErrorUnionType private constructor(
 
     companion object {
         fun create(valueType: ConeValueType, errorType: CEType): ConeErrorUnionType {
-            if (valueType is ConeClassLikeType && !valueType.isNothing && errorType is CETypeVariableType) {
-                error("")
-            }
             return ConeErrorUnionType(valueType, errorType)
         }
 
         fun createNormalized(valueType: ConeValueType, errorType: CEType): ConeRigidType {
-            if (valueType is ConeClassLikeType && !valueType.isNothing && errorType is CETypeVariableType) {
-                error("")
-            }
             if (errorType is CEBotType) return valueType
             return ConeErrorUnionType(valueType, errorType)
         }
@@ -209,13 +203,6 @@ open class ConeFlexibleType(
      */
     val isTrivial: Boolean,
 ) : ConeKotlinType(), FlexibleTypeMarker {
-
-    init {
-        if (lowerBound.isNothing && upperBound.isNullableAny && this !is ConeDynamicType) {
-            print("hi")
-        }
-    }
-
     final override val typeArguments: Array<out ConeTypeProjection>
         get() = lowerBound.typeArguments
 

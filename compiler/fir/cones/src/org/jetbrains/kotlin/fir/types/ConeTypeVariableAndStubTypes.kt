@@ -15,7 +15,6 @@ class ConeTypeVariableType(
     val typeConstructor: ConeTypeVariableTypeConstructor,
     override val attributes: ConeAttributes = ConeAttributes.Empty,
 ) : ConeSimpleKotlinType() {
-
     override val typeArguments: Array<out ConeTypeProjection> get() = EMPTY_ARRAY
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
@@ -107,8 +106,7 @@ class ConeStubTypeForTypeVariableInSubtyping(
     )
 }
 
-open class ConeTypeVariable(name: String, originalTypeParameter: TypeParameterMarker? = null) :
-    TypeVariableMarker {
+open class ConeTypeVariable(name: String, originalTypeParameter: TypeParameterMarker? = null) : TypeVariableMarker {
     val typeConstructor: ConeTypeVariableTypeConstructor = ConeTypeVariableTypeConstructor(name, originalTypeParameter)
     val defaultValueType: ConeTypeVariableType = ConeTypeVariableType(isMarkedNullable = false, typeConstructor)
     val defaultCEType: CEType = CETypeVariableType(typeConstructor)

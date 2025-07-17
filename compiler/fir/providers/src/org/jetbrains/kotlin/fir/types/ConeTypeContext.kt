@@ -668,8 +668,7 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
                 if (lb == ub) {
                     return lb ?: StandardTypes.Nothing
                 } else {
-                    error("Flexible of errors??")
-                    // ConeFlexibleType(lb, ub, isTrivial)
+                    error("Flexible type with different error components detected: $this")
                 }
             }
             is ConeErrorUnionType -> {
@@ -693,11 +692,7 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
         }
     }
 
-    @OptIn(ExperimentalContracts::class)
     private fun ConeRigidType.isPureErrorType(): Boolean {
-        contract {
-            returns(true) implies (this@isPureErrorType is ConeErrorUnionType)
-        }
         if (this !is ConeErrorUnionType) return false
         return valueType.isNothing
     }
@@ -709,7 +704,7 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
                 require(upperBound.isPureErrorType()) { "Not a pure error type" }
                 val lbT = (lowerBound as ConeErrorUnionType).errorType
                 val ubT = (upperBound as ConeErrorUnionType).errorType
-                check(lbT == ubT) { "flexible for errors with different bounds is not expected" }
+                check(lbT == ubT) { "Flexible type with different error components detected: $this" }
                 return lbT
             }
             is ConeErrorUnionType -> {
@@ -728,13 +723,16 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
             is CEBotType -> true
             is CETopType -> false
             is CETypeParameterType -> {
+                // TODO: RE: HIGH: this approach to subtyping is incorrect:
+                // Type parameter may be a subtype of several atomics, while none of them separately
+                // All subtyping-related places require refactoring
                 lookupTag.bounds().any { bound ->
                     val errorProjection = bound.coneType.projectOnError()
                     when {
                         errorProjection.isNothing() -> true
                         errorProjection is ConeErrorUnionType ->
                             errorProjection.errorType.isSubtypeOf(other)
-                        else -> error("unexpected")
+                        else -> error("Unreachable")
                     }
                 }
             }
@@ -760,7 +758,7 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
         val subTs = (this as CEType).collectAtomics(mutableListOf())
         val superTs = (other as CEType).collectAtomics(mutableListOf())
 
-        return subTs.all { subT -> superTs.any { superT -> subT.isSubtypeOfAtomic(superT) } }
+        return subTs.all { subT -> superTs.any { superT -> subT.isSubtypeOfAtomic(superT) } || subT.isSubtypeOfAtomic(CEBotType) }
     }
 
     override fun simplifyAndIncorporateSubtyping(
@@ -779,7 +777,6 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
     }
 
     override fun ErrorTypeMarker.isPossibleSubtypeOf(other: ErrorTypeMarker): Boolean {
-        // TODO: RE: This function does not expand upper bounds of type parameters, so incorrect
         require(this !is CEUnionType) { "Expected atomic" }
         require(!this.isSubtypeOf(other)) { "Already a subtype" }
 
@@ -809,9 +806,9 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
             }
         }
 
-        atomicTypes.map { it.filter { atom -> resultingTypes.any { resAtom -> !atom.isSubtypeOfAtomic(resAtom) } } }
-        if (atomicTypes.any { types -> types.count { it is CETypeVariableType || it is CETypeParameterType } > 1 }) {
-            error("This should not happen. Intersection for different type variables is not supported yet.")
+        val extraTypes = atomicTypes.map { it.filter { atom -> resultingTypes.none { resAtom -> atom.isSubtypeOfAtomic(resAtom) } } }
+        if (extraTypes.sumOf { it.count { it is CETypeVariableType || it is CETypeParameterType } } > 1) {
+            error("Precise intersection is not possible. Some investigation required.")
         }
 
         return when (resultingTypes.size) {
@@ -928,6 +925,7 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
     }
 
     override fun KotlinTypeMarker.addErrorComponent(errorType: ErrorTypeMarker): KotlinTypeMarker {
+        this as ConeKotlinType
         errorType as CEType
         if (errorType == CEBotType) return this
 
@@ -937,9 +935,8 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
                 val upperBound = ConeErrorUnionType.createNormalized(upperBound as ConeValueType, errorType)
                 ConeFlexibleType(lowerBound, upperBound, isTrivial)
             }
-            is ConeErrorUnionType -> error("unexpected")
             is ConeValueType -> ConeErrorUnionType.createNormalized(this, errorType)
-            else -> error("Unexpected")
+            is ConeErrorUnionType -> error("Unexpected")
         }
     }
 

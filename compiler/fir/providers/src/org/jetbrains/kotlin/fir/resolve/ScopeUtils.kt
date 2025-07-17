@@ -188,7 +188,7 @@ fun FirClassLikeSymbol<*>.defaultTypeExpectValue(): ConeClassLikeType = fir.defa
 
 fun FirClassLikeDeclaration.defaultTypeExpectValue(): ConeClassLikeType =
     if (status.isError) {
-        error("Error type happened, time for refactoring")
+        error("Unexpected failure. Report with stacktrace if you see this message.")
     } else {
         ConeClassLikeTypeImpl(
             symbol.toLookupTag(),

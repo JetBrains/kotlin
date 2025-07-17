@@ -317,7 +317,7 @@ open class ConeTypeRenderer(
                 builder.append("Error")
             }
             is CEBotType -> {
-                error("wtf?")
+                error("Unexpected failure. Report with stacktrace if you see this message.")
             }
         }
     }

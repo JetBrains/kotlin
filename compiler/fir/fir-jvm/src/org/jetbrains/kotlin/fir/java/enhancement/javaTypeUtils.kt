@@ -103,6 +103,7 @@ private fun ConeRigidType.enhanceInflexibleType(
     when (this) {
         is ConeErrorUnionType -> {
             check(lookupTagIfTypeParameterIgnoringDnn() != null)
+            // TODO: RE: IMMEDIATE: why only value???
             return valueType.enhanceInflexibleType(
                 session, position, qualifiers, index, subtreeSizes,
                 precomputedTypeArguments, isFromDefinitelyNotNullType, convertErrorToWarning,

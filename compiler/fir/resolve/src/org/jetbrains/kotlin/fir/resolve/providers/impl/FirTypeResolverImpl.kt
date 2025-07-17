@@ -409,10 +409,6 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
                     }
                     else -> resolvedType
                 }
-                val resolvedTypeFir = resolvedTypeSymbol?.fir
-                if (resolvedTypeFir is FirMemberDeclaration && resolvedTypeFir.status.isError) {
-                    check(resolvedExpandedType is ConeErrorUnionType)
-                }
                 FirTypeResolutionResult(resolvedExpandedType, result.resolvedCandidateOrNull()?.diagnostic)
             }
             is FirFunctionTypeRef -> createFunctionType(typeRef)

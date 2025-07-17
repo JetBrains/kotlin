@@ -30,5 +30,15 @@ public abstract class SomeMap<K3, V3> implements Map<K3, V3>, MyMap<K3, V3> {
 // FILE: main.kt
 
 fun test(map: SomeMap<Int, String>) {
+    map.containsKey(1) // ok
     map.containsKey(<!ARGUMENT_TYPE_MISMATCH!>""<!>) // error
+
+    map.containsValue("") // ok
+    map.containsValue(<!ARGUMENT_TYPE_MISMATCH!>1<!>) // error
+
+    map.get(1) // ok
+    map.get(<!ARGUMENT_TYPE_MISMATCH!>""<!>) // error
+
+    map.remove(1) // ok
+    map.remove(<!ARGUMENT_TYPE_MISMATCH!>""<!>) // error
 }

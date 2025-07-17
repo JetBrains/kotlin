@@ -37,8 +37,10 @@ fun substitutorByMap(
             val cet = type.projectOnError()
             if (cet is ConeErrorUnionType) {
                 ceSubstitution[typeParameter] = cet.errorType
+            } else if (cet.isNothing()) {
+                ceSubstitution[typeParameter] = CEBotType
             } else {
-                ceSubstitution[typeParameter] = CEBotType // TODO: RE: suspicious place
+                error("Unexpected failure. Report with stacktrace if you see this message.")
             }
         }
     }

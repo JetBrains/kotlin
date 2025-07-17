@@ -114,9 +114,7 @@ class Fir2IrTypeConverter(
                 }
             }
             is ConeErrorUnionType -> {
-                if (valueType is ConeTypeParameterType && errorType is CETypeParameterType &&
-                    (valueType as ConeTypeParameterType).lookupTag == (errorType as CETypeParameterType).lookupTag
-                ) {
+                if (isTypeParameter()) {
                     return valueType.toIrType(
                         typeOrigin,
                         annotations,

@@ -35,7 +35,6 @@ fun FirSession.doUnify(
         val intersectionResult = mutableMapOf<FirTypeParameterSymbol, ConeTypeProjection>()
         for (intersectedType in originalType.intersectedTypes) {
             val localResult = mutableMapOf<FirTypeParameterSymbol, ConeTypeProjection>()
-            // TODO: RE: MID: We should replicate the behaviour for value types
             if (!doUnify(intersectedType, typeWithParametersProjection, targetTypeParameters, localResult, resultCe)) return false
             for ((typeParameter, typeProjection) in localResult) {
                 val existingTypeProjection = intersectionResult[typeParameter]
@@ -71,8 +70,7 @@ fun FirSession.doUnify(
 
     // in Foo ~ in X  =>  Foo ~ X
     if (originalTypeProjection.kind == typeWithParametersProjection.kind &&
-        originalTypeProjection.kind != ProjectionKind.INVARIANT && originalTypeProjection.kind != ProjectionKind.STAR
-    ) {
+        originalTypeProjection.kind != ProjectionKind.INVARIANT && originalTypeProjection.kind != ProjectionKind.STAR) {
         return doUnify(originalType!!, typeWithParameters!!, targetTypeParameters, result, resultCe)
     }
 
@@ -158,7 +156,6 @@ private fun ConeTypeProjection.replaceType(newType: ConeKotlinType): ConeTypePro
         ProjectionKind.STAR -> error("Should not be a star projection")
     }
 
-// TODO: RE: MID: I was not fiully sure in the expected behaviour of this function
 private fun FirSession.doUnifyCe(
     originalTypeProjection: CEType,
     typeWithParametersProjection: CEType,
@@ -182,20 +179,6 @@ private fun FirSession.doUnifyCe(
     if (originalAtoms.isEmpty() && typeWithParametersAtoms.isEmpty()) {
         return true
     }
-
-//    val parameter = if (typeWithParametersAtoms.size == 1) {
-//        val singleAtom = typeWithParametersAtoms.single()
-//        if (singleAtom !is CETypeParameterType) {
-//            return false
-//        }
-//        val parameterSymbol = singleAtom.lookupTag.typeParameterSymbol
-//        if (parameterSymbol !in targetTypeParameters) {
-//            return false
-//        }
-//        parameterSymbol
-//    } else {
-//        return false
-//    }
 
     val parameterType = typeWithParametersAtoms.find { it is CETypeParameterType } ?: return true
     val parameter = (parameterType as CETypeParameterType).lookupTag.typeParameterSymbol

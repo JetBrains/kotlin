@@ -57,10 +57,7 @@ class Context<T> {
     val capturedTypeParameters: MutableList<StatusFirTypeParameterSymbolList> = mutableListOf()
     val arraySetArgument: MutableMap<T, FirExpression> = mutableMapOf()
 
-    // TODO: RE: HIGH: There should be some redesign to handle functions (and other content) inside error objects
-    // Currently not doing it as it looks dangerous to change ConeClassLikeType to ConeRigidType as a type of dispatch receiver
-    // Probably we should introduce new interface to commonize these two cases (while it is complex as second one is conditional)
-    // this place is a good starting point for this task
+    // TODO: RE: HIGH: Support functions (and other content) inside error objects
     val dispatchReceiverTypesStack: MutableList<ConeRigidType /* ConeClassLikeType | ConeErrorUnionType(Nothing, CEClassifierType)*/> =
         mutableListOf()
     var containerIsExpect: Boolean = false

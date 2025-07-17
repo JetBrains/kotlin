@@ -59,7 +59,6 @@ class ConstraintSystemCompleter(components: BodyResolveComponents) {
         context: ResolutionContext,
         analyzer: PostponedAtomAnalyzer,
     ) {
-        // HERE: HERE: I am currently investigating why it does not analyze lambda
         val topLevelTypeVariables = topLevelType.extractTypeVariables()
 
         completion@ while (true) {
