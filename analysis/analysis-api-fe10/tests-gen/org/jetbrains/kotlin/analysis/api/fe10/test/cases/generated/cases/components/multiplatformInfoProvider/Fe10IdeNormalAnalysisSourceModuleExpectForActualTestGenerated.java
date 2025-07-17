@@ -68,4 +68,10 @@ public class Fe10IdeNormalAnalysisSourceModuleExpectForActualTestGenerated exten
   public void testMultipleExpects() {
     runTest("analysis/analysis-api/testData/components/multiplatformInfoProvider/expectForActual/multipleExpects.kt");
   }
+
+  @Test
+  @TestMetadata("receiverParameter.kt")
+  public void testReceiverParameter() {
+    runTest("analysis/analysis-api/testData/components/multiplatformInfoProvider/expectForActual/receiverParameter.kt");
+  }
 }
