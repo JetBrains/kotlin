@@ -73,16 +73,17 @@ internal fun DurationUnit.shortName(): String = when (this) {
 }
 
 @SinceKotlin("1.5")
-internal fun durationUnitByShortName(shortName: String, throwExceptionOnInvalidDuration: Boolean = true): DurationUnit? = when (shortName) {
-    "ns" -> DurationUnit.NANOSECONDS
-    "us" -> DurationUnit.MICROSECONDS
-    "ms" -> DurationUnit.MILLISECONDS
-    "s" -> DurationUnit.SECONDS
-    "m" -> DurationUnit.MINUTES
-    "h" -> DurationUnit.HOURS
-    "d" -> DurationUnit.DAYS
-    else -> if (throwExceptionOnInvalidDuration) throw IllegalArgumentException("Unknown duration unit short name: $shortName") else null
-}
+internal fun durationUnitByShortName(shortName: String, throwExceptionOnInvalidDurationUnit: Boolean = true): DurationUnit? =
+    when (shortName) {
+        "ns" -> DurationUnit.NANOSECONDS
+        "us" -> DurationUnit.MICROSECONDS
+        "ms" -> DurationUnit.MILLISECONDS
+        "s" -> DurationUnit.SECONDS
+        "m" -> DurationUnit.MINUTES
+        "h" -> DurationUnit.HOURS
+        "d" -> DurationUnit.DAYS
+        else -> if (throwExceptionOnInvalidDurationUnit) throw IllegalArgumentException("Unknown duration unit short name: $shortName") else null
+    }
 
 @SinceKotlin("1.5")
 internal fun durationUnitByIsoChar(
