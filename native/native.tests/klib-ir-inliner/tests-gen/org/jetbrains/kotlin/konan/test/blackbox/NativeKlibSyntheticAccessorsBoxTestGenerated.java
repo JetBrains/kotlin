@@ -23,7 +23,7 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 @Tag("klibIrInliner")
 @UseExtTestCaseGroupProvider()
-public class FirNativeKlibSyntheticAccessorsBoxTestGenerated extends AbstractNativeCodegenBoxTest {
+public class NativeKlibSyntheticAccessorsBoxTestGenerated extends AbstractNativeCodegenBoxTest {
   @Test
   public void testAllFilesPresentInSyntheticAccessors() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/klib/syntheticAccessors"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);

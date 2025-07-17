@@ -22,7 +22,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @Tag("klibIrInliner")
 @UseExtTestCaseGroupProvider()
-public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends AbstractNativeCodegenBoxTest {
+public class NativeCodegenBoxWithInlinedFunInKlibTestGenerated extends AbstractNativeCodegenBoxTest {
   @Nested
   @TestMetadata("compiler/testData/codegen/box")
   @TestDataPath("$PROJECT_ROOT")
