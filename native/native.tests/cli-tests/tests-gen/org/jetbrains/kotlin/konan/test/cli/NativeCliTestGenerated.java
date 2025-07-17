@@ -109,6 +109,16 @@ public class NativeCliTestGenerated extends AbstractNativeCliTest {
     runTest("native/native.tests/cli-tests/testData/cli/syntaxError_psi.args");
   }
 
+  @TestMetadata("threadSanitizer.args")
+  public void testThreadSanitizer() {
+    runTest("native/native.tests/cli-tests/testData/cli/threadSanitizer.args");
+  }
+
+  @TestMetadata("threadSanitizerPagedAllocator.args")
+  public void testThreadSanitizerPagedAllocator() {
+    runTest("native/native.tests/cli-tests/testData/cli/threadSanitizerPagedAllocator.args");
+  }
+
   @TestMetadata("warningsSuppressionDisablesErrors_Native.args")
   public void testWarningsSuppressionDisablesErrors_Native() {
     runTest("native/native.tests/cli-tests/testData/cli/warningsSuppressionDisablesErrors_Native.args");

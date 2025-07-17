@@ -286,10 +286,10 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
                 ?: false // For now disabled by default due to performance penalty.
     }
 
-    internal val defaultPagedAllocator: Boolean get() = true
+    internal val defaultPagedAllocator: Boolean get() = sanitizer == null
 
     val pagedAllocator: Boolean by lazy {
-        configuration.get(BinaryOptions.pagedAllocator) ?: true
+        configuration.get(BinaryOptions.pagedAllocator) ?: defaultPagedAllocator
     }
 
     internal val bridgesPolicy: BridgesPolicy by lazy {
@@ -376,21 +376,12 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
     }
 
     private val defaultAllocationMode
-        get() =
-            if (sanitizer == null)
-                AllocationMode.CUSTOM
-            else
-                AllocationMode.STD
+        get() = AllocationMode.CUSTOM
 
     val allocationMode by lazy {
-        when (configuration.get(KonanConfigKeys.ALLOCATION_MODE)) {
-            null -> defaultAllocationMode
-            AllocationMode.STD -> AllocationMode.STD
-            AllocationMode.CUSTOM -> {
-                if (sanitizer != null) {
-                    configuration.report(CompilerMessageSeverity.STRONG_WARNING, "Sanitizers are useful only with the std allocator")
-                }
-                AllocationMode.CUSTOM
+        (configuration.get(KonanConfigKeys.ALLOCATION_MODE) ?: defaultAllocationMode).also {
+            if (it == AllocationMode.CUSTOM && sanitizer != null && pagedAllocator) {
+                configuration.report(CompilerMessageSeverity.STRONG_WARNING, "Sanitizers are not useful with the paged allocator")
             }
         }
     }
