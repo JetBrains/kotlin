@@ -1,3 +1,62 @@
+## 2.2.10-RC
+
+### Compiler
+
+- [`KT-78501`](https://youtrack.jetbrains.com/issue/KT-78501) K2: Missing [ABSTRACT_SUPER_CALL] diagnostics for delegated interface method leads to AssertionError: isCompiledToJvmDefault during IR lowering
+- [`KT-78479`](https://youtrack.jetbrains.com/issue/KT-78479)  IR lowering failed / Unexpected null argument for composable call
+- [`KT-76477`](https://youtrack.jetbrains.com/issue/KT-76477) Kotlin/Native: fix compiler performance reporting in sources->klib and klibs->binary
+- [`KT-78736`](https://youtrack.jetbrains.com/issue/KT-78736) Missing [NOT_YET_SUPPORTED_IN_INLINE] diagnostics because of incorrect context update
+- [`KT-77685`](https://youtrack.jetbrains.com/issue/KT-77685) "IllegalArgumentException: Sequence contains more than one matching element"
+- [`KT-76365`](https://youtrack.jetbrains.com/issue/KT-76365) K2: Missing ABSTRACT_SUPER_CALL
+- [`KT-78352`](https://youtrack.jetbrains.com/issue/KT-78352) False-positive IDENTITY_SENSITIVE_OPERATIONS_WITH_VALUE_TYPE when comparing with equality operator (==)
+
+### Compose compiler
+
+- [`KT-78479`](https://youtrack.jetbrains.com/issue/KT-78479) Ensure that default transform affects functions entered through a call
+- [`KT-78490`](https://youtrack.jetbrains.com/issue/KT-78490) Fix visibility for default wrappers of protected methods
+- [`b/408492167`](https://issuetracker.google.com/issues/408492167) Emit parameter names in Compose source information
+
+### Native. Runtime. Memory
+
+- [`KT-78925`](https://youtrack.jetbrains.com/issue/KT-78925) Crash SIGABRT on Apple Watch after updating Kotlin to 2.2.0
+
+### Tools. CLI
+
+- [`KT-77445`](https://youtrack.jetbrains.com/issue/KT-77445)  UNRESOLVED_REFERENCE when importing classes from kotlin-stdlib
+- [`KT-78263`](https://youtrack.jetbrains.com/issue/KT-78263) java.lang.NoClassDefFoundError: Could not initialize class com.intellij.psi.impl.PsiSubstitutorImpl
+- [`KT-78318`](https://youtrack.jetbrains.com/issue/KT-78318) Unresolved reference when compiling kotlin/JS project on fresh master
+
+### Tools. Compiler Plugins
+
+- [`KT-78490`](https://youtrack.jetbrains.com/issue/KT-78490) "AssertionError: SyntheticAccessorLowering should not attempt to modify other files" when calling protected open composable with default argument
+- [`KT-78038`](https://youtrack.jetbrains.com/issue/KT-78038) Make jvm-abi-gen compiler plugin output classloader-friendly
+
+### Tools. Gradle
+
+- [`KT-77023`](https://youtrack.jetbrains.com/issue/KT-77023) Support creating KotlinJvmAndroidCompilation in KotlinBaseApiPlugin
+
+### Tools. Gradle. JS
+
+- [`KT-78504`](https://youtrack.jetbrains.com/issue/KT-78504) [2.2.0-RC3] NPM Tasks in 2.2 RCs produce broken/unusable build cache entries
+
+### Tools. Gradle. Multiplatform
+
+- [`KT-77466`](https://youtrack.jetbrains.com/issue/KT-77466) KMP - testFixturesApi and similar configurations do not affect jvmTestFixtures source set
+- [`KT-68646`](https://youtrack.jetbrains.com/issue/KT-68646) Compose extension's metrics/reports dir should use subdirs based on target
+
+### Tools. Gradle. Native
+
+- [`KT-77977`](https://youtrack.jetbrains.com/issue/KT-77977) "Unknown hardware platform: riscv64" on JVM project build
+
+### Tools. Incremental Compile
+
+- [`KT-78807`](https://youtrack.jetbrains.com/issue/KT-78807) Changing ABI fingerprint on non-ABI changes when lambda passed to inlined function
+
+### Tools. Kapt
+
+- [`KT-77853`](https://youtrack.jetbrains.com/issue/KT-77853) K2 KAPT: backend internal error: exception during IR fake override builder
+
+
 ## 2.2.0-RC3
 
 ### Compiler
