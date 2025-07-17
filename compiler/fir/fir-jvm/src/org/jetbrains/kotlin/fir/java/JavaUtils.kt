@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.fir.java
 
+import com.intellij.util.asSafely
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
@@ -58,7 +59,12 @@ val JavaClass.classKind: ClassKind
     }
 
 fun JavaClass.hasMetadataAnnotation(): Boolean =
-    annotations.any { it.isResolvedTo(JvmAnnotationNames.METADATA_FQ_NAME) }
+    annotations.any { annotation ->
+        // `@kotlin.Metadata` is recognized as an annotation that contains Kotlin metadata only if it has the "kind" argument.
+        annotation.isResolvedTo(JvmAnnotationNames.METADATA_FQ_NAME) && annotation.arguments.any { argument ->
+            argument.name?.asString() == JvmAnnotationNames.KIND_FIELD_NAME
+        }
+    }
 
 internal fun Any?.createConstantOrError(session: FirSession, expectedConeType: ConeKotlinType? = null): FirExpression {
     val value = if (this is Int && expectedConeType != null) {
