@@ -126,6 +126,7 @@ sealed class ExportedType {
         object IntArray : Primitive("Int32Array")
         object FloatArray : Primitive("Float32Array")
         object DoubleArray : Primitive("Float64Array")
+        object LongArray : Primitive("BigInt64Array")
         object String : Primitive("string")
         object Throwable : Primitive("Error")
         object Any : Primitive("any")
