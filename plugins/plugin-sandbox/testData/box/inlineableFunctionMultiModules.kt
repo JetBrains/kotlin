@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 // DUMP_IR
 
 // MODULE: lib

@@ -1,8 +1,7 @@
-import org.jetbrains.kotlin.ideaExt.idea
-
 plugins {
     kotlin("jvm")
     id("jps-compatible")
+    id("d8-configuration")
 }
 
 dependencies {
@@ -65,6 +64,7 @@ projectTest(parallel = true, jUnitMode = JUnitMode.JUnit5) {
     dependsOn(":dist")
     workingDir = rootDir
     useJUnitPlatform()
+    useJsIrBoxTests(version = version, buildDir = layout.buildDirectory)
 }.also { confugureFirPluginAnnotationsDependency(it) }
 
 testsJar()

@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.FIR_PARSER
 import org.jetbrains.kotlin.test.directives.model.DirectiveApplicability.Global
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
+import org.jetbrains.kotlin.test.frontend.fir.handlers.FirDumpHandler
 import org.jetbrains.kotlin.test.frontend.fir.handlers.FirResolvedTypesVerifier
 import org.jetbrains.kotlin.test.frontend.fir.handlers.FirScopeDumpHandler
 
@@ -39,6 +40,14 @@ object FirDiagnosticsDirectives : SimpleDirectivesContainer() {
             Dumps resulting fir to `testName.fir.txt` file
         """.trimIndent(),
         applicability = Global
+    )
+
+    val DISABLE_FIR_DUMP_HANDLER by directive(
+        description = """
+            Completely disables ${FirDumpHandler::class}.
+            It could be useful, for example, if there are JVM and JS tests configured, and dumps between are
+            slightly different due to differences in stdlib actualization.
+        """.trimIndent()
     )
 
     val FIR_IDENTICAL by directive(

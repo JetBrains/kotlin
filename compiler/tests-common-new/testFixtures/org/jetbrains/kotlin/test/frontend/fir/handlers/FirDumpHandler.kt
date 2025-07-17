@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.test.backend.handlers.assertFileDoesntExist
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.CHECK_BYTECODE_LISTING
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives.DISABLE_TYPEALIAS_EXPANSION
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
+import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.DISABLE_FIR_DUMP_HANDLER
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.USE_LATEST_LANGUAGE_VERSION
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
@@ -118,6 +119,6 @@ class FirDumpHandler(
         // disabled typealias mode is used only for sanity checks for tests
         // there is no need to duplicate dumps for them (and they may differ from regular ones, as
         // types in resolved type ref won't be expanded)
-        return DISABLE_TYPEALIAS_EXPANSION in this || USE_LATEST_LANGUAGE_VERSION in this
+        return DISABLE_TYPEALIAS_EXPANSION in this || USE_LATEST_LANGUAGE_VERSION in this || DISABLE_FIR_DUMP_HANDLER in this
     }
 }

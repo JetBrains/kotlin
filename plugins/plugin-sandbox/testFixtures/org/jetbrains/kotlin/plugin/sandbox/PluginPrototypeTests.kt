@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.plugin.sandbox
 
+import org.jetbrains.kotlin.js.test.fir.AbstractFirJsTest
+import org.jetbrains.kotlin.js.test.fir.AbstractFirLightTreeJsBoxTest
 import org.jetbrains.kotlin.js.test.fir.AbstractFirLoadK2CompiledJsKotlinTest
 import org.jetbrains.kotlin.kotlinp.jvm.test.CompareMetadataHandler
 import org.jetbrains.kotlin.plugin.sandbox.PluginSandboxDirectives.DONT_LOAD_IN_SYNTHETIC_MODULES
@@ -18,6 +20,7 @@ import org.jetbrains.kotlin.test.builders.configureIrHandlersStep
 import org.jetbrains.kotlin.test.builders.configureJvmArtifactsHandlersStep
 import org.jetbrains.kotlin.test.configuration.commonConfigurationForJvmTest
 import org.jetbrains.kotlin.test.configuration.enableLazyResolvePhaseChecking
+import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.DISABLE_FIR_DUMP_HANDLER
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.ENABLE_PLUGIN_PHASES
 import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives.FIR_DUMP
 import org.jetbrains.kotlin.test.directives.configureFirParser
@@ -31,10 +34,24 @@ import org.jetbrains.kotlin.test.runners.AbstractFirPsiDiagnosticTest
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackendTest
 import org.jetbrains.kotlin.test.runners.codegen.AbstractFirLightTreeBlackBoxCodegenTest
 
-open class AbstractFirLightTreePluginBlackBoxCodegenTest : AbstractFirLightTreeBlackBoxCodegenTest() {
+open class AbstractFirJvmLightTreePluginBlackBoxCodegenTest : AbstractFirLightTreeBlackBoxCodegenTest() {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         builder.commonFirWithPluginFrontendConfiguration()
+    }
+}
+
+open class AbstractFirJsLightTreePluginBlackBoxCodegenTest : AbstractFirJsTest(
+    pathToTestDir = "plugins/plugin-sandbox/testData/box",
+    testGroupOutputDirPrefix = "firPluginSandboxBox/",
+    parser = FirParser.LightTree
+) {
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        builder.commonFirWithPluginFrontendConfiguration(dumpFir = false)
+        builder.defaultDirectives {
+            +DISABLE_FIR_DUMP_HANDLER
+        }
     }
 }
 

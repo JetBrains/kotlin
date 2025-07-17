@@ -216,7 +216,11 @@ fun main(args: Array<String>) {
                 model("diagnostics", excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN)
             }
 
-            testClass<AbstractFirLightTreePluginBlackBoxCodegenTest> {
+            testClass<AbstractFirJvmLightTreePluginBlackBoxCodegenTest> {
+                model("box", excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN)
+            }
+
+            testClass<AbstractFirJsLightTreePluginBlackBoxCodegenTest> {
                 model("box", excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN)
             }
 

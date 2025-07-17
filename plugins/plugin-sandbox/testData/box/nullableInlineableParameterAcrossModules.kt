@@ -1,3 +1,4 @@
+// IGNORE_BACKEND: JS_IR
 // ISSUE: KT-64994
 
 // MODULE: a
