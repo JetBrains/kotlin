@@ -209,7 +209,8 @@ abstract class CLICompiler<A : CommonCompilerArguments> {
     ): ExitCode {
         val pluginClasspaths = arguments.pluginClasspaths.orEmpty().toMutableList()
         val pluginOptions = arguments.pluginOptions.orEmpty().toMutableList()
-        val pluginConfigurations = arguments.pluginConfigurations.orEmpty().toMutableList()
+        val pluginConfigurations = arguments.pluginConfigurations?.asList().orEmpty()
+        val pluginOrderConstraints = arguments.pluginOrderConstraints?.asList().orEmpty()
         val messageCollector = configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
 
         val useK2 = configuration.get(CommonConfigurationKeys.USE_FIR) == true
@@ -250,7 +251,14 @@ abstract class CLICompiler<A : CommonCompilerArguments> {
         pluginClasspaths.addAll(scriptingPluginClasspath)
         pluginOptions.addAll(scriptingPluginOptions)
 
-        return PluginCliParser.loadPluginsSafe(pluginClasspaths, pluginOptions, pluginConfigurations, configuration, parentDisposable)
+        return PluginCliParser.loadPluginsSafe(
+            pluginClasspaths,
+            pluginOptions,
+            pluginConfigurations,
+            pluginOrderConstraints,
+            configuration,
+            parentDisposable
+        )
     }
 
     private fun tryLoadScriptingPluginFromCurrentClassLoader(

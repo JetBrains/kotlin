@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments.Com
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments.Companion.X_ANNOTATION_DEFAULT_TARGET
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments.Companion.X_ANNOTATION_TARGET_ALL
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments.Companion.X_CHECK_PHASE_CONDITIONS
+import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments.Companion.X_COMPILER_PLUGIN_ORDER
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments.Companion.X_CONSISTENT_DATA_CLASS_COPY_VISIBILITY
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments.Companion.X_CONTEXT_PARAMETERS
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments.Companion.X_CONTEXT_RECEIVERS
@@ -119,6 +120,7 @@ internal open class CommonCompilerArgumentsImpl : CommonToolArgumentsImpl(),
     if ("X_SKIP_METADATA_VERSION_CHECK" in optionsMap) { arguments.skipMetadataVersionCheck = get(X_SKIP_METADATA_VERSION_CHECK) }
     if ("X_SKIP_PRERELEASE_CHECK" in optionsMap) { arguments.skipPrereleaseCheck = get(X_SKIP_PRERELEASE_CHECK) }
     if ("X_REPORT_OUTPUT_FILES" in optionsMap) { arguments.reportOutputFiles = get(X_REPORT_OUTPUT_FILES) }
+    if ("X_COMPILER_PLUGIN_ORDER" in optionsMap) { arguments.pluginOrderConstraints = get(X_COMPILER_PLUGIN_ORDER) }
     if ("X_NEW_INFERENCE" in optionsMap) { arguments.newInference = get(X_NEW_INFERENCE) }
     if ("X_INLINE_CLASSES" in optionsMap) { arguments.inlineClasses = get(X_INLINE_CLASSES) }
     if ("X_REPORT_PERF" in optionsMap) { arguments.reportPerf = get(X_REPORT_PERF) }
@@ -210,6 +212,9 @@ internal open class CommonCompilerArgumentsImpl : CommonToolArgumentsImpl(),
 
     public val X_REPORT_OUTPUT_FILES: CommonCompilerArgument<Boolean> =
         CommonCompilerArgument("X_REPORT_OUTPUT_FILES")
+
+    public val X_COMPILER_PLUGIN_ORDER: CommonCompilerArgument<Array<String>?> =
+        CommonCompilerArgument("X_COMPILER_PLUGIN_ORDER")
 
     public val X_NEW_INFERENCE: CommonCompilerArgument<Boolean> =
         CommonCompilerArgument("X_NEW_INFERENCE")

@@ -239,6 +239,24 @@ val actualCommonCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLev
     }
 
     compilerArgument {
+        name = "Xcompiler-plugin-order"
+        compilerName = "pluginOrderConstraints"
+        description = """
+            Specify an execution order constraint for compiler plugins.
+            Order constraint can be specified using the 'pluginId' of compiler plugins.
+            The first specified plugin will be executed before the second plugin.
+            Multiple constraints can be specified by repeating this option. Cycles in constraints will cause an error.
+            """.trimIndent().asReleaseDependent()
+        valueType = StringArrayType.defaultNull
+        valueDescription = "<pluginId1>><pluginId2>".asReleaseDependent()
+        delimiter = KotlinCompilerArgument.Delimiter.None
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_3_0,
+        )
+    }
+
+    compilerArgument {
         name = "Xmulti-platform"
         description = "Enable language support for multiplatform projects.".asReleaseDependent()
         valueType = BooleanType.defaultFalse

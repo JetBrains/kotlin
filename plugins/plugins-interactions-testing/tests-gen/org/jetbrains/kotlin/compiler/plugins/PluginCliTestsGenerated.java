@@ -38,4 +38,9 @@ public class PluginCliTestsGenerated extends AbstractPluginCliTests {
   public void testPluginsReversed() {
     runTest("plugins/plugins-interactions-testing/testData/cli/pluginsReversed.args");
   }
+
+  @TestMetadata("pluginsSorted.args")
+  public void testPluginsSorted() {
+    runTest("plugins/plugins-interactions-testing/testData/cli/pluginsSorted.args");
+  }
 }

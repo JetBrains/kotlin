@@ -156,6 +156,11 @@ where advanced options include:
   -Xplugin=<path>            Load plugins from the given classpath.
   -Xcompiler-plugin=<path1>,<path2>[=<optionName>=<value>,<optionName>=<value>]
                              Register a compiler plugin.
+  -Xcompiler-plugin-order=<pluginId1>><pluginId2>
+                             Specify an execution order constraint for compiler plugins.
+                             Order constraint can be specified using the 'pluginId' of compiler plugins.
+                             The first specified plugin will be executed before the second plugin.
+                             Multiple constraints can be specified by repeating this option. Cycles in constraints will cause an error.
   -Xmulti-platform           Enable language support for multiplatform projects.
   -Xno-check-actual          Do not check for the presence of the 'actual' modifier in multiplatform projects.
   -Xintellij-plugin-root=<path> Path to 'kotlin-compiler.jar' or the directory where the IntelliJ IDEA configuration files can be found.

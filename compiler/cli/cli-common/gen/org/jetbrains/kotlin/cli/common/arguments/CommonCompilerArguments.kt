@@ -201,6 +201,21 @@ progressive mode enabled may cause compilation errors in progressive mode.""",
         }
 
     @Argument(
+        value = "-Xcompiler-plugin-order",
+        valueDescription = "<pluginId1>><pluginId2>",
+        description = """Specify an execution order constraint for compiler plugins.
+Order constraint can be specified using the 'pluginId' of compiler plugins.
+The first specified plugin will be executed before the second plugin.
+Multiple constraints can be specified by repeating this option. Cycles in constraints will cause an error.""",
+        delimiter = Argument.Delimiters.none,
+    )
+    var pluginOrderConstraints: Array<String>? = null
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
         value = "-Xmulti-platform",
         description = "Enable language support for multiplatform projects.",
     )
