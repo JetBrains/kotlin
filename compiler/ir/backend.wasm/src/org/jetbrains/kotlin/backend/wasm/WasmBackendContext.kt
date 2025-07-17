@@ -63,6 +63,8 @@ class WasmBackendContext(
         )
     }
 
+    fun getExcludedPackageFragment(fqName: FqName): IrPackageFragment? = excludedDeclarations.get(fqName)
+
     class CrossFileContext {
         var mainFunctionWrapper: IrSimpleFunction? = null
         val closureCallExports = mutableMapOf<String, IrSimpleFunction>()
