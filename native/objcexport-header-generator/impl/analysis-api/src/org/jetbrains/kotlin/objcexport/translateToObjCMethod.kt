@@ -225,16 +225,28 @@ internal fun splitSelector(selector: String): List<String> {
  * [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportNamerImpl.getSelector]
  */
 fun ObjCExportContext.getSelector(symbol: KaFunctionSymbol, methodBridge: MethodBridge): String {
-    if (symbol is KaNamedSymbol) {
-        val name = symbol.name
-
-        anyMethodSelectors[name]?.let { return it }
-        objCReservedNameMethodSelectors[name]?.let { return it }
-    }
 
     val parameters = valueParametersAssociated(methodBridge, symbol)
     val method = symbol
     val sb = StringBuilder()
+    val anyMethodSelector = anyMethodSelectors[symbol.name]
+    val reservedNameSelector = objCReservedNameMethodSelectors[symbol.name]
+
+    if (anyMethodSelector != null) {
+        return anyMethodSelector
+    }
+
+    if (reservedNameSelector != null && parameters.isEmpty()) {
+        /**
+         * We take reserved name only when there are no parameters.
+         * If there is at least one parameter then there will be no conflict with reserved name:
+         * ```kotlin
+         * fun release(param: String) -> "releaseParam"
+         * fun release() -> "release_"
+         * ```
+         */
+        return reservedNameSelector
+    }
 
     sb.append(getMangledName(symbol, forSwift = false))
 
