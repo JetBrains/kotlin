@@ -17,7 +17,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("native/native.tests/testData/klib/header-klibs/compilation")
 @TestDataPath("$PROJECT_ROOT")
-public class FirNativeHeaderKlibCompilationTestGenerated extends AbstractNativeHeaderKlibCompilationTest {
+public class NativeHeaderKlibCompilationTestGenerated extends AbstractNativeHeaderKlibCompilationTest {
   @Test
   public void testAllFilesPresentInCompilation() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/klib/header-klibs/compilation"), Pattern.compile("^([^.]+)$"), null, false);
