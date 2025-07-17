@@ -19,6 +19,12 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 public class CompilerFacilityTestForComposeCompilerPluginGenerated extends AbstractCompilerFacilityTestForComposeCompilerPlugin {
   @Test
+  @TestMetadata("abstractDefaults.kt")
+  public void testAbstractDefaults() {
+    runTest("plugins/compose/compiler-hosted/testData/codegen/abstractDefaults.kt");
+  }
+
+  @Test
   public void testAllFilesPresentInCodegen() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/compose/compiler-hosted/testData/codegen"), Pattern.compile("^(.+)\\.kt$"), null, true);
   }

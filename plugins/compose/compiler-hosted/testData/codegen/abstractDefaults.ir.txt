@@ -1,0 +1,81 @@
+MODULE_FRAGMENT
+  FILE fqName:<root> fileName:main.kt
+    CLASS OBJECT name:AlternativeDesktopPopupRenderer modality:FINAL visibility:private superTypes:[<root>.PopupRenderer]
+      thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.AlternativeDesktopPopupRenderer
+      CONSTRUCTOR visibility:private returnType:<root>.AlternativeDesktopPopupRenderer [primary]
+        BLOCK_BODY
+          DELEGATING_CONSTRUCTOR_CALL 'public constructor <init> () [primary] declared in kotlin.Any'
+          INSTANCE_INITIALIZER_CALL classDescriptor='CLASS OBJECT name:AlternativeDesktopPopupRenderer modality:FINAL visibility:private superTypes:[<root>.PopupRenderer]' type=kotlin.Unit
+      FUN FAKE_OVERRIDE name:equals visibility:public modality:OPEN returnType:kotlin.Boolean [fake_override,operator]
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+        VALUE_PARAMETER kind:Regular name:other index:1 type:kotlin.Any?
+        overridden:
+          public open fun equals (other: kotlin.Any?): kotlin.Boolean [fake_override,operator] declared in <root>.PopupRenderer
+      FUN FAKE_OVERRIDE name:hashCode visibility:public modality:OPEN returnType:kotlin.Int [fake_override]
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+        overridden:
+          public open fun hashCode (): kotlin.Int [fake_override] declared in <root>.PopupRenderer
+      FUN FAKE_OVERRIDE name:toString visibility:public modality:OPEN returnType:kotlin.String [fake_override]
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:kotlin.Any
+        overridden:
+          public open fun toString (): kotlin.String [fake_override] declared in <root>.PopupRenderer
+      FUN name:Popup visibility:public modality:OPEN returnType:kotlin.Unit
+        VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.AlternativeDesktopPopupRenderer
+        VALUE_PARAMETER kind:Regular name:onDismissRequest index:1 type:kotlin.Function0<kotlin.Unit>?
+        VALUE_PARAMETER kind:Regular name:onPreviewKeyEvent index:2 type:kotlin.Function1<androidx.compose.ui.input.key.KeyEvent, kotlin.Boolean>?
+        VALUE_PARAMETER kind:Regular name:onKeyEvent index:3 type:kotlin.Function1<androidx.compose.ui.input.key.KeyEvent, kotlin.Boolean>?
+        VALUE_PARAMETER kind:Regular name:content index:4 type:kotlin.Function2<androidx.compose.runtime.Composer, kotlin.Int, kotlin.Unit>
+        VALUE_PARAMETER kind:Regular name:$composer index:5 type:androidx.compose.runtime.Composer? [assignable]
+        VALUE_PARAMETER kind:Regular name:$changed index:6 type:kotlin.Int
+        annotations:
+          Composable
+          ComposableInferredTarget(scheme = "[androidx.compose.ui.UiComposable[_]]")
+          FunctionKeyMeta(key = 732992142, startOffset = 314, endOffset = 544)
+        overridden:
+          public abstract fun Popup (onDismissRequest: kotlin.Function0<kotlin.Unit>?, onPreviewKeyEvent: kotlin.Function1<androidx.compose.ui.input.key.KeyEvent, kotlin.Boolean>?, onKeyEvent: kotlin.Function1<androidx.compose.ui.input.key.KeyEvent, kotlin.Boolean>?, content: kotlin.Function2<androidx.compose.runtime.Composer, kotlin.Int, kotlin.Unit>, $composer: androidx.compose.runtime.Composer?, $changed: kotlin.Int): kotlin.Unit declared in <root>.PopupRenderer
+        BLOCK_BODY
+          BLOCK type=kotlin.Unit origin=null
+            CALL 'public abstract fun startReplaceGroup (key: kotlin.Int): kotlin.Unit declared in androidx.compose.runtime.Composer' type=kotlin.Unit origin=null
+              ARG <this>: GET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in <root>.AlternativeDesktopPopupRenderer.Popup' type=androidx.compose.runtime.Composer? origin=null
+              ARG key: CONST Int type=kotlin.Int value=732992142
+            CALL 'public final fun sourceInformation (composer: androidx.compose.runtime.Composer, sourceInformation: kotlin.String): kotlin.Unit declared in androidx.compose.runtime' type=kotlin.Unit origin=null
+              ARG composer: GET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in <root>.AlternativeDesktopPopupRenderer.Popup' type=androidx.compose.runtime.Composer? origin=null
+              ARG sourceInformation: CONST String type=kotlin.String value="C(Popup)N(onDismissRequest,onPreviewKeyEvent,onKeyEvent,content)56@521L17:main.kt"
+          WHEN type=kotlin.Unit origin=IF
+            BRANCH
+              if: CALL 'public final fun isTraceInProgress (): kotlin.Boolean declared in androidx.compose.runtime' type=kotlin.Boolean origin=null
+              then: CALL 'public final fun traceEventStart (key: kotlin.Int, dirty1: kotlin.Int, dirty2: kotlin.Int, info: kotlin.String): kotlin.Unit declared in androidx.compose.runtime' type=kotlin.Unit origin=null
+                ARG key: CONST Int type=kotlin.Int value=732992142
+                ARG dirty1: GET_VAR '$changed: kotlin.Int declared in <root>.AlternativeDesktopPopupRenderer.Popup' type=kotlin.Int origin=null
+                ARG dirty2: CONST Int type=kotlin.Int value=-1
+                ARG info: CONST String type=kotlin.String value="AlternativeDesktopPopupRenderer.Popup (main.kt:55)"
+          CALL 'public final fun BasicText (text: kotlin.String, modifier: androidx.compose.ui.Modifier?, style: androidx.compose.ui.text.TextStyle?, onTextLayout: kotlin.Function1<androidx.compose.ui.text.TextLayoutResult, kotlin.Unit>?, overflow: androidx.compose.ui.text.style.TextOverflow, softWrap: kotlin.Boolean, maxLines: kotlin.Int, minLines: kotlin.Int, color: androidx.compose.ui.graphics.ColorProducer?, $composer: androidx.compose.runtime.Composer?, $changed: kotlin.Int, $default: kotlin.Int): kotlin.Unit declared in androidx.compose.foundation.text' type=kotlin.Unit origin=null
+            ARG text: CONST String type=kotlin.String value="Test"
+            ARG modifier: COMPOSITE type=kotlin.Nothing? origin=DEFAULT_VALUE
+              CONST Null type=kotlin.Nothing? value=null
+            ARG style: COMPOSITE type=kotlin.Nothing? origin=DEFAULT_VALUE
+              CONST Null type=kotlin.Nothing? value=null
+            ARG onTextLayout: COMPOSITE type=kotlin.Nothing? origin=DEFAULT_VALUE
+              CONST Null type=kotlin.Nothing? value=null
+            ARG overflow: COMPOSITE type=androidx.compose.ui.text.style.TextOverflow origin=DEFAULT_VALUE
+              CALL 'public final fun <unsafe-coerce> <T, R> (v: T of kotlin.jvm.internal.<unsafe-coerce>): R of kotlin.jvm.internal.<unsafe-coerce> declared in kotlin.jvm.internal' type=androidx.compose.ui.text.style.TextOverflow origin=null
+                TYPE_ARG T: kotlin.Int
+                TYPE_ARG R: androidx.compose.ui.text.style.TextOverflow
+                ARG v: CONST Int type=kotlin.Int value=0
+            ARG softWrap: COMPOSITE type=kotlin.Boolean origin=DEFAULT_VALUE
+              CONST Boolean type=kotlin.Boolean value=false
+            ARG maxLines: COMPOSITE type=kotlin.Int origin=DEFAULT_VALUE
+              CONST Int type=kotlin.Int value=0
+            ARG minLines: COMPOSITE type=kotlin.Int origin=DEFAULT_VALUE
+              CONST Int type=kotlin.Int value=0
+            ARG color: COMPOSITE type=kotlin.Nothing? origin=DEFAULT_VALUE
+              CONST Null type=kotlin.Nothing? value=null
+            ARG $composer: GET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in <root>.AlternativeDesktopPopupRenderer.Popup' type=androidx.compose.runtime.Composer? origin=null
+            ARG $changed: CONST Int type=kotlin.Int value=6
+            ARG $default: CONST Int type=kotlin.Int value=510
+          WHEN type=kotlin.Unit origin=IF
+            BRANCH
+              if: CALL 'public final fun isTraceInProgress (): kotlin.Boolean declared in androidx.compose.runtime' type=kotlin.Boolean origin=null
+              then: CALL 'public final fun traceEventEnd (): kotlin.Unit declared in androidx.compose.runtime' type=kotlin.Unit origin=null
+          CALL 'public abstract fun endReplaceGroup (): kotlin.Unit declared in androidx.compose.runtime.Composer' type=kotlin.Unit origin=null
+            ARG <this>: GET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in <root>.AlternativeDesktopPopupRenderer.Popup' type=androidx.compose.runtime.Composer? origin=null
