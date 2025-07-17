@@ -326,6 +326,18 @@ object Elements : TemplateGroupBase() {
                     """
                 }
             }
+            on(Platform.Native) {
+                on(Backend.Wasm) {
+                    inlineOnly()
+
+                    val size = f.code.size
+                    body {
+                        """
+                        return elementAtOrElse(index) { throw IndexOutOfBoundsException("index: $index, $size: $$size}") }
+                        """
+                    }
+                }
+            }
         }
     }
 

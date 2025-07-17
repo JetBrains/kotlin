@@ -20,7 +20,7 @@ import kotlin.ranges.reversed
  */
 @kotlin.internal.InlineOnly
 public actual inline fun <T> Array<out T>.elementAt(index: Int): T {
-    return get(index)
+    return elementAtOrElse(index) { throw IndexOutOfBoundsException("index: $index, size: $size}") }
 }
 
 /**
@@ -30,7 +30,7 @@ public actual inline fun <T> Array<out T>.elementAt(index: Int): T {
  */
 @kotlin.internal.InlineOnly
 public actual inline fun ByteArray.elementAt(index: Int): Byte {
-    return get(index)
+    return elementAtOrElse(index) { throw IndexOutOfBoundsException("index: $index, size: $size}") }
 }
 
 /**
@@ -40,7 +40,7 @@ public actual inline fun ByteArray.elementAt(index: Int): Byte {
  */
 @kotlin.internal.InlineOnly
 public actual inline fun ShortArray.elementAt(index: Int): Short {
-    return get(index)
+    return elementAtOrElse(index) { throw IndexOutOfBoundsException("index: $index, size: $size}") }
 }
 
 /**
@@ -50,7 +50,7 @@ public actual inline fun ShortArray.elementAt(index: Int): Short {
  */
 @kotlin.internal.InlineOnly
 public actual inline fun IntArray.elementAt(index: Int): Int {
-    return get(index)
+    return elementAtOrElse(index) { throw IndexOutOfBoundsException("index: $index, size: $size}") }
 }
 
 /**
@@ -60,7 +60,7 @@ public actual inline fun IntArray.elementAt(index: Int): Int {
  */
 @kotlin.internal.InlineOnly
 public actual inline fun LongArray.elementAt(index: Int): Long {
-    return get(index)
+    return elementAtOrElse(index) { throw IndexOutOfBoundsException("index: $index, size: $size}") }
 }
 
 /**
@@ -70,7 +70,7 @@ public actual inline fun LongArray.elementAt(index: Int): Long {
  */
 @kotlin.internal.InlineOnly
 public actual inline fun FloatArray.elementAt(index: Int): Float {
-    return get(index)
+    return elementAtOrElse(index) { throw IndexOutOfBoundsException("index: $index, size: $size}") }
 }
 
 /**
@@ -80,7 +80,7 @@ public actual inline fun FloatArray.elementAt(index: Int): Float {
  */
 @kotlin.internal.InlineOnly
 public actual inline fun DoubleArray.elementAt(index: Int): Double {
-    return get(index)
+    return elementAtOrElse(index) { throw IndexOutOfBoundsException("index: $index, size: $size}") }
 }
 
 /**
@@ -90,7 +90,7 @@ public actual inline fun DoubleArray.elementAt(index: Int): Double {
  */
 @kotlin.internal.InlineOnly
 public actual inline fun BooleanArray.elementAt(index: Int): Boolean {
-    return get(index)
+    return elementAtOrElse(index) { throw IndexOutOfBoundsException("index: $index, size: $size}") }
 }
 
 /**
@@ -100,7 +100,7 @@ public actual inline fun BooleanArray.elementAt(index: Int): Boolean {
  */
 @kotlin.internal.InlineOnly
 public actual inline fun CharArray.elementAt(index: Int): Char {
-    return get(index)
+    return elementAtOrElse(index) { throw IndexOutOfBoundsException("index: $index, size: $size}") }
 }
 
 /**
