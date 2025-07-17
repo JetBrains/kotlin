@@ -90,36 +90,28 @@ fun main() {
 
         // Dump KLIB metadata tests
         testGroup("native/native.tests/klib-ir-inliner/tests-gen", "native/native.tests/testData/klib/dump-metadata") {
-            testClass<AbstractNativeKlibDumpMetadataTest>(
-                suiteTestClassName = "FirNativeKlibDumpMetadataTestGenerated",
-            ) {
+            testClass<AbstractNativeKlibDumpMetadataTest> {
                 model(pattern = "^([^_](.+)).kt$", recursive = true)
             }
         }
 
         // Dump KLIB IR tests
         testGroup("native/native.tests/klib-ir-inliner/tests-gen", "native/native.tests/testData/klib/dump-ir") {
-            testClass<AbstractNativeKlibDumpIrTest>(
-                suiteTestClassName = "FirNativeKlibDumpIrTestGenerated",
-            ) {
+            testClass<AbstractNativeKlibDumpIrTest> {
                 model(pattern = "^([^_](.+)).kt$", recursive = true)
             }
         }
 
         // Dump KLIB IR signatures tests
         testGroup("native/native.tests/klib-ir-inliner/tests-gen", "native/native.tests/testData/klib/dump-signatures") {
-            testClass<AbstractNativeKlibDumpIrSignaturesTest>(
-                suiteTestClassName = "FirNativeKlibDumpIrSignaturesTestGenerated",
-            ) {
+            testClass<AbstractNativeKlibDumpIrSignaturesTest> {
                 model(pattern = "^([^_](.+)).kt$", recursive = true)
             }
         }
 
         // Dump KLIB metadata signatures tests
         testGroup("native/native.tests/klib-ir-inliner/tests-gen", "native/native.tests/testData/klib/dump-signatures") {
-            testClass<AbstractNativeKlibDumpMetadataSignaturesTest>(
-                suiteTestClassName = "FirNativeKlibDumpMetadataSignaturesTestGenerated",
-            ) {
+            testClass<AbstractNativeKlibDumpMetadataSignaturesTest> {
                 model(pattern = "^([^_](.+)).(kt|def)$", recursive = true)
             }
         }
