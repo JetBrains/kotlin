@@ -6,7 +6,7 @@
 package org.jetbrains.kotlinx.atomicfu.runners
 
 import org.jetbrains.kotlin.test.backend.handlers.SMAPDumpHandler
-import org.jetbrains.kotlin.konan.test.irText.AbstractFirLightTreeNativeIrTextTest
+import org.jetbrains.kotlin.konan.test.irText.AbstractLightTreeNativeIrTextTest
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.configureJvmArtifactsHandlersStep
 import org.jetbrains.kotlin.test.frontend.fir.FirFailingTestSuppressor
@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.runners.AbstractFirPsiDiagnosticTest
 import org.jetbrains.kotlin.test.runners.codegen.AbstractFirLightTreeBlackBoxCodegenTest
 import org.jetbrains.kotlin.test.runners.codegen.AbstractIrBlackBoxCodegenTest
-import org.jetbrains.kotlin.test.runners.codegen.*
 import org.jetbrains.kotlin.test.services.RuntimeClasspathProvider
 import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.NativeEnvironmentConfigurator
@@ -48,7 +47,7 @@ abstract class AbstractAtomicfuFirCheckerTest : AbstractFirPsiDiagnosticTest() {
 }
 
 // TODO temporarily disabled generation of FIR dumping tests, see: KT-79199
-open class AbstractAtomicfuNativeIrTextTest : AbstractFirLightTreeNativeIrTextTest() {
+open class AbstractAtomicfuNativeIrTextTest : AbstractLightTreeNativeIrTextTest() {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         with(builder) {
