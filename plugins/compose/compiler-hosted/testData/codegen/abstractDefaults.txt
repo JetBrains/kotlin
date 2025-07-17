@@ -1,0 +1,7 @@
+final class AlternativeDesktopPopupRenderer {
+    // source: 'main.kt'
+    public final static field INSTANCE: AlternativeDesktopPopupRenderer
+    static method <clinit>(): void
+    private method <init>(): void
+    public method Popup(p0: kotlin.jvm.functions.Function0, p1: kotlin.jvm.functions.Function1, p2: kotlin.jvm.functions.Function1, p3: kotlin.jvm.functions.Function2, p4: androidx.compose.runtime.Composer, p5: int): void
+}

@@ -1687,9 +1687,9 @@ abstract class AbstractComposeLowering(
         return origin != IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA
     }
 
-    private fun IrFunction.isVirtualFunctionWithDefaultParam(): Boolean =
+    protected fun IrFunction.isVirtualFunctionWithDefaultParam(): Boolean =
         this is IrSimpleFunction &&
-                (isVirtualFunctionWithDefaultParam != null ||
+                (isVirtualFunctionWithDefaultParam == true ||
                         overriddenSymbols.any { it.owner.isVirtualFunctionWithDefaultParam() })
 }
 
