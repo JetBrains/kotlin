@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.konan.test.Fir2IrNativeResultsConverter
-import org.jetbrains.kotlin.konan.test.FirNativeKlibSerializerFacade
+import org.jetbrains.kotlin.konan.test.NativeKlibSerializerFacade
 import org.jetbrains.kotlin.konan.test.blackbox.support.RegularKotlinNativeClassLoader
 import org.jetbrains.kotlin.konan.test.blackbox.support.copyNativeHomeProperty
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.dumpIr
@@ -130,7 +130,7 @@ open class AbstractFirKlibCrossCompilationIdentityTestBase(val irFileSuffix: Str
                 ::NoFir2IrCompilationErrorsHandler,
             )
         }
-        facadeStep(::FirNativeKlibSerializerFacade)
+        facadeStep(::NativeKlibSerializerFacade)
         klibArtifactsHandlersStep {
             useHandlers(::NativeKlibCrossCompilationIdentityHandler.bind(irFileSuffix))
         }

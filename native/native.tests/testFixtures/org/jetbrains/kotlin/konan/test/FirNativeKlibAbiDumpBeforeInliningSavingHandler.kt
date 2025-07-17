@@ -22,7 +22,7 @@ class FirNativeKlibAbiDumpBeforeInliningSavingHandler(
         val diagnosticReporter = DiagnosticReporterFactory.createReporter(configuration.messageCollector)
         val outputFile = getAbiCheckKlibArtifactFile(module.name)
 
-        FirNativeKlibSerializerFacade(testServices).serializeBare(module, inputArtifact, outputFile, configuration, diagnosticReporter)
+        NativeKlibSerializerFacade(testServices).serializeBare(module, inputArtifact, outputFile, configuration, diagnosticReporter)
 
         return BinaryArtifacts.KLib(outputFile, diagnosticReporter)
     }

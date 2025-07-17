@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.konan.test.diagnostics
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.test.Fir2IrNativeResultsConverter
-import org.jetbrains.kotlin.konan.test.FirNativeKlibSerializerFacade
+import org.jetbrains.kotlin.konan.test.NativeKlibSerializerFacade
 import org.jetbrains.kotlin.konan.test.converters.NativePreSerializationLoweringFacade
 import org.jetbrains.kotlin.platform.konan.NativePlatforms
 import org.jetbrains.kotlin.test.Constructor
@@ -93,7 +93,7 @@ abstract class AbstractNativeDiagnosticsWithBackendTestBase(parser: FirParser) :
         facadeStep(::Fir2IrNativeResultsConverter)
         facadeStep(::NativePreSerializationLoweringFacade)
         loweredIrHandlersStep { useHandlers(::IrDiagnosticsHandler) }
-        facadeStep(::FirNativeKlibSerializerFacade)
+        facadeStep(::NativeKlibSerializerFacade)
 
         klibArtifactsHandlersStep {
             useHandlers(::KlibBackendDiagnosticsHandler)
