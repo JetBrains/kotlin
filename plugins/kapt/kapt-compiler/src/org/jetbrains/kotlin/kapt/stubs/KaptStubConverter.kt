@@ -153,7 +153,6 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
     private val correctErrorTypes = kaptContext.options[KaptFlag.CORRECT_ERROR_TYPES]
     private val strictMode = kaptContext.options[KaptFlag.STRICT]
     private val stripMetadata = kaptContext.options[KaptFlag.STRIP_METADATA]
-    private val keepKdocComments = kaptContext.options[KaptFlag.KEEP_KDOC_COMMENTS_IN_STUBS]
 
     private val mutableBindings = mutableMapOf<String, KaptJavaFileObject>()
 
@@ -166,7 +165,7 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
 
     private val signatureParser = SignatureParser(treeMaker)
 
-    private val kdocCommentKeeper = if (keepKdocComments) KaptDocCommentKeeper(kaptContext) else null
+    private val kdocCommentKeeper = KaptDocCommentKeeper(kaptContext)
 
     private val importsFromRoot by lazy(::collectImportsFromRootPackage)
 
@@ -286,9 +285,7 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
         val classes = JavacList.of<JCTree>(classDeclaration)
 
         val topLevel = treeMaker.TopLevelJava9Aware(packageClause, imports + classes)
-        if (kdocCommentKeeper != null) {
-            topLevel.docComments = kdocCommentKeeper.getDocTable(topLevel)
-        }
+        topLevel.docComments = kdocCommentKeeper.getDocTable(topLevel)
 
         KaptJavaFileObject(topLevel, classDeclaration).apply {
             topLevel.sourcefile = this
@@ -1847,7 +1844,7 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
     }
 
     private fun <T : JCTree> T.keepKdocCommentsIfNecessary(node: Any): T {
-        kdocCommentKeeper?.saveKDocComment(this, node)
+        kdocCommentKeeper.saveKDocComment(this, node)
         return this
     }
 

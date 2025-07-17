@@ -24,7 +24,6 @@ import org.jetbrains.kotlin.test.model.FrontendKinds
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.utils.PathUtil
-import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import java.io.File
 
 class KaptEnvironmentConfigurator(
@@ -53,19 +52,16 @@ class KaptEnvironmentConfigurator(
             stubsOutputDir = sourcesOutputDir
             incrementalDataOutputDir = sourcesOutputDir
 
-            val javacOptions = module.directives[CodegenTestDirectives.JAVAC_OPTIONS].associate { opt ->
-                val (key, value) = opt.split('=').map { it.trim() }.also { assert(it.size == 2) }
-                key to value
+            for (option in module.directives[CodegenTestDirectives.JAVAC_OPTIONS]) {
+                val (key, value) = option.split('=').map { it.trim() }.also { assert(it.size == 2) }
+                javacOptions.put(key, value)
             }
 
-            this.javacOptions.putAll(javacOptions)
-            val kaptFlagsToAdd = KaptTestDirectives.flagDirectives.mapNotNull {
-                runIf(it in module.directives) {
-                    KaptFlag.valueOf(it.name)
+            for (directive in KaptTestDirectives.flagDirectives) {
+                if (directive in module.directives) {
+                    flags.add(KaptFlag.valueOf(directive.name))
                 }
             }
-            flags.addAll(kaptFlagsToAdd)
-            flags.removeAll(module.directives[KaptTestDirectives.DISABLED_FLAGS])
 
             processingOptions.putAll(processorOptions)
             detectMemoryLeaks = DetectMemoryLeaksMode.NONE
