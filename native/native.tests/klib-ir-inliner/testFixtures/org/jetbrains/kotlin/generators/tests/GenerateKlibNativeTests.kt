@@ -21,8 +21,8 @@ import org.jetbrains.kotlin.konan.test.evolution.AbstractNativeKlibEvolutionTest
 import org.jetbrains.kotlin.konan.test.headerklib.*
 import org.jetbrains.kotlin.konan.test.irText.*
 import org.jetbrains.kotlin.konan.test.dump.*
-import org.jetbrains.kotlin.konan.test.klib.AbstractFirKlibCrossCompilationIdentityTest
-import org.jetbrains.kotlin.konan.test.klib.AbstractFirKlibCrossCompilationIdentityWithPreSerializationLoweringTest
+import org.jetbrains.kotlin.konan.test.klib.AbstractKlibCrossCompilationIdentityTest
+import org.jetbrains.kotlin.konan.test.klib.AbstractKlibCrossCompilationIdentityWithPreSerializationLoweringTest
 import org.jetbrains.kotlin.konan.test.serialization.AbstractNativeIrDeserializationTest
 import org.jetbrains.kotlin.konan.test.serialization.AbstractNativeIrDeserializationWithInlinedFunInKlibTest
 import org.jetbrains.kotlin.konan.test.syntheticAccessors.*
@@ -186,10 +186,10 @@ fun main() {
 
         // KLIB cross-compilation tests.
         testGroup("native/native.tests/klib-ir-inliner/tests-gen", "native/native.tests/testData/klib/cross-compilation/identity") {
-            testClass<AbstractFirKlibCrossCompilationIdentityTest> {
+            testClass<AbstractKlibCrossCompilationIdentityTest> {
                 model()
             }
-            testClass<AbstractFirKlibCrossCompilationIdentityWithPreSerializationLoweringTest> {
+            testClass<AbstractKlibCrossCompilationIdentityWithPreSerializationLoweringTest> {
                 model()
             }
         }

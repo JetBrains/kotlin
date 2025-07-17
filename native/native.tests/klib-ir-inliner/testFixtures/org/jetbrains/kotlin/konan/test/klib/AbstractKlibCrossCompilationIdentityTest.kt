@@ -59,9 +59,9 @@ import java.io.File
  * indirectly asserts that the generated klib is "identical" across these hosts
  */
 @Tag("klib")
-open class AbstractFirKlibCrossCompilationIdentityTest : AbstractFirKlibCrossCompilationIdentityTestBase("")
+open class AbstractKlibCrossCompilationIdentityTest : AbstractFirKlibCrossCompilationIdentityTestBase("")
 @Tag("klib")
-open class AbstractFirKlibCrossCompilationIdentityWithPreSerializationLoweringTest :
+open class AbstractKlibCrossCompilationIdentityWithPreSerializationLoweringTest :
     AbstractFirKlibCrossCompilationIdentityTestBase(".lowered") {
 
     override fun configure(builder: TestConfigurationBuilder) {
