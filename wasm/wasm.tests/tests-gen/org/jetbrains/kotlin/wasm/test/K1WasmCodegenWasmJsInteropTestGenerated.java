@@ -314,6 +314,12 @@ public class K1WasmCodegenWasmJsInteropTestGenerated extends AbstractK1WasmCodeg
   }
 
   @Test
+  @TestMetadata("noKotlinCastForUnsafeCast.kt")
+  public void testNoKotlinCastForUnsafeCast() {
+    runTest("compiler/testData/codegen/boxWasmJsInterop/noKotlinCastForUnsafeCast.kt");
+  }
+
+  @Test
   @TestMetadata("nullableExternRefs.kt")
   public void testNullableExternRefs() {
     runTest("compiler/testData/codegen/boxWasmJsInterop/nullableExternRefs.kt");
