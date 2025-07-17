@@ -56,18 +56,6 @@ fun main() {
 
         // New frontend test infrastructure tests
         testGroup(testsRoot = "native/native.tests/klib-ir-inliner/tests-gen", testDataRoot = "compiler/testData/diagnostics") {
-            testClass<AbstractDiagnosticsNativeTest>(
-                annotations = listOf(*frontendClassic()),
-            ) {
-                model(
-                    "nativeTests",
-                    excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN,
-                    // There are no special native-specific diagnostics in K1 frontend.
-                    // These checks happen in native backend instead, in SpecialBackendChecks class.
-                    excludeDirs = listOf("specialBackendChecks"),
-                )
-            }
-
             testClass<AbstractFirPsiNativeDiagnosticsTest>(
                 suiteTestClassName = "FirPsiOldFrontendNativeDiagnosticsTestGenerated",
             ) {
