@@ -559,6 +559,7 @@ enum class LanguageFeature(
     DisableCheckingChangedProgressionsResolve(sinceVersion = null, "KT-49276"),
 
     DontCreateSyntheticPropertiesWithoutBaseJavaGetter(sinceVersion = null, "KT-64358"),
+    CollectionLiterals(sinceVersion = null, testOnly = true, issue = "KT-80489"),
     ProperFieldAccessGenerationForFieldAccessShadowedByKotlinProperty(sinceVersion = null, "KT-56386"),
     IrIntraModuleInlinerBeforeKlibSerialization(sinceVersion = null, forcesPreReleaseBinaries = false, issue = "KT-79717"),
     IrCrossModuleInlinerBeforeKlibSerialization(sinceVersion = null, forcesPreReleaseBinaries = true, issue = "KT-79717"),
