@@ -154,7 +154,7 @@ fun main() {
         // Codegen/box tests for IR Inliner at 1st phase, invoked before K2 Klib Serializer
         testGroup("native/native.tests/klib-ir-inliner/tests-gen", "compiler/testData/codegen") {
             testClass<AbstractNativeCodegenBoxTest>(
-                suiteTestClassName = "FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated",
+                suiteTestClassName = "NativeCodegenBoxWithInlinedFunInKlibTestGenerated",
                 annotations = listOf(
                     klibIrInliner(),
                     provider<UseExtTestCaseGroupProvider>()
@@ -176,7 +176,7 @@ fun main() {
         // Codegen/box tests for synthetic accessor tests
         testGroup("native/native.tests/klib-ir-inliner/tests-gen", "compiler/testData/klib/syntheticAccessors") {
             testClass<AbstractNativeCodegenBoxTest>(
-                suiteTestClassName = "FirNativeKlibSyntheticAccessorsBoxTestGenerated",
+                suiteTestClassName = "NativeKlibSyntheticAccessorsBoxTestGenerated",
                 annotations = listOf(
                     klibIrInliner(),
                     provider<UseExtTestCaseGroupProvider>(),
