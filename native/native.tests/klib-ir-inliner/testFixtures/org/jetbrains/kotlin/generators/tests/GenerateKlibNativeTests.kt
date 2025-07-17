@@ -37,11 +37,6 @@ fun main() {
     generateTestGroupSuiteWithJUnit5 {
         // irText tests
         testGroup("native/native.tests/klib-ir-inliner/tests-gen", "compiler/testData/ir/irText") {
-            testClass<AbstractClassicNativeIrTextTest>(
-                annotations = listOf(*frontendClassic()),
-            ) {
-                model(excludeDirs = listOf("declarations/multiplatform/k2"))
-            }
             testClass<AbstractFirLightTreeNativeIrTextTest>(
                 annotations = listOf(*frontendClassic()),
             ) {
