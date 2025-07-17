@@ -8,7 +8,10 @@ package org.jetbrains.kotlin.fir.declarations
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.containingClassLookupTag
+import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
+import org.jetbrains.kotlin.fir.declarations.utils.isExtension
 import org.jetbrains.kotlin.fir.declarations.utils.isInlineOrValue
+import org.jetbrains.kotlin.fir.declarations.utils.isStatic
 import org.jetbrains.kotlin.fir.declarations.utils.isSuspend
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
@@ -156,6 +159,13 @@ object OperatorFunctionChecks {
             Checks.memberOrExtension, Checks.Returns.unit, Checks.ValueParametersCount.single,
             Checks.noDefaultAndVarargs
         )
+        checkFor(
+            OperatorNameConventions.OF,
+            Checks.staticMember, Checks.notExtension, Checks.noContextParameters,
+            Checks.simple("CollectionLiterals feature must be enabled") { _, session ->
+                session.languageVersionSettings.supportsFeature(LanguageFeature.CollectionLiterals)
+            },
+        )
     }
 
     private val regexChecks: List<Pair<Regex, List<Check>>> = buildList {
@@ -218,6 +228,23 @@ private object Checks {
 
     val member = simple("must be a member function") { it, _ ->
         it.dispatchReceiverType != null
+    }
+
+    val staticMember =
+        simple(
+            "must be a static member function or a member of companion",
+            requiredResolvePhase = { _ -> FirResolvePhase.STATUS }
+        )
+        { function, session ->
+            function.containingClassLookupTag()?.toRegularClassSymbol(session)?.isCompanion == true || function.isStatic
+        }
+
+    val notExtension = simple("must not have an extension receiver") { it, _ ->
+        !it.isExtension
+    }
+
+    val noContextParameters = simple("must not have context parameters") { it, _ ->
+        it.contextParameters.isEmpty()
     }
 
     val nonSuspend = simple("must not be suspend", feature = null, requiredResolvePhase = { _ -> FirResolvePhase.STATUS }) { it, _ ->

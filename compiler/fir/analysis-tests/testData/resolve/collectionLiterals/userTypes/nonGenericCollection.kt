@@ -4,7 +4,7 @@
 
 class MyList {
     companion object {
-        <!INAPPLICABLE_OPERATOR_MODIFIER!>operator<!> fun of(vararg vals: String): MyList = MyList()
+        operator fun of(vararg vals: String): MyList = MyList()
     }
 }
 
