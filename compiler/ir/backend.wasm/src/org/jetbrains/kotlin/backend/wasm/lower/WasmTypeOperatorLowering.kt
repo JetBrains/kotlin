@@ -320,12 +320,19 @@ class WasmBaseTypeOperatorTransformer(val context: WasmBackendContext) : IrEleme
         }
     }
 
-    private fun isTypeParameterCastsToRegularType(expression: IrExpression, toType: IrType): Boolean {
+    private fun shouldGenerateKotlinCast(expression: IrExpression, toType: IrType): Boolean {
         if (toType.isNullableAny()) return false
         if (toType.isTypeParameter()) return false
 
         val argumentType = when (expression) {
-            is IrCall -> expression.symbol.owner.returnType
+            is IrCall -> {
+                val function = expression.symbol.owner
+
+                val packageFragment = function.getPackageFragment()
+                if (context.getExcludedPackageFragment(packageFragment.packageFqName) == packageFragment) return false
+
+                function.returnType
+            }
             is IrGetField -> expression.symbol.owner.type
             else -> expression.type
         }
@@ -333,10 +340,7 @@ class WasmBaseTypeOperatorTransformer(val context: WasmBackendContext) : IrEleme
     }
 
     private fun lowerImplicitCast(expression: IrTypeOperatorCall): IrExpression {
-        return if (
-            expression.typeOperand.classFqName != wasmCharArrayFqName &&
-            isTypeParameterCastsToRegularType(expression.argument, expression.typeOperand)
-        ) {
+        return if (shouldGenerateKotlinCast(expression.argument, expression.typeOperand)) {
             lowerCast(
                 expression = expression,
                 isSafe = false
