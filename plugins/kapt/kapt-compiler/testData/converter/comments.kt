@@ -65,3 +65,10 @@ enum class EnumError {
  * `/* Failure */`
  */
 interface TestComponent
+
+interface Base {
+    /** Inherited doc comment. */
+    fun inherited() {}
+}
+
+class Derived : Base
