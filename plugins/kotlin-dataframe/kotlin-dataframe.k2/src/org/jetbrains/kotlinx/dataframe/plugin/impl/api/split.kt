@@ -217,7 +217,7 @@ class SplitAnyFrameRows : AbstractSchemaModificationInterpreter() {
     }
 }
 
-class SplitPair : AbstractSchemaModificationInterpreter() {
+abstract class SplitPair : AbstractSchemaModificationInterpreter() {
     val Arguments.receiver: SplitApproximation by arg()
     val Arguments.typeArg1 by type()
     val Arguments.typeArg2 by type()
@@ -229,8 +229,25 @@ class SplitPair : AbstractSchemaModificationInterpreter() {
             .split(receiver.columns) {
                 listOf(typeArg1, typeArg2)
             }
-            .into(firstCol, secondCol)
+            .operation()
             .toPluginDataFrameSchema()
+    }
+
+    context(arguments: Arguments)
+    abstract fun SplitWithTransform<ConeTypesAdapter, Any, Marker>.operation(): DataFrame<ConeTypesAdapter>
+}
+
+class SplitPairInto : SplitPair() {
+    context(arguments: Arguments)
+    override fun SplitWithTransform<ConeTypesAdapter, Any, Marker>.operation(): DataFrame<ConeTypesAdapter> {
+        return into(arguments.firstCol, arguments.secondCol)
+    }
+}
+
+class SplitPairInward : SplitPair() {
+    context(arguments: Arguments)
+    override fun SplitWithTransform<ConeTypesAdapter, Any, Marker>.operation(): DataFrame<ConeTypesAdapter> {
+        return inward(arguments.firstCol, arguments.secondCol)
     }
 }
 
@@ -268,7 +285,7 @@ private fun Arguments.createListType(type: ConeKotlinType): ConeClassLikeType = 
     arrayOf(type.toTypeProjection(Variance.INVARIANT)),
 )
 
-class SplitIterableInto : AbstractSchemaModificationInterpreter() {
+abstract class SplitIterableAbstractOperation : AbstractSchemaModificationInterpreter() {
     val Arguments.receiver: SplitApproximation by arg()
     val Arguments.names: List<String> by arg()
     val Arguments.extraNamesGenerator by ignore()
@@ -285,7 +302,24 @@ class SplitIterableInto : AbstractSchemaModificationInterpreter() {
 
         return receiver.df
             .split(receiver.columns) { List(names.size) { targetType } }
-            .into(names)
+            .operation()
             .toPluginDataFrameSchema()
+    }
+
+    context(arguments: Arguments)
+    abstract fun SplitWithTransform<ConeTypesAdapter, Any, Marker>.operation(): DataFrame<ConeTypesAdapter>
+}
+
+class SplitIterableInto : SplitIterableAbstractOperation() {
+    context(arguments: Arguments)
+    override fun SplitWithTransform<ConeTypesAdapter, Any, Marker>.operation(): DataFrame<ConeTypesAdapter> {
+        return into(arguments.names)
+    }
+}
+
+class SplitIterableInward : SplitIterableAbstractOperation() {
+    context(arguments: Arguments)
+    override fun SplitWithTransform<ConeTypesAdapter, Any, Marker>.operation(): DataFrame<ConeTypesAdapter> {
+        return inward(arguments.names)
     }
 }
