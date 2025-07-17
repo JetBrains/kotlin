@@ -122,11 +122,11 @@ open class ExtraClassInfoGenerator() {
  */
 private object ConstantValueExternalizer : DataExternalizer<Any> by DelegateDataExternalizer(
     listOf(
-        java.lang.Integer::class.java,
-        java.lang.Long::class.java,
-        java.lang.Float::class.java,
-        java.lang.Double::class.java,
-        java.lang.String::class.java
+        Int::class.java,
+        Long::class.java,
+        Float::class.java,
+        Double::class.java,
+        String::class.java
     ),
     listOf(IntExternalizer, LongExternalizer, FloatExternalizer, DoubleExternalizer, StringExternalizer)
 )

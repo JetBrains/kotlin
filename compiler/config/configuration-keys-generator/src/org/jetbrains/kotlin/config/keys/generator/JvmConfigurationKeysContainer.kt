@@ -55,7 +55,7 @@ object JvmConfigurationKeysContainer : KeysContainer("org.jetbrains.kotlin.confi
 
     val STRING_CONCAT by key<JvmStringConcat>("Specifies string concatenation scheme")
 
-    val JDK_RELEASE by key<Integer>("Specifies JDK API version")
+    val JDK_RELEASE by key<Int>("Specifies JDK API version")
 
     val SAM_CONVERSIONS by key<JvmClosureGenerationScheme>("SAM conversions code generation scheme")
 

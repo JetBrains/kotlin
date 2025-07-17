@@ -70,5 +70,5 @@ internal fun List<State>.wrap(callInterceptor: CallInterceptor, irFunction: IrFu
 }
 
 internal fun Class<*>.isObject(): Boolean {
-    return this == java.lang.Object::class.java
+    return this == Any::class.java
 }

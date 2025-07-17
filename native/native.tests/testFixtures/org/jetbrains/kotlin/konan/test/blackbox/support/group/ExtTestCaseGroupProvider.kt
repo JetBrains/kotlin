@@ -882,7 +882,7 @@ private class ExtTestDataFileStructureFactory(parentDisposable: Disposable) : Te
     }
 
     companion object {
-        private val lock = Object()
+        private val lock = Any()
 
         private fun createPsiFactory(parentDisposable: Disposable): KtPsiFactory {
             val configuration: CompilerConfiguration = KotlinTestUtils.newConfiguration()
