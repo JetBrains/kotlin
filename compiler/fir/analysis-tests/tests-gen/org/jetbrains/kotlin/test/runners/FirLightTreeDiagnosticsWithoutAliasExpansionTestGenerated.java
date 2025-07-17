@@ -140,6 +140,12 @@ public class FirLightTreeDiagnosticsWithoutAliasExpansionTestGenerated extends A
     }
 
     @Nested
+    @TestMetadata("compiler/fir/analysis-tests/testData/resolve/collectionLiterals")
+    @TestDataPath("$PROJECT_ROOT")
+    public class CollectionLiterals {
+    }
+
+    @Nested
     @TestMetadata("compiler/fir/analysis-tests/testData/resolve/constVal")
     @TestDataPath("$PROJECT_ROOT")
     public class ConstVal {

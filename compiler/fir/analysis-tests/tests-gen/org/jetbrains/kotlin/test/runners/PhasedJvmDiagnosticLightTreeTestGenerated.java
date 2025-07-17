@@ -53980,6 +53980,40 @@ public class PhasedJvmDiagnosticLightTreeTestGenerated extends AbstractPhasedJvm
     }
 
     @Nested
+    @TestMetadata("compiler/fir/analysis-tests/testData/resolve/collectionLiterals")
+    @TestDataPath("$PROJECT_ROOT")
+    public class CollectionLiterals {
+      @Nested
+      @TestMetadata("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/userTypes")
+      @TestDataPath("$PROJECT_ROOT")
+      public class UserTypes {
+        @Test
+        @TestMetadata("genericCollection.kt")
+        public void testGenericCollection() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/userTypes/genericCollection.kt");
+        }
+
+        @Test
+        @TestMetadata("genericCollectionWithNonGenericElementType.kt")
+        public void testGenericCollectionWithNonGenericElementType() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/userTypes/genericCollectionWithNonGenericElementType.kt");
+        }
+
+        @Test
+        @TestMetadata("nonGenericCollection.kt")
+        public void testNonGenericCollection() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/userTypes/nonGenericCollection.kt");
+        }
+
+        @Test
+        @TestMetadata("nonGenericCollectionWithGenericElementType.kt")
+        public void testNonGenericCollectionWithGenericElementType() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/collectionLiterals/userTypes/nonGenericCollectionWithGenericElementType.kt");
+        }
+      }
+    }
+
+    @Nested
     @TestMetadata("compiler/fir/analysis-tests/testData/resolve/constVal")
     @TestDataPath("$PROJECT_ROOT")
     public class ConstVal {
