@@ -164,6 +164,18 @@ public class ResolveToFirSymbolTestGenerated extends AbstractResolveToFirSymbolT
     public void testTopLevelCallableAmbiguitySourceSingleModule() {
       runTest("analysis/low-level-api-fir/testData/resolveToFirSymbol/ambiguities/topLevelCallableAmbiguitySourceSingleModule.kt");
     }
+
+    @Test
+    @TestMetadata("topLevelCallableAmbiguityWithSameFacadeNameLibraryMultiModule.kt")
+    public void testTopLevelCallableAmbiguityWithSameFacadeNameLibraryMultiModule() {
+      runTest("analysis/low-level-api-fir/testData/resolveToFirSymbol/ambiguities/topLevelCallableAmbiguityWithSameFacadeNameLibraryMultiModule.kt");
+    }
+
+    @Test
+    @TestMetadata("topLevelCallableAmbiguityWithSameFacadeNameLibrarySingleModuleMultiRoot.kt")
+    public void testTopLevelCallableAmbiguityWithSameFacadeNameLibrarySingleModuleMultiRoot() {
+      runTest("analysis/low-level-api-fir/testData/resolveToFirSymbol/ambiguities/topLevelCallableAmbiguityWithSameFacadeNameLibrarySingleModuleMultiRoot.kt");
+    }
   }
 
   @Nested
