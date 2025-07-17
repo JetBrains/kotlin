@@ -90,3 +90,5 @@ val resultJar by task<Jar> {
 }
 
 setPublishableArtifact(resultJar)
+sourcesJar()
+javadocJar()
