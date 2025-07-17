@@ -23,12 +23,12 @@ import org.jetbrains.kotlin.config.CompilerConfigurationKey
 @Deprecated(
     message = "ComponentRegistrar is deprecated. Please use CompilerPluginRegistrar instead. Check https://youtrack.jetbrains.com/issue/KT-52665 for more details",
     replaceWith = ReplaceWith("CompilerPluginRegistrar", "org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar"),
-    level = DeprecationLevel.WARNING
+    level = DeprecationLevel.ERROR
 )
 @ExperimentalCompilerApi
 interface ComponentRegistrar {
     companion object {
-        @Suppress("DEPRECATION")
+        @Suppress("DEPRECATION_ERROR")
         val PLUGIN_COMPONENT_REGISTRARS: CompilerConfigurationKey<MutableList<ComponentRegistrar>> =
             CompilerConfigurationKey.create("plugin component registrars")
     }
