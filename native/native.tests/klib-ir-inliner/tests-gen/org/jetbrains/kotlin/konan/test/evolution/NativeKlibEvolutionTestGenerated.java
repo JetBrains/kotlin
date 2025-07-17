@@ -17,7 +17,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("compiler/testData/klib/evolution")
 @TestDataPath("$PROJECT_ROOT")
-public class FirNativeKlibEvolutionTestGenerated extends AbstractNativeKlibEvolutionTest {
+public class NativeKlibEvolutionTestGenerated extends AbstractNativeKlibEvolutionTest {
   @Test
   @TestMetadata("addAbstractMemberBody.kt")
   public void testAddAbstractMemberBody() {
