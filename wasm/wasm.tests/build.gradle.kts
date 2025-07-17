@@ -175,18 +175,18 @@ fun generateTypeScriptTestFor(dir: String): TaskProvider<NpmTask> = tasks.regist
     outputs.file(mainJsFile)
     outputs.upToDateWhen { mainJsFile.exists() }
 
-    args.set(listOf("run", "generateTypeScriptTests", "--", "./typescript-export/wasm/$dir/tsconfig.json"))
+    npmCommand.set(listOf("run", "generateTypeScriptTests", "--", "./typescript-export/wasm/$dir/tsconfig.json"))
 }
 
 val installTsDependencies by task<NpmTask> {
     val packageLockFile = testDataDir.resolve("package-lock.json")
     val nodeModules = testDataDir.resolve("node_modules")
     inputs.file(testDataDir.resolve("package.json"))
-    outputs.file(packageLockFile)
+    inputs.file(packageLockFile)
     outputs.upToDateWhen { nodeModules.exists() }
 
     workingDir.set(testDataDir)
-    args.set(listOf("install"))
+    npmCommand.set(listOf("ci"))
 }
 
 val generateTypeScriptTests by parallel(
