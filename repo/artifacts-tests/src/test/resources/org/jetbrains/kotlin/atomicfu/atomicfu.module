@@ -10,7 +10,7 @@
   },
   "createdBy": {
     "gradle": {
-      "version": "8.14"
+      "version": "8.15"
     }
   },
   "variants": [
@@ -74,11 +74,11 @@
           "excludes": [
             {
               "group": "org.jetbrains.kotlin",
-              "module": "kotlin-reflect"
+              "module": "kotlin-stdlib-jdk8"
             },
             {
               "group": "org.jetbrains.kotlin",
-              "module": "kotlin-stdlib-jdk8"
+              "module": "kotlin-reflect"
             },
             {
               "group": "org.jetbrains.kotlin",
