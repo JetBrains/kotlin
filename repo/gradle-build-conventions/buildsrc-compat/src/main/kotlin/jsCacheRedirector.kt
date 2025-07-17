@@ -4,11 +4,12 @@
  */
 import com.github.gradle.node.NodeExtension
 import com.github.gradle.node.NodePlugin
+import com.github.gradle.node.exec.NodeExecConfiguration
+import com.github.gradle.node.npm.exec.NpmExecRunner
 import com.github.gradle.node.npm.task.NpmTask
+import com.github.gradle.node.variant.VariantComputer
 import org.gradle.api.Project
-import org.gradle.api.tasks.Delete
 import org.gradle.kotlin.dsl.configure
-import org.gradle.kotlin.dsl.register
 import org.gradle.kotlin.dsl.the
 import org.gradle.kotlin.dsl.withType
 import org.jetbrains.kotlin.gradle.targets.js.yarn.YarnLockMismatchReport
@@ -26,46 +27,31 @@ fun Project.configureJsCacheRedirector() {
     }
 
     project.allprojects {
-        pluginManager.withPlugin("com.github.node-gradle.node") {
-            val npmRcFile = layout.projectDirectory.file(".npmrc")
-            val npmSetRegistry = tasks.register<NpmTask>("npmSetRegistry") {
-                group = NodePlugin.NPM_GROUP
-                args.addAll(
-                    listOf("config", "set", "registry", NPM_REGISTRY, "--location=project")
-                )
-                outputs.file(npmRcFile)
-            }
+        afterEvaluate {
+            pluginManager.withPlugin("com.github.node-gradle.node") {
+                tasks.withType<NpmTask>().configureEach {
+                    if (npmCommand.get().first() in listOf("install", "ci")) {
+                        val workingDirectory = workingDir.orNull?.asFile ?: layout.projectDirectory.asFile
+                        val npmRcFile = workingDirectory.resolve(".npmrc")
 
-            tasks.named("npmInstall").configure {
-                dependsOn(npmSetRegistry)
-            }
+                        outputs.file(npmRcFile)
 
-            tasks.register<Delete>("cleanNpmRc") {
-                delete = setOf(npmRcFile)
-            }
-
-            tasks.named("clean").configure {
-                dependsOn("cleanNpmRc")
-            }
-        }
-
-        plugins.withType<org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin> {
-            val npmRcFile = layout.buildDirectory.file("js/.npmrc")
-            tasks.named("kotlinNpmInstall").configure {
-                doFirst {
-                    npmRcFile.get().asFile.writeText("registry=$NPM_REGISTRY")
+                        doFirst {
+                            logger.info("Setting Npm registry for $path to $NPM_REGISTRY")
+                            val nodeExecConfiguration =
+                                NodeExecConfiguration(
+                                    listOf("config", "set", "registry", NPM_REGISTRY, "--location=project"),
+                                    environment.get(),
+                                    workingDir.asFile.orNull,
+                                    ignoreExitValue.get(),
+                                    execOverrides.orNull
+                                )
+                            val npmExecRunner = objects.newInstance(NpmExecRunner::class.java)
+                            npmExecRunner.executeNpmCommand(projectHelper, nodeExtension, nodeExecConfiguration, VariantComputer())
+                        }
+                    }
                 }
             }
-
-            tasks.register<Delete>("cleanNpmRc") {
-                delete = setOf(npmRcFile)
-            }
-        }
-    }
-
-    plugins.withType(org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin::class) {
-        extensions.configure(org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsEnvSpec::class.java) {
-            downloadBaseUrl.set(NODE_DIST)
         }
     }
 
@@ -77,6 +63,12 @@ fun Project.configureJsCacheRedirector() {
                 val lockFile = outputFile.get()
                 lockFile.writeText(lockFile.readText().replace(DEFAULT_YARN_REGISTRY, NPM_REGISTRY))
             }
+        }
+    }
+
+    plugins.withType(org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsRootPlugin::class) {
+        extensions.configure(org.jetbrains.kotlin.gradle.targets.js.nodejs.NodeJsEnvSpec::class.java) {
+            downloadBaseUrl.set(NODE_DIST)
         }
     }
 
