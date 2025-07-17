@@ -18,7 +18,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("native/native.tests/testData/klib/cross-compilation/identity")
 @TestDataPath("$PROJECT_ROOT")
-public class FirKlibCrossCompilationIdentityWithPreSerializationLoweringTestGenerated extends AbstractFirKlibCrossCompilationIdentityWithPreSerializationLoweringTest {
+public class KlibCrossCompilationIdentityTestGenerated extends AbstractKlibCrossCompilationIdentityTest {
   @Test
   public void testAllFilesPresentInIdentity() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/klib/cross-compilation/identity"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
