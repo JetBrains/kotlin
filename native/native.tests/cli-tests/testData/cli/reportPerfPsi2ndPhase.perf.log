@@ -39,6 +39,7 @@ Kotlin to Native compiler performance report
        DYNAMIC PHASE        $UINT>>$ ms (StringConcatenation)
        DYNAMIC PHASE        $UINT>>$ ms (EnumConstructors)
        DYNAMIC PHASE        $UINT>>$ ms (Initializers)
+       DYNAMIC PHASE        $UINT>>$ ms (InventNameForInteropBridges)
        DYNAMIC PHASE        $UINT>>$ ms (InventNamesForLocalClasses)
        DYNAMIC PHASE        $UINT>>$ ms (LocalFunctions)
        DYNAMIC PHASE        $UINT>>$ ms (Tailrec)
