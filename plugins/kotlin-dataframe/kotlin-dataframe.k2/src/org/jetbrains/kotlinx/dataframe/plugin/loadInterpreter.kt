@@ -245,7 +245,9 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.api.SplitDefault
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.SplitInplace
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.SplitIntoRows
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.SplitIterableInto
-import org.jetbrains.kotlinx.dataframe.plugin.impl.api.SplitPair
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.SplitIterableInward
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.SplitPairInto
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.SplitPairInward
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.SplitWithTransformDefault
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.SplitWithTransformInplace
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.SplitWithTransformInto0
@@ -492,9 +494,11 @@ internal inline fun <reified T : Interpreter<*>> String.load(isTest: Boolean): T
         "SplitDefault" -> SplitDefault()
         "SplitIntoRows" -> SplitIntoRows()
         "SplitAnyFrameRows" -> SplitAnyFrameRows()
-        "SplitPair" -> SplitPair()
+        "SplitPair" -> SplitPairInto()
+        "SplitPairInward" -> SplitPairInward()
         "SplitAnyFrameIntoColumns" -> SplitAnyFrameIntoColumns()
         "SplitIterableInto" -> SplitIterableInto()
+        "SplitIterableInward" -> SplitIterableInward()
         "SplitWithTransformDefault" -> SplitWithTransformDefault()
         "SplitWithTransformIntoRows" -> SplitWithTransformIntoRows()
         "Named0" -> Named0()
