@@ -13822,6 +13822,12 @@ public class LLBlackBoxTestGenerated extends AbstractLLBlackBoxTest {
       }
 
       @Test
+      @TestMetadata("debugMetadata_av22.kt")
+      public void testDebugMetadata_av22() {
+        runTest("compiler/testData/codegen/box/coroutines/debug/debugMetadata_av22.kt");
+      }
+
+      @Test
       @TestMetadata("debuggerMetadata.kt")
       public void testDebuggerMetadata() {
         runTest("compiler/testData/codegen/box/coroutines/debug/debuggerMetadata.kt");
