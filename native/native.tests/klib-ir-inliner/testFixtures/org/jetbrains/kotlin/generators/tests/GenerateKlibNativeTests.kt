@@ -136,12 +136,6 @@ fun main() {
         // Header klib comparison tests
         testGroup("native/native.tests/klib-ir-inliner/tests-gen", "native/native.tests/testData/klib/header-klibs/comparison") {
             testClass<AbstractNativeHeaderKlibComparisonTest>(
-                suiteTestClassName = "NativeHeaderKlibComparisonTestGenerated",
-                annotations = listOf(*frontendClassic()),
-            ) {
-                model(extension = null, recursive = false)
-            }
-            testClass<AbstractNativeHeaderKlibComparisonTest>(
                 suiteTestClassName = "FirNativeHeaderKlibComparisonTestGenerated",
             ) {
                 model(extension = null, recursive = false)
@@ -150,12 +144,6 @@ fun main() {
 
         // Header klib compilation tests
         testGroup("native/native.tests/klib-ir-inliner/tests-gen", "native/native.tests/testData/klib/header-klibs/compilation") {
-            testClass<AbstractNativeHeaderKlibCompilationTest>(
-                suiteTestClassName = "NativeHeaderKlibCompilationTestGenerated",
-                annotations = listOf(*frontendClassic()),
-            ) {
-                model(extension = null, recursive = false)
-            }
             testClass<AbstractNativeHeaderKlibCompilationTest>(
                 suiteTestClassName = "FirNativeHeaderKlibCompilationTestGenerated",
             ) {
