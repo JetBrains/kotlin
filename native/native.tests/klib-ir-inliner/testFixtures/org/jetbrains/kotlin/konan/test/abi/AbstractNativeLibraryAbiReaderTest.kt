@@ -38,27 +38,9 @@ import org.jetbrains.kotlin.test.services.configuration.NativeEnvironmentConfigu
 import org.junit.jupiter.api.Tag
 
 @Tag("klib")
-abstract class AbstractNativeLibraryAbiReaderTest<FrontendOutput : ResultingArtifact.FrontendOutput<FrontendOutput>> :
-    AbstractLibraryAbiReaderTest<FrontendOutput>(NativePlatforms.unspecifiedNativePlatform, TargetBackend.NATIVE) {
+open class AbstractNativeLibraryAbiReaderTest :
+    AbstractLibraryAbiReaderTest<FirOutputArtifact>(NativePlatforms.unspecifiedNativePlatform, TargetBackend.NATIVE) {
 
-    override val preserializerFacade: Constructor<IrPreSerializationLoweringFacade<IrBackendInput>>
-        get() = ::NativePreSerializationLoweringFacade
-
-    override fun configure(builder: TestConfigurationBuilder) = with(builder) {
-        defaultDirectives {
-            // Kotlin/Native does not have "minimal" stdlib(like other backends do), so full stdlib is needed to resolve
-            // `Any`, `String`, `println`, etc.
-            +ConfigurationDirectives.WITH_STDLIB
-        }
-        useConfigurators(
-            ::CommonEnvironmentConfigurator,
-            ::NativeEnvironmentConfigurator,
-        )
-        super.configure(builder)
-    }
-}
-
-open class AbstractFirNativeLibraryAbiReaderTest : AbstractNativeLibraryAbiReaderTest<FirOutputArtifact>() {
     final override val frontend: FrontendKind<*>
         get() = FrontendKinds.FIR
 
@@ -68,6 +50,9 @@ open class AbstractFirNativeLibraryAbiReaderTest : AbstractNativeLibraryAbiReade
     override val converter: Constructor<Frontend2BackendConverter<FirOutputArtifact, IrBackendInput>>
         get() = ::Fir2IrNativeResultsConverter
 
+    override val preserializerFacade: Constructor<IrPreSerializationLoweringFacade<IrBackendInput>>
+        get() = ::NativePreSerializationLoweringFacade
+
     override val backendFacade: Constructor<BackendFacade<IrBackendInput, BinaryArtifacts.KLib>>
         get() = ::FirNativeKlibSerializerFacade
 
@@ -75,8 +60,14 @@ open class AbstractFirNativeLibraryAbiReaderTest : AbstractNativeLibraryAbiReade
         configureFirParser(FirParser.LightTree)
         defaultDirectives {
             LANGUAGE with "+${LanguageFeature.IrInlinerBeforeKlibSerialization.name}"
+            // Kotlin/Native does not have "minimal" stdlib(like other backends do), so full stdlib is needed to resolve
+            // `Any`, `String`, `println`, etc.
+            +ConfigurationDirectives.WITH_STDLIB
         }
-
+        useConfigurators(
+            ::CommonEnvironmentConfigurator,
+            ::NativeEnvironmentConfigurator,
+        )
         super.configure(builder)
     }
 }
