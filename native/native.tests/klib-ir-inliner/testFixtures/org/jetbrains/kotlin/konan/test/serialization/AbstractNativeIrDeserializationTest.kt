@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.konan.test.serialization
 
 import org.jetbrains.kotlin.konan.test.Fir2IrNativeResultsConverter
-import org.jetbrains.kotlin.konan.test.FirNativeKlibSerializerFacade
+import org.jetbrains.kotlin.konan.test.NativeKlibSerializerFacade
 import org.jetbrains.kotlin.konan.test.converters.NativeDeserializerFacade
 import org.jetbrains.kotlin.konan.test.converters.NativePreSerializationLoweringFacade
 import org.jetbrains.kotlin.platform.konan.NativePlatforms
@@ -64,7 +64,7 @@ open class AbstractNativeIrDeserializationTest : AbstractKotlinCompilerWithTarge
     open val irPreSerializationLoweringFacade: Constructor<IrPreSerializationLoweringFacade<IrBackendInput>>
         get() = ::NativePreSerializationLoweringFacade
     val serializerFacade: Constructor<BackendFacade<IrBackendInput, BinaryArtifacts.KLib>>
-        get() = ::FirNativeKlibSerializerFacade
+        get() = ::NativeKlibSerializerFacade
     val deserializerFacade: Constructor<DeserializerFacade<BinaryArtifacts.KLib, IrBackendInput>>
         get() = ::NativeDeserializerFacade
 

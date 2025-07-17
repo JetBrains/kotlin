@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.konan.test.irText
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.konan.test.Fir2IrNativeResultsConverter
 import org.jetbrains.kotlin.konan.test.FirNativeKlibAbiDumpBeforeInliningSavingHandler
-import org.jetbrains.kotlin.konan.test.FirNativeKlibSerializerFacade
+import org.jetbrains.kotlin.konan.test.NativeKlibSerializerFacade
 import org.jetbrains.kotlin.konan.test.converters.NativeDeserializerFacade
 import org.jetbrains.kotlin.konan.test.converters.NativePreSerializationLoweringFacade
 import org.jetbrains.kotlin.platform.konan.NativePlatforms
@@ -55,7 +55,7 @@ abstract class AbstractNativeIrTextTestBase(private val parser: FirParser) :
 
     override val klibFacades: KlibFacades
         get() = KlibFacades(
-            serializerFacade = ::FirNativeKlibSerializerFacade,
+            serializerFacade = ::NativeKlibSerializerFacade,
             deserializerFacade = ::NativeDeserializerFacade,
         )
 
