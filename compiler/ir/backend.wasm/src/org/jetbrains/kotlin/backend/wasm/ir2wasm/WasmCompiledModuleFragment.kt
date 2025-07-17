@@ -257,7 +257,7 @@ class WasmCompiledModuleFragment(
         wasmCompiledFileFragments.forEach { fragment ->
             fragment.rttiElements?.run {
                 globalReferences.unbound.forEach { unbound ->
-                    unbound.value.bind(rttiGlobals[unbound.key]!!.global)
+                    unbound.value.bind(rttiGlobals[unbound.key]?.global ?: error("A RttiGlobal was not found for ${unbound.key}"))
                 }
                 rttiType.bind(rttiTypeDeclaration)
             }
