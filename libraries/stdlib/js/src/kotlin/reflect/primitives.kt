@@ -5,10 +5,12 @@
 
 package kotlin.reflect.js.internal
 
+import kotlin.internal.UsedFromCompilerGeneratedCode
 import kotlin.js.JsClass
 import kotlin.js.internal.BigInt
 
 @JsName("PrimitiveClasses")
+@UsedFromCompilerGeneratedCode
 internal object PrimitiveClasses {
     @JsName("anyClass")
     val anyClass = PrimitiveKClassImpl(js("Object").unsafeCast<JsClass<Any>>(), "Any", { it is Any })

@@ -7,6 +7,7 @@
 
 package kotlin.js
 
+import kotlin.internal.UsedFromCompilerGeneratedCode
 import kotlin.js.internal.boxedLong.BoxedLongApi
 import kotlin.js.internal.boxedLong.toStringImpl
 
@@ -231,6 +232,7 @@ internal fun <T> jsYield(suspendFunction: () -> T): T
  *
  * TODO(KT-70480): Replace call sites with `value.unsafeCast<BigInt>().toString(radix)` when we drop the ES5 target
  */
+@UsedFromCompilerGeneratedCode
 internal fun jsLongToString(value: Long, radix: Int): String {
     // TODO(KT-57128): Make bodiless after 2.2.20 branching and mark with @JsIntrinsic
     @OptIn(BoxedLongApi::class)

@@ -4,8 +4,10 @@
  */
 package kotlin.reflect.js.internal
 
+import kotlin.internal.UsedFromCompilerGeneratedCode
 import kotlin.reflect.*
 
+@UsedFromCompilerGeneratedCode
 internal fun createKType(
     classifier: KClassifier,
     arguments: Array<KTypeProjection>,
@@ -13,10 +15,12 @@ internal fun createKType(
 ) =
     KTypeImpl(classifier, arguments.asList(), isMarkedNullable)
 
+@UsedFromCompilerGeneratedCode
 internal fun createDynamicKType(): KType = DynamicKType
 
 internal fun markKTypeNullable(kType: KType) = KTypeImpl(kType.classifier!!, kType.arguments, true)
 
+@UsedFromCompilerGeneratedCode
 internal fun createKTypeParameter(
     name: String,
     upperBounds: Array<KType>,
@@ -33,14 +37,18 @@ internal fun createKTypeParameter(
     return KTypeParameterImpl(name, upperBounds.asList(), kVariance, isReified, container)
 }
 
+@UsedFromCompilerGeneratedCode
 internal fun getStarKTypeProjection(): KTypeProjection =
     KTypeProjection.STAR
 
+@UsedFromCompilerGeneratedCode
 internal fun createCovariantKTypeProjection(type: KType): KTypeProjection =
     KTypeProjection.covariant(type)
 
+@UsedFromCompilerGeneratedCode
 internal fun createInvariantKTypeProjection(type: KType): KTypeProjection =
     KTypeProjection.invariant(type)
 
+@UsedFromCompilerGeneratedCode
 internal fun createContravariantKTypeProjection(type: KType): KTypeProjection =
     KTypeProjection.contravariant(type)

@@ -19,6 +19,8 @@
 
 package kotlin.js.internal.boxedLong
 
+import kotlin.internal.UsedFromCompilerGeneratedCode
+
 /**
  * Marks the stdlib functions that implement the pre-BigInt Long boxing or rely on [Long] being implemented as a regular class
  * with two [Int] fields.
@@ -36,42 +38,49 @@ internal annotation class BoxedLongApi
  * @see kotlin.js.internal.longAsBigInt.toNumber
  */
 @BoxedLongApi
+@UsedFromCompilerGeneratedCode
 internal fun Long.toNumber() = high * TWO_PWR_32_DBL_ + getLowBitsUnsigned()
 
 /**
  * @see kotlin.js.internal.longAsBigInt.convertToByte
  */
 @BoxedLongApi
+@UsedFromCompilerGeneratedCode
 internal fun Long.convertToByte(): Byte = low.toByte()
 
 /**
  * @see kotlin.js.internal.longAsBigInt.convertToChar
  */
 @BoxedLongApi
+@UsedFromCompilerGeneratedCode
 internal fun Long.convertToChar(): Char = low.toChar()
 
 /**
  * @see kotlin.js.internal.longAsBigInt.convertToShort
  */
 @BoxedLongApi
+@UsedFromCompilerGeneratedCode
 internal fun Long.convertToShort(): Short = low.toShort()
 
 /**
  * @see kotlin.js.internal.longAsBigInt.convertToInt
  */
 @BoxedLongApi
+@UsedFromCompilerGeneratedCode
 internal fun Long.convertToInt(): Int = low
 
 @BoxedLongApi
 private fun Long.getLowBitsUnsigned() = if (low >= 0) low.toDouble() else TWO_PWR_32_DBL_ + low
 
 @BoxedLongApi
+@UsedFromCompilerGeneratedCode
 internal fun hashCode(l: Long) = l.low xor l.high
 
 /**
  * @see kotlin.js.internal.longAsBigInt.toStringImpl
  */
 @BoxedLongApi
+@UsedFromCompilerGeneratedCode
 internal fun Long.toStringImpl(radix: Int): String {
     if (isZero()) {
         return "0"
@@ -125,6 +134,7 @@ internal fun Long.toStringImpl(radix: Int): String {
  * @see kotlin.js.internal.longAsBigInt.negate
  */
 @BoxedLongApi
+@UsedFromCompilerGeneratedCode
 internal fun Long.negate(): Long = invert() + 1L
 
 @BoxedLongApi
@@ -137,18 +147,23 @@ private fun Long.isNegative() = high < 0
 private fun Long.isOdd() = low and 1 == 1
 
 @BoxedLongApi
+@UsedFromCompilerGeneratedCode
 internal fun Long.equalsLong(other: Long) = high == other.high && low == other.low
 
 @BoxedLongApi
+@UsedFromCompilerGeneratedCode
 private fun Long.lessThan(other: Long) = compare(other) < 0
 
 @BoxedLongApi
+@UsedFromCompilerGeneratedCode
 private fun Long.greaterThan(other: Long) = compare(other) > 0
 
 @BoxedLongApi
+@UsedFromCompilerGeneratedCode
 private fun Long.greaterThanOrEqual(other: Long) = compare(other) >= 0
 
 @BoxedLongApi
+@UsedFromCompilerGeneratedCode
 internal fun Long.compare(other: Long): Int {
     if (equalsLong(other)) {
         return 0;
@@ -170,6 +185,7 @@ internal fun Long.compare(other: Long): Int {
  * @see kotlin.js.internal.longAsBigInt.add
  */
 @BoxedLongApi
+@UsedFromCompilerGeneratedCode
 internal fun Long.add(other: Long): Long {
     // Divide each number into 4 chunks of 16 bits, and then sum the chunks.
 
@@ -205,12 +221,14 @@ internal fun Long.add(other: Long): Long {
  * @see kotlin.js.internal.longAsBigInt.subtract
  */
 @BoxedLongApi
+@UsedFromCompilerGeneratedCode
 internal fun Long.subtract(other: Long) = add(other.unaryMinus())
 
 /**
  * @see kotlin.js.internal.longAsBigInt.multiply
  */
 @BoxedLongApi
+@UsedFromCompilerGeneratedCode
 internal fun Long.multiply(other: Long): Long {
     if (isZero()) {
         return ZERO
@@ -283,6 +301,7 @@ internal fun Long.multiply(other: Long): Long {
  * @see kotlin.js.internal.longAsBigInt.divide
  */
 @BoxedLongApi
+@UsedFromCompilerGeneratedCode
 internal fun Long.divide(other: Long): Long {
     if (other.isZero()) {
         throw Exception("division by zero")
@@ -364,12 +383,14 @@ internal fun Long.divide(other: Long): Long {
  * @see kotlin.js.internal.longAsBigInt.modulo
  */
 @BoxedLongApi
+@UsedFromCompilerGeneratedCode
 internal fun Long.modulo(other: Long) = subtract(div(other).multiply(other))
 
 /**
  * @see kotlin.js.internal.longAsBigInt.shiftLeft
  */
 @BoxedLongApi
+@UsedFromCompilerGeneratedCode
 internal fun Long.shiftLeft(numBits: Int): Long {
     @Suppress("NAME_SHADOWING")
     val numBits = numBits and 63
@@ -388,6 +409,7 @@ internal fun Long.shiftLeft(numBits: Int): Long {
  * @see kotlin.js.internal.longAsBigInt.shiftRight
  */
 @BoxedLongApi
+@UsedFromCompilerGeneratedCode
 internal fun Long.shiftRight(numBits: Int): Long {
     @Suppress("NAME_SHADOWING")
     val numBits = numBits and 63
@@ -406,6 +428,7 @@ internal fun Long.shiftRight(numBits: Int): Long {
  * @see kotlin.js.internal.longAsBigInt.shiftRightUnsigned
  */
 @BoxedLongApi
+@UsedFromCompilerGeneratedCode
 internal fun Long.shiftRightUnsigned(numBits: Int): Long {
     @Suppress("NAME_SHADOWING")
     val numBits = numBits and 63
@@ -423,15 +446,19 @@ internal fun Long.shiftRightUnsigned(numBits: Int): Long {
 }
 
 @BoxedLongApi
+@UsedFromCompilerGeneratedCode
 internal fun Long.bitwiseAnd(other: Long) = Long(this.low and other.low, this.high and other.high)
 
 @BoxedLongApi
+@UsedFromCompilerGeneratedCode
 internal fun Long.bitwiseOr(other: Long) = Long(this.low or other.low, this.high or other.high)
 
 @BoxedLongApi
+@UsedFromCompilerGeneratedCode
 internal fun Long.bitwiseXor(other: Long) = Long(this.low xor other.low, this.high xor other.high)
 
 @BoxedLongApi
+@UsedFromCompilerGeneratedCode
 internal fun Long.invert() = Long(this.low.inv(), this.high.inv())
 
 /**
@@ -443,12 +470,14 @@ internal fun Long.invert() = Long(this.low.inv(), this.high.inv())
  */
 // TODO: cache
 @BoxedLongApi
+@UsedFromCompilerGeneratedCode
 internal fun fromInt(value: dynamic) = Long(value, if (value < 0) -1 else 0)
 
 /**
  * @see kotlin.js.internal.longAsBigInt.numberToLong
  */
 @BoxedLongApi
+@UsedFromCompilerGeneratedCode
 internal fun numberToLong(a: dynamic): Long = if (a is Long) a else fromNumber(a)
 
 /**
@@ -460,6 +489,7 @@ internal fun numberToLong(a: dynamic): Long = if (a is Long) a else fromNumber(a
  * @see kotlin.js.internal.longAsBigInt.fromNumber
  */
 @BoxedLongApi
+@UsedFromCompilerGeneratedCode
 internal fun fromNumber(value: Double): Long {
     if (value.isNaN()) {
         return ZERO;
@@ -488,6 +518,7 @@ private const val TWO_PWR_63_DBL_ = (((1 shl 16).toDouble() * (1 shl 16).toDoubl
 private val ZERO = fromInt(0)
 
 @BoxedLongApi
+@UsedFromCompilerGeneratedCode
 internal val ONE = fromInt(1)
 
 @BoxedLongApi

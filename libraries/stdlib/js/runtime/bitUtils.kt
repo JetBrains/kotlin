@@ -5,6 +5,7 @@
 
 package kotlin.js
 
+import kotlin.internal.UsedFromCompilerGeneratedCode
 import kotlin.js.internal.boxedLong.BoxedLongApi
 
 // TODO use declarations from stdlib
@@ -56,6 +57,7 @@ internal fun doubleSignBit(value: Double): Int {
     return bufInt32[highIndex] and Int.MIN_VALUE
 }
 
+@UsedFromCompilerGeneratedCode
 internal fun getNumberHashCode(obj: Double): Int {
     @Suppress("DEPRECATED_IDENTITY_EQUALS")
     if (jsBitwiseOr(obj, 0).unsafeCast<Double>() === obj) {

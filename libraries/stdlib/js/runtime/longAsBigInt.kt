@@ -7,6 +7,7 @@
 
 package kotlin.js.internal.longAsBigInt
 
+import kotlin.internal.UsedFromCompilerGeneratedCode
 import kotlin.js.internal.*
 
 /**
@@ -25,6 +26,7 @@ internal annotation class LongAsBigIntApi
  * @see kotlin.js.internal.boxedLong.toNumber
  */
 @LongAsBigIntApi
+@UsedFromCompilerGeneratedCode
 internal fun Long.toNumber(): Double = unsafeCast<BigInt>().toNumber().unsafeCast<Double>()
 
 private fun Long.truncating(bitSize: Int): Number = BigInt.asIntN(bitSize, unsafeCast<BigInt>()).toNumber()
@@ -33,30 +35,35 @@ private fun Long.truncating(bitSize: Int): Number = BigInt.asIntN(bitSize, unsaf
  * @see kotlin.js.internal.boxedLong.convertToByte
  */
 @LongAsBigIntApi
+@UsedFromCompilerGeneratedCode
 internal fun Long.convertToByte(): Byte = truncating(Byte.SIZE_BITS).unsafeCast<Byte>()
 
 /**
  * @see kotlin.js.internal.boxedLong.convertToChar
  */
 @LongAsBigIntApi
+@UsedFromCompilerGeneratedCode
 internal fun Long.convertToChar(): Char = truncating(Char.SIZE_BITS).unsafeCast<Int>().toChar()
 
 /**
  * @see kotlin.js.internal.boxedLong.convertToShort
  */
 @LongAsBigIntApi
+@UsedFromCompilerGeneratedCode
 internal fun Long.convertToShort(): Short = truncating(Short.SIZE_BITS).unsafeCast<Short>()
 
 /**
  * @see kotlin.js.internal.boxedLong.convertToInt
  */
 @LongAsBigIntApi
+@UsedFromCompilerGeneratedCode
 internal fun Long.convertToInt(): Int = truncating(Int.SIZE_BITS).unsafeCast<Int>()
 
 /**
  * @see kotlin.js.internal.boxedLong.toStringImpl
  */
 @LongAsBigIntApi
+@UsedFromCompilerGeneratedCode
 internal fun Long.toStringImpl(radix: Int): String {
     return this.unsafeCast<BigInt>().toString(radix)
 }
@@ -69,6 +76,7 @@ private inline fun wrappingArithmetic(lhs: Long, rhs: Long, op: (l: BigInt, r: B
  * @see kotlin.js.internal.boxedLong.negate
  */
 @LongAsBigIntApi
+@UsedFromCompilerGeneratedCode
 internal fun Long.negate(): Long =
     BigInt.asIntN(Long.SIZE_BITS, -unsafeCast<BigInt>()).unsafeCast<Long>()
 
@@ -76,30 +84,35 @@ internal fun Long.negate(): Long =
  * @see kotlin.js.internal.boxedLong.add
  */
 @LongAsBigIntApi
+@UsedFromCompilerGeneratedCode
 internal fun Long.add(other: Long): Long = wrappingArithmetic(this, other, BigInt::plus)
 
 /**
  * @see kotlin.js.internal.boxedLong.subtract
  */
 @LongAsBigIntApi
+@UsedFromCompilerGeneratedCode
 internal fun Long.subtract(other: Long): Long = wrappingArithmetic(this, other, BigInt::minus)
 
 /**
  * @see kotlin.js.internal.boxedLong.multiply
  */
 @LongAsBigIntApi
+@UsedFromCompilerGeneratedCode
 internal fun Long.multiply(other: Long): Long = wrappingArithmetic(this, other, BigInt::times)
 
 /**
  * @see kotlin.js.internal.boxedLong.divide
  */
 @LongAsBigIntApi
+@UsedFromCompilerGeneratedCode
 internal fun Long.divide(other: Long): Long = wrappingArithmetic(this, other, BigInt::div)
 
 /**
  * @see kotlin.js.internal.boxedLong.modulo
  */
 @LongAsBigIntApi
+@UsedFromCompilerGeneratedCode
 internal fun Long.modulo(other: Long): Long = wrappingArithmetic(this, other, BigInt::rem)
 
 // In JavaScript, shifting a bigint by a negative N is equivalent to shifting it by -N in the opposite direction.
@@ -110,18 +123,21 @@ private fun sanitizeBitShiftRHS(numBits: Int): Int = numBits and (Long.SIZE_BITS
  * @see kotlin.js.internal.boxedLong.shiftLeft
  */
 @LongAsBigIntApi
+@UsedFromCompilerGeneratedCode
 internal fun Long.shiftLeft(numBits: Int): Long = wrappingArithmetic(this, sanitizeBitShiftRHS(numBits).toLong(), BigInt::shl)
 
 /**
  * @see kotlin.js.internal.boxedLong.shiftRight
  */
 @LongAsBigIntApi
+@UsedFromCompilerGeneratedCode
 internal fun Long.shiftRight(numBits: Int): Long = wrappingArithmetic(this, sanitizeBitShiftRHS(numBits).toLong(), BigInt::shr)
 
 /**
  * @see kotlin.js.internal.boxedLong.shiftRightUnsigned
  */
 @LongAsBigIntApi
+@UsedFromCompilerGeneratedCode
 internal fun Long.shiftRightUnsigned(numBits: Int): Long = wrappingArithmetic(this, sanitizeBitShiftRHS(numBits).toLong()) { lhs, rhs ->
     // BigInt doesn't natively support unsigned shift right.
     BigInt.asUintN(Long.SIZE_BITS, lhs) shr rhs
@@ -131,12 +147,14 @@ internal fun Long.shiftRightUnsigned(numBits: Int): Long = wrappingArithmetic(th
  * @see kotlin.js.internal.boxedLong.fromInt
  */
 @LongAsBigIntApi
+@UsedFromCompilerGeneratedCode
 internal fun fromInt(value: dynamic): Long = BigInt(value).unsafeCast<Long>()
 
 /**
  * @see kotlin.js.internal.boxedLong.numberToLong
  */
 @LongAsBigIntApi
+@UsedFromCompilerGeneratedCode
 internal fun numberToLong(value: dynamic): Long = value as? Long ?: fromNumber(value.unsafeCast<Double>())
 
 /**
@@ -148,6 +166,7 @@ internal fun numberToLong(value: dynamic): Long = value as? Long ?: fromNumber(v
  * @see kotlin.js.internal.boxedLong.fromNumber
  */
 @LongAsBigIntApi
+@UsedFromCompilerGeneratedCode
 internal fun fromNumber(value: Double): Long = when {
     value.isNaN() -> 0L
     value <= -TWO_PWR_63_DBL_ -> Long.MIN_VALUE
@@ -160,12 +179,15 @@ private const val TWO_PWR_63_DBL_ = (((1 shl 16).toDouble() * (1 shl 16).toDoubl
 
 // TODO(KT-70480): Remove this function when we drop the ES5 target
 @LongAsBigIntApi
+@UsedFromCompilerGeneratedCode
 internal fun longFromTwoInts(low: Int, high: Int): Long = high.toLong() shl 32 or (low.toLong() and 0xFFFFFFFFL)
 
 // TODO(KT-70480): Remove this function when we drop the ES5 target
 @LongAsBigIntApi
+@UsedFromCompilerGeneratedCode
 internal fun Long.lowBits(): Int = toInt()
 
 // TODO(KT-70480): Remove this function when we drop the ES5 target
 @LongAsBigIntApi
+@UsedFromCompilerGeneratedCode
 internal fun Long.highBits(): Int = (this shr 32).toInt()

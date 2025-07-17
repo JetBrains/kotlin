@@ -5,8 +5,10 @@
 
 package kotlin.js
 
+import kotlin.internal.UsedFromCompilerGeneratedCode
 import kotlin.js.internal.*
 
+@UsedFromCompilerGeneratedCode
 internal fun equals(obj1: dynamic, obj2: dynamic): Boolean {
     if (obj1 == null) {
         return obj2 == null
@@ -29,6 +31,7 @@ internal fun equals(obj1: dynamic, obj2: dynamic): Boolean {
     return obj1 === obj2
 }
 
+@UsedFromCompilerGeneratedCode
 internal fun toString(o: dynamic): String = when {
     o == null -> "null"
     isArrayish(o) -> "[...]"
@@ -36,8 +39,10 @@ internal fun toString(o: dynamic): String = when {
     else -> (o.toString)().unsafeCast<String>()
 }
 
+@UsedFromCompilerGeneratedCode
 internal fun anyToString(o: dynamic): String = js("Object").prototype.toString.call(o)
 
+@UsedFromCompilerGeneratedCode
 internal fun hashCode(obj: dynamic): Int {
     if (obj == null) return 0
 
@@ -54,10 +59,12 @@ internal fun hashCode(obj: dynamic): Int {
     }
 }
 
+@UsedFromCompilerGeneratedCode
 internal fun getBooleanHashCode(value: Boolean): Int {
     return if (value) 1231 else 1237
 }
 
+@UsedFromCompilerGeneratedCode
 internal fun getBigIntHashCode(value: BigInt): Int {
     val shiftNumber = BigInt(32)
 
@@ -118,6 +125,7 @@ private fun calculateRandomHash(): Int {
     return jsBitwiseOr(js("Math").random() * POW_2_32, 0) // Make 32-bit singed integer.
 }
 
+@UsedFromCompilerGeneratedCode
 internal fun getObjectHashCode(obj: dynamic): Int {
     if (!jsIn(OBJECT_HASH_CODE_PROPERTY_NAME, obj)) {
         var hash = calculateRandomHash()
@@ -129,6 +137,7 @@ internal fun getObjectHashCode(obj: dynamic): Int {
     return obj[OBJECT_HASH_CODE_PROPERTY_NAME].unsafeCast<Int>();
 }
 
+@UsedFromCompilerGeneratedCode
 internal fun getStringHashCode(str: String): Int {
     var hash = 0
     val length: Int = str.length  // TODO: Implement WString.length
@@ -141,6 +150,7 @@ internal fun getStringHashCode(str: String): Int {
 
 internal fun identityHashCode(obj: Any?): Int = getObjectHashCode(obj)
 
+@UsedFromCompilerGeneratedCode
 internal fun captureStack(instance: Throwable, constructorFunction: Any) {
     if (js("Error").captureStackTrace != null) {
         js("Error").captureStackTrace(instance, constructorFunction)
@@ -154,6 +164,7 @@ private fun defineMessage(message: String?, cause: Throwable?): String? =
         if (isUndefined(cause)) message else cause?.toString() ?: VOID
     } else message ?: VOID
 
+@UsedFromCompilerGeneratedCode
 internal fun newThrowable(message: String?, cause: Throwable?): Throwable {
     val throwable = js("new Error()")
     throwable.message = defineMessage(message, cause)
@@ -162,10 +173,10 @@ internal fun newThrowable(message: String?, cause: Throwable?): Throwable {
     return throwable.unsafeCast<Throwable>()
 }
 
-@Suppress("UNUSED") // calls to this function are emitted by the compiler
+@UsedFromCompilerGeneratedCode
 internal fun setupCauseParameter(cause: Throwable?) = js("{ cause: cause }")
 
-@Suppress("UNUSED") // calls to this function are emitted by the compiler
+@UsedFromCompilerGeneratedCode
 internal fun setPropertiesToThrowableInstance(this_: dynamic, message: String?, cause: Throwable?) {
     this_.name = JsObject.getPrototypeOf(this_).constructor.name
     if (message == null) {
@@ -185,6 +196,7 @@ internal fun extendThrowable(this_: dynamic, message: String?, cause: Throwable?
 }
 
 @JsName("Object")
+@UsedFromCompilerGeneratedCode
 internal external class JsObject {
     companion object {
         fun getPrototypeOf(obj: Any?): dynamic
@@ -200,18 +212,24 @@ internal fun errorCode(description: String): Nothing {
 @Suppress("SENSELESS_COMPARISON")
 internal fun isUndefined(value: dynamic): Boolean = value === VOID
 
+@UsedFromCompilerGeneratedCode
 internal fun <T, R> boxIntrinsic(@Suppress("UNUSED_PARAMETER") x: T): R = error("Should be lowered")
+
+@UsedFromCompilerGeneratedCode
 internal fun <T, R> unboxIntrinsic(@Suppress("UNUSED_PARAMETER") x: T): R = error("Should be lowered")
 
 @Suppress("UNUSED_PARAMETER")
+@UsedFromCompilerGeneratedCode
 internal fun protoOf(constructor: Any) =
     js("constructor.prototype")
 
 @Suppress("UNUSED_PARAMETER")
+@UsedFromCompilerGeneratedCode
 internal fun <T> objectCreate(proto: T? = null): T =
     js("Object.create(proto)")
 
 @Suppress("UNUSED_PARAMETER")
+@UsedFromCompilerGeneratedCode
 internal fun createThis(ctor: Ctor, box: dynamic): dynamic {
     val self = js("Object.create(ctor.prototype)")
     boxApply(self, box)
@@ -219,12 +237,14 @@ internal fun createThis(ctor: Ctor, box: dynamic): dynamic {
 }
 
 @Suppress("UNUSED_PARAMETER")
+@UsedFromCompilerGeneratedCode
 internal fun boxApply(self: dynamic, box: dynamic) {
     if (box !== VOID) js("Object.assign(self, box)")
 }
 
 @OptIn(JsIntrinsic::class)
 @Suppress("UNUSED_PARAMETER", "UNUSED_VARIABLE", "REIFIED_TYPE_PARAMETER_NO_INLINE")
+@UsedFromCompilerGeneratedCode
 internal fun <reified T : Any> createExternalThis(
     ctor: JsClass<T>,
     superExternalCtor: JsClass<T>,
@@ -243,5 +263,6 @@ internal fun <reified T : Any> createExternalThis(
 }
 
 @Suppress("UNUSED_PARAMETER")
+@UsedFromCompilerGeneratedCode
 internal fun defineProp(obj: Any, name: String, getter: Any?, setter: Any?, enumerable: Boolean?) =
     js("Object.defineProperty(obj, name, { configurable: true, get: getter, set: setter, enumerable: enumerable })")
