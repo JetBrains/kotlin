@@ -53,6 +53,8 @@ class SamWithReceiverCommandLineProcessor : CommandLineProcessor {
 }
 
 class SamWithReceiverComponentRegistrar : CompilerPluginRegistrar() {
+    override val pluginId: String get() = PLUGIN_ID
+
     override fun ExtensionStorage.registerExtensions(configuration: CompilerConfiguration) {
         val annotations = configuration.get(ANNOTATION)?.toMutableList() ?: mutableListOf()
         configuration.get(PRESET)?.forEach { preset ->

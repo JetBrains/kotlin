@@ -45,6 +45,8 @@ class AllOpenCommandLineProcessor : CommandLineProcessor {
 }
 
 class AllOpenComponentRegistrar : CompilerPluginRegistrar() {
+    override val pluginId: String get() = AllOpenPluginNames.PLUGIN_ID
+
     override fun ExtensionStorage.registerExtensions(configuration: CompilerConfiguration) {
         val annotations = configuration.get(ANNOTATION)?.toMutableList() ?: mutableListOf()
         configuration.get(PRESET)?.forEach { preset ->

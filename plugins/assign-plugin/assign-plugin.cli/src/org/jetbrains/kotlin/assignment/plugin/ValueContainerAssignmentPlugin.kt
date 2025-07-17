@@ -44,6 +44,8 @@ class AssignmentCommandLineProcessor : CommandLineProcessor {
 }
 
 class AssignmentComponentRegistrar : CompilerPluginRegistrar() {
+    override val pluginId: String get() = PLUGIN_ID
+
     @OptIn(InternalNonStableExtensionPoints::class)
     override fun ExtensionStorage.registerExtensions(configuration: CompilerConfiguration) {
         val annotations = configuration.getList(ANNOTATION)

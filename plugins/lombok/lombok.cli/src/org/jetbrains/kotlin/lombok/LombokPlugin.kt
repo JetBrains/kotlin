@@ -31,6 +31,8 @@ class LombokComponentRegistrar : CompilerPluginRegistrar() {
         }
     }
 
+    override val pluginId: String get() = PLUGIN_ID
+
     override fun ExtensionStorage.registerExtensions(configuration: CompilerConfiguration) {
         configuration.messageCollector
             .report(

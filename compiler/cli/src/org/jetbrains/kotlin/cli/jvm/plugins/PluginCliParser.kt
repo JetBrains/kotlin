@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.compiler.plugin.*
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.util.ServiceLoaderLite
+import org.jetbrains.kotlin.utils.topologicalSort
 import java.io.File
 import java.lang.ref.WeakReference
 import java.net.URLClassLoader
@@ -120,7 +121,20 @@ object PluginCliParser {
                 pluginConfiguration.options
             )
         }
-        return pluginInfos
+
+        val byId = pluginInfos
+            .filter { !it.compilerPluginRegistrar?.pluginId.isNullOrEmpty() }
+            .associateBy { it.compilerPluginRegistrar!!.pluginId }
+        val topologicalSort = topologicalSort(
+            pluginInfos,
+            reportCycle = {
+                throw IllegalStateException("Compiler plugin '${it.compilerPluginRegistrar?.pluginId}' has a dependencies cycle.")
+            },
+            dependencies = {
+                compilerPluginRegistrar?.dependencyPluginIds?.mapNotNull { byId[it] } ?: emptyList()
+            }
+        )
+        return topologicalSort.asReversed()
     }
 
     private fun loadPluginsModernStyle(

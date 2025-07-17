@@ -16,6 +16,7 @@
 
 package androidx.compose.compiler.plugins.kotlin
 
+import androidx.compose.compiler.plugins.kotlin.ComposeCommandLineProcessor.Companion.PLUGIN_ID
 import androidx.compose.compiler.plugins.kotlin.analysis.FqNameMatcher
 import androidx.compose.compiler.plugins.kotlin.analysis.StabilityConfigParser
 import androidx.compose.compiler.plugins.kotlin.analysis.StabilityInferencer
@@ -577,6 +578,8 @@ fun validateFeatureFlag(
 
 @OptIn(ExperimentalCompilerApi::class)
 class ComposePluginRegistrar : CompilerPluginRegistrar() {
+    override val pluginId = PLUGIN_ID
+
     override val supportsK2: Boolean
         get() = true
 

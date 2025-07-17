@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.codegen.extensions.ClassFileFactoryFinalizerExtensio
 import org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.messageCollector
+import org.jetbrains.kotlin.jvm.abi.JvmAbiCommandLineProcessor.Companion.COMPILER_PLUGIN_ID
 import java.io.File
 
 /**
@@ -21,6 +22,9 @@ import java.io.File
 class JvmAbiComponentRegistrar(
     private val consumeOutput: ((OutputFileCollection) -> Unit)? = null,
 ) : CompilerPluginRegistrar() {
+    override val pluginId: String
+        get() = COMPILER_PLUGIN_ID
+
     override fun ExtensionStorage.registerExtensions(configuration: CompilerConfiguration) {
         val removeDataClassCopy = configuration.getBoolean(JvmAbiConfigurationKeys.REMOVE_DATA_CLASS_COPY_IF_CONSTRUCTOR_IS_PRIVATE)
         val builderExtension = JvmAbiClassBuilderInterceptor(

@@ -47,6 +47,8 @@ class FirDataFrameExtensionRegistrar(
 
 @OptIn(ExperimentalCompilerApi::class)
 class FirDataFrameComponentRegistrar : CompilerPluginRegistrar() {
+    override val pluginId: String get() = "org.jetbrains.kotlin.dataframe"
+
     override fun ExtensionStorage.registerExtensions(configuration: CompilerConfiguration) {
         FirExtensionRegistrarAdapter.registerExtension(
             FirDataFrameExtensionRegistrar(

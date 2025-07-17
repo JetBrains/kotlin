@@ -50,6 +50,8 @@ class SerializationPluginOptions : CommandLineProcessor {
 
 
 class SerializationComponentRegistrar : CompilerPluginRegistrar() {
+    override val pluginId: String get() = "org.jetbrains.kotlinx.serialization"
+
     override fun ExtensionStorage.registerExtensions(configuration: CompilerConfiguration) {
         Companion.registerExtensions(this, loadDisableIntrinsic(configuration))
     }
