@@ -18,7 +18,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("compiler/testData/klib/dump-abi/content")
 @TestDataPath("$PROJECT_ROOT")
-public class FirNativeLibraryAbiReaderTestGenerated extends AbstractFirNativeLibraryAbiReaderTest {
+public class NativeLibraryAbiReaderTestGenerated extends AbstractNativeLibraryAbiReaderTest {
   @Test
   public void testAllFilesPresentInContent() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/klib/dump-abi/content"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);

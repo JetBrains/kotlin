@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.generators.tests
 
 import org.jetbrains.kotlin.generators.generateTestGroupSuiteWithJUnit5
 import org.jetbrains.kotlin.generators.model.annotation
-import org.jetbrains.kotlin.konan.test.abi.AbstractFirNativeLibraryAbiReaderTest
+import org.jetbrains.kotlin.konan.test.abi.AbstractNativeLibraryAbiReaderTest
 import org.jetbrains.kotlin.konan.test.blackbox.AbstractNativeCodegenBoxTest
 import org.jetbrains.kotlin.konan.test.blackbox.support.ClassLevelProperty
 import org.jetbrains.kotlin.konan.test.blackbox.support.EnforcedProperty
@@ -211,9 +211,7 @@ fun main() {
 
     generateTestGroupSuiteWithJUnit5 {
         testGroup("native/native.tests/klib-ir-inliner/tests-gen", "compiler/testData/klib/dump-abi/content") {
-            testClass<AbstractFirNativeLibraryAbiReaderTest>(
-                suiteTestClassName = "FirNativeLibraryAbiReaderTestGenerated",
-            ) {
+            testClass<AbstractNativeLibraryAbiReaderTest> {
                 model()
             }
         }
