@@ -68,7 +68,7 @@ internal class JvmDefaultIT : KGPBaseTest() {
                 id("kotlin-dsl")
             }
 
-            overrideLanguageVersion14(gradleVersion)
+            overrideOldLanguageVersions(gradleVersion)
             kotlinSourcesDir().also { it.createDirectories() }.writeMainFun()
 
             checkJvmDefaultReplacement(
@@ -105,7 +105,7 @@ internal class JvmDefaultIT : KGPBaseTest() {
                     compilerVersion.value("2.2.0-RC")
                 }
             }
-            overrideLanguageVersion14(gradleVersion)
+            overrideOldLanguageVersions(gradleVersion)
             kotlinSourcesDir().also { it.createDirectories() }.writeMainFun()
 
             build(":compileKotlin") {
@@ -132,7 +132,7 @@ internal class JvmDefaultIT : KGPBaseTest() {
                 """.trimIndent()
             )
 
-            overrideLanguageVersion14(gradleVersion)
+            overrideOldLanguageVersions(gradleVersion)
             kotlinSourcesDir().also { it.createDirectories() }.writeMainFun()
 
             checkJvmDefaultReplacement(
@@ -165,7 +165,7 @@ internal class JvmDefaultIT : KGPBaseTest() {
                     }
                 }
             }
-            overrideLanguageVersion14(gradleVersion)
+            overrideOldLanguageVersions(gradleVersion)
 
             kotlinSourcesDir().also { it.createDirectories() }.writeMainFun()
 
@@ -193,18 +193,16 @@ internal class JvmDefaultIT : KGPBaseTest() {
     )
 
     // Applied in Gradle 7.6.3 by 'kotlin-dsl' plugin language version '1.4' is not supported by the latest Kotlin compiler
-    private fun TestProject.overrideLanguageVersion14(gradleVersion: GradleVersion) {
-        if (gradleVersion <= GradleVersion.version(TestVersions.Gradle.G_8_0)) {
-            buildScriptInjection {
+    private fun TestProject.overrideOldLanguageVersions(gradleVersion: GradleVersion) {
+        buildScriptInjection {
+            project.afterEvaluate {
                 project.afterEvaluate {
-                    project.afterEvaluate {
-                        project.tasks.named("compileKotlin", KotlinJvmCompile::class.java) {
-                            it.compilerOptions {
-                                @Suppress("DEPRECATION")
-                                languageVersion.set(KotlinVersion.KOTLIN_2_0)
-                                @Suppress("DEPRECATION")
-                                apiVersion.set(KotlinVersion.KOTLIN_2_0)
-                            }
+                    project.tasks.named("compileKotlin", KotlinJvmCompile::class.java) {
+                        it.compilerOptions {
+                            @Suppress("DEPRECATION")
+                            languageVersion.set(KotlinVersion.KOTLIN_2_0)
+                            @Suppress("DEPRECATION")
+                            apiVersion.set(KotlinVersion.KOTLIN_2_0)
                         }
                     }
                 }
