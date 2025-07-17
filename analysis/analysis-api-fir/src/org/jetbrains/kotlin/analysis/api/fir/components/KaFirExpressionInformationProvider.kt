@@ -187,6 +187,9 @@ internal class KaFirExpressionInformationProvider(
         is KtClassBody ->
             false
 
+        is KtImportDirective ->
+            false
+
         // $_ and ${_} contexts use their inner expression
         is KtStringTemplateEntry ->
             parent.expression == child

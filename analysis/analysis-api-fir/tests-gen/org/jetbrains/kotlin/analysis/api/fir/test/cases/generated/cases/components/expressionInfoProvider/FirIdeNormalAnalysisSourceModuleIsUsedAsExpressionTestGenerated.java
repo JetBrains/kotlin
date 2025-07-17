@@ -1048,6 +1048,12 @@ public class FirIdeNormalAnalysisSourceModuleIsUsedAsExpressionTestGenerated ext
   }
 
   @Test
+  @TestMetadata("import.kt")
+  public void testImport() {
+    runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/import.kt");
+  }
+
+  @Test
   @TestMetadata("initializer_when_branch.kt")
   public void testInitializer_when_branch() {
     runTest("analysis/analysis-api/testData/components/expressionInfoProvider/isUsedAsExpression/initializer_when_branch.kt");
