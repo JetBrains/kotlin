@@ -24,6 +24,9 @@ import org.jetbrains.kotlin.ir.util.toIrConst
 import org.jetbrains.kotlin.name.Name
 
 class BeforeComponentRegistrar : CompilerPluginRegistrar() {
+    override val pluginId: String
+        get() = "kotlin.plugin.test.before"
+
     override val supportsK2: Boolean
         get() = true
 

@@ -9,6 +9,7 @@ package org.jetbrains.kotlin.scripting.compiler.plugin.impl
 
 import com.intellij.openapi.Disposable
 import org.jetbrains.kotlin.K1Deprecation
+import org.jetbrains.kotlin.cli.common.ExitCode.INTERNAL_ERROR
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
 import org.jetbrains.kotlin.cli.common.arguments.validateArguments
@@ -319,11 +320,19 @@ private fun createInitialCompilerConfiguration(
 
         val pluginClasspaths = baseArguments.pluginClasspaths?.asList().orEmpty()
         val pluginOptions = baseArguments.pluginOptions?.asList().orEmpty()
-        val pluginConfigurations = baseArguments.pluginConfigurations.orEmpty().toMutableList()
+        val pluginConfigurations = baseArguments.pluginConfigurations?.asList().orEmpty()
+        val pluginOrderConstraints = baseArguments.pluginOrderConstraints?.asList().orEmpty()
 
         checkPluginsArguments(messageCollector, false, pluginClasspaths, pluginOptions, pluginConfigurations)
         if (pluginClasspaths.isNotEmpty() || pluginConfigurations.isNotEmpty()) {
-            PluginCliParser.loadPluginsSafe(pluginClasspaths, pluginOptions, pluginConfigurations, this, parentDisposable)
+            PluginCliParser.loadPluginsSafe(
+                pluginClasspaths,
+                pluginOptions,
+                pluginConfigurations,
+                pluginOrderConstraints,
+                this,
+                parentDisposable
+            )
         } else {
             loadPluginsFromClassloader(CompilerConfiguration::class.java.classLoader)
         }

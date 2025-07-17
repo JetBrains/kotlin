@@ -344,6 +344,6 @@ fun loadPluginsForTests(configuration: CompilerConfiguration, parentDisposable: 
         PathUtil.KOTLIN_SCRIPTING_PLUGIN_CLASSPATH_JARS.map { File(libPath, it) }.partition { it.exists() }
     pluginClasspath = jars.map { it.canonicalPath } + pluginClasspath
 
-    return PluginCliParser.loadPluginsSafe(pluginClasspath, listOf(), listOf(), configuration, parentDisposable)
+    return PluginCliParser.loadPluginsSafe(pluginClasspath, listOf(), listOf(), listOf(), configuration, parentDisposable)
 }
 

@@ -51,7 +51,12 @@ class K2Native : CLICompiler<K2NativeCompilerArguments>() {
         }
 
         val pluginLoadResult = PluginCliParser.loadPluginsSafe(
-            arguments.pluginClasspaths, arguments.pluginOptions, arguments.pluginConfigurations, configuration, rootDisposable,
+            arguments.pluginClasspaths,
+            arguments.pluginOptions,
+            arguments.pluginConfigurations,
+            arguments.pluginOrderConstraints,
+            configuration,
+            rootDisposable,
         )
         if (pluginLoadResult != ExitCode.OK) return pluginLoadResult
 
