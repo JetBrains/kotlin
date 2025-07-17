@@ -435,6 +435,7 @@ enum class LanguageFeature(
     AllowReturnInExpressionBodyWithExplicitType(KOTLIN_2_3, "KT-76926"),
     ParseLambdaWithSuspendModifier(KOTLIN_2_3, "KT-22765"),
     DiscriminateSuspendInOverloadResolution(KOTLIN_2_3, "KT-23610"),
+    JsAllowLongInExportedDeclarations(sinceVersion = KOTLIN_2_3, "KT-79222"),
 
     // 2.4
 
