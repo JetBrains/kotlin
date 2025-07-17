@@ -32623,6 +32623,42 @@ public class FirLightTreeOldFrontendDiagnosticsWithLatestLanguageVersionTestGene
       }
 
       @Test
+      @TestMetadata("kotlinClassJavaClassNestedRedeclaration.kt")
+      public void testKotlinClassJavaClassNestedRedeclaration() {
+        runTest("compiler/testData/diagnostics/tests/redeclarations/kotlinClassJavaClassNestedRedeclaration.kt");
+      }
+
+      @Test
+      @TestMetadata("kotlinClassJavaClassRedeclaration.kt")
+      public void testKotlinClassJavaClassRedeclaration() {
+        runTest("compiler/testData/diagnostics/tests/redeclarations/kotlinClassJavaClassRedeclaration.kt");
+      }
+
+      @Test
+      @TestMetadata("kotlinEnumJavaEnumRedeclaration.kt")
+      public void testKotlinEnumJavaEnumRedeclaration() {
+        runTest("compiler/testData/diagnostics/tests/redeclarations/kotlinEnumJavaEnumRedeclaration.kt");
+      }
+
+      @Test
+      @TestMetadata("kotlinInterfaceJavaInterfaceRedeclaration.kt")
+      public void testKotlinInterfaceJavaInterfaceRedeclaration() {
+        runTest("compiler/testData/diagnostics/tests/redeclarations/kotlinInterfaceJavaInterfaceRedeclaration.kt");
+      }
+
+      @Test
+      @TestMetadata("kotlinObjectJavaClassNestedRedeclaration.kt")
+      public void testKotlinObjectJavaClassNestedRedeclaration() {
+        runTest("compiler/testData/diagnostics/tests/redeclarations/kotlinObjectJavaClassNestedRedeclaration.kt");
+      }
+
+      @Test
+      @TestMetadata("kotlinObjectJavaClassRedeclaration.kt")
+      public void testKotlinObjectJavaClassRedeclaration() {
+        runTest("compiler/testData/diagnostics/tests/redeclarations/kotlinObjectJavaClassRedeclaration.kt");
+      }
+
+      @Test
       @TestMetadata("kt2418.kt")
       public void testKt2418() {
         runTest("compiler/testData/diagnostics/tests/redeclarations/kt2418.kt");
