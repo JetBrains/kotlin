@@ -4,11 +4,12 @@ root_dir=$(pwd)
 
 # cache-redirector can't be used to upgrade lock files because NPM makes uncacheable API calls during the upgrade.
 # We need to ensure the default registry is used during the upgrade so can be overridden later by a registry set in .npmrc
-./gradlew cleanNpmRc
+echo "Deleting .npmrc files..."
+find . -name ".npmrc" -type f -delete
 
 # Upgrade kotlin-js-store/yarn.lock
 echo "Start upgrade 'kotlin-js-store/yarn.lock'"
-rm -rf kotlin-js-store && ./gradlew :kotlinUpgradeYarnLock -PcacheRedirectorEnabled=false
+rm -rf kotlin-js-store build/js && ./gradlew :kotlinUpgradeYarnLock -PcacheRedirectorEnabled=false
 echo "End upgrade 'kotlin-js-store/yarn.lock'"
 
 # Upgrade js/js.translator/testData/package-lock.json
