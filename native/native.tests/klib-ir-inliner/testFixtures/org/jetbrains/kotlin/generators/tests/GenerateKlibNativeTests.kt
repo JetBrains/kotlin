@@ -174,7 +174,7 @@ fun main() {
 
         // KLIB synthetic accessor tests.
         testGroup("native/native.tests/klib-ir-inliner/tests-gen", "compiler/testData/klib/syntheticAccessors") {
-            testClass<AbstractFirNativeKlibSyntheticAccessorTest>(
+            testClass<AbstractNativeKlibSyntheticAccessorTest>(
                 annotations = listOf(
                     *klibSyntheticAccessors(),
                     klibIrInliner(),

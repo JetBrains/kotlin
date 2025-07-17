@@ -41,7 +41,7 @@ import org.jetbrains.kotlin.test.services.sourceProviders.CoroutineHelpersSource
 import org.jetbrains.kotlin.utils.bind
 
 // Base class for IR dump synthetic accessors test, configured with FIR frontend, in Native-specific way.
-open class AbstractFirNativeKlibSyntheticAccessorTest : AbstractKotlinCompilerWithTargetBackendTest(TargetBackend.NATIVE) {
+open class AbstractNativeKlibSyntheticAccessorTest : AbstractKotlinCompilerWithTargetBackendTest(TargetBackend.NATIVE) {
     val targetFrontend = FrontendKinds.FIR
     val parser = FirParser.LightTree
     val frontendFacade: Constructor<FrontendFacade<FirOutputArtifact>>
