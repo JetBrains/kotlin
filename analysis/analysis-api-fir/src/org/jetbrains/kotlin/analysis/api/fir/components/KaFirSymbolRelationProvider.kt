@@ -428,9 +428,10 @@ internal class KaFirSymbolRelationProvider(
 
     override fun KaDeclarationSymbol.getExpectsForActual(): List<KaDeclarationSymbol> = withValidityAssertion {
         if (this is KaReceiverParameterSymbol) {
-            this.firSymbol.expectForActual?.get(ExpectActualMatchingCompatibility.MatchedSuccessfully).orEmpty()
+            val owningExpectSymbols =
+                this.owningCallableSymbol.firSymbol.expectForActual?.get(ExpectActualMatchingCompatibility.MatchedSuccessfully).orEmpty()
+            return owningExpectSymbols
                 .filterIsInstance<FirCallableSymbol<*>>()
-                // TODO: KT-73050. This code in fact does nothing
                 .mapNotNull { callableSymbol ->
                     callableSymbol.receiverParameterSymbol?.let {
                         analysisSession.firSymbolBuilder.callableBuilder.buildExtensionReceiverSymbol(it)

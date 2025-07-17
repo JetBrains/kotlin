@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.multiplatformInfoProvider
 
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.impl.KaDeclarationRendererForDebug
+import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaReceiverParameterSymbol
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
@@ -18,13 +20,21 @@ import org.jetbrains.kotlin.test.services.assertions
 abstract class AbstractExpectForActualTest : AbstractAnalysisApiBasedTest() {
     override fun doTestByMainFile(mainFile: KtFile, mainModule: KtTestModule, testServices: TestServices) {
         val renderer = KaDeclarationRendererForDebug.WITH_QUALIFIED_NAMES
-
         val declaration = testServices.expressionMarkerProvider.getBottommostElementOfTypeAtCaret<KtDeclaration>(mainFile)
-        val expectedSymbolText: String? = executeOnPooledThreadInReadAction {
+        val expectedSymbolText = executeOnPooledThreadInReadAction {
             copyAwareAnalyzeForTest(declaration) { contextDeclaration ->
-                val expectedSymbols = contextDeclaration.symbol.getExpectsForActual()
+                val symbol = contextDeclaration.symbol
+                val expectedSymbols = if (symbol is KaCallableSymbol) {
+                    // For callable symbols, exercise the endpoint also for their receiver parameter,
+                    // since it is kind of a special case and not a `KtDeclaration` itself.
+                    symbol.receiverParameter?.getExpectsForActual().orEmpty() + symbol.getExpectsForActual()
+                } else {
+                    symbol.getExpectsForActual()
+                }
+
                 expectedSymbols.joinToString(separator = "\n") { expectedSymbol ->
-                    expectedSymbol.psi?.containingFile?.name + " : " + expectedSymbol.render(renderer)
+                    val prefix = if (expectedSymbol is KaReceiverParameterSymbol) "receiver parameter " else ""
+                    expectedSymbol.psi?.containingFile?.name + " : " + prefix + expectedSymbol.render(renderer)
                 }
             }
         }
