@@ -133,12 +133,6 @@ public class FirKaptStubConverterTestGenerated extends AbstractFirKaptStubConver
   }
 
   @Test
-  @TestMetadata("commentsRemoved.kt")
-  public void testCommentsRemoved() {
-    runTest("plugins/kapt/kapt-compiler/testData/converter/commentsRemoved.kt");
-  }
-
-  @Test
   @TestMetadata("cyrillicClassName.kt")
   public void testCyrillicClassName() {
     runTest("plugins/kapt/kapt-compiler/testData/converter/cyrillicClassName.kt");
