@@ -11,13 +11,15 @@ import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertEqualsToFile
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.isTeamCityBuild
 import org.junit.jupiter.api.DynamicTest
 import org.junit.jupiter.api.TestFactory
-import java.io.File
+import java.nio.file.Files
 import java.util.stream.Stream
 import kotlin.io.path.absolute
-import kotlin.io.path.pathString
+import kotlin.io.path.name
 import kotlin.streams.asStream
 import kotlin.test.assertTrue
 import kotlin.test.fail
+
+private val prettyJson = Json { prettyPrint = true }
 
 class GradleMetadataTest {
     @TestFactory
@@ -28,15 +30,16 @@ class GradleMetadataTest {
                 if ("${expectedGradleMetadataPath.parent.fileName}" !in excludedProjects) {
                     if ("${expectedGradleMetadataPath.parent.fileName}" !in nativeBundles) {
                         val actualString = actual.toFile().readText()
-                        val expectedWithVersion = expectedGradleMetadataPath.toFile().readText().replace("ArtifactsTest.version", kotlinVersion)
+                        val expectedWithVersion =
+                            expectedGradleMetadataPath.toFile().readText().replace("ArtifactsTest.version", kotlinVersion)
                         val expectedObject = Json.decodeFromString<GradleMetadata>(expectedWithVersion)
                         expectedObject.sortListsRecursively()
-                        val tempExpectedFile = File(expectedGradleMetadataPath.pathString + ".tmp").also { it.createNewFile() }
-                        tempExpectedFile.writeText(Json.encodeToString(expectedObject))
+                        val tempExpectedFile = Files.createTempFile(expectedGradleMetadataPath.name, ".tmp").toFile()
+                        tempExpectedFile.writeText(prettyJson.encodeToString(expectedObject))
                         val actualObject = Json.decodeFromString<GradleMetadata>(actualString)
                         actualObject.removeFilesFingerprint()
                         actualObject.sortListsRecursively()
-                        assertEqualsToFile(tempExpectedFile, actualObject.toString())
+                        assertEqualsToFile(tempExpectedFile, prettyJson.encodeToString(actualObject))
                     }
                 } else {
                     if (isTeamCityBuild) fail("Excluded project in actual artifacts: $actual")

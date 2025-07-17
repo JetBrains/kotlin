@@ -2,11 +2,7 @@ package org.jetbrains.kotlin.code
 
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.SerialName
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
 import org.jetbrains.kotlin.utils.addToStdlib.sequenceOfLazyValues
-
-private val jsonFormatter = Json { prettyPrint = true }
 
 fun Sequence<Int>.firstNonZeroOrZero() = firstOrNull { it != 0 } ?: 0
 
@@ -48,10 +44,6 @@ data class GradleMetadata(
     fun sortListsRecursively() {
         variants.sort()
         variants.forEach { it.sortListsRecursively() }
-    }
-
-    override fun toString(): String {
-        return jsonFormatter.encodeToString(this)
     }
 
     override fun compareTo(other: GradleMetadata): Int {
