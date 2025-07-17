@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.buildtools.api.arguments.JsArguments.Companion.X_ENA
 import org.jetbrains.kotlin.buildtools.api.arguments.JsArguments.Companion.X_ES_ARROW_FUNCTIONS
 import org.jetbrains.kotlin.buildtools.api.arguments.JsArguments.Companion.X_ES_CLASSES
 import org.jetbrains.kotlin.buildtools.api.arguments.JsArguments.Companion.X_ES_GENERATORS
+import org.jetbrains.kotlin.buildtools.api.arguments.JsArguments.Companion.X_ES_LONG_AS_BIGINT
 import org.jetbrains.kotlin.buildtools.api.arguments.JsArguments.Companion.X_FAKE_OVERRIDE_VALIDATOR
 import org.jetbrains.kotlin.buildtools.api.arguments.JsArguments.Companion.X_FRIEND_MODULES
 import org.jetbrains.kotlin.buildtools.api.arguments.JsArguments.Companion.X_FRIEND_MODULES_DISABLED
@@ -107,6 +108,7 @@ public class JsArgumentsImpl : WasmArgumentsImpl(), JsArguments {
     if ("X_PLATFORM_ARGUMENTS_IN_MAIN_FUNCTION" in optionsMap) { arguments.platformArgumentsProviderJsExpression = get(X_PLATFORM_ARGUMENTS_IN_MAIN_FUNCTION) }
     if ("X_ES_GENERATORS" in optionsMap) { arguments.useEsGenerators = get(X_ES_GENERATORS) }
     if ("X_ES_ARROW_FUNCTIONS" in optionsMap) { arguments.useEsArrowFunctions = get(X_ES_ARROW_FUNCTIONS) }
+    if ("X_ES_LONG_AS_BIGINT" in optionsMap) { arguments.compileLongAsBigInt = get(X_ES_LONG_AS_BIGINT) }
     if ("X_TYPED_ARRAYS" in optionsMap) { arguments.typedArrays = get(X_TYPED_ARRAYS) }
     if ("X_FRIEND_MODULES_DISABLED" in optionsMap) { arguments.friendModulesDisabled = get(X_FRIEND_MODULES_DISABLED) }
     if ("X_FRIEND_MODULES" in optionsMap) { arguments.friendModules = get(X_FRIEND_MODULES) }

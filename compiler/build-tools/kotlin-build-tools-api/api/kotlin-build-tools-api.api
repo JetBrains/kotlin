@@ -231,6 +231,7 @@ public abstract interface class org/jetbrains/kotlin/buildtools/api/arguments/Js
 	public static final field X_ES_ARROW_FUNCTIONS Lorg/jetbrains/kotlin/buildtools/api/arguments/JsArguments$JsArgument;
 	public static final field X_ES_CLASSES Lorg/jetbrains/kotlin/buildtools/api/arguments/JsArguments$JsArgument;
 	public static final field X_ES_GENERATORS Lorg/jetbrains/kotlin/buildtools/api/arguments/JsArguments$JsArgument;
+	public static final field X_ES_LONG_AS_BIGINT Lorg/jetbrains/kotlin/buildtools/api/arguments/JsArguments$JsArgument;
 	public static final field X_FAKE_OVERRIDE_VALIDATOR Lorg/jetbrains/kotlin/buildtools/api/arguments/JsArguments$JsArgument;
 	public static final field X_FRIEND_MODULES Lorg/jetbrains/kotlin/buildtools/api/arguments/JsArguments$JsArgument;
 	public static final field X_FRIEND_MODULES_DISABLED Lorg/jetbrains/kotlin/buildtools/api/arguments/JsArguments$JsArgument;
