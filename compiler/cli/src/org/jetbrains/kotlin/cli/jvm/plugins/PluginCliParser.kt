@@ -119,13 +119,13 @@ object PluginCliParser {
     }
 
     class RegisteredPluginInfo(
-        @Suppress("DEPRECATION") val componentRegistrar: ComponentRegistrar?,
+        @Suppress("DEPRECATION_ERROR") val componentRegistrar: ComponentRegistrar?,
         val compilerPluginRegistrar: CompilerPluginRegistrar?,
         val commandLineProcessor: CommandLineProcessor?,
         val pluginOptions: List<CliOptionValue>,
     )
 
-    @Suppress("DEPRECATION")
+    @Suppress("DEPRECATION_ERROR")
     private fun loadRegisteredPluginsInfo(
         rawPluginConfigurations: Iterable<String>,
         rawPluginOrderConstraints: Iterable<String>,
@@ -213,7 +213,7 @@ object PluginCliParser {
         val pluginInfos = loadRegisteredPluginsInfo(rawPluginConfigurations, rawPluginOrderConstraints, parentDisposable)
         for (pluginInfo in pluginInfos) {
             pluginInfo.componentRegistrar?.let {
-                @Suppress("DEPRECATION")
+                @Suppress("DEPRECATION_ERROR")
                 configuration.add(ComponentRegistrar.PLUGIN_COMPONENT_REGISTRARS, it)
             }
             pluginInfo.compilerPluginRegistrar?.let { configuration.add(CompilerPluginRegistrar.COMPILER_PLUGIN_REGISTRARS, it) }
@@ -225,7 +225,7 @@ object PluginCliParser {
     }
 
     @JvmStatic
-    @Suppress("DEPRECATION")
+    @Suppress("DEPRECATION_ERROR")
     private fun loadPluginsLegacyStyle(
         pluginClasspaths: Iterable<String>?,
         pluginOptions: Iterable<String>?,
