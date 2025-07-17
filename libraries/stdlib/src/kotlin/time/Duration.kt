@@ -292,13 +292,13 @@ public value class Duration internal constructor(private val rawValue: Long) : C
         return addFiniteDurations(other)
     }
 
-    internal fun plus(other: Duration, throwException: Boolean): Duration? {
+    internal fun plus(other: Duration, throwException: Boolean): Duration {
         when {
             this.isInfinite() -> {
                 if (other.isFinite() || (this.rawValue xor other.rawValue >= 0))
                     return this
                 else
-                    if (throwException) throw IllegalArgumentException(SUMMING_INFINITE_DURATIONS_OF_DIFFERENT_SIGN_ERROR_MESSAGE) else return null
+                    if (throwException) throw IllegalArgumentException(SUMMING_INFINITE_DURATIONS_OF_DIFFERENT_SIGN_ERROR_MESSAGE) else return INVALID
             }
             other.isInfinite() -> return other
         }
@@ -963,17 +963,17 @@ private fun parseDuration(value: String, strictIso: Boolean, throwExceptionOnPar
                     result = result.plus(
                         (parseOverLongIsoComponent(whole, throwExceptionOnParsingError) ?: return Duration.INVALID).toDuration(unit),
                         throwExceptionOnParsingError
-                    )?.plus(
+                    ).plus(
                         component.substring(dotIndex)
                             .let { if (throwExceptionOnParsingError) it.toDouble() else (it.toDoubleOrNull() ?: return Duration.INVALID) }
                             .toDuration(unit),
                         throwExceptionOnParsingError
-                    ) ?: return Duration.INVALID
+                    )
                 } else {
                     result = result.plus(
                         (parseOverLongIsoComponent(component, throwExceptionOnParsingError) ?: return Duration.INVALID).toDuration(unit),
                         throwExceptionOnParsingError
-                    ) ?: return Duration.INVALID
+                    )
                 }
             }
         }
@@ -1011,19 +1011,19 @@ private fun parseDuration(value: String, strictIso: Boolean, throwExceptionOnPar
                         (if (throwExceptionOnParsingError) whole.toLong() else (whole.toLongOrNull() ?: return Duration.INVALID))
                             .toDuration(unit),
                         throwExceptionOnParsingError
-                    )?.plus(
+                    ).plus(
                         component.substring(dotIndex)
                             .let { if (throwExceptionOnParsingError) it.toDouble() else (it.toDoubleOrNull() ?: return Duration.INVALID) }
                             .toDuration(unit),
                         throwExceptionOnParsingError
-                    ) ?: return Duration.INVALID
+                    )
                     if (index < length) return throwExceptionOrInvalid("Fractional component must be last")
                 } else {
                     result = result.plus(
                         (if (throwExceptionOnParsingError) component.toLong() else (component.toLongOrNull() ?: return Duration.INVALID))
                             .toDuration(unit),
                         throwExceptionOnParsingError
-                    ) ?: return Duration.INVALID
+                    )
                 }
             }
         }
