@@ -136,9 +136,7 @@ fun main() {
 
         // KLIB evolution tests.
         testGroup("native/native.tests/klib-ir-inliner/tests-gen", "compiler/testData/klib/evolution") {
-            testClass<AbstractNativeKlibEvolutionTest>(
-                suiteTestClassName = "FirNativeKlibEvolutionTestGenerated",
-            ) {
+            testClass<AbstractNativeKlibEvolutionTest> {
                 model(recursive = false)
             }
         }
