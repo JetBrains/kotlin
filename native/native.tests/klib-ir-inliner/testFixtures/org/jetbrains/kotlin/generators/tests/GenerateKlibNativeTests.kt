@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.generators.tests
 
 import org.jetbrains.kotlin.generators.generateTestGroupSuiteWithJUnit5
 import org.jetbrains.kotlin.generators.model.annotation
-import org.jetbrains.kotlin.konan.test.abi.AbstractClassicNativeLibraryAbiReaderTest
 import org.jetbrains.kotlin.konan.test.abi.AbstractFirNativeLibraryAbiReaderTest
 import org.jetbrains.kotlin.konan.test.blackbox.AbstractNativeCodegenBoxTest
 import org.jetbrains.kotlin.konan.test.blackbox.support.ClassLevelProperty
@@ -285,14 +284,6 @@ fun main() {
 
     generateTestGroupSuiteWithJUnit5 {
         testGroup("native/native.tests/klib-ir-inliner/tests-gen", "compiler/testData/klib/dump-abi/content") {
-            testClass<AbstractClassicNativeLibraryAbiReaderTest>(
-                suiteTestClassName = "ClassicNativeLibraryAbiReaderTestGenerated",
-                annotations = listOf(
-                    *frontendClassic()
-                ),
-            ) {
-                model()
-            }
             testClass<AbstractFirNativeLibraryAbiReaderTest>(
                 suiteTestClassName = "FirNativeLibraryAbiReaderTestGenerated",
             ) {

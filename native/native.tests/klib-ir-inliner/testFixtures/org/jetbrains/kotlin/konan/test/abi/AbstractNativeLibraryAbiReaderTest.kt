@@ -80,17 +80,3 @@ open class AbstractFirNativeLibraryAbiReaderTest : AbstractNativeLibraryAbiReade
         super.configure(builder)
     }
 }
-
-open class AbstractClassicNativeLibraryAbiReaderTest : AbstractNativeLibraryAbiReaderTest<ClassicFrontendOutputArtifact>() {
-    final override val frontend: FrontendKind<*>
-        get() = FrontendKinds.ClassicFrontend
-
-    final override val frontendFacade: Constructor<FrontendFacade<ClassicFrontendOutputArtifact>>
-        get() = ::ClassicFrontendFacade
-
-    override val converter: Constructor<Frontend2BackendConverter<ClassicFrontendOutputArtifact, IrBackendInput>>
-        get() = ::ClassicFrontend2NativeIrConverter
-
-    override val backendFacade: Constructor<BackendFacade<IrBackendInput, BinaryArtifacts.KLib>>
-        get() = ::ClassicNativeKlibSerializerFacade
-}
