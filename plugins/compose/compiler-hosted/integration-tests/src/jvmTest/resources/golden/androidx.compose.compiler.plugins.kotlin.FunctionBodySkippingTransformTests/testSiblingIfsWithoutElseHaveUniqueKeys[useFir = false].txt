@@ -49,7 +49,7 @@ fun Test(cond: Boolean, %composer: Composer?, %changed: Int) {
       B(%composer, 0)
       %composer.endReplaceGroup()
     } else {
-      %composer.startReplaceGroup(<!DUPLICATE KEY: 723292542!>)
+      %composer.startReplaceGroup(<>)
       %composer.endReplaceGroup()
     }
     if (isTraceInProgress()) {

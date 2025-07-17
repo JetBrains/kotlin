@@ -734,11 +734,13 @@ abstract class AbstractComposeLowering(
     protected fun irBlock(
         type: IrType = context.irBuiltIns.unitType,
         origin: IrStatementOrigin? = null,
+        startOffset: Int = UNDEFINED_OFFSET,
+        endOffset: Int = UNDEFINED_OFFSET,
         statements: List<IrStatement>,
     ): IrBlock {
         return IrBlockImpl(
-            UNDEFINED_OFFSET,
-            UNDEFINED_OFFSET,
+            startOffset,
+            endOffset,
             type,
             origin,
             statements
