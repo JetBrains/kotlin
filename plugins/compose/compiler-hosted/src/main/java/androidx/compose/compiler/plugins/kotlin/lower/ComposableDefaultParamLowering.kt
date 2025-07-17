@@ -101,6 +101,12 @@ class ComposableDefaultParamLowering(
         }
 
         if (!declaration.isVirtualFunctionWithDefaultParam()) {
+            val override = declaration.findOverriddenFunWithDefaultParam()
+            if (override != null && override.origin == IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB) {
+                // Mark that this chain of overrides should not be transformed downstream
+                override.isVirtualFunctionWithDefaultParam = true
+            }
+
             return super.visitSimpleFunction(declaration)
         }
 
