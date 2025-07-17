@@ -3897,6 +3897,8 @@ class ComposableFunctionBodyTransformer(
                     startOffset = expression.endOffset,
                     endOffset = expression.endOffset,
                     expression = irBlock(
+                        startOffset = expression.endOffset,
+                        endOffset = expression.endOffset,
                         type = context.irBuiltIns.unitType,
                         statements = emptyList()
                     )

@@ -19,13 +19,16 @@ package androidx.compose.compiler.plugins.kotlin.debug
 import com.sun.jdi.Location
 import com.sun.jdi.event.LocatableEvent
 import junit.framework.TestCase
+import kotlin.test.assertEquals
 
 fun List<LocatableEvent>.assertTrace(expected: String) {
     val actual = compressRunsWithoutLinenumber(this)
         .filter { (!it.location().method().isSynthetic) }
         .map { it.location().formatAsExpectation() }
 
-    expected.lines().forEachIndexed { index, expectedLine ->
+    val lines = expected.lines()
+    assertEquals(expected.lines().size, actual.size)
+    lines.forEachIndexed { index, expectedLine ->
         TestCase.assertEquals(expectedLine, actual[index])
     }
 }
