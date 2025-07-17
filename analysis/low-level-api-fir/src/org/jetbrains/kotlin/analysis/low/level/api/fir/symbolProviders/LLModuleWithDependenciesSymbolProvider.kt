@@ -214,6 +214,23 @@ internal class LLDependenciesSymbolProvider(
 
     override fun hasPackage(fqName: FqName): Boolean = providers.any { it.hasPackage(fqName) }
 
+    /**
+     * Filters out any top-level [FirCallableSymbol]s defined in a facade class which have already been added by a previous symbol provider
+     * for a facade class with the same name.
+     *
+     * We need this handling because we usually have two sources for builtins:
+     *
+     * 1. The builtins from the stdlib library symbol provider.
+     * 2. The fallback builtins from the symbol provider created in
+     *    [LLFirBuiltinsSessionFactory][org.jetbrains.kotlin.analysis.low.level.api.fir.projectStructure.LLFirBuiltinsSessionFactory].
+     *
+     * In contrast to class symbols where we return the first match, for callables we query all symbol providers and build a list of all
+     * candidates. Callables declared in the same facade class, but provided by two different symbol providers, are essentially duplicates.
+     * Hence, we filter them out.
+     *
+     * Regarding builtins, this logic filters out callables from fallback builtins if they have already been added from the stdlib, since
+     * the fallback builtins provider is ordered last.
+     */
     private fun <S : FirCallableSymbol<*>> addNewSymbolsConsideringJvmFacades(
         destination: MutableList<S>,
         newSymbols: List<S>,
