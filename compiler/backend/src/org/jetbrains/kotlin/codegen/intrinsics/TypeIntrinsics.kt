@@ -81,7 +81,7 @@ object TypeIntrinsics {
                 IntInsnNode(Opcodes.SIPUSH, value)
             }
             else {
-                LdcInsnNode(Integer(value))
+                LdcInsnNode(value)
             }
 
     @JvmStatic fun instanceOf(instanceofInsn: TypeInsnNode, instructions: InsnList, kotlinType: KotlinType, asmType: Type) {

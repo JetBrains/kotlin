@@ -456,7 +456,7 @@ class KotlinCoreEnvironment private constructor(
         private val LOG = Logger.getInstance(KotlinCoreEnvironment::class.java)
 
         @PublishedApi
-        internal val APPLICATION_LOCK = Object()
+        internal val APPLICATION_LOCK = Any()
 
         private var ourApplicationEnvironment: KotlinCoreApplicationEnvironment? = null
         private var ourProjectCount = 0

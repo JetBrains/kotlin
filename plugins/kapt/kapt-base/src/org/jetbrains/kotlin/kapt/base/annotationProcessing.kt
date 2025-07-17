@@ -94,7 +94,7 @@ fun KaptContext.doAnnotationProcessing(
             val additionalClassNames = JavacList.from(binaryTypesToReprocess)
             if (isJava9OrLater()) {
                 val processAnnotationsMethod =
-                    compiler.javaClass.getMethod("processAnnotations", JavacList::class.java, java.util.Collection::class.java)
+                    compiler.javaClass.getMethod("processAnnotations", JavacList::class.java, Collection::class.java)
                 processAnnotationsMethod.invoke(compiler, analyzedFiles, additionalClassNames)
                 compiler
             } else {
