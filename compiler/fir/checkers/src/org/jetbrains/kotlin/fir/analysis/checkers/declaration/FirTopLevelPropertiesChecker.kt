@@ -71,7 +71,8 @@ private fun checkFileLikeDeclaration(
     val info = declaration.collectionInitializationInfo(topLevelPropertySymbols)
     for (topLevelPropertySymbol in topLevelPropertySymbols) {
         val rangeInfo = info?.get(topLevelPropertySymbol)
-        val isDefinitelyAssigned = rangeInfo?.range?.isDefinitelyVisited() == true && !rangeInfo.mustBeLateinit
+        val isDefinitelyAssigned = rangeInfo?.range?.isDefinitelyVisited() == true
+                && (!topLevelPropertySymbol.isLateInit || !rangeInfo.mustBeLateinit)
         checkProperty(containingDeclaration = null, topLevelPropertySymbol, isDefinitelyAssigned, reachable = true)
     }
 }

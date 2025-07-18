@@ -187,7 +187,7 @@ class AnonymousInitializers(var a: String, val b: String) {
         m = 400
     }
 
-    <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>val n: Int<!>
+    val n: Int
 
     init {
         while (<!UNINITIALIZED_VARIABLE!>n<!> == 0) {
