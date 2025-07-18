@@ -43,6 +43,7 @@ class K2JSCompilerArgumentsConfigurator : CommonKlibBasedCompilerArgumentsConfig
                 this[LanguageFeature.JsEnableExtensionFunctionInExternals] = LanguageFeature.State.ENABLED
             }
             this[LanguageFeature.JsAllowValueClassesInExternals] = LanguageFeature.State.ENABLED
+            this[LanguageFeature.AllowAnyAsAnActualTypeForExpectInterface] = LanguageFeature.State.ENABLED
             if (wasm) {
                 this[LanguageFeature.JsAllowImplementingFunctionInterface] = LanguageFeature.State.ENABLED
             }
