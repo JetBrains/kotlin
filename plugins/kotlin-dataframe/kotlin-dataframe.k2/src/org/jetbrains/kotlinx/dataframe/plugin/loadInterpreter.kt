@@ -267,6 +267,7 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.api.TakeLast2
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ToSpecificType
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ToSpecificTypePattern
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ToSpecificTypeZone
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.UpdateWhere
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ValueCols0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ValueCols1
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.WithoutNulls0
@@ -522,6 +523,7 @@ internal inline fun <reified T : Interpreter<*>> String.load(isTest: Boolean): T
         "Move0" -> Move0()
         "ToTop" -> ToTop()
         "Update0" -> Update0()
+        "UpdateWhere" -> UpdateWhere()
         "Aggregate" -> Aggregate()
         "AggregateRow" -> AggregateRow()
         "DataFrameOf3" -> DataFrameOf3()

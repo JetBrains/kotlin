@@ -23,8 +23,8 @@ fun DataFrame<ConeTypesAdapter>.toPluginDataFrameSchema() = PluginDataFrameSchem
 
 interface ConeTypesAdapter
 
-fun PluginDataFrameSchema.convert(columns: ColumnsResolver, converter: () -> Marker): PluginDataFrameSchema {
-    return asDataFrame().convert { columns }.with { converter() }.toPluginDataFrameSchema()
+fun PluginDataFrameSchema.convert(columns: ColumnsResolver, converter: (Marker) -> Marker): PluginDataFrameSchema {
+    return asDataFrame().convert { columns }.with { converter(it as Marker) }.toPluginDataFrameSchema()
 }
 
 private fun List<SimpleCol>.map(): DataFrame<ConeTypesAdapter> {
