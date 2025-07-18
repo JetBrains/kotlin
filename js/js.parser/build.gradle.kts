@@ -1,6 +1,8 @@
 plugins {
+    java
     kotlin("jvm")
     id("jps-compatible")
+    antlr
 }
 
 dependencies {
@@ -12,6 +14,9 @@ dependencies {
     implementation("com.caoccao.javet:swc4j-windows-arm64:1.6.0")
     implementation("com.caoccao.javet:swc4j-windows-x86_64:1.6.0")
 
+    antlr("org.antlr:antlr4:4.13.2")
+    implementation("org.antlr:antlr4-runtime:4.13.2")
+
     api(kotlinStdlib())
     api(project(":js:js.ast"))
     compileOnly(intellijCore())
@@ -20,4 +25,13 @@ dependencies {
 sourceSets {
     "main" { projectDefault() }
     "test" {}
+}
+
+tasks.generateGrammarSource {
+    maxHeapSize = "64m"
+    arguments = arguments + listOf("-visitor", "-long-messages")
+}
+
+tasks.compileKotlin {
+    dependsOn(tasks.generateGrammarSource)
 }
