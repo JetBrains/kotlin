@@ -8,11 +8,9 @@ package org.jetbrains.kotlin.swiftexport.standalone.test
 import org.jetbrains.kotlin.konan.test.blackbox.support.NativeTestSupport.createTestRunSettings
 import org.jetbrains.kotlin.konan.test.blackbox.support.NativeTestSupport.getOrCreateTestRunProvider
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.NativeTestInstances
-import org.junit.jupiter.api.extension.AfterEachCallback
 import org.junit.jupiter.api.extension.BeforeAllCallback
 import org.junit.jupiter.api.extension.BeforeEachCallback
 import org.junit.jupiter.api.extension.ExtensionContext
-import org.junit.jupiter.api.extension.TestExecutionExceptionHandler
 
 class SwiftExportTestSupport : BeforeEachCallback {
     /**
@@ -22,7 +20,7 @@ class SwiftExportTestSupport : BeforeEachCallback {
      * not allow accessing its parent test instance in case there are inner test classes in the generated test suite.
      */
     override fun beforeEach(extensionContext: ExtensionContext): Unit = with(extensionContext) {
-        val settings = createTestRunSettings(NativeTestInstances<AbstractSwiftExportTest>(requiredTestInstances.allInstances))
+        val settings = createTestRunSettings(NativeTestInstances<AbstractSwiftExportWithBinaryCompilationTest>(requiredTestInstances.allInstances))
 
         // Inject the required properties to test instance.
         with(settings.get<NativeTestInstances<AbstractSwiftExportTest>>().enclosingTestInstance) {
