@@ -974,6 +974,12 @@ public class DataFrameBlackBoxCodegenTestGenerated extends AbstractDataFrameBlac
   }
 
   @Test
+  @TestMetadata("updateAt.kt")
+  public void testUpdateAt() {
+    runTest("plugins/kotlin-dataframe/testData/box/updateAt.kt");
+  }
+
+  @Test
   @TestMetadata("updateWhere.kt")
   public void testUpdateWhere() {
     runTest("plugins/kotlin-dataframe/testData/box/updateWhere.kt");

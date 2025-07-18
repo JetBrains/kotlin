@@ -34,6 +34,19 @@ class UpdateWhere : AbstractInterpreter<UpdateApproximation>() {
     }
 }
 
+class UpdateAt : AbstractInterpreter<UpdateApproximation>() {
+    val Arguments.receiver: UpdateApproximation by arg()
+    val Arguments.rowIndices by ignore()
+    val Arguments.rowRange by ignore()
+
+    override fun Arguments.interpret(): UpdateApproximation {
+        return when (val receiver = receiver) {
+            is FillNullsApproximation -> receiver.copy(where = true)
+            is UpdateApproximationImpl -> receiver.copy(where = true)
+        }
+    }
+}
+
 sealed interface UpdateApproximation
 
 data class UpdateApproximationImpl(val schema: PluginDataFrameSchema, val columns: ColumnsResolver, val where: Boolean = false) :
