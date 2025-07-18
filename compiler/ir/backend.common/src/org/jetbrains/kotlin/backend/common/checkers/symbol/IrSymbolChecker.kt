@@ -9,6 +9,6 @@ import org.jetbrains.kotlin.backend.common.checkers.context.CheckerContext
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 
-internal interface IrSymbolChecker {
+interface IrSymbolChecker {
     fun check(symbol: IrSymbol, container: IrElement, context: CheckerContext)
 }

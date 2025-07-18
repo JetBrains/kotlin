@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.backend.common.checkers.checkFunctionProperties
 import org.jetbrains.kotlin.backend.common.checkers.context.CheckerContext
 import org.jetbrains.kotlin.ir.expressions.IrFunctionReference
 
-internal object IrFunctionReferenceFunctionPropertiesChecker : IrElementChecker<IrFunctionReference>(IrFunctionReference::class) {
+object IrFunctionReferenceFunctionPropertiesChecker : IrElementChecker<IrFunctionReference>(IrFunctionReference::class) {
     override fun check(
         element: IrFunctionReference,
         context: CheckerContext,

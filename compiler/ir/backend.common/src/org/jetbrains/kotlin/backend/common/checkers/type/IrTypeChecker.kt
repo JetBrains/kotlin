@@ -9,6 +9,6 @@ import org.jetbrains.kotlin.backend.common.checkers.context.CheckerContext
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.types.IrType
 
-internal interface IrTypeChecker {
+interface IrTypeChecker {
     fun check(type: IrType, container: IrElement, context: CheckerContext)
 }

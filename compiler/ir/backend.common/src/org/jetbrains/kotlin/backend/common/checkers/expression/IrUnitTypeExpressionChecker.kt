@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.ir.expressions.IrLoop
 import org.jetbrains.kotlin.ir.expressions.IrSetField
 import org.jetbrains.kotlin.ir.expressions.IrSetValue
 
-internal object IrUnitTypeExpressionChecker : IrElementChecker<IrExpression>(IrExpression::class) {
+object IrUnitTypeExpressionChecker : IrElementChecker<IrExpression>(IrExpression::class) {
     override fun check(
         element: IrExpression,
         context: CheckerContext,

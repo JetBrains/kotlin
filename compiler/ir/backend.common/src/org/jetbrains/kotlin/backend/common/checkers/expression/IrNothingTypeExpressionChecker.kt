@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrReturn
 import org.jetbrains.kotlin.ir.expressions.IrThrow
 
-internal object IrNothingTypeExpressionChecker : IrElementChecker<IrExpression>(IrExpression::class) {
+object IrNothingTypeExpressionChecker : IrElementChecker<IrExpression>(IrExpression::class) {
     override fun check(
         element: IrExpression,
         context: CheckerContext,

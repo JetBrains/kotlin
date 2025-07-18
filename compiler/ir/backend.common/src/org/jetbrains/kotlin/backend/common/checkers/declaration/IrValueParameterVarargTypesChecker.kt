@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.ir.expressions.IrVararg
 /**
  * Makes sure that: [IrVararg.type] is an array of [IrVararg.varargElementType].
  */
-internal object IrValueParameterVarargTypesChecker : IrElementChecker<IrValueParameter>(IrValueParameter::class) {
+object IrValueParameterVarargTypesChecker : IrElementChecker<IrValueParameter>(IrValueParameter::class) {
     override fun check(
         element: IrValueParameter,
         context: CheckerContext

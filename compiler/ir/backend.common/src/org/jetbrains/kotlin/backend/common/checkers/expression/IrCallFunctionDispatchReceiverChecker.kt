@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.backend.common.checkers.checkFunctionDispatchReceive
 import org.jetbrains.kotlin.backend.common.checkers.context.CheckerContext
 import org.jetbrains.kotlin.ir.expressions.IrCall
 
-internal object IrCallFunctionDispatchReceiverChecker : IrElementChecker<IrCall>(IrCall::class) {
+object IrCallFunctionDispatchReceiverChecker : IrElementChecker<IrCall>(IrCall::class) {
     override fun check(
         element: IrCall,
         context: CheckerContext,

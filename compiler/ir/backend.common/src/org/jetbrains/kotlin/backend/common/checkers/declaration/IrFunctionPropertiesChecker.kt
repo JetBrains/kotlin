@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.backend.common.checkers.context.CheckerContext
 import org.jetbrains.kotlin.backend.common.checkers.IrElementChecker
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 
-internal object IrFunctionPropertiesChecker: IrElementChecker<IrFunction>(IrFunction::class) {
+object IrFunctionPropertiesChecker: IrElementChecker<IrFunction>(IrFunction::class) {
     override fun check(
         element: IrFunction,
         context: CheckerContext,
