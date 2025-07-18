@@ -228,9 +228,6 @@ abstract class AbstractKotlinNativeCompile<
     @get:Input
     val kotlinNativeVersion: String = project.nativeProperties.kotlinNativeVersion.get()
 
-    @get:Input
-    val artifactVersion = project.version.toString()
-
     @get:Internal
     open val outputFile: Provider<File>
         get() = destinationDirectory.flatMap {
