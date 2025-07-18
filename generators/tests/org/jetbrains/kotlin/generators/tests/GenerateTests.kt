@@ -211,32 +211,6 @@ fun main(args: Array<String>) {
             }
         }
 
-        testGroup("plugins/plugin-sandbox/tests-gen", "plugins/plugin-sandbox/testData") {
-            testClass<AbstractFirPsiPluginDiagnosticTest> {
-                model("diagnostics", excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN)
-            }
-
-            testClass<AbstractFirJvmLightTreePluginBlackBoxCodegenTest> {
-                model("box", excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN)
-            }
-
-            testClass<AbstractFirJsLightTreePluginBlackBoxCodegenTest> {
-                model("box", excludedPattern = CUSTOM_TEST_DATA_EXTENSION_PATTERN)
-            }
-
-            testClass<AbstractFirLoadK2CompiledWithPluginJvmKotlinTest> {
-                model("firLoadK2Compiled")
-            }
-
-            testClass<AbstractFirLoadK2CompiledWithPluginJsKotlinTest> {
-                model("firLoadK2Compiled")
-            }
-
-            testClass<AbstractFirMetadataPluginSandboxTest> {
-                model("metadata")
-            }
-        }
-
         testGroup("plugins/allopen/tests-gen", "plugins/allopen/testData") {
             testClass<AbstractIrBytecodeListingTestForAllOpen> {
                 model("bytecodeListing", excludedPattern = excludedFirTestdataPattern)
