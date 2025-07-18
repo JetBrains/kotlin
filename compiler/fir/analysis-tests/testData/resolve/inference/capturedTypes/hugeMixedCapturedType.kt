@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-76453
 
 // FILE: JavaClass.java
@@ -150,8 +150,6 @@ fun bar(a: JavaClass.A<*, *, *, *, *, *, *, *, *, *>) {
         .foo().foo().foo().foo().foo().foo().foo().foo().foo().foo().foo().foo().foo()
         .foo().foo().foo().foo().foo().foo().foo().foo().foo().foo().foo().foo().foo()
         .foo().foo().foo().foo().foo().foo().foo().foo().foo().foo().foo().foo().foo()
-
-    "".<!UNRESOLVED_REFERENCE!>qwer<!>
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, inProjection, lambdaLiteral, localProperty, nullableType,

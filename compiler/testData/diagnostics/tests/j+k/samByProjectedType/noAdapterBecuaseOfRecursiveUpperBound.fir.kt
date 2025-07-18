@@ -18,12 +18,12 @@ public class A {
 // FILE: main.kt
 fun main() {
     A().foo {
-        x ->
+        <!CANNOT_INFER_PARAMETER_TYPE!>x<!> ->
         ""
     }
 
     A.bar {
-        x ->
+        <!CANNOT_INFER_PARAMETER_TYPE!>x<!> ->
         ""
     }
 }
