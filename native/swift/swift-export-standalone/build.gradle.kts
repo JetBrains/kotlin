@@ -50,7 +50,9 @@ sourceSets {
 }
 
 val testTags = findProperty("kotlin.native.tests.tags")?.toString()
-val test by nativeTest("test", testTags)
+val test by nativeTest("test", testTags) {
+    dependsOn(":kotlin-native:distInvalidateStaleCaches")
+}
 
 publish()
 

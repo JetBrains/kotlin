@@ -26,7 +26,9 @@ dependencies {
     testImplementation(project(":compiler:tests-common", "tests-jar"))
 }
 
-nativeTest("test", null)
+nativeTest("test", null) {
+    dependsOn(":kotlin-native:distInvalidateStaleCaches")
+}
 
 sourceSets {
     "main" { projectDefault() }

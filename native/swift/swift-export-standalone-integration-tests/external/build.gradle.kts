@@ -29,6 +29,8 @@ sourceSets {
     }
 }
 
-val test by nativeTestWithExternalDependencies("test", requirePlatformLibs = true)
+val test by nativeTestWithExternalDependencies("test", requirePlatformLibs = true) {
+    dependsOn(":kotlin-native:distInvalidateStaleCaches")
+}
 
 testsJar()

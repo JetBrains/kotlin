@@ -38,7 +38,7 @@ sourceSets {
 
 
 val test by nativeTest("test", null) {
-    dependsOn(":dist")
+    dependsOn(":dist", ":kotlin-native:distInvalidateStaleCaches")
 }
 
 
