@@ -5,6 +5,8 @@
 
 package kotlin
 
+import kotlin.js.ExperimentalWasmJsInterop
+
 /**
  * Implements annotated function in JavaScript and automatically imports is to Wasm.
  * [code] string must contain JS expression that evaluates to JS function with signature that matches annotated kotlin function

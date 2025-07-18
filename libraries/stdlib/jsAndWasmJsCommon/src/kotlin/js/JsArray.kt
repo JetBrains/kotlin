@@ -34,4 +34,5 @@ public expect fun <T : JsAny?> Array<T>.toJsArray(): JsArray<T>
 public expect fun <T : JsAny?> JsArray<T>.toList(): List<T>
 
 /** Returns a new [JsArray] containing all the elements of this [List]. */
+@ExperimentalWasmJsInterop
 public expect fun <T : JsAny?> List<T>.toJsArray(): JsArray<T>
