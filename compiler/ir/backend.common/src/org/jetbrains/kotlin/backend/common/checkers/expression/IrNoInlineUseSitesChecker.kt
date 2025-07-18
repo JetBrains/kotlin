@@ -5,19 +5,18 @@
 
 package org.jetbrains.kotlin.backend.common.checkers.expression
 
+import org.jetbrains.kotlin.backend.common.checkers.IrElementChecker
 import org.jetbrains.kotlin.backend.common.checkers.checkFunctionUseSite
 import org.jetbrains.kotlin.backend.common.checkers.context.CheckerContext
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
-import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
-import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 
-internal object IrNoInlineUseSitesChecker : IrFunctionAccessChecker {
+internal object IrNoInlineUseSitesChecker : IrElementChecker<IrFunctionAccessExpression>() {
     override fun check(
-        expression: IrFunctionAccessExpression,
+        element: IrFunctionAccessExpression,
         context: CheckerContext,
     ) {
         context.checkInlineFunctionUseSites?.let {
-            checkFunctionUseSite(expression, it, context)
+            checkFunctionUseSite(element, it, context)
         }
     }
 }

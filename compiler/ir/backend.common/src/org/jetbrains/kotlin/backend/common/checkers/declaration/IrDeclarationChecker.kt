@@ -6,19 +6,17 @@
 package org.jetbrains.kotlin.backend.common.checkers.declaration
 
 import org.jetbrains.kotlin.backend.common.checkers.context.CheckerContext
+import org.jetbrains.kotlin.backend.common.checkers.IrElementChecker
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.expressions.IrExpression
 
-internal interface IrDeclarationChecker<in D : IrDeclaration> {
-    fun check(declaration: D, context: CheckerContext)
-}
-
-internal fun <D : IrDeclaration> List<IrDeclarationChecker<D>>.check(declaration: D, context: CheckerContext) {
+internal fun <E : IrDeclaration> List<IrElementChecker<E>>.check(expression: E, context: CheckerContext) {
     for (checker in this) {
-        checker.check(declaration, context)
+        checker.check(expression, context)
     }
 }
 
-internal typealias IrValueParameterChecker = IrDeclarationChecker<IrValueParameter>
-internal typealias IrFieldChecker = IrDeclarationChecker<IrField>
-internal typealias IrFunctionChecker = IrDeclarationChecker<IrFunction>
-internal typealias IrPropertyChecker = IrDeclarationChecker<IrProperty>
+internal typealias IrValueParameterChecker = IrElementChecker<IrValueParameter>
+internal typealias IrFieldChecker = IrElementChecker<IrField>
+internal typealias IrFunctionChecker = IrElementChecker<IrFunction>
+internal typealias IrPropertyChecker = IrElementChecker<IrProperty>

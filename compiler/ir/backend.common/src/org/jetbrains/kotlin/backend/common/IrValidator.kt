@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.common
 
+import org.jetbrains.kotlin.backend.common.checkers.IrElementChecker
 import org.jetbrains.kotlin.backend.common.checkers.context.*
 import org.jetbrains.kotlin.backend.common.checkers.declaration.*
 import org.jetbrains.kotlin.backend.common.checkers.expression.*
@@ -122,11 +123,11 @@ private class IrFileValidator(
     private val throwCheckers: MutableList<IrThrowChecker> = mutableListOf()
     private val functionCheckers: MutableList<IrFunctionChecker> =
         mutableListOf(IrFunctionDispatchReceiverChecker, IrFunctionParametersChecker, IrConstructorReceiverChecker)
-    private val declarationBaseCheckers: MutableList<IrDeclarationChecker<IrDeclaration>> =
+    private val declarationBaseCheckers: MutableList<IrElementChecker<IrDeclaration>> =
         mutableListOf(IrPrivateDeclarationOverrideChecker)
     private val propertyReferenceCheckers: MutableList<IrPropertyReferenceChecker> = mutableListOf()
     private val localDelegatedPropertyReferenceCheckers: MutableList<IrLocalDelegatedPropertyReferenceChecker> = mutableListOf()
-    private val expressionCheckers: MutableList<IrExpressionChecker<IrExpression>> = mutableListOf(IrExpressionTypeChecker)
+    private val expressionCheckers: MutableList<IrElementChecker<IrExpression>> = mutableListOf(IrExpressionTypeChecker)
     private val typeOperatorCheckers: MutableList<IrTypeOperatorChecker> = mutableListOf(IrTypeOperatorTypeOperandChecker)
     private val propertyCheckers: MutableList<IrPropertyChecker> = mutableListOf()
 

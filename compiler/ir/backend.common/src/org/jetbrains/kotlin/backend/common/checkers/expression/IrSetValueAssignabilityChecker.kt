@@ -5,18 +5,19 @@
 
 package org.jetbrains.kotlin.backend.common.checkers.expression
 
+import org.jetbrains.kotlin.backend.common.checkers.IrElementChecker
 import org.jetbrains.kotlin.backend.common.checkers.context.CheckerContext
 import org.jetbrains.kotlin.ir.declarations.IrValueParameter
 import org.jetbrains.kotlin.ir.expressions.IrSetValue
 
-internal object IrSetValueAssignabilityChecker : IrSetValueChecker {
+internal object IrSetValueAssignabilityChecker : IrElementChecker<IrSetValue>() {
     override fun check(
-        expression: IrSetValue,
+        element: IrSetValue,
         context: CheckerContext,
     ) {
-        val declaration = expression.symbol.owner
+        val declaration = element.symbol.owner
         if (declaration is IrValueParameter && !declaration.isAssignable) {
-            context.error(expression, "Assignment to value parameters not marked assignable")
+            context.error(element, "Assignment to value parameters not marked assignable")
         }
     }
 }

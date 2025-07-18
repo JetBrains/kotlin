@@ -5,20 +5,21 @@
 
 package org.jetbrains.kotlin.backend.common.checkers.expression
 
+import org.jetbrains.kotlin.backend.common.checkers.IrElementChecker
 import org.jetbrains.kotlin.backend.common.checkers.context.CheckerContext
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.util.render
 
-internal object IrExpressionTypeChecker : IrExpressionChecker<IrExpression> {
+internal object IrExpressionTypeChecker : IrElementChecker<IrExpression>() {
     override fun check(
-        expression: IrExpression,
+        element: IrExpression,
         context: CheckerContext,
     ) {
-        val type = expression.type
+        val type = element.type
         if (type is IrSimpleType) {
             if (!type.classifier.isBound) {
-                context.error(expression, "Type: ${type.render()} has unbound classifier")
+                context.error(element, "Type: ${type.render()} has unbound classifier")
             }
         }
     }

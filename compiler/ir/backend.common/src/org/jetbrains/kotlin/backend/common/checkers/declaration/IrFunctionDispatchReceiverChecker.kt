@@ -7,13 +7,14 @@ package org.jetbrains.kotlin.backend.common.checkers.declaration
 
 import org.jetbrains.kotlin.backend.common.checkers.checkFunctionDispatchReceiver
 import org.jetbrains.kotlin.backend.common.checkers.context.CheckerContext
+import org.jetbrains.kotlin.backend.common.checkers.IrElementChecker
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 
-internal object IrFunctionDispatchReceiverChecker : IrFunctionChecker {
+internal object IrFunctionDispatchReceiverChecker: IrElementChecker<IrFunction>() {
     override fun check(
-        declaration: IrFunction,
+        element: IrFunction,
         context: CheckerContext,
     ) {
-        declaration.checkFunctionDispatchReceiver(declaration, context)
+        element.checkFunctionDispatchReceiver(element, context)
     }
 }

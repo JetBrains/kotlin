@@ -5,41 +5,38 @@
 
 package org.jetbrains.kotlin.backend.common.checkers.expression
 
+import org.jetbrains.kotlin.backend.common.checkers.IrElementChecker
 import org.jetbrains.kotlin.backend.common.checkers.context.CheckerContext
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 
-internal interface IrExpressionChecker<in E : IrExpression> {
-    fun check(expression: E, context: CheckerContext)
-}
-
-internal fun <E : IrExpression> List<IrExpressionChecker<E>>.check(expression: E, context: CheckerContext) {
+internal fun <E : IrExpression> List<IrElementChecker<E>>.check(expression: E, context: CheckerContext) {
     for (checker in this) {
         checker.check(expression, context)
     }
 }
 
-internal typealias IrVarargChecker = IrExpressionChecker<IrVararg>
-internal typealias IrFieldAccessChecker = IrExpressionChecker<IrFieldAccessExpression>
-internal typealias IrDeclarationReferenceChecker = IrExpressionChecker<IrDeclarationReference>
-internal typealias IrValueAccessChecker = IrExpressionChecker<IrValueAccessExpression>
-internal typealias IrFunctionAccessChecker = IrExpressionChecker<IrFunctionAccessExpression>
-internal typealias IrFunctionReferenceChecker = IrExpressionChecker<IrFunctionReference>
-internal typealias IrMemberAccessChecker = IrExpressionChecker<IrMemberAccessExpression<IrFunctionSymbol>>
-internal typealias IrStringConcatenationChecker = IrExpressionChecker<IrStringConcatenation>
-internal typealias IrGetObjectValueChecker = IrExpressionChecker<IrGetObjectValue>
-internal typealias IrGetValueChecker = IrExpressionChecker<IrGetValue>
-internal typealias IrSetValueChecker = IrExpressionChecker<IrSetValue>
-internal typealias IrGetFieldChecker = IrExpressionChecker<IrGetField>
-internal typealias IrSetFieldChecker = IrExpressionChecker<IrSetField>
-internal typealias IrCallChecker = IrExpressionChecker<IrCall>
-internal typealias IrInstanceInitializerCallChecker = IrExpressionChecker<IrInstanceInitializerCall>
-internal typealias IrTypeOperatorChecker = IrExpressionChecker<IrTypeOperatorCall>
-internal typealias IrReturnChecker = IrExpressionChecker<IrReturn>
-internal typealias IrPropertyReferenceChecker = IrExpressionChecker<IrPropertyReference>
-internal typealias IrLocalDelegatedPropertyReferenceChecker = IrExpressionChecker<IrLocalDelegatedPropertyReference>
-internal typealias IrConstChecker = IrExpressionChecker<IrConst>
-internal typealias IrDelegatingConstructorCallChecker = IrExpressionChecker<IrDelegatingConstructorCall>
-internal typealias IrLoopChecker = IrExpressionChecker<IrLoop>
-internal typealias IrBreakContinueChecker = IrExpressionChecker<IrBreakContinue>
-internal typealias IrThrowChecker = IrExpressionChecker<IrThrow>
+internal typealias IrVarargChecker = IrElementChecker<IrVararg>
+internal typealias IrFieldAccessChecker = IrElementChecker<IrFieldAccessExpression>
+internal typealias IrDeclarationReferenceChecker = IrElementChecker<IrDeclarationReference>
+internal typealias IrValueAccessChecker = IrElementChecker<IrValueAccessExpression>
+internal typealias IrFunctionAccessChecker = IrElementChecker<IrFunctionAccessExpression>
+internal typealias IrFunctionReferenceChecker = IrElementChecker<IrFunctionReference>
+internal typealias IrMemberAccessChecker = IrElementChecker<IrMemberAccessExpression<IrFunctionSymbol>>
+internal typealias IrStringConcatenationChecker = IrElementChecker<IrStringConcatenation>
+internal typealias IrGetObjectValueChecker = IrElementChecker<IrGetObjectValue>
+internal typealias IrGetValueChecker = IrElementChecker<IrGetValue>
+internal typealias IrSetValueChecker = IrElementChecker<IrSetValue>
+internal typealias IrGetFieldChecker = IrElementChecker<IrGetField>
+internal typealias IrSetFieldChecker = IrElementChecker<IrSetField>
+internal typealias IrCallChecker = IrElementChecker<IrCall>
+internal typealias IrInstanceInitializerCallChecker = IrElementChecker<IrInstanceInitializerCall>
+internal typealias IrTypeOperatorChecker = IrElementChecker<IrTypeOperatorCall>
+internal typealias IrReturnChecker = IrElementChecker<IrReturn>
+internal typealias IrPropertyReferenceChecker = IrElementChecker<IrPropertyReference>
+internal typealias IrLocalDelegatedPropertyReferenceChecker = IrElementChecker<IrLocalDelegatedPropertyReference>
+internal typealias IrConstChecker = IrElementChecker<IrConst>
+internal typealias IrDelegatingConstructorCallChecker = IrElementChecker<IrDelegatingConstructorCall>
+internal typealias IrLoopChecker = IrElementChecker<IrLoop>
+internal typealias IrBreakContinueChecker = IrElementChecker<IrBreakContinue>
+internal typealias IrThrowChecker = IrElementChecker<IrThrow>

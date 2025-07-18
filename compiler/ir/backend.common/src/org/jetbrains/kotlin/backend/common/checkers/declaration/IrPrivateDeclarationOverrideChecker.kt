@@ -6,22 +6,23 @@
 package org.jetbrains.kotlin.backend.common.checkers.declaration
 
 import org.jetbrains.kotlin.backend.common.checkers.context.CheckerContext
+import org.jetbrains.kotlin.backend.common.checkers.IrElementChecker
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithVisibility
 import org.jetbrains.kotlin.ir.declarations.IrOverridableDeclaration
 import org.jetbrains.kotlin.ir.util.render
 
-internal object IrPrivateDeclarationOverrideChecker : IrDeclarationChecker<IrDeclaration> {
+internal object IrPrivateDeclarationOverrideChecker: IrElementChecker<IrDeclaration>() {
     override fun check(
-        declaration: IrDeclaration,
+        element: IrDeclaration,
         context: CheckerContext,
     ) {
-        if (declaration is IrOverridableDeclaration<*>) {
-            for (overriddenSymbol in declaration.overriddenSymbols) {
+        if (element is IrOverridableDeclaration<*>) {
+            for (overriddenSymbol in element.overriddenSymbols) {
                 val overriddenDeclaration = overriddenSymbol.owner as? IrDeclarationWithVisibility ?: continue
                 if (overriddenDeclaration.visibility == DescriptorVisibilities.PRIVATE) {
-                    context.error(declaration, "Overrides private declaration ${overriddenDeclaration.render()}")
+                    context.error(element, "Overrides private declaration ${overriddenDeclaration.render()}")
                 }
             }
         }

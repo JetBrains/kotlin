@@ -5,16 +5,17 @@
 
 package org.jetbrains.kotlin.backend.common.checkers.expression
 
+import org.jetbrains.kotlin.backend.common.checkers.IrElementChecker
 import org.jetbrains.kotlin.backend.common.checkers.context.CheckerContext
 import org.jetbrains.kotlin.backend.common.checkers.ensureTypeIs
 import org.jetbrains.kotlin.ir.expressions.IrGetObjectValue
 import org.jetbrains.kotlin.ir.types.createType
 
-internal object IrGetObjectValueTypeChecker : IrGetObjectValueChecker {
+internal object IrGetObjectValueTypeChecker : IrElementChecker<IrGetObjectValue>() {
     override fun check(
-        expression: IrGetObjectValue,
+        element: IrGetObjectValue,
         context: CheckerContext,
     ) {
-        expression.ensureTypeIs(expression.symbol.createType(false, emptyList()), context)
+        element.ensureTypeIs(element.symbol.createType(false, emptyList()), context)
     }
 }

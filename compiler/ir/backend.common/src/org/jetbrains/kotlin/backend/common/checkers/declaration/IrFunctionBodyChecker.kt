@@ -6,16 +6,17 @@
 package org.jetbrains.kotlin.backend.common.checkers.declaration
 
 import org.jetbrains.kotlin.backend.common.checkers.context.CheckerContext
+import org.jetbrains.kotlin.backend.common.checkers.IrElementChecker
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 
-internal object IrFunctionBodyChecker : IrFunctionChecker {
+internal object IrFunctionBodyChecker : IrElementChecker<IrFunction>() {
     override fun check(
-        declaration: IrFunction,
+        element: IrFunction,
         context: CheckerContext,
     ) {
-        if (declaration.body is IrExpressionBody) {
-            context.error(declaration, "IrFunction body cannot be of type IrExpressionBody. Use IrBlockBody instead.")
+        if (element.body is IrExpressionBody) {
+            context.error(element, "IrFunction body cannot be of type IrExpressionBody. Use IrBlockBody instead.")
         }
     }
 }

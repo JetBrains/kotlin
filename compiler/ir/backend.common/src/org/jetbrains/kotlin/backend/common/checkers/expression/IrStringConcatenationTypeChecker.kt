@@ -5,15 +5,16 @@
 
 package org.jetbrains.kotlin.backend.common.checkers.expression
 
+import org.jetbrains.kotlin.backend.common.checkers.IrElementChecker
 import org.jetbrains.kotlin.backend.common.checkers.context.CheckerContext
 import org.jetbrains.kotlin.backend.common.checkers.ensureTypeIs
 import org.jetbrains.kotlin.ir.expressions.IrStringConcatenation
 
-internal object IrStringConcatenationTypeChecker : IrStringConcatenationChecker {
+internal object IrStringConcatenationTypeChecker : IrElementChecker<IrStringConcatenation>() {
     override fun check(
-        expression: IrStringConcatenation,
+        element: IrStringConcatenation,
         context: CheckerContext,
     ) {
-        expression.ensureTypeIs(context.irBuiltIns.stringType, context)
+        element.ensureTypeIs(context.irBuiltIns.stringType, context)
     }
 }

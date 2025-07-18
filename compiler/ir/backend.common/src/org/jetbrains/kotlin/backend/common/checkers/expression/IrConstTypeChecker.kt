@@ -5,24 +5,25 @@
 
 package org.jetbrains.kotlin.backend.common.checkers.expression
 
+import org.jetbrains.kotlin.backend.common.checkers.IrElementChecker
 import org.jetbrains.kotlin.backend.common.checkers.context.CheckerContext
 import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.expressions.IrConstKind
 import org.jetbrains.kotlin.ir.util.isNullable
 import org.jetbrains.kotlin.ir.util.render
 
-internal object IrConstTypeChecker : IrConstChecker {
+internal object IrConstTypeChecker : IrElementChecker<IrConst>() {
     override fun check(
-        expression: IrConst,
+        element: IrConst,
         context: CheckerContext,
     ) {
         val irBuiltIns = context.irBuiltIns
 
         @Suppress("UNUSED_VARIABLE")
-        val naturalType = when (expression.kind) {
+        val naturalType = when (element.kind) {
             IrConstKind.Null -> {
-                if (!expression.type.isNullable())
-                    context.error(expression, "expected a nullable type, got ${expression.type.render()}")
+                if (!element.type.isNullable())
+                    context.error(element, "expected a nullable type, got ${element.type.render()}")
                 return
             }
             IrConstKind.Boolean -> irBuiltIns.booleanType

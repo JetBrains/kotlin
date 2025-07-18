@@ -5,15 +5,16 @@
 
 package org.jetbrains.kotlin.backend.common.checkers.expression
 
+import org.jetbrains.kotlin.backend.common.checkers.IrElementChecker
 import org.jetbrains.kotlin.backend.common.checkers.context.CheckerContext
 import org.jetbrains.kotlin.backend.common.checkers.ensureTypeIs
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 
-internal object IrNothingTypeExpressionChecker : IrExpressionChecker<IrExpression> {
+internal object IrNothingTypeExpressionChecker : IrElementChecker<IrExpression>() {
     override fun check(
-        expression: IrExpression,
+        element: IrExpression,
         context: CheckerContext,
     ) {
-        expression.ensureTypeIs(context.irBuiltIns.nothingType, context)
+        element.ensureTypeIs(context.irBuiltIns.nothingType, context)
     }
 }

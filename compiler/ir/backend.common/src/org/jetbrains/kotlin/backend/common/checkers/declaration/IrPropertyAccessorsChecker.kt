@@ -6,27 +6,28 @@
 package org.jetbrains.kotlin.backend.common.checkers.declaration
 
 import org.jetbrains.kotlin.backend.common.checkers.context.CheckerContext
+import org.jetbrains.kotlin.backend.common.checkers.IrElementChecker
 import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.util.render
 
-internal object IrPropertyAccessorsChecker : IrPropertyChecker {
+internal object IrPropertyAccessorsChecker : IrElementChecker<IrProperty>() {
     override fun check(
-        declaration: IrProperty,
+        element: IrProperty,
         context: CheckerContext,
     ) {
-        declaration.getter?.let {
-            if (it.correspondingPropertySymbol != declaration.symbol) {
+        element.getter?.let {
+            if (it.correspondingPropertySymbol != element.symbol) {
                 context.error(
-                    declaration,
-                    "Getter of property '${declaration.render()}' has an inconsistent corresponding property symbol."
+                    element,
+                    "Getter of property '${element.render()}' has an inconsistent corresponding property symbol."
                 )
             }
         }
-        declaration.setter?.let {
-            if (it.correspondingPropertySymbol != declaration.symbol) {
+        element.setter?.let {
+            if (it.correspondingPropertySymbol != element.symbol) {
                 context.error(
-                    declaration,
-                    "Setter of property '${declaration.render()}' has an inconsistent corresponding property symbol."
+                    element,
+                    "Setter of property '${element.render()}' has an inconsistent corresponding property symbol."
                 )
             }
         }

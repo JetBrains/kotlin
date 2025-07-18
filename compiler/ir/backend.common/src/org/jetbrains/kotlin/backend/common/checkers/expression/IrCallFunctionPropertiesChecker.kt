@@ -5,16 +5,17 @@
 
 package org.jetbrains.kotlin.backend.common.checkers.expression
 
+import org.jetbrains.kotlin.backend.common.checkers.IrElementChecker
 import org.jetbrains.kotlin.backend.common.checkers.checkFunctionProperties
 import org.jetbrains.kotlin.backend.common.checkers.context.CheckerContext
 import org.jetbrains.kotlin.ir.expressions.IrCall
 
-internal object IrCallFunctionPropertiesChecker : IrCallChecker {
+internal object IrCallFunctionPropertiesChecker : IrElementChecker<IrCall>() {
     override fun check(
-        expression: IrCall,
+        element: IrCall,
         context: CheckerContext,
     ) {
-        val function = expression.symbol.owner
-        expression.checkFunctionProperties(function, context)
+        val function = element.symbol.owner
+        element.checkFunctionProperties(function, context)
     }
 }

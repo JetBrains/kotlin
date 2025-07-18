@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.common.checkers.expression
 
+import org.jetbrains.kotlin.backend.common.checkers.IrElementChecker
 import org.jetbrains.kotlin.backend.common.checkers.context.CheckerContext
 import org.jetbrains.kotlin.backend.common.checkers.validateVararg
 import org.jetbrains.kotlin.ir.expressions.IrVararg
@@ -12,11 +13,11 @@ import org.jetbrains.kotlin.ir.expressions.IrVararg
 /**
  * Makes sure that [IrVararg.type] is an array of [IrVararg.varargElementType].
  */
-internal object IrVarargTypesChecker : IrVarargChecker {
+internal object IrVarargTypesChecker : IrElementChecker<IrVararg>() {
     override fun check(
-        expression: IrVararg,
+        element: IrVararg,
         context: CheckerContext,
     ) {
-        validateVararg(expression, expression.type, expression.varargElementType, context)
+        validateVararg(element, element.type, element.varargElementType, context)
     }
 }

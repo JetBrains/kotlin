@@ -5,20 +5,21 @@
 
 package org.jetbrains.kotlin.backend.common.checkers.expression
 
+import org.jetbrains.kotlin.backend.common.checkers.IrElementChecker
 import org.jetbrains.kotlin.backend.common.checkers.context.CheckerContext
 import org.jetbrains.kotlin.backend.common.checkers.ensureTypeIs
 import org.jetbrains.kotlin.ir.expressions.IrTypeOperator
 import org.jetbrains.kotlin.ir.expressions.IrTypeOperatorCall
 import org.jetbrains.kotlin.ir.types.makeNullable
 
-internal object IrTypeOperatorTypeChecker : IrTypeOperatorChecker {
+internal object IrTypeOperatorTypeChecker : IrElementChecker<IrTypeOperatorCall>() {
     override fun check(
-        expression: IrTypeOperatorCall,
+        element: IrTypeOperatorCall,
         context: CheckerContext,
     ) {
         // TODO: check IMPLICIT_NOTNULL's argument type.
-        val operator = expression.operator
-        val typeOperand = expression.typeOperand
+        val operator = element.operator
+        val typeOperand = element.typeOperand
         val naturalType = when (operator) {
             IrTypeOperator.CAST,
             IrTypeOperator.IMPLICIT_CAST,
@@ -27,7 +28,8 @@ internal object IrTypeOperatorTypeChecker : IrTypeOperatorChecker {
             IrTypeOperator.IMPLICIT_INTEGER_COERCION,
             IrTypeOperator.SAM_CONVERSION,
             IrTypeOperator.IMPLICIT_DYNAMIC_CAST,
-            IrTypeOperator.REINTERPRET_CAST ->
+            IrTypeOperator.REINTERPRET_CAST
+                ->
                 typeOperand
 
             IrTypeOperator.SAFE_CAST ->
@@ -36,6 +38,6 @@ internal object IrTypeOperatorTypeChecker : IrTypeOperatorChecker {
             IrTypeOperator.INSTANCEOF, IrTypeOperator.NOT_INSTANCEOF ->
                 context.irBuiltIns.booleanType
         }
-        expression.ensureTypeIs(naturalType, context)
+        element.ensureTypeIs(naturalType, context)
     }
 }
