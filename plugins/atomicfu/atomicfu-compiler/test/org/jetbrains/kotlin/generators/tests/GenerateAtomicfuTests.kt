@@ -31,12 +31,6 @@ fun main(args: Array<String>) {
         // Atomicfu compiler plugin native tests.
         testGroup("plugins/atomicfu/atomicfu-compiler/tests-gen", "plugins/atomicfu/atomicfu-compiler/testData/box") {
             testClass<AbstractNativeCodegenBoxTest>(
-                suiteTestClassName = "AtomicfuNativeTestGenerated",
-                annotations = listOf(*atomicfuNative(), *frontendClassic(), provider<UseExtTestCaseGroupProvider>())
-            ) {
-                model(targetBackend = TargetBackend.NATIVE, excludeDirs = listOf("context_parameters"))
-            }
-            testClass<AbstractNativeCodegenBoxTest>(
                 suiteTestClassName = "AtomicfuNativeFirTestGenerated",
                 annotations = listOf(*atomicfuNative(), provider<UseExtTestCaseGroupProvider>())
             ) {
@@ -55,10 +49,6 @@ fun main(args: Array<String>) {
             "plugins/atomicfu/atomicfu-compiler/testData",
             testRunnerMethodName = "runTest0"
         ) {
-            testClass<AbstractAtomicfuJsIrTest> {
-                model("box/", excludeDirs = listOf("context_parameters"))
-            }
-
             testClass<AbstractAtomicfuJsFirTest> {
                 model("box/")
             }

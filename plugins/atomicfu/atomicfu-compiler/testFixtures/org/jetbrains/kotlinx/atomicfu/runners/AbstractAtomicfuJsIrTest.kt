@@ -23,19 +23,6 @@ import java.io.File
 private val atomicfuJsCompileDependency = System.getProperty("atomicfuJs.classpath")
 private val atomicfuJsIrRuntime = System.getProperty("atomicfuJsIrRuntimeForTests.classpath")
 
-open class AbstractAtomicfuJsIrTest : AbstractJsIrTest(
-    pathToTestDir = "plugins/atomicfu/atomicfu-compiler/testData/box/",
-    testGroupOutputDirPrefix = "box/atomicfu"
-) {
-    override fun configure(builder: TestConfigurationBuilder) {
-        super.configure(builder)
-        with(builder) {
-            useConfigurators(::AtomicfuEnvironmentConfigurator)
-            useCustomRuntimeClasspathProviders(::AtomicfuJsRuntimeClasspathProvider)
-        }
-    }
-}
-
 open class AbstractAtomicfuJsFirTest(
     testGroupOutputDirPrefix: String = "box/atomicfuFir"
 ) : AbstractFirJsTest(
