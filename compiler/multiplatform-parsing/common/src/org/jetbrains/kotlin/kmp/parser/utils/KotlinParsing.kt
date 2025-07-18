@@ -220,11 +220,13 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
         private val USER_TYPE_NAME_RECOVERY_SET: SyntaxElementTypeSet =
             EXPRESSION_FIRST + EXPRESSION_FOLLOW + DECLARATION_FIRST
 
-        private val NO_MODIFIER_BEFORE_FOR_VALUE_PARAMETER = syntaxElementTypeSetOf(KtTokens.COMMA, KtTokens.COLON, KtTokens.EQ, KtTokens.RPAR)
+        private val NO_MODIFIER_BEFORE_FOR_VALUE_PARAMETER =
+            syntaxElementTypeSetOf(KtTokens.COMMA, KtTokens.COLON, KtTokens.EQ, KtTokens.RPAR)
 
         private val LAST_DOT_AFTER_RECEIVER_LPAR_PATTERN_SET = syntaxElementTypeSetOf(KtTokens.QUEST, KtTokens.LPAR, KtTokens.RPAR)
 
-        private val LAST_DOT_AFTER_RECEIVER_NOT_LPAR_PATTERN_SET = syntaxElementTypeSetOf(KtTokens.LT, KtTokens.DOT, KtTokens.SAFE_ACCESS, KtTokens.QUEST)
+        private val LAST_DOT_AFTER_RECEIVER_NOT_LPAR_PATTERN_SET =
+            syntaxElementTypeSetOf(KtTokens.LT, KtTokens.DOT, KtTokens.SAFE_ACCESS, KtTokens.QUEST)
 
         private val ACCESSOR_BODY_EXPECTED_RECOVERY_SET by lazy(LazyThreadSafetyMode.PUBLICATION) {
             ACCESSOR_FIRST_OR_PROPERTY_END + syntaxElementTypeSetOf(KtTokens.LBRACE, KtTokens.LPAR, KtTokens.EQ)
@@ -589,7 +591,7 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
     private fun closeImportWithErrorIfNewline(
         importDirective: SyntaxTreeBuilder.Marker,
         importAlias: SyntaxTreeBuilder.Marker?,
-        errorMessage: String
+        errorMessage: String,
     ): Boolean {
         if (builder.newlineBeforeCurrentToken()) {
             importAlias?.done(KtNodeTypes.IMPORT_ALIAS)
@@ -657,16 +659,18 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
     fun parseCommonDeclaration(
         detector: ModifierDetector,
         nameParsingModeForObject: NameParsingMode,
-        declarationParsingMode: DeclarationParsingMode
+        declarationParsingMode: DeclarationParsingMode,
     ): SyntaxElementType? {
         when (tokenId) {
             KtTokens.CLASS_KEYWORD_ID,
-            KtTokens.INTERFACE_KEYWORD_ID -> return parseClass(
+            KtTokens.INTERFACE_KEYWORD_ID,
+                -> return parseClass(
                 detector.isEnumDetected, true
             )
             KtTokens.FUN_MODIFIER_ID -> return parseFunction()
             KtTokens.VAL_KEYWORD_ID,
-            KtTokens.VAR_KEYWORD_ID -> return parseProperty(declarationParsingMode)
+            KtTokens.VAR_KEYWORD_ID,
+                -> return parseProperty(declarationParsingMode)
             KtTokens.TYPE_ALIAS_KEYWORD_ID -> return parseTypeAlias()
             KtTokens.OBJECT_KEYWORD_ID -> {
                 parseObject(nameParsingModeForObject, true)
@@ -740,7 +744,7 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
         modifierDetector: ModifierDetector?,
         modifierKeywords: SyntaxElementTypeSet,
         annotationParsingMode: AnnotationParsingMode,
-        noModifiersBefore: SyntaxElementTypeSet
+        noModifiersBefore: SyntaxElementTypeSet,
     ): Boolean {
         var empty = true
         var beforeAnnotationMarker: SyntaxTreeBuilder.Marker?
@@ -781,7 +785,7 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
         modifierDetector: ModifierDetector?,
         modifierKeywords: SyntaxElementTypeSet,
         annotationParsingMode: AnnotationParsingMode,
-        noModifiersBefore: SyntaxElementTypeSet
+        noModifiersBefore: SyntaxElementTypeSet,
     ): Boolean {
         val list = mark()
 
@@ -803,7 +807,7 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
     private fun tryParseModifier(
         modifierDetector: ModifierDetector?,
         noModifiersBefore: SyntaxElementTypeSet,
-        modifierKeywords: SyntaxElementTypeSet
+        modifierKeywords: SyntaxElementTypeSet,
     ): Boolean {
         val marker = mark()
 
@@ -1151,7 +1155,7 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
         nameParsingMode: NameParsingMode,
         optionalBody: Boolean,
         enumClass: Boolean,
-        expectKindKeyword: Boolean
+        expectKindKeyword: Boolean,
     ): SyntaxElementType {
         if (expectKindKeyword) {
             if (isObject) {
@@ -1556,7 +1560,7 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
     enum class DeclarationParsingMode(
         val destructuringAllowed: Boolean,
         val accessorsAllowed: Boolean,
-        val canBeEnumUsedAsSoftKeyword: Boolean
+        val canBeEnumUsedAsSoftKeyword: Boolean,
     ) {
         MEMBER_OR_TOPLEVEL(destructuringAllowed = false, accessorsAllowed = true, canBeEnumUsedAsSoftKeyword = true),
         LOCAL(destructuringAllowed = true, accessorsAllowed = false, canBeEnumUsedAsSoftKeyword = false),
@@ -1985,7 +1989,7 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
         title: String,
         nameFollow: SyntaxElementTypeSet,
         recoverySet: SyntaxElementTypeSet,
-        nameRequired: Boolean
+        nameRequired: Boolean,
     ) {
         if (!nameRequired && atSetWithRemap(nameFollow)) return  // no name
 
@@ -2281,7 +2285,10 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
 
     // The extraRecoverySet is needed for the foo(bar<x, 1, y>(z)) case, to tell whether we should stop
     // on expression-indicating symbols or not
-    private fun parseTypeRefContents(extraRecoverySet: SyntaxElementTypeSet, allowSimpleIntersectionTypes: Boolean): SyntaxTreeBuilder.Marker {
+    private fun parseTypeRefContents(
+        extraRecoverySet: SyntaxElementTypeSet,
+        allowSimpleIntersectionTypes: Boolean,
+    ): SyntaxTreeBuilder.Marker {
         val typeRefMarker = mark()
 
         parseTypeModifierList()
@@ -2753,7 +2760,7 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
         val allowAnnotations: Boolean,
         val allowContextList: Boolean,
         val typeContext: Boolean,
-        val withSignificantWhitespaceBeforeArguments: Boolean
+        val withSignificantWhitespaceBeforeArguments: Boolean,
     ) {
         DEFAULT(
             isFileAnnotationParsingMode = false,
