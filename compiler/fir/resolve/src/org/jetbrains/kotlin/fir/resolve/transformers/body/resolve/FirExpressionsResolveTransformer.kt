@@ -964,15 +964,19 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         fun buildAndResolveOperatorCall(
             receiver: FirExpression,
             fakeSourceKind: KtFakeSourceElementKind.DesugaredIncrementOrDecrement,
-        ): FirFunctionCall = buildFunctionCall {
-            source = incrementDecrementExpression.operationSource
-            explicitReceiver = receiver
-            calleeReference = buildSimpleNamedReference {
-                source = incrementDecrementExpression.operationSource?.fakeElement(fakeSourceKind)
-                name = incrementDecrementExpression.operationName
+        ): FirExpression {
+            val buildFunctionCall = buildFunctionCall {
+                source = incrementDecrementExpression.operationSource
+                explicitReceiver = receiver
+                calleeReference = buildSimpleNamedReference {
+                    source = incrementDecrementExpression.operationSource?.fakeElement(fakeSourceKind)
+                    name = incrementDecrementExpression.operationName
+                }
+                origin = FirFunctionCallOrigin.Operator
             }
-            origin = FirFunctionCallOrigin.Operator
-        }.transformSingle(transformer, ResolutionMode.ContextIndependent)
+            val transformSingle = buildFunctionCall.transformSingle(transformer, ResolutionMode.ContextIndependent)
+            return transformSingle
+        }
 
         fun buildAndResolveVariableAssignment(rValue: FirExpression): FirVariableAssignment = buildVariableAssignment {
             source = desugaredSource

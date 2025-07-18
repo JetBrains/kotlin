@@ -1333,8 +1333,8 @@ abstract class FirDataFlowAnalyzer(
 
         val stability = propertyVariable.getStability(flow, components.session)
         if (stability == SmartcastStability.STABLE_VALUE || stability == SmartcastStability.CAPTURED_VARIABLE) {
-            val initializerVariable = flow.getVariableIfUsedOrReal(initializer)
-            if (!hasExplicitType && initializerVariable is RealVariable &&
+            val initializerVariable = flow.getVariable(initializer, false)
+            if (!hasExplicitType && initializerVariable != null &&
                 // It's impossible to reference implicit when subjects.
                 // With explicit local variables, we want to give the user an option to
                 // choose whether they want to access the variable with smartcasts
@@ -1345,6 +1345,7 @@ abstract class FirDataFlowAnalyzer(
                 // val a = ...
                 // val b = a
                 // if (b != null) { /* a != null */ }
+                flow.addTypeStatement(flow.unwrapVariable(propertyVariable) typeEq initializer.resolvedType)
                 logicSystem.addLocalVariableAlias(flow, propertyVariable, initializerVariable)
             } else if (initializerVariable != null && !(property.isLocal && property.isVar)) {
                 // Case 1:
@@ -1839,6 +1840,6 @@ abstract class FirDataFlowAnalyzer(
     private fun Flow.getRealVariableWithoutUnwrappingAlias(fir: FirExpression): RealVariable? =
         getVariableWithoutUnwrappingAlias(fir, createReal = false) as? RealVariable
 
-    private fun Flow.unwrapVariableIfStable(variable: RealVariable): RealVariable? =
+    private fun Flow.unwrapVariableIfStable(variable: RealVariable): DataFlowVariable? =
         unwrapVariable(variable).takeIf { it == variable || !variable.isUnstableLocalVar(types = null) }
 }

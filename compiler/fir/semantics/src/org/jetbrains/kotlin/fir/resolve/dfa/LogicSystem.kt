@@ -55,7 +55,7 @@ abstract class LogicSystem(private val context: ConeInferenceContext) {
         return result
     }
 
-    fun addLocalVariableAlias(flow: MutableFlow, alias: RealVariable, underlyingVariable: RealVariable) {
+    fun addLocalVariableAlias(flow: MutableFlow, alias: RealVariable, underlyingVariable: DataFlowVariable) {
         if (underlyingVariable == alias) return // x = x
         flow.directAliasMap[alias] = underlyingVariable
         flow.backwardsAliasMap[underlyingVariable] = flow.backwardsAliasMap[underlyingVariable]?.add(alias) ?: persistentSetOf(alias)
@@ -170,7 +170,7 @@ abstract class LogicSystem(private val context: ConeInferenceContext) {
     }
 
     private fun MutableFlow.copyNonConflictingAliases(flows: Collection<PersistentFlow>, commonFlow: PersistentFlow) {
-        val candidates = mutableMapOf<RealVariable, RealVariable?>()
+        val candidates = mutableMapOf<RealVariable, DataFlowVariable?>()
         for (flow in flows) {
             for ((from, to) in flow.directAliasMap) {
                 candidates[from] = when {

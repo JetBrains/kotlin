@@ -12,7 +12,7 @@ import kotlinx.collections.immutable.persistentHashMapOf
 
 abstract class Flow {
     abstract val knownVariables: Set<DataFlowVariable>
-    abstract fun unwrapVariable(variable: RealVariable): RealVariable
+    abstract fun unwrapVariable(variable: RealVariable): DataFlowVariable
     abstract fun getTypeStatement(variable: DataFlowVariable): TypeStatement?
     abstract fun getImplications(variable: DataFlowVariable): Collection<Implication>?
 
@@ -31,8 +31,8 @@ class PersistentFlow internal constructor(
     // RealVariables thus form equivalence sets by values they reference. One is chosen
     // as a representative of that set, while the rest are mapped to that representative
     // in `directAliasMap`. `backwardsAliasMap` maps each representative to the rest of the set.
-    internal val directAliasMap: PersistentMap<RealVariable, RealVariable>,
-    private val backwardsAliasMap: PersistentMap<RealVariable, PersistentSet<RealVariable>>,
+    internal val directAliasMap: PersistentMap<RealVariable, DataFlowVariable>,
+    private val backwardsAliasMap: PersistentMap<DataFlowVariable, PersistentSet<RealVariable>>,
 ) : Flow() {
     private val level: Int = if (previousFlow != null) previousFlow.level + 1 else 0
 
@@ -42,7 +42,7 @@ class PersistentFlow internal constructor(
     val allVariablesForDebug: Set<DataFlowVariable>
         get() = knownVariables + implications.keys + implications.values.flatten().map { it.effect.variable }
 
-    override fun unwrapVariable(variable: RealVariable): RealVariable =
+    override fun unwrapVariable(variable: RealVariable): DataFlowVariable =
         directAliasMap[variable] ?: variable
 
     override fun getTypeStatement(variable: DataFlowVariable): TypeStatement? =
@@ -82,8 +82,8 @@ class MutableFlow internal constructor(
     internal val approvedTypeStatements: PersistentMap.Builder<DataFlowVariable, PersistentTypeStatement>,
     internal val implications: PersistentMap.Builder<DataFlowVariable, PersistentList<Implication>>,
     internal val assignmentIndex: PersistentMap.Builder<RealVariable, Int>,
-    internal val directAliasMap: PersistentMap.Builder<RealVariable, RealVariable>,
-    internal val backwardsAliasMap: PersistentMap.Builder<RealVariable, PersistentSet<RealVariable>>,
+    internal val directAliasMap: PersistentMap.Builder<RealVariable, DataFlowVariable>,
+    internal val backwardsAliasMap: PersistentMap.Builder<DataFlowVariable, PersistentSet<RealVariable>>,
 ) : Flow() {
     constructor() : this(
         null,
@@ -97,7 +97,7 @@ class MutableFlow internal constructor(
     override val knownVariables: Set<DataFlowVariable>
         get() = approvedTypeStatements.keys + directAliasMap.keys
 
-    override fun unwrapVariable(variable: RealVariable): RealVariable =
+    override fun unwrapVariable(variable: RealVariable): DataFlowVariable =
         directAliasMap[variable] ?: variable
 
     override fun getTypeStatement(variable: DataFlowVariable): TypeStatement? =

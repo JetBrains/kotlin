@@ -64,8 +64,8 @@ class VariableStorage private constructor(
     fun get(
         fir: FirExpression,
         createReal: Boolean,
-        unwrapAlias: (RealVariable) -> RealVariable?,
-        unwrapAliasInReceivers: (RealVariable) -> RealVariable? = unwrapAlias,
+        unwrapAlias: (RealVariable) -> DataFlowVariable?,
+        unwrapAliasInReceivers: (RealVariable) -> DataFlowVariable? = unwrapAlias,
     ): DataFlowVariable? {
         val unwrapped = fir.unwrapElement() ?: return null
         val isImplicit = unwrapped is FirThisReceiverExpression ||
@@ -79,7 +79,7 @@ class VariableStorage private constructor(
             isImplicit || it is FirClassSymbol || (it is FirVariableSymbol && it !is FirSyntheticPropertySymbol)
         }?.unwrapFakeOverridesIfNecessary() ?: return SyntheticVariable(unwrapped)
 
-        if (unwrapped is FirPropertyAccessExpression) return SyntheticVariable(unwrapped)
+//        if (unwrapped is FirPropertyAccessExpression) return SyntheticVariable(unwrapped)
 
         val qualifiedAccess = unwrapped as? FirQualifiedAccessExpression
         val dispatchReceiverVar = qualifiedAccess?.dispatchReceiver?.let {
