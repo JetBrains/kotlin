@@ -71,3 +71,5 @@ projectTest(parallel = true, jUnitMode = JUnitMode.JUnit5) {
 }.also { confugureFirPluginAnnotationsDependency(it) }
 
 testsJar()
+
+val generateTests by generator("org.jetbrains.kotlin.plugin.sandbox.TestGeneratorKt")
