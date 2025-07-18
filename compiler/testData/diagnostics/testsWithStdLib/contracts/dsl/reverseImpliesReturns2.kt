@@ -37,7 +37,7 @@ operator fun <T> PairList<T>?.component2(): T {
 
 fun testDestructuring(pair: PairList<String?>) {
     val (first, second) = pair
-    first<!UNSAFE_CALL!>.<!>length
+    first.length
     pair.component1().length
 }
 
@@ -51,7 +51,7 @@ fun usage(){
     null.foo().length
     acceptString(null.foo())
     val a = null.foo()
-    a<!UNSAFE_CALL!>.<!>length
+    a.length
 }
 
 // KT-79355
