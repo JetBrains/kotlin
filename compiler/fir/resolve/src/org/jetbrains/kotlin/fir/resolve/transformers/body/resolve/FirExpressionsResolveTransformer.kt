@@ -232,6 +232,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
 
     private fun transformExpressionUsingSmartcastInfo(original: FirExpression): FirExpression {
         when (val expression = original.unwrapDesugaredAssignmentValueRef()) {
+            is FirFunctionCall -> {}
             is FirQualifiedAccessExpression -> dataFlowAnalyzer.exitQualifiedAccessExpression(expression)
             is FirResolvedQualifier -> dataFlowAnalyzer.exitResolvedQualifierNode(expression)
             else -> return original
