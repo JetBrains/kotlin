@@ -30424,6 +30424,18 @@ public class PhasedJvmDiagnosticLightTreeTestGenerated extends AbstractPhasedJvm
         }
 
         @Test
+        @TestMetadata("actualTypealiasToAnyFromInterface.kt")
+        public void testActualTypealiasToAnyFromInterface() {
+          runTest("compiler/testData/diagnostics/tests/multiplatform/typealias/actualTypealiasToAnyFromInterface.kt");
+        }
+
+        @Test
+        @TestMetadata("actualTypealiasToAnyFromInterfaceMultiModule.kt")
+        public void testActualTypealiasToAnyFromInterfaceMultiModule() {
+          runTest("compiler/testData/diagnostics/tests/multiplatform/typealias/actualTypealiasToAnyFromInterfaceMultiModule.kt");
+        }
+
+        @Test
         @TestMetadata("actualTypealiasToNothing.kt")
         public void testActualTypealiasToNothing() {
           runTest("compiler/testData/diagnostics/tests/multiplatform/typealias/actualTypealiasToNothing.kt");
