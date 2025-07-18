@@ -5,10 +5,14 @@
 
 package org.jetbrains.kotlin.swiftexport.standalone.test
 
+import com.intellij.openapi.util.io.FileUtil
 import com.intellij.testFramework.TestDataPath
+import org.jetbrains.kotlin.konan.test.blackbox.support.TestCase
+import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationArtifact
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.UseStandardTestCaseGroupProvider
 import org.jetbrains.kotlin.konan.test.testLibraryAKlibFile
 import org.jetbrains.kotlin.konan.test.testLibraryKotlinxSerializationCore
+import org.jetbrains.kotlin.swiftexport.standalone.SwiftExportModule
 import org.jetbrains.kotlin.swiftexport.standalone.config.SwiftModuleConfig
 import org.jetbrains.kotlin.swiftexport.standalone.runSwiftExport
 import org.jetbrains.kotlin.test.TestMetadata
@@ -18,7 +22,19 @@ import java.io.File
 @TestMetadata("native/swift/swift-export-standalone-integration-tests/external/testData/generation")
 @TestDataPath("\$PROJECT_ROOT")
 @UseStandardTestCaseGroupProvider
-class ExternalProjectGenerationTests : AbstractKlibBasedSwiftRunnerTest() {
+class ExternalProjectGenerationTests : AbstractSwiftExportWithBinaryCompilationTest(), SwiftExportValidator {
+
+    private val tmpdir = FileUtil.createTempDirectory("SwiftExportIntegrationTests", null, false)
+
+    override fun runCompiledTest(
+        testPathFull: File,
+        testCase: TestCase,
+        swiftExportOutputs: Set<SwiftExportModule>,
+        swiftModules: Set<TestCompilationArtifact.Swift.Module>,
+        kotlinBinaryLibrary: TestCompilationArtifact.BinaryLibrary,
+    ) {
+        validateSwiftExportOutput(testPathFull, swiftExportOutputs)
+    }
 
     @Test
     fun `full export of testLibraryA`() {

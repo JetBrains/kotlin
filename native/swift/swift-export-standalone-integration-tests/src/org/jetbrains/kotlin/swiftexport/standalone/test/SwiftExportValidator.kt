@@ -5,31 +5,16 @@
 
 package org.jetbrains.kotlin.swiftexport.standalone.test
 
-import com.intellij.openapi.util.io.FileUtil
-import org.jetbrains.kotlin.konan.test.blackbox.support.TestCase
-import org.jetbrains.kotlin.konan.test.blackbox.support.compilation.TestCompilationArtifact
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.flatMapToSet
 import org.jetbrains.kotlin.swiftexport.standalone.SwiftExportModule
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import org.junit.jupiter.api.assertAll
 import java.io.File
+import kotlin.collections.plus
 import kotlin.io.path.div
 import kotlin.io.path.readText
 
-abstract class AbstractKlibBasedSwiftRunnerTest : AbstractSwiftExportWithBinaryCompilationTest() {
-
-    protected val tmpdir = FileUtil.createTempDirectory("SwiftExportIntegrationTests", null, false)
-
-    override fun runCompiledTest(
-        testPathFull: File,
-        testCase: TestCase,
-        swiftExportOutputs: Set<SwiftExportModule>,
-        swiftModules: Set<TestCompilationArtifact.Swift.Module>,
-        kotlinBinaryLibrary: TestCompilationArtifact.BinaryLibrary,
-    ) {
-        validateSwiftExportOutput(testPathFull, swiftExportOutputs)
-    }
-
+interface SwiftExportValidator {
     /**
      * Check that [swiftExportOutputs] are the same as in [goldenData].
      */
