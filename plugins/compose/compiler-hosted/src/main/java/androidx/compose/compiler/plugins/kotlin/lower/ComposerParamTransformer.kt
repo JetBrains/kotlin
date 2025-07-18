@@ -449,6 +449,7 @@ class ComposerParamTransformer(
     }
 
     private fun defaultArgumentFor(param: IrValueParameter): IrExpression? {
+        // in case of inaccessible (private/internal) constructor we use default value as init expression
         return param.type.defaultValue(param.defaultValue?.expression)?.let {
             IrCompositeImpl(
                 it.startOffset,
@@ -694,6 +695,7 @@ class ComposerParamTransformer(
 
             val parent = fn.parent
             if (parent is IrClass || parent is IrFile) {
+                // checking if any stubs have all same-type parameters and discarding them
                 val addedParamTypes = mutableSetOf(fn.parameters.map { it.type })
                 stubs.forEach { stub ->
                     val stubParamTypes = stub.parameters.map { it.type }
@@ -889,8 +891,15 @@ class ComposerParamTransformer(
 
         val stubs = mutableListOf<IrSimpleFunction>()
         makeValueClassNonPrimitiveNonNullableStub()?.let { stubs.add(it) }
+
+        // such constructors would not be visible in IR on another module's side.
+        // which would lead to different calling-function parameter types patching, so for compatibility we generate additional stub,
+        // where all value-class default args with private constructors would have a nullable type
         makeValueClassInaccessibleConstructorDefaultStub { isPrimaryConstructorPrivate() }?.let { stubs.add(it) }
+        // we cant access private/internal constructors from another module, so we need to generate additional stub
+        // with all default value-class (with private and internal constructors) are marked nullable
         makeValueClassInaccessibleConstructorDefaultStub { !constructorVisibilityIsAtLeastAsAccessibleAsType() }?.let { stubs.add(it) }
+
         return stubs
     }
 

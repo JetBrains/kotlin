@@ -130,6 +130,7 @@ abstract class AbstractComposeLowering(
         return when {
             type.isPrimitiveType() -> type
             type.isInlineClassType() -> {
+                // TODO migrate to more precise constructor accessibility test in k2.4
                 val constructorAccessible = type.classOrNull?.owner?.primaryConstructor != null
                 if (context.platform.isJvm() || constructorAccessible) {
                     if (type.unboxInlineClass().isPrimitiveType()) {
