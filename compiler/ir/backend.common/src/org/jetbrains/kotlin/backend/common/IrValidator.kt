@@ -64,7 +64,7 @@ fun interface InlineFunctionUseSiteChecker {
      *   return `false` (== not permitted). However, there are a few exceptions that are temporarily permitted.
      *   For example, `inline external` intrinsics in Native (KT-66734).
      */
-    fun isPermitted(inlineFunctionUseSite: IrMemberAccessExpression<IrFunctionSymbol>): Boolean
+    fun isPermitted(inlineFunctionUseSite: IrFunctionAccessExpression): Boolean
 }
 
 private class IrValidator(
@@ -106,7 +106,7 @@ private class IrFileValidator(
     private val valueAccessCheckers: MutableList<IrValueAccessChecker> = mutableListOf()
     private val functionAccessCheckers: MutableList<IrFunctionAccessChecker> = mutableListOf(IrNoInlineUseSitesChecker)
     private val functionReferenceCheckers: MutableList<IrFunctionReferenceChecker> =
-        mutableListOf(IrFunctionReferenceFunctionDispatchReceiverChecker, IrNoInlineUseSitesChecker)
+        mutableListOf(IrFunctionReferenceFunctionDispatchReceiverChecker)
     private val constCheckers: MutableList<IrConstChecker> = mutableListOf()
     private val stringConcatenationCheckers: MutableList<IrStringConcatenationChecker> = mutableListOf()
     private val getObjectValueCheckers: MutableList<IrGetObjectValueChecker> = mutableListOf()

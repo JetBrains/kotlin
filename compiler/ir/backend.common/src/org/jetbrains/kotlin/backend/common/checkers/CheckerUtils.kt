@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.descriptors.toEffectiveVisibilityOrNull
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrExpression
+import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
@@ -176,7 +177,7 @@ internal fun checkVisibility(
 }
 
 internal fun checkFunctionUseSite(
-    expression: IrMemberAccessExpression<IrFunctionSymbol>,
+    expression: IrFunctionAccessExpression,
     inlineFunctionUseSiteChecker: InlineFunctionUseSiteChecker,
     context: CheckerContext,
 ) {

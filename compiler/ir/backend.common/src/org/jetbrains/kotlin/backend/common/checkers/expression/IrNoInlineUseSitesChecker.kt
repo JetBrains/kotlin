@@ -7,12 +7,13 @@ package org.jetbrains.kotlin.backend.common.checkers.expression
 
 import org.jetbrains.kotlin.backend.common.checkers.checkFunctionUseSite
 import org.jetbrains.kotlin.backend.common.checkers.context.CheckerContext
+import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 
-internal object IrNoInlineUseSitesChecker : IrMemberAccessChecker {
+internal object IrNoInlineUseSitesChecker : IrFunctionAccessChecker {
     override fun check(
-        expression: IrMemberAccessExpression<IrFunctionSymbol>,
+        expression: IrFunctionAccessExpression,
         context: CheckerContext,
     ) {
         context.checkInlineFunctionUseSites?.let {
