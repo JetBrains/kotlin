@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.util.render
 
-internal object IrExpressionTypeChecker : IrElementChecker<IrExpression>() {
+internal object IrExpressionTypeChecker : IrElementChecker<IrExpression>(IrExpression::class) {
     override fun check(
         element: IrExpression,
         context: CheckerContext,

@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.ir.expressions.IrGetField
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 
-internal object IrGetFieldTypeChecker : IrElementChecker<IrGetField>() {
+internal object IrGetFieldTypeChecker : IrElementChecker<IrGetField>(IrGetField::class) {
     override fun check(
         element: IrGetField,
         context: CheckerContext,

@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.backend.common.checkers.IrElementChecker
 import org.jetbrains.kotlin.backend.common.checkers.context.CheckerContext
 import org.jetbrains.kotlin.ir.expressions.IrValueAccessExpression
 
-internal object IrValueAccessScopeChecker : IrElementChecker<IrValueAccessExpression>() {
+internal object IrValueAccessScopeChecker : IrElementChecker<IrValueAccessExpression>(IrValueAccessExpression::class) {
     override fun check(
         element: IrValueAccessExpression,
         context: CheckerContext,

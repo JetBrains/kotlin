@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.ir.util.fileOrNull
 /**
  * Makes sure that [IrField]s are not accessed outside their containing files.
  */
-internal object IrCrossFileFieldUsageChecker : IrElementChecker<IrFieldAccessExpression>() {
+internal object IrCrossFileFieldUsageChecker : IrElementChecker<IrFieldAccessExpression>(IrFieldAccessExpression::class) {
     override fun check(
         element: IrFieldAccessExpression,
         context: CheckerContext,

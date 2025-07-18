@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.backend.common.checkers.context.CheckerContext
 import org.jetbrains.kotlin.backend.common.checkers.ensureTypeIs
 import org.jetbrains.kotlin.ir.expressions.IrStringConcatenation
 
-internal object IrStringConcatenationTypeChecker : IrElementChecker<IrStringConcatenation>() {
+internal object IrStringConcatenationTypeChecker : IrElementChecker<IrStringConcatenation>(IrStringConcatenation::class) {
     override fun check(
         element: IrStringConcatenation,
         context: CheckerContext,
