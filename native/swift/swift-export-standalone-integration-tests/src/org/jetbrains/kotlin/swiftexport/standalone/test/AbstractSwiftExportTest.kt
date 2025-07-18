@@ -22,12 +22,8 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.util.flatMapToSet
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.getAbsoluteFile
 import org.jetbrains.kotlin.konan.test.blackbox.support.util.mapToSet
 import org.jetbrains.kotlin.swiftexport.standalone.*
-import org.jetbrains.kotlin.test.backend.handlers.UpdateTestDataSupport
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import org.jetbrains.kotlin.utils.KotlinNativePaths
-import org.jetbrains.kotlin.utils.filterToSetOrEmpty
-import org.junit.jupiter.api.Assumptions
-import org.junit.jupiter.api.extension.ExtendWith
 import java.io.File
 import java.nio.file.Path
 import kotlin.io.path.Path
@@ -35,8 +31,9 @@ import kotlin.io.path.div
 import org.jetbrains.kotlin.swiftexport.standalone.UnsupportedDeclarationReporterKind
 import org.jetbrains.kotlin.swiftexport.standalone.config.SwiftExportConfig
 import org.jetbrains.kotlin.swiftexport.standalone.config.SwiftModuleConfig
+import org.junit.jupiter.api.extension.ExtendWith
 
-@ExtendWith(SwiftExportTestSupport::class, UpdateTestDataSupport::class)
+@ExtendWith(SwiftExportTestSupport::class)
 abstract class AbstractSwiftExportTest {
     lateinit var testRunSettings: TestRunSettings
     lateinit var testRunProvider: TestRunProvider
@@ -47,16 +44,7 @@ abstract class AbstractSwiftExportTest {
     protected val testCompilationFactory = TestCompilationFactory()
     private val compiledSwiftCache = ThreadSafeCache<SwiftExportModule, TestCompilationArtifact.Swift.Module>()
 
-    protected abstract fun runCompiledTest(
-        testPathFull: File,
-        testCase: TestCase,
-        swiftExportOutputs: Set<SwiftExportModule>,
-        swiftModules: Set<TestCompilationArtifact.Swift.Module>,
-        kotlinBinaryLibrary: TestCompilationArtifact.BinaryLibrary,
-    )
-
-    protected fun runTest(@TestDataFile testDir: String) {
-        Assumptions.assumeTrue(targets.testTarget.family.isAppleFamily)
+    protected fun runConvertToSwift(@TestDataFile testDir: String): Pair<Set<SwiftExportModule>, TestCase> {
         val testPathFull = getAbsoluteFile(testDir)
 
         val testCaseId = TestCaseId.TestDataFile((testPathFull.toPath() / "${testPathFull.name}.kt").toFile())
@@ -103,30 +91,7 @@ abstract class AbstractSwiftExportTest {
                     it.allRegularDependencies.filterIsInstance<TestModule.Exclusive>().toSet()
                 } - originalTestCase.rootModules,
         )
-
-        // TODO: we don't need to compile Kotlin binary for generation tests.
-        val kotlinBinaryLibrary = testCompilationFactory.testCaseToBinaryLibrary(
-            resultingTestCase, testRunSettings,
-            kind = BinaryLibraryKind.STATIC,
-        ).result.assertSuccess().resultingArtifact
-
-        // compile swift into binary
-        val swiftModules = swiftExportOutputs.flatMapToSet {
-            it.compile(
-                testPathFull,
-                swiftExportOutputs
-            )
-        }
-
-        // at this point we know that the generated code from SwiftExport can be compiled into library
-        // and we are ready to perform other checks
-        runCompiledTest(
-            testPathFull,
-            resultingTestCase,
-            swiftExportOutputs,
-            swiftModules,
-            kotlinBinaryLibrary
-        )
+        return swiftExportOutputs to resultingTestCase
     }
 
     private fun createInputModule(
@@ -334,12 +299,4 @@ private fun getUnsupportedDeclarationsReporterKind(configMap: Map<String, String
             UnsupportedDeclarationReporterKind.entries
                 .singleOrNull { it.name.equals(value, ignoreCase = true) }
         } ?: UnsupportedDeclarationReporterKind.Silent
-}
-
-object KonanHome {
-    private const val KONAN_HOME_PROPERTY_KEY = "kotlin.internal.native.test.nativeHome"
-
-    val konanHomePath: String
-        get() = System.getProperty(KONAN_HOME_PROPERTY_KEY)
-            ?: error("Missing System property: '$KONAN_HOME_PROPERTY_KEY'")
 }

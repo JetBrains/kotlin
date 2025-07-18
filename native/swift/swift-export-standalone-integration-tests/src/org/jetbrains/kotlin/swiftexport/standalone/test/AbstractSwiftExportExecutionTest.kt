@@ -32,7 +32,7 @@ import java.io.File
  * See more at https://github.com/swiftlang/swift-testing/tree/main/Documentation/ABI.
  * Harness is at native/native.tests/testData/framework/main-testing.swift
  */
-abstract class AbstractSwiftExportExecutionTest : AbstractSwiftExportTest() {
+abstract class AbstractSwiftExportExecutionTest : AbstractSwiftExportWithBinaryCompilationTest() {
     private val testSuiteDir = File("native/native.tests/testData/framework")
 
     @BeforeEach
