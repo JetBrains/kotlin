@@ -546,8 +546,12 @@ class SwiftCompilation<T : TestCompilationArtifact>(
     outputFile: (T) -> File,
 ) : TestCompilation<T>() {
     override val result: TestCompilationResult<out T> by lazy {
-        val configs = testRunSettings.configurables as AppleConfigurables
-        val swiftTarget = configs.targetTriple.withOSVersion(configs.osVersionMin).toString()
+        val configs = testRunSettings.configurables
+        val swiftTarget = if (configs is AppleConfigurables) {
+            configs.targetTriple.withOSVersion(configs.osVersionMin)
+        } else {
+            configs.targetTriple
+        }.toString()
 
         val optimizationModeFlags = swiftcOptimizationModeFlags(testRunSettings.get<OptimizationMode>())
 

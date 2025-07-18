@@ -56,7 +56,6 @@ abstract class AbstractSwiftExportTest {
     )
 
     protected fun runTest(@TestDataFile testDir: String) {
-        Assumptions.assumeTrue(targets.testTarget.family.isAppleFamily)
         val testPathFull = getAbsoluteFile(testDir)
 
         val testCaseId = TestCaseId.TestDataFile((testPathFull.toPath() / "${testPathFull.name}.kt").toFile())

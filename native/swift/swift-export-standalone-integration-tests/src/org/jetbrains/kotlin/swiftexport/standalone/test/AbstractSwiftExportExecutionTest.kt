@@ -35,13 +35,6 @@ import java.io.File
 abstract class AbstractSwiftExportExecutionTest : AbstractSwiftExportTest() {
     private val testSuiteDir = File("native/native.tests/testData/framework")
 
-    @BeforeEach
-    fun checkHost() {
-        Assumptions.assumeTrue(testRunSettings.get<KotlinNativeTargets>().hostTarget.family.isAppleFamily)
-        // TODO: KT-75530
-        Assumptions.assumeTrue(testRunSettings.get<KotlinNativeTargets>().testTarget.family == Family.OSX)
-    }
-
     override fun runCompiledTest(
         testPathFull: File,
         testCase: TestCase,
