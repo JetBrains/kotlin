@@ -833,16 +833,6 @@ inside suspend functions and lambdas to distinguish them from user code by debug
         }
 
     @Argument(
-        value = "-Xuse-k2-kapt",
-        description = "Enable the experimental support for K2 KAPT.",
-    )
-    var useK2Kapt: Boolean? = null
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
-    @Argument(
         value = "-Xcompile-builtins-as-part-of-stdlib",
         description = "Enable behaviour needed to compile builtins as part of JVM stdlib",
     )
