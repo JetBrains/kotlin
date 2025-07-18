@@ -81,7 +81,6 @@ import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments.Compan
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments.Companion.X_USE_14_INLINE_CLASSES_MANGLING_SCHEME
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments.Companion.X_USE_FAST_JAR_FILE_SYSTEM
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments.Companion.X_USE_INLINE_SCOPES_NUMBERS
-import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments.Companion.X_USE_K2_KAPT
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments.Companion.X_USE_OLD_CLASS_FILES_READING
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments.Companion.X_USE_TYPE_TABLE
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments.Companion.X_VALIDATE_BYTECODE
@@ -179,7 +178,6 @@ internal class JvmCompilerArgumentsImpl : CommonCompilerArgumentsImpl(), JvmComp
     if ("X_NO_NEW_JAVA_ANNOTATION_TARGETS" in optionsMap) { arguments.noNewJavaAnnotationTargets = get(X_NO_NEW_JAVA_ANNOTATION_TARGETS) }
     if ("X_VALUE_CLASSES" in optionsMap) { arguments.valueClasses = get(X_VALUE_CLASSES) }
     if ("X_USE_INLINE_SCOPES_NUMBERS" in optionsMap) { arguments.useInlineScopesNumbers = get(X_USE_INLINE_SCOPES_NUMBERS) }
-    if ("X_USE_K2_KAPT" in optionsMap) { arguments.useK2Kapt = get(X_USE_K2_KAPT) }
     if ("X_COMPILE_BUILTINS_AS_PART_OF_STDLIB" in optionsMap) { arguments.expectBuiltinsAsPartOfStdlib = get(X_COMPILE_BUILTINS_AS_PART_OF_STDLIB) }
     if ("X_OUTPUT_BUILTINS_METADATA" in optionsMap) { arguments.outputBuiltinsMetadata = get(X_OUTPUT_BUILTINS_METADATA) }
     if ("X_ANNOTATIONS_IN_METADATA" in optionsMap) { arguments.annotationsInMetadata = get(X_ANNOTATIONS_IN_METADATA) }
@@ -373,8 +371,6 @@ internal class JvmCompilerArgumentsImpl : CommonCompilerArgumentsImpl(), JvmComp
 
     public val X_USE_INLINE_SCOPES_NUMBERS: JvmCompilerArgument<Boolean> =
         JvmCompilerArgument("X_USE_INLINE_SCOPES_NUMBERS")
-
-    public val X_USE_K2_KAPT: JvmCompilerArgument<Boolean?> = JvmCompilerArgument("X_USE_K2_KAPT")
 
     public val X_COMPILE_BUILTINS_AS_PART_OF_STDLIB: JvmCompilerArgument<Boolean> =
         JvmCompilerArgument("X_COMPILE_BUILTINS_AS_PART_OF_STDLIB")
