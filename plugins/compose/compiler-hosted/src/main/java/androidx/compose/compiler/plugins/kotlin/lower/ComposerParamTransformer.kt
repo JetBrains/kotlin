@@ -449,7 +449,7 @@ class ComposerParamTransformer(
     }
 
     private fun defaultArgumentFor(param: IrValueParameter): IrExpression? {
-        return param.type.defaultValue().let {
+        return param.type.defaultValue(param.defaultValue?.expression)?.let {
             IrCompositeImpl(
                 it.startOffset,
                 it.endOffset,
@@ -466,9 +466,10 @@ class ComposerParamTransformer(
     //  don't have access to that so instead we are just going to construct the inline class
     //  itself and hope that it gets lowered properly.
     private fun IrType.defaultValue(
+        orDefaultExpr: IrExpression? = null,
         startOffset: Int = UNDEFINED_OFFSET,
         endOffset: Int = UNDEFINED_OFFSET,
-    ): IrExpression {
+    ): IrExpression? {
         val classSymbol = classOrNull
         if (this !is IrSimpleType || isMarkedNullable() || !isInlineClassType()) {
             return if (isMarkedNullable()) {
@@ -486,22 +487,25 @@ class ComposerParamTransformer(
                 this
             )
         } else {
-            val ctor = classSymbol!!.constructors.first { it.owner.isPrimary }
-            val underlyingType = getInlineClassUnderlyingType(classSymbol.owner)
+            return classSymbol!!.constructors.firstOrNull { it.owner.isPrimary }?.let { ctor ->
+                val underlyingType = getInlineClassUnderlyingType(classSymbol.owner)
 
-            // TODO(lmr): We should not be calling the constructor here, but this seems like a
-            //  reasonable interim solution.
-            return IrConstructorCallImpl(
-                startOffset,
-                endOffset,
-                this,
-                ctor,
-                typeArgumentsCount = 0,
-                constructorTypeArgumentsCount = 0,
-                origin = null
-            ).also {
-                it.arguments[0] = underlyingType.defaultValue(startOffset, endOffset)
-            }
+                // TODO(lmr): We should not be calling the constructor here, but this seems like a
+                //  reasonable interim solution.
+                underlyingType.defaultValue(null, startOffset, endOffset)?.let { defaultUnderlyingTypeValue ->
+                    IrConstructorCallImpl(
+                        startOffset,
+                        endOffset,
+                        this,
+                        ctor,
+                        typeArgumentsCount = 0,
+                        constructorTypeArgumentsCount = 0,
+                        origin = null
+                    ).also {
+                        it.arguments[0] = defaultUnderlyingTypeValue
+                    }
+                }
+            } ?: orDefaultExpr
         }
     }
 
@@ -679,21 +683,26 @@ class ComposerParamTransformer(
                 }
             }
 
-            fn.makeStubsForDefaultValueClassIfNeeded().forEach {
-                when (val parent = fn.parent) {
-                    is IrClass -> parent.addChild(it)
-                    is IrFile -> parent.addChild(it)
-                    else -> {
-                        // ignore
-                    }
-                }
-            }
+            val stubs = fn.makeStubsForDefaultValueClassIfNeeded()
 
             // update parameter types so they are ready to accept the default values
             fn.parameters.fastForEach { param ->
                 if (fn.hasDefaultForParam(param.indexInParameters)) {
                     param.type = param.type.defaultParameterType()
                 }
+            }
+
+            val parent = fn.parent
+            if (parent is IrClass || parent is IrFile) {
+                val addedParamTypes = mutableSetOf(fn.parameters.map { it.type })
+                stubs.forEach { stub ->
+                    val stubParamTypes = stub.parameters.map { it.type }
+                    if (addedParamTypes.add(stubParamTypes)) {
+                        parent.addChild(stub)
+                    }
+                }
+            } else {
+                // ignore
             }
 
             inlineLambdaInfo.scan(fn)
@@ -784,7 +793,20 @@ class ComposerParamTransformer(
         return type.classOrNull?.owner?.primaryConstructor?.let { Visibilities.isPrivate(it.visibility.delegate) } == true
     }
 
-    private fun IrSimpleFunction.makeValueClassPrivateConstructorDefaultStub(): IrSimpleFunction? {
+    fun IrType.constructorVisibilityIsAtLeastAsAccessibleAsType(): Boolean {
+        val clazz = type.classOrNull?.owner
+        val primaryConstructor = clazz?.primaryConstructor
+        val classVisibility = clazz?.visibility?.delegate
+        val constructorVisibility = primaryConstructor?.visibility?.delegate
+
+        // if public type has private constructor, it is inaccessible for external uses,
+        // but private constructor for private type should be ok as far
+        // as we could not use that type in the first place
+        return constructorVisibility != null && classVisibility != null
+                && Visibilities.compare(constructorVisibility, classVisibility)?.let { it >= 0 } == true
+    }
+
+    private fun IrSimpleFunction.makeValueClassPrivateConstructorDefaultStub(typeCheck: IrType.() -> Boolean): IrSimpleFunction? {
         val defaultValueClassesWithPrivateConstructors = mutableSetOf<Int>()
         for (i in parameters.indices) {
             val param = parameters[i]
@@ -793,7 +815,7 @@ class ComposerParamTransformer(
                 param.type.isInlineClassType() &&
                 !param.type.isNullable() &&
                 param.type.unboxInlineClass().isPrimitiveType() &&  // non-primitive case is covered by another stub
-                param.type.isPrimaryConstructorPrivate()
+                param.type.typeCheck()
             ) {
                 defaultValueClassesWithPrivateConstructors.add(i)
             }
@@ -864,7 +886,8 @@ class ComposerParamTransformer(
 
         val stubs = mutableListOf<IrSimpleFunction>()
         makeValueClassNonPrimitiveNonNullableStub()?.let { stubs.add(it) }
-        makeValueClassPrivateConstructorDefaultStub()?.let { stubs.add(it) }
+        makeValueClassPrivateConstructorDefaultStub { isPrimaryConstructorPrivate() }?.let { stubs.add(it) }
+        makeValueClassPrivateConstructorDefaultStub { !constructorVisibilityIsAtLeastAsAccessibleAsType() }?.let { stubs.add(it) }
         return stubs
     }
 
