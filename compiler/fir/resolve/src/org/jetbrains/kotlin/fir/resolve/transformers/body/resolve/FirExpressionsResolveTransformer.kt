@@ -600,7 +600,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
             if (enableArrayOfCallTransformation) {
                 return arrayOfCallTransformer.transformFunctionCall(result, session)
             }
-            return result
+            return result.addSmartcastIfNeeded(data)
         }
 
     /**

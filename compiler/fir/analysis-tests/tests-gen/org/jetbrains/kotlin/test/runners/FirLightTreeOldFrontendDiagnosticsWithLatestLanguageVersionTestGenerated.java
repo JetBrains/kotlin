@@ -46141,6 +46141,12 @@ public class FirLightTreeOldFrontendDiagnosticsWithLatestLanguageVersionTestGene
       @TestDataPath("$PROJECT_ROOT")
       public class Dsl {
         @Test
+        @TestMetadata("accessors2.kt")
+        public void testAccessors2() {
+          runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/dsl/accessors2.kt");
+        }
+
+        @Test
         @TestMetadata("accessorsAllowedInK2.kt")
         public void testAccessorsAllowedInK2() {
           runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/dsl/accessorsAllowedInK2.kt");
