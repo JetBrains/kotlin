@@ -171,6 +171,9 @@ abstract class AbstractKotlinNativeCompile<
     @get:Internal
     internal val konanDistribution = project.nativeProperties.actualNativeHomeDirectory
 
+    @get:Input
+    val exportKdoc: Property<Boolean> = objectFactory.property(true)
+
     @get:Internal
     internal val enabledOnCurrentHostForKlibCompilationProperty: Property<Boolean> = project.objects.property<Boolean>().convention(
         // For KT-66452 we need to get rid of invocation of 'Task.project'.
@@ -308,9 +311,6 @@ internal constructor(
 
     @get:Input
     override val debuggable = true
-
-    @get:Input
-    val exportKdoc: Property<Boolean> = objectFactory.property(true)
 
     @get:Internal
     override val baseName: String by lazy {

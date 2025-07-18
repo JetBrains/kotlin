@@ -6041,6 +6041,7 @@ public abstract class org/jetbrains/kotlin/gradle/tasks/AbstractKotlinNativeComp
 	public final fun getCompilerPluginCommandLine ()Ljava/util/List;
 	public final fun getCompilerPluginOptions ()Lorg/jetbrains/kotlin/gradle/tasks/CompilerPluginOptions;
 	public abstract fun getDebuggable ()Z
+	public final fun getExportKdoc ()Lorg/gradle/api/provider/Property;
 	public fun getKlibDirectory ()Lorg/gradle/api/provider/Provider;
 	public fun getKlibFile ()Lorg/gradle/api/provider/Provider;
 	public final fun getKotlinNativeVersion ()Ljava/lang/String;
@@ -6334,7 +6335,6 @@ public abstract class org/jetbrains/kotlin/gradle/tasks/KotlinNativeCompile : or
 	public fun getCompilerOptions ()Lorg/jetbrains/kotlin/gradle/dsl/KotlinNativeCompilerOptions;
 	public fun getDebuggable ()Z
 	public final fun getEnabledLanguageFeatures ()Ljava/util/Set;
-	public final fun getExportKdoc ()Lorg/gradle/api/provider/Property;
 	public fun getKlibOutput ()Lorg/gradle/api/provider/Provider;
 	public final fun getKonanDataDir ()Lorg/gradle/api/provider/Provider;
 	public final fun getKonanHome ()Lorg/gradle/api/provider/Provider;

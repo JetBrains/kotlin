@@ -5,7 +5,13 @@
 
 package org.jetbrains.kotlin.gradle.plugin.mpp.compilationImpl
 
+import org.gradle.api.Project
+import org.gradle.api.attributes.Category
+import org.gradle.api.attributes.DocsType
 import org.gradle.api.plugins.BasePlugin
+import org.gradle.api.provider.Provider
+import org.gradle.api.publish.PublishingExtension
+import org.gradle.api.publish.maven.MavenPublication
 import org.gradle.language.base.plugins.LifecycleBasePlugin
 import org.jetbrains.kotlin.gradle.artifacts.klibOutputDirectory
 import org.jetbrains.kotlin.gradle.dsl.ExplicitApiMode
@@ -17,7 +23,6 @@ import org.jetbrains.kotlin.gradle.plugin.SubpluginEnvironment
 import org.jetbrains.kotlin.gradle.plugin.launchInStage
 import org.jetbrains.kotlin.gradle.plugin.mpp.AbstractKotlinNativeCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMetadataCompilation
-import org.jetbrains.kotlin.gradle.plugin.mpp.enabledOnCurrentHostForBinariesCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.enabledOnCurrentHostForKlibCompilation
 import org.jetbrains.kotlin.gradle.targets.native.toolchain.chooseKotlinNativeProvider
 import org.jetbrains.kotlin.gradle.tasks.KotlinNativeCompile
@@ -65,6 +70,7 @@ internal val KotlinCreateNativeCompileTasksSideEffect = KotlinCompilationSideEff
                 compilation.konanTarget
             )
         )
+        task.exportKdoc.set(project.checkForSourcesPublication())
         task.enabledOnCurrentHostForKlibCompilationProperty.set(enabledOnCurrentHost)
         task.kotlinCompilerArgumentsLogLevel
             .value(project.kotlinPropertiesProvider.kotlinCompilerArgumentsLogLevel)
@@ -78,6 +84,32 @@ internal val KotlinCreateNativeCompileTasksSideEffect = KotlinCompilationSideEff
     project.tasks.named(compilation.compileAllTaskName).dependsOn(kotlinNativeCompile)
     project.tasks.named(LifecycleBasePlugin.ASSEMBLE_TASK_NAME).dependsOn(kotlinNativeCompile)
     compilation.addCompilerPlugins()
+}
+
+private fun Project.checkForSourcesPublication() = provider {
+    val publishing = project.extensions.findByType(PublishingExtension::class.java)
+
+    if (publishing == null) {
+        true
+    } else {
+        // Check if any Maven publication has sources artifacts
+        publishing.publications.filterIsInstance<MavenPublication>().any { publication ->
+            // Primary check: artifacts with classifier "sources"
+            val hasSourcesArtifact = publication.artifacts.any { artifact ->
+                artifact.classifier == "sources"
+            }
+
+            // Secondary check: common sources jar naming patterns
+            val hasSourcesJarFile = publication.artifacts.any { artifact ->
+                val fileName = artifact.file.name
+                fileName.contains("-sources.jar") ||
+                        fileName.endsWith("sources.jar") ||
+                        fileName.matches(Regex(".*-sources\\.[a-z]+"))
+            }
+
+            hasSourcesArtifact || hasSourcesJarFile
+        }
+    }
 }
 
 private fun AbstractKotlinNativeCompilation.addCompilerPlugins() {
