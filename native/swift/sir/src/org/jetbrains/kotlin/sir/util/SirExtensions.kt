@@ -89,3 +89,32 @@ val SirVariable.swiftFqName: String
 
 val SirTypealias.expandedType: SirType
     get() = ((type as? SirNominalType)?.typeDeclaration as? SirTypealias)?.expandedType ?: type
+
+
+private val SirFunction.isConfusable: Boolean get() = this.parameters.isEmpty() && this.extensionReceiverParameter == null
+
+fun SirDeclaration.conflictsWith(other: SirDeclaration): Boolean = when (this) {
+    is SirFunction -> when (other) {
+        is SirFunction -> this.name == other.name
+                && this.isInstance == other.isInstance
+                && this.extensionReceiverParameter == other.extensionReceiverParameter
+                && this.errorType == other.errorType
+                && this.parameters == other.parameters
+        is SirVariable -> this.name == other.name && this.isInstance == other.isInstance && this.isConfusable
+        is SirNamedDeclaration -> this.name == other.name && this.isInstance.not()
+        else -> false
+    }
+    is SirVariable -> when (other) {
+        is SirFunction -> this.name == other.name && this.isInstance == other.isInstance && other.isConfusable
+        is SirVariable -> this.name == other.name && this.isInstance == other.isInstance
+        is SirNamedDeclaration -> this.name == other.name && this.isInstance.not()
+        else -> false
+    }
+    is SirNamedDeclaration -> when (other) {
+        is SirFunction -> this.name == other.name && other.isInstance.not()
+        is SirVariable -> this.name == other.name && other.isInstance.not()
+        is SirNamedDeclaration -> this.name == other.name
+        else -> false
+    }
+    else -> false
+}
