@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.asJava.elements.*
 import org.jetbrains.kotlin.light.classes.symbol.basicIsEquivalentTo
 import org.jetbrains.kotlin.light.classes.symbol.classes.typeForValueClass
 import org.jetbrains.kotlin.light.classes.symbol.invalidAccess
+import org.jetbrains.kotlin.light.classes.symbol.isOriginEquivalentTo
 import org.jetbrains.kotlin.light.classes.symbol.methods.SymbolLightMethodBase
 import org.jetbrains.kotlin.psi.KtParameter
 
@@ -58,7 +59,7 @@ internal abstract class SymbolLightParameterBase(containingDeclaration: SymbolLi
     override fun toString(): String = "${this::class.simpleName}:$name"
 
     override fun isEquivalentTo(another: PsiElement?): Boolean =
-        basicIsEquivalentTo(this, another as? PsiParameter)
+        basicIsEquivalentTo(this, another as? PsiParameter) || isOriginEquivalentTo(another)
 
     override fun getNavigationElement(): PsiElement = kotlinOrigin ?: method.navigationElement
 
