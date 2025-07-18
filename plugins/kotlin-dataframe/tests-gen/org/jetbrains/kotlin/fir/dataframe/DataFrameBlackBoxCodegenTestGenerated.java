@@ -974,6 +974,18 @@ public class DataFrameBlackBoxCodegenTestGenerated extends AbstractDataFrameBlac
   }
 
   @Test
+  @TestMetadata("updateWhere.kt")
+  public void testUpdateWhere() {
+    runTest("plugins/kotlin-dataframe/testData/box/updateWhere.kt");
+  }
+
+  @Test
+  @TestMetadata("updateWhereFillNulls.kt")
+  public void testUpdateWhereFillNulls() {
+    runTest("plugins/kotlin-dataframe/testData/box/updateWhereFillNulls.kt");
+  }
+
+  @Test
   @TestMetadata("valueCounts.kt")
   public void testValueCounts() {
     runTest("plugins/kotlin-dataframe/testData/box/valueCounts.kt");
