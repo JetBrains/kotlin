@@ -29,7 +29,7 @@ import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.importO
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.inheritorsProvider.AbstractDanglingFileSealedInheritorsTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.inheritorsProvider.AbstractSealedInheritorsTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.klibSourceFileProvider.AbstractGetKlibSourceFileNameTest
-import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.multiplatformInfoProvider.AbstractExpectForActualTest
+import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.relationProvider.AbstractGetExpectsForActualTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.javaInteroperabilityComponent.AbstractExpressionTypeAsPsiTypeTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.javaInteroperabilityComponent.AbstractPsiTypeAsKaTypeTest
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.javaInteroperabilityComponent.AbstractDeclarationTypeAsPsiTypeTest
@@ -484,12 +484,6 @@ private fun AnalysisApiTestGroup.generateAnalysisApiComponentsTests() {
         }
     }
 
-    component("multiplatformInfoProvider") {
-        test<AbstractExpectForActualTest> {
-            model(it, "expectForActual")
-        }
-    }
-
     component("javaInteroperabilityComponent") {
         test<AbstractDeclarationTypeAsPsiTypeTest> {
             model(it, "asPsiType/forDeclaration")
@@ -664,6 +658,10 @@ private fun AnalysisApiTestGroup.generateAnalysisApiComponentsTests() {
             filter = frontendIs(FrontendKind.Fir),
         ) {
             model(it, "originalConstructorIfTypeAliased")
+        }
+
+        test<AbstractGetExpectsForActualTest> {
+            model(it, "getExpectsForActual")
         }
     }
 
