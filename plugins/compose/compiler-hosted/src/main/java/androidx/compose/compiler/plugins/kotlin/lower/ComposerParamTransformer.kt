@@ -806,7 +806,10 @@ class ComposerParamTransformer(
                 && Visibilities.compare(constructorVisibility, classVisibility)?.let { it >= 0 } == true
     }
 
-    private fun IrSimpleFunction.makeValueClassPrivateConstructorDefaultStub(typeCheck: IrType.() -> Boolean): IrSimpleFunction? {
+    private fun IrSimpleFunction.makeValueClassInaccessibleConstructorDefaultStub(visibilityCheck: IrType.() -> Boolean): IrSimpleFunction? {
+        if (context.platform.isJvm()) {
+            return null
+        }
         val defaultValueClassesWithPrivateConstructors = mutableSetOf<Int>()
         for (i in parameters.indices) {
             val param = parameters[i]
@@ -815,7 +818,7 @@ class ComposerParamTransformer(
                 param.type.isInlineClassType() &&
                 !param.type.isNullable() &&
                 param.type.unboxInlineClass().isPrimitiveType() &&  // non-primitive case is covered by another stub
-                param.type.typeCheck()
+                param.type.visibilityCheck()
             ) {
                 defaultValueClassesWithPrivateConstructors.add(i)
             }
@@ -886,8 +889,8 @@ class ComposerParamTransformer(
 
         val stubs = mutableListOf<IrSimpleFunction>()
         makeValueClassNonPrimitiveNonNullableStub()?.let { stubs.add(it) }
-        makeValueClassPrivateConstructorDefaultStub { isPrimaryConstructorPrivate() }?.let { stubs.add(it) }
-        makeValueClassPrivateConstructorDefaultStub { !constructorVisibilityIsAtLeastAsAccessibleAsType() }?.let { stubs.add(it) }
+        makeValueClassInaccessibleConstructorDefaultStub { isPrimaryConstructorPrivate() }?.let { stubs.add(it) }
+        makeValueClassInaccessibleConstructorDefaultStub { !constructorVisibilityIsAtLeastAsAccessibleAsType() }?.let { stubs.add(it) }
         return stubs
     }
 
