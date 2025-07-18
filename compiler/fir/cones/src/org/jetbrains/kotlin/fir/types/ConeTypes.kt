@@ -143,14 +143,22 @@ open class ConeFlexibleType(
         if (other !is ConeFlexibleType) return false
 
         if (lowerBound != other.lowerBound) return false
+
+        if (isTrivial && other.isTrivial) return true
+
         if (upperBound != other.upperBound) return false
 
         return true
     }
 
     final override fun hashCode(): Int {
-        var result = lowerBound.hashCode()
-        result = 31 * result + upperBound.hashCode()
+        val lowerBoundResult = lowerBound.hashCode()
+        var result = lowerBoundResult
+        result *= 31
+        result += when {
+            isTrivial -> lowerBoundResult + 1 // One for marked-as-nullable
+            else -> upperBound.hashCode()
+        }
         return result
     }
 }
