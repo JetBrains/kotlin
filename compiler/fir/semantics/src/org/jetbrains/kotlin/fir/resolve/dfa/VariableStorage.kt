@@ -79,6 +79,8 @@ class VariableStorage private constructor(
             isImplicit || it is FirClassSymbol || (it is FirVariableSymbol && it !is FirSyntheticPropertySymbol)
         }?.unwrapFakeOverridesIfNecessary() ?: return SyntheticVariable(unwrapped)
 
+        if (unwrapped is FirPropertyAccessExpression) return SyntheticVariable(unwrapped)
+
         val qualifiedAccess = unwrapped as? FirQualifiedAccessExpression
         val dispatchReceiverVar = qualifiedAccess?.dispatchReceiver?.let {
             (get(it, createReal, unwrapAliasInReceivers) ?: return null) as? RealVariable ?: return SyntheticVariable(unwrapped)
