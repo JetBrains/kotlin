@@ -14,14 +14,11 @@ output/javaClasses
 output/sources
 
 # kotlinc
--language-version %LATEST_STABLE%
 -cp %KOTLIN_STDLIB%
 -d output/ap
 ap/Processor.kt
 
 # kapt
--language-version %LATEST_STABLE%
--Xuse-k2-kapt
 -Kapt-mode=apt
 -Kapt-stubs=output/stubs
 -Kapt-classes=output/classes

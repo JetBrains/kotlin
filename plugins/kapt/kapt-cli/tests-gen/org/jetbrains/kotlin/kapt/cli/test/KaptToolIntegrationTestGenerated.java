@@ -60,12 +60,6 @@ public class KaptToolIntegrationTestGenerated extends AbstractKaptToolIntegratio
   }
 
   @Test
-  @TestMetadata("fallback")
-  public void testFallback() {
-    runTest("plugins/kapt/kapt-cli/testData/integration-k1/fallback/");
-  }
-
-  @Test
   @TestMetadata("kotlinFileGeneration")
   public void testKotlinFileGeneration() {
     runTest("plugins/kapt/kapt-cli/testData/integration-k1/kotlinFileGeneration/");

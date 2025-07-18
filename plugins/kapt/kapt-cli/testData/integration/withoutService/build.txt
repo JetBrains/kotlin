@@ -14,14 +14,11 @@ output/javaClasses
 output/sources
 
 # kotlinc
--language-version 2.0
 -cp %KOTLIN_STDLIB%
 -d output/ap
 ap/Processor.kt
 
 # kapt
--language-version 2.0
--Xuse-k2-kapt
 -Kapt-stubs=output/stubs
 -Kapt-classes=output/classes
 -Kapt-sources=output/sources
@@ -32,7 +29,6 @@ ap/Processor.kt
 Test.kt
 
 # kotlinc
--language-version 2.0
 -d output/classes
 -cp output/ap:output/classes:%KOTLIN_STDLIB%
 Test.kt

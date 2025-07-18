@@ -3,8 +3,6 @@ output/stubs
 
 # kapt
 -jvm-default=disable
--language-version 2.0
--Xuse-k2-kapt
 -Kapt-mode=stubs
 -Kapt-stubs=output/stubs
 -Kapt-classes=output/classes

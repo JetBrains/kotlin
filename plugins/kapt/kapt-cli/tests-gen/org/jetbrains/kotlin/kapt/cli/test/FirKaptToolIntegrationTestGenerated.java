@@ -84,12 +84,6 @@ public class FirKaptToolIntegrationTestGenerated extends AbstractFirKaptToolInte
   }
 
   @Test
-  @TestMetadata("kaptUseK2Flag")
-  public void testKaptUseK2Flag() {
-    runTest("plugins/kapt/kapt-cli/testData/integration/kaptUseK2Flag/");
-  }
-
-  @Test
   @TestMetadata("kotlinFileGeneration")
   public void testKotlinFileGeneration() {
     runTest("plugins/kapt/kapt-cli/testData/integration/kotlinFileGeneration/");
