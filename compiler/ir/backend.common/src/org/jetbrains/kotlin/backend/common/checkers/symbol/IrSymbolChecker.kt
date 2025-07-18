@@ -12,9 +12,3 @@ import org.jetbrains.kotlin.ir.symbols.IrSymbol
 internal interface IrSymbolChecker {
     fun check(symbol: IrSymbol, container: IrElement, context: CheckerContext)
 }
-
-internal fun List<IrSymbolChecker>.check(symbol: IrSymbol, container: IrElement, context: CheckerContext) {
-    for (checker in this) {
-        checker.check(symbol, container, context)
-    }
-}
