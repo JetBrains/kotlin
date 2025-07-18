@@ -55,6 +55,10 @@ class BtaApiGenerator(val genDir: Path) : BtaGenerator {
             if (skipXX && name.startsWith("XX_")) return@forEach
             val experimental = name.startsWith("XX_") || name.startsWith("X_")
 
+            if (argument.releaseVersionsMetadata.removedVersion != null) {
+                return@forEach
+            }
+
             val argumentTypeParameter = argument.valueType::class
                 .supertypes.single { it.classifier == KotlinArgumentValueType::class }
                 .arguments.first().type!!.let {

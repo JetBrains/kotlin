@@ -76,6 +76,11 @@ class BtaImplGenerator(val genDir: Path) : BtaGenerator {
         arguments.forEach { argument ->
             val name = argument.extractName()
             if (skipXX && name.startsWith("XX_")) return@forEach
+
+            if (argument.releaseVersionsMetadata.removedVersion != null) {
+                return@forEach
+            }
+
             val clazz = argument.valueType::class
                 .supertypes.single { it.classifier == KotlinArgumentValueType::class }
                 .arguments.first().type!!.classifier as KClass<*>
