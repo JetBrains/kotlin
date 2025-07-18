@@ -69,10 +69,6 @@ fun main(args: Array<String>) {
                 model("boxWithoutRuntime")
             }
 
-            testClass<AbstractSerializationIrJsBoxTest> {
-                model("boxIr")
-            }
-
             testClass<AbstractSerializationFirJsBoxTest> {
                 model("boxIr")
             }
