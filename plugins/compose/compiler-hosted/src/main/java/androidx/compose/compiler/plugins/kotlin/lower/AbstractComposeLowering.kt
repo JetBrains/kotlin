@@ -47,6 +47,7 @@ import org.jetbrains.kotlin.ir.interpreter.hasAnnotation
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
 import org.jetbrains.kotlin.ir.types.*
+import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.types.impl.IrSimpleTypeImpl
 import org.jetbrains.kotlin.ir.types.impl.IrStarProjectionImpl
 import org.jetbrains.kotlin.ir.util.*
@@ -122,21 +123,24 @@ abstract class AbstractComposeLowering(
 
     fun IrType.defaultParameterType(): IrType {
         val type = this
-        val constructorAccessible = !type.isPrimitiveType() &&
-                type.classOrNull?.owner?.primaryConstructor != null
+
         return when {
             type.isPrimitiveType() -> type
-            type.isInlineClassType() -> if (context.platform.isJvm() || constructorAccessible) {
-                if (type.unboxInlineClass().isPrimitiveType()) {
-                    type
+            type.isInlineClassType() -> {
+                // TODO migrate to more precise constructor accessibility test in k2.4
+                val constructorAccessible = type.classOrNull?.owner?.primaryConstructor != null
+                if (context.platform.isJvm() || constructorAccessible) {
+                    if (type.unboxInlineClass().isPrimitiveType()) {
+                        type
+                    } else {
+                        type.makeNullable()
+                    }
                 } else {
+                    // k/js and k/native: private constructors of value classes can be not accessible.
+                    // Therefore it won't be possible to create a "fake" default argument for calls.
+                    // Making it nullable allows to pass null.
                     type.makeNullable()
                 }
-            } else {
-                // k/js and k/native: private constructors of value classes can be not accessible.
-                // Therefore it won't be possible to create a "fake" default argument for calls.
-                // Making it nullable allows to pass null.
-                type.makeNullable()
             }
             else -> type.makeNullable()
         }
