@@ -623,6 +623,137 @@ class ComposeIT : KGPBaseTest() {
         }
     }
 
+    @DisplayName("CMP-7505 verification")
+    @AndroidGradlePluginTests
+    @GradleAndroidTest
+    @GradleTestVersions(minVersion = TestVersions.Gradle.MAX_SUPPORTED)
+    @AndroidTestVersions(minVersion = TestVersions.AGP.AGP_80)
+    @TestMetadata("JBComposeMultiplatformApp")
+    fun testJBComposeCMP7505(
+        gradleVersion: GradleVersion,
+        agpVersion: String,
+        providedJdk: JdkVersions.ProvidedJdk,
+    ) {
+        var buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion)
+            .suppressDeprecationWarningsOn(
+                "JB Compose produces deprecation warning: https://github.com/JetBrains/compose-multiplatform/issues/3945"
+            ) {
+                gradleVersion >= GradleVersion.version(TestVersions.Gradle.G_8_4)
+            }
+        if (OS.WINDOWS.isCurrentOs) {
+            // CMP-8375 Compose Gradle Plugin is not compatible with Gradle isolated projects on Windows
+            buildOptions = buildOptions.disableIsolatedProjects()
+        }
+
+        project(
+            projectName = "JBComposeMultiplatformApp",
+            gradleVersion = gradleVersion,
+            buildJdk = providedJdk.location,
+            buildOptions = buildOptions,
+        ) {
+            val common = projectPath.resolve("composeApp/src/commonMain/kotlin/App.kt").createFile()
+            common.writeText(
+                //language=kotlin
+                """
+                    package org.example.project
+
+                    import androidx.compose.foundation.layout.Column
+                    import androidx.compose.runtime.Composable
+                    import org.example.project.lib.defaultExternalValueForInternalConstructor
+                    import org.example.project.lib.defaultExternalValueForPrivateConstructor
+                    import org.example.project.lib.defaultValueForInternalConstructor
+                    import org.example.project.lib.defaultValueForPrivateConstructor
+
+                    @Composable
+                    fun App() {
+                        Column {
+                            defaultValueForPrivateConstructor()
+                            defaultValueForInternalConstructor()
+                            defaultExternalValueForPrivateConstructor()
+                            defaultExternalValueForInternalConstructor()
+                        }
+                    }
+                """.trimIndent()
+            )
+
+            val lib = projectPath.resolve("lib/src/commonMain/kotlin/org/example/project/lib/library.kt").createFile()
+            lib.writeText(
+                //language=kotlin
+                """
+                    package org.example.project.lib
+                    
+                    import androidx.compose.material3.Text
+                    import androidx.compose.runtime.Composable
+                    import org.example.project.lib2.ThirdPartyValueInternalConstructor
+                    import org.example.project.lib2.ThirdPartyValuePrivateConstructor
+                    import kotlin.jvm.JvmInline
+                    
+                    @JvmInline
+                    value class ValuePrivateConstructor private constructor(private val value: Int) {
+                        companion object {
+                            val dummy = ValuePrivateConstructor(1)
+                        }
+                    }
+                    
+                    @JvmInline
+                    value class ValueInternalConstructor internal constructor(private val value: Int) {
+                        companion object {
+                            val dummy = ValueInternalConstructor(1)
+                        }
+                    }
+                    
+                    @Composable
+                    fun defaultValueForPrivateConstructor(v: ValuePrivateConstructor = ValuePrivateConstructor.dummy) {
+                        Text(v.toString())
+                    }
+                    
+                    @Composable
+                    fun defaultValueForInternalConstructor(v: ValueInternalConstructor = ValueInternalConstructor.dummy) {
+                        Text(v.toString())
+                    }
+                    
+                    @Composable
+                    fun defaultExternalValueForPrivateConstructor(v: ThirdPartyValuePrivateConstructor = ThirdPartyValuePrivateConstructor.dummy) {
+                        Text(v.toString())
+                    }
+                    
+                    @Composable
+                    fun defaultExternalValueForInternalConstructor(v: ThirdPartyValueInternalConstructor = ThirdPartyValueInternalConstructor.dummy) {
+                        Text(v.toString())
+                    }
+                """.trimIndent()
+            )
+
+            val lib2 = projectPath.resolve("lib2/src/commonMain/kotlin/org/example/project/lib2/library2.kt").createFile()
+            lib2.writeText(
+                //language=kotlin
+                """
+                    package org.example.project.lib2
+
+                    import kotlin.jvm.JvmInline
+
+                    @JvmInline
+                    value class ThirdPartyValuePrivateConstructor private constructor(private val value: Int) {
+                        companion object {
+                            val dummy = ThirdPartyValuePrivateConstructor(1)
+                        }
+                    }
+
+                    @JvmInline
+                    value class ThirdPartyValueInternalConstructor internal constructor(private val value: Int) {
+                        companion object {
+                            val dummy = ThirdPartyValueInternalConstructor(1)
+                        }
+                    }
+                """.trimIndent()
+            )
+
+            val agpVersion = TestVersions.AgpCompatibilityMatrix.fromVersion(agpVersion)
+            build(":composeApp:linkReleaseFrameworkIosArm64") {}
+            build(":composeApp:") {}
+        }
+    }
+
     private fun Path.appendComposePlugin() {
         modify { originalBuildScript ->
             """
