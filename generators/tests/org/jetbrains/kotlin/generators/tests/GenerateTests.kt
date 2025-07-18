@@ -320,7 +320,7 @@ fun main(args: Array<String>) {
                 model("argumentParsing", extension = "txt")
             }
             testClass<AbstractKaptToolIntegrationTest> {
-                model("integration", recursive = false, extension = null)
+                model("integration-k1", recursive = false, extension = null)
             }
             testClass<AbstractFirKaptToolIntegrationTest> {
                 model("integration-kapt4", recursive = false, extension = null)
