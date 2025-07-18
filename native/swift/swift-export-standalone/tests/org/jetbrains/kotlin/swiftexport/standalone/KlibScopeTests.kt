@@ -13,6 +13,8 @@ import org.jetbrains.kotlin.analysis.api.analyze
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
 import org.jetbrains.kotlin.analysis.api.standalone.buildStandaloneAnalysisAPISession
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassKind
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaNamedSymbol
 import org.jetbrains.kotlin.analysis.project.structure.builder.buildKtLibraryModule
@@ -37,6 +39,23 @@ import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 class KlibScopeTests : AbstractNativeSimpleTest() {
+
+    @Test
+    fun `smoke simple enum`() {
+        withKlibScope(
+            source = """
+                enum class EnumSimple {
+                    FIRST,
+                    SECOND,
+                    LAST;
+                }
+            """.trimIndent()
+        ) {
+            val symbol = declarations.single()
+            assertTrue(symbol is KaClassSymbol)
+            assertTrue(symbol.classKind == KaClassKind.ENUM_CLASS)
+        }
+    }
 
     @Test
     fun `smoke single function`() {
