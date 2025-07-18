@@ -4,6 +4,12 @@
  */
 package kotlin.js
 
+/**
+ * JavaScript value that can serve as a reference for any Kotlin value.
+ *
+ * In JavaScript, it behaves like an immutable empty object with a null prototype.
+ * When passed back to Kotlin/Wasm, the original value can be retrieved using the [get] method.
+ */
 @ExperimentalWasmJsInterop
 @Suppress("EXPECT_ACTUAL_IR_INCOMPATIBILITY")
 public expect sealed interface JsReference<out T : Any> : JsAny
