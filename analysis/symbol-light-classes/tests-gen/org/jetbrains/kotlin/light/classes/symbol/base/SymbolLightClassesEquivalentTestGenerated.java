@@ -78,6 +78,12 @@ public class SymbolLightClassesEquivalentTestGenerated extends AbstractSymbolLig
   }
 
   @Test
+  @TestMetadata("Parameter.kt")
+  public void testParameter() {
+    runTest("analysis/symbol-light-classes/testData/equivalentTo/Parameter.kt");
+  }
+
+  @Test
   @TestMetadata("TypeParameter.kt")
   public void testTypeParameter() {
     runTest("analysis/symbol-light-classes/testData/equivalentTo/TypeParameter.kt");
