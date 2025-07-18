@@ -138,7 +138,7 @@ class IrValidatorTest {
 
     private inline fun runValidationAndAssert(mode: IrVerificationMode, block: () -> Unit) {
         if (mode == IrVerificationMode.ERROR) {
-            assertFailsWith<IrValidationError>(block = block)
+            assertFailsWith<IrValidationException>(block = block)
         } else {
             block()
         }
@@ -146,26 +146,27 @@ class IrValidatorTest {
 
     private fun testValidation(mode: IrVerificationMode, tree: IrElement, expectedMessages: List<Message>) {
         runValidationAndAssert(mode) {
-            validateIr(messageCollector, mode) {
-                performBasicIrValidation(
-                    tree,
-                    TestIrBuiltins,
-                    phaseName = "IrValidatorTest",
-                    IrValidatorConfig(
-                        checkTypes = true,
-                        checkProperties = true,
-                        checkValueScopes = true,
-                        checkTypeParameterScopes = true,
-                        checkCrossFileFieldUsage = true,
-                        checkAllKotlinFieldsArePrivate = true,
-                        checkVisibilities = true,
-                        checkVarargTypes = true,
-                        checkUnboundSymbols = true,
-                        checkInlineFunctionUseSites = { it.symbol.owner.name.toString() != "inlineFunctionUseSiteNotPermitted" }
-                    )
-                )
-                assertEquals(expectedMessages, messageCollector.messages)
-            }
+            validateIr(
+                tree,
+                TestIrBuiltins,
+                IrValidatorConfig(
+                    checkUnboundSymbols = true,
+                    checkInlineFunctionUseSites = { it.symbol.owner.name.toString() != "inlineFunctionUseSiteNotPermitted" }
+                ).withCommonCheckers(
+                    checkTypes = true,
+                    checkProperties = true,
+                    checkValueScopes = true,
+                    checkTypeParameterScopes = true,
+                    checkCrossFileFieldUsage = true,
+                    checkAllKotlinFieldsArePrivate = true,
+                    checkVisibilities = true,
+                    checkVarargTypes = true,
+                ),
+                messageCollector,
+                mode,
+                phaseName = "IrValidatorTest",
+            )
+            assertEquals(expectedMessages, messageCollector.messages)
         }
     }
 

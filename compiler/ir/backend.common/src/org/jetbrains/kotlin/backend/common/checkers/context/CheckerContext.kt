@@ -6,8 +6,9 @@
 package org.jetbrains.kotlin.backend.common.checkers.context
 
 import org.jetbrains.kotlin.backend.common.InlineFunctionUseSiteChecker
-import org.jetbrains.kotlin.backend.common.ReportIrValidationError
+import org.jetbrains.kotlin.backend.common.IrValidationError
 import org.jetbrains.kotlin.backend.common.ScopeStack
+import org.jetbrains.kotlin.backend.common.checkers.IrChecker
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
@@ -18,20 +19,23 @@ import org.jetbrains.kotlin.ir.declarations.IrTypeParametersContainer
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 
-internal class CheckerContext(
+class CheckerContext(
     val irBuiltIns: IrBuiltIns,
     val checkInlineFunctionUseSites: InlineFunctionUseSiteChecker?,
     val file: IrFile,
-    private val reportError: ReportIrValidationError,
+    private val reportError: (IrValidationError) -> Unit,
 ) {
     val parentChain: MutableList<IrElement> = mutableListOf()
-    val typeParameterScopeStack = ScopeStack<IrTypeParameterSymbol>()
-    val valueSymbolScopeStack = ScopeStack<IrValueSymbol>()
+    internal val typeParameterScopeStack = ScopeStack<IrTypeParameterSymbol>()
+    internal val valueSymbolScopeStack = ScopeStack<IrValueSymbol>()
 
     var withinAnnotationUsageSubTree: Boolean = false
         private set
 
-    fun error(element: IrElement, message: String) = reportError(file, element, message, parentChain)
+    fun error(element: IrElement, cause: IrValidationError.Cause, message: String) = reportError(IrValidationError(element, file, cause, message, parentChain))
+
+    context(checker: IrChecker)
+    fun error(element: IrElement, message: String) = error(element, checker, message)
 
     fun withTypeParametersInScope(container: IrTypeParametersContainer, block: () -> Unit) {
         typeParameterScopeStack.withNewScope(

@@ -5,14 +5,17 @@
 
 package org.jetbrains.kotlin.backend.common.checkers
 
+import org.jetbrains.kotlin.backend.common.IrValidationError
 import org.jetbrains.kotlin.backend.common.checkers.context.CheckerContext
 import org.jetbrains.kotlin.ir.IrElement
 import kotlin.reflect.KClass
 
+interface IrChecker : IrValidationError.Cause
+
 abstract class IrElementChecker<in E : IrElement>(
     elementClass: KClass<in E>,
-) {
+) : IrChecker {
     internal val elementClass: Class<in E> = elementClass.java
 
-    internal abstract fun check(element: E, context: CheckerContext)
+    abstract fun check(element: E, context: CheckerContext)
 }

@@ -5,10 +5,11 @@
 
 package org.jetbrains.kotlin.backend.common.checkers.symbol
 
+import org.jetbrains.kotlin.backend.common.checkers.IrChecker
 import org.jetbrains.kotlin.backend.common.checkers.context.CheckerContext
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 
-interface IrSymbolChecker {
+interface IrSymbolChecker : IrChecker {
     fun check(symbol: IrSymbol, container: IrElement, context: CheckerContext)
 }

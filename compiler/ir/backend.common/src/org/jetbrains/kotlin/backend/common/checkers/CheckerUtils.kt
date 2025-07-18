@@ -36,6 +36,7 @@ val EXCLUDED_PACKAGES_FROM_VARARG_VALIDATION = listOf(
     "kotlinx.serialization.json.internal"
 ).mapTo(hashSetOf(), ::FqName)
 
+context(checker: IrChecker)
 internal fun validateVararg(irElement: IrElement, type: IrType, varargElementType: IrType, context: CheckerContext) {
     if (context.withinAnnotationUsageSubTree && context.file.packageFqName in EXCLUDED_PACKAGES_FROM_VARARG_VALIDATION) return
 
@@ -70,6 +71,7 @@ internal val EXCLUDED_MODULE_NAMES: Set<Name> =
         KOTLINTEST_MODULE_NAME,
     ).mapTo(mutableSetOf()) { Name.special("<$it>") }
 
+context(checker: IrChecker)
 private fun visibilityError(element: IrElement, visibility: Visibility, context: CheckerContext) {
     val message = "The following element references " +
             if (visibility == Visibilities.Unknown) {
@@ -116,6 +118,7 @@ private fun IrSymbol.isExcludedFromVisibilityChecks(): Boolean {
     return FQ_NAMES_EXCLUDED_FROM_VISIBILITY_CHECKS.any { excludedFqName -> hasEqualFqName(excludedFqName) }
 }
 
+context(checker: IrChecker)
 internal fun checkVisibility(
     referencedDeclarationSymbol: IrSymbol,
     reference: IrElement,
@@ -176,6 +179,7 @@ internal fun checkVisibility(
     }
 }
 
+context(checker: IrChecker)
 internal fun checkFunctionUseSite(
     expression: IrFunctionAccessExpression,
     inlineFunctionUseSiteChecker: InlineFunctionUseSiteChecker,
@@ -196,12 +200,14 @@ internal fun checkFunctionUseSite(
     context.error(expression, message)
 }
 
+context(checker: IrChecker)
 internal fun IrExpression.ensureTypeIs(expectedType: IrType, context: CheckerContext) {
     if (type != expectedType) {
         context.error(this, "unexpected type: expected ${expectedType.render()}, got ${type.render()}")
     }
 }
 
+context(checker: IrChecker)
 internal fun IrElement.checkFunctionProperties(function: IrFunction, context: CheckerContext) {
     if (function is IrSimpleFunction) {
         val property = function.correspondingPropertySymbol?.owner
@@ -211,6 +217,7 @@ internal fun IrElement.checkFunctionProperties(function: IrFunction, context: Ch
     }
 }
 
+context(checker: IrChecker)
 internal fun IrElement.checkFunctionDispatchReceiver(function: IrFunction, context: CheckerContext) {
     if (function.dispatchReceiverParameter?.type is IrDynamicType) {
         context.error(this, "Dispatch receivers with 'dynamic' type are not allowed")

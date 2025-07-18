@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.ir.util.render
 /**
  * Makes sure that all the type parameter references are within the scope of the corresponding type parameters.
  */
-internal object IrTypeParameterScopeChecker: IrTypeChecker {
+internal object IrTypeParameterScopeChecker : IrTypeChecker {
     override fun check(
         type: IrType,
         container: IrElement,

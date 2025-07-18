@@ -5,8 +5,9 @@
 
 package org.jetbrains.kotlin.backend.common.checkers
 
+import org.jetbrains.kotlin.backend.common.IrValidationError
+import org.jetbrains.kotlin.backend.common.IrValidationException
 import org.jetbrains.kotlin.backend.common.IrValidatorConfig
-import org.jetbrains.kotlin.backend.common.ReportIrValidationError
 import org.jetbrains.kotlin.backend.common.temporarilyPushing
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrDeclaration
@@ -22,7 +23,7 @@ import org.jetbrains.kotlin.ir.util.IrTreeSymbolsVisitor
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 
-private class CheckTreeConsistencyVisitor(val reportError: ReportIrValidationError, val config: IrValidatorConfig) :
+private class CheckTreeConsistencyVisitor(val reportError: (IrValidationError) -> Unit, val config: IrValidatorConfig) :
     IrTreeSymbolsVisitor() {
     var hasInconsistency = false
 
@@ -69,7 +70,7 @@ private class CheckTreeConsistencyVisitor(val reportError: ReportIrValidationErr
     override fun visitSymbol(container: IrElement, symbol: IrSymbol) {
         if (config.checkUnboundSymbols && !symbol.isBound) {
             hasInconsistency = true
-            reportError(null, container, "Unexpected unbound symbol", parentChain)
+            reportError(IrValidationError(container, null, IrValidationError.Cause.IrUnboundSymbol, "Unexpected unbound symbol", parentChain))
         }
     }
 
@@ -88,36 +89,37 @@ private class CheckTreeConsistencyVisitor(val reportError: ReportIrValidationErr
     private fun reportWrongParent(declaration: IrDeclaration, expectedParent: IrDeclarationParent?, actualParent: IrDeclarationParent) {
         hasInconsistency = true
         reportError(
-            null,
-            declaration,
-            buildString {
-                appendLine("Declaration with wrong parent:")
-                appendLine("declaration: ${declaration.render()}")
-                appendLine("expectedParent: ${expectedParent?.render()}")
-                appendLine("actualParent: ${actualParent.render()}")
-            },
-            parentChain,
+            IrValidationError(
+                declaration,
+                null,
+                IrValidationError.Cause.IrTreeInconsistency,
+                buildString {
+                    appendLine("Declaration with wrong parent:")
+                    appendLine("declaration: ${declaration.render()}")
+                    appendLine("expectedParent: ${expectedParent?.render()}")
+                    appendLine("actualParent: ${actualParent.render()}")
+                },
+                parentChain,
+            )
         )
     }
 
     private fun checkDuplicateNode(element: IrElement) {
         if (!visitedElements.add(element)) {
             val renderString = if (element is IrTypeParameter) element.render() + " of " + element.parent.render() else element.render()
-            reportError(null, element, "Duplicate IR node: $renderString", parentChain)
+            reportError(IrValidationError(element, null, IrValidationError.Cause.IrTreeInconsistency, "Duplicate IR node: $renderString", parentChain))
 
             // The IR tree is completely messed up if it includes one element twice. It may not be a tree at all, there may be cycles.
             // Give up early to avoid stack overflow.
-            throw TreeConsistencyError(element)
+            throw IrTreeInconsistencyException(element)
         }
     }
 }
 
-internal fun IrElement.checkTreeConsistency(reportError: ReportIrValidationError, config: IrValidatorConfig) {
+internal fun IrElement.checkTreeConsistency(reportError: (IrValidationError) -> Unit, config: IrValidatorConfig) {
     val checker = CheckTreeConsistencyVisitor(reportError, config)
     accept(checker, null)
-    if (checker.hasInconsistency) throw TreeConsistencyError(this)
+    if (checker.hasInconsistency) throw IrTreeInconsistencyException(this)
 }
 
-open class IrValidationError(message: String? = null, cause: Throwable? = null) : IllegalStateException(message, cause)
-
-class TreeConsistencyError(element: IrElement) : IrValidationError(element.render())
+class IrTreeInconsistencyException(element: IrElement) : IrValidationException(element.render())

@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.common.actualizer.*
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.config.IrVerificationMode
 import org.jetbrains.kotlin.config.LanguageFeature
@@ -339,18 +340,18 @@ private class Fir2IrPipeline(
     }
 
     private fun Fir2IrConversionResult.checkUnboundSymbols() {
-        validateIr(fir2IrConfiguration.messageCollector, IrVerificationMode.ERROR) {
-            performBasicIrValidation(
-                mainIrFragment,
-                irBuiltIns,
-                phaseName = "",
-                IrValidatorConfig(
-                    checkTreeConsistency = false,
-                    checkFunctionBody = false,
-                    checkUnboundSymbols = true,
-                )
-            )
-        }
+        validateIr(
+            mainIrFragment,
+            irBuiltIns,
+            IrValidatorConfig(
+                checkTreeConsistency = false,
+                checkUnboundSymbols = true,
+            ).withCommonCheckers(
+                checkFunctionBody = false,
+            ),
+            fir2IrConfiguration.messageCollector,
+            IrVerificationMode.ERROR,
+        )
     }
 
     private fun Fir2IrConversionResult.evaluateConstants() {
@@ -468,23 +469,24 @@ private fun IrPluginContext.runMandatoryIrValidation(
     val mode =
         if (languageVersionSettings.supportsFeature(LanguageFeature.ForbidCrossFileIrFieldAccessInKlibs)) IrVerificationMode.ERROR
         else IrVerificationMode.WARNING
-    validateIr(fir2IrConfiguration.messageCollector, mode) {
-        performBasicIrValidation(
-            module,
-            irBuiltIns,
-            phaseName = "",
-            IrValidatorConfig(
-                // Invalid parents and duplicated IR nodes don't always result in broken KLIBs,
-                // so we disable them not to cause too much breakage.
-                checkTreeConsistency = false,
-                // Cross-file field accesses, though, do result in invalid KLIBs, so report them as early as possible.
-                checkCrossFileFieldUsage = true,
-                // FIXME(KT-71243): This should be true, but currently the ExplicitBackingFields feature de-facto allows specifying
-                //  non-private visibilities for fields.
-                checkAllKotlinFieldsArePrivate = !fir2IrConfiguration.languageVersionSettings.supportsFeature(LanguageFeature.ExplicitBackingFields),
-            )
-        )
-    }
+    validateIr(
+        module,
+        irBuiltIns,
+        IrValidatorConfig(
+            // Invalid parents and duplicated IR nodes don't always result in broken KLIBs,
+            // so we disable them not to cause too much breakage.
+            checkTreeConsistency = false,
+        ).withCommonCheckers(
+            // Cross-file field accesses, though, do result in invalid KLIBs, so report them as early as possible.
+            checkCrossFileFieldUsage = true,
+            // FIXME(KT-71243): This should be true, but currently the ExplicitBackingFields feature de-facto allows specifying
+            //  non-private visibilities for fields.
+            checkAllKotlinFieldsArePrivate = !fir2IrConfiguration.languageVersionSettings.supportsFeature(LanguageFeature.ExplicitBackingFields),
+        ),
+        fir2IrConfiguration.messageCollector,
+        mode,
+        phaseName = "",
+    )
 }
 
 fun IrPluginContext.applyIrGenerationExtensions(
