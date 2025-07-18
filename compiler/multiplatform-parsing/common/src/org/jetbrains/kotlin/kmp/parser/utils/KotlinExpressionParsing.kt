@@ -45,6 +45,7 @@ import org.jetbrains.kotlin.kmp.parser.BinaryOperationPrecedence
 import org.jetbrains.kotlin.kmp.parser.KtNodeTypes
 import org.jetbrains.kotlin.kmp.parser.utils.KotlinParsing.Companion.EXPRESSION_FIRST
 import org.jetbrains.kotlin.kmp.parser.utils.KotlinParsing.Companion.EXPRESSION_FOLLOW
+import org.jetbrains.kotlin.kmp.parser.utils.KotlinParsing.MultiDeclarationMode
 
 internal open class KotlinExpressionParsing(
     builder: SemanticWhitespaceAwareSyntaxBuilder,
@@ -1191,9 +1192,11 @@ internal open class KotlinExpressionParsing(
                 }
                 KtTokens.LPAR_ID -> {
                     val destructuringDeclaration = mark()
-                    kotlinParsing.parseMultiDeclarationName(
+                    kotlinParsing.parseMultiDeclarationEntry(
                         TOKEN_SET_TO_FOLLOW_AFTER_DESTRUCTURING_DECLARATION_IN_LAMBDA,
-                        TOKEN_SET_TO_FOLLOW_AFTER_DESTRUCTURING_DECLARATION_IN_LAMBDA_RECOVERY
+                        TOKEN_SET_TO_FOLLOW_AFTER_DESTRUCTURING_DECLARATION_IN_LAMBDA_RECOVERY,
+                        // No var in lambda parameter destructuring
+                        if(lookahead(1) == VAL_KEYWORD) MultiDeclarationMode.FullValOnly else MultiDeclarationMode.Short,
                     )
                     destructuringDeclaration.done(KtNodeTypes.DESTRUCTURING_DECLARATION)
                 }
@@ -1428,7 +1431,12 @@ internal open class KotlinExpressionParsing(
 
                 if (at(KtTokens.LPAR)) {
                     val destructuringDeclaration = mark()
-                    kotlinParsing.parseMultiDeclarationName(IN_KEYWORD_L_BRACE_SET, IN_KEYWORD_L_BRACE_RECOVERY_SET)
+                    kotlinParsing.parseMultiDeclarationEntry(
+                        IN_KEYWORD_L_BRACE_SET,
+                        IN_KEYWORD_L_BRACE_RECOVERY_SET,
+                        // No var in destructured loop parameter
+                        if (lookahead(1) == VAL_KEYWORD) MultiDeclarationMode.FullValOnly else MultiDeclarationMode.Short,
+                    )
                     destructuringDeclaration.done(KtNodeTypes.DESTRUCTURING_DECLARATION)
                 } else {
                     expectIdentifierWithRemap("Expecting a variable name", COLON_IN_KEYWORD_SET)

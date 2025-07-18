@@ -5,12 +5,12 @@
 
 package org.jetbrains.kotlin.kmp.parser.utils
 
-import com.intellij.platform.syntax.syntaxElementTypeSetOf
 import com.intellij.platform.syntax.SyntaxElementType
 import com.intellij.platform.syntax.SyntaxElementTypeSet
 import com.intellij.platform.syntax.emptySyntaxElementTypeSet
 import com.intellij.platform.syntax.parser.SyntaxTreeBuilder
 import com.intellij.platform.syntax.parser.WhitespacesBinders
+import com.intellij.platform.syntax.syntaxElementTypeSetOf
 import org.jetbrains.annotations.Contract
 import org.jetbrains.kotlin.kmp.lexer.KtTokens
 import org.jetbrains.kotlin.kmp.lexer.KtTokens.BREAK_KEYWORD
@@ -111,6 +111,7 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
             KtTokens.FUN_MODIFIER,
             KtTokens.CLASS_KEYWORD
         )
+        private val DESTRUCTURING_PROPERTY_NAME_FOLLOW_SET = PROPERTY_NAME_FOLLOW_SET - KtTokens.VAL_VAR
         private val PROPERTY_NAME_FOLLOW_MULTI_DECLARATION_RECOVERY_SET =
             PROPERTY_NAME_FOLLOW_SET + PARAMETER_NAME_RECOVERY_SET
         private val PROPERTY_NAME_FOLLOW_FUNCTION_OR_PROPERTY_RECOVERY_SET =
@@ -671,6 +672,7 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
             KtTokens.VAL_KEYWORD_ID,
             KtTokens.VAR_KEYWORD_ID,
                 -> return parseProperty(declarationParsingMode)
+            KtTokens.LPAR_ID if lookahead(1) in KtTokens.VAL_VAR -> return parseProperty(declarationParsingMode)
             KtTokens.TYPE_ALIAS_KEYWORD_ID -> return parseTypeAlias()
             KtTokens.OBJECT_KEYWORD_ID -> {
                 parseObject(nameParsingModeForObject, true)
@@ -1583,8 +1585,10 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
      *   ;
      */
     fun parseProperty(mode: DeclarationParsingMode): SyntaxElementType {
-        require(at(KtTokens.VAL_KEYWORD) || at(KtTokens.VAR_KEYWORD))
-        advance()
+        val isShortForm = at(KtTokens.VAL_KEYWORD) || at(KtTokens.VAR_KEYWORD)
+        if (isShortForm) {
+            advance()
+        }
 
         val typeParametersDeclared = at(KtTokens.LT) && parseTypeParameterList(IDENTIFIER_EQ_COLON_SEMICOLON_SET)
 
@@ -1602,7 +1606,11 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
 
         if (multiDeclaration) {
             val multiDecl = mark()
-            parseMultiDeclarationName(PROPERTY_NAME_FOLLOW_SET, PROPERTY_NAME_FOLLOW_MULTI_DECLARATION_RECOVERY_SET)
+            parseMultiDeclarationEntry(
+                follow = if (isShortForm) PROPERTY_NAME_FOLLOW_SET else DESTRUCTURING_PROPERTY_NAME_FOLLOW_SET,
+                recoverySet = PROPERTY_NAME_FOLLOW_MULTI_DECLARATION_RECOVERY_SET,
+                mode = if (isShortForm) MultiDeclarationMode.Short else MultiDeclarationMode.Full
+            )
             errorIf(multiDecl, !mode.destructuringAllowed, "Destructuring declarations are only allowed for local variables/values")
         } else {
             parseFunctionOrPropertyName(
@@ -1695,12 +1703,19 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
         delegate.done(KtNodeTypes.PROPERTY_DELEGATE)
     }
 
+    enum class MultiDeclarationMode {
+        Short,
+        Full,
+        FullValOnly,
+    }
+
     /*
      * (SimpleName (":" type){","})
      */
-    fun parseMultiDeclarationName(follow: SyntaxElementTypeSet, recoverySet: SyntaxElementTypeSet) {
+    fun parseMultiDeclarationEntry(follow: SyntaxElementTypeSet, recoverySet: SyntaxElementTypeSet, mode: MultiDeclarationMode) {
         // Parsing multi-name, e.g.
         //   val (a, b) = foo()
+        //   (val a: X = aa, var b) = foo()
         builder.disableNewlines()
         advance() // LPAR
 
@@ -1714,7 +1729,25 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
                 }
                 val property = mark()
 
-                parseModifierList(COMMA_RPAR_COLON_EQ_SET)
+                when (mode) {
+                    MultiDeclarationMode.Full -> {
+                        if (at(KtTokens.VAL_KEYWORD) || at(KtTokens.VAR_KEYWORD)) {
+                            advance()
+                        } else {
+                            errorWithRecovery("Expecting val or var keyword", recoverySet)
+                        }
+                    }
+                    MultiDeclarationMode.FullValOnly -> {
+                        if (at(KtTokens.VAL_KEYWORD)) {
+                            advance()
+                        } else {
+                            errorWithRecovery("Expecting val keyword", recoverySet)
+                        }
+                    }
+                    MultiDeclarationMode.Short -> {
+                        parseModifierList(COMMA_RPAR_COLON_EQ_SET)
+                    }
+                }
 
                 expectIdentifierWithRemap("Expecting a name", recoverySet)
 
@@ -1722,6 +1755,12 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
                     advance() // COLON
                     parseTypeRef(follow)
                 }
+
+                if (at(KtTokens.EQ)) {
+                    advance()
+                    expressionParsing.parseSimpleNameExpression()
+                }
+
                 property.done(KtNodeTypes.DESTRUCTURING_DECLARATION_ENTRY)
 
                 if (!at(KtTokens.COMMA)) break
