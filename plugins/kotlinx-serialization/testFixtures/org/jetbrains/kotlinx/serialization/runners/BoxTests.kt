@@ -68,16 +68,6 @@ open class AbstractSerializationWithoutRuntimeFirLightTreeBoxTest : AbstractFirL
     }
 }
 
-open class AbstractSerializationIrJsBoxTest : AbstractJsIrTest(
-    pathToTestDir = "plugins/kotlinx-serialization/testData/boxIr/",
-    testGroupOutputDirPrefix = "codegen/serializationBoxIr/"
-) {
-    override fun configure(builder: TestConfigurationBuilder) {
-        super.configure(builder)
-        builder.configureForKotlinxSerialization(target = TargetBackend.JS_IR)
-    }
-}
-
 open class AbstractSerializationFirJsBoxTest(
     testGroupOutputDirPrefix: String = "codegen/serializationBoxFir/"
 ) : AbstractFirJsTest(
