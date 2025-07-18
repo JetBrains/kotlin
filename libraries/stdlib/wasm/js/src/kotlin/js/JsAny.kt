@@ -13,7 +13,7 @@ import kotlin.wasm.internal.implementedAsIntrinsic
  * Any JavaScript value except null or undefined
  */
 @ExperimentalWasmJsInterop
-public external interface JsAny
+public actual external interface JsAny
 
 /**
  * Cast JsAny to other Js type without runtime check
@@ -21,5 +21,5 @@ public external interface JsAny
 @WasmNoOpCast
 @ExcludedFromCodegen
 @ExperimentalWasmJsInterop
-public fun <T : JsAny> JsAny.unsafeCast(): T =
+public actual fun <T : JsAny> JsAny.unsafeCast(): T =
     implementedAsIntrinsic
