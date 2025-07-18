@@ -18,14 +18,17 @@ public class A {
 // FILE: main.kt
 fun main() {
     A().foo {
-        x ->
+        <!CANNOT_INFER_PARAMETER_TYPE!>x<!> ->
         ""
     }
 
     A.bar {
-        x ->
+        <!CANNOT_INFER_PARAMETER_TYPE!>x<!> ->
         ""
     }
+
+    A.bar(<!CANNOT_INFER_PARAMETER_TYPE, CANNOT_INFER_PARAMETER_TYPE!>Function<!> { <!CANNOT_INFER_PARAMETER_TYPE!>x<!> -> "" })
+    A.bar(Function<CharSequence, Map<String, CharSequence>>{ x -> x[""] })
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, flexibleType, funWithExtensionReceiver, functionDeclaration, functionalType,
