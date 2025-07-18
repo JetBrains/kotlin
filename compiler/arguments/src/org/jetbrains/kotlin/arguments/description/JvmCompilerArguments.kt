@@ -858,8 +858,10 @@ inside suspend functions and lambdas to distinguish them from user code by debug
         description = "Enable the experimental support for K2 KAPT.".asReleaseDependent()
         valueType = BooleanType.defaultNull
 
-        @OptIn(TemporaryCompilerArgumentLifecycle::class)
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_1_0,
+            removedVersion = KotlinReleaseVersion.v2_3_0,
+        )
     }
 
     compilerArgument {
