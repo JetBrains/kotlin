@@ -1,7 +1,5 @@
 # kapt
--language-version 2.0
 -Xsuppress-version-warnings
--Xuse-k2-kapt
 -Kapt-mode=compile
 ../simple/Test.kt
 

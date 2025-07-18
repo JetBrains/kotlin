@@ -5,7 +5,6 @@ output/classes
 output/sources
 
 # kotlinc
--language-version 2.0
 -opt-in org.jetbrains.kotlin.compiler.plugin.ExperimentalCompilerApi
 -cp %KOTLIN_STDLIB%:%KOTLIN_COMPILER%
 -d output/plugin
@@ -16,8 +15,6 @@ plugin/META-INF/services/org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegi
 output/plugin/META-INF/services/org.jetbrains.kotlin.compiler.plugin.CompilerPluginRegistrar
 
 # kapt
--language-version 2.0
--Xuse-k2-kapt
 -Kapt-mode=stubs
 -Kapt-stubs=output/stubs
 -Kapt-classes=output/classes
@@ -28,7 +25,6 @@ output/plugin/META-INF/services/org.jetbrains.kotlin.compiler.plugin.CompilerPlu
 Test.kt
 
 # kotlinc
--language-version 2.0
 -d output/classes
 Test.kt
 
