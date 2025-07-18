@@ -28,7 +28,7 @@ fun VariableInitializationInfoData.render(node: CFGNode<*>): String = buildStrin
     for ((path, data) in getValue(node)) {
         appendLine(path.label ?: "NormalPath")
         for ((symbol, range) in data) {
-            appendLine("$symbol ${range.withoutMarker}")
+            appendLine("$symbol ${range.range.withoutMarker}")
         }
         appendLine()
     }

@@ -47,7 +47,8 @@ object FirMemberPropertiesChecker : FirClassChecker(MppCheckerKind.Common) {
         for (innerDeclaration in declaration.declarations) {
             if (innerDeclaration is FirProperty) {
                 val symbol = innerDeclaration.symbol
-                val isDefinitelyAssignedInConstructor = info?.get(symbol)?.isDefinitelyVisited() == true
+                val isDefinitelyAssignedInConstructor = info?.get(symbol)
+                    .let { it?.range?.isDefinitelyVisited() == true && !it.mustBeLateinit }
                 checkProperty(declaration, symbol, isDefinitelyAssignedInConstructor, !reachedDeadEnd)
             }
             // Can't just look at each property's graph's enterNode because they may have no graph if there is no initializer.

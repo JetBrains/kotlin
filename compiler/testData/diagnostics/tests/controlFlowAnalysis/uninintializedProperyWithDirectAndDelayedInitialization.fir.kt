@@ -9,7 +9,7 @@ class A {
 
 class B {
     val b = <!UNINITIALIZED_VARIABLE!>a<!>
-    val a: Int
+    <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>val a: Int<!>
     val c = <!UNINITIALIZED_VARIABLE!>a<!>
     init {
         a = 1

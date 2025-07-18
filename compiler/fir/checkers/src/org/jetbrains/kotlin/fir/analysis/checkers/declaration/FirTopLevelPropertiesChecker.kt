@@ -70,7 +70,8 @@ private fun checkFileLikeDeclaration(
 ) {
     val info = declaration.collectionInitializationInfo(topLevelPropertySymbols)
     for (topLevelPropertySymbol in topLevelPropertySymbols) {
-        val isDefinitelyAssigned = info?.get(topLevelPropertySymbol)?.isDefinitelyVisited() == true
+        val rangeInfo = info?.get(topLevelPropertySymbol)
+        val isDefinitelyAssigned = rangeInfo?.range?.isDefinitelyVisited() == true && !rangeInfo.mustBeLateinit
         checkProperty(containingDeclaration = null, topLevelPropertySymbol, isDefinitelyAssigned, reachable = true)
     }
 }

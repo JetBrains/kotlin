@@ -1,11 +1,11 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // DIAGNOSTICS: -UNUSED_PARAMETER
 class A(val w: Int) {
-    val x: Int
+    <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>val x: Int<!>
     val useUnitialized = <!UNINITIALIZED_VARIABLE!>x<!> +
                          <!UNINITIALIZED_VARIABLE!>y<!> +
                          <!UNINITIALIZED_VARIABLE!>v<!>
-    var y: Int
+    <!MUST_BE_INITIALIZED_OR_BE_ABSTRACT!>var y: Int<!>
     val v = -1
     val useInitialized = useUnitialized + v + w
 

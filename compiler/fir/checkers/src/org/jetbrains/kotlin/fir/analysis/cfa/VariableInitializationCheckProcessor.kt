@@ -121,7 +121,7 @@ abstract class VariableInitializationCheckProcessor {
 
             for (previousNode in previousCfgNodes) {
                 if (edgeFrom(previousNode).kind.isBack) continue
-                when (val assignmentNode = getValue(previousNode)[path]?.get(symbol)?.location) {
+                when (val assignmentNode = getValue(previousNode)[path]?.get(symbol)?.range?.location) {
                     is VariableDeclarationNode -> {} // unreachable - `val`s with initializers do not require hindsight
                     is VariableAssignmentNode -> reportCapturedInitialization(assignmentNode, symbol)
                     else -> // merge node for a branching construct, e.g. `if (p) { x = 1 } else { x = 2 }` - report on all branches
@@ -134,11 +134,11 @@ abstract class VariableInitializationCheckProcessor {
             if (path == CapturedByValue) continue // CaptureByValue path does not contain enough information for captured initialization checks.
 
             for ((symbol, range) in data) {
-                if (!symbol.isVal || !range.canBeRevisited() || symbol !in properties) continue
+                if (!symbol.isVal || !range.range.canBeRevisited() || symbol !in properties) continue
                 // This can be something like `f({ x = 1 }, { x = 2 })` where `f` calls both lambdas in-place.
                 // At each assignment it was only considered in isolation, but now that we're merging their control flows,
                 // we can see that the assignments clash, so we need to go back and emit errors on these nodes.
-                if (node.previousCfgNodes.all { getValue(it)[path]?.get(symbol)?.canBeRevisited() != true }) {
+                if (node.previousCfgNodes.all { getValue(it)[path]?.get(symbol)?.range?.canBeRevisited() != true }) {
                     node.reportErrorsOnInitializationsInInputs(symbol, path, visited = persistentSetOf())
                 }
             }
@@ -170,7 +170,7 @@ abstract class VariableInitializationCheckProcessor {
         if (!symbol.isVal || node.fir.unwrapLValue()?.hasMatchingReceiver(this) != true || symbol !in properties) return
 
         val info = getValue(node)
-        val isRevisited = info.values.any { it[symbol]?.canBeRevisited() == true }
+        val isRevisited = info.values.any { it[symbol]?.range?.canBeRevisited() == true }
 
         // If the variable has an initializer, this is definitely a reassignment if revisited.
         // Otherwise, prefer reporting captured or non-inline initialization before falling back
@@ -222,7 +222,7 @@ abstract class VariableInitializationCheckProcessor {
 
     private fun FirVariableSymbol<*>.isInitializedAt(node: CFGNode<*>, data: VariableInitializationInfoData): Boolean {
         return data.getValue(node).all { (key, value) ->
-            (key == CapturedByValue && !isCapturedByValue) || value[this]?.isDefinitelyVisited() == true
+            (key == CapturedByValue && !isCapturedByValue) || value[this]?.range?.isDefinitelyVisited() == true
         }
     }
 
