@@ -135,7 +135,6 @@ abstract class AbstractKaptToolIntegrationTest {
             val arg = it
                 .replace("%KOTLIN_STDLIB%", File("dist/kotlinc/lib/kotlin-stdlib.jar").absolutePath)
                 .replace("%KOTLIN_COMPILER%", File("dist/kotlinc/lib/kotlin-compiler.jar").absolutePath)
-                .replace("%LATEST_STABLE%", LanguageVersion.LATEST_STABLE.versionString)
             if (SystemInfo.isWindows && (arg.contains("=") || arg.contains(":") || arg.contains(";"))) {
                 "\"" + arg + "\""
             } else {

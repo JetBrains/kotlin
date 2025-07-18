@@ -2,9 +2,7 @@
 output/stubs
 
 # kapt
--jvm-default=enable
--language-version 2.0
--Xuse-k2-kapt
+-jvm-default=no-compatibility
 -Kapt-mode=stubs
 -Kapt-stubs=output/stubs
 -Kapt-classes=output/classes

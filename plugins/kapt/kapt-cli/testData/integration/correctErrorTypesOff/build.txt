@@ -20,8 +20,6 @@ output/sources
 ap/Processor.kt
 
 # kapt
--language-version %LATEST_STABLE%
--Xuse-k2-kapt
 -Kapt-mode=stubs
 -Kapt-stubs=output/stubs
 -Kapt-classes=output/classes
@@ -33,8 +31,6 @@ ap/Processor.kt
 Test.kt
 
 # kapt
--language-version %LATEST_STABLE%
--Xuse-k2-kapt
 -Kapt-mode=apt
 -Kapt-stubs=output/stubs
 -Kapt-classes=output/classes

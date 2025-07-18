@@ -23,7 +23,6 @@ output/sources
 @javacArgs.txt
 
 # kotlinc
--language-version 2.0
 -d output/classes
 -cp output/ap:output/classes:output/javaClasses
 Test.kt
