@@ -5,15 +5,16 @@
 
 package org.jetbrains.kotlin.backend.common
 
+import org.jetbrains.kotlin.backend.common.checkers.IrValidationError
+import org.jetbrains.kotlin.backend.common.checkers.TreeConsistencyError
+import org.jetbrains.kotlin.backend.common.checkers.checkTreeConsistency
 import org.jetbrains.kotlin.backend.common.checkers.context.*
 import org.jetbrains.kotlin.backend.common.checkers.declaration.*
 import org.jetbrains.kotlin.backend.common.checkers.expression.*
 import org.jetbrains.kotlin.backend.common.checkers.symbol.IrSymbolChecker
 import org.jetbrains.kotlin.backend.common.checkers.symbol.IrVisibilityChecker
-import org.jetbrains.kotlin.backend.common.checkers.symbol.check
 import org.jetbrains.kotlin.backend.common.checkers.type.IrTypeChecker
 import org.jetbrains.kotlin.backend.common.checkers.type.IrTypeParameterScopeChecker
-import org.jetbrains.kotlin.backend.common.checkers.type.check
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.IrVerificationMode
@@ -22,9 +23,7 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
-import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.IrTypeProjection
 import org.jetbrains.kotlin.ir.util.IrTreeSymbolsVisitor
 import org.jetbrains.kotlin.ir.util.file
 import org.jetbrains.kotlin.ir.util.render
@@ -349,106 +348,6 @@ private class IrFileValidator(
         }
     }
 }
-
-private fun IrElement.checkTreeConsistency(reportError: ReportIrValidationError, config: IrValidatorConfig) {
-    val checker = CheckTreeConsistencyVisitor(reportError, config)
-    accept(checker, null)
-    if (checker.hasInconsistency) throw TreeConsistencyError(this)
-}
-
-private class CheckTreeConsistencyVisitor(val reportError: ReportIrValidationError, val config: IrValidatorConfig) :
-    IrTreeSymbolsVisitor() {
-    var hasInconsistency = false
-
-    private val visitedElements = hashSetOf<IrElement>()
-    private val parentChain: MutableList<IrElement> = mutableListOf()
-    private var currentActualParent: IrDeclarationParent? = null
-
-    override fun visitElement(element: IrElement) {
-        checkDuplicateNode(element)
-        parentChain.temporarilyPushing(element) {
-            element.acceptChildrenVoid(this)
-        }
-    }
-
-    override fun visitTypeRecursively(container: IrElement, type: IrType) {
-        // Skip `type.annotations` to avoid visiting the same annotation nodes multiple times,
-        // since `IrType` instances can be shared across the IR tree and are not guaranteed to be unique.
-        visitType(container, type)
-        if (type is IrSimpleType) {
-            type.arguments.forEach {
-                if (it is IrTypeProjection) {
-                    visitTypeRecursively(container, it.type)
-                }
-            }
-        }
-    }
-
-    override fun visitDeclaration(declaration: IrDeclarationBase) {
-        checkDuplicateNode(declaration)
-        parentChain.temporarilyPushing(declaration) {
-            handleParent(declaration, currentActualParent)
-            val previousActualParent = currentActualParent
-            currentActualParent = declaration as? IrDeclarationParent ?: currentActualParent
-            declaration.acceptChildrenVoid(this)
-            currentActualParent = previousActualParent
-        }
-    }
-
-    override fun visitPackageFragment(declaration: IrPackageFragment) {
-        currentActualParent = declaration
-        visitElement(declaration)
-    }
-
-    override fun visitSymbol(container: IrElement, symbol: IrSymbol) {
-        if (config.checkUnboundSymbols && !symbol.isBound) {
-            hasInconsistency = true
-            reportError(null, container, "Unexpected unbound symbol", parentChain)
-        }
-    }
-
-    private fun handleParent(declaration: IrDeclaration, actualParent: IrDeclarationParent?) {
-        if (actualParent == null) return
-        try {
-            val assignedParent = declaration.parent
-            if (assignedParent != actualParent) {
-                reportWrongParent(declaration, assignedParent, actualParent)
-            }
-        } catch (_: Exception) {
-            reportWrongParent(declaration, null, actualParent)
-        }
-    }
-
-    private fun reportWrongParent(declaration: IrDeclaration, expectedParent: IrDeclarationParent?, actualParent: IrDeclarationParent) {
-        hasInconsistency = true
-        reportError(
-            null,
-            declaration,
-            buildString {
-                appendLine("Declaration with wrong parent:")
-                appendLine("declaration: ${declaration.render()}")
-                appendLine("expectedParent: ${expectedParent?.render()}")
-                appendLine("actualParent: ${actualParent.render()}")
-            },
-            parentChain,
-        )
-    }
-
-    private fun checkDuplicateNode(element: IrElement) {
-        if (!visitedElements.add(element)) {
-            val renderString = if (element is IrTypeParameter) element.render() + " of " + element.parent.render() else element.render()
-            reportError(null, element, "Duplicate IR node: $renderString", parentChain)
-
-            // The IR tree is completely messed up if it includes one element twice. It may not be a tree at all, there may be cycles.
-            // Give up early to avoid stack overflow.
-            throw TreeConsistencyError(element)
-        }
-    }
-}
-
-open class IrValidationError(message: String? = null, cause: Throwable? = null) : IllegalStateException(message, cause)
-
-class TreeConsistencyError(element: IrElement) : IrValidationError(element.render())
 
 /**
  * Verifies common IR invariants that should hold in all the backends.

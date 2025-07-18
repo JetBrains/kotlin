@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.test.backend.handlers
 
-import org.jetbrains.kotlin.backend.common.IrValidationError
+import org.jetbrains.kotlin.backend.common.checkers.IrValidationError
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.WrappedException
 import org.jetbrains.kotlin.test.model.AfterAnalysisChecker
