@@ -1,5 +1,6 @@
 // KIND: STANDALONE
 // FREE_COMPILER_ARGS: -opt-in=kotlinx.cinterop.ExperimentalForeignApi
+// IGNORE_SWIFT_EXPORT_WITH_ONLY_VALIDATION
 // MODULE: main
 // FILE: main.kt
 

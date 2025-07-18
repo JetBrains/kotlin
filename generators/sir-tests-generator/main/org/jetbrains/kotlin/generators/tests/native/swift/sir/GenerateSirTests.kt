@@ -15,11 +15,25 @@ import org.jetbrains.kotlin.generators.tests.provider
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.UseStandardTestCaseGroupProvider
 import org.jetbrains.kotlin.swiftexport.standalone.test.AbstractKlibBasedSwiftRunnerTest
 import org.jetbrains.kotlin.swiftexport.standalone.test.AbstractSwiftExportExecutionTest
+import org.jetbrains.kotlin.swiftexport.standalone.test.AbstractSwiftExportWithResultValidationTest
 
 
 fun main() {
     System.setProperty("java.awt.headless", "true")
     generateTestGroupSuiteWithJUnit5(additionalMethodGenerators = listOf(FrontendConfiguratorTestGenerator)) {
+        testGroup(
+            "native/swift/swift-export-standalone-integration-tests/simple/tests-gen/",
+            "native/swift/swift-export-standalone-integration-tests/simple/testData/generation"
+        ) {
+            testClass<AbstractSwiftExportWithResultValidationTest>(
+                suiteTestClassName = "SwiftExportWithResultValidationTest",
+                annotations = listOf(
+                    provider<UseStandardTestCaseGroupProvider>(),
+                ),
+            ) {
+                model("", extension = null, recursive = false)
+            }
+        }
         testGroup(
             "native/swift/swift-export-standalone-integration-tests/simple/tests-gen/",
             "native/swift/swift-export-standalone-integration-tests/simple/testData/generation"

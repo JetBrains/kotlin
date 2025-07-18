@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.swiftexport.standalone.test
 
+import com.intellij.openapi.util.io.FileUtil
 import com.intellij.testFramework.TestDataPath
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.UseStandardTestCaseGroupProvider
 import org.jetbrains.kotlin.konan.test.testLibraryAKlibFile
@@ -19,6 +20,8 @@ import java.io.File
 @TestDataPath("\$PROJECT_ROOT")
 @UseStandardTestCaseGroupProvider
 class ExternalProjectGenerationTests : AbstractKlibBasedSwiftRunnerTest() {
+
+    private val tmpdir = FileUtil.createTempDirectory("SwiftExportIntegrationTests", null, false)
 
     @Test
     fun `full export of testLibraryA`() {
