@@ -3,18 +3,34 @@ package org.jetbrains.kotlin.buildtools.api.arguments
 import kotlin.Array
 import kotlin.Boolean
 import kotlin.String
-import kotlin.Suppress
 import kotlin.jvm.JvmField
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.ExplicitApiMode
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.KotlinVersion
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.ReturnValueCheckerMode
 
+/**
+ * @since 2.3.0
+ */
 public interface CommonCompilerArguments : CommonToolArguments {
-  @Suppress("UNCHECKED_CAST")
+  /**
+   * Get the value for option specified by [key] if it was previously [set] or if it has a default value.
+   *
+   * @return the previously set value for an option
+   * @throws IllegalStateException if the option was not set and has no default value
+   */
   public operator fun <V> `get`(key: CommonCompilerArgument<V>): V
 
+  /**
+   * Set the [value] for option specified by [key], overriding any previous value for that option.
+   */
   public operator fun <V> `set`(key: CommonCompilerArgument<V>, `value`: V)
 
+  /**
+   * Base class for [CommonCompilerArguments] options.
+   *
+   * @see get
+   * @see set    
+   */
   public class CommonCompilerArgument<V>(
     public val id: String,
   )

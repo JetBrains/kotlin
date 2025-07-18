@@ -13,7 +13,7 @@ class GenConsistencyTest {
     @DisplayName("Check that generated BTA API classes are up-to-date")
     fun testGeneratedApiClassesAreUpToDate() {
         val apiGenPath = File("../kotlin-build-tools-api/gen")
-        checkPathHash(apiGenPath, -5534482494, "kotlin-build-tools-api")
+        checkPathHash(apiGenPath, 440032856, "kotlin-build-tools-api")
     }
 
     @Test

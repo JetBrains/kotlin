@@ -17,7 +17,27 @@ import kotlin.reflect.KProperty1
 
 internal const val IMPL_PACKAGE = "org.jetbrains.kotlin.buildtools.internal.arguments"
 internal const val API_PACKAGE = "org.jetbrains.kotlin.buildtools.api.arguments"
+
 internal val ANNOTATION_EXPERIMENTAL = ClassName(API_PACKAGE, "ExperimentalCompilerArgument")
+
+internal val KDOC_SINCE_2_3_0 = "@since 2.3.0"
+internal val KDOC_BASE_OPTIONS_CLASS = """
+    Base class for [%T] options.
+
+    @see get
+    @see set    
+""".trimIndent()
+
+internal val KDOC_OPTIONS_GET = """
+    Get the value for option specified by [key] if it was previously [set] or if it has a default value.
+    
+    @return the previously set value for an option
+    @throws IllegalStateException if the option was not set and has no default value
+""".trimIndent()
+
+internal val KDOC_OPTIONS_SET = """
+    Set the [value] for option specified by [key], overriding any previous value for that option.
+""".trimIndent()
 
 internal val experimentalLevelNames = listOf(
     CompilerArgumentsLevelNames.commonKlibBasedArguments,

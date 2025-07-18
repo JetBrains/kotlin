@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.buildtools.api
 
+import org.jetbrains.kotlin.buildtools.api.CompilationService.Companion.loadImplementation
 import org.jetbrains.kotlin.buildtools.api.internal.KotlinCompilerVersion
 import org.jetbrains.kotlin.buildtools.api.internal.wrappers.PreKotlin220Wrapper
 import org.jetbrains.kotlin.buildtools.api.jvm.ClassSnapshotGranularity
@@ -39,7 +40,7 @@ public interface CompilationService {
     public fun calculateClasspathSnapshot(
         classpathEntry: File,
         granularity: ClassSnapshotGranularity,
-        parseInlinedLocalClasses: Boolean
+        parseInlinedLocalClasses: Boolean,
     ): ClasspathEntrySnapshot
 
     /**
@@ -54,7 +55,7 @@ public interface CompilationService {
      */
     public fun calculateClasspathSnapshot(
         classpathEntry: File,
-        granularity: ClassSnapshotGranularity
+        granularity: ClassSnapshotGranularity,
     ): ClasspathEntrySnapshot
 
     /**

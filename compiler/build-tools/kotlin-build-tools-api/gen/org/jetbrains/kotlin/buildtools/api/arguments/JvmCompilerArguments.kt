@@ -4,16 +4,32 @@ import kotlin.Array
 import kotlin.Boolean
 import kotlin.Int
 import kotlin.String
-import kotlin.Suppress
 import kotlin.jvm.JvmField
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.JvmTarget
 
+/**
+ * @since 2.3.0
+ */
 public interface JvmCompilerArguments : CommonCompilerArguments {
-  @Suppress("UNCHECKED_CAST")
+  /**
+   * Get the value for option specified by [key] if it was previously [set] or if it has a default value.
+   *
+   * @return the previously set value for an option
+   * @throws IllegalStateException if the option was not set and has no default value
+   */
   public operator fun <V> `get`(key: JvmCompilerArgument<V>): V
 
+  /**
+   * Set the [value] for option specified by [key], overriding any previous value for that option.
+   */
   public operator fun <V> `set`(key: JvmCompilerArgument<V>, `value`: V)
 
+  /**
+   * Base class for [JvmCompilerArguments] options.
+   *
+   * @see get
+   * @see set    
+   */
   public class JvmCompilerArgument<V>(
     public val id: String,
   )

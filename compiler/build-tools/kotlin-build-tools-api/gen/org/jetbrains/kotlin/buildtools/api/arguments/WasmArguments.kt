@@ -2,16 +2,32 @@ package org.jetbrains.kotlin.buildtools.api.arguments
 
 import kotlin.Boolean
 import kotlin.String
-import kotlin.Suppress
 import kotlin.jvm.JvmField
 
+/**
+ * @since 2.3.0
+ */
 @ExperimentalCompilerArgument
 public interface WasmArguments : CommonKlibBasedArguments {
-  @Suppress("UNCHECKED_CAST")
+  /**
+   * Get the value for option specified by [key] if it was previously [set] or if it has a default value.
+   *
+   * @return the previously set value for an option
+   * @throws IllegalStateException if the option was not set and has no default value
+   */
   public operator fun <V> `get`(key: WasmArgument<V>): V
 
+  /**
+   * Set the [value] for option specified by [key], overriding any previous value for that option.
+   */
   public operator fun <V> `set`(key: WasmArgument<V>, `value`: V)
 
+  /**
+   * Base class for [WasmArguments] options.
+   *
+   * @see get
+   * @see set    
+   */
   public class WasmArgument<V>(
     public val id: String,
   )

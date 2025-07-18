@@ -25,6 +25,7 @@ class BtaApiGenerator(val genDir: Path) : BtaGenerator {
         FileSpec.Companion.builder(API_PACKAGE, className).apply {
             addType(
                 TypeSpec.Companion.interfaceBuilder(className).apply {
+                    addKdoc(KDOC_SINCE_2_3_0)
                     if (level.name in experimentalLevelNames) {
                         addAnnotation(ANNOTATION_EXPERIMENTAL)
                     }
@@ -106,6 +107,7 @@ class BtaApiGenerator(val genDir: Path) : BtaGenerator {
             property<String>("stringValue") {
                 initializer("stringValue")
             }
+            addKdoc(KDOC_SINCE_2_3_0)
             primaryConstructor(FunSpec.Companion.constructorBuilder().addParameter("stringValue", String::class).build())
             sourceEnum.forEach {
                 addEnumConstant(
@@ -131,6 +133,7 @@ class BtaApiGenerator(val genDir: Path) : BtaGenerator {
         val argumentTypeName = argumentsClassName.removeSuffix("s")
         val typeSpec =
             TypeSpec.Companion.classBuilder(argumentTypeName).apply {
+                addKdoc(KDOC_BASE_OPTIONS_CLASS, ClassName(API_PACKAGE, argumentsClassName))
                 addTypeVariable(TypeVariableName.Companion("V"))
                 property<String>("id") {
                     initializer("id")
@@ -143,17 +146,16 @@ class BtaApiGenerator(val genDir: Path) : BtaGenerator {
 
     fun TypeSpec.Builder.generateGetPutFunctions(parameter: ClassName) {
         function("get") {
+            addKdoc(KDOC_OPTIONS_GET)
             addModifiers(KModifier.ABSTRACT)
             val typeParameter = TypeVariableName.Companion("V")
-            annotation<Suppress> {
-                addMember("%S", "UNCHECKED_CAST")
-            }
             returns(typeParameter)
             addModifiers(KModifier.OPERATOR)
             addTypeVariable(typeParameter)
             addParameter("key", parameter.parameterizedBy(typeParameter))
         }
         function("set") {
+            addKdoc(KDOC_OPTIONS_SET)
             addModifiers(KModifier.ABSTRACT)
             val typeParameter = TypeVariableName.Companion("V")
             addModifiers(KModifier.OPERATOR)

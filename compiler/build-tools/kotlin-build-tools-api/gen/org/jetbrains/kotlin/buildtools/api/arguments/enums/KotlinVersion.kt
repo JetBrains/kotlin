@@ -2,6 +2,9 @@ package org.jetbrains.kotlin.buildtools.api.arguments.enums
 
 import kotlin.String
 
+/**
+ * @since 2.3.0
+ */
 public enum class KotlinVersion(
   public val stringValue: String,
 ) {

@@ -11,8 +11,9 @@ import java.util.*
  * Represents a unique identifier for a specific project. In this context, a "project" refers to the top-level entity
  * or the main project itself, rather than a project's module. It's important to note that in certain build systems,
  * like Gradle, the term "project" may be used to refer to individual modules. However, in this interface, we are
- * explicitly using it to represent a complete project rather than its sub-modules.
+ * explicitly using it to represent a complete project rather than its submodules.
  */
+@ExperimentalBuildToolsApi
 public sealed interface ProjectId {
     public data class ProjectUUID(public val uuid: UUID) : ProjectId
 
