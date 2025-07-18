@@ -112,3 +112,7 @@ fun equals(compile: DataFrameSchema, runtime: DataFrameSchema, mismatches: Mutab
     }
 }
 
+fun DataFrameSchema.column(name: String): ColumnSchema {
+    return columns[name] ?: error("Column ${name} not found in schema:\n${this}")
+}
+

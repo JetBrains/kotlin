@@ -18,17 +18,17 @@ fun box(): String {
 
     val df1 = dataFrameOf("a" to columnOf(null, 1), "b" to columnOf("str", null))
     df1.dropNulls(whereAllNull = true) { a and b }.let { res ->
-        val columns = res.compileTimeSchema().columns
-        assert(columns["a"]!!.nullable)
-        assert(columns["b"]!!.nullable)
+        val schema = res.compileTimeSchema()
+        assert(schema.column("a").nullable)
+        assert(schema.column("b").nullable)
 
         res.compareSchemas(strict = true)
     }
 
     df1.dropNulls(whereAllNull = true).let { res ->
-        val columns = res.compileTimeSchema().columns
-        assert(columns["a"]!!.nullable)
-        assert(columns["b"]!!.nullable)
+        val schema = res.compileTimeSchema()
+        assert(schema.column("a").nullable)
+        assert(schema.column("b").nullable)
 
         res.compareSchemas(strict = true)
     }
