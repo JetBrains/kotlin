@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtNodeTypes
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.isEnumEntry
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
@@ -19,12 +20,17 @@ import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.primaryConstructorIfAny
 import org.jetbrains.kotlin.fir.declarations.utils.isErrorPrimaryConstructor
 import org.jetbrains.kotlin.fir.declarations.utils.isInterface
+import org.jetbrains.kotlin.fir.declarations.utils.superConeTypes
+import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.types.coneType
 import org.jetbrains.kotlin.fir.types.impl.FirImplicitAnyTypeRef
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import org.jetbrains.kotlin.fir.types.abbreviatedType
+import org.jetbrains.kotlin.fir.types.isAny
 import org.jetbrains.kotlin.utils.addToStdlib.lastIsInstanceOrNull
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 /** Checker on super type declarations in the primary constructor of a class declaration. */
 object FirPrimaryConstructorSuperTypeChecker : FirClassChecker(MppCheckerKind.Common) {
@@ -84,8 +90,30 @@ object FirPrimaryConstructorSuperTypeChecker : FirClassChecker(MppCheckerKind.Co
         val supertypesToSkip = context.session.primaryConstructorSuperTypePlatformSupport
             .supertypesThatDontNeedInitializationInSubtypesConstructors
         if (superClassSymbol.classId in supertypesToSkip) return
+
+
         if (delegatedCallSource.elementType != KtNodeTypes.SUPER_TYPE_CALL_ENTRY) {
-            reporter.reportOn(constructedTypeRef.source, FirErrors.SUPERTYPE_NOT_INITIALIZED)
+            /**
+             * This is a special case for actualizing an `expect` interface into `Any` type.
+             * Here, we allow using such an actualized `Any` type without calling directly it's constructor
+             * ```kotlin
+             * // commonMain
+             * expect interface Foo
+             *
+             * // jvmMain
+             * actual typealias Foo = Any
+             *
+             * class Test : Base(), Foo
+             * ```
+             */
+            val allowUsingClassTypeAsInterface =
+                context.session.languageVersionSettings.supportsFeature(LanguageFeature.AllowAnyAsAnActualTypeForExpectInterface) &&
+                        delegatedConstructorCall.constructedTypeRef.coneType.isAny &&
+                        regularClass.superConeTypes.any { it.abbreviatedType != null && it.isAny }
+
+            if (!allowUsingClassTypeAsInterface) {
+                reporter.reportOn(constructedTypeRef.source, FirErrors.SUPERTYPE_NOT_INITIALIZED)
+            }
         }
     }
 
