@@ -16,7 +16,7 @@ import java.io.File
 import kotlin.io.path.div
 import kotlin.io.path.readText
 
-abstract class AbstractKlibBasedSwiftRunnerTest : AbstractSwiftExportTest() {
+abstract class AbstractKlibBasedSwiftRunnerTest : AbstractSwiftExportWithBinaryCompilationTest() {
 
     protected val tmpdir = FileUtil.createTempDirectory("SwiftExportIntegrationTests", null, false)
 
