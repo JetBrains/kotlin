@@ -1399,7 +1399,6 @@ open class PsiRawFirBuilder(
 
                                 addDestructuringVariables(
                                     declarations,
-                                    this@Visitor,
                                     moduleData,
                                     declaration,
                                     destructuringContainerVar,
@@ -1466,7 +1465,6 @@ open class PsiRawFirBuilder(
 
                                                 addDestructuringVariables(
                                                     statements,
-                                                    this@Visitor,
                                                     baseModuleData,
                                                     declaration,
                                                     destructuringContainerVar,
@@ -2148,7 +2146,6 @@ open class PsiRawFirBuilder(
                         }
                         addDestructuringVariables(
                             destructuringVariables,
-                            this@Visitor,
                             baseModuleData,
                             multiDeclaration,
                             multiParameter,
@@ -3130,7 +3127,6 @@ open class PsiRawFirBuilder(
                         if (multiDeclaration != null) {
                             addDestructuringVariables(
                                 blockBuilder.statements,
-                                this@Visitor,
                                 baseModuleData,
                                 multiDeclaration = multiDeclaration,
                                 container = firLoopParameter,
@@ -3567,7 +3563,6 @@ open class PsiRawFirBuilder(
                 extractAnnotationsTo = { extractAnnotationsTo(it) }
             )
             return generateDestructuringBlock(
-                this@Visitor,
                 baseModuleData,
                 multiDeclaration,
                 baseVariable,

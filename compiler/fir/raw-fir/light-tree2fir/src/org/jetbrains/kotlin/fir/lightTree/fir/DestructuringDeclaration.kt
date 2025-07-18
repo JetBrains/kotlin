@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.fir.declarations.FirVariable
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotationCallCopy
 import org.jetbrains.kotlin.fir.expressions.builder.buildBlock
 import org.jetbrains.kotlin.fir.generateTemporaryVariable
@@ -84,22 +83,24 @@ class DestructuringEntry(
 }
 
 fun AbstractRawFirBuilder<*>.addDestructuringStatements(
-    destination: MutableList<FirStatement>,
+    destination: MutableList<in FirVariable>,
     moduleData: FirModuleData,
     multiDeclaration: DestructuringDeclaration,
     container: FirVariable,
-    tmpVariable: Boolean,
-    forceLocal: Boolean
-
+    isTmpVariable: Boolean,
+    forceLocal: Boolean,
+    configure: (FirVariable) -> Unit = {}
 ) {
-    addDestructuringVariables(
-        destination,
-        DestructuringEntry,
-        moduleData,
-        container,
-        multiDeclaration.entries,
-        multiDeclaration.isVar,
-        tmpVariable,
-        forceLocal
-    )
+    with(DestructuringEntry.Companion) {
+        addDestructuringVariables(
+            destination,
+            moduleData,
+            container,
+            entries = multiDeclaration.entries,
+            isVar = multiDeclaration.isVar,
+            isTmpVariable = isTmpVariable,
+            forceLocal = forceLocal,
+            configure,
+        )
+    }
 }

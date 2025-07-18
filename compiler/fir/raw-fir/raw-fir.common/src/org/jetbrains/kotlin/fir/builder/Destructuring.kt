@@ -34,24 +34,23 @@ interface DestructuringContext<T> {
     }
 }
 
+context(c: DestructuringContext<T>)
 fun <T> AbstractRawFirBuilder<*>.addDestructuringVariables(
     destination: MutableList<in FirVariable>,
-    c: DestructuringContext<T>,
     moduleData: FirModuleData,
     container: FirVariable,
     entries: List<T>,
     isVar: Boolean,
-    tmpVariable: Boolean,
+    isTmpVariable: Boolean,
     forceLocal: Boolean,
     configure: (FirVariable) -> Unit = {}
 ) {
-    if (tmpVariable) {
+    if (isTmpVariable) {
         destination += container
     }
     for ((index, entry) in entries.withIndex()) {
         destination += buildDestructuringVariable(
             moduleData,
-            c,
             container,
             entry,
             isVar,
@@ -62,9 +61,9 @@ fun <T> AbstractRawFirBuilder<*>.addDestructuringVariables(
     }
 }
 
+context(c: DestructuringContext<T>)
 fun <T> AbstractRawFirBuilder<*>.buildDestructuringVariable(
     moduleData: FirModuleData,
-    c: DestructuringContext<T>,
     container: FirVariable,
     entry: T,
     isVar: Boolean,

@@ -232,7 +232,7 @@ class LightTreeRawFirExpressionBuilder(
                         baseModuleData,
                         multiDeclaration,
                         multiParameter,
-                        tmpVariable = false,
+                        isTmpVariable = false,
                         forceLocal = true,
                     )
                     multiParameter
@@ -1340,7 +1340,7 @@ class LightTreeRawFirExpressionBuilder(
                             baseModuleData,
                             multiDeclaration,
                             firLoopParameter,
-                            tmpVariable = true,
+                            isTmpVariable = true,
                             forceLocal = true,
                         )
                     } else {

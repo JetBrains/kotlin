@@ -2838,14 +2838,12 @@ class LightTreeRawFirDeclarationBuilder(
                                 isScriptTopLevelDeclaration = true
                                 isDestructuringDeclarationContainerVariable = true
                             }
-                            addDestructuringVariables(
+                            addDestructuringStatements(
                                 declarations,
-                                DestructuringEntry,
                                 baseModuleData,
+                                destructuringDeclaration,
                                 destructuringContainerVar,
-                                destructuringDeclaration.entries,
-                                destructuringDeclaration.isVar,
-                                tmpVariable = true,
+                                isTmpVariable = true,
                                 forceLocal = false,
                             ) {
                                 configureScriptDestructuringDeclarationEntry(it, destructuringContainerVar)
