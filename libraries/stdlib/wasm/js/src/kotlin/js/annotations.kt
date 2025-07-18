@@ -18,7 +18,7 @@ package kotlin.js
 @MustBeDocumented
 @Retention(AnnotationRetention.BINARY)
 @SinceKotlin("2.2")
-public annotation class ExperimentalWasmJsInterop
+public actual annotation class ExperimentalWasmJsInterop
 
 /**
  * Exports top-level declaration on JS platform.
@@ -84,7 +84,7 @@ public actual annotation class JsName(actual val name: String)
 @ExperimentalWasmJsInterop
 @Retention(AnnotationRetention.BINARY)
 @Target(AnnotationTarget.CLASS, AnnotationTarget.PROPERTY, AnnotationTarget.FUNCTION, AnnotationTarget.FILE)
-public annotation class JsModule(val import: String)
+public actual annotation class JsModule(actual val import: String)
 
 
 /**
@@ -119,4 +119,4 @@ public annotation class JsModule(val import: String)
 @ExperimentalWasmJsInterop
 @Retention(AnnotationRetention.BINARY)
 @Target(AnnotationTarget.FILE)
-public annotation class JsQualifier(val value: String)
+public actual annotation class JsQualifier(actual val value: String)

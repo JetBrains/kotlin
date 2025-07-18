@@ -101,7 +101,7 @@ public actual annotation class JsFileName(actual val name: String)
  */
 @Retention(AnnotationRetention.BINARY)
 @Target(CLASS, PROPERTY, FUNCTION, FILE)
-public annotation class JsModule(val import: String)
+public actual annotation class JsModule(actual val import: String)
 
 /**
  * Denotes an `external` declaration that can be used without module system.
@@ -165,7 +165,7 @@ public annotation class JsNonModule
  */
 @Retention(AnnotationRetention.BINARY)
 @Target(AnnotationTarget.FILE)
-public annotation class JsQualifier(val value: String)
+public actual annotation class JsQualifier(actual val value: String)
 
 /**
  * Exports top-level declaration on JS platform.
