@@ -7,10 +7,13 @@ package test.io
 
 import test.collections.behaviors.sequenceBehavior
 import test.collections.compare
+import java.io.Closeable
 import kotlin.test.*
 import java.io.File
+import java.io.Flushable
 import java.io.Reader
 import java.io.StringReader
+import java.io.StringWriter
 import java.net.URL
 import java.util.ArrayList
 
@@ -190,6 +193,106 @@ class LineIteratorTest {
         reader = StringReader("a\nb\nc").buffered()
         compare(listOf("a", "b", "c").asSequence().constrainOnce(), reader.lineSequence()) {
             sequenceBehavior(isConstrainOnce = true)
+        }
+    }
+}
+
+
+class AppendableWriterTest {
+    @Test fun returnSelfIfIsWriter() {
+        val writer: Appendable = StringWriter()
+        val wrapped = writer.asWriter()
+        assertSame(writer, wrapped)
+    }
+
+    @Test fun write() {
+        val builder = StringBuilder()
+        val writer = builder.asWriter()
+
+        writer.write(72) // 'H'
+        writer.write("ello")
+        writer.write(" World!".toCharArray(), 1, 5) // "World"
+        writer.write(" Test".toCharArray())
+
+        assertEquals("Hello World Test", builder.toString())
+    }
+
+    @Test fun append() {
+        val builder = StringBuilder()
+        val writer = builder.asWriter()
+
+        writer.append("Hello")
+        writer.append(' ')
+        writer.append("World", 1, 3) // "or"
+        writer.append('!')
+
+        assertEquals("Hello or!", builder.toString())
+    }
+
+    @Test fun close() {
+        val mockCloseable = object : Appendable, Closeable {
+            var closed = false
+
+            override fun close() {
+                closed = true
+            }
+
+            override fun append(csq: CharSequence?) = this
+            override fun append(csq: CharSequence?, start: Int, end: Int) = this
+            override fun append(c: Char) = this
+        }
+
+        val writer = mockCloseable.asWriter()
+        writer.close()
+
+        assertTrue(mockCloseable.closed)
+    }
+
+    @Test
+    fun flush() {
+        val mockFlushable = object : Appendable, Flushable {
+            var flushed = false
+
+            override fun flush() {
+                flushed = true
+            }
+
+            override fun append(csq: CharSequence?) = this
+            override fun append(csq: CharSequence?, start: Int, end: Int) = this
+            override fun append(c: Char) = this
+        }
+
+        val writer = mockFlushable.asWriter()
+        writer.flush()
+
+        assertTrue(mockFlushable.flushed)
+    }
+
+    @Test fun writeWithExceptions() {
+        val writer = StringBuilder().asWriter()
+
+        assertFailsWith<IndexOutOfBoundsException> {
+            writer.write("test", -1, 2)
+        }
+
+        assertFailsWith<IndexOutOfBoundsException> {
+            writer.write("test".toCharArray(), -1, 2)
+        }
+
+        assertFailsWith<IndexOutOfBoundsException> {
+            writer.write("test", 1, -1)
+        }
+
+        assertFailsWith<IndexOutOfBoundsException> {
+            writer.write("test".toCharArray(), 1, -1)
+        }
+
+        assertFailsWith<IndexOutOfBoundsException> {
+            writer.write("test", 2, 3)
+        }
+
+        assertFailsWith<IndexOutOfBoundsException> {
+            writer.write("test".toCharArray(), 2, 3)
         }
     }
 }

@@ -873,6 +873,34 @@ public actual fun CharSequence.repeat(n: Int): String {
     }
 }
 
+/**
+ * Returns a [CharSequence] that wraps the specified [CharArray].
+ * All modifications to the original [CharArray] are reflected in the [CharSequence] and subsequences derived from it.
+ *
+ * @param startIndex the start index (inclusive) of the [CharArray], defaults to 0.
+ * @param endIndex the end index (exclusive) of the [CharArray], defaults to [CharArray.size].
+ * @return a [CharSequence] representing given [CharArray].
+ * @throws IndexOutOfBoundsException if [startIndex] or [endIndex] is out of bounds, or [startIndex] is greater than [endIndex].
+ */
+@JvmOverloads
+internal fun CharArray.asCharSequence(startIndex: Int = 0, endIndex: Int = this.size): CharSequence =
+    if (startIndex == endIndex) "" else CharArraySequenceView(this, startIndex, endIndex)
+
+private class CharArraySequenceView(
+    val charArray: CharArray,
+    val startIndex: Int,
+    val endIndex: Int,
+) : CharSequence {
+    init {
+        if (startIndex !in charArray.indices || endIndex !in charArray.indices || startIndex > endIndex)
+            throw IndexOutOfBoundsException("startIndex: $startIndex, endIndex: $endIndex, charArray.size: ${charArray.size}")
+    }
+
+    override val length: Int get() = endIndex - startIndex
+    override fun get(index: Int): Char = if (index !in 0 until length) throw IndexOutOfBoundsException() else charArray[index]
+    override fun subSequence(startIndex: Int, endIndex: Int): CharSequence =
+        CharArraySequenceView(charArray, startIndex + this.startIndex, endIndex + this.startIndex)
+}
 
 /**
  * A Comparator that orders strings ignoring character case.
