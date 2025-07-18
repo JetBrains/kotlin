@@ -234,7 +234,8 @@ private fun SirAndKaSession.deepTouch(container: SirDeclarationContainer) {
     container
         .allVariables()
         .forEach { it.type }
-    container
-        .allContainers()
-        .forEach { deepTouch(it) }
+    val allContainers = container.declarations.filterIsInstance<SirDeclarationContainer>()
+    for (i in allContainers.indices) {
+        deepTouch(allContainers[i])
+    }
 }
