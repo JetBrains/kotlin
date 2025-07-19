@@ -7,9 +7,6 @@ package kotlin.js
 
 import kotlin.internal.LowPriorityInOverloadResolution
 
-@ExperimentalWasmJsInterop
-public expect class JsError : JsAny
-
 /**
  * Exposes the JavaScript [Promise object](https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Promise) to Kotlin.
  */

@@ -6,24 +6,13 @@
 package kotlin.js
 
 import kotlin.internal.LowPriorityInOverloadResolution
-import kotlin.wasm.internal.ExternalInterfaceType
-
-@JsName("Error")
-@ExperimentalWasmJsInterop
-public actual external class JsError : JsAny {
-    internal val message: String
-    internal var name: String
-    internal val stack: ExternalInterfaceType
-    internal val cause: JsError?
-    internal var kotlinException: JsReference<Throwable>?
-}
 
 /**
  * Exposes the JavaScript [Promise object](https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Promise) to Kotlin.
  */
 @ExperimentalWasmJsInterop
 public actual open external class Promise<out T : JsAny?>
-    actual constructor(executor: (resolve: (T) -> Unit, reject: (JsError) -> Unit) -> Unit) : JsAny {
+actual constructor(executor: (resolve: (T) -> Unit, reject: (JsError) -> Unit) -> Unit) : JsAny {
 
     public constructor(executor: (resolve: (T) -> Unit, reject: (JsAny) -> Unit) -> Unit)
 
