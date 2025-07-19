@@ -7,14 +7,12 @@ package kotlin.js
 
 import kotlin.internal.LowPriorityInOverloadResolution
 
-public actual typealias JsError = Throwable
-
 /**
  * Exposes the JavaScript [Promise object](https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Promise) to Kotlin.
  */
 @Suppress("NOT_DOCUMENTED")
 public actual open external class Promise<out T>
-    actual constructor(executor: (resolve: (T) -> Unit, reject: (Throwable) -> Unit) -> Unit) {
+actual constructor(executor: (resolve: (T) -> Unit, reject: (Throwable) -> Unit) -> Unit) {
 
     @LowPriorityInOverloadResolution
     public actual open fun <S> then(onFulfilled: ((T) -> S)?): Promise<S>

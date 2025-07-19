@@ -6,6 +6,7 @@
 package kotlin.js
 
 import kotlin.internal.InlineOnly
+import kotlin.internal.LowPriorityInOverloadResolution
 
 /** JavaScript Array */
 public actual typealias JsArray<T> = Array<T>
@@ -31,8 +32,9 @@ public actual inline fun <T : JsAny?> JsArray<T>.toArray(): Array<T> = unsafeCas
 @Suppress("NOTHING_TO_INLINE")
 public actual inline fun <T : JsAny?> Array<T>.toJsArray(): JsArray<T> = unsafeCast<JsArray<T>>()
 
-@Suppress("NOTHING_TO_INLINE")
 /** Returns a new [List] containing all the elements of this [JsArray]. */
+@LowPriorityInOverloadResolution
+@Suppress("NOTHING_TO_INLINE")
 public actual inline fun <T : JsAny?> JsArray<T>.toList(): List<T> =
     unsafeCast<Array<T>>().asList()
 

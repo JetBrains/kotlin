@@ -111,6 +111,9 @@ val commonNonJvmMainSources by task<Sync> {
 val jsMainSources by task<Sync> {
     dependsOn(":kotlin-stdlib:prepareJsIrMainSources")
     val jsDir = file("$rootDir/libraries/stdlib/js")
+    val jsAndWasmJsDir = file("$rootDir/libraries/stdlib/jsAndWasmJs")
+
+    from("$jsAndWasmJsDir/src")
 
     from("$jsDir/src") {
         exclude(
