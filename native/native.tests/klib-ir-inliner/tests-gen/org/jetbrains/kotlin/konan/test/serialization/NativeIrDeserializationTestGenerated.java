@@ -2680,6 +2680,322 @@ public class NativeIrDeserializationTestGenerated extends AbstractNativeIrDeseri
       }
 
       @Nested
+      @TestMetadata("compiler/testData/codegen/box/bridges/declarationDifferentSignature")
+      @TestDataPath("$PROJECT_ROOT")
+      public class DeclarationDifferentSignature {
+        @Test
+        public void testAllFilesPresentInDeclarationDifferentSignature() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/bridges/declarationDifferentSignature"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+        }
+
+        @Test
+        @TestMetadata("simpleAbstractDeclarationDifferentSignature.kt")
+        public void testSimpleAbstractDeclarationDifferentSignature() {
+          runTest("compiler/testData/codegen/box/bridges/declarationDifferentSignature/simpleAbstractDeclarationDifferentSignature.kt");
+        }
+
+        @Test
+        @TestMetadata("simpleAbstractDeclarationOverridesConcreteDifferentSignature.kt")
+        public void testSimpleAbstractDeclarationOverridesConcreteDifferentSignature() {
+          runTest("compiler/testData/codegen/box/bridges/declarationDifferentSignature/simpleAbstractDeclarationOverridesConcreteDifferentSignature.kt");
+        }
+
+        @Test
+        @TestMetadata("simpleConcreteDeclarationDifferentSignature.kt")
+        public void testSimpleConcreteDeclarationDifferentSignature() {
+          runTest("compiler/testData/codegen/box/bridges/declarationDifferentSignature/simpleConcreteDeclarationDifferentSignature.kt");
+        }
+
+        @Test
+        @TestMetadata("simpleConcreteDeclarationOverridesAbstractDifferentSignature.kt")
+        public void testSimpleConcreteDeclarationOverridesAbstractDifferentSignature() {
+          runTest("compiler/testData/codegen/box/bridges/declarationDifferentSignature/simpleConcreteDeclarationOverridesAbstractDifferentSignature.kt");
+        }
+      }
+
+      @Nested
+      @TestMetadata("compiler/testData/codegen/box/bridges/diamond")
+      @TestDataPath("$PROJECT_ROOT")
+      public class Diamond {
+        @Test
+        public void testAllFilesPresentInDiamond() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/bridges/diamond"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+        }
+
+        @Test
+        @TestMetadata("diamondAbstractDeclarations.kt")
+        public void testDiamondAbstractDeclarations() {
+          runTest("compiler/testData/codegen/box/bridges/diamond/diamondAbstractDeclarations.kt");
+        }
+
+        @Test
+        @TestMetadata("diamondAbstractFakeOverridesInTheMiddle.kt")
+        public void testDiamondAbstractFakeOverridesInTheMiddle() {
+          runTest("compiler/testData/codegen/box/bridges/diamond/diamondAbstractFakeOverridesInTheMiddle.kt");
+        }
+
+        @Test
+        @TestMetadata("diamondMixedDeclarations.kt")
+        public void testDiamondMixedDeclarations() {
+          runTest("compiler/testData/codegen/box/bridges/diamond/diamondMixedDeclarations.kt");
+        }
+      }
+
+      @Nested
+      @TestMetadata("compiler/testData/codegen/box/bridges/doubleOverride")
+      @TestDataPath("$PROJECT_ROOT")
+      public class DoubleOverride {
+        @Test
+        public void testAllFilesPresentInDoubleOverride() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/bridges/doubleOverride"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+        }
+
+        @Test
+        @TestMetadata("concreteDeclarationOverridesAbstractDeclarationOverridingConcrete.kt")
+        public void testConcreteDeclarationOverridesAbstractDeclarationOverridingConcrete() {
+          runTest("compiler/testData/codegen/box/bridges/doubleOverride/concreteDeclarationOverridesAbstractDeclarationOverridingConcrete.kt");
+        }
+
+        @Test
+        @TestMetadata("concreteDeclarationOverridesTwoInheritingDeclarations.kt")
+        public void testConcreteDeclarationOverridesTwoInheritingDeclarations() {
+          runTest("compiler/testData/codegen/box/bridges/doubleOverride/concreteDeclarationOverridesTwoInheritingDeclarations.kt");
+        }
+      }
+
+      @Nested
+      @TestMetadata("compiler/testData/codegen/box/bridges/fakeOverride")
+      @TestDataPath("$PROJECT_ROOT")
+      public class FakeOverride {
+        @Test
+        @TestMetadata("abstractFakeOverride.kt")
+        public void testAbstractFakeOverride() {
+          runTest("compiler/testData/codegen/box/bridges/fakeOverride/abstractFakeOverride.kt");
+        }
+
+        @Test
+        public void testAllFilesPresentInFakeOverride() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/bridges/fakeOverride"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+        }
+
+        @Test
+        @TestMetadata("diamondFakeOverrideAbstractAndConcrete.kt")
+        public void testDiamondFakeOverrideAbstractAndConcrete() {
+          runTest("compiler/testData/codegen/box/bridges/fakeOverride/diamondFakeOverrideAbstractAndConcrete.kt");
+        }
+
+        @Test
+        @TestMetadata("diamondFakeOverrideAbstractFakeAndConcrete.kt")
+        public void testDiamondFakeOverrideAbstractFakeAndConcrete() {
+          runTest("compiler/testData/codegen/box/bridges/fakeOverride/diamondFakeOverrideAbstractFakeAndConcrete.kt");
+        }
+
+        @Test
+        @TestMetadata("diamondFakeOverrideAbstractOverridesConcrete.kt")
+        public void testDiamondFakeOverrideAbstractOverridesConcrete() {
+          runTest("compiler/testData/codegen/box/bridges/fakeOverride/diamondFakeOverrideAbstractOverridesConcrete.kt");
+        }
+
+        @Test
+        @TestMetadata("fakeOverrideAbstractAndConcreteDeclarations.kt")
+        public void testFakeOverrideAbstractAndConcreteDeclarations() {
+          runTest("compiler/testData/codegen/box/bridges/fakeOverride/fakeOverrideAbstractAndConcreteDeclarations.kt");
+        }
+
+        @Test
+        @TestMetadata("fakeOverrideDiamondWithExtraAbstract.kt")
+        public void testFakeOverrideDiamondWithExtraAbstract() {
+          runTest("compiler/testData/codegen/box/bridges/fakeOverride/fakeOverrideDiamondWithExtraAbstract.kt");
+        }
+
+        @Test
+        @TestMetadata("fakeOverrideInheritingDeclarations.kt")
+        public void testFakeOverrideInheritingDeclarations() {
+          runTest("compiler/testData/codegen/box/bridges/fakeOverride/fakeOverrideInheritingDeclarations.kt");
+        }
+
+        @Test
+        @TestMetadata("fakeOverrideInheritingDeclarationsAndAbstract.kt")
+        public void testFakeOverrideInheritingDeclarationsAndAbstract() {
+          runTest("compiler/testData/codegen/box/bridges/fakeOverride/fakeOverrideInheritingDeclarationsAndAbstract.kt");
+        }
+
+        @Test
+        @TestMetadata("fakeOverrideInheritsBridgeFromDeclaration.kt")
+        public void testFakeOverrideInheritsBridgeFromDeclaration() {
+          runTest("compiler/testData/codegen/box/bridges/fakeOverride/fakeOverrideInheritsBridgeFromDeclaration.kt");
+        }
+
+        @Test
+        @TestMetadata("fakeOverrideInheritsBridgeFromFakeOverride.kt")
+        public void testFakeOverrideInheritsBridgeFromFakeOverride() {
+          runTest("compiler/testData/codegen/box/bridges/fakeOverride/fakeOverrideInheritsBridgeFromFakeOverride.kt");
+        }
+
+        @Test
+        @TestMetadata("fakeOverrideInheritsBridgesAndAbstract.kt")
+        public void testFakeOverrideInheritsBridgesAndAbstract() {
+          runTest("compiler/testData/codegen/box/bridges/fakeOverride/fakeOverrideInheritsBridgesAndAbstract.kt");
+        }
+
+        @Test
+        @TestMetadata("fakeOverrideManyDeclarations.kt")
+        public void testFakeOverrideManyDeclarations() {
+          runTest("compiler/testData/codegen/box/bridges/fakeOverride/fakeOverrideManyDeclarations.kt");
+        }
+
+        @Test
+        @TestMetadata("fakeOverrideMisleadingImplementation.kt")
+        public void testFakeOverrideMisleadingImplementation() {
+          runTest("compiler/testData/codegen/box/bridges/fakeOverride/fakeOverrideMisleadingImplementation.kt");
+        }
+
+        @Test
+        @TestMetadata("fakeOverrideSameSuperDeclarations.kt")
+        public void testFakeOverrideSameSuperDeclarations() {
+          runTest("compiler/testData/codegen/box/bridges/fakeOverride/fakeOverrideSameSuperDeclarations.kt");
+        }
+
+        @Test
+        @TestMetadata("fakeOverrideShouldNotInheritBridgeFromAbstractDeclaration.kt")
+        public void testFakeOverrideShouldNotInheritBridgeFromAbstractDeclaration() {
+          runTest("compiler/testData/codegen/box/bridges/fakeOverride/fakeOverrideShouldNotInheritBridgeFromAbstractDeclaration.kt");
+        }
+
+        @Test
+        @TestMetadata("fakeOverrideShouldNotInheritBridgeFromAbstractFakeOverride.kt")
+        public void testFakeOverrideShouldNotInheritBridgeFromAbstractFakeOverride() {
+          runTest("compiler/testData/codegen/box/bridges/fakeOverride/fakeOverrideShouldNotInheritBridgeFromAbstractFakeOverride.kt");
+        }
+
+        @Test
+        @TestMetadata("fakeOverrideTwoDeclarationsThroughFakeOverrides.kt")
+        public void testFakeOverrideTwoDeclarationsThroughFakeOverrides() {
+          runTest("compiler/testData/codegen/box/bridges/fakeOverride/fakeOverrideTwoDeclarationsThroughFakeOverrides.kt");
+        }
+
+        @Test
+        @TestMetadata("longTreeOfFakeOverrideBridgeInheritance.kt")
+        public void testLongTreeOfFakeOverrideBridgeInheritance() {
+          runTest("compiler/testData/codegen/box/bridges/fakeOverride/longTreeOfFakeOverrideBridgeInheritance.kt");
+        }
+      }
+
+      @Nested
+      @TestMetadata("compiler/testData/codegen/box/bridges/fakeOverrideDifferentSignature")
+      @TestDataPath("$PROJECT_ROOT")
+      public class FakeOverrideDifferentSignature {
+        @Test
+        public void testAllFilesPresentInFakeOverrideDifferentSignature() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/bridges/fakeOverrideDifferentSignature"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+        }
+
+        @Test
+        @TestMetadata("simpleAbstractDeclarationOverridesAbstractThroughFakeOverride.kt")
+        public void testSimpleAbstractDeclarationOverridesAbstractThroughFakeOverride() {
+          runTest("compiler/testData/codegen/box/bridges/fakeOverrideDifferentSignature/simpleAbstractDeclarationOverridesAbstractThroughFakeOverride.kt");
+        }
+
+        @Test
+        @TestMetadata("simpleAbstractDeclarationOverridesConcreteThroughFakeOverride.kt")
+        public void testSimpleAbstractDeclarationOverridesConcreteThroughFakeOverride() {
+          runTest("compiler/testData/codegen/box/bridges/fakeOverrideDifferentSignature/simpleAbstractDeclarationOverridesConcreteThroughFakeOverride.kt");
+        }
+
+        @Test
+        @TestMetadata("simpleConcreteDeclarationOverridesAbstractThroughFakeOverride.kt")
+        public void testSimpleConcreteDeclarationOverridesAbstractThroughFakeOverride() {
+          runTest("compiler/testData/codegen/box/bridges/fakeOverrideDifferentSignature/simpleConcreteDeclarationOverridesAbstractThroughFakeOverride.kt");
+        }
+
+        @Test
+        @TestMetadata("simpleConcreteDeclarationOverridesConcreteThroughFakeOverride.kt")
+        public void testSimpleConcreteDeclarationOverridesConcreteThroughFakeOverride() {
+          runTest("compiler/testData/codegen/box/bridges/fakeOverrideDifferentSignature/simpleConcreteDeclarationOverridesConcreteThroughFakeOverride.kt");
+        }
+      }
+
+      @Nested
+      @TestMetadata("compiler/testData/codegen/box/bridges/noBridges")
+      @TestDataPath("$PROJECT_ROOT")
+      public class NoBridges {
+        @Test
+        public void testAllFilesPresentInNoBridges() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/bridges/noBridges"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+        }
+
+        @Test
+        @TestMetadata("oneVertexAbstract.kt")
+        public void testOneVertexAbstract() {
+          runTest("compiler/testData/codegen/box/bridges/noBridges/oneVertexAbstract.kt");
+        }
+
+        @Test
+        @TestMetadata("oneVertexConcrete.kt")
+        public void testOneVertexConcrete() {
+          runTest("compiler/testData/codegen/box/bridges/noBridges/oneVertexConcrete.kt");
+        }
+
+        @Test
+        @TestMetadata("simpleAbstractDeclarationOverridesConcreteSameSignature.kt")
+        public void testSimpleAbstractDeclarationOverridesConcreteSameSignature() {
+          runTest("compiler/testData/codegen/box/bridges/noBridges/simpleAbstractDeclarationOverridesConcreteSameSignature.kt");
+        }
+
+        @Test
+        @TestMetadata("simpleAbstractDeclarationSameSignature.kt")
+        public void testSimpleAbstractDeclarationSameSignature() {
+          runTest("compiler/testData/codegen/box/bridges/noBridges/simpleAbstractDeclarationSameSignature.kt");
+        }
+
+        @Test
+        @TestMetadata("simpleDeclarationSameSignature.kt")
+        public void testSimpleDeclarationSameSignature() {
+          runTest("compiler/testData/codegen/box/bridges/noBridges/simpleDeclarationSameSignature.kt");
+        }
+
+        @Test
+        @TestMetadata("simpleFakeOverrideSameSignature.kt")
+        public void testSimpleFakeOverrideSameSignature() {
+          runTest("compiler/testData/codegen/box/bridges/noBridges/simpleFakeOverrideSameSignature.kt");
+        }
+      }
+
+      @Nested
+      @TestMetadata("compiler/testData/codegen/box/bridges/overridesTwoDeclarations")
+      @TestDataPath("$PROJECT_ROOT")
+      public class OverridesTwoDeclarations {
+        @Test
+        @TestMetadata("abstractDeclarationOverridesAbstractAndConcreteDeclarations.kt")
+        public void testAbstractDeclarationOverridesAbstractAndConcreteDeclarations() {
+          runTest("compiler/testData/codegen/box/bridges/overridesTwoDeclarations/abstractDeclarationOverridesAbstractAndConcreteDeclarations.kt");
+        }
+
+        @Test
+        @TestMetadata("abstractDeclarationOverridesTwoAbstractDeclarations.kt")
+        public void testAbstractDeclarationOverridesTwoAbstractDeclarations() {
+          runTest("compiler/testData/codegen/box/bridges/overridesTwoDeclarations/abstractDeclarationOverridesTwoAbstractDeclarations.kt");
+        }
+
+        @Test
+        public void testAllFilesPresentInOverridesTwoDeclarations() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/bridges/overridesTwoDeclarations"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+        }
+
+        @Test
+        @TestMetadata("concreteDeclarationOverridesAbstractAndConcreteDeclarations.kt")
+        public void testConcreteDeclarationOverridesAbstractAndConcreteDeclarations() {
+          runTest("compiler/testData/codegen/box/bridges/overridesTwoDeclarations/concreteDeclarationOverridesAbstractAndConcreteDeclarations.kt");
+        }
+
+        @Test
+        @TestMetadata("concreteDeclarationOverridesTwoAbstractDeclarations.kt")
+        public void testConcreteDeclarationOverridesTwoAbstractDeclarations() {
+          runTest("compiler/testData/codegen/box/bridges/overridesTwoDeclarations/concreteDeclarationOverridesTwoAbstractDeclarations.kt");
+        }
+      }
+
+      @Nested
       @TestMetadata("compiler/testData/codegen/box/bridges/substitutionInSuperClass")
       @TestDataPath("$PROJECT_ROOT")
       public class SubstitutionInSuperClass {
