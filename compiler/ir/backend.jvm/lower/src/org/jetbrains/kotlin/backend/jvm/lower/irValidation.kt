@@ -11,25 +11,9 @@ import org.jetbrains.kotlin.backend.common.checkers.context.CheckerContext
 import org.jetbrains.kotlin.backend.common.checkers.declaration.IrFieldVisibilityChecker
 import org.jetbrains.kotlin.backend.common.checkers.expression.IrCrossFileFieldUsageChecker
 import org.jetbrains.kotlin.backend.common.phaser.IrValidationAfterLoweringPhase
-import org.jetbrains.kotlin.backend.common.phaser.IrValidationBeforeLoweringPhase
 import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.ir.declarations.*
-
-@PhaseDescription(name = "JvmValidateIrBeforeLowering")
-internal class JvmIrValidationBeforeLoweringPhase(
-    context: JvmBackendContext,
-) : IrValidationBeforeLoweringPhase<JvmBackendContext>(context) {
-    override val defaultValidationConfig: IrValidatorConfig
-        get() = super.defaultValidationConfig
-            .withCommonCheckers()
-            .apply {
-                copy(
-                    elementCheckers = elementCheckers
-                            - setOf(IrCrossFileFieldUsageChecker, IrFieldVisibilityChecker, IrCrossFileFieldUsageChecker)
-                )
-            }
-}
 
 @PhaseDescription(name = "JvmValidateIrAfterLowering")
 internal class JvmIrValidationAfterLoweringPhase(
@@ -37,11 +21,10 @@ internal class JvmIrValidationAfterLoweringPhase(
 ) : IrValidationAfterLoweringPhase<JvmBackendContext>(context) {
     override val defaultValidationConfig: IrValidatorConfig
         get() = super.defaultValidationConfig
-            .withCommonCheckers()
             .apply {
                 copy(
                     elementCheckers = elementCheckers
-                            - setOf(IrCrossFileFieldUsageChecker, IrFieldVisibilityChecker, IrCrossFileFieldUsageChecker)
+                            - setOf(IrCrossFileFieldUsageChecker, IrFieldVisibilityChecker)
                             + listOf(NoTopLevelDeclarationsChecker, NoPropertiesChecker, NoAnonymousInitializersChecker)
                 )
             }

@@ -13,7 +13,7 @@ import kotlin.reflect.KClass
 interface IrChecker : IrValidationError.Cause
 
 abstract class IrElementChecker<in E : IrElement>(
-    elementClass: KClass<in E>,
+    elementClass: KClass<E>,
 ) : IrChecker {
     internal val elementClass: Class<in E> = elementClass.java
 

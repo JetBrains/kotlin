@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.buildtools.api.arguments.JsArguments.Companion.IR_OU
 import org.jetbrains.kotlin.buildtools.api.arguments.JsArguments.Companion.LIBRARIES
 import org.jetbrains.kotlin.buildtools.api.arguments.JsArguments.Companion.MAIN
 import org.jetbrains.kotlin.buildtools.api.arguments.JsArguments.Companion.MODULE_KIND
-import org.jetbrains.kotlin.buildtools.api.arguments.JsArguments.Companion.OUTPUT
 import org.jetbrains.kotlin.buildtools.api.arguments.JsArguments.Companion.SOURCE_MAP
 import org.jetbrains.kotlin.buildtools.api.arguments.JsArguments.Companion.SOURCE_MAP_BASE_DIRS
 import org.jetbrains.kotlin.buildtools.api.arguments.JsArguments.Companion.SOURCE_MAP_EMBED_SOURCES
@@ -70,7 +69,6 @@ public class JsArgumentsImpl : WasmArgumentsImpl(), JsArguments {
   @Suppress("DEPRECATION")
   public fun toCompilerArguments(arguments: K2JSCompilerArguments = K2JSCompilerArguments()): K2JSCompilerArguments {
     super.toCompilerArguments(arguments)
-    if ("OUTPUT" in optionsMap) { arguments.outputFile = get(OUTPUT) }
     if ("IR_OUTPUT_DIR" in optionsMap) { arguments.outputDir = get(IR_OUTPUT_DIR) }
     if ("IR_OUTPUT_NAME" in optionsMap) { arguments.moduleName = get(IR_OUTPUT_NAME) }
     if ("LIBRARIES" in optionsMap) { arguments.libraries = get(LIBRARIES) }

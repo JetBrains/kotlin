@@ -7,11 +7,14 @@ package org.jetbrains.kotlin.fir.pipeline
 
 import org.jetbrains.kotlin.backend.common.*
 import org.jetbrains.kotlin.backend.common.actualizer.*
+import org.jetbrains.kotlin.backend.common.checkers.expression.IrCrossFileFieldUsageChecker
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.config.AnalysisFlags
+import org.jetbrains.kotlin.config.CommonConfigurationKeys
+import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.IrVerificationMode
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
@@ -74,6 +77,7 @@ fun List<ModuleCompilerAnalyzedOutput>.runPlatformCheckers(reporter: BaseDiagnos
 fun FirResult.convertToIrAndActualize(
     fir2IrExtensions: Fir2IrExtensions,
     fir2IrConfiguration: Fir2IrConfiguration,
+    compilerConfiguration: CompilerConfiguration,
     irGeneratorExtensions: Collection<IrGenerationExtension>,
     irMangler: KotlinMangler.IrMangler,
     visibilityConverter: Fir2IrVisibilityConverter,
@@ -88,6 +92,7 @@ fun FirResult.convertToIrAndActualize(
         outputs,
         fir2IrExtensions,
         fir2IrConfiguration,
+        compilerConfiguration,
         irGeneratorExtensions,
         irMangler,
         visibilityConverter,
@@ -105,6 +110,7 @@ private class Fir2IrPipeline(
     val outputs: List<ModuleCompilerAnalyzedOutput>,
     val fir2IrExtensions: Fir2IrExtensions,
     val fir2IrConfiguration: Fir2IrConfiguration,
+    val compilerConfiguration: CompilerConfiguration,
     val irGeneratorExtensions: Collection<IrGenerationExtension>,
     val irMangler: KotlinMangler.IrMangler,
     val visibilityConverter: Fir2IrVisibilityConverter,
@@ -252,10 +258,10 @@ private class Fir2IrPipeline(
         removeGeneratedBuiltinsDeclarationsIfNeeded()
 
         pluginContext.runMandatoryIrValidation(
-            mainIrFragment, fir2IrConfiguration,
+            mainIrFragment,
             "The frontend generated invalid IR. This is a compiler bug, please report it to https://kotl.in/issue."
         )
-        pluginContext.applyIrGenerationExtensions(fir2IrConfiguration, mainIrFragment, irGeneratorExtensions)
+        pluginContext.applyIrGenerationExtensions( mainIrFragment, irGeneratorExtensions)
 
         return Fir2IrActualizedResult(mainIrFragment, componentsStorage, pluginContext, actualizationResult, irBuiltIns, symbolTable)
     }
@@ -343,12 +349,7 @@ private class Fir2IrPipeline(
         validateIr(
             mainIrFragment,
             irBuiltIns,
-            IrValidatorConfig(
-                checkTreeConsistency = false,
-                checkUnboundSymbols = true,
-            ).withCommonCheckers(
-                checkFunctionBody = false,
-            ),
+            IrValidatorConfig(checkUnboundSymbols = true),
             fir2IrConfiguration.messageCollector,
             IrVerificationMode.ERROR,
         )
@@ -458,47 +459,76 @@ private class Fir2IrPipeline(
             mainIrFragment.files.removeAll { it.name == generatedBuiltinsDeclarationsFileName }
         }
     }
-}
 
-private fun IrPluginContext.runMandatoryIrValidation(
-    module: IrModuleFragment,
-    fir2IrConfiguration: Fir2IrConfiguration,
-    messagePrefix: String,
-) {
-    if (!fir2IrConfiguration.validateIrForSerialization) return
-    val mode =
-        if (languageVersionSettings.supportsFeature(LanguageFeature.ForbidCrossFileIrFieldAccessInKlibs)) IrVerificationMode.ERROR
-        else IrVerificationMode.WARNING
-    validateIr(
-        module,
-        irBuiltIns,
-        IrValidatorConfig(
-            // Invalid parents and duplicated IR nodes don't always result in broken KLIBs,
-            // so we disable them not to cause too much breakage.
-            checkTreeConsistency = false,
-        ).withCommonCheckers(
-            // Cross-file field accesses, though, do result in invalid KLIBs, so report them as early as possible.
-            checkCrossFileFieldUsage = true,
-            // FIXME(KT-71243): This should be true, but currently the ExplicitBackingFields feature de-facto allows specifying
-            //  non-private visibilities for fields.
-            checkAllKotlinFieldsArePrivate = !fir2IrConfiguration.languageVersionSettings.supportsFeature(LanguageFeature.ExplicitBackingFields),
-        ),
-        fir2IrConfiguration.messageCollector,
-        mode,
-        phaseName = "",
-    )
-}
+    private fun IrPluginContext.runMandatoryIrValidation(
+        module: IrModuleFragment,
+        messagePrefix: String,
+    ) {
+        val irVerificationMode = compilerConfiguration.get(CommonConfigurationKeys.VERIFY_IR, IrVerificationMode.NONE)
+        if (irVerificationMode == IrVerificationMode.NONE && !fir2IrConfiguration.validateIrForSerialization) {
+            return
+        }
+        val regularSeverity = when (irVerificationMode) {
+            IrVerificationMode.NONE -> null
+            IrVerificationMode.WARNING -> CompilerMessageSeverity.WARNING
+            IrVerificationMode.ERROR -> CompilerMessageSeverity.ERROR
+        }
 
-fun IrPluginContext.applyIrGenerationExtensions(
-    fir2IrConfiguration: Fir2IrConfiguration,
-    irModuleFragment: IrModuleFragment,
-    irGenerationExtensions: Collection<IrGenerationExtension>,
-) {
-    for (extension in irGenerationExtensions) {
-        extension.generate(irModuleFragment, this)
-        runMandatoryIrValidation(
-            irModuleFragment, fir2IrConfiguration,
-            "The compiler plugin '${extension.javaClass.name}' generated invalid IR. Please report this bug to the plugin vendor."
-        )
+        var hasAnyError = false
+        validateIr(
+            module,
+            irBuiltIns,
+            IrValidatorConfig(
+                checkTreeConsistency = true,
+                checkUnboundSymbols = true,
+            ).withCommonCheckers(
+                checkTypes = false, // TODO: Re-enable checking types (KT-68663)
+                checkValueScopes = true,
+                checkTypeParameterScopes = false, // TODO: Re-enable checking out-of-scope type parameter usages (KT-69305)
+                // Cross-file field accesses, though, do result in invalid KLIBs, so report them as early as possible.
+                checkCrossFileFieldUsage = fir2IrConfiguration.validateIrForSerialization ||
+                        compilerConfiguration.getBoolean(CommonConfigurationKeys.ENABLE_IR_VISIBILITY_CHECKS),
+                // FIXME(KT-71243): This should be true, but currently the ExplicitBackingFields feature de-facto allows specifying
+                //  non-private visibilities for fields.
+                checkAllKotlinFieldsArePrivate = compilerConfiguration.getBoolean(CommonConfigurationKeys.ENABLE_IR_VISIBILITY_CHECKS) &&
+                        !languageVersionSettings.supportsFeature(LanguageFeature.ExplicitBackingFields),
+                checkVisibilities = compilerConfiguration.getBoolean(CommonConfigurationKeys.ENABLE_IR_VISIBILITY_CHECKS),
+                checkVarargTypes = compilerConfiguration.getBoolean(CommonConfigurationKeys.ENABLE_IR_VARARG_TYPES_CHECKS),
+            )
+        ) { error ->
+            val severity = when (error.cause) {
+                is IrCrossFileFieldUsageChecker if fir2IrConfiguration.validateIrForSerialization ->
+                    if (languageVersionSettings.supportsFeature(LanguageFeature.ForbidCrossFileIrFieldAccessInKlibs))
+                        CompilerMessageSeverity.ERROR
+                    else CompilerMessageSeverity.WARNING
+                is IrValidationError.Cause.IrUnboundSymbol if fir2IrConfiguration.validateIrForSerialization ->
+                    CompilerMessageSeverity.ERROR
+                else -> regularSeverity
+            }
+
+            if (severity != null) {
+                fir2IrConfiguration.messageCollector.report(error, severity, customMessagePrefix = messagePrefix)
+                if (severity == CompilerMessageSeverity.ERROR) {
+                    hasAnyError = true
+                }
+            }
+        }
+
+        if (hasAnyError) {
+            throw IrValidationException()
+        }
+    }
+
+    private fun IrPluginContext.applyIrGenerationExtensions(
+        module: IrModuleFragment,
+        irGenerationExtensions: Collection<IrGenerationExtension>,
+    ) {
+        for (extension in irGenerationExtensions) {
+            extension.generate(module, this)
+            runMandatoryIrValidation(
+                module,
+                "The compiler plugin '${extension.javaClass.name}' generated invalid IR. Please report this bug to the plugin vendor."
+            )
+        }
     }
 }

@@ -113,7 +113,10 @@ fun <Context : ErrorReportingContext, Data> getIrValidator(checkTypes: Boolean):
         validateIr(
             element,
             context.heldBackendContext.irBuiltIns,
-            IrValidatorConfig().withCommonCheckers(checkTypes = checkTypes),
+            IrValidatorConfig(
+                checkTreeConsistency = true,
+                checkUnboundSymbols = true,
+            ).withCommonCheckers(checkTypes = checkTypes),
             messageCollector,
             IrVerificationMode.ERROR,
             phaseName = "${state.beforeOrAfter.name.toLowerCaseAsciiOnly()} ${state.phase}",

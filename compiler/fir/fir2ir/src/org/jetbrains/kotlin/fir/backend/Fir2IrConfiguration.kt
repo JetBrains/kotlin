@@ -80,7 +80,7 @@ class Fir2IrConfiguration private constructor(
                 allowNonCachedDeclarations = false,
                 skipBodies = false,
                 validateIrForSerialization = true,
-                carefulApproximationOfContravariantProjectionForSam = false,
+                carefulApproximationOfContravariantProjectionForSam = false
             )
 
         fun forAnalysisApi(
@@ -101,7 +101,7 @@ class Fir2IrConfiguration private constructor(
                 allowNonCachedDeclarations = true,
                 skipBodies = false,
                 validateIrForSerialization = false,
-                carefulApproximationOfContravariantProjectionForSam = compilerConfiguration.get(JVMConfigurationKeys.SAM_CONVERSIONS) != JvmClosureGenerationScheme.CLASS,
+                carefulApproximationOfContravariantProjectionForSam = compilerConfiguration.get(JVMConfigurationKeys.SAM_CONVERSIONS) != JvmClosureGenerationScheme.CLASS
             )
     }
 }

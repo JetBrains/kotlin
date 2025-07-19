@@ -26,10 +26,13 @@ abstract class IrValidationPhase<Context : LoweringContext>(val context: Context
     }
 }
 
-@PhaseDescription(name = "ValidateIrBeforeLowering")
-open class IrValidationBeforeLoweringPhase<Context : LoweringContext>(context: Context) : IrValidationPhase<Context>(context) {
+@PhaseDescription(name = "ValidateIrAfterKlibDeserialization")
+class IrValidationAfterDeserializationPhase<Context : LoweringContext>(context: Context) : IrValidationPhase<Context>(context) {
     override val defaultValidationConfig: IrValidatorConfig
-        get() = IrValidatorConfig().withCommonCheckers(
+        get() = IrValidatorConfig(
+            checkTreeConsistency = true,
+            checkUnboundSymbols = true,
+        ).withCommonCheckers(
             checkTypes = false, // TODO: Re-enable checking types (KT-68663)
             checkValueScopes = true,
             checkTypeParameterScopes = false, // TODO: Re-enable checking out-of-scope type parameter usages (KT-69305)
@@ -50,6 +53,7 @@ class IrValidationAfterInliningOnlyPrivateFunctionsPhase<Context : LoweringConte
 ) : IrValidationPhase<Context>(context) {
     override val defaultValidationConfig: IrValidatorConfig
         get() = IrValidatorConfig(
+            checkTreeConsistency = true,
             checkInlineFunctionUseSites = checkInlineFunctionCallSites,
         ).withCommonCheckers(
             checkTypes = false, // TODO: Re-enable checking types (KT-68663)
@@ -64,6 +68,7 @@ class IrValidationAfterInliningAllFunctionsPhase<Context : LoweringContext>(
 ) : IrValidationPhase<Context>(context) {
     override val defaultValidationConfig: IrValidatorConfig
         get() = IrValidatorConfig(
+            checkTreeConsistency = true,
             checkInlineFunctionUseSites = checkInlineFunctionCallSites,
         ).withCommonCheckers(
             checkTypes = false, // TODO: Re-enable checking types (KT-68663)
@@ -77,5 +82,7 @@ class IrValidationAfterInliningAllFunctionsPhase<Context : LoweringContext>(
 
 open class IrValidationAfterLoweringPhase<Context : LoweringContext>(context: Context) : IrValidationPhase<Context>(context) {
     override val defaultValidationConfig: IrValidatorConfig
-        get() = IrValidatorConfig()
+        get() = IrValidatorConfig(
+            checkTreeConsistency = true,
+        ).withCommonCheckers()
 }

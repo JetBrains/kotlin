@@ -51,7 +51,7 @@ data class IrValidatorConfig(
     val elementCheckers: List<IrElementChecker<*>> = emptyList(),
     val symbolCheckers: List<IrSymbolChecker> = emptyList(),
     val typeCheckers: List<IrTypeChecker> = emptyList(),
-    val checkTreeConsistency: Boolean = true,
+    val checkTreeConsistency: Boolean = false,
     val checkUnboundSymbols: Boolean = false,
     val checkInlineFunctionUseSites: InlineFunctionUseSiteChecker? = null,
 ) {
@@ -249,7 +249,7 @@ fun validateIr(
     mode: IrVerificationMode,
     phaseName: String? = null,
     customMessagePrefix: String? = null,
-    throwIfAnyError: Boolean = true,
+    throwIfAnyError: Boolean = mode == IrVerificationMode.ERROR,
 ): Boolean {
     val severity = when (mode) {
         IrVerificationMode.NONE -> return false
