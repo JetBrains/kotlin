@@ -154,7 +154,6 @@ class IrValidatorTest {
                     checkInlineFunctionUseSites = { it.symbol.owner.name.toString() != "inlineFunctionUseSiteNotPermitted" }
                 ).withCommonCheckers(
                     checkTypes = true,
-                    checkProperties = true,
                     checkValueScopes = true,
                     checkTypeParameterScopes = true,
                     checkCrossFileFieldUsage = true,

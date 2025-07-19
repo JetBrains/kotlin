@@ -57,7 +57,6 @@ data class IrValidatorConfig(
 ) {
     fun withCommonCheckers(
         checkTypes: Boolean = false,
-        checkProperties: Boolean = false,
         checkValueScopes: Boolean = false,
         checkTypeParameterScopes: Boolean = false,
         checkCrossFileFieldUsage: Boolean = false,
@@ -76,7 +75,9 @@ data class IrValidatorConfig(
             IrFunctionDispatchReceiverChecker, IrFunctionParametersChecker, IrConstructorReceiverChecker,
             IrPrivateDeclarationOverrideChecker, IrExpressionTypeChecker, IrTypeOperatorTypeOperandChecker,
             // TODO: Why don't we check parameters as well?
-            IrCallFunctionDispatchReceiverChecker
+            IrCallFunctionDispatchReceiverChecker,
+            IrCallFunctionPropertiesChecker, IrFunctionPropertiesChecker, IrFunctionReferenceFunctionPropertiesChecker,
+            IrPropertyAccessorsChecker
         )
         contextUpdaters += ParentChainUpdater
 
@@ -112,12 +113,6 @@ data class IrValidatorConfig(
             elementCheckers.add(IrCallTypeChecker)
             elementCheckers.add(IrTypeOperatorTypeChecker)
             elementCheckers.add(IrDynamicTypeFieldAccessChecker)
-        }
-        if (checkProperties) {
-            elementCheckers.add(IrCallFunctionPropertiesChecker)
-            elementCheckers.add(IrFunctionPropertiesChecker)
-            elementCheckers.add(IrFunctionReferenceFunctionPropertiesChecker)
-            elementCheckers.add(IrPropertyAccessorsChecker)
         }
         if (checkFunctionBody) {
             elementCheckers.add(IrFunctionBodyChecker)

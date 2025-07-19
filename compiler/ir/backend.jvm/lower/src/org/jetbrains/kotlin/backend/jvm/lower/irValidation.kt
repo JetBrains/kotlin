@@ -22,7 +22,7 @@ internal class JvmIrValidationBeforeLoweringPhase(
 ) : IrValidationBeforeLoweringPhase<JvmBackendContext>(context) {
     override val defaultValidationConfig: IrValidatorConfig
         get() = super.defaultValidationConfig
-            .withCommonCheckers(checkProperties = true)
+            .withCommonCheckers()
             .apply {
                 copy(
                     elementCheckers = elementCheckers
@@ -37,7 +37,7 @@ internal class JvmIrValidationAfterLoweringPhase(
 ) : IrValidationAfterLoweringPhase<JvmBackendContext>(context) {
     override val defaultValidationConfig: IrValidatorConfig
         get() = super.defaultValidationConfig
-            .withCommonCheckers(checkProperties = true)
+            .withCommonCheckers()
             .apply {
                 copy(
                     elementCheckers = elementCheckers
