@@ -9225,6 +9225,12 @@ public class FirJsES6BoxTestGenerated extends AbstractFirJsES6BoxTest {
     public void testVararg() {
       runTest("js/js.translator/testData/box/native/vararg.kt");
     }
+
+    @Test
+    @TestMetadata("varargWasm.kt")
+    public void testVarargWasm() {
+      runTest("js/js.translator/testData/box/native/varargWasm.kt");
+    }
   }
 
   @Nested

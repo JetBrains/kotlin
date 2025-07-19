@@ -9320,6 +9320,12 @@ public class IrBoxJsES6TestGenerated extends AbstractIrBoxJsES6Test {
     public void testVararg() {
       runTest("js/js.translator/testData/box/native/vararg.kt");
     }
+
+    @Test
+    @TestMetadata("varargWasm.kt")
+    public void testVarargWasm() {
+      runTest("js/js.translator/testData/box/native/varargWasm.kt");
+    }
   }
 
   @Nested
