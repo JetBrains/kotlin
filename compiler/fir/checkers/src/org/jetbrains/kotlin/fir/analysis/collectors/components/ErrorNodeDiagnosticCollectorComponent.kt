@@ -207,7 +207,7 @@ class ErrorNodeDiagnosticCollectorComponent(
             valueParameter: FirValueParameter? = null,
         ) {
             // Will be handled by [FirDestructuringDeclarationChecker]
-            if (source?.elementType == KtNodeTypes.DESTRUCTURING_DECLARATION_ENTRY) {
+            if (source?.elementType == KtNodeTypes.DESTRUCTURING_DECLARATION_ENTRY && source.kind != KtFakeSourceElementKind.DesugaredNameBasedDestructuring) {
                 return
             }
 
