@@ -464,6 +464,7 @@ internal constructor(
             args.moduleName = compilerOptions.moduleName.get()
             args.shortModuleName = shortModuleName
             args.multiPlatform = true
+            @Suppress("DEPRECATION")
             args.noendorsedlibs = true
             args.outputName = outputFile.get().absolutePath
             args.optimization = optimized

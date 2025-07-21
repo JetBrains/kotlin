@@ -35,6 +35,7 @@ fun CompilerConfiguration.setupFromArguments(arguments: K2NativeCompilerArgument
     arguments.kotlinHome?.let { put(KONAN_HOME, it) }
 
     put(NODEFAULTLIBS, arguments.nodefaultlibs || !arguments.libraryToAddToCache.isNullOrEmpty())
+    @Suppress("DEPRECATION")
     put(NOENDORSEDLIBS, arguments.noendorsedlibs || !arguments.libraryToAddToCache.isNullOrEmpty())
     put(NOSTDLIB, arguments.nostdlib || !arguments.libraryToAddToCache.isNullOrEmpty())
     put(NOPACK, arguments.nopack)
@@ -76,6 +77,7 @@ fun CompilerConfiguration.setupFromArguments(arguments: K2NativeCompilerArgument
     put(OPTIMIZATION, arguments.optimization)
     put(DEBUG, arguments.debug)
     // TODO: remove after 1.4 release.
+    @Suppress("DEPRECATION")
     if (arguments.lightDebugDeprecated) {
         report(WARNING,
                 "-Xg0 is now deprecated and skipped by compiler. Light debug information is enabled by default for Darwin platforms." +

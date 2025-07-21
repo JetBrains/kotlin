@@ -224,6 +224,7 @@ internal class JvmDefaultIT : KGPBaseTest() {
         }.buildAndReturn(":compileKotlin", buildAction = BuildActions.buildWithAssertions(buildOutputAssertions))
 
         assertEquals(expectedJvmDefaultStable, jvmArgs.jvmDefaultStable)
+        @Suppress("DEPRECATION")
         assertEquals(expectedJvmDefaultDeprecated, jvmArgs.jvmDefault)
     }
 }

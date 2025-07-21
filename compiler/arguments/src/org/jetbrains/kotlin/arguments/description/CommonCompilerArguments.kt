@@ -554,6 +554,10 @@ val actualCommonCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLev
         description = "Enable experimental frontend IR checkers that are not yet ready for production.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
+        additionalAnnotations(
+            Deprecated("This flag is deprecated")
+        )
+
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_1_0,
             deprecatedVersion = KotlinReleaseVersion.v2_2_20,

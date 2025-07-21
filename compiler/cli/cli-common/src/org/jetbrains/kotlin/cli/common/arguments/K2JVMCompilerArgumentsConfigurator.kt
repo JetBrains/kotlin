@@ -40,6 +40,7 @@ class K2JVMCompilerArgumentsConfigurator : CommonCompilerArgumentsConfigurator()
         return result
     }
 
+    @Suppress("DEPRECATION")
     private fun K2JVMCompilerArguments.configureJvmDefaultMode(collector: MessageCollector?): JvmDefaultMode? = when {
         jvmDefaultStable != null -> JvmDefaultMode.fromStringOrNull(jvmDefaultStable).also {
             if (it == null) {

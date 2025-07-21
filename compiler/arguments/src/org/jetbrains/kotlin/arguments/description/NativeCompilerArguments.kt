@@ -117,6 +117,10 @@ val actualNativeArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.
         valueType = StringType.defaultNull
         valueDescription = "<version>".asReleaseDependent()
 
+        additionalAnnotations(
+            Deprecated("This flag is deprecated")
+        )
+
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_5_20,
             stabilizedVersion = KotlinReleaseVersion.v1_5_20,
@@ -215,6 +219,10 @@ val actualNativeArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.
         compilerName = "noendorsedlibs"
         description = "Don't link endorsed libraries from the dist automatically. This option has been deprecated, as the dist no longer has any endorsed libraries.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
+
+        additionalAnnotations(
+            Deprecated("This flag is deprecated")
+        )
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_5_20,
@@ -519,6 +527,10 @@ Currently this option is disabled by default on other platforms.""".asReleaseDep
         compilerName = "lightDebugDeprecated"
         description = "Add light debug information. This option has been deprecated. Please use '-Xadd-light-debug=enable' instead.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
+
+        additionalAnnotations(
+            Deprecated("This flag is deprecated")
+        )
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_5_20,

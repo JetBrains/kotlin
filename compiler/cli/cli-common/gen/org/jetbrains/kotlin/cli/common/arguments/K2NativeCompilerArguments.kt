@@ -93,6 +93,7 @@ class K2NativeCompilerArguments : CommonKlibBasedCompilerArguments() {
             field = value
         }
 
+    @Deprecated("This flag is deprecated")
     @Argument(
         value = "-library-version",
         shortName = "-lv",
@@ -176,6 +177,7 @@ Note: This option is deprecated and will be removed in one of the future release
             field = value
         }
 
+    @Deprecated("This flag is deprecated")
     @Argument(
         value = "-no-endorsed-libs",
         description = "Don't link endorsed libraries from the dist automatically. This option has been deprecated, as the dist no longer has any endorsed libraries.",
@@ -451,6 +453,7 @@ Currently this option is disabled by default on other platforms.""",
             field = if (value.isNullOrEmpty()) null else value
         }
 
+    @Deprecated("This flag is deprecated")
     @Argument(
         value = "-Xg0",
         description = "Add light debug information. This option has been deprecated. Please use '-Xadd-light-debug=enable' instead.",

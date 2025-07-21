@@ -146,6 +146,7 @@ abstract class AbstractFullPipelineModularizedTest : AbstractModularizedTest() {
             args.jsr305 = originalArguments.jsr305
             args.nullabilityAnnotations = originalArguments.nullabilityAnnotations
             args.jspecifyAnnotations = originalArguments.jspecifyAnnotations
+            @Suppress("DEPRECATION")
             args.jvmDefault = originalArguments.jvmDefault
             args.jdkRelease = originalArguments.jdkRelease
             args.progressiveMode = originalArguments.progressiveMode

@@ -465,6 +465,7 @@ The default value is 'warn'.""",
             field = if (value.isNullOrEmpty()) null else value
         }
 
+    @Deprecated("This flag is deprecated. Use `-jvm-default` instead")
     @Argument(
         value = "-Xjvm-default",
         valueDescription = "{all|all-compatibility|disable}",
@@ -763,6 +764,7 @@ See KT-45671 for more details.""",
             field = value
         }
 
+    @Deprecated("This flag is deprecated")
     @Argument(
         value = "-Xlink-via-signatures",
         description = """Link JVM IR symbols via signatures instead of descriptors.

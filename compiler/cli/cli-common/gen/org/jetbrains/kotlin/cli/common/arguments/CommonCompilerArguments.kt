@@ -464,6 +464,7 @@ They should be a subset of sources passed as free arguments.""",
             field = value
         }
 
+    @Deprecated("This flag is deprecated")
     @Argument(
         value = "-Xuse-fir-experimental-checkers",
         description = "Enable experimental frontend IR checkers that are not yet ready for production.",

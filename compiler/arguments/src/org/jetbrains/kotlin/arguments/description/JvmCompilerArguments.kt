@@ -558,6 +558,10 @@ The default value is 'warn'.""".asReleaseDependent()
         valueType = StringType.defaultNull
         valueDescription = "{all|all-compatibility|disable}".asReleaseDependent()
 
+        additionalAnnotations(
+            Deprecated("This flag is deprecated. Use `-jvm-default` instead")
+        )
+
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_2_50,
             deprecatedVersion = KotlinReleaseVersion.v2_2_0,
@@ -866,6 +870,10 @@ This mode is slower, but it can be useful for troubleshooting problems with the 
 This option is deprecated and will be deleted in future versions.
 It has no effect when -language-version is 2.0 or higher.""".asReleaseDependent()
         valueType = BooleanType.defaultFalse
+
+        additionalAnnotations(
+            Deprecated("This flag is deprecated")
+        )
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_7_0,
