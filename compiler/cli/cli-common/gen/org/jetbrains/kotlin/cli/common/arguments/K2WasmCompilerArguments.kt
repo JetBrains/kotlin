@@ -50,6 +50,16 @@ abstract class K2WasmCompilerArguments : CommonKlibBasedCompilerArguments() {
         }
 
     @Argument(
+        value = "-Xwasm-multimodule-mode",
+        description = "Set multimodule compilation mode.",
+    )
+    var wasmMultimoduleMode: String? = null
+        set(value) {
+            checkFrozen()
+            field = if (value.isNullOrEmpty()) null else value
+        }
+
+    @Argument(
         value = "-Xwasm-generate-wat",
         description = "Generate a .wat file.",
     )

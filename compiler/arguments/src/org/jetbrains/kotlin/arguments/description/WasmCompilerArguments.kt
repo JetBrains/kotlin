@@ -59,6 +59,16 @@ val actualWasmArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.wa
     }
 
     compilerArgument {
+        name = "Xwasm-multimodule-mode"
+        description = "Set multimodule compilation mode.".asReleaseDependent()
+        valueType = StringType.defaultNull
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_3_0,
+        )
+    }
+
+    compilerArgument {
         name = "Xwasm-generate-wat"
         description = "Generate a .wat file.".asReleaseDependent()
         valueType = BooleanType.defaultFalse

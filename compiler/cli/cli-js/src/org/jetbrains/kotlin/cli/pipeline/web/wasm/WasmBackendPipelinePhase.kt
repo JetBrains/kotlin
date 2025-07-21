@@ -137,7 +137,7 @@ object WasmBackendPipelinePhase : WebBackendPipelinePhase<WasmBackendPipelineArt
         wasmDebug: Boolean,
         generateDwarf: Boolean
     ): WasmCompilerResult {
-        val wasmMultimoduleCompilationMode = WasmMultimoduleMode.NONE
+        val wasmMultimoduleCompilationMode = configuration.get(WasmConfigurationKeys.WASM_MULTIMODULE_MODE) ?: WasmMultimoduleMode.NONE
         return when (wasmMultimoduleCompilationMode) {
             WasmMultimoduleMode.NONE -> compileNormalMode(
                 configuration = configuration,

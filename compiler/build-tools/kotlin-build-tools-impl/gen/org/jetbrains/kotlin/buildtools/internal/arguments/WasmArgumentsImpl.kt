@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.buildtools.api.arguments.WasmArguments.Companion.X_W
 import org.jetbrains.kotlin.buildtools.api.arguments.WasmArguments.Companion.X_WASM_GENERATE_WAT
 import org.jetbrains.kotlin.buildtools.api.arguments.WasmArguments.Companion.X_WASM_IC_CACHE_READONLY
 import org.jetbrains.kotlin.buildtools.api.arguments.WasmArguments.Companion.X_WASM_KCLASS_FQN
+import org.jetbrains.kotlin.buildtools.api.arguments.WasmArguments.Companion.X_WASM_MULTIMODULE_MODE
 import org.jetbrains.kotlin.buildtools.api.arguments.WasmArguments.Companion.X_WASM_NO_JSTAG
 import org.jetbrains.kotlin.buildtools.api.arguments.WasmArguments.Companion.X_WASM_PRESERVE_IC_ORDER
 import org.jetbrains.kotlin.buildtools.api.arguments.WasmArguments.Companion.X_WASM_SOURCE_MAP_INCLUDE_MAPPINGS_FROM_UNAVAILABLE_SOURCES
@@ -50,6 +51,7 @@ public open class WasmArgumentsImpl : CommonKlibBasedArgumentsImpl(), WasmArgume
     if ("X_WASM_TARGET" in optionsMap) { arguments.wasmTarget = get(X_WASM_TARGET) }
     if ("X_WASM_DEBUG_INFO" in optionsMap) { arguments.wasmDebug = get(X_WASM_DEBUG_INFO) }
     if ("X_WASM_DEBUG_FRIENDLY" in optionsMap) { arguments.forceDebugFriendlyCompilation = get(X_WASM_DEBUG_FRIENDLY) }
+    if ("X_WASM_MULTIMODULE_MODE" in optionsMap) { arguments.wasmMultimoduleMode = get(X_WASM_MULTIMODULE_MODE) }
     if ("X_WASM_GENERATE_WAT" in optionsMap) { arguments.wasmGenerateWat = get(X_WASM_GENERATE_WAT) }
     if ("X_WASM_KCLASS_FQN" in optionsMap) { arguments.wasmKClassFqn = get(X_WASM_KCLASS_FQN) }
     if ("X_WASM_ENABLE_ARRAY_RANGE_CHECKS" in optionsMap) { arguments.wasmEnableArrayRangeChecks = get(X_WASM_ENABLE_ARRAY_RANGE_CHECKS) }
