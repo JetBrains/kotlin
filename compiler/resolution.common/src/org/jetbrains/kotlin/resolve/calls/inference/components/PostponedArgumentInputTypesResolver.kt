@@ -367,7 +367,7 @@ class PostponedArgumentInputTypesResolver(
         argument: PostponedAtomWithRevisableExpectedType,
         parameterTypesInfo: ParameterTypesInfo,
         variableDependencyProvider: TypeVariableDependencyInformationProvider,
-        topLevelTypeVariables: Set<TypeVariableTypeConstructorMarker>
+        topLevelTypeVariables: Set<TypeVariableTypeConstructorMarker>,
     ): KotlinTypeMarker? = with(resolutionTypeSystemContext) {
         val expectedType = argument.expectedType ?: return null
         val expectedTypeConstructor = expectedType.typeConstructor()
@@ -470,7 +470,10 @@ class PostponedArgumentInputTypesResolver(
         getBuilder().addSubtypeConstraint(
             newExpectedType,
             expectedType,
-            createArgumentConstraintPosition(argument)
+            when (argument) {
+                is LambdaWithTypeVariableAsExpectedTypeMarker -> createLambdaArgumentConstraintPosition(argument)
+                else -> createArgumentConstraintPosition(argument)
+            }
         )
 
         if (pathFromRelatedTopLevelVariable != null && relatedTopLevelVariable != null) {

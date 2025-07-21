@@ -26,7 +26,7 @@ fun test() {
     }
 
     OnlyReturn<String> {
-        <!TYPE_MISMATCH!>fun() = <!TYPE_MISMATCH!>""<!><!>
+        <!TYPE_MISMATCH!>fun() = <!TYPE_MISMATCHN!>""<!><!>
     }
 
     val onlyReturn: OnlyReturn<String> = OnlyReturn lbl@{

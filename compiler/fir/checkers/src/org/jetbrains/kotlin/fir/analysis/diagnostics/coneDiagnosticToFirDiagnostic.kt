@@ -740,7 +740,7 @@ private fun ConstraintSystemError.toDiagnostic(
             val (argument, reportOn) =
                 when (position) {
                     is ConeArgumentConstraintPosition -> position.argument to null
-                    is ConeLambdaArgumentConstraintPosition -> position.lambda to null
+                    is ConeLambdaArgumentConstraintPosition -> position.lambda to position.anonymousFunctionReturnExpression?.source
                     is ConeReceiverConstraintPosition -> position.argument to (position.argument.source.takeIf { it?.kind == KtRealSourceElementKind }
                         ?: position.source)
                     // ConeExpectedTypeConstraintPosition is processed below,
