@@ -12,6 +12,8 @@
         <list>
           <option value=":compiler:cli-common:generateCliArguments" />
           <option value=":generators:generateCompilerArgumentsCopy" />
+          <option value=":compiler:build-tools:kotlin-build-tools-impl:generateBtaArguments" />
+          <option value=":compiler:build-tools:kotlin-build-tools-api:generateBtaArguments" />
         </list>
       </option>
       <option name="vmOptions" />
