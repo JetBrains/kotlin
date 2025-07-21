@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.resolve.inference
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.utils.isSuspend
 import org.jetbrains.kotlin.fir.resolve.calls.ConeLambdaWithTypeVariableAsExpectedTypeAtom
+import org.jetbrains.kotlin.fir.resolve.calls.ConePostponedAtomWithRevisableExpectedType
 import org.jetbrains.kotlin.fir.resolve.calls.ConePostponedResolvedAtom
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeArgumentConstraintPosition
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeFixVariableConstraintPosition
@@ -20,7 +21,6 @@ import org.jetbrains.kotlin.resolve.calls.inference.components.PostponedArgument
 import org.jetbrains.kotlin.resolve.calls.inference.model.ArgumentConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.inference.model.FixVariableConstraintPosition
-import org.jetbrains.kotlin.resolve.calls.model.LambdaWithTypeVariableAsExpectedTypeMarker
 import org.jetbrains.kotlin.resolve.calls.model.PostponedAtomWithRevisableExpectedType
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.TypeVariableMarker
@@ -88,10 +88,8 @@ object ConeConstraintSystemUtilContext : ConstraintSystemUtilContext {
         return ConeArgumentConstraintPosition(argument.expression)
     }
 
-    override fun createLambdaArgumentConstraintPosition(
-        argument: LambdaWithTypeVariableAsExpectedTypeMarker
-    ): ConstraintPosition {
-        require(argument is ConeLambdaWithTypeVariableAsExpectedTypeAtom) {
+    override fun createLambdaArgumentConstraintPositionIfPossible(argument: PostponedAtomWithRevisableExpectedType): ConstraintPosition {
+        require(argument is ConePostponedAtomWithRevisableExpectedType) {
             "${argument::class}"
         }
         return argument.anonymousFunctionIfReturnExpression?.let {

@@ -470,10 +470,7 @@ class PostponedArgumentInputTypesResolver(
         getBuilder().addSubtypeConstraint(
             newExpectedType,
             expectedType,
-            when (argument) {
-                is LambdaWithTypeVariableAsExpectedTypeMarker -> createLambdaArgumentConstraintPosition(argument)
-                else -> createArgumentConstraintPosition(argument)
-            }
+            createLambdaArgumentConstraintPositionIfPossible(argument),
         )
 
         if (pathFromRelatedTopLevelVariable != null && relatedTopLevelVariable != null) {
