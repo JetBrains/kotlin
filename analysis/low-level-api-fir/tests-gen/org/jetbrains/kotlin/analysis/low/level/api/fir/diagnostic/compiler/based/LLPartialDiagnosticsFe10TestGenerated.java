@@ -9671,6 +9671,12 @@ public class LLPartialDiagnosticsFe10TestGenerated extends AbstractLLPartialDiag
       }
 
       @Test
+      @TestMetadata("inheritanceChainIgnorability.kt")
+      public void testInheritanceChainIgnorability() {
+        runTest("compiler/testData/diagnostics/tests/crv/inheritanceChainIgnorability.kt");
+      }
+
+      @Test
       @TestMetadata("lambdas.kt")
       public void testLambdas() {
         runTest("compiler/testData/diagnostics/tests/crv/lambdas.kt");
@@ -9756,6 +9762,18 @@ public class LLPartialDiagnosticsFe10TestGenerated extends AbstractLLPartialDiag
       @TestMetadata("halfEnabled.kt")
       public void testHalfEnabled() {
         runTest("compiler/testData/diagnostics/tests/crvDifferent/halfEnabled.kt");
+      }
+
+      @Test
+      @TestMetadata("overrideDisabledWithFull.kt")
+      public void testOverrideDisabledWithFull() {
+        runTest("compiler/testData/diagnostics/tests/crvDifferent/overrideDisabledWithFull.kt");
+      }
+
+      @Test
+      @TestMetadata("overrideFullWithChecker.kt")
+      public void testOverrideFullWithChecker() {
+        runTest("compiler/testData/diagnostics/tests/crvDifferent/overrideFullWithChecker.kt");
       }
     }
 

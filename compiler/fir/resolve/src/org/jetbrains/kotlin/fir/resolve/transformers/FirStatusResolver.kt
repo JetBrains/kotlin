@@ -290,7 +290,7 @@ class FirStatusResolver(
             status.isExpect = true
         }
 
-        status.hasMustUseReturnValue = computeMustUseReturnValue(declaration, isLocal, containingClass, containingProperty)
+        status.hasMustUseReturnValue = computeMustUseReturnValue(declaration, isLocal, containingClass, containingProperty, overriddenStatuses)
 
         return status.resolved(visibility, modality, effectiveVisibility)
     }
@@ -300,6 +300,7 @@ class FirStatusResolver(
         isLocal: Boolean,
         containingClass: FirClass?,
         containingProperty: FirProperty?,
+        overriddenStatuses: List<FirResolvedDeclarationStatus>,
     ): Boolean {
         if (declaration !is FirCallableDeclaration) return false
 
@@ -308,7 +309,8 @@ class FirStatusResolver(
             declaration.symbol,
             isLocal,
             containingClass?.symbol,
-            containingProperty?.symbol
+            containingProperty?.symbol,
+            overriddenStatuses
         )
     }
 
