@@ -21,121 +21,66 @@ import org.jetbrains.kotlin.fir.contracts.FirResolvedContractDescription
 import org.jetbrains.kotlin.fir.contracts.description.ConeCallsEffectDeclaration
 import org.jetbrains.kotlin.fir.contracts.description.ConeConditionalEffectDeclaration
 import org.jetbrains.kotlin.fir.contracts.description.ConeReturnsEffectDeclaration
-import org.jetbrains.kotlin.fir.declarations.DirectDeclarationsAccess
-import org.jetbrains.kotlin.fir.declarations.FirAnonymousInitializer
-import org.jetbrains.kotlin.fir.declarations.FirConstructor
-import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
-import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
-import org.jetbrains.kotlin.fir.declarations.FirEnumEntry
-import org.jetbrains.kotlin.fir.declarations.FirField
-import org.jetbrains.kotlin.fir.declarations.FirFile
-import org.jetbrains.kotlin.fir.declarations.FirProperty
-import org.jetbrains.kotlin.fir.declarations.FirRegularClass
-import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
-import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
-import org.jetbrains.kotlin.fir.declarations.FirTypeParameter
-import org.jetbrains.kotlin.fir.declarations.FirValueParameter
-import org.jetbrains.kotlin.fir.declarations.isLocal
+import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
-import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
-import org.jetbrains.kotlin.fir.expressions.FirAnonymousFunctionExpression
-import org.jetbrains.kotlin.fir.expressions.FirAnonymousObjectExpression
-import org.jetbrains.kotlin.fir.expressions.FirArrayLiteral
-import org.jetbrains.kotlin.fir.expressions.FirBooleanOperatorExpression
-import org.jetbrains.kotlin.fir.expressions.FirBreakExpression
-import org.jetbrains.kotlin.fir.expressions.FirCheckNotNullCall
-import org.jetbrains.kotlin.fir.expressions.FirComparisonExpression
-import org.jetbrains.kotlin.fir.expressions.FirContinueExpression
-import org.jetbrains.kotlin.fir.expressions.FirDoWhileLoop
-import org.jetbrains.kotlin.fir.expressions.FirElvisExpression
-import org.jetbrains.kotlin.fir.expressions.FirEqualityOperatorCall
-import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
-import org.jetbrains.kotlin.fir.expressions.FirFunctionCallOrigin
-import org.jetbrains.kotlin.fir.expressions.FirGetClassCall
-import org.jetbrains.kotlin.fir.expressions.FirLiteralExpression
-import org.jetbrains.kotlin.fir.expressions.FirOperation
-import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
-import org.jetbrains.kotlin.fir.expressions.FirSafeCallExpression
-import org.jetbrains.kotlin.fir.expressions.FirSamConversionExpression
-import org.jetbrains.kotlin.fir.expressions.FirSmartCastExpression
-import org.jetbrains.kotlin.fir.expressions.FirTryExpression
-import org.jetbrains.kotlin.fir.expressions.FirTypeOperatorCall
-import org.jetbrains.kotlin.fir.expressions.FirVariableAssignment
-import org.jetbrains.kotlin.fir.expressions.FirWhenBranch
-import org.jetbrains.kotlin.fir.expressions.FirWhenExpression
-import org.jetbrains.kotlin.fir.expressions.FirWhileLoop
-import org.jetbrains.kotlin.fir.expressions.UnresolvedExpressionTypeAccess
-import org.jetbrains.kotlin.fir.expressions.arguments
+import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirUnitExpression
 import org.jetbrains.kotlin.fir.references.FirResolvedCallableReference
 import org.jetbrains.kotlin.fir.references.FirSuperReference
 import org.jetbrains.kotlin.fir.references.FirThisReference
 import org.jetbrains.kotlin.fir.references.symbol
 import org.jetbrains.kotlin.fir.resolve.toSymbol
-import org.jetbrains.kotlin.fir.types.ConeCapturedType
-import org.jetbrains.kotlin.fir.types.ConeClassLikeType
-import org.jetbrains.kotlin.fir.types.ConeDefinitelyNotNullType
-import org.jetbrains.kotlin.fir.types.ConeFlexibleType
-import org.jetbrains.kotlin.fir.types.ConeIntersectionType
-import org.jetbrains.kotlin.fir.types.ConeKotlinType
-import org.jetbrains.kotlin.fir.types.ConeKotlinTypeProjection
-import org.jetbrains.kotlin.fir.types.FirFunctionTypeRef
-import org.jetbrains.kotlin.fir.types.FirResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.ProjectionKind
+import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
-import org.jetbrains.kotlin.fir.types.isMarkedNullable
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.name.SpecialNames
-import org.jetbrains.kotlin.test.WrappedException
 import org.jetbrains.kotlin.test.frontend.fir.TagsGeneratorChecker.FirTags
 import org.jetbrains.kotlin.test.frontend.fir.TagsGeneratorChecker.FirTags.MAX_LINE_LENGTH
 import org.jetbrains.kotlin.test.frontend.fir.TagsGeneratorChecker.FirTags.TAG_PREFIX
 import org.jetbrains.kotlin.test.frontend.fir.TagsGeneratorChecker.FirTags.TAG_SUFFIX
-import org.jetbrains.kotlin.test.model.AfterAnalysisChecker
-import org.jetbrains.kotlin.test.model.FrontendKinds
+import org.jetbrains.kotlin.test.frontend.fir.handlers.FirAnalysisHandler
+import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
-import org.jetbrains.kotlin.test.services.artifactsProvider
 import org.jetbrains.kotlin.test.services.assertions
 import org.jetbrains.kotlin.test.services.moduleStructure
+import org.jetbrains.kotlin.test.utils.*
 import org.jetbrains.kotlin.test.utils.FirIdenticalCheckerHelper.Companion.isTeamCityBuild
-import org.jetbrains.kotlin.test.utils.firTestDataFile
-import org.jetbrains.kotlin.test.utils.latestLVTestDataFile
-import org.jetbrains.kotlin.test.utils.llFirTestDataFile
-import org.jetbrains.kotlin.test.utils.originalTestDataFile
-import org.jetbrains.kotlin.test.utils.reversedTestDataFile
 import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.types.Variance
 import java.io.File
 
-class TagsGeneratorChecker(testServices: TestServices) : AfterAnalysisChecker(testServices) {
-    override fun check(failedAssertions: List<WrappedException>) {
-        val originalFile = testServices.moduleStructure.originalTestDataFiles.first()
-
-        val existingTestFiles = listOf(
-            originalFile.originalTestDataFile,
-            originalFile.firTestDataFile,
-            originalFile.llFirTestDataFile,
-            originalFile.reversedTestDataFile,
-            originalFile.latestLVTestDataFile
-        ).filter { it.exists() }
-
-        val firFiles = testServices.moduleStructure.modules.flatMap {
-            testServices.artifactsProvider.getArtifactSafe(
-                module = it, kind = FrontendKinds.FIR
-            )?.allFirFiles?.values.orEmpty()
+class TagsGeneratorChecker(testServices: TestServices) : FirAnalysisHandler(testServices) {
+    private val tagsFromAllModules: MutableSet<String> = mutableSetOf()
+    private val testDataFiles: List<File> by lazy {
+        testServices.moduleStructure.originalTestDataFiles.first().let { originalFile ->
+            listOf(
+                originalFile.originalTestDataFile,
+                originalFile.firTestDataFile,
+                originalFile.llFirTestDataFile,
+                originalFile.reversedTestDataFile,
+                originalFile.latestLVTestDataFile
+            ).filter { it.exists() }
         }
-        addTagsToTestDataFiles(existingTestFiles, firFiles)
     }
 
-    fun addTagsToTestDataFiles(
-        testDataFiles: List<File>,
-        firFiles: List<FirFile>,
-    ) {
+    private val shouldSkip: Boolean by lazy { testDataFiles.any { it.readText().contains(TAG_PREFIX) } }
+
+    override fun processModule(module: TestModule, info: FirOutputArtifact) {
+        if (shouldSkip) return
+        for (file in info.allFirFiles.values) {
+            val session = file.moduleData.session
+            val visitor = TagsCollectorVisitor(session)
+            file.accept(visitor)
+            tagsFromAllModules += visitor.tags
+        }
+    }
+
+    override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
+        if (shouldSkip) return
+        if (tagsFromAllModules.isEmpty()) return
         for (testDataFile in testDataFiles) {
             val testDataFileContent = testDataFile.readText()
             if (testDataFileContent.contains(TAG_PREFIX)) return
-            if (firFiles.isEmpty()) return
 
             if (isTeamCityBuild) {
                 testServices.assertions.fail {
@@ -144,8 +89,7 @@ class TagsGeneratorChecker(testServices: TestServices) : AfterAnalysisChecker(te
                 }
             }
 
-            val tags = createListOfTags(firFiles)
-            val wrappedTagComment = formatTagsAsMultilineComment(tags)
+            val wrappedTagComment = formatTagsAsMultilineComment()
 
             testDataFile.writer().use {
                 it.append(testDataFileContent.trim())
@@ -155,24 +99,11 @@ class TagsGeneratorChecker(testServices: TestServices) : AfterAnalysisChecker(te
         }
     }
 
-    @OptIn(DirectDeclarationsAccess::class)
-    fun createListOfTags(firFiles: List<FirFile>): List<String> {
-        val allTags = mutableSetOf<String>()
-        for (file in firFiles) {
-            val session = file.moduleData.session
-            val visitor = TagsCollectorVisitor(session)
-            file.accept(visitor)
-            allTags += visitor.tags
-        }
-
-        return allTags.sorted()
-    }
-
-    fun formatTagsAsMultilineComment(tags: List<String>): String {
+    private fun formatTagsAsMultilineComment(): String {
         val result = StringBuilder(TAG_PREFIX)
         var lineLength = TAG_PREFIX.length
 
-        for (tag in tags) {
+        for (tag in tagsFromAllModules.sorted()) {
             val toAppend = if (result.endsWith(": ") || result.endsWith("\n")) tag else ", $tag"
             if (lineLength + toAppend.length > MAX_LINE_LENGTH) {
                 result.appendLine(",")

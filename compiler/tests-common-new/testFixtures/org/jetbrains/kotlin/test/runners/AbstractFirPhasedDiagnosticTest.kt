@@ -51,7 +51,7 @@ abstract class AbstractFirPhasedDiagnosticTest(val parser: FirParser) : Abstract
 
         configureFirHandlersStep {
             setupHandlersForDiagnosticTest()
-            useHandlers(::NoFirCompilationErrorsHandler)
+            useHandlers(::NoFirCompilationErrorsHandler, ::TagsGeneratorChecker)
         }
 
         configureIrHandlersStep {
@@ -66,7 +66,7 @@ abstract class AbstractFirPhasedDiagnosticTest(val parser: FirParser) : Abstract
         }
 
         useMetaInfoProcessors(::PsiLightTreeMetaInfoProcessor)
-        useAfterAnalysisCheckers(::PhasedPipelineChecker, ::NonSourceErrorMessagesHandler, ::TagsGeneratorChecker)
+        useAfterAnalysisCheckers(::PhasedPipelineChecker, ::NonSourceErrorMessagesHandler)
         enableMetaInfoHandler()
         useAdditionalService<SuppressionChecker>(::SuppressionChecker.bind(null))
     }
