@@ -623,10 +623,12 @@ fun generateConstExpression(
         is IrConstKind.String -> {
             val stringValue = expression.value as String
             val (literalAddress, literalPoolId) = context.referenceStringLiteralAddressAndId(stringValue)
+            val isLatin = stringValue.all { it.code in 0..255 }
             body.commentGroupStart { "const string: \"$stringValue\"" }
             body.buildConstI32Symbol(literalPoolId, location)
             body.buildConstI32Symbol(literalAddress, location)
             body.buildConstI32(stringValue.length, location)
+            body.buildConstI32(if (isLatin) 1 else 0, location)
             body.buildCall(context.referenceFunction(backendContext.wasmSymbols.stringGetLiteral), location)
             body.commentGroupEnd()
         }
