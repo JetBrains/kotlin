@@ -27,7 +27,7 @@ private fun addressToString(address: Int): String =
 class ConstantDataCharField(val value: WasmSymbol<Char>) : ConstantDataElement() {
     constructor(value: Char) : this(WasmSymbol(value))
 
-    override fun toBytes(): ByteArray = ByteArray(2).apply { value.owner.toLittleEndianBytes(this, 0) }
+    override fun toBytes(): ByteArray = ByteArray(2).apply { value.owner.toLittleEndianBytes(this, false, 0) }
 
     override fun dump(indent: String, startAddress: Int): String {
         return "${addressToString(startAddress)}: $indent i32   : ${value.owner}    ;;\n"
@@ -85,9 +85,12 @@ class ConstantDataIntArray(val value: List<WasmSymbol<Int>>) : ConstantDataEleme
 class ConstantDataCharArray(val value: List<WasmSymbol<Char>>) : ConstantDataElement() {
     constructor(value: CharArray) : this(value.map { WasmSymbol(it) })
 
+    private val isLatin: Boolean
+        get() = value.all { it.owner.code in 0..255 }
+
     override fun toBytes(): ByteArray {
-        return ByteArray(value.size * 2).apply {
-            value.forEachIndexed { index, symbol -> symbol.owner.toLittleEndianBytes(this, index * 2) }
+        return ByteArray(sizeInBytes).apply {
+            value.forEachIndexed { index, symbol -> symbol.owner.toLittleEndianBytes(this, isLatin, index * 2) }
         }
     }
 
@@ -96,7 +99,8 @@ class ConstantDataCharArray(val value: List<WasmSymbol<Char>>) : ConstantDataEle
         return "${addressToString(startAddress)}: $indent i16[] : ${value.map { it.owner }.toCharArray().contentToString()}   ;;\n"
     }
 
-    override val sizeInBytes: Int = value.size * CHAR_SIZE_BYTES
+    override val sizeInBytes: Int = value.size *
+            if (isLatin) BYTE_SIZE_BYTES else CHAR_SIZE_BYTES
 }
 
 class ConstantDataStruct(val elements: List<ConstantDataElement>) : ConstantDataElement() {
@@ -138,7 +142,9 @@ fun Int.toLittleEndianBytes(to: ByteArray, offset: Int) {
     to[offset + 3] = (this ushr 24).toByte()
 }
 
-fun Char.toLittleEndianBytes(to: ByteArray, offset: Int) {
+fun Char.toLittleEndianBytes(to: ByteArray, isLatin: Boolean, offset: Int) {
     to[offset] = (this.code and 0xFF).toByte()
-    to[offset + 1] = (this.code ushr Byte.SIZE_BITS).toByte()
+    if (!isLatin) {
+        to[offset + 1] = (this.code ushr Byte.SIZE_BITS).toByte()
+    }
 }

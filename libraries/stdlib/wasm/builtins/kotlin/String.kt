@@ -157,13 +157,23 @@ public actual class String internal @WasmPrimitiveConstructor constructor(
 internal inline fun WasmCharArray.createString(): String =
     String(null, this.len(), this)
 
-internal fun stringLiteral(poolId: Int, startAddress: Int, length: Int): String {
+internal fun stringLiteral(poolId: Int, startAddress: Int, length: Int, isLatin: Int = 0): String {
     val cached = stringPool[poolId]
     if (cached !== null) {
         return cached
     }
 
-    val chars = array_new_data0<WasmCharArray>(startAddress, length)
+    val chars: WasmCharArray
+    if (isLatin == 0) {
+        chars = array_new_data0<WasmCharArray>(startAddress, length)
+    } else {
+        val bytes = array_new_data0<WasmByteArray>(startAddress, length)
+        chars = WasmCharArray(length)
+        for (i in 0..<length) {
+            val chr = bytes.get(i).toInt().toChar()
+            chars.set(i, chr)
+        }
+    }
     val newString = String(null, length, chars)
     stringPool[poolId] = newString
     return newString
