@@ -94,7 +94,7 @@ object FirJsExportDeclarationChecker : FirBasicDeclarationChecker(MppCheckerKind
                     return
                 }
 
-                if (declaration.isSuspend) {
+                if (declaration.isSuspend && !context.languageVersionSettings.supportsFeature(LanguageFeature.JsExportSuspendFunctions)) {
                     reportWrongExportedDeclaration("suspend function")
                     return
                 }
@@ -261,10 +261,14 @@ object FirJsExportDeclarationChecker : FirBasicDeclarationChecker(MppCheckerKind
 
         val expandedType = fullyExpandedType(session, FirTypeAlias::expandedConeTypeWithEnsuredPhase)
 
-        val isFunctionType = expandedType.isBasicFunctionType(session)
+        val isExportableFunctionType = expandedType.isBasicFunctionType(session) || (
+                context.languageVersionSettings.supportsFeature(LanguageFeature.JsExportSuspendFunctions) &&
+                        expandedType.isBasicSuspendFunctionType(session)
+                )
+
         val isExportableArgs = expandedType.isExportableTypeArguments(session, currentlyProcessed)
         currentlyProcessed.remove(this)
-        if (isFunctionType || !isExportableArgs) {
+        if (isExportableFunctionType || !isExportableArgs) {
             return isExportableArgs
         }
 

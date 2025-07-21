@@ -133,10 +133,13 @@ class JsDefaultArgumentStubGenerator(context: JsIrBackendContext) :
         val (exportAnnotations, irrelevantAnnotations) = originalFun.annotations
             .map { it.deepCopyWithSymbols(originalFun as? IrDeclarationParent) }
             .partition {
-                it.isAnnotation(JsAnnotations.jsExportFqn) || (it.isAnnotation(JsAnnotations.jsNameFqn))
+                it.isAnnotation(JsAnnotations.jsExportFqn) ||
+                        (it.isAnnotation(JsAnnotations.jsNameFqn)) ||
+                        (it.isAnnotation(JsAnnotations.jsExportIgnoreFqn))
+
             }
 
-        originalFun.annotations = irrelevantAnnotations
+        originalFun.annotations = irrelevantAnnotations + originalFun.generateJsExportIgnoreCall()
         defaultFunStub.annotations = exportAnnotations
         originalFun.origin = JsLoweredDeclarationOrigin.JS_SHADOWED_EXPORT
 
@@ -206,6 +209,14 @@ class JsDefaultArgumentStubGenerator(context: JsIrBackendContext) :
                     )
                 }
             )
+        }
+    }
+
+    private fun IrFunction.generateJsExportIgnoreCall(): IrConstructorCall {
+        val builder = context.createIrBuilder(symbol, startOffset, endOffset)
+
+        return with(context) {
+            builder.irCall(intrinsics.jsExportIgnoreAnnotationSymbol.constructors.single())
         }
     }
 

@@ -90,6 +90,9 @@ class WasmBackendContext(
     override val jsPromiseSymbol: IrClassSymbol?
         get() = if (configuration.wasmTarget == WasmTarget.JS) wasmSymbols.jsRelatedSymbols.jsPromise else null
 
+    override val jsExportIgnoreSymbol: IrClassSymbol?
+        get() = if (isWasmJsTarget) wasmSymbols.jsRelatedSymbols.jsExportIgnore else null
+
     override val innerClassesSupport: InnerClassesSupport = JsInnerClassesSupport(irFactory)
 
     override val internalPackageFqn = FqName("kotlin.wasm")

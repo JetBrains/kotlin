@@ -67,6 +67,12 @@ class JsSuspendFunctionWithGeneratorsLowering(private val context: JsIrBackendCo
         )
     }
 
+    private fun IrSimpleFunction.addJsExportIgnoreAnnotation() {
+        annotations = annotations memoryOptimizedPlus JsIrBuilder.buildConstructorCall(
+            context.intrinsics.jsExportIgnoreAnnotationSymbol.owner.primaryConstructor!!.symbol
+        )
+    }
+
     private fun generateGeneratorAndItsWrapper(
         function: IrSimpleFunction,
         functionBody: IrBody,
@@ -90,6 +96,7 @@ class JsSuspendFunctionWithGeneratorsLowering(private val context: JsIrBackendCo
             function.isExternal,
         ).apply {
             copyValueAndTypeParametersFrom(function)
+            parameters.forEach { it.defaultValue = null }
             parent = function.parent
             annotations = function.annotations
             body = functionBody.apply {
@@ -116,6 +123,7 @@ class JsSuspendFunctionWithGeneratorsLowering(private val context: JsIrBackendCo
                 })
             }
             addJsGeneratorAnnotation()
+            addJsExportIgnoreAnnotation()
         }
 
         function.body = context.createIrBuilder(function.symbol).irBlockBody {

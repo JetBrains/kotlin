@@ -663,6 +663,24 @@ public class DiagnosticsWithJsStdLibTestGenerated extends AbstractDiagnosticsTes
     public void testWrongExportedDeclarationInExportedFileWhenIgnored() {
       runTest("compiler/testData/diagnostics/testsWithJsStdLib/export/wrongExportedDeclarationInExportedFileWhenIgnored.kt");
     }
+
+    @Test
+    @TestMetadata("wrongExportedDeclarationInExportedFileWithExportableSuspendFunctions.kt")
+    public void testWrongExportedDeclarationInExportedFileWithExportableSuspendFunctions() {
+      runTest("compiler/testData/diagnostics/testsWithJsStdLib/export/wrongExportedDeclarationInExportedFileWithExportableSuspendFunctions.kt");
+    }
+
+    @Test
+    @TestMetadata("wrongExportedDeclarationWithExportableSuspendFunctions.kt")
+    public void testWrongExportedDeclarationWithExportableSuspendFunctions() {
+      runTest("compiler/testData/diagnostics/testsWithJsStdLib/export/wrongExportedDeclarationWithExportableSuspendFunctions.kt");
+    }
+
+    @Test
+    @TestMetadata("wrongExportedDeclarationWithoutExportableSuspendFunctions.kt")
+    public void testWrongExportedDeclarationWithoutExportableSuspendFunctions() {
+      runTest("compiler/testData/diagnostics/testsWithJsStdLib/export/wrongExportedDeclarationWithoutExportableSuspendFunctions.kt");
+    }
   }
 
   @Nested
