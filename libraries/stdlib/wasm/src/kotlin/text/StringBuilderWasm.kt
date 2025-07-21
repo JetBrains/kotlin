@@ -57,6 +57,6 @@ internal actual fun unsafeStringFromCharArray(array: CharArray, start: Int, size
 internal actual fun insertInt(array: CharArray, start: Int, value: Int): Int {
     val valueString = value.toString()
     val length = valueString.length
-    insertString(array, start, valueString, 0, length)
+    val _ = insertString(array, start, valueString, 0, length)
     return length
 }

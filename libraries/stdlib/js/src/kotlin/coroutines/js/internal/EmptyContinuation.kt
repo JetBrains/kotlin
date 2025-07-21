@@ -11,5 +11,5 @@ import kotlin.coroutines.EmptyCoroutineContext
 @PublishedApi
 @SinceKotlin("1.3")
 internal val EmptyContinuation: Continuation<Any?> = Continuation(EmptyCoroutineContext) { result ->
-    result.getOrThrow()
+    val _ = result.getOrThrow()
 }

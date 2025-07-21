@@ -52,7 +52,7 @@ public fun JsAny.toThrowableOrNull(): Throwable? {
     val thisAny: Any = this
     if (thisAny is Throwable) return thisAny
     var result: Throwable? = null
-    jsCatch {
+    val _ = jsCatch {
         try {
             jsThrow(this)
         } catch (e: Throwable) {
