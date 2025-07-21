@@ -96,7 +96,7 @@ object ConeTypeCompatibilityChecker {
             // This is to stay compatible with FE1.0.
             else -> Compatibility.SOFT_INCOMPATIBLE
         }
-        return ctx.getCompatibility(flatMap { it.collectUpperBounds() }.toSet(), emptySet(), compatibilityUpperBound)
+        return ctx.getCompatibility(flatMap { it.collectUpperBounds(ctx) }.toSet(), emptySet(), compatibilityUpperBound)
     }
 
     private fun ConeKotlinType.isConcreteType(): Boolean {
@@ -352,7 +352,7 @@ object ConeTypeCompatibilityChecker {
                 it.lower += type.collectLowerBounds()
             }
             if (boundTypeArgument.variance.allowsOutPosition) {
-                it.upper += type.collectUpperBounds()
+                it.upper += type.collectUpperBounds(ctx)
             }
         }
     }

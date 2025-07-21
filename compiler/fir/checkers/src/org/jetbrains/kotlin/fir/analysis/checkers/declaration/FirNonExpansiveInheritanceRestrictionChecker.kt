@@ -124,7 +124,7 @@ object FirNonExpansiveInheritanceRestrictionChecker : FirRegularClassChecker(Mpp
                         val bounds = SmartSet.create<ConeKotlinType>()
                         constituentTypeParameterSymbol.resolvedBounds.mapNotNullTo(bounds) { substitutor!!.substituteOrNull(it.coneType) }
                         typeProjection.type?.let(bounds::add)
-                        val boundClosure = bounds.flatMapTo(SmartSet.create()) { it.collectUpperBounds() }
+                        val boundClosure = bounds.flatMapTo(SmartSet.create()) { it.collectUpperBounds(session.typeContext) }
 
                         addEdges(
                             typeParameters = typeParameters,
