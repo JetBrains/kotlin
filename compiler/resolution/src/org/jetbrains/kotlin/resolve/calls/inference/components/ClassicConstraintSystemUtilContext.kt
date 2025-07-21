@@ -54,7 +54,7 @@ class ClassicConstraintSystemUtilContext(
         return ArgumentConstraintPositionImpl(argument.atom as KotlinCallArgument)
     }
 
-    override fun createLambdaArgumentConstraintPosition(argument: LambdaWithTypeVariableAsExpectedTypeMarker): ConstraintPosition {
+    override fun createLambdaArgumentConstraintPositionIfPossible(argument: PostponedAtomWithRevisableExpectedType): ConstraintPosition {
         return createArgumentConstraintPosition(argument)
     }
 

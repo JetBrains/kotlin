@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.resolve.calls.inference.model.ArgumentConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.inference.model.FixVariableConstraintPosition
-import org.jetbrains.kotlin.resolve.calls.model.LambdaWithTypeVariableAsExpectedTypeMarker
 import org.jetbrains.kotlin.resolve.calls.model.PostponedAtomWithRevisableExpectedType
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.TypeVariableMarker
@@ -35,7 +34,7 @@ interface ConstraintSystemUtilContext {
 
     // PostponedArgumentInputTypesResolver
     fun createArgumentConstraintPosition(argument: PostponedAtomWithRevisableExpectedType): ArgumentConstraintPosition<*>
-    fun createLambdaArgumentConstraintPosition(argument: LambdaWithTypeVariableAsExpectedTypeMarker): ConstraintPosition
+    fun createLambdaArgumentConstraintPositionIfPossible(argument: PostponedAtomWithRevisableExpectedType): ConstraintPosition
     fun <T> createFixVariableConstraintPosition(variable: TypeVariableMarker, atom: T): FixVariableConstraintPosition<T>
     fun extractLambdaParameterTypesFromDeclaration(declaration: PostponedAtomWithRevisableExpectedType): List<KotlinTypeMarker?>?
     fun PostponedAtomWithRevisableExpectedType.isFunctionExpression(): Boolean
