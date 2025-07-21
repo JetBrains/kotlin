@@ -1,0 +1,37 @@
+PsiJetFileStubImpl[package=]
+  PACKAGE_DIRECTIVE
+  IMPORT_LIST
+  OBJECT_DECLARATION[classId=/DataObject, fqName=DataObject, isCompanion=false, isLocal=false, isObjectLiteral=false, isTopLevel=true, name=DataObject, superNames=[]]
+    MODIFIER_LIST[public]
+    CLASS_BODY
+      FUN[fqName=DataObject.equals, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=equals]
+        MODIFIER_LIST[public open operator]
+        VALUE_PARAMETER_LIST
+          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=other]
+            TYPE_REFERENCE
+              NULLABLE_TYPE
+                USER_TYPE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=kotlin]
+                  REFERENCE_EXPRESSION[referencedName=Any]
+        TYPE_REFERENCE
+          USER_TYPE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=kotlin]
+            REFERENCE_EXPRESSION[referencedName=Boolean]
+      FUN[fqName=DataObject.hashCode, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=hashCode]
+        MODIFIER_LIST[public open]
+        VALUE_PARAMETER_LIST
+        TYPE_REFERENCE
+          USER_TYPE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=kotlin]
+            REFERENCE_EXPRESSION[referencedName=Int]
+      FUN[fqName=DataObject.toString, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=toString]
+        MODIFIER_LIST[public open]
+        VALUE_PARAMETER_LIST
+        TYPE_REFERENCE
+          USER_TYPE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=kotlin]
+            REFERENCE_EXPRESSION[referencedName=String]

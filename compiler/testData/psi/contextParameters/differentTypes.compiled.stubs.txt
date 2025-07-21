@@ -1,0 +1,324 @@
+Anno.class:
+  PsiJetFileStubImpl[package=]
+    PACKAGE_DIRECTIVE
+    IMPORT_LIST
+    CLASS[classId=/Anno, fqName=Anno, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=Anno, superNames=[Annotation]]
+      MODIFIER_LIST[public final annotation]
+        ANNOTATION_ENTRY[hasValueArguments=false, shortName=Target]
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                USER_TYPE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=kotlin]
+                  REFERENCE_EXPRESSION[referencedName=annotation]
+                REFERENCE_EXPRESSION[referencedName=Target]
+      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Anno]
+        MODIFIER_LIST[public]
+        VALUE_PARAMETER_LIST
+      SUPER_TYPE_LIST
+        SUPER_TYPE_ENTRY
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=kotlin]
+              REFERENCE_EXPRESSION[referencedName=Annotation]
+      CLASS_BODY
+
+
+Foo.class:
+  PsiJetFileStubImpl[package=]
+    PACKAGE_DIRECTIVE
+    IMPORT_LIST
+    CLASS[classId=/Foo, fqName=Foo, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=Foo, superNames=[]]
+      MODIFIER_LIST[public final]
+      PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Foo]
+        MODIFIER_LIST[public]
+        VALUE_PARAMETER_LIST
+      CLASS_BODY
+        PROPERTY[fqName=Foo.contextParameter2, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=contextParameter2]
+          MODIFIER_LIST[public final]
+            CONTEXT_RECEIVER_LIST
+              CONTEXT_RECEIVER[label=null]
+                TYPE_REFERENCE
+                  MODIFIER_LIST[suspend]
+                    ANNOTATION_ENTRY[hasValueArguments=false, shortName=Anno]
+                      CONSTRUCTOR_CALLEE
+                        TYPE_REFERENCE
+                          USER_TYPE
+                            REFERENCE_EXPRESSION[referencedName=Anno]
+                  FUNCTION_TYPE
+                    VALUE_PARAMETER_LIST
+                    TYPE_REFERENCE
+                      USER_TYPE
+                        USER_TYPE
+                          REFERENCE_EXPRESSION[referencedName=kotlin]
+                        REFERENCE_EXPRESSION[referencedName=Unit]
+              CONTEXT_RECEIVER[label=null]
+                TYPE_REFERENCE
+                  MODIFIER_LIST[suspend]
+                  FUNCTION_TYPE
+                    FUNCTION_TYPE_RECEIVER
+                      TYPE_REFERENCE
+                        USER_TYPE
+                          USER_TYPE
+                            REFERENCE_EXPRESSION[referencedName=kotlin]
+                          REFERENCE_EXPRESSION[referencedName=String]
+                    VALUE_PARAMETER_LIST
+                    TYPE_REFERENCE
+                      USER_TYPE
+                        USER_TYPE
+                          REFERENCE_EXPRESSION[referencedName=kotlin]
+                        REFERENCE_EXPRESSION[referencedName=Int]
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=kotlin]
+              REFERENCE_EXPRESSION[referencedName=Int]
+          PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=true, isGetter=true, mayHaveContract=false]
+            MODIFIER_LIST[public final]
+            VALUE_PARAMETER_LIST
+        PROPERTY[fqName=Foo.dnnP, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=true, isTopLevel=false, isVar=false, name=dnnP]
+          MODIFIER_LIST[public final]
+            CONTEXT_RECEIVER_LIST
+              CONTEXT_RECEIVER[label=null]
+                TYPE_REFERENCE
+                  INTERSECTION_TYPE
+                    TYPE_REFERENCE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION[referencedName=A]
+                    TYPE_REFERENCE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION[referencedName=Any]
+              CONTEXT_RECEIVER[label=null]
+                TYPE_REFERENCE
+                  INTERSECTION_TYPE
+                    TYPE_REFERENCE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION[referencedName=B]
+                    TYPE_REFERENCE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION[referencedName=Any]
+          TYPE_PARAMETER_LIST
+            TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=A]
+            TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=B]
+            TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=C]
+          TYPE_REFERENCE
+            INTERSECTION_TYPE
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=C]
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=Any]
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=kotlin]
+              REFERENCE_EXPRESSION[referencedName=Int]
+          PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=true, isGetter=true, mayHaveContract=false]
+            MODIFIER_LIST[public final]
+            VALUE_PARAMETER_LIST
+        PROPERTY[fqName=Foo.contextParameter3, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=contextParameter3]
+          MODIFIER_LIST[public final]
+            CONTEXT_RECEIVER_LIST
+              CONTEXT_RECEIVER[label=null]
+                TYPE_REFERENCE
+                  MODIFIER_LIST[suspend]
+                    ANNOTATION_ENTRY[hasValueArguments=false, shortName=Anno]
+                      CONSTRUCTOR_CALLEE
+                        TYPE_REFERENCE
+                          USER_TYPE
+                            REFERENCE_EXPRESSION[referencedName=Anno]
+                  FUNCTION_TYPE
+                    CONTEXT_RECEIVER_LIST
+                      CONTEXT_RECEIVER[label=null]
+                        TYPE_REFERENCE
+                          USER_TYPE
+                            USER_TYPE
+                              REFERENCE_EXPRESSION[referencedName=kotlin]
+                            REFERENCE_EXPRESSION[referencedName=Int]
+                    VALUE_PARAMETER_LIST
+                    TYPE_REFERENCE
+                      USER_TYPE
+                        USER_TYPE
+                          REFERENCE_EXPRESSION[referencedName=kotlin]
+                        REFERENCE_EXPRESSION[referencedName=Unit]
+              CONTEXT_RECEIVER[label=null]
+                TYPE_REFERENCE
+                  MODIFIER_LIST[suspend]
+                  FUNCTION_TYPE
+                    CONTEXT_RECEIVER_LIST
+                      CONTEXT_RECEIVER[label=null]
+                        TYPE_REFERENCE
+                          USER_TYPE
+                            USER_TYPE
+                              REFERENCE_EXPRESSION[referencedName=kotlin]
+                            REFERENCE_EXPRESSION[referencedName=String]
+                    VALUE_PARAMETER_LIST
+                    TYPE_REFERENCE
+                      USER_TYPE
+                        USER_TYPE
+                          REFERENCE_EXPRESSION[referencedName=kotlin]
+                        REFERENCE_EXPRESSION[referencedName=Boolean]
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=kotlin]
+              REFERENCE_EXPRESSION[referencedName=Int]
+          PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=true, isGetter=true, mayHaveContract=false]
+            MODIFIER_LIST[public final]
+            VALUE_PARAMETER_LIST
+        PROPERTY[fqName=Foo.returnType, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=returnType]
+          MODIFIER_LIST[public final]
+          TYPE_REFERENCE
+            MODIFIER_LIST[suspend]
+              ANNOTATION_ENTRY[hasValueArguments=false, shortName=Anno]
+                CONSTRUCTOR_CALLEE
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      REFERENCE_EXPRESSION[referencedName=Anno]
+            FUNCTION_TYPE
+              CONTEXT_RECEIVER_LIST
+                CONTEXT_RECEIVER[label=null]
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION[referencedName=kotlin]
+                      REFERENCE_EXPRESSION[referencedName=Int]
+              VALUE_PARAMETER_LIST
+              TYPE_REFERENCE
+                USER_TYPE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=kotlin]
+                  REFERENCE_EXPRESSION[referencedName=Unit]
+          PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=true, isGetter=true, mayHaveContract=false]
+            MODIFIER_LIST[public final]
+            VALUE_PARAMETER_LIST
+        FUN[fqName=Foo.contextParameter, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=contextParameter]
+          MODIFIER_LIST[public final]
+            CONTEXT_RECEIVER_LIST
+              CONTEXT_RECEIVER[label=null]
+                TYPE_REFERENCE
+                  MODIFIER_LIST[suspend]
+                    ANNOTATION_ENTRY[hasValueArguments=false, shortName=Anno]
+                      CONSTRUCTOR_CALLEE
+                        TYPE_REFERENCE
+                          USER_TYPE
+                            REFERENCE_EXPRESSION[referencedName=Anno]
+                  FUNCTION_TYPE
+                    VALUE_PARAMETER_LIST
+                    TYPE_REFERENCE
+                      USER_TYPE
+                        USER_TYPE
+                          REFERENCE_EXPRESSION[referencedName=kotlin]
+                        REFERENCE_EXPRESSION[referencedName=Unit]
+              CONTEXT_RECEIVER[label=null]
+                TYPE_REFERENCE
+                  MODIFIER_LIST[suspend]
+                  FUNCTION_TYPE
+                    FUNCTION_TYPE_RECEIVER
+                      TYPE_REFERENCE
+                        USER_TYPE
+                          USER_TYPE
+                            REFERENCE_EXPRESSION[referencedName=kotlin]
+                          REFERENCE_EXPRESSION[referencedName=String]
+                    VALUE_PARAMETER_LIST
+                    TYPE_REFERENCE
+                      USER_TYPE
+                        USER_TYPE
+                          REFERENCE_EXPRESSION[referencedName=kotlin]
+                        REFERENCE_EXPRESSION[referencedName=Int]
+          VALUE_PARAMETER_LIST
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=kotlin]
+              REFERENCE_EXPRESSION[referencedName=Unit]
+        FUN[fqName=Foo.dnnF, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=true, isTopLevel=false, mayHaveContract=false, name=dnnF]
+          MODIFIER_LIST[public final]
+            CONTEXT_RECEIVER_LIST
+              CONTEXT_RECEIVER[label=null]
+                TYPE_REFERENCE
+                  INTERSECTION_TYPE
+                    TYPE_REFERENCE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION[referencedName=A]
+                    TYPE_REFERENCE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION[referencedName=Any]
+              CONTEXT_RECEIVER[label=null]
+                TYPE_REFERENCE
+                  INTERSECTION_TYPE
+                    TYPE_REFERENCE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION[referencedName=B]
+                    TYPE_REFERENCE
+                      USER_TYPE
+                        REFERENCE_EXPRESSION[referencedName=Any]
+          TYPE_PARAMETER_LIST
+            TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=A]
+            TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=B]
+            TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=C]
+          TYPE_REFERENCE
+            INTERSECTION_TYPE
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=C]
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=Any]
+          VALUE_PARAMETER_LIST
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=kotlin]
+              REFERENCE_EXPRESSION[referencedName=Unit]
+        FUN[fqName=Foo.contextParameter4, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=contextParameter4]
+          MODIFIER_LIST[public final]
+            CONTEXT_RECEIVER_LIST
+              CONTEXT_RECEIVER[label=null]
+                TYPE_REFERENCE
+                  MODIFIER_LIST[suspend]
+                    ANNOTATION_ENTRY[hasValueArguments=false, shortName=Anno]
+                      CONSTRUCTOR_CALLEE
+                        TYPE_REFERENCE
+                          USER_TYPE
+                            REFERENCE_EXPRESSION[referencedName=Anno]
+                  FUNCTION_TYPE
+                    CONTEXT_RECEIVER_LIST
+                      CONTEXT_RECEIVER[label=null]
+                        TYPE_REFERENCE
+                          USER_TYPE
+                            USER_TYPE
+                              REFERENCE_EXPRESSION[referencedName=kotlin]
+                            REFERENCE_EXPRESSION[referencedName=Int]
+                    VALUE_PARAMETER_LIST
+                    TYPE_REFERENCE
+                      USER_TYPE
+                        USER_TYPE
+                          REFERENCE_EXPRESSION[referencedName=kotlin]
+                        REFERENCE_EXPRESSION[referencedName=Unit]
+              CONTEXT_RECEIVER[label=null]
+                TYPE_REFERENCE
+                  MODIFIER_LIST[suspend]
+                  FUNCTION_TYPE
+                    CONTEXT_RECEIVER_LIST
+                      CONTEXT_RECEIVER[label=null]
+                        TYPE_REFERENCE
+                          USER_TYPE
+                            USER_TYPE
+                              REFERENCE_EXPRESSION[referencedName=kotlin]
+                            REFERENCE_EXPRESSION[referencedName=String]
+                    VALUE_PARAMETER_LIST
+                    TYPE_REFERENCE
+                      USER_TYPE
+                        USER_TYPE
+                          REFERENCE_EXPRESSION[referencedName=kotlin]
+                        REFERENCE_EXPRESSION[referencedName=Boolean]
+          VALUE_PARAMETER_LIST
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=kotlin]
+              REFERENCE_EXPRESSION[referencedName=Unit]

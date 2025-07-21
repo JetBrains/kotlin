@@ -64,4 +64,9 @@ SuspendLambda.class:
       public final fun override(p: kotlin.String, b: suspend (test.P) -> kotlin.Unit): kotlin.Nothing? { /* compiled code */ }
 
       public final fun override(b: suspend (test.P) -> kotlin.Unit): kotlin.Nothing? { /* compiled code */ }
+
+      public final fun annotatedReturnSuspend(): @test.A suspend (test.P) -> kotlin.Unit { /* compiled code */ }
+
+      public final fun returnSuspend(): suspend (test.P) -> kotlin.Unit { /* compiled code */ }
   }
+

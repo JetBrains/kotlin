@@ -253,6 +253,12 @@ public class DecompiledStubsTestGenerated extends AbstractDecompiledStubsTest {
   }
 
   @Test
+  @TestMetadata("dataObject.kt")
+  public void testDataObject() {
+    runTest("compiler/testData/psi/dataObject.kt");
+  }
+
+  @Test
   @TestMetadata("defaultImplsInInterface.kt")
   public void testDefaultImplsInInterface() {
     runTest("compiler/testData/psi/defaultImplsInInterface.kt");
@@ -274,6 +280,12 @@ public class DecompiledStubsTestGenerated extends AbstractDecompiledStubsTest {
   @TestMetadata("definitelyNotNullTypes.kt")
   public void testDefinitelyNotNullTypes() {
     runTest("compiler/testData/psi/definitelyNotNullTypes.kt");
+  }
+
+  @Test
+  @TestMetadata("delegatedWithInitializer.kt")
+  public void testDelegatedWithInitializer() {
+    runTest("compiler/testData/psi/delegatedWithInitializer.kt");
   }
 
   @Test
@@ -382,6 +394,12 @@ public class DecompiledStubsTestGenerated extends AbstractDecompiledStubsTest {
   @TestMetadata("EOLsOnRollback.kt")
   public void testEOLsOnRollback() {
     runTest("compiler/testData/psi/EOLsOnRollback.kt");
+  }
+
+  @Test
+  @TestMetadata("emptyEnum.kt")
+  public void testEmptyEnum() {
+    runTest("compiler/testData/psi/emptyEnum.kt");
   }
 
   @Test
@@ -709,6 +727,12 @@ public class DecompiledStubsTestGenerated extends AbstractDecompiledStubsTest {
   }
 
   @Test
+  @TestMetadata("internalConst.kt")
+  public void testInternalConst() {
+    runTest("compiler/testData/psi/internalConst.kt");
+  }
+
+  @Test
   @TestMetadata("kotlinFunInterface_ERR.kt")
   public void testKotlinFunInterface_ERR() {
     runTest("compiler/testData/psi/kotlinFunInterface_ERR.kt");
@@ -943,6 +967,12 @@ public class DecompiledStubsTestGenerated extends AbstractDecompiledStubsTest {
   }
 
   @Test
+  @TestMetadata("propertyWithConstraints.kt")
+  public void testPropertyWithConstraints() {
+    runTest("compiler/testData/psi/propertyWithConstraints.kt");
+  }
+
+  @Test
   @TestMetadata("QuotedIdentifiers.kt")
   public void testQuotedIdentifiers() {
     runTest("compiler/testData/psi/QuotedIdentifiers.kt");
@@ -1120,6 +1150,12 @@ public class DecompiledStubsTestGenerated extends AbstractDecompiledStubsTest {
   @TestMetadata("typeAliasExpansion.kt")
   public void testTypeAliasExpansion() {
     runTest("compiler/testData/psi/typeAliasExpansion.kt");
+  }
+
+  @Test
+  @TestMetadata("typeAliasWithConstraints.kt")
+  public void testTypeAliasWithConstraints() {
+    runTest("compiler/testData/psi/typeAliasWithConstraints.kt");
   }
 
   @Test
@@ -1333,6 +1369,12 @@ public class DecompiledStubsTestGenerated extends AbstractDecompiledStubsTest {
     @TestMetadata("annotatedReturnType.kt")
     public void testAnnotatedReturnType() {
       runTest("compiler/testData/psi/annotation/annotatedReturnType.kt");
+    }
+
+    @Test
+    @TestMetadata("annotatedTypeConstraint.kt")
+    public void testAnnotatedTypeConstraint() {
+      runTest("compiler/testData/psi/annotation/annotatedTypeConstraint.kt");
     }
 
     @Test
@@ -2011,6 +2053,12 @@ public class DecompiledStubsTestGenerated extends AbstractDecompiledStubsTest {
     @TestMetadata("danglingContextParameterAndAnnotations.kt")
     public void testDanglingContextParameterAndAnnotations() {
       runTest("compiler/testData/psi/contextParameters/danglingContextParameterAndAnnotations.kt");
+    }
+
+    @Test
+    @TestMetadata("differentTypes.kt")
+    public void testDifferentTypes() {
+      runTest("compiler/testData/psi/contextParameters/differentTypes.kt");
     }
 
     @Test

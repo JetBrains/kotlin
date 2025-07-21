@@ -33,6 +33,12 @@ AnnotationsOnNullableTypes.class:
       public final fun returnArgument(): B<@A C?> { /* compiled code */ }
 
       public final fun @receiver:A C?.functionWithAnnotatedReceiver(): kotlin.Unit { /* compiled code */ }
+
+      public final fun @A kotlin.String?.foo(): kotlin.Unit { /* compiled code */ }
+
+      public final fun @receiver:A (() -> kotlin.Unit?).functionWithAnnotatedReceiver2(): kotlin.Unit { /* compiled code */ }
+
+      public final fun @receiver:A (() -> kotlin.Unit)?.functionWithAnnotatedReceiver3(): kotlin.Unit { /* compiled code */ }
   }
 
 B.class:
@@ -48,3 +54,4 @@ C.class:
 
   public interface C {
   }
+

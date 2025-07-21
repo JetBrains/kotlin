@@ -589,6 +589,92 @@ KtFile: suspendLambda.kt
         PsiWhiteSpace(' ')
         NULL
           PsiElement(null)('null')
+      PsiWhiteSpace('\n\n    ')
+      FUN
+        PsiElement(fun)('fun')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('annotatedReturnSuspend')
+        VALUE_PARAMETER_LIST
+          PsiElement(LPAR)('(')
+          PsiElement(RPAR)(')')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          MODIFIER_LIST
+            ANNOTATION_ENTRY
+              PsiElement(AT)('@')
+              CONSTRUCTOR_CALLEE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('A')
+            PsiWhiteSpace(' ')
+            PsiElement(suspend)('suspend')
+          PsiWhiteSpace(' ')
+          FUNCTION_TYPE
+            VALUE_PARAMETER_LIST
+              PsiElement(LPAR)('(')
+              VALUE_PARAMETER
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('P')
+              PsiElement(RPAR)(')')
+            PsiWhiteSpace(' ')
+            PsiElement(ARROW)('->')
+            PsiWhiteSpace(' ')
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('Unit')
+        PsiWhiteSpace(' ')
+        PsiElement(EQ)('=')
+        PsiWhiteSpace(' ')
+        LAMBDA_EXPRESSION
+          FUNCTION_LITERAL
+            PsiElement(LBRACE)('{')
+            BLOCK
+              <empty list>
+            PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n    ')
+      FUN
+        PsiElement(fun)('fun')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('returnSuspend')
+        VALUE_PARAMETER_LIST
+          PsiElement(LPAR)('(')
+          PsiElement(RPAR)(')')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          MODIFIER_LIST
+            PsiElement(suspend)('suspend')
+          PsiWhiteSpace(' ')
+          FUNCTION_TYPE
+            VALUE_PARAMETER_LIST
+              PsiElement(LPAR)('(')
+              VALUE_PARAMETER
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION
+                      PsiElement(IDENTIFIER)('P')
+              PsiElement(RPAR)(')')
+            PsiWhiteSpace(' ')
+            PsiElement(ARROW)('->')
+            PsiWhiteSpace(' ')
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION
+                  PsiElement(IDENTIFIER)('Unit')
+        PsiWhiteSpace(' ')
+        PsiElement(EQ)('=')
+        PsiWhiteSpace(' ')
+        LAMBDA_EXPRESSION
+          FUNCTION_LITERAL
+            PsiElement(LBRACE)('{')
+            BLOCK
+              <empty list>
+            PsiElement(RBRACE)('}')
       PsiWhiteSpace('\n')
       PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n\n')

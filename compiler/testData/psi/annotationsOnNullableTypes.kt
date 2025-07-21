@@ -22,6 +22,13 @@ public class AnnotationsOnNullableTypes {
     val lambdaTypeWithNullableReceiver: @A C?.() -> C = null!!
 
     fun @receiver:A C?.functionWithAnnotatedReceiver() {}
+
+    fun (@A String?)?.foo() {
+
+    }
+
+    fun @receiver:A () -> Unit?.functionWithAnnotatedReceiver2() {}
+    fun (@receiver:A (() -> Unit)?)?.functionWithAnnotatedReceiver3() {}
 }
 
 @Target(AnnotationTarget.TYPE, AnnotationTarget.TYPE_PARAMETER, AnnotationTarget.VALUE_PARAMETER)

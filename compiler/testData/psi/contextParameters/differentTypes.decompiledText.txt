@@ -1,0 +1,31 @@
+Anno.class:
+  // IntelliJ API Decompiler stub source generated from a class file
+  // Implementation of methods is not available
+
+  @kotlin.annotation.Target public final annotation class Anno public constructor() : kotlin.Annotation {
+  }
+
+Foo.class:
+  // IntelliJ API Decompiler stub source generated from a class file
+  // Implementation of methods is not available
+
+  public final class Foo public constructor() {
+      context((@Anno suspend () -> kotlin.Unit), (suspend kotlin.String.() -> kotlin.Int)) public final val contextParameter2: kotlin.Int /* compiled code */ /* hasBackingField: false */
+          public final get() {/* compiled code */ }
+
+      context((A & Any), (B & Any)) public final val <A, B, C> (C & Any).dnnP: kotlin.Int /* compiled code */ /* hasBackingField: false */
+          public final get() {/* compiled code */ }
+
+      context((@Anno suspend context(kotlin.Int) () -> kotlin.Unit), (suspend context(kotlin.String) () -> kotlin.Boolean)) public final val contextParameter3: kotlin.Int /* compiled code */ /* hasBackingField: false */
+          public final get() {/* compiled code */ }
+
+      public final val returnType: @Anno suspend context(kotlin.Int) () -> kotlin.Unit /* compiled code */ /* hasBackingField: false */
+          public final get() {/* compiled code */ }
+
+      context((@Anno suspend () -> kotlin.Unit), (suspend kotlin.String.() -> kotlin.Int)) public final fun contextParameter(): kotlin.Unit { /* compiled code */ }
+
+      context((A & Any), (B & Any)) public final fun <A, B, C> (C & Any).dnnF(): kotlin.Unit { /* compiled code */ }
+
+      context((@Anno suspend context(kotlin.Int) () -> kotlin.Unit), (suspend context(kotlin.String) () -> kotlin.Boolean)) public final fun contextParameter4(): kotlin.Unit { /* compiled code */ }
+  }
+
