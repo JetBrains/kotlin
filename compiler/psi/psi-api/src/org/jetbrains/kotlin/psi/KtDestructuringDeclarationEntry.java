@@ -108,7 +108,7 @@ public class KtDestructuringDeclarationEntry extends KtNamedDeclarationNotStubbe
 
     @Nullable
     @Override
-    public KtExpression getInitializer() {
+    public KtNameReferenceExpression getInitializer() {
         return null;
     }
 
