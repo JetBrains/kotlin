@@ -1,0 +1,39 @@
+/kt78942.kt:25:9: error: type mismatch: inferred type is () -> String but String was expected
+        fun(): String = ""
+        ^^^^^^^^^^^^^^^^^^
+/kt78942.kt:29:9: error: type mismatch: inferred type is () -> String but String was expected
+        fun() = ""
+        ^^^^^^^^^^
+/kt78942.kt:29:17: error: type mismatch: inferred type is () -> String but String was expected
+        fun() = ""
+                ^^
+/kt78942.kt:33:9: error: type mismatch: inferred type is () -> String but String was expected
+        fun() = ""
+        ^^^^^^^^^^
+/kt78942.kt:33:17: error: type mismatch: inferred type is () -> String but String was expected
+        fun() = ""
+                ^^
+/kt78942.kt:38:9: error: type mismatch: inferred type is () -> String but String was expected
+        res
+        ^^^
+/kt78942.kt:42:9: error: type mismatch: inferred type is () -> String but String was expected
+        fun() = it
+        ^^^^^^^^^^
+/kt78942.kt:46:9: error: type mismatch: inferred type is () -> String but String was expected
+        fun() = it
+        ^^^^^^^^^^
+/kt78942.kt:46:17: error: type mismatch: inferred type is () -> String but String was expected
+        fun() = it
+                ^^
+/kt78942.kt:50:9: error: type mismatch: inferred type is () -> String but String was expected
+        fun() = it.toString()
+        ^^^^^^^^^^^^^^^^^^^^^
+/kt78942.kt:50:17: error: type mismatch: inferred type is () -> String but String was expected
+        fun() = it.toString()
+                ^^^^^^^^^^^^^
+/kt78942.kt:54:9: error: type mismatch: inferred type is () -> String but String was expected
+        fun() = it.toString()
+        ^^^^^^^^^^^^^^^^^^^^^
+/kt78942.kt:54:17: error: type mismatch: inferred type is () -> String but String was expected
+        fun() = it.toString()
+                ^^^^^^^^^^^^^
