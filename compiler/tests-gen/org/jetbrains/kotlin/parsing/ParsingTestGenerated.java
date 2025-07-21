@@ -1713,6 +1713,11 @@ public class ParsingTestGenerated extends AbstractParsingTest {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/psi/contextParameters"), Pattern.compile("^(.*)\\.kts?$"), null, true);
       }
 
+      @TestMetadata("annotatedContextParameterType.kt")
+      public void testAnnotatedContextParameterType() {
+        runTest("compiler/testData/psi/contextParameters/annotatedContextParameterType.kt");
+      }
+
       @TestMetadata("anonymousFunction.kt")
       public void testAnonymousFunction() {
         runTest("compiler/testData/psi/contextParameters/anonymousFunction.kt");
