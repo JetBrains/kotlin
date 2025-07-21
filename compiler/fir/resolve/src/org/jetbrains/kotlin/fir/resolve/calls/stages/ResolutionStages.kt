@@ -879,7 +879,7 @@ internal object CheckLowPriorityInOverloadResolution : ResolutionStage() {
 
 internal object CheckIncompatibleTypeVariableUpperBounds : ResolutionStage() {
     context(sink: CheckerSink, context: ResolutionContext)
-    override suspend fun check(candidate: Candidate) =
+    override suspend fun check(candidate: Candidate): Unit =
         with(candidate.system.asConstraintSystemCompleterContext()) {
             for (variableWithConstraints in candidate.system.notFixedTypeVariables.values) {
                 val upperTypes = variableWithConstraints.constraints.extractUpperTypesToCheckIntersectionEmptiness()
