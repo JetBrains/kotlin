@@ -1,0 +1,13 @@
+/kt78942.fir.kt:(312,322): error: Argument type mismatch: actual type is 'Function0<ERROR CLASS: Unknown return lambda parameter type>', but 'String' was expected.
+
+/kt78942.fir.kt:(356,366): error: Return type mismatch: expected 'String', actual 'Function0<String>'.
+
+/kt78942.fir.kt:(404,414): error: Return type mismatch: expected 'String', actual 'Function0<String>'.
+
+/kt78942.fir.kt:(466,476): error: Return type mismatch: expected 'String', actual 'Function0<String>'.
+
+/kt78942.fir.kt:(520,530): error: Argument type mismatch: actual type is 'Function0<ERROR CLASS: Unknown return lambda parameter type>', but 'String' was expected.
+
+/kt78942.fir.kt:(583,604): error: Return type mismatch: expected 'String', actual 'Function0<String>'.
+
+/kt78942.fir.kt:(677,698): error: Argument type mismatch: actual type is 'Function0<ERROR CLASS: Unknown return lambda parameter type>', but 'String' was expected.

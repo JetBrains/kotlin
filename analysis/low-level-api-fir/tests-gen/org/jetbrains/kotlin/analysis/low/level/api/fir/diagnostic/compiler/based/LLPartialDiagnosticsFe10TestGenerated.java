@@ -1240,6 +1240,12 @@ public class LLPartialDiagnosticsFe10TestGenerated extends AbstractLLPartialDiag
     }
 
     @Test
+    @TestMetadata("kt78942.kt")
+    public void testKt78942() {
+      runTest("compiler/testData/diagnostics/tests/kt78942.kt");
+    }
+
+    @Test
     @TestMetadata("LValueAssignment.kt")
     public void testLValueAssignment() {
       runTest("compiler/testData/diagnostics/tests/LValueAssignment.kt");
@@ -14982,6 +14988,12 @@ public class LLPartialDiagnosticsFe10TestGenerated extends AbstractLLPartialDiag
       @TestMetadata("genericSubstitutionForFunInterface.kt")
       public void testGenericSubstitutionForFunInterface() {
         runTest("compiler/testData/diagnostics/tests/funInterface/genericSubstitutionForFunInterface.kt");
+      }
+
+      @Test
+      @TestMetadata("kt78942.kt")
+      public void testKt78942() {
+        runTest("compiler/testData/diagnostics/tests/funInterface/kt78942.kt");
       }
 
       @Test
