@@ -115,7 +115,8 @@ sealed interface PartialLinkageCase {
      * Applicable to: Expressions.
      */
     class InvalidSamConversion(
-        val expression: IrTypeOperatorCall,
+        val expression: IrExpression,
+        val funInterface: IrClassifierSymbol,
         val abstractFunctionSymbols: Set<IrSimpleFunctionSymbol>,
         val abstractPropertySymbol: IrPropertySymbol?
     ) : PartialLinkageCase

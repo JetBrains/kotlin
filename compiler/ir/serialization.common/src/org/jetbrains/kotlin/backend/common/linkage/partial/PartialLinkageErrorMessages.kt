@@ -47,7 +47,7 @@ internal fun PartialLinkageCase.renderLinkageError(): String = buildString {
         }
 
         is InvalidSamConversion -> expression(expression) {
-            invalidSamConversion(expression, abstractFunctionSymbols, abstractPropertySymbol)
+            invalidSamConversion(funInterface, abstractFunctionSymbols, abstractPropertySymbol)
         }
 
         is SuspendableFunctionCallWithoutCoroutineContext -> expression(expression) {
@@ -524,11 +524,11 @@ private fun Appendable.memberAccessExpressionArgumentsMismatch(
 }
 
 private fun Appendable.invalidSamConversion(
-    expression: IrTypeOperatorCall,
+    funInterface: IrClassifierSymbol,
     abstractFunctionSymbols: Set<IrSimpleFunctionSymbol>,
     abstractPropertySymbol: IrPropertySymbol?,
 ): Appendable {
-    declarationKindName(expression.typeOperand.classifierOrFail, capitalized = true)
+    declarationKindName(funInterface, capitalized = true)
     return when {
         abstractPropertySymbol != null -> append(" has abstract ").declarationKindName(abstractPropertySymbol, capitalized = false)
         abstractFunctionSymbols.isEmpty() -> append(" does not have an abstract function")

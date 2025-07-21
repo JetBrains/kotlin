@@ -669,6 +669,7 @@ internal class PartiallyLinkedIrTreePatcher(
             // A type of function reference is usually FunctionN or KFunctionN, and its overriddenFunctionSymbol is FunctionN.invoke.
             // But the type can also be a user defined fun interface, and either that interface or its SAM could have gone missing.
             checkReferencedDeclaration(overriddenFunctionSymbol)
+                ?: checkOverriddenFunInterface(overriddenFunctionSymbol.owner.parentAsClass)
                 ?: checkExpressionType(type)
                 ?: run {
                     // Don't completely fail when reflectionTargetSymbol is unlinked, see reflectionTargetLinkageError for details.
@@ -946,8 +947,16 @@ internal class PartiallyLinkedIrTreePatcher(
 
         private fun IrTypeOperatorCall.checkSamConversion(): PartialLinkageCase? {
             if (operator != IrTypeOperator.SAM_CONVERSION) return null
-
             val funInterface: IrClass = typeOperand.classOrNull?.owner ?: return null
+            return checkOverriddenFunInterface(funInterface)
+        }
+
+        private fun IrExpression.checkOverriddenFunInterface(funInterface: IrClass): PartialLinkageCase? {
+            if (funInterface.symbol.isKFunction()) {
+                // KFunction is special as technically it has more than one abstract member, so the checks below do not apply.
+                // But it is a type provided by stdlib, so no need to verify it :)
+                return null
+            }
 
             val abstractFunctionSymbols = newHashSetWithExpectedSize<IrSimpleFunctionSymbol>(funInterface.declarations.size)
             funInterface.declarations.forEach { member ->
@@ -960,6 +969,7 @@ internal class PartiallyLinkedIrTreePatcher(
                         if (member.modality == Modality.ABSTRACT)
                             return InvalidSamConversion(
                                 expression = this,
+                                funInterface = funInterface.symbol,
                                 abstractFunctionSymbols = emptySet(),
                                 abstractPropertySymbol = member.symbol
                             )
@@ -970,6 +980,7 @@ internal class PartiallyLinkedIrTreePatcher(
             return if (abstractFunctionSymbols.size != 1)
                 InvalidSamConversion(
                     expression = this,
+                    funInterface = funInterface.symbol,
                     abstractFunctionSymbols = abstractFunctionSymbols,
                     abstractPropertySymbol = null
                 )
