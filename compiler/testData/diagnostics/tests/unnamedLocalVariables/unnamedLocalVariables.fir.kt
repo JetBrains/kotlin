@@ -11,7 +11,7 @@ fun foo() {
     var (b, _) = 1 to 2
     val (_) = 'a' to 'b'
 
-    (<!SYNTAX!><!>val f = <!UNRESOLVED_REFERENCE!>first<!><!SYNTAX!>, val _ = second) = "first" to "second"<!>
+    (val f = first, val _ = second) = "first" to "second"
 
     when(val _ = writeTo()) {
         true -> {}

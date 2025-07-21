@@ -1602,7 +1602,7 @@ class LightTreeRawFirDeclarationBuilder(
     }
 
     /**
-     * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseMultiDeclarationName
+     * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseMultiDeclarationEntry
      */
     private fun convertDestructingDeclarationEntry(entry: LighterASTNode): DestructuringEntry {
         val annotations = mutableListOf<FirAnnotationCall>()

@@ -1,4 +1,4 @@
 class InitOrderDemo(name: String) {
-    val (firstProperty = <expr>"First property"</expr>
+    <expr>val (firstProperty = "First property"</expr>
 
 }

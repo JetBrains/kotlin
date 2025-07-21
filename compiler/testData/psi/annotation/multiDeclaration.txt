@@ -149,12 +149,13 @@ KtFile: multiDeclaration.kt
         PsiWhiteSpace(' ')
         DESTRUCTURING_DECLARATION_ENTRY
           PsiElement(IDENTIFIER)('y')
+          PsiWhiteSpace(' ')
+          PsiElement(EQ)('=')
+          PsiWhiteSpace(' ')
+          REFERENCE_EXPRESSION
+            PsiErrorElement:Expecting an identifier
+              <empty list>
         PsiErrorElement:Expecting ')'
-          <empty list>
-        PsiWhiteSpace(' ')
-        PsiElement(EQ)('=')
-        PsiWhiteSpace(' ')
-        INTEGER_CONSTANT
           PsiElement(INTEGER_LITERAL)('1')
       PsiWhiteSpace('\n')
       PsiElement(RBRACE)('}')

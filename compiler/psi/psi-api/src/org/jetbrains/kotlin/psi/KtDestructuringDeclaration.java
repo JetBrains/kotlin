@@ -70,6 +70,20 @@ public class KtDestructuringDeclaration extends KtDeclarationImpl implements KtV
         return findChildByType(VAL_VAR);
     }
 
+    /**
+     * Example:
+     * <code>
+     *     (val x, var y) = ...
+     * </code>
+     *
+     * @return true when this destructuring declaration uses the full form with the val or var keywords inside the entries.
+     * See <a href="https://kotl.in/name-based-destructuring">KEEP</a>.
+     */
+    public boolean isFullForm() {
+        List<KtDestructuringDeclarationEntry> entries = getEntries();
+        return !entries.isEmpty() && entries.get(0).getOwnValOrVarKeyword() != null;
+    }
+
     @Nullable
     public PsiElement getRPar() {
         return findChildByType(KtTokens.RPAR);

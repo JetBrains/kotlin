@@ -16,108 +16,99 @@ KtFile: fullNameBasedDestructuring.kt
     BLOCK
       PsiElement(LBRACE)('{')
       PsiWhiteSpace('\n    ')
-      PARENTHESIZED
+      DESTRUCTURING_DECLARATION
         PsiElement(LPAR)('(')
-        PsiErrorElement:Expecting an expression
-          <empty list>
-      PROPERTY
-        PsiElement(val)('val')
-        PsiWhiteSpace(' ')
-        PsiElement(IDENTIFIER)('first')
-      PsiErrorElement:Unexpected tokens (use ';' to separate expressions on the same line)
+        DESTRUCTURING_DECLARATION_ENTRY
+          PsiElement(val)('val')
+          PsiWhiteSpace(' ')
+          PsiElement(IDENTIFIER)('first')
         PsiElement(COMMA)(',')
         PsiWhiteSpace(' ')
-        PsiElement(var)('var')
-        PsiWhiteSpace(' ')
-        PsiElement(IDENTIFIER)('second')
+        DESTRUCTURING_DECLARATION_ENTRY
+          PsiElement(var)('var')
+          PsiWhiteSpace(' ')
+          PsiElement(IDENTIFIER)('second')
         PsiElement(COMMA)(',')
         PsiElement(RPAR)(')')
         PsiWhiteSpace(' ')
         PsiElement(EQ)('=')
         PsiWhiteSpace(' ')
-        PsiElement(IDENTIFIER)('x')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('x')
       PsiWhiteSpace('\n    ')
-      PARENTHESIZED
+      DESTRUCTURING_DECLARATION
         PsiElement(LPAR)('(')
-        PsiErrorElement:Expecting an expression
-          <empty list>
-      PROPERTY
-        PsiElement(var)('var')
-        PsiWhiteSpace(' ')
-        PsiElement(IDENTIFIER)('first')
-      PsiErrorElement:Unexpected tokens (use ';' to separate expressions on the same line)
+        DESTRUCTURING_DECLARATION_ENTRY
+          PsiElement(var)('var')
+          PsiWhiteSpace(' ')
+          PsiElement(IDENTIFIER)('first')
         PsiElement(RPAR)(')')
-        PsiWhiteSpace(' ')
-        PsiElement(EQ)('=')
-        PsiWhiteSpace(' ')
-        PsiElement(IDENTIFIER)('x')
-      PsiWhiteSpace('\n    ')
-      PARENTHESIZED
-        PsiElement(LPAR)('(')
-        PsiErrorElement:Expecting an expression
-          <empty list>
-      PROPERTY
-        PsiElement(val)('val')
-        PsiWhiteSpace(' ')
-        PsiElement(IDENTIFIER)('first')
-        PsiElement(COLON)(':')
-        PsiWhiteSpace(' ')
-        TYPE_REFERENCE
-          USER_TYPE
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('String')
-      PsiErrorElement:Unexpected tokens (use ';' to separate expressions on the same line)
-        PsiElement(RPAR)(')')
-        PsiWhiteSpace(' ')
-        PsiElement(EQ)('=')
-        PsiWhiteSpace(' ')
-        PsiElement(IDENTIFIER)('x')
-      PsiWhiteSpace('\n    ')
-      PARENTHESIZED
-        PsiElement(LPAR)('(')
-        PsiErrorElement:Expecting an expression
-          <empty list>
-      PROPERTY
-        PsiElement(val)('val')
-        PsiWhiteSpace(' ')
-        PsiElement(IDENTIFIER)('aa')
         PsiWhiteSpace(' ')
         PsiElement(EQ)('=')
         PsiWhiteSpace(' ')
         REFERENCE_EXPRESSION
-          PsiElement(IDENTIFIER)('first')
-      PsiErrorElement:Unexpected tokens (use ';' to separate expressions on the same line)
-        PsiElement(RPAR)(')')
-        PsiWhiteSpace(' ')
-        PsiElement(EQ)('=')
-        PsiWhiteSpace(' ')
-        PsiElement(IDENTIFIER)('x')
+          PsiElement(IDENTIFIER)('x')
       PsiWhiteSpace('\n    ')
-      PARENTHESIZED
+      DESTRUCTURING_DECLARATION
         PsiElement(LPAR)('(')
-        PsiErrorElement:Expecting an expression
-          <empty list>
-      PROPERTY
-        PsiElement(val)('val')
-        PsiWhiteSpace(' ')
-        PsiElement(IDENTIFIER)('aa')
-        PsiElement(COLON)(':')
-        PsiWhiteSpace(' ')
-        TYPE_REFERENCE
-          USER_TYPE
-            REFERENCE_EXPRESSION
-              PsiElement(IDENTIFIER)('String')
+        DESTRUCTURING_DECLARATION_ENTRY
+          PsiElement(val)('val')
+          PsiWhiteSpace(' ')
+          PsiElement(IDENTIFIER)('first')
+          PsiElement(COLON)(':')
+          PsiWhiteSpace(' ')
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('String')
+        PsiElement(RPAR)(')')
         PsiWhiteSpace(' ')
         PsiElement(EQ)('=')
         PsiWhiteSpace(' ')
         REFERENCE_EXPRESSION
-          PsiElement(IDENTIFIER)('first')
-      PsiErrorElement:Unexpected tokens (use ';' to separate expressions on the same line)
+          PsiElement(IDENTIFIER)('x')
+      PsiWhiteSpace('\n    ')
+      DESTRUCTURING_DECLARATION
+        PsiElement(LPAR)('(')
+        DESTRUCTURING_DECLARATION_ENTRY
+          PsiElement(val)('val')
+          PsiWhiteSpace(' ')
+          PsiElement(IDENTIFIER)('aa')
+          PsiWhiteSpace(' ')
+          PsiElement(EQ)('=')
+          PsiWhiteSpace(' ')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('first')
         PsiElement(RPAR)(')')
         PsiWhiteSpace(' ')
         PsiElement(EQ)('=')
         PsiWhiteSpace(' ')
-        PsiElement(IDENTIFIER)('x')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('x')
+      PsiWhiteSpace('\n    ')
+      DESTRUCTURING_DECLARATION
+        PsiElement(LPAR)('(')
+        DESTRUCTURING_DECLARATION_ENTRY
+          PsiElement(val)('val')
+          PsiWhiteSpace(' ')
+          PsiElement(IDENTIFIER)('aa')
+          PsiElement(COLON)(':')
+          PsiWhiteSpace(' ')
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('String')
+          PsiWhiteSpace(' ')
+          PsiElement(EQ)('=')
+          PsiWhiteSpace(' ')
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('first')
+        PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(EQ)('=')
+        PsiWhiteSpace(' ')
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('x')
       PsiWhiteSpace('\n')
       PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n\n')
@@ -140,73 +131,29 @@ KtFile: fullNameBasedDestructuring.kt
           DESTRUCTURING_DECLARATION
             PsiElement(LPAR)('(')
             DESTRUCTURING_DECLARATION_ENTRY
-              PsiErrorElement:Expecting a name
-                <empty list>
-            PsiErrorElement:Expecting ')'
               PsiElement(val)('val')
-        PsiWhiteSpace(' ')
-        PsiErrorElement:Expecting 'in'
-          PsiElement(IDENTIFIER)('first')
-        PsiErrorElement:Expecting ')'
-          <empty list>
-        BODY
-          <empty list>
-      PsiErrorElement:Unexpected tokens (use ';' to separate expressions on the same line)
-        PsiElement(COMMA)(',')
-        PsiWhiteSpace(' ')
-        PsiElement(val)('val')
-        PsiWhiteSpace(' ')
-        PsiElement(IDENTIFIER)('second')
-        PsiElement(COMMA)(',')
-        PsiElement(RPAR)(')')
+              PsiWhiteSpace(' ')
+              PsiElement(IDENTIFIER)('first')
+            PsiElement(COMMA)(',')
+            PsiWhiteSpace(' ')
+            DESTRUCTURING_DECLARATION_ENTRY
+              PsiElement(val)('val')
+              PsiWhiteSpace(' ')
+              PsiElement(IDENTIFIER)('second')
+            PsiElement(COMMA)(',')
+            PsiElement(RPAR)(')')
         PsiWhiteSpace(' ')
         PsiElement(in)('in')
         PsiWhiteSpace(' ')
-        PsiElement(IDENTIFIER)('x')
+        LOOP_RANGE
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('x')
         PsiElement(RPAR)(')')
-      PsiWhiteSpace(' ')
-      LAMBDA_EXPRESSION
-        FUNCTION_LITERAL
-          PsiElement(LBRACE)('{')
-          BLOCK
-            <empty list>
-          PsiElement(RBRACE)('}')
-      PsiWhiteSpace('\n    ')
-      BINARY_EXPRESSION
-        FOR
-          PsiElement(for)('for')
-          PsiWhiteSpace(' ')
-          PsiElement(LPAR)('(')
-          VALUE_PARAMETER
-            DESTRUCTURING_DECLARATION
-              PsiElement(LPAR)('(')
-              DESTRUCTURING_DECLARATION_ENTRY
-                PsiErrorElement:Expecting a name
-                  <empty list>
-              PsiErrorElement:Expecting ')'
-                PsiElement(val)('val')
-          PsiWhiteSpace(' ')
-          PsiErrorElement:Expecting 'in'
-            PsiElement(IDENTIFIER)('first')
-          PsiElement(RPAR)(')')
-          PsiWhiteSpace(' ')
-          BODY
-            PsiErrorElement:Expecting an expression
-              <empty list>
-        OPERATION_REFERENCE
-          PsiElement(in)('in')
         PsiWhiteSpace(' ')
-        REFERENCE_EXPRESSION
-          PsiElement(IDENTIFIER)('x')
-      PsiErrorElement:Unexpected tokens (use ';' to separate expressions on the same line)
-        PsiElement(RPAR)(')')
-      PsiWhiteSpace(' ')
-      LAMBDA_EXPRESSION
-        FUNCTION_LITERAL
-          PsiElement(LBRACE)('{')
+        BODY
           BLOCK
-            <empty list>
-          PsiElement(RBRACE)('}')
+            PsiElement(LBRACE)('{')
+            PsiElement(RBRACE)('}')
       PsiWhiteSpace('\n    ')
       FOR
         PsiElement(for)('for')
@@ -216,76 +163,22 @@ KtFile: fullNameBasedDestructuring.kt
           DESTRUCTURING_DECLARATION
             PsiElement(LPAR)('(')
             DESTRUCTURING_DECLARATION_ENTRY
-              PsiErrorElement:Expecting a name
-                <empty list>
-            PsiErrorElement:Expecting ')'
               PsiElement(val)('val')
+              PsiWhiteSpace(' ')
+              PsiElement(IDENTIFIER)('first')
+            PsiElement(RPAR)(')')
         PsiWhiteSpace(' ')
-        PsiErrorElement:Expecting 'in'
-          PsiElement(IDENTIFIER)('first')
-        PsiErrorElement:Expecting ')'
-          <empty list>
+        PsiElement(in)('in')
+        PsiWhiteSpace(' ')
+        LOOP_RANGE
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('x')
+        PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
         BODY
-          <empty list>
-      PsiErrorElement:Unexpected tokens (use ';' to separate expressions on the same line)
-        PsiElement(COLON)(':')
-        PsiWhiteSpace(' ')
-        PsiElement(IDENTIFIER)('String')
-        PsiElement(RPAR)(')')
-        PsiWhiteSpace(' ')
-        PsiElement(in)('in')
-        PsiWhiteSpace(' ')
-        PsiElement(IDENTIFIER)('x')
-        PsiElement(RPAR)(')')
-      PsiWhiteSpace(' ')
-      LAMBDA_EXPRESSION
-        FUNCTION_LITERAL
-          PsiElement(LBRACE)('{')
           BLOCK
-            <empty list>
-          PsiElement(RBRACE)('}')
-      PsiWhiteSpace('\n    ')
-      BINARY_EXPRESSION
-        FOR
-          PsiElement(for)('for')
-          PsiWhiteSpace(' ')
-          PsiElement(LPAR)('(')
-          VALUE_PARAMETER
-            DESTRUCTURING_DECLARATION
-              PsiElement(LPAR)('(')
-              DESTRUCTURING_DECLARATION_ENTRY
-                PsiErrorElement:Expecting a name
-                  <empty list>
-              PsiErrorElement:Expecting ')'
-                PsiElement(val)('val')
-          PsiWhiteSpace(' ')
-          PsiErrorElement:Expecting 'in'
-            PsiElement(IDENTIFIER)('aa')
-          PsiErrorElement:Expecting ')'
-            <empty list>
-          PsiWhiteSpace(' ')
-          BODY
-            PsiErrorElement:Expecting an expression
-              <empty list>
-        OPERATION_REFERENCE
-          PsiElement(EQ)('=')
-        PsiWhiteSpace(' ')
-        REFERENCE_EXPRESSION
-          PsiElement(IDENTIFIER)('first')
-      PsiErrorElement:Unexpected tokens (use ';' to separate expressions on the same line)
-        PsiElement(RPAR)(')')
-        PsiWhiteSpace(' ')
-        PsiElement(in)('in')
-        PsiWhiteSpace(' ')
-        PsiElement(IDENTIFIER)('x')
-        PsiElement(RPAR)(')')
-      PsiWhiteSpace(' ')
-      LAMBDA_EXPRESSION
-        FUNCTION_LITERAL
-          PsiElement(LBRACE)('{')
-          BLOCK
-            <empty list>
-          PsiElement(RBRACE)('}')
+            PsiElement(LBRACE)('{')
+            PsiElement(RBRACE)('}')
       PsiWhiteSpace('\n    ')
       FOR
         PsiElement(for)('for')
@@ -295,38 +188,94 @@ KtFile: fullNameBasedDestructuring.kt
           DESTRUCTURING_DECLARATION
             PsiElement(LPAR)('(')
             DESTRUCTURING_DECLARATION_ENTRY
-              PsiErrorElement:Expecting a name
-                <empty list>
-            PsiErrorElement:Expecting ')'
               PsiElement(val)('val')
-        PsiWhiteSpace(' ')
-        PsiErrorElement:Expecting 'in'
-          PsiElement(IDENTIFIER)('aa')
-        PsiErrorElement:Expecting ')'
-          <empty list>
-        BODY
-          <empty list>
-      PsiErrorElement:Unexpected tokens (use ';' to separate expressions on the same line)
-        PsiElement(COLON)(':')
-        PsiWhiteSpace(' ')
-        PsiElement(IDENTIFIER)('String')
-        PsiWhiteSpace(' ')
-        PsiElement(EQ)('=')
-        PsiWhiteSpace(' ')
-        PsiElement(IDENTIFIER)('first')
-        PsiElement(RPAR)(')')
+              PsiWhiteSpace(' ')
+              PsiElement(IDENTIFIER)('first')
+              PsiElement(COLON)(':')
+              PsiWhiteSpace(' ')
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('String')
+            PsiElement(RPAR)(')')
         PsiWhiteSpace(' ')
         PsiElement(in)('in')
         PsiWhiteSpace(' ')
-        PsiElement(IDENTIFIER)('x')
+        LOOP_RANGE
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('x')
         PsiElement(RPAR)(')')
-      PsiWhiteSpace(' ')
-      LAMBDA_EXPRESSION
-        FUNCTION_LITERAL
-          PsiElement(LBRACE)('{')
+        PsiWhiteSpace(' ')
+        BODY
           BLOCK
-            <empty list>
-          PsiElement(RBRACE)('}')
+            PsiElement(LBRACE)('{')
+            PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n    ')
+      FOR
+        PsiElement(for)('for')
+        PsiWhiteSpace(' ')
+        PsiElement(LPAR)('(')
+        VALUE_PARAMETER
+          DESTRUCTURING_DECLARATION
+            PsiElement(LPAR)('(')
+            DESTRUCTURING_DECLARATION_ENTRY
+              PsiElement(val)('val')
+              PsiWhiteSpace(' ')
+              PsiElement(IDENTIFIER)('aa')
+              PsiWhiteSpace(' ')
+              PsiElement(EQ)('=')
+              PsiWhiteSpace(' ')
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('first')
+            PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(in)('in')
+        PsiWhiteSpace(' ')
+        LOOP_RANGE
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('x')
+        PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        BODY
+          BLOCK
+            PsiElement(LBRACE)('{')
+            PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n    ')
+      FOR
+        PsiElement(for)('for')
+        PsiWhiteSpace(' ')
+        PsiElement(LPAR)('(')
+        VALUE_PARAMETER
+          DESTRUCTURING_DECLARATION
+            PsiElement(LPAR)('(')
+            DESTRUCTURING_DECLARATION_ENTRY
+              PsiElement(val)('val')
+              PsiWhiteSpace(' ')
+              PsiElement(IDENTIFIER)('aa')
+              PsiElement(COLON)(':')
+              PsiWhiteSpace(' ')
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('String')
+              PsiWhiteSpace(' ')
+              PsiElement(EQ)('=')
+              PsiWhiteSpace(' ')
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('first')
+            PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        PsiElement(in)('in')
+        PsiWhiteSpace(' ')
+        LOOP_RANGE
+          REFERENCE_EXPRESSION
+            PsiElement(IDENTIFIER)('x')
+        PsiElement(RPAR)(')')
+        PsiWhiteSpace(' ')
+        BODY
+          BLOCK
+            PsiElement(LBRACE)('{')
+            PsiElement(RBRACE)('}')
       PsiWhiteSpace('\n')
       PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n\n')
@@ -350,26 +299,27 @@ KtFile: fullNameBasedDestructuring.kt
             FUNCTION_LITERAL
               PsiElement(LBRACE)('{')
               PsiWhiteSpace(' ')
-              BLOCK
-                PARENTHESIZED
-                  PsiElement(LPAR)('(')
-                  PsiErrorElement:Expecting an expression
-                    <empty list>
-                PROPERTY
-                  PsiElement(val)('val')
-                  PsiWhiteSpace(' ')
-                  PsiElement(IDENTIFIER)('first')
-                PsiErrorElement:Unexpected tokens (use ';' to separate expressions on the same line)
-                  PsiElement(COMMA)(',')
-                  PsiWhiteSpace(' ')
-                  PsiElement(val)('val')
-                  PsiWhiteSpace(' ')
-                  PsiElement(IDENTIFIER)('second')
-                  PsiElement(COMMA)(',')
-                  PsiElement(RPAR)(')')
-                  PsiWhiteSpace(' ')
-                  PsiElement(ARROW)('->')
+              VALUE_PARAMETER_LIST
+                VALUE_PARAMETER
+                  DESTRUCTURING_DECLARATION
+                    PsiElement(LPAR)('(')
+                    DESTRUCTURING_DECLARATION_ENTRY
+                      PsiElement(val)('val')
+                      PsiWhiteSpace(' ')
+                      PsiElement(IDENTIFIER)('first')
+                    PsiElement(COMMA)(',')
+                    PsiWhiteSpace(' ')
+                    DESTRUCTURING_DECLARATION_ENTRY
+                      PsiElement(val)('val')
+                      PsiWhiteSpace(' ')
+                      PsiElement(IDENTIFIER)('second')
+                    PsiElement(COMMA)(',')
+                    PsiElement(RPAR)(')')
               PsiWhiteSpace(' ')
+              PsiElement(ARROW)('->')
+              PsiWhiteSpace(' ')
+              BLOCK
+                <empty list>
               PsiElement(RBRACE)('}')
       PsiWhiteSpace('\n    ')
       CALL_EXPRESSION
@@ -381,20 +331,20 @@ KtFile: fullNameBasedDestructuring.kt
             FUNCTION_LITERAL
               PsiElement(LBRACE)('{')
               PsiWhiteSpace(' ')
-              BLOCK
-                PARENTHESIZED
-                  PsiElement(LPAR)('(')
-                  PsiErrorElement:Expecting an expression
-                    <empty list>
-                PROPERTY
-                  PsiElement(val)('val')
-                  PsiWhiteSpace(' ')
-                  PsiElement(IDENTIFIER)('first')
-                PsiErrorElement:Unexpected tokens (use ';' to separate expressions on the same line)
-                  PsiElement(RPAR)(')')
-                  PsiWhiteSpace(' ')
-                  PsiElement(ARROW)('->')
+              VALUE_PARAMETER_LIST
+                VALUE_PARAMETER
+                  DESTRUCTURING_DECLARATION
+                    PsiElement(LPAR)('(')
+                    DESTRUCTURING_DECLARATION_ENTRY
+                      PsiElement(val)('val')
+                      PsiWhiteSpace(' ')
+                      PsiElement(IDENTIFIER)('first')
+                    PsiElement(RPAR)(')')
               PsiWhiteSpace(' ')
+              PsiElement(ARROW)('->')
+              PsiWhiteSpace(' ')
+              BLOCK
+                <empty list>
               PsiElement(RBRACE)('}')
       PsiWhiteSpace('\n    ')
       CALL_EXPRESSION
@@ -406,26 +356,56 @@ KtFile: fullNameBasedDestructuring.kt
             FUNCTION_LITERAL
               PsiElement(LBRACE)('{')
               PsiWhiteSpace(' ')
+              VALUE_PARAMETER_LIST
+                VALUE_PARAMETER
+                  DESTRUCTURING_DECLARATION
+                    PsiElement(LPAR)('(')
+                    DESTRUCTURING_DECLARATION_ENTRY
+                      PsiElement(val)('val')
+                      PsiWhiteSpace(' ')
+                      PsiElement(IDENTIFIER)('first')
+                      PsiElement(COLON)(':')
+                      PsiWhiteSpace(' ')
+                      TYPE_REFERENCE
+                        USER_TYPE
+                          REFERENCE_EXPRESSION
+                            PsiElement(IDENTIFIER)('String')
+                    PsiElement(RPAR)(')')
+              PsiWhiteSpace(' ')
+              PsiElement(ARROW)('->')
+              PsiWhiteSpace(' ')
               BLOCK
-                PARENTHESIZED
-                  PsiElement(LPAR)('(')
-                  PsiErrorElement:Expecting an expression
-                    <empty list>
-                PROPERTY
-                  PsiElement(val)('val')
-                  PsiWhiteSpace(' ')
-                  PsiElement(IDENTIFIER)('first')
-                  PsiElement(COLON)(':')
-                  PsiWhiteSpace(' ')
-                  TYPE_REFERENCE
-                    USER_TYPE
+                <empty list>
+              PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n    ')
+      CALL_EXPRESSION
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('foo')
+        PsiWhiteSpace(' ')
+        LAMBDA_ARGUMENT
+          LAMBDA_EXPRESSION
+            FUNCTION_LITERAL
+              PsiElement(LBRACE)('{')
+              PsiWhiteSpace(' ')
+              VALUE_PARAMETER_LIST
+                VALUE_PARAMETER
+                  DESTRUCTURING_DECLARATION
+                    PsiElement(LPAR)('(')
+                    DESTRUCTURING_DECLARATION_ENTRY
+                      PsiElement(val)('val')
+                      PsiWhiteSpace(' ')
+                      PsiElement(IDENTIFIER)('aa')
+                      PsiWhiteSpace(' ')
+                      PsiElement(EQ)('=')
+                      PsiWhiteSpace(' ')
                       REFERENCE_EXPRESSION
-                        PsiElement(IDENTIFIER)('String')
-                PsiErrorElement:Unexpected tokens (use ';' to separate expressions on the same line)
-                  PsiElement(RPAR)(')')
-                  PsiWhiteSpace(' ')
-                  PsiElement(ARROW)('->')
+                        PsiElement(IDENTIFIER)('first')
+                    PsiElement(RPAR)(')')
               PsiWhiteSpace(' ')
+              PsiElement(ARROW)('->')
+              PsiWhiteSpace(' ')
+              BLOCK
+                <empty list>
               PsiElement(RBRACE)('}')
       PsiWhiteSpace('\n    ')
       CALL_EXPRESSION
@@ -437,61 +417,31 @@ KtFile: fullNameBasedDestructuring.kt
             FUNCTION_LITERAL
               PsiElement(LBRACE)('{')
               PsiWhiteSpace(' ')
-              BLOCK
-                PARENTHESIZED
-                  PsiElement(LPAR)('(')
-                  PsiErrorElement:Expecting an expression
-                    <empty list>
-                PROPERTY
-                  PsiElement(val)('val')
-                  PsiWhiteSpace(' ')
-                  PsiElement(IDENTIFIER)('aa')
-                  PsiWhiteSpace(' ')
-                  PsiElement(EQ)('=')
-                  PsiWhiteSpace(' ')
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('first')
-                PsiErrorElement:Unexpected tokens (use ';' to separate expressions on the same line)
-                  PsiElement(RPAR)(')')
-                  PsiWhiteSpace(' ')
-                  PsiElement(ARROW)('->')
-              PsiWhiteSpace(' ')
-              PsiElement(RBRACE)('}')
-      PsiWhiteSpace('\n    ')
-      CALL_EXPRESSION
-        REFERENCE_EXPRESSION
-          PsiElement(IDENTIFIER)('foo')
-        PsiWhiteSpace(' ')
-        LAMBDA_ARGUMENT
-          LAMBDA_EXPRESSION
-            FUNCTION_LITERAL
-              PsiElement(LBRACE)('{')
-              PsiWhiteSpace(' ')
-              BLOCK
-                PARENTHESIZED
-                  PsiElement(LPAR)('(')
-                  PsiErrorElement:Expecting an expression
-                    <empty list>
-                PROPERTY
-                  PsiElement(val)('val')
-                  PsiWhiteSpace(' ')
-                  PsiElement(IDENTIFIER)('aa')
-                  PsiElement(COLON)(':')
-                  PsiWhiteSpace(' ')
-                  TYPE_REFERENCE
-                    USER_TYPE
+              VALUE_PARAMETER_LIST
+                VALUE_PARAMETER
+                  DESTRUCTURING_DECLARATION
+                    PsiElement(LPAR)('(')
+                    DESTRUCTURING_DECLARATION_ENTRY
+                      PsiElement(val)('val')
+                      PsiWhiteSpace(' ')
+                      PsiElement(IDENTIFIER)('aa')
+                      PsiElement(COLON)(':')
+                      PsiWhiteSpace(' ')
+                      TYPE_REFERENCE
+                        USER_TYPE
+                          REFERENCE_EXPRESSION
+                            PsiElement(IDENTIFIER)('String')
+                      PsiWhiteSpace(' ')
+                      PsiElement(EQ)('=')
+                      PsiWhiteSpace(' ')
                       REFERENCE_EXPRESSION
-                        PsiElement(IDENTIFIER)('String')
-                  PsiWhiteSpace(' ')
-                  PsiElement(EQ)('=')
-                  PsiWhiteSpace(' ')
-                  REFERENCE_EXPRESSION
-                    PsiElement(IDENTIFIER)('first')
-                PsiErrorElement:Unexpected tokens (use ';' to separate expressions on the same line)
-                  PsiElement(RPAR)(')')
-                  PsiWhiteSpace(' ')
-                  PsiElement(ARROW)('->')
+                        PsiElement(IDENTIFIER)('first')
+                    PsiElement(RPAR)(')')
               PsiWhiteSpace(' ')
+              PsiElement(ARROW)('->')
+              PsiWhiteSpace(' ')
+              BLOCK
+                <empty list>
               PsiElement(RBRACE)('}')
       PsiWhiteSpace('\n')
       PsiElement(RBRACE)('}')
