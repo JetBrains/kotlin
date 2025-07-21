@@ -37,12 +37,6 @@ int32_t DATA_OBJECT_WITH_PACKAGE_variable_get(void * self);
 
 void DATA_OBJECT_WITH_PACKAGE_variable_set__TypesOfArguments__Swift_Int32__(void * self, int32_t newValue);
 
-void * ENUM_A_get();
-
-void * ENUM_B_get();
-
-void * ENUM_C_get();
-
 void * ENUM_INSIDE_ENUM_init_allocate();
 
 void ENUM_INSIDE_ENUM_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);

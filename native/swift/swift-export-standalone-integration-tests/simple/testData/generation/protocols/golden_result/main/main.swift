@@ -433,20 +433,7 @@ extension KotlinRuntimeSupport._KotlinExistential: main._ExportedKotlinPackages_
 extension main._SealedFoeble_SealedBarable where Self : KotlinRuntimeSupport._KotlinBridgeable {
 }
 extension ExportedKotlinPackages.packagewithprotocols {
-    public protocol ContainerProtocol: KotlinRuntime.KotlinBase {
-        typealias NestedClass = main._ExportedKotlinPackages_packagewithprotocols_ContainerProtocol_NestedClass
-        typealias NestedProtocol = main._ExportedKotlinPackages_packagewithprotocols_ContainerProtocol_NestedProtocol
-    }
-    public protocol SiblingProtocol: KotlinRuntime.KotlinBase {
-        typealias NestedClass = main._ExportedKotlinPackages_packagewithprotocols_SiblingProtocol_NestedClass
-    }
-    @objc(_ContainerProtocol)
-    package protocol _ContainerProtocol {
-    }
-    @objc(_SiblingProtocol)
-    package protocol _SiblingProtocol {
-    }
-    public final class ENUM_WITH_INTERFACE_INHERITANCE: KotlinRuntime.KotlinBase, ExportedKotlinPackages.packagewithprotocols.ContainerProtocol, ExportedKotlinPackages.packagewithprotocols._ContainerProtocol, Swift.CaseIterable {
+    public enum ENUM_WITH_INTERFACE_INHERITANCE {
         public static var allCases: [ExportedKotlinPackages.packagewithprotocols.ENUM_WITH_INTERFACE_INHERITANCE] {
             get {
                 return packagewithprotocols_ENUM_WITH_INTERFACE_INHERITANCE_entries_get() as! Swift.Array<ExportedKotlinPackages.packagewithprotocols.ENUM_WITH_INTERFACE_INHERITANCE>
@@ -463,6 +450,19 @@ extension ExportedKotlinPackages.packagewithprotocols {
         ) -> ExportedKotlinPackages.packagewithprotocols.ENUM_WITH_INTERFACE_INHERITANCE {
             return ExportedKotlinPackages.packagewithprotocols.ENUM_WITH_INTERFACE_INHERITANCE.__createClassWrapper(externalRCRef: packagewithprotocols_ENUM_WITH_INTERFACE_INHERITANCE_valueOf__TypesOfArguments__Swift_String__(value))
         }
+    }
+    public protocol ContainerProtocol: KotlinRuntime.KotlinBase {
+        typealias NestedClass = main._ExportedKotlinPackages_packagewithprotocols_ContainerProtocol_NestedClass
+        typealias NestedProtocol = main._ExportedKotlinPackages_packagewithprotocols_ContainerProtocol_NestedProtocol
+    }
+    public protocol SiblingProtocol: KotlinRuntime.KotlinBase {
+        typealias NestedClass = main._ExportedKotlinPackages_packagewithprotocols_SiblingProtocol_NestedClass
+    }
+    @objc(_ContainerProtocol)
+    package protocol _ContainerProtocol {
+    }
+    @objc(_SiblingProtocol)
+    package protocol _SiblingProtocol {
     }
     public final class INHERITANCE_COUPLE: main._ExportedKotlinPackages_packagewithprotocols_ContainerProtocol_NestedClass, ExportedKotlinPackages.packagewithprotocols.ContainerProtocol, ExportedKotlinPackages.packagewithprotocols._ContainerProtocol {
         public override init() {
