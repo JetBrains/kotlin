@@ -1,8 +1,9 @@
 Diagnostics from foo1.kt:
-  for PSI element of type KtProperty at (7,1) - (8,21)
-    REDECLARATION      text ranges: [(132,135)]
-      PSI: KtProperty at (7,1) - (8,21)
+  for PSI element of type KtProperty at (6,1) - (7,21)
+    REDECLARATION      text ranges: [(101,104)]
+      PSI: KtProperty at (6,1) - (7,21)
+
 Diagnostics from foo2.kt:
-  for PSI element of type KtProperty at (10,1) - (11,17)
-    REDECLARATION      text ranges: [(30,33)]
-      PSI: KtProperty at (10,1) - (11,17)
+  for PSI element of type KtProperty at (9,1) - (10,17)
+    REDECLARATION      text ranges: [(29,32)]
+      PSI: KtProperty at (9,1) - (10,17)

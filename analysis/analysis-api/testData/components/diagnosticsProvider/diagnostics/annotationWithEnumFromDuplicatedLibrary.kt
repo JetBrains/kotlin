@@ -1,6 +1,6 @@
 // ALLOW_KOTLIN_PACKAGE
 // MODULE: lib1
-// FILE: anno.kt
+// FILE: anno1.kt
 package kotlin.annotation
 
 public enum class AnnotationTarget {
@@ -17,7 +17,7 @@ import kotlin.annotation.AnnotationTarget
 annotation class Deprecated
 
 // MODULE: lib2
-// FILE: anno.kt
+// FILE: anno2.kt
 package kotlin.annotation
 
 public enum class AnnotationTarget {

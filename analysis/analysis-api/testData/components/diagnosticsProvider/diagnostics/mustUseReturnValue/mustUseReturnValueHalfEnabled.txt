@@ -1,4 +1,7 @@
-Diagnostics from file:
+Diagnostics from Dep.kt:
+  <NO DIAGNOSTICS>
+
+Diagnostics from main.kt:
   for PSI element of type KtDotQualifiedExpression at (43,5-30)
     RETURN_VALUE_NOT_USED      text ranges: [(195,220)]
       PSI: KtDotQualifiedExpression at (43,5-30)

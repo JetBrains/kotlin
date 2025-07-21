@@ -1,4 +1,15 @@
-Diagnostics from file:
+Diagnostics from dependency.kt:
+  <NO DIAGNOSTICS>
+
+Diagnostics from annotation.kt:
+  for PSI element of type KtNameReferenceExpression at (11,39-51)
+    UNRESOLVED_REFERENCE      text ranges: [(103,115)]
+      PSI: KtNameReferenceExpression at (11,39-51)
+
+Diagnostics from dependency.kt:
+  <NO DIAGNOSTICS>
+
+Diagnostics from usage.kt:
   for PSI element of type KtCallExpression at (23,20) - (26,2)
     TYPE_MISMATCH      text ranges: [(97,159)]
       PSI: KtCallExpression at (23,20) - (26,2)

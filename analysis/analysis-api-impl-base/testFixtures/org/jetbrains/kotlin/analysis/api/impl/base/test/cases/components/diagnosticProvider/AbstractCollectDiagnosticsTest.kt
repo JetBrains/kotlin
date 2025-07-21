@@ -27,8 +27,9 @@ import org.jetbrains.kotlin.test.services.moduleStructure
 import kotlin.test.assertEquals
 
 /**
- * Checks the output of [org.jetbrains.kotlin.analysis.api.components.KaDiagnosticProvider.collectDiagnostics]
- * and its consistency with [org.jetbrains.kotlin.analysis.api.components.KaDiagnosticProvider.diagnostics].
+ * Checks the output of [KaDiagnosticProvider.collectDiagnostics][org.jetbrains.kotlin.analysis.api.components.KaDiagnosticProvider.collectDiagnostics]
+ * and its consistency with [KaDiagnosticProvider.diagnostics][org.jetbrains.kotlin.analysis.api.components.KaDiagnosticProvider.diagnostics]
+ * on all source files in the test data (in all test modules).
  *
  * @see AbstractElementDiagnosticsTest
  */
@@ -38,50 +39,41 @@ abstract class AbstractCollectDiagnosticsTest : AbstractAnalysisApiBasedTest() {
 
     private object Directives : SimpleDirectivesContainer() {
         val SUPPRESS_INDIVIDUAL_DIAGNOSTICS_CHECK by stringDirective("Suppress individual diagnostics check for the test")
-        val MULTI_FILE_DIAGNOSTICS_TEST by stringDirective(
-            "Ensures that diagnostics are checked for all files across all test modules, disregarding the main file and main module."
-        )
-    }
-
-    open fun prepareKtFile(ktFile: KtFile, testServices: TestServices): KtFile = ktFile
-
-    override fun doTest(testServices: TestServices) {
-        if (testServices.moduleStructure.allDirectives.contains(Directives.MULTI_FILE_DIAGNOSTICS_TEST)) {
-            doMultiFileTest(testServices)
-        } else {
-            val (mainFile, _) = findMainFileAndModule(testServices)
-            if (mainFile != null) {
-                doMainFileTest(mainFile, testServices)
-            } else {
-                error(
-                    "Cannot find the main file. To enable multi-file tests, use the '${Directives.MULTI_FILE_DIAGNOSTICS_TEST.name}'" +
-                            " directive."
-                )
-            }
-        }
-    }
-
-    private fun doMainFileTest(mainFile: KtFile, testServices: TestServices) {
-        doTestByKtFiles(listOf(prepareKtFile(mainFile, testServices)), testServices)
-    }
-
-    private fun doMultiFileTest(testServices: TestServices) {
-        val ktFiles = testServices.ktTestModuleStructure.mainModules
-            .flatMap { it.ktFiles }
-            .map { prepareKtFile(it, testServices) }
-
-        doTestByKtFiles(ktFiles, testServices)
     }
 
     /**
-     * [ktFiles] may contain fake files for dangling module tests.
+     * @param name This is the name of the original test file that will be printed in test results. In the case of dangling files, [name]
+     *  might deviate from the [ktFile]'s own name. Because the printed names shouldn't differ between non-dangling and dangling file tests,
+     *  we need this separate property.
+     *
+     *  We cannot change the name of the [ktFile] directly because dangling files for *scripts* need to have a `.kt` extension, not a `.kts`
+     *  extension, so their name cannot be equal to the original test file's `.kts` name.
      */
-    protected fun doTestByKtFiles(ktFiles: List<KtFile>, testServices: TestServices) {
+    protected class PreparedFile(val ktFile: KtFile, val name: String)
+
+    protected open fun prepareKtFile(ktFile: KtFile, testServices: TestServices): PreparedFile = PreparedFile(ktFile, ktFile.name)
+
+    override fun doTest(testServices: TestServices) {
+        val preparedFiles = testServices.ktTestModuleStructure.mainModules
+            .flatMap { it.ktFiles }
+            .map { prepareKtFile(it, testServices) }
+
+        doTestByPreparedFiles(preparedFiles, testServices)
+    }
+
+    /**
+     * [preparedFiles] may contain fake files for dangling module tests.
+     */
+    protected fun doTestByPreparedFiles(preparedFiles: List<PreparedFile>, testServices: TestServices) {
         val actual = buildString {
-            for (ktFile in ktFiles) {
+            preparedFiles.forEachIndexed { index, preparedFile ->
+                val ktFile = preparedFile.ktFile
                 analyzeForTest(ktFile) {
                     val diagnosticsFromFile = collectFileDiagnostics(ktFile)
-                    printFileDiagnostics(ktFile, diagnosticsFromFile, ktFiles.size > 1)
+                    printFileDiagnostics(preparedFile, diagnosticsFromFile, preparedFiles.size > 1)
+                    if (index != preparedFiles.lastIndex) {
+                        appendLine()
+                    }
                 }
             }
         }
@@ -95,7 +87,8 @@ abstract class AbstractCollectDiagnosticsTest : AbstractAnalysisApiBasedTest() {
                 suppressionDirective = Directives.SUPPRESS_INDIVIDUAL_DIAGNOSTICS_CHECK,
                 filter = { it is AssertionError },
                 action = {
-                    for (ktFile in ktFiles) {
+                    for (preparedFile in preparedFiles) {
+                        val ktFile = preparedFile.ktFile
                         analyzeForTest(ktFile) {
                             val diagnosticsFromFile = collectFileDiagnostics(ktFile)
                             checkDiagnosticsFromElements(ktFile, diagnosticsFromFile)
@@ -112,18 +105,26 @@ abstract class AbstractCollectDiagnosticsTest : AbstractAnalysisApiBasedTest() {
             .map { it.getDiagnosticKey() }
             .sorted()
 
-    private fun StringBuilder.printFileDiagnostics(ktFile: KtFile, diagnostics: List<DiagnosticKey>, hasMultipleTestFiles: Boolean) {
+    private fun StringBuilder.printFileDiagnostics(
+        preparedFile: PreparedFile,
+        diagnostics: List<DiagnosticKey>,
+        hasMultipleTestFiles: Boolean,
+    ) {
         val heading = if (hasMultipleTestFiles) {
-            "Diagnostics from ${ktFile.originalFile.name}:"
+            "Diagnostics from ${preparedFile.name}:"
         } else {
             "Diagnostics from file:"
         }
 
         appendLine(heading)
-        for (key in diagnostics) {
-            val element = key.psi
-            appendLine("  for PSI element of type ${element::class.simpleName} at ${element.getLineColumnRange()}")
-            printDiagnosticKey(key, 4)
+        if (diagnostics.isNotEmpty()) {
+            for (key in diagnostics) {
+                val element = key.psi
+                appendLine("  for PSI element of type ${element::class.simpleName} at ${element.getLineColumnRange()}")
+                printDiagnosticKey(key, 4)
+            }
+        } else {
+            appendLine("  <NO DIAGNOSTICS>")
         }
     }
 

@@ -1,5 +1,3 @@
-// MULTI_FILE_DIAGNOSTICS_TEST
-
 // FILE: A.java
 public class A {
 }

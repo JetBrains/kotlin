@@ -34,6 +34,7 @@ abstract class AbstractCodeFragmentCollectDiagnosticsTest : AbstractCollectDiagn
             else -> factory.createExpressionCodeFragment(fragmentText, contextElement)
         }
 
-        doTestByKtFiles(listOf(codeFragment), testServices)
+        val preparedFile = PreparedFile(codeFragment, mainFile.name)
+        doTestByPreparedFiles(listOf(preparedFile), testServices)
     }
 }

@@ -32,12 +32,13 @@ abstract class AbstractDanglingFileCollectDiagnosticsTest : AbstractCollectDiagn
         )
     }
 
-    override fun prepareKtFile(ktFile: KtFile, testServices: TestServices): KtFile {
+    override fun prepareKtFile(ktFile: KtFile, testServices: TestServices): PreparedFile {
         val contextModule = KotlinProjectStructureProvider.getModule(ktFile.project, ktFile, useSiteModule = null)
         val ktPsiFactory = KtPsiFactory.contextual(ktFile, markGenerated = true, eventSystemEnabled = false)
 
-        return ktPsiFactory.createFile("fake.kt", ktFile.text).also { ktFile ->
+        val fakeFile = ktPsiFactory.createFile("fake.kt", ktFile.text).also { ktFile ->
             ktFile.contextModule = contextModule
         }
+        return PreparedFile(fakeFile, ktFile.name)
     }
 }

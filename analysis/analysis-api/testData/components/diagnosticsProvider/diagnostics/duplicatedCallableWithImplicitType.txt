@@ -1,1 +1,11 @@
-Diagnostics from file:
+Diagnostics from dependency.kt:
+  <NO DIAGNOSTICS>
+
+Diagnostics from annotation.kt:
+  <NO DIAGNOSTICS>
+
+Diagnostics from dependency.kt:
+  <NO DIAGNOSTICS>
+
+Diagnostics from usage.kt:
+  <NO DIAGNOSTICS>
