@@ -12,16 +12,12 @@ import org.jetbrains.kotlin.arguments.dsl.base.KotlinCompilerArgumentsLevel
 import org.jetbrains.kotlin.arguments.dsl.types.BooleanType
 import org.jetbrains.kotlin.arguments.dsl.types.KotlinArgumentValueType
 import org.jetbrains.kotlin.arguments.dsl.types.StringArrayType
-import org.jetbrains.kotlin.cli.common.arguments.DefaultValue
 import org.jetbrains.kotlin.cli.common.arguments.Disables
 import org.jetbrains.kotlin.cli.common.arguments.Enables
-import org.jetbrains.kotlin.cli.common.arguments.GradleDeprecatedOption
-import org.jetbrains.kotlin.cli.common.arguments.GradleInputTypes
-import org.jetbrains.kotlin.cli.common.arguments.GradleOption
 import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.generators.util.GeneratorsFileUtil
 import org.jetbrains.kotlin.utils.SmartPrinter
+import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.withIndent
 import java.io.File
 
@@ -181,6 +177,7 @@ private fun SmartPrinter.generateArgumentsClass(
                     argLevelName == level.name && argument.name == name
                 } && argument.releaseVersionsMetadata.removedVersion != null
             ) continue
+            validateDeprecationConsistency(argument)
             generateGradleAnnotations(argument)
             generateArgumentAnnotation(argument, level)
             generateFeatureAnnotations(argument)
@@ -262,6 +259,20 @@ private fun SmartPrinter.generateArgumentAnnotation(
 private enum class AnnotationKind {
     Gradle,
     LanguageFeature
+}
+
+private fun validateDeprecationConsistency(argument: KotlinCompilerArgument) {
+    if (argument.releaseVersionsMetadata.removedVersion != null) return
+    val deprecatedAnnotation = argument.additionalAnnotations.firstIsInstanceOrNull<Deprecated>()
+    val deprecatedVersion = argument.releaseVersionsMetadata.deprecatedVersion
+    when {
+        deprecatedVersion == null && deprecatedAnnotation != null -> {
+            error("Argument ${argument.name} is deprecated but has no deprecated version specified")
+        }
+        deprecatedVersion != null && deprecatedAnnotation == null -> {
+            error("Argument ${argument.name} is deprecated but has no @Deprecated annotation")
+        }
+    }
 }
 
 private fun SmartPrinter.generateGradleAnnotations(argument: KotlinCompilerArgument) {
