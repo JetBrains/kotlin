@@ -8,15 +8,18 @@ package org.jetbrains.kotlin.fir.resolve.inference
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.utils.isSuspend
 import org.jetbrains.kotlin.fir.resolve.calls.ConeLambdaWithTypeVariableAsExpectedTypeAtom
+import org.jetbrains.kotlin.fir.resolve.calls.ConePostponedAtomWithRevisableExpectedType
 import org.jetbrains.kotlin.fir.resolve.calls.ConePostponedResolvedAtom
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeArgumentConstraintPosition
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeFixVariableConstraintPosition
+import org.jetbrains.kotlin.fir.resolve.inference.model.ConeLambdaArgumentConstraintPosition
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemUtilContext
 import org.jetbrains.kotlin.resolve.calls.inference.components.PostponedArgumentInputTypesResolver
 import org.jetbrains.kotlin.resolve.calls.inference.model.ArgumentConstraintPosition
+import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.inference.model.FixVariableConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.model.PostponedAtomWithRevisableExpectedType
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
@@ -83,6 +86,15 @@ object ConeConstraintSystemUtilContext : ConstraintSystemUtilContext {
             "${argument::class}"
         }
         return ConeArgumentConstraintPosition(argument.expression)
+    }
+
+    override fun createLambdaArgumentConstraintPositionIfPossible(argument: PostponedAtomWithRevisableExpectedType): ConstraintPosition {
+        require(argument is ConePostponedAtomWithRevisableExpectedType) {
+            "${argument::class}"
+        }
+        return argument.anonymousFunctionIfReturnExpression?.let {
+            ConeLambdaArgumentConstraintPosition(it, argument.expression)
+        } ?: createArgumentConstraintPosition(argument)
     }
 
     override fun <T> createFixVariableConstraintPosition(variable: TypeVariableMarker, atom: T): FixVariableConstraintPosition<T> {

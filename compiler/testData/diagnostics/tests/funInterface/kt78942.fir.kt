@@ -30,7 +30,7 @@ fun test() {
     }
 
     val onlyReturn: OnlyReturn<String> = OnlyReturn lbl@{
-        <!ARGUMENT_TYPE_MISMATCH!>fun() = ""<!>
+        <!RETURN_TYPE_MISMATCH!>fun() = ""<!>
     }
 
     val savedToLocal: OnlyReturn<String> = OnlyReturn {
@@ -43,7 +43,7 @@ fun test() {
     }
 
     ToSame { it: String ->
-        <!ARGUMENT_TYPE_MISMATCH!>fun() = it<!>
+        <!RETURN_TYPE_MISMATCH!>fun() = it<!>
     }
 
     Different<Int, String> {
@@ -51,9 +51,9 @@ fun test() {
     }
 
     val different: Different<Int, String> = Different {
-        <!ARGUMENT_TYPE_MISMATCH!>fun() = it.toString()<!>
+        <!RETURN_TYPE_MISMATCH!>fun() = it.toString()<!>
     }
 }
 
-/* GENERATED_FIR_TAGS: anonymousFunction, funInterface, functionDeclaration, functionalType, interfaceDeclaration,
-lambdaLiteral, localProperty, nullableType, propertyDeclaration, stringLiteral, typeParameter */
+/* GENERATED_FIR_TAGS: anonymousFunction, funInterface, functionDeclaration, functionalType,
+lambdaLiteral, typeParameter */
