@@ -190,12 +190,6 @@ public fun __root___enumId__TypesOfArguments__ExportedKotlinPackages_kotlin_Enum
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
-@ExportedBridge("__root___ewamEntries")
-public fun __root___ewamEntries(): kotlin.native.internal.NativePtr {
-    val _result = ewamEntries()
-    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
-}
-
 @ExportedBridge("__root___ewamValues")
 public fun __root___ewamValues(): kotlin.native.internal.NativePtr {
     val _result = ewamValues()
