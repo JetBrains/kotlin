@@ -50,8 +50,8 @@ fun usage() {
     DerivedWithOverride().baz()
     <!RETURN_VALUE_NOT_USED!>DerivedFromAnnotated().foo()<!>
     <!RETURN_VALUE_NOT_USED!>DerivedFromAnnotated().a<!>
-    DerivedFromAnnotatedWithOverride().foo()
-    DerivedFromAnnotatedWithOverride().a
+    <!RETURN_VALUE_NOT_USED!>DerivedFromAnnotatedWithOverride().foo()<!>
+    <!RETURN_VALUE_NOT_USED!>DerivedFromAnnotatedWithOverride().a<!>
     DerivedFromAnnotatedWithOverride().baz()
 }
 
