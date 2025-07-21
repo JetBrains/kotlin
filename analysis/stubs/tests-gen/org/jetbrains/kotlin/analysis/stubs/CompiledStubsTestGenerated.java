@@ -1954,6 +1954,12 @@ public class CompiledStubsTestGenerated extends AbstractCompiledStubsTest {
     }
 
     @Test
+    @TestMetadata("annotatedContextParameterType.kt")
+    public void testAnnotatedContextParameterType() {
+      runTest("compiler/testData/psi/contextParameters/annotatedContextParameterType.kt");
+    }
+
+    @Test
     @TestMetadata("anonymousFunction.kt")
     public void testAnonymousFunction() {
       runTest("compiler/testData/psi/contextParameters/anonymousFunction.kt");
