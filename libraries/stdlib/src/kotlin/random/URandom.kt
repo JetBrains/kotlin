@@ -117,6 +117,7 @@ public fun Random.nextULong(range: ULongRange): ULong = when {
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
+@IgnorableReturnValue
 public fun Random.nextUBytes(array: UByteArray): UByteArray {
     nextBytes(array.asByteArray())
     return array
@@ -127,6 +128,7 @@ public fun Random.nextUBytes(array: UByteArray): UByteArray {
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
+@IgnorableReturnValue
 public fun Random.nextUBytes(size: Int): UByteArray = nextBytes(size).asUByteArray()
 
 /**
@@ -136,6 +138,7 @@ public fun Random.nextUBytes(size: Int): UByteArray = nextBytes(size).asUByteArr
  */
 @SinceKotlin("1.3")
 @ExperimentalUnsignedTypes
+@IgnorableReturnValue
 public fun Random.nextUBytes(array: UByteArray, fromIndex: Int = 0, toIndex: Int = array.size): UByteArray {
     nextBytes(array.asByteArray(), fromIndex, toIndex)
     return array

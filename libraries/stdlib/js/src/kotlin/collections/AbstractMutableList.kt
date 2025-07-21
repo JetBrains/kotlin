@@ -100,7 +100,7 @@ public actual abstract class AbstractMutableList<E> protected actual constructor
     protected actual open fun removeRange(fromIndex: Int, toIndex: Int) {
         val iterator = listIterator(fromIndex)
         repeat(toIndex - fromIndex) {
-            iterator.next()
+            val _ = iterator.next()
             iterator.remove()
         }
     }

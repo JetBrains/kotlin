@@ -263,7 +263,7 @@ internal fun decodeUtf8(bytes: ByteArray, startIndex: Int, endIndex: Int, throwO
                 }
             }
             else -> {
-                malformed(0, byteIndex, throwOnMalformed)
+                val _ = malformed(0, byteIndex, throwOnMalformed)
                 stringBuilder.append(REPLACEMENT_CHAR)
             }
         }

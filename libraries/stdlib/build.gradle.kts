@@ -63,11 +63,6 @@ fun KotlinCommonCompilerOptions.addReturnValueCheckerInfo() {
     freeCompilerArgs.add("-Xreturn-value-checker=full")
 }
 
-fun KotlinCommonCompilerOptions.allowReturnValueCheckerButNotReport() {
-    freeCompilerArgs.add("-Xreturn-value-checker=check")
-    freeCompilerArgs.add("-Xwarning-level=RETURN_VALUE_NOT_USED:disabled")
-}
-
 val jvmBuiltinsRelativeDir = "libraries/stdlib/jvm/builtins"
 val jvmBuiltinsDir = "${rootDir}/${jvmBuiltinsRelativeDir}"
 
@@ -271,7 +266,7 @@ kotlin {
                             diagnosticNamesArg,
                         )
                     )
-                    compilerOptions.allowReturnValueCheckerButNotReport()
+                    compilerOptions.addReturnValueCheckerInfo()
                 }
             }
         }
@@ -294,7 +289,7 @@ kotlin {
             val main by getting {
                 compileTaskProvider.configure {
                     compilerOptions.mainCompilationOptions()
-                    compilerOptions.allowReturnValueCheckerButNotReport()
+                    compilerOptions.addReturnValueCheckerInfo()
                     compilerOptions.freeCompilerArgs.add("-Xir-module-name=$KOTLIN_WASM_STDLIB_NAME")
                 }
             }
