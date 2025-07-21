@@ -408,7 +408,7 @@ class UnsignedTypeGenerator(val type: UnsignedType, out: PrintWriter) : BuiltIns
             out.println(" */")
             out.println("@SinceKotlin(\"1.5\")")
             out.println("@kotlin.internal.InlineOnly")
-            //out.println("@kotlin.internal.IntrinsicConstEvaluation")
+            out.println("@kotlin.internal.IntrinsicConstEvaluation")
             out.print("public inline fun $otherSigned.to$className(): $className = ")
             out.println(when {
                 otherType == type -> "$className(this)"
