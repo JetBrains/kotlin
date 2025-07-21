@@ -3496,7 +3496,6 @@ final class kotlin/Long : kotlin/Comparable<kotlin/Long>, kotlin/Number { // kot
     final inline fun times(kotlin/Float): kotlin/Float // kotlin/Long.times|times(kotlin.Float){}[0]
     final inline fun times(kotlin/Int): kotlin/Long // kotlin/Long.times|times(kotlin.Int){}[0]
     final inline fun times(kotlin/Short): kotlin/Long // kotlin/Long.times|times(kotlin.Short){}[0]
-    final inline fun unaryPlus(): kotlin/Long // kotlin/Long.unaryPlus|unaryPlus(){}[0]
 
     final object Companion { // kotlin/Long.Companion|null[0]
         final const val MAX_VALUE // kotlin/Long.Companion.MAX_VALUE|{}MAX_VALUE[0]
@@ -3511,6 +3510,9 @@ final class kotlin/Long : kotlin/Comparable<kotlin/Long>, kotlin/Number { // kot
 
     // Targets: [native, wasmJs, wasmWasi]
     final inline fun toLong(): kotlin/Long // kotlin/Long.toLong|toLong(){}[0]
+
+    // Targets: [native, wasmJs, wasmWasi]
+    final inline fun unaryPlus(): kotlin/Long // kotlin/Long.unaryPlus|unaryPlus(){}[0]
 
     // Targets: [js, native]
     final fun compareTo(kotlin/Long): kotlin/Int // kotlin/Long.compareTo|compareTo(kotlin.Long){}[0]
@@ -3583,6 +3585,9 @@ final class kotlin/Long : kotlin/Comparable<kotlin/Long>, kotlin/Number { // kot
 
     // Targets: [js]
     final fun toLong(): kotlin/Long // kotlin/Long.toLong|toLong(){}[0]
+
+    // Targets: [js]
+    final fun unaryPlus(): kotlin/Long // kotlin/Long.unaryPlus|unaryPlus(){}[0]
 }
 
 final class kotlin/LongArray { // kotlin/LongArray|null[0]

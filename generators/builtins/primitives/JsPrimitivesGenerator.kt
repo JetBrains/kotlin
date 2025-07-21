@@ -18,8 +18,6 @@ class JsPrimitivesGenerator(writer: PrintWriter) : BasePrimitivesGenerator(write
         TODO(KT-70480): Make bodiless when we drop the ES5 target.
         """.trimIndent()
 
-    private val makeBodilessAfter2220Comment = "TODO(KT-79130): Make bodiless after 2.2.20 branching"
-
     override fun FileBuilder.modifyGeneratedFile() {
         suppress("NON_ABSTRACT_FUNCTION_WITH_NO_BODY")
         suppress("UNUSED_PARAMETER")
@@ -58,22 +56,11 @@ class JsPrimitivesGenerator(writer: PrintWriter) : BasePrimitivesGenerator(write
     override fun MethodBuilder.modifyGeneratedBinaryOperation(thisKind: PrimitiveType, otherKind: PrimitiveType) {
         if (thisKind == PrimitiveType.LONG) {
             if (thisKind == otherKind) {
-                additionalComments = if (methodName == "compareTo") {
-                    intrinsifiedOverrideComment
-                } else {
-                    makeBodilessAfter2220Comment
+                if (methodName == "compareTo") {
+                    additionalComments = intrinsifiedOverrideComment
+                    "this.compare(other)".setAsExpressionBody()
+                    annotations += "OptIn(BoxedLongApi::class)"
                 }
-                val implMethod = when (methodName) {
-                    "compareTo" -> "compare"
-                    "plus" -> "add"
-                    "minus" -> "subtract"
-                    "times" -> "multiply"
-                    "div" -> "divide"
-                    "rem" -> "modulo"
-                    else -> error("Unsupported binary operation: $methodName")
-                }
-                "this.$implMethod(other)".setAsExpressionBody()
-                annotations += "OptIn(BoxedLongApi::class)"
             } else {
                 modifySignature { isInline = true }
                 "this${thisKind.castToIfNecessary(otherKind)}.${methodName}(other${otherKind.castToIfNecessary(thisKind)})".setAsExpressionBody()
@@ -81,59 +68,9 @@ class JsPrimitivesGenerator(writer: PrintWriter) : BasePrimitivesGenerator(write
         }
     }
 
-    override fun MethodBuilder.modifyGeneratedUnaryOperation(thisKind: PrimitiveType) {
-        if (thisKind == PrimitiveType.LONG) {
-            when (methodName) {
-                "inc" -> {
-                    additionalComments = makeBodilessAfter2220Comment
-                    "this + 1L"
-                }
-                "dec" -> {
-                    additionalComments = makeBodilessAfter2220Comment
-                    "this - 1L"
-                }
-                "unaryMinus" -> {
-                    additionalComments = makeBodilessAfter2220Comment
-                    "this.inv() + 1L"
-                }
-                "unaryPlus" -> {
-                    modifySignature { isInline = true }
-                    "this"
-                }
-                else -> error(methodName)
-            }.setAsExpressionBody()
-        }
-    }
-
     override fun MethodBuilder.modifyGeneratedRangeTo(thisKind: PrimitiveType, otherKind: PrimitiveType, opReturnType: PrimitiveType) {
         if (thisKind != PrimitiveType.LONG) {
             noBody()
-        }
-    }
-
-    override fun MethodBuilder.modifyGeneratedBitShiftOperators(thisKind: PrimitiveType) {
-        if (thisKind == PrimitiveType.LONG) {
-            additionalComments = makeBodilessAfter2220Comment
-            val implMethod = when (methodName) {
-                "shl" -> "shiftLeft"
-                "shr" -> "shiftRight"
-                "ushr" -> "shiftRightUnsigned"
-                else -> error(methodName)
-            }
-            "$implMethod(bitCount)".setAsExpressionBody()
-            annotations += "OptIn(BoxedLongApi::class)"
-        }
-    }
-
-    override fun MethodBuilder.modifyGeneratedBitwiseOperators(thisKind: PrimitiveType) {
-        if (thisKind == PrimitiveType.LONG) {
-            additionalComments = makeBodilessAfter2220Comment
-            if (methodName == "inv") {
-                "invert()".setAsExpressionBody()
-            } else {
-                "bitwise${methodName.replaceFirstChar(Char::uppercaseChar)}(other)".setAsExpressionBody()
-            }
-            annotations += "OptIn(BoxedLongApi::class)"
         }
     }
 

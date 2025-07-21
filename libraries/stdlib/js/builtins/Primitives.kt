@@ -1279,11 +1279,8 @@ internal constructor(@property:BoxedLongApi internal val low: Int, @property:Box
         this.plus(other.toLong())
 
     /** Adds the other value to this value. */
-    // TODO(KT-79130): Make bodiless after 2.2.20 branching
     @kotlin.internal.IntrinsicConstEvaluation
-    @OptIn(BoxedLongApi::class)
-    public actual operator fun plus(other: Long): Long =
-        this.add(other)
+    public actual operator fun plus(other: Long): Long
 
     /** Adds the other value to this value. */
     @kotlin.internal.IntrinsicConstEvaluation
@@ -1311,11 +1308,8 @@ internal constructor(@property:BoxedLongApi internal val low: Int, @property:Box
         this.minus(other.toLong())
 
     /** Subtracts the other value from this value. */
-    // TODO(KT-79130): Make bodiless after 2.2.20 branching
     @kotlin.internal.IntrinsicConstEvaluation
-    @OptIn(BoxedLongApi::class)
-    public actual operator fun minus(other: Long): Long =
-        this.subtract(other)
+    public actual operator fun minus(other: Long): Long
 
     /** Subtracts the other value from this value. */
     @kotlin.internal.IntrinsicConstEvaluation
@@ -1343,11 +1337,8 @@ internal constructor(@property:BoxedLongApi internal val low: Int, @property:Box
         this.times(other.toLong())
 
     /** Multiplies this value by the other value. */
-    // TODO(KT-79130): Make bodiless after 2.2.20 branching
     @kotlin.internal.IntrinsicConstEvaluation
-    @OptIn(BoxedLongApi::class)
-    public actual operator fun times(other: Long): Long =
-        this.multiply(other)
+    public actual operator fun times(other: Long): Long
 
     /** Multiplies this value by the other value. */
     @kotlin.internal.IntrinsicConstEvaluation
@@ -1375,11 +1366,8 @@ internal constructor(@property:BoxedLongApi internal val low: Int, @property:Box
         this.div(other.toLong())
 
     /** Divides this value by the other value, truncating the result to an integer that is closer to zero. */
-    // TODO(KT-79130): Make bodiless after 2.2.20 branching
     @kotlin.internal.IntrinsicConstEvaluation
-    @OptIn(BoxedLongApi::class)
-    public actual operator fun div(other: Long): Long =
-        this.divide(other)
+    public actual operator fun div(other: Long): Long
 
     /** Divides this value by the other value. */
     @kotlin.internal.IntrinsicConstEvaluation
@@ -1426,12 +1414,9 @@ internal constructor(@property:BoxedLongApi internal val low: Int, @property:Box
      *
      * The result is either zero or has the same sign as the _dividend_ and has the absolute value less than the absolute value of the divisor.
      */
-    // TODO(KT-79130): Make bodiless after 2.2.20 branching
     @SinceKotlin("1.1")
     @kotlin.internal.IntrinsicConstEvaluation
-    @OptIn(BoxedLongApi::class)
-    public actual operator fun rem(other: Long): Long =
-        this.modulo(other)
+    public actual operator fun rem(other: Long): Long
 
     /**
      * Calculates the remainder of truncating division of this value (dividend) by the other value (divisor).
@@ -1458,29 +1443,22 @@ internal constructor(@property:BoxedLongApi internal val low: Int, @property:Box
      *
      * @sample samples.misc.Builtins.inc
      */
-    // TODO(KT-79130): Make bodiless after 2.2.20 branching
-    public actual operator fun inc(): Long =
-        this + 1L
+    public actual operator fun inc(): Long
 
     /**
      * Returns this value decremented by one.
      *
      * @sample samples.misc.Builtins.dec
      */
-    // TODO(KT-79130): Make bodiless after 2.2.20 branching
-    public actual operator fun dec(): Long =
-        this - 1L
+    public actual operator fun dec(): Long
 
     /** Returns this value. */
     @kotlin.internal.IntrinsicConstEvaluation
-    public actual inline operator fun unaryPlus(): Long =
-        this
+    public actual operator fun unaryPlus(): Long
 
     /** Returns the negative of this value. */
-    // TODO(KT-79130): Make bodiless after 2.2.20 branching
     @kotlin.internal.IntrinsicConstEvaluation
-    public actual operator fun unaryMinus(): Long =
-        this.inv() + 1L
+    public actual operator fun unaryMinus(): Long
 
     /** Creates a range from this value to the specified [other] value. */
     public actual operator fun rangeTo(other: Byte): LongRange =
@@ -1544,11 +1522,8 @@ internal constructor(@property:BoxedLongApi internal val low: Int, @property:Box
      * Note that only the six lowest-order bits of the [bitCount] are used as the shift distance.
      * The shift distance actually used is therefore always in the range `0..63`.
      */
-    // TODO(KT-79130): Make bodiless after 2.2.20 branching
     @kotlin.internal.IntrinsicConstEvaluation
-    @OptIn(BoxedLongApi::class)
-    public actual infix fun shl(bitCount: Int): Long =
-        shiftLeft(bitCount)
+    public actual infix fun shl(bitCount: Int): Long
 
     /**
      * Shifts this value right by the [bitCount] number of bits, filling the leftmost bits with copies of the sign bit.
@@ -1556,11 +1531,8 @@ internal constructor(@property:BoxedLongApi internal val low: Int, @property:Box
      * Note that only the six lowest-order bits of the [bitCount] are used as the shift distance.
      * The shift distance actually used is therefore always in the range `0..63`.
      */
-    // TODO(KT-79130): Make bodiless after 2.2.20 branching
     @kotlin.internal.IntrinsicConstEvaluation
-    @OptIn(BoxedLongApi::class)
-    public actual infix fun shr(bitCount: Int): Long =
-        shiftRight(bitCount)
+    public actual infix fun shr(bitCount: Int): Long
 
     /**
      * Shifts this value right by the [bitCount] number of bits, filling the leftmost bits with zeros.
@@ -1568,39 +1540,24 @@ internal constructor(@property:BoxedLongApi internal val low: Int, @property:Box
      * Note that only the six lowest-order bits of the [bitCount] are used as the shift distance.
      * The shift distance actually used is therefore always in the range `0..63`.
      */
-    // TODO(KT-79130): Make bodiless after 2.2.20 branching
     @kotlin.internal.IntrinsicConstEvaluation
-    @OptIn(BoxedLongApi::class)
-    public actual infix fun ushr(bitCount: Int): Long =
-        shiftRightUnsigned(bitCount)
+    public actual infix fun ushr(bitCount: Int): Long
 
     /** Performs a bitwise AND operation between the two values. */
-    // TODO(KT-79130): Make bodiless after 2.2.20 branching
     @kotlin.internal.IntrinsicConstEvaluation
-    @OptIn(BoxedLongApi::class)
-    public actual infix fun and(other: Long): Long =
-        bitwiseAnd(other)
+    public actual infix fun and(other: Long): Long
 
     /** Performs a bitwise OR operation between the two values. */
-    // TODO(KT-79130): Make bodiless after 2.2.20 branching
     @kotlin.internal.IntrinsicConstEvaluation
-    @OptIn(BoxedLongApi::class)
-    public actual infix fun or(other: Long): Long =
-        bitwiseOr(other)
+    public actual infix fun or(other: Long): Long
 
     /** Performs a bitwise XOR operation between the two values. */
-    // TODO(KT-79130): Make bodiless after 2.2.20 branching
     @kotlin.internal.IntrinsicConstEvaluation
-    @OptIn(BoxedLongApi::class)
-    public actual infix fun xor(other: Long): Long =
-        bitwiseXor(other)
+    public actual infix fun xor(other: Long): Long
 
     /** Inverts the bits in this value. */
-    // TODO(KT-79130): Make bodiless after 2.2.20 branching
     @kotlin.internal.IntrinsicConstEvaluation
-    @OptIn(BoxedLongApi::class)
-    public actual fun inv(): Long =
-        invert()
+    public actual fun inv(): Long
 
     /**
      * Converts this [Long] value to [Byte].
