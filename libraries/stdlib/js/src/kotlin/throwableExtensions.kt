@@ -65,11 +65,11 @@ private class ExceptionTraceBuilder {
     private fun hasSeen(exception: Throwable): Boolean = visited.any { it === exception }
 
     private fun Throwable.dumpFullTrace(indent: String, qualifier: String) {
-        this.dumpSelfTrace(indent, qualifier) || return
+        if (!this.dumpSelfTrace(indent, qualifier)) return
 
         var cause = this.cause
         while (cause != null) {
-            cause.dumpSelfTrace(indent, "Caused by: ") || return
+            if (!cause.dumpSelfTrace(indent, "Caused by: ")) return
             cause = cause.cause
         }
     }

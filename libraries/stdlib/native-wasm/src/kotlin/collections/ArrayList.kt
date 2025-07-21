@@ -445,6 +445,7 @@ public actual constructor(initialCapacity: Int) : MutableList<E>, RandomAccess, 
             removeRangeInternal(offset, length)
         }
 
+        @IgnorableReturnValue
         override fun removeAt(index: Int): E {
             checkIsMutable()
             checkForComodification()

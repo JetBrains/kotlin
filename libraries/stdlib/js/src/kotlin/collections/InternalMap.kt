@@ -11,6 +11,7 @@ package kotlin.collections
 internal interface InternalMap<K, V> {
     val size: Int
 
+    @IgnorableReturnValue
     fun put(key: K, value: V): V?
     fun putAll(from: Map<out K, V>)
 

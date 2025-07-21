@@ -492,6 +492,7 @@ public actual class StringBuilder public actual constructor(content: String) : A
      * @sample samples.text.Strings.clearStringBuilder
      */
     @SinceKotlin("1.3")
+    @IgnorableReturnValue
     public fun clear(): StringBuilder {
         string = ""
         return this
@@ -519,6 +520,7 @@ public actual class StringBuilder public actual constructor(content: String) : A
      * @throws IndexOutOfBoundsException or [IllegalArgumentException] if [startIndex] is less than zero, greater than the length of this string builder, or `startIndex > endIndex`.
      */
     @SinceKotlin("1.4")
+    @IgnorableReturnValue
     public fun setRange(startIndex: Int, endIndex: Int, value: String): StringBuilder {
         checkReplaceRange(startIndex, endIndex, length)
 
@@ -545,6 +547,7 @@ public actual class StringBuilder public actual constructor(content: String) : A
      * @throws IndexOutOfBoundsException if [index] is out of bounds of this string builder.
      */
     @SinceKotlin("1.4")
+    @IgnorableReturnValue
     public fun deleteAt(index: Int): StringBuilder {
         AbstractList.checkElementIndex(index, length)
 
@@ -561,6 +564,7 @@ public actual class StringBuilder public actual constructor(content: String) : A
      * @throws IndexOutOfBoundsException or [IllegalArgumentException] when [startIndex] is out of range of this string builder indices or when `startIndex > endIndex`.
      */
     @SinceKotlin("1.4")
+    @IgnorableReturnValue
     public fun deleteRange(startIndex: Int, endIndex: Int): StringBuilder {
         checkReplaceRange(startIndex, endIndex, length)
 
@@ -603,6 +607,7 @@ public actual class StringBuilder public actual constructor(content: String) : A
      * @throws IndexOutOfBoundsException or [IllegalArgumentException] when [startIndex] or [endIndex] is out of range of the [value] array indices or when `startIndex > endIndex`.
      */
     @SinceKotlin("1.4")
+    @IgnorableReturnValue
     public fun appendRange(value: CharArray, startIndex: Int, endIndex: Int): StringBuilder {
         string += value.concatToString(startIndex, endIndex)
         return this
@@ -618,6 +623,7 @@ public actual class StringBuilder public actual constructor(content: String) : A
      * @throws IndexOutOfBoundsException or [IllegalArgumentException] when [startIndex] or [endIndex] is out of range of the [value] character sequence indices or when `startIndex > endIndex`.
      */
     @SinceKotlin("1.4")
+    @IgnorableReturnValue
     public fun appendRange(value: CharSequence, startIndex: Int, endIndex: Int): StringBuilder {
         val stringCsq = value.toString()
         AbstractList.checkBoundsIndexes(startIndex, endIndex, stringCsq.length)
@@ -640,6 +646,7 @@ public actual class StringBuilder public actual constructor(content: String) : A
      * @throws IndexOutOfBoundsException if [index] is less than zero or greater than the length of this string builder.
      */
     @SinceKotlin("1.4")
+    @IgnorableReturnValue
     public fun insertRange(index: Int, value: CharArray, startIndex: Int, endIndex: Int): StringBuilder {
         AbstractList.checkPositionIndex(index, this.length)
 
@@ -661,6 +668,7 @@ public actual class StringBuilder public actual constructor(content: String) : A
      * @throws IndexOutOfBoundsException if [index] is less than zero or greater than the length of this string builder.
      */
     @SinceKotlin("1.4")
+    @IgnorableReturnValue
     public fun insertRange(index: Int, value: CharSequence, startIndex: Int, endIndex: Int): StringBuilder {
         AbstractList.checkPositionIndex(index, length)
 

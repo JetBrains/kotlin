@@ -173,6 +173,7 @@ internal class Lexer(val patternString: String, flags: Int) {
 
     // Processing index moving =========================================================================================
     /** Returns current character and moves string index to the next one. */
+    @IgnorableReturnValue
     operator fun next(): Int {
         movePointer()
         return lookBack
@@ -204,6 +205,7 @@ internal class Lexer(val patternString: String, flags: Int) {
      * The following actions are equivalent if comments flag is off:
      * currentChar = pattern[index++] == currentChar = pattern[nextIndex]
      */
+    @IgnorableReturnValue
     private fun nextIndex(): Int {
         prevNonWhitespaceIndex = index
         index++
@@ -214,6 +216,7 @@ internal class Lexer(val patternString: String, flags: Int) {
     }
 
     /** Skips comments and whitespaces */
+    @IgnorableReturnValue
     private fun skipComments(): Int {
         val length = pattern.size - 2
         do {
@@ -283,9 +286,8 @@ internal class Lexer(val patternString: String, flags: Int) {
     // Special functions called from [movePointer] function to process chars in different modes ========================
     /**
      * Processing an escaped sequence like "\Q foo \E". Just skip a character if it is not \E.
-     * Returns whether we need to reread the character or not
      */
-    private fun processInEscapeMode(): Boolean {
+    private fun processInEscapeMode() {
         if (lookAhead == '\\'.toInt()) {
             // Need not care about supplementary code points here.
             val lookAheadChar: Char = if (index < pattern.size) pattern[nextIndex()] else '\u0000'
@@ -303,7 +305,6 @@ internal class Lexer(val patternString: String, flags: Int) {
                 index = prevNonWhitespaceIndex
             }
         }
-        return false
     }
 
     /** Processes a next character in [Mode.PATTERN] mode. Returns whether we need to reread the character or not */

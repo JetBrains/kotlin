@@ -215,9 +215,7 @@ tasks.withType<KotlinCompilationTask<*>>().configureEach {
                 "-opt-in=kotlin.ExperimentalMultiplatform",
                 "-opt-in=kotlin.contracts.ExperimentalContracts",
                 "-Xcontext-parameters",
-                // See allowReturnValueCheckerButNotReport() in libraries/stdlib/build.gradle.kts:
-                "-Xreturn-value-checker=check",
-                "-Xwarning-level=RETURN_VALUE_NOT_USED:disabled",
+                "-Xreturn-value-checker=full",
             )
         )
     }

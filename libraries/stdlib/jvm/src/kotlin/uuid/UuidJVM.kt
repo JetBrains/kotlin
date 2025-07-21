@@ -221,6 +221,7 @@ public fun ByteBuffer.getUuid(index: Int): Uuid {
  */
 @SinceKotlin("2.0")
 @ExperimentalUuidApi
+@IgnorableReturnValue
 public fun ByteBuffer.putUuid(uuid: Uuid): ByteBuffer = uuid.toLongs { msb, lsb ->
     if (position() + 15 >= limit()) {
         throw BufferOverflowException() // otherwise a partial write could occur
@@ -266,6 +267,7 @@ public fun ByteBuffer.putUuid(uuid: Uuid): ByteBuffer = uuid.toLongs { msb, lsb 
  */
 @SinceKotlin("2.0")
 @ExperimentalUuidApi
+@IgnorableReturnValue
 public fun ByteBuffer.putUuid(index: Int, uuid: Uuid): ByteBuffer = uuid.toLongs { msb, lsb ->
     if (index < 0) {
         throw IndexOutOfBoundsException("Negative index: $index")

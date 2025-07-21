@@ -195,10 +195,12 @@ public actual open class ArrayList<E> internal constructor(private var array: Ar
         if (isReadOnly) throw UnsupportedOperationException()
     }
 
+    @IgnorableReturnValue
     private fun rangeCheck(index: Int) = index.apply {
         AbstractList.checkElementIndex(index, size)
     }
 
+    @IgnorableReturnValue
     private fun insertionRangeCheck(index: Int) = index.apply {
         AbstractList.checkPositionIndex(index, size)
     }

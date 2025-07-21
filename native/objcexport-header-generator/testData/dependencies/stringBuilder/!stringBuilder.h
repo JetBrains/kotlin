@@ -75,6 +75,11 @@ __attribute__((objc_subclassing_restricted))
  *   kotlin.IgnorableReturnValue
 */
 - (KotlinStringBuilder *)appendValue___:(BOOL)value __attribute__((swift_name("append(value___:)")));
+
+/**
+ * @note annotations
+ *   kotlin.IgnorableReturnValue
+*/
 - (KotlinStringBuilder *)appendValue____:(int8_t)value __attribute__((swift_name("append(value____:)")));
 
 /**
@@ -118,6 +123,11 @@ __attribute__((objc_subclassing_restricted))
  *   kotlin.IgnorableReturnValue
 */
 - (KotlinStringBuilder *)appendValue_________:(int64_t)value __attribute__((swift_name("append(value_________:)")));
+
+/**
+ * @note annotations
+ *   kotlin.IgnorableReturnValue
+*/
 - (KotlinStringBuilder *)appendValue__________:(int16_t)value __attribute__((swift_name("append(value__________:)")));
 
 /**
@@ -135,12 +145,14 @@ __attribute__((objc_subclassing_restricted))
 /**
  * @note annotations
  *   kotlin.SinceKotlin(version="1.4")
+ *   kotlin.IgnorableReturnValue
 */
 - (KotlinStringBuilder *)appendRangeValue:(KotlinCharArray *)value startIndex:(int32_t)startIndex endIndex:(int32_t)endIndex __attribute__((swift_name("appendRange(value:startIndex:endIndex:)")));
 
 /**
  * @note annotations
  *   kotlin.SinceKotlin(version="1.4")
+ *   kotlin.IgnorableReturnValue
 */
 - (KotlinStringBuilder *)appendRangeValue:(id)value startIndex:(int32_t)startIndex endIndex_:(int32_t)endIndex __attribute__((swift_name("appendRange(value:startIndex:endIndex_:)")));
 - (int32_t)capacity __attribute__((swift_name("capacity()")));
@@ -148,12 +160,14 @@ __attribute__((objc_subclassing_restricted))
 /**
  * @note annotations
  *   kotlin.SinceKotlin(version="1.4")
+ *   kotlin.IgnorableReturnValue
 */
 - (KotlinStringBuilder *)deleteAtIndex:(int32_t)index __attribute__((swift_name("deleteAt(index:)")));
 
 /**
  * @note annotations
  *   kotlin.SinceKotlin(version="1.4")
+ *   kotlin.IgnorableReturnValue
 */
 - (KotlinStringBuilder *)deleteRangeStartIndex:(int32_t)startIndex endIndex:(int32_t)endIndex __attribute__((swift_name("deleteRange(startIndex:endIndex:)")));
 - (void)ensureCapacityMinimumCapacity:(int32_t)minimumCapacity __attribute__((swift_name("ensureCapacity(minimumCapacity:)")));
@@ -182,6 +196,11 @@ __attribute__((objc_subclassing_restricted))
  *   kotlin.IgnorableReturnValue
 */
 - (KotlinStringBuilder *)insertIndex:(int32_t)index value_:(BOOL)value __attribute__((swift_name("insert(index:value_:)")));
+
+/**
+ * @note annotations
+ *   kotlin.IgnorableReturnValue
+*/
 - (KotlinStringBuilder *)insertIndex:(int32_t)index value__:(int8_t)value __attribute__((swift_name("insert(index:value__:)")));
 
 /**
@@ -225,6 +244,11 @@ __attribute__((objc_subclassing_restricted))
  *   kotlin.IgnorableReturnValue
 */
 - (KotlinStringBuilder *)insertIndex:(int32_t)index value_________:(int64_t)value __attribute__((swift_name("insert(index:value_________:)")));
+
+/**
+ * @note annotations
+ *   kotlin.IgnorableReturnValue
+*/
 - (KotlinStringBuilder *)insertIndex:(int32_t)index value__________:(int16_t)value __attribute__((swift_name("insert(index:value__________:)")));
 
 /**
@@ -236,12 +260,14 @@ __attribute__((objc_subclassing_restricted))
 /**
  * @note annotations
  *   kotlin.SinceKotlin(version="1.4")
+ *   kotlin.IgnorableReturnValue
 */
 - (KotlinStringBuilder *)insertRangeIndex:(int32_t)index value:(KotlinCharArray *)value startIndex:(int32_t)startIndex endIndex:(int32_t)endIndex __attribute__((swift_name("insertRange(index:value:startIndex:endIndex:)")));
 
 /**
  * @note annotations
  *   kotlin.SinceKotlin(version="1.4")
+ *   kotlin.IgnorableReturnValue
 */
 - (KotlinStringBuilder *)insertRangeIndex:(int32_t)index value:(id)value startIndex:(int32_t)startIndex endIndex_:(int32_t)endIndex __attribute__((swift_name("insertRange(index:value:startIndex:endIndex_:)")));
 
@@ -268,6 +294,7 @@ __attribute__((objc_subclassing_restricted))
 /**
  * @note annotations
  *   kotlin.SinceKotlin(version="1.4")
+ *   kotlin.IgnorableReturnValue
 */
 - (KotlinStringBuilder *)setRangeStartIndex:(int32_t)startIndex endIndex:(int32_t)endIndex value:(NSString *)value __attribute__((swift_name("setRange(startIndex:endIndex:value:)")));
 - (id)subSequenceStartIndex:(int32_t)startIndex endIndex:(int32_t)endIndex __attribute__((swift_name("subSequence(startIndex:endIndex:)")));
@@ -281,7 +308,7 @@ __attribute__((objc_subclassing_restricted))
 
 /**
  * @note annotations
- *   kotlin.SinceKotlin(version="1.4")
+ *   kotlin.SinceKotlin(version="1.9")
 */
 - (void)toCharArrayDestination:(KotlinCharArray *)destination destinationOffset:(int32_t)destinationOffset startIndex:(int32_t)startIndex endIndex:(int32_t)endIndex __attribute__((swift_name("toCharArray(destination:destinationOffset:startIndex:endIndex:)")));
 - (NSString *)description __attribute__((swift_name("description()")));

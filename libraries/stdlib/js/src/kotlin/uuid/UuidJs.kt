@@ -49,6 +49,7 @@ internal actual fun Long.formatBytesInto(dst: ByteArray, dstOffset: Int, startIn
 }
 
 @OptIn(ExperimentalStdlibApi::class)
+@IgnorableReturnValue
 private fun Int.formatBytesInto(dst: ByteArray, dstOffset: Int, startIndex: Int, endIndex: Int): Int {
     var dstIndex = dstOffset
     for (reversedIndex in 3 - startIndex downTo 4 - endIndex) {
