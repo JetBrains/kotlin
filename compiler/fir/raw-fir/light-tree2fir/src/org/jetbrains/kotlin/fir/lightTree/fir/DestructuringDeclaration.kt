@@ -106,7 +106,7 @@ fun AbstractRawFirBuilder<*>.addDestructuringStatements(
             moduleData,
             container,
             entries = multiDeclaration.entries,
-            isNameBased = multiDeclaration.isFullForm,
+            isNameBased = multiDeclaration.isFullForm || nameBasedDestructuringShortForm,
             isTmpVariable = isTmpVariable,
             forceLocal = forceLocal,
             configure,
