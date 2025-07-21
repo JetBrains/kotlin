@@ -145,6 +145,14 @@ class FirExtensionDeclarationsSymbolProvider private constructor(
 
     // ------------------------------------------ provider methods ------------------------------------------
 
+    /**
+     * Even though we use [FirSymbolNamesProvider.mayHaveTopLevelClassifier] and [FirSymbolNamesProvider.mayHaveTopLevelCallable] below, the
+     * symbol names provider doesn't need to be cached. That's because `mayHaveTopLevel*` functions access
+     * [FirSymbolNamesProvider.getTopLevelClassifierNamesInPackage] and [FirSymbolNamesProvider.getTopLevelCallableNamesInPackage] directly,
+     * which in this symbol names provider are already supplied from caches.
+     *
+     * In contrast, package sets are computed anew on every request, but they aren't used directly by `mayHaveTopLevel*` functions.
+     */
     override val symbolNamesProvider: FirSymbolNamesProvider = object : FirSymbolNamesProvider() {
         override val hasSpecificClassifierPackageNamesComputation: Boolean get() = true
 
@@ -174,12 +182,28 @@ class FirExtensionDeclarationsSymbolProvider private constructor(
             callableNamesInPackageCache.getValue()[packageFqName].orEmpty()
     }
 
+    // NOTE: We should fill the caches only when the FIR extension can generate such a declaration to avoid a large number of null/empty
+    // entries, hence the use of `mayHaveTopLevel*` before accessing caches.
+
     override fun getClassLikeSymbolByClassId(classId: ClassId): FirClassLikeSymbol<*>? {
+        // A FIR extension may generate a nested classifier for an outer classifier provided by a different symbol provider. This deviates
+        // from the normal behavior where the nested classifier and its outermost (top-level) classifier are provided by the same symbol
+        // provider. So we can only check `mayHaveTopLevelClassifier` *local to this symbol provider* for top-level class ID requests. For
+        // nested classifiers, we would have to call `mayHaveTopLevelClassifier` on the session symbol provider's level, but such a check
+        // should rather be handled at the top level.
+        //
+        // Compare also the handling of nested classes in `generateClassLikeDeclaration`, where we specifically fetch the outer class symbol
+        // from `session.symbolProvider`, not *this* symbol provider. There doesn't seem to be a quick check that we can perform instead, so
+        // for nested classes we have to access the cache and attempt the generation.
+        if (!classId.isNestedClass && !symbolNamesProvider.mayHaveTopLevelClassifier(classId)) return null
+
         return classCache.getValue(classId)
     }
 
     @FirSymbolProviderInternals
     override fun getTopLevelCallableSymbolsTo(destination: MutableList<FirCallableSymbol<*>>, packageFqName: FqName, name: Name) {
+        if (!symbolNamesProvider.mayHaveTopLevelCallable(packageFqName, name)) return
+
         val callableId = CallableId(packageFqName, name)
         destination += functionCache.getValue(callableId)
         destination += propertyCache.getValue(callableId)
@@ -187,11 +211,15 @@ class FirExtensionDeclarationsSymbolProvider private constructor(
 
     @FirSymbolProviderInternals
     override fun getTopLevelFunctionSymbolsTo(destination: MutableList<FirNamedFunctionSymbol>, packageFqName: FqName, name: Name) {
+        if (!symbolNamesProvider.mayHaveTopLevelCallable(packageFqName, name)) return
+
         destination += functionCache.getValue(CallableId(packageFqName, name))
     }
 
     @FirSymbolProviderInternals
     override fun getTopLevelPropertySymbolsTo(destination: MutableList<FirPropertySymbol>, packageFqName: FqName, name: Name) {
+        if (!symbolNamesProvider.mayHaveTopLevelCallable(packageFqName, name)) return
+
         destination += propertyCache.getValue(CallableId(packageFqName, name))
     }
 
