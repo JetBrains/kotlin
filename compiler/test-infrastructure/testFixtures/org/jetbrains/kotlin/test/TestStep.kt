@@ -76,6 +76,7 @@ sealed class TestStep<InputArtifact, OutputArtifact>
             thereWereExceptionsOnPreviousSteps: Boolean
         ): StepResult.HandlersResult {
             val exceptions = mutableListOf<WrappedException>()
+            var shouldRunNextSteps = true
             for (outputHandler in handlers) {
                 if (outputHandler.shouldRun(thereWasAnException = thereWereExceptionsOnPreviousSteps || exceptions.isNotEmpty())) {
                     try {
@@ -83,12 +84,12 @@ sealed class TestStep<InputArtifact, OutputArtifact>
                     } catch (e: Throwable) {
                         exceptions += WrappedException.FromHandler(e, module, outputHandler)
                         if (outputHandler.failureDisablesNextSteps) {
-                            return StepResult.HandlersResult(exceptions, shouldRunNextSteps = false)
+                            shouldRunNextSteps = false
                         }
                     }
                 }
             }
-            return StepResult.HandlersResult(exceptions, shouldRunNextSteps = true)
+            return StepResult.HandlersResult(exceptions, shouldRunNextSteps)
         }
 
         override fun toString(): String {
