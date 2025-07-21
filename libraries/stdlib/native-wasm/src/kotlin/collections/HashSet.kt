@@ -56,7 +56,7 @@ public actual class HashSet<E> internal constructor(
 
     @PublishedApi
     internal fun build(): Set<E> {
-        backing.build()
+        val _ = backing.build()
         return if (size > 0) this else Empty
     }
 
