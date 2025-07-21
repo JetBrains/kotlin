@@ -27,6 +27,7 @@ object CommonTypeCheckers : TypeCheckers() {
         FirProjectionRelationChecker,
         FirArrayOfNothingTypeChecker,
         FirInlineExposedLessVisibleTypeChecker,
+        RedundantNullableChecker,
     )
 
     override val intersectionTypeRefCheckers: Set<FirIntersectionTypeRefChecker> = setOf(
