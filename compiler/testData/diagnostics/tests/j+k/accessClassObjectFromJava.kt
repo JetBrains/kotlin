@@ -1,15 +1,17 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // FIR_IDENTICAL
-class Foo {
-  companion object {
-    val bar = 1
+// WITH_STDLIB
+// MODULE: lib
+// FILE: E.java
+import kotlin.Metadata;
 
-    fun test(a: Foo.<!UNRESOLVED_REFERENCE!>`object`<!>) {
-
-    }
-
-  }
+@Metadata(k = 1)
+public enum E {
+    OK;
 }
 
-/* GENERATED_FIR_TAGS: classDeclaration, companionObject, functionDeclaration, integerLiteral, objectDeclaration,
-propertyDeclaration */
+// MODULE: main(lib)
+// FILE: box.kt
+fun box(): String = <!UNRESOLVED_REFERENCE!>E<!>.OK.name
+
+/* GENERATED_FIR_TAGS: functionDeclaration */

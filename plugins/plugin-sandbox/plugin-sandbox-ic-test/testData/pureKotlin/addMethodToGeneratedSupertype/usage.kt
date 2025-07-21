@@ -1,5 +1,5 @@
 package foo
 
-fun test() {
+fun test(x: MyInterface) {
     SomeClass().foo()
 }
