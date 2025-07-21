@@ -477,7 +477,7 @@ class MethodInliner(
         val oldArgumentTypes = if (reorderIrLambdaParameters) {
             // In IR lambdas, captured variables come before real parameters, but after the extension receiver.
             // Move them to the end of the descriptor instead.
-            Type.getArgumentTypes(inliningContext.lambdaInfo!!.invokeMethod.descriptor)
+            Type.getArgumentTypes(inliningContext.lambdaInfo.invokeMethod.descriptor)
         } else {
             Type.getArgumentTypes(node.desc)
         }

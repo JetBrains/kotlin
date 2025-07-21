@@ -89,7 +89,7 @@ private class PropertyReferenceDelegationTransformer(val context: JvmBackendCont
                 }
             } else {
                 val receiver = if (field.isStatic) null else boundReceiver ?: irGet(unboundReceiver!!)
-                if (isGetter) irGetField(receiver, field) else irSetField(receiver, field, value!!)
+                if (isGetter) irGetField(receiver, field) else irSetField(receiver, field, value)
             }
             irExprBody(access)
         }

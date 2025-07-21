@@ -1460,7 +1460,7 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
                 val useSimpleName = '.' in fqName && fqName.substringBeforeLast('.', "") == packageFqName
 
                 when {
-                    useSimpleName -> treeMaker.FqName(fqName.substring(packageFqName!!.length + 1))
+                    useSimpleName -> treeMaker.FqName(fqName.substring(packageFqName.length + 1))
                     else -> treeMaker.Type(annotationType)
                 }
             }

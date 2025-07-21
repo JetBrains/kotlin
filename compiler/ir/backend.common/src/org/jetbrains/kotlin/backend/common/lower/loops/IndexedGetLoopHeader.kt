@@ -45,7 +45,7 @@ class IndexedGetLoopHeader(
             }.implicitCastIfNeededTo(loopVariable?.type ?: indexedGetFun.returnType)
             // The call could be wrapped in an IMPLICIT_NOTNULL type-cast (see comment in ForLoopsLowering.gatherLoopVariableInfo()).
             // Find and replace the call to preserve any type-casts.
-            loopVariable?.initializer = loopVariable?.initializer?.transform(InitializerCallReplacer(get), null)
+            loopVariable?.initializer = loopVariable.initializer?.transform(InitializerCallReplacer(get), null)
             // Even if there is no loop variable, we always want to call `get()` as it may have side effects.
             // The un-lowered loop always calls `get()` on each iteration.
             listOf(loopVariable ?: get) + incrementInductionVariable(this)

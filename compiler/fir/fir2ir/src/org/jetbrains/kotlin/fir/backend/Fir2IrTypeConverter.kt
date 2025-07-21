@@ -352,7 +352,7 @@ class Fir2IrTypeConverter(
         if (!configuration.skipBodies) return null
 
         if (symbol !is FirClassSymbol) return null
-        val firClass = symbol.fir as? FirClass ?: return null
+        val firClass = symbol.fir
         if (!firClass.isLocalClassOrAnonymousObject()) return null
         return firClass.superTypeRefs.firstOrNull {
             // Skip Enum supertype because otherwise, translating local enums will lead to stack overflow error

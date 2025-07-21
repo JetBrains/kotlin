@@ -123,7 +123,7 @@ class FirSamResolver(
 
         val (_, unsubstitutedFunctionType) = resolveFunctionTypeIfSamInterface(firRegularClass) ?: return null
 
-        val functionType = firRegularClass.buildSubstitutorWithUpperBounds(session, type)?.substituteOrNull(unsubstitutedFunctionType)
+        val functionType = firRegularClass.buildSubstitutorWithUpperBounds(session, type).substituteOrNull(unsubstitutedFunctionType)
             ?: unsubstitutedFunctionType
 
         require(functionType is ConeLookupTagBasedType) {
@@ -468,7 +468,7 @@ private fun FirRegularClass.findSingleAbstractMethodByNames(
         }
     }
 
-    if (metIncorrectMember || resultMethod == null || resultMethod!!.typeParameters.isNotEmpty()) return null
+    if (metIncorrectMember || resultMethod == null || resultMethod.typeParameters.isNotEmpty()) return null
 
     return resultMethod
 }

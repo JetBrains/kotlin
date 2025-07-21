@@ -201,7 +201,7 @@ fun FirExpression.extractEnumValueArgumentInfo(): EnumValueArgumentInfo? {
                 val entrySymbol = calleeReference.toResolvedEnumEntrySymbol() ?: return null
                 EnumValueArgumentInfo(entrySymbol.callableId.classId!!, entrySymbol.callableId.callableName)
             } else {
-                val enumEntryName = (calleeReference as? FirNamedReference)?.name ?: return null
+                val enumEntryName = calleeReference.name
                 EnumValueArgumentInfo(null, enumEntryName)
             }
         }

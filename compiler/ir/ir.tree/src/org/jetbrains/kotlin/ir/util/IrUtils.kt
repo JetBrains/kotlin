@@ -551,7 +551,7 @@ fun IrMemberAccessExpression<*>.getTypeSubstitutionMap(irFunction: IrFunction): 
     val hasDispatchReceiver = (this as? IrCall)?.symbol?.owner?.dispatchReceiverParameter != null
 
     val receiverType = when {
-        superQualifierSymbol != null -> superQualifierSymbol.defaultType as? IrSimpleType
+        superQualifierSymbol != null -> superQualifierSymbol.defaultType
         hasDispatchReceiver -> arguments[0]?.type as? IrSimpleType
         else -> null
     }

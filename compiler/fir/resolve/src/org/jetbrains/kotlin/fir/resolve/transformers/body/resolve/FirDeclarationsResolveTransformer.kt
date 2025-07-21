@@ -625,7 +625,7 @@ open class FirDeclarationsResolveTransformer(
 
             check(!candidateStorage.hasContradiction) { "We only should try fixing variables on successful provideDelegate candidate" }
             // We don't actually fix it, but add an equality constraint as approximation
-            candidateSystem.addEqualityConstraint(returnTypeBasedOnVariable, resultType!!, ProvideDelegateFixationPosition)
+            candidateSystem.addEqualityConstraint(returnTypeBasedOnVariable, resultType, ProvideDelegateFixationPosition)
 
             check(!candidateStorage.hasContradiction) {
                 "Currently, we see no cases when contradiction might happen after adding equality constraint like that." +

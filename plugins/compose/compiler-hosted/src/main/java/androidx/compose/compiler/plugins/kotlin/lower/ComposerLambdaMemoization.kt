@@ -234,7 +234,7 @@ private class ClassContext(override val declaration: IrClass) : DeclarationConte
     override fun declareLocal(local: IrValueDeclaration) {}
     override fun recordCapture(local: IrValueDeclaration): Boolean {
         val isThis = local == thisParam
-        val isConstructorParam = (local?.parent as? IrConstructor)?.parent === declaration
+        val isConstructorParam = (local.parent as? IrConstructor)?.parent === declaration
         val isClassParam = isThis || isConstructorParam
         if (collectors.isNotEmpty() && isClassParam) {
             for (collector in collectors) {

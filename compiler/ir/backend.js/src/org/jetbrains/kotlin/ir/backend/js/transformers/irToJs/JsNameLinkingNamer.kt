@@ -198,7 +198,7 @@ class JsNameLinkingNamer(
                                     (correspondingProperty.isExported(context) || correspondingProperty.getJsName() != null) &&
                                     correspondingProperty.isSimpleProperty
                             val safeName = when {
-                               hasStableName -> (correspondingProperty ?: it).getJsNameOrKotlinName().identifier
+                               hasStableName -> correspondingProperty.getJsNameOrKotlinName().identifier
                                minimizedMemberNames && !context.keeper.shouldKeep(it) -> context.minimizedNameGenerator.generateNextName()
                                else -> it.safeName()
                             }
