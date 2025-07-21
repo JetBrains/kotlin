@@ -948,6 +948,12 @@ public class PhasedJvmDiagnosticLightTreeTestGenerated extends AbstractPhasedJvm
     }
 
     @Test
+    @TestMetadata("inlineEnumEntries.kt")
+    public void testInlineEnumEntries() {
+      runTest("compiler/testData/diagnostics/tests/inlineEnumEntries.kt");
+    }
+
+    @Test
     @TestMetadata("inlineFunctionContextBug.kt")
     public void testInlineFunctionContextBug() {
       runTest("compiler/testData/diagnostics/tests/inlineFunctionContextBug.kt");
