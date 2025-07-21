@@ -989,16 +989,21 @@ fun ConeKotlinType.convertToNonRawVersion(): ConeKotlinType {
  * Returns true if this type can be `null`.
  * This function expands typealiases, checks upper bounds of type parameters, the components of intersection types, etc.
  */
-fun ConeKotlinType.canBeNull(session: FirSession, considerTypeVariableBounds: Boolean = true): Boolean {
+fun ConeKotlinType.canBeNull(
+    session: FirSession,
+    considerTypeVariableBounds: Boolean = true,
+    visited: MutableSet<ConeKotlinType> = mutableSetOf(),
+): Boolean {
     return when (this) {
-        is ConeFlexibleType -> upperBound.canBeNull(session, considerTypeVariableBounds)
+        else if !visited.add(this) -> false
+        is ConeFlexibleType -> upperBound.canBeNull(session, considerTypeVariableBounds, visited)
         is ConeDefinitelyNotNullType -> false
         is ConeTypeParameterType -> isMarkedNullable || this.lookupTag.typeParameterSymbol.resolvedBounds.all {
-            it.coneType.canBeNull(session, considerTypeVariableBounds)
+            it.coneType.canBeNull(session, considerTypeVariableBounds, visited)
         }
-        is ConeStubType -> isMarkedNullable || constructor.variable.defaultType.canBeNull(session, considerTypeVariableBounds)
-        is ConeIntersectionType -> intersectedTypes.all { it.canBeNull(session, considerTypeVariableBounds) }
-        is ConeCapturedType -> isMarkedNullable || constructor.supertypes?.all { it.canBeNull(session, considerTypeVariableBounds) } == true
+        is ConeStubType -> isMarkedNullable || constructor.variable.defaultType.canBeNull(session, considerTypeVariableBounds, visited)
+        is ConeIntersectionType -> intersectedTypes.all { it.canBeNull(session, considerTypeVariableBounds, visited) }
+        is ConeCapturedType -> isMarkedNullable || constructor.supertypes?.all { it.canBeNull(session, considerTypeVariableBounds, visited) } == true
         is ConeErrorType -> nullable != false
         is ConeLookupTagBasedType -> isMarkedNullable || fullyExpandedType(session).isMarkedNullable
         is ConeIntegerLiteralType -> isMarkedNullable
