@@ -8,12 +8,11 @@ package org.jetbrains.kotlin.sir.providers.support
 import org.jetbrains.kotlin.sir.SirClass
 import org.jetbrains.kotlin.sir.SirDeclaration
 import org.jetbrains.kotlin.sir.SirFunction
-import org.jetbrains.kotlin.sir.SirNominalType
 import org.jetbrains.kotlin.sir.SirProtocol
 import org.jetbrains.kotlin.sir.SirVariable
 
 val SirClass.superClassDeclaration: SirClass?
-    get() = (superClass as? SirNominalType)?.typeDeclaration as? SirClass
+    get() = superClass?.typeDeclaration as? SirClass
 
 fun List<SirDeclaration>.classNamed(className: String): SirClass {
     return filterIsInstance<SirClass>()

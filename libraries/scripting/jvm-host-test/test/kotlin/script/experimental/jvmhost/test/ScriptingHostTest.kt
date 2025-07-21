@@ -93,7 +93,7 @@ class ScriptingHostTest {
     fun testErrorResult() {
         val resVal = evalScriptWithResult("throw RuntimeException(\"abc\")")
         assertTrue(resVal is ResultValue.Error)
-        val resValError = (resVal as ResultValue.Error).error
+        val resValError = resVal.error
         assertTrue(resValError is RuntimeException)
         assertEquals("abc", resValError.message)
     }
@@ -172,7 +172,7 @@ class ScriptingHostTest {
             val mainMethod = scriptClass.methods.find { it.name == "main" }
             assertNotNull(mainMethod)
             val output = captureOutAndErr {
-                mainMethod!!.invoke(null, emptyArray<String>())
+                mainMethod.invoke(null, emptyArray<String>())
             }.toList().filterNot(String::isEmpty).joinToString("\n")
             assertEquals(greeting, output)
         }
@@ -660,7 +660,7 @@ class ScriptingHostTest {
         assertTrue(res is ResultWithDiagnostics.Failure)
         val report = res.reports.find { it.message.startsWith("Imported source file not found") }
         assertNotNull(report)
-        assertEquals("script.kts", report?.sourcePath)
+        assertEquals("script.kts", report.sourcePath)
     }
 
     @Test
@@ -844,8 +844,8 @@ class ScriptingHostTest {
         assertNotNull(classAsResourceUrl)
         assertNotNull(classAssResourceStream)
 
-        val classAsResourceData = classAsResourceUrl!!.openConnection().getInputStream().readBytes()
-        val classAsResourceStreamData = classAssResourceStream!!.readBytes()
+        val classAsResourceData = classAsResourceUrl.openConnection().getInputStream().readBytes()
+        val classAsResourceStreamData = classAssResourceStream.readBytes()
 
         assertContentEquals(classAsResourceData, classAsResourceStreamData)
 
