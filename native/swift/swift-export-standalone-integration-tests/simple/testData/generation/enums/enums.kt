@@ -60,7 +60,7 @@ enum class EnumWithAbstractMembers {
     fun ordinalSquare() = this.ordinal * this.ordinal
 }
 
-fun ewamEntries() = EnumWithAbstractMembers.entries
+//fun ewamEntries() = EnumWithAbstractMembers.entries
 
 fun ewamValues() = EnumWithAbstractMembers.values()
 
