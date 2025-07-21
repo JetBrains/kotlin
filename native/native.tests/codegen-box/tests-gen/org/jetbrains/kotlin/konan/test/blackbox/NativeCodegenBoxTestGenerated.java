@@ -31610,6 +31610,18 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
       }
 
       @Test
+      @TestMetadata("nameBasedDestructuringFullForm.kt")
+      public void testNameBasedDestructuringFullForm() {
+        runTest("compiler/testData/codegen/box/multiDecl/nameBasedDestructuringFullForm.kt");
+      }
+
+      @Test
+      @TestMetadata("nameBasedDestructuringShortForm.kt")
+      public void testNameBasedDestructuringShortForm() {
+        runTest("compiler/testData/codegen/box/multiDecl/nameBasedDestructuringShortForm.kt");
+      }
+
+      @Test
       @TestMetadata("returnInElvis.kt")
       public void testReturnInElvis() {
         runTest("compiler/testData/codegen/box/multiDecl/returnInElvis.kt");
