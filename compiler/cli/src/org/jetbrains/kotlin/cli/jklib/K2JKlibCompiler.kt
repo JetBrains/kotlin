@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.cli.jklib
 import com.intellij.openapi.Disposable
 import com.intellij.psi.search.GlobalSearchScope
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
+import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
+import org.jetbrains.kotlin.backend.common.extensions.IrPluginContextImpl
 import org.jetbrains.kotlin.backend.common.linkage.issues.checkNoUnboundSymbols
 import org.jetbrains.kotlin.backend.common.overrides.IrLinkerFakeOverrideProvider
 import org.jetbrains.kotlin.backend.common.serialization.*
@@ -365,8 +367,8 @@ class K2JKlibCompiler : CLICompiler<K2JKlibCompilerArguments>() {
         val exitCodeKlib = compileLibrary(arguments, rootDisposable, paths, klibDestination)
         if (outputKind == OutputKind.LIBRARY || exitCodeKlib != ExitCode.OK) return exitCodeKlib
 
-        return compileIr(arguments, rootDisposable, paths, klibDestination)
-
+        compileIr(arguments, rootDisposable, klibDestination)
+        return ExitCode.OK
     }
 
     fun createJarDependenciesModuleDescriptor(
@@ -424,12 +426,31 @@ class K2JKlibCompiler : CLICompiler<K2JKlibCompilerArguments>() {
         return dependenciesContext.module
     }
 
+    class CompilationResult(
+        val pluginContext: IrPluginContext,
+        val mainModuleFragment: IrModuleFragment
+    )
+
+    fun experimentalHookToCompileKlibAndDeserializeIr(
+        arguments: K2JKlibCompilerArguments,
+        configuration: CompilerConfiguration,
+        rootDisposable: Disposable,
+        paths: KotlinPaths?
+    ): CompilationResult {
+        this.configuration = configuration
+        val klibDestination =  File(System.getProperty("java.io.tmpdir"), "${UUID.randomUUID()}.klib").also {
+            require(!it.exists) { "Collision writing intermediate KLib $it" }
+            it.deleteOnExit()
+        }
+        compileLibrary(arguments, rootDisposable, paths, klibDestination)
+        return compileIr(arguments, rootDisposable, klibDestination)
+    }
+
     fun compileIr(
         arguments: K2JKlibCompilerArguments,
         disposable: Disposable,
-        paths: KotlinPaths?,
         klib: File,
-    ): ExitCode {
+    ): CompilationResult {
         val messageCollector = configuration.getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
         configuration.put(MODULE_NAME, arguments.moduleName ?: JvmProtoBufUtil.DEFAULT_MODULE_NAME)
 
@@ -502,6 +523,17 @@ class K2JKlibCompiler : CLICompiler<K2JKlibCompilerArguments>() {
             mangler = mangler,
         )
 
+        val pluginContext = IrPluginContextImpl(
+            mainModule,
+            trace.bindingContext,
+            configuration.languageVersionSettings,
+            symbolTable,
+            typeTranslator,
+            irBuiltIns,
+            linker = linker,
+            messageCollector = messageCollector,
+        )
+
         // Deserialize modules
         linker.deserializeIrModuleHeader(
             jarDepsModuleDescriptor,
@@ -509,10 +541,13 @@ class K2JKlibCompiler : CLICompiler<K2JKlibCompilerArguments>() {
             { DeserializationStrategy.ALL },
             jarDepsModuleDescriptor.name.asString()
         )
+        lateinit var mainModuleFragment: IrModuleFragment
         for (dep in sortedDependencies) {
             val descriptor = getModuleDescriptor(dep)
             when {
-                descriptor == mainModule -> linker.deserializeIrModuleHeader(descriptor, dep, { DeserializationStrategy.ALL })
+                descriptor == mainModule -> {
+                    mainModuleFragment = linker.deserializeIrModuleHeader(descriptor, dep, { DeserializationStrategy.ALL })
+                }
                 else -> linker.deserializeIrModuleHeader(descriptor, dep, { DeserializationStrategy.EXPLICITLY_EXPORTED })
             }
         }
@@ -549,7 +584,7 @@ class K2JKlibCompiler : CLICompiler<K2JKlibCompilerArguments>() {
 //        val moduleFragment = deserializedModuleFragments.last()
 //        println(moduleFragment.dump())
 
-        return ExitCode.OK
+        return CompilationResult(pluginContext, mainModuleFragment)
     }
 
     private fun getModuleDescriptor(current: KotlinLibrary): ModuleDescriptorImpl {
