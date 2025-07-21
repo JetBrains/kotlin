@@ -1,5 +1,4 @@
 @file:kotlin.Suppress("DEPRECATION_ERROR")
-@file:kotlin.native.internal.objc.BindClassToObjCName(packagewithprotocols.ENUM_WITH_INTERFACE_INHERITANCE::class, "22ExportedKotlinPackages20packagewithprotocolsO4mainE31ENUM_WITH_INTERFACE_INHERITANCEC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(packagewithprotocols.INHERITANCE_COUPLE::class, "22ExportedKotlinPackages20packagewithprotocolsO4mainE18INHERITANCE_COUPLEC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(packagewithprotocols.INHERITANCE_SINGLE_PROTO::class, "22ExportedKotlinPackages20packagewithprotocolsO4mainE24INHERITANCE_SINGLE_PROTOC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(packagewithprotocols.OBJECT_WITH_INTERFACE_INHERITANCE::class, "22ExportedKotlinPackages20packagewithprotocolsO4mainE33OBJECT_WITH_INTERFACE_INHERITANCEC")

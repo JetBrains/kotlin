@@ -45,17 +45,18 @@ import kotlin.lazy
 internal fun createSirClassFromKtSymbol(
     ktSymbol: KaNamedClassSymbol,
     sirSession: SirSession,
-): SirAbstractClassFromKtSymbol = when (ktSymbol.classKind) {
-    KaClassKind.ENUM_CLASS ->
-        SirEnumClassFromKtSymbol(
-            ktSymbol,
-            sirSession
-        )
-    else -> SirClassFromKtSymbol(
-        ktSymbol,
-        sirSession
-    )
-}
+): SirAbstractClassFromKtSymbol = SirClassFromKtSymbol(
+    ktSymbol,
+    sirSession
+)
+
+internal fun createSirEnumFromKtSymbol(
+    ktSymbol: KaNamedClassSymbol,
+    sirSession: SirSession,
+): SirEnum = SirEnumFromKtSymbol(
+    ktSymbol,
+    sirSession
+)
 
 private class SirClassFromKtSymbol(
     ktSymbol: KaNamedClassSymbol,
@@ -73,6 +74,60 @@ internal class SirStubClassFromKtSymbol(
     sirSession
 ) {
     override val declarations: List<SirDeclaration> = emptyList()
+}
+
+internal class SirEnumFromKtSymbol(
+    override val ktSymbol: KaNamedClassSymbol,
+    override val sirSession: SirSession,
+) : SirEnum(), SirFromKtSymbol<KaNamedClassSymbol> {
+    override val origin: KotlinSource by lazy {
+        KotlinSource(ktSymbol)
+    }
+    override val visibility: SirVisibility by lazy {
+        SirVisibility.PUBLIC
+    }
+    override val documentation: String? by lazy {
+        ktSymbol.documentation()
+    }
+    override val name: String by lazyWithSessions {
+        (this@SirEnumFromKtSymbol.relocatedDeclarationNamePrefix() ?: "") + ktSymbol.sirDeclarationName()
+    }
+    override var parent: SirDeclarationParent
+        get() = withSessions {
+            ktSymbol.getSirParent()
+        }
+        set(_) = Unit
+    override val declarations: MutableList<SirDeclaration> by lazyWithSessions {
+        mutableListOf<SirDeclaration>().apply {
+            addAll(childDeclarations)
+            addAll(syntheticDeclarations())
+        }
+    }
+    override val attributes: List<SirAttribute> by lazy { this.translatedAttributes }
+    override val cases: List<SirEnumCase> by lazyWithSessions {
+        ktSymbol.combinedDeclaredMemberScope
+            .declarations.filterIsInstance<KaEnumEntrySymbol>()
+            .map { SirEnumCase(it.name.asString(), emptyList()) }
+            .toList()
+    }
+    val childDeclarations: List<SirDeclaration> by lazyWithSessions {
+        ktSymbol.combinedDeclaredMemberScope
+            .extractDeclarations()
+            .toList()
+    }
+
+    private fun syntheticDeclarations(): List<SirDeclaration> = listOf(
+        kotlinBaseInitDeclaration()
+    )
+
+    private fun kotlinBaseInitDeclaration(): SirDeclaration = buildInitCopy(KotlinRuntimeModule.kotlinBaseDesignatedInit) {
+        origin = SirOrigin.KotlinBaseInitOverride(`for` = KotlinSource(ktSymbol))
+        visibility = SirVisibility.PACKAGE // Hide from users, but not from other Swift Export modules.
+        isOverride = true
+        body = SirFunctionBody(
+            listOf("super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)")
+        )
+    }.also { it.parent = this }
 }
 
 internal class SirEnumClassFromKtSymbol(

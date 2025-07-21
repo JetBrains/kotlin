@@ -21,23 +21,29 @@ public class SirDeclarationFromKtSymbolProvider(
     public override fun KaDeclarationSymbol.toSir(): SirTranslationResult =
         when (val ktSymbol = this@toSir) {
             is KaNamedClassSymbol -> {
-                if (ktSymbol.classKind == KaClassKind.INTERFACE) {
-                    val protocol = SirProtocolFromKtSymbol(
-                        ktSymbol = ktSymbol,
-                        sirSession = sirSession,
-                    )
-                    SirTranslationResult.RegularInterface(
-                        declaration = protocol,
-                        bridgedImplementation = SirBridgedProtocolImplementationFromKtSymbol(protocol),
-                        markerDeclaration = protocol.existentialMarker,
-                        existentialExtension = SirExistentialProtocolImplementationFromKtSymbol(protocol),
-                        samConverter = protocol.samConverter,
-                    )
-                } else {
-                    createSirClassFromKtSymbol(
-                        ktSymbol = ktSymbol,
-                        sirSession = sirSession,
-                    ).let(SirTranslationResult::RegularClass)
+                when (ktSymbol.classKind) {
+                    KaClassKind.INTERFACE -> {
+                        val protocol = SirProtocolFromKtSymbol(
+                            ktSymbol = ktSymbol,
+                            sirSession = sirSession,
+                        )
+                        SirTranslationResult.RegularInterface(
+                            declaration = protocol,
+                            bridgedImplementation = SirBridgedProtocolImplementationFromKtSymbol(protocol),
+                            markerDeclaration = protocol.existentialMarker,
+                            existentialExtension = SirExistentialProtocolImplementationFromKtSymbol(protocol),
+                            samConverter = protocol.samConverter,
+                        )
+                    }
+                    KaClassKind.ENUM_CLASS -> {
+                        createSirEnumFromKtSymbol(ktSymbol, sirSession).let(SirTranslationResult::Enum)
+                    }
+                    else -> {
+                        createSirClassFromKtSymbol(
+                            ktSymbol = ktSymbol,
+                            sirSession = sirSession,
+                        ).let(SirTranslationResult::RegularClass)
+                    }
                 }
             }
             is KaConstructorSymbol -> {
@@ -52,6 +58,9 @@ public class SirDeclarationFromKtSymbolProvider(
                         ktSymbol = ktSymbol,
                         sirSession = sirSession,
                     ).let(SirTranslationResult::RegularFunction)
+            }
+            is KaEnumEntrySymbol -> {
+                SirTranslationResult.Untranslatable(KotlinSource(ktSymbol))
             }
             is KaVariableSymbol -> {
                 if (ktSymbol is KaPropertySymbol && ktSymbol.isExtension) {

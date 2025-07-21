@@ -59,22 +59,10 @@ public final class Foo: KotlinRuntime.KotlinBase {
     }
 }
 extension ExportedKotlinPackages.a.b.c {
-    public final class E: KotlinRuntime.KotlinBase, Swift.CaseIterable {
-        public static var A: ExportedKotlinPackages.a.b.c.E {
-            get {
-                return ExportedKotlinPackages.a.b.c.E.__createClassWrapper(externalRCRef: a_b_c_E_A_get())
-            }
-        }
-        public static var B: ExportedKotlinPackages.a.b.c.E {
-            get {
-                return ExportedKotlinPackages.a.b.c.E.__createClassWrapper(externalRCRef: a_b_c_E_B_get())
-            }
-        }
-        public static var C: ExportedKotlinPackages.a.b.c.E {
-            get {
-                return ExportedKotlinPackages.a.b.c.E.__createClassWrapper(externalRCRef: a_b_c_E_C_get())
-            }
-        }
+    public enum E {
+        case A
+        case B
+        case C
         public static var allCases: [ExportedKotlinPackages.a.b.c.E] {
             get {
                 return a_b_c_E_entries_get() as! Swift.Array<ExportedKotlinPackages.a.b.c.E>

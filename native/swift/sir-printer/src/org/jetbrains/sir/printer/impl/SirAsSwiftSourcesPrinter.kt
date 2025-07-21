@@ -156,6 +156,11 @@ internal class SirAsSwiftSourcesPrinter private constructor(
         printer.withContext(Context(this)) {
             println(" {")
             withIndent {
+                if (this is SirEnum) {
+                    for (case in cases) {
+                        println("case ${case.name}")
+                    }
+                }
                 printChildren()
             }
             println("}")
