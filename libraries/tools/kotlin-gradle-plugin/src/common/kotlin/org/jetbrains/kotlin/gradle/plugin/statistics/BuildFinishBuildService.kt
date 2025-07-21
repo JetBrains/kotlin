@@ -15,17 +15,20 @@ import org.gradle.api.services.BuildService
 import org.gradle.api.services.BuildServiceParameters
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.fus.BuildUidService
+import org.jetbrains.kotlin.gradle.logging.Errors
 import org.jetbrains.kotlin.gradle.logging.GradleKotlinLogger
 import org.jetbrains.kotlin.gradle.logging.reportToIde
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.utils.kotlinErrorsDir
 import org.jetbrains.kotlin.statistics.fileloggers.MetricsContainer
 import java.io.File
+import java.util.concurrent.atomic.AtomicBoolean
 import kotlin.String
 
 internal abstract class BuildFinishBuildService : BuildService<BuildFinishBuildService.Parameters>, AutoCloseable {
     protected val buildId = parameters.buildId.get()
     private val log = Logging.getLogger(this.javaClass)
+    private val errorWasReported = AtomicBoolean(false)
 
     interface Parameters : BuildServiceParameters {
         val buildId: Property<String>
@@ -40,6 +43,10 @@ internal abstract class BuildFinishBuildService : BuildService<BuildFinishBuildS
 
         fun registerIfAbsent(project: Project, buildUidService: Provider<BuildUidService>, kotlinPluginVersion: String) {
             if (!project.buildServiceShouldBeCreated) {
+                return
+            }
+
+            if (project.gradle.sharedServices.registrations.findByName(serviceName) != null) {
                 return
             }
 
@@ -67,7 +74,7 @@ internal abstract class BuildFinishBuildService : BuildService<BuildFinishBuildS
             fusReportDirectory: File,
             kotlinVersion: String,
             log: Logger,
-        ): List<String> {
+        ): Errors {
             try {
                 val metricContainer = MetricsContainer()
 
@@ -98,8 +105,6 @@ internal abstract class BuildFinishBuildService : BuildService<BuildFinishBuildS
             log.debug("Single fus file was created for build $buildUid ")
             return emptyList()
         }
-
-
     }
 
     override fun close() {
@@ -110,9 +115,15 @@ internal abstract class BuildFinishBuildService : BuildService<BuildFinishBuildS
 
     internal fun collectAllFusReportsIntoOne() {
         val errorMessages = collectAllFusReportsIntoOne(buildId, parameters.fusReportDirectory.get(), parameters.kotlinVersion.get(), log)
-        errorMessages.reportToIde(
-            parameters.errorDirs.get().map { it.errorFile() }, parameters.kotlinVersion.get(), buildId,
-            GradleKotlinLogger(log)
-        )
+
+        //KT-79408 skip reporting to IDE if there is already a reported fus related error file with the same buildId
+        if (errorMessages.isNotEmpty()) {
+            if (errorWasReported.compareAndSet(false, true)) {
+                errorMessages.reportToIde(
+                    parameters.errorDirs.get().map { it.errorFile() }, parameters.kotlinVersion.get(), buildId,
+                    GradleKotlinLogger(log)
+                )
+            }
+        }
     }
 }

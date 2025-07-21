@@ -529,23 +529,14 @@ class BuildReportsIT : KGPBaseTest() {
             projectName = "simpleProject",
             gradleVersion = gradleVersion,
         ) {
-            val kotlinErrorPaths = setOf(
-                projectPersistentCache.resolve("errors"),
-                projectPath.resolve(".gradle/kotlin/errors")
-            )
-
-            build("compileKotlin", buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)) {
-                assertOutputDoesNotContain("errors were stored into file")
-                for (kotlinErrorPath in kotlinErrorPaths) {
-                    assertDirectoryDoesNotExist(kotlinErrorPath)
+            assertNoErrorFilesCreated {
+                build("compileKotlin", buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)) {
+                    assertNoErrorFileCreatedInOutput()
                 }
-            }
-            val kotlinFile = kotlinSourcesDir().resolve("helloWorld.kt")
-            kotlinFile.modify { it.replace("ArrayList", "skjfghsjk") }
-            buildAndFail("compileKotlin", buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)) {
-                assertOutputDoesNotContain("errors were stored into file")
-                for (kotlinErrorPath in kotlinErrorPaths) {
-                    assertDirectoryDoesNotExist(kotlinErrorPath)
+                val kotlinFile = kotlinSourcesDir().resolve("helloWorld.kt")
+                kotlinFile.modify { it.replace("ArrayList", "skjfghsjk") }
+                buildAndFail("compileKotlin", buildOptions = defaultBuildOptions.copy(logLevel = LogLevel.DEBUG)) {
+                    assertNoErrorFileCreatedInOutput()
                 }
             }
         }
@@ -845,7 +836,8 @@ class BuildReportsIT : KGPBaseTest() {
                 assertContains(jsonReport.aggregatedMetrics.buildTimes.buildTimesMapMs().keys, GradleBuildTime.NATIVE_IN_PROCESS)
 
                 val compilerMetrics = GradleBuildTime.COMPILER_PERFORMANCE.allChildrenMetrics()
-                val reportedCompilerMetrics = jsonReport.aggregatedMetrics.buildTimes.buildTimesMapMs().keys.filter { it in compilerMetrics }
+                val reportedCompilerMetrics =
+                    jsonReport.aggregatedMetrics.buildTimes.buildTimesMapMs().keys.filter { it in compilerMetrics }
 
                 // Recursively (only two levels) gather leaves of subtree under COMPILER_PERFORMANCE, excluding nodes like CODE_GENERATION
                 val expected = GradleBuildTime.COMPILER_PERFORMANCE.children()?.flatMap { it.children() ?: listOf(it) }
