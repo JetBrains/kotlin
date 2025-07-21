@@ -1,3 +1,4 @@
 fun test() {
-    Serializer.serializeA(A())
+//    Serializer.serializeA(A())
+    A()
 }

@@ -240,11 +240,11 @@ class LookupTrackerImpl(private val delegate: LookupTracker) : LookupTracker {
     override val requiresPosition: Boolean
         get() = delegate.requiresPosition
 
-    var prevFilePath: String = ""
-    var prevPosition: Position? = null
-    var prevScopeFqName: String = ""
-    var prevScopeKind: ScopeKind? = null
-    var prevName: String = ""
+    private var prevFilePath: String = ""
+    private var prevPosition: Position? = null
+    private var prevScopeFqName: String = ""
+    private var prevScopeKind: ScopeKind? = null
+    private var prevName: String = ""
 
     // This method is very hot and sequential invocations usually have the same parameters. Thus we cache previous parameters
     override fun record(filePath: String, position: Position, scopeFqName: String, scopeKind: ScopeKind, name: String) {
