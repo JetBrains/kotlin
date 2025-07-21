@@ -22,7 +22,7 @@ import java.util.regex.Pattern;
 public class PsiNativeIrTextTestGenerated extends AbstractPsiNativeIrTextTest {
   @Test
   public void testAllFilesPresentInIrText() {
-    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true, "declarations/multiplatform/k1");
+    KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
   }
 
   @Nested
@@ -381,7 +381,7 @@ public class PsiNativeIrTextTestGenerated extends AbstractPsiNativeIrTextTest {
   public class Declarations {
     @Test
     public void testAllFilesPresentInDeclarations() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/declarations"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true, "multiplatform/k1");
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/declarations"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
     }
 
     @Test
@@ -1020,7 +1020,53 @@ public class PsiNativeIrTextTestGenerated extends AbstractPsiNativeIrTextTest {
     public class Multiplatform {
       @Test
       public void testAllFilesPresentInMultiplatform() {
-        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/declarations/multiplatform"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true, "k1");
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/declarations/multiplatform"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+      }
+
+      @Nested
+      @TestMetadata("compiler/testData/ir/irText/declarations/multiplatform/k1")
+      @TestDataPath("$PROJECT_ROOT")
+      public class K1 {
+        @Test
+        public void testAllFilesPresentInK1() {
+          KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/declarations/multiplatform/k1"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+        }
+
+        @Test
+        @TestMetadata("expectClassInherited.kt")
+        public void testExpectClassInherited() {
+          runTest("compiler/testData/ir/irText/declarations/multiplatform/k1/expectClassInherited.kt");
+        }
+
+        @Test
+        @TestMetadata("expectIntersectionOverride.kt")
+        public void testExpectIntersectionOverride() {
+          runTest("compiler/testData/ir/irText/declarations/multiplatform/k1/expectIntersectionOverride.kt");
+        }
+
+        @Test
+        @TestMetadata("expectMemberInNotExpectClass.kt")
+        public void testExpectMemberInNotExpectClass() {
+          runTest("compiler/testData/ir/irText/declarations/multiplatform/k1/expectMemberInNotExpectClass.kt");
+        }
+
+        @Test
+        @TestMetadata("expectedEnumClass.kt")
+        public void testExpectedEnumClass() {
+          runTest("compiler/testData/ir/irText/declarations/multiplatform/k1/expectedEnumClass.kt");
+        }
+
+        @Test
+        @TestMetadata("expectedFun.kt")
+        public void testExpectedFun() {
+          runTest("compiler/testData/ir/irText/declarations/multiplatform/k1/expectedFun.kt");
+        }
+
+        @Test
+        @TestMetadata("expectedSealedClass.kt")
+        public void testExpectedSealedClass() {
+          runTest("compiler/testData/ir/irText/declarations/multiplatform/k1/expectedSealedClass.kt");
+        }
       }
 
       @Nested

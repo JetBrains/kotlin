@@ -38,10 +38,10 @@ fun main() {
         // irText tests
         testGroup("native/native.tests/klib-ir-inliner/tests-gen", "compiler/testData/ir/irText") {
             testClass<AbstractLightTreeNativeIrTextTest> {
-                model(excludeDirs = listOf("declarations/multiplatform/k1"))
+                model()
             }
             testClass<AbstractPsiNativeIrTextTest> {
-                model(excludeDirs = listOf("declarations/multiplatform/k1"))
+                model()
             }
         }
 
