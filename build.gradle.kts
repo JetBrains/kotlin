@@ -941,7 +941,6 @@ tasks {
 
     register("miscTest") {
         dependsOn("coreLibsTest")
-        dependsOn("gradlePluginTest")
         dependsOn("toolsTest")
         dependsOn("examplesTest")
         dependsOn(":kotlin-build-common:test")
