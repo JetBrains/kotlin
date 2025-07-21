@@ -67,6 +67,8 @@ open class WasmCompilerWithIC(
                 allowIncompleteImplementations,
                 if (safeFragmentTags) "${irFile.module.name.asString()}${irFile.path}" else null,
                 skipCommentInstructions = skipCommentInstructions,
+                useStringPool = true,
+                inlineUnitGetter = true,
             )
         )
     }

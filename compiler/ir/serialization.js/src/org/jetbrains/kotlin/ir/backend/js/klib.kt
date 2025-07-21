@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.backend.common.extensions.IrPluginContextImpl
 import org.jetbrains.kotlin.backend.common.klibAbiVersionForManifest
 import org.jetbrains.kotlin.backend.common.linkage.IrDeserializer
 import org.jetbrains.kotlin.backend.common.linkage.issues.checkNoUnboundSymbols
+import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageConfig
 import org.jetbrains.kotlin.backend.common.linkage.partial.createPartialLinkageSupportForLinker
 import org.jetbrains.kotlin.backend.common.linkage.partial.partialLinkageConfig
 import org.jetbrains.kotlin.backend.common.overrides.FakeOverrideChecker
@@ -206,6 +207,89 @@ fun loadIr(
             ) { modulesStructure.getModuleDescriptor(it) }
         }
     }
+}
+
+@OptIn(ObsoleteDescriptorBasedAPI::class)
+fun loadIrForMultimoduleMode(
+    modulesStructure: ModulesStructure,
+    irFactory: IrFactory,
+    masterDeserializer: (JsIrLinker, ModuleDescriptor, KotlinLibrary) -> IrModuleFragment,
+    slaveDeserializer: (JsIrLinker, ModuleDescriptor, KotlinLibrary) -> IrModuleFragment,
+): IrModuleInfo {
+    val mainModule = modulesStructure.mainModule
+    val configuration = modulesStructure.compilerConfiguration
+    val messageLogger = configuration.messageCollector
+
+    val signaturer = IdSignatureDescriptor(JsManglerDesc)
+    val symbolTable = SymbolTable(signaturer, irFactory)
+
+    check(mainModule is MainModule.Klib)
+
+    val mainModuleLib = modulesStructure.klibs.included
+        ?: error("No module with ${mainModule.libPath} found")
+    val moduleDescriptor = modulesStructure.getModuleDescriptor(mainModuleLib)
+    val friendModules = mapOf(mainModuleLib.uniqueName to modulesStructure.klibs.friends.map { it.uniqueName })
+
+    val typeTranslator = TypeTranslatorImpl(symbolTable, configuration.languageVersionSettings, moduleDescriptor)
+    val irBuiltIns = IrBuiltInsOverDescriptors(moduleDescriptor.builtIns, typeTranslator, symbolTable)
+
+    val irLinker = JsIrLinker(
+        currentModule = null,
+        messageCollector = messageLogger,
+        builtIns = irBuiltIns,
+        symbolTable = symbolTable,
+        partialLinkageSupport = createPartialLinkageSupportForLinker(
+            partialLinkageConfig = configuration.partialLinkageConfig,
+            builtIns = irBuiltIns,
+            messageCollector = messageLogger
+        ),
+        icData = null,
+        friendModules = friendModules
+    )
+
+    var stdlibFragment: IrModuleFragment? = null
+    var mainFragment: IrModuleFragment? = null
+    val deserializedFragments = modulesStructure.klibs.all.map { klib ->
+        when {
+            klib == modulesStructure.klibs.included -> {
+                mainFragment = slaveDeserializer(irLinker, modulesStructure.getModuleDescriptor(klib), klib)
+                mainFragment
+            }
+            klib.isAnyPlatformStdlib -> {
+                stdlibFragment = masterDeserializer(irLinker, modulesStructure.getModuleDescriptor(klib), klib)
+                stdlibFragment
+            } else -> {
+                masterDeserializer(irLinker, modulesStructure.getModuleDescriptor(klib), klib)
+            }
+        }
+    }
+
+    irBuiltIns.functionFactory = IrDescriptorBasedFunctionFactory(
+        irBuiltIns = irBuiltIns,
+        symbolTable = symbolTable,
+        typeTranslator = typeTranslator,
+        getPackageFragment = stdlibFragment?.let { FunctionTypeInterfacePackages().makePackageAccessor(it) },
+        referenceFunctionsWhenKFunctionAreReferenced = true
+    )
+
+    irLinker.init(null)
+    ExternalDependenciesGenerator(symbolTable, listOf(irLinker)).generateUnboundSymbolsAsDependencies()
+    irLinker.postProcess(inOrAfterLinkageStep = true)
+
+    val moduleDependencies = IrModuleDependencies(
+        all = deserializedFragments,
+        stdlib = stdlibFragment,
+        included = mainFragment,
+        fragmentNames = deserializedFragments.getUniqueNameForEachFragment(),
+    )
+
+    return IrModuleInfo(
+        module = mainFragment!!,
+        dependencies = moduleDependencies,
+        bultins = irBuiltIns,
+        symbolTable = symbolTable,
+        deserializer = irLinker,
+    )
 }
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)

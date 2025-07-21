@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.ir.backend.js.objectGetInstanceFunction
 import org.jetbrains.kotlin.ir.backend.js.utils.findUnitGetInstanceFunction
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
+import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.fileOrNull
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 
@@ -20,12 +21,40 @@ class WasmModuleFragmentGenerator(
     private val idSignatureRetriever: IdSignatureRetriever,
     private val allowIncompleteImplementations: Boolean,
     private val skipCommentInstructions: Boolean,
+    private val useStringPool: Boolean,
+    private val inlineUnitGetter: Boolean,
 ) {
-    fun generateModuleAsSingleFileFragment(irModuleFragment: IrModuleFragment): WasmCompiledFileFragment {
+    fun generateModuleAsSingleFileFragment(
+        irModuleFragment: IrModuleFragment,
+    ): WasmCompiledFileFragment {
         val wasmFileFragment = WasmCompiledFileFragment(fragmentTag = null)
         val wasmFileCodegenContext = WasmFileCodegenContext(wasmFileFragment, idSignatureRetriever)
-        val wasmModuleTypeTransformer = WasmModuleTypeTransformer(backendContext, wasmFileCodegenContext)
+        generate(irModuleFragment, wasmFileCodegenContext)
+        return wasmFileFragment
+    }
 
+    fun generateModuleAsSingleFileFragmentWithIECImport(
+        irModuleFragment: IrModuleFragment,
+        moduleName: String,
+        importDeclarations: Set<IdSignature>,
+    ): WasmCompiledFileFragment {
+        val wasmFileFragment = WasmCompiledFileFragment(fragmentTag = null)
+        val wasmFileCodegenContext = WasmFileCodegenContextWithImport(wasmFileFragment, idSignatureRetriever, moduleName, importDeclarations)
+        generate(irModuleFragment, wasmFileCodegenContext)
+        return wasmFileFragment
+    }
+
+    fun generateModuleAsSingleFileFragmentWithIECExport(
+        irModuleFragment: IrModuleFragment,
+    ): WasmCompiledFileFragment {
+        val wasmFileFragment = WasmCompiledFileFragment(fragmentTag = null)
+        val wasmFileCodegenContext = WasmFileCodegenContextWithExport(wasmFileFragment, idSignatureRetriever)
+        generate(irModuleFragment, wasmFileCodegenContext)
+        return wasmFileFragment
+    }
+
+    private fun generate(irModuleFragment: IrModuleFragment, wasmFileCodegenContext: WasmFileCodegenContext) {
+        val wasmModuleTypeTransformer = WasmModuleTypeTransformer(backendContext, wasmFileCodegenContext)
         for (irFile in irModuleFragment.files) {
             compileIrFile(
                 irFile,
@@ -35,9 +64,10 @@ class WasmModuleFragmentGenerator(
                 wasmFileCodegenContext,
                 wasmModuleTypeTransformer,
                 skipCommentInstructions,
+                useStringPool,
+                inlineUnitGetter,
             )
         }
-        return wasmFileFragment
     }
 }
 
@@ -49,6 +79,8 @@ internal fun compileIrFile(
     allowIncompleteImplementations: Boolean,
     fragmentTag: String?,
     skipCommentInstructions: Boolean,
+    useStringPool: Boolean,
+    inlineUnitGetter: Boolean,
 ): WasmCompiledFileFragment {
     val wasmFileFragment = WasmCompiledFileFragment(fragmentTag)
     val wasmFileCodegenContext = WasmFileCodegenContext(wasmFileFragment, idSignatureRetriever)
@@ -61,6 +93,8 @@ internal fun compileIrFile(
         wasmFileCodegenContext,
         wasmModuleTypeTransformer,
         skipCommentInstructions,
+        useStringPool,
+        inlineUnitGetter,
     )
     return wasmFileFragment
 }
@@ -73,6 +107,8 @@ private fun compileIrFile(
     wasmFileCodegenContext: WasmFileCodegenContext,
     wasmModuleTypeTransformer: WasmModuleTypeTransformer,
     skipCommentInstructions: Boolean,
+    useStringPool: Boolean,
+    inlineUnitGetter: Boolean,
 ) {
     val generator = DeclarationGenerator(
         backendContext,
@@ -81,6 +117,8 @@ private fun compileIrFile(
         wasmModuleMetadataCache,
         allowIncompleteImplementations,
         skipCommentInstructions,
+        useStringPool,
+        inlineUnitGetter,
     )
     for (irDeclaration in irFile.declarations) {
         irDeclaration.acceptVoid(generator)
