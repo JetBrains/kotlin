@@ -39,6 +39,7 @@ class DeclarationGenerator(
     private val wasmModuleMetadataCache: WasmModuleMetadataCache,
     private val allowIncompleteImplementations: Boolean,
     private val skipCommentInstructions: Boolean,
+    private val inlineUnitGetter: Boolean = true,
 ) : IrVisitorVoid() {
     // Shortcuts
     private val irBuiltIns: IrBuiltIns = backendContext.irBuiltIns
@@ -98,8 +99,9 @@ class DeclarationGenerator(
             "Sanity check that $declaration is a real function that can be used in calls"
         }
 
-        val functionTypeSymbol = wasmFileCodegenContext.referenceFunctionType(declaration.symbol)
+        if (wasmFileCodegenContext.handleFunctionWithImport(declaration.symbol)) return
 
+        val functionTypeSymbol = wasmFileCodegenContext.referenceFunctionType(declaration.symbol)
         val wasmImportModule = declaration.getWasmImportDescriptor()
         val jsCode = declaration.getJsFunAnnotation()
 
@@ -163,6 +165,7 @@ class DeclarationGenerator(
             functionCodegenContext,
             wasmModuleMetadataCache,
             wasmModuleTypeTransformer,
+            inlineUnitGetter,
         )
 
         val declarationBody = declaration.body
@@ -311,6 +314,8 @@ class DeclarationGenerator(
 
         if (klass.isAbstractOrSealed) return
 
+        if (wasmFileCodegenContext.handleVTableWithImport(symbol)) return
+
         val vTableTypeReference = wasmFileCodegenContext.referenceVTableGcType(symbol)
         val vTableRefGcType = WasmRefType(WasmHeapType.Type(vTableTypeReference))
 
@@ -364,6 +369,8 @@ class DeclarationGenerator(
         val klass = metadata.klass
         val symbol = klass.symbol
         val superType = klass.getSuperClass(irBuiltIns)?.symbol
+
+        if (wasmFileCodegenContext.handleRTTIWithImport(symbol, superType)) return
 
         val fqnShouldBeEmitted = backendContext.configuration.languageVersionSettings.getFlag(allowFullyQualifiedNameInKClass)
         val qualifier =
@@ -441,6 +448,8 @@ class DeclarationGenerator(
         val klass = metadata.klass
         if (klass.isAbstractOrSealed) return
         if (!klass.hasInterfaceSuperClass()) return
+
+        if (wasmFileCodegenContext.handleClassITableWithImport(klass.symbol)) return
 
         val location = SourceLocation.NoLocation("Create instance of itable struct")
 
@@ -564,7 +573,6 @@ class DeclarationGenerator(
     override fun visitField(declaration: IrField) {
         // Member fields are generated as part of struct type
         if (!declaration.isStatic) return
-
         val wasmType = wasmModuleTypeTransformer.transformType(declaration.type)
 
         val initBody = mutableListOf<WasmInstr>()

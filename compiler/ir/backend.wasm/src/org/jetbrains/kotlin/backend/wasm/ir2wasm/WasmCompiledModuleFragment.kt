@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.backend.wasm.ir2wasm
 
 import org.jetbrains.kotlin.backend.common.compilationException
-import org.jetbrains.kotlin.backend.common.serialization.Hash128Bits
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmCompiledModuleFragment.*
 import org.jetbrains.kotlin.backend.wasm.utils.fitsLatin1
@@ -167,6 +166,7 @@ class WasmCompiledModuleFragment(
         definedFunctions: MutableList<WasmFunction.Defined>,
         additionalTypes: MutableList<WasmTypeDeclaration>,
         stringPoolSize: Int,
+        initializeUnit: Boolean,
         wasmElements: MutableList<WasmElement>,
         exports: MutableList<WasmExport<*>>,
         globals: MutableList<WasmGlobal>,
@@ -226,7 +226,7 @@ class WasmCompiledModuleFragment(
         }
     }
 
-    fun linkWasmCompiledFragments(): WasmModule {
+    fun linkWasmCompiledFragments(moduleImportName: String?, initializeUnit: Boolean, exportThrowableTag: Boolean): WasmModule {
         // TODO: Implement optimal ir linkage KT-71040
         bindUnboundSymbols()
         val canonicalFunctionTypes = bindUnboundFunctionTypes()
@@ -240,7 +240,8 @@ class WasmCompiledModuleFragment(
         val exports = mutableListOf<WasmExport<*>>()
         wasmCompiledFileFragments.flatMapTo(exports) { it.exports }
 
-        val memory = createAndExportMemory(exports)
+        val memories = createAndExportMemory(exports, moduleImportName)
+        val (importedMemories, definedMemories) = memories.partition { it.importPair != null }
 
         val syntheticTypes = mutableListOf<WasmTypeDeclaration>()
         createAndBindSpecialITableTypes(syntheticTypes)
@@ -255,12 +256,23 @@ class WasmCompiledModuleFragment(
         val throwableDeclaration = tryFindBuiltInType { it.throwable }
             ?: compilationException("kotlin.Throwable is not found in fragments", null)
 
-        val tags = getTags(throwableDeclaration)
+        val tags = getTags(exports, moduleImportName, exportThrowableTag, throwableDeclaration)
         require(tags.size <= 1) { "Having more than 1 tag is not supported" }
 
         val (importedTags, definedTags) = tags.partition { it.importPair != null }
         val importsInOrder = importedFunctions + importedTags
         tags.forEach { additionalTypes.add(it.type) }
+
+        val syntheticTypes = mutableListOf<WasmTypeDeclaration>()
+        createAndBindSpecialITableTypes(syntheticTypes)
+        val globals = getGlobals(syntheticTypes)
+        val (importedGlobals, definedGlobals) = globals.partition { it.importPair != null }
+
+        val importsInOrder = mutableListOf<WasmNamedModuleField>()
+        importsInOrder.addAll(importedFunctions)
+        importsInOrder.addAll(importedTags)
+        importsInOrder.addAll(importedGlobals)
+        importsInOrder.addAll(importedMemories)
 
         val recursiveTypeGroups = getTypes(syntheticTypes, canonicalFunctionTypes, additionalTypes)
 
@@ -268,17 +280,19 @@ class WasmCompiledModuleFragment(
             recGroups = recursiveTypeGroups,
             importsInOrder = importsInOrder,
             importedFunctions = importedFunctions,
+            importedMemories = importedMemories,
             definedFunctions = definedFunctions,
+            importedTags = importedTags,
             tables = emptyList(),
-            memories = listOf(memory),
-            globals = globals,
+            memories = definedMemories,
+            globals = definedGlobals,
+            importedGlobals = importedGlobals,
             exports = exports,
             startFunction = null,  // Module is initialized via export call
             elements = elements,
             data = data,
             dataCount = true,
-            tags = definedTags,
-            importedTags = importedTags,
+            tags = definedTags
         ).apply { calculateIds() }
     }
 
@@ -371,7 +385,7 @@ class WasmCompiledModuleFragment(
         return syntheticTypes
     }
 
-    private fun getTags(throwableDeclaration: WasmTypeDeclaration): List<WasmTag> {
+    private fun getTags(exports: MutableList<WasmExport<*>>, moduleImportName: String?, exportThrowableTag: Boolean, throwableDeclaration: WasmTypeDeclaration): List<WasmTag> {
         if (generateTrapsInsteadOfExceptions) return emptyList()
 
         val tag = if (isWasmJsTarget) {
@@ -392,6 +406,10 @@ class WasmCompiledModuleFragment(
             WasmTag(throwableTagFuncType)
         }
 
+        if (exportThrowableTag) {
+            exports.add(WasmExport.Tag("tag_throwable", tag))
+        }
+
         return listOf(tag)
     }
 
@@ -400,31 +418,43 @@ class WasmCompiledModuleFragment(
         canonicalFunctionTypes: Map<WasmFunctionType, WasmFunctionType>,
         additionalTypes: List<WasmTypeDeclaration>,
     ): List<RecursiveTypeGroup> {
-        val gcTypes = wasmCompiledFileFragments.flatMapTo(mutableSetOf()) { it.gcTypes.elements }
+        val gcTypes = wasmCompiledFileFragments.flatMap { it.gcTypes.elements }
+        val vTableGcTypes = wasmCompiledFileFragments.flatMap { it.vTableGcTypes.elements }
 
         val recGroupTypes = buildList {
             addAll(additionalRecGroupTypes)
             addAll(gcTypes)
-            addAll(wasmCompiledFileFragments.flatMap { it.vTableGcTypes.elements })
+            addAll(vTableGcTypes)
             addAll(canonicalFunctionTypes.values)
         }
 
         val recursiveGroups = createRecursiveTypeGroups(recGroupTypes)
 
-        val mixInIndexesForGroups = mutableMapOf<Hash128Bits, Int>()
-        val groupsWithMixIns = mutableListOf<RecursiveTypeGroup>()
+        recursiveGroups.forEach { group ->
+            if (group.singleOrNull() is WasmArrayDeclaration) {
+                return@forEach
+            }
 
-        recursiveGroups.mapTo(groupsWithMixIns) { group ->
-            if (group.any { it in gcTypes } && group.singleOrNull() !is WasmArrayDeclaration) {
-                addMixInGroup(group, mixInIndexesForGroups)
-            } else {
-                group
+            val needMixIn = group.any { it in gcTypes }
+            val needStableSort = needMixIn || group.any { it in vTableGcTypes }
+
+            canonicalSort(group, needStableSort)
+
+            if (needMixIn) {
+                val firstIdSignature = group.firstOrNull { it is WasmStructDeclaration }?.let { firstStruct ->
+                    wasmCompiledFileFragments.firstNotNullOfOrNull {
+                        it.gcTypes.wasmToIr[firstStruct] ?: it.vTableGcTypes.wasmToIr[firstStruct]
+                    }
+                }
+                if (firstIdSignature != null) {
+                    val mixIn = WasmStructDeclaration("mixin_type", encodeIndex(firstIdSignature.toString().hashCode().toUInt()), null, true)
+                    group.add(mixIn)
+                }
             }
         }
 
-        additionalTypes.forEach { groupsWithMixIns.add(listOf(it)) }
-
-        return groupsWithMixIns
+        additionalTypes.forEach { recursiveGroups.add(mutableListOf(it)) }
+        return recursiveGroups
     }
 
     private fun getGlobals(additionalTypes: MutableList<WasmTypeDeclaration>) = mutableListOf<WasmGlobal>().apply {
@@ -436,15 +466,16 @@ class WasmCompiledModuleFragment(
         createRttiTypeAndProcessRttiGlobals(this, additionalTypes)
     }
 
-    private fun createAndExportMemory(exports: MutableList<WasmExport<*>>): WasmMemory {
+    private fun createAndExportMemory(exports: MutableList<WasmExport<*>>, moduleImportName: String?): List<WasmMemory> {
         val memorySizeInPages = 0
-        val memory = WasmMemory(WasmLimits(memorySizeInPages.toUInt(), null /* "unlimited" */))
+        val importPair = moduleImportName?.let { WasmImportDescriptor(it, WasmSymbol("memory")) }
+        val memory = WasmMemory(WasmLimits(memorySizeInPages.toUInt(), null/* "unlimited" */), importPair)
 
         // Need to export the memory in order to pass complex objects to the host language.
         // Export name "memory" is a WASI ABI convention.
         val exportMemory = WasmExport.Memory("memory", memory)
         exports.add(exportMemory)
-        return memory
+        return listOf(memory)
     }
 
     private fun createAndExportMasterInitFunction(
@@ -456,7 +487,12 @@ class WasmCompiledModuleFragment(
 
         val masterInitFunction = WasmFunction.Defined("_initialize", WasmSymbol(parameterlessNoReturnFunctionType))
         with(WasmExpressionBuilder(masterInitFunction.instructions)) {
-            buildCall(WasmSymbol(unitGetInstance), serviceCodeLocation)
+            if (initializeUnit) {
+                val unitGetInstance = tryFindBuiltInFunction { it.unitGetInstance }
+                    ?: compilationException("kotlin.Unit_getInstance is not file in fragments", null)
+                buildCall(WasmSymbol(unitGetInstance), serviceCodeLocation)
+            }
+
             buildCall(WasmSymbol(fieldInitializerFunction), serviceCodeLocation)
 
             if (tryGetAssociatedObject != null) {

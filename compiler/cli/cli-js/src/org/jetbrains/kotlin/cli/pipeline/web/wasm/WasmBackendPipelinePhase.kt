@@ -11,8 +11,10 @@ import org.jetbrains.kotlin.backend.wasm.compileWasm
 import org.jetbrains.kotlin.backend.wasm.dce.eliminateDeadDeclarations
 import org.jetbrains.kotlin.backend.wasm.ic.IrFactoryImplForWasmIC
 import org.jetbrains.kotlin.backend.wasm.ic.WasmModuleArtifact
+import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmCompiledFileFragment
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmModuleFragmentGenerator
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmModuleMetadataCache
+import org.jetbrains.kotlin.backend.wasm.ir2wasm.getAllReferencedDeclarations
 import org.jetbrains.kotlin.backend.wasm.writeCompilationResult
 import org.jetbrains.kotlin.cli.common.perfManager
 import org.jetbrains.kotlin.cli.js.IcCachesArtifacts
@@ -21,17 +23,23 @@ import org.jetbrains.kotlin.cli.pipeline.web.WasmBackendPipelineArtifact
 import org.jetbrains.kotlin.cli.pipeline.web.WebBackendPipelinePhase
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.moduleName
+import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.backend.js.ModulesStructure
 import org.jetbrains.kotlin.ir.backend.js.WholeWorldStageController
 import org.jetbrains.kotlin.ir.backend.js.dce.DceDumpNameCache
 import org.jetbrains.kotlin.ir.backend.js.dce.dumpDeclarationIrSizesIfNeed
 import org.jetbrains.kotlin.ir.backend.js.loadIr
+import org.jetbrains.kotlin.ir.backend.js.loadIrForMultimoduleMode
+import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsIrLinker
+import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.js.config.*
+import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.platform.wasm.WasmTarget
 import org.jetbrains.kotlin.util.PhaseType
 import org.jetbrains.kotlin.util.PotentiallyIncorrectPhaseTimeMeasurement
 import org.jetbrains.kotlin.util.tryMeasurePhaseTime
+import org.jetbrains.kotlin.platform.wasm.WasmMultimoduleMode
 import org.jetbrains.kotlin.wasm.config.WasmConfigurationKeys
 import java.io.File
 
@@ -129,6 +137,41 @@ object WasmBackendPipelinePhase : WebBackendPipelinePhase<WasmBackendPipelineArt
         wasmDebug: Boolean,
         generateDwarf: Boolean
     ): WasmCompilerResult {
+        val wasmMultimoduleCompilationMode = WasmMultimoduleMode.NONE
+        return when (wasmMultimoduleCompilationMode) {
+            WasmMultimoduleMode.NONE -> compileNormalMode(
+                configuration = configuration,
+                module = module,
+                outputName = outputName,
+                outputDir = outputDir,
+                propertyLazyInitialization = propertyLazyInitialization,
+                dce = dce,
+                dceDumpDeclarationIrSizesToFile = dceDumpDeclarationIrSizesToFile,
+                wasmDebug = wasmDebug,
+                generateDwarf = generateDwarf,
+            )
+            WasmMultimoduleMode.SLAVE, WasmMultimoduleMode.MASTER -> compileMultimoduleMode(
+                configuration = configuration,
+                module = module,
+                outputName = outputName,
+                outputDir = outputDir,
+                propertyLazyInitialization = propertyLazyInitialization,
+                isMaster = wasmMultimoduleCompilationMode == WasmMultimoduleMode.MASTER
+            )
+        }
+    }
+
+    internal fun compileNormalMode(
+        configuration: CompilerConfiguration,
+        module: ModulesStructure,
+        outputName: String,
+        outputDir: File,
+        propertyLazyInitialization: Boolean,
+        dce: Boolean,
+        dceDumpDeclarationIrSizesToFile: String?,
+        wasmDebug: Boolean,
+        generateDwarf: Boolean
+    ): WasmCompilerResult {
         val performanceManager = configuration.perfManager
         performanceManager?.let {
             @OptIn(PotentiallyIncorrectPhaseTimeMeasurement::class)
@@ -174,6 +217,7 @@ object WasmBackendPipelinePhase : WebBackendPipelinePhase<WasmBackendPipelineArt
                 irFactory,
                 allowIncompleteImplementations = dce,
                 skipCommentInstructions = !generateWat,
+                useStringPool = true,
             )
             val wasmCompiledFileFragments = allModules.map { codeGenerator.generateModuleAsSingleFileFragment(it) }
 
@@ -194,6 +238,119 @@ object WasmBackendPipelinePhase : WebBackendPipelinePhase<WasmBackendPipelineArt
                 result = res,
                 dir = outputDir,
                 fileNameBase = outputName
+            )
+
+            return res
+        }
+    }
+
+    private fun compileMultimoduleMode(
+        configuration: CompilerConfiguration,
+        module: ModulesStructure,
+        outputName: String,
+        outputDir: File,
+        propertyLazyInitialization: Boolean,
+        isMaster: Boolean,
+    ): WasmCompilerResult {
+        val performanceManager = configuration.perfManager
+
+        val irFactory = IrFactoryImplForWasmIC(WholeWorldStageController())
+
+        val masterDeserializer: (JsIrLinker, ModuleDescriptor, KotlinLibrary) -> IrModuleFragment
+        val slaveDeserializer: (JsIrLinker, ModuleDescriptor, KotlinLibrary) -> IrModuleFragment
+        if (isMaster) {
+            masterDeserializer = JsIrLinker::deserializeFullModule
+            slaveDeserializer = JsIrLinker::deserializeOnlyHeaderModule
+        } else {
+            masterDeserializer = JsIrLinker::deserializeHeadersWithInlineBodies
+            slaveDeserializer = JsIrLinker::deserializeFullModule
+        }
+
+        val irModuleInfo = loadIrForMultimoduleMode(
+            modulesStructure = module,
+            irFactory = irFactory,
+            masterDeserializer = masterDeserializer,
+            slaveDeserializer = slaveDeserializer,
+        )
+
+//        //Hack - pre-load functional interfaces in case if IrLoader cut its count (KT-71039)
+//        if (isMaster) {
+//            repeat(25) {
+//                irModuleInfo.bultins.functionN(it)
+//                irModuleInfo.bultins.suspendFunctionN(it)
+//                irModuleInfo.bultins.kFunctionN(it)
+//                irModuleInfo.bultins.kSuspendFunctionN(it)
+//            }
+//        }
+
+        val (allModules, backendContext, typeScriptFragment) = compileToLoweredIr(
+            irModuleInfo,
+            module.mainModule,
+            configuration,
+            performanceManager,
+            exportedDeclarations = setOf(FqName("main")),
+            generateTypeScriptFragment = false,
+            propertyLazyInitialization = propertyLazyInitialization,
+            isIncremental = true,
+        )
+
+        performanceManager.tryMeasurePhaseTime(PhaseType.Backend) {
+            val generateWat = configuration.get(WasmConfigurationKeys.WASM_GENERATE_WAT, false)
+
+            val wasmModuleMetadataCache = WasmModuleMetadataCache(backendContext)
+            val codeGenerator = WasmModuleFragmentGenerator(
+                backendContext,
+                wasmModuleMetadataCache,
+                irFactory,
+                allowIncompleteImplementations = false,
+                skipCommentInstructions = !generateWat,
+                useStringPool = isMaster
+            )
+
+            val slaveModule = allModules.last()
+            val masterModules = allModules.dropLast(1)
+            val wasmCompiledFileFragments = mutableListOf<WasmCompiledFileFragment>()
+            val masterModuleName: String?
+            if (isMaster) {
+                masterModules.mapTo(wasmCompiledFileFragments) {
+                    codeGenerator.generateModuleAsSingleFileFragmentWithIECExport(it)
+                }
+                masterModuleName = null
+            } else {
+                masterModuleName = "$outputName.master"
+                val slaveModuleFileFragment = codeGenerator.generateModuleAsSingleFileFragment(slaveModule)
+
+                val importedDeclarations = getAllReferencedDeclarations(slaveModuleFileFragment)
+                masterModules.mapTo(wasmCompiledFileFragments) {
+                    codeGenerator.generateModuleAsSingleFileFragmentWithIECImport(it, masterModuleName, importedDeclarations)
+                }
+                wasmCompiledFileFragments.add(slaveModuleFileFragment)
+            }
+
+            val moduleName = if (isMaster) "${slaveModule.name.asString()}.master" else slaveModule.name.asString()
+            val outputFileName = if (isMaster) "${outputName}_master" else outputName
+
+            val res = compileWasm(
+                wasmCompiledFileFragments = wasmCompiledFileFragments,
+                moduleName = moduleName,
+                configuration = configuration,
+                typeScriptFragment = typeScriptFragment,
+                baseFileName = outputFileName,
+                emitNameSection = false,
+                generateWat = generateWat,
+                generateDwarf = false,
+                generateSourceMaps = false,
+                useDebuggerCustomFormatters = false,
+                moduleImportName = masterModuleName,
+                initializeUnit = isMaster,
+                exportThrowableTag = isMaster,
+                initializeStringPool = isMaster,
+            )
+
+            writeCompilationResult(
+                result = res,
+                dir = outputDir,
+                fileNameBase = outputFileName,
             )
 
             return res
