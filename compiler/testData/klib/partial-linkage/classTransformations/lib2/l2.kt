@@ -289,6 +289,22 @@ fun getFunctionalInterfaceToInterfaceAnswer(answer: Int): Int {
     return getFunctionalInterfaceToInterface(answer).answer()
 }
 
+fun getFunctionalInterfaceWithChangedFun(answer: Int): FunctionalInterfaceWithChangedFun {
+    val worker = FunctionalInterfaceWithChangedFun { answer }
+    return worker
+}
+
+fun getFunctionalInterfaceWithChangedFunAsObject(answer: Int): FunctionalInterfaceWithChangedFun {
+    val worker = object : FunctionalInterfaceWithChangedFun {
+        override fun answer() = answer
+    }
+    return worker
+}
+
+fun getFunctionalInterfaceWithChangedFunAnswer(answer: Int): Int {
+    return getFunctionalInterfaceWithChangedFun(answer).answer()
+}
+
 fun interface FunctionalInterfaceWith0AbstractFunctions : XAnswerDefault
 fun interface FunctionalInterfaceWith1AbstractFunction : XAnswer, XFunction1Default, XFunction2Default, XProperty1Default, XProperty2Default
 fun interface FunctionalInterfaceWith2AbstractFunctions : XAnswer, XFunction1, XFunction2Default, XProperty1Default, XProperty2Default

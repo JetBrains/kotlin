@@ -179,6 +179,9 @@ fun box() = abiTest {
     expectSuccess(1) { getFunctionalInterfaceToInterface(1).answer() }
     expectSuccess(2) { getFunctionalInterfaceToInterfaceAsObject(2).answer() }
     expectSuccess(3) { getFunctionalInterfaceToInterfaceAnswer(3) }
+    expectFailure(linkage("Reference to lambda in function 'getFunctionalInterfaceWithChangedFun' can not be evaluated: No function found for symbol '/FunctionalInterfaceWithChangedFun.answer'")) { getFunctionalInterfaceWithChangedFun(1).answer() }
+    expectFailure(linkage("Function 'answer' can not be called: No function found for symbol '/FunctionalInterfaceWithChangedFun.answer'")) { getFunctionalInterfaceWithChangedFunAsObject(2).answer() }
+    expectFailure(linkage("Reference to lambda in function 'getFunctionalInterfaceWithChangedFun' can not be evaluated: No function found for symbol '/FunctionalInterfaceWithChangedFun.answer'")) { getFunctionalInterfaceWithChangedFunAnswer(3) }
     expectSuccess(4) { getFunctionalInterfaceWith0AbstractFunctions(4).answer() }
     expectSuccess(5) { getFunctionalInterfaceWith0AbstractFunctionsAsObject(5).answer() }
     expectSuccess(6) { getFunctionalInterfaceWith0AbstractFunctionsAnswer(6) }
