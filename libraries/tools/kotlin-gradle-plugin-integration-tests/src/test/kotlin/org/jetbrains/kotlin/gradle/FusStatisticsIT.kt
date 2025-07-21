@@ -36,6 +36,7 @@ import kotlin.test.assertTrue
 class FusStatisticsIT : KGPBaseTest() {
     private val expectedMetrics = arrayOf(
         "OS_TYPE",
+        "OS_VERSION",
         "BUILD_FAILED=false",
         "EXECUTED_FROM_IDEA=false",
         "BUILD_FINISH_TIME",
