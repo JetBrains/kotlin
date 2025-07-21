@@ -450,7 +450,7 @@ class ComposerParamTransformer(
 
     private fun defaultArgumentFor(param: IrValueParameter): IrExpression? {
         // in case of inaccessible (private/internal) constructor we use default value as init expression
-        return param.type.defaultValue(param.defaultValue?.expression)?.let {
+        return (param.type.defaultValue() ?: param.defaultValue?.expression)?.let {
             IrCompositeImpl(
                 it.startOffset,
                 it.endOffset,
@@ -467,7 +467,6 @@ class ComposerParamTransformer(
     //  don't have access to that so instead we are just going to construct the inline class
     //  itself and hope that it gets lowered properly.
     private fun IrType.defaultValue(
-        orDefaultExpr: IrExpression? = null,
         startOffset: Int = UNDEFINED_OFFSET,
         endOffset: Int = UNDEFINED_OFFSET,
     ): IrExpression? {
@@ -493,7 +492,7 @@ class ComposerParamTransformer(
 
                 // TODO(lmr): We should not be calling the constructor here, but this seems like a
                 //  reasonable interim solution.
-                underlyingType.defaultValue(null, startOffset, endOffset)?.let { defaultUnderlyingTypeValue ->
+                underlyingType.defaultValue(startOffset, endOffset)?.let { defaultUnderlyingTypeValue ->
                     IrConstructorCallImpl(
                         startOffset,
                         endOffset,
@@ -506,7 +505,7 @@ class ComposerParamTransformer(
                         it.arguments[0] = defaultUnderlyingTypeValue
                     }
                 }
-            } ?: orDefaultExpr
+            }
         }
     }
 
@@ -746,7 +745,7 @@ class ComposerParamTransformer(
      * nullability changed the value class mangle on a function signature. This stub creates a
      * binary compatible function to support old compilers while redirecting to a new function.
      */
-    private fun IrSimpleFunction.makeValueClassNonPrimitiveNonNullableStub(): IrSimpleFunction? {
+    private fun IrSimpleFunction.makeValueClassNonPrimitiveStub(): IrSimpleFunction? {
         var makeStub = false
         for (i in parameters.indices) {
             val param = parameters[i]
@@ -808,10 +807,7 @@ class ComposerParamTransformer(
                 && Visibilities.compare(constructorVisibility, classVisibility)?.let { it >= 0 } == true
     }
 
-    private fun IrSimpleFunction.makeValueClassInaccessibleConstructorDefaultStub(visibilityCheck: IrType.() -> Boolean): IrSimpleFunction? {
-        if (context.platform.isJvm()) {
-            return null
-        }
+    private fun IrSimpleFunction.makeValueClassInaccessibleConstructorDefaultStub(): IrSimpleFunction? {
         val defaultValueClassesWithPrivateConstructors = mutableSetOf<Int>()
         for (i in parameters.indices) {
             val param = parameters[i]
@@ -820,7 +816,7 @@ class ComposerParamTransformer(
                 param.type.isInlineClassType() &&
                 !param.type.isNullable() &&
                 param.type.unboxInlineClass().isPrimitiveType() &&  // non-primitive case is covered by another stub
-                param.type.visibilityCheck()
+                !param.type.constructorVisibilityIsAtLeastAsAccessibleAsType()
             ) {
                 defaultValueClassesWithPrivateConstructors.add(i)
             }
@@ -890,16 +886,15 @@ class ComposerParamTransformer(
         }
 
         val stubs = mutableListOf<IrSimpleFunction>()
-        makeValueClassNonPrimitiveNonNullableStub()?.let { stubs.add(it) }
+        makeValueClassNonPrimitiveStub()?.let { stubs.add(it) }
 
-        // such constructors would not be visible in IR on another module's side.
-        // which would lead to different calling-function parameter types patching, so for compatibility we generate additional stub,
-        // where all value-class default args with private constructors would have a nullable type
-        makeValueClassInaccessibleConstructorDefaultStub { isPrimaryConstructorPrivate() }?.let { stubs.add(it) }
-        // we cant access private/internal constructors from another module, so we need to generate additional stub
-        // with all default value-class (with private and internal constructors) are marked nullable
-        makeValueClassInaccessibleConstructorDefaultStub { !constructorVisibilityIsAtLeastAsAccessibleAsType() }?.let { stubs.add(it) }
-
+        if (!context.platform.isJvm()) {
+            // such constructors would not be visible in IR on another module's side.
+            // which would lead to different calling-function parameter types patching, so for compatibility we generate additional stub.
+            // where all value-class default args with constructors whose visibility is less visible than type's visibility
+            // (internal/private constructors) would be transformed to a nullable type
+            makeValueClassInaccessibleConstructorDefaultStub()?.let { stubs.add(it) }
+        }
         return stubs
     }
 
