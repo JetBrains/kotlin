@@ -147,15 +147,15 @@ fun main() {
                 )
             ) {
                 model("box", targetBackend = TargetBackend.NATIVE, excludeDirs = k1BoxTestDir)
-                model("boxInline", targetBackend = TargetBackend.NATIVE, excludeDirs = k1BoxTestDir)
+                model("boxInline", targetBackend = TargetBackend.NATIVE)
             }
             testClass<AbstractNativeIrDeserializationTest> {
                 model("box", excludeDirs = k1BoxTestDir, nativeTestInNonNativeTestInfra = true)
-                model("boxInline", excludeDirs = k1BoxTestDir, nativeTestInNonNativeTestInfra = true)
+                model("boxInline", nativeTestInNonNativeTestInfra = true)
             }
             testClass<AbstractNativeIrDeserializationWithInlinedFunInKlibTest> {
                 model("box", excludeDirs = k1BoxTestDir, nativeTestInNonNativeTestInfra = true)
-                model("boxInline", excludeDirs = k1BoxTestDir, nativeTestInNonNativeTestInfra = true)
+                model("boxInline", nativeTestInNonNativeTestInfra = true)
             }
         }
 
