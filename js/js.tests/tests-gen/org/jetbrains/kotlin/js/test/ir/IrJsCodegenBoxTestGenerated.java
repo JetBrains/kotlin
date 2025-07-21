@@ -17382,6 +17382,24 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
     }
 
     @Test
+    @TestMetadata("kt77685-sam.kt")
+    public void testKt77685_sam() {
+      runTest("compiler/testData/codegen/box/funInterface/kt77685-sam.kt");
+    }
+
+    @Test
+    @TestMetadata("kt79092.kt")
+    public void testKt79092() {
+      runTest("compiler/testData/codegen/box/funInterface/kt79092.kt");
+    }
+
+    @Test
+    @TestMetadata("kt79092-sam.kt")
+    public void testKt79092_sam() {
+      runTest("compiler/testData/codegen/box/funInterface/kt79092-sam.kt");
+    }
+
+    @Test
     @TestMetadata("multimodule.kt")
     public void testMultimodule() {
       runTest("compiler/testData/codegen/box/funInterface/multimodule.kt");
