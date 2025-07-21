@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.ir.builders.irCall
 import org.jetbrains.kotlin.ir.builders.irGet
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
+import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOriginImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrInstanceInitializerCallImpl
@@ -43,6 +44,9 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
 
         private val CREATE_METHOD_NAME = Name.identifier("create")
     }
+
+    protected open val coroutineClassAnnotations: List<IrConstructorCall>
+        get() = emptyList()
 
     protected abstract val stateMachineMethodName: Name
     protected abstract fun getCoroutineBaseClass(function: IrFunction): IrClassSymbol
@@ -98,7 +102,9 @@ abstract class AbstractSuspendFunctionsLowering<C : CommonBackendContext>(val co
     private inner class CoroutineBuilder(val function: IrSimpleFunction, private val isSuspendLambda: Boolean) {
         private val functionParameters = if (isSuspendLambda) function.nonDispatchParameters else function.parameters
 
-        private val coroutineClass: IrClass = getCoroutineClass(function)
+        private val coroutineClass: IrClass = getCoroutineClass(function).apply {
+            annotations = annotations memoryOptimizedPlus coroutineClassAnnotations
+        }
 
         private fun buildNewCoroutineClass(function: IrSimpleFunction): IrClass =
             context.irFactory.buildClass {

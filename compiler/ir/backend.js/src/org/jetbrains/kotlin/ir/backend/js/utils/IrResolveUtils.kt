@@ -17,10 +17,13 @@ val IrFunction.realOverrideTarget: IrFunction
     }
 
 val IrSimpleFunction.realOverrideTarget: IrSimpleFunction
-    get(): IrSimpleFunction {
+    get(): IrSimpleFunction =
+        realOverrideTargetOrNull ?: compilationException("No real override target found", this)
+
+val IrSimpleFunction.realOverrideTargetOrNull: IrSimpleFunction?
+    get(): IrSimpleFunction? {
         val realOverrides = collectRealOverrides()
         return realOverrides.find { it.modality != Modality.ABSTRACT } ?: realOverrides.firstOrNull()
-        ?: compilationException("No real override target found", this)
     }
 
 val IrProperty.realOverrideTarget: IrProperty

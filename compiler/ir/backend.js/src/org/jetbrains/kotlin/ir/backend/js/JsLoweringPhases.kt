@@ -448,6 +448,17 @@ private val addContinuationToFunctionCallsLoweringPhase = makeIrModulePhase(
     )
 )
 
+private val prepareSuspendFunctionsToExportLowering = makeIrModulePhase(
+    ::PrepareSuspendFunctionsToExportLowering,
+    name = "PrepareSuspendFunctionsToExportLowering",
+)
+
+private val ignoreOriginalSuspendFunctionsThatWereExportedLowering = makeIrModulePhase(
+    ::IgnoreOriginalSuspendFunctionsThatWereExportedLowering,
+    name = "IgnoreOriginalSuspendFunctionsThatWereExportedLowering",
+    prerequisite = setOf(prepareSuspendFunctionsToExportLowering)
+)
+
 private val privateMembersLoweringPhase = makeIrModulePhase(
     ::PrivateMembersLowering,
     name = "PrivateMembersLowering",
@@ -754,6 +765,8 @@ fun getJsLowerings(
     copyInlineFunctionBodyLoweringPhase,
     removeInlineDeclarationsWithReifiedTypeParametersLoweringPhase,
     replaceSuspendIntrinsicLowering,
+    prepareSuspendFunctionsToExportLowering,
+    ignoreOriginalSuspendFunctionsThatWereExportedLowering,
     prepareCollectionsToExportLowering,
     preventExportOfSyntheticDeclarationsLowering,
     jsStaticLowering,

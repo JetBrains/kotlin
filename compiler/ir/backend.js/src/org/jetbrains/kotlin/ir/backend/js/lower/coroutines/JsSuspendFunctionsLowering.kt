@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.ir.symbols.IrVariableSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.isUnit
 import org.jetbrains.kotlin.ir.util.addChild
+import org.jetbrains.kotlin.ir.util.constructors
 import org.jetbrains.kotlin.ir.util.isSuspend
 import org.jetbrains.kotlin.ir.util.nonDispatchParameters
 import org.jetbrains.kotlin.ir.util.parentClassOrNull
@@ -59,6 +60,10 @@ class JsSuspendFunctionsLowering(
     private val coroutineImplResultSymbolSetter = coroutineSymbols.coroutineImplResultSymbolSetter
 
     override val stateMachineMethodName = Name.identifier("doResume")
+    override val coroutineClassAnnotations: List<IrConstructorCall> by lazy(LazyThreadSafetyMode.NONE) {
+        ctx.jsExportIgnoreSymbol?.let { listOf(JsIrBuilder.buildConstructorCall(it.constructors.single())) } ?: emptyList()
+    }
+
     override fun getCoroutineBaseClass(function: IrFunction) = context.symbols.coroutineImpl
 
     override fun nameForCoroutineClass(function: IrFunction) = "${function.name}COROUTINE\$".synthesizedName

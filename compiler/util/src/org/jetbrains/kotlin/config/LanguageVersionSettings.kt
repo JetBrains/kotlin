@@ -442,6 +442,7 @@ enum class LanguageFeature(
     ParseLambdaWithSuspendModifier(KOTLIN_2_3, "KT-22765"),
     DiscriminateSuspendInOverloadResolution(KOTLIN_2_3, "KT-23610"),
     JsAllowLongInExportedDeclarations(sinceVersion = KOTLIN_2_3, "KT-79222"),
+    JsExportSuspendFunctions(sinceVersion = KOTLIN_2_3, "KT-79359"),
 
     IrRichCallableReferencesInKlibs(sinceVersion = KOTLIN_2_3, "KT-72734"), // KT-72734, KT-74384, KT-74392
 
