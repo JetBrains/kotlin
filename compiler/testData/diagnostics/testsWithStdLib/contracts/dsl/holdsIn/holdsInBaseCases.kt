@@ -151,6 +151,6 @@ fun testRunIfElseWithUnrelatedAssignmentBefore(foo: String?) {
     )
 }
 
-/* GENERATED_FIR_TAGS: assignment, contractCallsEffect, contracts, equalityExpression, functionDeclaration,
-functionalType, ifExpression, inline, isExpression, lambdaLiteral, localProperty, nullableType, propertyDeclaration,
-smartcast, stringLiteral, typeParameter */
+/* GENERATED_FIR_TAGS: assignment, contractCallsEffect, contractHoldsInEffect, contracts, equalityExpression,
+functionDeclaration, functionalType, ifExpression, inline, isExpression, lambdaLiteral, localProperty, nullableType,
+propertyDeclaration, smartcast, stringLiteral, typeParameter */
