@@ -15,6 +15,8 @@
 #include "RuntimePrivate.hpp"
 #include "Worker.h"
 #include "KString.h"
+#include "mm/cpp/HotReload.hpp"
+
 #include "CrashHandler.hpp"
 #include <atomic>
 #include <cstdint>
@@ -112,6 +114,8 @@ NO_INLINE RuntimeState* initRuntime() {
 
   // Register runtime deinit function at thread cleanup.
   konan::onThreadExit(Kotlin_deinitRuntimeCallback, runtimeState);
+
+  hot::HotReloader::Init();
 
   return result;
 }

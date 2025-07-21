@@ -7,12 +7,16 @@ package kotlin.native.runtime
 
 import kotlin.native.internal.GCUnsafeCall
 import kotlin.native.internal.escapeAnalysis.Escapes
+import kotlin.reflect.KClass
 
 @NativeRuntimeApi
-@SinceKotlin("1.9")
 public object HotReload {
 
     @GCUnsafeCall("Kotlin_native_internal_HotReload_perform")
     @Escapes.Nothing
     public external fun perform()
+
+    @GCUnsafeCall("Kotlin_native_internal_HotReload_forceReloadOf")
+    @Escapes.Nothing
+    public external fun <T1 : Any, T2: Any> forceReloadOf(oldType: KClass<T1>, newType: KClass<T2>)
 }
