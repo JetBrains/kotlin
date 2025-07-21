@@ -22,6 +22,9 @@ class SuspendLambda {
 
     fun override(p: String, b: (suspend (P) -> Unit)) = null
     fun override(b: (suspend (P) -> Unit)) = null
+
+    fun annotatedReturnSuspend(): @A suspend (P) -> Unit = {}
+    fun returnSuspend(): suspend (P) -> Unit = {}
 }
 
 interface P

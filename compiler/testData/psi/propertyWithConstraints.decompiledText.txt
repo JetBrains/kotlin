@@ -1,0 +1,20 @@
+FooKt.class:
+  // IntelliJ API Decompiler stub source generated from a class file
+  // Implementation of methods is not available
+
+  public val <T : I1> T.foo: kotlin.String? where T : I2 /* compiled code */ /* hasBackingField: false */
+      public final get() {/* compiled code */ }
+
+I1.class:
+  // IntelliJ API Decompiler stub source generated from a class file
+  // Implementation of methods is not available
+
+  public interface I1 {
+  }
+
+I2.class:
+  // IntelliJ API Decompiler stub source generated from a class file
+  // Implementation of methods is not available
+
+  public interface I2 {
+  }
