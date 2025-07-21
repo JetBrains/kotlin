@@ -35761,9 +35761,21 @@ public class LLPartialDiagnosticsFe10TestGenerated extends AbstractLLPartialDiag
       }
 
       @Test
+      @TestMetadata("privateClasses.kt")
+      public void testPrivateClasses() {
+        runTest("compiler/testData/diagnostics/tests/redeclarations/privateClasses.kt");
+      }
+
+      @Test
       @TestMetadata("privateNestedClasses.kt")
       public void testPrivateNestedClasses() {
         runTest("compiler/testData/diagnostics/tests/redeclarations/privateNestedClasses.kt");
+      }
+
+      @Test
+      @TestMetadata("privateTypeAliases.kt")
+      public void testPrivateTypeAliases() {
+        runTest("compiler/testData/diagnostics/tests/redeclarations/privateTypeAliases.kt");
       }
 
       @Test
