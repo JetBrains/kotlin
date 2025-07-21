@@ -56,13 +56,13 @@ internal fun getQualifiedName(rtti: kotlin.wasm.internal.reftypes.structref): St
     return if (packageName.isEmpty()) typeName else "$packageName.$typeName"
 }
 
-internal fun getPackageName(rtti: kotlin.wasm.internal.reftypes.structref): String = stringLiteral(
+internal fun getPackageName(rtti: kotlin.wasm.internal.reftypes.structref): String = stringLiteralUTF16(
     startAddress = wasmGetRttiIntField(2, rtti),
     length = wasmGetRttiIntField(3, rtti),
     poolId = wasmGetRttiIntField(4, rtti),
 )
 
-internal fun getSimpleName(rtti: kotlin.wasm.internal.reftypes.structref): String = stringLiteral(
+internal fun getSimpleName(rtti: kotlin.wasm.internal.reftypes.structref): String = stringLiteralUTF16(
     startAddress = wasmGetRttiIntField(5, rtti),
     length = wasmGetRttiIntField(6, rtti),
     poolId = wasmGetRttiIntField(7, rtti),

@@ -628,8 +628,11 @@ fun generateConstExpression(
             body.buildConstI32Symbol(literalPoolId, location)
             body.buildConstI32Symbol(literalAddress, location)
             body.buildConstI32(stringValue.length, location)
-            body.buildConstI32(if (isLatin) 1 else 0, location)
-            body.buildCall(context.referenceFunction(backendContext.wasmSymbols.stringGetLiteral), location)
+            if (isLatin) {
+                body.buildCall(context.referenceFunction(backendContext.wasmSymbols.stringGetLiteralLatin), location)
+            } else {
+                body.buildCall(context.referenceFunction(backendContext.wasmSymbols.stringGetLiteralUTF16), location)
+            }
             body.commentGroupEnd()
         }
     }

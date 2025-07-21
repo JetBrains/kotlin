@@ -32,8 +32,15 @@ internal class WasmUsefulDeclarationProcessor(
     override val bodyVisitor: BodyVisitorBase = object : BodyVisitorBase() {
         override fun visitConst(expression: IrConst, data: IrDeclaration) = when (expression.kind) {
             is IrConstKind.Null -> expression.type.enqueueType(data, "expression type")
-            is IrConstKind.String -> context.wasmSymbols.stringGetLiteral.owner
-                .enqueue(data, "String literal intrinsic getter stringGetLiteral")
+            is IrConstKind.String -> {
+                if ((expression.value as String).all { it.code in 0..255 }) {
+                    context.wasmSymbols.stringGetLiteralLatin.owner
+                        .enqueue(data, "String literal intrinsic getter stringGetLiteral")
+                } else {
+                    context.wasmSymbols.stringGetLiteralUTF16.owner
+                        .enqueue(data, "String literal intrinsic getter stringGetLiteral")
+                }
+            }
             else -> Unit
         }
 
