@@ -476,10 +476,14 @@ private fun FirDeclarationCollector<FirBasedSymbol<*>>.collectTopLevelConflict(
         }
     if (!conflictingSymbol.isCollectable()) return
     if (areCompatibleMainFunctions(declaration, containingFile, conflictingSymbol, actualConflictingFile, session)) return
+
     @OptIn(SymbolInternals::class)
     val conflicting = conflictingSymbol.fir
+
+    // Private callables are allowed to be redeclared across multiple files, but private classifiers are not. Hence, we only check the
+    // visibility of callables, as classifiers of any visibility can conflict.
     if (
-        conflicting is FirMemberDeclaration &&
+        conflicting is FirCallableDeclaration &&
         !session.visibilityChecker.isVisible(conflicting, session, containingFile, emptyList(), dispatchReceiver = null)
     ) return
 

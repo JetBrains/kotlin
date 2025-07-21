@@ -5,6 +5,6 @@
 private class <!CLASSIFIER_REDECLARATION!>A<!>
 
 // FILE: A2.kt
-private class A
+private class <!CLASSIFIER_REDECLARATION!>A<!>
 
 /* GENERATED_FIR_TAGS: classDeclaration */

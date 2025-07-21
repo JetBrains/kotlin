@@ -5,6 +5,6 @@
 private typealias <!CLASSIFIER_REDECLARATION!>A<!> = Int
 
 // FILE: A2.kt
-private typealias A = String
+private typealias <!CLASSIFIER_REDECLARATION!>A<!> = String
 
 /* GENERATED_FIR_TAGS: classDeclaration */
