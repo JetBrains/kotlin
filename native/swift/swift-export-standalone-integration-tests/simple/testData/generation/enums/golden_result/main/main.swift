@@ -3,20 +3,12 @@ import KotlinRuntime
 import KotlinRuntimeSupport
 import KotlinStdlib
 
-public final class Enum: KotlinRuntime.KotlinBase, Swift.CaseIterable {
-    public static var a: main.Enum {
-        get {
-            return main.Enum.__createClassWrapper(externalRCRef: Enum_a_get())
-        }
-    }
+public enum Enum: KotlinRuntimeSupport._KotlinBridgeable, Swift.CaseIterable {
+    case a
+    case b
     public static var allCases: [main.Enum] {
         get {
             return Enum_entries_get() as! Swift.Array<main.Enum>
-        }
-    }
-    public static var b: main.Enum {
-        get {
-            return main.Enum.__createClassWrapper(externalRCRef: Enum_b_get())
         }
     }
     public var i: Swift.Int32 {
@@ -27,7 +19,7 @@ public final class Enum: KotlinRuntime.KotlinBase, Swift.CaseIterable {
             return Enum_i_set__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), newValue)
         }
     }
-    package override init(
+    package init(
         __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
         options: KotlinRuntime.KotlinBaseConstructionOptions
     ) {
@@ -39,31 +31,19 @@ public final class Enum: KotlinRuntime.KotlinBase, Swift.CaseIterable {
     public static func valueOf(
         value: Swift.String
     ) -> main.Enum {
-        return main.Enum.__createClassWrapper(externalRCRef: Enum_valueOf__TypesOfArguments__Swift_String__(value))
+        return main.Enum(__externalRCRefUnsafe: Enum_valueOf__TypesOfArguments__Swift_String__(value), options: .asBestFittingWrapper)
     }
 }
-public final class EnumSimple: KotlinRuntime.KotlinBase, Swift.CaseIterable {
-    public static var FIRST: main.EnumSimple {
-        get {
-            return main.EnumSimple.__createClassWrapper(externalRCRef: EnumSimple_FIRST_get())
-        }
-    }
-    public static var LAST: main.EnumSimple {
-        get {
-            return main.EnumSimple.__createClassWrapper(externalRCRef: EnumSimple_LAST_get())
-        }
-    }
-    public static var SECOND: main.EnumSimple {
-        get {
-            return main.EnumSimple.__createClassWrapper(externalRCRef: EnumSimple_SECOND_get())
-        }
-    }
+public enum EnumSimple: KotlinRuntimeSupport._KotlinBridgeable, Swift.CaseIterable {
+    case FIRST
+    case SECOND
+    case LAST
     public static var allCases: [main.EnumSimple] {
         get {
             return EnumSimple_entries_get() as! Swift.Array<main.EnumSimple>
         }
     }
-    package override init(
+    package init(
         __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
         options: KotlinRuntime.KotlinBaseConstructionOptions
     ) {
@@ -72,25 +52,13 @@ public final class EnumSimple: KotlinRuntime.KotlinBase, Swift.CaseIterable {
     public static func valueOf(
         value: Swift.String
     ) -> main.EnumSimple {
-        return main.EnumSimple.__createClassWrapper(externalRCRef: EnumSimple_valueOf__TypesOfArguments__Swift_String__(value))
+        return main.EnumSimple(__externalRCRefUnsafe: EnumSimple_valueOf__TypesOfArguments__Swift_String__(value), options: .asBestFittingWrapper)
     }
 }
-public final class EnumWithAbstractMembers: KotlinRuntime.KotlinBase, Swift.CaseIterable {
-    public static var MAGENTA: main.EnumWithAbstractMembers {
-        get {
-            return main.EnumWithAbstractMembers.__createClassWrapper(externalRCRef: EnumWithAbstractMembers_MAGENTA_get())
-        }
-    }
-    public static var SKY: main.EnumWithAbstractMembers {
-        get {
-            return main.EnumWithAbstractMembers.__createClassWrapper(externalRCRef: EnumWithAbstractMembers_SKY_get())
-        }
-    }
-    public static var YELLOW: main.EnumWithAbstractMembers {
-        get {
-            return main.EnumWithAbstractMembers.__createClassWrapper(externalRCRef: EnumWithAbstractMembers_YELLOW_get())
-        }
-    }
+public enum EnumWithAbstractMembers: KotlinRuntimeSupport._KotlinBridgeable, Swift.CaseIterable {
+    case YELLOW
+    case SKY
+    case MAGENTA
     public static var allCases: [main.EnumWithAbstractMembers] {
         get {
             return EnumWithAbstractMembers_entries_get() as! Swift.Array<main.EnumWithAbstractMembers>
@@ -101,7 +69,7 @@ public final class EnumWithAbstractMembers: KotlinRuntime.KotlinBase, Swift.Case
             return EnumWithAbstractMembers_red_get(self.__externalRCRef())
         }
     }
-    package override init(
+    package init(
         __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
         options: KotlinRuntime.KotlinBaseConstructionOptions
     ) {
@@ -119,20 +87,12 @@ public final class EnumWithAbstractMembers: KotlinRuntime.KotlinBase, Swift.Case
     public static func valueOf(
         value: Swift.String
     ) -> main.EnumWithAbstractMembers {
-        return main.EnumWithAbstractMembers.__createClassWrapper(externalRCRef: EnumWithAbstractMembers_valueOf__TypesOfArguments__Swift_String__(value))
+        return main.EnumWithAbstractMembers(__externalRCRefUnsafe: EnumWithAbstractMembers_valueOf__TypesOfArguments__Swift_String__(value), options: .asBestFittingWrapper)
     }
 }
-public final class EnumWithMembers: KotlinRuntime.KotlinBase, Swift.CaseIterable {
-    public static var NORTH: main.EnumWithMembers {
-        get {
-            return main.EnumWithMembers.__createClassWrapper(externalRCRef: EnumWithMembers_NORTH_get())
-        }
-    }
-    public static var SOUTH: main.EnumWithMembers {
-        get {
-            return main.EnumWithMembers.__createClassWrapper(externalRCRef: EnumWithMembers_SOUTH_get())
-        }
-    }
+public enum EnumWithMembers: KotlinRuntimeSupport._KotlinBridgeable, Swift.CaseIterable {
+    case NORTH
+    case SOUTH
     public static var allCases: [main.EnumWithMembers] {
         get {
             return EnumWithMembers_entries_get() as! Swift.Array<main.EnumWithMembers>
@@ -143,7 +103,7 @@ public final class EnumWithMembers: KotlinRuntime.KotlinBase, Swift.CaseIterable
             return EnumWithMembers_isNorth_get(self.__externalRCRef())
         }
     }
-    package override init(
+    package init(
         __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
         options: KotlinRuntime.KotlinBaseConstructionOptions
     ) {
@@ -155,7 +115,7 @@ public final class EnumWithMembers: KotlinRuntime.KotlinBase, Swift.CaseIterable
     public static func valueOf(
         value: Swift.String
     ) -> main.EnumWithMembers {
-        return main.EnumWithMembers.__createClassWrapper(externalRCRef: EnumWithMembers_valueOf__TypesOfArguments__Swift_String__(value))
+        return main.EnumWithMembers(__externalRCRefUnsafe: EnumWithMembers_valueOf__TypesOfArguments__Swift_String__(value), options: .asBestFittingWrapper)
     }
 }
 public func enumId(
@@ -167,5 +127,5 @@ public func ewamValues() -> ExportedKotlinPackages.kotlin.Array {
     return ExportedKotlinPackages.kotlin.Array.__createClassWrapper(externalRCRef: __root___ewamValues())
 }
 public func yellow() -> main.EnumWithAbstractMembers {
-    return main.EnumWithAbstractMembers.__createClassWrapper(externalRCRef: __root___yellow())
+    return main.EnumWithAbstractMembers(__externalRCRefUnsafe: __root___yellow(), options: .asBestFittingWrapper)
 }

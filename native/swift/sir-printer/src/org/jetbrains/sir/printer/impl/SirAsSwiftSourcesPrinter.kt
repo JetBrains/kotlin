@@ -91,6 +91,7 @@ internal class SirAsSwiftSourcesPrinter private constructor(
         when (this) {
             is SirClass -> printDeclaration()
             is SirEnum -> printDeclaration()
+            is SirEnumCase -> "case $name"
             is SirExtension -> printDeclaration()
             is SirStruct -> printDeclaration()
             is SirProtocol -> printDeclaration()
@@ -156,6 +157,11 @@ internal class SirAsSwiftSourcesPrinter private constructor(
         printer.withContext(Context(this)) {
             println(" {")
             withIndent {
+                if (this is SirEnum) {
+                    for (case in cases) {
+                        println("case ${case.name}")
+                    }
+                }
                 printChildren()
             }
             println("}")
@@ -318,6 +324,7 @@ internal class SirAsSwiftSourcesPrinter private constructor(
             is SirClass -> superClass to protocols
             is SirProtocol -> superClass to protocols
             is SirExtension -> null to protocols
+            is SirEnum -> null to protocols
             else -> null to emptyList()
         }
 

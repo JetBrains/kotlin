@@ -624,18 +624,14 @@ extension ExportedKotlinPackages.namespace.deeper {
     }
 }
 extension ExportedKotlinPackages.ignored {
-    public final class ENUM: KotlinRuntime.KotlinBase, Swift.CaseIterable {
-        public static var A: ExportedKotlinPackages.ignored.ENUM {
-            get {
-                return ExportedKotlinPackages.ignored.ENUM.__createClassWrapper(externalRCRef: ignored_ENUM_A_get())
-            }
-        }
+    public enum ENUM: KotlinRuntimeSupport._KotlinBridgeable, Swift.CaseIterable {
+        case A
         public static var allCases: [ExportedKotlinPackages.ignored.ENUM] {
             get {
                 return ignored_ENUM_entries_get() as! Swift.Array<ExportedKotlinPackages.ignored.ENUM>
             }
         }
-        package override init(
+        package init(
             __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
@@ -644,11 +640,11 @@ extension ExportedKotlinPackages.ignored {
         public static func valueOf(
             value: Swift.String
         ) -> ExportedKotlinPackages.ignored.ENUM {
-            return ExportedKotlinPackages.ignored.ENUM.__createClassWrapper(externalRCRef: ignored_ENUM_valueOf__TypesOfArguments__Swift_String__(value))
+            return ExportedKotlinPackages.ignored.ENUM(__externalRCRefUnsafe: ignored_ENUM_valueOf__TypesOfArguments__Swift_String__(value), options: .asBestFittingWrapper)
         }
     }
     public static func produce_ENUM() -> ExportedKotlinPackages.ignored.ENUM {
-        return ExportedKotlinPackages.ignored.ENUM.__createClassWrapper(externalRCRef: ignored_produce_ENUM())
+        return ExportedKotlinPackages.ignored.ENUM(__externalRCRefUnsafe: ignored_produce_ENUM(), options: .asBestFittingWrapper)
     }
     public static func produce_VALUE_CLASS() -> Swift.Never {
         fatalError()

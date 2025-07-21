@@ -20,6 +20,7 @@ val SirElement.debugString: String
             is SirClass -> "class ${swiftFqName}${listOfNotNull(superClass?.render, renderProtocols.takeIf { it.isNotEmpty() }).joinToString().prefixIfNotEmpty(": ")}"
             is SirProtocol -> "protocol ${swiftFqName}${renderProtocols.prefixIfNotEmpty(": ")}"
             is SirEnum -> "enum ${swiftFqName}" // TODO: Render protocols
+            is SirEnumCase -> "case ${swiftFqName}"
             is SirStruct -> "struct ${swiftFqName}" // TODO: Render protocols
             is SirTypealias -> "typealias ${swiftFqName} = ${type.render}"
             is SirModule -> "module ${swiftFqNameOrNull ?: "?"}"
