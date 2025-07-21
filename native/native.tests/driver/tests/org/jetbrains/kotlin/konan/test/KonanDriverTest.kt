@@ -161,10 +161,9 @@ class KonanDriverTest : AbstractNativeSimpleTest() {
             freeCompilerArgs = TestCompilerArgs(
                 listOf(
                     "-Xverbose-phases=MandatoryBitcodeLLVMPostprocessingPhase",
-                    if (HostManager.hostIsMingw)
-                        "-Xoverride-konan-properties=\"llvmInlineThreshold=76\""
-                    else "-Xoverride-konan-properties=llvmInlineThreshold=76"
-                )),
+                    "-Xoverride-konan-properties=llvmInlineThreshold=76",
+                )
+            ),
             sourceModules = testCase.modules,
             extras = TestCase.NoTestRunnerExtras("main"),
             dependencies = emptyList(),
