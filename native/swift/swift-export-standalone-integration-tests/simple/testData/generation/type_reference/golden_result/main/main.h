@@ -169,8 +169,6 @@ void * __root___var_object_wp_get();
 
 void __root___var_object_wp_set__TypesOfArguments__ExportedKotlinPackages_namespace_deeper_Object_with_package__(void * newValue);
 
-void * ignored_ENUM_A_get();
-
 NSArray<id> * ignored_ENUM_entries_get();
 
 void * ignored_ENUM_valueOf__TypesOfArguments__Swift_String__(NSString * value);

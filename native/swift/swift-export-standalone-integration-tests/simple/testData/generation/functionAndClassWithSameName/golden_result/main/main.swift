@@ -5,6 +5,25 @@ import KotlinRuntimeSupport
 import dep
 import flattened
 
+public enum EnumWithFactory {
+    case ONE
+    public static var allCases: [main.EnumWithFactory] {
+        get {
+            return EnumWithFactory_entries_get() as! Swift.Array<main.EnumWithFactory>
+        }
+    }
+    package override init(
+        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+        options: KotlinRuntime.KotlinBaseConstructionOptions
+    ) {
+        super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+    }
+    public static func valueOf(
+        value: Swift.String
+    ) -> main.EnumWithFactory {
+        return main.EnumWithFactory.__createClassWrapper(externalRCRef: EnumWithFactory_valueOf__TypesOfArguments__Swift_String__(value))
+    }
+}
 public protocol InterfaceWithFactory: KotlinRuntime.KotlinBase {
 }
 @objc(_InterfaceWithFactory)
@@ -29,29 +48,6 @@ public final class ClassWithFactoryWithoutParameters: KotlinRuntime.KotlinBase {
         options: KotlinRuntime.KotlinBaseConstructionOptions
     ) {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
-    }
-}
-public final class EnumWithFactory: KotlinRuntime.KotlinBase, Swift.CaseIterable {
-    public static var ONE: main.EnumWithFactory {
-        get {
-            return main.EnumWithFactory.__createClassWrapper(externalRCRef: EnumWithFactory_ONE_get())
-        }
-    }
-    public static var allCases: [main.EnumWithFactory] {
-        get {
-            return EnumWithFactory_entries_get() as! Swift.Array<main.EnumWithFactory>
-        }
-    }
-    package override init(
-        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
-        options: KotlinRuntime.KotlinBaseConstructionOptions
-    ) {
-        super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
-    }
-    public static func valueOf(
-        value: Swift.String
-    ) -> main.EnumWithFactory {
-        return main.EnumWithFactory.__createClassWrapper(externalRCRef: EnumWithFactory_valueOf__TypesOfArguments__Swift_String__(value))
     }
 }
 public final class ObjectWithFactory: KotlinRuntime.KotlinBase {

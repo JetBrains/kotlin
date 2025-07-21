@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.sir
 
+// Why on earth it's not a SirDeclaration
 class SirEnumCase(
     val name: String,
     val parameters: List<SirParameter>
