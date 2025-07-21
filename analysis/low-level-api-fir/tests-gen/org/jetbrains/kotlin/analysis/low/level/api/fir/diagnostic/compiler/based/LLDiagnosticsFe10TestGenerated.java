@@ -262,6 +262,12 @@ public class LLDiagnosticsFe10TestGenerated extends AbstractLLDiagnosticsTest {
     }
 
     @Test
+    @TestMetadata("castToNullableParameter.kt")
+    public void testCastToNullableParameter() {
+      runTest("compiler/testData/diagnostics/tests/castToNullableParameter.kt");
+    }
+
+    @Test
     @TestMetadata("castingMutableListVariance.kt")
     public void testCastingMutableListVariance() {
       runTest("compiler/testData/diagnostics/tests/castingMutableListVariance.kt");
