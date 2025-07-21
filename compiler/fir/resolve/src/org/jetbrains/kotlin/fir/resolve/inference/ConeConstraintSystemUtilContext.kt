@@ -11,13 +11,16 @@ import org.jetbrains.kotlin.fir.resolve.calls.ConeLambdaWithTypeVariableAsExpect
 import org.jetbrains.kotlin.fir.resolve.calls.ConePostponedResolvedAtom
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeArgumentConstraintPosition
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeFixVariableConstraintPosition
+import org.jetbrains.kotlin.fir.resolve.inference.model.ConeLambdaArgumentConstraintPosition
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemUtilContext
 import org.jetbrains.kotlin.resolve.calls.inference.components.PostponedArgumentInputTypesResolver
 import org.jetbrains.kotlin.resolve.calls.inference.model.ArgumentConstraintPosition
+import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.inference.model.FixVariableConstraintPosition
+import org.jetbrains.kotlin.resolve.calls.model.LambdaWithTypeVariableAsExpectedTypeMarker
 import org.jetbrains.kotlin.resolve.calls.model.PostponedAtomWithRevisableExpectedType
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.types.model.TypeVariableMarker
@@ -83,6 +86,17 @@ object ConeConstraintSystemUtilContext : ConstraintSystemUtilContext {
             "${argument::class}"
         }
         return ConeArgumentConstraintPosition(argument.expression)
+    }
+
+    override fun createLambdaArgumentConstraintPosition(
+        argument: LambdaWithTypeVariableAsExpectedTypeMarker
+    ): ConstraintPosition {
+        require(argument is ConeLambdaWithTypeVariableAsExpectedTypeAtom) {
+            "${argument::class}"
+        }
+        return argument.anonymousFunctionIfReturnExpression?.let {
+            ConeLambdaArgumentConstraintPosition(it, argument.expression)
+        } ?: createArgumentConstraintPosition(argument)
     }
 
     override fun <T> createFixVariableConstraintPosition(variable: TypeVariableMarker, atom: T): FixVariableConstraintPosition<T> {

@@ -331,7 +331,7 @@ class PostponedArgumentsAnalyzer(
                     // See KT-63602 for details.
                     builder.addSubtypeConstraintIfCompatible(
                         expression.resolvedType, returnTypeRef.coneType,
-                        ConeLambdaArgumentConstraintPosition(lambda.anonymousFunction)
+                        ConeLambdaArgumentConstraintPosition(lambda.anonymousFunction, expression)
                     )
                 }
                 continue
@@ -373,7 +373,7 @@ class PostponedArgumentsAnalyzer(
         // If we've got some errors already, no new constraints or diagnostics are required
         if (with(c) { lambdaReturnType.isError() } || builder.hasContradiction) return
 
-        val position = ConeLambdaArgumentConstraintPosition(lambda.anonymousFunction)
+        val position = ConeLambdaArgumentConstraintPosition(lambda.anonymousFunction, anonymousFunctionReturnExpression = null)
         val unitType = components.session.builtinTypes.unitType.coneType
         if (!builder.addSubtypeConstraintIfCompatible(
                 unitType,

@@ -44,7 +44,8 @@ class ConeExplicitTypeParameterConstraintPosition(
 }
 
 class ConeLambdaArgumentConstraintPosition(
-    anonymousFunction: FirAnonymousFunction
+    anonymousFunction: FirAnonymousFunction,
+    val anonymousFunctionReturnExpression: FirExpression?,
 ) : LambdaArgumentConstraintPosition<FirAnonymousFunction>(anonymousFunction) {
     override fun toString(): String {
         return "LambdaArgument"
