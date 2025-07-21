@@ -190,6 +190,52 @@ PsiJetFileStubImpl[package=]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=C]
         VALUE_PARAMETER_LIST
+      FUN[fqName=AnnotationsOnNullableTypes.foo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=false, mayHaveContract=false, name=foo]
+        TYPE_REFERENCE
+          NULLABLE_TYPE
+            MODIFIER_LIST[]
+              ANNOTATION_ENTRY[hasValueArguments=false, shortName=A]
+                CONSTRUCTOR_CALLEE
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      REFERENCE_EXPRESSION[referencedName=A]
+            NULLABLE_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=String]
+        VALUE_PARAMETER_LIST
+      FUN[fqName=AnnotationsOnNullableTypes.functionWithAnnotatedReceiver2, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=false, mayHaveContract=false, name=functionWithAnnotatedReceiver2]
+        TYPE_REFERENCE
+          MODIFIER_LIST[]
+            ANNOTATION_ENTRY[hasValueArguments=false, shortName=A]
+              ANNOTATION_TARGET[useSiteTarget=RECEIVER]
+              CONSTRUCTOR_CALLEE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=A]
+          FUNCTION_TYPE
+            VALUE_PARAMETER_LIST
+            TYPE_REFERENCE
+              NULLABLE_TYPE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=Unit]
+        VALUE_PARAMETER_LIST
+      FUN[fqName=AnnotationsOnNullableTypes.functionWithAnnotatedReceiver3, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=false, mayHaveContract=false, name=functionWithAnnotatedReceiver3]
+        TYPE_REFERENCE
+          NULLABLE_TYPE
+            MODIFIER_LIST[]
+              ANNOTATION_ENTRY[hasValueArguments=false, shortName=A]
+                ANNOTATION_TARGET[useSiteTarget=RECEIVER]
+                CONSTRUCTOR_CALLEE
+                  TYPE_REFERENCE
+                    USER_TYPE
+                      REFERENCE_EXPRESSION[referencedName=A]
+            NULLABLE_TYPE
+              FUNCTION_TYPE
+                VALUE_PARAMETER_LIST
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=Unit]
+        VALUE_PARAMETER_LIST
   CLASS[classId=/A, fqName=A, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=A, superNames=[]]
     MODIFIER_LIST[annotation]
       ANNOTATION_ENTRY[hasValueArguments=true, shortName=Target]

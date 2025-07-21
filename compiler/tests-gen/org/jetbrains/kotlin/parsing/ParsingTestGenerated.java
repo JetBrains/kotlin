@@ -221,6 +221,11 @@ public class ParsingTestGenerated extends AbstractParsingTest {
       runTest("compiler/testData/psi/dataClass.kt");
     }
 
+    @TestMetadata("dataObject.kt")
+    public void testDataObject() {
+      runTest("compiler/testData/psi/dataObject.kt");
+    }
+
     @TestMetadata("defaultImplsInInterface.kt")
     public void testDefaultImplsInInterface() {
       runTest("compiler/testData/psi/defaultImplsInInterface.kt");
@@ -239,6 +244,11 @@ public class ParsingTestGenerated extends AbstractParsingTest {
     @TestMetadata("definitelyNotNullTypes.kt")
     public void testDefinitelyNotNullTypes() {
       runTest("compiler/testData/psi/definitelyNotNullTypes.kt");
+    }
+
+    @TestMetadata("delegatedWithInitializer.kt")
+    public void testDelegatedWithInitializer() {
+      runTest("compiler/testData/psi/delegatedWithInitializer.kt");
     }
 
     @TestMetadata("delegation.kt")
@@ -329,6 +339,11 @@ public class ParsingTestGenerated extends AbstractParsingTest {
     @TestMetadata("EOLsOnRollback.kt")
     public void testEOLsOnRollback() {
       runTest("compiler/testData/psi/EOLsOnRollback.kt");
+    }
+
+    @TestMetadata("emptyEnum.kt")
+    public void testEmptyEnum() {
+      runTest("compiler/testData/psi/emptyEnum.kt");
     }
 
     @TestMetadata("EmptyFile.kt")
@@ -601,6 +616,11 @@ public class ParsingTestGenerated extends AbstractParsingTest {
       runTest("compiler/testData/psi/InterfaceWithEnumKeyword.kt");
     }
 
+    @TestMetadata("internalConst.kt")
+    public void testInternalConst() {
+      runTest("compiler/testData/psi/internalConst.kt");
+    }
+
     @TestMetadata("kotlinFunInterface_ERR.kt")
     public void testKotlinFunInterface_ERR() {
       runTest("compiler/testData/psi/kotlinFunInterface_ERR.kt");
@@ -796,6 +816,11 @@ public class ParsingTestGenerated extends AbstractParsingTest {
       runTest("compiler/testData/psi/PropertyInvokes.kt");
     }
 
+    @TestMetadata("propertyWithConstraints.kt")
+    public void testPropertyWithConstraints() {
+      runTest("compiler/testData/psi/propertyWithConstraints.kt");
+    }
+
     @TestMetadata("QuotedIdentifiers.kt")
     public void testQuotedIdentifiers() {
       runTest("compiler/testData/psi/QuotedIdentifiers.kt");
@@ -944,6 +969,11 @@ public class ParsingTestGenerated extends AbstractParsingTest {
     @TestMetadata("typeAliasExpansion.kt")
     public void testTypeAliasExpansion() {
       runTest("compiler/testData/psi/typeAliasExpansion.kt");
+    }
+
+    @TestMetadata("typeAliasWithConstraints.kt")
+    public void testTypeAliasWithConstraints() {
+      runTest("compiler/testData/psi/typeAliasWithConstraints.kt");
     }
 
     @TestMetadata("TypeAlias_ERR.kt")
@@ -1126,6 +1156,11 @@ public class ParsingTestGenerated extends AbstractParsingTest {
       @TestMetadata("annotatedReturnType.kt")
       public void testAnnotatedReturnType() {
         runTest("compiler/testData/psi/annotation/annotatedReturnType.kt");
+      }
+
+      @TestMetadata("annotatedTypeConstraint.kt")
+      public void testAnnotatedTypeConstraint() {
+        runTest("compiler/testData/psi/annotation/annotatedTypeConstraint.kt");
       }
 
       @TestMetadata("Annotations.kt")
@@ -1761,6 +1796,11 @@ public class ParsingTestGenerated extends AbstractParsingTest {
       @TestMetadata("danglingContextParameterAndAnnotations.kt")
       public void testDanglingContextParameterAndAnnotations() {
         runTest("compiler/testData/psi/contextParameters/danglingContextParameterAndAnnotations.kt");
+      }
+
+      @TestMetadata("differentTypes.kt")
+      public void testDifferentTypes() {
+        runTest("compiler/testData/psi/contextParameters/differentTypes.kt");
       }
 
       @TestMetadata("functions.kt")
