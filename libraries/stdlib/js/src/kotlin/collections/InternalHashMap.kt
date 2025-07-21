@@ -432,6 +432,7 @@ internal class InternalHashMap<K, V> private constructor(
 
     private fun contentEquals(other: Map<*, *>): Boolean = _size == other.size && containsAllEntries(other.entries)
 
+    @IgnorableReturnValue
     private fun putEntry(entry: Map.Entry<K, V>): Boolean {
         val index = addKey(entry.key)
         val valuesArray = allocateValuesArray()
@@ -447,6 +448,7 @@ internal class InternalHashMap<K, V> private constructor(
         return false
     }
 
+    @IgnorableReturnValue
     private fun putAllEntries(from: Collection<Map.Entry<K, V>>): Boolean {
         if (from.isEmpty()) return false
         ensureExtraCapacity(from.size)

@@ -56,7 +56,7 @@ public actual abstract class AbstractMutableCollection<E> protected actual const
         checkIsMutable()
         val iterator = this.iterator()
         while (iterator.hasNext()) {
-            iterator.next()
+            val _ = iterator.next()
             iterator.remove()
         }
     }
