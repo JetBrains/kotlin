@@ -490,8 +490,6 @@ class ComposerParamTransformer(
             return classSymbol!!.constructors.firstOrNull { it.owner.isPrimary }?.let { ctor ->
                 val underlyingType = getInlineClassUnderlyingType(classSymbol.owner)
 
-                // TODO(lmr): We should not be calling the constructor here, but this seems like a
-                //  reasonable interim solution.
                 underlyingType.defaultValue(startOffset, endOffset)?.let { defaultUnderlyingTypeValue ->
                     IrConstructorCallImpl(
                         startOffset,
@@ -683,27 +681,20 @@ class ComposerParamTransformer(
                 }
             }
 
-            val stubs = fn.makeStubsForDefaultValueClassIfNeeded()
+            val parent = fn.parent
+            if (parent is IrClass || parent is IrFile) {
+                fn.makeStubsForDefaultValueClassIfNeeded().forEach { stub ->
+                    parent.addChild(stub)
+                }
+            } else {
+                // ignore
+            }
 
             // update parameter types so they are ready to accept the default values
             fn.parameters.fastForEach { param ->
                 if (fn.hasDefaultForParam(param.indexInParameters)) {
                     param.type = param.type.defaultParameterType()
                 }
-            }
-
-            val parent = fn.parent
-            if (parent is IrClass || parent is IrFile) {
-                // checking if any stubs have all same-type parameters and discarding them
-                val addedParamTypes = mutableSetOf(fn.parameters.map { it.type })
-                stubs.forEach { stub ->
-                    val stubParamTypes = stub.parameters.map { it.type }
-                    if (addedParamTypes.add(stubParamTypes)) {
-                        parent.addChild(stub)
-                    }
-                }
-            } else {
-                // ignore
             }
 
             inlineLambdaInfo.scan(fn)
@@ -808,7 +799,8 @@ class ComposerParamTransformer(
     }
 
     private fun IrSimpleFunction.makeValueClassInaccessibleConstructorDefaultStub(): IrSimpleFunction? {
-        val defaultValueClassesWithPrivateConstructors = mutableSetOf<Int>()
+        var makeStub = false
+        val defaultValueClassesWithPrivateConstructors = BooleanArray(parameters.size)
         for (i in parameters.indices) {
             val param = parameters[i]
             if (
@@ -818,11 +810,12 @@ class ComposerParamTransformer(
                 param.type.unboxInlineClass().isPrimitiveType() &&  // non-primitive case is covered by another stub
                 !param.type.constructorVisibilityIsAtLeastAsAccessibleAsType()
             ) {
-                defaultValueClassesWithPrivateConstructors.add(i)
+                makeStub = true
+                defaultValueClassesWithPrivateConstructors[i] = true
             }
         }
 
-        if (defaultValueClassesWithPrivateConstructors.isEmpty()) {
+        if (!makeStub) {
             return null
         }
 
@@ -834,7 +827,7 @@ class ComposerParamTransformer(
 
             // update parameter types so they are ready to accept the default values
             copy.parameters.fastForEachIndexed { index, param ->
-                if (index in defaultValueClassesWithPrivateConstructors) {
+                if (defaultValueClassesWithPrivateConstructors[index]) {
                     param.type = param.type.makeNullable()
                 } else if (param.defaultValue != null) {
                     param.type = param.type.defaultParameterType()
@@ -851,7 +844,7 @@ class ComposerParamTransformer(
                                 typeArguments[index] = param.defaultType
                             }
                             copy.parameters.fastForEachIndexed { index, param ->
-                                if (index in defaultValueClassesWithPrivateConstructors) {
+                                if (defaultValueClassesWithPrivateConstructors[index]) {
                                     val origParam = source.parameters[index]
                                     val argType = origParam.type
                                     val paramValue = irTemporary(irGet(param), name = $$"$tmp_for_arg_$$index")
