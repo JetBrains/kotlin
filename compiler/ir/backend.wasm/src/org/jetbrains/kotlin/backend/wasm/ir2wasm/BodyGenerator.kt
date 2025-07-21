@@ -37,6 +37,8 @@ class BodyGenerator(
     private val functionContext: WasmFunctionCodegenContext,
     private val wasmModuleMetadataCache: WasmModuleMetadataCache,
     private val wasmModuleTypeTransformer: WasmModuleTypeTransformer,
+    private val useStringPool: Boolean,
+    private val inlineUnitGetter: Boolean,
 ) : IrVisitorVoid() {
     val body: WasmExpressionBuilder = functionContext.bodyGen
 
@@ -48,10 +50,17 @@ class BodyGenerator(
     private val unitInstanceField by lazy { backendContext.findUnitInstanceField() }
 
     fun WasmExpressionBuilder.buildGetUnit() {
-        buildGetGlobal(
-            wasmFileCodegenContext.referenceGlobalField(unitInstanceField.symbol),
-            SourceLocation.NoLocation("GET_UNIT")
-        )
+        if (inlineUnitGetter) {
+            buildGetGlobal(
+                wasmFileCodegenContext.referenceGlobalField(unitInstanceField.symbol),
+                SourceLocation.NoLocation("GET_UNIT")
+            )
+        } else {
+            buildCall(
+                wasmFileCodegenContext.referenceFunction(unitGetInstance.symbol),
+                SourceLocation.NoLocation("GET_UNIT")
+            )
+        }
     }
 
     fun getStructFieldRef(field: IrField): WasmSymbol<Int> {
@@ -530,7 +539,7 @@ class BodyGenerator(
     }
 
     override fun visitConst(expression: IrConst): Unit =
-        generateConstExpression(expression, body, wasmFileCodegenContext, backendContext, expression.getSourceLocation())
+        generateConstExpression(expression, body, wasmFileCodegenContext, backendContext, expression.getSourceLocation(), useStringPool)
 
     override fun visitGetField(expression: IrGetField) {
         val field: IrField = expression.symbol.owner
