@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.api.components
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.KaContextParameterApi
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
+import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.psi.KtDeclaration
 import org.jetbrains.kotlin.psi.KtDeclarationWithReturnType
@@ -44,6 +45,14 @@ public interface KaExpressionTypeProvider : KaSessionComponent {
      * Note: For a `vararg foo: T` parameter, the resulting type is the full `Array<out T>` type (unlike
      * [KaValueParameterSymbol.returnType][org.jetbrains.kotlin.analysis.api.symbols.KaValueParameterSymbol.returnType],
      * which returns `T`).
+     *
+     * The reasoning behind this is that [KaCallableSymbol.returnType] sees the parameter from the declaration's semantic perspective,
+     * representing the signature of the parameter, which contains just the element type. In this paradigm, `vararg` arrays are
+     * constructed separately under the hood.
+     *
+     * At the same time, [KtDeclaration.returnType][org.jetbrains.kotlin.analysis.api.components.KaExpressionTypeProvider.returnType]
+     * from [KaExpressionTypeProvider][org.jetbrains.kotlin.analysis.api.components.KaExpressionTypeProvider.returnType] represents a
+     * use-site perspective, which has to desugar `vararg` parameters because they are consumed as array types.
      */
     public val KtDeclarationWithReturnType.returnType: KaType
 

@@ -25,6 +25,19 @@ public sealed class KaCallableSymbol : KaDeclarationSymbol, KaContextReceiversOw
 
     /**
      * The callable's return type. For variables, [returnType] is the type of the variable.
+     *
+     * Note: For a `vararg foo: T` parameter, the resulting type is the vararg element `T` type (unlike
+     * [KtDeclaration.returnType][org.jetbrains.kotlin.analysis.api.components.KaExpressionTypeProvider.returnType] from
+     * [KaExpressionTypeProvider][org.jetbrains.kotlin.analysis.api.components.KaExpressionTypeProvider.returnType],
+     * which returns the full `Array<out T>` type).
+     *
+     * The reasoning behind this is that [KaCallableSymbol.returnType] sees the parameter from the declaration's semantic perspective,
+     * representing the signature of the parameter, which contains just the element type. In this paradigm, `vararg` arrays are
+     * constructed separately under the hood.
+     *
+     * At the same time [KtDeclaration.returnType][org.jetbrains.kotlin.analysis.api.components.KaExpressionTypeProvider.returnType] from
+     * [KaExpressionTypeProvider][org.jetbrains.kotlin.analysis.api.components.KaExpressionTypeProvider.returnType] represents a
+     * use-site perspective, which has to desugar `vararg` parameters because they are consumed as array types.
      */
     public abstract val returnType: KaType
 
