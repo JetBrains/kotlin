@@ -158,7 +158,7 @@ internal object NativeCompilerOptionMetrics : FusMetrics {
     fun collectMetrics(
         compilerOptions: KotlinNativeCompilerOptions,
         separateKmpCompilationEnabled: Boolean,
-        metricsConsumer: StatisticsValuesConsumer
+        metricsConsumer: StatisticsValuesConsumer,
     ) {
         metricsConsumer.report(BooleanMetrics.KOTLIN_PROGRESSIVE_MODE, compilerOptions.progressiveMode.get())
         compilerOptions.apiVersion.orNull?.also { v ->
@@ -215,7 +215,8 @@ internal object BuildFinishMetrics : FusMetrics {
 
     private fun reportGlobalMetrics(logger: Logger, metricConsumer: StatisticsValuesConsumer) {
         runMetricMethodSafely(logger, "reportGlobalMetrics") {
-            System.getProperty("os.name")?.also { metricConsumer.report(StringMetrics.OS_TYPE, System.getProperty("os.name")) }
+            System.getProperty("os.name")?.also { metricConsumer.report(StringMetrics.OS_TYPE, it) }
+            System.getProperty("os.version")?.also { metricConsumer.report(StringMetrics.OS_VERSION, it) }
             metricConsumer.report(NumericalMetrics.CPU_NUMBER_OF_CORES, Runtime.getRuntime().availableProcessors().toLong())
             metricConsumer.report(BooleanMetrics.EXECUTED_FROM_IDEA, System.getProperty("idea.active") != null)
             metricConsumer.report(NumericalMetrics.GRADLE_DAEMON_HEAP_SIZE, Runtime.getRuntime().maxMemory())
