@@ -11,12 +11,9 @@ import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.lastExpression
-import org.jetbrains.kotlin.fir.references.FirErrorNamedReference
 import org.jetbrains.kotlin.fir.references.FirNamedReference
-import org.jetbrains.kotlin.fir.references.FirResolvedErrorReference
 import org.jetbrains.kotlin.fir.resolve.DoubleColonLHS
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.Candidate
-import org.jetbrains.kotlin.fir.resolve.calls.candidate.FirErrorReferenceWithCandidate
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.FirNamedReferenceWithCandidate
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.candidate
 import org.jetbrains.kotlin.fir.resolve.calls.stages.FirFakeArgumentForCallableReference
@@ -224,11 +221,16 @@ class ConeResolvedLambdaAtom(
     }
 }
 
+sealed class ConePostponedAtomWithRevisableExpectedType : ConeFunctionTypeRelatedPostponedResolvedAtom() {
+    abstract val anonymousFunctionIfReturnExpression: FirAnonymousFunction?
+}
+
 class ConeLambdaWithTypeVariableAsExpectedTypeAtom(
     override val expression: FirAnonymousFunctionExpression,
     private val initialExpectedTypeType: ConeKotlinType,
     val candidateOfOuterCall: Candidate,
-) : ConeFunctionTypeRelatedPostponedResolvedAtom(), LambdaWithTypeVariableAsExpectedTypeMarker {
+    override val anonymousFunctionIfReturnExpression: FirAnonymousFunction? = null,
+) : ConePostponedAtomWithRevisableExpectedType(), LambdaWithTypeVariableAsExpectedTypeMarker {
     val anonymousFunction: FirAnonymousFunction = expression.anonymousFunction
 
     var subAtom: ConeResolvedLambdaAtom? = null
@@ -266,8 +268,9 @@ class ConeResolvedCallableReferenceAtom(
     override val expression: FirCallableReferenceAccess,
     private val initialExpectedType: ConeKotlinType?,
     val lhs: DoubleColonLHS?,
-    private val session: FirSession
-) : ConeFunctionTypeRelatedPostponedResolvedAtom(), PostponedCallableReferenceMarker {
+    private val session: FirSession,
+    override val anonymousFunctionIfReturnExpression: FirAnonymousFunction? = null,
+) : ConePostponedAtomWithRevisableExpectedType(), PostponedCallableReferenceMarker {
     var subAtom: ConeAtomWithCandidate? = null
         private set
 

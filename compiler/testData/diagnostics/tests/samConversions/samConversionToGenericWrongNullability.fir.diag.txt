@@ -26,7 +26,7 @@
 
 /test.kt:(1653,1752): error: Argument type mismatch: actual type is 'Function0<String>', but 'String!' was expected.
 
-/test.kt:(1653,1752): error: Argument type mismatch: actual type is 'Function0<String>', but 'String!' was expected.
+/test.kt:(1653,1752): error: Return type mismatch: expected 'String!', actual 'Function0<String>'.
 
 /test.kt:(1698,1720): error: Return type mismatch: expected 'String', actual 'String?'.
 
@@ -34,7 +34,7 @@
 
 /test.kt:(1950,2050): error: Argument type mismatch: actual type is 'Function0<String?>', but 'String!' was expected.
 
-/test.kt:(1950,2050): error: Argument type mismatch: actual type is 'Function0<String?>', but 'String!' was expected.
+/test.kt:(1950,2050): error: Return type mismatch: expected 'String!', actual 'Function0<String?>'.
 
 /test.kt:(2115,2137): warning: Argument type mismatch: actual type is 'String?', but 'String' was expected. This will become an error in language version 2.1. See https://youtrack.jetbrains.com/issue/KT-57014.
 

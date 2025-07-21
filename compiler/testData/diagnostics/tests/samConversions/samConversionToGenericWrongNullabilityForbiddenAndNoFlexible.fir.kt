@@ -96,7 +96,7 @@ fun main() {
     )
 
     val sam4: Supplier<String> = Supplier {
-        <!ARGUMENT_TYPE_MISMATCH, ARGUMENT_TYPE_MISMATCH!>fun(): String {
+        <!ARGUMENT_TYPE_MISMATCH, RETURN_TYPE_MISMATCH!>fun(): String {
             if (true) return <!RETURN_TYPE_MISMATCH!>returnNullableString()<!>
             return ""
         }<!>
@@ -110,7 +110,7 @@ fun main() {
     )
 
     val sam5: Supplier<String> = Supplier {
-        <!ARGUMENT_TYPE_MISMATCH, ARGUMENT_TYPE_MISMATCH!>fun(): String? {
+        <!ARGUMENT_TYPE_MISMATCH, RETURN_TYPE_MISMATCH!>fun(): String? {
             if (true) return returnNullableString()
             return ""
         }<!>

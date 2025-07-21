@@ -9,7 +9,7 @@ fun <A, B> fooDifferent(t: (A) -> B): B = null!!
 
 fun testFoo() {
     val bar: String = foo {
-        <!ARGUMENT_TYPE_MISMATCH!>fun() = ""<!>
+        <!RETURN_TYPE_MISMATCH!>fun() = ""<!>
     }
 
     foo<String> {
@@ -25,7 +25,7 @@ fun testFoo() {
     }
 
     fooSame { it: String ->
-        <!ARGUMENT_TYPE_MISMATCH!>fun() = it<!>
+        <!RETURN_TYPE_MISMATCH!>fun() = it<!>
     }
 
     fooDifferent<Int, String> { it->
@@ -33,9 +33,8 @@ fun testFoo() {
     }
 
     val barDifferent: String = fooDifferent { it: Int ->
-        <!ARGUMENT_TYPE_MISMATCH!>fun() = it.toString()<!>
+        <!RETURN_TYPE_MISMATCH!>fun() = it.toString()<!>
     }
 }
 
-/* GENERATED_FIR_TAGS: anonymousFunction, checkNotNullCall, functionDeclaration, functionalType, lambdaLiteral,
-localProperty, nullableType, propertyDeclaration, stringLiteral, typeParameter */
+/* GENERATED_FIR_TAGS: anonymousFunction, functionalType, lambdaLiteral, typeParameter */
