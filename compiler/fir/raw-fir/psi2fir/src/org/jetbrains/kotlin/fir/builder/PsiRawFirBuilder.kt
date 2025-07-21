@@ -214,8 +214,17 @@ open class PsiRawFirBuilder(
                 nameAsSafeName
             }
 
+        override val KtDestructuringDeclarationEntry.initializerName: Name?
+            get() = initializer?.getReferencedNameAsName()
+
+        override val KtDestructuringDeclarationEntry.isVar: Boolean
+            get() = isVar
+
         override val KtDestructuringDeclarationEntry.source: KtSourceElement
             get() = toKtPsiSourceElement()
+
+        override val KtDestructuringDeclarationEntry.initializerSource: KtSourceElement?
+            get() = initializer?.toKtPsiSourceElement()
 
         override fun KtDestructuringDeclarationEntry.extractAnnotationsTo(
             target: FirAnnotationContainerBuilder,
@@ -224,12 +233,8 @@ open class PsiRawFirBuilder(
             (this as KtAnnotated).extractAnnotationsTo(target)
         }
 
-        override fun createComponentCall(
-            container: FirVariable,
-            entrySource: KtSourceElement?,
-            index: Int,
-        ): FirExpression = buildOrLazyExpression(entrySource) {
-            super.createComponentCall(container, entrySource, index)
+        override fun interceptExpressionBuilding(sourceElement: KtSourceElement?, buildExpression: () -> FirExpression): FirExpression {
+            return buildOrLazyExpression(sourceElement, buildExpression)
         }
 
         private inline fun <reified R : FirElement> KtElement.convert(): R =

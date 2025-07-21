@@ -1581,7 +1581,7 @@ class LightTreeRawFirDeclarationBuilder(
             when (it.tokenType) {
                 MODIFIER_LIST -> convertAnnotationsOnlyTo(it, annotations)
                 VAR_KEYWORD -> isVar = true
-                DESTRUCTURING_DECLARATION_ENTRY -> entries += convertDestructingDeclarationEntry(it)
+                DESTRUCTURING_DECLARATION_ENTRY -> entries += convertDestructingDeclarationEntry(it, isVar)
                 // Property delegates should be ignored as they aren't a valid initializer
                 PROPERTY_DELEGATE -> {}
                 else -> if (it.isExpression()) firExpression =
@@ -1591,6 +1591,7 @@ class LightTreeRawFirDeclarationBuilder(
 
         return DestructuringDeclaration(
             isVar,
+            entries.any { it.isFullForm },
             entries,
             firExpression ?: buildErrorExpression(
                 destructingDeclaration.toFirSourceElement(),
@@ -1604,15 +1605,28 @@ class LightTreeRawFirDeclarationBuilder(
     /**
      * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseMultiDeclarationEntry
      */
-    private fun convertDestructingDeclarationEntry(entry: LighterASTNode): DestructuringEntry {
+    private fun convertDestructingDeclarationEntry(entry: LighterASTNode, isVar: Boolean): DestructuringEntry {
         val annotations = mutableListOf<FirAnnotationCall>()
         var identifier: String? = null
         var firType: FirTypeRef? = null
+        var isVar = isVar
+        var initializerName: Name? = null
+        var initializerSource: KtSourceElement? = null
+        var isFullForm = false
         entry.forEachChildren {
             when (it.tokenType) {
                 MODIFIER_LIST -> convertAnnotationsOnlyTo(it, annotations)
                 IDENTIFIER -> identifier = it.asText
                 TYPE_REFERENCE -> firType = convertType(it)
+                VAL_KEYWORD -> isFullForm = true
+                VAR_KEYWORD -> {
+                    isFullForm = true
+                    isVar = true
+                }
+                REFERENCE_EXPRESSION -> {
+                    initializerName = it.getReferencedNameAsName()
+                    initializerSource = it.toFirSourceElement()
+                }
             }
         }
 
@@ -1624,8 +1638,12 @@ class LightTreeRawFirDeclarationBuilder(
 
         return DestructuringEntry(
             source = entry.toFirSourceElement(),
+            initializerSource = initializerSource,
             returnTypeRef = firType ?: implicitType,
             name = name,
+            initializerName = initializerName,
+            isVar = isVar,
+            isFullForm = isFullForm,
             annotations = annotations,
         )
     }

@@ -159,7 +159,7 @@ internal fun AbstractRawFirBuilder<*>.addDestructuringVariables(
         moduleData,
         container,
         multiDeclaration.entries,
-        isVar = multiDeclaration.isVar,
+        isNameBased = multiDeclaration.isFullForm,
         isTmpVariable = tmpVariable,
         forceLocal = forceLocal,
         configure,

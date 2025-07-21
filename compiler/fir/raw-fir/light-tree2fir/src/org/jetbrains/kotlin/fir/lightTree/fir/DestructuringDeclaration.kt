@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.name.SpecialNames
 
 data class DestructuringDeclaration(
     val isVar: Boolean,
+    val isFullForm: Boolean,
     val entries: List<DestructuringEntry>,
     val initializer: FirExpression,
     val source: KtSourceElement,
@@ -63,15 +64,23 @@ data class DestructuringDeclaration(
 
 class DestructuringEntry(
     val source: KtSourceElement,
+    val initializerSource: KtSourceElement?,
     val returnTypeRef: FirTypeRef,
     val name: Name,
+    val initializerName: Name?,
+    val isVar: Boolean,
+    val isFullForm: Boolean,
     val annotations: List<FirAnnotationCall>,
 ) {
     @Suppress("EXTENSION_SHADOWED_BY_MEMBER")
     companion object : DestructuringContext<DestructuringEntry> {
         override val DestructuringEntry.returnTypeRef: FirTypeRef get() = returnTypeRef
         override val DestructuringEntry.name: Name get() = name
+        override val DestructuringEntry.initializerName: Name? get() = initializerName
+        override val DestructuringEntry.isVar: Boolean get() = isVar
         override val DestructuringEntry.source: KtSourceElement get() = source
+        override val DestructuringEntry.initializerSource: KtSourceElement? get() = initializerSource
+
         override fun DestructuringEntry.extractAnnotationsTo(target: FirAnnotationContainerBuilder, containerSymbol: FirBasedSymbol<*>) {
             target.annotations += annotations.map {
                 buildAnnotationCallCopy(it) {
@@ -97,7 +106,7 @@ fun AbstractRawFirBuilder<*>.addDestructuringStatements(
             moduleData,
             container,
             entries = multiDeclaration.entries,
-            isVar = multiDeclaration.isVar,
+            isNameBased = multiDeclaration.isFullForm,
             isTmpVariable = isTmpVariable,
             forceLocal = forceLocal,
             configure,

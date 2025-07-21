@@ -144,7 +144,7 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
                 moduleData = baseModuleData,
                 container = container,
                 element,
-                isVar = element.isVar,
+                isNameBased = element.ownValOrVarKeyword != null,
                 forceLocal = false,
                 index = element.index(),
                 configure = { configureScriptDestructuringDeclarationEntry(it, container) },

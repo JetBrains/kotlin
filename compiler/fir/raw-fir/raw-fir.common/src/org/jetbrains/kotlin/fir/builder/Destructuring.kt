@@ -18,6 +18,8 @@ import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertySetter
 import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.builder.buildPropertyAccessExpression
+import org.jetbrains.kotlin.fir.references.builder.buildSimpleNamedReference
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirLocalPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularPropertySymbol
@@ -27,11 +29,16 @@ import org.jetbrains.kotlin.name.Name
 interface DestructuringContext<T> {
     val T.returnTypeRef: FirTypeRef
     val T.name: Name
+    val T.initializerName: Name?
+    val T.isVar: Boolean
     val T.source: KtSourceElement
+    val T.initializerSource: KtSourceElement?
     fun T.extractAnnotationsTo(target: FirAnnotationContainerBuilder, containerSymbol: FirBasedSymbol<*>)
-    fun createComponentCall(container: FirVariable, entrySource: KtSourceElement?, index: Int): FirExpression {
-        return container.toComponentCall(entrySource, index)
-    }
+
+    fun interceptExpressionBuilding(
+        sourceElement: KtSourceElement?,
+        buildExpression: () -> FirExpression,
+    ): FirExpression = buildExpression()
 }
 
 context(c: DestructuringContext<T>)
@@ -40,7 +47,7 @@ fun <T> AbstractRawFirBuilder<*>.addDestructuringVariables(
     moduleData: FirModuleData,
     container: FirVariable,
     entries: List<T>,
-    isVar: Boolean,
+    isNameBased: Boolean,
     isTmpVariable: Boolean,
     forceLocal: Boolean,
     configure: (FirVariable) -> Unit = {}
@@ -53,7 +60,7 @@ fun <T> AbstractRawFirBuilder<*>.addDestructuringVariables(
             moduleData,
             container,
             entry,
-            isVar,
+            isNameBased,
             forceLocal,
             index,
             configure,
@@ -66,7 +73,7 @@ fun <T> AbstractRawFirBuilder<*>.buildDestructuringVariable(
     moduleData: FirModuleData,
     container: FirVariable,
     entry: T,
-    isVar: Boolean,
+    isNameBased: Boolean,
     forceLocal: Boolean,
     index: Int,
     configure: (FirVariable) -> Unit = {}
@@ -82,8 +89,23 @@ fun <T> AbstractRawFirBuilder<*>.buildDestructuringVariable(
             origin = FirDeclarationOrigin.Source
             returnTypeRef = entry.returnTypeRef
             name = entry.name
-            initializer = createComponentCall(container, entry.source, index)
-            this.isVar = isVar
+            initializer = interceptExpressionBuilding(entry.source) {
+                if (isNameBased) {
+                    buildPropertyAccessExpression {
+                        val entryFakeSource = entry.source.fakeElement(KtFakeSourceElementKind.DesugaredNameBasedDestructuring)
+                        val initializerFakeSource = entry.initializerSource?.fakeElement(KtFakeSourceElementKind.DesugaredNameBasedDestructuring) ?: entryFakeSource
+                        source = initializerFakeSource
+                        explicitReceiver = generateResolvedAccessExpression(entryFakeSource, container)
+                        calleeReference = buildSimpleNamedReference {
+                            this.source = initializerFakeSource
+                            name = entry.initializerName ?: entry.name
+                        }
+                    }
+                } else {
+                    container.toComponentCall(entry.source, index)
+                }
+            }
+            this.isVar = entry.isVar
             source = entry.source
             status = FirDeclarationStatusImpl(if (localEntries) Visibilities.Local else Visibilities.Public, Modality.FINAL)
             entry.extractAnnotationsTo(this, context.containerSymbol)
@@ -97,7 +119,7 @@ fun <T> AbstractRawFirBuilder<*>.buildDestructuringVariable(
                     propertySymbol = symbol,
                     modality = Modality.FINAL,
                 )
-                if (isVar) {
+                if (entry.isVar) {
                     setter = FirDefaultPropertySetter(
                         source = source?.fakeElement(KtFakeSourceElementKind.DefaultAccessor),
                         moduleData = moduleData,

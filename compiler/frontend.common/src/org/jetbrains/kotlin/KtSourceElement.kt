@@ -290,6 +290,12 @@ sealed class KtFakeSourceElementKind(final override val shouldSkipErrorTypeRepor
     object DesugaredComponentFunctionCall : KtFakeSourceElementKind()
 
     /**
+     * `(val a, val bb = b) = x` --> `val a = x.a; val bb = x.b`
+     * where property accesses a and b will have the fake source elements refer to the corresponding KtDestructuringDeclarationEntry
+     */
+    object DesugaredNameBasedDestructuring : KtFakeSourceElementKind()
+
+    /**
      * when smart casts applied to the expression, it is wrapped into FirSmartCastExpression
      * which type reference will have a fake source refer to a original source element of it
      */
