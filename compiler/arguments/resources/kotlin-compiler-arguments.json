@@ -6386,6 +6386,37 @@
                                         }
                                     },
                                     {
+                                        "name": "Xwasm-multimodule-mode",
+                                        "shortName": null,
+                                        "deprecatedName": null,
+                                        "description": {
+                                            "current": "Set multimodule compilation mode.",
+                                            "valueInVersions": []
+                                        },
+                                        "delimiter": null,
+                                        "valueType": {
+                                            "type": "org.jetbrains.kotlin.arguments.dsl.types.StringType",
+                                            "isNullable": {
+                                                "current": true,
+                                                "valueInVersions": []
+                                            },
+                                            "defaultValue": {
+                                                "current": null,
+                                                "valueInVersions": []
+                                            }
+                                        },
+                                        "valueDescription": {
+                                            "current": null,
+                                            "valueInVersions": []
+                                        },
+                                        "releaseVersionsMetadata": {
+                                            "introducedVersion": "2.2.20",
+                                            "stabilizedVersion": null,
+                                            "deprecatedVersion": null,
+                                            "removedVersion": null
+                                        }
+                                    },
+                                    {
                                         "name": "Xwasm-generate-wat",
                                         "shortName": null,
                                         "deprecatedName": null,
