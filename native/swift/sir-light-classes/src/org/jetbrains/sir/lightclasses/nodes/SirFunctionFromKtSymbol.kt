@@ -57,7 +57,7 @@ internal open class SirFunctionFromKtSymbol(
     private val overrideStatus: OverrideStatus<SirFunction>? by lazy { computeIsOverride() }
 
     override val isInstance: Boolean
-        get() = !ktSymbol.isTopLevel && (ktSymbol as KaNamedFunctionSymbol)?.let { !it.isStatic } ?: false
+        get() = !ktSymbol.isTopLevel && (ktSymbol as KaNamedFunctionSymbol).let { !it.isStatic }
 
     override val modality: SirModality
         get() = ktSymbol.modality.sirModality

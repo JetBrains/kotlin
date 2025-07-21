@@ -45,8 +45,8 @@ abstract class AbstractEnhancedSignaturesResolvedCallsTest : AbstractResolvedCal
                     val indent = line.takeWhile(Char::isWhitespace) + "    "
                     calls.forEach { resolvedCall ->
                         appendLine("$indent// ${resolvedCall?.status}")
-                        appendLine("$indent// ORIGINAL:    ${resolvedCall?.run { resultingDescriptor!!.original.getText() }}")
-                        appendLine("$indent// SUBSTITUTED: ${resolvedCall?.run { resultingDescriptor!!.getText() }}")
+                        appendLine("$indent// ORIGINAL:    ${resolvedCall?.run { resultingDescriptor.original.getText() }}")
+                        appendLine("$indent// SUBSTITUTED: ${resolvedCall?.run { resultingDescriptor.getText() }}")
                     }
                 }
             }

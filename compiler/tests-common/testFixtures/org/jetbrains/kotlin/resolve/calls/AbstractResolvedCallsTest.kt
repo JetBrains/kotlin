@@ -138,9 +138,9 @@ internal fun ResolvedCall<*>.renderToText(): String {
         appendLine()
 
         if (candidateDescriptor != resultingDescriptor) {
-            appendLine("Candidate descriptor: ${candidateDescriptor!!.getText()}")
+            appendLine("Candidate descriptor: ${candidateDescriptor.getText()}")
         }
-        appendLine("Resulting descriptor: ${resultingDescriptor!!.getText()}")
+        appendLine("Resulting descriptor: ${resultingDescriptor.getText()}")
         appendLine()
 
         appendLine("Explicit receiver kind = ${explicitReceiverKind}")

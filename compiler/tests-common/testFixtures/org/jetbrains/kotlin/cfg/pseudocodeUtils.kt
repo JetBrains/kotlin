@@ -41,7 +41,7 @@ import org.jetbrains.kotlin.types.TypeUtils
 import java.util.*
 
 fun getReceiverTypePredicate(resolvedCall: ResolvedCall<*>, receiverValue: ReceiverValue): TypePredicate? {
-    val callableDescriptor = resolvedCall.resultingDescriptor ?: return null
+    val callableDescriptor = resolvedCall.resultingDescriptor
 
     when (receiverValue) {
         resolvedCall.extensionReceiver -> {

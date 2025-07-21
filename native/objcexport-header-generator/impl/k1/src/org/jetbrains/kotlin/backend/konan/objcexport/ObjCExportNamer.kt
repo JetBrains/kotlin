@@ -891,7 +891,6 @@ class ObjCExportNamerImpl(
                             DescriptorRenderer.COMPACT_WITH_SHORT_TYPES.render(res.conflictingElement)
                         is AssignResult.Conflict -> "${res.conflictingElement}"
                         AssignResult.Reserved -> "a keyword or a reserved name"
-                        else -> "another entity"
                     }
                     when (configuration.nameCollisionMode) {
                         ObjCExportNameCollisionMode.ERROR -> {

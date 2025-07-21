@@ -104,7 +104,7 @@ internal fun LinkKlibsContext.linkKlibs(
     val stdlibIsCached = stdlibModule.konanLibrary?.let { config.cachedLibraries.isLibraryCached(it) } == true
     val stdlibIsBeingCached = libraryToCacheModule == stdlibModule
     require(!(stdlibIsCached && stdlibIsBeingCached)) { "The cache for stdlib is already built" }
-    val kFunctionImplIsBeingCached = stdlibIsBeingCached && libraryToCache?.strategy.containsKFunctionImpl
+    val kFunctionImplIsBeingCached = stdlibIsBeingCached && libraryToCache.strategy.containsKFunctionImpl
     val shouldUseLazyFunctionClasses = (stdlibIsCached || stdlibIsBeingCached) && !kFunctionImplIsBeingCached
 
     val stubGenerator = DeclarationStubGeneratorImpl(

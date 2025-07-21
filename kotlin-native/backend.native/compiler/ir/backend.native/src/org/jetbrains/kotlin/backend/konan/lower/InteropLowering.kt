@@ -969,7 +969,6 @@ private class InteropTransformerPart2(
                             require(receiverTypeIndex <= typeOperandIndex) { renderCompilerError(expression) }
                         IntrinsicType.INTEROP_NARROW ->
                             require(receiverTypeIndex >= typeOperandIndex) { renderCompilerError(expression) }
-                        else -> error(intrinsicType)
                     }
 
                     val receiverClass = symbols.integerClasses.single {

@@ -274,7 +274,7 @@ private class ExtTestDataFile(
      * Examples: package kotlin.coroutines -> package kotlin.coroutines
      *           import kotlin.test.* -> import kotlin.test.*
      */
-    private fun patchPackageNames(isStandaloneTest: Boolean) = with(structure) {
+    private fun patchPackageNames(isStandaloneTest: Boolean): Unit = with(structure) {
         if (isStandaloneTest) return // Don't patch packages for standalone tests.
 
         val basePackageName = FqName(testDataFileSettings.nominalPackageName.toString())

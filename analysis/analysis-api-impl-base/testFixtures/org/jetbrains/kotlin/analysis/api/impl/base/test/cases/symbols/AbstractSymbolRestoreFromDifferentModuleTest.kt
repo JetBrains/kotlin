@@ -42,7 +42,7 @@ abstract class AbstractSymbolRestoreFromDifferentModuleTest : AbstractAnalysisAp
         configurator.doGlobalModuleStateModification(project)
 
         val (debugRenderedRestored, prettyRenderedRestored) = analyzeForTest(restoreAt) {
-            val symbol = pointer.restoreSymbol() as? KaDeclarationSymbol
+            val symbol = pointer.restoreSymbol()
             symbol?.let { DebugSymbolRenderer().render(useSiteSession, it) } to symbol?.render(defaultRenderer)
         }
 
