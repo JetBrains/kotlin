@@ -55,5 +55,5 @@ fun test() {
     }
 }
 
-/* GENERATED_FIR_TAGS: anonymousFunction, funInterface, functionDeclaration, functionalType, interfaceDeclaration,
-lambdaLiteral, localProperty, nullableType, propertyDeclaration, stringLiteral, typeParameter */
+/* GENERATED_FIR_TAGS: anonymousFunction, funInterface, functionDeclaration, functionalType,
+lambdaLiteral, typeParameter */
