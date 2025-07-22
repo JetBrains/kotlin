@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.utils.memoryOptimizedPlus
 
 /**
  * The lowering generates a few functions from the original exported suspend functions
- * to be used both from Kotlin and JS sides with minimal performance degradation.
+ * to be used both from Kotlin and JS sides with minimal performance overhead.
  *
  * It works both with top-level suspend functions and with member suspend functions.
  *
