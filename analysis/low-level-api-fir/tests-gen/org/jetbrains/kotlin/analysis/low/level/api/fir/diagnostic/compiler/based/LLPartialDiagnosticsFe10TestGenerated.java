@@ -49432,6 +49432,12 @@ public class LLPartialDiagnosticsFe10TestGenerated extends AbstractLLPartialDiag
         }
 
         @Test
+        @TestMetadata("reverseImpliesReturns2.kt")
+        public void testReverseImpliesReturns2() {
+          runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/dsl/reverseImpliesReturns2.kt");
+        }
+
+        @Test
         @TestMetadata("reverseImpliesReturns_forbidden.kt")
         public void testReverseImpliesReturns_forbidden() {
           runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/dsl/reverseImpliesReturns_forbidden.kt");
