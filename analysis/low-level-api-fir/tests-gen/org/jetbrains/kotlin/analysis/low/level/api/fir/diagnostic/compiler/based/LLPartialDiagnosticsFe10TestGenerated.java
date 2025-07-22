@@ -11339,6 +11339,18 @@ public class LLPartialDiagnosticsFe10TestGenerated extends AbstractLLPartialDiag
       }
 
       @Test
+      @TestMetadata("inheritedDefaultValue.kt")
+      public void testInheritedDefaultValue() {
+        runTest("compiler/testData/diagnostics/tests/defaultArguments/inheritedDefaultValue.kt");
+      }
+
+      @Test
+      @TestMetadata("inheritedDefaultValueWithIntersectionOverride.kt")
+      public void testInheritedDefaultValueWithIntersectionOverride() {
+        runTest("compiler/testData/diagnostics/tests/defaultArguments/inheritedDefaultValueWithIntersectionOverride.kt");
+      }
+
+      @Test
       @TestMetadata("kt5232.kt")
       public void testKt5232() {
         runTest("compiler/testData/diagnostics/tests/defaultArguments/kt5232.kt");

@@ -186,6 +186,28 @@ public class FirPsiJsOldFrontendDiagnosticsTestGenerated extends AbstractFirPsiJ
   }
 
   @Nested
+  @TestMetadata("compiler/testData/diagnostics/testsWithJsStdLib/defaultArguments")
+  @TestDataPath("$PROJECT_ROOT")
+  public class DefaultArguments {
+    @Test
+    public void testAllFilesPresentInDefaultArguments() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/testsWithJsStdLib/defaultArguments"), Pattern.compile("^([^_](.+))\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), TargetBackend.JS_IR, true);
+    }
+
+    @Test
+    @TestMetadata("inheritedDefaultValue.kt")
+    public void testInheritedDefaultValue() {
+      runTest("compiler/testData/diagnostics/testsWithJsStdLib/defaultArguments/inheritedDefaultValue.kt");
+    }
+
+    @Test
+    @TestMetadata("inheritedDefaultValueWithIntersectionOverride.kt")
+    public void testInheritedDefaultValueWithIntersectionOverride() {
+      runTest("compiler/testData/diagnostics/testsWithJsStdLib/defaultArguments/inheritedDefaultValueWithIntersectionOverride.kt");
+    }
+  }
+
+  @Nested
   @TestMetadata("compiler/testData/diagnostics/testsWithJsStdLib/dynamicTypes")
   @TestDataPath("$PROJECT_ROOT")
   public class DynamicTypes {
