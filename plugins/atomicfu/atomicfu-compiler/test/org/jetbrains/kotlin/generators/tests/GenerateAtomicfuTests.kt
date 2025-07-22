@@ -31,13 +31,13 @@ fun main(args: Array<String>) {
         // Atomicfu compiler plugin native tests.
         testGroup("plugins/atomicfu/atomicfu-compiler/tests-gen", "plugins/atomicfu/atomicfu-compiler/testData/box") {
             testClass<AbstractNativeCodegenBoxTest>(
-                suiteTestClassName = "AtomicfuNativeFirTestGenerated",
+                suiteTestClassName = "AtomicfuNativeTestGenerated",
                 annotations = listOf(*atomicfuNative(), provider<UseExtTestCaseGroupProvider>())
             ) {
                 model(targetBackend = TargetBackend.NATIVE)
             }
             testClass<AbstractNativeCodegenBoxTest>(
-                suiteTestClassName = "AtomicfuNativeFirTestWithInlinedFunInKlibGenerated",
+                suiteTestClassName = "AtomicfuNativeTestWithInlinedFunInKlibGenerated",
                 annotations = listOf(klibIrInliner(), *atomicfuNative(), provider<UseExtTestCaseGroupProvider>())
             ) {
                 model(targetBackend = TargetBackend.NATIVE)
