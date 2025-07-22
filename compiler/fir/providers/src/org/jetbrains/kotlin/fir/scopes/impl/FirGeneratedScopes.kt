@@ -254,7 +254,7 @@ class FirGeneratedMemberDeclarationsStorage(private val session: FirSession) : F
                 extension.generateNestedClassLikeDeclaration(classSymbol, name, generationContext)?.also { symbol ->
                     symbol.fir.ownerGenerator = extension
                     if (classSymbol.isLocal) {
-                        (symbol.fir as? FirRegularClass)?.containingClassForLocalAttr = classSymbol.toLookupTag()
+                        symbol.fir.containingClassForLocalAttr = classSymbol.toLookupTag()
                     }
                 }
             }
