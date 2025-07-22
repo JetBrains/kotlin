@@ -2,7 +2,7 @@ PsiJetFileStubImpl[package=]
   PACKAGE_DIRECTIVE
   IMPORT_LIST
   OBJECT_DECLARATION[classId=/DataObject, fqName=DataObject, isCompanion=false, isLocal=false, isObjectLiteral=false, isTopLevel=true, name=DataObject, superNames=[]]
-    MODIFIER_LIST[public]
+    MODIFIER_LIST[public data]
     CLASS_BODY
       FUN[fqName=DataObject.equals, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=equals]
         MODIFIER_LIST[public open operator]
