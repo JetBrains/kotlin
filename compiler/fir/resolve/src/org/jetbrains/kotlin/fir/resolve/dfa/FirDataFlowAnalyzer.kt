@@ -267,9 +267,12 @@ abstract class FirDataFlowAnalyzer(
      */
     open fun getTypeUsingSmartcastInfo(expression: FirExpression): SmartCastStatement? {
         val flow = currentSmartCastPosition ?: return null
-        // Can have an unstable alias to a stable variable, so don't resolve aliases here.
-        val variable = flow.getVariableWithoutUnwrappingAlias(expression, createReal = false) ?: return null
-        val typeStatement = flow.getTypeStatement(variable)?.takeIf { it.isNotEmpty }
+        var variable: DataFlowVariable = SyntheticVariable(expression)
+        val typeStatement = flow.getTypeStatement(variable)?.takeIf { it.isNotEmpty } ?: run {
+            // Can have an unstable alias to a stable variable, so don't resolve aliases here.
+            variable = flow.getVariableWithoutUnwrappingAlias(expression, createReal = false) ?: return null
+            flow.getTypeStatement(variable)?.takeIf { it.isNotEmpty }
+        }
         val upperTypes = typeStatement?.upperTypes
         val upperTypesStability = when {
             upperTypes != null -> variable.getStability(flow, targetTypes = upperTypes)
@@ -1247,8 +1250,7 @@ abstract class FirDataFlowAnalyzer(
                     statements?.forEach { (variable, statement) ->
                         val approved = logicSystem.approveTypeStatement(flow, statement)
                         if (approved) {
-                            val functionCallVariable = flow.getOrCreateVariable(qualifiedAccess) ?: continue
-                            val functionReturnCondition = OperationStatement(functionCallVariable, Operation.NotEqNull)
+                            val functionReturnCondition = OperationStatement(SyntheticVariable(qualifiedAccess), Operation.NotEqNull)
                             val functionReturnStatements =
                                 logicSystem.approveOperationStatement(flow, functionReturnCondition, removeApprovedOrImpossible = true)
                             flow.addAllStatements(functionReturnStatements)
