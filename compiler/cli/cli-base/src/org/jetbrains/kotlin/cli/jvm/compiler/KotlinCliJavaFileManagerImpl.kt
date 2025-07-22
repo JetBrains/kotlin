@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.cli.jvm.index.SingleJavaFileRootsIndex
 import org.jetbrains.kotlin.load.java.JavaClassFinder
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.impl.JavaClassImpl
+import org.jetbrains.kotlin.load.java.structure.impl.source.SingleFileRootPsiPackage
 import org.jetbrains.kotlin.load.java.structure.impl.classFiles.BinaryClassSignatureParser
 import org.jetbrains.kotlin.load.java.structure.impl.classFiles.BinaryJavaClass
 import org.jetbrains.kotlin.load.java.structure.impl.classFiles.ClassifierResolutionContext
@@ -245,27 +246,20 @@ class KotlinCliJavaFileManagerImpl(private val myPsiManager: PsiManager) : CoreJ
         if (!found) {
             found = packagePartProviders.any { it.findPackageParts(packageName).isNotEmpty() }
         }
-        if (!found) {
-            found = singleJavaFileRootsIndex.hasPackage(packageFqName)
+        if (!found && singleJavaFileRootsIndex.hasPackage(packageFqName)) {
+            val packageInfoClassId = ClassId(packageFqName, SingleJavaFileRootsIndex.PACKAGE_INFO_CLASS_NAME)
+            val packageInfoVirtualFile = singleJavaFileRootsIndex.findJavaSourceClass(packageInfoClassId)
+            val packageInfoPsiFile = packageInfoVirtualFile?.let { myPsiManager.findFile(it) } as? PsiJavaFile
+            val annotationsList = packageInfoPsiFile?.packageStatement?.annotationList
+            return SingleFileRootPsiPackage(myPsiManager, packageName, annotationsList)
         }
 
         if (!found) return null
 
         return object : PsiPackageImpl(myPsiManager, packageName) {
-            private val packageInfoAnnotations by lazy {
-                val packageInfoClassId = ClassId(packageFqName, SingleJavaFileRootsIndex.PACKAGE_INFO_CLASS_NAME)
-                val packageInfoVirtualFile = singleJavaFileRootsIndex.findJavaSourceClass(packageInfoClassId)
-                val packageInfoPsiFile = packageInfoVirtualFile?.let { myPsiManager.findFile(it) } as? PsiJavaFile
-                packageInfoPsiFile?.packageStatement?.annotationList
-            }
-
             // Do not check validness for packages we just made sure are actually present
             // It might be important for source roots that have non-trivial package prefix
             override fun isValid() = true
-
-            override fun getAnnotationList(): PsiModifierList? {
-                return packageInfoAnnotations ?: super.getAnnotationList()
-            }
         }
     }
 
