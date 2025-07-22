@@ -232,6 +232,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
 
     private fun transformExpressionUsingSmartcastInfo(original: FirExpression): FirExpression {
         when (val expression = original.unwrapDesugaredAssignmentValueRef()) {
+            is FirFunctionCall -> {}
             is FirQualifiedAccessExpression -> dataFlowAnalyzer.exitQualifiedAccessExpression(expression)
             is FirResolvedQualifier -> dataFlowAnalyzer.exitResolvedQualifierNode(expression)
             else -> return original
@@ -600,7 +601,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
             if (enableArrayOfCallTransformation) {
                 return arrayOfCallTransformer.transformFunctionCall(result, session)
             }
-            return result
+            return result.addSmartcastIfNeeded(data)
         }
 
     /**
@@ -963,7 +964,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         fun buildAndResolveOperatorCall(
             receiver: FirExpression,
             fakeSourceKind: KtFakeSourceElementKind.DesugaredIncrementOrDecrement,
-        ): FirFunctionCall = buildFunctionCall {
+        ): FirExpression = buildFunctionCall {
             source = incrementDecrementExpression.operationSource
             explicitReceiver = receiver
             calleeReference = buildSimpleNamedReference {

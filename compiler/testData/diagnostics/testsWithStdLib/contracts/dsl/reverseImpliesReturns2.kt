@@ -49,7 +49,7 @@ fun String?.foo(): String? {
 
 fun usage(){
     null.foo().length
-    acceptString(<!ARGUMENT_TYPE_MISMATCH!>null.foo()<!>)
+    acceptString(null.foo())
     val a = null.foo()
     a<!UNSAFE_CALL!>.<!>length
 }
@@ -66,7 +66,7 @@ operator fun Any?.inc(): Int? {
 fun test_inc_dec(ix1: Int?) {
     var x1 = ix1
     x1++
-    x1<!UNSAFE_CALL!>.<!>toChar()
+    x1.toChar()
 }
 
 // KT-79277
@@ -78,7 +78,7 @@ fun decode(encoded: String?): String? {
 }
 
 fun nestedUsage(x: String) {
-    acceptString(<!ARGUMENT_TYPE_MISMATCH!>decode(x)<!>)
+    acceptString(decode(x))
 }
 
 fun directUsage(x: String) {
@@ -101,7 +101,7 @@ fun ensureA(v: Variants): Variants? {
 
 fun foo(v: Variants.A): String {
     ensureA(v).foo()
-    return <!NO_ELSE_IN_WHEN!>when<!> (ensureA(v)) {
+    return when (ensureA(v)) {
         is Variants.B -> "B"
         is Variants.A -> "A"
     }
