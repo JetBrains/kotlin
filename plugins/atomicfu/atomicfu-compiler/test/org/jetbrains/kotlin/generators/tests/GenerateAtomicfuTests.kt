@@ -49,10 +49,10 @@ fun main(args: Array<String>) {
             "plugins/atomicfu/atomicfu-compiler/testData",
             testRunnerMethodName = "runTest0"
         ) {
-            testClass<AbstractAtomicfuJsFirTest> {
+            testClass<AbstractAtomicfuJsTest> {
                 model("box/")
             }
-            testClass<AbstractAtomicfuJsFirWithInlinedFunInKlibTest> {
+            testClass<AbstractAtomicfuJsWithInlinedFunInKlibTest> {
                 model("box/")
             }
         }
