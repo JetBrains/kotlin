@@ -8,18 +8,18 @@ class MyList {
     }
 }
 
-fun <T> acceptList(l: MyList<!WRONG_NUMBER_OF_TYPE_ARGUMENTS!><T><!>) = Unit
+fun acceptList(l: MyList) = Unit
 
 class A
 
 fun test() {
-    <!CANNOT_INFER_PARAMETER_TYPE!>acceptList<!>(MyList.of("1", "2", "3"))
-    <!CANNOT_INFER_PARAMETER_TYPE!>acceptList<!>(<!UNSUPPORTED!>["1", "2", "3"]<!>)
-    <!CANNOT_INFER_PARAMETER_TYPE!>acceptList<!>(<!UNSUPPORTED!>[]<!>)
-    <!CANNOT_INFER_PARAMETER_TYPE!>acceptList<!>(<!UNSUPPORTED!>[null]<!>) // should not pass
-    <!CANNOT_INFER_PARAMETER_TYPE!>acceptList<!>(<!UNSUPPORTED!>[A()]<!>) // should not pass
-    <!CANNOT_INFER_PARAMETER_TYPE!>acceptList<!>(<!UNSUPPORTED!>["0", A()]<!>) // should not pass
-    <!CANNOT_INFER_PARAMETER_TYPE!>acceptList<!>(<!UNSUPPORTED!>["0", null]<!>) // should not pass
+    acceptList(MyList.of("1", "2", "3"))
+    acceptList(<!ARGUMENT_TYPE_MISMATCH, UNSUPPORTED!>["1", "2", "3"]<!>)
+    acceptList(<!ARGUMENT_TYPE_MISMATCH, UNSUPPORTED!>[]<!>)
+    acceptList(<!ARGUMENT_TYPE_MISMATCH, UNSUPPORTED!>[null]<!>) // should not pass
+    acceptList(<!ARGUMENT_TYPE_MISMATCH, UNSUPPORTED!>[A()]<!>) // should not pass
+    acceptList(<!ARGUMENT_TYPE_MISMATCH, UNSUPPORTED!>["0", A()]<!>) // should not pass
+    acceptList(<!ARGUMENT_TYPE_MISMATCH, UNSUPPORTED!>["0", null]<!>) // should not pass
 
     val lst1: MyList = <!INITIALIZER_TYPE_MISMATCH, UNSUPPORTED!>[]<!>
     val lst2: MyList = <!INITIALIZER_TYPE_MISMATCH, UNSUPPORTED!>["1", "2", "3"]<!>
@@ -28,4 +28,4 @@ fun test() {
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, collectionLiteral, companionObject, functionDeclaration, localProperty,
-nullableType, objectDeclaration, operator, propertyDeclaration, stringLiteral, typeParameter, vararg */
+nullableType, objectDeclaration, operator, propertyDeclaration, stringLiteral, vararg */
