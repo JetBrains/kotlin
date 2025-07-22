@@ -8,7 +8,6 @@ plugins {
     kotlin("jvm")
     id("jps-compatible")
     id("d8-configuration")
-    id("java-test-fixtures")
 }
 
 val jsoIrRuntimeForTests by configurations.creating {
@@ -25,20 +24,20 @@ dependencies {
     embedded(project(":plugins:js-plain-objects:compiler-plugin:js-plain-objects.backend")) { isTransitive = false }
     embedded(project(":plugins:js-plain-objects:compiler-plugin:js-plain-objects.cli")) { isTransitive = false }
 
-    testFixturesApi(project(":compiler:backend"))
-    testFixturesApi(project(":compiler:cli"))
-    testFixturesApi(project(":plugins:js-plain-objects:compiler-plugin:js-plain-objects.cli"))
+    testApi(project(":compiler:backend"))
+    testApi(project(":compiler:cli"))
+    testApi(project(":plugins:js-plain-objects:compiler-plugin:js-plain-objects.cli"))
 
-    testFixturesApi(testFixtures(project(":compiler:test-infrastructure")))
-    testFixturesApi(testFixtures(project(":compiler:test-infrastructure-utils")))
-    testFixturesApi(testFixtures(project(":compiler:tests-compiler-utils")))
-    testFixturesApi(testFixtures(project(":compiler:tests-common-new")))
+    testApi(testFixtures(project(":compiler:test-infrastructure")))
+    testApi(testFixtures(project(":compiler:test-infrastructure-utils")))
+    testApi(testFixtures(project(":compiler:tests-compiler-utils")))
+    testApi(testFixtures(project(":compiler:tests-common-new")))
 
-    testFixturesApi(testFixtures(project(":js:js.tests")))
-    testFixturesImplementation(testFixtures(project(":generators:test-generator")))
+    testApi(testFixtures(project(":js:js.tests")))
+    testFixtures(testFixtures(project(":generators:test-generator")))
 
-    testFixturesApi(platform(libs.junit.bom))
-    testFixturesImplementation(libs.junit.jupiter.api)
+    testApi(platform(libs.junit.bom))
+    testFixtures(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
 
     if (!project.kotlinBuildProperties.isInJpsBuildIdeaSync) {
@@ -61,8 +60,11 @@ optInToExperimentalCompilerApi()
 
 sourceSets {
     "main" { none() }
-    "test" { generatedTestDir() }
-    "testFixtures" { projectDefault() }
+    "test" {
+        projectDefault()
+        java.srcDirs("testFixtures")
+        generatedTestDir()
+    }
 }
 
 publish {
