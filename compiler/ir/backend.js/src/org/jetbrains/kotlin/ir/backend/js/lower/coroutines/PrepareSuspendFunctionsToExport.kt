@@ -169,7 +169,7 @@ internal class PrepareSuspendFunctionsToExportLowering(private val context: JsIr
             annotations = originalFunc.annotations memoryOptimizedPlus listOf(
                 JsIrBuilder.buildConstructorCall(jsExportIgnoreAnnotation.symbol)
             )
-        }
+        }.patchDeclarationParents()
     }
 
     private fun IrSimpleFunction.replaceBodyWithBridge(
