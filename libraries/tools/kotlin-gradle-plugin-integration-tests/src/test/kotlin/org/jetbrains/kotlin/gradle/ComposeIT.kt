@@ -749,8 +749,12 @@ class ComposeIT : KGPBaseTest() {
             )
 
             val agpVersion = TestVersions.AgpCompatibilityMatrix.fromVersion(agpVersion)
-            build(":composeApp:linkReleaseFrameworkIosArm64") {}
-            build(":composeApp:") {}
+            build(":linkReleaseFrameworkIosArm64") {
+                assertTasksExecuted(":composeApp:linkReleaseFrameworkIosArm64")
+            }
+            build(":compileDevelopmentExecutableKotlinWasmJs") {
+                assertTasksExecuted(":composeApp:compileDevelopmentExecutableKotlinWasmJs")
+            }
         }
     }
 
