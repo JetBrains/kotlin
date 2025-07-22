@@ -33,6 +33,9 @@ grant {
     // Used by com.intellij.openapi.util.SystemInfo.isCrostini() to detect ChromeOs
     permission java.io.FilePermission "/dev/.cros_milestone", "read";
 
+    // com.intellij.openapi.util.registry.EarlyAccessRegistryManager
+    permission java.io.FilePermission "some/non/existent/path/early-access-registry.txt", "read";
+
     {{native}}
 
     // Temp directory

@@ -137,8 +137,6 @@ tasks.withType<Test>().names.forEach { taskName ->
                                         //This is scary because it's too broad
                                         """permission java.util.PropertyPermission "*", "write";""", // org/jetbrains/kotlin/konan/test/blackbox/support/util/SafeEnvironment.kt:48
 
-                                        """permission java.io.FilePermission "some/non/existent/path/early-access-registry.txt", "read";""", // com.intellij.openapi.util.registry.EarlyAccessRegistryManager
-
                                         """permission java.io.FilePermission "$konanDataDir/-", "read,write,delete,execute";""",
                                         """permission java.io.FilePermission "$konanDataDir", "read";""",
                                         """permission java.io.FilePermission "/bin/sh", "execute";""",
