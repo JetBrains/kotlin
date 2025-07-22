@@ -70,7 +70,7 @@ internal val KotlinCreateNativeCompileTasksSideEffect = KotlinCompilationSideEff
                 compilation.konanTarget
             )
         )
-        task.exportKdoc.set(project.checkForSourcesPublication())
+        task.exportKdoc.convention(project.checkForSourcesPublication())
         task.enabledOnCurrentHostForKlibCompilationProperty.set(enabledOnCurrentHost)
         task.kotlinCompilerArgumentsLogLevel
             .value(project.kotlinPropertiesProvider.kotlinCompilerArgumentsLogLevel)
