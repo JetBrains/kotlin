@@ -40274,6 +40274,18 @@ public class FirLightTreeBlackBoxCodegenTestGenerated extends AbstractFirLightTr
     }
 
     @Test
+    @TestMetadata("positionalDestructuringFullForm.kt")
+    public void testPositionalDestructuringFullForm() {
+      runTest("compiler/testData/codegen/box/multiDecl/positionalDestructuringFullForm.kt");
+    }
+
+    @Test
+    @TestMetadata("positionalDestructuringShortForm.kt")
+    public void testPositionalDestructuringShortForm() {
+      runTest("compiler/testData/codegen/box/multiDecl/positionalDestructuringShortForm.kt");
+    }
+
+    @Test
     @TestMetadata("returnInElvis.kt")
     public void testReturnInElvis() {
       runTest("compiler/testData/codegen/box/multiDecl/returnInElvis.kt");

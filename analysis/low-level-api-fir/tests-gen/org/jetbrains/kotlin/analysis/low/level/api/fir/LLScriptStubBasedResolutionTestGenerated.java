@@ -101,6 +101,12 @@ public class LLScriptStubBasedResolutionTestGenerated extends AbstractLLScriptSt
       public void testNameBasedDestructuringScript() {
         runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/destructuring/nameBasedDestructuringScript.kts");
       }
+
+      @Test
+      @TestMetadata("positionalDestructuringScript.kts")
+      public void testPositionalDestructuringScript() {
+        runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/destructuring/positionalDestructuringScript.kts");
+      }
     }
 
     @Nested

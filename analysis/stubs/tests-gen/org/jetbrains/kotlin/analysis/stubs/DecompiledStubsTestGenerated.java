@@ -2342,6 +2342,18 @@ public class DecompiledStubsTestGenerated extends AbstractDecompiledStubsTest {
     }
 
     @Test
+    @TestMetadata("fullPositionBasedDestructuring.kt")
+    public void testFullPositionBasedDestructuring() {
+      runTest("compiler/testData/psi/destructuring/fullPositionBasedDestructuring.kt");
+    }
+
+    @Test
+    @TestMetadata("fullPositionBasedDestructuringErrors.kt")
+    public void testFullPositionBasedDestructuringErrors() {
+      runTest("compiler/testData/psi/destructuring/fullPositionBasedDestructuringErrors.kt");
+    }
+
+    @Test
     @TestMetadata("ktij23263.kt")
     public void testKtij23263() {
       runTest("compiler/testData/psi/destructuring/ktij23263.kt");
@@ -2351,6 +2363,18 @@ public class DecompiledStubsTestGenerated extends AbstractDecompiledStubsTest {
     @TestMetadata("shortNameBasedDestructuringWithRenaming.kt")
     public void testShortNameBasedDestructuringWithRenaming() {
       runTest("compiler/testData/psi/destructuring/shortNameBasedDestructuringWithRenaming.kt");
+    }
+
+    @Test
+    @TestMetadata("shortPositionBasedDestructuring.kt")
+    public void testShortPositionBasedDestructuring() {
+      runTest("compiler/testData/psi/destructuring/shortPositionBasedDestructuring.kt");
+    }
+
+    @Test
+    @TestMetadata("shortPositionBasedDestructuringErrors.kt")
+    public void testShortPositionBasedDestructuringErrors() {
+      runTest("compiler/testData/psi/destructuring/shortPositionBasedDestructuringErrors.kt");
     }
   }
 
