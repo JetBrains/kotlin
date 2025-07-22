@@ -748,7 +748,7 @@ class ComposeIT : KGPBaseTest() {
                 """.trimIndent()
             )
 
-            val agpVersion = TestVersions.AgpCompatibilityMatrix.fromVersion(agpVersion)
+            error("fail intentionally")
             build(":linkReleaseFrameworkIosArm64") {
                 assertTasksExecuted(":composeApp:linkReleaseFrameworkIosArm64")
             }
