@@ -74,10 +74,10 @@ import org.jetbrains.kotlin.utils.memoryOptimizedPlus
  * ```kotlin
  * @JsExport
  * open class SomeClass {
- *  @JsName("foo")
- *  // This function is used from the JS side and is supposed to be overridden from the JS side
- *  fun foo$promisified(a: Int, b: String): Promise<String> =
- *      kotlin.coroutines.promisify { this.foo$original(a, b) }
+ *   @JsName("foo")
+ *   // This function is used from the JS side and is supposed to be overridden from the JS side
+ *   fun foo$promisified(a: Int, b: String): Promise<String> =
+ *       kotlin.coroutines.promisify { this.foo$original(a, b) }
  *
  *   @JsExport.Ignore
  *   // This function is supposed to be overridden from the Kotlin side
