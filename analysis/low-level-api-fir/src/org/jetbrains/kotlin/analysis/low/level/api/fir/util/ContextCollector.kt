@@ -632,6 +632,10 @@ private class ContextCollectorVisitor(
         context.forTypeAlias(typeAlias) {
             super.visitTypeAlias(typeAlias)
         }
+
+        if (typeAlias.isLocal) {
+            context.storeClassOrTypealiasIfNotNested(typeAlias, typeAlias.moduleData.session)
+        }
     }
 
     override fun visitDoWhileLoop(doWhileLoop: FirDoWhileLoop) = withProcessor(doWhileLoop) {

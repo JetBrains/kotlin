@@ -143,7 +143,7 @@ internal class KaFirSymbolRelationProvider(
         }
 
     private fun getContainingDeclarationsForLocalClass(firSymbol: FirBasedSymbol<*>, symbolFirSession: FirSession): KaDeclarationSymbol? {
-        val fir = firSymbol.fir as? FirRegularClass ?: return null
+        val fir = firSymbol.fir as? FirClassLikeDeclaration ?: return null
         val containerSymbol = fir.containingClassForLocalAttr?.toSymbol(symbolFirSession) ?: return null
         return firSymbolBuilder.classifierBuilder.buildClassLikeSymbol(containerSymbol)
     }

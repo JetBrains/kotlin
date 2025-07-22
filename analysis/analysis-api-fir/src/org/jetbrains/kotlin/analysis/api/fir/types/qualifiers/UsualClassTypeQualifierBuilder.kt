@@ -80,7 +80,7 @@ internal object UsualClassTypeQualifierBuilder {
         return result
     }
 
-    private fun FirRegularClass.collectForLocal(): List<FirClassLikeDeclaration> {
+    private fun FirClassLikeDeclaration.collectForLocal(): List<FirClassLikeDeclaration> {
         require(isLocal)
         var containingClassLookUp = containingClassForLocal()
         val designation = mutableListOf<FirClassLikeDeclaration>(this)
@@ -102,8 +102,9 @@ internal object UsualClassTypeQualifierBuilder {
         }
         return when (declaration) {
             is FirAnonymousObject -> listOf(declaration)
-            is FirRegularClass -> declaration.collectForLocal()
-            is FirTypeAlias -> listOf(declaration) // TODO: handle type aliases
+            is FirRegularClass,
+            is FirTypeAlias
+                -> declaration.collectForLocal()
         }
     }
 }
