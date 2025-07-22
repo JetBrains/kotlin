@@ -10,6 +10,7 @@ package kotlin.js
  *
  * */
 @ExperimentalWasmJsInterop
+@SinceKotlin("2.2")
 @Suppress("EXPECT_ACTUAL_IR_INCOMPATIBILITY")
 public expect class JsException : Throwable
 
@@ -17,4 +18,5 @@ public expect class JsException : Throwable
  * value thrown by JavaScript; commonly it's an instance of an `Error` or its subclass, but it can be any JavaScript value
  * */
 @ExperimentalWasmJsInterop
+@SinceKotlin("2.2")
 public expect val JsException.thrownValue: JsAny?

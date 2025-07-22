@@ -7,10 +7,13 @@ package kotlin.js
 
 /** JavaScript primitive bigint for WasmJs interop */
 @ExperimentalWasmJsInterop
+@SinceKotlin("2.2")
 public expect class JsBigInt : JsAny
 
 @ExperimentalWasmJsInterop
+@SinceKotlin("2.2")
 public expect fun JsBigInt.toLong(): Long
 
 @ExperimentalWasmJsInterop
+@SinceKotlin("2.2")
 public expect fun Long.toJsBigInt(): JsBigInt

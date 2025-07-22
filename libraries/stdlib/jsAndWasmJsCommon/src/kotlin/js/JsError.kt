@@ -6,4 +6,5 @@
 package kotlin.js
 
 @ExperimentalWasmJsInterop
+@SinceKotlin("2.2")
 public expect class JsError : JsAny

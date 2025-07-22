@@ -6,7 +6,11 @@
 package kotlin.js
 
 /** JavaScript primitive string */
+@SinceKotlin("2.2")
+@ExperimentalWasmJsInterop
 public actual typealias JsString = String
 
 @Suppress("NOTHING_TO_INLINE")
+@SinceKotlin("2.2")
+@ExperimentalWasmJsInterop
 public actual inline fun String.toJsString(): JsString = this

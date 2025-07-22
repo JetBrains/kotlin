@@ -5,5 +5,7 @@
 
 package kotlin.js
 
+@SinceKotlin("2.2")
+@ExperimentalWasmJsInterop
 public actual typealias JsError = Throwable
 

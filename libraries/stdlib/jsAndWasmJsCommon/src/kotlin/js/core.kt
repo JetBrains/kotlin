@@ -31,6 +31,8 @@ package kotlin.js
  * external val prop: Float = definedExternally
  * ```
  */
+@ExperimentalWasmJsInterop
+@SinceKotlin("2.2")
 public expect val definedExternally: Nothing
 
 /**
@@ -63,4 +65,6 @@ public expect val definedExternally: Nothing
  * You can use parameters of calling function in JavaScript [code].
  * However, other Kotlin declarations are not visible inside the [code] block.
  */
+@ExperimentalWasmJsInterop
+@SinceKotlin("2.2")
 public expect fun js(code: String): Nothing

@@ -8,11 +8,13 @@ package kotlin.js
 /**
  * Any JavaScript value except null or undefined for WasmJs interop
  */
+@SinceKotlin("2.2")
 @ExperimentalWasmJsInterop
 public expect interface JsAny
 
 /**
  * Cast JsAny to other Js type without runtime check for WasmJs interop
  */
+@SinceKotlin("2.2")
 @ExperimentalWasmJsInterop
 public expect fun <T : JsAny> JsAny.unsafeCast(): T

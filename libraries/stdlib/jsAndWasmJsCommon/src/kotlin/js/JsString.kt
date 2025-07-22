@@ -7,7 +7,9 @@ package kotlin.js
 
 /** JavaScript primitive string for WasmJs interop */
 @ExperimentalWasmJsInterop
+@SinceKotlin("2.2")
 public expect class JsString : JsAny
 
 @ExperimentalWasmJsInterop
+@SinceKotlin("2.2")
 public expect fun String.toJsString(): JsString

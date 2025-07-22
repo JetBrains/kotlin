@@ -7,16 +7,21 @@ package kotlin.js
 
 /** JavaScript primitive number for WasmJs interop */
 @ExperimentalWasmJsInterop
+@SinceKotlin("2.2")
 public expect class JsNumber : JsAny
 
 @ExperimentalWasmJsInterop
+@SinceKotlin("2.2")
 public expect fun JsNumber.toDouble(): Double
 
 @ExperimentalWasmJsInterop
+@SinceKotlin("2.2")
 public expect fun Double.toJsNumber(): JsNumber
 
 @ExperimentalWasmJsInterop
+@SinceKotlin("2.2")
 public expect fun JsNumber.toInt(): Int
 
 @ExperimentalWasmJsInterop
+@SinceKotlin("2.2")
 public expect fun Int.toJsNumber(): JsNumber

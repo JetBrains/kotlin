@@ -7,10 +7,13 @@ package kotlin.js
 
 /** JavaScript primitive boolean for WasmJs interop */
 @ExperimentalWasmJsInterop
+@SinceKotlin("2.2")
 public expect class JsBoolean : JsAny
 
 @ExperimentalWasmJsInterop
+@SinceKotlin("2.2")
 public expect fun JsBoolean.toBoolean(): Boolean
 
 @ExperimentalWasmJsInterop
+@SinceKotlin("2.2")
 public expect fun Boolean.toJsBoolean(): JsBoolean

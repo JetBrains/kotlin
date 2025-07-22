@@ -6,10 +6,16 @@
 package kotlin.js
 
 /** JavaScript primitive boolean */
+@SinceKotlin("2.2")
+@ExperimentalWasmJsInterop
 public actual typealias JsBoolean = Boolean
 
+@SinceKotlin("2.2")
+@ExperimentalWasmJsInterop
 @Suppress("NOTHING_TO_INLINE")
 public actual inline fun JsBoolean.toBoolean(): Boolean = unsafeCast<Boolean>()
 
+@SinceKotlin("2.2")
+@ExperimentalWasmJsInterop
 @Suppress("NOTHING_TO_INLINE")
 public actual inline fun Boolean.toJsBoolean(): JsBoolean = unsafeCast<JsBoolean>()

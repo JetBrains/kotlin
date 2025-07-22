@@ -11,12 +11,15 @@ package kotlin.js
  * When passed back to Kotlin/Wasm, the original value can be retrieved using the [get] method.
  */
 @ExperimentalWasmJsInterop
+@SinceKotlin("2.2")
 @Suppress("EXPECT_ACTUAL_IR_INCOMPATIBILITY")
 public expect sealed interface JsReference<out T : Any> : JsAny
 
 @ExperimentalWasmJsInterop
+@SinceKotlin("2.2")
 public expect fun <T : Any> T.toJsReference(): JsReference<T>
 
 /** Retrieve original Kotlin value from JsReference */
 @ExperimentalWasmJsInterop
+@SinceKotlin("2.2")
 public expect fun <T : Any> JsReference<T>.get(): T

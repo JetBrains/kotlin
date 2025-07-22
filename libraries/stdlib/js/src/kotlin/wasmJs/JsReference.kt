@@ -6,10 +6,16 @@
 package kotlin.js
 
 // TODO: Replace `Any` with `T` as soon as it will be possible
+@SinceKotlin("2.2")
+@ExperimentalWasmJsInterop
 public actual typealias JsReference<T> = Any
 
+@SinceKotlin("2.2")
+@ExperimentalWasmJsInterop
 @Suppress("NOTHING_TO_INLINE")
 public actual inline fun <T : Any> T.toJsReference(): JsReference<T> = unsafeCast<JsReference<T>>()
 
+@SinceKotlin("2.2")
+@ExperimentalWasmJsInterop
 @Suppress("NOTHING_TO_INLINE")
 public actual inline fun <T : Any> JsReference<T>.get(): T = unsafeCast<T>()

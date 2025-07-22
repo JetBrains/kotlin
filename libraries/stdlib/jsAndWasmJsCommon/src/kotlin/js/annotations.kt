@@ -18,8 +18,13 @@ package kotlin.js
 @MustBeDocumented
 @Retention(AnnotationRetention.BINARY)
 @SinceKotlin("2.2")
-@OptionalExpectation
-public expect annotation class ExperimentalWasmJsInterop()
+@Target(
+    AnnotationTarget.CLASS,
+    AnnotationTarget.FUNCTION,
+    AnnotationTarget.PROPERTY,
+    AnnotationTarget.TYPEALIAS
+)
+public annotation class ExperimentalWasmJsInterop
 
 /**
  * Denotes an `external` declaration that must be imported from JavaScript module.
@@ -44,6 +49,8 @@ public expect annotation class ExperimentalWasmJsInterop()
  * @property import name of a module to import declaration from.
  *           It is not interpreted by the Kotlin compiler, it's passed as is directly to the target module system.
  */
+@ExperimentalWasmJsInterop
+@SinceKotlin("2.2")
 @Retention(AnnotationRetention.BINARY)
 @Target(AnnotationTarget.CLASS, AnnotationTarget.PROPERTY, AnnotationTarget.FUNCTION, AnnotationTarget.FILE)
 public expect annotation class JsModule(val import: String)
@@ -77,6 +84,8 @@ public expect annotation class JsModule(val import: String)
  *
  * @see JsModule
  */
+@ExperimentalWasmJsInterop
+@SinceKotlin("2.2")
 @Retention(AnnotationRetention.BINARY)
 @Target(AnnotationTarget.FILE)
 public expect annotation class JsQualifier(val value: String)

@@ -5,10 +5,16 @@
 
 package kotlin.js
 
+@SinceKotlin("2.2")
+@ExperimentalWasmJsInterop
 public actual typealias JsBigInt = Long
 
+@SinceKotlin("2.2")
+@ExperimentalWasmJsInterop
 public actual fun JsBigInt.toLong(): Long =
     unsafeCast<Long>()
 
+@SinceKotlin("2.2")
+@ExperimentalWasmJsInterop
 public actual fun Long.toJsBigInt(): JsBigInt =
     unsafeCast<JsBigInt>()

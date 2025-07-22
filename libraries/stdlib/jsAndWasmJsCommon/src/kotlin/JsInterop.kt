@@ -20,6 +20,7 @@ import kotlin.js.ExperimentalWasmJsInterop
  * This is a temporary annotation because K/Wasm <-> JS interop is not designed yet.
  */
 @ExperimentalWasmJsInterop
+@SinceKotlin("2.2")
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER)
 @Retention(AnnotationRetention.BINARY)
 public annotation class JsFun(val code: String)
