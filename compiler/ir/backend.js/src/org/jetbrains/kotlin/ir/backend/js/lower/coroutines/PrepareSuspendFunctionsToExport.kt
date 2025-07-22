@@ -70,7 +70,7 @@ import org.jetbrains.kotlin.utils.memoryOptimizedPlus
  * }
  * ```
  *
- * **After the transformation: **
+ * **After the transformation:**
  * ```kotlin
  * @JsExport
  * open class SomeClass {
