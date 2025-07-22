@@ -62,7 +62,7 @@ import org.jetbrains.kotlin.utils.memoryOptimizedPlus
  * For the member functions it's a little bit more complicated because we should take in an account that they could be overridden from the JS side.
  * To support the overriding, we introduce two more helper methods.
  *
- * **Before the transformation: **
+ * **Before the transformation:**
  * ```kotlin
  * @JsExport
  * open class SomeClass {
