@@ -1167,7 +1167,7 @@ abstract class AbstractRawFirBuilder<T : Any>(val baseSession: FirSession, val c
         }
     }
 
-    protected fun FirRegularClass.initContainingClassForLocalAttr() {
+    protected fun FirClassLikeDeclaration.initContainingClassForLocalAttr() {
         if (isLocal) {
             val currentDispatchReceiverType = currentDispatchReceiverType()
             if (currentDispatchReceiverType != null) {
