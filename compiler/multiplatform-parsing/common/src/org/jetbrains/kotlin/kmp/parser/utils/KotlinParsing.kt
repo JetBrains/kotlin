@@ -673,6 +673,7 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
             KtTokens.VAR_KEYWORD_ID,
                 -> return parseProperty(declarationParsingMode)
             KtTokens.LPAR_ID if lookahead(1) in KtTokens.VAL_VAR -> return parseProperty(declarationParsingMode)
+            KtTokens.LBRACKET_ID if lookahead(1) in KtTokens.VAL_VAR -> return parseProperty(declarationParsingMode)
             KtTokens.TYPE_ALIAS_KEYWORD_ID -> return parseTypeAlias()
             KtTokens.OBJECT_KEYWORD_ID -> {
                 parseObject(nameParsingModeForObject, true)
@@ -1597,7 +1598,7 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
         val receiver = mark()
         val receiverTypeDeclared = parseReceiverType("property", PROPERTY_NAME_FOLLOW_SET)
 
-        val multiDeclaration = at(KtTokens.LPAR)
+        val multiDeclaration = at(KtTokens.LPAR) || at(KtTokens.LBRACKET)
 
         errorIf(receiver, multiDeclaration && receiverTypeDeclared, "Receiver type is not allowed on a destructuring declaration")
 
@@ -1716,14 +1717,20 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
         // Parsing multi-name, e.g.
         //   val (a, b) = foo()
         //   (val a: X = aa, var b) = foo()
+        //   val [a, b] = foo()
+        //   [val a: X, var b] = foo()
         builder.disableNewlines()
-        advance() // LPAR
+
+        val isParentheses = at(KtTokens.LPAR)
+        val closingBrace = if (isParentheses) KtTokens.RPAR else KtTokens.RBRACKET
+
+        advance() // LPAR | LBRACKET
 
         if (!atSetWithRemap(follow)) {
             while (true) {
                 if (at(KtTokens.COMMA)) {
                     errorAndAdvance("Expecting a name")
-                } else if (at(KtTokens.RPAR)) { // For declaration similar to `val () = somethingCall()`
+                } else if (at(closingBrace)) { // For declaration similar to `val () = somethingCall()`
                     error("Expecting a name")
                     break
                 }
@@ -1756,7 +1763,7 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
                     parseTypeRef(follow)
                 }
 
-                if (at(KtTokens.EQ)) {
+                if (at(KtTokens.EQ) && closingBrace == KtTokens.RPAR) {
                     advance()
                     expressionParsing.parseSimpleNameExpression()
                 }
@@ -1765,11 +1772,11 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
 
                 if (!at(KtTokens.COMMA)) break
                 advance() // COMMA
-                if (at(KtTokens.RPAR)) break
+                if (at(closingBrace)) break
             }
         }
 
-        expect(KtTokens.RPAR, "Expecting ')'", follow)
+        expect(closingBrace, if (isParentheses) "Expecting '('" else "Expecting '['", follow)
         builder.restoreNewlinesState()
     }
 

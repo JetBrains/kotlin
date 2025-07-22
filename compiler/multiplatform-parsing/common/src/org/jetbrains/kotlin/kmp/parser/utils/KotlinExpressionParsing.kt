@@ -1112,7 +1112,7 @@ internal open class KotlinExpressionParsing(
                 advance() // ARROW
                 paramsFound = true
             }
-            KtTokens.IDENTIFIER_ID, KtTokens.COLON_ID, KtTokens.LPAR_ID -> {
+            KtTokens.IDENTIFIER_ID, KtTokens.COLON_ID, KtTokens.LPAR_ID, KtTokens.LBRACKET_ID -> {
                 // Try to parse a simple name list followed by an ARROW
                 //   {a -> ...}
                 //   {a, b -> ...}
@@ -1190,7 +1190,7 @@ internal open class KotlinExpressionParsing(
                 KtTokens.COLON_ID -> {
                     error("Expecting parameter name")
                 }
-                KtTokens.LPAR_ID -> {
+                KtTokens.LPAR_ID, KtTokens.LBRACKET_ID -> {
                     val destructuringDeclaration = mark()
                     kotlinParsing.parseMultiDeclarationEntry(
                         TOKEN_SET_TO_FOLLOW_AFTER_DESTRUCTURING_DECLARATION_IN_LAMBDA,
@@ -1429,7 +1429,7 @@ internal open class KotlinExpressionParsing(
                     advance()
                 }
 
-                if (at(KtTokens.LPAR)) {
+                if (at(KtTokens.LPAR) || at(KtTokens.LBRACKET)) {
                     val destructuringDeclaration = mark()
                     kotlinParsing.parseMultiDeclarationEntry(
                         IN_KEYWORD_L_BRACE_SET,
