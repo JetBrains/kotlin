@@ -252,9 +252,8 @@ internal class PrepareSuspendFunctionsToExportLowering(private val context: JsIr
                 +irReturn(
                     irCall(promisifyFunctionSymbol).apply {
                         arguments[0] = JsIrBuilder.buildFunctionExpression(
-                            IrSimpleTypeImpl(
-                                suspendFunctionClassSymbol, SimpleTypeNullability.NOT_SPECIFIED, listOf(call.type), emptyList()
-                            ), promisifiedSuspendLambda
+                            suspendFunctionClassSymbol.typeWith(call.type),
+                            promisifiedSuspendLambda,
                         )
                     })
             }
