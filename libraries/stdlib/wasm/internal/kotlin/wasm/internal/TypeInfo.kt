@@ -11,6 +11,8 @@ internal class TypeInfoData(val typeId: Long, val packageName: String, val typeN
 
 private const val TYPE_INFO_FLAG_ANONYMOUS_CLASS = 1
 private const val TYPE_INFO_FLAG_LOCAL_CLASS = 2
+private const val TYPE_INFO_FLAG_FITS_ONE_BIT_QUALIFIER = 4
+private const val TYPE_INFO_FLAG_FITS_ONE_BIT_SIMPLE_NAME = 8
 
 @Suppress("UNUSED_PARAMETER")
 @WasmArrayOf(Long::class, isNullable = false, isMutable = false)
@@ -56,17 +58,33 @@ internal fun getQualifiedName(rtti: kotlin.wasm.internal.reftypes.structref): St
     return if (packageName.isEmpty()) typeName else "$packageName.$typeName"
 }
 
-internal fun getPackageName(rtti: kotlin.wasm.internal.reftypes.structref): String = stringLiteralUTF16(
-    startAddress = wasmGetRttiIntField(2, rtti),
-    length = wasmGetRttiIntField(3, rtti),
-    poolId = wasmGetRttiIntField(4, rtti),
-)
+internal fun getPackageName(rtti: kotlin.wasm.internal.reftypes.structref): String =
+    if ((wasmGetRttiIntField(9, rtti) and TYPE_INFO_FLAG_FITS_ONE_BIT_QUALIFIER) != 0)
+        stringLiteralLatin(
+            startAddress = wasmGetRttiIntField(2, rtti),
+            length = wasmGetRttiIntField(3, rtti),
+            poolId = wasmGetRttiIntField(4, rtti),
+        )
+    else
+        stringLiteralUTF16(
+            startAddress = wasmGetRttiIntField(2, rtti),
+            length = wasmGetRttiIntField(3, rtti),
+            poolId = wasmGetRttiIntField(4, rtti),
+        )
 
-internal fun getSimpleName(rtti: kotlin.wasm.internal.reftypes.structref): String = stringLiteralUTF16(
-    startAddress = wasmGetRttiIntField(5, rtti),
-    length = wasmGetRttiIntField(6, rtti),
-    poolId = wasmGetRttiIntField(7, rtti),
-)
+internal fun getSimpleName(rtti: kotlin.wasm.internal.reftypes.structref): String =
+    if ((wasmGetRttiIntField(9, rtti) and TYPE_INFO_FLAG_FITS_ONE_BIT_SIMPLE_NAME) != 0)
+        stringLiteralLatin(
+            startAddress = wasmGetRttiIntField(5, rtti),
+            length = wasmGetRttiIntField(6, rtti),
+            poolId = wasmGetRttiIntField(7, rtti),
+        )
+    else
+        stringLiteralUTF16(
+            startAddress = wasmGetRttiIntField(5, rtti),
+            length = wasmGetRttiIntField(6, rtti),
+            poolId = wasmGetRttiIntField(7, rtti),
+        )
 
 internal fun getTypeId(rtti: kotlin.wasm.internal.reftypes.structref): Long =
     wasmGetRttiLongField(8, rtti)

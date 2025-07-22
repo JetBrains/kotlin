@@ -553,7 +553,9 @@ class WasmCompiledModuleFragment(
                     currentStringId = stringAddressAndId.size
                     stringAddressAndId[string] = currentStringAddress to currentStringId
 
-                    val constData = ConstantDataCharArray(string.toCharArray())
+                    val fitsOneByte = if (string.all { it.code in 0..255 }) 1 else 0
+
+                    val constData = ConstantDataCharArray(string.toCharArray(), fitsOneByte)
                     stringDataSectionBytes += constData.toBytes().toList()
                     stringDataSectionStart += constData.sizeInBytes
                 } else {

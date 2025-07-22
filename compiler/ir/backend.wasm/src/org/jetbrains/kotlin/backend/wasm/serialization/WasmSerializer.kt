@@ -515,6 +515,7 @@ class WasmSerializer(outputStream: OutputStream) {
 
     private fun serializeConstantDataCharArray(constantDataCharArray: ConstantDataCharArray) {
         serializeList(constantDataCharArray.value) { serializeWasmSymbolReadOnly(it) { b.writeUInt32(it.code.toUInt()) } }
+        serializeInt(constantDataCharArray.fitsOneByte)
     }
 
     private fun serializeConstantDataCharField(constantDataCharField: ConstantDataCharField) {

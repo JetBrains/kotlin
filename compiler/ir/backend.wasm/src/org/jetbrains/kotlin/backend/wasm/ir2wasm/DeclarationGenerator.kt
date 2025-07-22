@@ -31,6 +31,8 @@ import org.jetbrains.kotlin.wasm.ir.source.location.SourceLocation
 
 private const val TYPE_INFO_FLAG_ANONYMOUS_CLASS = 1
 private const val TYPE_INFO_FLAG_LOCAL_CLASS = 2
+private const val TYPE_INFO_FLAG_FITS_ONE_BIT_QUALIFIER = 4
+private const val TYPE_INFO_FLAG_FITS_ONE_BIT_SIMPLE_NAME = 8
 
 class DeclarationGenerator(
     private val backendContext: WasmBackendContext,
@@ -397,7 +399,9 @@ class DeclarationGenerator(
 
             val isAnonymousFlag = if (klass.isAnonymousObject) TYPE_INFO_FLAG_ANONYMOUS_CLASS else 0
             val isLocalFlag = if (klass.isOriginallyLocalClass) TYPE_INFO_FLAG_LOCAL_CLASS else 0
-            buildConstI32(isAnonymousFlag or isLocalFlag, location)
+            val fitsOneByteQualifier = if (qualifier.all { it.code in 0..255 }) TYPE_INFO_FLAG_FITS_ONE_BIT_QUALIFIER else 0
+            val fitsOneByteSimpleName = if (simpleName.all { it.code in 0..255 }) TYPE_INFO_FLAG_FITS_ONE_BIT_SIMPLE_NAME else 0
+            buildConstI32(isAnonymousFlag or isLocalFlag or fitsOneByteQualifier or fitsOneByteSimpleName, location)
 
             buildStructNew(wasmFileCodegenContext.rttiType, location)
         }
