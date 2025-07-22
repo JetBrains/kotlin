@@ -60,7 +60,7 @@ internal fun getQualifiedName(rtti: kotlin.wasm.internal.reftypes.structref): St
 
 internal fun getPackageName(rtti: kotlin.wasm.internal.reftypes.structref): String =
     if ((wasmGetRttiIntField(5, rtti) and TYPE_INFO_FLAG_FITS_ONE_BIT_QUALIFIER) != 0)
-        stringLiteralLatin(
+        stringLiteralRawByte(
             poolId = wasmGetRttiIntField(2, rtti),
         )
     else
@@ -70,7 +70,7 @@ internal fun getPackageName(rtti: kotlin.wasm.internal.reftypes.structref): Stri
 
 internal fun getSimpleName(rtti: kotlin.wasm.internal.reftypes.structref): String =
     if ((wasmGetRttiIntField(5, rtti) and TYPE_INFO_FLAG_FITS_ONE_BIT_SIMPLE_NAME) != 0)
-        stringLiteralLatin(
+        stringLiteralRawByte(
             poolId = wasmGetRttiIntField(3, rtti),
         )
     else

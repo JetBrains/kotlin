@@ -173,7 +173,7 @@ internal fun stringLiteralUTF16(poolId: Int): String {
     return newString
 }
 
-internal fun stringLiteralLatin(poolId: Int): String {
+internal fun stringLiteralRawByte(poolId: Int): String {
     val cached = stringPool[poolId]
     if (cached !== null) {
         return cached
@@ -190,6 +190,19 @@ internal fun stringLiteralLatin(poolId: Int): String {
         chars.set(i, chr)
     }
 
+    val newString = String(null, length, chars)
+    stringPool[poolId] = newString
+    return newString
+}
+
+// TODO: remove after bootstrap
+internal fun stringLiteral(poolId: Int, start: Int, length: Int): String {
+    val cached = stringPool[poolId]
+    if (cached !== null) {
+        return cached
+    }
+
+    val chars = array_new_data0<WasmCharArray>(start, length)
     val newString = String(null, length, chars)
     stringPool[poolId] = newString
     return newString
