@@ -25,6 +25,7 @@ import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.lexer.KtKeywordToken;
+import org.jetbrains.kotlin.lexer.KtSingleValueToken;
 import org.jetbrains.kotlin.lexer.KtTokens;
 
 import static org.jetbrains.kotlin.KtNodeTypes.*;
@@ -534,6 +535,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
             case VAR_KEYWORD_Id:
                 return parseProperty(declarationParsingMode);
             case LPAR_Id:
+            case LBRACKET_Id:
                 IElementType lookahead = lookahead(1);
                 return lookahead == VAL_KEYWORD || lookahead == VAR_KEYWORD ? parseProperty(declarationParsingMode) : null;
             case TYPE_ALIAS_KEYWORD_Id:
@@ -1472,7 +1474,7 @@ public class KotlinParsing extends AbstractKotlinParsing {
         PsiBuilder.Marker receiver = mark();
         boolean receiverTypeDeclared = parseReceiverType("property", PROPERTY_NAME_FOLLOW_SET);
 
-        boolean multiDeclaration = at(LPAR);
+        boolean multiDeclaration = at(LPAR) || at(LBRACKET);
 
         errorIf(receiver, multiDeclaration && receiverTypeDeclared, "Receiver type is not allowed on a destructuring declaration");
 
@@ -1587,15 +1589,21 @@ public class KotlinParsing extends AbstractKotlinParsing {
         // Parsing multi-name, e.g.
         //   val (a, b) = foo()
         //   (val a: X = aa, var b) = foo()
+        //   val [a, b] = foo()
+        //   [val a: X, var b] = foo()
         myBuilder.disableNewlines();
-        advance(); // LPAR
+
+        boolean isParentheses = at(LPAR);
+        KtSingleValueToken closingBrace = isParentheses ? RPAR : RBRACKET;
+
+        advance(); // LPAR | LBRACKET
 
         if (!atSet(follow)) {
             while (true) {
                 if (at(COMMA)) {
                     errorAndAdvance("Expecting a name");
                 }
-                else if (at(RPAR)) { // For declaration similar to `val () = somethingCall()`
+                else if (at(closingBrace)) { // For declaration similar to `val () = somethingCall()`
                     error("Expecting a name");
                     break;
                 }
@@ -1624,7 +1632,8 @@ public class KotlinParsing extends AbstractKotlinParsing {
                     parseTypeRef(follow);
                 }
 
-                if (at(EQ)) {
+                // Renaming is only allowed in name-based destructuring
+                if (at(EQ) && closingBrace == RPAR) {
                     advance();
                     myExpressionParsing.parseSimpleNameExpression();
                 }
@@ -1633,11 +1642,11 @@ public class KotlinParsing extends AbstractKotlinParsing {
 
                 if (!at(COMMA)) break;
                 advance(); // COMMA
-                if (at(RPAR)) break;
+                if (at(closingBrace)) break;
             }
         }
 
-        expect(RPAR, "Expecting ')'", follow);
+        expect(closingBrace, isParentheses ? "Expecting ')'" : "Expecting ']'", follow);
         myBuilder.restoreNewlinesState();
     }
 

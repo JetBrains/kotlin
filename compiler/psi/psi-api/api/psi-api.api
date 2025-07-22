@@ -1394,6 +1394,7 @@ public class org/jetbrains/kotlin/psi/KtDestructuringDeclaration : org/jetbrains
 	public fun getTrailingComma ()Lcom/intellij/psi/PsiElement;
 	public fun getValOrVarKeyword ()Lcom/intellij/psi/PsiElement;
 	public fun hasInitializer ()Z
+	public fun hasSquareBrackets ()Z
 	public fun isFullForm ()Z
 	public fun isVar ()Z
 }

@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.psi;
 
 import com.intellij.lang.ASTNode;
 import com.intellij.psi.PsiElement;
+import com.intellij.psi.tree.TokenSet;
 import com.intellij.psi.util.PsiTreeUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -84,14 +85,24 @@ public class KtDestructuringDeclaration extends KtDeclarationImpl implements KtV
         return !entries.isEmpty() && entries.get(0).getOwnValOrVarKeyword() != null;
     }
 
+    private static final TokenSet OPENING_BRACES = TokenSet.create(LPAR, LBRACKET);
+    private static final TokenSet CLOSING_BRACES = TokenSet.create(RPAR, RBRACKET);
+
     @Nullable
     public PsiElement getRPar() {
-        return findChildByType(KtTokens.RPAR);
+        return findChildByType(OPENING_BRACES);
     }
 
     @Nullable
     public PsiElement getLPar() {
-        return findChildByType(KtTokens.LPAR);
+        return findChildByType(CLOSING_BRACES);
+    }
+
+    /**
+     * @return true when this destructuring declaration uses square brackets.
+     */
+    public boolean hasSquareBrackets() {
+        return getNode().findChildByType(LBRACKET) != null;
     }
 
     @Nullable
