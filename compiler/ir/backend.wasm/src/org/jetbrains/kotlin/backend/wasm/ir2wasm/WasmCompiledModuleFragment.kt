@@ -233,11 +233,7 @@ class WasmCompiledModuleFragment(
             fields = listOf(
                 WasmStructFieldDeclaration("implementedIFaceIds", WasmRefNullType(WasmHeapType.Type(WasmSymbol(wasmLongArray))), false),
                 WasmStructFieldDeclaration("superClassRtti", WasmRefNullType(WasmHeapType.Type(rttiTypeDeclarationSymbol)), false),
-//                WasmStructFieldDeclaration("packageNameAddress", WasmI32, false),
-//                WasmStructFieldDeclaration("packageNameLength", WasmI32, false),
                 WasmStructFieldDeclaration("packageNamePoolId", WasmI32, false),
-//                WasmStructFieldDeclaration("simpleNameAddress", WasmI32, false),
-//                WasmStructFieldDeclaration("simpleNameLength", WasmI32, false),
                 WasmStructFieldDeclaration("simpleNamePoolId", WasmI32, false),
                 WasmStructFieldDeclaration("klassId", WasmI64, false),
                 WasmStructFieldDeclaration("typeInfoFlag", WasmI32, false),
