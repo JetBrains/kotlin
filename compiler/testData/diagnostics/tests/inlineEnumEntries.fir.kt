@@ -3,7 +3,7 @@
 // ISSUE: KT-42096
 
 enum class E {
-    inline E1 {
+    <!DEPRECATED_MODIFIER_FOR_TARGET!>inline<!> E1 {
         override fun invoke() = 123
     };
     abstract fun invoke(): Int
