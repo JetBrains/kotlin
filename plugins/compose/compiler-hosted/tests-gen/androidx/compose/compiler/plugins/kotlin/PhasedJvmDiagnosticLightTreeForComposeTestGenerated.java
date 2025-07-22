@@ -25,6 +25,12 @@ public class PhasedJvmDiagnosticLightTreeForComposeTestGenerated extends Abstrac
   }
 
   @Test
+  @TestMetadata("applierComposeUI.kt")
+  public void testApplierComposeUI() {
+    runTest("plugins/compose/compiler-hosted/testData/diagnostics/applierComposeUI.kt");
+  }
+
+  @Test
   @TestMetadata("noOverrideWarning.kt")
   public void testNoOverrideWarning() {
     runTest("plugins/compose/compiler-hosted/testData/diagnostics/noOverrideWarning.kt");
