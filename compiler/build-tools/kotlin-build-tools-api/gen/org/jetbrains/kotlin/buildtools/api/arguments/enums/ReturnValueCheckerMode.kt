@@ -1,3 +1,6 @@
+// This file was generated automatically. See the README.md file
+// DO NOT MODIFY IT MANUALLY.
+
 package org.jetbrains.kotlin.buildtools.api.arguments.enums
 
 import kotlin.String

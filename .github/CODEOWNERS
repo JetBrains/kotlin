@@ -37,7 +37,6 @@
 /compiler/build-tools/ @JetBrains/kotlin-build-tools
 /compiler/build-tools/kotlin-build-tools-api/gen/ @JetBrains/kotlin
 /compiler/build-tools/kotlin-build-tools-impl/gen/ @JetBrains/kotlin
-/compiler/build-tools/kotlin-build-tools-api-tests/src/testConsistency/kotlin/GenConsistencyTest.kt @JetBrains/kotlin
 /compiler/build-tools/kotlin-build-tools-api/api/kotlin-build-tools-api.api @JetBrains/kotlin
 /compiler/cli/ @JetBrains/kotlin-frontend
 /compiler/cli/cli-js/ @JetBrains/kotlin-js @JetBrains/kotlin-wasm

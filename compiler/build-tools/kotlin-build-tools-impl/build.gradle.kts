@@ -46,5 +46,5 @@ generatedSourcesTask(
             generationRoot.toString(),
             "impl"
         )
-    }
+    },
 )

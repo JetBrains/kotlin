@@ -15,14 +15,18 @@ import org.jetbrains.kotlin.generators.kotlinpoet.function
 import org.jetbrains.kotlin.generators.kotlinpoet.property
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 import java.nio.file.Path
+import kotlin.io.path.Path
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty1
 import kotlin.reflect.full.isSubclassOf
 
-class BtaApiGenerator(val genDir: Path) : BtaGenerator {
-    override fun generateArgumentsForLevel(level: KotlinCompilerArgumentsLevel, parentClass: TypeName?, skipXX: Boolean): TypeName {
+class BtaApiGenerator() : BtaGenerator {
+    private val outputs = mutableListOf<Pair<Path, String>>()
+
+    override fun generateArgumentsForLevel(level: KotlinCompilerArgumentsLevel, parentClass: TypeName?, skipXX: Boolean): GeneratorOutputs {
         val className = level.name.capitalizeAsciiOnly()
-        FileSpec.Companion.builder(API_PACKAGE, className).apply {
+        val mainFileAppendable = createGeneratedFileAppendable()
+        val mainFile = FileSpec.Companion.builder(API_PACKAGE, className).apply {
             addType(
                 TypeSpec.Companion.interfaceBuilder(className).apply {
                     addKdoc(KDOC_SINCE_2_3_0)
@@ -38,8 +42,10 @@ class BtaApiGenerator(val genDir: Path) : BtaGenerator {
                     }.build())
                 }.build()
             )
-        }.build().writeTo(genDir)
-        return ClassName(API_PACKAGE, className)
+        }.build()
+        mainFile.writeTo(mainFileAppendable)
+        outputs += Path(mainFile.relativePath) to mainFileAppendable.toString()
+        return GeneratorOutputs(ClassName(API_PACKAGE, className), outputs)
     }
 
     private fun TypeSpec.Builder.generateOptions(
@@ -59,9 +65,8 @@ class BtaApiGenerator(val genDir: Path) : BtaGenerator {
                 return@forEach
             }
 
-            val argumentTypeParameter = argument.valueType::class
-                .supertypes.single { it.classifier == KotlinArgumentValueType::class }
-                .arguments.first().type!!.let {
+            val argumentTypeParameter =
+                argument.valueType::class.supertypes.single { it.classifier == KotlinArgumentValueType::class }.arguments.first().type!!.let {
                     when (val type = it.classifier) {
                         is KClass<*> if type.isSubclassOf(Enum::class) && type in enumNameAccessors -> {
                             val enumConstants = type.java.enumConstants.filterIsInstance<Enum<*>>()
@@ -79,8 +84,7 @@ class BtaApiGenerator(val genDir: Path) : BtaGenerator {
                             it.asTypeName()
                         }
                     }
-                }
-                .copy(nullable = argument.valueType.isNullable.current)
+                }.copy(nullable = argument.valueType.isNullable.current)
             property(name, argumentTypeName.parameterizedBy(argumentTypeParameter)) {
                 annotation<JvmField>()
                 // KT-28979 Need a way to escape /* in kdoc comments
@@ -116,9 +120,7 @@ class BtaApiGenerator(val genDir: Path) : BtaGenerator {
             sourceEnum.forEach {
                 addEnumConstant(
                     it.name.uppercase(),
-                    TypeSpec.Companion.anonymousClassBuilder()
-                        .addSuperclassConstructorParameter("%S", nameAccessor.get(it))
-                        .build()
+                    TypeSpec.Companion.anonymousClassBuilder().addSuperclassConstructorParameter("%S", nameAccessor.get(it)).build()
                 )
             }
         }
@@ -126,24 +128,26 @@ class BtaApiGenerator(val genDir: Path) : BtaGenerator {
 
     fun writeEnumFile(typeSpec: TypeSpec, sourceEnum: KClass<*>) {
         val className = ClassName("$API_PACKAGE.enums", sourceEnum.simpleName!!)
-        FileSpec.Companion.builder(className).apply {
+        val enumFileAppendable = createGeneratedFileAppendable()
+        val enumFile = FileSpec.Companion.builder(className).apply {
             addType(typeSpec)
-        }.build().writeTo(genDir)
+        }.build()
+        enumFile.writeTo(enumFileAppendable)
+        outputs += Path(enumFile.relativePath) to enumFileAppendable.toString()
     }
 
 
     fun TypeSpec.Builder.generateArgumentType(argumentsClassName: String): String {
         require(argumentsClassName.endsWith("Arguments"))
         val argumentTypeName = argumentsClassName.removeSuffix("s")
-        val typeSpec =
-            TypeSpec.Companion.classBuilder(argumentTypeName).apply {
-                addKdoc(KDOC_BASE_OPTIONS_CLASS, ClassName(API_PACKAGE, argumentsClassName))
-                addTypeVariable(TypeVariableName.Companion("V"))
-                property<String>("id") {
-                    initializer("id")
-                }
-                primaryConstructor(FunSpec.Companion.constructorBuilder().addParameter("id", String::class).build())
-            }.build()
+        val typeSpec = TypeSpec.Companion.classBuilder(argumentTypeName).apply {
+            addKdoc(KDOC_BASE_OPTIONS_CLASS, ClassName(API_PACKAGE, argumentsClassName))
+            addTypeVariable(TypeVariableName.Companion("V"))
+            property<String>("id") {
+                initializer("id")
+            }
+            primaryConstructor(FunSpec.Companion.constructorBuilder().addParameter("id", String::class).build())
+        }.build()
         addType(typeSpec)
         return argumentTypeName
     }

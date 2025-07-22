@@ -18,13 +18,18 @@ import org.jetbrains.kotlin.generators.kotlinpoet.function
 import org.jetbrains.kotlin.generators.kotlinpoet.property
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 import java.nio.file.Path
+import kotlin.io.path.Path
 import kotlin.reflect.KClass
 
-class BtaImplGenerator(val genDir: Path) : BtaGenerator {
-    override fun generateArgumentsForLevel(level: KotlinCompilerArgumentsLevel, parentClass: TypeName?, skipXX: Boolean): TypeName {
+class BtaImplGenerator() : BtaGenerator {
+
+    private val outputs = mutableListOf<Pair<Path, String>>()
+
+    override fun generateArgumentsForLevel(level: KotlinCompilerArgumentsLevel, parentClass: TypeName?, skipXX: Boolean): GeneratorOutputs {
         val apiClassName = level.name.capitalizeAsciiOnly()
         val className = apiClassName + "Impl"
-        FileSpec.Companion.builder(IMPL_PACKAGE, className).apply {
+        val mainFileAppendable = createGeneratedFileAppendable()
+        val mainFile = FileSpec.Companion.builder(IMPL_PACKAGE, className).apply {
             addAnnotation(
                 AnnotationSpec.Companion.builder(ClassName("kotlin", "OptIn"))
                     .addMember("%T::class", ANNOTATION_EXPERIMENTAL).build()
@@ -63,8 +68,10 @@ class BtaImplGenerator(val genDir: Path) : BtaGenerator {
                     addFunction(converterFun.build())
                 }.build()
             )
-        }.build().writeTo(genDir)
-        return ClassName(IMPL_PACKAGE, className)
+        }.build()
+        mainFile.writeTo(mainFileAppendable)
+        outputs += Path(mainFile.relativePath) to mainFileAppendable.toString()
+        return GeneratorOutputs(ClassName(IMPL_PACKAGE, className), outputs)
     }
 
     private fun generateOptions(

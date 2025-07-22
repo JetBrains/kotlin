@@ -1,3 +1,6 @@
+// This file was generated automatically. See the README.md file
+// DO NOT MODIFY IT MANUALLY.
+
 @file:OptIn(ExperimentalCompilerArgument::class)
 
 package org.jetbrains.kotlin.buildtools.`internal`.arguments

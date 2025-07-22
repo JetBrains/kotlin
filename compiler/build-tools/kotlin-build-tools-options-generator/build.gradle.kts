@@ -9,6 +9,7 @@ dependencies {
     implementation(project(":core:compiler.common"))
     implementation(project(":compiler:arguments"))
     implementation(project(":compiler:build-tools:util-kotlinpoet"))
+    implementation(project(":generators"))
     implementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect"))
 }
 
