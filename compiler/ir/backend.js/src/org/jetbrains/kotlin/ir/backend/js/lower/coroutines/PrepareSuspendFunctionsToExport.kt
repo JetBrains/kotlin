@@ -59,7 +59,7 @@ import org.jetbrains.kotlin.utils.memoryOptimizedPlus
  *     kotlin.coroutines.promisify { foo(a, b) }
  * ```
  *
- * For the member functions it's a little bit more complicated because we should take in an account that they could be overridden from the JS side.
+ * For member functions it's a little bit more complicated because we have to take into account that they could be overridden from the JS side.
  * To support the overriding, we introduce two more helper methods.
  *
  * **Before the transformation:**
