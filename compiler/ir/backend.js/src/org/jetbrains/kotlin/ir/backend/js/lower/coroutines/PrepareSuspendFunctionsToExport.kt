@@ -42,7 +42,7 @@ import org.jetbrains.kotlin.utils.memoryOptimizedPlus
  * For the top-level suspend functions we generate only one additional function supposed to be used only from the JS side.
  * As an example:
  *
- * **Before the transformation: **
+ * **Before the transformation:**
  * ```kotlin
  * @JsExport
  * suspend fun foo(a: Int, b: String): String { ... }
