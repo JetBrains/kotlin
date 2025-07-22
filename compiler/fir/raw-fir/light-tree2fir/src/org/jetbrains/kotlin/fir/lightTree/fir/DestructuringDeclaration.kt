@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.name.SpecialNames
 
 data class DestructuringDeclaration(
     val isVar: Boolean,
-    val isFullForm: Boolean,
+    val isNameBased: Boolean,
     val entries: List<DestructuringEntry>,
     val initializer: FirExpression,
     val source: KtSourceElement,
@@ -106,7 +106,7 @@ fun AbstractRawFirBuilder<*>.addDestructuringStatements(
             moduleData,
             container,
             entries = multiDeclaration.entries,
-            isNameBased = multiDeclaration.isFullForm || nameBasedDestructuringShortForm,
+            isNameBased = multiDeclaration.isNameBased,
             isTmpVariable = isTmpVariable,
             forceLocal = forceLocal,
             configure,

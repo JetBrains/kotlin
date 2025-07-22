@@ -1578,11 +1578,13 @@ class LightTreeRawFirDeclarationBuilder(
     internal fun convertDestructingDeclaration(destructingDeclaration: LighterASTNode): DestructuringDeclaration {
         val annotations = mutableListOf<FirAnnotationCall>()
         var isVar = false
+        var isPositional = false
         val entries = mutableListOf<DestructuringEntry>()
         val source = destructingDeclaration.toFirSourceElement()
         var firExpression: FirExpression? = null
         destructingDeclaration.forEachChildren {
             when (it.tokenType) {
+                LBRACKET -> isPositional = true
                 MODIFIER_LIST -> convertAnnotationsOnlyTo(it, annotations)
                 VAR_KEYWORD -> isVar = true
                 DESTRUCTURING_DECLARATION_ENTRY -> entries += convertDestructingDeclarationEntry(it, isVar)
@@ -1594,8 +1596,8 @@ class LightTreeRawFirDeclarationBuilder(
         }
 
         return DestructuringDeclaration(
-            isVar,
-            entries.any { it.isFullForm },
+            isVar = isVar,
+            isNameBased = !isPositional && (entries.any { it.isFullForm } || nameBasedDestructuringShortForm),
             entries,
             firExpression ?: buildErrorExpression(
                 destructingDeclaration.toFirSourceElement(),
