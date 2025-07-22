@@ -36,7 +36,7 @@ package kotlin.js
 public expect val definedExternally: Nothing
 
 /**
- * This function allows you to incorporate JavaScript [code] into Kotlin/Wasm codebase.
+ * This function allows you to incorporate JavaScript [code] into Kotlin/Wasm and/or Kotlin/Js codebase.
  * It is used to implement top-level functions and initialize top-level properties.
  *
  * It is important to note, that calls to [js] function should be the only expression
