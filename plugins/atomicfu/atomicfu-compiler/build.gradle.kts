@@ -8,7 +8,6 @@ description = "Atomicfu Compiler Plugin"
 
 plugins {
     kotlin("jvm")
-    id("java-test-fixtures")
     id("jps-compatible")
     id("d8-configuration")
 }
@@ -82,41 +81,41 @@ dependencies {
 
     compileOnly(kotlinStdlib())
 
-    testFixturesApi(testFixtures(project(":compiler:tests-common")))
-    testFixturesApi(testFixtures(project(":compiler:test-infrastructure")))
-    testFixturesApi(testFixtures(project(":compiler:test-infrastructure-utils")))
-    testFixturesApi(testFixtures(project(":compiler:tests-compiler-utils")))
-    testFixturesApi(testFixtures(project(":compiler:tests-common-new")))
-    testFixturesImplementation(testFixtures(project(":generators:test-generator")))
-    testFixturesApi(project(":plugins:plugin-sandbox"))
-    testFixturesApi(project(":compiler:incremental-compilation-impl"))
-    testFixturesApi(testFixtures(project(":compiler:incremental-compilation-impl")))
+    testApi(testFixtures(project(":compiler:tests-common")))
+    testApi(testFixtures(project(":compiler:test-infrastructure")))
+    testApi(testFixtures(project(":compiler:test-infrastructure-utils")))
+    testApi(testFixtures(project(":compiler:tests-compiler-utils")))
+    testApi(testFixtures(project(":compiler:tests-common-new")))
+    testImplementation(testFixtures(project(":generators:test-generator")))
+    testApi(project(":plugins:plugin-sandbox"))
+    testApi(project(":compiler:incremental-compilation-impl"))
+    testApi(testFixtures(project(":compiler:incremental-compilation-impl")))
 
-    testFixturesApi(testFixtures(project(":js:js.tests")))
-    testFixturesImplementation(libs.junit4)
-    testFixturesApi(kotlinTest())
+    testApi(testFixtures(project(":js:js.tests")))
+    testImplementation(libs.junit4)
+    testApi(kotlinTest())
 
     // Dependencies for Kotlin/Native test infra:
     if (!kotlinBuildProperties.isInIdeaSync) {
-        testFixturesApi(testFixtures(project(":native:native.tests")))
+        testApi(testFixtures(project(":native:native.tests")))
     }
-    testFixturesImplementation(project(":compiler:ir.backend.native"))
-    testFixturesImplementation(project(":native:kotlin-native-utils"))
-    testFixturesImplementation(testFixtures(project(":native:native.tests:klib-ir-inliner")))
-    testFixturesImplementation(project(":kotlin-util-klib-abi"))
-    testFixturesImplementation(commonDependency("org.jetbrains.teamcity:serviceMessages"))
+    testImplementation(project(":compiler:ir.backend.native"))
+    testImplementation(project(":native:kotlin-native-utils"))
+    testImplementation(testFixtures(project(":native:native.tests:klib-ir-inliner")))
+    testImplementation(project(":kotlin-util-klib-abi"))
+    testImplementation(commonDependency("org.jetbrains.teamcity:serviceMessages"))
 
     // todo: remove unnecessary dependencies
-    testFixturesImplementation(project(":kotlin-compiler-runner-unshaded"))
+    testImplementation(project(":kotlin-compiler-runner-unshaded"))
 
-    testFixturesImplementation(commonDependency("commons-lang:commons-lang"))
-    testFixturesApi(testFixtures(project(":compiler:tests-common")))
-    testFixturesApi(testFixtures(project(":compiler:tests-common-new")))
-    testFixturesApi(testFixtures(project(":compiler:test-infrastructure")))
+    testImplementation(commonDependency("commons-lang:commons-lang"))
+    testApi(testFixtures(project(":compiler:tests-common")))
+    testApi(testFixtures(project(":compiler:tests-common-new")))
+    testApi(testFixtures(project(":compiler:test-infrastructure")))
     testCompileOnly("org.jetbrains.kotlinx:atomicfu:0.25.0")
 
-    testFixturesApi(platform(libs.junit.bom))
-    testFixturesImplementation(libs.junit.jupiter.api)
+    testApi(platform(libs.junit.bom))
+    testImplementation(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
 
     testRuntimeOnly(kotlinStdlib())
@@ -165,7 +164,7 @@ dependencies {
         isTransitive = false
     }
 
-    testFixturesImplementation("org.jetbrains.kotlinx:atomicfu:0.25.0")
+    testImplementation("org.jetbrains.kotlinx:atomicfu:0.25.0")
 
     testRuntimeOnly(libs.junit.vintage.engine)
 }
@@ -176,10 +175,9 @@ optInToUnsafeDuringIrConstructionAPI()
 sourceSets {
     "main" { projectDefault() }
     "test" {
-        generatedTestDir()
-    }
-    "testFixtures" {
         projectDefault()
+        java.srcDirs("testFixtures")
+        generatedTestDir()
     }
 }
 
