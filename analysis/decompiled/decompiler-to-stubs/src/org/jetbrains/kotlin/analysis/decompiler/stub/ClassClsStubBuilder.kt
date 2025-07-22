@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.analysis.decompiler.stub.flags.*
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.isNumberedFunctionClassFqName
 import org.jetbrains.kotlin.descriptors.SourceElement
-import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.*
@@ -96,24 +95,27 @@ private class ClassClsStubBuilder(
     }
 
     private fun createModifierListForClass(parent: StubElement<out PsiElement>): KotlinModifierListStubImpl {
-        val relevantFlags = arrayListOf(VISIBILITY)
-        relevantFlags.add(EXTERNAL_CLASS)
-        relevantFlags.add(EXPECT_CLASS)
-        if (isClass()) {
-            relevantFlags.add(INNER)
-            relevantFlags.add(DATA)
-            relevantFlags.add(MODALITY)
-            relevantFlags.add(VALUE_CLASS)
+        val relevantFlags = arrayListOf(
+            VISIBILITY,
+            EXTERNAL_CLASS,
+            EXPECT_CLASS,
+            INNER,
+            DATA,
+            VALUE_CLASS,
+            FUN_INTERFACE,
+        )
+
+        when {
+            isInterface() -> relevantFlags.add(INTERFACE_MODALITY)
+            isObject() -> {} // objects are final always
+            else -> relevantFlags.add(MODALITY)
         }
-        if (isInterface()) {
-            relevantFlags.add(FUN_INTERFACE)
-            relevantFlags.add(INTERFACE_MODALITY)
-        }
+
         val additionalModifiers = when (classKind) {
             ProtoBuf.Class.Kind.ENUM_CLASS -> listOf(KtTokens.ENUM_KEYWORD)
             ProtoBuf.Class.Kind.COMPANION_OBJECT -> listOf(KtTokens.COMPANION_KEYWORD)
             ProtoBuf.Class.Kind.ANNOTATION_CLASS -> listOf(KtTokens.ANNOTATION_KEYWORD)
-            else -> listOf<KtModifierKeywordToken>()
+            else -> emptyList()
         }
 
         return createModifierListStubForDeclaration(
@@ -247,15 +249,17 @@ private class ClassClsStubBuilder(
         createDeclarationsStubs(classBody, c, thisAsProtoContainer, classProto.functionList, classProto.propertyList)
     }
 
-    private fun isClass(): Boolean {
-        return classKind == ProtoBuf.Class.Kind.CLASS ||
-                classKind == ProtoBuf.Class.Kind.ENUM_CLASS ||
-                classKind == ProtoBuf.Class.Kind.ANNOTATION_CLASS
+    private fun isClass(): Boolean = when (classKind) {
+        ProtoBuf.Class.Kind.CLASS, ProtoBuf.Class.Kind.ENUM_CLASS, ProtoBuf.Class.Kind.ANNOTATION_CLASS -> true
+        else -> false
     }
 
-    private fun isInterface(): Boolean {
-        return classKind == ProtoBuf.Class.Kind.INTERFACE
+    private fun isObject(): Boolean = when (classKind) {
+        ProtoBuf.Class.Kind.OBJECT, ProtoBuf.Class.Kind.COMPANION_OBJECT -> true
+        else -> false
     }
+
+    private fun isInterface(): Boolean = classKind == ProtoBuf.Class.Kind.INTERFACE
 
     private fun createInnerAndNestedClasses(classBody: KotlinPlaceHolderStubImpl<KtClassBody>) {
         classProto.nestedClassNameList.forEach { id ->
