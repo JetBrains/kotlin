@@ -37,5 +37,4 @@ fun testFoo() {
     }<!>
 }
 
-/* GENERATED_FIR_TAGS: anonymousFunction, checkNotNullCall, functionDeclaration, functionalType, lambdaLiteral,
-localProperty, nullableType, propertyDeclaration, stringLiteral, typeParameter */
+/* GENERATED_FIR_TAGS: anonymousFunction, functionalType, lambdaLiteral, typeParameter */
