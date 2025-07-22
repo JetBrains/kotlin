@@ -313,7 +313,8 @@ open class KotlinCocoapodsPlugin : Plugin<Project> {
                             _packageNameProp.set(project.provider { pod.packageName })
                             _extraOptsProp.addAll(project.provider { pod.extraOpts })
                             _extraOptsProp.addAll(pod.useClangModules.map { useModules ->
-                                if (useModules) listOf("-compiler-option", "-fmodules") else emptyList()
+                                val hasNoHeaders = pod.headers.isNullOrEmpty()
+                                if (useModules && hasNoHeaders) listOf("-compiler-option", "-fmodules") else emptyList()
                             })
                         }
 
