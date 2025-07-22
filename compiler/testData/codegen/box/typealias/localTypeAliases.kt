@@ -2,6 +2,8 @@
 // ISSUE: KT-79185
 // LANGUAGE: +NestedTypeAliases
 
+// MODULE: lib
+
 open class Generic<K>(val k: K) {
     companion object C {
         const val prop: Int = 123
@@ -10,7 +12,7 @@ open class Generic<K>(val k: K) {
     inner class Inner<K2>(val k2: K2)
 }
 
-fun box(): String {
+fun testGeneral(): String {
     class Local2<T>(val p: T)
 
     open class Local {
@@ -62,5 +64,23 @@ fun box(): String {
     val typeRefToLocalTypeAliasInLocalClass: Local.LocalTAtoLocal = Local.LocalTAtoLocal()
     if (typeRefToLocalTypeAliasInLocalClass.p != "OK") return "FAIL"
 
+    return "OK"
+}
+
+abstract class A {
+    abstract val p: String
+}
+
+fun testReturnTypeAsLocalTypeAlias(): A {
+    typealias TA = String
+    class B(override val p: TA) : A()
+    return B("OK")
+}
+
+// MODULE: main(lib)
+
+fun box(): String {
+    if (testGeneral() != "OK") return "FAIL"
+    if (testReturnTypeAsLocalTypeAlias().p != "OK") return "FAIL"
     return "OK"
 }
