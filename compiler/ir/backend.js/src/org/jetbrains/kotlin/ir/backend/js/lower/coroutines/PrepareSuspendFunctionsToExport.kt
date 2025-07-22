@@ -289,7 +289,7 @@ internal class PrepareSuspendFunctionsToExportLowering(private val context: JsIr
 
             annotations = annotations memoryOptimizedPlus exportAnnotations
 
-            if (!exportAnnotations.any { it.isAnnotation(JsAnnotations.jsNameFqn) }) {
+            if (!exportAnnotations.hasAnnotation(JsStandardClassIds.Annotations.JsName)) {
                 addJsName(originalFunc.name.asString())
             }
             if (originalFunc.isTopLevel && !exportAnnotations.any { it.isAnnotation(JsAnnotations.jsExportFqn) }) {
