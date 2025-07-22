@@ -56,7 +56,7 @@ import org.jetbrains.kotlin.utils.memoryOptimizedPlus
  * @JsExport
  * @JsName("foo")
  * fun foo$promisified(a: Int, b: String): Promise<String> =
- *  kotlin.coroutines.promisify { foo(a, b) }
+ *     kotlin.coroutines.promisify { foo(a, b) }
  * ```
  *
  * For the member functions it's a little bit more complicated because we should take in an account that they could be overridden from the JS side.
