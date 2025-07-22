@@ -8,15 +8,15 @@ package kotlin.js
  * A wrapper for an exception thrown by a JavaScript code.
  * All exceptions thrown by JS code are signalled to Wasm code as `JsException`.
  *
- * */
+ */
 @ExperimentalWasmJsInterop
 @SinceKotlin("2.2")
 @Suppress("EXPECT_ACTUAL_IR_INCOMPATIBILITY")
 public expect class JsException : Throwable
 
 /**
- * value thrown by JavaScript; commonly it's an instance of an `Error` or its subclass, but it can be any JavaScript value
- * */
+ * @property thrownValue value thrown by JavaScript; commonly it's an instance of an `Error` or its subclass, but it can be any JavaScript value
+ */
 @ExperimentalWasmJsInterop
 @SinceKotlin("2.2")
 public expect val JsException.thrownValue: JsAny?
