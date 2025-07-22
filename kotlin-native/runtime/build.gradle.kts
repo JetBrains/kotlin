@@ -111,6 +111,10 @@ bitcode {
                     inputFiles.from(srcRoot.dir("src"))
                     inputFiles.setIncludes(sources)
                     headersDirs.setFrom(project.layout.projectDirectory.dir("src/breakpad/cpp"))
+                    // Fix Gradle Configuration Cache: support this task being configured before breakpad sources are actually downloaded.
+                    compileTask.configure {
+                        inputFiles.setFrom(sources.map { breakpadLocationNoDependency.get().dir("src").file(it) })
+                    }
                 }
             }
             // Make sure breakpad sources are downloaded when building the corresponding compilation database entry
