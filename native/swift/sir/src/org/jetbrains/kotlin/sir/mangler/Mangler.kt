@@ -71,6 +71,7 @@ public val SirNamedDeclaration.mangledNameOrNull: String?
         is SirEnum -> mangledNameOrNull
         is SirStruct -> mangledNameOrNull
         is SirTypealias -> TODO()
+        is SirEnumCase -> TODO()
         is SirProtocol -> mangledNameOrNull
     }
 

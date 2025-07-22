@@ -91,6 +91,7 @@ internal class SirAsSwiftSourcesPrinter private constructor(
         when (this) {
             is SirClass -> printDeclaration()
             is SirEnum -> printDeclaration()
+            is SirEnumCase -> "case $name"
             is SirExtension -> printDeclaration()
             is SirStruct -> printDeclaration()
             is SirProtocol -> printDeclaration()

@@ -174,6 +174,10 @@ public sealed interface SirTranslationResult {
         override val allDeclarations: List<SirDeclaration> = listOf(declaration)
     }
 
+    public data class EnumCase(public override val declaration: SirEnumCase) : TypeDeclaration {
+        override val allDeclarations: List<SirDeclaration> = listOf(declaration)
+    }
+
     public data class Constructor(public val declaration: SirInit) : SirTranslationResult {
         override val allDeclarations: List<SirDeclaration> = listOf(declaration)
         override val primaryDeclaration: SirDeclaration get() = declaration
