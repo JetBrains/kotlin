@@ -633,6 +633,7 @@ class WasmSerializer(outputStream: OutputStream) {
             serializeNullable(rttiElements, ::serializeRttiElements)
             serializeList(objectInstanceFieldInitializers, ::serializeIdSignature)
             serializeNullable(stringPoolFieldInitializer, ::serializeIdSignature)
+            serializeNullable(stringAddressesAndLengthsInitializer, ::serializeIdSignature)
             serializeList(nonConstantFieldInitializers, ::serializeIdSignature)
         }
 

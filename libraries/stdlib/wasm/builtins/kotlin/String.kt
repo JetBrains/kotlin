@@ -157,11 +157,15 @@ public actual class String internal @WasmPrimitiveConstructor constructor(
 internal inline fun WasmCharArray.createString(): String =
     String(null, this.len(), this)
 
-internal fun stringLiteralUTF16(poolId: Int, startAddress: Int, length: Int): String {
+internal fun stringLiteralUTF16(poolId: Int): String {
     val cached = stringPool[poolId]
     if (cached !== null) {
         return cached
     }
+
+    val addressAndLength = stringAddressesAndLengths.get(poolId)
+    val length = (addressAndLength shr 32).toInt()
+    val startAddress = (addressAndLength and ((1L shl 32) - 1L)).toInt()
 
     val chars = array_new_data0<WasmCharArray>(startAddress, length)
     val newString = String(null, length, chars)
@@ -169,11 +173,15 @@ internal fun stringLiteralUTF16(poolId: Int, startAddress: Int, length: Int): St
     return newString
 }
 
-internal fun stringLiteralLatin(poolId: Int, startAddress: Int, length: Int): String {
+internal fun stringLiteralLatin(poolId: Int): String {
     val cached = stringPool[poolId]
     if (cached !== null) {
         return cached
     }
+
+    val addressAndLength = stringAddressesAndLengths.get(poolId)
+    val length = (addressAndLength shr 32).toInt()
+    val startAddress = (addressAndLength and ((1L shl 32) - 1L)).toInt()
 
     val bytes = array_new_data0<WasmByteArray>(startAddress, length)
     val chars = WasmCharArray(length)

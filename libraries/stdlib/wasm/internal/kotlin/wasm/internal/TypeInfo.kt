@@ -59,41 +59,33 @@ internal fun getQualifiedName(rtti: kotlin.wasm.internal.reftypes.structref): St
 }
 
 internal fun getPackageName(rtti: kotlin.wasm.internal.reftypes.structref): String =
-    if ((wasmGetRttiIntField(9, rtti) and TYPE_INFO_FLAG_FITS_ONE_BIT_QUALIFIER) != 0)
+    if ((wasmGetRttiIntField(5, rtti) and TYPE_INFO_FLAG_FITS_ONE_BIT_QUALIFIER) != 0)
         stringLiteralLatin(
-            startAddress = wasmGetRttiIntField(2, rtti),
-            length = wasmGetRttiIntField(3, rtti),
-            poolId = wasmGetRttiIntField(4, rtti),
+            poolId = wasmGetRttiIntField(2, rtti),
         )
     else
         stringLiteralUTF16(
-            startAddress = wasmGetRttiIntField(2, rtti),
-            length = wasmGetRttiIntField(3, rtti),
-            poolId = wasmGetRttiIntField(4, rtti),
+            poolId = wasmGetRttiIntField(2, rtti),
         )
 
 internal fun getSimpleName(rtti: kotlin.wasm.internal.reftypes.structref): String =
-    if ((wasmGetRttiIntField(9, rtti) and TYPE_INFO_FLAG_FITS_ONE_BIT_SIMPLE_NAME) != 0)
+    if ((wasmGetRttiIntField(5, rtti) and TYPE_INFO_FLAG_FITS_ONE_BIT_SIMPLE_NAME) != 0)
         stringLiteralLatin(
-            startAddress = wasmGetRttiIntField(5, rtti),
-            length = wasmGetRttiIntField(6, rtti),
-            poolId = wasmGetRttiIntField(7, rtti),
+            poolId = wasmGetRttiIntField(3, rtti),
         )
     else
         stringLiteralUTF16(
-            startAddress = wasmGetRttiIntField(5, rtti),
-            length = wasmGetRttiIntField(6, rtti),
-            poolId = wasmGetRttiIntField(7, rtti),
+            poolId = wasmGetRttiIntField(3, rtti),
         )
 
 internal fun getTypeId(rtti: kotlin.wasm.internal.reftypes.structref): Long =
-    wasmGetRttiLongField(8, rtti)
+    wasmGetRttiLongField(4, rtti)
 
 internal fun isAnonymousClass(rtti: kotlin.wasm.internal.reftypes.structref): Boolean =
-    (wasmGetRttiIntField(9, rtti) and TYPE_INFO_FLAG_ANONYMOUS_CLASS) != 0
+    (wasmGetRttiIntField(5, rtti) and TYPE_INFO_FLAG_ANONYMOUS_CLASS) != 0
 
 internal fun isLocalClass(rtti: kotlin.wasm.internal.reftypes.structref): Boolean =
-    (wasmGetRttiIntField(9, rtti) and TYPE_INFO_FLAG_LOCAL_CLASS) != 0
+    (wasmGetRttiIntField(5, rtti) and TYPE_INFO_FLAG_LOCAL_CLASS) != 0
 
 @Suppress("UNUSED_PARAMETER")
 @ExcludedFromCodegen
