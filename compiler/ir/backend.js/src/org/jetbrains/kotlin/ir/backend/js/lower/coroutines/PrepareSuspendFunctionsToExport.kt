@@ -94,8 +94,9 @@ import org.jetbrains.kotlin.utils.memoryOptimizedPlus
  * }
  * ```
  *
- * Such a trick with the 3 functions helps us to call the original function instead of the promisified variant until the function is not overridden from the JS side
- * and also helps us to not recompile each child class if the body of the exported function is changed
+ * Such a trick with the 3 functions helps us to call the original function instead of the promisified variant as long as the function
+ * is not overridden from the JS side, and also makes sure we don't recompile each child class if the body of the exported function
+ * is changed.
  */
 internal class PrepareSuspendFunctionsToExportLowering(private val context: JsIrBackendContext) : DeclarationTransformer {
     companion object {
