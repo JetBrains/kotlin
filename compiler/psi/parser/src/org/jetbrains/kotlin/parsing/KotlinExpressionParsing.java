@@ -1104,7 +1104,7 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
             advance(); // ARROW
             paramsFound = true;
         }
-        else if (token == IDENTIFIER || token == COLON || token == LPAR) {
+        else if (token == IDENTIFIER || token == COLON || token == LPAR || token == LBRACKET) {
             // Try to parse a simple name list followed by an ARROW
             //   {a -> ...}
             //   {a, b -> ...}
@@ -1197,7 +1197,7 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
             if (at(COLON)) {
                 error("Expecting parameter name");
             }
-            else if (at(LPAR)) {
+            else if (at(LPAR) || at(LBRACKET)) {
                 PsiBuilder.Marker destructuringDeclaration = mark();
                 myKotlinParsing.parseMultiDeclarationEntry(
                         TOKEN_SET_TO_FOLLOW_AFTER_DESTRUCTURING_DECLARATION_IN_LAMBDA,
@@ -1428,7 +1428,7 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
 
                 if (at(VAL_KEYWORD) || at(VAR_KEYWORD)) advance(); // VAL_KEYWORD or VAR_KEYWORD
 
-                if (at(LPAR)) {
+                if (at(LPAR) || at(LBRACKET)) {
                     PsiBuilder.Marker destructuringDeclaration = mark();
                     myKotlinParsing.parseMultiDeclarationEntry(
                             IN_KEYWORD_L_BRACE_SET,
