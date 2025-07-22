@@ -23,6 +23,7 @@ import kotlin.collections.addAll
 public class SirPrinter(
     private val stableDeclarationsOrder: Boolean = true,
     private val renderDocComments: Boolean = false,
+    private val renderDeclarationOrigins: Boolean = false,
     private val emptyBodyStub: SirFunctionBody = fatalErrorBodyStub
 ) {
     public inner class Printout(private val module: SirModule) {
@@ -31,6 +32,7 @@ public class SirPrinter(
                 module,
                 stableDeclarationsOrder = this@SirPrinter.stableDeclarationsOrder,
                 renderDocComments = this@SirPrinter.renderDocComments,
+                renderDeclarationOrigins = this@SirPrinter.renderDeclarationOrigins,
                 emptyBodyStub = this@SirPrinter.emptyBodyStub,
             )
             sequenceOf(result)

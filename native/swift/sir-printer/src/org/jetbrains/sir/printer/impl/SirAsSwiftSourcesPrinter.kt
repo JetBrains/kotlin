@@ -16,6 +16,7 @@ internal class SirAsSwiftSourcesPrinter private constructor(
     private val printer: ContextualizedPrinter<Context>,
     private val stableDeclarationsOrder: Boolean,
     private val renderDocComments: Boolean,
+    private val renderDeclarationOrigins: Boolean,
     private val emptyBodyStub: SirFunctionBody
 ) : ContextualizedPrinter<Context> by printer {
     public companion object {
@@ -28,12 +29,14 @@ internal class SirAsSwiftSourcesPrinter private constructor(
             module: SirModule,
             stableDeclarationsOrder: Boolean,
             renderDocComments: Boolean,
+            renderDeclarationOrigins: Boolean,
             emptyBodyStub: SirFunctionBody = fatalErrorBodyStub
         ): String {
             val childrenPrinter = SirAsSwiftSourcesPrinter(
                 ContextualizedPrinterImpl(SmartPrinter(StringBuilder()), Context(module)),
                 stableDeclarationsOrder = stableDeclarationsOrder,
                 renderDocComments = renderDocComments,
+                renderDeclarationOrigins = renderDeclarationOrigins,
                 emptyBodyStub = emptyBodyStub,
             )
             val declarationsString = with(childrenPrinter) {
@@ -46,6 +49,7 @@ internal class SirAsSwiftSourcesPrinter private constructor(
                     ContextualizedPrinterImpl(SmartPrinter(StringBuilder()), Context(module)),
                     stableDeclarationsOrder = stableDeclarationsOrder,
                     renderDocComments = renderDocComments,
+                    renderDeclarationOrigins = renderDeclarationOrigins,
                     emptyBodyStub = emptyBodyStub,
                 )
                 with(importsPrinter) {
@@ -79,6 +83,11 @@ internal class SirAsSwiftSourcesPrinter private constructor(
 
     private fun SirDeclaration.print() {
         printDocumentation()
+
+        if (renderDeclarationOrigins) {
+            println("// $origin")
+        }
+
         printAttributes()
 
         when (this) {

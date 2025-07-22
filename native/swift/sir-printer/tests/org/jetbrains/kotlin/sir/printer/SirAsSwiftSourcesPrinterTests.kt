@@ -1105,6 +1105,7 @@ class SirAsSwiftSourcesPrinterTests {
             module,
             stableDeclarationsOrder = false,
             renderDocComments = true,
+            renderDeclarationOrigins = false,
             emptyBodyStub = SirFunctionBody(listOf("stub()"))
         )
         JUnit5Assertions.assertEqualsToFile(expectedSwiftSrc, actualSwiftSrc)
