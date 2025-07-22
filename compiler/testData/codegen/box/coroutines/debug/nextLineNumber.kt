@@ -3,6 +3,7 @@
 // WITH_STDLIB
 // FULL_JDK
 // DISABLE_IR_VISIBILITY_CHECKS: ANY
+// API_VERSION: 2.3
 @file:Suppress("INVISIBLE_REFERENCE", "INVISIBLE_MEMBER", "CANNOT_OVERRIDE_INVISIBLE_MEMBER")
 package test
 
@@ -59,37 +60,37 @@ fun box(): String {
     builder {
         foo()
     }
-    if (continuation.nextLineNumber() != 14) {
+    if (continuation.nextLineNumber() != 15) {
         return "FAIL 1 ${continuation.nextLineNumber()}"
     }
     continuation?.resume(Unit)
-    if (continuation.nextLineNumber() != 22) {
+    if (continuation.nextLineNumber() != 23) {
         return "FAIL 2 ${continuation.nextLineNumber()}"
     }
     continuation?.resume(Unit)
-    if (continuation.nextLineNumber() != 23) {
+    if (continuation.nextLineNumber() != 24) {
         return "FAIL 3 ${continuation.nextLineNumber()}"
     }
     continuation?.resume(Unit)
-    if (continuation.nextLineNumber() != 24) {
+    if (continuation.nextLineNumber() != 25) {
         return "FAIL 4 ${continuation.nextLineNumber()}"
     }
     builder {
         lambda()
     }
-    if (continuation.nextLineNumber() != 27) {
+    if (continuation.nextLineNumber() != 28) {
         return "FAIL 5 ${continuation.nextLineNumber()}"
     }
     continuation?.resume(Unit)
-    if (continuation.nextLineNumber() != 35) {
+    if (continuation.nextLineNumber() != 36) {
         return "FAIL 6 ${continuation.nextLineNumber()}"
     }
     continuation?.resume(Unit)
-    if (continuation.nextLineNumber() != 36) {
+    if (continuation.nextLineNumber() != 37) {
         return "FAIL 7 ${continuation.nextLineNumber()}"
     }
     continuation?.resume(Unit)
-    if (continuation.nextLineNumber() != 37) {
+    if (continuation.nextLineNumber() != 38) {
         return "FAIL 8 ${continuation.nextLineNumber()}"
     }
     return "OK"
