@@ -128,7 +128,7 @@ internal class PrepareSuspendFunctionsToExportLowering(private val context: JsIr
             val promisifiedWrapperFunction = generatePromisifiedWrapper(declaration)
 
             if (declaration.isFakeOverride) return listOf(
-                promisifiedWrapperFunction.apply { body = generatePromisifiedWrapperBody(declaration, this) },
+                promisifiedWrapperFunction,
                 declaration
             )
 
