@@ -317,9 +317,13 @@ fun renamedQualifiedWithArguments(x: Int, y: Float): Nothing = TODO("never")
 @RequiresOptIn(level = RequiresOptIn.Level.ERROR)
 annotation class Foonnotation()
 
-@RequiresOptIn(level = RequiresOptIn.Level.ERROR)
+@RequiresOptIn(level = RequiresOptIn.Level.WARNING)
 annotation class Barnnotation()
 
+@RequiresOptIn
+annotation class Baznnotation()
+
+// Class declarations
 @Foonnotation
 open class Foo
 
@@ -327,9 +331,60 @@ open class Foo
 @OptIn(Foonnotation::class)
 class Bar : Foo()
 
-
+// Function declarations
 @Foonnotation
 fun foo() = Foo()
 
 @Barnnotation
 fun bar() = Bar()
+
+// Property declarations
+@Foonnotation
+val fooProperty = Foo()
+
+@Barnnotation
+@OptIn(Foonnotation::class)
+var barProperty = Bar()
+
+// Top-level variable
+@Foonnotation
+val fooVal = "foo"
+
+// Object declarations
+@Foonnotation
+object FooObject {
+    @Barnnotation
+    fun objectMethod() {}
+
+    @OptIn(Barnnotation::class)
+    val objectProperty = "value"
+}
+
+// Companion object
+class WithCompanion {
+    @Foonnotation
+    companion object {
+        @OptIn(Baznnotation::class)
+        fun companionMethod() {}
+    }
+}
+
+// Constructor
+class OptInConstructor @OptIn(Foonnotation::class) constructor(val name: String) {
+    @OptIn(Barnnotation::class)
+    constructor() : this("default")
+}
+
+// Local declaration with opt-in
+fun localDeclarations() {
+    @OptIn(Foonnotation::class)
+    val localVar = Foo()
+
+    @OptIn(Barnnotation::class, Baznnotation::class)
+    fun localFunction() {}
+}
+
+// Expression level opt-in
+fun expressionOptIn() {
+    val result = @OptIn(Foonnotation::class) Foo()
+}

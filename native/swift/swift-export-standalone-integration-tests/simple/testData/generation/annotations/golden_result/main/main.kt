@@ -2,6 +2,10 @@
 @file:kotlin.Suppress("DEPRECATION_ERROR")
 @file:kotlin.native.internal.objc.BindClassToObjCName(Bar::class, "4main3BarC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(Foo::class, "4main3FooC")
+@file:kotlin.native.internal.objc.BindClassToObjCName(FooObject::class, "4main9FooObjectC")
+@file:kotlin.native.internal.objc.BindClassToObjCName(OptInConstructor::class, "4main16OptInConstructorC")
+@file:kotlin.native.internal.objc.BindClassToObjCName(WithCompanion::class, "4main13WithCompanionC")
+@file:kotlin.native.internal.objc.BindClassToObjCName(WithCompanion.Companion::class, "4main13WithCompanionC9CompanionC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(deprecatedChildT::class, "4main16deprecatedChildTC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(deprecatedT::class, "4main11deprecatedTC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(deprecatedT.deprecationInheritedT::class, "4main11deprecatedTC21deprecationInheritedTC")
@@ -16,6 +20,41 @@ import kotlin.native.internal.ExportedBridge
 import kotlinx.cinterop.*
 import kotlinx.cinterop.internal.convertBlockPtrToKotlinFunction
 
+@ExportedBridge("FooObject_objectMethod")
+@OptIn(Barnnotation::class, Foonnotation::class)
+public fun FooObject_objectMethod(self: kotlin.native.internal.NativePtr): Unit {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as FooObject
+    __self.objectMethod()
+}
+
+@ExportedBridge("FooObject_objectProperty_get")
+@OptIn(Foonnotation::class)
+public fun FooObject_objectProperty_get(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as FooObject
+    val _result = __self.objectProperty
+    return _result.objcPtr()
+}
+
+@ExportedBridge("OptInConstructor_name_get")
+public fun OptInConstructor_name_get(self: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as OptInConstructor
+    val _result = __self.name
+    return _result.objcPtr()
+}
+
+@ExportedBridge("WithCompanion_Companion_companionMethod")
+@OptIn(Foonnotation::class)
+public fun WithCompanion_Companion_companionMethod(self: kotlin.native.internal.NativePtr): Unit {
+    val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as WithCompanion.Companion
+    __self.companionMethod()
+}
+
+@ExportedBridge("WithCompanion_Companion_get")
+public fun WithCompanion_Companion_get(): kotlin.native.internal.NativePtr {
+    val _result = WithCompanion.Companion
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
 @ExportedBridge("__root___Bar_init_allocate")
 @OptIn(Barnnotation::class, Foonnotation::class)
 public fun __root___Bar_init_allocate(): kotlin.native.internal.NativePtr {
@@ -28,6 +67,12 @@ public fun __root___Bar_init_allocate(): kotlin.native.internal.NativePtr {
 public fun __root___Bar_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Unit {
     val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
     kotlin.native.internal.initInstance(____kt, Bar())
+}
+
+@ExportedBridge("__root___FooObject_get")
+public fun __root___FooObject_get(): kotlin.native.internal.NativePtr {
+    val _result = FooObject
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("__root___Foo_init_allocate")
@@ -50,11 +95,56 @@ public fun __root___MESSAGE_get(): kotlin.native.internal.NativePtr {
     return _result.objcPtr()
 }
 
+@ExportedBridge("__root___OptInConstructor_init_allocate")
+public fun __root___OptInConstructor_init_allocate(): kotlin.native.internal.NativePtr {
+    val _result = kotlin.native.internal.createUninitializedInstance<OptInConstructor>()
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("__root___OptInConstructor_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_String__")
+public fun __root___OptInConstructor_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_String__(__kt: kotlin.native.internal.NativePtr, name: kotlin.native.internal.NativePtr): Unit {
+    val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
+    val __name = interpretObjCPointer<kotlin.String>(name)
+    kotlin.native.internal.initInstance(____kt, OptInConstructor(__name))
+}
+
+@ExportedBridge("__root___OptInConstructor_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
+public fun __root___OptInConstructor_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Unit {
+    val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
+    kotlin.native.internal.initInstance(____kt, OptInConstructor())
+}
+
+@ExportedBridge("__root___WithCompanion_init_allocate")
+public fun __root___WithCompanion_init_allocate(): kotlin.native.internal.NativePtr {
+    val _result = kotlin.native.internal.createUninitializedInstance<WithCompanion>()
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("__root___WithCompanion_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
+public fun __root___WithCompanion_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Unit {
+    val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
+    kotlin.native.internal.initInstance(____kt, WithCompanion())
+}
+
 @ExportedBridge("__root___bar")
 @OptIn(Barnnotation::class)
 public fun __root___bar(): kotlin.native.internal.NativePtr {
     val _result = bar()
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("__root___barProperty_get")
+@OptIn(Barnnotation::class)
+public fun __root___barProperty_get(): kotlin.native.internal.NativePtr {
+    val _result = barProperty
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("__root___barProperty_set__TypesOfArguments__main_Bar__")
+@OptIn(Barnnotation::class)
+public fun __root___barProperty_set__TypesOfArguments__main_Bar__(newValue: kotlin.native.internal.NativePtr): Unit {
+    val __newValue = kotlin.native.internal.ref.dereferenceExternalRCRef(newValue) as Bar
+    barProperty = __newValue
 }
 
 @ExportedBridge("__root___constMessage")
@@ -107,6 +197,11 @@ public fun __root___deprecationInheritedV_get(): Unit {
     deprecationInheritedV
 }
 
+@ExportedBridge("__root___expressionOptIn")
+public fun __root___expressionOptIn(): Unit {
+    expressionOptIn()
+}
+
 @ExportedBridge("__root___foo")
 @OptIn(Foonnotation::class)
 public fun __root___foo(): kotlin.native.internal.NativePtr {
@@ -114,10 +209,29 @@ public fun __root___foo(): kotlin.native.internal.NativePtr {
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
+@ExportedBridge("__root___fooProperty_get")
+@OptIn(Foonnotation::class)
+public fun __root___fooProperty_get(): kotlin.native.internal.NativePtr {
+    val _result = fooProperty
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("__root___fooVal_get")
+@OptIn(Foonnotation::class)
+public fun __root___fooVal_get(): kotlin.native.internal.NativePtr {
+    val _result = fooVal
+    return _result.objcPtr()
+}
+
 @ExportedBridge("__root___formattedMessage")
 public fun __root___formattedMessage(): kotlin.native.internal.NativePtr {
     val _result = formattedMessage()
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("__root___localDeclarations")
+public fun __root___localDeclarations(): Unit {
+    localDeclarations()
 }
 
 @ExportedBridge("__root___multilineFormattedMessage")

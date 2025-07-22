@@ -3,9 +3,21 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+void FooObject_objectMethod(void * self);
+
+NSString * FooObject_objectProperty_get(void * self);
+
+NSString * OptInConstructor_name_get(void * self);
+
+void WithCompanion_Companion_companionMethod(void * self);
+
+void * WithCompanion_Companion_get();
+
 void * __root___Bar_init_allocate();
 
 void __root___Bar_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
+
+void * __root___FooObject_get();
 
 void * __root___Foo_init_allocate();
 
@@ -13,7 +25,21 @@ void __root___Foo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPoint
 
 NSString * __root___MESSAGE_get();
 
+void * __root___OptInConstructor_init_allocate();
+
+void __root___OptInConstructor_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_String__(void * __kt, NSString * name);
+
+void __root___OptInConstructor_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
+
+void * __root___WithCompanion_init_allocate();
+
+void __root___WithCompanion_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
+
 void * __root___bar();
+
+void * __root___barProperty_get();
+
+void __root___barProperty_set__TypesOfArguments__main_Bar__(void * newValue);
 
 void __root___constMessage() __attribute((noreturn));
 
@@ -33,9 +59,17 @@ void __root___deprecationInheritedImplicitlyV_get();
 
 void __root___deprecationInheritedV_get();
 
+void __root___expressionOptIn();
+
 void * __root___foo();
 
+void * __root___fooProperty_get();
+
+NSString * __root___fooVal_get();
+
 void __root___formattedMessage() __attribute((noreturn));
+
+void __root___localDeclarations();
 
 void __root___multilineFormattedMessage() __attribute((noreturn));
 
