@@ -111,6 +111,10 @@ class WasmFileCodegenContext(
         wasmFileFragment.stringPoolFieldInitializer = initializer.getReferenceKey()
     }
 
+    fun setStringAddressesAndLengthsInitializer(initializer: IrFunctionSymbol) {
+        wasmFileFragment.stringAddressesAndLengthsInitializer = initializer.getReferenceKey()
+    }
+
     fun addNonConstantFieldInitializers(initializer: IrFunctionSymbol) {
         wasmFileFragment.nonConstantFieldInitializers.add(initializer.getReferenceKey())
     }

@@ -111,6 +111,9 @@ private fun compileIrFile(
     fileContext.stringPoolFieldInitializer?.apply {
         wasmFileCodegenContext.setStringPoolFieldInitializer(symbol)
     }
+    fileContext.stringAddressesAndLengthsInitializer?.apply {
+        wasmFileCodegenContext.setStringAddressesAndLengthsInitializer(symbol)
+    }
     fileContext.nonConstantFieldInitializer?.apply {
         wasmFileCodegenContext.addNonConstantFieldInitializers(symbol)
     }

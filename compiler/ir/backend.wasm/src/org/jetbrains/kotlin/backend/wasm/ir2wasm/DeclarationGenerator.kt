@@ -375,8 +375,8 @@ class DeclarationGenerator(
                 ""
             }
         val simpleName = klass.name.asString()
-        val (packageNameAddress, packageNamePoolId) = wasmFileCodegenContext.referenceStringLiteralAddressAndId(qualifier)
-        val (simpleNameAddress, simpleNamePoolId) = wasmFileCodegenContext.referenceStringLiteralAddressAndId(simpleName)
+        val (_, packageNamePoolId) = wasmFileCodegenContext.referenceStringLiteralAddressAndId(qualifier)
+        val (_, simpleNamePoolId) = wasmFileCodegenContext.referenceStringLiteralAddressAndId(simpleName)
 
         val location = SourceLocation.NoLocation("Create instance of rtti struct")
         val initRttiGlobal = buildWasmExpression {
@@ -387,12 +387,7 @@ class DeclarationGenerator(
                 buildRefNull(WasmHeapType.Simple.None, location)
             }
 
-            buildConstI32Symbol(packageNameAddress, location)
-            buildConstI32(qualifier.length, location)
             buildConstI32Symbol(packageNamePoolId, location)
-
-            buildConstI32Symbol(simpleNameAddress, location)
-            buildConstI32(simpleName.length, location)
             buildConstI32Symbol(simpleNamePoolId, location)
 
             buildConstI64(wasmFileCodegenContext.referenceTypeId(symbol), location)
@@ -626,12 +621,10 @@ fun generateConstExpression(
         is IrConstKind.Double -> body.buildConstF64(expression.value as Double, location)
         is IrConstKind.String -> {
             val stringValue = expression.value as String
-            val (literalAddress, literalPoolId) = context.referenceStringLiteralAddressAndId(stringValue)
+            val (_, literalPoolId) = context.referenceStringLiteralAddressAndId(stringValue)
             val isLatin = stringValue.all { it.code in 0..255 }
             body.commentGroupStart { "const string: \"$stringValue\"" }
             body.buildConstI32Symbol(literalPoolId, location)
-            body.buildConstI32Symbol(literalAddress, location)
-            body.buildConstI32(stringValue.length, location)
             if (isLatin) {
                 body.buildCall(context.referenceFunction(backendContext.wasmSymbols.stringGetLiteralLatin), location)
             } else {

@@ -96,6 +96,7 @@ private fun buildRoots(modules: List<IrModuleFragment>, context: WasmBackendCont
 
     context.fileContexts.values.forEach { crossFileContext ->
         crossFileContext.stringPoolFieldInitializer?.let { add(it) }
+        crossFileContext.stringAddressesAndLengthsInitializer?.let { add(it) }
         crossFileContext.nonConstantFieldInitializer?.let { add(it) }
     }
 

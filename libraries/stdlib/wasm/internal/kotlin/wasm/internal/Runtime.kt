@@ -124,6 +124,12 @@ internal fun consumeDoubleIntoVoid(a: Double): Void =
 internal fun stringGetPoolSize(): Int =
     implementedAsIntrinsic
 
+@Suppress("DEPRECATION")
+@OptIn(ExperimentalStdlibApi::class)
+@EagerInitialization
+internal val stringAddressesAndLengths: WasmLongArray =
+    array_new_data1<WasmLongArray>(0, stringGetPoolSize())
+
 // This initializer is a special case in FieldInitializersLowering
 @Suppress("DEPRECATION")
 @OptIn(ExperimentalStdlibApi::class)

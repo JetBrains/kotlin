@@ -612,6 +612,7 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
         rttiElements = deserializeRttiElements(),
         objectInstanceFieldInitializers = deserializeList(::deserializeIdSignature),
         stringPoolFieldInitializer = deserializeNullable(::deserializeIdSignature),
+        stringAddressesAndLengthsInitializer = deserializeNullable(::deserializeIdSignature),
         nonConstantFieldInitializers = deserializeList(::deserializeIdSignature),
     )
 
