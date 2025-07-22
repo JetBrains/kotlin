@@ -29,12 +29,10 @@ class ResolutionStageRunner {
             // because we have to start from the next unprocessed stage and mutate `Candidate.passedStages` on every iteration.
             val resolutionSequence = candidate.callInfo.callKind.resolutionSequence
             while (candidate.passedStages < resolutionSequence.size) {
-                with(context) {
-                    with(sink) {
-                        val nextStage = resolutionSequence[candidate.passedStages++]
-                        inferenceLogger?.logStage("Resolution Stages > ${nextStage::class.simpleName}", candidate.system)
-                        nextStage.check(candidate)
-                    }
+                context(context, sink) {
+                    val nextStage = resolutionSequence[candidate.passedStages++]
+                    inferenceLogger?.logStage("Resolution Stages > ${nextStage::class.simpleName}", candidate.system)
+                    nextStage.check(candidate)
                 }
             }
         }.createCoroutineUnintercepted(completion = object : Continuation<Unit> {

@@ -81,11 +81,8 @@ abstract class AbstractTypeApproximator(
         conf: TypeApproximatorConfiguration,
         caches: TypeApproximatorCachesPerConfiguration? = null,
     ): KotlinTypeMarker? {
-        // TODO: Replace with context(conf) { ... } once it's possible
-        return with(conf) {
-            with(caches?.getOrPut(conf, ::Cache) ?: Cache()) {
-                approximateToSuperType(type, -type.typeDepthForApproximation())
-            }
+        return context(conf, caches?.getOrPut(conf, ::Cache) ?: Cache()) {
+            approximateToSuperType(type, -type.typeDepthForApproximation())
         }
     }
 
@@ -95,11 +92,8 @@ abstract class AbstractTypeApproximator(
         conf: TypeApproximatorConfiguration,
         caches: TypeApproximatorCachesPerConfiguration? = null,
     ): KotlinTypeMarker? {
-        // TODO: Replace with context(conf) { ... } once it's possible
-        return with(conf) {
-            with(caches?.getOrPut(conf, ::Cache) ?: Cache()) {
-                approximateToSubType(type, -type.typeDepthForApproximation())
-            }
+        return context(conf, caches?.getOrPut(conf, ::Cache) ?: Cache()) {
+            approximateToSubType(type, -type.typeDepthForApproximation())
         }
     }
 

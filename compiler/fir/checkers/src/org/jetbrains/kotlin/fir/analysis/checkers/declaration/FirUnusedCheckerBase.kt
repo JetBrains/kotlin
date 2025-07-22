@@ -85,10 +85,8 @@ abstract class FirUnusedCheckerBase : FirBasicDeclarationChecker(MppCheckerKind.
                 element is FirExpression &&
                 source != null
             ) {
-                with(context) {
-                    with(reporter) {
-                        if (reportUnusedExpressionIfNeeded(element, element.hasSideEffect(), source)) return
-                    }
+                context(context, reporter) {
+                    if (reportUnusedExpressionIfNeeded(element, element.hasSideEffect(), source)) return
                 }
             }
 
