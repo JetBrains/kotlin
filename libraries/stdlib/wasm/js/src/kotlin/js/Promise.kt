@@ -11,7 +11,7 @@ import kotlin.internal.LowPriorityInOverloadResolution
  * Exposes the JavaScript [Promise object](https://developer.mozilla.org/en/docs/Web/JavaScript/Reference/Global_Objects/Promise) to Kotlin.
  */
 @ExperimentalWasmJsInterop
-public actual open external class Promise<out T : JsAny?>
+public actual external class Promise<out T : JsAny?>
 @LowPriorityInOverloadResolution
 actual constructor(executor: (resolve: (T) -> Unit, reject: (JsError) -> Unit) -> Unit) : JsAny {
 
