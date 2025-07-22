@@ -3,4 +3,3 @@ org.jetbrains.kotlin.daemon.CompilerDaemonTest.testParallelDaemonStart,,STABLE
 org.jetbrains.kotlin.gradle.JsSetupConfigurationCacheIT.checkNodeJsSetup,,FLAKY
 org.jetbrains.kotlin.js.test.fir.FirLightTreeJsOldFrontendDiagnosticsTestGenerated.Export.testPrimitiveNullableTypes,,STABLE
 org.jetbrains.kotlin.js.test.fir.FirPsiJsOldFrontendDiagnosticsTestGenerated.Export.testPrimitiveNullableTypes,,STABLE
-org.jetbrains.kotlin.gradle.ComposeIT.testComposeDefaultParamsInOpenFunctionK1ToK2[AGP 8.11.1 with Gradle 8.14: Run test against older versions of open @Composable function],,STABLE
