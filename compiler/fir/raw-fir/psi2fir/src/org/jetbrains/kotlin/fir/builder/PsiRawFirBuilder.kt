@@ -1960,6 +1960,10 @@ open class PsiRawFirBuilder(
                         }
                     }
                 }
+            }.also {
+                if (typeAlias.parent is KtClassBody) {
+                    it.initContainingClassForLocalAttr()
+                }
             }
         }
 

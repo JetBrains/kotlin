@@ -1362,6 +1362,10 @@ class LightTreeRawFirDeclarationBuilder(
                     }
                 }
             }
+        }.also {
+            if (typeAlias.getParent()?.elementType == KtStubElementTypes.CLASS_BODY) {
+                it.initContainingClassForLocalAttr()
+            }
         }
     }
 
