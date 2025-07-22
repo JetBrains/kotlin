@@ -399,6 +399,17 @@ class CocoaPodsIT : KGPBaseTest() {
         }
     }
 
+    @DisplayName("KT-79429 - Cinterop explicit header and fmodules")
+    @GradleTest
+    fun testCinteropExplicitHeaderAndFmodules(gradleVersion: GradleVersion) {
+        nativeProjectWithCocoapodsAndIosAppPodFile(gradleVersion = gradleVersion) {
+            buildGradleKts.addPod("AFNetworking", "headers = \"AFNetworking.h\"")
+            buildWithCocoapodsWrapper("cinteropAFNetworkingIOS") {
+                assertOutputDoesNotContain("-compiler-option -fmodules")
+            }
+        }
+    }
+
     @DisplayName("Cocoapods with regular framework definition")
     @GradleTest
     fun testCocoapodsWithRegularFrameworkDefinition(gradleVersion: GradleVersion) {
