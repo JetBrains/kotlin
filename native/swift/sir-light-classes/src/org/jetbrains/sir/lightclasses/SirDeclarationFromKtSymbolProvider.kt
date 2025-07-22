@@ -7,11 +7,15 @@ package org.jetbrains.sir.lightclasses
 
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.builtins.StandardNames
+import org.jetbrains.kotlin.sir.SirEnum
+import org.jetbrains.kotlin.sir.SirEnumCase
 import org.jetbrains.kotlin.sir.SirFunction
 import org.jetbrains.kotlin.sir.providers.SirDeclarationProvider
 import org.jetbrains.kotlin.sir.providers.SirSession
 import org.jetbrains.kotlin.sir.providers.SirTranslationResult
+import org.jetbrains.kotlin.sir.providers.getSirParent
 import org.jetbrains.kotlin.sir.providers.source.KotlinSource
+import org.jetbrains.kotlin.sir.providers.withSessions
 import org.jetbrains.sir.lightclasses.nodes.*
 import org.jetbrains.sir.lightclasses.utils.SirOperatorTranslationStrategy
 
@@ -60,7 +64,12 @@ public class SirDeclarationFromKtSymbolProvider(
                     ).let(SirTranslationResult::RegularFunction)
             }
             is KaEnumEntrySymbol -> {
-                SirTranslationResult.Untranslatable(KotlinSource(ktSymbol))
+                SirTranslationResult.EnumCase(
+                    SirEnumCase(
+                        ktSymbol.name.asString(), emptyList(),
+                        sirSession.withSessions { ktSymbol.getSirParent() as SirEnum }
+                    )
+                )
             }
             is KaVariableSymbol -> {
                 if (ktSymbol is KaPropertySymbol && ktSymbol.isExtension) {

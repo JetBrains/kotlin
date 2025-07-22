@@ -5,11 +5,26 @@
 
 package org.jetbrains.kotlin.sir
 
-// Why on earth it's not a SirDeclaration
 class SirEnumCase(
-    val name: String,
-    val parameters: List<SirParameter>
-) {
+    override val name: String,
+    val parameters: List<SirParameter>,
+    val enum: SirEnum,
+) : SirNamedDeclaration {
+    override val origin: SirOrigin
+        get() = enum.origin
+    override val visibility: SirVisibility
+        get() = SirVisibility.PUBLIC
+    override val documentation: String?
+        get() = enum.documentation
+    override var parent: SirDeclarationParent
+        get() = enum
+        set(arg) {
+            if (arg === enum) return
+            error("Changing SirEnumCase.parent is prohibited")
+        }
+    override val attributes: List<SirAttribute>
+        get() = emptyList()
+
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other !is SirEnumCase) return false
