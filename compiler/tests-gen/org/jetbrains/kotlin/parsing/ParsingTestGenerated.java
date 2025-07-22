@@ -2069,6 +2069,16 @@ public class ParsingTestGenerated extends AbstractParsingTest {
         runTest("compiler/testData/psi/destructuring/fullNameBasedDestructuringErrors.kt");
       }
 
+      @TestMetadata("fullPositionBasedDestructuring.kt")
+      public void testFullPositionBasedDestructuring() {
+        runTest("compiler/testData/psi/destructuring/fullPositionBasedDestructuring.kt");
+      }
+
+      @TestMetadata("fullPositionBasedDestructuringErrors.kt")
+      public void testFullPositionBasedDestructuringErrors() {
+        runTest("compiler/testData/psi/destructuring/fullPositionBasedDestructuringErrors.kt");
+      }
+
       @TestMetadata("ktij23263.kt")
       public void testKtij23263() {
         runTest("compiler/testData/psi/destructuring/ktij23263.kt");
@@ -2077,6 +2087,16 @@ public class ParsingTestGenerated extends AbstractParsingTest {
       @TestMetadata("shortNameBasedDestructuringWithRenaming.kt")
       public void testShortNameBasedDestructuringWithRenaming() {
         runTest("compiler/testData/psi/destructuring/shortNameBasedDestructuringWithRenaming.kt");
+      }
+
+      @TestMetadata("shortPositionBasedDestructuring.kt")
+      public void testShortPositionBasedDestructuring() {
+        runTest("compiler/testData/psi/destructuring/shortPositionBasedDestructuring.kt");
+      }
+
+      @TestMetadata("shortPositionBasedDestructuringErrors.kt")
+      public void testShortPositionBasedDestructuringErrors() {
+        runTest("compiler/testData/psi/destructuring/shortPositionBasedDestructuringErrors.kt");
       }
     }
 
