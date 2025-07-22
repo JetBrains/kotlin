@@ -498,6 +498,12 @@ public class FirLightTreeLocalVariableTestGenerated extends AbstractFirLightTree
       public void testInlineScopes9() {
         runTest("compiler/testData/debug/localVariables/inlineScopes/oldFormatToNew/inlineScopes9.kt");
       }
+
+      @Test
+      @TestMetadata("inlineScopesWithTryFinally.kt")
+      public void testInlineScopesWithTryFinally() {
+        runTest("compiler/testData/debug/localVariables/inlineScopes/oldFormatToNew/inlineScopesWithTryFinally.kt");
+      }
     }
   }
 
