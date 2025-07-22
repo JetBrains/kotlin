@@ -7,6 +7,7 @@ package kotlin.js
 
 import kotlin.wasm.internal.ExternalInterfaceType
 
+@SinceKotlin("2.2")
 @JsName("Error")
 @ExperimentalWasmJsInterop
 public actual external class JsError : JsAny {
