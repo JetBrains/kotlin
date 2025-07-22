@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 // OPT_IN: kotlin.contracts.ExperimentalContracts, kotlin.contracts.ExperimentalExtendedContracts
 // LANGUAGE: +AllowContractsOnPropertyAccessors, +ConditionImpliesReturnsContracts, +DataFlowBasedExhaustiveness
 
@@ -16,7 +16,7 @@ val String?.foo: String?
 
 fun test_transitive() {
     val x = null
-    <!SMARTCAST_IMPOSSIBLE!>x.foo<!>.length
+    x.foo.length
 }
 
 // KT-79220
