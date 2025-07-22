@@ -48,7 +48,7 @@ import org.jetbrains.kotlin.utils.memoryOptimizedPlus
  * suspend fun foo(a: Int, b: String): String { ... }
  * ```
  *
- * **After the transformation: **
+ * **After the transformation:**
  * ```kotlin
  * @JsExport.Ignore
  * suspend fun foo(a: Int, b: String): String { ... }
