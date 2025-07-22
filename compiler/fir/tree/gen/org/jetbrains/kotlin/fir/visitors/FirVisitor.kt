@@ -152,6 +152,9 @@ abstract class FirVisitor<out R, in D> {
     open fun visitArrayLiteral(arrayLiteral: FirArrayLiteral, data: D): R =
         visitElement(arrayLiteral, data)
 
+    open fun visitCollectionLiteralCall(collectionLiteralCall: FirCollectionLiteralCall, data: D): R =
+        visitElement(collectionLiteralCall, data)
+
     open fun visitCheckNotNullCall(checkNotNullCall: FirCheckNotNullCall, data: D): R =
         visitElement(checkNotNullCall, data)
 

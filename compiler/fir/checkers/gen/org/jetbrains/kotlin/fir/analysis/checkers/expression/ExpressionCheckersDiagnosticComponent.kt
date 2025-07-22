@@ -259,6 +259,10 @@ class ExpressionCheckersDiagnosticComponent(
         checkers.allResolvedQualifierCheckers.check(errorResolvedQualifier, data)
     }
 
+    override fun visitCollectionLiteralCall(collectionLiteralCall: FirCollectionLiteralCall, data: CheckerContext) {
+        checkers.allArrayLiteralCheckers.check(collectionLiteralCall, data)
+    }
+
     private inline fun <reified E : FirStatement> Array<FirExpressionChecker<E>>.check(
         element: E,
         context: CheckerContext
