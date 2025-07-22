@@ -13933,6 +13933,11 @@ final inline fun <#A: kotlin/Any?> (kotlin.collections/Collection<#A>).kotlin.co
 final inline fun <#A: kotlin/Any?> kotlin/emptyArray(): kotlin/Array<#A> // kotlin/emptyArray|emptyArray(){0§<kotlin.Any?>}[0]
 
 // Targets: [js, wasmJs]
+open annotation class kotlin.js/ExperimentalWasmJsInterop : kotlin/Annotation { // kotlin.js/ExperimentalWasmJsInterop|null[0]
+    constructor <init>() // kotlin.js/ExperimentalWasmJsInterop.<init>|<init>(){}[0]
+}
+
+// Targets: [js, wasmJs]
 open annotation class kotlin.js/JsExport : kotlin/Annotation { // kotlin.js/JsExport|null[0]
     constructor <init>() // kotlin.js/JsExport.<init>|<init>(){}[0]
 
@@ -14189,11 +14194,6 @@ final suspend inline fun kotlin.wasm.internal/getCoroutineContext(): kotlin.coro
 // Targets: [js]
 open annotation class kotlin.js/EagerInitialization : kotlin/Annotation { // kotlin.js/EagerInitialization|null[0]
     constructor <init>() // kotlin.js/EagerInitialization.<init>|<init>(){}[0]
-}
-
-// Targets: [js]
-open annotation class kotlin.js/ExperimentalWasmJsInterop : kotlin/Annotation { // kotlin.js/ExperimentalWasmJsInterop|null[1]
-    constructor <init>() // kotlin.js/ExperimentalWasmJsInterop.<init>|<init>(){}[1]
 }
 
 // Targets: [js]
@@ -15444,11 +15444,6 @@ final suspend inline fun <#A: kotlin/Any?> kotlin.js/suspendCoroutineUnintercept
 
 // Targets: [js]
 final suspend inline fun kotlin.js/getCoroutineContext(): kotlin.coroutines/CoroutineContext // kotlin.js/getCoroutineContext|getCoroutineContext(){}[0]
-
-// Targets: [wasmJs]
-open annotation class kotlin.js/ExperimentalWasmJsInterop : kotlin/Annotation { // kotlin.js/ExperimentalWasmJsInterop|null[0]
-    constructor <init>() // kotlin.js/ExperimentalWasmJsInterop.<init>|<init>(){}[0]
-}
 
 // Targets: [wasmJs]
 abstract interface kotlin.js/Dynamic : kotlin.js/JsAny // kotlin.js/Dynamic|null[0]
