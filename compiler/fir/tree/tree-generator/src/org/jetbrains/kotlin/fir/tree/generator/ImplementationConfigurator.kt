@@ -102,6 +102,8 @@ object ImplementationConfigurator : AbstractFirTreeImplementationConfigurator() 
 
         impl(arrayLiteral)
 
+        impl(collectionLiteralCall)
+
         impl(callableReferenceAccess)
 
         impl(componentCall) {

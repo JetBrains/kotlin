@@ -324,8 +324,15 @@ object FirTree : AbstractFirTreeBuilder() {
     }
 
     val arrayLiteral: Element by element(Expression) {
+        kind = ImplementationKind.AbstractClass
+
         parent(expression)
         parent(call)
+    }
+
+    val collectionLiteralCall: Element by element(Expression) {
+        parent(arrayLiteral)
+        parent(resolvable)
     }
 
     val checkNotNullCall: Element by element(Expression) {
