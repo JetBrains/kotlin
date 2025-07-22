@@ -68,7 +68,7 @@ dependencies {
     testApi(testFixtures(project(":kotlin-sam-with-receiver-compiler-plugin")))
     testApi(testFixtures(project(":kotlin-assignment-compiler-plugin")))
     testApi(testFixtures(project(":kotlinx-serialization-compiler-plugin")))
-    testApi(testFixtures(project(":kotlin-atomicfu-compiler-plugin")))
+    testApi(projectTests(":kotlin-atomicfu-compiler-plugin"))
     testApi(testFixtures(project(":kotlin-dataframe-compiler-plugin")))
     testImplementation(testFixtures(project(":analysis:analysis-api-impl-base")))
     testImplementation(testFixtures(project(":analysis:analysis-test-framework")))
