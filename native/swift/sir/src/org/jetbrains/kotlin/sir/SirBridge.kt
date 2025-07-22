@@ -54,4 +54,5 @@ public class SirTypeBindingBridge(
      * File-level annotation to be placed on the generated Kotlin bridge.
      */
     public val kotlinFileAnnotation: String,
+    public val kotlinOptIns: List<String> = emptyList(),
 ) : SirBridge(name)

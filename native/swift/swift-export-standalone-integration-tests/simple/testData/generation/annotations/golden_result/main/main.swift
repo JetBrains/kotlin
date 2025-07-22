@@ -10,6 +10,38 @@ public typealias deprecatedImplicitlyA = Swift.Void
 public typealias obsoletedA = Swift.Void
 @available(*, deprecated, message: "Deprecated. Replacement: renamed")
 public typealias renamedA = Swift.Void
+@_spi(Barnnotation) @_spi(Foonnotation)
+public final class Bar: main.Foo {
+    @_spi(Barnnotation) @_spi(Foonnotation)
+    public override init() {
+        if Self.self != main.Bar.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.Bar ") }
+        let __kt = __root___Bar_init_allocate()
+        super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
+        __root___Bar_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt)
+    }
+    package override init(
+        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+        options: KotlinRuntime.KotlinBaseConstructionOptions
+    ) {
+        super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+    }
+}
+@_spi(Foonnotation)
+open class Foo: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+    @_spi(Foonnotation)
+    public init() {
+        if Self.self != main.Foo.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.Foo ") }
+        let __kt = __root___Foo_init_allocate()
+        super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
+        __root___Foo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt)
+    }
+    package override init(
+        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+        options: KotlinRuntime.KotlinBaseConstructionOptions
+    ) {
+        super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+    }
+}
 public final class deprecatedChildT: main.deprecatedT {
     public var deprecationFurtherReinforcedV: Swift.Void {
         get {
@@ -423,6 +455,10 @@ public var renamedV: Swift.Void {
         return __root___renamedV_get()
     }
 }
+@_spi(Barnnotation)
+public func bar() -> main.Bar {
+    return main.Bar.__createClassWrapper(externalRCRef: __root___bar())
+}
 @available(*, deprecated, message: "message")
 public func constMessage() -> Swift.Never {
     return __root___constMessage()
@@ -434,6 +470,10 @@ public func deprecatedF() -> Swift.Void {
 @available(*, deprecated, message: "Deprecated")
 public func deprecatedImplicitlyF() -> Swift.Void {
     return __root___deprecatedImplicitlyF()
+}
+@_spi(Foonnotation)
+public func foo() -> main.Foo {
+    return main.Foo.__createClassWrapper(externalRCRef: __root___foo())
 }
 @available(*, deprecated, message: "->message<-")
 public func formattedMessage() -> Swift.Never {

@@ -5,14 +5,19 @@
 
 package org.jetbrains.kotlin.sir.providers.utils
 
+import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.annotations.KaAnnotationValue
+import org.jetbrains.kotlin.analysis.api.export.utilities.getSuperClassSymbolNotAny
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
+import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbolModality
+import org.jetbrains.kotlin.analysis.api.types.symbol
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
-import kotlin.Throws
 
 public fun KaSymbolModality.isAbstract(): Boolean = when (this) {
     KaSymbolModality.FINAL, KaSymbolModality.OPEN -> false
@@ -51,4 +56,60 @@ public val KaDeclarationSymbol.throwsAnnotation: Throws?
             ?.values?.filterIsInstance<KaAnnotationValue.ClassLiteralValue>()
 
         Throws()
+    }
+
+
+@Suppress("OPT_IN_CAN_ONLY_BE_USED_AS_ANNOTATION")
+public val KaDeclarationSymbol.optInAnnotation: RequiresOptIn?
+    get() = this.annotations[ClassId.topLevel(FqName("kotlin.RequiresOptIn"))].firstOrNull()?.let {
+        val arguments = it.arguments.associate { it.name.asString() to it.expression }
+
+        val message = (arguments["message"] as? KaAnnotationValue.ConstantValue?)
+            ?.value?.toString()?.removeSurrounding("\"") ?: ""
+
+        val level = (arguments["level"] as? KaAnnotationValue.EnumEntryValue?)
+            ?.callableId?.let {
+                require(it.classId == ClassId.topLevel(FqName("kotlin.RequiresOptIn")).createNestedClassId(Name.identifier("Level")))
+                when (it.callableName.identifier) {
+                    "WARNING" -> RequiresOptIn.Level.WARNING
+                    "ERROR" -> RequiresOptIn.Level.ERROR
+                    else -> RequiresOptIn.Level.ERROR
+                }
+            } ?: RequiresOptIn.Level.ERROR
+
+        RequiresOptIn(message, level)
+    }
+
+/**
+ * Extracts all opt-in requirements for the given declaration.
+ * This includes both direct @RequiresOptIn annotations and indirect opt-in requirements
+ * from annotations that themselves require opt-in.
+ *
+ * @return Set of ClassId representing all opt-in markers required for this declaration
+ */
+context(session: KaSession)
+public val KaDeclarationSymbol.allRequiredOptIns: List<ClassId>
+    get() = with(session) {
+        buildList {
+            (this@allRequiredOptIns as? KaClassSymbol)?.let { getSuperClassSymbolNotAny(it) }?.let {
+                addAll(it.allRequiredOptIns)
+            }
+
+            this@allRequiredOptIns.containingDeclaration?.allRequiredOptIns?.let { addAll(it) }
+
+            for (annotation in this@allRequiredOptIns.annotations) {
+                val annotationClassId = annotation.classId ?: continue
+
+                if (annotationClassId == ClassId.topLevel(FqName("kotlin.RequiresOptIn"))) {
+                    (this@allRequiredOptIns as? KaClassLikeSymbol)?.classId?.let { add(it) }
+                    continue
+                }
+
+                annotation.constructorSymbol?.returnType?.symbol?.let { symbol ->
+                    if (symbol.optInAnnotation != null) {
+                        symbol.classId?.let { add(it) }
+                    }
+                }
+            }
+        }.distinct().sortedBy { it.asFqNameString() }
     }

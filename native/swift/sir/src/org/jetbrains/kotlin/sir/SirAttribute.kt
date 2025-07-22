@@ -40,6 +40,13 @@ public sealed interface SirAttribute {
         val isUnusable = unavailable || obsoleted
     }
 
+    class SPI(
+        val name: String
+    ) : SirAttribute {
+        override val identifier: String get() = "_spi"
+        override val arguments: List<SirArgument> get() = listOf(SirArgument(null, SirExpression(raw = name)))
+    }
+
     object NonOverride : SirAttribute {
         override val identifier: String get() = "_nonoverride"
 

@@ -7,11 +7,13 @@ package org.jetbrains.sir.lightclasses.utils
 
 import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
 import org.jetbrains.kotlin.sir.SirAttribute
+import org.jetbrains.kotlin.sir.providers.utils.allRequiredOptIns
 import org.jetbrains.kotlin.sir.providers.utils.deprecatedAnnotation
 import org.jetbrains.sir.lightclasses.SirFromKtSymbol
+import org.jetbrains.sir.lightclasses.extensions.withSessions
 
 internal inline val <reified S : KaDeclarationSymbol> SirFromKtSymbol<S>.translatedAttributes
-    get(): List<SirAttribute> {
+    get(): List<SirAttribute> = withSessions {
         val availability = ktSymbol.deprecatedAnnotation?.takeIf { it.level != DeprecationLevel.HIDDEN }?.let { annotation ->
             SirAttribute.Available(
                 message = annotation.replaceWith.expression.takeIf { it.isNotBlank() }?.let { "${annotation.message}. Replacement: $it" }
@@ -21,5 +23,7 @@ internal inline val <reified S : KaDeclarationSymbol> SirFromKtSymbol<S>.transla
             )
         }
 
-        return listOfNotNull(availability)
+        val spi = ktSymbol.allRequiredOptIns.map { SirAttribute.SPI(it.asSingleFqName().pathSegments().joinToString("$")) }
+
+        listOfNotNull(availability) + spi
     }

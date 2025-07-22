@@ -22,6 +22,8 @@ import org.jetbrains.kotlin.sir.providers.sirModule
 import org.jetbrains.kotlin.sir.providers.source.KotlinSource
 import org.jetbrains.kotlin.sir.providers.toSir
 import org.jetbrains.kotlin.sir.providers.utils.KotlinRuntimeModule
+import org.jetbrains.kotlin.sir.providers.utils.KotlinRuntimeSupportModule
+import org.jetbrains.kotlin.sir.providers.utils.allRequiredOptIns
 import org.jetbrains.kotlin.sir.providers.utils.containingModule
 import org.jetbrains.kotlin.sir.providers.utils.updateImport
 import org.jetbrains.kotlin.sir.providers.utils.throwsAnnotation
@@ -173,6 +175,7 @@ internal abstract class SirAbstractClassFromKtSymbol(
     override val bridges: List<SirBridge> by lazyWithSessions {
         listOfNotNull(sirSession.generateTypeBridge(
             ktSymbol.classId?.asSingleFqName()?.pathSegments()?.map { it.toString() } ?: emptyList(),
+            kotlinOptIns =  ktSymbol.allRequiredOptIns,
             swiftFqName = swiftFqName,
             swiftSymbolName = objcClassSymbolName,
         ))

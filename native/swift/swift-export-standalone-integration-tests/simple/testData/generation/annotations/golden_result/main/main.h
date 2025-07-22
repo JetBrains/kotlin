@@ -3,7 +3,17 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
+void * __root___Bar_init_allocate();
+
+void __root___Bar_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
+
+void * __root___Foo_init_allocate();
+
+void __root___Foo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
+
 NSString * __root___MESSAGE_get();
+
+void * __root___bar();
 
 void __root___constMessage() __attribute((noreturn));
 
@@ -22,6 +32,8 @@ void __root___deprecatedT_init_initialize__TypesOfArguments__Swift_UnsafeMutable
 void __root___deprecationInheritedImplicitlyV_get();
 
 void __root___deprecationInheritedV_get();
+
+void * __root___foo();
 
 void __root___formattedMessage() __attribute((noreturn));
 

@@ -311,3 +311,25 @@ fun renamedQualified(x: Int, y: Float): Nothing = TODO("never")
 
 @Deprecated(message = "", replaceWith = ReplaceWith("something.else(x, y)"))
 fun renamedQualifiedWithArguments(x: Int, y: Float): Nothing = TODO("never")
+
+// FILE: optin.kt
+
+@RequiresOptIn(level = RequiresOptIn.Level.ERROR)
+annotation class Foonnotation()
+
+@RequiresOptIn(level = RequiresOptIn.Level.ERROR)
+annotation class Barnnotation()
+
+@Foonnotation
+open class Foo
+
+@Barnnotation
+@OptIn(Foonnotation::class)
+class Bar : Foo()
+
+
+@Foonnotation
+fun foo() = Foo()
+
+@Barnnotation
+fun bar() = Bar()

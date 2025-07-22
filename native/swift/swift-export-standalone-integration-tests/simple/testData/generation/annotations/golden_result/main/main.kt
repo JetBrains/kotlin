@@ -1,4 +1,7 @@
+@file:OptIn(Barnnotation::class, Foonnotation::class)
 @file:kotlin.Suppress("DEPRECATION_ERROR")
+@file:kotlin.native.internal.objc.BindClassToObjCName(Bar::class, "4main3BarC")
+@file:kotlin.native.internal.objc.BindClassToObjCName(Foo::class, "4main3FooC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(deprecatedChildT::class, "4main16deprecatedChildTC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(deprecatedT::class, "4main11deprecatedTC")
 @file:kotlin.native.internal.objc.BindClassToObjCName(deprecatedT.deprecationInheritedT::class, "4main11deprecatedTC21deprecationInheritedTC")
@@ -13,10 +16,45 @@ import kotlin.native.internal.ExportedBridge
 import kotlinx.cinterop.*
 import kotlinx.cinterop.internal.convertBlockPtrToKotlinFunction
 
+@ExportedBridge("__root___Bar_init_allocate")
+@OptIn(Barnnotation::class, Foonnotation::class)
+public fun __root___Bar_init_allocate(): kotlin.native.internal.NativePtr {
+    val _result = kotlin.native.internal.createUninitializedInstance<Bar>()
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("__root___Bar_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
+@OptIn(Barnnotation::class, Foonnotation::class)
+public fun __root___Bar_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Unit {
+    val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
+    kotlin.native.internal.initInstance(____kt, Bar())
+}
+
+@ExportedBridge("__root___Foo_init_allocate")
+@OptIn(Foonnotation::class)
+public fun __root___Foo_init_allocate(): kotlin.native.internal.NativePtr {
+    val _result = kotlin.native.internal.createUninitializedInstance<Foo>()
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
+}
+
+@ExportedBridge("__root___Foo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__")
+@OptIn(Foonnotation::class)
+public fun __root___Foo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt: kotlin.native.internal.NativePtr): Unit {
+    val ____kt = kotlin.native.internal.ref.dereferenceExternalRCRef(__kt)!!
+    kotlin.native.internal.initInstance(____kt, Foo())
+}
+
 @ExportedBridge("__root___MESSAGE_get")
 public fun __root___MESSAGE_get(): kotlin.native.internal.NativePtr {
     val _result = MESSAGE
     return _result.objcPtr()
+}
+
+@ExportedBridge("__root___bar")
+@OptIn(Barnnotation::class)
+public fun __root___bar(): kotlin.native.internal.NativePtr {
+    val _result = bar()
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("__root___constMessage")
@@ -67,6 +105,13 @@ public fun __root___deprecationInheritedImplicitlyV_get(): Unit {
 @ExportedBridge("__root___deprecationInheritedV_get")
 public fun __root___deprecationInheritedV_get(): Unit {
     deprecationInheritedV
+}
+
+@ExportedBridge("__root___foo")
+@OptIn(Foonnotation::class)
+public fun __root___foo(): kotlin.native.internal.NativePtr {
+    val _result = foo()
+    return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
 @ExportedBridge("__root___formattedMessage")
