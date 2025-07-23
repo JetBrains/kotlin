@@ -855,6 +855,10 @@ object LightTreePositioningStrategies {
                         return markRange(startElement, nameIdentifier, startOffset, endOffset, tree, node)
                     }
                 }
+                node.tokenType == KtNodeTypes.DESTRUCTURING_DECLARATION_ENTRY -> {
+                    val nodeToMark = tree.nameIdentifier(node) ?: node
+                    return markElement(nodeToMark, startOffset, endOffset, tree, node)
+                }
                 node.tokenType != KtNodeTypes.DOT_QUALIFIED_EXPRESSION &&
                         node.tokenType != KtNodeTypes.SAFE_ACCESS_EXPRESSION &&
                         node.tokenType != KtNodeTypes.CALLABLE_REFERENCE_EXPRESSION -> {
