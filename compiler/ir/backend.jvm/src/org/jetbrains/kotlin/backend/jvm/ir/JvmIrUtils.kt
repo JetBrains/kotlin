@@ -568,3 +568,20 @@ fun IrClass.getJvmAnnotationRetention(): RetentionPolicy {
 
     return RetentionPolicy.RUNTIME
 }
+
+private fun IrFunction.singleCallOrNull(): IrCall? = when (body) {
+    is IrBlockBody -> {
+        val statements = (body as IrBlockBody).statements
+        (statements.singleOrNull() as? IrReturn)?.value as? IrCall
+    }
+    is IrExpressionBody -> {
+        val expression = (body as IrExpressionBody).expression
+        expression as? IrCall
+    }
+    else -> null
+}
+
+fun IrFunction.isBodyBridgeCallTo(target: IrSimpleFunction?): Boolean {
+    val callee: IrSimpleFunction = singleCallOrNull()?.symbol?.owner ?: return false
+    return callee == target || (callee.origin == IrDeclarationOrigin.SYNTHETIC_ACCESSOR && callee.isBodyBridgeCallTo(target))
+}

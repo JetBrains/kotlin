@@ -304,6 +304,13 @@ internal class AddContinuationLowering(context: JvmBackendContext) : SuspendLowe
 
                 val capturesCrossinline = function.isCapturingCrossinline()
                 val view = function.suspendFunctionViewOrStub(context)
+
+                // if X is original for Y, then (view for X) is an original for the (view for Y)
+                function.originalFunctionForDefaultImpl?.let { originalForDefaultImplBridge ->
+                    val viewForOriginal = originalForDefaultImplBridge.suspendFunctionOriginal().viewOfOriginalSuspendFunction
+                    if (viewForOriginal != null) view.originalFunctionForDefaultImpl = viewForOriginal
+                }
+
                 val continuationParameter = view.continuationParameter()
                 val parameterMap = function.parameters.zip(view.parameters.filter { it != continuationParameter }).toMap()
                 view.body = function.moveBodyTo(view, parameterMap)
