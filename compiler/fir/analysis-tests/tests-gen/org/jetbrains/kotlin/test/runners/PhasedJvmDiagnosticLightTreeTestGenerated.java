@@ -38102,6 +38102,12 @@ public class PhasedJvmDiagnosticLightTreeTestGenerated extends AbstractPhasedJvm
         public void testSimpleSealedInterface() {
           runTest("compiler/testData/diagnostics/tests/sealed/interfaces/simpleSealedInterface.kt");
         }
+
+        @Test
+        @TestMetadata("triangleHierarchy.kt")
+        public void testTriangleHierarchy() {
+          runTest("compiler/testData/diagnostics/tests/sealed/interfaces/triangleHierarchy.kt");
+        }
       }
     }
 
