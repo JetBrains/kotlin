@@ -17,6 +17,8 @@ import kotlin.concurrent.thread
 import kotlin.io.path.exists
 import kotlin.io.path.readText
 import kotlin.test.assertEquals
+import kotlin.time.Duration.Companion.minutes
+import kotlin.time.TimeSource
 
 /**
  * Test changes to files in continuous build mode will trigger recompilation.
@@ -40,7 +42,8 @@ class JsContinuousBuildIT : KGPDaemonsBaseTest() {
 
     @GradleTest
     @TestMetadata("js-run-continuous")
-    @Timeout(value = 2, unit = TimeUnit.MINUTES)
+    // Timeout is much longer than expected test duration because sometimes KGP needs to download JS tools.
+    @Timeout(value = 10, unit = TimeUnit.MINUTES)
     fun testJsRunContinuousBuild(
         gradleVersion: GradleVersion,
     ) {
@@ -52,25 +55,45 @@ class JsContinuousBuildIT : KGPDaemonsBaseTest() {
             val daemonStdin = PipedInputStream(daemonRelease)
 
             val checker = thread(name = "testJsRunContinuousBuild checker", isDaemon = true) {
-                // wait for the first compilation to succeed
-                while (!compiledJs.exists()) {
-                    Thread.sleep(1000)
+                try {
+                    val buildStartMark = TimeSource.Monotonic.markNow()
+                    fun checkBuildDuration() {
+                        check(buildStartMark.elapsedNow() < 10.minutes) {
+                            "build took too long - ${buildStartMark.elapsedNow()}"
+                        }
+                    }
+
+                    println("Waiting for the first compilation to succeed...")
+                    while (!compiledJs.exists()) {
+                        Thread.sleep(1000)
+                        checkBuildDuration()
+                    }
+                    println("First compilation completed.")
+
+                    println("Waiting before file modification...")
+                    // wait to give Gradle a chance to catch up with file events
+                    Thread.sleep(5000)
+
+                    // modify a file to trigger a re-build
+                    projectPath.resolve("src/jsMain/kotlin/main.kt")
+                        .replaceText("//println", "println")
+                    println("Modified main.kt")
+
+                    println("Waiting for the second compilation to succeed...")
+                    while ("Hello again!!!" !in compiledJs.readText()) {
+                        Thread.sleep(1000)
+                        checkBuildDuration()
+                    }
+                    println("Second compilation completed")
+                } catch (t: Throwable) {
+                    println("Exception in ${Thread.currentThread().name}:\n${t.stackTraceToString()}")
+                    throw t
+                } finally {
+                    println("Releasing daemon stdin stream...")
+                    // close the stream, which will allow Gradle to finish the build
+                    daemonRelease.close()
+                    println("Released daemon stdin stream.")
                 }
-
-                // wait before file modification, to give Gradle a chance to catch up with file events
-                Thread.sleep(5000)
-
-                // modify a file to trigger a re-build
-                projectPath.resolve("src/jsMain/kotlin/main.kt")
-                    .replaceText("//println", "println")
-
-                // wait for the second compilation to succeed
-                while ("Hello again!!!" !in compiledJs.readText()) {
-                    Thread.sleep(1000)
-                }
-
-                // close the stream, which will allow Gradle to finish the build
-                daemonRelease.close()
             }
 
             build(
