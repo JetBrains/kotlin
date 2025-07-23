@@ -78,12 +78,12 @@ class ConstantDataIntArray(val value: List<WasmSymbol<Int>>) : ConstantDataEleme
     override val sizeInBytes: Int = value.size * INT_SIZE_BYTES
 }
 
-class ConstantDataCharArray(val value: List<WasmSymbol<Char>>, val fitsLatin1: Int) : ConstantDataElement() {
-    constructor(value: CharArray, fitsLatin1: Int) : this(value.map { WasmSymbol(it) }, fitsLatin1)
+class ConstantDataCharArray(val value: List<WasmSymbol<Char>>, val fitsLatin1: Boolean) : ConstantDataElement() {
+    constructor(value: CharArray, fitsLatin1: Boolean) : this(value.map { WasmSymbol(it) }, fitsLatin1)
 
     override fun toBytes(): ByteArray {
         return value
-            .map { it.owner.toLittleEndianBytes(fitsLatin1 != 0) }
+            .map { it.owner.toLittleEndianBytes(fitsLatin1) }
             .fold(byteArrayOf(), ByteArray::plus)
     }
 
@@ -93,7 +93,7 @@ class ConstantDataCharArray(val value: List<WasmSymbol<Char>>, val fitsLatin1: I
     }
 
     override val sizeInBytes: Int = value.size *
-            if (fitsLatin1 != 0) BYTE_SIZE_BYTES else CHAR_SIZE_BYTES
+            if (fitsLatin1) BYTE_SIZE_BYTES else CHAR_SIZE_BYTES
 }
 
 class ConstantDataStruct(val elements: List<ConstantDataElement>) : ConstantDataElement() {
