@@ -101,10 +101,10 @@ abstract class FirMustUseReturnValueStatusComponent : FirSessionComponent {
             )
         }
 
-        enum class ParentStatus {
+        enum class OverriddenStatus {
             IGNORABLE,
             MUST_USE,
-            NO_PARENT
+            NO_BASE_DECLARATION
         }
 
         override fun computeMustUseReturnValueForCallable(
@@ -121,21 +121,21 @@ abstract class FirMustUseReturnValueStatusComponent : FirSessionComponent {
             }
             // Implementation note: just with intersection overrides, in case we have more than one immediate parent, we take first from the list
             // See inheritanceChainIgnorability.kt test.
-            val parentStatus = when (overriddenStatuses.firstOrNull()?.hasMustUseReturnValue) {
-                null -> ParentStatus.NO_PARENT
-                true -> ParentStatus.MUST_USE
-                false -> ParentStatus.IGNORABLE
+            val overriddenFlag = when (overriddenStatuses.firstOrNull()?.hasMustUseReturnValue) {
+                null -> OverriddenStatus.NO_BASE_DECLARATION
+                true -> OverriddenStatus.MUST_USE
+                false -> OverriddenStatus.IGNORABLE
             }
 
             if (hasIgnorableLikeAnnotation(declaration.resolvedAnnotationClassIds)) return false
 
             // In the case of inheriting @Ignorable, global FULL setting has lesser priority
-            if (session.languageVersionSettings.getFlag(AnalysisFlags.returnValueCheckerMode) == ReturnValueCheckerMode.FULL && parentStatus != ParentStatus.IGNORABLE) return true
+            if (session.languageVersionSettings.getFlag(AnalysisFlags.returnValueCheckerMode) == ReturnValueCheckerMode.FULL && overriddenFlag != OverriddenStatus.IGNORABLE) return true
 
             val hasAnnotation =
                 findMustUseAmongContainers(session, declaration, containingClass, containingProperty, additionalAnnotations = null)
             if (hasAnnotation) return true
-            return parentStatus == ParentStatus.MUST_USE
+            return overriddenFlag == OverriddenStatus.MUST_USE
         }
 
         private fun findMustUseAmongContainers(

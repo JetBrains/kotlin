@@ -640,6 +640,7 @@ object FirErrors : KtDiagnosticsContainer() {
     val DIFFERENT_NAMES_FOR_THE_SAME_PARAMETER_IN_SUPERTYPES: KtDiagnosticFactory4<FirValueParameterSymbol, FirValueParameterSymbol, Int, List<FirNamedFunctionSymbol>> = KtDiagnosticFactory4("DIFFERENT_NAMES_FOR_THE_SAME_PARAMETER_IN_SUPERTYPES", WARNING, SourceElementPositioningStrategies.DECLARATION_NAME, KtClassOrObject::class, getRendererFactory())
     val SUSPEND_OVERRIDDEN_BY_NON_SUSPEND: KtDiagnosticFactory2<FirCallableSymbol<*>, FirCallableSymbol<*>> = KtDiagnosticFactory2("SUSPEND_OVERRIDDEN_BY_NON_SUSPEND", ERROR, SourceElementPositioningStrategies.DECLARATION_NAME, KtCallableDeclaration::class, getRendererFactory())
     val NON_SUSPEND_OVERRIDDEN_BY_SUSPEND: KtDiagnosticFactory2<FirCallableSymbol<*>, FirCallableSymbol<*>> = KtDiagnosticFactory2("NON_SUSPEND_OVERRIDDEN_BY_SUSPEND", ERROR, SourceElementPositioningStrategies.DECLARATION_NAME, KtCallableDeclaration::class, getRendererFactory())
+    val OVERRIDING_IGNORABLE_WITH_MUST_USE: KtDiagnosticFactory2<FirCallableSymbol<*>, FirClassLikeSymbol<*>> = KtDiagnosticFactory2("OVERRIDING_IGNORABLE_WITH_MUST_USE", WARNING, SourceElementPositioningStrategies.DECLARATION_NAME, KtDeclaration::class, getRendererFactory())
 
     // Redeclarations
     val MANY_COMPANION_OBJECTS: KtDiagnosticFactory0 = KtDiagnosticFactory0("MANY_COMPANION_OBJECTS", ERROR, SourceElementPositioningStrategies.COMPANION_OBJECT, KtObjectDeclaration::class, getRendererFactory())

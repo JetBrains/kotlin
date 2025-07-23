@@ -48,6 +48,7 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
         FirDynamicReceiverChecker,
         FirExtensionShadowedByMemberChecker.Regular,
         FirExtensionShadowedByMemberChecker.ForExpectDeclaration,
+        FirReturnValueOverrideChecker,
     )
 
     override val functionCheckers: Set<FirFunctionChecker> = setOf(
