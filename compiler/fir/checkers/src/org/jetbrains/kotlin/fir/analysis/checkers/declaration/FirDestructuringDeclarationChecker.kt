@@ -87,6 +87,15 @@ object FirDestructuringDeclarationChecker : FirPropertyChecker(MppCheckerKind.Co
 
         if (initializer !is FirComponentCall) return
 
+        // We check above that initializer is a component call, therefore, we must have positional destructuring.
+        source.getChild(KtTokens.EQ, depth = 1)?.let {
+            reporter.reportOn(
+                it,
+                FirErrors.UNSUPPORTED_FEATURE,
+                LanguageFeature.EnableNameBasedDestructuringShortForm to context.languageVersionSettings
+            )
+        }
+
         if (originalDestructuringDeclarationOrInitializer.isMissingInitializer()) return
         val originalDestructuringDeclarationOrInitializerSource = originalDestructuringDeclarationOrInitializer.source ?: return
         val originalDestructuringDeclarationType =
