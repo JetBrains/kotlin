@@ -32,6 +32,12 @@ public class SwiftExportWithResultValidationTest extends AbstractSwiftExportWith
   }
 
   @Test
+  @TestMetadata("any")
+  public void testAny() {
+    runTest("native/swift/swift-export-standalone-integration-tests/simple/testData/generation/any/");
+  }
+
+  @Test
   @TestMetadata("classes")
   public void testClasses() {
     runTest("native/swift/swift-export-standalone-integration-tests/simple/testData/generation/classes/");
