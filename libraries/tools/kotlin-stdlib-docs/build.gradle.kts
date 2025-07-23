@@ -139,7 +139,8 @@ fun createStdLibVersionedDocTask(version: String, isLatest: Boolean) =
                 sourceRoots.from("$kotlin_stdlib_dir/js/src/kotlin")
 
                 sourceRoots.from("$kotlin_stdlib_dir/js/builtins")
-                sourceRoots.from("$kotlin_stdlib_dir/jsAndWasmJsCommon/src")
+                sourceRoots.from("$kotlin_stdlib_dir/jsAndWasmJsCommon/src/kotlin/JsInterop.kt")
+                sourceRoots.from("$kotlin_stdlib_dir/jsAndWasmJsCommon/src/kotlin/js/ExperimentalWasmJsInterop.kt")
 
                 // builtin sources that are copied from common builtins during JS stdlib build
                 listOf(
@@ -189,7 +190,8 @@ fun createStdLibVersionedDocTask(version: String, isLatest: Boolean) =
                 sourceRoots.from("$kotlin_stdlib_dir/wasm/js/builtins")
                 sourceRoots.from("$kotlin_stdlib_dir/wasm/js/internal")
                 sourceRoots.from("$kotlin_stdlib_dir/wasm/js/src")
-                sourceRoots.from("$kotlin_stdlib_dir/jsAndWasmJsCommon/src")
+                sourceRoots.from("$kotlin_stdlib_dir/jsAndWasmJsCommon/src/kotlin/JsInterop.kt")
+                sourceRoots.from("$kotlin_stdlib_dir/jsAndWasmJsCommon/src/kotlin/js/ExperimentalWasmJsInterop.kt")
 
                 // builtin sources that are copied from common builtins during Wasm stdlib build
                 listOf(
