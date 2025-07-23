@@ -430,6 +430,12 @@ public class LLSourceAnnotationArgumentsCalculatorTestGenerated extends Abstract
     }
 
     @Test
+    @TestMetadata("localTypeAliasInsideLocalClass.kt")
+    public void testLocalTypeAliasInsideLocalClass() {
+      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/localTypeAliasInsideLocalClass.kt");
+    }
+
+    @Test
     @TestMetadata("multiDeclarations.kt")
     public void testMultiDeclarations() {
       runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/multiDeclarations.kt");

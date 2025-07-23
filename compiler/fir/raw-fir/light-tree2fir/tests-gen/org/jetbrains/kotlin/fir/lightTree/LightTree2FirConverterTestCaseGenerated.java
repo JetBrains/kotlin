@@ -371,6 +371,11 @@ public class LightTree2FirConverterTestCaseGenerated extends AbstractLightTree2F
       runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/localImplicitType.kt");
     }
 
+    @TestMetadata("localTypeAliasInsideLocalClass.kt")
+    public void testLocalTypeAliasInsideLocalClass() {
+      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/localTypeAliasInsideLocalClass.kt");
+    }
+
     @TestMetadata("multiDeclarations.kt")
     public void testMultiDeclarations() {
       runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/multiDeclarations.kt");
