@@ -1221,6 +1221,7 @@ object PositioningStrategies {
                 is KtTypeReference -> (element.typeElement as? KtNullableType)?.innerType ?: element
                 is KtImportDirective -> element.importedReference ?: element
                 is KtImportAlias -> element.nameIdentifier ?: element
+                is KtDestructuringDeclarationEntry -> element.nameIdentifier ?: element
                 else -> element
             }
             while (locateReferencedName && result is KtParenthesizedExpression) {
