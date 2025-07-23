@@ -60,18 +60,20 @@ internal fun getQualifiedName(rtti: kotlin.wasm.internal.reftypes.structref): St
 
 internal fun getPackageName(rtti: kotlin.wasm.internal.reftypes.structref): String {
     val flagFitsOneBitQualifier = wasmGetRttiIntField(5, rtti) and TYPE_INFO_FLAG_FITS_LATIN1_QUALIFIER
+    val poolId = wasmGetRttiIntField(2, rtti)
     return if (flagFitsOneBitQualifier != 0)
-        stringLiteralLatin1(wasmGetRttiIntField(2, rtti))
+        stringLiteralLatin1(poolId)
     else
-        stringLiteralUtf16(wasmGetRttiIntField(2, rtti))
+        stringLiteralUtf16(poolId)
 }
 
 internal fun getSimpleName(rtti: kotlin.wasm.internal.reftypes.structref): String {
     val flagFitsOneBitSimpleName = wasmGetRttiIntField(5, rtti) and TYPE_INFO_FLAG_FITS_LATIN1_SIMPLE_NAME
+    val poolId = wasmGetRttiIntField(3, rtti)
     return if (flagFitsOneBitSimpleName != 0)
-        stringLiteralLatin1(wasmGetRttiIntField(3, rtti))
+        stringLiteralLatin1(poolId)
     else
-        stringLiteralUtf16(wasmGetRttiIntField(3, rtti))
+        stringLiteralUtf16(poolId)
 }
 
 internal fun getTypeId(rtti: kotlin.wasm.internal.reftypes.structref): Long =
