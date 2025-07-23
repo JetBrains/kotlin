@@ -1,5 +1,8 @@
 // TARGET_BACKEND: JVM
 // WITH_STDLIB
+// IGNORE_BACKEND_K1: JVM_IR
+// ^ K1 does not support coercing assigment to Any?
+
 // FILE: destructuringAssignmentWithNullabilityAssertionOnExtensionReceiver_lv12.kt
 
 import kotlin.test.*

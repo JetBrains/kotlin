@@ -16,4 +16,4 @@ public expect fun todo(block: () -> Unit)
 
 /** Asserts that a [blockResult] is a failure with the specific exception type being thrown. */
 @PublishedApi
-internal expect fun <T : Throwable> checkResultIsFailure(exceptionClass: KClass<T>, message: String?, blockResult: Result<Unit>): T
+internal expect fun <T : Throwable> checkResultIsFailure(exceptionClass: KClass<T>, message: String?, blockResult: Result<Any?>): T

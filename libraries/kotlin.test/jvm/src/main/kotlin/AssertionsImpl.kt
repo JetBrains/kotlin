@@ -15,7 +15,7 @@ import kotlin.reflect.*
 
 /** Asserts that a [blockResult] is a failure with the specific exception type being thrown. */
 @PublishedApi
-internal actual fun <T : Throwable> checkResultIsFailure(exceptionClass: KClass<T>, message: String?, blockResult: Result<Unit>): T {
+internal actual fun <T : Throwable> checkResultIsFailure(exceptionClass: KClass<T>, message: String?, blockResult: Result<Any?>): T {
     blockResult.fold(
         onSuccess = {
             val msg = messagePrefix(message)

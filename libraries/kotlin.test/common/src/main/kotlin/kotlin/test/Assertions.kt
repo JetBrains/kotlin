@@ -596,7 +596,13 @@ public inline fun <@OnlyInputTypes T> expect(expected: T, message: String?, bloc
  * The returned exception can be inspected further, for example by asserting its property values.
  */
 @InlineOnly
+@JvmName("assertFailsInlineAny")
+public inline fun assertFails(block: () -> Any?): Throwable =
+    checkResultIsFailure(null, runCatching(block))
+
+@InlineOnly
 @JvmName("assertFailsInline")
+@Deprecated("", level = DeprecationLevel.HIDDEN)
 public inline fun assertFails(block: () -> Unit): Throwable =
     checkResultIsFailure(null, runCatching(block))
 
@@ -610,12 +616,19 @@ public inline fun assertFails(block: () -> Unit): Throwable =
  */
 @SinceKotlin("1.1")
 @InlineOnly
+@JvmName("assertFailsInlineAny")
+public inline fun assertFails(message: String?, block: () -> Any?): Throwable =
+    checkResultIsFailure(message, runCatching(block))
+
+@SinceKotlin("1.1")
+@InlineOnly
 @JvmName("assertFailsInline")
+@Deprecated("", level = DeprecationLevel.HIDDEN)
 public inline fun assertFails(message: String?, block: () -> Unit): Throwable =
     checkResultIsFailure(message, runCatching(block))
 
 @PublishedApi
-internal fun checkResultIsFailure(message: String?, blockResult: Result<Unit>): Throwable {
+internal fun checkResultIsFailure(message: String?, blockResult: Result<Any?>): Throwable {
     blockResult.fold(
         onSuccess = {
             asserter.fail(messagePrefix(message) + "Expected an exception to be thrown, but was completed successfully.")
@@ -634,6 +647,12 @@ internal fun checkResultIsFailure(message: String?, blockResult: Result<Unit>): 
  * The returned exception can be inspected further, for example by asserting its property values.
  */
 @InlineOnly
+@JvmName("assertFailsWithAny")
+public inline fun <reified T : Throwable> assertFailsWith(message: String? = null, block: () -> Any?): T =
+    assertFailsWith(T::class, message, block)
+
+@InlineOnly
+@Deprecated("", level = DeprecationLevel.HIDDEN)
 public inline fun <reified T : Throwable> assertFailsWith(message: String? = null, block: () -> Unit): T =
     assertFailsWith(T::class, message, block)
 
@@ -644,7 +663,12 @@ public inline fun <reified T : Throwable> assertFailsWith(message: String? = nul
  * The returned exception can be inspected further, for example by asserting its property values.
  */
 @InlineOnly
+@JvmName("assertFailsWithInlineAny")
+public inline fun <T : Throwable> assertFailsWith(exceptionClass: KClass<T>, block: () -> Any?): T = assertFailsWith(exceptionClass, null, block)
+
+@InlineOnly
 @JvmName("assertFailsWithInline")
+@Deprecated("", level = DeprecationLevel.HIDDEN)
 public inline fun <T : Throwable> assertFailsWith(exceptionClass: KClass<T>, block: () -> Unit): T = assertFailsWith(exceptionClass, null, block)
 
 /**
@@ -656,7 +680,13 @@ public inline fun <T : Throwable> assertFailsWith(exceptionClass: KClass<T>, blo
  * The returned exception can be inspected further, for example by asserting its property values.
  */
 @InlineOnly
+@JvmName("assertFailsWithInlineAny")
+public inline fun <T : Throwable> assertFailsWith(exceptionClass: KClass<T>, message: String?, block: () -> Any?): T =
+    checkResultIsFailure(exceptionClass, message, runCatching(block))
+
+@InlineOnly
 @JvmName("assertFailsWithInline")
+@Deprecated("", level = DeprecationLevel.HIDDEN)
 public inline fun <T : Throwable> assertFailsWith(exceptionClass: KClass<T>, message: String?, block: () -> Unit): T =
     checkResultIsFailure(exceptionClass, message, runCatching(block))
 
@@ -771,4 +801,3 @@ public interface AsserterContributor {
      */
     public fun contribute(): Asserter?
 }
-

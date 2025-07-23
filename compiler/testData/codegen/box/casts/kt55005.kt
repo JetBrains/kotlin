@@ -1,6 +1,8 @@
 // TARGET_BACKEND: JVM_IR
 // CHECK_BYTECODE_TEXT
 // WITH_STDLIB
+// IGNORE_BACKEND_K1: JVM_IR
+// ^ K1 does not support coercing assigment to Any?
 
 import kotlin.test.*
 
