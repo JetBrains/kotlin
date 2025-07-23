@@ -579,7 +579,7 @@ class WasmSerializer(outputStream: OutputStream) {
     }
 
     private fun serializeBoolean(bool: Boolean) {
-        b.writeByte(bool.toByte())
+        b.writeUByte(bool.toByte().toUByte())
     }
 
     private fun serializeLong(long: Long) {
