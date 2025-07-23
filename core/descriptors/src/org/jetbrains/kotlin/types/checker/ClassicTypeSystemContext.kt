@@ -645,6 +645,10 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
         errorSupportedOnlyInTypeInference()
     }
 
+    override fun TypeVariableMarker.defaultValueType(): SimpleTypeMarker {
+        errorSupportedOnlyInTypeInference()
+    }
+
     override fun createStubTypeForBuilderInference(typeVariable: TypeVariableMarker): StubTypeMarker {
         errorSupportedOnlyInTypeInference()
     }

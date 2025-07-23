@@ -56451,9 +56451,9 @@ public class PhasedJvmDiagnosticLightTreeTestGenerated extends AbstractPhasedJvm
       }
 
       @Test
-      @TestMetadata("play.kt")
-      public void testPlay() {
-        runTest("compiler/fir/analysis-tests/testData/resolve/rich-errors/play.kt");
+      @TestMetadata("safeCall.kt")
+      public void testSafeCall() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/rich-errors/safeCall.kt");
       }
 
       @Test

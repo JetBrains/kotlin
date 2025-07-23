@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.languageVersionSettings
+import org.jetbrains.kotlin.fir.resolve.SafeCallPropagationState
 import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.Candidate
 import org.jetbrains.kotlin.fir.resolve.calls.candidate.CheckerSink
@@ -138,10 +139,16 @@ internal object ArgumentCheckingProcessor {
                             StandardClassIds.Unit.constructClassLikeType(emptyArray(), isMarkedNullable = false),
                             SimpleConstraintSystemConstraintPosition,
                         )
-                        else -> resolvePlainExpressionArgument(
-                            selectorAtom,
-                            useNullableArgumentType = true
-                        )
+                        else -> {
+                            val receiverType = atom.expression.resolvedType
+                            resolvePlainExpressionArgument(
+                                selectorAtom,
+                                propagationState = SafeCallPropagationState(
+                                    receiverType.canBeNull(session),
+                                    receiverType.splitIntoValueAndError().second
+                                )
+                            )
+                        }
                     }
                     is FirBlock -> when (val lastExpression = atom.subAtom) {
                         null -> {
@@ -165,19 +172,19 @@ internal object ArgumentCheckingProcessor {
 
     private fun ArgumentContext.resolvePlainExpressionArgument(
         atom: ConeResolutionAtom,
-        useNullableArgumentType: Boolean = false
+        propagationState: SafeCallPropagationState? = null,
     ) {
         if (expectedType == null) return
         val expression = atom.expression
 
         val argumentType = expression.resolvedType
-        resolvePlainArgumentType(atom, argumentType, useNullableArgumentType)
+        resolvePlainArgumentType(atom, argumentType, propagationState)
     }
 
     private fun ArgumentContext.resolvePlainArgumentType(
         atom: ConeResolutionAtom,
         argumentType: ConeKotlinType,
-        useNullableArgumentType: Boolean = false,
+        propagationState: SafeCallPropagationState? = null,
         sourceForReceiver: KtSourceElement? = null,
     ) {
         val expression = atom.expression
@@ -188,9 +195,7 @@ internal object ArgumentCheckingProcessor {
 
         val capturedType = prepareCapturedType(argumentType, context.session)
 
-        var argumentTypeForApplicabilityCheck = capturedType.applyIf(useNullableArgumentType) {
-            withNullability(nullable = true, session.typeContext)
-        }
+        var argumentTypeForApplicabilityCheck = propagationState?.apply(capturedType, context.session) ?: capturedType
 
         // If the argument is of functional type and the expected type is a suspend function type, we need to do "suspend conversion."
 

@@ -109,6 +109,10 @@ interface TypeSystemCommonBackendContext : TypeSystemContext {
         error("unexpected for non-cone type system")
     }
 
+    override fun List<ErrorTypeMarker>.commonSupertypeForErrors(): ErrorTypeMarker {
+        error("unexpected for non-cone type system")
+    }
+
     override fun KotlinTypeMarker.addErrorComponent(errorType: ErrorTypeMarker): KotlinTypeMarker {
         error("unexpected for non-cone type system")
     }

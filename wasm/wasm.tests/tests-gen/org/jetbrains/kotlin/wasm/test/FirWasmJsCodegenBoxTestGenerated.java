@@ -40287,6 +40287,22 @@ public class FirWasmJsCodegenBoxTestGenerated extends AbstractFirWasmJsCodegenBo
   }
 
   @Nested
+  @TestMetadata("compiler/testData/codegen/box/richErrors")
+  @TestDataPath("$PROJECT_ROOT")
+  public class RichErrors {
+    @Test
+    public void testAllFilesPresentInRichErrors() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/richErrors"), Pattern.compile("^([^_](.+))\\.kt$"), null, TargetBackend.WASM, true);
+    }
+
+    @Test
+    @TestMetadata("simpleRichErrors.kt")
+    public void testSimpleRichErrors() {
+      runTest("compiler/testData/codegen/box/richErrors/simpleRichErrors.kt");
+    }
+  }
+
+  @Nested
   @TestMetadata("compiler/testData/codegen/box/safeCall")
   @TestDataPath("$PROJECT_ROOT")
   public class SafeCall {

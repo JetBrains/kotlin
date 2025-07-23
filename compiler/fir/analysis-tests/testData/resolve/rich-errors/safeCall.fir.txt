@@ -1,0 +1,39 @@
+FILE: safeCall.kt
+    public final object E1 : R|kotlin/KError| {
+        private constructor(): R|kotlin/Nothing | E1| {
+            super<R|kotlin/KError|>()
+        }
+
+    }
+    public final val nString: R|kotlin/String?| = Null(null)!!
+        public get(): R|kotlin/String?|
+    public final val eString: R|kotlin/String | E1| = Null(null)!!
+        public get(): R|kotlin/String | E1|
+    public final val neString: R|kotlin/String? | E1| = Null(null)!!
+        public get(): R|kotlin/String? | E1|
+    public final fun R|kotlin/String|.foo(): R|kotlin/Int| {
+        ^foo Null(null)!!
+    }
+    public final fun <T : R|kotlin/Any? | E1|> identity(v: R|T|): R|T| {
+        ^identity R|<local>/v|
+    }
+    public final val v1: R|kotlin/Int?| = R|/nString|?.{ $subj$.R|/foo|() }
+        public get(): R|kotlin/Int?|
+    public final val v2: R|kotlin/Int | E1| = R|/eString|?.{ $subj$.R|/foo|() }
+        public get(): R|kotlin/Int | E1|
+    public final val v3: R|kotlin/Int? | E1| = R|/neString|?.{ $subj$.R|/foo|() }
+        public get(): R|kotlin/Int? | E1|
+    public final val v4: R|kotlin/Int| = R|/eString|?.{ $subj$.R|/foo|() }
+        public get(): R|kotlin/Int|
+    public final val v5: R|kotlin/Int?| = R|/neString|?.{ $subj$.R|/foo|() }
+        public get(): R|kotlin/Int?|
+    public final val v12: R|kotlin/Int?| = R|/identity|<R|kotlin/Int?|>(R|/nString|?.{ $subj$.R|/foo|() })
+        public get(): R|kotlin/Int?|
+    public final val v22: R|kotlin/Int | E1| = R|/identity|<R|kotlin/Int | E1|>(R|/eString|?.{ $subj$.R|/foo|() })
+        public get(): R|kotlin/Int | E1|
+    public final val v32: R|kotlin/Int? | E1| = R|/identity|<R|kotlin/Int? | E1|>(R|/neString|?.{ $subj$.R|/foo|() })
+        public get(): R|kotlin/Int? | E1|
+    public final val v42: R|kotlin/Int| = R|/identity<CS errors: /identity>#|<R|kotlin/Int | E1|>(R|/eString|?.{ $subj$.R|/foo|() })
+        public get(): R|kotlin/Int|
+    public final val v52: R|kotlin/Int?| = R|/identity<CS errors: /identity>#|<R|kotlin/Int? | E1|>(R|/neString|?.{ $subj$.R|/foo|() })
+        public get(): R|kotlin/Int?|

@@ -33,6 +33,7 @@ val copyCommonSources by task<Sync> {
             "kotlin/Enum.kt",
             "kotlin/Function.kt",
             "kotlin/Iterator.kt",
+            "kotlin/KError.kt",
             "kotlin/Library.kt",
             "kotlin/Nothing.kt",
             "kotlin/Number.kt",

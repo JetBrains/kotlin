@@ -114,6 +114,28 @@ class Fir2IrTypeConverter(
                 }
             }
             is ConeErrorUnionType -> {
+                if (valueType.isNothing) {
+                    if (errorType is CEClassifierType) {
+                        // TODO: RE: MID: unify with common types
+                        val irSymbol =
+                            getBuiltInClassSymbol(classId)
+                                ?: (errorType as CEClassifierType).lookupTag.toSymbol(session)?.let { firSymbol ->
+                                    approximateTypeForLocalClassIfNeeded(firSymbol)?.let { return it }
+                                    firSymbol.toIrSymbol(typeOrigin) {}
+                                }
+                                ?: (errorType as CEClassifierType).lookupTag.let(classifierStorage::getIrClassForNotFoundClass).symbol
+
+                        return IrSimpleTypeImpl(
+                            irSymbol,
+                            hasQuestionMark = false,
+                            arguments = emptyList(),
+                            annotations = emptyList(),
+                        )
+                    }
+
+                    return builtins.errorType
+                }
+
                 if (isTypeParameter()) {
                     return valueType.toIrType(
                         typeOrigin,
@@ -124,7 +146,7 @@ class Fir2IrTypeConverter(
                         addRawTypeAnnotation
                     )
                 }
-                // TODO: RE: revisit translation
+
                 IrSimpleTypeImpl(
                     StandardClassIds.Any.toSymbol(c.session)?.toIrSymbol()!!,
                     hasQuestionMark = true,

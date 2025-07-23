@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.expressions.IrElseBranch
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 import org.jetbrains.kotlin.ir.expressions.IrStatementOrigin
+import org.jetbrains.kotlin.ir.expressions.IrTypeOperator
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
@@ -92,25 +93,39 @@ fun Fir2IrComponents.createSafeCallConstruction(
     val startOffset = expressionOnNotNull.startOffset
     val endOffset = expressionOnNotNull.endOffset
 
+    fun conditionNull() = IrCallImplWithShape(
+        startOffset, endOffset, builtins.booleanType,
+        builtins.eqeqSymbol,
+        valueArgumentsCount = 2,
+        typeArgumentsCount = 0,
+        contextParameterCount = 0,
+        hasDispatchReceiver = false,
+        hasExtensionReceiver = false,
+        origin = IrStatementOrigin.EQEQ
+    ).apply {
+        arguments[0] = IrGetValueImpl(startOffset, endOffset, receiverVariableSymbol)
+        arguments[1] = IrConstImpl.constNull(startOffset, endOffset, builtins.nothingNType)
+    }
+
+    fun conditionError() = IrTypeOperatorCallImpl(
+        startOffset, endOffset, builtins.booleanType,
+        IrTypeOperator.INSTANCEOF,
+        builtins.errorType,
+        IrGetValueImpl(startOffset, endOffset, receiverVariableSymbol),
+    )
+
+    // TODO: RE: HIGH: make errorable too
     val resultType = expressionOnNotNull.type.makeNullable()
+
     return IrBlockImpl(startOffset, endOffset, resultType, IrStatementOrigin.SAFE_CALL).apply {
         statements += receiverVariable
         statements += IrWhenImpl(startOffset, endOffset, resultType).apply {
-            val condition = IrCallImplWithShape(
-                startOffset, endOffset, builtins.booleanType,
-                builtins.eqeqSymbol,
-                valueArgumentsCount = 2,
-                typeArgumentsCount = 0,
-                contextParameterCount = 0,
-                hasDispatchReceiver = false,
-                hasExtensionReceiver = false,
-                origin = IrStatementOrigin.EQEQ
-            ).apply {
-                arguments[0] = IrGetValueImpl(startOffset, endOffset, receiverVariableSymbol)
-                arguments[1] = IrConstImpl.constNull(startOffset, endOffset, builtins.nothingNType)
-            }
             branches += IrBranchImpl(
-                condition, IrConstImpl.constNull(startOffset, endOffset, builtins.nothingNType)
+                conditionNull(), IrConstImpl.constNull(startOffset, endOffset, builtins.nothingNType)
+            )
+            // TODO: RE: HIGH: Do not add if receiverVariable.type is not appropriate
+            branches += IrBranchImpl(
+                conditionError(), IrGetValueImpl(startOffset, endOffset, receiverVariableSymbol)
             )
             branches += IrElseBranchImpl(
                 IrConstImpl.boolean(startOffset, endOffset, builtins.booleanType, true),

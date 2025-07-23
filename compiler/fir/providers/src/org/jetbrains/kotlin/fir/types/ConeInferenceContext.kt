@@ -448,6 +448,11 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
         return this.defaultType
     }
 
+    override fun TypeVariableMarker.defaultValueType(): RigidTypeMarker {
+        require(this is ConeTypeVariable)
+        return this.defaultValueType
+    }
+
     override fun KotlinTypeMarker.isSpecial(): Boolean {
         // Cone type system doesn't have special types
         return false

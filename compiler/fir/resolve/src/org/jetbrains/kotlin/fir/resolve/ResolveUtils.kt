@@ -597,11 +597,24 @@ fun BodyResolveComponents.transformExpressionUsingSmartcastInfo(expression: FirE
     }
 }
 
+data class SafeCallPropagationState(val canBeNull: Boolean, val errorType: CEType) {
+    fun apply(type: ConeKotlinType, session: FirSession): ConeKotlinType {
+        return if (errorType is CEBotType) {
+            type.withNullability(nullable = true, session.typeContext)
+        } else {
+            ConeErrorUnionType.addErrorComponent(
+                if (canBeNull) type.withNullability(nullable = true, session.typeContext) else type,
+                errorType
+            )
+        }
+    }
+}
+
 fun FirCheckedSafeCallSubject.propagateTypeFromOriginalReceiver(
     nullableReceiverExpression: FirExpression,
     session: FirSession,
     file: FirFile,
-) {
+): SafeCallPropagationState {
     // If the receiver expression is smartcast to `null`, it would have `Nothing?` as its type, which may not have members called by user
     // code. Hence, we fallback to the type before intersecting with `Nothing?`.
     val receiverType = (nullableReceiverExpression as? FirSmartCastExpression)
@@ -610,21 +623,24 @@ fun FirCheckedSafeCallSubject.propagateTypeFromOriginalReceiver(
         ?.coneTypeSafe<ConeKotlinType>()
         ?: nullableReceiverExpression.resolvedType
 
-    val expandedReceiverType = receiverType.fullyExpandedType(session).makeConeTypeDefinitelyNotNullOrNotNull(session.typeContext)
-    replaceConeTypeOrNull(expandedReceiverType)
-    session.lookupTracker?.recordTypeResolveAsLookup(expandedReceiverType, source, file.source)
+    val (expandedReceiverType, errorType) = receiverType.fullyExpandedType(session).splitIntoValueAndError()
+    val notNullExpandedReceiverType = expandedReceiverType.makeConeTypeDefinitelyNotNullOrNotNull(session.typeContext)
+    replaceConeTypeOrNull(notNullExpandedReceiverType)
+    session.lookupTracker?.recordTypeResolveAsLookup(notNullExpandedReceiverType, source, file.source)
+    return SafeCallPropagationState(expandedReceiverType.canBeNull(session), errorType)
 }
 
 fun FirSafeCallExpression.propagateTypeFromQualifiedAccessAfterNullCheck(
     session: FirSession,
     file: FirFile,
+    propagationState: SafeCallPropagationState,
 ) {
     val selector = selector
 
     val resultingType = when {
         selector is FirExpression && !selector.isStatementLikeExpression -> {
             val type = selector.resolvedType
-            type.withNullability(nullable = true, session.typeContext)
+            propagationState.apply(type, session)
         }
         // Branch for things that shouldn't be used as expressions.
         // They are forced to return not-null `Unit`, regardless of the receiver.

@@ -84,6 +84,20 @@ data class ConeErrorUnionType private constructor(
             if (errorType is CEBotType) return valueType
             return ConeErrorUnionType(valueType, errorType)
         }
+
+        fun addErrorComponent(original: ConeKotlinType, errorType: CEType): ConeKotlinType {
+            if (errorType == CEBotType) return original
+
+            return when (original) {
+                is ConeFlexibleType -> {
+                    val lowerBound = addErrorComponent(original.lowerBound, errorType) as ConeRigidType
+                    val upperBound = addErrorComponent(original.upperBound, errorType) as ConeRigidType
+                    ConeFlexibleType(lowerBound, upperBound, original.isTrivial)
+                }
+                is ConeValueType -> createNormalized(original, errorType)
+                is ConeErrorUnionType -> TODO()
+            }
+        }
     }
 }
 

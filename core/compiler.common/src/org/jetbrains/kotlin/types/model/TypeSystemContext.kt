@@ -261,6 +261,7 @@ interface TypeSystemInferenceExtensionContext : TypeSystemContext, TypeSystemBui
     fun CapturedTypeMarker.hasRawSuperType(): Boolean
 
     fun TypeVariableMarker.defaultType(): RigidTypeMarker
+    fun TypeVariableMarker.defaultValueType(): RigidTypeMarker
 
     fun createTypeWithUpperBoundForIntersectionResult(
         firstCandidate: KotlinTypeMarker,
@@ -428,6 +429,7 @@ interface TypeSystemContext : TypeSystemOptimizationContext {
     fun List<ErrorTypeMarker>.intersectErrorTypes(): ErrorTypeMarker
 
     fun RichErrorsSystemState<ErrorTypeMarker>.solveSystem(): RichErrorsSystemSolution<ErrorTypeMarker>
+    fun List<ErrorTypeMarker>.commonSupertypeForErrors(): ErrorTypeMarker
 
     fun KotlinTypeMarker.addErrorComponent(errorType: ErrorTypeMarker): KotlinTypeMarker
 

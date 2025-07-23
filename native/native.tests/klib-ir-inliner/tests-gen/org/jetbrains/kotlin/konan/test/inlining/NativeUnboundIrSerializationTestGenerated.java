@@ -38810,6 +38810,18 @@ public class NativeUnboundIrSerializationTestGenerated extends AbstractNativeUnb
     }
 
     @Nested
+    @TestMetadata("compiler/testData/codegen/box/richErrors")
+    @TestDataPath("$PROJECT_ROOT")
+    @Tag("klib")
+    public class RichErrors {
+      @Test
+      @TestMetadata("simpleRichErrors.kt")
+      public void testSimpleRichErrors() {
+        runTest("compiler/testData/codegen/box/richErrors/simpleRichErrors.kt");
+      }
+    }
+
+    @Nested
     @TestMetadata("compiler/testData/codegen/box/safeCall")
     @TestDataPath("$PROJECT_ROOT")
     @Tag("klib")

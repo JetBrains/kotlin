@@ -40806,6 +40806,24 @@ public class IrJsES6CodegenBoxTestGenerated extends AbstractIrJsES6CodegenBoxTes
   }
 
   @Nested
+  @TestMetadata("compiler/testData/codegen/box/richErrors")
+  @TestDataPath("$PROJECT_ROOT")
+  @Tag("legacy-frontend")
+  @Tag("es6")
+  public class RichErrors {
+    @Test
+    public void testAllFilesPresentInRichErrors() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/richErrors"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR_ES6, true);
+    }
+
+    @Test
+    @TestMetadata("simpleRichErrors.kt")
+    public void testSimpleRichErrors() {
+      runTest("compiler/testData/codegen/box/richErrors/simpleRichErrors.kt");
+    }
+  }
+
+  @Nested
   @TestMetadata("compiler/testData/codegen/box/safeCall")
   @TestDataPath("$PROJECT_ROOT")
   @Tag("legacy-frontend")

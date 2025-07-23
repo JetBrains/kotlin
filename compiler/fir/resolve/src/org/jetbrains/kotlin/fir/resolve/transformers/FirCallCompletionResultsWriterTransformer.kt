@@ -705,7 +705,10 @@ class FirCallCompletionResultsWriterTransformer(
             )?.toExpectedType(data.contextSensitiveResolutionReplacements)
         )
 
-        safeCallExpression.propagateTypeFromQualifiedAccessAfterNullCheck(session, context.file)
+        // TODO: RE: Most probably, this behaviour is incorrect in some cases. Should be checked by tests
+        val receiverType = safeCallExpression.receiver.resolvedType
+        val propagationState = SafeCallPropagationState(receiverType.canBeNull(session), receiverType.splitIntoValueAndError().second)
+        safeCallExpression.propagateTypeFromQualifiedAccessAfterNullCheck(session, context.file, propagationState)
 
         return safeCallExpression
     }

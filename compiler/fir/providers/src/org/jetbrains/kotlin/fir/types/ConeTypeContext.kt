@@ -32,8 +32,6 @@ import org.jetbrains.kotlin.types.TypeCheckerState.SupertypesPolicy.LowerIfFlexi
 import org.jetbrains.kotlin.types.TypeSystemCommonBackendContext
 import org.jetbrains.kotlin.types.model.*
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
-import kotlin.contracts.ExperimentalContracts
-import kotlin.contracts.contract
 
 interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, TypeCheckerProviderContext, TypeSystemCommonBackendContext {
     val session: FirSession
@@ -924,20 +922,28 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
         )
     }
 
-    override fun KotlinTypeMarker.addErrorComponent(errorType: ErrorTypeMarker): KotlinTypeMarker {
-        this as ConeKotlinType
-        errorType as CEType
-        if (errorType == CEBotType) return this
+    override fun List<ErrorTypeMarker>.commonSupertypeForErrors(): ErrorTypeMarker {
+        val atomicTypes = this.map { (it as CEType).collectAtomics(mutableListOf()) }
 
-        return when (this) {
-            is ConeFlexibleType -> {
-                val lowerBound = ConeErrorUnionType.createNormalized(lowerBound as ConeValueType, errorType)
-                val upperBound = ConeErrorUnionType.createNormalized(upperBound as ConeValueType, errorType)
-                ConeFlexibleType(lowerBound, upperBound, isTrivial)
+        val resultingTypes = mutableListOf<CEType>()
+
+        atomicTypes.forEach {
+            it.forEach { type ->
+                // already in intersection => not needed
+                if (resultingTypes.any { superType -> type.isSubtypeOfAtomic(superType) })
+                    return@forEach
+                resultingTypes.add(type)
             }
-            is ConeValueType -> ConeErrorUnionType.createNormalized(this, errorType)
-            is ConeErrorUnionType -> error("Unexpected")
         }
+
+        return when (resultingTypes.size) {
+            0 -> CEBotType
+            else -> CEUnionType.create(resultingTypes)
+        }
+    }
+
+    override fun KotlinTypeMarker.addErrorComponent(errorType: ErrorTypeMarker): KotlinTypeMarker {
+        return ConeErrorUnionType.addErrorComponent(this as ConeKotlinType, errorType as CEType)
     }
 
     fun CEType.typeConstructor(): TypeConstructorMarker {

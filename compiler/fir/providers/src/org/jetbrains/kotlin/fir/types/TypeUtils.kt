@@ -1038,6 +1038,22 @@ fun ConeKotlinType.canBeNull(session: FirSession): Boolean {
     }
 }
 
+fun ConeKotlinType.canBeError(session: FirSession): Boolean {
+    return when (this) {
+        is ConeFlexibleType -> upperBound.canBeError(session)
+        is ConeErrorUnionType -> errorType !is CEBotType
+        is ConeIntersectionType -> intersectedTypes.all { it.canBeError(session) }
+        is ConeTypeParameterType -> this.lookupTag.typeParameterSymbol.resolvedBounds.all {
+            it.coneType.canBeError(session)
+        }
+        is ConeCapturedType -> constructor.supertypes?.all { it.canBeError(session) } == true
+        is ConeStubType -> TODO()
+        is ConeDefinitelyNotNullType, is ConeErrorType, is ConeLookupTagBasedType,
+        is ConeIntegerLiteralType, is ConeTypeVariableType,
+            -> false
+    }
+}
+
 private fun FirTypeParameterSymbol.allBoundsAreNullableOrUnresolved(session: FirSession): Boolean {
     for (bound in fir.bounds) {
         if (bound !is FirResolvedTypeRef) return true

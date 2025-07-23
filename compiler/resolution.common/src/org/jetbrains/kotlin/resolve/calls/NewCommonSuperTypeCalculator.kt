@@ -59,10 +59,10 @@ object NewCommonSuperTypeCalculator {
         val stateStubTypesEqualToAnything = newTypeCheckerState(errorTypesEqualToAnything = false, stubTypesEqualToAnything = true)
         val stateStubTypesNotEqual = newTypeCheckerState(errorTypesEqualToAnything = false, stubTypesEqualToAnything = false)
 
-        val lowerSuperType = commonSuperTypeForSimpleTypes(lowers, depth, stateStubTypesEqualToAnything, stateStubTypesNotEqual)
+        val lowerSuperType = commonSuperTypeForRigidTypes(lowers, depth, stateStubTypesEqualToAnything, stateStubTypesNotEqual)
         if (!thereIsFlexibleTypes) return lowerSuperType
 
-        val upperSuperType = commonSuperTypeForSimpleTypes(
+        val upperSuperType = commonSuperTypeForRigidTypes(
             types.map { it.upperBoundIfFlexible() }, depth, stateStubTypesEqualToAnything, stateStubTypesNotEqual
         )
 
@@ -82,6 +82,19 @@ object NewCommonSuperTypeCalculator {
         }
 
         return createFlexibleType(lowerSuperType, upperSuperType)
+    }
+
+    private fun TypeSystemCommonSuperTypesContext.commonSuperTypeForRigidTypes(
+        types: List<RigidTypeMarker>,
+        depth: Int,
+        stateStubTypesEqualToAnything: TypeCheckerState,
+        stateStubTypesNotEqual: TypeCheckerState
+    ): RigidTypeMarker {
+        val valueTypes = types.map { it.valueType() }
+        val errorTypes = types.map { it.errorType() }
+        val valueSuperType = commonSuperTypeForSimpleTypes(valueTypes, depth, stateStubTypesEqualToAnything, stateStubTypesNotEqual)
+        val errorSuperType = errorTypes.commonSupertypeForErrors()
+        return valueSuperType.addErrorComponent(errorSuperType) as RigidTypeMarker
     }
 
     private fun TypeSystemCommonSuperTypesContext.commonSuperTypeForSimpleTypes(

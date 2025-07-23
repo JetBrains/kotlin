@@ -78,6 +78,9 @@ class Fir2IrBuiltinSymbolsContainer(
     val nothingType: IrType get() = nothingClass.defaultTypeWithoutArguments
     val nothingNType: IrType by lazy { nothingType.makeNullable() }
 
+    val errorClass: IrClassSymbol by lazy { loadClass(StandardClassIds.Error) }
+    val errorType: IrType get() = errorClass.defaultTypeWithoutArguments
+
     val unitClass: IrClassSymbol by lazy { loadClass(StandardClassIds.Unit) }
     val unitType: IrType get() = unitClass.defaultTypeWithoutArguments
 

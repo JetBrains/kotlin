@@ -692,7 +692,7 @@ class NewConstraintSystemImpl(
 
         checkInferredEmptyIntersection(variable, resultType)
 
-        constraintInjector.addInitialEqualityConstraint(this@NewConstraintSystemImpl, variable.defaultType(), resultType, position)
+        constraintInjector.addInitialEqualityConstraint(this@NewConstraintSystemImpl, variable.defaultValueType(), resultType, position)
 
         val freshTypeConstructor = variable.freshTypeConstructor()
         val variableWithConstraints =

@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.expressions.FirSafeCallExpression
 import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
+import org.jetbrains.kotlin.fir.types.canBeError
 import org.jetbrains.kotlin.fir.types.canBeNull
 import org.jetbrains.kotlin.fir.types.resolvedType
 
@@ -27,7 +28,7 @@ abstract class AbstractFirUnnecessarySafeCallChecker : FirSafeCallExpressionChec
         context: CheckerContext,
         reporter: DiagnosticReporter,
     ) {
-        if (!receiverType.canBeNull(context.session)) {
+        if (!receiverType.canBeNull(context.session) && !receiverType.canBeError(context.session)) {
             if (context.languageVersionSettings.supportsFeature(LanguageFeature.EnableDfaWarningsInK2)) {
                 reporter.reportOn(source, FirErrors.UNNECESSARY_SAFE_CALL, receiverType, context)
             }

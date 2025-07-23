@@ -40835,6 +40835,22 @@ public class NativeIrDeserializationWithInlinedFunInKlibTestGenerated extends Ab
     }
 
     @Nested
+    @TestMetadata("compiler/testData/codegen/box/richErrors")
+    @TestDataPath("$PROJECT_ROOT")
+    public class RichErrors {
+      @Test
+      public void testAllFilesPresentInRichErrors() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/richErrors"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
+      }
+
+      @Test
+      @TestMetadata("simpleRichErrors.kt")
+      public void testSimpleRichErrors() {
+        runTest("compiler/testData/codegen/box/richErrors/simpleRichErrors.kt");
+      }
+    }
+
+    @Nested
     @TestMetadata("compiler/testData/codegen/box/safeCall")
     @TestDataPath("$PROJECT_ROOT")
     public class SafeCall {
