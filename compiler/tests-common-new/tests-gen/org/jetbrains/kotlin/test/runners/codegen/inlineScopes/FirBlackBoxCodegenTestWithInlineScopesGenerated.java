@@ -3218,6 +3218,12 @@ public class FirBlackBoxCodegenTestWithInlineScopesGenerated extends AbstractFir
     }
 
     @Test
+    @TestMetadata("kt79442_jvmDefault.kt")
+    public void testKt79442_jvmDefault() {
+      runTest("compiler/testData/codegen/box/bridges/kt79442_jvmDefault.kt");
+    }
+
+    @Test
     @TestMetadata("longChainOneBridge.kt")
     public void testLongChainOneBridge() {
       runTest("compiler/testData/codegen/box/bridges/longChainOneBridge.kt");

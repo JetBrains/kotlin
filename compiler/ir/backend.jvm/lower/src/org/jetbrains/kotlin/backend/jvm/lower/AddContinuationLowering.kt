@@ -63,6 +63,8 @@ internal class AddContinuationLowering(context: JvmBackendContext) : SuspendLowe
             val functionStack = mutableListOf<IrFunction>()
 
             override fun visitFunction(declaration: IrFunction): IrStatement {
+                if (declaration.isDefaultImplsBridgeInJvmDefaultEnableMode())
+                    return declaration
                 functionStack.push(declaration)
                 return super.visitFunction(declaration).also { functionStack.pop() }
             }
@@ -291,7 +293,7 @@ internal class AddContinuationLowering(context: JvmBackendContext) : SuspendLowe
         irFile.accept(object : IrElementTransformerVoid() {
             override fun visitClass(declaration: IrClass): IrStatement {
                 declaration.transformDeclarationsFlat {
-                    if (it is IrSimpleFunction && it.isSuspend)
+                    if (it is IrSimpleFunction && it.isSuspend && !it.isDefaultImplsBridgeInJvmDefaultEnableMode())
                         return@transformDeclarationsFlat transformToView(it)
                     it.accept(this, null)
                     null

@@ -79,13 +79,32 @@ fun IrFunction.isStaticInlineClassReplacementForDefaultInterfaceMethod(): Boolea
 // If this function is declared in a `DefaultImpls` class and its body only contains a call to the interface function that it was created
 // for, we must be using the `-jvm-default=enable` mode, in which case this function is a simple bridge and needs no continuation or
 // inline class boxing/unboxing.
-private fun IrFunction.isDefaultImplsBridgeInJvmDefaultEnableMode(): Boolean =
+fun IrFunction.isDefaultImplsBridgeInJvmDefaultEnableMode(): Boolean =
     this is IrSimpleFunction &&
             originalFunctionForDefaultImpl != null &&
             (parent as? IrClass)?.origin == JvmLoweredDeclarationOrigin.DEFAULT_IMPLS &&
             // (Note that we could've checked this directly via `context.config.jvmDefaultMode`, but that would require passing `context`
             // to utilities in this file, and all their call sites.)
-            ((body as? IrExpressionBody)?.expression as? IrCall)?.symbol?.owner == originalFunctionForDefaultImpl
+            isBridgeCallTo(originalFunctionForDefaultImpl)
+
+private fun IrFunction.isBridgeCallTo(target: IrSimpleFunction?): Boolean {
+    val callee: IrSimpleFunction = singleCallOrNull()?.symbol?.owner ?: return false
+    return callee == target || (callee.origin == IrDeclarationOrigin.SYNTHETIC_ACCESSOR && callee.isBridgeCallTo(target))
+}
+
+private fun IrFunction.singleCallOrNull(): IrCall? = when (body) {
+    is IrBlockBody -> {
+        val statements = (body as IrBlockBody).statements
+        if (statements.size == 1) {
+            (statements[0] as? IrReturn)?.value as? IrCall
+        } else null
+    }
+    is IrExpressionBody -> {
+        val expression = (body as IrExpressionBody).expression
+        expression as? IrCall
+    }
+    else -> null
+}
 
 fun IrFunction.shouldContainSuspendMarkers(): Boolean = !isNonBoxingSuspendDelegation() &&
         // These functions also contain a single `suspend` tail call, but if it returns an unboxed inline class value,
@@ -97,6 +116,7 @@ fun IrFunction.shouldContainSuspendMarkers(): Boolean = !isNonBoxingSuspendDeleg
 
 fun IrFunction.hasContinuation(): Boolean = isInvokeSuspendOfLambda() ||
         isSuspend && shouldContainSuspendMarkers() &&
+        !isDefaultImplsBridgeInJvmDefaultEnableMode() &&
         // These are templates for the inliner; the continuation is borrowed from the caller method.
         !isEffectivelyInlineOnly() &&
         origin != IrDeclarationOrigin.INLINE_LAMBDA &&
