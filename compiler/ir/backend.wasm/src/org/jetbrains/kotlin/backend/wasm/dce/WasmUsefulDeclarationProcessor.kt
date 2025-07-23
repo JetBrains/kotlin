@@ -33,7 +33,7 @@ internal class WasmUsefulDeclarationProcessor(
         override fun visitConst(expression: IrConst, data: IrDeclaration) = when (expression.kind) {
             is IrConstKind.Null -> expression.type.enqueueType(data, "expression type")
             is IrConstKind.String -> {
-                if ((expression.value as String).all { it.code in 0..255 }) {
+                if ((expression.value as String).fitsLatin1) {
                     context.wasmSymbols.stringGetLiteralLatin1.owner
                         .enqueue(data, "String literal intrinsic getter stringGetLiteralLatin1")
                 } else {

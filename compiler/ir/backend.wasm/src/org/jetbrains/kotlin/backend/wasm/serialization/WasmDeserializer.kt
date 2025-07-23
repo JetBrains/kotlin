@@ -489,8 +489,8 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
 
     private fun deserializeConstantDataCharArray(): ConstantDataCharArray {
         val value = deserializeList { deserializeSymbol { Char(deserializeInt()) } }
-        val fitsOneByte = deserializeInt()
-        return ConstantDataCharArray(value, fitsOneByte)
+        val fitsLatin1 = deserializeInt()
+        return ConstantDataCharArray(value, fitsLatin1)
     }
 
     private fun deserializeConstantDataCharField(): ConstantDataCharField {

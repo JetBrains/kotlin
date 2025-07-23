@@ -31,8 +31,8 @@ import org.jetbrains.kotlin.wasm.ir.source.location.SourceLocation
 
 private const val TYPE_INFO_FLAG_ANONYMOUS_CLASS = 1
 private const val TYPE_INFO_FLAG_LOCAL_CLASS = 2
-private const val TYPE_INFO_FLAG_FITS_ONE_BIT_QUALIFIER = 4
-private const val TYPE_INFO_FLAG_FITS_ONE_BIT_SIMPLE_NAME = 8
+private const val TYPE_INFO_FLAG_FITS_LATIN1_QUALIFIER = 4
+private const val TYPE_INFO_FLAG_FITS_LATIN1_SIMPLE_NAME = 8
 
 class DeclarationGenerator(
     private val backendContext: WasmBackendContext,
@@ -394,9 +394,9 @@ class DeclarationGenerator(
 
             val isAnonymousFlag = if (klass.isAnonymousObject) TYPE_INFO_FLAG_ANONYMOUS_CLASS else 0
             val isLocalFlag = if (klass.isOriginallyLocalClass) TYPE_INFO_FLAG_LOCAL_CLASS else 0
-            val fitsOneByteQualifier = if (qualifier.all { it.code in 0..255 }) TYPE_INFO_FLAG_FITS_ONE_BIT_QUALIFIER else 0
-            val fitsOneByteSimpleName = if (simpleName.all { it.code in 0..255 }) TYPE_INFO_FLAG_FITS_ONE_BIT_SIMPLE_NAME else 0
-            buildConstI32(isAnonymousFlag or isLocalFlag or fitsOneByteQualifier or fitsOneByteSimpleName, location)
+            val fitsLatin1Qualifier = if (qualifier.fitsLatin1) TYPE_INFO_FLAG_FITS_LATIN1_QUALIFIER else 0
+            val fitsLatin1SimpleName = if (simpleName.fitsLatin1) TYPE_INFO_FLAG_FITS_LATIN1_SIMPLE_NAME else 0
+            buildConstI32(isAnonymousFlag or isLocalFlag or fitsLatin1Qualifier or fitsLatin1SimpleName, location)
 
             buildStructNew(wasmFileCodegenContext.rttiType, location)
         }
@@ -622,10 +622,9 @@ fun generateConstExpression(
         is IrConstKind.String -> {
             val stringValue = expression.value as String
             val (_, literalPoolId) = context.referenceStringLiteralAddressAndId(stringValue)
-            val isLatin = stringValue.all { it.code in 0..255 }
             body.commentGroupStart { "const string: \"$stringValue\"" }
             body.buildConstI32Symbol(literalPoolId, location)
-            if (isLatin) {
+            if (stringValue.fitsLatin1) {
                 body.buildCall(context.referenceFunction(backendContext.wasmSymbols.stringGetLiteralLatin1), location)
             } else {
                 body.buildCall(context.referenceFunction(backendContext.wasmSymbols.stringGetLiteralUtf16), location)

@@ -35,3 +35,6 @@ internal fun getFunctionalInterfaceSlot(iFace: IrClass): Int {
     check(iFace.symbol.isFunction())
     return if (iFace.defaultType.isFunctionMarker()) return 0 else iFace.typeParameters.size
 }
+
+internal val String.fitsLatin1
+    get() = this.all { it.code in 0..255 }

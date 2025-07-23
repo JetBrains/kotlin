@@ -11,8 +11,8 @@ internal class TypeInfoData(val typeId: Long, val packageName: String, val typeN
 
 private const val TYPE_INFO_FLAG_ANONYMOUS_CLASS = 1
 private const val TYPE_INFO_FLAG_LOCAL_CLASS = 2
-private const val TYPE_INFO_FLAG_FITS_ONE_BIT_QUALIFIER = 4
-private const val TYPE_INFO_FLAG_FITS_ONE_BIT_SIMPLE_NAME = 8
+private const val TYPE_INFO_FLAG_FITS_LATIN1_QUALIFIER = 4
+private const val TYPE_INFO_FLAG_FITS_LATIN1_SIMPLE_NAME = 8
 
 @Suppress("UNUSED_PARAMETER")
 @WasmArrayOf(Long::class, isNullable = false, isMutable = false)
@@ -59,7 +59,7 @@ internal fun getQualifiedName(rtti: kotlin.wasm.internal.reftypes.structref): St
 }
 
 internal fun getPackageName(rtti: kotlin.wasm.internal.reftypes.structref): String {
-    val flagFitsOneBitQualifier = wasmGetRttiIntField(5, rtti) and TYPE_INFO_FLAG_FITS_ONE_BIT_QUALIFIER
+    val flagFitsOneBitQualifier = wasmGetRttiIntField(5, rtti) and TYPE_INFO_FLAG_FITS_LATIN1_QUALIFIER
     return if (flagFitsOneBitQualifier != 0)
         stringLiteralLatin1(wasmGetRttiIntField(2, rtti))
     else
@@ -67,7 +67,7 @@ internal fun getPackageName(rtti: kotlin.wasm.internal.reftypes.structref): Stri
 }
 
 internal fun getSimpleName(rtti: kotlin.wasm.internal.reftypes.structref): String {
-    val flagFitsOneBitSimpleName = wasmGetRttiIntField(5, rtti) and TYPE_INFO_FLAG_FITS_ONE_BIT_SIMPLE_NAME
+    val flagFitsOneBitSimpleName = wasmGetRttiIntField(5, rtti) and TYPE_INFO_FLAG_FITS_LATIN1_SIMPLE_NAME
     return if (flagFitsOneBitSimpleName != 0)
         stringLiteralLatin1(wasmGetRttiIntField(3, rtti))
     else
