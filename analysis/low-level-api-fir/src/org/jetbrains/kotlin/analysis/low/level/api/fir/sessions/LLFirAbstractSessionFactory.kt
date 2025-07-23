@@ -27,9 +27,11 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.LLDepende
 import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.LLFirJavaSymbolProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.LLFirSwitchableExtensionDeclarationsSymbolProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.LLKotlinSourceSymbolProvider
+import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.LLKotlinStubBasedLibrarySymbolProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.LLModuleWithDependenciesSymbolProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.combined.LLCombinedJavaSymbolProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.combined.LLCombinedKotlinSymbolProvider
+import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.combined.LLCombinedPackageDelegationSymbolProvider
 import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.combined.LLCombinedSyntheticFunctionSymbolProvider
 import org.jetbrains.kotlin.assignment.plugin.AssignmentCommandLineProcessor
 import org.jetbrains.kotlin.assignment.plugin.AssignmentConfigurationKeys
@@ -736,6 +738,12 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
     ) {
         mergeInto(destination) {
             merge<LLKotlinSourceSymbolProvider> { LLCombinedKotlinSymbolProvider.merge(session, project, it) }
+
+            // We place the combined Kotlin library symbol provider before the combined Java symbol provider because the former is generally
+            // faster due to package and name set checks. The placement leads to fewer requests for class-like symbols arriving at the Java
+            // symbol provider, since the Kotlin library symbol provider answers a good number of them.
+            merge<LLKotlinStubBasedLibrarySymbolProvider> { LLCombinedPackageDelegationSymbolProvider.merge(session, it) }
+
             merge<LLFirJavaSymbolProvider> { LLCombinedJavaSymbolProvider.merge(session, project, it) }
             merge<FirExtensionSyntheticFunctionInterfaceProvider> { LLCombinedSyntheticFunctionSymbolProvider.merge(session, it) }
         }
