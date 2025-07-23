@@ -252,7 +252,10 @@ include ":kotlin-assignment-compiler-plugin",
         ":kotlin-assignment-compiler-plugin.cli",
         ":kotlin-assignment-compiler-plugin.embeddable"
 
-include ":plugins:plugins-interactions-testing"
+include ":plugins:test-plugins:before",
+        ":plugins:test-plugins:middle",
+        ":plugins:test-plugins:after",
+        ":plugins:plugins-interactions-testing"
 
 include ":kotlin-script-runtime",
         ":plugins:plugin-sandbox",

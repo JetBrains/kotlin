@@ -19,6 +19,7 @@ dependencies {
     testImplementation(testFixtures(project(":compiler:fir:analysis-tests:legacy-fir-tests")))
     testImplementation(testFixtures(project(":js:js.tests")))
     testImplementation(testFixtures(project(":generators:test-generator")))
+    testImplementation(testFixtures(project(":plugins:plugins-interactions-testing")))
 }
 
 sourceSets {

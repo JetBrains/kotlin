@@ -443,6 +443,7 @@
 /plugins/scripting/ "Kotlin Frontend"
 /plugins/plugins-interactions-testing/ "Kotlin Frontend"
 /plugins/kotlin-dataframe/ "Kotlin for Data Science"
+/plugins/test-plugins/ "Kotlin Frontend"
 
 /prepare/ "Kotlin Build Infrastructure"
 

@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.codegen.ir.AbstractIrCheckLocalVariablesTableTest
 import org.jetbrains.kotlin.codegen.ir.AbstractIrScriptCodegenTest
 import org.jetbrains.kotlin.codegen.ir.AbstractIrWriteFlagsTest
 import org.jetbrains.kotlin.codegen.ir.AbstractIrWriteSignatureTest
+import org.jetbrains.kotlin.compiler.plugins.AbstractPluginCliTests
 import org.jetbrains.kotlin.fir.builder.AbstractRawFirBuilderLazyBodiesByAstTest
 import org.jetbrains.kotlin.fir.builder.AbstractRawFirBuilderLazyBodiesByStubTest
 import org.jetbrains.kotlin.fir.builder.AbstractRawFirBuilderSourceElementMappingTestCase
@@ -354,6 +355,12 @@ fun generateJUnit3CompilerTests(args: Array<String>, mainClassName: String?) {
         testGroup("compiler/fir/analysis-tests/legacy-fir-tests/tests-gen", "compiler/fir/analysis-tests/testData") {
             testClass<AbstractFirOldFrontendLightClassesTest> {
                 model("lightClasses")
+            }
+        }
+
+        testGroup("plugins/plugins-interactions-testing/tests-gen", "plugins/plugins-interactions-testing/testData") {
+            testClass<AbstractPluginCliTests> {
+                model("cli", extension = "args", testMethod = "doJvmTest", recursive = false)
             }
         }
     }
