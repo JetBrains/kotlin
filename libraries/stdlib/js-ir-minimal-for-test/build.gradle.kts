@@ -114,6 +114,7 @@ val jsAndWasmJsCommon by task<Sync> {
     from("$jsAndWasmJsDir/src") {
         include(
             "kotlin/js/annotations.kt",
+            "kotlin/js/ExperimentalWasmJsInterop.kt",
             "kotlin/js/core.kt",
         )
     }
