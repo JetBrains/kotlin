@@ -177,6 +177,7 @@ val commonCompilerModules = arrayOf(
     ":core:util.runtime",
     ":compiler:frontend.common.jvm",
     ":compiler:frontend.java", // TODO this is fe10 module but some utils used in fir ide now
+    ":analysis:analysis-internal-utils",
     ":analysis:light-classes-base",
     ":analysis:decompiled:decompiler-to-stubs",
     ":analysis:decompiled:decompiler-to-file-stubs",
@@ -296,7 +297,6 @@ val projectsUsedInIntelliJKotlinPlugin =
                 ":analysis:analysis-api-standalone:analysis-api-standalone-base",
                 ":analysis:analysis-api-standalone:analysis-api-fir-standalone-base",
                 ":analysis:analysis-api-standalone",
-                ":analysis:analysis-internal-utils",
                 ":analysis:analysis-test-framework",
                 ":analysis:decompiled",
                 ":analysis:kt-references",
