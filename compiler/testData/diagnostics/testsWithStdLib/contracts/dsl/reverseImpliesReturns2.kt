@@ -1,7 +1,7 @@
 // FIR_IDENTICAL
 // RUN_PIPELINE_TILL: BACKEND
 // OPT_IN: kotlin.contracts.ExperimentalContracts, kotlin.contracts.ExperimentalExtendedContracts
-// LANGUAGE: +AllowContractsOnPropertyAccessors, +ConditionImpliesReturnsContracts, +DataFlowBasedExhaustiveness
+// LANGUAGE: +AllowContractsOnSomeOperators, +AllowContractsOnPropertyAccessors, +ConditionImpliesReturnsContracts, +DataFlowBasedExhaustiveness
 
 import kotlin.contracts.*
 
