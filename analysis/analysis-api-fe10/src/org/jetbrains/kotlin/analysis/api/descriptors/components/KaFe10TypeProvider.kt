@@ -31,7 +31,6 @@ import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.psi.*
-import org.jetbrains.kotlin.psi.psiUtil.contains
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -70,7 +69,7 @@ internal class KaFe10TypeProvider(
             ?.toKtType(analysisContext)
     }
 
-    override fun KaType.approximateToDenotableSupertype(allowLocalDenotableTypes: Boolean): KaType? {
+    override fun KaType.approximateToDenotableSupertype(allowLocalDenotableTypes: Boolean): KaType? = withValidityAssertion {
         require(this is KaFe10Type)
         return typeApproximator.approximateToSuperType(
             fe10Type,
@@ -89,33 +88,33 @@ internal class KaFe10TypeProvider(
         )?.toKtType(analysisContext)
     }
 
-    override fun KaType.approximateToDenotableSupertype(position: KtElement): KaType? {
+    override fun KaType.approximateToDenotableSupertype(position: KtElement): KaType? = withValidityAssertion {
         require(this is KaFe10Type)
-
-        if (!analysisSession.analysisScope.contains(position)) {
-            errorWithAttachment("The given position is not within the analysis scope of the session") {
-                withPsiEntry("position", position)
-            }
-        }
-
-        val containingFile = position.containingFile as? KtFile
-        val scopeClassifiers = with(analysisSession) {
-            containingFile?.scopeContext(position)?.scopes?.filter {
-                it.kind is KaScopeKind.LocalScope
-            }?.flatMap { it.scope.classifiers }?.associateBy { it.name }
-        }
-
-        return typeApproximator.approximateToSuperType(
-            fe10Type,
-            PublicApproximatorConfiguration(
-                approximateLocalTypes = true,
-                shouldApproximateLocalType = { _, typeMarker ->
-                    val typeSymbol =
-                        (typeMarker as KotlinType).toKtType(analysisContext).symbol ?: return@PublicApproximatorConfiguration false
-                    scopeClassifiers?.get(typeSymbol.name) != typeSymbol
+        with(analysisSession) {
+            if (!position.canBeAnalysed()) {
+                errorWithAttachment("The given position is not within the analysis scope of the session") {
+                    withPsiEntry("position", position)
                 }
-            )
-        )?.toKtType(analysisContext)
+            }
+
+            val containingFile = position.containingFile as? KtFile
+            val scopeClassifiers =
+                containingFile?.scopeContext(position)?.scopes?.filter {
+                    it.kind is KaScopeKind.LocalScope
+                }?.flatMap { it.scope.classifiers }?.associateBy { it.name }
+
+            return typeApproximator.approximateToSuperType(
+                fe10Type,
+                PublicApproximatorConfiguration(
+                    approximateLocalTypes = true,
+                    shouldApproximateLocalType = { _, typeMarker ->
+                        val typeSymbol =
+                            (typeMarker as KotlinType).toKtType(analysisContext).symbol ?: return@PublicApproximatorConfiguration false
+                        scopeClassifiers?.get(typeSymbol.name) != typeSymbol
+                    }
+                )
+            )?.toKtType(analysisContext)
+        }
     }
 
     override val KaType.enhancedType: KaType?
