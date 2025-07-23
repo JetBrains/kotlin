@@ -46121,6 +46121,12 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
       }
 
       @Test
+      @TestMetadata("importNestedTypealiasFromAnotherModule.kt")
+      public void testImportNestedTypealiasFromAnotherModule() {
+        runTest("compiler/testData/codegen/box/typealias/importNestedTypealiasFromAnotherModule.kt");
+      }
+
+      @Test
       @TestMetadata("incorrectTypeOfTypealiasForSuspendFTMM.kt")
       public void testIncorrectTypeOfTypealiasForSuspendFTMM() {
         runTest("compiler/testData/codegen/box/typealias/incorrectTypeOfTypealiasForSuspendFTMM.kt");
