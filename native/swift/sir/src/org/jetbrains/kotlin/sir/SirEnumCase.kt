@@ -11,9 +11,9 @@ class SirEnumCase(
 ) {
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (other != null && this::class != other::class) return false
+        if (other !is SirEnumCase) return false
 
-        other as SirEnumCase
+
 
         if (name != other.name) return false
         if (parameters != other.parameters) return false

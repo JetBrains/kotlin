@@ -10,15 +10,19 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.sir.*
+import org.jetbrains.kotlin.sir.builder.buildModule
 import org.jetbrains.kotlin.sir.providers.SirAndKaSession
 import org.jetbrains.kotlin.sir.providers.SirSession
 import org.jetbrains.kotlin.sir.providers.impl.SirKaClassReferenceHandler
+import org.jetbrains.kotlin.sir.providers.source.kaSymbolOrNull
 import org.jetbrains.kotlin.sir.providers.utils.KotlinRuntimeModule
 import org.jetbrains.kotlin.sir.providers.utils.updateImport
 import org.jetbrains.kotlin.sir.providers.withSessions
 import org.jetbrains.kotlin.sir.util.allParameters
+import org.jetbrains.kotlin.sir.util.conflictsWith
 import org.jetbrains.kotlin.sir.util.returnType
 import org.jetbrains.kotlin.swiftexport.standalone.InputModule
+import org.jetbrains.kotlin.swiftexport.standalone.SwiftExportLogger
 import org.jetbrains.kotlin.swiftexport.standalone.SwiftExportModule
 import org.jetbrains.kotlin.swiftexport.standalone.builders.KaModules
 import org.jetbrains.kotlin.swiftexport.standalone.builders.buildSirSession
@@ -124,9 +128,8 @@ internal fun translateCrossReferencingModulesTransitively(
                 it.currentlyProcessing = emptyList()
                 // Touch all declarations
                 it.sirSession.withSessions {
-                    deepTouch(sirModule)
+                    deepTouch(sirModule, typeReferenceHandler::onClassReference)
                 }
-                forceComputeSupertypes(sirModule)
             }
     }
     return translationStates.mapNotNull {
@@ -142,21 +145,6 @@ internal fun translateCrossReferencingModulesTransitively(
     }
 }
 
-/**
- * A little hack to force computation of supertypes when exporting a module transitively.
- * Otherwise, we might encounter a new type declaration during SIR printing which is too late.
- */
-private fun forceComputeSupertypes(container: SirDeclarationContainer) {
-    when (container) {
-            // This invokes SirKaClassReferenceHandler under the hood for Kotlin-exported types.
-        is SirProtocolConformingDeclaration -> container.protocols
-            // This invokes SirKaClassReferenceHandler under the hood for Kotlin-exported types.
-        is SirClassInhertingDeclaration -> container.superClass
-        else -> {}
-    }
-    container.allContainers().forEach { forceComputeSupertypes(it) }
-}
-
 private fun SirSession.createTranslationResult(
     sirModule: SirModule,
     config: SwiftExportConfig,
@@ -167,6 +155,10 @@ private fun SirSession.createTranslationResult(
     // It might not be the case, but precise tracking seems like an overkill at the moment.
     sirModule.updateImport(SirImport(config.runtimeSupportModuleName))
     sirModule.updateImport(SirImport(config.runtimeModuleName))
+
+    // Conflicts may have arisen from the package flattening process
+    sirModule.removeConflicts(config.logger)
+
     val bridgeModuleName = "${moduleConfig.bridgeModuleName}_${sirModule.name}"
 
     val printer = SirPrinter(
@@ -224,17 +216,63 @@ internal class TranslationResult(
     val externalTypeDeclarationReferences: Map<KaLibraryModule, List<FqName>>,
 )
 
-private fun SirAndKaSession.deepTouch(container: SirDeclarationContainer) {
-    container
-        .allCallables()
-        .forEach {
-            it.allParameters
-            it.returnType
-        }
-    container
-        .allVariables()
-        .forEach { it.type }
-    container
-        .allContainers()
-        .forEach { deepTouch(it) }
+private fun SirAndKaSession.deepTouch(
+    container: SirDeclarationContainer,
+    symbolHandler: (KaClassLikeSymbol) -> Unit = {},
+): Unit = with(container.declarations.toList()) {
+    // This invokes SirKaClassReferenceHandler under the hood for Kotlin-exported types.
+    when (container) {
+        is SirProtocolConformingDeclaration -> container.protocols
+        is SirClassInhertingDeclaration -> container.superClass
+        else -> {}
+    }
+
+    filterIsInstance<SirCallable>().forEach {
+        it.allParameters
+        it.returnType
+    }
+
+    filterIsInstance<SirVariable>().forEach {
+        it.type
+    }
+
+    filterIsInstance<SirDeclarationContainer>().forEach {
+        deepTouch(it)
+    }
+
+    // Ensure each newly occuring declaration gets included in `unprocessedReferences`
+    container.declarations.toList().takeIf { it != this }?.let {
+        (it - this).forEach { it.kaSymbolOrNull<KaClassLikeSymbol>()?.let(symbolHandler) }
+    }
 }
+
+private fun SirMutableDeclarationContainer.removeConflicts(logger: SwiftExportLogger?) {
+    val trashBin = buildModule { name = "removedDueToConflicts" }
+    val iterator = this.declarations.listIterator()
+    while (iterator.hasNext()) {
+        val decl = iterator.next()
+        declarations
+            .indexOfFirst { decl.conflictsWith(it) } // We assume that `conflictsWith` is transitive
+            .takeIf { it in 0..<iterator.previousIndex() }
+            ?.let { i ->
+                val expelled = decl.takeIf { decl.priority < declarations[i].priority } ?: declarations[i].also { declarations[i] = decl }
+                iterator.remove()
+                expelled.parent = trashBin
+                logger?.report(
+                    SwiftExportLogger.Severity.Warning,
+                    "Exported declaration $expelled was removed from export due to conflicts")
+            }
+    }
+}
+
+private val SirDeclaration.priority: Int get() = when (this) {
+        is SirVariable -> 10
+        is SirFunction -> 20
+        is SirNamedDeclaration -> 30
+        else -> 0
+    }.let {
+        if (this.origin is SirOrigin.Trampoline)
+            it - 50
+        else
+            it
+    }

@@ -22,7 +22,7 @@ public protocol _ExportedKotlinPackages_kotlin_collections_Map_Entry: KotlinRunt
 @objc(__ExportedKotlinPackages_kotlin_collections_Map_Entry)
 protocol __ExportedKotlinPackages_kotlin_collections_Map_Entry {
 }
-public extension ExportedKotlinPackages.kotlin {
+extension ExportedKotlinPackages.kotlin {
     public protocol Annotation: KotlinRuntime.KotlinBase {
     }
     @objc(_Annotation)
@@ -39,11 +39,6 @@ public extension ExportedKotlinPackages.kotlin {
             startIndex: Swift.Int32,
             endIndex: Swift.Int32
         ) -> any ExportedKotlinPackages.kotlin.CharSequence
-        subscript(
-            index: Swift.Int32
-        ) -> Swift.Unicode.UTF16.CodeUnit {
-            get
-        }
     }
     @objc(_CharSequence)
     protocol _CharSequence {
@@ -2305,7 +2300,7 @@ See https://youtrack.jetbrains.com/issue/KT-46465 for details about the migratio
         }
     }
 }
-public extension ExportedKotlinPackages.kotlin.collections {
+extension ExportedKotlinPackages.kotlin.collections {
     public protocol Iterable: KotlinRuntime.KotlinBase {
         func iterator() -> any ExportedKotlinPackages.kotlin.collections.Iterator
     }
@@ -2391,11 +2386,6 @@ public extension ExportedKotlinPackages.kotlin.collections {
         func _get(
             key: KotlinRuntime.KotlinBase?
         ) -> KotlinRuntime.KotlinBase?
-        subscript(
-            key: KotlinRuntime.KotlinBase?
-        ) -> KotlinRuntime.KotlinBase? {
-            get
-        }
     }
     @objc(_Map)
     protocol _Map {
@@ -2430,10 +2420,6 @@ public extension ExportedKotlinPackages.kotlin.collections {
         func contains(
             element: KotlinRuntime.KotlinBase?
         ) -> Swift.Bool
-        func ~=(
-            this: ExportedKotlinPackages.kotlin.collections.Collection,
-            element: KotlinRuntime.KotlinBase?
-        ) -> Swift.Bool
         func iterator() -> any ExportedKotlinPackages.kotlin.collections.Iterator
         func containsAll(
             elements: any ExportedKotlinPackages.kotlin.collections.Collection
@@ -2460,10 +2446,6 @@ public extension ExportedKotlinPackages.kotlin.collections {
         }
         func isEmpty() -> Swift.Bool
         func contains(
-            element: KotlinRuntime.KotlinBase?
-        ) -> Swift.Bool
-        func ~=(
-            this: ExportedKotlinPackages.kotlin.collections.Set,
             element: KotlinRuntime.KotlinBase?
         ) -> Swift.Bool
         func iterator() -> any ExportedKotlinPackages.kotlin.collections.Iterator
@@ -2543,18 +2525,18 @@ public extension ExportedKotlinPackages.kotlin.collections {
         }
     }
 }
-public extension ExportedKotlinPackages.kotlin.Annotation where Self : KotlinRuntimeSupport._KotlinBridged {
+extension ExportedKotlinPackages.kotlin.Annotation where Self : KotlinRuntimeSupport._KotlinBridged {
 }
 extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlin.Annotation where Wrapped : ExportedKotlinPackages.kotlin._Annotation {
 }
-public extension ExportedKotlinPackages.kotlin.collections.Iterable where Self : KotlinRuntimeSupport._KotlinBridged {
+extension ExportedKotlinPackages.kotlin.collections.Iterable where Self : KotlinRuntimeSupport._KotlinBridged {
     public func iterator() -> any ExportedKotlinPackages.kotlin.collections.Iterator {
         return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlin_collections_Iterable_iterator(self.__externalRCRef())) as! any ExportedKotlinPackages.kotlin.collections.Iterator
     }
 }
 extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlin.collections.Iterable where Wrapped : ExportedKotlinPackages.kotlin.collections._Iterable {
 }
-public extension ExportedKotlinPackages.kotlin.collections.Iterator where Self : KotlinRuntimeSupport._KotlinBridged {
+extension ExportedKotlinPackages.kotlin.collections.Iterator where Self : KotlinRuntimeSupport._KotlinBridged {
     public func next() -> KotlinRuntime.KotlinBase? {
         return { switch kotlin_collections_Iterator_next(self.__externalRCRef()) { case nil: .none; case let res: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: res); } }()
     }
@@ -2564,7 +2546,7 @@ public extension ExportedKotlinPackages.kotlin.collections.Iterator where Self :
 }
 extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlin.collections.Iterator where Wrapped : ExportedKotlinPackages.kotlin.collections._Iterator {
 }
-public extension ExportedKotlinPackages.kotlin.collections.MutableMap where Self : KotlinRuntimeSupport._KotlinBridged {
+extension ExportedKotlinPackages.kotlin.collections.MutableMap where Self : KotlinRuntimeSupport._KotlinBridged {
     public var keys: any ExportedKotlinPackages.kotlin.collections.MutableSet {
         get {
             return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlin_collections_MutableMap_keys_get(self.__externalRCRef())) as! any ExportedKotlinPackages.kotlin.collections.MutableSet
@@ -2602,7 +2584,7 @@ public extension ExportedKotlinPackages.kotlin.collections.MutableMap where Self
 }
 extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlin.collections.MutableMap where Wrapped : ExportedKotlinPackages.kotlin.collections._MutableMap {
 }
-public extension KotlinStdlib._ExportedKotlinPackages_kotlin_collections_MutableMap_MutableEntry where Self : KotlinRuntimeSupport._KotlinBridged {
+extension KotlinStdlib._ExportedKotlinPackages_kotlin_collections_MutableMap_MutableEntry where Self : KotlinRuntimeSupport._KotlinBridged {
     public func setValue(
         newValue: KotlinRuntime.KotlinBase?
     ) -> KotlinRuntime.KotlinBase? {
@@ -2611,7 +2593,7 @@ public extension KotlinStdlib._ExportedKotlinPackages_kotlin_collections_Mutable
 }
 extension KotlinRuntimeSupport._KotlinExistential: KotlinStdlib._ExportedKotlinPackages_kotlin_collections_MutableMap_MutableEntry where Wrapped : KotlinStdlib.__ExportedKotlinPackages_kotlin_collections_MutableMap_MutableEntry {
 }
-public extension ExportedKotlinPackages.kotlin.ranges {
+extension ExportedKotlinPackages.kotlin.ranges {
     public final class CharRange: ExportedKotlinPackages.kotlin.ranges.CharProgression {
         public final class Companion: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
             public var EMPTY: ExportedKotlinPackages.kotlin.ranges.CharRange {
@@ -3075,7 +3057,7 @@ public extension ExportedKotlinPackages.kotlin.ranges {
         }
     }
 }
-public extension ExportedKotlinPackages.kotlin.CharSequence where Self : KotlinRuntimeSupport._KotlinBridged {
+extension ExportedKotlinPackages.kotlin.CharSequence where Self : KotlinRuntimeSupport._KotlinBridged {
     public var length: Swift.Int32 {
         get {
             return kotlin_CharSequence_length_get(self.__externalRCRef())
@@ -3102,7 +3084,7 @@ public extension ExportedKotlinPackages.kotlin.CharSequence where Self : KotlinR
 }
 extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlin.CharSequence where Wrapped : ExportedKotlinPackages.kotlin._CharSequence {
 }
-public extension ExportedKotlinPackages.kotlin.collections.MutableCollection where Self : KotlinRuntimeSupport._KotlinBridged {
+extension ExportedKotlinPackages.kotlin.collections.MutableCollection where Self : KotlinRuntimeSupport._KotlinBridged {
     public func iterator() -> any ExportedKotlinPackages.kotlin.collections.MutableIterator {
         return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlin_collections_MutableCollection_iterator(self.__externalRCRef())) as! any ExportedKotlinPackages.kotlin.collections.MutableIterator
     }
@@ -3137,7 +3119,7 @@ public extension ExportedKotlinPackages.kotlin.collections.MutableCollection whe
 }
 extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlin.collections.MutableCollection where Wrapped : ExportedKotlinPackages.kotlin.collections._MutableCollection {
 }
-public extension ExportedKotlinPackages.kotlin.collections.Map where Self : KotlinRuntimeSupport._KotlinBridged {
+extension ExportedKotlinPackages.kotlin.collections.Map where Self : KotlinRuntimeSupport._KotlinBridged {
     public var size: Swift.Int32 {
         get {
             return kotlin_collections_Map_size_get(self.__externalRCRef())
@@ -3186,7 +3168,7 @@ public extension ExportedKotlinPackages.kotlin.collections.Map where Self : Kotl
 }
 extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlin.collections.Map where Wrapped : ExportedKotlinPackages.kotlin.collections._Map {
 }
-public extension ExportedKotlinPackages.kotlin.collections.MutableSet where Self : KotlinRuntimeSupport._KotlinBridged {
+extension ExportedKotlinPackages.kotlin.collections.MutableSet where Self : KotlinRuntimeSupport._KotlinBridged {
     public func iterator() -> any ExportedKotlinPackages.kotlin.collections.MutableIterator {
         return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlin_collections_MutableSet_iterator(self.__externalRCRef())) as! any ExportedKotlinPackages.kotlin.collections.MutableIterator
     }
@@ -3221,7 +3203,7 @@ public extension ExportedKotlinPackages.kotlin.collections.MutableSet where Self
 }
 extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlin.collections.MutableSet where Wrapped : ExportedKotlinPackages.kotlin.collections._MutableSet {
 }
-public extension KotlinStdlib._ExportedKotlinPackages_kotlin_collections_Map_Entry where Self : KotlinRuntimeSupport._KotlinBridged {
+extension KotlinStdlib._ExportedKotlinPackages_kotlin_collections_Map_Entry where Self : KotlinRuntimeSupport._KotlinBridged {
     public var key: KotlinRuntime.KotlinBase? {
         get {
             return { switch kotlin_collections_Map_Entry_key_get(self.__externalRCRef()) { case nil: .none; case let res: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: res); } }()
@@ -3235,7 +3217,7 @@ public extension KotlinStdlib._ExportedKotlinPackages_kotlin_collections_Map_Ent
 }
 extension KotlinRuntimeSupport._KotlinExistential: KotlinStdlib._ExportedKotlinPackages_kotlin_collections_Map_Entry where Wrapped : KotlinStdlib.__ExportedKotlinPackages_kotlin_collections_Map_Entry {
 }
-public extension ExportedKotlinPackages.kotlin.collections.Collection where Self : KotlinRuntimeSupport._KotlinBridged {
+extension ExportedKotlinPackages.kotlin.collections.Collection where Self : KotlinRuntimeSupport._KotlinBridged {
     public var size: Swift.Int32 {
         get {
             return kotlin_collections_Collection_size_get(self.__externalRCRef())
@@ -3250,7 +3232,7 @@ public extension ExportedKotlinPackages.kotlin.collections.Collection where Self
         return kotlin_collections_Collection_contains__TypesOfArguments__Swift_Optional_KotlinRuntime_KotlinBase___(self.__externalRCRef(), element.map { it in it.__externalRCRef() } ?? nil)
     }
     public static func ~=(
-        this: ExportedKotlinPackages.kotlin.collections.Collection,
+        this: Self,
         element: KotlinRuntime.KotlinBase?
     ) -> Swift.Bool {
         this.contains(element: element)
@@ -3266,21 +3248,21 @@ public extension ExportedKotlinPackages.kotlin.collections.Collection where Self
 }
 extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlin.collections.Collection where Wrapped : ExportedKotlinPackages.kotlin.collections._Collection {
 }
-public extension ExportedKotlinPackages.kotlin.collections.MutableIterable where Self : KotlinRuntimeSupport._KotlinBridged {
+extension ExportedKotlinPackages.kotlin.collections.MutableIterable where Self : KotlinRuntimeSupport._KotlinBridged {
     public func iterator() -> any ExportedKotlinPackages.kotlin.collections.MutableIterator {
         return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlin_collections_MutableIterable_iterator(self.__externalRCRef())) as! any ExportedKotlinPackages.kotlin.collections.MutableIterator
     }
 }
 extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlin.collections.MutableIterable where Wrapped : ExportedKotlinPackages.kotlin.collections._MutableIterable {
 }
-public extension ExportedKotlinPackages.kotlin.collections.MutableIterator where Self : KotlinRuntimeSupport._KotlinBridged {
+extension ExportedKotlinPackages.kotlin.collections.MutableIterator where Self : KotlinRuntimeSupport._KotlinBridged {
     public func remove() -> Swift.Void {
         return kotlin_collections_MutableIterator_remove(self.__externalRCRef())
     }
 }
 extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlin.collections.MutableIterator where Wrapped : ExportedKotlinPackages.kotlin.collections._MutableIterator {
 }
-public extension ExportedKotlinPackages.kotlin.collections.Set where Self : KotlinRuntimeSupport._KotlinBridged {
+extension ExportedKotlinPackages.kotlin.collections.Set where Self : KotlinRuntimeSupport._KotlinBridged {
     public var size: Swift.Int32 {
         get {
             return kotlin_collections_Set_size_get(self.__externalRCRef())
@@ -3295,7 +3277,7 @@ public extension ExportedKotlinPackages.kotlin.collections.Set where Self : Kotl
         return kotlin_collections_Set_contains__TypesOfArguments__Swift_Optional_KotlinRuntime_KotlinBase___(self.__externalRCRef(), element.map { it in it.__externalRCRef() } ?? nil)
     }
     public static func ~=(
-        this: ExportedKotlinPackages.kotlin.collections.Set,
+        this: Self,
         element: KotlinRuntime.KotlinBase?
     ) -> Swift.Bool {
         this.contains(element: element)

@@ -10,9 +10,8 @@ import org.jetbrains.kotlin.sir.SirBridged
 import org.jetbrains.kotlin.sir.SirDeclarationContainer
 import org.jetbrains.kotlin.sir.SirFunctionBody
 import org.jetbrains.kotlin.sir.SirModule
-import org.jetbrains.kotlin.sir.allContainers
-import org.jetbrains.kotlin.sir.allSubscripts
-import org.jetbrains.kotlin.sir.allVariables
+import org.jetbrains.kotlin.sir.SirSubscript
+import org.jetbrains.kotlin.sir.SirVariable
 import org.jetbrains.kotlin.sir.util.Comparators
 import org.jetbrains.kotlin.sir.util.accessors
 import org.jetbrains.sir.printer.impl.CBridgePrinter
@@ -75,19 +74,18 @@ private fun collectBridges(container: SirDeclarationContainer): List<SirBridge> 
     addAll(container.declarations.filterIsInstance<SirBridged>().flatMap { it.bridges })
 
     addAll(
-        container
-            .allVariables()
+        container.declarations
+            .filterIsInstance<SirVariable>()
             .flatMap { it.accessors.flatMap { it.bridges } }
     )
     addAll(
-        container
-            .allSubscripts()
+        container.declarations
+            .filterIsInstance<SirSubscript>()
             .flatMap { it.accessors.flatMap { it.bridges } }
     )
     addAll(
-        container
-            .allContainers()
-            .toList()
+        container.declarations
+            .filterIsInstance<SirDeclarationContainer>()
             .flatMap { collectBridges(it) }
     )
 }

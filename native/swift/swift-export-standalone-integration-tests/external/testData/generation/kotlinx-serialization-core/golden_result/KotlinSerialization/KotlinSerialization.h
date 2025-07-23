@@ -125,7 +125,7 @@ void * kotlinx_serialization_builtins_serializer__TypesOfArguments__ExportedKotl
 
 void * kotlinx_serialization_builtins_serializer__TypesOfArguments__ExportedKotlinPackages_kotlin_String_Companion__(void * receiver);
 
-void * kotlinx_serialization_builtins_serializer__TypesOfArguments__Swift_Void__(void receiver);
+void * kotlinx_serialization_builtins_serializer__TypesOfArguments__Swift_Void__();
 
 void * _Nullable kotlinx_serialization_decodeFromHexString__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_BinaryFormat_anyU20ExportedKotlinPackages_kotlinx_serialization_DeserializationStrategy_Swift_String__(void * receiver, void * deserializer, NSString * hex);
 

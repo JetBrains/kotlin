@@ -48,7 +48,7 @@ public class SirTrampolineFunction(
             listOf(
                 "${"try ".takeIf { source.errorType != SirType.never } ?: ""}${source.swiftFqName}(${this.allParameters.joinToString { it.forward ?: error("unreachable") }})"
             )
-        )
+        ).takeUnless { attributes.any { it is SirAttribute.Available && it.isUnusable } }
         set(_) = Unit
 }
 
