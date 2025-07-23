@@ -4,9 +4,9 @@ import KotlinRuntime
 import KotlinRuntimeSupport
 
 extension ExportedKotlinPackages.org.main.second {
-    public static var deps_instance_2: KotlinRuntime.KotlinBase {
+    public static var deps_instance_2: any KotlinRuntimeSupport._KotlinBridgeable {
         get {
-            return KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: org_main_second_deps_instance_2_get())
+            return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: org_main_second_deps_instance_2_get()) as! any KotlinRuntimeSupport._KotlinBridgeable
         }
     }
 }

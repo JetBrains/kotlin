@@ -66,7 +66,7 @@ public final class DATA_CLASS: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._K
     }
     public static func ==(
         this: main.DATA_CLASS,
-        other: KotlinRuntime.KotlinBase?
+        other: (any KotlinRuntimeSupport._KotlinBridgeable)?
     ) -> Swift.Bool {
         this.equals(other: other)
     }
@@ -76,9 +76,9 @@ public final class DATA_CLASS: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._K
         return main.DATA_CLASS.__createClassWrapper(externalRCRef: DATA_CLASS_copy__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), a))
     }
     public func equals(
-        other: KotlinRuntime.KotlinBase?
+        other: (any KotlinRuntimeSupport._KotlinBridgeable)?
     ) -> Swift.Bool {
-        return DATA_CLASS_equals__TypesOfArguments__Swift_Optional_KotlinRuntime_KotlinBase___(self.__externalRCRef(), other.map { it in it.__externalRCRef() } ?? nil)
+        return DATA_CLASS_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), other.map { it in it.intoRCRefUnsafe() } ?? nil)
     }
     public func hashCode() -> Swift.Int32 {
         return DATA_CLASS_hashCode(self.__externalRCRef())
@@ -98,9 +98,9 @@ public final class DATA_CLASS_WITH_MANY_FIELDS: KotlinRuntime.KotlinBase, Kotlin
             return DATA_CLASS_WITH_MANY_FIELDS_b_get(self.__externalRCRef())
         }
     }
-    public var c: KotlinRuntime.KotlinBase {
+    public var c: any KotlinRuntimeSupport._KotlinBridgeable {
         get {
-            return KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: DATA_CLASS_WITH_MANY_FIELDS_c_get(self.__externalRCRef()))
+            return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: DATA_CLASS_WITH_MANY_FIELDS_c_get(self.__externalRCRef())) as! any KotlinRuntimeSupport._KotlinBridgeable
         }
     }
     public var d: Swift.Double {
@@ -122,30 +122,30 @@ public final class DATA_CLASS_WITH_MANY_FIELDS: KotlinRuntime.KotlinBase, Kotlin
     public init(
         a: Swift.Int32,
         b: Swift.String,
-        c: KotlinRuntime.KotlinBase
+        c: any KotlinRuntimeSupport._KotlinBridgeable
     ) {
         if Self.self != main.DATA_CLASS_WITH_MANY_FIELDS.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.DATA_CLASS_WITH_MANY_FIELDS ") }
         let __kt = __root___DATA_CLASS_WITH_MANY_FIELDS_init_allocate()
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
-        __root___DATA_CLASS_WITH_MANY_FIELDS_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32_Swift_String_KotlinRuntime_KotlinBase__(__kt, a, b, c.__externalRCRef())
+        __root___DATA_CLASS_WITH_MANY_FIELDS_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Int32_Swift_String_anyU20KotlinRuntimeSupport__KotlinBridgeable__(__kt, a, b, c.intoRCRefUnsafe())
     }
     public static func ==(
         this: main.DATA_CLASS_WITH_MANY_FIELDS,
-        other: KotlinRuntime.KotlinBase?
+        other: (any KotlinRuntimeSupport._KotlinBridgeable)?
     ) -> Swift.Bool {
         this.equals(other: other)
     }
     public func copy(
         a: Swift.Int32,
         b: Swift.String,
-        c: KotlinRuntime.KotlinBase
+        c: any KotlinRuntimeSupport._KotlinBridgeable
     ) -> main.DATA_CLASS_WITH_MANY_FIELDS {
-        return main.DATA_CLASS_WITH_MANY_FIELDS.__createClassWrapper(externalRCRef: DATA_CLASS_WITH_MANY_FIELDS_copy__TypesOfArguments__Swift_Int32_Swift_String_KotlinRuntime_KotlinBase__(self.__externalRCRef(), a, b, c.__externalRCRef()))
+        return main.DATA_CLASS_WITH_MANY_FIELDS.__createClassWrapper(externalRCRef: DATA_CLASS_WITH_MANY_FIELDS_copy__TypesOfArguments__Swift_Int32_Swift_String_anyU20KotlinRuntimeSupport__KotlinBridgeable__(self.__externalRCRef(), a, b, c.intoRCRefUnsafe()))
     }
     public func equals(
-        other: KotlinRuntime.KotlinBase?
+        other: (any KotlinRuntimeSupport._KotlinBridgeable)?
     ) -> Swift.Bool {
-        return DATA_CLASS_WITH_MANY_FIELDS_equals__TypesOfArguments__Swift_Optional_KotlinRuntime_KotlinBase___(self.__externalRCRef(), other.map { it in it.__externalRCRef() } ?? nil)
+        return DATA_CLASS_WITH_MANY_FIELDS_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), other.map { it in it.intoRCRefUnsafe() } ?? nil)
     }
     public func hashCode() -> Swift.Int32 {
         return DATA_CLASS_WITH_MANY_FIELDS_hashCode(self.__externalRCRef())
@@ -155,18 +155,18 @@ public final class DATA_CLASS_WITH_MANY_FIELDS: KotlinRuntime.KotlinBase, Kotlin
     }
 }
 public final class DATA_CLASS_WITH_REF: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
-    public var o: KotlinRuntime.KotlinBase {
+    public var o: any KotlinRuntimeSupport._KotlinBridgeable {
         get {
-            return KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: DATA_CLASS_WITH_REF_o_get(self.__externalRCRef()))
+            return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: DATA_CLASS_WITH_REF_o_get(self.__externalRCRef())) as! any KotlinRuntimeSupport._KotlinBridgeable
         }
     }
     public init(
-        o: KotlinRuntime.KotlinBase
+        o: any KotlinRuntimeSupport._KotlinBridgeable
     ) {
         if Self.self != main.DATA_CLASS_WITH_REF.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.DATA_CLASS_WITH_REF ") }
         let __kt = __root___DATA_CLASS_WITH_REF_init_allocate()
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
-        __root___DATA_CLASS_WITH_REF_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_KotlinRuntime_KotlinBase__(__kt, o.__externalRCRef())
+        __root___DATA_CLASS_WITH_REF_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_anyU20KotlinRuntimeSupport__KotlinBridgeable__(__kt, o.intoRCRefUnsafe())
     }
     package override init(
         __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
@@ -176,19 +176,19 @@ public final class DATA_CLASS_WITH_REF: KotlinRuntime.KotlinBase, KotlinRuntimeS
     }
     public static func ==(
         this: main.DATA_CLASS_WITH_REF,
-        other: KotlinRuntime.KotlinBase?
+        other: (any KotlinRuntimeSupport._KotlinBridgeable)?
     ) -> Swift.Bool {
         this.equals(other: other)
     }
     public func copy(
-        o: KotlinRuntime.KotlinBase
+        o: any KotlinRuntimeSupport._KotlinBridgeable
     ) -> main.DATA_CLASS_WITH_REF {
-        return main.DATA_CLASS_WITH_REF.__createClassWrapper(externalRCRef: DATA_CLASS_WITH_REF_copy__TypesOfArguments__KotlinRuntime_KotlinBase__(self.__externalRCRef(), o.__externalRCRef()))
+        return main.DATA_CLASS_WITH_REF.__createClassWrapper(externalRCRef: DATA_CLASS_WITH_REF_copy__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__(self.__externalRCRef(), o.intoRCRefUnsafe()))
     }
     public func equals(
-        other: KotlinRuntime.KotlinBase?
+        other: (any KotlinRuntimeSupport._KotlinBridgeable)?
     ) -> Swift.Bool {
-        return DATA_CLASS_WITH_REF_equals__TypesOfArguments__Swift_Optional_KotlinRuntime_KotlinBase___(self.__externalRCRef(), other.map { it in it.__externalRCRef() } ?? nil)
+        return DATA_CLASS_WITH_REF_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), other.map { it in it.intoRCRefUnsafe() } ?? nil)
     }
     public func hashCode() -> Swift.Int32 {
         return DATA_CLASS_WITH_REF_hashCode(self.__externalRCRef())
@@ -610,14 +610,14 @@ extension ExportedKotlinPackages.namespace.deeper {
         }
         public static func ==(
             this: ExportedKotlinPackages.namespace.deeper.DATA_OBJECT_WITH_PACKAGE,
-            other: KotlinRuntime.KotlinBase?
+            other: (any KotlinRuntimeSupport._KotlinBridgeable)?
         ) -> Swift.Bool {
             this.equals(other: other)
         }
         public func equals(
-            other: KotlinRuntime.KotlinBase?
+            other: (any KotlinRuntimeSupport._KotlinBridgeable)?
         ) -> Swift.Bool {
-            return namespace_deeper_DATA_OBJECT_WITH_PACKAGE_equals__TypesOfArguments__Swift_Optional_KotlinRuntime_KotlinBase___(self.__externalRCRef(), other.map { it in it.__externalRCRef() } ?? nil)
+            return namespace_deeper_DATA_OBJECT_WITH_PACKAGE_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), other.map { it in it.intoRCRefUnsafe() } ?? nil)
         }
         public func foo() -> Swift.Int32 {
             return namespace_deeper_DATA_OBJECT_WITH_PACKAGE_foo(self.__externalRCRef())

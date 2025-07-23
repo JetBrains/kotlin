@@ -1,10 +1,11 @@
 import Generics
 import Testing
+import KotlinRuntime
 
 @Test
 func smoke() throws {
     let foo = Foo(i: 5)
-    try #require(foo == id(param: foo))
+    try #require(foo == id(param: foo) as! KotlinBase)
     try #require(nil == id(param: nil))
 }
 

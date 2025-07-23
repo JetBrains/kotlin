@@ -101,7 +101,7 @@ extension ExportedKotlinPackages.kotlinx.serialization {
         }
         func deserialize(
             decoder: any ExportedKotlinPackages.kotlinx.serialization.encoding.Decoder
-        ) -> KotlinRuntime.KotlinBase?
+        ) -> (any KotlinRuntimeSupport._KotlinBridgeable)?
     }
     @objc(_DeserializationStrategy)
     package protocol _DeserializationStrategy {
@@ -128,7 +128,7 @@ extension ExportedKotlinPackages.kotlinx.serialization {
         }
         func serialize(
             encoder: any ExportedKotlinPackages.kotlinx.serialization.encoding.Encoder,
-            value: KotlinRuntime.KotlinBase?
+            value: (any KotlinRuntimeSupport._KotlinBridgeable)?
         ) -> Swift.Void
     }
     @objc(_SerializationStrategy)
@@ -147,14 +147,14 @@ extension ExportedKotlinPackages.kotlinx.serialization {
         }
         public func deserialize(
             decoder: any ExportedKotlinPackages.kotlinx.serialization.encoding.Decoder
-        ) -> KotlinRuntime.KotlinBase {
-            return KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: kotlinx_serialization_ContextualSerializer_deserialize__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_encoding_Decoder__(self.__externalRCRef(), decoder.__externalRCRef()))
+        ) -> any KotlinRuntimeSupport._KotlinBridgeable {
+            return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_serialization_ContextualSerializer_deserialize__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_encoding_Decoder__(self.__externalRCRef(), decoder.__externalRCRef())) as! any KotlinRuntimeSupport._KotlinBridgeable
         }
         public func serialize(
             encoder: any ExportedKotlinPackages.kotlinx.serialization.encoding.Encoder,
-            value: KotlinRuntime.KotlinBase
+            value: any KotlinRuntimeSupport._KotlinBridgeable
         ) -> Swift.Void {
-            return kotlinx_serialization_ContextualSerializer_serialize__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_encoding_Encoder_KotlinRuntime_KotlinBase__(self.__externalRCRef(), encoder.__externalRCRef(), value.__externalRCRef())
+            return kotlinx_serialization_ContextualSerializer_serialize__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_encoding_Encoder_anyU20KotlinRuntimeSupport__KotlinBridgeable__(self.__externalRCRef(), encoder.__externalRCRef(), value.intoRCRefUnsafe())
         }
         public init(
             serializableClass: Swift.Never
@@ -261,9 +261,9 @@ extension ExportedKotlinPackages.kotlinx.serialization {
         }
         public override func findPolymorphicSerializerOrNull(
             encoder: any ExportedKotlinPackages.kotlinx.serialization.encoding.Encoder,
-            value: KotlinRuntime.KotlinBase
+            value: any KotlinRuntimeSupport._KotlinBridgeable
         ) -> (any ExportedKotlinPackages.kotlinx.serialization.SerializationStrategy)? {
-            return { switch kotlinx_serialization_SealedClassSerializer_findPolymorphicSerializerOrNull__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_encoding_Encoder_KotlinRuntime_KotlinBase__(self.__externalRCRef(), encoder.__externalRCRef(), value.__externalRCRef()) { case nil: .none; case let res: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: res) as! any ExportedKotlinPackages.kotlinx.serialization.SerializationStrategy; } }()
+            return { switch kotlinx_serialization_SealedClassSerializer_findPolymorphicSerializerOrNull__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_encoding_Encoder_anyU20KotlinRuntimeSupport__KotlinBridgeable__(self.__externalRCRef(), encoder.__externalRCRef(), value.intoRCRefUnsafe()) { case nil: .none; case let res: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: res) as! any ExportedKotlinPackages.kotlinx.serialization.SerializationStrategy; } }()
         }
         public init(
             serialName: Swift.String,
@@ -368,20 +368,20 @@ extension ExportedKotlinPackages.kotlinx.serialization.`internal` {
     open class AbstractCollectionSerializer: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
         open func deserialize(
             decoder: any ExportedKotlinPackages.kotlinx.serialization.encoding.Decoder
-        ) -> KotlinRuntime.KotlinBase? {
-            return { switch kotlinx_serialization_internal_AbstractCollectionSerializer_deserialize__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_encoding_Decoder__(self.__externalRCRef(), decoder.__externalRCRef()) { case nil: .none; case let res: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: res); } }()
+        ) -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
+            return { switch kotlinx_serialization_internal_AbstractCollectionSerializer_deserialize__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_encoding_Decoder__(self.__externalRCRef(), decoder.__externalRCRef()) { case nil: .none; case let res: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: res) as! any KotlinRuntimeSupport._KotlinBridgeable; } }()
         }
         public final func merge(
             decoder: any ExportedKotlinPackages.kotlinx.serialization.encoding.Decoder,
-            previous: KotlinRuntime.KotlinBase?
-        ) -> KotlinRuntime.KotlinBase? {
-            return { switch kotlinx_serialization_internal_AbstractCollectionSerializer_merge__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_encoding_Decoder_Swift_Optional_KotlinRuntime_KotlinBase___(self.__externalRCRef(), decoder.__externalRCRef(), previous.map { it in it.__externalRCRef() } ?? nil) { case nil: .none; case let res: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: res); } }()
+            previous: (any KotlinRuntimeSupport._KotlinBridgeable)?
+        ) -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
+            return { switch kotlinx_serialization_internal_AbstractCollectionSerializer_merge__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_encoding_Decoder_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), decoder.__externalRCRef(), previous.map { it in it.intoRCRefUnsafe() } ?? nil) { case nil: .none; case let res: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: res) as! any KotlinRuntimeSupport._KotlinBridgeable; } }()
         }
         open func serialize(
             encoder: any ExportedKotlinPackages.kotlinx.serialization.encoding.Encoder,
-            value: KotlinRuntime.KotlinBase?
+            value: (any KotlinRuntimeSupport._KotlinBridgeable)?
         ) -> Swift.Void {
-            return kotlinx_serialization_internal_AbstractCollectionSerializer_serialize__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_encoding_Encoder_Swift_Optional_KotlinRuntime_KotlinBase___(self.__externalRCRef(), encoder.__externalRCRef(), value.map { it in it.__externalRCRef() } ?? nil)
+            return kotlinx_serialization_internal_AbstractCollectionSerializer_serialize__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_encoding_Encoder_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), encoder.__externalRCRef(), value.map { it in it.intoRCRefUnsafe() } ?? nil)
         }
         package override init(
             __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
@@ -398,8 +398,8 @@ extension ExportedKotlinPackages.kotlinx.serialization.`internal` {
         }
         public final func deserialize(
             decoder: any ExportedKotlinPackages.kotlinx.serialization.encoding.Decoder
-        ) -> KotlinRuntime.KotlinBase {
-            return KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: kotlinx_serialization_internal_AbstractPolymorphicSerializer_deserialize__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_encoding_Decoder__(self.__externalRCRef(), decoder.__externalRCRef()))
+        ) -> any KotlinRuntimeSupport._KotlinBridgeable {
+            return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_serialization_internal_AbstractPolymorphicSerializer_deserialize__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_encoding_Decoder__(self.__externalRCRef(), decoder.__externalRCRef())) as! any KotlinRuntimeSupport._KotlinBridgeable
         }
         open func findPolymorphicSerializerOrNull(
             decoder: any ExportedKotlinPackages.kotlinx.serialization.encoding.CompositeDecoder,
@@ -409,15 +409,15 @@ extension ExportedKotlinPackages.kotlinx.serialization.`internal` {
         }
         open func findPolymorphicSerializerOrNull(
             encoder: any ExportedKotlinPackages.kotlinx.serialization.encoding.Encoder,
-            value: KotlinRuntime.KotlinBase
+            value: any KotlinRuntimeSupport._KotlinBridgeable
         ) -> (any ExportedKotlinPackages.kotlinx.serialization.SerializationStrategy)? {
-            return { switch kotlinx_serialization_internal_AbstractPolymorphicSerializer_findPolymorphicSerializerOrNull__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_encoding_Encoder_KotlinRuntime_KotlinBase__(self.__externalRCRef(), encoder.__externalRCRef(), value.__externalRCRef()) { case nil: .none; case let res: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: res) as! any ExportedKotlinPackages.kotlinx.serialization.SerializationStrategy; } }()
+            return { switch kotlinx_serialization_internal_AbstractPolymorphicSerializer_findPolymorphicSerializerOrNull__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_encoding_Encoder_anyU20KotlinRuntimeSupport__KotlinBridgeable__(self.__externalRCRef(), encoder.__externalRCRef(), value.intoRCRefUnsafe()) { case nil: .none; case let res: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: res) as! any ExportedKotlinPackages.kotlinx.serialization.SerializationStrategy; } }()
         }
         public final func serialize(
             encoder: any ExportedKotlinPackages.kotlinx.serialization.encoding.Encoder,
-            value: KotlinRuntime.KotlinBase
+            value: any KotlinRuntimeSupport._KotlinBridgeable
         ) -> Swift.Void {
-            return kotlinx_serialization_internal_AbstractPolymorphicSerializer_serialize__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_encoding_Encoder_KotlinRuntime_KotlinBase__(self.__externalRCRef(), encoder.__externalRCRef(), value.__externalRCRef())
+            return kotlinx_serialization_internal_AbstractPolymorphicSerializer_serialize__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_encoding_Encoder_anyU20KotlinRuntimeSupport__KotlinBridgeable__(self.__externalRCRef(), encoder.__externalRCRef(), value.intoRCRefUnsafe())
         }
         package override init(
             __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
@@ -472,9 +472,9 @@ extension ExportedKotlinPackages.kotlinx.serialization.`internal` {
         }
         open override func serialize(
             encoder: any ExportedKotlinPackages.kotlinx.serialization.encoding.Encoder,
-            value: KotlinRuntime.KotlinBase?
+            value: (any KotlinRuntimeSupport._KotlinBridgeable)?
         ) -> Swift.Void {
-            return kotlinx_serialization_internal_MapLikeSerializer_serialize__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_encoding_Encoder_Swift_Optional_KotlinRuntime_KotlinBase___(self.__externalRCRef(), encoder.__externalRCRef(), value.map { it in it.__externalRCRef() } ?? nil)
+            return kotlinx_serialization_internal_MapLikeSerializer_serialize__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_encoding_Encoder_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), encoder.__externalRCRef(), value.map { it in it.intoRCRefUnsafe() } ?? nil)
         }
         package override init(
             __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
@@ -1816,8 +1816,8 @@ extension ExportedKotlinPackages.kotlinx.serialization.encoding {
         ) -> Swift.String {
             return kotlinx_serialization_encoding_AbstractDecoder_decodeStringElement__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor_Swift_Int32__(self.__externalRCRef(), descriptor.__externalRCRef(), index)
         }
-        open func decodeValue() -> KotlinRuntime.KotlinBase {
-            return KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: kotlinx_serialization_encoding_AbstractDecoder_decodeValue(self.__externalRCRef()))
+        open func decodeValue() -> any KotlinRuntimeSupport._KotlinBridgeable {
+            return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlinx_serialization_encoding_AbstractDecoder_decodeValue(self.__externalRCRef())) as! any KotlinRuntimeSupport._KotlinBridgeable
         }
         open func endStructure(
             descriptor: any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor
@@ -1975,9 +1975,9 @@ extension ExportedKotlinPackages.kotlinx.serialization.encoding {
             return kotlinx_serialization_encoding_AbstractEncoder_encodeStringElement__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor_Swift_Int32_Swift_String__(self.__externalRCRef(), descriptor.__externalRCRef(), index, value)
         }
         open func encodeValue(
-            value: KotlinRuntime.KotlinBase
+            value: any KotlinRuntimeSupport._KotlinBridgeable
         ) -> Swift.Void {
-            return kotlinx_serialization_encoding_AbstractEncoder_encodeValue__TypesOfArguments__KotlinRuntime_KotlinBase__(self.__externalRCRef(), value.__externalRCRef())
+            return kotlinx_serialization_encoding_AbstractEncoder_encodeValue__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__(self.__externalRCRef(), value.intoRCRefUnsafe())
         }
         open func endStructure(
             descriptor: any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor
@@ -2007,8 +2007,8 @@ extension ExportedKotlinPackages.kotlinx.serialization.DeserializationStrategy w
     }
     public func deserialize(
         decoder: any ExportedKotlinPackages.kotlinx.serialization.encoding.Decoder
-    ) -> KotlinRuntime.KotlinBase? {
-        return { switch kotlinx_serialization_DeserializationStrategy_deserialize__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_encoding_Decoder__(self.__externalRCRef(), decoder.__externalRCRef()) { case nil: .none; case let res: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: res); } }()
+    ) -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
+        return { switch kotlinx_serialization_DeserializationStrategy_deserialize__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_encoding_Decoder__(self.__externalRCRef(), decoder.__externalRCRef()) { case nil: .none; case let res: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: res) as! any KotlinRuntimeSupport._KotlinBridgeable; } }()
     }
 }
 extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlinx.serialization.DeserializationStrategy where Wrapped : ExportedKotlinPackages.kotlinx.serialization._DeserializationStrategy {
@@ -2039,9 +2039,9 @@ extension ExportedKotlinPackages.kotlinx.serialization.SerializationStrategy whe
     }
     public func serialize(
         encoder: any ExportedKotlinPackages.kotlinx.serialization.encoding.Encoder,
-        value: KotlinRuntime.KotlinBase?
+        value: (any KotlinRuntimeSupport._KotlinBridgeable)?
     ) -> Swift.Void {
-        return kotlinx_serialization_SerializationStrategy_serialize__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_encoding_Encoder_Swift_Optional_KotlinRuntime_KotlinBase___(self.__externalRCRef(), encoder.__externalRCRef(), value.map { it in it.__externalRCRef() } ?? nil)
+        return kotlinx_serialization_SerializationStrategy_serialize__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_encoding_Encoder_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), encoder.__externalRCRef(), value.map { it in it.intoRCRefUnsafe() } ?? nil)
     }
 }
 extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlinx.serialization.SerializationStrategy where Wrapped : ExportedKotlinPackages.kotlinx.serialization._SerializationStrategy {

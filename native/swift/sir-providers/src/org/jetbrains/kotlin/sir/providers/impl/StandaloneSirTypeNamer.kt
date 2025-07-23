@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.sir.SirUnsupportedType
 import org.jetbrains.kotlin.sir.providers.SirTypeNamer
 import org.jetbrains.kotlin.sir.providers.source.kaSymbolOrNull
 import org.jetbrains.kotlin.sir.providers.utils.KotlinRuntimeModule
+import org.jetbrains.kotlin.sir.providers.utils.KotlinRuntimeSupportModule
 import org.jetbrains.kotlin.sir.util.SirSwiftModule
 import org.jetbrains.kotlin.sir.util.swiftName
 
@@ -42,13 +43,15 @@ internal object StandaloneSirTypeNamer : SirTypeNamer {
     } ?: kotlinFqName(type)
 
     private fun kotlinFqName(type: SirExistentialType): String = type.protocols.single().let {
-        it.kaSymbolOrNull<KaClassLikeSymbol>()!!.classId!!.asFqNameString()
+        if (it == KotlinRuntimeSupportModule.kotlinBridgeable) "kotlin.Any"
+        else it.kaSymbolOrNull<KaClassLikeSymbol>()!!.classId!!.asFqNameString()
     }
 
     @OptIn(KaExperimentalApi::class)
     private fun kotlinFqName(type: SirNominalType): String {
         return when (val declaration = type.typeDeclaration) {
             KotlinRuntimeModule.kotlinBase -> "kotlin.Any"
+            KotlinRuntimeSupportModule.kotlinBridgeable -> "kotlin.Any"
             SirSwiftModule.string -> "kotlin.String"
 
             SirSwiftModule.bool -> "Boolean"

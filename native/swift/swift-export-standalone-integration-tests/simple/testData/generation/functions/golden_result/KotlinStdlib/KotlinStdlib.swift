@@ -7,8 +7,8 @@ extension ExportedKotlinPackages.kotlin.collections.Iterator where Self : Kotlin
     public func hasNext() -> Swift.Bool {
         return kotlin_collections_Iterator_hasNext(self.__externalRCRef())
     }
-    public func next() -> KotlinRuntime.KotlinBase? {
-        return { switch kotlin_collections_Iterator_next(self.__externalRCRef()) { case nil: .none; case let res: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: res); } }()
+    public func next() -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
+        return { switch kotlin_collections_Iterator_next(self.__externalRCRef()) { case nil: .none; case let res: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: res) as! any KotlinRuntimeSupport._KotlinBridgeable; } }()
     }
 }
 extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlin.collections.Iterator where Wrapped : ExportedKotlinPackages.kotlin.collections._Iterator {
@@ -16,7 +16,7 @@ extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlin
 extension ExportedKotlinPackages.kotlin.collections {
     public protocol Iterator: KotlinRuntime.KotlinBase {
         func hasNext() -> Swift.Bool
-        func next() -> KotlinRuntime.KotlinBase?
+        func next() -> (any KotlinRuntimeSupport._KotlinBridgeable)?
     }
     @objc(_Iterator)
     package protocol _Iterator {

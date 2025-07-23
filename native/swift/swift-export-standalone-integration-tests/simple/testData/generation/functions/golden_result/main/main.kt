@@ -298,8 +298,8 @@ public fun operators_Foo_divAssign__TypesOfArguments__ExportedKotlinPackages_ope
     __self.divAssign(__other)
 }
 
-@ExportedBridge("operators_Foo_equals__TypesOfArguments__Swift_Optional_KotlinRuntime_KotlinBase___")
-public fun operators_Foo_equals__TypesOfArguments__Swift_Optional_KotlinRuntime_KotlinBase___(self: kotlin.native.internal.NativePtr, other: kotlin.native.internal.NativePtr): Boolean {
+@ExportedBridge("operators_Foo_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___")
+public fun operators_Foo_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self: kotlin.native.internal.NativePtr, other: kotlin.native.internal.NativePtr): Boolean {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as operators.Foo
     val __other = if (other == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(other) as kotlin.Any
     val _result = __self.equals(__other)

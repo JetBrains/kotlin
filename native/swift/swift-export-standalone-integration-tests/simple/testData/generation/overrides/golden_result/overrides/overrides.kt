@@ -52,8 +52,8 @@ public fun Child_contains__TypesOfArguments__Swift_Int32__(self: kotlin.native.i
     return _result
 }
 
-@ExportedBridge("Child_equals__TypesOfArguments__Swift_Optional_KotlinRuntime_KotlinBase___")
-public fun Child_equals__TypesOfArguments__Swift_Optional_KotlinRuntime_KotlinBase___(self: kotlin.native.internal.NativePtr, to: kotlin.native.internal.NativePtr): Boolean {
+@ExportedBridge("Child_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___")
+public fun Child_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self: kotlin.native.internal.NativePtr, to: kotlin.native.internal.NativePtr): Boolean {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Child
     val __to = if (to == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(to) as kotlin.Any
     val _result = __self.equals(__to)
@@ -228,8 +228,8 @@ public fun Parent_contains__TypesOfArguments__Swift_Int32__(self: kotlin.native.
     return _result
 }
 
-@ExportedBridge("Parent_equals__TypesOfArguments__Swift_Optional_KotlinRuntime_KotlinBase___")
-public fun Parent_equals__TypesOfArguments__Swift_Optional_KotlinRuntime_KotlinBase___(self: kotlin.native.internal.NativePtr, to: kotlin.native.internal.NativePtr): Boolean {
+@ExportedBridge("Parent_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___")
+public fun Parent_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self: kotlin.native.internal.NativePtr, to: kotlin.native.internal.NativePtr): Boolean {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as Parent
     val __to = if (to == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(to) as kotlin.Any
     val _result = __self.equals(__to)

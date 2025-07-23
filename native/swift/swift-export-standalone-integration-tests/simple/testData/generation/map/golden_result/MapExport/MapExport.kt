@@ -4,8 +4,8 @@ import kotlin.native.internal.ExportedBridge
 import kotlinx.cinterop.*
 import kotlinx.cinterop.internal.convertBlockPtrToKotlinFunction
 
-@ExportedBridge("__root___testMapAnyLong__TypesOfArguments__Swift_Dictionary_KotlinRuntime_KotlinBase_Swift_Int64___")
-public fun __root___testMapAnyLong__TypesOfArguments__Swift_Dictionary_KotlinRuntime_KotlinBase_Swift_Int64___(m: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+@ExportedBridge("__root___testMapAnyLong__TypesOfArguments__Swift_Dictionary_anyU20KotlinRuntimeSupport__KotlinBridgeable_Swift_Int64___")
+public fun __root___testMapAnyLong__TypesOfArguments__Swift_Dictionary_anyU20KotlinRuntimeSupport__KotlinBridgeable_Swift_Int64___(m: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __m = interpretObjCPointer<kotlin.collections.Map<kotlin.Any, Long>>(m)
     val _result = testMapAnyLong(__m)
     return _result.objcPtr()
@@ -25,8 +25,8 @@ public fun __root___testMapListIntSetInt__TypesOfArguments__Swift_Dictionary_Swi
     return _result.objcPtr()
 }
 
-@ExportedBridge("__root___testMapLongAny__TypesOfArguments__Swift_Dictionary_Swift_Int64_KotlinRuntime_KotlinBase___")
-public fun __root___testMapLongAny__TypesOfArguments__Swift_Dictionary_Swift_Int64_KotlinRuntime_KotlinBase___(m: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+@ExportedBridge("__root___testMapLongAny__TypesOfArguments__Swift_Dictionary_Swift_Int64_anyU20KotlinRuntimeSupport__KotlinBridgeable___")
+public fun __root___testMapLongAny__TypesOfArguments__Swift_Dictionary_Swift_Int64_anyU20KotlinRuntimeSupport__KotlinBridgeable___(m: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __m = interpretObjCPointer<kotlin.collections.Map<Long, kotlin.Any>>(m)
     val _result = testMapLongAny(__m)
     return _result.objcPtr()
@@ -67,8 +67,8 @@ public fun __root___testMapStringInt__TypesOfArguments__Swift_Dictionary_Swift_S
     return _result.objcPtr()
 }
 
-@ExportedBridge("__root___testStarMap__TypesOfArguments__Swift_Dictionary_KotlinRuntime_KotlinBase_KotlinRuntime_KotlinBase___")
-public fun __root___testStarMap__TypesOfArguments__Swift_Dictionary_KotlinRuntime_KotlinBase_KotlinRuntime_KotlinBase___(m: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+@ExportedBridge("__root___testStarMap__TypesOfArguments__Swift_Dictionary_anyU20KotlinRuntimeSupport__KotlinBridgeable_anyU20KotlinRuntimeSupport__KotlinBridgeable___")
+public fun __root___testStarMap__TypesOfArguments__Swift_Dictionary_anyU20KotlinRuntimeSupport__KotlinBridgeable_anyU20KotlinRuntimeSupport__KotlinBridgeable___(m: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __m = interpretObjCPointer<kotlin.collections.Map<kotlin.Any, kotlin.Any>>(m)
     val _result = testStarMap(__m)
     return _result.objcPtr()

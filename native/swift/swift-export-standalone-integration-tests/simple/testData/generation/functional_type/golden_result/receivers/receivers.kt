@@ -16,8 +16,8 @@ public fun __root___foo__TypesOfArguments__U28Swift_Int32U29202D_U20Swift_Void__
     foo(__i)
 }
 
-@ExportedBridge("__root___fooAny__TypesOfArguments__U28KotlinRuntime_KotlinBaseU29202D_U20Swift_Void__")
-public fun __root___fooAny__TypesOfArguments__U28KotlinRuntime_KotlinBaseU29202D_U20Swift_Void__(i: kotlin.native.internal.NativePtr): Unit {
+@ExportedBridge("__root___fooAny__TypesOfArguments__U28anyU20KotlinRuntimeSupport__KotlinBridgeableU29202D_U20Swift_Void__")
+public fun __root___fooAny__TypesOfArguments__U28anyU20KotlinRuntimeSupport__KotlinBridgeableU29202D_U20Swift_Void__(i: kotlin.native.internal.NativePtr): Unit {
     val __i = run {
         val kotlinFun = convertBlockPtrToKotlinFunction<(kotlin.native.internal.NativePtr)->Unit>(i);
         { arg0: kotlin.Any ->

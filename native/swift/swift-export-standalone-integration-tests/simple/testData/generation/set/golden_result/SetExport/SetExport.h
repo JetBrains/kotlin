@@ -5,7 +5,7 @@ NS_ASSUME_NONNULL_BEGIN
 
 NSSet<NSNumber *> * _Nullable __root___testOptSetInt__TypesOfArguments__Swift_Optional_Swift_Set_Swift_Int32____(NSSet<NSNumber *> * _Nullable s);
 
-NSSet<id> * __root___testSetAny__TypesOfArguments__Swift_Set_KotlinRuntime_KotlinBase___(NSSet<id> * s);
+NSSet<id> * __root___testSetAny__TypesOfArguments__Swift_Set_anyU20KotlinRuntimeSupport__KotlinBridgeable___(NSSet<id> * s);
 
 NSSet<NSNumber *> * __root___testSetInt__TypesOfArguments__Swift_Set_Swift_Int32___(NSSet<NSNumber *> * s);
 
@@ -13,7 +13,7 @@ NSSet<NSArray<NSNumber *> *> * __root___testSetListInt__TypesOfArguments__Swift_
 
 NSSet<id> * __root___testSetNothing__TypesOfArguments__Swift_Set_Swift_Never___(NSSet<id> * s);
 
-NSSet<id> * __root___testSetOptAny__TypesOfArguments__Swift_Set_Swift_Optional_KotlinRuntime_KotlinBase____(NSSet<id> * s);
+NSSet<id> * __root___testSetOptAny__TypesOfArguments__Swift_Set_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable____(NSSet<id> * s);
 
 NSSet<id> * __root___testSetOptInt__TypesOfArguments__Swift_Set_Swift_Optional_Swift_Int32____(NSSet<id> * s);
 

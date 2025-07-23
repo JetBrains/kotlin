@@ -85,7 +85,7 @@ public final class DATA_CLASS: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._K
     }
     public static func ==(
         this: main.DATA_CLASS,
-        other: KotlinRuntime.KotlinBase?
+        other: (any KotlinRuntimeSupport._KotlinBridgeable)?
     ) -> Swift.Bool {
         this.equals(other: other)
     }
@@ -95,9 +95,9 @@ public final class DATA_CLASS: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._K
         return main.DATA_CLASS.__createClassWrapper(externalRCRef: DATA_CLASS_copy__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), a))
     }
     public func equals(
-        other: KotlinRuntime.KotlinBase?
+        other: (any KotlinRuntimeSupport._KotlinBridgeable)?
     ) -> Swift.Bool {
-        return DATA_CLASS_equals__TypesOfArguments__Swift_Optional_KotlinRuntime_KotlinBase___(self.__externalRCRef(), other.map { it in it.__externalRCRef() } ?? nil)
+        return DATA_CLASS_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), other.map { it in it.intoRCRefUnsafe() } ?? nil)
     }
     public func hashCode() -> Swift.Int32 {
         return DATA_CLASS_hashCode(self.__externalRCRef())
@@ -558,14 +558,14 @@ extension ExportedKotlinPackages.namespace.deeper {
         }
         public static func ==(
             this: ExportedKotlinPackages.namespace.deeper.DATA_OBJECT,
-            other: KotlinRuntime.KotlinBase?
+            other: (any KotlinRuntimeSupport._KotlinBridgeable)?
         ) -> Swift.Bool {
             this.equals(other: other)
         }
         public func equals(
-            other: KotlinRuntime.KotlinBase?
+            other: (any KotlinRuntimeSupport._KotlinBridgeable)?
         ) -> Swift.Bool {
-            return namespace_deeper_DATA_OBJECT_equals__TypesOfArguments__Swift_Optional_KotlinRuntime_KotlinBase___(self.__externalRCRef(), other.map { it in it.__externalRCRef() } ?? nil)
+            return namespace_deeper_DATA_OBJECT_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), other.map { it in it.intoRCRefUnsafe() } ?? nil)
         }
         public func hashCode() -> Swift.Int32 {
             return namespace_deeper_DATA_OBJECT_hashCode(self.__externalRCRef())

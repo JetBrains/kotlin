@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
 import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.providers.*
 import org.jetbrains.kotlin.sir.providers.source.kaSymbolOrNull
+import org.jetbrains.kotlin.sir.providers.utils.KotlinRuntimeSupportModule
 import org.jetbrains.kotlin.sir.util.isNever
 import org.jetbrains.kotlin.sir.util.isVoid
 import org.jetbrains.kotlin.sir.util.name
@@ -84,7 +85,10 @@ internal fun isSupported(type: SirType): Boolean = when (type) {
         declarationSupported && type.typeArguments.all { isSupported(it) }
     }
     is SirFunctionalType -> isSupported(type.returnType) && type.parameterTypes.all { isSupported(it) }
-    is SirExistentialType -> type.protocols.all { it.kaSymbolOrNull<KaClassSymbol>()?.sirAvailability() is SirAvailability.Available != false }
+    is SirExistentialType -> type.protocols.all {
+        it == KotlinRuntimeSupportModule.kotlinBridgeable ||
+                it.kaSymbolOrNull<KaClassSymbol>()?.sirAvailability() is SirAvailability.Available
+    }
     else -> false
 }
 

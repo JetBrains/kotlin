@@ -6,15 +6,16 @@
 package org.jetbrains.kotlin.sir.providers
 
 import org.jetbrains.kotlin.export.test.InlineSourceCodeAnalysis
+import org.jetbrains.kotlin.sir.SirExistentialType
 import org.jetbrains.kotlin.sir.SirNominalType
+import org.jetbrains.kotlin.sir.SirType
 import org.jetbrains.kotlin.sir.SirUnsupportedType
 import org.jetbrains.kotlin.sir.optional
 import org.jetbrains.kotlin.sir.providers.support.SirTranslationTest
 import org.jetbrains.kotlin.sir.providers.support.classNamed
 import org.jetbrains.kotlin.sir.providers.support.functionsNamed
 import org.jetbrains.kotlin.sir.providers.support.translate
-import org.jetbrains.kotlin.sir.providers.utils.KotlinRuntimeModule.kotlinBase
-import org.jetbrains.kotlin.sir.util.SirSwiftModule
+import org.jetbrains.kotlin.sir.providers.utils.KotlinRuntimeSupportModule
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
@@ -37,15 +38,15 @@ class GenericsErasure : SirTranslationTest() {
         translate(code) {
             val foo = it.functionsNamed("foo").first()
             val tParam = foo.parameters.first()
-            val optionalKotlinBase = SirNominalType(kotlinBase).optional()
-            assertEquals(optionalKotlinBase, tParam.type)
+            val optionalAny = SirExistentialType(KotlinRuntimeSupportModule.kotlinBridgeable).optional()
+            assertEquals(optionalAny, tParam.type)
 
             val id = it.functionsNamed("id").first()
             val aParam = id.parameters.first()
-            assertEquals(SirNominalType(kotlinBase), aParam.type)
+            assertEquals(SirExistentialType(KotlinRuntimeSupportModule.kotlinBridgeable), aParam.type)
 
             val myClassMethod = it.classNamed("MyClass").declarations.functionsNamed("method").first()
-            assertEquals(optionalKotlinBase, myClassMethod.returnType)
+            assertEquals(optionalAny, myClassMethod.returnType)
         }
     }
 
@@ -65,8 +66,7 @@ class GenericsErasure : SirTranslationTest() {
         translate(code) {
             val foo = it.functionsNamed("foo").first()
             val tParam = foo.parameters.first()
-            val optionalKotlinBase = SirNominalType(kotlinBase)
-            assertEquals(optionalKotlinBase, tParam.type)
+            assertEquals(SirExistentialType(KotlinRuntimeSupportModule.kotlinBridgeable), tParam.type)
 
             val bar = it.functionsNamed("bar").first()
             val myClass = it.classNamed("MyClass")

@@ -175,8 +175,8 @@ public fun kotlin_text_StringBuilder_append__TypesOfArguments__Swift_Optional_an
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
-@ExportedBridge("kotlin_text_StringBuilder_append__TypesOfArguments__Swift_Optional_KotlinRuntime_KotlinBase___")
-public fun kotlin_text_StringBuilder_append__TypesOfArguments__Swift_Optional_KotlinRuntime_KotlinBase___(self: kotlin.native.internal.NativePtr, value: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+@ExportedBridge("kotlin_text_StringBuilder_append__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___")
+public fun kotlin_text_StringBuilder_append__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self: kotlin.native.internal.NativePtr, value: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.text.StringBuilder
     val __value = if (value == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(value) as kotlin.Any
     val _result = __self.append(__value)
@@ -454,8 +454,8 @@ public fun kotlin_text_StringBuilder_insert__TypesOfArguments__Swift_Int32_Swift
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
-@ExportedBridge("kotlin_text_StringBuilder_insert__TypesOfArguments__Swift_Int32_Swift_Optional_KotlinRuntime_KotlinBase___")
-public fun kotlin_text_StringBuilder_insert__TypesOfArguments__Swift_Int32_Swift_Optional_KotlinRuntime_KotlinBase___(self: kotlin.native.internal.NativePtr, index: Int, value: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+@ExportedBridge("kotlin_text_StringBuilder_insert__TypesOfArguments__Swift_Int32_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___")
+public fun kotlin_text_StringBuilder_insert__TypesOfArguments__Swift_Int32_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self: kotlin.native.internal.NativePtr, index: Int, value: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as kotlin.text.StringBuilder
     val __index = index
     val __value = if (value == kotlin.native.internal.NativePtr.NULL) null else kotlin.native.internal.ref.dereferenceExternalRCRef(value) as kotlin.Any

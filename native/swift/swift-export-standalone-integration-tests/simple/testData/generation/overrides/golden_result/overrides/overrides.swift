@@ -113,7 +113,7 @@ open class Child: overrides.Parent {
     }
     public static func ==(
         this: overrides.Child,
-        to: KotlinRuntime.KotlinBase?
+        to: (any KotlinRuntimeSupport._KotlinBridgeable)?
     ) -> Swift.Bool {
         this.equals(to: to)
     }
@@ -130,9 +130,9 @@ open class Child: overrides.Parent {
         return Child_contains__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), element)
     }
     open override func equals(
-        to: KotlinRuntime.KotlinBase?
+        to: (any KotlinRuntimeSupport._KotlinBridgeable)?
     ) -> Swift.Bool {
-        return Child_equals__TypesOfArguments__Swift_Optional_KotlinRuntime_KotlinBase___(self.__externalRCRef(), to.map { it in it.__externalRCRef() } ?? nil)
+        return Child_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), to.map { it in it.intoRCRefUnsafe() } ?? nil)
     }
     public final override func finalOverrideFunc() -> Swift.Void {
         return Child_finalOverrideFunc(self.__externalRCRef())
@@ -289,7 +289,7 @@ open class Parent: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged
     }
     public static func ==(
         this: overrides.Parent,
-        to: KotlinRuntime.KotlinBase?
+        to: (any KotlinRuntimeSupport._KotlinBridgeable)?
     ) -> Swift.Bool {
         this.equals(to: to)
     }
@@ -306,9 +306,9 @@ open class Parent: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged
         return Parent_contains__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), element)
     }
     open func equals(
-        to: KotlinRuntime.KotlinBase?
+        to: (any KotlinRuntimeSupport._KotlinBridgeable)?
     ) -> Swift.Bool {
-        return Parent_equals__TypesOfArguments__Swift_Optional_KotlinRuntime_KotlinBase___(self.__externalRCRef(), to.map { it in it.__externalRCRef() } ?? nil)
+        return Parent_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), to.map { it in it.intoRCRefUnsafe() } ?? nil)
     }
     open func finalOverrideFunc() -> Swift.Void {
         return Parent_finalOverrideFunc(self.__externalRCRef())

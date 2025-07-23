@@ -13,7 +13,7 @@ int32_t DATA_CLASS_a_get(void * self);
 
 void * DATA_CLASS_copy__TypesOfArguments__Swift_Int32__(void * self, int32_t a);
 
-_Bool DATA_CLASS_equals__TypesOfArguments__Swift_Optional_KotlinRuntime_KotlinBase___(void * self, void * _Nullable other);
+_Bool DATA_CLASS_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(void * self, void * _Nullable other);
 
 int32_t DATA_CLASS_hashCode(void * self);
 
@@ -191,7 +191,7 @@ void namespace_deeper_Class_with_package_init_initialize__TypesOfArguments__Swif
 
 int32_t namespace_deeper_DATA_OBJECT_a_get(void * self);
 
-_Bool namespace_deeper_DATA_OBJECT_equals__TypesOfArguments__Swift_Optional_KotlinRuntime_KotlinBase___(void * self, void * _Nullable other);
+_Bool namespace_deeper_DATA_OBJECT_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(void * self, void * _Nullable other);
 
 void * namespace_deeper_DATA_OBJECT_get();
 

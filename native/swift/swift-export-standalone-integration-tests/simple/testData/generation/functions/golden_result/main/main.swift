@@ -102,8 +102,8 @@ public func getFoo(
 ) -> Swift.String {
     return __root___foo_get__TypesOfArguments__Swift_Optional_main_Foo___(receiver.map { it in it.__externalRCRef() } ?? nil)
 }
-public func return_any_should_append_runtime_import() -> KotlinRuntime.KotlinBase {
-    return KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: __root___return_any_should_append_runtime_import())
+public func return_any_should_append_runtime_import() -> any KotlinRuntimeSupport._KotlinBridgeable {
+    return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: __root___return_any_should_append_runtime_import()) as! any KotlinRuntimeSupport._KotlinBridgeable
 }
 public func setFoo(
     _ receiver: Swift.Int32,
@@ -322,7 +322,7 @@ extension ExportedKotlinPackages.operators {
         }
         public static func ==(
             this: ExportedKotlinPackages.operators.Foo,
-            other: KotlinRuntime.KotlinBase?
+            other: (any KotlinRuntimeSupport._KotlinBridgeable)?
         ) -> Swift.Bool {
             this.equals(other: other)
         }
@@ -430,9 +430,9 @@ extension ExportedKotlinPackages.operators {
             return ExportedKotlinPackages.operators.Foo.__createClassWrapper(externalRCRef: operators_Foo_dec(self.__externalRCRef()))
         }
         public func equals(
-            other: KotlinRuntime.KotlinBase?
+            other: (any KotlinRuntimeSupport._KotlinBridgeable)?
         ) -> Swift.Bool {
-            return operators_Foo_equals__TypesOfArguments__Swift_Optional_KotlinRuntime_KotlinBase___(self.__externalRCRef(), other.map { it in it.__externalRCRef() } ?? nil)
+            return operators_Foo_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), other.map { it in it.intoRCRefUnsafe() } ?? nil)
         }
         public func hashCode() -> Swift.Int32 {
             return operators_Foo_hashCode(self.__externalRCRef())

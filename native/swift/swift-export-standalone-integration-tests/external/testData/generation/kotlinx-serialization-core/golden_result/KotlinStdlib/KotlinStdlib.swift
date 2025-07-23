@@ -32,21 +32,21 @@ extension ExportedKotlinPackages.kotlin {
         }
         public func _get(
             index: Swift.Int32
-        ) -> KotlinRuntime.KotlinBase? {
-            return { switch kotlin_Array_get__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), index) { case nil: .none; case let res: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: res); } }()
+        ) -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
+            return { switch kotlin_Array_get__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), index) { case nil: .none; case let res: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: res) as! any KotlinRuntimeSupport._KotlinBridgeable; } }()
         }
         public func _set(
             index: Swift.Int32,
-            value: KotlinRuntime.KotlinBase?
+            value: (any KotlinRuntimeSupport._KotlinBridgeable)?
         ) -> Swift.Void {
-            return kotlin_Array_set__TypesOfArguments__Swift_Int32_Swift_Optional_KotlinRuntime_KotlinBase___(self.__externalRCRef(), index, value.map { it in it.__externalRCRef() } ?? nil)
+            return kotlin_Array_set__TypesOfArguments__Swift_Int32_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), index, value.map { it in it.intoRCRefUnsafe() } ?? nil)
         }
         public func iterator() -> any ExportedKotlinPackages.kotlin.collections.Iterator {
             return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlin_Array_iterator(self.__externalRCRef())) as! any ExportedKotlinPackages.kotlin.collections.Iterator
         }
         public init(
             size: Swift.Int32,
-            `init`: @escaping (Swift.Int32) -> Swift.Optional<KotlinRuntime.KotlinBase>
+            `init`: @escaping (Swift.Int32) -> Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>
         ) {
             fatalError()
         }
@@ -58,7 +58,7 @@ extension ExportedKotlinPackages.kotlin {
         }
         public subscript(
             index: Swift.Int32
-        ) -> KotlinRuntime.KotlinBase? {
+        ) -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
             get {
                 _get(index: index)
             }
@@ -188,13 +188,13 @@ extension ExportedKotlinPackages.kotlin {
             return kotlin_Boolean_toString(self.__externalRCRef())
         }
         public func equals(
-            other: KotlinRuntime.KotlinBase?
+            other: (any KotlinRuntimeSupport._KotlinBridgeable)?
         ) -> Swift.Bool {
-            return kotlin_Boolean_equals__TypesOfArguments__Swift_Optional_KotlinRuntime_KotlinBase___(self.__externalRCRef(), other.map { it in it.__externalRCRef() } ?? nil)
+            return kotlin_Boolean_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), other.map { it in it.intoRCRefUnsafe() } ?? nil)
         }
         public static func ==(
             this: ExportedKotlinPackages.kotlin.Boolean,
-            other: KotlinRuntime.KotlinBase?
+            other: (any KotlinRuntimeSupport._KotlinBridgeable)?
         ) -> Swift.Bool {
             this.equals(other: other)
         }
@@ -375,13 +375,13 @@ extension ExportedKotlinPackages.kotlin {
             return kotlin_Char_toString(self.__externalRCRef())
         }
         public func equals(
-            other: KotlinRuntime.KotlinBase?
+            other: (any KotlinRuntimeSupport._KotlinBridgeable)?
         ) -> Swift.Bool {
-            return kotlin_Char_equals__TypesOfArguments__Swift_Optional_KotlinRuntime_KotlinBase___(self.__externalRCRef(), other.map { it in it.__externalRCRef() } ?? nil)
+            return kotlin_Char_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), other.map { it in it.intoRCRefUnsafe() } ?? nil)
         }
         public static func ==(
             this: ExportedKotlinPackages.kotlin.Char,
-            other: KotlinRuntime.KotlinBase?
+            other: (any KotlinRuntimeSupport._KotlinBridgeable)?
         ) -> Swift.Bool {
             this.equals(other: other)
         }
@@ -647,13 +647,13 @@ extension ExportedKotlinPackages.kotlin {
             return kotlin_Byte_toString(self.__externalRCRef())
         }
         public func equals(
-            other: KotlinRuntime.KotlinBase?
+            other: (any KotlinRuntimeSupport._KotlinBridgeable)?
         ) -> Swift.Bool {
-            return kotlin_Byte_equals__TypesOfArguments__Swift_Optional_KotlinRuntime_KotlinBase___(self.__externalRCRef(), other.map { it in it.__externalRCRef() } ?? nil)
+            return kotlin_Byte_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), other.map { it in it.intoRCRefUnsafe() } ?? nil)
         }
         public static func ==(
             this: ExportedKotlinPackages.kotlin.Byte,
-            other: KotlinRuntime.KotlinBase?
+            other: (any KotlinRuntimeSupport._KotlinBridgeable)?
         ) -> Swift.Bool {
             this.equals(other: other)
         }
@@ -802,13 +802,13 @@ extension ExportedKotlinPackages.kotlin {
             return kotlin_Short_toString(self.__externalRCRef())
         }
         public func equals(
-            other: KotlinRuntime.KotlinBase?
+            other: (any KotlinRuntimeSupport._KotlinBridgeable)?
         ) -> Swift.Bool {
-            return kotlin_Short_equals__TypesOfArguments__Swift_Optional_KotlinRuntime_KotlinBase___(self.__externalRCRef(), other.map { it in it.__externalRCRef() } ?? nil)
+            return kotlin_Short_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), other.map { it in it.intoRCRefUnsafe() } ?? nil)
         }
         public static func ==(
             this: ExportedKotlinPackages.kotlin.Short,
-            other: KotlinRuntime.KotlinBase?
+            other: (any KotlinRuntimeSupport._KotlinBridgeable)?
         ) -> Swift.Bool {
             this.equals(other: other)
         }
@@ -1060,13 +1060,13 @@ extension ExportedKotlinPackages.kotlin {
             return kotlin_Int_toString(self.__externalRCRef())
         }
         public func equals(
-            other: KotlinRuntime.KotlinBase?
+            other: (any KotlinRuntimeSupport._KotlinBridgeable)?
         ) -> Swift.Bool {
-            return kotlin_Int_equals__TypesOfArguments__Swift_Optional_KotlinRuntime_KotlinBase___(self.__externalRCRef(), other.map { it in it.__externalRCRef() } ?? nil)
+            return kotlin_Int_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), other.map { it in it.intoRCRefUnsafe() } ?? nil)
         }
         public static func ==(
             this: ExportedKotlinPackages.kotlin.Int,
-            other: KotlinRuntime.KotlinBase?
+            other: (any KotlinRuntimeSupport._KotlinBridgeable)?
         ) -> Swift.Bool {
             this.equals(other: other)
         }
@@ -1311,13 +1311,13 @@ extension ExportedKotlinPackages.kotlin {
             return kotlin_Long_toString(self.__externalRCRef())
         }
         public func equals(
-            other: KotlinRuntime.KotlinBase?
+            other: (any KotlinRuntimeSupport._KotlinBridgeable)?
         ) -> Swift.Bool {
-            return kotlin_Long_equals__TypesOfArguments__Swift_Optional_KotlinRuntime_KotlinBase___(self.__externalRCRef(), other.map { it in it.__externalRCRef() } ?? nil)
+            return kotlin_Long_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), other.map { it in it.intoRCRefUnsafe() } ?? nil)
         }
         public static func ==(
             this: ExportedKotlinPackages.kotlin.Long,
-            other: KotlinRuntime.KotlinBase?
+            other: (any KotlinRuntimeSupport._KotlinBridgeable)?
         ) -> Swift.Bool {
             this.equals(other: other)
         }
@@ -1659,13 +1659,13 @@ extension ExportedKotlinPackages.kotlin {
             return kotlin_Float_toString(self.__externalRCRef())
         }
         public func equals(
-            other: KotlinRuntime.KotlinBase?
+            other: (any KotlinRuntimeSupport._KotlinBridgeable)?
         ) -> Swift.Bool {
-            return kotlin_Float_equals__TypesOfArguments__Swift_Optional_KotlinRuntime_KotlinBase___(self.__externalRCRef(), other.map { it in it.__externalRCRef() } ?? nil)
+            return kotlin_Float_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), other.map { it in it.intoRCRefUnsafe() } ?? nil)
         }
         public static func ==(
             this: ExportedKotlinPackages.kotlin.Float,
-            other: KotlinRuntime.KotlinBase?
+            other: (any KotlinRuntimeSupport._KotlinBridgeable)?
         ) -> Swift.Bool {
             this.equals(other: other)
         }
@@ -2007,13 +2007,13 @@ extension ExportedKotlinPackages.kotlin {
             return kotlin_Double_toString(self.__externalRCRef())
         }
         public func equals(
-            other: KotlinRuntime.KotlinBase?
+            other: (any KotlinRuntimeSupport._KotlinBridgeable)?
         ) -> Swift.Bool {
-            return kotlin_Double_equals__TypesOfArguments__Swift_Optional_KotlinRuntime_KotlinBase___(self.__externalRCRef(), other.map { it in it.__externalRCRef() } ?? nil)
+            return kotlin_Double_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), other.map { it in it.intoRCRefUnsafe() } ?? nil)
         }
         public static func ==(
             this: ExportedKotlinPackages.kotlin.Double,
-            other: KotlinRuntime.KotlinBase?
+            other: (any KotlinRuntimeSupport._KotlinBridgeable)?
         ) -> Swift.Bool {
             this.equals(other: other)
         }
@@ -2053,13 +2053,13 @@ extension ExportedKotlinPackages.kotlin {
             return kotlin_String_hashCode(self.__externalRCRef())
         }
         public func _plus(
-            other: KotlinRuntime.KotlinBase?
+            other: (any KotlinRuntimeSupport._KotlinBridgeable)?
         ) -> Swift.String {
-            return kotlin_String_plus__TypesOfArguments__Swift_Optional_KotlinRuntime_KotlinBase___(self.__externalRCRef(), other.map { it in it.__externalRCRef() } ?? nil)
+            return kotlin_String_plus__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), other.map { it in it.intoRCRefUnsafe() } ?? nil)
         }
         public static func +(
             this: ExportedKotlinPackages.kotlin.String,
-            other: KotlinRuntime.KotlinBase?
+            other: (any KotlinRuntimeSupport._KotlinBridgeable)?
         ) -> Swift.String {
             this._plus(other: other)
         }
@@ -2107,13 +2107,13 @@ extension ExportedKotlinPackages.kotlin {
             this._compareTo(other: other) >= 0
         }
         public func equals(
-            other: KotlinRuntime.KotlinBase?
+            other: (any KotlinRuntimeSupport._KotlinBridgeable)?
         ) -> Swift.Bool {
-            return kotlin_String_equals__TypesOfArguments__Swift_Optional_KotlinRuntime_KotlinBase___(self.__externalRCRef(), other.map { it in it.__externalRCRef() } ?? nil)
+            return kotlin_String_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), other.map { it in it.intoRCRefUnsafe() } ?? nil)
         }
         public static func ==(
             this: ExportedKotlinPackages.kotlin.String,
-            other: KotlinRuntime.KotlinBase?
+            other: (any KotlinRuntimeSupport._KotlinBridgeable)?
         ) -> Swift.Bool {
             this.equals(other: other)
         }
@@ -2241,7 +2241,7 @@ extension ExportedKotlinPackages.kotlin.collections {
     package protocol _Iterable {
     }
     public protocol Iterator: KotlinRuntime.KotlinBase {
-        func next() -> KotlinRuntime.KotlinBase?
+        func next() -> (any KotlinRuntimeSupport._KotlinBridgeable)?
         func hasNext() -> Swift.Bool
     }
     @objc(_Iterator)
@@ -2364,13 +2364,13 @@ extension ExportedKotlinPackages.kotlin.ranges {
             return kotlin_ranges_CharRange_isEmpty(self.__externalRCRef())
         }
         public override func equals(
-            other: KotlinRuntime.KotlinBase?
+            other: (any KotlinRuntimeSupport._KotlinBridgeable)?
         ) -> Swift.Bool {
-            return kotlin_ranges_CharRange_equals__TypesOfArguments__Swift_Optional_KotlinRuntime_KotlinBase___(self.__externalRCRef(), other.map { it in it.__externalRCRef() } ?? nil)
+            return kotlin_ranges_CharRange_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), other.map { it in it.intoRCRefUnsafe() } ?? nil)
         }
         public static func ==(
             this: ExportedKotlinPackages.kotlin.ranges.CharRange,
-            other: KotlinRuntime.KotlinBase?
+            other: (any KotlinRuntimeSupport._KotlinBridgeable)?
         ) -> Swift.Bool {
             this.equals(other: other)
         }
@@ -2449,13 +2449,13 @@ extension ExportedKotlinPackages.kotlin.ranges {
             return kotlin_ranges_IntRange_isEmpty(self.__externalRCRef())
         }
         public override func equals(
-            other: KotlinRuntime.KotlinBase?
+            other: (any KotlinRuntimeSupport._KotlinBridgeable)?
         ) -> Swift.Bool {
-            return kotlin_ranges_IntRange_equals__TypesOfArguments__Swift_Optional_KotlinRuntime_KotlinBase___(self.__externalRCRef(), other.map { it in it.__externalRCRef() } ?? nil)
+            return kotlin_ranges_IntRange_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), other.map { it in it.intoRCRefUnsafe() } ?? nil)
         }
         public static func ==(
             this: ExportedKotlinPackages.kotlin.ranges.IntRange,
-            other: KotlinRuntime.KotlinBase?
+            other: (any KotlinRuntimeSupport._KotlinBridgeable)?
         ) -> Swift.Bool {
             this.equals(other: other)
         }
@@ -2534,13 +2534,13 @@ extension ExportedKotlinPackages.kotlin.ranges {
             return kotlin_ranges_LongRange_isEmpty(self.__externalRCRef())
         }
         public override func equals(
-            other: KotlinRuntime.KotlinBase?
+            other: (any KotlinRuntimeSupport._KotlinBridgeable)?
         ) -> Swift.Bool {
-            return kotlin_ranges_LongRange_equals__TypesOfArguments__Swift_Optional_KotlinRuntime_KotlinBase___(self.__externalRCRef(), other.map { it in it.__externalRCRef() } ?? nil)
+            return kotlin_ranges_LongRange_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), other.map { it in it.intoRCRefUnsafe() } ?? nil)
         }
         public static func ==(
             this: ExportedKotlinPackages.kotlin.ranges.LongRange,
-            other: KotlinRuntime.KotlinBase?
+            other: (any KotlinRuntimeSupport._KotlinBridgeable)?
         ) -> Swift.Bool {
             this.equals(other: other)
         }
@@ -2612,13 +2612,13 @@ extension ExportedKotlinPackages.kotlin.ranges {
             return kotlin_ranges_CharProgression_isEmpty(self.__externalRCRef())
         }
         open func equals(
-            other: KotlinRuntime.KotlinBase?
+            other: (any KotlinRuntimeSupport._KotlinBridgeable)?
         ) -> Swift.Bool {
-            return kotlin_ranges_CharProgression_equals__TypesOfArguments__Swift_Optional_KotlinRuntime_KotlinBase___(self.__externalRCRef(), other.map { it in it.__externalRCRef() } ?? nil)
+            return kotlin_ranges_CharProgression_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), other.map { it in it.intoRCRefUnsafe() } ?? nil)
         }
         public static func ==(
             this: ExportedKotlinPackages.kotlin.ranges.CharProgression,
-            other: KotlinRuntime.KotlinBase?
+            other: (any KotlinRuntimeSupport._KotlinBridgeable)?
         ) -> Swift.Bool {
             this.equals(other: other)
         }
@@ -2681,13 +2681,13 @@ extension ExportedKotlinPackages.kotlin.ranges {
             return kotlin_ranges_IntProgression_isEmpty(self.__externalRCRef())
         }
         open func equals(
-            other: KotlinRuntime.KotlinBase?
+            other: (any KotlinRuntimeSupport._KotlinBridgeable)?
         ) -> Swift.Bool {
-            return kotlin_ranges_IntProgression_equals__TypesOfArguments__Swift_Optional_KotlinRuntime_KotlinBase___(self.__externalRCRef(), other.map { it in it.__externalRCRef() } ?? nil)
+            return kotlin_ranges_IntProgression_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), other.map { it in it.intoRCRefUnsafe() } ?? nil)
         }
         public static func ==(
             this: ExportedKotlinPackages.kotlin.ranges.IntProgression,
-            other: KotlinRuntime.KotlinBase?
+            other: (any KotlinRuntimeSupport._KotlinBridgeable)?
         ) -> Swift.Bool {
             this.equals(other: other)
         }
@@ -2750,13 +2750,13 @@ extension ExportedKotlinPackages.kotlin.ranges {
             return kotlin_ranges_LongProgression_isEmpty(self.__externalRCRef())
         }
         open func equals(
-            other: KotlinRuntime.KotlinBase?
+            other: (any KotlinRuntimeSupport._KotlinBridgeable)?
         ) -> Swift.Bool {
-            return kotlin_ranges_LongProgression_equals__TypesOfArguments__Swift_Optional_KotlinRuntime_KotlinBase___(self.__externalRCRef(), other.map { it in it.__externalRCRef() } ?? nil)
+            return kotlin_ranges_LongProgression_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), other.map { it in it.intoRCRefUnsafe() } ?? nil)
         }
         public static func ==(
             this: ExportedKotlinPackages.kotlin.ranges.LongProgression,
-            other: KotlinRuntime.KotlinBase?
+            other: (any KotlinRuntimeSupport._KotlinBridgeable)?
         ) -> Swift.Bool {
             this.equals(other: other)
         }
@@ -2802,8 +2802,8 @@ extension ExportedKotlinPackages.kotlin.CharSequence where Self : KotlinRuntimeS
 extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlin.CharSequence where Wrapped : ExportedKotlinPackages.kotlin._CharSequence {
 }
 extension ExportedKotlinPackages.kotlin.collections.Iterator where Self : KotlinRuntimeSupport._KotlinBridged {
-    public func next() -> KotlinRuntime.KotlinBase? {
-        return { switch kotlin_collections_Iterator_next(self.__externalRCRef()) { case nil: .none; case let res: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: res); } }()
+    public func next() -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
+        return { switch kotlin_collections_Iterator_next(self.__externalRCRef()) { case nil: .none; case let res: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: res) as! any KotlinRuntimeSupport._KotlinBridgeable; } }()
     }
     public func hasNext() -> Swift.Bool {
         return kotlin_collections_Iterator_hasNext(self.__externalRCRef())

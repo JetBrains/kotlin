@@ -45,7 +45,7 @@ void * kotlin_text_StringBuilder_append__TypesOfArguments__Swift_Optional_anyU20
 
 void * kotlin_text_StringBuilder_append__TypesOfArguments__Swift_Optional_anyU20ExportedKotlinPackages_kotlin_CharSequence__Swift_Int32_Swift_Int32__(void * self, void * _Nullable value, int32_t startIndex, int32_t endIndex);
 
-void * kotlin_text_StringBuilder_append__TypesOfArguments__Swift_Optional_KotlinRuntime_KotlinBase___(void * self, void * _Nullable value);
+void * kotlin_text_StringBuilder_append__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(void * self, void * _Nullable value);
 
 void * kotlin_text_StringBuilder_append__TypesOfArguments__Swift_Bool__(void * self, _Bool value);
 
@@ -113,7 +113,7 @@ void * kotlin_text_StringBuilder_insert__TypesOfArguments__Swift_Int32_ExportedK
 
 void * kotlin_text_StringBuilder_insert__TypesOfArguments__Swift_Int32_Swift_Optional_anyU20ExportedKotlinPackages_kotlin_CharSequence___(void * self, int32_t index, void * _Nullable value);
 
-void * kotlin_text_StringBuilder_insert__TypesOfArguments__Swift_Int32_Swift_Optional_KotlinRuntime_KotlinBase___(void * self, int32_t index, void * _Nullable value);
+void * kotlin_text_StringBuilder_insert__TypesOfArguments__Swift_Int32_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(void * self, int32_t index, void * _Nullable value);
 
 void * kotlin_text_StringBuilder_insert__TypesOfArguments__Swift_Int32_Swift_Optional_Swift_String___(void * self, int32_t index, NSString * _Nullable value);
 

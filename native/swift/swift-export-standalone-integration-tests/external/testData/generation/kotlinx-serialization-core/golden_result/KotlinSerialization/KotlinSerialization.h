@@ -7,7 +7,7 @@ void * kotlinx_serialization_ContextualSerializer_descriptor_get(void * self);
 
 void * kotlinx_serialization_ContextualSerializer_deserialize__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_encoding_Decoder__(void * self, void * decoder);
 
-void kotlinx_serialization_ContextualSerializer_serialize__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_encoding_Encoder_KotlinRuntime_KotlinBase__(void * self, void * encoder, void * value);
+void kotlinx_serialization_ContextualSerializer_serialize__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_encoding_Encoder_anyU20KotlinRuntimeSupport__KotlinBridgeable__(void * self, void * encoder, void * value);
 
 void * kotlinx_serialization_DeserializationStrategy_descriptor_get(void * self);
 
@@ -33,7 +33,7 @@ void * kotlinx_serialization_SealedClassSerializer_descriptor_get(void * self);
 
 void * _Nullable kotlinx_serialization_SealedClassSerializer_findPolymorphicSerializerOrNull__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_encoding_CompositeDecoder_Swift_Optional_Swift_String___(void * self, void * decoder, NSString * _Nullable klassName);
 
-void * _Nullable kotlinx_serialization_SealedClassSerializer_findPolymorphicSerializerOrNull__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_encoding_Encoder_KotlinRuntime_KotlinBase__(void * self, void * encoder, void * value);
+void * _Nullable kotlinx_serialization_SealedClassSerializer_findPolymorphicSerializerOrNull__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_encoding_Encoder_anyU20KotlinRuntimeSupport__KotlinBridgeable__(void * self, void * encoder, void * value);
 
 void * kotlinx_serialization_SerialFormat_serializersModule_get(void * self);
 
@@ -49,7 +49,7 @@ void kotlinx_serialization_SerializationException_init_initialize__TypesOfArgume
 
 void * kotlinx_serialization_SerializationStrategy_descriptor_get(void * self);
 
-void kotlinx_serialization_SerializationStrategy_serialize__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_encoding_Encoder_Swift_Optional_KotlinRuntime_KotlinBase___(void * self, void * encoder, void * _Nullable value);
+void kotlinx_serialization_SerializationStrategy_serialize__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_encoding_Encoder_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(void * self, void * encoder, void * _Nullable value);
 
 void * kotlinx_serialization_builtins_BooleanArraySerializer();
 
@@ -299,7 +299,7 @@ void kotlinx_serialization_encoding_AbstractEncoder_encodeString__TypesOfArgumen
 
 void kotlinx_serialization_encoding_AbstractEncoder_encodeStringElement__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor_Swift_Int32_Swift_String__(void * self, void * descriptor, int32_t index, NSString * value);
 
-void kotlinx_serialization_encoding_AbstractEncoder_encodeValue__TypesOfArguments__KotlinRuntime_KotlinBase__(void * self, void * value);
+void kotlinx_serialization_encoding_AbstractEncoder_encodeValue__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__(void * self, void * value);
 
 void kotlinx_serialization_encoding_AbstractEncoder_endStructure__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_descriptors_SerialDescriptor__(void * self, void * descriptor);
 
@@ -431,17 +431,17 @@ void * kotlinx_serialization_encoding_Encoder_serializersModule_get(void * self)
 
 void * _Nullable kotlinx_serialization_internal_AbstractCollectionSerializer_deserialize__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_encoding_Decoder__(void * self, void * decoder);
 
-void * _Nullable kotlinx_serialization_internal_AbstractCollectionSerializer_merge__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_encoding_Decoder_Swift_Optional_KotlinRuntime_KotlinBase___(void * self, void * decoder, void * _Nullable previous);
+void * _Nullable kotlinx_serialization_internal_AbstractCollectionSerializer_merge__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_encoding_Decoder_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(void * self, void * decoder, void * _Nullable previous);
 
-void kotlinx_serialization_internal_AbstractCollectionSerializer_serialize__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_encoding_Encoder_Swift_Optional_KotlinRuntime_KotlinBase___(void * self, void * encoder, void * _Nullable value);
+void kotlinx_serialization_internal_AbstractCollectionSerializer_serialize__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_encoding_Encoder_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(void * self, void * encoder, void * _Nullable value);
 
 void * kotlinx_serialization_internal_AbstractPolymorphicSerializer_deserialize__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_encoding_Decoder__(void * self, void * decoder);
 
 void * _Nullable kotlinx_serialization_internal_AbstractPolymorphicSerializer_findPolymorphicSerializerOrNull__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_encoding_CompositeDecoder_Swift_Optional_Swift_String___(void * self, void * decoder, NSString * _Nullable klassName);
 
-void * _Nullable kotlinx_serialization_internal_AbstractPolymorphicSerializer_findPolymorphicSerializerOrNull__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_encoding_Encoder_KotlinRuntime_KotlinBase__(void * self, void * encoder, void * value);
+void * _Nullable kotlinx_serialization_internal_AbstractPolymorphicSerializer_findPolymorphicSerializerOrNull__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_encoding_Encoder_anyU20KotlinRuntimeSupport__KotlinBridgeable__(void * self, void * encoder, void * value);
 
-void kotlinx_serialization_internal_AbstractPolymorphicSerializer_serialize__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_encoding_Encoder_KotlinRuntime_KotlinBase__(void * self, void * encoder, void * value);
+void kotlinx_serialization_internal_AbstractPolymorphicSerializer_serialize__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_encoding_Encoder_anyU20KotlinRuntimeSupport__KotlinBridgeable__(void * self, void * encoder, void * value);
 
 void * kotlinx_serialization_internal_ElementMarker_init_allocate();
 
@@ -459,7 +459,7 @@ void * kotlinx_serialization_internal_MapLikeSerializer_descriptor_get(void * se
 
 void * kotlinx_serialization_internal_MapLikeSerializer_keySerializer_get(void * self);
 
-void kotlinx_serialization_internal_MapLikeSerializer_serialize__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_encoding_Encoder_Swift_Optional_KotlinRuntime_KotlinBase___(void * self, void * encoder, void * _Nullable value);
+void kotlinx_serialization_internal_MapLikeSerializer_serialize__TypesOfArguments__anyU20ExportedKotlinPackages_kotlinx_serialization_encoding_Encoder_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(void * self, void * encoder, void * _Nullable value);
 
 void * kotlinx_serialization_internal_MapLikeSerializer_valueSerializer_get(void * self);
 

@@ -43,6 +43,7 @@ import org.jetbrains.kotlin.sir.providers.source.KotlinRuntimeElement
 import org.jetbrains.kotlin.sir.providers.source.KotlinSource
 import org.jetbrains.kotlin.sir.providers.toSir
 import org.jetbrains.kotlin.sir.providers.utils.KotlinRuntimeModule
+import org.jetbrains.kotlin.sir.providers.utils.KotlinRuntimeSupportModule
 import org.jetbrains.kotlin.sir.providers.withSessions
 import org.jetbrains.kotlin.sir.util.SirSwiftModule
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstance
@@ -113,7 +114,7 @@ public class SirTypeProviderImpl(
 
         fun buildRegularType(kaType: KaType): SirType = sirSession.withSessions {
             fun KaTypeProjection.sirType(): SirType = when (this) {
-                is KaStarTypeProjection -> SirNominalType(KotlinRuntimeModule.kotlinBase)
+                is KaStarTypeProjection -> SirExistentialType(KotlinRuntimeSupportModule.kotlinBridgeable)
                 is KaTypeArgumentWithVariance -> buildSirType(type, ctx)
             }
 
@@ -125,7 +126,7 @@ public class SirTypeProviderImpl(
                     when {
                         kaType.isNothingType -> SirNominalType(SirSwiftModule.never)
                         kaType.isStringType -> SirNominalType(SirSwiftModule.string)
-                        kaType.isAnyType -> SirNominalType(KotlinRuntimeModule.kotlinBase)
+                        kaType.isAnyType -> SirExistentialType(KotlinRuntimeSupportModule.kotlinBridgeable)
 
                         kaType.isClassType(StandardClassIds.List) -> {
                             SirArrayType(
@@ -195,7 +196,7 @@ public class SirTypeProviderImpl(
         val fallbackType = SirUnsupportedType
         if (symbol.isReified) return@withSessions fallbackType
         return@withSessions when (symbol.upperBounds.size) {
-            0 -> SirNominalType(KotlinRuntimeModule.kotlinBase).optional()
+            0 -> SirExistentialType(KotlinRuntimeSupportModule.kotlinBridgeable).optional()
             1 -> {
                 val upperBound = symbol.upperBounds.single().translateType(this@translateTypeParameterType)
                 if (type.isMarkedNullable) {

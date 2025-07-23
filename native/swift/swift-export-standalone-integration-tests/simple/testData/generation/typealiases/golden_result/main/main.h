@@ -3,9 +3,9 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-void * DATA_CLASS_WITH_REF_copy__TypesOfArguments__KotlinRuntime_KotlinBase__(void * self, void * o);
+void * DATA_CLASS_WITH_REF_copy__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__(void * self, void * o);
 
-_Bool DATA_CLASS_WITH_REF_equals__TypesOfArguments__Swift_Optional_KotlinRuntime_KotlinBase___(void * self, void * _Nullable other);
+_Bool DATA_CLASS_WITH_REF_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(void * self, void * _Nullable other);
 
 int32_t DATA_CLASS_WITH_REF_hashCode(void * self);
 
@@ -17,13 +17,13 @@ int32_t DATA_CLASS_a_get(void * self);
 
 void * DATA_CLASS_copy__TypesOfArguments__Swift_Int32__(void * self, int32_t a);
 
-_Bool DATA_CLASS_equals__TypesOfArguments__Swift_Optional_KotlinRuntime_KotlinBase___(void * self, void * _Nullable other);
+_Bool DATA_CLASS_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(void * self, void * _Nullable other);
 
 int32_t DATA_CLASS_hashCode(void * self);
 
 NSString * DATA_CLASS_toString(void * self);
 
-_Bool DATA_OBJECT_WITH_PACKAGE_equals__TypesOfArguments__Swift_Optional_KotlinRuntime_KotlinBase___(void * self, void * _Nullable other);
+_Bool DATA_OBJECT_WITH_PACKAGE_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(void * self, void * _Nullable other);
 
 int32_t DATA_OBJECT_WITH_PACKAGE_foo(void * self);
 
@@ -67,7 +67,7 @@ void * SEALED_O_get();
 
 void * __root___DATA_CLASS_WITH_REF_init_allocate();
 
-void __root___DATA_CLASS_WITH_REF_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_KotlinRuntime_KotlinBase__(void * __kt, void * o);
+void __root___DATA_CLASS_WITH_REF_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_anyU20KotlinRuntimeSupport__KotlinBridgeable__(void * __kt, void * o);
 
 void * __root___DATA_CLASS_init_allocate();
 

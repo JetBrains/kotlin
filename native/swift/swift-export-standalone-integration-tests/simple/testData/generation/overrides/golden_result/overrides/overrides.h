@@ -15,7 +15,7 @@ void Child_actuallyOverride__TypesOfArguments__Swift_Optional_Swift_Int32__overr
 
 _Bool Child_contains__TypesOfArguments__Swift_Int32__(void * self, int32_t element);
 
-_Bool Child_equals__TypesOfArguments__Swift_Optional_KotlinRuntime_KotlinBase___(void * self, void * _Nullable to);
+_Bool Child_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(void * self, void * _Nullable to);
 
 void Child_finalOverrideFunc(void * self);
 
@@ -65,7 +65,7 @@ void Parent_actuallyOverride__TypesOfArguments__Swift_Int32_overrides_Child_over
 
 _Bool Parent_contains__TypesOfArguments__Swift_Int32__(void * self, int32_t element);
 
-_Bool Parent_equals__TypesOfArguments__Swift_Optional_KotlinRuntime_KotlinBase___(void * self, void * _Nullable to);
+_Bool Parent_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(void * self, void * _Nullable to);
 
 void Parent_finalOverrideFunc(void * self);
 

@@ -77,8 +77,8 @@ public fun __root___InterfaceWithFactory(): kotlin.native.internal.NativePtr {
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
-@ExportedBridge("__root___InterfaceWithFactory__TypesOfArguments__KotlinRuntime_KotlinBase__")
-public fun __root___InterfaceWithFactory__TypesOfArguments__KotlinRuntime_KotlinBase__(arg: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+@ExportedBridge("__root___InterfaceWithFactory__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__")
+public fun __root___InterfaceWithFactory__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__(arg: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __arg = kotlin.native.internal.ref.dereferenceExternalRCRef(arg) as kotlin.Any
     val _result = InterfaceWithFactory(__arg)
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
@@ -115,8 +115,8 @@ public fun __root___UtcOffset_init_initialize__TypesOfArguments__Swift_UnsafeMut
     kotlin.native.internal.initInstance(____kt, UtcOffset())
 }
 
-@ExportedBridge("test_factory_ClassWithFactoryInAPackage__TypesOfArguments__KotlinRuntime_KotlinBase__")
-public fun test_factory_ClassWithFactoryInAPackage__TypesOfArguments__KotlinRuntime_KotlinBase__(arg: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+@ExportedBridge("test_factory_ClassWithFactoryInAPackage__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__")
+public fun test_factory_ClassWithFactoryInAPackage__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__(arg: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __arg = kotlin.native.internal.ref.dereferenceExternalRCRef(arg) as kotlin.Any
     val _result = test.factory.ClassWithFactoryInAPackage(__arg)
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
@@ -140,16 +140,16 @@ public fun test_factory_Nested(): kotlin.native.internal.NativePtr {
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
-@ExportedBridge("test_factory_Outer_ClassWithFactoryInAPackage__TypesOfArguments__KotlinRuntime_KotlinBase__")
-public fun test_factory_Outer_ClassWithFactoryInAPackage__TypesOfArguments__KotlinRuntime_KotlinBase__(self: kotlin.native.internal.NativePtr, arg: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+@ExportedBridge("test_factory_Outer_ClassWithFactoryInAPackage__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__")
+public fun test_factory_Outer_ClassWithFactoryInAPackage__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__(self: kotlin.native.internal.NativePtr, arg: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as test.factory.Outer
     val __arg = kotlin.native.internal.ref.dereferenceExternalRCRef(arg) as kotlin.Any
     val _result = __self.ClassWithFactoryInAPackage(__arg)
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
-@ExportedBridge("test_factory_Outer_Nested__TypesOfArguments__KotlinRuntime_KotlinBase__")
-public fun test_factory_Outer_Nested__TypesOfArguments__KotlinRuntime_KotlinBase__(self: kotlin.native.internal.NativePtr, x: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+@ExportedBridge("test_factory_Outer_Nested__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__")
+public fun test_factory_Outer_Nested__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__(self: kotlin.native.internal.NativePtr, x: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __self = kotlin.native.internal.ref.dereferenceExternalRCRef(self) as test.factory.Outer
     val __x = kotlin.native.internal.ref.dereferenceExternalRCRef(x) as kotlin.Any
     val _result = __self.Nested(__x)
@@ -180,15 +180,15 @@ public fun test_factory_Outer_init_initialize__TypesOfArguments__Swift_UnsafeMut
     kotlin.native.internal.initInstance(____kt, test.factory.Outer())
 }
 
-@ExportedBridge("test_factory_modules_ClassFromDependency__TypesOfArguments__KotlinRuntime_KotlinBase__")
-public fun test_factory_modules_ClassFromDependency__TypesOfArguments__KotlinRuntime_KotlinBase__(arg: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+@ExportedBridge("test_factory_modules_ClassFromDependency__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__")
+public fun test_factory_modules_ClassFromDependency__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__(arg: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __arg = kotlin.native.internal.ref.dereferenceExternalRCRef(arg) as kotlin.Any
     val _result = test.factory.modules.ClassFromDependency(__arg)
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)
 }
 
-@ExportedBridge("test_not_factory_ClassWithFactoryInAPackage__TypesOfArguments__KotlinRuntime_KotlinBase__")
-public fun test_not_factory_ClassWithFactoryInAPackage__TypesOfArguments__KotlinRuntime_KotlinBase__(arg: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
+@ExportedBridge("test_not_factory_ClassWithFactoryInAPackage__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__")
+public fun test_not_factory_ClassWithFactoryInAPackage__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__(arg: kotlin.native.internal.NativePtr): kotlin.native.internal.NativePtr {
     val __arg = kotlin.native.internal.ref.dereferenceExternalRCRef(arg) as kotlin.Any
     val _result = test.not.factory.ClassWithFactoryInAPackage(__arg)
     return kotlin.native.internal.ref.createRetainedExternalRCRef(_result)

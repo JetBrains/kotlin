@@ -6,11 +6,11 @@
 package org.jetbrains.kotlin.sir.providers
 
 import org.jetbrains.kotlin.export.test.InlineSourceCodeAnalysis
-import org.jetbrains.kotlin.sir.SirNominalType
+import org.jetbrains.kotlin.sir.SirExistentialType
 import org.jetbrains.kotlin.sir.providers.support.SirTranslationTest
 import org.jetbrains.kotlin.sir.providers.support.functionsNamed
 import org.jetbrains.kotlin.sir.providers.support.translate
-import org.jetbrains.kotlin.sir.providers.utils.KotlinRuntimeModule.kotlinBase
+import org.jetbrains.kotlin.sir.providers.utils.KotlinRuntimeSupportModule
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
@@ -28,13 +28,13 @@ class AnyTypeTranslationTest : SirTranslationTest() {
         translate(file) {
             val getMainObject = it.functionsNamed("getMainObject").first()
             val isMainObject = it.functionsNamed("isMainObject").first()
-            
+
             // Check that the return type of getMainObject() is mapped to KotlinBase
-            assertEquals(SirNominalType(kotlinBase), getMainObject.returnType)
-            
+            assertEquals(SirExistentialType(KotlinRuntimeSupportModule.kotlinBridgeable), getMainObject.returnType)
+
             // Check that the parameter type of isMainObject(obj: Any) is mapped to KotlinBase
             val objParam = isMainObject.parameters.first()
-            assertEquals(SirNominalType(kotlinBase), objParam.type)
+            assertEquals(SirExistentialType(KotlinRuntimeSupportModule.kotlinBridgeable), objParam.type)
         }
     }
 }

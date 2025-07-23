@@ -21,9 +21,9 @@ public final class Bar: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBr
     }
 }
 public final class Foo: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
-    public var any_value: KotlinRuntime.KotlinBase? {
+    public var any_value: (any KotlinRuntimeSupport._KotlinBridgeable)? {
         get {
-            return { switch Foo_any_value_get(self.__externalRCRef()) { case nil: .none; case let res: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: res); } }()
+            return { switch Foo_any_value_get(self.__externalRCRef()) { case nil: .none; case let res: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: res) as! any KotlinRuntimeSupport._KotlinBridgeable; } }()
         }
     }
     public var value: main.Bar? {
@@ -89,14 +89,14 @@ public func foo(
     return __root___foo__TypesOfArguments__Swift_Optional_main_Bar___(a.map { it in it.__externalRCRef() } ?? nil)
 }
 public func foo_any(
-    a: KotlinRuntime.KotlinBase
+    a: any KotlinRuntimeSupport._KotlinBridgeable
 ) -> Swift.Void {
-    return __root___foo_any__TypesOfArguments__KotlinRuntime_KotlinBase__(a.__externalRCRef())
+    return __root___foo_any__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__(a.intoRCRefUnsafe())
 }
 public func foo_any(
-    a: KotlinRuntime.KotlinBase?
+    a: (any KotlinRuntimeSupport._KotlinBridgeable)?
 ) -> Swift.Void {
-    return __root___foo_any__TypesOfArguments__Swift_Optional_KotlinRuntime_KotlinBase___(a.map { it in it.__externalRCRef() } ?? nil)
+    return __root___foo_any__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(a.map { it in it.intoRCRefUnsafe() } ?? nil)
 }
 public func opt_to_non_opt_usage(
     i: main.OptToNonOptTypealias
@@ -106,8 +106,8 @@ public func opt_to_non_opt_usage(
 public func p() -> main.Bar? {
     return { switch __root___p() { case nil: .none; case let res: main.Bar.__createClassWrapper(externalRCRef: res); } }()
 }
-public func p_any() -> KotlinRuntime.KotlinBase? {
-    return { switch __root___p_any() { case nil: .none; case let res: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: res); } }()
+public func p_any() -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
+    return { switch __root___p_any() { case nil: .none; case let res: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: res) as! any KotlinRuntimeSupport._KotlinBridgeable; } }()
 }
 public func p_opt_opt_in(
     input: main.OptOptRef

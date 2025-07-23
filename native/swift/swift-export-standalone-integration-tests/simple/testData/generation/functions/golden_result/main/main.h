@@ -85,7 +85,7 @@ void * operators_Foo_div__TypesOfArguments__ExportedKotlinPackages_operators_Foo
 
 void operators_Foo_divAssign__TypesOfArguments__ExportedKotlinPackages_operators_Foo__(void * self, void * other);
 
-_Bool operators_Foo_equals__TypesOfArguments__Swift_Optional_KotlinRuntime_KotlinBase___(void * self, void * _Nullable other);
+_Bool operators_Foo_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(void * self, void * _Nullable other);
 
 int32_t operators_Foo_get__TypesOfArguments__Swift_Int32__(void * self, int32_t index);
 

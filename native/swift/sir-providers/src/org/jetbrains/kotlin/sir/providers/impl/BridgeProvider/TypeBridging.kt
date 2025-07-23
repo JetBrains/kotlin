@@ -7,7 +7,9 @@ package org.jetbrains.kotlin.sir.providers.impl.BridgeProvider
 
 import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.providers.SirTypeNamer
+import org.jetbrains.kotlin.sir.providers.impl.BridgeProvider.Bridge.*
 import org.jetbrains.kotlin.sir.providers.utils.KotlinRuntimeModule
+import org.jetbrains.kotlin.sir.providers.utils.KotlinRuntimeSupportModule
 import org.jetbrains.kotlin.sir.util.SirPlatformModule
 import org.jetbrains.kotlin.sir.util.SirSwiftModule
 import org.jetbrains.kotlin.sir.util.isNever
@@ -20,22 +22,32 @@ internal fun bridgeType(type: SirType): Bridge = when (type) {
     else -> error("Attempt to bridge unbridgeable type: $type.")
 }
 
-private fun bridgeExistential(type: SirExistentialType): Bridge = Bridge.AsExistential(
-    swiftType = type,
-    KotlinType.KotlinObject,
-    CType.Object
-)
+private fun bridgeExistential(type: SirExistentialType): Bridge {
+    if (type.protocols.singleOrNull() == KotlinRuntimeSupportModule.kotlinBridgeable) {
+        return Bridge.AsBridgeableAny(type)
+    }
+    return Bridge.AsExistential(
+        swiftType = type,
+        KotlinType.KotlinObject,
+        CType.Object
+    )
+}
 
 private fun bridgeNominalType(type: SirNominalType): Bridge {
     fun bridgeAsNSCollectionElement(type: SirType): Bridge = when (val bridge = bridgeType(type)) {
-        is Bridge.AsIs -> Bridge.AsNSNumber(bridge.swiftType)
-        is Bridge.AsOptionalWrapper -> Bridge.AsObjCBridgedOptional(bridge.wrappedObject.swiftType)
-        is Bridge.AsOptionalNothing -> Bridge.AsObjCBridgedOptional(bridge.swiftType)
+        is Bridge.AsIs -> AsNSNumber(bridge.swiftType)
+        is Bridge.AsOptionalWrapper -> AsObjCBridgedOptional(bridge.wrappedObject.swiftType)
+        is Bridge.AsOptionalNothing -> AsObjCBridgedOptional(bridge.swiftType)
         is Bridge.AsObject,
         is Bridge.AsExistential,
+        is Bridge.AsBridgeableAny,
         is Bridge.AsOpaqueObject,
-            -> Bridge.AsObjCBridged(bridge.swiftType, CType.id)
-        else -> bridge
+            -> AsObjCBridged(bridge.swiftType, CType.id)
+        is Bridge.AsBlock,
+        is Bridge.AsObjCBridged,
+        Bridge.AsOutError,
+        Bridge.AsVoid
+            -> bridge
     }
 
     return when (val subtype = type.typeDeclaration) {
@@ -67,6 +79,7 @@ private fun bridgeNominalType(type: SirNominalType): Bridge {
             is Bridge.AsObject,
             is Bridge.AsObjCBridged,
             is Bridge.AsExistential,
+            is Bridge.AsBridgeableAny,
             is Bridge.AsBlock,
                 -> Bridge.AsOptionalWrapper(bridge)
 
@@ -206,6 +219,30 @@ internal sealed class Bridge(
         }
     }
 
+    class AsBridgeableAny(swiftType: SirExistentialType) : Bridge(swiftType, KotlinType.KotlinObject, CType.Object) {
+        override val inKotlinSources = object : ValueConversion {
+            override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String) =
+                "kotlin.native.internal.ref.dereferenceExternalRCRef($valueExpression) as kotlin.Any"
+
+            override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String) =
+                "kotlin.native.internal.ref.createRetainedExternalRCRef($valueExpression)"
+        }
+
+        override val inSwiftSources: InSwiftSourcesConversion = object : InSwiftSourcesConversion {
+            override fun renderNil(): String = "nil"
+
+            override fun swiftToKotlin(
+                typeNamer: SirTypeNamer,
+                valueExpression: String,
+            ): String {
+                return "$valueExpression.intoRCRefUnsafe()"
+            }
+
+            override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String) =
+                "${typeNamer.swiftFqName(SirNominalType(KotlinRuntimeModule.kotlinBase))}.__createProtocolWrapper(externalRCRef: $valueExpression) as! ${typeNamer.swiftFqName(swiftType)}"
+        }
+    }
+
     class AsExistential(swiftType: SirExistentialType, kotlinType: KotlinType, cType: CType) : Bridge(swiftType, kotlinType, cType) {
         override val inKotlinSources = object : ValueConversion {
             override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String) =
@@ -271,7 +308,7 @@ internal sealed class Bridge(
             override fun renderNil(): String = "NSNull()"
 
             override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String): String {
-                return "$valueExpression as NSObject? ?? ${renderNil()}"
+                return "$valueExpression as! NSObject? ?? ${renderNil()}"
             }
 
             override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String): String = valueExpression
@@ -427,7 +464,10 @@ internal sealed class Bridge(
 
         override val inSwiftSources: InSwiftSourcesConversion = object : InSwiftSourcesConversion {
             override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String): String {
-                require(wrappedObject is AsObjCBridged || wrappedObject is AsObject || wrappedObject is AsExistential || wrappedObject is AsBlock)
+                require(
+                    wrappedObject is AsObjCBridged || wrappedObject is AsObject ||
+                            wrappedObject is AsExistential || wrappedObject is AsBridgeableAny || wrappedObject is AsBlock
+                )
                 return valueExpression.mapSwift { wrappedObject.inSwiftSources.swiftToKotlin(typeNamer, it) } +
                         " ?? ${wrappedObject.inSwiftSources.renderNil()}"
             }
@@ -436,9 +476,10 @@ internal sealed class Bridge(
                 return when (wrappedObject) {
                     is AsObjCBridged ->
                         valueExpression.mapSwift { wrappedObject.inSwiftSources.kotlinToSwift(typeNamer, it) }
-                    is AsObject, is AsExistential, is AsBlock -> "{ switch $valueExpression { case ${wrappedObject.inSwiftSources.renderNil()}: .none; case let res: ${
-                        wrappedObject.inSwiftSources.kotlinToSwift(typeNamer, "res")
-                    }; } }()"
+                    is AsObject, is AsExistential, is AsBlock, is AsBridgeableAny ->
+                        "{ switch $valueExpression { case ${wrappedObject.inSwiftSources.renderNil()}: .none; case let res: ${
+                            wrappedObject.inSwiftSources.kotlinToSwift(typeNamer, "res")
+                        }; } }()"
                     is AsIs,
                     is AsVoid,
                     is AsOpaqueObject,
