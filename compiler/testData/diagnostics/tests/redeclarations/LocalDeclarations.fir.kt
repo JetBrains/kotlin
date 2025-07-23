@@ -2,14 +2,14 @@
 // LANGUAGE: +NestedTypeAliases
 
 fun conflicts() {
-    class <!CONFLICTING_OVERLOADS!>C<!>
-    class <!CONFLICTING_OVERLOADS!>C<!>
+    class <!CONFLICTING_OVERLOADS, REDECLARATION!>C<!>
+    class <!CONFLICTING_OVERLOADS, REDECLARATION!>C<!>
 
-    typealias TA = String
-    typealias TA = String
+    typealias <!REDECLARATION!>TA<!> = String
+    typealias <!REDECLARATION!>TA<!> = String
 
-    class ClassConflictsTA
-    typealias ClassConflictsTA = Int
+    class <!REDECLARATION!>ClassConflictsTA<!>
+    typealias <!REDECLARATION!>ClassConflictsTA<!> = Int
 }
 
 fun noConflics(condition: Boolean) {
