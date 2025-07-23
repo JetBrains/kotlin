@@ -1,3 +1,4 @@
+// LANGUAGE: +NameBasedDestructuring
 data class Tuple(val first: String, val second: Int)
 
 fun test1(x: Tuple): Boolean {

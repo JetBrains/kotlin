@@ -1,4 +1,5 @@
 // RUN_PIPELINE_TILL: BACKEND
+// LANGUAGE: +NameBasedDestructuring
 data class Tuple(val first: String, val second: Int)
 
 fun declaration(x: Tuple) {

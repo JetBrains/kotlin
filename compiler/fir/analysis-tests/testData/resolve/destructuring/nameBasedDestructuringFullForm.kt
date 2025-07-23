@@ -1,4 +1,5 @@
 // RUN_PIPELINE_TILL: BACKEND
+// LANGUAGE: +NameBasedDestructuring
 
 class Tuple(val first: String, val second: Int)
 
