@@ -570,7 +570,7 @@ private fun FirDeclarationOverloadabilityHelper.getConflictStateWithContextParam
 }
 
 context(context: CheckerContext, reporter: DiagnosticReporter)
-        /** Checks for redeclarations of value and type parameters, and local variables. */
+/** Checks for redeclarations of value and type parameters, and local variables. */
 fun checkForLocalRedeclarations(elements: List<FirElement>) {
     if (elements.size <= 1) return
 
@@ -588,6 +588,7 @@ fun checkForLocalRedeclarations(elements: List<FirElement>) {
                 }
             }
             is FirVariable -> element.symbol to element.name
+            is FirClassLikeDeclaration -> element.symbol.let { it to it.name }
             is FirOuterClassTypeParameterRef -> continue
             is FirTypeParameterRef -> element.symbol.let { it to it.name }
             else -> null to null
