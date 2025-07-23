@@ -1152,9 +1152,7 @@ class BodyGenerator(
                 val arrayGcType = WasmImmediate.GcType(
                     wasmFileCodegenContext.referenceGcType(call.typeArguments[0]!!.getRuntimeClass(irBuiltIns).symbol)
                 )
-                val dataIdx = (call.arguments[2] as? IrConst)?.value as? Int ?: error("Data idx argument should be int")
-//                if (dataIdxIrConst.kind != IrConstKind.Int) error("")
-//                val dataIdx = dataIdxIrConst.value as Int
+                val dataIdx = (call.arguments[2] as? IrConst)?.value as? Int ?: error("An argument for dataIdx should be a compile time const with type Int")
                 body.buildDrop(location)
                 body.buildInstr(WasmOp.ARRAY_NEW_DATA, location, arrayGcType, WasmImmediate.DataIdx(dataIdx))
             }
