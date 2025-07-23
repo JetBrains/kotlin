@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrBlockBody
 import org.jetbrains.kotlin.ir.expressions.IrConst
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
+import org.jetbrains.kotlin.ir.util.file
 import org.jetbrains.kotlin.ir.util.getAnnotation
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
@@ -60,5 +61,6 @@ class IrTransformerForICTesting(private val context: IrPluginContext) : IrVisito
             superQualifierSymbol = null
         )
         body.statements.add(0, functionCall)
+        context.recordLookup(functionToCall, fromFile = declaration.file)
     }
 }
