@@ -405,6 +405,7 @@
 /plugins/scripting/ @JetBrains/kotlin-frontend
 /plugins/plugins-interactions-testing/ @JetBrains/kotlin-frontend
 /plugins/kotlin-dataframe/ @JetBrains/kotlin-for-data-science
+/plugins/test-plugins/ @JetBrains/kotlin-frontend
 
 /prepare/ @JetBrains/kotlin-build-infrastructure
 
