@@ -63,8 +63,6 @@ internal class AddContinuationLowering(context: JvmBackendContext) : SuspendLowe
             val functionStack = mutableListOf<IrFunction>()
 
             override fun visitFunction(declaration: IrFunction): IrStatement {
-                if (declaration.isDefaultImplsBridgeInJvmDefaultEnableMode())
-                    return declaration
                 functionStack.push(declaration)
                 return super.visitFunction(declaration).also { functionStack.pop() }
             }
@@ -309,8 +307,10 @@ internal class AddContinuationLowering(context: JvmBackendContext) : SuspendLowe
                 val continuationParameter = view.continuationParameter()
                 val parameterMap = function.parameters.zip(view.parameters.filter { it != continuationParameter }).toMap()
                 view.body = function.moveBodyTo(view, parameterMap)
-                if (function.isDefaultImplsBridgeInJvmDefaultEnableMode()) {
-                    view.originalFunctionForDefaultImpl = function.originalFunctionForDefaultImpl
+                // if X is original for Y, then (view for X) is an original for the (view for Y)
+                function.originalFunctionForDefaultImpl?.let { originalForDefaultImplBridge ->
+                    val viewForOriginal = originalForDefaultImplBridge.suspendFunctionOriginal().viewOfOriginalSuspendFunction
+                    if (viewForOriginal != null) view.originalFunctionForDefaultImpl = viewForOriginal
                 }
 
                 val result = mutableListOf(view)
