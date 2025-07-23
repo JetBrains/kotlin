@@ -58,25 +58,21 @@ internal fun getQualifiedName(rtti: kotlin.wasm.internal.reftypes.structref): St
     return if (packageName.isEmpty()) typeName else "$packageName.$typeName"
 }
 
-internal fun getPackageName(rtti: kotlin.wasm.internal.reftypes.structref): String =
-    if ((wasmGetRttiIntField(5, rtti) and TYPE_INFO_FLAG_FITS_ONE_BIT_QUALIFIER) != 0)
-        stringLiteralRawByte(
-            poolId = wasmGetRttiIntField(2, rtti),
-        )
+internal fun getPackageName(rtti: kotlin.wasm.internal.reftypes.structref): String {
+    val flagFitsOneBitQualifier = wasmGetRttiIntField(5, rtti) and TYPE_INFO_FLAG_FITS_ONE_BIT_QUALIFIER
+    return if (flagFitsOneBitQualifier != 0)
+        stringLiteralLatin1(wasmGetRttiIntField(2, rtti))
     else
-        stringLiteralUTF16(
-            poolId = wasmGetRttiIntField(2, rtti),
-        )
+        stringLiteralUtf16(wasmGetRttiIntField(2, rtti))
+}
 
-internal fun getSimpleName(rtti: kotlin.wasm.internal.reftypes.structref): String =
-    if ((wasmGetRttiIntField(5, rtti) and TYPE_INFO_FLAG_FITS_ONE_BIT_SIMPLE_NAME) != 0)
-        stringLiteralRawByte(
-            poolId = wasmGetRttiIntField(3, rtti),
-        )
+internal fun getSimpleName(rtti: kotlin.wasm.internal.reftypes.structref): String {
+    val flagFitsOneBitSimpleName = wasmGetRttiIntField(5, rtti) and TYPE_INFO_FLAG_FITS_ONE_BIT_SIMPLE_NAME
+    return if (flagFitsOneBitSimpleName != 0)
+        stringLiteralLatin1(wasmGetRttiIntField(3, rtti))
     else
-        stringLiteralUTF16(
-            poolId = wasmGetRttiIntField(3, rtti),
-        )
+        stringLiteralUtf16(wasmGetRttiIntField(3, rtti))
+}
 
 internal fun getTypeId(rtti: kotlin.wasm.internal.reftypes.structref): Long =
     wasmGetRttiLongField(4, rtti)

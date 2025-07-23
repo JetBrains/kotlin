@@ -157,7 +157,7 @@ public actual class String internal @WasmPrimitiveConstructor constructor(
 internal inline fun WasmCharArray.createString(): String =
     String(null, this.len(), this)
 
-internal fun stringLiteralUTF16(poolId: Int): String {
+internal fun stringLiteralUtf16(poolId: Int): String {
     val cached = stringPool[poolId]
     if (cached !== null) {
         return cached
@@ -173,7 +173,7 @@ internal fun stringLiteralUTF16(poolId: Int): String {
     return newString
 }
 
-internal fun stringLiteralRawByte(poolId: Int): String {
+internal fun stringLiteralLatin1(poolId: Int): String {
     val cached = stringPool[poolId]
     if (cached !== null) {
         return cached

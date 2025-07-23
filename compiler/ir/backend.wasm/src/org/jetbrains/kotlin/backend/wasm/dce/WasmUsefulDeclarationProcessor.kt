@@ -34,11 +34,11 @@ internal class WasmUsefulDeclarationProcessor(
             is IrConstKind.Null -> expression.type.enqueueType(data, "expression type")
             is IrConstKind.String -> {
                 if ((expression.value as String).all { it.code in 0..255 }) {
-                    context.wasmSymbols.stringGetLiteralRawByte.owner
-                        .enqueue(data, "String literal intrinsic getter stringGetLiteral")
+                    context.wasmSymbols.stringGetLiteralLatin1.owner
+                        .enqueue(data, "String literal intrinsic getter stringGetLiteralLatin1")
                 } else {
-                    context.wasmSymbols.stringGetLiteralUTF16.owner
-                        .enqueue(data, "String literal intrinsic getter stringGetLiteral")
+                    context.wasmSymbols.stringGetLiteralUtf16.owner
+                        .enqueue(data, "String literal intrinsic getter stringGetLiteralUtf16")
                 }
             }
             else -> Unit

@@ -626,9 +626,9 @@ fun generateConstExpression(
             body.commentGroupStart { "const string: \"$stringValue\"" }
             body.buildConstI32Symbol(literalPoolId, location)
             if (isLatin) {
-                body.buildCall(context.referenceFunction(backendContext.wasmSymbols.stringGetLiteralRawByte), location)
+                body.buildCall(context.referenceFunction(backendContext.wasmSymbols.stringGetLiteralLatin1), location)
             } else {
-                body.buildCall(context.referenceFunction(backendContext.wasmSymbols.stringGetLiteralUTF16), location)
+                body.buildCall(context.referenceFunction(backendContext.wasmSymbols.stringGetLiteralUtf16), location)
             }
             body.commentGroupEnd()
         }
