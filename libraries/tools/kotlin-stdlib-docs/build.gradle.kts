@@ -139,6 +139,8 @@ fun createStdLibVersionedDocTask(version: String, isLatest: Boolean) =
                 sourceRoots.from("$kotlin_stdlib_dir/js/src/kotlin")
 
                 sourceRoots.from("$kotlin_stdlib_dir/js/builtins")
+                // We don't generate docs for the intermediate webMain source set, so to make
+                // regular declarations from it visible, they are explicitly included in js and wasm-js source sets.
                 sourceRoots.from("$kotlin_stdlib_dir/jsAndWasmJsCommon/src/kotlin/JsInterop.kt")
                 sourceRoots.from("$kotlin_stdlib_dir/jsAndWasmJsCommon/src/kotlin/js/ExperimentalWasmJsInterop.kt")
 
@@ -190,6 +192,8 @@ fun createStdLibVersionedDocTask(version: String, isLatest: Boolean) =
                 sourceRoots.from("$kotlin_stdlib_dir/wasm/js/builtins")
                 sourceRoots.from("$kotlin_stdlib_dir/wasm/js/internal")
                 sourceRoots.from("$kotlin_stdlib_dir/wasm/js/src")
+                // We don't generate docs for the intermediate webMain source set, so to make
+                // regular declarations from it visible, they are explicitly included in js and wasm-js source sets.
                 sourceRoots.from("$kotlin_stdlib_dir/jsAndWasmJsCommon/src/kotlin/JsInterop.kt")
                 sourceRoots.from("$kotlin_stdlib_dir/jsAndWasmJsCommon/src/kotlin/js/ExperimentalWasmJsInterop.kt")
 
