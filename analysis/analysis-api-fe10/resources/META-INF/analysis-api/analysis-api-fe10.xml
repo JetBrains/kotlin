@@ -16,6 +16,11 @@
   </extensionPoints>
 
   <extensions defaultExtensionNs="com.intellij">
+    <!-- legacy JS decompiler for .kjsm files, not supported in K2 -->
+    <psi.classFileDecompiler implementation="org.jetbrains.kotlin.analysis.decompiler.js.KotlinJavaScriptMetaFileDecompiler"/>
+
+    <psi.classFileDecompiler implementation="org.jetbrains.kotlin.analysis.decompiler.konan.KotlinNativeMetadataDecompiler"/>
+
     <projectService
         serviceInterface="org.jetbrains.kotlin.analysis.api.session.KaSessionProvider"
         serviceImplementation="org.jetbrains.kotlin.analysis.api.descriptors.KaFe10SessionProvider"
