@@ -259,8 +259,8 @@ abstract class AbstractBuilderGenerator<T : AbstractBuilder>(session: FirSession
 
     @OptIn(SymbolInternals::class)
     private fun extractBuilderWithDeclarations(classSymbol: FirClassSymbol<*>): List<BuilderWithDeclaration<T>>? {
+        val annotationSymbol = annotationClassId.toSymbol(session) as? FirRegularClassSymbol ?: return emptyList()
         return buildList {
-            val annotationSymbol = annotationClassId.toSymbol(session) as FirRegularClassSymbol
             val allowedTargets = annotationSymbol.fir.getAllowedAnnotationTargets(session)
 
             if (allowedTargets.contains(KotlinTarget.CLASS)) {
