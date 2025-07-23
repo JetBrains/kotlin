@@ -1320,6 +1320,11 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<FirCallableSymbol<*>>("overridingDeclaration")
             parameter<FirCallableSymbol<*>>("overriddenDeclaration")
         }
+
+        val OVERRIDING_IGNORABLE_WITH_MUST_USE by warning<KtDeclaration>(PositioningStrategy.DECLARATION_NAME) {
+            parameter<FirCallableSymbol<*>>("method")
+            parameter<FirClassLikeSymbol<*>>("parentClass")
+        }
     }
 
     val REDECLARATIONS by object : DiagnosticGroup("Redeclarations") {

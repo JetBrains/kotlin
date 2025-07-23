@@ -54,7 +54,7 @@ class C3: I3 {
 
 @MustUseReturnValue
 class C4: I3 {
-    override fun foo(): String = "" // Should be a warning on overriding explicit @Ignorable
+    override fun <!OVERRIDING_IGNORABLE_WITH_MUST_USE!>foo<!>(): String = "" // Should be a warning on overriding explicit @Ignorable
 }
 
 fun check(c1: C1, c2: C2, c3: C3, c4: C4) {
