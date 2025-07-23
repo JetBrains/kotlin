@@ -17954,6 +17954,12 @@ public class PhasedJvmDiagnosticLightTreeTestGenerated extends AbstractPhasedJvm
         }
 
         @Test
+        @TestMetadata("approximationForCollectionAsserter.kt")
+        public void testApproximationForCollectionAsserter() {
+          runTest("compiler/testData/diagnostics/tests/inference/capturedTypes/approximationForCollectionAsserter.kt");
+        }
+
+        @Test
         @TestMetadata("approximationLeavesNonTrivialLowerBound.kt")
         public void testApproximationLeavesNonTrivialLowerBound() {
           runTest("compiler/testData/diagnostics/tests/inference/capturedTypes/approximationLeavesNonTrivialLowerBound.kt");
@@ -37019,6 +37025,12 @@ public class PhasedJvmDiagnosticLightTreeTestGenerated extends AbstractPhasedJvm
       @TestMetadata("SimpleCorrectKT.kt")
       public void testSimpleCorrectKT() {
         runTest("compiler/testData/diagnostics/tests/samConversions/SimpleCorrectKT.kt");
+      }
+
+      @Test
+      @TestMetadata("starProjectedTypesAndExplicitLambdaParameters.kt")
+      public void testStarProjectedTypesAndExplicitLambdaParameters() {
+        runTest("compiler/testData/diagnostics/tests/samConversions/starProjectedTypesAndExplicitLambdaParameters.kt");
       }
 
       @Test
