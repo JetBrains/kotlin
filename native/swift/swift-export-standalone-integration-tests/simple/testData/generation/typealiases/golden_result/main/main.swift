@@ -27,7 +27,7 @@ public typealias sealedClass = main.SEALED
 public protocol OUTSIDE_PROTO: KotlinRuntime.KotlinBase {
 }
 @objc(_OUTSIDE_PROTO)
-protocol _OUTSIDE_PROTO {
+package protocol _OUTSIDE_PROTO {
 }
 open class ABSTRACT_CLASS: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
     package init() {

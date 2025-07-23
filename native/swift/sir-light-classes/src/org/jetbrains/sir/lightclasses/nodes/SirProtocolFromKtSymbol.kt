@@ -133,7 +133,7 @@ internal class SirMarkerProtocolFromKtSymbol(
 
     override lateinit var parent: SirDeclarationParent
     override val origin: KotlinSource get() = KotlinMarkerProtocol(ktSymbol)
-    override val visibility: SirVisibility = SirVisibility.INTERNAL
+    override val visibility: SirVisibility = SirVisibility.PACKAGE
     override val documentation: String? = null
     override val attributes: List<SirAttribute> get() = listOf(SirAttribute.ObjC(this.name))
     override val name: String get() = "_${target.name}"

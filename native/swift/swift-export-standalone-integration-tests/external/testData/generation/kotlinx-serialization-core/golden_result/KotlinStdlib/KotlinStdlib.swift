@@ -9,7 +9,7 @@ public protocol _ExportedKotlinPackages_kotlin_collections_MutableMap_MutableEnt
     ) -> KotlinRuntime.KotlinBase?
 }
 @objc(__ExportedKotlinPackages_kotlin_collections_MutableMap_MutableEntry)
-protocol __ExportedKotlinPackages_kotlin_collections_MutableMap_MutableEntry: KotlinStdlib.__ExportedKotlinPackages_kotlin_collections_Map_Entry {
+package protocol __ExportedKotlinPackages_kotlin_collections_MutableMap_MutableEntry: KotlinStdlib.__ExportedKotlinPackages_kotlin_collections_Map_Entry {
 }
 public protocol _ExportedKotlinPackages_kotlin_collections_Map_Entry: KotlinRuntime.KotlinBase {
     var key: KotlinRuntime.KotlinBase? {
@@ -20,13 +20,13 @@ public protocol _ExportedKotlinPackages_kotlin_collections_Map_Entry: KotlinRunt
     }
 }
 @objc(__ExportedKotlinPackages_kotlin_collections_Map_Entry)
-protocol __ExportedKotlinPackages_kotlin_collections_Map_Entry {
+package protocol __ExportedKotlinPackages_kotlin_collections_Map_Entry {
 }
 extension ExportedKotlinPackages.kotlin {
     public protocol Annotation: KotlinRuntime.KotlinBase {
     }
     @objc(_Annotation)
-    protocol _Annotation {
+    package protocol _Annotation {
     }
     public protocol CharSequence: KotlinRuntime.KotlinBase {
         var length: Swift.Int32 {
@@ -41,7 +41,7 @@ extension ExportedKotlinPackages.kotlin {
         ) -> any ExportedKotlinPackages.kotlin.CharSequence
     }
     @objc(_CharSequence)
-    protocol _CharSequence {
+    package protocol _CharSequence {
     }
     public final class Array: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
         public var size: Swift.Int32 {
@@ -2305,14 +2305,14 @@ extension ExportedKotlinPackages.kotlin.collections {
         func iterator() -> any ExportedKotlinPackages.kotlin.collections.Iterator
     }
     @objc(_Iterable)
-    protocol _Iterable {
+    package protocol _Iterable {
     }
     public protocol Iterator: KotlinRuntime.KotlinBase {
         func next() -> KotlinRuntime.KotlinBase?
         func hasNext() -> Swift.Bool
     }
     @objc(_Iterator)
-    protocol _Iterator {
+    package protocol _Iterator {
     }
     public protocol MutableMap: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlin.collections.Map {
         typealias MutableEntry = KotlinStdlib._ExportedKotlinPackages_kotlin_collections_MutableMap_MutableEntry
@@ -2338,7 +2338,7 @@ extension ExportedKotlinPackages.kotlin.collections {
         func clear() -> Swift.Void
     }
     @objc(_MutableMap)
-    protocol _MutableMap: ExportedKotlinPackages.kotlin.collections._Map {
+    package protocol _MutableMap: ExportedKotlinPackages.kotlin.collections._Map {
     }
     public protocol MutableCollection: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlin.collections.Collection, ExportedKotlinPackages.kotlin.collections.MutableIterable {
         func iterator() -> any ExportedKotlinPackages.kotlin.collections.MutableIterator
@@ -2360,7 +2360,7 @@ extension ExportedKotlinPackages.kotlin.collections {
         func clear() -> Swift.Void
     }
     @objc(_MutableCollection)
-    protocol _MutableCollection: ExportedKotlinPackages.kotlin.collections._Collection, ExportedKotlinPackages.kotlin.collections._MutableIterable {
+    package protocol _MutableCollection: ExportedKotlinPackages.kotlin.collections._Collection, ExportedKotlinPackages.kotlin.collections._MutableIterable {
     }
     public protocol Map: KotlinRuntime.KotlinBase {
         typealias Entry = KotlinStdlib._ExportedKotlinPackages_kotlin_collections_Map_Entry
@@ -2388,7 +2388,7 @@ extension ExportedKotlinPackages.kotlin.collections {
         ) -> KotlinRuntime.KotlinBase?
     }
     @objc(_Map)
-    protocol _Map {
+    package protocol _Map {
     }
     public protocol MutableSet: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlin.collections.Set, ExportedKotlinPackages.kotlin.collections.MutableCollection {
         func iterator() -> any ExportedKotlinPackages.kotlin.collections.MutableIterator
@@ -2410,7 +2410,7 @@ extension ExportedKotlinPackages.kotlin.collections {
         func clear() -> Swift.Void
     }
     @objc(_MutableSet)
-    protocol _MutableSet: ExportedKotlinPackages.kotlin.collections._Set, ExportedKotlinPackages.kotlin.collections._MutableCollection {
+    package protocol _MutableSet: ExportedKotlinPackages.kotlin.collections._Set, ExportedKotlinPackages.kotlin.collections._MutableCollection {
     }
     public protocol Collection: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlin.collections.Iterable {
         var size: Swift.Int32 {
@@ -2426,19 +2426,19 @@ extension ExportedKotlinPackages.kotlin.collections {
         ) -> Swift.Bool
     }
     @objc(_Collection)
-    protocol _Collection: ExportedKotlinPackages.kotlin.collections._Iterable {
+    package protocol _Collection: ExportedKotlinPackages.kotlin.collections._Iterable {
     }
     public protocol MutableIterable: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlin.collections.Iterable {
         func iterator() -> any ExportedKotlinPackages.kotlin.collections.MutableIterator
     }
     @objc(_MutableIterable)
-    protocol _MutableIterable: ExportedKotlinPackages.kotlin.collections._Iterable {
+    package protocol _MutableIterable: ExportedKotlinPackages.kotlin.collections._Iterable {
     }
     public protocol MutableIterator: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlin.collections.Iterator {
         func remove() -> Swift.Void
     }
     @objc(_MutableIterator)
-    protocol _MutableIterator: ExportedKotlinPackages.kotlin.collections._Iterator {
+    package protocol _MutableIterator: ExportedKotlinPackages.kotlin.collections._Iterator {
     }
     public protocol Set: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlin.collections.Collection {
         var size: Swift.Int32 {
@@ -2454,7 +2454,7 @@ extension ExportedKotlinPackages.kotlin.collections {
         ) -> Swift.Bool
     }
     @objc(_Set)
-    protocol _Set: ExportedKotlinPackages.kotlin.collections._Collection {
+    package protocol _Set: ExportedKotlinPackages.kotlin.collections._Collection {
     }
     open class ByteIterator: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
         public final func next() -> Swift.Int8 {

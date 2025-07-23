@@ -6,7 +6,7 @@ import KotlinRuntimeSupport
 public protocol INTERFACE: KotlinRuntime.KotlinBase {
 }
 @objc(_INTERFACE)
-protocol _INTERFACE {
+package protocol _INTERFACE {
 }
 open class ABSTRACT_CLASS: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
     package init() {

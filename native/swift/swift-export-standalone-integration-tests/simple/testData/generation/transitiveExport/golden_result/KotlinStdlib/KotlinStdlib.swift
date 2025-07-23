@@ -19,7 +19,7 @@ extension ExportedKotlinPackages.kotlin.collections {
         func next() -> KotlinRuntime.KotlinBase?
     }
     @objc(_Iterator)
-    protocol _Iterator {
+    package protocol _Iterator {
     }
     open class ByteIterator: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
         package init() {

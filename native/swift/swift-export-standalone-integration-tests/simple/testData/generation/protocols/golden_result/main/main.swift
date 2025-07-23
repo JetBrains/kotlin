@@ -36,13 +36,13 @@ public protocol SiblingProtocol: KotlinRuntime.KotlinBase {
     typealias NestedClass = main._SiblingProtocol_NestedClass
 }
 @objc(_Barable)
-protocol _Barable: main._Foeble {
+package protocol _Barable: main._Foeble {
 }
 @objc(_Bazzable)
-protocol _Bazzable {
+package protocol _Bazzable {
 }
 @objc(_ContainerProtocol)
-protocol _ContainerProtocol {
+package protocol _ContainerProtocol {
 }
 public protocol _ContainerProtocol_NestedProtocol: KotlinRuntime.KotlinBase {
     typealias NestedClass = main.__ContainerProtocol_NestedProtocol_NestedClass
@@ -51,27 +51,27 @@ public protocol _ExportedKotlinPackages_packagewithprotocols_ContainerProtocol_N
     typealias NestedClass = main.__ExportedKotlinPackages_packagewithprotocols_ContainerProtocol_NestedProtocol_NestedClass
 }
 @objc(_Foeble)
-protocol _Foeble {
+package protocol _Foeble {
 }
 @objc(_SealedBazzable)
-protocol _SealedBazzable: main._SealedFoeble {
+package protocol _SealedBazzable: main._SealedFoeble {
 }
 @objc(_SealedFoeble)
-protocol _SealedFoeble {
+package protocol _SealedFoeble {
 }
 public protocol _SealedFoeble_SealedBarable: KotlinRuntime.KotlinBase, main.SealedFoeble {
 }
 @objc(_SiblingProtocol)
-protocol _SiblingProtocol {
+package protocol _SiblingProtocol {
 }
 @objc(__ContainerProtocol_NestedProtocol)
-protocol __ContainerProtocol_NestedProtocol {
+package protocol __ContainerProtocol_NestedProtocol {
 }
 @objc(__ExportedKotlinPackages_packagewithprotocols_ContainerProtocol_NestedProtocol)
-protocol __ExportedKotlinPackages_packagewithprotocols_ContainerProtocol_NestedProtocol {
+package protocol __ExportedKotlinPackages_packagewithprotocols_ContainerProtocol_NestedProtocol {
 }
 @objc(__SealedFoeble_SealedBarable)
-protocol __SealedFoeble_SealedBarable: main._SealedFoeble {
+package protocol __SealedFoeble_SealedBarable: main._SealedFoeble {
 }
 public final class Bar: KotlinRuntime.KotlinBase, main.Barable, main._Barable, main.Foeble, main._Foeble, main.Bazzable, main._Bazzable, KotlinRuntimeSupport._KotlinBridged {
     public var baz: main.Bar {
@@ -441,10 +441,10 @@ extension ExportedKotlinPackages.packagewithprotocols {
         typealias NestedClass = main._ExportedKotlinPackages_packagewithprotocols_SiblingProtocol_NestedClass
     }
     @objc(_ContainerProtocol)
-    protocol _ContainerProtocol {
+    package protocol _ContainerProtocol {
     }
     @objc(_SiblingProtocol)
-    protocol _SiblingProtocol {
+    package protocol _SiblingProtocol {
     }
     public final class ENUM_WITH_INTERFACE_INHERITANCE: KotlinRuntime.KotlinBase, ExportedKotlinPackages.packagewithprotocols.ContainerProtocol, ExportedKotlinPackages.packagewithprotocols._ContainerProtocol, KotlinRuntimeSupport._KotlinBridged, Swift.CaseIterable {
         public static var allCases: [ExportedKotlinPackages.packagewithprotocols.ENUM_WITH_INTERFACE_INHERITANCE] {
@@ -535,10 +535,10 @@ extension ExportedKotlinPackages.repeating_conformances {
     public protocol Foeble: KotlinRuntime.KotlinBase {
     }
     @objc(_Barable)
-    protocol _Barable: ExportedKotlinPackages.repeating_conformances._Foeble {
+    package protocol _Barable: ExportedKotlinPackages.repeating_conformances._Foeble {
     }
     @objc(_Foeble)
-    protocol _Foeble {
+    package protocol _Foeble {
     }
     open class Child1: ExportedKotlinPackages.repeating_conformances.Parent1 {
         public override init() {
