@@ -47,6 +47,7 @@ public class JavaList extends java.util.AbstractList<String> {
 }
 
 // FILE: app/UnannotatedList.java
+package app;
 
 public class UnannotatedList extends java.util.AbstractList<String> {
     @Override
@@ -86,6 +87,7 @@ class List1: JavaList() {
 @MustUseReturnValue
 class List2: JavaList() {
     override fun get(index: Int): String = ""
+    // Not sure why K1 reports parameter name change, probably some quirk in handling java list as supertype
     override fun <!OVERRIDING_IGNORABLE_WITH_MUST_USE!>add<!>(s: String?): Boolean = true
 
     @IgnorableReturnValue
@@ -102,6 +104,7 @@ class List3: UnannotatedList() {
 @MustUseReturnValue
 class List4: UnannotatedList() {
     override fun get(index: Int): String = ""
+    // Not sure why K1 reports parameter name change, probably some quirk in handling java list as supertype
     override fun add(s: String?): Boolean = true
 
     @IgnorableReturnValue

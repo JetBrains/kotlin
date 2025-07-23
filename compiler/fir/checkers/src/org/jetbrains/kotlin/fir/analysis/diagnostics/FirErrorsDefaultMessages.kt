@@ -2449,7 +2449,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(
             OVERRIDING_IGNORABLE_WITH_MUST_USE,
             "Method ''{0}'' is located in the scope marked as @MustUseReturnValue, but declared as @IgnorableReturnValue in the parent type ''{1}''. " +
-                    "Overriding ignorable methods with must-use methods is most likely a semantically incorrect change. Consider marking ''{0}'' as @IgnorableReturnValue.",
+                    "Overriding ignorable methods with must-use methods is a semantically incorrect change. Consider marking ''{0}'' as @IgnorableReturnValue.",
             DECLARATION_NAME,
             DECLARATION_FQ_NAME,
         )
