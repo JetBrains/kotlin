@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.buildtools.`internal`.UseFromImplModuleRestricted
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments.Companion.CLASSPATH
-import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments.Companion.D
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments.Companion.INCLUDE_RUNTIME
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments.Companion.JAVA_PARAMETERS
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments.Companion.JDK_HOME
@@ -116,7 +115,6 @@ public class JvmCompilerArgumentsImpl : CommonCompilerArgumentsImpl(), JvmCompil
   @Suppress("DEPRECATION")
   public fun toCompilerArguments(arguments: K2JVMCompilerArguments = K2JVMCompilerArguments()): K2JVMCompilerArguments {
     super.toCompilerArguments(arguments)
-    if ("D" in optionsMap) { arguments.destination = get(D) }
     if ("CLASSPATH" in optionsMap) { arguments.classpath = get(CLASSPATH) }
     if ("INCLUDE_RUNTIME" in optionsMap) { arguments.includeRuntime = get(INCLUDE_RUNTIME) }
     if ("JDK_HOME" in optionsMap) { arguments.jdkHome = get(JDK_HOME) }
@@ -202,8 +200,6 @@ public class JvmCompilerArgumentsImpl : CommonCompilerArgumentsImpl(), JvmCompil
   )
 
   public companion object {
-    public val D: JvmCompilerArgument<String?> = JvmCompilerArgument("D")
-
     public val CLASSPATH: JvmCompilerArgument<String?> = JvmCompilerArgument("CLASSPATH")
 
     public val INCLUDE_RUNTIME: JvmCompilerArgument<Boolean> =
@@ -379,8 +375,6 @@ public class JvmCompilerArgumentsImpl : CommonCompilerArgumentsImpl(), JvmCompil
 
     public val X_VALUE_CLASSES: JvmCompilerArgument<Boolean> =
         JvmCompilerArgument("X_VALUE_CLASSES")
-
-    public val X_IR_INLINER: JvmCompilerArgument<Boolean> = JvmCompilerArgument("X_IR_INLINER")
 
     public val X_USE_INLINE_SCOPES_NUMBERS: JvmCompilerArgument<Boolean> =
         JvmCompilerArgument("X_USE_INLINE_SCOPES_NUMBERS")

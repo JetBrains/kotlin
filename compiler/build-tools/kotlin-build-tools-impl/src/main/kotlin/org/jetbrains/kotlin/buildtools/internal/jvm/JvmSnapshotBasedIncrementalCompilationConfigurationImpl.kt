@@ -16,7 +16,7 @@ class JvmSnapshotBasedIncrementalCompilationOptionsImpl() : JvmSnapshotBasedIncr
     private val optionsDelegate = OptionsDelegate()
 
     init {
-        this[PRECISE_JAVA_TRACKING] = true
+        this[PRECISE_JAVA_TRACKING] = false
         this[BACKUP_CLASSES] = false
         this[KEEP_IC_CACHES_IN_MEMORY] = false
         this[FORCE_RECOMPILATION] = false

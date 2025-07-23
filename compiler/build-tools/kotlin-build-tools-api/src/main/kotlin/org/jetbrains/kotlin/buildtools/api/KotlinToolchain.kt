@@ -53,7 +53,7 @@ public interface KotlinToolchain {
      * @param operation the [BuildOperation] to execute.
      * Operations can be obtained from platform toolchains, e.g. [JvmPlatformToolchain.createJvmCompilationOperation]
      */
-    public suspend fun <R> executeOperation(
+    public fun <R> executeOperation(
         operation: BuildOperation<R>,
     ): R
 
@@ -65,7 +65,7 @@ public interface KotlinToolchain {
      * @param executionPolicy an [ExecutionPolicy] obtained from [createInProcessExecutionPolicy] or [createDaemonExecutionPolicy]
      * @param logger an optional [KotlinLogger]
      */
-    public suspend fun <R> executeOperation(
+    public fun <R> executeOperation(
         operation: BuildOperation<R>,
         executionPolicy: ExecutionPolicy = createInProcessExecutionPolicy(),
         logger: KotlinLogger? = null,

@@ -366,5 +366,8 @@ public open class CommonCompilerArgumentsImpl : CommonToolArgumentsImpl(),
 
     public val X_ALLOW_HOLDSIN_CONTRACT: CommonCompilerArgument<Boolean> =
         CommonCompilerArgument("X_ALLOW_HOLDSIN_CONTRACT")
+
+    public val X_NAME_BASED_DESTRUCTURING: CommonCompilerArgument<String?> =
+        CommonCompilerArgument("X_NAME_BASED_DESTRUCTURING")
   }
 }

@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.buildtools.`internal`.UseFromImplModuleRestricted
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.arguments.MetadataArguments
 import org.jetbrains.kotlin.buildtools.api.arguments.MetadataArguments.Companion.CLASSPATH
-import org.jetbrains.kotlin.buildtools.api.arguments.MetadataArguments.Companion.D
 import org.jetbrains.kotlin.buildtools.api.arguments.MetadataArguments.Companion.MODULE_NAME
 import org.jetbrains.kotlin.buildtools.api.arguments.MetadataArguments.Companion.X_FRIEND_PATHS
 import org.jetbrains.kotlin.buildtools.api.arguments.MetadataArguments.Companion.X_REFINES_PATHS
@@ -47,7 +46,6 @@ public class MetadataArgumentsImpl : CommonCompilerArgumentsImpl(), MetadataArgu
   @Suppress("DEPRECATION")
   public fun toCompilerArguments(arguments: K2MetadataCompilerArguments = K2MetadataCompilerArguments()): K2MetadataCompilerArguments {
     super.toCompilerArguments(arguments)
-    if ("D" in optionsMap) { arguments.destination = get(D) }
     if ("CLASSPATH" in optionsMap) { arguments.classpath = get(CLASSPATH) }
     if ("MODULE_NAME" in optionsMap) { arguments.moduleName = get(MODULE_NAME) }
     if ("X_FRIEND_PATHS" in optionsMap) { arguments.friendPaths = get(X_FRIEND_PATHS) }
@@ -66,8 +64,6 @@ public class MetadataArgumentsImpl : CommonCompilerArgumentsImpl(), MetadataArgu
   )
 
   public companion object {
-    public val D: MetadataArgument<String?> = MetadataArgument("D")
-
     public val CLASSPATH: MetadataArgument<String?> = MetadataArgument("CLASSPATH")
 
     public val MODULE_NAME: MetadataArgument<String?> = MetadataArgument("MODULE_NAME")
