@@ -9,13 +9,13 @@ class F : B
 abstract class G : B
 class H : G(), C
 
-fun test_1(a: A): Int = <!NO_ELSE_IN_WHEN!>when<!> (a) {
+fun test_1(a: A): Int = when (a) {
     is E -> 0
     is F -> 1
     is G -> 2
 }
 
-fun bar(b: B): Int = <!NO_ELSE_IN_WHEN!>when<!> (b) {
+fun bar(b: B): Int = when (b) {
     is F -> 0
     is G -> 1
 }
