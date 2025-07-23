@@ -12652,7 +12652,7 @@ final fun <#A: kotlin/Long> (kotlinx.cinterop/NativePlacement).kotlinx.cinterop/
 final fun <#A: kotlin/Short> (kotlinx.cinterop/NativePlacement).kotlinx.cinterop/alloc(#A): kotlinx.cinterop/ShortVarOf<#A> // kotlinx.cinterop/alloc|alloc@kotlinx.cinterop.NativePlacement(0:0){0§<kotlin.Short>}[0]
 
 // Targets: [native]
-final fun <#A: kotlin/Throwable> kotlin.test/checkResultIsFailure(kotlin.reflect/KClass<#A>, kotlin/String?, kotlin/Result<kotlin/Unit>): #A // kotlin.test/checkResultIsFailure|checkResultIsFailure(kotlin.reflect.KClass<0:0>;kotlin.String?;kotlin.Result<kotlin.Unit>){0§<kotlin.Throwable>}[0]
+final fun <#A: kotlin/Throwable> kotlin.test/checkResultIsFailure(kotlin.reflect/KClass<#A>, kotlin/String?, kotlin/Result<kotlin/Any?>): #A // kotlin.test/checkResultIsFailure|checkResultIsFailure(kotlin.reflect.KClass<0:0>;kotlin.String?;kotlin.Result<kotlin.Any?>){0§<kotlin.Throwable>}[0]
 
 // Targets: [native]
 final fun <#A: kotlin/UByte> (kotlinx.cinterop/NativePlacement).kotlinx.cinterop/alloc(#A): kotlinx.cinterop/UByteVarOf<#A> // kotlinx.cinterop/alloc|alloc@kotlinx.cinterop.NativePlacement(0:0){0§<kotlin.UByte>}[0]
@@ -13174,7 +13174,7 @@ final fun kotlin.test/assertNull(kotlin/Any?, kotlin/String? = ...) // kotlin.te
 final fun kotlin.test/assertTrue(kotlin/Boolean, kotlin/String? = ...) // kotlin.test/assertTrue|assertTrue(kotlin.Boolean;kotlin.String?){}[0]
 
 // Targets: [native]
-final fun kotlin.test/checkResultIsFailure(kotlin/String?, kotlin/Result<kotlin/Unit>): kotlin/Throwable // kotlin.test/checkResultIsFailure|checkResultIsFailure(kotlin.String?;kotlin.Result<kotlin.Unit>){}[0]
+final fun kotlin.test/checkResultIsFailure(kotlin/String?, kotlin/Result<kotlin/Any?>): kotlin/Throwable // kotlin.test/checkResultIsFailure|checkResultIsFailure(kotlin.String?;kotlin.Result<kotlin.Any?>){}[0]
 
 // Targets: [native]
 final fun kotlin.test/fail(kotlin/String? = ...): kotlin/Nothing // kotlin.test/fail|fail(kotlin.String?){}[0]
@@ -13486,7 +13486,13 @@ final inline fun <#A: kotlin/Short> (kotlinx.cinterop/CPointer<kotlinx.cinterop/
 final inline fun <#A: kotlin/Short> (kotlinx.cinterop/CPointer<kotlinx.cinterop/ShortVarOf<#A>>).kotlinx.cinterop/set(kotlin/Long, #A) // kotlinx.cinterop/set|set@kotlinx.cinterop.CPointer<kotlinx.cinterop.ShortVarOf<0:0>>(kotlin.Long;0:0){0§<kotlin.Short>}[0]
 
 // Targets: [native]
+final inline fun <#A: kotlin/Throwable> kotlin.test/assertFailsWith(kotlin.reflect/KClass<#A>, kotlin/Function0<kotlin/Any?>): #A // kotlin.test/assertFailsWith|assertFailsWith(kotlin.reflect.KClass<0:0>;kotlin.Function0<kotlin.Any?>){0§<kotlin.Throwable>}[0]
+
+// Targets: [native]
 final inline fun <#A: kotlin/Throwable> kotlin.test/assertFailsWith(kotlin.reflect/KClass<#A>, kotlin/Function0<kotlin/Unit>): #A // kotlin.test/assertFailsWith|assertFailsWith(kotlin.reflect.KClass<0:0>;kotlin.Function0<kotlin.Unit>){0§<kotlin.Throwable>}[0]
+
+// Targets: [native]
+final inline fun <#A: kotlin/Throwable> kotlin.test/assertFailsWith(kotlin.reflect/KClass<#A>, kotlin/String?, kotlin/Function0<kotlin/Any?>): #A // kotlin.test/assertFailsWith|assertFailsWith(kotlin.reflect.KClass<0:0>;kotlin.String?;kotlin.Function0<kotlin.Any?>){0§<kotlin.Throwable>}[0]
 
 // Targets: [native]
 final inline fun <#A: kotlin/Throwable> kotlin.test/assertFailsWith(kotlin.reflect/KClass<#A>, kotlin/String?, kotlin/Function0<kotlin/Unit>): #A // kotlin.test/assertFailsWith|assertFailsWith(kotlin.reflect.KClass<0:0>;kotlin.String?;kotlin.Function0<kotlin.Unit>){0§<kotlin.Throwable>}[0]
@@ -13675,6 +13681,9 @@ final inline fun <#A: reified kotlin/Number> (kotlin/Number).kotlinx.cinterop/na
 final inline fun <#A: reified kotlin/Number> (kotlin/Number).kotlinx.cinterop/signExtend(): #A // kotlinx.cinterop/signExtend|signExtend@kotlin.Number(){0§<kotlin.Number>}[0]
 
 // Targets: [native]
+final inline fun <#A: reified kotlin/Throwable> kotlin.test/assertFailsWith(kotlin/String? = ..., kotlin/Function0<kotlin/Any?>): #A // kotlin.test/assertFailsWith|assertFailsWith(kotlin.String?;kotlin.Function0<kotlin.Any?>){0§<kotlin.Throwable>}[0]
+
+// Targets: [native]
 final inline fun <#A: reified kotlin/Throwable> kotlin.test/assertFailsWith(kotlin/String? = ..., kotlin/Function0<kotlin/Unit>): #A // kotlin.test/assertFailsWith|assertFailsWith(kotlin.String?;kotlin.Function0<kotlin.Unit>){0§<kotlin.Throwable>}[0]
 
 // Targets: [native]
@@ -13765,7 +13774,13 @@ final inline fun kotlin.system/measureTimeMicros(kotlin/Function0<kotlin/Unit>):
 final inline fun kotlin.system/measureTimeMillis(kotlin/Function0<kotlin/Unit>): kotlin/Long // kotlin.system/measureTimeMillis|measureTimeMillis(kotlin.Function0<kotlin.Unit>){}[0]
 
 // Targets: [native]
+final inline fun kotlin.test/assertFails(kotlin/Function0<kotlin/Any?>): kotlin/Throwable // kotlin.test/assertFails|assertFails(kotlin.Function0<kotlin.Any?>){}[0]
+
+// Targets: [native]
 final inline fun kotlin.test/assertFails(kotlin/Function0<kotlin/Unit>): kotlin/Throwable // kotlin.test/assertFails|assertFails(kotlin.Function0<kotlin.Unit>){}[0]
+
+// Targets: [native]
+final inline fun kotlin.test/assertFails(kotlin/String?, kotlin/Function0<kotlin/Any?>): kotlin/Throwable // kotlin.test/assertFails|assertFails(kotlin.String?;kotlin.Function0<kotlin.Any?>){}[0]
 
 // Targets: [native]
 final inline fun kotlin.test/assertFails(kotlin/String?, kotlin/Function0<kotlin/Unit>): kotlin/Throwable // kotlin.test/assertFails|assertFails(kotlin.String?;kotlin.Function0<kotlin.Unit>){}[0]
