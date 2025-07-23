@@ -39,11 +39,11 @@ class KotlinToolchainImpl(
 
     override fun getCompilerVersion(): String = KotlinCompilerVersion.VERSION
 
-    override suspend fun <R> executeOperation(operation: BuildOperation<R>): R {
+    override fun <R> executeOperation(operation: BuildOperation<R>): R {
         return executeOperation(operation, logger = null)
     }
 
-    override suspend fun <R> executeOperation(
+    override fun <R> executeOperation(
         operation: BuildOperation<R>,
         executionPolicy: ExecutionPolicy,
         logger: KotlinLogger?,

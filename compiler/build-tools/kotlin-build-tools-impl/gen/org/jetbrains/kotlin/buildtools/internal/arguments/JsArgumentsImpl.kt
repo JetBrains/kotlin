@@ -143,8 +143,6 @@ public class JsArgumentsImpl : WasmArgumentsImpl(), JsArguments {
   )
 
   public companion object {
-    public val OUTPUT: JsArgument<String?> = JsArgument("OUTPUT")
-
     public val IR_OUTPUT_DIR: JsArgument<String?> = JsArgument("IR_OUTPUT_DIR")
 
     public val IR_OUTPUT_NAME: JsArgument<String?> = JsArgument("IR_OUTPUT_NAME")

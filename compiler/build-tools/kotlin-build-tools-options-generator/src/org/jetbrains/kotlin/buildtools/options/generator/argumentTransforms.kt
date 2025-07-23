@@ -51,11 +51,13 @@ private val levelsToArgumentTransforms: Map<String, Map<String, ArgumentTransfor
     })
     put(actualMetadataArguments.name, buildMap {
         with(actualMetadataArguments) {
+            drop("d")
             drop("Xlegacy-metadata-jar-k2")
         }
     })
     put(actualJvmCompilerArguments.name, buildMap {
         with(actualJvmCompilerArguments) {
+            drop("d")
             drop("expression")
             drop("Xbuild-file")
             drop("Xuse-javac")

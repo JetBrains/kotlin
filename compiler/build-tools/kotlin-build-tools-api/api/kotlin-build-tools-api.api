@@ -90,9 +90,9 @@ public abstract interface class org/jetbrains/kotlin/buildtools/api/KotlinToolch
 	public static final field Companion Lorg/jetbrains/kotlin/buildtools/api/KotlinToolchain$Companion;
 	public abstract fun createDaemonExecutionPolicy ()Lorg/jetbrains/kotlin/buildtools/api/ExecutionPolicy$WithDaemon;
 	public abstract fun createInProcessExecutionPolicy ()Lorg/jetbrains/kotlin/buildtools/api/ExecutionPolicy$InProcess;
-	public abstract fun executeOperation (Lorg/jetbrains/kotlin/buildtools/api/BuildOperation;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public abstract fun executeOperation (Lorg/jetbrains/kotlin/buildtools/api/BuildOperation;Lorg/jetbrains/kotlin/buildtools/api/ExecutionPolicy;Lorg/jetbrains/kotlin/buildtools/api/KotlinLogger;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;
-	public static synthetic fun executeOperation$default (Lorg/jetbrains/kotlin/buildtools/api/KotlinToolchain;Lorg/jetbrains/kotlin/buildtools/api/BuildOperation;Lorg/jetbrains/kotlin/buildtools/api/ExecutionPolicy;Lorg/jetbrains/kotlin/buildtools/api/KotlinLogger;Lkotlin/coroutines/Continuation;ILjava/lang/Object;)Ljava/lang/Object;
+	public abstract fun executeOperation (Lorg/jetbrains/kotlin/buildtools/api/BuildOperation;)Ljava/lang/Object;
+	public abstract fun executeOperation (Lorg/jetbrains/kotlin/buildtools/api/BuildOperation;Lorg/jetbrains/kotlin/buildtools/api/ExecutionPolicy;Lorg/jetbrains/kotlin/buildtools/api/KotlinLogger;)Ljava/lang/Object;
+	public static synthetic fun executeOperation$default (Lorg/jetbrains/kotlin/buildtools/api/KotlinToolchain;Lorg/jetbrains/kotlin/buildtools/api/BuildOperation;Lorg/jetbrains/kotlin/buildtools/api/ExecutionPolicy;Lorg/jetbrains/kotlin/buildtools/api/KotlinLogger;ILjava/lang/Object;)Ljava/lang/Object;
 	public abstract fun finishBuild (Lorg/jetbrains/kotlin/buildtools/api/ProjectId;)V
 	public abstract fun getCompilerVersion ()Ljava/lang/String;
 	public abstract fun getJs ()Lorg/jetbrains/kotlin/buildtools/api/js/JsPlatformToolchain;
@@ -328,7 +328,6 @@ public final class org/jetbrains/kotlin/buildtools/api/arguments/JsArguments$JsA
 public abstract interface class org/jetbrains/kotlin/buildtools/api/arguments/JvmCompilerArguments : org/jetbrains/kotlin/buildtools/api/arguments/CommonCompilerArguments {
 	public static final field CLASSPATH Lorg/jetbrains/kotlin/buildtools/api/arguments/JvmCompilerArguments$JvmCompilerArgument;
 	public static final field Companion Lorg/jetbrains/kotlin/buildtools/api/arguments/JvmCompilerArguments$Companion;
-	public static final field D Lorg/jetbrains/kotlin/buildtools/api/arguments/JvmCompilerArguments$JvmCompilerArgument;
 	public static final field INCLUDE_RUNTIME Lorg/jetbrains/kotlin/buildtools/api/arguments/JvmCompilerArguments$JvmCompilerArgument;
 	public static final field JAVA_PARAMETERS Lorg/jetbrains/kotlin/buildtools/api/arguments/JvmCompilerArguments$JvmCompilerArgument;
 	public static final field JDK_HOME Lorg/jetbrains/kotlin/buildtools/api/arguments/JvmCompilerArguments$JvmCompilerArgument;
@@ -414,7 +413,6 @@ public final class org/jetbrains/kotlin/buildtools/api/arguments/JvmCompilerArgu
 public abstract interface class org/jetbrains/kotlin/buildtools/api/arguments/MetadataArguments : org/jetbrains/kotlin/buildtools/api/arguments/CommonCompilerArguments {
 	public static final field CLASSPATH Lorg/jetbrains/kotlin/buildtools/api/arguments/MetadataArguments$MetadataArgument;
 	public static final field Companion Lorg/jetbrains/kotlin/buildtools/api/arguments/MetadataArguments$Companion;
-	public static final field D Lorg/jetbrains/kotlin/buildtools/api/arguments/MetadataArguments$MetadataArgument;
 	public static final field MODULE_NAME Lorg/jetbrains/kotlin/buildtools/api/arguments/MetadataArguments$MetadataArgument;
 	public static final field X_FRIEND_PATHS Lorg/jetbrains/kotlin/buildtools/api/arguments/MetadataArguments$MetadataArgument;
 	public static final field X_REFINES_PATHS Lorg/jetbrains/kotlin/buildtools/api/arguments/MetadataArguments$MetadataArgument;

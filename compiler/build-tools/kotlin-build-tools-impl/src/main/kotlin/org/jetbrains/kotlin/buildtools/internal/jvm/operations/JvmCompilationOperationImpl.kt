@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.buildtools.internal.jvm.JvmSnapshotBasedIncrementalC
 import org.jetbrains.kotlin.buildtools.internal.jvm.JvmSnapshotBasedIncrementalCompilationOptionsImpl.Companion.ROOT_PROJECT_DIR
 import org.jetbrains.kotlin.buildtools.internal.jvm.JvmSnapshotBasedIncrementalCompilationOptionsImpl.Companion.USE_FIR_RUNNER
 import org.jetbrains.kotlin.cli.common.ExitCode
+import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.cli.jvm.compiler.setupIdeaStandaloneExecution
 import org.jetbrains.kotlin.compilerRunner.KotlinCompilerRunnerUtils
@@ -162,7 +163,7 @@ class JvmCompilationOperationImpl(
                 kotlinScriptExtensions = ktsExtensionsAsArray,
             )
             else -> error(
-                "Unexpected incremental compilation configuration: $aggregatedIcConfiguration. " + "In this version, it must be an instance of JvmIncrementalCompilationConfiguration for incremental compilation, " + "or null for non-incremental compilation."
+                "Unexpected incremental compilation configuration: $aggregatedIcConfiguration. In this version, it must be an instance of JvmIncrementalCompilationConfiguration for incremental compilation, or null for non-incremental compilation."
             )
         }
     }
@@ -210,21 +211,9 @@ class JvmCompilationOperationImpl(
         val isIncrementalCompilation = daemonCompileOptions is IncrementalCompilationOptions
         if (isIncrementalCompilation && daemonCompileOptions.useJvmFirRunner) {
             checkJvmFirRequirements(compilerArguments)
-        }/* TODO: fix together with KT-62759
-         * To avoid parsing sources from freeArgs and filtering them in the daemon,
-         * work around the issue by removing .java files in non-incremental mode.
-         * Preferably, this should be done in the daemon.
-         * In incremental mode, incremental compiler filters them out, but should be aware of them for tracking changes.
-         * Kotlin compiler itself knows about the .java sources via -Xjava-source-roots
-         */
-        val effectiveSources = if (isIncrementalCompilation) {
-            kotlinSources
-        } else {
-            val kotlinFilenameExtensions = DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS + (get(KOTLINSCRIPT_EXTENSIONS) ?: emptyArray())
-            kotlinSources.filter { it.toFile().isKotlinFile(kotlinFilenameExtensions) }
         }
         val arguments = compilerArguments.toCompilerArguments()
-        arguments.freeArgs += effectiveSources.map { it.absolutePathString() }
+        arguments.freeArgs += kotlinSources.map { it.absolutePathString() } // TODO: pass the sources explicitly KT-62759
         arguments.destination = destinationDirectory.absolutePathString()
         val aggregatedIcConfiguration = get(INCREMENTAL_COMPILATION) as? JvmSnapshotBasedIncrementalCompilationConfiguration
         val aggregatedIcConfigurationOptions = aggregatedIcConfiguration?.options as? JvmSnapshotBasedIncrementalCompilationOptionsImpl
@@ -260,92 +249,16 @@ class JvmCompilationOperationImpl(
     private fun compileInProcess(loggerAdapter: KotlinLoggerMessageCollectorAdapter): CompilationResult {
         loggerAdapter.kotlinLogger.debug("Compiling using the in-process strategy")
         setupIdeaStandaloneExecution()
-        val compiler = K2JVMCompiler()
-        val arguments = compilerArguments.toCompilerArguments()
+        val arguments = compilerArguments.toCompilerArguments().also {
+            it.destination = destinationDirectory.absolutePathString()
+        }
         val kotlinFilenameExtensions = DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS + (get(KOTLINSCRIPT_EXTENSIONS) ?: emptyArray())
-        arguments.destination = destinationDirectory.absolutePathString()
-        val aggregatedIcConfiguration = get(INCREMENTAL_COMPILATION)
-        return when (aggregatedIcConfiguration) {
+        return when (val aggregatedIcConfiguration = get(INCREMENTAL_COMPILATION)) {
             is JvmSnapshotBasedIncrementalCompilationConfiguration -> {
-                val aggregatedIcConfigurationOptions =
-                    aggregatedIcConfiguration.options as JvmSnapshotBasedIncrementalCompilationOptionsImpl
-                @Suppress("DEPRECATION") val kotlinSources = extractKotlinSourcesFromFreeCompilerArguments(
-                    arguments, DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS, includeJavaSources = true
-                ) + kotlinSources.map { it.toFile() }
-
-                val classpathChanges = aggregatedIcConfiguration.classpathChanges
-                val buildReporter = BuildReporter(
-                    icReporter = BuildToolsApiBuildICReporter(
-                        loggerAdapter.kotlinLogger, aggregatedIcConfigurationOptions[ROOT_PROJECT_DIR].toFile()
-                    ), buildMetricsReporter = DoNothingBuildMetricsReporter
-                )
-                val verifiedPreciseJavaTracking =
-                    arguments.disablePreciseJavaTrackingIfK2(usePreciseJavaTrackingByDefault = aggregatedIcConfigurationOptions[PRECISE_JAVA_TRACKING])
-                val icFeatures = aggregatedIcConfiguration.extractIncrementalCompilationFeatures().copy(
-                    usePreciseJavaTracking = verifiedPreciseJavaTracking
-                )
-                val incrementalCompiler =
-                    if (aggregatedIcConfigurationOptions[USE_FIR_RUNNER] && checkJvmFirRequirements(compilerArguments)) {
-                        IncrementalFirJvmCompilerRunner(
-                            aggregatedIcConfiguration.workingDirectory.toFile(),
-                            buildReporter,
-                            outputDirs = aggregatedIcConfigurationOptions[OUTPUT_DIRS]?.map { it.toFile() },
-                            classpathChanges = classpathChanges,
-                            kotlinSourceFilesExtensions = kotlinFilenameExtensions,
-                            icFeatures = icFeatures
-                        )
-                    } else {
-                        IncrementalJvmCompilerRunner(
-                            aggregatedIcConfiguration.workingDirectory.toFile(),
-                            buildReporter,
-                            outputDirs = aggregatedIcConfigurationOptions[OUTPUT_DIRS]?.map { it.toFile() },
-                            classpathChanges = classpathChanges,
-                            kotlinSourceFilesExtensions = kotlinFilenameExtensions,
-                            icFeatures = icFeatures
-                        )
-                    }
-
-                val rootProjectDir = aggregatedIcConfigurationOptions[ROOT_PROJECT_DIR]
-                val buildDir = aggregatedIcConfigurationOptions[MODULE_BUILD_DIR]
-                arguments.incrementalCompilation = true
-                incrementalCompiler.compile(
-                    kotlinSources,
-                    arguments,
-                    loggerAdapter,
-                    aggregatedIcConfiguration.sourcesChanges.asChangedFiles,
-                    fileLocations = FileLocations(rootProjectDir.toFile(), buildDir.toFile())
-                ).asCompilationResult
+                aggregatedIcConfiguration.compileInProcess(arguments, loggerAdapter, kotlinFilenameExtensions)
             }
             null -> { // no IC configuration -> non-incremental compilation
-                arguments.freeArgs += kotlinSources.filter { it.toFile().isKotlinFile(kotlinFilenameExtensions) }
-                    .map { it.absolutePathString() }
-                val services = Services.Builder().apply {
-                    get(LOOKUP_TRACKER)?.let { tracker: CompilerLookupTracker ->
-                        register(LookupTracker::class.java, object : LookupTracker {
-                            override val requiresPosition = false
-
-                            override fun record(
-                                filePath: String,
-                                position: Position,
-                                scopeFqName: String,
-                                scopeKind: ScopeKind,
-                                name: String,
-                            ) {
-                                tracker.recordLookup(
-                                    filePath,
-                                    scopeFqName,
-                                    CompilerLookupTracker.ScopeKind.valueOf(scopeKind.name),
-                                    name
-                                )
-                            }
-
-                            override fun clear() {
-                                tracker.clear()
-                            }
-                        })
-                    }
-                }.build()
-                compiler.exec(loggerAdapter, services, arguments).asCompilationResult
+                compileInProcessWithoutIc(arguments, loggerAdapter)
             }
             else -> error(
                 "Unexpected incremental compilation configuration: $aggregatedIcConfiguration. "
@@ -353,6 +266,97 @@ class JvmCompilationOperationImpl(
                         + "compilation, or null for non-incremental compilation."
             )
         }
+    }
+
+    private fun compileInProcessWithoutIc(
+        arguments: K2JVMCompilerArguments,
+        loggerAdapter: KotlinLoggerMessageCollectorAdapter,
+    ): CompilationResult {
+        val compiler = K2JVMCompiler()
+        arguments.freeArgs += kotlinSources.map { it.absolutePathString() }
+        val services = Services.Builder().apply {
+            get(LOOKUP_TRACKER)?.let { tracker: CompilerLookupTracker ->
+                register(LookupTracker::class.java, object : LookupTracker {
+                    override val requiresPosition = false
+
+                    override fun record(
+                        filePath: String,
+                        position: Position,
+                        scopeFqName: String,
+                        scopeKind: ScopeKind,
+                        name: String,
+                    ) {
+                        tracker.recordLookup(
+                            filePath,
+                            scopeFqName,
+                            CompilerLookupTracker.ScopeKind.valueOf(scopeKind.name),
+                            name
+                        )
+                    }
+
+                    override fun clear() {
+                        tracker.clear()
+                    }
+                })
+            }
+        }.build()
+        return compiler.exec(loggerAdapter, services, arguments).asCompilationResult
+    }
+
+    private fun JvmSnapshotBasedIncrementalCompilationConfiguration.compileInProcess(
+        arguments: K2JVMCompilerArguments,
+        loggerAdapter: KotlinLoggerMessageCollectorAdapter,
+        kotlinFilenameExtensions: Set<String>,
+    ): CompilationResult {
+        val aggregatedIcConfigurationOptions =
+            options as JvmSnapshotBasedIncrementalCompilationOptionsImpl
+        @Suppress("DEPRECATION") val kotlinSources = extractKotlinSourcesFromFreeCompilerArguments(
+            arguments, DEFAULT_KOTLIN_SOURCE_FILES_EXTENSIONS, includeJavaSources = true
+        ) + kotlinSources.map { it.toFile() }
+
+        val classpathChanges = classpathChanges
+        val buildReporter = BuildReporter(
+            icReporter = BuildToolsApiBuildICReporter(
+                loggerAdapter.kotlinLogger, aggregatedIcConfigurationOptions[ROOT_PROJECT_DIR].toFile()
+            ), buildMetricsReporter = DoNothingBuildMetricsReporter
+        )
+        val verifiedPreciseJavaTracking =
+            arguments.disablePreciseJavaTrackingIfK2(usePreciseJavaTrackingByDefault = aggregatedIcConfigurationOptions[PRECISE_JAVA_TRACKING])
+        val icFeatures = extractIncrementalCompilationFeatures().copy(
+            usePreciseJavaTracking = verifiedPreciseJavaTracking
+        )
+        val incrementalCompiler =
+            if (aggregatedIcConfigurationOptions[USE_FIR_RUNNER] && checkJvmFirRequirements(compilerArguments)) {
+                IncrementalFirJvmCompilerRunner(
+                    workingDirectory.toFile(),
+                    buildReporter,
+                    outputDirs = aggregatedIcConfigurationOptions[OUTPUT_DIRS]?.map { it.toFile() },
+                    classpathChanges = classpathChanges,
+                    kotlinSourceFilesExtensions = kotlinFilenameExtensions,
+                    icFeatures = icFeatures
+                )
+            } else {
+                IncrementalJvmCompilerRunner(
+                    workingDirectory.toFile(),
+                    buildReporter,
+                    outputDirs = aggregatedIcConfigurationOptions[OUTPUT_DIRS]?.map { it.toFile() },
+                    classpathChanges = classpathChanges,
+                    kotlinSourceFilesExtensions = kotlinFilenameExtensions,
+                    icFeatures = icFeatures
+                )
+            }
+
+        arguments.incrementalCompilation = true
+        return incrementalCompiler.compile(
+            kotlinSources,
+            arguments,
+            loggerAdapter,
+            sourcesChanges.asChangedFiles,
+            fileLocations = FileLocations(
+                aggregatedIcConfigurationOptions[ROOT_PROJECT_DIR].toFile(),
+                aggregatedIcConfigurationOptions[MODULE_BUILD_DIR].toFile()
+            )
+        ).asCompilationResult
     }
 
     companion object {
@@ -369,7 +373,7 @@ private fun JvmSnapshotBasedIncrementalCompilationConfiguration.extractIncrement
     return IncrementalCompilationFeatures(
         usePreciseJavaTracking = options[PRECISE_JAVA_TRACKING],
         withAbiSnapshot = false,
-        preciseCompilationResultsBackup = options[BACKUP_CLASSES], //TODO is it this option?
+        preciseCompilationResultsBackup = options[BACKUP_CLASSES],
         keepIncrementalCompilationCachesInMemory = options[KEEP_IC_CACHES_IN_MEMORY],
     )
 }

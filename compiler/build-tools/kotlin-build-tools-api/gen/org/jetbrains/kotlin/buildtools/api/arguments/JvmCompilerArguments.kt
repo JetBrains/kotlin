@@ -39,12 +39,6 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
 
   public companion object {
     /**
-     * Destination for generated class files.
-     */
-    @JvmField
-    public val D: JvmCompilerArgument<String?> = JvmCompilerArgument("D")
-
-    /**
      * List of directories and JAR/ZIP archives to search for user class files.
      */
     @JvmField

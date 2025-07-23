@@ -36,12 +36,6 @@ public interface MetadataArguments : CommonCompilerArguments {
 
   public companion object {
     /**
-     * Destination for generated .kotlin_metadata files.
-     */
-    @JvmField
-    public val D: MetadataArgument<String?> = MetadataArgument("D")
-
-    /**
      * List of directories and JAR/ZIP archives to search for user .kotlin_metadata files.
      */
     @JvmField
