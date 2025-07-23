@@ -1,0 +1,34 @@
+FILE: a.kt
+    package foo
+
+    public final var result: R|kotlin/String| = String(Error)
+        public get(): R|kotlin/String|
+        public set(value: R|kotlin/String|): R|kotlin/Unit|
+    public final fun functionToCall(): R|kotlin/String| {
+        R|foo/result| = String(OK)
+        ^functionToCall String(OK)
+    }
+FILE: b.kt
+    package foo
+
+    @R|org/jetbrains/kotlin/plugin/sandbox/CallSpecifiedFunction|(functionName = String(foo.functionToCall)) public final fun test(): R|kotlin/Int| {
+        lval x: R|kotlin/Int| = Int(1)
+        lval y: R|kotlin/Int| = Int(2)
+        ^test R|<local>/x|.R|kotlin/Int.plus|(R|<local>/y|)
+    }
+    public final fun box(): R|kotlin/String| {
+        when () {
+            !=(R|foo/result|, String(Error)) ->  {
+                ^box R|foo/result|
+            }
+        }
+
+        lval testResult: R|kotlin/Int| = R|foo/test|()
+        when () {
+            !=(R|<local>/testResult|, Int(3)) ->  {
+                ^box <strcat>(String(Error: ), R|<local>/testResult|)
+            }
+        }
+
+        ^box R|foo/result|
+    }
