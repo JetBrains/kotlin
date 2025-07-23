@@ -220,8 +220,6 @@ tasks.register("distStdlibCache") {
     if (hostName in cacheableTargetNames) {
         dependsOn("${hostName}StdlibCache")
     }
-    // Make sure any tasks depending on this one see cleaned-up distribution.
-    mustRunAfter("distInvalidateStaleCaches")
 }
 
 tasks.register("distStdlib", Sync) {
@@ -314,8 +312,6 @@ tasks.register("crossDistPlatformLibs") {
 
 tasks.register("crossDistStdlibCache") {
     dependsOn.addAll(targetList.findAll { it in cacheableTargetNames }.collect { "${it}StdlibCache" })
-    // Make sure any tasks depending on this one see cleaned-up distribution.
-    mustRunAfter("distInvalidateStaleCaches")
 }
 
 targetList.each { target ->
@@ -351,8 +347,6 @@ targetList.each { target ->
         if (target in cacheableTargetNames) {
             dependsOn(":kotlin-native:platformLibs:${target}Cache")
         }
-        // Make sure any tasks depending on this one see cleaned-up distribution.
-        mustRunAfter("distInvalidateStaleCaches")
     }
 
     if (target in cacheableTargetNames) {
@@ -375,8 +369,6 @@ targetList.each { target ->
         if (target in cacheableTargetNames) {
             dependsOn "${target}StdlibCache"
         }
-        // Make sure any tasks depending on this one see cleaned-up distribution.
-        mustRunAfter("distInvalidateStaleCaches")
     }
 }
 
