@@ -3,9 +3,9 @@ import KotlinRuntime
 import KotlinRuntimeSupport
 
 public func testMapAnyLong(
-    m: [KotlinRuntime.KotlinBase: Swift.Int64]
-) -> [KotlinRuntime.KotlinBase: Swift.Int64] {
-    return __root___testMapAnyLong__TypesOfArguments__Swift_Dictionary_KotlinRuntime_KotlinBase_Swift_Int64___(Dictionary(uniqueKeysWithValues: m.map { key, value in (key, NSNumber(value: value) )})) as! Swift.Dictionary<KotlinRuntime.KotlinBase,Swift.Int64>
+    m: [Any: Swift.Int64]
+) -> [Any: Swift.Int64] {
+    return __root___testMapAnyLong__TypesOfArguments__Swift_Dictionary_Any_Swift_Int64___(Dictionary(uniqueKeysWithValues: m.map { key, value in (key, NSNumber(value: value) )})) as! Swift.Dictionary<Any,Swift.Int64>
 }
 public func testMapIntString(
     m: [Swift.Int32: Swift.String]
@@ -18,9 +18,9 @@ public func testMapListIntSetInt(
     return __root___testMapListIntSetInt__TypesOfArguments__Swift_Dictionary_Swift_Array_Swift_Int32__Swift_Set_Swift_Int32____(Dictionary(uniqueKeysWithValues: m.map { key, value in (key.map { it in NSNumber(value: it) }, Set(value.map { it in NSNumber(value: it) }) )})) as! Swift.Dictionary<Swift.Array<Swift.Int32>,Swift.Set<Swift.Int32>>
 }
 public func testMapLongAny(
-    m: [Swift.Int64: KotlinRuntime.KotlinBase]
-) -> [Swift.Int64: KotlinRuntime.KotlinBase] {
-    return __root___testMapLongAny__TypesOfArguments__Swift_Dictionary_Swift_Int64_KotlinRuntime_KotlinBase___(Dictionary(uniqueKeysWithValues: m.map { key, value in (NSNumber(value: key), value )})) as! Swift.Dictionary<Swift.Int64,KotlinRuntime.KotlinBase>
+    m: [Swift.Int64: Any]
+) -> [Swift.Int64: Any] {
+    return __root___testMapLongAny__TypesOfArguments__Swift_Dictionary_Swift_Int64_Any___(Dictionary(uniqueKeysWithValues: m.map { key, value in (NSNumber(value: key), value )})) as! Swift.Dictionary<Swift.Int64,Any>
 }
 public func testMapNothingOptNothing(
     m: [Swift.Never: Swift.Never?]
@@ -48,7 +48,7 @@ public func testMapStringInt(
     return __root___testMapStringInt__TypesOfArguments__Swift_Dictionary_Swift_String_Swift_Int32___(Dictionary(uniqueKeysWithValues: m.map { key, value in (key, NSNumber(value: value) )})) as! Swift.Dictionary<Swift.String,Swift.Int32>
 }
 public func testStarMap(
-    m: [KotlinRuntime.KotlinBase: KotlinRuntime.KotlinBase]
-) -> [KotlinRuntime.KotlinBase: KotlinRuntime.KotlinBase] {
-    return __root___testStarMap__TypesOfArguments__Swift_Dictionary_KotlinRuntime_KotlinBase_KotlinRuntime_KotlinBase___(m) as! Swift.Dictionary<KotlinRuntime.KotlinBase,KotlinRuntime.KotlinBase>
+    m: [Any: Any]
+) -> [Any: Any] {
+    return __root___testStarMap__TypesOfArguments__Swift_Dictionary_Any_Any___(m) as! Swift.Dictionary<Any,Any>
 }

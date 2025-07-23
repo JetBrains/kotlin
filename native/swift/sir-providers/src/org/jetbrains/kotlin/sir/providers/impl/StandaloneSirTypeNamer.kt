@@ -41,14 +41,14 @@ internal object StandaloneSirTypeNamer : SirTypeNamer {
         is SirErrorType, is SirFunctionalType, is SirUnsupportedType -> null
     } ?: kotlinFqName(type)
 
-    private fun kotlinFqName(type: SirExistentialType): String = type.protocols.single().let {
+    private fun kotlinFqName(type: SirExistentialType): String = type.protocols.singleOrNull()?.let {
         it.kaSymbolOrNull<KaClassLikeSymbol>()!!.classId!!.asFqNameString()
-    }
+    } ?: "kotlin.Any"
 
     @OptIn(KaExperimentalApi::class)
     private fun kotlinFqName(type: SirNominalType): String {
         return when (val declaration = type.typeDeclaration) {
-            KotlinRuntimeModule.kotlinBase -> "kotlin.Any"
+            KotlinRuntimeModule.kotlinBase -> "kotlin.Any(kotlinBase)"
             SirSwiftModule.string -> "kotlin.String"
 
             SirSwiftModule.bool -> "Boolean"

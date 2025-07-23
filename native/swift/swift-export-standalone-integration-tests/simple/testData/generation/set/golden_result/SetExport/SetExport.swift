@@ -8,9 +8,9 @@ public func testOptSetInt(
     return __root___testOptSetInt__TypesOfArguments__Swift_Optional_Swift_Set_Swift_Int32____(s.map { it in Set(it.map { it in NSNumber(value: it) }) } ?? nil).map { it in it as! Swift.Set<Swift.Int32> }
 }
 public func testSetAny(
-    s: Swift.Set<KotlinRuntime.KotlinBase>
-) -> Swift.Set<KotlinRuntime.KotlinBase> {
-    return __root___testSetAny__TypesOfArguments__Swift_Set_KotlinRuntime_KotlinBase___(s) as! Swift.Set<KotlinRuntime.KotlinBase>
+    s: Swift.Set<Any>
+) -> Swift.Set<Any> {
+    return __root___testSetAny__TypesOfArguments__Swift_Set_Any___(s) as! Swift.Set<Any>
 }
 public func testSetInt(
     s: Swift.Set<Swift.Int32>
@@ -28,9 +28,9 @@ public func testSetNothing(
     return __root___testSetNothing__TypesOfArguments__Swift_Set_Swift_Never___(s) as! Swift.Set<Swift.Never>
 }
 public func testSetOptAny(
-    s: Swift.Set<Swift.Optional<KotlinRuntime.KotlinBase>>
-) -> Swift.Set<Swift.Optional<KotlinRuntime.KotlinBase>> {
-    return __root___testSetOptAny__TypesOfArguments__Swift_Set_Swift_Optional_KotlinRuntime_KotlinBase____(Set(s.map { it in it as NSObject? ?? NSNull() })) as! Swift.Set<Swift.Optional<KotlinRuntime.KotlinBase>>
+    s: Swift.Set<Swift.Optional<Any>>
+) -> Swift.Set<Swift.Optional<Any>> {
+    return __root___testSetOptAny__TypesOfArguments__Swift_Set_Swift_Optional_Any____(Set(s.map { it in it as NSObject? ?? NSNull() })) as! Swift.Set<Swift.Optional<Any>>
 }
 public func testSetOptInt(
     s: Swift.Set<Swift.Optional<Swift.Int32>>

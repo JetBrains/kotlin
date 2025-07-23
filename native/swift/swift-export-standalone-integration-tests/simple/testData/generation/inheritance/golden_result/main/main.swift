@@ -2,7 +2,7 @@
 import KotlinRuntime
 import KotlinRuntimeSupport
 
-open class Foo: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+open class Foo: Any, KotlinRuntimeSupport._KotlinBridged {
     public init() {
         if Self.self != main.Foo.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.Foo ") }
         let __kt = __root___Foo_init_allocate()

@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.sir.providers
 
 import org.jetbrains.kotlin.export.test.InlineSourceCodeAnalysis
-import org.jetbrains.kotlin.export.test.InlineSourceCodeAnalysisExtension
 import org.jetbrains.kotlin.sir.SirClass
 import org.jetbrains.kotlin.sir.SirInit
 import org.jetbrains.kotlin.sir.SirVisibility
@@ -14,11 +13,10 @@ import org.jetbrains.kotlin.sir.providers.support.SirTranslationTest
 import org.jetbrains.kotlin.sir.providers.support.classNamed
 import org.jetbrains.kotlin.sir.providers.support.superClassDeclaration
 import org.jetbrains.kotlin.sir.providers.support.translate
-import org.jetbrains.kotlin.sir.providers.utils.KotlinRuntimeModule
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.extension.ExtendWith
 import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
+import kotlin.test.assertNull
 
 class ClassInheritanceTranslationTests : SirTranslationTest() {
     @Test
@@ -31,7 +29,7 @@ class ClassInheritanceTranslationTests : SirTranslationTest() {
         translate(file) {
             val sirClass = it.single() as SirClass
             assertEquals("Foo", sirClass.name)
-            assertEquals(KotlinRuntimeModule.kotlinBase, sirClass.superClassDeclaration)
+            assertNull(sirClass.superClassDeclaration)
         }
     }
 

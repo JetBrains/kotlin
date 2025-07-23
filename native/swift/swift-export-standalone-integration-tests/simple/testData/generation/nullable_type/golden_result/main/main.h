@@ -27,9 +27,9 @@ void __root___foo__TypesOfArguments__main_Bar__(void * a);
 
 void __root___foo__TypesOfArguments__Swift_Optional_main_Bar___(void * _Nullable a);
 
-void __root___foo_any__TypesOfArguments__KotlinRuntime_KotlinBase__(void * a);
+void __root___foo_any__TypesOfArguments__Any__(void * a);
 
-void __root___foo_any__TypesOfArguments__Swift_Optional_KotlinRuntime_KotlinBase___(void * _Nullable a);
+void __root___foo_any__TypesOfArguments__Swift_Optional_Any___(void * _Nullable a);
 
 void __root___opt_to_non_opt_usage__TypesOfArguments__Swift_Optional_main_Bar___(void * _Nullable i);
 

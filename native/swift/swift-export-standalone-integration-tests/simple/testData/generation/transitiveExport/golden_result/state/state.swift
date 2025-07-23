@@ -5,7 +5,7 @@ import KotlinRuntimeSupport
 import KotlinStdlib
 
 extension ExportedKotlinPackages.oh.my.state.inner {
-    public final class InnerState: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+    public final class InnerState: Any, KotlinRuntimeSupport._KotlinBridged {
         public var bytes: ExportedKotlinPackages.kotlin.ByteArray? {
             get {
                 return { switch oh_my_state_inner_InnerState_bytes_get(self.__externalRCRef()) { case nil: .none; case let res: ExportedKotlinPackages.kotlin.ByteArray.__createClassWrapper(externalRCRef: res); } }()
@@ -28,7 +28,7 @@ extension ExportedKotlinPackages.oh.my.state.inner {
     }
 }
 extension ExportedKotlinPackages.oh.my.state {
-    public final class State: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+    public final class State: Any, KotlinRuntimeSupport._KotlinBridged {
         public var innerState: ExportedKotlinPackages.oh.my.state.inner.InnerState? {
             get {
                 return { switch oh_my_state_State_innerState_get(self.__externalRCRef()) { case nil: .none; case let res: ExportedKotlinPackages.oh.my.state.inner.InnerState.__createClassWrapper(externalRCRef: res); } }()

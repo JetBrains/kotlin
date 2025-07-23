@@ -3,7 +3,7 @@
 import KotlinRuntime
 import KotlinRuntimeSupport
 
-public protocol Barable: KotlinRuntime.KotlinBase, main.Foeble {
+public protocol Barable: Any, main.Foeble {
     var baz: any main.Foeble {
         get
     }
@@ -11,13 +11,13 @@ public protocol Barable: KotlinRuntime.KotlinBase, main.Foeble {
         arg: any main.Foeble
     ) -> any main.Barable
 }
-public protocol Bazzable: KotlinRuntime.KotlinBase {
+public protocol Bazzable: Any {
 }
-public protocol ContainerProtocol: KotlinRuntime.KotlinBase {
+public protocol ContainerProtocol: Any {
     typealias NestedClass = main._ContainerProtocol_NestedClass
     typealias NestedProtocol = main._ContainerProtocol_NestedProtocol
 }
-public protocol Foeble: KotlinRuntime.KotlinBase {
+public protocol Foeble: Any {
     var baz: any main.Foeble {
         get
     }
@@ -25,14 +25,14 @@ public protocol Foeble: KotlinRuntime.KotlinBase {
         arg: any main.Foeble
     ) -> any main.Foeble
 }
-public protocol SealedBazzable: KotlinRuntime.KotlinBase, main.SealedFoeble {
+public protocol SealedBazzable: Any, main.SealedFoeble {
 }
-public protocol SealedFoeble: KotlinRuntime.KotlinBase {
+public protocol SealedFoeble: Any {
     typealias SealedBarable = main._SealedFoeble_SealedBarable
     typealias SomeBarable = main._SealedFoeble_SomeBarable
     typealias SomeFoeble = main._SealedFoeble_SomeFoeble
 }
-public protocol SiblingProtocol: KotlinRuntime.KotlinBase {
+public protocol SiblingProtocol: Any {
     typealias NestedClass = main._SiblingProtocol_NestedClass
 }
 @objc(_Barable)
@@ -44,10 +44,10 @@ package protocol _Bazzable {
 @objc(_ContainerProtocol)
 package protocol _ContainerProtocol {
 }
-public protocol _ContainerProtocol_NestedProtocol: KotlinRuntime.KotlinBase {
+public protocol _ContainerProtocol_NestedProtocol: Any {
     typealias NestedClass = main.__ContainerProtocol_NestedProtocol_NestedClass
 }
-public protocol _ExportedKotlinPackages_packagewithprotocols_ContainerProtocol_NestedProtocol: KotlinRuntime.KotlinBase {
+public protocol _ExportedKotlinPackages_packagewithprotocols_ContainerProtocol_NestedProtocol: Any {
     typealias NestedClass = main.__ExportedKotlinPackages_packagewithprotocols_ContainerProtocol_NestedProtocol_NestedClass
 }
 @objc(_Foeble)
@@ -59,7 +59,7 @@ package protocol _SealedBazzable: main._SealedFoeble {
 @objc(_SealedFoeble)
 package protocol _SealedFoeble {
 }
-public protocol _SealedFoeble_SealedBarable: KotlinRuntime.KotlinBase, main.SealedFoeble {
+public protocol _SealedFoeble_SealedBarable: Any, main.SealedFoeble {
 }
 @objc(_SiblingProtocol)
 package protocol _SiblingProtocol {
@@ -73,7 +73,7 @@ package protocol __ExportedKotlinPackages_packagewithprotocols_ContainerProtocol
 @objc(__SealedFoeble_SealedBarable)
 package protocol __SealedFoeble_SealedBarable: main._SealedFoeble {
 }
-public final class Bar: KotlinRuntime.KotlinBase, main.Barable, main._Barable, main.Foeble, main._Foeble, main.Bazzable, main._Bazzable, KotlinRuntimeSupport._KotlinBridged {
+public final class Bar: Any, main.Barable, main._Barable, main.Foeble, main._Foeble, main.Bazzable, main._Bazzable, KotlinRuntimeSupport._KotlinBridged {
     public var baz: main.Bar {
         get {
             return main.Bar.__createClassWrapper(externalRCRef: Bar_baz_get(self.__externalRCRef()))
@@ -97,7 +97,7 @@ public final class Bar: KotlinRuntime.KotlinBase, main.Barable, main._Barable, m
         return main.Bar.__createClassWrapper(externalRCRef: Bar_bar__TypesOfArguments__anyU20main_Foeble__(self.__externalRCRef(), arg.__externalRCRef()))
     }
 }
-public final class Foo: KotlinRuntime.KotlinBase, main.Foeble, main._Foeble, KotlinRuntimeSupport._KotlinBridged {
+public final class Foo: Any, main.Foeble, main._Foeble, KotlinRuntimeSupport._KotlinBridged {
     public var baz: any main.Foeble {
         get {
             return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: Foo_baz_get(self.__externalRCRef())) as! any main.Foeble
@@ -121,7 +121,7 @@ public final class Foo: KotlinRuntime.KotlinBase, main.Foeble, main._Foeble, Kot
         return main.Foo.__createClassWrapper(externalRCRef: Foo_bar__TypesOfArguments__anyU20main_Foeble__(self.__externalRCRef(), arg.__externalRCRef()))
     }
 }
-public final class MyObject: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+public final class MyObject: Any, KotlinRuntimeSupport._KotlinBridged {
     public static var shared: main.MyObject {
         get {
             return main.MyObject.__createClassWrapper(externalRCRef: __root___MyObject_get())
@@ -137,7 +137,7 @@ public final class MyObject: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._Kot
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
     }
 }
-public final class SomeBazzable: KotlinRuntime.KotlinBase, main.SealedBazzable, main._SealedBazzable, KotlinRuntimeSupport._KotlinBridged {
+public final class SomeBazzable: Any, main.SealedBazzable, main._SealedBazzable, KotlinRuntimeSupport._KotlinBridged {
     public static var shared: main.SomeBazzable {
         get {
             return main.SomeBazzable.__createClassWrapper(externalRCRef: __root___SomeBazzable_get())
@@ -153,7 +153,7 @@ public final class SomeBazzable: KotlinRuntime.KotlinBase, main.SealedBazzable, 
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
     }
 }
-open class _ContainerProtocol_NestedClass: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+open class _ContainerProtocol_NestedClass: Any, KotlinRuntimeSupport._KotlinBridged {
     public init() {
         if Self.self != main._ContainerProtocol_NestedClass.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main._ContainerProtocol_NestedClass ") }
         let __kt = ContainerProtocol_NestedClass_init_allocate()
@@ -167,7 +167,7 @@ open class _ContainerProtocol_NestedClass: KotlinRuntime.KotlinBase, KotlinRunti
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
     }
 }
-open class _ExportedKotlinPackages_packagewithprotocols_ContainerProtocol_NestedClass: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+open class _ExportedKotlinPackages_packagewithprotocols_ContainerProtocol_NestedClass: Any, KotlinRuntimeSupport._KotlinBridged {
     public init() {
         if Self.self != main._ExportedKotlinPackages_packagewithprotocols_ContainerProtocol_NestedClass.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main._ExportedKotlinPackages_packagewithprotocols_ContainerProtocol_NestedClass ") }
         let __kt = packagewithprotocols_ContainerProtocol_NestedClass_init_allocate()
@@ -181,8 +181,8 @@ open class _ExportedKotlinPackages_packagewithprotocols_ContainerProtocol_Nested
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
     }
 }
-public final class _ExportedKotlinPackages_packagewithprotocols_SiblingProtocol_NestedClass: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
-    public final class NestedClass: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+public final class _ExportedKotlinPackages_packagewithprotocols_SiblingProtocol_NestedClass: Any, KotlinRuntimeSupport._KotlinBridged {
+    public final class NestedClass: Any, KotlinRuntimeSupport._KotlinBridged {
         public init() {
             if Self.self != main._ExportedKotlinPackages_packagewithprotocols_SiblingProtocol_NestedClass.NestedClass.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main._ExportedKotlinPackages_packagewithprotocols_SiblingProtocol_NestedClass.NestedClass ") }
             let __kt = packagewithprotocols_SiblingProtocol_NestedClass_NestedClass_init_allocate()
@@ -209,7 +209,7 @@ public final class _ExportedKotlinPackages_packagewithprotocols_SiblingProtocol_
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
     }
 }
-public final class _SealedFoeble_SomeBarable: KotlinRuntime.KotlinBase, main._SealedFoeble_SealedBarable, main.__SealedFoeble_SealedBarable, KotlinRuntimeSupport._KotlinBridged {
+public final class _SealedFoeble_SomeBarable: Any, main._SealedFoeble_SealedBarable, main.__SealedFoeble_SealedBarable, KotlinRuntimeSupport._KotlinBridged {
     public static var shared: main._SealedFoeble_SomeBarable {
         get {
             return main._SealedFoeble_SomeBarable.__createClassWrapper(externalRCRef: SealedFoeble_SomeBarable_get())
@@ -225,7 +225,7 @@ public final class _SealedFoeble_SomeBarable: KotlinRuntime.KotlinBase, main._Se
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
     }
 }
-public final class _SealedFoeble_SomeFoeble: KotlinRuntime.KotlinBase, main.SealedFoeble, main._SealedFoeble, KotlinRuntimeSupport._KotlinBridged {
+public final class _SealedFoeble_SomeFoeble: Any, main.SealedFoeble, main._SealedFoeble, KotlinRuntimeSupport._KotlinBridged {
     public static var shared: main._SealedFoeble_SomeFoeble {
         get {
             return main._SealedFoeble_SomeFoeble.__createClassWrapper(externalRCRef: SealedFoeble_SomeFoeble_get())
@@ -241,8 +241,8 @@ public final class _SealedFoeble_SomeFoeble: KotlinRuntime.KotlinBase, main.Seal
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
     }
 }
-public final class _SiblingProtocol_NestedClass: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
-    public final class NestedClass: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+public final class _SiblingProtocol_NestedClass: Any, KotlinRuntimeSupport._KotlinBridged {
+    public final class NestedClass: Any, KotlinRuntimeSupport._KotlinBridged {
         public init() {
             if Self.self != main._SiblingProtocol_NestedClass.NestedClass.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main._SiblingProtocol_NestedClass.NestedClass ") }
             let __kt = SiblingProtocol_NestedClass_NestedClass_init_allocate()
@@ -269,7 +269,7 @@ public final class _SiblingProtocol_NestedClass: KotlinRuntime.KotlinBase, Kotli
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
     }
 }
-open class __ContainerProtocol_NestedProtocol_NestedClass: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+open class __ContainerProtocol_NestedProtocol_NestedClass: Any, KotlinRuntimeSupport._KotlinBridged {
     public init() {
         if Self.self != main.__ContainerProtocol_NestedProtocol_NestedClass.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.__ContainerProtocol_NestedProtocol_NestedClass ") }
         let __kt = ContainerProtocol_NestedProtocol_NestedClass_init_allocate()
@@ -283,7 +283,7 @@ open class __ContainerProtocol_NestedProtocol_NestedClass: KotlinRuntime.KotlinB
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
     }
 }
-open class __ExportedKotlinPackages_packagewithprotocols_ContainerProtocol_NestedProtocol_NestedClass: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+open class __ExportedKotlinPackages_packagewithprotocols_ContainerProtocol_NestedProtocol_NestedClass: Any, KotlinRuntimeSupport._KotlinBridged {
     public init() {
         if Self.self != main.__ExportedKotlinPackages_packagewithprotocols_ContainerProtocol_NestedProtocol_NestedClass.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.__ExportedKotlinPackages_packagewithprotocols_ContainerProtocol_NestedProtocol_NestedClass ") }
         let __kt = packagewithprotocols_ContainerProtocol_NestedProtocol_NestedClass_init_allocate()
@@ -433,11 +433,11 @@ extension KotlinRuntimeSupport._KotlinExistential: main._ExportedKotlinPackages_
 extension main._SealedFoeble_SealedBarable where Self : KotlinRuntimeSupport._KotlinBridged {
 }
 extension ExportedKotlinPackages.packagewithprotocols {
-    public protocol ContainerProtocol: KotlinRuntime.KotlinBase {
+    public protocol ContainerProtocol: Any {
         typealias NestedClass = main._ExportedKotlinPackages_packagewithprotocols_ContainerProtocol_NestedClass
         typealias NestedProtocol = main._ExportedKotlinPackages_packagewithprotocols_ContainerProtocol_NestedProtocol
     }
-    public protocol SiblingProtocol: KotlinRuntime.KotlinBase {
+    public protocol SiblingProtocol: Any {
         typealias NestedClass = main._ExportedKotlinPackages_packagewithprotocols_SiblingProtocol_NestedClass
     }
     @objc(_ContainerProtocol)
@@ -446,7 +446,7 @@ extension ExportedKotlinPackages.packagewithprotocols {
     @objc(_SiblingProtocol)
     package protocol _SiblingProtocol {
     }
-    public final class ENUM_WITH_INTERFACE_INHERITANCE: KotlinRuntime.KotlinBase, ExportedKotlinPackages.packagewithprotocols.ContainerProtocol, ExportedKotlinPackages.packagewithprotocols._ContainerProtocol, KotlinRuntimeSupport._KotlinBridged, Swift.CaseIterable {
+    public final class ENUM_WITH_INTERFACE_INHERITANCE: Any, ExportedKotlinPackages.packagewithprotocols.ContainerProtocol, ExportedKotlinPackages.packagewithprotocols._ContainerProtocol, KotlinRuntimeSupport._KotlinBridged, Swift.CaseIterable {
         public static var allCases: [ExportedKotlinPackages.packagewithprotocols.ENUM_WITH_INTERFACE_INHERITANCE] {
             get {
                 return packagewithprotocols_ENUM_WITH_INTERFACE_INHERITANCE_entries_get() as! Swift.Array<ExportedKotlinPackages.packagewithprotocols.ENUM_WITH_INTERFACE_INHERITANCE>
@@ -492,7 +492,7 @@ extension ExportedKotlinPackages.packagewithprotocols {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
         }
     }
-    public final class OBJECT_WITH_INTERFACE_INHERITANCE: KotlinRuntime.KotlinBase, ExportedKotlinPackages.packagewithprotocols.ContainerProtocol, ExportedKotlinPackages.packagewithprotocols._ContainerProtocol, KotlinRuntimeSupport._KotlinBridged {
+    public final class OBJECT_WITH_INTERFACE_INHERITANCE: Any, ExportedKotlinPackages.packagewithprotocols.ContainerProtocol, ExportedKotlinPackages.packagewithprotocols._ContainerProtocol, KotlinRuntimeSupport._KotlinBridged {
         public static var shared: ExportedKotlinPackages.packagewithprotocols.OBJECT_WITH_INTERFACE_INHERITANCE {
             get {
                 return ExportedKotlinPackages.packagewithprotocols.OBJECT_WITH_INTERFACE_INHERITANCE.__createClassWrapper(externalRCRef: packagewithprotocols_OBJECT_WITH_INTERFACE_INHERITANCE_get())
@@ -530,9 +530,9 @@ extension ExportedKotlinPackages.packagewithprotocols {
     }
 }
 extension ExportedKotlinPackages.repeating_conformances {
-    public protocol Barable: KotlinRuntime.KotlinBase, ExportedKotlinPackages.repeating_conformances.Foeble {
+    public protocol Barable: Any, ExportedKotlinPackages.repeating_conformances.Foeble {
     }
-    public protocol Foeble: KotlinRuntime.KotlinBase {
+    public protocol Foeble: Any {
     }
     @objc(_Barable)
     package protocol _Barable: ExportedKotlinPackages.repeating_conformances._Foeble {
@@ -680,7 +680,7 @@ extension ExportedKotlinPackages.repeating_conformances {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
         }
     }
-    open class Parent1: KotlinRuntime.KotlinBase, ExportedKotlinPackages.repeating_conformances.Foeble, ExportedKotlinPackages.repeating_conformances._Foeble, KotlinRuntimeSupport._KotlinBridged {
+    open class Parent1: Any, ExportedKotlinPackages.repeating_conformances.Foeble, ExportedKotlinPackages.repeating_conformances._Foeble, KotlinRuntimeSupport._KotlinBridged {
         public init() {
             if Self.self != ExportedKotlinPackages.repeating_conformances.Parent1.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from ExportedKotlinPackages.repeating_conformances.Parent1 ") }
             let __kt = repeating_conformances_Parent1_init_allocate()
@@ -694,7 +694,7 @@ extension ExportedKotlinPackages.repeating_conformances {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
         }
     }
-    open class Parent2: KotlinRuntime.KotlinBase, ExportedKotlinPackages.repeating_conformances.Foeble, ExportedKotlinPackages.repeating_conformances._Foeble, KotlinRuntimeSupport._KotlinBridged {
+    open class Parent2: Any, ExportedKotlinPackages.repeating_conformances.Foeble, ExportedKotlinPackages.repeating_conformances._Foeble, KotlinRuntimeSupport._KotlinBridged {
         public init() {
             if Self.self != ExportedKotlinPackages.repeating_conformances.Parent2.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from ExportedKotlinPackages.repeating_conformances.Parent2 ") }
             let __kt = repeating_conformances_Parent2_init_allocate()
@@ -708,7 +708,7 @@ extension ExportedKotlinPackages.repeating_conformances {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
         }
     }
-    open class Parent3: KotlinRuntime.KotlinBase, ExportedKotlinPackages.repeating_conformances.Barable, ExportedKotlinPackages.repeating_conformances._Barable, KotlinRuntimeSupport._KotlinBridged {
+    open class Parent3: Any, ExportedKotlinPackages.repeating_conformances.Barable, ExportedKotlinPackages.repeating_conformances._Barable, KotlinRuntimeSupport._KotlinBridged {
         public init() {
             if Self.self != ExportedKotlinPackages.repeating_conformances.Parent3.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from ExportedKotlinPackages.repeating_conformances.Parent3 ") }
             let __kt = repeating_conformances_Parent3_init_allocate()
@@ -722,7 +722,7 @@ extension ExportedKotlinPackages.repeating_conformances {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
         }
     }
-    open class Parent4: KotlinRuntime.KotlinBase, ExportedKotlinPackages.repeating_conformances.Foeble, ExportedKotlinPackages.repeating_conformances._Foeble, KotlinRuntimeSupport._KotlinBridged {
+    open class Parent4: Any, ExportedKotlinPackages.repeating_conformances.Foeble, ExportedKotlinPackages.repeating_conformances._Foeble, KotlinRuntimeSupport._KotlinBridged {
         public init() {
             if Self.self != ExportedKotlinPackages.repeating_conformances.Parent4.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from ExportedKotlinPackages.repeating_conformances.Parent4 ") }
             let __kt = repeating_conformances_Parent4_init_allocate()
@@ -736,7 +736,7 @@ extension ExportedKotlinPackages.repeating_conformances {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
         }
     }
-    open class Parent5: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+    open class Parent5: Any, KotlinRuntimeSupport._KotlinBridged {
         public init() {
             if Self.self != ExportedKotlinPackages.repeating_conformances.Parent5.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from ExportedKotlinPackages.repeating_conformances.Parent5 ") }
             let __kt = repeating_conformances_Parent5_init_allocate()

@@ -21,7 +21,7 @@ extension ExportedKotlinPackages.kotlin.collections {
     @objc(_Iterator)
     package protocol _Iterator {
     }
-    open class ByteIterator: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+    open class ByteIterator: Any, KotlinRuntimeSupport._KotlinBridged {
         package init() {
             fatalError()
         }
@@ -83,7 +83,7 @@ extension ExportedKotlinPackages.kotlin {
             }
         }
     }
-    public final class ByteArray: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+    public final class ByteArray: Any, KotlinRuntimeSupport._KotlinBridged {
         public var size: Swift.Int32 {
             get {
                 return kotlin_ByteArray_size_get(self.__externalRCRef())

@@ -16,13 +16,12 @@ import org.jetbrains.kotlin.sir.providers.SirSession
 import org.jetbrains.kotlin.sir.providers.source.KotlinMarkerProtocol
 import org.jetbrains.kotlin.sir.providers.source.KotlinSource
 import org.jetbrains.kotlin.sir.providers.source.kaSymbolOrNull
-import org.jetbrains.kotlin.sir.providers.utils.KotlinRuntimeModule
 import org.jetbrains.kotlin.sir.providers.utils.KotlinRuntimeSupportModule
 import org.jetbrains.kotlin.sir.providers.utils.containingModule
 import org.jetbrains.kotlin.sir.providers.utils.updateImport
+import org.jetbrains.kotlin.sir.util.swiftFqName
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
-import org.jetbrains.kotlin.sir.util.swiftFqName
 import org.jetbrains.sir.lightclasses.SirFromKtSymbol
 import org.jetbrains.sir.lightclasses.extensions.documentation
 import org.jetbrains.sir.lightclasses.extensions.lazyWithSessions
@@ -50,8 +49,8 @@ internal open class SirProtocolFromKtSymbol(
         }
         set(_) = Unit
 
-    override val superClass: SirNominalType? by lazy {
-        SirNominalType(KotlinRuntimeModule.kotlinBase)
+    override val superClass: SirType? by lazy {
+        SirType.any
     }
 
     override val protocols: List<SirProtocol> by lazyWithSessions {

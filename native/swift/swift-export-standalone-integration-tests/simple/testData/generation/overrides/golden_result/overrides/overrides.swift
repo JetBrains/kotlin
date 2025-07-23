@@ -2,7 +2,7 @@
 import KotlinRuntime
 import KotlinRuntimeSupport
 
-open class AbstractBase: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+open class AbstractBase: Any, KotlinRuntimeSupport._KotlinBridged {
     open var abstractVal: Swift.Int32 {
         get {
             return AbstractBase_abstractVal_get(self.__externalRCRef())
@@ -113,7 +113,7 @@ open class Child: overrides.Parent {
     }
     public static func ==(
         this: overrides.Child,
-        to: KotlinRuntime.KotlinBase?
+        to: Any?
     ) -> Swift.Bool {
         this.equals(to: to)
     }
@@ -129,10 +129,10 @@ open class Child: overrides.Parent {
     ) -> Swift.Bool {
         return Child_contains__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), element)
     }
-    open override func equals(
-        to: KotlinRuntime.KotlinBase?
+    open func equals(
+        to: Any?
     ) -> Swift.Bool {
-        return Child_equals__TypesOfArguments__Swift_Optional_KotlinRuntime_KotlinBase___(self.__externalRCRef(), to.map { it in it.__externalRCRef() } ?? nil)
+        return Child_equals__TypesOfArguments__Swift_Optional_Any___(self.__externalRCRef(), to.map { it in it.__externalRCRef() } ?? nil)
     }
     public final override func finalOverrideFunc() -> Swift.Void {
         return Child_finalOverrideFunc(self.__externalRCRef())
@@ -237,7 +237,7 @@ open class OpenDerived1: overrides.AbstractBase {
         return OpenDerived1_abstractFun2(self.__externalRCRef())
     }
 }
-open class Parent: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+open class Parent: Any, KotlinRuntimeSupport._KotlinBridged {
     open var objectOptionalVar: overrides.Parent? {
         get {
             return { switch Parent_objectOptionalVar_get(self.__externalRCRef()) { case nil: .none; case let res: overrides.Parent.__createClassWrapper(externalRCRef: res); } }()
@@ -289,7 +289,7 @@ open class Parent: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged
     }
     public static func ==(
         this: overrides.Parent,
-        to: KotlinRuntime.KotlinBase?
+        to: Any?
     ) -> Swift.Bool {
         this.equals(to: to)
     }
@@ -306,9 +306,9 @@ open class Parent: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged
         return Parent_contains__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), element)
     }
     open func equals(
-        to: KotlinRuntime.KotlinBase?
+        to: Any?
     ) -> Swift.Bool {
-        return Parent_equals__TypesOfArguments__Swift_Optional_KotlinRuntime_KotlinBase___(self.__externalRCRef(), to.map { it in it.__externalRCRef() } ?? nil)
+        return Parent_equals__TypesOfArguments__Swift_Optional_Any___(self.__externalRCRef(), to.map { it in it.__externalRCRef() } ?? nil)
     }
     open func finalOverrideFunc() -> Swift.Void {
         return Parent_finalOverrideFunc(self.__externalRCRef())

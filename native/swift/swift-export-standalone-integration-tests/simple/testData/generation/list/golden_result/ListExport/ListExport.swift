@@ -3,9 +3,9 @@ import KotlinRuntime
 import KotlinRuntimeSupport
 
 public func testListAny(
-    l: [KotlinRuntime.KotlinBase]
-) -> [KotlinRuntime.KotlinBase] {
-    return __root___testListAny__TypesOfArguments__Swift_Array_KotlinRuntime_KotlinBase___(l) as! Swift.Array<KotlinRuntime.KotlinBase>
+    l: [Any]
+) -> [Any] {
+    return __root___testListAny__TypesOfArguments__Swift_Array_Any___(l) as! Swift.Array<Any>
 }
 public func testListInt(
     l: [Swift.Int32]
@@ -23,9 +23,9 @@ public func testListNothing(
     return __root___testListNothing__TypesOfArguments__Swift_Array_Swift_Never___(l) as! Swift.Array<Swift.Never>
 }
 public func testListOptAny(
-    l: [KotlinRuntime.KotlinBase?]
-) -> [KotlinRuntime.KotlinBase?] {
-    return __root___testListOptAny__TypesOfArguments__Swift_Array_Swift_Optional_KotlinRuntime_KotlinBase____(l.map { it in it as NSObject? ?? NSNull() }) as! Swift.Array<Swift.Optional<KotlinRuntime.KotlinBase>>
+    l: [Any?]
+) -> [Any?] {
+    return __root___testListOptAny__TypesOfArguments__Swift_Array_Swift_Optional_Any____(l.map { it in it as NSObject? ?? NSNull() }) as! Swift.Array<Swift.Optional<Any>>
 }
 public func testListOptInt(
     l: [Swift.Int32?]
@@ -63,7 +63,7 @@ public func testOptListInt(
     return __root___testOptListInt__TypesOfArguments__Swift_Optional_Swift_Array_Swift_Int32____(l.map { it in it.map { it in NSNumber(value: it) } } ?? nil).map { it in it as! Swift.Array<Swift.Int32> }
 }
 public func testStarList(
-    l: [KotlinRuntime.KotlinBase]
-) -> [KotlinRuntime.KotlinBase] {
-    return __root___testStarList__TypesOfArguments__Swift_Array_KotlinRuntime_KotlinBase___(l) as! Swift.Array<KotlinRuntime.KotlinBase>
+    l: [Any]
+) -> [Any] {
+    return __root___testStarList__TypesOfArguments__Swift_Array_Any___(l) as! Swift.Array<Any>
 }

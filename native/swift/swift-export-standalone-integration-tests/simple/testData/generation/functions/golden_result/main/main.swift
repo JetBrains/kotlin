@@ -4,7 +4,7 @@ import KotlinRuntime
 import KotlinRuntimeSupport
 import KotlinStdlib
 
-public final class Foo: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+public final class Foo: Any, KotlinRuntimeSupport._KotlinBridged {
     public init() {
         if Self.self != main.Foo.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.Foo ") }
         let __kt = __root___Foo_init_allocate()
@@ -102,8 +102,8 @@ public func getFoo(
 ) -> Swift.String {
     return __root___foo_get__TypesOfArguments__Swift_Optional_main_Foo___(receiver.map { it in it.__externalRCRef() } ?? nil)
 }
-public func return_any_should_append_runtime_import() -> KotlinRuntime.KotlinBase {
-    return KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: __root___return_any_should_append_runtime_import())
+public func return_any_should_append_runtime_import() -> Any {
+    return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: __root___return_any_should_append_runtime_import()) as! Any
 }
 public func setFoo(
     _ receiver: Swift.Int32,
@@ -170,8 +170,8 @@ extension ExportedKotlinPackages.namespace2 {
     }
 }
 extension ExportedKotlinPackages.operators {
-    public final class Foo: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
-        public final class EmptyIterator: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+    public final class Foo: Any, KotlinRuntimeSupport._KotlinBridged {
+        public final class EmptyIterator: Any, KotlinRuntimeSupport._KotlinBridged {
             public static var shared: ExportedKotlinPackages.operators.Foo.EmptyIterator {
                 get {
                     return ExportedKotlinPackages.operators.Foo.EmptyIterator.__createClassWrapper(externalRCRef: operators_Foo_EmptyIterator_get())
@@ -304,7 +304,7 @@ extension ExportedKotlinPackages.operators {
         }
         public static func ==(
             this: ExportedKotlinPackages.operators.Foo,
-            other: KotlinRuntime.KotlinBase?
+            other: Any?
         ) -> Swift.Bool {
             this.equals(other: other)
         }
@@ -412,9 +412,9 @@ extension ExportedKotlinPackages.operators {
             return ExportedKotlinPackages.operators.Foo.__createClassWrapper(externalRCRef: operators_Foo_dec(self.__externalRCRef()))
         }
         public func equals(
-            other: KotlinRuntime.KotlinBase?
+            other: Any?
         ) -> Swift.Bool {
-            return operators_Foo_equals__TypesOfArguments__Swift_Optional_KotlinRuntime_KotlinBase___(self.__externalRCRef(), other.map { it in it.__externalRCRef() } ?? nil)
+            return operators_Foo_equals__TypesOfArguments__Swift_Optional_Any___(self.__externalRCRef(), other.map { it in it.__externalRCRef() } ?? nil)
         }
         public func hashCode() -> Swift.Int32 {
             return operators_Foo_hashCode(self.__externalRCRef())
@@ -463,7 +463,7 @@ extension ExportedKotlinPackages.operators {
     }
 }
 extension ExportedKotlinPackages.overload {
-    public final class Foo: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+    public final class Foo: Any, KotlinRuntimeSupport._KotlinBridged {
         public init() {
             if Self.self != ExportedKotlinPackages.overload.Foo.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from ExportedKotlinPackages.overload.Foo ") }
             let __kt = overload_Foo_init_allocate()

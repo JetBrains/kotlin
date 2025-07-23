@@ -52,7 +52,7 @@ extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlin
 extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlin.text.Appendable where Wrapped : ExportedKotlinPackages.kotlin.text._Appendable {
 }
 extension ExportedKotlinPackages.kotlin.collections {
-    open class ByteIterator: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+    open class ByteIterator: Any, KotlinRuntimeSupport._KotlinBridged {
         package init() {
             fatalError()
         }
@@ -69,7 +69,7 @@ extension ExportedKotlinPackages.kotlin.collections {
             return kotlin_collections_ByteIterator_nextByte(self.__externalRCRef())
         }
     }
-    open class CharIterator: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+    open class CharIterator: Any, KotlinRuntimeSupport._KotlinBridged {
         package init() {
             fatalError()
         }
@@ -88,7 +88,7 @@ extension ExportedKotlinPackages.kotlin.collections {
     }
 }
 extension ExportedKotlinPackages.kotlin {
-    public protocol CharSequence: KotlinRuntime.KotlinBase {
+    public protocol CharSequence: Any {
         var length: Swift.Int32 {
             get
         }
@@ -103,7 +103,7 @@ extension ExportedKotlinPackages.kotlin {
     @objc(_CharSequence)
     package protocol _CharSequence {
     }
-    public final class ByteArray: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+    public final class ByteArray: Any, KotlinRuntimeSupport._KotlinBridged {
         public var size: Swift.Int32 {
             get {
                 return kotlin_ByteArray_size_get(self.__externalRCRef())
@@ -151,7 +151,7 @@ extension ExportedKotlinPackages.kotlin {
             }
         }
     }
-    public final class CharArray: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+    public final class CharArray: Any, KotlinRuntimeSupport._KotlinBridged {
         public var size: Swift.Int32 {
             get {
                 return kotlin_CharArray_size_get(self.__externalRCRef())
@@ -201,7 +201,7 @@ extension ExportedKotlinPackages.kotlin {
     }
 }
 extension ExportedKotlinPackages.kotlin.text {
-    public protocol Appendable: KotlinRuntime.KotlinBase {
+    public protocol Appendable: Any {
         func append(
             value: Swift.Unicode.UTF16.CodeUnit
         ) -> any ExportedKotlinPackages.kotlin.text.Appendable
@@ -217,7 +217,7 @@ extension ExportedKotlinPackages.kotlin.text {
     @objc(_Appendable)
     package protocol _Appendable {
     }
-    public final class StringBuilder: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlin.CharSequence, ExportedKotlinPackages.kotlin._CharSequence, ExportedKotlinPackages.kotlin.text.Appendable, ExportedKotlinPackages.kotlin.text._Appendable, KotlinRuntimeSupport._KotlinBridged {
+    public final class StringBuilder: Any, ExportedKotlinPackages.kotlin.CharSequence, ExportedKotlinPackages.kotlin._CharSequence, ExportedKotlinPackages.kotlin.text.Appendable, ExportedKotlinPackages.kotlin.text._Appendable, KotlinRuntimeSupport._KotlinBridged {
         public var length: Swift.Int32 {
             get {
                 return kotlin_text_StringBuilder_length_get(self.__externalRCRef())
@@ -321,9 +321,9 @@ extension ExportedKotlinPackages.kotlin.text {
             return ExportedKotlinPackages.kotlin.text.StringBuilder.__createClassWrapper(externalRCRef: kotlin_text_StringBuilder_append__TypesOfArguments__Swift_Optional_anyU20ExportedKotlinPackages_kotlin_CharSequence___(self.__externalRCRef(), value.map { it in it.__externalRCRef() } ?? nil))
         }
         public func append(
-            value: KotlinRuntime.KotlinBase?
+            value: Any?
         ) -> ExportedKotlinPackages.kotlin.text.StringBuilder {
-            return ExportedKotlinPackages.kotlin.text.StringBuilder.__createClassWrapper(externalRCRef: kotlin_text_StringBuilder_append__TypesOfArguments__Swift_Optional_KotlinRuntime_KotlinBase___(self.__externalRCRef(), value.map { it in it.__externalRCRef() } ?? nil))
+            return ExportedKotlinPackages.kotlin.text.StringBuilder.__createClassWrapper(externalRCRef: kotlin_text_StringBuilder_append__TypesOfArguments__Swift_Optional_Any___(self.__externalRCRef(), value.map { it in it.__externalRCRef() } ?? nil))
         }
         public func append(
             value: Swift.String?
@@ -443,9 +443,9 @@ extension ExportedKotlinPackages.kotlin.text {
         }
         public func insert(
             index: Swift.Int32,
-            value: KotlinRuntime.KotlinBase?
+            value: Any?
         ) -> ExportedKotlinPackages.kotlin.text.StringBuilder {
-            return ExportedKotlinPackages.kotlin.text.StringBuilder.__createClassWrapper(externalRCRef: kotlin_text_StringBuilder_insert__TypesOfArguments__Swift_Int32_Swift_Optional_KotlinRuntime_KotlinBase___(self.__externalRCRef(), index, value.map { it in it.__externalRCRef() } ?? nil))
+            return ExportedKotlinPackages.kotlin.text.StringBuilder.__createClassWrapper(externalRCRef: kotlin_text_StringBuilder_insert__TypesOfArguments__Swift_Int32_Swift_Optional_Any___(self.__externalRCRef(), index, value.map { it in it.__externalRCRef() } ?? nil))
         }
         public func insert(
             index: Swift.Int32,

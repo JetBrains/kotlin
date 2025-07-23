@@ -2,9 +2,9 @@
 import KotlinRuntime
 import KotlinRuntimeSupport
 
-public final class Outer: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
-    public final class Inner: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
-        public final class InnerInner: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+public final class Outer: Any, KotlinRuntimeSupport._KotlinBridged {
+    public final class Inner: Any, KotlinRuntimeSupport._KotlinBridged {
+        public final class InnerInner: Any, KotlinRuntimeSupport._KotlinBridged {
             public init(
                 outer__: main.Outer.Inner
             ) {

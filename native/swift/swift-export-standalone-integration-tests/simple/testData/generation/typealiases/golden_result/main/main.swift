@@ -24,12 +24,12 @@ public typealias objectWithInterfaceInheritance = main.OBJECT_WITH_INTERFACE_INH
 public typealias openClass = main.OPEN_CLASS
 public typealias outerInterface = any main.OUTSIDE_PROTO
 public typealias sealedClass = main.SEALED
-public protocol OUTSIDE_PROTO: KotlinRuntime.KotlinBase {
+public protocol OUTSIDE_PROTO: Any {
 }
 @objc(_OUTSIDE_PROTO)
 package protocol _OUTSIDE_PROTO {
 }
-open class ABSTRACT_CLASS: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+open class ABSTRACT_CLASS: Any, KotlinRuntimeSupport._KotlinBridged {
     package init() {
         fatalError()
     }
@@ -40,7 +40,7 @@ open class ABSTRACT_CLASS: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._Kotli
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
     }
 }
-public final class DATA_CLASS: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+public final class DATA_CLASS: Any, KotlinRuntimeSupport._KotlinBridged {
     public var a: Swift.Int32 {
         get {
             return DATA_CLASS_a_get(self.__externalRCRef())
@@ -62,7 +62,7 @@ public final class DATA_CLASS: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._K
     }
     public static func ==(
         this: main.DATA_CLASS,
-        other: KotlinRuntime.KotlinBase?
+        other: Any?
     ) -> Swift.Bool {
         this.equals(other: other)
     }
@@ -72,9 +72,9 @@ public final class DATA_CLASS: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._K
         return main.DATA_CLASS.__createClassWrapper(externalRCRef: DATA_CLASS_copy__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), a))
     }
     public func equals(
-        other: KotlinRuntime.KotlinBase?
+        other: Any?
     ) -> Swift.Bool {
-        return DATA_CLASS_equals__TypesOfArguments__Swift_Optional_KotlinRuntime_KotlinBase___(self.__externalRCRef(), other.map { it in it.__externalRCRef() } ?? nil)
+        return DATA_CLASS_equals__TypesOfArguments__Swift_Optional_Any___(self.__externalRCRef(), other.map { it in it.__externalRCRef() } ?? nil)
     }
     public func hashCode() -> Swift.Int32 {
         return DATA_CLASS_hashCode(self.__externalRCRef())
@@ -83,19 +83,19 @@ public final class DATA_CLASS: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._K
         return DATA_CLASS_toString(self.__externalRCRef())
     }
 }
-public final class DATA_CLASS_WITH_REF: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
-    public var o: KotlinRuntime.KotlinBase {
+public final class DATA_CLASS_WITH_REF: Any, KotlinRuntimeSupport._KotlinBridged {
+    public var o: Any {
         get {
-            return KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: DATA_CLASS_WITH_REF_o_get(self.__externalRCRef()))
+            return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: DATA_CLASS_WITH_REF_o_get(self.__externalRCRef())) as! Any
         }
     }
     public init(
-        o: KotlinRuntime.KotlinBase
+        o: Any
     ) {
         if Self.self != main.DATA_CLASS_WITH_REF.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.DATA_CLASS_WITH_REF ") }
         let __kt = __root___DATA_CLASS_WITH_REF_init_allocate()
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
-        __root___DATA_CLASS_WITH_REF_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_KotlinRuntime_KotlinBase__(__kt, o.__externalRCRef())
+        __root___DATA_CLASS_WITH_REF_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Any__(__kt, o.__externalRCRef())
     }
     package override init(
         __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
@@ -105,19 +105,19 @@ public final class DATA_CLASS_WITH_REF: KotlinRuntime.KotlinBase, KotlinRuntimeS
     }
     public static func ==(
         this: main.DATA_CLASS_WITH_REF,
-        other: KotlinRuntime.KotlinBase?
+        other: Any?
     ) -> Swift.Bool {
         this.equals(other: other)
     }
     public func copy(
-        o: KotlinRuntime.KotlinBase
+        o: Any
     ) -> main.DATA_CLASS_WITH_REF {
-        return main.DATA_CLASS_WITH_REF.__createClassWrapper(externalRCRef: DATA_CLASS_WITH_REF_copy__TypesOfArguments__KotlinRuntime_KotlinBase__(self.__externalRCRef(), o.__externalRCRef()))
+        return main.DATA_CLASS_WITH_REF.__createClassWrapper(externalRCRef: DATA_CLASS_WITH_REF_copy__TypesOfArguments__Any__(self.__externalRCRef(), o.__externalRCRef()))
     }
     public func equals(
-        other: KotlinRuntime.KotlinBase?
+        other: Any?
     ) -> Swift.Bool {
-        return DATA_CLASS_WITH_REF_equals__TypesOfArguments__Swift_Optional_KotlinRuntime_KotlinBase___(self.__externalRCRef(), other.map { it in it.__externalRCRef() } ?? nil)
+        return DATA_CLASS_WITH_REF_equals__TypesOfArguments__Swift_Optional_Any___(self.__externalRCRef(), other.map { it in it.__externalRCRef() } ?? nil)
     }
     public func hashCode() -> Swift.Int32 {
         return DATA_CLASS_WITH_REF_hashCode(self.__externalRCRef())
@@ -126,7 +126,7 @@ public final class DATA_CLASS_WITH_REF: KotlinRuntime.KotlinBase, KotlinRuntimeS
         return DATA_CLASS_WITH_REF_toString(self.__externalRCRef())
     }
 }
-public final class DATA_OBJECT_WITH_PACKAGE: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+public final class DATA_OBJECT_WITH_PACKAGE: Any, KotlinRuntimeSupport._KotlinBridged {
     public static var shared: main.DATA_OBJECT_WITH_PACKAGE {
         get {
             return main.DATA_OBJECT_WITH_PACKAGE.__createClassWrapper(externalRCRef: __root___DATA_OBJECT_WITH_PACKAGE_get())
@@ -156,14 +156,14 @@ public final class DATA_OBJECT_WITH_PACKAGE: KotlinRuntime.KotlinBase, KotlinRun
     }
     public static func ==(
         this: main.DATA_OBJECT_WITH_PACKAGE,
-        other: KotlinRuntime.KotlinBase?
+        other: Any?
     ) -> Swift.Bool {
         this.equals(other: other)
     }
     public func equals(
-        other: KotlinRuntime.KotlinBase?
+        other: Any?
     ) -> Swift.Bool {
-        return DATA_OBJECT_WITH_PACKAGE_equals__TypesOfArguments__Swift_Optional_KotlinRuntime_KotlinBase___(self.__externalRCRef(), other.map { it in it.__externalRCRef() } ?? nil)
+        return DATA_OBJECT_WITH_PACKAGE_equals__TypesOfArguments__Swift_Optional_Any___(self.__externalRCRef(), other.map { it in it.__externalRCRef() } ?? nil)
     }
     public func foo() -> Swift.Int32 {
         return DATA_OBJECT_WITH_PACKAGE_foo(self.__externalRCRef())
@@ -175,8 +175,8 @@ public final class DATA_OBJECT_WITH_PACKAGE: KotlinRuntime.KotlinBase, KotlinRun
         return DATA_OBJECT_WITH_PACKAGE_toString(self.__externalRCRef())
     }
 }
-public final class ENUM: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged, Swift.CaseIterable {
-    public final class INSIDE_ENUM: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+public final class ENUM: Any, KotlinRuntimeSupport._KotlinBridged, Swift.CaseIterable {
+    public final class INSIDE_ENUM: Any, KotlinRuntimeSupport._KotlinBridged {
         public init() {
             if Self.self != main.ENUM.INSIDE_ENUM.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.ENUM.INSIDE_ENUM ") }
             let __kt = ENUM_INSIDE_ENUM_init_allocate()
@@ -222,7 +222,7 @@ public final class ENUM: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinB
         return main.ENUM.__createClassWrapper(externalRCRef: ENUM_valueOf__TypesOfArguments__Swift_String__(value))
     }
 }
-public final class GENERIC_CLASS: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+public final class GENERIC_CLASS: Any, KotlinRuntimeSupport._KotlinBridged {
     public init() {
         if Self.self != main.GENERIC_CLASS.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.GENERIC_CLASS ") }
         let __kt = __root___GENERIC_CLASS_init_allocate()
@@ -266,7 +266,7 @@ public final class OBJECT_WITH_CLASS_INHERITANCE: main.OPEN_CLASS {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
     }
 }
-public final class OBJECT_WITH_GENERIC_INHERITANCE: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+public final class OBJECT_WITH_GENERIC_INHERITANCE: Any, KotlinRuntimeSupport._KotlinBridged {
     public static var shared: main.OBJECT_WITH_GENERIC_INHERITANCE {
         get {
             return main.OBJECT_WITH_GENERIC_INHERITANCE.__createClassWrapper(externalRCRef: __root___OBJECT_WITH_GENERIC_INHERITANCE_get())
@@ -300,7 +300,7 @@ public final class OBJECT_WITH_GENERIC_INHERITANCE: KotlinRuntime.KotlinBase, Ko
         return OBJECT_WITH_GENERIC_INHERITANCE_previousIndex(self.__externalRCRef())
     }
 }
-public final class OBJECT_WITH_INTERFACE_INHERITANCE: KotlinRuntime.KotlinBase, main.OUTSIDE_PROTO, main._OUTSIDE_PROTO, KotlinRuntimeSupport._KotlinBridged {
+public final class OBJECT_WITH_INTERFACE_INHERITANCE: Any, main.OUTSIDE_PROTO, main._OUTSIDE_PROTO, KotlinRuntimeSupport._KotlinBridged {
     public static var shared: main.OBJECT_WITH_INTERFACE_INHERITANCE {
         get {
             return main.OBJECT_WITH_INTERFACE_INHERITANCE.__createClassWrapper(externalRCRef: __root___OBJECT_WITH_INTERFACE_INHERITANCE_get())
@@ -316,7 +316,7 @@ public final class OBJECT_WITH_INTERFACE_INHERITANCE: KotlinRuntime.KotlinBase, 
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
     }
 }
-open class OPEN_CLASS: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+open class OPEN_CLASS: Any, KotlinRuntimeSupport._KotlinBridged {
     public init() {
         if Self.self != main.OPEN_CLASS.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.OPEN_CLASS ") }
         let __kt = __root___OPEN_CLASS_init_allocate()
@@ -330,7 +330,7 @@ open class OPEN_CLASS: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBri
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
     }
 }
-open class SEALED: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+open class SEALED: Any, KotlinRuntimeSupport._KotlinBridged {
     public final class O: main.SEALED {
         public static var shared: main.SEALED.O {
             get {
@@ -408,7 +408,7 @@ extension KotlinRuntimeSupport._KotlinExistential: main.OUTSIDE_PROTO where Wrap
 extension ExportedKotlinPackages.typealiases.inner {
     public typealias Foo = ExportedKotlinPackages.typealiases.Foo
     public typealias LargeInteger = Swift.Int64
-    public final class Bar: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+    public final class Bar: Any, KotlinRuntimeSupport._KotlinBridged {
         public init() {
             if Self.self != ExportedKotlinPackages.typealiases.inner.Bar.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from ExportedKotlinPackages.typealiases.inner.Bar ") }
             let __kt = typealiases_inner_Bar_init_allocate()
@@ -426,7 +426,7 @@ extension ExportedKotlinPackages.typealiases.inner {
 extension ExportedKotlinPackages.typealiases {
     public typealias Bar = ExportedKotlinPackages.typealiases.inner.Bar
     public typealias SmallInteger = Swift.Int16
-    public final class Foo: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+    public final class Foo: Any, KotlinRuntimeSupport._KotlinBridged {
         public init() {
             if Self.self != ExportedKotlinPackages.typealiases.Foo.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from ExportedKotlinPackages.typealiases.Foo ") }
             let __kt = typealiases_Foo_init_allocate()

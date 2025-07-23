@@ -73,20 +73,20 @@ public var baz: Swift.Int32 {
         return __root___baz_get()
     }
 }
-public var foo: KotlinRuntime.KotlinBase {
+public var foo: Any {
     get {
-        return KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: __root___foo_get())
+        return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: __root___foo_get()) as! Any
     }
     set {
-        return __root___foo_set__TypesOfArguments__KotlinRuntime_KotlinBase__(newValue.__externalRCRef())
+        return __root___foo_set__TypesOfArguments__Any__(newValue.__externalRCRef())
     }
 }
-public var lateinit_foo: KotlinRuntime.KotlinBase {
+public var lateinit_foo: Any {
     get {
-        return KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: __root___lateinit_foo_get())
+        return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: __root___lateinit_foo_get()) as! Any
     }
     set {
-        return __root___lateinit_foo_set__TypesOfArguments__KotlinRuntime_KotlinBase__(newValue.__externalRCRef())
+        return __root___lateinit_foo_set__TypesOfArguments__Any__(newValue.__externalRCRef())
     }
 }
 extension ExportedKotlinPackages.namespace.main {

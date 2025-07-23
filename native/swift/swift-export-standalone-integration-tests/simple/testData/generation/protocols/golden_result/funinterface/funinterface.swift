@@ -46,22 +46,22 @@ extension ExportedKotlinPackages.funinterface.functionalInterfaceWithAlreadyLowe
     }
 }
 extension ExportedKotlinPackages.funinterface {
-    public protocol FunctionalInterface: KotlinRuntime.KotlinBase {
+    public protocol FunctionalInterface: Any {
         func callAsFunction() -> Swift.Int32
     }
-    public protocol XMLFunctionalInterfaceWithLeadingAbbreviation: KotlinRuntime.KotlinBase {
+    public protocol XMLFunctionalInterfaceWithLeadingAbbreviation: Any {
         func callAsFunction() -> Swift.Int32
     }
-    public protocol _123FunctionalInterfaceWithLeadingNumbers: KotlinRuntime.KotlinBase {
+    public protocol _123FunctionalInterfaceWithLeadingNumbers: Any {
         func callAsFunction() -> Swift.Int32
     }
-    public protocol _123XMLFunctionalInterfaceWithLeadingUnderscoreNumbersAndAbbreviation: KotlinRuntime.KotlinBase {
+    public protocol _123XMLFunctionalInterfaceWithLeadingUnderscoreNumbersAndAbbreviation: Any {
         func callAsFunction() -> Swift.Int32
     }
     @objc(_FunctionalInterface)
     package protocol _FunctionalInterface {
     }
-    public protocol _FunctionalInterfaceWithLeadingUnderscore: KotlinRuntime.KotlinBase {
+    public protocol _FunctionalInterfaceWithLeadingUnderscore: Any {
         func callAsFunction() -> Swift.Int32
     }
     @objc(_XMLFunctionalInterfaceWithLeadingAbbreviation)
@@ -79,10 +79,10 @@ extension ExportedKotlinPackages.funinterface {
     @objc(_functionalInterfaceWithAlreadyLowercaseLeading)
     package protocol _functionalInterfaceWithAlreadyLowercaseLeading {
     }
-    public protocol functionalInterfaceWithAlreadyLowercaseLeading: KotlinRuntime.KotlinBase {
+    public protocol functionalInterfaceWithAlreadyLowercaseLeading: Any {
         func callAsFunction() -> Swift.Int32
     }
-    public final class FunctorClass: KotlinRuntime.KotlinBase, ExportedKotlinPackages.funinterface.FunctionalInterface, ExportedKotlinPackages.funinterface._FunctionalInterface, KotlinRuntimeSupport._KotlinBridged {
+    public final class FunctorClass: Any, ExportedKotlinPackages.funinterface.FunctionalInterface, ExportedKotlinPackages.funinterface._FunctionalInterface, KotlinRuntimeSupport._KotlinBridged {
         public init() {
             if Self.self != ExportedKotlinPackages.funinterface.FunctorClass.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from ExportedKotlinPackages.funinterface.FunctorClass ") }
             let __kt = funinterface_FunctorClass_init_allocate()

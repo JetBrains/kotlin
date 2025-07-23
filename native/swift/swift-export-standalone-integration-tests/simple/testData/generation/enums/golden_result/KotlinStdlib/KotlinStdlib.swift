@@ -7,23 +7,23 @@ extension ExportedKotlinPackages.kotlin.collections.Iterator where Self : Kotlin
     public func hasNext() -> Swift.Bool {
         return kotlin_collections_Iterator_hasNext(self.__externalRCRef())
     }
-    public func next() -> KotlinRuntime.KotlinBase? {
-        return { switch kotlin_collections_Iterator_next(self.__externalRCRef()) { case nil: .none; case let res: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: res); } }()
+    public func next() -> Any? {
+        return { switch kotlin_collections_Iterator_next(self.__externalRCRef()) { case nil: .none; case let res: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: res) as! Any; } }()
     }
 }
 extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlin.collections.Iterator where Wrapped : ExportedKotlinPackages.kotlin.collections._Iterator {
 }
 extension ExportedKotlinPackages.kotlin.collections {
-    public protocol Iterator: KotlinRuntime.KotlinBase {
+    public protocol Iterator: Any {
         func hasNext() -> Swift.Bool
-        func next() -> KotlinRuntime.KotlinBase?
+        func next() -> Any?
     }
     @objc(_Iterator)
     package protocol _Iterator {
     }
 }
 extension ExportedKotlinPackages.kotlin {
-    public final class Array: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+    public final class Array: Any, KotlinRuntimeSupport._KotlinBridged {
         public var size: Swift.Int32 {
             get {
                 return kotlin_Array_size_get(self.__externalRCRef())
@@ -37,27 +37,27 @@ extension ExportedKotlinPackages.kotlin {
         }
         public init(
             size: Swift.Int32,
-            `init`: @escaping (Swift.Int32) -> Swift.Optional<KotlinRuntime.KotlinBase>
+            `init`: @escaping (Swift.Int32) -> Swift.Optional<Any>
         ) {
             fatalError()
         }
         public func _get(
             index: Swift.Int32
-        ) -> KotlinRuntime.KotlinBase? {
-            return { switch kotlin_Array_get__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), index) { case nil: .none; case let res: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: res); } }()
+        ) -> Any? {
+            return { switch kotlin_Array_get__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), index) { case nil: .none; case let res: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: res) as! Any; } }()
         }
         public func _set(
             index: Swift.Int32,
-            value: KotlinRuntime.KotlinBase?
+            value: Any?
         ) -> Swift.Void {
-            return kotlin_Array_set__TypesOfArguments__Swift_Int32_Swift_Optional_KotlinRuntime_KotlinBase___(self.__externalRCRef(), index, value.map { it in it.__externalRCRef() } ?? nil)
+            return kotlin_Array_set__TypesOfArguments__Swift_Int32_Swift_Optional_Any___(self.__externalRCRef(), index, value.map { it in it.__externalRCRef() } ?? nil)
         }
         public func iterator() -> any ExportedKotlinPackages.kotlin.collections.Iterator {
             return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlin_Array_iterator(self.__externalRCRef())) as! any ExportedKotlinPackages.kotlin.collections.Iterator
         }
         public subscript(
             index: Swift.Int32
-        ) -> KotlinRuntime.KotlinBase? {
+        ) -> Any? {
             get {
                 _get(index: index)
             }
@@ -66,8 +66,8 @@ extension ExportedKotlinPackages.kotlin {
             }
         }
     }
-    open class Enum: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
-        public final class Companion: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+    open class Enum: Any, KotlinRuntimeSupport._KotlinBridged {
+        public final class Companion: Any, KotlinRuntimeSupport._KotlinBridged {
             public static var shared: ExportedKotlinPackages.kotlin.Enum.Companion {
                 get {
                     return ExportedKotlinPackages.kotlin.Enum.Companion.__createClassWrapper(externalRCRef: kotlin_Enum_Companion_get())
@@ -119,7 +119,7 @@ extension ExportedKotlinPackages.kotlin {
         }
         public static func ==(
             this: ExportedKotlinPackages.kotlin.Enum,
-            other: KotlinRuntime.KotlinBase?
+            other: Any?
         ) -> Swift.Bool {
             this.equals(other: other)
         }
@@ -141,9 +141,9 @@ extension ExportedKotlinPackages.kotlin {
             return kotlin_Enum_compareTo__TypesOfArguments__ExportedKotlinPackages_kotlin_Enum__(self.__externalRCRef(), other.__externalRCRef())
         }
         public final func equals(
-            other: KotlinRuntime.KotlinBase?
+            other: Any?
         ) -> Swift.Bool {
-            return kotlin_Enum_equals__TypesOfArguments__Swift_Optional_KotlinRuntime_KotlinBase___(self.__externalRCRef(), other.map { it in it.__externalRCRef() } ?? nil)
+            return kotlin_Enum_equals__TypesOfArguments__Swift_Optional_Any___(self.__externalRCRef(), other.map { it in it.__externalRCRef() } ?? nil)
         }
         public final func hashCode() -> Swift.Int32 {
             return kotlin_Enum_hashCode(self.__externalRCRef())
