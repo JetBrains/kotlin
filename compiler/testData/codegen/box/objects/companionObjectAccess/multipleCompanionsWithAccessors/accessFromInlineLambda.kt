@@ -1,9 +1,4 @@
 // LANGUAGE: +ProperVisibilityForCompanionObjectInstanceField
-// FILE: accessFromInlineLambda.kt
-import c.C
-
-fun box() = C().test()
-
 // FILE: a.kt
 package a
 
@@ -34,3 +29,8 @@ inline fun runStr(fn: () -> String) = fn()
 class C : B() {
     val test = { runStr { getO() + getK() } }
 }
+
+// FILE: accessFromInlineLambda.kt
+import c.C
+
+fun box() = C().test()

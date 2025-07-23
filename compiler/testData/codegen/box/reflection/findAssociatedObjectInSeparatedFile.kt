@@ -1,5 +1,7 @@
 // DONT_TARGET_EXACT_BACKEND: JVM_IR
 // ^ @AssociatedObjectKey is not available in Kotlin/JVM
+// IGNORE_BACKEND_K2_MULTI_MODULE: JS_IR
+// ^^^ Cannot split to two modules due to cycle import
 
 // WITH_STDLIB
 

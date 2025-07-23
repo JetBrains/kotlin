@@ -1,6 +1,7 @@
 // LANGUAGE: +KotlinFunInterfaceConstructorReference
 
 // IGNORE_BACKEND: JS_IR, JS_IR_ES6
+// IGNORE_BACKEND_K2_MULTI_MODULE: JS_IR JS_IR_ES6
 //  ^ Failed: ks1 != ks2 (same file, same SAM type)
 
 // FILE: funInterfaceConstructorEquality.kt

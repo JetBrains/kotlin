@@ -1,9 +1,4 @@
 // LANGUAGE: +ProperVisibilityForCompanionObjectInstanceField
-// FILE: fromInitBlock.kt
-import outer.*
-
-fun box() = Outer().test
-
 // FILE: Outer.kt
 package outer
 
@@ -29,3 +24,8 @@ open class A {
         fun getO() = "O"
     }
 }
+
+// FILE: fromInitBlock.kt
+import outer.*
+
+fun box() = Outer().test

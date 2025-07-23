@@ -11,6 +11,8 @@ import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.TestInfrastructureInternals
 import org.jetbrains.kotlin.test.builders.RegisteredDirectivesBuilder
+import org.jetbrains.kotlin.test.directives.AdditionalFilesDirectives.CHECK_STATE_MACHINE
+import org.jetbrains.kotlin.test.directives.AdditionalFilesDirectives.WITH_COROUTINES
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.SERIALIZE_IR
 import org.jetbrains.kotlin.test.model.DependencyDescription
@@ -84,6 +86,17 @@ class SplittingTestConfigurator(testServices: TestServices) : MetaTestConfigurat
             // Tests without `inline` substring in lib module must be skipped in such testrunners
             if (testServices.defaultsProvider.targetBackend == TargetBackend.JVM_IR_SERIALIZE) {
                 if (moduleLib.files.none { it.originalContent.contains("inline") })
+                    return true
+            }
+        } else { // Klib backends
+            if (WITH_COROUTINES in moduleLib.directives) {
+                // WITH_COROUTINES works incorrectly for non-jvm multi-module tests, should EmptyContinuation object be referenced from moduleLib,
+                // or CHECK_STATE_MACHINE would add `val StateMachineChecker` to both modules
+                // Same helper sources `CoroutineHelpers.kt` and `CoroutineUtil.kt` are added to each module, which causes symbols clash in deserialization phase for moduleMain like:
+                //   IrClassSymbolImpl is already bound. Signature: helpers/EmptyContinuation|null[0]
+                if (CHECK_STATE_MACHINE in moduleLib.directives)
+                    return true
+                if (moduleLib.files[0].originalContent.contains("EmptyContinuation"))
                     return true
             }
         }

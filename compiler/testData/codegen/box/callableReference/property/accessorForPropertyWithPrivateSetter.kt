@@ -1,6 +1,14 @@
 // JVM_ABI_K1_K2_DIFF: KT-63984
 
 // WITH_STDLIB
+// FILE: a.kt
+package a
+
+class A {
+    var value: String = "OK"
+        private set
+}
+
 // FILE: b.kt
 import a.A
 
@@ -10,11 +18,3 @@ class B {
 }
 
 fun box() = B().getValue()
-
-// FILE: a.kt
-package a
-
-class A {
-    var value: String = "OK"
-        private set
-}

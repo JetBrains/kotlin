@@ -1,3 +1,15 @@
+// FILE: b.kt
+
+package b
+
+var result = "fail"
+
+abstract class A {
+    protected fun foo() {
+        result = "OK"
+    }
+}
+
 // FILE: a.kt
 
 package a
@@ -17,16 +29,4 @@ class C : B
 fun box(): String {
     C().test()
     return result
-}
-
-// FILE: b.kt
-
-package b
-
-var result = "fail"
-
-abstract class A {
-    protected fun foo() {
-        result = "OK"
-    }
 }

@@ -1,9 +1,4 @@
 // LANGUAGE: +ProperVisibilityForCompanionObjectInstanceField
-// FILE: anonymousObjectInPropertyInitializer.kt
-import c.C
-
-fun box() = C().test.toString()
-
 // FILE: a.kt
 package a
 
@@ -34,3 +29,8 @@ class C {
         override fun toString() = getO() + getK()
     }
 }
+
+// FILE: anonymousObjectInPropertyInitializer.kt
+import c.C
+
+fun box() = C().test.toString()

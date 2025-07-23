@@ -1,5 +1,11 @@
 // WITH_COROUTINES
 // WITH_STDLIB
+
+// FILE: c.kt
+fun interface C {
+    suspend fun run()
+}
+
 // FILE: a.kt
 fun interface A {
     suspend fun run()
@@ -21,9 +27,4 @@ fun box(): String {
         C { }.run()
     }.startCoroutine(EmptyContinuation)
     return "OK"
-}
-
-// FILE: c.kt
-fun interface C {
-    suspend fun run()
 }

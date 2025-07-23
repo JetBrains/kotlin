@@ -1,5 +1,19 @@
 // JVM_ABI_K1_K2_DIFF: KT-63984
 
+// FILE: b.kt
+
+package test
+
+open class Actor
+
+abstract public class O2dScriptAction<T : Actor> {
+    protected var owner: T? = null
+        private set
+
+    protected fun calc(): T? = null
+
+}
+
 // FILE: a.kt
 
 package test2
@@ -23,18 +37,4 @@ fun box(): String {
     if (O2dDialog().test2() != null) return "fail 2"
 
     return "OK"
-}
-
-// FILE: b.kt
-
-package test
-
-open class Actor
-
-abstract public class O2dScriptAction<T : Actor> {
-    protected var owner: T? = null
-        private set
-
-    protected fun calc(): T? = null
-
 }

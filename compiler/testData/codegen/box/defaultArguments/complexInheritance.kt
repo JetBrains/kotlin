@@ -1,9 +1,3 @@
-// FILE: A.kt
-
-interface A : B
-
-fun box(): String = object : A {}.foo()
-
 // FILE: B.kt
 
 interface Base {
@@ -11,3 +5,9 @@ interface Base {
 }
 
 interface B : Base
+
+// FILE: A.kt
+
+interface A : B
+
+fun box(): String = object : A {}.foo()

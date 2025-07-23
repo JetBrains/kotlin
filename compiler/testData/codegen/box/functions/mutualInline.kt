@@ -1,4 +1,5 @@
-// IGNORE_BACKEND_K2_MULTI_MODULE: JVM_IR_SERIALIZE
+// IGNORE_BACKEND_K2_MULTI_MODULE: JVM_IR_SERIALIZE JS_IR
+// ^^^ Cannot split to two modules due to cycle import
 // FILE: A.kt
 
 inline fun a(): String = b2()

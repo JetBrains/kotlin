@@ -1,10 +1,3 @@
-// FILE: 1.kt
-
-class B : A<String>
-
-fun box(): String =
-    B().f()!!
-
 // FILE: 2.kt
 
 interface A<T> {
@@ -15,3 +8,10 @@ interface A<T> {
         private val RESULT = "OK"
     }
 }
+
+// FILE: 1.kt
+
+class B : A<String>
+
+fun box(): String =
+    B().f()!!
