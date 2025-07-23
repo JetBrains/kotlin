@@ -25,6 +25,8 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.backend.common.linkage.IrDeserializer
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithName
+import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.ReferenceSymbolTable
@@ -194,6 +196,8 @@ open class IrPluginContextImpl(
     override fun referenceProperties(callableId: CallableId): Collection<IrPropertySymbol> {
         return referenceProperties(callableId.asSingleFqName())
     }
+
+    override fun recordLookup(declaration: IrDeclarationWithName, fromFile: IrFile) {}
 
     @Deprecated("This API is deprecated. It will be removed after the 2.3 release", level = DeprecationLevel.WARNING)
     @FirIncompatiblePluginAPI
