@@ -7,11 +7,13 @@ package org.jetbrains.kotlin.test.services
 
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.platform.jvm.isJvm
+import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.TestInfrastructureInternals
 import org.jetbrains.kotlin.test.builders.RegisteredDirectivesBuilder
 import org.jetbrains.kotlin.test.directives.AdditionalFilesDirectives.CHECK_STATE_MACHINE
 import org.jetbrains.kotlin.test.directives.AdditionalFilesDirectives.WITH_COROUTINES
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
+import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.SKIP_SPLITTING_TO_TWO_MODULES
 import org.jetbrains.kotlin.test.model.DependencyDescription
 import org.jetbrains.kotlin.test.model.DependencyKind
 import org.jetbrains.kotlin.test.model.DependencyRelation
@@ -91,6 +93,11 @@ class SplittingTestConfigurator(testServices: TestServices) : MetaTestConfigurat
             if (moduleLib.files[0].originalContent.contains("EmptyContinuation"))
                 return true
         }
+
+        val skippedBackends = moduleLib.directives[SKIP_SPLITTING_TO_TWO_MODULES]
+        if (testServices.defaultsProvider.targetBackend in skippedBackends ||
+            TargetBackend.ANY in skippedBackends
+        ) return true
 
         // The following matcher should recognize the module structure created by SplittingModuleTransformerForBoxTests
         // Some small amount of false-positives are ok, for ex, in `mangling/internal.kt`, where second module has friend dep: `// MODULE: main()(lib)`

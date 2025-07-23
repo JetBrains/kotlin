@@ -1,3 +1,4 @@
+// SKIP_SPLITTING_TO_TWO_MODULES: ANY
 // FILE: test.kt
 
 fun checkNotEqual(x: Any, y: Any) {

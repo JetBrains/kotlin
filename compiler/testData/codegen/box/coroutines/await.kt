@@ -1,5 +1,8 @@
 // WITH_STDLIB
 // WITH_COROUTINES
+// SKIP _SPLITTING_TO_TWO_MODULES: JS_IR
+// ^^^ Error loading module 'kotlin_lib'. Its dependency 'kotlin_main' was not found. Please, check whether 'kotlin_main' is loaded prior to 'kotlin_lib'.
+
 // FILE: promise.kt
 import helpers.*
 import kotlin.coroutines.*

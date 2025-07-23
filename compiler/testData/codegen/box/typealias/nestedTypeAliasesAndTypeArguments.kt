@@ -1,5 +1,7 @@
 // IGNORE_BACKEND_K1: ANY
 // LANGUAGE: +NestedTypeAliases
+// SKIP_SPLITTING_TO_TWO_MODULES: ANY
+// ^^^ KT-79519: Nested type alias is unreachable from another module
 
 // FILE: typealiases.kt
 

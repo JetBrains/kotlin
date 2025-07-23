@@ -1,5 +1,6 @@
 // DONT_TARGET_EXACT_BACKEND: JVM_IR
 // ^ @AssociatedObjectKey is not available in Kotlin/JVM
+// SKIP_SPLITTING_TO_TWO_MODULES: ANY
 
 // WITH_STDLIB
 
