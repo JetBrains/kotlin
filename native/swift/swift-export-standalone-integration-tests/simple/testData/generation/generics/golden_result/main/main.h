@@ -17,6 +17,8 @@ void Consumer_consume__TypesOfArguments__Swift_Optional_KotlinRuntime_KotlinBase
 
 int32_t Demo_foo_get(void * self);
 
+void * GenericWithComparableUpperBound_t_get(void * self);
+
 void * _Nullable IdentityProcessor_process__TypesOfArguments__Swift_Optional_KotlinRuntime_KotlinBase___(void * self, void * _Nullable input);
 
 void * _Nullable Pair_first_get(void * self);
@@ -44,6 +46,10 @@ void __root___DefaultBox_init_initialize__TypesOfArguments__Swift_UnsafeMutableR
 void * __root___Demo_init_allocate();
 
 void __root___Demo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
+
+void * __root___GenericWithComparableUpperBound_init_allocate();
+
+void __root___GenericWithComparableUpperBound_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_anyU20ExportedKotlinPackages_kotlin_Comparable__(void * __kt, void * t);
 
 void * __root___IdentityProcessor_init_allocate();
 
