@@ -22,7 +22,7 @@ class SirClassBuilder {
     val attributes: MutableList<SirAttribute> = mutableListOf()
     lateinit var name: String
     val declarations: MutableList<SirDeclaration> = mutableListOf()
-    var superClass: SirNominalType? = null
+    var superClass: SirType? = null
     val protocols: MutableList<SirProtocol> = mutableListOf()
     val bridges: MutableList<SirBridge> = mutableListOf()
     var modality: SirModality = SirModality.UNSPECIFIED

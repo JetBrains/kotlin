@@ -19,7 +19,7 @@ internal class SirClassImpl(
     override val attributes: MutableList<SirAttribute>,
     override val name: String,
     override val declarations: MutableList<SirDeclaration>,
-    override val superClass: SirNominalType?,
+    override val superClass: SirType?,
     override val protocols: MutableList<SirProtocol>,
     override val bridges: MutableList<SirBridge>,
     override val modality: SirModality,

@@ -77,7 +77,7 @@ object SwiftIrTree : AbstractSwiftIrTreeBuilder() {
     }
 
     val classInhertingDeclaration by sealedElement {
-        +field("superClass", nominalTypeType, nullable = true)
+        +field("superClass", typeType, nullable = true)
     }
 
     val extension: Element by element {
