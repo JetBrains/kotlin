@@ -19,7 +19,7 @@ import java.util.regex.Pattern;
 @TestMetadata("native/swift/swift-export-standalone-integration-tests/simple/testData/generation")
 @TestDataPath("$PROJECT_ROOT")
 @UseStandardTestCaseGroupProvider()
-public class KlibBasedSwiftExportRunnerTest extends AbstractKlibBasedSwiftRunnerTest {
+public class SwiftExportWithBinaryCompilationTest extends AbstractSwiftExportWithBinaryCompilationTest {
   @Test
   public void testAllFilesPresentInGeneration() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/swift/swift-export-standalone-integration-tests/simple/testData/generation"), Pattern.compile("^([^.]+)$"), null, false);

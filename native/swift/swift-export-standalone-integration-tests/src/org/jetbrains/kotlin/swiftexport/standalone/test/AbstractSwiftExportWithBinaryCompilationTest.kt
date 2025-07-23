@@ -20,13 +20,14 @@ import java.io.File
 
 @ExtendWith(UpdateTestDataSupport::class)
 abstract class AbstractSwiftExportWithBinaryCompilationTest : AbstractSwiftExportTest() {
-    protected abstract fun runCompiledTest(
+    protected open fun runCompiledTest(
         testPathFull: File,
         testCase: TestCase,
         swiftExportOutputs: Set<SwiftExportModule>,
         swiftModules: Set<TestCompilationArtifact.Swift.Module>,
         kotlinBinaryLibrary: TestCompilationArtifact.BinaryLibrary,
-    )
+    ) {
+    }
 
     protected fun runTest(@TestDataFile testDir: String) {
         Assumptions.assumeTrue(targets.testTarget.family.isAppleFamily)

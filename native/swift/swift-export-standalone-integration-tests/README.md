@@ -14,5 +14,5 @@ These tests tend to be large, and manual test data for generation tests update m
 To update test data in bulk, use the following command:
 ```
 ./gradlew :native:swift:swift-export-standalone-integration-tests:external:test --tests "org.jetbrains.kotlin.swiftexport.standalone.test.ExternalProjectGenerationTests" -Pkotlin.test.update.test.data=true
-./gradlew :native:swift:swift-export-standalone-integration-tests:simple:test --tests "org.jetbrains.kotlin.swiftexport.standalone.test.KlibBasedSwiftExportRunnerTest" -Pkotlin.test.update.test.data=true
+./gradlew :native:swift:swift-export-standalone-integration-tests:simple:test --tests "org.jetbrains.kotlin.swiftexport.standalone.test.SwiftExportWithResultValidationTest" -Pkotlin.test.update.test.data=true
 ```
