@@ -4,6 +4,10 @@
  */
 // WITH_STDLIB
 
+// FILE: 2.kt
+
+fun foo(ignored: Int) = { "foo2" }
+
 // FILE: 1.kt
 
 import kotlin.test.*
@@ -16,7 +20,3 @@ fun box(): String {
 }
 
 fun foo() = { "foo1" }
-
-// FILE: 2.kt
-
-fun foo(ignored: Int) = { "foo2" }

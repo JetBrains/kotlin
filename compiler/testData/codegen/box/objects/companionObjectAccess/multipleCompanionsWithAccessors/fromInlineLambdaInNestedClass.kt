@@ -1,9 +1,4 @@
 // LANGUAGE: +ProperVisibilityForCompanionObjectInstanceField
-// FILE: fromInlineLambdaInNestedClass.kt
-import b.*
-
-fun box() = Outer().test()
-
 // FILE: a.kt
 package a
 
@@ -32,3 +27,7 @@ class Outer : A() {
     fun test() = Nested().foo()
 }
 
+// FILE: fromInlineLambdaInNestedClass.kt
+import b.*
+
+fun box() = Outer().test()

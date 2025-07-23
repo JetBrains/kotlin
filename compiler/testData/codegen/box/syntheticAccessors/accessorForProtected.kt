@@ -1,10 +1,3 @@
-// FILE: 1.kt
-
-import b.B
-import a.BSamePackage
-
-fun box() = if (B().test() == BSamePackage().test()) "OK" else "fail"
-
 // FILE: 2.kt
 
 package a
@@ -36,3 +29,10 @@ class B: A() {
         return a()
     }
 }
+
+// FILE: 1.kt
+
+import b.B
+import a.BSamePackage
+
+fun box() = if (B().test() == BSamePackage().test()) "OK" else "fail"

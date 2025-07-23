@@ -1,9 +1,4 @@
 // LANGUAGE: +ProperVisibilityForCompanionObjectInstanceField
-// FILE: withCompanionObjectBase.kt
-import b.*
-
-fun box() = B.ok
-
 // FILE: a.kt
 package a
 
@@ -23,3 +18,8 @@ class B {
         val ok = getOK()
     }
 }
+
+// FILE: withCompanionObjectBase.kt
+import b.*
+
+fun box() = B.ok

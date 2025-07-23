@@ -1,6 +1,11 @@
 // KT-66094: java.lang.InstantiationError: Foo
 // WITH_STDLIB
 
+// FILE: 2.kt
+
+@Target(AnnotationTarget.ANNOTATION_CLASS)
+annotation class SerialInfo
+
 // FILE: 1.kt
 
 import kotlin.test.*
@@ -13,8 +18,3 @@ fun box(): String {
     assertEquals(foo.x, 42)
     return foo.y
 }
-
-// FILE: 2.kt
-
-@Target(AnnotationTarget.ANNOTATION_CLASS)
-annotation class SerialInfo

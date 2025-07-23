@@ -5,8 +5,12 @@
 
 package org.jetbrains.kotlin.test.services
 
+import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.test.TestInfrastructureInternals
 import org.jetbrains.kotlin.test.builders.RegisteredDirectivesBuilder
+import org.jetbrains.kotlin.test.directives.AdditionalFilesDirectives.CHECK_STATE_MACHINE
+import org.jetbrains.kotlin.test.directives.AdditionalFilesDirectives.WITH_COROUTINES
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.model.DependencyDescription
 import org.jetbrains.kotlin.test.model.DependencyKind
@@ -22,6 +26,8 @@ import org.jetbrains.kotlin.test.services.impl.TestModuleStructureImpl
  * and in multi-module mode (as in IrCompileKotlinAgainstInlineKotlinTest).
  *
  * If the test is already multimodule, do nothing.
+ * If the test is single-module, single-file, do nothing.
+ * NOTE: Make sure SplittingTestConfigurator is also added to metaTestConfigurators to skip running such non-split tests.
  */
 @TestInfrastructureInternals
 class SplittingModuleTransformerForBoxTests : ModuleStructureTransformer() {
@@ -32,7 +38,10 @@ class SplittingModuleTransformerForBoxTests : ModuleStructureTransformer() {
         }
         val module = moduleStructure.modules.single()
         val realFiles = module.files.filterNot { it.isAdditional }
-        if (realFiles.size < 2) error("Test should contain at least two files")
+        if (realFiles.size < 2) {
+            // Cannot split single-file tests, so cannot split into modules.
+            return moduleStructure
+        }
         val additionalFiles = module.files.filter { it.isAdditional }
         val firstModuleFiles = realFiles.dropLast(1)
         val secondModuleFile = realFiles.last()
@@ -54,5 +63,43 @@ class SplittingModuleTransformerForBoxTests : ModuleStructureTransformer() {
             module.languageVersionSettings
         )
         return TestModuleStructureImpl(listOf(firstModule, secondModule), moduleStructure.originalTestDataFiles)
+    }
+}
+
+/*
+ * Always use this configurator along with SplittingModuleTransformerForBoxTests, to skip non-splitted tests, and avoid non-splittable tests
+ */
+class SplittingTestConfigurator(testServices: TestServices) : MetaTestConfigurator(testServices) {
+    override fun shouldSkipTest(): Boolean {
+        val modules = testServices.moduleStructure.modules
+        if (modules.size != 2) return true
+
+        val (moduleLib, moduleMain) = modules
+
+        val settings = moduleLib.languageVersionSettings
+        if (settings.supportsFeature(LanguageFeature.MultiPlatformProjects)) {
+            // Multiplatform tests must not be tested with SplittingModuleTransformerForBoxTests
+            return true
+        }
+        if (WITH_COROUTINES in moduleLib.directives && !moduleLib.targetPlatform(testServices).isJvm()) {
+            // WITH_COROUTINES works incorrectly for non-jvm multi-module tests, should EmptyContinuation object be referenced from moduleLib,
+            // or CHECK_STATE_MACHINE would add `val StateMachineChecker` to both modules
+            // Same helper sources `CoroutineHelpers.kt` and `CoroutineUtil.kt` are added to each module, which causes symbols clash in deserialization phase for moduleMain like:
+            //   IrClassSymbolImpl is already bound. Signature: helpers/EmptyContinuation|null[0]
+            if (CHECK_STATE_MACHINE in moduleLib.directives)
+                return true
+            if (moduleLib.files[0].originalContent.contains("EmptyContinuation"))
+                return true
+        }
+
+        // The following matcher should recognize the module structure created by SplittingModuleTransformerForBoxTests
+        // Some small amount of false-positives are ok, for ex, in `mangling/internal.kt`, where second module has friend dep: `// MODULE: main()(lib)`
+        val looksLikeSplitted = moduleMain.friendDependencies.singleOrNull()?.dependencyModule == moduleLib
+                && moduleMain.regularDependencies.isEmpty()
+                && moduleMain.dependsOnDependencies.isEmpty()
+                && moduleLib.friendDependencies.isEmpty()
+                && moduleLib.regularDependencies.isEmpty()
+                && moduleLib.dependsOnDependencies.isEmpty()
+        return !looksLikeSplitted
     }
 }

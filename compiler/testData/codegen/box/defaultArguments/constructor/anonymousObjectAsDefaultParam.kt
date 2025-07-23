@@ -1,4 +1,8 @@
 // ISSUE: KT-74739
+// FILE: C.kt
+open class FooC(val string: String)
+
+class BarC(val foo: FooC? = object: FooC("C") {})
 // FILE: A.kt
 open class FooA(val string: String)
 
@@ -17,8 +21,3 @@ fun box(): String {
     if (cd != "CD") return cd
     return "OK"
 }
-
-// FILE: C.kt
-open class FooC(val string: String)
-
-class BarC(val foo: FooC? = object: FooC("C") {})

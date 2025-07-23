@@ -1,4 +1,16 @@
 // WITH_STDLIB
+// FILE: file1.kt
+private const val K = "K"
+
+interface A {
+    suspend fun foo(k: String = K): String
+}
+
+// FILE: file2.kt
+class B(val o: String) : A {
+    override suspend fun foo(k: String) = o + k
+}
+
 // FILE: kt45377.kt
 
 import kotlin.coroutines.*
@@ -27,16 +39,4 @@ fun box(): String {
     if (s4 != "OK") return "Failed: s4=$s4"
 
     return "OK"
-}
-
-// FILE: file1.kt
-private const val K = "K"
-
-interface A {
-    suspend fun foo(k: String = K): String
-}
-
-// FILE: file2.kt
-class B(val o: String) : A {
-    override suspend fun foo(k: String) = o + k
 }

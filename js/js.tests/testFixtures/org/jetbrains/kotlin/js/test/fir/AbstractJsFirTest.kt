@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.test.frontend.fir.handlers.FirDumpHandler
 import org.jetbrains.kotlin.test.frontend.fir.handlers.FirResolvedTypesVerifier
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.services.SplittingModuleTransformerForBoxTests
+import org.jetbrains.kotlin.test.services.SplittingTestConfigurator
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
 import java.lang.Boolean.getBoolean
 
@@ -165,6 +166,7 @@ open class AbstractFirJsCodegenSplittingInlineWithInlinedFunInKlibTest : Abstrac
         builder.useModuleStructureTransformers(
             SplittingModuleTransformerForBoxTests()
         )
+        builder.useMetaTestConfigurators(::SplittingTestConfigurator)
     }
 }
 

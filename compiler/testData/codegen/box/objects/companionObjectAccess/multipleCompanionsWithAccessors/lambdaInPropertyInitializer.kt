@@ -1,9 +1,4 @@
 // LANGUAGE: +ProperVisibilityForCompanionObjectInstanceField
-// FILE: lambdaInPropertyInitializer.kt
-import c.C
-
-fun box() = C().test()
-
 // FILE: a.kt
 package a
 
@@ -32,3 +27,8 @@ import b.B
 class C : B() {
     val test = { getO() + getK() }
 }
+
+// FILE: lambdaInPropertyInitializer.kt
+import c.C
+
+fun box() = C().test()

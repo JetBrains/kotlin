@@ -1,9 +1,3 @@
-// FILE: test.kt
-import b.B
-
-fun box() =
-        B().getOK()
-
 // FILE: a.kt
 package a
 
@@ -27,3 +21,9 @@ class B : A<Long>() {
     fun getOK() =
             Inner().innerGetO() + lambdaGetK().invoke()
 }
+
+// FILE: test.kt
+import b.B
+
+fun box() =
+    B().getOK()

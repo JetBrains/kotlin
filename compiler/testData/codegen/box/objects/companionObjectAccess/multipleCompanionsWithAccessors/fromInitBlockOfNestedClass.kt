@@ -1,8 +1,12 @@
 // LANGUAGE: +ProperVisibilityForCompanionObjectInstanceField
-// FILE: fromInitBlockOfNestedClass.kt
-import b.*
+// FILE: a.kt
+package a
 
-fun box() = Outer.Nested().test
+open class A {
+    protected companion object {
+        fun getO() = "O"
+    }
+}
 
 // FILE: b.kt
 package b
@@ -23,11 +27,7 @@ class Outer : A() {
     }
 }
 
-// FILE: a.kt
-package a
+// FILE: fromInitBlockOfNestedClass.kt
+import b.*
 
-open class A {
-    protected companion object {
-        fun getO() = "O"
-    }
-}
+fun box() = Outer.Nested().test

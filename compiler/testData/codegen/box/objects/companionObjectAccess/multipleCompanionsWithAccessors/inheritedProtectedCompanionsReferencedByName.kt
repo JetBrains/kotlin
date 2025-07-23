@@ -1,9 +1,4 @@
 // LANGUAGE: +ProperVisibilityForCompanionObjectInstanceField
-// FILE: twoInheritedProtectedCompanions.kt
-import c.C
-
-fun box() = C().test()()
-
 // FILE: a.kt
 package a
 
@@ -33,3 +28,8 @@ import b.B
 class C : B() {
     fun test() = { A.AC.getO() + B.BC.getK() }
 }
+
+// FILE: twoInheritedProtectedCompanions.kt
+import c.C
+
+fun box() = C().test()()
