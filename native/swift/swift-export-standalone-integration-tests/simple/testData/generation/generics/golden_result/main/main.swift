@@ -103,7 +103,7 @@ public final class CPImpl: main.StringProducer {
     }
 }
 public final class DefaultBox: main.Box {
-    public init(
+    public override init(
         t: Any?
     ) {
         if Self.self != main.DefaultBox.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.DefaultBox ") }

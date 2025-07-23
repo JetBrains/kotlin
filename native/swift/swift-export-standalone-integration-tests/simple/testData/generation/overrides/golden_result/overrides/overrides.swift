@@ -129,7 +129,7 @@ open class Child: overrides.Parent {
     ) -> Swift.Bool {
         return Child_contains__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), element)
     }
-    open func equals(
+    open override func equals(
         to: Any?
     ) -> Swift.Bool {
         return Child_equals__TypesOfArguments__Swift_Optional_Any___(self.__externalRCRef(), to.map { it in it.__externalRCRef() } ?? nil)
