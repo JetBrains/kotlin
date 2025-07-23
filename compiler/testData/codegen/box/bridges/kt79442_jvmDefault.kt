@@ -20,3 +20,4 @@ fun box(): String {
 // @Repository$DefaultImpls.class:
 // 0 @Lkotlin/coroutines/jvm/internal/DebugMetadata;
 // 0 L$0
+// 2 ALOAD 1

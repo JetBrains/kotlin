@@ -293,7 +293,7 @@ internal class AddContinuationLowering(context: JvmBackendContext) : SuspendLowe
         irFile.accept(object : IrElementTransformerVoid() {
             override fun visitClass(declaration: IrClass): IrStatement {
                 declaration.transformDeclarationsFlat {
-                    if (it is IrSimpleFunction && it.isSuspend && !it.isDefaultImplsBridgeInJvmDefaultEnableMode())
+                    if (it is IrSimpleFunction && it.isSuspend)
                         return@transformDeclarationsFlat transformToView(it)
                     it.accept(this, null)
                     null
@@ -309,6 +309,9 @@ internal class AddContinuationLowering(context: JvmBackendContext) : SuspendLowe
                 val continuationParameter = view.continuationParameter()
                 val parameterMap = function.parameters.zip(view.parameters.filter { it != continuationParameter }).toMap()
                 view.body = function.moveBodyTo(view, parameterMap)
+                if (function.isDefaultImplsBridgeInJvmDefaultEnableMode()) {
+                    view.originalFunctionForDefaultImpl = function.originalFunctionForDefaultImpl
+                }
 
                 val result = mutableListOf(view)
                 if (function.body == null || !function.hasContinuation()) return result
