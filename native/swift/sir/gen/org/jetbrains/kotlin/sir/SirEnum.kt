@@ -13,14 +13,14 @@ import org.jetbrains.kotlin.sir.util.*
 /**
  * Generated from: [org.jetbrains.kotlin.sir.tree.generator.SwiftIrTree.enum]
  */
-abstract class SirEnum : SirElementBase(), SirNamedDeclaration, SirMutableDeclarationContainer {
+abstract class SirEnum : SirElementBase(), SirNamedDeclaration, SirDeclarationContainer {
     abstract override val origin: SirOrigin
     abstract override val visibility: SirVisibility
     abstract override val documentation: String?
     abstract override var parent: SirDeclarationParent
     abstract override val attributes: List<SirAttribute>
     abstract override val name: String
-    abstract override val declarations: MutableList<SirDeclaration>
+    abstract override val declarations: List<SirDeclaration>
     abstract val cases: List<SirEnumCase>
     override fun toString(): String {
         return this.debugString
