@@ -200,7 +200,7 @@ internal sealed class Bridge(
                 "kotlin.native.internal.ref.dereferenceExternalRCRef($valueExpression) as ${
                     typeNamer.kotlinFqName(
                         swiftType,
-                        SirTypeNamer.KotlinNameType.FQN
+                        SirTypeNamer.KotlinNameType.PARAMETRIZED
                     )
                 }"
 

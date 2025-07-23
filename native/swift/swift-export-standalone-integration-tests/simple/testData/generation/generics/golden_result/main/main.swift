@@ -1,6 +1,7 @@
 @_implementationOnly import KotlinBridges_main
 import KotlinRuntime
 import KotlinRuntimeSupport
+import KotlinStdlib
 
 public protocol A: KotlinRuntime.KotlinBase {
     var foo: KotlinRuntime.KotlinBase? {
@@ -128,6 +129,27 @@ public final class Demo: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinB
         let __kt = __root___Demo_init_allocate()
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
         __root___Demo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt)
+    }
+    package override init(
+        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+        options: KotlinRuntime.KotlinBaseConstructionOptions
+    ) {
+        super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+    }
+}
+public final class GenericWithComparableUpperBound: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+    public var t: any ExportedKotlinPackages.kotlin.Comparable {
+        get {
+            return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: GenericWithComparableUpperBound_t_get(self.__externalRCRef())) as! any ExportedKotlinPackages.kotlin.Comparable
+        }
+    }
+    public init(
+        t: any ExportedKotlinPackages.kotlin.Comparable
+    ) {
+        if Self.self != main.GenericWithComparableUpperBound.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.GenericWithComparableUpperBound ") }
+        let __kt = __root___GenericWithComparableUpperBound_init_allocate()
+        super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
+        __root___GenericWithComparableUpperBound_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_anyU20ExportedKotlinPackages_kotlin_Comparable__(__kt, t.__externalRCRef())
     }
     package override init(
         __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
