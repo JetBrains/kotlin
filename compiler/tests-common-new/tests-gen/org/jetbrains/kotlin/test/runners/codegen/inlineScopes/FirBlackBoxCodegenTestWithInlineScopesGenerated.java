@@ -13533,6 +13533,12 @@ public class FirBlackBoxCodegenTestWithInlineScopesGenerated extends AbstractFir
       }
 
       @Test
+      @TestMetadata("interfaceWithTwoDefaultFunsReturnValueType.kt")
+      public void testInterfaceWithTwoDefaultFunsReturnValueType() {
+        runTest("compiler/testData/codegen/box/coroutines/bridges/interfaceWithTwoDefaultFunsReturnValueType.kt");
+      }
+
+      @Test
       @TestMetadata("lambdaWithLongReceiver.kt")
       public void testLambdaWithLongReceiver() {
         runTest("compiler/testData/codegen/box/coroutines/bridges/lambdaWithLongReceiver.kt");
