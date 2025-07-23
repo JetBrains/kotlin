@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.compilationException
 import org.jetbrains.kotlin.backend.common.serialization.Hash128Bits
 import org.jetbrains.kotlin.backend.wasm.WasmBackendContext
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmCompiledModuleFragment.*
+import org.jetbrains.kotlin.backend.wasm.utils.fitsLatin1
 import org.jetbrains.kotlin.ir.backend.js.ic.IrICProgramFragment
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithName
 import org.jetbrains.kotlin.ir.declarations.IrExternalPackageFragment
@@ -560,9 +561,9 @@ class WasmCompiledModuleFragment(
                     stringAddressAndId[string] = currentStringAddress to currentStringId
                     addressesAndLengths.add(currentStringAddress.toLong() or (string.length.toLong() shl 32))
 
-                    val fitsOneByte = if (string.all { it.code in 0..255 }) 1 else 0
+                    val fitsLatin1 = if (string.fitsLatin1) 1 else 0
 
-                    val constData = ConstantDataCharArray(string.toCharArray(), fitsOneByte)
+                    val constData = ConstantDataCharArray(string.toCharArray(), fitsLatin1)
                     stringDataSectionBytes += constData.toBytes().toList()
                     stringDataSectionStart += constData.sizeInBytes
                 } else {
