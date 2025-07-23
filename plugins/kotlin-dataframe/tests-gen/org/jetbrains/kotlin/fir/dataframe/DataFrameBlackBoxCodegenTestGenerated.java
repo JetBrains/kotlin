@@ -398,6 +398,12 @@ public class DataFrameBlackBoxCodegenTestGenerated extends AbstractDataFrameBlac
   }
 
   @Test
+  @TestMetadata("implode.kt")
+  public void testImplode() {
+    runTest("plugins/kotlin-dataframe/testData/box/implode.kt");
+  }
+
+  @Test
   @TestMetadata("infer.kt")
   public void testInfer() {
     runTest("plugins/kotlin-dataframe/testData/box/infer.kt");

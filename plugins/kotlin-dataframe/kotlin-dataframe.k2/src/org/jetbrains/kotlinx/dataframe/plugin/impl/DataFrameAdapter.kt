@@ -3,6 +3,7 @@ package org.jetbrains.kotlinx.dataframe.plugin.impl
 import org.jetbrains.kotlinx.dataframe.AnyCol
 import org.jetbrains.kotlinx.dataframe.DataColumn
 import org.jetbrains.kotlinx.dataframe.DataFrame
+import org.jetbrains.kotlinx.dataframe.api.asColumn
 import org.jetbrains.kotlinx.dataframe.api.asDataColumn
 import org.jetbrains.kotlinx.dataframe.api.cast
 import org.jetbrains.kotlinx.dataframe.api.convert
@@ -25,6 +26,10 @@ interface ConeTypesAdapter
 
 fun PluginDataFrameSchema.convert(columns: ColumnsResolver, converter: (Marker) -> Marker): PluginDataFrameSchema {
     return asDataFrame().convert { columns }.with { converter(it as Marker) }.toPluginDataFrameSchema()
+}
+
+fun PluginDataFrameSchema.convertAsColumn(columns: ColumnsResolver, converter: (SimpleCol) -> SimpleCol): PluginDataFrameSchema {
+    return asDataFrame().convert { columns }.asColumn { converter(it.asSimpleColumn()).asDataColumn() }.toPluginDataFrameSchema()
 }
 
 private fun List<SimpleCol>.map(): DataFrame<ConeTypesAdapter> {
