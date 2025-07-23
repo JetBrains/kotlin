@@ -268,19 +268,7 @@ class SplitAnyFrameIntoColumns : AbstractSchemaModificationInterpreter() {
     }
 }
 
-private fun Arguments.implode(col: SimpleCol): SimpleCol = when (col) {
-    is SimpleColumnGroup -> SimpleFrameColumn(col.name(), col.columns())
-    is SimpleDataColumn -> simpleColumnOf(
-        col.name, createListType(col.type.type)
-    )
-    is SimpleFrameColumn -> simpleColumnOf(
-        // For now, we can't propagate the schema like List<DataFrame<SchemaType>> - the column type becomes List<DataFrame<*>>.
-        // but it's the same as in the library
-        col.name, createListType(Names.DF_CLASS_ID.createConeType(session, arrayOf(ConeStarProjection)))
-    )
-}
-
-private fun Arguments.createListType(type: ConeKotlinType): ConeClassLikeType = StandardClassIds.List.createConeType(
+internal fun Arguments.createListType(type: ConeKotlinType): ConeClassLikeType = StandardClassIds.List.createConeType(
     session,
     arrayOf(type.toTypeProjection(Variance.INVARIANT)),
 )

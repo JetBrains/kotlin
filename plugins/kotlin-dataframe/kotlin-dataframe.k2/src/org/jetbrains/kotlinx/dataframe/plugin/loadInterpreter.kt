@@ -172,6 +172,8 @@ import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GroupByStdOf
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GroupBySum0
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GroupBySum1
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.GroupBySumOf
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.Implode
+import org.jetbrains.kotlinx.dataframe.plugin.impl.api.ImplodeDefault
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.InnerJoinWith
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.InsertAt
 import org.jetbrains.kotlinx.dataframe.plugin.impl.api.JoinWith
@@ -367,6 +369,8 @@ internal inline fun <reified T : Interpreter<*>> String.load(isTest: Boolean): T
         "ConvertAsColumn" -> ConvertAsColumn()
         "PerRowCol" -> PerRowCol()
         "Explode0" -> Explode0()
+        "Implode" -> Implode()
+        "ImplodeDefault" -> ImplodeDefault()
         "Insert0" -> Insert0()
         "Insert1" -> Insert1()
         "Under0" -> Under0()
