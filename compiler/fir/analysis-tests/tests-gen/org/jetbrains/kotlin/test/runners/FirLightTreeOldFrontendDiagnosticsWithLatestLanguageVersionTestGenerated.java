@@ -32731,6 +32731,12 @@ public class FirLightTreeOldFrontendDiagnosticsWithLatestLanguageVersionTestGene
       }
 
       @Test
+      @TestMetadata("LocalDeclarations.kt")
+      public void testLocalDeclarations() {
+        runTest("compiler/testData/diagnostics/tests/redeclarations/LocalDeclarations.kt");
+      }
+
+      @Test
       @TestMetadata("MultiFilePackageRedeclaration.kt")
       public void testMultiFilePackageRedeclaration() {
         runTest("compiler/testData/diagnostics/tests/redeclarations/MultiFilePackageRedeclaration.kt");
