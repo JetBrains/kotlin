@@ -12,6 +12,7 @@ import kotlin.internal.LowPriorityInOverloadResolution
  */
 @ExperimentalWasmJsInterop
 public actual external class Promise<out T : JsAny?>
+@SinceKotlin("2.2")
 @LowPriorityInOverloadResolution
 actual constructor(executor: (resolve: (T) -> Unit, reject: (JsError) -> Unit) -> Unit) : JsAny {
 
@@ -20,12 +21,14 @@ actual constructor(executor: (resolve: (T) -> Unit, reject: (JsError) -> Unit) -
     @LowPriorityInOverloadResolution
     public actual fun <S : JsAny?> then(onFulfilled: ((T) -> S)?): Promise<S>
 
+    @SinceKotlin("2.2")
     @LowPriorityInOverloadResolution
     public actual fun <S : JsAny?> then(onFulfilled: ((T) -> S)?, onRejected: ((JsError) -> S)?): Promise<S>
 
     @LowPriorityInOverloadResolution
     public fun <S : JsAny?> then(onFulfilled: ((T) -> S)?, onRejected: ((JsAny) -> S)?): Promise<S>
 
+    @SinceKotlin("2.2")
     @LowPriorityInOverloadResolution
     public actual fun <S : JsAny?> catch(onRejected: (JsError) -> S): Promise<S>
 
@@ -37,6 +40,7 @@ actual constructor(executor: (resolve: (T) -> Unit, reject: (JsError) -> Unit) -
         public actual fun <S : JsAny?> all(promise: JsArray<out Promise<S>>): Promise<JsArray<out S>>
         public actual fun <S : JsAny?> race(promise: JsArray<out Promise<S>>): Promise<S>
 
+        @SinceKotlin("2.2")
         @LowPriorityInOverloadResolution
         public actual fun reject(e: JsError): Promise<Nothing>
         public fun reject(e: JsAny): Promise<Nothing>

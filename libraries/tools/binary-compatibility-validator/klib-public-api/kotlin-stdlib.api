@@ -15461,6 +15461,28 @@ final class <#A: kotlin.js/JsAny?> kotlin.js/JsArray : kotlin.js/JsAny { // kotl
 }
 
 // Targets: [wasmJs]
+final class <#A: out kotlin.js/JsAny?> kotlin.js/Promise : kotlin.js/JsAny { // kotlin.js/Promise|null[0]
+    constructor <init>(kotlin/Function2<kotlin/Function1<#A, kotlin/Unit>, kotlin/Function1<kotlin.js/JsAny, kotlin/Unit>, kotlin/Unit>) // kotlin.js/Promise.<init>|<init>(kotlin.Function2<kotlin.Function1<1:0,kotlin.Unit>,kotlin.Function1<kotlin.js.JsAny,kotlin.Unit>,kotlin.Unit>){}[0]
+    constructor <init>(kotlin/Function2<kotlin/Function1<#A, kotlin/Unit>, kotlin/Function1<kotlin.js/JsError, kotlin/Unit>, kotlin/Unit>) // kotlin.js/Promise.<init>|<init>(kotlin.Function2<kotlin.Function1<1:0,kotlin.Unit>,kotlin.Function1<kotlin.js.JsError,kotlin.Unit>,kotlin.Unit>){}[0]
+
+    final fun <#A1: kotlin.js/JsAny?> catch(kotlin/Function1<kotlin.js/JsAny, #A1>): kotlin.js/Promise<#A1> // kotlin.js/Promise.catch|catch(kotlin.Function1<kotlin.js.JsAny,0:0>){0§<kotlin.js.JsAny?>}[0]
+    final fun <#A1: kotlin.js/JsAny?> catch(kotlin/Function1<kotlin.js/JsError, #A1>): kotlin.js/Promise<#A1> // kotlin.js/Promise.catch|catch(kotlin.Function1<kotlin.js.JsError,0:0>){0§<kotlin.js.JsAny?>}[0]
+    final fun <#A1: kotlin.js/JsAny?> then(kotlin/Function1<#A, #A1>?): kotlin.js/Promise<#A1> // kotlin.js/Promise.then|then(kotlin.Function1<1:0,0:0>?){0§<kotlin.js.JsAny?>}[0]
+    final fun <#A1: kotlin.js/JsAny?> then(kotlin/Function1<#A, #A1>?, kotlin/Function1<kotlin.js/JsAny, #A1>?): kotlin.js/Promise<#A1> // kotlin.js/Promise.then|then(kotlin.Function1<1:0,0:0>?;kotlin.Function1<kotlin.js.JsAny,0:0>?){0§<kotlin.js.JsAny?>}[0]
+    final fun <#A1: kotlin.js/JsAny?> then(kotlin/Function1<#A, #A1>?, kotlin/Function1<kotlin.js/JsError, #A1>?): kotlin.js/Promise<#A1> // kotlin.js/Promise.then|then(kotlin.Function1<1:0,0:0>?;kotlin.Function1<kotlin.js.JsError,0:0>?){0§<kotlin.js.JsAny?>}[0]
+    final fun finally(kotlin/Function0<kotlin/Unit>): kotlin.js/Promise<#A> // kotlin.js/Promise.finally|finally(kotlin.Function0<kotlin.Unit>){}[0]
+
+    final object Companion { // kotlin.js/Promise.Companion|null[0]
+        final fun <#A2: kotlin.js/JsAny?> all(kotlin.js/JsArray<out kotlin.js/Promise<#A2>>): kotlin.js/Promise<kotlin.js/JsArray<out #A2>> // kotlin.js/Promise.Companion.all|all(kotlin.js.JsArray<out|kotlin.js.Promise<0:0>>){0§<kotlin.js.JsAny?>}[0]
+        final fun <#A2: kotlin.js/JsAny?> race(kotlin.js/JsArray<out kotlin.js/Promise<#A2>>): kotlin.js/Promise<#A2> // kotlin.js/Promise.Companion.race|race(kotlin.js.JsArray<out|kotlin.js.Promise<0:0>>){0§<kotlin.js.JsAny?>}[0]
+        final fun <#A2: kotlin.js/JsAny?> resolve(#A2): kotlin.js/Promise<#A2> // kotlin.js/Promise.Companion.resolve|resolve(0:0){0§<kotlin.js.JsAny?>}[0]
+        final fun <#A2: kotlin.js/JsAny?> resolve(kotlin.js/Promise<#A2>): kotlin.js/Promise<#A2> // kotlin.js/Promise.Companion.resolve|resolve(kotlin.js.Promise<0:0>){0§<kotlin.js.JsAny?>}[0]
+        final fun reject(kotlin.js/JsAny): kotlin.js/Promise<kotlin/Nothing> // kotlin.js/Promise.Companion.reject|reject(kotlin.js.JsAny){}[0]
+        final fun reject(kotlin.js/JsError): kotlin.js/Promise<kotlin/Nothing> // kotlin.js/Promise.Companion.reject|reject(kotlin.js.JsError){}[0]
+    }
+}
+
+// Targets: [wasmJs]
 final class kotlin.js/JsBigInt : kotlin.js/JsAny // kotlin.js/JsBigInt|null[0]
 
 // Targets: [wasmJs]
@@ -15484,28 +15506,6 @@ final class kotlin.js/JsNumber : kotlin.js/JsAny // kotlin.js/JsNumber|null[0]
 
 // Targets: [wasmJs]
 final class kotlin.js/JsString : kotlin.js/JsAny // kotlin.js/JsString|null[0]
-
-// Targets: [wasmJs]
-open class <#A: out kotlin.js/JsAny?> kotlin.js/Promise : kotlin.js/JsAny { // kotlin.js/Promise|null[0]
-    constructor <init>(kotlin/Function2<kotlin/Function1<#A, kotlin/Unit>, kotlin/Function1<kotlin.js/JsAny, kotlin/Unit>, kotlin/Unit>) // kotlin.js/Promise.<init>|<init>(kotlin.Function2<kotlin.Function1<1:0,kotlin.Unit>,kotlin.Function1<kotlin.js.JsAny,kotlin.Unit>,kotlin.Unit>){}[0]
-    constructor <init>(kotlin/Function2<kotlin/Function1<#A, kotlin/Unit>, kotlin/Function1<kotlin.js/JsError, kotlin/Unit>, kotlin/Unit>) // kotlin.js/Promise.<init>|<init>(kotlin.Function2<kotlin.Function1<1:0,kotlin.Unit>,kotlin.Function1<kotlin.js.JsError,kotlin.Unit>,kotlin.Unit>){}[0]
-
-    final fun <#A1: kotlin.js/JsAny?> catch(kotlin/Function1<kotlin.js/JsAny, #A1>): kotlin.js/Promise<#A1> // kotlin.js/Promise.catch|catch(kotlin.Function1<kotlin.js.JsAny,0:0>){0§<kotlin.js.JsAny?>}[0]
-    final fun <#A1: kotlin.js/JsAny?> catch(kotlin/Function1<kotlin.js/JsError, #A1>): kotlin.js/Promise<#A1> // kotlin.js/Promise.catch|catch(kotlin.Function1<kotlin.js.JsError,0:0>){0§<kotlin.js.JsAny?>}[0]
-    final fun <#A1: kotlin.js/JsAny?> then(kotlin/Function1<#A, #A1>?): kotlin.js/Promise<#A1> // kotlin.js/Promise.then|then(kotlin.Function1<1:0,0:0>?){0§<kotlin.js.JsAny?>}[0]
-    final fun <#A1: kotlin.js/JsAny?> then(kotlin/Function1<#A, #A1>?, kotlin/Function1<kotlin.js/JsAny, #A1>?): kotlin.js/Promise<#A1> // kotlin.js/Promise.then|then(kotlin.Function1<1:0,0:0>?;kotlin.Function1<kotlin.js.JsAny,0:0>?){0§<kotlin.js.JsAny?>}[0]
-    final fun <#A1: kotlin.js/JsAny?> then(kotlin/Function1<#A, #A1>?, kotlin/Function1<kotlin.js/JsError, #A1>?): kotlin.js/Promise<#A1> // kotlin.js/Promise.then|then(kotlin.Function1<1:0,0:0>?;kotlin.Function1<kotlin.js.JsError,0:0>?){0§<kotlin.js.JsAny?>}[0]
-    final fun finally(kotlin/Function0<kotlin/Unit>): kotlin.js/Promise<#A> // kotlin.js/Promise.finally|finally(kotlin.Function0<kotlin.Unit>){}[0]
-
-    final object Companion { // kotlin.js/Promise.Companion|null[0]
-        final fun <#A2: kotlin.js/JsAny?> all(kotlin.js/JsArray<out kotlin.js/Promise<#A2>>): kotlin.js/Promise<kotlin.js/JsArray<out #A2>> // kotlin.js/Promise.Companion.all|all(kotlin.js.JsArray<out|kotlin.js.Promise<0:0>>){0§<kotlin.js.JsAny?>}[0]
-        final fun <#A2: kotlin.js/JsAny?> race(kotlin.js/JsArray<out kotlin.js/Promise<#A2>>): kotlin.js/Promise<#A2> // kotlin.js/Promise.Companion.race|race(kotlin.js.JsArray<out|kotlin.js.Promise<0:0>>){0§<kotlin.js.JsAny?>}[0]
-        final fun <#A2: kotlin.js/JsAny?> resolve(#A2): kotlin.js/Promise<#A2> // kotlin.js/Promise.Companion.resolve|resolve(0:0){0§<kotlin.js.JsAny?>}[0]
-        final fun <#A2: kotlin.js/JsAny?> resolve(kotlin.js/Promise<#A2>): kotlin.js/Promise<#A2> // kotlin.js/Promise.Companion.resolve|resolve(kotlin.js.Promise<0:0>){0§<kotlin.js.JsAny?>}[0]
-        final fun reject(kotlin.js/JsAny): kotlin.js/Promise<kotlin/Nothing> // kotlin.js/Promise.Companion.reject|reject(kotlin.js.JsAny){}[0]
-        final fun reject(kotlin.js/JsError): kotlin.js/Promise<kotlin/Nothing> // kotlin.js/Promise.Companion.reject|reject(kotlin.js.JsError){}[0]
-    }
-}
 
 // Targets: [wasmJs]
 final val kotlin.js/length // kotlin.js/length|@kotlin.js.JsArray<*>{}length[0]
