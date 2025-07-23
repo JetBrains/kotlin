@@ -7,16 +7,16 @@
 // CHECK_BYTECODE_TEXT
 // 1 java/lang/invoke/LambdaMetafactory
 
+// FILE: Consumer.java
+
+public interface Consumer<T> {
+    void accept(T t);
+}
+
 // FILE: inlineOnly.kt
 fun call(c: Consumer<String>) = c.accept("")
 
 fun box(): String {
     call(::println) // 'println' is @InlineOnly
     return "OK"
-}
-
-// FILE: Consumer.java
-
-public interface Consumer<T> {
-    void accept(T t);
 }

@@ -4,6 +4,7 @@
 // TARGET_BACKEND: JVM_IR
 // LANGUAGE: +ValueClasses
 // FIR_IDENTICAL
+// SKIP_SPLITTING_TO_TWO_MODULES: ANY
 
 // FILE: caller.kt
 import kotlin.coroutines.*

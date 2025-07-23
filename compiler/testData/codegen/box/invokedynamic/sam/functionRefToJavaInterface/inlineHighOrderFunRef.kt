@@ -7,13 +7,13 @@
 // CHECK_BYTECODE_TEXT
 // 2 java/lang/invoke/LambdaMetafactory
 
+// FILE: J.java
+public interface J {
+    String invoke(kotlin.jvm.functions.Function1<String, String> fn);
+}
+
 // FILE: inlineHighOrderFunRef.kt
 
 inline fun applyO(fn: (String) -> String) = fn("O")
 
 fun box() = J(::applyO).invoke { it + "K" }
-
-// FILE: J.java
-public interface J {
-    String invoke(kotlin.jvm.functions.Function1<String, String> fn);
-}

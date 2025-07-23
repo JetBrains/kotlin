@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.test.services
 
+import org.jetbrains.kotlin.config.JvmSerializeIrMode
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.test.TargetBackend
@@ -14,6 +15,7 @@ import org.jetbrains.kotlin.test.directives.AdditionalFilesDirectives.CHECK_STAT
 import org.jetbrains.kotlin.test.directives.AdditionalFilesDirectives.WITH_COROUTINES
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.SKIP_SPLITTING_TO_TWO_MODULES
+import org.jetbrains.kotlin.test.directives.JvmEnvironmentConfigurationDirectives.SERIALIZE_IR
 import org.jetbrains.kotlin.test.model.DependencyDescription
 import org.jetbrains.kotlin.test.model.DependencyKind
 import org.jetbrains.kotlin.test.model.DependencyRelation
@@ -83,7 +85,16 @@ class SplittingTestConfigurator(testServices: TestServices) : MetaTestConfigurat
             // Multiplatform tests must not be tested with SplittingModuleTransformerForBoxTests
             return true
         }
-        if (WITH_COROUTINES in moduleLib.directives && !moduleLib.targetPlatform(testServices).isJvm()) {
+        val isJvm = moduleLib.targetPlatform(testServices).isJvm()
+        if (isJvm) {
+            // `TestConfigurationBuilder.configureForSerialization()` sets IrInlineBodiesHandler, which requires inlines functions to present
+            // Tests without `inline` substring in lib module must be skipped in such testrunners
+            if (JvmSerializeIrMode.INLINE in moduleLib.directives[SERIALIZE_IR]) {
+                if (moduleLib.files.none { it.originalContent.contains("inline") })
+                    return true
+            }
+        }
+        if (WITH_COROUTINES in moduleLib.directives && !isJvm) {
             // WITH_COROUTINES works incorrectly for non-jvm multi-module tests, should EmptyContinuation object be referenced from moduleLib,
             // or CHECK_STATE_MACHINE would add `val StateMachineChecker` to both modules
             // Same helper sources `CoroutineHelpers.kt` and `CoroutineUtil.kt` are added to each module, which causes symbols clash in deserialization phase for moduleMain like:

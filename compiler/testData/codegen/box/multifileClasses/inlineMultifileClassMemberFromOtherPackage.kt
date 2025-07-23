@@ -1,5 +1,6 @@
 // TARGET_BACKEND: JVM
 // WITH_STDLIB
+// SKIP_SPLITTING_TO_TWO_MODULES: ANY
 // FILE: box.kt
 
 package test

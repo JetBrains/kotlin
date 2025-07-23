@@ -1,5 +1,11 @@
 // TARGET_BACKEND: JVM
 // WITH_REFLECT
+// FILE: J.java
+
+public class J {
+    public static <X> X platformType() { return null; }
+}
+
 // FILE: box.kt
 
 package test
@@ -37,9 +43,3 @@ fun box(): String {
 
 inline fun <reified Z> returnTypeOf(block: () -> Z) =
     typeOf<Z>()
-
-// FILE: J.java
-
-public class J {
-    public static <X> X platformType() { return null; }
-}

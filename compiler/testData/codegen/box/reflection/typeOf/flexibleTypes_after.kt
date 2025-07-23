@@ -1,27 +1,5 @@
 // TARGET_BACKEND: JVM
 // WITH_REFLECT
-// FILE: box.kt
-
-package test
-
-import kotlin.reflect.KType
-import kotlin.reflect.typeOf
-import kotlin.test.assertEquals
-
-fun box(): String {
-    assertEquals("kotlin.String!", returnTypeOf { J.nullabilityFlexible() }.toString())
-    assertEquals("kotlin.collections.(Mutable)List<kotlin.String!>", returnTypeOf { J.mutabilityFlexible() }.toString())
-    assertEquals("kotlin.collections.(Mutable)Map.(Mutable)Entry<kotlin.String!, kotlin.Int!>!", returnTypeOf { J.bothFlexible() }.toString())
-    assertEquals("kotlin.Array<out kotlin.CharSequence!>!", returnTypeOf { J.arrayElementVarianceFlexible() }.toString())
-    assertEquals("((kotlin.Number!) -> kotlin.Any!)!", returnTypeOf { J.function() }.toString())
-    assertEquals("kotlin.Function1<kotlin.Any!, *>!", returnTypeOf { J.functionWithStar() }.toString())
-
-    return "OK"
-}
-
-inline fun <reified T : Any> returnTypeOf(block: () -> T) =
-    typeOf<T>()
-
 // FILE: J.java
 
 import org.jetbrains.annotations.NotNull;
@@ -55,3 +33,25 @@ public class J {
         return null;
     }
 }
+
+// FILE: box.kt
+
+package test
+
+import kotlin.reflect.KType
+import kotlin.reflect.typeOf
+import kotlin.test.assertEquals
+
+fun box(): String {
+    assertEquals("kotlin.String!", returnTypeOf { J.nullabilityFlexible() }.toString())
+    assertEquals("kotlin.collections.(Mutable)List<kotlin.String!>", returnTypeOf { J.mutabilityFlexible() }.toString())
+    assertEquals("kotlin.collections.(Mutable)Map.(Mutable)Entry<kotlin.String!, kotlin.Int!>!", returnTypeOf { J.bothFlexible() }.toString())
+    assertEquals("kotlin.Array<out kotlin.CharSequence!>!", returnTypeOf { J.arrayElementVarianceFlexible() }.toString())
+    assertEquals("((kotlin.Number!) -> kotlin.Any!)!", returnTypeOf { J.function() }.toString())
+    assertEquals("kotlin.Function1<kotlin.Any!, *>!", returnTypeOf { J.functionWithStar() }.toString())
+
+    return "OK"
+}
+
+inline fun <reified T : Any> returnTypeOf(block: () -> T) =
+    typeOf<T>()

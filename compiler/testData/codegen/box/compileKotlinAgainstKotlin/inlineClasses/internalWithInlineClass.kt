@@ -1,3 +1,4 @@
+// SKIP_SPLITTING_TO_TWO_MODULES: ANY
 // MODULE: lib
 // FILE: A.kt
 

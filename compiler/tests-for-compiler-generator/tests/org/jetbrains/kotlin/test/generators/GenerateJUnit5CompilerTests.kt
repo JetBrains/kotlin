@@ -146,6 +146,7 @@ fun generateJUnit5CompilerTests(args: Array<String>, mainClassName: String?) {
             }
 
             testClass<AbstractIrSerializeCompileKotlinAgainstInlineKotlinTest> {
+                model("codegen/box")
                 model("codegen/boxInline")
             }
 

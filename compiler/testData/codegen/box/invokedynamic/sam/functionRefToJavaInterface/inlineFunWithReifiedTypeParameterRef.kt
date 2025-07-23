@@ -7,6 +7,11 @@
 // CHECK_BYTECODE_TEXT
 // 1 java/lang/invoke/LambdaMetafactory
 
+// FILE: J.java
+public interface J {
+    public String apply(K x);
+}
+
 // FILE: inlineFunWithReifiedTypeParameterRef.kt
 
 inline fun <reified T> oPlus(x: T) = "O" + T::class.java.simpleName
@@ -14,8 +19,3 @@ inline fun <reified T> oPlus(x: T) = "O" + T::class.java.simpleName
 class K
 
 fun box() = J(::oPlus).apply(K())
-
-// FILE: J.java
-public interface J {
-    public String apply(K x);
-}

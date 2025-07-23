@@ -1,5 +1,10 @@
 // TARGET_BACKEND: JVM
 // WITH_STDLIB
+// FILE: J.java
+public class J {
+    public static String s() { return null; }
+}
+
 // FILE: test.kt
 
 import kotlin.test.*
@@ -11,9 +16,4 @@ fun box(): String {
         J.s().extension()
     }
     return "OK"
-}
-
-// FILE: J.java
-public class J {
-    public static String s() { return null; }
 }

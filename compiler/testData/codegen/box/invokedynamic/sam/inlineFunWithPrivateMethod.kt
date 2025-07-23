@@ -8,6 +8,12 @@
 // CHECK_BYTECODE_TEXT
 // 2 java/lang/invoke/LambdaMetafactory
 
+// FILE: Consumer.java
+
+public interface Consumer<T> {
+    void accept(T t);
+}
+
 // FILE: inlineFunWithPrivateMethod.kt
 
 private inline fun g(x: String) = println(x)
@@ -18,10 +24,4 @@ fun box(): String {
     val obj = { call(::g) } // `g` is inaccessible in this scope
     obj()
     return "OK"
-}
-
-// FILE: Consumer.java
-
-public interface Consumer<T> {
-    void accept(T t);
 }

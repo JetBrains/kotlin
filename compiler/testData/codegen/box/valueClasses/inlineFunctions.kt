@@ -4,6 +4,7 @@
 // WITH_STDLIB
 // CHECK_BYTECODE_TEXT
 // FIR_IDENTICAL
+// SKIP_SPLITTING_TO_TWO_MODULES: ANY
 
 // FILE: caller.kt
 import kotlin.coroutines.*

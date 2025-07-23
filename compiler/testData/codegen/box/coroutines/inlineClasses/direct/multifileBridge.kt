@@ -1,6 +1,7 @@
 // TARGET_BACKEND: JVM
 // WITH_STDLIB
 // WITH_COROUTINES
+// SKIP_SPLITTING_TO_TWO_MODULES: ANY
 // FILE: a.kt
 @file:JvmMultifileClass
 @file:JvmName("A")
