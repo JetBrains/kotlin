@@ -127,13 +127,23 @@ fun createStdLibVersionedDocTask(version: String, isLatest: Boolean) =
                 sourceRoots.from("$kotlin_stdlib_dir/jdk7/src")
                 sourceRoots.from("$kotlin_stdlib_dir/jdk8/src")
             }
+            register("common-web") {
+                jdkVersion.set(8)
+                platform.set(Platform.common)
+                noJdkLink.set(true)
+
+                displayName.set("Web")
+                dependsOn("common")
+
+                sourceRoots.from("$kotlin_stdlib_dir/jsAndWasmJsCommon/src")
+            }
             register("js") {
                 jdkVersion.set(8)
                 platform.set(Platform.js)
                 noJdkLink.set(true)
 
                 displayName.set("JS")
-                dependsOn("common")
+                dependsOn("common-web")
 
                 sourceRoots.from("$kotlin_stdlib_dir/js/src/generated")
                 sourceRoots.from("$kotlin_stdlib_dir/js/src/kotlin")
@@ -179,7 +189,7 @@ fun createStdLibVersionedDocTask(version: String, isLatest: Boolean) =
                 noJdkLink.set(true)
 
                 displayName.set("Wasm-JS")
-                dependsOn("common")
+                dependsOn("common-web")
                 sourceRoots.from("$kotlin_stdlib_dir/native-wasm/src")
                 sourceRoots.from("$kotlin_stdlib_dir/wasm/src")
                 sourceRoots.from("$kotlin_stdlib_dir/wasm/builtins")
