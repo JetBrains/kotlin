@@ -43,6 +43,6 @@ extension ExportedKotlinPackages.kotlin {
         ) -> Swift.Int32
     }
     @objc(_Comparable)
-    protocol _Comparable {
+    package protocol _Comparable {
     }
 }

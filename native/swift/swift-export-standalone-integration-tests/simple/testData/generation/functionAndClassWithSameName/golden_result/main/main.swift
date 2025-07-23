@@ -8,7 +8,7 @@ import flattened
 public protocol InterfaceWithFactory: KotlinRuntime.KotlinBase {
 }
 @objc(_InterfaceWithFactory)
-protocol _InterfaceWithFactory {
+package protocol _InterfaceWithFactory {
 }
 public final class ClassWithFactoryWithoutParameters: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
     public var value: Swift.Int32 {

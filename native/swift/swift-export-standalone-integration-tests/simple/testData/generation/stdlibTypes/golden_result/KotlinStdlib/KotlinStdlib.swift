@@ -101,7 +101,7 @@ extension ExportedKotlinPackages.kotlin {
         ) -> any ExportedKotlinPackages.kotlin.CharSequence
     }
     @objc(_CharSequence)
-    protocol _CharSequence {
+    package protocol _CharSequence {
     }
     public final class ByteArray: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
         public var size: Swift.Int32 {
@@ -215,7 +215,7 @@ extension ExportedKotlinPackages.kotlin.text {
         ) -> any ExportedKotlinPackages.kotlin.text.Appendable
     }
     @objc(_Appendable)
-    protocol _Appendable {
+    package protocol _Appendable {
     }
     public final class StringBuilder: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlin.CharSequence, ExportedKotlinPackages.kotlin._CharSequence, ExportedKotlinPackages.kotlin.text.Appendable, ExportedKotlinPackages.kotlin.text._Appendable, KotlinRuntimeSupport._KotlinBridged {
         public var length: Swift.Int32 {

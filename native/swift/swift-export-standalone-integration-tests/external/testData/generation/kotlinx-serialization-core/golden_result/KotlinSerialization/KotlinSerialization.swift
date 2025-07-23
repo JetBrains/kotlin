@@ -10,22 +10,22 @@ public typealias descriptors = ExportedKotlinPackages.kotlinx.serialization.desc
 public typealias builtins = ExportedKotlinPackages.kotlinx.serialization.builtins
 public typealias encoding = ExportedKotlinPackages.kotlinx.serialization.encoding
 public typealias BinaryFormat = ExportedKotlinPackages.kotlinx.serialization.BinaryFormat
-typealias _BinaryFormat = ExportedKotlinPackages.kotlinx.serialization._BinaryFormat
+package typealias _BinaryFormat = ExportedKotlinPackages.kotlinx.serialization._BinaryFormat
 public typealias ContextualSerializer = ExportedKotlinPackages.kotlinx.serialization.ContextualSerializer
 public typealias DeserializationStrategy = ExportedKotlinPackages.kotlinx.serialization.DeserializationStrategy
-typealias _DeserializationStrategy = ExportedKotlinPackages.kotlinx.serialization._DeserializationStrategy
+package typealias _DeserializationStrategy = ExportedKotlinPackages.kotlinx.serialization._DeserializationStrategy
 public typealias KSerializer = ExportedKotlinPackages.kotlinx.serialization.KSerializer
-typealias _KSerializer = ExportedKotlinPackages.kotlinx.serialization._KSerializer
+package typealias _KSerializer = ExportedKotlinPackages.kotlinx.serialization._KSerializer
 public typealias MissingFieldException = ExportedKotlinPackages.kotlinx.serialization.MissingFieldException
 public typealias PolymorphicSerializer = ExportedKotlinPackages.kotlinx.serialization.PolymorphicSerializer
 public typealias SealedClassSerializer = ExportedKotlinPackages.kotlinx.serialization.SealedClassSerializer
 public typealias SerialFormat = ExportedKotlinPackages.kotlinx.serialization.SerialFormat
-typealias _SerialFormat = ExportedKotlinPackages.kotlinx.serialization._SerialFormat
+package typealias _SerialFormat = ExportedKotlinPackages.kotlinx.serialization._SerialFormat
 public typealias SerializationException = ExportedKotlinPackages.kotlinx.serialization.SerializationException
 public typealias SerializationStrategy = ExportedKotlinPackages.kotlinx.serialization.SerializationStrategy
-typealias _SerializationStrategy = ExportedKotlinPackages.kotlinx.serialization._SerializationStrategy
+package typealias _SerializationStrategy = ExportedKotlinPackages.kotlinx.serialization._SerializationStrategy
 public typealias StringFormat = ExportedKotlinPackages.kotlinx.serialization.StringFormat
-typealias _StringFormat = ExportedKotlinPackages.kotlinx.serialization._StringFormat
+package typealias _StringFormat = ExportedKotlinPackages.kotlinx.serialization._StringFormat
 public final class _ExportedKotlinPackages_kotlinx_serialization_encoding_CompositeDecoder_Companion: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
     public var DECODE_DONE: Swift.Int32 {
         get {
@@ -139,7 +139,7 @@ extension ExportedKotlinPackages.kotlinx.serialization {
         ) -> ExportedKotlinPackages.kotlin.ByteArray
     }
     @objc(_BinaryFormat)
-    protocol _BinaryFormat: ExportedKotlinPackages.kotlinx.serialization._SerialFormat {
+    package protocol _BinaryFormat: ExportedKotlinPackages.kotlinx.serialization._SerialFormat {
     }
     public protocol DeserializationStrategy: KotlinRuntime.KotlinBase {
         var descriptor: any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor {
@@ -150,7 +150,7 @@ extension ExportedKotlinPackages.kotlinx.serialization {
         ) -> KotlinRuntime.KotlinBase?
     }
     @objc(_DeserializationStrategy)
-    protocol _DeserializationStrategy {
+    package protocol _DeserializationStrategy {
     }
     public protocol KSerializer: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlinx.serialization.SerializationStrategy, ExportedKotlinPackages.kotlinx.serialization.DeserializationStrategy {
         var descriptor: any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor {
@@ -158,7 +158,7 @@ extension ExportedKotlinPackages.kotlinx.serialization {
         }
     }
     @objc(_KSerializer)
-    protocol _KSerializer: ExportedKotlinPackages.kotlinx.serialization._SerializationStrategy, ExportedKotlinPackages.kotlinx.serialization._DeserializationStrategy {
+    package protocol _KSerializer: ExportedKotlinPackages.kotlinx.serialization._SerializationStrategy, ExportedKotlinPackages.kotlinx.serialization._DeserializationStrategy {
     }
     public protocol SerialFormat: KotlinRuntime.KotlinBase {
         var serializersModule: ExportedKotlinPackages.kotlinx.serialization.modules.SerializersModule {
@@ -166,7 +166,7 @@ extension ExportedKotlinPackages.kotlinx.serialization {
         }
     }
     @objc(_SerialFormat)
-    protocol _SerialFormat {
+    package protocol _SerialFormat {
     }
     public protocol SerializationStrategy: KotlinRuntime.KotlinBase {
         var descriptor: any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor {
@@ -178,7 +178,7 @@ extension ExportedKotlinPackages.kotlinx.serialization {
         ) -> Swift.Void
     }
     @objc(_SerializationStrategy)
-    protocol _SerializationStrategy {
+    package protocol _SerializationStrategy {
     }
     public protocol StringFormat: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlinx.serialization.SerialFormat {
         func decodeFromString(
@@ -191,7 +191,7 @@ extension ExportedKotlinPackages.kotlinx.serialization {
         ) -> Swift.String
     }
     @objc(_StringFormat)
-    protocol _StringFormat: ExportedKotlinPackages.kotlinx.serialization._SerialFormat {
+    package protocol _StringFormat: ExportedKotlinPackages.kotlinx.serialization._SerialFormat {
     }
     public final class ContextualSerializer: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
         public var descriptor: any ExportedKotlinPackages.kotlinx.serialization.descriptors.SerialDescriptor {
@@ -455,7 +455,7 @@ extension ExportedKotlinPackages.kotlinx.serialization.`internal` {
         func typeParametersSerializers() -> ExportedKotlinPackages.kotlin.Array
     }
     @objc(_GeneratedSerializer)
-    protocol _GeneratedSerializer: ExportedKotlinPackages.kotlinx.serialization._KSerializer {
+    package protocol _GeneratedSerializer: ExportedKotlinPackages.kotlinx.serialization._KSerializer {
     }
     open class AbstractCollectionSerializer: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
         open func builder() -> KotlinRuntime.KotlinBase? {
@@ -1319,7 +1319,7 @@ extension ExportedKotlinPackages.kotlinx.serialization.modules {
         ) -> Swift.Void
     }
     @objc(_SerializersModuleCollector)
-    protocol _SerializersModuleCollector {
+    package protocol _SerializersModuleCollector {
     }
     public final class PolymorphicModuleBuilder: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
         @available(*, deprecated, message: "Deprecated in favor of function with more precise name: defaultDeserializer. Replacement: defaultDeserializer(defaultSerializerProvider)")
@@ -1495,7 +1495,7 @@ extension ExportedKotlinPackages.kotlinx.serialization.descriptors {
         ) -> Swift.Bool
     }
     @objc(_SerialDescriptor)
-    protocol _SerialDescriptor {
+    package protocol _SerialDescriptor {
     }
     public final class ClassSerialDescriptorBuilder: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
         public var annotations: [any ExportedKotlinPackages.kotlin.Annotation] {
@@ -2145,7 +2145,7 @@ extension ExportedKotlinPackages.kotlinx.serialization.encoding {
         ) -> Swift.Void
     }
     @objc(_ChunkedDecoder)
-    protocol _ChunkedDecoder {
+    package protocol _ChunkedDecoder {
     }
     public protocol CompositeDecoder: KotlinRuntime.KotlinBase {
         typealias Companion = KotlinSerialization._ExportedKotlinPackages_kotlinx_serialization_encoding_CompositeDecoder_Companion
@@ -2216,7 +2216,7 @@ extension ExportedKotlinPackages.kotlinx.serialization.encoding {
         ) -> Swift.Void
     }
     @objc(_CompositeDecoder)
-    protocol _CompositeDecoder {
+    package protocol _CompositeDecoder {
     }
     public protocol CompositeEncoder: KotlinRuntime.KotlinBase {
         var serializersModule: ExportedKotlinPackages.kotlinx.serialization.modules.SerializersModule {
@@ -2292,7 +2292,7 @@ extension ExportedKotlinPackages.kotlinx.serialization.encoding {
         ) -> Swift.Bool
     }
     @objc(_CompositeEncoder)
-    protocol _CompositeEncoder {
+    package protocol _CompositeEncoder {
     }
     public protocol Decoder: KotlinRuntime.KotlinBase {
         var serializersModule: ExportedKotlinPackages.kotlinx.serialization.modules.SerializersModule {
@@ -2326,7 +2326,7 @@ extension ExportedKotlinPackages.kotlinx.serialization.encoding {
         func decodeString() -> Swift.String
     }
     @objc(_Decoder)
-    protocol _Decoder {
+    package protocol _Decoder {
     }
     public protocol Encoder: KotlinRuntime.KotlinBase {
         var serializersModule: ExportedKotlinPackages.kotlinx.serialization.modules.SerializersModule {
@@ -2385,7 +2385,7 @@ extension ExportedKotlinPackages.kotlinx.serialization.encoding {
         ) -> Swift.Void
     }
     @objc(_Encoder)
-    protocol _Encoder {
+    package protocol _Encoder {
     }
     open class AbstractDecoder: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlinx.serialization.encoding.Decoder, ExportedKotlinPackages.kotlinx.serialization.encoding._Decoder, ExportedKotlinPackages.kotlinx.serialization.encoding.CompositeDecoder, ExportedKotlinPackages.kotlinx.serialization.encoding._CompositeDecoder, KotlinRuntimeSupport._KotlinBridged {
         open func beginStructure(

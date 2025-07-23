@@ -29,22 +29,22 @@ public protocol Producer: KotlinRuntime.KotlinBase {
     func produce() -> KotlinRuntime.KotlinBase?
 }
 @objc(_A)
-protocol _A {
+package protocol _A {
 }
 @objc(_B)
-protocol _B {
+package protocol _B {
 }
 @objc(_Consumer)
-protocol _Consumer {
+package protocol _Consumer {
 }
 @objc(_ConsumerProducer)
-protocol _ConsumerProducer: main._Consumer, main._Producer {
+package protocol _ConsumerProducer: main._Consumer, main._Producer {
 }
 @objc(_Processor)
-protocol _Processor {
+package protocol _Processor {
 }
 @objc(_Producer)
-protocol _Producer {
+package protocol _Producer {
 }
 public final class AnyConsumer: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
     public init() {
