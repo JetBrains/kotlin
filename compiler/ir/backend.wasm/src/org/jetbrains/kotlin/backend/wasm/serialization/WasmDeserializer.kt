@@ -156,7 +156,7 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
     private fun deserializeStructFieldDeclaration(): WasmStructFieldDeclaration {
         val name = deserializeString()
         val type = deserializeType()
-        val isMutable = b.readUByte().toBoolean()
+        val isMutable = deserializeBoolean()
         return WasmStructFieldDeclaration(name, type, isMutable)
     }
 
@@ -213,7 +213,7 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
             name = deserializeString()
         }
         val type = deserializeType()
-        val isParameter = b.readUByte().toBoolean()
+        val isParameter = deserializeBoolean()
         return WasmLocal(id, name, type, isParameter)
     }
 
@@ -489,7 +489,7 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
 
     private fun deserializeConstantDataCharArray(): ConstantDataCharArray {
         val value = deserializeList { deserializeSymbol { Char(deserializeInt()) } }
-        val fitsLatin1 = deserializeInt()
+        val fitsLatin1 = deserializeBoolean()
         return ConstantDataCharArray(value, fitsLatin1)
     }
 
@@ -554,6 +554,8 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
     }
 
     private fun deserializeInt() = b.readUInt32().toInt()
+
+    private fun deserializeBoolean() = b.readUByte().toBoolean()
 
     private fun skipInt() {
         b.skip(4)

@@ -561,9 +561,7 @@ class WasmCompiledModuleFragment(
                     stringAddressAndId[string] = currentStringAddress to currentStringId
                     addressesAndLengths.add(currentStringAddress.toLong() or (string.length.toLong() shl 32))
 
-                    val fitsLatin1 = if (string.fitsLatin1) 1 else 0
-
-                    val constData = ConstantDataCharArray(string.toCharArray(), fitsLatin1)
+                    val constData = ConstantDataCharArray(string.toCharArray(), string.fitsLatin1)
                     stringDataSectionBytes += constData.toBytes().toList()
                     stringDataSectionStart += constData.sizeInBytes
                 } else {
