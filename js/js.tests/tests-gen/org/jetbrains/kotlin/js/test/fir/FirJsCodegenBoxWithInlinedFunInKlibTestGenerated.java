@@ -39745,6 +39745,12 @@ public class FirJsCodegenBoxWithInlinedFunInKlibTestGenerated extends AbstractFi
         }
 
         @Test
+        @TestMetadata("inNestedInline.kt")
+        public void testInNestedInline() {
+          runTest("compiler/testData/codegen/box/reflection/typeOf/inNestedInline.kt");
+        }
+
+        @Test
         @TestMetadata("inlineClasses.kt")
         public void testInlineClasses() {
           runTest("compiler/testData/codegen/box/reflection/typeOf/inlineClasses.kt");
@@ -39784,6 +39790,12 @@ public class FirJsCodegenBoxWithInlinedFunInKlibTestGenerated extends AbstractFi
         @TestMetadata("reifiedAsNestedArgument.kt")
         public void testReifiedAsNestedArgument() {
           runTest("compiler/testData/codegen/box/reflection/typeOf/reifiedAsNestedArgument.kt");
+        }
+
+        @Test
+        @TestMetadata("typeAliasedType.kt")
+        public void testTypeAliasedType() {
+          runTest("compiler/testData/codegen/box/reflection/typeOf/typeAliasedType.kt");
         }
 
         @Test
@@ -39873,6 +39885,18 @@ public class FirJsCodegenBoxWithInlinedFunInKlibTestGenerated extends AbstractFi
             public void testAllFilesPresentInNonReifiedTypeParameters() {
               KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/typeOf/noReflect/nonReifiedTypeParameters"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JS_IR, true);
             }
+
+            @Test
+            @TestMetadata("equalsOnClassParameters.kt")
+            public void testEqualsOnClassParameters() {
+              runTest("compiler/testData/codegen/box/reflection/typeOf/noReflect/nonReifiedTypeParameters/equalsOnClassParameters.kt");
+            }
+
+            @Test
+            @TestMetadata("equalsOnFunctionParameters.kt")
+            public void testEqualsOnFunctionParameters() {
+              runTest("compiler/testData/codegen/box/reflection/typeOf/noReflect/nonReifiedTypeParameters/equalsOnFunctionParameters.kt");
+            }
           }
         }
 
@@ -39907,6 +39931,30 @@ public class FirJsCodegenBoxWithInlinedFunInKlibTestGenerated extends AbstractFi
           @TestMetadata("innerGeneric.kt")
           public void testInnerGeneric() {
             runTest("compiler/testData/codegen/box/reflection/typeOf/nonReifiedTypeParameters/innerGeneric.kt");
+          }
+
+          @Test
+          @TestMetadata("insideInlineLambda_class.kt")
+          public void testInsideInlineLambda_class() {
+            runTest("compiler/testData/codegen/box/reflection/typeOf/nonReifiedTypeParameters/insideInlineLambda_class.kt");
+          }
+
+          @Test
+          @TestMetadata("insideInlineLambda_indy.kt")
+          public void testInsideInlineLambda_indy() {
+            runTest("compiler/testData/codegen/box/reflection/typeOf/nonReifiedTypeParameters/insideInlineLambda_indy.kt");
+          }
+
+          @Test
+          @TestMetadata("insideNonInlineLambda_class.kt")
+          public void testInsideNonInlineLambda_class() {
+            runTest("compiler/testData/codegen/box/reflection/typeOf/nonReifiedTypeParameters/insideNonInlineLambda_class.kt");
+          }
+
+          @Test
+          @TestMetadata("insideNonInlineLambda_indy.kt")
+          public void testInsideNonInlineLambda_indy() {
+            runTest("compiler/testData/codegen/box/reflection/typeOf/nonReifiedTypeParameters/insideNonInlineLambda_indy.kt");
           }
 
           @Test

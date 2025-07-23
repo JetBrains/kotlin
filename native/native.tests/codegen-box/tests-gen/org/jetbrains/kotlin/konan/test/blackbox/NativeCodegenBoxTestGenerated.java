@@ -42430,6 +42430,12 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
         }
 
         @Test
+        @TestMetadata("typeAliasedType.kt")
+        public void testTypeAliasedType() {
+          runTest("compiler/testData/codegen/box/reflection/typeOf/typeAliasedType.kt");
+        }
+
+        @Test
         @TestMetadata("typeOfCapturedStar.kt")
         public void testTypeOfCapturedStar() {
           runTest("compiler/testData/codegen/box/reflection/typeOf/typeOfCapturedStar.kt");
@@ -42477,6 +42483,18 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
             public void testAllFilesPresentInNonReifiedTypeParameters() {
               KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/reflection/typeOf/noReflect/nonReifiedTypeParameters"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
             }
+
+            @Test
+            @TestMetadata("equalsOnClassParameters.kt")
+            public void testEqualsOnClassParameters() {
+              runTest("compiler/testData/codegen/box/reflection/typeOf/noReflect/nonReifiedTypeParameters/equalsOnClassParameters.kt");
+            }
+
+            @Test
+            @TestMetadata("equalsOnFunctionParameters.kt")
+            public void testEqualsOnFunctionParameters() {
+              runTest("compiler/testData/codegen/box/reflection/typeOf/noReflect/nonReifiedTypeParameters/equalsOnFunctionParameters.kt");
+            }
           }
         }
 
@@ -42514,6 +42532,42 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
           @TestMetadata("innerGeneric.kt")
           public void testInnerGeneric() {
             runTest("compiler/testData/codegen/box/reflection/typeOf/nonReifiedTypeParameters/innerGeneric.kt");
+          }
+
+          @Test
+          @TestMetadata("insideInlineLambda_class.kt")
+          public void testInsideInlineLambda_class() {
+            runTest("compiler/testData/codegen/box/reflection/typeOf/nonReifiedTypeParameters/insideInlineLambda_class.kt");
+          }
+
+          @Test
+          @TestMetadata("insideInlineLambda_indy.kt")
+          public void testInsideInlineLambda_indy() {
+            runTest("compiler/testData/codegen/box/reflection/typeOf/nonReifiedTypeParameters/insideInlineLambda_indy.kt");
+          }
+
+          @Test
+          @TestMetadata("insideNonInlineLambda_class.kt")
+          public void testInsideNonInlineLambda_class() {
+            runTest("compiler/testData/codegen/box/reflection/typeOf/nonReifiedTypeParameters/insideNonInlineLambda_class.kt");
+          }
+
+          @Test
+          @TestMetadata("insideNonInlineLambda_indy.kt")
+          public void testInsideNonInlineLambda_indy() {
+            runTest("compiler/testData/codegen/box/reflection/typeOf/nonReifiedTypeParameters/insideNonInlineLambda_indy.kt");
+          }
+
+          @Test
+          @TestMetadata("recursiveBoundWithInline.kt")
+          public void testRecursiveBoundWithInline() {
+            runTest("compiler/testData/codegen/box/reflection/typeOf/nonReifiedTypeParameters/recursiveBoundWithInline.kt");
+          }
+
+          @Test
+          @TestMetadata("recursiveBoundWithoutInline.kt")
+          public void testRecursiveBoundWithoutInline() {
+            runTest("compiler/testData/codegen/box/reflection/typeOf/nonReifiedTypeParameters/recursiveBoundWithoutInline.kt");
           }
 
           @Test

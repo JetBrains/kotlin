@@ -56060,6 +56060,18 @@ public class FirBlackBoxCodegenTestWithInlineScopesGenerated extends AbstractFir
         }
 
         @Test
+        @TestMetadata("recursiveBoundWithInline.kt")
+        public void testRecursiveBoundWithInline() {
+          runTest("compiler/testData/codegen/box/reflection/typeOf/nonReifiedTypeParameters/recursiveBoundWithInline.kt");
+        }
+
+        @Test
+        @TestMetadata("recursiveBoundWithoutInline.kt")
+        public void testRecursiveBoundWithoutInline() {
+          runTest("compiler/testData/codegen/box/reflection/typeOf/nonReifiedTypeParameters/recursiveBoundWithoutInline.kt");
+        }
+
+        @Test
         @TestMetadata("simpleClassParameter.kt")
         public void testSimpleClassParameter() {
           runTest("compiler/testData/codegen/box/reflection/typeOf/nonReifiedTypeParameters/simpleClassParameter.kt");

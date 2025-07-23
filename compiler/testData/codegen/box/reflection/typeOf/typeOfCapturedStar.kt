@@ -1,9 +1,8 @@
-// IGNORE_BACKEND: JS_IR
-// IGNORE_BACKEND: JS_IR_ES6
 // WITH_REFLECT
-// IGNORE_IR_DESERIALIZATION_TEST: JS_IR
-// ^^^ Source code is not compiled in JS.
+// KJS_WITH_FULL_RUNTIME
 // WASM_ALLOW_FQNAME_IN_KCLASS
+// IGNORE_BACKEND: JS_IR, JS_IR_ES6
+// Should be unmuted for JS when KT-79471 is fixed
 
 package test
 
