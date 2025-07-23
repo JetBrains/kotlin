@@ -1,4 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: +NameBasedDestructuring
 data class Tuple(val first: String, val second: Int)
 class NonDataTuple(val first: String, val second: Int)
 

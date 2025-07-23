@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirElement
@@ -15,6 +16,7 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.toFirDiagnostics
 import org.jetbrains.kotlin.fir.analysis.diagnostics.toInvisibleReferenceDiagnostic
+import org.jetbrains.kotlin.fir.analysis.getChild
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
@@ -22,6 +24,7 @@ import org.jetbrains.kotlin.fir.declarations.FirVariable
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.ConeSyntaxDiagnostic
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.references.isError
 import org.jetbrains.kotlin.fir.references.toResolvedVariableSymbol
 import org.jetbrains.kotlin.fir.resolve.diagnostics.*
@@ -30,6 +33,8 @@ import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.resolve.calls.tower.ApplicabilityDetail
 import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
 import org.jetbrains.kotlin.types.AbstractTypeChecker
@@ -41,14 +46,19 @@ object FirDestructuringDeclarationChecker : FirPropertyChecker(MppCheckerKind.Co
         // val (...) = `destructuring_declaration`
         if (source.elementType == KtNodeTypes.DESTRUCTURING_DECLARATION) {
             checkInitializer(source, declaration.initializer)
+            checkSquareBracketsLanguageFeature(source)
             return
+        }
+
+        if (declaration.name == SpecialNames.DESTRUCT) {
+            checkSquareBracketsLanguageFeature(source)
         }
 
         // val (`destructuring_declaration_entry`, ...) = ...
         if (source.elementType != KtNodeTypes.DESTRUCTURING_DECLARATION_ENTRY) return
 
-        val componentCall = declaration.initializer as? FirComponentCall ?: return
-        val originalExpression = componentCall.explicitReceiverOfQualifiedAccess ?: return
+        val initializer = declaration.initializer as? FirQualifiedAccessExpression ?: return
+        val originalExpression = initializer.explicitReceiverOfQualifiedAccess ?: return
         val originalDestructuringDeclaration = originalExpression.resolvedVariable ?: return
         val originalDestructuringDeclarationOrInitializer =
             when (originalDestructuringDeclaration) {
@@ -69,6 +79,14 @@ object FirDestructuringDeclarationChecker : FirPropertyChecker(MppCheckerKind.Co
                 }
                 else -> null
             } ?: return
+
+        // If it uses the bracket syntax, we already checked for the same language feature.
+        if (originalDestructuringDeclaration.source?.findSquareBracket() == null) {
+            checkFullFormLanguageFeature(source)
+        }
+
+        if (initializer !is FirComponentCall) return
+
         if (originalDestructuringDeclarationOrInitializer.isMissingInitializer()) return
         val originalDestructuringDeclarationOrInitializerSource = originalDestructuringDeclarationOrInitializer.source ?: return
         val originalDestructuringDeclarationType =
@@ -78,7 +96,7 @@ object FirDestructuringDeclarationChecker : FirPropertyChecker(MppCheckerKind.Co
                 else -> null
             } ?: return
 
-        val reference = componentCall.calleeReference
+        val reference = initializer.calleeReference
         val diagnostic = if (reference.isError()) reference.diagnostic else null
         if (diagnostic != null) {
             reportGivenDiagnostic(
@@ -86,7 +104,7 @@ object FirDestructuringDeclarationChecker : FirPropertyChecker(MppCheckerKind.Co
                 originalDestructuringDeclarationType,
                 diagnostic,
                 declaration,
-                componentCall,
+                initializer,
             )
         }
 
@@ -94,8 +112,43 @@ object FirDestructuringDeclarationChecker : FirPropertyChecker(MppCheckerKind.Co
             originalDestructuringDeclarationOrInitializerSource,
             declaration,
             originalDestructuringDeclaration,
-            componentCall
+            initializer
         )
+    }
+
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    private fun checkFullFormLanguageFeature(source: KtSourceElement) {
+        if (LanguageFeature.NameBasedDestructuring.isEnabled()) return
+
+        source.getChild(KtTokens.VAL_VAR, depth = 1)?.let {
+            reporter.reportOn(
+                it,
+                FirErrors.UNSUPPORTED_FEATURE,
+                LanguageFeature.NameBasedDestructuring to context.languageVersionSettings
+            )
+        }
+    }
+
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    internal fun checkSquareBracketsLanguageFeature(source: KtSourceElement) {
+        if (LanguageFeature.NameBasedDestructuring.isEnabled()) return
+
+        val lBracket = source.findSquareBracket()
+        if (lBracket != null) {
+            reporter.reportOn(
+                lBracket,
+                FirErrors.UNSUPPORTED_FEATURE,
+                LanguageFeature.NameBasedDestructuring to context.languageVersionSettings
+            )
+        }
+    }
+
+    private fun KtSourceElement.findSquareBracket(): KtSourceElement? {
+        return when (elementType) {
+            KtNodeTypes.DESTRUCTURING_DECLARATION -> getChild(KtTokens.LBRACKET, depth = 1)
+            KtNodeTypes.VALUE_PARAMETER -> getChild(KtNodeTypes.DESTRUCTURING_DECLARATION, depth = 1)?.findSquareBracket()
+            else -> null
+        }
     }
 
     context(reporter: DiagnosticReporter, context: CheckerContext)

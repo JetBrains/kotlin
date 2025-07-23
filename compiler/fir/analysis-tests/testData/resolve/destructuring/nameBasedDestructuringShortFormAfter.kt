@@ -1,5 +1,5 @@
 // RUN_PIPELINE_TILL: BACKEND
-// LANGUAGE: +EnableNameBasedDestructuringShortForm
+// LANGUAGE: +NameBasedDestructuring, +EnableNameBasedDestructuringShortForm
 class Tuple(val first: String, val second: Int)
 
 fun declaration(x: Tuple) {
