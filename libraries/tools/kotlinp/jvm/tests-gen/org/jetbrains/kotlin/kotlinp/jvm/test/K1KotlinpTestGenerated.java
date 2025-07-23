@@ -169,6 +169,12 @@ public class K1KotlinpTestGenerated extends AbstractK1KotlinpTest {
   }
 
   @Test
+  @TestMetadata("ReturnValueChecker.kt")
+  public void testReturnValueChecker() {
+    runTest("libraries/tools/kotlinp/jvm/testData/ReturnValueChecker.kt");
+  }
+
+  @Test
   @TestMetadata("SimpleClass.kt")
   public void testSimpleClass() {
     runTest("libraries/tools/kotlinp/jvm/testData/SimpleClass.kt");

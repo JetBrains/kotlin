@@ -9,6 +9,9 @@ public final class kotlin/metadata/Attributes {
 	public static final fun getHasAnnotations (Lkotlin/metadata/KmValueParameter;)Z
 	public static final fun getHasConstant (Lkotlin/metadata/KmProperty;)Z
 	public static final fun getHasEnumEntries (Lkotlin/metadata/KmClass;)Z
+	public static final fun getHasMustUseReturnValue (Lkotlin/metadata/KmConstructor;)Z
+	public static final fun getHasMustUseReturnValue (Lkotlin/metadata/KmFunction;)Z
+	public static final fun getHasMustUseReturnValue (Lkotlin/metadata/KmProperty;)Z
 	public static final fun getHasNonStableParameterNames (Lkotlin/metadata/KmConstructor;)Z
 	public static final fun getHasNonStableParameterNames (Lkotlin/metadata/KmFunction;)Z
 	public static final fun getKind (Lkotlin/metadata/KmClass;)Lkotlin/metadata/ClassKind;
@@ -78,6 +81,9 @@ public final class kotlin/metadata/Attributes {
 	public static final fun setHasAnnotations (Lkotlin/metadata/KmValueParameter;Z)V
 	public static final fun setHasConstant (Lkotlin/metadata/KmProperty;Z)V
 	public static final fun setHasEnumEntries (Lkotlin/metadata/KmClass;Z)V
+	public static final fun setHasMustUseReturnValue (Lkotlin/metadata/KmConstructor;Z)V
+	public static final fun setHasMustUseReturnValue (Lkotlin/metadata/KmFunction;Z)V
+	public static final fun setHasMustUseReturnValue (Lkotlin/metadata/KmProperty;Z)V
 	public static final fun setHasNonStableParameterNames (Lkotlin/metadata/KmConstructor;Z)V
 	public static final fun setHasNonStableParameterNames (Lkotlin/metadata/KmFunction;Z)V
 	public static final fun setInfix (Lkotlin/metadata/KmFunction;Z)V

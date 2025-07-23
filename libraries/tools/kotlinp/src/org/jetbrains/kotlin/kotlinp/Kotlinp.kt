@@ -157,7 +157,8 @@ abstract class Kotlinp(protected val settings: Settings) {
         append(VISIBILITY_MAP[constructor.visibility])
         appendFlags(
             constructor.isSecondary to "/* secondary */",
-            constructor.hasNonStableParameterNames to "/* non-stable parameter names */"
+            constructor.hasNonStableParameterNames to "/* non-stable parameter names */",
+            constructor.hasMustUseReturnValue to "/* must-use-return-value */",
         )
     }
 
@@ -198,7 +199,8 @@ abstract class Kotlinp(protected val settings: Settings) {
             function.isExternal to "external",
             function.isSuspend to "suspend",
             function.isExpect to "expect",
-            function.hasNonStableParameterNames to "/* non-stable parameter names */"
+            function.hasNonStableParameterNames to "/* non-stable parameter names */",
+            function.hasMustUseReturnValue to "/* must-use-return-value */"
         )
     }
 
@@ -344,7 +346,8 @@ abstract class Kotlinp(protected val settings: Settings) {
             property.isLateinit to "lateinit",
             property.isExternal to "external",
             property.isDelegated to "/* delegated */",
-            property.isExpect to "expect"
+            property.isExpect to "expect",
+            property.hasMustUseReturnValue to "/* must-use-return-value */",
         )
     }
 

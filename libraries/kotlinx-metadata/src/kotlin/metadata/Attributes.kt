@@ -198,6 +198,18 @@ public var KmConstructor.isSecondary: Boolean by constructorBooleanFlag(FlagImpl
  */
 public var KmConstructor.hasNonStableParameterNames: Boolean by constructorBooleanFlag(FlagImpl(ProtoFlags.IS_CONSTRUCTOR_WITH_NON_STABLE_PARAMETER_NAMES))
 
+/**
+ * Indicates whether the constructor was compiled with must-use-return-value status.
+ * This status may come from `@MustUseReturnValue` annotation on one of the containing scopes, or from `-Xreturn-value-checker=full` global compilation setting.
+ *
+ * Status serves as the input for 'Unused return value' diagnostic, but it shouldn't be the only factor to decide whether to report the warning
+ * on a particular constructor call.
+ * Checker implementations should also consider other factors, such as the expression's return type or shape.
+ *
+ * @see [MustUseReturnValue]
+ */
+public var KmConstructor.hasMustUseReturnValue: Boolean by constructorBooleanFlag(FlagImpl(ProtoFlags.HAS_MUST_USE_RETURN_VALUE_CTOR))
+
 // --- FUNCTION ---
 
 /**
@@ -267,6 +279,20 @@ public var KmFunction.isExpect: Boolean by functionBooleanFlag(FlagImpl(ProtoFla
  * This may be changed in the future.
  */
 public var KmFunction.hasNonStableParameterNames: Boolean by functionBooleanFlag(FlagImpl(ProtoFlags.IS_FUNCTION_WITH_NON_STABLE_PARAMETER_NAMES))
+
+/**
+ * Indicates whether the function was compiled with must-use-return-value status.
+ * This status may come from `@MustUseReturnValue` annotation on one of the containing scopes, base function implementation, or from `-Xreturn-value-checker=full` global compilation setting.
+ *
+ * Status serves as the input for 'Unused return value' diagnostic, but it shouldn't be the only factor to decide whether to report the warning
+ * on a particular function call.
+ * Checker implementations should also consider other factors, such as the expression's return type or shape.
+ * For example, all functions with Unit return type compiled with `-Xreturn-value-checker=full` compilation flag will also have this attribute set to `true`,
+ * but they shouldn't be reported as unused.
+ *
+ * @see [MustUseReturnValue]
+ */
+public var KmFunction.hasMustUseReturnValue: Boolean by functionBooleanFlag(FlagImpl(ProtoFlags.HAS_MUST_USE_RETURN_VALUE_FUNCTION))
 
 // --- PROPERTY ---
 
@@ -352,6 +378,20 @@ public var KmProperty.isDelegated: Boolean by propertyBooleanFlag(FlagImpl(Proto
  * Indicates that the corresponding property is `expect`.
  */
 public var KmProperty.isExpect: Boolean by propertyBooleanFlag(FlagImpl(ProtoFlags.IS_EXPECT_PROPERTY))
+
+/**
+ * Indicates whether the property was compiled with must-use-return-value status.
+ * This status may come from `@MustUseReturnValue` annotation on one of the containing scopes, base property implementation, or from `-Xreturn-value-checker=full` global compilation setting.
+ *
+ * Status serves as the input for 'Unused return value' diagnostic, but it shouldn't be the only factor to decide whether to report the warning
+ * on a particular property accessor call.
+ * Checker implementations should also consider other factors, such as the expression's return type or shape.
+ * For example, a property's setter call usually comes in a form of assignment and does not have a return type,
+ * so it shouldn't be reported.
+ *
+ * @see [MustUseReturnValue]
+ */
+public var KmProperty.hasMustUseReturnValue: Boolean by propertyBooleanFlag(FlagImpl(ProtoFlags.HAS_MUST_USE_RETURN_VALUE_PROPERTY))
 
 // --- PROPERTY ACCESSOR ---
 
