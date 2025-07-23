@@ -98,6 +98,7 @@ private class AnalysisApiExecutionTestExtension : BeforeTestExecutionCallback, A
     private fun getTestFilePath(testDirPathString: String, testFileName: String): Path {
         return Paths.get(testDirPathString, "$testFileName.kt").takeIf { it.exists() }
             ?: Paths.get(testDirPathString, "$testFileName.kts").takeIf { it.exists() }
+            ?: Paths.get(testDirPathString, "$testFileName.kotlin_builtins").takeIf { it.exists() }
             ?: error("Cannot find test file $testFileName.kt(s) in $testDirPathString")
     }
 }
