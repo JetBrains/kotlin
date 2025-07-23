@@ -118,10 +118,8 @@ internal class JvmSafeCallChainFoldingLowering(val context: JvmBackendContext) :
         IrConstImpl.boolean(startOffset, endOffset, context.irBuiltIns.booleanType, false)
 
     private fun irValNotNull(startOffset: Int, endOffset: Int, irVariable: IrVariable): IrExpression =
-        if (irVariable.type.isJvmNullable() || irVariable.initializer?.isConstantLike != true)
-            IrGetValueImpl(startOffset, endOffset, irVariable.symbol).irEqEqNull().irNot()
-        else
-            irTrue(startOffset, endOffset)
+        // Always generate a null check for safe calls to ensure bytecode is verifiable by D8/R8
+        IrGetValueImpl(startOffset, endOffset, irVariable.symbol).irEqEqNull().irNot()
 
     private fun IrType.isJvmNullable(): Boolean =
         isNullable() || hasAnnotation(JvmAnnotationNames.ENHANCED_NULLABILITY_ANNOTATION)
