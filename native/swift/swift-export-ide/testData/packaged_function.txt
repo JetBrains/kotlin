@@ -1,6 +1,6 @@
 @_exported import ExportedKotlinPackages
 
-public extension ExportedKotlinPackages.namespace {
+extension ExportedKotlinPackages.namespace {
     public static func foo(
         arg: Swift.Int32
     ) -> ExportedKotlinPackages.namespace.Foo {

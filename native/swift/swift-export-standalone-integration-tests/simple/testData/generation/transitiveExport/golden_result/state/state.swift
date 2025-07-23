@@ -4,7 +4,7 @@ import KotlinRuntime
 import KotlinRuntimeSupport
 import KotlinStdlib
 
-public extension ExportedKotlinPackages.oh.my.state.inner {
+extension ExportedKotlinPackages.oh.my.state.inner {
     public final class InnerState: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
         public var bytes: ExportedKotlinPackages.kotlin.ByteArray? {
             get {
@@ -27,7 +27,7 @@ public extension ExportedKotlinPackages.oh.my.state.inner {
         }
     }
 }
-public extension ExportedKotlinPackages.oh.my.state {
+extension ExportedKotlinPackages.oh.my.state {
     public final class State: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
         public var innerState: ExportedKotlinPackages.oh.my.state.inner.InnerState? {
             get {

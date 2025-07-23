@@ -58,6 +58,11 @@ internal open class SirProtocolFromKtSymbol(
         ktSymbol.superTypes
             .mapNotNull { it.symbol as? KaClassSymbol }
             .filter { it.classKind == KaClassKind.INTERFACE }
+            .filter {
+                it.sirAvailability(this@lazyWithSessions).let {
+                    it is SirAvailability.Available && it.visibility > SirVisibility.INTERNAL
+                }
+            }
             .mapNotNull {
                 it.toSir().allDeclarations.firstIsInstanceOrNull<SirProtocol>()?.also {
                     ktSymbol.containingModule.sirModule().updateImport(SirImport(it.containingModule().name))
@@ -72,6 +77,7 @@ internal open class SirProtocolFromKtSymbol(
             .extractDeclarations(useSiteSession)
             .flatMap { declaration ->
                 when (declaration) {
+                    is SirOperatorAuxiliaryDeclaration -> emptyList() // FIXME: rectify where auxiliary declarations should go.
                     is SirVariable, is SirFunction -> listOf(declaration)
                     is SirNamedDeclaration -> listOfNotNull(
                         (declaration.visibility == SirVisibility.PUBLIC).ifTrue {

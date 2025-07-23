@@ -129,12 +129,12 @@ public func setFoo(
 ) -> Swift.Void {
     return __root___foo_set__TypesOfArguments__Swift_Optional_main_Foo__Swift_String__(receiver.map { it in it.__externalRCRef() } ?? nil, v)
 }
-public extension ExportedKotlinPackages.namespace1.local_functions {
+extension ExportedKotlinPackages.namespace1.local_functions {
     public static func foo() -> Swift.Void {
         return namespace1_local_functions_foo()
     }
 }
-public extension ExportedKotlinPackages.namespace1.main {
+extension ExportedKotlinPackages.namespace1.main {
     public static func all_args(
         arg1: Swift.Bool,
         arg2: Swift.Int8,
@@ -157,19 +157,19 @@ public extension ExportedKotlinPackages.namespace1.main {
         return namespace1_main_foobar__TypesOfArguments__Swift_Int32__(param)
     }
 }
-public extension ExportedKotlinPackages.namespace1 {
+extension ExportedKotlinPackages.namespace1 {
     public static func bar() -> Swift.Int32 {
         return namespace1_bar()
     }
 }
-public extension ExportedKotlinPackages.namespace2 {
+extension ExportedKotlinPackages.namespace2 {
     public static func foo(
         arg1: Swift.Int32
     ) -> Swift.Int32 {
         return namespace2_foo__TypesOfArguments__Swift_Int32__(arg1)
     }
 }
-public extension ExportedKotlinPackages.operators {
+extension ExportedKotlinPackages.operators {
     public final class Foo: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
         public final class EmptyIterator: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
             public static var shared: ExportedKotlinPackages.operators.Foo.EmptyIterator {
@@ -462,7 +462,7 @@ public extension ExportedKotlinPackages.operators {
         return ExportedKotlinPackages.operators.Foo.__createClassWrapper(externalRCRef: operators_invoke__TypesOfArguments__ExportedKotlinPackages_operators_Foo_ExportedKotlinPackages_operators_Foo__(receiver.__externalRCRef(), other.__externalRCRef()))
     }
 }
-public extension ExportedKotlinPackages.overload {
+extension ExportedKotlinPackages.overload {
     public final class Foo: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
         public init() {
             if Self.self != ExportedKotlinPackages.overload.Foo.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from ExportedKotlinPackages.overload.Foo ") }

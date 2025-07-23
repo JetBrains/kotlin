@@ -3,27 +3,27 @@
 import KotlinRuntime
 import KotlinRuntimeSupport
 
-public extension ExportedKotlinPackages.funinterface.FunctionalInterface where Self : KotlinRuntimeSupport._KotlinBridged {
+extension ExportedKotlinPackages.funinterface.FunctionalInterface where Self : KotlinRuntimeSupport._KotlinBridged {
     public func callAsFunction() -> Swift.Int32 {
         return funinterface_FunctionalInterface_invoke(self.__externalRCRef())
     }
 }
-public extension ExportedKotlinPackages.funinterface.XMLFunctionalInterfaceWithLeadingAbbreviation where Self : KotlinRuntimeSupport._KotlinBridged {
+extension ExportedKotlinPackages.funinterface.XMLFunctionalInterfaceWithLeadingAbbreviation where Self : KotlinRuntimeSupport._KotlinBridged {
     public func callAsFunction() -> Swift.Int32 {
         return funinterface_XMLFunctionalInterfaceWithLeadingAbbreviation_invoke(self.__externalRCRef())
     }
 }
-public extension ExportedKotlinPackages.funinterface._123FunctionalInterfaceWithLeadingNumbers where Self : KotlinRuntimeSupport._KotlinBridged {
+extension ExportedKotlinPackages.funinterface._123FunctionalInterfaceWithLeadingNumbers where Self : KotlinRuntimeSupport._KotlinBridged {
     public func callAsFunction() -> Swift.Int32 {
         return funinterface__123FunctionalInterfaceWithLeadingNumbers_invoke(self.__externalRCRef())
     }
 }
-public extension ExportedKotlinPackages.funinterface._123XMLFunctionalInterfaceWithLeadingUnderscoreNumbersAndAbbreviation where Self : KotlinRuntimeSupport._KotlinBridged {
+extension ExportedKotlinPackages.funinterface._123XMLFunctionalInterfaceWithLeadingUnderscoreNumbersAndAbbreviation where Self : KotlinRuntimeSupport._KotlinBridged {
     public func callAsFunction() -> Swift.Int32 {
         return funinterface__123XMLFunctionalInterfaceWithLeadingUnderscoreNumbersAndAbbreviation_invoke(self.__externalRCRef())
     }
 }
-public extension ExportedKotlinPackages.funinterface._FunctionalInterfaceWithLeadingUnderscore where Self : KotlinRuntimeSupport._KotlinBridged {
+extension ExportedKotlinPackages.funinterface._FunctionalInterfaceWithLeadingUnderscore where Self : KotlinRuntimeSupport._KotlinBridged {
     public func callAsFunction() -> Swift.Int32 {
         return funinterface__FunctionalInterfaceWithLeadingUnderscore_invoke(self.__externalRCRef())
     }
@@ -40,12 +40,12 @@ extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.funint
 }
 extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.funinterface.functionalInterfaceWithAlreadyLowercaseLeading where Wrapped : ExportedKotlinPackages.funinterface._functionalInterfaceWithAlreadyLowercaseLeading {
 }
-public extension ExportedKotlinPackages.funinterface.functionalInterfaceWithAlreadyLowercaseLeading where Self : KotlinRuntimeSupport._KotlinBridged {
+extension ExportedKotlinPackages.funinterface.functionalInterfaceWithAlreadyLowercaseLeading where Self : KotlinRuntimeSupport._KotlinBridged {
     public func callAsFunction() -> Swift.Int32 {
         return funinterface_functionalInterfaceWithAlreadyLowercaseLeading_invoke(self.__externalRCRef())
     }
 }
-public extension ExportedKotlinPackages.funinterface {
+extension ExportedKotlinPackages.funinterface {
     public protocol FunctionalInterface: KotlinRuntime.KotlinBase {
         func callAsFunction() -> Swift.Int32
     }

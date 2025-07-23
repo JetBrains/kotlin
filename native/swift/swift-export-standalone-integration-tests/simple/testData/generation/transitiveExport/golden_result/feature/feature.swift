@@ -3,7 +3,7 @@
 import KotlinRuntime
 import KotlinRuntimeSupport
 
-public extension ExportedKotlinPackages.oh.my.kotlin {
+extension ExportedKotlinPackages.oh.my.kotlin {
     public final class FeatureA: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
         public init() {
             if Self.self != ExportedKotlinPackages.oh.my.kotlin.FeatureA.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from ExportedKotlinPackages.oh.my.kotlin.FeatureA ") }

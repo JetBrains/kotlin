@@ -3,7 +3,7 @@
 import KotlinRuntime
 import KotlinRuntimeSupport
 
-public extension ExportedKotlinPackages.dependency.four {
+extension ExportedKotlinPackages.dependency.four {
     public final class AnotherBar: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
         public init() {
             if Self.self != ExportedKotlinPackages.dependency.four.AnotherBar.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from ExportedKotlinPackages.dependency.four.AnotherBar ") }

@@ -9,7 +9,7 @@ public func flattenedPackageClass(
 ) -> ExportedKotlinPackages.flattenedPackage.FlattenedPackageClass {
     ExportedKotlinPackages.flattenedPackage.flattenedPackageClass(i: i)
 }
-public extension ExportedKotlinPackages.flattenedPackage {
+extension ExportedKotlinPackages.flattenedPackage {
     public final class FlattenedPackageClass: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
         public init() {
             if Self.self != ExportedKotlinPackages.flattenedPackage.FlattenedPackageClass.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from ExportedKotlinPackages.flattenedPackage.FlattenedPackageClass ") }

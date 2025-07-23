@@ -89,7 +89,7 @@ public var lateinit_foo: KotlinRuntime.KotlinBase {
         return __root___lateinit_foo_set__TypesOfArguments__KotlinRuntime_KotlinBase__(newValue.__externalRCRef())
     }
 }
-public extension ExportedKotlinPackages.namespace.main {
+extension ExportedKotlinPackages.namespace.main {
     public static var bar: Swift.Int32 {
         get {
             return namespace_main_bar_get()

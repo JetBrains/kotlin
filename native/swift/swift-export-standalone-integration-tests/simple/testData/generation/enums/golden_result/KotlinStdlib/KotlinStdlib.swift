@@ -3,7 +3,7 @@
 import KotlinRuntime
 import KotlinRuntimeSupport
 
-public extension ExportedKotlinPackages.kotlin {
+extension ExportedKotlinPackages.kotlin {
     open class Enum: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
         public final class Companion: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
             public static var shared: ExportedKotlinPackages.kotlin.Enum.Companion {

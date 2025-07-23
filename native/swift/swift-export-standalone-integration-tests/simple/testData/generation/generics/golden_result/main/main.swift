@@ -233,37 +233,37 @@ public func foo(
 ) -> Swift.Void {
     return __root___foo__TypesOfArguments__Swift_Optional_KotlinRuntime_KotlinBase__Swift_Optional_KotlinRuntime_KotlinBase___(param1.map { it in it.__externalRCRef() } ?? nil, param2.map { it in it.__externalRCRef() } ?? nil)
 }
-public extension main.A where Self : KotlinRuntimeSupport._KotlinBridged {
+extension main.A where Self : KotlinRuntimeSupport._KotlinBridged {
     public var foo: KotlinRuntime.KotlinBase? {
         get {
             return { switch A_foo_get(self.__externalRCRef()) { case nil: .none; case let res: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: res); } }()
         }
     }
 }
-public extension main.B where Self : KotlinRuntimeSupport._KotlinBridged {
+extension main.B where Self : KotlinRuntimeSupport._KotlinBridged {
     public var foo: KotlinRuntime.KotlinBase? {
         get {
             return { switch B_foo_get(self.__externalRCRef()) { case nil: .none; case let res: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: res); } }()
         }
     }
 }
-public extension main.Consumer where Self : KotlinRuntimeSupport._KotlinBridged {
+extension main.Consumer where Self : KotlinRuntimeSupport._KotlinBridged {
     public func consume(
         item: KotlinRuntime.KotlinBase?
     ) -> Swift.Void {
         return Consumer_consume__TypesOfArguments__Swift_Optional_KotlinRuntime_KotlinBase___(self.__externalRCRef(), item.map { it in it.__externalRCRef() } ?? nil)
     }
 }
-public extension main.ConsumerProducer where Self : KotlinRuntimeSupport._KotlinBridged {
+extension main.ConsumerProducer where Self : KotlinRuntimeSupport._KotlinBridged {
 }
-public extension main.Processor where Self : KotlinRuntimeSupport._KotlinBridged {
+extension main.Processor where Self : KotlinRuntimeSupport._KotlinBridged {
     public func process(
         input: KotlinRuntime.KotlinBase?
     ) -> KotlinRuntime.KotlinBase? {
         return { switch Processor_process__TypesOfArguments__Swift_Optional_KotlinRuntime_KotlinBase___(self.__externalRCRef(), input.map { it in it.__externalRCRef() } ?? nil) { case nil: .none; case let res: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: res); } }()
     }
 }
-public extension main.Producer where Self : KotlinRuntimeSupport._KotlinBridged {
+extension main.Producer where Self : KotlinRuntimeSupport._KotlinBridged {
     public func produce() -> KotlinRuntime.KotlinBase? {
         return { switch Producer_produce(self.__externalRCRef()) { case nil: .none; case let res: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: res); } }()
     }
