@@ -1,5 +1,4 @@
 // IGNORE_BACKEND_K1: ANY
-// IGNORE_BACKEND_K2: ANY
 // ISSUE: KT-79185
 // LANGUAGE: +NestedTypeAliases
 
@@ -60,8 +59,8 @@ fun box(): String {
     val companion = TAtoGeneric
     if (companion.prop != 123) return "FAIL"
 
-    val typeRefToLocalTypeAliasInLocalClass: Local.<!UNRESOLVED_REFERENCE!>LocalTAtoLocal<!> = Local.LocalTAtoLocal()
-    if (typeRefToLocalTypeAliasInLocalClass.<!UNRESOLVED_REFERENCE!>p<!> != "OK") return "FAIL"
+    val typeRefToLocalTypeAliasInLocalClass: Local.LocalTAtoLocal = Local.LocalTAtoLocal()
+    if (typeRefToLocalTypeAliasInLocalClass.p != "OK") return "FAIL"
 
     return "OK"
 }
