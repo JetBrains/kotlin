@@ -3,6 +3,8 @@
  * that can be found in the license/LICENSE.txt file.
  */
 
+import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import java.util.Properties
 
@@ -42,12 +44,6 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-util-klib:${project.bootstrapKotlinVersion}")
 }
 
-java {
-    toolchain {
-        languageVersion.set(JavaLanguageVersion.of(8))
-    }
-}
-
 val compileKotlin: KotlinCompile by tasks
 
 compileKotlin.apply {
@@ -69,6 +65,9 @@ kotlin {
             kotlin.srcDir("src/main/kotlin")
         }
     }
+    @OptIn(ExperimentalKotlinGradlePluginApi::class, ExperimentalBuildToolsApi::class)
+    compilerVersion = libs.versions.kotlin.`for`.gradle.plugins.compilation
+    jvmToolchain(11)
 }
 
 gradlePlugin {
