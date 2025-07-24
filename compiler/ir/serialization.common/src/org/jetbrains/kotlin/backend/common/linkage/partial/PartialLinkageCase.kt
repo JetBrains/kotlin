@@ -134,6 +134,13 @@ sealed interface PartialLinkageCase {
             val originalOverriddenFunction: IrSimpleFunctionSymbol,
             val newOverriddenFunction: IrSimpleFunctionSymbol,
         ) : InvalidSamConversion(expression)
+
+        class SamChanged(
+            expression: IrExpression,
+            val funInterface: IrClassifierSymbol,
+            val originalOverriddenFunction: IrSimpleFunctionSymbol,
+            val newOverriddenFunction: IrSimpleFunctionSymbol,
+        ) : InvalidSamConversion(expression)
     }
 
     /**

@@ -584,6 +584,7 @@ internal class PartiallyLinkedIrTreePatcher(
             checkReferencedDeclaration(overriddenFunctionSymbol)
                 ?: checkExpressionType(type)
                 ?: checkHasFunctionalType(type)
+                ?: checkOverriddenFunctionConsistentWithSam()
                 ?: run {
                     // Don't completely fail when reflectionTargetSymbol is unlinked, see reflectionTargetLinkageError for details.
                     reflectionTargetLinkageError = checkReferencedDeclaration(reflectionTargetSymbol)
@@ -853,6 +854,41 @@ internal class PartiallyLinkedIrTreePatcher(
                         function.parameters.dropLast(expectedParameters)
                     )
                 }
+            }
+
+            return null
+        }
+
+        private fun IrRichFunctionReference.checkOverriddenFunctionConsistentWithSam(): PartialLinkageCase? {
+            /*
+            In the following case:
+
+            // v1
+            fun interface I {
+                fun foo()
+            }
+            // v2
+            fun interface I {
+                fun foo() {}
+                fun bar()
+            }
+
+            While the second version of I is still a valid SAM (it has one abstract method), and [IrRichFunctionReference.overriddenFunctionSymbol]
+            still points to a valid method, those are now two different methods. Such a case confuses potential SAM conversions done via
+            the old-school [IrTypeOperatorCall] with SAM_CONVERSION, as it now assumes that [I.bar] is the target method instead of [I.foo].
+            To avoid behavioral difference between [IrRichFunctionReference]-style and [IrTypeOperatorCall]-style SAM conversions, we prohibit
+            such a case.
+            This restriction may be lifted if we discontinue IrTypeOperatorCall for SAMs. That would make the behavior closer to that of JVM.
+            */
+
+            val actualSam = type.classOrFail.owner.selectSAMOverriddenFunction().symbol
+            if (overriddenFunctionSymbol != actualSam) {
+                return InvalidSamConversion.SamChanged(
+                    expression = this,
+                    type.classOrFail,
+                    originalOverriddenFunction = overriddenFunctionSymbol,
+                    newOverriddenFunction = actualSam,
+                )
             }
 
             return null
