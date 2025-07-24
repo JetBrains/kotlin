@@ -229,24 +229,49 @@ projectTest("test", jUnitMode = JUnitMode.JUnit5) {
     configureTestDistribution()
 }
 
-projectTest("jsIrTest", jUnitMode = JUnitMode.JUnit5) {
-    setUpJsBoxTests("legacy-frontend & !es6")
-    useJUnitPlatform()
-}
+if (kotlinBuildProperties.isTeamcityBuild) {
+    projectTest("jsIrTest", jUnitMode = JUnitMode.JUnit5) {
+        setUpJsBoxTests("legacy-frontend & !es6")
+        useJUnitPlatform()
+    }
 
-projectTest("jsIrES6Test", jUnitMode = JUnitMode.JUnit5) {
-    setUpJsBoxTests("legacy-frontend & es6")
-    useJUnitPlatform()
-}
+    projectTest("jsIrES6Test", jUnitMode = JUnitMode.JUnit5) {
+        setUpJsBoxTests("legacy-frontend & es6")
+        useJUnitPlatform()
+    }
 
-projectTest("jsFirTest", jUnitMode = JUnitMode.JUnit5) {
-    setUpJsBoxTests("!legacy-frontend & !es6")
-    useJUnitPlatform()
-}
+    projectTest("jsFirTest", jUnitMode = JUnitMode.JUnit5) {
+        setUpJsBoxTests("!legacy-frontend & !es6")
+        useJUnitPlatform()
+    }
 
-projectTest("jsFirES6Test", jUnitMode = JUnitMode.JUnit5) {
-    setUpJsBoxTests("!legacy-frontend & es6")
-    useJUnitPlatform()
+    projectTest("jsFirES6Test", jUnitMode = JUnitMode.JUnit5) {
+        setUpJsBoxTests("!legacy-frontend & es6")
+        useJUnitPlatform()
+    }
+
+    projectTest("invalidationTest", jUnitMode = JUnitMode.JUnit5) {
+        workingDir = rootDir
+
+        useJsIrBoxTests(version = version, buildDir = layout.buildDirectory)
+        include("org/jetbrains/kotlin/incremental/*")
+        dependsOn(":dist")
+        forwardProperties()
+        useJUnitPlatform()
+    }
+} else {
+    /*
+     * There is no much sense in those configurations in the local development.
+     * They actually reduce the UX of running tests, as IDEA suggests choosing one of three
+     *   test tasks when you run any test.
+     * So to fix this inconvenience in the local environment, those
+     *   tasks just do nothing (and not inherit TestTask), so the IDEA won't see them.
+    */
+    tasks.register("jsIrTest")
+    tasks.register("jsIrES6Test")
+    tasks.register("jsFirTest")
+    tasks.register("jsFirES6Test")
+    tasks.register("invalidationTest")
 }
 
 testsJar {}
@@ -282,12 +307,3 @@ val npmInstall by tasks.getting(NpmTask::class) {
     npmCommand.set(listOf("ci"))
 }
 
-projectTest("invalidationTest", jUnitMode = JUnitMode.JUnit5) {
-    workingDir = rootDir
-
-    useJsIrBoxTests(version = version, buildDir = layout.buildDirectory)
-    include("org/jetbrains/kotlin/incremental/*")
-    dependsOn(":dist")
-    forwardProperties()
-    useJUnitPlatform()
-}
