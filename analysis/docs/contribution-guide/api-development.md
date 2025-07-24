@@ -1261,23 +1261,52 @@ internal class KaFirNamedClassSymbol(
 }
 ```
 
+For endpoints consuming `PsiElement`s, use `withPsiValidityAssertion()` instead:
+
+```kotlin
+override val KtFile.symbol: KaFileSymbol
+    get() = withPsiValidityAssertion {
+        KaFirFileSymbol(this, analysisSession)
+    }
+```
+
+Remember to guard properties you declare in the primary constructor: 
+
+```kotlin
+class KaScopeWithKindImpl(
+    private val backingScope: KaScope,
+    private val backingKind: KaScopeKind,
+) : KaScopeWithKind {
+    override val scope: KaScope get() = withValidityAssertion { backingScope }
+    override val kind: KaScopeKind get() = withValidityAssertion { backingKind }
+}
+``` 
+
+For `equals()`, `hashCode()` and `toString()` implementations, avoid validation as these methods are often used in uncontrolled contexts.
+
 ### Handle Errors Appropriately
 
 Fail fast with clear messages, use appropriate exception types, and document error conditions.
 
-Robust error handling improves developer experience:
+Robust error handling improves developer experience. Use `checkWithAttachment`, `requireWithAttachment` and `errorWithAttachment`, passing
+the relevant information. Never pass sensitive information such as code snippets in the exception message directly.
 
 ```kotlin
-override fun findClass(classId: ClassId): KaClassSymbol? = withValidityAssertion {
-    require(classId.isValid) {
-        "ClassId must be valid: package=${classId.packageFqName}, name=${classId.className}"
+private fun calculateLazyBodyForResultProperty(firProperty: FirProperty, designation: FirDesignation) {
+    val newInitializer = revive<FirAnonymousInitializer>(designation)
+    val body = newInitializer.body
+    requireWithAttachment(body != null, { "${FirAnonymousInitializer::class.simpleName} without body" }) {
+        withFirDesignationEntry("designation", designation)
+        withFirEntry("initializer", newInitializer)
     }
 
-    // Return null for not found rather than throwing
-    return searchForClass(classId)
+    ...
 }
+```
 
-// Document throwing behavior
+Document throwing behavior:
+
+```kotlin
 /**
  * @throws IllegalArgumentException if [name] is a special name like <init>
  */
