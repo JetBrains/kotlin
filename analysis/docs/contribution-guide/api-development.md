@@ -327,9 +327,11 @@ interface KaCallInfo : KaLifetimeOwner {
 }
 
 // Doesn't need lifetime management: Pure data
-interface KaSourceModule : KaModule {
-    val name: String
-    val languageVersionSettings: LanguageVersionSettings
+sealed interface KaConstantValue {
+    val value: Any?
+    val sourcePsi: KtElement?
+
+    fun render(): String
 }
 ```
 
