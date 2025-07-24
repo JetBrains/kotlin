@@ -151,5 +151,7 @@ enum class DiagnosticKind {
     IsEnumEntry,
     EnumEntryAsType,
 
+    UnderscoreWithoutRenamingInDestructuring,
+
     Other,
 }

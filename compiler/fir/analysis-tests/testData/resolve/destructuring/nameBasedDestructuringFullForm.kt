@@ -9,6 +9,8 @@ fun declaration(x: Tuple) {
     if (true) { (val first: String) = x }
     if (true) { (val aa = first) = x }
     if (true) { (val aa: String = first) = x }
+    if (true) { (val _ = first) = x }
+    if (true) { (val _: String = first) = x }
 }
 
 fun loop(x: List<Tuple>) {
@@ -17,6 +19,8 @@ fun loop(x: List<Tuple>) {
     for ((val first: String) in x) {}
     for ((val aa = first) in x) {}
     for ((val aa: String = first) in x) {}
+    for ((val _ = first) in x) {}
+    for ((val _: String = first) in x) {}
 }
 
 fun lambda() {
@@ -27,6 +31,8 @@ fun lambda() {
     foo { (val first: String) -> }
     foo { (val aa = first) -> }
     foo { (val aa: String = first) -> }
+    foo { (val _ = first) -> }
+    foo { (val _: String = first) -> }
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, destructuringDeclaration, forLoop, functionDeclaration, functionalType,
