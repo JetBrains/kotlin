@@ -83,3 +83,16 @@ public annotation class KaExperimentalApi
 )
 @RequiresOptIn("An API intended for Analysis API implementations & platforms. The API is neither stable nor intended for user consumption.")
 public annotation class KaPlatformInterface
+
+/**
+ * Marks an API as only available in the K2 implementation of the Analysis API.
+ * In the K1 implementation, the behavior is undefined.
+ */
+@Target(
+    AnnotationTarget.CLASS,
+    AnnotationTarget.PROPERTY,
+    AnnotationTarget.CONSTRUCTOR,
+    AnnotationTarget.FUNCTION,
+    AnnotationTarget.TYPEALIAS,
+)
+public annotation class KaK1Unsupported
