@@ -995,7 +995,21 @@ class CoroutineTransformerMethodVisitor(
             }
             cursor = cursor.next
         }
-        return true
+
+        // Check whether the variable range has meaningful operations in it
+        // TODO This is a temporary workaround for KT-79276, it shall be removed or extended with further fixes:
+        //  1) Get rid of all locals with meaningless ranges earlier (e.g. where they appear) or on some common place
+        //  2) Default-initialize "dead" spilled variables on all state-machines paths
+        cursor = local.start
+        while (cursor != null && cursor != local.end) {
+            if (cursor.isMeaningful) {
+                // found at least one meaningful operation
+                return true
+            }
+            cursor = cursor.next
+        }
+
+        return false
     }
 
     private fun mapFieldNameToVariable(
