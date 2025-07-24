@@ -250,7 +250,7 @@ class SubpluginsIT : KGPBaseTest() {
     fun testBuildSrcKotlinDSL(gradleVersion: GradleVersion) {
         val firstNonDeprecated = KotlinVersion.firstNonDeprecated.name
         project("buildSrcUsingKotlinCompilationAndKotlinPlugin", gradleVersion) {
-            val languageVersionConfiguration = if (gradleVersion == GradleVersion.version(TestVersions.Gradle.G_7_6)) {
+            val languageVersionConfiguration =
                 """
                 afterEvaluate {
                     tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
@@ -261,9 +261,6 @@ class SubpluginsIT : KGPBaseTest() {
                     }
                 }
                 """.trimIndent()
-            } else {
-                ""
-            }
             subProject("buildSrc").buildGradleKts.modify {
                 //language=kts
                 """
