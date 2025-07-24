@@ -39,6 +39,12 @@ public class JsPartialLinkageNoICTestCaseGenerated extends AbstractJsPartialLink
   }
 
   @Test
+  @TestMetadata("callableReferenceTypeTransformations")
+  public void testCallableReferenceTypeTransformations() {
+    runTest("compiler/testData/klib/partial-linkage/callableReferenceTypeTransformations/");
+  }
+
+  @Test
   @TestMetadata("changeClassVisibility")
   public void testChangeClassVisibility() {
     runTest("compiler/testData/klib/partial-linkage/changeClassVisibility/");
