@@ -111,7 +111,7 @@ kotlin {
 
         forEach {
             val copyTask = registerCopyFrameworkTask(it.konanTarget)
-            it.compilations.all {
+            it.compilations.getByName("main") {
                 cinterops {
                     register("XCTest") {
                         compilerOpts("-iframework", copyTask.map { it.destinationDir }.get().absolutePath)
