@@ -5,6 +5,8 @@
 
 package kotlin
 
+import kotlin.js.ExperimentalWasmJsInterop
+
 /**
  * Implements annotated function in JavaScript and automatically imports is to Wasm.
  * [code] string must contain JS expression that evaluates to JS function with signature that matches annotated kotlin function
@@ -18,6 +20,7 @@ package kotlin
  * This is a temporary annotation because K/Wasm <-> JS interop is not designed yet.
  */
 @ExperimentalWasmJsInterop
+@SinceKotlin("2.2")
 @Target(AnnotationTarget.FUNCTION, AnnotationTarget.PROPERTY_GETTER, AnnotationTarget.PROPERTY_SETTER)
 @Retention(AnnotationRetention.BINARY)
 public annotation class JsFun(val code: String)

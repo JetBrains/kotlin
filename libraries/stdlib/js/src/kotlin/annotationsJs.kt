@@ -80,7 +80,7 @@ public actual annotation class JsFileName(actual val name: String)
  * The annotation can be used on top-level external declarations (classes, properties, functions) and files.
  * In case of file (which can't be `external`) the following rule applies: all the declarations in
  * the file must be `external`. By applying `@JsModule(...)` on a file you tell the compiler to import a JavaScript object
- * that contain all the declarations from the file.
+ * that contains all the declarations from the file.
  *
  * Example:
  *
@@ -101,7 +101,7 @@ public actual annotation class JsFileName(actual val name: String)
  */
 @Retention(AnnotationRetention.BINARY)
 @Target(CLASS, PROPERTY, FUNCTION, FILE)
-public annotation class JsModule(val import: String)
+public actual annotation class JsModule(actual val import: String)
 
 /**
  * Denotes an `external` declaration that can be used without module system.
@@ -137,7 +137,7 @@ public annotation class JsNonModule
 /**
  * Adds prefix to `external` declarations in a source file.
  *
- * JavaScript does not have concept of packages (namespaces). They are usually emulated by nested objects.
+ * JavaScript does not have a concept of packages (namespaces). They are usually emulated by nested objects.
  * The compiler turns references to `external` declarations either to plain unprefixed names (in case of *plain* modules)
  * or to plain imports.
  * However, if a JavaScript library provides its declarations in packages, you won't be satisfied with this.
@@ -165,7 +165,7 @@ public annotation class JsNonModule
  */
 @Retention(AnnotationRetention.BINARY)
 @Target(AnnotationTarget.FILE)
-public annotation class JsQualifier(val value: String)
+public actual annotation class JsQualifier(actual val value: String)
 
 /**
  * Exports top-level declaration on JS platform.

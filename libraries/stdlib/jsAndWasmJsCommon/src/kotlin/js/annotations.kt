@@ -1,47 +1,30 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package kotlin.js
 
 /**
- * Exports top-level declaration on JS platform.
+ * Marks API related to interoperability with JS as experimental.
  *
- * Can only be applied to top-level functions.
- */
-@ExperimentalJsExport
-@Retention(AnnotationRetention.BINARY)
-@Target(AnnotationTarget.FUNCTION)
-// All targets from expect can't be set because for K/Wasm so far you can export only functions
-@Suppress("ACTUAL_ANNOTATIONS_NOT_MATCH_EXPECT")
-public actual annotation class JsExport {
-    @ExperimentalJsExport
-    @Retention(AnnotationRetention.BINARY)
-    @Target(
-        AnnotationTarget.CLASS,
-        AnnotationTarget.FUNCTION,
-        AnnotationTarget.PROPERTY,
-        AnnotationTarget.CONSTRUCTOR,
-    )
-    public actual annotation class Ignore
-}
-
-/**
- * Gives a declaration (a function, a property or a class) specific name in JavaScript.
+ * Note that the behavior of such API may be changed in the future.
  *
- * Interoperability with JavaScript is experimental, and the behavior of this annotation may change in the future.
+ * Usages of such API will be reported as warnings unless an explicit opt-in with
+ * the [OptIn] annotation, e.g. `@OptIn(ExperimentalWasmJsInterop::class)`,
+ * or with the `-opt-in=kotlin.js.ExperimentalWasmJsInterop` compiler option is given.
  */
+@RequiresOptIn(level = RequiresOptIn.Level.WARNING)
+@MustBeDocumented
 @Retention(AnnotationRetention.BINARY)
+@SinceKotlin("2.2")
 @Target(
     AnnotationTarget.CLASS,
     AnnotationTarget.FUNCTION,
     AnnotationTarget.PROPERTY,
-    AnnotationTarget.CONSTRUCTOR,
-    AnnotationTarget.PROPERTY_GETTER,
-    AnnotationTarget.PROPERTY_SETTER
+    AnnotationTarget.TYPEALIAS
 )
-public actual annotation class JsName(actual val name: String)
+public annotation class ExperimentalWasmJsInterop
 
 /**
  * Denotes an `external` declaration that must be imported from JavaScript module.
@@ -67,10 +50,10 @@ public actual annotation class JsName(actual val name: String)
  *           It is not interpreted by the Kotlin compiler, it's passed as is directly to the target module system.
  */
 @ExperimentalWasmJsInterop
+@SinceKotlin("2.2")
 @Retention(AnnotationRetention.BINARY)
 @Target(AnnotationTarget.CLASS, AnnotationTarget.PROPERTY, AnnotationTarget.FUNCTION, AnnotationTarget.FILE)
-public actual annotation class JsModule(actual val import: String)
-
+public expect annotation class JsModule(val import: String)
 
 /**
  * Adds prefix to `external` declarations in a source file.
@@ -102,6 +85,7 @@ public actual annotation class JsModule(actual val import: String)
  * @see JsModule
  */
 @ExperimentalWasmJsInterop
+@SinceKotlin("2.2")
 @Retention(AnnotationRetention.BINARY)
 @Target(AnnotationTarget.FILE)
-public actual annotation class JsQualifier(actual val value: String)
+public expect annotation class JsQualifier(val value: String)

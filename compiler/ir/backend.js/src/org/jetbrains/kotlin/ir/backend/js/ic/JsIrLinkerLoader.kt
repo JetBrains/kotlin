@@ -167,7 +167,8 @@ internal class JsIrLinkerLoader(
             partialLinkageSupport = createPartialLinkageSupportForLinker(
                 partialLinkageConfig = compilerConfiguration.partialLinkageConfig,
                 builtIns = irBuiltIns,
-                messageCollector = messageCollector
+                messageCollector = messageCollector,
+                platform = moduleDescriptor.platform!!
             ),
             friendModules = mapOf(mainLibrary.uniqueName to mainModuleFriends.map { it.uniqueName })
         )

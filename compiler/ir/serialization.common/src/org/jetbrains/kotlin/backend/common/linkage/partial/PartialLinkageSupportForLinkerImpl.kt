@@ -16,22 +16,29 @@ import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeAliasSymbol
 import org.jetbrains.kotlin.ir.util.SymbolTable
+import org.jetbrains.kotlin.platform.TargetPlatform
 
 fun createPartialLinkageSupportForLinker(
     partialLinkageConfig: PartialLinkageConfig,
     builtIns: IrBuiltIns,
-    messageCollector: MessageCollector
+    messageCollector: MessageCollector,
+    platform: TargetPlatform,
 ): PartialLinkageSupportForLinker = if (partialLinkageConfig.isEnabled)
-    PartialLinkageSupportForLinkerImpl(builtIns, PartialLinkageLogger(messageCollector, partialLinkageConfig.logLevel))
+    PartialLinkageSupportForLinkerImpl(
+        builtIns = builtIns,
+        platform = platform,
+        logger = PartialLinkageLogger(messageCollector, partialLinkageConfig.logLevel),
+    )
 else
     PartialLinkageSupportForLinker.DISABLED
 
 internal class PartialLinkageSupportForLinkerImpl(
     builtIns: IrBuiltIns,
-    private val logger: PartialLinkageLogger
+    private val logger: PartialLinkageLogger,
+    platform: TargetPlatform
 ) : PartialLinkageSupportForLinker {
     private val stubGenerator = MissingDeclarationStubGenerator(builtIns)
-    private val classifierExplorer = ClassifierExplorer(builtIns, stubGenerator)
+    private val classifierExplorer = ClassifierExplorer(builtIns, stubGenerator, platform)
     private val patcher = PartiallyLinkedIrTreePatcher(builtIns, classifierExplorer, stubGenerator, logger)
 
     /**

@@ -5,18 +5,16 @@
 
 package kotlin.js
 
-import kotlin.wasm.internal.*
-import kotlin.wasm.internal.JsPrimitive
-
-/** JavaScript primitive bigint */
-@JsPrimitive("bigint")
+@SinceKotlin("2.2")
 @ExperimentalWasmJsInterop
-public actual external class JsBigInt internal constructor() : JsAny
+public actual typealias JsBigInt = Long
 
+@SinceKotlin("2.2")
 @ExperimentalWasmJsInterop
 public actual fun JsBigInt.toLong(): Long =
-    externRefToKotlinLongAdapter(this)
+    unsafeCast<Long>()
 
+@SinceKotlin("2.2")
 @ExperimentalWasmJsInterop
 public actual fun Long.toJsBigInt(): JsBigInt =
-    kotlinLongToExternRefAdapter(this)
+    unsafeCast<JsBigInt>()
