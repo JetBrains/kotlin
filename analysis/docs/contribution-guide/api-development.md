@@ -981,7 +981,22 @@ Across domain boundaries, prefer more descriptive names:
     - `typeReference` (not `type`!) for
     - `script` for a `KtScript`
 
-Rule of thumb: is it clear for the user that they get an entity of a different API (PSI → Analysis API or vice versa)?
+Rule of thumb: is it clear for the user that they get an entity of a different API domain?
+
+- PSI ↔ Analysis API
+- `KaSymbol` ↔ `KaType`
+
+For example:
+
+```kotlin
+sealed class KaClassType : KaType {
+    // From `KaType` to `KaSymbol`
+    val symbol: KaClassLikeSymbol
+}
+
+// From `KaSymbol` to `KaTye`
+val KaClassifierSymbol.defaultType: KaType
+```
 
 ### Avoid Unnecessary `ka` and `kt` Prefixes
 
