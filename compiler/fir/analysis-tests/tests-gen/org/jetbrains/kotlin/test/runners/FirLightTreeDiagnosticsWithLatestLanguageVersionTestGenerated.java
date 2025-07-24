@@ -2583,6 +2583,12 @@ public class FirLightTreeDiagnosticsWithLatestLanguageVersionTestGenerated exten
         }
 
         @Test
+        @TestMetadata("constraintInteractionBetweenContextAndParameter.kt")
+        public void testConstraintInteractionBetweenContextAndParameter() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/overloads/constraintInteractionBetweenContextAndParameter.kt");
+        }
+
+        @Test
         @TestMetadata("IdenticalDeclarations.kt")
         public void testIdenticalDeclarations() {
           runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/overloads/IdenticalDeclarations.kt");

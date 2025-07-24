@@ -53744,6 +53744,12 @@ public class PhasedJvmDiagnosticLightTreeTestGenerated extends AbstractPhasedJvm
       @TestDataPath("$PROJECT_ROOT")
       public class Overloads {
         @Test
+        @TestMetadata("constraintInteractionBetweenContextAndParameter.kt")
+        public void testConstraintInteractionBetweenContextAndParameter() {
+          runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/overloads/constraintInteractionBetweenContextAndParameter.kt");
+        }
+
+        @Test
         @TestMetadata("IdenticalDeclarations.kt")
         public void testIdenticalDeclarations() {
           runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/overloads/IdenticalDeclarations.kt");
