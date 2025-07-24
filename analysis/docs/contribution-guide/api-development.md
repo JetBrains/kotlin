@@ -1111,13 +1111,18 @@ val inline: Boolean
 val isNullable: Boolean          // Current state
 val hasTypeParameters: Boolean   // Existence check
 val canBeOverridden: Boolean     // Capability check
-val shouldInline: Boolean        // Recommendation
+val shouldBeInlined: Boolean     // Recommendation
 
 // Good: Distinguish between temporal states
-val shouldEvaluate: Boolean   // Future action recommended
-val willEvaluate: Boolean     // Future action will happen
-val isEvaluated: Boolean      // Past/current state
+val shouldBeEvaluated: Boolean   // Future action recommended
+val willBeEvaluated: Boolean     // Future action will happen
+val isEvaluated: Boolean         // Past/current state
 ```
+
+Check that the names of flags are grammatically correct, and they mean exactly what they say.
+
+Mind a difference between an actor and an object. E.g., `shouldResolve` is a property of the resolver itself, while for a declaration the
+correct flag name is `shouldBeResolved`.
 
 ### Name Sealed Classes Appropriately
 
