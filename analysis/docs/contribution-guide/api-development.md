@@ -484,11 +484,28 @@ fun findFunctions(name: Name, scope: KaScope? = null): Sequence<KaFunctionSymbol
 // Good: Explicit overloads
 fun findFunctions(name: Name): Sequence<KaFunctionSymbol>
 fun findFunctions(name: Name, scope: KaScope): Sequence<KaFunctionSymbol>
-
-// Alternative: @JvmOverloads for compatibility (still prefer explicit overloads)
-@JvmOverloads
-fun findFunctions(name: Name, scope: KaScope? = null): Sequence<KaFunctionSymbol>
 ```
+
+While `@JvmOverloads` may look like a solution, it still generates the `$default` function, compatibility of which breaks on signature 
+changes. E.g., for the following function:
+
+```kotlin
+@JvmOverloads 
+fun test(i: Int = 0, s: String = "") {}
+```
+
+The following set of JVM methods is generated:
+
+```java
+public final class FacadeKt {
+    public static final void test(int, java.lang.String);
+    public static void test$default(int, java.lang.String, int, java.lang.Object);
+    public static final void test(int);
+    public static final void test();
+}
+```
+
+Now, if the `test()` function gets a new parameter, the old `$default` will disappear. 
 
 #### Ensure Consistent Behavior Across Overloads
 
