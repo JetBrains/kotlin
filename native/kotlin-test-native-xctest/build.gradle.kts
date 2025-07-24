@@ -87,6 +87,7 @@ fun registerCopyFrameworkTask(target: KonanTarget): TaskProvider<Sync> =
             }
         ) {
             include("XCTest.framework/**")
+            include("XCUIAutomation.framework/**")
         }
     }
 
