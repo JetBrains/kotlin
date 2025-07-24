@@ -17,3 +17,8 @@ open class /Test { // /Test|null[0]
     constructor <init>() // /Test.<init>|<init>(){}[0]
 }
 final fun <#A: kotlin/Any> /test1() // /test1|test1(){0§<kotlin.Any>}[0]
+final fun <#A: /NoSuperTypeMarker & kotlin/Any> /test2() // /test2|test2(){0§<kotlin.Any&NoSuperTypeMarker>}[0]
+final fun <#A: /NoSuperTypeMarker> /test3() // /test3|test3(){0§<kotlin.Any?&NoSuperTypeMarker>}[0]
+final fun <#A: /Test? & kotlin/Any> /test4() // /test4|test4(){0§<kotlin.Any&Test?>}[0]
+final fun <#A: /Test?> /test5() // /test5|test5(){0§<kotlin.Any?&Test?>}[0]
+final fun <#A: /Test & kotlin/Any, #B: #A> /test6() // /test6|test6(){0§<kotlin.Any&Test>;1§<0:0>}[0]
