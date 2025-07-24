@@ -33,6 +33,9 @@ fun main(args: Array<String>) {
         // Multimodal infra is not supported. Also, we don't use ES modules for cross-module refs in Wasm
         "crossModuleRef", "crossModuleRefPerFile", "crossModuleRefPerModule"
     )
+    // TODO: Remove excludedPattern below after fix of KT-78960 (it's simpler to exclude temporarily than to split test `boxInline/innerClasses/kt12126.kt`)
+    val excludedPatternForBoxInlineTestsWithInliner = "kt12126.kt"
+
 
     generateTestGroupSuiteWithJUnit5(args) {
         testGroup("wasm/wasm.tests/tests-gen", "compiler/testData") {
@@ -104,6 +107,12 @@ fun main(args: Array<String>) {
 
             testClass<AbstractFirWasmJsCodegenBoxWithInlinedFunInKlibTest> {
                 model("codegen/box", pattern = jsTranslatorTestPattern, excludeDirs = jvmOnlyBoxTests + k1BoxTestDir)
+                model("codegen/boxInline", pattern = jsTranslatorTestPattern, excludedPattern = excludedPatternForBoxInlineTestsWithInliner)
+            }
+
+            testClass<AbstractFirWasmJsCodegenSplittingWithInlinedFunInKlibTest> {
+                model("codegen/box", pattern = jsTranslatorTestPattern, excludeDirs = jvmOnlyBoxTests + k1BoxTestDir)
+                model("codegen/boxInline", pattern = jsTranslatorTestPattern, excludedPattern = excludedPatternForBoxInlineTestsWithInliner)
             }
 
             testClass<AbstractFirWasmJsCodegenBoxInlineTest> {

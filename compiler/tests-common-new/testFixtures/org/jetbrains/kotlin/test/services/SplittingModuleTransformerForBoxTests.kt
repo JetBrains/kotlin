@@ -47,7 +47,7 @@ class SplittingModuleTransformerForBoxTests(
         val realFiles = module.files.filterNot { it.isAdditional }
         if (realFiles.size < 2) return moduleStructure // Cannot split single-file tests into two modules. SplittingTestConfigurator will skip this test
         val additionalFiles = module.files.filter { it.isAdditional }
-        val boxFiles = realFiles.filter { it.originalContent.contains("fun box()") }
+        val boxFiles = realFiles.filter { it.originalContent.contains("fun box()") || it.name == "entry.mjs" }
         val secondModuleFile = when (boxFiles.size) {
             1 -> boxFiles.single()
             0 -> error("Codegen test should contain one global `fun box()`")
