@@ -551,7 +551,7 @@ private fun FirDeclarationCollector<*>.getConflictState(
 
     return if (session.languageVersionSettings.supportsFeature(LanguageFeature.ContextParameters)) {
         overloadabilityHelper.getConflictStateWithContextParameters(declaration, conflicting)
-    } else if (overloadabilityHelper.isConflicting(declaration, conflicting, ignoreContextParameters = false)) {
+    } else if (overloadabilityHelper.isConflicting(declaration, conflicting)) {
         ConflictState.Conflict
     } else {
         ConflictState.NoConflict
@@ -562,10 +562,6 @@ private fun FirDeclarationOverloadabilityHelper.getConflictStateWithContextParam
     declaration: FirCallableSymbol<*>,
     conflicting: FirCallableSymbol<*>,
 ): ConflictState {
-    if (!isConflicting(declaration, conflicting, ignoreContextParameters = true)) {
-        return ConflictState.NoConflict
-    }
-
     return when (getContextParameterShadowing(declaration, conflicting)) {
         BothWays -> ConflictState.Conflict
         Shadowing -> ConflictState.ContextParameterShadowing
