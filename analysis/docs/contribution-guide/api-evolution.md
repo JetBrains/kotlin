@@ -14,7 +14,7 @@ The Analysis API consists of several interconnected components, each serving a s
     [`KtDeclaration`](https://github.com/JetBrains/kotlin/blob/master/compiler/psi/psi-api/src/org/jetbrains/kotlin/psi/KtDeclaration.java),
     and [`KtExpression`](https://github.com/JetBrains/kotlin/blob/master/compiler/psi/psi-api/src/org/jetbrains/kotlin/psi/KtExpression.java)
 
-- **Analysis API Core** ([source](https://github.com/JetBrains/kotlin/tree/master/analysis/analysis-api))
+- **Analysis API Surface** ([source](https://github.com/JetBrains/kotlin/tree/master/analysis/analysis-api))
     - User-facing layer of the Analysis API. Maps the Kotlin PSI to its semantic representation
     - Key entities: [`KaSession`](https://kotlin.github.io/analysis-api/fundamentals.html#kasession),
       [`KaSymbol`](https://kotlin.github.io/analysis-api/symbols.html), [`KaType`](https://kotlin.github.io/analysis-api/types.html)
@@ -54,7 +54,7 @@ Every part of the Analysis API falls under one of these stability categories:
     - Strong source and binary backward compatibility
     - Changes follow strict deprecation cycles
     - Applies to
-        - *Analysis API Core* (excluding declarations with opt-ins)
+        - *Analysis API Surface* (excluding declarations with opt-ins)
 
 - **Unstable API**
     - May evolve without deprecation warnings
@@ -72,7 +72,7 @@ Every part of the Analysis API falls under one of these stability categories:
         - *K1* and *K2* implementations of the Analysis API
         - *Platform Interface* implementations
         - *Low-level API*
-        - *Light Classes* (unless explicitly exposed in the *Analysis API Core*)
+        - *Light Classes* (unless explicitly exposed in the *Analysis API Surface*)
         - PSI Reference implementations
         - Declarations annotated with `@KaImplementationDetail`
 
