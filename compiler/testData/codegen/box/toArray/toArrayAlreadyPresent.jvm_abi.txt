@@ -1,21 +1,7 @@
 MODULE main
-	CLASS Impl.class
+	CLASS MyCollection.class
 		CLASS METADATA
-			K1
-				getSize()I
-			K2
-				---
-			K1
-				---
-			K2
-				size
-			FUNCTION clear()V
-				Property: class.metadata.function.modifiers
-					K1
-						public open /* delegation */
-					K2
-						public open /* delegation */ /* must-use-return-value */
-			FUNCTION contains(Ljava/lang/String;)Z
+			FUNCTION contains(Ljava/lang/Object;)Z
 				Property: class.metadata.function.modifiers
 					K1
 						public open /* delegation */ operator
@@ -39,3 +25,9 @@ MODULE main
 						public open /* delegation */ operator
 					K2
 						public open /* delegation */ operator /* must-use-return-value */
+			PROPERTY getSize()I
+				Property: class.metadata.property.modifiers
+					K1
+						public open /* delegation */
+					K2
+						public open /* delegation */ /* must-use-return-value */

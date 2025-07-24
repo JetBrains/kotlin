@@ -1,0 +1,51 @@
+MODULE main
+	CLASS AMap1.class
+		CLASS METADATA
+			FUNCTION containsKey(Ljava/lang/Object;)Z
+				Property: class.metadata.function.modifiers
+					K1
+						public open /* delegation */
+					K2
+						public open /* delegation */ /* must-use-return-value */
+			FUNCTION containsValue(Ljava/lang/Object;)Z
+				Property: class.metadata.function.modifiers
+					K1
+						public open /* delegation */
+					K2
+						public open /* delegation */ /* must-use-return-value */
+			FUNCTION get(Ljava/lang/Object;)Ljava/lang/Object;
+				Property: class.metadata.function.modifiers
+					K1
+						public open /* delegation */ operator
+					K2
+						public open /* delegation */ operator /* must-use-return-value */
+			FUNCTION isEmpty()Z
+				Property: class.metadata.function.modifiers
+					K1
+						public open /* delegation */
+					K2
+						public open /* delegation */ /* must-use-return-value */
+			PROPERTY getEntries()Ljava/util/Set;
+				Property: class.metadata.property.modifiers
+					K1
+						public open /* delegation */
+					K2
+						public open /* delegation */ /* must-use-return-value */
+			PROPERTY getKeys()Ljava/util/Set;
+				Property: class.metadata.property.modifiers
+					K1
+						public open /* delegation */
+					K2
+						public open /* delegation */ /* must-use-return-value */
+			PROPERTY getSize()I
+				Property: class.metadata.property.modifiers
+					K1
+						public open /* delegation */
+					K2
+						public open /* delegation */ /* must-use-return-value */
+			PROPERTY getValues()Ljava/util/Collection;
+				Property: class.metadata.property.modifiers
+					K1
+						public open /* delegation */
+					K2
+						public open /* delegation */ /* must-use-return-value */

@@ -1,5 +1,5 @@
 // TARGET_BACKEND: JVM
-// JVM_ABI_K1_K2_DIFF: KT-69522
+// JVM_ABI_K1_K2_DIFF: KT-69522, Delegation to stdlib class annotated with @MustUseReturnValue (KT-79125)
 
 // MODULE: lib
 // FILE: Foo.java

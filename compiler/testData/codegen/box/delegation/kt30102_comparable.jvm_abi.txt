@@ -1,0 +1,9 @@
+MODULE main
+	CLASS BooleanWrap.class
+		CLASS METADATA
+			FUNCTION compareTo(Z)I
+				Property: class.metadata.function.modifiers
+					K1
+						public open /* delegation */ operator
+					K2
+						public open /* delegation */ operator /* must-use-return-value */

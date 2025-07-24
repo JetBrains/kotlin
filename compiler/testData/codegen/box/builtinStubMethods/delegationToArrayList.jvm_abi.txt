@@ -1,143 +1,135 @@
 MODULE main
-	CLASS IC1.class
+	CLASS A.class
 		CLASS METADATA
-			K1
-				getSize-impl(Ljava/util/List;)I
-			K2
-				---
-			K1
-				---
-			K2
-				size
-			FUNCTION add-impl(Ljava/util/List;ILjava/lang/Object;)V
-				Property: class.metadata.function.modifiers
-					K1
-						public open /* delegation */
-					K2
-						public open /* delegation */ /* must-use-return-value */
-			FUNCTION clear-impl(Ljava/util/List;)V
-				Property: class.metadata.function.modifiers
-					K1
-						public open /* delegation */
-					K2
-						public open /* delegation */ /* must-use-return-value */
-			FUNCTION contains-impl(Ljava/util/List;Ljava/lang/Object;)Z
+			FUNCTION contains(Ljava/lang/Object;)Z
 				Property: class.metadata.function.modifiers
 					K1
 						public open /* delegation */ operator
 					K2
 						public open /* delegation */ operator /* must-use-return-value */
-			FUNCTION containsAll-impl(Ljava/util/List;Ljava/util/Collection;)Z
+			FUNCTION containsAll(Ljava/util/Collection;)Z
 				Property: class.metadata.function.modifiers
 					K1
 						public open /* delegation */
 					K2
 						public open /* delegation */ /* must-use-return-value */
-			FUNCTION get-impl(Ljava/util/List;I)Ljava/lang/Object;
+			FUNCTION get(I)Ljava/lang/Object;
 				Property: class.metadata.function.modifiers
 					K1
 						public open /* delegation */ operator
 					K2
 						public open /* delegation */ operator /* must-use-return-value */
-			FUNCTION indexOf-impl(Ljava/util/List;Ljava/lang/Object;)I
+			FUNCTION indexOf(Ljava/lang/Object;)I
 				Property: class.metadata.function.modifiers
 					K1
 						public open /* delegation */
 					K2
 						public open /* delegation */ /* must-use-return-value */
-			FUNCTION isEmpty-impl(Ljava/util/List;)Z
+			FUNCTION isEmpty()Z
 				Property: class.metadata.function.modifiers
 					K1
 						public open /* delegation */
 					K2
 						public open /* delegation */ /* must-use-return-value */
-			FUNCTION iterator-impl(Ljava/util/List;)Ljava/util/Iterator;
+			FUNCTION iterator()Ljava/util/Iterator;
 				Property: class.metadata.function.modifiers
 					K1
 						public open /* delegation */ operator
 					K2
 						public open /* delegation */ operator /* must-use-return-value */
-			FUNCTION lastIndexOf-impl(Ljava/util/List;Ljava/lang/Object;)I
+			FUNCTION lastIndexOf(Ljava/lang/Object;)I
 				Property: class.metadata.function.modifiers
 					K1
 						public open /* delegation */
 					K2
 						public open /* delegation */ /* must-use-return-value */
-			FUNCTION listIterator-impl(Ljava/util/List;)Ljava/util/ListIterator;
+			FUNCTION listIterator()Ljava/util/ListIterator;
 				Property: class.metadata.function.modifiers
 					K1
 						public open /* delegation */
 					K2
 						public open /* delegation */ /* must-use-return-value */
-			FUNCTION listIterator-impl(Ljava/util/List;I)Ljava/util/ListIterator;
+			FUNCTION listIterator(I)Ljava/util/ListIterator;
 				Property: class.metadata.function.modifiers
 					K1
 						public open /* delegation */
 					K2
 						public open /* delegation */ /* must-use-return-value */
-			FUNCTION subList-impl(Ljava/util/List;II)Ljava/util/List;
+			FUNCTION subList(II)Ljava/util/List;
 				Property: class.metadata.function.modifiers
 					K1
 						public open /* delegation */
 					K2
 						public open /* delegation */ /* must-use-return-value */
-	CLASS IC3.class
+			PROPERTY getSize()I
+				Property: class.metadata.property.modifiers
+					K1
+						public open /* delegation */
+					K2
+						public open /* delegation */ /* must-use-return-value */
+	CLASS B.class
 		CLASS METADATA
-			FUNCTION clear-impl(Ljava/util/Map;)V
-				Property: class.metadata.function.modifiers
-					K1
-						public open /* delegation */
-					K2
-						public open /* delegation */ /* must-use-return-value */
-			FUNCTION containsKey-impl(Ljava/util/Map;Ljava/lang/Object;)Z
-				Property: class.metadata.function.modifiers
-					K1
-						public open /* delegation */
-					K2
-						public open /* delegation */ /* must-use-return-value */
-			FUNCTION containsValue-impl(Ljava/util/Map;Ljava/lang/Object;)Z
-				Property: class.metadata.function.modifiers
-					K1
-						public open /* delegation */
-					K2
-						public open /* delegation */ /* must-use-return-value */
-			FUNCTION get-impl(Ljava/util/Map;Ljava/lang/Object;)Ljava/lang/Object;
+			FUNCTION contains(Ljava/lang/String;)Z
 				Property: class.metadata.function.modifiers
 					K1
 						public open /* delegation */ operator
 					K2
 						public open /* delegation */ operator /* must-use-return-value */
-			FUNCTION isEmpty-impl(Ljava/util/Map;)Z
+			FUNCTION containsAll(Ljava/util/Collection;)Z
 				Property: class.metadata.function.modifiers
 					K1
 						public open /* delegation */
 					K2
 						public open /* delegation */ /* must-use-return-value */
-			FUNCTION putAll-impl(Ljava/util/Map;Ljava/util/Map;)V
+			FUNCTION get(I)Ljava/lang/String;
+				Property: class.metadata.function.modifiers
+					K1
+						public open /* delegation */ operator
+					K2
+						public open /* delegation */ operator /* must-use-return-value */
+			FUNCTION indexOf(Ljava/lang/String;)I
 				Property: class.metadata.function.modifiers
 					K1
 						public open /* delegation */
 					K2
 						public open /* delegation */ /* must-use-return-value */
-			PROPERTY getEntries-impl(Ljava/util/Map;)Ljava/util/Set;
-				Property: class.metadata.property.modifiers
+			FUNCTION isEmpty()Z
+				Property: class.metadata.function.modifiers
 					K1
 						public open /* delegation */
 					K2
 						public open /* delegation */ /* must-use-return-value */
-			PROPERTY getKeys-impl(Ljava/util/Map;)Ljava/util/Set;
-				Property: class.metadata.property.modifiers
+			FUNCTION iterator()Ljava/util/Iterator;
+				Property: class.metadata.function.modifiers
+					K1
+						public open /* delegation */ operator
+					K2
+						public open /* delegation */ operator /* must-use-return-value */
+			FUNCTION lastIndexOf(Ljava/lang/String;)I
+				Property: class.metadata.function.modifiers
 					K1
 						public open /* delegation */
 					K2
 						public open /* delegation */ /* must-use-return-value */
-			PROPERTY getSize-impl(Ljava/util/Map;)I
-				Property: class.metadata.property.modifiers
+			FUNCTION listIterator()Ljava/util/ListIterator;
+				Property: class.metadata.function.modifiers
 					K1
 						public open /* delegation */
 					K2
 						public open /* delegation */ /* must-use-return-value */
-			PROPERTY getValues-impl(Ljava/util/Map;)Ljava/util/Collection;
+			FUNCTION listIterator(I)Ljava/util/ListIterator;
+				Property: class.metadata.function.modifiers
+					K1
+						public open /* delegation */
+					K2
+						public open /* delegation */ /* must-use-return-value */
+			FUNCTION subList(II)Ljava/util/List;
+				Property: class.metadata.function.modifiers
+					K1
+						public open /* delegation */
+					K2
+						public open /* delegation */ /* must-use-return-value */
+			PROPERTY getSize()I
 				Property: class.metadata.property.modifiers
 					K1
 						public open /* delegation */

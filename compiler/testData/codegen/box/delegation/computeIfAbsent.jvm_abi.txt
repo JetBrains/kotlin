@@ -1,33 +1,19 @@
 MODULE main
-	CLASS A.class
+	CLASS MyMap.class
 		CLASS METADATA
-			K1
-				getSize()I
-			K2
-				---
-			K1
-				---
-			K2
-				size
-			FUNCTION add(ILjava/lang/String;)V
-				Property: class.metadata.function.modifiers
-					K1
-						public open /* delegation */
-					K2
-						public open /* delegation */ /* must-use-return-value */
 			FUNCTION clear()V
 				Property: class.metadata.function.modifiers
 					K1
 						public open /* delegation */
 					K2
 						public open /* delegation */ /* must-use-return-value */
-			FUNCTION contains(Ljava/lang/String;)Z
+			FUNCTION containsKey(I)Z
 				Property: class.metadata.function.modifiers
 					K1
-						public open /* delegation */ operator
+						public open /* delegation */
 					K2
-						public open /* delegation */ operator /* must-use-return-value */
-			FUNCTION containsAll(Ljava/util/Collection;)Z
+						public open /* delegation */ /* must-use-return-value */
+			FUNCTION containsValue(Ljava/lang/String;)Z
 				Property: class.metadata.function.modifiers
 					K1
 						public open /* delegation */
@@ -39,44 +25,38 @@ MODULE main
 						public open /* delegation */ operator
 					K2
 						public open /* delegation */ operator /* must-use-return-value */
-			FUNCTION indexOf(Ljava/lang/String;)I
-				Property: class.metadata.function.modifiers
-					K1
-						public open /* delegation */
-					K2
-						public open /* delegation */ /* must-use-return-value */
 			FUNCTION isEmpty()Z
 				Property: class.metadata.function.modifiers
 					K1
 						public open /* delegation */
 					K2
 						public open /* delegation */ /* must-use-return-value */
-			FUNCTION iterator()Ljava/util/Iterator;
-				Property: class.metadata.function.modifiers
-					K1
-						public open /* delegation */ operator
-					K2
-						public open /* delegation */ operator /* must-use-return-value */
-			FUNCTION lastIndexOf(Ljava/lang/String;)I
+			FUNCTION putAll(Ljava/util/Map;)V
 				Property: class.metadata.function.modifiers
 					K1
 						public open /* delegation */
 					K2
 						public open /* delegation */ /* must-use-return-value */
-			FUNCTION listIterator()Ljava/util/ListIterator;
-				Property: class.metadata.function.modifiers
+			PROPERTY getEntries()Ljava/util/Set;
+				Property: class.metadata.property.modifiers
 					K1
 						public open /* delegation */
 					K2
 						public open /* delegation */ /* must-use-return-value */
-			FUNCTION listIterator(I)Ljava/util/ListIterator;
-				Property: class.metadata.function.modifiers
+			PROPERTY getKeys()Ljava/util/Set;
+				Property: class.metadata.property.modifiers
 					K1
 						public open /* delegation */
 					K2
 						public open /* delegation */ /* must-use-return-value */
-			FUNCTION subList(II)Ljava/util/List;
-				Property: class.metadata.function.modifiers
+			PROPERTY getSize()I
+				Property: class.metadata.property.modifiers
+					K1
+						public open /* delegation */
+					K2
+						public open /* delegation */ /* must-use-return-value */
+			PROPERTY getValues()Ljava/util/Collection;
+				Property: class.metadata.property.modifiers
 					K1
 						public open /* delegation */
 					K2

@@ -1,0 +1,21 @@
+MODULE main
+	CLASS MyCharSequence.class
+		CLASS METADATA
+			FUNCTION get(I)C
+				Property: class.metadata.function.modifiers
+					K1
+						public open /* delegation */ operator
+					K2
+						public open /* delegation */ operator /* must-use-return-value */
+			FUNCTION subSequence(II)Ljava/lang/CharSequence;
+				Property: class.metadata.function.modifiers
+					K1
+						public open /* delegation */
+					K2
+						public open /* delegation */ /* must-use-return-value */
+			PROPERTY getLength()I
+				Property: class.metadata.property.modifiers
+					K1
+						public open /* delegation */
+					K2
+						public open /* delegation */ /* must-use-return-value */

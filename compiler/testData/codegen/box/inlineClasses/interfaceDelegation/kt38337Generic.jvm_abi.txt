@@ -1,0 +1,51 @@
+MODULE main
+	CLASS DMap.class
+		CLASS METADATA
+			FUNCTION containsKey-czs3aTU(I)Z
+				Property: class.metadata.function.modifiers
+					K1
+						public open /* delegation */
+					K2
+						public open /* delegation */ /* must-use-return-value */
+			FUNCTION containsValue(Ljava/lang/String;)Z
+				Property: class.metadata.function.modifiers
+					K1
+						public open /* delegation */
+					K2
+						public open /* delegation */ /* must-use-return-value */
+			FUNCTION get-czs3aTU(I)Ljava/lang/String;
+				Property: class.metadata.function.modifiers
+					K1
+						public open /* delegation */ operator
+					K2
+						public open /* delegation */ operator /* must-use-return-value */
+			FUNCTION isEmpty()Z
+				Property: class.metadata.function.modifiers
+					K1
+						public open /* delegation */
+					K2
+						public open /* delegation */ /* must-use-return-value */
+			PROPERTY getEntries()Ljava/util/Set;
+				Property: class.metadata.property.modifiers
+					K1
+						public open /* delegation */
+					K2
+						public open /* delegation */ /* must-use-return-value */
+			PROPERTY getKeys()Ljava/util/Set;
+				Property: class.metadata.property.modifiers
+					K1
+						public open /* delegation */
+					K2
+						public open /* delegation */ /* must-use-return-value */
+			PROPERTY getSize()I
+				Property: class.metadata.property.modifiers
+					K1
+						public open /* delegation */
+					K2
+						public open /* delegation */ /* must-use-return-value */
+			PROPERTY getValues()Ljava/util/Collection;
+				Property: class.metadata.property.modifiers
+					K1
+						public open /* delegation */
+					K2
+						public open /* delegation */ /* must-use-return-value */

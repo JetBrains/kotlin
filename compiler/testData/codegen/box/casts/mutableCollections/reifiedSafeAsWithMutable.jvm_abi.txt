@@ -1,4 +1,286 @@
 MODULE main
+	CLASS Itr.class
+		CLASS METADATA
+			FUNCTION hasNext()Z
+				Property: class.metadata.function.modifiers
+					K1
+						public open /* delegation */ operator 
+					K2
+						public open /* delegation */ operator /* must-use-return-value */ 
+			FUNCTION next()Ljava/lang/String;
+				Property: class.metadata.function.modifiers
+					K1
+						public open /* delegation */ operator 
+					K2
+						public open /* delegation */ operator /* must-use-return-value */ 
+	CLASS MItr.class
+		CLASS METADATA
+			FUNCTION hasNext()Z
+				Property: class.metadata.function.modifiers
+					K1
+						public open /* delegation */ operator 
+					K2
+						public open /* delegation */ operator /* must-use-return-value */ 
+			FUNCTION next()Ljava/lang/String;
+				Property: class.metadata.function.modifiers
+					K1
+						public open /* delegation */ operator 
+					K2
+						public open /* delegation */ operator /* must-use-return-value */ 
+			FUNCTION remove()V
+				Property: class.metadata.function.modifiers
+					K1
+						public open /* delegation */ 
+					K2
+						public open /* delegation */ /* must-use-return-value */ 
+	CLASS LItr.class
+		CLASS METADATA
+			FUNCTION hasNext()Z
+				Property: class.metadata.function.modifiers
+					K1
+						public open /* delegation */ operator 
+					K2
+						public open /* delegation */ operator /* must-use-return-value */ 
+			FUNCTION hasPrevious()Z
+				Property: class.metadata.function.modifiers
+					K1
+						public open /* delegation */ 
+					K2
+						public open /* delegation */ /* must-use-return-value */ 
+			FUNCTION next()Ljava/lang/String;
+				Property: class.metadata.function.modifiers
+					K1
+						public open /* delegation */ operator 
+					K2
+						public open /* delegation */ operator /* must-use-return-value */ 
+			FUNCTION nextIndex()I
+				Property: class.metadata.function.modifiers
+					K1
+						public open /* delegation */ 
+					K2
+						public open /* delegation */ /* must-use-return-value */ 
+			FUNCTION previous()Ljava/lang/String;
+				Property: class.metadata.function.modifiers
+					K1
+						public open /* delegation */ 
+					K2
+						public open /* delegation */ /* must-use-return-value */ 
+			FUNCTION previousIndex()I
+				Property: class.metadata.function.modifiers
+					K1
+						public open /* delegation */ 
+					K2
+						public open /* delegation */ /* must-use-return-value */ 
+	CLASS MLItr.class
+		CLASS METADATA
+			FUNCTION add(Ljava/lang/String;)V
+				Property: class.metadata.function.modifiers
+					K1
+						public open /* delegation */ 
+					K2
+						public open /* delegation */ /* must-use-return-value */ 
+			FUNCTION hasNext()Z
+				Property: class.metadata.function.modifiers
+					K1
+						public open /* delegation */ operator 
+					K2
+						public open /* delegation */ operator /* must-use-return-value */ 
+			FUNCTION hasPrevious()Z
+				Property: class.metadata.function.modifiers
+					K1
+						public open /* delegation */ 
+					K2
+						public open /* delegation */ /* must-use-return-value */ 
+			FUNCTION next()Ljava/lang/String;
+				Property: class.metadata.function.modifiers
+					K1
+						public open /* delegation */ operator 
+					K2
+						public open /* delegation */ operator /* must-use-return-value */ 
+			FUNCTION nextIndex()I
+				Property: class.metadata.function.modifiers
+					K1
+						public open /* delegation */ 
+					K2
+						public open /* delegation */ /* must-use-return-value */ 
+			FUNCTION previous()Ljava/lang/String;
+				Property: class.metadata.function.modifiers
+					K1
+						public open /* delegation */ 
+					K2
+						public open /* delegation */ /* must-use-return-value */ 
+			FUNCTION previousIndex()I
+				Property: class.metadata.function.modifiers
+					K1
+						public open /* delegation */ 
+					K2
+						public open /* delegation */ /* must-use-return-value */ 
+			FUNCTION remove()V
+				Property: class.metadata.function.modifiers
+					K1
+						public open /* delegation */ 
+					K2
+						public open /* delegation */ /* must-use-return-value */ 
+			FUNCTION set(Ljava/lang/String;)V
+				Property: class.metadata.function.modifiers
+					K1
+						public open /* delegation */ 
+					K2
+						public open /* delegation */ /* must-use-return-value */ 
+	CLASS It.class
+		CLASS METADATA
+			FUNCTION iterator()Ljava/util/Iterator;
+				Property: class.metadata.function.modifiers
+					K1
+						public open /* delegation */ operator 
+					K2
+						public open /* delegation */ operator /* must-use-return-value */ 
+	CLASS MIt.class
+		CLASS METADATA
+			FUNCTION iterator()Ljava/util/Iterator;
+				Property: class.metadata.function.modifiers
+					K1
+						public open /* delegation */ operator 
+					K2
+						public open /* delegation */ operator /* must-use-return-value */ 
+	CLASS C.class
+		CLASS METADATA
+			FUNCTION contains(Ljava/lang/String;)Z
+				Property: class.metadata.function.modifiers
+					K1
+						public open /* delegation */ operator 
+					K2
+						public open /* delegation */ operator /* must-use-return-value */ 
+			FUNCTION containsAll(Ljava/util/Collection;)Z
+				Property: class.metadata.function.modifiers
+					K1
+						public open /* delegation */ 
+					K2
+						public open /* delegation */ /* must-use-return-value */ 
+			FUNCTION isEmpty()Z
+				Property: class.metadata.function.modifiers
+					K1
+						public open /* delegation */ 
+					K2
+						public open /* delegation */ /* must-use-return-value */ 
+			FUNCTION iterator()Ljava/util/Iterator;
+				Property: class.metadata.function.modifiers
+					K1
+						public open /* delegation */ operator 
+					K2
+						public open /* delegation */ operator /* must-use-return-value */ 
+			PROPERTY getSize()I
+				Property: class.metadata.property.modifiers
+					K1
+						public open /* delegation */ 
+					K2
+						public open /* delegation */ /* must-use-return-value */ 
+	CLASS MC.class
+		CLASS METADATA
+			FUNCTION clear()V
+				Property: class.metadata.function.modifiers
+					K1
+						public open /* delegation */ 
+					K2
+						public open /* delegation */ /* must-use-return-value */ 
+			FUNCTION contains(Ljava/lang/String;)Z
+				Property: class.metadata.function.modifiers
+					K1
+						public open /* delegation */ operator 
+					K2
+						public open /* delegation */ operator /* must-use-return-value */ 
+			FUNCTION containsAll(Ljava/util/Collection;)Z
+				Property: class.metadata.function.modifiers
+					K1
+						public open /* delegation */ 
+					K2
+						public open /* delegation */ /* must-use-return-value */ 
+			FUNCTION isEmpty()Z
+				Property: class.metadata.function.modifiers
+					K1
+						public open /* delegation */ 
+					K2
+						public open /* delegation */ /* must-use-return-value */ 
+			FUNCTION iterator()Ljava/util/Iterator;
+				Property: class.metadata.function.modifiers
+					K1
+						public open /* delegation */ operator 
+					K2
+						public open /* delegation */ operator /* must-use-return-value */ 
+			PROPERTY getSize()I
+				Property: class.metadata.property.modifiers
+					K1
+						public open /* delegation */ 
+					K2
+						public open /* delegation */ /* must-use-return-value */ 
+	CLASS L.class
+		CLASS METADATA
+			FUNCTION contains(Ljava/lang/String;)Z
+				Property: class.metadata.function.modifiers
+					K1
+						public open /* delegation */ operator 
+					K2
+						public open /* delegation */ operator /* must-use-return-value */ 
+			FUNCTION containsAll(Ljava/util/Collection;)Z
+				Property: class.metadata.function.modifiers
+					K1
+						public open /* delegation */ 
+					K2
+						public open /* delegation */ /* must-use-return-value */ 
+			FUNCTION get(I)Ljava/lang/String;
+				Property: class.metadata.function.modifiers
+					K1
+						public open /* delegation */ operator 
+					K2
+						public open /* delegation */ operator /* must-use-return-value */ 
+			FUNCTION indexOf(Ljava/lang/String;)I
+				Property: class.metadata.function.modifiers
+					K1
+						public open /* delegation */ 
+					K2
+						public open /* delegation */ /* must-use-return-value */ 
+			FUNCTION isEmpty()Z
+				Property: class.metadata.function.modifiers
+					K1
+						public open /* delegation */ 
+					K2
+						public open /* delegation */ /* must-use-return-value */ 
+			FUNCTION iterator()Ljava/util/Iterator;
+				Property: class.metadata.function.modifiers
+					K1
+						public open /* delegation */ operator 
+					K2
+						public open /* delegation */ operator /* must-use-return-value */ 
+			FUNCTION lastIndexOf(Ljava/lang/String;)I
+				Property: class.metadata.function.modifiers
+					K1
+						public open /* delegation */ 
+					K2
+						public open /* delegation */ /* must-use-return-value */ 
+			FUNCTION listIterator()Ljava/util/ListIterator;
+				Property: class.metadata.function.modifiers
+					K1
+						public open /* delegation */ 
+					K2
+						public open /* delegation */ /* must-use-return-value */ 
+			FUNCTION listIterator(I)Ljava/util/ListIterator;
+				Property: class.metadata.function.modifiers
+					K1
+						public open /* delegation */ 
+					K2
+						public open /* delegation */ /* must-use-return-value */ 
+			FUNCTION subList(II)Ljava/util/List;
+				Property: class.metadata.function.modifiers
+					K1
+						public open /* delegation */ 
+					K2
+						public open /* delegation */ /* must-use-return-value */ 
+			PROPERTY getSize()I
+				Property: class.metadata.property.modifiers
+					K1
+						public open /* delegation */ 
+					K2
+						public open /* delegation */ /* must-use-return-value */ 
 	CLASS ML.class
 		CLASS METADATA
 			K1
@@ -9,6 +291,110 @@ MODULE main
 				---
 			K2
 				size
+			FUNCTION add(ILjava/lang/String;)V
+				Property: class.metadata.function.modifiers
+					K1
+						public open /* delegation */ 
+					K2
+						public open /* delegation */ /* must-use-return-value */ 
+			FUNCTION clear()V
+				Property: class.metadata.function.modifiers
+					K1
+						public open /* delegation */ 
+					K2
+						public open /* delegation */ /* must-use-return-value */ 
+			FUNCTION contains(Ljava/lang/String;)Z
+				Property: class.metadata.function.modifiers
+					K1
+						public open /* delegation */ operator 
+					K2
+						public open /* delegation */ operator /* must-use-return-value */ 
+			FUNCTION containsAll(Ljava/util/Collection;)Z
+				Property: class.metadata.function.modifiers
+					K1
+						public open /* delegation */ 
+					K2
+						public open /* delegation */ /* must-use-return-value */ 
+			FUNCTION get(I)Ljava/lang/String;
+				Property: class.metadata.function.modifiers
+					K1
+						public open /* delegation */ operator 
+					K2
+						public open /* delegation */ operator /* must-use-return-value */ 
+			FUNCTION indexOf(Ljava/lang/String;)I
+				Property: class.metadata.function.modifiers
+					K1
+						public open /* delegation */ 
+					K2
+						public open /* delegation */ /* must-use-return-value */ 
+			FUNCTION isEmpty()Z
+				Property: class.metadata.function.modifiers
+					K1
+						public open /* delegation */ 
+					K2
+						public open /* delegation */ /* must-use-return-value */ 
+			FUNCTION iterator()Ljava/util/Iterator;
+				Property: class.metadata.function.modifiers
+					K1
+						public open /* delegation */ operator 
+					K2
+						public open /* delegation */ operator /* must-use-return-value */ 
+			FUNCTION lastIndexOf(Ljava/lang/String;)I
+				Property: class.metadata.function.modifiers
+					K1
+						public open /* delegation */ 
+					K2
+						public open /* delegation */ /* must-use-return-value */ 
+			FUNCTION listIterator()Ljava/util/ListIterator;
+				Property: class.metadata.function.modifiers
+					K1
+						public open /* delegation */ 
+					K2
+						public open /* delegation */ /* must-use-return-value */ 
+			FUNCTION listIterator(I)Ljava/util/ListIterator;
+				Property: class.metadata.function.modifiers
+					K1
+						public open /* delegation */ 
+					K2
+						public open /* delegation */ /* must-use-return-value */ 
+			FUNCTION subList(II)Ljava/util/List;
+				Property: class.metadata.function.modifiers
+					K1
+						public open /* delegation */ 
+					K2
+						public open /* delegation */ /* must-use-return-value */ 
+	CLASS S.class
+		CLASS METADATA
+			FUNCTION contains(Ljava/lang/String;)Z
+				Property: class.metadata.function.modifiers
+					K1
+						public open /* delegation */ operator 
+					K2
+						public open /* delegation */ operator /* must-use-return-value */ 
+			FUNCTION containsAll(Ljava/util/Collection;)Z
+				Property: class.metadata.function.modifiers
+					K1
+						public open /* delegation */ 
+					K2
+						public open /* delegation */ /* must-use-return-value */ 
+			FUNCTION isEmpty()Z
+				Property: class.metadata.function.modifiers
+					K1
+						public open /* delegation */ 
+					K2
+						public open /* delegation */ /* must-use-return-value */ 
+			FUNCTION iterator()Ljava/util/Iterator;
+				Property: class.metadata.function.modifiers
+					K1
+						public open /* delegation */ operator 
+					K2
+						public open /* delegation */ operator /* must-use-return-value */ 
+			PROPERTY getSize()I
+				Property: class.metadata.property.modifiers
+					K1
+						public open /* delegation */ 
+					K2
+						public open /* delegation */ /* must-use-return-value */ 
 	CLASS MS.class
 		CLASS METADATA
 			K1
@@ -19,3 +405,145 @@ MODULE main
 				---
 			K2
 				size
+			FUNCTION clear()V
+				Property: class.metadata.function.modifiers
+					K1
+						public open /* delegation */ 
+					K2
+						public open /* delegation */ /* must-use-return-value */ 
+			FUNCTION contains(Ljava/lang/String;)Z
+				Property: class.metadata.function.modifiers
+					K1
+						public open /* delegation */ operator 
+					K2
+						public open /* delegation */ operator /* must-use-return-value */ 
+			FUNCTION containsAll(Ljava/util/Collection;)Z
+				Property: class.metadata.function.modifiers
+					K1
+						public open /* delegation */ 
+					K2
+						public open /* delegation */ /* must-use-return-value */ 
+			FUNCTION isEmpty()Z
+				Property: class.metadata.function.modifiers
+					K1
+						public open /* delegation */ 
+					K2
+						public open /* delegation */ /* must-use-return-value */ 
+			FUNCTION iterator()Ljava/util/Iterator;
+				Property: class.metadata.function.modifiers
+					K1
+						public open /* delegation */ operator 
+					K2
+						public open /* delegation */ operator /* must-use-return-value */ 
+	CLASS M.class
+		CLASS METADATA
+			FUNCTION containsKey(Ljava/lang/String;)Z
+				Property: class.metadata.function.modifiers
+					K1
+						public open /* delegation */ 
+					K2
+						public open /* delegation */ /* must-use-return-value */ 
+			FUNCTION containsValue(Ljava/lang/String;)Z
+				Property: class.metadata.function.modifiers
+					K1
+						public open /* delegation */ 
+					K2
+						public open /* delegation */ /* must-use-return-value */ 
+			FUNCTION get(Ljava/lang/String;)Ljava/lang/String;
+				Property: class.metadata.function.modifiers
+					K1
+						public open /* delegation */ operator 
+					K2
+						public open /* delegation */ operator /* must-use-return-value */ 
+			FUNCTION isEmpty()Z
+				Property: class.metadata.function.modifiers
+					K1
+						public open /* delegation */ 
+					K2
+						public open /* delegation */ /* must-use-return-value */ 
+			PROPERTY getEntries()Ljava/util/Set;
+				Property: class.metadata.property.modifiers
+					K1
+						public open /* delegation */ 
+					K2
+						public open /* delegation */ /* must-use-return-value */ 
+			PROPERTY getKeys()Ljava/util/Set;
+				Property: class.metadata.property.modifiers
+					K1
+						public open /* delegation */ 
+					K2
+						public open /* delegation */ /* must-use-return-value */ 
+			PROPERTY getSize()I
+				Property: class.metadata.property.modifiers
+					K1
+						public open /* delegation */ 
+					K2
+						public open /* delegation */ /* must-use-return-value */ 
+			PROPERTY getValues()Ljava/util/Collection;
+				Property: class.metadata.property.modifiers
+					K1
+						public open /* delegation */ 
+					K2
+						public open /* delegation */ /* must-use-return-value */ 
+	CLASS MM.class
+		CLASS METADATA
+			FUNCTION clear()V
+				Property: class.metadata.function.modifiers
+					K1
+						public open /* delegation */ 
+					K2
+						public open /* delegation */ /* must-use-return-value */ 
+			FUNCTION containsKey(Ljava/lang/String;)Z
+				Property: class.metadata.function.modifiers
+					K1
+						public open /* delegation */ 
+					K2
+						public open /* delegation */ /* must-use-return-value */ 
+			FUNCTION containsValue(Ljava/lang/String;)Z
+				Property: class.metadata.function.modifiers
+					K1
+						public open /* delegation */ 
+					K2
+						public open /* delegation */ /* must-use-return-value */ 
+			FUNCTION get(Ljava/lang/String;)Ljava/lang/String;
+				Property: class.metadata.function.modifiers
+					K1
+						public open /* delegation */ operator 
+					K2
+						public open /* delegation */ operator /* must-use-return-value */ 
+			FUNCTION isEmpty()Z
+				Property: class.metadata.function.modifiers
+					K1
+						public open /* delegation */ 
+					K2
+						public open /* delegation */ /* must-use-return-value */ 
+			FUNCTION putAll(Ljava/util/Map;)V
+				Property: class.metadata.function.modifiers
+					K1
+						public open /* delegation */ 
+					K2
+						public open /* delegation */ /* must-use-return-value */ 
+			PROPERTY getEntries()Ljava/util/Set;
+				Property: class.metadata.property.modifiers
+					K1
+						public open /* delegation */ 
+					K2
+						public open /* delegation */ /* must-use-return-value */ 
+			PROPERTY getKeys()Ljava/util/Set;
+				Property: class.metadata.property.modifiers
+					K1
+						public open /* delegation */ 
+					K2
+						public open /* delegation */ /* must-use-return-value */ 
+			PROPERTY getSize()I
+				Property: class.metadata.property.modifiers
+					K1
+						public open /* delegation */ 
+					K2
+						public open /* delegation */ /* must-use-return-value */ 
+			PROPERTY getValues()Ljava/util/Collection;
+				Property: class.metadata.property.modifiers
+					K1
+						public open /* delegation */ 
+					K2
+						public open /* delegation */ /* must-use-return-value */ 

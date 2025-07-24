@@ -1,27 +1,7 @@
 MODULE main
-	CLASS A.class
+	CLASS ContentBoxDelegate.class
 		CLASS METADATA
-			K1
-				getSize()I
-			K2
-				---
-			K1
-				---
-			K2
-				size
-			FUNCTION add(ILjava/lang/String;)V
-				Property: class.metadata.function.modifiers
-					K1
-						public open /* delegation */
-					K2
-						public open /* delegation */ /* must-use-return-value */
-			FUNCTION clear()V
-				Property: class.metadata.function.modifiers
-					K1
-						public open /* delegation */
-					K2
-						public open /* delegation */ /* must-use-return-value */
-			FUNCTION contains(Ljava/lang/String;)Z
+			FUNCTION contains(LContent;)Z
 				Property: class.metadata.function.modifiers
 					K1
 						public open /* delegation */ operator
@@ -33,13 +13,13 @@ MODULE main
 						public open /* delegation */
 					K2
 						public open /* delegation */ /* must-use-return-value */
-			FUNCTION get(I)Ljava/lang/String;
+			FUNCTION get(I)LContent;
 				Property: class.metadata.function.modifiers
 					K1
 						public open /* delegation */ operator
 					K2
 						public open /* delegation */ operator /* must-use-return-value */
-			FUNCTION indexOf(Ljava/lang/String;)I
+			FUNCTION indexOf(LContent;)I
 				Property: class.metadata.function.modifiers
 					K1
 						public open /* delegation */
@@ -57,7 +37,7 @@ MODULE main
 						public open /* delegation */ operator
 					K2
 						public open /* delegation */ operator /* must-use-return-value */
-			FUNCTION lastIndexOf(Ljava/lang/String;)I
+			FUNCTION lastIndexOf(LContent;)I
 				Property: class.metadata.function.modifiers
 					K1
 						public open /* delegation */
@@ -77,6 +57,12 @@ MODULE main
 						public open /* delegation */ /* must-use-return-value */
 			FUNCTION subList(II)Ljava/util/List;
 				Property: class.metadata.function.modifiers
+					K1
+						public open /* delegation */
+					K2
+						public open /* delegation */ /* must-use-return-value */
+			PROPERTY getSize()I
+				Property: class.metadata.property.modifiers
 					K1
 						public open /* delegation */
 					K2

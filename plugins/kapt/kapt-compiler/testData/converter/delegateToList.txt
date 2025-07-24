@@ -5,37 +5,37 @@
  *   public constructor(wrappedList: kotlin/collections/List<T#0>)
  *
  *   // signature: contains(Ljava/lang/Object;)Z
- *   public open (* delegation *) operator fun contains(element: T#0): kotlin/Boolean
+ *   public open (* delegation *) operator (* must-use-return-value *) fun contains(element: T#0): kotlin/Boolean
  *
  *   // signature: containsAll(Ljava/util/Collection;)Z
- *   public open (* delegation *) fun containsAll(elements: kotlin/collections/Collection<T#0>): kotlin/Boolean
+ *   public open (* delegation *) (* must-use-return-value *) fun containsAll(elements: kotlin/collections/Collection<T#0>): kotlin/Boolean
  *
  *   // signature: get(I)Ljava/lang/Object;
- *   public open (* delegation *) operator fun get(index: kotlin/Int): T#0
+ *   public open (* delegation *) operator (* must-use-return-value *) fun get(index: kotlin/Int): T#0
  *
  *   // signature: indexOf(Ljava/lang/Object;)I
- *   public open (* delegation *) fun indexOf(element: T#0): kotlin/Int
+ *   public open (* delegation *) (* must-use-return-value *) fun indexOf(element: T#0): kotlin/Int
  *
  *   // signature: isEmpty()Z
- *   public open (* delegation *) fun isEmpty(): kotlin/Boolean
+ *   public open (* delegation *) (* must-use-return-value *) fun isEmpty(): kotlin/Boolean
  *
  *   // signature: iterator()Ljava/util/Iterator;
- *   public open (* delegation *) operator fun iterator(): kotlin/collections/Iterator<T#0>
+ *   public open (* delegation *) operator (* must-use-return-value *) fun iterator(): kotlin/collections/Iterator<T#0>
  *
  *   // signature: lastIndexOf(Ljava/lang/Object;)I
- *   public open (* delegation *) fun lastIndexOf(element: T#0): kotlin/Int
+ *   public open (* delegation *) (* must-use-return-value *) fun lastIndexOf(element: T#0): kotlin/Int
  *
  *   // signature: listIterator()Ljava/util/ListIterator;
- *   public open (* delegation *) fun listIterator(): kotlin/collections/ListIterator<T#0>
+ *   public open (* delegation *) (* must-use-return-value *) fun listIterator(): kotlin/collections/ListIterator<T#0>
  *
  *   // signature: listIterator(I)Ljava/util/ListIterator;
- *   public open (* delegation *) fun listIterator(index: kotlin/Int): kotlin/collections/ListIterator<T#0>
+ *   public open (* delegation *) (* must-use-return-value *) fun listIterator(index: kotlin/Int): kotlin/collections/ListIterator<T#0>
  *
  *   // signature: subList(II)Ljava/util/List;
- *   public open (* delegation *) fun subList(fromIndex: kotlin/Int, toIndex: kotlin/Int): kotlin/collections/List<T#0>
+ *   public open (* delegation *) (* must-use-return-value *) fun subList(fromIndex: kotlin/Int, toIndex: kotlin/Int): kotlin/collections/List<T#0>
  *
  *   // getter: getSize()I
- *   public open (* delegation *) val size: kotlin/Int
+ *   public open (* delegation *) (* must-use-return-value *) val size: kotlin/Int
  *     public open get
  *
  *   // field: wrappedList:Ljava/util/List;

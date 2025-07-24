@@ -1,7 +1,7 @@
 // TARGET_BACKEND: JVM
 // FULL_JDK
 // ISSUE: KT-65555
-// JVM_ABI_K1_K2_DIFF: KT-69522
+// JVM_ABI_K1_K2_DIFF: KT-69522, Delegation to stdlib class annotated with @MustUseReturnValue (KT-79125)
 
 interface MyCollection<E> : Collection<E>
 interface MyList<E> : MyCollection<E>, List<E>

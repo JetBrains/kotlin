@@ -1,4 +1,5 @@
 // TARGET_BACKEND: JVM
+// JVM_ABI_K1_K2_DIFF: Delegation to stdlib class annotated with @MustUseReturnValue (KT-79125)
 
 import java.util.ArrayList
 
