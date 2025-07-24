@@ -6,27 +6,6 @@
 package kotlin.js
 
 /**
- * Marks API related to interoperability with JS as experimental.
- *
- * Note that the behavior of such API may be changed in the future.
- *
- * Usages of such API will be reported as warnings unless an explicit opt-in with
- * the [OptIn] annotation, e.g. `@OptIn(ExperimentalWasmJsInterop::class)`,
- * or with the `-opt-in=kotlin.js.ExperimentalWasmJsInterop` compiler option is given.
- */
-@RequiresOptIn(level = RequiresOptIn.Level.WARNING)
-@MustBeDocumented
-@Retention(AnnotationRetention.BINARY)
-@SinceKotlin("2.2")
-@Target(
-    AnnotationTarget.CLASS,
-    AnnotationTarget.FUNCTION,
-    AnnotationTarget.PROPERTY,
-    AnnotationTarget.TYPEALIAS
-)
-public annotation class ExperimentalWasmJsInterop
-
-/**
  * Denotes an `external` declaration that must be imported from JavaScript module.
  *
  * The annotation can be used on top-level external declarations (classes, properties, functions) and files.
