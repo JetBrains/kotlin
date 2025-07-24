@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.js.config.compileLambdasAsEs6ArrowFunctions
 import org.jetbrains.kotlin.name.JsStandardClassIds
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.compactIfPossible
 import org.jetbrains.kotlin.utils.memoryOptimizedPlus
 
@@ -131,25 +132,24 @@ internal class PrepareSuspendFunctionsForExportLowering(private val context: JsI
     private val jsPrototypeFunctionSymbol = context.intrinsics.jsPrototypeOfSymbol
     private val suspendFunctionClassSymbol = context.irBuiltIns.suspendFunctionN(0).symbol
 
+    private val IrOverridableDeclaration<*>.isInterfaceMethod: Boolean
+        get() = parentClassOrNull?.isInterface == true
+
     override fun transformFlat(declaration: IrDeclaration): List<IrDeclaration>? {
         if (
             declaration !is IrSimpleFunction ||
             declaration.isFakeOverride ||
-            declaration.parentClassOrNull?.isInterface == true ||
             !declaration.isExportedSuspendFunction(context)
         ) return null
 
-        val promisifiedWrapperFunction = generatePromisifiedWrapper(declaration)
-        val isTheFirstRealOverriddenMethod = declaration.overriddenSymbols.isEmpty() || declaration.overriddenSymbols.all {
-            it.owner.parentClassOrNull?.isInterface == true
-        }
+        val isTheFirstRealOverriddenMethod =
+            (declaration.overriddenSymbols.isEmpty() || declaration.overriddenSymbols.all { it.owner.isInterfaceMethod })
+                    && !declaration.isInterfaceMethod
+
+        val promisifiedWrapperFunction = generatePromisifiedWrapper(declaration, isTheFirstRealOverriddenMethod)
 
         return when {
-            declaration.isTopLevel -> listOf(promisifiedWrapperFunction, declaration)
-            !isTheFirstRealOverriddenMethod -> listOf(
-                promisifiedWrapperFunction.apply { isFakeOverride = true },
-                declaration
-            )
+            declaration.isTopLevel || !isTheFirstRealOverriddenMethod -> listOf(promisifiedWrapperFunction, declaration)
             else -> {
                 val bridgeFunction = generateBridgeFunction(declaration, promisifiedWrapperFunction)
 
@@ -224,13 +224,16 @@ internal class PrepareSuspendFunctionsForExportLowering(private val context: JsI
         }.patchDeclarationParents()
     }
 
-    private fun generatePromisifiedWrapper(originalFunc: IrSimpleFunction): IrSimpleFunction {
+    private fun generatePromisifiedWrapper(
+        originalFunc: IrSimpleFunction,
+        originalFunctionIsTheFirstRealMethod: Boolean,
+    ): IrSimpleFunction {
         return context.irFactory.buildFun {
             updateFrom(originalFunc)
             name = Name.identifier("${originalFunc.name.asString()}${PROMISIFIED_WRAPPER_SUFFIX}")
             origin = PROMISIFIED_WRAPPER
             isSuspend = false
-            isFakeOverride = originalFunc.isFakeOverride
+            isFakeOverride = !originalFunc.isInterfaceMethod && !originalFunctionIsTheFirstRealMethod
             modality = Modality.OPEN
             returnType =
                 IrSimpleTypeImpl(promiseClass, SimpleTypeNullability.NOT_SPECIFIED, listOf(originalFunc.returnType), emptyList())
@@ -260,31 +263,33 @@ internal class PrepareSuspendFunctionsForExportLowering(private val context: JsI
 
             originalFunc.annotations = irrelevantAnnotations.compactIfPossible()
 
-            body = context.createIrBuilder(symbol).irBlockBody(this) {
-                val call = irCallWithParametersOf(originalFunc, this@apply)
+            body = runIf(originalFunctionIsTheFirstRealMethod) {
+                context.createIrBuilder(symbol).irBlockBody(this) {
+                    val call = irCallWithParametersOf(originalFunc, this@apply)
 
-                if (!this@PrepareSuspendFunctionsForExportLowering.context.configuration.compileLambdasAsEs6ArrowFunctions) {
-                    val selfSaver = call.dispatchReceiver?.let(::createTmpVariable)
-                    call.dispatchReceiver = selfSaver?.let(::irGet)
+                    if (!this@PrepareSuspendFunctionsForExportLowering.context.configuration.compileLambdasAsEs6ArrowFunctions) {
+                        val selfSaver = call.dispatchReceiver?.let(::createTmpVariable)
+                        call.dispatchReceiver = selfSaver?.let(::irGet)
+                    }
+
+                    val promisifiedSuspendLambda = context.irFactory.buildFun {
+                        name = SpecialNames.NO_NAME_PROVIDED
+                        visibility = DescriptorVisibilities.LOCAL
+                        isSuspend = true
+                        returnType = call.type
+                    }.also {
+                        it.parent = this@apply
+                        it.body = irBlockBody(it) { +irReturn(call) }
+                    }
+
+                    +irReturn(
+                        irCall(promisifyFunctionSymbol).apply {
+                            arguments[0] = JsIrBuilder.buildFunctionExpression(
+                                suspendFunctionClassSymbol.typeWith(call.type),
+                                promisifiedSuspendLambda,
+                            )
+                        })
                 }
-
-                val promisifiedSuspendLambda = context.irFactory.buildFun {
-                    name = SpecialNames.NO_NAME_PROVIDED
-                    visibility = DescriptorVisibilities.LOCAL
-                    isSuspend = true
-                    returnType = call.type
-                }.also {
-                    it.parent = this@apply
-                    it.body = irBlockBody(it) { +irReturn(call) }
-                }
-
-                +irReturn(
-                    irCall(promisifyFunctionSymbol).apply {
-                        arguments[0] = JsIrBuilder.buildFunctionExpression(
-                            suspendFunctionClassSymbol.typeWith(call.type),
-                            promisifiedSuspendLambda,
-                        )
-                    })
             }
         }
     }
