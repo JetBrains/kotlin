@@ -946,6 +946,25 @@ If your API isn't implemented for K1, make it clear:
 val KaCallableSymbol.contextParameters: List<KaContextParameterSymbol>
 ```
 
+Also, if the behavior differs between K1 and K2, describe those differences:
+
+```kotlin
+/**
+ * Compiles the given [file] in-memory (without dumping the compiled binaries to the disk).
+ * The file might be either a Kotlin source file, or a [KtCodeFragment].
+ * 
+ * The function rethrows exceptions from the compiler, wrapped in [KaCodeCompilationException]. The implementation should wrap the
+ * `compile()` call into a `try`/`catch` block when necessary.
+ * 
+ * ### K1 Implementation Limitations
+ * 
+ * The K1 implementation of [compile] does not support [KtCodeFragment]s.
+ * The only existing use-case for code fragment compilation is code evaluation in the JVM debugger, and in the K1 Kotlin plugin for
+ * IntelliJ IDEA compilation is implemented on the IDE side.
+ */
+fun compile(file: KtFile, configuration: CompilerConfiguration, target: KaCompilerTarget): KaCompilationResult
+```
+
 ## Naming Conventions
 
 ### Use Common Property and Parameter Names
