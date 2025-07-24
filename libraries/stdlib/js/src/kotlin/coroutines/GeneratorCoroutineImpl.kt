@@ -112,7 +112,7 @@ internal class GeneratorCoroutineImpl(val resultContinuation: Continuation<Any?>
                 current = completion
             } else {
                 return if (currentException != null) {
-                    completion.resumeWithException(currentException!!)
+                    completion.resumeWithException(currentException)
                 } else {
                     completion.resume(currentResult)
                 }

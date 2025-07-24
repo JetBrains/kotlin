@@ -606,9 +606,9 @@ val stdlibBuildTask by tasks.registering(KonanCompileTask::class) {
             "-opt-in=kotlin.ExperimentalMultiplatform",
             "-opt-in=kotlin.native.internal.InternalForKotlinNative",
             "-language-version",
-            "2.2",
+            "2.3",
             "-api-version",
-            "2.2",
+            "2.3",
             "-Xdont-warn-on-error-suppression",
             "-Xstdlib-compilation",
 

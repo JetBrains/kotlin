@@ -58,7 +58,7 @@ internal abstract class CoroutineImpl(
                 } else {
                     // top-level completion reached -- invoke and return
                     if (currentException != null) {
-                        completion.resumeWithException(currentException!!)
+                        completion.resumeWithException(currentException)
                     } else {
                         completion.resume(currentResult)
                     }
