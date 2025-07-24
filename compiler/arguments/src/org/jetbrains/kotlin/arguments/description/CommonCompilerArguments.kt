@@ -72,6 +72,29 @@ val actualCommonCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLev
     }
 
     compilerArgument {
+        name = "header"
+        compilerName = "headerMode"
+        description = """
+                Enable header compilation mode.
+                In this mode, the compiler produces class files that only contain the 'skeleton' of the classes to be
+                compiled but the method bodies of all the implementations are empty.  This is used to speed up parallel compilation
+                build systems where header libraries can be used to replace downstream dependencies for which we only need to
+                see the type names and method signatures required to compile a given translation unit.
+                """.trimIndent().asReleaseDependent()
+        valueType = BooleanType.defaultFalse
+
+        additionalAnnotations(
+            GradleOption(
+                value = DefaultValue.BOOLEAN_FALSE_DEFAULT,
+                gradleInputType = GradleInputTypes.INPUT
+            )
+        )
+
+        @OptIn(TemporaryCompilerArgumentLifecycle::class)
+        stubLifecycle()
+    }
+
+    compilerArgument {
         name = "progressive"
         deprecatedName = "Xprogressive"
         compilerName = "progressiveMode"
