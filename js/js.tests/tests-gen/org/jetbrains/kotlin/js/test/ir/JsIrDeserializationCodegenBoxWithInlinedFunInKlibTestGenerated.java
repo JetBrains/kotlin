@@ -28350,6 +28350,12 @@ public class JsIrDeserializationCodegenBoxWithInlinedFunInKlibTestGenerated exte
       }
 
       @Test
+      @TestMetadata("nameBasedDestructuringUnderscoreWithRenaming.kt")
+      public void testNameBasedDestructuringUnderscoreWithRenaming() {
+        runTest("compiler/testData/codegen/box/multiDecl/nameBasedDestructuringUnderscoreWithRenaming.kt");
+      }
+
+      @Test
       @TestMetadata("positionalDestructuringFullForm.kt")
       public void testPositionalDestructuringFullForm() {
         runTest("compiler/testData/codegen/box/multiDecl/positionalDestructuringFullForm.kt");
