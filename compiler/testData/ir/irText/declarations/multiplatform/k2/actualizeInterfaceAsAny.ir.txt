@@ -113,5 +113,21 @@ FILE fqName:<root> fileName:/common.kt
   FUN name:test1 visibility:public modality:FINAL returnType:kotlin.Unit
     TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any] reified:false
     BLOCK_BODY
+  FUN name:test2 visibility:public modality:FINAL returnType:kotlin.Unit
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any; <root>.NoSuperTypeMarker] reified:false
+    BLOCK_BODY
+  FUN name:test3 visibility:public modality:FINAL returnType:kotlin.Unit
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?; <root>.NoSuperTypeMarker] reified:false
+    BLOCK_BODY
+  FUN name:test4 visibility:public modality:FINAL returnType:kotlin.Unit
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any; <root>.Test?] reified:false
+    BLOCK_BODY
+  FUN name:test5 visibility:public modality:FINAL returnType:kotlin.Unit
+    TYPE_PARAMETER name:T index:0 variance: superTypes:[kotlin.Any?; <root>.Test?] reified:false
+    BLOCK_BODY
+  FUN name:test6 visibility:public modality:FINAL returnType:kotlin.Unit
+    TYPE_PARAMETER name:A index:0 variance: superTypes:[kotlin.Any; <root>.Test] reified:false
+    TYPE_PARAMETER name:B index:1 variance: superTypes:[A of <root>.test6] reified:false
+    BLOCK_BODY
 FILE fqName:<root> fileName:/main.kt
   TYPEALIAS name:Marker visibility:public expandedType:kotlin.Any[actual]

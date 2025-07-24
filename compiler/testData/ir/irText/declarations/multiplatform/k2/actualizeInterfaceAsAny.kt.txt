@@ -39,6 +39,21 @@ interface NoSuperTypeMarker {
 fun <T : Any> test1() {
 }
 
+fun <T> test2() where T : Any, T : NoSuperTypeMarker {
+}
+
+fun <T> test3() where T : Any?, T : NoSuperTypeMarker {
+}
+
+fun <T> test4() where T : Test?, T : Any {
+}
+
+fun <T> test5() where T : Test?, T : Any? {
+}
+
+fun <A, B : A> test6() where A : Test, A : Any {
+}
+
 // FILE: main.kt
 
 actual typealias Marker = Any
