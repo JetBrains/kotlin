@@ -85,13 +85,15 @@ fun TestProject.makeSnapshotTo(
             |""".trimMargin()
         )
 
-        setPosixFilePermissions(
-            setOf(
-                PosixFilePermission.OWNER_EXECUTE,
-                PosixFilePermission.OWNER_READ,
-                PosixFilePermission.OWNER_WRITE,
+        if ("Windows" !in System.getProperty("os.name")) {
+            setPosixFilePermissions(
+                setOf(
+                    PosixFilePermission.OWNER_EXECUTE,
+                    PosixFilePermission.OWNER_READ,
+                    PosixFilePermission.OWNER_WRITE,
+                )
             )
-        )
+        }
     }
 
     dest.resolve("run.bat").run {
