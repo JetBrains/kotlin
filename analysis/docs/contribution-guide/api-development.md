@@ -939,7 +939,7 @@ If your API isn't implemented for K1, make it clear:
 /**
  * A list of [KaContextParameterSymbol]s directly declared in the callable symbol.
  *
- * As context parameters are not supported in the classic Kotlin compiler,
+ * As context parameters are not supported in the K1 Kotlin compiler,
  * in the K1 API implementation the resulting list is always empty.
  */
 @KaK1Unsupported
@@ -964,6 +964,9 @@ Also, if the behavior differs between K1 and K2, describe those differences:
  */
 fun compile(file: KtFile, configuration: CompilerConfiguration, target: KaCompilerTarget): KaCompilationResult
 ```
+
+Always refer to the K1 compiler and the K1 implementation simply as "K1".
+Avoid adjectives such as "legacy", "classic", "old" or similar.
 
 ## Naming Conventions
 
