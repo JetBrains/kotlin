@@ -35706,6 +35706,12 @@ public class PhasedJvmDiagnosticLightTreeTestGenerated extends AbstractPhasedJvm
       }
 
       @Test
+      @TestMetadata("confusingNoneApplicable.kt")
+      public void testConfusingNoneApplicable() {
+        runTest("compiler/testData/diagnostics/tests/resolve/confusingNoneApplicable.kt");
+      }
+
+      @Test
       @TestMetadata("constructorVsCompanion.kt")
       public void testConstructorVsCompanion() {
         runTest("compiler/testData/diagnostics/tests/resolve/constructorVsCompanion.kt");
