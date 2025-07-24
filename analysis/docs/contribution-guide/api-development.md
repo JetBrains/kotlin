@@ -1293,4 +1293,4 @@ fun findFunctions(name: Name): Sequence<KaFunctionSymbol> {
 - [Kotlin Evolution and Enhancement Process (KEEP)](https://github.com/Kotlin/KEEP)
 - [JVM Binary Compatibility Specification](https://docs.oracle.com/javase/specs/jls/se24/html/jls-13.html)
     - [API design practices for Java from IBM](https://developer.ibm.com/articles/api-design-practices-for-java/)
-- [Kotlin API Design Guidelines](https://kotlinlang.org/docs/api-guidelines.html)
+- [Kotlin API Design Guidelines](https://kotlinlang.org/docs/api-guidelines-introduction.html)
