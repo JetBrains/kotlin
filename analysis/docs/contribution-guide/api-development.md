@@ -63,7 +63,7 @@ Use Kotlin's language features to create convenient and safe endpoints.
 ```kotlin
 // Leverage extension functions for better readability
 val KaClassSymbol.allSuperTypes: Sequence<KaType>       // Good
-fun allSuperTypes(symbol: KaClassSymbol): List<KaType>  // Less idiomatic
+fun allSuperTypes(symbol: KaClassSymbol): Sequence<KaType>  // Less idiomatic
 
 // Use Kotlin function types instead of Java interfaces
 fun processTypes(filter: (KaType) -> Boolean)  // Good
