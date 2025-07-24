@@ -42,7 +42,7 @@ Provide simple, intuitive solutions for frequent use cases while offering sophis
 You can apply different stability guarantees to each tier.
 
 ```kotlin
-// Simple API for common cases: get a target symbol alone
+// Simple API for common cases: get just the target symbol
 expression.mainReference.resolveToSymbol()
 
 // Advanced API for complex scenarios: get all information about the call
