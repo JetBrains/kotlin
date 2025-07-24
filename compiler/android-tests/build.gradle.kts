@@ -39,7 +39,7 @@ sourceSets {
 
 optInToK1Deprecation()
 
-projectTest {
+projectTest(jUnitMode = JUnitMode.JUnit4) {
     dependsOn(":dist")
     val jdkHome = project.getToolchainJdkHomeFor(JdkMajorVersion.JDK_1_8)
     doFirst {

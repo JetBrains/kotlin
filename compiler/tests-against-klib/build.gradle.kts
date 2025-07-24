@@ -33,7 +33,7 @@ compilerTests {
     testData(project(":compiler").isolated, "testData/codegen/boxKlib")
 }
 
-projectTest(parallel = true) {
+projectTest(parallel = true, jUnitMode = JUnitMode.JUnit4) {
     useJUnitPlatform()
 }
 

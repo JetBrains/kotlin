@@ -91,7 +91,7 @@ fun Test.cleanupInvalidExcludePatternsForTCParallelTests(excludesFilePath: Strin
 fun Project.projectTest(
     taskName: String = "test",
     parallel: Boolean = false,
-    jUnitMode: JUnitMode = JUnitMode.JUnit4,
+    jUnitMode: JUnitMode,
     maxHeapSizeMb: Int? = null,
     minHeapSizeMb: Int? = null,
     maxMetaspaceSizeMb: Int = 512,

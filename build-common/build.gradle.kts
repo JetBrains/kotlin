@@ -42,7 +42,7 @@ sourceSets {
 
 testsJar()
 
-projectTest(parallel = true)
+projectTest(parallel = true, jUnitMode = JUnitMode.JUnit4)
 
 projectTest("testJUnit5", jUnitMode = JUnitMode.JUnit5, parallel = true) {
     useJUnitPlatform()

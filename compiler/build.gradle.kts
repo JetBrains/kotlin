@@ -47,6 +47,7 @@ sourceSets {
 }
 
 projectTest(
+    jUnitMode = JUnitMode.JUnit4,
     parallel = true,
     defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_1_8, JdkMajorVersion.JDK_11_0, JdkMajorVersion.JDK_17_0)
 ) {
@@ -62,7 +63,7 @@ projectTest(
 }
 
 if (kotlinBuildProperties.isTeamcityBuild) {
-    projectTest("fastJarFSLongTests") {
+    projectTest("fastJarFSLongTests", jUnitMode = JUnitMode.JUnit4) {
         include("**/FastJarFSLongTest*")
     }
 } else {

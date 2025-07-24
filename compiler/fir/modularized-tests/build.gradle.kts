@@ -44,7 +44,7 @@ sourceSets {
 
 optInToK1Deprecation()
 
-projectTest(minHeapSizeMb = 8192, maxHeapSizeMb = 8192, reservedCodeCacheSizeMb = 512) {
+projectTest(minHeapSizeMb = 8192, maxHeapSizeMb = 8192, reservedCodeCacheSizeMb = 512, jUnitMode = JUnitMode.JUnit4) {
     dependsOn(":dist")
     systemProperties(project.properties.filterKeys { it.startsWith("fir.") })
     workingDir = rootDir
