@@ -163,15 +163,20 @@ fun deserializeClassToSymbol(
             }
         )
 
+        fun createNestedClassId(nameId: Int): ClassId {
+            return classId.createNestedClassId(Name.identifier(nameResolver.getString(nameId)))
+        }
+
         addDeclarations(
-            classProto.nestedClassNameList.mapNotNull { nestedNameId ->
-                val nestedClassId = classId.createNestedClassId(Name.identifier(nameResolver.getString(nestedNameId)))
-                deserializeNestedClass(nestedClassId, context)?.fir
+            classProto.nestedClassNameList.mapNotNull {
+                deserializeNestedClass(createNestedClassId(it), context)?.fir
             }
         )
 
         addDeclarations(
-            classProto.typeAliasList.mapNotNull { classDeserializer.loadTypeAlias(it, scopeProvider) }
+            classProto.typeAliasList.mapNotNull {
+                classDeserializer.loadTypeAlias(it, createNestedClassId(it.name), scopeProvider)
+            }
         )
 
         addDeclarations(
