@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.messages.MessageCollectorImpl
-import org.jetbrains.kotlin.compilerRunner.MessageCollectorToOutputItemsCollectorAdapter
 import org.jetbrains.kotlin.compilerRunner.OutputItemsCollectorImpl
 import org.jetbrains.kotlin.compilerRunner.toGeneratedFile
 import org.jetbrains.kotlin.config.LanguageVersion
@@ -498,15 +497,10 @@ abstract class IncrementalCompilerRunner<
 
             args.reportOutputFiles = true
             val bufferingMessageCollector = MessageCollectorImpl()
-            val messageCollectorAdapter = MessageCollectorToOutputItemsCollectorAdapter(
-                bufferingMessageCollector,
-                transactionOutputsRegistrar,
-                fileMappingTracker
-            )
 
             val compiledSources = reporter.measure(GradleBuildTime.COMPILATION_ROUND) {
                 runCompiler(
-                    sourcesToCompile, args, caches, services, messageCollectorAdapter,
+                    sourcesToCompile, args, caches, services, bufferingMessageCollector,
                     allKotlinSources, compilationMode is CompilationMode.Incremental
                 )
             }.let { (ec, compiled) ->

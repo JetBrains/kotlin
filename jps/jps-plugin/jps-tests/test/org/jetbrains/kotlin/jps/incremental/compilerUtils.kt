@@ -25,12 +25,11 @@ fun createTestingCompilerEnvironment(
     services: Services
 ): JpsCompilerEnvironment {
     val paths = PathUtil.kotlinPathsForDistDirectoryForTests
-    val wrappedMessageCollector = MessageCollectorToOutputItemsCollectorAdapter(messageCollector, outputItemsCollector)
     return JpsCompilerEnvironment(
         paths,
         services,
         KotlinBuilder.classesToLoadByParent,
-        wrappedMessageCollector,
+        messageCollector,
         outputItemsCollector,
         MockProgressReporter
     )
