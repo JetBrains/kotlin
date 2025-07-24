@@ -17,7 +17,10 @@ import org.jetbrains.kotlin.fir.declarations.builder.buildProperty
 import org.jetbrains.kotlin.fir.declarations.impl.FirDeclarationStatusImpl
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyGetter
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertySetter
+import org.jetbrains.kotlin.fir.diagnostics.ConeSimpleDiagnostic
+import org.jetbrains.kotlin.fir.diagnostics.DiagnosticKind
 import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.buildErrorExpression
 import org.jetbrains.kotlin.fir.expressions.builder.buildPropertyAccessExpression
 import org.jetbrains.kotlin.fir.references.builder.buildSimpleNamedReference
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
@@ -25,6 +28,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirLocalPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularPropertySymbol
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.SpecialNames
 
 interface DestructuringContext<T> {
     val T.returnTypeRef: FirTypeRef
@@ -91,14 +95,25 @@ fun <T> AbstractRawFirBuilder<*>.buildDestructuringVariable(
             name = entry.name
             initializer = interceptExpressionBuilding(entry.source) {
                 if (isNameBased) {
-                    buildPropertyAccessExpression {
-                        val entryFakeSource = entry.source.fakeElement(KtFakeSourceElementKind.DesugaredNameBasedDestructuring)
-                        val initializerFakeSource = entry.initializerSource?.fakeElement(KtFakeSourceElementKind.DesugaredNameBasedDestructuring) ?: entryFakeSource
-                        source = initializerFakeSource
-                        explicitReceiver = generateResolvedAccessExpression(entryFakeSource, container)
-                        calleeReference = buildSimpleNamedReference {
-                            this.source = initializerFakeSource
-                            name = entry.initializerName ?: entry.name
+                    val entryFakeSource = entry.source.fakeElement(KtFakeSourceElementKind.DesugaredNameBasedDestructuring)
+                    val initializerFakeSource = entry.initializerSource?.fakeElement(KtFakeSourceElementKind.DesugaredNameBasedDestructuring) ?: entryFakeSource
+
+                    if (entry.name == SpecialNames.UNDERSCORE_FOR_UNUSED_VAR && entry.initializerName == null) {
+                        buildErrorExpression(
+                            initializerFakeSource,
+                            ConeSimpleDiagnostic(
+                                "Underscore without renaming in destructuring",
+                                DiagnosticKind.UnderscoreWithoutRenamingInDestructuring
+                            )
+                        )
+                    } else {
+                        buildPropertyAccessExpression {
+                            source = initializerFakeSource
+                            explicitReceiver = generateResolvedAccessExpression(entryFakeSource, container)
+                            calleeReference = buildSimpleNamedReference {
+                                this.source = initializerFakeSource
+                                name = entry.initializerName ?: entry.name
+                            }
                         }
                     }
                 } else {

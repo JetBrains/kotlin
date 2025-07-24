@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.SourceElementPositioningStrategies
@@ -25,7 +26,7 @@ object FirUnnamedPropertyChecker : FirPropertyChecker(MppCheckerKind.Common) {
             return
         }
 
-        val isDesugaredComponentCall = declaration.initializer?.source?.kind == KtFakeSourceElementKind.DesugaredComponentFunctionCall
+        val isDesugaredComponentCall = declaration.source?.elementType == KtNodeTypes.DESTRUCTURING_DECLARATION_ENTRY
 
         if (declaration.isVar && !isDesugaredComponentCall) {
             reporter.reportOn(declaration.source, FirErrors.UNNAMED_VAR_PROPERTY)
