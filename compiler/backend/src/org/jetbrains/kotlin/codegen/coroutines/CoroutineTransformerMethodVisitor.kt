@@ -995,7 +995,19 @@ class CoroutineTransformerMethodVisitor(
             }
             cursor = cursor.next
         }
-        return true
+
+        // TODO KT-79682 Below is a temporary workaround for KT-79276, it shall be removed or extended with the proper "full" fix
+        // Check whether the variable range has meaningful operations in it
+        cursor = local.start
+        while (cursor != null && cursor != local.end) {
+            if (cursor.isMeaningful) {
+                // found at least one meaningful operation
+                return true
+            }
+            cursor = cursor.next
+        }
+
+        return false
     }
 
     private fun mapFieldNameToVariable(

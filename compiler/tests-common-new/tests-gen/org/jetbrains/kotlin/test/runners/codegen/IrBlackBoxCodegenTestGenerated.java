@@ -16083,6 +16083,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
       }
 
       @Test
+      @TestMetadata("kt79276.kt")
+      public void testKt79276() {
+        runTest("compiler/testData/codegen/box/coroutines/varSpilling/kt79276.kt");
+      }
+
+      @Test
       @TestMetadata("lambdaInlineClassParamUnspill.kt")
       public void testLambdaInlineClassParamUnspill() {
         runTest("compiler/testData/codegen/box/coroutines/varSpilling/lambdaInlineClassParamUnspill.kt");
