@@ -20,6 +20,8 @@ declare namespace JS_TESTS {
         function generic3<A, B, C, D, E>(a: A, b: B, c: C, d: D): Promise<Nullable<E>>;
         function inlineFun(x: number, callback: (p0: number) => void): Promise<void>;
         interface HolderOfSum {
+            sum(x: number, y: number): Promise<number>;
+            sumNullable(x: Nullable<number>, y: Nullable<number>): Promise<number>;
             readonly __doNotUseOrImplementIt: {
                 readonly "foo.HolderOfSum": unique symbol;
             };

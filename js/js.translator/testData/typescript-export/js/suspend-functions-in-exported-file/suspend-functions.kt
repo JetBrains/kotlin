@@ -5,7 +5,7 @@
 // RUN_PLAIN_BOX_FUNCTION
 // SKIP_NODE_JS
 // INFER_MAIN_MODULE
-// LANGUAGE: +JsExportSuspendFunctions
+// LANGUAGE: +JsAllowExportingSuspendFunctions
 // MODULE: JS_TESTS
 // FILE: suspend-functions.kt
 

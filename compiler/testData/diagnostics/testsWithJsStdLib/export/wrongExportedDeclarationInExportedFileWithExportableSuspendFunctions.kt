@@ -1,7 +1,7 @@
 // OPT_IN: kotlin.js.ExperimentalJsExport
 // RENDER_DIAGNOSTICS_MESSAGES
 // DIAGNOSTICS: -INLINE_CLASS_DEPRECATED
-// LANGUAGE: +JsExportSuspendFunctions
+// LANGUAGE: +JsAllowExportingSuspendFunctions
 @file:JsExport
 package foo
 
