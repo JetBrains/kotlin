@@ -536,6 +536,10 @@ private fun Appendable.invalidSamConversion(case: InvalidSamConversion): Appenda
     is InvalidSamConversion.FunctionIsIncompatible ->
         append("Cannot convert from ").declarationKindName(case.originalOverriddenFunction, capitalized = false)
             .append(" to ").declarationKindName(case.newOverriddenFunction, capitalized = false)
+    is InvalidSamConversion.SamChanged ->
+        append("The single abstract method of ").declarationKindName(case.funInterface, capitalized = false)
+            .append(" changed from ").declarationKindName(case.originalOverriddenFunction, capitalized = false)
+            .append(" to ").declarationKindName(case.newOverriddenFunction, capitalized = false)
 }
 
 private fun Appendable.suspendableCallWithoutCoroutine(): Appendable =

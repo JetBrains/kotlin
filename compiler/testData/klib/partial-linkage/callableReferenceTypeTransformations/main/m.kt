@@ -21,8 +21,8 @@ fun box() = abiTest {
     // The difference between backends comes from how they represent (immidiate) SAM conversions in IR (see UpgradeCallableReferences.upgradeSamConversions).
     // Ideally there should be no difference, but it is acceptable for now.
     if (testMode.isNative) {
-        expectSuccess(1) { getFunInterfaceWithDifferentAbstractFun(1).answer() }
-        expectSuccess(2) { getFunInterfaceWithDifferentAbstractFunAnswer(2) }
+        expectFailure(linkage("Reference to lambda in function 'getFunInterfaceWithDifferentAbstractFun' can not be evaluated: The single abstract method of fun interface 'FunInterfaceWithDifferentAbstractFun' changed from function 'answer' to function 'hijack'")) { getFunInterfaceWithDifferentAbstractFun(1).answer() }
+        expectFailure(linkage("Reference to lambda in function 'getFunInterfaceWithDifferentAbstractFun' can not be evaluated: The single abstract method of fun interface 'FunInterfaceWithDifferentAbstractFun' changed from function 'answer' to function 'hijack'")) { getFunInterfaceWithDifferentAbstractFunAnswer(4) }
     } else {
         expectSuccess(42) { getFunInterfaceWithDifferentAbstractFun(1).answer() }
         expectSuccess(42) { getFunInterfaceWithDifferentAbstractFunAnswer(2) }
@@ -33,8 +33,8 @@ fun box() = abiTest {
     // The difference between backends comes from how they represent (immidiate) SAM conversions in IR (see UpgradeCallableReferences.upgradeSamConversions).
     // Ideally there should be no difference, but it is acceptable for now.
     if (testMode.isNative) {
-        expectSuccess(1) { getFunInterfaceWithDifferentChangedAbstractFun(1).answer() }
-        expectSuccess(2) { getFunInterfaceWithDifferentChangedAbstractFunAnswer(2) }
+        expectFailure(linkage("Reference to lambda in function 'getFunInterfaceWithDifferentChangedAbstractFun' can not be evaluated: The single abstract method of fun interface 'FunInterfaceWithDifferentChangedAbstractFun' changed from function 'answer' to function 'hijack'")) { getFunInterfaceWithDifferentChangedAbstractFun(1).answer() }
+        expectFailure(linkage("Reference to lambda in function 'getFunInterfaceWithDifferentChangedAbstractFun' can not be evaluated: The single abstract method of fun interface 'FunInterfaceWithDifferentChangedAbstractFun' changed from function 'answer' to function 'hijack'")) { getFunInterfaceWithDifferentChangedAbstractFunAnswer(4) }
     } else {
         expectFailure(linkage("Reference to lambda in function 'getFunInterfaceWithDifferentChangedAbstractFun' can not be evaluated: Cannot convert from function 'invoke' to function 'hijack'")) { getFunInterfaceWithDifferentChangedAbstractFun(1).answer() }
         expectFailure(linkage("Reference to lambda in function 'getFunInterfaceWithDifferentChangedAbstractFun' can not be evaluated: Cannot convert from function 'invoke' to function 'hijack'")) { getFunInterfaceWithDifferentChangedAbstractFunAnswer(4) }
