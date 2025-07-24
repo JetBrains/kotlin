@@ -126,19 +126,21 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
         return collector.getResult()
     }
 
-    private fun resolveLocalClassChain(symbol: FirClassLikeSymbol<*>, remainingQualifier: List<FirQualifierPart>): FirRegularClassSymbol? {
-        if (symbol !is FirRegularClassSymbol || !symbol.isLocal) {
+    private fun resolveLocalClassChain(outermostClassLikeSymbol: FirClassLikeSymbol<*>, remainingQualifier: List<FirQualifierPart>): FirClassLikeSymbol<*>? {
+        if (outermostClassLikeSymbol !is FirRegularClassSymbol || !outermostClassLikeSymbol.isLocal) {
             return null
         }
 
-        fun resolveLocalClassChain(classSymbol: FirRegularClassSymbol, qualifierIndex: Int): FirRegularClassSymbol? {
+        fun resolveLocalClassChain(classLikeSymbol: FirClassLikeSymbol<*>, qualifierIndex: Int): FirClassLikeSymbol<*>? {
             if (qualifierIndex == remainingQualifier.size) {
-                return classSymbol
+                return classLikeSymbol
             }
 
+            if (classLikeSymbol !is FirRegularClassSymbol) return null
+
             val qualifierName = remainingQualifier[qualifierIndex].name
-            for (declarationSymbol in classSymbol.declarationSymbols) {
-                if (declarationSymbol is FirRegularClassSymbol) {
+            for (declarationSymbol in classLikeSymbol.declarationSymbols) {
+                if (declarationSymbol is FirClassLikeSymbol<*>) {
                     if (declarationSymbol.toLookupTag().name == qualifierName) {
                         return resolveLocalClassChain(declarationSymbol, qualifierIndex + 1)
                     }
@@ -148,7 +150,7 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
             return null
         }
 
-        return resolveLocalClassChain(symbol, 0)
+        return resolveLocalClassChain(outermostClassLikeSymbol, 0)
     }
 
     @OptIn(SymbolInternals::class)
