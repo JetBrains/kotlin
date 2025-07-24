@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.platform.wasm.WasmPlatforms
 import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.TargetBackend
+import org.jetbrains.kotlin.test.TestInfrastructureInternals
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.builders.configureFirHandlersStep
@@ -30,8 +31,12 @@ import org.jetbrains.kotlin.test.frontend.fir.handlers.FirDumpHandler
 import org.jetbrains.kotlin.test.frontend.fir.handlers.FirResolvedTypesVerifier
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.configuration.commonFirHandlersForCodegenTest
+import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.IGNORE_BACKEND_K2_MULTI_MODULE
+import org.jetbrains.kotlin.test.directives.model.ValueDirective
 import org.jetbrains.kotlin.test.services.AdditionalSourceProvider
 import org.jetbrains.kotlin.test.services.EnvironmentConfigurator
+import org.jetbrains.kotlin.test.services.SplittingModuleTransformerForBoxTests
+import org.jetbrains.kotlin.test.services.SplittingTestConfigurator
 import org.jetbrains.kotlin.test.services.configuration.WasmEnvironmentConfiguratorJs
 import org.jetbrains.kotlin.test.services.configuration.WasmEnvironmentConfiguratorWasi
 import org.jetbrains.kotlin.wasm.test.converters.FirWasmKlibSerializerFacade
@@ -111,8 +116,10 @@ open class AbstractFirWasmJsCodegenBoxTest(
     }
 }
 
-open class AbstractFirWasmJsCodegenBoxWithInlinedFunInKlibTest : AbstractFirWasmJsCodegenBoxTest(
-    testGroupOutputDirPrefix = "codegen/boxInlKlib/"
+open class AbstractFirWasmJsCodegenBoxWithInlinedFunInKlibTest(
+    testGroupOutputDirPrefix: String = "codegen/boxInlKlib/"
+) : AbstractFirWasmJsCodegenBoxTest(
+    testGroupOutputDirPrefix = testGroupOutputDirPrefix
 ) {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
@@ -121,6 +128,22 @@ open class AbstractFirWasmJsCodegenBoxWithInlinedFunInKlibTest : AbstractFirWasm
                 LANGUAGE with "+${LanguageFeature.IrInlinerBeforeKlibSerialization.name}"
             }
         }
+    }
+}
+
+open class AbstractFirWasmJsCodegenSplittingWithInlinedFunInKlibTest() : AbstractFirWasmJsCodegenBoxWithInlinedFunInKlibTest(
+    "codegen/boxSplitted/"
+) {
+    override val customIgnoreDirective: ValueDirective<TargetBackend>?
+        get() = IGNORE_BACKEND_K2_MULTI_MODULE
+
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        @OptIn(TestInfrastructureInternals::class)
+        builder.useModuleStructureTransformers(
+            ::SplittingModuleTransformerForBoxTests
+        )
+        builder.useMetaTestConfigurators(::SplittingTestConfigurator)
     }
 }
 

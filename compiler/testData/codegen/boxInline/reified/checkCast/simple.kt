@@ -3,7 +3,7 @@
 // TODO: Reified generics required some design to unify behavior across all backends
 // IGNORE_BACKEND: JS_IR
 // IGNORE_BACKEND: JS_IR_ES6
-// IGNORE_BACKEND_K2_MULTI_MODULE: JS_IR JS_IR_ES6
+// IGNORE_BACKEND_K2_MULTI_MODULE: JS_IR JS_IR_ES6 WASM
 // FILE: 1.kt
 package test
 
