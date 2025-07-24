@@ -179,9 +179,9 @@ fun box() = abiTest {
     expectSuccess(1) { getFunctionalInterfaceToInterface(1).answer() }
     expectSuccess(2) { getFunctionalInterfaceToInterfaceAsObject(2).answer() }
     expectSuccess(3) { getFunctionalInterfaceToInterfaceAnswer(3) }
-    expectSuccess(4) { getFunctionalInterfaceWith0AbstractFunctions(4).answer() }
+    /* TODO: KT-79371 */ if (!testMode.isNative) expectFailure(linkage("Single abstract method (SAM) conversion expression can not be evaluated: Fun interface 'FunctionalInterfaceWith0AbstractFunctions' does not have an abstract function")) { getFunctionalInterfaceWith0AbstractFunctions(4).answer() }
     expectSuccess(5) { getFunctionalInterfaceWith0AbstractFunctionsAsObject(5).answer() }
-    expectSuccess(6) { getFunctionalInterfaceWith0AbstractFunctionsAnswer(6) }
+    /* TODO: KT-79371 */ if (!testMode.isNative) expectFailure(linkage("Single abstract method (SAM) conversion expression can not be evaluated: Fun interface 'FunctionalInterfaceWith0AbstractFunctions' does not have an abstract function")) { getFunctionalInterfaceWith0AbstractFunctionsAnswer(6) }
     expectSuccess(7) { getFunctionalInterfaceWith1AbstractFunction(7).answer() }
     expectSuccess(8) { getFunctionalInterfaceWith1AbstractFunctionAsObject(8).answer() }
     expectSuccess(9) { getFunctionalInterfaceWith1AbstractFunctionAnswer(9) }
