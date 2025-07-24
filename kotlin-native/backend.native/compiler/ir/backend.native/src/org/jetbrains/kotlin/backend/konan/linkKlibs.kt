@@ -159,7 +159,6 @@ internal fun LinkKlibsContext.linkKlibs(
                         partialLinkageConfig = partialLinkageConfig,
                         builtIns = generatorContext.irBuiltIns,
                         messageCollector = messageCollector,
-                        platform = moduleDescriptor.platform!!
                 ),
                 libraryBeingCached = config.libraryToCache,
                 userVisibleIrModulesSupport = config.userVisibleIrModulesSupport,

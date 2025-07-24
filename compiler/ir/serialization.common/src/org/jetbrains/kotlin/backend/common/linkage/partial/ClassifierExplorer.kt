@@ -24,15 +24,12 @@ import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrTypeVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
-import org.jetbrains.kotlin.platform.TargetPlatform
-import org.jetbrains.kotlin.platform.isJs
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageSources.Module as PLModule
 
 internal class ClassifierExplorer(
     private val builtIns: IrBuiltIns,
     private val stubGenerator: MissingDeclarationStubGenerator,
-    private val platform: TargetPlatform
 ) {
     private val permittedAnnotationArrayParameterSymbols: Set<IrClassSymbol> by lazy {
         setOf(
@@ -229,10 +226,7 @@ internal class ClassifierExplorer(
             if (illegalSuperClassSymbols.isNotEmpty())
                 return InvalidInheritance(symbol, illegalSuperClassSymbols)
         } else {
-            // Check the number of non-interface supertypes.
-            // We allow to have Any class together with another class in the list to support cross-compilation of the webMain
-            // to both JS and WasmJS, since the `JsAny` WasmJs external interface is actualized as `Any` on the JS side (and JS is a class)
-            val superClassSymbols = superTypeSymbols.filter { !it.owner.isInterface && (it != builtIns.anyClass || platform.isJs()) }
+            val superClassSymbols = superTypeSymbols.filter { !it.owner.isInterface }
             val superClassSymbol = when (superClassSymbols.size) {
                 0 -> return null // It can be only Any.
                 1 -> superClassSymbols.first()
