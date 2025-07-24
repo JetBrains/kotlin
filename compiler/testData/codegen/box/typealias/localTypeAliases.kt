@@ -37,27 +37,27 @@ fun box(): String {
     <!UNSUPPORTED!>typealias TAtoGeneric<K> = Generic<K><!>
     <!UNSUPPORTED!>typealias TAtoInner<K, L> = Generic<K>.Inner<L><!>
 
-    if (<!UNRESOLVED_REFERENCE!>TAtoLocal<!>().p != "OK") return "FAIL"
-    if (<!UNRESOLVED_REFERENCE!>TAtoLocal2<!>("OK").p != "OK") return "FAIL"
-    if (<!UNRESOLVED_REFERENCE!>TA2toLocal2<!>("OK").p != "OK") return "FAIL"
+    if (TAtoLocal().p != "OK") return "FAIL"
+    if (TAtoLocal2("OK").p != "OK") return "FAIL"
+    if (TA2toLocal2("OK").p != "OK") return "FAIL"
 
-    val callable = ::<!UNRESOLVED_REFERENCE!>TAtoLocal<!>
-    if (<!UNRESOLVED_REFERENCE!>callable<!>().p != "OK") return "FAIL"
+    val callable = ::TAtoLocal
+    if (callable().p != "OK") return "FAIL"
 
-    fun localFunc(): <!UNRESOLVED_REFERENCE!>TAtoLocal<!> = <!UNRESOLVED_REFERENCE!>TAtoLocal<!>()
-    if (localFunc().<!UNRESOLVED_REFERENCE!>test<!>() != "OK") return "FAIL"
+    fun localFunc(): TAtoLocal = TAtoLocal()
+    if (localFunc().test() != "OK") return "FAIL"
 
-    if (<!UNRESOLVED_REFERENCE!>TAtoGeneric<!><String>("OK").k != "OK") return "FAIL"
+    if (TAtoGeneric<String>("OK").k != "OK") return "FAIL"
     val genericObj = Generic<Int>(42)
-    if (genericObj.<!UNRESOLVED_REFERENCE!>TAtoInner<!><Int, String>("OK").k2 != "OK") return "FAIL"
+    if (genericObj.TAtoInner<Int, String>("OK").k2 != "OK") return "FAIL"
 
-    val anonObject = object : <!UNRESOLVED_REFERENCE!>TAtoLocal<!>() {}
-    if (anonObject.<!UNRESOLVED_REFERENCE!>test<!>() != "OK") return "FAIL"
+    val anonObject = object : TAtoLocal() {}
+    if (anonObject.test() != "OK") return "FAIL"
 
-    val anonObject2 = object : <!UNRESOLVED_REFERENCE!>TAtoGeneric<!><String>("OK") {}
-    if (anonObject2.<!UNRESOLVED_REFERENCE!>k<!> != "OK") return "FAIL"
+    val anonObject2 = object : TAtoGeneric<String>("OK") {}
+    if (anonObject2.k != "OK") return "FAIL"
 
-    val companion = <!UNRESOLVED_REFERENCE!>TAtoGeneric<!>
+    val companion = TAtoGeneric
     if (companion.prop != 123) return "FAIL"
 
     val typeRefToLocalTypeAliasInLocalClass: Local.<!UNRESOLVED_REFERENCE!>LocalTAtoLocal<!> = Local.LocalTAtoLocal()
