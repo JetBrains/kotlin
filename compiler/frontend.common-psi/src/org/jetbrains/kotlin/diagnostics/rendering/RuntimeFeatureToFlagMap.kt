@@ -18,17 +18,20 @@ private const val ENABLES_CLASS = "org.jetbrains.kotlin.cli.common.arguments.Ena
 private const val DISABLES_CLASS = "org.jetbrains.kotlin.cli.common.arguments.Disables"
 private const val FEATURE = "feature"
 
-private fun ClassLoader.loadAnnotationClassWithMethod(fqName: String, methodName: String): Pair<Class<*>, Method> {
-    val klass = loadClass(fqName)
+private fun ClassLoader.loadAnnotationClassWithMethod(fqName: String, methodName: String): Pair<Class<out Annotation>, Method> {
+    @Suppress("UNCHECKED_CAST")
+    val klass = loadClass(fqName) as Class<out Annotation>
     val method = klass.methods.find { it.name == methodName } ?: error("No `$methodName` in `@$fqName`")
     return klass to method
 }
 
-private fun Field.getAnnotationNamedAs(annotationClass: Class<*>) = annotations
-    .find { it.annotationClass.qualifiedName == annotationClass.canonicalName }
+private fun Field.getAnnotationNamedAs(annotationClass: Class<out Annotation>): Annotation? {
+    return getAnnotationsNamedAs(annotationClass).firstOrNull()
+}
 
-private fun Field.getAnnotationsNamedAs(annotationClass: Class<*>) = annotations
-    .filter { it.annotationClass.qualifiedName == annotationClass.canonicalName }
+private fun Field.getAnnotationsNamedAs(annotationClass: Class<out Annotation>): Array<out Annotation> {
+    return getAnnotationsByType(annotationClass)
+}
 
 fun buildRuntimeFeatureToFlagMap(classLoader: ClassLoader): Map<LanguageFeature, String> {
     val compilerArgumentsClass = classLoader.loadClass(COMPILER_ARGUMENTS_CLASS)
