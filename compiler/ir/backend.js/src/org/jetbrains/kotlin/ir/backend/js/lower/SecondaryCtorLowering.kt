@@ -220,6 +220,7 @@ private fun JsIrBackendContext.buildFactoryDeclaration(constructor: IrConstructo
         factory.copyTypeParametersFrom(constructor.parentAsClass)
         factory.parameters = constructor.parameters.map { p -> p.copyTo(factory) }
         factory.annotations = constructor.annotations
+        factory.returnType = constructor.returnType.remapTypeParameters(constructor, factory)
     }
 }
 

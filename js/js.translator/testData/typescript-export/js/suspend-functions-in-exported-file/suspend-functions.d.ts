@@ -19,7 +19,12 @@ declare namespace JS_TESTS {
         function genericWithMultipleConstraints<T extends unknown/* kotlin.Comparable<T> */ & foo.SomeExternalInterface & Error>(x: T): Promise<T>;
         function generic3<A, B, C, D, E>(a: A, b: B, c: C, d: D): Promise<Nullable<E>>;
         function inlineFun(x: number, callback: (p0: number) => void): Promise<void>;
-        class Test {
+        interface HolderOfSum {
+            readonly __doNotUseOrImplementIt: {
+                readonly "foo.HolderOfSum": unique symbol;
+            };
+        }
+        class Test implements foo.HolderOfSum {
             constructor();
             sum(x: number, y: number): Promise<number>;
             varargInt(x: Int32Array): Promise<number>;
@@ -33,6 +38,7 @@ declare namespace JS_TESTS {
             genericWithConstraint<T extends string>(x: T): Promise<T>;
             genericWithMultipleConstraints<T extends unknown/* kotlin.Comparable<T> */ & foo.SomeExternalInterface & Error>(x: T): Promise<T>;
             generic3<A, B, C, D, E>(a: A, b: B, c: C, d: D): Promise<Nullable<E>>;
+            readonly __doNotUseOrImplementIt: foo.HolderOfSum["__doNotUseOrImplementIt"];
         }
         /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
         namespace Test.$metadata$ {
