@@ -141,9 +141,6 @@ internal class YarnPluginApplier(
                 task.inputFile.set(nodeJsRoot.rootPackageDirectory.map { it.file(LockCopyTask.YARN_LOCK) })
                 task.outputDirectory.set(yarnRootExtension.lockFileDirectory)
                 task.fileName.set(yarnRootExtension.lockFileName)
-                task.storeEmptyLockFile.value(
-                    yarnSpec.storeEmptyLockFile
-                ).disallowChanges()
             }
 
         project.tasks.register(platformDisambiguate.extensionName(STORE_YARN_LOCK_BASE_NAME), YarnLockStoreTask::class.java) { task ->
@@ -160,9 +157,6 @@ internal class YarnPluginApplier(
             ).disallowChanges()
             task.lockFileAutoReplace.value(
                 project.provider { yarnRootExtension.requireConfigured().yarnLockAutoReplace }
-            ).disallowChanges()
-            task.storeEmptyLockFile.value(
-                yarnSpec.storeEmptyLockFile
             ).disallowChanges()
             task.mismatchMessage.value(
                 YarnPlugin.yarnLockMismatchMessage(upgradeYarnLock.name)
@@ -214,7 +208,6 @@ internal class YarnPluginApplier(
         yarnLockMismatchReport.convention(objectFactory.providerWithLazyConvention { yarnRootExtension.yarnLockMismatchReport })
         reportNewYarnLock.convention(objectFactory.providerWithLazyConvention { yarnRootExtension.reportNewYarnLock })
         yarnLockAutoReplace.convention(objectFactory.providerWithLazyConvention { yarnRootExtension.yarnLockAutoReplace })
-        storeEmptyLockFile.convention(false)
         resolutions.convention(
             objectFactory.listProperty<YarnResolution>().value(
                 objectFactory.providerWithLazyConvention {

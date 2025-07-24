@@ -5,9 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.targets.js.yarn
 
-import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
-import org.gradle.api.tasks.Input
 import org.gradle.api.tasks.Internal
 import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.gradle.targets.js.npm.LockCopyTask
@@ -18,34 +16,45 @@ import java.io.File
 @DisableCachingByDefault
 abstract class YarnLockCopyTask : LockCopyTask()
 
+/**
+ * Updates the project's stored `yarn.lock` file.
+ * When this task runs the existing `yarn.lock` file will be overwritten.
+ *
+ * If no NPM dependencies are present, this task will delete the existing lock file.
+ *
+ * See https://kotl.in/js-project-setup/version-locking
+ */
 @DisableCachingByDefault
 abstract class YarnLockUpgradeTask internal constructor() : YarnLockCopyTask() {
-    @get:Input
-    internal abstract val storeEmptyLockFile: Property<Boolean>
 
     override fun copy() {
-        if (storeEmptyLockFile.get()) {
+        val inputFile = inputFile.getOrNull()?.asFile
+
+        val isInputLockFileEmpty = isEmptyYarnLock(inputFile)
+
+        if (!isInputLockFileEmpty) {
             super.copy()
-            return
-        }
-
-        val isEmptyInputYarnLock = inputFile.getOrNull()?.asFile?.let {
-            isEmptyYarnLock(it)
-        } ?: true
-
-        val outputFile = outputDirectory.get().asFile.resolve(fileName.get())
-
-        if (!isEmptyInputYarnLock) {
-            super.copy()
-            return
         } else {
-            fs.delete {
-                it.delete(outputFile)
+            val outputDirectory = outputDirectory.get().asFile
+            val outputFile = outputDirectory.resolve(fileName.get())
+            if (outputFile.exists()) {
+                logger.lifecycle("[$path] No NPM dependencies detected. Deleting empty yarn.lock file $outputFile")
+                fs.delete {
+                    it.delete(outputFile)
+                }
             }
         }
     }
 }
 
+/**
+ * Validates and the project's stored `yarn.lock` file against the actual current state of NPM dependencies.
+ * If the stored lock file is valid, the task will update it.
+ *
+ * To overwrite the stored lockfile without validation use [YarnLockUpgradeTask].
+ *
+ * See https://kotl.in/js-project-setup/version-locking
+ */
 @DisableCachingByDefault
 abstract class YarnLockStoreTask : LockStoreTask() {
     @get:Internal
@@ -60,47 +69,25 @@ abstract class YarnLockStoreTask : LockStoreTask() {
     val yarnLockAutoReplace: Provider<Boolean>
         get() = lockFileAutoReplace
 
-    @get:Input
-    internal abstract val storeEmptyLockFile: Property<Boolean>
-
     override fun copy() {
-        if (storeEmptyLockFile.get()) {
-            super.copy()
-            return
-        }
-
-        val isEmptyInputYarnLock = inputFile.getOrNull()?.asFile?.let {
-            isEmptyYarnLock(it)
-        } ?: true
-
-        if (!isEmptyInputYarnLock) {
-            super.copy()
-            return
-        }
-
+        val inputFile = inputFile.getOrNull()?.asFile
         val outputFile = outputDirectory.get().asFile.resolve(fileName.get())
-        val outputFileExists = outputFile.exists()
 
-        if (!outputFileExists) {
+        if (isEmptyYarnLock(inputFile) && !outputFile.exists()) {
+            logger.info("[$path] No NPM dependencies detected, and stored lockfile does not exist - skipping copy $inputFile")
             return
+        } else {
+            super.copy()
         }
-
-        val isEmptyOutputYarnLock = isEmptyYarnLock(outputFile)
-        if (isEmptyOutputYarnLock || lockFileAutoReplace.get()) {
-            fs.delete {
-                it.delete(outputFile)
-            }
-
-            return
-        }
-
-        super.copy()
     }
 }
 
-private fun isEmptyYarnLock(file: File): Boolean = file.useLines { lines ->
-    lines.all { it.startsWith("#") || it.isBlank() }
-}
+private fun isEmptyYarnLock(file: File?): Boolean =
+    file == null ||
+            !file.exists() ||
+            file.useLines { lines ->
+                lines.all { it.startsWith("#") || it.isBlank() }
+            }
 
 enum class YarnLockMismatchReport {
     NONE,

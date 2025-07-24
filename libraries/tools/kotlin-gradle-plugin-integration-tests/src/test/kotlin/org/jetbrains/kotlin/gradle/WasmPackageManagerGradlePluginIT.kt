@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.gradle
 
 import org.gradle.api.tasks.Exec
 import org.gradle.util.GradleVersion
-import org.jetbrains.kotlin.gradle.targets.js.npm.LockCopyTask
 import org.jetbrains.kotlin.gradle.targets.js.npm.LockCopyTask.Companion.KOTLIN_JS_STORE
 import org.jetbrains.kotlin.gradle.targets.js.npm.LockCopyTask.Companion.PACKAGE_LOCK
 import org.jetbrains.kotlin.gradle.targets.js.npm.LockCopyTask.Companion.YARN_LOCK
@@ -16,10 +15,15 @@ import org.jetbrains.kotlin.gradle.targets.wasm.nodejs.WasmNpmTooling
 import org.jetbrains.kotlin.gradle.targets.wasm.npm.WasmNpmExtension
 import org.jetbrains.kotlin.gradle.targets.wasm.yarn.WasmYarnRootEnvSpec
 import org.jetbrains.kotlin.gradle.testbase.*
+import org.jetbrains.kotlin.gradle.util.replaceText
 import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.DisplayName
 import java.io.File
-import kotlin.test.assertTrue
+import java.nio.file.Path
+import kotlin.io.path.createDirectories
+import kotlin.io.path.readText
+import kotlin.io.path.writeText
+import kotlin.test.assertEquals
 
 class WasmNpmGradlePluginIT : WasmPackageManagerGradlePluginIT() {
     override val yarn: Boolean = false
@@ -33,210 +37,148 @@ class WasmNpmGradlePluginIT : WasmPackageManagerGradlePluginIT() {
 class WasmYarnGradlePluginIT : WasmPackageManagerGradlePluginIT() {
     override val yarn: Boolean = true
 
-    override val lockFileName: String = LockCopyTask.YARN_LOCK
+    override val lockFileName: String = YARN_LOCK
 
     override val toolingCustomDir: String
         get() = "yarn"
 
-    @DisplayName("Empty yarn.lock stored with flag, not stored by default")
     @GradleTest
     @MppGradlePluginTests
-    fun testEmptyYarnLockStore(gradleVersion: GradleVersion) {
+    @TestMetadata("kotlin-wasm-package-lock-project")
+    fun `given project without npm dependencies - when lockfile tasks run - expect tasks succeed - and do not create yarn lock file`(
+        gradleVersion: GradleVersion,
+    ) {
+        project("kotlin-wasm-package-lock-project", gradleVersion) {
+            build(":kotlinWasmStoreYarnLock") {
+                assertTasksExecuted(":kotlinWasmStoreYarnLock")
+                assertFileNotExists(defaultYarnLockFile)
+                assertOutputContains("[:kotlinWasmStoreYarnLock] No NPM dependencies detected, and stored lockfile does not exist - skipping copy")
+            }
+            build(":kotlinWasmUpgradeYarnLock") {
+                assertTasksExecuted(":kotlinWasmUpgradeYarnLock")
+                assertFileNotExists(defaultYarnLockFile)
+            }
+        }
+    }
+
+    @GradleTest
+    @MppGradlePluginTests
+    @TestMetadata("kotlin-wasm-package-lock-project")
+    fun `given project with npm dependency - when 'store lockfile' task runs - expect task succeeds - and creates yarn lock file`(
+        gradleVersion: GradleVersion,
+    ) {
+        project("kotlin-wasm-package-lock-project", gradleVersion) {
+            assertFileNotExists(defaultYarnLockFile)
+
+            addWasmJsNpmDependency()
+
+            build(":kotlinWasmStoreYarnLock") {
+                assertTasksExecuted(":kotlinWasmStoreYarnLock")
+                assertFileExists(defaultYarnLockFile)
+            }
+        }
+    }
+
+    @GradleTest
+    @MppGradlePluginTests
+    @TestMetadata("kotlin-wasm-package-lock-project")
+    fun `given project with npm dependency and non-empty lock file - when npm dependency is removed - expect KGP deletes empty lock file`(
+        gradleVersion: GradleVersion,
+    ) {
         project("kotlin-wasm-package-lock-project", gradleVersion) {
 
+            // First, store a valid yarn lock file with an NPM dependency
+            addWasmJsNpmDependency()
             build(":kotlinWasmStoreYarnLock") {
-                val yarnLock = projectPath.resolve(KOTLIN_JS_STORE)
-                    .resolve("wasm")
-                    .resolve(YARN_LOCK)
-                assertFileNotExists(yarnLock)
+                assertTasksExecuted(":kotlinWasmStoreYarnLock")
+                assertFileExists(defaultYarnLockFile)
             }
 
-            buildScriptInjection {
-                project.extensions.getByType(WasmYarnRootEnvSpec::class.java).storeEmptyLockFile.set(true)
+            // next, run without the npm dependency
+            // expect failure, because the new lockfile is empty but the stored one is not
+            removeWasmJsNpmDependency()
+            buildAndFail(":kotlinWasmStoreYarnLock") {
+                assertFileExists(defaultYarnLockFile)
+                assertFileContains(defaultYarnLockFile, "decamelize@6.0.0:")
             }
 
+            // updating the lockfile results in deletion of the stored file
+            build(":kotlinWasmUpgradeYarnLock") {
+                assertTasksExecuted(":kotlinWasmUpgradeYarnLock")
+                assertOutputContains("[:kotlinWasmUpgradeYarnLock] No NPM dependencies detected. Deleting empty yarn.lock file")
+                assertFileNotExists(defaultYarnLockFile)
+            }
+        }
+    }
+
+    /**
+     * Validate the behaviour should a user manually create an empty `yarn.lock` file.
+     * We may want to change this in future, to allow users to manually define an empty lockfile.
+     */
+    @GradleTest
+    @MppGradlePluginTests
+    @TestMetadata("kotlin-wasm-package-lock-project")
+    fun `given project with npm dependency and empty lock file - when npm dependency is removed - expect KGP deletes empty lock file`(
+        gradleVersion: GradleVersion,
+    ) {
+        val emptyYarnLockFileContent =
+            """
+            |# THIS IS AN AUTOGENERATED FILE. DO NOT EDIT THIS FILE DIRECTLY.
+            |# yarn lockfile v1
+            |
+            |
+            |""".trimMargin()
+
+        project("kotlin-wasm-package-lock-project", gradleVersion) {
+
+            // First, create a valid, but empty, lockfile
+            defaultYarnLockFile.parent.createDirectories()
+            defaultYarnLockFile.writeText(emptyYarnLockFileContent)
+
+            // expect success, because both the new and stored lock files are empty
             build(":kotlinWasmStoreYarnLock") {
-                val yarnLock = projectPath.resolve(KOTLIN_JS_STORE)
-                    .resolve("wasm")
-                    .resolve(YARN_LOCK)
+                assertFileExists(defaultYarnLockFile)
+                assertEquals(
+                    emptyYarnLockFileContent,
+                    defaultYarnLockFile.readText(),
+                    "Verify stored yarn.lock file is effectively empty (it should only contain comments)"
+                )
+            }
 
-                assertFileExists(yarnLock)
+            // updating the lockfile results in deletion of the stored file
+            build(":kotlinWasmUpgradeYarnLock") {
+                assertTasksExecuted(":kotlinWasmUpgradeYarnLock")
+                assertOutputContains("[:kotlinWasmUpgradeYarnLock] No NPM dependencies detected. Deleting empty yarn.lock file")
+                assertFileNotExists(defaultYarnLockFile)
+            }
+        }
+    }
 
-                assertTrue("yarn.lock file should be empty, but was: \n${yarnLock.toFile().readText()}") {
-                    yarnLock.toFile().useLines { lines ->
-                        lines.any { !it.startsWith("#") || it.isNotBlank() }
-                    }
+    companion object {
+        @Suppress("ConstPropertyName")
+        private const val `implementation(npm(decamelize))` =
+            """implementation(npm("decamelize", "6.0.0"))"""
+
+        private fun TestProject.addWasmJsNpmDependency() {
+            buildGradleKts.append(
+                """
+                kotlin {
+                  sourceSets.wasmJsMain.dependencies {
+                    $`implementation(npm(decamelize))`
+                  }
                 }
-            }
+                """.trimIndent()
+            )
         }
-    }
 
-    @DisplayName("yarn.lock storing without the flag")
-    @GradleTest
-    @MppGradlePluginTests
-    fun testYarnLockStoringWithoutFlag(gradleVersion: GradleVersion) {
-        project("kotlin-wasm-package-lock-project", gradleVersion) {
-
-            build(":kotlinWasmStoreYarnLock") {
-                val yarnLock = projectPath.resolve(KOTLIN_JS_STORE)
-                    .resolve("wasm")
-                    .resolve(YARN_LOCK)
-                assertFileNotExists(yarnLock)
-                assertTasksExecuted(":kotlinWasmStoreYarnLock")
-            }
-
-            buildGradleKts.modify {
-                it + "\n" +
-                        """
-                        dependencies {
-                            "wasmJsMainImplementation"(npm("decamelize", "6.0.0"))
-                        }
-                        """.trimIndent()
-            }
-
-            build(":kotlinWasmStoreYarnLock") {
-                val yarnLock = projectPath.resolve(KOTLIN_JS_STORE)
-                    .resolve("wasm")
-                    .resolve(YARN_LOCK)
-
-                assertFileExists(yarnLock)
-
-                assertTasksExecuted(":kotlinWasmStoreYarnLock")
-            }
-
-            buildGradleKts.modify {
-                it.replace("\"wasmJsMainImplementation\"(npm(\"decamelize\", \"6.0.0\"))", "")
-            }
-
-            buildAndFail(":kotlinWasmStoreYarnLock") {
-                assertTasksFailed(":kotlinWasmStoreYarnLock")
-            }
+        private fun TestProject.removeWasmJsNpmDependency() {
+            buildGradleKts.replaceText(`implementation(npm(decamelize))`, "")
         }
-    }
 
-    @DisplayName("yarn.lock storing with the flag")
-    @GradleTest
-    @MppGradlePluginTests
-    fun testYarnLockStoringWithFlag(gradleVersion: GradleVersion) {
-        project("kotlin-wasm-package-lock-project", gradleVersion) {
-
-            buildScriptInjection {
-                project.extensions.getByType(WasmYarnRootEnvSpec::class.java).storeEmptyLockFile.set(true)
-            }
-
-            build(":kotlinWasmStoreYarnLock") {
-                val yarnLock = projectPath.resolve(KOTLIN_JS_STORE)
-                    .resolve("wasm")
-                    .resolve(YARN_LOCK)
-                assertFileExists(yarnLock)
-                assertTasksExecuted(":kotlinWasmStoreYarnLock")
-            }
-
-            buildGradleKts.modify {
-                it + "\n" +
-                        """
-                        dependencies {
-                            "wasmJsMainImplementation"(npm("decamelize", "6.0.0"))
-                        }
-                        """.trimIndent()
-            }
-
-            buildAndFail(":kotlinWasmStoreYarnLock") {
-                assertTasksFailed(":kotlinWasmStoreYarnLock")
-            }
-
-            buildGradleKts.modify {
-                it.replace("\"wasmJsMainImplementation\"(npm(\"decamelize\", \"6.0.0\"))", "")
-            }
-
-            build(":kotlinWasmStoreYarnLock") {
-                assertTasksUpToDate(":kotlinWasmStoreYarnLock")
-            }
-        }
-    }
-
-    @DisplayName("Upgrade empty and non empty yarn.lock no flag")
-    @GradleTest
-    @MppGradlePluginTests
-    fun testUpgradeEmptyAndNonEmptyYarnLockNoFlag(gradleVersion: GradleVersion) {
-        project("kotlin-wasm-package-lock-project", gradleVersion) {
-
-            val yarnLock = projectPath.resolve(KOTLIN_JS_STORE)
+        private val TestProject.defaultYarnLockFile: Path
+            get() = projectPath.resolve(KOTLIN_JS_STORE)
                 .resolve("wasm")
                 .resolve(YARN_LOCK)
-
-            build(":kotlinWasmUpgradeYarnLock") {
-                assertFileNotExists(yarnLock)
-                assertTasksExecuted(":kotlinWasmUpgradeYarnLock")
-            }
-
-            buildGradleKts.modify {
-                it + "\n" +
-                        """
-                        dependencies {
-                            "wasmJsMainImplementation"(npm("decamelize", "6.0.0"))
-                        }
-                        """.trimIndent()
-            }
-
-            build(":kotlinWasmUpgradeYarnLock") {
-                assertFileExists(yarnLock)
-                assertTasksExecuted(":kotlinWasmUpgradeYarnLock")
-            }
-
-            buildGradleKts.modify {
-                it.replace("\"wasmJsMainImplementation\"(npm(\"decamelize\", \"6.0.0\"))", "")
-            }
-
-            build(":kotlinWasmUpgradeYarnLock") {
-                assertFileNotExists(yarnLock)
-                assertTasksExecuted(":kotlinWasmUpgradeYarnLock")
-            }
-        }
-    }
-
-    @DisplayName("Upgrade empty and non empty yarn.lock with flag")
-    @GradleTest
-    @MppGradlePluginTests
-    fun testUpgradeEmptyAndNonEmptyYarnLockWithFlag(gradleVersion: GradleVersion) {
-        project("kotlin-wasm-package-lock-project", gradleVersion) {
-
-            buildScriptInjection {
-                project.extensions.getByType(WasmYarnRootEnvSpec::class.java).storeEmptyLockFile.set(true)
-            }
-
-            val yarnLock = projectPath.resolve(KOTLIN_JS_STORE)
-                .resolve("wasm")
-                .resolve(YARN_LOCK)
-
-            build(":kotlinWasmUpgradeYarnLock") {
-                assertFileExists(yarnLock)
-                assertTasksExecuted(":kotlinWasmUpgradeYarnLock")
-            }
-
-            buildGradleKts.modify {
-                it + "\n" +
-                        """
-                        dependencies {
-                            "wasmJsMainImplementation"(npm("decamelize", "6.0.0"))
-                        }
-                        """.trimIndent()
-            }
-
-            build(":kotlinWasmUpgradeYarnLock") {
-                assertFileExists(yarnLock)
-                assertTasksExecuted(":kotlinWasmUpgradeYarnLock")
-            }
-
-            buildGradleKts.modify {
-                it.replace("\"wasmJsMainImplementation\"(npm(\"decamelize\", \"6.0.0\"))", "")
-            }
-
-            build(":kotlinWasmUpgradeYarnLock") {
-                assertFileExists(yarnLock)
-                assertTasksExecuted(":kotlinWasmUpgradeYarnLock")
-            }
-        }
     }
 }
 

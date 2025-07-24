@@ -20,7 +20,6 @@ data class YarnEnv(
     val reportNewYarnLock: Boolean,
     val yarnLockAutoReplace: Boolean,
     val yarnResolutions: List<YarnResolution>,
-    internal val storeEmptyLockFile: Boolean,
 ) : AbstractEnv {
     val standalone: Boolean
         get() = !download
