@@ -51,7 +51,7 @@ open class CodeOwnersArgumentProviders @Inject constructor(
     )
 }
 
-projectTest {
+projectTest(jUnitMode = JUnitMode.JUnit4) {
     dependsOn(":dist")
     workingDir = rootDir
     javaLauncher.set(getToolchainLauncherFor(JdkMajorVersion.JDK_17_0))

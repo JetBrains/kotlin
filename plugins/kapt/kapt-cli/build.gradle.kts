@@ -25,7 +25,7 @@ sourceSets {
 
 testsJar()
 
-projectTest(defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_1_8)) {
+projectTest(jUnitMode = JUnitMode.JUnit5, defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_1_8)) {
     useJUnitPlatform()
     workingDir = rootDir
     dependsOn(":dist")

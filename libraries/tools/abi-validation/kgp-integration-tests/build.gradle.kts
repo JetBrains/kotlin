@@ -2,7 +2,7 @@ plugins {
     kotlin("jvm")
 }
 
-projectTest {
+projectTest(jUnitMode = JUnitMode.JUnit4) {
     // Disable KONAN_DATA_DIR env variable for all integration tests
     // because we are using `konan.data.dir` gradle property instead
     environment.remove("KONAN_DATA_DIR")

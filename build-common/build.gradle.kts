@@ -52,7 +52,7 @@ sourceSets {
 // test jar is used for ide dependencies (`kotlin-build-common-tests-for-ide` and `kotlin-jps-plugin-tests-for-ide`)
 testsJarToBeUsedAlongWithFixtures()
 
-projectTest(parallel = true)
+projectTest(parallel = true, jUnitMode = JUnitMode.JUnit4)
 
 projectTest("testJUnit5", jUnitMode = JUnitMode.JUnit5, parallel = true) {
     useJUnitPlatform()

@@ -29,7 +29,7 @@ sourceSets {
     "test" { projectDefault() }
 }
 
-projectTest(parallel = false) {
+projectTest(parallel = false, jUnitMode = JUnitMode.JUnit4) {
     workingDir = projectDir
 }
 

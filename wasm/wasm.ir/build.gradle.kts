@@ -98,7 +98,7 @@ tasks.withType<KotlinJvmCompile>().configureEach {
     compilerOptions.freeCompilerArgs.add("-Xskip-prerelease-check")
 }
 
-projectTest("test", true) {
+projectTest("test", true, jUnitMode = JUnitMode.JUnit4) {
     dependsOn(unzipWabt)
     dependsOn(unzipTestSuite)
     systemProperty("wabt.bin.path", "$wabtDir/wabt-$wabtVersion/bin")

@@ -9,7 +9,7 @@ dependencies {
     commonApi(platform(project(":kotlin-gradle-plugins-bom")))
 }
 
-projectTest(parallel = true)
+projectTest(parallel = true, jUnitMode = JUnitMode.JUnit4)
 
 gradlePlugin {
     plugins {

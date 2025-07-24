@@ -112,7 +112,7 @@ open class ProjectTestArgumentProvider @Inject constructor(
     )
 }
 
-projectTest {
+projectTest(jUnitMode = JUnitMode.JUnit4) {
     /**
      * It's expected that test should be executed on CI, but currently this project under `kotlin.native.enabled`
      */

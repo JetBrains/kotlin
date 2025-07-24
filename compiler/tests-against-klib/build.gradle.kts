@@ -35,7 +35,7 @@ projectTests {
     withJvmStdlibAndReflect()
 }
 
-projectTest(parallel = true) {
+projectTest(parallel = true, jUnitMode = JUnitMode.JUnit4) {
     useJUnitPlatform()
 }
 

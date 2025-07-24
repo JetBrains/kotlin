@@ -8,7 +8,7 @@ sourceSets {
     "test" { projectDefault() }
 }
 
-projectTest {
+projectTest(jUnitMode = JUnitMode.JUnit4) {
     workingDir = rootDir
 }
 

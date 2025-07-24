@@ -15,7 +15,7 @@ sourceSets.named("test") {
     java.srcDir("src/test/kotlin")
 }
 
-projectTest {
+projectTest(jUnitMode = JUnitMode.JUnit4) {
     useJUnit()
     systemProperty("overwrite.output", System.getProperty("overwrite.output", "false"))
     systemProperty("testCasesClassesDirs", sourceSets.test.get().output.classesDirs.asPath)
