@@ -211,7 +211,7 @@ interface KaMultiplatformSymbol : KaSymbol {
     val isExpect: Boolean
     val isActual: Boolean
 }
-interface KaDeclarationSymbol : KaSymbolWithModality, KaSymbolwithVisibility, KaMultiplatformSymbol
+interface KaDeclarationSymbol : KaSymbolWithModality, KaSymbolWithVisibility, KaMultiplatformSymbol
 ```
 
 #### Avoid Mixing Conceptual Hierarchies
