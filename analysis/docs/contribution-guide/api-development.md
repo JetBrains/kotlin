@@ -294,12 +294,11 @@ When you have two or more inheritance levels in a sealed hierarchy, or when indi
 implement them as top-level classes:
 
 ```kotlin
-sealed interface KaType
-interface KaClassType : KaType
-interface KaUsualClassType : KaClassType
-interface KaFunctionType : KaClassType, KaContextReceiversOwner
-interface KaTypeParameterType : KaType
-interface KaFlexibleType : KaType
+sealed class KaClassifierSymbol : KaDeclarationSymbol()
+sealed class KaClassSymbol : KaClassifierSymbol()
+abstract class KaNamedClassSymbol : KaClassSymbol()
+abstract class KaAnonymousObjectSymbol : KaClassSymbol()
+abstract class KaTypeAliasSymbol : KaClassifierSymbol()
 ```
 
 #### Use `@SubclassOptInRequired` for Non-Extendable Types
@@ -998,9 +997,9 @@ sealed class KaConstantValue {
 }
 
 // Good: Descriptive names for top-level sealed implementations
-sealed interface KaType
-interface KaClassType : KaType
-interface KaTypeParameterType : KaType
+sealed class KaClassifierSymbol : KaDeclarationSymbol()
+sealed class KaClassSymbol : KaClassifierSymbol()
+abstract class KaTypeAliasSymbol : KaClassifierSymbol()
 ```
 
 ### Use Consistent Terminology
