@@ -823,7 +823,7 @@ The often-used `Foo` placeholder may be acceptable when discussing declarations 
 /**
  * The function symbol for the original Java getter method.
  *
- * Example:
+ * #### Example:
  *
  * `​`​`
  * public class JavaClass {
