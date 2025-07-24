@@ -250,6 +250,7 @@ internal object CompileKotlinTaskMetrics : FusMetrics {
         name: String,
         compilerOptions: KotlinCommonCompilerOptions,
         separateKmpCompilationEnabled: Boolean,
+        firRunnerEnabled: Boolean, // jvm only as of 2.2.20
         metricsContainer: StatisticsValuesConsumer,
     ) {
         metricsContainer.report(BooleanMetrics.KOTLIN_PROGRESSIVE_MODE, compilerOptions.progressiveMode.get())
@@ -265,6 +266,9 @@ internal object CompileKotlinTaskMetrics : FusMetrics {
             metricsContainer.report(BooleanMetrics.COMPILATION_STARTED, true)
         if (separateKmpCompilationEnabled) {
             metricsContainer.report(BooleanMetrics.KOTLIN_SEPARATE_KMP_COMPILATION_ENABLED, true)
+        }
+        if (firRunnerEnabled) {
+            metricsContainer.report(BooleanMetrics.KOTLIN_INCREMENTAL_FIR_RUNNER_ENABLED, true)
         }
     }
 }
