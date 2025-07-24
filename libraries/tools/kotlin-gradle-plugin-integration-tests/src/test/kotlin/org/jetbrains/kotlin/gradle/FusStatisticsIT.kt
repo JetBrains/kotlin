@@ -9,6 +9,7 @@ import org.gradle.api.logging.LogLevel
 import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.kotlin.dsl.kotlin
 import org.gradle.testkit.runner.BuildResult
+import org.gradle.kotlin.dsl.version
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.report.BuildReportType
 import org.jetbrains.kotlin.gradle.testbase.*
@@ -347,6 +348,26 @@ class FusStatisticsIT : KGPBaseTest() {
                         "COMPILATIONS_COUNT=2"
                     )
                 }
+            }
+        }
+    }
+
+    @JvmGradlePluginTests
+    @DisplayName("test configuration time ksp metrics")
+    @GradleTest
+    @GradleTestVersions(
+        additionalVersions = [TestVersions.Gradle.G_8_0, TestVersions.Gradle.G_8_2],
+    )
+    fun testFusStatisticsForKsp(gradleVersion: GradleVersion) {
+        project("empty", gradleVersion) {
+            plugins {
+                kotlin("jvm")
+                id("com.google.devtools.ksp") version (TestVersions.ThirdPartyDependencies.KSP)
+            }
+            build("help", "-Pkotlin.session.logger.root.path=$projectPath") {
+                fusStatisticsDirectory.assertFusReportContains(
+                    "KSP_GRADLE_PLUGIN_VERSION=1.9.22"
+                )
             }
         }
     }
