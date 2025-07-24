@@ -384,8 +384,17 @@ interface KaType
 
 #### Choose Between Properties and Functions Based on Semantics
 
-Use properties for simple endpoints.
-Use functions when non-trivial computation is involved or if there are parameters:
+In many languages, properties are often used for simple operations that don't involve expensive computation, or when the result is already
+known, while functions represent more complex operations. However, as the Analysis API features on-demand code analysis, it's rarely
+possible to predict the amount of computation required for a given endpoint.
+
+So instead, choose between properties and functions based on the endpoint semantic, and aesthetic of its usages:
+
+- Use functions when you consume parameters. While in such cases there's typically no choice in the first place, think of whether an
+  extension property will look more elegant.
+- Prefer functions for **actions** – an endpoint that performs some work *conceptually* (e.g., type creation) or has side effects.
+- Prefer properties for semantical **attributes** that users just *get* or *set*. E.g., `KtClassOrObject.symbol` means
+  "get a symbol that represents the given class". The user doesn't care whether the symbol is newly computed or taken from the cache.
 
 ```kotlin
 // Property: No user-visible side effects
@@ -801,6 +810,34 @@ The often-used `Foo` placeholder may be acceptable when discussing declarations 
  * In the synthetic property for `field`, [javaGetterSymbol] is the function symbol for `getField`.
  */
 val javaGetterSymbol: KaNamedFunctionSymbol
+```
+
+### Document properties and functions differently
+
+As explained in the [Choose between properties and functions based on semantics](#choose-between-properties-and-functions-based-on-semantics)
+section, function and property endpoints are different. The difference should be reflected in the documentation.
+
+For functions, explain what the action does:
+
+```kotlin
+/**
+ * Creates a new [KaType] based on the given type with the updated nullability specified by [isMarkedNullable].
+ * @retur
+ */
+fun KaType.withNullability(isMarkedNullable: Boolean): KaType
+```
+
+`@param` and `@return` tags can be omitted if the user can get the same information from a more natural description at the beginning
+of the KDoc. However, add them if there are special cases that need explanation, or to make the description more concise so understanding
+the general goal of a function is easier.
+
+For properties, just explain what the user gets (or sets) when accessing the property. Avoid verbs like "returns", "computes" or similar:
+
+```kotlin
+/**
+ * A [KaScope] containing the top-level declarations (such as classes, functions and properties) in the given [KaFileSymbol].
+ */
+public val KaFileSymbol.fileScope: KaScope
 ```
 
 ### Test Your Documentation's Completeness
