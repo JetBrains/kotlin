@@ -10,3 +10,17 @@ interface XProperty2 { val property2: Int }
 interface XProperty2Default { val property2: Int get() = 42 }
 
 /*fun*/ interface FunctionalInterfaceToInterface : XAnswer
+
+fun interface FunInterfaceWithChangedFun {
+    fun answer(x: Int): Int
+}
+
+fun interface FunInterfaceWithDifferentAbstractFun {
+    fun answer(): Int = 42
+    fun hijack(): Int
+}
+
+fun interface FunInterfaceWithDifferentChangedAbstractFun {
+    fun answer(): Int = 42
+    fun hijack(x: Int): Int
+}

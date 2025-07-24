@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrGetEnumValue
 import org.jetbrains.kotlin.ir.expressions.IrVararg
 import org.jetbrains.kotlin.ir.symbols.*
+import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.types.isArray
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.resolve.descriptorUtil.module
@@ -344,12 +345,18 @@ fun IrClass.getAnnotationTargets(): Set<KotlinTarget>? {
     }.toSet()
 }
 
-fun IrClass.selectSAMOverriddenFunction(): IrSimpleFunction {
-    // Function classes on jvm have some extra methods, which would be in fact implemented by super type,
-    // e.g., callBy and other reflection related callables. So we need to filter them out.
-    return if (symbol.isKFunction() || symbol.isKSuspendFunction() || symbol.isFunction() || symbol.isSuspendFunction()) {
-        functions.singleOrNull { it.name == OperatorNameConventions.INVOKE }
-    } else {
-        functions.singleOrNull { it.modality == Modality.ABSTRACT }
-    } ?: error("${render()} should have a single abstract method to be a type of function reference")
+fun IrClass.selectSAMOverriddenFunctionOrNull(): IrSimpleFunction? {
+    return when {
+        // Function classes on jvm have some extra methods, which would be in fact implemented by super type,
+        // e.g., callBy and other reflection related callables. So we need to filter them out.
+        symbol.isKFunction() || symbol.isKSuspendFunction() || symbol.isFunction() || symbol.isSuspendFunction() ->
+            functions.singleOrNull { it.name == OperatorNameConventions.INVOKE }
+        symbol.defaultType.isKProperty() ->
+            functions.singleOrNull { it.name == OperatorNameConventions.GET }
+        else ->
+            functions.singleOrNull { it.modality == Modality.ABSTRACT }
+    }
 }
+
+fun IrClass.selectSAMOverriddenFunction(): IrSimpleFunction = selectSAMOverriddenFunctionOrNull()
+    ?: error("${render()} should have a single abstract method to be a type of function reference")
