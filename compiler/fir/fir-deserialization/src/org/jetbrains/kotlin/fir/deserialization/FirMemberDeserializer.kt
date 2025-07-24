@@ -200,12 +200,11 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
      */
     fun loadTypeAlias(
         proto: ProtoBuf.TypeAlias,
+        classId: ClassId,
         scopeProvider: FirScopeProvider,
         preComputedSymbol: FirTypeAliasSymbol? = null
     ): FirTypeAlias {
         val flags = proto.flags
-        val name = c.nameResolver.getName(proto.name)
-        val classId = ClassId(c.packageFqName, name)
         val symbol = preComputedSymbol ?: FirTypeAliasSymbol(classId)
         val local = c.childContext(proto.typeParameterList, containingDeclarationSymbol = symbol)
         val versionRequirements = VersionRequirement.create(proto, c)
@@ -213,7 +212,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
             moduleData = c.moduleData
             origin = FirDeclarationOrigin.Library
             this.scopeProvider = scopeProvider
-            this.name = name
+            this.name = classId.shortClassName
             val visibility = ProtoEnumFlags.visibility(Flags.VISIBILITY.get(flags))
             status = FirResolvedDeclarationStatusWithLazyEffectiveVisibility(
                 visibility,
