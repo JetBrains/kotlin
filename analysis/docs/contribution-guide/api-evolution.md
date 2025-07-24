@@ -7,43 +7,43 @@ strategies. For guidance on designing new APIs, see the [API Development Guide](
 
 The Analysis API consists of several interconnected components, each serving a specific purpose:
 
-- **The Kotlin PSI** ([source](https://github.com/JetBrains/kotlin/tree/master/compiler/psi/psi-api))
-    - Foundation layer providing syntax tree representation through [`KtElement`](https://github.com/JetBrains/kotlin/blob/master/compiler/psi/psi-api/src/org/jetbrains/kotlin/psi/KtElement.kt)
+- **The Kotlin PSI** ([source](../../../compiler/psi/psi-api))
+    - Foundation layer providing syntax tree representation through [`KtElement`](../../../compiler/psi/psi-api/src/org/jetbrains/kotlin/psi/KtElement.kt)
     hierarchy
-    - Key entities: [`KtFile`](https://github.com/JetBrains/kotlin/blob/master/compiler/psi/psi-api/src/org/jetbrains/kotlin/psi/KtFile.kt),
-    [`KtDeclaration`](https://github.com/JetBrains/kotlin/blob/master/compiler/psi/psi-api/src/org/jetbrains/kotlin/psi/KtDeclaration.java),
-    and [`KtExpression`](https://github.com/JetBrains/kotlin/blob/master/compiler/psi/psi-api/src/org/jetbrains/kotlin/psi/KtExpression.java)
+    - Key entities: [`KtFile`](../../../compiler/psi/psi-api/src/org/jetbrains/kotlin/psi/KtFile.kt),
+    [`KtDeclaration`](../../../compiler/psi/psi-api/src/org/jetbrains/kotlin/psi/KtDeclaration.java),
+    and [`KtExpression`](../../../compiler/psi/psi-api/src/org/jetbrains/kotlin/psi/KtExpression.java)
 
-- **Analysis API Surface** ([source](https://github.com/JetBrains/kotlin/tree/master/analysis/analysis-api))
+- **Analysis API Surface** ([source](../../analysis-api))
     - User-facing layer of the Analysis API. Maps the Kotlin PSI to its semantic representation
     - Key entities: [`KaSession`](https://kotlin.github.io/analysis-api/fundamentals.html#kasession),
       [`KaSymbol`](https://kotlin.github.io/analysis-api/symbols.html), [`KaType`](https://kotlin.github.io/analysis-api/types.html)
 
-- **Platform Interface** ([source](https://github.com/JetBrains/kotlin/tree/master/analysis/analysis-api-platform-interface))
+- **Platform Interface** ([source](../../analysis-api-platform-interface))
     - Abstraction layer between the API and its execution environments
     - Defines how the API interacts with project structure and file systems
-    - Key entities: [`KotlinPlatformComponent`](https://github.com/JetBrains/kotlin/blob/master/analysis/analysis-api-platform-interface/src/org/jetbrains/kotlin/analysis/api/platform/KotlinPlatformComponent.kt),
-      [`KaEngineService`](https://github.com/JetBrains/kotlin/blob/master/analysis/analysis-api-platform-interface/src/org/jetbrains/kotlin/analysis/api/platform/KaEngineService.kt)
+    - Key entities: [`KotlinPlatformComponent`](../../analysis-api-platform-interface/src/org/jetbrains/kotlin/analysis/api/platform/KotlinPlatformComponent.kt),
+      [`KaEngineService`](../../analysis-api-platform-interface/src/org/jetbrains/kotlin/analysis/api/platform/KaEngineService.kt)
 
-- **Analysis API Standalone** ([source](https://github.com/JetBrains/kotlin/tree/master/analysis/analysis-api-standalone))
+- **Analysis API Standalone** ([source](../../analysis-api-standalone))
     - Command-line implementation for using the API outside of IDEs
     - Provides project structure management that IDEs typically handle automatically
 
 - **Implementations**
     - Analysis API implementations
-        - K2 implementation, based on the new K2 compiler frontend ([source](https://github.com/JetBrains/kotlin/tree/master/analysis/analysis-api-fir))
-        - K1 implementation, based on the classic, K1 compiler frontend ([source](https://github.com/JetBrains/kotlin/tree/master/analysis/analysis-api-fe10))
+        - K2 implementation, based on the new K2 compiler frontend ([source](../../analysis-api-fir))
+        - K1 implementation, based on the classic, K1 compiler frontend ([source](../../analysis-api-fe10))
     - Platform interface implementations
         - Kotlin IntelliJ IDEA plugin ([source](https://github.com/JetBrains/intellij-community/tree/master/plugins/kotlin/base/analysis-api-platform))
-        - Analysis API Standalone ([source](https://github.com/JetBrains/kotlin/tree/master/analysis/analysis-api-standalone))
-    - PSI Implementation, including stubs ([source](https://github.com/JetBrains/kotlin/tree/master/compiler/psi/psi-impl))
-    - PSI Reference Implementations ([source](https://github.com/JetBrains/kotlin/tree/master/analysis/kt-references))
+        - Analysis API Standalone ([source](../../analysis-api-standalone))
+    - PSI Implementation, including stubs ([source](../../../compiler/psi/psi-impl))
+    - PSI Reference Implementations ([source](../../kt-references))
 
-- **Light Classes** ([source](https://github.com/JetBrains/kotlin/tree/master/analysis/symbol-light-classes))
+- **Light Classes** ([source](../../symbol-light-classes))
     - A Java view for Kotlin declarations designed mainly for Java interoperability
     - Currently, also used in UAST (technical debt)
 
-- **Low-level API** ([source](https://github.com/JetBrains/kotlin/tree/master/analysis/low-level-api-fir))
+- **Low-level API** ([source](../../low-level-api-fir))
     - K2-specific infrastructure for on-demand and incremental code analysis
     - Not directly accessible to end users
 
