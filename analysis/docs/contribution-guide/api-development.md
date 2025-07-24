@@ -1000,7 +1000,7 @@ Across domain boundaries, prefer more descriptive names:
     - `declaration` for a `KtDeclaration` or its subtypes (when no disambiguation is needed)
     - `expression` for a `KtExpression` or its subtypes
         - `callExpression` (not `call`!) for `KtCallExpression`
-    - `typeReference` (not `type`!) for
+    - `typeReference` (not `type`!) for `KtTypeReference`
     - `script` for a `KtScript`
 
 Rule of thumb: is it clear for the user that they get an entity of a different API domain?
