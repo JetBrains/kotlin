@@ -33,22 +33,20 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.StandardClassIds
 
-object FirReturnValueOverrideChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
+object FirReturnValueOverrideChecker : FirCallableDeclarationChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
-    override fun check(declaration: FirDeclaration) {
+    override fun check(declaration: FirCallableDeclaration) {
         if (context.languageVersionSettings.getFlag(AnalysisFlags.returnValueCheckerMode) == ReturnValueCheckerMode.DISABLED) return
 
-        // Only check must-use callable declarations with override modifier
-        if (declaration !is FirCallableDeclaration || !declaration.isOverride) return
+        // Only check mustUse overrides:
+        if (!declaration.isOverride) return
         if (!declaration.status.hasMustUseReturnValue) return
-
-        val session = context.session
         val symbol = declaration.symbol
 
         // Check if any of the overridden symbols have @IgnorableReturnValue
         val overriddenSymbols = symbol.directOverriddenSymbolsSafe()
         val ignorableBaseSymbol = overriddenSymbols.find {
-            session.mustUseReturnValueStatusComponent.hasIgnorableLikeAnnotation(it.resolvedAnnotationClassIds)
+            context.session.mustUseReturnValueStatusComponent.hasIgnorableLikeAnnotation(it.resolvedAnnotationClassIds)
         } ?: return
 
         // Report error if an overridden symbol has @IgnorableReturnValue but the current declaration doesn't
