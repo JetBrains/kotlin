@@ -3670,6 +3670,25 @@ internal class UnnamedDelegatedPropertyImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.UnnamedDelegatedProperty
 
+internal class DestructuringShortFormNameMismatchImpl(
+    override val destructuredName: Name,
+    override val propertyName: Name,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.DestructuringShortFormNameMismatch
+
+internal class DestructuringShortFormOfNonDataClassImpl(
+    override val rhsType: KaType,
+    override val destructuredName: Name,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.DestructuringShortFormOfNonDataClass
+
+internal class DestructuringShortFormUnderscoreImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.DestructuringShortFormUnderscore
+
 internal class ExpectedDeclarationWithBodyImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,

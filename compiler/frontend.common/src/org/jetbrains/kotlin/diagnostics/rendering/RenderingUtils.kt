@@ -21,19 +21,23 @@ fun String.toDeprecationWarningMessage(deprecatingFeature: LanguageFeature): Str
 }
 
 fun StringBuilder.appendDeprecationWarningSuffix(deprecatingFeature: LanguageFeature) {
-    append("This will become an error")
-    val sinceVersion = deprecatingFeature.sinceVersion
-    if (sinceVersion != null) {
-        append(" in language version ")
-        append(sinceVersion.versionString)
-    } else {
-        append(" in a future release")
-    }
+    append("This will become an error ")
+    appendVersion(deprecatingFeature)
     append(".")
 
     deprecatingFeature.issue.takeUnless { it == NO_ISSUE_SPECIFIED }?.let {
         append(" See https://youtrack.jetbrains.com/issue/")
         append(it)
         append(".")
+    }
+}
+
+fun StringBuilder.appendVersion(deprecatingFeature: LanguageFeature) {
+    val sinceVersion = deprecatingFeature.sinceVersion
+    if (sinceVersion != null) {
+        append("in language version ")
+        append(sinceVersion.versionString)
+    } else {
+        append("in a future release")
     }
 }

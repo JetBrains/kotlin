@@ -7,12 +7,14 @@ package org.jetbrains.kotlin.fir.analysis.checkers.declaration
 
 import org.jetbrains.kotlin.KtNodeTypes
 import org.jetbrains.kotlin.KtSourceElement
+import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.checkers.declaredMemberScope
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.analysis.diagnostics.toFirDiagnostics
 import org.jetbrains.kotlin.fir.analysis.diagnostics.toInvisibleReferenceDiagnostic
@@ -21,6 +23,7 @@ import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
 import org.jetbrains.kotlin.fir.declarations.FirVariable
+import org.jetbrains.kotlin.fir.declarations.utils.isData
 import org.jetbrains.kotlin.fir.diagnostics.ConeDiagnostic
 import org.jetbrains.kotlin.fir.diagnostics.ConeSyntaxDiagnostic
 import org.jetbrains.kotlin.fir.expressions.*
@@ -29,17 +32,28 @@ import org.jetbrains.kotlin.fir.references.isError
 import org.jetbrains.kotlin.fir.references.toResolvedVariableSymbol
 import org.jetbrains.kotlin.fir.resolve.diagnostics.*
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
+import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
+import org.jetbrains.kotlin.fir.scopes.getDeclaredConstructors
 import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.calls.tower.ApplicabilityDetail
 import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
 import org.jetbrains.kotlin.types.AbstractTypeChecker
 
 object FirDestructuringDeclarationChecker : FirPropertyChecker(MppCheckerKind.Common) {
+    private enum class DestructuringSyntax {
+        ParensShort,
+        ParensFull,
+        SquareBracketsShort,
+        SquareBracketsFull,
+    }
+
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(declaration: FirProperty) {
         val source = declaration.source ?: return
@@ -80,8 +94,9 @@ object FirDestructuringDeclarationChecker : FirPropertyChecker(MppCheckerKind.Co
                 else -> null
             } ?: return
 
-        // If it uses the bracket syntax, we already checked for the same language feature.
-        if (originalDestructuringDeclaration.source?.findSquareBracket() == null) {
+        val syntax = source.syntaxKind(originalDestructuringDeclaration)
+
+        if (syntax == DestructuringSyntax.ParensFull) {
             checkFullFormLanguageFeature(source)
         }
 
@@ -123,6 +138,26 @@ object FirDestructuringDeclarationChecker : FirPropertyChecker(MppCheckerKind.Co
             originalDestructuringDeclaration,
             initializer
         )
+
+        if (syntax == DestructuringSyntax.ParensShort) {
+            checkChangingMeaningOfShortSyntax(declaration, originalDestructuringDeclarationType, initializer.componentIndex, source)
+        }
+    }
+
+    private fun KtSourceElement.syntaxKind(originalDestructuringDeclaration: FirVariable): DestructuringSyntax {
+        val hasOpeningSquareBracket = originalDestructuringDeclaration.source?.findSquareBracket() != null
+        val hasValVar = getChild(KtTokens.VAL_VAR, depth = 1) != null
+
+        return when (hasOpeningSquareBracket) {
+            true -> when (hasValVar) {
+                true -> DestructuringSyntax.SquareBracketsFull
+                false -> DestructuringSyntax.SquareBracketsShort
+            }
+            false -> when (hasValVar) {
+                true -> DestructuringSyntax.ParensFull
+                false -> DestructuringSyntax.ParensShort
+            }
+        }
     }
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
@@ -156,6 +191,59 @@ object FirDestructuringDeclarationChecker : FirPropertyChecker(MppCheckerKind.Co
         return when (elementType) {
             KtNodeTypes.DESTRUCTURING_DECLARATION -> getChild(KtTokens.LBRACKET, depth = 1)
             KtNodeTypes.VALUE_PARAMETER -> getChild(KtNodeTypes.DESTRUCTURING_DECLARATION, depth = 1)?.findSquareBracket()
+            else -> null
+        }
+    }
+
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    private fun checkChangingMeaningOfShortSyntax(
+        declaration: FirProperty,
+        originalDestructuringDeclarationType: ConeKotlinType,
+        componentIndex: Int,
+        source: KtSourceElement,
+    ) {
+        if (!LanguageFeature.DeprecateNameMismatchInShortDestructuringWithParentheses.isEnabled()
+            || LanguageFeature.EnableNameBasedDestructuringShortForm.isEnabled()
+        ) {
+            return
+        }
+
+        if (declaration.name == SpecialNames.UNDERSCORE_FOR_UNUSED_VAR) {
+            reporter.reportOn(source, FirErrors.DESTRUCTURING_SHORT_FORM_UNDERSCORE)
+            return
+        }
+
+        val propertyName = originalDestructuringDeclarationType.associatedPropertyName(componentIndex)
+
+        if (propertyName == null) {
+            // If this condition is true for the first entry, it is true for all entries.
+            // Suppress repeated diagnostics by only reporting on the first one.
+            if (componentIndex == 1) {
+                reporter.reportOn(
+                    source,
+                    FirErrors.DESTRUCTURING_SHORT_FORM_OF_NON_DATA_CLASS,
+                    originalDestructuringDeclarationType,
+                    declaration.name
+                )
+            }
+        } else if (propertyName != declaration.name) {
+            reporter.reportOn(source, FirErrors.DESTRUCTURING_SHORT_FORM_NAME_MISMATCH, declaration.name, propertyName)
+        }
+    }
+
+    context(context: CheckerContext)
+    private fun ConeKotlinType.associatedPropertyName(componentIndex: Int): Name? {
+        val classSymbol = fullyExpandedType().toRegularClassSymbol(context.session) ?: return null
+        return when {
+            classSymbol.isData -> {
+                val constructor = classSymbol.declaredMemberScope().getDeclaredConstructors().firstOrNull { it.isPrimary }
+                constructor?.valueParameterSymbols?.elementAtOrNull(componentIndex - 1)?.name
+            }
+            classSymbol.classId == StandardClassIds.MapEntry -> when (componentIndex) {
+                1 -> StandardNames.MAP_ENTRY_KEY
+                2 -> StandardNames.MAP_ENTRY_VALUE
+                else -> null
+            }
             else -> null
         }
     }

@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.diagnostics.rendering.CommonRenderers.STRING
 import org.jetbrains.kotlin.diagnostics.rendering.CommonRenderers.commaSeparated
 import org.jetbrains.kotlin.diagnostics.rendering.LanguageFeatureMessageRenderer
 import org.jetbrains.kotlin.diagnostics.rendering.Renderer
+import org.jetbrains.kotlin.diagnostics.rendering.appendVersion
 import org.jetbrains.kotlin.diagnostics.rendering.toDeprecationWarningMessage
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.CALLABLES_FQ_NAMES
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirDiagnosticRenderers.CALLEE_NAME
@@ -249,6 +250,9 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DEPRECATED_TYPE_P
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DEPRECATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DEPRECATION_ERROR
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DESERIALIZATION_ERROR
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DESTRUCTURING_SHORT_FORM_NAME_MISMATCH
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DESTRUCTURING_SHORT_FORM_OF_NON_DATA_CLASS
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DESTRUCTURING_SHORT_FORM_UNDERSCORE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DIFFERENT_NAMES_FOR_THE_SAME_PARAMETER_IN_SUPERTYPES
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DIVISION_BY_ZERO
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.DSL_MARKER_PROPAGATES_TO_MANY
@@ -2741,6 +2745,41 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
 
         map.put(UNNAMED_VAR_PROPERTY, "'var' properties require a name.")
         map.put(UNNAMED_DELEGATED_PROPERTY, "Delegated properties require a name.")
+
+        map.put(
+            DESTRUCTURING_SHORT_FORM_NAME_MISMATCH,
+            buildString {
+                append("Variable name ''{0}'' differs from accessed property name ''{1}''. This syntax will be used for name-based destructuring ")
+                appendVersion(LanguageFeature.EnableNameBasedDestructuringShortForm)
+                appendLine(", and this code will change its meaning.")
+                appendLine("Use the full name-based destructuring syntax ''(val {0} = {1}, ...)'', the new positional destructuring syntax ''[{0}, ...]'', or align the names to prepare for the transition.")
+                append("See https://kotl.in/name-based-destructuring for more information.")
+            },
+            NAME,
+            NAME,
+        )
+        map.put(
+            DESTRUCTURING_SHORT_FORM_OF_NON_DATA_CLASS,
+            buildString {
+                append("This syntax will be used for name-based destructuring ")
+                appendVersion(LanguageFeature.EnableNameBasedDestructuringShortForm)
+                appendLine(" which will stop compiling or change its meaning for non-data class ''{0}''.")
+                appendLine("Use the new positional destructuring syntax ''[{1}, ...]'' to prepare for the transition.")
+                append("See https://kotl.in/name-based-destructuring for more information.")
+            },
+            RENDER_TYPE,
+            NAME
+        )
+        map.put(
+            DESTRUCTURING_SHORT_FORM_UNDERSCORE,
+            buildString {
+                append("This syntax will be used for name-based destructuring ")
+                appendVersion(LanguageFeature.EnableNameBasedDestructuringShortForm)
+                appendLine(", and an underscore without renaming will become an error.")
+                appendLine("Use name-based destructuring syntax '(val x, ...)' and drop the unused entry, or use the new positional destructuring syntax '[_, ...]'.")
+                append("See https://kotl.in/name-based-destructuring for more information.")
+            },
+        )
 
         map.put(CONST_VAL_NOT_TOP_LEVEL_OR_OBJECT, "Const 'val' is only allowed on top level, in named objects, or in companion objects.")
         map.put(CONST_VAL_WITH_GETTER, "Const 'val' cannot have a getter.")

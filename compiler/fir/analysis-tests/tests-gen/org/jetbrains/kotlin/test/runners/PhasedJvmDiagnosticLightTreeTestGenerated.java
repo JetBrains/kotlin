@@ -54776,6 +54776,24 @@ public class PhasedJvmDiagnosticLightTreeTestGenerated extends AbstractPhasedJvm
     @TestDataPath("$PROJECT_ROOT")
     public class Destructuring {
       @Test
+      @TestMetadata("deprecationOfParensShortFormOfMapEntry.kt")
+      public void testDeprecationOfParensShortFormOfMapEntry() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/destructuring/deprecationOfParensShortFormOfMapEntry.kt");
+      }
+
+      @Test
+      @TestMetadata("deprecationOfParensShortFormOfNonDataClass.kt")
+      public void testDeprecationOfParensShortFormOfNonDataClass() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/destructuring/deprecationOfParensShortFormOfNonDataClass.kt");
+      }
+
+      @Test
+      @TestMetadata("deprecationOfParensShortFormWithNameMismatch.kt")
+      public void testDeprecationOfParensShortFormWithNameMismatch() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/destructuring/deprecationOfParensShortFormWithNameMismatch.kt");
+      }
+
+      @Test
       @TestMetadata("nameBasedDestructuringFullForm.kt")
       public void testNameBasedDestructuringFullForm() {
         runTest("compiler/fir/analysis-tests/testData/resolve/destructuring/nameBasedDestructuringFullForm.kt");

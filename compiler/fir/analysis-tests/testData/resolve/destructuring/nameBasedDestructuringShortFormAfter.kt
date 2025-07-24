@@ -4,6 +4,7 @@ class Tuple(val first: String, val second: Int)
 
 fun declaration(x: Tuple) {
     if (true) { val (first, second,) = x }
+    if (true) { val (second, first,) = x }
     if (true) { var (first) = x }
     if (true) { val (first: String) = x }
     // renaming
@@ -13,6 +14,7 @@ fun declaration(x: Tuple) {
 
 fun loop(x: List<Tuple>) {
     for ((first, second,) in x) {}
+    for ((second, first,) in x) {}
     for ((first) in x) {}
     for ((first: String) in x) {}
 
@@ -25,6 +27,7 @@ fun lambda() {
     fun foo(f: (Tuple) -> Unit) {}
 
     foo { (first, second,) -> }
+    foo { (second, first,) -> }
     foo { (first) -> }
     foo { (first: String) -> }
 

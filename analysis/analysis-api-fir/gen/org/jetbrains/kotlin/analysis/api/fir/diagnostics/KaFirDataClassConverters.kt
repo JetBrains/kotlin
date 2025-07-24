@@ -4365,6 +4365,28 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.DESTRUCTURING_SHORT_FORM_NAME_MISMATCH) { firDiagnostic ->
+        DestructuringShortFormNameMismatchImpl(
+            firDiagnostic.a,
+            firDiagnostic.b,
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.DESTRUCTURING_SHORT_FORM_OF_NON_DATA_CLASS) { firDiagnostic ->
+        DestructuringShortFormOfNonDataClassImpl(
+            firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),
+            firDiagnostic.b,
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
+    add(FirErrors.DESTRUCTURING_SHORT_FORM_UNDERSCORE) { firDiagnostic ->
+        DestructuringShortFormUnderscoreImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.EXPECTED_DECLARATION_WITH_BODY) { firDiagnostic ->
         ExpectedDeclarationWithBodyImpl(
             firDiagnostic as KtPsiDiagnostic,
