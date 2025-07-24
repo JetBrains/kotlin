@@ -81,6 +81,9 @@ object CommonConfigurationKeys {
     val INCREMENTAL_COMPILATION = CompilerConfigurationKey.create<Boolean>("Enable incremental compilation")
 
     @JvmField
+    val HEADER_COMPILATION = CompilerConfigurationKey.create<Boolean>("Enable header compilation mode")
+
+    @JvmField
     val ALLOW_ANY_SCRIPTS_IN_SOURCE_ROOTS = CompilerConfigurationKey.create<Boolean>("Allow to compile any scripts along with regular Kotlin sources")
 
     @JvmField
@@ -193,6 +196,10 @@ var CompilerConfiguration.parallelBackendThreads: Int?
 var CompilerConfiguration.incrementalCompilation: Boolean
     get() = getBoolean(CommonConfigurationKeys.INCREMENTAL_COMPILATION)
     set(value) { put(CommonConfigurationKeys.INCREMENTAL_COMPILATION, value) }
+
+var CompilerConfiguration.headerCompilation: Boolean
+    get() = getBoolean(CommonConfigurationKeys.HEADER_COMPILATION)
+    set(value) { put(CommonConfigurationKeys.HEADER_COMPILATION, value) }
 
 var CompilerConfiguration.allowAnyScriptsInSourceRoots: Boolean
     get() = getBoolean(CommonConfigurationKeys.ALLOW_ANY_SCRIPTS_IN_SOURCE_ROOTS)
