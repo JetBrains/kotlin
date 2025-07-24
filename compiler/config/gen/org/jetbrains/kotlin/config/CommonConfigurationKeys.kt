@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.config.phaser.PhaseConfig
 import org.jetbrains.kotlin.constant.EvaluatedConstTracker
 import org.jetbrains.kotlin.incremental.components.EnumWhenTracker
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
+import org.jetbrains.kotlin.incremental.components.ICFileMappingTracker
 import org.jetbrains.kotlin.incremental.components.ImportTracker
 import org.jetbrains.kotlin.incremental.components.InlineConstTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
@@ -43,6 +44,9 @@ object CommonConfigurationKeys {
 
     @JvmField
     val INLINE_CONST_TRACKER = CompilerConfigurationKey.create<InlineConstTracker>("inline constant tracker")
+
+    @JvmField
+    val FILE_MAPPING_TRACKER = CompilerConfigurationKey.create<ICFileMappingTracker>("file mapping tracker")
 
     @JvmField
     val ENUM_WHEN_TRACKER = CompilerConfigurationKey.create<EnumWhenTracker>("enum when tracker")
@@ -145,6 +149,10 @@ var CompilerConfiguration.expectActualTracker: ExpectActualTracker?
 var CompilerConfiguration.inlineConstTracker: InlineConstTracker?
     get() = get(CommonConfigurationKeys.INLINE_CONST_TRACKER)
     set(value) { putIfNotNull(CommonConfigurationKeys.INLINE_CONST_TRACKER, value) }
+
+var CompilerConfiguration.fileMappingTracker: ICFileMappingTracker?
+    get() = get(CommonConfigurationKeys.FILE_MAPPING_TRACKER)
+    set(value) { putIfNotNull(CommonConfigurationKeys.FILE_MAPPING_TRACKER, value) }
 
 var CompilerConfiguration.enumWhenTracker: EnumWhenTracker?
     get() = get(CommonConfigurationKeys.ENUM_WHEN_TRACKER)

@@ -89,14 +89,19 @@ fun writeOutput(
             outputFiles,
             messageCollector
         )
+        val sourceFiles = outputFiles.asList().flatMap { it.sourceFiles }.distinct()
+        configuration.fileMappingTracker?.recordSourceFilesToOutputFileMapping(
+            sourceFiles,
+            jarPath
+        )
         if (reportOutputFiles) {
-            val message = OutputMessageUtil.formatOutputMessage(outputFiles.asList().flatMap { it.sourceFiles }.distinct(), jarPath)
+            val message = OutputMessageUtil.formatOutputMessage(sourceFiles, jarPath)
             messageCollector.report(CompilerMessageSeverity.OUTPUT, message)
         }
         return
     }
 
-    outputFiles.writeAll(configuration.outputDirOrCurrentDirectory(), messageCollector, reportOutputFiles)
+    outputFiles.writeAll(configuration.outputDirOrCurrentDirectory(), messageCollector, reportOutputFiles, configuration.fileMappingTracker)
 }
 
 private fun CompilerConfiguration.outputDirOrCurrentDirectory(): File =

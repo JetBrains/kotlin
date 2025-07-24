@@ -225,6 +225,8 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
 
                 putIfNotNull(CommonConfigurationKeys.IMPORT_TRACKER, services[ImportTracker::class.java])
 
+                putIfNotNull(CommonConfigurationKeys.FILE_MAPPING_TRACKER, services[ICFileMappingTracker::class.java])
+
                 putIfNotNull(
                     JVMConfigurationKeys.INCREMENTAL_COMPILATION_COMPONENTS,
                     services[IncrementalCompilationComponents::class.java]

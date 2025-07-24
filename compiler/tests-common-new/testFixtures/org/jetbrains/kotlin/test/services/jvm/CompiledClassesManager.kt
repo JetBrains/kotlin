@@ -7,7 +7,8 @@ package org.jetbrains.kotlin.test.services.jvm
 
 import org.jetbrains.kotlin.cli.common.output.writeAll
 import org.jetbrains.kotlin.codegen.ClassFileFactory
-import org.jetbrains.kotlin.config.CommonConfigurationKeys
+import org.jetbrains.kotlin.config.fileMappingTracker
+import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.test.model.ArtifactKinds
 import org.jetbrains.kotlin.test.model.FrontendKind
 import org.jetbrains.kotlin.test.model.FrontendKinds
@@ -34,9 +35,8 @@ class CompiledClassesManager(val testServices: TestServices) : TestService {
         } else {
             testServices.artifactsProvider.getArtifact(module, ArtifactKinds.Jvm).classFileFactory
         }
-        val messageCollector = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
-            .getNotNull(CommonConfigurationKeys.MESSAGE_COLLECTOR_KEY)
-        classFileFactory.writeAll(outputDir, messageCollector, reportOutputFiles = false)
+        val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module)
+        classFileFactory.writeAll(outputDir, configuration.messageCollector, reportOutputFiles = false, configuration.fileMappingTracker)
         return outputDir
     }
 
