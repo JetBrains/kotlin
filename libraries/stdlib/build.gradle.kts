@@ -414,7 +414,7 @@ kotlin {
         val webMain by creating {
             dependsOn(commonMain.get())
             kotlin {
-                srcDir("jsAndWasmJsCommon/src")
+                srcDir("common-js-wasmjs/src")
             }
         }
 

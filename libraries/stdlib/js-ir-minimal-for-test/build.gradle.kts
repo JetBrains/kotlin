@@ -108,17 +108,18 @@ val commonNonJvmMainSources by task<Sync> {
     into(layout.buildDirectory.dir("commonNonJvmMainSources"))
 }
 
-val jsAndWasmJsCommonSources by task<Sync> {
-    val jsAndWasmJsDir = file("$rootDir/libraries/stdlib/jsAndWasmJsCommon")
+val commonJsAndWasmJsSources by task<Sync> {
+    val jsAndWasmJsDir = file("$rootDir/libraries/stdlib/common-js-wasmjs")
 
     from("$jsAndWasmJsDir/src") {
         include(
             "kotlin/js/annotations.kt",
+            "kotlin/js/ExperimentalWasmJsInterop.kt",
             "kotlin/js/core.kt",
         )
     }
 
-    into(layout.buildDirectory.dir("jsAndWasmJsCommon"))
+    into(layout.buildDirectory.dir("commonJsAndWasmJsSources"))
 }
 
 val jsMainSources by task<Sync> {
@@ -186,12 +187,12 @@ kotlin {
             dependsOn(commonMain)
             kotlin.srcDir(files(commonNonJvmMainSources.map { it.destinationDir }))
         }
-        val jsAndWasmJsCommon by creating {
+        val commonJsAndWasmJs by creating {
             dependsOn(commonMain)
-            kotlin.srcDir(files(jsAndWasmJsCommonSources.map { it.destinationDir }))
+            kotlin.srcDir(files(commonJsAndWasmJsSources.map { it.destinationDir }))
         }
         named("jsMain") {
-            dependsOn(jsAndWasmJsCommon)
+            dependsOn(commonJsAndWasmJs)
             dependsOn(commonNonJvmMain)
             kotlin.srcDir(files(jsMainSources.map { it.destinationDir }))
             kotlin.srcDir("js-src")
