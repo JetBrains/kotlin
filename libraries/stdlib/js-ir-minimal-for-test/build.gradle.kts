@@ -108,6 +108,19 @@ val commonNonJvmMainSources by task<Sync> {
     into(layout.buildDirectory.dir("commonNonJvmMainSources"))
 }
 
+val jsAndWasmJsCommonSources by task<Sync> {
+    val jsAndWasmJsDir = file("$rootDir/libraries/stdlib/jsAndWasmJsCommon")
+
+    from("$jsAndWasmJsDir/src") {
+        include(
+            "kotlin/js/annotations.kt",
+            "kotlin/js/core.kt",
+        )
+    }
+
+    into(layout.buildDirectory.dir("jsAndWasmJsCommon"))
+}
+
 val jsMainSources by task<Sync> {
     dependsOn(":kotlin-stdlib:prepareJsIrMainSources")
     val jsDir = file("$rootDir/libraries/stdlib/js")
@@ -127,8 +140,9 @@ val jsMainSources by task<Sync> {
             "kotlin/GroupingJs.kt",
             "kotlin/ItemArrayLike.kt",
             "kotlin/io/**",
+            "kotlin/wasmJs/**",
             "kotlin/json.kt",
-            "kotlin/promise.kt",
+            "kotlin/Promise.kt",
             "kotlin/regexp.kt",
             "kotlin/sequenceJs.kt",
             "kotlin/throwableExtensions.kt",
@@ -172,7 +186,12 @@ kotlin {
             dependsOn(commonMain)
             kotlin.srcDir(files(commonNonJvmMainSources.map { it.destinationDir }))
         }
+        val jsAndWasmJsCommon by creating {
+            dependsOn(commonMain)
+            kotlin.srcDir(files(jsAndWasmJsCommonSources.map { it.destinationDir }))
+        }
         named("jsMain") {
+            dependsOn(jsAndWasmJsCommon)
             dependsOn(commonNonJvmMain)
             kotlin.srcDir(files(jsMainSources.map { it.destinationDir }))
             kotlin.srcDir("js-src")

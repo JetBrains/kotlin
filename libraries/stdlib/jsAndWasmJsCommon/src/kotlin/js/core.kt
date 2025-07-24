@@ -5,21 +5,19 @@
 
 package kotlin.js
 
-import kotlin.wasm.internal.ExcludedFromCodegen
-
 /**
  * The property that can be used as a placeholder for statements and values that are defined in JavaScript.
  *
  * This property can be used in two cases:
  *
- *   * To represent body of an external function. In most cases Kotlin does not require to provide bodies of external
+ *   * To represent the body of an external function. In most cases Kotlin does not require to provide bodies of external
  *     functions and properties, but if for some reason you want to (for example, due to limitation of your coding style guides),
  *     you should use `definedExternally`.
- *   * To represent value of default argument.
+ *   * To represent the value of default argument.
  *
  * There's two forms of using `definedExternally`:
  *
- *   1. `= definedExternally` (for functions, properties and parameters).
+ *   1. `= definedExternally` (for functions, properties, and parameters).
  *   2. `{ definedExternally }` (for functions and property getters/setters).
  *
  * This property can't be used from normal code.
@@ -34,15 +32,14 @@ import kotlin.wasm.internal.ExcludedFromCodegen
  * ```
  */
 @ExperimentalWasmJsInterop
-@ExcludedFromCodegen
-@Suppress("WRONG_JS_INTEROP_TYPE")
-public actual external val definedExternally: Nothing
+@SinceKotlin("2.2")
+public expect val definedExternally: Nothing
 
 /**
- * This function allows you to incorporate JavaScript [code] into Kotlin/Wasm codebase.
+ * This function allows you to incorporate JavaScript [code] into Kotlin/Wasm and/or Kotlin/JS codebase.
  * It is used to implement top-level functions and initialize top-level properties.
  *
- * It is important to note, that calls to [js] function should be the only expression
+ * It is important to note that calls to the [js] function should be the only expression
  * in a function body or a property initializer.
  *
  * [code] parameter should be a compile-time constant.
@@ -69,6 +66,5 @@ public actual external val definedExternally: Nothing
  * However, other Kotlin declarations are not visible inside the [code] block.
  */
 @ExperimentalWasmJsInterop
-@ExcludedFromCodegen
-@SinceKotlin("1.9")
-public actual external fun js(code: String): Nothing
+@SinceKotlin("2.2")
+public expect fun js(code: String): Nothing

@@ -13938,6 +13938,11 @@ final inline fun <#A: kotlin/Any?> (kotlin.collections/Collection<#A>).kotlin.co
 final inline fun <#A: kotlin/Any?> kotlin/emptyArray(): kotlin/Array<#A> // kotlin/emptyArray|emptyArray(){0§<kotlin.Any?>}[0]
 
 // Targets: [js, wasmJs]
+open annotation class kotlin.js/ExperimentalWasmJsInterop : kotlin/Annotation { // kotlin.js/ExperimentalWasmJsInterop|null[0]
+    constructor <init>() // kotlin.js/ExperimentalWasmJsInterop.<init>|<init>(){}[0]
+}
+
+// Targets: [js, wasmJs]
 open annotation class kotlin.js/JsExport : kotlin/Annotation { // kotlin.js/JsExport|null[0]
     constructor <init>() // kotlin.js/JsExport.<init>|<init>(){}[0]
 
@@ -13968,6 +13973,14 @@ open annotation class kotlin.js/JsQualifier : kotlin/Annotation { // kotlin.js/J
 
     final val value // kotlin.js/JsQualifier.value|{}value[0]
         final fun <get-value>(): kotlin/String // kotlin.js/JsQualifier.value.<get-value>|<get-value>(){}[0]
+}
+
+// Targets: [js, wasmJs]
+open annotation class kotlin/JsFun : kotlin/Annotation { // kotlin/JsFun|null[0]
+    constructor <init>(kotlin/String) // kotlin/JsFun.<init>|<init>(kotlin.String){}[0]
+
+    final val code // kotlin/JsFun.code|{}code[0]
+        final fun <get-code>(): kotlin/String // kotlin/JsFun.code.<get-code>|<get-code>(){}[0]
 }
 
 // Targets: [js, wasmJs]
@@ -14616,6 +14629,14 @@ final val kotlin.js/kotlin // kotlin.js/kotlin|@kotlin.js.JsClass<0:0>{0§<kotli
     final fun <#A1: kotlin/Any> (kotlin.js/JsClass<#A1>).<get-kotlin>(): kotlin.reflect/KClass<#A1> // kotlin.js/kotlin.<get-kotlin>|<get-kotlin>@kotlin.js.JsClass<0:0>(){0§<kotlin.Any>}[0]
 
 // Targets: [js]
+final val kotlin.js/length // kotlin.js/length|@kotlin.Array<*>{}length[0]
+    final inline fun (kotlin/Array<*>).<get-length>(): kotlin/Int // kotlin.js/length.<get-length>|<get-length>@kotlin.Array<*>(){}[0]
+
+// Targets: [js]
+final val kotlin.js/thrownValue // kotlin.js/thrownValue|@kotlin.Throwable{}thrownValue[0]
+    final inline fun (kotlin/Throwable).<get-thrownValue>(): kotlin/Any? // kotlin.js/thrownValue.<get-thrownValue>|<get-thrownValue>@kotlin.Throwable(){}[0]
+
+// Targets: [js]
 final val kotlin.js/undefined // kotlin.js/undefined|{}undefined[0]
     final fun <get-undefined>(): kotlin/Nothing? // kotlin.js/undefined.<get-undefined>|<get-undefined>(){}[0]
 
@@ -14654,6 +14675,12 @@ final fun (kotlin/FloatArray).kotlin.collections/elementAt(kotlin/Int): kotlin/F
 
 // Targets: [js]
 final fun (kotlin/IntArray).kotlin.collections/elementAt(kotlin/Int): kotlin/Int // kotlin.collections/elementAt|elementAt@kotlin.IntArray(kotlin.Int){}[0]
+
+// Targets: [js]
+final fun (kotlin/Long).kotlin.js/toJsBigInt(): kotlin/Long // kotlin.js/toJsBigInt|toJsBigInt@kotlin.Long(){}[0]
+
+// Targets: [js]
+final fun (kotlin/Long).kotlin.js/toLong(): kotlin/Long // kotlin.js/toLong|toLong@kotlin.Long(){}[0]
 
 // Targets: [js]
 final fun (kotlin/LongArray).kotlin.collections/elementAt(kotlin/Int): kotlin/Long // kotlin.collections/elementAt|elementAt@kotlin.LongArray(kotlin.Int){}[0]
@@ -14893,6 +14920,12 @@ final inline fun (kotlin/Any).kotlin.js/nativeSort(noinline kotlin/Function2<dyn
 final inline fun (kotlin/Any?).kotlin.js/asDynamic(): dynamic // kotlin.js/asDynamic|asDynamic@kotlin.Any?(){}[0]
 
 // Targets: [js]
+final inline fun (kotlin/Boolean).kotlin.js/toBoolean(): kotlin/Boolean // kotlin.js/toBoolean|toBoolean@kotlin.Boolean(){}[0]
+
+// Targets: [js]
+final inline fun (kotlin/Boolean).kotlin.js/toJsBoolean(): kotlin/Boolean // kotlin.js/toJsBoolean|toJsBoolean@kotlin.Boolean(){}[0]
+
+// Targets: [js]
 final inline fun (kotlin/BooleanArray).kotlin.collections/asList(): kotlin.collections/List<kotlin/Boolean> // kotlin.collections/asList|asList@kotlin.BooleanArray(){}[0]
 
 // Targets: [js]
@@ -14948,6 +14981,15 @@ final inline fun (kotlin/CharArray).kotlin.collections/plus(kotlin/CharArray): k
 
 // Targets: [js]
 final inline fun (kotlin/CharArray).kotlin.collections/sort(noinline kotlin/Function2<kotlin/Char, kotlin/Char, kotlin/Int>) // kotlin.collections/sort|sort@kotlin.CharArray(kotlin.Function2<kotlin.Char,kotlin.Char,kotlin.Int>){}[0]
+
+// Targets: [js]
+final inline fun (kotlin/Double).kotlin.js/toDouble(): kotlin/Double // kotlin.js/toDouble|toDouble@kotlin.Double(){}[0]
+
+// Targets: [js]
+final inline fun (kotlin/Double).kotlin.js/toInt(): kotlin/Int // kotlin.js/toInt|toInt@kotlin.Double(){}[0]
+
+// Targets: [js]
+final inline fun (kotlin/Double).kotlin.js/toJsNumber(): kotlin/Double // kotlin.js/toJsNumber|toJsNumber@kotlin.Double(){}[0]
 
 // Targets: [js]
 final inline fun (kotlin/Double).kotlin.math/pow(kotlin/Double): kotlin/Double // kotlin.math/pow|pow@kotlin.Double(kotlin.Double){}[0]
@@ -15013,6 +15055,9 @@ final inline fun (kotlin/FloatArray).kotlin.collections/plus(kotlin/FloatArray):
 final inline fun (kotlin/FloatArray).kotlin.collections/sort(noinline kotlin/Function2<kotlin/Float, kotlin/Float, kotlin/Int>) // kotlin.collections/sort|sort@kotlin.FloatArray(kotlin.Function2<kotlin.Float,kotlin.Float,kotlin.Int>){}[0]
 
 // Targets: [js]
+final inline fun (kotlin/Int).kotlin.js/toJsNumber(): kotlin/Double // kotlin.js/toJsNumber|toJsNumber@kotlin.Int(){}[0]
+
+// Targets: [js]
 final inline fun (kotlin/Int).kotlin/countLeadingZeroBits(): kotlin/Int // kotlin/countLeadingZeroBits|countLeadingZeroBits@kotlin.Int(){}[0]
 
 // Targets: [js]
@@ -15067,6 +15112,9 @@ final inline fun (kotlin/ShortArray).kotlin.collections/plus(kotlin/ShortArray):
 final inline fun (kotlin/ShortArray).kotlin.collections/sort(noinline kotlin/Function2<kotlin/Short, kotlin/Short, kotlin/Int>) // kotlin.collections/sort|sort@kotlin.ShortArray(kotlin.Function2<kotlin.Short,kotlin.Short,kotlin.Int>){}[0]
 
 // Targets: [js]
+final inline fun (kotlin/String).kotlin.js/toJsString(): kotlin/String // kotlin.js/toJsString|toJsString@kotlin.String(){}[0]
+
+// Targets: [js]
 final inline fun (kotlin/String).kotlin.text/concat(kotlin/String): kotlin/String // kotlin.text/concat|concat@kotlin.String(kotlin.String){}[0]
 
 // Targets: [js]
@@ -15094,6 +15142,15 @@ final inline fun (kotlin/String).kotlin.text/uppercase(): kotlin/String // kotli
 final inline fun /withType(kotlin/String, dynamic): dynamic // /withType|withType(kotlin.String;<dynamic>){}[0]
 
 // Targets: [js]
+final inline fun <#A: kotlin/Any> (#A).kotlin.js/toJsReference(): kotlin/Any // kotlin.js/toJsReference|toJsReference@0:0(){0§<kotlin.Any>}[0]
+
+// Targets: [js]
+final inline fun <#A: kotlin/Any> (kotlin/Any).kotlin.js/get(): #A // kotlin.js/get|get@kotlin.Any(){0§<kotlin.Any>}[0]
+
+// Targets: [js]
+final inline fun <#A: kotlin/Any> (kotlin/Any).kotlin.js/unsafeCast(): #A // kotlin.js/unsafeCast|unsafeCast@kotlin.Any(){0§<kotlin.Any>}[0]
+
+// Targets: [js]
 final inline fun <#A: kotlin/Any?, #B: kotlin/Any?> (kotlin.js.collections/JsReadonlyMap<#A, #B>).kotlin.js.collections/toMap(): kotlin.collections/Map<#A, #B> // kotlin.js.collections/toMap|toMap@kotlin.js.collections.JsReadonlyMap<0:0,0:1>(){0§<kotlin.Any?>;1§<kotlin.Any?>}[0]
 
 // Targets: [js]
@@ -15110,6 +15167,9 @@ final inline fun <#A: kotlin/Any?, #B: kotlin/Any?> kotlin.collections/linkedMap
 
 // Targets: [js]
 final inline fun <#A: kotlin/Any?> (dynamic).kotlin.js/unsafeCast(): #A // kotlin.js/unsafeCast|unsafeCast@<dynamic>(){0§<kotlin.Any?>}[0]
+
+// Targets: [js]
+final inline fun <#A: kotlin/Any?> (kotlin.collections/List<#A>).kotlin.js/toJsArray(): kotlin/Array<#A> // kotlin.js/toJsArray|toJsArray@kotlin.collections.List<0:0>(){0§<kotlin.Any?>}[0]
 
 // Targets: [js]
 final inline fun <#A: kotlin/Any?> (kotlin.js.collections/JsReadonlyArray<#A>).kotlin.js.collections/toList(): kotlin.collections/List<#A> // kotlin.js.collections/toList|toList@kotlin.js.collections.JsReadonlyArray<0:0>(){0§<kotlin.Any?>}[0]
@@ -15145,6 +15205,21 @@ final inline fun <#A: kotlin/Any?> (kotlin/Array<#A>).kotlin.collections/plus(ko
 final inline fun <#A: kotlin/Any?> (kotlin/Array<#A>).kotlin.collections/plus(kotlin/Array<out #A>): kotlin/Array<#A> // kotlin.collections/plus|plus@kotlin.Array<0:0>(kotlin.Array<out|0:0>){0§<kotlin.Any?>}[0]
 
 // Targets: [js]
+final inline fun <#A: kotlin/Any?> (kotlin/Array<#A>).kotlin.js/get(kotlin/Int): #A? // kotlin.js/get|get@kotlin.Array<0:0>(kotlin.Int){0§<kotlin.Any?>}[0]
+
+// Targets: [js]
+final inline fun <#A: kotlin/Any?> (kotlin/Array<#A>).kotlin.js/set(kotlin/Int, #A) // kotlin.js/set|set@kotlin.Array<0:0>(kotlin.Int;0:0){0§<kotlin.Any?>}[0]
+
+// Targets: [js]
+final inline fun <#A: kotlin/Any?> (kotlin/Array<#A>).kotlin.js/toArray(): kotlin/Array<#A> // kotlin.js/toArray|toArray@kotlin.Array<0:0>(){0§<kotlin.Any?>}[0]
+
+// Targets: [js]
+final inline fun <#A: kotlin/Any?> (kotlin/Array<#A>).kotlin.js/toJsArray(): kotlin/Array<#A> // kotlin.js/toJsArray|toJsArray@kotlin.Array<0:0>(){0§<kotlin.Any?>}[0]
+
+// Targets: [js]
+final inline fun <#A: kotlin/Any?> (kotlin/Array<#A>).kotlin.js/toList(): kotlin.collections/List<#A> // kotlin.js/toList|toList@kotlin.Array<0:0>(){0§<kotlin.Any?>}[0]
+
+// Targets: [js]
 final inline fun <#A: kotlin/Any?> (kotlin/Array<out #A>).kotlin.collections/copyInto(kotlin/Array<#A>, kotlin/Int = ..., kotlin/Int = ..., kotlin/Int = ...): kotlin/Array<#A> // kotlin.collections/copyInto|copyInto@kotlin.Array<out|0:0>(kotlin.Array<0:0>;kotlin.Int;kotlin.Int;kotlin.Int){0§<kotlin.Any?>}[0]
 
 // Targets: [js]
@@ -15164,6 +15239,9 @@ final inline fun <#A: kotlin/Any?> (kotlin/Array<out #A>?).kotlin.collections/or
 
 // Targets: [js]
 final inline fun <#A: kotlin/Any?> kotlin.collections/linkedSetOf(): kotlin.collections/LinkedHashSet<#A> // kotlin.collections/linkedSetOf|linkedSetOf(){0§<kotlin.Any?>}[0]
+
+// Targets: [js]
+final inline fun <#A: kotlin/Any?> kotlin.js/JsArray(): kotlin/Array<#A> // kotlin.js/JsArray|JsArray(){0§<kotlin.Any?>}[0]
 
 // Targets: [js]
 final inline fun <#A: kotlin/Any?> kotlin/synchronized(kotlin/Any, kotlin/Function0<#A>): #A // kotlin/synchronized|synchronized(kotlin.Any;kotlin.Function0<0:0>){0§<kotlin.Any?>}[0]
@@ -15373,19 +15451,6 @@ final suspend inline fun <#A: kotlin/Any?> kotlin.js/suspendCoroutineUnintercept
 final suspend inline fun kotlin.js/getCoroutineContext(): kotlin.coroutines/CoroutineContext // kotlin.js/getCoroutineContext|getCoroutineContext(){}[0]
 
 // Targets: [wasmJs]
-open annotation class kotlin.js/ExperimentalWasmJsInterop : kotlin/Annotation { // kotlin.js/ExperimentalWasmJsInterop|null[0]
-    constructor <init>() // kotlin.js/ExperimentalWasmJsInterop.<init>|<init>(){}[0]
-}
-
-// Targets: [wasmJs]
-open annotation class kotlin/JsFun : kotlin/Annotation { // kotlin/JsFun|null[0]
-    constructor <init>(kotlin/String) // kotlin/JsFun.<init>|<init>(kotlin.String){}[0]
-
-    final val code // kotlin/JsFun.code|{}code[0]
-        final fun <get-code>(): kotlin/String // kotlin/JsFun.code.<get-code>|<get-code>(){}[0]
-}
-
-// Targets: [wasmJs]
 abstract interface kotlin.js/Dynamic : kotlin.js/JsAny // kotlin.js/Dynamic|null[0]
 
 // Targets: [wasmJs]
@@ -15405,10 +15470,13 @@ final class <#A: kotlin.js/JsAny?> kotlin.js/JsArray : kotlin.js/JsAny { // kotl
 // Targets: [wasmJs]
 final class <#A: out kotlin.js/JsAny?> kotlin.js/Promise : kotlin.js/JsAny { // kotlin.js/Promise|null[0]
     constructor <init>(kotlin/Function2<kotlin/Function1<#A, kotlin/Unit>, kotlin/Function1<kotlin.js/JsAny, kotlin/Unit>, kotlin/Unit>) // kotlin.js/Promise.<init>|<init>(kotlin.Function2<kotlin.Function1<1:0,kotlin.Unit>,kotlin.Function1<kotlin.js.JsAny,kotlin.Unit>,kotlin.Unit>){}[0]
+    constructor <init>(kotlin/Function2<kotlin/Function1<#A, kotlin/Unit>, kotlin/Function1<kotlin.js/JsError, kotlin/Unit>, kotlin/Unit>) // kotlin.js/Promise.<init>|<init>(kotlin.Function2<kotlin.Function1<1:0,kotlin.Unit>,kotlin.Function1<kotlin.js.JsError,kotlin.Unit>,kotlin.Unit>){}[0]
 
     final fun <#A1: kotlin.js/JsAny?> catch(kotlin/Function1<kotlin.js/JsAny, #A1>): kotlin.js/Promise<#A1> // kotlin.js/Promise.catch|catch(kotlin.Function1<kotlin.js.JsAny,0:0>){0§<kotlin.js.JsAny?>}[0]
+    final fun <#A1: kotlin.js/JsAny?> catch(kotlin/Function1<kotlin.js/JsError, #A1>): kotlin.js/Promise<#A1> // kotlin.js/Promise.catch|catch(kotlin.Function1<kotlin.js.JsError,0:0>){0§<kotlin.js.JsAny?>}[0]
     final fun <#A1: kotlin.js/JsAny?> then(kotlin/Function1<#A, #A1>?): kotlin.js/Promise<#A1> // kotlin.js/Promise.then|then(kotlin.Function1<1:0,0:0>?){0§<kotlin.js.JsAny?>}[0]
     final fun <#A1: kotlin.js/JsAny?> then(kotlin/Function1<#A, #A1>?, kotlin/Function1<kotlin.js/JsAny, #A1>?): kotlin.js/Promise<#A1> // kotlin.js/Promise.then|then(kotlin.Function1<1:0,0:0>?;kotlin.Function1<kotlin.js.JsAny,0:0>?){0§<kotlin.js.JsAny?>}[0]
+    final fun <#A1: kotlin.js/JsAny?> then(kotlin/Function1<#A, #A1>?, kotlin/Function1<kotlin.js/JsError, #A1>?): kotlin.js/Promise<#A1> // kotlin.js/Promise.then|then(kotlin.Function1<1:0,0:0>?;kotlin.Function1<kotlin.js.JsError,0:0>?){0§<kotlin.js.JsAny?>}[0]
     final fun finally(kotlin/Function0<kotlin/Unit>): kotlin.js/Promise<#A> // kotlin.js/Promise.finally|finally(kotlin.Function0<kotlin.Unit>){}[0]
 
     final object Companion { // kotlin.js/Promise.Companion|null[0]
@@ -15417,6 +15485,7 @@ final class <#A: out kotlin.js/JsAny?> kotlin.js/Promise : kotlin.js/JsAny { // 
         final fun <#A2: kotlin.js/JsAny?> resolve(#A2): kotlin.js/Promise<#A2> // kotlin.js/Promise.Companion.resolve|resolve(0:0){0§<kotlin.js.JsAny?>}[0]
         final fun <#A2: kotlin.js/JsAny?> resolve(kotlin.js/Promise<#A2>): kotlin.js/Promise<#A2> // kotlin.js/Promise.Companion.resolve|resolve(kotlin.js.Promise<0:0>){0§<kotlin.js.JsAny?>}[0]
         final fun reject(kotlin.js/JsAny): kotlin.js/Promise<kotlin/Nothing> // kotlin.js/Promise.Companion.reject|reject(kotlin.js.JsAny){}[0]
+        final fun reject(kotlin.js/JsError): kotlin.js/Promise<kotlin/Nothing> // kotlin.js/Promise.Companion.reject|reject(kotlin.js.JsError){}[0]
     }
 }
 
@@ -15427,9 +15496,14 @@ final class kotlin.js/JsBigInt : kotlin.js/JsAny // kotlin.js/JsBigInt|null[0]
 final class kotlin.js/JsBoolean : kotlin.js/JsAny // kotlin.js/JsBoolean|null[0]
 
 // Targets: [wasmJs]
+final class kotlin.js/JsError : kotlin.js/JsAny { // kotlin.js/JsError|null[0]
+    constructor <init>() // kotlin.js/JsError.<init>|<init>(){}[0]
+}
+
+// Targets: [wasmJs]
 final class kotlin.js/JsException : kotlin/Throwable { // kotlin.js/JsException|null[0]
     final val message // kotlin.js/JsException.message|{}message[0]
-        final fun <get-message>(): kotlin/String // kotlin.js/JsException.message.<get-message>|<get-message>(){}[0]
+        final fun <get-message>(): kotlin/String? // kotlin.js/JsException.message.<get-message>|<get-message>(){}[0]
     final val thrownValue // kotlin.js/JsException.thrownValue|{}thrownValue[0]
         final fun <get-thrownValue>(): kotlin.js/JsAny? // kotlin.js/JsException.thrownValue.<get-thrownValue>|<get-thrownValue>(){}[0]
 }
@@ -15439,6 +15513,14 @@ final class kotlin.js/JsNumber : kotlin.js/JsAny // kotlin.js/JsNumber|null[0]
 
 // Targets: [wasmJs]
 final class kotlin.js/JsString : kotlin.js/JsAny // kotlin.js/JsString|null[0]
+
+// Targets: [wasmJs]
+final val kotlin.js/length // kotlin.js/length|@kotlin.js.JsArray<*>{}length[0]
+    final inline fun (kotlin.js/JsArray<*>).<get-length>(): kotlin/Int // kotlin.js/length.<get-length>|<get-length>@kotlin.js.JsArray<*>(){}[0]
+
+// Targets: [wasmJs]
+final val kotlin.js/thrownValue // kotlin.js/thrownValue|@kotlin.js.JsException{}thrownValue[0]
+    final fun (kotlin.js/JsException).<get-thrownValue>(): kotlin.js/JsAny? // kotlin.js/thrownValue.<get-thrownValue>|<get-thrownValue>@kotlin.js.JsException(){}[0]
 
 // Targets: [wasmJs]
 final fun (kotlin.js/JsAny).kotlin.js/toThrowableOrNull(): kotlin/Throwable? // kotlin.js/toThrowableOrNull|toThrowableOrNull@kotlin.js.JsAny(){}[0]
@@ -15496,6 +15578,9 @@ final fun <#A: kotlin.js/JsAny?> (kotlin.js/JsArray<#A>).kotlin.js/toList(): kot
 
 // Targets: [wasmJs]
 final fun <#A: kotlin.js/JsAny?> (kotlin/Array<#A>).kotlin.js/toJsArray(): kotlin.js/JsArray<#A> // kotlin.js/toJsArray|toJsArray@kotlin.Array<0:0>(){0§<kotlin.js.JsAny?>}[0]
+
+// Targets: [wasmJs]
+final fun <#A: kotlin.js/JsAny?> kotlin.js/JsArray(): kotlin.js/JsArray<#A> // kotlin.js/JsArray|JsArray(){0§<kotlin.js.JsAny?>}[0]
 
 // Targets: [wasmJs]
 final fun <#A: kotlin/Any> (#A).kotlin.js/toJsReference(): kotlin.js/JsReference<#A> // kotlin.js/toJsReference|toJsReference@0:0(){0§<kotlin.Any>}[0]

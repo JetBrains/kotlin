@@ -74,7 +74,7 @@ object JsStandardClassIds {
         val JsExportIgnore = JsExport.createNestedClassId(Name.identifier("Ignore"))
 
         @JvmField
-        val JsFun = "JsFun".jsId()
+        val JsFun = "JsFun".id()
 
         @JvmField
         val JsOutlinedFunction = "JsOutlinedFunction".jsId()
@@ -105,5 +105,6 @@ object JsStandardClassIds {
 }
 
 private fun String.jsId() = ClassId(JsStandardClassIds.BASE_JS_PACKAGE, Name.identifier(this))
+private fun String.id() = ClassId(BASE_KOTLIN_PACKAGE, Name.identifier(this))
 
 private fun String.callableId(packageName: FqName) = CallableId(packageName, Name.identifier(this))
