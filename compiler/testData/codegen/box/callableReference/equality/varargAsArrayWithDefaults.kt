@@ -1,4 +1,4 @@
-// IGNORE_BACKEND_K2_MULTI_MODULE: JS_IR
+// IGNORE_BACKEND_K2_MULTI_MODULE: JS_IR WASM
 // ^^^ Cannot split to two modules due to cycle import
 // FILE: test.kt
 

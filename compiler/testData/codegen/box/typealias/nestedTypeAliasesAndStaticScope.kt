@@ -1,6 +1,6 @@
 // IGNORE_BACKEND_K1: ANY
 // ISSUE: KT-74107
-// IGNORE_BACKEND_K2_MULTI_MODULE: JS_IR
+// IGNORE_BACKEND_K2_MULTI_MODULE: JS_IR WASM
 // ^^^ KT-79519: Nested type alias is unreachable from another module
 // LANGUAGE: +NestedTypeAliases
 

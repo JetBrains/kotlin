@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.DIAGNOSTICS
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives
+import org.jetbrains.kotlin.test.directives.model.ValueDirective
 import org.jetbrains.kotlin.test.frontend.classic.handlers.ClassicDiagnosticsHandler
 import org.jetbrains.kotlin.test.frontend.fir.handlers.FirDiagnosticsHandler
 import org.jetbrains.kotlin.test.model.*
@@ -27,6 +28,7 @@ import org.jetbrains.kotlin.test.services.EnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.LibraryProvider
 import org.jetbrains.kotlin.test.services.sourceProviders.AdditionalDiagnosticsSourceFilesProvider
 import org.jetbrains.kotlin.test.services.sourceProviders.CoroutineHelpersSourceFilesProvider
+import org.jetbrains.kotlin.utils.bind
 import org.jetbrains.kotlin.wasm.test.converters.WasmPreSerializationLoweringFacade
 import org.jetbrains.kotlin.wasm.test.handlers.WasmDtsHandler
 
@@ -44,8 +46,10 @@ abstract class AbstractWasmBlackBoxCodegenTestBase<R : ResultingArtifact.Fronten
     abstract val wasmBoxTestRunner: Constructor<AnalysisHandler<BinaryArtifacts.Wasm>>
     abstract val wasmEnvironmentConfigurator: Constructor<EnvironmentConfigurator>
     open val additionalSourceProvider: Constructor<AdditionalSourceProvider>? = null
+    protected open val customIgnoreDirective: ValueDirective<TargetBackend>?
+        get() = null
 
-    protected fun TestConfigurationBuilder.commonConfigurationForWasmBlackBoxCodegenTest() {
+    protected fun TestConfigurationBuilder.commonConfigurationForWasmBlackBoxCodegenTest(customIgnoreDirective: ValueDirective<TargetBackend>? = null) {
         globalDefaults {
             frontend = targetFrontend
             targetPlatform = this@AbstractWasmBlackBoxCodegenTestBase.targetPlatform
@@ -79,7 +83,7 @@ abstract class AbstractWasmBlackBoxCodegenTestBase<R : ResultingArtifact.Fronten
 
         useAfterAnalysisCheckers(
             ::WasmFailingTestSuppressor,
-            ::BlackBoxCodegenSuppressor,
+            ::BlackBoxCodegenSuppressor.bind(customIgnoreDirective),
         )
 
         facadeStep(frontendFacade)
@@ -110,7 +114,7 @@ abstract class AbstractWasmBlackBoxCodegenTestBase<R : ResultingArtifact.Fronten
     }
 
     override fun configure(builder: TestConfigurationBuilder) = with(builder) {
-        commonConfigurationForWasmBlackBoxCodegenTest()
+        commonConfigurationForWasmBlackBoxCodegenTest(customIgnoreDirective)
 
         forTestsNotMatching(
             "compiler/testData/codegen/box/diagnostics/functions/tailRecursion/*" or

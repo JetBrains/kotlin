@@ -1,7 +1,7 @@
 // LANGUAGE: +KotlinFunInterfaceConstructorReference
 
 // IGNORE_BACKEND: JS_IR, JS_IR_ES6
-// IGNORE_BACKEND_K2_MULTI_MODULE: JS_IR JS_IR_ES6
+// IGNORE_BACKEND_K2_MULTI_MODULE: JS_IR JS_IR_ES6 WASM
 //  ^ TypeError: tmp is not a function
 
 // FILE: funInterfaceConstructedObjectsEquality.kt
