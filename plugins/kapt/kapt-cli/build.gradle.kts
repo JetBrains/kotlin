@@ -25,7 +25,7 @@ sourceSets {
 
 testsJar()
 
-projectTest {
+projectTest(jUnitMode = JUnitMode.JUnit5) {
     useJUnitPlatform()
     workingDir = rootDir
     dependsOn(":dist")

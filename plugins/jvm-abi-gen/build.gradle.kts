@@ -65,7 +65,7 @@ sourcesJar()
 
 javadocJar()
 
-projectTest(parallel = true) {
+projectTest(parallel = true, jUnitMode = JUnitMode.JUnit4) {
     workingDir = rootDir
     dependsOn(":dist")
 }

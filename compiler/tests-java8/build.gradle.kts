@@ -48,7 +48,8 @@ compilerTests {
 
 projectTest(
     parallel = true,
-    defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_21_0)
+    defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_21_0),
+    jUnitMode = JUnitMode.JUnit4
 ) {
     useJUnitPlatform()
     systemProperty("kotlin.test.script.classpath", testSourceSet.output.classesDirs.joinToString(File.pathSeparator))

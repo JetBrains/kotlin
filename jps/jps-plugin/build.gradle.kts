@@ -117,7 +117,7 @@ tasks.compileKotlin {
     compilerOptions.jvmTarget = JvmTarget.JVM_1_8
 }
 
-projectTest(parallel = true) {
+projectTest(parallel = true, jUnitMode = JUnitMode.JUnit4) {
     // do not replace with compile/runtime dependency,
     // because it forces Intellij reindexing after each compiler change
     dependsOn(":kotlin-compiler:dist")

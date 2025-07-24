@@ -1,3 +1,8 @@
+/*
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
+ */
+
 import com.sun.management.OperatingSystemMXBean
 import org.gradle.api.Project
 import org.gradle.api.file.FileSystemOperations
@@ -22,11 +27,6 @@ import java.nio.file.Files
 import java.nio.file.Path
 import javax.inject.Inject
 import kotlin.collections.forEach
-
-/*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
- * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
- */
 
 // Mixing JUnit4 and Junit5 in one module proved to be problematic, consider using separate modules instead
 enum class JUnitMode {
@@ -55,7 +55,7 @@ val Test.commandLineIncludePatterns: Set<String>
 fun Project.projectTest(
     taskName: String = "test",
     parallel: Boolean = false,
-    jUnitMode: JUnitMode = JUnitMode.JUnit4,
+    jUnitMode: JUnitMode,
     maxHeapSizeMb: Int? = null,
     minHeapSizeMb: Int? = null,
     maxMetaspaceSizeMb: Int = 512,

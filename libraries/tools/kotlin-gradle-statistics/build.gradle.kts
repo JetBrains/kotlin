@@ -22,7 +22,7 @@ dependencies {
     testImplementation(libs.junit4)
 }
 
-projectTest {
+projectTest(jUnitMode = JUnitMode.JUnit4) {
     workingDir = rootDir
 }
 

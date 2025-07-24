@@ -62,7 +62,7 @@ publish {
     setArtifacts(listOf(runtimeJar, sourcesJar, javadocJar))
 }
 
-projectTest {
+projectTest(jUnitMode = JUnitMode.JUnit4) {
     dependsOn(runtimeJar)
     val testCompilerClasspathProvider = project.provider { testCompilerClasspath.asPath }
     val testCompilationClasspathProvider = project.provider { testCompilationClasspath.asPath }

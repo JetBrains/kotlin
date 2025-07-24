@@ -23,7 +23,7 @@ sourceSets {
     "test" { projectDefault() }
 }
 
-projectTest(parallel = true) {
+projectTest(parallel = true, jUnitMode = JUnitMode.JUnit4) {
     dependsOn(":dist", ":kotlinx-serialization-compiler-plugin.embeddable:embeddable")
     workingDir = rootDir
     val localKotlinxSerializationPluginClasspath: FileCollection = kotlinxSerializationGradlePluginClasspath
@@ -32,7 +32,7 @@ projectTest(parallel = true) {
     }
 }
 
-projectTest(taskName = "testWithK1", parallel = true) {
+projectTest(taskName = "testWithK1", parallel = true, jUnitMode = JUnitMode.JUnit4) {
     dependsOn(":dist", ":kotlinx-serialization-compiler-plugin.embeddable:embeddable")
     workingDir = rootDir
     val localKotlinxSerializationPluginClasspath: FileCollection = kotlinxSerializationGradlePluginClasspath

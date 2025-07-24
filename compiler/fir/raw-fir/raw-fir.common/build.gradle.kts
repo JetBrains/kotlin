@@ -31,7 +31,7 @@ sourceSets {
     "test" { none() }
 }
 
-projectTest(parallel = true) {
+projectTest(parallel = true, jUnitMode = JUnitMode.JUnit4) {
     workingDir = rootDir
 }
 

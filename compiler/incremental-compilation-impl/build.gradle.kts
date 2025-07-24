@@ -50,13 +50,13 @@ sourceSets {
     "testFixtures" { projectDefault() }
 }
 
-projectTest(parallel = true) {
+projectTest(parallel = true, jUnitMode = JUnitMode.JUnit4) {
     dependsOn(":dist")
     workingDir = rootDir
     useJsIrBoxTests(version = version, buildDir = layout.buildDirectory)
 }
 
-projectTest("testJvmICWithJdk11", parallel = true) {
+projectTest("testJvmICWithJdk11", parallel = true, jUnitMode = JUnitMode.JUnit4) {
     dependsOn(":dist")
     workingDir = rootDir
     useJsIrBoxTests(version = version, buildDir = layout.buildDirectory)

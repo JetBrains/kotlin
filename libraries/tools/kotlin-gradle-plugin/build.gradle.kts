@@ -412,7 +412,7 @@ tasks.named("validatePlugins") {
     enabled = false
 }
 
-projectTest {
+projectTest(jUnitMode = JUnitMode.JUnit4) {
     workingDir = rootDir
 }
 

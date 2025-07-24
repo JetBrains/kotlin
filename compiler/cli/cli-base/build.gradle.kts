@@ -32,7 +32,7 @@ optInToK1Deprecation()
 
 testsJar {}
 
-projectTest {
+projectTest(jUnitMode = JUnitMode.JUnit4) {
     workingDir = rootDir
 }
 
