@@ -74,6 +74,7 @@ class ES6PrimaryConstructorOptimizationLowering(private val context: JsIrBackend
             val substitutionMap = makeTypeParameterSubstitutionMap(original, constructor)
             constructor.copyParameters(original.nonDispatchParameters, substitutionMap)
             constructor.parent = irClass
+            constructor.returnType = returnType.remapTypeParameters(this, constructor)
 
             if (irClass.isExported(context)) {
                 constructor.annotations = original.annotations.withoutFirst { it.isAnnotation(JsAnnotations.jsExportIgnoreFqn) }

@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
 import org.jetbrains.kotlin.ir.backend.js.JsStatementOrigins
 import org.jetbrains.kotlin.ir.backend.js.export.isExported
-import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.PrepareSuspendFunctionsToExportLowering.Companion.wrapperFunction
+import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.PrepareSuspendFunctionsForExportLowering.Companion.promisifiedWrapperFunction
 import org.jetbrains.kotlin.ir.backend.js.utils.getVoid
 import org.jetbrains.kotlin.ir.backend.js.utils.jsConstructorReference
 import org.jetbrains.kotlin.ir.builders.IrBlockBuilder
@@ -45,7 +45,7 @@ class JsDefaultParameterInjector(context: JsIrBackendContext) :
             origin == JsLoweredDeclarationOrigin.JS_SHADOWED_EXPORT &&
                     !isTopLevel &&
                     functionAccess.origin != JsStatementOrigins.IMPLEMENTATION_DELEGATION_CALL &&
-                    (wrapperFunction ?: this).isExported(context)
+                    (promisifiedWrapperFunction ?: this).isExported(context)
         }
     }
 

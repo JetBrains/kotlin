@@ -55,7 +55,8 @@ suspend fun <T> genericWithMultipleConstraints(x: T): T
               T : Throwable = x
 
 @JsExport
-suspend fun <A, B, C, D, E> generic3(a: A, b: B, c: C, d: D): E? = null
+@JsName("generic3")
+suspend fun <A, B, C, D, E> forth(a: A, b: B, c: C, d: D): E? = null
 
 @JsExport
 suspend inline fun inlineFun(x: Int, callback: (Int) -> Unit) {
@@ -66,8 +67,14 @@ suspend inline fun inlineFun(x: Int, callback: (Int) -> Unit) {
 external interface SomeExternalInterface
 
 @JsExport
-open class Test {
-    open suspend fun sum(x: Int, y: Int): Int =
+interface HolderOfSum {
+    suspend fun sum(x: Int, y: Int): Int
+    suspend fun sumNullable(x: Int?, y: Int?): Int
+}
+
+@JsExport
+open class Test : HolderOfSum {
+    override suspend fun sum(x: Int, y: Int): Int =
         x + y
 
     open suspend fun varargInt(vararg x: Int): Int =
@@ -82,7 +89,7 @@ open class Test {
     open suspend fun varargWithComplexType(vararg x: (Array<IntArray>) -> Array<IntArray>): Int =
         x.size
 
-    open suspend fun sumNullable(x: Int?, y: Int?): Int =
+    override suspend fun sumNullable(x: Int?, y: Int?): Int =
         (x ?: 0) + (y ?: 0)
 
     open suspend fun defaultParameters(a: String, x: Int = 10, y: String = "OK"): String =
@@ -99,7 +106,8 @@ open class Test {
                   T : SomeExternalInterface,
                   T : Throwable = x
 
-    open suspend fun <A, B, C, D, E> generic3(a: A, b: B, c: C, d: D): E? = null
+    @JsName("generic3")
+    open suspend fun <A, B, C, D, E> forth(a: A, b: B, c: C, d: D): E? = null
 }
 
 @JsExport
@@ -110,7 +118,7 @@ open class TestChild : Test() {
     override suspend fun sumNullable(x: Int?, y: Int?): Int =
         (x ?: 1) + (y ?: 1)
 
-    override suspend fun <A, B, C, D, E> generic3(a: A, b: B, c: C, d: D): E? = js("'OK'").unsafeCast<E>()
+    override suspend fun <A, B, C, D, E> forth(a: A, b: B, c: C, d: D): E? = js("'OK'").unsafeCast<E>()
 }
 
 @JsExport suspend fun acceptTest(test: Test) {
@@ -149,7 +157,7 @@ open class TestChild : Test() {
     })
 
     assert(test.genericWithConstraint("constrained") == "constrained")
-    val result = test.generic3<Int, String, Boolean, Double, String>(1, "test", true, 1.0)
+    val result = test.forth<Int, String, Boolean, Double, String>(1, "test", true, 1.0)
     assert(when (test) {
         is TestChild -> result is String
         else -> result == null
