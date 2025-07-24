@@ -706,7 +706,7 @@ inline fun performOperation(action: () -> Unit, timeout: Int = DEFAULT_TIMEOUT) 
 
 #### Think Twice Before Using Inline Functions
 
-Inline functions have limited evolution possibilities:
+Inline functions have limited evolution possibilities and expose implementation details:
 
 ```kotlin
 // Bad: Inline function limits future evolution
@@ -714,6 +714,10 @@ inline fun <reified T : KaSymbol> KaModule.topLevelSymbolsOfType(): Sequence<T>
 
 // Good: Regular function allows internal changes
 fun <T : KaSymbol> KaModule.topLevelSymbolsOfType(klass: KClass<T>): Sequence<T>
+
+// Convenience: You can still provide an inline function with a trivial, delegating body
+inline fun <reified T : KaSymbol> KaModule.topLevelSymbolsOfType(): Sequence<T> =
+    topLevelSymbolsOfType(T::class)
 
 // Even better: let the users filter symbols by themselves 
 // or provide distinct functions for specific symbols
