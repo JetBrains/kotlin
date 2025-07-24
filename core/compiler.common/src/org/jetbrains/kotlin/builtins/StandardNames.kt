@@ -71,6 +71,10 @@ object StandardNames {
     @JvmField
     val BUILT_INS_PACKAGE_NAME = Name.identifier("kotlin")
 
+    @JvmField val MAP_ENTRY_KEY = Name.identifier("key")
+
+    @JvmField val MAP_ENTRY_VALUE = DEFAULT_VALUE_PARAMETER
+
     @JvmField
     val BUILT_INS_PACKAGE_FQ_NAME = FqName.topLevel(BUILT_INS_PACKAGE_NAME)
 
