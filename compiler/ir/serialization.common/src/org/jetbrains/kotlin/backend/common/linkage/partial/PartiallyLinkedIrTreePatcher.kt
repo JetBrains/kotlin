@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrAnonymousInitializerSymbolImpl
 import org.jetbrains.kotlin.ir.symbols.impl.IrSimpleFunctionSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.classOrFail
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
@@ -582,6 +583,7 @@ internal class PartiallyLinkedIrTreePatcher(
             // But the type can also be a user defined fun interface, and either that interface or its SAM could have gone missing.
             checkReferencedDeclaration(overriddenFunctionSymbol)
                 ?: checkExpressionType(type)
+                ?: checkHasFunctionalType(type)
                 ?: run {
                     // Don't completely fail when reflectionTargetSymbol is unlinked, see reflectionTargetLinkageError for details.
                     reflectionTargetLinkageError = checkReferencedDeclaration(reflectionTargetSymbol)
@@ -859,7 +861,51 @@ internal class PartiallyLinkedIrTreePatcher(
         private fun IrTypeOperatorCall.checkSamConversion(): PartialLinkageCase? {
             if (operator != IrTypeOperator.SAM_CONVERSION) return null
 
-            val funInterface: IrClass = typeOperand.classOrNull?.owner ?: return null
+            val reportOn = if (argument is IrRichFunctionReference) argument else this
+
+            reportOn.checkHasFunctionalType(typeOperand)?.let { return it }
+            val newFunInterface: IrClass = typeOperand.classOrNull?.owner ?: return null
+
+            val newOverriddenFunction = newFunInterface.selectSAMOverriddenFunction()
+            reportOn.checkReferencedDeclaration(newOverriddenFunction.symbol)?.let { return it }
+
+            val oldOverriddenFunction = when (val argument = argument) {
+                is IrRichFunctionReference -> argument.overriddenFunctionSymbol.owner
+                else -> argument.type.classOrNull?.owner?.selectSAMOverriddenFunctionOrNull() ?: return null
+            }
+
+            if (oldOverriddenFunction.parameters.size != newOverriddenFunction.parameters.size) {
+                return InvalidSamConversion.FunctionIsIncompatible(
+                    expression = reportOn,
+                    originalOverriddenFunction = oldOverriddenFunction.symbol,
+                    newOverriddenFunction = newOverriddenFunction.symbol,
+                )
+            }
+            if (oldOverriddenFunction.isSuspend != newOverriddenFunction.isSuspend) {
+                return InvalidSamConversion.FunctionIsIncompatible(
+                    expression = reportOn,
+                    originalOverriddenFunction = oldOverriddenFunction.symbol,
+                    newOverriddenFunction = newOverriddenFunction.symbol,
+                )
+            }
+
+            return null
+        }
+
+        private fun IrExpression.checkHasFunctionalType(type: IrType): PartialLinkageCase? {
+            if (type.isFunctionOrKFunction() || type.isSuspendFunctionOrKFunction()) {
+                // KFunction is special as technically it has more than one abstract member, so the checks below do not apply.
+                // But it is a type provided by stdlib, so no need to verify it :)
+                return null
+            }
+
+            val funInterface = type.classOrNull?.owner ?: return null
+            if (!(funInterface.isInterface && funInterface.isFun)) {
+                return InvalidSamConversion.NotAFunInterface(
+                    expression = this,
+                    classifier = funInterface.symbol,
+                )
+            }
 
             val abstractFunctionSymbols = newHashSetWithExpectedSize<IrSimpleFunctionSymbol>(funInterface.declarations.size)
             funInterface.declarations.forEach { member ->
@@ -870,20 +916,20 @@ internal class PartiallyLinkedIrTreePatcher(
                     }
                     is IrProperty -> {
                         if (member.modality == Modality.ABSTRACT)
-                            return InvalidSamConversion(
+                            return InvalidSamConversion.FunInterfaceHasAbstractProperty(
                                 expression = this,
-                                abstractFunctionSymbols = emptySet(),
-                                abstractPropertySymbol = member.symbol
+                                funInterface = funInterface.symbol,
+                                abstractPropertySymbol = member.symbol,
                             )
                     }
                 }
             }
 
             return if (abstractFunctionSymbols.size != 1)
-                InvalidSamConversion(
+                InvalidSamConversion.FunInterfaceHasNotSingleFunction(
                     expression = this,
+                    funInterface = funInterface.symbol,
                     abstractFunctionSymbols = abstractFunctionSymbols,
-                    abstractPropertySymbol = null
                 )
             else
                 null
