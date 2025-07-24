@@ -527,7 +527,7 @@ val KtProperty.symbol: KaPropertySymbol
 #### Choose Return Types Thoughtfully
 
 Select return types that provide flexibility for implementations and users.
-`List` should not be the "default" choice – consider `Sequence`, `Collection` or `Iterable`.
+Avoid choosing the `List` unconsciously – consider also `Sequence`, `Collection` or `Iterable`.
 
 ```kotlin
 // Good: Sequence allows lazy evaluation (and lazy implementation!)
@@ -547,6 +547,9 @@ interface KaFunctionSymbol {
     val valueParameters: List<KaValueParameterSymbol>
 }
 ```
+
+At the same time, avoid using `Sequence`s "just in case" – they are more heavyweight. Also, they are prone to scoping issues, as you cannot
+know when the sequence will be traversed. Use them when it can make the implementation significantly more efficient.
 
 #### Design Collection Operations as Extensions
 
