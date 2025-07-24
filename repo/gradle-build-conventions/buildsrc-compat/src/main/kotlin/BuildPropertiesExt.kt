@@ -43,9 +43,6 @@ val KotlinBuildProperties.pathToSpaceModularizedTestData: String?
 val KotlinBuildProperties.isNativeRuntimeDebugInfoEnabled: Boolean
     get() = getBoolean("kotlin.native.isNativeRuntimeDebugInfoEnabled", false)
 
-val KotlinBuildProperties.junit5NumberOfThreadsForParallelExecution: Int?
-    get() = (getOrNull("kotlin.test.junit5.maxParallelForks") as? String)?.toInt()
-
 val KotlinBuildProperties.useFirWithLightTree: Boolean
     get() = getBoolean("kotlin.build.useFirLT")
 

@@ -57,24 +57,6 @@ var Project.javaHome: String?
         extra["javaHome"] = v
     }
 
-fun Project.generator(
-    fqName: String,
-    sourceSet: SourceSet? = null,
-    configure: JavaExec.() -> Unit = {}
-) = PropertyDelegateProvider<Any?, TaskProvider<JavaExec>> { _, property ->
-    smartJavaExec(
-        name = property.name,
-        classpath = (sourceSet ?: testSourceSet).runtimeClasspath,
-        mainClass = fqName
-    ) {
-        group = "Generate"
-        workingDir = rootDir
-        systemProperty("line.separator", "\n")
-        systemProperty("idea.ignore.disabled.plugins", "true")
-        configure()
-    }
-}
-
 fun Project.getBooleanProperty(name: String): Boolean? = this.findProperty(name)?.let {
     val v = it.toString()
     if (v.isBlank()) true
@@ -82,10 +64,6 @@ fun Project.getBooleanProperty(name: String): Boolean? = this.findProperty(name)
 }
 
 inline fun CopySourceSpec.from(crossinline filesProvider: () -> Any?): CopySourceSpec = from(Callable { filesProvider() })
-
-fun Project.javaPluginExtension(): JavaPluginExtension = extensions.getByType()
-
-fun Project.findJavaPluginExtension(): JavaPluginExtension? = extensions.findByType()
 
 fun JavaExec.pathRelativeToWorkingDir(file: File): String = file.relativeTo(workingDir).invariantSeparatorsPath
 
