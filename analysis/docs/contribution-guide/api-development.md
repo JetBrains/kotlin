@@ -1092,7 +1092,7 @@ the [API Evolution Guide](api-evolution.md).
 Implementation declarations should be internal unless they need to be part of the public API surface (like `KaFirDiagnostic`).
 Minimize accidental exposure of implementation details.
 
-If you cannot make the declaration internal, mark it with `@KaInternalApi`.
+If you cannot make the declaration internal, mark it with `@KaImplementationDetail`.
 
 ### Lifetime Management
 
