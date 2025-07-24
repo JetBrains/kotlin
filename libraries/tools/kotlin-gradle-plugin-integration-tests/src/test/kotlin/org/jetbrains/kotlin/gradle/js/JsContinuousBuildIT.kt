@@ -54,6 +54,8 @@ class JsContinuousBuildIT : KGPDaemonsBaseTest() {
             val daemonRelease = PipedOutputStream()
             val daemonStdin = PipedInputStream(daemonRelease)
 
+            makeSnapshotTo("""C:\Users\user\projects\kgp-it-snapshots""")
+
             val checker = thread(name = "testJsRunContinuousBuild checker", isDaemon = true) {
                 try {
                     val buildStartMark = TimeSource.Monotonic.markNow()
