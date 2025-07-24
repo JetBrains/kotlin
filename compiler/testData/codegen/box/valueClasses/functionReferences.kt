@@ -4,6 +4,7 @@
 // TARGET_BACKEND: JVM_IR
 // LANGUAGE: +ValueClasses
 // FIR_IDENTICAL
+// IGNORE_BACKEND_K2_MULTI_MODULE: JVM_IR_SERIALIZE
 
 // FILE: caller.kt
 import kotlin.coroutines.*

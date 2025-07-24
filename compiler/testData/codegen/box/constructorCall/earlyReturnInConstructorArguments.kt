@@ -1,20 +1,6 @@
 // TARGET_BACKEND: JVM
 // WITH_STDLIB
 
-inline fun ok(): String {
-    return foo(1, 1.0, 1.0f, 1L, "O", C(if (bar()) return "zap" else "K"))
-}
-
-fun box(): String {
-    val ok = ok()
-    if (ok != "OK") return "Fail: $ok"
-
-    val r = log.toString()
-    if (r != "bar;<clinit>;<init>;foo;") return "Fail: '$r'"
-
-    return "OK"
-}
-
 // FILE: C.kt
 class C(val str: String) {
     init {
@@ -39,4 +25,18 @@ val log = StringBuilder()
 fun <T> logged(msg: String, value: T): T {
     log.append(msg)
     return value
+}
+// FILE: box.kt
+inline fun ok(): String {
+    return foo(1, 1.0, 1.0f, 1L, "O", C(if (bar()) return "zap" else "K"))
+}
+
+fun box(): String {
+    val ok = ok()
+    if (ok != "OK") return "Fail: $ok"
+
+    val r = log.toString()
+    if (r != "bar;<clinit>;<init>;foo;") return "Fail: '$r'"
+
+    return "OK"
 }

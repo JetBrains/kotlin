@@ -7,6 +7,12 @@
 // CHECK_BYTECODE_TEXT
 // 1 java/lang/invoke/LambdaMetafactory
 
+// FILE: Consumer.java
+
+public interface Consumer<T> {
+    String accept(T t);
+}
+
 // FILE: reifiedTypeParameter.kt
 class OK
 
@@ -17,10 +23,4 @@ fun call(c: Consumer<OK>) = c.accept(OK())
 
 fun box(): String {
     return call(::f) // `f` has a reified type parameter and thus isn't callable directly
-}
-
-// FILE: Consumer.java
-
-public interface Consumer<T> {
-    String accept(T t);
 }

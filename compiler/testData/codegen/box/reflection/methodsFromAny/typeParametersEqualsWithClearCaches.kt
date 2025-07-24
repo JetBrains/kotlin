@@ -1,5 +1,10 @@
 // TARGET_BACKEND: JVM
 // WITH_REFLECT
+// FILE: J.java
+
+public interface J<Z> {
+    Z z();
+}
 // FILE: box.kt
 
 import kotlin.test.assertEquals
@@ -49,10 +54,4 @@ fun box(): String {
     check("Z from z's returnType") { J::class.members.single { it.name == "z" }.returnType.classifier }
 
     return "OK"
-}
-
-// FILE: J.java
-
-public interface J<Z> {
-    Z z();
 }

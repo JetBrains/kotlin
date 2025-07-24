@@ -1,5 +1,26 @@
 // TARGET_BACKEND: JVM
 // WITH_STDLIB
+// FILE: J.java
+
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import java.util.List;
+
+public class J {
+    public static String nullabilityFlexible() { return null; }
+
+    @NotNull
+    public static List<String> mutabilityFlexible() { return null; }
+
+    public static List<String> bothFlexible() { return null; }
+
+    @Nullable
+    public static String nullable() { return null; }
+
+    @NotNull
+    public static String notNull() { return null; }
+}
+
 // FILE: box.kt
 
 package test
@@ -27,24 +48,3 @@ fun box(): String {
 
 inline fun <reified T> returnTypeOf(block: () -> T) =
     typeOf<T>()
-
-// FILE: J.java
-
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import java.util.List;
-
-public class J {
-    public static String nullabilityFlexible() { return null; }
-
-    @NotNull
-    public static List<String> mutabilityFlexible() { return null; }
-
-    public static List<String> bothFlexible() { return null; }
-
-    @Nullable
-    public static String nullable() { return null; }
-
-    @NotNull
-    public static String notNull() { return null; }
-}

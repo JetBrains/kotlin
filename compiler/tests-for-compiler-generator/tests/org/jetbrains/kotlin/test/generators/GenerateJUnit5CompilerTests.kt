@@ -192,6 +192,7 @@ fun generateJUnit5CompilerTests(args: Array<String>, mainClassName: String?) {
             }
 
             testClass<AbstractFirSerializeCompileKotlinAgainstInlineKotlinTestWithInlineScopes> {
+                model("codegen/box")
                 model("codegen/boxInline")
             }
 
@@ -369,10 +370,12 @@ fun generateJUnit5CompilerTests(args: Array<String>, mainClassName: String?) {
             }
 
             testClass<AbstractFirLightTreeSerializeCompileKotlinAgainstInlineKotlinTest> {
+                model("codegen/box")
                 model("codegen/boxInline")
             }
 
             testClass<AbstractFirPsiSerializeCompileKotlinAgainstInlineKotlinTest> {
+                model("codegen/box")
                 model("codegen/boxInline")
             }
 

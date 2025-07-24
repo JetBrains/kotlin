@@ -6,6 +6,13 @@
 // CHECK_BYTECODE_TEXT
 // 2 java/lang/invoke/LambdaMetafactory
 
+// FILE: Sam.java
+import java.io.*;
+
+public interface Sam extends Serializable {
+    String get(String s);
+}
+
 // FILE: serializableLambdaCapturingBoxedInlineClassAny.kt
 import java.io.*
 
@@ -21,11 +28,4 @@ fun <T> roundtrip(x: T): T {
     val out1 = ByteArrayOutputStream()
     ObjectOutputStream(out1).writeObject(x)
     return ObjectInputStream(ByteArrayInputStream(out1.toByteArray())).readObject() as T
-}
-
-// FILE: Sam.java
-import java.io.*;
-
-public interface Sam extends Serializable {
-    String get(String s);
 }

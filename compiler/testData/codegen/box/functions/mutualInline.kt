@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_K2_MULTI_MODULE: JVM_IR_SERIALIZE
 // FILE: A.kt
 
 inline fun a(): String = b2()

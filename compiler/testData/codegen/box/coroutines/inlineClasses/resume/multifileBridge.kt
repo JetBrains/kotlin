@@ -1,6 +1,7 @@
 // TARGET_BACKEND: JVM
 // WITH_STDLIB
 // WITH_COROUTINES
+// IGNORE_BACKEND_K2_MULTI_MODULE: JVM_IR_SERIALIZE
 // FILE: a.kt
 @file:JvmMultifileClass
 @file:JvmName("A")

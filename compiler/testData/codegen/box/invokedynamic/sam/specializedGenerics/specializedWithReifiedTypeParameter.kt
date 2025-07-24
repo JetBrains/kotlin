@@ -7,6 +7,11 @@
 // CHECK_BYTECODE_TEXT
 // 1 java/lang/invoke/LambdaMetafactory
 
+// FILE: GenericToAny.java
+public  interface GenericToAny<T> {
+    T invoke();
+}
+
 // FILE: specializedWithReifiedTypeParameter.kt
 class OK
 
@@ -17,9 +22,4 @@ fun <T> foo2(g: GenericToAny<T>): T = g.invoke()
 
 fun box(): String {
     return foo2<OK>(::f)::class.simpleName!!
-}
-
-// FILE: GenericToAny.java
-public  interface GenericToAny<T> {
-    T invoke();
 }
