@@ -160,7 +160,7 @@ The process balances giving users time to migrate while preventing indefinite ma
 
 ### 2. `ERROR` Advancement
 
-**Goal**: Prevent new usage while maintaining source compatibility for existing code.
+**Goal**: Prevent new usage while maintaining both source and binary compatibility for existing code.
 
 - **Ensure there's at least one major release with WARNING**  
   This gives users a full release cycle to discover and plan their migration.
