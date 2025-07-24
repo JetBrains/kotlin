@@ -696,7 +696,11 @@ When you use `const val` or `inline fun`, the implementation is copied directly 
 // If clients compile against version 1.0
 const val DEFAULT_TIMEOUT = 1000
 
-// Changing to 2000 in version 1.1 won't affect already-compiled clients!
+inline fun performOperation(action: () -> Unit, timeout: Int = DEFAULT_TIMEOUT) {
+    ...
+}
+
+// Changing DEFAULT_TIMEOUT to 2000 in version 1.1 won't affect already-compiled clients!
 // They will continue using 1000 until recompiled
 ```
 
