@@ -70,6 +70,8 @@ enum class StringMetrics(val type: StringOverridePolicy, val anonymization: Stri
 
     ANDROID_GRADLE_PLUGIN_VERSION(OVERRIDE, ComponentVersionAnonymizer()),
 
+    KSP_GRADLE_PLUGIN_VERSION(OVERRIDE, ComponentVersionAnonymizer()),
+
     // Features
     KOTLIN_LANGUAGE_VERSION(OVERRIDE, ComponentVersionAnonymizer()),
     KOTLIN_API_VERSION(OVERRIDE, ComponentVersionAnonymizer()),
@@ -84,7 +86,8 @@ enum class StringMetrics(val type: StringOverridePolicy, val anonymization: Stri
 
     JS_PROPERTY_LAZY_INITIALIZATION(CONCAT, AllowedListAnonymizer(listOf("true", "false")));
 
+
     companion object {
-        const val VERSION = 5
+        const val VERSION = 6
     }
 }
