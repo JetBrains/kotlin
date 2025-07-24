@@ -39,19 +39,19 @@ interface NoSuperTypeMarker {
 fun <T : Any> test1() {
 }
 
-fun <T> test2() where T : Any, T : NoSuperTypeMarker {
+fun <T : NoSuperTypeMarker> test2() {
 }
 
-fun <T> test3() where T : Any?, T : NoSuperTypeMarker {
+fun <T : NoSuperTypeMarker> test3() {
 }
 
-fun <T> test4() where T : Test?, T : Any {
+fun <T : Test> test4() {
 }
 
-fun <T> test5() where T : Test?, T : Any? {
+fun <T : Test?> test5() {
 }
 
-fun <A, B : A> test6() where A : Test, A : Any {
+fun <A : Test, B : A> test6() {
 }
 
 // FILE: main.kt

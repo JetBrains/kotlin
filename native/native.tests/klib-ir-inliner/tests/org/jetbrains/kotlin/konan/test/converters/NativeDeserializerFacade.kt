@@ -147,7 +147,6 @@ class NativeDeserializerFacade(
                 partialLinkageConfig = PartialLinkageConfig(PartialLinkageMode.ENABLE, PartialLinkageLogLevel.ERROR),
                 builtIns = irBuiltIns,
                 messageCollector = messageCollector,
-                platform = moduleDescriptor.platform!!
             ),
             libraryBeingCached = null,
             userVisibleIrModulesSupport = UserVisibleIrModulesSupport(externalDependenciesLoader = UserVisibleIrModulesSupport.ExternalDependenciesLoader.EMPTY),
