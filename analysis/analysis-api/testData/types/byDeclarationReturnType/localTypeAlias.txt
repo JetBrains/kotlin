@@ -5,8 +5,8 @@ KaUsualClassType:
     classId: <local>/LocalClass.LocalTypeAlias
     qualifiers: [
       KaResolvedClassTypeQualifier:
-        name: LocalTypeAlias
-        symbol: KaTypeAliasSymbol(<local>/LocalTypeAlias)
+        name: LocalClass
+        symbol: KaNamedClassSymbol(<local>/LocalClass)
         typeArguments: [
           KaTypeParameterType:
             abbreviation: null
@@ -29,30 +29,13 @@ KaUsualClassType:
             isNullable: true
             hasFlexibleNullability: false
         ]
+      KaResolvedClassTypeQualifier:
+        name: LocalTypeAlias
+        symbol: KaTypeAliasSymbol(<local>/LocalTypeAlias)
+        typeArguments: []
     ]
     symbol: KaTypeAliasSymbol(<local>/LocalTypeAlias)
-    typeArguments: [
-      KaTypeParameterType:
-        abbreviation: null
-        annotations: []
-        name: T
-        symbol: KaTypeParameterSymbol:
-          annotations: []
-          compilerVisibility: Local
-          isActual: false
-          isExpect: false
-          isReified: false
-          location: CLASS
-          modality: FINAL
-          name: T
-          origin: SOURCE
-          upperBounds: []
-          variance: INVARIANT
-          visibility: LOCAL
-        isMarkedNullable: false
-        isNullable: true
-        hasFlexibleNullability: false
-    ]
+    typeArguments: []
     isMarkedNullable: true
     isNullable: true
     hasFlexibleNullability: false
@@ -113,4 +96,4 @@ KaUsualClassType:
   hasFlexibleNullability: false
 
 Rendered type:
-LocalTypeAlias<T>?
+LocalClass<T>.LocalTypeAlias?

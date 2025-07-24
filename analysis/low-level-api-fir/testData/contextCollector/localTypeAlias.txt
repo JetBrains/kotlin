@@ -17,6 +17,7 @@ Tower Data Context:
         Scope: FirLocalScope
             Classifiers:
                 FirRegularClassSymbol local final class LocalClass : R|kotlin/Any|
+                FirTypeAliasSymbol local final typealias LocalTypeAlias = R|<local>/LocalClass|
 
 FILE: [ResolvedTo(IMPORTS)] localTypeAlias.kt
     public final [ResolvedTo(BODY_RESOLVE)] fun foo(): R|kotlin/Unit| {
