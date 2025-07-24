@@ -97,7 +97,7 @@ abstract class BaseYarnRootEnvSpec internal constructor() : EnvSpec<YarnEnv>() {
                 yarnLockMismatchReport = yarnLockMismatchReport.get(),
                 reportNewYarnLock = reportNewYarnLock.get(),
                 yarnLockAutoReplace = yarnLockAutoReplace.get(),
-                yarnResolutions = resolutions.get()
+                yarnResolutions = resolutions.get(),
             )
         }
     }
