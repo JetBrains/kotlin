@@ -46037,6 +46037,12 @@ public class LLReversedDiagnosticsFe10TestGenerated extends AbstractLLReversedDi
       }
 
       @Test
+      @TestMetadata("unsignOverloadVsNonIntLike.kt")
+      public void testUnsignOverloadVsNonIntLike() {
+        runTest("compiler/testData/diagnostics/tests/unsignedTypes/unsignOverloadVsNonIntLike.kt");
+      }
+
+      @Test
       @TestMetadata("unsignedLiteralsInsideConstVals.kt")
       public void testUnsignedLiteralsInsideConstVals() {
         runTest("compiler/testData/diagnostics/tests/unsignedTypes/unsignedLiteralsInsideConstVals.kt");
