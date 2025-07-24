@@ -778,7 +778,7 @@ interface KaTypeProvider : KaSessionComponent {
 
 #### Provide Context Parameter Bridges
 
-For every component function and property, provide a bridge that accepts `KaSession` as a context parameter:
+For every component function and property, provide a bridge that accepts a session component as a context parameter:
 
 ```kotlin
 interface KaScopeProvider : KaSessionComponent {
