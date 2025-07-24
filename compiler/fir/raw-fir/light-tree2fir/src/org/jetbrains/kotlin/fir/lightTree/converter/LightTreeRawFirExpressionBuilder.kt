@@ -62,6 +62,7 @@ class LightTreeRawFirExpressionBuilder(
     session: FirSession,
     tree: FlyweightCapableTreeStructure<LighterASTNode>,
     private val declarationBuilder: LightTreeRawFirDeclarationBuilder,
+    val headerCompilationMode: Boolean = false, // TODO: may be unnecessary
     context: Context<LighterASTNode> = Context(),
 ) : AbstractLightTreeRawFirBuilder(session, tree, context) {
 

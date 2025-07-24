@@ -61,10 +61,10 @@ class LightTreeRawFirDeclarationBuilder(
     session: FirSession,
     internal val baseScopeProvider: FirScopeProvider,
     tree: FlyweightCapableTreeStructure<LighterASTNode>,
+    private val headerCompilationMode: Boolean = false,
     context: Context<LighterASTNode> = Context(),
 ) : AbstractLightTreeRawFirBuilder(session, tree, context) {
-
-    private val expressionConverter = LightTreeRawFirExpressionBuilder(session, tree, this, context)
+    private val expressionConverter = LightTreeRawFirExpressionBuilder(session, tree, this, headerCompilationMode, context)
 
     /**
      * [org.jetbrains.kotlin.parsing.KotlinParsing.parseFile]
@@ -1238,6 +1238,7 @@ class LightTreeRawFirDeclarationBuilder(
                 modifiers?.convertAnnotationsTo(annotations)
                 typeParameters += constructorTypeParametersFromConstructedClass(classWrapper.classBuilder.typeParameters)
                 valueParameters += firValueParameters.map { it.firValueParameter }
+                // TODO-HEADER-COMPILATION: Potentially remove this and produce an empty constructor body.
                 val (body, contractDescription) = withForcedLocalContext {
                     convertFunctionBody(block, null, allowLegacyContractDescription = true)
                 }
@@ -1759,6 +1760,7 @@ class LightTreeRawFirDeclarationBuilder(
                 valueParameters += firValueParameters
             }
             val allowLegacyContractDescription = outerContractDescription == null
+            // TODO-HEADER-COMPILATION: Potentially remove getter/setter code.
             val bodyWithContractDescription = withForcedLocalContext {
                 convertFunctionBody(block, expression, allowLegacyContractDescription)
             }
@@ -2104,6 +2106,8 @@ class LightTreeRawFirDeclarationBuilder(
         expression: LighterASTNode?,
         allowLegacyContractDescription: Boolean
     ): Pair<FirBlock?, FirContractDescription?> {
+        // TODO-HEADER-COMPILATION: Another option to produce empty methods
+        // TODO-HEADER-COMPILATION: is to make this function return nothing.
         return when {
             blockNode != null -> {
                 val block = convertBlock(blockNode)
@@ -2139,6 +2143,8 @@ class LightTreeRawFirDeclarationBuilder(
      * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseBlock
      */
     fun convertBlock(block: LighterASTNode?): FirBlock {
+        // TODO-HEADER-COMPILATION: One option is to prevent the frontend
+        // TODO-HEADER-COMPILATION: from producing IR here.
         if (block == null) return buildEmptyExpressionBlock()
         if (block.tokenType != BLOCK) {
             return FirSingleExpressionBlock(
