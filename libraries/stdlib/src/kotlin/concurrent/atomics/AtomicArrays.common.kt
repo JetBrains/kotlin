@@ -20,7 +20,8 @@ import kotlin.internal.InlineOnly
  * When targeting the Native backend, [AtomicIntArray] stores an [IntArray] and atomically updates it's elements.
  * For additional details about atomicity guarantees for reads and writes see [kotlin.concurrent.Volatile].
  *
- * When targeting the JVM, instances of [AtomicIntArray] are represented by [java.util.concurrent.atomic.AtomicIntegerArray].
+ * When targeting the JVM, instances of [AtomicIntArray] are represented by
+ * [java.util.concurrent.atomic.AtomicIntegerArray](https://docs.oracle.com/javase/8/docs/api/java/util/concurrent/atomic/AtomicIntegerArray.html).
  * For details about guarantees of volatile accesses and updates of atomics refer to The Java Language Specification (17.4 Memory Model).
  *
  * For JS and Wasm [AtomicIntArray] is implemented trivially and is not thread-safe since these platforms do not support multi-threading.
@@ -288,7 +289,8 @@ public expect inline fun AtomicIntArray.fetchAndUpdateAt(index: Int, transform: 
  * When targeting the Native backend, [AtomicLongArray] stores a [LongArray] and atomically updates it's elements.
  * For additional details about atomicity guarantees for reads and writes see [kotlin.concurrent.Volatile].
  *
- * When targeting the JVM, instances of [AtomicLongArray] are represented by [java.util.concurrent.atomic.AtomicLongArray].
+ * When targeting the JVM, instances of [AtomicLongArray] are represented by
+ * [java.util.concurrent.atomic.AtomicLongArray](https://docs.oracle.com/javase/8/docs/api/java/util/concurrent/atomic/AtomicLongArray.html).
  * For details about guarantees of volatile accesses and updates of atomics refer to The Java Language Specification (17.4 Memory Model).
  *
  * For JS and Wasm [AtomicLongArray] is implemented trivially and is not thread-safe since these platforms do not support multi-threading.
@@ -555,7 +557,8 @@ public expect inline fun AtomicLongArray.fetchAndUpdateAt(index: Int, transform:
  * When targeting the Native backend, [AtomicArray] stores an [Array] with elements of type [T] and atomically updates it's elements.
  * For additional details about atomicity guarantees for reads and writes see [kotlin.concurrent.Volatile].
  *
- * When targeting the JVM, instances of [AtomicArray] are represented by [java.util.concurrent.atomic.AtomicReferenceArray].
+ * When targeting the JVM, instances of [AtomicArray] are represented by
+ * [java.util.concurrent.atomic.AtomicReferenceArray](https://docs.oracle.com/javase/8/docs/api/java/util/concurrent/atomic/AtomicReferenceArray.html).
  * For details about guarantees of volatile accesses and updates of atomics refer to The Java Language Specification (17.4 Memory Model).
  *
  * For JS and Wasm [AtomicArray] is implemented trivially and is not thread-safe since these platforms do not support multi-threading.
@@ -567,7 +570,6 @@ public expect class AtomicArray<T> {
     /**
      * Creates a new [AtomicArray] filled with elements of the given [array].
      *
-     * @see atomicArrayOf
      * @see atomicArrayOfNulls
      *
      * @sample samples.concurrent.atomics.AtomicArray.arrCons
@@ -654,7 +656,6 @@ public expect class AtomicArray<T> {
  *
  * @throws RuntimeException if the specified [size] is negative.
  *
- * @see atomicArrayOf
  * @see atomicArrayOfNulls
  *
  * @sample samples.concurrent.atomics.AtomicArray.initCons
