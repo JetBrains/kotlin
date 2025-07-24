@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.api.components
 
 import org.jetbrains.kotlin.analysis.api.KaContextParameterApi
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
+import org.jetbrains.kotlin.analysis.api.KaK1Unsupported
 import org.jetbrains.kotlin.analysis.api.KaNonPublicApi
 import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
 import org.jetbrains.kotlin.psi.KtDeclaration
@@ -19,6 +20,7 @@ public interface KaSourceProvider : KaSessionComponent {
      * a klib, or when the source file name is not available.
      */
     @KaNonPublicApi
+    @KaK1Unsupported
     public val KaDeclarationSymbol.klibSourceFileName: String?
 }
 

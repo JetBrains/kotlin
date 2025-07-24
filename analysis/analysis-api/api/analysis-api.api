@@ -16,6 +16,9 @@ public abstract interface annotation class org/jetbrains/kotlin/analysis/api/KaI
 public abstract interface annotation class org/jetbrains/kotlin/analysis/api/KaImplementationDetail : java/lang/annotation/Annotation {
 }
 
+public abstract interface annotation class org/jetbrains/kotlin/analysis/api/KaK1Unsupported : java/lang/annotation/Annotation {
+}
+
 public abstract interface annotation class org/jetbrains/kotlin/analysis/api/KaNonPublicApi : java/lang/annotation/Annotation {
 }
 

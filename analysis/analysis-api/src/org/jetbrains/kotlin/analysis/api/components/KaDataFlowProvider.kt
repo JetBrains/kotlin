@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.api.components
 
 import org.jetbrains.kotlin.analysis.api.KaContextParameterApi
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
+import org.jetbrains.kotlin.analysis.api.KaK1Unsupported
 import org.jetbrains.kotlin.analysis.api.KaNonPublicApi
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
 import org.jetbrains.kotlin.analysis.api.symbols.KaVariableSymbol
@@ -40,6 +41,7 @@ public interface KaDataFlowProvider : KaSessionComponent {
     public val KtExpression.implicitReceiverSmartCasts: Collection<KaImplicitReceiverSmartCast>
 
     @KaNonPublicApi
+    @KaK1Unsupported
     public fun computeExitPointSnapshot(statements: List<KtExpression>): KaDataFlowExitPointSnapshot
 }
 

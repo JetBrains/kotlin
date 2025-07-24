@@ -94,3 +94,16 @@ public annotation class KaPlatformInterface
 )
 @RequiresOptIn("An API using the experimental 'context parameters' language feature.")
 public annotation class KaContextParameterApi
+
+/**
+ * Marks an API as only available in the K2 implementation of the Analysis API.
+ * In the K1 implementation, the behavior is undefined.
+ */
+@Target(
+    AnnotationTarget.CLASS,
+    AnnotationTarget.PROPERTY,
+    AnnotationTarget.CONSTRUCTOR,
+    AnnotationTarget.FUNCTION,
+    AnnotationTarget.TYPEALIAS,
+)
+public annotation class KaK1Unsupported

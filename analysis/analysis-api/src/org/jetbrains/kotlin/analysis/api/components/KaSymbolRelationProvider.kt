@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.analysis.api.components
 import org.jetbrains.kotlin.analysis.api.KaContextParameterApi
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
+import org.jetbrains.kotlin.analysis.api.KaK1Unsupported
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.util.ImplementationStatus
@@ -158,6 +159,7 @@ public interface KaSymbolRelationProvider : KaSessionComponent {
      *
      * @see KaSymbolOrigin.INTERSECTION_OVERRIDE
      */
+    @KaK1Unsupported
     public val KaCallableSymbol.intersectionOverriddenSymbols: List<KaCallableSymbol>
 
     /**
@@ -165,6 +167,7 @@ public interface KaSymbolRelationProvider : KaSessionComponent {
      * a member.
      */
     @KaExperimentalApi
+    @KaK1Unsupported
     public fun KaCallableSymbol.getImplementationStatus(parentClassSymbol: KaClassSymbol): ImplementationStatus?
 
     /**
