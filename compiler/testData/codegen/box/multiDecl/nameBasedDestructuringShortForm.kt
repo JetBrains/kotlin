@@ -4,8 +4,8 @@
 class Tuple(val first: String, val second: Int)
 
 fun test1(x: Tuple): Boolean {
-    val (first, second) = x
-    return first == "OK" && second == 1
+    val (a = first, b = second) = x
+    return a == "OK" && b == 1
 }
 
 fun test2(x: Tuple): Boolean {
