@@ -1,3 +1,4 @@
+// IGNORE_BACKEND_K1: ANY
 // LANGUAGE: +NameBasedDestructuring
 data class Tuple(val first: String, val second: Int)
 

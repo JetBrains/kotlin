@@ -12899,6 +12899,12 @@ public class LLReversedDiagnosticsFe10TestGenerated extends AbstractLLReversedDi
       public void testDestructuringInWhenSubject() {
         runTest("compiler/testData/diagnostics/tests/destructuring/destructuringInWhenSubject.kt");
       }
+
+      @Test
+      @TestMetadata("newDestructuringSyntax.kt")
+      public void testNewDestructuringSyntax() {
+        runTest("compiler/testData/diagnostics/tests/destructuring/newDestructuringSyntax.kt");
+      }
     }
 
     @Nested
