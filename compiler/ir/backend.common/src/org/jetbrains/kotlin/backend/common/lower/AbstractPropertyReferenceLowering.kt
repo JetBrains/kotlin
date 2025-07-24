@@ -21,8 +21,10 @@ import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.classOrFail
 import org.jetbrains.kotlin.ir.types.typeOrNull
 import org.jetbrains.kotlin.ir.types.typeWith
+import org.jetbrains.kotlin.ir.util.selectSAMOverriddenFunction
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
@@ -96,7 +98,7 @@ abstract class AbstractPropertyReferenceLowering<C : CommonBackendContext>(val c
                 invokeFunction = function,
                 superType = superType,
                 reflectionTargetSymbol = reflectionTarget,
-                overriddenFunctionSymbol = UpgradeCallableReferences.selectSAMOverriddenFunction(superType),
+                overriddenFunctionSymbol = superType.classOrFail.owner.selectSAMOverriddenFunction().symbol,
                 captures = captures,
                 origin = origin,
             )
