@@ -1148,6 +1148,12 @@ public class FirLightTreeJvmIrTextTestGenerated extends AbstractFirLightTreeJvmI
       @TestDataPath("$PROJECT_ROOT")
       public class K2 {
         @Test
+        @TestMetadata("actualizeInterfaceAsAny.kt")
+        public void testActualizeInterfaceAsAny() {
+          runTest("compiler/testData/ir/irText/declarations/multiplatform/k2/actualizeInterfaceAsAny.kt");
+        }
+
+        @Test
         public void testAllFilesPresentInK2() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/ir/irText/declarations/multiplatform/k2"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.JVM_IR, true);
         }

@@ -1,0 +1,44 @@
+// FILE: common.kt
+
+open class B {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+class C : Test, NoSuperTypeMarker {
+  constructor() /* primary */ {
+    super/*Test*/()
+    /* <init>() */
+
+  }
+
+}
+
+open class Test {
+  constructor() /* primary */ {
+    super/*Any*/()
+    /* <init>() */
+
+  }
+
+}
+
+interface Marker2 {
+}
+
+interface Marker3 : Marker2 {
+}
+
+interface NoSuperTypeMarker {
+}
+
+fun <T : Any> test1() {
+}
+
+// FILE: main.kt
+
+actual typealias Marker = Any
