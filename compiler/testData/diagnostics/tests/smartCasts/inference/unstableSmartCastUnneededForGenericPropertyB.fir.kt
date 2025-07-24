@@ -3,7 +3,7 @@
 
 val <T: Any> T.javaKlass: java.lang.Class<T>
     get() {
-        this as java.lang.Object
+        this as <!PLATFORM_CLASS_MAPPED_TO_KOTLIN!>java.lang.Object<!>
         return getClass() <!UNCHECKED_CAST!>as java.lang.Class<T><!>
     }
 

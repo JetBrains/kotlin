@@ -212,10 +212,6 @@ internal class LLCheckersFactory(val session: LLFirSession) : FirSessionComponen
             addAll(extensionCheckers.map { it.typeCheckers })
         }
 
-        if (filter.runExtraCheckers) {
-            add(ExtraTypeCheckers)
-        }
-
         if (filter.runExperimentalCheckers) {
             add(ExperimentalTypeCheckers)
         }
