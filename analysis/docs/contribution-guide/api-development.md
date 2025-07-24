@@ -1151,7 +1151,7 @@ Use established single-word forms for compound terms commonly used in the progra
 - `builtin` (not `builtIn`)
 - `uint` (not `uInt`, but `UInt` when in PascalCase)
 
-## Guard API with Annotations
+## Guard API Endpoints with Annotations
 
 The Analysis API serves various projects with different stability requirements.
 To prevent accidental usage of unstable APIs or usage-tailored functionality, the Analysis API uses a set of opt-in annotations.
