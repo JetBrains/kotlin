@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.analysis.api.symbols.markers.KaNamedSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.backend.konan.objcexport.MethodBridgeValueParameter
 import org.jetbrains.kotlin.utils.getOrPutNullable
+import kotlin.reflect.KClass
 
 
 sealed interface KtObjCExportSession {
@@ -94,7 +95,8 @@ internal data class KtObjCExportSessionImpl(
  * ```
  */
 internal inline fun <reified T> KtObjCExportSession.cached(key: Any, noinline computation: () -> T): T {
-    return cached(T::class.java, key, computation)
+    @Suppress("UNCHECKED_CAST")
+    return cached((T::class as KClass<T & Any>).java, key, computation)
 }
 
 /**

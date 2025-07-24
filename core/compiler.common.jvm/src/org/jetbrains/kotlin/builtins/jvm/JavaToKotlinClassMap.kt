@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.resolve.jvm.JvmPrimitiveType
 import java.util.concurrent.atomic.*
+import kotlin.reflect.KClass
 
 object JavaToKotlinClassMap {
     private val NUMBERED_FUNCTION_PREFIX: String =
@@ -48,7 +49,8 @@ object JavaToKotlinClassMap {
 
     private inline fun <reified T> mutabilityMapping(kotlinReadOnly: ClassId, kotlinMutable: FqName): PlatformMutabilityMapping {
         val mutableClassId = ClassId(kotlinReadOnly.packageFqName, kotlinMutable.tail(kotlinReadOnly.packageFqName), isLocal = false)
-        return PlatformMutabilityMapping(classId(T::class.java), kotlinReadOnly, mutableClassId)
+        @Suppress("UNCHECKED_CAST")
+        return PlatformMutabilityMapping(classId((T::class as KClass<T & Any>).java), kotlinReadOnly, mutableClassId)
     }
 
     val mutabilityMappings = listOf(

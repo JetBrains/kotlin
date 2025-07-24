@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.generators.util.extractTagsFromDirectory
 import org.jetbrains.kotlin.test.TargetBackend
 import java.io.File
 import java.util.regex.Pattern
+import kotlin.reflect.KClass
 
 fun testGroupSuite(
     init: TestGroupSuite.() -> Unit
@@ -60,13 +61,14 @@ class TestGroup(
     val testClasses: List<TestClass>
         get() = _testClasses
 
+    @Suppress("UNCHECKED_CAST")
     inline fun <reified T> testClass(
-        suiteTestClassName: String = getDefaultSuiteTestClassName(T::class.java.simpleName),
+        suiteTestClassName: String = getDefaultSuiteTestClassName((T::class as KClass<T & Any>).java.simpleName),
         useJunit4: Boolean = false,
         annotations: List<AnnotationModel> = emptyList(),
         noinline init: TestClass.() -> Unit
     ) {
-        val testKClass = T::class.java
+        val testKClass = (T::class as KClass<T & Any>).java
         testClass(testKClass, testKClass.name, suiteTestClassName, useJunit4, annotations, init)
     }
 

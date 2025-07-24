@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.utils.errors
 
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
+import kotlin.reflect.KClass
 
 public fun unexpectedElementError(elementName: String, element: Any?): Nothing {
     errorWithAttachment("Unexpected $elementName ${element?.let { it::class.simpleName }}") {
@@ -14,6 +15,7 @@ public fun unexpectedElementError(elementName: String, element: Any?): Nothing {
 }
 
 public inline fun <reified ELEMENT> unexpectedElementError(element: Any?): Nothing {
-    unexpectedElementError(ELEMENT::class.simpleName ?: ELEMENT::class.java.name, element)
+    @Suppress("UNCHECKED_CAST")
+    unexpectedElementError(ELEMENT::class.simpleName ?: (ELEMENT::class as KClass<ELEMENT & Any>).java.name, element)
 }
 
