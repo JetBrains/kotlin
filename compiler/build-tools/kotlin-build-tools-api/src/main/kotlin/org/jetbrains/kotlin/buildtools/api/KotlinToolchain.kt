@@ -48,34 +48,60 @@ public interface KotlinToolchain {
     public fun getCompilerVersion(): String
 
     /**
-     * Execute the given [operation] using [ExecutionPolicy.InProcess].
+     * Create a new [Build] that can be used to execute multiple [BuildOperations][BuildOperation] while retaining certain caches.
      *
-     * @param operation the [BuildOperation] to execute.
-     * Operations can be obtained from platform toolchains, e.g. [JvmPlatformToolchain.createJvmCompilationOperation]
+     * Remember to call [Build.close] when all build operations are finished.
+     *
+     * @param projectId an optional [ProjectId] to identify this build. If not specified, a random one will be generated.
      */
-    public fun <R> executeOperation(
-        operation: BuildOperation<R>,
-    ): R
+    public fun createBuild(projectId: ProjectId? = null): Build
 
     /**
-     * Execute the given [operation] using the given [executionPolicy].
+     * Represents a project build that can execute (see [executeOperation])
+     * multiple [BuildOperations][BuildOperation] while retaining certain caches.
      *
-     * @param operation the [BuildOperation] to execute.
-     * Operations can be obtained from platform toolchains, e.g. [JvmPlatformToolchain.createJvmCompilationOperation]
-     * @param executionPolicy an [ExecutionPolicy] obtained from [createInProcessExecutionPolicy] or [createDaemonExecutionPolicy]
-     * @param logger an optional [KotlinLogger]
+     * Remember to call [close] after all operations are finished and no more operations in this build are planned.
      */
-    public fun <R> executeOperation(
-        operation: BuildOperation<R>,
-        executionPolicy: ExecutionPolicy = createInProcessExecutionPolicy(),
-        logger: KotlinLogger? = null,
-    ): R
+    public interface Build : AutoCloseable {
+        /**
+         * Access to the [KotlinToolchain] that created this build.
+         */
+        public val kotlinToolchain: KotlinToolchain
 
-    /**
-     * This must be called at the end of the project build (i.e., all build operations scoped to the project are finished)
-     * iff [projectId] is configured via [BuildOperation.PROJECT_ID]
-     */
-    public fun finishBuild(projectId: ProjectId)
+        /**
+         * The [ProjectId] that identifies this build.
+         */
+        public val projectId: ProjectId
+
+        /**
+         * Execute the given [operation] using [ExecutionPolicy.InProcess].
+         *
+         * @param operation the [BuildOperation] to execute.
+         * Operations can be obtained from platform toolchains, e.g. [JvmPlatformToolchain.createJvmCompilationOperation]
+         */
+        public fun <R> executeOperation(
+            operation: BuildOperation<R>,
+        ): R
+
+        /**
+         * Execute the given [operation] using the given [executionPolicy].
+         *
+         * @param operation the [BuildOperation] to execute.
+         * Operations can be obtained from platform toolchains, e.g. [JvmPlatformToolchain.createJvmCompilationOperation]
+         * @param executionPolicy an [ExecutionPolicy] obtained from [createInProcessExecutionPolicy] or [createDaemonExecutionPolicy]
+         * @param logger an optional [KotlinLogger]
+         */
+        public fun <R> executeOperation(
+            operation: BuildOperation<R>,
+            executionPolicy: ExecutionPolicy = kotlinToolchain.createInProcessExecutionPolicy(),
+            logger: KotlinLogger? = null,
+        ): R
+
+        /**
+         * This must be called at the end of the project build (that is when all build operations scoped to the project are finished).
+         */
+        public override fun close()
+    }
 
     public companion object {
         /**

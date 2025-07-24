@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.buildtools.api.trackers.BuildMetricsCollector
  * Instances of concrete implementations for operations can be obtained from [KotlinToolchain] and related classes, e.g.
  * [JvmPlatformToolchain.createClasspathSnapshottingOperation] or [JvmPlatformToolchain.createJvmCompilationOperation]
  *
- * @see KotlinToolchain.executeOperation
+ * @see KotlinToolchain.Build.executeOperation
  * @since 2.3.0
  */
 @ExperimentalBuildToolsApi
@@ -45,17 +45,6 @@ public interface BuildOperation<R> {
     public operator fun <V> set(key: Option<V>, value: V)
 
     public companion object {
-
-        // TODO: opt-in that marks it as requiring explicit cleanup by `finishBuild`
-        /**
-         * Marks build operation as scoped to a project build. Allows tools to avoid dropping some caches.
-         *
-         * When setting this option, you are required to call [KotlinToolchain.finishBuild] with the same [ProjectId]
-         * after all build operations have finished.
-         */
-        @JvmField
-        public val PROJECT_ID: Option<ProjectId?> = Option("PROJECT_ID")
-
         /**
          * A collector for various metrics emitted by the compilation operation.
          */
