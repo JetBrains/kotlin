@@ -1068,15 +1068,18 @@ Function names should clearly indicate their behavior and return characteristics
 ```kotlin
 // Bad: Unnecessary 'get' prefix
 fun getSupertypes(): List<KaType>
+fun KtElement.getDiagnostics(filter: KaDiagnosticCheckerFilter): List<KaDiagnosticWithPsi<*>>
 fun getClass(classId: ClassId): KaClassSymbol?
 
 // Good: Direct naming
 val supertypes: List<KaType>
+fun KtElement.diagnostics(filter: KaDiagnosticCheckerFilter): List<KaDiagnosticWithPsi<*>>
 fun findClass(classId: ClassId): KaClassSymbol?  // 'find' indicates nullable result
 
-// Good: Use appropriate verbs for side effects
-fun computeCommonSupertype(): KaType  // Involves computation
-fun resolveSymbol(): KaSymbol?        // Performs resolution
+// Good: Use appropriate verbs for actions
+fun buildClassType(classId: ClassId): KaType
+fun KaType.render(): String
+fun KtExpression.evaluate(): KaConstantValue?
 ```
 
 ### Avoid Redundant Naming
