@@ -1126,7 +1126,8 @@ correct flag name is `shouldBeResolved`.
 
 ### Name Sealed Classes Appropriately
 
-Use simple names for nested sealed class implementations. Reserve complex names for top-level classes.
+Use simple names for nested sealed class implementations, also dropping the `Ka` prefix.
+Reserve complex names for top-level classes.
 
 ```kotlin
 // Good: Simple names for nested implementations
