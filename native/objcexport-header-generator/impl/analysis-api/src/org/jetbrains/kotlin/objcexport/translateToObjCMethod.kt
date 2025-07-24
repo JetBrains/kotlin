@@ -223,7 +223,7 @@ internal fun splitSelector(selector: String): List<String> {
 /**
  * [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportNamerImpl.getSelector]
  */
-fun ObjCExportContext.getSelector(symbol: KaFunctionSymbol, methodBridge: MethodBridge): String {
+fun ObjCExportContext.getSelector(symbol: KaFunctionSymbol, methodBridge: MethodBridge, isPropertyGetter: Boolean = false): String {
 
     val parameters = valueParametersAssociated(methodBridge, symbol)
     val method = symbol
@@ -284,7 +284,7 @@ fun ObjCExportContext.getSelector(symbol: KaFunctionSymbol, methodBridge: Method
             sb.append(name)
         }
 
-        sb.append(':')
+        if (!isPropertyGetter) sb.append(':')
     }
     return sb.toString()
 }
