@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle
 import org.gradle.api.logging.LogLevel
 import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.kotlin.dsl.kotlin
+import org.gradle.kotlin.dsl.version
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.report.BuildReportType
@@ -351,6 +352,28 @@ class FusStatisticsIT : KGPBaseTest() {
             }
         }
     }
+
+    @JvmGradlePluginTests
+    @DisplayName("test configuration time ksp metrics")
+    @GradleTest
+    @GradleTestVersions(
+        additionalVersions = [TestVersions.Gradle.G_8_0, TestVersions.Gradle.G_8_2],
+    )
+    fun testFusStatisticsForKsp(gradleVersion: GradleVersion) {
+        project("empty", gradleVersion) {
+            plugins {
+                kotlin("jvm")
+                id("com.google.devtools.ksp") version (TestVersions.ThirdPartyDependencies.KSP)
+            }
+            build("help", "-Pkotlin.session.logger.root.path=$projectPath") {
+                assertOutputDoesNotContainFusErrors()
+                fusStatisticsDirectory.assertFusReportContains(
+                    "KSP_GRADLE_PLUGIN_VERSION=1.9.22"
+                )
+            }
+        }
+    }
+
 
     @JvmGradlePluginTests
     @DisplayName("general fields with configuration cache")
