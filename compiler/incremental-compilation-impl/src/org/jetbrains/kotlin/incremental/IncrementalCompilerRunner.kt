@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.config.LanguageVersion
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.incremental.ChangedFiles.DeterminableFiles
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
+import org.jetbrains.kotlin.incremental.components.ICFileMappingTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.dirtyFiles.DirtyFilesContainer
 import org.jetbrains.kotlin.incremental.dirtyFiles.DirtyFilesProvider
@@ -381,6 +382,7 @@ abstract class IncrementalCompilerRunner<
         args: Args,
         lookupTracker: LookupTracker,
         expectActualTracker: ExpectActualTracker,
+        fileMappingTracker: ICFileMappingTracker,
         caches: CacheManager,
         dirtySources: Set<File>,
         isIncremental: Boolean,
@@ -389,6 +391,7 @@ abstract class IncrementalCompilerRunner<
             register(LookupTracker::class.java, lookupTracker)
             register(ExpectActualTracker::class.java, expectActualTracker)
             register(CompilationCanceledStatus::class.java, EmptyCompilationCanceledStatus)
+            register(ICFileMappingTracker::class.java, fileMappingTracker)
         }
 
     protected abstract fun runCompiler(
@@ -475,6 +478,11 @@ abstract class IncrementalCompilerRunner<
 
             val lookupTracker = LookupTrackerImpl(getLookupTrackerDelegate())
             val expectActualTracker = ExpectActualTrackerImpl()
+
+            val outputItemsCollector = OutputItemsCollectorImpl()
+            val transactionOutputsRegistrar = TransactionOutputsRegistrar(transaction, outputItemsCollector)
+            val fileMappingTracker = ICFileMappingTrackerImpl(transactionOutputsRegistrar)
+
             val (sourcesToCompile, removedKotlinSources) = dirtySources.partition { it.exists() && allKotlinSources.contains(it) }
 
             icContext.fragmentContext?.let {
@@ -484,16 +492,17 @@ abstract class IncrementalCompilerRunner<
             }
 
             val services = makeServices(
-                args, lookupTracker, expectActualTracker, caches,
+                args, lookupTracker, expectActualTracker, fileMappingTracker, caches,
                 dirtySources.toSet(), compilationMode is CompilationMode.Incremental
             ).build()
 
             args.reportOutputFiles = true
-            val outputItemsCollector = OutputItemsCollectorImpl()
-            val transactionOutputsRegistrar = TransactionOutputsRegistrar(transaction, outputItemsCollector)
             val bufferingMessageCollector = MessageCollectorImpl()
-            val messageCollectorAdapter =
-                MessageCollectorToOutputItemsCollectorAdapter(bufferingMessageCollector, transactionOutputsRegistrar)
+            val messageCollectorAdapter = MessageCollectorToOutputItemsCollectorAdapter(
+                bufferingMessageCollector,
+                transactionOutputsRegistrar,
+                fileMappingTracker
+            )
 
             val compiledSources = reporter.measure(GradleBuildTime.COMPILATION_ROUND) {
                 runCompiler(

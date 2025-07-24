@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.backend.common.output.OutputFileCollection
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.cli.common.messages.OutputMessageUtil
+import org.jetbrains.kotlin.incremental.components.ICFileMappingTracker
 import java.io.File
 import java.io.FileNotFoundException
 
@@ -47,11 +48,19 @@ fun OutputFileCollection.writeAllTo(outputDir: File) {
     writeAll(outputDir, null)
 }
 
-fun OutputFileCollection.writeAll(outputDir: File, messageCollector: MessageCollector, reportOutputFiles: Boolean) {
+fun OutputFileCollection.writeAll(
+    outputDir: File,
+    messageCollector: MessageCollector,
+    reportOutputFiles: Boolean,
+    fileMappingTracker: ICFileMappingTracker?,
+) {
     try {
-        if (!reportOutputFiles) writeAllTo(outputDir)
+        if (!reportOutputFiles && fileMappingTracker == null) writeAllTo(outputDir)
         else writeAll(outputDir) { sources, output ->
-            messageCollector.report(CompilerMessageSeverity.OUTPUT, OutputMessageUtil.formatOutputMessage(sources, output))
+            fileMappingTracker?.recordSourceFilesToOutputFileMapping(sources, output)
+            if (reportOutputFiles) {
+                messageCollector.report(CompilerMessageSeverity.OUTPUT, OutputMessageUtil.formatOutputMessage(sources, output))
+            }
         }
     } catch (e: NoPermissionException) {
         messageCollector.report(CompilerMessageSeverity.ERROR, e.message!!)
