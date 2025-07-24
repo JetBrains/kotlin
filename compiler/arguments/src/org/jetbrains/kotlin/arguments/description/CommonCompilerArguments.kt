@@ -83,15 +83,17 @@ val actualCommonCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLev
                 """.trimIndent().asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
-        additionalAnnotations(
+        additionalMetadata(
             GradleOption(
                 value = DefaultValue.BOOLEAN_FALSE_DEFAULT,
                 gradleInputType = GradleInputTypes.INPUT
             )
         )
 
-        @OptIn(TemporaryCompilerArgumentLifecycle::class)
-        stubLifecycle()
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_2_0,
+            stabilizedVersion = KotlinReleaseVersion.v2_2_0,
+        )
     }
 
     compilerArgument {

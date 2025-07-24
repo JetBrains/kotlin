@@ -73,10 +73,6 @@ see the type names and method signatures required to compile a given translation
             field = value
         }
 
-    @GradleOption(
-        value = DefaultValue.BOOLEAN_FALSE_DEFAULT,
-        gradleInputType = GradleInputTypes.INPUT,
-    )
     @Argument(
         value = "-progressive",
         deprecatedName = "-Xprogressive",

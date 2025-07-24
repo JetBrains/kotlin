@@ -1099,8 +1099,8 @@
                             "valueInVersions": []
                         },
                         "releaseVersionsMetadata": {
-                            "introducedVersion": "1.4.0",
-                            "stabilizedVersion": "1.4.0",
+                            "introducedVersion": "2.2.0",
+                            "stabilizedVersion": "2.2.0",
                             "deprecatedVersion": null,
                             "removedVersion": null
                         }
