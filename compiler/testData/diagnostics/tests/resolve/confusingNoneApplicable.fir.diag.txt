@@ -1,0 +1,3 @@
+/test.kt:(47,57): error: None of the following candidates is applicable:
+static fun createWrap(type: Int, wrapFirstElement: Boolean): Unit
+static fun createWrap(type: String!, wrapFirstElement: Boolean): Unit
