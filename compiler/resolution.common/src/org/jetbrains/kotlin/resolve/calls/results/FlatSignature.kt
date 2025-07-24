@@ -66,16 +66,49 @@ interface SimpleConstraintSystem {
     val constraintSystemMarker: ConstraintSystemMarker
 }
 
-private fun <T> SimpleConstraintSystem.isValueParameterTypeEquallyOrMoreSpecific(
+class FlatSignatureComparisonState(
+    private val cs: SimpleConstraintSystem,
+    private val typeParameters: Collection<TypeParameterMarker>,
+    private val typeSubstitutor: TypeSubstitutorMarker,
+    private val callbacks: SpecificityComparisonCallbacks,
+    private val specificityComparator: TypeSpecificityComparator,
+) {
+    fun isLessSpecific(specificType: KotlinTypeMarker, generalType: KotlinTypeMarker): Boolean {
+        if (specificityComparator.isDefinitelyLessSpecific(specificType, generalType)) {
+            return true
+        } else if (typeParameters.isEmpty() || !generalType.dependsOnTypeParameters(cs.context, typeParameters)) {
+            if (!AbstractTypeChecker.isSubtypeOf(cs.context, specificType, generalType)) {
+                if (!callbacks.isNonSubtypeEquallyOrMoreSpecific(specificType, generalType)) {
+                    return true
+                }
+            }
+        } else {
+            val substitutedGeneralType = typeSubstitutor.safeSubstitute(cs.context, generalType)
+
+            /**
+             * Example:
+             * fun <X> Array<out X>.sort(): Unit {}
+             * fun <Y: Comparable<Y>> Array<out Y>.sort(): Unit {}
+             * Here, when we try solve this CS(Y is variables) then Array<out X> <: Array<out Y> and this system impossible to solve,
+             * so we capture types from receiver and value parameters.
+             */
+            val specificCapturedType = AbstractTypeChecker.prepareType(cs.context, specificType)
+                .let { if (cs.captureFromArgument) cs.context.captureFromExpression(it) ?: it else it }
+            cs.addSubtypeConstraint(specificCapturedType, substitutedGeneralType)
+            if (cs.hasContradiction()) {
+                return true
+            }
+        }
+
+        return false
+    }
+}
+
+private fun <T> FlatSignatureComparisonState.isValueParameterTypeEquallyOrMoreSpecific(
     specific: FlatSignature<T>,
     general: FlatSignature<T>,
-    callbacks: SpecificityComparisonCallbacks,
-    specificityComparator: TypeSpecificityComparator,
-    typeKindSelector: (TypeWithConversion?) -> KotlinTypeMarker?
+    typeKindSelector: (TypeWithConversion?) -> KotlinTypeMarker?,
 ): Boolean {
-    val typeParameters = general.typeParameters
-    val typeSubstitutor = registerTypeVariables(typeParameters)
-
     val specificContextReceiverCount = specific.contextReceiverCount
     val generalContextReceiverCount = general.contextReceiverCount
 
@@ -91,33 +124,36 @@ private fun <T> SimpleConstraintSystem.isValueParameterTypeEquallyOrMoreSpecific
         val specificType = typeKindSelector(specificValueParameterTypes[index]) ?: continue
         val generalType = typeKindSelector(generalValueParameterTypes[index]) ?: continue
 
-        if (specificityComparator.isDefinitelyLessSpecific(specificType, generalType)) {
-            return false
-        }
-
-        if (typeParameters.isEmpty() || !generalType.dependsOnTypeParameters(context, typeParameters)) {
-            if (!AbstractTypeChecker.isSubtypeOf(context, specificType, generalType)) {
-                if (!callbacks.isNonSubtypeEquallyOrMoreSpecific(specificType, generalType)) {
-                    return false
-                }
-            }
-        } else {
-            val substitutedGeneralType = typeSubstitutor.safeSubstitute(context, generalType)
-
-            /**
-             * Example:
-             * fun <X> Array<out X>.sort(): Unit {}
-             * fun <Y: Comparable<Y>> Array<out Y>.sort(): Unit {}
-             * Here, when we try solve this CS(Y is variables) then Array<out X> <: Array<out Y> and this system impossible to solve,
-             * so we capture types from receiver and value parameters.
-             */
-            val specificCapturedType = AbstractTypeChecker.prepareType(context, specificType)
-                .let { if (captureFromArgument) context.captureFromExpression(it) ?: it else it }
-            addSubtypeConstraint(specificCapturedType, substitutedGeneralType)
-        }
+        if (isLessSpecific(specificType, generalType)) return false
     }
 
     return true
+}
+
+fun <T> SimpleConstraintSystem.signatureComparisonStateIfEquallyOrMoreSpecific(
+    specific: FlatSignature<T>,
+    general: FlatSignature<T>,
+    callbacks: SpecificityComparisonCallbacks,
+    specificityComparator: TypeSpecificityComparator,
+    useOriginalSamTypes: Boolean = false,
+): FlatSignatureComparisonState? {
+    if (specific.hasExtensionReceiver != general.hasExtensionReceiver) return null
+    if (specific.contextReceiverCount > general.contextReceiverCount) return null
+    if (specific.valueParameterTypes.size - specific.contextReceiverCount != general.valueParameterTypes.size - general.contextReceiverCount)
+        return null
+
+    val typeSubstitutor = registerTypeVariables(general.typeParameters)
+    val state = FlatSignatureComparisonState(this, general.typeParameters, typeSubstitutor, callbacks, specificityComparator)
+
+    if (!state.isValueParameterTypeEquallyOrMoreSpecific(specific, general) { it?.resultType }) {
+        return null
+    }
+
+    if (useOriginalSamTypes && !state.isValueParameterTypeEquallyOrMoreSpecific(specific, general) { it?.originalTypeIfWasConverted }) {
+        return null
+    }
+
+    return state
 }
 
 fun <T> SimpleConstraintSystem.isSignatureEquallyOrMoreSpecific(
@@ -127,21 +163,5 @@ fun <T> SimpleConstraintSystem.isSignatureEquallyOrMoreSpecific(
     specificityComparator: TypeSpecificityComparator,
     useOriginalSamTypes: Boolean = false
 ): Boolean {
-    if (specific.hasExtensionReceiver != general.hasExtensionReceiver) return false
-    if (specific.contextReceiverCount > general.contextReceiverCount) return false
-    if (specific.valueParameterTypes.size - specific.contextReceiverCount != general.valueParameterTypes.size - general.contextReceiverCount)
-        return false
-
-    if (!isValueParameterTypeEquallyOrMoreSpecific(specific, general, callbacks, specificityComparator) { it?.resultType }) {
-        return false
-    }
-
-    if (useOriginalSamTypes && !isValueParameterTypeEquallyOrMoreSpecific(
-            specific, general, callbacks, specificityComparator
-        ) { it?.originalTypeIfWasConverted }
-    ) {
-        return false
-    }
-
-    return !hasContradiction()
+    return signatureComparisonStateIfEquallyOrMoreSpecific(specific, general, callbacks, specificityComparator, useOriginalSamTypes) != null
 }
