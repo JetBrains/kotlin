@@ -1192,12 +1192,6 @@ public class FirLightTreeOldFrontendDiagnosticsWithoutAliasExpansionTestGenerate
     @TestDataPath("$PROJECT_ROOT")
     public class Redeclarations {
       @Test
-      @TestMetadata("LocalDeclarations.kt")
-      public void testLocalDeclarations() {
-        runTest("compiler/testData/diagnostics/tests/redeclarations/LocalDeclarations.kt");
-      }
-
-      @Test
       @TestMetadata("privateTypeAliases.kt")
       public void testPrivateTypeAliases() {
         runTest("compiler/testData/diagnostics/tests/redeclarations/privateTypeAliases.kt");
