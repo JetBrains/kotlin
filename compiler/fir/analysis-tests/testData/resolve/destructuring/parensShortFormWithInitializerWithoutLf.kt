@@ -1,5 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: -EnableNameBasedDestructuringShortForm
+// RENDER_DIAGNOSTICS_FULL_TEXT
 data class Tuple(val a: String, val b: Int)
 
 fun declaration(x: Tuple) {
