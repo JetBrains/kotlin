@@ -12931,6 +12931,12 @@ public class FirNativeCodegenBoxWithInlinedFunInKlibTestGenerated extends Abstra
         }
 
         @Test
+        @TestMetadata("kt79276.kt")
+        public void testKt79276() {
+          runTest("compiler/testData/codegen/box/coroutines/varSpilling/kt79276.kt");
+        }
+
+        @Test
         @TestMetadata("lvtWithInlineOnly.kt")
         public void testLvtWithInlineOnly() {
           runTest("compiler/testData/codegen/box/coroutines/varSpilling/lvtWithInlineOnly.kt");
