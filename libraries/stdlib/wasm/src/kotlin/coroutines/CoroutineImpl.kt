@@ -62,7 +62,7 @@ internal abstract class CoroutineImpl(private val resultContinuation: Continuati
                 } else {
                     // top-level completion reached -- invoke and return
                     if (currentException != null) {
-                        completion.resumeWithException(currentException!!)
+                        completion.resumeWithException(currentException)
                     } else {
                         completion.resume(currentResult)
                     }
