@@ -791,7 +791,7 @@ interface KaScopeProvider : KaSessionComponent {
 @KaContextParameterApi
 context(context: KaScopeProvider)
 val KaDeclarationContainerSymbol.memberScope: KaScope
-get() = with(context) { memberScope }
+    get() = with(context) { memberScope }
 ```
 
 ### Documentation Standards
