@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporterImpl
 import org.jetbrains.kotlin.build.report.metrics.DoNothingBuildMetricsReporter
 import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
 import org.jetbrains.kotlin.buildtools.api.KotlinLogger
+import org.jetbrains.kotlin.buildtools.api.ProjectId
 import org.jetbrains.kotlin.buildtools.api.internal.BaseOption
 import org.jetbrains.kotlin.buildtools.api.jvm.ClassSnapshotGranularity
 import org.jetbrains.kotlin.buildtools.api.jvm.ClasspathEntrySnapshot
@@ -40,7 +41,7 @@ class JvmClasspathSnapshottingOperationImpl(
         optionsDelegate[key] = value
     }
 
-    override fun execute(executionPolicy: ExecutionPolicy, logger: KotlinLogger?): ClasspathEntrySnapshot {
+    override fun execute(projectId: ProjectId, executionPolicy: ExecutionPolicy, logger: KotlinLogger?): ClasspathEntrySnapshot {
         val granularity: ClassSnapshotGranularity = optionsDelegate["GRANULARITY"]
         val parseInlinedLocalClasses: Boolean = optionsDelegate["PARSE_INLINED_LOCAL_CLASSES"]
         val metricsReporter = this[METRICS_COLLECTOR]?.let { BuildMetricsReporterImpl() }

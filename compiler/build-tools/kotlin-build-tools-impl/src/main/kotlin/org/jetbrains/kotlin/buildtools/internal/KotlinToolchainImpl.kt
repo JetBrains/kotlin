@@ -8,11 +8,8 @@ package org.jetbrains.kotlin.buildtools.internal
 import com.intellij.openapi.vfs.impl.ZipHandler
 import com.intellij.openapi.vfs.impl.jar.CoreJarFileSystem
 import org.jetbrains.kotlin.K1Deprecation
-import org.jetbrains.kotlin.buildtools.api.KotlinLogger
-import org.jetbrains.kotlin.buildtools.api.ProjectId
-import org.jetbrains.kotlin.buildtools.api.BuildOperation
-import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
-import org.jetbrains.kotlin.buildtools.api.KotlinToolchain
+import org.jetbrains.kotlin.buildtools.api.*
+import org.jetbrains.kotlin.buildtools.api.ProjectId.Companion.RandomProjectUUID
 import org.jetbrains.kotlin.buildtools.api.js.JsPlatformToolchain
 import org.jetbrains.kotlin.buildtools.api.js.WasmPlatformToolchain
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmPlatformToolchain
@@ -39,32 +36,42 @@ class KotlinToolchainImpl(
 
     override fun getCompilerVersion(): String = KotlinCompilerVersion.VERSION
 
-    override fun <R> executeOperation(operation: BuildOperation<R>): R {
-        return executeOperation(operation, logger = null)
+    override fun createBuild(projectId: ProjectId?): KotlinToolchain.Build {
+        return BuildImpl(this, projectId ?: RandomProjectUUID(), buildIdToSessionFlagFile)
     }
 
-    override fun <R> executeOperation(
-        operation: BuildOperation<R>,
-        executionPolicy: ExecutionPolicy,
-        logger: KotlinLogger?,
-    ): R {
-        check(operation is BuildOperationImpl<R>) { "Unknown operation type: ${operation::class.qualifiedName}" }
-        return operation.execute(executionPolicy, logger)
-    }
+    private class BuildImpl(
+        override val kotlinToolchain: KotlinToolchain,
+        override val projectId: ProjectId,
+        private val buildIdToSessionFlagFile: MutableMap<ProjectId, File>,
+    ) : KotlinToolchain.Build {
+        override fun <R> executeOperation(operation: BuildOperation<R>): R {
+            return executeOperation(operation, logger = null)
+        }
 
-    override fun finishBuild(projectId: ProjectId) {
-        clearJarCaches()
-        val file = buildIdToSessionFlagFile.remove(projectId) ?: return
-        file.delete()
-    }
+        override fun <R> executeOperation(
+            operation: BuildOperation<R>,
+            executionPolicy: ExecutionPolicy,
+            logger: KotlinLogger?,
+        ): R {
+            check(operation is BuildOperationImpl<R>) { "Unknown operation type: ${operation::class.qualifiedName}" }
+            return operation.execute(projectId, executionPolicy, logger)
+        }
 
-    private fun clearJarCaches() {
-        ZipHandler.clearFileAccessorCache()
-        @OptIn(K1Deprecation::class)
-        KotlinCoreEnvironment.applicationEnvironment?.apply {
-            (jarFileSystem as? CoreJarFileSystem)?.clearHandlersCache()
-            (jrtFileSystem as? CoreJrtFileSystem)?.clearRoots()
-            idleCleanup()
+        override fun close() {
+            clearJarCaches()
+            val file = buildIdToSessionFlagFile.remove(projectId) ?: return
+            file.delete()
+        }
+
+        private fun clearJarCaches() {
+            ZipHandler.clearFileAccessorCache()
+            @OptIn(K1Deprecation::class)
+            KotlinCoreEnvironment.applicationEnvironment?.apply {
+                (jarFileSystem as? CoreJarFileSystem)?.clearHandlersCache()
+                (jrtFileSystem as? CoreJrtFileSystem)?.clearRoots()
+                idleCleanup()
+            }
         }
     }
 }

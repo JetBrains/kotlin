@@ -16,7 +16,6 @@ abstract class BuildOperationImpl<R> : BuildOperation<R> {
     private val optionsDelegate = OptionsDelegate()
 
     init {
-        this[PROJECT_ID] = null
         this[METRICS_COLLECTOR] = null
     }
 
@@ -28,7 +27,7 @@ abstract class BuildOperationImpl<R> : BuildOperation<R> {
         optionsDelegate[key] = value
     }
 
-    abstract fun execute(executionPolicy: ExecutionPolicy, logger: KotlinLogger? = null): R
+    abstract fun execute(projectId: ProjectId, executionPolicy: ExecutionPolicy, logger: KotlinLogger? = null): R
 
     @OptIn(UseFromImplModuleRestricted::class)
     operator fun <V> get(key: Option<V>): V = optionsDelegate[key]
@@ -41,8 +40,6 @@ abstract class BuildOperationImpl<R> : BuildOperation<R> {
     class Option<V>(id: String) : BaseOption<V>(id)
 
     companion object {
-        val PROJECT_ID: Option<ProjectId?> = Option("PROJECT_ID")
-
         val METRICS_COLLECTOR: Option<BuildMetricsCollector?> = Option("METRICS_COLLECTOR")
     }
 }

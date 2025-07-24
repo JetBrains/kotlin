@@ -96,7 +96,7 @@ class JvmCompilationOperationImpl(
         return JvmSnapshotBasedIncrementalCompilationOptionsImpl()
     }
 
-    override fun execute(executionPolicy: ExecutionPolicy, logger: KotlinLogger?): CompilationResult {
+    override fun execute(projectId: ProjectId, executionPolicy: ExecutionPolicy, logger: KotlinLogger?): CompilationResult {
         val loggerAdapter =
             logger?.let { KotlinLoggerMessageCollectorAdapter(it) } ?: KotlinLoggerMessageCollectorAdapter(DefaultKotlinLogger)
         return when (executionPolicy) {
@@ -104,7 +104,7 @@ class JvmCompilationOperationImpl(
                 compileInProcess(loggerAdapter)
             }
             is DaemonExecutionPolicyImpl -> {
-                compileWithDaemon(requireNotNull(get(PROJECT_ID)), executionPolicy, loggerAdapter)
+                compileWithDaemon(projectId, executionPolicy, loggerAdapter)
             }
             else -> {
                 CompilationResult.COMPILATION_ERROR.also {
