@@ -22,7 +22,8 @@ The Analysis API consists of several interconnected components, each serving a s
 - **Platform Interface** ([source](https://github.com/JetBrains/kotlin/tree/master/analysis/analysis-api-platform-interface))
     - Abstraction layer between the API and its execution environments
     - Defines how the API interacts with project structure and file systems
-    - Key entities: `KotlinPlatformComponent`, `KaEngineService`
+    - Key entities: [`KotlinPlatformComponent`](https://github.com/JetBrains/kotlin/blob/master/analysis/analysis-api-platform-interface/src/org/jetbrains/kotlin/analysis/api/platform/KotlinPlatformComponent.kt),
+      [`KaEngineService`](https://github.com/JetBrains/kotlin/blob/master/analysis/analysis-api-platform-interface/src/org/jetbrains/kotlin/analysis/api/platform/KaEngineService.kt)
 
 - **Analysis API Standalone** ([source](https://github.com/JetBrains/kotlin/tree/master/analysis/analysis-api-standalone))
     - Command-line implementation for using the API outside of IDEs
