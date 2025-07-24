@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.ir.backend.js.lower
 
-import org.jetbrains.kotlin.backend.common.lower.UpgradeCallableReferences.Companion.selectSAMOverriddenFunction
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
@@ -92,13 +91,13 @@ class TestGenerator(val context: JsCommonBackendContext) {
         function.parent = parentFunction
         function.body = body
 
-        val refType = context.symbols.functionN(0).typeWith(function.returnType)
+        val refClass = context.symbols.functionN(0)
         val testFunReference = IrRichFunctionReferenceImpl(
             startOffset = UNDEFINED_OFFSET,
             endOffset = UNDEFINED_OFFSET,
-            type = refType,
+            type = refClass.typeWith(function.returnType),
             reflectionTargetSymbol = null,
-            overriddenFunctionSymbol = selectSAMOverriddenFunction(refType),
+            overriddenFunctionSymbol = refClass.owner.selectSAMOverriddenFunction().symbol,
             invokeFunction = function,
             origin = null,
             isRestrictedSuspension = false,
@@ -237,13 +236,13 @@ class TestGenerator(val context: JsCommonBackendContext) {
                 )
             }
 
-            val refType = context.symbols.functionN(0).typeWith(afterFunction.returnType)
+            val refClass = context.symbols.functionN(0)
             val finallyLambda = IrRichFunctionReferenceImpl(
                 startOffset = UNDEFINED_OFFSET,
                 endOffset = UNDEFINED_OFFSET,
-                type = refType,
+                type = refClass.typeWith(afterFunction.returnType),
                 reflectionTargetSymbol = null,
-                overriddenFunctionSymbol = selectSAMOverriddenFunction(refType),
+                overriddenFunctionSymbol = refClass.owner.selectSAMOverriddenFunction().symbol,
                 invokeFunction = afterFunction,
                 origin = null,
                 isRestrictedSuspension = false,
