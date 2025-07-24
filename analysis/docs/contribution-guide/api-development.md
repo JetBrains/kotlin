@@ -840,6 +840,37 @@ The often-used `Foo` placeholder may be acceptable when discussing declarations 
 val javaGetterSymbol: KaNamedFunctionSymbol
 ```
 
+### Structure documentation comments
+
+KDoc is not just a custom comment syntax – it supports [Markdown](https://daringfireball.net/projects/markdown/syntax) tags.
+Inside longer documentation comments, use Markdown headers (`###`) for individual comment sections.
+
+```kotlin
+/**
+ * The abbreviated type for this expanded [KaType], or `null` if this type has not been expanded from an abbreviated type or the
+ * abbreviated type cannot be resolved. [...]
+ *
+ * ### Resolvability
+ *
+ * Even when this [KaType] is an expansion, the abbreviated type may be `null` if it is not resolvable from this type's use-site module.
+ * This can occur when the abbreviated type from a module `M1` was expanded at some declaration `D` in module `M2`, and the use-site
+ * module uses `D`, but only has a dependency on `M2`. Then the type alias of `M1` remains unresolved and [abbreviation] is `null`.
+ *
+ * ### Type arguments and nested abbreviated types
+ *
+ * The type arguments of an abbreviated type are not converted to abbreviated types automatically. That is, if a type argument is a type
+ * expansion, its [abbreviation] doesn't automatically replace the expanded type. [...]
+ *
+ * ### Transitive expansion
+ *
+ * Types are always expanded to their final form. That is, if we have a chain of type alias expansions, the [KaType] only represents the
+ * final expanded type, and its [abbreviation] the initial type alias application. [...}]
+ */
+val abbreviation: KaUsualClassType?
+```
+
+Use the documentation viewer in IntelliJ IDEA (`F1` by default) to check how your documentation looks like for the users.
+
 ### Document properties and functions differently
 
 As explained in the [Choose between properties and functions based on semantics](#choose-between-properties-and-functions-based-on-semantics)
