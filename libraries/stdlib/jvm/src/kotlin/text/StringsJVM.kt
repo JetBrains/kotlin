@@ -389,7 +389,15 @@ public inline fun String.Companion.format(locale: Locale?, format: String, varar
  *   - the function returns the result as a `List<String>` rather than an `Array<String>`;
  *   - when the [limit] is not specified or specified as 0,
  *   this function doesn't drop trailing empty strings from the result.
-
+ *
+ * The last element of the resulting list corresponds to a subsequence starting right after the last
+ * [regex] match (or at the beginning of this char sequence if there were no matches)
+ * and ending at the end of this char sequence. That implies that if this char sequences does not
+ * contain subsequences matching [regex], the resulting list will contain a single element
+ * corresponding to the whole char sequence.
+ * It also implies that for char sequences ending with a [regex] match,
+ * the resulting list will end with an empty string.
+ *
  * @param limit Non-negative value specifying the maximum number of substrings to return.
  * Zero by default means no limit is set.
  * @sample samples.text.StringsJvmSpecific.splitWithPattern
