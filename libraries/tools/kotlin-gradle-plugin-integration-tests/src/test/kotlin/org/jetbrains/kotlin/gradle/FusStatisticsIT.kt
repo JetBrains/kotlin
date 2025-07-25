@@ -322,12 +322,12 @@ class FusStatisticsIT : KGPBaseTest() {
         }
     }
 
+    @JvmGradlePluginTests
     @DisplayName("fus metric for multiproject")
     @GradleTest
     @GradleTestVersions(
         additionalVersions = [TestVersions.Gradle.G_8_0, TestVersions.Gradle.G_8_2],
     )
-    @JvmGradlePluginTests
     fun testFusStatisticsForMultiproject(gradleVersion: GradleVersion) {
         project(
             "incrementalMultiproject", gradleVersion,
@@ -374,6 +374,37 @@ class FusStatisticsIT : KGPBaseTest() {
         }
     }
 
+    @JvmGradlePluginTests
+    @DisplayName("fus metric for jvm feature flags")
+    @GradleTest
+    @GradleTestVersions(
+        additionalVersions = [TestVersions.Gradle.G_8_0, TestVersions.Gradle.G_8_2],
+    )
+    fun testFusStatisticsForJvmMultiprojectWithFeatureFlags(gradleVersion: GradleVersion) {
+        project(
+            "incrementalMultiproject", gradleVersion,
+        ) {
+            assertNoErrorFilesCreated {
+                //Collect metrics from BuildMetricsService also
+                build(
+                    "compileKotlin", "-Pkotlin.session.logger.root.path=$projectPath",
+                    buildOptions = defaultBuildOptions
+                        .copy(
+                            buildReport = listOf(BuildReportType.FILE),
+                            useFirJvmRunner = true,
+                        ).disableIsolatedProjects(),
+                ) {
+                    assertOutputDoesNotContainFusErrors()
+                    fusStatisticsDirectory.assertFusReportContains(
+                        "CONFIGURATION_IMPLEMENTATION_COUNT=2",
+                        "NUMBER_OF_SUBPROJECTS=2",
+                        "COMPILATIONS_COUNT=2",
+                        "KOTLIN_INCREMENTAL_FIR_RUNNER_ENABLED=true"
+                    )
+                }
+            }
+        }
+    }
 
     @JvmGradlePluginTests
     @DisplayName("general fields with configuration cache")
