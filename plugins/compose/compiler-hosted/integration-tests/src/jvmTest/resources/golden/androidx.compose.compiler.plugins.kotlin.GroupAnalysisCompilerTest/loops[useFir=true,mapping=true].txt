@@ -1,0 +1,24 @@
+//
+// Source
+// ------------------------------------------
+
+@Composable
+fun Content(index: Int) {}
+
+@Composable
+fun Test() {
+    for (i in 0..10) {
+        Content(i)
+    }
+
+    Content(1)
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+========= FunctionMeta: true, OptimizeGroups: true =========
+1:1:void TestKt.Content(int,androidx.compose.runtime.Composer,int):5:5 -> m$-482540690
+1:1:void TestKt.Test(androidx.compose.runtime.Composer,int):8:8 -> m$-2081044797
+1:1:void TestKt.Test(androidx.compose.runtime.Composer,int):8:8 -> m$-1794342280

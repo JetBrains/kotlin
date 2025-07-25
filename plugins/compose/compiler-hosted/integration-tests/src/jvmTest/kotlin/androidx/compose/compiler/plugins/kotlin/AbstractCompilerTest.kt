@@ -161,6 +161,7 @@ abstract class AbstractCompilerTest(val useFir: Boolean) {
         platformSourceFiles: List<SourceFile>,
         commonSourceFiles: List<SourceFile> = listOf(),
         additionalPaths: List<File> = listOf(),
+        additionalConfigurationParameters: (CompilerConfiguration) -> Unit = {},
         forcedFirSetting: Boolean? = null,
     ): GeneratedClassLoader {
         val classLoader = if (additionalPaths.isNotEmpty()) {
@@ -172,7 +173,7 @@ abstract class AbstractCompilerTest(val useFir: Boolean) {
             defaultClassLoader
         }
         return GeneratedClassLoader(
-            createCompilerFacade(additionalPaths, forcedFirSetting)
+            createCompilerFacade(additionalPaths, forcedFirSetting, additionalConfigurationParameters)
                 .compile(platformSourceFiles, commonSourceFiles).factory,
             classLoader
         )

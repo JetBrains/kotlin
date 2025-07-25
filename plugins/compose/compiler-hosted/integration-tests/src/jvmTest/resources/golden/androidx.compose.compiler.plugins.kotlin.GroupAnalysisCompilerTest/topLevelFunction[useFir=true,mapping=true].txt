@@ -1,0 +1,13 @@
+//
+// Source
+// ------------------------------------------
+
+@Composable
+fun Test() {}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+========= FunctionMeta: true, OptimizeGroups: true =========
+1:1:void TestKt.Test(androidx.compose.runtime.Composer,int):5:5 -> m$-1794342280
