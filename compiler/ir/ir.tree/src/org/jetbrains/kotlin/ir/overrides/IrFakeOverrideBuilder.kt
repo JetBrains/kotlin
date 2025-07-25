@@ -99,6 +99,9 @@ class IrFakeOverrideBuilder(
                 }
         }
 
+        if (isStaticMembers && allFromSuper.isNotEmpty()) {
+            TODO("!!!!!! STATIC FO")
+        }
         val allFromSuperByName = allFromSuper.groupBy { it.override.name }
         val allFromCurrentByName = allFromCurrent.groupBy { it.name }
 
