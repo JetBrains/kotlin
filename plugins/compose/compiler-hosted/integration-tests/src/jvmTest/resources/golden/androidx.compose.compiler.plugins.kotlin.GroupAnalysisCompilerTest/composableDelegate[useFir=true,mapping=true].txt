@@ -1,0 +1,22 @@
+//
+// Source
+// ------------------------------------------
+
+interface Test {
+    @Composable fun Content()
+}
+
+class Delegate(val test: Test) : Test by test
+
+//
+// Transformed IR
+// ------------------------------------------
+
+========= FunctionMeta: true, OptimizeGroups: true =========
+ComposeStackTrace -> $$compose:
+========= FunctionMeta: false, OptimizeGroups: true =========
+ComposeStackTrace -> $$compose:
+========= FunctionMeta: true, OptimizeGroups: false =========
+ComposeStackTrace -> $$compose:
+========= FunctionMeta: false, OptimizeGroups: false =========
+ComposeStackTrace -> $$compose:

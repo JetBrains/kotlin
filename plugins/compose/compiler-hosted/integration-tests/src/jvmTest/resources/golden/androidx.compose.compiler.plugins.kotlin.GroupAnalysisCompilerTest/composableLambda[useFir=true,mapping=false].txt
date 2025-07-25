@@ -1,0 +1,32 @@
+//
+// Source
+// ------------------------------------------
+
+@Composable fun App(param: String) {
+    Content {
+        Text(param)
+    }
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+========= FunctionMeta: true, OptimizeGroups: true =========
+TestKt {
+    file: Test.kt
+    App(Ljava/lang/String;Landroidx/compose/runtime/Composer;I)V
+        RestartGroup { key: <key>, line: 4 }
+    App$lambda$0(Ljava/lang/String;Landroidx/compose/runtime/Composer;I)Lkotlin/Unit;
+        Root { key: <key>, line: 6 }
+}
+
+========= FunctionMeta: false, OptimizeGroups: true =========
+TestKt {
+    file: Test.kt
+    App(Ljava/lang/String;Landroidx/compose/runtime/Composer;I)V
+        RestartGroup { key: <key>, line: 4 }
+        Root { key: null, line: 4 }
+    App$lambda$0(Ljava/lang/String;Landroidx/compose/runtime/Composer;I)Lkotlin/Unit;
+        Root { key: <key>, line: 6 }
+}

@@ -1,0 +1,41 @@
+//
+// Source
+// ------------------------------------------
+
+@Composable
+fun Test(param: String): String =
+    TODO("test")
+
+@Composable
+fun TestConditional(param: String): String =
+    if (param.isEmpty()) {
+        Test("")
+        TODO("test")
+    } else {
+        Test(param)
+    }
+
+@Composable
+fun TestFunctionThrow(param: String): String =
+    throwError() // this will generate `throw NothingValueException()`
+
+private fun throwError(): Nothing = TODO()
+
+//
+// Transformed IR
+// ------------------------------------------
+
+========= FunctionMeta: true, OptimizeGroups: true =========
+ComposeStackTrace -> $$compose:
+  1:1:java.lang.String TestKt.Test(java.lang.String,androidx.compose.runtime.Composer,int):6:6 -> m$<key>
+  1:1:java.lang.String TestKt.TestConditional(java.lang.String,androidx.compose.runtime.Composer,int):10:10 -> m$<key>
+  1:1:java.lang.String TestKt.TestConditional(java.lang.String,androidx.compose.runtime.Composer,int):13:13 -> m$<key>
+  1:1:java.lang.String TestKt.TestConditional(java.lang.String,androidx.compose.runtime.Composer,int):10:10 -> m$<key>
+  1:1:java.lang.String TestKt.TestFunctionThrow(java.lang.String,androidx.compose.runtime.Composer,int):19:19 -> m$<key>
+========= FunctionMeta: true, OptimizeGroups: false =========
+ComposeStackTrace -> $$compose:
+  1:1:java.lang.String TestKt.Test(java.lang.String,androidx.compose.runtime.Composer,int):6:6 -> m$<key>
+  1:1:java.lang.String TestKt.TestConditional(java.lang.String,androidx.compose.runtime.Composer,int):10:10 -> m$<key>
+  1:1:java.lang.String TestKt.TestConditional(java.lang.String,androidx.compose.runtime.Composer,int):13:13 -> m$<key>
+  1:1:java.lang.String TestKt.TestConditional(java.lang.String,androidx.compose.runtime.Composer,int):10:10 -> m$<key>
+  1:1:java.lang.String TestKt.TestFunctionThrow(java.lang.String,androidx.compose.runtime.Composer,int):19:19 -> m$<key>

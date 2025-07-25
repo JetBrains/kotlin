@@ -1,0 +1,67 @@
+//
+// Source
+// ------------------------------------------
+
+interface Test {
+    @Composable fun Content()
+}
+
+class Delegate(val test: Test) : Test by test
+
+//
+// Transformed IR
+// ------------------------------------------
+
+========= FunctionMeta: true, OptimizeGroups: true =========
+Delegate {
+    file: Test.kt
+    Content(Landroidx/compose/runtime/Composer;I)V
+        RestartGroup { key: <key>, line: -1 }
+}
+
+Delegate$Content$1 {
+    file: Test.kt
+    invoke(Landroidx/compose/runtime/Composer;I)V
+        Root { key: null, line: -1 }
+}
+
+========= FunctionMeta: false, OptimizeGroups: true =========
+Delegate {
+    file: Test.kt
+    Content(Landroidx/compose/runtime/Composer;I)V
+        RestartGroup { key: <key>, line: -1 }
+        Root { key: null, line: -1 }
+}
+
+Delegate$Content$1 {
+    file: Test.kt
+    invoke(Landroidx/compose/runtime/Composer;I)V
+        Root { key: null, line: -1 }
+}
+
+========= FunctionMeta: true, OptimizeGroups: false =========
+Delegate {
+    file: Test.kt
+    Content(Landroidx/compose/runtime/Composer;I)V
+        RestartGroup { key: <key>, line: -1 }
+}
+
+Delegate$Content$1 {
+    file: Test.kt
+    invoke(Landroidx/compose/runtime/Composer;I)V
+        Root { key: null, line: -1 }
+}
+
+========= FunctionMeta: false, OptimizeGroups: false =========
+Delegate {
+    file: Test.kt
+    Content(Landroidx/compose/runtime/Composer;I)V
+        RestartGroup { key: <key>, line: -1 }
+        Root { key: null, line: -1 }
+}
+
+Delegate$Content$1 {
+    file: Test.kt
+    invoke(Landroidx/compose/runtime/Composer;I)V
+        Root { key: null, line: -1 }
+}

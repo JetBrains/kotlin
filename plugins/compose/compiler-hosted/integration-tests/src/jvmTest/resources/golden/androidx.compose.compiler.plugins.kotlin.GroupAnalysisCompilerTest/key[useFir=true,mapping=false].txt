@@ -1,0 +1,36 @@
+//
+// Source
+// ------------------------------------------
+
+@Composable
+fun targetEnterExit(param: String): String =
+    key(param) {
+        if (param.isEmpty()) {
+            "Empty"
+        } else {
+            val state = remember { mutableStateOf("") }
+            state.value
+        }
+    }
+
+//
+// Transformed IR
+// ------------------------------------------
+
+========= FunctionMeta: true, OptimizeGroups: true =========
+TestKt {
+    file: Test.kt
+    targetEnterExit(Ljava/lang/String;Landroidx/compose/runtime/Composer;I)Ljava/lang/String;
+        ReplaceGroup { key: <key>, line: 7 }
+        ReplaceGroup { key: <key>, line: 9 }
+        Root { key: <key>, line: 6 }
+}
+
+========= FunctionMeta: true, OptimizeGroups: false =========
+TestKt {
+    file: Test.kt
+    targetEnterExit(Ljava/lang/String;Landroidx/compose/runtime/Composer;I)Ljava/lang/String;
+        ReplaceGroup { key: <key>, line: 8 }
+        ReplaceGroup { key: <key>, line: 7 }
+        ReplaceGroup { key: <key>, line: 6 }
+}

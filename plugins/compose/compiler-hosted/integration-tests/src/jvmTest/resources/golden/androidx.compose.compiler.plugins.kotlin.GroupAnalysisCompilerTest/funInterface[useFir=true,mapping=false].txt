@@ -1,0 +1,23 @@
+//
+// Source
+// ------------------------------------------
+
+fun interface Test {
+    @Composable
+    fun Test()
+}
+
+fun Content() {
+    Test {}
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+========= FunctionMeta: true, OptimizeGroups: true =========
+TestKt$Content$1 {
+    file: Test.kt
+    Test(Landroidx/compose/runtime/Composer;I)V
+        RestartGroup { key: <key>, line: 10 }
+}

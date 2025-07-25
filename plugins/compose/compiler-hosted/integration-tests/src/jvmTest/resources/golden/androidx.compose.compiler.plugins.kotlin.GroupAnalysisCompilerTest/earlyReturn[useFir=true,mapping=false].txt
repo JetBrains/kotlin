@@ -1,0 +1,20 @@
+//
+// Source
+// ------------------------------------------
+
+@Composable
+fun Test(text: String) {
+    if (text.isEmpty()) return
+    Text(text)
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+========= FunctionMeta: true, OptimizeGroups: true =========
+TestKt {
+    file: Test.kt
+    Test(Ljava/lang/String;Landroidx/compose/runtime/Composer;I)V
+        RestartGroup { key: <key>, line: 5 }
+}

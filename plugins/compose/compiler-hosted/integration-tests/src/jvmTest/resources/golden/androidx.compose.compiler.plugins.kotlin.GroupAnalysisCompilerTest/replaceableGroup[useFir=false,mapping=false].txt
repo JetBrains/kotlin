@@ -1,0 +1,26 @@
+//
+// Source
+// ------------------------------------------
+
+@Composable fun <T> Test(text: T): T {
+    Text(text.toString())
+    return text
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+========= FunctionMeta: true, OptimizeGroups: true =========
+TestKt {
+    file: Test.kt
+    Test(Ljava/lang/Object;Landroidx/compose/runtime/Composer;I)Ljava/lang/Object;
+        Root { key: <key>, line: 5 }
+}
+
+========= FunctionMeta: true, OptimizeGroups: false =========
+TestKt {
+    file: Test.kt
+    Test(Ljava/lang/Object;Landroidx/compose/runtime/Composer;I)Ljava/lang/Object;
+        ReplaceGroup { key: <key>, line: 4 }
+}

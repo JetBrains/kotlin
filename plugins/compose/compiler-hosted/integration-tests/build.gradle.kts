@@ -59,6 +59,7 @@ kotlin {
 
                 // Compose compiler deps
                 implementation(project(":plugins:compose-compiler-plugin:compiler-hosted"))
+                implementation(project(":plugins:compose-compiler-plugin:group-mapping"))
                 implementation(project(":plugins:compose-compiler-plugin:compiler-hosted:integration-tests:protobuf-test-classes"))
 
                 // coroutines for runtime tests
