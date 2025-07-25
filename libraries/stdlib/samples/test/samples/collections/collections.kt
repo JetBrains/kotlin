@@ -1261,6 +1261,33 @@ class Collections {
     class Sorting {
 
         @Sample
+        fun sortBy() {
+            // non-comparable class
+            class Dish(val name: String, val calories: Int, val tasteRate: Float) {
+                override fun toString(): String = "Dish($name: $calories cal, taste $tasteRate/5)"
+            }
+
+            val fridgeContent = mutableListOf(Dish("🍨", 207, 4.7f), Dish("🥦", 34, 2.3f), Dish("🧃", 34, 4.9f))
+            
+            // before sorting
+            assertPrints(fridgeContent, "[Dish(🍨: 207 cal, taste 4.7/5), Dish(🥦: 34 cal, taste 2.3/5), Dish(🧃: 34 cal, taste 4.9/5)]")
+            
+            fridgeContent.sortBy { it.tasteRate }
+            
+            // after sorting by taste rate
+            assertPrints(fridgeContent, "[Dish(🥦: 34 cal, taste 2.3/5), Dish(🍨: 207 cal, taste 4.7/5), Dish(🧃: 34 cal, taste 4.9/5)]")
+            
+            // create a new list with the same content
+            val newFridgeContent = mutableListOf(Dish("🍨", 207, 4.7f), Dish("🥦", 34, 2.3f), Dish("🧃", 34, 4.9f))
+            
+            newFridgeContent.sortBy { it.calories }
+            
+            // after sorting by calories
+            // note that the sorting is stable, so the 🥦 is before the 🧃
+            assertPrints(newFridgeContent, "[Dish(🥦: 34 cal, taste 2.3/5), Dish(🧃: 34 cal, taste 4.9/5), Dish(🍨: 207 cal, taste 4.7/5)]")
+        }
+
+        @Sample
         fun sortMutableList() {
             val mutableList = mutableListOf(4, 3, 2, 1)
 
