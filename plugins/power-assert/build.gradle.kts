@@ -4,6 +4,7 @@ plugins {
     kotlin("jvm")
     id("jps-compatible")
     id("java-test-fixtures")
+    id("project-tests-convention")
 }
 
 val junit5Classpath by configurations.creating
@@ -40,14 +41,17 @@ sourcesJar()
 javadocJar()
 testsJar()
 
-projectTest(jUnitMode = JUnitMode.JUnit5) {
-    dependsOn(":dist")
-    workingDir = rootDir
-    useJUnitPlatform()
+projectTests {
+    testTask(jUnitMode = JUnitMode.JUnit5) {
+        dependsOn(":dist")
+        workingDir = rootDir
 
-    val localJunit5Classpath: FileCollection = junit5Classpath
+        val localJunit5Classpath: FileCollection = junit5Classpath
 
-    doFirst {
-        systemProperty("junit5.classpath", localJunit5Classpath.asPath)
+        doFirst {
+            systemProperty("junit5.classpath", localJunit5Classpath.asPath)
+        }
     }
+
+    withJvmStdlibAndReflect()
 }

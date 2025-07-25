@@ -33,12 +33,6 @@ sourceSets {
 
 testsJar()
 
-projectTest(parallel = true, jUnitMode = JUnitMode.JUnit4) {
-    useJUnitPlatform()
-}
-
-val generateSpecTests by generator("org.jetbrains.kotlin.spec.utils.tasks.GenerateSpecTestsKt")
-
 val generateFeatureInteractionSpecTestData by generator("org.jetbrains.kotlin.spec.utils.tasks.GenerateFeatureInteractionSpecTestDataKt")
 
 val printSpecTestsStatistic by generator("org.jetbrains.kotlin.spec.utils.tasks.PrintSpecTestsStatisticKt")
@@ -60,10 +54,12 @@ projectTests {
     withMockJdkAnnotationsJar()
     withMockJdkRuntime()
     withStdlibCommon()
-}
 
-tasks.named<Test>("test") {
-    filter {
-        excludeTestsMatching("org.jetbrains.kotlin.spec.consistency.SpecTestsConsistencyTest")
+    testTask(jUnitMode = JUnitMode.JUnit5) {
+        filter {
+            excludeTestsMatching("org.jetbrains.kotlin.spec.consistency.SpecTestsConsistencyTest")
+        }
     }
+
+    testGenerator("org.jetbrains.kotlin.spec.utils.tasks.GenerateSpecTestsKt", taskName = "generateSpecTests")
 }

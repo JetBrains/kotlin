@@ -6,6 +6,7 @@ plugins {
     application
     kotlin("jvm")
     id("jps-compatible")
+    id("project-tests-convention")
 }
 
 
@@ -26,9 +27,10 @@ dependencies {
     testRuntimeOnly(libs.junit.jupiter.engine)
 }
 
-projectTest(jUnitMode = JUnitMode.JUnit5) {
-    workingDir = rootDir
-    useJUnitPlatform()
+projectTests {
+    testTask(jUnitMode = JUnitMode.JUnit5) {
+        workingDir = rootDir
+    }
 }
 
 application {

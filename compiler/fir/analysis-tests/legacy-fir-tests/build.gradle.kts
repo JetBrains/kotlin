@@ -7,6 +7,7 @@ plugins {
     kotlin("jvm")
     id("jps-compatible")
     id("java-test-fixtures")
+    id("project-tests-convention")
 }
 
 dependencies {
@@ -36,9 +37,13 @@ sourceSets {
     "testFixtures" { projectDefault() }
 }
 
-projectTest(parallel = true, maxHeapSizeMb = 3072, jUnitMode = JUnitMode.JUnit4) {
-    dependsOn(":dist")
-    workingDir = rootDir
+projectTests {
+    testTask(parallel = true, maxHeapSizeMb = 3072, jUnitMode = JUnitMode.JUnit4) {
+        dependsOn(":dist")
+        workingDir = rootDir
+    }
+
+    withJvmStdlibAndReflect()
 }
 
 testsJar()

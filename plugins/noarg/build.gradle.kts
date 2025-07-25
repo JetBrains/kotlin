@@ -4,6 +4,7 @@ plugins {
     kotlin("jvm")
     id("jps-compatible")
     id("java-test-fixtures")
+    id("project-tests-convention")
 }
 
 dependencies {
@@ -50,8 +51,11 @@ sourcesJar()
 javadocJar()
 testsJar()
 
-projectTest(parallel = true, jUnitMode = JUnitMode.JUnit4) {
-    dependsOn(":dist")
-    workingDir = rootDir
-    useJUnitPlatform()
+projectTests {
+    testTask(jUnitMode = JUnitMode.JUnit5) {
+        dependsOn(":dist")
+        workingDir = rootDir
+    }
+
+    withJvmStdlibAndReflect()
 }

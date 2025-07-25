@@ -5,6 +5,7 @@ import org.jetbrains.kotlin.gradle.targets.js.KotlinJsCompilerAttribute
 plugins {
     kotlin("jvm")
     id("d8-configuration")
+    id("project-tests-convention")
 }
 
 repositories {
@@ -124,15 +125,20 @@ val runtimeJar = runtimeJar()
 sourcesJar()
 javadocJar()
 
-projectTest(parallel = true, jUnitMode = JUnitMode.JUnit5) {
-    dependsOn(":dist")
-    dependsOn(runtimeJar)
-    systemProperty("compose.compiler.hosted.jar.path", runtimeJar.get().outputs.files.singleFile.relativeTo(rootDir))
-    systemProperty("compose.compiler.test.js.classpath", testJsRuntime.asPath)
-    workingDir = rootDir
-    useJUnitPlatform()
-    useJsIrBoxTests(version = version, buildDir = layout.buildDirectory)
+projectTests {
+    testTask(jUnitMode = JUnitMode.JUnit5) {
+        dependsOn(":dist")
+        dependsOn(runtimeJar)
+        systemProperty("compose.compiler.hosted.jar.path", runtimeJar.get().outputs.files.singleFile.relativeTo(rootDir))
+        systemProperty("compose.compiler.test.js.classpath", testJsRuntime.asPath)
+        workingDir = rootDir
+        useJsIrBoxTests(version = version, buildDir = layout.buildDirectory)
+    }
+
+    testGenerator("androidx.compose.compiler.plugins.kotlin.TestGeneratorKt")
+
+    withJvmStdlibAndReflect()
+    withStdlibJsRuntime()
 }
 
-val generateTests by generator("androidx.compose.compiler.plugins.kotlin.TestGeneratorKt")
 testsJar()

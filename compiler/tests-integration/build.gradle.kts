@@ -2,6 +2,7 @@ plugins {
     kotlin("jvm")
     id("jps-compatible")
     id("java-test-fixtures")
+    id("project-tests-convention")
 }
 
 val compilerModules: Array<String> by rootProject.extra
@@ -60,31 +61,35 @@ sourceSets {
     "testFixtures" { projectDefault() }
 }
 
-projectTest(
-    parallel = true,
-    defineJDKEnvVariables = listOf(
-        JdkMajorVersion.JDK_1_8,
-        JdkMajorVersion.JDK_11_0,
-        JdkMajorVersion.JDK_17_0,
-        JdkMajorVersion.JDK_21_0
-    ),
-    jUnitMode = JUnitMode.JUnit4
-) {
-    dependsOn(":dist")
-    dependsOn(":kotlin-stdlib:compileKotlinWasmJs")
+projectTests {
+    testTask(
+        parallel = true,
+        defineJDKEnvVariables = listOf(
+            JdkMajorVersion.JDK_1_8,
+            JdkMajorVersion.JDK_11_0,
+            JdkMajorVersion.JDK_17_0,
+            JdkMajorVersion.JDK_21_0
+        ),
+        jUnitMode = JUnitMode.JUnit4
+    ) {
+        dependsOn(":dist")
+        dependsOn(":kotlin-stdlib:compileKotlinWasmJs")
 
-    workingDir = rootDir
+        workingDir = rootDir
 
-    useJUnitPlatform()
+        useJUnitPlatform()
 
-    systemProperty("kotlin.test.script.classpath", testSourceSet.output.classesDirs.joinToString(File.pathSeparator))
-    val antLauncherJarPathProvider = project.provider {
-        antLauncherJar.asPath
+        systemProperty("kotlin.test.script.classpath", testSourceSet.output.classesDirs.joinToString(File.pathSeparator))
+        val antLauncherJarPathProvider = project.provider {
+            antLauncherJar.asPath
+        }
+        doFirst {
+            systemProperty("kotlin.ant.classpath", antLauncherJarPathProvider.get())
+            systemProperty("kotlin.ant.launcher.class", "org.apache.tools.ant.Main")
+        }
     }
-    doFirst {
-        systemProperty("kotlin.ant.classpath", antLauncherJarPathProvider.get())
-        systemProperty("kotlin.ant.launcher.class", "org.apache.tools.ant.Main")
-    }
+
+    withJvmStdlibAndReflect()
 }
 
 testsJar()

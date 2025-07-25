@@ -14,6 +14,7 @@ plugins {
     id("jps-compatible")
     id("d8-configuration")
     id("java-test-fixtures")
+    id("project-tests-convention")
 }
 
 val jsonJsIrRuntimeForTests: Configuration by configurations.creating {
@@ -177,16 +178,21 @@ artifacts {
     }
 }
 
-projectTest(parallel = true, jUnitMode = JUnitMode.JUnit5, defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_11_0)) {
-    useJUnitPlatform {
-        // Exclude all tests with the "serialization-native" tag. They should be launched by another test task.
-        excludeTags("serialization-native")
+projectTests {
+    testTask(jUnitMode = JUnitMode.JUnit5, defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_11_0)) {
+        useJUnitPlatform {
+            // Exclude all tests with the "serialization-native" tag. They should be launched by another test task.
+            excludeTags("serialization-native")
+        }
+
+        dependsOn(":dist")
+        workingDir = rootDir
+        setUpJsIrBoxTests()
     }
 
-    dependsOn(":dist")
-    workingDir = rootDir
-    useJUnitPlatform()
-    setUpJsIrBoxTests()
+    testGenerator("org.jetbrains.kotlin.generators.tests.GenerateSerializationTestsKt")
+
+    withJvmStdlibAndReflect()
 }
 
 val nativeTest = nativeTest(
@@ -196,8 +202,6 @@ val nativeTest = nativeTest(
     customTestDependencies = listOf(coreNativeRuntimeForTests, jsonNativeRuntimeForTests),
     compilerPluginDependencies = listOf(serializationPluginForTests)
 )
-
-val generateTests by generator("org.jetbrains.kotlin.generators.tests.GenerateSerializationTestsKt")
 
 fun Test.setUpJsIrBoxTests() {
     useJsIrBoxTests(version = version, buildDir = layout.buildDirectory)

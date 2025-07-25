@@ -5,6 +5,7 @@ plugins {
     kotlin("jvm")
     id("jps-compatible")
     id("org.jetbrains.kotlinx.binary-compatibility-validator")
+    id("project-tests-convention")
 }
 
 configureKotlinCompileTasksGradleCompatibility()
@@ -41,8 +42,8 @@ tasks.named<KotlinCompile>("compileTestKotlin") {
     }
 }
 
-projectTest(jUnitMode = JUnitMode.JUnit5) {
-    useJUnitPlatform()
+projectTests {
+    testTask(jUnitMode = JUnitMode.JUnit5)
 }
 
 generatedSourcesTask(

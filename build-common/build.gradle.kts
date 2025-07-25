@@ -5,6 +5,7 @@ plugins {
     id("jps-compatible")
     id("gradle-plugin-compiler-dependency-configuration")
     id("java-test-fixtures")
+    id("project-tests-convention")
 }
 
 dependencies {
@@ -52,8 +53,7 @@ sourceSets {
 // test jar is used for ide dependencies (`kotlin-build-common-tests-for-ide` and `kotlin-jps-plugin-tests-for-ide`)
 testsJarToBeUsedAlongWithFixtures()
 
-projectTest(parallel = true, jUnitMode = JUnitMode.JUnit4)
-
-projectTest("testJUnit5", jUnitMode = JUnitMode.JUnit5, parallel = true) {
-    useJUnitPlatform()
+projectTests {
+    testTask(parallel = true, jUnitMode = JUnitMode.JUnit4)
+    testTask("testJUnit5", jUnitMode = JUnitMode.JUnit5, skipInLocalBuild = false)
 }

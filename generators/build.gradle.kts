@@ -92,7 +92,6 @@ dependencies {
     testRuntimeOnly(libs.junit.jupiter.engine)
 }
 
-
 projectTest(parallel = true, jUnitMode = JUnitMode.JUnit4) {
     workingDir = rootDir
 }

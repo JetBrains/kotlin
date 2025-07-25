@@ -1,6 +1,7 @@
 plugins {
     kotlin("jvm")
     id("org.jetbrains.kotlinx.binary-compatibility-validator")
+    id("project-tests-convention")
 }
 
 kotlin {
@@ -15,11 +16,13 @@ sourceSets.named("test") {
     java.srcDir("src/test/kotlin")
 }
 
-projectTest(jUnitMode = JUnitMode.JUnit4) {
-    useJUnit()
-    systemProperty("overwrite.output", System.getProperty("overwrite.output", "false"))
-    systemProperty("testCasesClassesDirs", sourceSets.test.get().output.classesDirs.asPath)
-    jvmArgs("-ea")
+projectTests {
+    testTask(jUnitMode = JUnitMode.JUnit4) {
+        useJUnit()
+        systemProperty("overwrite.output", System.getProperty("overwrite.output", "false"))
+        systemProperty("testCasesClassesDirs", sourceSets.test.get().output.classesDirs.asPath)
+        jvmArgs("-ea")
+    }
 }
 
 tasks.compileTestKotlin {

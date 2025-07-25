@@ -5,6 +5,7 @@ plugins {
     id("jps-compatible")
     id("generated-sources")
     id("java-test-fixtures")
+    id("project-tests-convention")
 }
 
 dependencies {
@@ -73,14 +74,18 @@ sourceSets {
 
 optInToUnsafeDuringIrConstructionAPI()
 
-projectTest(
-    jUnitMode = JUnitMode.JUnit5,
-    defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_11_0)
-) {
-    dependsOn(":dist")
-    workingDir = rootDir
-    useJUnitPlatform()
-}.also { confugureFirPluginAnnotationsDependency(it) }
+projectTests {
+    testTask(
+        jUnitMode = JUnitMode.JUnit5,
+        defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_11_0)
+    ) {
+        dependsOn(":dist")
+        workingDir = rootDir
+        useJUnitPlatform()
+    }.also { confugureFirPluginAnnotationsDependency(it) }
+
+    withJvmStdlibAndReflect()
+}
 
 testsJar()
 

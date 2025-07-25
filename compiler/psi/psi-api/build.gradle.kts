@@ -3,6 +3,7 @@ plugins {
     id("jps-compatible")
     id("org.jetbrains.kotlinx.binary-compatibility-validator")
     id("java-test-fixtures")
+    id("project-tests-convention")
 }
 
 dependencies {
@@ -39,7 +40,8 @@ apiValidation {
 
 testsJar()
 
-projectTest(jUnitMode = JUnitMode.JUnit5) {
-    workingDir = rootDir
-    useJUnitPlatform()
+projectTests {
+    testTask(jUnitMode = JUnitMode.JUnit5) {
+        workingDir = rootDir
+    }
 }

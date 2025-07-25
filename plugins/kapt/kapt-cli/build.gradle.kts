@@ -2,6 +2,7 @@ plugins {
     kotlin("jvm")
     id("jps-compatible")
     id("java-test-fixtures")
+    id("project-tests-convention")
 }
 
 dependencies {
@@ -25,12 +26,15 @@ sourceSets {
 
 testsJar()
 
-projectTest(jUnitMode = JUnitMode.JUnit5, defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_1_8)) {
-    useJUnitPlatform()
-    workingDir = rootDir
-    dependsOn(":dist")
-    val jdkHome = project.getToolchainJdkHomeFor(JdkMajorVersion.JDK_1_8)
-    doFirst {
-        environment("JAVA_HOME", jdkHome.get())
+projectTests {
+    testTask(jUnitMode = JUnitMode.JUnit5, defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_1_8)) {
+        workingDir = rootDir
+        dependsOn(":dist")
+        val jdkHome = project.getToolchainJdkHomeFor(JdkMajorVersion.JDK_1_8)
+        doFirst {
+            environment("JAVA_HOME", jdkHome.get())
+        }
     }
+
+    withJvmStdlibAndReflect()
 }
