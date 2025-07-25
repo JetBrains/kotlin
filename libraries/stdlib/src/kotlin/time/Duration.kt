@@ -1139,36 +1139,31 @@ private fun findDot(str: String, start: Int, end: Int): Int {
 private fun parseLongInPlace(str: String, start: Int, end: Int): Long {
     if (start >= end) throw IllegalArgumentException()
 
-    var result = 0L
-    var negative = false
-    var i = start
-
-    when (str[i]) {
-        '-' -> {
-            negative = true; i++
-        }
-        '+' -> i++
+    var index = start
+    val firstChar = str[start]
+    when (firstChar) {
+        '+', '-' -> index++
     }
+    val isNegative = firstChar == '-'
 
-    if (i >= end) throw IllegalArgumentException()
+    if (index >= end) throw IllegalArgumentException()
 
-    while (i < end) {
-        val digit = str[i] - '0'
+    var result = 0L
+    while (index < end) {
+        val digit = str[index] - '0'
         if (digit !in 0..9) throw IllegalArgumentException("Invalid character in number")
         if (result > Long.MAX_VALUE / 10) {
             throw NumberFormatException("Long overflow")
         }
-
         val newResult = result * 10
         if (newResult < 0 || Long.MAX_VALUE - newResult < digit) {
             throw NumberFormatException("Long overflow")
         }
-
         result = newResult + digit
-        i++
+        index++
     }
 
-    return if (negative) -result else result
+    return if (isNegative) -result else result
 }
 
 private fun parseDoubleInPlace(str: String, start: Int, end: Int): Double {
