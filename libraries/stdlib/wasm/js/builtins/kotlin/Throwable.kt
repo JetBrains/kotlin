@@ -7,6 +7,7 @@ package kotlin
 
 import kotlin.wasm.internal.jsToKotlinStringAdapter
 import kotlin.wasm.internal.wasmGetObjectRtti
+import kotlin.wasm.internal.getQualifiedName
 import kotlin.wasm.internal.getSimpleName
 
 /**
@@ -57,7 +58,7 @@ public actual open class Throwable internal constructor(
      * followed by the exception message if it is not null.
      */
     public override fun toString(): String {
-        val s = getSimpleName(wasmGetObjectRtti(this))
+        val s = getQualifiedName(wasmGetObjectRtti(this))
         return if (message != null) "$s: $message" else s
     }
 }
