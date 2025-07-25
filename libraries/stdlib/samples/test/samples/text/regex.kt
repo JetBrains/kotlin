@@ -1,6 +1,7 @@
 package samples.text
 
 import samples.*
+import kotlin.test.*
 
 class Regexps {
 
@@ -54,7 +55,29 @@ class Regexps {
     }
 
     @Sample
+    fun split() {
+        val colors = "green, red , brown&blue, orange, pink&green"
+        val regex = "[,\\s]+".toRegex()
+
+        val mixedColor = regex.split(colors)
+            .onEach { println(it) }
+            .firstOrNull { it.contains('&') }
+
+        assertPrints(mixedColor, "brown&blue")
+
+        val splitNonMatchingInput = regex.split("Split_me_if_you_can")
+        assertPrints(splitNonMatchingInput, "[Split_me_if_you_can]")
+
+        val splitSurroundedByMatches = regex.split(",(-.-),")
+        assertPrints(splitSurroundedByMatches, "[, (-.-), ]")
+
+        assertTrue(regex.split("") == listOf(""))
+    }
+
+    @Sample
     fun splitToSequence() {
+        fun Sequence<String>.toPrettyString() = joinToString(", ", "[", "]")
+
         val colors = "green, red , brown&blue, orange, pink&green"
         val regex = "[,\\s]+".toRegex()
 
@@ -63,6 +86,15 @@ class Regexps {
             .firstOrNull { it.contains('&') }
 
         assertPrints(mixedColor, "brown&blue")
+
+        val splitNonMatchingInput = regex.splitToSequence("Split_me_if_you_can").toPrettyString()
+        assertPrints(splitNonMatchingInput, "[Split_me_if_you_can]")
+
+        val splitSurroundedByMatches = regex.splitToSequence(",(-.-),").toPrettyString()
+        assertPrints(splitSurroundedByMatches, "[, (-.-), ]")
+
+        assertTrue(regex.splitToSequence("").toList() == listOf(""))
+
     }
 
     @Sample
