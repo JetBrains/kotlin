@@ -58,7 +58,8 @@ public value class Duration internal constructor(private val rawValue: Long) : C
         public val INFINITE: Duration = durationOfMillis(MAX_MILLIS)
         internal val NEG_INFINITE: Duration = durationOfMillis(-MAX_MILLIS)
 
-        internal val INVALID: Duration = Duration(0x7FFFFFFFFBADC0DE)
+        internal const val INVALID_RAW_VALUE = 0x7FFFFFFFFBADC0DE
+        internal val INVALID: Duration = Duration(INVALID_RAW_VALUE)
 
         /** Converts the given time duration [value] expressed in the specified [sourceUnit] into the specified [targetUnit]. */
         @ExperimentalTime
@@ -1080,11 +1081,13 @@ private fun parseDuration(value: String, strictIso: Boolean, throwException: Boo
                 prevUnit = unit
                 if (unit == DurationUnit.SECONDS && dotIndex >= 0) {
                     val whole = parseOverLongIsoComponentInPlace(value, componentStart, dotIndex)
+                        .also { if (it == Duration.INVALID_RAW_VALUE) return throwExceptionOrInvalid() }
                     result += whole.toDuration(unit)
                     val fractional = parseDoubleInPlace(value, dotIndex, componentEnd) ?: return throwExceptionOrInvalid()
                     result += fractional.toDuration(unit)
                 } else {
                     val componentValue = parseOverLongIsoComponentInPlace(value, componentStart, componentEnd)
+                        .also { if (it == Duration.INVALID_RAW_VALUE) return throwExceptionOrInvalid() }
                     result += componentValue.toDuration(unit)
                 }
             }
@@ -1124,12 +1127,26 @@ private fun parseDuration(value: String, strictIso: Boolean, throwException: Boo
                 }
                 if (dotIndex >= 0) {
                     val whole = parseLongInPlace(value, componentStart, dotIndex)
+                        .also { if (it == Duration.INVALID_RAW_VALUE) return throwExceptionOrInvalid() }
+                        .also {
+                            val firstChar = value[componentStart]
+                            if (it == Long.MAX_VALUE && firstChar == '-' ||
+                                it == Long.MIN_VALUE && firstChar != '-'
+                            ) return throwExceptionOrInvalid()
+                        }
                     result += whole.toDuration(unit)
                     val fractional = parseDoubleInPlace(value, dotIndex, componentEnd) ?: return throwExceptionOrInvalid()
                     result += fractional.toDuration(unit)
                     if (index < length) return throwExceptionOrInvalid("Fractional component must be last")
                 } else {
                     val componentValue = parseLongInPlace(value, componentStart, componentEnd)
+                        .also { if (it == Duration.INVALID_RAW_VALUE) return throwExceptionOrInvalid() }
+                        .also {
+                            val firstChar = value[componentStart]
+                            if (it == Long.MAX_VALUE && firstChar == '-' ||
+                                it == Long.MIN_VALUE && firstChar != '-'
+                            ) return throwExceptionOrInvalid()
+                        }
                     result += componentValue.toDuration(unit)
                 }
             }
@@ -1146,7 +1163,7 @@ private fun findDot(str: String, start: Int, end: Int): Int {
 }
 
 private fun parseLongInPlace(str: String, start: Int, end: Int): Long {
-    if (start >= end) throw IllegalArgumentException()
+    if (start >= end) return Duration.INVALID_RAW_VALUE
 
     var index = start
     val firstChar = str[start]
@@ -1155,18 +1172,18 @@ private fun parseLongInPlace(str: String, start: Int, end: Int): Long {
     }
     val isNegative = firstChar == '-'
 
-    if (index >= end) throw IllegalArgumentException()
+    if (index >= end) return Duration.INVALID_RAW_VALUE
 
     var result = 0L
     while (index < end) {
         val digit = str[index] - '0'
-        if (digit !in 0..9) throw IllegalArgumentException("Invalid character in number")
+        if (digit !in 0..9) return Duration.INVALID_RAW_VALUE
         if (result > Long.MAX_VALUE / 10) {
-            throw NumberFormatException("Long overflow")
+            return if (isNegative) Long.MAX_VALUE else Long.MIN_VALUE
         }
         val newResult = result * 10
         if (newResult < 0 || Long.MAX_VALUE - newResult < digit) {
-            throw NumberFormatException("Long overflow")
+            return if (isNegative) Long.MAX_VALUE else Long.MIN_VALUE
         }
         result = newResult + digit
         index++
@@ -1220,8 +1237,9 @@ private fun parseDoubleInPlace(str: String, start: Int, end: Int): Double? {
 private fun parseOverLongIsoComponentInPlace(value: String, start: Int, end: Int): Long {
     val length = end - start
     var actualStart = start
+    val firstChar = value[start]
 
-    if (length > 0 && value[start] in "+-") actualStart++
+    if (length > 0 && firstChar in "+-") actualStart++
 
     if (length > 16) {
         var firstNonZero = actualStart
@@ -1232,14 +1250,16 @@ private fun parseOverLongIsoComponentInPlace(value: String, start: Int, end: Int
             }
         }
         if (end - firstNonZero > 16) {
-            return if (value[start] == '-') Long.MIN_VALUE else Long.MAX_VALUE
+            return if (firstChar == '-') Long.MIN_VALUE else Long.MAX_VALUE
         }
     }
 
-    return try {
-        parseLongInPlace(value, start, end)
-    } catch (_: NumberFormatException) {
-        if (start < end && value[start] == '-') Long.MIN_VALUE else Long.MAX_VALUE
+    return parseLongInPlace(value, start, end).let {
+        when (it) {
+            Long.MAX_VALUE if firstChar == '-' -> Long.MIN_VALUE
+            Long.MIN_VALUE if firstChar != '-' -> Long.MAX_VALUE
+            else -> it
+        }
     }
 }
 
