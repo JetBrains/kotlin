@@ -1046,13 +1046,13 @@ private fun CharSequence.findAnyOf(strings: Collection<String>, startIndex: Int,
  * Finds the first occurrence of any of the specified [strings] in this char sequence,
  * starting from the specified [startIndex] and optionally ignoring the case.
  *
- * @param ignoreCase `true` to ignore character case when matching a string. By default `false`.
- * @return A pair of an index of the first occurrence of matched string from [strings] and the string matched
- * or `null` if none of [strings] are found.
- *
  * To avoid ambiguous results when strings in [strings] have characters in common, this method proceeds from
  * the beginning to the end of this string, and finds at each position the first element in [strings]
  * that matches this string at that position.
+ *
+ * @param ignoreCase `true` to ignore character case when matching a string. By default `false`.
+ * @return A pair of an index of the first occurrence of matched string from [strings] and the string matched
+ * or `null` if none of [strings] are found.
  */
 public fun CharSequence.findAnyOf(strings: Collection<String>, startIndex: Int = 0, ignoreCase: Boolean = false): Pair<Int, String>? =
     findAnyOf(strings, startIndex, ignoreCase, last = false)
@@ -1061,13 +1061,13 @@ public fun CharSequence.findAnyOf(strings: Collection<String>, startIndex: Int =
  * Finds the last occurrence of any of the specified [strings] in this char sequence,
  * starting from the specified [startIndex] and optionally ignoring the case.
  *
- * @param startIndex The index of character to start searching at. The search proceeds backward toward the beginning of the string.
- * @param ignoreCase `true` to ignore character case when matching a string. By default `false`.
- * @return A pair of an index of the last occurrence of matched string from [strings] and the string matched or `null` if none of [strings] are found.
- *
  * To avoid ambiguous results when strings in [strings] have characters in common, this method proceeds from
  * the end toward the beginning of this string, and finds at each position the first element in [strings]
  * that matches this string at that position.
+ *
+ * @param startIndex The index of character to start searching at. The search proceeds backward toward the beginning of the string.
+ * @param ignoreCase `true` to ignore character case when matching a string. By default `false`.
+ * @return A pair of an index of the last occurrence of matched string from [strings] and the string matched or `null` if none of [strings] are found.
  */
 public fun CharSequence.findLastAnyOf(strings: Collection<String>, startIndex: Int = lastIndex, ignoreCase: Boolean = false): Pair<Int, String>? =
     findAnyOf(strings, startIndex, ignoreCase, last = true)
@@ -1076,12 +1076,12 @@ public fun CharSequence.findLastAnyOf(strings: Collection<String>, startIndex: I
  * Finds the index of the first occurrence of any of the specified [strings] in this char sequence,
  * starting from the specified [startIndex] and optionally ignoring the case.
  *
- * @param ignoreCase `true` to ignore character case when matching a string. By default `false`.
- * @return An index of the first occurrence of matched string from [strings] or -1 if none of [strings] are found.
- *
  * To avoid ambiguous results when strings in [strings] have characters in common, this method proceeds from
  * the beginning to the end of this string, and finds at each position the first element in [strings]
  * that matches this string at that position.
+ *
+ * @param ignoreCase `true` to ignore character case when matching a string. By default `false`.
+ * @return An index of the first occurrence of matched string from [strings] or -1 if none of [strings] are found.
  */
 public fun CharSequence.indexOfAny(strings: Collection<String>, startIndex: Int = 0, ignoreCase: Boolean = false): Int =
     findAnyOf(strings, startIndex, ignoreCase, last = false)?.first ?: -1
@@ -1090,13 +1090,13 @@ public fun CharSequence.indexOfAny(strings: Collection<String>, startIndex: Int 
  * Finds the index of the last occurrence of any of the specified [strings] in this char sequence,
  * starting from the specified [startIndex] and optionally ignoring the case.
  *
- * @param startIndex The index of character to start searching at. The search proceeds backward toward the beginning of the string.
- * @param ignoreCase `true` to ignore character case when matching a string. By default `false`.
- * @return An index of the last occurrence of matched string from [strings] or -1 if none of [strings] are found.
- *
  * To avoid ambiguous results when strings in [strings] have characters in common, this method proceeds from
  * the end toward the beginning of this string, and finds at each position the first element in [strings]
  * that matches this string at that position.
+ *
+ * @param startIndex The index of character to start searching at. The search proceeds backward toward the beginning of the string.
+ * @param ignoreCase `true` to ignore character case when matching a string. By default `false`.
+ * @return An index of the last occurrence of matched string from [strings] or -1 if none of [strings] are found.
  */
 public fun CharSequence.lastIndexOfAny(strings: Collection<String>, startIndex: Int = lastIndex, ignoreCase: Boolean = false): Int =
     findAnyOf(strings, startIndex, ignoreCase, last = true)?.first ?: -1
@@ -1338,16 +1338,16 @@ private fun CharSequence.rangesDelimitedBy(delimiters: CharArray, startIndex: In
 /**
  * Returns a sequence of index ranges of substrings in this char sequence around occurrences of the specified [delimiters].
  *
+ * To avoid ambiguous results when strings in [delimiters] have characters in common, this method proceeds from
+ * the beginning to the end of this string, and finds at each position the first element in [delimiters]
+ * that matches this string at that position.
+ *
  * @param delimiters One or more strings to be used as delimiters.
  * @param startIndex The index to start searching delimiters from.
  *  No range having its start value less than [startIndex] is returned.
  *  [startIndex] is coerced to be non-negative and not greater than length of this string.
  * @param ignoreCase `true` to ignore character case when matching a delimiter. By default `false`.
  * @param limit The maximum number of substrings to return. Zero by default means no limit is set.
- *
- * To avoid ambiguous results when strings in [delimiters] have characters in common, this method proceeds from
- * the beginning to the end of this string, and finds at each position the first element in [delimiters]
- * that matches this string at that position.
  */
 private fun CharSequence.rangesDelimitedBy(delimiters: Array<out String>, startIndex: Int = 0, ignoreCase: Boolean = false, limit: Int = 0): Sequence<IntRange> {
     requireNonNegativeLimit(limit)
@@ -1366,13 +1366,13 @@ internal fun requireNonNegativeLimit(limit: Int) =
 /**
  * Splits this char sequence to a sequence of strings around occurrences of the specified [delimiters].
  *
- * @param delimiters One or more strings to be used as delimiters.
- * @param ignoreCase `true` to ignore character case when matching a delimiter. By default `false`.
- * @param limit The maximum number of substrings to return. Zero by default means no limit is set.
- *
  * To avoid ambiguous results when strings in [delimiters] have characters in common, this method proceeds from
  * the beginning to the end of this string, and finds at each position the first element in [delimiters]
  * that matches this string at that position.
+ *
+ * @param delimiters One or more strings to be used as delimiters.
+ * @param ignoreCase `true` to ignore character case when matching a delimiter. By default `false`.
+ * @param limit The maximum number of substrings to return. Zero by default means no limit is set.
  */
 public fun CharSequence.splitToSequence(vararg delimiters: String, ignoreCase: Boolean = false, limit: Int = 0): Sequence<String> =
     rangesDelimitedBy(delimiters, ignoreCase = ignoreCase, limit = limit).map { substring(it) }
@@ -1380,13 +1380,13 @@ public fun CharSequence.splitToSequence(vararg delimiters: String, ignoreCase: B
 /**
  * Splits this char sequence to a list of strings around occurrences of the specified [delimiters].
  *
- * @param delimiters One or more strings to be used as delimiters.
- * @param ignoreCase `true` to ignore character case when matching a delimiter. By default `false`.
- * @param limit The maximum number of substrings to return. Zero by default means no limit is set.
- *
  * To avoid ambiguous results when strings in [delimiters] have characters in common, this method proceeds from
  * the beginning to the end of this string, and matches at each position the first element in [delimiters]
  * that is equal to a delimiter in this instance at that position.
+ *
+ * @param delimiters One or more strings to be used as delimiters.
+ * @param ignoreCase `true` to ignore character case when matching a delimiter. By default `false`.
+ * @param limit The maximum number of substrings to return. Zero by default means no limit is set.
  *
  * @sample samples.text.Strings.splitWithStringDelimiters
  */
