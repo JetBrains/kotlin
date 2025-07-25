@@ -255,6 +255,12 @@ public class DiagnosticsWithJsStdLibAndBackendTestGenerated extends AbstractDiag
       }
 
       @Test
+      @TestMetadata("defaultValue.kt")
+      public void testDefaultValue() {
+        runTest("compiler/testData/diagnostics/testsWithJsStdLibAndBackendCompilation/jsCode/inlinedReturnBreakContinue/defaultValue.kt");
+      }
+
+      @Test
       @TestMetadata("inlineFunctionWithMultipleParameters.kt")
       public void testInlineFunctionWithMultipleParameters() {
         runTest("compiler/testData/diagnostics/testsWithJsStdLibAndBackendCompilation/jsCode/inlinedReturnBreakContinue/inlineFunctionWithMultipleParameters.kt");
@@ -270,6 +276,12 @@ public class DiagnosticsWithJsStdLibAndBackendTestGenerated extends AbstractDiag
       @TestMetadata("loopWithinInlineFunction.kt")
       public void testLoopWithinInlineFunction() {
         runTest("compiler/testData/diagnostics/testsWithJsStdLibAndBackendCompilation/jsCode/inlinedReturnBreakContinue/loopWithinInlineFunction.kt");
+      }
+
+      @Test
+      @TestMetadata("noinlineParameter.kt")
+      public void testNoinlineParameter() {
+        runTest("compiler/testData/diagnostics/testsWithJsStdLibAndBackendCompilation/jsCode/inlinedReturnBreakContinue/noinlineParameter.kt");
       }
 
       @Test
