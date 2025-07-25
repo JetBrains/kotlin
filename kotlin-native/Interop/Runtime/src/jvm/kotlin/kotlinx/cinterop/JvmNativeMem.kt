@@ -18,6 +18,7 @@ package kotlinx.cinterop
 
 import org.jetbrains.kotlin.utils.nativeMemoryAllocator
 import sun.misc.Unsafe
+import kotlin.reflect.KClass
 
 private val NativePointed.address: Long
     get() = this.rawPtr
@@ -91,9 +92,9 @@ internal object nativeMemUtils {
             unsafe.copyMemory(src.address, dest.address, length.toLong())
 
 
-    @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE")
+    @Suppress("NON_PUBLIC_CALL_FROM_PUBLIC_INLINE", "UNCHECKED_CAST")
     inline fun <reified T> allocateInstance(): T {
-        return unsafe.allocateInstance(T::class.java) as T
+        return unsafe.allocateInstance((T::class as KClass<T & Any>).java) as T
     }
 
     internal fun allocRaw(size: Long, align: Int): NativePtr {

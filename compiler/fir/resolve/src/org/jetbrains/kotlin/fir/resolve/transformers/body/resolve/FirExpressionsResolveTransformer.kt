@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.resolve.transformers.body.resolve
 
 import org.jetbrains.kotlin.*
+import org.jetbrains.kotlin.config.ApiVersion
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.*
@@ -1422,7 +1423,12 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
             }
             is FirResolvedReifiedParameterReference -> {
                 val symbol = lhs.symbol
-                symbol.constructType().makeConeTypeDefinitelyNotNullOrNotNull(session.typeContext)
+                val preType = symbol.constructType()
+                if (session.languageVersionSettings.apiVersion < ApiVersion.KOTLIN_2_2) {
+                    preType
+                } else {
+                    preType.makeConeTypeDefinitelyNotNullOrNotNull(session.typeContext)
+                }
             }
             else -> {
                 if (!shouldComputeTypeOfGetClassCallWithNotQualifierInLhs(getClassCall)) return transformedGetClassCall

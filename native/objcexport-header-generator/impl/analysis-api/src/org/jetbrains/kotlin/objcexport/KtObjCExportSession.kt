@@ -96,7 +96,7 @@ internal data class KtObjCExportSessionImpl(
  */
 internal inline fun <reified T> KtObjCExportSession.cached(key: Any, noinline computation: () -> T): T {
     @Suppress("UNCHECKED_CAST")
-    return cached((T::class as KClass<T & Any>).java, key, computation)
+    return cached(T::class.java, key, computation)
 }
 
 /**
