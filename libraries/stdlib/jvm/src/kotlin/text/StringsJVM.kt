@@ -67,7 +67,12 @@ public actual fun String?.equals(other: String?, ignoreCase: Boolean = false): B
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun String.replace(oldChar: Char, newChar: Char, ignoreCase: Boolean = false): String {
     // prefer case-insensitive platform implementation
-    if (!ignoreCase) return (this as java.lang.String).replace(oldChar, newChar)
+    if (!ignoreCase) {
+        // When oldChar equals newChar, Java's replace returns the same string object
+        // To ensure we always return a new string as per documentation, we handle this case specially
+        if (oldChar == newChar) return String(this.toCharArray())
+        return (this as java.lang.String).replace(oldChar, newChar)
+    }
 
     return buildString(length) {
         this@replace.forEach { c ->
