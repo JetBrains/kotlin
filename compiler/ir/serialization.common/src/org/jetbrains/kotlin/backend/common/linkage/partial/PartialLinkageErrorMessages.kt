@@ -523,6 +523,8 @@ private fun Appendable.memberAccessExpressionArgumentsMismatch(
 }
 
 private fun Appendable.invalidSamConversion(case: InvalidSamConversion): Appendable = when(case) {
+    is InvalidSamConversion.NotAFunInterface ->
+        declarationKindName(case.classifier, capitalized = true).append(" is not a fun interface")
     is InvalidSamConversion.FunInterfaceHasNotSingleFunction -> {
         declarationKindName(case.funInterface, capitalized = true)
         if (case.abstractFunctionSymbols.isEmpty()) append(" does not have an abstract function")

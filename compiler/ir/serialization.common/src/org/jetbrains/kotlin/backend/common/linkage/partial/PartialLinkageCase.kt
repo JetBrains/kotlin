@@ -117,6 +117,11 @@ sealed interface PartialLinkageCase {
     sealed class InvalidSamConversion(
         val expression: IrExpression,
     ) : PartialLinkageCase {
+        class NotAFunInterface(
+            expression: IrExpression,
+            val classifier: IrClassifierSymbol,
+        ) : InvalidSamConversion(expression)
+
         class FunInterfaceHasNotSingleFunction(
             expression: IrExpression,
             val funInterface: IrClassifierSymbol,

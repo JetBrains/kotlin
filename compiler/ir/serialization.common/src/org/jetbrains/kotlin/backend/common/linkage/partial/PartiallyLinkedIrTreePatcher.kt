@@ -929,6 +929,13 @@ internal class PartiallyLinkedIrTreePatcher(
             }
 
             val funInterface = type.classOrNull?.owner ?: return null
+            if (!(funInterface.isInterface && funInterface.isFun)) {
+                return InvalidSamConversion.NotAFunInterface(
+                    expression = this,
+                    classifier = funInterface.symbol,
+                )
+            }
+
             val abstractFunctionSymbols = newHashSetWithExpectedSize<IrSimpleFunctionSymbol>(funInterface.declarations.size)
             funInterface.declarations.forEach { member ->
                 when (member) {
@@ -941,7 +948,7 @@ internal class PartiallyLinkedIrTreePatcher(
                             return InvalidSamConversion.FunInterfaceHasAbstractProperty(
                                 expression = this,
                                 funInterface = funInterface.symbol,
-                                abstractPropertySymbol = member.symbol
+                                abstractPropertySymbol = member.symbol,
                             )
                     }
                 }
