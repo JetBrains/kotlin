@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.incremental.components.EnumWhenTracker
 import java.util.concurrent.ConcurrentHashMap
 
 @Suppress("unused")
-class EnumWhenTrackerImpl: EnumWhenTracker {
+class EnumWhenTrackerImpl : EnumWhenTracker {
     private val whenExpressionFilePathToEnumClass = ConcurrentHashMap<String, MutableSet<String>>()
 
     val whenExpressionFilePathToEnumClassMap: Map<String, Collection<String>>
