@@ -1060,15 +1060,10 @@ private fun parseDuration(value: String, strictIso: Boolean): Duration {
                 }
                 componentEnd = value.skipWhile(componentEnd) { it in '0'..'9' || it == '.' }
                 if (componentEnd == componentStart) throw IllegalArgumentException()
-                var dotCount = 0
-                var dotIndex = -1
-                for (i in componentStart..<componentEnd) {
-                    if (value[i] == '.') {
-                        dotIndex = i
-                        dotCount++
-                    }
+                val dotIndex = findChar(value, '.', componentStart, componentEnd)
+                if (dotIndex >= 0 && findChar(value, '.', dotIndex + 1, componentEnd) >= 0) {
+                    throw IllegalArgumentException()
                 }
-                if (dotCount > 1) throw IllegalArgumentException()
                 val unitChar = value.getOrElse(componentEnd) { throw IllegalArgumentException("Missing unit for value") }
                 index = componentEnd + 1
                 val unit = durationUnitByIsoChar(unitChar, isTimeComponent)
