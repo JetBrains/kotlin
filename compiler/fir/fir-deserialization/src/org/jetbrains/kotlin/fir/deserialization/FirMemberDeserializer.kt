@@ -185,6 +185,12 @@ class FirDeserializationContext(
     }
 }
 
+class FirNestedTypeAliasDeserializationContext(
+    val memberDeserializer: FirMemberDeserializer,
+    val proto: ProtoBuf.TypeAlias,
+    val scopeProvider: FirScopeProvider,
+)
+
 class FirMemberDeserializer(private val c: FirDeserializationContext) {
     private val contractDeserializer = FirContractDeserializer(c)
 

@@ -1,5 +1,4 @@
 // IGNORE_BACKEND_K1: ANY
-// IGNORE_BACKEND_K2: ANY
 // ISSUE: KT-79519
 // LANGUAGE: +NestedTypeAliases
 
@@ -15,9 +14,9 @@ class Foo {
 // MODULE: main(lib)
 // FILE: main.kt
 
-import Foo.<!UNRESOLVED_IMPORT!>TA<!>
+import Foo.TA
 
 fun box(): String {
-    val c: <!UNRESOLVED_REFERENCE!>TA<!> = <!UNRESOLVED_REFERENCE!>TA<!>("OK")
-    return c.<!UNRESOLVED_REFERENCE!>p<!>
+    val c: TA = TA("OK")
+    return c.p
 }
