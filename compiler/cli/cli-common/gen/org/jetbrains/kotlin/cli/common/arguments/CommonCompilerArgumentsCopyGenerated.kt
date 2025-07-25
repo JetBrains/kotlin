@@ -32,6 +32,7 @@ fun copyCommonCompilerArguments(from: CommonCompilerArguments, to: CommonCompile
     to.disableDefaultScriptingPlugin = from.disableDefaultScriptingPlugin
     to.disablePhases = from.disablePhases?.copyOf()
     to.dontWarnOnErrorSuppression = from.dontWarnOnErrorSuppression
+    to.dumpArgumentsDir = from.dumpArgumentsDir
     to.dumpDirectory = from.dumpDirectory
     to.dumpOnlyFqName = from.dumpOnlyFqName
     to.dumpPerf = from.dumpPerf
