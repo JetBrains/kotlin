@@ -19,7 +19,7 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirArgumentList
 import org.jetbrains.kotlin.fir.expressions.FirCollectionLiteralCall
 import org.jetbrains.kotlin.fir.expressions.impl.FirCollectionLiteralCallImpl
-import org.jetbrains.kotlin.fir.references.FirReference
+import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 
 @FirBuilderDsl
@@ -28,7 +28,7 @@ class FirCollectionLiteralCallBuilder : FirAnnotationContainerBuilder, FirExpres
     override var coneTypeOrNull: ConeKotlinType? = null
     override val annotations: MutableList<FirAnnotation> = mutableListOf()
     lateinit var argumentList: FirArgumentList
-    lateinit var calleeReference: FirReference
+    lateinit var calleeReference: FirNamedReference
 
     override fun build(): FirCollectionLiteralCall {
         return FirCollectionLiteralCallImpl(

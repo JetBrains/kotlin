@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirArgumentList
 import org.jetbrains.kotlin.fir.expressions.FirCollectionLiteralCall
 import org.jetbrains.kotlin.fir.expressions.UnresolvedExpressionTypeAccess
+import org.jetbrains.kotlin.fir.references.FirNamedReference
 import org.jetbrains.kotlin.fir.references.FirReference
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
@@ -30,7 +31,7 @@ internal class FirCollectionLiteralCallImpl(
     override var coneTypeOrNull: ConeKotlinType?,
     override var annotations: MutableOrEmptyList<FirAnnotation>,
     override var argumentList: FirArgumentList,
-    override var calleeReference: FirReference,
+    override var calleeReference: FirNamedReference,
 ) : FirCollectionLiteralCall() {
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {
@@ -68,7 +69,12 @@ internal class FirCollectionLiteralCallImpl(
         argumentList = newArgumentList
     }
 
-    override fun replaceCalleeReference(newCalleeReference: FirReference) {
+    override fun replaceCalleeReference(newCalleeReference: FirNamedReference) {
         calleeReference = newCalleeReference
+    }
+
+    override fun replaceCalleeReference(newCalleeReference: FirReference) {
+        require(newCalleeReference is FirNamedReference)
+        replaceCalleeReference(newCalleeReference)
     }
 }
