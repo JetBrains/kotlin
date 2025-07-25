@@ -1,6 +1,5 @@
 // WITH_REFLECT
 // KJS_WITH_FULL_RUNTIME
-// WASM_ALLOW_FQNAME_IN_KCLASS
 package test
 
 import kotlin.reflect.typeOf
