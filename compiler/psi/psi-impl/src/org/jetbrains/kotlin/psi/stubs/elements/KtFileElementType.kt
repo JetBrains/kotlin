@@ -56,14 +56,26 @@ object KtFileElementType : IStubFileElementType<KotlinFileStub>(KtFileElementTyp
         val facadeString = dataStream.readNameString()
         val partSimpleName = dataStream.readNameString()
         val numPartNames = dataStream.readInt()
-        val facadePartNames: MutableList<String> = ArrayList(numPartNames)
-        for (i in 0..<numPartNames) {
-            val partNameRef = dataStream.readNameString()
-            checkNotNull(partNameRef) { "Can't read partName from stream" }
-            facadePartNames.add(partNameRef)
+        val facadePartNames: List<String>? = if (numPartNames == 0)
+            null
+        else {
+            ArrayList<String>(numPartNames).apply {
+                repeat(numPartNames) {
+                    val partNameRef = dataStream.readNameString()
+                    checkNotNull(partNameRef) { "Can't read partName from stream" }
+                    add(partNameRef)
+                }
+            }
         }
 
-        return KotlinFileStubImpl(null, packageFqNameAsString, isScript, facadeString, partSimpleName, facadePartNames)
+        return KotlinFileStubImpl(
+            ktFile = null,
+            packageName = packageFqNameAsString,
+            isScript = isScript,
+            facadeFqNameString = facadeString,
+            partSimpleName = partSimpleName,
+            facadePartSimpleNames = facadePartNames,
+        )
     }
 
     override fun doParseContents(chameleon: ASTNode, psi: PsiElement): ASTNode? {
