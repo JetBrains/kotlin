@@ -5,7 +5,6 @@
 
 // WITH_STDLIB
 // LANGUAGE: +InstantiationOfAnnotationClasses
-// WASM_ALLOW_FQNAME_IN_KCLASS
 
 package test
 

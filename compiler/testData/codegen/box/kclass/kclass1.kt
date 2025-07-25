@@ -7,7 +7,6 @@
 // IGNORE_IR_DESERIALIZATION_TEST: JS_IR
 // ^^^ Source code is not compiled in JS.
 // WITH_STDLIB
-// WASM_ALLOW_FQNAME_IN_KCLASS
 
 package codegen.kclass.kclass1
 

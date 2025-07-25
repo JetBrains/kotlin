@@ -1,5 +1,4 @@
 // TARGET_BACKEND: WASM
-// WASM_ALLOW_FQNAME_IN_KCLASS
 
 class NonLocal
 val nonLocalObject = object {}

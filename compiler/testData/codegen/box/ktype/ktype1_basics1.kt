@@ -8,7 +8,6 @@
 
 // WITH_STDLIB
 // WITH_REFLECT
-// WASM_ALLOW_FQNAME_IN_KCLASS
 
 import kotlin.test.*
 import kotlin.reflect.*
