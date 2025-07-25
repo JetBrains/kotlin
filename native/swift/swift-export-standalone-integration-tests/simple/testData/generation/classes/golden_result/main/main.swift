@@ -543,7 +543,7 @@ public final class OBJECT_WITH_GENERIC_INHERITANCE: KotlinRuntime.KotlinBase, Ko
 }
 open class SEALED: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
     public final class C: main.SEALED {
-        public override init() {
+        public init() {
             if Self.self != main.SEALED.C.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.SEALED.C ") }
             let __kt = SEALED_C_init_allocate()
             super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
@@ -562,7 +562,7 @@ open class SEALED: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged
                 return main.SEALED.O.__createClassWrapper(externalRCRef: SEALED_O_get())
             }
         }
-        private override init() {
+        private init() {
             fatalError()
         }
         package override init(
@@ -571,9 +571,6 @@ open class SEALED: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged
         ) {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
         }
-    }
-    package init() {
-        fatalError()
     }
     package override init(
         __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,

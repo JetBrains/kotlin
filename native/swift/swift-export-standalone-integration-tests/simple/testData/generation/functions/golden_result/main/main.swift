@@ -169,6 +169,24 @@ extension ExportedKotlinPackages.namespace2 {
         return namespace2_foo__TypesOfArguments__Swift_Int32__(arg1)
     }
 }
+extension ExportedKotlinPackages.namespace3 {
+    public static var bar: Swift.Void {
+        get {
+            return namespace3_bar_get()
+        }
+    }
+    public static func foo(
+        faux: Swift.Void
+    ) -> Swift.Void {
+        return namespace3_foo__TypesOfArguments__Swift_Void__()
+    }
+    public static func foo(
+        arg1: Swift.Int32,
+        faux: Swift.Void
+    ) -> Swift.Void {
+        return namespace3_foo__TypesOfArguments__Swift_Int32_Swift_Void__(arg1)
+    }
+}
 extension ExportedKotlinPackages.operators {
     public final class Foo: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
         public final class EmptyIterator: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
