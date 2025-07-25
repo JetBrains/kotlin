@@ -58,6 +58,8 @@ public value class Duration internal constructor(private val rawValue: Long) : C
         public val INFINITE: Duration = durationOfMillis(MAX_MILLIS)
         internal val NEG_INFINITE: Duration = durationOfMillis(-MAX_MILLIS)
 
+        internal val INVALID: Duration = Duration(0x7FFFFFFFFBADC0DE)
+
         /** Converts the given time duration [value] expressed in the specified [sourceUnit] into the specified [targetUnit]. */
         @ExperimentalTime
         public fun convert(value: Double, sourceUnit: DurationUnit, targetUnit: DurationUnit): Double =
@@ -324,7 +326,7 @@ public value class Duration internal constructor(private val rawValue: Long) : C
          *   @sample samples.time.Durations.parse
          */
         public fun parseOrNull(value: String): Duration? = try {
-            parseDuration(value, strictIso = false)
+            parseDuration(value, strictIso = false, throwException = false).let { if (it == INVALID) null else it }
         } catch (e: IllegalArgumentException) {
             null
         }
@@ -337,7 +339,7 @@ public value class Duration internal constructor(private val rawValue: Long) : C
          * @sample samples.time.Durations.parseIsoString
          */
         public fun parseIsoStringOrNull(value: String): Duration? = try {
-            parseDuration(value, strictIso = true)
+            parseDuration(value, strictIso = true, throwException = false).let { if (it == INVALID) null else it }
         } catch (e: IllegalArgumentException) {
             null
         }
@@ -1029,7 +1031,7 @@ public inline operator fun Double.times(duration: Duration): Duration = duration
 
 
 
-private fun parseDuration(value: String, strictIso: Boolean): Duration {
+private fun parseDuration(value: String, strictIso: Boolean, throwException: Boolean = true): Duration {
     var length = value.length
     if (length == 0) throw IllegalArgumentException("The string is empty")
     var index = 0
