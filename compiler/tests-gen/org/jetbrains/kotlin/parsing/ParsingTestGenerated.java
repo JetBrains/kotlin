@@ -2069,6 +2069,11 @@ public class ParsingTestGenerated extends AbstractParsingTest {
         runTest("compiler/testData/psi/destructuring/fullNameBasedDestructuringErrors.kt");
       }
 
+      @TestMetadata("ktij23263.kt")
+      public void testKtij23263() {
+        runTest("compiler/testData/psi/destructuring/ktij23263.kt");
+      }
+
       @TestMetadata("shortNameBasedDestructuringWithRenaming.kt")
       public void testShortNameBasedDestructuringWithRenaming() {
         runTest("compiler/testData/psi/destructuring/shortNameBasedDestructuringWithRenaming.kt");

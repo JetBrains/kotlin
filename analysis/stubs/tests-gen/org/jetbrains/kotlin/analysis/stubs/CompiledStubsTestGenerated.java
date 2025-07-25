@@ -2342,6 +2342,12 @@ public class CompiledStubsTestGenerated extends AbstractCompiledStubsTest {
     }
 
     @Test
+    @TestMetadata("ktij23263.kt")
+    public void testKtij23263() {
+      runTest("compiler/testData/psi/destructuring/ktij23263.kt");
+    }
+
+    @Test
     @TestMetadata("shortNameBasedDestructuringWithRenaming.kt")
     public void testShortNameBasedDestructuringWithRenaming() {
       runTest("compiler/testData/psi/destructuring/shortNameBasedDestructuringWithRenaming.kt");
