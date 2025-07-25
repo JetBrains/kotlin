@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.gradle.report.BuildReportType
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.testbase.BuildOptions.IsolatedProjectsMode
 import org.jetbrains.kotlin.gradle.testbase.TestVersions.ThirdPartyDependencies.GRADLE_ENTERPRISE_PLUGIN_VERSION
+import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.jetbrains.kotlin.gradle.util.BuildOperationRecordImpl
 import org.jetbrains.kotlin.gradle.util.readJsonReport
 import org.jetbrains.kotlin.gradle.util.replaceText
@@ -870,18 +871,11 @@ class BuildReportsIT : KGPBaseTest() {
                 buildReport = listOf(BuildReportType.JSON)
             )
         ) {
-            buildGradleKts.appendText(
-                """
-                |
-                |kotlin {
-                |    tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinNativeCompile>().configureEach {
-                |        compilerOptions {
-                |            freeCompilerArgs.add("-XXLanguage:+IrInlinerBeforeKlibSerialization")
-                |        }
-                |    }
-                |}
-                """.trimMargin()
-            )
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    compilerOptions.freeCompilerArgs.add("-XXLanguage:+IrInlinerBeforeKlibSerialization")
+                }
+            }
             build("linkDebugExecutableHost", "-Pkotlin.build.report.json.directory=${projectPath.resolve("report").pathString}") {
                 val jsonReportFile = projectPath.getSingleFileInDir("report")
                 assertTrue { jsonReportFile.exists() }
