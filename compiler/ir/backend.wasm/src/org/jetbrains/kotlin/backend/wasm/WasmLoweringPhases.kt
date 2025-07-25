@@ -308,7 +308,7 @@ private val localDeclarationsLoweringPhase = makeIrModulePhase(
 )
 
 private val localClassExtractionPhase = makeIrModulePhase(
-    ::LocalClassPopupLowering,
+    ::LocalDeclarationsPopupLowering,
     name = "LocalClassExtractionPhase",
     prerequisite = setOf(localDeclarationsLoweringPhase)
 )

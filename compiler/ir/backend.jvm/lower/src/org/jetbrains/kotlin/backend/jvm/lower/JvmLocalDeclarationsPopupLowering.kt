@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.ScopeWithIr
-import org.jetbrains.kotlin.backend.common.lower.LocalClassPopupLowering
+import org.jetbrains.kotlin.backend.common.lower.LocalDeclarationsPopupLowering
 import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.ir.findInlineLambdas
@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.ir.declarations.*
  * Moves local classes from field initializers and anonymous init blocks into the containing class.
  */
 @PhaseDescription(name = "JvmLocalClassExtraction")
-internal class JvmLocalClassPopupLowering(context: JvmBackendContext) : LocalClassPopupLowering(context) {
+internal class JvmLocalDeclarationsPopupLowering(context: JvmBackendContext) : LocalDeclarationsPopupLowering(context) {
     private val inlineLambdaToScope = mutableMapOf<IrFunction, IrDeclaration>()
 
     override fun lower(irFile: IrFile) {
@@ -33,9 +33,9 @@ internal class JvmLocalClassPopupLowering(context: JvmBackendContext) : LocalCla
     // or capture crossinline lambdas.)
     // Upon moving such class, we record that it used to be in an initializer so that the codegen later sets its EnclosingMethod
     // to the primary constructor.
-    override fun shouldPopUp(klass: IrClass, currentScope: ScopeWithIr?): Boolean {
+    override fun shouldPopUp(declaration: IrDeclaration, currentScope: ScopeWithIr?): Boolean {
         // On JVM, lambdas have package-private visibility after LocalDeclarationsLowering; see `forClass` in `localDeclarationsPhase`.
-        if (!super.shouldPopUp(klass, currentScope) && !klass.isGeneratedLambdaClass) return false
+        if (!super.shouldPopUp(declaration, currentScope) && (declaration is IrClass && !declaration.isGeneratedLambdaClass)) return false
 
         var parent = currentScope?.irElement
         while (parent is IrFunction) {
@@ -45,7 +45,7 @@ internal class JvmLocalClassPopupLowering(context: JvmBackendContext) : LocalCla
         if (parent is IrAnonymousInitializer && !parent.isStatic ||
             parent is IrField && !parent.isStatic
         ) {
-            klass.isEnclosedInConstructor = true
+            declaration.isEnclosedInConstructor = true
             return true
         }
         return false

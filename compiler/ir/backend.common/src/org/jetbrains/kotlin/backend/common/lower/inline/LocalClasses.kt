@@ -7,8 +7,9 @@ package org.jetbrains.kotlin.backend.common.lower.inline
 
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.LoweringContext
+import org.jetbrains.kotlin.backend.common.customNameInReflection
 import org.jetbrains.kotlin.backend.common.ir.isInlineLambdaBlock
-import org.jetbrains.kotlin.backend.common.lower.LocalClassPopupLowering
+import org.jetbrains.kotlin.backend.common.lower.LocalDeclarationsPopupLowering
 import org.jetbrains.kotlin.backend.common.lower.LocalDeclarationsLowering
 import org.jetbrains.kotlin.backend.common.lower.VisibilityPolicy
 import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
@@ -20,8 +21,11 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrBlockImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
+import org.jetbrains.kotlin.ir.set
 import org.jetbrains.kotlin.ir.util.isAdaptedFunctionReference
 import org.jetbrains.kotlin.ir.util.isInlineParameter
+import org.jetbrains.kotlin.ir.util.isLocal
+import org.jetbrains.kotlin.ir.util.isOriginallyLocalDeclaration
 import org.jetbrains.kotlin.ir.util.setDeclarationsParent
 import org.jetbrains.kotlin.ir.visitors.*
 
@@ -57,9 +61,9 @@ class LocalClassesInInlineLambdasLowering(val context: LoweringContext) : BodyLo
                 for (index in expression.arguments.indices) {
                     val argument = expression.arguments[index]
                     val inlineLambda = when (argument) {
-                       is IrRichPropertyReference -> argument.getterFunction
-                       is IrRichFunctionReference -> argument.invokeFunction
-                       else -> null
+                        is IrRichPropertyReference -> argument.getterFunction
+                        is IrRichFunctionReference -> argument.invokeFunction
+                        else -> null
                     }?.takeIf { rootCallee.parameters[index].isInlineParameter() }
                     if (inlineLambda == null)
                         expression.arguments[index] = argument?.transform(this, data)
@@ -84,12 +88,12 @@ class LocalClassesInInlineLambdasLowering(val context: LoweringContext) : BodyLo
                         }
 
                         override fun visitRichFunctionReference(expression: IrRichFunctionReference) {
-                            expression.boundValues.forEach { it.acceptVoid(this)  }
+                            expression.boundValues.forEach { it.acceptVoid(this) }
                             expression.invokeFunction.acceptChildrenVoid(this)
                         }
 
                         override fun visitRichPropertyReference(expression: IrRichPropertyReference) {
-                            expression.boundValues.forEach { it.acceptVoid(this)  }
+                            expression.boundValues.forEach { it.acceptVoid(this) }
                             expression.getterFunction.acceptChildrenVoid(this)
                             expression.setterFunction?.acceptChildrenVoid(this)
                         }
@@ -118,7 +122,8 @@ class LocalClassesInInlineLambdasLowering(val context: LoweringContext) : BodyLo
 
                             expression.arguments.zip(callee.parameters).forEach { (argument, parameter) ->
                                 // Skip adapted function references and inline lambdas - they will be inlined later.
-                                val shouldSkip = argument != null && (argument.isAdaptedFunctionReference() || argument.isInlineLambdaBlock())
+                                val shouldSkip =
+                                    argument != null && (argument.isAdaptedFunctionReference() || argument.isInlineLambdaBlock())
                                 if (parameter.isInlineParameter() && shouldSkip)
                                     adaptedFunctions += (argument as IrBlock).statements[0] as IrSimpleFunction
                                 else
@@ -140,7 +145,7 @@ class LocalClassesInInlineLambdasLowering(val context: LoweringContext) : BodyLo
                         /**
                          * Local classes extracted from inline lambdas are not yet lifted, so their visibility should remain local.
                          * They will be visited for the second time _after_ function inlining, and only then will they be lifted to
-                         * the nearest declaration container by [LocalClassPopupLowering],
+                         * the nearest declaration container by [LocalDeclarationsPopupLowering],
                          * so that's when we will change their visibility to private.
                          */
                         override fun forClass(declaration: IrClass, inInlineFunctionScope: Boolean): DescriptorVisibility =
@@ -151,7 +156,21 @@ class LocalClassesInInlineLambdasLowering(val context: LoweringContext) : BodyLo
                     // which we will extract the local class to.
                     remapCapturedTypesInExtractedLocalDeclarations = false,
                 ).lower(irBlock, container, data, localClasses, adaptedFunctions)
+
+                val localFunctions2 = mutableSetOf<IrSimpleFunction>()
+                for (lambda in inlineLambdas) {
+                    lambda.acceptChildrenVoid(object : IrVisitorVoid() {
+                        override fun visitSimpleFunction(declaration: IrSimpleFunction) {
+                            declaration.acceptChildrenVoid(this)
+                            if (declaration.isOriginallyLocalDeclaration) {
+                                localFunctions2.add(declaration)
+                            }
+                        }
+                    })
+                }
+
                 irBlock.statements.addAll(0, localClasses)
+                irBlock.statements.addAll(0, localFunctions2)
 
                 for (lambda in inlineLambdas) {
                     lambda.transformChildrenVoid(object : IrElementTransformerVoid() {
@@ -161,9 +180,19 @@ class LocalClassesInInlineLambdasLowering(val context: LoweringContext) : BodyLo
                                 context.irBuiltIns.unitType
                             )
                         }
+
+                        override fun visitSimpleFunction(declaration: IrSimpleFunction): IrStatement {
+                            return if (declaration in localFunctions2) {
+                                IrCompositeImpl(
+                                    declaration.startOffset, declaration.endOffset,
+                                    context.irBuiltIns.unitType
+                                )
+                            } else declaration
+                        }
                     })
                 }
                 localClasses.forEach { it.setDeclarationsParent(data) }
+                localFunctions2.forEach { it.setDeclarationsParent(data) }
 
                 return irBlock
             }
