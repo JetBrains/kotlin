@@ -211,6 +211,8 @@ public actual fun String.replace(oldValue: String, newValue: String, ignoreCase:
 /**
  * Returns a new string with all occurrences of [oldChar] replaced with [newChar].
  *
+ * Note: Unlike the JVM implementation, this always creates a new string, even when [oldChar] equals [newChar].
+ *
  * @sample samples.text.Strings.replace
  */
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")

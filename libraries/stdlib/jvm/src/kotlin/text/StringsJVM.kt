@@ -62,6 +62,10 @@ public actual fun String?.equals(other: String?, ignoreCase: Boolean = false): B
 /**
  * Returns a new string with all occurrences of [oldChar] replaced with [newChar].
  *
+ * Note: When [ignoreCase] is `false` and [oldChar] equals [newChar], this function returns the original string object
+ * rather than creating a new string with the same contents. This is because it uses the native Java implementation
+ * which has this optimization.
+ *
  * @sample samples.text.Strings.replace
  */
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")

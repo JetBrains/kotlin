@@ -75,6 +75,9 @@ public actual fun String?.equals(other: String?, ignoreCase: Boolean = false): B
 /**
  * Returns a new string with all occurrences of [oldChar] replaced with [newChar].
  *
+ * Note: When [ignoreCase] is `false`, this implementation delegates to a native function.
+ * The behavior regarding whether a new string is created when [oldChar] equals [newChar] depends on the native implementation.
+ *
  * @sample samples.text.Strings.replace
  */
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")

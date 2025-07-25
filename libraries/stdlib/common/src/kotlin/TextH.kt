@@ -397,6 +397,10 @@ public expect fun CharSequence.repeat(n: Int): String
 /**
  * Returns a new string with all occurrences of [oldChar] replaced with [newChar].
  * 
+ * Note: Platform-specific implementations may have different behavior in certain edge cases.
+ * For example, on JVM when [ignoreCase] is `false` and [oldChar] equals [newChar], 
+ * this function returns the original string object rather than creating a new string with the same contents.
+ * 
  * @sample samples.text.Strings.replace
  */
 public expect fun String.replace(oldChar: Char, newChar: Char, ignoreCase: Boolean = false): String

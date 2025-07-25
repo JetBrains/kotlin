@@ -346,6 +346,8 @@ public actual fun CharSequence.repeat(n: Int): String {
 
 /**
  * Returns a new string with all occurrences of [oldChar] replaced with [newChar].
+ * 
+ * Note: Unlike the JVM implementation, this always creates a new string, even when [oldChar] equals [newChar].
  */
 @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
 public actual fun String.replace(oldChar: Char, newChar: Char, ignoreCase: Boolean = false): String {
