@@ -1060,8 +1060,8 @@ private fun parseDuration(value: String, strictIso: Boolean): Duration {
                 }
                 componentEnd = value.skipWhile(componentEnd) { it in '0'..'9' || it == '.' }
                 if (componentEnd == componentStart) throw IllegalArgumentException()
-                val dotIndex = findChar(value, '.', componentStart, componentEnd)
-                if (dotIndex >= 0 && findChar(value, '.', dotIndex + 1, componentEnd) >= 0) {
+                val dotIndex = findDot(value, componentStart, componentEnd)
+                if (dotIndex >= 0 && findDot(value, dotIndex + 1, componentEnd) >= 0) {
                     throw IllegalArgumentException()
                 }
                 val unitChar = value.getOrElse(componentEnd) { throw IllegalArgumentException("Missing unit for value") }
@@ -1109,8 +1109,8 @@ private fun parseDuration(value: String, strictIso: Boolean): Duration {
                 val unit = durationUnitByShortNameInPlace(value, unitStart, unitEnd)
                 if (prevUnit != null && prevUnit <= unit) throw IllegalArgumentException("Unexpected order of duration components")
                 prevUnit = unit
-                val dotIndex = findChar(value, '.', componentStart, componentEnd)
-                if (dotIndex >= 0 && findChar(value, '.', dotIndex + 1, componentEnd) >= 0) {
+                val dotIndex = findDot(value, componentStart, componentEnd)
+                if (dotIndex >= 0 && findDot(value, dotIndex + 1, componentEnd) >= 0) {
                     throw IllegalArgumentException()
                 }
                 if (dotIndex >= 0) {
@@ -1129,9 +1129,9 @@ private fun parseDuration(value: String, strictIso: Boolean): Duration {
     return if (isNegative) -result else result
 }
 
-private fun findChar(str: String, char: Char, start: Int, end: Int): Int {
+private fun findDot(str: String, start: Int, end: Int): Int {
     for (i in start..<end) {
-        if (str[i] == char) return i
+        if (str[i] == '.') return i
     }
     return -1
 }
