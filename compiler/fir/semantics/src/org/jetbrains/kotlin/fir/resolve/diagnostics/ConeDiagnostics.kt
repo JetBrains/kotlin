@@ -157,10 +157,10 @@ class ConeConstraintSystemHasContradiction(
 class ConeAmbiguityError(
     val name: Name,
     val applicability: CandidateApplicability,
-    override val candidates: Collection<AbstractCandidate>
+    val candidatesWithErrors: Map<out AbstractCandidate, ConeDiagnostic?>
 ) : ConeDiagnosticWithCandidates {
     override val reason: String get() = "Ambiguity: $name, ${candidateSymbols.map { describeSymbol(it) }}"
-    override val candidateSymbols: Collection<FirBasedSymbol<*>> get() = candidates.map { it.symbol }
+    override val candidates: Collection<AbstractCandidate> get() = candidatesWithErrors.keys
 }
 
 class ConeOperatorAmbiguityError(override val candidates: Collection<AbstractCallCandidate<*>>) : ConeDiagnosticWithCandidates {

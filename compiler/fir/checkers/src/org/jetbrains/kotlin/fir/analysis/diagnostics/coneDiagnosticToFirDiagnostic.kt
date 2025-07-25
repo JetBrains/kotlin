@@ -144,7 +144,11 @@ private fun ConeDiagnostic.toKtDiagnostic(
                     session
                 )
             } else {
-                FirErrors.NONE_APPLICABLE.createOn(source, this.candidates.map { it.symbol }, session)
+                FirErrors.NONE_APPLICABLE.createOn(
+                    source,
+                    candidatesWithDiagnosticMessages(source, session),
+                    session
+                )
             }
         }
 
@@ -155,7 +159,11 @@ private fun ConeDiagnostic.toKtDiagnostic(
             unstableSmartcast.mapUnstableSmartCast(session)
         }
 
-        else -> FirErrors.NONE_APPLICABLE.createOn(source, this.candidates.map { it.symbol }, session)
+        else -> FirErrors.NONE_APPLICABLE.createOn(
+            source,
+            candidatesWithDiagnosticMessages(source, session),
+            session
+        )
     }
 
     is ConeOperatorAmbiguityError -> FirErrors.ASSIGN_OPERATOR_AMBIGUITY.createOn(source, this.candidateSymbols, session)
@@ -240,6 +248,16 @@ private fun ConeDiagnostic.toKtDiagnostic(
     is ConeContextParameterWithDefaultValue -> FirErrors.CONTEXT_PARAMETER_WITH_DEFAULT.createOn(source, session)
     is ConeCyclicTypeBound -> null // reported in FirCyclicTypeBoundsChecker
     else -> throw IllegalArgumentException("Unsupported diagnostic type: ${this.javaClass}")
+}
+
+private fun ConeAmbiguityError.candidatesWithDiagnosticMessages(
+    source: KtSourceElement?,
+    session: FirSession,
+): List<Pair<FirBasedSymbol<*>, List<String>>> {
+    return candidatesWithErrors.map {
+        it.key.symbol to it.value?.toFirDiagnostics(session, source, callOrAssignmentSource = null, valueParameter = null)
+            ?.map(KtDiagnostic::renderMessage).orEmpty()
+    }
 }
 
 private fun AbstractConeResolutionAtom.containsErrorTypeForSuppressingAmbiguityError(): Boolean {

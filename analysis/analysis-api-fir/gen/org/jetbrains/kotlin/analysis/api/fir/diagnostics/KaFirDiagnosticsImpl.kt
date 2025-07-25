@@ -1813,7 +1813,7 @@ internal class AnnotationOnIllegalMultiFieldValueClassTypedTargetImpl(
 ) : KaAbstractFirDiagnostic<KtAnnotationEntry>(firDiagnostic, token), KaFirDiagnostic.AnnotationOnIllegalMultiFieldValueClassTypedTarget
 
 internal class NoneApplicableImpl(
-    override val candidates: List<KaSymbol>,
+    override val candidates: List<Pair<KaSymbol, List<String>>>,
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.NoneApplicable

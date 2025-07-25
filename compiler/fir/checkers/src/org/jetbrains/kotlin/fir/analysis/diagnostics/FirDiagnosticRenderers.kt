@@ -422,6 +422,27 @@ object FirDiagnosticRenderers {
             else -> "targets $quotedTargets"
         }
     }
+
+    val CANDIDATES_WITH_DIAGNOSTIC_MESSAGES = Renderer { list: Collection<Pair<FirBasedSymbol<*>, List<String>>> ->
+        buildString {
+            for ((symbol, diagnostics) in list) {
+                append(SYMBOL.render(symbol))
+
+                if (diagnostics.isEmpty()) {
+                    continue
+                }
+
+                appendLine(":")
+
+                diagnostics.forEach {
+                    append("  ")
+                    appendLine(it)
+                }
+
+                appendLine()
+            }
+        }
+    }
 }
 
 fun <T> DiagnosticParameterRenderer<T>.joinToString(

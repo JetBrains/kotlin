@@ -409,7 +409,7 @@ class FirSyntheticCallGenerator(
                     diagnostic = ConeAmbiguityError(
                         it.name,
                         CandidateApplicability.INAPPLICABLE,
-                        it.candidates,
+                        it.candidatesWithErrors,
                     )
                     name = it.name
                 }

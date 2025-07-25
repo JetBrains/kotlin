@@ -2115,8 +2115,10 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
     }
     add(FirErrors.NONE_APPLICABLE) { firDiagnostic ->
         NoneApplicableImpl(
-            firDiagnostic.a.map { firBasedSymbol ->
-                firSymbolBuilder.buildSymbol(firBasedSymbol)
+            firDiagnostic.a.map { pair ->
+                firSymbolBuilder.buildSymbol(pair.first) to pair.second.map { string ->
+                                    string
+                                }
             },
             firDiagnostic as KtPsiDiagnostic,
             token,

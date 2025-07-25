@@ -1512,7 +1512,7 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
 
     interface NoneApplicable : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = NoneApplicable::class
-        val candidates: List<KaSymbol>
+        val candidates: List<Pair<KaSymbol, List<String>>>
     }
 
     interface InapplicableCandidate : KaFirDiagnostic<PsiElement> {

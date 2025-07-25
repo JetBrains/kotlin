@@ -55,5 +55,11 @@ KtCallExpression(134,137): 'x()'
         typeArgumentsMapping = {}
     ]
     diagnostic = ERROR<NONE_APPLICABLE: None of the following candidates is applicable:
-    fun Int.invoke(a: String): Unit
-    fun Int.invoke(b: Boolean): Unit>
+
+    fun Int.invoke(a: String): Unit:
+      No value passed for parameter 'a'.
+
+    fun Int.invoke(b: Boolean): Unit:
+      No value passed for parameter 'b'.
+
+    >

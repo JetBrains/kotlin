@@ -495,7 +495,12 @@ class FirCallResolver(
                                 reducedCandidates.firstOrNull()?.diagnostics?.firstOrNull() as? Unsupported
                             ConeUnsupported(unsupportedResolutionDiagnostic?.message ?: "", unsupportedResolutionDiagnostic?.source)
                         }
-                        reducedCandidates.size > 1 -> ConeAmbiguityError(info.name, applicability, reducedCandidates)
+                        reducedCandidates.size > 1 -> {
+                            val candidatesWithErrors = reducedCandidates.associateWith {
+                                createConeDiagnosticForCandidateWithError(it.applicability, it)
+                            }
+                            ConeAmbiguityError(info.name, applicability, candidatesWithErrors)
+                        }
                         reducedCandidates.size == 1 -> createConeDiagnosticForCandidateWithError(applicability, reducedCandidates.single())
                         else -> ConeUnresolvedReferenceError(info.name)
                     },
@@ -508,7 +513,7 @@ class FirCallResolver(
                 if (resolvedCallableReferenceAtom.isPostponedBecauseOfAmbiguity) {
                     val errorReference = buildReferenceWithErrorCandidate(
                         info,
-                        ConeAmbiguityError(info.name, applicability, reducedCandidates),
+                        ConeAmbiguityError(info.name, applicability, reducedCandidates.associateWith { null }),
                         calleeReference.source
                     )
                     resolvedCallableReferenceAtom.initializeResultingReference(errorReference)
@@ -831,7 +836,12 @@ class FirCallResolver(
                 }
             }
 
-            candidates.size > 1 -> ConeAmbiguityError(name, applicability, candidates)
+            candidates.size > 1 -> {
+                val candidatesWithErrors = candidates.associateWith {
+                    runIf(!it.isSuccessful) { createConeDiagnosticForCandidateWithError(it.applicability, it) }
+                }
+                ConeAmbiguityError(name, applicability, candidatesWithErrors)
+            }
 
             else -> {
                 val candidate = candidates.single()
