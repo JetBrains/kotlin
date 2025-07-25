@@ -16,19 +16,27 @@ fun Project.generator(
     fqName: String,
     sourceSet: SourceSet? = null,
     configure: JavaExec.() -> Unit = {}
-) = PropertyDelegateProvider<Any?, TaskProvider<JavaExec>> { _, property ->
-    smartJavaExec(
-        name = property.name,
-        classpath = (sourceSet ?: testSourceSet).runtimeClasspath,
-        mainClass = fqName
-    ) {
-        group = "Generate"
-        workingDir = rootDir
-        systemProperty("line.separator", "\n")
-        systemProperty("idea.ignore.disabled.plugins", "true")
-        configure()
-    }
+): PropertyDelegateProvider<Any?, TaskProvider<JavaExec>> = PropertyDelegateProvider { _, property ->
+    generator(property.name, fqName, sourceSet, configure)
 }
+
+fun Project.generator(
+    taskName: String,
+    fqName: String,
+    sourceSet: SourceSet? = null,
+    configure: JavaExec.() -> Unit = {}
+): TaskProvider<JavaExec> = smartJavaExec(
+    name = taskName,
+    classpath = (sourceSet ?: testSourceSet).runtimeClasspath,
+    mainClass = fqName
+) {
+    group = "Generate"
+    workingDir = rootDir
+    systemProperty("line.separator", "\n")
+    systemProperty("idea.ignore.disabled.plugins", "true")
+    configure()
+}
+
 
 fun Project.javaPluginExtension(): JavaPluginExtension = extensions.getByType()
 
