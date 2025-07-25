@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.*
 import org.jetbrains.kotlin.cli.jvm.config.ClassicFrontendSpecificJvmConfigurationKeys
 import org.jetbrains.kotlin.cli.jvm.config.configureJdkClasspathRoots
 import org.jetbrains.kotlin.cli.pipeline.jvm.JvmCliPipeline
+import org.jetbrains.kotlin.cli.pipeline.jvm.JvmFrontendPipelinePhase
 import org.jetbrains.kotlin.codegen.CompilationException
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.incremental.components.*
@@ -187,7 +188,7 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
             }
 
             if (dumpModelDir != null) {
-                KotlinToJVMBytecodeCompiler.dumpModel(dumpModelDir, chunk, configuration, arguments)
+                JvmFrontendPipelinePhase.dumpModel(dumpModelDir, chunk, configuration, arguments)
             }
 
             if (!KotlinToJVMBytecodeCompiler.compileModules(environment, buildFile, chunk)) return COMPILATION_ERROR
