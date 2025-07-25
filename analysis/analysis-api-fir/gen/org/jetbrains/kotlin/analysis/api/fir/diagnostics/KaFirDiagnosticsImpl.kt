@@ -520,6 +520,11 @@ internal class SelfCallInNestedObjectConstructorErrorImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.SelfCallInNestedObjectConstructorError
 
+internal class UnsupportedFallbackForCollectionLiteralImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.UnsupportedFallbackForCollectionLiteral
+
 internal class SuperIsNotAnExpressionImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,

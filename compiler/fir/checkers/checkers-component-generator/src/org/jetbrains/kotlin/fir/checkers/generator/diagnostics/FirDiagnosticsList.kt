@@ -223,6 +223,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<List<String?>>("altererNames")
         }
         val SELF_CALL_IN_NESTED_OBJECT_CONSTRUCTOR_ERROR by error<PsiElement>()
+        val UNSUPPORTED_FALLBACK_FOR_COLLECTION_LITERAL by error<PsiElement>()
     }
 
     val SUPER by object : DiagnosticGroup("Super") {

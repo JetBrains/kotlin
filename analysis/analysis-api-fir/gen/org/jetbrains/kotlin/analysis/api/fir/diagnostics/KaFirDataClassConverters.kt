@@ -576,6 +576,12 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.UNSUPPORTED_FALLBACK_FOR_COLLECTION_LITERAL) { firDiagnostic ->
+        UnsupportedFallbackForCollectionLiteralImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.SUPER_IS_NOT_AN_EXPRESSION) { firDiagnostic ->
         SuperIsNotAnExpressionImpl(
             firDiagnostic as KtPsiDiagnostic,
