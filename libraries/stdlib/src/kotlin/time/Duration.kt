@@ -1167,28 +1167,27 @@ private fun parseLongInPlace(str: String, start: Int, end: Int): Long {
 }
 
 private fun parseDoubleInPlace(str: String, start: Int, end: Int): Double {
-    if (start >= end) return 0.0
+    if (start >= end) throw IllegalArgumentException()
+
+    var index = start
+    val firstChar = str[start]
+    when (firstChar) {
+        '+', '-' -> index++
+    }
+    val isNegative = firstChar == '-'
+
+    if (index >= end) throw IllegalArgumentException()
 
     var result = 0.0
-    var i = start
     var inFraction = false
     var fractionMultiplier = 0.1
-    var negative = false
     var hasDot = false
 
-    when (str[i]) {
-        '-' -> {
-            negative = true
-            i++
-        }
-        '+' -> i++
-    }
-
-    while (i < end) {
-        val ch = str[i]
+    while (index < end) {
+        val ch = str[index]
         when (ch) {
             '.' -> {
-                if (hasDot) throw IllegalArgumentException() // Second decimal point
+                if (hasDot) throw IllegalArgumentException()
                 hasDot = true
                 inFraction = true
             }
@@ -1203,10 +1202,10 @@ private fun parseDoubleInPlace(str: String, start: Int, end: Int): Double {
             }
             else -> throw IllegalArgumentException()
         }
-        i++
+        index++
     }
 
-    return if (negative) -result else result
+    return if (isNegative) -result else result
 }
 
 private fun parseOverLongIsoComponentInPlace(value: String, start: Int, end: Int): Long {
