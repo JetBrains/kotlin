@@ -105,7 +105,6 @@ dependencies {
     if (!kotlinBuildProperties.isInIdeaSync) {
         testImplementation(projectTests(":native:native.tests"))
     }
-    testImplementation(project(":native:kotlin-native-utils"))
 
     // Implicit dependencies on CORE native artifacts to run native tests on CI
     implicitDependencies("org.jetbrains.kotlinx:kotlinx-serialization-core-linuxx64:1.7.0") {
