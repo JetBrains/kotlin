@@ -61,6 +61,9 @@ public value class Duration internal constructor(private val rawValue: Long) : C
         internal const val INVALID_RAW_VALUE = 0x7FFFFFFFFBADC0DE
         internal val INVALID: Duration = Duration(INVALID_RAW_VALUE)
 
+        internal const val SUMMING_INFINITE_DURATIONS_OF_DIFFERENT_SIGN_ERROR_MESSAGE =
+            "Summing infinite durations of different signs yields an undefined result."
+
         /** Converts the given time duration [value] expressed in the specified [sourceUnit] into the specified [targetUnit]. */
         @ExperimentalTime
         public fun convert(value: Double, sourceUnit: DurationUnit, targetUnit: DurationUnit): Double =
@@ -326,11 +329,8 @@ public value class Duration internal constructor(private val rawValue: Long) : C
          *   e.g. `10s`, `1h 30m` or `-(1h 30m)`.
          *   @sample samples.time.Durations.parse
          */
-        public fun parseOrNull(value: String): Duration? = try {
+        public fun parseOrNull(value: String): Duration? =
             parseDuration(value, strictIso = false, throwException = false).let { if (it == INVALID) null else it }
-        } catch (e: IllegalArgumentException) {
-            null
-        }
 
         /**
          * Parses a string that represents a duration in restricted ISO-8601 composite representation
@@ -339,11 +339,8 @@ public value class Duration internal constructor(private val rawValue: Long) : C
          *
          * @sample samples.time.Durations.parseIsoString
          */
-        public fun parseIsoStringOrNull(value: String): Duration? = try {
+        public fun parseIsoStringOrNull(value: String): Duration? =
             parseDuration(value, strictIso = true, throwException = false).let { if (it == INVALID) null else it }
-        } catch (e: IllegalArgumentException) {
-            null
-        }
     }
 
     // arithmetic operators
@@ -363,11 +360,29 @@ public value class Duration internal constructor(private val rawValue: Long) : C
                 if (other.isFinite() || (this.rawValue xor other.rawValue >= 0))
                     return this
                 else
-                    throw IllegalArgumentException("Summing infinite durations of different signs yields an undefined result.")
+                    throw IllegalArgumentException(SUMMING_INFINITE_DURATIONS_OF_DIFFERENT_SIGN_ERROR_MESSAGE)
             }
             other.isInfinite() -> return other
         }
 
+        return addFiniteDurations(other)
+    }
+
+    internal fun plus(other: Duration, throwException: Boolean): Duration {
+        when {
+            this.isInfinite() -> {
+                if (other.isFinite() || (this.rawValue xor other.rawValue >= 0))
+                    return this
+                else
+                    if (throwException) throw IllegalArgumentException(SUMMING_INFINITE_DURATIONS_OF_DIFFERENT_SIGN_ERROR_MESSAGE) else return INVALID
+            }
+            other.isInfinite() -> return other
+        }
+
+        return addFiniteDurations(other)
+    }
+
+    private fun addFiniteDurations(other: Duration): Duration {
         return when {
             this.unitDiscriminator == other.unitDiscriminator -> {
                 val result = this.value + other.value // never overflows long, but can overflow long63
@@ -1082,13 +1097,16 @@ private fun parseDuration(value: String, strictIso: Boolean, throwException: Boo
                 if (unit == DurationUnit.SECONDS && dotIndex >= 0) {
                     val whole = parseOverLongIsoComponentInPlace(value, componentStart, dotIndex)
                         .also { if (it == Duration.INVALID_RAW_VALUE) return throwExceptionOrInvalid() }
-                    result += whole.toDuration(unit)
+                    result = result.plus(whole.toDuration(unit), throwException)
+                        .also { if (it == Duration.INVALID) return Duration.INVALID }
                     val fractional = parseDoubleInPlace(value, dotIndex, componentEnd) ?: return throwExceptionOrInvalid()
-                    result += fractional.toDuration(unit)
+                    result = result.plus(fractional.toDuration(unit), throwException)
+                        .also { if (it == Duration.INVALID) return Duration.INVALID }
                 } else {
                     val componentValue = parseOverLongIsoComponentInPlace(value, componentStart, componentEnd)
                         .also { if (it == Duration.INVALID_RAW_VALUE) return throwExceptionOrInvalid() }
-                    result += componentValue.toDuration(unit)
+                    result = result.plus(componentValue.toDuration(unit), throwException)
+                        .also { if (it == Duration.INVALID) return Duration.INVALID }
                 }
             }
         }
@@ -1134,9 +1152,11 @@ private fun parseDuration(value: String, strictIso: Boolean, throwException: Boo
                                 it == Long.MIN_VALUE && firstChar != '-'
                             ) return throwExceptionOrInvalid()
                         }
-                    result += whole.toDuration(unit)
+                    result = result.plus(whole.toDuration(unit), throwException)
+                        .also { if (it == Duration.INVALID) return Duration.INVALID }
                     val fractional = parseDoubleInPlace(value, dotIndex, componentEnd) ?: return throwExceptionOrInvalid()
-                    result += fractional.toDuration(unit)
+                    result = result.plus(fractional.toDuration(unit), throwException)
+                        .also { if (it == Duration.INVALID) return Duration.INVALID }
                     if (index < length) return throwExceptionOrInvalid("Fractional component must be last")
                 } else {
                     val componentValue = parseLongInPlace(value, componentStart, componentEnd)
@@ -1147,7 +1167,8 @@ private fun parseDuration(value: String, strictIso: Boolean, throwException: Boo
                                 it == Long.MIN_VALUE && firstChar != '-'
                             ) return throwExceptionOrInvalid()
                         }
-                    result += componentValue.toDuration(unit)
+                    result = result.plus(componentValue.toDuration(unit), throwException)
+                        .also { if (it == Duration.INVALID) return Duration.INVALID }
                 }
             }
         }
