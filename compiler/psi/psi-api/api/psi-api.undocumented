@@ -2081,7 +2081,6 @@ org.jetbrains.kotlin.psi.stubs.elements.KtDotQualifiedExpressionElementType
 org.jetbrains.kotlin.psi.stubs.elements.KtDotQualifiedExpressionElementType:constructor(String)
 org.jetbrains.kotlin.psi.stubs.elements.KtEnumEntrySuperClassReferenceExpressionElementType
 org.jetbrains.kotlin.psi.stubs.elements.KtFileElementType
-org.jetbrains.kotlin.psi.stubs.elements.KtFileElementType:INSTANCE
 org.jetbrains.kotlin.psi.stubs.elements.KtFileStubBuilder
 org.jetbrains.kotlin.psi.stubs.elements.KtFunctionElementType
 org.jetbrains.kotlin.psi.stubs.elements.KtFunctionElementType:constructor(String)

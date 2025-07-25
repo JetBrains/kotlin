@@ -56,7 +56,7 @@ class KotlinFileStubImpl(
 
     override fun getPackageFqName(): FqName = FqName(packageName)
     override fun isScript(): Boolean = isScript
-    override fun getType(): IStubFileElementType<KotlinFileStub> = KtFileElementType.INSTANCE
+    override fun getType(): IStubFileElementType<KotlinFileStub> = KtFileElementType
 
     override fun toString(): String = "PsiJetFileStubImpl[" + "package=" + getPackageFqName().asString() + "]"
 

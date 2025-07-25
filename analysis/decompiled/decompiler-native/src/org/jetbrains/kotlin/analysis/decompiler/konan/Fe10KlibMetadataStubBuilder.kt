@@ -49,6 +49,6 @@ internal open class Fe10KlibMetadataStubBuilder(
 
         val psiFileFactory = PsiFileFactory.getInstance(project) as PsiFileFactoryImpl
         val file = psiFileFactory.trySetupPsiForFile(virtualFile, KotlinLanguage.INSTANCE, false, false)!!
-        return KtFileElementType.INSTANCE.builder.buildStubTree(file) as PsiFileStub<*>
+        return KtFileElementType.builder.buildStubTree(file) as PsiFileStub<*>
     }
 }
