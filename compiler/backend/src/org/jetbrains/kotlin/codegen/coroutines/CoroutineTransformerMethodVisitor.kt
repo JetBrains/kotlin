@@ -999,7 +999,14 @@ class CoroutineTransformerMethodVisitor(
         // Check whether the variable range has meaningful operations in it
         // TODO This is a temporary workaround for KT-79276, it shall be removed or extended with further fixes:
         //  1) Get rid of all locals with meaningless ranges earlier (e.g. where they appear) or on some common place
-        //  2) Default-initialize "dead" spilled variables on all state-machines paths
+        //  2) Default-initialize "dead" spilled variables on all state-machines paths. For that
+        //      a. add to liveness DFS analysis array of states (one per suspension point): "initialized after ith suspension point" (standard liveness but reset on corresponding point)
+        //      b. after spills, build CFG of suspension points (to determine PREVs for each)
+        //      c. for each suspension point i, if a dead variable is spilled and not init'ed on path from some PREV-SP, add default-value LOAD to that slot on resume)
+        //  3) Improve the heuristic above:
+        //      a. Check all ranges for the slot, not only closest one (CFG is not linear!)
+        //      b. Use interpreter (ASM or simple one) to colorize (color=slot) instructions where values from SP are potentially not overridden
+        //      c. If LVT range for slot exists where the value is not overridden, spill it.
         cursor = local.start
         while (cursor != null && cursor != local.end) {
             if (cursor.isMeaningful) {

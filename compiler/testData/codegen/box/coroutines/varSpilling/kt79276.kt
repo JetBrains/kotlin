@@ -1,28 +1,32 @@
 // WITH_STDLIB
 // WITH_COROUTINES
 import helpers.*
-import kotlin.coroutines.*
-import kotlin.coroutines.intrinsics.*
 
-class LoginViewModel {
-    suspend fun testSuspend(): Unit = println("test")
+val traceResult = StringBuilder()
 
-    fun onSubmit2(): Unit {
+fun trace(o : Any) {
+    traceResult.append(o)
+}
+
+class Test {
+    suspend fun someSuspendFun(): Unit = trace("S")
+
+    fun test(): Unit {
         runBlocking {
-            1F.also { println(it) }
+            1F.also { trace(it) }
             try {
-                testSuspend()
+                someSuspendFun()
             } catch (throwable: Throwable) {
-                testSuspend()
+                someSuspendFun()
                 throw throwable
             } finally {
-                1.also { println(it) }
+                2.also { trace(it) }
             }
         }
     }
 }
 
 fun box(): String {
-    LoginViewModel().onSubmit2()
-    return "OK"
+    Test().test()
+    return if (traceResult.toString() == "" + 1F + "S" + 2) "OK" else "FAIL: $traceResult"
 }
