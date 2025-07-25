@@ -73,12 +73,12 @@ internal fun DurationUnit.shortName(): String = when (this) {
 }
 
 @SinceKotlin("1.5")
-internal fun durationUnitByIsoChar(isoChar: Char, isTimeComponent: Boolean): DurationUnit =
+internal fun durationUnitByIsoChar(isoChar: Char, isTimeComponent: Boolean, throwException: Boolean): DurationUnit? =
     when {
         !isTimeComponent -> {
             when (isoChar) {
                 'D' -> DurationUnit.DAYS
-                else -> throw IllegalArgumentException("Invalid or unsupported duration ISO non-time unit: $isoChar")
+                else -> if (throwException) throw IllegalArgumentException("Invalid or unsupported duration ISO non-time unit: $isoChar") else null
             }
         }
         else -> {
@@ -86,7 +86,7 @@ internal fun durationUnitByIsoChar(isoChar: Char, isTimeComponent: Boolean): Dur
                 'H' -> DurationUnit.HOURS
                 'M' -> DurationUnit.MINUTES
                 'S' -> DurationUnit.SECONDS
-                else -> throw IllegalArgumentException("Invalid duration ISO time unit: $isoChar")
+                else -> if (throwException) throw IllegalArgumentException("Invalid duration ISO time unit: $isoChar") else null
             }
         }
     }
