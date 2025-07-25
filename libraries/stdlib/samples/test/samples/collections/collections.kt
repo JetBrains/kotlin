@@ -602,6 +602,46 @@ class Collections {
         }
     }
 
+    class ArrayDeques {
+
+        @Sample
+        fun toArray() {
+            val deque = ArrayDeque(listOf(1, 2, 3))
+            
+            // Convert to Array<Any?>
+            val array = deque.toArray()
+            
+            // The resulting array contains all elements of the deque
+            assertPrints(array.contentToString(), "[1, 2, 3]")
+            
+            // The array is a copy, so modifying the deque doesn't affect the array
+            deque.addFirst(0)
+            assertPrints(array.contentToString(), "[1, 2, 3]")
+            assertPrints(deque.toList(), "[0, 1, 2, 3]")
+        }
+        
+        @Sample
+        fun toArrayWithParameter() {
+            val deque = ArrayDeque(listOf("a", "b", "c"))
+            
+            // When the provided array is large enough, it's reused
+            val largeArray = arrayOf("", "", "", "", "")
+            val resultLarge = deque.toArray(largeArray)
+            
+            // The resulting array is the same instance as the input array
+            assertTrue(resultLarge === largeArray)
+            assertPrints(resultLarge.contentToString(), "[a, b, c, null, null]")
+            
+            // When the provided array is too small, a new array is created
+            val smallArray = arrayOf("", "")
+            val resultSmall = deque.toArray(smallArray)
+            
+            // The resulting array is a new instance with the correct size
+            assertFalse(resultSmall === smallArray)
+            assertPrints(resultSmall.contentToString(), "[a, b, c]")
+        }
+    }
+
     class Transformations {
 
         @Sample
