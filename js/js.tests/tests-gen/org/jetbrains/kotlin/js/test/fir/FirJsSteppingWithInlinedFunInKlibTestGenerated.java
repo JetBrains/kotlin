@@ -403,6 +403,30 @@ public class FirJsSteppingWithInlinedFunInKlibTestGenerated extends AbstractFirJ
   }
 
   @Test
+  @TestMetadata("leakingPrivateFunThroughDefaultArgument.kt")
+  public void testLeakingPrivateFunThroughDefaultArgument() {
+    runTest("compiler/testData/debug/stepping/leakingPrivateFunThroughDefaultArgument.kt");
+  }
+
+  @Test
+  @TestMetadata("leakingPrivateFunThroughInternalInlineVal.kt")
+  public void testLeakingPrivateFunThroughInternalInlineVal() {
+    runTest("compiler/testData/debug/stepping/leakingPrivateFunThroughInternalInlineVal.kt");
+  }
+
+  @Test
+  @TestMetadata("leakingPrivateFunThroughReferenceInInternalInlineFun.kt")
+  public void testLeakingPrivateFunThroughReferenceInInternalInlineFun() {
+    runTest("compiler/testData/debug/stepping/leakingPrivateFunThroughReferenceInInternalInlineFun.kt");
+  }
+
+  @Test
+  @TestMetadata("leakingPrivateValThroughInternalInlineFun.kt")
+  public void testLeakingPrivateValThroughInternalInlineFun() {
+    runTest("compiler/testData/debug/stepping/leakingPrivateValThroughInternalInlineFun.kt");
+  }
+
+  @Test
   @TestMetadata("lineNumberAfterInline.kt")
   public void testLineNumberAfterInline() {
     runTest("compiler/testData/debug/stepping/lineNumberAfterInline.kt");
