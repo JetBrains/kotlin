@@ -2084,6 +2084,8 @@ class LightTreeRawFirDeclarationBuilder(
     ): Pair<FirBlock?, FirContractDescription?> {
         // TODO-HEADER-COMPILATION: Another option to produce empty methods
         // TODO-HEADER-COMPILATION: is to make this function return nothing.
+        if (headerCompilationMode)
+            return null to null
         return when {
             blockNode != null -> {
                 val block = convertBlock(blockNode)
