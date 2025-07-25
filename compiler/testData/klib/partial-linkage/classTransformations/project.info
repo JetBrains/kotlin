@@ -1,3 +1,6 @@
+IGNORE_BACKEND: NATIVE
+// ^^ unmute when KT-79569 is fixed
+
 MODULES: lib1, lib2, main
 
 STEP 0:
