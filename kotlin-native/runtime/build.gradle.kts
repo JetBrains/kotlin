@@ -84,48 +84,58 @@ bitcode {
             sourceSets {}
         }
 
-        module("breakpad") {
-            srcRoot.set(downloadBreakpad.flatMap { it.outputDirectory })
-            val sources = listOf(
-                    "client/mac/crash_generation/crash_generation_client.cc",
-                    "client/mac/handler/breakpad_nlist_64.cc",
-                    "client/mac/handler/dynamic_images.cc",
-                    "client/mac/handler/exception_handler.cc",
-                    "client/mac/handler/minidump_generator.cc",
-                    "client/mac/handler/protected_memory_allocator.cc",
-                    "client/minidump_file_writer.cc",
-                    "common/mac/MachIPC.mm",
-                    "common/mac/arch_utilities.cc",
-                    "common/mac/file_id.cc",
-                    "common/mac/macho_id.cc",
-                    "common/mac/macho_utilities.cc",
-                    "common/mac/macho_walker.cc",
-                    "common/mac/string_utilities.cc",
-                    "common/mac/bootstrap_compat.cc",
-                    "common/convert_UTF.cc",
-                    "common/md5.cc",
-                    "common/string_conversion.cc",
-            )
-            sourceSets {
-                main {
-                    inputFiles.from(srcRoot.dir("src"))
-                    inputFiles.setIncludes(sources)
-                    headersDirs.setFrom(project.layout.projectDirectory.dir("src/breakpad/cpp"))
-                    // Fix Gradle Configuration Cache: support this task being configured before breakpad sources are actually downloaded.
-                    compileTask.configure {
-                        inputFiles.setFrom(sources.map { breakpadLocationNoDependency.get().dir("src").file(it) })
+        if (!project.hasProperty("disableBreakpad")) {
+            module("breakpad") {
+                srcRoot.set(downloadBreakpad.flatMap { it.outputDirectory })
+                val sources = listOf(
+                        "client/mac/crash_generation/crash_generation_client.cc",
+                        "client/mac/handler/breakpad_nlist_64.cc",
+                        "client/mac/handler/dynamic_images.cc",
+                        "client/mac/handler/exception_handler.cc",
+                        "client/mac/handler/minidump_generator.cc",
+                        "client/mac/handler/protected_memory_allocator.cc",
+                        "client/minidump_file_writer.cc",
+                        "common/mac/MachIPC.mm",
+                        "common/mac/arch_utilities.cc",
+                        "common/mac/file_id.cc",
+                        "common/mac/macho_id.cc",
+                        "common/mac/macho_utilities.cc",
+                        "common/mac/macho_walker.cc",
+                        "common/mac/string_utilities.cc",
+                        "common/mac/bootstrap_compat.cc",
+                        "common/convert_UTF.cc",
+                        "common/md5.cc",
+                        "common/string_conversion.cc",
+                )
+                sourceSets {
+                    main {
+                        inputFiles.from(srcRoot.dir("src"))
+                        inputFiles.setIncludes(sources)
+                        headersDirs.setFrom(project.layout.projectDirectory.dir("src/breakpad/cpp"))
+                        // Fix Gradle Configuration Cache: support this task being configured before breakpad sources are actually downloaded.
+                        compileTask.configure {
+                            inputFiles.setFrom(sources.map { breakpadLocationNoDependency.get().dir("src").file(it) })
+                        }
                     }
                 }
-            }
-            // Make sure breakpad sources are downloaded when building the corresponding compilation database entry
-            dependencies.add(downloadBreakpad)
-            compilerArgs.set(listOf(
-                    "-std=c++17",
-                    "-DHAVE_MACH_O_NLIST_H",
-                    "-DHAVE_CONFIG_H",
-            ))
+                // Make sure breakpad sources are downloaded when building the corresponding compilation database entry
+                dependencies.add(downloadBreakpad)
+                compilerArgs.set(listOf(
+                        "-std=c++17",
+                        "-DHAVE_MACH_O_NLIST_H",
+                        "-DHAVE_CONFIG_H",
+                ))
 
-            onlyIf { it.family == Family.OSX }
+                onlyIf { it.family == Family.OSX }
+            }
+        } else {
+            // Compiler expects breakpad.bc file. Let's give it an empty one.
+            module("breakpad") {
+                srcRoot.set(project.layout.projectDirectory.dir("src/breakpad_stubs"))
+                sourceSets {
+                    main {}
+                }
+            }
         }
 
         module("libbacktrace") {
@@ -458,20 +468,29 @@ bitcode {
             }
         }
 
-        module("impl_crashHandler") {
-            srcRoot.set(layout.projectDirectory.dir("src/crashHandler/impl"))
-            // Cannot use output of `downloadBreakpad` to support Gradle Configuration Cache working before `downloadBreakpad`
-            // actually had a chance to run.
-            headersDirs.from("src/main/cpp", "src/breakpad/cpp", breakpadLocationNoDependency.get().dir("src"))
-            sourceSets {
-                main {
-                    // This task depends on breakpad headers being present.
-                    compileTask.configure {
-                        dependsOn(downloadBreakpad)
+        if (!project.hasProperty("disableBreakpad")) {
+            module("impl_crashHandler") {
+                srcRoot.set(layout.projectDirectory.dir("src/crashHandler/impl"))
+                // Cannot use output of `downloadBreakpad` to support Gradle Configuration Cache working before `downloadBreakpad`
+                // actually had a chance to run.
+                headersDirs.from("src/main/cpp", "src/breakpad/cpp", breakpadLocationNoDependency.get().dir("src"))
+                sourceSets {
+                    main {
+                        // This task depends on breakpad headers being present.
+                        compileTask.configure {
+                            dependsOn(downloadBreakpad)
+                        }
                     }
                 }
+                onlyIf { it.family == Family.OSX }
             }
-            onlyIf { it.family == Family.OSX }
+        } else {
+            module("impl_crashHandler") {
+                srcRoot.set(layout.projectDirectory.dir("src/crashHandler/noop"))
+                sourceSets {
+                    main {}
+                }
+            }
         }
 
         module("noop_crashHandler") {

@@ -225,7 +225,7 @@ private open class NativeArgsProvider @Inject constructor(
     @get:PathSensitive(PathSensitivity.NONE) // it doesn't matter at all how is this analyzer named, or where it's placed
     @get:Optional
     protected val minidumpAnalyzer: ConfigurableFileCollection = objects.fileCollection().apply {
-        if (HostManager.hostIsMac) {
+        if (HostManager.hostIsMac && !project.hasProperty("disableBreakpad")) {
             val fileCollection = project.configurations.detachedConfiguration(
                 project.dependencies.project(":kotlin-native:tools:minidump-analyzer"),
             ).also {
