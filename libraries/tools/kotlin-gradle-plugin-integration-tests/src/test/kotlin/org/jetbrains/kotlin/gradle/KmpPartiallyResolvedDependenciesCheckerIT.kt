@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.gradle.testbase.MppGradlePluginTests
 import org.jetbrains.kotlin.gradle.testbase.assertHasDiagnostic
 import org.jetbrains.kotlin.gradle.testbase.assertNoDiagnostic
 import org.jetbrains.kotlin.gradle.testbase.assertOutputContains
+import org.jetbrains.kotlin.gradle.testbase.assertOutputDoesNotContain
 import org.jetbrains.kotlin.gradle.testbase.assertTasksExecuted
 import org.jetbrains.kotlin.gradle.testbase.build
 import org.jetbrains.kotlin.gradle.testbase.buildAndFail
@@ -224,14 +225,15 @@ class KmpPartiallyResolvedDependenciesCheckerIT : KGPBaseTest() {
         }
 
         consumer.build("compileKotlinLinuxArm64") {
-            assertOutputContains("Configuration 'jvmCompileClasspath' was resolved during configuration time")
+            assertOutputDoesNotContain("Configuration 'jvmCompileClasspath' was resolved during configuration time")
             assertHasDiagnostic(KotlinToolingDiagnostics.PartiallyResolvedKmpDependencies)
         }
         consumer.buildAndFail("compileKotlinJvm") {
-            assertHasDiagnostic(KotlinToolingDiagnostics.PartiallyResolvedKmpDependencies)
+            // See: KT-79559
+            assertNoDiagnostic(KotlinToolingDiagnostics.PartiallyResolvedKmpDependencies)
         }
         consumer.buildAndFail("compileDebugKotlinAndroid") {
-            assertHasDiagnostic(KotlinToolingDiagnostics.PartiallyResolvedKmpDependencies)
+            assertNoDiagnostic(KotlinToolingDiagnostics.PartiallyResolvedKmpDependencies)
         }
     }
 
