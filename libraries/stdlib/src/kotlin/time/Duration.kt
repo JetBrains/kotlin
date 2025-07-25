@@ -1061,8 +1061,10 @@ private fun parseDuration(value: String, strictIso: Boolean): Duration {
                 componentEnd = value.skipWhile(componentEnd) { it in '0'..'9' || it == '.' }
                 if (componentEnd == componentStart) throw IllegalArgumentException()
                 var dotCount = 0
+                var dotIndex = -1
                 for (i in componentStart..<componentEnd) {
                     if (value[i] == '.') {
+                        dotIndex = i
                         dotCount++
                     }
                 }
@@ -1072,7 +1074,6 @@ private fun parseDuration(value: String, strictIso: Boolean): Duration {
                 val unit = durationUnitByIsoChar(unitChar, isTimeComponent)
                 if (prevUnit != null && prevUnit <= unit) throw IllegalArgumentException("Unexpected order of duration components")
                 prevUnit = unit
-                val dotIndex = findChar(value, '.', componentStart, componentEnd)
                 if (unit == DurationUnit.SECONDS && dotIndex >= 0) {
                     val whole = parseOverLongIsoComponentInPlace(value, componentStart, dotIndex)
                     result += whole.toDuration(unit)
