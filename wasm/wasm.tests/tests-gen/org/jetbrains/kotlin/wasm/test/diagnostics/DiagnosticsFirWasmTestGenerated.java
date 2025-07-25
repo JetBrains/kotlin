@@ -30,12 +30,6 @@ public class DiagnosticsFirWasmTestGenerated extends AbstractDiagnosticsFirWasmT
     runTest("compiler/testData/diagnostics/wasmTests/qualifiedNameIsAllowed.kt");
   }
 
-  @Test
-  @TestMetadata("qualifiedNameIsProhibited.kt")
-  public void testQualifiedNameIsProhibited() {
-    runTest("compiler/testData/diagnostics/wasmTests/qualifiedNameIsProhibited.kt");
-  }
-
   @Nested
   @TestMetadata("compiler/testData/diagnostics/wasmTests/jsInterop")
   @TestDataPath("$PROJECT_ROOT")

@@ -1,3 +1,4 @@
+// FIR_IDENTICAL
 // DIAGNOSTICS: -UNUSED_EXPRESSION
 import kotlin.reflect.*
 
@@ -26,7 +27,7 @@ fun testSomeValidCases(p0: KProperty0<Int>, pm0: KMutableProperty0<String>, f: K
 
 fun <T : Any> kclass(k: KClass<*>, kt: KClass<T>) {
     k.simpleName
-    k.<!UNSUPPORTED!>qualifiedName<!>
+    k.qualifiedName
     k.<!UNRESOLVED_REFERENCE!>members<!>
     k.<!UNRESOLVED_REFERENCE!>constructors<!>
     k.<!UNRESOLVED_REFERENCE!>nestedClasses<!>
