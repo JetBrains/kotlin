@@ -1,5 +1,4 @@
 // RUN_PIPELINE_TILL: BACKEND
-// WITH_EXTRA_CHECKERS
 class Generic<T>
 
 fun redundantNullable(
