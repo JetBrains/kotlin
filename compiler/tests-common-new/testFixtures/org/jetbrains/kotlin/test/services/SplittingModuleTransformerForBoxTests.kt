@@ -66,8 +66,8 @@ class SplittingModuleTransformerForBoxTests : ModuleStructureTransformer() {
     }
 }
 
-/*
- * Always use this configurator along with SplittingModuleTransformerForBoxTests, to skip non-splitted tests, and avoid non-splittable tests
+/**
+ * Always use this configurator along with [SplittingModuleTransformerForBoxTests], to skip non-splitted tests, and avoid non-splittable tests
  */
 class SplittingTestConfigurator(testServices: TestServices) : MetaTestConfigurator(testServices) {
     override fun shouldSkipTest(): Boolean {
@@ -83,10 +83,14 @@ class SplittingTestConfigurator(testServices: TestServices) : MetaTestConfigurat
         }
         if (moduleLib.targetPlatform(testServices).isJvm()) {
             // `TestConfigurationBuilder.configureForSerialization()` sets IrInlineBodiesHandler, which requires inlines functions to present
-            // Tests without `inline` substring in lib module must be skipped in such testrunners
+            // Tests without `inline fun` in lib module must be skipped in such testrunners
             if (testServices.defaultsProvider.targetBackend == TargetBackend.JVM_IR_SERIALIZE) {
-                if (moduleLib.files.none { it.originalContent.contains("inline") })
-                    return true
+                if (moduleLib.files.none {
+                        it.originalContent.replace("suspend", "")
+                            .replace("\\s+".toRegex(), " ")
+                            .contains("inline fun")
+                    }
+                ) return true
             }
         } else { // Klib backends
             if (WITH_COROUTINES in moduleLib.directives) {

@@ -1,6 +1,3 @@
-// IGNORE_BACKEND_K2_MULTI_MODULE: JVM_IR_SERIALIZE
-// ^^^ False-positive detection in SplittingTestConfigurator allowed test to be run on *SerializeKotlinAgainstInlineKotlin*
-
 // MODULE: lib
 // FILE: A.kt
 
