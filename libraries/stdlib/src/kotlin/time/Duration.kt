@@ -1081,7 +1081,7 @@ private fun parseDuration(value: String, strictIso: Boolean, throwException: Boo
                 if (unit == DurationUnit.SECONDS && dotIndex >= 0) {
                     val whole = parseOverLongIsoComponentInPlace(value, componentStart, dotIndex)
                     result += whole.toDuration(unit)
-                    val fractional = parseDoubleInPlace(value, dotIndex, componentEnd)
+                    val fractional = parseDoubleInPlace(value, dotIndex, componentEnd) ?: return throwExceptionOrInvalid()
                     result += fractional.toDuration(unit)
                 } else {
                     val componentValue = parseOverLongIsoComponentInPlace(value, componentStart, componentEnd)
@@ -1125,7 +1125,7 @@ private fun parseDuration(value: String, strictIso: Boolean, throwException: Boo
                 if (dotIndex >= 0) {
                     val whole = parseLongInPlace(value, componentStart, dotIndex)
                     result += whole.toDuration(unit)
-                    val fractional = parseDoubleInPlace(value, dotIndex, componentEnd)
+                    val fractional = parseDoubleInPlace(value, dotIndex, componentEnd) ?: return throwExceptionOrInvalid()
                     result += fractional.toDuration(unit)
                     if (index < length) return throwExceptionOrInvalid("Fractional component must be last")
                 } else {
@@ -1175,8 +1175,8 @@ private fun parseLongInPlace(str: String, start: Int, end: Int): Long {
     return if (isNegative) -result else result
 }
 
-private fun parseDoubleInPlace(str: String, start: Int, end: Int): Double {
-    if (start >= end) throw IllegalArgumentException()
+private fun parseDoubleInPlace(str: String, start: Int, end: Int): Double? {
+    if (start >= end) return null
 
     var index = start
     val firstChar = str[start]
@@ -1185,7 +1185,7 @@ private fun parseDoubleInPlace(str: String, start: Int, end: Int): Double {
     }
     val isNegative = firstChar == '-'
 
-    if (index >= end) throw IllegalArgumentException()
+    if (index >= end) return null
 
     var result = 0.0
     var inFraction = false
@@ -1196,7 +1196,7 @@ private fun parseDoubleInPlace(str: String, start: Int, end: Int): Double {
         val ch = str[index]
         when (ch) {
             '.' -> {
-                if (hasDot) throw IllegalArgumentException()
+                if (hasDot) return null
                 hasDot = true
                 inFraction = true
             }
@@ -1209,7 +1209,7 @@ private fun parseDoubleInPlace(str: String, start: Int, end: Int): Double {
                     result = result * 10 + digit
                 }
             }
-            else -> throw IllegalArgumentException()
+            else -> return null
         }
         index++
     }
