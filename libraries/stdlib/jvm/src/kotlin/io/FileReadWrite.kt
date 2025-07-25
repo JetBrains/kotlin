@@ -30,6 +30,8 @@ public inline fun File.reader(charset: Charset = Charsets.UTF_8): InputStreamRea
 /**
  * Returns a new [BufferedReader] for reading the content of this file.
  *
+ * Refer to [BufferedReader] documentation for details about buffering behavior.
+ *
  * @param bufferSize necessary size of the buffer.
  */
 @kotlin.internal.InlineOnly
@@ -46,9 +48,9 @@ public inline fun File.writer(charset: Charset = Charsets.UTF_8): OutputStreamWr
 /**
  * Returns a new [BufferedWriter] for writing the content of this file.
  *
- * @param bufferSize necessary size of the buffer.
+ * Refer to [BufferedWriter] documentation for details about buffering and flushing behavior.
  *
- * See [java.io.BufferedWriter] documentation for details about buffering and flushing behavior.
+ * @param bufferSize necessary size of the buffer.
  */
 @kotlin.internal.InlineOnly
 public inline fun File.bufferedWriter(charset: Charset = Charsets.UTF_8, bufferSize: Int = DEFAULT_BUFFER_SIZE): BufferedWriter =

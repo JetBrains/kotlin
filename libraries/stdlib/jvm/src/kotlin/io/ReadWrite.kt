@@ -16,12 +16,20 @@ import kotlin.contracts.contract
 import kotlin.internal.*
 
 
-/** Returns a buffered reader wrapping this Reader, or this Reader itself if it is already buffered. */
+/**
+ * Returns a [BufferedReader] wrapping this [Reader], or this [Reader] itself if it is already buffered.
+ *
+ * Refer to [BufferedReader] documentation for details about buffering behavior.
+ */
 @kotlin.internal.InlineOnly
 public inline fun Reader.buffered(bufferSize: Int = DEFAULT_BUFFER_SIZE): BufferedReader =
     if (this is BufferedReader) this else BufferedReader(this, bufferSize)
 
-/** Returns a buffered writer wrapping this Writer, or this Writer itself if it is already buffered. */
+/**
+ * Returns a [BufferedWriter] wrapping this [Writer], or this [Writer] itself if it is already buffered.
+ *
+ * Refer to [BufferedWriter] documentation for details about buffering and flushing behavior.
+ */
 @kotlin.internal.InlineOnly
 public inline fun Writer.buffered(bufferSize: Int = DEFAULT_BUFFER_SIZE): BufferedWriter =
     if (this is BufferedWriter) this else BufferedWriter(this, bufferSize)
