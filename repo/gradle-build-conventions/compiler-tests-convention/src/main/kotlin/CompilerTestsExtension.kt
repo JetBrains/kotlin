@@ -4,6 +4,7 @@
  */
 
 import org.gradle.api.Project
+import org.gradle.api.Task
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.ProjectDependency
 import org.gradle.api.artifacts.dsl.DependencyHandler
@@ -13,12 +14,18 @@ import org.gradle.api.file.RegularFileProperty
 import org.gradle.api.project.IsolatedProject
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
+import org.gradle.api.tasks.JavaExec
+import org.gradle.api.tasks.SourceSet
+import org.gradle.api.tasks.TaskProvider
+import org.gradle.api.tasks.testing.Test
 import org.gradle.kotlin.dsl.dependencies
 import org.gradle.kotlin.dsl.project
 import java.io.File
 
 abstract class CompilerTestsExtension(private val project: Project) {
     abstract val allowFlaky: Property<Boolean>
+
+    // -------------------- dependencies for runtime of tests --------------------
 
     val stdlibRuntimeForTests: Configuration = project.configurations.create("stdlibRuntimeForTests") {
         isTransitive = false
@@ -64,18 +71,6 @@ abstract class CompilerTestsExtension(private val project: Project) {
             add(stdlibMinimalRuntimeForTests) { project(":kotlin-stdlib-jvm-minimal-for-test") }
             add(kotlinReflectJarForTests) { project(":kotlin-reflect") }
         }
-    }
-
-    internal abstract val testDataFiles: ListProperty<Directory>
-    internal val testDataMap: MutableMap<String, String> = mutableMapOf<String, String>()
-
-    fun testData(isolatedProject: IsolatedProject, relativePath: String) {
-        val testDataDirectory = isolatedProject.projectDirectory.dir(relativePath)
-        testDataFiles.add(testDataDirectory)
-        testDataMap.put(
-            testDataDirectory.asFile.relativeTo(project.rootDir).path.replace("\\", "/"),
-            testDataDirectory.asFile.canonicalPath.replace("\\", "/")
-        )
     }
 
     fun withStdlibCommon() {
@@ -149,5 +144,90 @@ abstract class CompilerTestsExtension(private val project: Project) {
 
     fun withThirdPartyJsr305() {
         thirdPartyJsr305.set(File(project.rootDir, "third-party/jsr305"))
+    }
+
+    // -------------------- testData configuration --------------------
+
+    internal abstract val testDataFiles: ListProperty<Directory>
+    internal val testDataMap: MutableMap<String, String> = mutableMapOf<String, String>()
+
+    fun testData(isolatedProject: IsolatedProject, relativePath: String) {
+        val testDataDirectory = isolatedProject.projectDirectory.dir(relativePath)
+        testDataFiles.add(testDataDirectory)
+        testDataMap.put(
+            testDataDirectory.asFile.relativeTo(project.rootDir).path.replace("\\", "/"),
+            testDataDirectory.asFile.canonicalPath.replace("\\", "/")
+        )
+    }
+
+    // -------------------- test task definitions --------------------
+
+    fun testTask(
+        parallel: Boolean? = null,
+        jUnitMode: JUnitMode,
+        maxHeapSizeMb: Int? = null,
+        minHeapSizeMb: Int? = null,
+        maxMetaspaceSizeMb: Int = 512,
+        reservedCodeCacheSizeMb: Int = 256,
+        defineJDKEnvVariables: List<JdkMajorVersion> = emptyList(),
+        body: Test.() -> Unit = {},
+    ): TaskProvider<Test> {
+        @Suppress("UNCHECKED_CAST")
+        return testTask(
+            taskName = "test",
+            parallel,
+            jUnitMode,
+            maxHeapSizeMb,
+            minHeapSizeMb,
+            maxMetaspaceSizeMb,
+            reservedCodeCacheSizeMb,
+            defineJDKEnvVariables,
+            skipInLocalBuild = false,
+            body
+        ) as TaskProvider<Test>
+    }
+
+    fun testTask(
+        taskName: String,
+        parallel: Boolean? = null,
+        jUnitMode: JUnitMode,
+        maxHeapSizeMb: Int? = null,
+        minHeapSizeMb: Int? = null,
+        maxMetaspaceSizeMb: Int = 512,
+        reservedCodeCacheSizeMb: Int = 256,
+        defineJDKEnvVariables: List<JdkMajorVersion> = emptyList(),
+        skipInLocalBuild: Boolean,
+        body: Test.() -> Unit = {},
+    ): TaskProvider<out Task> {
+        if (skipInLocalBuild && project.kotlinBuildProperties.isTeamcityBuild) {
+            return project.tasks.register(taskName)
+        }
+        if (jUnitMode == JUnitMode.JUnit5 && parallel != null) {
+            project.logger.error("JUnit5 tests are parallel by default and its configured with `junit-platform.properties`, please remove `parallel=$parallel` argument")
+        }
+        return project.projectTest(
+            taskName,
+            parallel ?: false,
+            jUnitMode,
+            maxHeapSizeMb,
+            minHeapSizeMb,
+            maxMetaspaceSizeMb,
+            reservedCodeCacheSizeMb,
+            defineJDKEnvVariables,
+        ) {
+            if (jUnitMode == JUnitMode.JUnit5) {
+                useJUnitPlatform()
+            }
+            body()
+        }
+    }
+
+    fun testGenerator(
+        fqName: String,
+        taskName: String = "generateTests",
+        sourceSet: SourceSet? = null,
+        configure: JavaExec.() -> Unit = {}
+    ) {
+        project.generator(taskName, fqName, sourceSet, configure)
     }
 }
