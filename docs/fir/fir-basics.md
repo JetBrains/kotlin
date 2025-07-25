@@ -93,7 +93,7 @@ classifier symbol until it meets one.
 _Scopes_ are used to looking for declarations in some specific places, e.g. in file imports or class members.
 
 Note that scopes and providers return symbols of declarations, not declarations themselves. In most cases, it's illegal to access FIR
-declaration directly. Suppose you got s function symbol you got by a symbol provider. To get the function return type, you need to access it
+declaration directly. Suppose you got a function symbol from a symbol provider. To get the function return type, you need to access it
 via the symbol itself, not via the corresponding FIR element. Such contract is required to provoke resolution of the corresponding declaration in Analysis API mode as in Analysis API all resolution is lazy.
 
 ```kotlin
