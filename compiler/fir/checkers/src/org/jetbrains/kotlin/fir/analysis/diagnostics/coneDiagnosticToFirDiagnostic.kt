@@ -144,7 +144,13 @@ private fun ConeDiagnostic.toKtDiagnostic(
                     session
                 )
             } else {
-                FirErrors.NONE_APPLICABLE.createOn(source, this.candidates.map { it.symbol }, session)
+                candidatesWithErrors.entries.map { }
+                FirErrors.NONE_APPLICABLE.createOn(
+                    source,
+                    this.candidates.map { it.symbol },
+                    renderCandidatesForNonApplicable(source, valueParameter, callOrAssignmentSource, session),
+                    session
+                )
             }
         }
 
@@ -155,7 +161,12 @@ private fun ConeDiagnostic.toKtDiagnostic(
             unstableSmartcast.mapUnstableSmartCast(session)
         }
 
-        else -> FirErrors.NONE_APPLICABLE.createOn(source, this.candidates.map { it.symbol }, session)
+        else -> FirErrors.NONE_APPLICABLE.createOn(
+            source,
+            this.candidates.map { it.symbol },
+            renderCandidatesForNonApplicable(source, valueParameter, callOrAssignmentSource, session),
+            session
+        )
     }
 
     is ConeOperatorAmbiguityError -> FirErrors.ASSIGN_OPERATOR_AMBIGUITY.createOn(source, this.candidateSymbols, session)
@@ -240,6 +251,33 @@ private fun ConeDiagnostic.toKtDiagnostic(
     is ConeContextParameterWithDefaultValue -> FirErrors.CONTEXT_PARAMETER_WITH_DEFAULT.createOn(source, session)
     is ConeCyclicTypeBound -> null // reported in FirCyclicTypeBoundsChecker
     else -> throw IllegalArgumentException("Unsupported diagnostic type: ${this.javaClass}")
+}
+
+private fun ConeAmbiguityError.renderCandidatesForNonApplicable(
+    source: KtSourceElement?,
+    valueParameter: FirValueParameter?,
+    callOrAssignmentSource: KtSourceElement?,
+    session: FirSession,
+): String {
+    return buildString {
+        for ((key, value) in candidatesWithErrors) {
+            append(FirDiagnosticRenderers.SYMBOL.render(key.symbol))
+            val diagnostics = value?.toFirDiagnostics(session, source, callOrAssignmentSource, valueParameter)
+
+            if (diagnostics.isNullOrEmpty()) {
+                continue
+            }
+
+            appendLine(":")
+
+            diagnostics.forEach {
+                append("  ")
+                appendLine(it.renderMessage())
+            }
+
+            appendLine()
+        }
+    }
 }
 
 private fun AbstractConeResolutionAtom.containsErrorTypeForSuppressingAmbiguityError(): Boolean {

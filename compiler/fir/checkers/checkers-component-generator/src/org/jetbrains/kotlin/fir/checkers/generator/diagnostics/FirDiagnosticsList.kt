@@ -655,6 +655,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
     val APPLICABILITY by object : DiagnosticGroup("Applicability") {
         val NONE_APPLICABLE by error<PsiElement>(PositioningStrategy.REFERENCE_BY_QUALIFIED) {
             parameter<Collection<Symbol>>("candidates")
+            parameter<String>("renderedCandidates")
         }
 
         val INAPPLICABLE_CANDIDATE by error<PsiElement>(PositioningStrategy.REFERENCE_BY_QUALIFIED) {

@@ -2118,6 +2118,7 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             firDiagnostic.a.map { firBasedSymbol ->
                 firSymbolBuilder.buildSymbol(firBasedSymbol)
             },
+            firDiagnostic.b,
             firDiagnostic as KtPsiDiagnostic,
             token,
         )
