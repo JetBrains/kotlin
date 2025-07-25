@@ -47,6 +47,8 @@ public inline fun File.writer(charset: Charset = Charsets.UTF_8): OutputStreamWr
  * Returns a new [BufferedWriter] for writing the content of this file.
  *
  * @param bufferSize necessary size of the buffer.
+ *
+ * See [java.io.BufferedWriter] documentation for details about buffering and flushing behavior.
  */
 @kotlin.internal.InlineOnly
 public inline fun File.bufferedWriter(charset: Charset = Charsets.UTF_8, bufferSize: Int = DEFAULT_BUFFER_SIZE): BufferedWriter =

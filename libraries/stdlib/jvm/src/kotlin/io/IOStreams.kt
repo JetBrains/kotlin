@@ -91,7 +91,11 @@ public inline fun OutputStream.buffered(bufferSize: Int = DEFAULT_BUFFER_SIZE): 
 @kotlin.internal.InlineOnly
 public inline fun OutputStream.writer(charset: Charset = Charsets.UTF_8): OutputStreamWriter = OutputStreamWriter(this, charset)
 
-/** Creates a buffered writer on this output stream using UTF-8 or the specified [charset]. */
+/**
+ * Creates a buffered writer on this output stream using UTF-8 or the specified [charset].
+ *
+ * See [java.io.BufferedWriter] documentation for details about buffering and flushing behavior.
+ */
 @kotlin.internal.InlineOnly
 public inline fun OutputStream.bufferedWriter(charset: Charset = Charsets.UTF_8): BufferedWriter = writer(charset).buffered()
 
