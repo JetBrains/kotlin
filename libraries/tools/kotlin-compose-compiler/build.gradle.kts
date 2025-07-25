@@ -1,4 +1,5 @@
 import gradle.GradlePluginVariant
+import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 
 plugins {
     id("gradle-plugin-common-configuration")
@@ -6,10 +7,23 @@ plugins {
     id("gradle-plugin-api-reference")
 }
 
+project.updateJvmTarget("11")
+
+tasks.withType<KotlinJvmCompile>().configureEach {
+    compilerOptions {
+        freeCompilerArgs.add("-Xskip-metadata-version-check")
+    }
+}
+
 dependencies {
     commonApi(platform(project(":kotlin-gradle-plugins-bom")))
     commonApi(project(":kotlin-gradle-plugin-model"))
     commonApi(project(":kotlin-gradle-plugin"))
+
+    // TODO: figure out AGP dependency story
+    commonCompileOnly("com.android.tools.build:gradle-api:8.8.1") { isTransitive = false }
+    commonCompileOnly("com.android.tools.build:gradle:8.8.1") { isTransitive = false }
+    commonApi(project(":plugins:compose-compiler-plugin:mapping-generator"))
 }
 
 gradlePlugin {
