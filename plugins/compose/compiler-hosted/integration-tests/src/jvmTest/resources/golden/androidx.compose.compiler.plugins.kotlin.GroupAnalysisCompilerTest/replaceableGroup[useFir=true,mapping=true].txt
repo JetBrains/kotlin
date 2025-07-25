@@ -1,0 +1,19 @@
+//
+// Source
+// ------------------------------------------
+
+@Composable fun <T> Test(text: T): T {
+    Text(text.toString())
+    return text
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+========= FunctionMeta: true, OptimizeGroups: true =========
+1:1:java.lang.Object TestKt.Test(java.lang.Object,androidx.compose.runtime.Composer,int):5:5 -> m$1033748938
+1:1:void ExtraKt.Text(java.lang.String,androidx.compose.runtime.Composer,int):4:4 -> m$-1960580374
+========= FunctionMeta: true, OptimizeGroups: false =========
+1:1:java.lang.Object TestKt.Test(java.lang.Object,androidx.compose.runtime.Composer,int):5:5 -> m$1033748938
+1:1:void ExtraKt.Text(java.lang.String,androidx.compose.runtime.Composer,int):4:4 -> m$-1960580374

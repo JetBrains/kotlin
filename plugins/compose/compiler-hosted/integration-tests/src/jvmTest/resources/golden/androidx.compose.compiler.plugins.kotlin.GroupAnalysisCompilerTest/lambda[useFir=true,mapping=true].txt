@@ -1,0 +1,13 @@
+//
+// Source
+// ------------------------------------------
+
+val a = @Composable {}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+========= FunctionMeta: true, OptimizeGroups: true =========
+1:1:kotlin.Unit ComposableSingletons$TestKt.lambda__486040309$lambda$0(androidx.compose.runtime.Composer,int):4:4 -> m$-486040309
+========= FunctionMeta: false, OptimizeGroups: true =========
