@@ -8,6 +8,7 @@ dependencies {
     api(project(":compiler:util"))
     api(project(":compiler:frontend.common"))
     api(project(":kotlin-script-runtime"))
+    implementation(project(":compiler:frontend.common.jvm"))
 
     compileOnly(intellijCore())
     compileOnly(libs.guava)

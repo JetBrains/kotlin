@@ -1,17 +1,6 @@
 /*
- * Copyright 2010-2016 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.psi.stubs.elements;
@@ -28,11 +17,15 @@ import com.intellij.psi.tree.IStubFileElementType;
 import org.jetbrains.annotations.NonNls;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.idea.KotlinLanguage;
+import org.jetbrains.kotlin.name.FqName;
 import org.jetbrains.kotlin.parsing.KotlinParser;
 import org.jetbrains.kotlin.psi.stubs.KotlinFileStub;
 import org.jetbrains.kotlin.psi.stubs.KotlinStubVersions;
+import org.jetbrains.kotlin.psi.stubs.impl.KotlinFileStubImpl;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 public class KtFileElementType extends IStubFileElementType<KotlinFileStub> {
     private static final String NAME = "kotlin.FILE";
@@ -64,15 +57,44 @@ public class KtFileElementType extends IStubFileElementType<KotlinFileStub> {
     }
 
     @Override
-    public void serialize(@NotNull KotlinFileStub stub, @NotNull StubOutputStream dataStream)
-            throws IOException {
-        StubIndexService.getInstance().serializeFileStub(stub, dataStream);
+    public void serialize(@NotNull KotlinFileStub stub, @NotNull StubOutputStream dataStream) throws IOException {
+        KotlinFileStubImpl fileStub = (KotlinFileStubImpl) stub;
+        dataStream.writeName(fileStub.getPackageFqName().asString());
+        dataStream.writeBoolean(fileStub.isScript());
+        FqName facadeFqName = fileStub.getFacadeFqName();
+        dataStream.writeName(facadeFqName != null ? facadeFqName.asString() : null);
+        dataStream.writeName(fileStub.getPartSimpleName());
+        List<String> facadePartNames = fileStub.getFacadePartSimpleNames();
+        if (facadePartNames == null) {
+            dataStream.writeInt(0);
+        }
+        else {
+            dataStream.writeInt(facadePartNames.size());
+            for (String partName : facadePartNames) {
+                dataStream.writeName(partName);
+            }
+        }
     }
 
     @NotNull
     @Override
     public KotlinFileStub deserialize(@NotNull StubInputStream dataStream, StubElement parentStub) throws IOException {
-        return StubIndexService.getInstance().deserializeFileStub(dataStream);
+        String packageFqNameAsString = dataStream.readNameString();
+        if (packageFqNameAsString == null) {
+            throw new IllegalStateException("Can't read package fqname from stream");
+        }
+
+        boolean isScript = dataStream.readBoolean();
+        String facadeString = dataStream.readNameString();
+        String partSimpleName = dataStream.readNameString();
+        int numPartNames = dataStream.readInt();
+        List<String> facadePartNames = new ArrayList<>();
+        for (int i = 0; i < numPartNames; ++i) {
+            String partNameRef = dataStream.readNameString();
+            facadePartNames.add(partNameRef);
+        }
+
+        return new KotlinFileStubImpl(null, packageFqNameAsString, isScript, facadeString, partSimpleName, facadePartNames);
     }
 
     @Override

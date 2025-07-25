@@ -2205,8 +2205,6 @@ org.jetbrains.kotlin.psi.stubs.elements.KtValueArgumentListElementType
 org.jetbrains.kotlin.psi.stubs.elements.KtValueArgumentListElementType:constructor(String)
 org.jetbrains.kotlin.psi.stubs.elements.StubIndexService
 org.jetbrains.kotlin.psi.stubs.elements.StubIndexService.Companion.getInstance()
-org.jetbrains.kotlin.psi.stubs.elements.StubIndexService.createFileStub(KtFile)
-org.jetbrains.kotlin.psi.stubs.elements.StubIndexService.deserializeFileStub(StubInputStream)
 org.jetbrains.kotlin.psi.stubs.elements.StubIndexService.indexAnnotation(KotlinAnnotationEntryStub, IndexSink)
 org.jetbrains.kotlin.psi.stubs.elements.StubIndexService.indexClass(KotlinClassStub, IndexSink)
 org.jetbrains.kotlin.psi.stubs.elements.StubIndexService.indexFile(KotlinFileStub, IndexSink)
@@ -2216,7 +2214,6 @@ org.jetbrains.kotlin.psi.stubs.elements.StubIndexService.indexParameter(KotlinPa
 org.jetbrains.kotlin.psi.stubs.elements.StubIndexService.indexProperty(KotlinPropertyStub, IndexSink)
 org.jetbrains.kotlin.psi.stubs.elements.StubIndexService.indexScript(KotlinScriptStub, IndexSink)
 org.jetbrains.kotlin.psi.stubs.elements.StubIndexService.indexTypeAlias(KotlinTypeAliasStub, IndexSink)
-org.jetbrains.kotlin.psi.stubs.elements.StubIndexService.serializeFileStub(KotlinFileStub, StubOutputStream)
 org.jetbrains.kotlin.psi.stubs.impl.AnnotationData
 org.jetbrains.kotlin.psi.stubs.impl.EnumData
 org.jetbrains.kotlin.psi.stubs.impl.KClassData

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -7,12 +7,7 @@ package org.jetbrains.kotlin.psi.stubs.elements
 
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.psi.stubs.IndexSink
-import com.intellij.psi.stubs.StubInputStream
-import com.intellij.psi.stubs.StubOutputStream
-import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.stubs.*
-import org.jetbrains.kotlin.psi.stubs.impl.KotlinFileStubImpl
-import java.io.IOException
 
 open class StubIndexService protected constructor() {
     open fun indexFile(stub: KotlinFileStub, sink: IndexSink) {
@@ -40,23 +35,6 @@ open class StubIndexService protected constructor() {
     }
 
     open fun indexScript(stub: KotlinScriptStub, sink: IndexSink) {
-    }
-
-    open fun createFileStub(file: KtFile): KotlinFileStub {
-        return KotlinFileStubImpl(file, file.packageFqName.asString(), file.isScript())
-    }
-
-    @Throws(IOException::class)
-    open fun serializeFileStub(stub: KotlinFileStub, dataStream: StubOutputStream) {
-        dataStream.writeName(stub.getPackageFqName().asString())
-        dataStream.writeBoolean(stub.isScript())
-    }
-
-    @Throws(IOException::class)
-    open fun deserializeFileStub(dataStream: StubInputStream): KotlinFileStub {
-        val packageFqNameAsString = dataStream.readName()
-        val isScript = dataStream.readBoolean()
-        return KotlinFileStubImpl(null, packageFqNameAsString!!.string, isScript)
     }
 
     companion object {
