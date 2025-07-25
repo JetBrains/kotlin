@@ -1,6 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // DIAGNOSTICS: -UNUSED_VARIABLE
-// WITH_EXTRA_CHECKERS
 // Fixpoint generic in Java: Enum<T extends Enum<T>>
 fun test(a : java.lang.annotation.RetentionPolicy) {
 
