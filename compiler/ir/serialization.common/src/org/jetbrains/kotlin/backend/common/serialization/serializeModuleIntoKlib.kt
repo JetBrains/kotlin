@@ -17,6 +17,8 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.config.forcesPreReleaseBinariesIfEnabled
+import org.jetbrains.kotlin.config.getCustomizedEffectivelyDisabledLanguageFeatures
+import org.jetbrains.kotlin.config.getCustomizedEffectivelyEnabledLanguageFeatures
 import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.impl.deduplicating
@@ -202,11 +204,12 @@ fun <Dependency : KotlinLibrary, SourceFile> serializeModuleIntoKlib(
 }
 
 fun addLanguageFeaturesToManifest(manifestProperties: Properties, languageVersionSettings: LanguageVersionSettings) {
-    val enabledFeatures = languageVersionSettings.getManuallyEnabledLanguageFeatures()
-
+    val enabledFeatures = languageVersionSettings.getCustomizedEffectivelyEnabledLanguageFeatures()
     val presentableEnabledFeatures = enabledFeatures.sortedBy(LanguageFeature::name).joinToString(" ") { "+$it" }
-    val presentableDisabledFeatures =
-        languageVersionSettings.getManuallyDisabledLanguageFeatures().sortedBy(LanguageFeature::name).joinToString(" ") { "-$it" }
+
+    val disabledFeatures = languageVersionSettings.getCustomizedEffectivelyDisabledLanguageFeatures()
+    val presentableDisabledFeatures = disabledFeatures.sortedBy(LanguageFeature::name).joinToString(" ") { "-$it" }
+
     val presentableAlteredFeatures = "$presentableEnabledFeatures $presentableDisabledFeatures".trim()
     if (presentableAlteredFeatures.isNotBlank()) {
         manifestProperties.setProperty(KLIB_PROPERTY_MANUALLY_ALTERED_LANGUAGE_FEATURES, presentableAlteredFeatures)

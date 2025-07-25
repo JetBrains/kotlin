@@ -695,9 +695,7 @@ interface LanguageVersionSettings {
     fun supportsFeature(feature: LanguageFeature): Boolean =
         getFeatureSupport(feature) == LanguageFeature.State.ENABLED
 
-    fun getManuallyEnabledLanguageFeatures(): List<LanguageFeature>
-
-    fun getManuallyDisabledLanguageFeatures(): List<LanguageFeature>
+    fun getCustomizedLanguageFeatures(): Map<LanguageFeature, LanguageFeature.State>
 
     fun isPreRelease(): Boolean
 
@@ -735,20 +733,7 @@ class LanguageVersionSettingsImpl @JvmOverloads constructor(
         }
     }
 
-    override fun getManuallyEnabledLanguageFeatures(): List<LanguageFeature> =
-        specificFeatures.filter { isEnabledOnlyByFlag(it.key, it.value) }.keys.toList()
-
-    override fun getManuallyDisabledLanguageFeatures(): List<LanguageFeature> =
-        specificFeatures.filter { isDisabledOnlyByFlag(it.key, it.value) }.keys.toList()
-
-    private fun isEnabledOnlyByFlag(feature: LanguageFeature, state: LanguageFeature.State): Boolean =
-        !isEnabledByDefault(feature) && (state == LanguageFeature.State.ENABLED)
-
-    private fun isDisabledOnlyByFlag(feature: LanguageFeature, state: LanguageFeature.State): Boolean =
-        isEnabledByDefault(feature) && state == LanguageFeature.State.DISABLED
-
-    private fun isEnabledByDefault(feature: LanguageFeature): Boolean =
-        feature.sinceVersion != null && languageVersion >= feature.sinceVersion && apiVersion >= feature.sinceApiVersion
+    override fun getCustomizedLanguageFeatures(): Map<LanguageFeature, LanguageFeature.State> = specificFeatures
 
     override fun toString() = buildString {
         append("Language = $languageVersion, API = $apiVersion")
@@ -785,3 +770,18 @@ fun LanguageFeature.forcesPreReleaseBinariesIfEnabled(): Boolean {
     val isFeatureNotReleasedYet = sinceVersion?.isStable != true
     return isFeatureNotReleasedYet && forcesPreReleaseBinaries
 }
+
+fun LanguageVersionSettings.getCustomizedEffectivelyEnabledLanguageFeatures(): Set<LanguageFeature> {
+    return getCustomizedLanguageFeatures().entries.mapNotNullTo(mutableSetOf()) { (feature, state) ->
+        feature.takeIf { !isEnabledByDefault(feature) && state == LanguageFeature.State.ENABLED }
+    }
+}
+
+fun LanguageVersionSettings.getCustomizedEffectivelyDisabledLanguageFeatures(): Set<LanguageFeature> {
+    return getCustomizedLanguageFeatures().entries.mapNotNullTo(mutableSetOf()) { (feature, state) ->
+        feature.takeIf { isEnabledByDefault(feature) && state == LanguageFeature.State.DISABLED }
+    }
+}
+
+private fun LanguageVersionSettings.isEnabledByDefault(languageFeature: LanguageFeature): Boolean =
+    languageFeature.sinceVersion != null && languageVersion >= languageFeature.sinceVersion && apiVersion >= languageFeature.sinceApiVersion

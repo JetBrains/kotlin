@@ -104,9 +104,7 @@ object FirSessionFactoryHelper {
                         return features.getOrDefault(feature, LanguageFeature.State.DISABLED)
                     }
 
-                    override fun getManuallyEnabledLanguageFeatures(): List<LanguageFeature> = stub()
-
-                    override fun getManuallyDisabledLanguageFeatures(): List<LanguageFeature> = stub()
+                    override fun getCustomizedLanguageFeatures(): Map<LanguageFeature, LanguageFeature.State> = stub()
 
                     override fun isPreRelease(): Boolean = stub()
 

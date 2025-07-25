@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.test.frontend.classic.handlers
 
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.getCustomizedEffectivelyEnabledLanguageFeatures
 import org.jetbrains.kotlin.test.services.MetaTestConfigurator
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.moduleStructure
@@ -25,7 +26,7 @@ class ClassicUnstableAndK2LanguageFeaturesSkipConfigurator(testServices: TestSer
     override fun shouldSkipTest(): Boolean {
         val settings = testServices.moduleStructure.modules.first().languageVersionSettings
         if (settings.languageVersion.usesK2) return false
-        return settings.getManuallyEnabledLanguageFeatures().any { feature ->
+        return settings.getCustomizedEffectivelyEnabledLanguageFeatures().any { feature ->
             when (val sinceVersion = feature.sinceVersion) {
                 null -> feature in unscheduledK2OnlyFeatures
                 else -> sinceVersion.usesK2
