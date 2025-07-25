@@ -1032,8 +1032,13 @@ public inline operator fun Double.times(duration: Duration): Duration = duration
 
 
 private fun parseDuration(value: String, strictIso: Boolean, throwException: Boolean = true): Duration {
+    fun throwExceptionOrInvalid(message: String = ""): Duration {
+        if (throwException) throw IllegalArgumentException(message)
+        return Duration.INVALID
+    }
+
     var length = value.length
-    if (length == 0) throw IllegalArgumentException("The string is empty")
+    if (length == 0) return throwExceptionOrInvalid("The string is empty")
     var index = 0
     var result = Duration.ZERO
     val infinityString = "Infinity"
@@ -1044,14 +1049,14 @@ private fun parseDuration(value: String, strictIso: Boolean, throwException: Boo
     val isNegative = hasSign && value.startsWith('-')
     when {
         length <= index ->
-            throw IllegalArgumentException("No components")
+            return throwExceptionOrInvalid("No components")
         value[index] == 'P' -> {
-            if (++index == length) throw IllegalArgumentException()
+            if (++index == length) return throwExceptionOrInvalid()
             var isTimeComponent = false
             var prevUnit: DurationUnit? = null
             while (index < length) {
                 if (value[index] == 'T') {
-                    if (isTimeComponent || ++index == length) throw IllegalArgumentException()
+                    if (isTimeComponent || ++index == length) return throwExceptionOrInvalid()
                     isTimeComponent = true
                     continue
                 }
@@ -1061,15 +1066,17 @@ private fun parseDuration(value: String, strictIso: Boolean, throwException: Boo
                     componentEnd++
                 }
                 componentEnd = value.skipWhile(componentEnd) { it in '0'..'9' || it == '.' }
-                if (componentEnd == componentStart) throw IllegalArgumentException()
+                if (componentEnd == componentStart) return throwExceptionOrInvalid()
                 val dotIndex = findDot(value, componentStart, componentEnd)
                 if (dotIndex >= 0 && findDot(value, dotIndex + 1, componentEnd) >= 0) {
-                    throw IllegalArgumentException()
+                    return throwExceptionOrInvalid()
                 }
-                val unitChar = value.getOrElse(componentEnd) { throw IllegalArgumentException("Missing unit for value") }
+                val unitChar = value.getOrElse(componentEnd) {
+                    return throwExceptionOrInvalid("Missing unit for value ${value.substring(componentStart, componentEnd)}")
+                }
                 index = componentEnd + 1
                 val unit = durationUnitByIsoChar(unitChar, isTimeComponent)
-                if (prevUnit != null && prevUnit <= unit) throw IllegalArgumentException("Unexpected order of duration components")
+                if (prevUnit != null && prevUnit <= unit) return throwExceptionOrInvalid("Unexpected order of duration components")
                 prevUnit = unit
                 if (unit == DurationUnit.SECONDS && dotIndex >= 0) {
                     val whole = parseOverLongIsoComponentInPlace(value, componentStart, dotIndex)
@@ -1083,7 +1090,7 @@ private fun parseDuration(value: String, strictIso: Boolean, throwException: Boo
             }
         }
         strictIso ->
-            throw IllegalArgumentException()
+            return throwExceptionOrInvalid()
         value.regionMatches(index, infinityString, 0, length = maxOf(length - index, infinityString.length), ignoreCase = true) -> {
             result = Duration.INFINITE
         }
@@ -1094,7 +1101,7 @@ private fun parseDuration(value: String, strictIso: Boolean, throwException: Boo
             var allowSpaces = !hasSign
             if (hasSign && value[index] == '(' && value.last() == ')') {
                 allowSpaces = true
-                if (++index == --length) throw IllegalArgumentException("No components")
+                if (++index == --length) return throwExceptionOrInvalid("No components")
             }
             while (index < length) {
                 if (afterFirst && allowSpaces) {
@@ -1103,24 +1110,24 @@ private fun parseDuration(value: String, strictIso: Boolean, throwException: Boo
                 afterFirst = true
                 val componentStart = index
                 val componentEnd = value.skipWhile(index) { it in '0'..'9' || it == '.' }
-                if (componentEnd == componentStart) throw IllegalArgumentException()
+                if (componentEnd == componentStart) return throwExceptionOrInvalid()
                 index = componentEnd
                 val unitStart = index
                 val unitEnd = value.skipWhile(index) { it in 'a'..'z' }
                 index = unitEnd
                 val unit = durationUnitByShortNameInPlace(value, unitStart, unitEnd)
-                if (prevUnit != null && prevUnit <= unit) throw IllegalArgumentException("Unexpected order of duration components")
+                if (prevUnit != null && prevUnit <= unit) return throwExceptionOrInvalid("Unexpected order of duration components")
                 prevUnit = unit
                 val dotIndex = findDot(value, componentStart, componentEnd)
                 if (dotIndex >= 0 && findDot(value, dotIndex + 1, componentEnd) >= 0) {
-                    throw IllegalArgumentException()
+                    return throwExceptionOrInvalid()
                 }
                 if (dotIndex >= 0) {
                     val whole = parseLongInPlace(value, componentStart, dotIndex)
                     result += whole.toDuration(unit)
                     val fractional = parseDoubleInPlace(value, dotIndex, componentEnd)
                     result += fractional.toDuration(unit)
-                    if (index < length) throw IllegalArgumentException("Fractional component must be last")
+                    if (index < length) return throwExceptionOrInvalid("Fractional component must be last")
                 } else {
                     val componentValue = parseLongInPlace(value, componentStart, componentEnd)
                     result += componentValue.toDuration(unit)
