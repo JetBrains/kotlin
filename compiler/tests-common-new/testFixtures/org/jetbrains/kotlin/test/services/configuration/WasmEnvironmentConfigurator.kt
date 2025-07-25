@@ -22,7 +22,6 @@ import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectiv
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.FORCE_DEBUG_FRIENDLY_COMPILATION
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.SOURCE_MAP_INCLUDE_MAPPINGS_FROM_UNAVAILABLE_FILES
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.USE_NEW_EXCEPTION_HANDLING_PROPOSAL
-import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.WASM_ALLOW_FQNAME_IN_KCLASS
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.WASM_NO_JS_TAG
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
@@ -76,7 +75,7 @@ abstract class WasmEnvironmentConfigurator(testServices: TestServices) : Environ
         languageVersion: LanguageVersion
     ): Map<AnalysisFlag<*>, Any?> {
         return super.provideAdditionalAnalysisFlags(directives, languageVersion).toMutableMap().also {
-            it[allowFullyQualifiedNameInKClass] = WASM_ALLOW_FQNAME_IN_KCLASS in directives
+            it[allowFullyQualifiedNameInKClass] = true
         }
     }
 
