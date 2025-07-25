@@ -1,6 +1,7 @@
 plugins {
     kotlin("jvm")
     id("jps-compatible")
+    id("compiler-tests-convention")
 }
 
 dependencies {
@@ -51,18 +52,20 @@ open class CodeOwnersArgumentProviders @Inject constructor(
     )
 }
 
-projectTest(jUnitMode = JUnitMode.JUnit4) {
-    dependsOn(":dist")
-    workingDir = rootDir
-    javaLauncher.set(getToolchainLauncherFor(JdkMajorVersion.JDK_17_0))
-    jvmArgs("--add-opens=java.base/java.io=ALL-UNNAMED")
+compilerTests {
+    testTask(jUnitMode = JUnitMode.JUnit4) {
+        dependsOn(":dist")
+        workingDir = rootDir
+        javaLauncher.set(getToolchainLauncherFor(JdkMajorVersion.JDK_17_0))
+        jvmArgs("--add-opens=java.base/java.io=ALL-UNNAMED")
 
-    jvmArgumentProviders.add(objects.newInstance<CodeOwnersArgumentProviders>().apply {
-        scriptFile.from(rootDir.resolve(".space/generate-github-codeowners.sh"))
-        spaceCodeOwnersFile.from(rootDir.resolve(".space/CODEOWNERS"))
-        virtualTeamMappingFile.from(rootDir.resolve(".space/codeowners-virtual-team-mapping.json"))
-        githubCodeOwnersFile.from(rootDir.resolve(".github/CODEOWNERS"))
-    })
+        jvmArgumentProviders.add(objects.newInstance<CodeOwnersArgumentProviders>().apply {
+            scriptFile.from(rootDir.resolve(".space/generate-github-codeowners.sh"))
+            spaceCodeOwnersFile.from(rootDir.resolve(".space/CODEOWNERS"))
+            virtualTeamMappingFile.from(rootDir.resolve(".space/codeowners-virtual-team-mapping.json"))
+            githubCodeOwnersFile.from(rootDir.resolve(".github/CODEOWNERS"))
+        })
+    }
 }
 
 testsJar()

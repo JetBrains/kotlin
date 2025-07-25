@@ -2,6 +2,7 @@ plugins {
     kotlin("jvm")
     id("jps-compatible")
     id("java-test-fixtures")
+    id("compiler-tests-convention")
 }
 
 dependencies {
@@ -32,15 +33,17 @@ sourceSets {
 
 val testDataDir = project(":compiler").projectDir.resolve("testData/klib/dump-abi/content")
 
-projectTest(jUnitMode = JUnitMode.JUnit5) {
-    inputs.dir(testDataDir)
-    outputs.dir(layout.buildDirectory.dir("t"))
+compilerTests {
+    testTask(jUnitMode = JUnitMode.JUnit5) {
+        inputs.dir(testDataDir)
+        outputs.dir(layout.buildDirectory.dir("t"))
 
-    dependsOn(":dist")
-    workingDir = rootDir
-    useJUnitPlatform()
+        dependsOn(":dist")
+        workingDir = rootDir
+        useJUnitPlatform()
+    }
+
+    testGenerator("org.jetbrains.kotlin.library.abi.GenerateLibraryAbiReaderTestsKt")
 }
-
-val generateTests by generator("org.jetbrains.kotlin.library.abi.GenerateLibraryAbiReaderTestsKt")
 
 testsJar()

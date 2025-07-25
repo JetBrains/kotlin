@@ -9,6 +9,7 @@ plugins {
     id("d8-configuration")
     id("share-foreign-java-nullability-annotations")
     id("java-test-fixtures")
+    id("compiler-tests-convention")
 }
 
 dependencies {
@@ -57,19 +58,21 @@ sourceSets {
     "testFixtures" { projectDefault() }
 }
 
-projectTest(
-    jUnitMode = JUnitMode.JUnit5,
-    defineJDKEnvVariables = listOf(
-        JdkMajorVersion.JDK_1_8,
-        JdkMajorVersion.JDK_11_0,
-        JdkMajorVersion.JDK_17_0,
-        JdkMajorVersion.JDK_21_0
-    )
-) {
-    dependsOn(":dist")
-    workingDir = rootDir
-    useJUnitPlatform()
-    useJsIrBoxTests(version = version, buildDir = layout.buildDirectory)
+compilerTests {
+    testTask(
+        jUnitMode = JUnitMode.JUnit5,
+        defineJDKEnvVariables = listOf(
+            JdkMajorVersion.JDK_1_8,
+            JdkMajorVersion.JDK_11_0,
+            JdkMajorVersion.JDK_17_0,
+            JdkMajorVersion.JDK_21_0
+        )
+    ) {
+        dependsOn(":dist")
+        workingDir = rootDir
+        useJUnitPlatform()
+        useJsIrBoxTests(version = version, buildDir = layout.buildDirectory)
+    }
 }
 
 testsJar()

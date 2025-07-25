@@ -3,6 +3,7 @@ plugins {
     kotlin("jvm")
     id("jps-compatible")
     id("java-test-fixtures")
+    id("compiler-tests-convention")
 }
 
 val scriptingTestDefinition by configurations.creating
@@ -48,13 +49,14 @@ tasks.register<JavaExec>("runK2ExampleRepl") {
     systemProperties["kotlin.script.test.script.definition.classpath"] = scriptingTestDefinitionClasspath
 }
 
-projectTest(parallel = true, jUnitMode = JUnitMode.JUnit5) {
-    dependsOn(":dist", ":plugins:scripting:test-script-definition:testJar")
-    workingDir = rootDir
-    useJUnitPlatform()
-    val scriptingTestDefinitionClasspath = scriptingTestDefinition.asPath
-    doFirst {
-        systemProperty("kotlin.script.test.script.definition.classpath", scriptingTestDefinitionClasspath)
+compilerTests {
+    testTask(jUnitMode = JUnitMode.JUnit5) {
+        dependsOn(":dist", ":plugins:scripting:test-script-definition:testJar")
+        workingDir = rootDir
+        val scriptingTestDefinitionClasspath = scriptingTestDefinition.asPath
+        doFirst {
+            systemProperty("kotlin.script.test.script.definition.classpath", scriptingTestDefinitionClasspath)
+        }
     }
 }
 

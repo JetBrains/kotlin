@@ -2,6 +2,7 @@ plugins {
     kotlin("jvm")
     id("jps-compatible")
     id("d8-configuration")
+    id("compiler-tests-convention")
 }
 
 val compilerModules: Array<String> by rootProject.extra
@@ -46,29 +47,26 @@ sourceSets {
     }
 }
 
-projectTest(
-    jUnitMode = JUnitMode.JUnit4,
-    parallel = true,
-    defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_1_8, JdkMajorVersion.JDK_11_0, JdkMajorVersion.JDK_17_0)
-) {
-    dependsOn(":dist")
-    useJsIrBoxTests(version = version, buildDir = layout.buildDirectory)
+compilerTests {
+    testTask(
+        jUnitMode = JUnitMode.JUnit4,
+        parallel = true,
+        defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_1_8, JdkMajorVersion.JDK_11_0, JdkMajorVersion.JDK_17_0)
+    ) {
+        dependsOn(":dist")
+        useJsIrBoxTests(version = version, buildDir = layout.buildDirectory)
 
-    filter {
-        excludeTestsMatching("org.jetbrains.kotlin.jvm.compiler.io.FastJarFSLongTest*")
+        filter {
+            excludeTestsMatching("org.jetbrains.kotlin.jvm.compiler.io.FastJarFSLongTest*")
+        }
+
+        workingDir = rootDir
+        systemProperty("kotlin.test.script.classpath", testSourceSet.output.classesDirs.joinToString(File.pathSeparator))
     }
 
-    workingDir = rootDir
-    systemProperty("kotlin.test.script.classpath", testSourceSet.output.classesDirs.joinToString(File.pathSeparator))
-}
-
-if (kotlinBuildProperties.isTeamcityBuild) {
-    projectTest("fastJarFSLongTests", jUnitMode = JUnitMode.JUnit4) {
+    testTask("fastJarFSLongTests", jUnitMode = JUnitMode.JUnit4, skipInLocalBuild = true) {
         include("**/FastJarFSLongTest*")
     }
-} else {
-    // avoiding IntelliJ test configuration selection menu (see comments in compiler/fir/fir2ir/build.gradle.kts for details)
-    tasks.register("fastJarFSLongTests")
 }
 
 val generateTestData by generator("org.jetbrains.kotlin.generators.tests.GenerateCompilerTestDataKt")

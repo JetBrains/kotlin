@@ -1,8 +1,7 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
 plugins {
     kotlin("jvm")
     id("jps-compatible")
+    id("compiler-tests-convention")
 }
 
 project.configureJvmToolchain(JdkMajorVersion.JDK_1_8)
@@ -28,11 +27,13 @@ sourceSets {
     }
 }
 
-val generateTests by generator("org.jetbrains.kotlin.generators.tests.GenerateRuntimeDescriptorTestsKt")
+compilerTests {
+    testTask(jUnitMode = JUnitMode.JUnit4) {
+        dependsOn(":dist")
+        workingDir = rootDir
+    }
 
-projectTest(parallel = true, jUnitMode = JUnitMode.JUnit4) {
-    dependsOn(":dist")
-    workingDir = rootDir
+    testGenerator("org.jetbrains.kotlin.generators.tests.GenerateRuntimeDescriptorTestsKt")
 }
 
 testsJar()

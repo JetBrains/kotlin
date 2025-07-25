@@ -3,6 +3,7 @@ import org.jetbrains.kotlin.gradle.targets.js.KotlinJsCompilerAttribute
 plugins {
     kotlin("jvm")
     id("d8-configuration")
+    id("compiler-tests-convention")
 }
 
 dependencies {
@@ -54,12 +55,13 @@ fun Test.setUpJsBoxTests() {
     workingDir = rootDir
 }
 
-projectTest(jUnitMode = JUnitMode.JUnit5) {
-    dependsOn(downloadCustomCompilerArtifacts)
-    systemProperty("kotlin.internal.js.test.compat.customCompilerArtifactsDir", customCompilerArtifactsDir.get().asFile.absolutePath)
-    systemProperty("kotlin.internal.js.test.compat.customCompilerVersion", customCompilerVersion)
+compilerTests {
+    testTask(jUnitMode = JUnitMode.JUnit5) {
+        dependsOn(downloadCustomCompilerArtifacts)
+        systemProperty("kotlin.internal.js.test.compat.customCompilerArtifactsDir", customCompilerArtifactsDir.get().asFile.absolutePath)
+        systemProperty("kotlin.internal.js.test.compat.customCompilerVersion", customCompilerVersion)
 
-    setUpJsBoxTests()
-    useJUnitPlatform()
+        setUpJsBoxTests()
+    }
 }
 

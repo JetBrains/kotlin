@@ -6,6 +6,7 @@ plugins {
     kotlin("jvm")
     id("jps-compatible")
     id("java-test-fixtures")
+    id("compiler-tests-convention")
 }
 
 sourceSets {
@@ -65,9 +66,11 @@ sourcesJar()
 
 javadocJar()
 
-projectTest(parallel = true, jUnitMode = JUnitMode.JUnit4) {
-    workingDir = rootDir
-    dependsOn(":dist")
+compilerTests {
+    testTask(jUnitMode = JUnitMode.JUnit4) {
+        workingDir = rootDir
+        dependsOn(":dist")
+    }
 }
 
 testsJar()

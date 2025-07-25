@@ -4,6 +4,7 @@ plugins {
     kotlin("jvm")
     id("jps-compatible")
     id("java-test-fixtures")
+    id("compiler-tests-convention")
 }
 
 dependencies {
@@ -37,11 +38,12 @@ sourceSets {
     "testFixtures" { projectDefault() }
 }
 
-projectTest(jUnitMode = JUnitMode.JUnit5) {
-    dependsOn(":dist")
-    dependsOn(":plugins:plugin-sandbox:plugin-annotations:distAnnotations")
-    workingDir = rootDir
-    useJUnitPlatform()
+compilerTests {
+    testTask(jUnitMode = JUnitMode.JUnit5) {
+        dependsOn(":dist")
+        dependsOn(":plugins:plugin-sandbox:plugin-annotations:distAnnotations")
+        workingDir = rootDir
+    }
 }
 
 tasks.withType<KotlinJvmCompile>().configureEach {

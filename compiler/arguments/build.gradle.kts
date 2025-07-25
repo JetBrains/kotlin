@@ -4,6 +4,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 plugins {
     id("org.jetbrains.kotlin.jvm")
     id("org.jetbrains.kotlin.plugin.serialization")
+    id("compiler-tests-convention")
 }
 
 description = "Contains a unified representation of Kotlin compiler arguments for current and old Kotlin releases."
@@ -57,9 +58,10 @@ dependencies {
     testImplementation(libs.schema.kenerator.jsonschema)
 }
 
-projectTest(jUnitMode = JUnitMode.JUnit5) {
-    useJUnitPlatform()
-    javaLauncher.value(project.getToolchainLauncherFor(JdkMajorVersion.JDK_11_0))
+compilerTests {
+    testTask(jUnitMode = JUnitMode.JUnit5) {
+        javaLauncher.value(project.getToolchainLauncherFor(JdkMajorVersion.JDK_11_0))
+    }
 }
 
 val generateJson = tasks.register<JavaExec>("generateJson") {

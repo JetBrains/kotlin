@@ -2,6 +2,7 @@ plugins {
     kotlin("jvm")
     id("jps-compatible")
     id("java-test-fixtures")
+    id("compiler-tests-convention")
 }
 
 dependencies {
@@ -28,9 +29,11 @@ sourceSets {
     "testFixtures" { projectDefault() }
 }
 
-projectTest(jUnitMode = JUnitMode.JUnit5) {
-    dependsOn(":dist")
-    workingDir = rootDir
+compilerTests {
+    testTask(jUnitMode = JUnitMode.JUnit5) {
+        dependsOn(":dist")
+        workingDir = rootDir
+    }
 }
 
 

@@ -1,12 +1,10 @@
-import org.jetbrains.kotlin.gradle.dsl.KotlinVersion as GradleKotlinVersion
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
-
 description = "Kotlin Build Report Common"
 
 plugins {
     kotlin("jvm")
     id("jps-compatible")
     id("gradle-plugin-compiler-dependency-configuration")
+    id("compiler-tests-convention")
 }
 
 dependencies {
@@ -26,8 +24,9 @@ sourceSets {
     "main" { projectDefault() }
     "test" { projectDefault() }
 }
-
-projectTest(jUnitMode = JUnitMode.JUnit5, parallel = true)
+compilerTests {
+    testTask(jUnitMode = JUnitMode.JUnit5)
+}
 
 publish()
 

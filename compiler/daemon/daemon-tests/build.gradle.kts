@@ -3,6 +3,7 @@ description = "Kotlin Daemon Tests"
 plugins {
     kotlin("jvm")
     id("jps-compatible")
+    id("compiler-tests-convention")
 }
 
 dependencies {
@@ -23,14 +24,14 @@ sourceSets {
     "test" { projectDefault() }
 }
 
-projectTest(parallel = true, jUnitMode = JUnitMode.JUnit5) {
-    dependsOn(":dist")
-    workingDir = rootDir
+compilerTests {
+    testTask(jUnitMode = JUnitMode.JUnit5) {
+        dependsOn(":dist")
+        workingDir = rootDir
 
-    useJUnitPlatform()
-
-    val testClassesDirs = testSourceSet.output.classesDirs
-    doFirst {
-        systemProperty("kotlin.test.script.classpath", testClassesDirs.joinToString(File.pathSeparator))
+        val testClassesDirs = testSourceSet.output.classesDirs
+        doFirst {
+            systemProperty("kotlin.test.script.classpath", testClassesDirs.joinToString(File.pathSeparator))
+        }
     }
 }

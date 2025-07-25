@@ -1,6 +1,7 @@
 plugins {
     kotlin("jvm")
     id("jps-compatible")
+    id("compiler-tests-convention")
 }
 
 sourceSets {
@@ -8,8 +9,10 @@ sourceSets {
     "test" { projectDefault() }
 }
 
-projectTest(jUnitMode = JUnitMode.JUnit4) {
-    workingDir = rootDir
+compilerTests {
+    testTask(jUnitMode = JUnitMode.JUnit4) {
+        workingDir = rootDir
+    }
 }
 
 dependencies {

@@ -4,6 +4,7 @@ plugins {
     kotlin("jvm")
     id("jps-compatible")
     id("java-test-fixtures")
+    id("compiler-tests-convention")
 }
 
 dependencies {
@@ -55,18 +56,19 @@ sourceSets {
     "testFixtures" { projectDefault() }
 }
 
-projectTest(jUnitMode = JUnitMode.JUnit5) {
-    dependsOn(":dist")
-    useJUnitPlatform()
-    workingDir = rootDir
+compilerTests {
+    testTask(jUnitMode = JUnitMode.JUnit5) {
+        dependsOn(":dist")
+        workingDir = rootDir
 
-    val testRuntimeClasspathFiles: FileCollection = configurations.testRuntimeClasspath.get()
-    doFirst {
-        testRuntimeClasspathFiles
-            .find { "guava" in it.name }
-            ?.absolutePath
-            ?.let { systemProperty("org.jetbrains.kotlin.test.guava-location", it) }
+        val testRuntimeClasspathFiles: FileCollection = configurations.testRuntimeClasspath.get()
+        doFirst {
+            testRuntimeClasspathFiles
+                .find { "guava" in it.name }
+                ?.absolutePath
+                ?.let { systemProperty("org.jetbrains.kotlin.test.guava-location", it) }
 
+        }
     }
 }
 

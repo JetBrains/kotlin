@@ -1,5 +1,6 @@
 plugins {
     kotlin("jvm")
+    id("compiler-tests-convention")
 }
 
 repositories {
@@ -100,13 +101,14 @@ val runtimeJar = runtimeJar()
 sourcesJar()
 javadocJar()
 
-projectTest(parallel = true, jUnitMode = JUnitMode.JUnit5) {
-    dependsOn(":dist")
-    dependsOn(runtimeJar)
-    systemProperty("compose.compiler.hosted.jar.path", runtimeJar.get().outputs.files.singleFile.relativeTo(rootDir))
-    workingDir = rootDir
-    useJUnitPlatform()
-}
+compilerTests {
+    testTask(jUnitMode = JUnitMode.JUnit5) {
+        dependsOn(":dist")
+        dependsOn(runtimeJar)
+        systemProperty("compose.compiler.hosted.jar.path", runtimeJar.get().outputs.files.singleFile.relativeTo(rootDir))
+        workingDir = rootDir
+    }
 
-val generateTests by generator("androidx.compose.compiler.plugins.kotlin.TestGeneratorKt")
+    testGenerator("androidx.compose.compiler.plugins.kotlin.TestGeneratorKt")
+}
 testsJar()

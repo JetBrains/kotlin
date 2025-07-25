@@ -8,6 +8,7 @@ plugins {
     kotlin("jvm")
     id("jps-compatible")
     id("d8-configuration")
+    id("compiler-tests-convention")
 }
 
 val jsoIrRuntimeForTests by configurations.creating {
@@ -76,19 +77,20 @@ sourcesJar()
 javadocJar()
 testsJar()
 
-projectTest(parallel = true, jUnitMode = JUnitMode.JUnit5) {
-    useJUnitPlatform()
-    useJsIrBoxTests(version = version, buildDir = layout.buildDirectory)
+compilerTests {
+    testTask(jUnitMode = JUnitMode.JUnit5) {
+        useJsIrBoxTests(version = version, buildDir = layout.buildDirectory)
 
-    workingDir = rootDir
+        workingDir = rootDir
 
-    dependsOn(jsoIrRuntimeForTests)
+        dependsOn(jsoIrRuntimeForTests)
 
-    val localJsPlainObjectsIrRuntimePath: FileCollection = jsoIrRuntimeForTests
+        val localJsPlainObjectsIrRuntimePath: FileCollection = jsoIrRuntimeForTests
 
-    doFirst {
-        systemProperty("jso.runtime.path", localJsPlainObjectsIrRuntimePath.asPath)
+        doFirst {
+            systemProperty("jso.runtime.path", localJsPlainObjectsIrRuntimePath.asPath)
+        }
     }
-}
 
-val generateTests by generator("org.jetbrains.kotlinx.jspo.TestGeneratorKt")
+    testGenerator("org.jetbrains.kotlinx.jspo.TestGeneratorKt")
+}

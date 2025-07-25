@@ -5,6 +5,7 @@ plugins {
     kotlin("jvm")
     id("jps-compatible")
     id("java-test-fixtures")
+    id("compiler-tests-convention")
 }
 
 dependencies {
@@ -64,22 +65,24 @@ sourceSets {
 
 testsJar {}
 
-kaptTestTask("test", JavaLanguageVersion.of(8))
-kaptTestTask("testJdk11", JavaLanguageVersion.of(11))
-kaptTestTask("testJdk17", JavaLanguageVersion.of(17))
-kaptTestTask("testJdk21", JavaLanguageVersion.of(21))
+compilerTests {
+    fun Project.kaptTestTask(name: String, javaLanguageVersion: JavaLanguageVersion) {
+        val service = extensions.getByType<JavaToolchainService>()
 
-fun Project.kaptTestTask(name: String, javaLanguageVersion: JavaLanguageVersion) {
-    val service = extensions.getByType<JavaToolchainService>()
-
-    projectTest(taskName = name, parallel = true, jUnitMode = JUnitMode.JUnit5) {
-        useJUnitPlatform {
-            excludeTags = setOf("IgnoreJDK11")
+        testTask(taskName = name, jUnitMode = JUnitMode.JUnit5, skipInLocalBuild = false) {
+            useJUnitPlatform {
+                excludeTags = setOf("IgnoreJDK11")
+            }
+            workingDir = rootDir
+            dependsOn(":dist")
+            javaLauncher.set(service.launcherFor { languageVersion.set(javaLanguageVersion) })
         }
-        workingDir = rootDir
-        dependsOn(":dist")
-        javaLauncher.set(service.launcherFor { languageVersion.set(javaLanguageVersion) })
     }
+
+    kaptTestTask("test", JavaLanguageVersion.of(8))
+    kaptTestTask("testJdk11", JavaLanguageVersion.of(11))
+    kaptTestTask("testJdk17", JavaLanguageVersion.of(17))
+    kaptTestTask("testJdk21", JavaLanguageVersion.of(21))
 }
 
 publish()

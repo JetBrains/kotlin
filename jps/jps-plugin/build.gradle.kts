@@ -6,18 +6,10 @@ import org.jetbrains.kotlin.ideaExt.idea
 plugins {
     kotlin("jvm")
     id("jps-compatible")
+    id("compiler-tests-convention")
 }
 
 val compilerModules: Array<String> by rootProject.extra
-
-
-val generateTests by generator("org.jetbrains.kotlin.jps.GenerateJpsPluginTestsKt") {
-    javaLauncher.set(
-        javaToolchains.launcherFor {
-            languageVersion.set(JavaLanguageVersion.of(17))
-        }
-    )
-}
 
 dependencies {
     compileOnly(project(":jps:jps-platform-api-signatures"))
@@ -117,32 +109,42 @@ tasks.compileKotlin {
     compilerOptions.jvmTarget = JvmTarget.JVM_1_8
 }
 
-projectTest(parallel = true, jUnitMode = JUnitMode.JUnit4) {
-    // do not replace with compile/runtime dependency,
-    // because it forces Intellij reindexing after each compiler change
-    dependsOn(":kotlin-compiler:dist")
-    dependsOn(":kotlin-stdlib:jsJarForTests")
-    workingDir = rootDir
-    jvmArgs(
-        // https://github.com/JetBrains/intellij-community/blob/b49faf433f8d73ccd46016a5717f997d167de65f/jps/jps-builders/src/org/jetbrains/jps/cmdline/ClasspathBootstrap.java#L67
-        "--add-opens=jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED",
-        "--add-opens=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED",
-        "--add-opens=jdk.compiler/com.sun.tools.javac.code=ALL-UNNAMED",
-        "--add-opens=jdk.compiler/com.sun.tools.javac.comp=ALL-UNNAMED",
-        "--add-opens=jdk.compiler/com.sun.tools.javac.file=ALL-UNNAMED",
-        "--add-opens=jdk.compiler/com.sun.tools.javac.main=ALL-UNNAMED",
-        "--add-opens=jdk.compiler/com.sun.tools.javac.model=ALL-UNNAMED",
-        "--add-opens=jdk.compiler/com.sun.tools.javac.parser=ALL-UNNAMED",
-        "--add-opens=jdk.compiler/com.sun.tools.javac.processing=ALL-UNNAMED",
-        "--add-opens=jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED",
-        "--add-opens=jdk.compiler/com.sun.tools.javac.jvm=ALL-UNNAMED",
-        // the minimal required set of modules to be opened for the intellij platform itself
-        "--add-opens=java.desktop/java.awt=ALL-UNNAMED",
-        "--add-opens=java.desktop/sun.awt=ALL-UNNAMED",
-        "--add-opens=java.base/java.lang=ALL-UNNAMED",
-        "--add-opens=java.desktop/javax.swing=ALL-UNNAMED",
-        "--add-opens=java.base/java.io=ALL-UNNAMED",
-    )
+compilerTests {
+    testTask(parallel = true, jUnitMode = JUnitMode.JUnit4) {
+        // do not replace with compile/runtime dependency,
+        // because it forces Intellij reindexing after each compiler change
+        dependsOn(":kotlin-compiler:dist")
+        dependsOn(":kotlin-stdlib:jsJarForTests")
+        workingDir = rootDir
+        jvmArgs(
+            // https://github.com/JetBrains/intellij-community/blob/b49faf433f8d73ccd46016a5717f997d167de65f/jps/jps-builders/src/org/jetbrains/jps/cmdline/ClasspathBootstrap.java#L67
+            "--add-opens=jdk.compiler/com.sun.tools.javac.api=ALL-UNNAMED",
+            "--add-opens=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED",
+            "--add-opens=jdk.compiler/com.sun.tools.javac.code=ALL-UNNAMED",
+            "--add-opens=jdk.compiler/com.sun.tools.javac.comp=ALL-UNNAMED",
+            "--add-opens=jdk.compiler/com.sun.tools.javac.file=ALL-UNNAMED",
+            "--add-opens=jdk.compiler/com.sun.tools.javac.main=ALL-UNNAMED",
+            "--add-opens=jdk.compiler/com.sun.tools.javac.model=ALL-UNNAMED",
+            "--add-opens=jdk.compiler/com.sun.tools.javac.parser=ALL-UNNAMED",
+            "--add-opens=jdk.compiler/com.sun.tools.javac.processing=ALL-UNNAMED",
+            "--add-opens=jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED",
+            "--add-opens=jdk.compiler/com.sun.tools.javac.jvm=ALL-UNNAMED",
+            // the minimal required set of modules to be opened for the intellij platform itself
+            "--add-opens=java.desktop/java.awt=ALL-UNNAMED",
+            "--add-opens=java.desktop/sun.awt=ALL-UNNAMED",
+            "--add-opens=java.base/java.lang=ALL-UNNAMED",
+            "--add-opens=java.desktop/javax.swing=ALL-UNNAMED",
+            "--add-opens=java.base/java.io=ALL-UNNAMED",
+        )
+    }
+
+    testGenerator("org.jetbrains.kotlin.jps.GenerateJpsPluginTestsKt") {
+        javaLauncher.set(
+            javaToolchains.launcherFor {
+                languageVersion.set(JavaLanguageVersion.of(17))
+            }
+        )
+    }
 }
 
 testsJar {}

@@ -4,6 +4,7 @@ plugins {
     kotlin("jvm")
     id("jps-compatible")
     id("java-test-fixtures")
+    id("compiler-tests-convention")
 }
 
 dependencies {
@@ -60,10 +61,11 @@ tasks.withType<KotlinJvmCompile>().configureEach {
 
 optInToK1Deprecation()
 
-projectTest(jUnitMode = JUnitMode.JUnit5) {
-    dependsOn(":dist")
-    workingDir = rootDir
-    useJUnitPlatform()
+compilerTests {
+    testTask(jUnitMode = JUnitMode.JUnit5) {
+        dependsOn(":dist")
+        workingDir = rootDir
+    }
 }
 
 testsJar()

@@ -4,6 +4,7 @@ plugins {
     kotlin("jvm")
     id("jps-compatible")
     id("java-test-fixtures")
+    id("compiler-tests-convention")
 }
 
 val scriptingTestDefinition by configurations.creating
@@ -93,21 +94,22 @@ kotlin {
     }
 }
 
-projectTest(
-    jUnitMode = JUnitMode.JUnit5,
-    defineJDKEnvVariables = listOf(
-        JdkMajorVersion.JDK_11_0, // TestsWithJava11 and others
-        JdkMajorVersion.JDK_17_0, // TestsWithJava17 and others
-        JdkMajorVersion.JDK_21_0  // TestsWithJava21 and others
-    )
-) {
-    dependsOn(":dist", ":plugins:scripting:test-script-definition:testJar")
-    workingDir = rootDir
-    useJUnitPlatform()
+compilerTests {
+    testTask(
+        jUnitMode = JUnitMode.JUnit5,
+        defineJDKEnvVariables = listOf(
+            JdkMajorVersion.JDK_11_0, // TestsWithJava11 and others
+            JdkMajorVersion.JDK_17_0, // TestsWithJava17 and others
+            JdkMajorVersion.JDK_21_0  // TestsWithJava21 and others
+        )
+    ) {
+        dependsOn(":dist", ":plugins:scripting:test-script-definition:testJar")
+        workingDir = rootDir
 
-    val scriptingTestDefinitionClasspath = scriptingTestDefinition.asPath
-    doFirst {
-        systemProperty("kotlin.script.test.script.definition.classpath", scriptingTestDefinitionClasspath)
+        val scriptingTestDefinitionClasspath = scriptingTestDefinition.asPath
+        doFirst {
+            systemProperty("kotlin.script.test.script.definition.classpath", scriptingTestDefinitionClasspath)
+        }
     }
 }
 

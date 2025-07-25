@@ -4,6 +4,7 @@ plugins {
     kotlin("jvm")
     id("jps-compatible")
     id("gradle-plugin-compiler-dependency-configuration")
+    id("compiler-tests-convention")
 }
 
 dependencies {
@@ -39,6 +40,8 @@ tasks.withType<KotlinJvmCompile>().configureEach {
 
 testsJar()
 
-projectTest(parallel = true, jUnitMode = JUnitMode.JUnit4) {
-    workingDir = rootDir
+compilerTests {
+    testTask(jUnitMode = JUnitMode.JUnit4) {
+        workingDir = rootDir
+    }
 }

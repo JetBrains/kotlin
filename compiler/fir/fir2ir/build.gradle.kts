@@ -2,6 +2,7 @@ plugins {
     kotlin("jvm")
     id("jps-compatible")
     id("java-test-fixtures")
+    id("compiler-tests-convention")
 }
 
 dependencies {
@@ -65,36 +66,25 @@ fun Test.configure(configureJUnit: JUnitPlatformOptions.() -> Unit = {}) {
         configureJUnit()
     }
 }
+compilerTests {
+    testTask(
+        jUnitMode = JUnitMode.JUnit5,
+        defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_1_8, JdkMajorVersion.JDK_11_0, JdkMajorVersion.JDK_17_0, JdkMajorVersion.JDK_21_0),
+    ) {
+        configure()
+    }
 
-projectTest(
-    jUnitMode = JUnitMode.JUnit5,
-    defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_1_8, JdkMajorVersion.JDK_11_0, JdkMajorVersion.JDK_17_0, JdkMajorVersion.JDK_21_0)
-) {
-    configure()
-}
-
-if (kotlinBuildProperties.isTeamcityBuild) {
-    projectTest("aggregateTests", jUnitMode = JUnitMode.JUnit5) {
+    testTask("aggregateTests", jUnitMode = JUnitMode.JUnit5, skipInLocalBuild = true) {
         configure {
             excludeTags("FirPsiCodegenTest")
         }
-    }
 
-    projectTest("nightlyTests", jUnitMode = JUnitMode.JUnit5) {
+    }
+    testTask("nightlyTests", jUnitMode = JUnitMode.JUnit5, skipInLocalBuild = true) {
         configure {
             includeTags("FirPsiCodegenTest")
         }
     }
-} else {
-    /*
-     * There is no much sense in those configurations in the local development
-     * They actually reduce the UX of running tests, as IDEA suggests choosing one of three
-     *   test tasks when you run any test
-     * So to fix this inconvenience in local environment, those
-     *   tasks just do nothing (and not inherit TestTask), so the IDEA won't see them
-    */
-    tasks.register("aggregateTests")
-    tasks.register("nightlyTests")
 }
 
 testsJarToBeUsedAlongWithFixtures()

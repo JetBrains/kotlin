@@ -6,6 +6,7 @@ plugins {
     id("jps-compatible")
     id("org.jetbrains.kotlinx.binary-compatibility-validator")
     id("org.jetbrains.dokka")
+    id("compiler-tests-convention")
 }
 
 
@@ -37,8 +38,8 @@ kotlin {
     }
 }
 
-projectTest(jUnitMode = JUnitMode.JUnit5) {
-    useJUnitPlatform()
+compilerTests {
+    testTask(jUnitMode = JUnitMode.JUnit5)
 }
 
 publish()
