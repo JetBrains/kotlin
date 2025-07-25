@@ -10,7 +10,9 @@ import org.jetbrains.kotlin.stats.TestData.moduleStats0
 import org.jetbrains.kotlin.stats.TestData.moduleStats1
 import org.jetbrains.kotlin.stats.TestData.moduleStats2
 import org.jetbrains.kotlin.util.CompilerType
+import org.jetbrains.kotlin.util.DynamicStats
 import org.jetbrains.kotlin.util.GarbageCollectionStats
+import org.jetbrains.kotlin.util.PhaseType
 import org.jetbrains.kotlin.util.PlatformType
 import kotlin.test.Test
 import kotlin.test.assertEquals
@@ -37,6 +39,14 @@ class StatsCalculatorTests {
             assertEquals(moduleStats0.klibWritingStats!! + moduleStats1.klibWritingStats + moduleStats2.klibWritingStats, klibWritingStats)
             assertEquals(moduleStats0.irLoweringStats!! + moduleStats1.irLoweringStats + moduleStats2.irLoweringStats, irLoweringStats)
             assertEquals(moduleStats0.backendStats!! + moduleStats1.backendStats + moduleStats2.backendStats, backendStats)
+            assertEquals(
+                dynamicStats,
+                listOf(
+                    DynamicStats(PhaseType.IrPreLowering, "IrPreLoweringDynamicStat1", irPreLoweringStats!! / 2),
+                    DynamicStats(PhaseType.IrPreLowering, "IrPreLoweringDynamicStat2", irPreLoweringStats!! / 4),
+                    DynamicStats(PhaseType.IrPreLowering, "IrPreLoweringDynamicStat3", irPreLoweringStats!! / 4),
+                )
+            )
             assertEquals(moduleStats0.findJavaClassStats!! + moduleStats1.findJavaClassStats + moduleStats2.findJavaClassStats, findJavaClassStats)
             assertEquals(moduleStats0.findKotlinClassStats!! + moduleStats1.findKotlinClassStats + moduleStats2.findKotlinClassStats, findKotlinClassStats)
             assertEquals(

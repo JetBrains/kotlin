@@ -1,7 +1,9 @@
 package org.jetbrains.kotlin.stats
 
 import org.jetbrains.kotlin.util.CompilerType
+import org.jetbrains.kotlin.util.DynamicStats
 import org.jetbrains.kotlin.util.GarbageCollectionStats
+import org.jetbrains.kotlin.util.PhaseType
 import org.jetbrains.kotlin.util.PlatformType
 import org.jetbrains.kotlin.util.SideStats
 import org.jetbrains.kotlin.util.Time
@@ -54,6 +56,11 @@ object TestData {
             klibWritingStats = totalTime * 0.01,
             irLoweringStats = totalTime * 0.01,
             backendStats = totalTime * 0.16,
+            dynamicStats = listOf(
+                DynamicStats(PhaseType.IrPreLowering, "IrPreLoweringDynamicStat1", totalTime * 0.01 / 2),
+                DynamicStats(PhaseType.IrPreLowering, "IrPreLoweringDynamicStat2", totalTime * 0.01 / 4),
+                DynamicStats(PhaseType.IrPreLowering, "IrPreLoweringDynamicStat3", totalTime * 0.01 / 4),
+            ),
             findJavaClassStats = SideStats(increment, totalTime * 0.04),
             findKotlinClassStats = SideStats(increment, totalTime * 0.06),
             gcStats = listOf(

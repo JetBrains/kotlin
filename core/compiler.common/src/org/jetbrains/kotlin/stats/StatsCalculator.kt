@@ -6,7 +6,9 @@
 package org.jetbrains.kotlin.stats
 
 import org.jetbrains.kotlin.util.CompilerType
+import org.jetbrains.kotlin.util.DynamicStats
 import org.jetbrains.kotlin.util.GarbageCollectionStats
+import org.jetbrains.kotlin.util.PhaseType
 import org.jetbrains.kotlin.util.PlatformType
 import org.jetbrains.kotlin.util.SideStats
 import org.jetbrains.kotlin.util.Time
@@ -170,6 +172,23 @@ class StatsCalculator(val reportsData: ReportsData) {
                 klibWritingStats = klibWritingStats.let { if (total) it else it / size },
                 irLoweringStats = irLoweringStats.let { if (total) it else it / size },
                 backendStats = backendStats.let { if (total) it else it / size },
+                dynamicStats = listOf(
+                    DynamicStats(
+                        PhaseType.IrPreLowering,
+                        "IrPreLoweringDynamicStat1",
+                        irPreLoweringStats.let { if (total) it else it / size } / 2,
+                    ),
+                    DynamicStats(
+                        PhaseType.IrPreLowering,
+                        "IrPreLoweringDynamicStat2",
+                        irPreLoweringStats.let { if (total) it else it / size } / 4,
+                    ),
+                    DynamicStats(
+                        PhaseType.IrPreLowering,
+                        "IrPreLoweringDynamicStat3",
+                        irPreLoweringStats.let { if (total) it else it / size } / 4,
+                    ),
+                ),
                 findJavaClassStats = findJavaClassStats.let { if (total) it else it / size },
                 findKotlinClassStats = findKotlinClassStats.let { if (total) it else it / size },
                 gcStats = gcStats.values.map { gcStatsToCount ->
