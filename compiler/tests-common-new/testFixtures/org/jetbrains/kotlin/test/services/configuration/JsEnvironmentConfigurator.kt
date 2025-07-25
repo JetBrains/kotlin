@@ -130,7 +130,7 @@ class JsEnvironmentConfigurator(testServices: TestServices) : EnvironmentConfigu
         languageVersion: LanguageVersion
     ): Map<AnalysisFlag<*>, Any?> {
         return super.provideAdditionalAnalysisFlags(directives, languageVersion).toMutableMap().also {
-            it[allowFullyQualifiedNameInKClass] = false
+            it[allowFullyQualifiedNameInKClass] = true
         }
     }
 
