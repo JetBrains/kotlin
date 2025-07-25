@@ -2,8 +2,36 @@ package samples.text
 
 import samples.*
 import kotlin.test.*
+import java.util.LinkedList
 
 class Strings {
+
+    @Sample
+    fun toCollection() {
+        // Convert a string to a mutable list of characters
+        val charList = mutableListOf<Char>()
+        "Hello".toCollection(charList)
+        assertPrints(charList, "[H, e, l, l, o]")
+        
+        // Add characters to an existing collection
+        val existingCollection = mutableListOf('A', 'B', 'C')
+        "123".toCollection(existingCollection)
+        assertPrints(existingCollection, "[A, B, C, 1, 2, 3]")
+        
+        // Convert to a set to get unique characters
+        val uniqueChars = "Mississippi".toCollection(mutableSetOf())
+        assertPrints(uniqueChars, "[M, i, s, p]")
+        
+        // Use with custom collection types
+        val linkedList = LinkedList<Char>()
+        "Kotlin".toCollection(linkedList)
+        assertPrints(linkedList, "[K, o, t, l, i, n]")
+        
+        // Empty string results in an empty collection
+        val emptyResult = "".toCollection(mutableListOf())
+        assertPrints(emptyResult, "[]")
+        assertTrue(emptyResult.isEmpty())
+    }
 
     @Suppress("DEPRECATION")
     @Sample

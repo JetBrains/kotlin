@@ -799,6 +799,8 @@ public inline fun <V, M : MutableMap<in Char, in V>> CharSequence.associateWithT
 
 /**
  * Appends all characters to the given [destination] collection.
+ * 
+ * @sample samples.text.Strings.toCollection
  */
 @IgnorableReturnValue
 public fun <C : MutableCollection<in Char>> CharSequence.toCollection(destination: C): C {
