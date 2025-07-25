@@ -73,6 +73,9 @@ class MarkdownReportRenderer(val statsCalculator: StatsCalculator) {
 
             aggregatedStats.forEachPhaseMeasurement { phaseType, time ->
                 renderTimeLine(phaseTypeName.getValue(phaseType), time)
+                aggregatedStats.dynamicStats?.forEach { (parentPhaseType, name, time) ->
+                    if (parentPhaseType == phaseType) renderTimeLine("↳ $name", time)
+                }
             }
 
             renderBreak()

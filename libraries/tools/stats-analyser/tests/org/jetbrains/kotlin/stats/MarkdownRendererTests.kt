@@ -28,6 +28,9 @@ class MarkdownRendererTests {
 | ANALYZE                       |  40.00% (2400 ms) |  40.00% (1800 ms) |  40.00% (3000 ms) |
 | TRANSLATION to IR             |  20.00% (1200 ms) |   20.00% (900 ms) |  20.00% (1500 ms) |
 | IR PRE-LOWERING               |     1.00% (60 ms) |     1.00% (45 ms) |     1.00% (75 ms) |
+| ↳ IrPreLoweringDynamicStat1   |     0.50% (30 ms) |     0.50% (22 ms) |     0.50% (37 ms) |
+| ↳ IrPreLoweringDynamicStat2   |     0.25% (15 ms) |     0.25% (11 ms) |     0.25% (18 ms) |
+| ↳ IrPreLoweringDynamicStat3   |     0.25% (15 ms) |     0.25% (11 ms) |     0.25% (18 ms) |
 | IR SERIALIZATION              |     1.00% (60 ms) |     1.00% (45 ms) |     1.00% (75 ms) |
 | KLIB WRITING                  |     1.00% (60 ms) |     1.00% (45 ms) |     1.00% (75 ms) |
 | IR LOWERING                   |     1.00% (60 ms) |     1.00% (45 ms) |     1.00% (75 ms) |
@@ -80,7 +83,7 @@ class MarkdownRendererTests {
     @Test
     fun testTimeStampModeRendering() {
         assertEquals(
-            """# Stats for time_stamp
+            """# Stats for Aggregate
 
 * Platform: JVM
 * Has errors: false
@@ -96,6 +99,9 @@ class MarkdownRendererTests {
 | ANALYZE                       |   40.00% (800 ms) |   40.00% (600 ms) |  40.00% (1000 ms) |
 | TRANSLATION to IR             |   20.00% (400 ms) |   20.00% (300 ms) |   20.00% (500 ms) |
 | IR PRE-LOWERING               |     1.00% (20 ms) |     1.00% (15 ms) |     1.00% (25 ms) |
+| ↳ IrPreLoweringDynamicStat1   |     0.50% (10 ms) |      0.50% (7 ms) |     0.50% (12 ms) |
+| ↳ IrPreLoweringDynamicStat2   |      0.25% (5 ms) |      0.25% (3 ms) |      0.25% (6 ms) |
+| ↳ IrPreLoweringDynamicStat3   |      0.25% (5 ms) |      0.25% (3 ms) |      0.25% (6 ms) |
 | IR SERIALIZATION              |     1.00% (20 ms) |     1.00% (15 ms) |     1.00% (25 ms) |
 | KLIB WRITING                  |     1.00% (20 ms) |     1.00% (15 ms) |     1.00% (25 ms) |
 | IR LOWERING                   |     1.00% (20 ms) |     1.00% (15 ms) |     1.00% (25 ms) |
