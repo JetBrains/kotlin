@@ -917,6 +917,13 @@ internal class PartiallyLinkedIrTreePatcher(
                     newOverriddenFunction = newOverriddenFunction.symbol,
                 )
             }
+            if (oldOverriddenFunction.isSuspend != newOverriddenFunction.isSuspend) {
+                return InvalidSamConversion.FunctionIsIncompatible(
+                    expression = reportOn,
+                    originalOverriddenFunction = oldOverriddenFunction.symbol,
+                    newOverriddenFunction = newOverriddenFunction.symbol,
+                )
+            }
 
             return null
         }
