@@ -1075,7 +1075,7 @@ private fun parseDuration(value: String, strictIso: Boolean, throwException: Boo
                     return throwExceptionOrInvalid("Missing unit for value ${value.substring(componentStart, componentEnd)}")
                 }
                 index = componentEnd + 1
-                val unit = durationUnitByIsoChar(unitChar, isTimeComponent)
+                val unit = durationUnitByIsoChar(unitChar, isTimeComponent, throwException) ?: return Duration.INVALID
                 if (prevUnit != null && prevUnit <= unit) return throwExceptionOrInvalid("Unexpected order of duration components")
                 prevUnit = unit
                 if (unit == DurationUnit.SECONDS && dotIndex >= 0) {
@@ -1115,7 +1115,7 @@ private fun parseDuration(value: String, strictIso: Boolean, throwException: Boo
                 val unitStart = index
                 val unitEnd = value.skipWhile(index) { it in 'a'..'z' }
                 index = unitEnd
-                val unit = durationUnitByShortNameInPlace(value, unitStart, unitEnd)
+                val unit = durationUnitByShortNameInPlace(value, unitStart, unitEnd, throwException) ?: return Duration.INVALID
                 if (prevUnit != null && prevUnit <= unit) return throwExceptionOrInvalid("Unexpected order of duration components")
                 prevUnit = unit
                 val dotIndex = findDot(value, componentStart, componentEnd)
@@ -1243,7 +1243,7 @@ private fun parseOverLongIsoComponentInPlace(value: String, start: Int, end: Int
     }
 }
 
-private fun durationUnitByShortNameInPlace(str: String, start: Int, end: Int): DurationUnit {
+private fun durationUnitByShortNameInPlace(str: String, start: Int, end: Int, throwException: Boolean): DurationUnit? {
     val length = end - start
     return when (length) {
         1 -> when (str[start]) {
@@ -1251,7 +1251,7 @@ private fun durationUnitByShortNameInPlace(str: String, start: Int, end: Int): D
             'h' -> DurationUnit.HOURS
             'm' -> DurationUnit.MINUTES
             's' -> DurationUnit.SECONDS
-            else -> throw IllegalArgumentException("Unknown duration unit short name")
+            else -> if (throwException) throw IllegalArgumentException("Unknown duration unit short name") else null
         }
         2 -> when {
             str[start] == 'm' && str[start + 1] == 's' -> DurationUnit.MILLISECONDS
@@ -1259,7 +1259,7 @@ private fun durationUnitByShortNameInPlace(str: String, start: Int, end: Int): D
             str[start] == 'n' && str[start + 1] == 's' -> DurationUnit.NANOSECONDS
             else -> throw IllegalArgumentException("Unknown duration unit short name")
         }
-        else -> throw IllegalArgumentException("Unknown duration unit short name")
+        else -> if (throwException) throw IllegalArgumentException("Unknown duration unit short name") else null
     }
 }
 
