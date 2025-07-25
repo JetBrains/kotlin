@@ -70,8 +70,30 @@ public expect inline fun AutoCloseable(crossinline closeAction: () -> Unit): Aut
  * In case if the resource is being closed due to an exception occurred in [block], and the closing also fails with an exception,
  * the latter is added to the [suppressed][Throwable.addSuppressed] exceptions of the former.
  *
+ * Example:
+ * ```kotlin
+ * // Reading a file
+ * File("path/to/file.txt").bufferedReader().use { reader ->
+ *     val content = reader.readText()
+ *     println(content)
+ * } // The reader is automatically closed at this point
+ *
+ * // Using a database connection
+ * connection.use { conn ->
+ *     conn.prepareStatement("SELECT * FROM users").use { statement ->
+ *         statement.executeQuery().use { resultSet ->
+ *             while (resultSet.next()) {
+ *                 // Process each row
+ *                 println(resultSet.getString("name"))
+ *             }
+ *         }
+ *     }
+ * } // All resources are automatically closed in reverse order
+ * ```
+ *
  * @param block a function to process this [AutoCloseable] resource.
  * @return the result of [block] function invoked on this resource.
+ * @see <a href="https://kotlinlang.org/api/core/kotlin-stdlib/kotlin.io/use.html">Kotlin Standard Library Documentation</a>
  */
 @Suppress("EXPECTED_DECLARATION_WITH_BODY", "WRONG_INVOCATION_KIND")
 @SinceKotlin("2.0")
