@@ -32,6 +32,7 @@ import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
+import org.jetbrains.kotlin.utils.addToStdlib.NullPair
 
 @ThreadSafeMutableState
 class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
@@ -194,8 +195,8 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
             is TypeResolutionResult.Resolved -> {
                 result.typeCandidate.symbol to result.typeCandidate.substitutor
             }
-            is TypeResolutionResult.Ambiguity -> null to null
-            TypeResolutionResult.Unresolved -> null to null
+            is TypeResolutionResult.Ambiguity -> NullPair
+            TypeResolutionResult.Unresolved -> NullPair
         }
 
         val allTypeArguments = buildList {

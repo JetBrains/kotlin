@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.psi.psiUtil.getAssignmentLhsIfUnwrappable
 import org.jetbrains.kotlin.psi.stubs.elements.KtTokenSets
 import org.jetbrains.kotlin.util.getChildren
+import org.jetbrains.kotlin.utils.addToStdlib.NullPair
 import org.jetbrains.kotlin.utils.addToStdlib.runUnless
 
 object LightTreePositioningStrategies {
@@ -143,7 +144,7 @@ object LightTreePositioningStrategies {
                 node.isDeclaration || node.tokenType == KtNodeTypes.VALUE_PARAMETER ->
                     tree.typeReference(node) to tree.nameIdentifier(node)
                 else ->
-                    null to null
+                    NullPair
             }
             return returnTypeRef ?: (nameIdentifierOrPlaceHolder ?: node)
         }

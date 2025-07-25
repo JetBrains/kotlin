@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.fir.resolve.providers.FirSymbolProviderInternals
 import org.jetbrains.kotlin.fir.scopes.FirKotlinScopeProvider
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.metadata.ProtoBuf
+import org.jetbrains.kotlin.utils.addToStdlib.NullPair
 import org.jetbrains.kotlin.metadata.deserialization.NameResolver
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.serialization.SerializerExtensionProtocol
@@ -234,7 +235,7 @@ abstract class AbstractFirDeserializedSymbolProvider(
         if (classId.isNestedClass) {
             // The code below can search only top-level type aliases.
             // That's why we can drop that search if the provided `classId` is known to be nested.
-            return (null to null)
+            return NullPair
         }
 
         return getPackageParts(classId.packageFqName).firstNotNullOfOrNull { part ->
@@ -245,7 +246,7 @@ abstract class AbstractFirDeserializedSymbolProvider(
                 part.context.memberDeserializer.loadTypeAlias(aliasProto, classId, kotlinScopeProvider, it)
             }
             FirTypeAliasSymbol(classId) to postProcessor
-        } ?: (null to null)
+        } ?: NullPair
     }
 
     private fun findAndDeserializeClass(
@@ -256,7 +257,7 @@ abstract class AbstractFirDeserializedSymbolProvider(
             is ClassMetadataFindResult.NoMetadata -> FirRegularClassSymbol(classId) to result.classPostProcessor
             is ClassMetadataFindResult.Metadata -> {
                 val (nameResolver, classProto, annotationDeserializer, moduleData, sourceElement) = result
-                moduleData ?: return null to null
+                moduleData ?: return NullPair
                 val symbol = FirRegularClassSymbol(classId)
                 deserializeClassToSymbol(
                     classId,
@@ -278,7 +279,7 @@ abstract class AbstractFirDeserializedSymbolProvider(
                 symbol.fir.isNewPlaceForBodyGeneration = isNewPlaceForBodyGeneration(classProto)
                 symbol to null
             }
-            null -> null to null
+            null -> NullPair
         }
     }
 

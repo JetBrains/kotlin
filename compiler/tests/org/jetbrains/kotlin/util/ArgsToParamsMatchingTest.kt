@@ -18,6 +18,7 @@
 
 package org.jetbrains.kotlin.util
 
+import org.jetbrains.kotlin.utils.addToStdlib.NullPair
 import org.jetbrains.kotlin.utils.tryCreateCallableMappingFromNamedArgs
 import org.jetbrains.kotlin.utils.tryCreateCallableMappingFromStringArgs
 import org.junit.Assert
@@ -136,9 +137,9 @@ class ArgsToParamsMatchingTest {
             )
         ) // unnamed after named
 
-        Assert.assertNull(tryCreateCallableMappingFromNamedArgs(::notNullNumber, listOf(null to null)))
+        Assert.assertNull(tryCreateCallableMappingFromNamedArgs(::notNullNumber, listOf(NullPair)))
         assertParamMapsEquals(
-            tryCreateCallableMappingFromNamedArgs(::nullableNumber, listOf(null to null)),
+            tryCreateCallableMappingFromNamedArgs(::nullableNumber, listOf(NullPair)),
             "n" to null
         )
         assertParamMapsEquals(

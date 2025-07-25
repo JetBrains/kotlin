@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.incremental.storage.ListExternalizer
 import org.jetbrains.kotlin.incremental.storage.LookupSymbolKey
 import org.jetbrains.kotlin.incremental.storage.saveToFile
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.utils.addToStdlib.NullPair
 
 internal object ClasspathSnapshotShrinker {
 
@@ -250,7 +251,7 @@ internal fun shrinkAndSaveClasspathSnapshot(
         is ShrinkMode.UnchangedLookupsUnchangedClasspath -> {
             // There are no changes in the lookups and classpath, so there will be no changes in the shrunk classpath snapshot compared to
             // the previous run. Return null here as we don't need to compute this.
-            null to null
+            NullPair
         }
         is ShrinkMode.UnchangedLookupsChangedClasspath -> {
             // There are no changes in the lookups, so

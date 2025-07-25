@@ -44,6 +44,7 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames.UNDERSCORE_FOR_UNUSED_VAR
 import org.jetbrains.kotlin.util.PrivateForInline
+import org.jetbrains.kotlin.utils.addToStdlib.NullPair
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 class BodyResolveContext(
@@ -668,7 +669,7 @@ class BodyResolveContext(
             if (constructor?.isPrimary == true) {
                 constructor.scopesWithPrimaryConstructorParameters(holder.session)
             } else {
-                null to null
+                NullPair
             }
 
         val forConstructorHeader = if (!isContextCollectorMode) {

@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.util.ListMultimap
 import org.jetbrains.kotlin.fir.util.listMultimapOf
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
+import org.jetbrains.kotlin.utils.addToStdlib.NullPair
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
 
@@ -533,7 +534,7 @@ class ControlFlowGraphBuilder private constructor(
         assert(currentGraph.kind == ControlFlowGraph.Kind.File)
         if (currentGraph.declaration == null) {
             graphs.pop() // Discard empty file graph.
-            return null to null
+            return NullPair
         }
 
         // Properties of a file can be visited in any order, so data flow between them is unordered,
@@ -586,7 +587,7 @@ class ControlFlowGraphBuilder private constructor(
     fun enterClass(klass: FirClass, buildGraph: Boolean): Pair<CFGNode<*>?, ClassEnterNode?> {
         if (!buildGraph) {
             graphs.push(ControlFlowGraph(declaration = null, "<discarded class graph>", ControlFlowGraph.Kind.Class))
-            return null to null
+            return NullPair
         }
 
         val localClassEnterNode = when {
@@ -635,7 +636,7 @@ class ControlFlowGraphBuilder private constructor(
         assert(currentGraph.kind == ControlFlowGraph.Kind.Class)
         if (currentGraph.declaration == null) {
             graphs.pop()
-            return null to null
+            return NullPair
         }
 
         // Members of a class can be visited in any order, so data flow between them is unordered,
@@ -645,7 +646,7 @@ class ControlFlowGraphBuilder private constructor(
         val klass = enterNode.fir
         if ((klass as FirControlFlowGraphOwner).controlFlowGraphReference != null) {
             graphs.pop()
-            return null to null
+            return NullPair
         }
 
         val isLocalClass = klass.isLocal
@@ -806,7 +807,7 @@ class ControlFlowGraphBuilder private constructor(
         require(currentGraph.kind == ControlFlowGraph.Kind.Script)
         if (currentGraph.declaration == null) {
             graphs.pop() // Discard empty script graph.
-            return null to null
+            return NullPair
         }
 
         val enterNode = lastNodes.pop() as ScriptEnterNode
@@ -870,7 +871,7 @@ class ControlFlowGraphBuilder private constructor(
         require(currentGraph.kind == ControlFlowGraph.Kind.Script)
         if (currentGraph.declaration == null) {
             graphs.pop() // Discard empty graph
-            return null to null
+            return NullPair
         }
         return exitGraph()
     }

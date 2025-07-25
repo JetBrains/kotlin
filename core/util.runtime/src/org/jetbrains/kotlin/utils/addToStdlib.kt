@@ -502,3 +502,5 @@ class ChainedIterator<T>(delegates: Collection<Iterator<T>>) : Iterator<T> {
         return currentIterator?.next() ?: throw NoSuchElementException()
     }
 }
+
+val NullPair: Pair<Nothing?, Nothing?> = null to null

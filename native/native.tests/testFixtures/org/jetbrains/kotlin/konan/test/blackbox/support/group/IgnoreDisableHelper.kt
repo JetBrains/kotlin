@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.directives.model.StringDirective
+import org.jetbrains.kotlin.utils.addToStdlib.NullPair
 
 private val TARGET_FAMILY = "targetFamily"
 private val TARGET_ARCHITECTURE = "targetArchitecture"
@@ -86,7 +87,7 @@ internal fun Settings.evaluate(registeredDirectives: RegisteredDirectives, direc
                 SUPPORTS_CORE_SYMBOLICATION -> get<KotlinNativeTargets>().testTarget.supportsCoreSymbolication().toString() to BOOLEAN_NAMES
                 KLIB_IR_INLINER -> get<KlibIrInlinerMode>().name to KLIB_IR_INLINER_NAMES
                 else -> throw AssertionError("ClassLevelProperty name: $propName is not yet supported in IGNORE_NATIVE* test directives.")
-            } ?: (null to null)
+            } ?: NullPair
             val valueFromTestDirective = matchResult.groups[2]?.value!!
             supportedValues?.let {
                 if (actualValue !in it)

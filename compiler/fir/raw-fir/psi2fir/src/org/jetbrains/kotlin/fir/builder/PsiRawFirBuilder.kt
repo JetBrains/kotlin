@@ -54,6 +54,7 @@ import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.expressions.OperatorConventions
 import org.jetbrains.kotlin.util.OperatorNameConventions
+import org.jetbrains.kotlin.utils.addToStdlib.NullPair
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
@@ -478,7 +479,7 @@ open class PsiRawFirBuilder(
 
         private fun KtDeclarationWithBody.buildFirBody(): Pair<FirBlock?, FirContractDescription?> = when {
             // No psi body -> no fir body
-            !hasBody() -> null to null
+            !hasBody() -> NullPair
 
             // No block body -> expression body and no contract
             !hasBlockBody() -> {
@@ -492,7 +493,7 @@ open class PsiRawFirBuilder(
 
             else -> {
                 val block = buildOrLazyBlock {
-                    bodyBlockExpression?.accept(this@Visitor, null) as? FirBlock ?: return null to null
+                    bodyBlockExpression?.accept(this@Visitor, null) as? FirBlock ?: return NullPair
                 }
 
                 val contractDescription = if (!hasContractEffectList() && mayHaveContract()) {
@@ -2713,7 +2714,7 @@ open class PsiRawFirBuilder(
                                 }
 
                                 val (lazyDelegateExpression: FirLazyExpression?, lazyBody: FirLazyBlock?) = buildOrLazy(
-                                    build = { null to null },
+                                    build = { NullPair },
                                     lazy = { buildLazyExpression { source = delegateBuilder.source } to buildLazyBlock() },
                                 )
 

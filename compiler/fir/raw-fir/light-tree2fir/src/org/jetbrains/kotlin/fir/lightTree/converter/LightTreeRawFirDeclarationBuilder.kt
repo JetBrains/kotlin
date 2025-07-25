@@ -54,6 +54,7 @@ import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 import org.jetbrains.kotlin.util.getChildren
+import org.jetbrains.kotlin.utils.addToStdlib.NullPair
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
@@ -2169,7 +2170,7 @@ class LightTreeRawFirDeclarationBuilder(
                     expressionConverter.getAsFirExpression<FirExpression>(expression, "Function has no body (but should)").toReturn()
                 ) to null
             }
-            else -> null to null
+            else -> NullPair
         }
     }
 

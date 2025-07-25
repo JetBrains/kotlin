@@ -57,6 +57,7 @@ import org.jetbrains.kotlin.resolve.calls.tower.CandidateApplicability
 import org.jetbrains.kotlin.resolve.calls.tower.isSuccess
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.util.OperatorNameConventions
+import org.jetbrains.kotlin.utils.addToStdlib.NullPair
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
@@ -477,7 +478,7 @@ class FirCallResolver(
         val (referencedSymbol, resolvedSymbolOrigin) = when (nameReference) {
             is FirResolvedNamedReference -> nameReference.resolvedSymbol to nameReference.resolvedSymbolOrigin
             is FirNamedReferenceWithCandidate -> nameReference.candidateSymbol to nameReference.candidate.originScope?.toResolvedSymbolOrigin()
-            else -> null to null
+            else -> NullPair
         }
 
         val diagnostic = when (nameReference) {

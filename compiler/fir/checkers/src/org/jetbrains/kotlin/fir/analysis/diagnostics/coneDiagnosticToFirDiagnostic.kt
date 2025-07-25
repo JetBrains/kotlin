@@ -58,6 +58,7 @@ import org.jetbrains.kotlin.types.EmptyIntersectionTypeKind
 import org.jetbrains.kotlin.types.model.K2Only
 import org.jetbrains.kotlin.util.getPreviousSibling
 import org.jetbrains.kotlin.utils.addIfNotNull
+import org.jetbrains.kotlin.utils.addToStdlib.NullPair
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
@@ -838,7 +839,7 @@ private fun ConstraintSystemError.mapConstraintSystemError(
                     // - ConeFixVariableConstraintPosition is occurred in delegates only,
                     // and reported as DELEGATE_SPECIAL_FUNCTION_NONE_APPLICABLE (see testSuccessfulProvideDelegateLeadsToRedGetValue)
                     // Finally, ConeDeclaredUpperBoundConstraintPosition never occurs here
-                    else -> null to null
+                    else -> NullPair
                 }
 
             val typeMismatchDueToNullability = typeContext.isTypeMismatchDueToNullability(lowerConeType, upperConeType)

@@ -43,6 +43,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.resolve.ReturnValueStatus
 import org.jetbrains.kotlin.utils.SmartSet
+import org.jetbrains.kotlin.utils.addToStdlib.NullPair
 
 private fun FirResolvedDeclarationStatus.isAllowedForMainFunction(): Boolean {
     val defaultStatusForMain = DEFAULT_STATUS_FOR_STATUSLESS_DECLARATIONS
@@ -592,7 +593,7 @@ fun checkForLocalRedeclarations(elements: List<FirElement>) {
             is FirClassLikeDeclaration -> element.symbol.let { it to it.name }
             is FirOuterClassTypeParameterRef -> continue
             is FirTypeParameterRef -> element.symbol.let { it to it.name }
-            else -> null to null
+            else -> NullPair
         }
         if (name?.isSpecial == false) {
             multimap.put(name, symbol!!)

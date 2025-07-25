@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.library.metadata.parsePackageFragment
 import org.jetbrains.kotlin.library.readKonanLibraryVersioning
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
+import org.jetbrains.kotlin.utils.addToStdlib.NullPair
 import java.io.IOException
 import java.util.*
 
@@ -62,7 +63,7 @@ class KlibLoadingMetadataCache {
     }
 
     fun getCachedPackageFragmentWithVersion(packageFragmentFile: VirtualFile): Pair<ProtoBuf.PackageFragment?, MetadataVersion?> {
-        val packageFragment = getCachedPackageFragment(packageFragmentFile) ?: return null to null
+        val packageFragment = getCachedPackageFragment(packageFragmentFile) ?: return NullPair
         val version = getCachedMetadataVersion(getKlibLibraryRootForPackageFragment(packageFragmentFile))
         return packageFragment to version
     }
