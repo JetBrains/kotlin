@@ -1045,7 +1045,6 @@ private fun parseDuration(value: String, strictIso: Boolean): Duration {
             throw IllegalArgumentException("No components")
         value[index] == 'P' -> {
             if (++index == length) throw IllegalArgumentException()
-            val nonDigitSymbols = "+-."
             var isTimeComponent = false
             var prevUnit: DurationUnit? = null
             while (index < length) {
@@ -1054,21 +1053,34 @@ private fun parseDuration(value: String, strictIso: Boolean): Duration {
                     isTimeComponent = true
                     continue
                 }
-                val component = value.substringWhile(index) { it in '0'..'9' || it in nonDigitSymbols }
-                if (component.isEmpty()) throw IllegalArgumentException()
-                index += component.length
-                val unitChar = value.getOrElse(index) { throw IllegalArgumentException("Missing unit for value $component") }
-                index++
+                val componentStart = index
+                var componentEnd = index
+                if (index < length && value[index] in "+-") {
+                    componentEnd++
+                }
+                componentEnd = value.skipWhile(componentEnd) { it in '0'..'9' || it == '.' }
+                if (componentEnd == componentStart) throw IllegalArgumentException()
+                var dotCount = 0
+                for (i in componentStart..<componentEnd) {
+                    if (value[i] == '.') {
+                        dotCount++
+                    }
+                }
+                if (dotCount > 1) throw IllegalArgumentException()
+                val unitChar = value.getOrElse(componentEnd) { throw IllegalArgumentException("Missing unit for value") }
+                index = componentEnd + 1
                 val unit = durationUnitByIsoChar(unitChar, isTimeComponent)
                 if (prevUnit != null && prevUnit <= unit) throw IllegalArgumentException("Unexpected order of duration components")
                 prevUnit = unit
-                val dotIndex = component.indexOf('.')
-                if (unit == DurationUnit.SECONDS && dotIndex > 0) {
-                    val whole = component.substring(0, dotIndex)
-                    result += parseOverLongIsoComponent(whole).toDuration(unit)
-                    result += component.substring(dotIndex).toDouble().toDuration(unit)
+                val dotIndex = findChar(value, '.', componentStart, componentEnd)
+                if (unit == DurationUnit.SECONDS && dotIndex >= 0) {
+                    val whole = parseOverLongIsoComponentInPlace(value, componentStart, dotIndex)
+                    result += whole.toDuration(unit)
+                    val fractional = parseDoubleInPlace(value, dotIndex, componentEnd)
+                    result += fractional.toDuration(unit)
                 } else {
-                    result += parseOverLongIsoComponent(component).toDuration(unit)
+                    val componentValue = parseOverLongIsoComponentInPlace(value, componentStart, componentEnd)
+                    result += componentValue.toDuration(unit)
                 }
             }
         }
@@ -1091,22 +1103,29 @@ private fun parseDuration(value: String, strictIso: Boolean): Duration {
                     index = value.skipWhile(index) { it == ' ' }
                 }
                 afterFirst = true
-                val component = value.substringWhile(index) { it in '0'..'9' || it == '.' }
-                if (component.isEmpty()) throw IllegalArgumentException()
-                index += component.length
-                val unitName = value.substringWhile(index) { it in 'a'..'z' }
-                index += unitName.length
-                val unit = durationUnitByShortName(unitName)
+                val componentStart = index
+                val componentEnd = value.skipWhile(index) { it in '0'..'9' || it == '.' }
+                if (componentEnd == componentStart) throw IllegalArgumentException()
+                index = componentEnd
+                val unitStart = index
+                val unitEnd = value.skipWhile(index) { it in 'a'..'z' }
+                index = unitEnd
+                val unit = durationUnitByShortNameInPlace(value, unitStart, unitEnd)
                 if (prevUnit != null && prevUnit <= unit) throw IllegalArgumentException("Unexpected order of duration components")
                 prevUnit = unit
-                val dotIndex = component.indexOf('.')
-                if (dotIndex > 0) {
-                    val whole = component.substring(0, dotIndex)
-                    result += whole.toLong().toDuration(unit)
-                    result += component.substring(dotIndex).toDouble().toDuration(unit)
+                val dotIndex = findChar(value, '.', componentStart, componentEnd)
+                if (dotIndex >= 0 && findChar(value, '.', dotIndex + 1, componentEnd) >= 0) {
+                    throw IllegalArgumentException()
+                }
+                if (dotIndex >= 0) {
+                    val whole = parseLongInPlace(value, componentStart, dotIndex)
+                    result += whole.toDuration(unit)
+                    val fractional = parseDoubleInPlace(value, dotIndex, componentEnd)
+                    result += fractional.toDuration(unit)
                     if (index < length) throw IllegalArgumentException("Fractional component must be last")
                 } else {
-                    result += component.toLong().toDuration(unit)
+                    val componentValue = parseLongInPlace(value, componentStart, componentEnd)
+                    result += componentValue.toDuration(unit)
                 }
             }
         }
@@ -1114,32 +1133,138 @@ private fun parseDuration(value: String, strictIso: Boolean): Duration {
     return if (isNegative) -result else result
 }
 
+private fun findChar(str: String, char: Char, start: Int, end: Int): Int {
+    for (i in start..<end) {
+        if (str[i] == char) return i
+    }
+    return -1
+}
 
-private fun parseOverLongIsoComponent(value: String): Long {
-    val length = value.length
-    var startIndex = 0
-    if (length > 0 && value[0] in "+-") startIndex++
-    if (length - startIndex > 16) run {
-        var firstNonZero = startIndex
-        for (index in startIndex..<length) {
+private fun parseLongInPlace(str: String, start: Int, end: Int): Long {
+    if (start >= end) throw IllegalArgumentException()
+
+    var result = 0L
+    var negative = false
+    var i = start
+
+    when (str[i]) {
+        '-' -> {
+            negative = true; i++
+        }
+        '+' -> i++
+    }
+
+    if (i >= end) throw IllegalArgumentException()
+
+    while (i < end) {
+        val digit = str[i] - '0'
+        if (digit !in 0..9) throw IllegalArgumentException("Invalid character in number")
+        if (result > Long.MAX_VALUE / 10) {
+            throw NumberFormatException("Long overflow")
+        }
+
+        val newResult = result * 10
+        if (newResult < 0 || Long.MAX_VALUE - newResult < digit) {
+            throw NumberFormatException("Long overflow")
+        }
+
+        result = newResult + digit
+        i++
+    }
+
+    return if (negative) -result else result
+}
+
+private fun parseDoubleInPlace(str: String, start: Int, end: Int): Double {
+    if (start >= end) return 0.0
+
+    var result = 0.0
+    var i = start
+    var inFraction = false
+    var fractionMultiplier = 0.1
+    var negative = false
+    var hasDot = false
+
+    when (str[i]) {
+        '-' -> {
+            negative = true
+            i++
+        }
+        '+' -> i++
+    }
+
+    while (i < end) {
+        val ch = str[i]
+        when (ch) {
+            '.' -> {
+                if (hasDot) throw IllegalArgumentException() // Second decimal point
+                hasDot = true
+                inFraction = true
+            }
+            in '0'..'9' -> {
+                val digit = ch - '0'
+                if (inFraction) {
+                    result += digit * fractionMultiplier
+                    fractionMultiplier *= 0.1
+                } else {
+                    result = result * 10 + digit
+                }
+            }
+            else -> throw IllegalArgumentException()
+        }
+        i++
+    }
+
+    return if (negative) -result else result
+}
+
+private fun parseOverLongIsoComponentInPlace(value: String, start: Int, end: Int): Long {
+    val length = end - start
+    var actualStart = start
+
+    if (length > 0 && value[start] in "+-") actualStart++
+
+    if (length > 16) {
+        var firstNonZero = actualStart
+        for (index in actualStart..<end) {
             when (value[index]) {
                 '0' -> if (firstNonZero == index) firstNonZero++
-                !in '1'..'9' -> return@run
+                !in '1'..'9' -> break
             }
         }
-        if (length - firstNonZero > 16) {
-            // all chars are digits, but more than ceiling(log10(MAX_MILLIS / 1000)) of them
-            return if (value[0] == '-') Long.MIN_VALUE else Long.MAX_VALUE
+        if (end - firstNonZero > 16) {
+            return if (value[start] == '-') Long.MIN_VALUE else Long.MAX_VALUE
         }
     }
-    // TODO: replace with just toLong after the minimum supported Android SDK has the same behavior as JDK 8
-    return if (value.startsWith("+") && length > 1 && value[1] in '0'..'9') value.drop(1).toLong() else value.toLong()
+
+    return try {
+        parseLongInPlace(value, start, end)
+    } catch (_: NumberFormatException) {
+        if (start < end && value[start] == '-') Long.MIN_VALUE else Long.MAX_VALUE
+    }
+}
+
+private fun durationUnitByShortNameInPlace(str: String, start: Int, end: Int): DurationUnit {
+    val length = end - start
+    return when (length) {
+        1 -> when (str[start]) {
+            'd' -> DurationUnit.DAYS
+            'h' -> DurationUnit.HOURS
+            'm' -> DurationUnit.MINUTES
+            's' -> DurationUnit.SECONDS
+            else -> throw IllegalArgumentException("Unknown duration unit short name")
+        }
+        2 -> when {
+            str[start] == 'm' && str[start + 1] == 's' -> DurationUnit.MILLISECONDS
+            str[start] == 'u' && str[start + 1] == 's' -> DurationUnit.MICROSECONDS
+            str[start] == 'n' && str[start + 1] == 's' -> DurationUnit.NANOSECONDS
+            else -> throw IllegalArgumentException("Unknown duration unit short name")
+        }
+        else -> throw IllegalArgumentException("Unknown duration unit short name")
+    }
 }
 
 
-
-private inline fun String.substringWhile(startIndex: Int, predicate: (Char) -> Boolean): String =
-    substring(startIndex, skipWhile(startIndex, predicate))
 
 private inline fun String.skipWhile(startIndex: Int, predicate: (Char) -> Boolean): Int {
     var i = startIndex
