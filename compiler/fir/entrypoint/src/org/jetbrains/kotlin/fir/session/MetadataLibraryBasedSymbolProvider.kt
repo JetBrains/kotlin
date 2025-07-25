@@ -138,6 +138,7 @@ abstract class MetadataLibraryBasedSymbolProvider<L : MetadataLibrary>(
                     source,
                     origin = defaultDeserializationOrigin,
                     deserializeNestedClass = this::getClass,
+                    deserializeNestedTypeAlias = this::getTypeAlias,
                 )
 
                 if (resolvedLibrary is KotlinLibrary) {

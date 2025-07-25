@@ -145,6 +145,9 @@ abstract class AbstractFirBuiltinSymbolProvider(
                 null,
                 origin = if (originateFromFallbackBuiltIns) FirDeclarationOrigin.BuiltInsFallback else FirDeclarationOrigin.BuiltIns,
                 this::findAndDeserializeClass,
+                deserializeNestedTypeAlias = { classId, context ->
+                    memberDeserializer.loadTypeAlias(context.proto, classId, context.scopeProvider).symbol
+                },
             )
         }
 
