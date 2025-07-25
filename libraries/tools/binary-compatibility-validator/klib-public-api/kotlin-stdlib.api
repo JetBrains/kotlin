@@ -15139,6 +15139,9 @@ final inline fun (kotlin/String).kotlin.text/toUpperCase(): kotlin/String // kot
 final inline fun (kotlin/String).kotlin.text/uppercase(): kotlin/String // kotlin.text/uppercase|uppercase@kotlin.String(){}[0]
 
 // Targets: [js]
+final inline fun (kotlin/Throwable).kotlin.js/asJsException(): kotlin/Throwable // kotlin.js/asJsException|asJsException@kotlin.Throwable(){}[0]
+
+// Targets: [js]
 final inline fun /withType(kotlin/String, dynamic): dynamic // /withType|withType(kotlin.String;<dynamic>){}[0]
 
 // Targets: [js]
@@ -15470,13 +15473,10 @@ final class <#A: kotlin.js/JsAny?> kotlin.js/JsArray : kotlin.js/JsAny { // kotl
 // Targets: [wasmJs]
 final class <#A: out kotlin.js/JsAny?> kotlin.js/Promise : kotlin.js/JsAny { // kotlin.js/Promise|null[0]
     constructor <init>(kotlin/Function2<kotlin/Function1<#A, kotlin/Unit>, kotlin/Function1<kotlin.js/JsAny, kotlin/Unit>, kotlin/Unit>) // kotlin.js/Promise.<init>|<init>(kotlin.Function2<kotlin.Function1<1:0,kotlin.Unit>,kotlin.Function1<kotlin.js.JsAny,kotlin.Unit>,kotlin.Unit>){}[0]
-    constructor <init>(kotlin/Function2<kotlin/Function1<#A, kotlin/Unit>, kotlin/Function1<kotlin.js/JsError, kotlin/Unit>, kotlin/Unit>) // kotlin.js/Promise.<init>|<init>(kotlin.Function2<kotlin.Function1<1:0,kotlin.Unit>,kotlin.Function1<kotlin.js.JsError,kotlin.Unit>,kotlin.Unit>){}[0]
 
     final fun <#A1: kotlin.js/JsAny?> catch(kotlin/Function1<kotlin.js/JsAny, #A1>): kotlin.js/Promise<#A1> // kotlin.js/Promise.catch|catch(kotlin.Function1<kotlin.js.JsAny,0:0>){0§<kotlin.js.JsAny?>}[0]
-    final fun <#A1: kotlin.js/JsAny?> catch(kotlin/Function1<kotlin.js/JsError, #A1>): kotlin.js/Promise<#A1> // kotlin.js/Promise.catch|catch(kotlin.Function1<kotlin.js.JsError,0:0>){0§<kotlin.js.JsAny?>}[0]
     final fun <#A1: kotlin.js/JsAny?> then(kotlin/Function1<#A, #A1>?): kotlin.js/Promise<#A1> // kotlin.js/Promise.then|then(kotlin.Function1<1:0,0:0>?){0§<kotlin.js.JsAny?>}[0]
     final fun <#A1: kotlin.js/JsAny?> then(kotlin/Function1<#A, #A1>?, kotlin/Function1<kotlin.js/JsAny, #A1>?): kotlin.js/Promise<#A1> // kotlin.js/Promise.then|then(kotlin.Function1<1:0,0:0>?;kotlin.Function1<kotlin.js.JsAny,0:0>?){0§<kotlin.js.JsAny?>}[0]
-    final fun <#A1: kotlin.js/JsAny?> then(kotlin/Function1<#A, #A1>?, kotlin/Function1<kotlin.js/JsError, #A1>?): kotlin.js/Promise<#A1> // kotlin.js/Promise.then|then(kotlin.Function1<1:0,0:0>?;kotlin.Function1<kotlin.js.JsError,0:0>?){0§<kotlin.js.JsAny?>}[0]
     final fun finally(kotlin/Function0<kotlin/Unit>): kotlin.js/Promise<#A> // kotlin.js/Promise.finally|finally(kotlin.Function0<kotlin.Unit>){}[0]
 
     final object Companion { // kotlin.js/Promise.Companion|null[0]
@@ -15485,7 +15485,6 @@ final class <#A: out kotlin.js/JsAny?> kotlin.js/Promise : kotlin.js/JsAny { // 
         final fun <#A2: kotlin.js/JsAny?> resolve(#A2): kotlin.js/Promise<#A2> // kotlin.js/Promise.Companion.resolve|resolve(0:0){0§<kotlin.js.JsAny?>}[0]
         final fun <#A2: kotlin.js/JsAny?> resolve(kotlin.js/Promise<#A2>): kotlin.js/Promise<#A2> // kotlin.js/Promise.Companion.resolve|resolve(kotlin.js.Promise<0:0>){0§<kotlin.js.JsAny?>}[0]
         final fun reject(kotlin.js/JsAny): kotlin.js/Promise<kotlin/Nothing> // kotlin.js/Promise.Companion.reject|reject(kotlin.js.JsAny){}[0]
-        final fun reject(kotlin.js/JsError): kotlin.js/Promise<kotlin/Nothing> // kotlin.js/Promise.Companion.reject|reject(kotlin.js.JsError){}[0]
     }
 }
 
@@ -15494,11 +15493,6 @@ final class kotlin.js/JsBigInt : kotlin.js/JsAny // kotlin.js/JsBigInt|null[0]
 
 // Targets: [wasmJs]
 final class kotlin.js/JsBoolean : kotlin.js/JsAny // kotlin.js/JsBoolean|null[0]
-
-// Targets: [wasmJs]
-final class kotlin.js/JsError : kotlin.js/JsAny { // kotlin.js/JsError|null[0]
-    constructor <init>() // kotlin.js/JsError.<init>|<init>(){}[0]
-}
 
 // Targets: [wasmJs]
 final class kotlin.js/JsException : kotlin/Throwable { // kotlin.js/JsException|null[0]
@@ -15521,6 +15515,9 @@ final val kotlin.js/length // kotlin.js/length|@kotlin.js.JsArray<*>{}length[0]
 // Targets: [wasmJs]
 final val kotlin.js/thrownValue // kotlin.js/thrownValue|@kotlin.js.JsException{}thrownValue[0]
     final fun (kotlin.js/JsException).<get-thrownValue>(): kotlin.js/JsAny? // kotlin.js/thrownValue.<get-thrownValue>|<get-thrownValue>@kotlin.js.JsException(){}[0]
+
+// Targets: [wasmJs]
+final fun (kotlin.js/JsAny).kotlin.js/asJsException(): kotlin.js/JsException // kotlin.js/asJsException|asJsException@kotlin.js.JsAny(){}[0]
 
 // Targets: [wasmJs]
 final fun (kotlin.js/JsAny).kotlin.js/toThrowableOrNull(): kotlin/Throwable? // kotlin.js/toThrowableOrNull|toThrowableOrNull@kotlin.js.JsAny(){}[0]

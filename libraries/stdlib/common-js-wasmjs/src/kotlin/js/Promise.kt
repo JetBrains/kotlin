@@ -12,20 +12,20 @@ import kotlin.internal.LowPriorityInOverloadResolution
  */
 @ExperimentalWasmJsInterop
 @SinceKotlin("2.2")
-public expect class Promise<out T : JsAny?>(executor: (resolve: (T) -> Unit, reject: (JsError) -> Unit) -> Unit): JsAny {
+public expect class Promise<out T : JsAny?>(executor: (resolve: (T) -> Unit, reject: (JsPromiseError) -> Unit) -> Unit): JsAny {
     @LowPriorityInOverloadResolution
     public fun <S : JsAny?> then(onFulfilled: ((T) -> S)?): Promise<S>
 
     @LowPriorityInOverloadResolution
-    public fun <S : JsAny?> then(onFulfilled: ((T) -> S)?, onRejected: ((JsError) -> S)?): Promise<S>
+    public fun <S : JsAny?> then(onFulfilled: ((T) -> S)?, onRejected: ((JsPromiseError) -> S)?): Promise<S>
 
-    public fun <S : JsAny?> catch(onRejected: (JsError) -> S): Promise<S>
+    public fun <S : JsAny?> catch(onRejected: (JsPromiseError) -> S): Promise<S>
     public fun finally(onFinally: () -> Unit): Promise<T>
 
     public companion object {
         public fun <S : JsAny?> all(promise: JsArray<out Promise<S>>): Promise<JsArray<out S>>
         public fun <S : JsAny?> race(promise: JsArray<out Promise<S>>): Promise<S>
-        public fun reject(e: JsError): Promise<Nothing>
+        public fun reject(e: JsPromiseError): Promise<Nothing>
         public fun <S : JsAny?> resolve(e: S): Promise<S>
         public fun <S : JsAny?> resolve(e: Promise<S>): Promise<S>
     }

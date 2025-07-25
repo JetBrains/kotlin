@@ -43,3 +43,13 @@ public actual class JsException internal constructor(public val thrownValue: JsA
 
 @ExperimentalWasmJsInterop
 public actual val JsException.thrownValue: JsAny? get() = this.thrownValue
+
+@OptIn(ExperimentalWasmJsInterop::class)
+@JsName("Error")
+internal external class JsError : JsAny {
+    val message: String
+    var name: String
+    val stack: ExternalInterfaceType
+    val cause: JsError?
+    var kotlinException: JsReference<Throwable>?
+}

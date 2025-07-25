@@ -5,7 +5,13 @@
 
 package kotlin.js
 
+import kotlin.internal.InlineOnly
+
 @SinceKotlin("2.2")
 @ExperimentalWasmJsInterop
-public actual typealias JsError = Throwable
+public actual typealias JsPromiseError = Throwable
 
+@InlineOnly
+@ExperimentalWasmJsInterop
+@SinceKotlin("2.2")
+public actual inline fun JsPromiseError.asJsException(): Throwable = this
