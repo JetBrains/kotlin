@@ -403,7 +403,7 @@ private fun checkJvmFirRequirements(
     arguments: JvmCompilerArgumentsImpl,
 ): Boolean {
     val languageVersion: LanguageVersion = try {
-        arguments[LANGUAGE_VERSION] //TODO use strings here, not keys
+        arguments[LANGUAGE_VERSION]
     } catch (_: Exception) {
         null
     }?.let {
