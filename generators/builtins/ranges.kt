@@ -64,9 +64,11 @@ public class $range(start: $t, endInclusive: $t) : ${t}Progression(start, endInc
      */
     override fun isEmpty(): Boolean = first > last
 
-    override fun equals(other: Any?): Boolean =
-        other is $range && (isEmpty() && other.isEmpty() ||
-        ${compare("first")} && ${compare("last")})
+    override fun equals(other: Any?): Boolean = when (other) {
+        is $range -> (isEmpty() && other.isEmpty()) || (${compare("first")} && ${compare("last")})
+        is ClosedRange<*> -> (isEmpty() && other.isEmpty()) || (${compare("start")} && ${compare("endInclusive")})
+        else -> false
+    }
 
     override fun hashCode(): Int $hashCode
 

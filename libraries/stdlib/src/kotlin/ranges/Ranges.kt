@@ -17,7 +17,7 @@ private open class ComparableRange<T : Comparable<T>>(
 ) : ClosedRange<T> {
 
     override fun equals(other: Any?): Boolean {
-        return other is ComparableRange<*> && (isEmpty() && other.isEmpty() ||
+        return other is ClosedRange<*> && (isEmpty() && other.isEmpty() ||
                 start == other.start && endInclusive == other.endInclusive)
     }
 
@@ -95,8 +95,8 @@ private class ClosedDoubleRange(
     start: Double,
     endInclusive: Double
 ) : ClosedFloatingPointRange<Double> {
-    private val _start = start
-    private val _endInclusive = endInclusive
+    private val _start: Double = start
+    private val _endInclusive: Double = endInclusive
     override val start: Double get() = _start
     override val endInclusive: Double get() = _endInclusive
 
@@ -106,8 +106,9 @@ private class ClosedDoubleRange(
     override fun isEmpty(): Boolean = !(_start <= _endInclusive)
 
     override fun equals(other: Any?): Boolean {
-        return other is ClosedDoubleRange && (isEmpty() && other.isEmpty() ||
-                _start == other._start && _endInclusive == other._endInclusive)
+        // Casting to a Double is necessary because ClosedRange.start/endInclusive are Any (boxed) here, and those don't respect -0.0==0.0
+        return other is ClosedRange<*> && ((isEmpty() && other.isEmpty()) ||
+                (other.start as? Double == _start && other.endInclusive as? Double == _endInclusive))
     }
 
     override fun hashCode(): Int {
@@ -187,8 +188,9 @@ private class ClosedFloatRange(
     override fun isEmpty(): Boolean = !(_start <= _endInclusive)
 
     override fun equals(other: Any?): Boolean {
-        return other is ClosedFloatRange && (isEmpty() && other.isEmpty() ||
-                _start == other._start && _endInclusive == other._endInclusive)
+        // Casting to a Float is necessary because ClosedRange.start/endInclusive are Any (boxed) here, and those don't respect -0f==0f
+        return other is ClosedRange<*> && ((isEmpty() && other.isEmpty()) ||
+                (other.start as? Float == _start && other.endInclusive as? Float == _endInclusive))
     }
 
     override fun hashCode(): Int {
