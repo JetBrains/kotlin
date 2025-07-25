@@ -6295,6 +6295,8 @@ public fun CharArray.shuffle(random: Random): Unit {
  * 
  * The sort is _stable_. It means that elements for which [selector] returned equal values preserve their order
  * relative to each other after sorting.
+ * 
+ * @sample samples.collections.Collections.Sorting.sortBy
  */
 public inline fun <T, R : Comparable<R>> Array<out T>.sortBy(crossinline selector: (T) -> R?): Unit {
     if (size > 1) sortWith(compareBy(selector))
@@ -6305,6 +6307,8 @@ public inline fun <T, R : Comparable<R>> Array<out T>.sortBy(crossinline selecto
  * 
  * The sort is _stable_. It means that elements for which [selector] returned equal values preserve their order
  * relative to each other after sorting.
+ * 
+ * @sample samples.collections.Collections.Sorting.sortByDescending
  */
 public inline fun <T, R : Comparable<R>> Array<out T>.sortByDescending(crossinline selector: (T) -> R?): Unit {
     if (size > 1) sortWith(compareByDescending(selector))

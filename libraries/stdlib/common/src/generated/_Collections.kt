@@ -1011,6 +1011,8 @@ public fun <T> MutableList<T>.shuffle(random: Random): Unit {
  * 
  * The sort is _stable_. It means that elements for which [selector] returned equal values preserve their order
  * relative to each other after sorting.
+ * 
+ * @sample samples.collections.Collections.Sorting.sortBy
  */
 public inline fun <T, R : Comparable<R>> MutableList<T>.sortBy(crossinline selector: (T) -> R?): Unit {
     if (size > 1) sortWith(compareBy(selector))
@@ -1021,6 +1023,8 @@ public inline fun <T, R : Comparable<R>> MutableList<T>.sortBy(crossinline selec
  * 
  * The sort is _stable_. It means that elements for which [selector] returned equal values preserve their order
  * relative to each other after sorting.
+ * 
+ * @sample samples.collections.Collections.Sorting.sortByDescending
  */
 public inline fun <T, R : Comparable<R>> MutableList<T>.sortByDescending(crossinline selector: (T) -> R?): Unit {
     if (size > 1) sortWith(compareByDescending(selector))

@@ -1291,7 +1291,7 @@ class Collections {
             // after sorting
             assertPrints(people.joinToString(), "Sweyn Forkbeard, Ragnar Lodbrok, Bjorn Ironside")
         }
-        
+
         @Sample
         fun sortBy() {
             class Dish(val name: String, val calories: Int, val tasteRate: Float) {
@@ -1299,31 +1299,24 @@ class Collections {
             }
 
             val fridgeContent = mutableListOf(
-                Dish("🍨", 207, 4.7f), 
-                Dish("🥦", 34, 2.3f), 
+                Dish("🍨", 207, 4.7f),
+                Dish("🥦", 34, 2.3f),
                 Dish("🧃", 34, 4.9f)
             )
-            
+
             // original order
             assertPrints(fridgeContent, "[Dish(🍨: 207 cal, taste 4.7/5), Dish(🥦: 34 cal, taste 2.3/5), Dish(🧃: 34 cal, taste 4.9/5)]")
-            
+
             // sort by taste rate (ascending)
             fridgeContent.sortBy { it.tasteRate }
             assertPrints(fridgeContent, "[Dish(🥦: 34 cal, taste 2.3/5), Dish(🍨: 207 cal, taste 4.7/5), Dish(🧃: 34 cal, taste 4.9/5)]")
-            
-            // create a new list with the same elements
-            val newFridgeContent = mutableListOf(
-                Dish("🍨", 207, 4.7f), 
-                Dish("🥦", 34, 2.3f), 
-                Dish("🧃", 34, 4.9f)
-            )
-            
+
             // sort by calories (ascending)
-            newFridgeContent.sortBy { it.calories }
+            fridgeContent.sortBy { it.calories }
             // note that the sorting is stable, so the 🥦 is before the 🧃
-            assertPrints(newFridgeContent, "[Dish(🥦: 34 cal, taste 2.3/5), Dish(🧃: 34 cal, taste 4.9/5), Dish(🍨: 207 cal, taste 4.7/5)]")
+            assertPrints(fridgeContent, "[Dish(🥦: 34 cal, taste 2.3/5), Dish(🧃: 34 cal, taste 4.9/5), Dish(🍨: 207 cal, taste 4.7/5)]")
         }
-        
+
         @Sample
         fun sortByDescending() {
             class Dish(val name: String, val calories: Int, val tasteRate: Float) {
@@ -1331,29 +1324,22 @@ class Collections {
             }
 
             val fridgeContent = mutableListOf(
-                Dish("🍨", 207, 4.7f), 
-                Dish("🥦", 34, 2.3f), 
+                Dish("🍨", 207, 4.7f),
+                Dish("🥦", 34, 2.3f),
                 Dish("🧃", 34, 4.9f)
             )
-            
+
             // original order
             assertPrints(fridgeContent, "[Dish(🍨: 207 cal, taste 4.7/5), Dish(🥦: 34 cal, taste 2.3/5), Dish(🧃: 34 cal, taste 4.9/5)]")
-            
+
             // sort by taste rate (descending)
             fridgeContent.sortByDescending { it.tasteRate }
             assertPrints(fridgeContent, "[Dish(🧃: 34 cal, taste 4.9/5), Dish(🍨: 207 cal, taste 4.7/5), Dish(🥦: 34 cal, taste 2.3/5)]")
-            
-            // create a new list with the same elements
-            val newFridgeContent = mutableListOf(
-                Dish("🍨", 207, 4.7f), 
-                Dish("🥦", 34, 2.3f), 
-                Dish("🧃", 34, 4.9f)
-            )
-            
+
             // sort by calories (descending)
-            newFridgeContent.sortByDescending { it.calories }
-            // note that the sorting is stable, so the 🥦 is before the 🧃
-            assertPrints(newFridgeContent, "[Dish(🍨: 207 cal, taste 4.7/5), Dish(🥦: 34 cal, taste 2.3/5), Dish(🧃: 34 cal, taste 4.9/5)]")
+            fridgeContent.sortByDescending { it.calories }
+            // note that the sorting is stable, so the 🧃 is before the 🥦
+            assertPrints(fridgeContent, "[Dish(🍨: 207 cal, taste 4.7/5), Dish(🧃: 34 cal, taste 4.9/5), Dish(🥦: 34 cal, taste 2.3/5)]")
         }
 
         @Sample
