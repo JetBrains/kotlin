@@ -27,9 +27,8 @@ import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 @KtImplementationDetail
 @Suppress("unused") // Initiated via reflection in 'KotlinElementTypeProvider'
 object KotlinElementTypeProviderImpl : KotlinElementTypeProvider {
-    override val fileType: IFileElementType =
-        KtFileElementType.INSTANCE
-
+    override val fileType: IFileElementType
+        get() = KtFileElementType
 
     // Classifiers
 
