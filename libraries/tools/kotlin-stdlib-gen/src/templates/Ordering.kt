@@ -424,6 +424,12 @@ object Ordering : TemplateGroupBase() {
         returns("Unit")
         typeParam("R : Comparable<R>")
         specialFor(Lists) { receiver("MutableList<T>") }
+        
+        when (f) {
+            Lists -> {
+                sample("samples.collections.Collections.Sorting.sortBy")
+            }
+        }
 
         body { """if (size > 1) sortWith(compareBy(selector))""" }
     }
@@ -477,6 +483,12 @@ object Ordering : TemplateGroupBase() {
         returns("Unit")
         typeParam("R : Comparable<R>")
         specialFor(Lists) { receiver("MutableList<T>") }
+        
+        when (f) {
+            Lists -> {
+                sample("samples.collections.Collections.Sorting.sortByDescending")
+            }
+        }
 
         body {
             """if (size > 1) sortWith(compareByDescending(selector))""" }
