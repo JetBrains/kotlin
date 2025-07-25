@@ -824,4 +824,23 @@ class Strings {
         // list is converted to a String first and then concatenated with the "Numbers: " string
         assertEquals("Numbers: [1, 2, 3]", "Numbers: " + listOf(1, 2, 3))
     }
+    
+    @Sample
+    fun toCollection() {
+        val text = "Hello, World!"
+        
+        // Convert string characters to ArrayList
+        val arrayList = text.toCollection(ArrayList<Char>())
+        assertPrints(arrayList, "[H, e, l, l, o, ,,  , W, o, r, l, d, !]")
+        
+        // Convert string characters to HashSet (duplicates are removed)
+        val hashSet = text.toCollection(HashSet<Char>())
+        // Note: HashSet doesn't guarantee order, so we sort the result for consistent output
+        assertPrints(hashSet.sorted(), "[!, ,, H, W, d, e, l, o, r]")
+        
+        // Append string characters to an existing collection
+        val existingCollection = mutableListOf('a', 'b', 'c')
+        "xyz".toCollection(existingCollection)
+        assertPrints(existingCollection, "[a, b, c, x, y, z]")
+    }
 }

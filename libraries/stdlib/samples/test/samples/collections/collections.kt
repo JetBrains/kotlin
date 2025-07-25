@@ -714,6 +714,47 @@ class Collections {
             // Jacob Bernoulli only occurs once in the map because only the last pair with the same key gets added
             assertPrints(withLengthOfNames, "{Grace Hopper=11, Jacob Bernoulli=14}")
         }
+        
+        @Sample
+        fun toCollection() {
+            val sourceList = listOf(1, 2, 3, 4, 5)
+            
+            // Convert to ArrayList
+            val arrayList = sourceList.toCollection(ArrayList())
+            assertPrints(arrayList, "[1, 2, 3, 4, 5]")
+            
+            // Convert to LinkedList
+            val linkedList = sourceList.toCollection(LinkedList())
+            assertPrints(linkedList, "[1, 2, 3, 4, 5]")
+            
+            // Convert to HashSet (duplicates are removed)
+            val hashSet = listOf(1, 2, 2, 3, 4, 4, 5).toCollection(HashSet())
+            assertPrints(hashSet, "[1, 2, 3, 4, 5]")
+            
+            // Append to an existing collection
+            val existingCollection = mutableListOf("a", "b", "c")
+            val strings = listOf("d", "e", "f")
+            strings.toCollection(existingCollection)
+            assertPrints(existingCollection, "[a, b, c, d, e, f]")
+        }
+        
+        @Sample
+        fun sequenceToCollection() {
+            val sequence = sequenceOf(1, 2, 3, 4, 5)
+            
+            // Convert sequence to ArrayList
+            val arrayList = sequence.toCollection(ArrayList())
+            assertPrints(arrayList, "[1, 2, 3, 4, 5]")
+            
+            // Convert sequence to HashSet
+            val hashSet = sequenceOf(1, 2, 2, 3, 4, 4, 5).toCollection(HashSet())
+            assertPrints(hashSet, "[1, 2, 3, 4, 5]")
+            
+            // Append sequence elements to an existing collection
+            val existingCollection = mutableListOf(10, 20, 30)
+            sequence.toCollection(existingCollection)
+            assertPrints(existingCollection, "[10, 20, 30, 1, 2, 3, 4, 5]")
+        }
 
         @Sample
         fun distinctAndDistinctBy() {

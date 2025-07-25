@@ -154,6 +154,45 @@ class Arrays {
             assertPrints(even, "[2, 4]")
             assertPrints(odd, "[1, 3, 5]")
         }
+        
+        @Sample
+        fun toCollectionArray() {
+            val array = arrayOf("apple", "banana", "cherry", "date")
+            
+            // Convert array to ArrayList
+            val arrayList = array.toCollection(ArrayList<String>())
+            assertPrints(arrayList, "[apple, banana, cherry, date]")
+            
+            // Convert array to HashSet
+            val hashSet = array.toCollection(HashSet<String>())
+            // Note: HashSet doesn't guarantee order, so we sort the result for consistent output
+            assertPrints(hashSet.sorted(), "[apple, banana, cherry, date]")
+            
+            // Append array elements to an existing collection
+            val existingCollection = mutableListOf("kiwi", "lemon")
+            array.toCollection(existingCollection)
+            assertPrints(existingCollection, "[kiwi, lemon, apple, banana, cherry, date]")
+        }
+        
+        @Sample
+        fun toCollectionPrimitiveArray() {
+            val intArray = intArrayOf(1, 2, 3, 4, 5)
+            
+            // Convert primitive array to ArrayList
+            val arrayList = intArray.toCollection(ArrayList<Int>())
+            assertPrints(arrayList, "[1, 2, 3, 4, 5]")
+            
+            // Convert primitive array with duplicates to HashSet (duplicates are removed)
+            val duplicateArray = intArrayOf(1, 2, 2, 3, 3, 3, 4, 5, 5)
+            val hashSet = duplicateArray.toCollection(HashSet<Int>())
+            // Note: HashSet doesn't guarantee order, so we sort the result for consistent output
+            assertPrints(hashSet.sorted(), "[1, 2, 3, 4, 5]")
+            
+            // Append primitive array elements to an existing collection
+            val existingCollection = mutableListOf(10, 20, 30)
+            intArray.toCollection(existingCollection)
+            assertPrints(existingCollection, "[10, 20, 30, 1, 2, 3, 4, 5]")
+        }
     }
 
     class ContentOperations {

@@ -26,6 +26,13 @@ object Snapshots : TemplateGroupBase() {
         annotation("@IgnorableReturnValue")
         returns("C")
         typeParam("C : MutableCollection<in T>")
+        sample(when (family) {
+            CharSequences -> "samples.text.Strings.toCollection"
+            ArraysOfObjects -> "samples.collections.Arrays.Transformations.toCollectionArray"
+            ArraysOfPrimitives -> "samples.collections.Arrays.Transformations.toCollectionPrimitiveArray"
+            Sequences -> "samples.collections.Collections.Transformations.sequenceToCollection"
+            else -> "samples.collections.Collections.Transformations.toCollection"
+        })
         body {
             """
             for (item in this) {
