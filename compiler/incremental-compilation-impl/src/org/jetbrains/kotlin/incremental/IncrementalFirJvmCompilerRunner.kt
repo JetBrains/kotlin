@@ -106,7 +106,7 @@ open class IncrementalFirJvmCompilerRunner(
 
                 setupCommonArguments(args) { MetadataVersion(*it) }
 
-                if (IncrementalCompilation.isEnabledForJvm()) {
+                if (incrementalCompilationIsEnabled(args)) {
                     putIfNotNull(CommonConfigurationKeys.LOOKUP_TRACKER, services[LookupTracker::class.java])
 
                     putIfNotNull(CommonConfigurationKeys.EXPECT_ACTUAL_TRACKER, services[ExpectActualTracker::class.java])
