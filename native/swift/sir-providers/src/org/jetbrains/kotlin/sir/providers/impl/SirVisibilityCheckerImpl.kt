@@ -8,15 +8,18 @@ package org.jetbrains.kotlin.sir.providers.impl
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.components.DefaultTypeClassIds
-import org.jetbrains.kotlin.analysis.api.export.utilities.hasTypeParameter
+import org.jetbrains.kotlin.analysis.api.export.utilities.isAllSuperTypesExported
 import org.jetbrains.kotlin.analysis.api.export.utilities.isClone
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.symbols.markers.KaAnnotatedSymbol
+import org.jetbrains.kotlin.analysis.api.types.KaClassType
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.api.types.symbol
 import org.jetbrains.kotlin.builtins.StandardNames
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.sir.SirAvailability
 import org.jetbrains.kotlin.sir.SirVisibility
 import org.jetbrains.kotlin.sir.providers.SirSession
@@ -24,11 +27,14 @@ import org.jetbrains.kotlin.sir.providers.SirVisibilityChecker
 import org.jetbrains.kotlin.sir.providers.utils.UnsupportedDeclarationReporter
 import org.jetbrains.kotlin.sir.providers.utils.deprecatedAnnotation
 import org.jetbrains.kotlin.sir.providers.utils.isAbstract
+import org.jetbrains.kotlin.sir.providers.utils.isFromTemporarilyIgnoredPackage
+import org.jetbrains.kotlin.sir.providers.withSessions
 import org.jetbrains.kotlin.sir.util.SirPlatformModule
 import org.jetbrains.kotlin.utils.findIsInstanceAnd
-import org.jetbrains.kotlin.sir.providers.withSessions
-import org.jetbrains.kotlin.analysis.api.export.utilities.*
-import org.jetbrains.kotlin.sir.providers.utils.isFromTemporarilyIgnoredPackage
+import org.jetbrains.kotlin.utils.zipIfSizesAreEqual
+import kotlin.collections.plus
+
+private val speciallyBridgedTypes = listOf(StandardClassIds.List, StandardClassIds.Map, StandardClassIds.Set)
 
 public class SirVisibilityCheckerImpl(
     private val sirSession: SirSession,
@@ -58,7 +64,7 @@ public class SirVisibilityCheckerImpl(
         }
 
         // We care only about public API.
-        if (!ktSymbol.compilerVisibility.isPublicAPI) {
+        if (!ktSymbol.compilerVisibility.isPublicAPI || ktSymbol.compilerVisibility == Visibilities.Protected) {
             visibility.value = SirVisibility.PRIVATE
         }
         // Hidden declarations are, well, hidden.
@@ -67,6 +73,15 @@ public class SirVisibilityCheckerImpl(
         }
         if (ktSymbol is KaCallableSymbol && ktSymbol.contextParameters.isNotEmpty()) {
             return@withSessions SirAvailability.Unavailable("Callables with context parameters are not supported yet")
+        }
+        if (ktSymbol is KaFunctionSymbol && ktSymbol.valueParameters.any { it.isVararg }) {
+            return@withSessions SirAvailability.Unavailable("Callables with vararg parameters are not supported yet")
+        }
+        if (ktSymbol is KaNamedFunctionSymbol && ktSymbol.allParameters.map { it.returnType.fullyExpandedType }
+                .filter { type -> !type.isFunctionType && speciallyBridgedTypes.none { type.isClassType(it) } }
+                .any { hasUnboundTypeParameters(it) }
+        ) {
+            return@withSessions SirAvailability.Unavailable("Callables with vararg parameters are not supported yet")
         }
         if (containsHidesFromObjCAnnotation(ktSymbol)) {
             return@withSessions SirAvailability.Unavailable("Declaration is @HiddenFromObjC")
@@ -223,3 +238,18 @@ private fun KaSession.containsHidesFromObjCAnnotation(symbol: KaAnnotatedSymbol)
 
 
 private val SUPPORTED_SYMBOL_ORIGINS = setOf(KaSymbolOrigin.SOURCE, KaSymbolOrigin.LIBRARY)
+
+@OptIn(KaExperimentalApi::class)
+private fun KaSession.hasUnboundTypeParameters(type: KaType): Boolean = (type.fullyExpandedType as? KaClassType)?.let { classType ->
+    val typeParameters = classType.symbol.typeParameters.also { it.ifEmpty { return@let false } }
+
+    if (typeParameters.isEmpty()) return@let false
+
+    classType.typeArguments
+        .zipIfSizesAreEqual(typeParameters.map { typeParam -> typeParam.upperBounds.singleOrNull() }) // null indicates multiple bounds
+        ?.any { (argument, bound) -> argument.type?.let { it != bound } ?: false }  // .type == null indicates star projection
+        ?: false
+} ?: false
+
+@OptIn(KaExperimentalApi::class)
+private val KaFunctionSymbol.allParameters get() = valueParameters + listOfNotNull(receiverParameter, receiverParameter) + contextParameters

@@ -245,7 +245,8 @@ public fun __root___customFilter__TypesOfArguments__Swift_Array_Swift_Optional_K
     val __predicate = run {
         val kotlinFun = convertBlockPtrToKotlinFunction<(kotlin.native.internal.NativePtr)->Boolean>(predicate);
         { arg0: kotlin.Any? ->
-            kotlinFun(if (arg0 == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(arg0))
+            val _result = kotlinFun(if (arg0 == null) kotlin.native.internal.NativePtr.NULL else kotlin.native.internal.ref.createRetainedExternalRCRef(arg0))
+            _result
         }
     }
     val _result = __receiver.customFilter(__predicate)

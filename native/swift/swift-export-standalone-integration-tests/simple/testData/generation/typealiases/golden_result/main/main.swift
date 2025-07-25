@@ -337,7 +337,7 @@ open class SEALED: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged
                 return main.SEALED.O.__createClassWrapper(externalRCRef: SEALED_O_get())
             }
         }
-        private override init() {
+        private init() {
             fatalError()
         }
         package override init(
@@ -346,9 +346,6 @@ open class SEALED: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged
         ) {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
         }
-    }
-    package init() {
-        fatalError()
     }
     package override init(
         __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,

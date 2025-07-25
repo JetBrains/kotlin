@@ -39,7 +39,7 @@ private fun bridgeNominalType(type: SirNominalType): Bridge {
     }
 
     return when (val subtype = type.typeDeclaration) {
-        SirSwiftModule.void -> Bridge.AsIs(type, KotlinType.Unit, CType.Void)
+        SirSwiftModule.void -> Bridge.AsVoid
 
         SirSwiftModule.bool -> Bridge.AsIs(type, KotlinType.Boolean, CType.Bool)
 
@@ -124,7 +124,7 @@ internal data class BridgeParameter(
     val name: String,
     val bridge: Bridge,
 ) {
-    var isRenderable: Boolean = bridge !is Bridge.AsOptionalNothing && (bridge !is Bridge.AsIs || bridge.cType != CType.Void)
+    var isRenderable: Boolean = bridge !is Bridge.AsOptionalNothing && bridge !is Bridge.AsVoid
 }
 
 internal val SirType.isChar: Boolean
@@ -168,6 +168,18 @@ internal sealed class Bridge(
             override fun renderNil(): String = "nil"
         }
     }
+
+    object AsVoid : Bridge(SirNominalType(SirSwiftModule.void), KotlinType.Unit, CType.Void) {
+        override val inKotlinSources = object : ValueConversion {
+            override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String): String = "Unit"
+            override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String): String = valueExpression
+
+        }
+        override val inSwiftSources = object : NilableIdentityValueConversion {
+            override fun renderNil(): String = "nil"
+        }
+    }
+
 
     class AsObject(swiftType: SirType, kotlinType: KotlinType, cType: CType) : Bridge(swiftType, kotlinType, cType) {
         override val inKotlinSources = object : ValueConversion {
@@ -428,6 +440,7 @@ internal sealed class Bridge(
                         wrappedObject.inSwiftSources.kotlinToSwift(typeNamer, "res")
                     }; } }()"
                     is AsIs,
+                    is AsVoid,
                     is AsOpaqueObject,
                     is AsOutError,
                         -> TODO("not yet supported")
@@ -481,7 +494,8 @@ internal sealed class Bridge(
                     return """run {    
                     |    val kotlinFun = convertBlockPtrToKotlinFunction<$kotlinFunctionTypeRendered>($valueExpression);
                     |    {${defineArgs ?: ""}
-                    |        ${returnType.inKotlinSources.swiftToKotlin(typeNamer, "kotlinFun(${callArgs})")} 
+                    |        val _result = kotlinFun($callArgs)
+                    |        ${returnType.inKotlinSources.swiftToKotlin(typeNamer, "_result")} 
                     |    }
                     |}""".replaceIndentByMargin("    ")
                 }
