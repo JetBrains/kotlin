@@ -333,6 +333,8 @@ object FirTree : AbstractFirTreeBuilder() {
     val collectionLiteralCall: Element by element(Expression) {
         parent(arrayLiteral)
         parent(resolvable)
+
+        +field("calleeReference", namedReference)
     }
 
     val checkNotNullCall: Element by element(Expression) {
