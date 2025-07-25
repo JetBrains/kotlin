@@ -6,6 +6,7 @@ description = "kotlinp-jvm"
 plugins {
     kotlin("jvm")
     id("jps-compatible")
+    id("compiler-tests-convention")
 }
 
 val shadows by configurations.creating
@@ -43,12 +44,13 @@ sourceSets {
     }
 }
 
-projectTest(parallel = true, jUnitMode = JUnitMode.JUnit5) {
-    workingDir = rootDir
-    useJUnitPlatform()
-}
+compilerTests {
+    testTask(jUnitMode = JUnitMode.JUnit5) {
+        workingDir = rootDir
+    }
 
-val generateTests by generator("org.jetbrains.kotlin.kotlinp.jvm.test.GenerateKotlinpTestsKt")
+    testGenerator("org.jetbrains.kotlin.kotlinp.jvm.test.GenerateKotlinpTestsKt")
+}
 
 val shadowJar by task<ShadowJar> {
     archiveClassifier.set("shadow")

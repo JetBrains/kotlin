@@ -2,6 +2,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 
 plugins {
     kotlin("jvm")
+    id("compiler-tests-convention")
 }
 
 val embeddableTestRuntime by configurations.creating {
@@ -49,27 +50,29 @@ tasks.withType<KotlinJvmCompile>().configureEach {
     compilerOptions.freeCompilerArgs.add("-Xallow-kotlin-package")
 }
 
-projectTest(parallel = true, jUnitMode = JUnitMode.JUnit5, defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_17_0)) {
-    dependsOn(":dist")
-    workingDir = rootDir
-    val testRuntimeProvider = project.provider { testJsr223Runtime.asPath }
-    val testCompilationClasspathProvider = project.provider { testCompilationClasspath.asPath }
-    doFirst {
-        systemProperty("testJsr223RuntimeClasspath", testRuntimeProvider.get())
-        systemProperty("testCompilationClasspath", testCompilationClasspathProvider.get())
-        systemProperty("kotlin.script.base.compiler.arguments", "-language-version 1.9")
+compilerTests {
+    testTask(jUnitMode = JUnitMode.JUnit5, defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_17_0)) {
+        dependsOn(":dist")
+        workingDir = rootDir
+        val testRuntimeProvider = project.provider { testJsr223Runtime.asPath }
+        val testCompilationClasspathProvider = project.provider { testCompilationClasspath.asPath }
+        doFirst {
+            systemProperty("testJsr223RuntimeClasspath", testRuntimeProvider.get())
+            systemProperty("testCompilationClasspath", testCompilationClasspathProvider.get())
+            systemProperty("kotlin.script.base.compiler.arguments", "-language-version 1.9")
+        }
     }
-}
 
-projectTest(taskName = "embeddableTest", jUnitMode = JUnitMode.JUnit5, parallel = true) {
-    workingDir = rootDir
-    dependsOn(embeddableTestRuntime)
-    classpath = embeddableTestRuntime
-    val testRuntimeProvider = project.provider { embeddableTestRuntime.asPath }
-    val testCompilationClasspathProvider = project.provider { testCompilationClasspath.asPath }
-    doFirst {
-        systemProperty("testJsr223RuntimeClasspath", testRuntimeProvider.get())
-        systemProperty("testCompilationClasspath", testCompilationClasspathProvider.get())
-        systemProperty("kotlin.script.base.compiler.arguments", "-language-version 1.9")
+    testTask("embeddableTest", jUnitMode = JUnitMode.JUnit5, parallel = true, skipInLocalBuild = false) {
+        workingDir = rootDir
+        dependsOn(embeddableTestRuntime)
+        classpath = embeddableTestRuntime
+        val testRuntimeProvider = project.provider { embeddableTestRuntime.asPath }
+        val testCompilationClasspathProvider = project.provider { testCompilationClasspath.asPath }
+        doFirst {
+            systemProperty("testJsr223RuntimeClasspath", testRuntimeProvider.get())
+            systemProperty("testCompilationClasspath", testCompilationClasspathProvider.get())
+            systemProperty("kotlin.script.base.compiler.arguments", "-language-version 1.9")
+        }
     }
 }

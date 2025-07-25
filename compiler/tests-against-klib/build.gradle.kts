@@ -31,12 +31,10 @@ compilerTests {
     // - compiler/testData/codegen/boxKlib/properties.kt
     // - compiler/testData/codegen/boxKlib/simple.kt
     testData(project(":compiler").isolated, "testData/codegen/boxKlib")
-}
 
-projectTest(parallel = true, jUnitMode = JUnitMode.JUnit4) {
-    useJUnitPlatform()
+    testTask(jUnitMode = JUnitMode.JUnit5)
+
+    testGenerator("org.jetbrains.kotlin.generators.tests.GenerateCompilerTestsAgainstKlibKt")
 }
 
 optInToK1Deprecation()
-
-val generateTests by generator("org.jetbrains.kotlin.generators.tests.GenerateCompilerTestsAgainstKlibKt")

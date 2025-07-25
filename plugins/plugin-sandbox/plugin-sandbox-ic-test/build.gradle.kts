@@ -2,6 +2,7 @@ plugins {
     kotlin("jvm")
     id("jps-compatible")
     id("java-test-fixtures")
+    id("compiler-tests-convention")
 }
 
 dependencies {
@@ -30,12 +31,13 @@ sourceSets {
     "testFixtures" { projectDefault() }
 }
 
-projectTest(parallel = true, jUnitMode = JUnitMode.JUnit4, maxHeapSizeMb = 3072) {
-    dependsOn(":dist")
-    workingDir = rootDir
-    useJUnitPlatform()
-    dependsOn(":plugins:plugin-sandbox:jar")
-    dependsOn(":plugins:plugin-sandbox:plugin-annotations:distAnnotations")
+compilerTests {
+    testTask(jUnitMode = JUnitMode.JUnit5, maxHeapSizeMb = 3072) {
+        dependsOn(":dist")
+        workingDir = rootDir
+        dependsOn(":plugins:plugin-sandbox:jar")
+        dependsOn(":plugins:plugin-sandbox:plugin-annotations:distAnnotations")
+    }
 }
 
 testsJar()

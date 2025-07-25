@@ -8,6 +8,7 @@ plugins {
     id("org.jetbrains.kotlin.jvm")
     id("jps-compatible")
     `maven-publish`
+    id("compiler-tests-convention")
 }
 
 configureKotlinCompileTasksGradleCompatibility()
@@ -22,8 +23,10 @@ dependencies {
     testImplementation(libs.junit4)
 }
 
-projectTest(jUnitMode = JUnitMode.JUnit4) {
-    workingDir = rootDir
+compilerTests {
+    testTask(jUnitMode = JUnitMode.JUnit4) {
+        workingDir = rootDir
+    }
 }
 
 publishing {

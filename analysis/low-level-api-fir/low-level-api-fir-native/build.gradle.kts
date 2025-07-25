@@ -1,6 +1,7 @@
 plugins {
     kotlin("jvm")
     id("java-test-fixtures")
+    id("compiler-tests-convention")
 }
 
 dependencies {
@@ -22,10 +23,11 @@ sourceSets {
     "testFixtures" { projectDefault() }
 }
 
-projectTest(jUnitMode = JUnitMode.JUnit5) {
-    dependsOn(":dist")
-    workingDir = rootDir
-    useJUnitPlatform()
+compilerTests {
+    testTask(jUnitMode = JUnitMode.JUnit5) {
+        dependsOn(":dist")
+        workingDir = rootDir
+    }
 }
 
 nativeTest("llFirNativeTests", "llFirNative", requirePlatformLibs = true)

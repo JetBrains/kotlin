@@ -7,6 +7,7 @@ plugins {
     kotlin("jvm")
     id("jps-compatible")
     id("generated-sources")
+    id("compiler-tests-convention")
 }
 
 dependencies {
@@ -31,8 +32,10 @@ sourceSets {
     "test" { none() }
 }
 
-projectTest(parallel = true, jUnitMode = JUnitMode.JUnit4) {
-    workingDir = rootDir
+compilerTests {
+    testTask(jUnitMode = JUnitMode.JUnit4, parallel = true) {
+        workingDir = rootDir
+    }
 }
 
 generatedDiagnosticContainersAndCheckerComponents()

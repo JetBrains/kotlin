@@ -5,6 +5,7 @@ plugins {
     kotlin("jvm")
     id("jps-compatible")
     kotlin("plugin.serialization")
+    id("compiler-tests-convention")
 }
 
 repositories {
@@ -98,12 +99,14 @@ tasks.withType<KotlinJvmCompile>().configureEach {
     compilerOptions.freeCompilerArgs.add("-Xskip-prerelease-check")
 }
 
-projectTest("test", true, jUnitMode = JUnitMode.JUnit4) {
-    dependsOn(unzipWabt)
-    dependsOn(unzipTestSuite)
-    systemProperty("wabt.bin.path", "$wabtDir/wabt-$wabtVersion/bin")
-    systemProperty("wasm.testsuite.path", "$testSuiteDir/WebAssembly-testsuite-$testSuiteRevision")
-    workingDir = projectDir
+compilerTests {
+    testTask(parallel = true, jUnitMode = JUnitMode.JUnit4) {
+        dependsOn(unzipWabt)
+        dependsOn(unzipTestSuite)
+        systemProperty("wabt.bin.path", "$wabtDir/wabt-$wabtVersion/bin")
+        systemProperty("wasm.testsuite.path", "$testSuiteDir/WebAssembly-testsuite-$testSuiteRevision")
+        workingDir = projectDir
+    }
 }
 
 testsJar()

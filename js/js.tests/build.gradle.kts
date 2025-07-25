@@ -12,6 +12,7 @@ plugins {
     alias(libs.plugins.gradle.node)
     id("d8-configuration")
     id("java-test-fixtures")
+    id("compiler-tests-convention")
 }
 
 val cacheRedirectorEnabled = findProperty("cacheRedirectorEnabled")?.toString()?.toBoolean() == true
@@ -224,73 +225,53 @@ fun Test.setUpBoxTests() {
     forwardProperties()
 }
 
-projectTest("test", jUnitMode = JUnitMode.JUnit5) {
-    setUpJsBoxTests(null)
+compilerTests {
+    testTask(jUnitMode = JUnitMode.JUnit5) {
+        setUpJsBoxTests(null)
 
-    inputs.dir(rootDir.resolve("compiler/cli/cli-common/resources")) // compiler.xml
+        inputs.dir(rootDir.resolve("compiler/cli/cli-common/resources")) // compiler.xml
 
-    inputs.dir(testDataDir)
-    inputs.dir(rootDir.resolve("dist"))
-    inputs.dir(rootDir.resolve("compiler/testData"))
+        inputs.dir(testDataDir)
+        inputs.dir(rootDir.resolve("dist"))
+        inputs.dir(rootDir.resolve("compiler/testData"))
 
-    outputs.dir(layout.buildDirectory.dir("out"))
-    outputs.dir(layout.buildDirectory.dir("out-min"))
+        outputs.dir(layout.buildDirectory.dir("out"))
+        outputs.dir(layout.buildDirectory.dir("out-min"))
 
-    configureTestDistribution()
-}
+        configureTestDistribution()
+    }
 
-if (kotlinBuildProperties.isTeamcityBuild) {
-    projectTest("jsIrTest", jUnitMode = JUnitMode.JUnit5) {
+    testTask("jsIrTest", jUnitMode = JUnitMode.JUnit5, skipInLocalBuild = true) {
         setUpJsBoxTests("legacy-frontend & !es6")
-        useJUnitPlatform()
     }
 
-    projectTest("jsIrES6Test", jUnitMode = JUnitMode.JUnit5) {
+    testTask("jsIrES6Test", jUnitMode = JUnitMode.JUnit5, skipInLocalBuild = true) {
         setUpJsBoxTests("legacy-frontend & es6")
-        useJUnitPlatform()
     }
 
-    projectTest("jsFirTest", jUnitMode = JUnitMode.JUnit5) {
+    testTask("jsFirTest", jUnitMode = JUnitMode.JUnit5, skipInLocalBuild = true) {
         setUpJsBoxTests("!legacy-frontend & !es6")
-        useJUnitPlatform()
     }
 
-    projectTest("jsFirES6Test", jUnitMode = JUnitMode.JUnit5) {
+    testTask("jsFirES6Test", jUnitMode = JUnitMode.JUnit5, skipInLocalBuild = true) {
         setUpJsBoxTests("!legacy-frontend & es6")
-        useJUnitPlatform()
     }
 
-    projectTest("invalidationTest", jUnitMode = JUnitMode.JUnit5) {
+    testTask("invalidationTest", jUnitMode = JUnitMode.JUnit5, skipInLocalBuild = true) {
         workingDir = rootDir
 
         useJsIrBoxTests(version = version, buildDir = layout.buildDirectory)
         include("org/jetbrains/kotlin/incremental/*")
         dependsOn(":dist")
         forwardProperties()
-        useJUnitPlatform()
     }
-} else {
-    /*
-     * There is no much sense in those configurations in the local development.
-     * They actually reduce the UX of running tests, as IDEA suggests choosing one of three
-     *   test tasks when you run any test.
-     * So to fix this inconvenience in the local environment, those
-     *   tasks just do nothing (and not inherit TestTask), so the IDEA won't see them.
-    */
-    tasks.register("jsIrTest")
-    tasks.register("jsIrES6Test")
-    tasks.register("jsFirTest")
-    tasks.register("jsFirES6Test")
-    tasks.register("invalidationTest")
+
+    testGenerator("org.jetbrains.kotlin.generators.tests.GenerateJsTestsKt") {
+        dependsOn(":compiler:generateTestData")
+    }
 }
 
 testsJar {}
-
-@Suppress("unused")
-val generateTests by generator("org.jetbrains.kotlin.generators.tests.GenerateJsTestsKt") {
-    dependsOn(":compiler:generateTestData")
-}
-
 
 val testJsFile = testDataDir.resolve("test.js")
 val packageJsonFile = testDataDir.resolve("package.json")

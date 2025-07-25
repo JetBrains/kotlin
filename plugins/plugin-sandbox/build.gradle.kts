@@ -3,6 +3,7 @@ plugins {
     id("jps-compatible")
     id("d8-configuration")
     id("java-test-fixtures")
+    id("compiler-tests-convention")
 }
 
 dependencies {
@@ -63,13 +64,12 @@ sourceSets {
     }
 }
 
-projectTest(parallel = true, jUnitMode = JUnitMode.JUnit5) {
-    dependsOn(":dist")
-    workingDir = rootDir
-    useJUnitPlatform()
-    useJsIrBoxTests(version = version, buildDir = layout.buildDirectory)
-}.also { confugureFirPluginAnnotationsDependency(it) }
+compilerTests {
+    testTask(jUnitMode = JUnitMode.JUnit5) {
+        dependsOn(":dist")
+        workingDir = rootDir
+        useJsIrBoxTests(version = version, buildDir = layout.buildDirectory)
+    }.also { confugureFirPluginAnnotationsDependency(it) }
 
-testsJar()
-
-val generateTests by generator("org.jetbrains.kotlin.plugin.sandbox.TestGeneratorKt")
+    testGenerator("org.jetbrains.kotlin.plugin.sandbox.TestGeneratorKt")
+}

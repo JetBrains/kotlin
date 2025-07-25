@@ -2,6 +2,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 
 plugins {
     kotlin("jvm")
+    id("compiler-tests-convention")
 }
 
 dependencies {
@@ -31,25 +32,25 @@ tasks.withType<KotlinJvmCompile>().configureEach {
     compilerOptions.freeCompilerArgs.add("-Xallow-kotlin-package")
 }
 
-projectTest(parallel = true, jUnitMode = JUnitMode.JUnit5) {
-    dependsOn(":dist")
-    workingDir = rootDir
-    useJUnitPlatform()
-}
+compilerTests {
+    testTask(jUnitMode = JUnitMode.JUnit5) {
+        dependsOn(":dist")
+        workingDir = rootDir
+    }
 
-// This doesn;t work now due to conflicts between embeddable compiler contents and intellij sdk modules
-// To make it work, the dependencies to the intellij sdk should be eliminated
-//projectTest(taskName = "embeddableTest", parallel = true) {
-//    workingDir = rootDir
-//    dependsOn(embeddableTestRuntime)
-//    classpath = embeddableTestRuntime
-//}
+    // This doesn;t work now due to conflicts between embeddable compiler contents and intellij sdk modules
+    // To make it work, the dependencies to the intellij sdk should be eliminated
+    //projectTest(taskName = "embeddableTest", parallel = true) {
+    //    workingDir = rootDir
+    //    dependsOn(embeddableTestRuntime)
+    //    classpath = embeddableTestRuntime
+    //}
 
-projectTest(taskName = "testWithK1", parallel = true, jUnitMode = JUnitMode.JUnit5) {
-    dependsOn(":dist")
-    workingDir = rootDir
-    useJUnitPlatform()
-    doFirst {
-        systemProperty("kotlin.script.base.compiler.arguments", "-language-version 1.9")
+    testTask(taskName = "testWithK1", parallel = true, jUnitMode = JUnitMode.JUnit5, skipInLocalBuild = false) {
+        dependsOn(":dist")
+        workingDir = rootDir
+        doFirst {
+            systemProperty("kotlin.script.base.compiler.arguments", "-language-version 1.9")
+        }
     }
 }

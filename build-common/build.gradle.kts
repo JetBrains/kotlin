@@ -4,6 +4,7 @@ plugins {
     kotlin("jvm")
     id("jps-compatible")
     id("gradle-plugin-compiler-dependency-configuration")
+    id("compiler-tests-convention")
 }
 
 dependencies {
@@ -42,8 +43,7 @@ sourceSets {
 
 testsJar()
 
-projectTest(parallel = true, jUnitMode = JUnitMode.JUnit4)
-
-projectTest("testJUnit5", jUnitMode = JUnitMode.JUnit5, parallel = true) {
-    useJUnitPlatform()
+compilerTests {
+    testTask(parallel = true, jUnitMode = JUnitMode.JUnit4)
+    testTask("testJUnit5", jUnitMode = JUnitMode.JUnit5, skipInLocalBuild = false)
 }

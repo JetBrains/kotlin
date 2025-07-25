@@ -65,6 +65,7 @@ plugins {
     alias(libs.plugins.gradle.node) apply false
     id("nodejs-cache-redirector-configuration")
     id("gradle-plugins-documentation") apply false
+    id("compiler-tests-convention") apply false
 }
 
 val isTeamcityBuild = project.kotlinBuildProperties.isTeamcityBuild

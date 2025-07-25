@@ -1,6 +1,7 @@
 plugins {
     kotlin("jvm")
     id("java-test-fixtures")
+    id("compiler-tests-convention")
 }
 
 val dataframeRuntimeClasspath by configurations.creating
@@ -37,13 +38,14 @@ sourceSets {
     "testFixtures" { projectDefault() }
 }
 
-projectTest(parallel = true, jUnitMode = JUnitMode.JUnit5) {
-    dependsOn(":dist")
-    workingDir = rootDir
-    useJUnitPlatform()
-    val classpathProvider = objects.newInstance<DataFramePluginClasspathProvider>()
-    classpathProvider.classpath.from(dataframeRuntimeClasspath)
-    jvmArgumentProviders.add(classpathProvider)
+compilerTests {
+    testTask(jUnitMode = JUnitMode.JUnit5) {
+        dependsOn(":dist")
+        workingDir = rootDir
+        val classpathProvider = objects.newInstance<DataFramePluginClasspathProvider>()
+        classpathProvider.classpath.from(dataframeRuntimeClasspath)
+        jvmArgumentProviders.add(classpathProvider)
+    }
 }
 
 abstract class DataFramePluginClasspathProvider : CommandLineArgumentProvider {

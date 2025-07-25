@@ -3,6 +3,7 @@ description = "Kotlin \"main\" script definition tests"
 
 plugins {
     kotlin("jvm")
+    id("compiler-tests-convention")
 }
 
 val kotlinxSerializationGradlePluginClasspath by configurations.creating
@@ -23,22 +24,24 @@ sourceSets {
     "test" { projectDefault() }
 }
 
-projectTest(parallel = true, jUnitMode = JUnitMode.JUnit4) {
-    dependsOn(":dist", ":kotlinx-serialization-compiler-plugin.embeddable:embeddable")
-    workingDir = rootDir
-    val localKotlinxSerializationPluginClasspath: FileCollection = kotlinxSerializationGradlePluginClasspath
-    doFirst {
-        systemProperty("kotlin.script.test.kotlinx.serialization.plugin.classpath", localKotlinxSerializationPluginClasspath.asPath)
+compilerTests {
+    testTask(parallel = true, jUnitMode = JUnitMode.JUnit4) {
+        dependsOn(":dist", ":kotlinx-serialization-compiler-plugin.embeddable:embeddable")
+        workingDir = rootDir
+        val localKotlinxSerializationPluginClasspath: FileCollection = kotlinxSerializationGradlePluginClasspath
+        doFirst {
+            systemProperty("kotlin.script.test.kotlinx.serialization.plugin.classpath", localKotlinxSerializationPluginClasspath.asPath)
+        }
     }
-}
 
-projectTest(taskName = "testWithK1", parallel = true, jUnitMode = JUnitMode.JUnit4) {
-    dependsOn(":dist", ":kotlinx-serialization-compiler-plugin.embeddable:embeddable")
-    workingDir = rootDir
-    val localKotlinxSerializationPluginClasspath: FileCollection = kotlinxSerializationGradlePluginClasspath
-    doFirst {
-        systemProperty("kotlin.script.test.kotlinx.serialization.plugin.classpath", localKotlinxSerializationPluginClasspath.asPath)
-        systemProperty("kotlin.script.base.compiler.arguments", "-language-version 1.9")
-        systemProperty("kotlin.script.test.base.compiler.arguments", "-language-version 1.9")
+    testTask("testWithK1", parallel = true, jUnitMode = JUnitMode.JUnit4, skipInLocalBuild = true) {
+        dependsOn(":dist", ":kotlinx-serialization-compiler-plugin.embeddable:embeddable")
+        workingDir = rootDir
+        val localKotlinxSerializationPluginClasspath: FileCollection = kotlinxSerializationGradlePluginClasspath
+        doFirst {
+            systemProperty("kotlin.script.test.kotlinx.serialization.plugin.classpath", localKotlinxSerializationPluginClasspath.asPath)
+            systemProperty("kotlin.script.base.compiler.arguments", "-language-version 1.9")
+            systemProperty("kotlin.script.test.base.compiler.arguments", "-language-version 1.9")
+        }
     }
 }

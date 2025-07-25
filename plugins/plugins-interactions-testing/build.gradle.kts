@@ -2,6 +2,7 @@ plugins {
     kotlin("jvm")
     id("jps-compatible")
     id("java-test-fixtures")
+    id("compiler-tests-convention")
 }
 
 val beforePluginClasspath: Configuration by configurations.creating
@@ -47,14 +48,16 @@ runtimeJar()
 sourcesJar()
 testsJar()
 
-projectTest(jUnitMode = JUnitMode.JUnit5) {
-    dependsOn(":dist")
-    workingDir = rootDir
-    useJUnitPlatform()
+compilerTests {
+    testTask(jUnitMode = JUnitMode.JUnit5) {
+        dependsOn(":dist")
+        workingDir = rootDir
+        useJUnitPlatform()
 
-    addClasspathProperty(beforePluginClasspath, "plugin.classpath.before")
-    addClasspathProperty(middlePluginClasspath, "plugin.classpath.middle")
-    addClasspathProperty(afterPluginClasspath, "plugin.classpath.after")
+        addClasspathProperty(beforePluginClasspath, "plugin.classpath.before")
+        addClasspathProperty(middlePluginClasspath, "plugin.classpath.middle")
+        addClasspathProperty(afterPluginClasspath, "plugin.classpath.after")
+    }
 }
 
 fun Test.addClasspathProperty(configuration: Configuration, property: String) {

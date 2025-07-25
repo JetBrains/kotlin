@@ -12,6 +12,7 @@ plugins {
     id("binaryen-configuration")
     id("nodejs-configuration")
     id("java-test-fixtures")
+    id("compiler-tests-convention")
 }
 
 node {
@@ -265,53 +266,52 @@ fun Test.setupWasmEdge() {
 
 testsJar {}
 
-val generateTests by generator("org.jetbrains.kotlin.generators.tests.GenerateWasmTestsKt") {
-    dependsOn(":compiler:generateTestData")
-}
-
-fun Project.wasmProjectTest(
-    taskName: String,
-    body: Test.() -> Unit = {}
-): TaskProvider<Test> {
-    return projectTest(
-        taskName = taskName,
-        parallel = true,
-        jUnitMode = JUnitMode.JUnit5
-    ) {
-        workingDir = rootDir
-        with(d8KotlinBuild) {
-            setupV8()
-        }
-        with(nodeJsKotlinBuild) {
-            setupNodeJs()
-        }
-        with(binaryenKotlinBuild) {
-            setupBinaryen()
-        }
-        setupSpiderMonkey()
-        setupWasmEdge()
-        useJUnitPlatform()
-        setupWasmStdlib("js")
-        setupWasmStdlib("wasi")
-        setupGradlePropertiesForwarding()
-        systemProperty("kotlin.wasm.test.root.out.dir", "${layout.buildDirectory.get().asFile}/")
-        body()
+compilerTests {
+    testGenerator("org.jetbrains.kotlin.generators.tests.GenerateWasmTestsKt") {
+        dependsOn(":compiler:generateTestData")
     }
-}
 
-// Test everything
-wasmProjectTest("test")
+    fun wasmProjectTest(taskName: String, skipInLocalBuild: Boolean = false, body: Test.() -> Unit = {}) {
+        testTask(
+            taskName = taskName,
+            jUnitMode = JUnitMode.JUnit5,
+            skipInLocalBuild = skipInLocalBuild,
+        ) {
+            workingDir = rootDir
+            with(d8KotlinBuild) {
+                setupV8()
+            }
+            with(nodeJsKotlinBuild) {
+                setupNodeJs()
+            }
+            with(binaryenKotlinBuild) {
+                setupBinaryen()
+            }
+            setupSpiderMonkey()
+            setupWasmEdge()
+            useJUnitPlatform()
+            setupWasmStdlib("js")
+            setupWasmStdlib("wasi")
+            setupGradlePropertiesForwarding()
+            systemProperty("kotlin.wasm.test.root.out.dir", "${layout.buildDirectory.get().asFile}/")
+            body()
+        }
+    }
 
-wasmProjectTest("testFir") {
-    dependsOn(generateTypeScriptTests)
-    include("**/Fir*.class")
-}
+    // Test everything
+    wasmProjectTest("test")
 
-wasmProjectTest("testK1") {
-    dependsOn(generateTypeScriptTests)
-    include("**/K1*.class")
-}
+    wasmProjectTest("testFir", skipInLocalBuild = true) {
+        dependsOn(generateTypeScriptTests)
+        include("**/Fir*.class")
+    }
 
-wasmProjectTest("diagnosticTest") {
-    include("**/Diagnostics*.class")
+    wasmProjectTest("testK1", skipInLocalBuild = true) {
+        dependsOn(generateTypeScriptTests)
+        include("**/K1*.class")
+    }
+
+    wasmProjectTest("diagnosticTest", skipInLocalBuild = true) {
+        include("**/Diagnostics*.class")
+    }
 }

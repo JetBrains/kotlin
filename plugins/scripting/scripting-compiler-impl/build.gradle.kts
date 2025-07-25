@@ -5,6 +5,7 @@ description = "Kotlin Compiler Infrastructure for Scripting"
 plugins {
     kotlin("jvm")
     id("jps-compatible")
+    id("compiler-tests-convention")
 }
 
 dependencies {
@@ -51,6 +52,8 @@ runtimeJar()
 sourcesJar()
 javadocJar()
 
-projectTest(jUnitMode = JUnitMode.JUnit4) {
-    workingDir = rootDir
+compilerTests {
+    testTask(jUnitMode = JUnitMode.JUnit4) {
+        workingDir = rootDir
+    }
 }

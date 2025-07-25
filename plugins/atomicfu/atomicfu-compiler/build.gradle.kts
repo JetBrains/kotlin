@@ -10,6 +10,7 @@ plugins {
     kotlin("jvm")
     id("jps-compatible")
     id("d8-configuration")
+    id("compiler-tests-convention")
 }
 
 // WARNING: Native target is host-dependent. Re-running the same build on another host OS may bring to a different result.
@@ -183,28 +184,35 @@ sourceSets {
 
 testsJar()
 
-projectTest(jUnitMode = JUnitMode.JUnit5) {
-    useJUnitPlatform {
-        // Exclude all tests with the "atomicfu-native" tag. They should be launched by another test task.
-        excludeTags("atomicfu-native")
+compilerTests {
+    testTask(jUnitMode = JUnitMode.JUnit5) {
+        useJUnitPlatform {
+            // Exclude all tests with the "atomicfu-native" tag. They should be launched by another test task.
+            excludeTags("atomicfu-native")
+        }
+        useJsIrBoxTests(version = version, buildDir = layout.buildDirectory)
+
+        workingDir = rootDir
+
+        dependsOn(":dist")
+        dependsOn(atomicfuJsIrRuntimeForTests)
+
+        val localAtomicfuJsIrRuntimeForTests: FileCollection = atomicfuJsIrRuntimeForTests
+        val localAtomicfuJsClasspath: FileCollection = atomicfuJsClasspath
+        val localAtomicfuJvmClasspath: FileCollection = atomicfuJvmClasspath
+        val localAtomicfuCompilerPluginClasspath: FileCollection = atomicfuCompilerPluginForTests
+
+        doFirst {
+            systemProperty("atomicfuJsIrRuntimeForTests.classpath", localAtomicfuJsIrRuntimeForTests.asPath)
+            systemProperty("atomicfuJs.classpath", localAtomicfuJsClasspath.asPath)
+            systemProperty("atomicfuJvm.classpath", localAtomicfuJvmClasspath.asPath)
+            systemProperty("atomicfu.compiler.plugin", localAtomicfuCompilerPluginClasspath.asPath)
+        }
     }
-    useJsIrBoxTests(version = version, buildDir = layout.buildDirectory)
 
-    workingDir = rootDir
-
-    dependsOn(":dist")
-    dependsOn(atomicfuJsIrRuntimeForTests)
-
-    val localAtomicfuJsIrRuntimeForTests: FileCollection = atomicfuJsIrRuntimeForTests
-    val localAtomicfuJsClasspath: FileCollection = atomicfuJsClasspath
-    val localAtomicfuJvmClasspath: FileCollection = atomicfuJvmClasspath
-    val localAtomicfuCompilerPluginClasspath: FileCollection = atomicfuCompilerPluginForTests
-
-    doFirst {
-        systemProperty("atomicfuJsIrRuntimeForTests.classpath", localAtomicfuJsIrRuntimeForTests.asPath)
-        systemProperty("atomicfuJs.classpath", localAtomicfuJsClasspath.asPath)
-        systemProperty("atomicfuJvm.classpath", localAtomicfuJvmClasspath.asPath)
-        systemProperty("atomicfu.compiler.plugin", localAtomicfuCompilerPluginClasspath.asPath)
+    testGenerator("org.jetbrains.kotlin.generators.tests.GenerateAtomicfuTestsKt") {
+        javaLauncher.set(project.getToolchainLauncherFor(JdkMajorVersion.JDK_11_0))
+        dependsOn(":compiler:generateTestData")
     }
 }
 
@@ -245,7 +253,4 @@ tasks.named("check") {
     }
 }
 
-val generateTests by generator("org.jetbrains.kotlin.generators.tests.GenerateAtomicfuTestsKt") {
-    javaLauncher.set(project.getToolchainLauncherFor(JdkMajorVersion.JDK_11_0))
-    dependsOn(":compiler:generateTestData")
-}
+

@@ -2,6 +2,7 @@ description = "Kotlin compiler client embeddable"
 
 plugins {
     kotlin("jvm")
+    id("compiler-tests-convention")
 }
 
 val testCompilerClasspath by configurations.creating {
@@ -35,14 +36,16 @@ sourceSets {
     "test" { projectDefault() }
 }
 
-projectTest(jUnitMode = JUnitMode.JUnit4) {
-    dependsOn(":kotlin-compiler:jar")
-    systemProperty("kotlin.test.script.classpath", testSourceSet.output.classesDirs.joinToString(File.pathSeparator))
-    val testCompilerClasspathProvider = project.provider { testCompilerClasspath.asPath }
-    val testCompilationClasspathProvider = project.provider { testCompilationClasspath.asPath }
-    doFirst {
-        systemProperty("compilerClasspath", testCompilerClasspathProvider.get())
-        systemProperty("compilationClasspath", testCompilationClasspathProvider.get())
+compilerTests {
+    testTask(jUnitMode = JUnitMode.JUnit4) {
+        dependsOn(":kotlin-compiler:jar")
+        systemProperty("kotlin.test.script.classpath", testSourceSet.output.classesDirs.joinToString(File.pathSeparator))
+        val testCompilerClasspathProvider = project.provider { testCompilerClasspath.asPath }
+        val testCompilationClasspathProvider = project.provider { testCompilationClasspath.asPath }
+        doFirst {
+            systemProperty("compilerClasspath", testCompilerClasspathProvider.get())
+            systemProperty("compilationClasspath", testCompilationClasspathProvider.get())
+        }
     }
 }
 

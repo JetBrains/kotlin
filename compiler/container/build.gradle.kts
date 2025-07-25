@@ -2,6 +2,7 @@ plugins {
     kotlin("jvm")
     id("jps-compatible")
     id("test-inputs-check")
+    id("compiler-tests-convention")
 }
 
 dependencies {
@@ -27,6 +28,6 @@ sourceSets {
 
 testsJar {}
 
-projectTest(parallel = true, jUnitMode = JUnitMode.JUnit5) {
-    useJUnitPlatform()
+compilerTests {
+    testTask(jUnitMode = JUnitMode.JUnit5)
 }
