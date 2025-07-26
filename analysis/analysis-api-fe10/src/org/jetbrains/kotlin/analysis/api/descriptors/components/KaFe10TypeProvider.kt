@@ -47,8 +47,6 @@ import org.jetbrains.kotlin.types.error.ErrorUtils
 import org.jetbrains.kotlin.types.typeUtil.builtIns
 import org.jetbrains.kotlin.types.typeUtil.isNothing
 import org.jetbrains.kotlin.util.containingNonLocalDeclaration
-import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
-import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 
 internal class KaFe10TypeProvider(
     override val analysisSessionProvider: () -> KaFe10Session,
@@ -88,15 +86,9 @@ internal class KaFe10TypeProvider(
         )?.toKtType(analysisContext)
     }
 
-    override fun KaType.approximateToDenotableSupertype(position: KtElement): KaType? = withValidityAssertion {
+    override fun KaType.approximateToDenotableSupertype(position: KtElement): KaType? = withPsiValidityAssertion(position) {
         require(this is KaFe10Type)
         with(analysisSession) {
-            if (!position.canBeAnalysed()) {
-                errorWithAttachment("The given position is not within the analysis scope of the session") {
-                    withPsiEntry("position", position)
-                }
-            }
-
             val containingFile = position.containingFile as? KtFile
             val scopeClassifiers =
                 containingFile?.scopeContext(position)?.scopes?.filter {
