@@ -26,6 +26,8 @@ public const val E: Double = 2.718281828459045
  *
  *  Special cases:
  *   - `sin(NaN|+Inf|-Inf)` is `NaN`
+ *
+ * @sample samples.math.MathSamples.Doubles.sin
  */
 @SinceKotlin("1.2")
 public expect fun sin(x: Double): Double
@@ -34,6 +36,8 @@ public expect fun sin(x: Double): Double
  *
  *  Special cases:
  *   - `cos(NaN|+Inf|-Inf)` is `NaN`
+ *
+ * @sample samples.math.MathSamples.Doubles.cos
  */
 @SinceKotlin("1.2")
 public expect fun cos(x: Double): Double
@@ -42,6 +46,8 @@ public expect fun cos(x: Double): Double
  *
  *  Special cases:
  *   - `tan(NaN|+Inf|-Inf)` is `NaN`
+ *
+ * @sample samples.math.MathSamples.Doubles.tan
  */
 @SinceKotlin("1.2")
 public expect fun tan(x: Double): Double
@@ -182,6 +188,8 @@ public expect fun hypot(x: Double, y: Double): Double
  *
  * Special cases:
  *   - `sqrt(x)` is `NaN` when `x < 0` or `x` is `NaN`
+ *
+ * @sample samples.math.MathSamples.Doubles.sqrt
  */
 @SinceKotlin("1.2")
 public expect fun sqrt(x: Double): Double
@@ -193,6 +201,8 @@ public expect fun sqrt(x: Double): Double
  *   - `exp(NaN)` is `NaN`
  *   - `exp(+Inf)` is `+Inf`
  *   - `exp(-Inf)` is `0.0`
+ *
+ * @sample samples.math.MathSamples.Doubles.exp
  */
 @SinceKotlin("1.2")
 public expect fun exp(x: Double): Double
@@ -235,6 +245,8 @@ public expect fun log(x: Double, base: Double): Double
  *   - `ln(x)` is `NaN` when `x < 0.0`
  *   - `ln(+Inf)` is `+Inf`
  *   - `ln(0.0)` is `-Inf`
+ *
+ * @sample samples.math.MathSamples.Doubles.ln
  */
 @SinceKotlin("1.2")
 public expect fun ln(x: Double): Double
@@ -333,6 +345,7 @@ public expect fun round(x: Double): Double
  *   - `abs(NaN)` is `NaN`
  *
  * @see absoluteValue extension property for [Double]
+ * @sample samples.math.MathSamples.Doubles.abs
  */
 @SinceKotlin("1.2")
 public expect fun abs(x: Double): Double
@@ -357,6 +370,8 @@ public expect fun sign(x: Double): Double
  * Returns the smaller of two values.
  *
  * If either value is `NaN`, then the result is `NaN`.
+ *
+ * @sample samples.math.MathSamples.Doubles.min
  */
 @SinceKotlin("1.2")
 public expect fun min(a: Double, b: Double): Double
@@ -365,6 +380,8 @@ public expect fun min(a: Double, b: Double): Double
  * Returns the greater of two values.
  *
  * If either value is `NaN`, then the result is `NaN`.
+ *
+ * @sample samples.math.MathSamples.Doubles.max
  */
 @SinceKotlin("1.2")
 public expect fun max(a: Double, b: Double): Double
@@ -397,6 +414,8 @@ public expect fun cbrt(x: Double): Double
  *   - `NaN.pow(x)` is `NaN` for `x != 0.0`
  *   - `b.pow(Inf)` is `NaN` for `abs(b) == 1.0`
  *   - `b.pow(x)` is `NaN` for `b < 0` and `x` is finite and not an integer
+ *
+ * @sample samples.math.MathSamples.Doubles.pow
  */
 @SinceKotlin("1.2")
 public expect fun Double.pow(x: Double): Double
@@ -523,6 +542,8 @@ public expect fun Double.roundToLong(): Long
  *
  *  Special cases:
  *   - `sin(NaN|+Inf|-Inf)` is `NaN`
+ *
+ * @sample samples.math.MathSamples.Floats.sin
  */
 @SinceKotlin("1.2")
 public expect fun sin(x: Float): Float
@@ -531,6 +552,8 @@ public expect fun sin(x: Float): Float
  *
  *  Special cases:
  *   - `cos(NaN|+Inf|-Inf)` is `NaN`
+ *
+ * @sample samples.math.MathSamples.Floats.cos
  */
 @SinceKotlin("1.2")
 public expect fun cos(x: Float): Float
@@ -539,6 +562,8 @@ public expect fun cos(x: Float): Float
  *
  *  Special cases:
  *   - `tan(NaN|+Inf|-Inf)` is `NaN`
+ *
+ * @sample samples.math.MathSamples.Floats.tan
  */
 @SinceKotlin("1.2")
 public expect fun tan(x: Float): Float
@@ -679,6 +704,8 @@ public expect fun hypot(x: Float, y: Float): Float
  *
  * Special cases:
  *   - `sqrt(x)` is `NaN` when `x < 0` or `x` is `NaN`
+ *
+ * @sample samples.math.MathSamples.Floats.sqrt
  */
 @SinceKotlin("1.2")
 public expect fun sqrt(x: Float): Float
@@ -690,6 +717,8 @@ public expect fun sqrt(x: Float): Float
  *   - `exp(NaN)` is `NaN`
  *   - `exp(+Inf)` is `+Inf`
  *   - `exp(-Inf)` is `0.0`
+ *
+ * @sample samples.math.MathSamples.Floats.exp
  */
 @SinceKotlin("1.2")
 public expect fun exp(x: Float): Float
@@ -732,6 +761,8 @@ public expect fun log(x: Float, base: Float): Float
  *   - `ln(x)` is `NaN` when `x < 0.0`
  *   - `ln(+Inf)` is `+Inf`
  *   - `ln(0.0)` is `-Inf`
+ *
+ * @sample samples.math.MathSamples.Floats.ln
  */
 @SinceKotlin("1.2")
 public expect fun ln(x: Float): Float
@@ -831,6 +862,7 @@ public expect fun round(x: Float): Float
  *   - `abs(NaN)` is `NaN`
  *
  * @see absoluteValue extension property for [Float]
+ * @sample samples.math.MathSamples.Floats.abs
  */
 @SinceKotlin("1.2")
 public expect fun abs(x: Float): Float
@@ -856,6 +888,8 @@ public expect fun sign(x: Float): Float
  * Returns the smaller of two values.
  *
  * If either value is `NaN`, then the result is `NaN`.
+ *
+ * @sample samples.math.MathSamples.Floats.min
  */
 @SinceKotlin("1.2")
 public expect fun min(a: Float, b: Float): Float
@@ -864,6 +898,8 @@ public expect fun min(a: Float, b: Float): Float
  * Returns the greater of two values.
  *
  * If either value is `NaN`, then the result is `NaN`.
+ *
+ * @sample samples.math.MathSamples.Floats.max
  */
 @SinceKotlin("1.2")
 public expect fun max(a: Float, b: Float): Float
@@ -897,6 +933,8 @@ public expect fun cbrt(x: Float): Float
  *   - `NaN.pow(x)` is `NaN` for `x != 0.0`
  *   - `b.pow(Inf)` is `NaN` for `abs(b) == 1.0`
  *   - `b.pow(x)` is `NaN` for `b < 0` and `x` is finite and not an integer
+ *
+ * @sample samples.math.MathSamples.Floats.pow
  */
 @SinceKotlin("1.2")
 public expect fun Float.pow(x: Float): Float
