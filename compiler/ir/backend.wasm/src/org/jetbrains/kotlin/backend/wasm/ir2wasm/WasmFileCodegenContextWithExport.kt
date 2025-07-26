@@ -26,27 +26,27 @@ class WasmFileCodegenContextWithExport(
         addExport(
             WasmExport.Function(
                 field = wasmFunction,
-                name = "$FunctionImportPrefix$signature"
+                name = "${WasmImportPrefix.FUNC.prefix}$signature"
             )
         )
     }
 
     override fun defineGlobalVTable(irClass: IrClassSymbol, wasmGlobal: WasmGlobal) {
         super.defineGlobalVTable(irClass, wasmGlobal)
-        exportDeclarationGlobal(irClass.owner, TypeGlobalImportPrefix.VTABLE, wasmGlobal)
+        exportDeclarationGlobal(irClass.owner, WasmImportPrefix.VTABLE, wasmGlobal)
     }
 
     override fun defineGlobalClassITable(irClass: IrClassSymbol, wasmGlobal: WasmGlobal) {
         super.defineGlobalClassITable(irClass, wasmGlobal)
-        exportDeclarationGlobal(irClass.owner, TypeGlobalImportPrefix.ITABLE, wasmGlobal)
+        exportDeclarationGlobal(irClass.owner, WasmImportPrefix.ITABLE, wasmGlobal)
     }
 
     override fun defineRttiGlobal(global: WasmGlobal, irClass: IrClassSymbol, irSuperClass: IrClassSymbol?) {
         super.defineRttiGlobal(global, irClass, irSuperClass)
-        exportDeclarationGlobal(irClass.owner, TypeGlobalImportPrefix.RTTI, global)
+        exportDeclarationGlobal(irClass.owner, WasmImportPrefix.RTTI, global)
     }
 
-    private fun exportDeclarationGlobal(declaration: IrDeclarationWithVisibility, prefix: TypeGlobalImportPrefix, global: WasmGlobal) {
+    private fun exportDeclarationGlobal(declaration: IrDeclarationWithVisibility, prefix: WasmImportPrefix, global: WasmGlobal) {
         if (declaration.isEffectivelyPrivate()) return
         val signature = idSignatureRetriever.declarationSignature(declaration)
         addExport(

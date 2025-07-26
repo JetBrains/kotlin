@@ -18,14 +18,12 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.wasm.ir.*
 
-
-enum class TypeGlobalImportPrefix(val prefix: String) {
-    VTABLE("vtable_"),
-    ITABLE("itable_"),
-    RTTI("rtti_"),
+enum class WasmImportPrefix(val prefix: String) {
+    VTABLE($$"$vt_"),
+    ITABLE($$"$it_"),
+    RTTI($$"$rt_"),
+    FUNC($$"$fn_")
 }
-
-const val FunctionImportPrefix = "func_"
 
 open class WasmFileCodegenContext(
     private val wasmFileFragment: WasmCompiledFileFragment,

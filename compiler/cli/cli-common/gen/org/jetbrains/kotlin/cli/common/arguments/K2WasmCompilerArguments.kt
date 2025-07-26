@@ -50,10 +50,10 @@ abstract class K2WasmCompilerArguments : CommonKlibBasedCompilerArguments() {
         }
 
     @Argument(
-        value = "-Xwasm-multimodule-mode",
-        description = "Set multimodule compilation mode.",
+        value = "-Xwasm-single-module-mode",
+        description = "Compile only provided .wasm module.",
     )
-    var wasmMultimoduleMode: String? = null
+    var wasmSingleModuleMode: String? = null
         set(value) {
             checkFrozen()
             field = if (value.isNullOrEmpty()) null else value

@@ -6454,11 +6454,11 @@
                                         }
                                     },
                                     {
-                                        "name": "Xwasm-multimodule-mode",
+                                        "name": "Xwasm-single-module-mode",
                                         "shortName": null,
                                         "deprecatedName": null,
                                         "description": {
-                                            "current": "Set multimodule compilation mode.",
+                                            "current": "Compile only provided .wasm module.",
                                             "valueInVersions": []
                                         },
                                         "delimiter": null,

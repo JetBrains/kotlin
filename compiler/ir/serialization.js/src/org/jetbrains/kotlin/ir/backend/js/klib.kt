@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.backend.common.extensions.IrPluginContextImpl
 import org.jetbrains.kotlin.backend.common.klibAbiVersionForManifest
 import org.jetbrains.kotlin.backend.common.linkage.IrDeserializer
 import org.jetbrains.kotlin.backend.common.linkage.issues.checkNoUnboundSymbols
-import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageConfig
 import org.jetbrains.kotlin.backend.common.linkage.partial.createPartialLinkageSupportForLinker
 import org.jetbrains.kotlin.backend.common.linkage.partial.partialLinkageConfig
 import org.jetbrains.kotlin.backend.common.overrides.FakeOverrideChecker
@@ -209,11 +208,9 @@ fun loadIr(
 }
 
 @OptIn(ObsoleteDescriptorBasedAPI::class)
-fun loadIrForMultimoduleMode(
+fun loadIrForSingleModule(
     modulesStructure: ModulesStructure,
     irFactory: IrFactory,
-    masterDeserializer: (JsIrLinker, ModuleDescriptor, KotlinLibrary) -> IrModuleFragment,
-    slaveDeserializer: (JsIrLinker, ModuleDescriptor, KotlinLibrary) -> IrModuleFragment,
 ): IrModuleInfo {
     val mainModule = modulesStructure.mainModule
     val configuration = modulesStructure.compilerConfiguration
@@ -249,25 +246,31 @@ fun loadIrForMultimoduleMode(
     var stdlibFragment: IrModuleFragment? = null
     var mainFragment: IrModuleFragment? = null
     val deserializedFragments = modulesStructure.klibs.all.map { klib ->
-        when {
-            klib == modulesStructure.klibs.included -> {
-                mainFragment = slaveDeserializer(irLinker, modulesStructure.getModuleDescriptor(klib), klib)
-                mainFragment
-            }
-            klib.isAnyPlatformStdlib -> {
-                stdlibFragment = masterDeserializer(irLinker, modulesStructure.getModuleDescriptor(klib), klib)
-                stdlibFragment
-            } else -> {
-                masterDeserializer(irLinker, modulesStructure.getModuleDescriptor(klib), klib)
-            }
+        val moduleDescriptor = modulesStructure.getModuleDescriptor(klib)
+        val fragment = if (klib == modulesStructure.klibs.included) {
+            irLinker.deserializeFullModule(moduleDescriptor, klib)
+        } else {
+            irLinker.deserializeHeadersWithInlineBodies(moduleDescriptor, klib)
         }
+
+        if (klib == modulesStructure.klibs.included) {
+            mainFragment = fragment
+        }
+        if (klib.isWasmStdlib) {
+            stdlibFragment = fragment
+        }
+
+        fragment
     }
+
+    check(mainFragment != null)
+    check(stdlibFragment != null)
 
     irBuiltIns.functionFactory = IrDescriptorBasedFunctionFactory(
         irBuiltIns = irBuiltIns,
         symbolTable = symbolTable,
         typeTranslator = typeTranslator,
-        getPackageFragment = stdlibFragment?.let { FunctionTypeInterfacePackages().makePackageAccessor(it) },
+        getPackageFragment = FunctionTypeInterfacePackages().makePackageAccessor(stdlibFragment),
         referenceFunctionsWhenKFunctionAreReferenced = true
     )
 
@@ -275,15 +278,28 @@ fun loadIrForMultimoduleMode(
     ExternalDependenciesGenerator(symbolTable, listOf(irLinker)).generateUnboundSymbolsAsDependencies()
     irLinker.postProcess(inOrAfterLinkageStep = true)
 
+    val isStdlibCompilation = mainFragment == stdlibFragment
+
     val moduleDependencies = IrModuleDependencies(
         all = deserializedFragments,
-        stdlib = stdlibFragment,
+        stdlib = stdlibFragment.takeIf { !isStdlibCompilation },
         included = mainFragment,
         fragmentNames = deserializedFragments.getUniqueNameForEachFragment(),
     )
 
+    //Hack - pre-load functional interfaces in case if IrLoader cut its count (KT-71039)
+    if (isStdlibCompilation) {
+        repeat(25) {
+            irBuiltIns.functionN(it)
+            irBuiltIns.suspendFunctionN(it)
+            irBuiltIns.kFunctionN(it)
+            irBuiltIns.kSuspendFunctionN(it)
+        }
+    }
+
+
     return IrModuleInfo(
-        module = mainFragment!!,
+        module = mainFragment,
         dependencies = moduleDependencies,
         bultins = irBuiltIns,
         symbolTable = symbolTable,

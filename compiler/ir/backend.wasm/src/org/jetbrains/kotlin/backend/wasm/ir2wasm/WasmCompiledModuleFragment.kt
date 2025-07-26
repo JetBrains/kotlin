@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.ir.util.getPackageFragment
 import org.jetbrains.kotlin.wasm.ir.*
+import org.jetbrains.kotlin.wasm.ir.WasmFunction
 import org.jetbrains.kotlin.wasm.ir.source.location.SourceLocation
 
 class BuiltinIdSignatures(
@@ -183,7 +184,7 @@ class WasmCompiledModuleFragment(
             definedFunctions.add(associatedObjectGetter)
         }
 
-        val masterInitFunction = createAndExportMasterInitFunction(fieldInitializerFunction, associatedObjectGetter)
+        val masterInitFunction = createAndExportMasterInitFunction(fieldInitializerFunction, associatedObjectGetter, initializeUnit)
         exports.add(WasmExport.Function("_initialize", masterInitFunction))
         definedFunctions.add(masterInitFunction)
 
@@ -226,7 +227,7 @@ class WasmCompiledModuleFragment(
         }
     }
 
-    fun linkWasmCompiledFragments(moduleImportName: String?, initializeUnit: Boolean, exportThrowableTag: Boolean): WasmModule {
+    fun linkWasmCompiledFragments(moduleImportName: String?, initializeUnit: Boolean): WasmModule {
         // TODO: Implement optimal ir linkage KT-71040
         bindUnboundSymbols()
         val canonicalFunctionTypes = bindUnboundFunctionTypes()
@@ -251,21 +252,14 @@ class WasmCompiledModuleFragment(
         additionalTypes.add(parameterlessNoReturnFunctionType)
 
         val elements = mutableListOf<WasmElement>()
-        createAndExportServiceFunctions(definedFunctions, additionalTypes, stringPoolSize, elements, exports, globals)
+        createAndExportServiceFunctions(definedFunctions, additionalTypes, stringPoolSize, initializeUnit, elements, exports, globals)
 
-        val throwableDeclaration = tryFindBuiltInType { it.throwable }
-            ?: compilationException("kotlin.Throwable is not found in fragments", null)
-
-        val tags = getTags(exports, moduleImportName, exportThrowableTag, throwableDeclaration)
+        val tags = getTags()
         require(tags.size <= 1) { "Having more than 1 tag is not supported" }
 
         val (importedTags, definedTags) = tags.partition { it.importPair != null }
-        val importsInOrder = importedFunctions + importedTags
         tags.forEach { additionalTypes.add(it.type) }
 
-        val syntheticTypes = mutableListOf<WasmTypeDeclaration>()
-        createAndBindSpecialITableTypes(syntheticTypes)
-        val globals = getGlobals(syntheticTypes)
         val (importedGlobals, definedGlobals) = globals.partition { it.importPair != null }
 
         val importsInOrder = mutableListOf<WasmNamedModuleField>()
@@ -385,7 +379,7 @@ class WasmCompiledModuleFragment(
         return syntheticTypes
     }
 
-    private fun getTags(exports: MutableList<WasmExport<*>>, moduleImportName: String?, exportThrowableTag: Boolean, throwableDeclaration: WasmTypeDeclaration): List<WasmTag> {
+    private fun getTags(): List<WasmTag> {
         if (generateTrapsInsteadOfExceptions) return emptyList()
 
         val tag = if (isWasmJsTarget) {
@@ -396,6 +390,9 @@ class WasmCompiledModuleFragment(
 
             WasmTag(jsExceptionTagFuncType, WasmImportDescriptor("intrinsics", WasmSymbol("tag")))
         } else {
+            val throwableDeclaration = tryFindBuiltInType { it.throwable }
+                ?: compilationException("kotlin.Throwable is not found in fragments", null)
+
             val tagFuncType = WasmRefNullType(WasmHeapType.Type(WasmSymbol(throwableDeclaration)))
 
             val throwableTagFuncType = WasmFunctionType(
@@ -404,10 +401,6 @@ class WasmCompiledModuleFragment(
             )
 
             WasmTag(throwableTagFuncType)
-        }
-
-        if (exportThrowableTag) {
-            exports.add(WasmExport.Tag("tag_throwable", tag))
         }
 
         return listOf(tag)
@@ -481,10 +474,8 @@ class WasmCompiledModuleFragment(
     private fun createAndExportMasterInitFunction(
         fieldInitializerFunction: WasmFunction,
         tryGetAssociatedObject: WasmFunction?,
+        initializeUnit: Boolean,
     ): WasmFunction.Defined {
-        val unitGetInstance = tryFindBuiltInFunction { it.unitGetInstance }
-            ?: compilationException("kotlin.Unit_getInstance is not file in fragments", null)
-
         val masterInitFunction = WasmFunction.Defined("_initialize", WasmSymbol(parameterlessNoReturnFunctionType))
         with(WasmExpressionBuilder(masterInitFunction.instructions)) {
             if (initializeUnit) {
@@ -611,11 +602,6 @@ class WasmCompiledModuleFragment(
                 stringAddressesAndLengthsIndex,
             )
             buildSetGlobal(WasmSymbol(stringAddressesAndLengthsGlobal), serviceCodeLocation)
-
-            val stringPoolInitializer = wasmCompiledFileFragments.firstNotNullOfOrNull { fragment ->
-                fragment.wasmStringsElements?.stringPoolFieldInitializer?.let { WasmSymbol(fragment.functions.defined[it]) }
-            } ?: compilationException("stringPool initializer not found!", type = null)
-            buildCall(stringPoolInitializer, serviceCodeLocation)
 
             wasmCompiledFileFragments.forEach { fragment ->
                 fragment.objectInstanceFieldInitializers.forEach { objectInitializer ->

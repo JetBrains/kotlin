@@ -12,7 +12,10 @@ import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.fqNameWhenAvailable
 import org.jetbrains.kotlin.wasm.ir.*
 
-fun getAllReferencedDeclarations(wasmCompiledFileFragment: WasmCompiledFileFragment): Set<IdSignature> {
+fun getAllReferencedDeclarations(
+    wasmCompiledFileFragment: WasmCompiledFileFragment,
+    additionalSignatureToImport: Set<IdSignature>
+): Set<IdSignature> {
     val signatures = mutableSetOf<IdSignature>()
     signatures.addAll(wasmCompiledFileFragment.functions.unbound.keys)
     signatures.addAll(wasmCompiledFileFragment.globalFields.unbound.keys)
@@ -21,6 +24,7 @@ fun getAllReferencedDeclarations(wasmCompiledFileFragment: WasmCompiledFileFragm
     wasmCompiledFileFragment.rttiElements?.let {
         signatures.addAll(it.globalReferences.unbound.keys)
     }
+    signatures.addAll(additionalSignatureToImport)
     return signatures
 }
 
@@ -39,7 +43,7 @@ class WasmFileCodegenContextWithImport(
             WasmFunction.Imported(
                 name = declaration.owner.fqNameWhenAvailable.toString(),
                 type = functionTypeSymbol,
-                importPair = WasmImportDescriptor(moduleName, WasmSymbol("$FunctionImportPrefix$signature"))
+                importPair = WasmImportDescriptor(moduleName, WasmSymbol("${WasmImportPrefix.FUNC.prefix}$signature"))
             )
         )
         return true
@@ -53,7 +57,7 @@ class WasmFileCodegenContextWithImport(
             type = WasmRefType(WasmHeapType.Type(referenceVTableGcType(declaration))),
             isMutable = false,
             init = emptyList(),
-            importPair = WasmImportDescriptor(moduleName, WasmSymbol("${TypeGlobalImportPrefix.VTABLE.prefix}$signature"))
+            importPair = WasmImportDescriptor(moduleName, WasmSymbol("${WasmImportPrefix.VTABLE.prefix}$signature"))
         )
         defineGlobalVTable(irClass = declaration, wasmGlobal = global)
         return true
@@ -67,7 +71,7 @@ class WasmFileCodegenContextWithImport(
             type = WasmRefType(WasmHeapType.Type(interfaceTableTypes.wasmAnyArrayType)),
             isMutable = false,
             init = emptyList(),
-            importPair = WasmImportDescriptor(moduleName, WasmSymbol("${TypeGlobalImportPrefix.ITABLE.prefix}$signature"))
+            importPair = WasmImportDescriptor(moduleName, WasmSymbol("${WasmImportPrefix.ITABLE.prefix}$signature"))
         )
         defineGlobalClassITable(irClass = declaration, wasmGlobal = global)
         return true
@@ -81,7 +85,7 @@ class WasmFileCodegenContextWithImport(
             type = WasmRefType(WasmHeapType.Type(rttiType)),
             isMutable = false,
             init = emptyList(),
-            importPair = WasmImportDescriptor(moduleName, WasmSymbol("${TypeGlobalImportPrefix.RTTI.prefix}$signature"))
+            importPair = WasmImportDescriptor(moduleName, WasmSymbol("${WasmImportPrefix.RTTI.prefix}$signature"))
         )
         defineRttiGlobal(global = rttiGlobal, irClass = declaration, irSuperClass = superType)
         return true

@@ -59,8 +59,8 @@ val actualWasmArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.wa
     }
 
     compilerArgument {
-        name = "Xwasm-multimodule-mode"
-        description = "Set multimodule compilation mode.".asReleaseDependent()
+        name = "Xwasm-single-module-mode"
+        description = "Compile only provided .wasm module.".asReleaseDependent()
         valueType = StringType.defaultNull
 
         lifecycle(
