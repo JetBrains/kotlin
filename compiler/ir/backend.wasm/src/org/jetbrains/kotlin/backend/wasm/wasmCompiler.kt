@@ -162,7 +162,8 @@ fun compileWasm(
     generateSourceMaps: Boolean,
     useDebuggerCustomFormatters: Boolean,
     generateDwarf: Boolean,
-    moduleImportName: String? = null,
+    stdlibModuleName: String? = null,
+    dependenciesModuleNames: Set<String> = emptySet(),
     initializeUnit: Boolean = true,
     exportThrowableTag: Boolean = false,
     initializeStringPool: Boolean = true,
@@ -175,7 +176,7 @@ fun compileWasm(
         isWasmJsTarget,
     )
 
-    val linkedModule = wasmCompiledModuleFragment.linkWasmCompiledFragments(moduleImportName, initializeUnit, exportThrowableTag, initializeStringPool)
+    val linkedModule = wasmCompiledModuleFragment.linkWasmCompiledFragments(stdlibModuleName, initializeUnit, exportThrowableTag, initializeStringPool)
 
     val dwarfGeneratorForBinary = runIf(generateDwarf) {
         DwarfGenerator()
@@ -223,8 +224,9 @@ fun compileWasm(
             jsFuns.addAll(fragment.jsFuns.values)
             jsModuleAndQualifierReferences.addAll(fragment.jsModuleAndQualifierReferences)
         }
-        if (moduleImportName != null) {
-            jsModuleImports.add(moduleImportName)
+
+        dependenciesModuleNames.forEach {
+            jsModuleImports.add(it)
         }
 
         val useJsTag = !configuration.getBoolean(WasmConfigurationKeys.WASM_NO_JS_TAG)

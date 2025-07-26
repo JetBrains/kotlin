@@ -253,12 +253,16 @@ fun loadIrForMultimoduleMode(
         when {
             klib == modulesStructure.klibs.included -> {
                 mainFragment = slaveDeserializer(irLinker, modulesStructure.getModuleDescriptor(klib), klib)
+                if (klib.isAnyPlatformStdlib) {
+                    stdlibFragment = mainFragment
+                }
                 mainFragment
             }
             klib.isAnyPlatformStdlib -> {
                 stdlibFragment = masterDeserializer(irLinker, modulesStructure.getModuleDescriptor(klib), klib)
                 stdlibFragment
-            } else -> {
+            }
+            else -> {
                 masterDeserializer(irLinker, modulesStructure.getModuleDescriptor(klib), klib)
             }
         }
@@ -278,7 +282,7 @@ fun loadIrForMultimoduleMode(
 
     val moduleDependencies = IrModuleDependencies(
         all = deserializedFragments,
-        stdlib = stdlibFragment,
+        stdlib = stdlibFragment.takeIf { it != mainFragment },
         included = mainFragment,
         fragmentNames = deserializedFragments.getUniqueNameForEachFragment(),
     )

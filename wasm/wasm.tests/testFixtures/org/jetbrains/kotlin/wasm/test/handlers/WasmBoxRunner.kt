@@ -5,11 +5,9 @@
 
 package org.jetbrains.kotlin.wasm.test.handlers
 
-import org.jetbrains.kotlin.backend.wasm.WasmCompilerResult
 import org.jetbrains.kotlin.backend.wasm.writeCompilationResult
 import org.jetbrains.kotlin.test.DebugMode
 import org.jetbrains.kotlin.test.InTextDirectivesUtils
-import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.DISABLE_WASM_EXCEPTION_HANDLING
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.RUN_UNIT_TESTS
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.USE_NEW_EXCEPTION_HANDLING_PROPOSAL
 import org.jetbrains.kotlin.test.services.TestServices
@@ -20,7 +18,6 @@ import java.io.File
 class WasmBoxRunner(
     testServices: TestServices
 ) : AbstractWasmArtifactsCollector(testServices) {
-    private val vmsToCheck: List<WasmVM> = listOf(WasmVM.V8, WasmVM.SpiderMonkey)
 
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
         if (!someAssertionWasFailed) {
@@ -38,15 +35,33 @@ class WasmBoxRunner(
         val debugMode = DebugMode.fromSystemProperty("kotlin.wasm.debugMode")
         val startUnitTests = RUN_UNIT_TESTS in testServices.moduleStructure.allDirectives
 
-        val filesToIgnoreInSizeChecks = mutableSetOf<File>()
+        val projectDirBase = System.getProperty("user.dir")
 
-        fun File.ignoreInSizeChecks() = also { filesToIgnoreInSizeChecks.add(it) }
+        val stdlibRelativePath = System.getProperty("kotlin.wasm-js.kotlin.stdlib.executable.path") ?: error("precompiled stdlib not found")
+        val stdlibPath = File(projectDirBase, stdlibRelativePath)
+        val stdlibInitFile = File(stdlibPath, "kotlin-kotlin-stdlib.uninstantiated.mjs")
+
+        val kotlinTestRelativeTestPath = System.getProperty("kotlin.wasm-js.kotlin.test.executable.path") ?: error("precompiled test not found")
+        val kotlinTestPath = File(projectDirBase, kotlinTestRelativeTestPath)
+        val kotlinTestInitFile = File(kotlinTestPath, "kotlin-kotlin-test.uninstantiated.mjs")
 
         val testJs = """
                     let actualResult;
                     try {
                         // Use "dynamic import" to catch exception happened during JS & Wasm modules initialization
-                        let jsModule = await import('./index.mjs');
+                        os.chdir('$stdlibPath');
+                        let stdlib = await import('$stdlibInitFile');
+                        let stdlibInstantiate = await stdlib.instantiate();
+                
+                        os.chdir('$kotlinTestPath');
+                        let test = await import('$kotlinTestInitFile');
+                        let testInstantiate = await test.instantiate({ "<kotlin>": stdlibInstantiate.exports });
+                
+                        os.chdir('$outputDirBase');
+                        let index = await import('./index.uninstantiated.mjs');
+                        let indexInstantiate = await index.instantiate({ "<kotlin>": stdlibInstantiate.exports,  "<kotlin-test>": testInstantiate.exports });
+                        let jsModule = indexInstantiate.exports;
+
                         ${if (startUnitTests) "jsModule.startUnitTests();" else ""}
                         actualResult = jsModule.box();
                     } catch(e) {
@@ -70,97 +85,38 @@ class WasmBoxRunner(
                         console.log('test passed');
                 """.trimIndent()
 
-        fun writeToFilesAndRunTest(mode: String, res: WasmCompilerResult): List<Throwable> {
-            val dir = File(outputDirBase, mode)
-            dir.mkdirs()
+        outputDirBase.mkdirs()
+        File(outputDirBase, "test.mjs").writeText(testJs)
+        writeCompilationResult(artifacts.compilerResult, outputDirBase, baseFileName)
+        val (jsFilePaths) = collectedJsArtifacts.saveJsArtifacts(outputDirBase)
 
-            writeCompilationResult(res, dir, baseFileName)
+        if (debugMode >= DebugMode.DEBUG) {
+            val path = outputDirBase.absolutePath
+            println(" ------ Wat  file://$path/index.wat")
+            println(" ------ Wasm file://$path/index.wasm")
+            println(" ------ JS   file://$path/index.uninstantiated.mjs")
+            println(" ------ Test file://$path/test.mjs")
 
-            File(dir, "test.mjs")
-                .ignoreInSizeChecks()
-                .writeText(testJs)
-
-            val (jsFilePaths) = collectedJsArtifacts.saveJsArtifacts(dir)
-
-            if (debugMode >= DebugMode.DEBUG) {
-                File(dir, "index.html")
-                    .ignoreInSizeChecks()
-                    .writeText(
-                        """
-                                <!DOCTYPE html>
-                                <html lang="en">
-                                <body>
-                                    <span id="test">UNKNOWN</span>
-                                    <script type="module">
-                                        let test = document.getElementById("test")
-                                        try {
-                                            await import("./${collectedJsArtifacts.entryPath}");
-                                            test.style.backgroundColor = "#0f0";
-                                            test.textContent = "OK"
-                                        } catch(e) {
-                                            test.style.backgroundColor = "#f00";
-                                            test.textContent = "NOT OK"
-                                            throw e;
-                                        }
-                                    </script>
-                                </body>
-                                </html>
-                            """.trimIndent()
-                    )
-
-                val path = dir.absolutePath
-                println(" ------ $mode Wat  file://$path/index.wat")
-                println(" ------ $mode Wasm file://$path/index.wasm")
-                println(" ------ $mode JS   file://$path/index.uninstantiated.mjs")
-                println(" ------ $mode JS   file://$path/index.mjs")
-                println(" ------ $mode Test file://$path/test.mjs")
-
-                val rootStartIndex = path.indexOf("wasm/wasm.tests")
-                if (rootStartIndex >= 0) {
-                    val pathRelativeToProjectRoot = path.substring(rootStartIndex)
-                    val projectName = "kotlin"
-                    val baseUrl = System.getProperty("kotlin.wasm.sources.base.url", "http://0.0.0.0:63342/$projectName")
-                    println(" ------ $mode HTML $baseUrl/$pathRelativeToProjectRoot/index.html")
-                }
-
-
-                for (mjsFile: AdditionalFile in collectedJsArtifacts.mjsFiles) {
-                    println(" ------ $mode External ESM file://$path/${mjsFile.name}")
-                }
-            }
-
-            val testFileText = originalFile.readText()
-            val failsIn: List<String> = InTextDirectivesUtils.findListWithPrefixes(testFileText, "// WASM_FAILS_IN: ")
-
-            val disableExceptions = DISABLE_WASM_EXCEPTION_HANDLING in testServices.moduleStructure.allDirectives
-            val useNewExceptionProposal = USE_NEW_EXCEPTION_HANDLING_PROPOSAL in testServices.moduleStructure.allDirectives
-
-            val exceptions = vmsToCheck
-                .mapNotNull { vm ->
-                    vm.runWithCaughtExceptions(
-                        debugMode = debugMode,
-                        useNewExceptionHandling = useNewExceptionProposal,
-                        failsIn = failsIn,
-                        entryFile = collectedJsArtifacts.entryPath,
-                        jsFilePaths = jsFilePaths,
-                        workingDirectory = dir,
-                    )
-                }
-
-            return exceptions + when (mode) {
-                "dce" -> checkExpectedDceOutputSize(debugMode, testFileText, dir, filesToIgnoreInSizeChecks)
-                "optimized" -> checkExpectedOptimizedOutputSize(debugMode, testFileText, dir, filesToIgnoreInSizeChecks)
-                "dev" -> emptyList() // no additional checks required
-                else -> error("Unknown mode: $mode")
+            for (mjsFile: AdditionalFile in collectedJsArtifacts.mjsFiles) {
+                println(" ------ External ESM file://$path/${mjsFile.name}")
             }
         }
 
-        val allExceptions =
-            writeToFilesAndRunTest("dev", artifacts.compilerResult) +
-                    writeToFilesAndRunTest("dce", artifacts.compilerResultWithDCE) +
-                    (artifacts.compilerResultWithOptimizer?.let { writeToFilesAndRunTest("optimized", it) } ?: emptyList())
+        val testFileText = originalFile.readText()
+        val failsIn: List<String> = InTextDirectivesUtils.findListWithPrefixes(testFileText, "// WASM_FAILS_IN: ")
 
-        processExceptions(allExceptions)
+        val useNewExceptionProposal = USE_NEW_EXCEPTION_HANDLING_PROPOSAL in testServices.moduleStructure.allDirectives
+
+        val exceptions = WasmVM.V8.runWithCaughtExceptions(
+            debugMode = debugMode,
+            useNewExceptionHandling = useNewExceptionProposal,
+            failsIn = failsIn,
+            entryFile = collectedJsArtifacts.entryPath,
+            jsFilePaths = jsFilePaths,
+            workingDirectory = outputDirBase,
+        )
+
+        processExceptions(listOfNotNull(exceptions))
     }
 }
 

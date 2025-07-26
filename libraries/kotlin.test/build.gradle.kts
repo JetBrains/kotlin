@@ -108,6 +108,11 @@ kotlin {
         compilations["main"].compileTaskProvider.configure {
             compilerOptions.freeCompilerArgs.add("-Xir-module-name=$KOTLINTEST_MODULE_NAME")
         }
+        binaries.executable()
+        compilerOptions {
+            freeCompilerArgs.add("-Xwasm-multimodule-mode=intermediate")
+        }
+
     }
     @OptIn(ExperimentalWasmDsl::class)
     wasmWasi {

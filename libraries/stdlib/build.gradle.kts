@@ -302,6 +302,10 @@ kotlin {
     @OptIn(ExperimentalWasmDsl::class)
     wasmJs {
         commonWasmTargetConfiguration()
+        binaries.executable()
+        compilerOptions {
+            freeCompilerArgs.add("-Xwasm-multimodule-mode=intermediate")
+        }
     }
     @OptIn(ExperimentalWasmDsl::class)
     wasmWasi {

@@ -10,8 +10,10 @@ import org.jetbrains.kotlin.backend.wasm.compileToLoweredIr
 import org.jetbrains.kotlin.backend.wasm.compileWasm
 import org.jetbrains.kotlin.backend.wasm.dce.eliminateDeadDeclarations
 import org.jetbrains.kotlin.backend.wasm.ic.IrFactoryImplForWasmIC
+import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmCompiledFileFragment
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmModuleFragmentGenerator
 import org.jetbrains.kotlin.backend.wasm.ir2wasm.WasmModuleMetadataCache
+import org.jetbrains.kotlin.backend.wasm.ir2wasm.getAllReferencedDeclarations
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.config.phaseConfig
 import org.jetbrains.kotlin.config.phaser.PhaseConfig
@@ -96,9 +98,25 @@ class WasmLoweringFacade(
             moduleInfo.symbolTable.irFactory as IrFactoryImplForWasmIC,
             allowIncompleteImplementations = false,
             skipCommentInstructions = !generateWat,
-            useStringPool = true,
+            useStringPool = false,
         )
-        val wasmCompiledFileFragments = allModules.map { codeGenerator.generateModuleAsSingleFileFragment(it) }
+
+
+        val slaveModule = allModules.last()
+        val dependencyModules = allModules.dropLast(1)
+        val wasmCompiledFileFragments = mutableListOf<WasmCompiledFileFragment>()
+        val dependenciesModuleNames = mutableSetOf<String>()
+
+        val slaveModuleFileFragment = codeGenerator.generateModuleAsSingleFileFragment(slaveModule)
+
+        val importedDeclarations = getAllReferencedDeclarations(slaveModuleFileFragment)
+        dependencyModules.mapTo(wasmCompiledFileFragments) {
+            val importModuleName = it.name.asString()
+            dependenciesModuleNames.add(importModuleName)
+            codeGenerator.generateModuleAsSingleFileFragmentWithIECImport(it, importModuleName, importedDeclarations)
+        }
+        wasmCompiledFileFragments.add(slaveModuleFileFragment)
+
 
         val compilerResult = compileWasm(
             wasmCompiledFileFragments = wasmCompiledFileFragments,
@@ -110,44 +128,47 @@ class WasmLoweringFacade(
             generateWat = generateWat,
             generateSourceMaps = generateSourceMaps,
             generateDwarf = generateDwarf,
-            useDebuggerCustomFormatters = useDebuggerCustomFormatters
+            useDebuggerCustomFormatters = useDebuggerCustomFormatters,
+            stdlibModuleName = null,
+            dependenciesModuleNames = dependenciesModuleNames,
+            initializeUnit = false,
+            exportThrowableTag = false,
+            initializeStringPool = false,
         )
 
-        val dceDumpNameCache = DceDumpNameCache()
-        eliminateDeadDeclarations(allModules, backendContext, dceDumpNameCache)
-
-        dumpDeclarationIrSizesIfNeed(System.getProperty("kotlin.wasm.dump.declaration.ir.size.to.file"), allModules, dceDumpNameCache)
-
-        val wasmModuleMetadataCacheDce = WasmModuleMetadataCache(backendContext)
-        val codeGeneratorDce = WasmModuleFragmentGenerator(
-            backendContext,
-            wasmModuleMetadataCacheDce,
-            moduleInfo.symbolTable.irFactory as IrFactoryImplForWasmIC,
-            allowIncompleteImplementations = true,
-            skipCommentInstructions = !generateWat,
-            useStringPool = true,
-        )
-        val wasmCompiledFileFragmentsDce = allModules.map { codeGeneratorDce.generateModuleAsSingleFileFragment(it) }
-
-        val compilerResultWithDCE = compileWasm(
-            wasmCompiledFileFragments = wasmCompiledFileFragmentsDce,
-            moduleName = allModules.last().descriptor.name.asString(),
-            configuration = configuration,
-            typeScriptFragment = typeScriptFragment,
-            baseFileName = baseFileName,
-            emitNameSection = true,
-            generateWat = generateWat,
-            generateSourceMaps = generateSourceMaps,
-            generateDwarf = generateDwarf,
-            useDebuggerCustomFormatters = useDebuggerCustomFormatters
-        )
+//        val dceDumpNameCache = DceDumpNameCache()
+//        eliminateDeadDeclarations(allModules, backendContext, dceDumpNameCache)
+//
+//        dumpDeclarationIrSizesIfNeed(System.getProperty("kotlin.wasm.dump.declaration.ir.size.to.file"), allModules, dceDumpNameCache)
+//
+//        val wasmModuleMetadataCacheDce = WasmModuleMetadataCache(backendContext)
+//        val codeGeneratorDce = WasmModuleFragmentGenerator(
+//            backendContext,
+//            wasmModuleMetadataCacheDce,
+//            moduleInfo.symbolTable.irFactory as IrFactoryImplForWasmIC,
+//            allowIncompleteImplementations = true,
+//            skipCommentInstructions = !generateWat,
+//            useStringPool = true,
+//        )
+//        val wasmCompiledFileFragmentsDce = allModules.map { codeGeneratorDce.generateModuleAsSingleFileFragment(it) }
+//
+//        val compilerResultWithDCE = compileWasm(
+//            wasmCompiledFileFragments = wasmCompiledFileFragmentsDce,
+//            moduleName = allModules.last().descriptor.name.asString(),
+//            configuration = configuration,
+//            typeScriptFragment = typeScriptFragment,
+//            baseFileName = baseFileName,
+//            emitNameSection = true,
+//            generateWat = generateWat,
+//            generateSourceMaps = generateSourceMaps,
+//            generateDwarf = generateDwarf,
+//            useDebuggerCustomFormatters = useDebuggerCustomFormatters
+//        )
 
         return BinaryArtifacts.Wasm(
             compilerResult,
-            compilerResultWithDCE,
-            runIf(WasmEnvironmentConfigurationDirectives.RUN_THIRD_PARTY_OPTIMIZER in testServices.moduleStructure.allDirectives) {
-                compilerResultWithDCE.runThirdPartyOptimizer()
-            }
+            compilerResult,
+            null,
         )
     }
 

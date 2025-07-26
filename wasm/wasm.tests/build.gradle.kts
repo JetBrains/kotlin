@@ -141,6 +141,13 @@ fun Test.setupWasmStdlib(target: String) {
     systemProperty("kotlin.wasm-$target.stdlib.path", "libraries/stdlib/build/classes/kotlin/wasm$Target/main")
     dependsOn(":kotlin-test:compileKotlinWasm$Target")
     systemProperty("kotlin.wasm-$target.kotlin.test.path", "libraries/kotlin.test/build/classes/kotlin/wasm$Target/main")
+
+    if (target == "js") {
+        dependsOn(":kotlin-stdlib:compileDevelopmentExecutableKotlinWasm$Target")
+        systemProperty("kotlin.wasm-$target.kotlin.stdlib.executable.path", "build/wasm/packages/kotlin-kotlin-stdlib/kotlin")
+        dependsOn(":kotlin-test:compileDevelopmentExecutableKotlinWasm$Target")
+        systemProperty("kotlin.wasm-$target.kotlin.test.executable.path", "build/wasm/packages/kotlin-kotlin-test/kotlin")
+    }
 }
 
 fun Test.setupGradlePropertiesForwarding() {

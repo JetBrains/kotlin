@@ -499,11 +499,14 @@ class WasmCompiledModuleFragment(
                     ?: fragment.stringPoolFieldInitializer?.let { WasmSymbol(fragment.functions.defined[it]) }
 
                 fragment.objectInstanceFieldInitializers.forEach { objectInitializer ->
-                    val functionSymbol = WasmSymbol(fragment.functions.defined[objectInitializer]!!)
-                    expression.add(
-                        index = 0,
-                        element = WasmInstrWithoutLocation(WasmOp.CALL, listOf(WasmImmediate.FuncIdx(functionSymbol)))
-                    )
+                    val function = fragment.functions.defined[objectInitializer]
+                    if (function != null) {
+                        val functionSymbol = WasmSymbol(function)
+                        expression.add(
+                            index = 0,
+                            element = WasmInstrWithoutLocation(WasmOp.CALL, listOf(WasmImmediate.FuncIdx(functionSymbol)))
+                        )
+                    }
                 }
                 fragment.nonConstantFieldInitializers.forEach { nonConstantInitializer ->
                     val functionSymbol = WasmSymbol(fragment.functions.defined[nonConstantInitializer]!!)

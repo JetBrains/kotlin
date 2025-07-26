@@ -18,7 +18,8 @@ import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.ir.backend.js.MainModule
 import org.jetbrains.kotlin.ir.backend.js.ModulesStructure
 import org.jetbrains.kotlin.ir.backend.js.WholeWorldStageController
-import org.jetbrains.kotlin.ir.backend.js.loadIr
+import org.jetbrains.kotlin.ir.backend.js.loadIrForMultimoduleMode
+import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsIrLinker
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.JsManglerDesc
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.library.KotlinLibrary
@@ -71,10 +72,11 @@ class WasmDeserializerFacade(
             klibs = klibs,
         )
 
-        val moduleInfo = loadIr(
+        val moduleInfo = loadIrForMultimoduleMode(
             modulesStructure = moduleStructure,
             irFactory = IrFactoryImplForWasmIC(WholeWorldStageController()),
-            loadFunctionInterfacesIntoStdlib = true,
+            masterDeserializer = JsIrLinker::deserializeHeadersWithInlineBodies,
+            slaveDeserializer = JsIrLinker::deserializeFullModule,
         )
 
         val symbolTable = SymbolTable(IdSignatureDescriptor(JsManglerDesc), IrFactoryImplForWasmIC(WholeWorldStageController()))

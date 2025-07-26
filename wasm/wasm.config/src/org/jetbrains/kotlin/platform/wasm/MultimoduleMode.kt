@@ -8,7 +8,8 @@ package org.jetbrains.kotlin.platform.wasm
 enum class WasmMultimoduleMode(val alias: String) {
     NONE("none"),
     MASTER("master"),
-    SLAVE("slave");
+    SLAVE("slave"),
+    INTERMEDIATE("intermediate");
 
     companion object {
         fun fromName(name: String): WasmMultimoduleMode? = WasmMultimoduleMode.entries.firstOrNull { it.alias == name }
