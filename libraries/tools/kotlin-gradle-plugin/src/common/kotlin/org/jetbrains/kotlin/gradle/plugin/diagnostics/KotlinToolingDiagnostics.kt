@@ -221,6 +221,49 @@ internal object KotlinToolingDiagnostics {
             }
     }
 
+    object IncompatibleBinaryConfiguration : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Misconfiguration) {
+        operator fun invoke(binaryName: String, debuggable: Boolean, optimized: Boolean) =
+            build {
+                title("Incompatible Binary Configuration")
+                    .description {
+                        when {
+                            debuggable && optimized -> {
+                                """
+                            Binary '$binaryName' has incompatible configuration: debuggable=true and optimized=true.
+                            Debug binaries should not be optimized as this defeats the purpose of fast compilation and debugging.
+                            Optimization significantly increases compile time while making debugging more difficult.
+                            """.trimIndent()
+                            }
+                            else -> { // !debuggable && !optimized
+                                """
+                            Binary '$binaryName' has incompatible configuration: debuggable=false and optimized=false.
+                            Release binaries should be optimized to ensure good runtime performance.
+                            Without optimization, you get slow compilation (no debug build optimizations) and poor runtime performance.
+                            """.trimIndent()
+                            }
+                        }
+                    }
+                    .solutions {
+                        when {
+                            debuggable && optimized -> {
+                                listOf(
+                                    "Set 'optimized = false' for binary '$binaryName' to enable fast debug compilation",
+                                    "Use a release build type if you need optimization",
+                                    "Consider creating separate debug and release configurations"
+                                )
+                            }
+                            else -> { // !debuggable && !optimized
+                                listOf(
+                                    "Set 'optimized = true' for binary '$binaryName' to improve runtime performance",
+                                    "Use a debug build type if you need fast compilation and debugging capabilities",
+                                    "Verify that your build type configuration matches your intended use case"
+                                )
+                            }
+                        }
+                    }
+            }
+    }
+
     object DeprecatedKotlinNativeTargetsDiagnostic : ToolingDiagnosticFactory(ERROR, DiagnosticGroup.Kgp.Misconfiguration) {
         operator fun invoke(usedTargetIds: List<String>) = buildDiagnostic(
             title = "Deprecated Kotlin/Native Targets",
