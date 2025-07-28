@@ -396,7 +396,7 @@ class DeclarationGenerator(
             buildConstI64(wasmFileCodegenContext.referenceTypeId(symbol), location)
 
             val isAnonymousFlag = if (klass.isAnonymousObject) TYPE_INFO_FLAG_ANONYMOUS_CLASS else 0
-            val isLocalFlag = if (klass.isOriginallyLocalClass) TYPE_INFO_FLAG_LOCAL_CLASS else 0
+            val isLocalFlag = if (klass.isOriginallyLocalDeclaration) TYPE_INFO_FLAG_LOCAL_CLASS else 0
             buildConstI32(isAnonymousFlag or isLocalFlag, location)
 
             buildStructNew(wasmFileCodegenContext.rttiType, location)

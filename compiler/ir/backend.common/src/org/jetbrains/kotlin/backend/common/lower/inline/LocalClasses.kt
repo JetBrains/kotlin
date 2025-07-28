@@ -22,8 +22,10 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrBlockImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
 import org.jetbrains.kotlin.ir.util.isAdaptedFunctionReference
 import org.jetbrains.kotlin.ir.util.isInlineParameter
+import org.jetbrains.kotlin.ir.util.isOriginallyLocalDeclaration
 import org.jetbrains.kotlin.ir.util.setDeclarationsParent
 import org.jetbrains.kotlin.ir.visitors.*
+import org.jetbrains.kotlin.utils.mapToSetOrEmpty
 
 /**
  * Extracts local classes from inline lambdas.
@@ -151,7 +153,29 @@ class LocalClassesInInlineLambdasLowering(val context: LoweringContext) : BodyLo
                     // which we will extract the local class to.
                     remapCapturedTypesInExtractedLocalDeclarations = false,
                 ).lower(irBlock, container, data, localClasses, adaptedFunctions)
-                irBlock.statements.addAll(0, localClasses)
+
+                // `LocalDeclarationsLowering` transforms classes in place, but creates new nodes for functions
+                val transformedLocalFunctions = mutableSetOf<IrSimpleFunction>()
+                // New function nodes share body element with the old ones
+                val localFunctionBodies = localFunctions.mapToSetOrEmpty { it.body }
+                for (lambda in inlineLambdas) {
+                    lambda.acceptChildrenVoid(object : IrVisitorVoid() {
+                        override fun visitElement(element: IrElement) {
+                            element.acceptChildrenVoid(this)
+                        }
+
+                        override fun visitSimpleFunction(declaration: IrSimpleFunction) {
+                            // Referential equality of bodies used to avoid replication of traverse logic used in visitor that looked for original localFunctions
+                            if (declaration.isOriginallyLocalDeclaration && declaration.body in localFunctionBodies) {
+                                transformedLocalFunctions.add(declaration)
+                            }
+                        }
+                    })
+                }
+
+                val transformedLocalDeclarations = localClasses + transformedLocalFunctions
+                irBlock.statements.addAll(0, transformedLocalDeclarations)
+                transformedLocalDeclarations.forEach { it.setDeclarationsParent(data) }
 
                 for (lambda in inlineLambdas) {
                     lambda.transformChildrenVoid(object : IrElementTransformerVoid() {
@@ -161,9 +185,17 @@ class LocalClassesInInlineLambdasLowering(val context: LoweringContext) : BodyLo
                                 context.irBuiltIns.unitType
                             )
                         }
+
+                        override fun visitSimpleFunction(declaration: IrSimpleFunction): IrStatement {
+                            return if (declaration in transformedLocalFunctions) {
+                                IrCompositeImpl(
+                                    declaration.startOffset, declaration.endOffset,
+                                    context.irBuiltIns.unitType
+                                )
+                            } else super.visitSimpleFunction(declaration)
+                        }
                     })
                 }
-                localClasses.forEach { it.setDeclarationsParent(data) }
 
                 return irBlock
             }
