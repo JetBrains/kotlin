@@ -7,6 +7,9 @@ package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components
 
 import com.intellij.psi.PsiElement
 import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.components.containingDeclaration
+import org.jetbrains.kotlin.analysis.api.components.dispatchReceiverType
+import org.jetbrains.kotlin.analysis.api.components.render
 import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnostic
 import org.jetbrains.kotlin.analysis.api.impl.base.KaChainedSubstitutor
 import org.jetbrains.kotlin.analysis.api.impl.base.KaMapBackedSubstitutor
@@ -20,6 +23,7 @@ import org.jetbrains.kotlin.analysis.api.signatures.KaVariableSignature
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.types.KaSubstitutor
 import org.jetbrains.kotlin.analysis.api.types.KaType
+import org.jetbrains.kotlin.analysis.api.useSiteSession
 import org.jetbrains.kotlin.analysis.api.utils.getApiKClassOf
 import org.jetbrains.kotlin.analysis.utils.printer.prettyPrint
 import org.jetbrains.kotlin.name.CallableId
@@ -33,7 +37,8 @@ import kotlin.reflect.KVisibility
 import kotlin.reflect.full.hasAnnotation
 import kotlin.reflect.full.memberProperties
 
-internal fun KaSession.stringRepresentation(any: Any?): String = with(any) {
+context(_: KaSession)
+internal fun stringRepresentation(any: Any?): String = with(any) {
     fun KaType.render() = toString().replace('/', '.')
     return when (this) {
         null -> "null"
@@ -128,7 +133,8 @@ internal fun KaSession.stringRepresentation(any: Any?): String = with(any) {
     }
 }
 
-private fun KaSession.stringRepresentation(signature: KaCallableSignature<*>): String = buildString {
+context(_: KaSession)
+private fun stringRepresentation(signature: KaCallableSignature<*>): String = buildString {
     append(renderFrontendIndependentKClassNameOf(signature))
 
     val memberProperties = listOfNotNull(
@@ -151,7 +157,8 @@ private fun KaSession.stringRepresentation(signature: KaCallableSignature<*>): S
 
 private fun String.indented() = replace("\n", "\n  ")
 
-internal fun KaSession.prettyPrintSignature(signature: KaCallableSignature<*>): String = prettyPrint {
+context(_: KaSession)
+internal fun prettyPrintSignature(signature: KaCallableSignature<*>): String = prettyPrint {
     printCollectionIfNotEmpty(signature.contextParameters, prefix = "context(", postfix = ") ") { contextParameter ->
         append(contextParameter.name.asString())
         append(": ")
@@ -183,7 +190,8 @@ internal fun KaSession.prettyPrintSignature(signature: KaCallableSignature<*>): 
     }
 }
 
-internal fun KaSession.sortedCalls(collection: Collection<KaCall>): Collection<KaCall> = collection.sortedWith { call1, call2 ->
+context(_: KaSession)
+internal fun sortedCalls(collection: Collection<KaCall>): Collection<KaCall> = collection.sortedWith { call1, call2 ->
     compareCalls(call1, call2)
 }
 
@@ -202,13 +210,15 @@ internal fun KaCall.symbols(): List<KaSymbol> = when (this) {
     is KaCallableMemberCall<*, *> -> listOf(symbol)
 }
 
-internal fun KaSession.compareCalls(call1: KaCall, call2: KaCall): Int {
+context(_: KaSession)
+internal fun compareCalls(call1: KaCall, call2: KaCall): Int {
     // The order of candidate calls is non-deterministic. Sort by symbol string value.
     if (call1 !is KaCallableMemberCall<*, *> || call2 !is KaCallableMemberCall<*, *>) return 0
     return stringRepresentation(call1.partiallyAppliedSymbol).compareTo(stringRepresentation(call2.partiallyAppliedSymbol))
 }
 
-internal fun KaSession.assertStableSymbolResult(
+context(_: KaSession)
+internal fun assertStableSymbolResult(
     testServices: TestServices,
     firstCandidates: List<KaCallCandidateInfo>,
     secondCandidates: List<KaCallCandidateInfo>,
@@ -234,7 +244,8 @@ internal fun KaSession.assertStableSymbolResult(
     }
 }
 
-internal fun KaSession.assertStableResult(testServices: TestServices, firstInfo: KaCallInfo?, secondInfo: KaCallInfo?) {
+context(_: KaSession)
+internal fun assertStableResult(testServices: TestServices, firstInfo: KaCallInfo?, secondInfo: KaCallInfo?) {
     val assertions = testServices.assertions
     if (firstInfo == null || secondInfo == null) {
         assertions.assertEquals(firstInfo, secondInfo)
@@ -265,7 +276,8 @@ internal fun KaSession.assertStableResult(testServices: TestServices, firstInfo:
     }
 }
 
-internal fun KaSession.assertStableResult(testServices: TestServices, firstCall: KaCall, secondCall: KaCall) {
+context(_: KaSession)
+internal fun assertStableResult(testServices: TestServices, firstCall: KaCall, secondCall: KaCall) {
     val assertions = testServices.assertions
     assertions.assertEquals(firstCall::class, secondCall::class)
 
@@ -274,7 +286,8 @@ internal fun KaSession.assertStableResult(testServices: TestServices, firstCall:
     assertions.assertEquals(symbolsFromFirstCall, symbolsFromSecondCall)
 }
 
-internal fun KaSession.assertConsistency(testServices: TestServices, call: KaCall) {
+context(_: KaSession)
+internal fun assertConsistency(testServices: TestServices, call: KaCall) {
     if (call !is KaCallableMemberCall<*, *>) return
 
     val assertions = testServices.assertions
@@ -294,7 +307,8 @@ internal fun KaSession.assertConsistency(testServices: TestServices, call: KaCal
     }
 }
 
-internal fun KaSession.assertStableResult(
+context(_: KaSession)
+internal fun assertStableResult(
     testServices: TestServices,
     firstDiagnostic: KaDiagnostic,
     secondDiagnostic: KaDiagnostic,
@@ -305,7 +319,8 @@ internal fun KaSession.assertStableResult(
     assertions.assertEquals(firstDiagnostic.severity, secondDiagnostic.severity)
 }
 
-internal fun KaSession.renderScopeWithParentDeclarations(scope: KaScope): String = prettyPrint {
+context(_: KaSession)
+internal fun renderScopeWithParentDeclarations(scope: KaScope): String = prettyPrint {
     fun KaSymbol.qualifiedNameString() = when (this) {
         is KaConstructorSymbol -> "<constructor> ${containingClassId?.asString()}"
         is KaClassLikeSymbol -> classId!!.asString()

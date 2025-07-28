@@ -1,6 +1,7 @@
 plugins {
     kotlin("jvm")
     id("jps-compatible")
+    id("java-test-fixtures")
 }
 
 dependencies {
@@ -10,14 +11,14 @@ dependencies {
     implementation(project(":compiler:ir.serialization.common"))
     compileOnly(libs.intellij.fastutil)
     testApi(platform(libs.junit.bom))
-    testImplementation(libs.junit.jupiter.api)
+    testFixturesApi(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
-    testImplementation(libs.junit.jupiter.params)
-    testImplementation(intellijCore())
-    testImplementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
-    testImplementation(projectTests(":compiler:tests-common-new"))
-    testImplementation(projectTests(":generators:test-generator"))
-    testImplementation(projectTests(":js:js.tests"))
+    testFixturesApi(libs.junit.jupiter.params)
+    testFixturesApi(intellijCore())
+    testFixturesApi(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
+    testFixturesApi(testFixtures(project(":compiler:tests-common-new")))
+    testFixturesApi(testFixtures(project(":generators:test-generator")))
+    testFixturesApi(testFixtures(project(":js:js.tests")))
 }
 
 sourceSets {
@@ -26,6 +27,7 @@ sourceSets {
         projectDefault()
         generatedTestDir()
     }
+    "testFixtures" { projectDefault() }
 }
 
 val testDataDir = project(":compiler").projectDir.resolve("testData/klib/dump-abi/content")

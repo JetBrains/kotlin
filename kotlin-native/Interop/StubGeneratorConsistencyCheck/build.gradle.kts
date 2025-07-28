@@ -3,7 +3,7 @@ plugins {
 }
 
 dependencies {
-    testApi(projectTests(":compiler:tests-common-new"))
+    testApi(testFixtures(project(":compiler:tests-common-new")))
     testApi(libs.junit.jupiter.api)
     testApi(libs.junit.jupiter.engine)
 }

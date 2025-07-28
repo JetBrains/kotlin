@@ -13533,6 +13533,12 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
       }
 
       @Test
+      @TestMetadata("interfaceWithTwoDefaultFunsReturnValueType.kt")
+      public void testInterfaceWithTwoDefaultFunsReturnValueType() {
+        runTest("compiler/testData/codegen/box/coroutines/bridges/interfaceWithTwoDefaultFunsReturnValueType.kt");
+      }
+
+      @Test
       @TestMetadata("lambdaWithLongReceiver.kt")
       public void testLambdaWithLongReceiver() {
         runTest("compiler/testData/codegen/box/coroutines/bridges/lambdaWithLongReceiver.kt");
@@ -26926,6 +26932,12 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     }
 
     @Test
+    @TestMetadata("nestedLabelsInlinedClashingAtFunctionsWithClosure.kt")
+    public void testNestedLabelsInlinedClashingAtFunctionsWithClosure() {
+      runTest("compiler/testData/codegen/box/inline/nestedLabelsInlinedClashingAtFunctionsWithClosure.kt");
+    }
+
+    @Test
     @TestMetadata("propertyAccessorInline.kt")
     public void testPropertyAccessorInline() {
       runTest("compiler/testData/codegen/box/inline/propertyAccessorInline.kt");
@@ -40241,6 +40253,18 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     @TestMetadata("kt9828_hashMap.kt")
     public void testKt9828_hashMap() {
       runTest("compiler/testData/codegen/box/multiDecl/kt9828_hashMap.kt");
+    }
+
+    @Test
+    @TestMetadata("nameBasedDestructuringFullForm.kt")
+    public void testNameBasedDestructuringFullForm() {
+      runTest("compiler/testData/codegen/box/multiDecl/nameBasedDestructuringFullForm.kt");
+    }
+
+    @Test
+    @TestMetadata("nameBasedDestructuringShortForm.kt")
+    public void testNameBasedDestructuringShortForm() {
+      runTest("compiler/testData/codegen/box/multiDecl/nameBasedDestructuringShortForm.kt");
     }
 
     @Test
@@ -56117,6 +56141,12 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
       }
 
       @Test
+      @TestMetadata("functionTypes.kt")
+      public void testFunctionTypes() {
+        runTest("compiler/testData/codegen/box/reflection/types/functionTypes.kt");
+      }
+
+      @Test
       @TestMetadata("innerGenericArguments.kt")
       public void testInnerGenericArguments() {
         runTest("compiler/testData/codegen/box/reflection/types/innerGenericArguments.kt");
@@ -57795,12 +57825,6 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     @TestMetadata("samWithAbstractToString.kt")
     public void testSamWithAbstractToString() {
       runTest("compiler/testData/codegen/box/sam/samWithAbstractToString.kt");
-    }
-
-    @Test
-    @TestMetadata("samWithInferenceToDefaultBounds.kt")
-    public void testSamWithInferenceToDefaultBounds() {
-      runTest("compiler/testData/codegen/box/sam/samWithInferenceToDefaultBounds.kt");
     }
 
     @Test
@@ -61509,6 +61533,12 @@ public class FirPsiBlackBoxCodegenTestGenerated extends AbstractFirPsiBlackBoxCo
     @TestMetadata("kt45308.kt")
     public void testKt45308() {
       runTest("compiler/testData/codegen/box/typealias/kt45308.kt");
+    }
+
+    @Test
+    @TestMetadata("localTypeAliases.kt")
+    public void testLocalTypeAliases() {
+      runTest("compiler/testData/codegen/box/typealias/localTypeAliases.kt");
     }
 
     @Test

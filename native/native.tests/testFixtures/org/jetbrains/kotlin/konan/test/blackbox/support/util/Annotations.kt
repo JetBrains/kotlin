@@ -19,7 +19,7 @@ internal val Class<*>.allInheritedAnnotations: List<Annotation>
                     annotation.takeIf { it !is Metadata }
                 }
                 clazz.interfaces.forEach(::process)
-                clazz.superclass.takeIf { it != Object::class.java }?.let(::process)
+                clazz.superclass.takeIf { it != Any::class.java }?.let(::process)
             }
         }
 

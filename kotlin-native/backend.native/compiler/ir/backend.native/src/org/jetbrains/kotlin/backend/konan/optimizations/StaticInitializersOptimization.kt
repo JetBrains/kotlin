@@ -161,7 +161,7 @@ internal object StaticInitializersOptimization {
                 val result = mutableSetOf<IrSimpleFunction>()
                 initializedFiles.forEach { (function, functionInitializedFiles) ->
                     val containter = function.calledInitializer ?: return@forEach
-                    val backingField = (function as? IrSimpleFunction)?.correspondingPropertySymbol?.owner?.backingField
+                    val backingField = function.correspondingPropertySymbol?.owner?.backingField
                     val isDefaultAccessor = backingField != null && function.origin == IrDeclarationOrigin.DEFAULT_PROPERTY_ACCESSOR
                     val initializerCallCouldBeDropped =
                             functionInitializedFiles.get(containerIds[containter]!!)

@@ -3,6 +3,7 @@ description = "Kotlin AllOpen Compiler Plugin"
 plugins {
     kotlin("jvm")
     id("jps-compatible")
+    id("java-test-fixtures")
 }
 
 dependencies {
@@ -11,25 +12,25 @@ dependencies {
     embedded(project(":kotlin-allopen-compiler-plugin.k1")) { isTransitive = false }
     embedded(project(":kotlin-allopen-compiler-plugin.k2")) { isTransitive = false }
 
-    testImplementation(project(":kotlin-allopen-compiler-plugin"))
-    testImplementation(project(":kotlin-allopen-compiler-plugin.common"))
-    testImplementation(project(":kotlin-allopen-compiler-plugin.k1"))
-    testImplementation(project(":kotlin-allopen-compiler-plugin.k2"))
-    testImplementation(project(":kotlin-allopen-compiler-plugin.cli"))
-    testImplementation(project(":compiler:backend"))
-    testImplementation(project(":compiler:cli"))
+    testFixturesImplementation(project(":kotlin-allopen-compiler-plugin"))
+    testFixturesImplementation(project(":kotlin-allopen-compiler-plugin.common"))
+    testFixturesImplementation(project(":kotlin-allopen-compiler-plugin.k1"))
+    testFixturesImplementation(project(":kotlin-allopen-compiler-plugin.k2"))
+    testFixturesImplementation(project(":kotlin-allopen-compiler-plugin.cli"))
+    testFixturesImplementation(project(":compiler:backend"))
+    testFixturesImplementation(project(":compiler:cli"))
 
-    testImplementation(intellijCore())
+    testFixturesImplementation(intellijCore())
     testRuntimeOnly(commonDependency("org.codehaus.woodstox:stax2-api"))
     testRuntimeOnly(commonDependency("com.fasterxml:aalto-xml"))
 
-    testApi(platform(libs.junit.bom))
-    testImplementation(libs.junit.jupiter.api)
+    testFixturesApi(platform(libs.junit.bom))
+    testFixturesApi(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
-    testImplementation(projectTests(":compiler:tests-common-new"))
-    testImplementation(projectTests(":compiler:test-infrastructure"))
-    testImplementation(projectTests(":compiler:test-infrastructure-utils"))
-    testImplementation(project(":compiler:fir:checkers"))
+    testFixturesApi(testFixtures(project(":compiler:tests-common-new")))
+    testFixturesApi(testFixtures(project(":compiler:test-infrastructure")))
+    testFixturesApi(testFixtures(project(":compiler:test-infrastructure-utils")))
+    testFixturesImplementation(project(":compiler:fir:checkers"))
     testRuntimeOnly(project(":compiler:fir:fir-serialization"))
 
     testRuntimeOnly(project(":core:descriptors.runtime"))
@@ -42,6 +43,9 @@ sourceSets {
     "test" {
         projectDefault()
         generatedTestDir()
+    }
+    "testFixtures" {
+        projectDefault()
     }
 }
 

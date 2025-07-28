@@ -6,12 +6,20 @@
 package org.jetbrains.kotlin.analysis.api.descriptors.utils
 
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
+import org.jetbrains.kotlin.types.model.KotlinTypeMarker
+import org.jetbrains.kotlin.types.model.TypeSystemInferenceExtensionContext
 
-@Suppress("SpellCheckingInspection")
-internal class PublicApproximatorConfiguration(override val approximateLocalTypes: Boolean) : TypeApproximatorConfiguration() {
+internal class PublicApproximatorConfiguration(
+    override val approximateLocalTypes: Boolean,
+    private val shouldApproximateLocalType: (TypeSystemInferenceExtensionContext, KotlinTypeMarker) -> Boolean = { _, _ -> true },
+) : TypeApproximatorConfiguration() {
+    override fun shouldApproximateLocalType(ctx: TypeSystemInferenceExtensionContext, type: KotlinTypeMarker): Boolean =
+        shouldApproximateLocalType.invoke(ctx, type)
+
     override val approximateAllFlexible: Boolean get() = true
     override val approximateErrorTypes: Boolean get() = false
     override val approximateDefinitelyNotNullTypes: Boolean get() = true
     override val approximateIntegerLiteralConstantTypes: Boolean get() = true
     override val approximateIntersectionTypesInContravariantPositions: Boolean get() = true
+    override val approximateAnonymous: Boolean get() = true
 }

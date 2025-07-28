@@ -3,6 +3,7 @@ description = "Kotlin SamWithReceiver Compiler Plugin"
 plugins {
     kotlin("jvm")
     id("jps-compatible")
+    id("java-test-fixtures")
 }
 
 dependencies {
@@ -11,38 +12,36 @@ dependencies {
     embedded(project(":kotlin-sam-with-receiver-compiler-plugin.k2")) { isTransitive = false }
     embedded(project(":kotlin-sam-with-receiver-compiler-plugin.cli")) { isTransitive = false }
 
-    testApi(project(":compiler:backend"))
-    testApi(project(":compiler:cli"))
-    testApi(project(":kotlin-sam-with-receiver-compiler-plugin.cli"))
-    testImplementation(project(":kotlin-scripting-jvm-host-unshaded"))
+    testFixturesApi(project(":compiler:backend"))
+    testFixturesApi(project(":compiler:cli"))
+    testFixturesApi(project(":kotlin-sam-with-receiver-compiler-plugin.cli"))
+    testFixturesApi(project(":kotlin-scripting-jvm-host-unshaded"))
 
-    testApi(platform(libs.junit.bom))
-    testImplementation(libs.junit.jupiter.api)
+    testFixturesApi(platform(libs.junit.bom))
+    testFixturesApi(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
     testRuntimeOnly(libs.junit.vintage.engine)
 
-    testApi(projectTests(":compiler:tests-common-new"))
-    testApi(projectTests(":compiler:test-infrastructure"))
-    testApi(projectTests(":compiler:test-infrastructure-utils"))
+    testFixturesApi(testFixtures(project(":compiler:tests-common-new")))
+    testFixturesApi(testFixtures(project(":compiler:test-infrastructure")))
+    testFixturesApi(testFixtures(project(":compiler:test-infrastructure-utils")))
 
-    testImplementation(projectTests(":compiler:tests-common"))
-    testImplementation(libs.junit4)
+    testFixturesApi(testFixtures(project(":compiler:tests-common")))
+    testFixturesApi(libs.junit4)
 
     testRuntimeOnly(project(":core:descriptors.runtime"))
     testRuntimeOnly(project(":compiler:fir:fir-serialization"))
     testRuntimeOnly(toolsJar())
 
-    testApi(intellijCore())
+    testFixturesApi(intellijCore())
 }
 
 optInToExperimentalCompilerApi()
 
 sourceSets {
     "main" { none() }
-    "test" {
-        projectDefault()
-        generatedTestDir()
-    }
+    "test" { generatedTestDir() }
+    "testFixtures" { projectDefault() }
 }
 
 publish()

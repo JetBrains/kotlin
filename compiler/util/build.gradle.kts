@@ -17,7 +17,7 @@ dependencies {
     compileOnly(jpsModel()) { isTransitive = false }
     compileOnly(jpsModelImpl()) { isTransitive = false }
 
-    testImplementation(projectTests(":compiler:tests-common"))
+    testImplementation(testFixtures(project(":compiler:tests-common")))
     testImplementation(intellijCore())
     testApi(platform(libs.junit.bom))
     testImplementation(libs.junit4)

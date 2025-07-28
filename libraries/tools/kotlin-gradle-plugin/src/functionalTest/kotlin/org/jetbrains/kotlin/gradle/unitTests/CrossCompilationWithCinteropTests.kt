@@ -12,10 +12,12 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_NATIVE_ENABLE_KLIBS_CROSSCOMPILATION
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
+import org.jetbrains.kotlin.gradle.tasks.KotlinNativeCompile
 import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.junit.Test
+import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 
 class CrossCompilationWithCinteropTests {
@@ -34,9 +36,9 @@ class CrossCompilationWithCinteropTests {
             }
         }.evaluate()
 
-        val compileKotlinMacosX64 = project.tasks.findByName("compileKotlinMacosX64")
-        val compileKotlinMingwX64 = project.tasks.findByName("compileKotlinMingwX64")
-        val compileKotlinLinuxX64 = project.tasks.findByName("compileKotlinLinuxX64")
+        val compileKotlinMacosX64 = project.tasks.findByName("compileKotlinMacosX64") as? KotlinNativeCompile
+        val compileKotlinMingwX64 = project.tasks.findByName("compileKotlinMingwX64") as? KotlinNativeCompile
+        val compileKotlinLinuxX64 = project.tasks.findByName("compileKotlinLinuxX64") as? KotlinNativeCompile
 
         val cinteropDummyMacosX64 = project.tasks.findByName("cinteropDummyMacosX64")
         val cinteropDummyLinuxX64 = project.tasks.findByName("cinteropDummyLinuxX64")
@@ -50,20 +52,26 @@ class CrossCompilationWithCinteropTests {
         assertNotNull(cinteropDummyLinuxX64, "cinteropDummyLinuxX64 task should be present")
         assertNotNull(cinteropDummyMacosX64, "cinteropDummyMacosX64 task should be present")
 
-        assert(compileKotlinMacosX64.enabled) {
-            "compileKotlinMacosX64 task should be enabled"
-        }
-
         if (HostManager.hostIsMac) {
             project.assertNoDiagnostics(KotlinToolingDiagnostics.CrossCompilationWithCinterops)
             assert(cinteropDummyMacosX64.enabled) {
                 "cinteropDummyMacosX64 task should be enabled on macOS"
             }
+            assertEquals(
+                true,
+                compileKotlinMacosX64.onlyIf.isSatisfiedBy(compileKotlinMacosX64),
+                "compileKotlinMacosX64 task should be enabled on macOS"
+            )
         } else {
             project.assertContainsDiagnostic(KotlinToolingDiagnostics.CrossCompilationWithCinterops)
             assert(!cinteropDummyMacosX64.enabled) {
                 "cinteropDummyMacosX64 task should be disabled on non-macOS"
             }
+            assertEquals(
+                false,
+                compileKotlinMacosX64.onlyIf.isSatisfiedBy(compileKotlinMacosX64),
+                "compileKotlinMacosX64 task should be disabled on non-macOS"
+            )
         }
     }
 
@@ -79,9 +87,9 @@ class CrossCompilationWithCinteropTests {
             }
         }.evaluate()
 
-        val compileKotlinMacosX64 = project.tasks.findByName("compileKotlinMacosX64")
-        val compileKotlinMingwX64 = project.tasks.findByName("compileKotlinMingwX64")
-        val compileKotlinLinuxX64 = project.tasks.findByName("compileKotlinLinuxX64")
+        val compileKotlinMacosX64 = project.tasks.findByName("compileKotlinMacosX64") as? KotlinNativeCompile
+        val compileKotlinMingwX64 = project.tasks.findByName("compileKotlinMingwX64") as? KotlinNativeCompile
+        val compileKotlinLinuxX64 = project.tasks.findByName("compileKotlinLinuxX64") as? KotlinNativeCompile
 
         assertNotNull(compileKotlinMingwX64, "compileKotlinMingwX64 task should be present")
         assertNotNull(compileKotlinLinuxX64, "compileKotlinLinuxX64 task should be present")
@@ -90,13 +98,17 @@ class CrossCompilationWithCinteropTests {
         project.assertNoDiagnostics(KotlinToolingDiagnostics.CrossCompilationWithCinterops)
 
         if (HostManager.hostIsMac) {
-            assert(compileKotlinMacosX64.enabled) {
+            assertEquals(
+                true,
+                compileKotlinMacosX64.onlyIf.isSatisfiedBy(compileKotlinMacosX64),
                 "compileKotlinMacosX64 task should be enabled on macOS"
-            }
+            )
         } else {
-            assert(!compileKotlinMacosX64.enabled) {
+            assertEquals(
+                false,
+                compileKotlinMacosX64.onlyIf.isSatisfiedBy(compileKotlinMacosX64),
                 "compileKotlinMacosX64 task should be disabled on non-macOS"
-            }
+            )
         }
     }
 }

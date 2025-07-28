@@ -4941,9 +4941,14 @@ public final class org/jetbrains/kotlin/gradle/targets/js/yarn/YarnLockMismatchR
 
 public abstract class org/jetbrains/kotlin/gradle/targets/js/yarn/YarnLockStoreTask : org/jetbrains/kotlin/gradle/targets/js/npm/LockStoreTask {
 	public fun <init> ()V
+	public fun copy ()V
 	public final fun getReportNewYarnLock ()Lorg/gradle/api/provider/Provider;
 	public final fun getYarnLockAutoReplace ()Lorg/gradle/api/provider/Provider;
 	public final fun getYarnLockMismatchReport ()Lorg/gradle/api/provider/Provider;
+}
+
+public abstract class org/jetbrains/kotlin/gradle/targets/js/yarn/YarnLockUpgradeTask : org/jetbrains/kotlin/gradle/targets/js/yarn/YarnLockCopyTask {
+	public fun copy ()V
 }
 
 public class org/jetbrains/kotlin/gradle/targets/js/yarn/YarnPlugin : org/jetbrains/kotlin/gradle/targets/web/yarn/CommonYarnPlugin {
@@ -6033,7 +6038,7 @@ public abstract class org/jetbrains/kotlin/gradle/tasks/AbstractKotlinCompileToo
 }
 
 public abstract class org/jetbrains/kotlin/gradle/tasks/AbstractKotlinNativeCompile : org/jetbrains/kotlin/gradle/tasks/AbstractKotlinCompileTool, org/jetbrains/kotlin/gradle/internal/tasks/ProducesKlib {
-	public fun <init> (Lorg/gradle/api/model/ObjectFactory;)V
+	public fun <init> (Lorg/gradle/api/model/ObjectFactory;Lorg/gradle/api/provider/ProviderFactory;)V
 	public abstract fun getAdditionalCompilerOptions ()Lorg/gradle/api/provider/Provider;
 	public abstract fun getBaseName ()Ljava/lang/String;
 	public fun getCompilerPluginClasspath ()Lorg/gradle/api/file/FileCollection;

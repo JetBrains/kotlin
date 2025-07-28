@@ -86,8 +86,8 @@ fun makeLocalFirMetadataSerializerForMetadataSource(
     val approximator = TypeApproximatorForMetadataSerializer(session)
 
     val stringTable = object : JvmStringTable(null), FirElementAwareStringTable {
-        override fun getLocalClassIdReplacement(firClass: FirClass): ClassId =
-            ((firClass as? FirRegularClass)?.containingClassForLocal()?.toRegularClassSymbol(session)?.fir ?: firClass)
+        override fun getLocalClassLikeDeclarationIdReplacement(declaration: FirClassLikeDeclaration): ClassId =
+            (declaration.containingClassForLocal()?.toRegularClassSymbol(session)?.fir ?: declaration)
                 .symbol.classId
     }
 

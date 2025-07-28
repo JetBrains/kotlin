@@ -116,7 +116,6 @@ object PositioningStrategies {
         }
     }
 
-    val propertyKindTokens = TokenSet.create(KtTokens.VAL_KEYWORD, KtTokens.VAR_KEYWORD)
     val classKindTokens = TokenSet.create(KtTokens.CLASS_KEYWORD, KtTokens.OBJECT_KEYWORD, KtTokens.INTERFACE_KEYWORD)
 
     @JvmField
@@ -1067,6 +1066,7 @@ object PositioningStrategies {
                     is KtProperty -> element.initializer ?: element
                     // Type reference is used as a target for loop variable type mismatches
                     is KtParameter -> element.defaultValue ?: element.typeReference ?: element
+                    is KtDestructuringDeclarationEntry -> element.initializer ?: element.typeReference ?: element
                     else -> element
                 }
             )

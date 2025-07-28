@@ -72,6 +72,12 @@ public class LLReversedSandboxBackBoxTestGenerated extends AbstractLLReversedSan
   }
 
   @Test
+  @TestMetadata("functionCallInserterForIcTesting.kt")
+  public void testFunctionCallInserterForIcTesting() {
+    runTest("plugins/plugin-sandbox/testData/box/functionCallInserterForIcTesting.kt");
+  }
+
+  @Test
   @TestMetadata("generatedClassWithMembersAndNestedClasses.kt")
   public void testGeneratedClassWithMembersAndNestedClasses() {
     runTest("plugins/plugin-sandbox/testData/box/generatedClassWithMembersAndNestedClasses.kt");

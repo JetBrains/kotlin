@@ -77,10 +77,9 @@ abstract class AbstractValueUsageTransformer(
         expression.transformChildrenVoid(this)
 
         with(expression) {
-            val newArguments = arguments.zip(symbol.owner.parameters).map { (argument, parameter) ->
-                argument?.useAsValueArgument(expression, parameter)
+            for (index in 0 until minOf(arguments.size, symbol.owner.parameters.size)) {
+                arguments[index] = arguments[index]?.useAsValueArgument(expression, symbol.owner.parameters[index])
             }
-            arguments.assignFrom(newArguments)
         }
 
         return expression

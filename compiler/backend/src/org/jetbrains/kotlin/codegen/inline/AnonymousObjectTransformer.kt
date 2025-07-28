@@ -199,7 +199,7 @@ class AnonymousObjectTransformer(
                 sourceMapper, !state.config.languageVersionSettings.supportsFeature(LanguageFeature.CorrectSourceMappingSyntax), true
             )
         } else if (debugFileName != null) {
-            classBuilder.visitSource(debugFileName!!, debugInfo)
+            classBuilder.visitSource(debugFileName, debugInfo)
         }
 
         innerClassNodes.forEach { node ->
@@ -212,8 +212,8 @@ class AnonymousObjectTransformer(
 
         // debugMetadataAnnotation can be null in LV < 1.3
         if (putDebugMetadata && debugMetadataAnnotation != null) {
-            classBuilder.newAnnotation(debugMetadataAnnotation!!.desc, true).also {
-                debugMetadataAnnotation!!.accept(it)
+            classBuilder.newAnnotation(debugMetadataAnnotation.desc, true).also {
+                debugMetadataAnnotation.accept(it)
             }
         }
 

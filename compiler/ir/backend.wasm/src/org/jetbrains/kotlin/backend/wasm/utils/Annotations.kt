@@ -19,11 +19,22 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.wasm.ir.WasmImportDescriptor
 import org.jetbrains.kotlin.wasm.ir.WasmSymbol
 
+private val excludedFromCodegenFqName = FqName("kotlin.wasm.internal.ExcludedFromCodegen")
+private val wasmImportFqName: FqName = FqName("kotlin.wasm.WasmImport")
+private val wasmOpFqName = FqName("kotlin.wasm.internal.WasmOp")
+private val wasmNoOpCastFqName = FqName("kotlin.wasm.internal.WasmNoOpCast")
+private val wasmAutoboxedFqName = FqName("kotlin.wasm.internal.WasmAutoboxed")
+private val wasmPrimitiveConstructorFqName = FqName("kotlin.wasm.internal.WasmPrimitiveConstructor")
+private val wasmArrayOfFqName = FqName("kotlin.wasm.internal.WasmArrayOf")
+private val jsFunFqName = FqName("kotlin.JsFun")
+private val jsPrimitiveFqName = FqName("kotlin.wasm.internal.JsPrimitive")
+private val wasmExportFqName = FqName("kotlin.wasm.WasmExport")
+
 fun IrAnnotationContainer.hasExcludedFromCodegenAnnotation(): Boolean =
-    hasAnnotation(FqName("kotlin.wasm.internal.ExcludedFromCodegen"))
+    hasAnnotation(excludedFromCodegenFqName)
 
 fun IrFunction.getWasmImportDescriptor(): WasmImportDescriptor? {
-    val annotation = getAnnotation(FqName("kotlin.wasm.WasmImport"))
+    val annotation = getAnnotation(wasmImportFqName)
         ?: return null
 
     val moduleName = (annotation.arguments[0] as IrConst).value as String
@@ -35,23 +46,23 @@ fun IrFunction.getWasmImportDescriptor(): WasmImportDescriptor? {
 }
 
 fun IrAnnotationContainer.getWasmOpAnnotation(): String? =
-    getAnnotation(FqName("kotlin.wasm.internal.WasmOp"))?.getSingleConstStringArgument()
+    getAnnotation(wasmOpFqName)?.getSingleConstStringArgument()
 
 fun IrAnnotationContainer.hasWasmNoOpCastAnnotation(): Boolean =
-    hasAnnotation(FqName("kotlin.wasm.internal.WasmNoOpCast"))
+    hasAnnotation(wasmNoOpCastFqName)
 
 fun IrAnnotationContainer.hasWasmAutoboxedAnnotation(): Boolean =
-    hasAnnotation(FqName("kotlin.wasm.internal.WasmAutoboxed"))
+    hasAnnotation(wasmAutoboxedFqName)
 
 fun IrAnnotationContainer.hasWasmPrimitiveConstructorAnnotation(): Boolean =
-    hasAnnotation(FqName("kotlin.wasm.internal.WasmPrimitiveConstructor"))
+    hasAnnotation(wasmPrimitiveConstructorFqName)
 
 class WasmArrayInfo(val klass: IrClass, val isNullable: Boolean, val isMutable: Boolean) {
     val type = klass.defaultType.let { if (isNullable) it.makeNullable() else it }
 }
 
 fun IrAnnotationContainer.getWasmArrayAnnotation(): WasmArrayInfo? =
-    getAnnotation(FqName("kotlin.wasm.internal.WasmArrayOf"))?.let {
+    getAnnotation(wasmArrayOfFqName)?.let {
         WasmArrayInfo(
             (it.arguments[0] as IrClassReference).symbol.owner as IrClass,
             (it.arguments[1] as IrConst).value as Boolean,
@@ -60,13 +71,13 @@ fun IrAnnotationContainer.getWasmArrayAnnotation(): WasmArrayInfo? =
     }
 
 fun IrAnnotationContainer.getJsFunAnnotation(): String? =
-    getAnnotation(FqName("kotlin.JsFun"))?.getSingleConstStringArgument()
+    getAnnotation(jsFunFqName)?.getSingleConstStringArgument()
 
 fun IrAnnotationContainer.getJsPrimitiveType(): String? =
-    getAnnotation(FqName("kotlin.wasm.internal.JsPrimitive"))?.getSingleConstStringArgument()
+    getAnnotation(jsPrimitiveFqName)?.getSingleConstStringArgument()
 
 fun IrFunction.getWasmExportNameIfWasmExport(): String? {
-    val annotation = getAnnotation(FqName("kotlin.wasm.WasmExport")) ?: return null
+    val annotation = getAnnotation(wasmExportFqName) ?: return null
     if (annotation.arguments.isEmpty()) return name.identifier
     val nameFromAnnotation = (annotation.arguments[0] as? IrConst)?.value as? String
     return nameFromAnnotation ?: name.identifier

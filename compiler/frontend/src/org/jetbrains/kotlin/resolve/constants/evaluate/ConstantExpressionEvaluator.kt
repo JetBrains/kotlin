@@ -103,7 +103,7 @@ class ConstantExpressionEvaluator(
         val argumentsAsVararg = varargElementType != null && !hasSpread(resolvedArgument)
         val constantType = if (argumentsAsVararg) varargElementType else parameterDescriptor.type
         val expectedType = getEffectiveExpectedType(parameterDescriptor, resolvedArgument, languageVersionSettings, trace)
-        val compileTimeConstants = resolveAnnotationValueArguments(resolvedArgument, constantType!!, expectedType, trace)
+        val compileTimeConstants = resolveAnnotationValueArguments(resolvedArgument, constantType, expectedType, trace)
         val constants = compileTimeConstants.map { it.toConstantValue(expectedType) }
 
         if (argumentsAsVararg) {
@@ -486,7 +486,7 @@ private class ConstantExpressionEvaluatorVisitor(
     }
 
     override fun visitConstantExpression(expression: KtConstantExpression, expectedType: KotlinType?): CompileTimeConstant<*>? {
-        val text = expression.text ?: return null
+        val text = expression.text
 
         val nodeElementType = expression.node.elementType
         if (nodeElementType == KtNodeTypes.NULL) return NullValue().wrap()

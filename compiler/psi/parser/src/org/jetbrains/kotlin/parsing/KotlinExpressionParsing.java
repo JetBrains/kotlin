@@ -22,8 +22,6 @@ import org.jetbrains.kotlin.lexer.KtTokens;
 import org.jetbrains.kotlin.parsing.KotlinParsing.NameParsingMode;
 import org.jetbrains.kotlin.psi.stubs.elements.KtTokenSets;
 
-import java.util.*;
-
 import static org.jetbrains.kotlin.KtNodeTypes.*;
 import static org.jetbrains.kotlin.lang.BinaryOperationPrecedence.TOKEN_TO_BINARY_PRECEDENCE_MAP_WITH_SOFT_IDENTIFIERS;
 import static org.jetbrains.kotlin.lexer.KtTokens.*;
@@ -1201,8 +1199,11 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
             }
             else if (at(LPAR)) {
                 PsiBuilder.Marker destructuringDeclaration = mark();
-                myKotlinParsing.parseMultiDeclarationName(TOKEN_SET_TO_FOLLOW_AFTER_DESTRUCTURING_DECLARATION_IN_LAMBDA,
-                                                          TOKEN_SET_TO_FOLLOW_AFTER_DESTRUCTURING_DECLARATION_IN_LAMBDA_RECOVERY);
+                myKotlinParsing.parseMultiDeclarationEntry(
+                        TOKEN_SET_TO_FOLLOW_AFTER_DESTRUCTURING_DECLARATION_IN_LAMBDA,
+                        TOKEN_SET_TO_FOLLOW_AFTER_DESTRUCTURING_DECLARATION_IN_LAMBDA_RECOVERY,
+                        // No var in lambda parameter destructuring
+                        lookahead(1) == VAL_KEYWORD ? MultiDeclarationMode.FULL_VAL_ONLY : MultiDeclarationMode.SHORT);
                 destructuringDeclaration.done(DESTRUCTURING_DECLARATION);
             }
             else {
@@ -1429,7 +1430,11 @@ public class KotlinExpressionParsing extends AbstractKotlinParsing {
 
                 if (at(LPAR)) {
                     PsiBuilder.Marker destructuringDeclaration = mark();
-                    myKotlinParsing.parseMultiDeclarationName(IN_KEYWORD_L_BRACE_SET, IN_KEYWORD_L_BRACE_RECOVERY_SET);
+                    myKotlinParsing.parseMultiDeclarationEntry(
+                            IN_KEYWORD_L_BRACE_SET,
+                            IN_KEYWORD_L_BRACE_RECOVERY_SET,
+                            // No var in destructured loop parameter
+                            lookahead(1) == VAL_KEYWORD ? MultiDeclarationMode.FULL_VAL_ONLY : MultiDeclarationMode.SHORT);
                     destructuringDeclaration.done(DESTRUCTURING_DECLARATION);
                 }
                 else {

@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.java.enhancement
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
@@ -14,6 +15,7 @@ import org.jetbrains.kotlin.fir.declarations.extractEnumValueArgumentInfo
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.java.convertAnnotationsToFir
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
+import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.load.java.AbstractAnnotationTypeQualifierResolver
@@ -21,6 +23,8 @@ import org.jetbrains.kotlin.load.java.JavaModuleAnnotationsProvider
 import org.jetbrains.kotlin.load.java.JavaTypeEnhancementState
 import org.jetbrains.kotlin.load.java.JavaTypeQualifiersByElementType
 import org.jetbrains.kotlin.load.java.JvmAnnotationNames.DEFAULT_ANNOTATION_MEMBER_NAME
+import org.jetbrains.kotlin.load.java.structure.impl.JavaElementImpl
+import org.jetbrains.kotlin.load.java.structure.impl.source.SingleFileRootPsiPackage
 import org.jetbrains.kotlin.name.FqName
 
 class FirAnnotationTypeQualifierResolver(
@@ -64,10 +68,15 @@ class FirAnnotationTypeQualifierResolver(
                 ?.let { extractDefaultQualifiers(it) }
         } else {
             val fakeSource = firClass.source?.fakeElement(KtFakeSourceElementKind.Enhancement)
-            val forModule = javaModuleAnnotationsProvider.getAnnotationsForModuleOwnerOfClass(classId)
-                ?.let { extractAndMergeDefaultQualifiers(null, it.convertAnnotationsToFir(session, fakeSource)) }
-            val forPackage = (firClass as? FirJavaClass)?.javaPackage
-                ?.let { extractAndMergeDefaultQualifiers(forModule, it.convertAnnotationsToFir(session, fakeSource)) }
+            val forModule = javaModuleAnnotationsProvider.getAnnotationsForModuleOwnerOfClass(classId)?.let {
+                extractAndMergeDefaultQualifiers(null, it.convertAnnotationsToFir(session, fakeSource))
+            }
+            val forPackage = (firClass as? FirJavaClass)?.javaPackage?.let {
+                val isForWarningOnly =
+                    !session.languageVersionSettings.supportsFeature(LanguageFeature.CheckPackageInfoNullnessAnnotations) &&
+                            (it as? JavaElementImpl<*>)?.psi is SingleFileRootPsiPackage
+                extractAndMergeDefaultQualifiers(forModule, it.convertAnnotationsToFir(session, fakeSource), isForWarningOnly)
+            }
             forPackage ?: forModule
         }
         return extractAndMergeDefaultQualifiers(parentQualifiers, firClass.annotations)

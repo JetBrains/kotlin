@@ -178,27 +178,27 @@ class MppDslPomIT : KGPBaseTest() {
                     sourceSets.commonMain.dependencies {
                         api(project(":utils"))
                     }
-                }
-                publishing.publications.configureEach { publication ->
-                    publication as MavenPublication
-
-                    // Append artifact ID string i.e.
-                    // <dependency>
-                    //  <artifactId>OLD-$MyArtifactId</artifactId>
-                    //  ...
-                    //  </dependency>
-                    // If pom rewriter did its job, it should contain target-specific artifact ID
-                    publication.pom.withXml { xmlProvider ->
-                        val root = xmlProvider.asNode()
-                        val dependenciesNode = (root.get("dependencies") as NodeList).filterIsInstance<Node>().single()
-                        val dependencyNodes = (dependenciesNode.get("dependency") as? NodeList).orEmpty().filterIsInstance<Node>()
-                        fun Node.updateChildNodeByName(name: String, map: (String) -> String) {
-                            val childNode = (get(name) as NodeList).single() as Node
-                            val newValue = map(childNode.value().toString())
-                            childNode.setValue(newValue)
-                        }
-                        for (dependencyNode in dependencyNodes) {
-                            dependencyNode.updateChildNodeByName("artifactId") { "$it-MyArtifactId" }
+                    targets.configureEach {
+                        it.mavenPublication {
+                            // Append artifact ID string i.e.
+                            // <dependency>
+                            //  <artifactId>OLD-$MyArtifactId</artifactId>
+                            //  ...
+                            //  </dependency>
+                            // If pom rewriter did its job, it should contain target-specific artifact ID
+                            pom.withXml { xmlProvider ->
+                                val root = xmlProvider.asNode()
+                                val dependenciesNode = (root.get("dependencies") as NodeList).filterIsInstance<Node>().single()
+                                val dependencyNodes = (dependenciesNode.get("dependency") as? NodeList).orEmpty().filterIsInstance<Node>()
+                                fun Node.updateChildNodeByName(name: String, map: (String) -> String) {
+                                    val childNode = (get(name) as NodeList).single() as Node
+                                    val newValue = map(childNode.value().toString())
+                                    childNode.setValue(newValue)
+                                }
+                                for (dependencyNode in dependencyNodes) {
+                                    dependencyNode.updateChildNodeByName("artifactId") { "$it-MyArtifactId" }
+                                }
+                            }
                         }
                     }
                 }

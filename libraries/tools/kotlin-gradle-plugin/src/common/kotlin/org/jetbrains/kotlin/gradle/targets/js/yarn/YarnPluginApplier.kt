@@ -136,7 +136,7 @@ internal class YarnPluginApplier(
         yarnRootExtension.lockFileDirectory = lockFileDirectory(project.rootDir)
 
         val upgradeYarnLock =
-            project.tasks.register(platformDisambiguate.extensionName(UPGRADE_YARN_LOCK_BASE_NAME), YarnLockCopyTask::class.java) { task ->
+            project.tasks.register(platformDisambiguate.extensionName(UPGRADE_YARN_LOCK_BASE_NAME), YarnLockUpgradeTask::class.java) { task ->
                 task.dependsOn(kotlinNpmInstall)
                 task.inputFile.set(nodeJsRoot.rootPackageDirectory.map { it.file(LockCopyTask.YARN_LOCK) })
                 task.outputDirectory.set(yarnRootExtension.lockFileDirectory)

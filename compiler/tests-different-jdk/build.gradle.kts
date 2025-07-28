@@ -5,9 +5,10 @@ plugins {
 }
 
 dependencies {
-    testImplementation(projectTests(":compiler:tests-common-new"))
-    testImplementation(projectTests(":compiler:fir:fir2ir"))
-    testRuntimeOnly(projectTests(":compiler"))
+    testImplementation(project(":compiler:tests-common-new", "testsJarConfig"))
+    testRuntimeOnly(testFixtures(project(":compiler:tests-common-new")))
+    testImplementation(project(":compiler:fir:fir2ir", "testsJarConfig"))
+    testRuntimeOnly(testFixtures(project(":compiler:fir:fir2ir")))
 
     testImplementation(libs.junit4)
     testImplementation(kotlinStdlib())
@@ -97,5 +98,3 @@ codegenTest(
 ) {
     systemProperty("kotlin.test.box.d8.disable", true)
 }
-
-testsJar()

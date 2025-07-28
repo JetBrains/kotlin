@@ -16,7 +16,8 @@ public fun funinterface_FunctionalInterface__TypesOfArguments__U2829202D_U20Swif
     val __function = run {
         val kotlinFun = convertBlockPtrToKotlinFunction<()->Int>(function);
         {
-            kotlinFun()
+            val _result = kotlinFun()
+            _result
         }
     }
     val _result = funinterface.FunctionalInterface(__function)
@@ -54,7 +55,8 @@ public fun funinterface_XMLFunctionalInterfaceWithLeadingAbbreviation__TypesOfAr
     val __function = run {
         val kotlinFun = convertBlockPtrToKotlinFunction<()->Int>(function);
         {
-            kotlinFun()
+            val _result = kotlinFun()
+            _result
         }
     }
     val _result = funinterface.XMLFunctionalInterfaceWithLeadingAbbreviation(__function)
@@ -73,7 +75,8 @@ public fun funinterface__123FunctionalInterfaceWithLeadingNumbers__TypesOfArgume
     val __function = run {
         val kotlinFun = convertBlockPtrToKotlinFunction<()->Int>(function);
         {
-            kotlinFun()
+            val _result = kotlinFun()
+            _result
         }
     }
     val _result = funinterface._123FunctionalInterfaceWithLeadingNumbers(__function)
@@ -92,7 +95,8 @@ public fun funinterface__123XMLFunctionalInterfaceWithLeadingUnderscoreNumbersAn
     val __function = run {
         val kotlinFun = convertBlockPtrToKotlinFunction<()->Int>(function);
         {
-            kotlinFun()
+            val _result = kotlinFun()
+            _result
         }
     }
     val _result = funinterface._123XMLFunctionalInterfaceWithLeadingUnderscoreNumbersAndAbbreviation(__function)
@@ -111,7 +115,8 @@ public fun funinterface__FunctionalInterfaceWithLeadingUnderscore__TypesOfArgume
     val __function = run {
         val kotlinFun = convertBlockPtrToKotlinFunction<()->Int>(function);
         {
-            kotlinFun()
+            val _result = kotlinFun()
+            _result
         }
     }
     val _result = funinterface._FunctionalInterfaceWithLeadingUnderscore(__function)
@@ -130,7 +135,8 @@ public fun funinterface_functionalInterfaceWithAlreadyLowercaseLeading__TypesOfA
     val __function = run {
         val kotlinFun = convertBlockPtrToKotlinFunction<()->Int>(function);
         {
-            kotlinFun()
+            val _result = kotlinFun()
+            _result
         }
     }
     val _result = funinterface.functionalInterfaceWithAlreadyLowercaseLeading(__function)

@@ -276,13 +276,15 @@ sealed class IdSignature {
     ) : IdSignature() {
         override val isPubliclyVisible: Boolean get() = true
 
-        override fun packageFqName(): FqName = FqName(packageFqName)
+        private val packageFqNameObject = FqName(packageFqName)
 
-        val shortName: String get() = declarationFqName.substringAfterLast('.')
+        override fun packageFqName(): FqName = packageFqNameObject
 
-        val firstNameSegment: String get() = declarationFqName.substringBefore('.')
+        val shortName: String = declarationFqName.substringAfterLast('.')
 
-        val nameSegments: List<String> get() = declarationFqName.split('.')
+        val firstNameSegment: String = declarationFqName.substringBefore('.')
+
+        val nameSegments: List<String> = declarationFqName.split('.')
 
         private fun adaptMask(old: Long): Long =
             old xor Flags.entries.fold(0L) { a, f ->
@@ -297,7 +299,6 @@ sealed class IdSignature {
                 return this
             }
 
-            val nameSegments = nameSegments
             val adaptedMask = adaptMask(mask)
             if (nameSegments.size == 1 && mask == adaptedMask) return this
 

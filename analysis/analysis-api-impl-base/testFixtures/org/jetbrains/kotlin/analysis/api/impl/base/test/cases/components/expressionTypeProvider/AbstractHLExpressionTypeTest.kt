@@ -10,10 +10,7 @@ import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBase
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
 import org.jetbrains.kotlin.analysis.test.framework.utils.executeOnPooledThreadInReadAction
-import org.jetbrains.kotlin.psi.KtBlockExpression
-import org.jetbrains.kotlin.psi.KtExpression
-import org.jetbrains.kotlin.psi.KtFile
-import org.jetbrains.kotlin.psi.KtValueArgument
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.SimpleDirectivesContainer
 import org.jetbrains.kotlin.test.services.TestServices
@@ -36,11 +33,17 @@ abstract class AbstractHLExpressionTypeTest : AbstractAnalysisApiBasedTest() {
             else -> null
         } ?: error("expect an expression but got ${selected.text}, ${selected::class}")
 
+        val caretElement = testServices.expressionMarkerProvider.getBottommostElementOfTypeAtCaretOrNull<KtElement>(mainFile)
+
         val type = executeOnPooledThreadInReadAction {
-            copyAwareAnalyzeForTest(expression) { contextExpression ->
-                var ktType = contextExpression.expressionType
+            copyAwareAnalyzeForTest(caretElement ?: expression) {
+                var ktType = expression.expressionType
                 if (Directives.APPROXIMATE_TYPE in mainModule.testModule.directives) {
-                    ktType = ktType?.approximateToSuperPublicDenotableOrSelf(true)
+                    ktType = if (caretElement == null) {
+                        ktType?.approximateToDenotableSupertypeOrSelf(allowLocalDenotableTypes = true)
+                    } else {
+                        ktType?.approximateToDenotableSupertypeOrSelf(caretElement)
+                    }
                 }
                 ktType?.render(renderer, position = Variance.INVARIANT)
             }

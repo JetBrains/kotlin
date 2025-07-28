@@ -71,7 +71,7 @@ internal class CommonProxy private constructor(override val state: Common, overr
         internal fun Common.asProxy(callInterceptor: CallInterceptor, extendFrom: Class<*>? = null): Any {
             val commonProxy = CommonProxy(this, callInterceptor)
             val interfaces = when (extendFrom) {
-                null, Object::class.java -> arrayOf(Proxy::class.java)
+                null, Any::class.java -> arrayOf(Proxy::class.java)
                 else -> arrayOf(extendFrom, Proxy::class.java)
             }
 

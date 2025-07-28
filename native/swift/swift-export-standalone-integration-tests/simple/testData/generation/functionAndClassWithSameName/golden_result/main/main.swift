@@ -8,7 +8,7 @@ import flattened
 public protocol InterfaceWithFactory: KotlinRuntime.KotlinBase {
 }
 @objc(_InterfaceWithFactory)
-protocol _InterfaceWithFactory {
+package protocol _InterfaceWithFactory {
 }
 public final class ClassWithFactoryWithoutParameters: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
     public var value: Swift.Int32 {
@@ -118,11 +118,11 @@ public func utcOffset(
 ) -> main.UtcOffset {
     return main.UtcOffset.__createClassWrapper(externalRCRef: __root___UtcOffset__TypesOfArguments__Swift_Int32__(x))
 }
-public extension main.InterfaceWithFactory where Self : KotlinRuntimeSupport._KotlinBridged {
+extension main.InterfaceWithFactory where Self : KotlinRuntimeSupport._KotlinBridged {
 }
 extension KotlinRuntimeSupport._KotlinExistential: main.InterfaceWithFactory where Wrapped : main._InterfaceWithFactory {
 }
-public extension ExportedKotlinPackages.test.factory {
+extension ExportedKotlinPackages.test.factory {
     public final class ClassWithFactoryInAPackage: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
         public init() {
             if Self.self != ExportedKotlinPackages.test.factory.ClassWithFactoryInAPackage.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from ExportedKotlinPackages.test.factory.ClassWithFactoryInAPackage ") }
@@ -184,21 +184,21 @@ public extension ExportedKotlinPackages.test.factory {
         return ExportedKotlinPackages.test.factory.ClassWithFactoryInAPackage.__createClassWrapper(externalRCRef: test_factory_ClassWithFactoryInAPackage__TypesOfArguments__KotlinRuntime_KotlinBase__(arg.__externalRCRef()))
     }
 }
-public extension ExportedKotlinPackages.test.not.factory {
+extension ExportedKotlinPackages.test.not.factory {
     public static func ClassWithFactoryInAPackage(
         arg: KotlinRuntime.KotlinBase
     ) -> ExportedKotlinPackages.test.factory.ClassWithFactoryInAPackage {
         return ExportedKotlinPackages.test.factory.ClassWithFactoryInAPackage.__createClassWrapper(externalRCRef: test_not_factory_ClassWithFactoryInAPackage__TypesOfArguments__KotlinRuntime_KotlinBase__(arg.__externalRCRef()))
     }
 }
-public extension ExportedKotlinPackages.test.factory.modules {
+extension ExportedKotlinPackages.test.factory.modules {
     public static func classFromDependency(
         arg: KotlinRuntime.KotlinBase
     ) -> ExportedKotlinPackages.test.factory.modules.ClassFromDependency {
         return ExportedKotlinPackages.test.factory.modules.ClassFromDependency.__createClassWrapper(externalRCRef: test_factory_modules_ClassFromDependency__TypesOfArguments__KotlinRuntime_KotlinBase__(arg.__externalRCRef()))
     }
 }
-public extension ExportedKotlinPackages.typealiases {
+extension ExportedKotlinPackages.typealiases {
     public typealias TypealiasWithFactoryWithoutParameters = main.ClassWithFactoryWithoutParameters
     public typealias TypealiasWithFactoryWithoutParameters2 = main.ClassWithFactoryWithoutParameters
     public static func typealiasWithFactoryWithoutParameters() -> ExportedKotlinPackages.typealiases.TypealiasWithFactoryWithoutParameters {

@@ -4,6 +4,8 @@
 
 object MyObject
 
+private interface PrivateFoeble
+
 interface Foeble {
     fun bar(arg: Foeble): Foeble
     val baz: Foeble
@@ -16,7 +18,7 @@ interface Barable: Foeble {
 
 interface Bazzable
 
-class Foo: Foeble {
+class Foo: Foeble, PrivateFoeble {
     override fun bar(arg: Foeble): Foo = this
     override val baz: Foeble get() = this
 }
@@ -162,3 +164,16 @@ fun interface _123XMLFunctionalInterfaceWithLeadingUnderscoreNumbersAndAbbreviat
 fun interface functionalInterfaceWithAlreadyLowercaseLeading {
     operator fun invoke(): Int
 }
+
+// MODULE: public_interface_usage(public_interface)
+// EXPORT_TO_SWIFT
+// FILE: public_interface_usage.kt
+
+class DemoCrossModuleInterfaceUsage: DemoCrossModuleInterface
+
+// MODULE: public_interface
+// EXPORT_TO_SWIFT
+// FILE: public_interface.kt
+
+interface DemoCrossModuleInterface
+

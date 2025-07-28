@@ -374,7 +374,6 @@ open class IncrementalCompilationK2JvmMultiProjectBuildToolsApiInProcessIT : Inc
     }
 }
 
-@Disabled("KT-75657")
 @DisplayName("In Process: K/JVM multi-project IC with disabled precise outputs backups and BTA with FIR runner enabled")
 class IncrementalCompilationK2JvmMultiProjectFirRunnerBuildToolsApiInProcessIT : IncrementalCompilationK2JvmMultiProjectBuildToolsApiInProcessIT() {
     override val defaultBuildOptions = super.defaultBuildOptions.copy(useFirJvmRunner = true)

@@ -283,11 +283,19 @@ sealed class KtFakeSourceElementKind(final override val shouldSkipErrorTypeRepor
      */
     object ArrayTypeFromVarargParameter : KtFakeSourceElementKind()
 
+    sealed class DestructuringInitializer : KtFakeSourceElementKind()
+
     /**
      * `val (a,b) = x` --> `val a = x.component1(); val b = x.component2()`
      * where componentN calls will have the fake source elements refer to the corresponding KtDestructuringDeclarationEntry
      */
-    object DesugaredComponentFunctionCall : KtFakeSourceElementKind()
+    object DesugaredComponentFunctionCall : DestructuringInitializer()
+
+    /**
+     * `(val a, val bb = b) = x` --> `val a = x.a; val bb = x.b`
+     * where property accesses a and b will have the fake source elements refer to the corresponding KtDestructuringDeclarationEntry
+     */
+    object DesugaredNameBasedDestructuring : DestructuringInitializer()
 
     /**
      * when smart casts applied to the expression, it is wrapped into FirSmartCastExpression

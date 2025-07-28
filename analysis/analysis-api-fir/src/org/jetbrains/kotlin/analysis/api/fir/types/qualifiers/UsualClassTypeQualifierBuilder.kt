@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.fir.declarations.utils.isInner
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.resolve.toSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.LookupTagInternals
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.utils.exceptions.withConeTypeEntry
@@ -35,20 +34,10 @@ internal object UsualClassTypeQualifierBuilder {
                 withEntry("useSiteSession", builder.rootSession) { it.toString() }
             }
 
-
-        if (classSymbolToRender !is FirRegularClassSymbol) {
-            return listOf(
-                KaBaseResolvedClassTypeQualifier(
-                    builder.classifierBuilder.buildClassifierSymbol(classSymbolToRender),
-                    coneType.typeArguments.map { builder.typeBuilder.buildTypeProjection(it) },
-                )
-            )
-        }
-
         val designation = classSymbolToRender.fir.let {
             val nonLocalDesignation = it.tryCollectDesignationWithOptionalFile()
             nonLocalDesignation?.toSequence(includeTarget = true)?.toList() ?: collectDesignationPathForLocal(it)
-        }.filterIsInstance<FirRegularClass>()
+        }.filterIsInstance<FirClassLikeDeclaration>()
 
         var typeParametersLeft = coneType.typeArguments.size
 
@@ -80,7 +69,7 @@ internal object UsualClassTypeQualifierBuilder {
         return result
     }
 
-    private fun FirRegularClass.collectForLocal(): List<FirClassLikeDeclaration> {
+    private fun FirClassLikeDeclaration.collectForLocal(): List<FirClassLikeDeclaration> {
         require(isLocal)
         var containingClassLookUp = containingClassForLocal()
         val designation = mutableListOf<FirClassLikeDeclaration>(this)
@@ -102,8 +91,9 @@ internal object UsualClassTypeQualifierBuilder {
         }
         return when (declaration) {
             is FirAnonymousObject -> listOf(declaration)
-            is FirRegularClass -> declaration.collectForLocal()
-            is FirTypeAlias -> listOf(declaration) // TODO: handle type aliases
+            is FirRegularClass,
+            is FirTypeAlias
+                -> declaration.collectForLocal()
         }
     }
 }

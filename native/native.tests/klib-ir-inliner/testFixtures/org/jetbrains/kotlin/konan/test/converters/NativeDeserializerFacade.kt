@@ -146,7 +146,7 @@ class NativeDeserializerFacade(
                 // TODO KT-77493: Disable PL after all tests for invisible references would be migrated to diagnostic tests
                 partialLinkageConfig = PartialLinkageConfig(PartialLinkageMode.ENABLE, PartialLinkageLogLevel.ERROR),
                 builtIns = irBuiltIns,
-                messageCollector = messageCollector
+                messageCollector = messageCollector,
             ),
             libraryBeingCached = null,
             userVisibleIrModulesSupport = UserVisibleIrModulesSupport(externalDependenciesLoader = UserVisibleIrModulesSupport.ExternalDependenciesLoader.EMPTY),

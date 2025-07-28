@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.fir.resolve.transformers.plugin.CompilerRequiredAnno
  * classes to other non-local declarations and incorrectly modify them in the Analysis API mode
  *
  * @see org.jetbrains.kotlin.fir.declarations.FirResolvePhase
- * @see org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.runAllPhasesForLocalClass
+ * @see org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.runAllPhasesForLocalClassLikeDeclarations
  */
 @FirImplementationDetail
 abstract class FirJumpingPhaseComputationSessionForLocalClassesProvider : FirSessionComponent {

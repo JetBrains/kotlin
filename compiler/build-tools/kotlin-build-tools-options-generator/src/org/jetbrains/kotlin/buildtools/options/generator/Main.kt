@@ -30,14 +30,14 @@ fun main(args: Array<String>) {
         val output = generator.generateArgumentsForLevel(level.first, level.second)
         output.generatedFiles.forEach { (path, content) ->
             val genFile = genDir.resolve(path)
-            GeneratorsFileUtil.writeFileIfContentChanged(genFile.toFile(), content)
+            GeneratorsFileUtil.writeFileIfContentChanged(genFile.toFile(), content, logNotChanged = false)
             generatedFiles.add(genFile)
         }
         levels += level.first.nestedLevels.map { it to output.argumentTypeName }
     }
     genDir.walk().filter { it.isRegularFile() }.forEach {
         if (it !in generatedFiles) {
-            GeneratorsFileUtil.writeFileIfContentChanged(it.toFile(), "")
+            GeneratorsFileUtil.writeFileIfContentChanged(it.toFile(), "", logNotChanged = false)
             it.deleteExisting()
         }
     }

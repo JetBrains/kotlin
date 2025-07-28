@@ -23,7 +23,7 @@ class PathPartInfo(val key: String) {
         builder: StringBuilder,
         pathSeparator: String = "/",
         siblingSeparator: String = ":",
-    ) = with(builder) {
+    ): Unit = with(builder) {
         var node = this@PathPartInfo
         if (node == ROOT) {
             append("<ROOT>")

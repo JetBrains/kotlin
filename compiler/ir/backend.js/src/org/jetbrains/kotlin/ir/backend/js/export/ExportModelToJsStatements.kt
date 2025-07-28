@@ -207,7 +207,7 @@ class ExportModelToJsStatements(
             JsName(name, false),
             JsObjectLiteral(false).apply {
                 getter?.let {
-                    val fieldName = when (irGetter?.origin) {
+                    val fieldName = when (irGetter.origin) {
                         JsLoweredDeclarationOrigin.OBJECT_GET_INSTANCE_FUNCTION -> "getInstance"
                         else -> "get"
                     }

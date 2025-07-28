@@ -85,7 +85,7 @@ private fun IrFunction.isDefaultImplsBridgeInJvmDefaultEnableMode(): Boolean =
             (parent as? IrClass)?.origin == JvmLoweredDeclarationOrigin.DEFAULT_IMPLS &&
             // (Note that we could've checked this directly via `context.config.jvmDefaultMode`, but that would require passing `context`
             // to utilities in this file, and all their call sites.)
-            ((body as? IrExpressionBody)?.expression as? IrCall)?.symbol?.owner == originalFunctionForDefaultImpl
+            isBodyBridgeCallTo(originalFunctionForDefaultImpl)
 
 fun IrFunction.shouldContainSuspendMarkers(): Boolean = !isNonBoxingSuspendDelegation() &&
         // These functions also contain a single `suspend` tail call, but if it returns an unboxed inline class value,

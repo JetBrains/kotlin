@@ -1242,7 +1242,7 @@ abstract class AbstractComposeLowering(
             startOffset,
             endOffset,
             returnType,
-            symbol as IrSimpleFunctionSymbol,
+            symbol,
             symbol.owner.typeParameters.size
         ).apply {
             arguments[0] = currentComposer

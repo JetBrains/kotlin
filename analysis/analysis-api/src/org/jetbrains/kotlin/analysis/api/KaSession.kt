@@ -184,3 +184,38 @@ public interface KaSession : KaLifetimeOwner,
  */
 public fun KaSession.getModule(element: PsiElement): KaModule =
     KaModuleProvider.getModule(useSiteModule.project, element, useSiteModule)
+
+/**
+ * @see KaSession.useSiteModule
+ */
+@KaContextParameterApi
+context(context: KaSession)
+public val useSiteModule: KaModule
+    get() = with(context) { useSiteModule }
+
+/**
+ * @see KaSession.useSiteSession
+ */
+@KaContextParameterApi
+context(context: KaSession)
+public val useSiteSession: KaSession
+    get() = with(context) { useSiteSession }
+
+/**
+ * @see KaSession.restoreSymbol
+ */
+@KaContextParameterApi
+context(context: KaSession)
+public fun <S : KaSymbol> KaSymbolPointer<S>.restoreSymbol(): S? {
+    return with(context) { restoreSymbol() }
+}
+
+/**
+ * @see KaSession.restore
+ */
+@KaContextParameterApi
+@OptIn(KaExperimentalApi::class)
+context(context: KaSession)
+public fun <T : KaType> KaTypePointer<T>.restore(): T? {
+    return with(context) { restore() }
+}

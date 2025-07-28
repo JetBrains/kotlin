@@ -45,6 +45,15 @@ abstract class TypeApproximatorConfiguration {
     open val approximateLocalTypes get() = false
 
     /**
+     * Defines additional condition for local type approximation.
+     * Should return false if the current local type should be considered as a final approximation.
+     * This check is triggered for every found local supertype of the initial type (including the type itself).
+     * Note that [approximateLocalTypes] should be true for this to have any effect.
+     */
+    open fun shouldApproximateLocalType(ctx: TypeSystemInferenceExtensionContext, type: KotlinTypeMarker): Boolean =
+        true
+
+    /**
      * Is only expected to be true for FinalApproximationAfterResolutionAndInference
      * But it's only used for K2 to reproduce K1 behavior for the approximation of resolved calls
      */

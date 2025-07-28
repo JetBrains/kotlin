@@ -17,12 +17,12 @@ dependencies {
     testApi(kotlinTest())
     testCompileOnly(kotlinTest("junit"))
     testImplementation(libs.junit4)
-    testApi(projectTests(":compiler:tests-common"))
-    testApi(projectTests(":compiler:tests-common-new"))
-    testApi(projectTests(":compiler:fir:raw-fir:psi2fir"))
-    testApi(projectTests(":compiler:fir:raw-fir:light-tree2fir"))
-    testApi(projectTests(":compiler:fir:analysis-tests:legacy-fir-tests"))
-    testApi(projectTests(":generators:test-generator"))
+    testApi(testFixtures(project(":compiler:tests-common")))
+    testApi(testFixtures(project(":compiler:tests-common-new")))
+    testApi(testFixtures(project(":compiler:fir:raw-fir:psi2fir")))
+    testApi(testFixtures(project(":compiler:fir:raw-fir:light-tree2fir")))
+    testApi(testFixtures(project(":compiler:fir:analysis-tests:legacy-fir-tests")))
+    testApi(testFixtures(project(":generators:test-generator")))
     testApi(project(":compiler:ir.tree")) // used for deepCopyWithSymbols call that is removed by proguard from the compiler TODO: make it more straightforward
     testApi(project(":kotlin-scripting-compiler"))
 

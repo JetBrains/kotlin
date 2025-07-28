@@ -24,7 +24,7 @@ public val KaDeclarationSymbol.deprecatedAnnotation: Deprecated?
         val arguments = it.arguments.associate { it.name.asString() to it.expression }
 
         val message = (arguments["message"] as? KaAnnotationValue.ConstantValue?)
-            ?.value.toString().removeSurrounding("\"") ?: ""
+            ?.value.toString().removeSurrounding("\"")
 
         val level = (arguments["level"] as? KaAnnotationValue.EnumEntryValue?)
             ?.callableId?.let {

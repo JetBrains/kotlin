@@ -357,7 +357,7 @@ class CallCompleter(
             if (!convertedConst) {
                 updatedType =
                         if (resolvedCall.hasInferredReturnType())
-                            resolvedCall.makeNullableTypeIfSafeReceiver(resolvedCall.resultingDescriptor?.returnType, context)
+                            resolvedCall.makeNullableTypeIfSafeReceiver(resolvedCall.resultingDescriptor.returnType, context)
                         else
                             null
             }
@@ -468,7 +468,7 @@ class CallCompleter(
     private fun MutableResolvedCall<*>.updateResultDataFlowInfoUsingEffects(bindingTrace: BindingTrace) {
         if (dataFlowInfoForArguments is MutableDataFlowInfoForArguments.WithoutArgumentsCheck) return
 
-        val moduleDescriptor = DescriptorUtils.getContainingModule(this.resultingDescriptor?.containingDeclaration ?: return)
+        val moduleDescriptor = DescriptorUtils.getContainingModule(this.resultingDescriptor.containingDeclaration)
         val resultDFIfromES = effectSystem.getDataFlowInfoForFinishedCall(this, bindingTrace, moduleDescriptor)
         dataFlowInfoForArguments.updateResultInfo(resultDFIfromES)
 

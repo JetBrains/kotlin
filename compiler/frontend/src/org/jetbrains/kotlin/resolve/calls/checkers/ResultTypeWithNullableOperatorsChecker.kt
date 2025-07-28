@@ -28,7 +28,7 @@ class ResultTypeWithNullableOperatorsChecker : CallChecker {
                 val resultingDescriptor = resolvedCall.resultingDescriptor
                 val receiver = resultingDescriptor.extensionReceiverParameter ?: resultingDescriptor.dispatchReceiverParameter ?: return
                 if (receiver.type.isResultType()) {
-                    context.trace.report(Errors.RESULT_CLASS_WITH_NULLABLE_OPERATOR.on(operationNode!!.psi, "?."))
+                    context.trace.report(Errors.RESULT_CLASS_WITH_NULLABLE_OPERATOR.on(operationNode.psi, "?."))
                 }
             }
 

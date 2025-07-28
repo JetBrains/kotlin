@@ -52,7 +52,7 @@ object KClassWithIncorrectTypeArgumentChecker : DeclarationChecker {
 
         if (typeParameterWithoutNotNullableUpperBound != null) {
             context.trace.report(
-                Errors.KCLASS_WITH_NULLABLE_TYPE_PARAMETER_IN_SIGNATURE.on(declaration, typeParameterWithoutNotNullableUpperBound!!)
+                Errors.KCLASS_WITH_NULLABLE_TYPE_PARAMETER_IN_SIGNATURE.on(declaration, typeParameterWithoutNotNullableUpperBound)
             )
         }
     }

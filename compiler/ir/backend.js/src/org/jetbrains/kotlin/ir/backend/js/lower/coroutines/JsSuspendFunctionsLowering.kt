@@ -264,7 +264,7 @@ class JsSuspendFunctionsLowering(
         liveLocals.forEach {
             if (it !== suspendState && it !== suspendResult && it !== stateVar) {
                 localToPropertyMap.getOrPut(it.symbol) {
-                    coroutineClass.addField(Name.identifier("${it.name}${localCounter++}"), it.type, (it as? IrVariable)?.isVar ?: false)
+                    coroutineClass.addField(Name.identifier("${it.name}${localCounter++}"), it.type, it.isVar)
                         .symbol
                 }
             }

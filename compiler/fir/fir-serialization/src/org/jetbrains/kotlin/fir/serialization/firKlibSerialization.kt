@@ -5,10 +5,10 @@
 
 package org.jetbrains.kotlin.fir.serialization
 
-import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.FirClass
+import org.jetbrains.kotlin.fir.declarations.FirClassLikeDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.declarations.FirFile
 import org.jetbrains.kotlin.fir.packageFqName
@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.library.metadata.buildKlibPackageFragment
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.serialization.SerializableStringTable
 
 // TODO: handle incremental/monolothic (see klib serializer) - maybe externally
@@ -78,5 +79,5 @@ fun serializeSingleFirFile(
 }
 
 class FirElementAwareSerializableStringTable : FirElementAwareStringTable, SerializableStringTable() {
-    override fun getLocalClassIdReplacement(firClass: FirClass): ClassId = ClassId.topLevel(StandardNames.FqNames.any.toSafe())
+    override fun getLocalClassLikeDeclarationIdReplacement(declaration: FirClassLikeDeclaration): ClassId = StandardClassIds.Any
 }

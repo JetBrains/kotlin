@@ -31,6 +31,8 @@ import org.jetbrains.kotlin.sir.util.name
 import org.jetbrains.sir.lightclasses.extensions.lazyWithSessions
 import kotlin.getValue
 
+internal interface SirOperatorAuxiliaryDeclaration
+
 internal open class SirRenamedFunction(
     override val ktSymbol: KaNamedFunctionSymbol,
     override val sirSession: SirSession,
@@ -41,7 +43,7 @@ internal open class SirRenamedFunction(
 
 internal abstract class SirClassOperatorTrampolineFunction(
     val source: SirFunction,
-) : SirFunction() {
+) : SirFunction(), SirOperatorAuxiliaryDeclaration {
     override var parent: SirDeclarationParent
         get() = source.parent
         set(newValue) {}
@@ -113,7 +115,7 @@ internal class SirComparisonOperatorTrampolineFunction(
 internal class SirSubscriptTrampoline(
     val getterFunction: SirFunction,
     val setterFunction: SirFunction?,
-) : SirSubscript() {
+) : SirSubscript(), SirOperatorAuxiliaryDeclaration {
     override var parent: SirDeclarationParent
         get() = getterFunction.parent
         set(newValue) {}

@@ -543,7 +543,7 @@ public final class OBJECT_WITH_GENERIC_INHERITANCE: KotlinRuntime.KotlinBase, Ko
 }
 open class SEALED: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
     public final class C: main.SEALED {
-        public override init() {
+        public init() {
             if Self.self != main.SEALED.C.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.SEALED.C ") }
             let __kt = SEALED_C_init_allocate()
             super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
@@ -562,7 +562,7 @@ open class SEALED: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged
                 return main.SEALED.O.__createClassWrapper(externalRCRef: SEALED_O_get())
             }
         }
-        private override init() {
+        private init() {
             fatalError()
         }
         package override init(
@@ -572,9 +572,6 @@ open class SEALED: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
         }
     }
-    package init() {
-        fatalError()
-    }
     package override init(
         __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
         options: KotlinRuntime.KotlinBaseConstructionOptions
@@ -582,7 +579,7 @@ open class SEALED: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
     }
 }
-public extension ExportedKotlinPackages.namespace.deeper {
+extension ExportedKotlinPackages.namespace.deeper {
     public final class DATA_OBJECT_WITH_PACKAGE: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
         public static var shared: ExportedKotlinPackages.namespace.deeper.DATA_OBJECT_WITH_PACKAGE {
             get {
@@ -839,7 +836,7 @@ public extension ExportedKotlinPackages.namespace.deeper {
         }
     }
 }
-public extension ExportedKotlinPackages.namespace {
+extension ExportedKotlinPackages.namespace {
     public final class Foo: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
         public final class INSIDE_CLASS: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
             public init() {
@@ -899,7 +896,7 @@ public extension ExportedKotlinPackages.namespace {
         }
     }
 }
-public extension ExportedKotlinPackages.why_we_need_module_names {
+extension ExportedKotlinPackages.why_we_need_module_names {
     public final class CLASS_WITH_SAME_NAME: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
         public init() {
             if Self.self != ExportedKotlinPackages.why_we_need_module_names.CLASS_WITH_SAME_NAME.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from ExportedKotlinPackages.why_we_need_module_names.CLASS_WITH_SAME_NAME ") }

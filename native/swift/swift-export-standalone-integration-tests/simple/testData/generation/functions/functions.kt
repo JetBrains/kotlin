@@ -36,6 +36,16 @@ fun bar(): Int = 123
 
 fun return_any_should_append_runtime_import(): Any = TODO()
 
+// FILE: void.kt
+
+package namespace3
+
+fun foo(faux: Unit): Unit = Unit
+
+fun foo(arg1: Int, faux: Unit): Unit = Unit
+
+val bar: Unit get() = Unit
+
 // FILE: foo.kt
 package namespace2
 

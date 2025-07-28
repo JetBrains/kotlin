@@ -6,21 +6,6 @@
 package kotlin.js
 
 /**
- * Marks API related to interoperability with JS as experimental.
- *
- * Note that the behavior of such API may be changed in the future.
- *
- * Usages of such API will be reported as warnings unless an explicit opt-in with
- * the [OptIn] annotation, e.g. `@OptIn(ExperimentalWasmJsInterop::class)`,
- * or with the `-opt-in=kotlin.js.ExperimentalWasmJsInterop` compiler option is given.
- */
-@RequiresOptIn(level = RequiresOptIn.Level.WARNING)
-@MustBeDocumented
-@Retention(AnnotationRetention.BINARY)
-@SinceKotlin("2.2")
-public annotation class ExperimentalWasmJsInterop
-
-/**
  * Exports top-level declaration on JS platform.
  *
  * Can only be applied to top-level functions.
@@ -64,7 +49,7 @@ public actual annotation class JsName(actual val name: String)
  * The annotation can be used on top-level external declarations (classes, properties, functions) and files.
  * In case of file (which can't be `external`) the following rule applies: all the declarations in
  * the file must be `external`. By applying `@JsModule(...)` on a file you tell the compiler to import a JavaScript object
- * that contain all the declarations from the file.
+ * that contains all the declarations from the file.
  *
  * Example:
  *
@@ -84,13 +69,13 @@ public actual annotation class JsName(actual val name: String)
 @ExperimentalWasmJsInterop
 @Retention(AnnotationRetention.BINARY)
 @Target(AnnotationTarget.CLASS, AnnotationTarget.PROPERTY, AnnotationTarget.FUNCTION, AnnotationTarget.FILE)
-public annotation class JsModule(val import: String)
+public actual annotation class JsModule(actual val import: String)
 
 
 /**
  * Adds prefix to `external` declarations in a source file.
  *
- * JavaScript does not have concept of packages (namespaces). They are usually emulated by nested objects.
+ * JavaScript does not have a concept of packages (namespaces). They are usually emulated by nested objects.
  * The compiler turns references to `external` declarations either to plain unprefixed names
  * or to plain imports.
  * However, if a JavaScript library provides its declarations in packages, you won't be satisfied with this.
@@ -119,4 +104,4 @@ public annotation class JsModule(val import: String)
 @ExperimentalWasmJsInterop
 @Retention(AnnotationRetention.BINARY)
 @Target(AnnotationTarget.FILE)
-public annotation class JsQualifier(val value: String)
+public actual annotation class JsQualifier(actual val value: String)

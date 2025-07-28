@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.components
 
+import org.jetbrains.kotlin.analysis.api.KaContextParameterApi
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.renderer.declarations.KaDeclarationRenderer
@@ -35,4 +36,24 @@ public interface KaRenderer : KaSessionComponent {
      */
     @KaExperimentalApi
     public fun KaType.render(renderer: KaTypeRenderer = KaTypeRendererForSource.WITH_QUALIFIED_NAMES, position: Variance): String
+}
+
+/**
+ * @see KaRenderer.render
+ */
+@KaContextParameterApi
+@KaExperimentalApi
+context(context: KaRenderer)
+public fun KaDeclarationSymbol.render(renderer: KaDeclarationRenderer = KaDeclarationRendererForSource.WITH_QUALIFIED_NAMES): String {
+    return with(context) { render(renderer) }
+}
+
+/**
+ * @see KaRenderer.render
+ */
+@KaContextParameterApi
+@KaExperimentalApi
+context(context: KaRenderer)
+public fun KaType.render(renderer: KaTypeRenderer = KaTypeRendererForSource.WITH_QUALIFIED_NAMES, position: Variance): String {
+    return with(context) { render(renderer, position) }
 }

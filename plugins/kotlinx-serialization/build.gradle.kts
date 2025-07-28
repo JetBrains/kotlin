@@ -10,6 +10,7 @@ plugins {
     kotlin("jvm")
     id("jps-compatible")
     id("d8-configuration")
+    id("java-test-fixtures")
 }
 
 val jsonJsIrRuntimeForTests: Configuration by configurations.creating {
@@ -33,33 +34,33 @@ dependencies {
     embedded(project(":kotlinx-serialization-compiler-plugin.backend")) { isTransitive = false }
     embedded(project(":kotlinx-serialization-compiler-plugin.cli")) { isTransitive = false }
 
-    testApi(project(":compiler:backend"))
-    testApi(project(":compiler:cli"))
-    testApi(project(":kotlinx-serialization-compiler-plugin.cli"))
+    testFixturesApi(project(":compiler:backend"))
+    testFixturesApi(project(":compiler:cli"))
+    testFixturesApi(project(":kotlinx-serialization-compiler-plugin.cli"))
 
-    testApi(projectTests(":compiler:test-infrastructure"))
-    testApi(projectTests(":compiler:test-infrastructure-utils"))
-    testApi(projectTests(":compiler:tests-compiler-utils"))
-    testApi(projectTests(":compiler:tests-common-new"))
-    testApi(project(":compiler:fir:plugin-utils"))
-    testImplementation(projectTests(":generators:test-generator"))
-    testImplementation(projectTests(":js:js.tests"))
-    testImplementation(projectTests(":analysis:analysis-api-fir"))
-    testImplementation(projectTests(":analysis:analysis-api-impl-base"))
-    testImplementation(projectTests(":analysis:low-level-api-fir"))
+    testFixturesApi(testFixtures(project(":compiler:test-infrastructure")))
+    testFixturesApi(testFixtures(project(":compiler:test-infrastructure-utils")))
+    testFixturesApi(testFixtures(project(":compiler:tests-compiler-utils")))
+    testFixturesApi(testFixtures(project(":compiler:tests-common-new")))
+    testFixturesApi(project(":compiler:fir:plugin-utils"))
+    testFixturesImplementation(testFixtures(project(":generators:test-generator")))
+    testFixturesApi(testFixtures(project(":js:js.tests")))
+    testFixturesApi(testFixtures(project(":analysis:analysis-api-fir")))
+    testFixturesApi(testFixtures(project(":analysis:analysis-api-impl-base")))
+    testFixturesApi(testFixtures(project(":analysis:low-level-api-fir")))
 
-    testApi(platform(libs.junit.bom))
-    testImplementation(libs.junit.jupiter.api)
+    testFixturesApi(platform(libs.junit.bom))
+    testFixturesApi(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
 
-    testApi(project(":kotlinx-serialization-compiler-plugin.common"))
-    testApi(project(":kotlinx-serialization-compiler-plugin.k1"))
-    testApi(project(":kotlinx-serialization-compiler-plugin.k2"))
-    testApi(project(":kotlinx-serialization-compiler-plugin.backend"))
-    testApi(project(":kotlinx-serialization-compiler-plugin.cli"))
+    testFixturesApi(project(":kotlinx-serialization-compiler-plugin.common"))
+    testFixturesApi(project(":kotlinx-serialization-compiler-plugin.k1"))
+    testFixturesApi(project(":kotlinx-serialization-compiler-plugin.k2"))
+    testFixturesApi(project(":kotlinx-serialization-compiler-plugin.backend"))
+    testFixturesApi(project(":kotlinx-serialization-compiler-plugin.cli"))
 
-    testApi("org.jetbrains.kotlinx:kotlinx-serialization-core:1.7.0")
-    testApi("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.0")
+    testFixturesApi("org.jetbrains.kotlinx:kotlinx-serialization-core:1.7.0")
+    testFixturesApi("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.0")
 
     coreJsIrRuntimeForTests("org.jetbrains.kotlinx:kotlinx-serialization-core:1.7.0") { isTransitive = false }
     jsonJsIrRuntimeForTests("org.jetbrains.kotlinx:kotlinx-serialization-json:1.7.0") { isTransitive = false }
@@ -77,6 +78,9 @@ sourceSets {
     "test" {
         projectDefault()
         generatedTestDir()
+    }
+    "testFixtures" {
+        projectDefault()
     }
 }
 

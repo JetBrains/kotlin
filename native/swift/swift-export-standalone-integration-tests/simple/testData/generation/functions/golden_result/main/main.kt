@@ -214,6 +214,24 @@ public fun namespace2_foo__TypesOfArguments__Swift_Int32__(arg1: Int): Int {
     return _result
 }
 
+@ExportedBridge("namespace3_bar_get")
+public fun namespace3_bar_get(): Unit {
+    namespace3.bar
+}
+
+@ExportedBridge("namespace3_foo__TypesOfArguments__Swift_Void__")
+public fun namespace3_foo__TypesOfArguments__Swift_Void__(): Unit {
+    val __faux = Unit
+    namespace3.foo(__faux)
+}
+
+@ExportedBridge("namespace3_foo__TypesOfArguments__Swift_Int32_Swift_Void__")
+public fun namespace3_foo__TypesOfArguments__Swift_Int32_Swift_Void__(arg1: Int): Unit {
+    val __arg1 = arg1
+    val __faux = Unit
+    namespace3.foo(__arg1, __faux)
+}
+
 @ExportedBridge("operators_Foo_EmptyIterator_get")
 public fun operators_Foo_EmptyIterator_get(): kotlin.native.internal.NativePtr {
     val _result = operators.Foo.EmptyIterator

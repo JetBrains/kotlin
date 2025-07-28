@@ -10,17 +10,31 @@ plugins {
 }
 
 val projectsToInclude = listOf(
+    ":compiler:incremental-compilation-impl",
+)
+
+val fixturesToInclude = listOf(
     ":compiler:test-infrastructure-utils",
     ":compiler:tests-common",
     ":compiler:tests-compiler-utils",
-    ":compiler:incremental-compilation-impl",
-    ":kotlin-build-common"
+    ":kotlin-build-common",
 )
+
+fun Dependency.unsetTransitive() {
+    if (this is ModuleDependency) {
+        isTransitive = false
+    }
+}
 
 dependencies {
     for (projectName in projectsToInclude) {
-        api(projectTests(projectName)) { isTransitive = false }
-        embedded(projectTests(projectName)) { isTransitive = false }
+        api(projectTests(projectName)) { unsetTransitive() }
+        embedded(projectTests(projectName)) { unsetTransitive() }
+    }
+
+    for (projectName in fixturesToInclude) {
+        api(testFixtures(project(projectName))) { unsetTransitive() }
+        embedded(testFixtures(project(projectName))) { unsetTransitive() }
     }
 }
 

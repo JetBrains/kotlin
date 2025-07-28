@@ -3,7 +3,7 @@
 import KotlinRuntime
 import KotlinRuntimeSupport
 
-public extension ExportedKotlinPackages.kotlin.text.Appendable where Self : KotlinRuntimeSupport._KotlinBridged {
+extension ExportedKotlinPackages.kotlin.text.Appendable where Self : KotlinRuntimeSupport._KotlinBridged {
     public func append(
         value: Swift.Unicode.UTF16.CodeUnit
     ) -> any ExportedKotlinPackages.kotlin.text.Appendable {
@@ -22,7 +22,7 @@ public extension ExportedKotlinPackages.kotlin.text.Appendable where Self : Kotl
         return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlin_text_Appendable_append__TypesOfArguments__Swift_Optional_anyU20ExportedKotlinPackages_kotlin_CharSequence__Swift_Int32_Swift_Int32__(self.__externalRCRef(), value.map { it in it.__externalRCRef() } ?? nil, startIndex, endIndex)) as! any ExportedKotlinPackages.kotlin.text.Appendable
     }
 }
-public extension ExportedKotlinPackages.kotlin.CharSequence where Self : KotlinRuntimeSupport._KotlinBridged {
+extension ExportedKotlinPackages.kotlin.CharSequence where Self : KotlinRuntimeSupport._KotlinBridged {
     public var length: Swift.Int32 {
         get {
             return kotlin_CharSequence_length_get(self.__externalRCRef())
@@ -51,7 +51,7 @@ extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlin
 }
 extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlin.text.Appendable where Wrapped : ExportedKotlinPackages.kotlin.text._Appendable {
 }
-public extension ExportedKotlinPackages.kotlin.collections {
+extension ExportedKotlinPackages.kotlin.collections {
     open class ByteIterator: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
         package init() {
             fatalError()
@@ -87,7 +87,7 @@ public extension ExportedKotlinPackages.kotlin.collections {
         }
     }
 }
-public extension ExportedKotlinPackages.kotlin {
+extension ExportedKotlinPackages.kotlin {
     public protocol CharSequence: KotlinRuntime.KotlinBase {
         var length: Swift.Int32 {
             get
@@ -99,14 +99,9 @@ public extension ExportedKotlinPackages.kotlin {
             startIndex: Swift.Int32,
             endIndex: Swift.Int32
         ) -> any ExportedKotlinPackages.kotlin.CharSequence
-        subscript(
-            index: Swift.Int32
-        ) -> Swift.Unicode.UTF16.CodeUnit {
-            get
-        }
     }
     @objc(_CharSequence)
-    protocol _CharSequence {
+    package protocol _CharSequence {
     }
     public final class ByteArray: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
         public var size: Swift.Int32 {
@@ -205,7 +200,7 @@ public extension ExportedKotlinPackages.kotlin {
         }
     }
 }
-public extension ExportedKotlinPackages.kotlin.text {
+extension ExportedKotlinPackages.kotlin.text {
     public protocol Appendable: KotlinRuntime.KotlinBase {
         func append(
             value: Swift.Unicode.UTF16.CodeUnit
@@ -220,7 +215,7 @@ public extension ExportedKotlinPackages.kotlin.text {
         ) -> any ExportedKotlinPackages.kotlin.text.Appendable
     }
     @objc(_Appendable)
-    protocol _Appendable {
+    package protocol _Appendable {
     }
     public final class StringBuilder: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlin.CharSequence, ExportedKotlinPackages.kotlin._CharSequence, ExportedKotlinPackages.kotlin.text.Appendable, ExportedKotlinPackages.kotlin.text._Appendable, KotlinRuntimeSupport._KotlinBridged {
         public var length: Swift.Int32 {

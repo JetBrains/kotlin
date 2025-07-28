@@ -1,26 +1,22 @@
-import org.jetbrains.kotlin.gradle.tasks.Kotlin2JsCompile
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-
 plugins {
     kotlin("jvm")
+    id("java-test-fixtures")
 }
 
 dependencies {
-    testImplementation(platform(libs.junit.bom))
-    testImplementation(libs.junit.jupiter.api)
+    testFixturesApi(platform(libs.junit.bom))
+    testFixturesApi(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.vintage.engine)
 
-    testImplementation(project(":native:cli-native"))
+    testFixturesImplementation(project(":native:cli-native"))
 
-    testImplementation(projectTests(":native:native.tests"))
+    testFixturesApi(testFixtures(project(":native:native.tests")))
 }
 
 sourceSets {
     "main" { none() }
-    "test" {
-        projectDefault()
-        generatedTestDir()
-    }
+    "test" { generatedTestDir() }
+    "testFixtures" { projectDefault() }
 }
 
 testsJar {}

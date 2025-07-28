@@ -17,12 +17,12 @@ dependencies {
     testImplementation(libs.junit.jupiter.api)
 
     testImplementation(project(":native:swift:swift-export-standalone-integration-tests"))
-    testRuntimeOnly(projectTests(":analysis:low-level-api-fir"))
-    testRuntimeOnly(projectTests(":analysis:analysis-api-impl-base"))
-    testImplementation(projectTests(":analysis:analysis-api-fir"))
-    testImplementation(projectTests(":analysis:analysis-test-framework"))
-    testImplementation(projectTests(":compiler:tests-common"))
-    testImplementation(projectTests(":compiler:tests-common-new"))
+    testRuntimeOnly(testFixtures(project(":analysis:low-level-api-fir")))
+    testRuntimeOnly(testFixtures(project(":analysis:analysis-api-impl-base")))
+    testImplementation(testFixtures(project(":analysis:analysis-api-fir")))
+    testImplementation(testFixtures(project(":analysis:analysis-test-framework")))
+    testImplementation(testFixtures(project(":compiler:tests-common")))
+    testImplementation(testFixtures(project(":compiler:tests-common-new")))
 }
 
 sourceSets {
@@ -32,6 +32,8 @@ sourceSets {
     }
 }
 
-val test by nativeTest("test", null, requirePlatformLibs = true)
+val test by nativeTest("test", null, requirePlatformLibs = true) {
+    dependsOn(":kotlin-native:distInvalidateStaleCaches")
+}
 
 testsJar()

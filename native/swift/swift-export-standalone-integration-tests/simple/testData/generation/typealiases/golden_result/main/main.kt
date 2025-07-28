@@ -336,7 +336,8 @@ public fun __root___block_set__TypesOfArguments__U2829202D_U20Swift_Void__(newVa
     val __newValue = run {
         val kotlinFun = convertBlockPtrToKotlinFunction<()->Unit>(newValue);
         {
-            kotlinFun()
+            val _result = kotlinFun()
+            Unit
         }
     }
     block = __newValue
@@ -347,7 +348,8 @@ public fun __root___consume_closure__TypesOfArguments__U2829202D_U20Swift_Void__
     val __block = run {
         val kotlinFun = convertBlockPtrToKotlinFunction<()->Unit>(block);
         {
-            kotlinFun()
+            val _result = kotlinFun()
+            Unit
         }
     }
     consume_closure(__block)
@@ -358,7 +360,8 @@ public fun __root___deeper_closure_typealiase__TypesOfArguments__U2829202D_U20Sw
     val __block = run {
         val kotlinFun = convertBlockPtrToKotlinFunction<()->Unit>(block);
         {
-            kotlinFun()
+            val _result = kotlinFun()
+            Unit
         }
     }
     val _result = deeper_closure_typealiase(__block)

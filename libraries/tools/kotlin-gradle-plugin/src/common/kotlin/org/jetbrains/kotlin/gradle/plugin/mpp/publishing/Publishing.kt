@@ -95,15 +95,29 @@ private fun createTargetPublications(project: Project, publishing: PublishingExt
     // Enforce the order of creating the publications, since the metadata publication is used in the other publications:
     kotlin.targets
         .withType(InternalKotlinTarget::class.java)
-        .matching { it.publishable }
+        .matching { kotlinTarget ->
+            when (kotlinTarget) {
+                is KotlinNativeTarget -> kotlinTarget.crossCompilationPublishable
+                else -> kotlinTarget.publishable
+            }
+        }
         .all { kotlinTarget ->
             /** Publication for [KotlinMetadataTarget] is created in [createRootPublication] */
             if (kotlinTarget is KotlinMetadataTarget) return@all
-            if (kotlinTarget is KotlinAndroidTarget)
-            // Android targets have their variants created in afterEvaluate; TODO handle this better?
-                project.whenEvaluated { kotlinTarget.createTargetSpecificMavenPublications(publishing.publications) }
-            else
-                kotlinTarget.createTargetSpecificMavenPublications(publishing.publications)
+            when (kotlinTarget) {
+                // Android targets have their variants created in afterEvaluate; TODO handle this better?
+                is KotlinAndroidTarget -> project.whenEvaluated {
+                    kotlinTarget.createTargetSpecificMavenPublications(publishing.publications)
+                }
+                is KotlinNativeTarget -> {
+                    project.launch {
+                        val crossCompilationSupported = kotlinTarget.crossCompilationOnCurrentHostSupported.await()
+                        if (!crossCompilationSupported) return@launch
+                        kotlinTarget.createTargetSpecificMavenPublications(publishing.publications)
+                    }
+                }
+                else -> kotlinTarget.createTargetSpecificMavenPublications(publishing.publications)
+            }
         }
 }
 

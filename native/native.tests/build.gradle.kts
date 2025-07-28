@@ -1,34 +1,35 @@
 plugins {
     kotlin("jvm")
     id("jps-compatible")
+    id("java-test-fixtures")
 }
 
 dependencies {
     // Reexport these dependencies to every user of nativeTest()
-    testApi(kotlinStdlib())
-    testApi(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
-    testApi(intellijCore())
-    testApi(commonDependency("commons-lang:commons-lang"))
-    testApi(commonDependency("org.jetbrains.teamcity:serviceMessages"))
-    testApi(project(":kotlin-compiler-runner-unshaded"))
-    testApi(projectTests(":compiler:tests-common"))
-    testApi(projectTests(":compiler:tests-integration"))
-    testApi(projectTests(":compiler:tests-common-new"))
-    testApi(projectTests(":compiler:test-infrastructure"))
-    testApi(project(":native:kotlin-native-utils"))
-    testApi(project(":native:executors"))
+    testFixturesApi(kotlinStdlib())
+    testFixturesApi(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
+    testFixturesApi(intellijCore())
+    testFixturesApi(commonDependency("commons-lang:commons-lang"))
+    testFixturesApi(commonDependency("org.jetbrains.teamcity:serviceMessages"))
+    testFixturesApi(project(":kotlin-compiler-runner-unshaded"))
+    testFixturesApi(testFixtures(project(":compiler:tests-common")))
+    testFixturesApi(testFixtures(project(":compiler:tests-integration")))
+    testFixturesApi(testFixtures(project(":compiler:tests-common-new")))
+    testFixturesApi(testFixtures(project(":compiler:test-infrastructure")))
+    testFixturesApi(project(":native:kotlin-native-utils"))
+    testFixturesApi(project(":native:executors"))
 
-    testImplementation(projectTests(":generators:test-generator"))
-    testImplementation(project(":compiler:ir.serialization.native"))
-    testImplementation(project(":compiler:fir:fir-native"))
-    testImplementation(project(":core:compiler.common.native"))
-    testImplementation(project(":kotlin-util-klib-abi"))
-    testImplementation(project(":native:swift:swift-export-standalone"))
-    testApi(platform(libs.junit.bom))
-    testImplementation(libs.junit.jupiter.api)
+    testFixturesImplementation(testFixtures(project(":generators:test-generator")))
+    testFixturesImplementation(project(":compiler:ir.serialization.native"))
+    testFixturesImplementation(project(":compiler:fir:fir-native"))
+    testFixturesImplementation(project(":core:compiler.common.native"))
+    testFixturesImplementation(project(":kotlin-util-klib-abi"))
+    testFixturesImplementation(project(":native:swift:swift-export-standalone"))
+    testFixturesApi(platform(libs.junit.bom))
+    testFixturesImplementation(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
-    testImplementation(commonDependency("org.jetbrains.kotlinx", "kotlinx-metadata-klib"))
-    testImplementation(libs.kotlinx.coroutines.core) { isTransitive = false }
+    testFixturesApi(commonDependency("org.jetbrains.kotlinx", "kotlinx-metadata-klib"))
+    testFixturesImplementation(libs.kotlinx.coroutines.core) { isTransitive = false }
 
     testRuntimeOnly(libs.intellij.fastutil)
 }
@@ -39,6 +40,7 @@ sourceSets {
         projectDefault()
         generatedTestDir()
     }
+    "testFixtures" { projectDefault() }
 }
 
 testsJar {}

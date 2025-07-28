@@ -13,6 +13,7 @@ import org.gradle.api.artifacts.ProjectDependency
 import org.gradle.api.artifacts.dsl.DependencyHandler
 import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.*
+import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.dsl.KotlinGradlePluginDsl
 import org.jetbrains.kotlin.gradle.plugin.mpp.AbstractNativeLibrary
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.swiftexport.internal.SwiftExportedDependency
@@ -186,7 +187,16 @@ abstract class SwiftExportExtension @Inject constructor(
         val dependencyId = dependency.map { dep ->
             when (dep) {
                 is Project -> SwiftExportedDependency.Project(objectFactory, dep.path)
-                is ProjectDependency -> SwiftExportedDependency.Project(objectFactory, dep.path)
+                is ProjectDependency -> {
+                    val projectPath = if (GradleVersion.current() < GradleVersion.version("8.11")) {
+                        @Suppress("DEPRECATION")
+                        dep.dependencyProject.path
+                    } else {
+                        dep.path
+                    }
+
+                    SwiftExportedDependency.Project(objectFactory, projectPath)
+                }
                 is Dependency -> SwiftExportedDependency.External(objectFactory, dep.moduleVersionIdentifier)
                 else -> SwiftExportedDependency.External(objectFactory, dependencyHandler.create(dep).moduleVersionIdentifier)
             }.also {

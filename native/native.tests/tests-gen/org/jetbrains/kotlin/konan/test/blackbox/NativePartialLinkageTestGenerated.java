@@ -36,6 +36,12 @@ public class NativePartialLinkageTestGenerated extends AbstractNativePartialLink
   }
 
   @Test
+  @TestMetadata("callableReferenceTypeTransformations")
+  public void testCallableReferenceTypeTransformations() {
+    runTest("compiler/testData/klib/partial-linkage/callableReferenceTypeTransformations/");
+  }
+
+  @Test
   @TestMetadata("changeClassVisibility")
   public void testChangeClassVisibility() {
     runTest("compiler/testData/klib/partial-linkage/changeClassVisibility/");
@@ -126,15 +132,27 @@ public class NativePartialLinkageTestGenerated extends AbstractNativePartialLink
   }
 
   @Test
+  @TestMetadata("referenceOperations")
+  public void testReferenceOperations() {
+    runTest("compiler/testData/klib/partial-linkage/referenceOperations/");
+  }
+
+  @Test
+  @TestMetadata("referenceOperationsNative")
+  public void testReferenceOperationsNative() {
+    runTest("compiler/testData/klib/partial-linkage/referenceOperationsNative/");
+  }
+
+  @Test
   @TestMetadata("referencingUnusableDeclarations")
   public void testReferencingUnusableDeclarations() {
     runTest("compiler/testData/klib/partial-linkage/referencingUnusableDeclarations/");
   }
 
   @Test
-  @TestMetadata("referencingUnusableDeclarationsWithRichReferences")
-  public void testReferencingUnusableDeclarationsWithRichReferences() {
-    runTest("compiler/testData/klib/partial-linkage/referencingUnusableDeclarationsWithRichReferences/");
+  @TestMetadata("referencingUnusableDeclarationsWithOldReferences")
+  public void testReferencingUnusableDeclarationsWithOldReferences() {
+    runTest("compiler/testData/klib/partial-linkage/referencingUnusableDeclarationsWithOldReferences/");
   }
 
   @Test
@@ -171,18 +189,6 @@ public class NativePartialLinkageTestGenerated extends AbstractNativePartialLink
   @TestMetadata("replaceCallableReturnType")
   public void testReplaceCallableReturnType() {
     runTest("compiler/testData/klib/partial-linkage/replaceCallableReturnType/");
-  }
-
-  @Test
-  @TestMetadata("richReferencesOperations")
-  public void testRichReferencesOperations() {
-    runTest("compiler/testData/klib/partial-linkage/richReferencesOperations/");
-  }
-
-  @Test
-  @TestMetadata("richReferencesOperationsNative")
-  public void testRichReferencesOperationsNative() {
-    runTest("compiler/testData/klib/partial-linkage/richReferencesOperationsNative/");
   }
 
   @Test

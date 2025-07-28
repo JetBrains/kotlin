@@ -21746,6 +21746,12 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
       }
 
       @Test
+      @TestMetadata("nestedLabelsInlinedClashingAtFunctionsWithClosure.kt")
+      public void testNestedLabelsInlinedClashingAtFunctionsWithClosure() {
+        runTest("compiler/testData/codegen/box/inline/nestedLabelsInlinedClashingAtFunctionsWithClosure.kt");
+      }
+
+      @Test
       @TestMetadata("propertyAccessorInline.kt")
       public void testPropertyAccessorInline() {
         runTest("compiler/testData/codegen/box/inline/propertyAccessorInline.kt");
@@ -31607,6 +31613,18 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
       @TestMetadata("kt9828_hashMap.kt")
       public void testKt9828_hashMap() {
         runTest("compiler/testData/codegen/box/multiDecl/kt9828_hashMap.kt");
+      }
+
+      @Test
+      @TestMetadata("nameBasedDestructuringFullForm.kt")
+      public void testNameBasedDestructuringFullForm() {
+        runTest("compiler/testData/codegen/box/multiDecl/nameBasedDestructuringFullForm.kt");
+      }
+
+      @Test
+      @TestMetadata("nameBasedDestructuringShortForm.kt")
+      public void testNameBasedDestructuringShortForm() {
+        runTest("compiler/testData/codegen/box/multiDecl/nameBasedDestructuringShortForm.kt");
       }
 
       @Test
@@ -46094,6 +46112,12 @@ public class NativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTest 
       @TestMetadata("kt45308.kt")
       public void testKt45308() {
         runTest("compiler/testData/codegen/box/typealias/kt45308.kt");
+      }
+
+      @Test
+      @TestMetadata("localTypeAliases.kt")
+      public void testLocalTypeAliases() {
+        runTest("compiler/testData/codegen/box/typealias/localTypeAliases.kt");
       }
 
       @Test

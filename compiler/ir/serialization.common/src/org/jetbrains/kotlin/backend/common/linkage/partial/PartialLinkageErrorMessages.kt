@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.symbols.*
-import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.util.IdSignature.*
 import org.jetbrains.kotlin.name.SpecialNames.DEFAULT_NAME_FOR_COMPANION_OBJECT
@@ -47,7 +46,7 @@ internal fun PartialLinkageCase.renderLinkageError(): String = buildString {
         }
 
         is InvalidSamConversion -> expression(expression) {
-            invalidSamConversion(expression, abstractFunctionSymbols, abstractPropertySymbol)
+            invalidSamConversion(this@renderLinkageError)
         }
 
         is SuspendableFunctionCallWithoutCoroutineContext -> expression(expression) {
@@ -523,17 +522,24 @@ private fun Appendable.memberAccessExpressionArgumentsMismatch(
         .append(mismatch.forParameters.joinToString() { it.name.asString() })
 }
 
-private fun Appendable.invalidSamConversion(
-    expression: IrTypeOperatorCall,
-    abstractFunctionSymbols: Set<IrSimpleFunctionSymbol>,
-    abstractPropertySymbol: IrPropertySymbol?,
-): Appendable {
-    declarationKindName(expression.typeOperand.classifierOrFail, capitalized = true)
-    return when {
-        abstractPropertySymbol != null -> append(" has abstract ").declarationKindName(abstractPropertySymbol, capitalized = false)
-        abstractFunctionSymbols.isEmpty() -> append(" does not have an abstract function")
-        else -> append(" has more than one abstract function: ").sortedDeclarationsName(abstractFunctionSymbols)
+private fun Appendable.invalidSamConversion(case: InvalidSamConversion): Appendable = when(case) {
+    is InvalidSamConversion.NotAFunInterface ->
+        declarationKindName(case.classifier, capitalized = true).append(" is not a fun interface")
+    is InvalidSamConversion.FunInterfaceHasNotSingleFunction -> {
+        declarationKindName(case.funInterface, capitalized = true)
+        if (case.abstractFunctionSymbols.isEmpty()) append(" does not have an abstract function")
+        else append(" has more than one abstract function: ").sortedDeclarationsName(case.abstractFunctionSymbols)
     }
+    is InvalidSamConversion.FunInterfaceHasAbstractProperty ->
+        declarationKindName(case.funInterface, capitalized = true).append(" has abstract ")
+            .declarationKindName(case.abstractPropertySymbol, capitalized = false)
+    is InvalidSamConversion.FunctionIsIncompatible ->
+        append("Cannot convert from ").declarationKindName(case.originalOverriddenFunction, capitalized = false)
+            .append(" to ").declarationKindName(case.newOverriddenFunction, capitalized = false)
+    is InvalidSamConversion.SamChanged ->
+        append("The single abstract method of ").declarationKindName(case.funInterface, capitalized = false)
+            .append(" changed from ").declarationKindName(case.originalOverriddenFunction, capitalized = false)
+            .append(" to ").declarationKindName(case.newOverriddenFunction, capitalized = false)
 }
 
 private fun Appendable.suspendableCallWithoutCoroutine(): Appendable =

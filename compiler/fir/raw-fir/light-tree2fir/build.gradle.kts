@@ -1,8 +1,7 @@
-import org.jetbrains.kotlin.ideaExt.idea
-
 plugins {
     kotlin("jvm")
     id("jps-compatible")
+    id("java-test-fixtures")
 }
 
 group = "org.jetbrains.kotlin.fir"
@@ -24,16 +23,16 @@ dependencies {
     compileOnly(intellijCore())
     compileOnly(libs.guava)
 
-    testImplementation(libs.junit4)
-    testImplementation(projectTests(":compiler:tests-common"))
-    testImplementation(projectTests(":compiler:fir:raw-fir:psi2fir"))
+    testFixturesApi(libs.junit4)
+    testFixturesApi(testFixtures(project(":compiler:tests-common")))
+    testFixturesApi(testFixtures(project(":compiler:fir:raw-fir:psi2fir")))
 
     testCompileOnly(kotlinTest("junit"))
 
     testRuntimeOnly(project(":core:descriptors.runtime"))
 
-    testCompileOnly(intellijCore())
-    testRuntimeOnly(intellijCore())
+    testFixturesCompileOnly(intellijCore())
+    testImplementation(intellijCore())
 }
 
 sourceSets {
@@ -42,6 +41,7 @@ sourceSets {
         projectDefault()
         generatedTestDir()
     }
+    "testFixtures" { projectDefault() }
 }
 
 projectTest {

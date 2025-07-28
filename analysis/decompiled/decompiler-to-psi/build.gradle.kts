@@ -1,6 +1,7 @@
 plugins {
     kotlin("jvm")
     id("jps-compatible")
+    id("java-test-fixtures")
 }
 
 dependencies {
@@ -14,10 +15,10 @@ dependencies {
     implementation(project(":kotlin-util-klib-metadata"))
     implementation(intellijCore())
 
-    testImplementation(projectTests(":compiler:tests-common"))
-    testImplementation(projectTests(":compiler:tests-common-new"))
-    testImplementation(projectTests(":analysis:decompiled:decompiler-to-file-stubs"))
-    testImplementation(libs.junit.jupiter.api)
+    testFixturesApi(testFixtures(project(":compiler:tests-common")))
+    testFixturesApi(testFixtures(project(":compiler:tests-common-new")))
+    testFixturesApi(testFixtures(project(":analysis:decompiled:decompiler-to-file-stubs")))
+    testFixturesApi(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
 }
 
@@ -27,6 +28,7 @@ sourceSets {
         projectDefault()
         generatedTestDir()
     }
+    "testFixtures" { projectDefault() }
 }
 
 projectTest(jUnitMode = JUnitMode.JUnit5) {

@@ -232,7 +232,7 @@ actual constructor(size: Int = ELEMENT_SIZE) {
      * (if [lookFor] == false) bit after [startIndex] (inclusive).
      * Returns -1 (for [lookFor] == true) or [size] (for lookFor == false)
      * if there is no such bits between [startIndex] and [size] - 1.
-     * @throws IndexOutOfBoundException if [startIndex] < 0.
+     * @throws IndexOutOfBoundsException if [startIndex] < 0.
      */
     private fun nextBit(startIndex: Int, lookFor: Boolean): Int {
         if (startIndex < 0) {
@@ -266,7 +266,7 @@ actual constructor(size: Int = ELEMENT_SIZE) {
     /**
      * Returns an index of a next bit which value is `true` after [startIndex] (inclusive).
      * Returns -1 if there is no such bits after [startIndex].
-     * @throws IndexOutOfBoundException if [startIndex] < 0.
+     * @throws IndexOutOfBoundsException if [startIndex] < 0.
      */
     @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
     public actual fun nextSetBit(startIndex: Int = 0): Int = nextBit(startIndex, true)
@@ -275,7 +275,7 @@ actual constructor(size: Int = ELEMENT_SIZE) {
      * Returns an index of a next bit which value is `false` after [startIndex] (inclusive).
      * Returns [size] if there is no such bits between [startIndex] and [size] - 1 assuming that the set has an infinite
      * sequence of `false` bits after (size - 1)-th.
-     * @throws IndexOutOfBoundException if [startIndex] < 0.
+     * @throws IndexOutOfBoundsException if [startIndex] < 0.
      */
     @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
     public actual fun nextClearBit(startIndex: Int = 0): Int = nextBit(startIndex, false)
@@ -329,7 +329,7 @@ actual constructor(size: Int = ELEMENT_SIZE) {
      * Returns the biggest index of a bit which value is `true` before [startIndex] (inclusive).
      * Returns -1 if there is no such bits before [startIndex] or if [startIndex] == -1.
      * If [startIndex] >= size will search from (size - 1)-th bit.
-     * @throws IndexOutOfBoundException if [startIndex] < -1.
+     * @throws IndexOutOfBoundsException if [startIndex] < -1.
      */
     public fun previousSetBit(startIndex: Int): Int = previousBit(startIndex, true)
 
@@ -338,7 +338,7 @@ actual constructor(size: Int = ELEMENT_SIZE) {
      * Returns -1 if there is no such bits before [startIndex] or if [startIndex] == -1.
      * If [startIndex] >= size will return [startIndex] assuming that the set has an infinite
      * sequence of `false` bits after (size - 1)-th.
-     * @throws IndexOutOfBoundException if [startIndex] < -1.
+     * @throws IndexOutOfBoundsException if [startIndex] < -1.
      */
     public fun previousClearBit(startIndex: Int): Int = previousBit(startIndex, false)
 

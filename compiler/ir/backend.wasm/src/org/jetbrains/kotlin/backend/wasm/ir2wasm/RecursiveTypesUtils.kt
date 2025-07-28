@@ -54,7 +54,7 @@ private fun wasmTypeDeclarationOrderKey(declaration: WasmTypeDeclaration): Int {
 }
 
 
-fun createRecursiveTypeGroups(types: Sequence<WasmTypeDeclaration>): List<RecursiveTypeGroup> {
+fun createRecursiveTypeGroups(types: List<WasmTypeDeclaration>): List<RecursiveTypeGroup> {
     val componentFinder = StronglyConnectedComponents(::dependencyTypes)
     types.forEach(componentFinder::visit)
 

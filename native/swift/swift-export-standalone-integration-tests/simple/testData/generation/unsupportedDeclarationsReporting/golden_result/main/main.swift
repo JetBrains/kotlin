@@ -58,7 +58,7 @@ public final class Foo: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBr
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
     }
 }
-public extension ExportedKotlinPackages.a.b.c {
+extension ExportedKotlinPackages.a.b.c {
     public final class E: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged, Swift.CaseIterable {
         public static var A: ExportedKotlinPackages.a.b.c.E {
             get {

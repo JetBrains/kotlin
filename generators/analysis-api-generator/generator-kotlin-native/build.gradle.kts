@@ -11,19 +11,19 @@ sourceSets {
 dependencies {
     api(kotlinStdlib("jdk8"))
 
-    testImplementation(projectTests(":generators:test-generator"))
-    testImplementation(projectTests(":compiler:tests-common"))
+    testImplementation(testFixtures(project(":generators:test-generator")))
+    testImplementation(testFixtures(project(":compiler:tests-common")))
     testImplementation(projectTests(":compiler:tests-spec"))
-    testImplementation(projectTests(":generators:analysis-api-generator"))
+    testImplementation(testFixtures(project(":generators:analysis-api-generator")))
 
-    testImplementation(projectTests(":analysis:low-level-api-fir"))
-    testImplementation(projectTests(":analysis:low-level-api-fir:low-level-api-fir-native"))
+    testImplementation(testFixtures(project(":analysis:low-level-api-fir")))
+    testImplementation(testFixtures(project(":analysis:low-level-api-fir:low-level-api-fir-native")))
 
     testImplementation(intellijCore())
     testApi(platform(libs.junit.bom))
     testImplementation(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
-    testRuntimeOnly(projectTests(":analysis:analysis-test-framework"))
+    testRuntimeOnly(testFixtures(project(":analysis:analysis-test-framework")))
 }
 
 

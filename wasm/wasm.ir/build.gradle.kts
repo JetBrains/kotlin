@@ -57,7 +57,7 @@ dependencies {
     implementation(kotlinxCollectionsImmutable())
     testImplementation(libs.junit4)
     testCompileOnly(kotlinTest("junit"))
-    testImplementation(projectTests(":compiler:tests-common"))
+    testImplementation(testFixtures(project(":compiler:tests-common")))
     testImplementation(libs.kotlinx.serialization.json)
 
     testSuite("webassembly:testsuite:$testSuiteRevision@zip")

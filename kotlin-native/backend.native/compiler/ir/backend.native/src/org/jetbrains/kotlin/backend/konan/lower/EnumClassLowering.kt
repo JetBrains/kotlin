@@ -157,7 +157,6 @@ internal class EnumUsageLowering(val context: Context) : IrTransformer<IrBuilder
                     }
                 }
             }
-            else -> TODO("Unsupported intrinsic type ${intrinsicType}")
         }
     }
 

@@ -82,7 +82,7 @@ internal inline fun getMethodNode(classData: ByteArray, classType: Type, crossin
                 throw AssertionError("Can't find proper '$name' method for inline: ambiguity between '${existing.name + existing.desc}' and '${name + desc}'")
             }
             node = MethodNode(Opcodes.API_VERSION, access, name, desc, signature, exceptions)
-            return node!!
+            return node
         }
     }, ClassReader.SKIP_FRAMES or if (GENERATE_SMAP) 0 else ClassReader.SKIP_DEBUG)
 

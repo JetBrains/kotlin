@@ -31,7 +31,7 @@ package kotlin.js
  * external val prop: Float = definedExternally
  * ```
  */
-public external val definedExternally: Nothing
+public actual external val definedExternally: Nothing
 
 /**
  * Puts the given piece of a JavaScript code right into the calling function.
@@ -50,7 +50,8 @@ public external val definedExternally: Nothing
  *        You can safely refer to local variables of calling function (but not to local variables of outer functions),
  *        including parameters. You can't refer to functions, properties and classes by their short names.
  */
-public external fun js(code: String): dynamic
+@Suppress("EXPECT_ACTUAL_INCOMPATIBLE_RETURN_TYPE")
+public actual external fun js(code: String): dynamic
 
 
 /**

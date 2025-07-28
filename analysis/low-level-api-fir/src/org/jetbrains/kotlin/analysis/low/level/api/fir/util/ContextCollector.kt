@@ -624,13 +624,17 @@ private class ContextCollectorVisitor(
         }
 
         if (regularClass.isLocal) {
-            context.storeClassIfNotNested(regularClass, regularClass.moduleData.session)
+            context.storeClassOrTypealiasIfNotNested(regularClass, regularClass.moduleData.session)
         }
     }
 
     override fun visitTypeAlias(typeAlias: FirTypeAlias) {
         context.forTypeAlias(typeAlias) {
             super.visitTypeAlias(typeAlias)
+        }
+
+        if (typeAlias.isLocal) {
+            context.storeClassOrTypealiasIfNotNested(typeAlias, typeAlias.moduleData.session)
         }
     }
 

@@ -263,7 +263,7 @@ class WasmStringSwitchOptimizerLowering(
 
         val convertedBlock = context.createIrBuilder(currentScope!!.scope.scopeOwnerSymbol).run {
             irBlock(resultType = visitedWhen.type) {
-                val tempIntVariable = addHashCodeVariable(firstEqCall!!)
+                val tempIntVariable = addHashCodeVariable(firstEqCall)
 
                 val buckets = stringConstantToMatchedCase.keys.groupBy { it.hashCode() }
 

@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.builtins.functions.AllowedToUsedOnlyInK1
 import org.jetbrains.kotlin.types.TypeCheckerState.LowerCapturedTypePolicy.*
 import org.jetbrains.kotlin.types.TypeCheckerState.SupertypesPolicy
 import org.jetbrains.kotlin.types.model.*
+import org.jetbrains.kotlin.util.context
 import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.SmartSet
 import java.util.*
@@ -733,10 +734,8 @@ object AbstractTypeChecker {
         state: TypeCheckerState,
         subType: RigidTypeMarker,
         superConstructor: TypeConstructorMarker,
-    ): List<RigidTypeMarker> = with(state) {
-        with(state.typeSystemContext) {
-            findCorrespondingSupertypes(subType, superConstructor)
-        }
+    ): List<RigidTypeMarker> = context(state, state.typeSystemContext) {
+        findCorrespondingSupertypes(subType, superConstructor)
     }
 
     // nullability was checked earlier via nullabilityChecker

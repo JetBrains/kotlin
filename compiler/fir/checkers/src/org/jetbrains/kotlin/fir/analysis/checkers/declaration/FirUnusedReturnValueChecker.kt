@@ -13,22 +13,17 @@ import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
+import org.jetbrains.kotlin.fir.analysis.checkers.directOverriddenSymbolsSafe
+import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
-import org.jetbrains.kotlin.fir.declarations.FirDeclaration
-import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
-import org.jetbrains.kotlin.fir.declarations.hasAnnotation
-import org.jetbrains.kotlin.fir.declarations.mustUseReturnValueStatusComponent
-import org.jetbrains.kotlin.fir.declarations.toAnnotationClassId
+import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.utils.isOverride
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.originalOrSelf
 import org.jetbrains.kotlin.fir.references.resolved
-import org.jetbrains.kotlin.fir.references.symbol
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
-import org.jetbrains.kotlin.fir.references.toResolvedPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirEnumEntrySymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.classId
 import org.jetbrains.kotlin.fir.types.isMarkedNullable
@@ -36,8 +31,35 @@ import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
+
+object FirReturnValueOverrideChecker : FirCallableDeclarationChecker(MppCheckerKind.Common) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(declaration: FirCallableDeclaration) {
+        if (context.languageVersionSettings.getFlag(AnalysisFlags.returnValueCheckerMode) == ReturnValueCheckerMode.DISABLED) return
+
+        // Only check mustUse overrides:
+        if (!declaration.isOverride) return
+        if (!declaration.status.hasMustUseReturnValue) return
+        val symbol = declaration.symbol
+
+        // Check if any of the overridden symbols have @IgnorableReturnValue
+        val overriddenSymbols = symbol.directOverriddenSymbolsSafe()
+        val ignorableBaseSymbol = overriddenSymbols.find {
+            context.session.mustUseReturnValueStatusComponent.hasIgnorableLikeAnnotation(it.resolvedAnnotationClassIds)
+        } ?: return
+
+        // Report error if an overridden symbol has @IgnorableReturnValue but the current declaration doesn't
+        val containingClass = ignorableBaseSymbol.getContainingClassSymbol()
+            ?: error("Overridden symbol ${ignorableBaseSymbol.callableId} does not have containing class symbol")
+        reporter.reportOn(
+            declaration.source,
+            FirErrors.OVERRIDING_IGNORABLE_WITH_MUST_USE,
+            symbol,
+            containingClass,
+        )
+    }
+}
 
 object FirReturnValueAnnotationsChecker : FirBasicDeclarationChecker(MppCheckerKind.Common) {
     private fun FirAnnotation.isMustUseReturnValue(session: FirSession): Boolean =

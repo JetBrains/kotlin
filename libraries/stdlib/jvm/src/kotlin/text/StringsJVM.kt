@@ -570,7 +570,7 @@ public inline fun String(stringBuilder: java.lang.StringBuilder): String =
  * for more details on function's behavior.
  *
  * @param index the index of [Char] whose codepoint value is needed.
- * @throws IndexOutOfBoundsException if the [index] is negative or greater or equal to [length] of this string.
+ * @throws IndexOutOfBoundsException if the [index] is negative or greater or equal to [length][String.length] of this string.
  *
  * @sample samples.text.StringsJvmSpecific.codePointAt
  */
@@ -585,7 +585,7 @@ public inline fun String.codePointAt(index: Int): Int = (this as java.lang.Strin
  * for more details on function's behavior.
  *
  * @param index the index of a [Char] which follows a codepoint value that will be returned.
- * @throws IndexOutOfBoundsException if the [index] is less than 1, or exceeds the [length] of this string.
+ * @throws IndexOutOfBoundsException if the [index] is less than 1, or exceeds the [length][String.length] of this string.
  *
  * @sample samples.text.StringsJvmSpecific.codePointBefore
  */
@@ -602,7 +602,7 @@ public inline fun String.codePointBefore(index: Int): Int = (this as java.lang.S
  * @param beginIndex the index of a [Char] corresponding to a beginning of the text range (inclusive).
  * @param endIndex the index of a [Char] corresponding to an end of the text range (exclusive).
  *
- * @throws IndexOutOfBoundsException when either of the indices is negative, exceeds [length] of this string, or
+ * @throws IndexOutOfBoundsException when either of the indices is negative, exceeds [length][String.length] of this string, or
  *     when [beginIndex] is greater than [endIndex].
  *
  * @sample samples.text.StringsJvmSpecific.codePointCount

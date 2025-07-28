@@ -2,85 +2,86 @@
 plugins {
     kotlin("jvm")
     id("jps-compatible")
+    id("java-test-fixtures")
 }
 
 dependencies {
-    testApi(kotlinStdlib("jdk8"))
-    testApi(project(":kotlin-scripting-compiler"))
-    testApi(project(":core:descriptors"))
-    testApi(project(":core:descriptors.jvm"))
-    testApi(project(":core:deserialization"))
-    testApi(project(":compiler:util"))
-    testApi(project(":compiler:tests-mutes"))
-    testApi(project(":compiler:backend"))
-    testApi(project(":compiler:ir.tree"))
-    testApi(project(":compiler:fir:tree"))
-    testApi(project(":compiler:fir:raw-fir:psi2fir"))
-    testApi(project(":compiler:fir:raw-fir:light-tree2fir"))
-    testApi(project(":compiler:fir:fir2ir"))
-    testApi(project(":compiler:fir:fir2ir:jvm-backend"))
-    testApi(project(":compiler:fir:fir-serialization"))
-    testApi(project(":compiler:fir:fir-deserialization"))
-    testApi(project(":compiler:fir:cones"))
-    testApi(project(":compiler:fir:resolve"))
-    testApi(project(":compiler:fir:providers"))
-    testApi(project(":compiler:fir:semantics"))
-    testApi(project(":compiler:fir:checkers"))
-    testApi(project(":compiler:fir:checkers:checkers.jvm"))
-    testApi(project(":compiler:fir:checkers:checkers.js"))
-    testApi(project(":compiler:fir:checkers:checkers.native"))
-    testApi(project(":compiler:fir:checkers:checkers.wasm"))
-    testApi(project(":compiler:fir:fir-jvm"))
-    testApi(project(":compiler:fir:fir-js"))
-    testApi(project(":compiler:fir:entrypoint"))
-    testApi(project(":compiler:frontend"))
-    testApi(project(":compiler:frontend.java"))
-    testApi(project(":compiler:util"))
-    testApi(project(":compiler:cli-common"))
-    testApi(project(":compiler:cli"))
-    testApi(project(":compiler:cli-js"))
-    testApi(project(":analysis:light-classes-base"))
-    testApi(project(":compiler:serialization"))
-    testApi(project(":kotlin-preloader"))
-    testApi(project(":compiler:cli-common"))
-    testApi(project(":daemon-common"))
-    testApi(project(":js:js.frontend"))
-    testApi(project(":native:frontend.native"))
-    testApi(projectTests(":generators:test-generator"))
-    testApi(projectTests(":compiler:tests-compiler-utils"))
-    testApi(kotlinTest())
-    testApi(project(":kotlin-scripting-compiler-impl"))
-    testApi(projectTests(":compiler:test-infrastructure-utils"))
-    testApi(libs.junit4) // for ComparisonFailure
-    testApi(commonDependency("com.android.tools:r8"))
-    testApi(project(":analysis:analysis-internal-utils"))
-    testApi(project(":compiler:tests-mutes:mutes-junit4"))
-    testCompileOnly(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
-    testCompileOnly(toolsJarApi())
-    testCompileOnly(intellijCore())
+    testFixturesApi(kotlinStdlib("jdk8"))
+    testFixturesApi(project(":kotlin-scripting-compiler"))
+    testFixturesApi(project(":core:descriptors"))
+    testFixturesApi(project(":core:descriptors.jvm"))
+    testFixturesApi(project(":core:deserialization"))
+    testFixturesApi(project(":compiler:util"))
+    testFixturesApi(project(":compiler:tests-mutes"))
+    testFixturesApi(project(":compiler:backend"))
+    testFixturesApi(project(":compiler:ir.tree"))
+    testFixturesApi(project(":compiler:fir:tree"))
+    testFixturesApi(project(":compiler:fir:raw-fir:psi2fir"))
+    testFixturesApi(project(":compiler:fir:raw-fir:light-tree2fir"))
+    testFixturesApi(project(":compiler:fir:fir2ir"))
+    testFixturesApi(project(":compiler:fir:fir2ir:jvm-backend"))
+    testFixturesApi(project(":compiler:fir:fir-serialization"))
+    testFixturesApi(project(":compiler:fir:fir-deserialization"))
+    testFixturesApi(project(":compiler:fir:cones"))
+    testFixturesApi(project(":compiler:fir:resolve"))
+    testFixturesApi(project(":compiler:fir:providers"))
+    testFixturesApi(project(":compiler:fir:semantics"))
+    testFixturesApi(project(":compiler:fir:checkers"))
+    testFixturesApi(project(":compiler:fir:checkers:checkers.jvm"))
+    testFixturesApi(project(":compiler:fir:checkers:checkers.js"))
+    testFixturesApi(project(":compiler:fir:checkers:checkers.native"))
+    testFixturesApi(project(":compiler:fir:checkers:checkers.wasm"))
+    testFixturesApi(project(":compiler:fir:fir-jvm"))
+    testFixturesApi(project(":compiler:fir:fir-js"))
+    testFixturesApi(project(":compiler:fir:entrypoint"))
+    testFixturesApi(project(":compiler:frontend"))
+    testFixturesApi(project(":compiler:frontend.java"))
+    testFixturesApi(project(":compiler:util"))
+    testFixturesApi(project(":compiler:cli-common"))
+    testFixturesApi(project(":compiler:cli"))
+    testFixturesApi(project(":compiler:cli-js"))
+    testFixturesApi(project(":analysis:light-classes-base"))
+    testFixturesApi(project(":compiler:serialization"))
+    testFixturesApi(project(":kotlin-preloader"))
+    testFixturesApi(project(":compiler:cli-common"))
+    testFixturesApi(project(":daemon-common"))
+    testFixturesApi(project(":js:js.frontend"))
+    testFixturesApi(project(":native:frontend.native"))
+    testFixturesApi(testFixtures(project(":generators:test-generator")))
+    testFixturesApi(testFixtures(project(":compiler:tests-compiler-utils")))
+    testFixturesApi(kotlinTest())
+    testFixturesApi(project(":kotlin-scripting-compiler-impl"))
+    testFixturesApi(testFixtures(project(":compiler:test-infrastructure-utils")))
+    testFixturesApi(libs.junit4) // for ComparisonFailure
+    testFixturesApi(commonDependency("com.android.tools:r8"))
+    testFixturesApi(project(":analysis:analysis-internal-utils"))
+    testFixturesApi(project(":compiler:tests-mutes:mutes-junit4"))
+    testFixturesCompileOnly(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
+    testFixturesCompileOnly(toolsJarApi())
+    testFixturesCompileOnly(intellijCore())
 
     /*
      * Actually those dependencies are needed only at runtime, but they
      *   declared as Api dependencies to propagate them to all modules
      *   which depend on current one
      */
-    testApi(libs.intellij.fastutil)
-    testApi(commonDependency("org.jetbrains.intellij.deps.jna:jna"))
-    testApi(commonDependency("one.util:streamex"))
-    testApi(commonDependency("org.codehaus.woodstox:stax2-api"))
-    testApi(commonDependency("com.fasterxml:aalto-xml"))
-    testApi(libs.opentest4j)
+    testFixturesApi(libs.intellij.fastutil)
+    testFixturesApi(commonDependency("org.jetbrains.intellij.deps.jna:jna"))
+    testFixturesApi(commonDependency("one.util:streamex"))
+    testFixturesApi(commonDependency("org.codehaus.woodstox:stax2-api"))
+    testFixturesApi(commonDependency("com.fasterxml:aalto-xml"))
+    testFixturesApi(libs.opentest4j)
 
-    testApi(jpsModel()) { isTransitive = false }
-    testApi(jpsModelImpl()) { isTransitive = false }
+    testFixturesApi(jpsModel()) { isTransitive = false }
+    testFixturesApi(jpsModelImpl()) { isTransitive = false }
 
-    testImplementation(libs.guava)
-    testImplementation(libs.intellij.asm)
-    testImplementation(commonDependency("org.jetbrains.intellij.deps:log4j"))
-    testImplementation(intellijJDom())
+    testFixturesImplementation(libs.guava)
+    testFixturesImplementation(libs.intellij.asm)
+    testFixturesImplementation(commonDependency("org.jetbrains.intellij.deps:log4j"))
+    testFixturesImplementation(intellijJDom())
 
-    testApi(platform(libs.junit.bom))
-    testImplementation(libs.junit.jupiter.api)
+    testFixturesApi(platform(libs.junit.bom))
+    testFixturesImplementation(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
 }
 
@@ -89,8 +90,9 @@ optInToUnsafeDuringIrConstructionAPI()
 optInToK1Deprecation()
 
 sourceSets {
-    "main" { }
-    "test" { projectDefault() }
+    "main" { none() }
+    "test" { none() }
+    "testFixtures" { projectDefault() }
 }
 
 testsJar {}

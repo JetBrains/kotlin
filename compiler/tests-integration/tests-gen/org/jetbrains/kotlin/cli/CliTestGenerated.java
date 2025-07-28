@@ -1081,9 +1081,14 @@ public class CliTestGenerated extends AbstractCliTest {
       runTest("compiler/testData/cli/jvm/XjspecifyAnnotation/jspecifyDefault.args");
     }
 
-    @TestMetadata("jspecifyFileRoots.args")
-    public void testJspecifyFileRoots() {
-      runTest("compiler/testData/cli/jvm/XjspecifyAnnotation/jspecifyFileRoots.args");
+    @TestMetadata("jspecifyFileRootsProgressive.args")
+    public void testJspecifyFileRootsProgressive() {
+      runTest("compiler/testData/cli/jvm/XjspecifyAnnotation/jspecifyFileRootsProgressive.args");
+    }
+
+    @TestMetadata("jspecifyFileRootsWarning.args")
+    public void testJspecifyFileRootsWarning() {
+      runTest("compiler/testData/cli/jvm/XjspecifyAnnotation/jspecifyFileRootsWarning.args");
     }
 
     @TestMetadata("jspecifyIgnore.args")

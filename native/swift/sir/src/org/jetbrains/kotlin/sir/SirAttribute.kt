@@ -36,6 +36,8 @@ public sealed interface SirAttribute {
                 renamed.takeIf { it.isNotEmpty() }?.let { SirArgument("renamed", SirExpression.StringLiteral(renamed)) },
                 message?.let { SirArgument("message", SirExpression.StringLiteral(message)) },
             )
+
+        val isUnusable = unavailable || obsoleted
     }
 
     object NonOverride : SirAttribute {

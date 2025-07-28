@@ -214,8 +214,17 @@ open class PsiRawFirBuilder(
                 nameAsSafeName
             }
 
+        override val KtDestructuringDeclarationEntry.initializerName: Name?
+            get() = initializer?.getReferencedNameAsName()
+
+        override val KtDestructuringDeclarationEntry.isVar: Boolean
+            get() = isVar
+
         override val KtDestructuringDeclarationEntry.source: KtSourceElement
             get() = toKtPsiSourceElement()
+
+        override val KtDestructuringDeclarationEntry.initializerSource: KtSourceElement?
+            get() = initializer?.toKtPsiSourceElement()
 
         override fun KtDestructuringDeclarationEntry.extractAnnotationsTo(
             target: FirAnnotationContainerBuilder,
@@ -224,12 +233,8 @@ open class PsiRawFirBuilder(
             (this as KtAnnotated).extractAnnotationsTo(target)
         }
 
-        override fun createComponentCall(
-            container: FirVariable,
-            entrySource: KtSourceElement?,
-            index: Int,
-        ): FirExpression = buildOrLazyExpression(entrySource) {
-            super.createComponentCall(container, entrySource, index)
+        override fun interceptExpressionBuilding(sourceElement: KtSourceElement?, buildExpression: () -> FirExpression): FirExpression {
+            return buildOrLazyExpression(sourceElement, buildExpression)
         }
 
         private inline fun <reified R : FirElement> KtElement.convert(): R =
@@ -1399,7 +1404,6 @@ open class PsiRawFirBuilder(
 
                                 addDestructuringVariables(
                                     declarations,
-                                    this@Visitor,
                                     moduleData,
                                     declaration,
                                     destructuringContainerVar,
@@ -1466,7 +1470,6 @@ open class PsiRawFirBuilder(
 
                                                 addDestructuringVariables(
                                                     statements,
-                                                    this@Visitor,
                                                     baseModuleData,
                                                     declaration,
                                                     destructuringContainerVar,
@@ -1960,6 +1963,10 @@ open class PsiRawFirBuilder(
                         }
                     }
                 }
+            }.also {
+                if (typeAlias.parent is KtClassBody) {
+                    it.initContainingClassForLocalAttr()
+                }
             }
         }
 
@@ -2148,7 +2155,6 @@ open class PsiRawFirBuilder(
                         }
                         addDestructuringVariables(
                             destructuringVariables,
-                            this@Visitor,
                             baseModuleData,
                             multiDeclaration,
                             multiParameter,
@@ -3130,7 +3136,6 @@ open class PsiRawFirBuilder(
                         if (multiDeclaration != null) {
                             addDestructuringVariables(
                                 blockBuilder.statements,
-                                this@Visitor,
                                 baseModuleData,
                                 multiDeclaration = multiDeclaration,
                                 container = firLoopParameter,
@@ -3567,7 +3572,6 @@ open class PsiRawFirBuilder(
                 extractAnnotationsTo = { extractAnnotationsTo(it) }
             )
             return generateDestructuringBlock(
-                this@Visitor,
                 baseModuleData,
                 multiDeclaration,
                 baseVariable,

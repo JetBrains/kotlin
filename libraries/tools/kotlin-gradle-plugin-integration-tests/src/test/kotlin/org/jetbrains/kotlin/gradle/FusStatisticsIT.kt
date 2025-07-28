@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.gradle
 import org.gradle.api.logging.LogLevel
 import org.gradle.api.logging.configuration.WarningMode
 import org.gradle.kotlin.dsl.kotlin
+import org.gradle.kotlin.dsl.version
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.report.BuildReportType
@@ -321,12 +322,12 @@ class FusStatisticsIT : KGPBaseTest() {
         }
     }
 
+    @JvmGradlePluginTests
     @DisplayName("fus metric for multiproject")
     @GradleTest
     @GradleTestVersions(
         additionalVersions = [TestVersions.Gradle.G_8_0, TestVersions.Gradle.G_8_2],
     )
-    @JvmGradlePluginTests
     fun testFusStatisticsForMultiproject(gradleVersion: GradleVersion) {
         project(
             "incrementalMultiproject", gradleVersion,
@@ -346,6 +347,59 @@ class FusStatisticsIT : KGPBaseTest() {
                         "CONFIGURATION_IMPLEMENTATION_COUNT=2",
                         "NUMBER_OF_SUBPROJECTS=2",
                         "COMPILATIONS_COUNT=2"
+                    )
+                }
+            }
+        }
+    }
+
+    @JvmGradlePluginTests
+    @DisplayName("test configuration time ksp metrics")
+    @GradleTest
+    @GradleTestVersions(
+        additionalVersions = [TestVersions.Gradle.G_8_0, TestVersions.Gradle.G_8_2],
+    )
+    fun testFusStatisticsForKsp(gradleVersion: GradleVersion) {
+        project("empty", gradleVersion) {
+            plugins {
+                kotlin("jvm")
+                id("com.google.devtools.ksp") version (TestVersions.ThirdPartyDependencies.KSP)
+            }
+            build("help", "-Pkotlin.session.logger.root.path=$projectPath") {
+                assertOutputDoesNotContainFusErrors()
+                fusStatisticsDirectory.assertFusReportContains(
+                    "KSP_GRADLE_PLUGIN_VERSION=1.9.22"
+                )
+            }
+        }
+    }
+
+    @JvmGradlePluginTests
+    @DisplayName("fus metric for jvm feature flags")
+    @GradleTest
+    @GradleTestVersions(
+        additionalVersions = [TestVersions.Gradle.G_8_0, TestVersions.Gradle.G_8_2],
+    )
+    fun testFusStatisticsForJvmMultiprojectWithFeatureFlags(gradleVersion: GradleVersion) {
+        project(
+            "incrementalMultiproject", gradleVersion,
+        ) {
+            assertNoErrorFilesCreated {
+                //Collect metrics from BuildMetricsService also
+                build(
+                    "compileKotlin", "-Pkotlin.session.logger.root.path=$projectPath",
+                    buildOptions = defaultBuildOptions
+                        .copy(
+                            buildReport = listOf(BuildReportType.FILE),
+                            useFirJvmRunner = true,
+                        ).disableIsolatedProjects(),
+                ) {
+                    assertOutputDoesNotContainFusErrors()
+                    fusStatisticsDirectory.assertFusReportContains(
+                        "CONFIGURATION_IMPLEMENTATION_COUNT=2",
+                        "NUMBER_OF_SUBPROJECTS=2",
+                        "COMPILATIONS_COUNT=2",
+                        "KOTLIN_INCREMENTAL_FIR_RUNNER_ENABLED=true"
                     )
                 }
             }

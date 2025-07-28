@@ -81,27 +81,27 @@ dependencies {
 
     compileOnly(kotlinStdlib())
 
-    testApi(projectTests(":compiler:tests-common"))
-    testApi(projectTests(":compiler:test-infrastructure"))
-    testApi(projectTests(":compiler:test-infrastructure-utils"))
-    testApi(projectTests(":compiler:tests-compiler-utils"))
-    testApi(projectTests(":compiler:tests-common-new"))
-    testImplementation(projectTests(":generators:test-generator"))
+    testApi(testFixtures(project(":compiler:tests-common")))
+    testApi(testFixtures(project(":compiler:test-infrastructure")))
+    testApi(testFixtures(project(":compiler:test-infrastructure-utils")))
+    testApi(testFixtures(project(":compiler:tests-compiler-utils")))
+    testApi(testFixtures(project(":compiler:tests-common-new")))
+    testImplementation(testFixtures(project(":generators:test-generator")))
     testApi(project(":plugins:plugin-sandbox"))
     testApi(project(":compiler:incremental-compilation-impl"))
-    testApi(projectTests(":compiler:incremental-compilation-impl"))
+    testApi(testFixtures(project(":compiler:incremental-compilation-impl")))
 
-    testImplementation(projectTests(":js:js.tests"))
+    testApi(testFixtures(project(":js:js.tests")))
     testImplementation(libs.junit4)
     testApi(kotlinTest())
 
     // Dependencies for Kotlin/Native test infra:
     if (!kotlinBuildProperties.isInIdeaSync) {
-        testImplementation(projectTests(":native:native.tests"))
+        testApi(testFixtures(project(":native:native.tests")))
     }
     testImplementation(project(":compiler:ir.backend.native"))
     testImplementation(project(":native:kotlin-native-utils"))
-    testImplementation(projectTests(":native:native.tests:klib-ir-inliner"))
+    testImplementation(testFixtures(project(":native:native.tests:klib-ir-inliner")))
     testImplementation(project(":kotlin-util-klib-abi"))
     testImplementation(commonDependency("org.jetbrains.teamcity:serviceMessages"))
 
@@ -109,9 +109,9 @@ dependencies {
     testImplementation(project(":kotlin-compiler-runner-unshaded"))
 
     testImplementation(commonDependency("commons-lang:commons-lang"))
-    testImplementation(projectTests(":compiler:tests-common"))
-    testImplementation(projectTests(":compiler:tests-common-new"))
-    testImplementation(projectTests(":compiler:test-infrastructure"))
+    testApi(testFixtures(project(":compiler:tests-common")))
+    testApi(testFixtures(project(":compiler:tests-common-new")))
+    testApi(testFixtures(project(":compiler:test-infrastructure")))
     testCompileOnly("org.jetbrains.kotlinx:atomicfu:0.25.0")
 
     testApi(platform(libs.junit.bom))
@@ -176,6 +176,7 @@ sourceSets {
     "main" { projectDefault() }
     "test" {
         projectDefault()
+        java.srcDirs("testFixtures")
         generatedTestDir()
     }
 }

@@ -15,9 +15,7 @@ class SirParameter(
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
-        if (other != null && this::class != other::class) return false
-
-        other as SirParameter
+        if (other !is SirParameter) return false
 
         if (argumentName != other.argumentName) return false
         if (parameterName != other.parameterName) return false

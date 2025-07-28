@@ -81,12 +81,7 @@ abstract class AbstractTypeApproximator(
         conf: TypeApproximatorConfiguration,
         caches: TypeApproximatorCachesPerConfiguration? = null,
     ): KotlinTypeMarker? {
-        // TODO: Replace with context(conf) { ... } once it's possible
-        return with(conf) {
-            with(caches?.getOrPut(conf, ::Cache) ?: Cache()) {
-                approximateToSuperType(type, -type.typeDepthForApproximation())
-            }
-        }
+        return approximateEntryPoint(type, conf, caches) { type, depth -> approximateToSuperType(type, depth) }
     }
 
     // resultType <: type
@@ -95,13 +90,25 @@ abstract class AbstractTypeApproximator(
         conf: TypeApproximatorConfiguration,
         caches: TypeApproximatorCachesPerConfiguration? = null,
     ): KotlinTypeMarker? {
-        // TODO: Replace with context(conf) { ... } once it's possible
-        return with(conf) {
-            with(caches?.getOrPut(conf, ::Cache) ?: Cache()) {
-                approximateToSubType(type, -type.typeDepthForApproximation())
+        return approximateEntryPoint(type, conf, caches) { type, depth -> approximateToSubType(type, depth) }
+    }
+
+    private inline fun approximateEntryPoint(
+        type: KotlinTypeMarker,
+        conf: TypeApproximatorConfiguration,
+        caches: TypeApproximatorCachesPerConfiguration?,
+        approximateTo: context(TypeApproximatorConfiguration, Cache) (KotlinTypeMarker, Int) -> KotlinTypeMarker?,
+    ): KotlinTypeMarker? {
+        return context(conf, caches?.getOrPut(conf, ::Cache) ?: Cache()) {
+            try {
+                approximateTo(type, -type.typeDepthForApproximation())
+            } catch (e: StackOverflowError) {
+                throw RuntimeException("StackOverflowError during type approximation for ${type.renderForDebugInfo()}", e)
             }
         }
     }
+
+    protected open fun KotlinTypeMarker.renderForDebugInfo(): String = toString()
 
     fun clearCache() {
         cacheForIncorporationConfigToSubtypeDirection.clear()
@@ -275,12 +282,13 @@ abstract class AbstractTypeApproximator(
         if (!toSuper) return null
         if (!conf.approximateLocalTypes && !conf.approximateAnonymous) return null
 
-        fun TypeConstructorMarker.isAcceptable(): Boolean {
-            return !(conf.approximateLocalTypes && isLocalType()) && !(conf.approximateAnonymous && isAnonymous())
+        fun KotlinTypeMarker.isAcceptable(constructorMarker: TypeConstructorMarker): Boolean {
+            return !(conf.approximateLocalTypes && conf.shouldApproximateLocalType(ctx, this) && constructorMarker.isLocalType()) &&
+                    !(conf.approximateAnonymous && constructorMarker.isAnonymous())
         }
 
         val constructor = type.typeConstructor()
-        if (constructor.isAcceptable()) return null
+        if (type.isAcceptable(constructor)) return null
         val typeCheckerContext = newTypeCheckerState(
             errorTypesEqualToAnything = false,
             stubTypesEqualToAnything = false
@@ -301,7 +309,7 @@ abstract class AbstractTypeApproximator(
                 val currentType = queue.removeFirst()
                 if (!visited.add(currentType)) continue
                 val currentConstructor = currentType.typeConstructor()
-                if (currentConstructor.isAcceptable()) {
+                if (currentType.isAcceptable(currentConstructor)) {
                     result = currentType.withNullability(type.isMarkedNullable())
                     break
                 }

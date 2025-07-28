@@ -7,8 +7,10 @@ import org.gradle.api.Task
 import org.gradle.api.artifacts.ConfigurablePublishArtifact
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.ConfigurationContainer
+import org.gradle.api.artifacts.ModuleDependency
 import org.gradle.api.artifacts.PublishArtifact
 import org.gradle.api.artifacts.component.ProjectComponentIdentifier
+import org.gradle.api.attributes.Usage
 import org.gradle.api.component.AdhocComponentWithVariants
 import org.gradle.api.file.ArchiveOperations
 import org.gradle.api.file.DuplicatesStrategy
@@ -46,6 +48,36 @@ fun Project.testsJar(body: Jar.() -> Unit = {}): TaskProvider<Jar> {
         body()
     }.also {
         project.addArtifact(testsJarCfg.name, it)
+    }
+}
+
+/**
+ * This is a dirty hack that allows depending both on tests and test-fixture
+ * of the module from some other module. Please don't use it.
+ *
+ * The proper approach should be implemented in the scope of KTI-2521.
+ */
+fun Project.testsJarToBeUsedAlongWithFixtures() {
+    // Define a test jar task.
+    val testsJar by tasks.registering(Jar::class) {
+        archiveClassifier.set("tests")
+        from(sourceSets["test"].output)
+    }
+
+    // Create a consumable, non-resolvable configuration with a unique capability.
+    val testsJarConfig by configurations.creating {
+        isCanBeConsumed = true
+        isCanBeResolved = false
+        attributes {
+            attribute(Usage.USAGE_ATTRIBUTE, objects.named(Usage.JAVA_RUNTIME))
+        }
+        outgoing.capabilities.clear()
+        outgoing.capability("org.jetbrains.kotlin:${project.name}-tests-jar:${project.version}")
+    }
+
+    // Publish the test jar artifact only to this configuration (not to testImplementation/testRuntime)
+    artifacts {
+        add(testsJarConfig.name, testsJar)
     }
 }
 
@@ -327,12 +359,12 @@ fun Project.publishJarsForIde(projects: List<String>, libraryDependencies: List<
     }
 }
 
-fun Project.publishTestJarsForIde(projectNames: List<String>) {
+fun Project.publishTestJarsForIde(projectNames: List<String>, projectWithFixturesNames: List<String> = emptyList()) {
     idePluginDependency {
         // Compiler test infrastructure should not affect test running in IDE.
         // If required, the components should be registered on the IDE plugin side.
         val excludedPaths = listOf("junit-platform.properties", "META-INF/services/**/*")
-        publishTestJar(projectNames, excludedPaths)
+        publishTestJar(projectNames, projectWithFixturesNames, excludedPaths)
     }
     configurations.all {
         // Don't allow `ideaIC` from compiler to leak into Kotlin plugin modules. Compiler and
@@ -342,6 +374,9 @@ fun Project.publishTestJarsForIde(projectNames: List<String>) {
     dependencies {
         for (projectName in projectNames) {
             jpsLikeJarDependency(projectTests(projectName), JpsDepScope.COMPILE, exported = true)
+        }
+        for (projectName in projectWithFixturesNames) {
+            jpsLikeJarDependency(testFixtures(project(projectName)), JpsDepScope.COMPILE, exported = true)
         }
     }
 }
@@ -391,7 +426,7 @@ fun Project.publishProjectJars(projects: List<String>, libraryDependencies: List
     javadocJar()
 }
 
-fun Project.publishTestJar(projects: List<String>, excludedPaths: List<String>) {
+fun Project.publishTestJar(projects: List<String>, projectWithFixturesNames: List<String>, excludedPaths: List<String>) {
     apply<JavaPlugin>()
 
     val fatJarContents by configurations.creating
@@ -399,6 +434,10 @@ fun Project.publishTestJar(projects: List<String>, excludedPaths: List<String>) 
     dependencies {
         for (projectName in projects) {
             fatJarContents(project(projectName, configuration = "tests-jar")) { isTransitive = false }
+        }
+
+        for (projectName in projectWithFixturesNames) {
+            fatJarContents(testFixtures(project(projectName)) as ModuleDependency) { isTransitive = false }
         }
     }
 

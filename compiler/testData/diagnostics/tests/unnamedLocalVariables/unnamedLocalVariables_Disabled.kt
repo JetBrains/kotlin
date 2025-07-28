@@ -10,7 +10,7 @@ fun foo() {
     val (a, _) = 1 to 2
     val (_) = 'a' to 'b'
 
-    (<!SYNTAX!><!>val f = <!UNRESOLVED_REFERENCE!>first<!><!SYNTAX!>, val _ = second) = "first" to "second"<!>
+    (val f = <!DEBUG_INFO_MISSING_UNRESOLVED!>first<!>, val _ = <!DEBUG_INFO_MISSING_UNRESOLVED!>second<!>) = "first" to "second"
 
     when(val <!UNDERSCORE_IS_RESERVED!>_<!> = writeTo()) {
         true -> {}

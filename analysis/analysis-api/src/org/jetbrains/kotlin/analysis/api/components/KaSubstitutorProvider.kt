@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.components
 
+import org.jetbrains.kotlin.analysis.api.KaContextParameterApi
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
@@ -62,6 +63,7 @@ public interface KaSubstitutorProvider : KaSessionComponent {
  */
 @KaExperimentalApi
 @OptIn(ExperimentalContracts::class, KaImplementationDetail::class)
+@JvmName("buildSubstitutorExtension")
 public inline fun KaSession.buildSubstitutor(
     build: KaSubstitutorBuilder.() -> Unit,
 ): KaSubstitutor {
@@ -101,4 +103,40 @@ public class KaSubstitutorBuilder
     public fun substitutions(substitutions: Map<KaTypeParameterSymbol, KaType>): Unit = withValidityAssertion {
         backingMapping += substitutions
     }
+}
+
+/**
+ * @see KaSubstitutorProvider.createSubstitutor
+ */
+@KaContextParameterApi
+@KaExperimentalApi
+context(context: KaSubstitutorProvider)
+public fun createSubstitutor(mappings: Map<KaTypeParameterSymbol, KaType>): KaSubstitutor {
+    return with(context) { createSubstitutor(mappings) }
+}
+
+/**
+ * @see KaSubstitutorProvider.createInheritanceTypeSubstitutor
+ */
+@KaContextParameterApi
+@KaExperimentalApi
+context(context: KaSubstitutorProvider)
+public fun createInheritanceTypeSubstitutor(subClass: KaClassSymbol, superClass: KaClassSymbol): KaSubstitutor? {
+    return with(context) { createInheritanceTypeSubstitutor(subClass, superClass) }
+}
+
+/**
+ * @see KaSession.buildSubstitutor
+ */
+@KaContextParameterApi
+@KaExperimentalApi
+@OptIn(ExperimentalContracts::class, KaImplementationDetail::class)
+context(context: KaSession)
+public inline fun buildSubstitutor(
+    build: KaSubstitutorBuilder.() -> Unit,
+): KaSubstitutor {
+    contract {
+        callsInPlace(build, InvocationKind.EXACTLY_ONCE)
+    }
+    return context.buildSubstitutor(build)
 }

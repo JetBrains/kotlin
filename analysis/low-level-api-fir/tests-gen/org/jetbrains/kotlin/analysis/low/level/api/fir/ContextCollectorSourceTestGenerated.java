@@ -169,6 +169,12 @@ public class ContextCollectorSourceTestGenerated extends AbstractContextCollecto
   }
 
   @Test
+  @TestMetadata("localTypeAlias.kt")
+  public void testLocalTypeAlias() {
+    runTest("analysis/low-level-api-fir/testData/contextCollector/localTypeAlias.kt");
+  }
+
+  @Test
   @TestMetadata("nestedClass.kt")
   public void testNestedClass() {
     runTest("analysis/low-level-api-fir/testData/contextCollector/nestedClass.kt");

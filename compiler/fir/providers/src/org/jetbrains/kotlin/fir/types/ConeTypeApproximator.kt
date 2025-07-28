@@ -7,8 +7,10 @@ package org.jetbrains.kotlin.fir.types
 
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
+import org.jetbrains.kotlin.fir.renderer.ConeTypeRendererForDebugInfo
 import org.jetbrains.kotlin.types.AbstractTypeApproximator
 import org.jetbrains.kotlin.types.TypeApproximatorConfiguration
+import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 
 class ConeTypeApproximator(inferenceContext: ConeInferenceContext, languageVersionSettings: LanguageVersionSettings) :
     AbstractTypeApproximator(inferenceContext, languageVersionSettings) {
@@ -20,6 +22,10 @@ class ConeTypeApproximator(inferenceContext: ConeInferenceContext, languageVersi
     fun approximateToSubType(type: ConeKotlinType, conf: TypeApproximatorConfiguration): ConeKotlinType? {
         if (type.fastPathSkipApproximation(conf)) return null
         return super.approximateToSubType(type, conf, caches = null) as ConeKotlinType?
+    }
+
+    override fun KotlinTypeMarker.renderForDebugInfo(): String = buildString {
+        ConeTypeRendererForDebugInfo(this, renderCapturedDetails = true).render(this@renderForDebugInfo as ConeKotlinType)
     }
 
     private fun ConeKotlinType.fastPathSkipApproximation(conf: TypeApproximatorConfiguration): Boolean {

@@ -114,11 +114,7 @@ class MppCrossCompilationPublicationIT : KGPBaseTest() {
                 setupCInteropForTarget("mylib", KonanTarget.MINGW_X64, "mylib_windows.def")
             },
             builder = { project, taskName, assertions ->
-                if (HostManager.hostIsMac) {
-                    project.build(taskName, assertions = assertions)
-                } else {
-                    project.buildAndFail(taskName, assertions = assertions)
-                }
+                project.build(taskName, assertions = assertions)
             },
             assertions = {
                 if (HostManager.hostIsMac) {
@@ -128,9 +124,6 @@ class MppCrossCompilationPublicationIT : KGPBaseTest() {
                 }
             }
         )
-
-        // We can't publish on non-macOS hosts due to cinterop limitations
-        if (!HostManager.hostIsMac) return
 
         val mavenUrl = multiplatformLibrary.projectPath.resolve("build/repo")
         val libraryRoot = mavenUrl.resolve("com/jetbrains/library")

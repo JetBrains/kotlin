@@ -87,6 +87,7 @@ fun registerCopyFrameworkTask(target: KonanTarget): TaskProvider<Sync> =
             }
         ) {
             include("XCTest.framework/**")
+            include("XCUIAutomation.framework/**")
         }
     }
 
@@ -111,7 +112,7 @@ kotlin {
 
         forEach {
             val copyTask = registerCopyFrameworkTask(it.konanTarget)
-            it.compilations.all {
+            it.compilations.named("main") {
                 cinterops {
                     register("XCTest") {
                         compilerOpts("-iframework", copyTask.map { it.destinationDir }.get().absolutePath)
@@ -124,13 +125,11 @@ kotlin {
             }
         }
     }
-    sourceSets.all {
-        languageSettings.apply {
-            // Oh, yeah! So much experimental, so wow!
-            optIn("kotlinx.cinterop.BetaInteropApi")
-            optIn("kotlinx.cinterop.ExperimentalForeignApi")
-            optIn("kotlin.experimental.ExperimentalNativeApi")
-        }
+
+    compilerOptions {
+        optIn.add("kotlinx.cinterop.BetaInteropApi")
+        optIn.add("kotlinx.cinterop.ExperimentalForeignApi")
+        optIn.add("kotlin.experimental.ExperimentalNativeApi")
     }
 }
 

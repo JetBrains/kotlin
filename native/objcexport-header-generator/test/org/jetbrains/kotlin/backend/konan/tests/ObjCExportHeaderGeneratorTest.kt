@@ -665,6 +665,11 @@ class ObjCExportHeaderGeneratorTest(private val generator: HeaderGenerator) {
         doTest(headersTestDataDir.resolve("anyMethodsOverride"))
     }
 
+    @Test
+    fun `test - property getter without colon`() {
+        doTest(headersTestDataDir.resolve("propertyGetter"))
+    }
+
     private fun doTest(root: File, configuration: Configuration = Configuration()) {
         if (!root.isDirectory) fail("Expected ${root.absolutePath} to be directory")
         val generatedHeaders = generator.generateHeaders(root, configuration).toString()

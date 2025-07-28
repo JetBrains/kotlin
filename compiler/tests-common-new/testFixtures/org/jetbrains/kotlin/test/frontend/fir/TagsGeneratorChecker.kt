@@ -20,6 +20,8 @@ import org.jetbrains.kotlin.fir.contracts.FirEffectDeclaration
 import org.jetbrains.kotlin.fir.contracts.FirResolvedContractDescription
 import org.jetbrains.kotlin.fir.contracts.description.ConeCallsEffectDeclaration
 import org.jetbrains.kotlin.fir.contracts.description.ConeConditionalEffectDeclaration
+import org.jetbrains.kotlin.fir.contracts.description.ConeConditionalReturnsDeclaration
+import org.jetbrains.kotlin.fir.contracts.description.ConeHoldsInEffectDeclaration
 import org.jetbrains.kotlin.fir.contracts.description.ConeReturnsEffectDeclaration
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isLocal
@@ -243,6 +245,8 @@ class TagsGeneratorChecker(testServices: TestServices) : FirAnalysisHandler(test
         const val CONTRACT_RETURNS_EFFECT = "contractReturnsEffect"
         const val CONTRACT_CALLS_EFFECT = "contractCallsEffect"
         const val CONTRACT_CONDITIONAL_EFFECT = "contractConditionalEffect"
+        const val CONTRACT_HOLDSIN_EFFECT = "contractHoldsInEffect"
+        const val CONTRACT_IMPLIES_RETURN_EFFECT = "contractImpliesReturnEffect"
     }
 }
 
@@ -603,6 +607,8 @@ private class TagsCollectorVisitor(private val session: FirSession) : FirVisitor
             is ConeConditionalEffectDeclaration -> tags += FirTags.CONTRACT_CONDITIONAL_EFFECT
             is ConeCallsEffectDeclaration -> tags += FirTags.CONTRACT_CALLS_EFFECT
             is ConeReturnsEffectDeclaration -> tags += FirTags.CONTRACT_RETURNS_EFFECT
+            is ConeHoldsInEffectDeclaration -> tags += FirTags.CONTRACT_HOLDSIN_EFFECT
+            is ConeConditionalReturnsDeclaration -> tags += FirTags.CONTRACT_IMPLIES_RETURN_EFFECT
         }
     }
 

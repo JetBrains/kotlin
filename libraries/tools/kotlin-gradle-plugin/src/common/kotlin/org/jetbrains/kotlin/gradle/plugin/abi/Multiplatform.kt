@@ -10,10 +10,13 @@ import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
 import org.jetbrains.kotlin.gradle.dsl.abi.AbiValidationMultiplatformVariantSpec
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
+import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle
 import org.jetbrains.kotlin.gradle.plugin.KotlinTarget
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
+import org.jetbrains.kotlin.gradle.plugin.launch
+import org.jetbrains.kotlin.gradle.plugin.launchInStage
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
-import org.jetbrains.kotlin.gradle.plugin.mpp.enabledOnCurrentHostForKlibCompilation
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 
 /**
  * Finalizes the configuration of the report variant for the Kotlin Multiplatform Gradle Plugin.
@@ -89,15 +92,21 @@ private fun Project.processNonJvmTargets(
         .filter { target -> target.emitsKlib }
         .forEach { target ->
             val klibTarget = target.toKlibTarget()
-
-            if (target.enabledOnCurrentHostForKlibCompilation && klibTarget.configurableName !in bannedInTests) {
-                target.compilations.withMainCompilationIfExists {
-                    abiValidationTaskSet.addKlibTarget(klibTarget, output.classesDirs)
+            launch {
+                if (target.targetIsSupported() && klibTarget.configurableName !in bannedInTests) {
+                    target.compilations.withMainCompilationIfExists {
+                        abiValidationTaskSet.addKlibTarget(klibTarget, output.classesDirs)
+                    }
+                } else {
+                    abiValidationTaskSet.unsupportedTarget(klibTarget)
                 }
-            } else {
-                abiValidationTaskSet.unsupportedTarget(klibTarget)
             }
         }
+}
+
+private suspend fun KotlinTarget.targetIsSupported(): Boolean = when (this) {
+    is KotlinNativeTarget -> crossCompilationOnCurrentHostSupported.await()
+    else -> true
 }
 
 private fun Project.bannedCanonicalTargetsInTest(): Set<String> {

@@ -48,6 +48,7 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
         FirDynamicReceiverChecker,
         FirExtensionShadowedByMemberChecker.Regular,
         FirExtensionShadowedByMemberChecker.ForExpectDeclaration,
+        FirReturnValueOverrideChecker,
     )
 
     override val functionCheckers: Set<FirFunctionChecker> = setOf(
@@ -164,6 +165,7 @@ object CommonDeclarationCheckers : DeclarationCheckers() {
         FirUnresolvedInMiddleOfImportChecker,
         FirTopLevelPropertiesChecker,
         FirPackageConflictsWithClassifierChecker,
+        PlatformClassMappedToKotlinImportsChecker,
     )
 
     override val scriptCheckers: Set<FirScriptChecker> = setOf(

@@ -102,8 +102,8 @@ class AtomicfuJvmIrTransformer(
             dispatchReceiver: IrExpression?
         ): IrExpression = when(atomicHandler) {
             is AtomicFieldUpdater -> irGetProperty(atomicHandler.declaration, null)
-            is BoxedAtomic, is AtomicArray -> irGetProperty((atomicHandler.declaration as IrProperty), dispatchReceiver)
-            is AtomicFieldUpdaterValueParameter, is BoxedAtomicValueParameter, is AtomicArrayValueParameter -> (atomicHandler.declaration as IrValueParameter).capture()
+            is BoxedAtomic, is AtomicArray -> irGetProperty(atomicHandler.declaration, dispatchReceiver)
+            is AtomicFieldUpdaterValueParameter, is BoxedAtomicValueParameter, is AtomicArrayValueParameter -> atomicHandler.declaration.capture()
             else -> error("Unexpected atomic handler type for JVM backend: ${atomicHandler.javaClass.simpleName}")
         }
 

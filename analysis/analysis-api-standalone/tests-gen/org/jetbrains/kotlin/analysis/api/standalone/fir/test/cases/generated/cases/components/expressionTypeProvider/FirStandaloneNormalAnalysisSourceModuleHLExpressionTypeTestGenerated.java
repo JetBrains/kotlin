@@ -53,6 +53,12 @@ public class FirStandaloneNormalAnalysisSourceModuleHLExpressionTypeTestGenerate
   }
 
   @Test
+  @TestMetadata("anonymousTypeWithProjection.kt")
+  public void testAnonymousTypeWithProjection() {
+    runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/anonymousTypeWithProjection.kt");
+  }
+
+  @Test
   @TestMetadata("approximatedCapturedFlexible.kt")
   public void testApproximatedCapturedFlexible() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/approximatedCapturedFlexible.kt");
@@ -479,6 +485,42 @@ public class FirStandaloneNormalAnalysisSourceModuleHLExpressionTypeTestGenerate
     @TestMetadata("deeperHierarchy4.kt")
     public void testDeeperHierarchy4() {
       runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/approximatedLocalClasses/deeperHierarchy4.kt");
+    }
+
+    @Test
+    @TestMetadata("genericShadowedLocalClass1.kt")
+    public void testGenericShadowedLocalClass1() {
+      runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/approximatedLocalClasses/genericShadowedLocalClass1.kt");
+    }
+
+    @Test
+    @TestMetadata("genericShadowedLocalClass2.kt")
+    public void testGenericShadowedLocalClass2() {
+      runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/approximatedLocalClasses/genericShadowedLocalClass2.kt");
+    }
+
+    @Test
+    @TestMetadata("mirroredLocalContext.kt")
+    public void testMirroredLocalContext() {
+      runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/approximatedLocalClasses/mirroredLocalContext.kt");
+    }
+
+    @Test
+    @TestMetadata("nonLocalPositionForLocalApproximation.kt")
+    public void testNonLocalPositionForLocalApproximation() {
+      runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/approximatedLocalClasses/nonLocalPositionForLocalApproximation.kt");
+    }
+
+    @Test
+    @TestMetadata("shadowedLocalClass1.kt")
+    public void testShadowedLocalClass1() {
+      runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/approximatedLocalClasses/shadowedLocalClass1.kt");
+    }
+
+    @Test
+    @TestMetadata("shadowedLocalClass2.kt")
+    public void testShadowedLocalClass2() {
+      runTest("analysis/analysis-api/testData/components/expressionTypeProvider/expressionType/approximatedLocalClasses/shadowedLocalClass2.kt");
     }
 
     @Test

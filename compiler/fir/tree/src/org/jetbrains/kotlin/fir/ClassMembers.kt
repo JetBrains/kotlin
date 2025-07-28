@@ -32,7 +32,7 @@ fun FirCallableSymbol<*>.containingClassLookupTag(): ConeClassLikeLookupTag? =
 fun FirCallableDeclaration.containingClassLookupTag(): ConeClassLikeLookupTag? =
     containingClassForStaticMemberAttr ?: dispatchReceiverClassLookupTagOrNull()
 
-fun FirRegularClass.containingClassForLocal(): ConeClassLikeLookupTag? =
+fun FirClassLikeDeclaration.containingClassForLocal(): ConeClassLikeLookupTag? =
     if (isLocal) containingClassForLocalAttr else null
 
 fun FirDanglingModifierSymbol.containingClassLookupTag(): ConeClassLikeLookupTag? = fir.containingClass()
@@ -42,7 +42,7 @@ fun FirDanglingModifierList.containingClass(): ConeClassLikeLookupTag? =
 
 fun FirClassLikeSymbol<*>.getContainingClassLookupTag(): ConeClassLikeLookupTag? {
     return if (classId.isLocal) {
-        (fir as? FirRegularClass)?.containingClassForLocal()
+        fir.containingClassForLocal()
     } else {
         val ownerId = classId.outerClassId
         ownerId?.toLookupTag()
@@ -51,10 +51,8 @@ fun FirClassLikeSymbol<*>.getContainingClassLookupTag(): ConeClassLikeLookupTag?
 
 private object ContainingClassKey : FirDeclarationDataKey()
 var FirCallableDeclaration.containingClassForStaticMemberAttr: ConeClassLikeLookupTag? by FirDeclarationDataRegistry.data(ContainingClassKey)
-var FirRegularClass.containingClassForLocalAttr: ConeClassLikeLookupTag? by FirDeclarationDataRegistry.data(ContainingClassKey)
+var FirClassLikeDeclaration.containingClassForLocalAttr: ConeClassLikeLookupTag? by FirDeclarationDataRegistry.data(ContainingClassKey)
 var FirDanglingModifierList.containingClassAttr: ConeClassLikeLookupTag? by FirDeclarationDataRegistry.data(ContainingClassKey)
-val FirRegularClassSymbol.containingClassForLocalAttr: ConeClassLikeLookupTag?
-    get() = fir.containingClassForLocalAttr
 
 private object ContainingScriptKey : FirDeclarationDataKey()
 var FirClassLikeDeclaration.containingScriptSymbolAttr: FirScriptSymbol? by FirDeclarationDataRegistry.data(ContainingScriptKey)

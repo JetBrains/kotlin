@@ -447,7 +447,6 @@ internal fun buildKaptSubpluginOptions(
         "${kaptExtension.strictMode}"
     )
     pluginOptions += SubpluginOption("stripMetadata", "${kaptExtension.stripMetadata}")
-    pluginOptions += SubpluginOption("keepKdocCommentsInStubs", "${KaptProperties.isKaptKeepKdocCommentsInStubs(project).get()}")
     pluginOptions += SubpluginOption("showProcessorTimings", "${kaptExtension.showProcessorStats}")
     pluginOptions += SubpluginOption("detectMemoryLeaks", kaptExtension.detectMemoryLeaks)
     pluginOptions += SubpluginOption("useK2", "${KaptProperties.isUseK2(project).get()}")

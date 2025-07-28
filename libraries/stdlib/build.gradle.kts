@@ -411,7 +411,15 @@ kotlin {
             kotlin.srcDir("common-non-jvm/src")
         }
 
+        val webMain by creating {
+            dependsOn(commonMain.get())
+            kotlin {
+                srcDir("common-js-wasmjs/src")
+            }
+        }
+
         val jsMain by getting {
+            dependsOn(webMain)
             dependsOn(commonNonJvmMain)
             val prepareJsIrMainSources by tasks.registering(Sync::class)
             kotlin {
@@ -511,6 +519,7 @@ kotlin {
         }
 
         val wasmJsMain by getting {
+            dependsOn(webMain)
             dependsOn(wasmCommonMain)
             kotlin {
                 srcDir("wasm/js/builtins")

@@ -3,11 +3,13 @@ plugins {
 }
 
 publishTestJarsForIde(
-    listOf(
+    projectNames = listOf(
+        ":compiler:tests-spec"
+    ),
+    projectWithFixturesNames = listOf(
+        ":compiler:tests-compiler-utils",
+        ":compiler:test-infrastructure-utils",
         ":compiler:test-infrastructure",
         ":compiler:tests-common-new",
-        ":compiler:test-infrastructure-utils",
-        ":compiler:tests-compiler-utils",
-        ":compiler:tests-spec"
     )
 )

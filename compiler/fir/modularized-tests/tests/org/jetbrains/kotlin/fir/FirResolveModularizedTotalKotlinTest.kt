@@ -72,7 +72,7 @@ class FirResolveModularizedTotalKotlinTest : AbstractFrontendModularizedTest() {
     @OptIn(ObsoleteTestInfrastructure::class)
     private fun runAnalysis(moduleData: ModuleData, environment: KotlinCoreEnvironment) {
 
-        val projectEnvironment = environment.toVfsBasedProjectEnvironment() as VfsBasedProjectEnvironment
+        val projectEnvironment = environment.toVfsBasedProjectEnvironment()
         val project = environment.project
 
         val (sourceFiles: Collection<KtSourceFile>, scope) =

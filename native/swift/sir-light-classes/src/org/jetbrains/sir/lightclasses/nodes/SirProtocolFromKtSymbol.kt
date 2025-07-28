@@ -58,6 +58,11 @@ internal open class SirProtocolFromKtSymbol(
         ktSymbol.superTypes
             .mapNotNull { it.symbol as? KaClassSymbol }
             .filter { it.classKind == KaClassKind.INTERFACE }
+            .filter {
+                it.sirAvailability(this@lazyWithSessions).let {
+                    it is SirAvailability.Available && it.visibility > SirVisibility.INTERNAL
+                }
+            }
             .mapNotNull {
                 it.toSir().allDeclarations.firstIsInstanceOrNull<SirProtocol>()?.also {
                     ktSymbol.containingModule.sirModule().updateImport(SirImport(it.containingModule().name))
@@ -72,6 +77,7 @@ internal open class SirProtocolFromKtSymbol(
             .extractDeclarations(useSiteSession)
             .flatMap { declaration ->
                 when (declaration) {
+                    is SirOperatorAuxiliaryDeclaration -> emptyList() // FIXME: rectify where auxiliary declarations should go.
                     is SirVariable, is SirFunction -> listOf(declaration)
                     is SirNamedDeclaration -> listOfNotNull(
                         (declaration.visibility == SirVisibility.PUBLIC).ifTrue {
@@ -127,7 +133,7 @@ internal class SirMarkerProtocolFromKtSymbol(
 
     override lateinit var parent: SirDeclarationParent
     override val origin: KotlinSource get() = KotlinMarkerProtocol(ktSymbol)
-    override val visibility: SirVisibility = SirVisibility.INTERNAL
+    override val visibility: SirVisibility = SirVisibility.PACKAGE
     override val documentation: String? = null
     override val attributes: List<SirAttribute> get() = listOf(SirAttribute.ObjC(this.name))
     override val name: String get() = "_${target.name}"

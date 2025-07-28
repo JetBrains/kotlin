@@ -14,10 +14,6 @@ object ExtraExpressionCheckers : ExpressionCheckers() {
         UselessCallOnNotNullChecker,
     )
 
-    override val functionCallCheckers: Set<FirFunctionCallChecker> = setOf(
-        PlatformClassMappedToKotlinConstructorCallChecker,
-    )
-
     override val stringConcatenationCallCheckers: Set<FirStringConcatenationCallChecker> = setOf(
         RedundantSingleExpressionStringTemplateChecker,
     )

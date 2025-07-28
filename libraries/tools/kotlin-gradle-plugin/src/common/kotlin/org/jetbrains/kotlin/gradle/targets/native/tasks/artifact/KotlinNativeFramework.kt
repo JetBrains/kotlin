@@ -131,7 +131,7 @@ internal fun KotlinNativeArtifact.registerLinkFrameworkTask(
         task.exportLibraries.setFrom(project.configurations.getByName(exportConfigurationName))
         @Suppress("DEPRECATION_ERROR")
         task.kotlinOptions(kotlinOptionsFn)
-        task.kotlinNativeProvider.set(task.chooseKotlinNativeProvider(enabledOnCurrentHost, task.konanTarget))
+        task.kotlinNativeProvider.set(task.chooseKotlinNativeProvider(enabledOnCurrentHost, task.konanTarget, project))
         task.kotlinCompilerArgumentsLogLevel
             .value(project.kotlinPropertiesProvider.kotlinCompilerArgumentsLogLevel)
             .finalizeValueOnRead()

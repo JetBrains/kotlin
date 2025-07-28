@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.components
 
+import org.jetbrains.kotlin.analysis.api.KaContextParameterApi
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaIdeApi
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
@@ -104,3 +105,39 @@ public interface KaExpressionInformationProvider : KaSessionComponent {
     @KaExperimentalApi
     public val KtExpression.isUsedAsResultOfLambda: Boolean
 }
+
+/**
+ * @see KaExpressionInformationProvider.targetSymbol
+ */
+@KaContextParameterApi
+@KaIdeApi
+context(context: KaExpressionInformationProvider)
+public val KtReturnExpression.targetSymbol: KaCallableSymbol?
+    get() = with(context) { targetSymbol }
+
+/**
+ * @see KaExpressionInformationProvider.computeMissingCases
+ */
+@KaContextParameterApi
+@KaIdeApi
+context(context: KaExpressionInformationProvider)
+public fun KtWhenExpression.computeMissingCases(): List<WhenMissingCase> {
+    return with(context) { computeMissingCases() }
+}
+
+/**
+ * @see KaExpressionInformationProvider.isUsedAsExpression
+ */
+@KaContextParameterApi
+context(context: KaExpressionInformationProvider)
+public val KtExpression.isUsedAsExpression: Boolean
+    get() = with(context) { isUsedAsExpression }
+
+/**
+ * @see KaExpressionInformationProvider.isUsedAsResultOfLambda
+ */
+@KaContextParameterApi
+@KaExperimentalApi
+context(context: KaExpressionInformationProvider)
+public val KtExpression.isUsedAsResultOfLambda: Boolean
+    get() = with(context) { isUsedAsResultOfLambda }

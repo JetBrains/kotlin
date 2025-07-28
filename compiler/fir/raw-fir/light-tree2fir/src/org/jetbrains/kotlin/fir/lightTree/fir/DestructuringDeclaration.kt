@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.fir.declarations.FirVariable
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirAnnotationCall
 import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.expressions.FirStatement
 import org.jetbrains.kotlin.fir.expressions.builder.buildAnnotationCallCopy
 import org.jetbrains.kotlin.fir.expressions.builder.buildBlock
 import org.jetbrains.kotlin.fir.generateTemporaryVariable
@@ -28,6 +27,7 @@ import org.jetbrains.kotlin.name.SpecialNames
 
 data class DestructuringDeclaration(
     val isVar: Boolean,
+    val isFullForm: Boolean,
     val entries: List<DestructuringEntry>,
     val initializer: FirExpression,
     val source: KtSourceElement,
@@ -64,15 +64,23 @@ data class DestructuringDeclaration(
 
 class DestructuringEntry(
     val source: KtSourceElement,
+    val initializerSource: KtSourceElement?,
     val returnTypeRef: FirTypeRef,
     val name: Name,
+    val initializerName: Name?,
+    val isVar: Boolean,
+    val isFullForm: Boolean,
     val annotations: List<FirAnnotationCall>,
 ) {
     @Suppress("EXTENSION_SHADOWED_BY_MEMBER")
     companion object : DestructuringContext<DestructuringEntry> {
         override val DestructuringEntry.returnTypeRef: FirTypeRef get() = returnTypeRef
         override val DestructuringEntry.name: Name get() = name
+        override val DestructuringEntry.initializerName: Name? get() = initializerName
+        override val DestructuringEntry.isVar: Boolean get() = isVar
         override val DestructuringEntry.source: KtSourceElement get() = source
+        override val DestructuringEntry.initializerSource: KtSourceElement? get() = initializerSource
+
         override fun DestructuringEntry.extractAnnotationsTo(target: FirAnnotationContainerBuilder, containerSymbol: FirBasedSymbol<*>) {
             target.annotations += annotations.map {
                 buildAnnotationCallCopy(it) {
@@ -84,22 +92,24 @@ class DestructuringEntry(
 }
 
 fun AbstractRawFirBuilder<*>.addDestructuringStatements(
-    destination: MutableList<FirStatement>,
+    destination: MutableList<in FirVariable>,
     moduleData: FirModuleData,
     multiDeclaration: DestructuringDeclaration,
     container: FirVariable,
-    tmpVariable: Boolean,
-    forceLocal: Boolean
-
+    isTmpVariable: Boolean,
+    forceLocal: Boolean,
+    configure: (FirVariable) -> Unit = {}
 ) {
-    addDestructuringVariables(
-        destination,
-        DestructuringEntry,
-        moduleData,
-        container,
-        multiDeclaration.entries,
-        multiDeclaration.isVar,
-        tmpVariable,
-        forceLocal
-    )
+    with(DestructuringEntry.Companion) {
+        addDestructuringVariables(
+            destination,
+            moduleData,
+            container,
+            entries = multiDeclaration.entries,
+            isNameBased = multiDeclaration.isFullForm || nameBasedDestructuringShortForm,
+            isTmpVariable = isTmpVariable,
+            forceLocal = forceLocal,
+            configure,
+        )
+    }
 }

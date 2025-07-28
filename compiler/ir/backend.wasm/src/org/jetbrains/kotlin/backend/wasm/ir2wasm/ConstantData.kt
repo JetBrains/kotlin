@@ -27,7 +27,7 @@ private fun addressToString(address: Int): String =
 class ConstantDataCharField(val value: WasmSymbol<Char>) : ConstantDataElement() {
     constructor(value: Char) : this(WasmSymbol(value))
 
-    override fun toBytes(): ByteArray = value.owner.toLittleEndianBytes()
+    override fun toBytes(): ByteArray = ByteArray(2).apply { value.owner.toLittleEndianBytes(this, 0) }
 
     override fun dump(indent: String, startAddress: Int): String {
         return "${addressToString(startAddress)}: $indent i32   : ${value.owner}    ;;\n"
@@ -39,7 +39,7 @@ class ConstantDataCharField(val value: WasmSymbol<Char>) : ConstantDataElement()
 class ConstantDataIntField(val value: WasmSymbol<Int>) : ConstantDataElement() {
     constructor(value: Int) : this(WasmSymbol(value))
 
-    override fun toBytes(): ByteArray = value.owner.toLittleEndianBytes()
+    override fun toBytes(): ByteArray = ByteArray(4).apply { value.owner.toLittleEndianBytes(this, 0) }
 
     override fun dump(indent: String, startAddress: Int): String {
         return "${addressToString(startAddress)}: $indent i32   : ${value.owner}    ;;\n"
@@ -67,7 +67,11 @@ class ConstantDataIntegerArray(val value: List<Long>, val integerSize: Int) : Co
 
 class ConstantDataIntArray(val value: List<WasmSymbol<Int>>) : ConstantDataElement() {
     override fun toBytes(): ByteArray {
-        return value.fold(byteArrayOf()) { acc, el -> acc + el.owner.toLittleEndianBytes() }
+        return ByteArray(value.size * 4).apply {
+            for (index in value.indices) {
+                value[index].owner.toLittleEndianBytes(this, index * 4)
+            }
+        }
     }
 
     override fun dump(indent: String, startAddress: Int): String {
@@ -82,9 +86,9 @@ class ConstantDataCharArray(val value: List<WasmSymbol<Char>>) : ConstantDataEle
     constructor(value: CharArray) : this(value.map { WasmSymbol(it) })
 
     override fun toBytes(): ByteArray {
-        return value
-            .map { it.owner.toLittleEndianBytes() }
-            .fold(byteArrayOf(), ByteArray::plus)
+        return ByteArray(value.size * 2).apply {
+            value.forEachIndexed { index, symbol -> symbol.owner.toLittleEndianBytes(this, index * 2) }
+        }
     }
 
     override fun dump(indent: String, startAddress: Int): String {
@@ -97,7 +101,13 @@ class ConstantDataCharArray(val value: List<WasmSymbol<Char>>) : ConstantDataEle
 
 class ConstantDataStruct(val elements: List<ConstantDataElement>) : ConstantDataElement() {
     override fun toBytes(): ByteArray {
-        return elements.fold(byteArrayOf()) { acc, el -> acc + el.toBytes() }
+        return buildList {
+            elements.forEach {
+                for (byte in it.toBytes()) {
+                    add(byte)
+                }
+            }
+        }.toByteArray()
     }
 
     override fun dump(indent: String, startAddress: Int): String {
@@ -112,7 +122,7 @@ class ConstantDataStruct(val elements: List<ConstantDataElement>) : ConstantData
         return res
     }
 
-    override val sizeInBytes: Int = elements.map { it.sizeInBytes }.sum()
+    override val sizeInBytes: Int = elements.sumOf { it.sizeInBytes }
 }
 
 fun Long.toLittleEndianBytesTo(to: ByteArray, offset: Int, size: Int) {
@@ -121,13 +131,14 @@ fun Long.toLittleEndianBytesTo(to: ByteArray, offset: Int, size: Int) {
     }
 }
 
-
-fun Int.toLittleEndianBytes(): ByteArray {
-    return ByteArray(4) {
-        (this ushr (it * 8)).toByte()
-    }
+fun Int.toLittleEndianBytes(to: ByteArray, offset: Int) {
+    to[offset] = this.toByte()
+    to[offset + 1] = (this ushr 8).toByte()
+    to[offset + 2] = (this ushr 16).toByte()
+    to[offset + 3] = (this ushr 24).toByte()
 }
 
-fun Char.toLittleEndianBytes(): ByteArray {
-    return byteArrayOf((this.code and 0xFF).toByte(), (this.code ushr Byte.SIZE_BITS).toByte())
+fun Char.toLittleEndianBytes(to: ByteArray, offset: Int) {
+    to[offset] = (this.code and 0xFF).toByte()
+    to[offset + 1] = (this.code ushr Byte.SIZE_BITS).toByte()
 }

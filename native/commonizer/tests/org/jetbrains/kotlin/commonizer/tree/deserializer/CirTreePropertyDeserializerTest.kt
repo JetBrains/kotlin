@@ -61,7 +61,7 @@ class CirTreePropertyDeserializerTest : AbstractCirTreeDeserializerTest() {
 
         assertNotNull(property.extensionReceiver, "Expected property has extension receiver")
         assertTrue(
-            property.extensionReceiver?.type is CirTypeParameterType,
+            property.extensionReceiver.type is CirTypeParameterType,
             "Expected extension receiver being type of ${CirTypeParameterType::class.simpleName}"
         )
     }

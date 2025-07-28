@@ -120,6 +120,7 @@ open class ExtraClassInfoGenerator() {
  *
  * Side note: The value of a Boolean constant is represented as an Integer (0, 1) value.
  */
+@Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN")
 private object ConstantValueExternalizer : DataExternalizer<Any> by DelegateDataExternalizer(
     listOf(
         java.lang.Integer::class.java,

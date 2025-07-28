@@ -293,7 +293,7 @@ class CachingTest {
             assertEquals(1, cache.retrievedScripts)
 
             val compiledScriptClassRes = runBlocking { compiledScript!!.getClass(null) }
-            val cachedScriptClassRes = runBlocking { cachedScript!!.getClass(null) }
+            val cachedScriptClassRes = runBlocking { cachedScript.getClass(null) }
 
             val compiledScriptClass = compiledScriptClassRes.valueOrThrow()
             val cachedScriptClass = cachedScriptClassRes.valueOrThrow()
@@ -303,7 +303,7 @@ class CachingTest {
 
             val output2 = captureOut {
                 runBlocking {
-                    evaluator(cachedScript!!, scriptEvaluationConfiguration).throwOnFailure()
+                    evaluator(cachedScript, scriptEvaluationConfiguration).throwOnFailure()
                 }
             }.lines()
             assertEquals(output, output2)

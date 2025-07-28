@@ -2586,6 +2586,12 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         val overriddenDeclaration: KaCallableSymbol
     }
 
+    interface OverridingIgnorableWithMustUse : KaFirDiagnostic<KtDeclaration> {
+        override val diagnosticClass get() = OverridingIgnorableWithMustUse::class
+        val method: KaCallableSymbol
+        val parentClass: KaClassLikeSymbol
+    }
+
     interface ManyCompanionObjects : KaFirDiagnostic<KtObjectDeclaration> {
         override val diagnosticClass get() = ManyCompanionObjects::class
     }

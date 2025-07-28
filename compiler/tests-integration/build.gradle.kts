@@ -1,6 +1,7 @@
 plugins {
     kotlin("jvm")
     id("jps-compatible")
+    id("java-test-fixtures")
 }
 
 val compilerModules: Array<String> by rootProject.extra
@@ -11,36 +12,36 @@ val antLauncherJar by configurations.creating
 dependencies {
     testImplementation(intellijCore())
 
-    testApi(project(":kotlin-script-runtime"))
+    testFixturesApi(project(":kotlin-script-runtime"))
 
-    testApi(kotlinStdlib())
+    testFixturesApi(kotlinStdlib())
 
-    testApi(kotlinTest())
+    testFixturesApi(kotlinTest())
     testCompileOnly(kotlinTest("junit"))
 
-    testImplementation(libs.junit4)
-    testImplementation(platform(libs.junit.bom))
-    testImplementation(libs.junit.jupiter.api)
-    testImplementation(libs.junit.platform.launcher)
+    testFixturesApi(libs.junit4)
+    testFixturesApi(platform(libs.junit.bom))
+    testFixturesApi(libs.junit.jupiter.api)
+    testFixturesApi(libs.junit.platform.launcher)
 
     testRuntimeOnly(libs.junit.jupiter.engine)
     testRuntimeOnly(libs.junit.vintage.engine)
 
-    testApi(projectTests(":compiler:tests-common"))
-    testApi(projectTests(":compiler:tests-common-new"))
-    testApi(projectTests(":compiler:fir:raw-fir:psi2fir"))
-    testApi(projectTests(":compiler:fir:raw-fir:light-tree2fir"))
-    testApi(projectTests(":compiler:fir:analysis-tests:legacy-fir-tests"))
-    testApi(projectTests(":generators:test-generator"))
-    testApi(project(":compiler:ir.tree")) // used for deepCopyWithSymbols call that is removed by proguard from the compiler TODO: make it more straightforward
-    testApi(project(":kotlin-scripting-compiler"))
+    testFixturesApi(testFixtures(project(":compiler:tests-common")))
+    testFixturesApi(testFixtures(project(":compiler:tests-common-new")))
+    testFixturesApi(testFixtures(project(":compiler:fir:raw-fir:psi2fir")))
+    testFixturesApi(testFixtures(project(":compiler:fir:raw-fir:light-tree2fir")))
+    testFixturesApi(testFixtures(project(":compiler:fir:analysis-tests:legacy-fir-tests")))
+    testFixturesApi(testFixtures(project(":generators:test-generator")))
+    testFixturesApi(project(":compiler:ir.tree")) // used for deepCopyWithSymbols call that is removed by proguard from the compiler TODO: make it more straightforward
+    testFixturesApi(project(":kotlin-scripting-compiler"))
 
     otherCompilerModules.forEach {
         testCompileOnly(project(it))
     }
 
     testImplementation(commonDependency("org.jetbrains.kotlin:kotlin-reflect")) { isTransitive = false }
-    testCompileOnly(toolsJarApi())
+    testFixturesCompileOnly(toolsJarApi())
     testRuntimeOnly(toolsJar())
 
     antLauncherJar(commonDependency("org.apache.ant", "ant"))
@@ -56,6 +57,7 @@ sourceSets {
         projectDefault()
         generatedTestDir()
     }
+    "testFixtures" { projectDefault() }
 }
 
 projectTest(

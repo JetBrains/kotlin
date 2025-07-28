@@ -20,7 +20,7 @@ public class SirDeclarationChildrenProviderImpl(private val sirSession: SirSessi
         sirSession.withSessions {
             filter { isAccessible(it) }
                 .flatMap { it.toSir().allDeclarations }
-                .flatMap { listOf(it) + it.trampolineDeclarations() }
+                .flatMap { decl -> listOf(decl) + decl.trampolineDeclarations().filter { it.parent == decl } }
         }
 
     private fun SirAndKaSession.isAccessible(symbol: KaDeclarationSymbol): Boolean =

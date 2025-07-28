@@ -494,7 +494,7 @@ abstract class TypeCheckerStateForConstraintSystem(
     private fun isSubtypeOfByTypeChecker(subType: KotlinTypeMarker, superType: KotlinTypeMarker) =
         AbstractTypeChecker.isSubtypeOf(this as TypeCheckerState, subType, superType)
 
-    private fun assertInputTypes(subType: KotlinTypeMarker, superType: KotlinTypeMarker) = with(typeSystemContext) {
+    private fun assertInputTypes(subType: KotlinTypeMarker, superType: KotlinTypeMarker): Unit = with(typeSystemContext) {
         if (!AbstractTypeChecker.RUN_SLOW_ASSERTIONS) return
         fun correctSubType(subType: RigidTypeMarker) =
             subType.isSingleClassifierType() || subType.typeConstructor()

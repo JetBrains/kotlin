@@ -3,7 +3,7 @@ import KotlinRuntimeSupport
 import KotlinRuntime
 @_implementationOnly import KotlinBridges_testLibraryA
 
-public extension ExportedKotlinPackages.org.jetbrains.a {
+extension ExportedKotlinPackages.org.jetbrains.a {
     public final class MyLibraryA: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
         public func returnInt() -> Swift.Int32 {
             return org_jetbrains_a_MyLibraryA_returnInt(self.__externalRCRef())

@@ -26,6 +26,9 @@ fun main() {
         <!CANNOT_INFER_PARAMETER_TYPE!>x<!> ->
         ""
     }<!>
+
+    A.bar(<!NEW_INFERENCE_NO_INFORMATION_FOR_PARAMETER!>Function<!> { <!CANNOT_INFER_PARAMETER_TYPE!>x<!> -> "" })
+    A.bar(Function<CharSequence, Map<String, CharSequence>>{ x -> x[""] })
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, flexibleType, funWithExtensionReceiver, functionDeclaration, functionalType,

@@ -10,7 +10,7 @@ library {
 
     public final annotation class test/Anno : kotlin/Annotation {
 
-      public constructor(value: kotlin/String /* = ... */, x: kotlin/Int /* = ... */)
+      public constructor(value: kotlin/String = "0", x: kotlin/Int = 0)
 
       public final val value: kotlin/String
         public final get

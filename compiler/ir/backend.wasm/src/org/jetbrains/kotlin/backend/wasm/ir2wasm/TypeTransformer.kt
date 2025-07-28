@@ -65,60 +65,58 @@ class WasmTypeTransformer(
             else -> toWasmValueType()
         }
 
-    fun IrType.toWasmValueType(): WasmType =
-        when (this) {
-            builtIns.booleanType,
-            builtIns.byteType,
-            builtIns.shortType,
-            builtIns.intType,
-            builtIns.charType ->
-                WasmI32
+    private val irBuiltInToWasmType: HashMap<IrType, WasmType> = hashMapOf(
+        builtIns.booleanType to WasmI32,
+        builtIns.byteType to WasmI32,
+        builtIns.shortType to WasmI32,
+        builtIns.intType to WasmI32,
+        builtIns.charType to WasmI32,
 
-            builtIns.longType ->
-                WasmI64
+        builtIns.longType to WasmI64,
 
-            builtIns.floatType ->
-                WasmF32
+        builtIns.floatType to WasmF32,
 
-            builtIns.doubleType ->
-                WasmF64
+        builtIns.doubleType to WasmF64,
 
-            builtIns.nothingNType ->
-                WasmRefNullrefType
+        builtIns.nothingNType to WasmRefNullrefType,
 
-            // Value will not be created. Just using a random Wasm type.
-            builtIns.nothingType ->
-                WasmAnyRef
+        builtIns.nothingType to WasmAnyRef, // Value will not be created. Just using a random Wasm type.
+    )
 
-            symbols.voidType ->
-                error("Void type can't be used as a value")
+    fun IrType.toWasmValueType(): WasmType {
+        irBuiltInToWasmType[this]?.let { return it }
 
-            else -> {
-                val klass = this.erasedUpperBound
-                val ic = backendContext.inlineClassesUtils.getInlinedClass(this)
+        if (this == symbols.voidType) {
+            error("Void type can't be used as a value")
+        }
 
-                if (klass.isExternal) {
-                    WasmExternRef
-                } else if (isBuiltInWasmRefType(this)) {
-                    when (val name = klass.name.identifier) {
-                        "anyref" -> WasmAnyRef
-                        "eqref" -> WasmEqRef
-                        "structref" -> WasmRefNullType(WasmHeapType.Simple.Struct)
-                        "i31ref" -> WasmI31Ref
-                        "funcref" -> WasmRefNullType(WasmHeapType.Simple.Func)
-                        else -> error("Unknown reference type $name")
-                    }
-                } else if (ic != null) {
-                    backendContext.inlineClassesUtils.getInlineClassUnderlyingType(ic).toWasmValueType()
-                } else {
-                    this.toWasmGcRefType()
-                }
+        val klass = this.erasedUpperBound
+        return if (klass.isExternal) {
+            WasmExternRef
+        } else if (isBuiltInWasmRefType(this)) {
+            when (val name = klass.name.identifier) {
+                "anyref" -> WasmAnyRef
+                "eqref" -> WasmEqRef
+                "structref" -> WasmRefNullType(WasmHeapType.Simple.Struct)
+                "i31ref" -> WasmI31Ref
+                "funcref" -> WasmRefNullType(WasmHeapType.Simple.Func)
+                else -> error("Unknown reference type $name")
+            }
+        } else {
+            val ic = backendContext.inlineClassesUtils.getInlinedClass(this)
+            if (ic != null) {
+                backendContext.inlineClassesUtils.getInlineClassUnderlyingType(ic).toWasmValueType()
+            } else {
+                this.toWasmGcRefType()
             }
         }
+    }
 }
 
+private val internalReftypesFqName: FqName = FqName("kotlin.wasm.internal.reftypes")
+
 fun isBuiltInWasmRefType(type: IrType): Boolean {
-    return type.classOrNull?.owner?.packageFqName == FqName("kotlin.wasm.internal.reftypes")
+    return type.classOrNull?.owner?.packageFqName == internalReftypesFqName
 }
 
 fun isExternalType(type: IrType): Boolean =

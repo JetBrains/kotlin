@@ -81,3 +81,9 @@ annotation class EmitMetadata(val value: Int)
 
 @Retention(AnnotationRetention.SOURCE)
 annotation class GenerateBodyUsingEmittedMetadata
+
+/**
+ * Signals [IrTransformerForICTesting] to insert a call of the specified function
+ * in the annotated function
+ */
+annotation class CallSpecifiedFunction(val functionName: String)

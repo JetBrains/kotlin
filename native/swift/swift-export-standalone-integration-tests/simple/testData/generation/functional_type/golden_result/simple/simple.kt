@@ -18,7 +18,8 @@ public fun __root___closure_property_set__TypesOfArguments__U2829202D_U20Swift_V
     val __newValue = run {
         val kotlinFun = convertBlockPtrToKotlinFunction<()->Unit>(newValue);
         {
-            kotlinFun()
+            val _result = kotlinFun()
+            Unit
         }
     }
     closure_property = __newValue
@@ -47,7 +48,8 @@ public fun __root___foo_consume_simple__TypesOfArguments__U2829202D_U20Swift_Voi
     val __block = run {
         val kotlinFun = convertBlockPtrToKotlinFunction<()->Unit>(block);
         {
-            kotlinFun()
+            val _result = kotlinFun()
+            Unit
         }
     }
     foo_consume_simple(__block)

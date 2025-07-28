@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.api.components
 
 import com.intellij.psi.PsiElement
 import com.intellij.psi.PsiFile
+import org.jetbrains.kotlin.analysis.api.KaContextParameterApi
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.compile.CodeFragmentCapturedValue
@@ -185,3 +186,19 @@ public class KaCodeCompilationException(cause: Throwable) : RuntimeException(cau
  */
 @KaExperimentalApi
 public class DebuggerExtension(public val stack: Sequence<PsiElement?>)
+
+/**
+ * @see KaCompilerFacility.compile
+ */
+@KaContextParameterApi
+@KaExperimentalApi
+@Throws(KaCodeCompilationException::class)
+context(context: KaCompilerFacility)
+public fun compile(
+    file: KtFile,
+    configuration: CompilerConfiguration,
+    target: KaCompilerTarget,
+    allowedErrorFilter: (KaDiagnostic) -> Boolean
+): KaCompilationResult {
+    return with(context) { compile(file, configuration, target, allowedErrorFilter) }
+}

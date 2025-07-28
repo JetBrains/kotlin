@@ -10,7 +10,7 @@ dependencies {
     api(kotlinStdlib())
     compileOnly(project(":kotlin-tooling-core")) // to reuse `KotlinToolingVersion`
     compileOnly(project(":compiler:build-tools:kotlin-build-tools-api"))
-    api(projectTests(":compiler:test-infrastructure-utils")) // for `@TestDataPath`/`@TestMetadata`
+    api(testFixtures(project(":compiler:test-infrastructure-utils"))) // for `@TestDataPath`/`@TestMetadata`
 
     api(platform(libs.junit.bom))
     compileOnly(libs.junit.jupiter.engine)

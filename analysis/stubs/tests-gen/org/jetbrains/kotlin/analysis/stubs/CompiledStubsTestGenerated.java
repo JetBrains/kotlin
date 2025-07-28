@@ -2321,6 +2321,40 @@ public class CompiledStubsTestGenerated extends AbstractCompiledStubsTest {
   }
 
   @Nested
+  @TestMetadata("compiler/testData/psi/destructuring")
+  @TestDataPath("$PROJECT_ROOT")
+  public class Destructuring {
+    @Test
+    public void testAllFilesPresentInDestructuring() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/psi/destructuring"), Pattern.compile("^([^.]+)\\.kt$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("fullNameBasedDestructuring.kt")
+    public void testFullNameBasedDestructuring() {
+      runTest("compiler/testData/psi/destructuring/fullNameBasedDestructuring.kt");
+    }
+
+    @Test
+    @TestMetadata("fullNameBasedDestructuringErrors.kt")
+    public void testFullNameBasedDestructuringErrors() {
+      runTest("compiler/testData/psi/destructuring/fullNameBasedDestructuringErrors.kt");
+    }
+
+    @Test
+    @TestMetadata("ktij23263.kt")
+    public void testKtij23263() {
+      runTest("compiler/testData/psi/destructuring/ktij23263.kt");
+    }
+
+    @Test
+    @TestMetadata("shortNameBasedDestructuringWithRenaming.kt")
+    public void testShortNameBasedDestructuringWithRenaming() {
+      runTest("compiler/testData/psi/destructuring/shortNameBasedDestructuringWithRenaming.kt");
+    }
+  }
+
+  @Nested
   @TestMetadata("compiler/testData/psi/examples")
   @TestDataPath("$PROJECT_ROOT")
   public class Examples {

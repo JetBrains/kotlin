@@ -44,13 +44,6 @@ class FirPsiOuterClassGenTest : OuterClassGenTest() {
         get() = Psi
 }
 
-abstract class AbstractFirPsiCheckLocalVariablesTableTest : AbstractIrCheckLocalVariablesTableTest() {
-    override val useFir: Boolean
-        get() = true
-
-    override val firParser: FirParser
-        get() = Psi
-}
 
 class FirPsiPropertyGenTest : PropertyGenTest() {
     override val useFir: Boolean

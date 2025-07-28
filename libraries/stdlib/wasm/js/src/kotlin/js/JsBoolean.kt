@@ -12,12 +12,12 @@ import kotlin.wasm.internal.kotlinBooleanToExternRefAdapter
 /** JavaScript primitive boolean */
 @JsPrimitive("boolean")
 @ExperimentalWasmJsInterop
-public external class JsBoolean internal constructor() : JsAny
+public actual external class JsBoolean internal constructor() : JsAny
 
 @ExperimentalWasmJsInterop
-public fun JsBoolean.toBoolean(): Boolean =
+public actual fun JsBoolean.toBoolean(): Boolean =
     externRefToKotlinBooleanAdapter(this)
 
 @ExperimentalWasmJsInterop
-public fun Boolean.toJsBoolean(): JsBoolean =
+public actual fun Boolean.toJsBoolean(): JsBoolean =
     kotlinBooleanToExternRefAdapter(this)

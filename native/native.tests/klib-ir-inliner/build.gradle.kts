@@ -1,19 +1,20 @@
 plugins {
     kotlin("jvm")
+    id("java-test-fixtures")
 }
 
 dependencies {
-    testImplementation(platform(libs.junit.bom))
-    testImplementation(libs.junit.jupiter.api)
+    testFixturesApi(platform(libs.junit.bom))
+    testFixturesApi(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
 
-    testImplementation(project(":compiler:ir.objcinterop"))
-    testImplementation(project(":compiler:ir.backend.native"))
-    testImplementation(project(":compiler:ir.serialization.native"))
-    testImplementation(project(":compiler:test-infrastructure"))
-    testImplementation(project(":kotlin-util-klib-abi"))
-    testImplementation(projectTests(":native:native.tests"))
-    testImplementation(projectTests(":kotlin-util-klib-abi"))
+    testFixturesApi(project(":compiler:ir.objcinterop"))
+    testFixturesApi(project(":compiler:ir.backend.native"))
+    testFixturesApi(project(":compiler:ir.serialization.native"))
+    testFixturesApi(project(":compiler:test-infrastructure"))
+    testFixturesApi(project(":kotlin-util-klib-abi"))
+    testFixturesApi(testFixtures(project(":native:native.tests")))
+    testFixturesApi(testFixtures(project(":kotlin-util-klib-abi")))
 }
 
 sourceSets {
@@ -22,6 +23,7 @@ sourceSets {
         projectDefault()
         generatedTestDir()
     }
+    "testFixtures" { projectDefault() }
 }
 
 testsJar {}

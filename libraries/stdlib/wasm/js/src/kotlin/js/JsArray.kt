@@ -5,19 +5,30 @@
 
 package kotlin.js
 
+import kotlin.internal.LowPriorityInOverloadResolution
+
 /** JavaScript Array */
 @ExperimentalWasmJsInterop
 @JsName("Array")
-public external class JsArray<T : JsAny?> : JsAny {
+public actual external class JsArray<T : JsAny?> : JsAny {
     public val length: Int
 }
 
 @ExperimentalWasmJsInterop
-public operator fun <T : JsAny?> JsArray<T>.get(index: Int): T? =
+@LowPriorityInOverloadResolution
+public actual fun <T : JsAny?> JsArray(): JsArray<T> =
+    JsArray()
+
+@ExperimentalWasmJsInterop
+public actual val JsArray<*>.length: Int
+    inline get() = length
+
+@ExperimentalWasmJsInterop
+public actual operator fun <T : JsAny?> JsArray<T>.get(index: Int): T? =
     jsArrayGet(this, index)
 
 @ExperimentalWasmJsInterop
-public operator fun <T : JsAny?> JsArray<T>.set(index: Int, value: T) {
+public actual operator fun <T : JsAny?> JsArray<T>.set(index: Int, value: T) {
     jsArraySet(this, index, value)
 }
 
@@ -34,14 +45,14 @@ private fun <T : JsAny?> jsArraySet(array: JsArray<T>, index: Int, value: T) {
 
 /** Returns a new [Array] containing all the elements of this [JsArray]. */
 @ExperimentalWasmJsInterop
-public fun <T : JsAny?> JsArray<T>.toArray(): Array<T> {
+public actual fun <T : JsAny?> JsArray<T>.toArray(): Array<T> {
     @Suppress("UNCHECKED_CAST", "TYPE_PARAMETER_AS_REIFIED")
     return Array(this.length) { this[it] as T }
 }
 
 /** Returns a new [JsArray] containing all the elements of this [Array]. */
 @ExperimentalWasmJsInterop
-public fun <T : JsAny?> Array<T>.toJsArray(): JsArray<T> {
+public actual fun <T : JsAny?> Array<T>.toJsArray(): JsArray<T> {
     val destination = JsArray<T>()
     for (i in this.indices) {
         destination[i] = this[i]
@@ -51,14 +62,14 @@ public fun <T : JsAny?> Array<T>.toJsArray(): JsArray<T> {
 
 /** Returns a new [List] containing all the elements of this [JsArray]. */
 @ExperimentalWasmJsInterop
-public fun <T : JsAny?> JsArray<T>.toList(): List<T> {
+public actual fun <T : JsAny?> JsArray<T>.toList(): List<T> {
     @Suppress("UNCHECKED_CAST")
     return List(length) { this[it] as T }
 }
 
 /** Returns a new [JsArray] containing all the elements of this [List]. */
 @ExperimentalWasmJsInterop
-public fun <T : JsAny?> List<T>.toJsArray(): JsArray<T> {
+public actual fun <T : JsAny?> List<T>.toJsArray(): JsArray<T> {
     val destination = JsArray<T>()
     for (i in this.indices) {
         destination[i] = this[i]

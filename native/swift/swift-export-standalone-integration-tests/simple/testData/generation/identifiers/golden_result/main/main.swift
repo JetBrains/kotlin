@@ -3,7 +3,7 @@
 import KotlinRuntime
 import KotlinRuntimeSupport
 
-public extension ExportedKotlinPackages.u30 {
+extension ExportedKotlinPackages.u30 {
     public static var u30_times: Swift.String {
         get {
             return U30_0times_get()
@@ -45,7 +45,7 @@ public extension ExportedKotlinPackages.u30 {
         }
     }
 }
-public extension ExportedKotlinPackages.u31 {
+extension ExportedKotlinPackages.u31 {
     public static func u30_times() -> Swift.String {
         return U31_0times()
     }
@@ -75,7 +75,7 @@ public extension ExportedKotlinPackages.u31 {
         return U31_UD83EDD37()
     }
 }
-public extension ExportedKotlinPackages.u34 {
+extension ExportedKotlinPackages.u34 {
     public typealias u30_times = Swift.Void
     public typealias `_` = Swift.Void
     public typealias __ = Swift.Void

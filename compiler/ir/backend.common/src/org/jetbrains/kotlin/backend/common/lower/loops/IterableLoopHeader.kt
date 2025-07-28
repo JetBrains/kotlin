@@ -44,7 +44,7 @@ internal class IterableLoopHeader(
                 }
             // The call could be wrapped in an IMPLICIT_NOTNULL type-cast (see comment in ForLoopsLowering.gatherLoopVariableInfo()).
             // Find and replace the call to preserve any type-casts.
-            loopVariable?.initializer = loopVariable?.initializer?.transform(InitializerCallReplacer(next), null)
+            loopVariable?.initializer = loopVariable.initializer?.transform(InitializerCallReplacer(next), null)
             // Even if there is no loop variable, we always want to call `next()` for iterables and sequences.
             listOf(loopVariable ?: next.coerceToUnitIfNeeded(next.type, context.irBuiltIns))
         }

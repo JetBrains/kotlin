@@ -697,6 +697,7 @@ public abstract interface class org/jetbrains/kotlin/lexer/KtTokens {
 	public static final field VALUE_KEYWORD_Id I
 	public static final field VAL_KEYWORD Lorg/jetbrains/kotlin/lexer/KtKeywordToken;
 	public static final field VAL_KEYWORD_Id I
+	public static final field VAL_VAR Lcom/intellij/psi/tree/TokenSet;
 	public static final field VARARG_KEYWORD Lorg/jetbrains/kotlin/lexer/KtModifierKeywordToken;
 	public static final field VARARG_KEYWORD_Id I
 	public static final field VAR_KEYWORD Lorg/jetbrains/kotlin/lexer/KtKeywordToken;
@@ -1393,6 +1394,7 @@ public class org/jetbrains/kotlin/psi/KtDestructuringDeclaration : org/jetbrains
 	public fun getTrailingComma ()Lcom/intellij/psi/PsiElement;
 	public fun getValOrVarKeyword ()Lcom/intellij/psi/PsiElement;
 	public fun hasInitializer ()Z
+	public fun isFullForm ()Z
 	public fun isVar ()Z
 }
 
@@ -1401,11 +1403,13 @@ public class org/jetbrains/kotlin/psi/KtDestructuringDeclarationEntry : org/jetb
 	public fun accept (Lorg/jetbrains/kotlin/psi/KtVisitor;Ljava/lang/Object;)Ljava/lang/Object;
 	public fun getColon ()Lcom/intellij/psi/PsiElement;
 	public fun getFqName ()Lorg/jetbrains/kotlin/name/FqName;
-	public fun getInitializer ()Lorg/jetbrains/kotlin/psi/KtExpression;
+	public synthetic fun getInitializer ()Lorg/jetbrains/kotlin/psi/KtExpression;
+	public fun getInitializer ()Lorg/jetbrains/kotlin/psi/KtNameReferenceExpression;
 	public synthetic fun getName ()Ljava/lang/String;
 	public synthetic fun getNameAsName ()Lorg/jetbrains/kotlin/name/Name;
 	public synthetic fun getNameAsSafeName ()Lorg/jetbrains/kotlin/name/Name;
 	public synthetic fun getNameIdentifier ()Lcom/intellij/psi/PsiElement;
+	public fun getOwnValOrVarKeyword ()Lcom/intellij/psi/PsiElement;
 	public fun getReceiverTypeReference ()Lorg/jetbrains/kotlin/psi/KtTypeReference;
 	public synthetic fun getTextOffset ()I
 	public fun getTypeConstraintList ()Lorg/jetbrains/kotlin/psi/KtTypeConstraintList;

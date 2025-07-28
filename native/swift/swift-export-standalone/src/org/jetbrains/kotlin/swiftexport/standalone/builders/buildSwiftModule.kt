@@ -73,7 +73,9 @@ internal fun SirAndKaSession.translateModule(
 private fun SirAndKaSession.extractAllTransitively(
     declarations: Sequence<KaDeclarationSymbol>,
 ): Sequence<Pair<SirDeclarationParent, List<SirDeclaration>>> = generateSequence(
-    declarations.extractDeclarations(useSiteSession).groupBy { it.parent }.toList()
+    declarations.extractDeclarations(useSiteSession)
+        .flatMap { listOf(it) + it.trampolineDeclarations() }
+        .groupBy { it.parent }.toList()
 ) {
     it.flatMap { (_, children) ->
         children

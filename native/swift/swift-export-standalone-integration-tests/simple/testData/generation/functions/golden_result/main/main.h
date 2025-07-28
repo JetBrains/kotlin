@@ -61,6 +61,12 @@ int32_t namespace1_main_foobar__TypesOfArguments__Swift_Int32__(int32_t param);
 
 int32_t namespace2_foo__TypesOfArguments__Swift_Int32__(int32_t arg1);
 
+void namespace3_bar_get();
+
+void namespace3_foo__TypesOfArguments__Swift_Void__();
+
+void namespace3_foo__TypesOfArguments__Swift_Int32_Swift_Void__(int32_t arg1);
+
 void * operators_Foo_EmptyIterator_get();
 
 _Bool operators_Foo_EmptyIterator_hasNext(void * self);

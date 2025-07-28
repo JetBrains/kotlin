@@ -3092,6 +3092,13 @@ internal class NonSuspendOverriddenBySuspendImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtCallableDeclaration>(firDiagnostic, token), KaFirDiagnostic.NonSuspendOverriddenBySuspend
 
+internal class OverridingIgnorableWithMustUseImpl(
+    override val method: KaCallableSymbol,
+    override val parentClass: KaClassLikeSymbol,
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtDeclaration>(firDiagnostic, token), KaFirDiagnostic.OverridingIgnorableWithMustUse
+
 internal class ManyCompanionObjectsImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,

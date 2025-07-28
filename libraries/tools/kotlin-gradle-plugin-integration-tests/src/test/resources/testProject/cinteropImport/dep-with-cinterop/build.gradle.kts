@@ -1,12 +1,18 @@
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
+
 plugins {
     kotlin("multiplatform")
     id("maven-publish")
 }
 
 kotlin {
-    linuxX64().compilations.getByName("main").cinterops.create("dep")
-    linuxArm64().compilations.getByName("main").cinterops.create("dep")
-    iosX64().compilations.getByName("main").cinterops.create("dep")
+    linuxX64()
+    linuxArm64()
+    iosX64()
+
+    targets.withType<KotlinNativeTarget>().configureEach {
+        compilations.getByName("main").cinterops.create("dep")
+    }
 }
 
 publishing {

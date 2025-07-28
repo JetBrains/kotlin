@@ -7,12 +7,14 @@ import org.jetbrains.kotlin.gradle.idea.testFixtures.utils.*
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.testbase.BuildOptions
 import org.jetbrains.kotlin.gradle.testbase.BuildOptions.ConfigurationCacheValue
+import org.jetbrains.kotlin.gradle.testbase.GradleAndroidTest
 import org.jetbrains.kotlin.gradle.testbase.GradleTest
 import org.jetbrains.kotlin.gradle.testbase.KGPBaseTest
 import org.jetbrains.kotlin.gradle.testbase.MppGradlePluginTests
 import org.jetbrains.kotlin.gradle.testbase.assertHasDiagnostic
 import org.jetbrains.kotlin.gradle.testbase.assertNoDiagnostic
 import org.jetbrains.kotlin.gradle.testbase.assertOutputContains
+import org.jetbrains.kotlin.gradle.testbase.assertOutputDoesNotContain
 import org.jetbrains.kotlin.gradle.testbase.assertTasksExecuted
 import org.jetbrains.kotlin.gradle.testbase.build
 import org.jetbrains.kotlin.gradle.testbase.buildAndFail
@@ -179,6 +181,59 @@ class KmpPartiallyResolvedDependenciesCheckerIT : KGPBaseTest() {
         consumer.buildAndFail("compileKotlinJvm") {
             // FIXME: KT-79204 - Java task tries to compute cross-project dependencies before we have a chance to emit diagnostic
             // assertHasDiagnostic(KotlinToolingDiagnostics.PartiallyResolvedKmpDependencies)
+        }
+    }
+
+    @GradleAndroidTest
+    fun `partially resolved kmp dependencies checker - doesn't trigger AGP checker about configurations resolved at configuration time - KT-79559`(
+        gradleVersion: GradleVersion,
+        agpVersion: String,
+    ) {
+        val consumer = project("empty", gradleVersion, buildOptions = defaultBuildOptions.copy(androidVersion = agpVersion)) {
+            val producer = project("empty", gradleVersion) {
+                plugins {
+                    kotlin("multiplatform")
+                }
+                buildScriptInjection {
+                    project.applyMultiplatform {
+                        linuxArm64()
+                        sourceSets.commonMain.get().compileStubSourceWithSourceSetName()
+                    }
+                }
+            }
+
+            plugins {
+                kotlin("multiplatform")
+                id("com.android.library")
+            }
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    linuxArm64()
+                    androidTarget()
+                    jvm()
+
+                    sourceSets.commonMain.dependencies {
+                        implementation(project(":producer"))
+                    }
+
+                    androidLibrary.compileSdk = 33
+                    androidLibrary.namespace = "foo"
+                }
+            }
+
+            include(producer, "producer")
+        }
+
+        consumer.build("compileKotlinLinuxArm64") {
+            assertOutputDoesNotContain("Configuration 'jvmCompileClasspath' was resolved during configuration time")
+            assertHasDiagnostic(KotlinToolingDiagnostics.PartiallyResolvedKmpDependencies)
+        }
+        consumer.buildAndFail("compileKotlinJvm") {
+            // See: KT-79559
+            assertNoDiagnostic(KotlinToolingDiagnostics.PartiallyResolvedKmpDependencies)
+        }
+        consumer.buildAndFail("compileDebugKotlinAndroid") {
+            assertNoDiagnostic(KotlinToolingDiagnostics.PartiallyResolvedKmpDependencies)
         }
     }
 

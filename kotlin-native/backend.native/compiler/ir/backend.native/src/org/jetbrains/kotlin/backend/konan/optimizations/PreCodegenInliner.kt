@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.isSingleFieldValueClass
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
+import org.jetbrains.kotlin.ir.expressions.IrMemberAccessExpression
 import org.jetbrains.kotlin.ir.expressions.IrSuspensionPoint
 import org.jetbrains.kotlin.ir.inline.FunctionInlining
 import org.jetbrains.kotlin.ir.inline.InlineFunctionResolver
@@ -152,7 +153,7 @@ internal class PreCodegenInliner(
                                         return symbol.owner.takeIf { it in functionsToInline }
                                     }
 
-                                    override fun shouldSkipBecauseOfCallSite(expression: IrFunctionAccessExpression): Boolean {
+                                    override fun shouldSkipBecauseOfCallSite(expression: IrMemberAccessExpression<IrFunctionSymbol>): Boolean {
                                         return expression is IrCall && expression.isVirtualCall
                                     }
                                 },

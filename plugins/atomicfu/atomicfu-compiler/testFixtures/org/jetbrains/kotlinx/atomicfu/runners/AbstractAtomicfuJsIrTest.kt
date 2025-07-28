@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.js.test.fir.AbstractFirJsTest
-import org.jetbrains.kotlin.js.test.ir.AbstractJsIrTest
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE
 import org.jetbrains.kotlin.test.model.TestModule
@@ -23,21 +22,8 @@ import java.io.File
 private val atomicfuJsCompileDependency = System.getProperty("atomicfuJs.classpath")
 private val atomicfuJsIrRuntime = System.getProperty("atomicfuJsIrRuntimeForTests.classpath")
 
-open class AbstractAtomicfuJsIrTest : AbstractJsIrTest(
-    pathToTestDir = "plugins/atomicfu/atomicfu-compiler/testData/box/",
-    testGroupOutputDirPrefix = "box/atomicfu"
-) {
-    override fun configure(builder: TestConfigurationBuilder) {
-        super.configure(builder)
-        with(builder) {
-            useConfigurators(::AtomicfuEnvironmentConfigurator)
-            useCustomRuntimeClasspathProviders(::AtomicfuJsRuntimeClasspathProvider)
-        }
-    }
-}
-
-open class AbstractAtomicfuJsFirTest(
-    testGroupOutputDirPrefix: String = "box/atomicfuFir"
+open class AbstractAtomicfuJsTest(
+    testGroupOutputDirPrefix: String = "box/atomicfu"
 ) : AbstractFirJsTest(
     pathToTestDir = "plugins/atomicfu/atomicfu-compiler/testData/box/",
     testGroupOutputDirPrefix = testGroupOutputDirPrefix
@@ -51,8 +37,8 @@ open class AbstractAtomicfuJsFirTest(
     }
 }
 
-open class AbstractAtomicfuJsFirWithInlinedFunInKlibTest : AbstractAtomicfuJsFirTest(
-    testGroupOutputDirPrefix = "box/atomicfuFirWithInlinedFunInKlib"
+open class AbstractAtomicfuJsWithInlinedFunInKlibTest : AbstractAtomicfuJsTest(
+    testGroupOutputDirPrefix = "box/atomicfuWithInlinedFunInKlib"
 ) {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)

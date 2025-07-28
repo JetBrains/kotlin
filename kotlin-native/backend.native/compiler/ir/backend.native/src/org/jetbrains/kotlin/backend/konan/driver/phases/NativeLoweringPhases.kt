@@ -84,18 +84,12 @@ internal val validateIrAfterInliningAllFunctions = createSimpleNamedCompilerPhas
         op = { context, module ->
             IrValidationAfterInliningAllFunctionsPhase(
                     context = context.context,
-                    checkInlineFunctionCallSites = { inlineFunctionUseSite ->
+                    checkInlineFunctionCallSites = check@{ inlineFunctionUseSite ->
                         // No inline function call sites should remain at this stage.
                         val inlineFunction = inlineFunctionUseSite.symbol.owner
-                        when {
-                            // TODO: remove this condition after the fix of KT-66734:
-                            inlineFunction.isExternal -> true // temporarily permitted
-
-                            // it's fine to have typeOf<T>, it would be ignored by inliner and handled on the second stage of compilation
-                            Symbols.isTypeOfIntrinsic(inlineFunction.symbol) -> true
-
-                            else -> false // forbidden
-                        }
+                        // it's fine to have typeOf<T>, it would be ignored by inliner and handled on the second stage of compilation
+                        if (Symbols.isTypeOfIntrinsic(inlineFunction.symbol)) return@check true
+                        return@check inlineFunction.body == null
                     }
             ).lower(module)
         }

@@ -1,6 +1,7 @@
 @_implementationOnly import KotlinBridges_main
 import KotlinRuntime
 import KotlinRuntimeSupport
+import KotlinStdlib
 
 public protocol A: KotlinRuntime.KotlinBase {
     var foo: KotlinRuntime.KotlinBase? {
@@ -28,22 +29,22 @@ public protocol Producer: KotlinRuntime.KotlinBase {
     func produce() -> KotlinRuntime.KotlinBase?
 }
 @objc(_A)
-protocol _A {
+package protocol _A {
 }
 @objc(_B)
-protocol _B {
+package protocol _B {
 }
 @objc(_Consumer)
-protocol _Consumer {
+package protocol _Consumer {
 }
 @objc(_ConsumerProducer)
-protocol _ConsumerProducer: main._Consumer, main._Producer {
+package protocol _ConsumerProducer: main._Consumer, main._Producer {
 }
 @objc(_Processor)
-protocol _Processor {
+package protocol _Processor {
 }
 @objc(_Producer)
-protocol _Producer {
+package protocol _Producer {
 }
 public final class AnyConsumer: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
     public init() {
@@ -128,6 +129,27 @@ public final class Demo: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinB
         let __kt = __root___Demo_init_allocate()
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
         __root___Demo_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(__kt)
+    }
+    package override init(
+        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+        options: KotlinRuntime.KotlinBaseConstructionOptions
+    ) {
+        super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+    }
+}
+public final class GenericWithComparableUpperBound: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+    public var t: any ExportedKotlinPackages.kotlin.Comparable {
+        get {
+            return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: GenericWithComparableUpperBound_t_get(self.__externalRCRef())) as! any ExportedKotlinPackages.kotlin.Comparable
+        }
+    }
+    public init(
+        t: any ExportedKotlinPackages.kotlin.Comparable
+    ) {
+        if Self.self != main.GenericWithComparableUpperBound.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.GenericWithComparableUpperBound ") }
+        let __kt = __root___GenericWithComparableUpperBound_init_allocate()
+        super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
+        __root___GenericWithComparableUpperBound_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_anyU20ExportedKotlinPackages_kotlin_Comparable__(__kt, t.__externalRCRef())
     }
     package override init(
         __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
@@ -233,37 +255,37 @@ public func foo(
 ) -> Swift.Void {
     return __root___foo__TypesOfArguments__Swift_Optional_KotlinRuntime_KotlinBase__Swift_Optional_KotlinRuntime_KotlinBase___(param1.map { it in it.__externalRCRef() } ?? nil, param2.map { it in it.__externalRCRef() } ?? nil)
 }
-public extension main.A where Self : KotlinRuntimeSupport._KotlinBridged {
+extension main.A where Self : KotlinRuntimeSupport._KotlinBridged {
     public var foo: KotlinRuntime.KotlinBase? {
         get {
             return { switch A_foo_get(self.__externalRCRef()) { case nil: .none; case let res: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: res); } }()
         }
     }
 }
-public extension main.B where Self : KotlinRuntimeSupport._KotlinBridged {
+extension main.B where Self : KotlinRuntimeSupport._KotlinBridged {
     public var foo: KotlinRuntime.KotlinBase? {
         get {
             return { switch B_foo_get(self.__externalRCRef()) { case nil: .none; case let res: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: res); } }()
         }
     }
 }
-public extension main.Consumer where Self : KotlinRuntimeSupport._KotlinBridged {
+extension main.Consumer where Self : KotlinRuntimeSupport._KotlinBridged {
     public func consume(
         item: KotlinRuntime.KotlinBase?
     ) -> Swift.Void {
         return Consumer_consume__TypesOfArguments__Swift_Optional_KotlinRuntime_KotlinBase___(self.__externalRCRef(), item.map { it in it.__externalRCRef() } ?? nil)
     }
 }
-public extension main.ConsumerProducer where Self : KotlinRuntimeSupport._KotlinBridged {
+extension main.ConsumerProducer where Self : KotlinRuntimeSupport._KotlinBridged {
 }
-public extension main.Processor where Self : KotlinRuntimeSupport._KotlinBridged {
+extension main.Processor where Self : KotlinRuntimeSupport._KotlinBridged {
     public func process(
         input: KotlinRuntime.KotlinBase?
     ) -> KotlinRuntime.KotlinBase? {
         return { switch Processor_process__TypesOfArguments__Swift_Optional_KotlinRuntime_KotlinBase___(self.__externalRCRef(), input.map { it in it.__externalRCRef() } ?? nil) { case nil: .none; case let res: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: res); } }()
     }
 }
-public extension main.Producer where Self : KotlinRuntimeSupport._KotlinBridged {
+extension main.Producer where Self : KotlinRuntimeSupport._KotlinBridged {
     public func produce() -> KotlinRuntime.KotlinBase? {
         return { switch Producer_produce(self.__externalRCRef()) { case nil: .none; case let res: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: res); } }()
     }

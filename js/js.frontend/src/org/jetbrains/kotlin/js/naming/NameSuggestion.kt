@@ -182,7 +182,7 @@ open class NameSuggestion {
         val fixedDescriptor = current
 
         parts += if (fixedDescriptor is ConstructorDescriptor) {
-            current = current.containingDeclaration!!
+            current = current.containingDeclaration
             getSuggestedName(current) + "_init"
         }
         else {

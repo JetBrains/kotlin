@@ -51,7 +51,7 @@ dependencies {
     testRuntimeOnly(libs.junit.platform.launcher)
 
     testImplementation(project(":compiler:util"))
-    testImplementation(projectTests(":compiler:tests-common-new"))
+    testImplementation(testFixtures(project(":compiler:tests-common-new")))
     testImplementation(libs.schema.kenerator.core)
     testImplementation(libs.schema.kenerator.serialization)
     testImplementation(libs.schema.kenerator.jsonschema)

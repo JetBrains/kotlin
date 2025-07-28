@@ -55,7 +55,7 @@ internal class Runtime(
     val frameOverlayType = getStructType("FrameOverlay")
 
     val initNodeType = getStructType("InitNode")
-    val memoryStateType = getStructTypeOrNull("MemoryState") ?: createOpaqueStructType("struct.MemoryState")!!
+    val memoryStateType = getStructTypeOrNull("MemoryState") ?: createOpaqueStructType("struct.MemoryState")
 
     val target = LLVMGetTarget(llvmModule)!!.toKString()
 

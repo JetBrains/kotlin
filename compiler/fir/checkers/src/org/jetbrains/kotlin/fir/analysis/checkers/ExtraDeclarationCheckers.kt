@@ -11,10 +11,6 @@ import org.jetbrains.kotlin.fir.analysis.checkers.declaration.*
 import org.jetbrains.kotlin.fir.analysis.checkers.extra.*
 
 object ExtraDeclarationCheckers : DeclarationCheckers() {
-    override val fileCheckers: Set<FirFileChecker> = setOf(
-        PlatformClassMappedToKotlinImportsChecker,
-    )
-
     override val anonymousFunctionCheckers: Set<FirAnonymousFunctionChecker> = setOf(
         FirAnonymousUnusedParamChecker,
     )

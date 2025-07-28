@@ -87,7 +87,7 @@ class ClsKotlinBinaryClassCache {
         }
 
         if (isKotlinBinaryClass) {
-            val headerInfo = createHeaderInfo(kotlinBinaryClass!!)
+            val headerInfo = createHeaderInfo(kotlinBinaryClass)
             file.putUserData(KOTLIN_BINARY_DATA_KEY, SoftReference(KotlinBinaryData(isKotlinBinaryClass, file.timeStamp, headerInfo)))
         }
 

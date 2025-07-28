@@ -3,30 +3,11 @@ import KotlinRuntime
 import KotlinRuntimeSupport
 @_implementationOnly import KotlinBridges_KotlinStdlib
 
-public protocol _ExportedKotlinPackages_kotlin_collections_MutableMap_MutableEntry: KotlinRuntime.KotlinBase, KotlinStdlib._ExportedKotlinPackages_kotlin_collections_Map_Entry {
-    func setValue(
-        newValue: KotlinRuntime.KotlinBase?
-    ) -> KotlinRuntime.KotlinBase?
-}
-@objc(__ExportedKotlinPackages_kotlin_collections_MutableMap_MutableEntry)
-protocol __ExportedKotlinPackages_kotlin_collections_MutableMap_MutableEntry: KotlinStdlib.__ExportedKotlinPackages_kotlin_collections_Map_Entry {
-}
-public protocol _ExportedKotlinPackages_kotlin_collections_Map_Entry: KotlinRuntime.KotlinBase {
-    var key: KotlinRuntime.KotlinBase? {
-        get
-    }
-    var value: KotlinRuntime.KotlinBase? {
-        get
-    }
-}
-@objc(__ExportedKotlinPackages_kotlin_collections_Map_Entry)
-protocol __ExportedKotlinPackages_kotlin_collections_Map_Entry {
-}
-public extension ExportedKotlinPackages.kotlin {
+extension ExportedKotlinPackages.kotlin {
     public protocol Annotation: KotlinRuntime.KotlinBase {
     }
     @objc(_Annotation)
-    protocol _Annotation {
+    package protocol _Annotation {
     }
     public protocol CharSequence: KotlinRuntime.KotlinBase {
         var length: Swift.Int32 {
@@ -39,14 +20,9 @@ public extension ExportedKotlinPackages.kotlin {
             startIndex: Swift.Int32,
             endIndex: Swift.Int32
         ) -> any ExportedKotlinPackages.kotlin.CharSequence
-        subscript(
-            index: Swift.Int32
-        ) -> Swift.Unicode.UTF16.CodeUnit {
-            get
-        }
     }
     @objc(_CharSequence)
-    protocol _CharSequence {
+    package protocol _CharSequence {
     }
     public final class Array: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
         public var size: Swift.Int32 {
@@ -83,54 +59,6 @@ public extension ExportedKotlinPackages.kotlin {
         public subscript(
             index: Swift.Int32
         ) -> KotlinRuntime.KotlinBase? {
-            get {
-                _get(index: index)
-            }
-            set(value) {
-                _set(index: index, value: value)
-            }
-        }
-    }
-    public final class ByteArray: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
-        public var size: Swift.Int32 {
-            get {
-                return kotlin_ByteArray_size_get(self.__externalRCRef())
-            }
-        }
-        public func _get(
-            index: Swift.Int32
-        ) -> Swift.Int8 {
-            return kotlin_ByteArray_get__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), index)
-        }
-        public func _set(
-            index: Swift.Int32,
-            value: Swift.Int8
-        ) -> Swift.Void {
-            return kotlin_ByteArray_set__TypesOfArguments__Swift_Int32_Swift_Int8__(self.__externalRCRef(), index, value)
-        }
-        public func iterator() -> ExportedKotlinPackages.kotlin.collections.ByteIterator {
-            return ExportedKotlinPackages.kotlin.collections.ByteIterator.__createClassWrapper(externalRCRef: kotlin_ByteArray_iterator(self.__externalRCRef()))
-        }
-        public init(
-            size: Swift.Int32
-        ) {
-            fatalError()
-        }
-        public init(
-            size: Swift.Int32,
-            `init`: @escaping (Swift.Int32) -> Swift.Int8
-        ) {
-            fatalError()
-        }
-        package override init(
-            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
-            options: KotlinRuntime.KotlinBaseConstructionOptions
-        ) {
-            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
-        }
-        public subscript(
-            index: Swift.Int32
-        ) -> Swift.Int8 {
             get {
                 _get(index: index)
             }
@@ -2305,191 +2233,19 @@ See https://youtrack.jetbrains.com/issue/KT-46465 for details about the migratio
         }
     }
 }
-public extension ExportedKotlinPackages.kotlin.collections {
+extension ExportedKotlinPackages.kotlin.collections {
     public protocol Iterable: KotlinRuntime.KotlinBase {
         func iterator() -> any ExportedKotlinPackages.kotlin.collections.Iterator
     }
     @objc(_Iterable)
-    protocol _Iterable {
+    package protocol _Iterable {
     }
     public protocol Iterator: KotlinRuntime.KotlinBase {
         func next() -> KotlinRuntime.KotlinBase?
         func hasNext() -> Swift.Bool
     }
     @objc(_Iterator)
-    protocol _Iterator {
-    }
-    public protocol MutableMap: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlin.collections.Map {
-        typealias MutableEntry = KotlinStdlib._ExportedKotlinPackages_kotlin_collections_MutableMap_MutableEntry
-        var keys: any ExportedKotlinPackages.kotlin.collections.MutableSet {
-            get
-        }
-        var values: any ExportedKotlinPackages.kotlin.collections.MutableCollection {
-            get
-        }
-        var entries: any ExportedKotlinPackages.kotlin.collections.MutableSet {
-            get
-        }
-        func put(
-            key: KotlinRuntime.KotlinBase?,
-            value: KotlinRuntime.KotlinBase?
-        ) -> KotlinRuntime.KotlinBase?
-        func remove(
-            key: KotlinRuntime.KotlinBase?
-        ) -> KotlinRuntime.KotlinBase?
-        func putAll(
-            from: [KotlinRuntime.KotlinBase?: KotlinRuntime.KotlinBase?]
-        ) -> Swift.Void
-        func clear() -> Swift.Void
-    }
-    @objc(_MutableMap)
-    protocol _MutableMap: ExportedKotlinPackages.kotlin.collections._Map {
-    }
-    public protocol MutableCollection: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlin.collections.Collection, ExportedKotlinPackages.kotlin.collections.MutableIterable {
-        func iterator() -> any ExportedKotlinPackages.kotlin.collections.MutableIterator
-        func add(
-            element: KotlinRuntime.KotlinBase?
-        ) -> Swift.Bool
-        func remove(
-            element: KotlinRuntime.KotlinBase?
-        ) -> Swift.Bool
-        func addAll(
-            elements: any ExportedKotlinPackages.kotlin.collections.Collection
-        ) -> Swift.Bool
-        func removeAll(
-            elements: any ExportedKotlinPackages.kotlin.collections.Collection
-        ) -> Swift.Bool
-        func retainAll(
-            elements: any ExportedKotlinPackages.kotlin.collections.Collection
-        ) -> Swift.Bool
-        func clear() -> Swift.Void
-    }
-    @objc(_MutableCollection)
-    protocol _MutableCollection: ExportedKotlinPackages.kotlin.collections._Collection, ExportedKotlinPackages.kotlin.collections._MutableIterable {
-    }
-    public protocol Map: KotlinRuntime.KotlinBase {
-        typealias Entry = KotlinStdlib._ExportedKotlinPackages_kotlin_collections_Map_Entry
-        var size: Swift.Int32 {
-            get
-        }
-        var keys: Swift.Set<Swift.Optional<KotlinRuntime.KotlinBase>> {
-            get
-        }
-        var values: any ExportedKotlinPackages.kotlin.collections.Collection {
-            get
-        }
-        var entries: Swift.Set<any KotlinStdlib._ExportedKotlinPackages_kotlin_collections_Map_Entry> {
-            get
-        }
-        func isEmpty() -> Swift.Bool
-        func containsKey(
-            key: KotlinRuntime.KotlinBase?
-        ) -> Swift.Bool
-        func containsValue(
-            value: KotlinRuntime.KotlinBase?
-        ) -> Swift.Bool
-        func _get(
-            key: KotlinRuntime.KotlinBase?
-        ) -> KotlinRuntime.KotlinBase?
-        subscript(
-            key: KotlinRuntime.KotlinBase?
-        ) -> KotlinRuntime.KotlinBase? {
-            get
-        }
-    }
-    @objc(_Map)
-    protocol _Map {
-    }
-    public protocol MutableSet: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlin.collections.Set, ExportedKotlinPackages.kotlin.collections.MutableCollection {
-        func iterator() -> any ExportedKotlinPackages.kotlin.collections.MutableIterator
-        func add(
-            element: KotlinRuntime.KotlinBase?
-        ) -> Swift.Bool
-        func remove(
-            element: KotlinRuntime.KotlinBase?
-        ) -> Swift.Bool
-        func addAll(
-            elements: any ExportedKotlinPackages.kotlin.collections.Collection
-        ) -> Swift.Bool
-        func removeAll(
-            elements: any ExportedKotlinPackages.kotlin.collections.Collection
-        ) -> Swift.Bool
-        func retainAll(
-            elements: any ExportedKotlinPackages.kotlin.collections.Collection
-        ) -> Swift.Bool
-        func clear() -> Swift.Void
-    }
-    @objc(_MutableSet)
-    protocol _MutableSet: ExportedKotlinPackages.kotlin.collections._Set, ExportedKotlinPackages.kotlin.collections._MutableCollection {
-    }
-    public protocol Collection: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlin.collections.Iterable {
-        var size: Swift.Int32 {
-            get
-        }
-        func isEmpty() -> Swift.Bool
-        func contains(
-            element: KotlinRuntime.KotlinBase?
-        ) -> Swift.Bool
-        func ~=(
-            this: ExportedKotlinPackages.kotlin.collections.Collection,
-            element: KotlinRuntime.KotlinBase?
-        ) -> Swift.Bool
-        func iterator() -> any ExportedKotlinPackages.kotlin.collections.Iterator
-        func containsAll(
-            elements: any ExportedKotlinPackages.kotlin.collections.Collection
-        ) -> Swift.Bool
-    }
-    @objc(_Collection)
-    protocol _Collection: ExportedKotlinPackages.kotlin.collections._Iterable {
-    }
-    public protocol MutableIterable: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlin.collections.Iterable {
-        func iterator() -> any ExportedKotlinPackages.kotlin.collections.MutableIterator
-    }
-    @objc(_MutableIterable)
-    protocol _MutableIterable: ExportedKotlinPackages.kotlin.collections._Iterable {
-    }
-    public protocol MutableIterator: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlin.collections.Iterator {
-        func remove() -> Swift.Void
-    }
-    @objc(_MutableIterator)
-    protocol _MutableIterator: ExportedKotlinPackages.kotlin.collections._Iterator {
-    }
-    public protocol Set: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlin.collections.Collection {
-        var size: Swift.Int32 {
-            get
-        }
-        func isEmpty() -> Swift.Bool
-        func contains(
-            element: KotlinRuntime.KotlinBase?
-        ) -> Swift.Bool
-        func ~=(
-            this: ExportedKotlinPackages.kotlin.collections.Set,
-            element: KotlinRuntime.KotlinBase?
-        ) -> Swift.Bool
-        func iterator() -> any ExportedKotlinPackages.kotlin.collections.Iterator
-        func containsAll(
-            elements: any ExportedKotlinPackages.kotlin.collections.Collection
-        ) -> Swift.Bool
-    }
-    @objc(_Set)
-    protocol _Set: ExportedKotlinPackages.kotlin.collections._Collection {
-    }
-    open class ByteIterator: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
-        public final func next() -> Swift.Int8 {
-            return kotlin_collections_ByteIterator_next(self.__externalRCRef())
-        }
-        open func nextByte() -> Swift.Int8 {
-            return kotlin_collections_ByteIterator_nextByte(self.__externalRCRef())
-        }
-        package init() {
-            fatalError()
-        }
-        package override init(
-            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
-            options: KotlinRuntime.KotlinBaseConstructionOptions
-        ) {
-            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
-        }
+    package protocol _Iterator {
     }
     open class IntIterator: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
         public final func next() -> Swift.Int32 {
@@ -2543,75 +2299,18 @@ public extension ExportedKotlinPackages.kotlin.collections {
         }
     }
 }
-public extension ExportedKotlinPackages.kotlin.Annotation where Self : KotlinRuntimeSupport._KotlinBridged {
+extension ExportedKotlinPackages.kotlin.Annotation where Self : KotlinRuntimeSupport._KotlinBridged {
 }
 extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlin.Annotation where Wrapped : ExportedKotlinPackages.kotlin._Annotation {
 }
-public extension ExportedKotlinPackages.kotlin.collections.Iterable where Self : KotlinRuntimeSupport._KotlinBridged {
+extension ExportedKotlinPackages.kotlin.collections.Iterable where Self : KotlinRuntimeSupport._KotlinBridged {
     public func iterator() -> any ExportedKotlinPackages.kotlin.collections.Iterator {
         return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlin_collections_Iterable_iterator(self.__externalRCRef())) as! any ExportedKotlinPackages.kotlin.collections.Iterator
     }
 }
 extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlin.collections.Iterable where Wrapped : ExportedKotlinPackages.kotlin.collections._Iterable {
 }
-public extension ExportedKotlinPackages.kotlin.collections.Iterator where Self : KotlinRuntimeSupport._KotlinBridged {
-    public func next() -> KotlinRuntime.KotlinBase? {
-        return { switch kotlin_collections_Iterator_next(self.__externalRCRef()) { case nil: .none; case let res: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: res); } }()
-    }
-    public func hasNext() -> Swift.Bool {
-        return kotlin_collections_Iterator_hasNext(self.__externalRCRef())
-    }
-}
-extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlin.collections.Iterator where Wrapped : ExportedKotlinPackages.kotlin.collections._Iterator {
-}
-public extension ExportedKotlinPackages.kotlin.collections.MutableMap where Self : KotlinRuntimeSupport._KotlinBridged {
-    public var keys: any ExportedKotlinPackages.kotlin.collections.MutableSet {
-        get {
-            return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlin_collections_MutableMap_keys_get(self.__externalRCRef())) as! any ExportedKotlinPackages.kotlin.collections.MutableSet
-        }
-    }
-    public var values: any ExportedKotlinPackages.kotlin.collections.MutableCollection {
-        get {
-            return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlin_collections_MutableMap_values_get(self.__externalRCRef())) as! any ExportedKotlinPackages.kotlin.collections.MutableCollection
-        }
-    }
-    public var entries: any ExportedKotlinPackages.kotlin.collections.MutableSet {
-        get {
-            return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlin_collections_MutableMap_entries_get(self.__externalRCRef())) as! any ExportedKotlinPackages.kotlin.collections.MutableSet
-        }
-    }
-    public func put(
-        key: KotlinRuntime.KotlinBase?,
-        value: KotlinRuntime.KotlinBase?
-    ) -> KotlinRuntime.KotlinBase? {
-        return { switch kotlin_collections_MutableMap_put__TypesOfArguments__Swift_Optional_KotlinRuntime_KotlinBase__Swift_Optional_KotlinRuntime_KotlinBase___(self.__externalRCRef(), key.map { it in it.__externalRCRef() } ?? nil, value.map { it in it.__externalRCRef() } ?? nil) { case nil: .none; case let res: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: res); } }()
-    }
-    public func remove(
-        key: KotlinRuntime.KotlinBase?
-    ) -> KotlinRuntime.KotlinBase? {
-        return { switch kotlin_collections_MutableMap_remove__TypesOfArguments__Swift_Optional_KotlinRuntime_KotlinBase___(self.__externalRCRef(), key.map { it in it.__externalRCRef() } ?? nil) { case nil: .none; case let res: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: res); } }()
-    }
-    public func putAll(
-        from: [KotlinRuntime.KotlinBase?: KotlinRuntime.KotlinBase?]
-    ) -> Swift.Void {
-        return kotlin_collections_MutableMap_putAll__TypesOfArguments__Swift_Dictionary_Swift_Optional_KotlinRuntime_KotlinBase__Swift_Optional_KotlinRuntime_KotlinBase____(self.__externalRCRef(), Dictionary(uniqueKeysWithValues: from.map { key, value in (key as NSObject? ?? NSNull(), value as NSObject? ?? NSNull() )}))
-    }
-    public func clear() -> Swift.Void {
-        return kotlin_collections_MutableMap_clear(self.__externalRCRef())
-    }
-}
-extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlin.collections.MutableMap where Wrapped : ExportedKotlinPackages.kotlin.collections._MutableMap {
-}
-public extension KotlinStdlib._ExportedKotlinPackages_kotlin_collections_MutableMap_MutableEntry where Self : KotlinRuntimeSupport._KotlinBridged {
-    public func setValue(
-        newValue: KotlinRuntime.KotlinBase?
-    ) -> KotlinRuntime.KotlinBase? {
-        return { switch kotlin_collections_MutableMap_MutableEntry_setValue__TypesOfArguments__Swift_Optional_KotlinRuntime_KotlinBase___(self.__externalRCRef(), newValue.map { it in it.__externalRCRef() } ?? nil) { case nil: .none; case let res: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: res); } }()
-    }
-}
-extension KotlinRuntimeSupport._KotlinExistential: KotlinStdlib._ExportedKotlinPackages_kotlin_collections_MutableMap_MutableEntry where Wrapped : KotlinStdlib.__ExportedKotlinPackages_kotlin_collections_MutableMap_MutableEntry {
-}
-public extension ExportedKotlinPackages.kotlin.ranges {
+extension ExportedKotlinPackages.kotlin.ranges {
     public final class CharRange: ExportedKotlinPackages.kotlin.ranges.CharProgression {
         public final class Companion: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
             public var EMPTY: ExportedKotlinPackages.kotlin.ranges.CharRange {
@@ -3075,7 +2774,7 @@ public extension ExportedKotlinPackages.kotlin.ranges {
         }
     }
 }
-public extension ExportedKotlinPackages.kotlin.CharSequence where Self : KotlinRuntimeSupport._KotlinBridged {
+extension ExportedKotlinPackages.kotlin.CharSequence where Self : KotlinRuntimeSupport._KotlinBridged {
     public var length: Swift.Int32 {
         get {
             return kotlin_CharSequence_length_get(self.__externalRCRef())
@@ -3102,212 +2801,13 @@ public extension ExportedKotlinPackages.kotlin.CharSequence where Self : KotlinR
 }
 extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlin.CharSequence where Wrapped : ExportedKotlinPackages.kotlin._CharSequence {
 }
-public extension ExportedKotlinPackages.kotlin.collections.MutableCollection where Self : KotlinRuntimeSupport._KotlinBridged {
-    public func iterator() -> any ExportedKotlinPackages.kotlin.collections.MutableIterator {
-        return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlin_collections_MutableCollection_iterator(self.__externalRCRef())) as! any ExportedKotlinPackages.kotlin.collections.MutableIterator
+extension ExportedKotlinPackages.kotlin.collections.Iterator where Self : KotlinRuntimeSupport._KotlinBridged {
+    public func next() -> KotlinRuntime.KotlinBase? {
+        return { switch kotlin_collections_Iterator_next(self.__externalRCRef()) { case nil: .none; case let res: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: res); } }()
     }
-    public func add(
-        element: KotlinRuntime.KotlinBase?
-    ) -> Swift.Bool {
-        return kotlin_collections_MutableCollection_add__TypesOfArguments__Swift_Optional_KotlinRuntime_KotlinBase___(self.__externalRCRef(), element.map { it in it.__externalRCRef() } ?? nil)
-    }
-    public func remove(
-        element: KotlinRuntime.KotlinBase?
-    ) -> Swift.Bool {
-        return kotlin_collections_MutableCollection_remove__TypesOfArguments__Swift_Optional_KotlinRuntime_KotlinBase___(self.__externalRCRef(), element.map { it in it.__externalRCRef() } ?? nil)
-    }
-    public func addAll(
-        elements: any ExportedKotlinPackages.kotlin.collections.Collection
-    ) -> Swift.Bool {
-        return kotlin_collections_MutableCollection_addAll__TypesOfArguments__anyU20ExportedKotlinPackages_kotlin_collections_Collection__(self.__externalRCRef(), elements.__externalRCRef())
-    }
-    public func removeAll(
-        elements: any ExportedKotlinPackages.kotlin.collections.Collection
-    ) -> Swift.Bool {
-        return kotlin_collections_MutableCollection_removeAll__TypesOfArguments__anyU20ExportedKotlinPackages_kotlin_collections_Collection__(self.__externalRCRef(), elements.__externalRCRef())
-    }
-    public func retainAll(
-        elements: any ExportedKotlinPackages.kotlin.collections.Collection
-    ) -> Swift.Bool {
-        return kotlin_collections_MutableCollection_retainAll__TypesOfArguments__anyU20ExportedKotlinPackages_kotlin_collections_Collection__(self.__externalRCRef(), elements.__externalRCRef())
-    }
-    public func clear() -> Swift.Void {
-        return kotlin_collections_MutableCollection_clear(self.__externalRCRef())
+    public func hasNext() -> Swift.Bool {
+        return kotlin_collections_Iterator_hasNext(self.__externalRCRef())
     }
 }
-extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlin.collections.MutableCollection where Wrapped : ExportedKotlinPackages.kotlin.collections._MutableCollection {
-}
-public extension ExportedKotlinPackages.kotlin.collections.Map where Self : KotlinRuntimeSupport._KotlinBridged {
-    public var size: Swift.Int32 {
-        get {
-            return kotlin_collections_Map_size_get(self.__externalRCRef())
-        }
-    }
-    public var keys: Swift.Set<Swift.Optional<KotlinRuntime.KotlinBase>> {
-        get {
-            return kotlin_collections_Map_keys_get(self.__externalRCRef()) as! Swift.Set<Swift.Optional<KotlinRuntime.KotlinBase>>
-        }
-    }
-    public var values: any ExportedKotlinPackages.kotlin.collections.Collection {
-        get {
-            return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlin_collections_Map_values_get(self.__externalRCRef())) as! any ExportedKotlinPackages.kotlin.collections.Collection
-        }
-    }
-    public var entries: Swift.Set<any KotlinStdlib._ExportedKotlinPackages_kotlin_collections_Map_Entry> {
-        get {
-            return kotlin_collections_Map_entries_get(self.__externalRCRef()) as! Swift.Set<any KotlinStdlib._ExportedKotlinPackages_kotlin_collections_Map_Entry>
-        }
-    }
-    public func isEmpty() -> Swift.Bool {
-        return kotlin_collections_Map_isEmpty(self.__externalRCRef())
-    }
-    public func containsKey(
-        key: KotlinRuntime.KotlinBase?
-    ) -> Swift.Bool {
-        return kotlin_collections_Map_containsKey__TypesOfArguments__Swift_Optional_KotlinRuntime_KotlinBase___(self.__externalRCRef(), key.map { it in it.__externalRCRef() } ?? nil)
-    }
-    public func containsValue(
-        value: KotlinRuntime.KotlinBase?
-    ) -> Swift.Bool {
-        return kotlin_collections_Map_containsValue__TypesOfArguments__Swift_Optional_KotlinRuntime_KotlinBase___(self.__externalRCRef(), value.map { it in it.__externalRCRef() } ?? nil)
-    }
-    public func _get(
-        key: KotlinRuntime.KotlinBase?
-    ) -> KotlinRuntime.KotlinBase? {
-        return { switch kotlin_collections_Map_get__TypesOfArguments__Swift_Optional_KotlinRuntime_KotlinBase___(self.__externalRCRef(), key.map { it in it.__externalRCRef() } ?? nil) { case nil: .none; case let res: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: res); } }()
-    }
-    public subscript(
-        key: KotlinRuntime.KotlinBase?
-    ) -> KotlinRuntime.KotlinBase? {
-        get {
-            _get(key: key)
-        }
-    }
-}
-extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlin.collections.Map where Wrapped : ExportedKotlinPackages.kotlin.collections._Map {
-}
-public extension ExportedKotlinPackages.kotlin.collections.MutableSet where Self : KotlinRuntimeSupport._KotlinBridged {
-    public func iterator() -> any ExportedKotlinPackages.kotlin.collections.MutableIterator {
-        return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlin_collections_MutableSet_iterator(self.__externalRCRef())) as! any ExportedKotlinPackages.kotlin.collections.MutableIterator
-    }
-    public func add(
-        element: KotlinRuntime.KotlinBase?
-    ) -> Swift.Bool {
-        return kotlin_collections_MutableSet_add__TypesOfArguments__Swift_Optional_KotlinRuntime_KotlinBase___(self.__externalRCRef(), element.map { it in it.__externalRCRef() } ?? nil)
-    }
-    public func remove(
-        element: KotlinRuntime.KotlinBase?
-    ) -> Swift.Bool {
-        return kotlin_collections_MutableSet_remove__TypesOfArguments__Swift_Optional_KotlinRuntime_KotlinBase___(self.__externalRCRef(), element.map { it in it.__externalRCRef() } ?? nil)
-    }
-    public func addAll(
-        elements: any ExportedKotlinPackages.kotlin.collections.Collection
-    ) -> Swift.Bool {
-        return kotlin_collections_MutableSet_addAll__TypesOfArguments__anyU20ExportedKotlinPackages_kotlin_collections_Collection__(self.__externalRCRef(), elements.__externalRCRef())
-    }
-    public func removeAll(
-        elements: any ExportedKotlinPackages.kotlin.collections.Collection
-    ) -> Swift.Bool {
-        return kotlin_collections_MutableSet_removeAll__TypesOfArguments__anyU20ExportedKotlinPackages_kotlin_collections_Collection__(self.__externalRCRef(), elements.__externalRCRef())
-    }
-    public func retainAll(
-        elements: any ExportedKotlinPackages.kotlin.collections.Collection
-    ) -> Swift.Bool {
-        return kotlin_collections_MutableSet_retainAll__TypesOfArguments__anyU20ExportedKotlinPackages_kotlin_collections_Collection__(self.__externalRCRef(), elements.__externalRCRef())
-    }
-    public func clear() -> Swift.Void {
-        return kotlin_collections_MutableSet_clear(self.__externalRCRef())
-    }
-}
-extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlin.collections.MutableSet where Wrapped : ExportedKotlinPackages.kotlin.collections._MutableSet {
-}
-public extension KotlinStdlib._ExportedKotlinPackages_kotlin_collections_Map_Entry where Self : KotlinRuntimeSupport._KotlinBridged {
-    public var key: KotlinRuntime.KotlinBase? {
-        get {
-            return { switch kotlin_collections_Map_Entry_key_get(self.__externalRCRef()) { case nil: .none; case let res: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: res); } }()
-        }
-    }
-    public var value: KotlinRuntime.KotlinBase? {
-        get {
-            return { switch kotlin_collections_Map_Entry_value_get(self.__externalRCRef()) { case nil: .none; case let res: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: res); } }()
-        }
-    }
-}
-extension KotlinRuntimeSupport._KotlinExistential: KotlinStdlib._ExportedKotlinPackages_kotlin_collections_Map_Entry where Wrapped : KotlinStdlib.__ExportedKotlinPackages_kotlin_collections_Map_Entry {
-}
-public extension ExportedKotlinPackages.kotlin.collections.Collection where Self : KotlinRuntimeSupport._KotlinBridged {
-    public var size: Swift.Int32 {
-        get {
-            return kotlin_collections_Collection_size_get(self.__externalRCRef())
-        }
-    }
-    public func isEmpty() -> Swift.Bool {
-        return kotlin_collections_Collection_isEmpty(self.__externalRCRef())
-    }
-    public func contains(
-        element: KotlinRuntime.KotlinBase?
-    ) -> Swift.Bool {
-        return kotlin_collections_Collection_contains__TypesOfArguments__Swift_Optional_KotlinRuntime_KotlinBase___(self.__externalRCRef(), element.map { it in it.__externalRCRef() } ?? nil)
-    }
-    public static func ~=(
-        this: ExportedKotlinPackages.kotlin.collections.Collection,
-        element: KotlinRuntime.KotlinBase?
-    ) -> Swift.Bool {
-        this.contains(element: element)
-    }
-    public func iterator() -> any ExportedKotlinPackages.kotlin.collections.Iterator {
-        return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlin_collections_Collection_iterator(self.__externalRCRef())) as! any ExportedKotlinPackages.kotlin.collections.Iterator
-    }
-    public func containsAll(
-        elements: any ExportedKotlinPackages.kotlin.collections.Collection
-    ) -> Swift.Bool {
-        return kotlin_collections_Collection_containsAll__TypesOfArguments__anyU20ExportedKotlinPackages_kotlin_collections_Collection__(self.__externalRCRef(), elements.__externalRCRef())
-    }
-}
-extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlin.collections.Collection where Wrapped : ExportedKotlinPackages.kotlin.collections._Collection {
-}
-public extension ExportedKotlinPackages.kotlin.collections.MutableIterable where Self : KotlinRuntimeSupport._KotlinBridged {
-    public func iterator() -> any ExportedKotlinPackages.kotlin.collections.MutableIterator {
-        return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlin_collections_MutableIterable_iterator(self.__externalRCRef())) as! any ExportedKotlinPackages.kotlin.collections.MutableIterator
-    }
-}
-extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlin.collections.MutableIterable where Wrapped : ExportedKotlinPackages.kotlin.collections._MutableIterable {
-}
-public extension ExportedKotlinPackages.kotlin.collections.MutableIterator where Self : KotlinRuntimeSupport._KotlinBridged {
-    public func remove() -> Swift.Void {
-        return kotlin_collections_MutableIterator_remove(self.__externalRCRef())
-    }
-}
-extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlin.collections.MutableIterator where Wrapped : ExportedKotlinPackages.kotlin.collections._MutableIterator {
-}
-public extension ExportedKotlinPackages.kotlin.collections.Set where Self : KotlinRuntimeSupport._KotlinBridged {
-    public var size: Swift.Int32 {
-        get {
-            return kotlin_collections_Set_size_get(self.__externalRCRef())
-        }
-    }
-    public func isEmpty() -> Swift.Bool {
-        return kotlin_collections_Set_isEmpty(self.__externalRCRef())
-    }
-    public func contains(
-        element: KotlinRuntime.KotlinBase?
-    ) -> Swift.Bool {
-        return kotlin_collections_Set_contains__TypesOfArguments__Swift_Optional_KotlinRuntime_KotlinBase___(self.__externalRCRef(), element.map { it in it.__externalRCRef() } ?? nil)
-    }
-    public static func ~=(
-        this: ExportedKotlinPackages.kotlin.collections.Set,
-        element: KotlinRuntime.KotlinBase?
-    ) -> Swift.Bool {
-        this.contains(element: element)
-    }
-    public func iterator() -> any ExportedKotlinPackages.kotlin.collections.Iterator {
-        return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlin_collections_Set_iterator(self.__externalRCRef())) as! any ExportedKotlinPackages.kotlin.collections.Iterator
-    }
-    public func containsAll(
-        elements: any ExportedKotlinPackages.kotlin.collections.Collection
-    ) -> Swift.Bool {
-        return kotlin_collections_Set_containsAll__TypesOfArguments__anyU20ExportedKotlinPackages_kotlin_collections_Collection__(self.__externalRCRef(), elements.__externalRCRef())
-    }
-}
-extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlin.collections.Set where Wrapped : ExportedKotlinPackages.kotlin.collections._Set {
+extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlin.collections.Iterator where Wrapped : ExportedKotlinPackages.kotlin.collections._Iterator {
 }

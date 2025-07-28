@@ -22,7 +22,7 @@ internal fun ObjCExportContext.getObjCPropertyGetter(symbol: KaPropertySymbol, o
 
     val symbolGetter = symbol.getter
     val getterBridge = if (symbolGetter == null) error("KtPropertySymbol.getter is undefined") else getFunctionMethodBridge(symbolGetter)
-    val getterSelector = getSelector(symbolGetter, getterBridge)
+    val getterSelector = getSelector(symbolGetter, getterBridge, true)
 
     return if (getterSelector != objCName && getterSelector.isNotBlank()) getterSelector else null
 }

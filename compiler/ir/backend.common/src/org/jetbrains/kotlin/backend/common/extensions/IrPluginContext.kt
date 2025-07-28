@@ -13,6 +13,9 @@ import org.jetbrains.kotlin.descriptors.ModuleDescriptor
 import org.jetbrains.kotlin.ir.IrDiagnosticReporter
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.builders.IrGeneratorContext
+import org.jetbrains.kotlin.ir.declarations.IrDeclaration
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithName
+import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.ReferenceSymbolTable
@@ -64,6 +67,15 @@ interface IrPluginContext : IrGeneratorContext {
     fun referenceConstructors(classId: ClassId): Collection<IrConstructorSymbol>
     fun referenceFunctions(callableId: CallableId): Collection<IrSimpleFunctionSymbol>
     fun referenceProperties(callableId: CallableId): Collection<IrPropertySymbol>
+
+    // ------------------------------------ IC API ------------------------------------
+
+    /**
+     * Records information that [declaration] was referenced during modification of file [fromFile].
+     * This information later will be used by the Incremental compilation to correctly invalidate
+     * compiled files on source changes.
+     */
+    fun recordLookup(declaration: IrDeclarationWithName, fromFile: IrFile)
 
     // ------------------------------------ Deprecated API ------------------------------------
 

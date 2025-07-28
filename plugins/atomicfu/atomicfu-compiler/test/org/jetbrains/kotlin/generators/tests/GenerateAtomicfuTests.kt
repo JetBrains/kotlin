@@ -32,18 +32,12 @@ fun main(args: Array<String>) {
         testGroup("plugins/atomicfu/atomicfu-compiler/tests-gen", "plugins/atomicfu/atomicfu-compiler/testData/box") {
             testClass<AbstractNativeCodegenBoxTest>(
                 suiteTestClassName = "AtomicfuNativeTestGenerated",
-                annotations = listOf(*atomicfuNative(), *frontendClassic(), provider<UseExtTestCaseGroupProvider>())
-            ) {
-                model(targetBackend = TargetBackend.NATIVE, excludeDirs = listOf("context_parameters"))
-            }
-            testClass<AbstractNativeCodegenBoxTest>(
-                suiteTestClassName = "AtomicfuNativeFirTestGenerated",
                 annotations = listOf(*atomicfuNative(), provider<UseExtTestCaseGroupProvider>())
             ) {
                 model(targetBackend = TargetBackend.NATIVE)
             }
             testClass<AbstractNativeCodegenBoxTest>(
-                suiteTestClassName = "AtomicfuNativeFirTestWithInlinedFunInKlibGenerated",
+                suiteTestClassName = "AtomicfuNativeTestWithInlinedFunInKlibGenerated",
                 annotations = listOf(klibIrInliner(), *atomicfuNative(), provider<UseExtTestCaseGroupProvider>())
             ) {
                 model(targetBackend = TargetBackend.NATIVE)
@@ -55,14 +49,10 @@ fun main(args: Array<String>) {
             "plugins/atomicfu/atomicfu-compiler/testData",
             testRunnerMethodName = "runTest0"
         ) {
-            testClass<AbstractAtomicfuJsIrTest> {
-                model("box/", excludeDirs = listOf("context_parameters"))
-            }
-
-            testClass<AbstractAtomicfuJsFirTest> {
+            testClass<AbstractAtomicfuJsTest> {
                 model("box/")
             }
-            testClass<AbstractAtomicfuJsFirWithInlinedFunInKlibTest> {
+            testClass<AbstractAtomicfuJsWithInlinedFunInKlibTest> {
                 model("box/")
             }
         }

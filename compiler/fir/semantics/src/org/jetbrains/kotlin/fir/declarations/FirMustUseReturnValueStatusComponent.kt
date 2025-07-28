@@ -29,6 +29,7 @@ abstract class FirMustUseReturnValueStatusComponent : FirSessionComponent {
         isLocal: Boolean,
         containingClass: FirClassLikeSymbol<*>?,
         containingProperty: FirPropertySymbol?,
+        overriddenStatuses: List<FirResolvedDeclarationStatus>,
     ): Boolean
 
     abstract fun computeMustUseReturnValueForJavaCallable(
@@ -60,6 +61,7 @@ abstract class FirMustUseReturnValueStatusComponent : FirSessionComponent {
             isLocal: Boolean,
             containingClass: FirClassLikeSymbol<*>?,
             containingProperty: FirPropertySymbol?,
+            overriddenStatuses: List<FirResolvedDeclarationStatus>,
         ): Boolean {
             return false
         }
@@ -99,23 +101,41 @@ abstract class FirMustUseReturnValueStatusComponent : FirSessionComponent {
             )
         }
 
+        enum class OverriddenStatus {
+            IGNORABLE,
+            MUST_USE,
+            NO_BASE_DECLARATION
+        }
+
         override fun computeMustUseReturnValueForCallable(
             session: FirSession,
             declaration: FirCallableSymbol<*>,
             isLocal: Boolean,
             containingClass: FirClassLikeSymbol<*>?,
-            containingProperty: FirPropertySymbol?
+            containingProperty: FirPropertySymbol?,
+            overriddenStatuses: List<FirResolvedDeclarationStatus>,
         ): Boolean {
             if (isLocal) {
                 // FIXME (KT-78112): pass through outer declaration through BodyResolveTransformer when we compute status for local functions
                 return declaration is FirFunctionSymbol
             }
+            // Implementation note: just with intersection overrides, in case we have more than one immediate parent, we take first from the list
+            // See inheritanceChainIgnorability.kt test.
+            val overriddenFlag = when (overriddenStatuses.firstOrNull()?.hasMustUseReturnValue) {
+                null -> OverriddenStatus.NO_BASE_DECLARATION
+                true -> OverriddenStatus.MUST_USE
+                false -> OverriddenStatus.IGNORABLE
+            }
 
             if (hasIgnorableLikeAnnotation(declaration.resolvedAnnotationClassIds)) return false
 
-            if (session.languageVersionSettings.getFlag(AnalysisFlags.returnValueCheckerMode) == ReturnValueCheckerMode.FULL) return true
+            // In the case of inheriting @Ignorable, global FULL setting has lesser priority
+            if (session.languageVersionSettings.getFlag(AnalysisFlags.returnValueCheckerMode) == ReturnValueCheckerMode.FULL && overriddenFlag != OverriddenStatus.IGNORABLE) return true
 
-            return findMustUseAmongContainers(session, declaration, containingClass, containingProperty, additionalAnnotations = null)
+            val hasAnnotation =
+                findMustUseAmongContainers(session, declaration, containingClass, containingProperty, additionalAnnotations = null)
+            if (hasAnnotation) return true
+            return overriddenFlag == OverriddenStatus.MUST_USE
         }
 
         private fun findMustUseAmongContainers(

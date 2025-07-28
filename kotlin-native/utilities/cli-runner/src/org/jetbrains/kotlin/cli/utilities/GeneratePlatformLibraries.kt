@@ -251,7 +251,7 @@ private fun generateLibrary(
         tmpDirectory: File,
         rebuild: Boolean,
         logger: Logger
-) = with(directories) {
+): Unit = with(directories) {
     val defFile = inputDirectory.child("${def.name}.def")
     val outKlib = outputDirectory.child(def.libraryName)
 
@@ -309,7 +309,7 @@ private fun buildCache(
         rebuild: Boolean,
         logger: Logger,
         konanDataDir: String?,
-) = with(cacheInfo) {
+): Unit = with(cacheInfo) {
     val libraryCacheDir = getLibraryCacheDir(def.name, target, cacheDirectory, cacheKind)
     if (libraryCacheDir.listFilesOrEmpty.isNotEmpty() && !rebuild) {
         logger.verbose("Skip precompiling ${def.name} as it's already precompiled")
@@ -337,7 +337,7 @@ private fun buildStdlibCache(
         stdlib: File,
         cacheInfo: CacheInfo,
         logger: Logger
-) = with(cacheInfo) {
+): Unit = with(cacheInfo) {
     val stdlibCacheFile = getLibraryCacheDir("stdlib", target, cacheDirectory, cacheKind)
     if (stdlibCacheFile.exists) {
         logger.verbose("Skip precompiling standard library as it's already precompiled")

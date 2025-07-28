@@ -204,10 +204,6 @@ fun main() {
     }
 }
 
-fun frontendClassic() = arrayOf(
-    annotation(ClassicPipeline::class.java)
-)
-
 private fun klib() = annotation(Tag::class.java, "klib")
 fun klibIrInliner() = annotation(Tag::class.java, KLIB_IR_INLINER)
 private fun klibSyntheticAccessors() = arrayOf(

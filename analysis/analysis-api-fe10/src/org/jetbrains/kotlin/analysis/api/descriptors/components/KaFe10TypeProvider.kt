@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.api.descriptors.components
 
 import org.jetbrains.kotlin.analysis.api.components.KaBuiltinTypes
+import org.jetbrains.kotlin.analysis.api.components.KaScopeKind
 import org.jetbrains.kotlin.analysis.api.components.KaTypeProvider
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisContext
 import org.jetbrains.kotlin.analysis.api.descriptors.Fe10AnalysisFacade.AnalysisMode
@@ -24,14 +25,12 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaCallableSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassifierSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.nameOrAnonymous
 import org.jetbrains.kotlin.analysis.api.types.KaType
+import org.jetbrains.kotlin.analysis.api.types.symbol
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.name.StandardClassIds
-import org.jetbrains.kotlin.psi.KtCallElement
-import org.jetbrains.kotlin.psi.KtDoubleColonExpression
-import org.jetbrains.kotlin.psi.KtElement
-import org.jetbrains.kotlin.psi.KtTypeReference
+import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.resolve.BindingContext
 import org.jetbrains.kotlin.resolve.DescriptorUtils
@@ -48,11 +47,12 @@ import org.jetbrains.kotlin.types.error.ErrorUtils
 import org.jetbrains.kotlin.types.typeUtil.builtIns
 import org.jetbrains.kotlin.types.typeUtil.isNothing
 import org.jetbrains.kotlin.util.containingNonLocalDeclaration
+import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
+import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 
 internal class KaFe10TypeProvider(
     override val analysisSessionProvider: () -> KaFe10Session,
 ) : KaBaseSessionComponent<KaFe10Session>(), KaTypeProvider, KaFe10SessionComponent {
-    @Suppress("SpellCheckingInspection")
     private val typeApproximator by lazy {
         TypeApproximator(
             analysisContext.builtIns,
@@ -62,16 +62,59 @@ internal class KaFe10TypeProvider(
 
     override val builtinTypes: KaBuiltinTypes by lazy(LazyThreadSafetyMode.PUBLICATION) { KaFe10BuiltinTypes(analysisContext) }
 
+    @Suppress("OVERRIDE_DEPRECATION")
     override fun KaType.approximateToSuperPublicDenotable(approximateLocalTypes: Boolean): KaType? = withValidityAssertion {
         require(this is KaFe10Type)
         return typeApproximator.approximateToSuperType(fe10Type, PublicApproximatorConfiguration(approximateLocalTypes))
             ?.toKtType(analysisContext)
     }
 
-    override fun KaType.approximateToSubPublicDenotable(approximateLocalTypes: Boolean): KaType? = withValidityAssertion {
+    override fun KaType.approximateToDenotableSupertype(allowLocalDenotableTypes: Boolean): KaType? = withValidityAssertion {
         require(this is KaFe10Type)
-        return typeApproximator.approximateToSubType(fe10Type, PublicApproximatorConfiguration(approximateLocalTypes))
-            ?.toKtType(analysisContext)
+        return typeApproximator.approximateToSuperType(
+            fe10Type,
+            PublicApproximatorConfiguration(
+                approximateLocalTypes = true,
+                shouldApproximateLocalType = { _, _ -> !allowLocalDenotableTypes })
+        )?.toKtType(analysisContext)
+    }
+
+    override fun KaType.approximateToDenotableSubtype(): KaType? = withValidityAssertion {
+        require(this is KaFe10Type)
+        return typeApproximator.approximateToSubType(
+            fe10Type, PublicApproximatorConfiguration(
+                approximateLocalTypes = false
+            )
+        )?.toKtType(analysisContext)
+    }
+
+    override fun KaType.approximateToDenotableSupertype(position: KtElement): KaType? = withValidityAssertion {
+        require(this is KaFe10Type)
+        with(analysisSession) {
+            if (!position.canBeAnalysed()) {
+                errorWithAttachment("The given position is not within the analysis scope of the session") {
+                    withPsiEntry("position", position)
+                }
+            }
+
+            val containingFile = position.containingFile as? KtFile
+            val scopeClassifiers =
+                containingFile?.scopeContext(position)?.scopes?.filter {
+                    it.kind is KaScopeKind.LocalScope
+                }?.flatMap { it.scope.classifiers }?.associateBy { it.name }
+
+            return typeApproximator.approximateToSuperType(
+                fe10Type,
+                PublicApproximatorConfiguration(
+                    approximateLocalTypes = true,
+                    shouldApproximateLocalType = { _, typeMarker ->
+                        val typeSymbol =
+                            (typeMarker as KotlinType).toKtType(analysisContext).symbol ?: return@PublicApproximatorConfiguration false
+                        scopeClassifiers?.get(typeSymbol.name) != typeSymbol
+                    }
+                )
+            )?.toKtType(analysisContext)
+        }
     }
 
     override val KaType.enhancedType: KaType?

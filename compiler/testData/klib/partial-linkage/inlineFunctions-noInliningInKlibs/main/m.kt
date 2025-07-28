@@ -217,8 +217,8 @@ fun box() = abiTest {
     expectFailure(linkage("Can not read value from variable 'foo': Variable uses unlinked class symbol '/RemovedOpenClass' (via class 'OpenClassInheritedFromRemovedOpenClass')")) { inlinedFunctionWithOpenClassImplVariableType() }
     expectFailure(linkage("Constructor 'RemovedOpenClass.<init>' can not be called: No constructor found for symbol '/RemovedOpenClass.<init>'")) { inlinedFunctionWithCreationOfRemovedOpenClass() }
     expectFailure(linkage("Constructor 'OpenClassInheritedFromRemovedOpenClass.<init>' can not be called: Class 'OpenClassInheritedFromRemovedOpenClass' uses unlinked class symbol '/RemovedOpenClass'")) { inlinedFunctionWithCreationOfOpenClassImpl() }
-    expectFailure(linkage("Reference to constructor 'RemovedOpenClass.<init>' can not be evaluated: No constructor found for symbol '/RemovedOpenClass.<init>'")) { inlinedFunctionWithCreationOfRemovedOpenClassThroughReference() }
-    expectFailure(linkage("Reference to constructor 'OpenClassInheritedFromRemovedOpenClass.<init>' can not be evaluated: Class 'OpenClassInheritedFromRemovedOpenClass' uses unlinked class symbol '/RemovedOpenClass'")) { inlinedFunctionWithCreationOfOpenClassImplThroughReference() }
+    expectFailure(linkage("Reference to constructor 'RemovedOpenClass.<init>' can not be evaluated: Expression uses unlinked class symbol '/RemovedOpenClass'")) { inlinedFunctionWithCreationOfRemovedOpenClassThroughReference() }
+    expectFailure(linkage("Reference to constructor 'OpenClassInheritedFromRemovedOpenClass.<init>' can not be evaluated: Expression uses unlinked class symbol '/RemovedOpenClass' (via class 'OpenClassInheritedFromRemovedOpenClass')")) { inlinedFunctionWithCreationOfOpenClassImplThroughReference() }
     expectFailure(linkage("Can not read value from variable 'foo': Variable uses unlinked class symbol '/RemovedOpenClass' (via anonymous object)")) { inlinedFunctionWithRemovedOpenClassAnonymousObject() }
     expectFailure(linkage("Can not read value from variable 'foo': Variable uses unlinked class symbol '/RemovedOpenClass' (via anonymous object)")) { inlinedFunctionWithOpenClassImplAnonymousObject() }
 

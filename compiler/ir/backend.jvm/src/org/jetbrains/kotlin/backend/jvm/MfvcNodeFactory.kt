@@ -259,7 +259,7 @@ fun createIntermediateMfvcNode(
             shadowBackingFieldProperty != null -> DelegatingUnboxFunctionImplementation(
                 replacements.getMfvcPropertyNode(shadowBackingFieldProperty)!!
             )
-            useOldGetter -> CustomUnboxFunctionImplementation(oldGetter!!, rootNode[name]!!)
+            useOldGetter -> CustomUnboxFunctionImplementation(oldGetter, rootNode[name]!!)
             else -> DefaultUnboxFunctionImplementation
         }
         createNameableMfvcNodes(
@@ -284,7 +284,7 @@ fun createIntermediateMfvcNode(
     val unboxMethod: IrSimpleFunction
     val unboxFunctionImplementation: UnboxFunctionImplementation
     if (useOldGetter) {
-        unboxMethod = oldGetter!!
+        unboxMethod = oldGetter
         unboxFunctionImplementation = defaultMethodsImplementationSourceNode ?: CustomUnboxFunctionImplementation(unboxMethod, rootNode)
     } else {
         unboxFunctionImplementation = defaultMethodsImplementationSourceNode ?: DefaultUnboxFunctionImplementation

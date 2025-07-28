@@ -365,9 +365,9 @@ class BodyResolveContext(
         regularTowerDataContexts.primaryConstructorAllParametersScope
 
     @OptIn(PrivateForInline::class)
-    fun storeClassIfNotNested(klass: FirRegularClass, session: FirSession) {
+    fun storeClassOrTypealiasIfNotNested(classOrTypeAlias: FirClassLikeDeclaration, session: FirSession) {
         if (containerIfAny is FirClass) return
-        updateLastScope { storeClass(klass, session) }
+        updateLastScope { storeClassOrTypeAlias(classOrTypeAlias, session) }
     }
 
     @OptIn(PrivateForInline::class)
@@ -474,7 +474,7 @@ class BodyResolveContext(
         holder: SessionAndScopeSessionHolder,
         f: () -> T
     ): T {
-        storeClassIfNotNested(regularClass, holder.session)
+        storeClassOrTypealiasIfNotNested(regularClass, holder.session)
         return withSwitchedTowerDataModeForStaticNestedClass(regularClass) {
             withScopesForClass(regularClass, holder) {
                 withContainerRegularClass(regularClass, f)

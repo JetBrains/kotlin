@@ -65,7 +65,7 @@ class ScriptTest {
             assertNotNull(anObj)
         }
         assertEqualsTrimmed("$NUM_4_LINE (none)$FIB_SCRIPT_OUTPUT_TAIL", out1)
-        val savedClassLoader = URLClassLoader(arrayOf(tmpdir.toURI().toURL()), aClass!!.classLoader)
+        val savedClassLoader = URLClassLoader(arrayOf(tmpdir.toURI().toURL()), aClass.classLoader)
         val aClassSaved = savedClassLoader.loadClass(aClass.name)
         assertNotNull(aClassSaved)
         val out2 = captureOut {

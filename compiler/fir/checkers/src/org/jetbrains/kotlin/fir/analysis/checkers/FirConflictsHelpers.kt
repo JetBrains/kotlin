@@ -551,7 +551,7 @@ private fun FirDeclarationCollector<*>.getConflictState(
 
     return if (session.languageVersionSettings.supportsFeature(LanguageFeature.ContextParameters)) {
         overloadabilityHelper.getConflictStateWithContextParameters(declaration, conflicting)
-    } else if (overloadabilityHelper.isConflicting(declaration, conflicting, ignoreContextParameters = false)) {
+    } else if (overloadabilityHelper.isConflicting(declaration, conflicting)) {
         ConflictState.Conflict
     } else {
         ConflictState.NoConflict
@@ -562,10 +562,6 @@ private fun FirDeclarationOverloadabilityHelper.getConflictStateWithContextParam
     declaration: FirCallableSymbol<*>,
     conflicting: FirCallableSymbol<*>,
 ): ConflictState {
-    if (!isConflicting(declaration, conflicting, ignoreContextParameters = true)) {
-        return ConflictState.NoConflict
-    }
-
     return when (getContextParameterShadowing(declaration, conflicting)) {
         BothWays -> ConflictState.Conflict
         Shadowing -> ConflictState.ContextParameterShadowing
@@ -574,7 +570,7 @@ private fun FirDeclarationOverloadabilityHelper.getConflictStateWithContextParam
 }
 
 context(context: CheckerContext, reporter: DiagnosticReporter)
-        /** Checks for redeclarations of value and type parameters, and local variables. */
+/** Checks for redeclarations of value and type parameters, and local variables. */
 fun checkForLocalRedeclarations(elements: List<FirElement>) {
     if (elements.size <= 1) return
 
@@ -592,6 +588,7 @@ fun checkForLocalRedeclarations(elements: List<FirElement>) {
                 }
             }
             is FirVariable -> element.symbol to element.name
+            is FirClassLikeDeclaration -> element.symbol.let { it to it.name }
             is FirOuterClassTypeParameterRef -> continue
             is FirTypeParameterRef -> element.symbol.let { it to it.name }
             else -> null to null

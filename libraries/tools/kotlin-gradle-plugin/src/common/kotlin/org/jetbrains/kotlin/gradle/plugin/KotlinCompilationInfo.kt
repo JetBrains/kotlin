@@ -25,6 +25,7 @@ internal sealed class KotlinCompilationInfo {
     abstract val targetDisambiguationClassifier: String?
     abstract val compilationName: String
     abstract val moduleName: String
+
     @Suppress("TYPEALIAS_EXPANSION_DEPRECATION_ERROR")
     abstract val compilerOptions: DeprecatedHasCompilerOptions<*>
     abstract val compileKotlinTaskName: String
@@ -101,9 +102,7 @@ internal sealed class KotlinCompilationInfo {
     }
 }
 
-internal fun KotlinCompilationInfo(compilation: KotlinCompilation<*>): KotlinCompilationInfo.TCS {
-    return KotlinCompilationInfo.TCS(compilation)
-}
+internal fun KotlinCompilationInfo(compilation: KotlinCompilation<*>): KotlinCompilationInfo.TCS = KotlinCompilationInfo.TCS(compilation)
 
 internal val KotlinCompilationInfo.tcs: KotlinCompilationInfo.TCS
     get() = this as KotlinCompilationInfo.TCS

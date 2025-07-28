@@ -4,6 +4,7 @@ description = "Annotation Processor for Kotlin"
 plugins {
     kotlin("jvm")
     id("jps-compatible")
+    id("java-test-fixtures")
 }
 
 dependencies {
@@ -22,22 +23,22 @@ dependencies {
     compileOnly(toolsJarApi())
     compileOnly(libs.intellij.asm)
 
-    testImplementation(intellijCore())
+    testFixturesImplementation(intellijCore())
     testRuntimeOnly(intellijResources()) { isTransitive = false }
 
     testRuntimeOnly(commonDependency("org.codehaus.woodstox:stax2-api"))
     testRuntimeOnly(commonDependency("com.fasterxml:aalto-xml"))
 
-    testApi(platform(libs.junit.bom))
-    testImplementation(libs.junit.jupiter.api)
+    testFixturesApi(platform(libs.junit.bom))
+    testFixturesApi(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.jupiter.engine)
-    testApi(projectTests(":compiler:tests-common-new"))
-    testApi(projectTests(":compiler:test-infrastructure"))
-    testApi(projectTests(":compiler:test-infrastructure-utils"))
+    testFixturesApi(testFixtures(project(":compiler:tests-common-new")))
+    testFixturesApi(testFixtures(project(":compiler:test-infrastructure")))
+    testFixturesApi(testFixtures(project(":compiler:test-infrastructure-utils")))
 
-    testApi(project(":kotlin-annotation-processing-base"))
-    testApi(projectTests(":kotlin-annotation-processing-base"))
-    testApi(project(":kotlin-annotation-processing-runtime"))
+    testFixturesApi(project(":kotlin-annotation-processing-base"))
+    testFixturesApi(testFixtures(project(":kotlin-annotation-processing-base")))
+    testFixturesApi(project(":kotlin-annotation-processing-runtime"))
 
     testCompileOnly(toolsJarApi())
     testRuntimeOnly(toolsJar())
@@ -46,8 +47,8 @@ dependencies {
     embedded(project(":kotlin-annotation-processing-cli")) { isTransitive = false }
     embedded(project(":kotlin-annotation-processing-base")) { isTransitive = false }
 
-    testApi(project(":tools:kotlinp-jvm"))
-    testApi(project(":kotlin-metadata-jvm"))
+    testFixturesApi(project(":tools:kotlinp-jvm"))
+    testFixturesApi(project(":kotlin-metadata-jvm"))
 }
 
 optInToExperimentalCompilerApi()
@@ -58,6 +59,7 @@ sourceSets {
         projectDefault()
         generatedTestDir()
     }
+    "testFixtures" { projectDefault() }
 }
 
 testsJar {}

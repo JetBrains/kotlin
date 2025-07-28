@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.api.components
 
 import com.intellij.openapi.util.TextRange
 import com.intellij.psi.SmartPsiElementPointer
+import org.jetbrains.kotlin.analysis.api.KaContextParameterApi
 import org.jetbrains.kotlin.analysis.api.KaIdeApi
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.components.ShortenStrategy.Companion.defaultCallableShortenStrategy
@@ -210,4 +211,39 @@ public interface ShortenCommand {
                 listOfQualifierToShortenInfo.isEmpty() &&
                 thisLabelsToShorten.isEmpty() &&
                 kDocQualifiersToShorten.isEmpty()
+}
+
+/**
+ * @see KaReferenceShortener.collectPossibleReferenceShortenings
+ */
+@KaContextParameterApi
+@KaIdeApi
+context(context: KaReferenceShortener)
+public fun collectPossibleReferenceShortenings(
+    file: KtFile,
+    selection: TextRange = file.textRange,
+    shortenOptions: ShortenOptions = ShortenOptions.DEFAULT,
+    classShortenStrategy: (KaClassLikeSymbol) -> ShortenStrategy = defaultClassShortenStrategy,
+    callableShortenStrategy: (KaCallableSymbol) -> ShortenStrategy = defaultCallableShortenStrategy
+): ShortenCommand {
+    return with(context) {
+        collectPossibleReferenceShortenings(file, selection, shortenOptions, classShortenStrategy, callableShortenStrategy)
+    }
+}
+
+/**
+ * @see KaReferenceShortener.collectPossibleReferenceShorteningsInElement
+ */
+@KaContextParameterApi
+@KaIdeApi
+context(context: KaReferenceShortener)
+public fun collectPossibleReferenceShorteningsInElement(
+    element: KtElement,
+    shortenOptions: ShortenOptions = ShortenOptions.DEFAULT,
+    classShortenStrategy: (KaClassLikeSymbol) -> ShortenStrategy = defaultClassShortenStrategy,
+    callableShortenStrategy: (KaCallableSymbol) -> ShortenStrategy = defaultCallableShortenStrategy
+): ShortenCommand {
+    return with(context) {
+        collectPossibleReferenceShorteningsInElement(element, shortenOptions, classShortenStrategy, callableShortenStrategy)
+    }
 }

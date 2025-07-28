@@ -9,6 +9,7 @@ import org.gradle.api.Project
 import org.gradle.api.artifacts.DependencySet
 import org.gradle.api.artifacts.ProjectDependency
 import org.gradle.api.invocation.Gradle
+import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerPluginSupportPlugin
 import org.jetbrains.kotlin.gradle.plugin.statistics.plugins.ObservablePlugins
 import org.jetbrains.kotlin.gradle.report.BuildReportType
 import org.jetbrains.kotlin.gradle.utils.*
@@ -27,7 +28,7 @@ internal fun collectGeneralConfigurationTimeMetrics(
     pluginVersion: String,
     isProjectIsolationEnabled: Boolean,
     isProjectIsolationRequested: Boolean,
-    isConfigurationCacheRequested: Boolean
+    isConfigurationCacheRequested: Boolean,
 ): MetricContainer {
     val configurationTimeMetrics = MetricContainer()
 
@@ -164,14 +165,28 @@ private fun addTaskMetrics(
     }
 }
 
+private const val UNKNOWN_VERSION = "0.0.0"
+
 private fun collectAppliedPluginsStatistics(
     project: Project,
     configurationTimeMetrics: MetricContainer,
 ) {
     for (plugin in ObservablePlugins.values()) {
-        if (project.plugins.hasPlugin(plugin.title)) {
+        project.plugins.withId(plugin.title) {
             configurationTimeMetrics.put(plugin.metric, true)
         }
+    }
+
+    //split KSP plugin name to avoid package relocation
+    val prefix = "com"
+    project.plugins.withId(prefix + ".google.devtools.ksp") { plugin ->
+        try {
+            val version = (plugin as? KotlinCompilerPluginSupportPlugin)?.getPluginArtifact()?.version
+            configurationTimeMetrics.put(StringMetrics.KSP_GRADLE_PLUGIN_VERSION, version ?: UNKNOWN_VERSION)
+        } catch (_: Exception) {
+            configurationTimeMetrics.put(StringMetrics.KSP_GRADLE_PLUGIN_VERSION, UNKNOWN_VERSION)
+        }
+
     }
 }
 

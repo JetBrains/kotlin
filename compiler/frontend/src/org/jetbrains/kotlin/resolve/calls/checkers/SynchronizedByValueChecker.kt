@@ -21,7 +21,7 @@ class SynchronizedByValueChecker : CallChecker {
             || constructor.let { manyTypes -> manyTypes is IntegerLiteralTypeConstructor && manyTypes.possibleTypes.any { it.isValueOrPrimitive() } }
 
     override fun check(resolvedCall: ResolvedCall<*>, reportOn: PsiElement, context: CallCheckerContext) {
-        if (resolvedCall.resultingDescriptor?.isTopLevelInPackage("synchronized", "kotlin") != true) return
+        if (!resolvedCall.resultingDescriptor.isTopLevelInPackage("synchronized", "kotlin")) return
         val argument = resolvedCall.valueArgumentsByIndex?.get(0)?.arguments?.firstOrNull() ?: return
         val type = argument.getArgumentExpression()?.getType(context.trace.bindingContext) ?: return
         if (type.isValueOrPrimitive()) {

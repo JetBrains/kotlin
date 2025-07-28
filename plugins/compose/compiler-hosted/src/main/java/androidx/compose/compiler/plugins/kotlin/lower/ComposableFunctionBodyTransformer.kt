@@ -3081,7 +3081,7 @@ class ComposableFunctionBodyTransformer(
                     // ComposerParamTransformer should not allow for any null arguments on a composable
                     // invocation unless the parameter is vararg. If this is null here, we have
                     // missed something.
-                    error("Unexpected null argument for composable call")
+                    error("Unexpected null argument for composable call: ${expression.dump()}")
                 } else {
                     argsMeta.add(CallArgumentMeta(isVararg = true))
                     continue

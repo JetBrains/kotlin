@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.backend.common.LoweringContext
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
-import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.builders.*
@@ -24,7 +23,6 @@ import org.jetbrains.kotlin.ir.util.isSubtypeOfClass
 import org.jetbrains.kotlin.ir.visitors.IrTransformer
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds
-import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
 @PhaseDescription("UpgradeCallableReferences")
@@ -42,18 +40,6 @@ open class UpgradeCallableReferences(
 
     fun lower(irFunction: IrFunction) {
         irFunction.transform(UpgradeTransformer(), irFunction)
-    }
-
-    companion object {
-        fun selectSAMOverriddenFunction(type: IrType): IrSimpleFunctionSymbol {
-            // Function classes on jvm have some extra methods, which would be in fact implemented by super type,
-            // e.g., callBy and other reflection related callables. So we need to filter them out.
-            return if (type.isFunctionOrKFunction() || type.isSuspendFunctionOrKFunction()) {
-                type.classOrFail.functions.singleOrNull { it.owner.name == OperatorNameConventions.INVOKE }
-            } else {
-                type.classOrFail.functions.singleOrNull { it.owner.modality == Modality.ABSTRACT }
-            } ?: error("${type.render()} should have a single abstract method to be a type of function reference")
-        }
     }
 
 
@@ -94,7 +80,7 @@ open class UpgradeCallableReferences(
                 endOffset = expression.endOffset,
                 type = expression.type,
                 reflectionTargetSymbol = null,
-                overriddenFunctionSymbol = selectSAMOverriddenFunction(expression.type),
+                overriddenFunctionSymbol = expression.type.classOrFail.owner.selectSAMOverriddenFunction().symbol,
                 invokeFunction = expression.function,
                 origin = expression.origin,
                 isRestrictedSuspension = isRestrictedSuspension,
@@ -175,7 +161,7 @@ open class UpgradeCallableReferences(
                 endOffset = expression.endOffset,
                 type = referenceType,
                 reflectionTargetSymbol = reflectionTarget,
-                overriddenFunctionSymbol = selectSAMOverriddenFunction(referenceType),
+                overriddenFunctionSymbol = referenceType.classOrFail.owner.selectSAMOverriddenFunction().symbol,
                 invokeFunction = function,
                 origin = expression.origin,
                 hasSuspendConversion = reflectionTarget != null && reflectionTarget.isSuspend == false && function.isSuspend,
@@ -208,7 +194,7 @@ open class UpgradeCallableReferences(
                     startOffset = expression.startOffset
                     endOffset = expression.endOffset
                     type = expression.typeOperand
-                    overriddenFunctionSymbol = selectSAMOverriddenFunction(expression.typeOperand)
+                    overriddenFunctionSymbol = expression.typeOperand.classOrFail.owner.selectSAMOverriddenFunction().symbol
                 }
             }
             return super.visitTypeOperator(expression, data)
@@ -216,6 +202,7 @@ open class UpgradeCallableReferences(
 
         override fun visitFunctionReference(expression: IrFunctionReference, data: IrDeclarationParent): IrExpression {
             expression.transformChildren(this, data)
+            fixCallableReferenceComingFromKlib(expression)
             if (!upgradeFunctionReferencesAndLambdas) return expression
             val arguments = expression.getArgumentsWithIr()
             return IrRichFunctionReferenceImpl(
@@ -223,7 +210,7 @@ open class UpgradeCallableReferences(
                 endOffset = expression.endOffset,
                 type = expression.type,
                 reflectionTargetSymbol = (expression.reflectionTarget ?: expression.symbol).takeUnless { expression.origin.isLambda },
-                overriddenFunctionSymbol = selectSAMOverriddenFunction(expression.type),
+                overriddenFunctionSymbol = expression.type.classOrFail.owner.selectSAMOverriddenFunction().symbol,
                 invokeFunction = expression.wrapFunction(arguments, data, expression.symbol.owner),
                 origin = expression.origin,
                 isRestrictedSuspension = expression.symbol.owner.isRestrictedSuspensionFunction(),
@@ -234,6 +221,7 @@ open class UpgradeCallableReferences(
 
         override fun visitPropertyReference(expression: IrPropertyReference, data: IrDeclarationParent): IrExpression {
             expression.transformChildren(this, data)
+            fixCallableReferenceComingFromKlib(expression)
             if (!upgradePropertyReferences) return expression
             val getter = expression.getter?.owner
             val arguments = expression.getArgumentsWithIr()
@@ -265,6 +253,43 @@ open class UpgradeCallableReferences(
             ).apply {
                 boundValues += arguments.map { it.second }
             }
+        }
+
+        /**
+         * KLIBs don't contain enough information for initializing the correct shape for [IrFunctionReference]s and [IrPropertyReference]s.
+         *
+         * For example, consider the following code:
+         *
+         * ```kotlin
+         * class C {
+         *     fun foo() {}
+         * }
+         *
+         * fun bar() {}
+         * ```
+         *
+         * Function references `C::foo` and `::bar` will both be serialized (and deserialized) as having the following shape:
+         * ```
+         * dispatch_receiver = null
+         * extension_receiver = null
+         * value_argument = []
+         * ```
+         *
+         * However, `C::foo` has unbound dispatch receiver, while `::bar` doesn't have any dispatch receiver.
+         * To be able to adopt the new value parameter API ([KT-71850](https://youtrack.jetbrains.com/issue/KT-71850)),
+         * we have to be able to distinguish these two situations, because for `C::foo` the target function's [IrFunction.parameters]
+         * will be [[dispatch receiver]], while for `::bar` the target function's [IrFunction.parameters] will be an empty list,
+         * and [IrFunctionReference.arguments] must always match the target function's [IrFunction.parameters] list.
+         *
+         * The same applies to [IrPropertyReference].
+         *
+         * Because existing KLIBs already don't contain enough information for setting the correct shape, the following hack is used:
+         * After linking we visit callable references and update their shape from the linked target function/property.
+         *
+         * See [KT-71849](https://youtrack.jetbrains.com/issue/KT-71849).
+         */
+        private fun fixCallableReferenceComingFromKlib(reference: IrCallableReference<*>) {
+            reference.initializeTargetShapeFromSymbol()
         }
 
         override fun visitLocalDelegatedPropertyReference(

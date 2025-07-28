@@ -176,6 +176,11 @@ internal abstract class SirAbstractClassFromKtSymbol(
             .mapNotNull { it.expandedSymbol }
             .filter { it.classKind == KaClassKind.INTERFACE }
             .filter { it.typeParameters.isEmpty() } //Exclude generics
+            .filter {
+                it.sirAvailability(this@lazyWithSessions).let {
+                    it is SirAvailability.Available && it.visibility > SirVisibility.INTERNAL
+                }
+            }
             .filterNot { it.isCloneable }
             .flatMap {
                 it.toSir().allDeclarations.filterIsInstance<SirProtocol>().also {

@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 
+@file:Suppress("PLATFORM_CLASS_MAPPED_TO_KOTLIN")
+
 package kotlinx.cinterop
 
 import org.jetbrains.kotlin.utils.KotlinNativePaths

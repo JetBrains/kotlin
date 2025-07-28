@@ -204,9 +204,9 @@ private fun collectDesignationPathWithContainingClass(
     }
 
     val fallbackClassPath = collectDesignationPathWithContainingClassFallback(target, containingClassId)
-    val fallbackFile = providedFile ?: fallbackClassPath?.lastOrNull()?.getContainingFile() ?: file
+    val fallbackFile = providedFile ?: fallbackClassPath.lastOrNull()?.getContainingFile() ?: file
     val fallbackScript = fallbackFile?.declarations?.singleOrNull() as? FirScript
-    val fallbackPath = listOfNotNull(fallbackFile, fallbackScript) + fallbackClassPath.orEmpty()
+    val fallbackPath = listOfNotNull(fallbackFile, fallbackScript) + fallbackClassPath
     val patchedPath = patchDesignationPathIfNeeded(target, fallbackPath)
     return FirDesignation(patchedPath, target)
 }

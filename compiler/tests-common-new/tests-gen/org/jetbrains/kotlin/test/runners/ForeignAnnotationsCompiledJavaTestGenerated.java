@@ -1544,6 +1544,12 @@ public class ForeignAnnotationsCompiledJavaTestGenerated extends AbstractForeign
       }
 
       @Test
+      @TestMetadata("springNotNullApiGenericOverride.kt")
+      public void testSpringNotNullApiGenericOverride() {
+        runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jsr305/springNotNullApiGenericOverride.kt");
+      }
+
+      @Test
       @TestMetadata("springNullableWithTypeUse.kt")
       public void testSpringNullableWithTypeUse() {
         runTest("compiler/testData/diagnostics/foreignAnnotationsTests/java8Tests/jsr305/springNullableWithTypeUse.kt");

@@ -3,17 +3,18 @@ plugins {
     id("jps-compatible")
     id("compiler-tests-convention")
     id("test-inputs-check")
+    id("java-test-fixtures")
 }
 
 dependencies {
     api(kotlinStdlib())
-    testApi(projectTests(":generators:test-generator"))
-    testApi(projectTests(":compiler:tests-common"))
-    testApi(projectTests(":compiler:tests-integration"))
+    testFixturesApi(testFixtures(project(":generators:test-generator")))
+    testFixturesApi(testFixtures(project(":compiler:tests-common")))
+    testFixturesApi(testFixtures(project(":compiler:tests-integration")))
 
-    testCompileOnly(intellijCore())
+    testFixturesCompileOnly(intellijCore())
     testRuntimeOnly(intellijCore())
-    testImplementation("org.junit.jupiter:junit-jupiter")
+    testFixturesApi("org.junit.jupiter:junit-jupiter")
     testCompileOnly(libs.junit4)
     testRuntimeOnly("org.junit.vintage:junit-vintage-engine")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
@@ -21,10 +22,8 @@ dependencies {
 
 sourceSets {
     "main" { }
-    "test" {
-        projectDefault()
-        generatedTestDir()
-    }
+    "test" { generatedTestDir() }
+    "testFixtures" { projectDefault() }
 }
 
 compilerTests {

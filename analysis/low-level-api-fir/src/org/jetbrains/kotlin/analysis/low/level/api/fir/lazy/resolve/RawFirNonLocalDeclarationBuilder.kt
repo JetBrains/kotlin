@@ -142,10 +142,9 @@ internal class RawFirNonLocalDeclarationBuilder private constructor(
 
             return buildDestructuringVariable(
                 moduleData = baseModuleData,
-                this,
                 container = container,
                 element,
-                isVar = element.isVar,
+                isNameBased = element.ownValOrVarKeyword != null || nameBasedDestructuringShortForm,
                 forceLocal = false,
                 index = element.index(),
                 configure = { configureScriptDestructuringDeclarationEntry(it, container) },

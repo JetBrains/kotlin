@@ -2047,6 +2047,39 @@ public class ParsingTestGenerated extends AbstractParsingTest {
       }
     }
 
+    @TestMetadata("compiler/testData/psi/destructuring")
+    @TestDataPath("$PROJECT_ROOT")
+    @RunWith(JUnit3RunnerWithInners.class)
+    public static class Destructuring extends AbstractParsingTest {
+      private void runTest(String testDataFilePath) {
+        KotlinTestUtils.runTest(this::doParsingTest, this, testDataFilePath);
+      }
+
+      public void testAllFilesPresentInDestructuring() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/psi/destructuring"), Pattern.compile("^(.*)\\.kts?$"), null, true);
+      }
+
+      @TestMetadata("fullNameBasedDestructuring.kt")
+      public void testFullNameBasedDestructuring() {
+        runTest("compiler/testData/psi/destructuring/fullNameBasedDestructuring.kt");
+      }
+
+      @TestMetadata("fullNameBasedDestructuringErrors.kt")
+      public void testFullNameBasedDestructuringErrors() {
+        runTest("compiler/testData/psi/destructuring/fullNameBasedDestructuringErrors.kt");
+      }
+
+      @TestMetadata("ktij23263.kt")
+      public void testKtij23263() {
+        runTest("compiler/testData/psi/destructuring/ktij23263.kt");
+      }
+
+      @TestMetadata("shortNameBasedDestructuringWithRenaming.kt")
+      public void testShortNameBasedDestructuringWithRenaming() {
+        runTest("compiler/testData/psi/destructuring/shortNameBasedDestructuringWithRenaming.kt");
+      }
+    }
+
     @TestMetadata("compiler/testData/psi/examples")
     @TestDataPath("$PROJECT_ROOT")
     @RunWith(JUnit3RunnerWithInners.class)

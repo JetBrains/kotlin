@@ -471,7 +471,7 @@ class ConstraintInjector(
             isFromNullabilityConstraint: Boolean,
             isFromDeclaredUpperBound: Boolean,
             isNoInfer: Boolean,
-        ) = with(c) {
+        ): Unit = with(c) {
             // Avoid checking trivial incorporated constraints
             if (isK2) {
                 if (lowerType == upperType) return

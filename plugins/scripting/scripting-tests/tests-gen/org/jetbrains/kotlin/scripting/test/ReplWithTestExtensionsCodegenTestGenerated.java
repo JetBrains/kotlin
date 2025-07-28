@@ -185,4 +185,10 @@ public class ReplWithTestExtensionsCodegenTestGenerated extends AbstractReplWith
   public void testSingle_snippet_repl() {
     runTest("plugins/scripting/scripting-tests/testData/codegen/repl/single_snippet.repl.kts");
   }
+
+  @Test
+  @TestMetadata("type_aliases.repl.kts")
+  public void testType_aliases_repl() {
+    runTest("plugins/scripting/scripting-tests/testData/codegen/repl/type_aliases.repl.kts");
+  }
 }

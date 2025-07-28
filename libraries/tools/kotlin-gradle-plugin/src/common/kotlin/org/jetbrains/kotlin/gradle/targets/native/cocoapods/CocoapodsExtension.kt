@@ -232,6 +232,11 @@ abstract class CocoapodsExtension @Inject constructor(private val project: Proje
         @get:Input var moduleName: String
     ) : Named {
 
+        /**
+         * Header files to include in the interop.
+         * Note: Setting headers causes the `useClangModules` option to be ignored, as cinterop doesn't
+         * support having headers in -fmodules mode.
+         */
         @get:Optional
         @get:Input
         var headers: String? = null
@@ -264,6 +269,8 @@ abstract class CocoapodsExtension @Inject constructor(private val project: Proje
          * Enables the use of Clang modules (`-fmodules`) during cinterop with CocoaPods.
          * Some pods expect this flag to be set and may fail to compile without it.
          * Default is true.
+         * Note: The value of `useClangModules` is ignored when any `headers` are set,
+         * as cinterop doesn't support having headers in -fmodules mode.
          */
         @get:Input
         val useClangModules: Property<Boolean> = objectFactory.propertyWithConvention(true)

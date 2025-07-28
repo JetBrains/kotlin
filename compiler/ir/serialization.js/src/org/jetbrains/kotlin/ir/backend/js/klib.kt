@@ -231,7 +231,7 @@ fun getIrModuleInfoForKlib(
         partialLinkageSupport = createPartialLinkageSupportForLinker(
             partialLinkageConfig = configuration.partialLinkageConfig,
             builtIns = irBuiltIns,
-            messageCollector = messageCollector
+            messageCollector = messageCollector,
         ),
         icData = null,
         friendModules = friendModules
@@ -289,7 +289,7 @@ fun getIrModuleInfoForSourceFiles(
         partialLinkageSupport = createPartialLinkageSupportForLinker(
             partialLinkageConfig = configuration.partialLinkageConfig,
             builtIns = irBuiltIns,
-            messageCollector = messageCollector
+            messageCollector = messageCollector,
         ),
         icData = null,
         friendModules = friendModules,

@@ -21,36 +21,36 @@ import org.jetbrains.kotlin.gradle.utils.getFile
 abstract class BaseYarnRootEnvSpec internal constructor() : EnvSpec<YarnEnv>() {
 
     /**
-     * Specify a platform information with name and architecture
+     * Specify platform information with name and architecture.
      */
     internal abstract val platform: Property<Platform>
 
     /**
-     * Specify whether to not run install without custom package scripts.
-     * It is useful for security
+     * Specify whether custom package scripts are executed during project setup.
+     * It is useful for security.
      *
-     * Default: true
+     * Default: `true`
      */
     abstract val ignoreScripts: Property<Boolean>
 
     /**
-     * Specify a behaviour if yarn.lock file was changed
+     * Specify a behaviour if the project's `yarn.lock` file was changed.
      *
-     * Default: FAIL
+     * Default: [YarnLockMismatchReport.FAIL]
      */
     abstract val yarnLockMismatchReport: Property<YarnLockMismatchReport>
 
     /**
-     * Specify whether to fail a build if new yarn.lock file was generated during the build
+     * Specify whether to fail a build if a new `yarn.lock` file was generated during the build.
      *
-     * Default: false
+     * Default: `false`
      */
     abstract val reportNewYarnLock: Property<Boolean>
 
     /**
-     * Specify whether to replace already existing yarn.lock file with newly generated yarn.lock file
+     * Specify whether to replace already existing `yarn.lock` file with newly generated `yarn.lock` file
      *
-     * Default: false
+     * Default: `false`
      */
     abstract val yarnLockAutoReplace: Property<Boolean>
 
@@ -97,7 +97,7 @@ abstract class BaseYarnRootEnvSpec internal constructor() : EnvSpec<YarnEnv>() {
                 yarnLockMismatchReport = yarnLockMismatchReport.get(),
                 reportNewYarnLock = reportNewYarnLock.get(),
                 yarnLockAutoReplace = yarnLockAutoReplace.get(),
-                yarnResolutions = resolutions.get()
+                yarnResolutions = resolutions.get(),
             )
         }
     }

@@ -32,19 +32,15 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompileTool
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
 import org.jetbrains.kotlin.gradle.tasks.withType
 import org.jetbrains.kotlin.gradle.utils.LazyResolvedConfiguration
+import org.jetbrains.kotlin.gradle.utils.findAppliedAndroidPluginIdOrNull
 import org.jetbrains.kotlin.gradle.utils.future
+import org.jetbrains.kotlin.gradle.utils.multiplatformAndroidLibraryPluginId
 import java.util.concurrent.atomic.AtomicBoolean
 
 @DisableCachingByDefault(because = "This task is not intended for execution")
 internal abstract class KmpPartiallyResolvedDependenciesCheckerProjectsEvaluated : DefaultTask() {
-    @get:Input
-    val workaroundCompositeBuildDependencySubtitution: org.gradle.api.provider.Property<FileCollection> = project.objects.property(
-        FileCollection::class.java
-    ).convention(project.files())
-
     @TaskAction
     fun noop() {
-        workaroundCompositeBuildDependencySubtitution.get()
         throw StopExecutionException()
     }
 
@@ -99,13 +95,17 @@ internal object KmpPartiallyResolvedDependenciesChecker : KotlinGradleProjectChe
                         )
                     }
                 }
-                if (hasIncludedBuilds) {
-                    task.workaroundCompositeBuildDependencySubtitution.set(
-                        task.project.provider {
-                            validate()
-                            task.project.files()
-                        }
-                    )
+                val isMultiplatformAndroidLibraryPluginApplied = project.pluginManager.hasPlugin(multiplatformAndroidLibraryPluginId)
+                val isAndroidPluginApplied = (project.findAppliedAndroidPluginIdOrNull() != null) || isMultiplatformAndroidLibraryPluginApplied
+                /**
+                 * AGP adds a checker that emits a diagnostic if a configuration is resolved before taskGraph.whenReady. Delay the check to
+                 * execution in this case
+                 */
+                if (isAndroidPluginApplied || hasIncludedBuilds) {
+                    val validationProvider = project.provider { validate() }
+                    task.doFirst {
+                        validationProvider.get()
+                    }
                 } else {
                     validate()
                 }
@@ -116,6 +116,10 @@ internal object KmpPartiallyResolvedDependenciesChecker : KotlinGradleProjectChe
         } else {
             project.tasks.withType<MetadataDependencyTransformationTask>().configureEach {
                 if (!projectsEvaluationPhasePassed.get()) {
+                    return@configureEach
+                }
+                val isAndroidPluginApplied = project.findAppliedAndroidPluginIdOrNull() != null
+                if (isAndroidPluginApplied) {
                     return@configureEach
                 }
                 val validate = {

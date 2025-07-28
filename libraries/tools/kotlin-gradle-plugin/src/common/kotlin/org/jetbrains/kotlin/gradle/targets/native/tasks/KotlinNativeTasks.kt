@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.gradle.tasks
 
 import org.gradle.api.DefaultTask
 import org.gradle.api.Project
-import org.gradle.api.artifacts.*
+import org.gradle.api.artifacts.Configuration
 import org.gradle.api.artifacts.component.ModuleComponentIdentifier
 import org.gradle.api.artifacts.component.ModuleComponentSelector
 import org.gradle.api.artifacts.result.DependencyResult
@@ -20,12 +20,15 @@ import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.gradle.api.provider.ProviderFactory
 import org.gradle.api.tasks.*
-import org.gradle.process.ExecOperations
 import org.gradle.work.DisableCachingByDefault
 import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageMode
-import org.jetbrains.kotlin.build.report.metrics.*
-import org.jetbrains.kotlin.cli.common.arguments.*
+import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporter
+import org.jetbrains.kotlin.build.report.metrics.GradleBuildPerformanceMetric
+import org.jetbrains.kotlin.build.report.metrics.GradleBuildTime
+import org.jetbrains.kotlin.build.report.metrics.measure
+import org.jetbrains.kotlin.cli.common.arguments.CommonToolArguments
+import org.jetbrains.kotlin.cli.common.arguments.K2NativeCompilerArguments
 import org.jetbrains.kotlin.commonizer.KonanDistribution
 import org.jetbrains.kotlin.commonizer.platformLibsDir
 import org.jetbrains.kotlin.compilerRunner.ArgumentUtils
@@ -41,21 +44,23 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilationInfo
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.CreateCompilerArgumentsContext
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerArgumentsProducer.CreateCompilerArgumentsContext.Companion.create
-import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.cocoapods.asValidFrameworkName
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.apple.useXcodeMessageStyle
 import org.jetbrains.kotlin.gradle.plugin.statistics.NativeCompilerOptionMetrics
 import org.jetbrains.kotlin.gradle.plugin.statistics.UsesBuildFusService
-import org.jetbrains.kotlin.gradle.report.*
+import org.jetbrains.kotlin.gradle.plugin.tcs
+import org.jetbrains.kotlin.gradle.report.GradleBuildMetricsReporter
+import org.jetbrains.kotlin.gradle.report.UsesBuildMetricsService
 import org.jetbrains.kotlin.gradle.targets.native.KonanPropertiesBuildService
 import org.jetbrains.kotlin.gradle.targets.native.UsesKonanPropertiesBuildService
-import org.jetbrains.kotlin.gradle.targets.native.tasks.*
+import org.jetbrains.kotlin.gradle.targets.native.tasks.CompilerPluginData
+import org.jetbrains.kotlin.gradle.targets.native.tasks.SharedCompilationData
+import org.jetbrains.kotlin.gradle.targets.native.tasks.createExecutionContext
 import org.jetbrains.kotlin.gradle.targets.native.toolchain.KotlinNativeProvider
 import org.jetbrains.kotlin.gradle.targets.native.toolchain.NoopKotlinNativeProvider
 import org.jetbrains.kotlin.gradle.targets.native.toolchain.UsesKotlinNativeBundleBuildService
 import org.jetbrains.kotlin.gradle.utils.*
-import org.jetbrains.kotlin.gradle.utils.GradleLoggerAdapter
 import org.jetbrains.kotlin.internal.compilerRunner.native.KotlinNativeCInteropRunner
 import org.jetbrains.kotlin.internal.compilerRunner.native.KotlinNativeCompilerRunner
 import org.jetbrains.kotlin.internal.compilerRunner.native.KotlinNativeToolRunner
@@ -133,6 +138,7 @@ abstract class AbstractKotlinNativeCompile<
         >
 @Inject constructor(
     private val objectFactory: ObjectFactory,
+    private val providerFactory: ProviderFactory
 ) : AbstractKotlinCompileTool<M>(objectFactory), ProducesKlib {
     @get:Internal
     internal abstract val compilation: KotlinCompilationInfo
@@ -162,43 +168,31 @@ abstract class AbstractKotlinNativeCompile<
     internal abstract val explicitApiMode: Property<ExplicitApiMode>
 
     @get:Internal
-    internal val konanTarget by project.provider {
-        when (val compilation = compilation) {
-            is KotlinCompilationInfo.TCS -> (compilation.compilation as AbstractKotlinNativeCompilation).konanTarget
-        }
+    internal val konanTarget by providerFactory.provider {
+        (compilation.tcs.compilation as AbstractKotlinNativeCompilation).konanTarget
     }
 
     @get:Internal
     internal val konanDistribution = project.nativeProperties.actualNativeHomeDirectory
 
-    @get:Internal
-    internal val enabledOnCurrentHostForKlibCompilationProperty: Property<Boolean> = project.objects.property<Boolean>().convention(
-        // For KT-66452 we need to get rid of invocation of 'Task.project'.
-        // That is why we moved setting this property to task registration
-        // and added convention for backwards compatibility.
-        project.provider {
-            konanTarget.enabledOnCurrentHostForKlibCompilation(project.kotlinPropertiesProvider)
+    @get:Classpath
+    override val libraries: ConfigurableFileCollection by providerFactory.provider {
+        val nativeCompilation = compilation.tcs.compilation as AbstractKotlinNativeCompilation
+        if (nativeCompilation.crossCompilationOnCurrentHostSupported.getOrThrow()) {
+            objectFactory.fileCollection().from({ compilation.compileDependencyFiles })
+        } else {
+            objectFactory.fileCollection()
         }
-    )
+    }
 
     @get:Classpath
-    override val libraries: ConfigurableFileCollection = objectFactory.fileCollection().from(
-        {
-            // Avoid resolving these dependencies during task graph construction when we can't build the target:
-            if (enabledOnCurrentHostForKlibCompilationProperty.get())
-                objectFactory.fileCollection().from({ compilation.compileDependencyFiles })
-            else objectFactory.fileCollection()
-        }
-    )
+    internal val friendModule: FileCollection = objectFactory.fileCollection().from({ compilation.friendPaths })
 
     @get:Classpath
-    internal val friendModule: FileCollection = project.files({ compilation.friendPaths })
-
-    @get:Classpath
-    internal val refinesModule: FileCollection = project.files({ compilation.refinesPaths })
+    internal val refinesModule: FileCollection = objectFactory.fileCollection().from({ compilation.refinesPaths })
 
     @get:Input
-    val target: String by project.provider { konanTarget.name }
+    val target: String by providerFactory.provider { konanTarget.name }
 
     // region Compiler options.
     @Deprecated(
@@ -288,7 +282,7 @@ internal constructor(
     override val compilerOptions: KotlinNativeCompilerOptions,
     private val objectFactory: ObjectFactory,
     providerFactory: ProviderFactory,
-) : AbstractKotlinNativeCompile<KotlinCommonOptions, K2NativeCompilerArguments>(objectFactory),
+) : AbstractKotlinNativeCompile<KotlinCommonOptions, K2NativeCompilerArguments>(objectFactory, providerFactory),
     KotlinNativeCompileTask,
     K2MultiplatformCompilationTask,
     UsesBuildMetricsService,

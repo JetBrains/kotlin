@@ -430,6 +430,12 @@ public class FirSourceLazyBodiesCalculatorTestGenerated extends AbstractFirSourc
     }
 
     @Test
+    @TestMetadata("localTypeAliasInsideLocalClass.kt")
+    public void testLocalTypeAliasInsideLocalClass() {
+      runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/localTypeAliasInsideLocalClass.kt");
+    }
+
+    @Test
     @TestMetadata("multiDeclarations.kt")
     public void testMultiDeclarations() {
       runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/multiDeclarations.kt");
@@ -612,6 +618,34 @@ public class FirSourceLazyBodiesCalculatorTestGenerated extends AbstractFirSourc
         public void testContractDescription() {
           runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/contracts/oldSyntax/contractDescription.kt");
         }
+      }
+    }
+
+    @Nested
+    @TestMetadata("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/destructuring")
+    @TestDataPath("$PROJECT_ROOT")
+    public class Destructuring {
+      @Test
+      public void testAllFilesPresentInDestructuring() {
+        KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/destructuring"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
+      }
+
+      @Test
+      @TestMetadata("nameBasedDestructuringFullForm.kt")
+      public void testNameBasedDestructuringFullForm() {
+        runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/destructuring/nameBasedDestructuringFullForm.kt");
+      }
+
+      @Test
+      @TestMetadata("nameBasedDestructuringShortFormAfter.kt")
+      public void testNameBasedDestructuringShortFormAfter() {
+        runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/destructuring/nameBasedDestructuringShortFormAfter.kt");
+      }
+
+      @Test
+      @TestMetadata("nameBasedDestructuringShortFormBefore.kt")
+      public void testNameBasedDestructuringShortFormBefore() {
+        runTest("compiler/fir/raw-fir/psi2fir/testData/rawBuilder/declarations/destructuring/nameBasedDestructuringShortFormBefore.kt");
       }
     }
 

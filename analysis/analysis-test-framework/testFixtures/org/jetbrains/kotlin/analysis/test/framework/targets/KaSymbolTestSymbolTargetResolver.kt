@@ -22,7 +22,8 @@ internal class KaSymbolTestSymbolTargetResolver(private val session: KaSession) 
         listOf(symbol)
     }
 
-    private fun KaSession.resolveClass(classId: ClassId): KaClassSymbol =
+    context(_: KaSession)
+    private fun resolveClass(classId: ClassId): KaClassSymbol =
         findClass(classId) ?: error("Cannot find a symbol for the class `$classId`.")
 
     override fun resolveScriptTarget(target: ScriptTarget): List<KaSymbol> = with(session) {

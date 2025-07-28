@@ -6,7 +6,7 @@ import KotlinRuntimeSupport
 public protocol INTERFACE: KotlinRuntime.KotlinBase {
 }
 @objc(_INTERFACE)
-protocol _INTERFACE {
+package protocol _INTERFACE {
 }
 open class ABSTRACT_CLASS: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
     package init() {
@@ -487,11 +487,11 @@ public func setExtensionVarOnNullableRef(
 ) -> Swift.Void {
     return __root___extensionVarOnNullableRef_set__TypesOfArguments__Swift_Optional_main_Class_without_package__Swift_String__(receiver.map { it in it.__externalRCRef() } ?? nil, v)
 }
-public extension main.INTERFACE where Self : KotlinRuntimeSupport._KotlinBridged {
+extension main.INTERFACE where Self : KotlinRuntimeSupport._KotlinBridged {
 }
 extension KotlinRuntimeSupport._KotlinExistential: main.INTERFACE where Wrapped : main._INTERFACE {
 }
-public extension ExportedKotlinPackages.namespace.deeper {
+extension ExportedKotlinPackages.namespace.deeper {
     public final class Class_with_package: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
         public final class INNER_CLASS: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
             public init() {
@@ -621,7 +621,7 @@ public extension ExportedKotlinPackages.namespace.deeper {
         }
     }
 }
-public extension ExportedKotlinPackages.ignored {
+extension ExportedKotlinPackages.ignored {
     public final class ENUM: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged, Swift.CaseIterable {
         public static var A: ExportedKotlinPackages.ignored.ENUM {
             get {

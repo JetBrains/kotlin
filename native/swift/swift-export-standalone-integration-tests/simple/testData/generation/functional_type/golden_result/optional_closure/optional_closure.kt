@@ -9,7 +9,8 @@ public fun __root___consume_opt_closure__TypesOfArguments__Swift_Optional_U28292
     val __arg = if (arg == kotlin.native.internal.NativePtr.NULL) null else run {
         val kotlinFun = convertBlockPtrToKotlinFunction<()->Unit>(arg);
         {
-            kotlinFun()
+            val _result = kotlinFun()
+            Unit
         }
     }
     consume_opt_closure(__arg)

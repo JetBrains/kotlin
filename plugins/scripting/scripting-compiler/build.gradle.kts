@@ -41,8 +41,10 @@ dependencies {
     testApi(project(":compiler:cli-common"))
     testApi(project(":compiler:frontend.java"))
     testImplementation(project(":compiler:fir:plugin-utils"))
-    testApi(projectTests(":compiler:tests-common")) { // TODO: drop this, it's based on JUnit4
-        exclude(group = "com.nordstrom.tools", module = "junit-foundation")
+    testApi(testFixtures(project(":compiler:tests-common"))) { // TODO: drop this, it's based on JUnit4
+        if (this is ProjectDependency) {
+            exclude(group = "com.nordstrom.tools", module = "junit-foundation")
+        }
     }
     testApi(platform(libs.junit.bom))
     testImplementation(libs.junit.jupiter.api)

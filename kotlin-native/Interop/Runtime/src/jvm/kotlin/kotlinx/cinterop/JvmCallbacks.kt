@@ -259,7 +259,7 @@ internal fun <F : Function<*>> staticCFunctionImpl(function: F, returnType: KTyp
 
 private val invokeMethods = (0 .. 22).map { arity ->
     Class.forName("kotlin.jvm.functions.Function$arity").getMethod("invoke",
-            *Array<Class<*>>(arity) { java.lang.Object::class.java })
+            *Array<Class<*>>(arity) { Any::class.java })
 }
 
 private fun createStaticCFunctionImpl(

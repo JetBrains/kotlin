@@ -14,9 +14,16 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrFieldFakeOverrideSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrFunctionFakeOverrideSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrPropertyFakeOverrideSymbol
 import org.jetbrains.kotlin.ir.types.IrSimpleType
+import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.classOrNull
+import org.jetbrains.kotlin.ir.types.isAny
+import org.jetbrains.kotlin.ir.types.isNullableAny
+import org.jetbrains.kotlin.ir.types.makeNotNull
 import org.jetbrains.kotlin.ir.util.DeepCopyIrTreeWithSymbols
 import org.jetbrains.kotlin.ir.util.SymbolRemapper
 import org.jetbrains.kotlin.ir.util.constructedClass
+import org.jetbrains.kotlin.ir.util.isClass
+import org.jetbrains.kotlin.ir.util.isInterface
 import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.utils.memoryOptimizedMap
 import org.jetbrains.kotlin.utils.memoryOptimizedMapNotNull
@@ -120,7 +127,7 @@ internal open class ActualizerVisitor(
             insideDeclarationWithOptionalExpectation =
                 oldInsideDeclarationWithOptionalExpectation || declaration.containsOptionalExpectation()
             if (declaration.isExpect && !insideDeclarationWithOptionalExpectation) return@also
-            it.superTypes = it.superTypes.map { superType -> superType.remapType() }
+            it.superTypes = it.remappedSuperTypes()
             it.transformChildren(this, null)
             it.actualizeAnnotations()
             it.valueClassRepresentation = it.valueClassRepresentation?.mapUnderlyingType { type ->
@@ -178,7 +185,7 @@ internal open class ActualizerVisitor(
 
     override fun visitTypeParameter(declaration: IrTypeParameter): IrTypeParameter =
         declaration.also {
-            it.superTypes = it.superTypes.map { superType -> superType.remapType() }
+            it.superTypes = it.remappedSuperTypes()
             it.transformChildren(this, null)
             it.actualizeAnnotations()
         }
@@ -248,6 +255,66 @@ internal open class ActualizerVisitor(
         }
         if (newAnnotations.size != annotations.size) {
             annotations = newAnnotations
+        }
+    }
+
+    private fun IrClass.remappedSuperTypes(): List<IrType> =
+        remappedSuperTypes(superTypes, this)
+
+    private fun IrTypeParameter.remappedSuperTypes(): List<IrType> =
+        remappedSuperTypes(superTypes)
+
+    /**
+     * Function is used to keep klibs sufficient if [org.jetbrains.kotlin.config.LanguageFeature.AllowAnyAsAnActualTypeForExpectInterface] is turned on
+     * For the case, when some `expect` interface was actualized as [Any] we want to ensure that:
+     * - Each [IrClass] with CLASS kind has only one class in its superTypes list
+     * - Each [IrTypeParameter] has no multiple classes constraints and has correct nullability in its constraints
+     */
+    private fun remappedSuperTypes(superTypes: List<IrType>, ownerClass: IrClass? = null): List<IrType> = buildList {
+        var indexOfActualizedAny = -1
+        var isThereAnyOtherClass = false
+
+        superTypes.forEachIndexed { index, superType ->
+            val actualizedSuperType = superType.remapType().also(::add)
+
+            if (actualizedSuperType.isAny() || actualizedSuperType.isNullableAny()) {
+                indexOfActualizedAny = index
+            } else if (actualizedSuperType.classOrNull?.owner?.isClass == true) {
+                isThereAnyOtherClass = true
+            }
+        }
+
+        /*
+          We do want to remove [Any] from the superTypes list when:
+          - There are more classes than [Any]
+          - There are other types in an interface superTypes list
+          - There are superTypes of an [IrTypeParameter] where [Any] is not an alone constraint
+        */
+        if (indexOfActualizedAny == -1 || size == 1 || ownerClass?.isInterface == false && !isThereAnyOtherClass)
+            return@buildList
+
+        val actualizedAny = removeAt(indexOfActualizedAny)
+
+        /*
+          This nullability normalization is required for normalizing nullabilities after not nullable [Any] is removed. For example,
+          ```kotlin
+          // commonMain
+          open class Foo
+          interface SomeInterface
+
+          fun <T> foo(x: T): T where T: SomeInterface, T: Foo? = x
+
+          // jvmMain
+          actual typealias SomeInterface = Any
+
+          fun main() =
+            println(foo<Foo?>(null)) // <- should not be allowed after the normalization
+          ```
+        */
+        if (ownerClass == null && actualizedAny.isAny()) {
+            for (i in indices) {
+                this[i] = this[i].makeNotNull()
+            }
         }
     }
 }

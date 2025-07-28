@@ -1,5 +1,5 @@
 // APPROXIMATE_TYPE
-interface T
+interfa<caret>ce T
 
 fun foo() {
     open class A : T

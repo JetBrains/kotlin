@@ -26,7 +26,7 @@ import org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationComp
 import org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationIntrinsicsState
 import java.io.File
 
-private val librariesPaths = listOfNotNull(RuntimeLibraryInClasspathTest.coreLibraryPath, RuntimeLibraryInClasspathTest.jsonLibraryPath)
+private val librariesPaths = listOfNotNull(RuntimeLibraryInClasspathUtils.coreLibraryPath, RuntimeLibraryInClasspathUtils.jsonLibraryPath)
 
 class SerializationEnvironmentConfigurator(
     testServices: TestServices,

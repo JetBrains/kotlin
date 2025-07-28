@@ -66,7 +66,7 @@ class AllPublicVisibilityTransformer(session: FirSession) : FirStatusTransformer
             it.annotationTypeRef.coneType.classLikeLookupTagIfAny?.classId == AllPublicClassId
         } as? FirAnnotationCall ?: return null
         val argument = annotation.arguments.firstOrNull() as? FirPropertyAccessExpression ?: return null
-        val reference = argument.calleeReference as? FirNamedReference ?: return null
+        val reference = argument.calleeReference
         return when (reference.name) {
             PublicName -> Visibilities.Public
             InternalName -> Visibilities.Internal

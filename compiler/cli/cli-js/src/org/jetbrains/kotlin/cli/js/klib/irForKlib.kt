@@ -78,7 +78,7 @@ fun generateIrForKlibSerialization(
             partialLinkageSupport = createPartialLinkageSupportForLinker(
                 partialLinkageConfig = configuration.partialLinkageConfig,
                 builtIns = psi2IrContext.irBuiltIns,
-                messageCollector = messageCollector
+                messageCollector = messageCollector,
             ),
             ICData(icData.map { it.irData!! }, containsErrorCode = false),
             stubGenerator = stubGenerator

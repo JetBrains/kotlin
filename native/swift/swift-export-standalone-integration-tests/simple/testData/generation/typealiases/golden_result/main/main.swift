@@ -27,7 +27,7 @@ public typealias sealedClass = main.SEALED
 public protocol OUTSIDE_PROTO: KotlinRuntime.KotlinBase {
 }
 @objc(_OUTSIDE_PROTO)
-protocol _OUTSIDE_PROTO {
+package protocol _OUTSIDE_PROTO {
 }
 open class ABSTRACT_CLASS: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
     package init() {
@@ -337,7 +337,7 @@ open class SEALED: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged
                 return main.SEALED.O.__createClassWrapper(externalRCRef: SEALED_O_get())
             }
         }
-        private override init() {
+        private init() {
             fatalError()
         }
         package override init(
@@ -346,9 +346,6 @@ open class SEALED: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged
         ) {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
         }
-    }
-    package init() {
-        fatalError()
     }
     package override init(
         __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
@@ -401,11 +398,11 @@ public func produce_closure() -> main.closure {
         return { nativeBlock() }
     }()
 }
-public extension main.OUTSIDE_PROTO where Self : KotlinRuntimeSupport._KotlinBridged {
+extension main.OUTSIDE_PROTO where Self : KotlinRuntimeSupport._KotlinBridged {
 }
 extension KotlinRuntimeSupport._KotlinExistential: main.OUTSIDE_PROTO where Wrapped : main._OUTSIDE_PROTO {
 }
-public extension ExportedKotlinPackages.typealiases.inner {
+extension ExportedKotlinPackages.typealiases.inner {
     public typealias Foo = ExportedKotlinPackages.typealiases.Foo
     public typealias LargeInteger = Swift.Int64
     public final class Bar: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
@@ -423,7 +420,7 @@ public extension ExportedKotlinPackages.typealiases.inner {
         }
     }
 }
-public extension ExportedKotlinPackages.typealiases {
+extension ExportedKotlinPackages.typealiases {
     public typealias Bar = ExportedKotlinPackages.typealiases.inner.Bar
     public typealias SmallInteger = Swift.Int16
     public final class Foo: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
