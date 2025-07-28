@@ -1051,31 +1051,26 @@ private fun throwExceptionOrInvalid(throwException: Boolean, message: String = "
 }
 
 private fun parseDuration(value: String, strictIso: Boolean, throwException: Boolean = true): Duration {
-    var length = value.length
+    val length = value.length
     if (length == 0) return throwExceptionOrInvalid(throwException, "The string is empty")
     var index = 0
-    var result = Duration.ZERO
     val infinityString = "Infinity"
     when (value[index]) {
         '+', '-' -> index++
     }
     val hasSign = index > 0
-    val isNegative = hasSign && value.startsWith('-')
-    when {
-        length <= index ->
-            return throwExceptionOrInvalid(throwException, "No components")
-        value[index] == 'P' -> result = parseIsoStringFormat(value, index, length, throwException)
+    val result = when {
+        length <= index -> return throwExceptionOrInvalid(throwException, "No components")
+        value[index] == 'P' -> parseIsoStringFormat(value, index, length, throwException)
             .also { if (it == Duration.INVALID) return Duration.INVALID }
-        strictIso ->
-            return throwExceptionOrInvalid(throwException)
+        strictIso -> return throwExceptionOrInvalid(throwException)
         value.regionMatches(index, infinityString, 0, length = maxOf(length - index, infinityString.length), ignoreCase = true) -> {
-            result = Duration.INFINITE
+            Duration.INFINITE
         }
-        else -> {
-            result = parseDefaultStringFormat(value, index, length, hasSign, throwException)
-                .also { if (it == Duration.INVALID) return Duration.INVALID }
-        }
+        else -> parseDefaultStringFormat(value, index, length, hasSign, throwException)
+            .also { if (it == Duration.INVALID) return Duration.INVALID }
     }
+    val isNegative = hasSign && value.startsWith('-')
     return if (isNegative) -result else result
 }
 
