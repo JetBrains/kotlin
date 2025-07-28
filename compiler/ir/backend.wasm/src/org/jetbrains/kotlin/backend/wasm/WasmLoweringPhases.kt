@@ -304,16 +304,16 @@ private val localDeclarationsLoweringPhase = makeIrModulePhase(
     prerequisite = setOf(sharedVariablesLoweringPhase, localDelegatedPropertiesLoweringPhase)
 )
 
-private val localClassExtractionPhase = makeIrModulePhase(
-    ::LocalClassPopupLowering,
-    name = "LocalClassExtractionPhase",
+private val localDeclarationExtractionPhase = makeIrModulePhase(
+    ::LocalDeclarationPopupLowering,
+    name = "LocalDeclarationExtractionPhase",
     prerequisite = setOf(localDeclarationsLoweringPhase)
 )
 
 private val staticCallableReferenceLoweringPhase = makeIrModulePhase(
     ::WasmStaticCallableReferenceLowering,
     name = "WasmStaticCallableReferenceLowering",
-    prerequisite = setOf(callableReferencePhase, localClassExtractionPhase)
+    prerequisite = setOf(callableReferencePhase, localDeclarationExtractionPhase)
 )
 
 private val innerClassesLoweringPhase = makeIrModulePhase<WasmBackendContext>(
@@ -402,7 +402,7 @@ private val delegateToPrimaryConstructorLoweringPhase = makeIrModulePhase(
 private val initializersLoweringPhase = makeIrModulePhase(
     ::InitializersLowering,
     name = "InitializersLowering",
-    prerequisite = setOf(primaryConstructorLoweringPhase, localClassExtractionPhase)
+    prerequisite = setOf(primaryConstructorLoweringPhase, localDeclarationExtractionPhase)
 )
 
 private val initializersCleanupLoweringPhase = makeIrModulePhase(
@@ -475,7 +475,7 @@ private val builtInsLoweringPhase = makeIrModulePhase(
 private val associatedObjectsLowering = makeIrModulePhase(
     ::AssociatedObjectsLowering,
     name = "AssociatedObjectsLowering",
-    prerequisite = setOf(localClassExtractionPhase)
+    prerequisite = setOf(localDeclarationExtractionPhase)
 )
 
 private val objectDeclarationLoweringPhase = makeIrModulePhase(
@@ -649,7 +649,7 @@ fun getWasmLowerings(
         singleAbstractMethodPhase,
         localDelegatedPropertiesLoweringPhase,
         localDeclarationsLoweringPhase,
-        localClassExtractionPhase,
+        localDeclarationExtractionPhase,
         staticCallableReferenceLoweringPhase,
         innerClassesLoweringPhase,
         innerClassesMemberBodyLoweringPhase,

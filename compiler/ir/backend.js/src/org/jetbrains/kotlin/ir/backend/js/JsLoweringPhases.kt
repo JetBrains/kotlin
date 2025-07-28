@@ -396,9 +396,9 @@ private val localDeclarationsLoweringPhase = makeIrModulePhase(
     prerequisite = setOf(sharedVariablesLoweringPhase, localDelegatedPropertiesLoweringPhase)
 )
 
-private val localClassExtractionPhase = makeIrModulePhase(
-    { context -> LocalClassPopupLowering(context) },
-    name = "LocalClassExtractionPhase",
+private val localDeclarationExtractionPhase = makeIrModulePhase(
+    { context -> LocalDeclarationPopupLowering(context) },
+    name = "LocalDeclarationExtractionPhase",
     prerequisite = setOf(localDeclarationsLoweringPhase)
 )
 
@@ -523,7 +523,7 @@ private val initializersLoweringPhase = makeIrModulePhase(
     ::InitializersLowering,
     name = "InitializersLowering",
     prerequisite = setOf(
-        enumClassConstructorLoweringPhase, primaryConstructorLoweringPhase, annotationConstructorLowering, localClassExtractionPhase
+        enumClassConstructorLoweringPhase, primaryConstructorLoweringPhase, annotationConstructorLowering, localDeclarationExtractionPhase
     )
 )
 
@@ -772,7 +772,7 @@ fun getJsLowerings(
     enumClassConstructorBodyLoweringPhase,
     localDelegatedPropertiesLoweringPhase,
     localDeclarationsLoweringPhase,
-    localClassExtractionPhase,
+    localDeclarationExtractionPhase,
     innerClassesLoweringPhase,
     innerClassesMemberBodyLoweringPhase,
     innerClassConstructorCallsLoweringPhase,

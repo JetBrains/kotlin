@@ -209,7 +209,7 @@ private val localFunctionsPhase = createFileLoweringPhase(
         op = { context, irFile ->
             LocalDelegatedPropertiesLowering().lower(irFile)
             LocalDeclarationsLowering(context).lower(irFile)
-            LocalClassPopupLowering(context).lower(irFile)
+            LocalDeclarationPopupLowering(context).lower(irFile)
         },
         name = "LocalFunctions",
         prerequisite = setOf(sharedVariablesPhase, inventNamesForInteropBridgesPhase) // TODO: add "soft" dependency on inventNamesForLocalClasses
