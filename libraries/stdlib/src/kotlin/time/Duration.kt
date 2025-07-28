@@ -1110,7 +1110,7 @@ private inline fun parseIsoStringFormat(
             val whole = value.parseOverLongIsoComponentInPlace(componentStart, dotIndex)
                 .also { if (it == Duration.INVALID_RAW_VALUE) return throwExceptionOrInvalid(throwException) }
             result = result.plus(whole.toDuration(unit), throwException).onInvalid { return Duration.INVALID }
-            val fractional = value.parseDoubleInPlace(dotIndex, componentEnd) ?: return throwExceptionOrInvalid(throwException)
+            val fractional = value.parseFractionalPartOfDoubleInPlace(dotIndex + 1, componentEnd) ?: return throwExceptionOrInvalid(throwException)
             result = result.plus(fractional.toDuration(unit), throwException).onInvalid { return Duration.INVALID }
         } else {
             val componentValue = value.parseOverLongIsoComponentInPlace(componentStart, componentEnd)
@@ -1169,7 +1169,7 @@ private inline fun parseDefaultStringFormat(
                     ) return throwExceptionOrInvalid(throwException)
                 }
             result = result.plus(whole.toDuration(unit), throwException).onInvalid { return Duration.INVALID }
-            val fractional = value.parseDoubleInPlace(dotIndex, componentEnd) ?: return throwExceptionOrInvalid(throwException)
+            val fractional = value.parseFractionalPartOfDoubleInPlace(dotIndex + 1, componentEnd) ?: return throwExceptionOrInvalid(throwException)
             result = result.plus(fractional.toDuration(unit), throwException).onInvalid { return Duration.INVALID }
             if (index < length) return throwExceptionOrInvalid(throwException, "Fractional component must be last")
         } else {
@@ -1248,46 +1248,29 @@ private fun String.parseLongInPlace(start: Int, end: Int): Long {
     return if (isNegative) -result else result
 }
 
-private fun String.parseDoubleInPlace(start: Int, end: Int): Double? {
+private fun String.parseFractionalPartOfDoubleInPlace(start: Int, end: Int): Double? {
     if (start >= end) return null
 
     var index = start
-    val firstChar = this[start]
-    when (firstChar) {
-        '+', '-' -> index++
-    }
-    val isNegative = firstChar == '-'
-
-    if (index >= end) return null
+    if (index > end) return null
 
     var result = 0.0
-    var inFraction = false
     var fractionMultiplier = 0.1
-    var hasDot = false
 
     while (index < end) {
         val ch = this[index]
         when (ch) {
-            '.' -> {
-                if (hasDot) return null
-                hasDot = true
-                inFraction = true
-            }
             in '0'..'9' -> {
                 val digit = ch - '0'
-                if (inFraction) {
-                    result += digit * fractionMultiplier
-                    fractionMultiplier *= 0.1
-                } else {
-                    result = result * 10 + digit
-                }
+                result += digit * fractionMultiplier
+                fractionMultiplier *= 0.1
             }
             else -> return null
         }
         index++
     }
 
-    return if (isNegative) -result else result
+    return result
 }
 
 private fun String.parseOverLongIsoComponentInPlace(start: Int, end: Int): Long {
