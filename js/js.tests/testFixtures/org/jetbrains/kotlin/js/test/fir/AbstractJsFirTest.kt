@@ -163,7 +163,7 @@ open class AbstractFirJsCodegenSplittingInlineWithInlinedFunInKlibTest : Abstrac
         super.configure(builder)
         @OptIn(TestInfrastructureInternals::class)
         builder.useModuleStructureTransformers(
-            SplittingModuleTransformerForBoxTests()
+            ::SplittingModuleTransformerForBoxTests
         )
     }
 }
