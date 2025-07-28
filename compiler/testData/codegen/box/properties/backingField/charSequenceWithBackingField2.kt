@@ -6,6 +6,7 @@
 
 class Base {
     val x: CharSequence
+        @Suppress("WRONG_MODIFIER_TARGET")
         internal field: String = "OK"
 
     val s: String get() = x

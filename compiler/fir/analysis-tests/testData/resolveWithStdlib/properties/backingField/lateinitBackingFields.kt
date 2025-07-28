@@ -1,6 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 var that: Int
-    lateinit field: String
+    <!WRONG_MODIFIER_TARGET!>lateinit<!> field: String
     get() = field.length
     set(value) {
         field = value.toString()
@@ -20,16 +20,16 @@ fun test() {
     }
 
 val something: Number
-    <!LATEINIT_FIELD_IN_VAL_PROPERTY, LATEINIT_PROPERTY_FIELD_DECLARATION_WITH_INITIALIZER!>lateinit<!> field = 4
+    <!LATEINIT_FIELD_IN_VAL_PROPERTY, LATEINIT_PROPERTY_FIELD_DECLARATION_WITH_INITIALIZER, WRONG_MODIFIER_TARGET!>lateinit<!> field = 4
 
 <!INAPPLICABLE_LATEINIT_MODIFIER, INAPPLICABLE_LATEINIT_MODIFIER!>lateinit<!> var oneMore: Number
-    <!LATEINIT_PROPERTY_FIELD_DECLARATION_WITH_INITIALIZER!>lateinit<!> field = 4
+    <!LATEINIT_PROPERTY_FIELD_DECLARATION_WITH_INITIALIZER, WRONG_MODIFIER_TARGET!>lateinit<!> field = 4
     set(value) {
         field = 10
     }
 
 var thingWithNullableField: Number
-    <!LATEINIT_NULLABLE_BACKING_FIELD!>lateinit<!> field: String?
+    <!LATEINIT_NULLABLE_BACKING_FIELD, WRONG_MODIFIER_TARGET!>lateinit<!> field: String?
     get() = 20
     set(value) {
         field = value.toString()

@@ -5,6 +5,7 @@
 // IGNORE_BACKEND_K1: JVM_IR, JS_IR, JS_IR_ES6, WASM
 
 var that: Int
+    @Suppress("WRONG_MODIFIER_TARGET")
     lateinit field: String
     get() = field.length
     set(value) {

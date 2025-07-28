@@ -14,6 +14,8 @@ FILE fqName:<root> fileName:/backingFieldVisibility.kt
               receiver: GET_VAR '<this>: <root>.A declared in <root>.A.<get-a>' type=<root>.A origin=null
     PROPERTY name:b visibility:public modality:FINAL [val]
       FIELD PROPERTY_BACKING_FIELD name:b type:kotlin.Int visibility:internal [final]
+        annotations:
+          Suppress(names = ["WRONG_MODIFIER_TARGET"] type=kotlin.Array<out kotlin.String> varargElementType=kotlin.String)
         EXPRESSION_BODY
           CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PLUS
             ARG <this>: CALL 'public final fun <get-a> (): kotlin.Number declared in <root>.A' type=kotlin.Int origin=GET_PROPERTY

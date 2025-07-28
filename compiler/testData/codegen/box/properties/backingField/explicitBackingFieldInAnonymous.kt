@@ -26,6 +26,7 @@ fun test1(): String? {
 fun test2(): String? {
     class Local : I {
         final override val number: Number
+            @Suppress("WRONG_MODIFIER_TARGET")
             internal field = 42
     }
 
