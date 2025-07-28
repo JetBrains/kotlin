@@ -1252,8 +1252,6 @@ private fun String.parseFractionalPartOfDoubleInPlace(start: Int, end: Int): Dou
     if (start >= end) return null
 
     var index = start
-    if (index > end) return null
-
     var result = 0.0
     var fractionMultiplier = 0.1
 
