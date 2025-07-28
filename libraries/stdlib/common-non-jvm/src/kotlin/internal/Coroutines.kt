@@ -9,3 +9,6 @@ import kotlin.coroutines.Continuation
 
 @PublishedApi
 internal expect suspend fun <T> getContinuation(): Continuation<T>
+
+@PublishedApi
+internal expect suspend fun <T> returnIfSuspended(argument: Any?): T

@@ -8,12 +8,14 @@ package kotlin.js
 
 import kotlin.coroutines.*
 import kotlin.internal.getContinuation
+import kotlin.internal.returnIfSuspended
 
 // TODO: remove after compiler bootstrap
 @PublishedApi
 internal fun <T> getContinuation(): Continuation<T> { throw Exception("Implemented as intrinsic") }
 // Do we really need this intrinsic in JS?
 
+// TODO: remove after compiler bootstrap
 @PublishedApi
 @Suppress("UNCHECKED_CAST")
 internal suspend fun <T> returnIfSuspended(argument: Any?): T {
