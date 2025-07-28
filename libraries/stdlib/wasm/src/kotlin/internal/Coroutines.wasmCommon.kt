@@ -5,8 +5,18 @@
 
 package kotlin.internal
 
+import kotlin.annotation.AnnotationTarget.CLASS
+import kotlin.annotation.AnnotationTarget.CONSTRUCTOR
+import kotlin.annotation.AnnotationTarget.FILE
+import kotlin.annotation.AnnotationTarget.FUNCTION
+import kotlin.annotation.AnnotationTarget.PROPERTY
 import kotlin.coroutines.Continuation
 
+@Target(FILE, CLASS, FUNCTION, CONSTRUCTOR, PROPERTY)
+@Retention(AnnotationRetention.BINARY)
+internal annotation class ExcludedFromCodegen
+
+@ExcludedFromCodegen
 @PublishedApi
 internal actual suspend fun <T> getContinuation(): Continuation<T> =
     kotlin.wasm.internal.getContinuation()

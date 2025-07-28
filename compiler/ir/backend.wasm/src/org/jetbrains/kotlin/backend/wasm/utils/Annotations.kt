@@ -31,7 +31,7 @@ private val jsPrimitiveFqName = FqName("kotlin.wasm.internal.JsPrimitive")
 private val wasmExportFqName = FqName("kotlin.wasm.WasmExport")
 
 fun IrAnnotationContainer.hasExcludedFromCodegenAnnotation(): Boolean =
-    hasAnnotation(excludedFromCodegenFqName)
+    hasAnnotation(excludedFromCodegenFqName) || hasAnnotation(FqName("kotlin.internal.ExcludedFromCodegen"))
 
 fun IrFunction.getWasmImportDescriptor(): WasmImportDescriptor? {
     val annotation = getAnnotation(wasmImportFqName)
