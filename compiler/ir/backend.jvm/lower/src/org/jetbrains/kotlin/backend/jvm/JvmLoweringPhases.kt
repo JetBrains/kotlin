@@ -25,7 +25,7 @@ private val jvmFilePhases = createFilePhases<JvmBackendContext>(
     ::JvmLateinitLowering,
     ::JvmInventNamesForLocalClasses,
 
-    ::JvmInlineCallableReferenceToLambdaPhase,
+    ::InlineCallableReferenceToLambdaPhase,
     ::DirectInvokeLowering,
     ::FunctionReferenceLowering,
 
