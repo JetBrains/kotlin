@@ -6576,7 +6576,6 @@ final fun <#A: kotlin/Any?> kotlin.comparisons/maxOf(#A, kotlin/Array<out #A>...
 final fun <#A: kotlin/Any?> kotlin.comparisons/minOf(#A, #A, #A, kotlin/Comparator<in #A>): #A // kotlin.comparisons/minOf|minOf(0:0;0:0;0:0;kotlin.Comparator<in|0:0>){0§<kotlin.Any?>}[0]
 final fun <#A: kotlin/Any?> kotlin.comparisons/minOf(#A, #A, kotlin/Comparator<in #A>): #A // kotlin.comparisons/minOf|minOf(0:0;0:0;kotlin.Comparator<in|0:0>){0§<kotlin.Any?>}[0]
 final fun <#A: kotlin/Any?> kotlin.comparisons/minOf(#A, kotlin/Array<out #A>..., kotlin/Comparator<in #A>): #A // kotlin.comparisons/minOf|minOf(0:0;kotlin.Array<out|0:0>...;kotlin.Comparator<in|0:0>){0§<kotlin.Any?>}[0]
-final fun <#A: kotlin/Any?> kotlin.internal/getContinuation(): kotlin.coroutines/Continuation<#A> // kotlin.internal/getContinuation|getContinuation(){0§<kotlin.Any?>}[0]
 final fun <#A: kotlin/Any?> kotlin.sequences/emptySequence(): kotlin.sequences/Sequence<#A> // kotlin.sequences/emptySequence|emptySequence(){0§<kotlin.Any?>}[0]
 final fun <#A: kotlin/Any?> kotlin.sequences/iterator(kotlin.coroutines/SuspendFunction1<kotlin.sequences/SequenceScope<#A>, kotlin/Unit>): kotlin.collections/Iterator<#A> // kotlin.sequences/iterator|iterator(kotlin.coroutines.SuspendFunction1<kotlin.sequences.SequenceScope<0:0>,kotlin.Unit>){0§<kotlin.Any?>}[0]
 final fun <#A: kotlin/Any?> kotlin.sequences/sequence(kotlin.coroutines/SuspendFunction1<kotlin.sequences/SequenceScope<#A>, kotlin/Unit>): kotlin.sequences/Sequence<#A> // kotlin.sequences/sequence|sequence(kotlin.coroutines.SuspendFunction1<kotlin.sequences.SequenceScope<0:0>,kotlin.Unit>){0§<kotlin.Any?>}[0]
@@ -9084,6 +9083,7 @@ final inline fun kotlin/ubyteArrayOf(kotlin/UByteArray...): kotlin/UByteArray //
 final inline fun kotlin/uintArrayOf(kotlin/UIntArray...): kotlin/UIntArray // kotlin/uintArrayOf|uintArrayOf(kotlin.UIntArray...){}[0]
 final inline fun kotlin/ulongArrayOf(kotlin/ULongArray...): kotlin/ULongArray // kotlin/ulongArrayOf|ulongArrayOf(kotlin.ULongArray...){}[0]
 final inline fun kotlin/ushortArrayOf(kotlin/UShortArray...): kotlin/UShortArray // kotlin/ushortArrayOf|ushortArrayOf(kotlin.UShortArray...){}[0]
+final suspend fun <#A: kotlin/Any?> kotlin.internal/getContinuation(): kotlin.coroutines/Continuation<#A> // kotlin.internal/getContinuation|getContinuation(){0§<kotlin.Any?>}[0]
 final suspend inline fun <#A: kotlin/Any?> kotlin.coroutines.intrinsics/suspendCoroutineUninterceptedOrReturn(crossinline kotlin/Function1<kotlin.coroutines/Continuation<#A>, kotlin/Any?>): #A // kotlin.coroutines.intrinsics/suspendCoroutineUninterceptedOrReturn|suspendCoroutineUninterceptedOrReturn(kotlin.Function1<kotlin.coroutines.Continuation<0:0>,kotlin.Any?>){0§<kotlin.Any?>}[0]
 final suspend inline fun <#A: kotlin/Any?> kotlin.coroutines/suspendCoroutine(crossinline kotlin/Function1<kotlin.coroutines/Continuation<#A>, kotlin/Unit>): #A // kotlin.coroutines/suspendCoroutine|suspendCoroutine(kotlin.Function1<kotlin.coroutines.Continuation<0:0>,kotlin.Unit>){0§<kotlin.Any?>}[0]
 
@@ -12545,9 +12545,6 @@ final fun <#A: kotlin/Any?> kotlin.native.internal/createUninitializedArray(kotl
 
 // Targets: [native]
 final fun <#A: kotlin/Any?> kotlin.native.internal/createUninitializedInstance(): #A // kotlin.native.internal/createUninitializedInstance|createUninitializedInstance(){0§<kotlin.Any?>}[0]
-
-// Targets: [native]
-final fun <#A: kotlin/Any?> kotlin.native.internal/getContinuation(): kotlin.coroutines/Continuation<#A> // kotlin.native.internal/getContinuation|getContinuation(){0§<kotlin.Any?>}[0]
 
 // Targets: [native]
 final fun <#A: kotlin/Any?> kotlin.native.internal/isSubtype(kotlin.native.internal/NativePtr): kotlin/Boolean // kotlin.native.internal/isSubtype|isSubtype(kotlin.native.internal.NativePtr){0§<kotlin.Any?>}[0]
