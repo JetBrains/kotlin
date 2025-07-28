@@ -196,18 +196,17 @@ fun KaptOptions.logString(additionalInfo: String = "") = buildString {
 
     appendLine("Annotation processing mode: ${mode.stringValue}")
     appendLine("Memory leak detection mode: ${detectMemoryLeaks.stringValue}")
-    KaptFlag.values().forEach { appendLine(it.description + ": " + this@logString[it]) }
+    for (flag in KaptFlag.entries) {
+        appendLine(flag.description + ": " + get(flag))
+    }
 
     appendLine("Project base dir: $projectBaseDir")
-    appendLine("Compile classpath: " + compileClasspath.joinToString())
-    appendLine("Java source roots: " + javaSourceRoots.joinToString())
 
     appendLine("Sources output directory: $sourcesOutputDir")
     appendLine("Class files output directory: $classesOutputDir")
     appendLine("Stubs output directory: $stubsOutputDir")
     appendLine("Incremental data output directory: $incrementalDataOutputDir")
 
-    appendLine("Annotation processing classpath: " + processingClasspath.joinToString())
     appendLine("Annotation processors: " + processors.joinToString())
 
     appendLine("AP options: $processingOptions")
