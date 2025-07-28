@@ -1114,64 +1114,72 @@ private fun parseDuration(value: String, strictIso: Boolean, throwException: Boo
             result = Duration.INFINITE
         }
         else -> {
-            // parse default string format
-            var prevUnit: DurationUnit? = null
-            var afterFirst = false
-            var allowSpaces = !hasSign
-            if (hasSign && value[index] == '(' && value.last() == ')') {
-                allowSpaces = true
-                if (++index == --length) return throwExceptionOrInvalid(throwException, "No components")
-            }
-            while (index < length) {
-                if (afterFirst && allowSpaces) {
-                    index = value.skipWhile(index) { it == ' ' }
-                }
-                afterFirst = true
-                val componentStart = index
-                val componentEnd = value.skipWhile(index) { it in '0'..'9' || it == '.' }
-                if (componentEnd == componentStart) return throwExceptionOrInvalid(throwException)
-                index = componentEnd
-                val unitStart = index
-                val unitEnd = value.skipWhile(index) { it in 'a'..'z' }
-                index = unitEnd
-                val unit = durationUnitByShortNameInPlace(value, unitStart, unitEnd, throwException) ?: return Duration.INVALID
-                if (prevUnit != null && prevUnit <= unit) return throwExceptionOrInvalid(throwException, "Unexpected order of duration components")
-                prevUnit = unit
-                val dotIndex = value.findDot(componentStart, componentEnd)
-                if (dotIndex >= 0 && value.findDot(dotIndex + 1, componentEnd) >= 0) {
-                    return throwExceptionOrInvalid(throwException)
-                }
-                if (dotIndex >= 0) {
-                    val whole = value.parseLongInPlace(componentStart, dotIndex)
-                        .also { if (it == Duration.INVALID_RAW_VALUE) return throwExceptionOrInvalid(throwException) }
-                        .also {
-                            val firstChar = value[componentStart]
-                            if (it == Long.MAX_VALUE && firstChar == '-' ||
-                                it == Long.MIN_VALUE && firstChar != '-'
-                            ) return throwExceptionOrInvalid(throwException)
-                        }
-                    result = result.plus(whole.toDuration(unit), throwException)
-                        .also { if (it == Duration.INVALID) return Duration.INVALID }
-                    val fractional = value.parseDoubleInPlace(dotIndex, componentEnd) ?: return throwExceptionOrInvalid(throwException)
-                    result = result.plus(fractional.toDuration(unit), throwException)
-                        .also { if (it == Duration.INVALID) return Duration.INVALID }
-                    if (index < length) return throwExceptionOrInvalid(throwException, "Fractional component must be last")
-                } else {
-                    val componentValue = value.parseLongInPlace(componentStart, componentEnd)
-                        .also { if (it == Duration.INVALID_RAW_VALUE) return throwExceptionOrInvalid(throwException) }
-                        .also {
-                            val firstChar = value[componentStart]
-                            if (it == Long.MAX_VALUE && firstChar == '-' ||
-                                it == Long.MIN_VALUE && firstChar != '-'
-                            ) return throwExceptionOrInvalid(throwException)
-                        }
-                    result = result.plus(componentValue.toDuration(unit), throwException)
-                        .also { if (it == Duration.INVALID) return Duration.INVALID }
-                }
-            }
+            result = parseDefaultStringFormat(hasSign, value, index, length, throwException)
+                .also { if (it == Duration.INVALID) return Duration.INVALID }
         }
     }
     return if (isNegative) -result else result
+}
+
+private fun parseDefaultStringFormat(hasSign: Boolean, value: String, startIndex: Int, initialLength: Int, throwException: Boolean): Duration {
+    var index = startIndex
+    var length = initialLength
+    var result = Duration.ZERO
+    var prevUnit: DurationUnit? = null
+    var afterFirst = false
+    var allowSpaces = !hasSign
+    if (hasSign && value[index] == '(' && value.last() == ')') {
+        allowSpaces = true
+        if (++index == --length) return throwExceptionOrInvalid(throwException, "No components")
+    }
+    while (index < length) {
+        if (afterFirst && allowSpaces) {
+            index = value.skipWhile(index) { it == ' ' }
+        }
+        afterFirst = true
+        val componentStart = index
+        val componentEnd = value.skipWhile(index) { it in '0'..'9' || it == '.' }
+        if (componentEnd == componentStart) return throwExceptionOrInvalid(throwException)
+        index = componentEnd
+        val unitStart = index
+        val unitEnd = value.skipWhile(index) { it in 'a'..'z' }
+        index = unitEnd
+        val unit = durationUnitByShortNameInPlace(value, unitStart, unitEnd, throwException) ?: return Duration.INVALID
+        if (prevUnit != null && prevUnit <= unit) return throwExceptionOrInvalid(throwException, "Unexpected order of duration components")
+        prevUnit = unit
+        val dotIndex = value.findDot(componentStart, componentEnd)
+        if (dotIndex >= 0 && value.findDot(dotIndex + 1, componentEnd) >= 0) {
+            return throwExceptionOrInvalid(throwException)
+        }
+        if (dotIndex >= 0) {
+            val whole = value.parseLongInPlace(componentStart, dotIndex)
+                .also { if (it == Duration.INVALID_RAW_VALUE) return throwExceptionOrInvalid(throwException) }
+                .also {
+                    val firstChar = value[componentStart]
+                    if (it == Long.MAX_VALUE && firstChar == '-' ||
+                        it == Long.MIN_VALUE && firstChar != '-'
+                    ) return throwExceptionOrInvalid(throwException)
+                }
+            result = result.plus(whole.toDuration(unit), throwException)
+                .also { if (it == Duration.INVALID) return Duration.INVALID }
+            val fractional = value.parseDoubleInPlace(dotIndex, componentEnd) ?: return throwExceptionOrInvalid(throwException)
+            result = result.plus(fractional.toDuration(unit), throwException)
+                .also { if (it == Duration.INVALID) return Duration.INVALID }
+            if (index < length) return throwExceptionOrInvalid(throwException, "Fractional component must be last")
+        } else {
+            val componentValue = value.parseLongInPlace(componentStart, componentEnd)
+                .also { if (it == Duration.INVALID_RAW_VALUE) return throwExceptionOrInvalid(throwException) }
+                .also {
+                    val firstChar = value[componentStart]
+                    if (it == Long.MAX_VALUE && firstChar == '-' ||
+                        it == Long.MIN_VALUE && firstChar != '-'
+                    ) return throwExceptionOrInvalid(throwException)
+                }
+            result = result.plus(componentValue.toDuration(unit), throwException)
+                .also { if (it == Duration.INVALID) return Duration.INVALID }
+        }
+    }
+    return result
 }
 
 private fun String.findDot(start: Int, end: Int): Int {
