@@ -8,14 +8,67 @@ import org.jetbrains.dokka.base.testApi.testRunner.BaseAbstractTest
 import org.jetbrains.dokka.links.DRI
 import org.jetbrains.dokka.model.DModule
 import org.jetbrains.dokka.model.childrenOfType
+import org.jetbrains.dokka.model.dfs
+import org.jetbrains.dokka.model.DFunction
 import org.jetbrains.dokka.model.doc.*
 import org.jetbrains.dokka.model.firstChildOfType
 import org.jetbrains.dokka.model.firstMemberOfType
 import utils.text
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertNull
 
 class JavadocParserTest : BaseAbstractTest() {
+
+    @Test
+    fun `should not fail for javadoc links with type parameters #4117`() {
+        val configuration = dokkaConfiguration {
+            sourceSets {
+                sourceSet {
+                    sourceRoots = listOf("src/main/java")
+                }
+            }
+        }
+
+        testInline(
+            """
+            /src/main/java/sample/Foo.java
+            import java.util.List;
+
+            public class Foo {
+                /**
+                 * {@link List<I>}
+                 * @see List<I>
+                 */
+                public <I> List<I> foo() {
+                    return null;
+                }
+            }
+            """.trimIndent(),
+            configuration
+        ) {
+            documentablesMergingStage = {
+                val fn = it.dfs {
+                    it.name == "foo"
+                } as DFunction
+                val  description = fn.documentation.values.single().children[0] as Description
+                val  see = fn.documentation.values.single().children[1] as See
+
+                with(description.dfs { it is DocumentationLink } as DocumentationLink)  {
+                    assertEquals("List", dri.classNames)
+                    assertEquals("java.util", dri.packageName)
+                    assertNull(dri.callable)
+                    assertEquals("List", this.text())
+                }
+                with(see)  {
+                    assertEquals("List", address?.classNames)
+                    assertEquals("java.util", address?.packageName)
+                    assertNull(address?.callable)
+                    assertEquals("java.util.List", name)
+                }
+            }
+        }
+    }
 
     private fun performJavadocTest(testOperation: (DModule) -> Unit) {
         val configuration = dokkaConfiguration {
