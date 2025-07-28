@@ -673,6 +673,12 @@ public class KaptStubConverterTestGenerated extends AbstractKaptStubConverterTes
   }
 
   @Test
+  @TestMetadata("nestedClassInAnnotation.kt")
+  public void testNestedClassInAnnotation() {
+    runTest("plugins/kapt/kapt-compiler/testData/converter/nestedClassInAnnotation.kt");
+  }
+
+  @Test
   @TestMetadata("nestedClasses.kt")
   public void testNestedClasses() {
     runTest("plugins/kapt/kapt-compiler/testData/converter/nestedClasses.kt");

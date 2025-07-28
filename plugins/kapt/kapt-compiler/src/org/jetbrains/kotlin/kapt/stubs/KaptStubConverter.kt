@@ -49,6 +49,7 @@ import org.jetbrains.kotlin.fir.references.impl.FirPropertyFromParameterResolved
 import org.jetbrains.kotlin.fir.references.resolved
 import org.jetbrains.kotlin.fir.references.toResolvedEnumEntrySymbol
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedError
+import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnresolvedNameError
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
@@ -1570,26 +1571,32 @@ class KaptStubConverter(val kaptContext: KaptContextForStubGeneration, val gener
 
     private fun convertFirType(originalType: ConeKotlinType): JCExpression? {
         val type = originalType.fullyExpandedType(kaptContext.firSession!!)
-        val fqName = when (type) {
-            is ConeErrorType -> (type.diagnostic as? ConeUnresolvedError)?.qualifier
-            is ConeLookupTagBasedType -> {
-                val classId = (type.lookupTag as? ConeClassLikeLookupTag)?.classId ?: return null
-                val fqName = classId.asSingleFqName()
-                if (classId.packageFqName == StandardNames.BUILT_INS_PACKAGE_FQ_NAME) {
-                    val primitiveType = PrimitiveType.getByShortName(classId.relativeClassName.asString())
-                    if (primitiveType != null) {
-                        return treeMaker.Type(Type.getType(JvmPrimitiveType.get(primitiveType).desc))
-                    }
-                    val primitiveArrayType = PrimitiveType.getByShortArrayName(classId.relativeClassName.asString())
-                    if (primitiveArrayType != null) {
-                        return treeMaker.Type(Type.getType("[" + JvmPrimitiveType.get(primitiveArrayType).desc))
-                    }
-                }
-                JavaToKotlinClassMap.mapKotlinToJava(fqName.toUnsafe())?.asSingleFqName()?.asString() ?: fqName.asString()
+        if (type is ConeErrorType) {
+            val diagnostic = type.diagnostic as? ConeUnresolvedError
+            val simpleName = diagnostic?.qualifier ?: return null
+            val outerType = (diagnostic as? ConeUnresolvedNameError)?.receiverType
+            return if (outerType == null) {
+                treeMaker.SimpleName(simpleName)
+            } else {
+                treeMaker.Select(convertFirType(outerType), treeMaker.name(simpleName))
             }
-            else -> null
-        } ?: return null
-        return treeMaker.FqName(fqName)
+        }
+        if (type !is ConeLookupTagBasedType) return null
+        val classId = (type.lookupTag as? ConeClassLikeLookupTag)?.classId ?: return null
+        val fqName = classId.asSingleFqName()
+        if (classId.packageFqName == StandardNames.BUILT_INS_PACKAGE_FQ_NAME) {
+            val primitiveType = PrimitiveType.getByShortName(classId.relativeClassName.asString())
+            if (primitiveType != null) {
+                return treeMaker.Type(Type.getType(JvmPrimitiveType.get(primitiveType).desc))
+            }
+            val primitiveArrayType = PrimitiveType.getByShortArrayName(classId.relativeClassName.asString())
+            if (primitiveArrayType != null) {
+                return treeMaker.Type(Type.getType("[" + JvmPrimitiveType.get(primitiveArrayType).desc))
+            }
+        }
+        return treeMaker.FqName(
+            JavaToKotlinClassMap.mapKotlinToJava(fqName.toUnsafe())?.asSingleFqName()?.asString() ?: fqName.asString()
+        )
     }
 
     private fun convertAnnotationArgumentWithName(
