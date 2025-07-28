@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.backend.jvm.lower
 
 import org.jetbrains.kotlin.backend.common.ScopeWithIr
-import org.jetbrains.kotlin.backend.common.lower.LocalClassPopupLowering
+import org.jetbrains.kotlin.backend.common.lower.LocalDeclarationPopupLowering
 import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.ir.findInlineLambdas
@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.ir.declarations.*
  * Moves local classes from field initializers and anonymous init blocks into the containing class.
  */
 @PhaseDescription(name = "JvmLocalClassExtraction")
-internal class JvmLocalClassPopupLowering(context: JvmBackendContext) : LocalClassPopupLowering(context) {
+internal class JvmLocalDeclarationPopupLowering(context: JvmBackendContext) : LocalDeclarationPopupLowering(context) {
     private val inlineLambdaToScope = mutableMapOf<IrFunction, IrDeclaration>()
 
     override fun lower(irFile: IrFile) {

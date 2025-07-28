@@ -64,7 +64,7 @@ private var IrSymbolOwner.scopeWithCounter: ScopeWithCounter? by irAttribute(cop
  * (Note: in the JVM backend, we don't remap captured type parameters inside local declarations for reasons described
  * in [this commit](https://github.com/JetBrains/kotlin/commit/9ce6fd9a15618b856b64efd449799f2b5c379eb5).)
  *
- * Lifting is done in a separate lowering [LocalClassPopupLowering].
+ * Lifting is done in a separate lowering [LocalDeclarationPopupLowering].
  *
  * For example, transforms this
  * ```kotlin
