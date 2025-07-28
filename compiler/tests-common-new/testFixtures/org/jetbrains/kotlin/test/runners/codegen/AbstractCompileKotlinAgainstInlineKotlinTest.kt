@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackendTest
 import org.jetbrains.kotlin.test.services.SplittingModuleTransformerForBoxTests
+import org.jetbrains.kotlin.test.services.SplittingTestConfigurator
 import org.jetbrains.kotlin.utils.bind
 
 @OptIn(TestInfrastructureInternals::class)
@@ -54,8 +55,9 @@ abstract class AbstractCompileKotlinAgainstInlineKotlinTestBase<R : ResultingArt
         useInlineHandlers()
         configureCommonHandlersForBoxTest()
         useModuleStructureTransformers(
-            SplittingModuleTransformerForBoxTests()
+            ::SplittingModuleTransformerForBoxTests
         )
+        useMetaTestConfigurators(::SplittingTestConfigurator)
         configureJvmArtifactsHandlersStep {
             useHandlers(
                 ::BytecodeTextHandler.bind(true)
