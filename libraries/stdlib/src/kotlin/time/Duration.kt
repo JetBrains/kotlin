@@ -1046,15 +1046,8 @@ public inline operator fun Int.times(duration: Duration): Duration = duration * 
 @kotlin.internal.InlineOnly
 public inline operator fun Double.times(duration: Duration): Duration = duration * this
 
-@kotlin.internal.InlineOnly
-private inline fun throwExceptionOrInvalid(throwException: Boolean, message: String = ""): Duration {
-    if (throwException) throw IllegalArgumentException(message)
-    return Duration.INVALID
-}
 
-private inline fun Duration.onInvalid(block: () -> Nothing): Duration {
-    return if (this == Duration.INVALID) block() else this
-}
+
 
 private fun parseDuration(value: String, strictIso: Boolean, throwException: Boolean = true): Duration {
     val length = value.length
@@ -1096,24 +1089,14 @@ private inline fun parseIsoStringFormat(
             isTimeComponent = true
             continue
         }
-
         val componentStart = index
-        var componentEnd = index
-        if (index < length && value[index] in "+-") componentEnd++
-        var dotIndex = -1
-        while (componentEnd < value.length) {
-            when (val ch = value[componentEnd]) {
-                in '0'..'9' -> componentEnd++
-                '.' -> {
-                    if (dotIndex >= 0) return throwExceptionOrInvalid(throwException, "Multiple dots in numeric component")
-                    dotIndex = componentEnd
-                    componentEnd++
-                }
-                else -> break
-            }
+        val (componentEnd, dotIndex, isValid) = value.parseNumericComponent(index, length)
+        if (!isValid) {
+            return throwExceptionOrInvalid(
+                throwException,
+                if (dotIndex >= 0) "Multiple dots in numeric component" else "componentEnd <= componentStart"
+            )
         }
-        if (componentEnd == componentStart) return throwExceptionOrInvalid(throwException)
-
         val unitChar = value.getOrElse(componentEnd) {
             return throwExceptionOrInvalid(
                 throwException, "Missing unit for value ${value.substring(componentStart, componentEnd)}"
@@ -1161,24 +1144,14 @@ private inline fun parseDefaultStringFormat(
             index = value.skipWhile(index) { it == ' ' }
         }
         afterFirst = true
-
         val componentStart = index
-        var componentEnd = index
-        if (index < length && value[index] in "+-") componentEnd++
-        var dotIndex = -1
-        while (componentEnd < value.length) {
-            when (val ch = value[componentEnd]) {
-                in '0'..'9' -> componentEnd++
-                '.' -> {
-                    if (dotIndex >= 0) return throwExceptionOrInvalid(throwException, "Multiple dots in numeric component")
-                    dotIndex = componentEnd
-                    componentEnd++
-                }
-                else -> break
-            }
+        val (componentEnd, dotIndex, isValid) = value.parseNumericComponent(index, length)
+        if (!isValid) {
+            return throwExceptionOrInvalid(
+                throwException,
+                if (dotIndex >= 0) "Multiple dots in numeric component" else "componentEnd <= componentStart"
+            )
         }
-        if (componentEnd == componentStart) return throwExceptionOrInvalid(throwException)
-
         index = componentEnd
         val unitStart = index
         val unitEnd = value.skipWhile(index) { it in 'a'..'z' }
@@ -1214,11 +1187,35 @@ private inline fun parseDefaultStringFormat(
     return result
 }
 
-private fun String.findDot(start: Int, end: Int): Int {
-    for (i in start..<end) {
-        if (this[i] == '.') return i
+@kotlin.internal.InlineOnly
+private inline fun throwExceptionOrInvalid(throwException: Boolean, message: String = ""): Duration {
+    if (throwException) throw IllegalArgumentException(message)
+    return Duration.INVALID
+}
+
+private inline fun Duration.onInvalid(block: () -> Nothing): Duration {
+    return if (this == Duration.INVALID) block() else this
+}
+
+@kotlin.internal.InlineOnly
+private inline fun String.parseNumericComponent(startIndex: Int, length: Int): Triple<Int, Int, Boolean> {
+    var componentEnd = startIndex
+    if (startIndex < length && this[startIndex] in "+-") componentEnd++
+    var dotIndex = -1
+    val componentStart = componentEnd
+    while (componentEnd < length) {
+        when (val ch = this[componentEnd]) {
+            in '0'..'9' -> componentEnd++
+            '.' -> {
+                if (dotIndex >= 0) return Triple(componentEnd, dotIndex, false)
+                dotIndex = componentEnd
+                componentEnd++
+            }
+            else -> break
+        }
     }
-    return -1
+    val isValid = componentEnd > componentStart
+    return Triple(componentEnd, dotIndex, isValid)
 }
 
 private fun String.parseLongInPlace(start: Int, end: Int): Long {
@@ -1322,14 +1319,11 @@ private fun String.parseOverLongIsoComponentInPlace(start: Int, end: Int): Long 
     }
 }
 
-
-
 private inline fun String.skipWhile(startIndex: Int, predicate: (Char) -> Boolean): Int {
     var i = startIndex
     while (i < length && predicate(this[i])) i++
     return i
 }
-
 
 
 
