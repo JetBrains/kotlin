@@ -1298,7 +1298,7 @@ private fun durationUnitByShortNameInPlace(str: String, start: Int, end: Int, th
             str[start] == 'm' && str[start + 1] == 's' -> DurationUnit.MILLISECONDS
             str[start] == 'u' && str[start + 1] == 's' -> DurationUnit.MICROSECONDS
             str[start] == 'n' && str[start + 1] == 's' -> DurationUnit.NANOSECONDS
-            else -> throw IllegalArgumentException("Unknown duration unit short name")
+            else -> if (throwException) throw IllegalArgumentException("Unknown duration unit short name") else null
         }
         else -> if (throwException) throw IllegalArgumentException("Unknown duration unit short name") else null
     }
