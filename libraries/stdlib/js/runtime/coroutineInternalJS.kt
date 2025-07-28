@@ -8,6 +8,7 @@ package kotlin.js
 
 import kotlin.coroutines.*
 import kotlin.internal.getContinuation
+import kotlin.internal.returnIfSuspended
 
 
 // Drop after bootstrap

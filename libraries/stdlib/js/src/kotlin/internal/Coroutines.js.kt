@@ -10,3 +10,9 @@ import kotlin.coroutines.Continuation
 @PublishedApi
 internal actual suspend fun <T> getContinuation(): Continuation<T> =
     kotlin.js.getContinuation()
+
+@PublishedApi
+@Suppress("UNCHECKED_CAST")
+internal actual suspend fun <T> returnIfSuspended(argument: Any?): T {
+    return argument as T
+}

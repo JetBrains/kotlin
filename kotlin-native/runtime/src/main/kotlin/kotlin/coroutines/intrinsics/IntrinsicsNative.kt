@@ -14,7 +14,7 @@ import kotlin.coroutines.native.internal.RestrictedContinuationImpl
 import kotlin.coroutines.native.internal.probeCoroutineCreated
 import kotlin.internal.InlineOnly
 import kotlin.internal.getContinuation
-import kotlin.native.internal.returnIfSuspended
+import kotlin.internal.returnIfSuspended
 
 /**
  * Starts an unintercepted coroutine without a receiver and with result type [T] and executes it until its first suspension.
