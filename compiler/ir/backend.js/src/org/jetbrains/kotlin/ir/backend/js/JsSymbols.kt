@@ -92,7 +92,7 @@ class JsSymbols(
 
     override val coroutineGetContext = symbolFinder.topLevelFunction(BASE_JS_PACKAGE, GET_COROUTINE_CONTEXT_NAME)
 
-    override val returnIfSuspended = symbolFinder.topLevelFunction(BASE_JS_PACKAGE, "returnIfSuspended")
+    override val returnIfSuspended = symbolFinder.topLevelFunction(BASE_INTERNAL_PACKAGE, "returnIfSuspended")
 
     override val functionAdapter = symbolFinder.topLevelClass(BASE_JS_PACKAGE, "FunctionAdapter")
 

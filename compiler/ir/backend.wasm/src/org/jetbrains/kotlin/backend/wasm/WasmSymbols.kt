@@ -108,7 +108,7 @@ class WasmSymbols(
     override val coroutineGetContext =
         getInternalFunction("getCoroutineContext")
     override val returnIfSuspended =
-        getInternalFunction("returnIfSuspended")
+        getFunction("returnIfSuspended", StandardClassIds.BASE_INTERNAL_PACKAGE)
 
     private val _arraysContentEquals = symbolFinder.topLevelFunctions(COLLECTIONS_PACKAGE_FQ_NAME, "contentEquals").filter {
         it.descriptor.extensionReceiverParameter?.type?.isMarkedNullable == true

@@ -16,6 +16,7 @@ import kotlin.internal.getContinuation
 internal fun <T> getContinuation(): Continuation<T> =
     implementedAsIntrinsic
 
+// TODO: remove after compiler bootstrap
 @PublishedApi
 @Suppress("UNCHECKED_CAST")
 internal suspend fun <T> returnIfSuspended(argument: Any?): T =

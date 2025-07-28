@@ -20,3 +20,8 @@ internal annotation class ExcludedFromCodegen
 @PublishedApi
 internal actual suspend fun <T> getContinuation(): Continuation<T> =
     kotlin.wasm.internal.getContinuation()
+
+@PublishedApi
+@Suppress("UNCHECKED_CAST")
+internal actual suspend fun <T> returnIfSuspended(argument: Any?): T =
+    argument as T
