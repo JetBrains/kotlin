@@ -118,13 +118,6 @@ object CommonWebConfigurationUpdater : ConfigurationUpdater<K2JSCompilerArgument
         services: Services,
     ) {
         val messageCollector = configuration.messageCollector
-        @Suppress("DEPRECATION")
-        if (arguments.typedArrays) {
-            messageCollector.report(
-                WARNING,
-                "The '-Xtyped-arrays' command line option does nothing and will be removed in Kotlin 2.3"
-            )
-        }
 
         if (arguments.generateDwarf) {
             configuration.put(WasmConfigurationKeys.WASM_GENERATE_DWARF, true)

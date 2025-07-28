@@ -357,16 +357,6 @@ public interface JsArguments : WasmArguments {
     public val X_ES_LONG_AS_BIGINT: JsArgument<Boolean?> = JsArgument("X_ES_LONG_AS_BIGINT")
 
     /**
-     * This option does nothing and is left for compatibility with the legacy backend.
-     * It is deprecated and will be removed in a future release.
-     *
-     * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
-     */
-    @JvmField
-    @ExperimentalCompilerArgument
-    public val X_TYPED_ARRAYS: JsArgument<Boolean> = JsArgument("X_TYPED_ARRAYS")
-
-    /**
      * Disable internal declaration export.
      *
      * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.

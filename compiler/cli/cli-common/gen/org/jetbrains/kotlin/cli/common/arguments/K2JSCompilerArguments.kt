@@ -418,18 +418,6 @@ class K2JSCompilerArguments : K2WasmCompilerArguments() {
             field = value
         }
 
-    @Deprecated("It is senseless to use with IR compiler. Only for compatibility.")
-    @Argument(
-        value = "-Xtyped-arrays",
-        description = """This option does nothing and is left for compatibility with the legacy backend.
-It is deprecated and will be removed in a future release.""",
-    )
-    var typedArrays: Boolean = false
-        set(value) {
-            checkFrozen()
-            field = value
-        }
-
     @Argument(
         value = "-Xfriend-modules-disabled",
         description = "Disable internal declaration export.",

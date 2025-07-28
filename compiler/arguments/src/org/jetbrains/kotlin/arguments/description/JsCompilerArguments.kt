@@ -539,9 +539,6 @@ val actualJsArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.jsAr
 It is deprecated and will be removed in a future release.""".asReleaseDependent()
         valueType = BooleanType.defaultFalse
 
-        additionalAnnotations(
-            Deprecated("It is senseless to use with IR compiler. Only for compatibility."),
-        )
         additionalMetadata(
             GradleOption(
                 value = DefaultValue.BOOLEAN_FALSE_DEFAULT,
@@ -558,6 +555,7 @@ It is deprecated and will be removed in a future release.""".asReleaseDependent(
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v1_1_3,
             deprecatedVersion = KotlinReleaseVersion.v2_1_0,
+            removedVersion = KotlinReleaseVersion.v2_3_0,
         )
     }
 
