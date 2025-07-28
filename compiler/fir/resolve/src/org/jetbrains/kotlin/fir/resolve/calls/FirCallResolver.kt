@@ -826,7 +826,7 @@ class FirCallResolver(
                             explicitReceiver.resolvedType,
                         )
                     reference is FirSuperReference && (reference.superTypeRef.firClassLike(session) as? FirClass)?.isInterface == true -> ConeNoConstructorError
-                    else -> ConeUnresolvedNameError(name, operatorToken)
+                    else -> ConeUnresolvedNameError(name, operatorToken, explicitReceiver?.resolvedType)
                 }
             }
 

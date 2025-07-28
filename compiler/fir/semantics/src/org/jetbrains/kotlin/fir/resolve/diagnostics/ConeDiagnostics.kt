@@ -73,6 +73,7 @@ class ConeUnresolvedTypeQualifierError(val qualifiers: List<FirQualifierPart>) :
 class ConeUnresolvedNameError(
     val name: Name,
     val operatorToken: String? = null,
+    val receiverType: ConeKotlinType? = null,
 ) : ConeUnresolvedError {
     override val qualifier: String get() = name.asString()
     override val reason: String get() = "Unresolved name: $prettyReference"
