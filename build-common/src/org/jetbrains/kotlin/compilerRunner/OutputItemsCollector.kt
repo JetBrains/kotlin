@@ -13,13 +13,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.jetbrains.kotlin.compilerRunner
 
 import org.jetbrains.kotlin.build.GeneratedFile
 import org.jetbrains.kotlin.build.GeneratedJvmClass
 import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import java.io.File
+
+interface OutputItemsCollector {
+    fun add(sourceFiles: Collection<File>, outputFile: File)
+}
+
+class OutputItemsCollectorImpl : OutputItemsCollector {
+    val outputs: List<SimpleOutputItem>
+        get() = _outputs
+
+    private val _outputs: MutableList<SimpleOutputItem> = mutableListOf()
+
+    override fun add(sourceFiles: Collection<File>, outputFile: File) {
+        _outputs.add(SimpleOutputItem(sourceFiles, outputFile))
+    }
+}
 
 data class SimpleOutputItem(val sourceFiles: Collection<File>, val outputFile: File) {
     override fun toString(): String =
