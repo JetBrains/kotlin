@@ -27,8 +27,10 @@ import org.jetbrains.kotlin.test.builders.*
 import org.jetbrains.kotlin.test.configuration.commonFirHandlersForCodegenTest
 import org.jetbrains.kotlin.test.directives.*
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DUMP_IR_AFTER_INLINE
+import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.IGNORE_BACKEND_K2_MULTI_MODULE
 import org.jetbrains.kotlin.test.directives.KlibAbiConsistencyDirectives.CHECK_SAME_ABI_AFTER_INLINING
 import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.LANGUAGE
+import org.jetbrains.kotlin.test.directives.model.ValueDirective
 import org.jetbrains.kotlin.test.frontend.fir.FirMetaInfoDiffSuppressor
 import org.jetbrains.kotlin.test.frontend.fir.FirOutputArtifact
 import org.jetbrains.kotlin.test.frontend.fir.handlers.FirCfgConsistencyHandler
@@ -37,6 +39,7 @@ import org.jetbrains.kotlin.test.frontend.fir.handlers.FirDumpHandler
 import org.jetbrains.kotlin.test.frontend.fir.handlers.FirResolvedTypesVerifier
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.services.SplittingModuleTransformerForBoxTests
+import org.jetbrains.kotlin.test.services.SplittingTestConfigurator
 import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurator
 import java.lang.Boolean.getBoolean
 
@@ -145,8 +148,10 @@ open class AbstractFirJsCodegenInlineTest(
     testGroupOutputDirPrefix = testGroupOutputDirPrefix
 )
 
-open class AbstractFirJsCodegenInlineWithInlinedFunInKlibTest : AbstractFirJsCodegenInlineTest(
-    testGroupOutputDirPrefix = "codegen/firBoxInlineInlined/"
+open class AbstractFirJsCodegenInlineWithInlinedFunInKlibTest(
+    testGroupOutputDirPrefix: String = "codegen/firBoxInlineInlined/"
+) : AbstractFirJsCodegenInlineTest(
+    testGroupOutputDirPrefix = testGroupOutputDirPrefix
 ) {
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
@@ -158,13 +163,19 @@ open class AbstractFirJsCodegenInlineWithInlinedFunInKlibTest : AbstractFirJsCod
     }
 }
 
-open class AbstractFirJsCodegenSplittingInlineWithInlinedFunInKlibTest : AbstractFirJsCodegenInlineWithInlinedFunInKlibTest() {
+open class AbstractFirJsCodegenSplittingInlineWithInlinedFunInKlibTest : AbstractFirJsCodegenInlineWithInlinedFunInKlibTest(
+    testGroupOutputDirPrefix = "codegen/firBoxInlineSplitted/"
+) {
+    override val customIgnoreDirective: ValueDirective<TargetBackend>?
+        get() = IGNORE_BACKEND_K2_MULTI_MODULE
+
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         @OptIn(TestInfrastructureInternals::class)
         builder.useModuleStructureTransformers(
             ::SplittingModuleTransformerForBoxTests
         )
+        builder.useMetaTestConfigurators(::SplittingTestConfigurator)
     }
 }
 

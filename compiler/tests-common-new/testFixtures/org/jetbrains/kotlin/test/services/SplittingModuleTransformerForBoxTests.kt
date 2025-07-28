@@ -10,6 +10,8 @@ import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.TestInfrastructureInternals
 import org.jetbrains.kotlin.test.builders.RegisteredDirectivesBuilder
+import org.jetbrains.kotlin.test.directives.AdditionalFilesDirectives.CHECK_STATE_MACHINE
+import org.jetbrains.kotlin.test.directives.AdditionalFilesDirectives.WITH_COROUTINES
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.model.DependencyDescription
 import org.jetbrains.kotlin.test.model.DependencyKind
@@ -50,7 +52,7 @@ class SplittingModuleTransformerForBoxTests(
             1 -> boxFiles.single()
             0 -> error("Codegen test should contain one global `fun box()`")
             else -> boxFiles.singleOrNull { it.originalContent.contains("\nfun box()") }
-                ?: error("Too may `fun box()` are defined. Cannot heuristically detect, which one is global")
+                ?: error("Too many `fun box()` are defined. Cannot heuristically detect which one is global")
         }
         val firstModuleFiles = realFiles.filter { it != secondModuleFile }
         val firstModule = TestModule(
@@ -83,13 +85,12 @@ class SplittingTestConfigurator(testServices: TestServices) : MetaTestConfigurat
         get() = listOf(service(::SplitStateProvider))
 
     override fun shouldSkipTest(): Boolean {
+        if (!testServices.splitStateProvider.hasBeenSplit) return true
         val modules = testServices.moduleStructure.modules
-        if (modules.size != 2) return true
-
+        assert(modules.size == 2) // It's expected that SplittingModuleTransformerForBoxTests splits testData to exactly two modules
         val (moduleLib, moduleMain) = modules
 
-        val settings = moduleLib.languageVersionSettings
-        if (settings.supportsFeature(LanguageFeature.MultiPlatformProjects)) {
+        if (moduleLib.languageVersionSettings.supportsFeature(LanguageFeature.MultiPlatformProjects)) {
             // Multiplatform tests must not be tested with SplittingModuleTransformerForBoxTests
             return true
         }
@@ -104,8 +105,19 @@ class SplittingTestConfigurator(testServices: TestServices) : MetaTestConfigurat
                     }
                 ) return true
             }
+        } else { // Klib backends
+            if (WITH_COROUTINES in moduleLib.directives) {
+                // KT-79665: WITH_COROUTINES works incorrectly for non-jvm multi-module tests, should EmptyContinuation object be referenced from moduleLib,
+                // or CHECK_STATE_MACHINE would add `val StateMachineChecker` to both modules
+                // Same helper sources `CoroutineHelpers.kt` and `CoroutineUtil.kt` are added to each module, which causes symbols clash in deserialization phase for moduleMain like:
+                //   IrClassSymbolImpl is already bound. Signature: helpers/EmptyContinuation|null[0]
+                if (CHECK_STATE_MACHINE in moduleLib.directives)
+                    return true
+                if (moduleLib.files[0].originalContent.contains("EmptyContinuation"))
+                    return true
+            }
         }
-        return !testServices.splitStateProvider.hasBeenSplit
+        return false // Don't skip its execution, since the test has been split, and no counter-patterns found
     }
 }
 
@@ -113,8 +125,8 @@ class SplittingTestConfigurator(testServices: TestServices) : MetaTestConfigurat
  * This service must be used only to pass information from SplittingModuleTransformerForBoxTests to SplittingTestConfigurator:
  * to reliably skip tests which were not split by SplittingModuleTransformerForBoxTests
  */
-private class SplitStateProvider : TestService {
+internal class SplitStateProvider : TestService {
     var hasBeenSplit = false
 }
 
-private val TestServices.splitStateProvider: SplitStateProvider by TestServices.testServiceAccessor()
+internal val TestServices.splitStateProvider: SplitStateProvider by TestServices.testServiceAccessor()
