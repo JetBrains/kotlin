@@ -6,6 +6,9 @@
 package kotlin.internal
 
 import kotlin.coroutines.Continuation
+import kotlin.native.internal.IntrinsicType
+import kotlin.native.internal.TypedIntrinsic
 
 @PublishedApi
-internal actual suspend fun <T> getContinuation(): Continuation<T> = error("implemented as intrinsic")
+@TypedIntrinsic(IntrinsicType.GET_CONTINUATION)
+internal actual external suspend fun <T> getContinuation(): Continuation<T>
