@@ -255,6 +255,9 @@ private class SignatureParts(
     override val typeSystem: TypeSystemInferenceExtensionContext
         get() = SimpleClassicTypeSystemContext
 
+    override val isK2: Boolean
+        get() = false
+
     override fun AnnotationDescriptor.forceWarning(unenhancedType: KotlinTypeMarker?): Boolean =
         (this is PossiblyExternalAnnotationDescriptor && isIdeExternalAnnotation) ||
                 (this is LazyJavaAnnotationDescriptor && !enableImprovementsInStrictMode &&

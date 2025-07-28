@@ -1066,6 +1066,9 @@ private class EnhancementSignatureParts(
     override val typeSystem: TypeSystemContext
         get() = session.typeContext
 
+    override val isK2: Boolean
+        get() = true
+
     override fun FirAnnotation.forceWarning(unenhancedType: KotlinTypeMarker?): Boolean = this is FirJavaExternalAnnotation
 
     override val KotlinTypeMarker.annotations: Iterable<FirAnnotation>
