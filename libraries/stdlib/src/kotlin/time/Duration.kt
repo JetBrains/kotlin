@@ -1223,29 +1223,31 @@ private fun String.parseLongInPlace(start: Int, end: Int): Long {
 
     var index = start
     val firstChar = this[start]
-    when (firstChar) {
-        '+', '-' -> index++
-    }
     val isNegative = firstChar == '-'
 
-    if (index >= end) return Duration.INVALID_RAW_VALUE
+    if (firstChar == '+' || firstChar == '-') {
+        index++
+        if (index >= end) return Duration.INVALID_RAW_VALUE
+    }
 
     var result = 0L
+    val limit = if (isNegative) Long.MIN_VALUE else -Long.MAX_VALUE
+    val multiplyLimit = limit / 10
     while (index < end) {
         val digit = this[index] - '0'
         if (digit !in 0..9) return Duration.INVALID_RAW_VALUE
-        if (result > Long.MAX_VALUE / 10) {
+        if (result < multiplyLimit) {
             return if (isNegative) Long.MAX_VALUE else Long.MIN_VALUE
         }
-        val newResult = result * 10
-        if (newResult < 0 || Long.MAX_VALUE - newResult < digit) {
+        result *= 10
+        if (result < limit + digit) {
             return if (isNegative) Long.MAX_VALUE else Long.MIN_VALUE
         }
-        result = newResult + digit
+        result -= digit
         index++
     }
 
-    return if (isNegative) -result else result
+    return if (isNegative) result else -result
 }
 
 private fun String.parseFractionalPartOfDoubleInPlace(start: Int, end: Int): Double? {
