@@ -144,6 +144,17 @@ fun CompilerConfiguration.setupFromArguments(arguments: K2NativeCompilerArgument
         putIfNotNull(BinaryOptions.memoryModel, memoryModelFromArgument)
     }
 
+    get(BinaryOptions.hotReload)?.also {
+        val debug = getBoolean(KonanConfigKeys.DEBUG)
+        val hasInterposableLinkerFlag = getList(LINKER_ARGS).firstOrNull { arg -> arg.contains("-interposable") } != null
+        if (it && !debug) {
+            report(ERROR, "hot-code reloading cannot work without debug info. Please compile with debug info enabled (i.e., `-g`.)")
+        }
+        if (it && !hasInterposableLinkerFlag) {
+            report(ERROR, "hot-code reloading needs the -interposable linker flag. Please add it (i.e. `-linker-option=-interposable`).")
+        }
+    }
+
     get(BinaryOptions.memoryModel)?.also {
         if (it != MemoryModel.EXPERIMENTAL) {
             report(ERROR, "Legacy MM is deprecated and no longer works.")
