@@ -73,7 +73,8 @@ internal fun DurationUnit.shortName(): String = when (this) {
 }
 
 @SinceKotlin("1.5")
-internal fun durationUnitByIsoChar(isoChar: Char, isTimeComponent: Boolean, throwException: Boolean): DurationUnit? =
+@kotlin.internal.InlineOnly
+internal inline fun durationUnitByIsoChar(isoChar: Char, isTimeComponent: Boolean, throwException: Boolean): DurationUnit? =
     when {
         !isTimeComponent -> {
             when (isoChar) {
@@ -91,7 +92,8 @@ internal fun durationUnitByIsoChar(isoChar: Char, isTimeComponent: Boolean, thro
         }
     }
 
-internal fun durationUnitByShortNameInPlace(str: String, start: Int, end: Int, throwException: Boolean): DurationUnit? {
+@kotlin.internal.InlineOnly
+internal inline fun durationUnitByShortNameInPlace(str: String, start: Int, end: Int, throwException: Boolean): DurationUnit? {
     val length = end - start
     return when (length) {
         1 -> when (str[start]) {
