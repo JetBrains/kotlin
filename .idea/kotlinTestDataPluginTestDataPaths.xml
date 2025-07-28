@@ -161,21 +161,11 @@
             </array>
           </value>
         </entry>
-        <entry key="Fir.*BlackBoxInlineCodegenWithBytecodeInliner.*">
+        <entry key="Fir.*BlackBoxInlineCodegen.*">
           <value>
             <array>
               <option value="FIR" />
               <option value="JVM" />
-              <option value="Bytecode Inline" />
-            </array>
-          </value>
-        </entry>
-        <entry key="Fir.*BlackBoxInlineCodegenWithIrInliner.*">
-          <value>
-            <array>
-              <option value="FIR" />
-              <option value="JVM" />
-              <option value="IR Inline" />
             </array>
           </value>
         </entry>
@@ -301,21 +291,11 @@
             </array>
           </value>
         </entry>
-        <entry key="Ir.*BlackBoxInlineCodegenWithBytecodeInliner.*">
+        <entry key="Ir.*BlackBoxInlineCodegen.*">
           <value>
             <array>
               <option value="K1" />
               <option value="JVM" />
-              <option value="Bytecode Inline" />
-            </array>
-          </value>
-        </entry>
-        <entry key="Ir.*BlackBoxInlineCodegenWithIrInliner.*">
-          <value>
-            <array>
-              <option value="K1" />
-              <option value="JVM" />
-              <option value="IR Inline" />
             </array>
           </value>
         </entry>
