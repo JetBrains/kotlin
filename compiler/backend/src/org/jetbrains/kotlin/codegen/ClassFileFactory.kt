@@ -2,327 +2,241 @@
  * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
+package org.jetbrains.kotlin.codegen
 
-package org.jetbrains.kotlin.codegen;
+import org.jetbrains.annotations.TestOnly
+import org.jetbrains.kotlin.backend.common.output.OutputFile
+import org.jetbrains.kotlin.backend.common.output.OutputFileCollection
+import org.jetbrains.kotlin.codegen.extensions.ClassFileFactoryFinalizerExtension
+import org.jetbrains.kotlin.codegen.state.GenerationState
+import org.jetbrains.kotlin.config.JvmAnalysisFlags.strictMetadataVersionSemantics
+import org.jetbrains.kotlin.config.LanguageVersion
+import org.jetbrains.kotlin.load.kotlin.loadModuleMapping
+import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
+import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
+import org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf
+import org.jetbrains.kotlin.metadata.jvm.deserialization.ModuleMapping
+import org.jetbrains.kotlin.metadata.jvm.deserialization.serializeToByteArray
+import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
+import org.jetbrains.kotlin.serialization.deserialization.DeserializationConfiguration
+import org.jetbrains.org.objectweb.asm.Type
+import java.io.File
+import java.nio.charset.StandardCharsets
+import java.util.*
 
-import kotlin.collections.CollectionsKt;
-import kotlin.io.FilesKt;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.TestOnly;
-import org.jetbrains.kotlin.backend.common.output.OutputFile;
-import org.jetbrains.kotlin.backend.common.output.OutputFileCollection;
-import org.jetbrains.kotlin.codegen.extensions.ClassFileFactoryFinalizerExtension;
-import org.jetbrains.kotlin.codegen.state.GenerationState;
-import org.jetbrains.kotlin.config.JvmAnalysisFlags;
-import org.jetbrains.kotlin.config.LanguageVersion;
-import org.jetbrains.kotlin.load.kotlin.ModuleMappingUtilKt;
-import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion;
-import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion;
-import org.jetbrains.kotlin.metadata.jvm.JvmModuleProtoBuf;
-import org.jetbrains.kotlin.metadata.jvm.deserialization.ModuleMapping;
-import org.jetbrains.kotlin.metadata.jvm.deserialization.ModuleMappingKt;
-import org.jetbrains.kotlin.metadata.jvm.deserialization.PackageParts;
-import org.jetbrains.kotlin.name.FqName;
-import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin;
-import org.jetbrains.kotlin.serialization.deserialization.DeserializationConfiguration;
-import org.jetbrains.org.objectweb.asm.Type;
+class ClassFileFactory(
+    val generationState: GenerationState,
+    private val builderFactory: ClassBuilderFactory,
+    private val finalizers: List<ClassFileFactoryFinalizerExtension>
+) : OutputFileCollection {
+    private val generators: MutableMap<String, OutAndSourceFileList> = Collections.synchronizedMap(LinkedHashMap())
 
-import java.io.File;
-import java.nio.charset.StandardCharsets;
-import java.util.*;
+    private var isDone = false
 
-import static org.jetbrains.kotlin.codegen.JvmCodegenUtil.getMappingFileName;
+    private val sourceFiles: MutableSet<File> = HashSet()
+    val packagePartRegistry: PackagePartRegistry = PackagePartRegistry()
 
-public class ClassFileFactory implements OutputFileCollection {
-    private final GenerationState state;
-    private final ClassBuilderFactory builderFactory;
-    private final List<ClassFileFactoryFinalizerExtension> finalizers;
-    private final Map<String, OutAndSourceFileList> generators = Collections.synchronizedMap(new LinkedHashMap<>());
-
-    private boolean isDone = false;
-
-    private final Set<File> sourceFiles = new HashSet<>();
-    private final PackagePartRegistry packagePartRegistry = new PackagePartRegistry();
-
-    public ClassFileFactory(@NotNull GenerationState state, @NotNull ClassBuilderFactory builderFactory, @NotNull List<ClassFileFactoryFinalizerExtension> finalizers) {
-        this.state = state;
-        this.builderFactory = builderFactory;
-        this.finalizers = finalizers;
-    }
-
-    public GenerationState getGenerationState() {
-        return state;
-    }
-
-    @NotNull
-    public PackagePartRegistry getPackagePartRegistry() {
-        return packagePartRegistry;
-    }
-
-    @NotNull
-    public ClassBuilder newVisitor(
-            @NotNull JvmDeclarationOrigin origin,
-            @NotNull Type asmType,
-            @NotNull List<File> sourceFiles
-    ) {
-        ClassBuilder answer = builderFactory.newClassBuilder(origin);
+    fun newVisitor(origin: JvmDeclarationOrigin, asmType: Type, sourceFiles: List<File>): ClassBuilder {
+        val answer = builderFactory.newClassBuilder(origin)
         generators.put(
-                asmType.getInternalName() + ".class",
-                new ClassBuilderAndSourceFileList(answer, sourceFiles)
-        );
-        return answer;
+            asmType.internalName + ".class",
+            ClassBuilderAndSourceFileList(answer, sourceFiles)
+        )
+        return answer
     }
 
-    public void done() {
+    fun done() {
         if (!isDone) {
-            isDone = true;
-            for (ClassFileFactoryFinalizerExtension extension : finalizers) {
-                extension.finalizeClassFactory(this);
+            isDone = true
+            for (extension in finalizers) {
+                extension.finalizeClassFactory(this)
             }
         }
     }
 
-    public void addSerializedBuiltinsPackageMetadata(String path, byte[] serialized) {
-        generators.put(path, new OutAndSourceFileList(CollectionsKt.toList(sourceFiles)) {
-            @Override
-            public byte[] asBytes(ClassBuilderFactory factory) {
-                return serialized;
+    fun addSerializedBuiltinsPackageMetadata(path: String, serialized: ByteArray) {
+        generators.put(path, object : OutAndSourceFileList(sourceFiles.toList()) {
+            override fun asBytes(factory: ClassBuilderFactory): ByteArray {
+                return serialized
             }
 
-            @Override
-            public String asText(ClassBuilderFactory factory) {
-                throw new UnsupportedOperationException("No string representation for protobuf-serialized metadata");
+            override fun asText(factory: ClassBuilderFactory): String {
+                throw UnsupportedOperationException("No string representation for protobuf-serialized metadata")
             }
-        });
+        })
     }
 
-    public void setModuleMapping(JvmModuleProtoBuf.Module moduleProto) {
-        generators.put(getMappingFileName(state.getModuleName()), new OutAndSourceFileList(CollectionsKt.toList(sourceFiles)) {
-            @Override
-            public byte[] asBytes(ClassBuilderFactory factory) {
-                int flags = 0;
-                if (state.getConfig().getLanguageVersionSettings().getFlag(JvmAnalysisFlags.getStrictMetadataVersionSemantics())) {
-                    flags |= ModuleMapping.STRICT_METADATA_VERSION_SEMANTICS_FLAG;
+    fun setModuleMapping(moduleProto: JvmModuleProtoBuf.Module) {
+        generators.put(
+            JvmCodegenUtil.getMappingFileName(generationState.moduleName),
+            object : OutAndSourceFileList(sourceFiles.toList()) {
+                override fun asBytes(factory: ClassBuilderFactory): ByteArray {
+                    var flags = 0
+                    if (generationState.config.languageVersionSettings.getFlag(strictMetadataVersionSemantics)) {
+                        flags = flags or ModuleMapping.STRICT_METADATA_VERSION_SEMANTICS_FLAG
+                    }
+                    return moduleProto.serializeToByteArray(metadataVersionToUseForModuleMapping, flags)
                 }
-                return ModuleMappingKt.serializeToByteArray(moduleProto, getMetadataVersionToUseForModuleMapping(), flags);
+
+                override fun asText(factory: ClassBuilderFactory): String {
+                    return String(asBytes(factory), StandardCharsets.UTF_8)
+                }
+            })
+    }
+
+    private val metadataVersionToUseForModuleMapping: BinaryVersion
+        get() {
+            val version = generationState.config.metadataVersion
+            if (version.major == LanguageVersion.KOTLIN_2_0.major &&
+                version.minor == LanguageVersion.KOTLIN_2_0.minor
+            ) {
+                // If language version is >= 2.0, we're using metadata version 1.9.*. This is needed because before Kotlin 1.8.20-RC, there was
+                // a bug in determining whether module metadata is written in the pre-1.4 format, or in the 1.4+ format with an extra integer
+                // for module-wide flags (see https://github.com/jetbrains/kotlin/commit/25c600c556a5).
+                //
+                // Normally it should not be possible to suffer from it because we have only one version forward compatibility on JVM. However,
+                // with `-Xskip-metadata-version-check`, which is used in Gradle, pre-1.8.20-RC Kotlin compilers were trying to read the 2.0
+                // module metadata in the wrong format and failed with an exception: KT-62531.
+                //
+                // Since module metadata is not supposed to have any changes in 2.0, we're using the metadata version 1.9 as a workaround. This
+                // way, it's still written in the 1.4+ format, and old compilers will correctly understand that it's written in the 1.4+ format.
+                //
+                // Patch version does not affect anything, so we can use any number, for example 9999 to make it more recognizable that it's
+                // not a real Kotlin version, and rather a substitute for the 2.0 metadata version.
+                //
+                // This workaround can be removed once we no longer support language version 2.0.
+                return MetadataVersion(1, 9, 9999)
             }
-
-            @Override
-            public String asText(ClassBuilderFactory factory) {
-                return new String(asBytes(factory), StandardCharsets.UTF_8);
-            }
-        });
-    }
-
-    @NotNull
-    private BinaryVersion getMetadataVersionToUseForModuleMapping() {
-        BinaryVersion version = state.getConfig().getMetadataVersion();
-        if (version.getMajor() == LanguageVersion.KOTLIN_2_0.getMajor() &&
-            version.getMinor() == LanguageVersion.KOTLIN_2_0.getMinor()) {
-            // If language version is >= 2.0, we're using metadata version 1.9.*. This is needed because before Kotlin 1.8.20-RC, there was
-            // a bug in determining whether module metadata is written in the pre-1.4 format, or in the 1.4+ format with an extra integer
-            // for module-wide flags (see https://github.com/jetbrains/kotlin/commit/25c600c556a5).
-            //
-            // Normally it should not be possible to suffer from it because we have only one version forward compatibility on JVM. However,
-            // with `-Xskip-metadata-version-check`, which is used in Gradle, pre-1.8.20-RC Kotlin compilers were trying to read the 2.0
-            // module metadata in the wrong format and failed with an exception: KT-62531.
-            //
-            // Since module metadata is not supposed to have any changes in 2.0, we're using the metadata version 1.9 as a workaround. This
-            // way, it's still written in the 1.4+ format, and old compilers will correctly understand that it's written in the 1.4+ format.
-            //
-            // Patch version does not affect anything, so we can use any number, for example 9999 to make it more recognizable that it's
-            // not a real Kotlin version, and rather a substitute for the 2.0 metadata version.
-            //
-            // This workaround can be removed once we no longer support language version 2.0.
-            return new MetadataVersion(1, 9, 9999);
+            return version
         }
-        return version;
+
+    override fun asList(): List<OutputFile> {
+        done()
+        return this.currentOutput
     }
 
-    @NotNull
-    @Override
-    public List<OutputFile> asList() {
-        done();
-        return getCurrentOutput();
+    val currentOutput: List<OutputFile>
+        get() = generators.keys.map { OutputClassFile(it) }
+
+    override fun get(relativePath: String): OutputFile? {
+        return if (generators.containsKey(relativePath)) OutputClassFile(relativePath) else null
     }
 
-    @NotNull
-    public List<OutputFile> getCurrentOutput() {
-        return CollectionsKt.map(generators.keySet(), OutputClassFile::new);
-    }
-
-    @Override
-    @Nullable
-    public OutputFile get(@NotNull String relativePath) {
-        return generators.containsKey(relativePath) ? new OutputClassFile(relativePath) : null;
-    }
-
-    @NotNull
     @TestOnly
-    public String createText() {
-        return createText(null);
+    fun createText(): String {
+        return createText(ignorePrefixPath = null)
     }
 
-    private static class ModuleMappingException extends RuntimeException {
-        public ModuleMappingException(String message) {
-            super(message);
-        }
-    }
+    private class ModuleMappingException(message: String?) : RuntimeException(message)
 
-    @NotNull
     @TestOnly
-    public String createText(@Nullable String ignorePrefixPath) {
+    fun createText(ignorePrefixPath: String?): String {
         // NB this method is frequently used in JVM BE tests to display generated bytecode in case of test failure.
         // It should be permissive, and should try to handle exceptions gracefully (otherwise you would make JVM BE devs unhappy).
 
-        StringBuilder answer = new StringBuilder();
+        val answer = StringBuilder()
 
-        for (OutputFile file : asList()) {
-            if (ignorePrefixPath != null && file.getRelativePath().startsWith(ignorePrefixPath)) continue;
-            File relativePath = new File(file.getRelativePath());
-            answer.append("@").append(relativePath).append('\n');
-            switch (FilesKt.getExtension(relativePath)) {
-                case "class":
-                    answer.append(file.asText());
-                    break;
-                case "kotlin_module": {
-                    try {
-                        ModuleMapping mapping = ModuleMappingUtilKt.loadModuleMapping(
-                                ModuleMapping.Companion, file.asByteArray(), relativePath.getPath(),
-                                DeserializationConfiguration.Default.INSTANCE,
-                                version -> {
-                                    throw new ModuleMappingException("Generated module has incompatible JVM metadata version: " + version);
-                                }
-                        );
-                        for (Map.Entry<String, PackageParts> entry : mapping.getPackageFqName2Parts().entrySet()) {
-                            FqName packageFqName = new FqName(entry.getKey());
-                            PackageParts packageParts = entry.getValue();
-                            answer.append("<package ").append(packageFqName).append(": ").append(packageParts.getParts()).append(">\n");
-                        }
-                        break;
-                    } catch (ModuleMappingException e) {
-                        answer.append(relativePath).append(": ").append(e.getMessage()).append("\n");
-                        break;
+        for (file in asList()) {
+            if (ignorePrefixPath != null && file.relativePath.startsWith(ignorePrefixPath)) continue
+            val relativePath = File(file.relativePath)
+            answer.append("@").append(relativePath).append('\n')
+            when (relativePath.extension) {
+                "class" -> answer.append(file.asText())
+                "kotlin_module" -> try {
+                    val mapping = ModuleMapping.Companion.loadModuleMapping(
+                        file.asByteArray(), relativePath.path,
+                        DeserializationConfiguration.Default
+                    ) { version: MetadataVersion? ->
+                        throw ModuleMappingException("Generated module has incompatible JVM metadata version: $version")
                     }
+                    for (entry in mapping.packageFqName2Parts.entries) {
+                        val packageFqName = FqName(entry.key)
+                        val packageParts = entry.value
+                        answer.append("<package ").append(packageFqName).append(": ").append(packageParts.parts).append(">\n")
+                    }
+                } catch (e: ModuleMappingException) {
+                    answer.append(relativePath).append(": ").append(e.message).append("\n")
                 }
-                default:
-                    answer.append("Unknown output file: ").append(file);
+                else -> answer.append("Unknown output file: ").append(file)
             }
         }
 
-        return answer.toString();
+        return answer.toString()
     }
 
-    @NotNull
     @TestOnly
-    public Map<String, String> createTextForEachFile() {
-        Map<String, String> answer = new LinkedHashMap<>();
-        for (OutputFile file : asList()) {
-            answer.put(file.getRelativePath(), file.asText());
+    fun createTextForEachFile(): Map<String, String> {
+        val answer: MutableMap<String, String> = LinkedHashMap()
+        for (file in asList()) {
+            answer.put(file.relativePath, file.asText())
         }
-        return answer;
+        return answer
     }
 
-    public void registerSourceFiles(@NotNull Collection<File> files) {
-        for (File file : files) {
+    fun registerSourceFiles(files: Collection<File?>) {
+        for (file in files) {
             // We ignore non-physical files here, because this code is needed to tell the make what inputs affect which outputs
             // a non-physical file cannot be processed by make
-            if (file == null) continue;
-            sourceFiles.add(file);
+            if (file == null) continue
+            sourceFiles.add(file)
         }
     }
 
-    private class OutputClassFile implements OutputFile {
-        private final String relativeClassFilePath;
+    private inner class OutputClassFile(override val relativePath: String) : OutputFile {
+        override val sourceFiles: List<File>
+            get() {
+                val pair: OutAndSourceFileList = generators[this.relativePath]!!
+                checkNotNull(pair) { "No record for binary file " + this.relativePath }
 
-        public OutputClassFile(String relativeClassFilePath) {
-            this.relativeClassFilePath = relativeClassFilePath;
-        }
-
-        @NotNull
-        @Override
-        public String getRelativePath() {
-            return relativeClassFilePath;
-        }
-
-        @NotNull
-        @Override
-        public List<File> getSourceFiles() {
-            OutAndSourceFileList pair = generators.get(relativeClassFilePath);
-            if (pair == null) {
-                throw new IllegalStateException("No record for binary file " + relativeClassFilePath);
+                return pair.sourceFiles
             }
 
-            return pair.sourceFiles;
-        }
-
-        @NotNull
-        @Override
-        public byte[] asByteArray() {
+        override fun asByteArray(): ByteArray {
             try {
-                return generators.get(relativeClassFilePath).asBytes(builderFactory);
-            }
-            catch (RuntimeException e) {
-                throw new RuntimeException("Error generating class file " + this.toString() + ": " + e.getMessage(), e);
+                return generators[this.relativePath]!!.asBytes(builderFactory)
+            } catch (e: RuntimeException) {
+                throw RuntimeException("Error generating class file " + this.toString() + ": " + e.message, e)
             }
         }
 
-        @NotNull
-        @Override
-        public String asText() {
+        override fun asText(): String {
             try {
-                return generators.get(relativeClassFilePath).asText(builderFactory);
-            }
-            catch (RuntimeException e) {
-                throw new RuntimeException("Error generating class file " + this.toString() + ": " + e.getMessage(), e);
+                return generators[this.relativePath]!!.asText(builderFactory)
+            } catch (e: RuntimeException) {
+                throw RuntimeException("Error generating class file $this: ${e.message}", e)
             }
         }
 
-        @NotNull
-        @Override
-        public String toString() {
-            return getRelativePath() + " (compiled from " + getSourceFiles() + ")";
+        override fun toString(): String {
+            return "$relativePath (compiled from $sourceFiles)"
         }
     }
 
-    private static final class ClassBuilderAndSourceFileList extends OutAndSourceFileList {
-        private final ClassBuilder classBuilder;
-
-        private ClassBuilderAndSourceFileList(ClassBuilder classBuilder, List<File> sourceFiles) {
-            super(sourceFiles);
-            this.classBuilder = classBuilder;
-        }
-
-        @Override
-        public byte[] asBytes(ClassBuilderFactory factory) {
+    private class ClassBuilderAndSourceFileList(
+        private val classBuilder: ClassBuilder,
+        sourceFiles: List<File>,
+    ) : OutAndSourceFileList(sourceFiles) {
+        override fun asBytes(factory: ClassBuilderFactory): ByteArray {
             synchronized(this) {
-                return factory.asBytes(classBuilder);
+                return factory.asBytes(classBuilder)
             }
         }
 
-        @Override
-        public String asText(ClassBuilderFactory factory) {
-            return factory.asText(classBuilder);
+        override fun asText(factory: ClassBuilderFactory): String {
+            return factory.asText(classBuilder)
         }
     }
 
-    private static abstract class OutAndSourceFileList {
+    private abstract class OutAndSourceFileList(val sourceFiles: List<File>) {
+        abstract fun asBytes(factory: ClassBuilderFactory): ByteArray
 
-        protected final List<File> sourceFiles;
-
-        private OutAndSourceFileList(List<File> sourceFiles) {
-            this.sourceFiles = sourceFiles;
-        }
-
-        public abstract byte[] asBytes(ClassBuilderFactory factory);
-
-        public abstract String asText(ClassBuilderFactory factory);
+        abstract fun asText(factory: ClassBuilderFactory): String
     }
 
-    public void removeClasses(Set<String> classNamesToRemove) {
-        for (String classInternalName : classNamesToRemove) {
-            generators.remove(classInternalName + ".class");
+    fun removeClasses(classNamesToRemove: Set<String?>) {
+        for (classInternalName in classNamesToRemove) {
+            generators.remove("$classInternalName.class")
         }
     }
 }
