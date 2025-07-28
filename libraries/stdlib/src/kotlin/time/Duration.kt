@@ -368,7 +368,8 @@ public value class Duration internal constructor(private val rawValue: Long) : C
         return addFiniteDurations(other)
     }
 
-    internal fun plus(other: Duration, throwException: Boolean): Duration {
+    @kotlin.internal.InlineOnly
+    internal inline fun plus(other: Duration, throwException: Boolean): Duration {
         when {
             this.isInfinite() -> {
                 if (other.isFinite() || (this.rawValue xor other.rawValue >= 0))
@@ -1045,7 +1046,8 @@ public inline operator fun Int.times(duration: Duration): Duration = duration * 
 @kotlin.internal.InlineOnly
 public inline operator fun Double.times(duration: Duration): Duration = duration * this
 
-private fun throwExceptionOrInvalid(throwException: Boolean, message: String = ""): Duration {
+@kotlin.internal.InlineOnly
+private inline fun throwExceptionOrInvalid(throwException: Boolean, message: String = ""): Duration {
     if (throwException) throw IllegalArgumentException(message)
     return Duration.INVALID
 }
@@ -1074,7 +1076,8 @@ private fun parseDuration(value: String, strictIso: Boolean, throwException: Boo
     return if (isNegative) -result else result
 }
 
-private fun parseIsoStringFormat(
+@kotlin.internal.InlineOnly
+private inline fun parseIsoStringFormat(
     value: String,
     startIndex: Int,
     length: Int,
@@ -1125,7 +1128,8 @@ private fun parseIsoStringFormat(
     return result
 }
 
-private fun parseDefaultStringFormat(
+@kotlin.internal.InlineOnly
+private inline fun parseDefaultStringFormat(
     value: String,
     startIndex: Int,
     initialLength: Int,
