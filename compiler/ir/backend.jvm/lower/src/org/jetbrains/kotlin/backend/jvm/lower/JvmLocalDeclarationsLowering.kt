@@ -82,7 +82,7 @@ internal val IrClass.isGeneratedLambdaClass: Boolean
             origin == JvmLoweredDeclarationOrigin.GENERATED_PROPERTY_REFERENCE
 
 internal object JvmVisibilityPolicy : VisibilityPolicy {
-    // Note: any condition that results in non-`LOCAL` visibility here should be duplicated in `JvmLocalClassPopupLowering`,
+    // Note: any condition that results in non-`LOCAL` visibility here should be duplicated in `JvmLocalDeclarationPopupLowering`,
     // else it won't detect the class as local.
     override fun forClass(declaration: IrClass, inInlineFunctionScope: Boolean): DescriptorVisibility =
         if (declaration.isGeneratedLambdaClass) {

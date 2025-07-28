@@ -16,21 +16,21 @@ import org.jetbrains.kotlin.ir.util.isOriginallyLocalDeclaration
 import org.jetbrains.kotlin.ir.util.setDeclarationsParent
 
 /**
- * Moves local classes into nearest declaration container.
+ * Moves local declarations into nearest declaration container.
  */
-open class LocalClassPopupLowering(
+open class LocalDeclarationPopupLowering(
     val context: LoweringContext,
 ) : BodyLoweringPass {
     override fun lower(irFile: IrFile) {
         runOnFilePostfix(irFile, withLocalDeclarations = true)
     }
 
-    private data class ExtractedLocalClass(
+    private data class ExtractedLocalDeclaration(
         val local: IrDeclaration, val newContainer: IrDeclarationParent, val extractedUnder: IrStatement?,
     )
 
     override fun lower(irBody: IrBody, container: IrDeclaration) {
-        val extractedLocalClasses = arrayListOf<ExtractedLocalClass>()
+        val extractedLocalDeclarations = arrayListOf<ExtractedLocalDeclaration>()
 
         irBody.transform(object : IrElementTransformerVoidWithContext() {
             override fun visitClassNew(declaration: IrClass): IrStatement = visitClassOrFunction(declaration)
@@ -56,17 +56,17 @@ open class LocalClassPopupLowering(
                                 .takeIf { it > 0 && it < newContainer.statements.size }
                                 ?.let { newContainer.statements[it] }
                         }
-                        extractedLocalClasses.add(ExtractedLocalClass(declaration, newContainer, extractedUnder))
+                        extractedLocalDeclarations.add(ExtractedLocalDeclaration(declaration, newContainer, extractedUnder))
                     }
-                    is IrDeclarationContainer -> extractedLocalClasses.add(ExtractedLocalClass(declaration, newContainer, extractedUnder))
-                    else -> error("Inexpected container type $newContainer")
+                    is IrDeclarationContainer -> extractedLocalDeclarations.add(ExtractedLocalDeclaration(declaration, newContainer, extractedUnder))
+                    else -> error("Unexpected container type $newContainer")
                 }
 
                 return IrCompositeImpl(declaration.startOffset, declaration.endOffset, context.irBuiltIns.unitType)
             }
         }, null)
 
-        for ((local, newContainer, extractedUnder) in extractedLocalClasses) {
+        for ((local, newContainer, extractedUnder) in extractedLocalDeclarations) {
             when (newContainer) {
                 is IrStatementContainer -> {
                     val insertIndex = extractedUnder?.let { newContainer.statements.indexOf(it) } ?: -1
@@ -80,7 +80,7 @@ open class LocalClassPopupLowering(
                 is IrDeclarationContainer -> {
                     newContainer.addChild(local)
                 }
-                else -> error("Inexpected container type $newContainer")
+                else -> error("Unexpected container type $newContainer")
             }
         }
     }
