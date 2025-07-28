@@ -1052,6 +1052,10 @@ private inline fun throwExceptionOrInvalid(throwException: Boolean, message: Str
     return Duration.INVALID
 }
 
+private inline fun Duration.onInvalid(block: () -> Nothing): Duration {
+    return if (this == Duration.INVALID) block() else this
+}
+
 private fun parseDuration(value: String, strictIso: Boolean, throwException: Boolean = true): Duration {
     val length = value.length
     if (length == 0) return throwExceptionOrInvalid(throwException, "The string is empty")
@@ -1063,14 +1067,12 @@ private fun parseDuration(value: String, strictIso: Boolean, throwException: Boo
     val hasSign = index > 0
     val result = when {
         length <= index -> return throwExceptionOrInvalid(throwException, "No components")
-        value[index] == 'P' -> parseIsoStringFormat(value, index, length, throwException)
-            .also { if (it == Duration.INVALID) return Duration.INVALID }
+        value[index] == 'P' -> parseIsoStringFormat(value, index, length, throwException).onInvalid { return Duration.INVALID }
         strictIso -> return throwExceptionOrInvalid(throwException)
         value.regionMatches(index, infinityString, 0, length = maxOf(length - index, infinityString.length), ignoreCase = true) -> {
             Duration.INFINITE
         }
-        else -> parseDefaultStringFormat(value, index, length, hasSign, throwException)
-            .also { if (it == Duration.INVALID) return Duration.INVALID }
+        else -> parseDefaultStringFormat(value, index, length, hasSign, throwException).onInvalid { return Duration.INVALID }
     }
     val isNegative = hasSign && value.startsWith('-')
     return if (isNegative) -result else result
@@ -1113,16 +1115,13 @@ private inline fun parseIsoStringFormat(
         if (unit == DurationUnit.SECONDS && dotIndex >= 0) {
             val whole = value.parseOverLongIsoComponentInPlace(componentStart, dotIndex)
                 .also { if (it == Duration.INVALID_RAW_VALUE) return throwExceptionOrInvalid(throwException) }
-            result = result.plus(whole.toDuration(unit), throwException)
-                .also { if (it == Duration.INVALID) return Duration.INVALID }
+            result = result.plus(whole.toDuration(unit), throwException).onInvalid { return Duration.INVALID }
             val fractional = value.parseDoubleInPlace(dotIndex, componentEnd) ?: return throwExceptionOrInvalid(throwException)
-            result = result.plus(fractional.toDuration(unit), throwException)
-                .also { if (it == Duration.INVALID) return Duration.INVALID }
+            result = result.plus(fractional.toDuration(unit), throwException).onInvalid { return Duration.INVALID }
         } else {
             val componentValue = value.parseOverLongIsoComponentInPlace(componentStart, componentEnd)
                 .also { if (it == Duration.INVALID_RAW_VALUE) return throwExceptionOrInvalid(throwException) }
-            result = result.plus(componentValue.toDuration(unit), throwException)
-                .also { if (it == Duration.INVALID) return Duration.INVALID }
+            result = result.plus(componentValue.toDuration(unit), throwException).onInvalid { return Duration.INVALID }
         }
     }
     return result
@@ -1174,11 +1173,9 @@ private inline fun parseDefaultStringFormat(
                         it == Long.MIN_VALUE && firstChar != '-'
                     ) return throwExceptionOrInvalid(throwException)
                 }
-            result = result.plus(whole.toDuration(unit), throwException)
-                .also { if (it == Duration.INVALID) return Duration.INVALID }
+            result = result.plus(whole.toDuration(unit), throwException).onInvalid { return Duration.INVALID }
             val fractional = value.parseDoubleInPlace(dotIndex, componentEnd) ?: return throwExceptionOrInvalid(throwException)
-            result = result.plus(fractional.toDuration(unit), throwException)
-                .also { if (it == Duration.INVALID) return Duration.INVALID }
+            result = result.plus(fractional.toDuration(unit), throwException).onInvalid { return Duration.INVALID }
             if (index < length) return throwExceptionOrInvalid(throwException, "Fractional component must be last")
         } else {
             val componentValue = value.parseLongInPlace(componentStart, componentEnd)
@@ -1189,8 +1186,7 @@ private inline fun parseDefaultStringFormat(
                         it == Long.MIN_VALUE && firstChar != '-'
                     ) return throwExceptionOrInvalid(throwException)
                 }
-            result = result.plus(componentValue.toDuration(unit), throwException)
-                .also { if (it == Duration.INVALID) return Duration.INVALID }
+            result = result.plus(componentValue.toDuration(unit), throwException).onInvalid { return Duration.INVALID }
         }
     }
     return result
