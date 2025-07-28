@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.fir.types.coneTypeSafe
 
 @NoMutableState
 class FirPredicateBasedProviderImpl(private val session: FirSession) : FirPredicateBasedProvider() {
-    private val lookupTracker = session.lookupTracker
     private val registeredPluginAnnotations = session.registeredPluginAnnotations
     private val cache = Cache()
 
@@ -41,7 +40,7 @@ class FirPredicateBasedProviderImpl(private val session: FirSession) : FirPredic
         return declarations
             .filter { matches(predicate, it) }
             .map { it.symbol }
-            .onEach { lookupTracker?.recordDirtyDeclaration(it) }
+            .onEach { session.lookupTracker?.recordDirtyDeclaration(it) }
     }
 
     override fun fileHasPluginAnnotations(file: FirFile): Boolean {
