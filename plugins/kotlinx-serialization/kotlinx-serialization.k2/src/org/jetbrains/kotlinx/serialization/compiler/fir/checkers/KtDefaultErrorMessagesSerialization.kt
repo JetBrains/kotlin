@@ -237,5 +237,10 @@ object KtDefaultErrorMessagesSerialization : BaseDiagnosticRendererFactory() {
             FirSerializationErrors.JSON_FORMAT_REDUNDANT,
             "Redundant creation of Json format. Creating instances for each usage can be slow."
         )
+
+        map.put(
+            FirSerializationErrors.TYPEALIASED_SERIALIZABLE_ANNOTATION,
+            "Typealiased kotlinx.serialization.Serializable annotation is not expanded on the COMPILER_REQUIRED_ANNOTATIONS phase in K2 compiler. Consider using @MetaSerializable instead."
+        )
     }
 }

@@ -67,6 +67,8 @@ object FirSerializationErrors : KtDiagnosticsContainer() {
 
     val JSON_FORMAT_REDUNDANT_DEFAULT by warning0<KtElement>()
     val JSON_FORMAT_REDUNDANT by warning0<KtElement>()
+    
+    val TYPEALIASED_SERIALIZABLE_ANNOTATION by warning0<KtElement>()
 
     override fun getRendererFactory(): BaseDiagnosticRendererFactory = KtDefaultErrorMessagesSerialization
 }
