@@ -139,10 +139,9 @@ object CompilerOutputParser {
         }
 
         private fun reportToCollector(text: String) {
-            val output = OutputMessageUtil.parseOutputMessage(text)
-            if (output != null) {
-                collector.add(output.sourceFiles, output.outputFile)
-            }
+            val output = OutputMessageUtil.parseOutputMessage(text) ?: return
+            val outputFile = output.outputFile ?: return
+            collector.add(output.sourceFiles, outputFile)
         }
 
         companion object {
