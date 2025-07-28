@@ -349,6 +349,18 @@ public class FirJsSteppingTestGenerated extends AbstractFirJsSteppingTest {
   }
 
   @Test
+  @TestMetadata("inlineFunAsMemberOfAnonymousObjectInsideInlineFun.kt")
+  public void testInlineFunAsMemberOfAnonymousObjectInsideInlineFun() {
+    runTest("compiler/testData/debug/stepping/inlineFunAsMemberOfAnonymousObjectInsideInlineFun.kt");
+  }
+
+  @Test
+  @TestMetadata("inlineFunAsMemberOfClassInsideFun.kt")
+  public void testInlineFunAsMemberOfClassInsideFun() {
+    runTest("compiler/testData/debug/stepping/inlineFunAsMemberOfClassInsideFun.kt");
+  }
+
+  @Test
   @TestMetadata("inlineNamedCallableReference.kt")
   public void testInlineNamedCallableReference() {
     runTest("compiler/testData/debug/stepping/inlineNamedCallableReference.kt");
