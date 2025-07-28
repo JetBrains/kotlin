@@ -12,29 +12,29 @@ import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
 import org.jetbrains.kotlin.buildtools.api.internal.BaseOption
 import org.jetbrains.kotlin.buildtools.api.trackers.BuildMetricsCollector
 
-abstract class BuildOperationImpl<R> : BuildOperation<R> {
-    private val optionsDelegate = OptionsDelegate()
+internal abstract class BuildOperationImpl<R> : BuildOperation<R> {
+    private val options: Options by OptionsDelegate()
 
     init {
         this[METRICS_COLLECTOR] = null
     }
 
     @UseFromImplModuleRestricted
-    override fun <V> get(key: BuildOperation.Option<V>): V = optionsDelegate[key.id]
+    override fun <V> get(key: BuildOperation.Option<V>): V = options[key.id]
 
     @UseFromImplModuleRestricted
     override fun <V> set(key: BuildOperation.Option<V>, value: V) {
-        optionsDelegate[key] = value
+        options[key] = value
     }
 
     abstract fun execute(projectId: ProjectId, executionPolicy: ExecutionPolicy, logger: KotlinLogger? = null): R
 
     @OptIn(UseFromImplModuleRestricted::class)
-    operator fun <V> get(key: Option<V>): V = optionsDelegate[key]
+    operator fun <V> get(key: Option<V>): V = options[key]
 
     @OptIn(UseFromImplModuleRestricted::class)
     operator fun <V> set(key: Option<V>, value: V) {
-        optionsDelegate[key] = value
+        options[key] = value
     }
 
     class Option<V>(id: String) : BaseOption<V>(id)

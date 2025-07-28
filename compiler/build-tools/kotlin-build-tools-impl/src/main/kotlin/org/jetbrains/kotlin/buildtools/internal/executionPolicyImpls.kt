@@ -9,11 +9,11 @@ import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
 import org.jetbrains.kotlin.buildtools.api.internal.BaseOption
 import kotlin.time.Duration
 
-object InProcessExecutionPolicyImpl : ExecutionPolicy.InProcess
+internal object InProcessExecutionPolicyImpl : ExecutionPolicy.InProcess
 
-class DaemonExecutionPolicyImpl : ExecutionPolicy.WithDaemon {
+internal class DaemonExecutionPolicyImpl : ExecutionPolicy.WithDaemon {
 
-    private val optionsDelegate = OptionsDelegate()
+    private val options: Options by OptionsDelegate()
 
     init {
         this[JVM_ARGUMENTS] = null
@@ -21,19 +21,19 @@ class DaemonExecutionPolicyImpl : ExecutionPolicy.WithDaemon {
     }
 
     @UseFromImplModuleRestricted
-    override fun <V> get(key: ExecutionPolicy.WithDaemon.Option<V>): V = optionsDelegate[key.id]
+    override fun <V> get(key: ExecutionPolicy.WithDaemon.Option<V>): V = options[key.id]
 
     @UseFromImplModuleRestricted
     override fun <V> set(key: ExecutionPolicy.WithDaemon.Option<V>, value: V) {
-        optionsDelegate[key] = value
+        options[key] = value
     }
 
     @OptIn(UseFromImplModuleRestricted::class)
-    operator fun <V> get(key: Option<V>): V = optionsDelegate[key]
+    operator fun <V> get(key: Option<V>): V = options[key]
 
     @OptIn(UseFromImplModuleRestricted::class)
     operator fun <V> set(key: Option<V>, value: V) {
-        optionsDelegate[key] = value
+        options[key] = value
     }
 
     class Option<V>(id: String) : BaseOption<V>(id)

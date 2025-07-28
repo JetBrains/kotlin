@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.incremental.classpathDiff.InaccessibleClassSnapshot
 import org.jetbrains.kotlin.incremental.storage.saveToFile
 import java.io.File
 
-class ClasspathEntrySnapshotImpl(
+internal class ClasspathEntrySnapshotImpl(
     private val origin: org.jetbrains.kotlin.incremental.classpathDiff.ClasspathEntrySnapshot,
 ) :
     ClasspathEntrySnapshot {

@@ -17,16 +17,17 @@ import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmClasspathSnapshotti
 import org.jetbrains.kotlin.buildtools.api.trackers.BuildMetricsCollector
 import org.jetbrains.kotlin.buildtools.internal.BuildOperationImpl
 import org.jetbrains.kotlin.buildtools.internal.ClasspathEntrySnapshotImpl
+import org.jetbrains.kotlin.buildtools.internal.Options
 import org.jetbrains.kotlin.buildtools.internal.OptionsDelegate
 import org.jetbrains.kotlin.buildtools.internal.UseFromImplModuleRestricted
 import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathEntrySnapshotter
 import java.nio.file.Path
 
-class JvmClasspathSnapshottingOperationImpl(
+internal class JvmClasspathSnapshottingOperationImpl(
     private val classpathEntry: Path,
 ) : BuildOperationImpl<ClasspathEntrySnapshot>(), JvmClasspathSnapshottingOperation {
 
-    private val optionsDelegate = OptionsDelegate()
+    private val options: Options by OptionsDelegate()
 
     init {
         this[GRANULARITY] = ClassSnapshotGranularity.CLASS_MEMBER_LEVEL
@@ -34,16 +35,16 @@ class JvmClasspathSnapshottingOperationImpl(
     }
 
     @UseFromImplModuleRestricted
-    override fun <V> get(key: JvmClasspathSnapshottingOperation.Option<V>): V = optionsDelegate[key]
+    override fun <V> get(key: JvmClasspathSnapshottingOperation.Option<V>): V = options[key]
 
     @UseFromImplModuleRestricted
     override fun <V> set(key: JvmClasspathSnapshottingOperation.Option<V>, value: V) {
-        optionsDelegate[key] = value
+        options[key] = value
     }
 
     override fun execute(projectId: ProjectId, executionPolicy: ExecutionPolicy, logger: KotlinLogger?): ClasspathEntrySnapshot {
-        val granularity: ClassSnapshotGranularity = optionsDelegate["GRANULARITY"]
-        val parseInlinedLocalClasses: Boolean = optionsDelegate["PARSE_INLINED_LOCAL_CLASSES"]
+        val granularity: ClassSnapshotGranularity = options["GRANULARITY"]
+        val parseInlinedLocalClasses: Boolean = options["PARSE_INLINED_LOCAL_CLASSES"]
         val metricsReporter = this[METRICS_COLLECTOR]?.let { BuildMetricsReporterImpl() }
             ?: DoNothingBuildMetricsReporter
         val origin = ClasspathEntrySnapshotter.snapshot(
@@ -60,11 +61,11 @@ class JvmClasspathSnapshottingOperationImpl(
     }
 
     @OptIn(UseFromImplModuleRestricted::class)
-    operator fun <V> get(key: Option<V>): V = optionsDelegate[key]
+    operator fun <V> get(key: Option<V>): V = options[key]
 
     @OptIn(UseFromImplModuleRestricted::class)
     operator fun <V> set(key: Option<V>, value: V) {
-        optionsDelegate[key] = value
+        options[key] = value
     }
 
     class Option<V>(id: String) : BaseOption<V>(id)

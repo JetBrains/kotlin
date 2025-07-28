@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import java.io.File
 import java.util.concurrent.ConcurrentHashMap
 
-class KotlinToolchainImpl(
+internal class KotlinToolchainImpl(
     private val buildIdToSessionFlagFile: MutableMap<ProjectId, File> = ConcurrentHashMap(),
     override val jvm: JvmPlatformToolchain = JvmPlatformToolchainImpl(buildIdToSessionFlagFile),
 ) : KotlinToolchain {

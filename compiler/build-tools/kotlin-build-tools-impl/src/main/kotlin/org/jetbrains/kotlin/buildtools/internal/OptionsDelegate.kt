@@ -6,8 +6,21 @@
 package org.jetbrains.kotlin.buildtools.internal
 
 import org.jetbrains.kotlin.buildtools.api.internal.BaseOption
+import kotlin.reflect.KProperty
+import kotlin.reflect.jvm.jvmName
 
-class OptionsDelegate {
+
+internal class OptionsDelegate() {
+    private lateinit var options: Options
+    operator fun getValue(thisRef: Any, property: KProperty<*>): Options {
+        if (!::options.isInitialized) {
+            options = Options(thisRef::class.qualifiedName ?: thisRef::class.jvmName)
+        }
+        return options
+    }
+}
+
+internal class Options(private val optionsName: String) {
     private val optionsMap: MutableMap<String, Any?> = mutableMapOf()
 
     @UseFromImplModuleRestricted
@@ -17,11 +30,7 @@ class OptionsDelegate {
 
     @UseFromImplModuleRestricted
     @Suppress("UNCHECKED_CAST")
-    operator fun <V> get(key: BaseOption<V>): V {
-        return if (key.id !in optionsMap) {
-            error("$key not present in options")
-        } else optionsMap[key.id] as V
-    }
+    operator fun <V> get(key: BaseOption<V>): V = get(key.id)
 
     operator fun set(key: String, value: Any?) {
         optionsMap[key] = value
@@ -30,10 +39,10 @@ class OptionsDelegate {
     @Suppress("UNCHECKED_CAST")
     operator fun <V> get(key: String): V {
         return if (key !in optionsMap) {
-            error("$key not present in options")
+            error("$key was not set in $optionsName")
         } else optionsMap[key] as V
     }
 }
 
 @RequiresOptIn("Don't use from -impl package, as we're not allowed to access API classes for backward compatibility reasons.")
-annotation class UseFromImplModuleRestricted
+internal annotation class UseFromImplModuleRestricted

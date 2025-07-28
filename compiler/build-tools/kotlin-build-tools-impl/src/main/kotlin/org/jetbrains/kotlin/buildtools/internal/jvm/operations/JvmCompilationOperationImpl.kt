@@ -59,14 +59,14 @@ import java.rmi.RemoteException
 import kotlin.io.path.absolutePathString
 import kotlin.io.path.exists
 
-class JvmCompilationOperationImpl(
+internal class JvmCompilationOperationImpl(
     private val kotlinSources: List<Path>,
     private val destinationDirectory: Path,
     override val compilerArguments: JvmCompilerArgumentsImpl = JvmCompilerArgumentsImpl(),
     private val buildIdToSessionFlagFile: MutableMap<ProjectId, File>,
 ) : BuildOperationImpl<CompilationResult>(), JvmCompilationOperation {
 
-    private val optionsDelegate = OptionsDelegate()
+    private val options: Options by OptionsDelegate()
 
     init {
         this[INCREMENTAL_COMPILATION] = null
@@ -75,19 +75,19 @@ class JvmCompilationOperationImpl(
     }
 
     @UseFromImplModuleRestricted
-    override fun <V> get(key: JvmCompilationOperation.Option<V>): V = optionsDelegate[key]
+    override fun <V> get(key: JvmCompilationOperation.Option<V>): V = options[key]
 
     @UseFromImplModuleRestricted
     override fun <V> set(key: JvmCompilationOperation.Option<V>, value: V) {
-        optionsDelegate[key] = value
+        options[key] = value
     }
 
     @OptIn(UseFromImplModuleRestricted::class)
-    private operator fun <V> get(key: Option<V>): V = optionsDelegate[key]
+    private operator fun <V> get(key: Option<V>): V = options[key]
 
     @OptIn(UseFromImplModuleRestricted::class)
     private operator fun <V> set(key: Option<V>, value: V) {
-        optionsDelegate[key] = value
+        options[key] = value
     }
 
     class Option<V>(id: String) : BaseOption<V>(id)

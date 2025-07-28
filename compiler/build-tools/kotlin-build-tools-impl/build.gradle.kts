@@ -33,6 +33,7 @@ sourcesJar()
 javadocJar()
 
 kotlin {
+    explicitApi()
     compilerOptions {
         optIn.add("org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi")
     }

@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.buildtools.internal.jvm.operations.JvmCompilationOpe
 import java.io.File
 import java.nio.file.Path
 
-class JvmPlatformToolchainImpl(private val buildIdToSessionFlagFile: MutableMap<ProjectId, File>) : JvmPlatformToolchain {
+internal class JvmPlatformToolchainImpl(private val buildIdToSessionFlagFile: MutableMap<ProjectId, File>) : JvmPlatformToolchain {
     override fun createJvmCompilationOperation(
         sources: List<Path>,
         destinationDirectory: Path,

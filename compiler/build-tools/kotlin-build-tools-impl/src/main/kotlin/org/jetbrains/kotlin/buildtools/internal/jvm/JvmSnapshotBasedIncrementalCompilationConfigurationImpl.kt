@@ -8,12 +8,13 @@ package org.jetbrains.kotlin.buildtools.internal.jvm
 
 import org.jetbrains.kotlin.buildtools.api.internal.BaseOption
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationOptions
+import org.jetbrains.kotlin.buildtools.internal.Options
 import org.jetbrains.kotlin.buildtools.internal.OptionsDelegate
 import org.jetbrains.kotlin.buildtools.internal.UseFromImplModuleRestricted
 import java.nio.file.Path
 
-class JvmSnapshotBasedIncrementalCompilationOptionsImpl() : JvmSnapshotBasedIncrementalCompilationOptions {
-    private val optionsDelegate = OptionsDelegate()
+internal class JvmSnapshotBasedIncrementalCompilationOptionsImpl() : JvmSnapshotBasedIncrementalCompilationOptions {
+    private val options: Options by OptionsDelegate()
 
     init {
         this[PRECISE_JAVA_TRACKING] = false
@@ -26,19 +27,19 @@ class JvmSnapshotBasedIncrementalCompilationOptionsImpl() : JvmSnapshotBasedIncr
     }
 
     @OptIn(UseFromImplModuleRestricted::class)
-    operator fun <V> get(key: Option<V>): V = optionsDelegate[key]
+    operator fun <V> get(key: Option<V>): V = options[key]
 
     @OptIn(UseFromImplModuleRestricted::class)
     private operator fun <V> set(key: Option<V>, value: V) {
-        optionsDelegate[key] = value
+        options[key] = value
     }
 
     @UseFromImplModuleRestricted
-    override fun <V> get(key: JvmSnapshotBasedIncrementalCompilationOptions.Option<V>): V = optionsDelegate[key]
+    override fun <V> get(key: JvmSnapshotBasedIncrementalCompilationOptions.Option<V>): V = options[key]
 
     @UseFromImplModuleRestricted
     override fun <V> set(key: JvmSnapshotBasedIncrementalCompilationOptions.Option<V>, value: V) {
-        optionsDelegate[key] = value
+        options[key] = value
     }
 
     class Option<V>(id: String) : BaseOption<V>(id)
