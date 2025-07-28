@@ -62,7 +62,7 @@ tasks.withType<KotlinJvmCompile>().configureEach {
 optInToK1Deprecation()
 
 compilerTests {
-    testTask(jUnitMode = JUnitMode.JUnit5) {
+    testTask(jUnitMode = JUnitMode.JUnit5, defineJDKEnvVariables = listOf(JdkMajorVersion.JDK_11_0)) {
         dependsOn(":dist")
         workingDir = rootDir
     }
