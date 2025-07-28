@@ -21,6 +21,9 @@ open class JvmDeclarationOrigin(
     open val originalSourceElement: Any?
         get() = element
 
+    open val alwaysDirtyInIncrementalCompilation: Boolean
+        get() = false
+
     override fun toString(): String =
         if (this == NO_ORIGIN) "NO_ORIGIN" else "origin=$originKind element=${element?.javaClass?.simpleName} descriptor=$descriptor"
 

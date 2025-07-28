@@ -13,6 +13,9 @@ class SimpleOutputBinaryFile(
     override val relativePath: String,
     private val content: ByteArray,
 ) : OutputFile {
+    override val alwaysDirtyInIncrementalCompilation: Boolean
+        get() = false
+
     override fun asByteArray(): ByteArray = content
     override fun asText(): String = String(content)
 

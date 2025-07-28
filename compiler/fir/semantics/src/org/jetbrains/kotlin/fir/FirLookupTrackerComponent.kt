@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir
 
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.resolve.calls.AbstractCallInfo
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.types.*
@@ -22,6 +23,8 @@ abstract class FirLookupTrackerComponent : FirSessionComponent {
     abstract fun recordLookup(name: String, inScopes: Iterable<String>, source: KtSourceElement?, fileSource: KtSourceElement?)
 
     abstract fun recordLookup(name: String, inScope: String, source: KtSourceElement?, fileSource: KtSourceElement?)
+
+    abstract fun recordDirtyDeclaration(symbol: FirBasedSymbol<*>)
 }
 
 fun FirLookupTrackerComponent.recordCallLookup(callInfo: AbstractCallInfo, inType: ConeKotlinType) {

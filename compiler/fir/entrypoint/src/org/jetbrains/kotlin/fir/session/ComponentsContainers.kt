@@ -64,6 +64,7 @@ import org.jetbrains.kotlin.fir.serialization.FirProvidedDeclarationsForMetadata
 import org.jetbrains.kotlin.fir.symbols.FirLazyDeclarationResolver
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.incremental.components.EnumWhenTracker
+import org.jetbrains.kotlin.incremental.components.ICFileMappingTracker
 import org.jetbrains.kotlin.incremental.components.ImportTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.load.java.JavaTypeEnhancementState
@@ -211,6 +212,7 @@ fun FirSession.registerResolveComponents(
     lookupTracker: LookupTracker? = null,
     enumWhenTracker: EnumWhenTracker? = null,
     importTracker: ImportTracker? = null,
+    fileMappingTracker: ICFileMappingTracker? = null,
 ) {
     register(FirQualifierResolver::class, FirQualifierResolverImpl(this))
     register(FirTypeResolver::class, FirTypeResolverImpl(this))
@@ -223,7 +225,7 @@ fun FirSession.registerResolveComponents(
         }
         register(
             FirLookupTrackerComponent::class,
-            IncrementalPassThroughLookupTrackerComponent(lookupTracker, firFileToPath)
+            IncrementalPassThroughLookupTrackerComponent(this, lookupTracker, fileMappingTracker, firFileToPath)
         )
     }
     if (enumWhenTracker != null) {

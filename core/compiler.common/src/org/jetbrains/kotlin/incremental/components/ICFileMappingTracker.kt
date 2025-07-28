@@ -9,8 +9,12 @@ import java.io.File
 
 interface ICFileMappingTracker {
     fun recordSourceFilesToOutputFileMapping(sourceFiles: Collection<File>, outputFile: File)
+    fun recordDirtySourceFile(sourceFile: File)
+    fun recordDirtyOutputFile(outputFile: File)
 
     object DoNothing : ICFileMappingTracker {
         override fun recordSourceFilesToOutputFileMapping(sourceFiles: Collection<File>, outputFile: File) {}
+        override fun recordDirtySourceFile(sourceFile: File) {}
+        override fun recordDirtyOutputFile(outputFile: File) {}
     }
 }

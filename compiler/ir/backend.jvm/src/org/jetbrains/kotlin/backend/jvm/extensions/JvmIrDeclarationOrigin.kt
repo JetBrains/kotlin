@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.jvm.extensions
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.backend.common.fileForTopLevelPluginDeclarations
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.ir.isEffectivelyInlineOnly
 import org.jetbrains.kotlin.backend.jvm.ir.psiElement
@@ -24,6 +25,9 @@ class JvmIrDeclarationOrigin(
 ) : JvmDeclarationOrigin(originKind, element, declaration?.toIrBasedDescriptor()) {
     override val originalSourceElement: Any?
         get() = declaration?.attributeOwnerId
+
+    override val alwaysDirtyInIncrementalCompilation: Boolean
+        get() = (declaration as? IrFile)?.fileForTopLevelPluginDeclarations == true
 }
 
 val IrDeclaration.descriptorOrigin: JvmIrDeclarationOrigin

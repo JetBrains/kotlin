@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.extensions.predicate.AbstractPredicate
 import org.jetbrains.kotlin.fir.extensions.predicate.DeclarationPredicate
 import org.jetbrains.kotlin.fir.extensions.predicate.LookupPredicate
 import org.jetbrains.kotlin.fir.extensions.predicate.PredicateVisitor
+import org.jetbrains.kotlin.fir.lookupTracker
 import org.jetbrains.kotlin.fir.resolve.fqName
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
@@ -27,6 +28,7 @@ import org.jetbrains.kotlin.fir.types.coneTypeSafe
 
 @NoMutableState
 class FirPredicateBasedProviderImpl(private val session: FirSession) : FirPredicateBasedProvider() {
+    private val lookupTracker = session.lookupTracker
     private val registeredPluginAnnotations = session.registeredPluginAnnotations
     private val cache = Cache()
 
@@ -36,7 +38,10 @@ class FirPredicateBasedProviderImpl(private val session: FirSession) : FirPredic
         val declarations = annotations.flatMapTo(mutableSetOf()) {
             cache.declarationByAnnotation[it] + cache.declarationsUnderAnnotated[it]
         }
-        return declarations.filter { matches(predicate, it) }.map { it.symbol }
+        return declarations
+            .filter { matches(predicate, it) }
+            .map { it.symbol }
+            .onEach { lookupTracker?.recordDirtyDeclaration(it) }
     }
 
     override fun fileHasPluginAnnotations(file: FirFile): Boolean {
