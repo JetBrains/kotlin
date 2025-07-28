@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.analysis.test.framework.hasFallbackDependencies
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.TestModuleStructureFactory.addLibraryDependencies
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.TestModuleStructureFactory.getScopeForLibraryByRoots
 import org.jetbrains.kotlin.analysis.test.framework.services.environmentManager
+import org.jetbrains.kotlin.analysis.test.framework.utils.stripOutSnapshotVersion
 import org.jetbrains.kotlin.cli.common.CLIConfigurationKeys
 import org.jetbrains.kotlin.cli.jvm.config.JvmClasspathRoot
 import org.jetbrains.kotlin.js.config.JSConfigurationKeys
@@ -220,7 +221,7 @@ object TestModuleStructureFactory {
     ): KaLibraryModuleImpl {
         check(libraryFile.exists()) { "Library $libraryFile does not exist" }
 
-        val libraryName = libraryFile.nameWithoutExtension
+        val libraryName = libraryFile.nameWithoutExtension.stripOutSnapshotVersion()
         val libraryScope = getScopeForLibraryByRoots(project, listOf(libraryFile), testServices)
         return KaLibraryModuleImpl(libraryName, platform, libraryScope, project, listOf(libraryFile), librarySources = null, isSdk = false)
     }

@@ -106,7 +106,7 @@ fun KtElement.renderLocationDescription(): String {
             ?: error("Expected a JAR file path for a virtual file in a JAR file system: ${virtualFile.path}")
     } else {
         virtualFile.name
-    }
+    }.stripOutSnapshotVersion()
 
     return buildString {
         append("'$fileDescription'")
@@ -164,3 +164,12 @@ fun <T, R> Collection<T>.singleOrZeroValue(
         })
     }
 }
+
+private val snapshotVersionRegex: Regex = """-2\.\d\.\d+-(\w+-\d+|SNAPSHOT)""".toRegex()
+
+/**
+ * Removes version suffix from kotlin libraries, like stdlib or kotlin-reflect:
+ * kotlin-stdlib-2.3.255-SNAPSHOT -> kotlin-stdlib
+ * kotlin-stdlib-2.3.0-dev-1234 -> kotlin-stdlib
+ */
+fun String.stripOutSnapshotVersion(): String = replace(snapshotVersionRegex, "")
