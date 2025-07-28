@@ -1096,13 +1096,24 @@ private inline fun parseIsoStringFormat(
             isTimeComponent = true
             continue
         }
+
         val componentStart = index
         var componentEnd = index
         if (index < length && value[index] in "+-") componentEnd++
-        componentEnd = value.skipWhile(componentEnd) { it in '0'..'9' || it == '.' }
+        var dotIndex = -1
+        while (componentEnd < value.length) {
+            when (val ch = value[componentEnd]) {
+                in '0'..'9' -> componentEnd++
+                '.' -> {
+                    if (dotIndex >= 0) return throwExceptionOrInvalid(throwException, "Multiple dots in numeric component")
+                    dotIndex = componentEnd
+                    componentEnd++
+                }
+                else -> break
+            }
+        }
         if (componentEnd == componentStart) return throwExceptionOrInvalid(throwException)
-        val dotIndex = value.findDot(componentStart, componentEnd)
-        if (dotIndex >= 0 && value.findDot(dotIndex + 1, componentEnd) >= 0) return throwExceptionOrInvalid(throwException)
+
         val unitChar = value.getOrElse(componentEnd) {
             return throwExceptionOrInvalid(
                 throwException, "Missing unit for value ${value.substring(componentStart, componentEnd)}"
@@ -1150,9 +1161,24 @@ private inline fun parseDefaultStringFormat(
             index = value.skipWhile(index) { it == ' ' }
         }
         afterFirst = true
+
         val componentStart = index
-        val componentEnd = value.skipWhile(index) { it in '0'..'9' || it == '.' }
+        var componentEnd = index
+        if (index < length && value[index] in "+-") componentEnd++
+        var dotIndex = -1
+        while (componentEnd < value.length) {
+            when (val ch = value[componentEnd]) {
+                in '0'..'9' -> componentEnd++
+                '.' -> {
+                    if (dotIndex >= 0) return throwExceptionOrInvalid(throwException, "Multiple dots in numeric component")
+                    dotIndex = componentEnd
+                    componentEnd++
+                }
+                else -> break
+            }
+        }
         if (componentEnd == componentStart) return throwExceptionOrInvalid(throwException)
+
         index = componentEnd
         val unitStart = index
         val unitEnd = value.skipWhile(index) { it in 'a'..'z' }
@@ -1160,10 +1186,6 @@ private inline fun parseDefaultStringFormat(
         val unit = durationUnitByShortNameInPlace(value, unitStart, unitEnd, throwException) ?: return Duration.INVALID
         if (prevUnit != null && prevUnit <= unit) return throwExceptionOrInvalid(throwException, "Unexpected order of duration components")
         prevUnit = unit
-        val dotIndex = value.findDot(componentStart, componentEnd)
-        if (dotIndex >= 0 && value.findDot(dotIndex + 1, componentEnd) >= 0) {
-            return throwExceptionOrInvalid(throwException)
-        }
         if (dotIndex >= 0) {
             val whole = value.parseLongInPlace(componentStart, dotIndex)
                 .also { if (it == Duration.INVALID_RAW_VALUE) return throwExceptionOrInvalid(throwException) }
