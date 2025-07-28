@@ -163,7 +163,7 @@ actual constructor(size: Int = ELEMENT_SIZE) {
      * (if [lookFor] == false) bit after [startIndex] (inclusive).
      * Returns -1 (for [lookFor] == true) or [size] (for lookFor == false)
      * if there is no such bits between [startIndex] and [size] - 1.
-     * @throws IndexOutOfBoundException if [startIndex] < 0.
+     * @throws IndexOutOfBoundsException if [startIndex] < 0.
      */
     private fun nextBit(startIndex: Int, lookFor: Boolean): Int {
         if (startIndex < 0) {
@@ -197,7 +197,7 @@ actual constructor(size: Int = ELEMENT_SIZE) {
     /**
      * Returns an index of a next bit which value is `true` after [startIndex] (inclusive).
      * Returns -1 if there is no such bits after [startIndex].
-     * @throws IndexOutOfBoundException if [startIndex] < 0.
+     * @throws IndexOutOfBoundsException if [startIndex] < 0.
      */
     @Suppress("ACTUAL_FUNCTION_WITH_DEFAULT_ARGUMENTS")
     actual fun nextSetBit(startIndex: Int = 0): Int = nextBit(startIndex, true)
