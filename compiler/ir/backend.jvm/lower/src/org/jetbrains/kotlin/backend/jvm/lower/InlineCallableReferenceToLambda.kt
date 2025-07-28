@@ -42,8 +42,8 @@ private val STUB_FOR_INLINING = Name.identifier("stub_for_inlining")
  *
  * `foo(::smth)` is transformed to `foo { a -> smth(a) }`.
  */
-@PhaseDescription(name = "InlineCallableReferenceToLambdaPhase")
-class InlineCallableReferenceToLambdaPhase(
+@PhaseDescription(name = "JvmInlineCallableReferenceToLambdaPhase")
+class JvmInlineCallableReferenceToLambdaPhase(
     val context: JvmBackendContext,
 ) : FileLoweringPass, IrTransformer<IrDeclarationParent?>() {
     override fun lower(irFile: IrFile) {

@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.ir.util.render
 
 @PhaseDescription(
     name = "DefaultParameterInjector",
-    prerequisite = [FunctionReferenceLowering::class, InlineCallableReferenceToLambdaPhase::class]
+    prerequisite = [FunctionReferenceLowering::class, JvmInlineCallableReferenceToLambdaPhase::class]
 )
 internal class JvmDefaultParameterInjector(context: JvmBackendContext) : DefaultParameterInjector<JvmBackendContext>(
     context = context,
