@@ -59,9 +59,9 @@ class LocalClassesInInlineLambdasLowering(val context: LoweringContext) : BodyLo
                 for (index in expression.arguments.indices) {
                     val argument = expression.arguments[index]
                     val inlineLambda = when (argument) {
-                       is IrRichPropertyReference -> argument.getterFunction
-                       is IrRichFunctionReference -> argument.invokeFunction
-                       else -> null
+                        is IrRichPropertyReference -> argument.getterFunction
+                        is IrRichFunctionReference -> argument.invokeFunction
+                        else -> null
                     }?.takeIf { rootCallee.parameters[index].isInlineParameter() }
                     if (inlineLambda == null)
                         expression.arguments[index] = argument?.transform(this, data)
@@ -86,12 +86,12 @@ class LocalClassesInInlineLambdasLowering(val context: LoweringContext) : BodyLo
                         }
 
                         override fun visitRichFunctionReference(expression: IrRichFunctionReference) {
-                            expression.boundValues.forEach { it.acceptVoid(this)  }
+                            expression.boundValues.forEach { it.acceptVoid(this) }
                             expression.invokeFunction.acceptChildrenVoid(this)
                         }
 
                         override fun visitRichPropertyReference(expression: IrRichPropertyReference) {
-                            expression.boundValues.forEach { it.acceptVoid(this)  }
+                            expression.boundValues.forEach { it.acceptVoid(this) }
                             expression.getterFunction.acceptChildrenVoid(this)
                             expression.setterFunction?.acceptChildrenVoid(this)
                         }
@@ -120,7 +120,8 @@ class LocalClassesInInlineLambdasLowering(val context: LoweringContext) : BodyLo
 
                             expression.arguments.zip(callee.parameters).forEach { (argument, parameter) ->
                                 // Skip adapted function references and inline lambdas - they will be inlined later.
-                                val shouldSkip = argument != null && (argument.isAdaptedFunctionReference() || argument.isInlineLambdaBlock())
+                                val shouldSkip =
+                                    argument != null && (argument.isAdaptedFunctionReference() || argument.isInlineLambdaBlock())
                                 if (parameter.isInlineParameter() && shouldSkip)
                                     adaptedFunctions += (argument as IrBlock).statements[0] as IrSimpleFunction
                                 else

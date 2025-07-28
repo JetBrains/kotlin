@@ -206,6 +206,7 @@ open class LocalDeclarationsLowering(
         return declarationScopesWithCounter.getOrPut(klass, ::mutableMapOf)
             .getOrPut(this.name) { ScopeWithCounter(this) }
     }
+
     private fun IrFunction.getOrCreateScopeWithCounter(): ScopeWithCounter? {
         val klass = parentClassOrNull ?: return null
         return declarationScopesWithCounter.getOrPut(klass, ::mutableMapOf)
@@ -232,7 +233,7 @@ open class LocalDeclarationsLowering(
     }
 
     abstract class LocalContextWithClosureAsParameters(
-        override val sourceFileWhenInlined: IrFileEntry?
+        override val sourceFileWhenInlined: IrFileEntry?,
     ) : LocalContext() {
 
         abstract val declaration: IrFunction
@@ -545,7 +546,7 @@ open class LocalDeclarationsLowering(
 
             private fun <T : IrMemberAccessExpression<*>> T.fillArguments2(
                 oldExpression: IrMemberAccessExpression<*>,
-                newTarget: IrFunction
+                newTarget: IrFunction,
             ): T {
                 val transformedNewTargetParameters = newTarget.parameters.map { newValueParameterDeclaration ->
                     val oldParameter = newParameterToOld[newValueParameterDeclaration]
@@ -875,7 +876,7 @@ open class LocalDeclarationsLowering(
 
         private fun generateNameForLiftedDeclaration(
             declaration: IrDeclaration,
-            newOwner: IrDeclarationParent
+            newOwner: IrDeclarationParent,
         ): Name {
             val parents = declaration.parentsWithSelf.takeWhile { it != newOwner }.toList().reversed()
             val nameFromParents = parents.joinToString(separator = "$") { suggestLocalName(it as IrDeclarationWithName) }
@@ -965,7 +966,7 @@ open class LocalDeclarationsLowering(
             localFunctionContext: LocalContext,
             oldDeclaration: IrFunction,
             newDeclaration: IrFunction,
-            isExplicitLocalFunction: Boolean = false
+            isExplicitLocalFunction: Boolean = false,
         ): List<IrValueParameter> {
             val transformedParameters = oldDeclaration.parameters.map { param ->
                 param.copyTo(
@@ -1114,7 +1115,7 @@ open class LocalDeclarationsLowering(
         private fun suggestNameForCapturedValue(
             declaration: IrValueDeclaration,
             usedNames: MutableSet<String>,
-            isExplicitLocalFunction: Boolean = false
+            isExplicitLocalFunction: Boolean = false,
         ): Name {
             if (declaration is IrValueParameter) {
                 if (declaration.name.asString() == "<this>" && declaration.kind == IrParameterKind.DispatchReceiver) {
@@ -1323,7 +1324,8 @@ open class LocalDeclarationsLowering(
 
                     if (!declaration.constructedClass.isLocalNotInner()) return
 
-                    localClassConstructors[declaration] = LocalClassConstructorContext(declaration, data.inInlineFunctionScope, data.sourceFileWhenInlined)
+                    localClassConstructors[declaration] =
+                        LocalClassConstructorContext(declaration, data.inInlineFunctionScope, data.sourceFileWhenInlined)
                 }
 
                 override fun visitClass(declaration: IrClass, data: Data) {
@@ -1345,7 +1347,8 @@ open class LocalDeclarationsLowering(
                         .mapNotNull { localClassConstructors[it] }
                         .singleOrNull()
 
-                    localClasses[declaration] = LocalClassContext(declaration, data.inInlineFunctionScope, constructorContext, data.sourceFileWhenInlined)
+                    localClasses[declaration] =
+                        LocalClassContext(declaration, data.inInlineFunctionScope, constructorContext, data.sourceFileWhenInlined)
                 }
 
                 private val Data.inInlineFunctionScope: Boolean
