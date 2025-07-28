@@ -93,7 +93,7 @@ class ConstantDataCharArray(val value: List<WasmSymbol<Char>>, val fitsLatin1: B
 
     override fun dump(indent: String, startAddress: Int): String {
         if (value.isEmpty()) return ""
-        return "${addressToString(startAddress)}: $indent i16[] : ${value.map { it.owner }.toCharArray().contentToString()}   ;;\n"
+        return "${addressToString(startAddress)}: $indent i${8 * sizeInBytes}[] : ${value.map { it.owner }.toCharArray().contentToString()}   ;;\n"
     }
 
     private val bytesPerChar = if (fitsLatin1) BYTE_SIZE_BYTES else CHAR_SIZE_BYTES
@@ -143,7 +143,7 @@ fun Int.toLittleEndianBytes(to: ByteArray, offset: Int) {
 }
 
 fun Char.toLittleEndianBytes(to: ByteArray, offset: Int, fitsLatin1: Boolean) {
-    to[offset] = (this.code and 0xFF).toByte()
+    to[offset] = this.code.toByte()
     if (!fitsLatin1) {
         to[offset + 1] = (this.code ushr Byte.SIZE_BITS).toByte()
     }
