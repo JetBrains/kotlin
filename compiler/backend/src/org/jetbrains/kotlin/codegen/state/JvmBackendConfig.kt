@@ -108,7 +108,8 @@ class JvmBackendConfig(configuration: CompilerConfiguration) {
     // Fixed coroutines debugging uses stdlib function to null out spilled locals.
     // By default the function returns `null`, the debugger replaces it with implementation, that returns its argument.
     // This way we avoid memory leaks in release builds and do not make coroutines undebuggable.
-    val nullOutSpilledCoroutineLocalsUsingStdlibFunction: Boolean = languageVersionSettings.apiVersion >= ApiVersion.KOTLIN_2_2
+    val nullOutSpilledCoroutineLocalsUsingStdlibFunction: Boolean =
+        languageVersionSettings.supportsFeature(LanguageFeature.JvmNullOutSpilledCoroutineLocals)
 
     val whenGenerationScheme: JvmWhenGenerationScheme =
         if (target.majorVersion >= JvmTarget.JVM_21.majorVersion)

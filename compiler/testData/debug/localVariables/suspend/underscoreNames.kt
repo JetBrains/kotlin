@@ -1,5 +1,5 @@
 // WITH_STDLIB
-
+// LANGUAGE: +JvmNullOutSpilledCoroutineLocals
 // FILE: test.kt
 class A {
     operator fun component1() = "O"

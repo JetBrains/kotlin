@@ -1,4 +1,4 @@
-// API_VERSION: LATEST
+// LANGUAGE: +JvmNullOutSpilledCoroutineLocals
 
 import kotlin.sequences.*
 import kotlin.experimental.*

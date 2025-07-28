@@ -1,4 +1,4 @@
-// API_VERSION: LATEST
+// LANGUAGE: +JvmNullOutSpilledCoroutineLocals
 
 suspend fun blackhole(a: Any) {}
 

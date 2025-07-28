@@ -1,6 +1,6 @@
 
 // WITH_STDLIB
-// API_VERSION: LATEST
+// LANGUAGE: +JvmNullOutSpilledCoroutineLocals
 // FILE: test.kt
 
 import kotlin.coroutines.intrinsics.*

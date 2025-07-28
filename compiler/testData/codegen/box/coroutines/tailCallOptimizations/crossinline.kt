@@ -2,6 +2,8 @@
 // WITH_COROUTINES
 // CHECK_BYTECODE_LISTING
 // FIR_IDENTICAL
+// LANGUAGE: +JvmNullOutSpilledCoroutineLocals
+
 import helpers.*
 import kotlin.coroutines.*
 import kotlin.coroutines.intrinsics.*

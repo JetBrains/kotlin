@@ -405,6 +405,7 @@ enum class LanguageFeature(
     ForbidCrossFileIrFieldAccessInKlibs(KOTLIN_2_2, enabledInProgressiveMode = true, "KT-71138"),
     AllowExpectDeclarationsInJsExport(KOTLIN_2_2, "KT-64951"),
     DoNotRunSuspendConversionForLambdaReturnStatements(KOTLIN_2_2, enabledInProgressiveMode = true, "KT-74932"),
+    JvmNullOutSpilledCoroutineLocals(KOTLIN_2_2, ApiVersion.KOTLIN_2_2, "KT-63720"),
 
     // It's not a fully blown LF, but mostly a way to manage potential unexpected semantic changes.
     // We enable it for already released 2.2 because it's a bug fix, and we'd like to make it work in the IDE as fast as possible.

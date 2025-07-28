@@ -1,5 +1,6 @@
 // Corresponds to KT-79442
 
+// LANGUAGE: +JvmNullOutSpilledCoroutineLocals
 // TARGET_BACKEND: JVM
 
 // WITH_STDLIB

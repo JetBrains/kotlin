@@ -1,4 +1,4 @@
-
+// LANGUAGE: +JvmNullOutSpilledCoroutineLocals
 // WITH_STDLIB
 // WITH_COROUTINES
 // CHECK_BYTECODE_LISTING
