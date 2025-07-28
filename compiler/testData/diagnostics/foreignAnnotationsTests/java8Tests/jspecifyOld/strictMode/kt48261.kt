@@ -3,6 +3,7 @@
 // JSPECIFY_STATE: strict
 // WITH_STDLIB
 // FULL_JDK
+// SCOPE_DUMP: MyList:contains
 
 // FILE: MyCollection.java
 import java.util.AbstractCollection;
