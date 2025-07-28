@@ -28,8 +28,8 @@ class LexerTests : AbstractRecognizerTests<IElementType, SyntaxElementType, Test
         }
     }
 
-    override fun recognizeOldSyntaxElement(fileName: String, text: String): TestToken<IElementType> = OldTestLexer().tokenize(text)
-    override fun recognizeNewSyntaxElement(fileName: String, text: String): TestToken<SyntaxElementType> = NewTestLexer().tokenize(text)
+    override fun recognizeOldSyntaxElement(fileName: String, text: String): TestToken<IElementType> = OldTestLexer().tokenize(fileName, text)
+    override fun recognizeNewSyntaxElement(fileName: String, text: String): TestToken<SyntaxElementType> = NewTestLexer().tokenize(fileName, text)
 
     override val recognizerName: String = "lexer"
     override val recognizerSyntaxElementName: String = "token"

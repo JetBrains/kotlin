@@ -11,13 +11,14 @@ import org.jetbrains.kotlin.kdoc.lexer.KDocLexer
 import org.jetbrains.kotlin.kdoc.lexer.KDocTokens
 import org.jetbrains.kotlin.lexer.KotlinLexer
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.lexer.assertCorrectState
 
 class OldTestLexer : AbstractTestLexer<IElementType>() {
-    override fun tokenize(text: String): TestToken<IElementType> {
-        return tokenizeSubsequence(text, 0, KotlinLexer()).wrap(text.length)
+    override fun tokenize(fileName: String, text: String): TestToken<IElementType> {
+        return tokenizeSubsequence(fileName, text, 0, KotlinLexer()).wrap(text.length)
     }
 
-    private fun tokenizeSubsequence(charSequence: CharSequence, start: Int, lexer: LexerBase): List<TestToken<IElementType>> {
+    private fun tokenizeSubsequence(fileName: String, charSequence: CharSequence, start: Int, lexer: LexerBase): List<TestToken<IElementType>> {
         return buildList {
             lexer.start(charSequence)
             var tokenType = lexer.tokenType
@@ -31,7 +32,7 @@ class OldTestLexer : AbstractTestLexer<IElementType>() {
                         -> {
                         val subLexer = if (tokenType == KtTokens.DOC_COMMENT) KDocLexer() else KotlinLexer()
                         val subSequence = charSequence.subSequence(lexer.tokenStart, lexer.tokenEnd)
-                        tokenizeSubsequence(subSequence, mainTokenStart, subLexer)
+                        tokenizeSubsequence(fileName, subSequence, mainTokenStart, subLexer)
                     }
                     else -> {
                         emptyList()
@@ -41,6 +42,10 @@ class OldTestLexer : AbstractTestLexer<IElementType>() {
 
                 lexer.advance()
                 tokenType = lexer.tokenType
+            }
+        }.also {
+            if (lexer is KotlinLexer) {
+                lexer.assertCorrectState(fileName)
             }
         }
     }

@@ -722,12 +722,12 @@ class _JetLexer implements FlexLexer {
         @Override
         public String toString() {
             return "yystate = " + state
-                + (lBraceCount == 0 ? "" : "lBraceCount = " + lBraceCount)
-                + (requiredInterpolationPrefix == -1 ? "" : "requiredInterpolationPrefix = " + requiredInterpolationPrefix);
+                + (lBraceCount == 0 ? "" : ", lBraceCount = " + lBraceCount)
+                + (requiredInterpolationPrefix == -1 ? "" : ", requiredInterpolationPrefix = " + requiredInterpolationPrefix);
         }
     }
 
-    private final Stack<State> states = new Stack<State>();
+    public final Stack<State> states = new Stack<>();
     private int lBraceCount;
     private int requiredInterpolationPrefix;
 

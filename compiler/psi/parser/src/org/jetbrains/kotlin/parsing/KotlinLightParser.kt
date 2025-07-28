@@ -15,6 +15,7 @@ import com.intellij.util.diff.FlyweightCapableTreeStructure
 import org.jetbrains.kotlin.KtSourceFile
 import org.jetbrains.kotlin.idea.KotlinFileType
 import org.jetbrains.kotlin.lexer.KotlinLexer
+import org.jetbrains.kotlin.lexer.assertCorrectState
 
 object KotlinLightParser {
     fun buildLightTree(
@@ -22,11 +23,13 @@ object KotlinLightParser {
         sourceFile: KtSourceFile?,
         errorListener: LightTreeParsingErrorListener?,
     ): FlyweightCapableTreeStructure<LighterASTNode> {
-        val builder = PsiBuilderFactory.getInstance().createBuilder(KotlinParserDefinition(), KotlinLexer(), code)
+        val lexer = KotlinLexer()
+        val builder = PsiBuilderFactory.getInstance().createBuilder(KotlinParserDefinition(), lexer, code)
         val extension = sourceFile?.let { FileUtilRt.getExtension(it.name) } ?: ""
         val isScript = !(extension.isEmpty() || extension == KotlinFileType.EXTENSION)
         return parse(builder, isScript).also {
             if (errorListener != null) reportErrors(it.root, it, errorListener)
+            lexer.assertCorrectState()
         }
     }
 

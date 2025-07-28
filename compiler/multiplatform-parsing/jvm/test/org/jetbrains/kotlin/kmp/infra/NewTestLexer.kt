@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.kmp.lexer.KotlinLexer
 import org.jetbrains.kotlin.kmp.lexer.KtTokens
 
 class NewTestLexer : AbstractTestLexer<SyntaxElementType>() {
-    override fun tokenize(text: String): TestToken<SyntaxElementType> {
+    override fun tokenize(fileName: String, text: String): TestToken<SyntaxElementType> {
         return tokenizeSubsequence(text, 0, KotlinLexer()).wrap(text.length)
     }
 

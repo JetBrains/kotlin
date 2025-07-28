@@ -35,6 +35,8 @@ import org.jetbrains.kotlin.psi.KtFunctionLiteral;
 import org.jetbrains.kotlin.psi.KtLambdaExpression;
 import org.jetbrains.kotlin.psi.KtParameterList;
 
+import static org.jetbrains.kotlin.lexer.LexerUtilsKt.assertCorrectState;
+
 public class LambdaExpressionElementType extends IErrorCounterReparseableElementType {
     public LambdaExpressionElementType() {
         super("LAMBDA_EXPRESSION", KotlinLanguage.INSTANCE);
@@ -109,10 +111,10 @@ public class LambdaExpressionElementType extends IErrorCounterReparseableElement
     }
 
     private static boolean hasTokenMoved(String oldText, CharSequence buffer, int oldOffset, IElementType tokenType) {
-        Lexer oldLexer = new KotlinLexer();
+        KotlinLexer oldLexer = new KotlinLexer();
         oldLexer.start(oldText);
 
-        Lexer newLexer = new KotlinLexer();
+        KotlinLexer newLexer = new KotlinLexer();
         newLexer.start(buffer);
 
         while (true) {
@@ -120,7 +122,11 @@ public class LambdaExpressionElementType extends IErrorCounterReparseableElement
             if (oldType == null) break; // Didn't find an expected token. Consider it as no token was present.
 
             IElementType newType = newLexer.getTokenType();
-            if (newType == null) return true; // New text was finished before reaching expected token in old text
+            if (newType == null) {
+                assertCorrectState(oldLexer, null);
+                assertCorrectState(newLexer, null);
+                return true; // New text was finished before reaching expected token in old text
+            }
 
             if (newType != oldType) {
                 if (newType == KtTokens.WHITE_SPACE) {
@@ -132,6 +138,8 @@ public class LambdaExpressionElementType extends IErrorCounterReparseableElement
                     continue;
                 }
 
+                assertCorrectState(oldLexer, null);
+                assertCorrectState(newLexer, null);
                 return true; // Expected token was moved or deleted
             }
 
@@ -143,6 +151,8 @@ public class LambdaExpressionElementType extends IErrorCounterReparseableElement
             newLexer.advance();
         }
 
+        assertCorrectState(oldLexer, null);
+        assertCorrectState(newLexer, null);
         return false;
     }
 

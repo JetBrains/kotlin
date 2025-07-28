@@ -18,6 +18,7 @@ abstract class AbstractLexerTest(private val lexer: Lexer) : TestCase() {
         val lexerResult = printTokens(StringUtil.convertLineSeparators(text), 0, lexer)
 
         KtUsefulTestCase.assertSameLinesWithFile(fileName.replaceAfterLast(".", "txt"), lexerResult)
+        (lexer as? KotlinLexer)?.assertCorrectState()
     }
 
     private fun printTokens(text: CharSequence, start: Int, lexer: Lexer): String {

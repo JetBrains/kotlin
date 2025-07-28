@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.KtNodeTypes.*
 import org.jetbrains.kotlin.lexer.KotlinLexer
 import org.jetbrains.kotlin.lexer.KtToken
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.lexer.assertCorrectState
 import org.jetbrains.kotlin.psi.stubs.elements.KtClassLiteralExpressionElementType
 import org.jetbrains.kotlin.psi.stubs.elements.KtCollectionLiteralExpressionElementType
 import org.jetbrains.kotlin.psi.stubs.elements.KtConstantExpressionElementType
@@ -39,6 +40,9 @@ object ElementTypeUtils {
             }
             lexer.advance()
         }
+
+        lexer.assertCorrectState()
+
         return balance
     }
 

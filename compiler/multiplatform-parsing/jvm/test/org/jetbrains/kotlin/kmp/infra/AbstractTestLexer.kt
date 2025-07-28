@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.kmp.infra
 
 abstract class AbstractTestLexer<T> {
-    abstract fun tokenize(text: String): TestToken<T>
+    abstract fun tokenize(fileName: String, text: String): TestToken<T>
 
     protected fun List<TestToken<T>>.wrap(end: Int): TestToken<T> {
         return TestToken(

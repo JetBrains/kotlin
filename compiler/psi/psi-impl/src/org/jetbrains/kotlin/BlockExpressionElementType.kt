@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.KtNodeTypes.SCRIPT
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.lexer.KotlinLexer
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.lexer.assertCorrectState
 import org.jetbrains.kotlin.parsing.KotlinParser
 import org.jetbrains.kotlin.psi.KtBlockExpression
 
@@ -76,31 +77,52 @@ class BlockExpressionElementType : IErrorCounterReparseableElementType("BLOCK", 
             //   {a -> ...}
             //   {a, b -> ...}
             //   {(a, b) -> ... }
-            if (lexer.tokenType != KtTokens.LBRACE) return false
+            if (lexer.tokenType != KtTokens.LBRACE) {
+                lexer.assertCorrectState()
+                return false
+            }
 
-            if (advanceWhitespacesCheckIsEndOrArrow(lexer)) return false
+            if (advanceWhitespacesCheckIsEndOrArrow(lexer)) {
+                lexer.assertCorrectState()
+                return false
+            }
 
             if (lexer.tokenType != KtTokens.COLON &&
                 lexer.tokenType != KtTokens.IDENTIFIER &&
                 lexer.tokenType != KtTokens.LPAR
-            ) return true
+            ) {
+                lexer.assertCorrectState()
+                return true
+            }
 
             val searchForRPAR = lexer.tokenType == KtTokens.LPAR
 
-            if (advanceWhitespacesCheckIsEndOrArrow(lexer)) return false
+            if (advanceWhitespacesCheckIsEndOrArrow(lexer)) {
+                lexer.assertCorrectState()
+                return false
+            }
 
             val preferParamsToExpressions = lexer.tokenType == KtTokens.COMMA || lexer.tokenType == KtTokens.COLON
 
             while (true) {
-
-                if (lexer.tokenType == KtTokens.LBRACE) return true
-                if (lexer.tokenType == KtTokens.RBRACE) return !preferParamsToExpressions
+                if (lexer.tokenType == KtTokens.LBRACE) {
+                    lexer.assertCorrectState()
+                    return true
+                }
+                if (lexer.tokenType == KtTokens.RBRACE) {
+                    lexer.assertCorrectState()
+                    return !preferParamsToExpressions
+                }
 
                 if (searchForRPAR && lexer.tokenType == KtTokens.RPAR) {
+                    lexer.assertCorrectState()
                     return !advanceWhitespacesCheckIsEndOrArrow(lexer)
                 }
 
-                if (advanceWhitespacesCheckIsEndOrArrow(lexer)) return false
+                if (advanceWhitespacesCheckIsEndOrArrow(lexer)) {
+                    lexer.assertCorrectState()
+                    return false
+                }
             }
         }
     }

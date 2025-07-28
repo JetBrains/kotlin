@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.kmp.FullParserTestsWithLightTree
 import org.jetbrains.kotlin.kmp.parser.KtNodeTypes
 import org.jetbrains.kotlin.lexer.KotlinLexer
+import org.jetbrains.kotlin.lexer.assertCorrectState
 import org.jetbrains.kotlin.parsing.KotlinLightParser
 import org.jetbrains.kotlin.parsing.KotlinParserDefinition
 import org.jetbrains.kotlin.util.getChildren
@@ -35,9 +36,12 @@ class LightTreeTestParser() : AbstractTestParser<LighterASTNode>(ParseMode.NoKDo
         fileName: String,
         text: String,
     ): TestParseNode<LighterASTNode> {
-        val builder = builderFactoryInstance.createBuilder(KotlinParserDefinition(), KotlinLexer(), text)
+        val lexer = KotlinLexer()
+        val builder = builderFactoryInstance.createBuilder(KotlinParserDefinition(), lexer, text)
         val lightTree = KotlinLightParser.parse(builder, isScript(fileName))
-        return lightTree.root.toTestParseTree(lightTree)
+        return lightTree.root.toTestParseTree(lightTree).also {
+            lexer.assertCorrectState()
+        }
     }
 
     fun LighterASTNode.toTestParseTree(lightTree: FlyweightCapableTreeStructure<LighterASTNode>): TestParseNode<LighterASTNode> {

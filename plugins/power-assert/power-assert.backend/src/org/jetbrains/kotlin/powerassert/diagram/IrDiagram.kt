@@ -30,6 +30,7 @@ import org.jetbrains.kotlin.ir.declarations.IrVariable
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.lexer.KotlinLexer
 import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.lexer.assertCorrectState
 import org.jetbrains.kotlin.powerassert.*
 
 fun IrBuilderWithScope.irDiagramString(
@@ -256,6 +257,7 @@ private fun binaryOperatorOffset(lhs: IrExpression, wholeOperatorSourceRangeInfo
         while (tokenType != null && tokenType != KtTokens.EOF && (tokenType == KtTokens.DOT || tokenType !in KtTokens.OPERATIONS)) {
             advance()
         }
+        assertCorrectState()
         if (tokenStart >= wholeOperatorSource.length) return 0
         return tokenStart
     }
