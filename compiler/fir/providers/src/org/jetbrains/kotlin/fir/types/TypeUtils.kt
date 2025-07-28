@@ -994,8 +994,8 @@ fun ConeKotlinType.canBeNull(
     considerTypeVariableBounds: Boolean = true,
     visited: MutableSet<ConeKotlinType> = mutableSetOf(),
 ): Boolean {
+    if (!visited.add(this)) return false
     return when (this) {
-        else if !visited.add(this) -> false
         is ConeFlexibleType -> upperBound.canBeNull(session, considerTypeVariableBounds, visited)
         is ConeDefinitelyNotNullType -> false
         is ConeTypeParameterType -> isMarkedNullable || this.lookupTag.typeParameterSymbol.resolvedBounds.all {

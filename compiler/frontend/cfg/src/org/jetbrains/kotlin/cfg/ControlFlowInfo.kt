@@ -35,8 +35,6 @@ internal constructor(
 ) : ImmutableMap<K, D> by map, ReadOnlyControlFlowInfo<K, D> {
     protected abstract fun copy(newMap: ImmutableMap<K, D>): S
 
-    // KT-79453: Drop the suppression after the next bootstrap update
-    @Suppress("CAST_NEVER_SUCCEEDS")
     override fun put(key: K, value: D): S = put(key, value, this[key].getOrElse(null as D?))
 
     /**
@@ -50,8 +48,6 @@ internal constructor(
         return copy(map.put(key, value))
     }
 
-    // KT-79453: Drop the suppression after the next bootstrap update
-    @Suppress("CAST_NEVER_SUCCEEDS")
     override fun getOrNull(key: K): D? = this[key].getOrElse(null as D?)
     override fun asMap() = this
 
