@@ -363,6 +363,10 @@ internal class KaFirDataFlowProvider(
             fun addCandidate(firCandidate: FirElement) {
                 add(firCandidate)
 
+                if (firCandidate is FirReturnExpression && firCandidate.source?.kind is KtFakeSourceElementKind.ImplicitReturn) {
+                    add(firCandidate.result)
+                }
+
                 if (firCandidate is FirBlock) {
                     firCandidate.statements.forEach(::addCandidate)
                 }

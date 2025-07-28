@@ -434,6 +434,12 @@ public class FirIdeNormalAnalysisSourceModuleExitPointSnapshotTestGenerated exte
     }
 
     @Test
+    @TestMetadata("implicitReturn.kt")
+    public void testImplicitReturn() {
+      runTest("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/defaultValues/implicitReturn.kt");
+    }
+
+    @Test
     @TestMetadata("incrementPostfix.kt")
     public void testIncrementPostfix() {
       runTest("analysis/analysis-api/testData/components/dataFlowInfoProvider/exitPointSnapshot/defaultValues/incrementPostfix.kt");
