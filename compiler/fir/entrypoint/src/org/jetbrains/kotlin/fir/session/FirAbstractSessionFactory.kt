@@ -243,7 +243,8 @@ abstract class FirAbstractSessionFactory<LIBRARY_CONTEXT, SOURCE_CONTEXT> {
             registerResolveComponents(
                 configuration.lookupTracker,
                 configuration.enumWhenTracker,
-                configuration.importTracker
+                configuration.importTracker,
+                configuration.fileMappingTracker,
             )
             registerCliCompilerOnlyResolveComponents()
             registerSourceSessionComponents(context)

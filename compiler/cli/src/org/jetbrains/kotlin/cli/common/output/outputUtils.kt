@@ -57,7 +57,17 @@ fun OutputFileCollection.writeAll(
     try {
         if (!reportOutputFiles && fileMappingTracker == null) writeAllTo(outputDir)
         else writeAll(outputDir) { outputInfo, output ->
-            fileMappingTracker?.recordSourceFilesToOutputFileMapping(outputInfo.sourceFiles, output)
+            fileMappingTracker?.let { tracker ->
+                when (outputInfo.generatedForCompilerPlugin) {
+                    false -> tracker.recordSourceFilesToOutputFileMapping(outputInfo.sourceFiles, output)
+                    true -> {
+                        check(outputInfo.sourceFiles.none { it.exists() }) {
+                            "Plugin generated file shouldn't have sources, but got ${outputInfo.sourceFiles.joinToString { it.path }}"
+                        }
+                        tracker.recordSourceFilesToOutputFileMapping(outputInfo.sourceFiles, output)
+                    }
+                }
+            }
             if (reportOutputFiles) {
                 messageCollector.report(CompilerMessageSeverity.OUTPUT, OutputMessageUtil.formatOutputMessage(outputInfo.sourceFiles, output))
             }
