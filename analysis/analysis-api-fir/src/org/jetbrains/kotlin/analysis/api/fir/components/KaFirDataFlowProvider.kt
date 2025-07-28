@@ -452,7 +452,8 @@ internal class KaFirDataFlowProvider(
         private companion object {
             val FORBIDDEN_FAKE_SOURCE_KINDS: Set<KtFakeSourceElementKind> = setOf(
                 KtFakeSourceElementKind.WhenCondition,
-                KtFakeSourceElementKind.SingleExpressionBlock
+                KtFakeSourceElementKind.SingleExpressionBlock,
+                KtFakeSourceElementKind.VarargArgument
             )
         }
 
