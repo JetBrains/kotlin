@@ -53,9 +53,11 @@ abstract class AbstractAddContinuationToFunctionCallsLowering : BodyLoweringPass
             override fun visitCall(expression: IrCall): IrExpression {
                 expression.transformChildrenVoid()
 
+                if (expression.symbol == context.symbols.getContinuation) {
+                    return getContinuation() ?: expression.throwLinkageError(plFile)
+                }
+
                 if (!expression.isSuspend) {
-                    if (expression.symbol == context.symbols.getContinuation)
-                        return getContinuation() ?: expression.throwLinkageError(plFile)
                     return expression
                 }
 
