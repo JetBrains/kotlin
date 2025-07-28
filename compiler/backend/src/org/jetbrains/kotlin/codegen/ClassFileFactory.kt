@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.metadata.jvm.deserialization.serializeToByteArray
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
 import org.jetbrains.kotlin.serialization.deserialization.DeserializationConfiguration
+import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.org.objectweb.asm.Type
 import java.io.File
 import java.nio.charset.StandardCharsets
@@ -31,6 +32,7 @@ class ClassFileFactory(
     private val finalizers: List<ClassFileFactoryFinalizerExtension>
 ) : OutputFileCollection {
     private val generators: MutableMap<String, OutAndSourceFileList> = Collections.synchronizedMap(LinkedHashMap())
+    private val alwaysDirtyOutputs: MutableSet<String> = LinkedHashSet()
 
     private var isDone = false
 
@@ -39,10 +41,14 @@ class ClassFileFactory(
 
     fun newVisitor(origin: JvmDeclarationOrigin, asmType: Type, sourceFiles: List<File>): ClassBuilder {
         val answer = builderFactory.newClassBuilder(origin)
+        val classFileName = asmType.internalName + ".class"
         generators.put(
-            asmType.internalName + ".class",
+            classFileName,
             ClassBuilderAndSourceFileList(answer, sourceFiles)
         )
+        if (origin.generatedForCompilerPlugin) {
+            alwaysDirtyOutputs.add(classFileName)
+        }
         return answer
     }
 
@@ -117,10 +123,12 @@ class ClassFileFactory(
     }
 
     val currentOutput: List<OutputFile>
-        get() = generators.keys.map { OutputClassFile(it) }
+        get() = generators.keys.map { OutputClassFile(relativePath = it, alwaysDirtyInIncrementalCompilation = it in alwaysDirtyOutputs) }
 
     override fun get(relativePath: String): OutputFile? {
-        return if (generators.containsKey(relativePath)) OutputClassFile(relativePath) else null
+        return runIf(generators.containsKey(relativePath)) {
+            OutputClassFile(relativePath, alwaysDirtyInIncrementalCompilation = relativePath in alwaysDirtyOutputs)
+        }
     }
 
     @TestOnly
@@ -183,7 +191,10 @@ class ClassFileFactory(
         }
     }
 
-    private inner class OutputClassFile(override val relativePath: String) : OutputFile {
+    private inner class OutputClassFile(
+        override val relativePath: String,
+        override val alwaysDirtyInIncrementalCompilation: Boolean,
+    ) : OutputFile {
         override val sourceFiles: List<File>
             get() {
                 val pair: OutAndSourceFileList = generators[this.relativePath]!!

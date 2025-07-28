@@ -276,10 +276,15 @@ open class FirKaptAnalysisHandlerExtension(
 
         val reportOutputFiles = kaptContext.generationState.configuration.getBoolean(CommonConfigurationKeys.REPORT_OUTPUT_FILES)
         kaptContext.generationState.factory.writeAll(incrementalDataOutputDir) { outputInfo, output ->
-            kaptContext.generationState.configuration.fileMappingTracker?.recordSourceFilesToOutputFileMapping(
-                outputInfo.sourceFiles,
-                output
-            )
+            kaptContext.generationState.configuration.fileMappingTracker?.let {
+                it.recordSourceFilesToOutputFileMapping(
+                    outputInfo.sourceFiles,
+                    output
+                )
+                if (outputInfo.alwaysDirtyInIncrementalCompilation) {
+                    it.recordOutputFileGeneratedForPlugin(output)
+                }
+            }
             if (reportOutputFiles) {
                 messageCollector.report(OUTPUT, OutputMessageUtil.formatOutputMessage(outputInfo.sourceFiles, output))
             }

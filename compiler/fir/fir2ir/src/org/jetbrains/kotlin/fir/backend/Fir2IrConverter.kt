@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.KtPsiSourceFileLinesMapping
 import org.jetbrains.kotlin.KtSourceFileLinesMappingFromLineStartOffsets
 import org.jetbrains.kotlin.backend.common.CommonBackendErrors
+import org.jetbrains.kotlin.backend.common.fileForTopLevelPluginDeclarations
 import org.jetbrains.kotlin.builtins.jvm.JavaToKotlinClassMap
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
@@ -152,6 +153,9 @@ class Fir2IrConverter(
             moduleDescriptor.getPackage(file.packageFqName).fragments.first(),
             moduleFragment
         )
+        if (file.origin is FirDeclarationOrigin.Synthetic.PluginFile) {
+            irFile.fileForTopLevelPluginDeclarations = true
+        }
         declarationStorage.registerFile(file, irFile)
         for (declaration in file.declarations) {
             when (declaration) {

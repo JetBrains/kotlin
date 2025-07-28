@@ -6,12 +6,14 @@
 package org.jetbrains.kotlin.backend.jvm.extensions
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.backend.common.fileForTopLevelPluginDeclarations
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
 import org.jetbrains.kotlin.backend.jvm.ir.isEffectivelyInlineOnly
 import org.jetbrains.kotlin.backend.jvm.ir.psiElement
 import org.jetbrains.kotlin.ir.PsiSourceManager
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.toIrBasedDescriptor
+import org.jetbrains.kotlin.ir.util.fileOrNull
 import org.jetbrains.kotlin.psi.KtPropertyDelegate
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
@@ -24,6 +26,9 @@ class JvmIrDeclarationOrigin(
 ) : JvmDeclarationOrigin(originKind, element, declaration?.toIrBasedDescriptor()) {
     override val originalSourceElement: Any?
         get() = declaration?.attributeOwnerId
+
+    override val generatedForCompilerPlugin: Boolean
+        get() = (declaration?.fileOrNull)?.fileForTopLevelPluginDeclarations == true
 }
 
 val IrDeclaration.descriptorOrigin: JvmIrDeclarationOrigin

@@ -58,6 +58,9 @@ fun OutputFileCollection.writeAll(
         if (!reportOutputFiles && fileMappingTracker == null) writeAllTo(outputDir)
         else writeAll(outputDir) { outputInfo, output ->
             fileMappingTracker?.recordSourceFilesToOutputFileMapping(outputInfo.sourceFiles, output)
+            if (outputInfo.alwaysDirtyInIncrementalCompilation) {
+                fileMappingTracker?.recordOutputFileGeneratedForPlugin(output)
+            }
             if (reportOutputFiles) {
                 messageCollector.report(CompilerMessageSeverity.OUTPUT, OutputMessageUtil.formatOutputMessage(outputInfo.sourceFiles, output))
             }

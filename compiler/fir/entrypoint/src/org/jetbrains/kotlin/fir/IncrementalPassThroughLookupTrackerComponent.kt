@@ -8,14 +8,22 @@ package org.jetbrains.kotlin.fir
 import org.jetbrains.kotlin.KtPsiSourceElement
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.diagnostics.DiagnosticUtils.getLineAndColumnInPsiFile
+import org.jetbrains.kotlin.fir.resolve.providers.firProvider
+import org.jetbrains.kotlin.fir.resolve.providers.getContainingFile
+import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.SymbolInternals
+import org.jetbrains.kotlin.incremental.components.ICFileMappingTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
 import org.jetbrains.kotlin.incremental.components.Position
 import org.jetbrains.kotlin.incremental.components.ScopeKind
 import org.jetbrains.kotlin.utils.SmartList
+import java.io.File
 import java.util.concurrent.ConcurrentHashMap
 
 class IncrementalPassThroughLookupTrackerComponent(
+    private val session: FirSession,
     private val lookupTracker: LookupTracker,
+    private val fileMappingTracker: ICFileMappingTracker?,
     private val sourceToFilePath: (KtSourceElement) -> String?
 ) : FirLookupTrackerComponent() {
 
@@ -43,5 +51,13 @@ class IncrementalPassThroughLookupTrackerComponent(
 
     override fun recordLookup(name: String, inScope: String, source: KtSourceElement?, fileSource: KtSourceElement?) {
         recordLookup(name, SmartList(inScope), source, fileSource)
+    }
+
+    @OptIn(SymbolInternals::class)
+    override fun recordDirtyDeclaration(symbol: FirBasedSymbol<*>) {
+        if (fileMappingTracker == null) return
+        val containingFile = session.firProvider.getContainingFile(symbol) ?: return
+        val sourceFile = containingFile.sourceFile?.path?.let { File(it) } ?: return
+        fileMappingTracker.recordSourceReferencedByCompilerPlugin(sourceFile)
     }
 }
