@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.codegen.state
 
+import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.codegen.signature.AsmTypeFactory
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
 import org.jetbrains.kotlin.descriptors.ClassifierDescriptor
@@ -18,6 +19,7 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.TypeSystemCommonBackendContext
 import org.jetbrains.kotlin.types.checker.SimpleClassicTypeSystemContext
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
+import org.jetbrains.kotlin.types.typeUtil.builtIns
 import org.jetbrains.org.objectweb.asm.Type
 
 // This class exists only because it's used to box/unbox inline classes in the static method StackValue.coerce in the old backend, which
@@ -26,7 +28,7 @@ object StaticTypeMapperForOldBackend : KotlinTypeMapperBase() {
     override val typeSystem: TypeSystemCommonBackendContext
         get() = SimpleClassicTypeSystemContext
 
-    private val staticTypeMappingConfiguration = object : TypeMappingConfiguration<Type> {
+    private class Configuration(override val builtIns: KotlinBuiltIns) : TypeMappingConfiguration<Type> {
         override fun commonSupertype(types: Collection<KotlinType>): KotlinType {
             return CommonSupertypes.commonSupertype(types)
         }
@@ -51,7 +53,7 @@ object StaticTypeMapperForOldBackend : KotlinTypeMapperBase() {
     override fun mapClass(classifier: ClassifierDescriptor): Type = TODO("Should not be called")
 
     override fun mapTypeCommon(type: KotlinTypeMarker, mode: TypeMappingMode): Type {
-        return mapType(type as KotlinType, AsmTypeFactory, mode, staticTypeMappingConfiguration, null)
+        return mapType(type as KotlinType, AsmTypeFactory, mode, Configuration(type.builtIns), null)
     }
 
     private fun generateErrorMessageForErrorType(type: KotlinType, descriptor: DeclarationDescriptor): String {

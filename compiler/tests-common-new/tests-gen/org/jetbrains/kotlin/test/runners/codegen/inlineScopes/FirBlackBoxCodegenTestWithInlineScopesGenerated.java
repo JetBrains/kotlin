@@ -29032,6 +29032,12 @@ public class FirBlackBoxCodegenTestWithInlineScopesGenerated extends AbstractFir
     }
 
     @Test
+    @TestMetadata("kt79547_inlineLambdaWithUnderlyingArrayOfObject.kt")
+    public void testKt79547_inlineLambdaWithUnderlyingArrayOfObject() {
+      runTest("compiler/testData/codegen/box/inlineClasses/kt79547_inlineLambdaWithUnderlyingArrayOfObject.kt");
+    }
+
+    @Test
     @TestMetadata("mangledDefaultParameterFunction.kt")
     public void testMangledDefaultParameterFunction() {
       runTest("compiler/testData/codegen/box/inlineClasses/mangledDefaultParameterFunction.kt", TransformersFunctions.getReplaceOptionalJvmInlineAnnotationWithReal());
