@@ -55,9 +55,13 @@ class GlobalMetadataInfoHandler(
         // TODO: adapt to multiple testdata files
         val moduleStructure = testServices.moduleStructure
         val builder = StringBuilder()
-        for (module in moduleStructure.modules) {
-            for (file in module.files) {
-                if (file.isAdditional) continue
+        // In SplittingModuleTransformerForBoxTests, files may have been assigned to modules in a different order than declared in the original source file.
+        // So, to reconstruct the original source file it needs not per-module traversal, but in original file order.
+        val filesInOriginalOrder = moduleStructure.modules
+            .flatMap { module -> module.files.map { file -> module to file } }
+            .sortedBy { (_, file) -> file.startLineNumberInOriginalFile }
+        for ((module, file) in filesInOriginalOrder) {
+            if (!file.isAdditional) {
                 processors.forEach { it.processMetaInfos(module, file) }
                 val codeMetaInfos = infosPerFile.getValue(file)
                 val fileBuilder = StringBuilder()
