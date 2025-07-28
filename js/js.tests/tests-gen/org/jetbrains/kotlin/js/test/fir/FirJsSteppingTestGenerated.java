@@ -103,6 +103,18 @@ public class FirJsSteppingTestGenerated extends AbstractFirJsSteppingTest {
   }
 
   @Test
+  @TestMetadata("chainCallOfInlineFunctions.kt")
+  public void testChainCallOfInlineFunctions() {
+    runTest("compiler/testData/debug/stepping/chainCallOfInlineFunctions.kt");
+  }
+
+  @Test
+  @TestMetadata("chainCallOfPrivateInlineFunctions.kt")
+  public void testChainCallOfPrivateInlineFunctions() {
+    runTest("compiler/testData/debug/stepping/chainCallOfPrivateInlineFunctions.kt");
+  }
+
+  @Test
   @TestMetadata("class.kt")
   public void testClass() {
     runTest("compiler/testData/debug/stepping/class.kt");
