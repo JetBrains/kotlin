@@ -7,6 +7,7 @@
 fun createString() = "AAA" + "BBB"
 
 class A {
+    @Suppress("INCONSISTENT_BACKING_FIELD_TYPE")
     var it: Int
         field = 3.14
         get() = (field + 10).toInt()
@@ -18,6 +19,7 @@ class A {
             }
         }
 
+    @Suppress("INCONSISTENT_BACKING_FIELD_TYPE")
     var that: Int
         field = createString() + "!"
         get() = field.length
