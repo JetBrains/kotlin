@@ -34,7 +34,7 @@ public class SirPrinter(
                 renderDeclarationOrigins = this@SirPrinter.renderDeclarationOrigins,
                 emptyBodyStub = this@SirPrinter.emptyBodyStub,
             )
-            sequenceOf(result)
+            listOf(result).asSequence()
         }
 
         public val cSource: Sequence<String> by lazy {
