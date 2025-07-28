@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.test.services
 import org.jetbrains.kotlin.codegen.forTestCompile.TestCompilePaths.KOTLIN_TESTDATA_ROOTS
 
 class SystemPropertyTestDataRootConfigurator(testServices: TestServices) : MetaTestConfigurator(testServices) {
-    private val testDataRoots = System.getProperty(KOTLIN_TESTDATA_ROOTS)?.let { property ->
+    private val testDataRoots: Map<String, String>? = System.getProperty(KOTLIN_TESTDATA_ROOTS)?.let { property ->
         buildMap {
             val roots = property.split(";")
             for (root in roots) {
