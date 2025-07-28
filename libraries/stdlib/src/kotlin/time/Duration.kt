@@ -1090,13 +1090,15 @@ private inline fun parseIsoStringFormat(
             continue
         }
         val componentStart = index
-        val (componentEnd, dotIndex, isValid) = value.parseNumericComponent(index, length)
-        if (!isValid) {
+        val componentResult = value.parseNumericComponent(index, length)
+        val dotIndex = componentResult.dotIndex
+        if (!componentResult.isValid) {
             return throwExceptionOrInvalid(
                 throwException,
                 if (dotIndex >= 0) "Multiple dots in numeric component" else "componentEnd <= componentStart"
             )
         }
+        val componentEnd = componentResult.componentEnd
         val unitChar = value.getOrElse(componentEnd) {
             return throwExceptionOrInvalid(
                 throwException, "Missing unit for value ${value.substring(componentStart, componentEnd)}"
@@ -1145,13 +1147,15 @@ private inline fun parseDefaultStringFormat(
         }
         afterFirst = true
         val componentStart = index
-        val (componentEnd, dotIndex, isValid) = value.parseNumericComponent(index, length)
-        if (!isValid) {
+        val componentResult = value.parseNumericComponent(index, length)
+        val dotIndex = componentResult.dotIndex
+        if (!componentResult.isValid) {
             return throwExceptionOrInvalid(
                 throwException,
                 if (dotIndex >= 0) "Multiple dots in numeric component" else "componentEnd <= componentStart"
             )
         }
+        val componentEnd = componentResult.componentEnd
         index = componentEnd
         val unitStart = index
         val unitEnd = value.skipWhile(index) { it in 'a'..'z' }
@@ -1197,8 +1201,21 @@ private inline fun Duration.onInvalid(block: () -> Nothing): Duration {
     return if (this == Duration.INVALID) block() else this
 }
 
+@JvmInline
+private value class NumericComponentResult(private val packed: Long) {
+    constructor(componentEnd: Int, dotIndex: Int, isValid: Boolean) : this(
+        (componentEnd.toLong() shl 33) or
+                ((dotIndex + 1).toLong() shl 1) or
+                (if (isValid) 1L else 0L)
+    )
+
+    inline val componentEnd: Int get() = (packed shr 33).toInt()
+    inline val dotIndex: Int get() = ((packed shr 1) and 0x7FFFFFFFL).toInt() - 1
+    inline val isValid: Boolean get() = (packed and 1L) != 0L
+}
+
 @kotlin.internal.InlineOnly
-private inline fun String.parseNumericComponent(startIndex: Int, length: Int): Triple<Int, Int, Boolean> {
+private inline fun String.parseNumericComponent(startIndex: Int, length: Int): NumericComponentResult {
     var componentEnd = startIndex
     if (startIndex < length && this[startIndex] in "+-") componentEnd++
     var dotIndex = -1
@@ -1207,7 +1224,7 @@ private inline fun String.parseNumericComponent(startIndex: Int, length: Int): T
         when (val ch = this[componentEnd]) {
             in '0'..'9' -> componentEnd++
             '.' -> {
-                if (dotIndex >= 0) return Triple(componentEnd, dotIndex, false)
+                if (dotIndex >= 0) return NumericComponentResult(componentEnd, dotIndex, false)
                 dotIndex = componentEnd
                 componentEnd++
             }
@@ -1215,7 +1232,7 @@ private inline fun String.parseNumericComponent(startIndex: Int, length: Int): T
         }
     }
     val isValid = componentEnd > componentStart
-    return Triple(componentEnd, dotIndex, isValid)
+    return NumericComponentResult(componentEnd, dotIndex, isValid)
 }
 
 private fun String.parseLongInPlace(start: Int, end: Int): Long {
