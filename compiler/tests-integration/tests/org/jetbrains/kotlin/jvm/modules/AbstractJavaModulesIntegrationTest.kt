@@ -40,7 +40,8 @@ abstract class AbstractJavaModulesIntegrationTest(
         destination: File? = null,
         checkKotlinOutput: (String) -> Unit = this.checkKotlinOutput(name),
     ): File {
-        val paths = (modulePath + ForTestCompileRuntime.runtimeJarForTests()).joinToString(separator = File.pathSeparator) { it.path }
+        @Suppress("DEPRECATION")
+        val paths = (modulePath + ForTestCompileRuntime.runtimeJarFromDistForTests()).joinToString(separator = File.pathSeparator) { it.path }
 
         val kotlinOptions = mutableListOf(
             K2JVMCompilerArguments::jdkHome.cliArgument, jdkHome.path,
@@ -243,20 +244,22 @@ abstract class AbstractJavaModulesIntegrationTest(
         module("main", listOf(d1, d2))
     }
 
+    @Suppress("DEPRECATION")
     fun testDependencyOnStdlib() {
         module("unnamed")
         val namedWithExplicitDependency = module("namedWithExplicitDependency")
         module("namedWithoutExplicitDependency")
         module("namedWithIndirectDependencyViaOtherModule", listOf(namedWithExplicitDependency))
-        module("namedWithIndirectDependencyViaReflect", listOf(ForTestCompileRuntime.reflectJarForTests()))
+        module("namedWithIndirectDependencyViaReflect", listOf(ForTestCompileRuntime.reflectJarFromDistForTests()))
     }
 
     fun testDependencyOnStdlibJdk78() {
         module("usage", listOf(File("dist/kotlinc/lib/kotlin-stdlib-jdk7.jar"), File("dist/kotlinc/lib/kotlin-stdlib-jdk8.jar")))
     }
 
+    @Suppress("DEPRECATION")
     fun testDependencyOnReflect() {
-        module("usage", listOf(ForTestCompileRuntime.reflectJarForTests()))
+        module("usage", listOf(ForTestCompileRuntime.reflectJarFromDistForTests()))
     }
 
     fun testWithBuildFile() {
@@ -277,8 +280,9 @@ abstract class AbstractJavaModulesIntegrationTest(
         assertEquals("usage/some.module.withsome.packages.Test", stdout)
     }
 
+    @Suppress("DEPRECATION")
     fun testReflection() {
-        val reflect = ForTestCompileRuntime.reflectJarForTests()
+        val reflect = ForTestCompileRuntime.reflectJarFromDistForTests()
         val usage = module("usage", listOf(reflect))
         val (stdout, stderr) = runModule("usage/usage.test.UsageKt", listOf(usage, reflect))
         assertEquals("", stderr)

@@ -27,6 +27,16 @@ public class ForTestCompileRuntime {
         return propertyOrDist(KOTLIN_FULL_STDLIB_PATH, "dist/kotlinc/lib/kotlin-stdlib.jar");
     }
 
+    /**
+     * This function left as a workaround for AbstractJavaModulesIntegrationTest
+     * For any other case use `runtimeJarForTests` instead
+     */
+    @NotNull
+    @Deprecated
+    public static File runtimeJarFromDistForTests() {
+        return new File("dist/kotlinc/lib/kotlin-stdlib.jar");
+    }
+
     @NotNull
     public static File runtimeJarForTestsWithJdk8() {
         return propertyOrDist(KOTLIN_FULL_STDLIB_PATH, "dist/kotlinc/lib/kotlin-stdlib-jdk8.jar");
@@ -45,6 +55,16 @@ public class ForTestCompileRuntime {
     @NotNull
     public static File reflectJarForTests() {
         return propertyOrDist(KOTLIN_REFLECT_JAR_PATH, "dist/kotlinc/lib/kotlin-reflect.jar");
+    }
+
+    /**
+     * This function left as a workaround for AbstractJavaModulesIntegrationTest
+     * For any other case use `runtimeJarForTests` instead
+     */
+    @NotNull
+    @Deprecated
+    public static File reflectJarFromDistForTests() {
+        return new File("dist/kotlinc/lib/kotlin-reflect.jar");
     }
 
     @NotNull
