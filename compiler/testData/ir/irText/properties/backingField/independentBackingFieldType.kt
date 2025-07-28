@@ -4,6 +4,7 @@
 // IGNORE_BACKEND_KLIB: JS_IR
 
 class A {
+    @Suppress("INCONSISTENT_BACKING_FIELD_TYPE")
     var it: Int
         field = 3.14
         get() = (field + 10).toInt()

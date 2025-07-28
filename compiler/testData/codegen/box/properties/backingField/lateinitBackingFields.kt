@@ -4,6 +4,7 @@
 // TARGET_BACKEND: WASM
 // IGNORE_BACKEND_K1: JVM_IR, JS_IR, JS_IR_ES6, WASM
 
+@Suppress("INCONSISTENT_BACKING_FIELD_TYPE")
 var that: Int
     @Suppress("WRONG_MODIFIER_TARGET")
     lateinit field: String

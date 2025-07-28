@@ -408,6 +408,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INCOMPATIBLE_ENUM
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INCOMPATIBLE_MODIFIERS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INCOMPATIBLE_TYPES
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INCOMPATIBLE_TYPES_WARNING
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INCONSISTENT_BACKING_FIELD_TYPE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INCONSISTENT_TYPE_PARAMETER_BOUNDS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INCONSISTENT_TYPE_PARAMETER_VALUES
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INCORRECT_CHARACTER_LITERAL
@@ -634,8 +635,6 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PROPERTY_FIELD_DE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PROPERTY_INITIALIZER_IN_INTERFACE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PROPERTY_INITIALIZER_NO_BACKING_FIELD
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PROPERTY_INITIALIZER_WITH_EXPLICIT_FIELD_DECLARATION
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PROPERTY_MUST_HAVE_GETTER
-import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PROPERTY_MUST_HAVE_SETTER
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PROPERTY_TYPE_MISMATCH_BY_DELEGATION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PROPERTY_TYPE_MISMATCH_ON_INHERITANCE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.PROPERTY_TYPE_MISMATCH_ON_OVERRIDE
@@ -2716,12 +2715,8 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             "Delegated properties cannot have explicit backing field declarations."
         )
         map.put(
-            PROPERTY_MUST_HAVE_GETTER,
-            "This property needs a custom getter, because its type is not a supertype of the backing field's type."
-        )
-        map.put(
-            PROPERTY_MUST_HAVE_SETTER,
-            "This property needs a custom setter, because its type is not a subtype of the backing field's type."
+            INCONSISTENT_BACKING_FIELD_TYPE,
+            "The type of the backing field must be a subtype of the property's type."
         )
         map.put(
             EXPLICIT_BACKING_FIELD_IN_INTERFACE,

@@ -59,32 +59,10 @@ object FirPropertyFieldTypeChecker : FirPropertyChecker(MppCheckerKind.Common) {
         }
 
         if (!backingField.isSubtypeOf(declaration, typeCheckerContext)) {
-            checkAsFieldNotSubtype(declaration)
-        }
-
-        if (!declaration.isSubtypeOf(backingField, typeCheckerContext)) {
-            checkAsPropertyNotSubtype(declaration)
+            reporter.reportOn(declaration.source, FirErrors.INCONSISTENT_BACKING_FIELD_TYPE)
         }
     }
 
     private val FirPropertyAccessor?.isNotExplicit
         get() = this == null || this is FirDefaultPropertyAccessor
-
-    context(context: CheckerContext, reporter: DiagnosticReporter)
-    private fun checkAsPropertyNotSubtype(
-        property: FirProperty,
-    ) {
-        if (property.isVar && property.setter.isNotExplicit) {
-            reporter.reportOn(property.source, FirErrors.PROPERTY_MUST_HAVE_SETTER)
-        }
-    }
-
-    context(context: CheckerContext, reporter: DiagnosticReporter)
-    private fun checkAsFieldNotSubtype(
-        property: FirProperty,
-    ) {
-        if (property.getter.isNotExplicit) {
-            reporter.reportOn(property.source, FirErrors.PROPERTY_MUST_HAVE_GETTER)
-        }
-    }
 }

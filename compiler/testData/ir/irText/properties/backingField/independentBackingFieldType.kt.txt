@@ -1,4 +1,5 @@
 class A {
+  @Suppress(names = ["INCONSISTENT_BACKING_FIELD_TYPE"])
   var it: Double
     field = 3.14
     get(): Int {

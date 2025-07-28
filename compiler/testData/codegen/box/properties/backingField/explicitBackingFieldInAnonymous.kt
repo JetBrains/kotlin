@@ -39,6 +39,7 @@ fun test2(): String? {
 
 fun test3(): String? {
     val it = object : I {
+        @Suppress("INCONSISTENT_BACKING_FIELD_TYPE")
         override val number: Number
             field = "100"
             get() {

@@ -5,16 +5,16 @@ class A {
     val it: Number
     field = 4
 
-    <!PROPERTY_MUST_HAVE_GETTER!>val joke: Number<!>
+    <!INCONSISTENT_BACKING_FIELD_TYPE!>val joke: Number<!>
     field = "Haha"
 
-    <!PROPERTY_MUST_HAVE_GETTER!>val incompatible: Number<!>
+    <!INCONSISTENT_BACKING_FIELD_TYPE!>val incompatible: Number<!>
     field: Any? = 42
 
-    <!PROPERTY_MUST_HAVE_GETTER!>val customGetterNeeded: Int<!>
+    <!INCONSISTENT_BACKING_FIELD_TYPE!>val customGetterNeeded: Int<!>
     field: Number = 42
 
-    val invertedTypes: Int
+    <!INCONSISTENT_BACKING_FIELD_TYPE!>val invertedTypes: Int<!>
     field: Number = 42
     get() = 30
 
@@ -31,7 +31,7 @@ class A {
     val p = 5
         get() = field
 
-    <!PROPERTY_MUST_HAVE_SETTER!>var setterNeeded: Int<!>
+    <!INCONSISTENT_BACKING_FIELD_TYPE!>var setterNeeded: Int<!>
         field = "test"
         get() = field.length
 }

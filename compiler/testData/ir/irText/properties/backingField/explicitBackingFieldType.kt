@@ -9,6 +9,7 @@ class A {
     val it: Number
         field = 4
 
+    @Suppress("INCONSISTENT_BACKING_FIELD_TYPE")
     var invertedTypes: Int
         field: Number = 42
         get() = if (field.toInt() > 10) field.toInt() else 10
