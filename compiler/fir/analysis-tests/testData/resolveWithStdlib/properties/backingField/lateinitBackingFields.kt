@@ -1,5 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
-var that: Int
+<!INCONSISTENT_BACKING_FIELD_TYPE!>var that: Int<!>
     <!WRONG_MODIFIER_TARGET!>lateinit<!> field: String
     get() = field.length
     set(value) {
@@ -28,7 +28,7 @@ val something: Number
         field = 10
     }
 
-var thingWithNullableField: Number
+<!INCONSISTENT_BACKING_FIELD_TYPE!>var thingWithNullableField: Number<!>
     <!LATEINIT_NULLABLE_BACKING_FIELD, WRONG_MODIFIER_TARGET!>lateinit<!> field: String?
     get() = 20
     set(value) {

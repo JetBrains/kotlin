@@ -4256,14 +4256,8 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
-    add(FirErrors.PROPERTY_MUST_HAVE_GETTER) { firDiagnostic ->
-        PropertyMustHaveGetterImpl(
-            firDiagnostic as KtPsiDiagnostic,
-            token,
-        )
-    }
-    add(FirErrors.PROPERTY_MUST_HAVE_SETTER) { firDiagnostic ->
-        PropertyMustHaveSetterImpl(
+    add(FirErrors.INCONSISTENT_BACKING_FIELD_TYPE) { firDiagnostic ->
+        InconsistentBackingFieldTypeImpl(
             firDiagnostic as KtPsiDiagnostic,
             token,
         )

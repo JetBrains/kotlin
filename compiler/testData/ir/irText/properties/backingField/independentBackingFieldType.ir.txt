@@ -2,6 +2,8 @@ FILE fqName:<root> fileName:/independentBackingFieldType.kt
   CLASS CLASS name:A modality:FINAL visibility:public superTypes:[kotlin.Any]
     thisReceiver: VALUE_PARAMETER INSTANCE_RECEIVER kind:DispatchReceiver name:<this> type:<root>.A
     PROPERTY name:it visibility:public modality:FINAL [var]
+      annotations:
+        Suppress(names = ["INCONSISTENT_BACKING_FIELD_TYPE"] type=kotlin.Array<out kotlin.String> varargElementType=kotlin.String)
       FIELD PROPERTY_BACKING_FIELD name:it type:kotlin.Double visibility:private
         EXPRESSION_BODY
           CONST Double type=kotlin.Double value=3.14
