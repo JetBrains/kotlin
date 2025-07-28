@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.backend.jvm.ir.psiElement
 import org.jetbrains.kotlin.ir.PsiSourceManager
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.toIrBasedDescriptor
+import org.jetbrains.kotlin.ir.util.fileOrNull
 import org.jetbrains.kotlin.psi.KtPropertyDelegate
 import org.jetbrains.kotlin.psi.psiUtil.getParentOfType
 import org.jetbrains.kotlin.resolve.jvm.diagnostics.JvmDeclarationOrigin
@@ -27,7 +28,7 @@ class JvmIrDeclarationOrigin(
         get() = declaration?.attributeOwnerId
 
     override val alwaysDirtyInIncrementalCompilation: Boolean
-        get() = (declaration as? IrFile)?.fileForTopLevelPluginDeclarations == true
+        get() = (declaration?.fileOrNull)?.fileForTopLevelPluginDeclarations == true
 }
 
 val IrDeclaration.descriptorOrigin: JvmIrDeclarationOrigin
