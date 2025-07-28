@@ -90,3 +90,23 @@ internal fun durationUnitByIsoChar(isoChar: Char, isTimeComponent: Boolean, thro
             }
         }
     }
+
+internal fun durationUnitByShortNameInPlace(str: String, start: Int, end: Int, throwException: Boolean): DurationUnit? {
+    val length = end - start
+    return when (length) {
+        1 -> when (str[start]) {
+            'd' -> DurationUnit.DAYS
+            'h' -> DurationUnit.HOURS
+            'm' -> DurationUnit.MINUTES
+            's' -> DurationUnit.SECONDS
+            else -> if (throwException) throw IllegalArgumentException("Unknown duration unit short name") else null
+        }
+        2 -> when {
+            str[start] == 'm' && str[start + 1] == 's' -> DurationUnit.MILLISECONDS
+            str[start] == 'u' && str[start + 1] == 's' -> DurationUnit.MICROSECONDS
+            str[start] == 'n' && str[start + 1] == 's' -> DurationUnit.NANOSECONDS
+            else -> if (throwException) throw IllegalArgumentException("Unknown duration unit short name") else null
+        }
+        else -> if (throwException) throw IllegalArgumentException("Unknown duration unit short name") else null
+    }
+}
