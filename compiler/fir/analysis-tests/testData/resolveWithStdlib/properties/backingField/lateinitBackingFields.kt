@@ -13,7 +13,7 @@ fun test() {
 
 // Not allowed for properties with
 // custom accessors & backing fields
-<!INAPPLICABLE_LATEINIT_MODIFIER, INAPPLICABLE_LATEINIT_MODIFIER!>lateinit<!> var number: Number
+<!INAPPLICABLE_LATEINIT_MODIFIER, INAPPLICABLE_LATEINIT_MODIFIER, UNNECESSARY_LATEINIT!>lateinit<!> var number: Number
     field = 4
     set(value) {
         field = 10
@@ -22,7 +22,7 @@ fun test() {
 val something: Number
     <!LATEINIT_FIELD_IN_VAL_PROPERTY, LATEINIT_PROPERTY_FIELD_DECLARATION_WITH_INITIALIZER, WRONG_MODIFIER_TARGET!>lateinit<!> field = 4
 
-<!INAPPLICABLE_LATEINIT_MODIFIER, INAPPLICABLE_LATEINIT_MODIFIER!>lateinit<!> var oneMore: Number
+<!INAPPLICABLE_LATEINIT_MODIFIER, INAPPLICABLE_LATEINIT_MODIFIER, UNNECESSARY_LATEINIT!>lateinit<!> var oneMore: Number
     <!LATEINIT_PROPERTY_FIELD_DECLARATION_WITH_INITIALIZER, WRONG_MODIFIER_TARGET!>lateinit<!> field = 4
     set(value) {
         field = 10

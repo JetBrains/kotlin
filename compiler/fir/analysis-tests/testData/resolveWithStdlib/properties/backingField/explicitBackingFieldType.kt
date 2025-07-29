@@ -19,14 +19,14 @@ class A {
     get() = 30
 
     val uninitialized: Number
-    <!PROPERTY_FIELD_DECLARATION_MISSING_INITIALIZER!>field: Int<!>
+    <!EXPLICIT_FIELD_MUST_BE_INITIALIZED!>field: Int<!>
 
     val uninitializedWithGetter: Number
-    <!PROPERTY_FIELD_DECLARATION_MISSING_INITIALIZER!>field: Int<!>
+    <!EXPLICIT_FIELD_MUST_BE_INITIALIZED!>field: Int<!>
     get() = 2
 
     val initiaizedWithExplicitBackingField = <!PROPERTY_INITIALIZER_WITH_EXPLICIT_FIELD_DECLARATION!>listOf(1, 2)<!>
-    <!PROPERTY_FIELD_DECLARATION_MISSING_INITIALIZER!>field: MutableList<Int><!>
+    field: MutableList<Int>
 
     val p = 5
         get() = field

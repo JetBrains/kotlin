@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.hasBackingField
-import org.jetbrains.kotlin.fir.declarations.utils.hasExplicitBackingField
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
 import org.jetbrains.kotlin.fir.expressions.FirThisReceiverExpression
@@ -73,11 +72,10 @@ fun ControlFlowGraph.nearestNonInPlaceGraph(): ControlFlowGraph =
  */
 @OptIn(SymbolInternals::class)
 fun FirPropertySymbol.requiresInitialization(isForInitialization: Boolean): Boolean {
-    val hasImplicitBackingField = !hasExplicitBackingField && hasBackingField
     return when {
         this is FirSyntheticPropertySymbol -> false
-        isForInitialization -> hasDelegate || hasImplicitBackingField
-        else -> !hasInitializer && hasImplicitBackingField && fir.isCatchParameter != true
+        isForInitialization -> hasDelegate || hasBackingField
+        else -> hasBackingField && !hasInitializer && backingFieldSymbol?.resolvedInitializer == null && fir.isCatchParameter != true
     }
 }
 

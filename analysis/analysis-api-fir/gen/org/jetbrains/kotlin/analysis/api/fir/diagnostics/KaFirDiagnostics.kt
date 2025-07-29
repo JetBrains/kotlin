@@ -2853,6 +2853,10 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = MustBeInitializedOrFinalOrAbstractWarning::class
     }
 
+    interface ExplicitFieldMustBeInitialized : KaFirDiagnostic<KtBackingField> {
+        override val diagnosticClass get() = ExplicitFieldMustBeInitialized::class
+    }
+
     interface ExtensionPropertyMustHaveAccessorsOrBeAbstract : KaFirDiagnostic<KtProperty> {
         override val diagnosticClass get() = ExtensionPropertyMustHaveAccessorsOrBeAbstract::class
     }

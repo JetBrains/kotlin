@@ -9743,6 +9743,12 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
         }
 
         @Test
+        @TestMetadata("backingFieldInitializedInInit.kt")
+        public void testBackingFieldInitializedInInit() {
+          runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/backingField/backingFieldInitializedInInit.kt");
+        }
+
+        @Test
         @TestMetadata("backingFieldModifiers.kt")
         public void testBackingFieldModifiers() {
           runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/backingField/backingFieldModifiers.kt");
