@@ -284,6 +284,8 @@ kotlin {
                 listOfNotNull(
                     "-Xallow-kotlin-package",
                     "-Xexpect-actual-classes",
+                    "-source-map=false",
+                    "-source-map-embed-sources=",
                     diagnosticNamesArg
                 )
             )
