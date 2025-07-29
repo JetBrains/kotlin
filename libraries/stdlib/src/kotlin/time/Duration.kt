@@ -1097,13 +1097,13 @@ private fun parseIsoStringFormatFSA(
         var result = 0L
         while (index < length) {
             val ch = value[index]
+            if (ch !in '0'..'9') break
             val digit = ch - '0'
-            if (digit !in 0..9) break
             index++
             if (result >= MULTIPLY_LIMIT) {
                 if (result > MULTIPLY_LIMIT || digit > 7) {
                     while (index < length) {
-                        if (value[index] - '0' !in 0..9) break
+                        if (value[index] !in '0'..'9') break
                         index++
                     }
                     return Long.MAX_VALUE
