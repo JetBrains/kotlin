@@ -94,6 +94,12 @@ private class SuspensionPointsContext(suspensionPoints: List<SuspensionPoint>) {
 private class ResumeDependentFrame(val context: SuspensionPointsContext, val maxLocals: Int): Frame<ResumeDependentValue>(maxLocals, 0) {
     val isAfterSuspensionPoint = BitSet(context.suspensionPointsCount)
 
+    init {
+        for (varIndex in 0 until maxLocals) {
+            setLocal(varIndex, ResumeDependentValue(context.suspensionPointsCount))
+        }
+    }
+
     override fun init(frame: Frame<out ResumeDependentValue?>): Frame<ResumeDependentValue?>? {
         val other = frame as? ResumeDependentFrame ?: return super.init(frame)
         isAfterSuspensionPoint.or(other.isAfterSuspensionPoint)
