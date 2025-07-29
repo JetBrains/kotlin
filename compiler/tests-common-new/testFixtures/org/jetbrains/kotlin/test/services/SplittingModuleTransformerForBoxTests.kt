@@ -108,7 +108,7 @@ class SplittingTestConfigurator(testServices: TestServices) : MetaTestConfigurat
             }
         } else { // Klib backends
             if (WITH_COROUTINES in moduleLib.directives) {
-                // WITH_COROUTINES works incorrectly for non-jvm multi-module tests, should EmptyContinuation object be referenced from moduleLib,
+                // KT-79665: WITH_COROUTINES works incorrectly for non-jvm multi-module tests, should EmptyContinuation object be referenced from moduleLib,
                 // or CHECK_STATE_MACHINE would add `val StateMachineChecker` to both modules
                 // Same helper sources `CoroutineHelpers.kt` and `CoroutineUtil.kt` are added to each module, which causes symbols clash in deserialization phase for moduleMain like:
                 //   IrClassSymbolImpl is already bound. Signature: helpers/EmptyContinuation|null[0]

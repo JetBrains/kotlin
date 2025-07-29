@@ -1,7 +1,7 @@
 // WITH_STDLIB
 // WITH_COROUTINES
 // IGNORE_BACKEND_K2_MULTI_MODULE: JS_IR
-// ^^^ Error loading module 'kotlin_lib'. Its dependency 'kotlin_main' was not found. Please, check whether 'kotlin_main' is loaded prior to 'kotlin_lib'.
+// ^^^ KT-79664: Error loading module 'kotlin_lib'. Its dependency 'kotlin_main' was not found. Please, check whether 'kotlin_main' is loaded prior to 'kotlin_lib'.
 // FILE: promise.kt
 import helpers.*
 import kotlin.coroutines.*
