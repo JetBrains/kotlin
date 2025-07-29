@@ -18,6 +18,8 @@ import org.jetbrains.kotlin.codegen.AsmUtil.genThrow
 import org.jetbrains.kotlin.codegen.AsmUtil.isPrimitive
 import org.jetbrains.kotlin.codegen.inline.*
 import org.jetbrains.kotlin.codegen.state.GenerationState
+import org.jetbrains.kotlin.codegen.state.KotlinTypeMapperBase
+import org.jetbrains.kotlin.codegen.state.StaticTypeMapperForOldBackend
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.toIrBasedKotlinType
 import org.jetbrains.kotlin.ir.expressions.*
@@ -230,12 +232,12 @@ class IrInlineCodegen(
                     codegen.frameMap.enterTemp(info.type) // the inline function will put the value into this slot
                     addInplaceArgumentEndMarkerIfPostponed()
                 }
-                onStack.isLocalWithNoBoxing(expectedType) -> {
+                onStack.isLocalWithNoBoxing(expectedType, StaticTypeMapperForOldBackend) -> {
                     info.remapValue = onStack
                     addInplaceArgumentEndMarkerIfPostponed()
                 }
                 else -> {
-                    onStack.put(info.type, expectedType.kotlinType, codegen.visitor)
+                    onStack.put(info.type, expectedType.kotlinType, codegen.visitor, StaticTypeMapperForOldBackend)
                     addInplaceArgumentEndMarkerIfPostponed()
                     codegen.visitor.store(codegen.frameMap.enterTemp(info.type), info.type)
                 }
@@ -286,7 +288,7 @@ class IrInlineCodegen(
         val info = RootInliningContext(
             state, codegen.inlineNameGenerator.subGenerator(jvmSignature.asmMethod.name),
             sourceCompiler, sourceCompiler.inlineCallSiteInfo, reifiedTypeInliner, typeParameterMappings,
-            codegen.inlineScopesGenerator
+            codegen.inlineScopesGenerator, StaticTypeMapperForOldBackend,
         )
 
         val sourceMapper = sourceCompiler.sourceMapper
@@ -405,10 +407,10 @@ class IrInlineCodegen(
     private fun putCapturedToLocalVal(stackValue: StackValue, capturedParam: CapturedParamDesc, kotlinType: KotlinType?) {
         val info = invocationParamBuilder.addCapturedParam(capturedParam, capturedParam.fieldName, false)
         val asmType = info.type
-        if (stackValue.isLocalWithNoBoxing(JvmKotlinType(asmType, kotlinType))) {
+        if (stackValue.isLocalWithNoBoxing(JvmKotlinType(asmType, kotlinType), StaticTypeMapperForOldBackend)) {
             info.remapValue = stackValue
         } else {
-            stackValue.put(asmType, kotlinType, codegen.visitor)
+            stackValue.put(asmType, kotlinType, codegen.visitor, StaticTypeMapperForOldBackend)
             val index = codegen.frameMap.enterTemp(asmType)
             codegen.visitor.store(index, asmType)
             info.remapValue = StackValue.Local(index, asmType, null)
@@ -417,10 +419,10 @@ class IrInlineCodegen(
     }
 
     companion object {
-        private fun StackValue.isLocalWithNoBoxing(expected: JvmKotlinType): Boolean =
+        private fun StackValue.isLocalWithNoBoxing(expected: JvmKotlinType, typeMapper: KotlinTypeMapperBase): Boolean =
             this is StackValue.Local &&
                     isPrimitive(expected.type) == isPrimitive(type) &&
-                    !StackValue.requiresInlineClassBoxingOrUnboxing(type, kotlinType, expected.type, expected.kotlinType)
+                    !StackValue.requiresInlineClassBoxingOrUnboxing(type, kotlinType, expected.type, expected.kotlinType, typeMapper)
 
         // Stack spilling before inline function call is required if the inlined bytecode has:
         //   1. try-catch blocks - otherwise the stack spilling before and after them will not be correct;

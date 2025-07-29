@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.codegen.pseudoInsns.fakeAlwaysFalseIfeq
 import org.jetbrains.kotlin.codegen.pseudoInsns.fixStackAndJump
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.JvmBackendConfig
+import org.jetbrains.kotlin.codegen.state.StaticTypeMapperForOldBackend
 import org.jetbrains.kotlin.config.JVMConfigurationKeys
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.config.LanguageVersionSettings
@@ -1417,7 +1418,7 @@ class ExpressionCodegen(
         assert(context.config.runtimeStringConcat.isDynamic) {
             "IrStringConcatenation expression should be presented only with dynamic concatenation: ${expression.dump()}"
         }
-        val generator = StringConcatGenerator(context.config.runtimeStringConcat, mv)
+        val generator = StringConcatGenerator(context.config.runtimeStringConcat, mv, StaticTypeMapperForOldBackend)
         expression.arguments.forEach { arg ->
             if (arg is IrConst) {
                 val type = when (arg.kind) {
