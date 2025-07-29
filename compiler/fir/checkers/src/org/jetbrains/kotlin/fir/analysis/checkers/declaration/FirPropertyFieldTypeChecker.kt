@@ -39,9 +39,7 @@ object FirPropertyFieldTypeChecker : FirPropertyChecker(MppCheckerKind.Common) {
             reporter.reportOn(backingField.source, FirErrors.LATEINIT_FIELD_IN_VAL_PROPERTY)
         }
 
-        if (backingField.initializer == null && !backingField.isLateInit) {
-            reporter.reportOn(backingField.source, FirErrors.PROPERTY_FIELD_DECLARATION_MISSING_INITIALIZER)
-        } else if (backingField.initializer != null && backingField.isLateInit) {
+        if (backingField.initializer != null && backingField.isLateInit) {
             reporter.reportOn(backingField.source, FirErrors.LATEINIT_PROPERTY_FIELD_DECLARATION_WITH_INITIALIZER)
         }
 

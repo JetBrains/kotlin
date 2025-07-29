@@ -6,6 +6,7 @@
 
 fun createString() = "AAA" + "BBB"
 
+@Suppress("INCONSISTENT_BACKING_FIELD_TYPE")
 class A {
     @Suppress("INCONSISTENT_BACKING_FIELD_TYPE")
     var it: Int

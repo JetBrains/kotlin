@@ -73,11 +73,10 @@ fun ControlFlowGraph.nearestNonInPlaceGraph(): ControlFlowGraph =
  */
 @OptIn(SymbolInternals::class)
 fun FirPropertySymbol.requiresInitialization(isForInitialization: Boolean): Boolean {
-    val hasImplicitBackingField = !hasExplicitBackingField && hasBackingField
     return when {
         this is FirSyntheticPropertySymbol -> false
-        isForInitialization -> hasDelegate || hasImplicitBackingField
-        else -> !hasInitializer && hasImplicitBackingField && fir.isCatchParameter != true
+        isForInitialization -> hasDelegate || hasBackingField
+        else -> hasBackingField && !hasInitializer && backingFieldSymbol?.resolvedInitializer == null && fir.isCatchParameter != true
     }
 }
 
