@@ -63,6 +63,7 @@ class WasmIrToBinary(
 ) : DebugInformationConsumer {
     private var b: ByteWriter = ByteWriter.OutputStream(outputStream)
     private var codeSectionOffset: Int = 0
+    private val codeSectionOffsetDelegate = ::codeSectionOffset
 
     // "Stack" of offsets waiting initialization. 
     // Since blocks have as a prefix variable length number encoding its size, we can't calculate absolute offsets inside those blocks
@@ -285,7 +286,7 @@ class WasmIrToBinary(
     }
 
     private fun getCurrentSourceLocationMapping(sourceLocation: SourceLocation): SourceLocationMappingToBinary =
-        SourceLocationMappingToBinary(sourceLocation, offsets + Box(b.written), ::codeSectionOffset)
+        SourceLocationMappingToBinary(sourceLocation, offsets + Box(b.written), codeSectionOffsetDelegate)
 
     private fun appendImmediate(x: WasmImmediate) {
         when (x) {
@@ -335,12 +336,12 @@ class WasmIrToBinary(
         }
     }
 
-    private fun appendSection(section: WasmBinary.Section, beforeContentWrite: () -> Unit = {}, content: () -> Unit) {
+    private inline fun appendSection(section: WasmBinary.Section, beforeContentWrite: () -> Unit = {}, content: () -> Unit) {
         b.writeVarUInt7(section.id)
-        withVarUInt32PayloadSizePrepended(beforeContentWrite, { content() })
+        withVarUInt32PayloadSizePrepended(beforeContentWrite, content)
     }
 
-    private fun withVarUInt32PayloadSizePrepended(beforeContentWrite: () -> Unit = {}, fn: () -> Unit) {
+    private inline fun withVarUInt32PayloadSizePrepended(beforeContentWrite: () -> Unit = {}, fn: () -> Unit) {
         val box = Box(-1)
         val previousOffsets = offsets
         offsets += box

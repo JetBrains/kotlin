@@ -191,7 +191,7 @@ fun compileWasm(
             linkedModule,
             moduleName,
             emitNameSection,
-            DebugInformationGeneratorImpl(
+            DebugInformationGeneratorImpl.createIfNeeded(
                 sourceMapGenerator = sourceMapGeneratorForBinary,
                 dwarfGenerator = dwarfGeneratorForBinary,
             )
