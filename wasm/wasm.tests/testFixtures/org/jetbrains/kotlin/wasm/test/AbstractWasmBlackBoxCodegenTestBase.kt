@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.wasm.test
 
+import org.jetbrains.kotlin.js.test.ir.commonConfigurationForJsBackendFirstStageTest
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.test.Constructor
 import org.jetbrains.kotlin.test.TargetBackend
@@ -61,33 +62,13 @@ abstract class AbstractWasmBlackBoxCodegenTestBase<R : ResultingArtifact.Fronten
             dependencyKind = DependencyKind.Binary
         }
 
-        val pathToRootOutputDir = System.getProperty("kotlin.wasm.test.root.out.dir") ?: error("'kotlin.wasm.test.root.out.dir' is not set")
-        defaultDirectives {
-            +DiagnosticsDirectives.REPORT_ONLY_EXPLICITLY_DEFINED_DEBUG_INFO
-            WasmEnvironmentConfigurationDirectives.PATH_TO_ROOT_OUTPUT_DIR with pathToRootOutputDir
-            WasmEnvironmentConfigurationDirectives.PATH_TO_TEST_DIR with pathToTestDir
-            WasmEnvironmentConfigurationDirectives.TEST_GROUP_OUTPUT_DIR_PREFIX with testGroupOutputDirPrefix
-            LANGUAGE with "+JsAllowImplementingFunctionInterface"
-        }
-
-        useConfigurators(
-            wasmEnvironmentConfigurator,
-        )
-
-        useAdditionalSourceProviders(
-            ::WasmAdditionalSourceProvider,
-            ::CoroutineHelpersSourceFilesProvider,
-            ::AdditionalDiagnosticsSourceFilesProvider,
-        )
-
-        additionalSourceProvider?.let {
-            useAdditionalSourceProviders(it)
-        }
-
-        useAdditionalService(::LibraryProvider)
-
-        useAfterAnalysisCheckers(
-            ::BlackBoxCodegenSuppressor.bind(customIgnoreDirective, additionalIgnoreDirectives),
+        commonConfigurationForWasmBoxTest(
+            pathToTestDir = pathToTestDir,
+            testGroupOutputDirPrefix = testGroupOutputDirPrefix,
+            wasmEnvironmentConfigurator = wasmEnvironmentConfigurator,
+            additionalSourceProvider = additionalSourceProvider,
+            customIgnoreDirective = customIgnoreDirective,
+            additionalIgnoreDirectives = additionalIgnoreDirectives,
         )
 
         facadeStep(frontendFacade)
@@ -150,4 +131,47 @@ abstract class AbstractWasmBlackBoxCodegenTestBase<R : ResultingArtifact.Fronten
             }
         }
     }
+}
+
+/**
+ * Sets up configuration for JS second compilation phase (compilation from KLib to JS code).
+ * First compilation phase should be set up separately with [commonConfigurationForJsBackendFirstStageTest].
+ * The configuration includes all minimally required services, handlers and defaults for such tests.
+ */
+fun <FO : ResultingArtifact.FrontendOutput<FO>> TestConfigurationBuilder.commonConfigurationForWasmBoxTest(
+    pathToTestDir: String,
+    testGroupOutputDirPrefix: String,
+    wasmEnvironmentConfigurator: Constructor<EnvironmentConfigurator>,
+    additionalSourceProvider: Constructor<AdditionalSourceProvider>?,
+    customIgnoreDirective: ValueDirective<TargetBackend>?,
+    additionalIgnoreDirectives: List<ValueDirective<TargetBackend>>?,
+) {
+    val pathToRootOutputDir = System.getProperty("kotlin.wasm.test.root.out.dir") ?: error("'kotlin.wasm.test.root.out.dir' is not set")
+    defaultDirectives {
+        +DiagnosticsDirectives.REPORT_ONLY_EXPLICITLY_DEFINED_DEBUG_INFO
+        WasmEnvironmentConfigurationDirectives.PATH_TO_ROOT_OUTPUT_DIR with pathToRootOutputDir
+        WasmEnvironmentConfigurationDirectives.PATH_TO_TEST_DIR with pathToTestDir
+        WasmEnvironmentConfigurationDirectives.TEST_GROUP_OUTPUT_DIR_PREFIX with testGroupOutputDirPrefix
+        LANGUAGE with "+JsAllowImplementingFunctionInterface"
+    }
+
+    useConfigurators(
+        wasmEnvironmentConfigurator,
+    )
+
+    useAdditionalSourceProviders(
+        ::WasmAdditionalSourceProvider,
+        ::CoroutineHelpersSourceFilesProvider,
+        ::AdditionalDiagnosticsSourceFilesProvider,
+    )
+
+    additionalSourceProvider?.let {
+        useAdditionalSourceProviders(it)
+    }
+
+    useAdditionalService(::LibraryProvider)
+
+    useAfterAnalysisCheckers(
+        ::BlackBoxCodegenSuppressor.bind(customIgnoreDirective, additionalIgnoreDirectives),
+    )
 }
