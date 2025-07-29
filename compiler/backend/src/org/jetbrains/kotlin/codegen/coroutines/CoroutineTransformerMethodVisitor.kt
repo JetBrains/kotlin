@@ -1063,14 +1063,14 @@ class CoroutineTransformerMethodVisitor(
         //      a. Check all ranges for the slot, not only closest one (CFG is not linear!)
         //      b. Use interpreter (ASM or simple one) to colorize (color=slot) instructions where values from SP are potentially not overridden
         //      c. If LVT range for slot exists where the value is not overridden, spill it.
-        cursor = local.start
-        while (cursor != null && cursor != local.end) {
-            if (cursor.isMeaningful) {
-                // found at least one meaningful operation
-                return true
-            }
-            cursor = cursor.next
-        }
+//        cursor = local.start
+//        while (cursor != null && cursor != local.end) {
+//            if (cursor.isMeaningful) {
+//                // found at least one meaningful operation
+//                return true
+//            }
+//            cursor = cursor.next
+//        }
 
         return false
     }
