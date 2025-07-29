@@ -312,7 +312,6 @@ public abstract interface class org/jetbrains/kotlin/buildtools/api/arguments/Js
 	public static final field X_OPTIMIZE_GENERATED_JS Lorg/jetbrains/kotlin/buildtools/api/arguments/JsArguments$JsArgument;
 	public static final field X_PLATFORM_ARGUMENTS_IN_MAIN_FUNCTION Lorg/jetbrains/kotlin/buildtools/api/arguments/JsArguments$JsArgument;
 	public static final field X_STRICT_IMPLICIT_EXPORT_TYPES Lorg/jetbrains/kotlin/buildtools/api/arguments/JsArguments$JsArgument;
-	public static final field X_TYPED_ARRAYS Lorg/jetbrains/kotlin/buildtools/api/arguments/JsArguments$JsArgument;
 	public abstract fun get (Lorg/jetbrains/kotlin/buildtools/api/arguments/JsArguments$JsArgument;)Ljava/lang/Object;
 	public abstract fun set (Lorg/jetbrains/kotlin/buildtools/api/arguments/JsArguments$JsArgument;Ljava/lang/Object;)V
 }
