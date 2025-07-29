@@ -8,7 +8,6 @@ package kotlin.time
 import kotlin.contracts.*
 import kotlin.jvm.JvmInline
 import kotlin.math.*
-import kotlin.time.Duration.Companion.SUMMING_INFINITE_DURATIONS_OF_DIFFERENT_SIGN_ERROR_MESSAGE
 
 /**
  * Represents the amount of time one instant of time is away from another instant.
@@ -1091,8 +1090,8 @@ private inline fun willMultiplyOverflow(a: Long, b: Long): Boolean {
     return a < -OVERFLOW_LIMIT / b
 }
 
-//@kotlin.internal.InlineOnly
-private /*inline*/ fun Long.multiplyWithoutOverflow(other: Long): Long {
+@kotlin.internal.InlineOnly
+private inline fun Long.multiplyWithoutOverflow(other: Long): Long {
     if (willMultiplyOverflow(this, other)) {
         return if (this > 0) OVERFLOW_LIMIT else -OVERFLOW_LIMIT
     }
@@ -1113,9 +1112,9 @@ private inline fun Long.addWithoutOverflow(other: Long, throwException: Boolean)
     }
     if (this == -OVERFLOW_LIMIT && other == OVERFLOW_LIMIT || this == OVERFLOW_LIMIT && other == -OVERFLOW_LIMIT) {
         return if (throwException)
-            throw IllegalArgumentException(SUMMING_INFINITE_DURATIONS_OF_DIFFERENT_SIGN_ERROR_MESSAGE)
+            throw IllegalArgumentException(Duration.SUMMING_INFINITE_DURATIONS_OF_DIFFERENT_SIGN_ERROR_MESSAGE)
         else
-            Duration.Companion.INVALID_RAW_VALUE
+            Duration.INVALID_RAW_VALUE
     }
     return this + other
 }
@@ -1130,8 +1129,8 @@ private fun parseIsoStringFormatFSA(
     length: Int,
     throwException: Boolean,
 ): Duration {
-    var result = Duration.ZERO
     var totalSeconds = 0L
+    var fractionalPart = 0.0
     var sign = 1
     var index = startIndex
     var currentLongValue = 0L
@@ -1347,9 +1346,8 @@ private fun parseIsoStringFormatFSA(
 
             State.AFTER_DOT -> {
                 val prevIndex = index
-                val fractionalPart = parseFractionalPartOfDouble() * (if (currentLongValue.sign >= 0) 1 else -1)
+                fractionalPart = parseFractionalPartOfDouble() * (if (currentLongValue.sign >= 0) 1 else -1)
                 if (index == prevIndex) return throwExceptionOrInvalid(throwException)
-                result = result.plus(fractionalPart.toDuration(DurationUnit.SECONDS), throwException)
                 State.AFTER_DOUBLE
             }
 
@@ -1368,8 +1366,7 @@ private fun parseIsoStringFormatFSA(
     if (index != length) return throwExceptionOrInvalid(throwException)
     return when (state) {
         State.AFTER_D, State.AFTER_H, State.AFTER_M, State.AFTER_S -> {
-            result = result.plus(totalSeconds.toDuration(DurationUnit.SECONDS), throwException)
-            result
+            fractionalPart.toDuration(DurationUnit.SECONDS) + totalSeconds.toDuration(DurationUnit.SECONDS)
         }
         else -> throwExceptionOrInvalid(throwException)
     }
