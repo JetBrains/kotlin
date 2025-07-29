@@ -1060,7 +1060,7 @@ private fun parseDuration(value: String, strictIso: Boolean, throwException: Boo
     val hasSign = index > 0
     val result = when {
         length <= index -> return throwExceptionOrInvalid(throwException, "No components")
-        value[index] == 'P' -> parseIsoStringFormat(value, index, length, throwException).onInvalid { return Duration.INVALID }
+        value[index] == 'P' -> parseIsoStringFormatFSA(value, index + 1, length, throwException).onInvalid { return Duration.INVALID }
         strictIso -> return throwExceptionOrInvalid(throwException)
         value.regionMatches(index, infinityString, 0, length = maxOf(length - index, infinityString.length), ignoreCase = true) -> {
             Duration.INFINITE
@@ -1284,7 +1284,7 @@ private fun parseIsoStringFormatFSA(
 
             State.AFTER_DOT -> {
                 val prevIndex = index
-                val fractionalPart = parseFractionalPartOfDouble()
+                val fractionalPart = parseFractionalPartOfDouble() * currentLongValue.sign
                 if (index == prevIndex) break
                 result = result.plus(fractionalPart.toDuration(DurationUnit.SECONDS), throwException)
                 State.AFTER_DOUBLE
@@ -1298,11 +1298,18 @@ private fun parseIsoStringFormatFSA(
                 else -> break
             }
 
-            State.AFTER_S -> TODO()
+            State.AFTER_S -> {
+                result = result.plus(currentLongValue.toDuration(DurationUnit.SECONDS), throwException)
+                break
+            }
         }
     }
 
-    return result
+    if (index != length) return throwExceptionOrInvalid(throwException)
+    return when (state) {
+        State.AFTER_D, State.AFTER_H, State.AFTER_M, State.AFTER_S -> result
+        else -> throwExceptionOrInvalid(throwException)
+    }
 }
 
 @kotlin.internal.InlineOnly
