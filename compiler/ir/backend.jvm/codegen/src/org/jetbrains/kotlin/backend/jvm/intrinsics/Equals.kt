@@ -9,22 +9,23 @@ import com.intellij.psi.tree.IElementType
 import org.jetbrains.kotlin.backend.jvm.codegen.*
 import org.jetbrains.kotlin.backend.jvm.ir.isSmartcastFromHigherThanNullable
 import org.jetbrains.kotlin.backend.jvm.mapping.mapTypeAsDeclaration
+import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.AsmUtil.isPrimitive
 import org.jetbrains.kotlin.codegen.NumberComparisonUtils
 import org.jetbrains.kotlin.codegen.intrinsics.IntrinsicMethods
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.ir.declarations.isSingleFieldValueClass
-import org.jetbrains.kotlin.ir.descriptors.toIrBasedKotlinType
 import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
+import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classOrNull
+import org.jetbrains.kotlin.ir.types.classifierOrNull
+import org.jetbrains.kotlin.ir.types.getPrimitiveType
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
-import org.jetbrains.kotlin.types.isNullable
-import org.jetbrains.kotlin.types.typeUtil.isPrimitiveNumberOrNullableType
-import org.jetbrains.kotlin.types.typeUtil.upperBoundedByPrimitiveNumberOrNullableType
 import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.Opcodes
 import org.jetbrains.org.objectweb.asm.Type
@@ -203,16 +204,14 @@ class Ieee754Equals(val operandType: Type) : CallBasedIntrinsicMethod() {
         val arg0 = expression.arguments[0]!!
         val arg1 = expression.arguments[1]!!
 
-        val arg0Type = arg0.type.toIrBasedKotlinType()
-        if (!arg0Type.isPrimitiveNumberOrNullableType() && !arg0Type.upperBoundedByPrimitiveNumberOrNullableType())
-            throw AssertionError("Should be primitive or nullable primitive type: $arg0Type")
+        if (!arg0.type.isPrimitiveNumberOrNullableType() && !arg0.type.upperBoundedByPrimitiveNumberOrNullableType())
+            throw AssertionError("Should be primitive or nullable primitive type: ${arg0.type}")
 
-        val arg1Type = arg1.type.toIrBasedKotlinType()
-        if (!arg1Type.isPrimitiveNumberOrNullableType() && !arg1Type.upperBoundedByPrimitiveNumberOrNullableType())
-            throw AssertionError("Should be primitive or nullable primitive type: $arg1Type")
+        if (!arg1.type.isPrimitiveNumberOrNullableType() && !arg1.type.upperBoundedByPrimitiveNumberOrNullableType())
+            throw AssertionError("Should be primitive or nullable primitive type: ${arg1.type}")
 
-        val arg0isNullable = arg0Type.isNullable()
-        val arg1isNullable = arg1Type.isNullable()
+        val arg0isNullable = arg0.type.isNullable()
+        val arg1isNullable = arg1.type.isNullable()
 
         val useNonIEEE754Comparison =
             !classCodegen.context.config.languageVersionSettings.supportsFeature(LanguageFeature.ProperIeee754Comparisons)
@@ -234,5 +233,15 @@ class Ieee754Equals(val operandType: Type) : CallBasedIntrinsicMethod() {
             else ->
                 Ieee754AreEqual(boxedOperandType, boxedOperandType)
         }
+    }
+
+    private fun IrType.upperBoundedByPrimitiveNumberOrNullableType(): Boolean =
+        (classifierOrNull as? IrTypeParameterSymbol)?.owner?.superTypes?.any {
+            it.isPrimitiveNumberOrNullableType() || it.upperBoundedByPrimitiveNumberOrNullableType()
+        } == true
+
+    private fun IrType.isPrimitiveNumberOrNullableType(): Boolean {
+        val primitiveType = getPrimitiveType()
+        return primitiveType != null && primitiveType != PrimitiveType.BOOLEAN && primitiveType != PrimitiveType.CHAR
     }
 }
