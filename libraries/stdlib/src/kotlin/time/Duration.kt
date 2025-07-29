@@ -1188,18 +1188,22 @@ private fun parseIsoStringFormatFSA(
 
             State.AFTER_T_VALUE -> when {
                 value[index] == 'H' -> {
+                    result = result.plus(currentLongValue.toDuration(DurationUnit.HOURS), throwException)
                     index++
                     State.AFTER_H
                 }
                 value[index] == 'M' -> {
+                    result = result.plus(currentLongValue.toDuration(DurationUnit.MINUTES), throwException)
                     index++
                     State.AFTER_M
                 }
                 value[index] == '.' -> {
+                    result = result.plus(currentLongValue.toDuration(DurationUnit.SECONDS), throwException)
                     index++
                     State.AFTER_DOT
                 }
                 value[index] == 'S' -> {
+                    result = result.plus(currentLongValue.toDuration(DurationUnit.SECONDS), throwException)
                     index++
                     State.AFTER_S
                 }
@@ -1207,7 +1211,6 @@ private fun parseIsoStringFormatFSA(
             }
 
             State.AFTER_H -> {
-                result = result.plus(currentLongValue.toDuration(DurationUnit.HOURS), throwException)
                 when {
                     value[index] == '+' -> {
                         index++
@@ -1232,14 +1235,17 @@ private fun parseIsoStringFormatFSA(
 
             State.AFTER_H_VALUE -> when {
                 value[index] == 'M' -> {
+                    result = result.plus(currentLongValue.toDuration(DurationUnit.MINUTES), throwException)
                     index++
                     State.AFTER_M
                 }
                 value[index] == '.' -> {
+                    result = result.plus(currentLongValue.toDuration(DurationUnit.SECONDS), throwException)
                     index++
                     State.AFTER_DOT
                 }
                 value[index] == 'S' -> {
+                    result = result.plus(currentLongValue.toDuration(DurationUnit.SECONDS), throwException)
                     index++
                     State.AFTER_S
                 }
@@ -1247,7 +1253,6 @@ private fun parseIsoStringFormatFSA(
             }
 
             State.AFTER_M -> {
-                result = result.plus(currentLongValue.toDuration(DurationUnit.MINUTES), throwException)
                 when {
                     value[index] == '+' -> {
                         index++
@@ -1272,10 +1277,12 @@ private fun parseIsoStringFormatFSA(
 
             State.AFTER_M_VALUE -> when {
                 value[index] == '.' -> {
+                    result = result.plus(currentLongValue.toDuration(DurationUnit.SECONDS), throwException)
                     index++
                     State.AFTER_DOT
                 }
                 value[index] == 'S' -> {
+                    result = result.plus(currentLongValue.toDuration(DurationUnit.SECONDS), throwException)
                     index++
                     State.AFTER_S
                 }
@@ -1298,10 +1305,7 @@ private fun parseIsoStringFormatFSA(
                 else -> break
             }
 
-            State.AFTER_S -> {
-                result = result.plus(currentLongValue.toDuration(DurationUnit.SECONDS), throwException)
-                break
-            }
+            State.AFTER_S -> break
         }
     }
 
