@@ -10,6 +10,7 @@ import org.gradle.api.Action
 import org.gradle.api.GradleException
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
+import org.gradle.api.artifacts.FileCollectionDependency
 import org.gradle.api.artifacts.ModuleDependency
 import org.gradle.api.artifacts.VersionCatalogsExtension
 import org.gradle.api.artifacts.type.ArtifactTypeDefinition
@@ -31,6 +32,7 @@ import org.gradle.api.tasks.Copy
 import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.compile.JavaCompile
+import org.gradle.api.tasks.testing.Test
 import org.gradle.jvm.tasks.Jar
 import org.gradle.jvm.toolchain.JavaToolchainService
 import org.gradle.kotlin.dsl.*
@@ -808,4 +810,17 @@ fun Project.registerKotlinSourceForVersionRange(
                 }
             }
         }
+}
+
+// See KT-79528 and https://github.com/gradle/gradle/issues/34453
+fun Project.avoidStdlibDowngradeInTests() {
+    afterEvaluate {
+        tasks.withType<Test>().configureEach {
+            val gradleEmbeddedStdlib =
+                (dependencies.gradleApi() as FileCollectionDependency).files.single { it.name.startsWith("kotlin-stdlib") }
+            classpath = classpath.filter {
+                it != gradleEmbeddedStdlib
+            }
+        }
+    }
 }
