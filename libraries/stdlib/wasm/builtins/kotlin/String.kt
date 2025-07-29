@@ -186,7 +186,7 @@ internal fun stringLiteralLatin1(poolId: Int): String {
     val bytes = array_new_data0<WasmByteArray>(startAddress, length)
     val chars = WasmCharArray(length)
     for (i in 0..<length) {
-        val chr = bytes.get(i).toUByte().toInt().toChar()
+        val chr = bytes.getU(i).toByte().reinterpretAsInt().reinterpretAsChar()
         chars.set(i, chr)
     }
 
