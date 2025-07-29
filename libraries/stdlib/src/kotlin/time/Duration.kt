@@ -1249,7 +1249,13 @@ private fun parseIsoStringFormatFSA(
                 }
             }
 
-            State.AFTER_M_SIGN -> TODO()
+            State.AFTER_M_SIGN -> {
+                val prevIndex = index
+                currentLongValue = parseLong() * sign
+                if (index == prevIndex) break
+                sign = 1
+                State.AFTER_M_VALUE
+            }
 
             State.AFTER_M_VALUE -> TODO()
 
