@@ -95,6 +95,9 @@ abstract class AbstractJsBlackBoxCodegenTestBase<FO : ResultingArtifact.Frontend
     protected open val customIgnoreDirective: ValueDirective<TargetBackend>?
         get() = null
 
+    protected open val additionalIgnoreDirectives: List<ValueDirective<TargetBackend>>?
+        get() = null
+
     protected open val enableBoxHandlers: Boolean
         get() = true
 
@@ -111,7 +114,8 @@ abstract class AbstractJsBlackBoxCodegenTestBase<FO : ResultingArtifact.Frontend
             frontendFacade = frontendFacade,
             frontendToIrConverter = frontendToIrConverter,
             serializerFacade = serializerFacade,
-            customIgnoreDirective = customIgnoreDirective
+            customIgnoreDirective = customIgnoreDirective,
+            additionalIgnoreDirectives = additionalIgnoreDirectives,
         )
         commonConfigurationForJsBackendSecondStageTest(
             pathToTestDir,
@@ -158,9 +162,10 @@ fun <FO : ResultingArtifact.FrontendOutput<FO>> TestConfigurationBuilder.commonC
     frontendToIrConverter: Constructor<Frontend2BackendConverter<FO, IrBackendInput>>,
     serializerFacade: Constructor<BackendFacade<IrBackendInput, BinaryArtifacts.KLib>>,
     customIgnoreDirective: ValueDirective<TargetBackend>? = null,
+    additionalIgnoreDirectives: List<ValueDirective<TargetBackend>>? = null,
 ) {
     commonConfigurationForJsTest(targetFrontend, frontendFacade, frontendToIrConverter, serializerFacade)
-    setupCommonHandlersForJsTest(customIgnoreDirective)
+    setupCommonHandlersForJsTest(customIgnoreDirective, additionalIgnoreDirectives)
 }
 
 /**
@@ -287,7 +292,10 @@ fun <FO : ResultingArtifact.FrontendOutput<FO>> TestConfigurationBuilder.commonC
     klibArtifactsHandlersStep()
 }
 
-fun TestConfigurationBuilder.setupCommonHandlersForJsTest(customIgnoreDirective: ValueDirective<TargetBackend>? = null) {
+fun TestConfigurationBuilder.setupCommonHandlersForJsTest(
+    customIgnoreDirective: ValueDirective<TargetBackend>? = null,
+    additionalIgnoreDirectives: List<ValueDirective<TargetBackend>>? = null
+) {
     configureClassicFrontendHandlersStep(skipMissingStep = true) {
         commonClassicFrontendHandlersForCodegenTest()
         useHandlers(::ClassicDiagnosticsHandler)
@@ -313,7 +321,7 @@ fun TestConfigurationBuilder.setupCommonHandlersForJsTest(customIgnoreDirective:
 
     useAfterAnalysisCheckers(
         ::JsFailingTestSuppressor,
-        ::BlackBoxCodegenSuppressor.bind(customIgnoreDirective),
+        ::BlackBoxCodegenSuppressor.bind(customIgnoreDirective, additionalIgnoreDirectives),
     )
 
     enableMetaInfoHandler()

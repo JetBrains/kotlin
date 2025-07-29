@@ -148,7 +148,7 @@ fun TestConfigurationBuilder.commonConfigurationForNativeCodegenTest(
         ::AdditionalDiagnosticsSourceFilesProvider,
     )
     useAfterAnalysisCheckers(
-        ::BlackBoxCodegenSuppressor.bind(customIgnoreDirective),
+        ::BlackBoxCodegenSuppressor.bind(customIgnoreDirective, null),
         ::FirMetaInfoDiffSuppressor,
     )
 

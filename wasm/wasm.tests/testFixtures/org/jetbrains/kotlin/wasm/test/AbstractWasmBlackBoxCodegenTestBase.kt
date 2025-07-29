@@ -48,8 +48,13 @@ abstract class AbstractWasmBlackBoxCodegenTestBase<R : ResultingArtifact.Fronten
     open val additionalSourceProvider: Constructor<AdditionalSourceProvider>? = null
     protected open val customIgnoreDirective: ValueDirective<TargetBackend>?
         get() = null
+    protected open val additionalIgnoreDirectives: List<ValueDirective<TargetBackend>>?
+        get() = null
 
-    protected fun TestConfigurationBuilder.commonConfigurationForWasmBlackBoxCodegenTest(customIgnoreDirective: ValueDirective<TargetBackend>? = null) {
+    protected fun TestConfigurationBuilder.commonConfigurationForWasmBlackBoxCodegenTest(
+        customIgnoreDirective: ValueDirective<TargetBackend>? = null,
+        additionalIgnoreDirectives: List<ValueDirective<TargetBackend>>? = null,
+    ) {
         globalDefaults {
             frontend = targetFrontend
             targetPlatform = this@AbstractWasmBlackBoxCodegenTestBase.targetPlatform
@@ -83,7 +88,7 @@ abstract class AbstractWasmBlackBoxCodegenTestBase<R : ResultingArtifact.Fronten
 
         useAfterAnalysisCheckers(
             ::WasmFailingTestSuppressor,
-            ::BlackBoxCodegenSuppressor.bind(customIgnoreDirective),
+            ::BlackBoxCodegenSuppressor.bind(customIgnoreDirective, additionalIgnoreDirectives),
         )
 
         facadeStep(frontendFacade)
@@ -114,7 +119,7 @@ abstract class AbstractWasmBlackBoxCodegenTestBase<R : ResultingArtifact.Fronten
     }
 
     override fun configure(builder: TestConfigurationBuilder) = with(builder) {
-        commonConfigurationForWasmBlackBoxCodegenTest(customIgnoreDirective)
+        commonConfigurationForWasmBlackBoxCodegenTest(customIgnoreDirective, additionalIgnoreDirectives)
 
         forTestsNotMatching(
             "compiler/testData/codegen/box/diagnostics/functions/tailRecursion/*" or

@@ -63,7 +63,7 @@ abstract class AbstractCompileKotlinAgainstInlineKotlinTestBase<R : ResultingArt
                 ::BytecodeTextHandler.bind(true)
             )
         }
-        useAfterAnalysisCheckers(::BlackBoxCodegenSuppressor.bind(directiveToSuppressTest))
+        useAfterAnalysisCheckers(::BlackBoxCodegenSuppressor.bind(null, listOf(directiveToSuppressTest)))
     }
 }
 

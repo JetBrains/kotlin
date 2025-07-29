@@ -102,7 +102,7 @@ private fun TestConfigurationBuilder.commonConfigurationForDumpSyntheticAccessor
         ::AdditionalDiagnosticsSourceFilesProvider,
     )
     useAfterAnalysisCheckers(
-        ::BlackBoxCodegenSuppressor.bind(customIgnoreDirective),
+        ::BlackBoxCodegenSuppressor.bind(customIgnoreDirective, null),
         ::FirMetaInfoDiffSuppressor,
     )
     facadeStep(frontendFacade)

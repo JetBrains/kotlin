@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.utils.bind
 
 class AbiCheckerSuppressor(testServices: TestServices) : AfterAnalysisChecker(testServices) {
     override val additionalServices: List<ServiceRegistrationData>
-        get() = listOf(service(BlackBoxCodegenSuppressor::SuppressionChecker.bind(null)))
+        get() = listOf(service(BlackBoxCodegenSuppressor::SuppressionChecker.bind(null, null)))
 
 
     override fun suppressIfNeeded(failedAssertions: List<WrappedException>): List<WrappedException> {
@@ -43,5 +43,7 @@ class AbiCheckerSuppressor(testServices: TestServices) : AfterAnalysisChecker(te
 private val TestServices.suppressionChecker: BlackBoxCodegenSuppressor.SuppressionChecker by TestServices.testServiceAccessor()
 
 internal val TestServices.ignoredByBackend: Boolean
-    get() = listOf(IGNORE_BACKEND, IGNORE_BACKEND_K1, IGNORE_BACKEND_K2)
-        .any { suppressionChecker.failuresInModuleAreIgnored(moduleStructure.modules.first(), it).testMuted }
+    get() = suppressionChecker.failuresInModuleAreIgnored(
+        moduleStructure.modules.first(),
+        listOf(IGNORE_BACKEND, IGNORE_BACKEND_K1, IGNORE_BACKEND_K2)
+    ).testMuted

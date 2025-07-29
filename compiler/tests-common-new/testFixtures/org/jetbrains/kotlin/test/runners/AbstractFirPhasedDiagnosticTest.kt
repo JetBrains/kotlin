@@ -68,7 +68,7 @@ abstract class AbstractFirPhasedDiagnosticTest(val parser: FirParser) : Abstract
         useMetaInfoProcessors(::PsiLightTreeMetaInfoProcessor)
         useAfterAnalysisCheckers(::PhasedPipelineChecker, ::NonSourceErrorMessagesHandler)
         enableMetaInfoHandler()
-        useAdditionalService<SuppressionChecker>(::SuppressionChecker.bind(null))
+        useAdditionalService<SuppressionChecker>(::SuppressionChecker.bind(null, null))
     }
 }
 
