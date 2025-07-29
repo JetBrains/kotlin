@@ -47738,9 +47738,15 @@ public class FirJsCodegenBoxWithInlinedFunInKlibTestGenerated extends AbstractFi
       }
 
       @Test
-      @TestMetadata("localDelegatedPropertyWithInlinedFunInKlib.kt")
-      public void testLocalDelegatedPropertyWithInlinedFunInKlib() {
-        runTest("compiler/testData/codegen/boxInline/localFunInLambda/localDelegatedPropertyWithInlinedFunInKlib.kt");
+      @TestMetadata("localDelegatedPropertyUsedInsideAnonymousObject.kt")
+      public void testLocalDelegatedPropertyUsedInsideAnonymousObject() {
+        runTest("compiler/testData/codegen/boxInline/localFunInLambda/localDelegatedPropertyUsedInsideAnonymousObject.kt");
+      }
+
+      @Test
+      @TestMetadata("localDelegatedPropertyUsedInsideAnonymousObjectWithInlinedFunInKlib.kt")
+      public void testLocalDelegatedPropertyUsedInsideAnonymousObjectWithInlinedFunInKlib() {
+        runTest("compiler/testData/codegen/boxInline/localFunInLambda/localDelegatedPropertyUsedInsideAnonymousObjectWithInlinedFunInKlib.kt");
       }
 
       @Test
