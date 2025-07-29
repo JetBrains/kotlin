@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.IrBody
 import org.jetbrains.kotlin.ir.expressions.IrStatementContainer
 import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
+import org.jetbrains.kotlin.ir.transformStatement
 import org.jetbrains.kotlin.ir.util.addChild
 import org.jetbrains.kotlin.ir.util.isOriginallyLocalDeclaration
 import org.jetbrains.kotlin.ir.util.setDeclarationsParent
@@ -33,6 +34,12 @@ open class LocalDeclarationPopupLowering(
         val extractedLocalDeclarations = arrayListOf<ExtractedLocalDeclaration>()
 
         irBody.transform(object : IrElementTransformerVoidWithContext() {
+            override fun visitLocalDelegatedProperty(declaration: IrLocalDelegatedProperty): IrStatement {
+                declaration.getter.transformStatement(this)
+                declaration.setter?.transformStatement(this)
+                return declaration.delegate.transformStatement(this)
+            }
+
             override fun visitClassNew(declaration: IrClass): IrStatement = visitClassOrFunction(declaration)
 
             override fun visitSimpleFunction(declaration: IrSimpleFunction): IrStatement = visitClassOrFunction(declaration)
