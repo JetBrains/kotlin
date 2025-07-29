@@ -132,10 +132,16 @@ abstract class FirMustUseReturnValueStatusComponent : FirSessionComponent {
             // In the case of inheriting @Ignorable, global FULL setting has lesser priority
             if (session.languageVersionSettings.getFlag(AnalysisFlags.returnValueCheckerMode) == ReturnValueCheckerMode.FULL && overriddenFlag != OverriddenStatus.IGNORABLE) return true
 
-            val hasAnnotation =
-                findMustUseAmongContainers(session, declaration, containingClass, containingProperty, additionalAnnotations = null)
-            if (hasAnnotation) return true
-            return overriddenFlag == OverriddenStatus.MUST_USE
+            if (overriddenFlag == OverriddenStatus.MUST_USE) return true
+            val hasAnnotation = findMustUseAmongContainers(
+                session = session,
+                declaration = declaration,
+                containingClass = containingClass,
+                containingProperty = containingProperty,
+                additionalAnnotations = null,
+            )
+
+            return hasAnnotation
         }
 
         private fun findMustUseAmongContainers(
