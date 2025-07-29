@@ -3,9 +3,9 @@ import KotlinRuntime
 import KotlinRuntimeSupport
 
 public func testMapAnyLong(
-    m: [any KotlinRuntimeSupport._KotlinBridgeable: Swift.Int64]
-) -> [any KotlinRuntimeSupport._KotlinBridgeable: Swift.Int64] {
-    return __root___testMapAnyLong__TypesOfArguments__Swift_Dictionary_anyU20KotlinRuntimeSupport__KotlinBridgeable_Swift_Int64___(Dictionary(uniqueKeysWithValues: m.map { key, value in (key, NSNumber(value: value) )})) as! Swift.Dictionary<any KotlinRuntimeSupport._KotlinBridgeable,Swift.Int64>
+    m: [Swift.AnyHashable: Swift.Int64]
+) -> [Swift.AnyHashable: Swift.Int64] {
+    return __root___testMapAnyLong__TypesOfArguments__Swift_Dictionary_Swift_AnyHashable_Swift_Int64___(Dictionary(uniqueKeysWithValues: m.map { key, value in (key, NSNumber(value: value) )})) as! Swift.Dictionary<Swift.AnyHashable,Swift.Int64>
 }
 public func testMapIntString(
     m: [Swift.Int32: Swift.String]
@@ -48,7 +48,7 @@ public func testMapStringInt(
     return __root___testMapStringInt__TypesOfArguments__Swift_Dictionary_Swift_String_Swift_Int32___(Dictionary(uniqueKeysWithValues: m.map { key, value in (key, NSNumber(value: value) )})) as! Swift.Dictionary<Swift.String,Swift.Int32>
 }
 public func testStarMap(
-    m: [any KotlinRuntimeSupport._KotlinBridgeable: any KotlinRuntimeSupport._KotlinBridgeable]
-) -> [any KotlinRuntimeSupport._KotlinBridgeable: any KotlinRuntimeSupport._KotlinBridgeable] {
-    return __root___testStarMap__TypesOfArguments__Swift_Dictionary_anyU20KotlinRuntimeSupport__KotlinBridgeable_anyU20KotlinRuntimeSupport__KotlinBridgeable___(m) as! Swift.Dictionary<any KotlinRuntimeSupport._KotlinBridgeable,any KotlinRuntimeSupport._KotlinBridgeable>
+    m: [Swift.AnyHashable: any KotlinRuntimeSupport._KotlinBridgeable]
+) -> [Swift.AnyHashable: any KotlinRuntimeSupport._KotlinBridgeable] {
+    return __root___testStarMap__TypesOfArguments__Swift_Dictionary_Swift_AnyHashable_anyU20KotlinRuntimeSupport__KotlinBridgeable___(m) as! Swift.Dictionary<Swift.AnyHashable,any KotlinRuntimeSupport._KotlinBridgeable>
 }

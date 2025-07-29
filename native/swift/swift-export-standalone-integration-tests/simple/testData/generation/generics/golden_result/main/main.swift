@@ -237,8 +237,8 @@ public final class TripleBox: main.Box {
 }
 public func createMap(
     pairs: [main.Pair]
-) -> [(any KotlinRuntimeSupport._KotlinBridgeable)?: (any KotlinRuntimeSupport._KotlinBridgeable)?] {
-    return __root___createMap__TypesOfArguments__Swift_Array_main_Pair___(pairs) as! Swift.Dictionary<Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>,Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>
+) -> [Swift.AnyHashable?: (any KotlinRuntimeSupport._KotlinBridgeable)?] {
+    return __root___createMap__TypesOfArguments__Swift_Array_main_Pair___(pairs) as! Swift.Dictionary<Swift.Optional<Swift.AnyHashable>,Swift.Optional<any KotlinRuntimeSupport._KotlinBridgeable>>
 }
 public func customFilter(
     _ receiver: [(any KotlinRuntimeSupport._KotlinBridgeable)?],

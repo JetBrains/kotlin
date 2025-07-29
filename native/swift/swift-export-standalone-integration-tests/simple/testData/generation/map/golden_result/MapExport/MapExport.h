@@ -3,7 +3,7 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-NSDictionary<id, NSNumber *> * __root___testMapAnyLong__TypesOfArguments__Swift_Dictionary_anyU20KotlinRuntimeSupport__KotlinBridgeable_Swift_Int64___(NSDictionary<id, NSNumber *> * m);
+NSDictionary<id, NSNumber *> * __root___testMapAnyLong__TypesOfArguments__Swift_Dictionary_Swift_AnyHashable_Swift_Int64___(NSDictionary<id, NSNumber *> * m);
 
 NSDictionary<NSNumber *, NSString *> * __root___testMapIntString__TypesOfArguments__Swift_Dictionary_Swift_Int32_Swift_String___(NSDictionary<NSNumber *, NSString *> * m);
 
@@ -21,6 +21,6 @@ NSDictionary<NSSet<NSNumber *> *, NSDictionary<NSNumber *, NSNumber *> *> * __ro
 
 NSDictionary<NSString *, NSNumber *> * __root___testMapStringInt__TypesOfArguments__Swift_Dictionary_Swift_String_Swift_Int32___(NSDictionary<NSString *, NSNumber *> * m);
 
-NSDictionary<id, id> * __root___testStarMap__TypesOfArguments__Swift_Dictionary_anyU20KotlinRuntimeSupport__KotlinBridgeable_anyU20KotlinRuntimeSupport__KotlinBridgeable___(NSDictionary<id, id> * m);
+NSDictionary<id, id> * __root___testStarMap__TypesOfArguments__Swift_Dictionary_Swift_AnyHashable_anyU20KotlinRuntimeSupport__KotlinBridgeable___(NSDictionary<id, id> * m);
 
 NS_ASSUME_NONNULL_END

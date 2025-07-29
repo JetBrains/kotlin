@@ -4,8 +4,8 @@ import kotlin.native.internal.ExportedBridge
 import kotlinx.cinterop.*
 import kotlinx.cinterop.internal.convertBlockPtrToKotlinFunction
 
-@ExportedBridge("__root___consume_block_with_opt_reftype__TypesOfArguments__U28Swift_Optional_Swift_Int32__U20Swift_Optional_data_Bar__U20Swift_Optional_Swift_String__U20Swift_Optional_Swift_Set_anyU20KotlinRuntimeSupport__KotlinBridgeable__U29202D_U20Swift_Optional_data_Foo___")
-public fun __root___consume_block_with_opt_reftype__TypesOfArguments__U28Swift_Optional_Swift_Int32__U20Swift_Optional_data_Bar__U20Swift_Optional_Swift_String__U20Swift_Optional_Swift_Set_anyU20KotlinRuntimeSupport__KotlinBridgeable__U29202D_U20Swift_Optional_data_Foo___(block: kotlin.native.internal.NativePtr): Unit {
+@ExportedBridge("__root___consume_block_with_opt_reftype__TypesOfArguments__U28Swift_Optional_Swift_Int32__U20Swift_Optional_data_Bar__U20Swift_Optional_Swift_String__U20Swift_Optional_Swift_Set_Swift_AnyHashable__U29202D_U20Swift_Optional_data_Foo___")
+public fun __root___consume_block_with_opt_reftype__TypesOfArguments__U28Swift_Optional_Swift_Int32__U20Swift_Optional_data_Bar__U20Swift_Optional_Swift_String__U20Swift_Optional_Swift_Set_Swift_AnyHashable__U29202D_U20Swift_Optional_data_Foo___(block: kotlin.native.internal.NativePtr): Unit {
     val __block = run {
         val kotlinFun = convertBlockPtrToKotlinFunction<(kotlin.native.internal.NativePtr, kotlin.native.internal.NativePtr, kotlin.native.internal.NativePtr, kotlin.native.internal.NativePtr)->kotlin.native.internal.NativePtr>(block);
         { arg0: Int?, arg1: Bar?, arg2: kotlin.String?, arg3: kotlin.collections.Set<kotlin.Any>? ->

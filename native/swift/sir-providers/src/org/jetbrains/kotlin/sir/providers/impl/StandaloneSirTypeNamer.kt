@@ -52,6 +52,7 @@ internal object StandaloneSirTypeNamer : SirTypeNamer {
         return when (val declaration = type.typeDeclaration) {
             KotlinRuntimeModule.kotlinBase -> "kotlin.Any"
             KotlinRuntimeSupportModule.kotlinBridgeable -> "kotlin.Any"
+            SirSwiftModule.anyHashable -> "kotlin.Any"
             SirSwiftModule.string -> "kotlin.String"
 
             SirSwiftModule.bool -> "Boolean"

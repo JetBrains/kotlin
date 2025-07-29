@@ -13,6 +13,7 @@ sealed interface SirType {
 
     companion object {
         val any get() = SirExistentialType()
+        val anyHashable get() = SirNominalType(SirSwiftModule.anyHashable)
         val never get() = SirNominalType(SirSwiftModule.never)
         val void get() = SirNominalType(SirSwiftModule.void)
     }
