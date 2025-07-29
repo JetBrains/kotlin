@@ -3418,6 +3418,11 @@ internal class MustBeInitializedOrFinalOrAbstractWarningImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtProperty>(firDiagnostic, token), KaFirDiagnostic.MustBeInitializedOrFinalOrAbstractWarning
 
+internal class ExplicitFieldMustBeInitializedImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtBackingField>(firDiagnostic, token), KaFirDiagnostic.ExplicitFieldMustBeInitialized
+
 internal class ExtensionPropertyMustHaveAccessorsOrBeAbstractImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,

@@ -42,7 +42,7 @@ val simpleNoTypeExpression
     field = 1
 
 <!INCONSISTENT_BACKING_FIELD_TYPE!>val minimalFieldWithNoInitializer<!>
-    <!PROPERTY_FIELD_DECLARATION_MISSING_INITIALIZER!>field: Int<!>
+    <!EXPLICIT_FIELD_MUST_BE_INITIALIZED!>field: Int<!>
 
 // TODO: redundant backing field?
 // Or we assume someone may still want

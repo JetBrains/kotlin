@@ -4064,6 +4064,12 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.EXPLICIT_FIELD_MUST_BE_INITIALIZED) { firDiagnostic ->
+        ExplicitFieldMustBeInitializedImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.EXTENSION_PROPERTY_MUST_HAVE_ACCESSORS_OR_BE_ABSTRACT) { firDiagnostic ->
         ExtensionPropertyMustHaveAccessorsOrBeAbstractImpl(
             firDiagnostic as KtPsiDiagnostic,
