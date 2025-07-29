@@ -504,8 +504,34 @@ class K2JKlibCompiler : CLICompiler<K2JKlibCompilerArguments>() {
             messageCollector::checkNoUnboundSymbols
         )
         val typeTranslator = TypeTranslatorImpl(symbolTable, configuration.languageVersionSettings, mainModule)
-        val irBuiltIns = IrBuiltInsOverDescriptors(mainModule.builtIns, typeTranslator, symbolTable)
-
+        val irBuiltIns = IrBuiltInsOverDescriptors(mainModule.builtIns, typeTranslator, symbolTable).apply {
+            listOf(
+                Name.identifier("BooleanArrayInitializer"),
+                Name.identifier("IntArrayInitializer"),
+                Name.identifier("LongArrayInitializer"),
+                Name.identifier("ShortArrayInitializer"),
+                Name.identifier("ByteArrayInitializer"),
+                Name.identifier("CharArrayInitializer"),
+                Name.identifier("DoubleArrayInitializer"),
+                Name.identifier("FloatArrayInitializer"),
+                Name.identifier("ArrayInitializer"),
+            ).forEach {
+                symbolFinder.findClass(it, FqName("kotlin.jvm.internal"))
+            }
+            listOf(
+                Name.identifier("toBooleanArrayInitializer"),
+                Name.identifier("toIntArrayInitializer"),
+                Name.identifier("toLongArrayInitializer"),
+                Name.identifier("toShortArrayInitializer"),
+                Name.identifier("toByteArrayInitializer"),
+                Name.identifier("toCharArrayInitializer"),
+                Name.identifier("toDoubleArrayInitializer"),
+                Name.identifier("toFloatArrayInitializer"),
+                Name.identifier("toArrayInitializer"),
+            ).forEach {
+                symbolFinder.findFunctions(it, FqName("kotlin.jvm.internal"))
+            }
+        }
         val stubGenerator =
             DeclarationStubGeneratorImpl(
                 mainModule, symbolTable, irBuiltIns,
