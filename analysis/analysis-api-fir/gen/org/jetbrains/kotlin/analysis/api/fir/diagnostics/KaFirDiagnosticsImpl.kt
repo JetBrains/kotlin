@@ -3589,6 +3589,11 @@ internal class VarPropertyWithExplicitBackingFieldImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.VarPropertyWithExplicitBackingField
 
+internal class NonFinalPropertyWithExplicitBackingFieldImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtBackingField>(firDiagnostic, token), KaFirDiagnostic.NonFinalPropertyWithExplicitBackingField
+
 internal class InconsistentBackingFieldTypeImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
