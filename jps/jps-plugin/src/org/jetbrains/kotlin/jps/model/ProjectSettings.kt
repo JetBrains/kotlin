@@ -60,6 +60,7 @@ class JpsKotlinCompilerSettings : JpsElementBase<JpsKotlinCompilerSettings>() {
         else -> commonCompilerArguments as T
     }
 
+    @Deprecated("Deprecated by IJ platform, don't use it")
     override fun createCopy(): JpsKotlinCompilerSettings {
         val copy = JpsKotlinCompilerSettings()
         copy.commonCompilerArguments = this.commonCompilerArguments
@@ -69,6 +70,7 @@ class JpsKotlinCompilerSettings : JpsElementBase<JpsKotlinCompilerSettings>() {
         return copy
     }
 
+    @Deprecated("Deprecated by IJ platform, don't use it")
     override fun applyChanges(modified: JpsKotlinCompilerSettings) {
         // do nothing
     }

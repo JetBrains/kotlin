@@ -105,8 +105,10 @@ class JpsKotlinFacetModuleExtension(settings: KotlinFacetSettings) : JpsElementB
         val FACET_NAME = "Kotlin"
     }
 
+    @Deprecated("Deprecated by IJ platform, don't use it")
     override fun createCopy() = JpsKotlinFacetModuleExtension(settings)
 
+    @Deprecated("Deprecated by IJ platform, don't use it")
     override fun applyChanges(modified: JpsKotlinFacetModuleExtension) {
         this.settings = modified.settings
     }
