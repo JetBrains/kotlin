@@ -1091,6 +1091,7 @@ private fun parseIsoStringFormatFSA(
     var result = Duration.ZERO
     var sign = 1
     var index = startIndex
+    var currentLongValue = 0L
 
     fun parseLong(): Long {
         var result = 0L
@@ -1164,7 +1165,13 @@ private fun parseIsoStringFormatFSA(
                 else -> State.AFTER_T_SIGN
             }
 
-            State.AFTER_T_SIGN -> TODO()
+            State.AFTER_T_SIGN -> {
+                val prevIndex = index
+                currentLongValue = parseLong() * sign
+                if (index == prevIndex) break
+                sign = 1
+                State.AFTER_T_VALUE
+            }
 
             State.AFTER_T_VALUE -> TODO()
 
