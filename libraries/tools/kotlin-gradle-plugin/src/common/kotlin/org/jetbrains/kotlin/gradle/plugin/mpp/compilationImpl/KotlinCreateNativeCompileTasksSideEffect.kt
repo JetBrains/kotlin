@@ -17,7 +17,9 @@ import org.jetbrains.kotlin.gradle.plugin.SubpluginEnvironment
 import org.jetbrains.kotlin.gradle.plugin.launchInStage
 import org.jetbrains.kotlin.gradle.plugin.mpp.AbstractKotlinNativeCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinMetadataCompilation
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeCompilation
 import org.jetbrains.kotlin.gradle.plugin.mpp.crossCompilationOnCurrentHostSupported
+import org.jetbrains.kotlin.gradle.plugin.statistics.KotlinCrossCompilationMetrics
 import org.jetbrains.kotlin.gradle.targets.native.toolchain.chooseKotlinNativeProvider
 import org.jetbrains.kotlin.gradle.tasks.KotlinNativeCompile
 import org.jetbrains.kotlin.gradle.tasks.dependsOn
@@ -75,6 +77,10 @@ internal val KotlinCreateNativeCompileTasksSideEffect = KotlinCompilationSideEff
         // for metadata tasks we should always provide unpackaged klib
         task.produceUnpackagedKlib.set(isMetadataCompilation || project.kotlinPropertiesProvider.useNonPackedKlibs)
         task.separateKmpCompilation.convention(project.kotlinPropertiesProvider.separateKmpCompilation)
+    }
+
+    (compilation as? KotlinNativeCompilation)?.let { nativeCompilation ->
+        KotlinCrossCompilationMetrics.collectMetrics(project, nativeCompilation)
     }
 
     compilationInfo.classesDirs.from(kotlinNativeCompile.map { it.outputFile })

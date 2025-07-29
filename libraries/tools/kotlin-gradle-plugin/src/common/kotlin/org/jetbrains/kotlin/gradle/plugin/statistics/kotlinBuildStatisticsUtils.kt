@@ -10,6 +10,7 @@ import org.gradle.api.artifacts.DependencySet
 import org.gradle.api.artifacts.ProjectDependency
 import org.gradle.api.invocation.Gradle
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilerPluginSupportPlugin
+import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.statistics.plugins.ObservablePlugins
 import org.jetbrains.kotlin.gradle.report.BuildReportType
 import org.jetbrains.kotlin.gradle.utils.*
@@ -132,6 +133,11 @@ internal fun collectProjectConfigurationTimeMetrics(
         )
 
         addTaskMetrics(project, configurationTimeMetrics)
+
+        val crossCompilationEnabled = project.kotlinPropertiesProvider.enableKlibsCrossCompilation
+        if (!crossCompilationEnabled) {
+            configurationTimeMetrics.put(BooleanMetrics.KOTLIN_CROSS_COMPILATION_DISABLED, true)
+        }
 
         if (project.name == "buildSrc") {
             configurationTimeMetrics.put(NumericalMetrics.BUILD_SRC_COUNT, 1)
