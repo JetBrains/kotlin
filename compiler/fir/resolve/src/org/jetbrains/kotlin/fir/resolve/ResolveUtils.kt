@@ -471,7 +471,7 @@ private fun FirPropertySymbol.isEffectivelyFinal(session: FirSession): Boolean {
     return containingClass.modality == Modality.FINAL && containingClass.classKind != ClassKind.ENUM_CLASS
 }
 
-private fun FirPropertyWithExplicitBackingFieldResolvedNamedReference.getNarrowedDownSymbol(session: FirSession): FirBasedSymbol<*> {
+fun FirPropertyWithExplicitBackingFieldResolvedNamedReference.getNarrowedDownSymbol(session: FirSession): FirBasedSymbol<*> {
     val propertyReceiver = resolvedSymbol as? FirPropertySymbol ?: return resolvedSymbol
 
     // This can happen in case of 2 properties referencing
@@ -505,10 +505,6 @@ fun BodyResolveComponents.typeFromCallee(calleeReference: FirReference): ConeKot
         }
         is FirNamedReferenceWithCandidate -> {
             typeFromSymbol(calleeReference.candidateSymbol)
-        }
-        is FirPropertyWithExplicitBackingFieldResolvedNamedReference -> {
-            val symbol = calleeReference.getNarrowedDownSymbol(session)
-            typeFromSymbol(symbol)
         }
         is FirResolvedNamedReference -> {
             typeFromSymbol(calleeReference.resolvedSymbol)

@@ -18,8 +18,9 @@ FILE fqName:<root> fileName:/backingFieldVisibility.kt
           Suppress(names = ["WRONG_MODIFIER_TARGET"] type=kotlin.Array<out kotlin.String> varargElementType=kotlin.String)
         EXPRESSION_BODY
           CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PLUS
-            ARG <this>: CALL 'public final fun <get-a> (): kotlin.Number declared in <root>.A' type=kotlin.Int origin=GET_PROPERTY
-              ARG <this>: GET_VAR '<this>: <root>.A declared in <root>.A' type=<root>.A origin=IMPLICIT_ARGUMENT
+            ARG <this>: TYPE_OP type=kotlin.Int origin=IMPLICIT_CAST typeOperand=kotlin.Int
+              CALL 'public final fun <get-a> (): kotlin.Number declared in <root>.A' type=kotlin.Number origin=GET_PROPERTY
+                ARG <this>: GET_VAR '<this>: <root>.A declared in <root>.A' type=<root>.A origin=IMPLICIT_ARGUMENT
             ARG other: CONST Int type=kotlin.Int value=2
       FUN DEFAULT_PROPERTY_ACCESSOR name:<get-b> visibility:public modality:FINAL returnType:kotlin.Number
         VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.A
@@ -75,18 +76,21 @@ FILE fqName:<root> fileName:/backingFieldVisibility.kt
       BLOCK_BODY
         VAR name:aI type:kotlin.Int [val]
           CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PLUS
-            ARG <this>: CALL 'public final fun <get-a> (): kotlin.Number declared in <root>.A' type=kotlin.Int origin=GET_PROPERTY
-              ARG <this>: CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.A' type=<root>.A origin=null
+            ARG <this>: TYPE_OP type=kotlin.Int origin=IMPLICIT_CAST typeOperand=kotlin.Int
+              CALL 'public final fun <get-a> (): kotlin.Number declared in <root>.A' type=kotlin.Number origin=GET_PROPERTY
+                ARG <this>: CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.A' type=<root>.A origin=null
             ARG other: CONST Int type=kotlin.Int value=10
         VAR name:bI type:kotlin.Int [val]
           CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PLUS
-            ARG <this>: CALL 'public final fun <get-b> (): kotlin.Number declared in <root>.A' type=kotlin.Int origin=GET_PROPERTY
-              ARG <this>: CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.A' type=<root>.A origin=null
+            ARG <this>: TYPE_OP type=kotlin.Int origin=IMPLICIT_CAST typeOperand=kotlin.Int
+              CALL 'public final fun <get-b> (): kotlin.Number declared in <root>.A' type=kotlin.Number origin=GET_PROPERTY
+                ARG <this>: CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.A' type=<root>.A origin=null
             ARG other: CONST Int type=kotlin.Int value=20
   FUN name:test visibility:public modality:FINAL returnType:kotlin.Unit
     BLOCK_BODY
       VAR name:bA type:kotlin.Int [val]
         CALL 'public final fun plus (other: kotlin.Int): kotlin.Int declared in kotlin.Int' type=kotlin.Int origin=PLUS
-          ARG <this>: CALL 'public final fun <get-b> (): kotlin.Number declared in <root>.A' type=kotlin.Int origin=GET_PROPERTY
-            ARG <this>: CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.A' type=<root>.A origin=null
+          ARG <this>: TYPE_OP type=kotlin.Int origin=IMPLICIT_CAST typeOperand=kotlin.Int
+            CALL 'public final fun <get-b> (): kotlin.Number declared in <root>.A' type=kotlin.Number origin=GET_PROPERTY
+              ARG <this>: CONSTRUCTOR_CALL 'public constructor <init> () declared in <root>.A' type=<root>.A origin=null
           ARG other: CONST Int type=kotlin.Int value=20

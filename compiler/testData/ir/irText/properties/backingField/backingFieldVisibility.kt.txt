@@ -4,7 +4,7 @@ class A {
     get
 
   val b: Int
-    field = <this>.<get-a>().plus(other = 2)
+    field = <this>.<get-a>() /*as Int */.plus(other = 2)
     get
 
   val c: Int
@@ -22,13 +22,13 @@ class A {
   }
 
   fun rest() {
-    val aI: Int = A().<get-a>().plus(other = 10)
-    val bI: Int = A().<get-b>().plus(other = 20)
+    val aI: Int = A().<get-a>() /*as Int */.plus(other = 10)
+    val bI: Int = A().<get-b>() /*as Int */.plus(other = 20)
   }
 
 }
 
 fun test() {
-  val bA: Int = A().<get-b>().plus(other = 20)
+  val bA: Int = A().<get-b>() /*as Int */.plus(other = 20)
 }
 
