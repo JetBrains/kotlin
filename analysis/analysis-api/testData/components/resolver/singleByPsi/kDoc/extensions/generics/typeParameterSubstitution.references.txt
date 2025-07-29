@@ -1,0 +1,89 @@
+<caret_1>:
+  KDocName(352,383): 'Container.containerIntExtension'
+    KDocReference:
+      (in ROOT) fun Container<kotlin.Int>.containerIntExtension()
+
+<caret_2>:
+  KDocName(400,432): 'TContainer.containerIntExtension'
+    KDocReference:
+      Nothing (Unresolved reference)
+
+<caret_3>:
+  KDocName(449,492): 'TNumberBoundContainer.containerIntExtension'
+    KDocReference:
+      Nothing (Unresolved reference)
+
+<caret_4>:
+  KDocName(509,546): 'NumberContainer.containerIntExtension'
+    KDocReference:
+      Nothing (Unresolved reference)
+
+<caret_5>:
+  KDocName(565,599): 'IntContainer.containerIntExtension'
+    KDocReference:
+      (in ROOT) fun Container<kotlin.Int>.containerIntExtension()
+
+<caret_6>:
+  KDocName(616,653): 'StringContainer.containerIntExtension'
+    KDocReference:
+      Nothing (Unresolved reference)
+
+<caret_7>:
+  KDocName(822,861): 'Container.containerFixedNumberExtension'
+    KDocReference:
+      (in ROOT) fun Container<kotlin.Number>.containerFixedNumberExtension()
+
+<caret_8>:
+  KDocName(878,918): 'TContainer.containerFixedNumberExtension'
+    KDocReference:
+      Nothing (Unresolved reference)
+
+<caret_9>:
+  KDocName(935,986): 'TNumberBoundContainer.containerFixedNumberExtension'
+    KDocReference:
+      Nothing (Unresolved reference)
+
+<caret_10>:
+  KDocName(1003,1048): 'NumberContainer.containerFixedNumberExtension'
+    KDocReference:
+      (in ROOT) fun Container<kotlin.Number>.containerFixedNumberExtension()
+
+<caret_11>:
+  KDocName(1065,1107): 'IntContainer.containerFixedNumberExtension'
+    KDocReference:
+      Nothing (Unresolved reference)
+
+<caret_12>:
+  KDocName(1126,1171): 'StringContainer.containerFixedNumberExtension'
+    KDocReference:
+      Nothing (Unresolved reference)
+
+<caret_13>:
+  KDocName(1359,1396): 'Container.containerOutNumberExtension'
+    KDocReference:
+      (in ROOT) fun Container<out kotlin.Number>.containerOutNumberExtension()
+
+<caret_14>:
+  KDocName(1413,1451): 'TContainer.containerOutNumberExtension'
+    KDocReference:
+      Nothing (Unresolved reference)
+
+<caret_15>:
+  KDocName(1468,1517): 'TNumberBoundContainer.containerOutNumberExtension'
+    KDocReference:
+      (in ROOT) fun Container<out kotlin.Number>.containerOutNumberExtension()
+
+<caret_16>:
+  KDocName(1534,1577): 'NumberContainer.containerOutNumberExtension'
+    KDocReference:
+      (in ROOT) fun Container<out kotlin.Number>.containerOutNumberExtension()
+
+<caret_17>:
+  KDocName(1594,1634): 'IntContainer.containerOutNumberExtension'
+    KDocReference:
+      (in ROOT) fun Container<out kotlin.Number>.containerOutNumberExtension()
+
+<caret_18>:
+  KDocName(1651,1694): 'StringContainer.containerOutNumberExtension'
+    KDocReference:
+      Nothing (Unresolved reference)

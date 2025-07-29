@@ -1,0 +1,23 @@
+<caret_1>:
+  KDocName(226,258): 'OutContainer.someNumberExtension'
+    null
+
+<caret_2>:
+  KDocName(275,310): 'IntOutContainer.someNumberExtension'
+    null
+
+<caret_3>:
+  KDocName(327,365): 'NumberOutContainer.someNumberExtension'
+    null
+
+<caret_4>:
+  KDocName(382,411): 'OutContainer.someIntExtension'
+    null
+
+<caret_5>:
+  KDocName(428,460): 'IntOutContainer.someIntExtension'
+    null
+
+<caret_6>:
+  KDocName(477,512): 'NumberOutContainer.someIntExtension'
+    null

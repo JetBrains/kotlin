@@ -1,0 +1,3 @@
+KDocName(177,207): 'BoundedContainer.someExtension'
+  KDocReference:
+    Nothing (Unresolved reference)

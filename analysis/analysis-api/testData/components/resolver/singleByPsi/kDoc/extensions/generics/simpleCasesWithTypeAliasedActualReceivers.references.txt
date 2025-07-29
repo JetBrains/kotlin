@@ -1,0 +1,79 @@
+<caret_1>:
+  KDocName(396,417): 'ChildGenericAlias.ext'
+    KDocReference:
+      (in ROOT) fun <T> Base<T>.ext()
+
+<caret_2>:
+  KDocName(423,453): 'ChildGenericAlias.extRecursive'
+    KDocReference:
+      (in ROOT) fun <T : Base<T>> Base<T>.extRecursive()
+
+<caret_3>:
+  KDocName(459,487): 'ChildGenericAlias.extNothing'
+    KDocReference:
+      (in ROOT) fun Base<kotlin.Nothing>.extNothing()
+
+<caret_4>:
+  KDocName(493,518): 'ChildGenericAlias.extStar'
+    KDocReference:
+      (in ROOT) fun Base<*>.extStar()
+
+<caret_5>:
+  KDocName(527,566): 'ChildGenericAliasWithStarProjection.ext'
+    KDocReference:
+      (in ROOT) fun <T> Base<T>.ext()
+
+<caret_6>:
+  KDocName(572,620): 'ChildGenericAliasWithStarProjection.extRecursive'
+    KDocReference:
+      (in ROOT) fun <T : Base<T>> Base<T>.extRecursive()
+
+<caret_7>:
+  KDocName(626,672): 'ChildGenericAliasWithStarProjection.extNothing'
+    KDocReference:
+      (in ROOT) fun Base<kotlin.Nothing>.extNothing()
+
+<caret_8>:
+  KDocName(678,721): 'ChildGenericAliasWithStarProjection.extStar'
+    KDocReference:
+      (in ROOT) fun Base<*>.extStar()
+
+<caret_9>:
+  KDocName(730,762): 'ChildGenericAliasWithNothing.ext'
+    KDocReference:
+      (in ROOT) fun <T> Base<T>.ext()
+
+<caret_10>:
+  KDocName(768,809): 'ChildGenericAliasWithNothing.extRecursive'
+    KDocReference:
+      (in ROOT) fun <T : Base<T>> Base<T>.extRecursive()
+
+<caret_11>:
+  KDocName(815,854): 'ChildGenericAliasWithNothing.extNothing'
+    KDocReference:
+      (in ROOT) fun Base<kotlin.Nothing>.extNothing()
+
+<caret_12>:
+  KDocName(860,896): 'ChildGenericAliasWithNothing.extStar'
+    KDocReference:
+      (in ROOT) fun Base<*>.extStar()
+
+<caret_13>:
+  KDocName(905,949): 'ChildGenericAliasWithAnotherNothingAlias.ext'
+    KDocReference:
+      (in ROOT) fun <T> Base<T>.ext()
+
+<caret_14>:
+  KDocName(955,1008): 'ChildGenericAliasWithAnotherNothingAlias.extRecursive'
+    KDocReference:
+      (in ROOT) fun <T : Base<T>> Base<T>.extRecursive()
+
+<caret_15>:
+  KDocName(1014,1065): 'ChildGenericAliasWithAnotherNothingAlias.extNothing'
+    KDocReference:
+      (in ROOT) fun Base<kotlin.Nothing>.extNothing()
+
+<caret_16>:
+  KDocName(1071,1119): 'ChildGenericAliasWithAnotherNothingAlias.extStar'
+    KDocReference:
+      (in ROOT) fun Base<*>.extStar()

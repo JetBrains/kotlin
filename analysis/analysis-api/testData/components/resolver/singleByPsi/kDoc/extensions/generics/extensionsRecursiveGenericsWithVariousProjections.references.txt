@@ -1,0 +1,14 @@
+<caret_1>:
+  KDocName(390,403): 'SomeClass.ext'
+    KDocReference:
+      Nothing (Unresolved reference)
+
+<caret_2>:
+  KDocName(409,424): 'SomeClassIn.ext'
+    KDocReference:
+      Nothing (Unresolved reference)
+
+<caret_3>:
+  KDocName(430,446): 'SomeClassOut.ext'
+    KDocReference:
+      Nothing (Unresolved reference)

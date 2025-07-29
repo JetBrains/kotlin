@@ -1,0 +1,59 @@
+<caret_1>:
+  KDocName(573,582): 'Base.ext1'
+    KDocReference:
+      (in ROOT) fun <T> ChildGenericAlias<T> /* = Base<T> */.ext1()
+
+<caret_2>:
+  KDocName(588,597): 'Base.ext2'
+    KDocReference:
+      (in ROOT) fun ChildGenericAliasWithStarProjection /* = Base<*> */.ext2()
+
+<caret_3>:
+  KDocName(603,612): 'Base.ext3'
+    KDocReference:
+      (in ROOT) fun ChildGenericAliasWithNothing /* = Base<kotlin.Nothing> */.ext3()
+
+<caret_4>:
+  KDocName(618,627): 'Base.ext4'
+    KDocReference:
+      (in ROOT) fun ChildGenericAliasWithAnotherNothingAlias /* = Base<ChildGenericAliasWithNothing /* = Base<kotlin.Nothing> */> */.ext4()
+
+<caret_5>:
+  KDocName(636,661): 'DoubleNestedBaseStar.ext1'
+    KDocReference:
+      (in ROOT) fun <T> ChildGenericAlias<T> /* = Base<T> */.ext1()
+
+<caret_6>:
+  KDocName(667,692): 'DoubleNestedBaseStar.ext2'
+    KDocReference:
+      (in ROOT) fun ChildGenericAliasWithStarProjection /* = Base<*> */.ext2()
+
+<caret_7>:
+  KDocName(698,723): 'DoubleNestedBaseStar.ext3'
+    KDocReference:
+      (in ROOT) fun ChildGenericAliasWithNothing /* = Base<kotlin.Nothing> */.ext3()
+
+<caret_8>:
+  KDocName(729,754): 'DoubleNestedBaseStar.ext4'
+    KDocReference:
+      (in ROOT) fun ChildGenericAliasWithAnotherNothingAlias /* = Base<ChildGenericAliasWithNothing /* = Base<kotlin.Nothing> */> */.ext4()
+
+<caret_9>:
+  KDocName(763,791): 'DoubleNestedBaseNothing.ext1'
+    KDocReference:
+      (in ROOT) fun <T> ChildGenericAlias<T> /* = Base<T> */.ext1()
+
+<caret_10>:
+  KDocName(797,825): 'DoubleNestedBaseNothing.ext2'
+    KDocReference:
+      (in ROOT) fun ChildGenericAliasWithStarProjection /* = Base<*> */.ext2()
+
+<caret_11>:
+  KDocName(831,859): 'DoubleNestedBaseNothing.ext3'
+    KDocReference:
+      (in ROOT) fun ChildGenericAliasWithNothing /* = Base<kotlin.Nothing> */.ext3()
+
+<caret_12>:
+  KDocName(865,893): 'DoubleNestedBaseNothing.ext4'
+    KDocReference:
+      (in ROOT) fun ChildGenericAliasWithAnotherNothingAlias /* = Base<ChildGenericAliasWithNothing /* = Base<kotlin.Nothing> */> */.ext4()

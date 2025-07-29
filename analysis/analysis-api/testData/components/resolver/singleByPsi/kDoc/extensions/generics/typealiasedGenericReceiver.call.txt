@@ -1,0 +1,7 @@
+<caret_1>:
+  KDocName(104,112): 'AInt.foo'
+    null
+
+<caret_2>:
+  KDocName(118,129): 'AString.foo'
+    null

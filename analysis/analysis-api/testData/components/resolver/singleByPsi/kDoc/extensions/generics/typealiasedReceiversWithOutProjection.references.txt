@@ -1,0 +1,3 @@
+KDocName(102,110): 'AInt.foo'
+  KDocReference:
+    (in ROOT) fun ANumber /* = A<kotlin.Number> */.foo()

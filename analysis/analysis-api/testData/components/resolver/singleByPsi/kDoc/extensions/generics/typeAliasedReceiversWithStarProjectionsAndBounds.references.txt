@@ -1,0 +1,89 @@
+<caret_1>:
+  KDocName(731,756): 'ChildGenericAliasInt.ext1'
+    KDocReference:
+      Nothing (Unresolved reference)
+
+<caret_2>:
+  KDocName(762,787): 'ChildGenericAliasInt.ext2'
+    KDocReference:
+      Nothing (Unresolved reference)
+
+<caret_3>:
+  KDocName(793,818): 'ChildGenericAliasInt.ext3'
+    KDocReference:
+      Nothing (Unresolved reference)
+
+<caret_4>:
+  KDocName(824,849): 'ChildGenericAliasInt.ext4'
+    KDocReference:
+      Nothing (Unresolved reference)
+
+<caret_5>:
+  KDocName(855,880): 'ChildGenericAliasInt.ext5'
+    KDocReference:
+      Nothing (Unresolved reference)
+
+<caret_6>:
+  KDocName(886,911): 'ChildGenericAliasInt.ext6'
+    KDocReference:
+      Nothing (Unresolved reference)
+
+<caret_7>:
+  KDocName(917,942): 'ChildGenericAliasAny.ext1'
+    KDocReference:
+      Nothing (Unresolved reference)
+
+<caret_8>:
+  KDocName(948,973): 'ChildGenericAliasAny.ext2'
+    KDocReference:
+      Nothing (Unresolved reference)
+
+<caret_9>:
+  KDocName(979,1004): 'ChildGenericAliasAny.ext3'
+    KDocReference:
+      Nothing (Unresolved reference)
+
+<caret_10>:
+  KDocName(1010,1035): 'ChildGenericAliasAny.ext4'
+    KDocReference:
+      Nothing (Unresolved reference)
+
+<caret_11>:
+  KDocName(1041,1066): 'ChildGenericAliasAny.ext5'
+    KDocReference:
+      Nothing (Unresolved reference)
+
+<caret_12>:
+  KDocName(1072,1097): 'ChildGenericAliasAny.ext6'
+    KDocReference:
+      Nothing (Unresolved reference)
+
+<caret_13>:
+  KDocName(1103,1143): 'ChildGenericAliasIntWithOneArgument.ext1'
+    KDocReference:
+      Nothing (Unresolved reference)
+
+<caret_14>:
+  KDocName(1149,1189): 'ChildGenericAliasIntWithOneArgument.ext2'
+    KDocReference:
+      Nothing (Unresolved reference)
+
+<caret_15>:
+  KDocName(1195,1235): 'ChildGenericAliasIntWithOneArgument.ext3'
+    KDocReference:
+      Nothing (Unresolved reference)
+
+<caret_16>:
+  KDocName(1241,1281): 'ChildGenericAliasIntWithOneArgument.ext4'
+    KDocReference:
+      Nothing (Unresolved reference)
+
+<caret_17>:
+  KDocName(1287,1327): 'ChildGenericAliasIntWithOneArgument.ext5'
+    KDocReference:
+      Nothing (Unresolved reference)
+
+<caret_18>:
+  KDocName(1333,1373): 'ChildGenericAliasIntWithOneArgument.ext6'
+    KDocReference:
+      Nothing (Unresolved reference)

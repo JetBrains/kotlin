@@ -1,0 +1,71 @@
+<caret_1>:
+  KDocName(352,383): 'Container.containerIntExtension'
+    NO_CANDIDATES
+
+<caret_2>:
+  KDocName(400,432): 'TContainer.containerIntExtension'
+    NO_CANDIDATES
+
+<caret_3>:
+  KDocName(449,492): 'TNumberBoundContainer.containerIntExtension'
+    NO_CANDIDATES
+
+<caret_4>:
+  KDocName(509,546): 'NumberContainer.containerIntExtension'
+    NO_CANDIDATES
+
+<caret_5>:
+  KDocName(565,599): 'IntContainer.containerIntExtension'
+    NO_CANDIDATES
+
+<caret_6>:
+  KDocName(616,653): 'StringContainer.containerIntExtension'
+    NO_CANDIDATES
+
+<caret_7>:
+  KDocName(822,861): 'Container.containerFixedNumberExtension'
+    NO_CANDIDATES
+
+<caret_8>:
+  KDocName(878,918): 'TContainer.containerFixedNumberExtension'
+    NO_CANDIDATES
+
+<caret_9>:
+  KDocName(935,986): 'TNumberBoundContainer.containerFixedNumberExtension'
+    NO_CANDIDATES
+
+<caret_10>:
+  KDocName(1003,1048): 'NumberContainer.containerFixedNumberExtension'
+    NO_CANDIDATES
+
+<caret_11>:
+  KDocName(1065,1107): 'IntContainer.containerFixedNumberExtension'
+    NO_CANDIDATES
+
+<caret_12>:
+  KDocName(1126,1171): 'StringContainer.containerFixedNumberExtension'
+    NO_CANDIDATES
+
+<caret_13>:
+  KDocName(1359,1396): 'Container.containerOutNumberExtension'
+    NO_CANDIDATES
+
+<caret_14>:
+  KDocName(1413,1451): 'TContainer.containerOutNumberExtension'
+    NO_CANDIDATES
+
+<caret_15>:
+  KDocName(1468,1517): 'TNumberBoundContainer.containerOutNumberExtension'
+    NO_CANDIDATES
+
+<caret_16>:
+  KDocName(1534,1577): 'NumberContainer.containerOutNumberExtension'
+    NO_CANDIDATES
+
+<caret_17>:
+  KDocName(1594,1634): 'IntContainer.containerOutNumberExtension'
+    NO_CANDIDATES
+
+<caret_18>:
+  KDocName(1651,1694): 'StringContainer.containerOutNumberExtension'
+    NO_CANDIDATES

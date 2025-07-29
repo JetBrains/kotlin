@@ -1,0 +1,47 @@
+<caret_1>:
+  KDocName(573,582): 'Base.ext1'
+    null
+
+<caret_2>:
+  KDocName(588,597): 'Base.ext2'
+    null
+
+<caret_3>:
+  KDocName(603,612): 'Base.ext3'
+    null
+
+<caret_4>:
+  KDocName(618,627): 'Base.ext4'
+    null
+
+<caret_5>:
+  KDocName(636,661): 'DoubleNestedBaseStar.ext1'
+    null
+
+<caret_6>:
+  KDocName(667,692): 'DoubleNestedBaseStar.ext2'
+    null
+
+<caret_7>:
+  KDocName(698,723): 'DoubleNestedBaseStar.ext3'
+    null
+
+<caret_8>:
+  KDocName(729,754): 'DoubleNestedBaseStar.ext4'
+    null
+
+<caret_9>:
+  KDocName(763,791): 'DoubleNestedBaseNothing.ext1'
+    null
+
+<caret_10>:
+  KDocName(797,825): 'DoubleNestedBaseNothing.ext2'
+    null
+
+<caret_11>:
+  KDocName(831,859): 'DoubleNestedBaseNothing.ext3'
+    null
+
+<caret_12>:
+  KDocName(865,893): 'DoubleNestedBaseNothing.ext4'
+    null
