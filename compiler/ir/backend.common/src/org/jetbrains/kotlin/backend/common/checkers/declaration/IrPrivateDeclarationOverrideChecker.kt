@@ -19,7 +19,6 @@ internal object IrPrivateDeclarationOverrideChecker : IrDeclarationChecker<IrDec
     ) {
         if (declaration is IrOverridableDeclaration<*>) {
             for (overriddenSymbol in declaration.overriddenSymbols) {
-                if (!overriddenSymbol.isBound) continue
                 val overriddenDeclaration = overriddenSymbol.owner as? IrDeclarationWithVisibility ?: continue
                 if (overriddenDeclaration.visibility == DescriptorVisibilities.PRIVATE) {
                     context.error(declaration, "Overrides private declaration ${overriddenDeclaration.render()}")
