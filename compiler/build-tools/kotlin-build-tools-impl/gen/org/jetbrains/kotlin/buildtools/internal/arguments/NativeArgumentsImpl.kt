@@ -106,7 +106,7 @@ import org.jetbrains.kotlin.buildtools.api.arguments.NativeArguments.Companion.X
 import org.jetbrains.kotlin.buildtools.api.arguments.NativeArguments.Companion.X_WRITE_DEPENDENCIES_TO
 import org.jetbrains.kotlin.cli.common.arguments.K2NativeCompilerArguments
 
-public class NativeArgumentsImpl : CommonKlibBasedArgumentsImpl(), NativeArguments {
+internal class NativeArgumentsImpl : CommonKlibBasedArgumentsImpl(), NativeArguments {
   private val optionsMap: MutableMap<String, Any?> = mutableMapOf()
 
   @Suppress("UNCHECKED_CAST")

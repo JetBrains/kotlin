@@ -26,7 +26,7 @@ import org.jetbrains.kotlin.buildtools.api.arguments.CommonKlibBasedArguments.Co
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.cli.common.arguments.CommonKlibBasedCompilerArguments
 
-public open class CommonKlibBasedArgumentsImpl : CommonCompilerArgumentsImpl(),
+internal open class CommonKlibBasedArgumentsImpl : CommonCompilerArgumentsImpl(),
     CommonKlibBasedArguments {
   private val optionsMap: MutableMap<String, Any?> = mutableMapOf()
 

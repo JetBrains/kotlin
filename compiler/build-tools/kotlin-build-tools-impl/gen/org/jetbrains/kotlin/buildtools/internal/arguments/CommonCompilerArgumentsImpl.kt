@@ -84,7 +84,7 @@ import org.jetbrains.kotlin.buildtools.api.arguments.enums.ReturnValueCheckerMod
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments as ArgumentsCommonCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments as CommonCompilerArguments
 
-public open class CommonCompilerArgumentsImpl : CommonToolArgumentsImpl(),
+internal open class CommonCompilerArgumentsImpl : CommonToolArgumentsImpl(),
     ArgumentsCommonCompilerArguments {
   private val optionsMap: MutableMap<String, Any?> = mutableMapOf()
 

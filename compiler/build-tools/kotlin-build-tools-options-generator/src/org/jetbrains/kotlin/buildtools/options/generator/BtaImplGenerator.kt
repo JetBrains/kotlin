@@ -37,6 +37,7 @@ class BtaImplGenerator() : BtaGenerator {
             )
             addType(
                 TypeSpec.Companion.classBuilder(implClassName).apply {
+                    addModifiers(KModifier.INTERNAL)
                     parentClass?.let { superclass(it) }
                     addSuperinterface(ClassName(API_PACKAGE, level.name.capitalizeAsciiOnly()))
                     if (level.nestedLevels.isNotEmpty()) {

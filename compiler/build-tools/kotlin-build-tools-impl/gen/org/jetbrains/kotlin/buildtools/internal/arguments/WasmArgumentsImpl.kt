@@ -35,7 +35,7 @@ import org.jetbrains.kotlin.buildtools.api.arguments.WasmArguments.Companion.X_W
 import org.jetbrains.kotlin.buildtools.api.arguments.WasmArguments.Companion.X_WASM_USE_TRAPS_INSTEAD_OF_EXCEPTIONS
 import org.jetbrains.kotlin.cli.common.arguments.K2WasmCompilerArguments
 
-public open class WasmArgumentsImpl : CommonKlibBasedArgumentsImpl(), WasmArguments {
+internal open class WasmArgumentsImpl : CommonKlibBasedArgumentsImpl(), WasmArguments {
   private val optionsMap: MutableMap<String, Any?> = mutableMapOf()
 
   @Suppress("UNCHECKED_CAST")

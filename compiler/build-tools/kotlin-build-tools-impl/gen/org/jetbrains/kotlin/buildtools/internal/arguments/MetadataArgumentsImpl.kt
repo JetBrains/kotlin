@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.buildtools.api.arguments.MetadataArguments.Companion
 import org.jetbrains.kotlin.buildtools.api.arguments.MetadataArguments.Companion.X_REFINES_PATHS
 import org.jetbrains.kotlin.cli.common.arguments.K2MetadataCompilerArguments
 
-public class MetadataArgumentsImpl : CommonCompilerArgumentsImpl(), MetadataArguments {
+internal class MetadataArgumentsImpl : CommonCompilerArgumentsImpl(), MetadataArguments {
   private val optionsMap: MutableMap<String, Any?> = mutableMapOf()
 
   @Suppress("UNCHECKED_CAST")

@@ -60,7 +60,7 @@ import org.jetbrains.kotlin.buildtools.api.arguments.JsArguments.Companion.X_PLA
 import org.jetbrains.kotlin.buildtools.api.arguments.JsArguments.Companion.X_STRICT_IMPLICIT_EXPORT_TYPES
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
 
-public class JsArgumentsImpl : WasmArgumentsImpl(), JsArguments {
+internal class JsArgumentsImpl : WasmArgumentsImpl(), JsArguments {
   private val optionsMap: MutableMap<String, Any?> = mutableMapOf()
 
   @Suppress("UNCHECKED_CAST")
