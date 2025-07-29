@@ -1081,6 +1081,18 @@ private fun parseDuration(value: String, strictIso: Boolean, throwException: Boo
 }
 
 @kotlin.internal.InlineOnly
+private inline fun parseIsoStringFormatFSA(
+    value: String,
+    startIndex: Int,
+    length: Int,
+    throwException: Boolean,
+): Duration {
+    var result = Duration.ZERO
+
+    return result
+}
+
+@kotlin.internal.InlineOnly
 private inline fun parseIsoStringFormat(
     value: String,
     startIndex: Int,
