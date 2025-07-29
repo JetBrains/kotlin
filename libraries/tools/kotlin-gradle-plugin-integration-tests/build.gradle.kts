@@ -1,6 +1,7 @@
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.jetbrains.kotlin.build.androidsdkprovisioner.ProvisioningType
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.tasks.AbstractKotlinCompile
 import java.nio.file.Paths
 
@@ -26,6 +27,9 @@ kotlin {
             "-Xlambdas=class"
         )
     }
+
+    @Suppress("DEPRECATION")
+    target.compilations.getByName("test").downgradeApiVersionToAvoidBreakingCoroutines(KotlinVersion.KOTLIN_2_0)
 }
 
 tasks.withType(AbstractKotlinCompile::class.java).configureEach {

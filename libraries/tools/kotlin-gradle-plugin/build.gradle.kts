@@ -1,6 +1,7 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import gradle.GradlePluginVariant
 import org.jetbrains.kotlin.build.androidsdkprovisioner.ProvisioningType
+import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
@@ -32,6 +33,8 @@ kotlin {
             )
         )
     }
+
+    target.compilations.getByName("test").downgradeApiVersionToAvoidBreakingCoroutines()
 }
 
 tasks.test {
@@ -539,6 +542,7 @@ if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
             kotlinJavaToolchain.toolchain.use(project.getToolchainLauncherFor(JdkMajorVersion.JDK_17_0))
         }
     }
+    functionalTestCompilation.downgradeApiVersionToAvoidBreakingCoroutines()
 
     functionalTestCompilation.configurations.pluginConfiguration.dependencies.add(
         dependencies.create("org.jetbrains.kotlin:kotlin-serialization-compiler-plugin-embeddable")

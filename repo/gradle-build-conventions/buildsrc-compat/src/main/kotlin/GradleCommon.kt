@@ -10,6 +10,7 @@ import org.gradle.api.Action
 import org.gradle.api.GradleException
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
+import org.gradle.api.artifacts.FileCollectionDependency
 import org.gradle.api.artifacts.ModuleDependency
 import org.gradle.api.artifacts.VersionCatalogsExtension
 import org.gradle.api.artifacts.type.ArtifactTypeDefinition
@@ -43,10 +44,12 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.KotlinBaseExtension
+import org.jetbrains.kotlin.gradle.dsl.KotlinJvmExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinSingleJavaTargetExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinWithJavaCompilation
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
 import plugins.configureDefaultPublishing
@@ -808,4 +811,35 @@ fun Project.registerKotlinSourceForVersionRange(
                 }
             }
         }
+}
+
+fun Project.checkTestCompilationsLowerApiVersionIfEmbeddedStdlibIsInRuntimeClasspath() {
+    extensions.getByType<KotlinJvmExtension>().target.compilations.matching {
+        it.name.lowercase().contains("test")
+    }.all {
+        val compilation = this
+        compilation.compileTaskProvider.configure {
+            val task = this
+            val gradleEmbeddedStdlib =
+                (dependencies.gradleApi() as FileCollectionDependency).files.single { it.name.startsWith("kotlin-stdlib") }
+            val willCoroutinesHangOnUncaughtExceptions: Provider<Boolean> = provider {
+                val runtimeExportsEmbeddedStdlib = compilation.runtimeDependencyFiles?.contains(gradleEmbeddedStdlib)
+                    ?: error("Missing runtime dependency files")
+                val v2DebugMetadataIsEmitted = task.compilerOptions.apiVersion.get() >= KotlinVersion.KOTLIN_2_3
+                runtimeExportsEmbeddedStdlib && v2DebugMetadataIsEmitted
+            }
+            doFirst {
+                if (willCoroutinesHangOnUncaughtExceptions.get()) {
+                    error("""
+                        Test compilation task '${name}' depends on Gradle dependency with embedded kotlin-stdlib version, but doesn't lower -api-version. 
+                        Please remove Gradle's stdlib from runtime classpath or downgrade -api-version to ${KotlinVersion.KOTLIN_2_2} or lower using downgradeApiVersionToAvoidBreakingCoroutines()
+                    """.trimIndent())
+                }
+            }
+        }
+    }
+}
+
+fun KotlinWithJavaCompilation<*, *>.downgradeApiVersionToAvoidBreakingCoroutines(apiVersion: KotlinVersion = KotlinVersion.KOTLIN_2_2) {
+    compileTaskProvider.configure { compilerOptions.apiVersion.set(apiVersion) }
 }

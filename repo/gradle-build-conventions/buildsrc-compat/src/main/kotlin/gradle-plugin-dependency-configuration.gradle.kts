@@ -86,3 +86,4 @@ publishing {
     }
 }
 
+checkTestCompilationsLowerApiVersionIfEmbeddedStdlibIsInRuntimeClasspath()
