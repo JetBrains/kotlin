@@ -5,7 +5,6 @@
 // IGNORE_BACKEND_K1: JVM_IR, NATIVE
 // In K2, isInitialized on a property from another file is forbidden for all backends.
 // IGNORE_BACKEND_K2: ANY
-// IGNORE_BACKEND_K2_MULTI_MODULE: ANY
 // IGNORE_IR_DESERIALIZATION_TEST: NATIVE
 // IGNORE_IR_DESERIALIZATION_TEST: JS_IR
 // ^^^ Source code is not compiled in JS.

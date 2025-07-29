@@ -1,5 +1,4 @@
 // IGNORE_BACKEND: WASM
-// IGNORE_BACKEND_K2_MULTI_MODULE: WASM
 // https://youtrack.jetbrains.com/issue/KT-44571/Segfault-on-unnecessary-int-unboxing
 // NO_CHECK_LAMBDA_INLINING
 // FILE: 1.kt

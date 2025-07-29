@@ -2,7 +2,6 @@
 // some hacks are required, which isn't worth it considering that test contains invalid code (reassign of val property).
 // DISABLE_NATIVE
 // IGNORE_BACKEND_K2: ANY
-// IGNORE_BACKEND_K2_MULTI_MODULE: ANY
 // IGNORE_IR_DESERIALIZATION_TEST: NATIVE
 // FIR_STATUS: KT-35565
 //  java.lang.AssertionError
