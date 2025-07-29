@@ -249,6 +249,18 @@ public class IrJsSteppingTestGenerated extends AbstractIrJsSteppingTest {
   }
 
   @Test
+  @TestMetadata("funCallsInsideInlineableLambda.kt")
+  public void testFunCallsInsideInlineableLambda() {
+    runTest("compiler/testData/debug/stepping/funCallsInsideInlineableLambda.kt");
+  }
+
+  @Test
+  @TestMetadata("funCallsInsideNonInlineableLambda.kt")
+  public void testFunCallsInsideNonInlineableLambda() {
+    runTest("compiler/testData/debug/stepping/funCallsInsideNonInlineableLambda.kt");
+  }
+
+  @Test
   @TestMetadata("functionCallWithInlinedLambdaParam.kt")
   public void testFunctionCallWithInlinedLambdaParam() {
     runTest("compiler/testData/debug/stepping/functionCallWithInlinedLambdaParam.kt");
@@ -351,9 +363,21 @@ public class IrJsSteppingTestGenerated extends AbstractIrJsSteppingTest {
   }
 
   @Test
+  @TestMetadata("inlineFunAsDefaultArgument.kt")
+  public void testInlineFunAsDefaultArgument() {
+    runTest("compiler/testData/debug/stepping/inlineFunAsDefaultArgument.kt");
+  }
+
+  @Test
   @TestMetadata("inlineFunAsMemberOfAnonymousObjectInsideInlineFun.kt")
   public void testInlineFunAsMemberOfAnonymousObjectInsideInlineFun() {
     runTest("compiler/testData/debug/stepping/inlineFunAsMemberOfAnonymousObjectInsideInlineFun.kt");
+  }
+
+  @Test
+  @TestMetadata("inlineFunAsMemberOfAnonymousObjectInsideInlineableLambda.kt")
+  public void testInlineFunAsMemberOfAnonymousObjectInsideInlineableLambda() {
+    runTest("compiler/testData/debug/stepping/inlineFunAsMemberOfAnonymousObjectInsideInlineableLambda.kt");
   }
 
   @Test
