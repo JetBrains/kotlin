@@ -33625,6 +33625,12 @@ public class NativeIrDeserializationWithInlinedFunInKlibTestGenerated extends Ab
         public void testAllFilesPresentInBackingField() {
           KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/codegen/box/properties/backingField"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
         }
+
+        @Test
+        @TestMetadata("backingFieldInitializedInInit.kt")
+        public void testBackingFieldInitializedInInit() {
+          runTest("compiler/testData/codegen/box/properties/backingField/backingFieldInitializedInInit.kt");
+        }
       }
 
       @Nested
