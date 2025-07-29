@@ -1089,11 +1089,31 @@ private inline fun parseIsoStringFormatFSA(
 ): Duration {
     var result = Duration.ZERO
 
+    var isNegative = false
+
     var index = startIndex
     var state = State.START
     while (index < length) {
         state = when (state) {
-            State.START -> TODO()
+            State.START -> when {
+                value[index] == '+' -> {
+                    index++
+                    State.AFTER_D_SIGN
+                }
+
+                value[index] == '-' -> {
+                    isNegative = true
+                    index++
+                    State.AFTER_D_SIGN
+                }
+
+                value[index] == 'T' -> {
+                    index++
+                    State.AFTER_T
+                }
+
+                else -> State.AFTER_D_SIGN
+            }
 
             State.AFTER_D_SIGN -> TODO()
 
