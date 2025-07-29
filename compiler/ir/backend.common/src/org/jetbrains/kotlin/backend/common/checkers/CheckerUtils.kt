@@ -37,7 +37,6 @@ val EXCLUDED_PACKAGES_FROM_VARARG_VALIDATION = listOf(
 ).mapTo(hashSetOf(), ::FqName)
 
 internal fun validateVararg(irElement: IrElement, type: IrType, varargElementType: IrType, context: CheckerContext) {
-    if (type.classifierOrNull?.isBound != true) return
     if (context.withinAnnotationUsageSubTree && context.file.packageFqName in EXCLUDED_PACKAGES_FROM_VARARG_VALIDATION) return
 
     val isCorrectArrayOf = (type.isArray() || type.isNullableArray())
@@ -114,7 +113,6 @@ private val EXCLUDED_PACKAGES_FROM_ANNOTATIONS_VISIBILITY_CHECKS =
     listOf("kotlin.jvm", "kotlin.internal", "kotlin.native", "kotlin.native.internal").mapTo(hashSetOf(), ::FqName)
 
 private fun IrSymbol.isExcludedFromVisibilityChecks(): Boolean {
-    if (!isBound) return true
     return FQ_NAMES_EXCLUDED_FROM_VISIBILITY_CHECKS.any { excludedFqName -> hasEqualFqName(excludedFqName) }
 }
 

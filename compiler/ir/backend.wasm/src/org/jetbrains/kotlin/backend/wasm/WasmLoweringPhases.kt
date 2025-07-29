@@ -53,7 +53,7 @@ private val validateIrAfterInliningOnlyPrivateFunctionsPhase = makeIrModulePhase
 
 private val validateIrAfterInliningAllFunctionsPhase = makeIrModulePhase(
     { context: WasmBackendContext ->
-        IrValidationAfterInliningAllFunctionsPhase(
+        IrValidationAfterInliningAllFunctionsOnTheSecondStagePhase(
             context,
             checkInlineFunctionCallSites = check@{ inlineFunctionUseSite ->
                 // No inline function call sites should remain at this stage.

@@ -55,7 +55,7 @@ private val validateIrAfterInliningOnlyPrivateFunctions = makeIrModulePhase(
 
 private val validateIrAfterInliningAllFunctions = makeIrModulePhase(
     { context: LoweringContext ->
-        IrValidationAfterInliningAllFunctionsPhase(
+        IrValidationAfterInliningAllFunctionsOnTheSecondStagePhase(
             context,
             checkInlineFunctionCallSites = check@{ inlineFunctionUseSite ->
                 // No inline function call sites should remain at this stage.
