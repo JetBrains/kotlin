@@ -123,3 +123,5 @@ if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
     )
     publishShadowedJar(gradle813SourceSet, commonSourceSet)
 }
+
+disableCoroutinesStacktraceRecoveryInTestsIfGradleEmbeddedStdlibIsInRuntimeClasspath()
