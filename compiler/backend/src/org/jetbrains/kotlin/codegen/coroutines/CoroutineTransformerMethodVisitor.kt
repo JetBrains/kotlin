@@ -684,6 +684,8 @@ class CoroutineTransformerMethodVisitor(
         val referencesToSpillBySuspensionPointIndex = mutableListOf<List<SpillableVariable>>()
         // while primitives shall not
         val primitivesToSpillBySuspensionPointIndex = mutableListOf<List<SpillableVariable>>()
+        // both references and primitives
+        val variablesToSpillBySuspensionPointIndex = mutableListOf<List<SpillableVariable>>()
 
         // Collect information about spillable variables, that we use to determine which variables we need to cleanup
         for (suspension in suspensionPoints) {
@@ -707,6 +709,7 @@ class CoroutineTransformerMethodVisitor(
 
             referencesToSpillBySuspensionPointIndex += referencesToSpill
             primitivesToSpillBySuspensionPointIndex += primitivesToSpill
+            variablesToSpillBySuspensionPointIndex += variablesToSpill
 
             for ((type, index) in varsCountByType) {
                 maxVarsCountByType[type] = max(maxVarsCountByType[type] ?: 0, index)
@@ -722,6 +725,11 @@ class CoroutineTransformerMethodVisitor(
         val spilledToVariableMapping = mapFieldNameToVariable(
             methodNode, suspensionPoints, referencesToSpillBySuspensionPointIndex, primitivesToSpillBySuspensionPointIndex
         )
+
+        // for each suspension point, check if there are some dead non-spilled variables that will be spilled on further points
+        // but could be unitialized there if resumed on this point
+        val varilablesForReinitializationBySuspensionPointIndex =
+            calculateVariablesToReinitialize(suspensionPoints, afterResumeFrames, methodNode, variablesToSpillBySuspensionPointIndex)
 
         // Mutate method node
         for (suspensionPointIndex in suspensionPoints.indices) {
@@ -744,6 +752,10 @@ class CoroutineTransformerMethodVisitor(
             for (primitiveToSpill in primitivesToSpillBySuspensionPointIndex[suspensionPointIndex]) {
                 generateSpillAndUnspill(methodNode, suspension, primitiveToSpill, suspendLambdaParameters)
             }
+
+            for (variable in varilablesForReinitializationBySuspensionPointIndex[suspensionPointIndex]) {
+                generateFakeUnspill(methodNode, suspension, variable)
+            }
         }
 
         for (entry in maxVarsCountByType) {
@@ -757,6 +769,34 @@ class CoroutineTransformerMethodVisitor(
         }
 
         return spilledToVariableMapping
+    }
+
+    private fun calculateVariablesToReinitialize(
+        suspensionPoints: List<SuspensionPoint>,
+        afterResumeFrames: Array<out Frame<ResumeDependentValue>?>,
+        methodNode: MethodNode,
+        variablesToSpillBySuspensionPointIndex: MutableList<List<SpillableVariable>>,
+    ): Array<MutableList<SpillableVariable>> {
+        val varilablesForReinitializationBySuspensionPointIndex = Array(suspensionPoints.size) { mutableListOf<SpillableVariable>() }
+        for ((spIndex, suspensionPoint) in suspensionPoints.withIndex()) {
+            val resumeDependentFrame = afterResumeFrames[methodNode.instructions.indexOf(suspensionPoint.suspensionCallEnd)]
+                ?: error("Missing 'after resume' analysis data for ${suspensionPoint.suspensionCallEnd}")
+            variablesToSpillBySuspensionPointIndex[spIndex].forEach { variable ->
+                val resumeDependentValue =
+                    resumeDependentFrame.getLocal(variable.slot) ?: error("Missing 'after resume' analysis data for slot ${variable.slot}")
+                resumeDependentValue.states.withIndex().filter { it.value == DeadAfterResumeVariableState.UNINITIALIZED }.forEach {
+                    val otherSpIndex = it.index
+                    // it was deduced by analysis that there is a path between suspension points (otherSpIndex -> spIndex) with no
+                    // STOREs to the variable's slot
+                    if (variablesToSpillBySuspensionPointIndex[otherSpIndex].all { it.slot != variable.slot }) {
+                        // .. and the variable is not spilled on preceding (other) SP, so we need to additionally initialize it
+                        // with some value (e.g. default one) on unspill block
+                        varilablesForReinitializationBySuspensionPointIndex[otherSpIndex].add(variable)
+                    }
+                }
+            }
+        }
+        return varilablesForReinitializationBySuspensionPointIndex
     }
 
     private fun generateSpillAndUnspill(
@@ -834,6 +874,21 @@ class CoroutineTransformerMethodVisitor(
 
                 splitLvtRecord(methodNode, suspension, local, localRestart)
             }
+        }
+    }
+
+    private fun generateFakeUnspill(methodNode: MethodNode, suspension: SuspensionPoint, variable: SpillableVariable) {
+        with(methodNode.instructions) {
+            insert(suspension.tryCatchBlockEndLabelAfterSuspensionCall, withInstructionAdapter {
+                when(variable.normalizedType.sort) {
+                    Type.INT, Type.SHORT, Type.BYTE, Type.BOOLEAN, Type.CHAR -> iconst(0)
+                    Type.FLOAT -> fconst(0f)
+                    Type.DOUBLE -> dconst(0.0)
+                    Type.LONG -> lconst(0L)
+                    else -> aconst(null)
+                }
+                store(variable.slot, variable.normalizedType)
+            })
         }
     }
 
