@@ -1233,7 +1233,21 @@ private fun parseIsoStringFormatFSA(
                 else -> break
             }
 
-            State.AFTER_M -> TODO()
+            State.AFTER_M -> {
+                result = result.plus(currentLongValue.toDuration(DurationUnit.MINUTES), throwException)
+                when {
+                    value[index] == '+' -> {
+                        index++
+                        State.AFTER_M_SIGN
+                    }
+                    value[index] == '-' -> {
+                        sign = -1
+                        index++
+                        State.AFTER_M_SIGN
+                    }
+                    else -> State.AFTER_M_SIGN
+                }
+            }
 
             State.AFTER_M_SIGN -> TODO()
 
