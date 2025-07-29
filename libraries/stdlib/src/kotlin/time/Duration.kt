@@ -1151,7 +1151,18 @@ private fun parseIsoStringFormatFSA(
                 else -> break
             }
 
-            State.AFTER_T -> TODO()
+            State.AFTER_T -> when {
+                value[index] == '+' -> {
+                    index++
+                    State.AFTER_T_SIGN
+                }
+                value[index] == '-' -> {
+                    sign = -1
+                    index++
+                    State.AFTER_T_SIGN
+                }
+                else -> State.AFTER_T_SIGN
+            }
 
             State.AFTER_T_SIGN -> TODO()
 
