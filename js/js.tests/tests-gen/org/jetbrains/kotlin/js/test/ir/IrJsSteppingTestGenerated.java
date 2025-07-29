@@ -387,6 +387,12 @@ public class IrJsSteppingTestGenerated extends AbstractIrJsSteppingTest {
   }
 
   @Test
+  @TestMetadata("inlineFunReference.kt")
+  public void testInlineFunReference() {
+    runTest("compiler/testData/debug/stepping/inlineFunReference.kt");
+  }
+
+  @Test
   @TestMetadata("inlineNamedCallableReference.kt")
   public void testInlineNamedCallableReference() {
     runTest("compiler/testData/debug/stepping/inlineNamedCallableReference.kt");
