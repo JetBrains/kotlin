@@ -5,11 +5,12 @@
 
 package org.jetbrains.kotlin.client
 
-import CLIENT_COMPILED_DIR
-import OneFileOneChunkStrategy
-import buildAbsPath
+import common.CLIENT_COMPILED_DIR
+import common.OneFileOneChunkStrategy
+import common.buildAbsPath
 import client.RemoteClientInterceptor
 import client.RequestHandler
+import common.toGrpc
 import io.grpc.ManagedChannel
 import io.grpc.ManagedChannelBuilder
 import kotlinx.coroutines.Dispatchers
@@ -28,7 +29,6 @@ import org.jetbrains.kotlin.server.CompileResponseGrpc
 import org.jetbrains.kotlin.server.CompileServiceGrpcKt
 import org.jetbrains.kotlin.server.ConnectRequestGrpc
 import org.jetbrains.kotlin.server.ConnectResponseGrpc
-import toGrpc
 import java.io.Closeable
 import java.io.File
 import java.util.concurrent.TimeUnit
@@ -56,7 +56,7 @@ class RemoteDaemonClient(
 
         val fileChunkStrategy = OneFileOneChunkStrategy()
         val requestHandler = RequestHandler(
-            fileChunkStrategy = fileChunkStrategy
+            fileChunkingStrategy = fileChunkStrategy
         )
 
         coroutineScope {

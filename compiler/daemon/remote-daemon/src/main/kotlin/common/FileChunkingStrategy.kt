@@ -1,13 +1,15 @@
-import kotlinx.coroutines.flow.Flow
-import model.FileChunk
-import java.io.File
-
 /*
  * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-abstract class FileChunkStrategy {
+package common
+
+import kotlinx.coroutines.flow.Flow
+import model.FileChunk
+import java.io.File
+
+abstract class FileChunkingStrategy {
 
     // TODO: we are currently using filePath as the key, but using fileHash might be less error prone
     private val chunks = mutableMapOf<String, MutableList<ByteArray>>()

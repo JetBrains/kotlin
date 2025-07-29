@@ -5,9 +5,10 @@
 
 package client
 
-import FileChunkStrategy
+import common.FileChunkingStrategy
 import com.google.protobuf.kotlin.toByteString
-import computeSha256
+import common.toCompilationOptionsGrpc
+import common.computeSha256
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import org.jetbrains.kotlin.daemon.common.CompilationOptions
@@ -15,10 +16,9 @@ import org.jetbrains.kotlin.server.CompilationMetadataGrpc
 import org.jetbrains.kotlin.server.CompileRequestGrpc
 import org.jetbrains.kotlin.server.FileChunkGrpc
 import org.jetbrains.kotlin.server.FileTransferRequestGrpc
-import toCompilationOptionsGrpc
 import java.io.File
 
-class RequestHandler(private val fileChunkStrategy: FileChunkStrategy) {
+class RequestHandler(private val fileChunkingStrategy: FileChunkingStrategy) {
 
     fun buildCompilationMetadata(
         sessionId: Int,
@@ -41,7 +41,7 @@ class RequestHandler(private val fileChunkStrategy: FileChunkStrategy) {
     fun buildFileChunkStream(filePath: String): Flow<CompileRequestGrpc> {
         return flow {
             val file = File(filePath)
-            fileChunkStrategy.chunk(file).collect { chunk ->
+            fileChunkingStrategy.chunk(file).collect { chunk ->
                 val fileChunk = FileChunkGrpc.newBuilder()
                     .setFilePath(filePath)
                     .setContent(chunk.content.toByteString())
@@ -73,10 +73,10 @@ class RequestHandler(private val fileChunkStrategy: FileChunkStrategy) {
     }
 
     fun receiveFile(filePath: String, newFilePath: String, chunk: ByteArray, isLast: Boolean){
-        fileChunkStrategy.addChunks(filePath, chunk)
+        fileChunkingStrategy.addChunks(filePath, chunk)
         if (isLast) {
             println("reconstructing file $filePath to $newFilePath, size = ${File(filePath).length()} bytes")
-            fileChunkStrategy.reconstruct(filePath, newFilePath)
+            fileChunkingStrategy.reconstruct(filePath, newFilePath)
         }
     }
 }

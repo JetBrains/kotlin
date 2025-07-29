@@ -5,7 +5,7 @@
 
 package server
 
-import FileChunkStrategy
+import common.FileChunkingStrategy
 import com.google.protobuf.kotlin.toByteString
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.server.FileChunkGrpc
 import org.jetbrains.kotlin.server.FileTransferReplyGrpc
 import java.io.File
 
-class ResponseHandler(private val fileChunkStrategy: FileChunkStrategy) {
+class ResponseHandler(private val fileChunkingStrategy: FileChunkingStrategy) {
 
     fun buildFileTransferReply(filePath: String, isPresent: Boolean): CompileResponseGrpc {
         return CompileResponseGrpc
@@ -33,7 +33,7 @@ class ResponseHandler(private val fileChunkStrategy: FileChunkStrategy) {
         directory.listFiles()?.forEach { file ->
             if (!file.isDirectory) {
 
-                fileChunkStrategy.chunk(file).collect { chunk ->
+                fileChunkingStrategy.chunk(file).collect { chunk ->
                     val fileChunk = FileChunkGrpc.newBuilder()
                         .setFilePath(file.path)
                         .setContent(chunk.content.toByteString())

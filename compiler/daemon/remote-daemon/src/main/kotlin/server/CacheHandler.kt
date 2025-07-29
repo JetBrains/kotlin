@@ -5,7 +5,7 @@
 
 package server
 
-import CACHE_FILE
+import common.CACHE_FILE
 import java.io.File
 import java.io.FileInputStream
 import java.io.FileOutputStream

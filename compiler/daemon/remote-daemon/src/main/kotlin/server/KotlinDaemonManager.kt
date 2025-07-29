@@ -52,6 +52,7 @@ class KotlinDaemonManager {
                 daemonOptions = daemonOptions,
             )!!
 
+
 //
 //            val compilationOptions = CompilationOptions(
 //                compilerMode = CompilerMode.NON_INCREMENTAL_COMPILER,
