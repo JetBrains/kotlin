@@ -8,10 +8,15 @@
 // EXPECT_GENERATED_JS: function=captureVarInInlineLambda;captureVarInLocalClassInInlineLambda;captureValueClassVar;captureValueClassVar$lambda expect=closureBoxedVarOptimizations.js TARGET_BACKENDS=JS_IR
 // EXPECT_GENERATED_JS: function=captureVarInInlineLambda;captureVarInLocalClassInInlineLambda;captureValueClassVar;captureValueClassVar$lambda expect=closureBoxedVarOptimizations.es6.js TARGET_BACKENDS=JS_IR_ES6
 
+// CHECK_BYTECODE_TEXT
+// NO_CHECK_LAMBDA_INLINING
+
+// FILE: lib.kt
 inline fun run(f: () -> Unit) {
     f()
 }
 
+// FILE: main.kt
 fun run2(f: () -> Unit) {
     f()
 }
@@ -178,7 +183,6 @@ fun box(): String {
     return "OK"
 }
 
-// CHECK_BYTECODE_TEXT
 // 2 INVOKESPECIAL kotlin/jvm/internal/Ref\$ObjectRef\.<init> \(\)V
 // 2 INVOKESPECIAL kotlin/jvm/internal/Ref\$ByteRef\.<init> \(\)V
 // 2 INVOKESPECIAL kotlin/jvm/internal/Ref\$ShortRef\.<init> \(\)V

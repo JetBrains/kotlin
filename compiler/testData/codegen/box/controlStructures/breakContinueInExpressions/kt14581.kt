@@ -1,3 +1,7 @@
+// FILE: lib.kt
+inline fun String.bar(other: String) = this
+
+// FILE: main.kt
 fun foo(x: String): String {
     var y: String
     do {
@@ -5,7 +9,5 @@ fun foo(x: String): String {
     } while (y != x.bar(x))
     return y
 }
-
-inline fun String.bar(other: String) = this
 
 fun box(): String = foo("OK")

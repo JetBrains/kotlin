@@ -3,13 +3,15 @@
 // Reason: break/continue in inline lambdas unsupported
 // WITH_STDLIB
 
+// FILE: lib.kt
+inline fun foo(block: () -> Unit) = block()
+
+// FILE: main.kt
 import kotlin.test.assertEquals
 
 @Target(AnnotationTarget.EXPRESSION)
 @Retention(AnnotationRetention.SOURCE)
 public annotation class SomeAnnotation
-
-inline fun foo(block: () -> Unit) = block()
 
 fun box(): String {
     val visited = mutableListOf<Pair<Int, Int>>()

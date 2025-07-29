@@ -1,4 +1,4 @@
-
+// FILE: lib.kt
 inline fun test(s: () -> Int): Int =
         try {
             val i = s()
@@ -8,6 +8,7 @@ inline fun test(s: () -> Int): Int =
             0
         }
 
+// FILE: main.kt
 fun box() : String {
     test {
         try {
