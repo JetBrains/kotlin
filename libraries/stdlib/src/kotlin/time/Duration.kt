@@ -987,18 +987,15 @@ private fun parseIsoStringFormatFSA(
                     index++
                     State.AFTER_D_SIGN
                 }
-
                 value[index] == '-' -> {
                     sign = -1
                     index++
                     State.AFTER_D_SIGN
                 }
-
                 value[index] == 'T' -> {
                     index++
                     State.AFTER_T
                 }
-
                 else -> State.AFTER_D_SIGN
             }
 
@@ -1019,7 +1016,13 @@ private fun parseIsoStringFormatFSA(
                 else -> break
             }
 
-            State.AFTER_D -> TODO()
+            State.AFTER_D -> when {
+                value[index] == 'T' -> {
+                    index++
+                    State.AFTER_T
+                }
+                else -> break
+            }
 
             State.AFTER_T -> TODO()
 
