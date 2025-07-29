@@ -1080,18 +1080,32 @@ internal enum class State {
     AFTER_DOT, AFTER_DOUBLE, AFTER_S
 }
 
-@kotlin.internal.InlineOnly
-private inline fun parseIsoStringFormatFSA(
+private const val MULTIPLY_LIMIT = Long.MAX_VALUE / 10
+
+private fun parseIsoStringFormatFSA(
     value: String,
     startIndex: Int,
     length: Int,
     throwException: Boolean,
 ): Duration {
     var result = Duration.ZERO
-
-    var isNegative = false
-
+    var sign = 1
     var index = startIndex
+
+    fun parseLong(): Long {
+        var result = 0L
+        while (index < length) {
+            val digit = value[index] - '0'
+            if (digit !in 0..9) break
+            if (result > MULTIPLY_LIMIT) return Long.MAX_VALUE
+            result *= 10
+            if (result > Long.MAX_VALUE - digit) return Long.MAX_VALUE
+            result += digit
+            index++
+        }
+        return result
+    }
+
     var state = State.START
     while (index < length) {
         state = when (state) {
@@ -1102,7 +1116,7 @@ private inline fun parseIsoStringFormatFSA(
                 }
 
                 value[index] == '-' -> {
-                    isNegative = true
+                    sign = -1
                     index++
                     State.AFTER_D_SIGN
                 }
@@ -1115,7 +1129,14 @@ private inline fun parseIsoStringFormatFSA(
                 else -> State.AFTER_D_SIGN
             }
 
-            State.AFTER_D_SIGN -> TODO()
+            State.AFTER_D_SIGN -> {
+                val prevIndex = index
+                val daysAsLong = parseLong() * sign
+                if (index == prevIndex) break
+                sign = 1
+                result = result.plus(daysAsLong.toDuration(DurationUnit.DAYS), throwException)
+                State.AFTER_D_VALUE
+            }
 
             State.AFTER_D_VALUE -> TODO()
 
