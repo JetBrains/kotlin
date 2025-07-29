@@ -15,9 +15,6 @@ import org.jetbrains.org.objectweb.asm.tree.analysis.Interpreter
 import org.jetbrains.org.objectweb.asm.tree.analysis.Value
 import java.util.*
 
-// TODO rename everything. "Dead" is a bad name for this! It may be "uninitilized", "partially uninitialized",
-//  "not fully initilized" etc. Or maybe just "valid"/"invalid"
-
 // Predicts state of locals slots after resuming on `i-th` suspension point in case if no spills/restores
 // were added. Used to find out what slots would require extra care (like default-initialization on restore point)
 // if the following conditions are met:
@@ -29,15 +26,47 @@ internal fun performUninitializedAfterResumeVariablesAnalysis(
     methodNode: MethodNode,
     thisName: String,
 ): Array<out Frame<ResumeDependentValue>?> {
-    val context = DeadAfterResumeVariablesContext(suspensionPoints)
+    val context = SuspensionPointsContext(suspensionPoints)
+    // NOTE: exception edges shall not be "pruned" as path from SP to exception handlers are important for this analysis
     val analyzer = FastMethodAnalyzer(
         thisName, methodNode, EmptyInterpeter(), false
-    ) { nLocals, nStack -> DeadAfterResumeVariablesFrame(context, nLocals) }
-    // TODO maybe shrink frames before return, e.g. Map<Pair<SP,SP>, BitSet>
+    ) { nLocals, nStack -> ResumeDependentFrame(context, nLocals) }
     return analyzer.analyze()
 }
 
-internal class EmptyInterpeter<V: Value> : Interpreter<V>(Opcodes.API_VERSION) {
+// States of a single variable on some instruction for each of "resumed on SP_i" cases
+internal class ResumeDependentValue(suspensionPointsCount: Int) : Value {
+
+    // Variable state on some instruction in case of resume on a given suspension point
+    enum class VariableState {
+        // not analyzed yet, or no path from the suspension point
+        UNKNOWN,
+        // initialized by some STORE on each path from the suspension point to the instruction
+        INITIALIZED,
+        // not initialized on at least one path from the suspension point to the instruction
+        UNINITIALIZED;
+
+        fun isUnitialized() = this == UNINITIALIZED
+
+        fun merge(other: VariableState): VariableState =
+            when {
+                this == UNKNOWN -> other
+                this == UNINITIALIZED || other == UNINITIALIZED -> UNINITIALIZED
+                else -> this
+            }
+    }
+
+    val states: Array<VariableState> = Array(suspensionPointsCount) { VariableState.UNKNOWN }
+
+    fun setState(spIndex: Int, state: VariableState) {
+        states[spIndex] = state
+    }
+
+    // size is ignored for such special Value
+    override fun getSize(): Int = 1
+}
+
+private class EmptyInterpeter<V: Value> : Interpreter<V>(Opcodes.API_VERSION) {
     override fun newValue(type: Type?): V? = null
     override fun newOperation(insn: AbstractInsnNode?): V? = null
     override fun copyOperation(insn: AbstractInsnNode?, value: V?): V? = null
@@ -49,35 +78,8 @@ internal class EmptyInterpeter<V: Value> : Interpreter<V>(Opcodes.API_VERSION) {
     override fun merge(value1: V?, value2: V?): V? = null
 }
 
-internal enum class DeadAfterResumeVariableState {
-    // not analyzed yet, or no path from suspension point
-    UNKNOWN, // TODO use null instead? I.e. `Boolean?` instead of this enum
-    // after SP and STORE
-    INITIALIZED,
-    // after SP, before STORE. Final state, takes precedence on INITIALIZED on merge. Uninitialized (at least on some execution paths)
-    UNINITIALIZED;
-
-    fun merge(other: DeadAfterResumeVariableState): DeadAfterResumeVariableState =
-        when {
-            this == UNKNOWN -> other
-            this == UNINITIALIZED || other == UNINITIALIZED -> UNINITIALIZED
-            else -> this
-        }
-}
-
-internal class ResumeDependentValue(suspensionPointsCount: Int) : Value {
-    val states: Array<DeadAfterResumeVariableState> = Array(suspensionPointsCount) { DeadAfterResumeVariableState.UNKNOWN }
-
-    // state is special value, size is ignored
-    override fun getSize(): Int = 1
-
-    fun setState(spIndex: Int, state: DeadAfterResumeVariableState) {
-        states[spIndex] = state
-    }
-}
-
-// immmutable shared part of the frames used during this anslysis
-private class DeadAfterResumeVariablesContext(suspensionPoints: List<SuspensionPoint>) {
+// immmutable shared part of the frames used during this analysis
+private class SuspensionPointsContext(suspensionPoints: List<SuspensionPoint>) {
     init {
         check(!suspensionPoints.isEmpty())
         check(suspensionPoints.all { it.suspensionCallEnd.opcode == Opcodes.INVOKESTATIC })
@@ -89,12 +91,11 @@ private class DeadAfterResumeVariablesContext(suspensionPoints: List<SuspensionP
     val suspensionPointsCount = suspensionPoints.size
 }
 
-private class DeadAfterResumeVariablesFrame(val context: DeadAfterResumeVariablesContext, val maxLocals: Int): Frame<ResumeDependentValue>(maxLocals, 0) {
-
+private class ResumeDependentFrame(val context: SuspensionPointsContext, val maxLocals: Int): Frame<ResumeDependentValue>(maxLocals, 0) {
     val isAfterSuspensionPoint = BitSet(context.suspensionPointsCount)
 
     override fun init(frame: Frame<out ResumeDependentValue?>): Frame<ResumeDependentValue?>? {
-        val other = frame as? DeadAfterResumeVariablesFrame ?: return super.init(frame)
+        val other = frame as? ResumeDependentFrame ?: return super.init(frame)
         isAfterSuspensionPoint.or(other.isAfterSuspensionPoint)
         return super.init(frame)
     }
@@ -103,7 +104,7 @@ private class DeadAfterResumeVariablesFrame(val context: DeadAfterResumeVariable
         frame: Frame<out ResumeDependentValue?>,
         interpreter: Interpreter<ResumeDependentValue?>?,
     ): Boolean {
-        val other = frame as? DeadAfterResumeVariablesFrame ?: return super.merge(frame, interpreter)
+        val other = frame as? ResumeDependentFrame ?: return super.merge(frame, interpreter)
         check(maxLocals == other.maxLocals)
 
         var changed = isAfterSuspensionPoint == other.isAfterSuspensionPoint
@@ -127,25 +128,25 @@ private class DeadAfterResumeVariablesFrame(val context: DeadAfterResumeVariable
                 // could be suspension point end instruction
                 context.suspensionPointIndexByEnd[insn]?.let {
                     isAfterSuspensionPoint.set(it)
-                    setAllLocalsState(it, DeadAfterResumeVariableState.UNINITIALIZED)
+                    setAllLocalsState(it, ResumeDependentValue.VariableState.UNINITIALIZED)
                 }
             }
             in Opcodes.ISTORE..Opcodes.ASTORE -> {
                 val varInsn = insn as VarInsnNode
-                isAfterSuspensionPoint.forEachBit { setLocalState(varInsn.`var`, it, DeadAfterResumeVariableState.INITIALIZED) }
+                isAfterSuspensionPoint.forEachBit { setLocalState(varInsn.`var`, it, ResumeDependentValue.VariableState.INITIALIZED) }
             }
             Opcodes.IINC -> {
                 val iincInsn = insn as IincInsnNode
-                isAfterSuspensionPoint.forEachBit { setLocalState(iincInsn.`var`, it, DeadAfterResumeVariableState.INITIALIZED) }
+                isAfterSuspensionPoint.forEachBit { setLocalState(iincInsn.`var`, it, ResumeDependentValue.VariableState.INITIALIZED) }
             }
         }
     }
 
-    private fun setAllLocalsState(spIndex: Int, state: DeadAfterResumeVariableState) {
+    private fun setAllLocalsState(spIndex: Int, state: ResumeDependentValue.VariableState) {
         (0 until maxLocals).forEach { setLocalState(it, spIndex, state) }
     }
 
-    private fun setLocalState(varIndex: Int, spIndex: Int, state: DeadAfterResumeVariableState) {
+    private fun setLocalState(varIndex: Int, spIndex: Int, state: ResumeDependentValue.VariableState) {
         getLocal(varIndex).setState(spIndex, state)
     }
 }

@@ -784,7 +784,7 @@ class CoroutineTransformerMethodVisitor(
             variablesToSpillBySuspensionPointIndex[spIndex].forEach { variable ->
                 val resumeDependentValue =
                     resumeDependentFrame.getLocal(variable.slot) ?: error("Missing 'after resume' analysis data for slot ${variable.slot}")
-                resumeDependentValue.states.withIndex().filter { it.value == DeadAfterResumeVariableState.UNINITIALIZED }.forEach {
+                resumeDependentValue.states.withIndex().filter { it.value.isUnitialized() }.forEach {
                     val otherSpIndex = it.index
                     // it was deduced by analysis that there is a path between suspension points (otherSpIndex -> spIndex) with no
                     // STOREs to the variable's slot
