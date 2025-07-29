@@ -90,7 +90,7 @@ abstract class AbstractJvmBlackBoxCodegenWithSeparateKmpCompilationTestBase(
         configureCommonHandlersForBoxTest(includeK1Handlers = false)
 
         useAfterAnalysisCheckers(
-            ::BlackBoxCodegenSuppressor.bind(IGNORE_HMPP),
+            ::BlackBoxCodegenSuppressor.bind(IGNORE_HMPP, null),
         )
 
         configureJvmBoxCodegenSettings(includeAllDumpHandlers = true)

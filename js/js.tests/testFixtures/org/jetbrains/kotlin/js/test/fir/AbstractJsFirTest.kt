@@ -166,8 +166,8 @@ open class AbstractFirJsCodegenInlineWithInlinedFunInKlibTest(
 open class AbstractFirJsCodegenSplittingInlineWithInlinedFunInKlibTest : AbstractFirJsCodegenInlineWithInlinedFunInKlibTest(
     testGroupOutputDirPrefix = "codegen/firBoxInlineSplitted/"
 ) {
-    override val customIgnoreDirective: ValueDirective<TargetBackend>?
-        get() = IGNORE_BACKEND_K2_MULTI_MODULE
+    override val additionalIgnoreDirectives: List<ValueDirective<TargetBackend>>?
+        get() = listOf(IGNORE_BACKEND_K2_MULTI_MODULE)
 
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)

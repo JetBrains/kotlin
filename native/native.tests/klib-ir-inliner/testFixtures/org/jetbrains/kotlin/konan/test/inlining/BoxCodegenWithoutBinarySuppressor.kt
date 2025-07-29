@@ -44,14 +44,14 @@ class BoxCodegenWithoutBinarySuppressor(testServices: TestServices) : AfterAnaly
         get() = listOf(CodegenTestDirectives)
 
     override val additionalServices: List<ServiceRegistrationData>
-        get() = listOf(service(BlackBoxCodegenSuppressor::SuppressionChecker.bind(null)))
+        get() = listOf(service(BlackBoxCodegenSuppressor::SuppressionChecker.bind(null, emptyList())))
 
     override fun suppressIfNeeded(failedAssertions: List<WrappedException>): List<WrappedException> {
         val suppressionChecker = testServices.codegenSuppressionChecker
         val modules = testServices.moduleStructure.modules
 
-        val ignoreDirective = suppressionChecker.extractIgnoreDirective(modules.first()) ?: return failedAssertions
-        return if (modules.any { suppressionChecker.failuresInModuleAreIgnored(it, ignoreDirective).testMuted })
+        val ignoreDirectives = suppressionChecker.extractIgnoreDirectives(modules.first()) ?: return failedAssertions
+        return if (modules.any { suppressionChecker.failuresInModuleAreIgnored(it, ignoreDirectives).testMuted })
             emptyList()
         else
             failedAssertions
