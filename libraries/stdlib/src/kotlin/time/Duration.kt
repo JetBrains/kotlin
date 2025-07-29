@@ -1096,13 +1096,20 @@ private fun parseIsoStringFormatFSA(
     fun parseLong(): Long {
         var result = 0L
         while (index < length) {
-            val digit = value[index] - '0'
-            if (digit !in 0..9) break
-            if (result > MULTIPLY_LIMIT) return Long.MAX_VALUE
-            result *= 10
-            if (result > Long.MAX_VALUE - digit) return Long.MAX_VALUE
-            result += digit
+            val ch = value[index]
+            if (ch !in '0'..'9') break
+            val digit = ch - '0'
             index++
+            if (result > MULTIPLY_LIMIT) {
+                result = Long.MAX_VALUE
+                continue
+            }
+            result *= 10
+            if (result > Long.MAX_VALUE - digit) {
+                result = Long.MAX_VALUE
+                continue
+            }
+            result += digit
         }
         return result
     }
@@ -1111,8 +1118,9 @@ private fun parseIsoStringFormatFSA(
         var result = 0.0
         var fractionMultiplier = 0.1
         while (index < length) {
-            val digit = value[index] - '0'
-            if (digit !in 0..9) break
+            val ch = value[index]
+            if (ch !in '0'..'9') break
+            val digit = ch - '0'
             result += digit * fractionMultiplier
             fractionMultiplier *= 0.1
             index++
