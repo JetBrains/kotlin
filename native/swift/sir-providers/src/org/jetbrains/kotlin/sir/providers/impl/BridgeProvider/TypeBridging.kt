@@ -18,15 +18,15 @@ import org.jetbrains.kotlin.sir.util.name
 internal fun bridgeType(type: SirType): Bridge = when (type) {
     is SirNominalType -> bridgeNominalType(type)
     is SirExistentialType -> bridgeExistential(type)
-    is SirFunctionalType -> Bridge.AsBlock(type)
+    is SirFunctionalType -> AsBlock(type)
     else -> error("Attempt to bridge unbridgeable type: $type.")
 }
 
 private fun bridgeExistential(type: SirExistentialType): Bridge {
     if (type.protocols.singleOrNull() == KotlinRuntimeSupportModule.kotlinBridgeable) {
-        return Bridge.AsBridgeableAny(type)
+        return AsBridgeableAny(type)
     }
-    return Bridge.AsExistential(
+    return AsExistential(
         swiftType = type,
         KotlinType.KotlinObject,
         CType.Object
@@ -35,78 +35,78 @@ private fun bridgeExistential(type: SirExistentialType): Bridge {
 
 private fun bridgeNominalType(type: SirNominalType): Bridge {
     fun bridgeAsNSCollectionElement(type: SirType): Bridge = when (val bridge = bridgeType(type)) {
-        is Bridge.AsIs -> AsNSNumber(bridge.swiftType)
-        is Bridge.AsOptionalWrapper -> AsObjCBridgedOptional(bridge.wrappedObject.swiftType)
-        is Bridge.AsOptionalNothing -> AsObjCBridgedOptional(bridge.swiftType)
-        is Bridge.AsObject,
-        is Bridge.AsExistential,
-        is Bridge.AsBridgeableAny,
-        is Bridge.AsOpaqueObject,
+        is AsIs -> AsNSNumber(bridge.swiftType)
+        is AsOptionalWrapper -> AsObjCBridgedOptional(bridge.wrappedObject.swiftType)
+        is AsOptionalNothing -> AsObjCBridgedOptional(bridge.swiftType)
+        is AsObject,
+        is AsExistential,
+        is AsBridgeableAny,
+        is AsOpaqueObject,
             -> AsObjCBridged(bridge.swiftType, CType.id)
-        is Bridge.AsBlock,
-        is Bridge.AsObjCBridged,
-        Bridge.AsOutError,
-        Bridge.AsVoid
+        is AsBlock,
+        is AsObjCBridged,
+        AsOutError,
+        AsVoid
             -> bridge
     }
 
     return when (val subtype = type.typeDeclaration) {
-        SirSwiftModule.void -> Bridge.AsVoid
+        SirSwiftModule.void -> AsVoid
 
-        SirSwiftModule.bool -> Bridge.AsIs(type, KotlinType.Boolean, CType.Bool)
+        SirSwiftModule.bool -> AsIs(type, KotlinType.Boolean, CType.Bool)
 
-        SirSwiftModule.int8 -> Bridge.AsIs(type, KotlinType.Byte, CType.Int8)
-        SirSwiftModule.int16 -> Bridge.AsIs(type, KotlinType.Short, CType.Int16)
-        SirSwiftModule.int32 -> Bridge.AsIs(type, KotlinType.Int, CType.Int32)
-        SirSwiftModule.int64 -> Bridge.AsIs(type, KotlinType.Long, CType.Int64)
+        SirSwiftModule.int8 -> AsIs(type, KotlinType.Byte, CType.Int8)
+        SirSwiftModule.int16 -> AsIs(type, KotlinType.Short, CType.Int16)
+        SirSwiftModule.int32 -> AsIs(type, KotlinType.Int, CType.Int32)
+        SirSwiftModule.int64 -> AsIs(type, KotlinType.Long, CType.Int64)
 
-        SirSwiftModule.uint8 -> Bridge.AsIs(type, KotlinType.UByte, CType.UInt8)
-        SirSwiftModule.uint16 -> Bridge.AsIs(type, KotlinType.UShort, CType.UInt16)
-        SirSwiftModule.uint32 -> Bridge.AsIs(type, KotlinType.UInt, CType.UInt32)
-        SirSwiftModule.uint64 -> Bridge.AsIs(type, KotlinType.ULong, CType.UInt64)
+        SirSwiftModule.uint8 -> AsIs(type, KotlinType.UByte, CType.UInt8)
+        SirSwiftModule.uint16 -> AsIs(type, KotlinType.UShort, CType.UInt16)
+        SirSwiftModule.uint32 -> AsIs(type, KotlinType.UInt, CType.UInt32)
+        SirSwiftModule.uint64 -> AsIs(type, KotlinType.ULong, CType.UInt64)
 
-        SirSwiftModule.double -> Bridge.AsIs(type, KotlinType.Double, CType.Double)
-        SirSwiftModule.float -> Bridge.AsIs(type, KotlinType.Float, CType.Float)
+        SirSwiftModule.double -> AsIs(type, KotlinType.Double, CType.Double)
+        SirSwiftModule.float -> AsIs(type, KotlinType.Float, CType.Float)
 
-        SirSwiftModule.unsafeMutableRawPointer -> Bridge.AsOpaqueObject(type, KotlinType.KotlinObject, CType.Object)
-        SirSwiftModule.never -> Bridge.AsOpaqueObject(type, KotlinType.KotlinObject, CType.Void)
+        SirSwiftModule.unsafeMutableRawPointer -> AsOpaqueObject(type, KotlinType.KotlinObject, CType.Object)
+        SirSwiftModule.never -> AsOpaqueObject(type, KotlinType.KotlinObject, CType.Void)
 
-        SirSwiftModule.string -> Bridge.AsObjCBridged(type, CType.NSString)
+        SirSwiftModule.string -> AsObjCBridged(type, CType.NSString)
 
-        SirSwiftModule.utf16CodeUnit -> Bridge.AsIs(type, KotlinType.Char, CType.UInt16)
+        SirSwiftModule.utf16CodeUnit -> AsIs(type, KotlinType.Char, CType.UInt16)
 
         SirSwiftModule.optional -> when (val bridge = bridgeType(type.typeArguments.first())) {
-            is Bridge.AsObject,
-            is Bridge.AsObjCBridged,
-            is Bridge.AsExistential,
-            is Bridge.AsBridgeableAny,
-            is Bridge.AsBlock,
-                -> Bridge.AsOptionalWrapper(bridge)
+            is AsObject,
+            is AsObjCBridged,
+            is AsExistential,
+            is AsBridgeableAny,
+            is AsBlock,
+                -> AsOptionalWrapper(bridge)
 
-            is Bridge.AsOpaqueObject -> {
+            is AsOpaqueObject -> {
                 if (bridge.swiftType.isNever) {
-                    Bridge.AsOptionalNothing
+                    AsOptionalNothing
                 } else {
                     error("Found Optional wrapping for OpaqueObject. That is impossible")
                 }
             }
 
-            is Bridge.AsIs,
-                -> Bridge.AsOptionalWrapper(
+            is AsIs,
+                -> AsOptionalWrapper(
                 if (bridge.swiftType.isChar)
-                    Bridge.OptionalChar(bridge.swiftType)
+                    OptionalChar(bridge.swiftType)
                 else
-                    Bridge.AsNSNumber(bridge.swiftType)
+                    AsNSNumber(bridge.swiftType)
             )
 
             else -> error("Found Optional wrapping for $bridge. That is currently unsupported. See KT-66875")
         }
 
-        SirSwiftModule.array -> Bridge.AsNSArray(type, bridgeAsNSCollectionElement(type.typeArguments.single()))
-        SirSwiftModule.set -> Bridge.AsNSSet(type, bridgeAsNSCollectionElement(type.typeArguments.single()))
+        SirSwiftModule.array -> AsNSArray(type, bridgeAsNSCollectionElement(type.typeArguments.single()))
+        SirSwiftModule.set -> AsNSSet(type, bridgeAsNSCollectionElement(type.typeArguments.single()))
         SirSwiftModule.dictionary -> {
             val (key, value) = type.typeArguments
-            Bridge.AsNSDictionary(
+            AsNSDictionary(
                 type,
                 bridgeAsNSCollectionElement(key),
                 bridgeAsNSCollectionElement(value)
@@ -117,9 +117,9 @@ private fun bridgeNominalType(type: SirNominalType): Bridge {
 
         // TODO: Right now, we just assume everything nominal that we do not recognize is a class. We should make this decision looking at kotlin type?
         else -> if (type.typeDeclaration.parent is SirPlatformModule) {
-            Bridge.AsNSObject(type)
+            AsNSObject(type)
         } else {
-            Bridge.AsObject(type, KotlinType.KotlinObject, CType.Object)
+            AsObject(type, KotlinType.KotlinObject, CType.Object)
         }
     }
 }
@@ -137,7 +137,7 @@ internal data class BridgeParameter(
     val name: String,
     val bridge: Bridge,
 ) {
-    var isRenderable: Boolean = bridge !is Bridge.AsOptionalNothing && bridge !is Bridge.AsVoid
+    var isRenderable: Boolean = bridge !is AsOptionalNothing && bridge !is AsVoid
 }
 
 internal val SirType.isChar: Boolean
@@ -160,7 +160,7 @@ internal object IdentityValueConversion : ValueConversion {
     override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String) = valueExpression
 }
 
-internal interface NilableIdentityValueConversion : Bridge.InSwiftSourcesConversion {
+internal interface NilableIdentityValueConversion : InSwiftSourcesConversion {
     override fun swiftToKotlin(typeNamer: SirTypeNamer, valueExpression: String) = valueExpression
     override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String) = valueExpression
 }
