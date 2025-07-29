@@ -1949,6 +1949,21 @@ object Aggregates : TemplateGroupBase() {
         }
     }
 
+    val f_forEachList = fn("forEach(action: (T) -> Unit)") {
+        include(Lists)
+    } builder {
+        inline()
+
+        doc { "Performs the given [action] on each ${f.element}, optimized for [List]." }
+        annotation("@kotlin.internal.HidesMembers")
+        returns("Unit")
+        body {
+            """
+            for (index in 0..<this.size) action(this[index])
+            """
+        }
+    }
+
     val f_forEachIndexed = fn("forEachIndexed(action: (index: Int, T) -> Unit)") {
         includeDefault()
         include(CharSequences, ArraysOfUnsigned)
