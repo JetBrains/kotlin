@@ -1,0 +1,121 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_outer_classname = "CompileServiceProto";
+package org.jetbrains.kotlin.server;
+
+import "google/protobuf/any.proto";
+import "google/protobuf/timestamp.proto";
+
+service CompileService {
+  rpc Connect (ConnectRequestGrpc) returns (stream ConnectResponseGrpc) {}
+  rpc Compile (stream CompileRequestGrpc) returns (stream CompileResponseGrpc) {}
+}
+
+message ConnectRequestGrpc {
+  DaemonJVMOptionsConfiguratorGrpc daemon_jvm_options_configurator = 1;
+}
+
+message ConnectResponseGrpc {
+  oneof response_payload {
+    uint32 session_id = 1;
+    DaemonMessageGrpc daemon_message = 2;
+  }
+}
+
+message DaemonJVMOptionsConfiguratorGrpc{
+  bool inherit_memory_limits = 1;
+  bool inherit_other_jvm_options = 2;
+  bool inherit_additional_properties = 3;
+  repeated string additional_params = 4;
+}
+
+message CompileRequestGrpc {
+  oneof request_payload {
+    CompilationMetadataGrpc metadata = 1;
+    FileTransferRequestGrpc file_transfer_request = 2;
+    FileChunkGrpc source_file_chunk = 3;
+  }
+}
+
+message CompileResponseGrpc {
+  oneof response_payload{
+    DaemonMessageGrpc daemon_message = 1;
+    FileChunkGrpc compiled_file_chunk = 2;
+    FileTransferReplyGrpc file_transfer_reply = 3;
+  }
+}
+
+message CompilationMetadataGrpc{
+  int32 session_id = 1;
+  int32 file_count = 2;
+  repeated string compiler_arguments = 3;
+  CompilationOptionsGrpc compilation_options = 4;
+}
+
+message CompilationOptionsGrpc {
+  CompilerModeGrpc compiler_mode = 1;
+  TargetPlatformGrpc target_platform = 2;
+  repeated int32 report_categories = 3;
+  int32 report_severity = 4;
+  repeated int32 requested_compilation_results = 5;
+  repeated string kotlin_script_extensions = 6;
+}
+
+message FileChunkGrpc {
+  string file_path = 1;
+  int64 file_size = 2; // do we need this? maybe it would be appropriate to set it to size of the original file
+//  google.protobuf.Timestamp modified_at = 3;
+//  google.protobuf.Timestamp created_at = 4;
+  bytes content = 3;
+  bool is_last = 4;
+}
+
+message DaemonMessageGrpc{
+  CompilerMessageSeverityGrpc compiler_message_severity = 1;
+  string message = 2;
+  optional CompilerMessageSourceLocationGrpc compiler_message_source_location = 3;
+}
+
+enum CompilerModeGrpc {
+    NON_INCREMENTAL_COMPILER = 0;
+    INCREMENTAL_COMPILER = 1;
+    JPS_COMPILER = 2;
+}
+
+enum TargetPlatformGrpc {
+    JVM = 0;
+    JS = 1;
+    METADATA = 2;
+}
+
+enum CompilerMessageSeverityGrpc {
+  EXCEPTION = 0;
+  ERROR = 1;
+  STRONG_WARNING = 2;
+  FIXED_WARNING = 3;
+  WARNING = 4;
+  INFO = 5;
+  LOGGING = 6;
+  OUTPUT = 7;
+}
+
+
+message FileTransferRequestGrpc{
+  string file_path = 1;
+  string file_fingerprint = 2;
+}
+
+message FileTransferReplyGrpc{
+  string file_path = 1;
+  bool is_present = 2;
+}
+
+message CompilerMessageSourceLocationGrpc {
+  string path = 1;
+  int32 line = 2;
+  int32 column = 3;
+  int32 line_end = 4;
+  int32 column_end = 5;
+  optional string line_content = 6;
+}

@@ -84,6 +84,7 @@ def buildProperties = BuildPropertiesKt.getKotlinBuildPropertiesForSettings(sett
 
 // modules
 include ":benchmarks",
+        ":compiler:daemon:remote-daemon",
         ":compiler",
         ":compiler:util",
         ":compiler:config",

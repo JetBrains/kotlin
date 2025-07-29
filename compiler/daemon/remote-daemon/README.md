@@ -1,0 +1,4 @@
+# Remote Kotlin compilation daemon
+The Kotlin Daemon is a specialized process that serves as a Kotlin compilation server, optimizing the build process by reusing resources and reducing startup overhead, resulting in faster compilation times for Kotlin projects.
+
+This project involves enhancing the existing Kotlin daemon, currently limited to local clients, to enable remote compilation. This development will unlock potential for features like offloading heavy compilation tasks to remote servers, resource sharing across multiple developers, and some others, improving overall build efficiency and scalability.
