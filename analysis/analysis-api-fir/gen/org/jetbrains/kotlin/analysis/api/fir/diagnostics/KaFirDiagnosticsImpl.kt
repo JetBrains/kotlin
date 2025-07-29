@@ -5396,6 +5396,11 @@ internal class PropertyHidesJavaFieldImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtCallableDeclaration>(firDiagnostic, token), KaFirDiagnostic.PropertyHidesJavaField
 
+internal class JvmFieldPropertyWithExplicitBackingFieldImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtElement>(firDiagnostic, token), KaFirDiagnostic.JvmFieldPropertyWithExplicitBackingField
+
 internal class JavaTypeMismatchImpl(
     override val expectedType: KaType,
     override val actualType: KaType,

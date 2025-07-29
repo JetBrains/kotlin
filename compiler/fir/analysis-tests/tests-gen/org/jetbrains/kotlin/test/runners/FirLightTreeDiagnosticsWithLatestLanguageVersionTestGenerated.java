@@ -9779,6 +9779,12 @@ public class FirLightTreeDiagnosticsWithLatestLanguageVersionTestGenerated exten
         }
 
         @Test
+        @TestMetadata("explicitBackingFieldWithJvmField.kt")
+        public void testExplicitBackingFieldWithJvmField() {
+          runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/backingField/explicitBackingFieldWithJvmField.kt");
+        }
+
+        @Test
         @TestMetadata("explicitBackingFieldsWithDelegates.kt")
         public void testExplicitBackingFieldsWithDelegates() {
           runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/backingField/explicitBackingFieldsWithDelegates.kt");

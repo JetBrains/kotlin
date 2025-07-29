@@ -76,6 +76,8 @@ object JVM_DIAGNOSTICS_LIST : DiagnosticList("FirJvmErrors") {
         val PROPERTY_HIDES_JAVA_FIELD by warning<KtCallableDeclaration>(PositioningStrategy.DECLARATION_NAME) {
             parameter<FirFieldSymbol>("hidden")
         }
+
+        val JVM_FIELD_PROPERTY_WITH_EXPLICIT_BACKING_FIELD by error<KtElement>()
     }
 
     val TYPES by object : DiagnosticGroup("Types") {

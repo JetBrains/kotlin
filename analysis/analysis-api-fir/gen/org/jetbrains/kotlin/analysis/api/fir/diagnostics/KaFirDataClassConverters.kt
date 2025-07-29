@@ -6413,6 +6413,12 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirJvmErrors.JVM_FIELD_PROPERTY_WITH_EXPLICIT_BACKING_FIELD) { firDiagnostic ->
+        JvmFieldPropertyWithExplicitBackingFieldImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirJvmErrors.JAVA_TYPE_MISMATCH) { firDiagnostic ->
         JavaTypeMismatchImpl(
             firSymbolBuilder.typeBuilder.buildKtType(firDiagnostic.a),

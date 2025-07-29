@@ -63,6 +63,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.JVM_EXPOSE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.JVM_EXPOSE_BOXED_CANNOT_EXPOSE_SUSPEND
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.JVM_EXPOSE_BOXED_CANNOT_EXPOSE_SYNTHETIC
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.JVM_EXPOSE_BOXED_REQUIRES_NAME
+import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.JVM_FIELD_PROPERTY_WITH_EXPLICIT_BACKING_FIELD
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.JVM_INLINE_WITHOUT_VALUE_CLASS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.JVM_PACKAGE_NAME_CANNOT_BE_EMPTY
 import org.jetbrains.kotlin.fir.analysis.diagnostics.jvm.FirJvmErrors.JVM_PACKAGE_NAME_MUST_BE_VALID_NAME
@@ -215,6 +216,10 @@ object FirJvmErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
             PROPERTY_HIDES_JAVA_FIELD,
             "This property hides Java field ''{0}'' thus making it inaccessible.",
             SYMBOL,
+        )
+        map.put(
+            JVM_FIELD_PROPERTY_WITH_EXPLICIT_BACKING_FIELD,
+            "Properties with explicit backing fields cannot be marked with '@JvmField'.",
         )
 
         map.put(UPPER_BOUND_CANNOT_BE_ARRAY, "Upper bound of type parameter cannot be an array.")
