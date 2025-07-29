@@ -695,16 +695,27 @@ class ComposerParamTransformer(
                 }
             }
 
-            val parent = fn.parent
-            if (parent is IrClass || parent is IrFile) {
-                fn.makeStubsForDefaultValueClassIfNeeded().forEach { stub -> parent.addChild(stub) }
-            }
+            val stubs = fn.makeStubsForDefaultValueClassIfNeeded()
 
             // update parameter types so they are ready to accept the default values
             fn.parameters.fastForEach { param ->
                 if (fn.hasDefaultForParam(param.indexInParameters)) {
                     param.type = param.type.defaultParameterType()
                 }
+            }
+
+            val parent = fn.parent
+            if (parent is IrClass || parent is IrFile) {
+                // checking if any stubs have all same-type parameters and discarding them
+                val addedParamTypes = mutableSetOf(fn.parameters.map { it.type })
+                stubs.forEach { stub ->
+                    val stubParamTypes = stub.parameters.map { it.type }
+                    if (addedParamTypes.add(stubParamTypes)) {
+                        parent.addChild(stub)
+                    }
+                }
+            } else {
+                // ignore
             }
 
             inlineLambdaInfo.scan(fn)
@@ -900,7 +911,7 @@ class ComposerParamTransformer(
             // with all default value-class (with private and internal constructors) are marked nullable
             makeValueClassInaccessibleConstructorDefaultStub { !constructorVisibilityIsAtLeastAsAccessibleAsType() }?.let { stubs.add(it) }
         }
-        return stubs.distinctBy { stub -> stub.parameters.map { it.type } }
+        return stubs
     }
 
     private fun IrSimpleFunction.isPublicComposableFunction(): Boolean =
