@@ -1138,7 +1138,13 @@ private fun parseIsoStringFormatFSA(
                 State.AFTER_D_VALUE
             }
 
-            State.AFTER_D_VALUE -> TODO()
+            State.AFTER_D_VALUE -> when {
+                value[index] == 'D' -> {
+                    index++
+                    State.AFTER_D
+                }
+                else -> break
+            }
 
             State.AFTER_D -> TODO()
 
