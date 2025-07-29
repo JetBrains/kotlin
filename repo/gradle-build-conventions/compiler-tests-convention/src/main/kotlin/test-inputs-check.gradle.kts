@@ -192,7 +192,7 @@ tasks.withType<Test>().names.forEach { taskName ->
             logger.info("Security policy for test inputs generated to ${policyFileProvider.get().asFile.absolutePath}")
             jvmArgs(
                 "-Djava.security.policy=${policyFileProvider.get().asFile.absolutePath}",
-                "-Djava.security.debug=failure,policy",
+                "-Djava.security.debug=failure",
                 "-Djava.security.manager=java.lang.SecurityManager",
             )
         }
