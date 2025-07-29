@@ -1173,7 +1173,25 @@ private fun parseIsoStringFormatFSA(
                 State.AFTER_T_VALUE
             }
 
-            State.AFTER_T_VALUE -> TODO()
+            State.AFTER_T_VALUE -> when {
+                value[index] == 'H' -> {
+                    index++
+                    State.AFTER_H
+                }
+                value[index] == 'M' -> {
+                    index++
+                    State.AFTER_M
+                }
+                value[index] == '.' -> {
+                    index++
+                    State.AFTER_DOT
+                }
+                value[index] == 'S' -> {
+                    index++
+                    State.AFTER_S
+                }
+                else -> break
+            }
 
             State.AFTER_H -> TODO()
 
