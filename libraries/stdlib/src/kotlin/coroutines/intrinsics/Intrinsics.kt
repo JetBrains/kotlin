@@ -40,11 +40,12 @@ import kotlin.internal.InlineOnly
 @Suppress("WRONG_INVOCATION_KIND", "UNUSED_PARAMETER", "LEAKED_IN_PLACE_LAMBDA")
 public suspend inline fun <T> suspendCoroutineUninterceptedOrReturn(crossinline block: (Continuation<T>) -> Any?): T {
     contract { callsInPlace(block, InvocationKind.EXACTLY_ONCE) }
-    return suspendCoroutineUninterceptedOrReturnInternal(block)
+    return suspendCoroutineUninterceptedOrReturnImpl(block)
 }
 
 @PublishedApi
-internal expect suspend inline fun <T> suspendCoroutineUninterceptedOrReturnInternal(crossinline block: (Continuation<T>) -> Any?): T
+@InlineOnly
+internal expect suspend inline fun <T> suspendCoroutineUninterceptedOrReturnImpl(crossinline block: (Continuation<T>) -> Any?): T
 
 /**
  * This value is used as a return value of [suspendCoroutineUninterceptedOrReturn] `block` argument to state that

@@ -6,10 +6,12 @@
 package kotlin.coroutines.intrinsics
 
 import kotlin.coroutines.Continuation
+import kotlin.internal.InlineOnly
 import kotlin.internal.getContinuation
 import kotlin.internal.returnIfSuspended
 
 @PublishedApi
-internal actual suspend inline fun <T> suspendCoroutineUninterceptedOrReturnInternal(crossinline block: (Continuation<T>) -> Any?): T {
+@InlineOnly
+internal actual suspend inline fun <T> suspendCoroutineUninterceptedOrReturnImpl(crossinline block: (Continuation<T>) -> Any?): T {
     return returnIfSuspended(block(getContinuation()))
 }

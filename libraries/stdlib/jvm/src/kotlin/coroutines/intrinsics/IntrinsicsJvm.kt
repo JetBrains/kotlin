@@ -269,5 +269,7 @@ private fun <T> createSimpleCoroutineForSuspendFunction(
 }
 
 @PublishedApi
-internal actual suspend inline fun <T> suspendCoroutineUninterceptedOrReturnInternal(crossinline block: (Continuation<T>) -> Any?): T =
-    error("not implemented")
+@InlineOnly
+internal actual suspend inline fun <T> suspendCoroutineUninterceptedOrReturnImpl(crossinline block: (Continuation<T>) -> Any?): T {
+    throw NotImplementedError("Implementation of suspendCoroutineUninterceptedOrReturn is intrinsic")
+}
