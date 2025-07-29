@@ -30,9 +30,9 @@ import org.jetbrains.kotlin.fir.deserialization.deserializationExtension
 import org.jetbrains.kotlin.fir.deserialization.toLazyEffectiveVisibility
 import org.jetbrains.kotlin.fir.resolve.transformers.setLazyPublishedVisibility
 import org.jetbrains.kotlin.fir.scopes.FirScopeProvider
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.FirTypeAliasSymbol
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.ConeRigidType
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
@@ -143,7 +143,7 @@ internal fun deserializeClassToSymbol(
     scopeProvider: FirScopeProvider,
     parentContext: StubBasedFirDeserializationContext? = null,
     containerSource: DeserializedContainerSource? = null,
-    deserializeNestedClass: (ClassId, KtClassOrObject, StubBasedFirDeserializationContext) -> FirRegularClassSymbol?,
+    deserializeNestedClassLikeDeclaration: (ClassId, KtClassLikeDeclaration, StubBasedFirDeserializationContext) -> FirClassLikeSymbol<*>?,
     initialOrigin: FirDeclarationOrigin,
 ) {
     val kind = when (classOrObject) {
@@ -242,19 +242,22 @@ internal fun deserializeClassToSymbol(
                     )
                 )
                 is KtEnumEntry -> addDeclaration(memberDeserializer.loadEnumEntry(declaration, symbol, classId))
-                is KtClassOrObject -> {
-                    val name = declaration.name ?: errorWithAttachment("Class doesn't have name $declaration") {
-                        withPsiEntry("class", declaration)
-                    }
+                is KtClassOrObject,
+                is KtTypeAlias
+                    -> {
+                    val name = declaration.name
+                        ?: errorWithAttachment("${if (declaration is KtClassOrObject) "Class" else "Typealias"} doesn't have name") {
+                            withPsiEntry(if (declaration is KtClassOrObject) "Class" else "Typealias", declaration)
+                        }
 
                     val nestedClassId = classId.createNestedClassId(Name.identifier(name))
-                    // Add declaration to the context to avoid redundant provider access to the class map
-                    deserializeNestedClass(nestedClassId, declaration, context.withClassLikeDeclaration(declaration))
-                        ?.fir
-                        ?.let(this::addDeclaration)
+                    // Add declaration to the context to avoid redundant provider access to the class/typealias map
+                    deserializeNestedClassLikeDeclaration(
+                        nestedClassId,
+                        declaration,
+                        context.withClassLikeDeclaration(declaration),
+                    )?.fir?.let(this::addDeclaration)
                 }
-
-                is KtTypeAlias -> addDeclaration(memberDeserializer.loadTypeAlias(declaration, FirTypeAliasSymbol(classId), scopeProvider))
             }
         }
 

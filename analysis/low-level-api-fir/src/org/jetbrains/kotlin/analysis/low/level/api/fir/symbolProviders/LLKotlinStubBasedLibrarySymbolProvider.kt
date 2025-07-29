@@ -197,7 +197,7 @@ internal open class LLKotlinStubBasedLibrarySymbolProvider(
             kotlinScopeProvider,
             parentContext = parentContext,
             containerSource = deserializedContainerSourceProvider.getClassContainerSource(classId),
-            deserializeNestedClass = this::getNestedClass,
+            deserializeNestedClassLikeDeclaration = this::getNestedClassLikeDeclaration,
             initialOrigin = parentContext?.initialOrigin ?: getDeclarationOriginFor(declaration.containingKtFile)
         )
 
@@ -254,22 +254,28 @@ internal open class LLKotlinStubBasedLibrarySymbolProvider(
         }
     }
 
-    private fun getNestedClass(
+    private fun getNestedClassLikeDeclaration(
         classId: ClassId,
-        declaration: KtClassOrObject,
+        declaration: KtClassLikeDeclaration,
         parentContext: StubBasedFirDeserializationContext,
-    ): FirRegularClassSymbol? {
+    ): FirClassLikeSymbol<*>? {
         requireWithAttachment(
             parentContext.classLikeDeclaration != null,
-            { "The context should have a class-like declaration when deserializing nested classes." },
+            { "The context should have a class-like declaration when deserializing nested classes or type aliases." },
         ) {
             withPsiEntry("declaration", declaration, module)
         }
 
-        // We can assume that the outer class is in the scope since we're deserializing it with this symbol provider. Since the nested class
+        // We can assume that the outer class is in the scope since we're deserializing it with this symbol provider. Since the nested class or typealias
         // is in the same file as its outer class, it's definitely also in the scope of the symbol provider.
+        val cache = if (declaration is KtClassOrObject) {
+            classCache
+        } else {
+            require(declaration is KtTypeAlias)
+            typeAliasCache
+        }
         @OptIn(LLModuleSpecificSymbolProviderAccess::class)
-        return classCache.getSymbolByPsi(classId, declaration, parentContext)
+        return cache.getSymbolByPsi(classId, declaration, parentContext)
     }
 
     @FirSymbolProviderInternals
