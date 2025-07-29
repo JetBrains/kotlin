@@ -11,7 +11,7 @@ open class Base {
 
 class Ok : Base() {
     override val x: CharSequence
-        @Suppress("WRONG_MODIFIER_TARGET")
+        @Suppress("WRONG_MODIFIER_TARGET", "NON_FINAL_PROPERTY_WITH_EXPLICIT_BACKING_FIELD")
         internal field: String = "OK"
 }
 
