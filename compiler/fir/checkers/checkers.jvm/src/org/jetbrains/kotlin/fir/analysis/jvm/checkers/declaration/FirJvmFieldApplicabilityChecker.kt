@@ -63,6 +63,7 @@ object FirJvmFieldApplicabilityChecker : FirPropertyChecker(MppCheckerKind.Commo
             declaration.returnTypeRef.isInlineClassThatRequiresMangling(session) -> RETURN_TYPE_IS_VALUE_CLASS
             declaration.returnTypeRef.needsMultiFieldValueClassFlattening(session) -> RETURN_TYPE_IS_VALUE_CLASS
             containingClassSymbol?.classKind == ClassKind.ANNOTATION_CLASS -> ANNOTATION
+            declaration.hasExplicitBackingField -> PROPERTY_WITH_EXPLICIT_FIELD
             else -> return
         }
 
