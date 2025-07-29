@@ -1291,7 +1291,7 @@ private fun parseIsoStringFormatFSA(
 
             State.AFTER_DOT -> {
                 val prevIndex = index
-                val fractionalPart = parseFractionalPartOfDouble() * currentLongValue.sign.let { if (it == 0) 1 else it }
+                val fractionalPart = parseFractionalPartOfDouble() * (if (currentLongValue.sign >= 0) 1 else -1)
                 if (index == prevIndex) break
                 result = result.plus(fractionalPart.toDuration(DurationUnit.SECONDS), throwException)
                 State.AFTER_DOUBLE
