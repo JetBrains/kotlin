@@ -1,0 +1,9 @@
+<caret_1>:
+  KDocName(104,112): 'AInt.foo'
+    KDocReference:
+      (in ROOT) fun A<kotlin.Number>.foo()
+
+<caret_2>:
+  KDocName(118,129): 'AString.foo'
+    KDocReference:
+      (in ROOT) fun A<kotlin.Number>.foo()

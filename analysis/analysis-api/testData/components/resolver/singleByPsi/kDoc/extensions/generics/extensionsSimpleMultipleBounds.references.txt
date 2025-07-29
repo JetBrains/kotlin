@@ -1,0 +1,3 @@
+KDocName(230,243): 'SomeClass.ext'
+  KDocReference:
+    Nothing (Unresolved reference)

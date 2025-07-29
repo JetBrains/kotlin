@@ -1,0 +1,3 @@
+KDocName(152,173): 'Derived.someExtension'
+  KDocReference:
+    Nothing (Unresolved reference)

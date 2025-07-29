@@ -1,0 +1,9 @@
+<caret_1>:
+  KDocName(150,159): 'Child.foo'
+    KDocReference:
+      (in ROOT) fun <T : R, R : I, I : Recursive<T>> Base.foo(x: T, y: R, z: I): T
+
+<caret_2>:
+  KDocName(165,173): 'Base.foo'
+    KDocReference:
+      (in ROOT) fun <T : R, R : I, I : Recursive<T>> Base.foo(x: T, y: R, z: I): T

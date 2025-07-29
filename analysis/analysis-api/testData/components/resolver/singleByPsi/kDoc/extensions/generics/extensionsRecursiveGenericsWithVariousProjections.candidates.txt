@@ -1,0 +1,11 @@
+<caret_1>:
+  KDocName(390,403): 'SomeClass.ext'
+    NO_CANDIDATES
+
+<caret_2>:
+  KDocName(409,424): 'SomeClassIn.ext'
+    NO_CANDIDATES
+
+<caret_3>:
+  KDocName(430,446): 'SomeClassOut.ext'
+    NO_CANDIDATES
