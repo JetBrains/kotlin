@@ -2,6 +2,7 @@
 
 // WITH_STDLIB
 
+// FILE: lib.kt
 inline fun <reified T : Any> check(expected: String) {
     val clazz = T::class.javaObjectType!!
     assert (clazz.canonicalName == "java.lang.$expected") {
@@ -9,6 +10,7 @@ inline fun <reified T : Any> check(expected: String) {
     }
 }
 
+// FILE: main.kt
 fun box(): String {
     check<Boolean>("Boolean")
     check<Char>("Character")

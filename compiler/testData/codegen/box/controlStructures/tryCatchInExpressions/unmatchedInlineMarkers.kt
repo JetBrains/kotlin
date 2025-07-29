@@ -1,4 +1,4 @@
-
+// FILE: lib.kt
 inline fun catchAll(x: String, block: () -> Unit): String {
     try {
         block()
@@ -14,5 +14,6 @@ inline fun throwIt(msg: String) {
 inline fun bar(x: String): String =
         x + catchAll("") { throwIt("oops!") }
 
+// FILE: main.kt
 fun box(): String =
         bar("OK")

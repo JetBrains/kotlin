@@ -1,4 +1,4 @@
-
+// FILE: lib.kt
 inline fun catchAll(x: String, block: () -> Unit): String {
     try {
         block()
@@ -18,6 +18,7 @@ inline fun tryTwice(block: () -> Unit) {
     }
 }
 
+// FILE: main.kt
 fun box(): String {
     return catchAll("OK") {
         tryTwice {

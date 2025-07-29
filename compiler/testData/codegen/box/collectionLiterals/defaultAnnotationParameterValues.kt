@@ -2,9 +2,9 @@
 // WITH_REFLECT
 
 // JVM_ABI_K1_K2_DIFF: K2 serializes annotation parameter default values (KT-59526).
+// NO_CHECK_LAMBDA_INLINING
 
-import java.util.Arrays
-import kotlin.reflect.KClass
+// FILE: lib.kt
 import kotlin.reflect.KFunction0
 
 inline fun <reified T> test(kFunction: KFunction0<Unit>, test: T.() -> String): String {
@@ -12,6 +12,8 @@ inline fun <reified T> test(kFunction: KFunction0<Unit>, test: T.() -> String): 
     return annotation.test()
 }
 
+// FILE: main.kt
+import kotlin.reflect.KClass
 fun check(b: Boolean, message: String) {
     if (!b) throw RuntimeException(message)
 }

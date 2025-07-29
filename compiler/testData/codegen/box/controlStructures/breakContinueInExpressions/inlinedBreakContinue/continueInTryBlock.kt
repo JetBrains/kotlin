@@ -2,8 +2,10 @@
 // IGNORE_BACKEND_K1: ANY
 // Reason: break/continue in inline lambdas unsupported
 
+// FILE: lib.kt
 inline fun myRunInline(block: () -> Unit): Unit = block()
 
+// FILE: main.kt
 fun testContinue1(): String {
     while (true) {
         myRunInline {
