@@ -1152,7 +1152,7 @@ private fun parseIsoStringFormatFSA(
             State.AFTER_D_SIGN -> {
                 val prevIndex = index
                 val daysAsLong = parseLong() * sign
-                if (index == prevIndex) break
+                if (index == prevIndex) return throwExceptionOrInvalid(throwException)
                 sign = 1
                 result = result.plus(daysAsLong.toDuration(DurationUnit.DAYS), throwException)
                 State.AFTER_D_VALUE
@@ -1163,7 +1163,7 @@ private fun parseIsoStringFormatFSA(
                     index++
                     State.AFTER_D
                 }
-                else -> break
+                else -> return throwExceptionOrInvalid(throwException)
             }
 
             State.AFTER_D -> when (ch) {
@@ -1190,7 +1190,7 @@ private fun parseIsoStringFormatFSA(
             State.AFTER_T_SIGN -> {
                 val prevIndex = index
                 currentLongValue = parseLong() * sign
-                if (index == prevIndex) break
+                if (index == prevIndex) return throwExceptionOrInvalid(throwException)
                 sign = 1
                 State.AFTER_T_VALUE
             }
@@ -1235,7 +1235,7 @@ private fun parseIsoStringFormatFSA(
             State.AFTER_H_SIGN -> {
                 val prevIndex = index
                 currentLongValue = parseLong() * sign
-                if (index == prevIndex) break
+                if (index == prevIndex) return throwExceptionOrInvalid(throwException)
                 sign = 1
                 State.AFTER_H_VALUE
             }
@@ -1275,7 +1275,7 @@ private fun parseIsoStringFormatFSA(
             State.AFTER_M_SIGN -> {
                 val prevIndex = index
                 currentLongValue = parseLong() * sign
-                if (index == prevIndex) break
+                if (index == prevIndex) return throwExceptionOrInvalid(throwException)
                 sign = 1
                 State.AFTER_M_VALUE
             }
@@ -1297,7 +1297,7 @@ private fun parseIsoStringFormatFSA(
             State.AFTER_DOT -> {
                 val prevIndex = index
                 val fractionalPart = parseFractionalPartOfDouble() * (if (currentLongValue.sign >= 0) 1 else -1)
-                if (index == prevIndex) break
+                if (index == prevIndex) return throwExceptionOrInvalid(throwException)
                 result = result.plus(fractionalPart.toDuration(DurationUnit.SECONDS), throwException)
                 State.AFTER_DOUBLE
             }
