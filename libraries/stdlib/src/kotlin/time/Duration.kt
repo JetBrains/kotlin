@@ -1089,7 +1089,7 @@ private fun parseIsoStringFormatFSA(
                     index++
                     State.AFTER_S
                 }
-                else -> break
+                else -> return throwExceptionOrInvalid(throwException, "Missing unit for value $currentLongValue")
             }
 
             State.AFTER_H -> when (ch) {
@@ -1129,7 +1129,7 @@ private fun parseIsoStringFormatFSA(
                     index++
                     State.AFTER_S
                 }
-                else -> break
+                else -> return throwExceptionOrInvalid(throwException, "Missing unit for value $currentLongValue")
             }
 
             State.AFTER_M -> when (ch) {
@@ -1164,7 +1164,7 @@ private fun parseIsoStringFormatFSA(
                     index++
                     State.AFTER_S
                 }
-                else -> break
+                else -> return throwExceptionOrInvalid(throwException, "Missing unit for value $currentLongValue")
             }
 
             State.AFTER_DOT -> {
@@ -1180,7 +1180,7 @@ private fun parseIsoStringFormatFSA(
                     index++
                     State.AFTER_S
                 }
-                else -> break
+                else -> return throwExceptionOrInvalid(throwException, "Missing 'S' unit")
             }
 
             State.AFTER_S -> break
