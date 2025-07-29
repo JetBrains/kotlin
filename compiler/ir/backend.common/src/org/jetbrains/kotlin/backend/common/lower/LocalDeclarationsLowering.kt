@@ -171,7 +171,7 @@ open class LocalDeclarationsLowering(
 
     fun lower(
         irBlock: IrBlock, container: IrDeclaration, closestParent: IrDeclarationParent,
-        classesToLower: Set<IrClass>, functionsToSkip: Set<IrSimpleFunction>,
+        classesToLower: Set<IrClass>? = null, functionsToSkip: Set<IrSimpleFunction>? = null,
     ) {
         LocalDeclarationsTransformer(
             irBlock,
@@ -383,15 +383,6 @@ open class LocalDeclarationsLowering(
         val IrFunction.transformed: IrFunction?
             get() = transformedDeclarations[this] as IrFunction?
 
-        fun cacheLocalConstructors() {
-            collectLocalDeclarations()
-            collectClosureForLocalDeclarations()
-
-            localClassConstructors.values.forEach {
-                createTransformedConstructorDeclaration(it)
-            }
-        }
-
         fun lowerLocalDeclarations() {
             collectLocalDeclarations()
             if (localFunctions.isEmpty() && localClasses.isEmpty() && transformedDeclarations.isEmpty()) return
@@ -404,10 +395,6 @@ open class LocalDeclarationsLowering(
         }
 
         private inner class FunctionBodiesRewriter(val localContext: LocalContext?) : IrElementTransformerVoid() {
-            override fun visitLocalDelegatedProperty(declaration: IrLocalDelegatedProperty): IrStatement =
-                // Both accessors extracted as closures.
-                declaration.delegate.transformStatement(this)
-
             override fun visitClass(declaration: IrClass) =
                 localClasses[declaration]?.declaration
                     ?: visitMember(declaration)
@@ -415,7 +402,9 @@ open class LocalDeclarationsLowering(
 
             override fun visitFunction(declaration: IrFunction): IrStatement =
                 if (declaration in localFunctions) {
-                    declaration.transformed ?: error("No transformed function for local function")
+                    declaration.transformed?.apply {
+                        this.acceptChildren(SetDeclarationsParentVisitor, this)
+                    } ?: error("No transformed function for local function")
                 } else {
                     visitMember(declaration) ?: super.visitFunction(declaration)
                 }
@@ -898,6 +887,9 @@ open class LocalDeclarationsLowering(
 
             val owner = localFunctionContext.ownerForLoweredDeclaration
             val ownerParent = owner.closestDeclarationParent()
+
+            // Name invention is based on a parent that will be a final parent after the lifting.
+            // However, to preserve IR consistency newDeclaration.parent will be oldDeclaration.parent till the moment of actual lifting.
             val newName = generateNameForLiftedDeclaration(oldDeclaration, ownerParent)
 
             // TODO: consider using fields to access the closure of enclosing class.
@@ -956,7 +948,6 @@ open class LocalDeclarationsLowering(
                 }
                 oldParameterToNew[argument]!!.defaultValue = body
             }
-            newDeclaration.acceptChildren(SetDeclarationsParentVisitor, newDeclaration)
 
             transformedDeclarations[oldDeclaration] = newDeclaration
         }

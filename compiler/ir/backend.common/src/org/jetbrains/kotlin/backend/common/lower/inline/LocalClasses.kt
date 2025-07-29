@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.backend.common.lower.inline
 
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.LoweringContext
-import org.jetbrains.kotlin.backend.common.ir.isInlineLambdaBlock
 import org.jetbrains.kotlin.backend.common.lower.LocalDeclarationPopupLowering
 import org.jetbrains.kotlin.backend.common.lower.LocalDeclarationsLowering
 import org.jetbrains.kotlin.backend.common.lower.VisibilityPolicy
@@ -20,12 +19,11 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrBlockImpl
 import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
-import org.jetbrains.kotlin.ir.util.isAdaptedFunctionReference
+import org.jetbrains.kotlin.ir.transformStatement
 import org.jetbrains.kotlin.ir.util.isInlineParameter
 import org.jetbrains.kotlin.ir.util.isOriginallyLocalDeclaration
 import org.jetbrains.kotlin.ir.util.setDeclarationsParent
 import org.jetbrains.kotlin.ir.visitors.*
-import org.jetbrains.kotlin.utils.mapToSetOrEmpty
 
 /**
  * Extracts local classes from inline lambdas.
@@ -69,10 +67,16 @@ class LocalClassesInInlineLambdasLowering(val context: LoweringContext) : BodyLo
                         inlineLambdas.add(inlineLambda)
                 }
 
-                val localClasses = mutableSetOf<IrClass>()
-                val localFunctions = mutableSetOf<IrFunction>()
-                val adaptedFunctions = mutableSetOf<IrSimpleFunction>()
-                val transformer = this
+                if (inlineLambdas.isEmpty())
+                    return expression
+
+                // TODO: Remove fragment below after fixing KT-77103
+                // This fragment will make sure that local delegated properties accessors are lifted iff there are some other local declarations that could potentially "expose" them.
+                // That was a behavior of this lowering before the refactor. Local delegated properties accessors were not lifted if there weren't any other "liftable" declarations in inline lambda.
+                // It is just a temporary measure to avoid muting many tests that started reproducing problem explained in KT-77103 After handling this problem it will be
+                // possible to completely remove it, since more "relaxed" way of lifting local delegated properties accessors will not have any other negative effects other the one mentioned here.
+                val localDeclarations = mutableSetOf<IrDeclaration>()
+
                 for (lambda in inlineLambdas) {
                     lambda.acceptChildrenVoid(object : IrVisitorVoid() {
                         override fun visitElement(element: IrElement) {
@@ -80,59 +84,22 @@ class LocalClassesInInlineLambdasLowering(val context: LoweringContext) : BodyLo
                         }
 
                         override fun visitClass(declaration: IrClass) {
-                            declaration.transformChildren(transformer, declaration)
-
-                            localClasses.add(declaration)
-                        }
-
-                        override fun visitRichFunctionReference(expression: IrRichFunctionReference) {
-                            expression.boundValues.forEach { it.acceptVoid(this) }
-                            expression.invokeFunction.acceptChildrenVoid(this)
-                        }
-
-                        override fun visitRichPropertyReference(expression: IrRichPropertyReference) {
-                            expression.boundValues.forEach { it.acceptVoid(this) }
-                            expression.getterFunction.acceptChildrenVoid(this)
-                            expression.setterFunction?.acceptChildrenVoid(this)
+                            localDeclarations.add(declaration)
                         }
 
                         override fun visitFunction(declaration: IrFunction) {
-                            declaration.transformChildren(transformer, declaration)
-
-                            localFunctions.add(declaration)
+                            localDeclarations.add(declaration)
                         }
 
                         override fun visitLocalDelegatedProperty(declaration: IrLocalDelegatedProperty) {
-                            // Do not extract local delegates from the inline function.
-                            // Doing that can lead to inconsistent IR. Local delegated property consists of two elements: property and
-                            // accessors to it. Inside the accessor we have a reference to the property.
-                            // `LocalClassesInInlineLambdasLowering` can only extract the accessor out of inline lambda, leaving the
-                            // property in place. Because of this, we have not entirely correct reference.
                             return
-                        }
-
-                        override fun visitCall(expression: IrCall) {
-                            val callee = expression.symbol.owner
-                            if (!callee.isInline) {
-                                expression.acceptChildrenVoid(this)
-                                return
-                            }
-
-                            expression.arguments.zip(callee.parameters).forEach { (argument, parameter) ->
-                                // Skip adapted function references and inline lambdas - they will be inlined later.
-                                val shouldSkip =
-                                    argument != null && (argument.isAdaptedFunctionReference() || argument.isInlineLambdaBlock())
-                                if (parameter.isInlineParameter() && shouldSkip)
-                                    adaptedFunctions += (argument as IrBlock).statements[0] as IrSimpleFunction
-                                else
-                                    argument?.acceptVoid(this)
-                            }
                         }
                     })
                 }
 
-                if (localClasses.isEmpty() && localFunctions.isEmpty())
+                if (localDeclarations.isEmpty())
                     return expression
+                // TODO: Remove fragment above after fixing KT-77103
 
                 val irBlock = IrBlockImpl(expression.startOffset, expression.endOffset, expression.type).apply {
                     statements += expression
@@ -153,50 +120,54 @@ class LocalClassesInInlineLambdasLowering(val context: LoweringContext) : BodyLo
                     // are also present in the inline lambda's parent declaration,
                     // which we will extract the local class to.
                     remapCapturedTypesInExtractedLocalDeclarations = false,
-                ).lower(irBlock, container, data, localClasses, adaptedFunctions)
+                ).lower(irBlock, container, data)
 
-                // `LocalDeclarationsLowering` transforms classes in place, but creates new nodes for functions
-                val transformedLocalFunctions = mutableSetOf<IrSimpleFunction>()
-                // New function nodes share body element with the old ones
-                val localFunctionBodies = localFunctions.mapToSetOrEmpty { it.body }
-                for (lambda in inlineLambdas) {
-                    lambda.acceptChildrenVoid(object : IrVisitorVoid() {
-                        override fun visitElement(element: IrElement) {
-                            element.acceptChildrenVoid(this)
-                        }
+                val localDeclarationsToPopUp = mutableListOf<IrDeclaration>()
 
-                        override fun visitSimpleFunction(declaration: IrSimpleFunction) {
-                            // Referential equality of bodies used to avoid replication of traverse logic used in visitor that looked for original localFunctions
-                            if (declaration.isOriginallyLocalDeclaration && declaration.body in localFunctionBodies) {
-                                transformedLocalFunctions.add(declaration)
-                            }
-                        }
-                    })
-                }
-
-                val transformedLocalDeclarations = localClasses + transformedLocalFunctions
-                irBlock.statements.addAll(0, transformedLocalDeclarations)
-                transformedLocalDeclarations.forEach { it.setDeclarationsParent(data) }
-
+                val outerTransformer = this
                 for (lambda in inlineLambdas) {
                     lambda.transformChildrenVoid(object : IrElementTransformerVoid() {
-                        override fun visitClass(declaration: IrClass): IrStatement {
-                            return IrCompositeImpl(
-                                declaration.startOffset, declaration.endOffset,
-                                context.irBuiltIns.unitType
-                            )
+                        override fun visitLocalDelegatedProperty(declaration: IrLocalDelegatedProperty): IrStatement {
+                            declaration.getter.transformStatement(this)
+                            declaration.setter?.transformStatement(this)
+                            return declaration.delegate.transformStatement(this)
                         }
 
-                        override fun visitSimpleFunction(declaration: IrSimpleFunction): IrStatement {
-                            return if (declaration in transformedLocalFunctions) {
+                        override fun visitRichFunctionReference(expression: IrRichFunctionReference): IrExpression {
+                            expression.boundValues.forEach { it.transformStatement(this) }
+                            expression.invokeFunction.transformChildrenVoid(this)
+                            return expression
+                        }
+
+                        override fun visitRichPropertyReference(expression: IrRichPropertyReference): IrExpression {
+                            expression.boundValues.forEach { it.transformStatement(this) }
+                            expression.getterFunction.transformChildrenVoid(this)
+                            expression.setterFunction?.transformChildrenVoid(this)
+                            return expression
+                        }
+
+                        override fun visitClass(declaration: IrClass): IrStatement = visitSimpleFunctionOrClass(declaration)
+
+                        override fun visitSimpleFunction(declaration: IrSimpleFunction): IrStatement =
+                            visitSimpleFunctionOrClass(declaration)
+
+                        private fun visitSimpleFunctionOrClass(declaration: IrDeclaration): IrStatement {
+                            // Recursive call to outer transformer for handling nested inline lambdas
+                            declaration.transformChildren(outerTransformer, declaration as IrDeclarationParent)
+                            return if (declaration.isOriginallyLocalDeclaration) {
+                                localDeclarationsToPopUp += declaration
                                 IrCompositeImpl(
                                     declaration.startOffset, declaration.endOffset,
                                     context.irBuiltIns.unitType
                                 )
-                            } else super.visitSimpleFunction(declaration)
+                            } else declaration
                         }
+
                     })
                 }
+
+                irBlock.statements.addAll(0, localDeclarationsToPopUp)
+                localDeclarationsToPopUp.forEach { it.setDeclarationsParent(data) }
 
                 return irBlock
             }
