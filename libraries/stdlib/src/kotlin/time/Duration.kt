@@ -64,15 +64,6 @@ public value class Duration internal constructor(private val rawValue: Long) : C
         internal const val SUMMING_INFINITE_DURATIONS_OF_DIFFERENT_SIGN_ERROR_MESSAGE =
             "Summing infinite durations of different signs yields an undefined result."
 
-        internal enum class State {
-            START,
-            AFTER_D_SIGN, AFTER_D_VALUE, AFTER_D,
-            AFTER_T, AFTER_T_SIGN, AFTER_T_VALUE,
-            AFTER_H, AFTER_H_SIGN, AFTER_H_VALUE,
-            AFTER_M, AFTER_M_SIGN, AFTER_M_VALUE,
-            AFTER_DOT, AFTER_DOUBLE, AFTER_S
-        }
-
         /** Converts the given time duration [value] expressed in the specified [sourceUnit] into the specified [targetUnit]. */
         @ExperimentalTime
         public fun convert(value: Double, sourceUnit: DurationUnit, targetUnit: DurationUnit): Double =
@@ -1080,6 +1071,15 @@ private fun parseDuration(value: String, strictIso: Boolean, throwException: Boo
     return if (isNegative) -result else result
 }
 
+internal enum class State {
+    START,
+    AFTER_D_SIGN, AFTER_D_VALUE, AFTER_D,
+    AFTER_T, AFTER_T_SIGN, AFTER_T_VALUE,
+    AFTER_H, AFTER_H_SIGN, AFTER_H_VALUE,
+    AFTER_M, AFTER_M_SIGN, AFTER_M_VALUE,
+    AFTER_DOT, AFTER_DOUBLE, AFTER_S
+}
+
 @kotlin.internal.InlineOnly
 private inline fun parseIsoStringFormatFSA(
     value: String,
@@ -1088,6 +1088,44 @@ private inline fun parseIsoStringFormatFSA(
     throwException: Boolean,
 ): Duration {
     var result = Duration.ZERO
+
+    var index = startIndex
+    var state = State.START
+    while (index < length) {
+        state = when (state) {
+            State.START -> TODO()
+
+            State.AFTER_D_SIGN -> TODO()
+
+            State.AFTER_D_VALUE -> TODO()
+
+            State.AFTER_D -> TODO()
+
+            State.AFTER_T -> TODO()
+
+            State.AFTER_T_SIGN -> TODO()
+
+            State.AFTER_T_VALUE -> TODO()
+
+            State.AFTER_H -> TODO()
+
+            State.AFTER_H_SIGN -> TODO()
+
+            State.AFTER_H_VALUE -> TODO()
+
+            State.AFTER_M -> TODO()
+
+            State.AFTER_M_SIGN -> TODO()
+
+            State.AFTER_M_VALUE -> TODO()
+
+            State.AFTER_DOT -> TODO()
+
+            State.AFTER_DOUBLE -> TODO()
+
+            State.AFTER_S -> TODO()
+        }
+    }
 
     return result
 }
