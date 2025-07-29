@@ -1118,6 +1118,12 @@ public class FirJsKlibSyntheticAccessorTestGenerated extends AbstractFirJsKlibSy
       }
 
       @Test
+      @TestMetadata("usePrivateMethodFromInternalInlineGenericFakeOverride.kt")
+      public void testUsePrivateMethodFromInternalInlineGenericFakeOverride() {
+        runTest("compiler/testData/klib/syntheticAccessors/privateMember/singleFile/usePrivateMethodFromInternalInlineGenericFakeOverride.kt");
+      }
+
+      @Test
       @TestMetadata("usePrivateMethodFromLocalObjectInsideInternalInline.kt")
       public void testUsePrivateMethodFromLocalObjectInsideInternalInline() {
         runTest("compiler/testData/klib/syntheticAccessors/privateMember/singleFile/usePrivateMethodFromLocalObjectInsideInternalInline.kt");
