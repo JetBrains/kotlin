@@ -17,6 +17,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors
 import org.jetbrains.kotlin.fir.declarations.FirBackingField
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyBackingField
 import org.jetbrains.kotlin.fir.declarations.utils.isAbstract
+import org.jetbrains.kotlin.fir.declarations.utils.isExpect
 import org.jetbrains.kotlin.fir.declarations.utils.isExtension
 import org.jetbrains.kotlin.fir.declarations.utils.modality
 
@@ -33,6 +34,10 @@ object FirExplicitBackingFieldForbiddenChecker : FirBackingFieldChecker(MppCheck
 
         if (declaration.propertySymbol.isExtension) {
             reporter.reportOn(declaration.source, FirErrors.EXPLICIT_BACKING_FIELD_IN_EXTENSION)
+        }
+
+        if (declaration.propertySymbol.isExpect) {
+            reporter.reportOn(declaration.propertySymbol.source, FirErrors.EXPECT_PROPERTY_WITH_EXPLICIT_BACKING_FIELD)
         }
     }
 
