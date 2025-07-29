@@ -1107,6 +1107,19 @@ private fun parseIsoStringFormatFSA(
         return result
     }
 
+    fun parseFractionalPartOfDouble(): Double {
+        var result = 0.0
+        var fractionMultiplier = 0.1
+        while (index < length) {
+            val digit = value[index] - '0'
+            if (digit !in 0..9) break
+            result += digit * fractionMultiplier
+            fractionMultiplier *= 0.1
+            index++
+        }
+        return result
+    }
+
     var state = State.START
     while (index < length) {
         state = when (state) {
@@ -1269,7 +1282,13 @@ private fun parseIsoStringFormatFSA(
                 else -> break
             }
 
-            State.AFTER_DOT -> TODO()
+            State.AFTER_DOT -> {
+                val prevIndex = index
+                val fractionalPart = parseFractionalPartOfDouble()
+                if (index == prevIndex) break
+                result = result.plus(fractionalPart.toDuration(DurationUnit.SECONDS), throwException)
+                State.AFTER_DOUBLE
+            }
 
             State.AFTER_DOUBLE -> TODO()
 
