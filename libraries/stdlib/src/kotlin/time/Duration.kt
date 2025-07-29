@@ -1130,18 +1130,19 @@ private fun parseIsoStringFormatFSA(
 
     var state = State.START
     while (index < length) {
+        val ch = value[index]
         state = when (state) {
-            State.START -> when {
-                value[index] == '+' -> {
+            State.START -> when (ch) {
+                '+' -> {
                     index++
                     State.AFTER_D_SIGN
                 }
-                value[index] == '-' -> {
+                '-' -> {
                     sign = -1
                     index++
                     State.AFTER_D_SIGN
                 }
-                value[index] == 'T' -> {
+                'T' -> {
                     index++
                     State.AFTER_T
                 }
@@ -1157,28 +1158,28 @@ private fun parseIsoStringFormatFSA(
                 State.AFTER_D_VALUE
             }
 
-            State.AFTER_D_VALUE -> when {
-                value[index] == 'D' -> {
+            State.AFTER_D_VALUE -> when (ch) {
+                'D' -> {
                     index++
                     State.AFTER_D
                 }
                 else -> break
             }
 
-            State.AFTER_D -> when {
-                value[index] == 'T' -> {
+            State.AFTER_D -> when (ch) {
+                'T' -> {
                     index++
                     State.AFTER_T
                 }
                 else -> break
             }
 
-            State.AFTER_T -> when {
-                value[index] == '+' -> {
+            State.AFTER_T -> when (ch) {
+                '+' -> {
                     index++
                     State.AFTER_T_SIGN
                 }
-                value[index] == '-' -> {
+                '-' -> {
                     sign = -1
                     index++
                     State.AFTER_T_SIGN
@@ -1194,23 +1195,23 @@ private fun parseIsoStringFormatFSA(
                 State.AFTER_T_VALUE
             }
 
-            State.AFTER_T_VALUE -> when {
-                value[index] == 'H' -> {
+            State.AFTER_T_VALUE -> when (ch) {
+                'H' -> {
                     result = result.plus(currentLongValue.toDuration(DurationUnit.HOURS), throwException)
                     index++
                     State.AFTER_H
                 }
-                value[index] == 'M' -> {
+                'M' -> {
                     result = result.plus(currentLongValue.toDuration(DurationUnit.MINUTES), throwException)
                     index++
                     State.AFTER_M
                 }
-                value[index] == '.' -> {
+                '.' -> {
                     result = result.plus(currentLongValue.toDuration(DurationUnit.SECONDS), throwException)
                     index++
                     State.AFTER_DOT
                 }
-                value[index] == 'S' -> {
+                'S' -> {
                     result = result.plus(currentLongValue.toDuration(DurationUnit.SECONDS), throwException)
                     index++
                     State.AFTER_S
@@ -1218,19 +1219,17 @@ private fun parseIsoStringFormatFSA(
                 else -> break
             }
 
-            State.AFTER_H -> {
-                when {
-                    value[index] == '+' -> {
-                        index++
-                        State.AFTER_H_SIGN
-                    }
-                    value[index] == '-' -> {
-                        sign = -1
-                        index++
-                        State.AFTER_H_SIGN
-                    }
-                    else -> State.AFTER_H_SIGN
+            State.AFTER_H -> when (ch) {
+                '+' -> {
+                    index++
+                    State.AFTER_H_SIGN
                 }
+                '-' -> {
+                    sign = -1
+                    index++
+                    State.AFTER_H_SIGN
+                }
+                else -> State.AFTER_H_SIGN
             }
 
             State.AFTER_H_SIGN -> {
@@ -1241,18 +1240,18 @@ private fun parseIsoStringFormatFSA(
                 State.AFTER_H_VALUE
             }
 
-            State.AFTER_H_VALUE -> when {
-                value[index] == 'M' -> {
+            State.AFTER_H_VALUE -> when (ch) {
+                'M' -> {
                     result = result.plus(currentLongValue.toDuration(DurationUnit.MINUTES), throwException)
                     index++
                     State.AFTER_M
                 }
-                value[index] == '.' -> {
+                '.' -> {
                     result = result.plus(currentLongValue.toDuration(DurationUnit.SECONDS), throwException)
                     index++
                     State.AFTER_DOT
                 }
-                value[index] == 'S' -> {
+                'S' -> {
                     result = result.plus(currentLongValue.toDuration(DurationUnit.SECONDS), throwException)
                     index++
                     State.AFTER_S
@@ -1260,19 +1259,17 @@ private fun parseIsoStringFormatFSA(
                 else -> break
             }
 
-            State.AFTER_M -> {
-                when {
-                    value[index] == '+' -> {
-                        index++
-                        State.AFTER_M_SIGN
-                    }
-                    value[index] == '-' -> {
-                        sign = -1
-                        index++
-                        State.AFTER_M_SIGN
-                    }
-                    else -> State.AFTER_M_SIGN
+            State.AFTER_M -> when (ch) {
+                '+' -> {
+                    index++
+                    State.AFTER_M_SIGN
                 }
+                '-' -> {
+                    sign = -1
+                    index++
+                    State.AFTER_M_SIGN
+                }
+                else -> State.AFTER_M_SIGN
             }
 
             State.AFTER_M_SIGN -> {
@@ -1283,13 +1280,13 @@ private fun parseIsoStringFormatFSA(
                 State.AFTER_M_VALUE
             }
 
-            State.AFTER_M_VALUE -> when {
-                value[index] == '.' -> {
+            State.AFTER_M_VALUE -> when (ch) {
+                '.' -> {
                     result = result.plus(currentLongValue.toDuration(DurationUnit.SECONDS), throwException)
                     index++
                     State.AFTER_DOT
                 }
-                value[index] == 'S' -> {
+                'S' -> {
                     result = result.plus(currentLongValue.toDuration(DurationUnit.SECONDS), throwException)
                     index++
                     State.AFTER_S
@@ -1305,8 +1302,8 @@ private fun parseIsoStringFormatFSA(
                 State.AFTER_DOUBLE
             }
 
-            State.AFTER_DOUBLE -> when {
-                value[index] == 'S' -> {
+            State.AFTER_DOUBLE -> when (ch) {
+                'S' -> {
                     index++
                     State.AFTER_S
                 }
