@@ -528,3 +528,5 @@ tasks.withType<Test>().configureEach {
         })
     }
 }
+
+excludeGradleEmbeddedStdlibFromTestTasksRuntimeClasspath()

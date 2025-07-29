@@ -10,6 +10,7 @@ import org.gradle.api.Action
 import org.gradle.api.GradleException
 import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
+import org.gradle.api.artifacts.FileCollectionDependency
 import org.gradle.api.artifacts.ModuleDependency
 import org.gradle.api.artifacts.VersionCatalogsExtension
 import org.gradle.api.artifacts.type.ArtifactTypeDefinition
@@ -31,6 +32,7 @@ import org.gradle.api.tasks.Copy
 import org.gradle.api.tasks.SourceSet
 import org.gradle.api.tasks.TaskProvider
 import org.gradle.api.tasks.compile.JavaCompile
+import org.gradle.api.tasks.testing.Test
 import org.gradle.jvm.tasks.Jar
 import org.gradle.jvm.toolchain.JavaToolchainService
 import org.gradle.kotlin.dsl.*
@@ -39,6 +41,7 @@ import org.gradle.plugin.devel.PluginDeclaration
 import org.gradle.plugin.devel.plugins.JavaGradlePluginPlugin
 import org.gradle.plugin.devel.tasks.ValidatePlugins
 import org.gradle.plugin.use.resolve.internal.ArtifactRepositoriesPluginResolver.PLUGIN_MARKER_SUFFIX
+import org.gradle.process.CommandLineArgumentProvider
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
@@ -51,6 +54,7 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
 import plugins.configureDefaultPublishing
 import plugins.configureKotlinPomAttributes
+import java.io.File
 
 /**
  * We have to handle the returned provider lazily, because the publication's artifactId
@@ -809,3 +813,32 @@ fun Project.registerKotlinSourceForVersionRange(
             }
         }
 }
+
+// See KT-79528 and https://github.com/gradle/gradle/issues/34453
+fun Project.disableCoroutinesStacktraceRecoveryInTestsIfGradleEmbeddedStdlibIsInRuntimeClasspath() {
+    tasks.withType<Test>().configureEach {
+        val isEmbeddedStdlibInRuntimeClasspath = provider {
+            classpath.contains(gradleEmbeddedStdlib())
+        }
+        jvmArgumentProviders.add {
+            if (isEmbeddedStdlibInRuntimeClasspath.get()) {
+                listOf("-Dkotlinx.coroutines.stacktrace.recovery=false")
+            } else {
+                emptyList()
+            }
+        }
+    }
+}
+
+fun Project.excludeGradleEmbeddedStdlibFromTestTasksRuntimeClasspath() {
+    afterEvaluate {
+        tasks.withType<Test>().configureEach {
+            val embeddedStdlib = gradleEmbeddedStdlib()
+            classpath = classpath.filter {
+                it != embeddedStdlib
+            }
+        }
+    }
+}
+
+private fun Project.gradleEmbeddedStdlib(): File = (dependencies.gradleApi() as FileCollectionDependency).files.single { it.name.startsWith("kotlin-stdlib") }
