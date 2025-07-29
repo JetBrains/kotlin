@@ -11,10 +11,18 @@ import org.jetbrains.kotlin.backend.wasm.wasmLoweringsOfTheFirstPhase
 import org.jetbrains.kotlin.cli.common.runPreSerializationLoweringPhases
 import org.jetbrains.kotlin.cli.pipeline.web.JsFir2IrPipelineArtifact
 import org.jetbrains.kotlin.cli.pipeline.web.WebKlibInliningPipelinePhase
+import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.languageVersionSettings
 import org.jetbrains.kotlin.config.messageCollector
 import org.jetbrains.kotlin.config.phaser.PhaserState
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
+import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
+import org.jetbrains.kotlin.diagnostics.impl.deduplicating
+import org.jetbrains.kotlin.ir.KtDiagnosticReporterWithImplicitIrBasedContext
+import org.jetbrains.kotlin.ir.backend.js.wasm.WasmKlibCheckers
+import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
 import org.jetbrains.kotlin.test.frontend.fir.Fir2IrCliBasedOutputArtifact
 import org.jetbrains.kotlin.test.model.BackendKinds
@@ -60,6 +68,7 @@ class WasmPreSerializationLoweringFacade(
             }
             is IrBackendInput.WasmAfterFrontendBackendInput -> {
                 // TODO: When KT-74671 would be implemented, the following code would be never used and is subject to be deleted
+                runKlibCheckers(diagnosticReporter, configuration, inputArtifact.irModuleFragment)
                 val phaseConfig = createJsTestPhaseConfig(testServices, module)
                 if (diagnosticReporter.hasErrors) {
                     // Should errors be found by checkers, there's a chance that some lowering will throw an exception on unparseable code.
@@ -88,5 +97,21 @@ class WasmPreSerializationLoweringFacade(
                 throw IllegalArgumentException("Unexpected inputArtifact type: ${inputArtifact.javaClass.simpleName}")
             }
         }
+    }
+
+    private fun runKlibCheckers(
+        diagnosticReporter: BaseDiagnosticsCollector,
+        configuration: CompilerConfiguration,
+        irModuleFragment: IrModuleFragment,
+    ) {
+        val irDiagnosticReporter =
+            KtDiagnosticReporterWithImplicitIrBasedContext(diagnosticReporter.deduplicating(), configuration.languageVersionSettings)
+        irModuleFragment.acceptVoid(
+            WasmKlibCheckers.makeChecker(
+                irDiagnosticReporter,
+                configuration,
+                doModuleLevelChecks = true,
+            )
+        )
     }
 }
