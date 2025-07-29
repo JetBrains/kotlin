@@ -9,8 +9,11 @@ import org.jetbrains.kotlin.codegen.AsmUtil
 import org.jetbrains.kotlin.codegen.coroutines.isCoroutineSuperClass
 import org.jetbrains.kotlin.load.java.JvmAbi.LOCAL_VARIABLE_NAME_PREFIX_INLINE_ARGUMENT
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes.*
-import org.jetbrains.kotlin.types.KotlinType
-import org.jetbrains.org.objectweb.asm.*
+import org.jetbrains.kotlin.types.model.KotlinTypeMarker
+import org.jetbrains.org.objectweb.asm.ClassReader
+import org.jetbrains.org.objectweb.asm.Label
+import org.jetbrains.org.objectweb.asm.Opcodes
+import org.jetbrains.org.objectweb.asm.Type
 import org.jetbrains.org.objectweb.asm.commons.Method
 import org.jetbrains.org.objectweb.asm.tree.*
 
@@ -21,9 +24,9 @@ abstract class LambdaInfo : FunctionalArgument {
 
     abstract val invokeMethod: Method
 
-    abstract val invokeMethodParameters: List<KotlinType?>
+    abstract val invokeMethodParameters: List<KotlinTypeMarker?>
 
-    abstract val invokeMethodReturnType: KotlinType?
+    abstract val invokeMethodReturnType: KotlinTypeMarker?
 
     abstract val capturedVars: List<CapturedParamDesc>
 
@@ -74,7 +77,12 @@ abstract class ExpressionLambda : LambdaInfo() {
     }
 }
 
-class DefaultLambda(info: ExtractedDefaultLambda, sourceCompiler: SourceCompilerForInline, private val functionName: String) :
+class DefaultLambda(
+    info: ExtractedDefaultLambda,
+    sourceCompiler: SourceCompilerForInline,
+    private val functionName: String,
+    private val nullableAnyType: KotlinTypeMarker,
+) :
     LambdaInfo() {
     val isBoundCallableReference: Boolean
 
@@ -84,12 +92,10 @@ class DefaultLambda(info: ExtractedDefaultLambda, sourceCompiler: SourceCompiler
     override val invokeMethod: Method
         get() = Method(node.node.name, node.node.desc)
 
-    private val nullableAnyType = sourceCompiler.state.module.builtIns.nullableAnyType
-
-    override val invokeMethodParameters: List<KotlinType>
+    override val invokeMethodParameters: List<KotlinTypeMarker>
         get() = List(invokeMethod.argumentTypes.size) { nullableAnyType }
 
-    override val invokeMethodReturnType: KotlinType
+    override val invokeMethodReturnType: KotlinTypeMarker
         get() = nullableAnyType
 
     val originalBoundReceiverType: Type?

@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.resolve.isInlineClass
 import org.jetbrains.kotlin.types.*
-import org.jetbrains.kotlin.types.checker.ClassicTypeSystemContext
 import org.jetbrains.kotlin.types.checker.SimpleClassicTypeSystemContext
 import org.jetbrains.kotlin.types.error.ErrorUtils
 import org.jetbrains.kotlin.types.typeUtil.makeNullable
@@ -29,9 +28,6 @@ interface TypeMappingConfiguration<out T : Any> {
 
     // returns null when type doesn't need to be preprocessed
     fun preprocessType(kotlinType: KotlinType): KotlinType? = null
-
-    val builtIns: KotlinBuiltIns?
-        get() = null
 }
 
 fun <T : Any> mapType(
@@ -121,11 +117,7 @@ fun <T : Any> mapType(
         descriptor is ClassDescriptor -> {
             // NB if inline class is recursive, it's ok to map it as wrapped
             if (descriptor.isInlineClass() && !mode.needInlineClassWrapping) {
-                val typeSystemContext = object : ClassicTypeSystemContext {
-                    override val builtIns: KotlinBuiltIns
-                        get() = typeMappingConfiguration.builtIns ?: super.builtIns
-                }
-                val expandedType = typeSystemContext.computeExpandedTypeForInlineClass(kotlinType) as KotlinType?
+                val expandedType = SimpleClassicTypeSystemContext.computeExpandedTypeForInlineClass(kotlinType) as KotlinType?
                 if (expandedType != null) {
                     return mapType(
                         expandedType, factory, mode.wrapInlineClassesMode(), typeMappingConfiguration,

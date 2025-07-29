@@ -19,9 +19,7 @@ import org.jetbrains.kotlin.codegen.AsmUtil.isPrimitive
 import org.jetbrains.kotlin.codegen.inline.*
 import org.jetbrains.kotlin.codegen.state.GenerationState
 import org.jetbrains.kotlin.codegen.state.KotlinTypeMapperBase
-import org.jetbrains.kotlin.codegen.state.StaticTypeMapperForOldBackend
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.descriptors.toIrBasedKotlinType
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.dump
@@ -30,7 +28,7 @@ import org.jetbrains.kotlin.ir.util.getPackageFragment
 import org.jetbrains.kotlin.ir.util.isSuspendFunction
 import org.jetbrains.kotlin.resolve.jvm.AsmTypes
 import org.jetbrains.kotlin.resolve.jvm.jvmSignature.JvmMethodSignature
-import org.jetbrains.kotlin.types.KotlinType
+import org.jetbrains.kotlin.types.model.KotlinTypeMarker
 import org.jetbrains.kotlin.utils.exceptions.rethrowIntellijPlatformExceptionIfNeeded
 import org.jetbrains.org.objectweb.asm.Label
 import org.jetbrains.org.objectweb.asm.Opcodes
@@ -125,7 +123,7 @@ class IrInlineCodegen(
             lambdaInfo.reference.getArgumentsWithIr().forEachIndexed { index, (_, ir) ->
                 val param = lambdaInfo.capturedVars[index]
                 val onStack = codegen.genOrGetLocal(ir, param.type, ir.type, BlockInfo(), eraseType = false)
-                putCapturedToLocalVal(onStack, param, ir.type.toIrBasedKotlinType())
+                putCapturedToLocalVal(onStack, param, ir.type)
             }
         } else {
             val isInlineParameter = irValueParameter.isInlineParameter()
@@ -174,7 +172,7 @@ class IrInlineCodegen(
                         codegen.genOrGetLocal(argumentExpression, parameterType, irValueParameter.type, blockInfo, eraseType = true)
                     } else {
                         codegen.gen(argumentExpression, parameterType, irValueParameter.type, blockInfo)
-                        StackValue.OnStack(parameterType, irValueParameter.type.toIrBasedKotlinType())
+                        StackValue.OnStack(parameterType, irValueParameter.type)
                     }
                     // StackValue.Local hasn't materialized on the stack yet, postpone adding END marker
                     if (inlineArgumentsInPlace && argValue !is StackValue.Local) {
@@ -188,7 +186,7 @@ class IrInlineCodegen(
                 if (onStack is StackValue.Local) codegen.visitor.addInplaceArgumentEndMarker()
             }
 
-            val expectedType = JvmKotlinType(parameterType, irValueParameter.type.toIrBasedKotlinType())
+            val expectedType = JvmKotlinType(parameterType, irValueParameter.type)
 
             if (kind === ValueKind.DEFAULT_MASK || kind === ValueKind.METHOD_HANDLE_IN_DEFAULT) {
                 assert(onStack is StackValue.Constant) { "Additional default method argument should be constant, but $onStack" }
@@ -232,12 +230,12 @@ class IrInlineCodegen(
                     codegen.frameMap.enterTemp(info.type) // the inline function will put the value into this slot
                     addInplaceArgumentEndMarkerIfPostponed()
                 }
-                onStack.isLocalWithNoBoxing(expectedType, StaticTypeMapperForOldBackend) -> {
+                onStack.isLocalWithNoBoxing(expectedType, codegen.typeMapper) -> {
                     info.remapValue = onStack
                     addInplaceArgumentEndMarkerIfPostponed()
                 }
                 else -> {
-                    onStack.put(info.type, expectedType.kotlinType, codegen.visitor, StaticTypeMapperForOldBackend)
+                    onStack.put(info.type, expectedType.kotlinType, codegen.visitor, codegen.typeMapper)
                     addInplaceArgumentEndMarkerIfPostponed()
                     codegen.visitor.store(codegen.frameMap.enterTemp(info.type), info.type)
                 }
@@ -268,7 +266,9 @@ class IrInlineCodegen(
                     .mapTo<_, _, MutableCollection<Int>>(mutableSetOf()) { parameters.getDeclarationSlot(it) }
             )
             for (info in infos) {
-                val lambda = DefaultLambda(info, sourceCompiler, node.name.substringBeforeLast("\$default"))
+                val lambda = DefaultLambda(
+                    info, sourceCompiler, node.name.substringBeforeLast("\$default"), codegen.context.irBuiltIns.anyNType,
+                )
                 parameters.getParameterByDeclarationSlot(info.offset).functionalArgument = lambda
                 if (info.needReification) {
                     lambda.reifiedTypeParametersUsages.mergeAll(reifiedTypeInliner.reifyInstructions(lambda.node.node))
@@ -288,7 +288,7 @@ class IrInlineCodegen(
         val info = RootInliningContext(
             state, codegen.inlineNameGenerator.subGenerator(jvmSignature.asmMethod.name),
             sourceCompiler, sourceCompiler.inlineCallSiteInfo, reifiedTypeInliner, typeParameterMappings,
-            codegen.inlineScopesGenerator, StaticTypeMapperForOldBackend,
+            codegen.inlineScopesGenerator, codegen.typeMapper,
         )
 
         val sourceMapper = sourceCompiler.sourceMapper
@@ -404,13 +404,13 @@ class IrInlineCodegen(
         }
     }
 
-    private fun putCapturedToLocalVal(stackValue: StackValue, capturedParam: CapturedParamDesc, kotlinType: KotlinType?) {
+    private fun putCapturedToLocalVal(stackValue: StackValue, capturedParam: CapturedParamDesc, kotlinType: KotlinTypeMarker?) {
         val info = invocationParamBuilder.addCapturedParam(capturedParam, capturedParam.fieldName, false)
         val asmType = info.type
-        if (stackValue.isLocalWithNoBoxing(JvmKotlinType(asmType, kotlinType), StaticTypeMapperForOldBackend)) {
+        if (stackValue.isLocalWithNoBoxing(JvmKotlinType(asmType, kotlinType), codegen.typeMapper)) {
             info.remapValue = stackValue
         } else {
-            stackValue.put(asmType, kotlinType, codegen.visitor, StaticTypeMapperForOldBackend)
+            stackValue.put(asmType, kotlinType, codegen.visitor, codegen.typeMapper)
             val index = codegen.frameMap.enterTemp(asmType)
             codegen.visitor.store(index, asmType)
             info.remapValue = StackValue.Local(index, asmType, null)
@@ -469,8 +469,8 @@ class IrExpressionLambdaImpl(
 
     override val capturedVars: List<CapturedParamDesc>
     override val invokeMethod: Method
-    override val invokeMethodParameters: List<KotlinType?>
-    override val invokeMethodReturnType: KotlinType
+    override val invokeMethodParameters: List<KotlinTypeMarker?>
+    override val invokeMethodReturnType: KotlinTypeMarker
 
     init {
         val asmMethod = codegen.methodSignatureMapper.mapAsmMethod(function)
@@ -491,7 +491,7 @@ class IrExpressionLambdaImpl(
         val unboxedReturnType = function.originalReturnTypeOfSuspendFunctionReturningUnboxedInlineClass()
         val unboxedAsmReturnType = unboxedReturnType?.let(codegen.typeMapper::mapType)
         invokeMethod = Method(asmMethod.name, unboxedAsmReturnType ?: asmMethod.returnType, freeAsmParameters.toTypedArray())
-        invokeMethodParameters = freeParameters.map { it.type.toIrBasedKotlinType() }
-        invokeMethodReturnType = (unboxedReturnType ?: function.returnType).toIrBasedKotlinType()
+        invokeMethodParameters = freeParameters.map { it.type }
+        invokeMethodReturnType = unboxedReturnType ?: function.returnType
     }
 }

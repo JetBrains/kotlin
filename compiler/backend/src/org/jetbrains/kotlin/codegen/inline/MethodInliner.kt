@@ -253,7 +253,7 @@ class MethodInliner(
                         return
                     }
 
-                    val nullableAnyType = inliningContext.state.module.builtIns.nullableAnyType
+                    val nullableAnyType = inliningContext.typeMapper.typeSystem.nullableAnyType()
                     val expectedParameters = info.invokeMethod.argumentTypes
                     val expectedKotlinParameters = info.invokeMethodParameters
                     val argumentCount = Type.getArgumentTypes(desc).size

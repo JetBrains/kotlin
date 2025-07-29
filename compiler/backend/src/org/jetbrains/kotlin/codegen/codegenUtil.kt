@@ -132,7 +132,7 @@ private fun CallableDescriptor.isJvmStaticIn(predicate: (DeclarationDescriptor) 
         else -> predicate(containingDeclaration) && hasJvmStaticAnnotation()
     }
 
-class JvmKotlinType(val type: Type, val kotlinType: KotlinType? = null)
+class JvmKotlinType(val type: Type, val kotlinType: KotlinTypeMarker? = null)
 
 fun KtExpression?.kotlinType(bindingContext: BindingContext) = this?.let(bindingContext::getType)
 
