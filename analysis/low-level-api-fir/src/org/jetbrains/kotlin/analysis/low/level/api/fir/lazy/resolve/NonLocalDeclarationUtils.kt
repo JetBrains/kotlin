@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve
 
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.utils.printer.parentOfType
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
@@ -13,7 +14,8 @@ import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 /**
  * Note: The `KtCodeFragment` itself is technically lazy-resolvable, but the function doesn't support it yet.
  */
-internal fun elementCanBeLazilyResolved(element: KtElement?): Boolean = when (element) {
+@KaImplementationDetail
+fun elementCanBeLazilyResolved(element: KtElement?): Boolean = when (element) {
     null -> false
     is KtFunctionLiteral -> false
     is KtTypeParameter -> elementCanBeLazilyResolved(element.parentOfType<KtNamedDeclaration>(withSelf = false))

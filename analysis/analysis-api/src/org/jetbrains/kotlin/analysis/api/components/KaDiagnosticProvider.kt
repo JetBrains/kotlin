@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.analysis.api.components
 
 import org.jetbrains.kotlin.analysis.api.KaContextParameterApi
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
+import org.jetbrains.kotlin.analysis.api.KaIdeApi
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnosticWithPsi
 import org.jetbrains.kotlin.psi.KtElement
@@ -28,6 +29,9 @@ public interface KaDiagnosticProvider : KaSessionComponent {
      * Collects all diagnostics for the given file.
      */
     public fun KtFile.collectDiagnostics(filter: KaDiagnosticCheckerFilter): Collection<KaDiagnosticWithPsi<*>>
+
+    @KaIdeApi
+    public fun KtFile.analyzeEntirely(pool: (Runnable) -> Unit)
 }
 
 /**

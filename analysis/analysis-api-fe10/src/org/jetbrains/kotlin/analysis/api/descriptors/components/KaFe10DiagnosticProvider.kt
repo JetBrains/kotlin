@@ -48,6 +48,10 @@ internal class KaFe10DiagnosticProvider(
         }
         return result
     }
+
+    override fun KtFile.analyzeEntirely(pool: (Runnable) -> Unit) {
+        throw NotImplementedError("Method is not implemented for FE 1.0")
+    }
 }
 
 internal class KaFe10Diagnostic(private val diagnostic: Diagnostic, override val token: KaLifetimeToken) : KaDiagnosticWithPsi<PsiElement> {
