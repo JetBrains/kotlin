@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.buildtools.api.arguments.MetadataArguments.Companion
 import org.jetbrains.kotlin.buildtools.api.arguments.MetadataArguments.Companion.X_FRIEND_PATHS
 import org.jetbrains.kotlin.buildtools.api.arguments.MetadataArguments.Companion.X_REFINES_PATHS
 import org.jetbrains.kotlin.cli.common.arguments.K2MetadataCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
 
 internal class MetadataArgumentsImpl : CommonCompilerArgumentsImpl(), MetadataArguments {
   private val optionsMap: MutableMap<String, Any?> = mutableMapOf()
@@ -35,6 +36,8 @@ internal class MetadataArgumentsImpl : CommonCompilerArgumentsImpl(), MetadataAr
   override operator fun <V> `set`(key: MetadataArguments.MetadataArgument<V>, `value`: V) {
     optionsMap[key.id] = `value`
   }
+
+  override operator fun contains(key: MetadataArguments.MetadataArgument<*>): Boolean = key.id in optionsMap
 
   @Suppress("UNCHECKED_CAST")
   public operator fun <V> `get`(key: MetadataArgument<V>): V = optionsMap[key.id] as V
@@ -53,6 +56,16 @@ internal class MetadataArgumentsImpl : CommonCompilerArgumentsImpl(), MetadataAr
     if ("X_FRIEND_PATHS" in optionsMap) { arguments.friendPaths = get(X_FRIEND_PATHS) }
     if ("X_REFINES_PATHS" in optionsMap) { arguments.refinesPaths = get(X_REFINES_PATHS) }
     return arguments
+  }
+
+  @Suppress("DEPRECATION")
+  override fun applyArgumentStrings(arguments: List<String>) {
+    super.applyArgumentStrings(arguments)
+    val compilerArgs: K2MetadataCompilerArguments = parseCommandLineArguments(arguments)
+    this[CLASSPATH] = compilerArgs.classpath
+    this[MODULE_NAME] = compilerArgs.moduleName
+    this[X_FRIEND_PATHS] = compilerArgs.friendPaths
+    this[X_REFINES_PATHS] = compilerArgs.refinesPaths
   }
 
   @Suppress("DEPRECATION")

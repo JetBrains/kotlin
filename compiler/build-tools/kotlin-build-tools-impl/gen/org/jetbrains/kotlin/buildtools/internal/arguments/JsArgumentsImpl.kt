@@ -62,6 +62,7 @@ import org.jetbrains.kotlin.buildtools.api.arguments.JsArguments.Companion.X_PLA
 import org.jetbrains.kotlin.buildtools.api.arguments.JsArguments.Companion.X_STRICT_IMPLICIT_EXPORT_TYPES
 import org.jetbrains.kotlin.buildtools.api.arguments.JsArguments.Companion.X_TYPED_ARRAYS
 import org.jetbrains.kotlin.cli.common.arguments.K2JSCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
 
 internal class JsArgumentsImpl : WasmArgumentsImpl(), JsArguments {
   private val optionsMap: MutableMap<String, Any?> = mutableMapOf()
@@ -74,6 +75,8 @@ internal class JsArgumentsImpl : WasmArgumentsImpl(), JsArguments {
   override operator fun <V> `set`(key: JsArguments.JsArgument<V>, `value`: V) {
     optionsMap[key.id] = `value`
   }
+
+  override operator fun contains(key: JsArguments.JsArgument<*>): Boolean = key.id in optionsMap
 
   @Suppress("UNCHECKED_CAST")
   public operator fun <V> `get`(key: JsArgument<V>): V = optionsMap[key.id] as V
@@ -132,6 +135,56 @@ internal class JsArgumentsImpl : WasmArgumentsImpl(), JsArguments {
     if ("X_FAKE_OVERRIDE_VALIDATOR" in optionsMap) { arguments.fakeOverrideValidator = get(X_FAKE_OVERRIDE_VALIDATOR) }
     if ("X_OPTIMIZE_GENERATED_JS" in optionsMap) { arguments.optimizeGeneratedJs = get(X_OPTIMIZE_GENERATED_JS) }
     return arguments
+  }
+
+  @Suppress("DEPRECATION")
+  override fun applyArgumentStrings(arguments: List<String>) {
+    super.applyArgumentStrings(arguments)
+    val compilerArgs: K2JSCompilerArguments = parseCommandLineArguments(arguments)
+    this[IR_OUTPUT_DIR] = compilerArgs.outputDir
+    this[IR_OUTPUT_NAME] = compilerArgs.moduleName
+    this[LIBRARIES] = compilerArgs.libraries
+    this[SOURCE_MAP] = compilerArgs.sourceMap
+    this[SOURCE_MAP_PREFIX] = compilerArgs.sourceMapPrefix
+    this[SOURCE_MAP_BASE_DIRS] = compilerArgs.sourceMapBaseDirs
+    this[SOURCE_MAP_EMBED_SOURCES] = compilerArgs.sourceMapEmbedSources
+    this[SOURCE_MAP_NAMES_POLICY] = compilerArgs.sourceMapNamesPolicy
+    this[TARGET] = compilerArgs.target
+    this[X_IR_KEEP] = compilerArgs.irKeep
+    this[MODULE_KIND] = compilerArgs.moduleKind
+    this[MAIN] = compilerArgs.main
+    this[X_IR_PRODUCE_KLIB_DIR] = compilerArgs.irProduceKlibDir
+    this[X_IR_PRODUCE_KLIB_FILE] = compilerArgs.irProduceKlibFile
+    this[X_IR_PRODUCE_JS] = compilerArgs.irProduceJs
+    this[X_IR_DCE] = compilerArgs.irDce
+    this[X_IR_DCE_RUNTIME_DIAGNOSTIC] = compilerArgs.irDceRuntimeDiagnostic
+    this[X_IR_DCE_PRINT_REACHABILITY_INFO] = compilerArgs.irDcePrintReachabilityInfo
+    this[X_IR_PROPERTY_LAZY_INITIALIZATION] = compilerArgs.irPropertyLazyInitialization
+    this[X_IR_MINIMIZED_MEMBER_NAMES] = compilerArgs.irMinimizedMemberNames
+    this[X_IR_MODULE_NAME] = compilerArgs.irModuleName
+    this[X_IR_SAFE_EXTERNAL_BOOLEAN] = compilerArgs.irSafeExternalBoolean
+    this[X_IR_SAFE_EXTERNAL_BOOLEAN_DIAGNOSTIC] = compilerArgs.irSafeExternalBooleanDiagnostic
+    this[X_IR_PER_MODULE] = compilerArgs.irPerModule
+    this[X_IR_PER_MODULE_OUTPUT_NAME] = compilerArgs.irPerModuleOutputName
+    this[X_IR_PER_FILE] = compilerArgs.irPerFile
+    this[X_IR_GENERATE_INLINE_ANONYMOUS_FUNCTIONS] = compilerArgs.irGenerateInlineAnonymousFunctions
+    this[X_INCLUDE] = compilerArgs.includes
+    this[X_CACHE_DIRECTORY] = compilerArgs.cacheDirectory
+    this[X_IR_BUILD_CACHE] = compilerArgs.irBuildCache
+    this[X_GENERATE_DTS] = compilerArgs.generateDts
+    this[X_GENERATE_POLYFILLS] = compilerArgs.generatePolyfills
+    this[X_STRICT_IMPLICIT_EXPORT_TYPES] = compilerArgs.strictImplicitExportType
+    this[X_ES_CLASSES] = compilerArgs.useEsClasses
+    this[X_PLATFORM_ARGUMENTS_IN_MAIN_FUNCTION] = compilerArgs.platformArgumentsProviderJsExpression
+    this[X_ES_GENERATORS] = compilerArgs.useEsGenerators
+    this[X_ES_ARROW_FUNCTIONS] = compilerArgs.useEsArrowFunctions
+    this[X_ES_LONG_AS_BIGINT] = compilerArgs.compileLongAsBigInt
+    this[X_TYPED_ARRAYS] = compilerArgs.typedArrays
+    this[X_FRIEND_MODULES_DISABLED] = compilerArgs.friendModulesDisabled
+    this[X_FRIEND_MODULES] = compilerArgs.friendModules
+    this[X_ENABLE_EXTENSION_FUNCTIONS_IN_EXTERNALS] = compilerArgs.extensionFunctionsInExternals
+    this[X_FAKE_OVERRIDE_VALIDATOR] = compilerArgs.fakeOverrideValidator
+    this[X_OPTIMIZE_GENERATED_JS] = compilerArgs.optimizeGeneratedJs
   }
 
   @Suppress("DEPRECATION")

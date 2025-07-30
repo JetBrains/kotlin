@@ -42,6 +42,10 @@ class BtaApiGenerator(private val targetPackage: String) : BtaGenerator {
                             returns(listTypeNameOf<String>())
                             this.addModifiers(KModifier.ABSTRACT)
                         }
+                        function("applyArgumentStrings") {
+                            addParameter("arguments", listTypeNameOf<String>())
+                            this.addModifiers(KModifier.ABSTRACT)
+                        }
                     }
                     generateGetPutFunctions(argumentTypeName)
                     addType(TypeSpec.companionObjectBuilder().apply {
@@ -162,21 +166,25 @@ class BtaApiGenerator(private val targetPackage: String) : BtaGenerator {
     fun TypeSpec.Builder.generateGetPutFunctions(parameter: ClassName) {
         function("get") {
             addKdoc(KDOC_OPTIONS_GET)
-            addModifiers(KModifier.ABSTRACT)
+            addModifiers(KModifier.OPERATOR, KModifier.ABSTRACT)
             val typeParameter = TypeVariableName("V")
             returns(typeParameter)
-            addModifiers(KModifier.OPERATOR)
             addTypeVariable(typeParameter)
             addParameter("key", parameter.parameterizedBy(typeParameter))
         }
         function("set") {
             addKdoc(KDOC_OPTIONS_SET)
-            addModifiers(KModifier.ABSTRACT)
+            addModifiers(KModifier.OPERATOR, KModifier.ABSTRACT)
             val typeParameter = TypeVariableName("V")
-            addModifiers(KModifier.OPERATOR)
             addTypeVariable(typeParameter)
             addParameter("key", parameter.parameterizedBy(typeParameter))
             addParameter("value", typeParameter)
+        }
+
+        function("contains") {
+            addModifiers(KModifier.OPERATOR, KModifier.ABSTRACT)
+            returns(BOOLEAN)
+            addParameter("key", parameter.parameterizedBy(STAR))
         }
     }
 }

@@ -3,7 +3,7 @@
 
 @file:OptIn(ExperimentalCompilerArgument::class)
 
-package org.jetbrains.kotlin.buildtools.api.`internal`.compat.arguments
+package org.jetbrains.kotlin.buildtools.`internal`.compat.arguments
 
 import kotlin.Any
 import kotlin.Boolean
@@ -14,23 +14,27 @@ import kotlin.collections.List
 import kotlin.collections.MutableMap
 import kotlin.collections.mutableListOf
 import kotlin.collections.mutableMapOf
-import org.jetbrains.kotlin.buildtools.api.arguments.CommonToolArguments
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonToolArguments.Companion.NOWARN
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonToolArguments.Companion.VERBOSE
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonToolArguments.Companion.VERSION
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonToolArguments.Companion.WERROR
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonToolArguments.Companion.WEXTRA
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
+import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
+import org.jetbrains.kotlin.buildtools.api.arguments.CommonToolArguments as ArgumentsCommonToolArguments
+import org.jetbrains.kotlin.cli.common.arguments.CommonToolArguments as CommonToolArguments
 
-internal open class CommonToolArgumentsImpl : CommonToolArguments {
+internal open class CommonToolArgumentsImpl : ArgumentsCommonToolArguments {
   private val optionsMap: MutableMap<String, Any?> = mutableMapOf()
 
   @Suppress("UNCHECKED_CAST")
-  override operator fun <V> `get`(key: CommonToolArguments.CommonToolArgument<V>): V = optionsMap[key.id] as V
+  override operator fun <V> `get`(key: ArgumentsCommonToolArguments.CommonToolArgument<V>): V = optionsMap[key.id] as V
 
-  override operator fun <V> `set`(key: CommonToolArguments.CommonToolArgument<V>, `value`: V) {
+  override operator fun <V> `set`(key: ArgumentsCommonToolArguments.CommonToolArgument<V>, `value`: V) {
     optionsMap[key.id] = `value`
   }
+
+  override operator fun contains(key: ArgumentsCommonToolArguments.CommonToolArgument<*>): Boolean = key.id in optionsMap
 
   @Suppress("UNCHECKED_CAST")
   public operator fun <V> `get`(key: CommonToolArgument<V>): V = optionsMap[key.id] as V
@@ -40,6 +44,16 @@ internal open class CommonToolArgumentsImpl : CommonToolArguments {
   }
 
   public operator fun contains(key: CommonToolArgument<*>): Boolean = key.id in optionsMap
+
+  @Suppress("DEPRECATION")
+  open override fun applyArgumentStrings(arguments: List<String>) {
+    val compilerArgs: CommonToolArguments = parseCommandLineArguments(arguments)
+    this[VERSION] = compilerArgs.version
+    this[VERBOSE] = compilerArgs.verbose
+    this[NOWARN] = compilerArgs.suppressWarnings
+    this[WERROR] = compilerArgs.allWarningsAsErrors
+    this[WEXTRA] = compilerArgs.extraWarnings
+  }
 
   @Suppress("DEPRECATION")
   @OptIn(ExperimentalCompilerArgument::class)

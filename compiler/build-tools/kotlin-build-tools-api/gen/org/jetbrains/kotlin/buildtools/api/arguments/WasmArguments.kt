@@ -25,6 +25,8 @@ public interface WasmArguments : CommonKlibBasedArguments {
    */
   public operator fun <V> `set`(key: WasmArgument<V>, `value`: V)
 
+  public operator fun contains(key: WasmArgument<*>): Boolean
+
   /**
    * Base class for [WasmArguments] options.
    *

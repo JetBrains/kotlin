@@ -27,6 +27,8 @@ public interface NativeArguments : CommonKlibBasedArguments {
    */
   public operator fun <V> `set`(key: NativeArgument<V>, `value`: V)
 
+  public operator fun contains(key: NativeArgument<*>): Boolean
+
   /**
    * Base class for [NativeArguments] options.
    *

@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.buildtools.api.tests.compilation.model
 import org.jetbrains.kotlin.buildtools.api.CompilationService
 import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
 import org.jetbrains.kotlin.buildtools.api.KotlinToolchain
-import org.jetbrains.kotlin.buildtools.api.internal.compat.asKotlinToolchain
+import org.jetbrains.kotlin.buildtools.internal.compat.asKotlinToolchain
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.BaseCompilationTest
 import org.junit.jupiter.api.Named
 import org.junit.jupiter.api.Named.named

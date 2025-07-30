@@ -32,7 +32,6 @@ fun main(args: Array<String>) {
         apiArgsStart?.let { args.copyOfRange(it, implArgsStart ?: args.size) },
         implArgsStart?.let { args.copyOfRange(implArgsStart, args.size) }
     ).map { localArgs ->
-        println("localargs ${localArgs.joinToString()}")
         val allowedLevels = if (localArgs[1] == "*") {
             null
         } else {
@@ -50,12 +49,7 @@ fun main(args: Array<String>) {
         val levels = mutableListOf<Pair<KotlinCompilerArgumentsLevel, TypeName?>>(kotlinCompilerArguments.topLevel to null)
         while (levels.isNotEmpty()) {
             val level = levels.popLast()
-            println(generator)
-            println("Allowed: $allowedLevels")
-            println("Level: " + level.first.name)
-            println(allowedLevels)
             if (allowedLevels?.let { level.first.name !in it } ?: false) {
-                println("Skipping")
                 continue
             }
             val output = generator.generateArgumentsForLevel(level.first, level.second)

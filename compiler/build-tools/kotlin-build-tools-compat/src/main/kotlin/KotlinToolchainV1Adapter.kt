@@ -5,13 +5,12 @@
 
 @file:OptIn(ExperimentalBuildToolsApi::class)
 
-package org.jetbrains.kotlin.buildtools.api.internal.compat
+package org.jetbrains.kotlin.buildtools.internal.compat
 
 import org.jetbrains.kotlin.buildtools.api.*
 import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy.WithDaemon.Companion.JVM_ARGUMENTS
 import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy.WithDaemon.Companion.SHUTDOWN_DELAY
 import org.jetbrains.kotlin.buildtools.api.ProjectId.Companion.RandomProjectUUID
-import org.jetbrains.kotlin.buildtools.api.internal.compat.arguments.JvmCompilerArgumentsImpl
 import org.jetbrains.kotlin.buildtools.api.js.JsPlatformToolchain
 import org.jetbrains.kotlin.buildtools.api.js.WasmPlatformToolchain
 import org.jetbrains.kotlin.buildtools.api.jvm.ClasspathSnapshotBasedIncrementalCompilationApproachParameters
@@ -32,11 +31,12 @@ import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmClasspathSnapshotti
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmClasspathSnapshottingOperation.Companion.PARSE_INLINED_LOCAL_CLASSES
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation
 import org.jetbrains.kotlin.buildtools.api.knative.NativePlatformToolchain
+import org.jetbrains.kotlin.buildtools.internal.compat.arguments.JvmCompilerArgumentsImpl
 import java.nio.file.Path
 import kotlin.io.path.absolutePathString
 import kotlin.time.toJavaDuration
 
-internal class KotlinToolchainV1Adapter(
+public class KotlinToolchainV1Adapter(
     private val compilationService: CompilationService,
 ) : KotlinToolchain {
     override val jvm: JvmPlatformToolchain = object : JvmPlatformToolchain {

@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.buildtools.api.arguments.WasmArguments.Companion.X_W
 import org.jetbrains.kotlin.buildtools.api.arguments.WasmArguments.Companion.X_WASM_USE_NEW_EXCEPTION_PROPOSAL
 import org.jetbrains.kotlin.buildtools.api.arguments.WasmArguments.Companion.X_WASM_USE_TRAPS_INSTEAD_OF_EXCEPTIONS
 import org.jetbrains.kotlin.cli.common.arguments.K2WasmCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
 
 internal open class WasmArgumentsImpl : CommonKlibBasedArgumentsImpl(), WasmArguments {
   private val optionsMap: MutableMap<String, Any?> = mutableMapOf()
@@ -48,6 +49,8 @@ internal open class WasmArgumentsImpl : CommonKlibBasedArgumentsImpl(), WasmArgu
   override operator fun <V> `set`(key: WasmArguments.WasmArgument<V>, `value`: V) {
     optionsMap[key.id] = `value`
   }
+
+  override operator fun contains(key: WasmArguments.WasmArgument<*>): Boolean = key.id in optionsMap
 
   @Suppress("UNCHECKED_CAST")
   public operator fun <V> `get`(key: WasmArgument<V>): V = optionsMap[key.id] as V
@@ -80,6 +83,30 @@ internal open class WasmArgumentsImpl : CommonKlibBasedArgumentsImpl(), WasmArgu
     if ("X_IR_DCE_DUMP_REACHABILITY_INFO_TO_FILE" in optionsMap) { arguments.irDceDumpReachabilityInfoToFile = get(X_IR_DCE_DUMP_REACHABILITY_INFO_TO_FILE) }
     if ("X_IR_DUMP_DECLARATION_IR_SIZES_TO_FILE" in optionsMap) { arguments.irDceDumpDeclarationIrSizesToFile = get(X_IR_DUMP_DECLARATION_IR_SIZES_TO_FILE) }
     return arguments
+  }
+
+  @Suppress("DEPRECATION")
+  override fun applyArgumentStrings(arguments: List<String>) {
+    super.applyArgumentStrings(arguments)
+    val compilerArgs: K2WasmCompilerArguments = parseCommandLineArguments(arguments)
+    this[X_WASM] = compilerArgs.wasm
+    this[X_WASM_TARGET] = compilerArgs.wasmTarget
+    this[X_WASM_DEBUG_INFO] = compilerArgs.wasmDebug
+    this[X_WASM_DEBUG_FRIENDLY] = compilerArgs.forceDebugFriendlyCompilation
+    this[X_WASM_GENERATE_WAT] = compilerArgs.wasmGenerateWat
+    this[X_WASM_KCLASS_FQN] = compilerArgs.wasmKClassFqn
+    this[X_WASM_ENABLE_ARRAY_RANGE_CHECKS] = compilerArgs.wasmEnableArrayRangeChecks
+    this[X_WASM_ENABLE_ASSERTS] = compilerArgs.wasmEnableAsserts
+    this[X_WASM_USE_TRAPS_INSTEAD_OF_EXCEPTIONS] = compilerArgs.wasmUseTrapsInsteadOfExceptions
+    this[X_WASM_USE_NEW_EXCEPTION_PROPOSAL] = compilerArgs.wasmUseNewExceptionProposal
+    this[X_WASM_NO_JSTAG] = compilerArgs.wasmNoJsTag
+    this[X_WASM_DEBUGGER_CUSTOM_FORMATTERS] = compilerArgs.debuggerCustomFormatters
+    this[X_WASM_SOURCE_MAP_INCLUDE_MAPPINGS_FROM_UNAVAILABLE_SOURCES] = compilerArgs.includeUnavailableSourcesIntoSourceMap
+    this[X_WASM_PRESERVE_IC_ORDER] = compilerArgs.preserveIcOrder
+    this[X_WASM_IC_CACHE_READONLY] = compilerArgs.icCacheReadonly
+    this[X_WASM_GENERATE_DWARF] = compilerArgs.generateDwarf
+    this[X_IR_DCE_DUMP_REACHABILITY_INFO_TO_FILE] = compilerArgs.irDceDumpReachabilityInfoToFile
+    this[X_IR_DUMP_DECLARATION_IR_SIZES_TO_FILE] = compilerArgs.irDceDumpDeclarationIrSizesToFile
   }
 
   @Suppress("DEPRECATION")

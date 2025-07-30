@@ -55,9 +55,6 @@ generatedSourcesTask(
             generationRoot.toString(),
             "api",
             "*",
-            "impl",
-            "commonToolArguments,commonCompilerArguments,jvmCompilerArguments",
-            "org.jetbrains.kotlin.buildtools.api.internal.compat.arguments"
         )
     }
 )
