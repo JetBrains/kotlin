@@ -926,6 +926,11 @@ public class ParsingTestGenerated extends AbstractParsingTest {
       runTest("compiler/testData/psi/topJvmPackageName.kt");
     }
 
+    @TestMetadata("topJvmPackageNameMultifile.kt")
+    public void testTopJvmPackageNameMultifile() {
+      runTest("compiler/testData/psi/topJvmPackageNameMultifile.kt");
+    }
+
     @TestMetadata("topLevelMembers.kt")
     public void testTopLevelMembers() {
       runTest("compiler/testData/psi/topLevelMembers.kt");

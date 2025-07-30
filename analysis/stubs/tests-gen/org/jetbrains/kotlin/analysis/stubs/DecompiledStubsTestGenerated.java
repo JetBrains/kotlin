@@ -1099,6 +1099,12 @@ public class DecompiledStubsTestGenerated extends AbstractDecompiledStubsTest {
   }
 
   @Test
+  @TestMetadata("topJvmPackageNameMultifile.kt")
+  public void testTopJvmPackageNameMultifile() {
+    runTest("compiler/testData/psi/topJvmPackageNameMultifile.kt");
+  }
+
+  @Test
   @TestMetadata("topLevelMembers.kt")
   public void testTopLevelMembers() {
     runTest("compiler/testData/psi/topLevelMembers.kt");
