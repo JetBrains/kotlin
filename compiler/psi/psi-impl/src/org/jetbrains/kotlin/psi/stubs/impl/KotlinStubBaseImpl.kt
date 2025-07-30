@@ -36,15 +36,13 @@ open class KotlinStubBaseImpl<T : KtElementImplStub<*>>(parent: StubElement<*>?,
         return collectProperties(stubInterface).mapNotNull { property -> renderProperty(property) }.sorted()
     }
 
-    private fun collectProperties(stubInterface: Class<*>): Collection<Method> {
-        val result = ArrayList<Method>()
-        result.addAll(stubInterface.declaredMethods.filter { it.parameterTypes!!.isEmpty() })
+    private fun collectProperties(stubInterface: Class<*>): Collection<Method> = buildList {
+        stubInterface.declaredMethods.filterTo(this) { it.parameterTypes.isEmpty() }
         for (baseInterface in stubInterface.interfaces) {
             if (baseInterface in BASE_STUB_INTERFACES) {
-                result.addAll(collectProperties(baseInterface))
+                this += collectProperties(baseInterface)
             }
         }
-        return result
     }
 
     private fun renderProperty(property: Method): String? {
@@ -59,7 +57,7 @@ open class KotlinStubBaseImpl<T : KtElementImplStub<*>>(parent: StubElement<*>?,
     }
 
     private fun getPropertyName(method: Method): String {
-        val methodName = method.name!!
+        val methodName = method.name
         if (methodName.startsWith("get")) {
             return methodName.substring(3).replaceFirstChar(Char::lowercaseChar)
         }
