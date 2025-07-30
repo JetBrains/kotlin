@@ -105,8 +105,7 @@ private class IrFileValidator(
     private val valueParameterCheckers: MutableList<IrValueParameterChecker> = mutableListOf()
     private val valueAccessCheckers: MutableList<IrValueAccessChecker> = mutableListOf()
     private val functionAccessCheckers: MutableList<IrFunctionAccessChecker> = mutableListOf(IrNoInlineUseSitesChecker)
-    private val functionReferenceCheckers: MutableList<IrFunctionReferenceChecker> =
-        mutableListOf(IrFunctionReferenceFunctionDispatchReceiverChecker)
+    private val functionReferenceCheckers: MutableList<IrFunctionReferenceChecker> = mutableListOf()
     private val constCheckers: MutableList<IrConstChecker> = mutableListOf()
     private val stringConcatenationCheckers: MutableList<IrStringConcatenationChecker> = mutableListOf()
     private val getObjectValueCheckers: MutableList<IrGetObjectValueChecker> = mutableListOf()
@@ -130,8 +129,7 @@ private class IrFileValidator(
     private val typeOperatorCheckers: MutableList<IrTypeOperatorChecker> = mutableListOf(IrTypeOperatorTypeOperandChecker)
     private val propertyCheckers: MutableList<IrPropertyChecker> = mutableListOf()
 
-    // TODO: Why don't we check parameters as well?
-    private val callCheckers: MutableList<IrCallChecker> = mutableListOf(IrCallFunctionDispatchReceiverChecker)
+    private val callCheckers: MutableList<IrCallChecker> = mutableListOf()
 
     init {
         if (config.checkValueScopes) {
@@ -174,9 +172,7 @@ private class IrFileValidator(
             fieldAccessExpressionCheckers.add(IrDynamicTypeFieldAccessChecker)
         }
         if (config.checkProperties) {
-            callCheckers.add(IrCallFunctionPropertiesChecker)
             functionCheckers.add(IrFunctionPropertiesChecker)
-            functionReferenceCheckers.add(IrFunctionReferenceFunctionPropertiesChecker)
             propertyCheckers.add(IrPropertyAccessorsChecker)
         }
         if (config.checkFunctionBody) {
