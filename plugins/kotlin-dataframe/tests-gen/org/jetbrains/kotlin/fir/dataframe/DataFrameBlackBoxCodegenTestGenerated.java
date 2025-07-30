@@ -404,6 +404,12 @@ public class DataFrameBlackBoxCodegenTestGenerated extends AbstractDataFrameBlac
   }
 
   @Test
+  @TestMetadata("importedSchema.kt")
+  public void testImportedSchema() {
+    runTest("plugins/kotlin-dataframe/testData/box/importedSchema.kt");
+  }
+
+  @Test
   @TestMetadata("infer.kt")
   public void testInfer() {
     runTest("plugins/kotlin-dataframe/testData/box/infer.kt");

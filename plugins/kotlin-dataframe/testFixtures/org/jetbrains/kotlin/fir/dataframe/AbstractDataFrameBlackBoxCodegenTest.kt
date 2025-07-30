@@ -6,8 +6,10 @@
 package org.jetbrains.kotlin.fir.dataframe
 
 import org.jetbrains.kotlin.fir.dataframe.services.DataFrameClasspathProvider
+import org.jetbrains.kotlin.fir.dataframe.services.DataFrameDirectives
 import org.jetbrains.kotlin.fir.dataframe.services.DataFramePluginAnnotationsProvider
 import org.jetbrains.kotlin.fir.dataframe.services.ExperimentalExtensionRegistrarConfigurator
+import org.jetbrains.kotlin.fir.dataframe.services.TestUtilsSourceProvider
 import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
 import org.jetbrains.kotlin.test.configuration.enableLazyResolvePhaseChecking
@@ -32,24 +34,11 @@ open class AbstractDataFrameBlackBoxCodegenTest : AbstractFirLightTreeBlackBoxCo
             builder.useAdditionalSourceProviders(::SelectionDslUtilsSourceProvider)
         }
         builder.enableLazyResolvePhaseChecking()
+        builder.useDirectives(DataFrameDirectives)
         builder.useConfigurators(::DataFramePluginAnnotationsProvider)
         builder.useConfigurators(::ExperimentalExtensionRegistrarConfigurator)
         builder.useCustomRuntimeClasspathProviders(::DataFrameClasspathProvider)
         builder.useAdditionalSourceProviders(::TestUtilsSourceProvider)
-    }
-
-    class TestUtilsSourceProvider(testServices: TestServices) : AdditionalSourceProvider(testServices) {
-        companion object {
-            const val COMMON_SOURCE_PATH = "plugins/kotlin-dataframe/testData/testUtils.kt"
-        }
-
-        override fun produceAdditionalFiles(
-            globalDirectives: RegisteredDirectives,
-            module: TestModule,
-            testModuleStructure: TestModuleStructure,
-        ): List<TestFile> {
-            return listOf(File(COMMON_SOURCE_PATH).toTestFile())
-        }
     }
 
     class SelectionDslUtilsSourceProvider(testServices: TestServices) : AdditionalSourceProvider(testServices) {
