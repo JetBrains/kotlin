@@ -67,18 +67,9 @@ internal open class CommonKlibBasedArgumentsImpl : CommonCompilerArgumentsImpl()
     return arguments
   }
 
-  @Suppress("DEPRECATION")
   override fun applyArgumentStrings(arguments: List<String>) {
-    super.applyArgumentStrings(arguments)
     val compilerArgs: CommonKlibBasedCompilerArguments = parseCommandLineArguments(arguments)
-    this[X_KLIB_RELATIVE_PATH_BASE] = compilerArgs.relativePathBases
-    this[X_KLIB_NORMALIZE_ABSOLUTE_PATH] = compilerArgs.normalizeAbsolutePath
-    this[X_KLIB_ENABLE_SIGNATURE_CLASH_CHECKS] = compilerArgs.enableSignatureClashChecks
-    this[X_PARTIAL_LINKAGE] = compilerArgs.partialLinkageMode
-    this[X_PARTIAL_LINKAGE_LOGLEVEL] = compilerArgs.partialLinkageLogLevel
-    this[X_KLIB_DUPLICATED_UNIQUE_NAME_STRATEGY] = compilerArgs.duplicatedUniqueNameStrategy
-    this[X_KLIB_IR_INLINER] = compilerArgs.irInlinerBeforeKlibSerialization
-    this[X_KLIB_ABI_VERSION] = compilerArgs.customKlibAbiVersion
+    applyCompilerArguments(compilerArgs)
   }
 
   @Suppress("DEPRECATION")
@@ -95,6 +86,19 @@ internal open class CommonKlibBasedArgumentsImpl : CommonCompilerArgumentsImpl()
     if ("X_KLIB_IR_INLINER" in optionsMap) { arguments.add("-Xklib-ir-inliner=" + get(X_KLIB_IR_INLINER)) }
     if ("X_KLIB_ABI_VERSION" in optionsMap) { arguments.add("-Xklib-abi-version=" + get(X_KLIB_ABI_VERSION)) }
     return arguments
+  }
+
+  @Suppress("DEPRECATION")
+  public fun applyCompilerArguments(arguments: CommonKlibBasedCompilerArguments) {
+    super.applyCompilerArguments(arguments)
+    this[X_KLIB_RELATIVE_PATH_BASE] = arguments.relativePathBases
+    this[X_KLIB_NORMALIZE_ABSOLUTE_PATH] = arguments.normalizeAbsolutePath
+    this[X_KLIB_ENABLE_SIGNATURE_CLASH_CHECKS] = arguments.enableSignatureClashChecks
+    this[X_PARTIAL_LINKAGE] = arguments.partialLinkageMode
+    this[X_PARTIAL_LINKAGE_LOGLEVEL] = arguments.partialLinkageLogLevel
+    this[X_KLIB_DUPLICATED_UNIQUE_NAME_STRATEGY] = arguments.duplicatedUniqueNameStrategy
+    this[X_KLIB_IR_INLINER] = arguments.irInlinerBeforeKlibSerialization
+    this[X_KLIB_ABI_VERSION] = arguments.customKlibAbiVersion
   }
 
   public class CommonKlibBasedArgument<V>(

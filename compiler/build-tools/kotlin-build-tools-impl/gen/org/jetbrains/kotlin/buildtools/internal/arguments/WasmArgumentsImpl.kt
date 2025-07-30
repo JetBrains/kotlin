@@ -85,28 +85,9 @@ internal open class WasmArgumentsImpl : CommonKlibBasedArgumentsImpl(), WasmArgu
     return arguments
   }
 
-  @Suppress("DEPRECATION")
   override fun applyArgumentStrings(arguments: List<String>) {
-    super.applyArgumentStrings(arguments)
     val compilerArgs: K2WasmCompilerArguments = parseCommandLineArguments(arguments)
-    this[X_WASM] = compilerArgs.wasm
-    this[X_WASM_TARGET] = compilerArgs.wasmTarget
-    this[X_WASM_DEBUG_INFO] = compilerArgs.wasmDebug
-    this[X_WASM_DEBUG_FRIENDLY] = compilerArgs.forceDebugFriendlyCompilation
-    this[X_WASM_GENERATE_WAT] = compilerArgs.wasmGenerateWat
-    this[X_WASM_KCLASS_FQN] = compilerArgs.wasmKClassFqn
-    this[X_WASM_ENABLE_ARRAY_RANGE_CHECKS] = compilerArgs.wasmEnableArrayRangeChecks
-    this[X_WASM_ENABLE_ASSERTS] = compilerArgs.wasmEnableAsserts
-    this[X_WASM_USE_TRAPS_INSTEAD_OF_EXCEPTIONS] = compilerArgs.wasmUseTrapsInsteadOfExceptions
-    this[X_WASM_USE_NEW_EXCEPTION_PROPOSAL] = compilerArgs.wasmUseNewExceptionProposal
-    this[X_WASM_NO_JSTAG] = compilerArgs.wasmNoJsTag
-    this[X_WASM_DEBUGGER_CUSTOM_FORMATTERS] = compilerArgs.debuggerCustomFormatters
-    this[X_WASM_SOURCE_MAP_INCLUDE_MAPPINGS_FROM_UNAVAILABLE_SOURCES] = compilerArgs.includeUnavailableSourcesIntoSourceMap
-    this[X_WASM_PRESERVE_IC_ORDER] = compilerArgs.preserveIcOrder
-    this[X_WASM_IC_CACHE_READONLY] = compilerArgs.icCacheReadonly
-    this[X_WASM_GENERATE_DWARF] = compilerArgs.generateDwarf
-    this[X_IR_DCE_DUMP_REACHABILITY_INFO_TO_FILE] = compilerArgs.irDceDumpReachabilityInfoToFile
-    this[X_IR_DUMP_DECLARATION_IR_SIZES_TO_FILE] = compilerArgs.irDceDumpDeclarationIrSizesToFile
+    applyCompilerArguments(compilerArgs)
   }
 
   @Suppress("DEPRECATION")
@@ -133,6 +114,29 @@ internal open class WasmArgumentsImpl : CommonKlibBasedArgumentsImpl(), WasmArgu
     if ("X_IR_DCE_DUMP_REACHABILITY_INFO_TO_FILE" in optionsMap) { arguments.add("-Xir-dce-dump-reachability-info-to-file=" + get(X_IR_DCE_DUMP_REACHABILITY_INFO_TO_FILE)) }
     if ("X_IR_DUMP_DECLARATION_IR_SIZES_TO_FILE" in optionsMap) { arguments.add("-Xir-dump-declaration-ir-sizes-to-file=" + get(X_IR_DUMP_DECLARATION_IR_SIZES_TO_FILE)) }
     return arguments
+  }
+
+  @Suppress("DEPRECATION")
+  public fun applyCompilerArguments(arguments: K2WasmCompilerArguments) {
+    super.applyCompilerArguments(arguments)
+    this[X_WASM] = arguments.wasm
+    this[X_WASM_TARGET] = arguments.wasmTarget
+    this[X_WASM_DEBUG_INFO] = arguments.wasmDebug
+    this[X_WASM_DEBUG_FRIENDLY] = arguments.forceDebugFriendlyCompilation
+    this[X_WASM_GENERATE_WAT] = arguments.wasmGenerateWat
+    this[X_WASM_KCLASS_FQN] = arguments.wasmKClassFqn
+    this[X_WASM_ENABLE_ARRAY_RANGE_CHECKS] = arguments.wasmEnableArrayRangeChecks
+    this[X_WASM_ENABLE_ASSERTS] = arguments.wasmEnableAsserts
+    this[X_WASM_USE_TRAPS_INSTEAD_OF_EXCEPTIONS] = arguments.wasmUseTrapsInsteadOfExceptions
+    this[X_WASM_USE_NEW_EXCEPTION_PROPOSAL] = arguments.wasmUseNewExceptionProposal
+    this[X_WASM_NO_JSTAG] = arguments.wasmNoJsTag
+    this[X_WASM_DEBUGGER_CUSTOM_FORMATTERS] = arguments.debuggerCustomFormatters
+    this[X_WASM_SOURCE_MAP_INCLUDE_MAPPINGS_FROM_UNAVAILABLE_SOURCES] = arguments.includeUnavailableSourcesIntoSourceMap
+    this[X_WASM_PRESERVE_IC_ORDER] = arguments.preserveIcOrder
+    this[X_WASM_IC_CACHE_READONLY] = arguments.icCacheReadonly
+    this[X_WASM_GENERATE_DWARF] = arguments.generateDwarf
+    this[X_IR_DCE_DUMP_REACHABILITY_INFO_TO_FILE] = arguments.irDceDumpReachabilityInfoToFile
+    this[X_IR_DUMP_DECLARATION_IR_SIZES_TO_FILE] = arguments.irDceDumpDeclarationIrSizesToFile
   }
 
   public class WasmArgument<V>(

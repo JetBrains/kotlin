@@ -58,14 +58,9 @@ internal class MetadataArgumentsImpl : CommonCompilerArgumentsImpl(), MetadataAr
     return arguments
   }
 
-  @Suppress("DEPRECATION")
   override fun applyArgumentStrings(arguments: List<String>) {
-    super.applyArgumentStrings(arguments)
     val compilerArgs: K2MetadataCompilerArguments = parseCommandLineArguments(arguments)
-    this[CLASSPATH] = compilerArgs.classpath
-    this[MODULE_NAME] = compilerArgs.moduleName
-    this[X_FRIEND_PATHS] = compilerArgs.friendPaths
-    this[X_REFINES_PATHS] = compilerArgs.refinesPaths
+    applyCompilerArguments(compilerArgs)
   }
 
   @Suppress("DEPRECATION")
@@ -78,6 +73,15 @@ internal class MetadataArgumentsImpl : CommonCompilerArgumentsImpl(), MetadataAr
     if ("X_FRIEND_PATHS" in optionsMap) { arguments.add("-Xfriend-paths=" + get(X_FRIEND_PATHS)) }
     if ("X_REFINES_PATHS" in optionsMap) { arguments.add("-Xrefines-paths=" + get(X_REFINES_PATHS)) }
     return arguments
+  }
+
+  @Suppress("DEPRECATION")
+  public fun applyCompilerArguments(arguments: K2MetadataCompilerArguments) {
+    super.applyCompilerArguments(arguments)
+    this[CLASSPATH] = arguments.classpath
+    this[MODULE_NAME] = arguments.moduleName
+    this[X_FRIEND_PATHS] = arguments.friendPaths
+    this[X_REFINES_PATHS] = arguments.refinesPaths
   }
 
   public class MetadataArgument<V>(

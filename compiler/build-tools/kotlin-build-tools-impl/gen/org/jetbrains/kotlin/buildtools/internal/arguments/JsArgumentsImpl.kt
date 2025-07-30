@@ -137,54 +137,9 @@ internal class JsArgumentsImpl : WasmArgumentsImpl(), JsArguments {
     return arguments
   }
 
-  @Suppress("DEPRECATION")
   override fun applyArgumentStrings(arguments: List<String>) {
-    super.applyArgumentStrings(arguments)
     val compilerArgs: K2JSCompilerArguments = parseCommandLineArguments(arguments)
-    this[IR_OUTPUT_DIR] = compilerArgs.outputDir
-    this[IR_OUTPUT_NAME] = compilerArgs.moduleName
-    this[LIBRARIES] = compilerArgs.libraries
-    this[SOURCE_MAP] = compilerArgs.sourceMap
-    this[SOURCE_MAP_PREFIX] = compilerArgs.sourceMapPrefix
-    this[SOURCE_MAP_BASE_DIRS] = compilerArgs.sourceMapBaseDirs
-    this[SOURCE_MAP_EMBED_SOURCES] = compilerArgs.sourceMapEmbedSources
-    this[SOURCE_MAP_NAMES_POLICY] = compilerArgs.sourceMapNamesPolicy
-    this[TARGET] = compilerArgs.target
-    this[X_IR_KEEP] = compilerArgs.irKeep
-    this[MODULE_KIND] = compilerArgs.moduleKind
-    this[MAIN] = compilerArgs.main
-    this[X_IR_PRODUCE_KLIB_DIR] = compilerArgs.irProduceKlibDir
-    this[X_IR_PRODUCE_KLIB_FILE] = compilerArgs.irProduceKlibFile
-    this[X_IR_PRODUCE_JS] = compilerArgs.irProduceJs
-    this[X_IR_DCE] = compilerArgs.irDce
-    this[X_IR_DCE_RUNTIME_DIAGNOSTIC] = compilerArgs.irDceRuntimeDiagnostic
-    this[X_IR_DCE_PRINT_REACHABILITY_INFO] = compilerArgs.irDcePrintReachabilityInfo
-    this[X_IR_PROPERTY_LAZY_INITIALIZATION] = compilerArgs.irPropertyLazyInitialization
-    this[X_IR_MINIMIZED_MEMBER_NAMES] = compilerArgs.irMinimizedMemberNames
-    this[X_IR_MODULE_NAME] = compilerArgs.irModuleName
-    this[X_IR_SAFE_EXTERNAL_BOOLEAN] = compilerArgs.irSafeExternalBoolean
-    this[X_IR_SAFE_EXTERNAL_BOOLEAN_DIAGNOSTIC] = compilerArgs.irSafeExternalBooleanDiagnostic
-    this[X_IR_PER_MODULE] = compilerArgs.irPerModule
-    this[X_IR_PER_MODULE_OUTPUT_NAME] = compilerArgs.irPerModuleOutputName
-    this[X_IR_PER_FILE] = compilerArgs.irPerFile
-    this[X_IR_GENERATE_INLINE_ANONYMOUS_FUNCTIONS] = compilerArgs.irGenerateInlineAnonymousFunctions
-    this[X_INCLUDE] = compilerArgs.includes
-    this[X_CACHE_DIRECTORY] = compilerArgs.cacheDirectory
-    this[X_IR_BUILD_CACHE] = compilerArgs.irBuildCache
-    this[X_GENERATE_DTS] = compilerArgs.generateDts
-    this[X_GENERATE_POLYFILLS] = compilerArgs.generatePolyfills
-    this[X_STRICT_IMPLICIT_EXPORT_TYPES] = compilerArgs.strictImplicitExportType
-    this[X_ES_CLASSES] = compilerArgs.useEsClasses
-    this[X_PLATFORM_ARGUMENTS_IN_MAIN_FUNCTION] = compilerArgs.platformArgumentsProviderJsExpression
-    this[X_ES_GENERATORS] = compilerArgs.useEsGenerators
-    this[X_ES_ARROW_FUNCTIONS] = compilerArgs.useEsArrowFunctions
-    this[X_ES_LONG_AS_BIGINT] = compilerArgs.compileLongAsBigInt
-    this[X_TYPED_ARRAYS] = compilerArgs.typedArrays
-    this[X_FRIEND_MODULES_DISABLED] = compilerArgs.friendModulesDisabled
-    this[X_FRIEND_MODULES] = compilerArgs.friendModules
-    this[X_ENABLE_EXTENSION_FUNCTIONS_IN_EXTERNALS] = compilerArgs.extensionFunctionsInExternals
-    this[X_FAKE_OVERRIDE_VALIDATOR] = compilerArgs.fakeOverrideValidator
-    this[X_OPTIMIZE_GENERATED_JS] = compilerArgs.optimizeGeneratedJs
+    applyCompilerArguments(compilerArgs)
   }
 
   @Suppress("DEPRECATION")
@@ -237,6 +192,55 @@ internal class JsArgumentsImpl : WasmArgumentsImpl(), JsArguments {
     if ("X_FAKE_OVERRIDE_VALIDATOR" in optionsMap) { arguments.add("-Xfake-override-validator=" + get(X_FAKE_OVERRIDE_VALIDATOR)) }
     if ("X_OPTIMIZE_GENERATED_JS" in optionsMap) { arguments.add("-Xoptimize-generated-js=" + get(X_OPTIMIZE_GENERATED_JS)) }
     return arguments
+  }
+
+  @Suppress("DEPRECATION")
+  public fun applyCompilerArguments(arguments: K2JSCompilerArguments) {
+    super.applyCompilerArguments(arguments)
+    this[IR_OUTPUT_DIR] = arguments.outputDir
+    this[IR_OUTPUT_NAME] = arguments.moduleName
+    this[LIBRARIES] = arguments.libraries
+    this[SOURCE_MAP] = arguments.sourceMap
+    this[SOURCE_MAP_PREFIX] = arguments.sourceMapPrefix
+    this[SOURCE_MAP_BASE_DIRS] = arguments.sourceMapBaseDirs
+    this[SOURCE_MAP_EMBED_SOURCES] = arguments.sourceMapEmbedSources
+    this[SOURCE_MAP_NAMES_POLICY] = arguments.sourceMapNamesPolicy
+    this[TARGET] = arguments.target
+    this[X_IR_KEEP] = arguments.irKeep
+    this[MODULE_KIND] = arguments.moduleKind
+    this[MAIN] = arguments.main
+    this[X_IR_PRODUCE_KLIB_DIR] = arguments.irProduceKlibDir
+    this[X_IR_PRODUCE_KLIB_FILE] = arguments.irProduceKlibFile
+    this[X_IR_PRODUCE_JS] = arguments.irProduceJs
+    this[X_IR_DCE] = arguments.irDce
+    this[X_IR_DCE_RUNTIME_DIAGNOSTIC] = arguments.irDceRuntimeDiagnostic
+    this[X_IR_DCE_PRINT_REACHABILITY_INFO] = arguments.irDcePrintReachabilityInfo
+    this[X_IR_PROPERTY_LAZY_INITIALIZATION] = arguments.irPropertyLazyInitialization
+    this[X_IR_MINIMIZED_MEMBER_NAMES] = arguments.irMinimizedMemberNames
+    this[X_IR_MODULE_NAME] = arguments.irModuleName
+    this[X_IR_SAFE_EXTERNAL_BOOLEAN] = arguments.irSafeExternalBoolean
+    this[X_IR_SAFE_EXTERNAL_BOOLEAN_DIAGNOSTIC] = arguments.irSafeExternalBooleanDiagnostic
+    this[X_IR_PER_MODULE] = arguments.irPerModule
+    this[X_IR_PER_MODULE_OUTPUT_NAME] = arguments.irPerModuleOutputName
+    this[X_IR_PER_FILE] = arguments.irPerFile
+    this[X_IR_GENERATE_INLINE_ANONYMOUS_FUNCTIONS] = arguments.irGenerateInlineAnonymousFunctions
+    this[X_INCLUDE] = arguments.includes
+    this[X_CACHE_DIRECTORY] = arguments.cacheDirectory
+    this[X_IR_BUILD_CACHE] = arguments.irBuildCache
+    this[X_GENERATE_DTS] = arguments.generateDts
+    this[X_GENERATE_POLYFILLS] = arguments.generatePolyfills
+    this[X_STRICT_IMPLICIT_EXPORT_TYPES] = arguments.strictImplicitExportType
+    this[X_ES_CLASSES] = arguments.useEsClasses
+    this[X_PLATFORM_ARGUMENTS_IN_MAIN_FUNCTION] = arguments.platformArgumentsProviderJsExpression
+    this[X_ES_GENERATORS] = arguments.useEsGenerators
+    this[X_ES_ARROW_FUNCTIONS] = arguments.useEsArrowFunctions
+    this[X_ES_LONG_AS_BIGINT] = arguments.compileLongAsBigInt
+    this[X_TYPED_ARRAYS] = arguments.typedArrays
+    this[X_FRIEND_MODULES_DISABLED] = arguments.friendModulesDisabled
+    this[X_FRIEND_MODULES] = arguments.friendModules
+    this[X_ENABLE_EXTENSION_FUNCTIONS_IN_EXTERNALS] = arguments.extensionFunctionsInExternals
+    this[X_FAKE_OVERRIDE_VALIDATOR] = arguments.fakeOverrideValidator
+    this[X_OPTIMIZE_GENERATED_JS] = arguments.optimizeGeneratedJs
   }
 
   public class JsArgument<V>(
