@@ -182,9 +182,6 @@ private class IrFileValidator(
         if (config.checkFunctionBody) {
             functionCheckers.add(IrFunctionBodyChecker)
         }
-        if (config.checkUnboundSymbols) {
-            expressionCheckers.add(IrExpressionTypeChecker)
-        }
     }
 
     override fun visitElement(element: IrElement) {
