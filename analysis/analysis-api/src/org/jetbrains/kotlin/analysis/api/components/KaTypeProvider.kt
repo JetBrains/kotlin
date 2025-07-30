@@ -36,7 +36,10 @@ public interface KaTypeProvider : KaSessionComponent {
      *  approximation is sensible when the resulting [KaType] is analyzed in the same local context.
      */
     @KaExperimentalApi
-    @Deprecated("Use `approximateToSuperDenotable` instead", ReplaceWith("this.approximateToSuperDenotable(!approximateLocalTypes)"))
+    @Deprecated(
+        "Use `approximateToDenotableSupertype` instead",
+        ReplaceWith("this.approximateToDenotableSupertype(!approximateLocalTypes)")
+    )
     public fun KaType.approximateToSuperPublicDenotable(approximateLocalTypes: Boolean): KaType?
 
     /**
@@ -47,8 +50,8 @@ public interface KaTypeProvider : KaSessionComponent {
      */
     @KaExperimentalApi
     @Deprecated(
-        "Use `approximateToSuperDenotableOrSelf` instead",
-        ReplaceWith("this.approximateToSuperDenotableOrSelf(!approximateLocalTypes)")
+        "Use `approximateToDenotableSupertypeOrSelf` instead",
+        ReplaceWith("this.approximateToDenotableSupertypeOrSelf(!approximateLocalTypes)")
     )
     public fun KaType.approximateToSuperPublicDenotableOrSelf(approximateLocalTypes: Boolean): KaType = withValidityAssertion {
         @Suppress("DEPRECATION")
@@ -391,7 +394,10 @@ public val builtinTypes: KaBuiltinTypes
 @KaExperimentalApi
 @KaContextParameterApi
 context(context: KaTypeProvider)
-@Deprecated("Use `approximateToSuperDenotable` instead", ReplaceWith("this.approximateToSuperDenotable(!approximateLocalTypes)"))
+@Deprecated(
+    "Use `approximateToDenotableSupertype` instead",
+    ReplaceWith("this.approximateToDenotableSupertype(!approximateLocalTypes)")
+)
 public fun KaType.approximateToSuperPublicDenotable(approximateLocalTypes: Boolean): KaType? {
     return with(context) {
         @Suppress("DEPRECATION")
@@ -405,8 +411,8 @@ public fun KaType.approximateToSuperPublicDenotable(approximateLocalTypes: Boole
 @KaExperimentalApi
 @KaContextParameterApi
 @Deprecated(
-    "Use `approximateToSuperDenotableOrSelf` instead",
-    ReplaceWith("this.approximateToSuperDenotableOrSelf(!approximateLocalTypes)")
+    "Use `approximateToDenotableSupertypeOrSelf` instead",
+    ReplaceWith("this.approximateToDenotableSupertypeOrSelf(!approximateLocalTypes)")
 )
 context(context: KaTypeProvider)
 public fun KaType.approximateToSuperPublicDenotableOrSelf(approximateLocalTypes: Boolean): KaType {
