@@ -31,6 +31,10 @@ import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeOwner
  * While [symbol][org.jetbrains.kotlin.analysis.api.symbols.KaSymbolProvider.symbol] is actually a property from the [KaSymbolProvider][org.jetbrains.kotlin.analysis.api.symbols.KaSymbolProvider]
  * session component, it is usable directly in the [KaSession][org.jetbrains.kotlin.analysis.api.KaSession] context because the property has
  * been mixed into the session.
+ *
+ * All public API components inherited from [KaSessionComponent] are expected to be direct children of [KaSessionComponent].
+ * That's required for the correctness of the Analysis API context parameter bridge checker, which ensures that each API endpoint from
+ * session components has a corresponding context parameter bridge in the same file.
  */
 @SubclassOptInRequired(KaImplementationDetail::class)
 public interface KaSessionComponent : KaLifetimeOwner
