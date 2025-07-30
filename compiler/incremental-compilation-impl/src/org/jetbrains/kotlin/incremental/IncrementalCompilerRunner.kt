@@ -472,8 +472,10 @@ abstract class IncrementalCompilerRunner<
         while (dirtySources.any() || runWithNoDirtyKotlinSources(caches)) {
             val complementaryFiles = caches.platformCache.getComplementaryFilesRecursive(dirtySources)
             dirtySources.addAll(complementaryFiles)
+            dirtySources.addAll(caches.compilerPluginFilesCache.getSourceFilesReferencedByPlugins())
             caches.platformCache.markDirty(dirtySources)
             caches.inputsCache.removeOutputForSourceFiles(dirtySources)
+            caches.compilerPluginFilesCache.removeOutputsGeneratedByPlugins()
 
             val lookupTracker = LookupTrackerImpl(getLookupTrackerDelegate())
             val expectActualTracker = ExpectActualTrackerImpl()
@@ -546,6 +548,10 @@ abstract class IncrementalCompilerRunner<
                 caches.platformCache.updateComplementaryFiles(dirtySources, expectActualTracker)
                 caches.inputsCache.registerOutputForSourceFiles(generatedFiles)
                 caches.lookupCache.update(lookupTracker, sourcesToCompile, removedKotlinSources)
+                caches.compilerPluginFilesCache.let {
+                    it.recordSourceFilesReferencedByPlugins(outputItemsCollector.sourcesReferencedByCompilerPlugin)
+                    it.recordOutputFilesGeneratedByPlugins(outputItemsCollector.outputsFileGeneratedForPlugin)
+                }
                 updateCaches(services, caches, generatedFiles, changesCollector)
             }
             if (compilationMode is CompilationMode.Rebuild) {

@@ -22,6 +22,8 @@ import java.io.File
 
 interface OutputItemsCollector {
     fun add(sourceFiles: Collection<File>, outputFile: File)
+    fun addSourceReferencedByCompilerPlugin(sourceFile: File)
+    fun addOutputFileGeneratedForPlugin(outputFile: File)
 }
 
 class OutputItemsCollectorImpl : OutputItemsCollector {
@@ -30,8 +32,26 @@ class OutputItemsCollectorImpl : OutputItemsCollector {
 
     private val _outputs: MutableList<SimpleOutputItem> = mutableListOf()
 
+    val sourcesReferencedByCompilerPlugin: List<File>
+        get() = _sourcesReferencedByCompilerPlugin
+
+    private val _sourcesReferencedByCompilerPlugin: MutableList<File> = mutableListOf()
+
+    val outputsFileGeneratedForPlugin: List<File>
+        get() = _outputsFileGeneratedForPlugin
+
+    private val _outputsFileGeneratedForPlugin: MutableList<File> = mutableListOf()
+
     override fun add(sourceFiles: Collection<File>, outputFile: File) {
         _outputs.add(SimpleOutputItem(sourceFiles, outputFile))
+    }
+
+    override fun addSourceReferencedByCompilerPlugin(sourceFile: File) {
+        _sourcesReferencedByCompilerPlugin.add(sourceFile)
+    }
+
+    override fun addOutputFileGeneratedForPlugin(outputFile: File) {
+        _outputsFileGeneratedForPlugin.add(outputFile)
     }
 }
 

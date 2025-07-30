@@ -1,6 +1,7 @@
 ================ Step #1 =================
 
 Compiling files:
+  src/A.kt
   src/B.kt
   src/usage.kt
 End of files
