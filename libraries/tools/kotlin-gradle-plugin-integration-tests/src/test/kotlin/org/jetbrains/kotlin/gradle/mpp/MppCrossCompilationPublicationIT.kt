@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.jetbrains.kotlin.gradle.uklibs.setupMavenPublication
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
+import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
 import java.nio.file.Path
@@ -99,7 +100,7 @@ class MppCrossCompilationPublicationIT : KGPBaseTest() {
     ) {
         val multiplatformLibrary = publishMultiplatformLibrary(
             gradleVersion,
-            test = {
+            projectSetup = {
                 embedDirectoryFromTestData("cinterop-lib/cinterop", "src/nativeInterop/cinterop")
                 embedDirectoryFromTestData("cinterop-lib/src", "include")
                 embedDirectoryFromTestData("cinterop-lib/libs", "libs")
@@ -172,12 +173,123 @@ class MppCrossCompilationPublicationIT : KGPBaseTest() {
 
         assertEquals(expectedCinteropFiles, actualCinteropFiles, "Cinterop klib files don't match expected set")
     }
+
+    @DisplayName("Check FUS event for cross compilation enabled/disabled")
+    @GradleTest
+    fun testCrossCompilationDisabledFusEvent(
+        gradleVersion: GradleVersion,
+    ) {
+        project(
+            "empty",
+            gradleVersion,
+        ) {
+            plugins {
+                kotlin("multiplatform")
+            }
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    linuxX64()
+                    mingwX64()
+                    macosArm64()
+                    sourceSets.commonMain.get().compileStubSourceWithSourceSetName()
+                }
+            }
+
+            val eventPrefix = "${BooleanMetrics.KOTLIN_CROSS_COMPILATION_DISABLED.name}="
+            var events =
+                collectFusEvents(
+                    ":compileKotlinLinuxX64",
+                    ":compileKotlinMingwX64",
+                    ":compileKotlinMacosArm64",
+                ).count {
+                    it.startsWith(eventPrefix)
+                }
+
+            // Cross compilation enabled by default, so we expect 0 events
+            assertEquals(
+                0,
+                events
+            )
+
+            events =
+                collectFusEvents(
+                    ":compileKotlinLinuxX64",
+                    ":compileKotlinMingwX64",
+                    ":compileKotlinMacosArm64",
+                    "-Pkotlin.native.enableKlibsCrossCompilation=false"
+                ).count {
+                    it.startsWith(eventPrefix)
+                }
+
+            // Cross compilation disabled by user, so we expect 1 event
+            assertEquals(
+                1,
+                events
+            )
+        }
+    }
+
+    @DisplayName("Check FUS event for cross compilation not supported")
+    @GradleTest
+    fun testCrossCompilationNotSupportedFusEvent(
+        gradleVersion: GradleVersion,
+    ) {
+        project(
+            "empty",
+            gradleVersion,
+        ) {
+            embedDirectoryFromTestData("cinterop-lib/cinterop", "src/nativeInterop/cinterop")
+            embedDirectoryFromTestData("cinterop-lib/src", "include")
+            embedDirectoryFromTestData("cinterop-lib/libs", "libs")
+
+            plugins {
+                kotlin("multiplatform")
+            }
+            buildScriptInjection {
+                project.applyMultiplatform {
+                    linuxX64()
+                    mingwX64()
+                    macosArm64()
+                    iosArm64()
+                    sourceSets.commonMain.get().compileStubSourceWithSourceSetName()
+
+                    setupCInteropForTarget("mylib", KonanTarget.IOS_ARM64, "mylib_ios_arm64.def")
+                    setupCInteropForTarget("mylib", KonanTarget.MACOS_ARM64, "mylib_macos.def")
+                    setupCInteropForTarget("mylib", KonanTarget.LINUX_X64, "mylib_linux.def")
+                    setupCInteropForTarget("mylib", KonanTarget.MINGW_X64, "mylib_windows.def")
+                }
+            }
+
+            val eventPrefix = "${BooleanMetrics.KOTLIN_CROSS_COMPILATION_NOT_SUPPORTED.name}="
+            val notSupportedEventEvents =
+                collectFusEvents(
+                    ":compileKotlinLinuxX64",
+                    ":compileKotlinMingwX64",
+                    ":compileKotlinMacosArm64",
+                    ":compileKotlinIosArm64"
+                ).count {
+                    it.startsWith(eventPrefix)
+                }
+
+            if (HostManager.hostIsMac) {
+                assertEquals(
+                    0,
+                    notSupportedEventEvents
+                )
+            } else {
+                assertEquals(
+                    1,
+                    notSupportedEventEvents
+                )
+            }
+        }
+    }
 }
 
 private fun KGPBaseTest.publishMultiplatformLibrary(
     gradleVersion: GradleVersion,
     buildOptions: BuildOptions = defaultBuildOptions,
-    test: TestProject.() -> Unit = {},
+    projectSetup: TestProject.() -> Unit = {},
     kmpSetup: KotlinMultiplatformExtension.() -> Unit = {
         jvm()
         iosArm64()
@@ -188,13 +300,13 @@ private fun KGPBaseTest.publishMultiplatformLibrary(
     builder: (TestProject, String, BuildResult.() -> Unit) -> Unit = { project, taskName, assertions ->
         project.build(taskName, assertions = assertions)
     },
-    assertions: BuildResult.() -> Unit = {}
+    assertions: BuildResult.() -> Unit = {},
 ) = project(
     "empty",
     gradleVersion,
     buildOptions = buildOptions
 ) {
-    test()
+    projectSetup()
     plugins {
         kotlin("multiplatform")
     }
