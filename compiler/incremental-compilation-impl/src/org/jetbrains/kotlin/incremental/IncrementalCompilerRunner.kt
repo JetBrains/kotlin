@@ -453,7 +453,9 @@ abstract class IncrementalCompilerRunner<
         originalMessageCollector: MessageCollector,
     ): ExitCode {
         val dirtySources = when (compilationMode) {
-            is CompilationMode.Incremental -> compilationMode.dirtyFiles.toMutableLinkedSet()
+            is CompilationMode.Incremental -> compilationMode.dirtyFiles.toMutableLinkedSet().also {
+                it.addAll(caches.connectedFilesCache.getPluginRelatedSourceFiles())
+            }
             is CompilationMode.Rebuild -> LinkedHashSet(allKotlinSources)
         }
 
@@ -461,6 +463,7 @@ abstract class IncrementalCompilerRunner<
         val buildDirtyLookupSymbols = HashSet<LookupSymbol>()
         val buildDirtyFqNames = HashSet<FqName>()
         val allDirtySources = HashSet<File>()
+
         val transaction = icContext.transaction
 
         var exitCode = ExitCode.OK
@@ -546,6 +549,7 @@ abstract class IncrementalCompilerRunner<
                 caches.platformCache.updateComplementaryFiles(dirtySources, expectActualTracker)
                 caches.inputsCache.registerOutputForSourceFiles(generatedFiles)
                 caches.lookupCache.update(lookupTracker, sourcesToCompile, removedKotlinSources)
+                caches.connectedFilesCache.recordPluginRelatedSourceFiles(outputItemsCollector.dirtySources)
                 updateCaches(services, caches, generatedFiles, changesCollector)
             }
             if (compilationMode is CompilationMode.Rebuild) {

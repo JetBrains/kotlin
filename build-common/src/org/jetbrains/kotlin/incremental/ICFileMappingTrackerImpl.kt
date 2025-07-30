@@ -15,10 +15,10 @@ class ICFileMappingTrackerImpl(private val outputItemsCollector: OutputItemsColl
     }
 
     override fun recordDirtySourceFile(sourceFile: File) {
-        // nothing yet
+        outputItemsCollector.addDirtySource(sourceFile)
     }
 
     override fun recordDirtyOutputFile(outputFile: File) {
-        // nothing yet
+        outputItemsCollector.addDirtyOutput(outputFile)
     }
 }

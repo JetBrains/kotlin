@@ -27,6 +27,10 @@ class TransactionOutputsRegistrarTest {
         override fun add(sourceFiles: Collection<File>, outputFile: File) {
             addedOutputItems.add(sourceFiles to outputFile)
         }
+
+        override fun addDirtySource(sourceFile: File) {}
+
+        override fun addDirtyOutput(outputFile: File) {}
     }
 
     @Test

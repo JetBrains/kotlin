@@ -22,6 +22,8 @@ import java.io.File
 
 interface OutputItemsCollector {
     fun add(sourceFiles: Collection<File>, outputFile: File)
+    fun addDirtySource(sourceFile: File)
+    fun addDirtyOutput(outputFile: File)
 }
 
 class OutputItemsCollectorImpl : OutputItemsCollector {
@@ -30,8 +32,26 @@ class OutputItemsCollectorImpl : OutputItemsCollector {
 
     private val _outputs: MutableList<SimpleOutputItem> = mutableListOf()
 
+    val dirtySources: List<File>
+        get() = _dirtySources
+
+    private val _dirtySources: MutableList<File> = mutableListOf()
+
+    val dirtyOutputs: List<File>
+        get() = _dirtyOutputs
+
+    private val _dirtyOutputs: MutableList<File> = mutableListOf()
+
     override fun add(sourceFiles: Collection<File>, outputFile: File) {
         _outputs.add(SimpleOutputItem(sourceFiles, outputFile))
+    }
+
+    override fun addDirtySource(sourceFile: File) {
+        _dirtySources.add(sourceFile)
+    }
+
+    override fun addDirtyOutput(outputFile: File) {
+        _dirtyOutputs.add(outputFile)
     }
 }
 

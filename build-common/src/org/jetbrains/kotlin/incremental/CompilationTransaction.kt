@@ -279,4 +279,12 @@ class TransactionOutputsRegistrar(
         transaction.registerAddedOrChangedFile(outputFile.toPath())
         origin.add(sourceFiles, outputFile)
     }
+
+    override fun addDirtySource(sourceFile: File) {
+        origin.addDirtySource(sourceFile)
+    }
+
+    override fun addDirtyOutput(outputFile: File) {
+        origin.addDirtyOutput(outputFile)
+    }
 }
