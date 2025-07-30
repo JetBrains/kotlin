@@ -58,6 +58,7 @@ nativeTest(
     }
     // nativeTest sets workingDir to rootDir so here we need to override it
     workingDir = projectDir
+    systemProperty("user.dir", layout.buildDirectory.asFile.get().absolutePath)
 }
 
 val generateTests by generator("org.jetbrains.kotlin.generators.tests.GenerateKlibNativeTestsKt") {
