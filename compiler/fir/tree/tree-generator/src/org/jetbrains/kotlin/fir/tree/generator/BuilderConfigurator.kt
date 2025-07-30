@@ -340,10 +340,6 @@ class BuilderConfigurator(model: Model) : AbstractFirBuilderConfigurator<Abstrac
             defaultFalse("isContextSensitiveResolved")
         }
 
-        builder(backingFieldReference) {
-            defaultFalse("isContextSensitiveResolved")
-        }
-
         builder(resolvedTypeRef) {
             defaultNull("delegatedTypeRef")
             withCopy()
