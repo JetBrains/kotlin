@@ -128,7 +128,7 @@ class KotlinMocha internal constructor(
             add(mocha)
             add(file)
             addAll(cliArgs.toList())
-            addAll(cliArg("--reporter", "kotlin-web-helpers/dist/mocha-kotlin-reporter.js"))
+            addAll(cliArg("--reporter", modules.require("kotlin-web-helpers/dist/mocha-kotlin-reporter.js")))
             addAll(cliArg("--require", modules.require("kotlin-web-helpers/dist/kotlin-test-nodejs-runner.js")))
             if (debug) {
                 add(NO_TIMEOUT_ARG)
