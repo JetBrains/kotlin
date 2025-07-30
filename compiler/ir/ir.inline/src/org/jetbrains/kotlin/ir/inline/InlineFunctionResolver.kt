@@ -49,6 +49,10 @@ abstract class InlineFunctionResolverReplacingCoroutineIntrinsics<Ctx : Lowering
     override fun getFunctionDeclaration(symbol: IrFunctionSymbol): IrFunction? {
         if (!symbol.isBound) return null
         val realOwner = symbol.owner.resolveFakeOverrideOrSelf()
+        // TODO: remove after bootstrap
+        if (realOwner.symbol == context.symbols.getContinuation) {
+            realOwner.isInline = false
+        }
         if (!realOwner.isInline) return null
         // TODO: drop special cases KT-77111
         val result = when {

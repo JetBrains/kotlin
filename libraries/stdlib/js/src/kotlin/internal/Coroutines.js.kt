@@ -8,7 +8,8 @@ package kotlin.internal
 import kotlin.coroutines.Continuation
 
 @PublishedApi
-internal actual suspend fun <T> getContinuation(): Continuation<T> =
+@Suppress("NOTHING_TO_INLINE")
+internal actual inline fun <T> getContinuation(): Continuation<T> =
     kotlin.js.getContinuation()
 
 @PublishedApi

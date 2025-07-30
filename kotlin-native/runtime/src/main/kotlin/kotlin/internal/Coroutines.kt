@@ -11,7 +11,7 @@ import kotlin.native.internal.TypedIntrinsic
 
 @PublishedApi
 @TypedIntrinsic(IntrinsicType.GET_CONTINUATION)
-internal actual external suspend fun <T> getContinuation(): Continuation<T>
+internal actual external fun <T> getContinuation(): Continuation<T>
 
 @TypedIntrinsic(IntrinsicType.RETURN_IF_SUSPENDED)
 @PublishedApi
