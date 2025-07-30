@@ -83,6 +83,7 @@ internal open class LLPsiAwareClassLikeSymbolCache<E : PsiElement, V : FirClassL
     inline fun <reified T : E> getSymbolByPsi(
         classId: ClassId,
         declaration: PsiElement,
+        noinline buildAdditionalAttachments: (ExceptionAttachmentBuilder.(ClassId, CONTEXT) -> Unit)? = null,
         createContext: (T) -> CONTEXT,
     ): V? {
         if (declaration !is T) return null
@@ -90,7 +91,7 @@ internal open class LLPsiAwareClassLikeSymbolCache<E : PsiElement, V : FirClassL
         // Avoid the creation of the context if the symbol is already cached.
         getCachedSymbolByPsi(classId, declaration)?.let { return it }
 
-        return getSymbolByPsi(classId, declaration, createContext(declaration))
+        return getSymbolByPsi(classId, declaration, createContext(declaration), buildAdditionalAttachments)
     }
 
     /**
@@ -100,10 +101,15 @@ internal open class LLPsiAwareClassLikeSymbolCache<E : PsiElement, V : FirClassL
      * flexibility on the client side.
      */
     @LLModuleSpecificSymbolProviderAccess
-    fun getSymbolByPsi(classId: ClassId, declaration: E, context: CONTEXT): V? {
+    fun getSymbolByPsi(
+        classId: ClassId,
+        declaration: E,
+        context: CONTEXT,
+        buildAdditionalAttachments: (ExceptionAttachmentBuilder.(ClassId, CONTEXT) -> Unit)? = null,
+    ): V? {
         // Fast path: Query the cache normally. The *vast majority* of class IDs will not have ambiguities, hence most symbols will be
         // contained in the main cache.
-        val symbol = getSymbolByClassId(classId, context)
+        val symbol = getSymbolByClassId(classId, context, buildAdditionalAttachments)
             ?: return null // If we cannot find any symbol, there is no point in checking the ambiguity cache.
 
         if (symbol.hasPsi(declaration)) {
@@ -111,7 +117,11 @@ internal open class LLPsiAwareClassLikeSymbolCache<E : PsiElement, V : FirClassL
         }
 
         // Edge case: Access the fallback cache to provide an alternative symbol for `declaration`.
-        return ambiguityCache.getNotNullValueForNotNullContext(declaration, context)
+        return ambiguityCache.getNotNullValueForNotNullContext(declaration, context) { _, _ ->
+            if (buildAdditionalAttachments != null) {
+                buildAdditionalAttachments(classId, context)
+            }
+        }
     }
 
     /**

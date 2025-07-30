@@ -40,6 +40,7 @@ import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
+import org.jetbrains.kotlin.utils.exceptions.ExceptionAttachmentBuilder
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
 import org.jetbrains.kotlin.utils.exceptions.withVirtualFileEntry
@@ -127,10 +128,29 @@ internal class LLKotlinSourceSymbolProvider private constructor(
         classLikeDeclaration: KtClassLikeDeclaration?,
     ): FirClassLikeSymbol<*>? {
         if (!classId.isAccepted()) return null
-        return classLikeCache.getSymbolByClassId(classId, classLikeDeclaration) { classId, context ->
-            // To find out more about KT-62339, we're adding information about whether the declaration for the given class ID can *now* be
-            // found by the declaration provider (or is still `null`). And whether the given context element is actually in the scope of the
-            // symbol provider.
+        return classLikeCache.getSymbolByClassId(
+            classId,
+            classLikeDeclaration,
+            buildAdditionalAttachments = buildAdditionalAttachmentsForClassLikeSymbol,
+        )
+    }
+
+    @LLModuleSpecificSymbolProviderAccess
+    override fun getClassLikeSymbolByPsi(classId: ClassId, declaration: PsiElement): FirClassLikeSymbol<*>? {
+        if (!classId.isAccepted()) return null
+        return classLikeCache.getSymbolByPsi<KtClassLikeDeclaration>(
+            classId,
+            declaration,
+            buildAdditionalAttachments = buildAdditionalAttachmentsForClassLikeSymbol,
+        ) { it }
+    }
+
+    /**
+     * To find out more about KT-62339, we're adding information about whether the declaration for the given class ID can *now* be found by
+     * the declaration provider (or is still `null`). And whether the given context element is actually in the scope of the symbol provider.
+     */
+    private val buildAdditionalAttachmentsForClassLikeSymbol: ExceptionAttachmentBuilder.(ClassId, KtClassLikeDeclaration?) -> Unit =
+        { classId, context ->
             val declaration = declarationProvider.getClassLikeDeclarationByClassId(classId)
             withPsiEntry("declarationFromDeclarationProvider", declaration)
 
@@ -142,13 +162,6 @@ internal class LLKotlinSourceSymbolProvider private constructor(
                 withEntry("isContextInScope", isInContentScope.toString())
             }
         }
-    }
-
-    @LLModuleSpecificSymbolProviderAccess
-    override fun getClassLikeSymbolByPsi(classId: ClassId, declaration: PsiElement): FirClassLikeSymbol<*>? {
-        if (!classId.isAccepted()) return null
-        return classLikeCache.getSymbolByPsi<KtClassLikeDeclaration>(classId, declaration) { it }
-    }
 
     override fun getAllClassLikeSymbolsByClassId(classId: ClassId): List<FirClassLikeSymbol<*>> {
         val declarations = declarationProvider.getAllClassesByClassId(classId) + declarationProvider.getAllTypeAliasesByClassId(classId)
