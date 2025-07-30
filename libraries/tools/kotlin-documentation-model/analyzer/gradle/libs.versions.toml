@@ -22,7 +22,7 @@ javaDiffUtils = "4.12"
 
 ## Analysis
 kotlin-compiler = "2.2.0-dev-8822"
-kotlin-compiler-k2 = "2.2.0-dev-8822"
+kotlin-compiler-k2 = "2.2.20-dev-6511"
 
 # MUST match the version of the intellij platform used in the kotlin compiler,
 # otherwise this will lead to different versions of psi API and implementations
