@@ -24,6 +24,7 @@ internal class FirResolvedCallableReferenceImpl(
     override val source: KtSourceElement?,
     override val name: Name,
     override val resolvedSymbol: FirBasedSymbol<*>,
+    override var isContextSensitiveResolved: Boolean,
     override val inferredTypeArguments: MutableList<ConeKotlinType>,
     override val mappedArguments: CallableReferenceMappedArguments<FirExpression>,
 ) : FirResolvedCallableReference() {
@@ -32,5 +33,9 @@ internal class FirResolvedCallableReferenceImpl(
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirResolvedCallableReferenceImpl {
         return this
+    }
+
+    override fun replaceIsContextSensitiveResolved(newIsContextSensitiveResolved: Boolean) {
+        isContextSensitiveResolved = newIsContextSensitiveResolved
     }
 }

@@ -22,6 +22,7 @@ abstract class FirPropertyWithExplicitBackingFieldResolvedNamedReference : FirRe
     abstract override val source: KtSourceElement?
     abstract override val name: Name
     abstract override val resolvedSymbol: FirBasedSymbol<*>
+    abstract override val isContextSensitiveResolved: Boolean
     abstract val hasVisibleBackingField: Boolean
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
@@ -30,4 +31,6 @@ abstract class FirPropertyWithExplicitBackingFieldResolvedNamedReference : FirRe
     @Suppress("UNCHECKED_CAST")
     override fun <E : FirElement, D> transform(transformer: FirTransformer<D>, data: D): E =
         transformer.transformPropertyWithExplicitBackingFieldResolvedNamedReference(this, data) as E
+
+    abstract override fun replaceIsContextSensitiveResolved(newIsContextSensitiveResolved: Boolean)
 }

@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.name.Name
 
 internal class FirDelegateFieldReferenceImpl(
     override val source: KtSourceElement?,
+    override var isContextSensitiveResolved: Boolean,
     override val resolvedSymbol: FirDelegateFieldSymbol,
 ) : FirDelegateFieldReference() {
     override val name: Name
@@ -28,5 +29,9 @@ internal class FirDelegateFieldReferenceImpl(
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirDelegateFieldReferenceImpl {
         return this
+    }
+
+    override fun replaceIsContextSensitiveResolved(newIsContextSensitiveResolved: Boolean) {
+        isContextSensitiveResolved = newIsContextSensitiveResolved
     }
 }

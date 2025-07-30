@@ -26,6 +26,7 @@ class FirResolvedCallableReferenceBuilder {
     var source: KtSourceElement? = null
     lateinit var name: Name
     lateinit var resolvedSymbol: FirBasedSymbol<*>
+    var isContextSensitiveResolved: Boolean = false
     val inferredTypeArguments: MutableList<ConeKotlinType> = mutableListOf()
     lateinit var mappedArguments: CallableReferenceMappedArguments<FirExpression>
 
@@ -34,6 +35,7 @@ class FirResolvedCallableReferenceBuilder {
             source,
             name,
             resolvedSymbol,
+            isContextSensitiveResolved,
             inferredTypeArguments,
             mappedArguments,
         )

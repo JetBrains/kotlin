@@ -21,6 +21,7 @@ internal class FirPropertyWithExplicitBackingFieldResolvedNamedReferenceImpl(
     override val source: KtSourceElement?,
     override val name: Name,
     override val resolvedSymbol: FirBasedSymbol<*>,
+    override var isContextSensitiveResolved: Boolean,
     override val hasVisibleBackingField: Boolean,
 ) : FirPropertyWithExplicitBackingFieldResolvedNamedReference() {
 
@@ -28,5 +29,9 @@ internal class FirPropertyWithExplicitBackingFieldResolvedNamedReferenceImpl(
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirPropertyWithExplicitBackingFieldResolvedNamedReferenceImpl {
         return this
+    }
+
+    override fun replaceIsContextSensitiveResolved(newIsContextSensitiveResolved: Boolean) {
+        isContextSensitiveResolved = newIsContextSensitiveResolved
     }
 }

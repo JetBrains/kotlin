@@ -23,12 +23,14 @@ class FirResolvedNamedReferenceBuilder {
     var source: KtSourceElement? = null
     lateinit var name: Name
     lateinit var resolvedSymbol: FirBasedSymbol<*>
+    var isContextSensitiveResolved: Boolean = false
 
     fun build(): FirResolvedNamedReference {
         return FirResolvedNamedReferenceImpl(
             source,
             name,
             resolvedSymbol,
+            isContextSensitiveResolved,
         )
     }
 

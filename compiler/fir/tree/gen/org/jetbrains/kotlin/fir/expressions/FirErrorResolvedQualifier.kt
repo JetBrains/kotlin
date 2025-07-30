@@ -38,6 +38,7 @@ abstract class FirErrorResolvedQualifier : FirResolvedQualifier(), FirDiagnostic
     abstract override val canBeValue: Boolean
     abstract override val isFullyQualified: Boolean
     abstract override val nonFatalDiagnostics: List<ConeDiagnostic>
+    abstract override val isContextSensitiveResolved: Boolean
     abstract override val typeArguments: List<FirTypeProjection>
     abstract override val diagnostic: ConeDiagnostic
 
@@ -57,6 +58,8 @@ abstract class FirErrorResolvedQualifier : FirResolvedQualifier(), FirDiagnostic
     abstract override fun replaceResolvedToCompanionObject(newResolvedToCompanionObject: Boolean)
 
     abstract override fun replaceCanBeValue(newCanBeValue: Boolean)
+
+    abstract override fun replaceIsContextSensitiveResolved(newIsContextSensitiveResolved: Boolean)
 
     abstract override fun replaceTypeArguments(newTypeArguments: List<FirTypeProjection>)
 

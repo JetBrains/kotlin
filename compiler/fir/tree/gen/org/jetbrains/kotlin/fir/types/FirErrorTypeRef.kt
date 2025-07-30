@@ -25,6 +25,7 @@ abstract class FirErrorTypeRef : FirResolvedTypeRef(), FirDiagnosticHolder {
     abstract override val customRenderer: Boolean
     abstract override val coneType: ConeKotlinType
     abstract override val delegatedTypeRef: FirTypeRef?
+    abstract override val isContextSensitiveResolved: Boolean
     abstract override val diagnostic: ConeDiagnostic
     abstract val partiallyResolvedTypeRef: FirTypeRef?
 
@@ -36,6 +37,8 @@ abstract class FirErrorTypeRef : FirResolvedTypeRef(), FirDiagnosticHolder {
         transformer.transformErrorTypeRef(this, data) as E
 
     abstract override fun replaceAnnotations(newAnnotations: List<FirAnnotation>)
+
+    abstract override fun replaceIsContextSensitiveResolved(newIsContextSensitiveResolved: Boolean)
 
     abstract override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirErrorTypeRef
 

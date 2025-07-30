@@ -23,6 +23,7 @@ class FirPropertyWithExplicitBackingFieldResolvedNamedReferenceBuilder {
     var source: KtSourceElement? = null
     lateinit var name: Name
     lateinit var resolvedSymbol: FirBasedSymbol<*>
+    var isContextSensitiveResolved: Boolean = false
     var hasVisibleBackingField: Boolean by kotlin.properties.Delegates.notNull<Boolean>()
 
     fun build(): FirPropertyWithExplicitBackingFieldResolvedNamedReference {
@@ -30,6 +31,7 @@ class FirPropertyWithExplicitBackingFieldResolvedNamedReferenceBuilder {
             source,
             name,
             resolvedSymbol,
+            isContextSensitiveResolved,
             hasVisibleBackingField,
         )
     }

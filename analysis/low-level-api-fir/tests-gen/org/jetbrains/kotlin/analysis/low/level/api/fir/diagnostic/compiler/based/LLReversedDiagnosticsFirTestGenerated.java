@@ -2857,6 +2857,18 @@ public class LLReversedDiagnosticsFirTestGenerated extends AbstractLLReversedDia
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/fir/analysis-tests/testData/resolve/contextSensitiveResolutionUsingExpectedType"), Pattern.compile("^([^.]+)\\.kt(\\.can-freeze-ide)?$"), null, true);
       }
 
+      @Test
+      @TestMetadata("ambiguity.kt")
+      public void testAmbiguity() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/contextSensitiveResolutionUsingExpectedType/ambiguity.kt");
+      }
+
+      @Test
+      @TestMetadata("ambiguityStarImport.kt")
+      public void testAmbiguityStarImport() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/contextSensitiveResolutionUsingExpectedType/ambiguityStarImport.kt");
+      }
+
       @Nested
       @TestMetadata("compiler/fir/analysis-tests/testData/resolve/contextSensitiveResolutionUsingExpectedType/callArgumentPosition")
       @TestDataPath("$PROJECT_ROOT")

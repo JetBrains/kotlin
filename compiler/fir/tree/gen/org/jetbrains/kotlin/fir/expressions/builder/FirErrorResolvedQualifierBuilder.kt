@@ -40,6 +40,7 @@ class FirErrorResolvedQualifierBuilder : FirAbstractResolvedQualifierBuilder, Fi
     override var canBeValue: Boolean = false
     override var isFullyQualified: Boolean = false
     override val nonFatalDiagnostics: MutableList<ConeDiagnostic> = mutableListOf()
+    override var isContextSensitiveResolved: Boolean = false
     override val typeArguments: MutableList<FirTypeProjection> = mutableListOf()
     lateinit var diagnostic: ConeDiagnostic
 
@@ -57,6 +58,7 @@ class FirErrorResolvedQualifierBuilder : FirAbstractResolvedQualifierBuilder, Fi
             canBeValue,
             isFullyQualified,
             nonFatalDiagnostics.toMutableOrEmpty(),
+            isContextSensitiveResolved,
             typeArguments.toMutableOrEmpty(),
             diagnostic,
         )

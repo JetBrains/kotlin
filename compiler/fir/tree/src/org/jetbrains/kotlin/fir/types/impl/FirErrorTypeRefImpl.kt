@@ -29,6 +29,7 @@ internal class FirErrorTypeRefImpl(
     override var delegatedTypeRef: FirTypeRef?,
     override val diagnostic: ConeDiagnostic,
     override var partiallyResolvedTypeRef: FirTypeRef? = null,
+    override var isContextSensitiveResolved: Boolean = false,
 ) : FirErrorTypeRef() {
     override val customRenderer: Boolean
         get() = false
@@ -58,5 +59,9 @@ internal class FirErrorTypeRefImpl(
         partiallyResolvedTypeRef = partiallyResolvedTypeRef?.transform(transformer, data)
         transformChildren(transformer, data)
         return this
+    }
+
+    override fun replaceIsContextSensitiveResolved(newIsContextSensitiveResolved: Boolean) {
+        isContextSensitiveResolved = newIsContextSensitiveResolved
     }
 }

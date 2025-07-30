@@ -85,6 +85,7 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
                     resolvedSymbol,
                     // We don't allow inner classes capturing outer type parameters
                     ConeSubstitutor.Empty,
+                    isContextSensitiveResolved = true,
                 )
             }
 
@@ -397,7 +398,8 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
                     configuration.topContainer ?: configuration.containingClassDeclarations.lastOrNull(),
                     isOperandOfIsOperator,
                 )
-                val resolvedTypeSymbol = result.resolvedCandidateOrNull()?.symbol
+                val potentiallyResolvedCandidate = result.resolvedCandidateOrNull()
+                val resolvedTypeSymbol = potentiallyResolvedCandidate?.symbol
                 // We can expand typealiases from dependencies right away, as it won't depend on us back,
                 // so there will be no problems with recursion.
                 // In the ideal world, this should also work with some source dependencies as the only case
@@ -415,7 +417,12 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
                     }
                     else -> resolvedType
                 }
-                FirTypeResolutionResult(resolvedExpandedType, result.resolvedCandidateOrNull()?.diagnostic)
+
+                FirTypeResolutionResult(
+                    resolvedExpandedType,
+                    potentiallyResolvedCandidate?.diagnostic,
+                    potentiallyResolvedCandidate?.isContextSensitiveResolved ?: false
+                )
             }
             is FirFunctionTypeRef -> createFunctionType(typeRef)
             is FirDynamicTypeRef -> {

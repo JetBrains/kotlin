@@ -68,6 +68,7 @@ class TypeResolutionConfiguration private constructor(
 data class FirTypeResolutionResult(
     val type: ConeKotlinType,
     val diagnostic: ConeDiagnostic?,
+    val isContextSensitiveResolved: Boolean = false,
 )
 
 val FirSession.typeResolver: FirTypeResolver by FirSession.sessionComponentAccessor()

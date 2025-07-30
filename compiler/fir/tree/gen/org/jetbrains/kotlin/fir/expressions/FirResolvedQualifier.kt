@@ -37,6 +37,7 @@ abstract class FirResolvedQualifier : FirExpression() {
     abstract val canBeValue: Boolean
     abstract val isFullyQualified: Boolean
     abstract val nonFatalDiagnostics: List<ConeDiagnostic>
+    abstract val isContextSensitiveResolved: Boolean
     abstract val typeArguments: List<FirTypeProjection>
 
     override fun <R, D> accept(visitor: FirVisitor<R, D>, data: D): R =
@@ -55,6 +56,8 @@ abstract class FirResolvedQualifier : FirExpression() {
     abstract fun replaceResolvedToCompanionObject(newResolvedToCompanionObject: Boolean)
 
     abstract fun replaceCanBeValue(newCanBeValue: Boolean)
+
+    abstract fun replaceIsContextSensitiveResolved(newIsContextSensitiveResolved: Boolean)
 
     abstract fun replaceTypeArguments(newTypeArguments: List<FirTypeProjection>)
 

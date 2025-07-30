@@ -44,6 +44,13 @@ sealed class FirImplicitBuiltinTypeRef(
     override fun <D> transformAnnotations(transformer: FirTransformer<D>, data: D): FirResolvedTypeRef {
         return this
     }
+
+    override val isContextSensitiveResolved: Boolean
+        get() = false
+
+    override fun replaceIsContextSensitiveResolved(newIsContextSensitiveResolved: Boolean) {
+        throw AssertionError("Replacing context-sensitive resolved in FirImplicitBuiltinTypeRef is not supported")
+    }
 }
 
 class FirImplicitUnitTypeRef(

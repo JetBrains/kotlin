@@ -42,6 +42,7 @@ internal class FirErrorResolvedQualifierImpl(
     override var canBeValue: Boolean,
     override val isFullyQualified: Boolean,
     override var nonFatalDiagnostics: MutableOrEmptyList<ConeDiagnostic>,
+    override var isContextSensitiveResolved: Boolean,
     override var typeArguments: MutableOrEmptyList<FirTypeProjection>,
     override val diagnostic: ConeDiagnostic,
 ) : FirErrorResolvedQualifier() {
@@ -91,6 +92,10 @@ internal class FirErrorResolvedQualifierImpl(
 
     override fun replaceCanBeValue(newCanBeValue: Boolean) {
         canBeValue = newCanBeValue
+    }
+
+    override fun replaceIsContextSensitiveResolved(newIsContextSensitiveResolved: Boolean) {
+        isContextSensitiveResolved = newIsContextSensitiveResolved
     }
 
     override fun replaceTypeArguments(newTypeArguments: List<FirTypeProjection>) {

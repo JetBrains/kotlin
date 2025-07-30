@@ -316,8 +316,37 @@ class BuilderConfigurator(model: Model) : AbstractFirBuilderConfigurator<Abstrac
             additionalImports(stubReferenceType)
         }
 
+        builder(resolvedNamedReference, "FirResolvedNamedReferenceImpl") {
+            defaultFalse("isContextSensitiveResolved")
+        }
+
+        builder(resolvedNamedReference, "FirPropertyFromParameterResolvedNamedReference") {
+            defaultFalse("isContextSensitiveResolved")
+        }
+
+        builder(resolvedErrorReference) {
+            defaultFalse("isContextSensitiveResolved")
+        }
+
+        builder(resolvedCallableReference) {
+            defaultFalse("isContextSensitiveResolved")
+        }
+
+        builder(delegateFieldReference) {
+            defaultFalse("isContextSensitiveResolved")
+        }
+
+        builder(backingFieldReference) {
+            defaultFalse("isContextSensitiveResolved")
+        }
+
+        builder(propertyWithExplicitBackingFieldResolvedNamedReference) {
+            defaultFalse("isContextSensitiveResolved")
+        }
+
         builder(resolvedTypeRef) {
             defaultNull("delegatedTypeRef")
+            defaultFalse("isContextSensitiveResolved")
             withCopy()
         }
 
@@ -411,12 +440,12 @@ class BuilderConfigurator(model: Model) : AbstractFirBuilderConfigurator<Abstrac
 
         builder(resolvedQualifier) {
             parents += abstractResolvedQualifierBuilder
-            defaultFalse("isNullableLHSForCallableReference", "isFullyQualified", "canBeValue")
+            defaultFalse("isNullableLHSForCallableReference", "isFullyQualified", "canBeValue", "isContextSensitiveResolved")
         }
 
         builder(errorResolvedQualifier) {
             parents += abstractResolvedQualifierBuilder
-            defaultFalse("isNullableLHSForCallableReference", "isFullyQualified", "canBeValue")
+            defaultFalse("isNullableLHSForCallableReference", "isFullyQualified", "canBeValue", "isContextSensitiveResolved")
         }
 
 //        builder(safeCallExpression) {
