@@ -42,7 +42,8 @@ abstract class DebugRunner(testServices: TestServices) : JvmBoxRunner(testServic
         classPath: List<URL>,
         mainClassAndArguments: List<String>
     ): Process {
-        wholeFile = module.files.single { it.name == "test.kt" }.originalFile
+        wholeFile = module.files.singleOrNull { it.name == "test.kt" }?.originalFile
+            ?: error("There must be a file named 'test.kt' in the test")
 
         // Setup the java process to suspend waiting for debugging connection on a free port.
         val command = listOfNotNull(
