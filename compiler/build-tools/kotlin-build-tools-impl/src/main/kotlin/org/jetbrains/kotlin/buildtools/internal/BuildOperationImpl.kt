@@ -5,6 +5,9 @@
 
 package org.jetbrains.kotlin.buildtools.internal
 
+import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporter
+import org.jetbrains.kotlin.build.report.metrics.GradleBuildPerformanceMetric
+import org.jetbrains.kotlin.build.report.metrics.GradleBuildTime
 import org.jetbrains.kotlin.buildtools.api.BuildOperation
 import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
 import org.jetbrains.kotlin.buildtools.api.KotlinLogger
@@ -38,5 +41,7 @@ internal abstract class BuildOperationImpl<R> : BuildOperation<R> {
 
     companion object {
         val METRICS_COLLECTOR: Option<BuildMetricsCollector?> = Option("METRICS_COLLECTOR", default = null)
+        val XX_KGP_METRICS_COLLECTOR: Option<BuildMetricsReporter<GradleBuildTime, GradleBuildPerformanceMetric>?> =
+            Option("XX_KGP_METRICS_COLLECTOR", default = null)
     }
 }

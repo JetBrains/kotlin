@@ -22,6 +22,7 @@ internal class KotlinCompileCommonConfig(
             task.refinesMetadataPaths.from(compilationInfo.refinesPaths).disallowChanges()
             task.moduleName.set(providers.provider { compilationInfo.moduleName })
             task.incrementalModuleInfoProvider.disallowChanges()
+            task.runViaBuildToolsApi.value(false).disallowChanges()
         }
     }
 }
