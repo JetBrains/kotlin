@@ -1,5 +1,6 @@
 plugins {
     id("org.jetbrains.kotlin.jvm")
+    id("compiler-tests-convention")
 }
 
 dependencies {
@@ -56,7 +57,9 @@ fun JavaForkOptions.setKGPSourceRootPaths() {
     )
 }
 
-projectTest(jUnitMode = JUnitMode.JUnit4, parallel = true) {
-    useJUnit() // use JUnit4 as the `:generators` tests use JUnit 4, and we reuse the logic.
-    setKGPSourceRootPaths()
+compilerTests {
+    testTask(jUnitMode = JUnitMode.JUnit4, parallel = true) {
+        useJUnit() // use JUnit4 as the `:generators` tests use JUnit 4, and we reuse the logic.
+        setKGPSourceRootPaths()
+    }
 }

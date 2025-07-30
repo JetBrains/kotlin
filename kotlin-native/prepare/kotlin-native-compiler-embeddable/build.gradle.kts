@@ -5,6 +5,7 @@ import org.jetbrains.kotlin.nativeDistribution.nativeDistributionProperty
 
 plugins {
     kotlin("jvm")
+    id("compiler-tests-convention")
 }
 
 description = "Embeddable JAR of Kotlin/Native compiler"
@@ -112,16 +113,18 @@ open class ProjectTestArgumentProvider @Inject constructor(
     )
 }
 
-projectTest(jUnitMode = JUnitMode.JUnit4) {
-    /**
-     * It's expected that test should be executed on CI, but currently this project under `kotlin.native.enabled`
-     */
-    jvmArgumentProviders.add(objects.newInstance<ProjectTestArgumentProvider>().apply {
-        compilerClasspath.from(runtimeJar)
+compilerTests {
+    testTask(jUnitMode = JUnitMode.JUnit4) {
+        /**
+         * It's expected that test should be executed on CI, but currently this project under `kotlin.native.enabled`
+         */
+        jvmArgumentProviders.add(objects.newInstance<ProjectTestArgumentProvider>().apply {
+            compilerClasspath.from(runtimeJar)
 
-        // The tests run the compiler and try to produce an executable on host.
-        // So, distribution with stdlib and runtime for host is required.
-        nativeDistribution.set(project.nativeDistribution)
-        dependsOn(":kotlin-native:distRuntime")
-    })
+            // The tests run the compiler and try to produce an executable on host.
+            // So, distribution with stdlib and runtime for host is required.
+            nativeDistribution.set(project.nativeDistribution)
+            dependsOn(":kotlin-native:distRuntime")
+        })
+    }
 }

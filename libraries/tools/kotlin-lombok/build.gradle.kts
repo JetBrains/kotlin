@@ -3,6 +3,7 @@ description = "Kotlin lombok compiler plugin"
 plugins {
     id("gradle-plugin-common-configuration")
     id("jps-compatible")
+    id("compiler-tests-convention")
 }
 
 dependencies {
@@ -10,7 +11,9 @@ dependencies {
     commonApi(project(":kotlin-gradle-plugin-model"))
 }
 
-projectTest(parallel = true, jUnitMode = JUnitMode.JUnit4)
+compilerTests {
+    testTask(parallel = true, jUnitMode = JUnitMode.JUnit4)
+}
 
 gradlePlugin {
     plugins {

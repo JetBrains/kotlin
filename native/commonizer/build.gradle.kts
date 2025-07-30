@@ -1,5 +1,6 @@
 plugins {
     kotlin("jvm")
+    id("compiler-tests-convention")
 }
 
 description = "Kotlin KLIB Library Commonizer"
@@ -59,8 +60,10 @@ sourceSets {
     "test" { projectDefault() }
 }
 
-projectTest(parallel = true, jUnitMode = JUnitMode.JUnit4) {
-    workingDir = rootDir
+compilerTests {
+    testTask(parallel = true, jUnitMode = JUnitMode.JUnit4) {
+        workingDir = rootDir
+    }
 }
 
 runtimeJar()

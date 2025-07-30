@@ -1,5 +1,6 @@
 plugins {
     id("native-interop-plugin")
+    id("compiler-tests-convention")
 }
 
 dependencies {
@@ -18,4 +19,6 @@ nativeInteropPlugin {
     additionalLinkedStaticLibraries.set(emptyList<String>())
 }
 
-projectTest(jUnitMode = JUnitMode.JUnit5) // `projectTest()` is not available in kotlin-native/build-tools project
+compilerTests {
+    testTask(jUnitMode = JUnitMode.JUnit5)
+}

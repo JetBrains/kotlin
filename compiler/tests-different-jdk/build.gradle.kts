@@ -40,61 +40,62 @@ compilerTests {
     withMockJdkAnnotationsJar()
     withThirdPartyAnnotations()
     withThirdPartyJsr305()
-}
 
-fun Project.codegenTest(
-    target: Int,
-    jdk: JdkMajorVersion,
-    jvm: String = jdk.majorVersion.toString(),
-    targetInTestClass: String = "$target",
-    body: Test.() -> Unit = {}
-): TaskProvider<Test> = projectTest(
-    taskName = "codegenTarget${targetInTestClass}Jvm${jvm}Test",
-    jUnitMode = JUnitMode.JUnit5,
-    maxMetaspaceSizeMb = 1024
-) {
-    useJUnitPlatform()
+    fun codegenTestTask(
+        target: Int,
+        jdk: JdkMajorVersion,
+        jvm: String = jdk.majorVersion.toString(),
+        targetInTestClass: String = "$target",
+        body: Test.() -> Unit = {},
+    ) {
+        testTask(
+            taskName = "codegenTarget${targetInTestClass}Jvm${jvm}Test",
+            jUnitMode = JUnitMode.JUnit5,
+            maxMetaspaceSizeMb = 1024,
+            skipInLocalBuild = false
+        ) {
+            val testName = "JvmTarget${targetInTestClass}OnJvm${jvm}"
+            filter.includeTestsMatching("org.jetbrains.kotlin.codegen.jdk.$testName")
 
-    val testName = "JvmTarget${targetInTestClass}OnJvm${jvm}"
-    filter.includeTestsMatching("org.jetbrains.kotlin.codegen.jdk.$testName")
+            javaLauncher.set(project.getToolchainLauncherFor(jdk))
 
-    javaLauncher.set(project.getToolchainLauncherFor(jdk))
-
-    systemProperty("kotlin.test.default.jvm.target", "${if (target <= 8) "1." else ""}$target")
-    body()
-    doFirst {
-        logger.warn("Running tests with $target target and ${javaLauncher.get().metadata.installationPath.asFile}")
+            systemProperty("kotlin.test.default.jvm.target", "${if (target <= 8) "1." else ""}$target")
+            body()
+            doFirst {
+                logger.warn("Running tests with $target target and ${javaLauncher.get().metadata.installationPath.asFile}")
+            }
+            group = "verification"
+        }
     }
-    group = "verification"
-}
 
-//JDK 8
-// This is default one and is executed in default build configuration
-codegenTest(target = 8, jdk = JdkMajorVersion.JDK_1_8)
+    //JDK 8
+    // This is default one and is executed in default build configuration
+    codegenTestTask(target = 8, jdk = JdkMajorVersion.JDK_1_8)
 
-//JDK 11
-codegenTest(target = 8, jdk = JdkMajorVersion.JDK_11_0)
+    //JDK 11
+    codegenTestTask(target = 8, jdk = JdkMajorVersion.JDK_11_0)
 
-codegenTest(target = 11, jdk = JdkMajorVersion.JDK_11_0)
+    codegenTestTask(target = 11, jdk = JdkMajorVersion.JDK_11_0)
 
-//JDK 17
-codegenTest(target = 8, jdk = JdkMajorVersion.JDK_17_0)
+    //JDK 17
+    codegenTestTask(target = 8, jdk = JdkMajorVersion.JDK_17_0)
 
-codegenTest(target = 17, jdk = JdkMajorVersion.JDK_17_0) {
-    systemProperty("kotlin.test.box.d8.disable", true)
-}
+    codegenTestTask(target = 17, jdk = JdkMajorVersion.JDK_17_0) {
+        systemProperty("kotlin.test.box.d8.disable", true)
+    }
 
-//..also add this two tasks to build after adding fresh jdks to build agents
-val mostRecentJdk = JdkMajorVersion.values().last()
+    //..also add this two tasks to build after adding fresh jdks to build agents
+    val mostRecentJdk = JdkMajorVersion.values().last()
 
-//LAST JDK from JdkMajorVersion available on machine
-codegenTest(target = 8, jvm = "Last", jdk = mostRecentJdk)
+    //LAST JDK from JdkMajorVersion available on machine
+    codegenTestTask(target = 8, jvm = "Last", jdk = mostRecentJdk)
 
-codegenTest(
-    target = mostRecentJdk.majorVersion,
-    targetInTestClass = "Last",
-    jvm = "Last",
-    jdk = mostRecentJdk
-) {
-    systemProperty("kotlin.test.box.d8.disable", true)
+    codegenTestTask(
+        target = mostRecentJdk.majorVersion,
+        targetInTestClass = "Last",
+        jvm = "Last",
+        jdk = mostRecentJdk
+    ) {
+        systemProperty("kotlin.test.box.d8.disable", true)
+    }
 }

@@ -7,6 +7,7 @@ import org.jetbrains.kotlin.konan.target.HostManager
 plugins {
     kotlin("jvm")
     id("jps-compatible")
+    id("compiler-tests-convention")
 }
 
 sourceSets {
@@ -20,30 +21,31 @@ kotlin {
     }
 }
 
-projectTest(jUnitMode = JUnitMode.JUnit5) {
-    workingDir = rootDir
+compilerTests {
+    testTask(jUnitMode = JUnitMode.JUnit5) {
+        workingDir = rootDir
 
-    useJUnitPlatform()
-    val testProjectKlib = configurations.create("testProjectKlib") {
-        attributes {
-            attribute(Usage.USAGE_ATTRIBUTE, objects.named(KotlinUsages.KOTLIN_API))
-            attribute(Category.CATEGORY_ATTRIBUTE, objects.named(Category.LIBRARY))
-            attribute(KotlinPlatformType.attribute, KotlinPlatformType.native)
-            attribute(KotlinNativeTarget.konanTargetAttribute, HostManager.host.name)
+        val testProjectKlib = configurations.create("testProjectKlib") {
+            attributes {
+                attribute(Usage.USAGE_ATTRIBUTE, objects.named(KotlinUsages.KOTLIN_API))
+                attribute(Category.CATEGORY_ATTRIBUTE, objects.named(Category.LIBRARY))
+                attribute(KotlinPlatformType.attribute, KotlinPlatformType.native)
+                attribute(KotlinNativeTarget.konanTargetAttribute, HostManager.host.name)
+            }
         }
-    }
 
-    val testProjectKlibFiles = testProjectKlib.incoming.files
+        val testProjectKlibFiles = testProjectKlib.incoming.files
 
-    dependencies {
-        testProjectKlib(project("testProject"))
-    }
+        dependencies {
+            testProjectKlib(project("testProject"))
+        }
 
-    inputs.files(testProjectKlibFiles)
-        .withPathSensitivity(PathSensitivity.RELATIVE)
+        inputs.files(testProjectKlibFiles)
+            .withPathSensitivity(PathSensitivity.RELATIVE)
 
-    doFirst {
-        systemProperty("testKlibs", testProjectKlibFiles.joinToString(File.pathSeparator))
+        doFirst {
+            systemProperty("testKlibs", testProjectKlibFiles.joinToString(File.pathSeparator))
+        }
     }
 }
 

@@ -1,6 +1,7 @@
 plugins {
     kotlin("jvm")
     id("jps-compatible")
+    id("compiler-tests-convention")
 }
 
 sourceSets {
@@ -92,8 +93,10 @@ dependencies {
     testRuntimeOnly(libs.junit.jupiter.engine)
 }
 
-projectTest(parallel = true, jUnitMode = JUnitMode.JUnit4) {
-    workingDir = rootDir
+compilerTests {
+    testTask(parallel = true, jUnitMode = JUnitMode.JUnit4) {
+        workingDir = rootDir
+    }
 }
 
 val generateCompilerArgumentsCopy by generator("org.jetbrains.kotlin.generators.arguments.GenerateCompilerArgumentsCopyKt")

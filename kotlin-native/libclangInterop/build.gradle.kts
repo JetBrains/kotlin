@@ -4,6 +4,7 @@ import org.jetbrains.kotlin.tools.lib
 
 plugins {
     id("native-interop-plugin")
+    id("compiler-tests-convention")
 }
 
 dependencies {
@@ -76,4 +77,6 @@ nativeInteropPlugin {
     })
 }
 
-projectTest(jUnitMode = JUnitMode.JUnit5) // `projectTest()` is not available in kotlin-native/build-tools project
+compilerTests {
+    testTask(jUnitMode = JUnitMode.JUnit5)
+}

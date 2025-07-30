@@ -8,6 +8,7 @@ plugins {
     id("kotlin-git.gradle-build-conventions.binary-compatibility-extended")
     id("android-sdk-provisioner")
     id("asm-deprecating-transformer")
+    id("compiler-tests-convention")
     `java-test-fixtures`
 }
 
@@ -400,8 +401,10 @@ tasks.named("validatePlugins") {
     enabled = false
 }
 
-projectTest(jUnitMode = JUnitMode.JUnit4) {
-    workingDir = rootDir
+compilerTests {
+    testTask(jUnitMode = JUnitMode.JUnit4) {
+        workingDir = rootDir
+    }
 }
 
 gradlePlugin {
