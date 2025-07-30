@@ -38,6 +38,7 @@ import org.jetbrains.kotlin.util.getLinesPerSecond
 import org.jetbrains.kotlin.utils.KotlinPaths
 import org.jetbrains.kotlin.utils.PathUtil.kotlinPathsForDistDirectory
 import java.io.File
+import java.rmi.server.UnicastRemoteObject
 
 
 fun getPerformanceMetrics(compiler: CLICompiler<CommonCompilerArguments>): List<BuildMetricsValue> {
@@ -292,5 +293,6 @@ fun main() {
     )
 
     println("Compiler exit code: $exitCode")
+    UnicastRemoteObject.unexportObject(servicesFacade, false) // this should not be a remote object when we do not use RMI
 }
 
