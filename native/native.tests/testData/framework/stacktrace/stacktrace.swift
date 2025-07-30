@@ -9,10 +9,8 @@ func testStackTrace() throws {
     try assertTrue(trace[2].contains("stacktrace.kt:8"))
     try assertTrue(trace[3].contains("stacktrace.kt:13"))
     try assertTrue(trace[4].contains("<compiler-generated>"))
-
-    // See https://youtrack.jetbrains.com/issue/KT-76511/Native-Kotlin-stacktraces-dont-show-Swift-line-numbers.
-    // try assertTrue(trace[5].contains("stacktrace.swift:5"))
-    // try assertTrue(trace[6].contains("main.swift"))
+    try assertTrue(trace[5].contains("stacktrace.swift:5"))
+    try assertTrue(trace[6].contains("main.swift"))
 }
 
 class StacktraceTests : TestProvider {
