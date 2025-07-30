@@ -1,5 +1,5 @@
 OtherKt.class:
-  FILE[kind=Facade[packageFqName=some.other, facadeFqName=some.other.OtherKtKt]]
+  FILE[kind=Facade[packageFqName=some.other, facadeFqName=some.other.OtherKt]]
     PACKAGE_DIRECTIVE
       DOT_QUALIFIED_EXPRESSION
         REFERENCE_EXPRESSION[referencedName=some]
@@ -23,7 +23,7 @@ OtherKt.class:
 
 
 OtherKt__TopJvmPackageNameMultifileKt.class:
-  FILE[kind=Facade[packageFqName=some.other, facadeFqName=some.other.OtherKt__TopJvmPackageNameMultifileKtKt]]
+  FILE[kind=Facade[packageFqName=some.other, facadeFqName=some.other.OtherKt__TopJvmPackageNameMultifileKt]]
     PACKAGE_DIRECTIVE
       DOT_QUALIFIED_EXPRESSION
         REFERENCE_EXPRESSION[referencedName=some]

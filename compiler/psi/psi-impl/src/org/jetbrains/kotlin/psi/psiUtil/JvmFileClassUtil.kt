@@ -10,37 +10,35 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.*
 
 /**
- * Copy of org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
+ * Partial copy of org.jetbrains.kotlin.fileClasses.JvmFileClassUtil
  */
 internal object JvmFileClassUtil {
-    const val MULTIFILE_PART_NAME_DELIMITER = "__"
-    const val JVM_PACKAGE_NAME_SHORT = "JvmPackageName"
-    const val JVM_MULTIFILE_CLASS_SHORT = "JvmMultifileClass"
-    const val JVM_NAME_SHORT: String = "JvmName"
+    private const val MULTIFILE_PART_NAME_DELIMITER = "__"
+    private const val JVM_PACKAGE_NAME_SHORT = "JvmPackageName"
+    private const val JVM_MULTIFILE_CLASS_SHORT = "JvmMultifileClass"
+    private const val JVM_NAME_SHORT: String = "JvmName"
 
-    @JvmStatic
-    fun manglePartName(facadeName: String, fileName: String): String =
-        "$facadeName$MULTIFILE_PART_NAME_DELIMITER${PackagePartClassUtils.getFilePartShortName(fileName)}"
+    private fun manglePartName(facadeName: String, file: KtFile): String =
+        "$facadeName$MULTIFILE_PART_NAME_DELIMITER${PackagePartClassUtils.getFilePartShortName(file)}"
 
-    @JvmStatic
     fun getFileClassInfoNoResolve(file: KtFile): JvmFileClassInfo {
         val parsedAnnotations = parseJvmNameOnFileNoResolve(file)
         val packageFqName = parsedAnnotations?.jvmPackageName ?: file.packageFqName
         return when {
             parsedAnnotations != null -> {
-                val simpleName = parsedAnnotations.jvmName ?: PackagePartClassUtils.getFilePartShortName(file.name)
+                val simpleName = parsedAnnotations.jvmName ?: PackagePartClassUtils.getFilePartShortName(file)
                 val facadeClassFqName = packageFqName.child(Name.identifier(simpleName))
                 when {
                     parsedAnnotations.isMultifileClass -> JvmMultifileClassPartInfo(
-                        fileClassFqName = packageFqName.child(Name.identifier(manglePartName(simpleName, file.name))),
-                        facadeClassFqName = facadeClassFqName
+                        fileClassFqName = packageFqName.child(Name.identifier(manglePartName(simpleName, file))),
+                        facadeClassFqName = facadeClassFqName,
                     )
 
                     else -> JvmSimpleFileClassInfo(facadeClassFqName, true)
                 }
             }
 
-            else -> JvmSimpleFileClassInfo(PackagePartClassUtils.getPackagePartFqName(packageFqName, file.name), false)
+            else -> JvmSimpleFileClassInfo(PackagePartClassUtils.getPackagePartFqName(packageFqName, file), false)
         }
     }
 
@@ -58,17 +56,16 @@ internal object JvmFileClassUtil {
         return ParsedJvmFileClassAnnotations(jvmName, jvmPackageName, isMultifileClass)
     }
 
-    @JvmStatic
-    fun findAnnotationEntryOnFileNoResolve(file: KtFile, shortName: String): KtAnnotationEntry? =
+    private fun findAnnotationEntryOnFileNoResolve(file: KtFile, shortName: String): KtAnnotationEntry? =
         file.fileAnnotationList?.annotationEntries?.firstOrNull {
             it.calleeExpression?.constructorReferenceExpression?.getReferencedName() == shortName
         }
 
-    fun getLiteralStringFromAnnotation(annotation: KtAnnotationEntry): String? {
+    private fun getLiteralStringFromAnnotation(annotation: KtAnnotationEntry): String? {
         return getLiteralStringEntryFromAnnotation(annotation)?.text
     }
 
-    fun getLiteralStringEntryFromAnnotation(annotation: KtAnnotationEntry): KtLiteralStringTemplateEntry? {
+    private fun getLiteralStringEntryFromAnnotation(annotation: KtAnnotationEntry): KtLiteralStringTemplateEntry? {
         val stringTemplateExpression = annotation.valueArguments.firstOrNull()?.run {
             when (this) {
                 is KtValueArgument -> stringTemplateExpression

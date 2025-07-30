@@ -45,7 +45,7 @@ Marked.class:
 
 
 MarkedTopLevelKt.class:
-  FILE[kind=Facade[packageFqName=<root>, facadeFqName=MarkedTopLevelKtKt]]
+  FILE[kind=Facade[packageFqName=<root>, facadeFqName=MarkedTopLevelKt]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
     PROPERTY[fqName=markedTopProperty, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=markedTopProperty]
@@ -142,7 +142,7 @@ Unmarked.class:
 
 
 UnmarkedTopLevelKt.class:
-  FILE[kind=Facade[packageFqName=<root>, facadeFqName=UnmarkedTopLevelKtKt]]
+  FILE[kind=Facade[packageFqName=<root>, facadeFqName=UnmarkedTopLevelKt]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
     PROPERTY[fqName=unmarkedTopProperty, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=unmarkedTopProperty]

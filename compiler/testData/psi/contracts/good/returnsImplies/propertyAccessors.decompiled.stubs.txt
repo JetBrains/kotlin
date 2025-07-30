@@ -16,7 +16,7 @@ A.class:
 
 
 PropertyAccessorsKt.class:
-  FILE[kind=Facade[packageFqName=<root>, facadeFqName=PropertyAccessorsKtKt]]
+  FILE[kind=Facade[packageFqName=<root>, facadeFqName=PropertyAccessorsKt]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
     PROPERTY[fqName=isNotNull, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=true, isTopLevel=true, isVar=true, name=isNotNull]

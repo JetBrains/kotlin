@@ -1,5 +1,5 @@
 MultifileClass.class:
-  FILE[kind=Facade[packageFqName=test, facadeFqName=test.MultifileClassKt]]
+  FILE[kind=Facade[packageFqName=test, facadeFqName=test.MultifileClass]]
     PACKAGE_DIRECTIVE
       REFERENCE_EXPRESSION[referencedName=test]
     IMPORT_LIST
@@ -179,7 +179,7 @@ MultifileClass.class:
 
 
 MultifileClass__MultifileClassKt.class:
-  FILE[kind=Facade[packageFqName=test, facadeFqName=test.MultifileClass__MultifileClassKtKt]]
+  FILE[kind=Facade[packageFqName=test, facadeFqName=test.MultifileClass__MultifileClassKt]]
     PACKAGE_DIRECTIVE
       REFERENCE_EXPRESSION[referencedName=test]
     IMPORT_LIST
@@ -273,7 +273,7 @@ MultifileClass__MultifileClassKt.class:
 
 
 MultifileClass__MultifileClass__PartKt.class:
-  FILE[kind=Facade[packageFqName=test, facadeFqName=test.MultifileClass__MultifileClass__PartKtKt]]
+  FILE[kind=Facade[packageFqName=test, facadeFqName=test.MultifileClass__MultifileClass__PartKt]]
     PACKAGE_DIRECTIVE
       REFERENCE_EXPRESSION[referencedName=test]
     IMPORT_LIST
@@ -323,7 +323,7 @@ MultifileClass__MultifileClass__PartKt.class:
 
 
 MultifileClass__PartKt.class:
-  FILE[kind=Facade[packageFqName=test, facadeFqName=test.MultifileClass__PartKtKt]]
+  FILE[kind=Facade[packageFqName=test, facadeFqName=test.MultifileClass__PartKt]]
     PACKAGE_DIRECTIVE
       REFERENCE_EXPRESSION[referencedName=test]
     IMPORT_LIST

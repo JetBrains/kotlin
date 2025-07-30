@@ -9,20 +9,30 @@ import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.NameUtils
+import org.jetbrains.kotlin.psi.KtFile
 
 /**
- * Copy of org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
+ * Partial copy of org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
  */
 internal object PackagePartClassUtils {
     private const val PART_CLASS_NAME_SUFFIX = "Kt"
 
     @JvmStatic
-    fun getPackagePartFqName(packageFqName: FqName, fileName: String): FqName {
-        val partClassName = getFilePartShortName(fileName)
+    fun getPackagePartFqName(packageFqName: FqName, file: KtFile): FqName {
+        val partClassName = getFilePartShortName(file)
         return packageFqName.child(Name.identifier(partClassName))
     }
 
     @JvmStatic
-    fun getFilePartShortName(fileName: String): String =
-        NameUtils.getPackagePartClassNamePrefix(FileUtil.getNameWithoutExtension(fileName)) + PART_CLASS_NAME_SUFFIX
+    fun getFilePartShortName(file: KtFile): String {
+        val fileName = file.name
+        val nameWithoutExtension = FileUtil.getNameWithoutExtension(fileName)
+
+        // Decompiled .class files already have `Kt` suffix
+        if (file.isCompiled) {
+            return nameWithoutExtension
+        }
+
+        return NameUtils.getPackagePartClassNamePrefix(nameWithoutExtension) + PART_CLASS_NAME_SUFFIX
+    }
 }

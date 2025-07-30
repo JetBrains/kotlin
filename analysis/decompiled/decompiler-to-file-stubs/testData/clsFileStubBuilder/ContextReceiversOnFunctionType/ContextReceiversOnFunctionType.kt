@@ -1,7 +1,5 @@
 // JVM_FILE_NAME: ContextReceiversOnFunctionTypeKt
 // LANGUAGE: +ContextReceivers
-// BINARY_STUB_ONLY_TEST
-// KNM_K2_IGNORE
 // KNM_FE10_IGNORE
 
 @Target(AnnotationTarget.TYPE)

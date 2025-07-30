@@ -1,5 +1,5 @@
 FooKt.class:
-  FILE[kind=Facade[packageFqName=<root>, facadeFqName=FooKtKt]]
+  FILE[kind=Facade[packageFqName=<root>, facadeFqName=FooKt]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
     PROPERTY[fqName=foo, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=true, isTopLevel=true, isVar=false, name=foo]

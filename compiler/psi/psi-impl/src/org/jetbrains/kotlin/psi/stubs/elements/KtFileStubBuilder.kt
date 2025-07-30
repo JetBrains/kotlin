@@ -24,7 +24,7 @@ class KtFileStubBuilder : DefaultStubBuilder() {
 
         val kind = when {
             file.isScript() -> KotlinFileStubKindImpl.Script(packageFqName = packageFqName)
-            file.hasTopLevelCallables() -> {
+            file.hasTopLevelCallables() && (!file.isCompiled || file.name.endsWith(".class")) -> {
                 val fileClassInfo = JvmFileClassUtil.getFileClassInfoNoResolve(file)
                 KotlinFileStubKindImpl.Facade(
                     packageFqName = packageFqName,

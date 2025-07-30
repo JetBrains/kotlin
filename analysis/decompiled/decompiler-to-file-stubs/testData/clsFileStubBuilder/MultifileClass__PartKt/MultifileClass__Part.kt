@@ -1,7 +1,6 @@
 /* Unavailable @JvmName */
 // KNM_K2_IGNORE
 // KNM_FE10_IGNORE
-// BINARY_STUB_ONLY_TEST
 @file:[JvmName("MultifileClass") JvmMultifileClass]
 package test
 

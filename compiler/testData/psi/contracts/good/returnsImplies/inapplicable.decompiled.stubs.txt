@@ -1,4 +1,4 @@
-FILE[kind=Facade[packageFqName=<root>, facadeFqName=InapplicableKtKt]]
+FILE[kind=Facade[packageFqName=<root>, facadeFqName=InapplicableKt]]
   PACKAGE_DIRECTIVE
   IMPORT_LIST
   FUN[fqName=wrongFalse, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=true, name=wrongFalse]

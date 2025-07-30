@@ -1,5 +1,5 @@
 BazKt.class:
-  FILE[kind=Facade[packageFqName=<root>, facadeFqName=BazKtKt]]
+  FILE[kind=Facade[packageFqName=<root>, facadeFqName=BazKt]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
     FUN[fqName=baz, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=baz]

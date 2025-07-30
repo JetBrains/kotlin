@@ -1,5 +1,3 @@
-// BINARY_STUB_ONLY_TEST
-// KNM_K2_IGNORE
 // KNM_FE10_IGNORE
 package foo.TopLevelMembers
 

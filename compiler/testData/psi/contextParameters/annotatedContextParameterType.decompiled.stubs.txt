@@ -1,5 +1,5 @@
 MainKt.class:
-  FILE[kind=Facade[packageFqName=<root>, facadeFqName=MainKtKt]]
+  FILE[kind=Facade[packageFqName=<root>, facadeFqName=MainKt]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
     PROPERTY[fqName=bar, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=bar]

@@ -55,7 +55,7 @@ Anno2.class:
 
 
 FooKt.class:
-  FILE[kind=Facade[packageFqName=<root>, facadeFqName=FooKtKt]]
+  FILE[kind=Facade[packageFqName=<root>, facadeFqName=FooKt]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
     FUN[fqName=foo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo]

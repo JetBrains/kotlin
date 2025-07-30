@@ -1,4 +1,4 @@
-FILE[kind=Facade[packageFqName=kotlin, facadeFqName=kotlin.KotlinKt]]
+FILE[kind=File[packageFqName=kotlin]]
   PACKAGE_DIRECTIVE
     REFERENCE_EXPRESSION[referencedName=kotlin]
   IMPORT_LIST

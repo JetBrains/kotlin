@@ -8,7 +8,7 @@ A.class:
 
 
 ReceiversKt.class:
-  FILE[kind=Facade[packageFqName=<root>, facadeFqName=ReceiversKtKt]]
+  FILE[kind=Facade[packageFqName=<root>, facadeFqName=ReceiversKt]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
     FUN[fqName=foo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=false, name=foo]
