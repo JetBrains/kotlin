@@ -61,8 +61,7 @@ fun BuildResult.assertOutputDoesNotContain(
 
         val linesContainingSubString = occurrences.map { (startIndex, endIndex) ->
             output.subSequence(
-                (startIndex - wrappingCharsCount).coerceAtLeast(0),
-                (endIndex + wrappingCharsCount).coerceAtMost(output.length)
+                (startIndex - wrappingCharsCount).coerceAtLeast(0), (endIndex + wrappingCharsCount).coerceAtMost(output.length)
             )
         }
 
@@ -101,10 +100,7 @@ fun BuildResult.assertOutputDoesNotContain(
     assert(!output.contains(regexToCheck)) {
         printBuildOutput()
 
-        val matchedStrings = regexToCheck
-            .findAll(output)
-            .map { it.value }
-            .joinToString(prefix = "  ", separator = "\n  ")
+        val matchedStrings = regexToCheck.findAll(output).map { it.value }.joinToString(prefix = "  ", separator = "\n  ")
         "Build output contains following regex '$regexToCheck' matches:\n$matchedStrings"
     }
 }
@@ -124,10 +120,9 @@ fun BuildResult.assertOutputContainsExactlyTimes(
     expectedCount: Int = 1,
 ) {
     val occurrenceCount = expected.findAll(output).count()
-    assert(occurrenceCount == expectedCount) {
+    if (occurrenceCount != expectedCount) {
         printBuildOutput()
-
-        "Build output contains different number of '$expected' string occurrences - $occurrenceCount then $expectedCount"
+        assertEquals(expectedCount, occurrenceCount, "Build output contains unexpected number of '$expected' string occurrences.")
     }
 }
 
@@ -146,10 +141,7 @@ fun BuildResult.assertNoBuildWarnings(
     val cleanedOutput = (expectedWarnings + additionalExpectedWarnings).fold(output) { acc, s ->
         acc.replace(s, "")
     }
-    val warnings = cleanedOutput
-        .lineSequence()
-        .filter { it.trim().startsWith("w:") }
-        .toList()
+    val warnings = cleanedOutput.lineSequence().filter { it.trim().startsWith("w:") }.toList()
 
     assert(warnings.isEmpty()) {
         printBuildOutput()
@@ -167,9 +159,7 @@ fun BuildResult.assertKotlinDaemonJvmOptions(
     val jvmArgsCommonMessage = "Kotlin compile daemon JVM options: "
     assertOutputContains(jvmArgsCommonMessage)
     val argsRegex = "\\[.+?]".toRegex()
-    val argsStrings = output.lineSequence()
-        .filter { it.contains(jvmArgsCommonMessage) }
-        .map {
+    val argsStrings = output.lineSequence().filter { it.contains(jvmArgsCommonMessage) }.map {
             argsRegex.findAll(it).last().value.removePrefix("[").removeSuffix("]").split(", ")
         }
     val containsArgs = argsStrings.any {
@@ -187,8 +177,7 @@ fun BuildResult.assertBuildReportPathIsPrinted() {
     assertOutputContains("Kotlin build report is written to file://")
 }
 
-val NO_GRADLE_WARNINGS_DETECTOR_PLUGIN_ERROR_MESSAGE =
-    """
+val NO_GRADLE_WARNINGS_DETECTOR_PLUGIN_ERROR_MESSAGE = """
     The build uses warning mode other than `${WarningMode.Fail}` and uses a non-default project settings file.
     Please apply the `org.jetbrains.kotlin.test.gradle-warnings-detector` plugin to the settings.
 
@@ -205,8 +194,7 @@ fun getWarningModeChangeAdvice(warningMode: WarningMode) =
 fun BuildResult.assertDeprecationWarningsArePresent(warningMode: WarningMode) {
     assertOutputContains("[GradleWarningsDetectorPlugin] The plugin is being applied", NO_GRADLE_WARNINGS_DETECTOR_PLUGIN_ERROR_MESSAGE)
     assertOutputContains(
-        "[GradleWarningsDetectorPlugin] Some deprecation warnings were found during this build.",
-        getWarningModeChangeAdvice(warningMode)
+        "[GradleWarningsDetectorPlugin] Some deprecation warnings were found during this build.", getWarningModeChangeAdvice(warningMode)
     )
 }
 
@@ -218,20 +206,23 @@ fun BuildResult.assertDeprecationWarningsArePresent(warningMode: WarningMode) {
  * If the specified parameter name is found at the end of a key, the corresponding value is returned.
  * If the parameter is not found, the function returns null.
  */
-fun findParameterInOutput(name: String, output: String): String? =
-    output.lineSequence().mapNotNull { line ->
-        val (key, value) = line.split('=', limit = 2).takeIf { it.size == 2 } ?: return@mapNotNull null
-        if (key.endsWith(name)) value else null
-    }.firstOrNull()
+fun findParameterInOutput(name: String, output: String): String? = output.lineSequence().mapNotNull { line ->
+    val (key, value) = line.split('=', limit = 2).takeIf { it.size == 2 } ?: return@mapNotNull null
+    if (key.endsWith(name)) value else null
+}.firstOrNull()
 
 fun BuildResult.assertCompilerArgument(
     taskPath: String,
     expectedArgument: String,
-    logLevel: LogLevel = LogLevel.DEBUG
+    logLevel: LogLevel = LogLevel.DEBUG,
 ) {
     val compilerArguments = extractTaskCompilerArguments(taskPath, logLevel)
 
-    assert(compilerArguments.contains(expectedArgument)) {
+    assert(
+        compilerArguments.contains(expectedArgument) || (expectedArgument.contains("=") && compilerArguments.contains(
+            expectedArgument.replaceFirst("=", " ")
+        ))
+    ) {
         printBuildOutput()
 
         "$taskPath task compiler arguments don't contain $expectedArgument. Actual content: $compilerArguments"
@@ -260,8 +251,7 @@ fun BuildResult.assertCompilerArguments(
 ) {
     val compilerArguments = extractTaskCompilerArguments(taskPath, logLevel)
 
-    val nonExistingArguments = expectedArguments
-        .filter {
+    val nonExistingArguments = expectedArguments.filter {
             !compilerArguments.contains(it)
         }
 
@@ -279,7 +269,7 @@ fun BuildResult.assertCompilerArguments(
  */
 fun BuildResult.extractTaskCompilerArguments(
     taskPath: String,
-    logLevel: LogLevel = LogLevel.INFO
+    logLevel: LogLevel = LogLevel.INFO,
 ): String {
     val taskOutput = getOutputForTask(taskPath, logLevel)
     return taskOutput.lines().first {
@@ -288,7 +278,7 @@ fun BuildResult.extractTaskCompilerArguments(
 }
 
 fun BuildResult.extractNativeCompilerTaskArguments(
-    taskPath: String
+    taskPath: String,
 ): String {
     val taskOutput = getOutputForTask(taskPath, LogLevel.INFO)
     return taskOutput.substringAfter("Arguments = [\n").substringBefore("]\n")
@@ -389,13 +379,8 @@ fun BuildResult.assertOutputContainsNativeFrameworkVariant(variantName: String, 
     } catch (originalError: AssertionError) {
         val regexPattern = "Variant (.*?):"
         val matchedVariants = Regex(regexPattern).findAll(output).toList()
-        throw AssertionError(
-            "Expected variant $variantName. " +
-                    if (matchedVariants.isNotEmpty())
-                        "Found instead: " + matchedVariants.joinToString { it.groupValues[1] }
-                    else "No match.",
-            originalError
-        )
+        throw AssertionError("Expected variant $variantName. " + if (matchedVariants.isNotEmpty()) "Found instead: " + matchedVariants.joinToString { it.groupValues[1] }
+        else "No match.", originalError)
     }
 }
 
@@ -407,9 +392,7 @@ fun CommandLineArguments.assertNoDuplicates() {
     val argsWithoutLibraries = args.filter { it != "-library" }
 
     assertEquals(
-        argsWithoutLibraries.joinToString("\n"),
-        argsWithoutLibraries.toSet().joinToString("\n"),
-        "Link task has duplicated arguments"
+        argsWithoutLibraries.joinToString("\n"), argsWithoutLibraries.toSet().joinToString("\n"), "Link task has duplicated arguments"
     )
 }
 

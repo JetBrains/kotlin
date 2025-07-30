@@ -123,7 +123,10 @@ internal class CompilerOptionsIT : KGPBaseTest() {
             )
 
             build("assemble") {
-                assertOutputContainsExactlyTimes("-P plugin:blah-blah:", 3)
+                assertOutputContainsAny(
+                    "-P plugin:blah-blah:blah-blah1=1 -P plugin:blah-blah:blah-blah2=1 -P plugin:blah-blah:blah-blah3=1",
+                    "-P plugin:blah-blah:blah-blah1=1,plugin:blah-blah:blah-blah2=1,plugin:blah-blah:blah-blah3=1"
+                )
             }
         }
     }
@@ -166,7 +169,12 @@ internal class CompilerOptionsIT : KGPBaseTest() {
                 // we do not allow modifying free args for K/N at execution time
             )
             build(*compileTasks.toTypedArray()) {
-                assertOutputContainsExactlyTimes("-P plugin:blah-blah:", 3 * compileTasks.size) // 3 times per task
+                if (output.contains("-P plugin:blah-blah:blah-blah1=1,plugin:blah-blah:blah-blah2=1,plugin:blah-blah:blah-blah3=1")) {
+                    assertOutputContainsExactlyTimes("-P plugin:blah-blah:blah-blah1=1,plugin:blah-blah:blah-blah2=1,plugin:blah-blah:blah-blah3=1", 1)
+                    assertOutputContainsExactlyTimes("-P plugin:blah-blah:", 3 * (compileTasks.size - 1) + 1) // 3 times per task
+                } else {
+                    assertOutputContainsExactlyTimes("-P plugin:blah-blah:", 3 * compileTasks.size) // 3 times per task
+                }
             }
         }
     }
