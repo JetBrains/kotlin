@@ -8,9 +8,11 @@ package org.jetbrains.kotlin.analysis.decompiler
 import com.intellij.openapi.project.Project
 import com.intellij.openapi.vfs.VirtualFileManager
 import com.intellij.psi.PsiManager
+import com.intellij.util.indexing.FileContentImpl
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaPlatformInterface
 import org.jetbrains.kotlin.analysis.api.impl.base.projectStructure.KaBuiltinsModuleImpl
+import org.jetbrains.kotlin.analysis.decompiler.psi.KotlinBuiltInDecompiler
 import org.jetbrains.kotlin.analysis.decompiler.stub.files.serializeToString
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirBinaryTestConfigurator
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiExecutionTest
@@ -70,6 +72,7 @@ class BuiltinsDecompilerTest : AbstractAnalysisApiExecutionTest("analysis/stubs/
             file.text
         )
 
+        // Decompiled stub
         testServices.assertions.assertEquals(
             """
                 FILE[kind=File[packageFqName=<root>]]
@@ -78,6 +81,17 @@ class BuiltinsDecompilerTest : AbstractAnalysisApiExecutionTest("analysis/stubs/
 
             """.trimIndent(),
             file.calcStubTree().root.serializeToString(),
+        )
+
+        // Compiled stub
+        testServices.assertions.assertEquals(
+            """
+                FILE[kind=File[packageFqName=<root>]]
+                  PACKAGE_DIRECTIVE
+                  IMPORT_LIST
+
+            """.trimIndent(),
+            KotlinBuiltInDecompiler().stubBuilder.buildFileStub(FileContentImpl.createByFile(file.virtualFile))?.serializeToString(),
         )
     }
 }
