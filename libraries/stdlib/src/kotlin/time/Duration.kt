@@ -1125,6 +1125,8 @@ private const val SECONDS_PER_MINUTE = 60L
 private const val SECONDS_PER_HOUR = SECONDS_PER_MINUTE * 60L
 private const val SECONDS_PER_DAY = SECONDS_PER_HOUR * 24L
 
+private const val EPS = 1e-10
+
 private fun parseIsoStringFormat(
     value: String,
     startIndex: Int,
@@ -1166,7 +1168,7 @@ private fun parseIsoStringFormat(
     fun parseFractionalPartOfDouble(): Double {
         var result = 0.0
         var fractionMultiplier = 0.1
-        while (index < length) {
+        while (index < length && fractionMultiplier > EPS) {
             val ch = value[index]
             if (ch !in '0'..'9') break
             val digit = ch - '0'
@@ -1174,6 +1176,7 @@ private fun parseIsoStringFormat(
             fractionMultiplier *= 0.1
             index++
         }
+        while (index < length && value[index] in '0'..'9') index++
         return result
     }
 
