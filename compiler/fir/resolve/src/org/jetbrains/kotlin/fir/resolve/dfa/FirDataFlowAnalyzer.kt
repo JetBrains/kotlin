@@ -37,7 +37,6 @@ import org.jetbrains.kotlin.fir.resolve.getNarrowedDownSymbol
 import org.jetbrains.kotlin.fir.resolve.substitution.ConeSubstitutor
 import org.jetbrains.kotlin.fir.resolve.substitution.chain
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
-import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.resolve.transformers.body.resolve.FirAbstractBodyResolveTransformer
 import org.jetbrains.kotlin.fir.resolve.transformers.unwrapAnonymousFunctionExpression
@@ -1267,7 +1266,7 @@ abstract class FirDataFlowAnalyzer(
 
     private fun processBackingFieldAccess(flow: MutableFlow, qualifiedAccess: FirQualifiedAccessExpression) {
         val callee = qualifiedAccess.calleeReference as? FirPropertyWithExplicitBackingFieldResolvedNamedReference ?: return
-        val fieldSymbol = callee.getNarrowedDownSymbol(session) as? FirVariableSymbol<*> ?: return
+        val fieldSymbol = callee.getNarrowedDownSymbol(components.context.inlineFunction, session) as? FirVariableSymbol<*> ?: return
         val variable = flow.getOrCreateVariable(qualifiedAccess) ?: return
         flow.addTypeStatement(variable typeEq fieldSymbol.resolvedReturnType)
     }
