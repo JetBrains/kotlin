@@ -10,6 +10,7 @@ import kotlinx.collections.immutable.toPersistentSet
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.contracts.description.LogicOperationKind
 import org.jetbrains.kotlin.contracts.description.canBeRevisited
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.isObject
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.contracts.description.ConeBooleanExpression
@@ -21,6 +22,7 @@ import org.jetbrains.kotlin.fir.contracts.description.ConeReturnsEffectDeclarati
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.utils.lambdaArgumentParent
+import org.jetbrains.kotlin.fir.declarations.utils.visibility
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.references.symbol
@@ -1266,6 +1268,13 @@ abstract class FirDataFlowAnalyzer(
     }
 
     private fun processBackingFieldAccess(flow: MutableFlow, qualifiedAccess: FirQualifiedAccessExpression) {
+        val inlineFunction = components.context.inlineFunction
+        val visibilityCheckResult = inlineFunction?.visibility?.compareTo(Visibilities.Private)
+
+        if (visibilityCheckResult != null && visibilityCheckResult > 0) {
+            return
+        }
+
         val callee = qualifiedAccess.calleeReference as? FirPropertyWithExplicitBackingFieldResolvedNamedReference ?: return
         val fieldSymbol = callee.getNarrowedDownSymbol(session) as? FirVariableSymbol<*> ?: return
         val variable = flow.getOrCreateVariable(qualifiedAccess) ?: return
