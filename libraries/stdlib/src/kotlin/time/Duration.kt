@@ -1073,10 +1073,10 @@ private fun parseDuration(value: String, strictIso: Boolean, throwException: Boo
 
 internal enum class State {
     START,
-    AFTER_D_SIGN, AFTER_D_VALUE, AFTER_D,
-    AFTER_T, AFTER_T_SIGN, AFTER_T_VALUE,
-    AFTER_H, AFTER_H_SIGN, AFTER_H_VALUE,
-    AFTER_M, AFTER_M_SIGN, AFTER_M_VALUE,
+    AFTER_D_VALUE, AFTER_D,
+    AFTER_T, AFTER_T_VALUE,
+    AFTER_H, AFTER_H_VALUE,
+    AFTER_M, AFTER_M_VALUE,
     AFTER_DOT, AFTER_DOUBLE, AFTER_S
 }
 
@@ -1130,11 +1130,18 @@ private fun parseIsoStringFormatFSA(
 ): Duration {
     var totalSeconds = 0L
     var fractionalPart = 0.0
-    var sign = 1
     var index = startIndex
     var currentLongValue = 0L
 
     fun parseLong(): Long {
+        var sign = 1
+        val firstChar = value[index]
+        if (firstChar == '-') {
+            sign = -1
+            index++
+        } else if (firstChar == '+') {
+            index++
+        }
         var result = 0L
         while (index < length) {
             val ch = value[index]
@@ -1147,10 +1154,10 @@ private fun parseIsoStringFormatFSA(
                     if (value[index] !in '0'..'9') break
                     index++
                 }
-                return OVERFLOW_LIMIT
+                return OVERFLOW_LIMIT * sign
             }
         }
-        return result
+        return result * sign
     }
 
     fun parseFractionalPartOfDouble(): Double {
@@ -1172,31 +1179,19 @@ private fun parseIsoStringFormatFSA(
         val ch = value[index]
         state = when (state) {
             State.START -> when (ch) {
-                '+' -> {
-                    index++
-                    State.AFTER_D_SIGN
-                }
-                '-' -> {
-                    sign = -1
-                    index++
-                    State.AFTER_D_SIGN
-                }
                 'T' -> {
                     index++
                     State.AFTER_T
                 }
-                else -> State.AFTER_D_SIGN
-            }
-
-            State.AFTER_D_SIGN -> {
-                val prevIndex = index
-                val daysAsLong = parseLong() * sign
-                if (index == prevIndex) return throwExceptionOrInvalid(throwException)
-                sign = 1
-                totalSeconds = totalSeconds.addWithoutOverflow(
-                    daysAsLong.multiplyWithoutOverflow(SECONDS_PER_DAY), throwException
-                ).onInvalid { return Duration.INVALID }
-                State.AFTER_D_VALUE
+                else -> {
+                    val prevIndex = index
+                    val daysAsLong = parseLong()
+                    if (index == prevIndex + if (ch in "-+") 1 else 0) return throwExceptionOrInvalid(throwException)
+                    totalSeconds = totalSeconds.addWithoutOverflow(
+                        daysAsLong.multiplyWithoutOverflow(SECONDS_PER_DAY), throwException
+                    ).onInvalid { return Duration.INVALID }
+                    State.AFTER_D_VALUE
+                }
             }
 
             State.AFTER_D_VALUE -> when (ch) {
@@ -1215,24 +1210,10 @@ private fun parseIsoStringFormatFSA(
                 else -> break
             }
 
-            State.AFTER_T -> when (ch) {
-                '+' -> {
-                    index++
-                    State.AFTER_T_SIGN
-                }
-                '-' -> {
-                    sign = -1
-                    index++
-                    State.AFTER_T_SIGN
-                }
-                else -> State.AFTER_T_SIGN
-            }
-
-            State.AFTER_T_SIGN -> {
+            State.AFTER_T -> {
                 val prevIndex = index
-                currentLongValue = parseLong() * sign
-                if (index == prevIndex) return throwExceptionOrInvalid(throwException)
-                sign = 1
+                currentLongValue = parseLong()
+                if (index == prevIndex + if (ch in "-+") 1 else 0) return throwExceptionOrInvalid(throwException)
                 State.AFTER_T_VALUE
             }
 
@@ -1264,24 +1245,10 @@ private fun parseIsoStringFormatFSA(
                 else -> return throwExceptionOrInvalid(throwException, "Missing unit for value $currentLongValue")
             }
 
-            State.AFTER_H -> when (ch) {
-                '+' -> {
-                    index++
-                    State.AFTER_H_SIGN
-                }
-                '-' -> {
-                    sign = -1
-                    index++
-                    State.AFTER_H_SIGN
-                }
-                else -> State.AFTER_H_SIGN
-            }
-
-            State.AFTER_H_SIGN -> {
+            State.AFTER_H -> {
                 val prevIndex = index
-                currentLongValue = parseLong() * sign
-                if (index == prevIndex) return throwExceptionOrInvalid(throwException)
-                sign = 1
+                currentLongValue = parseLong()
+                if (index == prevIndex + if (ch in "-+") 1 else 0) return throwExceptionOrInvalid(throwException)
                 State.AFTER_H_VALUE
             }
 
@@ -1306,24 +1273,10 @@ private fun parseIsoStringFormatFSA(
                 else -> return throwExceptionOrInvalid(throwException, "Missing unit for value $currentLongValue")
             }
 
-            State.AFTER_M -> when (ch) {
-                '+' -> {
-                    index++
-                    State.AFTER_M_SIGN
-                }
-                '-' -> {
-                    sign = -1
-                    index++
-                    State.AFTER_M_SIGN
-                }
-                else -> State.AFTER_M_SIGN
-            }
-
-            State.AFTER_M_SIGN -> {
+            State.AFTER_M -> {
                 val prevIndex = index
-                currentLongValue = parseLong() * sign
-                if (index == prevIndex) return throwExceptionOrInvalid(throwException)
-                sign = 1
+                currentLongValue = parseLong()
+                if (index == prevIndex + if (ch in "-+") 1 else 0) return throwExceptionOrInvalid(throwException)
                 State.AFTER_M_VALUE
             }
 
