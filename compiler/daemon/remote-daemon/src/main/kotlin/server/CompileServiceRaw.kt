@@ -100,7 +100,7 @@ fun <ServicesFacadeT, JpsServicesFacadeT, CompilationResultsT> compileImpl(
     createReporter: (ServicesFacadeT, CompilationOptions) -> DaemonMessageReporter,
     createServices: (JpsServicesFacadeT, EventManager, Profiler) -> Services,
     getICReporter: (ServicesFacadeT, CompilationResultsT?, IncrementalCompilationOptions) -> RemoteBuildReporter<GradleBuildTime, GradleBuildPerformanceMetric>,
-) = run {
+): Int = run {
     val messageCollector = createMessageCollector(servicesFacade, compilationOptions)
     val daemonReporter = createReporter(servicesFacade, compilationOptions)
     val targetPlatform = compilationOptions.targetPlatform
@@ -119,7 +119,7 @@ fun <ServicesFacadeT, JpsServicesFacadeT, CompilationResultsT> compileImpl(
 
     if (argumentParseError != null) {
         messageCollector.report(CompilerMessageSeverity.ERROR, argumentParseError)
-        CompileService.CallResult.Good(ExitCode.COMPILATION_ERROR.code)
+        ExitCode.COMPILATION_ERROR.code
     } else when (compilationOptions.compilerMode) {
         CompilerMode.JPS_COMPILER -> {
             @Suppress("UNCHECKED_CAST")
@@ -138,7 +138,7 @@ fun <ServicesFacadeT, JpsServicesFacadeT, CompilationResultsT> compileImpl(
 
                     exitCode
                 }
-            }
+            }.get()
         }
         CompilerMode.NON_INCREMENTAL_COMPILER -> {
             doCompile(sessionId, daemonReporter, tracer = null) { _, _ ->
@@ -153,7 +153,7 @@ fun <ServicesFacadeT, JpsServicesFacadeT, CompilationResultsT> compileImpl(
                 }
 
                 exitCode
-            }
+            }.get()
         }
         CompilerMode.INCREMENTAL_COMPILER -> {
             val gradleIncrementalArgs = compilationOptions as IncrementalCompilationOptions
@@ -161,6 +161,7 @@ fun <ServicesFacadeT, JpsServicesFacadeT, CompilationResultsT> compileImpl(
 
             when (targetPlatform) {
                 CompileService.TargetPlatform.JVM -> withIncrementalCompilation(k2PlatformArgs) {
+                    TODO("we do not support incremental compilation at this moment")
                     // TODO we do not support incremental compilation at this moment
 
 //                    doCompile(sessionId, daemonReporter, tracer = null) { _, _ ->
@@ -177,6 +178,7 @@ fun <ServicesFacadeT, JpsServicesFacadeT, CompilationResultsT> compileImpl(
 //                    }
                 }
                 CompileService.TargetPlatform.JS -> withJsIC(k2PlatformArgs) {
+                    TODO("we do not support JS right now")
                     // TODO we do not support JS right now
 //                    doCompile(sessionId, daemonReporter, tracer = null) { _, _ ->
 //                        execJsIncrementalCompiler(
@@ -255,8 +257,6 @@ fun main() {
         }
     })
 
-
-
     val outputsCollector = { x: File, y: List<File> -> println("$x $y") }
     val servicesFacade = BasicCompilerServicesWithResultsFacadeServer(remoteMessageCollector, outputsCollector)
 
@@ -268,18 +268,20 @@ fun main() {
         requestedCompilationResults = arrayOf(),
     )
 
-    compileImpl(
+    val exitCode = compileImpl(
         sessionId = 1,
         compilerArguments = compilerArguments.toTypedArray(),
         compilationOptions = compilationOptions,
         servicesFacade = servicesFacade,
         compilationResults = null,
         hasIncrementalCaches = JpsCompilerServicesFacade::hasIncrementalCaches,
-        createMessageCollector = { facade, options -> RemoteMessageCollector(object : MessageSender {
-            override fun send(msg: MessageCollectorImpl.Message) {
-                println("this is our compilation message $msg")
-            }
-        }) },
+        createMessageCollector = { facade, options ->
+            RemoteMessageCollector(object : MessageSender {
+                override fun send(msg: MessageCollectorImpl.Message) {
+                    println("this is our compilation message $msg")
+                }
+            })
+        },
         createReporter = ::DaemonMessageReporter,
         createServices = { facade, eventManager, profiler ->
             // You'll need to implement this function or use an existing one
@@ -289,5 +291,6 @@ fun main() {
         getICReporter = { a, b, c -> getBuildReporter(a, b!!, c) }
     )
 
+    println("Compiler exit code: $exitCode")
 }
 
