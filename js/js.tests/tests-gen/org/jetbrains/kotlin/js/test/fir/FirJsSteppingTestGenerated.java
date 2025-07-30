@@ -655,6 +655,12 @@ public class FirJsSteppingTestGenerated extends AbstractFirJsSteppingTest {
   }
 
   @Test
+  @TestMetadata("supercall.kt")
+  public void testSupercall() {
+    runTest("compiler/testData/debug/stepping/supercall.kt");
+  }
+
+  @Test
   @TestMetadata("suspendFunWithLambdaParameter.kt")
   public void testSuspendFunWithLambdaParameter() {
     runTest("compiler/testData/debug/stepping/suspendFunWithLambdaParameter.kt");

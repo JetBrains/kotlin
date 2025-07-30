@@ -110,6 +110,12 @@ public class FirPsiJvmIrSourceRangesTestGenerated extends AbstractFirPsiJvmIrSou
   }
 
   @Test
+  @TestMetadata("supercall.kt")
+  public void testSupercall() {
+    runTest("compiler/testData/ir/sourceRanges/supercall.kt");
+  }
+
+  @Test
   @TestMetadata("this.kt")
   public void testThis() {
     runTest("compiler/testData/ir/sourceRanges/this.kt");

@@ -490,7 +490,12 @@ class CallAndReferenceGenerator(
         val calleeReference = qualifiedAccess.calleeReference
 
         if (qualifiedAccess is FirSuperReceiverExpression && dispatchReceiver != null) {
-            return visitor.convertToIrExpression(dispatchReceiver)
+            return qualifiedAccess.convertWithOffsets { startOffset, endOffset ->
+                visitor.convertToIrExpression(dispatchReceiver).apply {
+                    this.startOffset = startOffset
+                    this.endOffset = endOffset
+                }
+            }
         }
 
         val firSymbol = calleeReference.extractDeclarationSiteSymbol()
