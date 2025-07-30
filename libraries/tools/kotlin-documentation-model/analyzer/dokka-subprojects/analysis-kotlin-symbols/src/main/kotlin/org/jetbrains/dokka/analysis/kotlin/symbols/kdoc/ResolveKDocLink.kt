@@ -8,12 +8,16 @@ import com.intellij.psi.PsiElement
 import org.jetbrains.dokka.analysis.kotlin.symbols.translators.getDRIFromSymbol
 import org.jetbrains.dokka.links.DRI
 import org.jetbrains.dokka.utilities.DokkaLogger
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.analyze
+import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.idea.references.mainReference
 import org.jetbrains.kotlin.kdoc.psi.api.KDoc
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocLink
 import org.jetbrains.kotlin.kdoc.psi.impl.KDocName
+import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtPsiFactory
 
 /**
@@ -48,17 +52,41 @@ internal fun KaSession.resolveKDocTextLinkToDRI(link: String, context: PsiElemen
  */
 internal fun KaSession.resolveKDocTextLinkToSymbol(link: String, context: PsiElement? = null): KaSymbol? {
     val kDocLink = createKDocLink(link, context)
-    return kDocLink?.let { resolveToSymbol(it) }
+    return kDocLink?.let {
+        /**
+         *  Get [KaSession] is associated with [a dangling module][org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileModule]
+         */
+        analyze(kDocLink) { resolveToSymbol(it) }
+    }
 }
 
-private fun KaSession.createKDocLink(link: String, context: PsiElement? = null): KDocLink? {
-    val psiFactory = context?.let { KtPsiFactory.contextual(it) } ?: KtPsiFactory(this.useSiteModule.project)
+private fun KaSession.createKDocLink(link: String, context: PsiElement?): KDocLink? {
+    /**
+     * Creates a dangling file stored in-memory
+     * A such file belongs to [a separate module][org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileModule]
+     *
+     * Additional information: https://kotlin.github.io/analysis-api/in-memory-file-analysis.html#stand-alone-file-analysis
+     * @see [org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileModule]
+     */
+    val psiFactory = if (context != null) KtPsiFactory.contextual(context) else {
+        val currentModule: KaSourceModule = useSiteModule as? KaSourceModule
+            ?: throw IllegalStateException("Resolving KDoc links can be done only in a source module, not $useSiteModule")
+
+        // To pass context (dependencies) from the current source module to a dangling module,
+        // a random source file is selected as the context file
+        val randomKtSourceFile: KtFile =
+            @OptIn(KaExperimentalApi::class) currentModule.psiRoots.filterIsInstance<KtFile>().firstOrNull()
+                ?: return null
+
+        KtPsiFactory.contextual(randomKtSourceFile)
+    }
+
     val kDoc = psiFactory.createComment(
         """
     /**
     * [$link]
     */
- """.trimIndent()
+    """.trimIndent()
     ) as? KDoc
 
     return kDoc?.getDefaultSection()?.children?.filterIsInstance<KDocLink>()?.singleOrNull()
@@ -70,10 +98,19 @@ private fun KaSession.createKDocLink(link: String, context: PsiElement? = null):
  *
  * @return [DRI] or null if the [link] is unresolved
  */
-internal fun KaSession.resolveKDocLinkToDRI(link: KDocLink): DRI? {
-    val linkedSymbol = resolveToSymbol(link)
-    return if (linkedSymbol == null) null
-    else getDRIFromSymbol(linkedSymbol)
+internal fun resolveKDocLinkToDRI(kDocLink: KDocLink): DRI? {
+    /**
+     * [kDocLink] can belong to [a dangling module][org.jetbrains.kotlin.analysis.api.projectStructure.KaDanglingFileModule]
+     * or [a source module][org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule]
+     *
+     * Since [KaSession] is associated with a specific module,
+     * [analyze] should be called to get a corresponding instance of [KaSession]
+     */
+    analyze(kDocLink) {
+        val linkedSymbol = resolveToSymbol(kDocLink)
+        return if (linkedSymbol == null) null
+        else getDRIFromSymbol(linkedSymbol)
+    }
 }
 
 private fun KaSession.resolveToSymbol(kDocLink: KDocLink): KaSymbol? {
@@ -86,12 +123,12 @@ private fun KaSession.resolveToSymbol(kDocLink: KDocLink): KaSymbol? {
  *
  * TODO KT-64190
  */
-private var linkCandidatesComparator: Comparator<KaSymbol> = compareBy{
-    when(it) {
+private var linkCandidatesComparator: Comparator<KaSymbol> = compareBy {
+    when (it) {
         is KaClassifierSymbol -> 1
         is KaPackageSymbol -> 2
         is KaFunctionSymbol -> 3
-        is KaVariableSymbol-> 4
+        is KaVariableSymbol -> 4
         else -> 5
     }
 }
