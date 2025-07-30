@@ -20,21 +20,18 @@ repositories {
 }
 
 dependencies {
-    api(project(":compiler:daemon"))
-    api(project(":daemon-common"))
-    api(project(":kotlin-daemon-client"))
-    api(project(":kotlin-compiler-runner-unshaded"))
-    implementation(kotlin("stdlib"))
-    testImplementation(kotlin("test"))
-    api(project(":compiler:cli"))
-    api(project(":compiler:incremental-compilation-impl"))
-    api(project(":compiler:cli-common"))
-    api(project(":compiler:util"))
-    api(project(":core:compiler.common"))
-    implementation("it.unimi.dsi:fastutil:8.5.12")
-
-    runtimeOnly(intellijCore())
-    runtimeOnly(project(":kotlin-compiler-embeddable"))
+    compileOnly(project(":compiler:daemon"))
+    compileOnly(project(":daemon-common"))
+    compileOnly(project(":kotlin-compiler-runner-unshaded"))
+    compileOnly(kotlin("stdlib"))
+    compileOnly(project(":compiler:cli"))
+    compileOnly(project(":compiler:incremental-compilation-impl"))
+    compileOnly(project(":compiler:cli-common"))
+    compileOnly(project(":compiler:util"))
+    compileOnly(project(":core:compiler.common"))
+    compileOnly("it.unimi.dsi:fastutil:8.5.12")
+    compileOnly(intellijCore())
+    compileOnly("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2")
 
 
 //    implementation("org.jetbrains.kotlin:kotlin-stdlib:2.2.0")
@@ -45,14 +42,17 @@ dependencies {
         // or
 //    implementation("org.jetbrains.kotlin:kotlin-compiler:2.2.0")
 
-
+    implementation(project(":kotlin-daemon-client"))
     implementation("io.grpc:grpc-kotlin-stub:1.4.3")
     implementation("io.grpc:grpc-stub:1.73.0")
     implementation("io.grpc:grpc-protobuf:1.73.0")
     implementation("io.grpc:grpc-netty:1.73.0")
 
     implementation("com.google.protobuf:protobuf-kotlin:4.31.1")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2")
+
+    runtimeOnly(project(":kotlin-compiler-embeddable"))
+
+    testImplementation(kotlin("test"))
 }
 
 
