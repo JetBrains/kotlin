@@ -24,6 +24,7 @@ class FirResolvedErrorReferenceBuilder {
     var source: KtSourceElement? = null
     lateinit var name: Name
     lateinit var resolvedSymbol: FirBasedSymbol<*>
+    var isContextSensitiveResolved: Boolean = false
     lateinit var diagnostic: ConeDiagnostic
 
     fun build(): FirResolvedErrorReference {
@@ -31,6 +32,7 @@ class FirResolvedErrorReferenceBuilder {
             source,
             name,
             resolvedSymbol,
+            isContextSensitiveResolved,
             diagnostic,
         )
     }

@@ -25,6 +25,7 @@ abstract class FirResolvedCallableReference : FirResolvedNamedReference() {
     abstract override val source: KtSourceElement?
     abstract override val name: Name
     abstract override val resolvedSymbol: FirBasedSymbol<*>
+    abstract override val isContextSensitiveResolved: Boolean
     abstract val inferredTypeArguments: List<ConeKotlinType>
     abstract val mappedArguments: CallableReferenceMappedArguments<FirExpression>
 
@@ -34,4 +35,6 @@ abstract class FirResolvedCallableReference : FirResolvedNamedReference() {
     @Suppress("UNCHECKED_CAST")
     override fun <E : FirElement, D> transform(transformer: FirTransformer<D>, data: D): E =
         transformer.transformResolvedCallableReference(this, data) as E
+
+    abstract override fun replaceIsContextSensitiveResolved(newIsContextSensitiveResolved: Boolean)
 }

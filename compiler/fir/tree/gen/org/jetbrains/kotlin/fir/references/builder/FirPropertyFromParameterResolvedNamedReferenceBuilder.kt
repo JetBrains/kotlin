@@ -24,6 +24,7 @@ class FirPropertyFromParameterResolvedNamedReferenceBuilder {
     var source: KtSourceElement? = null
     lateinit var name: Name
     lateinit var resolvedSymbol: FirBasedSymbol<*>
+    var isContextSensitiveResolved: Boolean = false
 
     @OptIn(FirImplementationDetail::class)
     fun build(): FirResolvedNamedReference {
@@ -31,6 +32,7 @@ class FirPropertyFromParameterResolvedNamedReferenceBuilder {
             source,
             name,
             resolvedSymbol,
+            isContextSensitiveResolved,
         )
     }
 

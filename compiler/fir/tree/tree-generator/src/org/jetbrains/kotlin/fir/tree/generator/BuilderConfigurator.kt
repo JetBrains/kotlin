@@ -316,6 +316,34 @@ class BuilderConfigurator(model: Model) : AbstractFirBuilderConfigurator<Abstrac
             additionalImports(stubReferenceType)
         }
 
+        builder(resolvedNamedReference, "FirResolvedNamedReferenceImpl") {
+            defaultFalse("isContextSensitiveResolved")
+        }
+
+        builder(resolvedNamedReference, "FirPropertyFromParameterResolvedNamedReference") {
+            defaultFalse("isContextSensitiveResolved")
+        }
+
+        builder(resolvedErrorReference) {
+            defaultFalse("isContextSensitiveResolved")
+        }
+
+        builder(resolvedCallableReference) {
+            defaultFalse("isContextSensitiveResolved")
+        }
+
+        builder(delegateFieldReference) {
+            defaultFalse("isContextSensitiveResolved")
+        }
+
+        builder(backingFieldReference) {
+            defaultFalse("isContextSensitiveResolved")
+        }
+
+        builder(backingFieldReference) {
+            defaultFalse("isContextSensitiveResolved")
+        }
+
         builder(resolvedTypeRef) {
             defaultNull("delegatedTypeRef")
             withCopy()

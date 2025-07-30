@@ -20,11 +20,13 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirBackingFieldSymbol
 @FirBuilderDsl
 class FirBackingFieldReferenceBuilder {
     var source: KtSourceElement? = null
+    var isContextSensitiveResolved: Boolean = false
     lateinit var resolvedSymbol: FirBackingFieldSymbol
 
     fun build(): FirBackingFieldReference {
         return FirBackingFieldReferenceImpl(
             source,
+            isContextSensitiveResolved,
             resolvedSymbol,
         )
     }

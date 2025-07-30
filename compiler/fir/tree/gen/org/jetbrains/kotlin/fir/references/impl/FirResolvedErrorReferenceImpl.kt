@@ -22,6 +22,7 @@ internal class FirResolvedErrorReferenceImpl(
     override val source: KtSourceElement?,
     override val name: Name,
     override val resolvedSymbol: FirBasedSymbol<*>,
+    override var isContextSensitiveResolved: Boolean,
     override val diagnostic: ConeDiagnostic,
 ) : FirResolvedErrorReference() {
 
@@ -29,5 +30,9 @@ internal class FirResolvedErrorReferenceImpl(
 
     override fun <D> transformChildren(transformer: FirTransformer<D>, data: D): FirResolvedErrorReferenceImpl {
         return this
+    }
+
+    override fun replaceIsContextSensitiveResolved(newIsContextSensitiveResolved: Boolean) {
+        isContextSensitiveResolved = newIsContextSensitiveResolved
     }
 }

@@ -20,11 +20,13 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirDelegateFieldSymbol
 @FirBuilderDsl
 class FirDelegateFieldReferenceBuilder {
     var source: KtSourceElement? = null
+    var isContextSensitiveResolved: Boolean = false
     lateinit var resolvedSymbol: FirDelegateFieldSymbol
 
     fun build(): FirDelegateFieldReference {
         return FirDelegateFieldReferenceImpl(
             source,
+            isContextSensitiveResolved,
             resolvedSymbol,
         )
     }
