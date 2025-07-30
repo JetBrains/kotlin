@@ -1174,6 +1174,12 @@ private fun parseIsoStringFormatFSA(
         return result
     }
 
+    fun parseLongIfPossible(ch: Char): Boolean {
+        val prevIndex = index
+        currentLongValue = parseLong()
+        return index != prevIndex + if (ch == '-' || ch == '+') 1 else 0
+    }
+
     var state = State.START
     while (index < length) {
         val ch = value[index]
@@ -1184,11 +1190,9 @@ private fun parseIsoStringFormatFSA(
                     State.AFTER_T
                 }
                 else -> {
-                    val prevIndex = index
-                    val daysAsLong = parseLong()
-                    if (index == prevIndex + if (ch in "-+") 1 else 0) return throwExceptionOrInvalid(throwException)
+                    if (!parseLongIfPossible(ch)) return throwExceptionOrInvalid(throwException)
                     totalSeconds = totalSeconds.addWithoutOverflow(
-                        daysAsLong.multiplyWithoutOverflow(SECONDS_PER_DAY), throwException
+                        currentLongValue.multiplyWithoutOverflow(SECONDS_PER_DAY), throwException
                     ).onInvalid { return Duration.INVALID }
                     State.AFTER_D_VALUE
                 }
@@ -1211,9 +1215,7 @@ private fun parseIsoStringFormatFSA(
             }
 
             State.AFTER_T -> {
-                val prevIndex = index
-                currentLongValue = parseLong()
-                if (index == prevIndex + if (ch in "-+") 1 else 0) return throwExceptionOrInvalid(throwException)
+                if (!parseLongIfPossible(ch)) return throwExceptionOrInvalid(throwException)
                 State.AFTER_T_VALUE
             }
 
@@ -1246,9 +1248,7 @@ private fun parseIsoStringFormatFSA(
             }
 
             State.AFTER_H -> {
-                val prevIndex = index
-                currentLongValue = parseLong()
-                if (index == prevIndex + if (ch in "-+") 1 else 0) return throwExceptionOrInvalid(throwException)
+                if (!parseLongIfPossible(ch)) return throwExceptionOrInvalid(throwException)
                 State.AFTER_H_VALUE
             }
 
@@ -1274,9 +1274,7 @@ private fun parseIsoStringFormatFSA(
             }
 
             State.AFTER_M -> {
-                val prevIndex = index
-                currentLongValue = parseLong()
-                if (index == prevIndex + if (ch in "-+") 1 else 0) return throwExceptionOrInvalid(throwException)
+                if (!parseLongIfPossible(ch)) return throwExceptionOrInvalid(throwException)
                 State.AFTER_M_VALUE
             }
 
