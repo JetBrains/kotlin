@@ -59,7 +59,7 @@ class KotlinVersionConsistency {
     @Test
     fun versionIsRemoved() {
         LanguageVersion.entries
-            .filter { it.isUnsupported }
+            .filter { it.isUnsupported && !it.isJvmOnly }
             .forEach { languageVersion ->
                 languageVersion.toKotlinVersionOrNull()?.let {
                     assertTrue(

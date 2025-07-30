@@ -52,7 +52,7 @@ interface KotlinCommonOptions : org.jetbrains.kotlin.gradle.dsl.KotlinCommonTool
     /**
      * Provide source compatibility with the specified version of Kotlin.
      *
-     * Possible values: "1.9 (deprecated)", "2.0 (deprecated)", "2.1", "2.2", "2.3", "2.4 (experimental)", "2.5 (experimental)"
+     * Possible values: "1.9 (deprecated, JVM only)", "2.0 (deprecated)", "2.1", "2.2", "2.3", "2.4 (experimental)", "2.5 (experimental)"
      *
      * Default value: null
      */

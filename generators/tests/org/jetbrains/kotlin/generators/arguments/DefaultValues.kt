@@ -54,8 +54,8 @@ open class DefaultValues(
         "null",
         typeOf<KotlinVersionDsl?>(),
         typeOf<String?>(),
-        possibleValues = LanguageVersion.values()
-            .filterNot { it.isUnsupported }
+        possibleValues = LanguageVersion.entries
+            .filterNot { it.isUnsupported && !it.isJvmOnly }
             .map { "\"${it.description}\"" },
         fromKotlinOptionConverterProp = """
         if (this != null) ${typeOf<KotlinVersionDsl>()}.fromVersion(this) else null
@@ -69,7 +69,7 @@ open class DefaultValues(
         "null",
         typeOf<KotlinVersionDsl?>(),
         typeOf<String?>(),
-        possibleValues = LanguageVersion.values()
+        possibleValues = LanguageVersion.entries
             .map(ApiVersion.Companion::createByLanguageVersion)
             .filterNot { it.isUnsupported }
             .map { "\"${it.description}\"" },

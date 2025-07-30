@@ -20,7 +20,7 @@ interface LanguageSettings {
     /**
      * Provide source compatibility with the specified version of Kotlin.
      *
-     * Possible values: "1.9 (deprecated)", "2.0", "2.1", "2.2", "2.3"
+     * Possible values: "1.9 (deprecated, JVM only)", "2.0 (deprecated)", "2.1", "2.2", "2.3", "2.4", "2.5"
      *
      * Default value: `null`
      */
@@ -29,7 +29,7 @@ interface LanguageSettings {
     /**
      * Allow using declarations only from the specified version of bundled libraries.
      *
-     * Possible values: "1.9 (deprecated)", "2.0", "2.1", "2.2", "2.3"
+     * Possible values: "1.9 (deprecated)", "2.0 (deprecated)", "2.1", "2.2", "2.3", "2.4", "2.5"
      *
      * Default value: `null`
      */
