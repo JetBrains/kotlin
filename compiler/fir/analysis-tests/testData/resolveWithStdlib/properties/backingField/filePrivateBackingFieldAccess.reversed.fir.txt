@@ -3,5 +3,5 @@ FILE: filePrivateBackingFieldAccess.reversed.kt
         private final backing field field: R|kotlin/collections/MutableList<kotlin/String>| = R|kotlin/collections/mutableListOf|<R|kotlin/String|>()
         public get(): R|kotlin/collections/List<kotlin/String>|
     public final fun add(s: R|kotlin/String|): R|kotlin/Unit| {
-        R|/list|.<Unresolved name: add>#(R|<local>/s|)
+        R|/list|.R|SubstitutionOverride<kotlin/collections/MutableList.add: R|kotlin/Boolean|>|(R|<local>/s|)
     }
