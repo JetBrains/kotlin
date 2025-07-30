@@ -1,6 +1,7 @@
 plugins {
     kotlin("jvm")
     id("gradle-plugin-compiler-dependency-configuration")
+    id("project-tests-convention")
 }
 
 kotlin {
@@ -29,8 +30,10 @@ sourceSets {
     "test" { projectDefault() }
 }
 
-projectTest(parallel = false, jUnitMode = JUnitMode.JUnit4) {
-    workingDir = projectDir
+projectTests {
+    testTask(parallel = true, jUnitMode = JUnitMode.JUnit4) {
+        workingDir = projectDir
+    }
 }
 
 runtimeJar()
