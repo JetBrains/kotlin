@@ -16,3 +16,8 @@ ComposableSingletons$TestKt {
 }
 
 ========= FunctionMeta: false, OptimizeGroups: true =========
+ComposableSingletons$TestKt {
+    file: Test.kt
+    lambda__486040309$lambda$0(Landroidx/compose/runtime/Composer;I)Lkotlin/Unit;
+        Root { key: -486040309, line: 4 }
+}

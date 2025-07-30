@@ -38,28 +38,35 @@ TestKt$contentOf$1 {
     file: Test.kt
     invoke(Landroidx/compose/runtime/Composer;I)V
         ReplaceGroup { key: 870084930, line: 13 }
-        ReplaceGroup { key: 1202849237, line: 13 }
+        ReplaceGroup { key: 1202365141, line: 13 }
         ReplaceGroup { key: 870087938, line: 14 }
-        ReplaceGroup { key: 1202942485, line: 14 }
+        ReplaceGroup { key: 1202365141, line: 14 }
         ReplaceGroup { key: 870090754, line: 15 }
-        ReplaceGroup { key: 1203029781, line: 15 }
+        ReplaceGroup { key: 1202365141, line: 15 }
         ReplaceGroup { key: 870095210, line: 18 }
-        ReplaceGroup { key: 1203175605, line: 18 }
+        ReplaceGroup { key: 1202365141, line: 18 }
         Root { key: -1018087891, line: 11 }
 }
 
 ========= FunctionMeta: false, OptimizeGroups: true =========
+ComposableSingletons$TestKt$lambda$-1311044554$1 {
+    file: Test.kt
+    invoke(Landroidx/compose/runtime/Composer;I)V
+        Root { key: -1311044554, line: 21 }
+}
+
 TestKt$contentOf$1 {
     file: Test.kt
     invoke(Landroidx/compose/runtime/Composer;I)V
         ReplaceGroup { key: 870084930, line: 13 }
-        ReplaceGroup { key: 1202849237, line: 13 }
+        ReplaceGroup { key: 1202365141, line: 13 }
         ReplaceGroup { key: 870087938, line: 14 }
-        ReplaceGroup { key: 1202942485, line: 14 }
+        ReplaceGroup { key: 1202365141, line: 14 }
         ReplaceGroup { key: 870090754, line: 15 }
-        ReplaceGroup { key: 1203029781, line: 15 }
+        ReplaceGroup { key: 1202365141, line: 15 }
         ReplaceGroup { key: 870095210, line: 18 }
-        ReplaceGroup { key: 1203175605, line: 18 }
+        ReplaceGroup { key: 1202365141, line: 18 }
+        Root { key: -1018087891, line: 11 }
 }
 
 ========= FunctionMeta: true, OptimizeGroups: false =========
@@ -76,11 +83,17 @@ TestKt$contentOf$1 {
         ReplaceGroup { key: 1202887708, line: 14 }
         ReplaceGroup { key: 1202978848, line: 15 }
         ReplaceGroup { key: 1203064563, line: 16 }
-        ReplaceGroup { key: 1203124021, line: 17 }
+        ReplaceGroup { key: 1202365141, line: 16 }
         Root { key: -1018087891, line: 11 }
 }
 
 ========= FunctionMeta: false, OptimizeGroups: false =========
+ComposableSingletons$TestKt$lambda$-1311044554$1 {
+    file: Test.kt
+    invoke(Landroidx/compose/runtime/Composer;I)V
+        Root { key: -1311044554, line: 21 }
+}
+
 TestKt$contentOf$1 {
     file: Test.kt
     invoke(Landroidx/compose/runtime/Composer;I)V
@@ -88,5 +101,6 @@ TestKt$contentOf$1 {
         ReplaceGroup { key: 1202887708, line: 14 }
         ReplaceGroup { key: 1202978848, line: 15 }
         ReplaceGroup { key: 1203064563, line: 16 }
-        ReplaceGroup { key: 1203124021, line: 17 }
+        ReplaceGroup { key: 1202365141, line: 16 }
+        Root { key: -1018087891, line: 11 }
 }

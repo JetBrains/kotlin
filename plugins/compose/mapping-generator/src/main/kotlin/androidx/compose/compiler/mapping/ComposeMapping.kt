@@ -5,11 +5,17 @@
 
 package androidx.compose.compiler.mapping
 
+import androidx.compose.compiler.mapping.bytecode.JvmDescriptor
 import androidx.compose.compiler.mapping.group.GroupInfo
+import androidx.compose.compiler.mapping.group.GroupType
+import androidx.compose.compiler.mapping.group.LambdaKeyCache
 
-class ComposeMapping private constructor(
-    private val entries: List<Entry>
+class ComposeMapping(
+    private val reporter: ErrorReporter
 ) {
+    private val entries = mutableListOf<Entry>()
+    private val keyCache = LambdaKeyCache()
+
     private class Entry(
         val cls: ClassInfo,
         val method: MethodInfo,
@@ -19,8 +25,19 @@ class ComposeMapping private constructor(
     fun asProguardMapping(linePrefix: String = "  "): String = buildString {
         entries.forEach { entry ->
             appendEntry(entry.cls, entry.method, entry.group, linePrefix)
-            appendLine()
         }
+    }
+
+    fun append(bytecode: ByteArray) {
+        val cls = context(reporter, keyCache) { ClassInfo(bytecode) }
+        val entries = buildList {
+            cls.methods.forEach { method ->
+                method.groups.forEach { group ->
+                    add(Entry(cls, method, group))
+                }
+            }
+        }
+        this.entries.addAll(entries)
     }
 
     private fun StringBuilder.appendEntry(
@@ -29,7 +46,14 @@ class ComposeMapping private constructor(
         group: GroupInfo,
         linePrefix: String
     ) {
-        if (group.key == null) return
+        var key = group.key
+        if (key == null) {
+            if (group.type != GroupType.Root) return
+
+            key = keyCache[cls.classId.fqName] ?: keyCache[method.id.toString()]
+
+            if (key == null) return
+        }
 
         append(linePrefix)
         append("1:1:")
@@ -40,7 +64,8 @@ class ComposeMapping private constructor(
         append(group.line)
         append(" -> ")
         append("m$")
-        append(group.key.toString())
+        append(key)
+        appendLine()
     }
 
     private fun descriptorToProguardString(name: String, descriptor: String): String {
@@ -68,49 +93,14 @@ class ComposeMapping private constructor(
                 }
             }
 
-        val parameterString = descriptor.takeWhile { it != ')' }.dropWhile { it == '(' }
-        val parameters = sequence {
-            var i = 0
-            while (i < parameterString.length) {
-                val start = i
-                var current = parameterString[i]
-                while (current == '[') {
-                    i++
-                    current = parameterString[i]
-                }
-                val end = if (current == 'L') {
-                    parameterString.indexOf(';', i) + 1
-                } else {
-                    i + 1
-                }
-                yield(parameterString.substring(start, end))
-                i = end
-            }
-        }.map {
-            descriptorToJavaType(it)
-        }
-        val returnType = descriptor.takeLastWhile { it != ')' }
+        val desc = JvmDescriptor.fromString(descriptor)
 
-        return parameters.joinToString(
+        return desc.parameters.joinToString(
             separator = ",",
-            prefix = "${descriptorToJavaType(returnType)} $name(",
+            prefix = "${descriptorToJavaType(desc.returnType)} $name(",
             postfix = ")",
-        )
-    }
-
-    companion object {
-        fun fromBytecode(reporter: ErrorReporter, bytecode: ByteArray): ComposeMapping {
-            val cls = with(reporter) { ClassInfo(bytecode) }
-            val entries = buildList {
-                cls.methods.forEach { method ->
-                    method.groups.forEach { group ->
-                        if (group.key != null) {
-                            add(Entry(cls, method, group))
-                        }
-                    }
-                }
-            }
-            return ComposeMapping(entries)
+        ) {
+            descriptorToJavaType(it)
         }
     }
 }

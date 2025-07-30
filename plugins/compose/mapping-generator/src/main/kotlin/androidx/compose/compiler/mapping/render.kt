@@ -6,9 +6,12 @@
 package androidx.compose.compiler.mapping
 
 import androidx.compose.compiler.mapping.group.GroupInfo
+import androidx.compose.compiler.mapping.group.GroupType
+import androidx.compose.compiler.mapping.group.LambdaKeyCache
 import org.jetbrains.annotations.TestOnly
 
 @TestOnly
+context(lambdaKeys: LambdaKeyCache)
 fun ClassInfo.render(): String = buildString {
     append(classId.fqName)
     append(" {")
@@ -24,17 +27,28 @@ fun ClassInfo.render(): String = buildString {
     appendLine("}")
 }
 
+context(lambdaKeys: LambdaKeyCache)
 private fun MethodInfo.render(): String = buildString {
     append(id.methodName)
     append(id.methodDescriptor)
     appendLine()
 
     withIndent {
-        appendLine(groups.joinToString("\n") { it.render() })
+        appendLine(groups.joinToString("\n") {
+            if (it.type == GroupType.Root && it.key == null) {
+                it.render(resolveLambdaKey() ?: it.key)
+            } else {
+                it.render(it.key)
+            }
+        })
     }
 }.trim()
 
-private fun GroupInfo.render(): String = buildString {
+context(lambdaKeys: LambdaKeyCache)
+private fun MethodInfo.resolveLambdaKey(): Int? =
+    lambdaKeys[id.toString()] ?: lambdaKeys[id.classId.fqName]
+
+private fun GroupInfo.render(key: Int?): String = buildString {
     append(type)
     append(" { ")
     append("key: ")

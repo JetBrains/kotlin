@@ -21,3 +21,15 @@ TestKt {
         ReplaceGroup { key: -1335155982, line: 7 }
         RestartGroup { key: -1971298841, line: 5 }
 }
+
+TestKt$Test$1$1 {
+    file: Test.kt
+    invoke(Landroidx/compose/runtime/Composer;I)V
+        Root { key: null, line: -1 }
+}
+
+TestKt$Test$2 {
+    file: Test.kt
+    invoke(Landroidx/compose/runtime/Composer;I)V
+        Root { key: null, line: -1 }
+}
