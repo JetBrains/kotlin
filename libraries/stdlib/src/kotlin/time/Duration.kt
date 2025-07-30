@@ -1081,7 +1081,6 @@ internal enum class State {
 }
 
 private const val OVERFLOW_LIMIT = Long.MAX_VALUE / 1000
-private const val MULTIPLY_LIMIT = OVERFLOW_LIMIT / 10
 
 @kotlin.internal.InlineOnly
 private inline fun willMultiplyOverflow(a: Long, b: Long): Boolean {
@@ -1142,16 +1141,14 @@ private fun parseIsoStringFormatFSA(
             if (ch !in '0'..'9') break
             val digit = ch - '0'
             index++
-            if (result >= MULTIPLY_LIMIT) {
-                if (result > MULTIPLY_LIMIT || digit > 7) {
-                    while (index < length) {
-                        if (value[index] !in '0'..'9') break
-                        index++
-                    }
-                    return OVERFLOW_LIMIT
-                }
-            }
             result = result * 10 + digit
+            if (result > OVERFLOW_LIMIT) {
+                while (index < length) {
+                    if (value[index] !in '0'..'9') break
+                    index++
+                }
+                return OVERFLOW_LIMIT
+            }
         }
         return result
     }
