@@ -37746,6 +37746,12 @@ public class LLDiagnosticsFe10TestGenerated extends AbstractLLDiagnosticsTest {
         }
 
         @Test
+        @TestMetadata("invokeOnInvisiblePropertyOfFunctionType.kt")
+        public void testInvokeOnInvisiblePropertyOfFunctionType() {
+          runTest("compiler/testData/diagnostics/tests/resolve/invoke/invokeOnInvisiblePropertyOfFunctionType.kt");
+        }
+
+        @Test
         @TestMetadata("invokeOnVariableWithExtensionFunctionType.kt")
         public void testInvokeOnVariableWithExtensionFunctionType() {
           runTest("compiler/testData/diagnostics/tests/resolve/invoke/invokeOnVariableWithExtensionFunctionType.kt");
