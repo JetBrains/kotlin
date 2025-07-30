@@ -240,10 +240,14 @@ fun main() {
     classpath.split(File.pathSeparator).forEach { println("  $it") }
 
     val sourceFiles = listOf(
-        File("/Users/michal.svec/Desktop/kotlin/compiler/daemon/remote-daemon/src/main/kotlin/client/input/Input.kt")
+        File("compiler/daemon/remote-daemon/src/main/kotlin/client/input/Input.kt")
+    )
+    val staticArguments = listOf(
+        "-no-stdlib",
+        "-no-reflect",
     )
     val compilerArguments =
-        sourceFiles.map { it-> it.absolutePath} + "-d" + buildAbsPath(OUTPUT_FILES_DIR) + "-cp" + "/Users/michal.svec/Desktop/jars/kotlin-stdlib-2.2.0.jar"
+        sourceFiles.map { it-> it.absolutePath} + "-d" + buildAbsPath(OUTPUT_FILES_DIR) + "-cp" + "libraries/stdlib/build/classes/kotlin/jvm/main" + staticArguments
 //    println("DEBUG SERVER: compilerArguments=${compilerArguments.contentToString()}")
 
     val remoteMessageCollector = RemoteMessageCollector(object : MessageSender {
