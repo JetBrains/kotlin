@@ -1144,6 +1144,7 @@ private fun parseIsoStringFormat(
         } else if (firstChar == '+') {
             index++
         }
+        while (index < length && value[index] == '0') index++
         var result = 0L
         while (index < length) {
             val ch = value[index]
