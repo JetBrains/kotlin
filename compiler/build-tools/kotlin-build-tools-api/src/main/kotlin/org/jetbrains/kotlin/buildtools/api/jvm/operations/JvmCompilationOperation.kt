@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.buildtools.api.jvm.operations
 import org.jetbrains.kotlin.buildtools.api.BuildOperation
 import org.jetbrains.kotlin.buildtools.api.CompilationResult
 import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
+import org.jetbrains.kotlin.buildtools.api.KotlinLogger
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments
 import org.jetbrains.kotlin.buildtools.api.internal.BaseOption
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmIncrementalCompilationConfiguration
@@ -102,5 +103,11 @@ public interface JvmCompilationOperation : BuildOperation<CompilationResult> {
          */
         @JvmField
         public val KOTLINSCRIPT_EXTENSIONS: Option<Array<String>?> = Option("KOTLINSCRIPT_EXTENSIONS")
+
+        /**
+         * TODO one of error, warning, info, debug
+         */
+        @JvmField
+        public val COMPILER_ARGUMENTS_LOG_LEVEL: Option<String?> = Option("COMPILER_ARGUMENTS_LOG_LEVEL")
     }
 }

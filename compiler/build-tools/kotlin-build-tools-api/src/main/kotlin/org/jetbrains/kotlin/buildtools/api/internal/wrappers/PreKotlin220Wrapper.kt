@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.buildtools.api.*
 import org.jetbrains.kotlin.buildtools.api.jvm.*
 import java.io.File
 
+@Suppress("DEPRECATION")
 internal class PreKotlin220Wrapper(
     private val base: CompilationService
 ) : CompilationService by base {

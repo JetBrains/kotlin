@@ -55,6 +55,7 @@ internal open class BaseKotlin2JsCompileConfig<TASK : Kotlin2JsCompile>(
                         .flatMap { (it.compilerOptions as KotlinJsCompilerOptions).moduleName }
                 )
             }
+            task.runViaBuildToolsApi.value(false).disallowChanges()
         }
     }
 

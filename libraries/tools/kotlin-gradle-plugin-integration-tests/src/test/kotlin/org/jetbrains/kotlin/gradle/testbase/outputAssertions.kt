@@ -124,10 +124,9 @@ fun BuildResult.assertOutputContainsExactlyTimes(
     expectedCount: Int = 1,
 ) {
     val occurrenceCount = expected.findAll(output).count()
-    assert(occurrenceCount == expectedCount) {
+    if (occurrenceCount != expectedCount) {
         printBuildOutput()
-
-        "Build output contains different number of '$expected' string occurrences - $occurrenceCount then $expectedCount"
+        assertEquals(expectedCount, occurrenceCount, "Build output contains unexpected number of '$expected' string occurrences.")
     }
 }
 
@@ -227,7 +226,7 @@ fun findParameterInOutput(name: String, output: String): String? =
 fun BuildResult.assertCompilerArgument(
     taskPath: String,
     expectedArgument: String,
-    logLevel: LogLevel = LogLevel.DEBUG
+    logLevel: LogLevel = LogLevel.DEBUG,
 ) {
     val compilerArguments = extractTaskCompilerArguments(taskPath, logLevel)
 
@@ -279,7 +278,7 @@ fun BuildResult.assertCompilerArguments(
  */
 fun BuildResult.extractTaskCompilerArguments(
     taskPath: String,
-    logLevel: LogLevel = LogLevel.INFO
+    logLevel: LogLevel = LogLevel.INFO,
 ): String {
     val taskOutput = getOutputForTask(taskPath, logLevel)
     return taskOutput.lines().first {
@@ -288,7 +287,7 @@ fun BuildResult.extractTaskCompilerArguments(
 }
 
 fun BuildResult.extractNativeCompilerTaskArguments(
-    taskPath: String
+    taskPath: String,
 ): String {
     val taskOutput = getOutputForTask(taskPath, LogLevel.INFO)
     return taskOutput.substringAfter("Arguments = [\n").substringBefore("]\n")

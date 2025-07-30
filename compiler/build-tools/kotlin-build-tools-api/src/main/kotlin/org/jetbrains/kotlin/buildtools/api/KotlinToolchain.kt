@@ -117,6 +117,7 @@ public interface KotlinToolchain {
             try {
                 loadImplementation(KotlinToolchain::class, classLoader)
             } catch (_: IllegalStateException) {
+                @Suppress("DEPRECATION")
                 classLoader.loadClass("org.jetbrains.kotlin.buildtools.internal.compat.KotlinToolchainV1Adapter").constructors.first()
                     .newInstance(CompilationService.loadImplementation(classLoader)) as KotlinToolchain
             }

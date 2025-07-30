@@ -14,102 +14,106 @@ import kotlin.String
 import kotlin.Suppress
 import kotlin.collections.List
 import kotlin.collections.MutableMap
-import kotlin.collections.mutableListOf
+import kotlin.collections.MutableSet
 import kotlin.collections.mutableMapOf
+import kotlin.collections.mutableSetOf
 import org.jetbrains.kotlin.buildtools.`internal`.UseFromImplModuleRestricted
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.NativeArgumentsImpl.Companion.ENABLE_ASSERTIONS
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.NativeArgumentsImpl.Companion.ENTRY
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.NativeArgumentsImpl.Companion.FRIEND_MODULES
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.NativeArgumentsImpl.Companion.G
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.NativeArgumentsImpl.Companion.GENERATE_NO_EXIT_TEST_RUNNER
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.NativeArgumentsImpl.Companion.GENERATE_TEST_RUNNER
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.NativeArgumentsImpl.Companion.GENERATE_WORKER_TEST_RUNNER
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.NativeArgumentsImpl.Companion.INCLUDE_BINARY
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.NativeArgumentsImpl.Companion.LIBRARY
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.NativeArgumentsImpl.Companion.LIBRARY_VERSION
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.NativeArgumentsImpl.Companion.LINKER_OPTION
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.NativeArgumentsImpl.Companion.LINKER_OPTIONS
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.NativeArgumentsImpl.Companion.LIST_TARGETS
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.NativeArgumentsImpl.Companion.MANIFEST
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.NativeArgumentsImpl.Companion.MEMORY_MODEL
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.NativeArgumentsImpl.Companion.MODULE_NAME
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.NativeArgumentsImpl.Companion.NATIVE_LIBRARY
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.NativeArgumentsImpl.Companion.NOMAIN
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.NativeArgumentsImpl.Companion.NOPACK
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.NativeArgumentsImpl.Companion.NOSTDLIB
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.NativeArgumentsImpl.Companion.NO_DEFAULT_LIBS
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.NativeArgumentsImpl.Companion.NO_ENDORSED_LIBS
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.NativeArgumentsImpl.Companion.OPT
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.NativeArgumentsImpl.Companion.OUTPUT
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.NativeArgumentsImpl.Companion.PRODUCE
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.NativeArgumentsImpl.Companion.TARGET
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.NativeArgumentsImpl.Companion.X_ADD_CACHE
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.NativeArgumentsImpl.Companion.X_ADD_LIGHT_DEBUG
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.NativeArgumentsImpl.Companion.X_ALLOCATOR
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.NativeArgumentsImpl.Companion.X_AUTO_CACHE_DIR
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.NativeArgumentsImpl.Companion.X_AUTO_CACHE_FROM
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.NativeArgumentsImpl.Companion.X_BACKEND_THREADS
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.NativeArgumentsImpl.Companion.X_BINARY
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.NativeArgumentsImpl.Companion.X_BUNDLE_ID
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.NativeArgumentsImpl.Companion.X_CACHED_LIBRARY
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.NativeArgumentsImpl.Companion.X_CACHE_DIRECTORY
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.NativeArgumentsImpl.Companion.X_CHECK_DEPENDENCIES
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.NativeArgumentsImpl.Companion.X_CHECK_STATE_AT_EXTERNAL_CALLS
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.NativeArgumentsImpl.Companion.X_COMPILE_FROM_BITCODE
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.NativeArgumentsImpl.Companion.X_DEBUG_INFO_VERSION
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.NativeArgumentsImpl.Companion.X_DEBUG_PREFIX_MAP
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.NativeArgumentsImpl.Companion.X_DESTROY_RUNTIME_MODE
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.NativeArgumentsImpl.Companion.X_DUMP_TESTS_TO
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.NativeArgumentsImpl.Companion.X_EMIT_LAZY_OBJC_HEADER
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.NativeArgumentsImpl.Companion.X_EXPORT_KDOC
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.NativeArgumentsImpl.Companion.X_EXPORT_LIBRARY
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.NativeArgumentsImpl.Companion.X_EXTERNAL_DEPENDENCIES
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.NativeArgumentsImpl.Companion.X_FAKE_OVERRIDE_VALIDATOR
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.NativeArgumentsImpl.Companion.X_FILE_TO_CACHE
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.NativeArgumentsImpl.Companion.X_FRAMEWORK_IMPORT_HEADER
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.NativeArgumentsImpl.Companion.X_G0
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.NativeArgumentsImpl.Companion.X_GC
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.NativeArgumentsImpl.Companion.X_G_GENERATE_DEBUG_TRAMPOLINE
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.NativeArgumentsImpl.Companion.X_HEADER_KLIB_PATH
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.NativeArgumentsImpl.Companion.X_IC_CACHE_DIR
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.NativeArgumentsImpl.Companion.X_INCLUDE
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.NativeArgumentsImpl.Companion.X_IR_PROPERTY_LAZY_INITIALIZATION
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.NativeArgumentsImpl.Companion.X_KONAN_DATA_DIR
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.NativeArgumentsImpl.Companion.X_LAZY_IR_FOR_CACHES
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.NativeArgumentsImpl.Companion.X_LLVM_LTO_PASSES
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.NativeArgumentsImpl.Companion.X_LLVM_MODULE_PASSES
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.NativeArgumentsImpl.Companion.X_LLVM_VARIANT
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.NativeArgumentsImpl.Companion.X_MAKE_PER_FILE_CACHE
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.NativeArgumentsImpl.Companion.X_MANIFEST_NATIVE_TARGETS
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.NativeArgumentsImpl.Companion.X_NO_OBJC_GENERICS
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.NativeArgumentsImpl.Companion.X_OMIT_FRAMEWORK_BINARY
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.NativeArgumentsImpl.Companion.X_OVERRIDE_CLANG_OPTIONS
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.NativeArgumentsImpl.Companion.X_OVERRIDE_KONAN_PROPERTIES
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.NativeArgumentsImpl.Companion.X_PRE_LINK_CACHES
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.NativeArgumentsImpl.Companion.X_PRINT_BITCODE
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.NativeArgumentsImpl.Companion.X_PRINT_FILES
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.NativeArgumentsImpl.Companion.X_PRINT_IR
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.NativeArgumentsImpl.Companion.X_PURGE_USER_LIBS
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.NativeArgumentsImpl.Companion.X_READ_DEPENDENCIES_FROM
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.NativeArgumentsImpl.Companion.X_REFINES_PATHS
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.NativeArgumentsImpl.Companion.X_RUNTIME
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.NativeArgumentsImpl.Companion.X_RUNTIME_LOGS
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.NativeArgumentsImpl.Companion.X_SAVE_LLVM_IR_AFTER
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.NativeArgumentsImpl.Companion.X_SAVE_LLVM_IR_DIRECTORY
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.NativeArgumentsImpl.Companion.X_SHORT_MODULE_NAME
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.NativeArgumentsImpl.Companion.X_STATIC_FRAMEWORK
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.NativeArgumentsImpl.Companion.X_TEMPORARY_FILES_DIR
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.NativeArgumentsImpl.Companion.X_VERIFY_BITCODE
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.NativeArgumentsImpl.Companion.X_VERIFY_COMPILER
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.NativeArgumentsImpl.Companion.X_WORKER_EXCEPTION_HANDLING
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.NativeArgumentsImpl.Companion.X_WRITE_DEPENDENCIES_OF_PRODUCED_KLIB_TO
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.NativeArgumentsImpl.Companion.X_WRITE_DEPENDENCIES_TO
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.arguments.NativeArguments
-import org.jetbrains.kotlin.buildtools.api.arguments.NativeArguments.Companion.ENABLE_ASSERTIONS
-import org.jetbrains.kotlin.buildtools.api.arguments.NativeArguments.Companion.ENTRY
-import org.jetbrains.kotlin.buildtools.api.arguments.NativeArguments.Companion.FRIEND_MODULES
-import org.jetbrains.kotlin.buildtools.api.arguments.NativeArguments.Companion.G
-import org.jetbrains.kotlin.buildtools.api.arguments.NativeArguments.Companion.GENERATE_NO_EXIT_TEST_RUNNER
-import org.jetbrains.kotlin.buildtools.api.arguments.NativeArguments.Companion.GENERATE_TEST_RUNNER
-import org.jetbrains.kotlin.buildtools.api.arguments.NativeArguments.Companion.GENERATE_WORKER_TEST_RUNNER
-import org.jetbrains.kotlin.buildtools.api.arguments.NativeArguments.Companion.INCLUDE_BINARY
-import org.jetbrains.kotlin.buildtools.api.arguments.NativeArguments.Companion.LIBRARY
-import org.jetbrains.kotlin.buildtools.api.arguments.NativeArguments.Companion.LIBRARY_VERSION
-import org.jetbrains.kotlin.buildtools.api.arguments.NativeArguments.Companion.LINKER_OPTION
-import org.jetbrains.kotlin.buildtools.api.arguments.NativeArguments.Companion.LINKER_OPTIONS
-import org.jetbrains.kotlin.buildtools.api.arguments.NativeArguments.Companion.LIST_TARGETS
-import org.jetbrains.kotlin.buildtools.api.arguments.NativeArguments.Companion.MANIFEST
-import org.jetbrains.kotlin.buildtools.api.arguments.NativeArguments.Companion.MEMORY_MODEL
-import org.jetbrains.kotlin.buildtools.api.arguments.NativeArguments.Companion.MODULE_NAME
-import org.jetbrains.kotlin.buildtools.api.arguments.NativeArguments.Companion.NATIVE_LIBRARY
-import org.jetbrains.kotlin.buildtools.api.arguments.NativeArguments.Companion.NOMAIN
-import org.jetbrains.kotlin.buildtools.api.arguments.NativeArguments.Companion.NOPACK
-import org.jetbrains.kotlin.buildtools.api.arguments.NativeArguments.Companion.NOSTDLIB
-import org.jetbrains.kotlin.buildtools.api.arguments.NativeArguments.Companion.NO_DEFAULT_LIBS
-import org.jetbrains.kotlin.buildtools.api.arguments.NativeArguments.Companion.NO_ENDORSED_LIBS
-import org.jetbrains.kotlin.buildtools.api.arguments.NativeArguments.Companion.OPT
-import org.jetbrains.kotlin.buildtools.api.arguments.NativeArguments.Companion.OUTPUT
-import org.jetbrains.kotlin.buildtools.api.arguments.NativeArguments.Companion.PRODUCE
-import org.jetbrains.kotlin.buildtools.api.arguments.NativeArguments.Companion.TARGET
-import org.jetbrains.kotlin.buildtools.api.arguments.NativeArguments.Companion.X_ADD_CACHE
-import org.jetbrains.kotlin.buildtools.api.arguments.NativeArguments.Companion.X_ADD_LIGHT_DEBUG
-import org.jetbrains.kotlin.buildtools.api.arguments.NativeArguments.Companion.X_ALLOCATOR
-import org.jetbrains.kotlin.buildtools.api.arguments.NativeArguments.Companion.X_AUTO_CACHE_DIR
-import org.jetbrains.kotlin.buildtools.api.arguments.NativeArguments.Companion.X_AUTO_CACHE_FROM
-import org.jetbrains.kotlin.buildtools.api.arguments.NativeArguments.Companion.X_BACKEND_THREADS
-import org.jetbrains.kotlin.buildtools.api.arguments.NativeArguments.Companion.X_BINARY
-import org.jetbrains.kotlin.buildtools.api.arguments.NativeArguments.Companion.X_BUNDLE_ID
-import org.jetbrains.kotlin.buildtools.api.arguments.NativeArguments.Companion.X_CACHED_LIBRARY
-import org.jetbrains.kotlin.buildtools.api.arguments.NativeArguments.Companion.X_CACHE_DIRECTORY
-import org.jetbrains.kotlin.buildtools.api.arguments.NativeArguments.Companion.X_CHECK_DEPENDENCIES
-import org.jetbrains.kotlin.buildtools.api.arguments.NativeArguments.Companion.X_CHECK_STATE_AT_EXTERNAL_CALLS
-import org.jetbrains.kotlin.buildtools.api.arguments.NativeArguments.Companion.X_COMPILE_FROM_BITCODE
-import org.jetbrains.kotlin.buildtools.api.arguments.NativeArguments.Companion.X_DEBUG_INFO_VERSION
-import org.jetbrains.kotlin.buildtools.api.arguments.NativeArguments.Companion.X_DEBUG_PREFIX_MAP
-import org.jetbrains.kotlin.buildtools.api.arguments.NativeArguments.Companion.X_DESTROY_RUNTIME_MODE
-import org.jetbrains.kotlin.buildtools.api.arguments.NativeArguments.Companion.X_DUMP_TESTS_TO
-import org.jetbrains.kotlin.buildtools.api.arguments.NativeArguments.Companion.X_EMIT_LAZY_OBJC_HEADER
-import org.jetbrains.kotlin.buildtools.api.arguments.NativeArguments.Companion.X_EXPORT_KDOC
-import org.jetbrains.kotlin.buildtools.api.arguments.NativeArguments.Companion.X_EXPORT_LIBRARY
-import org.jetbrains.kotlin.buildtools.api.arguments.NativeArguments.Companion.X_EXTERNAL_DEPENDENCIES
-import org.jetbrains.kotlin.buildtools.api.arguments.NativeArguments.Companion.X_FAKE_OVERRIDE_VALIDATOR
-import org.jetbrains.kotlin.buildtools.api.arguments.NativeArguments.Companion.X_FILE_TO_CACHE
-import org.jetbrains.kotlin.buildtools.api.arguments.NativeArguments.Companion.X_FRAMEWORK_IMPORT_HEADER
-import org.jetbrains.kotlin.buildtools.api.arguments.NativeArguments.Companion.X_G0
-import org.jetbrains.kotlin.buildtools.api.arguments.NativeArguments.Companion.X_GC
-import org.jetbrains.kotlin.buildtools.api.arguments.NativeArguments.Companion.X_G_GENERATE_DEBUG_TRAMPOLINE
-import org.jetbrains.kotlin.buildtools.api.arguments.NativeArguments.Companion.X_HEADER_KLIB_PATH
-import org.jetbrains.kotlin.buildtools.api.arguments.NativeArguments.Companion.X_IC_CACHE_DIR
-import org.jetbrains.kotlin.buildtools.api.arguments.NativeArguments.Companion.X_INCLUDE
-import org.jetbrains.kotlin.buildtools.api.arguments.NativeArguments.Companion.X_IR_PROPERTY_LAZY_INITIALIZATION
-import org.jetbrains.kotlin.buildtools.api.arguments.NativeArguments.Companion.X_KONAN_DATA_DIR
-import org.jetbrains.kotlin.buildtools.api.arguments.NativeArguments.Companion.X_LAZY_IR_FOR_CACHES
-import org.jetbrains.kotlin.buildtools.api.arguments.NativeArguments.Companion.X_LLVM_LTO_PASSES
-import org.jetbrains.kotlin.buildtools.api.arguments.NativeArguments.Companion.X_LLVM_MODULE_PASSES
-import org.jetbrains.kotlin.buildtools.api.arguments.NativeArguments.Companion.X_LLVM_VARIANT
-import org.jetbrains.kotlin.buildtools.api.arguments.NativeArguments.Companion.X_MAKE_PER_FILE_CACHE
-import org.jetbrains.kotlin.buildtools.api.arguments.NativeArguments.Companion.X_MANIFEST_NATIVE_TARGETS
-import org.jetbrains.kotlin.buildtools.api.arguments.NativeArguments.Companion.X_NO_OBJC_GENERICS
-import org.jetbrains.kotlin.buildtools.api.arguments.NativeArguments.Companion.X_OMIT_FRAMEWORK_BINARY
-import org.jetbrains.kotlin.buildtools.api.arguments.NativeArguments.Companion.X_OVERRIDE_CLANG_OPTIONS
-import org.jetbrains.kotlin.buildtools.api.arguments.NativeArguments.Companion.X_OVERRIDE_KONAN_PROPERTIES
-import org.jetbrains.kotlin.buildtools.api.arguments.NativeArguments.Companion.X_PRE_LINK_CACHES
-import org.jetbrains.kotlin.buildtools.api.arguments.NativeArguments.Companion.X_PRINT_BITCODE
-import org.jetbrains.kotlin.buildtools.api.arguments.NativeArguments.Companion.X_PRINT_FILES
-import org.jetbrains.kotlin.buildtools.api.arguments.NativeArguments.Companion.X_PRINT_IR
-import org.jetbrains.kotlin.buildtools.api.arguments.NativeArguments.Companion.X_PURGE_USER_LIBS
-import org.jetbrains.kotlin.buildtools.api.arguments.NativeArguments.Companion.X_READ_DEPENDENCIES_FROM
-import org.jetbrains.kotlin.buildtools.api.arguments.NativeArguments.Companion.X_REFINES_PATHS
-import org.jetbrains.kotlin.buildtools.api.arguments.NativeArguments.Companion.X_RUNTIME
-import org.jetbrains.kotlin.buildtools.api.arguments.NativeArguments.Companion.X_RUNTIME_LOGS
-import org.jetbrains.kotlin.buildtools.api.arguments.NativeArguments.Companion.X_SAVE_LLVM_IR_AFTER
-import org.jetbrains.kotlin.buildtools.api.arguments.NativeArguments.Companion.X_SAVE_LLVM_IR_DIRECTORY
-import org.jetbrains.kotlin.buildtools.api.arguments.NativeArguments.Companion.X_SHORT_MODULE_NAME
-import org.jetbrains.kotlin.buildtools.api.arguments.NativeArguments.Companion.X_STATIC_FRAMEWORK
-import org.jetbrains.kotlin.buildtools.api.arguments.NativeArguments.Companion.X_TEMPORARY_FILES_DIR
-import org.jetbrains.kotlin.buildtools.api.arguments.NativeArguments.Companion.X_VERIFY_BITCODE
-import org.jetbrains.kotlin.buildtools.api.arguments.NativeArguments.Companion.X_VERIFY_COMPILER
-import org.jetbrains.kotlin.buildtools.api.arguments.NativeArguments.Companion.X_WORKER_EXCEPTION_HANDLING
-import org.jetbrains.kotlin.buildtools.api.arguments.NativeArguments.Companion.X_WRITE_DEPENDENCIES_OF_PRODUCED_KLIB_TO
-import org.jetbrains.kotlin.buildtools.api.arguments.NativeArguments.Companion.X_WRITE_DEPENDENCIES_TO
 import org.jetbrains.kotlin.cli.common.arguments.K2NativeCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
+import org.jetbrains.kotlin.compilerRunner.toArgumentStrings as compilerToArgumentStrings
 
 internal class NativeArgumentsImpl : CommonKlibBasedArgumentsImpl(), NativeArguments {
+  private val internalArguments: MutableSet<String> = mutableSetOf()
+
   private val optionsMap: MutableMap<String, Any?> = mutableMapOf()
 
   @Suppress("UNCHECKED_CAST")
@@ -135,93 +139,94 @@ internal class NativeArgumentsImpl : CommonKlibBasedArgumentsImpl(), NativeArgum
   @Suppress("DEPRECATION")
   public fun toCompilerArguments(arguments: K2NativeCompilerArguments = K2NativeCompilerArguments()): K2NativeCompilerArguments {
     super.toCompilerArguments(arguments)
-    if ("ENABLE_ASSERTIONS" in optionsMap) { arguments.enableAssertions = get(ENABLE_ASSERTIONS) }
-    if ("G" in optionsMap) { arguments.debug = get(G) }
-    if ("GENERATE_TEST_RUNNER" in optionsMap) { arguments.generateTestRunner = get(GENERATE_TEST_RUNNER) }
-    if ("GENERATE_WORKER_TEST_RUNNER" in optionsMap) { arguments.generateWorkerTestRunner = get(GENERATE_WORKER_TEST_RUNNER) }
-    if ("GENERATE_NO_EXIT_TEST_RUNNER" in optionsMap) { arguments.generateNoExitTestRunner = get(GENERATE_NO_EXIT_TEST_RUNNER) }
-    if ("INCLUDE_BINARY" in optionsMap) { arguments.includeBinaries = get(INCLUDE_BINARY) }
-    if ("LIBRARY" in optionsMap) { arguments.libraries = get(LIBRARY) }
-    if ("LIBRARY_VERSION" in optionsMap) { arguments.libraryVersion = get(LIBRARY_VERSION) }
-    if ("LIST_TARGETS" in optionsMap) { arguments.listTargets = get(LIST_TARGETS) }
-    if ("MANIFEST" in optionsMap) { arguments.manifestFile = get(MANIFEST) }
-    if ("MEMORY_MODEL" in optionsMap) { arguments.memoryModel = get(MEMORY_MODEL) }
-    if ("MODULE_NAME" in optionsMap) { arguments.moduleName = get(MODULE_NAME) }
-    if ("NATIVE_LIBRARY" in optionsMap) { arguments.nativeLibraries = get(NATIVE_LIBRARY) }
-    if ("NO_DEFAULT_LIBS" in optionsMap) { arguments.nodefaultlibs = get(NO_DEFAULT_LIBS) }
-    if ("NO_ENDORSED_LIBS" in optionsMap) { arguments.noendorsedlibs = get(NO_ENDORSED_LIBS) }
-    if ("NOMAIN" in optionsMap) { arguments.nomain = get(NOMAIN) }
-    if ("NOPACK" in optionsMap) { arguments.nopack = get(NOPACK) }
-    if ("LINKER_OPTIONS" in optionsMap) { arguments.linkerArguments = get(LINKER_OPTIONS) }
-    if ("LINKER_OPTION" in optionsMap) { arguments.singleLinkerArguments = get(LINKER_OPTION) }
-    if ("NOSTDLIB" in optionsMap) { arguments.nostdlib = get(NOSTDLIB) }
-    if ("OPT" in optionsMap) { arguments.optimization = get(OPT) }
-    if ("OUTPUT" in optionsMap) { arguments.outputName = get(OUTPUT) }
-    if ("ENTRY" in optionsMap) { arguments.mainPackage = get(ENTRY) }
-    if ("PRODUCE" in optionsMap) { arguments.produce = get(PRODUCE) }
-    if ("TARGET" in optionsMap) { arguments.target = get(TARGET) }
-    if ("X_BUNDLE_ID" in optionsMap) { arguments.bundleId = get(X_BUNDLE_ID) }
-    if ("X_CACHE_DIRECTORY" in optionsMap) { arguments.cacheDirectories = get(X_CACHE_DIRECTORY) }
-    if ("X_CACHED_LIBRARY" in optionsMap) { arguments.cachedLibraries = get(X_CACHED_LIBRARY) }
-    if ("X_AUTO_CACHE_FROM" in optionsMap) { arguments.autoCacheableFrom = get(X_AUTO_CACHE_FROM) }
-    if ("X_AUTO_CACHE_DIR" in optionsMap) { arguments.autoCacheDir = get(X_AUTO_CACHE_DIR) }
-    if ("X_IC_CACHE_DIR" in optionsMap) { arguments.incrementalCacheDir = get(X_IC_CACHE_DIR) }
-    if ("X_CHECK_DEPENDENCIES" in optionsMap) { arguments.checkDependencies = get(X_CHECK_DEPENDENCIES) }
-    if ("X_EMIT_LAZY_OBJC_HEADER" in optionsMap) { arguments.emitLazyObjCHeader = get(X_EMIT_LAZY_OBJC_HEADER) }
-    if ("X_EXPORT_LIBRARY" in optionsMap) { arguments.exportedLibraries = get(X_EXPORT_LIBRARY) }
-    if ("X_EXTERNAL_DEPENDENCIES" in optionsMap) { arguments.externalDependencies = get(X_EXTERNAL_DEPENDENCIES) }
-    if ("X_FAKE_OVERRIDE_VALIDATOR" in optionsMap) { arguments.fakeOverrideValidator = get(X_FAKE_OVERRIDE_VALIDATOR) }
-    if ("X_FRAMEWORK_IMPORT_HEADER" in optionsMap) { arguments.frameworkImportHeaders = get(X_FRAMEWORK_IMPORT_HEADER) }
-    if ("X_ADD_LIGHT_DEBUG" in optionsMap) { arguments.lightDebugString = get(X_ADD_LIGHT_DEBUG) }
-    if ("X_G0" in optionsMap) { arguments.lightDebugDeprecated = get(X_G0) }
-    if ("X_G_GENERATE_DEBUG_TRAMPOLINE" in optionsMap) { arguments.generateDebugTrampolineString = get(X_G_GENERATE_DEBUG_TRAMPOLINE) }
-    if ("X_ADD_CACHE" in optionsMap) { arguments.libraryToAddToCache = get(X_ADD_CACHE) }
-    if ("X_FILE_TO_CACHE" in optionsMap) { arguments.filesToCache = get(X_FILE_TO_CACHE) }
-    if ("X_MAKE_PER_FILE_CACHE" in optionsMap) { arguments.makePerFileCache = get(X_MAKE_PER_FILE_CACHE) }
-    if ("X_BACKEND_THREADS" in optionsMap) { arguments.backendThreads = get(X_BACKEND_THREADS).toString() }
-    if ("X_EXPORT_KDOC" in optionsMap) { arguments.exportKDoc = get(X_EXPORT_KDOC) }
-    if ("X_PRINT_BITCODE" in optionsMap) { arguments.printBitCode = get(X_PRINT_BITCODE) }
-    if ("X_CHECK_STATE_AT_EXTERNAL_CALLS" in optionsMap) { arguments.checkExternalCalls = get(X_CHECK_STATE_AT_EXTERNAL_CALLS) }
-    if ("X_PRINT_IR" in optionsMap) { arguments.printIr = get(X_PRINT_IR) }
-    if ("X_PRINT_FILES" in optionsMap) { arguments.printFiles = get(X_PRINT_FILES) }
-    if ("X_PURGE_USER_LIBS" in optionsMap) { arguments.purgeUserLibs = get(X_PURGE_USER_LIBS) }
-    if ("X_WRITE_DEPENDENCIES_OF_PRODUCED_KLIB_TO" in optionsMap) { arguments.writeDependenciesOfProducedKlibTo = get(X_WRITE_DEPENDENCIES_OF_PRODUCED_KLIB_TO) }
-    if ("X_RUNTIME" in optionsMap) { arguments.runtimeFile = get(X_RUNTIME) }
-    if ("X_INCLUDE" in optionsMap) { arguments.includes = get(X_INCLUDE) }
-    if ("X_SHORT_MODULE_NAME" in optionsMap) { arguments.shortModuleName = get(X_SHORT_MODULE_NAME) }
-    if ("X_STATIC_FRAMEWORK" in optionsMap) { arguments.staticFramework = get(X_STATIC_FRAMEWORK) }
-    if ("X_TEMPORARY_FILES_DIR" in optionsMap) { arguments.temporaryFilesDir = get(X_TEMPORARY_FILES_DIR) }
-    if ("X_SAVE_LLVM_IR_AFTER" in optionsMap) { arguments.saveLlvmIrAfter = get(X_SAVE_LLVM_IR_AFTER) }
-    if ("X_VERIFY_BITCODE" in optionsMap) { arguments.verifyBitCode = get(X_VERIFY_BITCODE) }
-    if ("X_VERIFY_COMPILER" in optionsMap) { arguments.verifyCompiler = get(X_VERIFY_COMPILER) }
-    if ("FRIEND_MODULES" in optionsMap) { arguments.friendModules = get(FRIEND_MODULES) }
-    if ("X_REFINES_PATHS" in optionsMap) { arguments.refinesPaths = get(X_REFINES_PATHS) }
-    if ("X_DEBUG_INFO_VERSION" in optionsMap) { arguments.debugInfoFormatVersion = get(X_DEBUG_INFO_VERSION).toString() }
-    if ("X_NO_OBJC_GENERICS" in optionsMap) { arguments.noObjcGenerics = get(X_NO_OBJC_GENERICS) }
-    if ("X_OVERRIDE_CLANG_OPTIONS" in optionsMap) { arguments.clangOptions = get(X_OVERRIDE_CLANG_OPTIONS) }
-    if ("X_ALLOCATOR" in optionsMap) { arguments.allocator = get(X_ALLOCATOR) }
-    if ("X_HEADER_KLIB_PATH" in optionsMap) { arguments.headerKlibPath = get(X_HEADER_KLIB_PATH) }
-    if ("X_DEBUG_PREFIX_MAP" in optionsMap) { arguments.debugPrefixMap = get(X_DEBUG_PREFIX_MAP) }
-    if ("X_PRE_LINK_CACHES" in optionsMap) { arguments.preLinkCaches = get(X_PRE_LINK_CACHES) }
-    if ("X_OVERRIDE_KONAN_PROPERTIES" in optionsMap) { arguments.overrideKonanProperties = get(X_OVERRIDE_KONAN_PROPERTIES) }
-    if ("X_DESTROY_RUNTIME_MODE" in optionsMap) { arguments.destroyRuntimeMode = get(X_DESTROY_RUNTIME_MODE) }
-    if ("X_GC" in optionsMap) { arguments.gc = get(X_GC) }
-    if ("X_IR_PROPERTY_LAZY_INITIALIZATION" in optionsMap) { arguments.propertyLazyInitialization = get(X_IR_PROPERTY_LAZY_INITIALIZATION) }
-    if ("X_WORKER_EXCEPTION_HANDLING" in optionsMap) { arguments.workerExceptionHandling = get(X_WORKER_EXCEPTION_HANDLING) }
-    if ("X_LLVM_VARIANT" in optionsMap) { arguments.llvmVariant = get(X_LLVM_VARIANT) }
-    if ("X_BINARY" in optionsMap) { arguments.binaryOptions = get(X_BINARY) }
-    if ("X_RUNTIME_LOGS" in optionsMap) { arguments.runtimeLogs = get(X_RUNTIME_LOGS) }
-    if ("X_DUMP_TESTS_TO" in optionsMap) { arguments.testDumpOutputPath = get(X_DUMP_TESTS_TO) }
-    if ("X_LAZY_IR_FOR_CACHES" in optionsMap) { arguments.lazyIrForCaches = get(X_LAZY_IR_FOR_CACHES) }
-    if ("X_OMIT_FRAMEWORK_BINARY" in optionsMap) { arguments.omitFrameworkBinary = get(X_OMIT_FRAMEWORK_BINARY) }
-    if ("X_COMPILE_FROM_BITCODE" in optionsMap) { arguments.compileFromBitcode = get(X_COMPILE_FROM_BITCODE) }
-    if ("X_READ_DEPENDENCIES_FROM" in optionsMap) { arguments.serializedDependencies = get(X_READ_DEPENDENCIES_FROM) }
-    if ("X_WRITE_DEPENDENCIES_TO" in optionsMap) { arguments.saveDependenciesPath = get(X_WRITE_DEPENDENCIES_TO) }
-    if ("X_SAVE_LLVM_IR_DIRECTORY" in optionsMap) { arguments.saveLlvmIrDirectory = get(X_SAVE_LLVM_IR_DIRECTORY) }
-    if ("X_KONAN_DATA_DIR" in optionsMap) { arguments.konanDataDir = get(X_KONAN_DATA_DIR) }
-    if ("X_LLVM_MODULE_PASSES" in optionsMap) { arguments.llvmModulePasses = get(X_LLVM_MODULE_PASSES) }
-    if ("X_LLVM_LTO_PASSES" in optionsMap) { arguments.llvmLTOPasses = get(X_LLVM_LTO_PASSES) }
-    if ("X_MANIFEST_NATIVE_TARGETS" in optionsMap) { arguments.manifestNativeTargets = get(X_MANIFEST_NATIVE_TARGETS) }
+    try { if ("ENABLE_ASSERTIONS" in optionsMap) { arguments.enableAssertions = get(ENABLE_ASSERTIONS) } } catch (_: NoSuchMethodError) {}
+    try { if ("G" in optionsMap) { arguments.debug = get(G) } } catch (_: NoSuchMethodError) {}
+    try { if ("GENERATE_TEST_RUNNER" in optionsMap) { arguments.generateTestRunner = get(GENERATE_TEST_RUNNER) } } catch (_: NoSuchMethodError) {}
+    try { if ("GENERATE_WORKER_TEST_RUNNER" in optionsMap) { arguments.generateWorkerTestRunner = get(GENERATE_WORKER_TEST_RUNNER) } } catch (_: NoSuchMethodError) {}
+    try { if ("GENERATE_NO_EXIT_TEST_RUNNER" in optionsMap) { arguments.generateNoExitTestRunner = get(GENERATE_NO_EXIT_TEST_RUNNER) } } catch (_: NoSuchMethodError) {}
+    try { if ("INCLUDE_BINARY" in optionsMap) { arguments.includeBinaries = get(INCLUDE_BINARY) } } catch (_: NoSuchMethodError) {}
+    try { if ("LIBRARY" in optionsMap) { arguments.libraries = get(LIBRARY) } } catch (_: NoSuchMethodError) {}
+    try { if ("LIBRARY_VERSION" in optionsMap) { arguments.libraryVersion = get(LIBRARY_VERSION) } } catch (_: NoSuchMethodError) {}
+    try { if ("LIST_TARGETS" in optionsMap) { arguments.listTargets = get(LIST_TARGETS) } } catch (_: NoSuchMethodError) {}
+    try { if ("MANIFEST" in optionsMap) { arguments.manifestFile = get(MANIFEST) } } catch (_: NoSuchMethodError) {}
+    try { if ("MEMORY_MODEL" in optionsMap) { arguments.memoryModel = get(MEMORY_MODEL) } } catch (_: NoSuchMethodError) {}
+    try { if ("MODULE_NAME" in optionsMap) { arguments.moduleName = get(MODULE_NAME) } } catch (_: NoSuchMethodError) {}
+    try { if ("NATIVE_LIBRARY" in optionsMap) { arguments.nativeLibraries = get(NATIVE_LIBRARY) } } catch (_: NoSuchMethodError) {}
+    try { if ("NO_DEFAULT_LIBS" in optionsMap) { arguments.nodefaultlibs = get(NO_DEFAULT_LIBS) } } catch (_: NoSuchMethodError) {}
+    try { if ("NO_ENDORSED_LIBS" in optionsMap) { arguments.noendorsedlibs = get(NO_ENDORSED_LIBS) } } catch (_: NoSuchMethodError) {}
+    try { if ("NOMAIN" in optionsMap) { arguments.nomain = get(NOMAIN) } } catch (_: NoSuchMethodError) {}
+    try { if ("NOPACK" in optionsMap) { arguments.nopack = get(NOPACK) } } catch (_: NoSuchMethodError) {}
+    try { if ("LINKER_OPTIONS" in optionsMap) { arguments.linkerArguments = get(LINKER_OPTIONS) } } catch (_: NoSuchMethodError) {}
+    try { if ("LINKER_OPTION" in optionsMap) { arguments.singleLinkerArguments = get(LINKER_OPTION) } } catch (_: NoSuchMethodError) {}
+    try { if ("NOSTDLIB" in optionsMap) { arguments.nostdlib = get(NOSTDLIB) } } catch (_: NoSuchMethodError) {}
+    try { if ("OPT" in optionsMap) { arguments.optimization = get(OPT) } } catch (_: NoSuchMethodError) {}
+    try { if ("OUTPUT" in optionsMap) { arguments.outputName = get(OUTPUT) } } catch (_: NoSuchMethodError) {}
+    try { if ("ENTRY" in optionsMap) { arguments.mainPackage = get(ENTRY) } } catch (_: NoSuchMethodError) {}
+    try { if ("PRODUCE" in optionsMap) { arguments.produce = get(PRODUCE) } } catch (_: NoSuchMethodError) {}
+    try { if ("TARGET" in optionsMap) { arguments.target = get(TARGET) } } catch (_: NoSuchMethodError) {}
+    try { if ("X_BUNDLE_ID" in optionsMap) { arguments.bundleId = get(X_BUNDLE_ID) } } catch (_: NoSuchMethodError) {}
+    try { if ("X_CACHE_DIRECTORY" in optionsMap) { arguments.cacheDirectories = get(X_CACHE_DIRECTORY) } } catch (_: NoSuchMethodError) {}
+    try { if ("X_CACHED_LIBRARY" in optionsMap) { arguments.cachedLibraries = get(X_CACHED_LIBRARY) } } catch (_: NoSuchMethodError) {}
+    try { if ("X_AUTO_CACHE_FROM" in optionsMap) { arguments.autoCacheableFrom = get(X_AUTO_CACHE_FROM) } } catch (_: NoSuchMethodError) {}
+    try { if ("X_AUTO_CACHE_DIR" in optionsMap) { arguments.autoCacheDir = get(X_AUTO_CACHE_DIR) } } catch (_: NoSuchMethodError) {}
+    try { if ("X_IC_CACHE_DIR" in optionsMap) { arguments.incrementalCacheDir = get(X_IC_CACHE_DIR) } } catch (_: NoSuchMethodError) {}
+    try { if ("X_CHECK_DEPENDENCIES" in optionsMap) { arguments.checkDependencies = get(X_CHECK_DEPENDENCIES) } } catch (_: NoSuchMethodError) {}
+    try { if ("X_EMIT_LAZY_OBJC_HEADER" in optionsMap) { arguments.emitLazyObjCHeader = get(X_EMIT_LAZY_OBJC_HEADER) } } catch (_: NoSuchMethodError) {}
+    try { if ("X_EXPORT_LIBRARY" in optionsMap) { arguments.exportedLibraries = get(X_EXPORT_LIBRARY) } } catch (_: NoSuchMethodError) {}
+    try { if ("X_EXTERNAL_DEPENDENCIES" in optionsMap) { arguments.externalDependencies = get(X_EXTERNAL_DEPENDENCIES) } } catch (_: NoSuchMethodError) {}
+    try { if ("X_FAKE_OVERRIDE_VALIDATOR" in optionsMap) { arguments.fakeOverrideValidator = get(X_FAKE_OVERRIDE_VALIDATOR) } } catch (_: NoSuchMethodError) {}
+    try { if ("X_FRAMEWORK_IMPORT_HEADER" in optionsMap) { arguments.frameworkImportHeaders = get(X_FRAMEWORK_IMPORT_HEADER) } } catch (_: NoSuchMethodError) {}
+    try { if ("X_ADD_LIGHT_DEBUG" in optionsMap) { arguments.lightDebugString = get(X_ADD_LIGHT_DEBUG) } } catch (_: NoSuchMethodError) {}
+    try { if ("X_G0" in optionsMap) { arguments.lightDebugDeprecated = get(X_G0) } } catch (_: NoSuchMethodError) {}
+    try { if ("X_G_GENERATE_DEBUG_TRAMPOLINE" in optionsMap) { arguments.generateDebugTrampolineString = get(X_G_GENERATE_DEBUG_TRAMPOLINE) } } catch (_: NoSuchMethodError) {}
+    try { if ("X_ADD_CACHE" in optionsMap) { arguments.libraryToAddToCache = get(X_ADD_CACHE) } } catch (_: NoSuchMethodError) {}
+    try { if ("X_FILE_TO_CACHE" in optionsMap) { arguments.filesToCache = get(X_FILE_TO_CACHE) } } catch (_: NoSuchMethodError) {}
+    try { if ("X_MAKE_PER_FILE_CACHE" in optionsMap) { arguments.makePerFileCache = get(X_MAKE_PER_FILE_CACHE) } } catch (_: NoSuchMethodError) {}
+    try { if ("X_BACKEND_THREADS" in optionsMap) { arguments.backendThreads = get(X_BACKEND_THREADS).toString() } } catch (_: NoSuchMethodError) {}
+    try { if ("X_EXPORT_KDOC" in optionsMap) { arguments.exportKDoc = get(X_EXPORT_KDOC) } } catch (_: NoSuchMethodError) {}
+    try { if ("X_PRINT_BITCODE" in optionsMap) { arguments.printBitCode = get(X_PRINT_BITCODE) } } catch (_: NoSuchMethodError) {}
+    try { if ("X_CHECK_STATE_AT_EXTERNAL_CALLS" in optionsMap) { arguments.checkExternalCalls = get(X_CHECK_STATE_AT_EXTERNAL_CALLS) } } catch (_: NoSuchMethodError) {}
+    try { if ("X_PRINT_IR" in optionsMap) { arguments.printIr = get(X_PRINT_IR) } } catch (_: NoSuchMethodError) {}
+    try { if ("X_PRINT_FILES" in optionsMap) { arguments.printFiles = get(X_PRINT_FILES) } } catch (_: NoSuchMethodError) {}
+    try { if ("X_PURGE_USER_LIBS" in optionsMap) { arguments.purgeUserLibs = get(X_PURGE_USER_LIBS) } } catch (_: NoSuchMethodError) {}
+    try { if ("X_WRITE_DEPENDENCIES_OF_PRODUCED_KLIB_TO" in optionsMap) { arguments.writeDependenciesOfProducedKlibTo = get(X_WRITE_DEPENDENCIES_OF_PRODUCED_KLIB_TO) } } catch (_: NoSuchMethodError) {}
+    try { if ("X_RUNTIME" in optionsMap) { arguments.runtimeFile = get(X_RUNTIME) } } catch (_: NoSuchMethodError) {}
+    try { if ("X_INCLUDE" in optionsMap) { arguments.includes = get(X_INCLUDE) } } catch (_: NoSuchMethodError) {}
+    try { if ("X_SHORT_MODULE_NAME" in optionsMap) { arguments.shortModuleName = get(X_SHORT_MODULE_NAME) } } catch (_: NoSuchMethodError) {}
+    try { if ("X_STATIC_FRAMEWORK" in optionsMap) { arguments.staticFramework = get(X_STATIC_FRAMEWORK) } } catch (_: NoSuchMethodError) {}
+    try { if ("X_TEMPORARY_FILES_DIR" in optionsMap) { arguments.temporaryFilesDir = get(X_TEMPORARY_FILES_DIR) } } catch (_: NoSuchMethodError) {}
+    try { if ("X_SAVE_LLVM_IR_AFTER" in optionsMap) { arguments.saveLlvmIrAfter = get(X_SAVE_LLVM_IR_AFTER) } } catch (_: NoSuchMethodError) {}
+    try { if ("X_VERIFY_BITCODE" in optionsMap) { arguments.verifyBitCode = get(X_VERIFY_BITCODE) } } catch (_: NoSuchMethodError) {}
+    try { if ("X_VERIFY_COMPILER" in optionsMap) { arguments.verifyCompiler = get(X_VERIFY_COMPILER) } } catch (_: NoSuchMethodError) {}
+    try { if ("FRIEND_MODULES" in optionsMap) { arguments.friendModules = get(FRIEND_MODULES) } } catch (_: NoSuchMethodError) {}
+    try { if ("X_REFINES_PATHS" in optionsMap) { arguments.refinesPaths = get(X_REFINES_PATHS) } } catch (_: NoSuchMethodError) {}
+    try { if ("X_DEBUG_INFO_VERSION" in optionsMap) { arguments.debugInfoFormatVersion = get(X_DEBUG_INFO_VERSION).toString() } } catch (_: NoSuchMethodError) {}
+    try { if ("X_NO_OBJC_GENERICS" in optionsMap) { arguments.noObjcGenerics = get(X_NO_OBJC_GENERICS) } } catch (_: NoSuchMethodError) {}
+    try { if ("X_OVERRIDE_CLANG_OPTIONS" in optionsMap) { arguments.clangOptions = get(X_OVERRIDE_CLANG_OPTIONS) } } catch (_: NoSuchMethodError) {}
+    try { if ("X_ALLOCATOR" in optionsMap) { arguments.allocator = get(X_ALLOCATOR) } } catch (_: NoSuchMethodError) {}
+    try { if ("X_HEADER_KLIB_PATH" in optionsMap) { arguments.headerKlibPath = get(X_HEADER_KLIB_PATH) } } catch (_: NoSuchMethodError) {}
+    try { if ("X_DEBUG_PREFIX_MAP" in optionsMap) { arguments.debugPrefixMap = get(X_DEBUG_PREFIX_MAP) } } catch (_: NoSuchMethodError) {}
+    try { if ("X_PRE_LINK_CACHES" in optionsMap) { arguments.preLinkCaches = get(X_PRE_LINK_CACHES) } } catch (_: NoSuchMethodError) {}
+    try { if ("X_OVERRIDE_KONAN_PROPERTIES" in optionsMap) { arguments.overrideKonanProperties = get(X_OVERRIDE_KONAN_PROPERTIES) } } catch (_: NoSuchMethodError) {}
+    try { if ("X_DESTROY_RUNTIME_MODE" in optionsMap) { arguments.destroyRuntimeMode = get(X_DESTROY_RUNTIME_MODE) } } catch (_: NoSuchMethodError) {}
+    try { if ("X_GC" in optionsMap) { arguments.gc = get(X_GC) } } catch (_: NoSuchMethodError) {}
+    try { if ("X_IR_PROPERTY_LAZY_INITIALIZATION" in optionsMap) { arguments.propertyLazyInitialization = get(X_IR_PROPERTY_LAZY_INITIALIZATION) } } catch (_: NoSuchMethodError) {}
+    try { if ("X_WORKER_EXCEPTION_HANDLING" in optionsMap) { arguments.workerExceptionHandling = get(X_WORKER_EXCEPTION_HANDLING) } } catch (_: NoSuchMethodError) {}
+    try { if ("X_LLVM_VARIANT" in optionsMap) { arguments.llvmVariant = get(X_LLVM_VARIANT) } } catch (_: NoSuchMethodError) {}
+    try { if ("X_BINARY" in optionsMap) { arguments.binaryOptions = get(X_BINARY) } } catch (_: NoSuchMethodError) {}
+    try { if ("X_RUNTIME_LOGS" in optionsMap) { arguments.runtimeLogs = get(X_RUNTIME_LOGS) } } catch (_: NoSuchMethodError) {}
+    try { if ("X_DUMP_TESTS_TO" in optionsMap) { arguments.testDumpOutputPath = get(X_DUMP_TESTS_TO) } } catch (_: NoSuchMethodError) {}
+    try { if ("X_LAZY_IR_FOR_CACHES" in optionsMap) { arguments.lazyIrForCaches = get(X_LAZY_IR_FOR_CACHES) } } catch (_: NoSuchMethodError) {}
+    try { if ("X_OMIT_FRAMEWORK_BINARY" in optionsMap) { arguments.omitFrameworkBinary = get(X_OMIT_FRAMEWORK_BINARY) } } catch (_: NoSuchMethodError) {}
+    try { if ("X_COMPILE_FROM_BITCODE" in optionsMap) { arguments.compileFromBitcode = get(X_COMPILE_FROM_BITCODE) } } catch (_: NoSuchMethodError) {}
+    try { if ("X_READ_DEPENDENCIES_FROM" in optionsMap) { arguments.serializedDependencies = get(X_READ_DEPENDENCIES_FROM) } } catch (_: NoSuchMethodError) {}
+    try { if ("X_WRITE_DEPENDENCIES_TO" in optionsMap) { arguments.saveDependenciesPath = get(X_WRITE_DEPENDENCIES_TO) } } catch (_: NoSuchMethodError) {}
+    try { if ("X_SAVE_LLVM_IR_DIRECTORY" in optionsMap) { arguments.saveLlvmIrDirectory = get(X_SAVE_LLVM_IR_DIRECTORY) } } catch (_: NoSuchMethodError) {}
+    try { if ("X_KONAN_DATA_DIR" in optionsMap) { arguments.konanDataDir = get(X_KONAN_DATA_DIR) } } catch (_: NoSuchMethodError) {}
+    try { if ("X_LLVM_MODULE_PASSES" in optionsMap) { arguments.llvmModulePasses = get(X_LLVM_MODULE_PASSES) } } catch (_: NoSuchMethodError) {}
+    try { if ("X_LLVM_LTO_PASSES" in optionsMap) { arguments.llvmLTOPasses = get(X_LLVM_LTO_PASSES) } } catch (_: NoSuchMethodError) {}
+    try { if ("X_MANIFEST_NATIVE_TARGETS" in optionsMap) { arguments.manifestNativeTargets = get(X_MANIFEST_NATIVE_TARGETS) } } catch (_: NoSuchMethodError) {}
+    arguments.internalArguments = parseCommandLineArguments<K2NativeCompilerArguments>(internalArguments.toList()).internalArguments
     return arguments
   }
 
@@ -230,191 +235,102 @@ internal class NativeArgumentsImpl : CommonKlibBasedArgumentsImpl(), NativeArgum
     applyCompilerArguments(compilerArgs)
   }
 
-  @Suppress("DEPRECATION")
-  @OptIn(ExperimentalCompilerArgument::class)
   override fun toArgumentStrings(): List<String> {
-    val arguments = mutableListOf<String>()
-    arguments.addAll(super.toArgumentStrings())
-    if ("ENABLE_ASSERTIONS" in optionsMap) { arguments.add("-enable-assertions=" + get(ENABLE_ASSERTIONS)) }
-    if ("G" in optionsMap) { arguments.add("-g=" + get(G)) }
-    if ("GENERATE_TEST_RUNNER" in optionsMap) { arguments.add("-generate-test-runner=" + get(GENERATE_TEST_RUNNER)) }
-    if ("GENERATE_WORKER_TEST_RUNNER" in optionsMap) { arguments.add("-generate-worker-test-runner=" + get(GENERATE_WORKER_TEST_RUNNER)) }
-    if ("GENERATE_NO_EXIT_TEST_RUNNER" in optionsMap) { arguments.add("-generate-no-exit-test-runner=" + get(GENERATE_NO_EXIT_TEST_RUNNER)) }
-    if ("INCLUDE_BINARY" in optionsMap) { arguments.add("-include-binary=" + get(INCLUDE_BINARY)) }
-    if ("LIBRARY" in optionsMap) { arguments.add("-library=" + get(LIBRARY)) }
-    if ("LIBRARY_VERSION" in optionsMap) { arguments.add("-library-version=" + get(LIBRARY_VERSION)) }
-    if ("LIST_TARGETS" in optionsMap) { arguments.add("-list-targets=" + get(LIST_TARGETS)) }
-    if ("MANIFEST" in optionsMap) { arguments.add("-manifest=" + get(MANIFEST)) }
-    if ("MEMORY_MODEL" in optionsMap) { arguments.add("-memory-model=" + get(MEMORY_MODEL)) }
-    if ("MODULE_NAME" in optionsMap) { arguments.add("-module-name=" + get(MODULE_NAME)) }
-    if ("NATIVE_LIBRARY" in optionsMap) { arguments.add("-native-library=" + get(NATIVE_LIBRARY)) }
-    if ("NO_DEFAULT_LIBS" in optionsMap) { arguments.add("-no-default-libs=" + get(NO_DEFAULT_LIBS)) }
-    if ("NO_ENDORSED_LIBS" in optionsMap) { arguments.add("-no-endorsed-libs=" + get(NO_ENDORSED_LIBS)) }
-    if ("NOMAIN" in optionsMap) { arguments.add("-nomain=" + get(NOMAIN)) }
-    if ("NOPACK" in optionsMap) { arguments.add("-nopack=" + get(NOPACK)) }
-    if ("LINKER_OPTIONS" in optionsMap) { arguments.add("-linker-options=" + get(LINKER_OPTIONS)) }
-    if ("LINKER_OPTION" in optionsMap) { arguments.add("-linker-option=" + get(LINKER_OPTION)) }
-    if ("NOSTDLIB" in optionsMap) { arguments.add("-nostdlib=" + get(NOSTDLIB)) }
-    if ("OPT" in optionsMap) { arguments.add("-opt=" + get(OPT)) }
-    if ("OUTPUT" in optionsMap) { arguments.add("-output=" + get(OUTPUT)) }
-    if ("ENTRY" in optionsMap) { arguments.add("-entry=" + get(ENTRY)) }
-    if ("PRODUCE" in optionsMap) { arguments.add("-produce=" + get(PRODUCE)) }
-    if ("TARGET" in optionsMap) { arguments.add("-target=" + get(TARGET)) }
-    if ("X_BUNDLE_ID" in optionsMap) { arguments.add("-Xbundle-id=" + get(X_BUNDLE_ID)) }
-    if ("X_CACHE_DIRECTORY" in optionsMap) { arguments.add("-Xcache-directory=" + get(X_CACHE_DIRECTORY)) }
-    if ("X_CACHED_LIBRARY" in optionsMap) { arguments.add("-Xcached-library=" + get(X_CACHED_LIBRARY)) }
-    if ("X_AUTO_CACHE_FROM" in optionsMap) { arguments.add("-Xauto-cache-from=" + get(X_AUTO_CACHE_FROM)) }
-    if ("X_AUTO_CACHE_DIR" in optionsMap) { arguments.add("-Xauto-cache-dir=" + get(X_AUTO_CACHE_DIR)) }
-    if ("X_IC_CACHE_DIR" in optionsMap) { arguments.add("-Xic-cache-dir=" + get(X_IC_CACHE_DIR)) }
-    if ("X_CHECK_DEPENDENCIES" in optionsMap) { arguments.add("-Xcheck-dependencies=" + get(X_CHECK_DEPENDENCIES)) }
-    if ("X_EMIT_LAZY_OBJC_HEADER" in optionsMap) { arguments.add("-Xemit-lazy-objc-header=" + get(X_EMIT_LAZY_OBJC_HEADER)) }
-    if ("X_EXPORT_LIBRARY" in optionsMap) { arguments.add("-Xexport-library=" + get(X_EXPORT_LIBRARY)) }
-    if ("X_EXTERNAL_DEPENDENCIES" in optionsMap) { arguments.add("-Xexternal-dependencies=" + get(X_EXTERNAL_DEPENDENCIES)) }
-    if ("X_FAKE_OVERRIDE_VALIDATOR" in optionsMap) { arguments.add("-Xfake-override-validator=" + get(X_FAKE_OVERRIDE_VALIDATOR)) }
-    if ("X_FRAMEWORK_IMPORT_HEADER" in optionsMap) { arguments.add("-Xframework-import-header=" + get(X_FRAMEWORK_IMPORT_HEADER)) }
-    if ("X_ADD_LIGHT_DEBUG" in optionsMap) { arguments.add("-Xadd-light-debug=" + get(X_ADD_LIGHT_DEBUG)) }
-    if ("X_G0" in optionsMap) { arguments.add("-Xg0=" + get(X_G0)) }
-    if ("X_G_GENERATE_DEBUG_TRAMPOLINE" in optionsMap) { arguments.add("-Xg-generate-debug-trampoline=" + get(X_G_GENERATE_DEBUG_TRAMPOLINE)) }
-    if ("X_ADD_CACHE" in optionsMap) { arguments.add("-Xadd-cache=" + get(X_ADD_CACHE)) }
-    if ("X_FILE_TO_CACHE" in optionsMap) { arguments.add("-Xfile-to-cache=" + get(X_FILE_TO_CACHE)) }
-    if ("X_MAKE_PER_FILE_CACHE" in optionsMap) { arguments.add("-Xmake-per-file-cache=" + get(X_MAKE_PER_FILE_CACHE)) }
-    if ("X_BACKEND_THREADS" in optionsMap) { arguments.add("-Xbackend-threads=" + get(X_BACKEND_THREADS).toString()) }
-    if ("X_EXPORT_KDOC" in optionsMap) { arguments.add("-Xexport-kdoc=" + get(X_EXPORT_KDOC)) }
-    if ("X_PRINT_BITCODE" in optionsMap) { arguments.add("-Xprint-bitcode=" + get(X_PRINT_BITCODE)) }
-    if ("X_CHECK_STATE_AT_EXTERNAL_CALLS" in optionsMap) { arguments.add("-Xcheck-state-at-external-calls=" + get(X_CHECK_STATE_AT_EXTERNAL_CALLS)) }
-    if ("X_PRINT_IR" in optionsMap) { arguments.add("-Xprint-ir=" + get(X_PRINT_IR)) }
-    if ("X_PRINT_FILES" in optionsMap) { arguments.add("-Xprint-files=" + get(X_PRINT_FILES)) }
-    if ("X_PURGE_USER_LIBS" in optionsMap) { arguments.add("-Xpurge-user-libs=" + get(X_PURGE_USER_LIBS)) }
-    if ("X_WRITE_DEPENDENCIES_OF_PRODUCED_KLIB_TO" in optionsMap) { arguments.add("-Xwrite-dependencies-of-produced-klib-to=" + get(X_WRITE_DEPENDENCIES_OF_PRODUCED_KLIB_TO)) }
-    if ("X_RUNTIME" in optionsMap) { arguments.add("-Xruntime=" + get(X_RUNTIME)) }
-    if ("X_INCLUDE" in optionsMap) { arguments.add("-Xinclude=" + get(X_INCLUDE)) }
-    if ("X_SHORT_MODULE_NAME" in optionsMap) { arguments.add("-Xshort-module-name=" + get(X_SHORT_MODULE_NAME)) }
-    if ("X_STATIC_FRAMEWORK" in optionsMap) { arguments.add("-Xstatic-framework=" + get(X_STATIC_FRAMEWORK)) }
-    if ("X_TEMPORARY_FILES_DIR" in optionsMap) { arguments.add("-Xtemporary-files-dir=" + get(X_TEMPORARY_FILES_DIR)) }
-    if ("X_SAVE_LLVM_IR_AFTER" in optionsMap) { arguments.add("-Xsave-llvm-ir-after=" + get(X_SAVE_LLVM_IR_AFTER)) }
-    if ("X_VERIFY_BITCODE" in optionsMap) { arguments.add("-Xverify-bitcode=" + get(X_VERIFY_BITCODE)) }
-    if ("X_VERIFY_COMPILER" in optionsMap) { arguments.add("-Xverify-compiler=" + get(X_VERIFY_COMPILER)) }
-    if ("FRIEND_MODULES" in optionsMap) { arguments.add("-friend-modules=" + get(FRIEND_MODULES)) }
-    if ("X_REFINES_PATHS" in optionsMap) { arguments.add("-Xrefines-paths=" + get(X_REFINES_PATHS)) }
-    if ("X_DEBUG_INFO_VERSION" in optionsMap) { arguments.add("-Xdebug-info-version=" + get(X_DEBUG_INFO_VERSION).toString()) }
-    if ("X_NO_OBJC_GENERICS" in optionsMap) { arguments.add("-Xno-objc-generics=" + get(X_NO_OBJC_GENERICS)) }
-    if ("X_OVERRIDE_CLANG_OPTIONS" in optionsMap) { arguments.add("-Xoverride-clang-options=" + get(X_OVERRIDE_CLANG_OPTIONS)) }
-    if ("X_ALLOCATOR" in optionsMap) { arguments.add("-Xallocator=" + get(X_ALLOCATOR)) }
-    if ("X_HEADER_KLIB_PATH" in optionsMap) { arguments.add("-Xheader-klib-path=" + get(X_HEADER_KLIB_PATH)) }
-    if ("X_DEBUG_PREFIX_MAP" in optionsMap) { arguments.add("-Xdebug-prefix-map=" + get(X_DEBUG_PREFIX_MAP)) }
-    if ("X_PRE_LINK_CACHES" in optionsMap) { arguments.add("-Xpre-link-caches=" + get(X_PRE_LINK_CACHES)) }
-    if ("X_OVERRIDE_KONAN_PROPERTIES" in optionsMap) { arguments.add("-Xoverride-konan-properties=" + get(X_OVERRIDE_KONAN_PROPERTIES)) }
-    if ("X_DESTROY_RUNTIME_MODE" in optionsMap) { arguments.add("-Xdestroy-runtime-mode=" + get(X_DESTROY_RUNTIME_MODE)) }
-    if ("X_GC" in optionsMap) { arguments.add("-Xgc=" + get(X_GC)) }
-    if ("X_IR_PROPERTY_LAZY_INITIALIZATION" in optionsMap) { arguments.add("-Xir-property-lazy-initialization=" + get(X_IR_PROPERTY_LAZY_INITIALIZATION)) }
-    if ("X_WORKER_EXCEPTION_HANDLING" in optionsMap) { arguments.add("-Xworker-exception-handling=" + get(X_WORKER_EXCEPTION_HANDLING)) }
-    if ("X_LLVM_VARIANT" in optionsMap) { arguments.add("-Xllvm-variant=" + get(X_LLVM_VARIANT)) }
-    if ("X_BINARY" in optionsMap) { arguments.add("-Xbinary=" + get(X_BINARY)) }
-    if ("X_RUNTIME_LOGS" in optionsMap) { arguments.add("-Xruntime-logs=" + get(X_RUNTIME_LOGS)) }
-    if ("X_DUMP_TESTS_TO" in optionsMap) { arguments.add("-Xdump-tests-to=" + get(X_DUMP_TESTS_TO)) }
-    if ("X_LAZY_IR_FOR_CACHES" in optionsMap) { arguments.add("-Xlazy-ir-for-caches=" + get(X_LAZY_IR_FOR_CACHES)) }
-    if ("X_OMIT_FRAMEWORK_BINARY" in optionsMap) { arguments.add("-Xomit-framework-binary=" + get(X_OMIT_FRAMEWORK_BINARY)) }
-    if ("X_COMPILE_FROM_BITCODE" in optionsMap) { arguments.add("-Xcompile-from-bitcode=" + get(X_COMPILE_FROM_BITCODE)) }
-    if ("X_READ_DEPENDENCIES_FROM" in optionsMap) { arguments.add("-Xread-dependencies-from=" + get(X_READ_DEPENDENCIES_FROM)) }
-    if ("X_WRITE_DEPENDENCIES_TO" in optionsMap) { arguments.add("-Xwrite-dependencies-to=" + get(X_WRITE_DEPENDENCIES_TO)) }
-    if ("X_SAVE_LLVM_IR_DIRECTORY" in optionsMap) { arguments.add("-Xsave-llvm-ir-directory=" + get(X_SAVE_LLVM_IR_DIRECTORY)) }
-    if ("X_KONAN_DATA_DIR" in optionsMap) { arguments.add("-Xkonan-data-dir=" + get(X_KONAN_DATA_DIR)) }
-    if ("X_LLVM_MODULE_PASSES" in optionsMap) { arguments.add("-Xllvm-module-passes=" + get(X_LLVM_MODULE_PASSES)) }
-    if ("X_LLVM_LTO_PASSES" in optionsMap) { arguments.add("-Xllvm-lto-passes=" + get(X_LLVM_LTO_PASSES)) }
-    if ("X_MANIFEST_NATIVE_TARGETS" in optionsMap) { arguments.add("-Xmanifest-native-targets=" + get(X_MANIFEST_NATIVE_TARGETS)) }
+    val arguments = toCompilerArguments().compilerToArgumentStrings()
     return arguments
   }
 
   @Suppress("DEPRECATION")
   public fun applyCompilerArguments(arguments: K2NativeCompilerArguments) {
     super.applyCompilerArguments(arguments)
-    this[ENABLE_ASSERTIONS] = arguments.enableAssertions
-    this[G] = arguments.debug
-    this[GENERATE_TEST_RUNNER] = arguments.generateTestRunner
-    this[GENERATE_WORKER_TEST_RUNNER] = arguments.generateWorkerTestRunner
-    this[GENERATE_NO_EXIT_TEST_RUNNER] = arguments.generateNoExitTestRunner
-    this[INCLUDE_BINARY] = arguments.includeBinaries
-    this[LIBRARY] = arguments.libraries
-    this[LIBRARY_VERSION] = arguments.libraryVersion
-    this[LIST_TARGETS] = arguments.listTargets
-    this[MANIFEST] = arguments.manifestFile
-    this[MEMORY_MODEL] = arguments.memoryModel
-    this[MODULE_NAME] = arguments.moduleName
-    this[NATIVE_LIBRARY] = arguments.nativeLibraries
-    this[NO_DEFAULT_LIBS] = arguments.nodefaultlibs
-    this[NO_ENDORSED_LIBS] = arguments.noendorsedlibs
-    this[NOMAIN] = arguments.nomain
-    this[NOPACK] = arguments.nopack
-    this[LINKER_OPTIONS] = arguments.linkerArguments
-    this[LINKER_OPTION] = arguments.singleLinkerArguments
-    this[NOSTDLIB] = arguments.nostdlib
-    this[OPT] = arguments.optimization
-    this[OUTPUT] = arguments.outputName
-    this[ENTRY] = arguments.mainPackage
-    this[PRODUCE] = arguments.produce
-    this[TARGET] = arguments.target
-    this[X_BUNDLE_ID] = arguments.bundleId
-    this[X_CACHE_DIRECTORY] = arguments.cacheDirectories
-    this[X_CACHED_LIBRARY] = arguments.cachedLibraries
-    this[X_AUTO_CACHE_FROM] = arguments.autoCacheableFrom
-    this[X_AUTO_CACHE_DIR] = arguments.autoCacheDir
-    this[X_IC_CACHE_DIR] = arguments.incrementalCacheDir
-    this[X_CHECK_DEPENDENCIES] = arguments.checkDependencies
-    this[X_EMIT_LAZY_OBJC_HEADER] = arguments.emitLazyObjCHeader
-    this[X_EXPORT_LIBRARY] = arguments.exportedLibraries
-    this[X_EXTERNAL_DEPENDENCIES] = arguments.externalDependencies
-    this[X_FAKE_OVERRIDE_VALIDATOR] = arguments.fakeOverrideValidator
-    this[X_FRAMEWORK_IMPORT_HEADER] = arguments.frameworkImportHeaders
-    this[X_ADD_LIGHT_DEBUG] = arguments.lightDebugString
-    this[X_G0] = arguments.lightDebugDeprecated
-    this[X_G_GENERATE_DEBUG_TRAMPOLINE] = arguments.generateDebugTrampolineString
-    this[X_ADD_CACHE] = arguments.libraryToAddToCache
-    this[X_FILE_TO_CACHE] = arguments.filesToCache
-    this[X_MAKE_PER_FILE_CACHE] = arguments.makePerFileCache
-    this[X_BACKEND_THREADS] = arguments.backendThreads.let { it.toInt() }
-    this[X_EXPORT_KDOC] = arguments.exportKDoc
-    this[X_PRINT_BITCODE] = arguments.printBitCode
-    this[X_CHECK_STATE_AT_EXTERNAL_CALLS] = arguments.checkExternalCalls
-    this[X_PRINT_IR] = arguments.printIr
-    this[X_PRINT_FILES] = arguments.printFiles
-    this[X_PURGE_USER_LIBS] = arguments.purgeUserLibs
-    this[X_WRITE_DEPENDENCIES_OF_PRODUCED_KLIB_TO] = arguments.writeDependenciesOfProducedKlibTo
-    this[X_RUNTIME] = arguments.runtimeFile
-    this[X_INCLUDE] = arguments.includes
-    this[X_SHORT_MODULE_NAME] = arguments.shortModuleName
-    this[X_STATIC_FRAMEWORK] = arguments.staticFramework
-    this[X_TEMPORARY_FILES_DIR] = arguments.temporaryFilesDir
-    this[X_SAVE_LLVM_IR_AFTER] = arguments.saveLlvmIrAfter
-    this[X_VERIFY_BITCODE] = arguments.verifyBitCode
-    this[X_VERIFY_COMPILER] = arguments.verifyCompiler
-    this[FRIEND_MODULES] = arguments.friendModules
-    this[X_REFINES_PATHS] = arguments.refinesPaths
-    this[X_DEBUG_INFO_VERSION] = arguments.debugInfoFormatVersion.let { it.toInt() }
-    this[X_NO_OBJC_GENERICS] = arguments.noObjcGenerics
-    this[X_OVERRIDE_CLANG_OPTIONS] = arguments.clangOptions
-    this[X_ALLOCATOR] = arguments.allocator
-    this[X_HEADER_KLIB_PATH] = arguments.headerKlibPath
-    this[X_DEBUG_PREFIX_MAP] = arguments.debugPrefixMap
-    this[X_PRE_LINK_CACHES] = arguments.preLinkCaches
-    this[X_OVERRIDE_KONAN_PROPERTIES] = arguments.overrideKonanProperties
-    this[X_DESTROY_RUNTIME_MODE] = arguments.destroyRuntimeMode
-    this[X_GC] = arguments.gc
-    this[X_IR_PROPERTY_LAZY_INITIALIZATION] = arguments.propertyLazyInitialization
-    this[X_WORKER_EXCEPTION_HANDLING] = arguments.workerExceptionHandling
-    this[X_LLVM_VARIANT] = arguments.llvmVariant
-    this[X_BINARY] = arguments.binaryOptions
-    this[X_RUNTIME_LOGS] = arguments.runtimeLogs
-    this[X_DUMP_TESTS_TO] = arguments.testDumpOutputPath
-    this[X_LAZY_IR_FOR_CACHES] = arguments.lazyIrForCaches
-    this[X_OMIT_FRAMEWORK_BINARY] = arguments.omitFrameworkBinary
-    this[X_COMPILE_FROM_BITCODE] = arguments.compileFromBitcode
-    this[X_READ_DEPENDENCIES_FROM] = arguments.serializedDependencies
-    this[X_WRITE_DEPENDENCIES_TO] = arguments.saveDependenciesPath
-    this[X_SAVE_LLVM_IR_DIRECTORY] = arguments.saveLlvmIrDirectory
-    this[X_KONAN_DATA_DIR] = arguments.konanDataDir
-    this[X_LLVM_MODULE_PASSES] = arguments.llvmModulePasses
-    this[X_LLVM_LTO_PASSES] = arguments.llvmLTOPasses
-    this[X_MANIFEST_NATIVE_TARGETS] = arguments.manifestNativeTargets
+    try { this[ENABLE_ASSERTIONS] = arguments.enableAssertions } catch (_: NoSuchMethodError) {}
+    try { this[G] = arguments.debug } catch (_: NoSuchMethodError) {}
+    try { this[GENERATE_TEST_RUNNER] = arguments.generateTestRunner } catch (_: NoSuchMethodError) {}
+    try { this[GENERATE_WORKER_TEST_RUNNER] = arguments.generateWorkerTestRunner } catch (_: NoSuchMethodError) {}
+    try { this[GENERATE_NO_EXIT_TEST_RUNNER] = arguments.generateNoExitTestRunner } catch (_: NoSuchMethodError) {}
+    try { this[INCLUDE_BINARY] = arguments.includeBinaries } catch (_: NoSuchMethodError) {}
+    try { this[LIBRARY] = arguments.libraries } catch (_: NoSuchMethodError) {}
+    try { this[LIBRARY_VERSION] = arguments.libraryVersion } catch (_: NoSuchMethodError) {}
+    try { this[LIST_TARGETS] = arguments.listTargets } catch (_: NoSuchMethodError) {}
+    try { this[MANIFEST] = arguments.manifestFile } catch (_: NoSuchMethodError) {}
+    try { this[MEMORY_MODEL] = arguments.memoryModel } catch (_: NoSuchMethodError) {}
+    try { this[MODULE_NAME] = arguments.moduleName } catch (_: NoSuchMethodError) {}
+    try { this[NATIVE_LIBRARY] = arguments.nativeLibraries } catch (_: NoSuchMethodError) {}
+    try { this[NO_DEFAULT_LIBS] = arguments.nodefaultlibs } catch (_: NoSuchMethodError) {}
+    try { this[NO_ENDORSED_LIBS] = arguments.noendorsedlibs } catch (_: NoSuchMethodError) {}
+    try { this[NOMAIN] = arguments.nomain } catch (_: NoSuchMethodError) {}
+    try { this[NOPACK] = arguments.nopack } catch (_: NoSuchMethodError) {}
+    try { this[LINKER_OPTIONS] = arguments.linkerArguments } catch (_: NoSuchMethodError) {}
+    try { this[LINKER_OPTION] = arguments.singleLinkerArguments } catch (_: NoSuchMethodError) {}
+    try { this[NOSTDLIB] = arguments.nostdlib } catch (_: NoSuchMethodError) {}
+    try { this[OPT] = arguments.optimization } catch (_: NoSuchMethodError) {}
+    try { this[OUTPUT] = arguments.outputName } catch (_: NoSuchMethodError) {}
+    try { this[ENTRY] = arguments.mainPackage } catch (_: NoSuchMethodError) {}
+    try { this[PRODUCE] = arguments.produce } catch (_: NoSuchMethodError) {}
+    try { this[TARGET] = arguments.target } catch (_: NoSuchMethodError) {}
+    try { this[X_BUNDLE_ID] = arguments.bundleId } catch (_: NoSuchMethodError) {}
+    try { this[X_CACHE_DIRECTORY] = arguments.cacheDirectories } catch (_: NoSuchMethodError) {}
+    try { this[X_CACHED_LIBRARY] = arguments.cachedLibraries } catch (_: NoSuchMethodError) {}
+    try { this[X_AUTO_CACHE_FROM] = arguments.autoCacheableFrom } catch (_: NoSuchMethodError) {}
+    try { this[X_AUTO_CACHE_DIR] = arguments.autoCacheDir } catch (_: NoSuchMethodError) {}
+    try { this[X_IC_CACHE_DIR] = arguments.incrementalCacheDir } catch (_: NoSuchMethodError) {}
+    try { this[X_CHECK_DEPENDENCIES] = arguments.checkDependencies } catch (_: NoSuchMethodError) {}
+    try { this[X_EMIT_LAZY_OBJC_HEADER] = arguments.emitLazyObjCHeader } catch (_: NoSuchMethodError) {}
+    try { this[X_EXPORT_LIBRARY] = arguments.exportedLibraries } catch (_: NoSuchMethodError) {}
+    try { this[X_EXTERNAL_DEPENDENCIES] = arguments.externalDependencies } catch (_: NoSuchMethodError) {}
+    try { this[X_FAKE_OVERRIDE_VALIDATOR] = arguments.fakeOverrideValidator } catch (_: NoSuchMethodError) {}
+    try { this[X_FRAMEWORK_IMPORT_HEADER] = arguments.frameworkImportHeaders } catch (_: NoSuchMethodError) {}
+    try { this[X_ADD_LIGHT_DEBUG] = arguments.lightDebugString } catch (_: NoSuchMethodError) {}
+    try { this[X_G0] = arguments.lightDebugDeprecated } catch (_: NoSuchMethodError) {}
+    try { this[X_G_GENERATE_DEBUG_TRAMPOLINE] = arguments.generateDebugTrampolineString } catch (_: NoSuchMethodError) {}
+    try { this[X_ADD_CACHE] = arguments.libraryToAddToCache } catch (_: NoSuchMethodError) {}
+    try { this[X_FILE_TO_CACHE] = arguments.filesToCache } catch (_: NoSuchMethodError) {}
+    try { this[X_MAKE_PER_FILE_CACHE] = arguments.makePerFileCache } catch (_: NoSuchMethodError) {}
+    try { this[X_BACKEND_THREADS] = arguments.backendThreads.let { it.toInt() } } catch (_: NoSuchMethodError) {}
+    try { this[X_EXPORT_KDOC] = arguments.exportKDoc } catch (_: NoSuchMethodError) {}
+    try { this[X_PRINT_BITCODE] = arguments.printBitCode } catch (_: NoSuchMethodError) {}
+    try { this[X_CHECK_STATE_AT_EXTERNAL_CALLS] = arguments.checkExternalCalls } catch (_: NoSuchMethodError) {}
+    try { this[X_PRINT_IR] = arguments.printIr } catch (_: NoSuchMethodError) {}
+    try { this[X_PRINT_FILES] = arguments.printFiles } catch (_: NoSuchMethodError) {}
+    try { this[X_PURGE_USER_LIBS] = arguments.purgeUserLibs } catch (_: NoSuchMethodError) {}
+    try { this[X_WRITE_DEPENDENCIES_OF_PRODUCED_KLIB_TO] = arguments.writeDependenciesOfProducedKlibTo } catch (_: NoSuchMethodError) {}
+    try { this[X_RUNTIME] = arguments.runtimeFile } catch (_: NoSuchMethodError) {}
+    try { this[X_INCLUDE] = arguments.includes } catch (_: NoSuchMethodError) {}
+    try { this[X_SHORT_MODULE_NAME] = arguments.shortModuleName } catch (_: NoSuchMethodError) {}
+    try { this[X_STATIC_FRAMEWORK] = arguments.staticFramework } catch (_: NoSuchMethodError) {}
+    try { this[X_TEMPORARY_FILES_DIR] = arguments.temporaryFilesDir } catch (_: NoSuchMethodError) {}
+    try { this[X_SAVE_LLVM_IR_AFTER] = arguments.saveLlvmIrAfter } catch (_: NoSuchMethodError) {}
+    try { this[X_VERIFY_BITCODE] = arguments.verifyBitCode } catch (_: NoSuchMethodError) {}
+    try { this[X_VERIFY_COMPILER] = arguments.verifyCompiler } catch (_: NoSuchMethodError) {}
+    try { this[FRIEND_MODULES] = arguments.friendModules } catch (_: NoSuchMethodError) {}
+    try { this[X_REFINES_PATHS] = arguments.refinesPaths } catch (_: NoSuchMethodError) {}
+    try { this[X_DEBUG_INFO_VERSION] = arguments.debugInfoFormatVersion.let { it.toInt() } } catch (_: NoSuchMethodError) {}
+    try { this[X_NO_OBJC_GENERICS] = arguments.noObjcGenerics } catch (_: NoSuchMethodError) {}
+    try { this[X_OVERRIDE_CLANG_OPTIONS] = arguments.clangOptions } catch (_: NoSuchMethodError) {}
+    try { this[X_ALLOCATOR] = arguments.allocator } catch (_: NoSuchMethodError) {}
+    try { this[X_HEADER_KLIB_PATH] = arguments.headerKlibPath } catch (_: NoSuchMethodError) {}
+    try { this[X_DEBUG_PREFIX_MAP] = arguments.debugPrefixMap } catch (_: NoSuchMethodError) {}
+    try { this[X_PRE_LINK_CACHES] = arguments.preLinkCaches } catch (_: NoSuchMethodError) {}
+    try { this[X_OVERRIDE_KONAN_PROPERTIES] = arguments.overrideKonanProperties } catch (_: NoSuchMethodError) {}
+    try { this[X_DESTROY_RUNTIME_MODE] = arguments.destroyRuntimeMode } catch (_: NoSuchMethodError) {}
+    try { this[X_GC] = arguments.gc } catch (_: NoSuchMethodError) {}
+    try { this[X_IR_PROPERTY_LAZY_INITIALIZATION] = arguments.propertyLazyInitialization } catch (_: NoSuchMethodError) {}
+    try { this[X_WORKER_EXCEPTION_HANDLING] = arguments.workerExceptionHandling } catch (_: NoSuchMethodError) {}
+    try { this[X_LLVM_VARIANT] = arguments.llvmVariant } catch (_: NoSuchMethodError) {}
+    try { this[X_BINARY] = arguments.binaryOptions } catch (_: NoSuchMethodError) {}
+    try { this[X_RUNTIME_LOGS] = arguments.runtimeLogs } catch (_: NoSuchMethodError) {}
+    try { this[X_DUMP_TESTS_TO] = arguments.testDumpOutputPath } catch (_: NoSuchMethodError) {}
+    try { this[X_LAZY_IR_FOR_CACHES] = arguments.lazyIrForCaches } catch (_: NoSuchMethodError) {}
+    try { this[X_OMIT_FRAMEWORK_BINARY] = arguments.omitFrameworkBinary } catch (_: NoSuchMethodError) {}
+    try { this[X_COMPILE_FROM_BITCODE] = arguments.compileFromBitcode } catch (_: NoSuchMethodError) {}
+    try { this[X_READ_DEPENDENCIES_FROM] = arguments.serializedDependencies } catch (_: NoSuchMethodError) {}
+    try { this[X_WRITE_DEPENDENCIES_TO] = arguments.saveDependenciesPath } catch (_: NoSuchMethodError) {}
+    try { this[X_SAVE_LLVM_IR_DIRECTORY] = arguments.saveLlvmIrDirectory } catch (_: NoSuchMethodError) {}
+    try { this[X_KONAN_DATA_DIR] = arguments.konanDataDir } catch (_: NoSuchMethodError) {}
+    try { this[X_LLVM_MODULE_PASSES] = arguments.llvmModulePasses } catch (_: NoSuchMethodError) {}
+    try { this[X_LLVM_LTO_PASSES] = arguments.llvmLTOPasses } catch (_: NoSuchMethodError) {}
+    try { this[X_MANIFEST_NATIVE_TARGETS] = arguments.manifestNativeTargets } catch (_: NoSuchMethodError) {}
+    internalArguments.addAll(arguments.internalArguments.map { it.stringRepresentation })
   }
 
   public class NativeArgument<V>(

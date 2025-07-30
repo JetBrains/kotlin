@@ -36,8 +36,8 @@ import java.nio.file.Path
 import kotlin.io.path.absolutePathString
 import kotlin.time.toJavaDuration
 
-public class KotlinToolchainV1Adapter(
-    private val compilationService: CompilationService,
+internal class KotlinToolchainV1Adapter(
+    @Suppress("DEPRECATION") private val compilationService: CompilationService,
 ) : KotlinToolchain {
     override val jvm: JvmPlatformToolchain = object : JvmPlatformToolchain {
         override fun createJvmCompilationOperation(
@@ -153,16 +153,18 @@ private class JvmCompilationOperationV1Adapter(
 }
 
 public interface ExecutionPolicyV1Adapter {
+    @Suppress("DEPRECATION")
     public val strategyConfiguration: CompilerExecutionStrategyConfiguration
 
-    public class InProcess(override val strategyConfiguration: CompilerExecutionStrategyConfiguration) : ExecutionPolicyV1Adapter,
+    public class InProcess(@Suppress("DEPRECATION") override val strategyConfiguration: CompilerExecutionStrategyConfiguration) : ExecutionPolicyV1Adapter,
         ExecutionPolicy.InProcess
 
-    public class WithDaemon(private val compilationService: CompilationService) : ExecutionPolicyV1Adapter,
+    public class WithDaemon(@Suppress("DEPRECATION") private val compilationService: CompilationService) : ExecutionPolicyV1Adapter,
         ExecutionPolicy.WithDaemon {
 
         private val optionsMap: MutableMap<ExecutionPolicy.WithDaemon.Option<*>, Any?> = mutableMapOf()
 
+        @Suppress("DEPRECATION")
         override val strategyConfiguration: CompilerExecutionStrategyConfiguration
             get() {
                 val jvmArguments = get(JVM_ARGUMENTS) ?: emptyList()
@@ -192,7 +194,7 @@ public interface ExecutionPolicyV1Adapter {
 private class BuildV1Adapter(
     override val kotlinToolchain: KotlinToolchain,
     override val projectId: ProjectId,
-    private val compilationService: CompilationService,
+    @Suppress("DEPRECATION") private val compilationService: CompilationService,
 ) : KotlinToolchain.Build {
     override fun <R> executeOperation(operation: BuildOperation<R>): R {
         return executeOperation(operation, logger = null)
@@ -265,4 +267,5 @@ private class BuildV1Adapter(
     }
 }
 
+@Suppress("DEPRECATION")
 public fun CompilationService.asKotlinToolchain(): KotlinToolchain = KotlinToolchainV1Adapter(this)

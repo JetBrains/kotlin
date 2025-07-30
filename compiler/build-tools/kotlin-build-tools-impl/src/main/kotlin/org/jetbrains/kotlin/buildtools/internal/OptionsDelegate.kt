@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.buildtools.api.internal.BaseOption
 import kotlin.reflect.KProperty
 import kotlin.reflect.jvm.jvmName
 
-
 internal class OptionsDelegate() {
     private lateinit var options: Options
     operator fun getValue(thisRef: Any, property: KProperty<*>): Options {

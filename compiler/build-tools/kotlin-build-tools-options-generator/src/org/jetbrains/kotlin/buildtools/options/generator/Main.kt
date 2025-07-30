@@ -41,9 +41,9 @@ fun main(args: Array<String>) {
             localArgs[2]
         } else null
         if (localArgs[0] == "api") {
-            BtaApiGenerator(targetPackage ?: API_PACKAGE) to allowedLevels
+            BtaApiGenerator(targetPackage ?: API_PACKAGE, skipXX = true) to allowedLevels
         } else {
-            BtaImplGenerator(targetPackage ?: IMPL_PACKAGE) to allowedLevels
+            BtaImplGenerator(targetPackage ?: IMPL_PACKAGE, skipXX = false) to allowedLevels
         }
     }.forEach { (generator, allowedLevels) ->
         val levels = mutableListOf<Pair<KotlinCompilerArgumentsLevel, TypeName?>>(kotlinCompilerArguments.topLevel to null)
@@ -73,7 +73,6 @@ interface BtaGenerator {
     fun generateArgumentsForLevel(
         level: KotlinCompilerArgumentsLevel,
         parentClass: TypeName? = null,
-        skipXX: Boolean = true,
     ): GeneratorOutputs
 }
 

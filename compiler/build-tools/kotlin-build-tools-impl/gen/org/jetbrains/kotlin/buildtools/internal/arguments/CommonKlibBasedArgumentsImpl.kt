@@ -13,24 +13,28 @@ import kotlin.String
 import kotlin.Suppress
 import kotlin.collections.List
 import kotlin.collections.MutableMap
-import kotlin.collections.mutableListOf
+import kotlin.collections.MutableSet
 import kotlin.collections.mutableMapOf
+import kotlin.collections.mutableSetOf
 import org.jetbrains.kotlin.buildtools.`internal`.UseFromImplModuleRestricted
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonKlibBasedArgumentsImpl.Companion.X_KLIB_ABI_VERSION
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonKlibBasedArgumentsImpl.Companion.X_KLIB_DUPLICATED_UNIQUE_NAME_STRATEGY
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonKlibBasedArgumentsImpl.Companion.X_KLIB_ENABLE_SIGNATURE_CLASH_CHECKS
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonKlibBasedArgumentsImpl.Companion.X_KLIB_IR_INLINER
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonKlibBasedArgumentsImpl.Companion.X_KLIB_NORMALIZE_ABSOLUTE_PATH
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonKlibBasedArgumentsImpl.Companion.X_KLIB_RELATIVE_PATH_BASE
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonKlibBasedArgumentsImpl.Companion.X_PARTIAL_LINKAGE
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonKlibBasedArgumentsImpl.Companion.X_PARTIAL_LINKAGE_LOGLEVEL
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonKlibBasedArguments
-import org.jetbrains.kotlin.buildtools.api.arguments.CommonKlibBasedArguments.Companion.X_KLIB_ABI_VERSION
-import org.jetbrains.kotlin.buildtools.api.arguments.CommonKlibBasedArguments.Companion.X_KLIB_DUPLICATED_UNIQUE_NAME_STRATEGY
-import org.jetbrains.kotlin.buildtools.api.arguments.CommonKlibBasedArguments.Companion.X_KLIB_ENABLE_SIGNATURE_CLASH_CHECKS
-import org.jetbrains.kotlin.buildtools.api.arguments.CommonKlibBasedArguments.Companion.X_KLIB_IR_INLINER
-import org.jetbrains.kotlin.buildtools.api.arguments.CommonKlibBasedArguments.Companion.X_KLIB_NORMALIZE_ABSOLUTE_PATH
-import org.jetbrains.kotlin.buildtools.api.arguments.CommonKlibBasedArguments.Companion.X_KLIB_RELATIVE_PATH_BASE
-import org.jetbrains.kotlin.buildtools.api.arguments.CommonKlibBasedArguments.Companion.X_PARTIAL_LINKAGE
-import org.jetbrains.kotlin.buildtools.api.arguments.CommonKlibBasedArguments.Companion.X_PARTIAL_LINKAGE_LOGLEVEL
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.cli.common.arguments.CommonKlibBasedCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
+import org.jetbrains.kotlin.compilerRunner.toArgumentStrings as compilerToArgumentStrings
 
-internal open class CommonKlibBasedArgumentsImpl : CommonCompilerArgumentsImpl(),
+internal abstract class CommonKlibBasedArgumentsImpl : CommonCompilerArgumentsImpl(),
     CommonKlibBasedArguments {
+  private val internalArguments: MutableSet<String> = mutableSetOf()
+
   private val optionsMap: MutableMap<String, Any?> = mutableMapOf()
 
   @Suppress("UNCHECKED_CAST")
@@ -56,14 +60,14 @@ internal open class CommonKlibBasedArgumentsImpl : CommonCompilerArgumentsImpl()
   @Suppress("DEPRECATION")
   public fun toCompilerArguments(arguments: CommonKlibBasedCompilerArguments): CommonKlibBasedCompilerArguments {
     super.toCompilerArguments(arguments)
-    if ("X_KLIB_RELATIVE_PATH_BASE" in optionsMap) { arguments.relativePathBases = get(X_KLIB_RELATIVE_PATH_BASE) }
-    if ("X_KLIB_NORMALIZE_ABSOLUTE_PATH" in optionsMap) { arguments.normalizeAbsolutePath = get(X_KLIB_NORMALIZE_ABSOLUTE_PATH) }
-    if ("X_KLIB_ENABLE_SIGNATURE_CLASH_CHECKS" in optionsMap) { arguments.enableSignatureClashChecks = get(X_KLIB_ENABLE_SIGNATURE_CLASH_CHECKS) }
-    if ("X_PARTIAL_LINKAGE" in optionsMap) { arguments.partialLinkageMode = get(X_PARTIAL_LINKAGE) }
-    if ("X_PARTIAL_LINKAGE_LOGLEVEL" in optionsMap) { arguments.partialLinkageLogLevel = get(X_PARTIAL_LINKAGE_LOGLEVEL) }
-    if ("X_KLIB_DUPLICATED_UNIQUE_NAME_STRATEGY" in optionsMap) { arguments.duplicatedUniqueNameStrategy = get(X_KLIB_DUPLICATED_UNIQUE_NAME_STRATEGY) }
-    if ("X_KLIB_IR_INLINER" in optionsMap) { arguments.irInlinerBeforeKlibSerialization = get(X_KLIB_IR_INLINER) }
-    if ("X_KLIB_ABI_VERSION" in optionsMap) { arguments.customKlibAbiVersion = get(X_KLIB_ABI_VERSION) }
+    try { if ("X_KLIB_RELATIVE_PATH_BASE" in optionsMap) { arguments.relativePathBases = get(X_KLIB_RELATIVE_PATH_BASE) } } catch (_: NoSuchMethodError) {}
+    try { if ("X_KLIB_NORMALIZE_ABSOLUTE_PATH" in optionsMap) { arguments.normalizeAbsolutePath = get(X_KLIB_NORMALIZE_ABSOLUTE_PATH) } } catch (_: NoSuchMethodError) {}
+    try { if ("X_KLIB_ENABLE_SIGNATURE_CLASH_CHECKS" in optionsMap) { arguments.enableSignatureClashChecks = get(X_KLIB_ENABLE_SIGNATURE_CLASH_CHECKS) } } catch (_: NoSuchMethodError) {}
+    try { if ("X_PARTIAL_LINKAGE" in optionsMap) { arguments.partialLinkageMode = get(X_PARTIAL_LINKAGE) } } catch (_: NoSuchMethodError) {}
+    try { if ("X_PARTIAL_LINKAGE_LOGLEVEL" in optionsMap) { arguments.partialLinkageLogLevel = get(X_PARTIAL_LINKAGE_LOGLEVEL) } } catch (_: NoSuchMethodError) {}
+    try { if ("X_KLIB_DUPLICATED_UNIQUE_NAME_STRATEGY" in optionsMap) { arguments.duplicatedUniqueNameStrategy = get(X_KLIB_DUPLICATED_UNIQUE_NAME_STRATEGY) } } catch (_: NoSuchMethodError) {}
+    try { if ("X_KLIB_IR_INLINER" in optionsMap) { arguments.irInlinerBeforeKlibSerialization = get(X_KLIB_IR_INLINER) } } catch (_: NoSuchMethodError) {}
+    try { if ("X_KLIB_ABI_VERSION" in optionsMap) { arguments.customKlibAbiVersion = get(X_KLIB_ABI_VERSION) } } catch (_: NoSuchMethodError) {}
     return arguments
   }
 
@@ -73,32 +77,17 @@ internal open class CommonKlibBasedArgumentsImpl : CommonCompilerArgumentsImpl()
   }
 
   @Suppress("DEPRECATION")
-  @OptIn(ExperimentalCompilerArgument::class)
-  override fun toArgumentStrings(): List<String> {
-    val arguments = mutableListOf<String>()
-    arguments.addAll(super.toArgumentStrings())
-    if ("X_KLIB_RELATIVE_PATH_BASE" in optionsMap) { arguments.add("-Xklib-relative-path-base=" + get(X_KLIB_RELATIVE_PATH_BASE)) }
-    if ("X_KLIB_NORMALIZE_ABSOLUTE_PATH" in optionsMap) { arguments.add("-Xklib-normalize-absolute-path=" + get(X_KLIB_NORMALIZE_ABSOLUTE_PATH)) }
-    if ("X_KLIB_ENABLE_SIGNATURE_CLASH_CHECKS" in optionsMap) { arguments.add("-Xklib-enable-signature-clash-checks=" + get(X_KLIB_ENABLE_SIGNATURE_CLASH_CHECKS)) }
-    if ("X_PARTIAL_LINKAGE" in optionsMap) { arguments.add("-Xpartial-linkage=" + get(X_PARTIAL_LINKAGE)) }
-    if ("X_PARTIAL_LINKAGE_LOGLEVEL" in optionsMap) { arguments.add("-Xpartial-linkage-loglevel=" + get(X_PARTIAL_LINKAGE_LOGLEVEL)) }
-    if ("X_KLIB_DUPLICATED_UNIQUE_NAME_STRATEGY" in optionsMap) { arguments.add("-Xklib-duplicated-unique-name-strategy=" + get(X_KLIB_DUPLICATED_UNIQUE_NAME_STRATEGY)) }
-    if ("X_KLIB_IR_INLINER" in optionsMap) { arguments.add("-Xklib-ir-inliner=" + get(X_KLIB_IR_INLINER)) }
-    if ("X_KLIB_ABI_VERSION" in optionsMap) { arguments.add("-Xklib-abi-version=" + get(X_KLIB_ABI_VERSION)) }
-    return arguments
-  }
-
-  @Suppress("DEPRECATION")
   public fun applyCompilerArguments(arguments: CommonKlibBasedCompilerArguments) {
     super.applyCompilerArguments(arguments)
-    this[X_KLIB_RELATIVE_PATH_BASE] = arguments.relativePathBases
-    this[X_KLIB_NORMALIZE_ABSOLUTE_PATH] = arguments.normalizeAbsolutePath
-    this[X_KLIB_ENABLE_SIGNATURE_CLASH_CHECKS] = arguments.enableSignatureClashChecks
-    this[X_PARTIAL_LINKAGE] = arguments.partialLinkageMode
-    this[X_PARTIAL_LINKAGE_LOGLEVEL] = arguments.partialLinkageLogLevel
-    this[X_KLIB_DUPLICATED_UNIQUE_NAME_STRATEGY] = arguments.duplicatedUniqueNameStrategy
-    this[X_KLIB_IR_INLINER] = arguments.irInlinerBeforeKlibSerialization
-    this[X_KLIB_ABI_VERSION] = arguments.customKlibAbiVersion
+    try { this[X_KLIB_RELATIVE_PATH_BASE] = arguments.relativePathBases } catch (_: NoSuchMethodError) {}
+    try { this[X_KLIB_NORMALIZE_ABSOLUTE_PATH] = arguments.normalizeAbsolutePath } catch (_: NoSuchMethodError) {}
+    try { this[X_KLIB_ENABLE_SIGNATURE_CLASH_CHECKS] = arguments.enableSignatureClashChecks } catch (_: NoSuchMethodError) {}
+    try { this[X_PARTIAL_LINKAGE] = arguments.partialLinkageMode } catch (_: NoSuchMethodError) {}
+    try { this[X_PARTIAL_LINKAGE_LOGLEVEL] = arguments.partialLinkageLogLevel } catch (_: NoSuchMethodError) {}
+    try { this[X_KLIB_DUPLICATED_UNIQUE_NAME_STRATEGY] = arguments.duplicatedUniqueNameStrategy } catch (_: NoSuchMethodError) {}
+    try { this[X_KLIB_IR_INLINER] = arguments.irInlinerBeforeKlibSerialization } catch (_: NoSuchMethodError) {}
+    try { this[X_KLIB_ABI_VERSION] = arguments.customKlibAbiVersion } catch (_: NoSuchMethodError) {}
+    internalArguments.addAll(arguments.internalArguments.map { it.stringRepresentation })
   }
 
   public class CommonKlibBasedArgument<V>(
