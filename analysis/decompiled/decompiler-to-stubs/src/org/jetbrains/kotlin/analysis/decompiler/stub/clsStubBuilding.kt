@@ -15,7 +15,6 @@ import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.load.kotlin.FacadeClassSource
 import org.jetbrains.kotlin.load.kotlin.JvmPackagePartSource
 import org.jetbrains.kotlin.load.kotlin.KotlinJvmBinaryClass
-import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.Flags
 import org.jetbrains.kotlin.metadata.deserialization.TypeTable
@@ -68,7 +67,7 @@ fun createFileFacadeStub(
 ): KotlinFileStubImpl {
     val fileStub = KotlinFileStubImpl.forFacade(
         packageFqName = packageFqName,
-        facadeFqName = facadeFqName,
+        facadeFqName = jvmFqName,
     )
 
     setupFileStub(fileStub)
@@ -90,13 +89,13 @@ fun createFileFacadeStub(
 fun createMultifileClassStub(
     packageFqName: FqName,
     partFiles: List<KotlinJvmBinaryClass>,
-    facadeFqName: FqName,
+    jvmFqName: FqName,
     components: ClsStubBuilderComponents,
 ): KotlinFileStubImpl {
     val partNames = partFiles.map { it.classId.shortClassName.asString() }
     val fileStub = KotlinFileStubImpl.forMultifileClass(
         packageFqName = packageFqName,
-        facadeFqName = facadeFqName,
+        facadeFqName = jvmFqName,
         partNames = partNames,
     )
 

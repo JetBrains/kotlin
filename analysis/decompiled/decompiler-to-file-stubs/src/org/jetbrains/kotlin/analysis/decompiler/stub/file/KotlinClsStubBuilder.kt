@@ -75,7 +75,7 @@ open class KotlinClsStubBuilder : ClsStubBuilder() {
             return createMultifileClassStub(
                 packageFqName = packageFqName,
                 partFiles = partFiles,
-                facadeFqName = classId.asSingleFqName(),
+                jvmFqName = classId.asSingleFqName(),
                 components = components,
             )
         }
@@ -107,13 +107,11 @@ open class KotlinClsStubBuilder : ClsStubBuilder() {
             KotlinClassHeader.Kind.FILE_FACADE, KotlinClassHeader.Kind.MULTIFILE_CLASS_PART -> {
                 val (nameResolver, packageProto) = JvmProtoBufUtil.readPackageDataFrom(annotationData, strings)
                 val context = components.createContext(nameResolver, packageFqName, TypeTable(packageProto.typeTable))
-                val fqName = header.packageName?.let { ClassId(FqName(it), classId.relativeClassName, classId.isLocal).asSingleFqName() }
-                    ?: classId.asSingleFqName()
-
+                val facadeFqName = packageFqName.child(classId.shortClassName)
                 createFileFacadeStub(
                     packageFqName = packageFqName,
                     packageProto = packageProto,
-                    facadeFqName = fqName,
+                    facadeFqName = facadeFqName,
                     jvmFqName = classId.asSingleFqName(),
                     c = context,
                 )
