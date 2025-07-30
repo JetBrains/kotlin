@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
-import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.IrType
@@ -38,7 +37,6 @@ typealias ReportIrValidationError = (IrFile?, IrElement, String, List<IrElement>
 data class IrValidatorConfig(
     val checkTreeConsistency: Boolean = true,
     val checkTypes: Boolean = false,
-    val checkProperties: Boolean = false,
     val checkValueScopes: Boolean = false,
     val checkTypeParameterScopes: Boolean = false,
     val checkCrossFileFieldUsage: Boolean = false,
@@ -119,15 +117,16 @@ private class IrFileValidator(
     private val breakContinueCheckers: MutableList<IrBreakContinueChecker> = mutableListOf()
     private val returnCheckers: MutableList<IrReturnChecker> = mutableListOf()
     private val throwCheckers: MutableList<IrThrowChecker> = mutableListOf()
-    private val functionCheckers: MutableList<IrFunctionChecker> =
-        mutableListOf(IrFunctionDispatchReceiverChecker, IrFunctionParametersChecker, IrConstructorReceiverChecker)
+    private val functionCheckers: MutableList<IrFunctionChecker> = mutableListOf(
+        IrFunctionDispatchReceiverChecker, IrFunctionParametersChecker, IrConstructorReceiverChecker, IrFunctionPropertiesChecker
+    )
     private val declarationBaseCheckers: MutableList<IrDeclarationChecker<IrDeclaration>> =
         mutableListOf(IrPrivateDeclarationOverrideChecker)
     private val propertyReferenceCheckers: MutableList<IrPropertyReferenceChecker> = mutableListOf()
     private val localDelegatedPropertyReferenceCheckers: MutableList<IrLocalDelegatedPropertyReferenceChecker> = mutableListOf()
     private val expressionCheckers: MutableList<IrExpressionChecker<IrExpression>> = mutableListOf()
     private val typeOperatorCheckers: MutableList<IrTypeOperatorChecker> = mutableListOf(IrTypeOperatorTypeOperandChecker)
-    private val propertyCheckers: MutableList<IrPropertyChecker> = mutableListOf()
+    private val propertyCheckers: MutableList<IrPropertyChecker> = mutableListOf(IrPropertyAccessorsChecker)
 
     private val callCheckers: MutableList<IrCallChecker> = mutableListOf()
 
@@ -170,10 +169,6 @@ private class IrFileValidator(
             returnCheckers.add(IrNothingTypeExpressionChecker)
             throwCheckers.add(IrNothingTypeExpressionChecker)
             fieldAccessExpressionCheckers.add(IrDynamicTypeFieldAccessChecker)
-        }
-        if (config.checkProperties) {
-            functionCheckers.add(IrFunctionPropertiesChecker)
-            propertyCheckers.add(IrPropertyAccessorsChecker)
         }
         if (config.checkFunctionBody) {
             functionCheckers.add(IrFunctionBodyChecker)
