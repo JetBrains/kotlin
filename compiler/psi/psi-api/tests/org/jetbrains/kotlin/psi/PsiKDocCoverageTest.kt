@@ -10,8 +10,8 @@ import org.jetbrains.kotlin.name.FqName
 import org.junit.jupiter.api.Test
 
 class PsiKDocCoverageTest : AbstractKDocCoverageTest() {
-    override val sourceDirectories: List<DocumentationLocations> = listOf(
-        DocumentationLocations(
+    override val sourceDirectories: List<SourceDirectory.ForDumpFileComparison> = listOf(
+        SourceDirectory.ForDumpFileComparison(
             listOf(
                 "compiler/psi/psi-api/src/org/jetbrains/kotlin",
                 "compiler/psi/psi-impl/src/org/jetbrains/kotlin",
