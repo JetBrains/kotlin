@@ -136,7 +136,7 @@ public interface KaTypeProvider : KaSessionComponent {
      * @see approximateToDenotableSupertype
      */
     @KaExperimentalApi
-    public fun KaType.approximateToDenotableSupertypeOrSelf(position: KtElement): KaType? = withValidityAssertion {
+    public fun KaType.approximateToDenotableSupertypeOrSelf(position: KtElement): KaType = withValidityAssertion {
         return approximateToDenotableSupertype(position) ?: this
     }
 
