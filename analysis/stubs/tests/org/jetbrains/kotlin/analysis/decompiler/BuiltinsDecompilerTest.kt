@@ -21,7 +21,6 @@ import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModul
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.TestModuleKind
 import org.jetbrains.kotlin.metadata.builtins.BuiltInsBinaryVersion
-import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.TestServices
@@ -63,15 +62,14 @@ class BuiltinsDecompilerTest : AbstractAnalysisApiExecutionTest("analysis/stubs/
     fun wrong(file: KtFile, testServices: TestServices) {
         testServices.assertions.assertEquals(testDataPath.name, file.name)
 
-        testServices.assertions.assertEquals(
-            """
-                // This file was compiled with a newer version of Kotlin compiler and can't be decompiled.
-                //
-                // The current compiler supports reading only metadata of version ${BuiltInsBinaryVersion.INSTANCE} or lower.
-                // The file metadata version is 0.42.239
-            """.trimIndent(),
-            file.text
-        )
+        val errorText = """
+            // This file was compiled with a newer version of Kotlin compiler and can't be decompiled.
+            //
+            // The current compiler supports reading only metadata of version ${BuiltInsBinaryVersion.INSTANCE} or lower.
+            // The file metadata version is 0.42.239
+        """.trimIndent()
+
+        testServices.assertions.assertEquals(errorText, file.text)
 
         // Decompiled stub
         testServices.assertions.assertEquals(
@@ -87,14 +85,11 @@ class BuiltinsDecompilerTest : AbstractAnalysisApiExecutionTest("analysis/stubs/
         // Compiled stub
         testServices.assertions.assertEquals(
             """
-                FILE[kind=Invalid[errorMessage=// This file was compiled with a newer version of Kotlin compiler and can't be decompiled.
-                //
-                // The current compiler supports reading only metadata of version ${MetadataVersion.INSTANCE_NEXT} or lower.
-                // The file metadata version is 0.42.239]]
-                  PACKAGE_DIRECTIVE
-                  IMPORT_LIST
+                |FILE[kind=Invalid[errorMessage=$errorText]]
+                |  PACKAGE_DIRECTIVE
+                |  IMPORT_LIST
 
-            """.trimIndent(),
+            """.trimMargin(),
             KotlinBuiltInDecompiler().stubBuilder.buildFileStub(FileContentImpl.createByFile(file.virtualFile))?.serializeToString(),
         )
     }

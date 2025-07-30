@@ -29,7 +29,8 @@ open class KotlinMetadataStubBuilder(
     private val version: Int,
     private val fileType: FileType,
     private val serializerProtocol: () -> SerializerExtensionProtocol,
-    private val readFile: (VirtualFile, ByteArray) -> FileWithMetadata?
+    private val readFile: (VirtualFile, ByteArray) -> FileWithMetadata?,
+    val expectedBinaryVersion: () -> BinaryVersion,
 ) : ClsStubBuilder() {
     override fun getStubVersion() = ClassFileStubBuilder.STUB_VERSION + version
 
@@ -39,7 +40,13 @@ open class KotlinMetadataStubBuilder(
         val file = readFile(virtualFile, content.content) ?: return null
 
         return when (file) {
-            is FileWithMetadata.Incompatible -> createIncompatibleAbiVersionFileStub(createIncompatibleMetadataVersionDecompiledText(file.version))
+            is FileWithMetadata.Incompatible -> createIncompatibleAbiVersionFileStub(
+                createIncompatibleMetadataVersionDecompiledText(
+                    expectedVersion = expectedBinaryVersion(),
+                    actualVersion = file.version,
+                )
+            )
+
             is FileWithMetadata.Compatible -> {
                 val packageProto = file.proto.`package`
                 val packageFqName = file.packageFqName

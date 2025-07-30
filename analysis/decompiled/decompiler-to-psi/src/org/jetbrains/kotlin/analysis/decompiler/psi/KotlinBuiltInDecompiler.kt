@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -24,9 +24,12 @@ import org.jetbrains.kotlin.serialization.deserialization.getClassId
 import java.io.ByteArrayInputStream
 
 class KotlinBuiltInDecompiler : KotlinMetadataDecompiler<BuiltInsBinaryVersion>(
-    KotlinBuiltInFileType, { BuiltInSerializerProtocol },
-    FlexibleTypeDeserializer.ThrowException, { BuiltInsBinaryVersion.INSTANCE }, { BuiltInsBinaryVersion.INVALID_VERSION },
-    stubVersionForStubBuilderAndDecompiler,
+    fileType = KotlinBuiltInFileType,
+    serializerProtocol = { BuiltInSerializerProtocol },
+    flexibleTypeDeserializer = FlexibleTypeDeserializer.ThrowException,
+    expectedBinaryVersion = { BuiltInsBinaryVersion.INSTANCE },
+    invalidBinaryVersion = { BuiltInsBinaryVersion.INVALID_VERSION },
+    stubVersion = stubVersionForStubBuilderAndDecompiler,
 ) {
     override val metadataStubBuilder: KotlinMetadataStubBuilder =
         KotlinBuiltInMetadataStubBuilder(::readFileSafely)
@@ -38,7 +41,13 @@ class KotlinBuiltInDecompiler : KotlinMetadataDecompiler<BuiltInsBinaryVersion>(
 
 private class KotlinBuiltInMetadataStubBuilder(
     readFile: (VirtualFile, ByteArray) -> FileWithMetadata?,
-) : KotlinMetadataStubBuilder(stubVersionForStubBuilderAndDecompiler, KotlinBuiltInFileType, { BuiltInSerializerProtocol }, readFile) {
+) : KotlinMetadataStubBuilder(
+    version = stubVersionForStubBuilderAndDecompiler,
+    fileType = KotlinBuiltInFileType,
+    serializerProtocol = { BuiltInSerializerProtocol },
+    readFile = readFile,
+    expectedBinaryVersion = { BuiltInsBinaryVersion.INSTANCE },
+) {
     override fun createCallableSource(file: FileWithMetadata.Compatible, filename: String): SourceElement? {
         val fileNameForFacade = when (val withoutExtension = filename.removeSuffix(BuiltInSerializerProtocol.DOT_DEFAULT_EXTENSION)) {
             // this is the filename used in stdlib, others should match
