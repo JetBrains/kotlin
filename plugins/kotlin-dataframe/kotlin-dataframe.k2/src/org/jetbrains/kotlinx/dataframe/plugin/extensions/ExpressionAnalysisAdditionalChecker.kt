@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.declarations.hasAnnotation
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticsContainer
+import org.jetbrains.kotlin.diagnostics.reportOn
 import org.jetbrains.kotlin.fir.expressions.FirFunctionCall
 import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
@@ -250,7 +251,7 @@ private fun SessionContext.reportSchema(
     }
 }
 
-private object SchemaInfoDiagnostics : KtDiagnosticsContainer() {
+object SchemaInfoDiagnostics : KtDiagnosticsContainer() {
     val PROPERTY_SCHEMA by info1(SourceElementPositioningStrategies.DECLARATION_NAME)
     val FUNCTION_SCHEMA by info1(SourceElementPositioningStrategies.DECLARATION_SIGNATURE)
     val FUNCTION_CALL_SCHEMA by info1(SourceElementPositioningStrategies.REFERENCED_NAME_BY_QUALIFIED)
@@ -266,15 +267,16 @@ private object SchemaInfoDiagnostics : KtDiagnosticsContainer() {
             it.put(PROPERTY_ACCESS_SCHEMA, "{0}", TO_STRING)
         }
     }
+}
 
-    private fun info1(positioningStrategy: AbstractSourceElementPositioningStrategy): DiagnosticFactory1DelegateProvider<String> {
-        return DiagnosticFactory1DelegateProvider(
-            Severity.INFO,
-            positioningStrategy,
-            KtElement::class,
-            container = this,
-        )
-    }
+context(container: KtDiagnosticsContainer)
+internal fun info1(positioningStrategy: AbstractSourceElementPositioningStrategy): DiagnosticFactory1DelegateProvider<String> {
+    return DiagnosticFactory1DelegateProvider(
+        Severity.INFO,
+        positioningStrategy,
+        KtElement::class,
+        container = container,
+    )
 }
 
 fun CheckerContext.sessionContext(f: SessionContext.() -> Unit) {

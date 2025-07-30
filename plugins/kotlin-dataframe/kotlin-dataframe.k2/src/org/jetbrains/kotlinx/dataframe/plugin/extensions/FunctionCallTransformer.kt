@@ -56,7 +56,6 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
-import org.jetbrains.kotlin.fir.toFirResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.ConeKotlinTypeProjection
 import org.jetbrains.kotlin.fir.types.ConeStarProjection
@@ -571,8 +570,7 @@ class FunctionCallTransformer(
                             marker = schema.defaultType(),
                             propertyName = PropertyName.of(it.name),
                             dataRowReturnType = frameColumnReturnType,
-                            columnContainerReturnType = frameColumnReturnType.toFirResolvedTypeRef()
-                                .projectOverDataColumnType()
+                            columnContainerReturnType = frameColumnReturnType.projectOverDataColumnType()
                         )
                     }
 
@@ -580,7 +578,7 @@ class FunctionCallTransformer(
                         marker = schema.defaultType(),
                         propertyName = PropertyName.of(it.name),
                         dataRowReturnType = it.type.type(),
-                        columnContainerReturnType = it.type.type().toFirResolvedTypeRef().projectOverDataColumnType()
+                        columnContainerReturnType = it.type.type().projectOverDataColumnType()
                     )
                 }
             }

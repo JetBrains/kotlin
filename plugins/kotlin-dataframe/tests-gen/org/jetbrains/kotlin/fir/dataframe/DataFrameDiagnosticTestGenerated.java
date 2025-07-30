@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.fir.dataframe;
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.kotlin.test.TestMetadata;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
 import java.io.File;
@@ -57,5 +58,27 @@ public class DataFrameDiagnosticTestGenerated extends AbstractDataFrameDiagnosti
   @TestMetadata("toDataFrame_java.kt")
   public void testToDataFrame_java() {
     runTest("plugins/kotlin-dataframe/testData/diagnostics/toDataFrame_java.kt");
+  }
+
+  @Nested
+  @TestMetadata("plugins/kotlin-dataframe/testData/diagnostics/importedSchema")
+  @TestDataPath("$PROJECT_ROOT")
+  public class ImportedSchema {
+    @Test
+    public void testAllFilesPresentInImportedSchema() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("plugins/kotlin-dataframe/testData/diagnostics/importedSchema"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("conflictingCompanionObject.kt")
+    public void testConflictingCompanionObject() {
+      runTest("plugins/kotlin-dataframe/testData/diagnostics/importedSchema/conflictingCompanionObject.kt");
+    }
+
+    @Test
+    @TestMetadata("invalidCompanionObjectSupertype.kt")
+    public void testInvalidCompanionObjectSupertype() {
+      runTest("plugins/kotlin-dataframe/testData/diagnostics/importedSchema/invalidCompanionObjectSupertype.kt");
+    }
   }
 }

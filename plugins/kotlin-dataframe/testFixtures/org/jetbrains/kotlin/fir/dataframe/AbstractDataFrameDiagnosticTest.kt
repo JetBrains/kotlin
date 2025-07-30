@@ -5,10 +5,10 @@
 
 package org.jetbrains.kotlin.fir.dataframe
 
-import org.jetbrains.kotlin.config.JvmTarget
+import org.jetbrains.kotlin.fir.dataframe.services.DataFrameDirectives
 import org.jetbrains.kotlin.fir.dataframe.services.DataFramePluginAnnotationsProvider
-import org.jetbrains.kotlin.fir.dataframe.services.Directives
 import org.jetbrains.kotlin.fir.dataframe.services.ExperimentalExtensionRegistrarConfigurator
+import org.jetbrains.kotlin.fir.dataframe.services.TestUtilsSourceProvider
 import org.jetbrains.kotlin.test.FirParser
 import org.jetbrains.kotlin.test.TestJdkKind
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
@@ -28,7 +28,7 @@ abstract class AbstractDataFrameDiagnosticTest : AbstractKotlinCompilerTest() {
             JvmEnvironmentConfigurationDirectives.JDK_KIND with TestJdkKind.FULL_JDK
         }
 
-        builder.useDirectives(Directives)
+        builder.useDirectives(DataFrameDirectives)
         builder.useConfigurators(
             ::DataFramePluginAnnotationsProvider,
             ::ExperimentalExtensionRegistrarConfigurator
@@ -36,5 +36,6 @@ abstract class AbstractDataFrameDiagnosticTest : AbstractKotlinCompilerTest() {
         builder.useAfterAnalysisCheckers(
             ::DisableLazyResolveChecksAfterAnalysisChecker,
         )
+        builder.useAdditionalSourceProviders(::TestUtilsSourceProvider)
     }
 }

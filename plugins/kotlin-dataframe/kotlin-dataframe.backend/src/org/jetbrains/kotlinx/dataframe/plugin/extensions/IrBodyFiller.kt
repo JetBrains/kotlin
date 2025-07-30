@@ -8,6 +8,7 @@ package org.jetbrains.kotlinx.dataframe.plugin.extensions
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
+import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
@@ -30,10 +31,12 @@ import org.jetbrains.kotlinx.dataframe.plugin.utils.Names
 class IrBodyFiller : IrGenerationExtension {
     override fun generate(moduleFragment: IrModuleFragment, pluginContext: IrPluginContext) {
         DataFrameFileLowering(pluginContext).lower(moduleFragment)
+        IrImportedSchemaGenerator(pluginContext).lower(moduleFragment)
     }
 }
 
-private class DataFrameFileLowering(val context: IrPluginContext) : FileLoweringPass, IrElementTransformerVoid() {
+private class DataFrameFileLowering(val context: IrPluginContext) : FileLoweringPass,
+    IrElementTransformerVoid() {
     companion object {
         val COLUMNS_SCOPE_ID =
             CallableId(ClassId(FqName("org.jetbrains.kotlinx.dataframe"), Name.identifier("ColumnsScope")), Name.identifier("get"))
@@ -47,39 +50,16 @@ private class DataFrameFileLowering(val context: IrPluginContext) : FileLowering
 
     override fun visitConstructor(declaration: IrConstructor): IrStatement {
         val origin = declaration.origin
-        if (!(origin is IrDeclarationOrigin.GeneratedByPlugin && origin.pluginKey is DataFrameTokenContentKey)) return declaration
-        declaration.body = generateBodyForDefaultConstructor(declaration)
+        if (!(origin is IrDeclarationOrigin.GeneratedByPlugin && (origin.pluginKey is DataFrameTokenContentKey || origin.pluginKey is DataFramePlugin))) return declaration
+        declaration.body = generateBodyForDefaultConstructor(context, declaration)
         return declaration
-    }
-
-    @OptIn(UnsafeDuringIrConstructionAPI::class)
-    private fun generateBodyForDefaultConstructor(declaration: IrConstructor): IrBody? {
-        val irType = declaration.returnType.superTypes()[0]
-        val symbol = irType.classOrFail.owner.primaryConstructor?.symbol ?: return null
-        val type = declaration.returnType as? IrSimpleType ?: return null
-        val delegatingAnyCall = IrDelegatingConstructorCallImpl(
-            -1,
-            -1,
-            irType,
-            symbol,
-            typeArgumentsCount = 0,
-        ).also { it.copyAttributes(declaration.parentAsClass) }
-
-        val initializerCall = IrInstanceInitializerCallImpl(
-            -1,
-            -1,
-            (declaration.parent as? IrClass)?.symbol ?: return null,
-            type
-        )
-
-        return context.irFactory.createBlockBody(-1, -1, listOf(delegatingAnyCall, initializerCall))
     }
 
     @OptIn(UnsafeDuringIrConstructionAPI::class)
     override fun visitProperty(declaration: IrProperty): IrStatement {
         val origin = declaration.origin
         val pluginKey = (origin as? IrDeclarationOrigin.GeneratedByPlugin)?.pluginKey as? DataFramePlugin
-        if (pluginKey == null) {
+        if (pluginKey == null || declaration.modality == Modality.ABSTRACT) {
             declaration.transformChildren(this, null)
             return declaration
         }
@@ -193,4 +173,29 @@ private class DataFrameFileLowering(val context: IrPluginContext) : FileLowering
         val constructor = type.getClass()!!.constructors.toList().single()
         return IrConstructorCallImpl(-1, -1, type, constructor.symbol, 0, 0)
     }
+}
+
+@OptIn(UnsafeDuringIrConstructionAPI::class)
+fun generateBodyForDefaultConstructor(context: IrPluginContext, declaration: IrConstructor): IrBody? {
+    val irType = declaration.returnType.superTypes()[0]
+    val symbol =
+        irType.classOrFail.owner.primaryConstructor?.symbol ?: context.irBuiltIns.anyType.classOrNull?.constructors?.firstOrNull()
+        ?: return null
+    val type = declaration.returnType as? IrSimpleType ?: return null
+    val delegatingAnyCall = IrDelegatingConstructorCallImpl(
+        -1,
+        -1,
+        irType,
+        symbol,
+        typeArgumentsCount = 0,
+    ).also { it.copyAttributes(declaration.parentAsClass) }
+
+    val initializerCall = IrInstanceInitializerCallImpl(
+        -1,
+        -1,
+        (declaration.parent as? IrClass)?.symbol ?: return null,
+        type
+    )
+
+    return context.irFactory.createBlockBody(-1, -1, listOf(delegatingAnyCall, initializerCall))
 }
