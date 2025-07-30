@@ -596,8 +596,8 @@ class ObjCExportHeaderGeneratorTest(private val generator: HeaderGenerator) {
     }
 
     @Test
-    fun `test - extensions mangling`() {
-        doTest(headersTestDataDir.resolve("extensionsMangling"))
+    fun `test - super class extensions mangling`() {
+        doTest(headersTestDataDir.resolve("superClassExtensionsMangling"))
     }
 
     @Test
@@ -668,6 +668,11 @@ class ObjCExportHeaderGeneratorTest(private val generator: HeaderGenerator) {
     @Test
     fun `test - property getter without colon`() {
         doTest(headersTestDataDir.resolve("propertyGetter"))
+    }
+
+    @Test
+    fun `test - extensions mangling`() {
+        doTest(headersTestDataDir.resolve("extensionsMangling"))
     }
 
     private fun doTest(root: File, configuration: Configuration = Configuration()) {

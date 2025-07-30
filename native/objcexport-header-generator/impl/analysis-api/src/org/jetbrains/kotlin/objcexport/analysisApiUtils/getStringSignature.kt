@@ -5,6 +5,7 @@ import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.api.types.KaTypeParameterType
+import org.jetbrains.kotlin.analysis.api.types.symbol
 
 /**
  * Returns function signature.
@@ -22,6 +23,11 @@ import org.jetbrains.kotlin.analysis.api.types.KaTypeParameterType
 internal fun KaSession.getStringSignature(symbol: KaFunctionSymbol): String {
     return buildString {
         append(symbol.name)
+
+        if (symbol.isExtension) {
+            val receiverClassId = symbol.receiverType?.symbol?.classId
+            append("@" + receiverClassId?.packageFqName?.asString() + "." + receiverClassId?.shortClassName)
+        }
 
         /** Translate parameters */
         append('(')
