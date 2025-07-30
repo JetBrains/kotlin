@@ -26,6 +26,8 @@ import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.exceptions.requireWithAttachment
 
+private val x = "hello"
+
 data class FirAnonymousFunctionReturnExpressionInfo(
     val expression: FirExpression,
     val isExplicit: Boolean,
