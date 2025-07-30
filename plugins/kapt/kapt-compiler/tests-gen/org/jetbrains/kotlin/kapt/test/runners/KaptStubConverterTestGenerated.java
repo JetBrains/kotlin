@@ -601,6 +601,12 @@ public class KaptStubConverterTestGenerated extends AbstractKaptStubConverterTes
   }
 
   @Test
+  @TestMetadata("kt79305_typeAliasUnresolvedClassLiteral.kt")
+  public void testKt79305_typeAliasUnresolvedClassLiteral() {
+    runTest("plugins/kapt/kapt-compiler/testData/converter/kt79305_typeAliasUnresolvedClassLiteral.kt");
+  }
+
+  @Test
   @TestMetadata("lazyProperty.kt")
   public void testLazyProperty() {
     runTest("plugins/kapt/kapt-compiler/testData/converter/lazyProperty.kt");
