@@ -1,7 +1,8 @@
 $TESTDATA_DIR$/moduleName.kt
 -d
 $TEMP_DIR$
+-Xlegacy-metadata-jar-k2
 -module-name
 foo
 -language-version
-1.9
+2.1

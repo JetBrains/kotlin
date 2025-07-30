@@ -1,3 +1,3 @@
 error: unknown language version: 239.42
-Supported language versions: 1.9 (deprecated), 2.0 (deprecated), 2.1, 2.2, 2.3, 2.4 (experimental), 2.5 (experimental)
+Supported language versions: 1.9 (deprecated, JVM only), 2.0 (deprecated), 2.1, 2.2, 2.3, 2.4 (experimental), 2.5 (experimental)
 COMPILATION_ERROR

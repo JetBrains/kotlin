@@ -1,6 +1,0 @@
-$TESTDATA_DIR$/enumEntriesNotEnabled.kt
--language-version
-1.9
--XXLanguage\:-EnumEntries
--d
-$TEMP_DIR$

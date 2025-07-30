@@ -1,6 +1,0 @@
-$TESTDATA_DIR$/fastJarFsEnabledBeforeK2.kt
--language-version
-1.9
--d
-$TEMP_DIR$
--Xuse-fast-jar-file-system
