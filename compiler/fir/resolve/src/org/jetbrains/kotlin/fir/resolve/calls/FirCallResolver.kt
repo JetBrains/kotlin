@@ -803,10 +803,19 @@ class FirCallResolver(
                                     val declarationType = (symbol as? FirCallableSymbol)
                                         ?.let { components.returnTypeCalculator.tryCalculateReturnType(it).coneType }
 
-                                    ConeFunctionExpectedError(
-                                        name.asString(),
-                                        declarationType ?: receiverType
-                                    )
+                                    // Doesn't cover the case of custom 'invoke',
+                                    // but it's difficult to implement without running the whole resolution again at this point.
+                                    if (!singleExpectedCandidate!!.isSuccessful && declarationType?.isSomeFunctionType(session) == true) {
+                                        createConeDiagnosticForCandidateWithError(
+                                            singleExpectedCandidate.lowestApplicability,
+                                            singleExpectedCandidate
+                                        )
+                                    } else {
+                                        ConeFunctionExpectedError(
+                                            name.asString(),
+                                            declarationType ?: receiverType
+                                        )
+                                    }
                                 }
                                 singleExpectedCandidate != null && !singleExpectedCandidate.isSuccessful -> {
                                     createConeDiagnosticForCandidateWithError(
