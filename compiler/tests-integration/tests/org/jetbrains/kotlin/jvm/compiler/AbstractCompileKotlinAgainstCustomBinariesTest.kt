@@ -352,7 +352,7 @@ abstract class AbstractCompileKotlinAgainstCustomBinariesTest : AbstractKotlinCo
 
     fun testMetadataVersionDerivedFromLanguage() {
         for (languageVersion in LanguageVersion.entries) {
-            if (languageVersion.isUnsupported) continue
+            if (languageVersion.isUnsupported && !languageVersion.isJvmOnly) continue
 
             compileKotlin(
                 "source.kt", tmpdir, additionalOptions = listOf(CommonCompilerArguments::languageVersion.cliArgument, languageVersion.versionString),

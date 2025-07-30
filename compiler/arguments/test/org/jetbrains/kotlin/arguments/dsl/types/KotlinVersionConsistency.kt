@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.arguments.dsl.types
 
 import org.jetbrains.kotlin.config.LanguageVersion
+import org.jetbrains.kotlin.config.isPreRelease
 import org.junit.jupiter.api.Test
 import kotlin.test.assertTrue
 
@@ -59,7 +60,7 @@ class KotlinVersionConsistency {
     @Test
     fun versionIsRemoved() {
         LanguageVersion.entries
-            .filter { it.isUnsupported }
+            .filter { it.isUnsupported && !it.isJvmOnly }
             .forEach { languageVersion ->
                 languageVersion.toKotlinVersionOrNull()?.let {
                     assertTrue(
