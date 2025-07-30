@@ -22,3 +22,9 @@ TestImpl {
     Test(Landroidx/compose/runtime/Composer;I)V
         RestartGroup { key: -1049054300, line: 11 }
 }
+
+TestImpl$Test$1 {
+    file: Test.kt
+    invoke(Landroidx/compose/runtime/Composer;I)V
+        Root { key: null, line: -1 }
+}

@@ -3,16 +3,17 @@ package androidx.compose.compiler.mapping.group
 import androidx.compose.compiler.mapping.ClassId
 import androidx.compose.compiler.mapping.ErrorReporter
 import androidx.compose.compiler.mapping.MethodId
-import androidx.compose.compiler.mapping.bytecode.BytecodeToken
+import androidx.compose.compiler.mapping.bytecode.*
 import androidx.compose.compiler.mapping.bytecode.BytecodeToken.*
-import androidx.compose.compiler.mapping.bytecode.EndGroupToken
-import androidx.compose.compiler.mapping.bytecode.StartGroupToken
-import androidx.compose.compiler.mapping.bytecode.tokenizeBytecode
 import org.objectweb.asm.Label
+import org.objectweb.asm.Opcodes
 import org.objectweb.asm.tree.MethodNode
 
-context(reporter: ErrorReporter)
-internal fun analyzeGroups(classId: ClassId, methodNode: MethodNode): List<GroupInfo> {
+context(reporter: ErrorReporter, keyCache: LambdaKeyCache)
+internal fun analyzeGroups(
+    classId: ClassId,
+    methodNode: MethodNode
+): List<GroupInfo> {
     if (methodNode.instructions.size() == 0) {
         // Ignore functions with no bodies (e.g. abstract)
         return emptyList()
@@ -20,14 +21,19 @@ internal fun analyzeGroups(classId: ClassId, methodNode: MethodNode): List<Group
 
     val methodId = MethodId(classId, methodNode.name, methodNode.desc)
 
-    val tokens = tokenizeBytecode(methodNode.instructions).getOrElse { e ->
+    val isComposable = methodNode.isComposable()
+    val tokens = tokenizeBytecode(methodNode.instructions, isComposable).getOrElse { e ->
         reporter.reportError(IllegalStateException("Failed to tokenize $methodId", e))
-        return methodNode.emptyGroup()
+        return methodNode.emptyGroup(isComposable)
     }
 
-    return parseGroupInfoFromTokens(methodNode, tokens).getOrElse { e ->
+    if (tokens.isEmpty()) {
+        return methodNode.emptyGroup(isComposable)
+    }
+
+    return parseGroupInfoFromTokens(methodNode, tokens, isComposable).getOrElse { e ->
         reporter.reportError(IllegalStateException("Failed to parse $methodId", e))
-        return methodNode.emptyGroup()
+        return methodNode.emptyGroup(isComposable)
     }
 }
 
@@ -36,34 +42,43 @@ private class GroupInfoBuilder(
     val type: GroupType,
     var line: Int = -1
 ) {
-    var incompleteLabels = mutableListOf<Label>()
-    var markers = mutableListOf<Int>()
+    val incompleteLabels = mutableSetOf<Label>()
+    val markers = mutableSetOf<Int>()
 
     fun build() = GroupInfo(key, type, line)
 }
 
-private fun MethodNode.emptyGroup(): List<GroupInfo> =
-    listOf(
-        GroupInfo(
-            key = readFunctionKeyMetaAnnotation(),
-            type = GroupType.Root,
-            line = -1
+private fun MethodNode.emptyGroup(isComposable: Boolean): List<GroupInfo> =
+    if (isComposable) {
+        listOf(
+            GroupInfo(
+                key = readFunctionKeyMetaAnnotation(),
+                type = GroupType.Root,
+                line = -1
+            )
         )
-    )
+    } else {
+        emptyList()
+    }
 
+context(keyCache: LambdaKeyCache)
 private fun parseGroupInfoFromTokens(
     methodNode: MethodNode,
-    tokens: List<BytecodeToken>
+    tokens: List<BytecodeToken>,
+    isComposable: Boolean
 ): Result<List<GroupInfo>> {
     val functionKey = methodNode.readFunctionKeyMetaAnnotation()
-
-    val nodeStack = mutableListOf(
-        GroupInfoBuilder(
-            key = functionKey,
-            type = GroupType.Root,
-            line = -1
+    val nodeStack = if (isComposable) {
+        mutableListOf(
+            GroupInfoBuilder(
+                key = functionKey,
+                type = GroupType.Root,
+            )
         )
-    )
+    } else {
+        mutableListOf()
+    }
+
     val result = mutableListOf<GroupInfo>()
     var currentLine = -1
     for (i in tokens.indices) {
@@ -86,11 +101,6 @@ private fun parseGroupInfoFromTokens(
 
             is StartGroupToken -> {
                 val newNode = GroupInfoBuilder(key = token.key, type = token.type, line = currentLine)
-
-                if (currentNode?.type == GroupType.Root && (currentNode.key == null || currentNode.key == token.key)) {
-                    nodeStack.removeLast() // This group is the root group
-                }
-
                 nodeStack.add(newNode)
             }
 
@@ -106,8 +116,13 @@ private fun parseGroupInfoFromTokens(
             }
 
             is JumpToken -> {
+                if (token.jumpInsn.opcode == Opcodes.GOTO) {
+                    // Ignore GOTO because it is not a conditional branch
+                    continue
+                }
+
                 val label = token.jumpInsn.label.label
-                val labelIndex = tokens.indexOfFirst { it is LabelToken && it.labelInsn == label }
+                val labelIndex = tokens.indexOfFirst { it is LabelToken && it.labelInsn.label == label }
                 if (labelIndex > i) {
                     // Only consider forward branches, backward branches are already processed
                     currentNode?.incompleteLabels += label
@@ -115,9 +130,9 @@ private fun parseGroupInfoFromTokens(
             }
 
             is LabelToken -> {
-                val label = token.labelInsn
+                val label = token.labelInsn.label
                 nodeStack.forEach {
-                    it.incompleteLabels -= label.label
+                    it.incompleteLabels -= label
                 }
             }
 
@@ -132,7 +147,7 @@ private fun parseGroupInfoFromTokens(
                     continue
                 }
 
-                for (i in (nodeStack.size - 1) downTo nodeIndex) {
+                for (i in (nodeStack.size - 1) downTo nodeIndex + 1) {
                     val node = nodeStack[i]
                     if (node.incompleteLabels.isEmpty()) {
                         nodeStack.removeAt(i)
@@ -140,19 +155,37 @@ private fun parseGroupInfoFromTokens(
                     }
                 }
             }
+            is ComposableLambdaToken -> {
+                val clsFqName = token.handle.owner.replace("/", ".")
+                val desc = if (token.isIndy) {
+                    "${clsFqName}.${token.handle.name}${token.handle.desc}"
+                } else {
+                    clsFqName
+                }
+                keyCache[desc] = token.key
+            }
         }
     }
 
-    check(nodeStack.size <= 1) {
-        "Expected optional root node, but found ${nodeStack.size}"
+    if (isComposable && nodeStack.size > 1) {
+        return parseError("Expected optional root group, but found ${nodeStack.size}")
+    }
+    if (!isComposable && nodeStack.isNotEmpty()) {
+        return parseError("Expected no groups in a non-composable function.")
     }
 
     val rootNode = nodeStack.firstOrNull()
-    if (rootNode != null) {
+    if (rootNode != null && result.none { it.key == rootNode.key }) {
         result.add(rootNode.build())
     }
 
     return Result.success(result)
+}
+
+private fun MethodNode.isComposable() = when {
+    hasComposableAnnotation() || hasFunctionKeyMetaAnnotation() -> true
+    name == "invoke" && desc.contains("${ComposeIds.Composer.classId.descriptor}I") -> true
+    else -> false
 }
 
 private fun <T> parseError(message: String): Result<T> = Result.failure(ParseException(message))

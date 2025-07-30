@@ -21,3 +21,9 @@ TestKt$Content$1 {
     Test(Landroidx/compose/runtime/Composer;I)V
         RestartGroup { key: 369503962, line: 10 }
 }
+
+TestKt$Content$1$Test$1 {
+    file: Test.kt
+    invoke(Landroidx/compose/runtime/Composer;I)V
+        Root { key: null, line: -1 }
+}

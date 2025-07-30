@@ -1,0 +1,24 @@
+//
+// Source
+// ------------------------------------------
+
+@Composable fun App(param: String) {
+    Content {
+        Text(param)
+    }
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+========= FunctionMeta: true, OptimizeGroups: true =========
+1:1:void TestKt.App(java.lang.String,androidx.compose.runtime.Composer,int):4:4 -> m$1570679002
+1:1:kotlin.Unit TestKt.App$lambda$0(java.lang.String,androidx.compose.runtime.Composer,int):6:6 -> m$1516043560
+1:1:void ExtraKt.Text(java.lang.String,androidx.compose.runtime.Composer,int):4:4 -> m$-1960580374
+1:1:void ExtraKt.Content(kotlin.jvm.functions.Function2,androidx.compose.runtime.Composer,int):5:5 -> m$1826047962
+========= FunctionMeta: false, OptimizeGroups: true =========
+1:1:void TestKt.App(java.lang.String,androidx.compose.runtime.Composer,int):4:4 -> m$1570679002
+1:1:kotlin.Unit TestKt.App$lambda$0(java.lang.String,androidx.compose.runtime.Composer,int):6:6 -> m$1516043560
+1:1:void ExtraKt.Text(java.lang.String,androidx.compose.runtime.Composer,int):4:4 -> m$-1960580374
+1:1:void ExtraKt.Content(kotlin.jvm.functions.Function2,androidx.compose.runtime.Composer,int):5:5 -> m$1826047962

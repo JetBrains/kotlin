@@ -8,6 +8,7 @@ package androidx.compose.compiler.plugins.kotlin
 import androidx.compose.compiler.mapping.ClassInfo
 import androidx.compose.compiler.mapping.ComposeMapping
 import androidx.compose.compiler.mapping.ErrorReporter
+import androidx.compose.compiler.mapping.group.LambdaKeyCache
 import androidx.compose.compiler.mapping.render
 import androidx.compose.compiler.plugins.kotlin.facade.SourceFile
 import androidx.compose.compiler.plugins.kotlin.lower.dumpSrc
@@ -18,7 +19,7 @@ import kotlin.test.Test
 
 class GroupAnalysisCompilerTest(
     useFir: Boolean,
-    private val mapping: Boolean
+    private val validateMapping: Boolean
 ) : AbstractCompilerTest(useFir) {
     companion object {
         @JvmStatic
@@ -234,6 +235,41 @@ class GroupAnalysisCompilerTest(
         """
     )
 
+    @Test
+    fun composableLambda() = groups(
+        """
+            @Composable fun App(param: String) {
+                Content {
+                    Text(param)
+                }
+            }
+        """,
+        """
+            @Composable fun Text(text: String) {}
+            @Composable fun Content(content: @Composable () -> Unit) {}
+        """,
+        checkFunctionMeta = true
+    )
+
+    @Test
+    fun nestedComposableLambda() = groups(
+        """
+            @Composable fun Test(param1: String, param2: String) {
+                Content {
+                    Content {
+                        Text(param1)
+                        Text(param2)
+                    }
+                }
+            }
+        """,
+        """
+            @Composable fun Text(text: String) {}
+            @Composable fun Content(content: @Composable () -> Unit) {}
+        """,
+        checkFunctionMeta = true
+    )
+
     @JvmField
     @Rule
     val goldenTransformRule = GoldenTransformRule()
@@ -256,39 +292,44 @@ class GroupAnalysisCompilerTest(
         val matrix = parameterMatrix(checkFunctionMeta, checkOptimizeGroups)
 
         val classLoaders =
-            matrix.map {
-                val (meta, groups) = it
-                val classLoader = createClassLoader(
-                    sources,
-                    additionalConfigurationParameters = {
-                        it.put(ComposeConfiguration.GENERATE_FUNCTION_KEY_META_ANNOTATION_KEY, meta)
-                        it.put(ComposeConfiguration.FEATURE_FLAGS, listOf(FeatureFlag.OptimizeNonSkippingGroups.name(groups)))
-                    }
-                )
-                it to classLoader
-            }
+            matrix.asSequence()
+                .map {
+                    val (meta, groups) = it
+                    val classLoader = createClassLoader(
+                        sources,
+                        additionalConfigurationParameters = {
+                            it.put(ComposeConfiguration.GENERATE_FUNCTION_KEY_META_ANNOTATION_KEY, meta)
+                            it.put(ComposeConfiguration.FEATURE_FLAGS, listOf(FeatureFlag.OptimizeNonSkippingGroups.name(groups)))
+                        }
+                    )
+                    it to classLoader
+                }
 
-        val infos =
+        val infos = if (validateMapping) {
+            classLoaders.map { (p, classLoader) ->
+                val mapping = ComposeMapping(ErrorReporter.Default)
+                classLoader.allGeneratedFiles
+                    .filter { it.relativePath.endsWith(".class") }
+                    .forEach { file ->
+                        mapping.append(file.asByteArray())
+                    }
+                p to mapping.asProguardMapping(linePrefix = "").trim()
+            }
+        } else {
+            val lambdaKeyCache = LambdaKeyCache()
             classLoaders.map { (p, classLoader) ->
                 val info = classLoader.allGeneratedFiles
                     .filter { it.relativePath.endsWith(".class") }
                     .mapNotNull { file ->
-                        if (mapping) {
-                            ComposeMapping.fromBytecode(ErrorReporter.Default, file.asByteArray())
-                                .asProguardMapping(linePrefix = "")
-                                .trim()
-                                .takeIf { it.isNotBlank() }
-                        } else {
-                            with(ErrorReporter.Default) {
-                                ClassInfo(file.asByteArray()).takeIf {
-                                    it.fileName == "Test.kt" && it.methods.isNotEmpty()
-                                }?.render()
-                            }
+                        context(ErrorReporter.Default, lambdaKeyCache) {
+                            ClassInfo(file.asByteArray()).takeIf {
+                                it.fileName == "Test.kt" && it.methods.isNotEmpty()
+                            }?.render()
                         }
                     }.joinToString(separator = "\n")
                 p to info
             }
-
+        }
 
         goldenTransformRule.verifyGolden(
             GoldenTransformTestInfo(

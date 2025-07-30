@@ -7,14 +7,15 @@ package androidx.compose.compiler.mapping.bytecode
 
 import androidx.compose.compiler.mapping.MethodId
 import androidx.compose.compiler.mapping.bytecode.BytecodeToken.*
+import org.objectweb.asm.Handle
 import org.objectweb.asm.Opcodes
 import org.objectweb.asm.tree.*
 
-private sealed interface BytecodeTokenizer {
+internal sealed interface BytecodeTokenizer {
     fun nextToken(context: TokenizerContext): Result<BytecodeToken>?
 }
 
-private data class TokenizerContext(
+internal data class TokenizerContext(
     val instructions: InsnList,
     var index: Int = 0,
 ) {
@@ -51,7 +52,7 @@ private class SingleInstructionTokenizer(
     }
 }
 
-private val tokenizer by lazy {
+private val GroupTokenizer by lazy {
     CompositeInstructionTokenizer(
         LineTokenizer,
         LabelTokenizer,
@@ -62,6 +63,7 @@ private val tokenizer by lazy {
         EndRestartGroupTokenizer,
         StartReplaceGroupTokenizer,
         EndReplaceGroupTokenizer,
+        ComposableLambdaTokenizer
     )
 }
 
@@ -191,13 +193,133 @@ private object EndToMarkerTokenizer : BytecodeTokenizer {
     }
 }
 
+private object ComposableLambdaTokenizer : BytecodeTokenizer {
+    fun MethodId.toComposableLambda(): ComposeIds.ComposableLambda? =
+        ComposeIds.ComposableLambda.entries.firstOrNull {
+            it.methodId == this
+        }
+
+    override fun nextToken(context: TokenizerContext): Result<BytecodeToken>? {
+        val composableLambdaInvoke = context[0]
+        if (composableLambdaInvoke !is MethodInsnNode) return null
+        val methodId = MethodId(composableLambdaInvoke)
+        val composableLambda = methodId.toComposableLambda() ?: return null
+
+        val lambdaInsn = context[-composableLambda.lambdaOffset]
+        when (lambdaInsn) {
+            is InvokeDynamicInsnNode -> {
+                val desc = JvmDescriptor.fromString(lambdaInsn.desc)
+                val capturesCount = captureInsnCount(context, -(composableLambda.lambdaOffset + 1), desc.parameters.size).getOrElse {
+                    return Result.failure(it)
+                }
+
+                val keyOffset = composableLambda.lambdaOffset + capturesCount + composableLambda.keyOffset
+                val keyLdcInsn = context[-keyOffset]
+                val keyValue = keyLdcInsn?.intValueOrNull() ?: return tokenizerError(
+                    "Failed parsing $composableLambda: expected key value"
+                )
+
+                val handle = lambdaInsn.bsmArgs.getOrNull(1) as? Handle ?: return null
+
+                return Result.success(
+                    ComposableLambdaToken(
+                        key = keyValue,
+                        handle = handle,
+                        isIndy = true,
+                        instructions = listOf(composableLambdaInvoke)
+                    )
+                )
+            }
+            is MethodInsnNode -> {
+                if (lambdaInsn.opcode != Opcodes.INVOKESPECIAL) return tokenizerError(
+                    "Failed parsing $composableLambda: expected INVOKESPECIAL for lambda call, got ${lambdaInsn.opcode}"
+                )
+
+                val desc = JvmDescriptor.fromString(lambdaInsn.desc)
+                val capturesCount = captureInsnCount(context, -(composableLambda.lambdaOffset + 1), desc.parameters.size).getOrElse {
+                    return Result.failure(it)
+                }
+
+                val keyOffset = composableLambda.lambdaOffset + capturesCount + /* new + dup */ 2 + composableLambda.keyOffset
+                val keyLdcInsn = context[-keyOffset]
+                val keyValue = keyLdcInsn?.intValueOrNull() ?: return tokenizerError(
+                    "Failed parsing $composableLambda: expected key value"
+                )
+
+                val handle = Handle(
+                    Opcodes.H_INVOKESPECIAL,
+                    lambdaInsn.owner,
+                    lambdaInsn.name,
+                    lambdaInsn.desc,
+                    lambdaInsn.itf
+                )
+
+                return Result.success(
+                    ComposableLambdaToken(
+                        key = keyValue,
+                        handle = handle,
+                        isIndy = false,
+                        instructions = listOf(composableLambdaInvoke)
+                    )
+                )
+            }
+            is FieldInsnNode -> {
+                if (lambdaInsn.opcode != Opcodes.GETSTATIC) {
+                    return tokenizerError("Failed parsing $composableLambda: expected GETSTATIC, but got ${lambdaInsn.opcode}")
+                }
+
+                val keyOffset = composableLambda.lambdaOffset + composableLambda.keyOffset
+                val keyLdcInsn = context[-keyOffset]
+                val keyValue = keyLdcInsn?.intValueOrNull() ?: return tokenizerError(
+                    "Failed parsing $composableLambda: expected key value"
+                )
+
+                val handle = Handle(
+                    Opcodes.H_GETSTATIC,
+                    lambdaInsn.owner,
+                    lambdaInsn.name,
+                    lambdaInsn.desc,
+                    false
+                )
+
+                return Result.success(
+                    ComposableLambdaToken(
+                        key = keyValue,
+                        handle = handle,
+                        isIndy = false,
+                        instructions = listOf(composableLambdaInvoke)
+                    )
+                )
+            }
+            else -> {
+                return tokenizerError("Failed parsing $composableLambda: unexpected opcode ${lambdaInsn?.opcode}.")
+            }
+        }
+    }
+
+    private fun captureInsnCount(context: TokenizerContext, capturesOffset: Int, captureCount: Int): Result<Int> {
+        var offset = capturesOffset
+        repeat(captureCount) {
+            when (val insn = context[offset]) {
+                is FieldInsnNode -> offset -= 2
+                is VarInsnNode -> offset -= 1
+                else -> {
+                    return tokenizerError("Unexpected ${insn?.opcode}")
+                }
+            }
+        }
+        return Result.success(-(offset - capturesOffset))
+    }
+}
+
 internal fun tokenizeBytecode(
-    instructions: InsnList
+    instructions: InsnList,
+    isComposable: Boolean
 ): Result<List<BytecodeToken>> {
     val context = TokenizerContext(instructions)
     val tokens = mutableListOf<BytecodeToken>()
 
-    val tokenizer = tokenizer
+    val tokenizer = if (isComposable) GroupTokenizer else ComposableLambdaTokenizer
     while (true) {
         val nextResult = tokenizer.nextToken(context)
         val count = if (nextResult != null) {

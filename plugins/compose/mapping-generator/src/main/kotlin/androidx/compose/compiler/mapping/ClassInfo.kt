@@ -7,11 +7,9 @@
 
 package androidx.compose.compiler.mapping
 
-import androidx.compose.compiler.mapping.bytecode.ComposeIds
 import androidx.compose.compiler.mapping.group.GroupInfo
+import androidx.compose.compiler.mapping.group.LambdaKeyCache
 import androidx.compose.compiler.mapping.group.analyzeGroups
-import androidx.compose.compiler.mapping.group.hasComposableAnnotation
-import androidx.compose.compiler.mapping.group.hasFunctionKeyMetaAnnotation
 import org.objectweb.asm.ClassReader
 import org.objectweb.asm.Opcodes.ASM9
 import org.objectweb.asm.tree.ClassNode
@@ -58,7 +56,7 @@ internal fun MethodId(methodInsnNode: MethodInsnNode): MethodId = MethodId(
     methodDescriptor = methodInsnNode.desc
 )
 
-context(reporter: ErrorReporter)
+context(reporter: ErrorReporter, keyCache: LambdaKeyCache)
 fun ClassInfo(bytecode: ByteArray): ClassInfo {
     val reader = ClassReader(bytecode)
     val node = ClassNode(ASM9)
@@ -66,22 +64,17 @@ fun ClassInfo(bytecode: ByteArray): ClassInfo {
     return buildClassInfo(node)
 }
 
-context(reporter: ErrorReporter)
+context(reporter: ErrorReporter, keyCache: LambdaKeyCache)
 private fun buildClassInfo(classNode: ClassNode): ClassInfo {
     val classId = ClassId(classNode)
 
     val methods = classNode.methods.mapNotNull { methodNode ->
-        if (!methodNode.isComposable()) {
-            // TODO: visit all fields and methods to process `composableLambdaInstance` calls.
-            return@mapNotNull null
-        }
-
         if (classId in InternalClasses) {
             // Ignore groups in the internal lambda class
             return@mapNotNull null
         }
 
-        val groups = analyzeGroups(classId, methodNode).filter { it.key != null }
+        val groups = analyzeGroups(classId, methodNode)
 
         if (groups.isNotEmpty()) {
             MethodInfo(
@@ -103,9 +96,3 @@ private fun buildClassInfo(classNode: ClassNode): ClassInfo {
 private val InternalClasses = setOf(
     ClassId("androidx/compose/runtime/internal/ComposableLambdaImpl")
 )
-
-private fun MethodNode.isComposable() = when {
-    hasComposableAnnotation() || hasFunctionKeyMetaAnnotation() -> true
-    name == "invoke" && desc.contains("${ComposeIds.Composer.classId.descriptor}I") -> true
-    else -> false
-}

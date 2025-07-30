@@ -6,6 +6,7 @@
 package androidx.compose.compiler.mapping.bytecode
 
 import androidx.compose.compiler.mapping.group.GroupType
+import org.objectweb.asm.Handle
 import org.objectweb.asm.tree.AbstractInsnNode
 import org.objectweb.asm.tree.JumpInsnNode
 import org.objectweb.asm.tree.LabelNode
@@ -29,9 +30,7 @@ internal sealed interface BytecodeToken {
     ) : StartGroupToken {
         override val type: GroupType = GroupType.RestartGroup
 
-        override fun toString(): String {
-            return "StartRestartGroup(key=$key)"
-        }
+        override fun toString(): String = "StartRestartGroup(key=$key)"
     }
 
     class EndRestartGroup(
@@ -39,9 +38,7 @@ internal sealed interface BytecodeToken {
     ) : EndGroupToken {
         override val type: GroupType = GroupType.RestartGroup
 
-        override fun toString(): String {
-            return "EndRestartGroup()"
-        }
+        override fun toString(): String = "EndRestartGroup()"
     }
 
     class StartReplaceGroup(
@@ -50,9 +47,7 @@ internal sealed interface BytecodeToken {
     ) : StartGroupToken {
         override val type: GroupType = GroupType.ReplaceGroup
 
-        override fun toString(): String {
-            return "StartReplaceGroup(key=$key)"
-        }
+        override fun toString(): String = "StartReplaceGroup(key=$key)"
     }
 
     class EndReplaceGroup(
@@ -60,9 +55,7 @@ internal sealed interface BytecodeToken {
     ) : EndGroupToken {
         override val type: GroupType = GroupType.ReplaceGroup
 
-        override fun toString(): String {
-            return "EndReplaceGroup()"
-        }
+        override fun toString(): String = "EndReplaceGroup()"
     }
 
 
@@ -84,24 +77,29 @@ internal sealed interface BytecodeToken {
         val jumpInsn: JumpInsnNode
     ) : BytecodeToken {
         override val instructions: List<AbstractInsnNode> = listOf(jumpInsn)
-        override fun toString(): String = "JumpToken(jump=${jumpInsn.opcode})"
+        override fun toString(): String = "JumpToken(jump=${jumpInsn.opcode}, label=${jumpInsn.label.label})"
     }
 
     class CurrentMarkerToken(
         val variableIndex: Int,
         override val instructions: List<AbstractInsnNode>
     ) : BytecodeToken {
-        override fun toString(): String {
-            return "CurrentMarkerToken(index=$variableIndex)"
-        }
+        override fun toString(): String = "CurrentMarkerToken(index=$variableIndex)"
     }
 
     class EndToMarkerToken(
         var variableIndex: Int,
         override val instructions: List<AbstractInsnNode>
     ) : BytecodeToken {
-        override fun toString(): String {
-            return "EndToMarkerToken(index=$variableIndex)"
-        }
+        override fun toString(): String = "EndToMarkerToken(index=$variableIndex)"
+    }
+
+    class ComposableLambdaToken(
+        val key: Int,
+        val handle: Handle,
+        val isIndy: Boolean,
+        override val instructions: List<AbstractInsnNode>
+    ) : BytecodeToken {
+        override fun toString(): String = "ComposableLambdaToken(key=$key, handle=$handle)"
     }
 }
