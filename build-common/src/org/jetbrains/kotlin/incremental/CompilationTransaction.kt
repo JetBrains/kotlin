@@ -279,4 +279,12 @@ class TransactionOutputsRegistrar(
         transaction.registerAddedOrChangedFile(outputFile.toPath())
         origin.add(sourceFiles, outputFile)
     }
+
+    override fun addSourceReferencedByCompilerPlugin(sourceFile: File) {
+        origin.addSourceReferencedByCompilerPlugin(sourceFile)
+    }
+
+    override fun addOutputFileGeneratedForPlugin(outputFile: File) {
+        origin.addOutputFileGeneratedForPlugin(outputFile)
+    }
 }

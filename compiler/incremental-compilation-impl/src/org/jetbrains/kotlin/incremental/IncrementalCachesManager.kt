@@ -38,9 +38,11 @@ abstract class IncrementalCachesManager<PlatformCache : AbstractIncrementalCache
 
     private val inputSnapshotsCacheDir = File(cachesRootDir, "inputs").apply { mkdirs() }
     private val lookupCacheDir = File(cachesRootDir, "lookups").apply { mkdirs() }
+    private val connectedFilesCacheDir = File(cachesRootDir, "connectedFiles").apply { mkdirs() }
 
     val inputsCache: InputsCache = InputsCache(inputSnapshotsCacheDir, icContext).apply { registerCache() }
     val lookupCache: LookupStorage = LookupStorage(lookupCacheDir, icContext).apply { registerCache() }
+    val compilerPluginFilesCache: CompilerPluginFilesCache = CompilerPluginFilesCache(connectedFilesCacheDir, icContext).apply { registerCache() }
     abstract val platformCache: PlatformCache
 
     @Suppress("UnstableApiUsage")
