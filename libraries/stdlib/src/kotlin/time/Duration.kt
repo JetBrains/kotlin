@@ -1133,9 +1133,8 @@ private fun parseIsoStringFormatFSA(
     var index = startIndex
     var currentLongValue = 0L
 
-    fun parseLong(): Long {
+    fun parseLong(firstChar: Char): Long {
         var sign = 1
-        val firstChar = value[index]
         if (firstChar == '-') {
             sign = -1
             index++
@@ -1176,7 +1175,7 @@ private fun parseIsoStringFormatFSA(
 
     fun parseLongIfPossible(ch: Char): Boolean {
         val prevIndex = index
-        currentLongValue = parseLong()
+        currentLongValue = parseLong(ch)
         return index != prevIndex + if (ch == '-' || ch == '+') 1 else 0
     }
 
