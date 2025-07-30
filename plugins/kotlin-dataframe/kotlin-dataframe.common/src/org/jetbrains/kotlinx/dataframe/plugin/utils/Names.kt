@@ -52,6 +52,10 @@ object Names {
             FqName.fromSegments(listOf("org", "jetbrains", "kotlinx", "dataframe")),
             Name.identifier("ColumnsScope")
         )
+
+
+
+
     val DATA_ROW_CLASS_ID: ClassId
         get() = ClassId(FqName.fromSegments(listOf("org", "jetbrains", "kotlinx", "dataframe")), Name.identifier("DataRow"))
     val DF_ANNOTATIONS_PACKAGE: Name
@@ -84,6 +88,12 @@ object Names {
     val TO = CallableId(FqName("kotlin"), Name.identifier("to"))
     val TRIM_MARGIN = CallableId(StandardNames.TEXT_PACKAGE_FQ_NAME, Name.identifier("trimMargin"))
     val TRIM_INDENT = CallableId(StandardNames.TEXT_PACKAGE_FQ_NAME, Name.identifier("trimIndent"))
+
+    val DATAFRAME_PROVIDER = ClassId(FqName("org.jetbrains.kotlinx.dataframe.io"), Name.identifier("DataFrameProvider"))
+    val DATA_SCHEMA_SOURCE_CLASS_ID = ClassId(annotationsPackage, Name.identifier("DataSchemaSource"))
+    val READ = Name.identifier("read")
+    val DEFAULT = Name.identifier("default")
+    val SCHEMA_KTYPE = Name.identifier("schemaKType")
 }
 
 private fun KClass<*>.classId(): ClassId {

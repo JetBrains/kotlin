@@ -1,0 +1,10 @@
+FILE: invalidCompanionObjectSupertype.kt
+    @R|org/jetbrains/kotlinx/dataframe/annotations/DataSchemaSource|() public abstract interface MySchema : R|kotlin/Any| {
+        public final companion object Companion : R|org/jetbrains/kotlinx/dataframe/io/DataFrameProvider<kotlin/String>| {
+            private constructor(): R|MySchema.Companion| {
+                super<R|kotlin/Any|>()
+            }
+
+        }
+
+    }
