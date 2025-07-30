@@ -423,6 +423,46 @@ public fun KaType.approximateToSuperPublicDenotableOrSelf(approximateLocalTypes:
 }
 
 /**
+ * @see KaTypeProvider.approximateToDenotableSupertype
+ */
+@KaExperimentalApi
+@KaContextParameterApi
+context(context: KaTypeProvider)
+public fun KaType.approximateToDenotableSupertype(allowLocalDenotableTypes: Boolean): KaType? {
+    return with(context) { approximateToDenotableSupertype(allowLocalDenotableTypes) }
+}
+
+/**
+ * @see KaTypeProvider.approximateToDenotableSupertypeOrSelf
+ */
+@KaExperimentalApi
+@KaContextParameterApi
+context(context: KaTypeProvider)
+public fun KaType.approximateToDenotableSupertypeOrSelf(allowLocalDenotableTypes: Boolean): KaType {
+    return with(context) { approximateToDenotableSupertypeOrSelf(allowLocalDenotableTypes) }
+}
+
+/**
+ * @see KaTypeProvider.approximateToDenotableSupertype
+ */
+@KaExperimentalApi
+@KaContextParameterApi
+context(context: KaTypeProvider)
+public fun KaType.approximateToDenotableSupertype(position: KtElement): KaType? {
+    return with(context) { approximateToDenotableSupertype(position) }
+}
+
+/**
+ * @see KaTypeProvider.approximateToDenotableSupertypeOrSelf
+ */
+@KaExperimentalApi
+@KaContextParameterApi
+context(context: KaTypeProvider)
+public fun KaType.approximateToDenotableSupertypeOrSelf(position: KtElement): KaType {
+    return with(context) { approximateToDenotableSupertypeOrSelf(position) }
+}
+
+/**
  * @see KaTypeProvider.approximateToDenotableSubtype
  */
 @KaExperimentalApi
