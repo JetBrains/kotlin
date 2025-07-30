@@ -13,6 +13,13 @@ import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.scripting.compiler.plugin.runAndCheckResults
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.utils.PathUtil
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.Assertions.assertNull
+import org.junit.jupiter.api.Assertions.assertSame
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.fail
 import java.io.File
 import java.lang.management.ManagementFactory
 import java.nio.file.Files.createTempDirectory
@@ -20,7 +27,6 @@ import java.nio.file.Files.createTempFile
 import javax.script.*
 import kotlin.script.experimental.jvmhost.jsr223.KotlinJsr223ScriptEngineImpl
 import kotlin.script.templates.standard.ScriptTemplateWithBindings
-import kotlin.test.*
 
 // duplicating it here to avoid dependency on the implementation - it may interfere with tests
 private const val KOTLIN_JSR223_RESOLVE_FROM_CLASSLOADER_PROPERTY = "kotlin.jsr223.experimental.resolve.dependencies.from.context.classloader"
@@ -86,8 +92,7 @@ class KotlinJsr223ScriptEngineIT {
         assertEquals(5, res2)
     }
 
-    @Test
-    @Ignore // Probably not possible to make it sensible on CI and with parallel run, so leaving it here for manual testing only
+    // @Test // Probably not possible to make it sensible on CI and with parallel run, so leaving it here for manual testing only
     fun testMemory() {
         val memoryMXBean = ManagementFactory.getMemoryMXBean()!!
         var prevMem = memoryMXBean.getHeapMemoryUsage().getUsed()
@@ -189,7 +194,7 @@ obj
 """)
         assertNotNull(res0)
         val invocator = engine as? Invocable
-        assertNotNull(invocator)
+        requireNotNull(invocator)
         val res1 = invocator.invokeFunction("fn", 6)
         assertEquals(8, res1)
         assertThrows(NoSuchMethodException::class.java) {
@@ -387,7 +392,7 @@ obj
         val result = scriptEngine.eval(script)
 
         assertTrue(result is Function0<*>)
-        assertEquals(3, result.invoke())
+        assertEquals(3, (result as Function0<*>).invoke())
     }
 
     @Test
