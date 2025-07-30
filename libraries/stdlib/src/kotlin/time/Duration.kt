@@ -1047,27 +1047,30 @@ public inline operator fun Int.times(duration: Duration): Duration = duration * 
 public inline operator fun Double.times(duration: Duration): Duration = duration * this
 
 
-
+private const val INFINITY_STRING = "Infinity"
 
 private fun parseDuration(value: String, strictIso: Boolean, throwException: Boolean = true): Duration {
     val length = value.length
     if (length == 0) return throwExceptionOrInvalid(throwException, "The string is empty")
     var index = 0
-    val infinityString = "Infinity"
-    when (value[index]) {
-        '+', '-' -> index++
+    val firstChar = value[index]
+    var isNegative = false
+    if (firstChar == '-') {
+        isNegative = true
+        index++
+    } else if (firstChar == '+') {
+        index++
     }
     val hasSign = index > 0
     val result = when {
         length <= index -> return throwExceptionOrInvalid(throwException, "No components")
         value[index] == 'P' -> parseIsoStringFormatFSA(value, index + 1, length, throwException).onInvalid { return Duration.INVALID }
         strictIso -> return throwExceptionOrInvalid(throwException)
-        value.regionMatches(index, infinityString, 0, length = maxOf(length - index, infinityString.length), ignoreCase = true) -> {
+        value.regionMatches(index, INFINITY_STRING, 0, length = maxOf(length - index, INFINITY_STRING.length), ignoreCase = true) -> {
             Duration.INFINITE
         }
         else -> parseDefaultStringFormat(value, index, length, hasSign, throwException).onInvalid { return Duration.INVALID }
     }
-    val isNegative = hasSign && value.startsWith('-')
     return if (isNegative) -result else result
 }
 
@@ -1320,58 +1323,6 @@ private fun parseIsoStringFormatFSA(
 }
 
 @kotlin.internal.InlineOnly
-private inline fun parseIsoStringFormat(
-    value: String,
-    startIndex: Int,
-    length: Int,
-    throwException: Boolean,
-): Duration {
-    var index = startIndex
-    var result = Duration.ZERO
-    if (++index == length) return throwExceptionOrInvalid(throwException)
-    var isTimeComponent = false
-    var prevUnit: DurationUnit? = null
-    while (index < length) {
-        if (value[index] == 'T') {
-            if (isTimeComponent || ++index == length) return throwExceptionOrInvalid(throwException)
-            isTimeComponent = true
-            continue
-        }
-        val componentStart = index
-        val componentResult = value.parseNumericComponent(index, length)
-        val dotIndex = componentResult.dotIndex
-        if (!componentResult.isValid) {
-            return throwExceptionOrInvalid(
-                throwException,
-                if (dotIndex >= 0) "Multiple dots in numeric component" else "componentEnd <= componentStart"
-            )
-        }
-        val componentEnd = componentResult.componentEnd
-        val unitChar = value.getOrElse(componentEnd) {
-            return throwExceptionOrInvalid(
-                throwException, "Missing unit for value ${value.substring(componentStart, componentEnd)}"
-            )
-        }
-        index = componentEnd + 1
-        val unit = durationUnitByIsoChar(unitChar, isTimeComponent, throwException) ?: return Duration.INVALID
-        if (prevUnit != null && prevUnit <= unit) return throwExceptionOrInvalid(throwException, "Unexpected order of duration components")
-        prevUnit = unit
-        if (unit == DurationUnit.SECONDS && dotIndex >= 0) {
-            val whole = value.parseOverLongIsoComponentInPlace(componentStart, dotIndex)
-                .also { if (it == Duration.INVALID_RAW_VALUE) return throwExceptionOrInvalid(throwException) }
-            result = result.plus(whole.toDuration(unit), throwException).onInvalid { return Duration.INVALID }
-            val fractional = value.parseFractionalPartOfDoubleInPlace(dotIndex + 1, componentEnd) ?: return throwExceptionOrInvalid(throwException)
-            result = result.plus(fractional.toDuration(unit), throwException).onInvalid { return Duration.INVALID }
-        } else {
-            val componentValue = value.parseOverLongIsoComponentInPlace(componentStart, componentEnd)
-                .also { if (it == Duration.INVALID_RAW_VALUE) return throwExceptionOrInvalid(throwException) }
-            result = result.plus(componentValue.toDuration(unit), throwException).onInvalid { return Duration.INVALID }
-        }
-    }
-    return result
-}
-
-@kotlin.internal.InlineOnly
 private inline fun parseDefaultStringFormat(
     value: String,
     startIndex: Int,
@@ -1540,35 +1491,6 @@ private fun String.parseFractionalPartOfDoubleInPlace(start: Int, end: Int): Dou
     }
 
     return result
-}
-
-private fun String.parseOverLongIsoComponentInPlace(start: Int, end: Int): Long {
-    val length = end - start
-    var actualStart = start
-    val firstChar = this[start]
-
-    if (length > 0 && firstChar in "+-") actualStart++
-
-    if (length > 16) {
-        var firstNonZero = actualStart
-        for (index in actualStart..<end) {
-            when (this[index]) {
-                '0' -> if (firstNonZero == index) firstNonZero++
-                !in '1'..'9' -> break
-            }
-        }
-        if (end - firstNonZero > 16) {
-            return if (firstChar == '-') Long.MIN_VALUE else Long.MAX_VALUE
-        }
-    }
-
-    return parseLongInPlace(start, end).let {
-        when (it) {
-            Long.MAX_VALUE if firstChar == '-' -> Long.MIN_VALUE
-            Long.MIN_VALUE if firstChar != '-' -> Long.MAX_VALUE
-            else -> it
-        }
-    }
 }
 
 private inline fun String.skipWhile(startIndex: Int, predicate: (Char) -> Boolean): Int {

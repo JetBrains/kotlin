@@ -72,26 +72,6 @@ internal fun DurationUnit.shortName(): String = when (this) {
     else -> error("Unknown unit: $this")
 }
 
-@SinceKotlin("1.5")
-@kotlin.internal.InlineOnly
-internal inline fun durationUnitByIsoChar(isoChar: Char, isTimeComponent: Boolean, throwException: Boolean): DurationUnit? =
-    when {
-        !isTimeComponent -> {
-            when (isoChar) {
-                'D' -> DurationUnit.DAYS
-                else -> if (throwException) throw IllegalArgumentException("Invalid or unsupported duration ISO non-time unit: $isoChar") else null
-            }
-        }
-        else -> {
-            when (isoChar) {
-                'H' -> DurationUnit.HOURS
-                'M' -> DurationUnit.MINUTES
-                'S' -> DurationUnit.SECONDS
-                else -> if (throwException) throw IllegalArgumentException("Invalid duration ISO time unit: $isoChar") else null
-            }
-        }
-    }
-
 @kotlin.internal.InlineOnly
 internal inline fun durationUnitByShortNameInPlace(str: String, start: Int, end: Int, throwException: Boolean): DurationUnit? {
     val length = end - start
