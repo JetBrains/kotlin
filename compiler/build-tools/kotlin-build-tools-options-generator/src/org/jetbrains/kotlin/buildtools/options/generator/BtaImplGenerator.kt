@@ -45,6 +45,7 @@ class BtaImplGenerator(private val targetPackage: String) : BtaGenerator {
                         addModifiers(KModifier.OPEN)
                     }
                     val toCompilerConverterFun = toCompilerConverterFunBuilder(level, parentClass)
+                    val applyCompilerArgumentsFun = applyCompilerArgumentsFunBuilder(level, parentClass)
                     val applyArgumentStringsFun = applyArgumentStringsFunBuilder(level, parentClass)
 
                     val toArgumentStringsFun = FunSpec.builder("toArgumentStrings").apply {
@@ -75,7 +76,7 @@ class BtaImplGenerator(private val targetPackage: String) : BtaGenerator {
                             apiClassName,
                             argumentImplTypeName,
                             toCompilerConverterFun,
-                            applyArgumentStringsFun,
+                            applyCompilerArgumentsFun,
                             toArgumentStringsFun,
                             skipXX
                         )
@@ -87,6 +88,7 @@ class BtaImplGenerator(private val targetPackage: String) : BtaGenerator {
                     addFunction(applyArgumentStringsFun.build())
                     toArgumentStringsFun.addStatement("return arguments")
                     addFunction(toArgumentStringsFun.build())
+                    addFunction(applyCompilerArgumentsFun.build())
 
                 }.build()
             )
@@ -101,7 +103,7 @@ class BtaImplGenerator(private val targetPackage: String) : BtaGenerator {
         apiClassName: String,
         argumentTypeName: ClassName,
         toCompilerConverterFun: FunSpec.Builder,
-        applyArgumentStringsFun: FunSpec.Builder,
+        applyCompilerArgumentsFun: FunSpec.Builder,
         toArgumentStringsFun: FunSpec.Builder,
         skipXX: Boolean,
     ) {
@@ -146,8 +148,8 @@ class BtaImplGenerator(private val targetPackage: String) : BtaGenerator {
                         "-${argument.name}=",
                         member
                     )
-                    applyArgumentStringsFun.addStatement(
-                        "this[%M] = compilerArgs.%N${if (argument.valueType.isNullable.current) "?" else ""}.let { %T.valueOf(it) }",
+                    applyCompilerArgumentsFun.addStatement(
+                        "this[%M] = arguments.%N${if (argument.valueType.isNullable.current) "?" else ""}.let { %T.valueOf(it) }",
                         member,
                         argument.calculateName(),
                         argumentTypeParameter.copy(nullable = false)
@@ -166,8 +168,8 @@ class BtaImplGenerator(private val targetPackage: String) : BtaGenerator {
                         "-${argument.name}=",
                         member
                     )
-                    applyArgumentStringsFun.addStatement(
-                        "this[%M] = compilerArgs.%N${if (argument.valueType.isNullable.current) "?" else ""}.let { it.toInt() }",
+                    applyCompilerArgumentsFun.addStatement(
+                        "this[%M] = arguments.%N${if (argument.valueType.isNullable.current) "?" else ""}.let { it.toInt() }",
                         member,
                         argument.calculateName(),
                     )
@@ -185,8 +187,8 @@ class BtaImplGenerator(private val targetPackage: String) : BtaGenerator {
                         "-${argument.name}=",
                         member
                     )
-                    applyArgumentStringsFun.addStatement(
-                        "this[%M] = compilerArgs.%N",
+                    applyCompilerArgumentsFun.addStatement(
+                        "this[%M] = arguments.%N",
                         member,
                         argument.calculateName(),
                     )
@@ -307,20 +309,31 @@ private fun applyArgumentStringsFunBuilder(
     parentClass: TypeName?,
 ): FunSpec.Builder = FunSpec.Companion.builder("applyArgumentStrings").apply {
     addModifiers(KModifier.OVERRIDE)
-    if (parentClass != null) {
-        addStatement("super.applyArgumentStrings(arguments)")
-    } else {
+    if (parentClass == null) {
         addModifiers(KModifier.OPEN)
     }
     val compilerArgumentInfo = levelToClassNameMap.getValue(level.name)
     val compilerArgumentsClass = ClassName(compilerArgumentInfo.classPackage, compilerArgumentInfo.className)
     addParameter("arguments", listTypeNameOf<String>())
-    annotation<Suppress> {
-        addMember("%S", "DEPRECATION")
-    }
     addStatement(
         "val compilerArgs: %T = %M(arguments)",
         compilerArgumentsClass,
         MemberName("org.jetbrains.kotlin.cli.common.arguments", "parseCommandLineArguments")
     )
+    addStatement("applyCompilerArguments(compilerArgs)")
+}
+
+private fun applyCompilerArgumentsFunBuilder(
+    level: KotlinCompilerArgumentsLevel,
+    parentClass: TypeName?,
+): FunSpec.Builder = FunSpec.Companion.builder("applyCompilerArguments").apply {
+    if (parentClass != null) {
+        addStatement("super.applyCompilerArguments(arguments)")
+    }
+    val compilerArgumentInfo = levelToClassNameMap.getValue(level.name)
+    val compilerArgumentsClass = ClassName(compilerArgumentInfo.classPackage, compilerArgumentInfo.className)
+    addParameter("arguments", compilerArgumentsClass)
+    annotation<Suppress> {
+        addMember("%S", "DEPRECATION")
+    }
 }

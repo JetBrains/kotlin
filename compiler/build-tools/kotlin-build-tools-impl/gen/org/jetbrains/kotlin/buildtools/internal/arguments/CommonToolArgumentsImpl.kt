@@ -58,14 +58,9 @@ internal open class CommonToolArgumentsImpl : ArgumentsCommonToolArguments {
     return arguments
   }
 
-  @Suppress("DEPRECATION")
   open override fun applyArgumentStrings(arguments: List<String>) {
     val compilerArgs: CommonToolArguments = parseCommandLineArguments(arguments)
-    this[VERSION] = compilerArgs.version
-    this[VERBOSE] = compilerArgs.verbose
-    this[NOWARN] = compilerArgs.suppressWarnings
-    this[WERROR] = compilerArgs.allWarningsAsErrors
-    this[WEXTRA] = compilerArgs.extraWarnings
+    applyCompilerArguments(compilerArgs)
   }
 
   @Suppress("DEPRECATION")
@@ -78,6 +73,15 @@ internal open class CommonToolArgumentsImpl : ArgumentsCommonToolArguments {
     if ("WERROR" in optionsMap) { arguments.add("-Werror=" + get(WERROR)) }
     if ("WEXTRA" in optionsMap) { arguments.add("-Wextra=" + get(WEXTRA)) }
     return arguments
+  }
+
+  @Suppress("DEPRECATION")
+  public fun applyCompilerArguments(arguments: CommonToolArguments) {
+    this[VERSION] = arguments.version
+    this[VERBOSE] = arguments.verbose
+    this[NOWARN] = arguments.suppressWarnings
+    this[WERROR] = arguments.allWarningsAsErrors
+    this[WEXTRA] = arguments.extraWarnings
   }
 
   public class CommonToolArgument<V>(

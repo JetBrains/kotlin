@@ -212,8 +212,10 @@ private class BuildV1Adapter(
                 operation[JvmCompilationOperation.INCREMENTAL_COMPILATION]?.let { icConfig ->
                     if (icConfig !is JvmSnapshotBasedIncrementalCompilationConfiguration) return@let
                     val snapshotBasedConfigV1 = configV1.makeClasspathSnapshotBasedIncrementalCompilationConfiguration()
-                        .setRootProjectDir(icConfig.options[ROOT_PROJECT_DIR].toFile())
-                        .setBuildDir(icConfig.options[MODULE_BUILD_DIR].toFile())
+                        .apply {
+                            icConfig.options[ROOT_PROJECT_DIR]?.let { setRootProjectDir(it.toFile()) }
+                            icConfig.options[MODULE_BUILD_DIR]?.let { setBuildDir(it.toFile()) }
+                        }
                         .usePreciseJavaTracking(icConfig.options[PRECISE_JAVA_TRACKING])
                         .usePreciseCompilationResultsBackup(icConfig.options[BACKUP_CLASSES])
                         .keepIncrementalCompilationCachesInMemory(icConfig.options[KEEP_IC_CACHES_IN_MEMORY])

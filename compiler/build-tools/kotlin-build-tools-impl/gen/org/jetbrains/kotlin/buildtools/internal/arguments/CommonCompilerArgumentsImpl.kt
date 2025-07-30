@@ -180,73 +180,9 @@ internal open class CommonCompilerArgumentsImpl : CommonToolArgumentsImpl(),
     return arguments
   }
 
-  @Suppress("DEPRECATION")
   override fun applyArgumentStrings(arguments: List<String>) {
-    super.applyArgumentStrings(arguments)
     val compilerArgs: CommonCompilerArguments = parseCommandLineArguments(arguments)
-    this[LANGUAGE_VERSION] = compilerArgs.languageVersion?.let { KotlinVersion.valueOf(it) }
-    this[API_VERSION] = compilerArgs.apiVersion?.let { KotlinVersion.valueOf(it) }
-    this[KOTLIN_HOME] = compilerArgs.kotlinHome
-    this[PROGRESSIVE] = compilerArgs.progressiveMode
-    this[OPT_IN] = compilerArgs.optIn
-    this[X_NO_INLINE] = compilerArgs.noInline
-    this[X_SKIP_METADATA_VERSION_CHECK] = compilerArgs.skipMetadataVersionCheck
-    this[X_SKIP_PRERELEASE_CHECK] = compilerArgs.skipPrereleaseCheck
-    this[X_REPORT_OUTPUT_FILES] = compilerArgs.reportOutputFiles
-    this[X_NEW_INFERENCE] = compilerArgs.newInference
-    this[X_INLINE_CLASSES] = compilerArgs.inlineClasses
-    this[X_REPORT_PERF] = compilerArgs.reportPerf
-    this[X_DUMP_PERF] = compilerArgs.dumpPerf
-    this[X_METADATA_VERSION] = compilerArgs.metadataVersion
-    this[X_LIST_PHASES] = compilerArgs.listPhases
-    this[X_DISABLE_PHASES] = compilerArgs.disablePhases
-    this[X_VERBOSE_PHASES] = compilerArgs.verbosePhases
-    this[X_PHASES_TO_DUMP_BEFORE] = compilerArgs.phasesToDumpBefore
-    this[X_PHASES_TO_DUMP_AFTER] = compilerArgs.phasesToDumpAfter
-    this[X_PHASES_TO_DUMP] = compilerArgs.phasesToDump
-    this[X_DUMP_DIRECTORY] = compilerArgs.dumpDirectory
-    this[X_DUMP_FQNAME] = compilerArgs.dumpOnlyFqName
-    this[X_PHASES_TO_VALIDATE_BEFORE] = compilerArgs.phasesToValidateBefore
-    this[X_PHASES_TO_VALIDATE_AFTER] = compilerArgs.phasesToValidateAfter
-    this[X_PHASES_TO_VALIDATE] = compilerArgs.phasesToValidate
-    this[X_VERIFY_IR] = compilerArgs.verifyIr
-    this[X_VERIFY_IR_VISIBILITY] = compilerArgs.verifyIrVisibility
-    this[X_PROFILE_PHASES] = compilerArgs.profilePhases
-    this[X_CHECK_PHASE_CONDITIONS] = compilerArgs.checkPhaseConditions
-    this[X_USE_FIR_EXPERIMENTAL_CHECKERS] = compilerArgs.useFirExperimentalCheckers
-    this[X_USE_FIR_IC] = compilerArgs.useFirIC
-    this[X_USE_FIR_LT] = compilerArgs.useFirLT
-    this[X_METADATA_KLIB] = compilerArgs.metadataKlib
-    this[X_DISABLE_DEFAULT_SCRIPTING_PLUGIN] = compilerArgs.disableDefaultScriptingPlugin
-    this[X_EXPLICIT_API] = compilerArgs.explicitApi.let { ExplicitApiMode.valueOf(it) }
-    this[X_RETURN_VALUE_CHECKER] = compilerArgs.returnValueChecker.let { ReturnValueCheckerMode.valueOf(it) }
-    this[X_SUPPRESS_VERSION_WARNINGS] = compilerArgs.suppressVersionWarnings
-    this[X_SUPPRESS_API_VERSION_GREATER_THAN_LANGUAGE_VERSION_ERROR] = compilerArgs.suppressApiVersionGreaterThanLanguageVersionError
-    this[X_EXPECT_ACTUAL_CLASSES] = compilerArgs.expectActualClasses
-    this[X_CONSISTENT_DATA_CLASS_COPY_VISIBILITY] = compilerArgs.consistentDataClassCopyVisibility
-    this[X_UNRESTRICTED_BUILDER_INFERENCE] = compilerArgs.unrestrictedBuilderInference
-    this[X_CONTEXT_RECEIVERS] = compilerArgs.contextReceivers
-    this[X_CONTEXT_PARAMETERS] = compilerArgs.contextParameters
-    this[X_CONTEXT_SENSITIVE_RESOLUTION] = compilerArgs.contextSensitiveResolution
-    this[X_NON_LOCAL_BREAK_CONTINUE] = compilerArgs.nonLocalBreakContinue
-    this[_XDATA_FLOW_BASED_EXHAUSTIVENESS] = compilerArgs.xdataFlowBasedExhaustiveness
-    this[X_MULTI_DOLLAR_INTERPOLATION] = compilerArgs.multiDollarInterpolation
-    this[X_RENDER_INTERNAL_DIAGNOSTIC_NAMES] = compilerArgs.renderInternalDiagnosticNames
-    this[X_ALLOW_ANY_SCRIPTS_IN_SOURCE_ROOTS] = compilerArgs.allowAnyScriptsInSourceRoots
-    this[X_REPORT_ALL_WARNINGS] = compilerArgs.reportAllWarnings
-    this[X_IGNORE_CONST_OPTIMIZATION_ERRORS] = compilerArgs.ignoreConstOptimizationErrors
-    this[X_DONT_WARN_ON_ERROR_SUPPRESSION] = compilerArgs.dontWarnOnErrorSuppression
-    this[X_WHEN_GUARDS] = compilerArgs.whenGuards
-    this[X_NESTED_TYPE_ALIASES] = compilerArgs.nestedTypeAliases
-    this[X_SUPPRESS_WARNING] = compilerArgs.suppressedDiagnostics
-    this[X_WARNING_LEVEL] = compilerArgs.warningLevels
-    this[X_ANNOTATION_DEFAULT_TARGET] = compilerArgs.annotationDefaultTarget
-    this[X_ANNOTATION_TARGET_ALL] = compilerArgs.annotationTargetAll
-    this[X_ALLOW_REIFIED_TYPE_IN_CATCH] = compilerArgs.allowReifiedTypeInCatch
-    this[X_ALLOW_CONTRACTS_ON_MORE_FUNCTIONS] = compilerArgs.allowContractsOnMoreFunctions
-    this[X_ALLOW_CONDITION_IMPLIES_RETURNS_CONTRACTS] = compilerArgs.allowConditionImpliesReturnsContracts
-    this[X_ALLOW_HOLDSIN_CONTRACT] = compilerArgs.allowHoldsinContract
-    this[X_NAME_BASED_DESTRUCTURING] = compilerArgs.nameBasedDestructuring
+    applyCompilerArguments(compilerArgs)
   }
 
   @Suppress("DEPRECATION")
@@ -318,6 +254,74 @@ internal open class CommonCompilerArgumentsImpl : CommonToolArgumentsImpl(),
     if ("X_ALLOW_HOLDSIN_CONTRACT" in optionsMap) { arguments.add("-Xallow-holdsin-contract=" + get(X_ALLOW_HOLDSIN_CONTRACT)) }
     if ("X_NAME_BASED_DESTRUCTURING" in optionsMap) { arguments.add("-Xname-based-destructuring=" + get(X_NAME_BASED_DESTRUCTURING)) }
     return arguments
+  }
+
+  @Suppress("DEPRECATION")
+  public fun applyCompilerArguments(arguments: CommonCompilerArguments) {
+    super.applyCompilerArguments(arguments)
+    this[LANGUAGE_VERSION] = arguments.languageVersion?.let { KotlinVersion.valueOf(it) }
+    this[API_VERSION] = arguments.apiVersion?.let { KotlinVersion.valueOf(it) }
+    this[KOTLIN_HOME] = arguments.kotlinHome
+    this[PROGRESSIVE] = arguments.progressiveMode
+    this[OPT_IN] = arguments.optIn
+    this[X_NO_INLINE] = arguments.noInline
+    this[X_SKIP_METADATA_VERSION_CHECK] = arguments.skipMetadataVersionCheck
+    this[X_SKIP_PRERELEASE_CHECK] = arguments.skipPrereleaseCheck
+    this[X_REPORT_OUTPUT_FILES] = arguments.reportOutputFiles
+    this[X_NEW_INFERENCE] = arguments.newInference
+    this[X_INLINE_CLASSES] = arguments.inlineClasses
+    this[X_REPORT_PERF] = arguments.reportPerf
+    this[X_DUMP_PERF] = arguments.dumpPerf
+    this[X_METADATA_VERSION] = arguments.metadataVersion
+    this[X_LIST_PHASES] = arguments.listPhases
+    this[X_DISABLE_PHASES] = arguments.disablePhases
+    this[X_VERBOSE_PHASES] = arguments.verbosePhases
+    this[X_PHASES_TO_DUMP_BEFORE] = arguments.phasesToDumpBefore
+    this[X_PHASES_TO_DUMP_AFTER] = arguments.phasesToDumpAfter
+    this[X_PHASES_TO_DUMP] = arguments.phasesToDump
+    this[X_DUMP_DIRECTORY] = arguments.dumpDirectory
+    this[X_DUMP_FQNAME] = arguments.dumpOnlyFqName
+    this[X_PHASES_TO_VALIDATE_BEFORE] = arguments.phasesToValidateBefore
+    this[X_PHASES_TO_VALIDATE_AFTER] = arguments.phasesToValidateAfter
+    this[X_PHASES_TO_VALIDATE] = arguments.phasesToValidate
+    this[X_VERIFY_IR] = arguments.verifyIr
+    this[X_VERIFY_IR_VISIBILITY] = arguments.verifyIrVisibility
+    this[X_PROFILE_PHASES] = arguments.profilePhases
+    this[X_CHECK_PHASE_CONDITIONS] = arguments.checkPhaseConditions
+    this[X_USE_FIR_EXPERIMENTAL_CHECKERS] = arguments.useFirExperimentalCheckers
+    this[X_USE_FIR_IC] = arguments.useFirIC
+    this[X_USE_FIR_LT] = arguments.useFirLT
+    this[X_METADATA_KLIB] = arguments.metadataKlib
+    this[X_DISABLE_DEFAULT_SCRIPTING_PLUGIN] = arguments.disableDefaultScriptingPlugin
+    this[X_EXPLICIT_API] = arguments.explicitApi.let { ExplicitApiMode.valueOf(it) }
+    this[X_RETURN_VALUE_CHECKER] = arguments.returnValueChecker.let { ReturnValueCheckerMode.valueOf(it) }
+    this[X_SUPPRESS_VERSION_WARNINGS] = arguments.suppressVersionWarnings
+    this[X_SUPPRESS_API_VERSION_GREATER_THAN_LANGUAGE_VERSION_ERROR] = arguments.suppressApiVersionGreaterThanLanguageVersionError
+    this[X_EXPECT_ACTUAL_CLASSES] = arguments.expectActualClasses
+    this[X_CONSISTENT_DATA_CLASS_COPY_VISIBILITY] = arguments.consistentDataClassCopyVisibility
+    this[X_UNRESTRICTED_BUILDER_INFERENCE] = arguments.unrestrictedBuilderInference
+    this[X_CONTEXT_RECEIVERS] = arguments.contextReceivers
+    this[X_CONTEXT_PARAMETERS] = arguments.contextParameters
+    this[X_CONTEXT_SENSITIVE_RESOLUTION] = arguments.contextSensitiveResolution
+    this[X_NON_LOCAL_BREAK_CONTINUE] = arguments.nonLocalBreakContinue
+    this[_XDATA_FLOW_BASED_EXHAUSTIVENESS] = arguments.xdataFlowBasedExhaustiveness
+    this[X_MULTI_DOLLAR_INTERPOLATION] = arguments.multiDollarInterpolation
+    this[X_RENDER_INTERNAL_DIAGNOSTIC_NAMES] = arguments.renderInternalDiagnosticNames
+    this[X_ALLOW_ANY_SCRIPTS_IN_SOURCE_ROOTS] = arguments.allowAnyScriptsInSourceRoots
+    this[X_REPORT_ALL_WARNINGS] = arguments.reportAllWarnings
+    this[X_IGNORE_CONST_OPTIMIZATION_ERRORS] = arguments.ignoreConstOptimizationErrors
+    this[X_DONT_WARN_ON_ERROR_SUPPRESSION] = arguments.dontWarnOnErrorSuppression
+    this[X_WHEN_GUARDS] = arguments.whenGuards
+    this[X_NESTED_TYPE_ALIASES] = arguments.nestedTypeAliases
+    this[X_SUPPRESS_WARNING] = arguments.suppressedDiagnostics
+    this[X_WARNING_LEVEL] = arguments.warningLevels
+    this[X_ANNOTATION_DEFAULT_TARGET] = arguments.annotationDefaultTarget
+    this[X_ANNOTATION_TARGET_ALL] = arguments.annotationTargetAll
+    this[X_ALLOW_REIFIED_TYPE_IN_CATCH] = arguments.allowReifiedTypeInCatch
+    this[X_ALLOW_CONTRACTS_ON_MORE_FUNCTIONS] = arguments.allowContractsOnMoreFunctions
+    this[X_ALLOW_CONDITION_IMPLIES_RETURNS_CONTRACTS] = arguments.allowConditionImpliesReturnsContracts
+    this[X_ALLOW_HOLDSIN_CONTRACT] = arguments.allowHoldsinContract
+    this[X_NAME_BASED_DESTRUCTURING] = arguments.nameBasedDestructuring
   }
 
   public class CommonCompilerArgument<V>(
