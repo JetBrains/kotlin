@@ -474,15 +474,6 @@ private fun FirPropertySymbol.isEffectivelyFinal(session: FirSession): Boolean {
 fun FirPropertyWithExplicitBackingFieldResolvedNamedReference.getNarrowedDownSymbol(session: FirSession): FirBasedSymbol<*> {
     val propertyReceiver = resolvedSymbol as? FirPropertySymbol ?: return resolvedSymbol
 
-    // This can happen in case of 2 properties referencing
-    // each other recursively. See: Jet81.fir.kt
-    if (
-        propertyReceiver.fir.returnTypeRef is FirImplicitTypeRef ||
-        propertyReceiver.fir.backingField?.returnTypeRef is FirImplicitTypeRef
-    ) {
-        return resolvedSymbol
-    }
-
     if (
         propertyReceiver.isEffectivelyFinal(session) &&
         hasVisibleBackingField &&

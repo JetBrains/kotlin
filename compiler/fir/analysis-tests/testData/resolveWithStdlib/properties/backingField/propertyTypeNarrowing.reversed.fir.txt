@@ -8,8 +8,8 @@ FILE: propertyTypeNarrowing.reversed.kt
             private final backing field field: R|kotlin/Int| = Int(4)
             public get(): R|kotlin/Number|
 
-        public final fun test(): <ERROR TYPE REF: Unresolved name: plus (+)> {
-            ^test this@R|/A|.R|/A.it|.<Unresolved name: plus (+)>#(Int(3))
+        public final fun test(): R|kotlin/Int| {
+            ^test this@R|/A|.R|/A.it|.R|kotlin/Int.plus|(Int(3))
         }
 
         public final val p: R|kotlin/Int| = Int(5)
