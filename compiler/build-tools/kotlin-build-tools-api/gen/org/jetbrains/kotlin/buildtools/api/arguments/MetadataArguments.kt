@@ -4,6 +4,7 @@
 package org.jetbrains.kotlin.buildtools.api.arguments
 
 import kotlin.Array
+import kotlin.Boolean
 import kotlin.String
 import kotlin.jvm.JvmField
 
@@ -23,6 +24,8 @@ public interface MetadataArguments : CommonCompilerArguments {
    * Set the [value] for option specified by [key], overriding any previous value for that option.
    */
   public operator fun <V> `set`(key: MetadataArgument<V>, `value`: V)
+
+  public operator fun contains(key: MetadataArgument<*>): Boolean
 
   /**
    * Base class for [MetadataArguments] options.

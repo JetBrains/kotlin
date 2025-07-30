@@ -25,6 +25,8 @@ public interface JsArguments : WasmArguments {
    */
   public operator fun <V> `set`(key: JsArgument<V>, `value`: V)
 
+  public operator fun contains(key: JsArgument<*>): Boolean
+
   /**
    * Base class for [JsArguments] options.
    *

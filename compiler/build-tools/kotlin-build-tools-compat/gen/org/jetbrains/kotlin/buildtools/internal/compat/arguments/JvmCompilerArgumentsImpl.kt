@@ -3,7 +3,7 @@
 
 @file:OptIn(ExperimentalCompilerArgument::class)
 
-package org.jetbrains.kotlin.buildtools.api.`internal`.compat.arguments
+package org.jetbrains.kotlin.buildtools.`internal`.compat.arguments
 
 import kotlin.Any
 import kotlin.Array
@@ -90,6 +90,8 @@ import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments.Compan
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments.Companion.X_VALUE_CLASSES
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments.Companion.X_WHEN_EXPRESSIONS
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.JvmTarget
+import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
 
 internal class JvmCompilerArgumentsImpl : CommonCompilerArgumentsImpl(), JvmCompilerArguments {
   private val optionsMap: MutableMap<String, Any?> = mutableMapOf()
@@ -101,6 +103,8 @@ internal class JvmCompilerArgumentsImpl : CommonCompilerArgumentsImpl(), JvmComp
     optionsMap[key.id] = `value`
   }
 
+  override operator fun contains(key: JvmCompilerArguments.JvmCompilerArgument<*>): Boolean = key.id in optionsMap
+
   @Suppress("UNCHECKED_CAST")
   public operator fun <V> `get`(key: JvmCompilerArgument<V>): V = optionsMap[key.id] as V
 
@@ -109,6 +113,83 @@ internal class JvmCompilerArgumentsImpl : CommonCompilerArgumentsImpl(), JvmComp
   }
 
   public operator fun contains(key: JvmCompilerArgument<*>): Boolean = key.id in optionsMap
+
+  @Suppress("DEPRECATION")
+  override fun applyArgumentStrings(arguments: List<String>) {
+    super.applyArgumentStrings(arguments)
+    val compilerArgs: K2JVMCompilerArguments = parseCommandLineArguments(arguments)
+    this[CLASSPATH] = compilerArgs.classpath
+    this[INCLUDE_RUNTIME] = compilerArgs.includeRuntime
+    this[JDK_HOME] = compilerArgs.jdkHome
+    this[NO_JDK] = compilerArgs.noJdk
+    this[NO_STDLIB] = compilerArgs.noStdlib
+    this[NO_REFLECT] = compilerArgs.noReflect
+    this[SCRIPT_TEMPLATES] = compilerArgs.scriptTemplates
+    this[MODULE_NAME] = compilerArgs.moduleName
+    this[JVM_TARGET] = compilerArgs.jvmTarget?.let { JvmTarget.valueOf(it) }
+    this[JAVA_PARAMETERS] = compilerArgs.javaParameters
+    this[JVM_DEFAULT] = compilerArgs.jvmDefaultStable
+    this[X_ALLOW_UNSTABLE_DEPENDENCIES] = compilerArgs.allowUnstableDependencies
+    this[X_ABI_STABILITY] = compilerArgs.abiStability
+    this[X_IR_DO_NOT_CLEAR_BINDING_CONTEXT] = compilerArgs.doNotClearBindingContext
+    this[X_BACKEND_THREADS] = compilerArgs.backendThreads.let { it.toInt() }
+    this[X_MODULE_PATH] = compilerArgs.javaModulePath
+    this[X_ADD_MODULES] = compilerArgs.additionalJavaModules
+    this[X_NO_CALL_ASSERTIONS] = compilerArgs.noCallAssertions
+    this[X_NO_RECEIVER_ASSERTIONS] = compilerArgs.noReceiverAssertions
+    this[X_NO_PARAM_ASSERTIONS] = compilerArgs.noParamAssertions
+    this[X_NO_OPTIMIZE] = compilerArgs.noOptimize
+    this[X_ASSERTIONS] = compilerArgs.assertionsMode
+    this[X_MULTIFILE_PARTS_INHERIT] = compilerArgs.inheritMultifileParts
+    this[X_USE_TYPE_TABLE] = compilerArgs.useTypeTable
+    this[X_USE_OLD_CLASS_FILES_READING] = compilerArgs.useOldClassFilesReading
+    this[X_USE_FAST_JAR_FILE_SYSTEM] = compilerArgs.useFastJarFileSystem
+    this[X_SUPPRESS_MISSING_BUILTINS_ERROR] = compilerArgs.suppressMissingBuiltinsError
+    this[X_SCRIPT_RESOLVER_ENVIRONMENT] = compilerArgs.scriptResolverEnvironment
+    this[X_JAVA_SOURCE_ROOTS] = compilerArgs.javaSourceRoots
+    this[X_JAVA_PACKAGE_PREFIX] = compilerArgs.javaPackagePrefix
+    this[X_JSR305] = compilerArgs.jsr305
+    this[X_NULLABILITY_ANNOTATIONS] = compilerArgs.nullabilityAnnotations
+    this[X_SUPPORT_COMPATQUAL_CHECKER_FRAMEWORK_ANNOTATIONS] = compilerArgs.supportCompatqualCheckerFrameworkAnnotations
+    this[X_JSPECIFY_ANNOTATIONS] = compilerArgs.jspecifyAnnotations
+    this[X_JVM_DEFAULT] = compilerArgs.jvmDefault
+    this[X_DEFAULT_SCRIPT_EXTENSION] = compilerArgs.defaultScriptExtension
+    this[X_DISABLE_STANDARD_SCRIPT] = compilerArgs.disableStandardScript
+    this[X_GENERATE_STRICT_METADATA_VERSION] = compilerArgs.strictMetadataVersionSemantics
+    this[X_SANITIZE_PARENTHESES] = compilerArgs.sanitizeParentheses
+    this[X_FRIEND_PATHS] = compilerArgs.friendPaths
+    this[X_ALLOW_NO_SOURCE_FILES] = compilerArgs.allowNoSourceFiles
+    this[X_EMIT_JVM_TYPE_ANNOTATIONS] = compilerArgs.emitJvmTypeAnnotations
+    this[X_JVM_EXPOSE_BOXED] = compilerArgs.jvmExposeBoxed
+    this[X_STRING_CONCAT] = compilerArgs.stringConcat
+    this[X_JDK_RELEASE] = compilerArgs.jdkRelease
+    this[X_SAM_CONVERSIONS] = compilerArgs.samConversions
+    this[X_LAMBDAS] = compilerArgs.lambdas
+    this[X_INDY_ALLOW_ANNOTATED_LAMBDAS] = compilerArgs.indyAllowAnnotatedLambdas
+    this[X_KLIB] = compilerArgs.klibLibraries
+    this[X_NO_RESET_JAR_TIMESTAMPS] = compilerArgs.noResetJarTimestamps
+    this[X_NO_UNIFIED_NULL_CHECKS] = compilerArgs.noUnifiedNullChecks
+    this[X_NO_SOURCE_DEBUG_EXTENSION] = compilerArgs.noSourceDebugExtension
+    this[X_PROFILE] = compilerArgs.profileCompilerCommand
+    this[X_USE_14_INLINE_CLASSES_MANGLING_SCHEME] = compilerArgs.useOldInlineClassesManglingScheme
+    this[X_JVM_ENABLE_PREVIEW] = compilerArgs.enableJvmPreview
+    this[X_SUPPRESS_DEPRECATED_JVM_TARGET_WARNING] = compilerArgs.suppressDeprecatedJvmTargetWarning
+    this[X_TYPE_ENHANCEMENT_IMPROVEMENTS_STRICT_MODE] = compilerArgs.typeEnhancementImprovementsInStrictMode
+    this[X_SERIALIZE_IR] = compilerArgs.serializeIr
+    this[X_VALIDATE_BYTECODE] = compilerArgs.validateBytecode
+    this[X_ENHANCE_TYPE_PARAMETER_TYPES_TO_DEF_NOT_NULL] = compilerArgs.enhanceTypeParameterTypesToDefNotNull
+    this[X_LINK_VIA_SIGNATURES] = compilerArgs.linkViaSignatures
+    this[X_DEBUG] = compilerArgs.enableDebugMode
+    this[X_ENHANCED_COROUTINES_DEBUGGING] = compilerArgs.enhancedCoroutinesDebugging
+    this[X_NO_NEW_JAVA_ANNOTATION_TARGETS] = compilerArgs.noNewJavaAnnotationTargets
+    this[X_VALUE_CLASSES] = compilerArgs.valueClasses
+    this[X_USE_INLINE_SCOPES_NUMBERS] = compilerArgs.useInlineScopesNumbers
+    this[X_USE_K2_KAPT] = compilerArgs.useK2Kapt
+    this[X_COMPILE_BUILTINS_AS_PART_OF_STDLIB] = compilerArgs.expectBuiltinsAsPartOfStdlib
+    this[X_OUTPUT_BUILTINS_METADATA] = compilerArgs.outputBuiltinsMetadata
+    this[X_ANNOTATIONS_IN_METADATA] = compilerArgs.annotationsInMetadata
+    this[X_WHEN_EXPRESSIONS] = compilerArgs.whenExpressionsGeneration
+  }
 
   @Suppress("DEPRECATION")
   @OptIn(ExperimentalCompilerArgument::class)

@@ -3,7 +3,7 @@
 
 @file:OptIn(ExperimentalCompilerArgument::class)
 
-package org.jetbrains.kotlin.buildtools.api.`internal`.compat.arguments
+package org.jetbrains.kotlin.buildtools.`internal`.compat.arguments
 
 import kotlin.Any
 import kotlin.Array
@@ -15,7 +15,6 @@ import kotlin.collections.List
 import kotlin.collections.MutableMap
 import kotlin.collections.mutableListOf
 import kotlin.collections.mutableMapOf
-import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments.Companion.API_VERSION
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments.Companion.KOTLIN_HOME
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments.Companion.LANGUAGE_VERSION
@@ -83,17 +82,22 @@ import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgumen
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.ExplicitApiMode
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.KotlinVersion
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.ReturnValueCheckerMode
+import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
+import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments as ArgumentsCommonCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments as CommonCompilerArguments
 
 internal open class CommonCompilerArgumentsImpl : CommonToolArgumentsImpl(),
-    CommonCompilerArguments {
+    ArgumentsCommonCompilerArguments {
   private val optionsMap: MutableMap<String, Any?> = mutableMapOf()
 
   @Suppress("UNCHECKED_CAST")
-  override operator fun <V> `get`(key: CommonCompilerArguments.CommonCompilerArgument<V>): V = optionsMap[key.id] as V
+  override operator fun <V> `get`(key: ArgumentsCommonCompilerArguments.CommonCompilerArgument<V>): V = optionsMap[key.id] as V
 
-  override operator fun <V> `set`(key: CommonCompilerArguments.CommonCompilerArgument<V>, `value`: V) {
+  override operator fun <V> `set`(key: ArgumentsCommonCompilerArguments.CommonCompilerArgument<V>, `value`: V) {
     optionsMap[key.id] = `value`
   }
+
+  override operator fun contains(key: ArgumentsCommonCompilerArguments.CommonCompilerArgument<*>): Boolean = key.id in optionsMap
 
   @Suppress("UNCHECKED_CAST")
   public operator fun <V> `get`(key: CommonCompilerArgument<V>): V = optionsMap[key.id] as V
@@ -103,6 +107,75 @@ internal open class CommonCompilerArgumentsImpl : CommonToolArgumentsImpl(),
   }
 
   public operator fun contains(key: CommonCompilerArgument<*>): Boolean = key.id in optionsMap
+
+  @Suppress("DEPRECATION")
+  override fun applyArgumentStrings(arguments: List<String>) {
+    super.applyArgumentStrings(arguments)
+    val compilerArgs: CommonCompilerArguments = parseCommandLineArguments(arguments)
+    this[LANGUAGE_VERSION] = compilerArgs.languageVersion?.let { KotlinVersion.valueOf(it) }
+    this[API_VERSION] = compilerArgs.apiVersion?.let { KotlinVersion.valueOf(it) }
+    this[KOTLIN_HOME] = compilerArgs.kotlinHome
+    this[PROGRESSIVE] = compilerArgs.progressiveMode
+    this[OPT_IN] = compilerArgs.optIn
+    this[X_NO_INLINE] = compilerArgs.noInline
+    this[X_SKIP_METADATA_VERSION_CHECK] = compilerArgs.skipMetadataVersionCheck
+    this[X_SKIP_PRERELEASE_CHECK] = compilerArgs.skipPrereleaseCheck
+    this[X_REPORT_OUTPUT_FILES] = compilerArgs.reportOutputFiles
+    this[X_NEW_INFERENCE] = compilerArgs.newInference
+    this[X_INLINE_CLASSES] = compilerArgs.inlineClasses
+    this[X_REPORT_PERF] = compilerArgs.reportPerf
+    this[X_DUMP_PERF] = compilerArgs.dumpPerf
+    this[X_METADATA_VERSION] = compilerArgs.metadataVersion
+    this[X_LIST_PHASES] = compilerArgs.listPhases
+    this[X_DISABLE_PHASES] = compilerArgs.disablePhases
+    this[X_VERBOSE_PHASES] = compilerArgs.verbosePhases
+    this[X_PHASES_TO_DUMP_BEFORE] = compilerArgs.phasesToDumpBefore
+    this[X_PHASES_TO_DUMP_AFTER] = compilerArgs.phasesToDumpAfter
+    this[X_PHASES_TO_DUMP] = compilerArgs.phasesToDump
+    this[X_DUMP_DIRECTORY] = compilerArgs.dumpDirectory
+    this[X_DUMP_FQNAME] = compilerArgs.dumpOnlyFqName
+    this[X_PHASES_TO_VALIDATE_BEFORE] = compilerArgs.phasesToValidateBefore
+    this[X_PHASES_TO_VALIDATE_AFTER] = compilerArgs.phasesToValidateAfter
+    this[X_PHASES_TO_VALIDATE] = compilerArgs.phasesToValidate
+    this[X_VERIFY_IR] = compilerArgs.verifyIr
+    this[X_VERIFY_IR_VISIBILITY] = compilerArgs.verifyIrVisibility
+    this[X_PROFILE_PHASES] = compilerArgs.profilePhases
+    this[X_CHECK_PHASE_CONDITIONS] = compilerArgs.checkPhaseConditions
+    this[X_USE_FIR_EXPERIMENTAL_CHECKERS] = compilerArgs.useFirExperimentalCheckers
+    this[X_USE_FIR_IC] = compilerArgs.useFirIC
+    this[X_USE_FIR_LT] = compilerArgs.useFirLT
+    this[X_METADATA_KLIB] = compilerArgs.metadataKlib
+    this[X_DISABLE_DEFAULT_SCRIPTING_PLUGIN] = compilerArgs.disableDefaultScriptingPlugin
+    this[X_EXPLICIT_API] = compilerArgs.explicitApi.let { ExplicitApiMode.valueOf(it) }
+    this[X_RETURN_VALUE_CHECKER] = compilerArgs.returnValueChecker.let { ReturnValueCheckerMode.valueOf(it) }
+    this[X_SUPPRESS_VERSION_WARNINGS] = compilerArgs.suppressVersionWarnings
+    this[X_SUPPRESS_API_VERSION_GREATER_THAN_LANGUAGE_VERSION_ERROR] = compilerArgs.suppressApiVersionGreaterThanLanguageVersionError
+    this[X_EXPECT_ACTUAL_CLASSES] = compilerArgs.expectActualClasses
+    this[X_CONSISTENT_DATA_CLASS_COPY_VISIBILITY] = compilerArgs.consistentDataClassCopyVisibility
+    this[X_UNRESTRICTED_BUILDER_INFERENCE] = compilerArgs.unrestrictedBuilderInference
+    this[X_CONTEXT_RECEIVERS] = compilerArgs.contextReceivers
+    this[X_CONTEXT_PARAMETERS] = compilerArgs.contextParameters
+    this[X_CONTEXT_SENSITIVE_RESOLUTION] = compilerArgs.contextSensitiveResolution
+    this[X_NON_LOCAL_BREAK_CONTINUE] = compilerArgs.nonLocalBreakContinue
+    this[_XDATA_FLOW_BASED_EXHAUSTIVENESS] = compilerArgs.xdataFlowBasedExhaustiveness
+    this[X_MULTI_DOLLAR_INTERPOLATION] = compilerArgs.multiDollarInterpolation
+    this[X_RENDER_INTERNAL_DIAGNOSTIC_NAMES] = compilerArgs.renderInternalDiagnosticNames
+    this[X_ALLOW_ANY_SCRIPTS_IN_SOURCE_ROOTS] = compilerArgs.allowAnyScriptsInSourceRoots
+    this[X_REPORT_ALL_WARNINGS] = compilerArgs.reportAllWarnings
+    this[X_IGNORE_CONST_OPTIMIZATION_ERRORS] = compilerArgs.ignoreConstOptimizationErrors
+    this[X_DONT_WARN_ON_ERROR_SUPPRESSION] = compilerArgs.dontWarnOnErrorSuppression
+    this[X_WHEN_GUARDS] = compilerArgs.whenGuards
+    this[X_NESTED_TYPE_ALIASES] = compilerArgs.nestedTypeAliases
+    this[X_SUPPRESS_WARNING] = compilerArgs.suppressedDiagnostics
+    this[X_WARNING_LEVEL] = compilerArgs.warningLevels
+    this[X_ANNOTATION_DEFAULT_TARGET] = compilerArgs.annotationDefaultTarget
+    this[X_ANNOTATION_TARGET_ALL] = compilerArgs.annotationTargetAll
+    this[X_ALLOW_REIFIED_TYPE_IN_CATCH] = compilerArgs.allowReifiedTypeInCatch
+    this[X_ALLOW_CONTRACTS_ON_MORE_FUNCTIONS] = compilerArgs.allowContractsOnMoreFunctions
+    this[X_ALLOW_CONDITION_IMPLIES_RETURNS_CONTRACTS] = compilerArgs.allowConditionImpliesReturnsContracts
+    this[X_ALLOW_HOLDSIN_CONTRACT] = compilerArgs.allowHoldsinContract
+    this[X_NAME_BASED_DESTRUCTURING] = compilerArgs.nameBasedDestructuring
+  }
 
   @Suppress("DEPRECATION")
   @OptIn(ExperimentalCompilerArgument::class)

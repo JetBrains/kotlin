@@ -107,6 +107,7 @@ import org.jetbrains.kotlin.buildtools.api.arguments.NativeArguments.Companion.X
 import org.jetbrains.kotlin.buildtools.api.arguments.NativeArguments.Companion.X_WRITE_DEPENDENCIES_OF_PRODUCED_KLIB_TO
 import org.jetbrains.kotlin.buildtools.api.arguments.NativeArguments.Companion.X_WRITE_DEPENDENCIES_TO
 import org.jetbrains.kotlin.cli.common.arguments.K2NativeCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
 
 internal class NativeArgumentsImpl : CommonKlibBasedArgumentsImpl(), NativeArguments {
   private val optionsMap: MutableMap<String, Any?> = mutableMapOf()
@@ -119,6 +120,8 @@ internal class NativeArgumentsImpl : CommonKlibBasedArgumentsImpl(), NativeArgum
   override operator fun <V> `set`(key: NativeArguments.NativeArgument<V>, `value`: V) {
     optionsMap[key.id] = `value`
   }
+
+  override operator fun contains(key: NativeArguments.NativeArgument<*>): Boolean = key.id in optionsMap
 
   @Suppress("UNCHECKED_CAST")
   public operator fun <V> `get`(key: NativeArgument<V>): V = optionsMap[key.id] as V
@@ -220,6 +223,99 @@ internal class NativeArgumentsImpl : CommonKlibBasedArgumentsImpl(), NativeArgum
     if ("X_LLVM_LTO_PASSES" in optionsMap) { arguments.llvmLTOPasses = get(X_LLVM_LTO_PASSES) }
     if ("X_MANIFEST_NATIVE_TARGETS" in optionsMap) { arguments.manifestNativeTargets = get(X_MANIFEST_NATIVE_TARGETS) }
     return arguments
+  }
+
+  @Suppress("DEPRECATION")
+  override fun applyArgumentStrings(arguments: List<String>) {
+    super.applyArgumentStrings(arguments)
+    val compilerArgs: K2NativeCompilerArguments = parseCommandLineArguments(arguments)
+    this[ENABLE_ASSERTIONS] = compilerArgs.enableAssertions
+    this[G] = compilerArgs.debug
+    this[GENERATE_TEST_RUNNER] = compilerArgs.generateTestRunner
+    this[GENERATE_WORKER_TEST_RUNNER] = compilerArgs.generateWorkerTestRunner
+    this[GENERATE_NO_EXIT_TEST_RUNNER] = compilerArgs.generateNoExitTestRunner
+    this[INCLUDE_BINARY] = compilerArgs.includeBinaries
+    this[LIBRARY] = compilerArgs.libraries
+    this[LIBRARY_VERSION] = compilerArgs.libraryVersion
+    this[LIST_TARGETS] = compilerArgs.listTargets
+    this[MANIFEST] = compilerArgs.manifestFile
+    this[MEMORY_MODEL] = compilerArgs.memoryModel
+    this[MODULE_NAME] = compilerArgs.moduleName
+    this[NATIVE_LIBRARY] = compilerArgs.nativeLibraries
+    this[NO_DEFAULT_LIBS] = compilerArgs.nodefaultlibs
+    this[NO_ENDORSED_LIBS] = compilerArgs.noendorsedlibs
+    this[NOMAIN] = compilerArgs.nomain
+    this[NOPACK] = compilerArgs.nopack
+    this[LINKER_OPTIONS] = compilerArgs.linkerArguments
+    this[LINKER_OPTION] = compilerArgs.singleLinkerArguments
+    this[NOSTDLIB] = compilerArgs.nostdlib
+    this[OPT] = compilerArgs.optimization
+    this[OUTPUT] = compilerArgs.outputName
+    this[ENTRY] = compilerArgs.mainPackage
+    this[PRODUCE] = compilerArgs.produce
+    this[TARGET] = compilerArgs.target
+    this[X_BUNDLE_ID] = compilerArgs.bundleId
+    this[X_CACHE_DIRECTORY] = compilerArgs.cacheDirectories
+    this[X_CACHED_LIBRARY] = compilerArgs.cachedLibraries
+    this[X_AUTO_CACHE_FROM] = compilerArgs.autoCacheableFrom
+    this[X_AUTO_CACHE_DIR] = compilerArgs.autoCacheDir
+    this[X_IC_CACHE_DIR] = compilerArgs.incrementalCacheDir
+    this[X_CHECK_DEPENDENCIES] = compilerArgs.checkDependencies
+    this[X_EMIT_LAZY_OBJC_HEADER] = compilerArgs.emitLazyObjCHeader
+    this[X_EXPORT_LIBRARY] = compilerArgs.exportedLibraries
+    this[X_EXTERNAL_DEPENDENCIES] = compilerArgs.externalDependencies
+    this[X_FAKE_OVERRIDE_VALIDATOR] = compilerArgs.fakeOverrideValidator
+    this[X_FRAMEWORK_IMPORT_HEADER] = compilerArgs.frameworkImportHeaders
+    this[X_ADD_LIGHT_DEBUG] = compilerArgs.lightDebugString
+    this[X_G0] = compilerArgs.lightDebugDeprecated
+    this[X_G_GENERATE_DEBUG_TRAMPOLINE] = compilerArgs.generateDebugTrampolineString
+    this[X_ADD_CACHE] = compilerArgs.libraryToAddToCache
+    this[X_FILE_TO_CACHE] = compilerArgs.filesToCache
+    this[X_MAKE_PER_FILE_CACHE] = compilerArgs.makePerFileCache
+    this[X_BACKEND_THREADS] = compilerArgs.backendThreads.let { it.toInt() }
+    this[X_EXPORT_KDOC] = compilerArgs.exportKDoc
+    this[X_PRINT_BITCODE] = compilerArgs.printBitCode
+    this[X_CHECK_STATE_AT_EXTERNAL_CALLS] = compilerArgs.checkExternalCalls
+    this[X_PRINT_IR] = compilerArgs.printIr
+    this[X_PRINT_FILES] = compilerArgs.printFiles
+    this[X_PURGE_USER_LIBS] = compilerArgs.purgeUserLibs
+    this[X_WRITE_DEPENDENCIES_OF_PRODUCED_KLIB_TO] = compilerArgs.writeDependenciesOfProducedKlibTo
+    this[X_RUNTIME] = compilerArgs.runtimeFile
+    this[X_INCLUDE] = compilerArgs.includes
+    this[X_SHORT_MODULE_NAME] = compilerArgs.shortModuleName
+    this[X_STATIC_FRAMEWORK] = compilerArgs.staticFramework
+    this[X_TEMPORARY_FILES_DIR] = compilerArgs.temporaryFilesDir
+    this[X_SAVE_LLVM_IR_AFTER] = compilerArgs.saveLlvmIrAfter
+    this[X_VERIFY_BITCODE] = compilerArgs.verifyBitCode
+    this[X_VERIFY_COMPILER] = compilerArgs.verifyCompiler
+    this[FRIEND_MODULES] = compilerArgs.friendModules
+    this[X_REFINES_PATHS] = compilerArgs.refinesPaths
+    this[X_DEBUG_INFO_VERSION] = compilerArgs.debugInfoFormatVersion.let { it.toInt() }
+    this[X_NO_OBJC_GENERICS] = compilerArgs.noObjcGenerics
+    this[X_OVERRIDE_CLANG_OPTIONS] = compilerArgs.clangOptions
+    this[X_ALLOCATOR] = compilerArgs.allocator
+    this[X_HEADER_KLIB_PATH] = compilerArgs.headerKlibPath
+    this[X_DEBUG_PREFIX_MAP] = compilerArgs.debugPrefixMap
+    this[X_PRE_LINK_CACHES] = compilerArgs.preLinkCaches
+    this[X_OVERRIDE_KONAN_PROPERTIES] = compilerArgs.overrideKonanProperties
+    this[X_DESTROY_RUNTIME_MODE] = compilerArgs.destroyRuntimeMode
+    this[X_GC] = compilerArgs.gc
+    this[X_IR_PROPERTY_LAZY_INITIALIZATION] = compilerArgs.propertyLazyInitialization
+    this[X_WORKER_EXCEPTION_HANDLING] = compilerArgs.workerExceptionHandling
+    this[X_LLVM_VARIANT] = compilerArgs.llvmVariant
+    this[X_BINARY] = compilerArgs.binaryOptions
+    this[X_RUNTIME_LOGS] = compilerArgs.runtimeLogs
+    this[X_DUMP_TESTS_TO] = compilerArgs.testDumpOutputPath
+    this[X_LAZY_IR_FOR_CACHES] = compilerArgs.lazyIrForCaches
+    this[X_OMIT_FRAMEWORK_BINARY] = compilerArgs.omitFrameworkBinary
+    this[X_COMPILE_FROM_BITCODE] = compilerArgs.compileFromBitcode
+    this[X_READ_DEPENDENCIES_FROM] = compilerArgs.serializedDependencies
+    this[X_WRITE_DEPENDENCIES_TO] = compilerArgs.saveDependenciesPath
+    this[X_SAVE_LLVM_IR_DIRECTORY] = compilerArgs.saveLlvmIrDirectory
+    this[X_KONAN_DATA_DIR] = compilerArgs.konanDataDir
+    this[X_LLVM_MODULE_PASSES] = compilerArgs.llvmModulePasses
+    this[X_LLVM_LTO_PASSES] = compilerArgs.llvmLTOPasses
+    this[X_MANIFEST_NATIVE_TARGETS] = compilerArgs.manifestNativeTargets
   }
 
   @Suppress("DEPRECATION")

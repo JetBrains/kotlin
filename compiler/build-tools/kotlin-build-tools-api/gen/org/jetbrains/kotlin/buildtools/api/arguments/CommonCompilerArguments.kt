@@ -28,6 +28,8 @@ public interface CommonCompilerArguments : CommonToolArguments {
    */
   public operator fun <V> `set`(key: CommonCompilerArgument<V>, `value`: V)
 
+  public operator fun contains(key: CommonCompilerArgument<*>): Boolean
+
   /**
    * Base class for [CommonCompilerArguments] options.
    *

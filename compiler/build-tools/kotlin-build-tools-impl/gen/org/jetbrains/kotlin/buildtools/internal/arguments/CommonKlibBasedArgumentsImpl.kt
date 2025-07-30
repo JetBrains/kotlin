@@ -27,6 +27,7 @@ import org.jetbrains.kotlin.buildtools.api.arguments.CommonKlibBasedArguments.Co
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonKlibBasedArguments.Companion.X_PARTIAL_LINKAGE_LOGLEVEL
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.cli.common.arguments.CommonKlibBasedCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
 
 internal open class CommonKlibBasedArgumentsImpl : CommonCompilerArgumentsImpl(),
     CommonKlibBasedArguments {
@@ -40,6 +41,8 @@ internal open class CommonKlibBasedArgumentsImpl : CommonCompilerArgumentsImpl()
   override operator fun <V> `set`(key: CommonKlibBasedArguments.CommonKlibBasedArgument<V>, `value`: V) {
     optionsMap[key.id] = `value`
   }
+
+  override operator fun contains(key: CommonKlibBasedArguments.CommonKlibBasedArgument<*>): Boolean = key.id in optionsMap
 
   @Suppress("UNCHECKED_CAST")
   public operator fun <V> `get`(key: CommonKlibBasedArgument<V>): V = optionsMap[key.id] as V
@@ -62,6 +65,20 @@ internal open class CommonKlibBasedArgumentsImpl : CommonCompilerArgumentsImpl()
     if ("X_KLIB_IR_INLINER" in optionsMap) { arguments.irInlinerBeforeKlibSerialization = get(X_KLIB_IR_INLINER) }
     if ("X_KLIB_ABI_VERSION" in optionsMap) { arguments.customKlibAbiVersion = get(X_KLIB_ABI_VERSION) }
     return arguments
+  }
+
+  @Suppress("DEPRECATION")
+  override fun applyArgumentStrings(arguments: List<String>) {
+    super.applyArgumentStrings(arguments)
+    val compilerArgs: CommonKlibBasedCompilerArguments = parseCommandLineArguments(arguments)
+    this[X_KLIB_RELATIVE_PATH_BASE] = compilerArgs.relativePathBases
+    this[X_KLIB_NORMALIZE_ABSOLUTE_PATH] = compilerArgs.normalizeAbsolutePath
+    this[X_KLIB_ENABLE_SIGNATURE_CLASH_CHECKS] = compilerArgs.enableSignatureClashChecks
+    this[X_PARTIAL_LINKAGE] = compilerArgs.partialLinkageMode
+    this[X_PARTIAL_LINKAGE_LOGLEVEL] = compilerArgs.partialLinkageLogLevel
+    this[X_KLIB_DUPLICATED_UNIQUE_NAME_STRATEGY] = compilerArgs.duplicatedUniqueNameStrategy
+    this[X_KLIB_IR_INLINER] = compilerArgs.irInlinerBeforeKlibSerialization
+    this[X_KLIB_ABI_VERSION] = compilerArgs.customKlibAbiVersion
   }
 
   @Suppress("DEPRECATION")

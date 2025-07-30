@@ -14,6 +14,8 @@ import kotlin.jvm.JvmField
 public interface CommonToolArguments {
   public fun toArgumentStrings(): List<String>
 
+  public fun applyArgumentStrings(arguments: List<String>)
+
   /**
    * Get the value for option specified by [key] if it was previously [set] or if it has a default value.
    *
@@ -26,6 +28,8 @@ public interface CommonToolArguments {
    * Set the [value] for option specified by [key], overriding any previous value for that option.
    */
   public operator fun <V> `set`(key: CommonToolArgument<V>, `value`: V)
+
+  public operator fun contains(key: CommonToolArgument<*>): Boolean
 
   /**
    * Base class for [CommonToolArguments] options.

@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.buildtools.api.arguments.CommonToolArguments.Compani
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonToolArguments.Companion.WERROR
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonToolArguments.Companion.WEXTRA
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
+import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonToolArguments as ArgumentsCommonToolArguments
 import org.jetbrains.kotlin.cli.common.arguments.CommonToolArguments as CommonToolArguments
 
@@ -35,6 +36,8 @@ internal open class CommonToolArgumentsImpl : ArgumentsCommonToolArguments {
   override operator fun <V> `set`(key: ArgumentsCommonToolArguments.CommonToolArgument<V>, `value`: V) {
     optionsMap[key.id] = `value`
   }
+
+  override operator fun contains(key: ArgumentsCommonToolArguments.CommonToolArgument<*>): Boolean = key.id in optionsMap
 
   @Suppress("UNCHECKED_CAST")
   public operator fun <V> `get`(key: CommonToolArgument<V>): V = optionsMap[key.id] as V
@@ -53,6 +56,16 @@ internal open class CommonToolArgumentsImpl : ArgumentsCommonToolArguments {
     if ("WERROR" in optionsMap) { arguments.allWarningsAsErrors = get(WERROR) }
     if ("WEXTRA" in optionsMap) { arguments.extraWarnings = get(WEXTRA) }
     return arguments
+  }
+
+  @Suppress("DEPRECATION")
+  open override fun applyArgumentStrings(arguments: List<String>) {
+    val compilerArgs: CommonToolArguments = parseCommandLineArguments(arguments)
+    this[VERSION] = compilerArgs.version
+    this[VERBOSE] = compilerArgs.verbose
+    this[NOWARN] = compilerArgs.suppressWarnings
+    this[WERROR] = compilerArgs.allWarningsAsErrors
+    this[WEXTRA] = compilerArgs.extraWarnings
   }
 
   @Suppress("DEPRECATION")

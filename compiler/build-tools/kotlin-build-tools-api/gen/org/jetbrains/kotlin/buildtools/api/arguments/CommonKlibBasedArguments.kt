@@ -26,6 +26,8 @@ public interface CommonKlibBasedArguments : CommonCompilerArguments {
    */
   public operator fun <V> `set`(key: CommonKlibBasedArgument<V>, `value`: V)
 
+  public operator fun contains(key: CommonKlibBasedArgument<*>): Boolean
+
   /**
    * Base class for [CommonKlibBasedArguments] options.
    *

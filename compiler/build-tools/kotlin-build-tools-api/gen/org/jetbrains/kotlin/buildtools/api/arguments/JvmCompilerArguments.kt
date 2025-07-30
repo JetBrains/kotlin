@@ -27,6 +27,8 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
    */
   public operator fun <V> `set`(key: JvmCompilerArgument<V>, `value`: V)
 
+  public operator fun contains(key: JvmCompilerArgument<*>): Boolean
+
   /**
    * Base class for [JvmCompilerArguments] options.
    *
