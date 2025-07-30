@@ -1,4 +1,4 @@
-PsiJetFileStubImpl[package=a.b.c.topLevelMembersAnnotated]
+FILE[kind=Facade[packageFqName=a.b.c.topLevelMembersAnnotated, facadeFqName=a.b.c.topLevelMembersAnnotated.TopLevelMembersAnnotatedKt]]
   PACKAGE_DIRECTIVE
     DOT_QUALIFIED_EXPRESSION
       DOT_QUALIFIED_EXPRESSION

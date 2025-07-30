@@ -1,5 +1,5 @@
 Arrays.kt:
-  PsiJetFileStubImpl[package=]
+  FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
     CLASS[classId=/Arrays, fqName=Arrays, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=Arrays, superNames=[]]
@@ -18,7 +18,7 @@ Arrays.kt:
 
 
 MyEnum.kt:
-  PsiJetFileStubImpl[package=]
+  FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
     CLASS[classId=/MyEnum, fqName=MyEnum, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=MyEnum, superNames=[]]
@@ -29,7 +29,7 @@ MyEnum.kt:
 
 
 WithArrays.kt:
-  PsiJetFileStubImpl[package=]
+  FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
       IMPORT_DIRECTIVE[importedFqName=MyEnum.ENTRY2, isAllUnder=false, isValid=true]

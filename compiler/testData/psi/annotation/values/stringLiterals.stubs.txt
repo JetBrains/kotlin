@@ -1,5 +1,5 @@
 StringLiteral.kt:
-  PsiJetFileStubImpl[package=]
+  FILE[kind=Facade[packageFqName=<root>, facadeFqName=StringLiteralKt]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
     CLASS[classId=/StringLiteral, fqName=StringLiteral, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=StringLiteral, superNames=[]]
@@ -23,7 +23,7 @@ StringLiteral.kt:
 
 
 WithStringConstant.kt:
-  PsiJetFileStubImpl[package=]
+  FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
     CLASS[classId=/WithStringConstant, fqName=WithStringConstant, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithStringConstant, superNames=[]]
@@ -47,7 +47,7 @@ WithStringConstant.kt:
 
 
 WithStringInterpolationPrefix.kt:
-  PsiJetFileStubImpl[package=]
+  FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
     CLASS[classId=/WithStringInterpolationPrefix, fqName=WithStringInterpolationPrefix, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithStringInterpolationPrefix, superNames=[]]
@@ -76,7 +76,7 @@ WithStringInterpolationPrefix.kt:
 
 
 WithStringLiteral.kt:
-  PsiJetFileStubImpl[package=]
+  FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
     CLASS[classId=/WithStringLiteral, fqName=WithStringLiteral, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithStringLiteral, superNames=[]]
@@ -100,7 +100,7 @@ WithStringLiteral.kt:
 
 
 WithStringLiteralConcat.kt:
-  PsiJetFileStubImpl[package=]
+  FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
     CLASS[classId=/WithStringLiteralConcat, fqName=WithStringLiteralConcat, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithStringLiteralConcat, superNames=[]]

@@ -1,5 +1,5 @@
 D.class:
-  PsiJetFileStubImpl[package=dependency]
+  FILE[kind=File[packageFqName=dependency]]
     PACKAGE_DIRECTIVE
       REFERENCE_EXPRESSION[referencedName=dependency]
     IMPORT_LIST
@@ -45,7 +45,7 @@ D.class:
 
 
 DependencyOnNestedClasses.class:
-  PsiJetFileStubImpl[package=test]
+  FILE[kind=File[packageFqName=test]]
     PACKAGE_DIRECTIVE
       REFERENCE_EXPRESSION[referencedName=test]
     IMPORT_LIST

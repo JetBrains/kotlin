@@ -1,5 +1,5 @@
 StringLiteral.class:
-  PsiJetFileStubImpl[package=]
+  FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
     CLASS[classId=/StringLiteral, fqName=StringLiteral, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=StringLiteral, superNames=[Annotation]]
@@ -57,7 +57,7 @@ StringLiteral.class:
 
 
 StringLiteralKt.class:
-  PsiJetFileStubImpl[package=]
+  FILE[kind=Facade[packageFqName=<root>, facadeFqName=StringLiteralKt]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
     PROPERTY[fqName=CONSTANT, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=CONSTANT]
@@ -71,7 +71,7 @@ StringLiteralKt.class:
 
 
 WithStringConstant.class:
-  PsiJetFileStubImpl[package=]
+  FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
     CLASS[classId=/WithStringConstant, fqName=WithStringConstant, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithStringConstant, superNames=[]]
@@ -88,7 +88,7 @@ WithStringConstant.class:
 
 
 WithStringInterpolationPrefix.class:
-  PsiJetFileStubImpl[package=]
+  FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
     CLASS[classId=/WithStringInterpolationPrefix, fqName=WithStringInterpolationPrefix, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithStringInterpolationPrefix, superNames=[]]
@@ -105,7 +105,7 @@ WithStringInterpolationPrefix.class:
 
 
 WithStringLiteral.class:
-  PsiJetFileStubImpl[package=]
+  FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
     CLASS[classId=/WithStringLiteral, fqName=WithStringLiteral, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithStringLiteral, superNames=[]]
@@ -122,7 +122,7 @@ WithStringLiteral.class:
 
 
 WithStringLiteralConcat.class:
-  PsiJetFileStubImpl[package=]
+  FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
     CLASS[classId=/WithStringLiteralConcat, fqName=WithStringLiteralConcat, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithStringLiteralConcat, superNames=[]]

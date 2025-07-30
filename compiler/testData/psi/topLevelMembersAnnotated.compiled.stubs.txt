@@ -1,5 +1,5 @@
 C.class:
-  PsiJetFileStubImpl[package=a.b.c.topLevelMembersAnnotated]
+  FILE[kind=File[packageFqName=a.b.c.topLevelMembersAnnotated]]
     PACKAGE_DIRECTIVE
       DOT_QUALIFIED_EXPRESSION
         DOT_QUALIFIED_EXPRESSION
@@ -18,7 +18,7 @@ C.class:
 
 
 TopLevelMembersAnnotatedKt.class:
-  PsiJetFileStubImpl[package=a.b.c.topLevelMembersAnnotated]
+  FILE[kind=Facade[packageFqName=a.b.c.topLevelMembersAnnotated, facadeFqName=a.b.c.topLevelMembersAnnotated.TopLevelMembersAnnotatedKt]]
     PACKAGE_DIRECTIVE
       DOT_QUALIFIED_EXPRESSION
         DOT_QUALIFIED_EXPRESSION
@@ -125,7 +125,7 @@ TopLevelMembersAnnotatedKt.class:
 
 
 a.class:
-  PsiJetFileStubImpl[package=d.e.f]
+  FILE[kind=File[packageFqName=d.e.f]]
     PACKAGE_DIRECTIVE
       DOT_QUALIFIED_EXPRESSION
         DOT_QUALIFIED_EXPRESSION
@@ -149,7 +149,7 @@ a.class:
 
 
 b.class:
-  PsiJetFileStubImpl[package=d.e.f]
+  FILE[kind=File[packageFqName=d.e.f]]
     PACKAGE_DIRECTIVE
       DOT_QUALIFIED_EXPRESSION
         DOT_QUALIFIED_EXPRESSION

@@ -1,4 +1,4 @@
-PsiJetFileStubImpl[package=]
+FILE[kind=Facade[packageFqName=<root>, facadeFqName=UnfinishedExtensionKt]]
   PACKAGE_DIRECTIVE
   IMPORT_LIST
   FUN[fqName=<no name provided>, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=false, name=null]

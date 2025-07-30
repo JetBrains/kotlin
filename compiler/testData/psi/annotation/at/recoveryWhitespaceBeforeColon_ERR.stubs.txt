@@ -1,4 +1,4 @@
-PsiJetFileStubImpl[package=]
+FILE[kind=File[packageFqName=<root>]]
   FILE_ANNOTATION_LIST
     ANNOTATION_ENTRY[hasValueArguments=false, shortName=ann1]
       CONSTRUCTOR_CALLEE

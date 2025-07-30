@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -71,7 +71,12 @@ open class KotlinClsStubBuilder : ClsStubBuilder() {
         val components = createStubBuilderComponents(file, packageFqName, fileContent, header.metadataVersion)
         if (header.kind == KotlinClassHeader.Kind.MULTIFILE_CLASS) {
             val partFiles = ClsClassFinder.findMultifileClassParts(file, classId, header.multifilePartNames)
-            return createMultifileClassStub(header, partFiles, classId.asSingleFqName(), components)
+            return createMultifileClassStub(
+                packageFqName = packageFqName,
+                partFiles = partFiles,
+                facadeFqName = classId.asSingleFqName(),
+                components = components,
+            )
         }
 
         val annotationData = header.data
@@ -103,7 +108,14 @@ open class KotlinClsStubBuilder : ClsStubBuilder() {
                 val context = components.createContext(nameResolver, packageFqName, TypeTable(packageProto.typeTable))
                 val fqName = header.packageName?.let { ClassId(FqName(it), classId.relativeClassName, classId.isLocal).asSingleFqName() }
                     ?: classId.asSingleFqName()
-                createFileFacadeStub(packageProto, facadeFqName = fqName, jvmFqName = classId.asSingleFqName(), context)
+
+                createFileFacadeStub(
+                    packageFqName = packageFqName,
+                    packageProto = packageProto,
+                    facadeFqName = fqName,
+                    jvmFqName = classId.asSingleFqName(),
+                    c = context,
+                )
             }
             else -> throw IllegalStateException("Should have processed " + file.path + " with header $header")
         }

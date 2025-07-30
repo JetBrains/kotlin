@@ -1,4 +1,4 @@
-PsiJetFileStubImpl[package=bar]
+FILE[kind=Facade[packageFqName=bar, facadeFqName=bar.FileAnnotationInWrongPlaceKt]]
   PACKAGE_DIRECTIVE
     REFERENCE_EXPRESSION[referencedName=bar]
   IMPORT_LIST

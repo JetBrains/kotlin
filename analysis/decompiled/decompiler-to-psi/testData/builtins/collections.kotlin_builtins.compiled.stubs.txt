@@ -1,4 +1,4 @@
-PsiJetFileStubImpl[package=kotlin.collections]
+FILE[kind=File[packageFqName=kotlin.collections]]
   PACKAGE_DIRECTIVE
     DOT_QUALIFIED_EXPRESSION
       REFERENCE_EXPRESSION[referencedName=kotlin]

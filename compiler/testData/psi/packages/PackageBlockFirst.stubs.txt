@@ -1,4 +1,4 @@
-PsiJetFileStubImpl[package=foobar]
+FILE[kind=Facade[packageFqName=foobar, facadeFqName=foobar.PackageBlockFirstKt]]
   PACKAGE_DIRECTIVE
     REFERENCE_EXPRESSION[referencedName=foobar]
   IMPORT_LIST

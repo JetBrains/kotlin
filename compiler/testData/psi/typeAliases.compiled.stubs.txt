@@ -1,5 +1,5 @@
 Ann.class:
-  PsiJetFileStubImpl[package=test]
+  FILE[kind=File[packageFqName=test]]
     PACKAGE_DIRECTIVE
       REFERENCE_EXPRESSION[referencedName=test]
     IMPORT_LIST
@@ -28,7 +28,7 @@ Ann.class:
 
 
 DependencyKt.class:
-  PsiJetFileStubImpl[package=dependency]
+  FILE[kind=Facade[packageFqName=dependency, facadeFqName=dependency.DependencyKt]]
     PACKAGE_DIRECTIVE
       REFERENCE_EXPRESSION[referencedName=dependency]
     IMPORT_LIST
@@ -62,7 +62,7 @@ DependencyKt.class:
 
 
 Outer.class:
-  PsiJetFileStubImpl[package=test]
+  FILE[kind=File[packageFqName=test]]
     PACKAGE_DIRECTIVE
       REFERENCE_EXPRESSION[referencedName=test]
     IMPORT_LIST
@@ -132,7 +132,7 @@ Outer.class:
 
 
 SomeClass.class:
-  PsiJetFileStubImpl[package=dependency]
+  FILE[kind=File[packageFqName=dependency]]
     PACKAGE_DIRECTIVE
       REFERENCE_EXPRESSION[referencedName=dependency]
     IMPORT_LIST
@@ -145,7 +145,7 @@ SomeClass.class:
 
 
 TypeAliases.class:
-  PsiJetFileStubImpl[package=test]
+  FILE[kind=File[packageFqName=test]]
     PACKAGE_DIRECTIVE
       REFERENCE_EXPRESSION[referencedName=test]
     IMPORT_LIST
@@ -328,7 +328,7 @@ TypeAliases.class:
 
 
 TypeAliasesKt.class:
-  PsiJetFileStubImpl[package=test]
+  FILE[kind=Facade[packageFqName=test, facadeFqName=test.TypeAliasesKt]]
     PACKAGE_DIRECTIVE
       REFERENCE_EXPRESSION[referencedName=test]
     IMPORT_LIST

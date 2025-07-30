@@ -1,4 +1,4 @@
-PsiJetFileStubImpl[package=foo.bar]
+FILE[kind=Facade[packageFqName=foo.bar, facadeFqName=foo.bar.CommentsBindingKt]]
   PACKAGE_DIRECTIVE
     DOT_QUALIFIED_EXPRESSION
       REFERENCE_EXPRESSION[referencedName=foo]

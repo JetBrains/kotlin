@@ -1,5 +1,5 @@
 A.class:
-  PsiJetFileStubImpl[package=foo.TopLevelMembers]
+  FILE[kind=File[packageFqName=foo.TopLevelMembers]]
     PACKAGE_DIRECTIVE
       DOT_QUALIFIED_EXPRESSION
         REFERENCE_EXPRESSION[referencedName=foo]
@@ -30,7 +30,7 @@ A.class:
 
 
 D.class:
-  PsiJetFileStubImpl[package=foo.TopLevelMembers]
+  FILE[kind=File[packageFqName=foo.TopLevelMembers]]
     PACKAGE_DIRECTIVE
       DOT_QUALIFIED_EXPRESSION
         REFERENCE_EXPRESSION[referencedName=foo]
@@ -45,7 +45,7 @@ D.class:
 
 
 Nothing.class:
-  PsiJetFileStubImpl[package=foo.TopLevelMembers]
+  FILE[kind=File[packageFqName=foo.TopLevelMembers]]
     PACKAGE_DIRECTIVE
       DOT_QUALIFIED_EXPRESSION
         REFERENCE_EXPRESSION[referencedName=foo]
@@ -60,7 +60,7 @@ Nothing.class:
 
 
 TopLevelMembersKt.class:
-  PsiJetFileStubImpl[package=foo.TopLevelMembers]
+  FILE[kind=Facade[packageFqName=foo.TopLevelMembers, facadeFqName=foo.TopLevelMembers.TopLevelMembersKt]]
     PACKAGE_DIRECTIVE
       DOT_QUALIFIED_EXPRESSION
         REFERENCE_EXPRESSION[referencedName=foo]

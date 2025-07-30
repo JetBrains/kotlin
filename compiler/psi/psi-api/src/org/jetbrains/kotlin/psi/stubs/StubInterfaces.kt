@@ -15,9 +15,13 @@ import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.*
 
 interface KotlinFileStub : PsiFileStub<KtFile> {
-    fun getPackageFqName(): FqName
-    fun isScript(): Boolean
+    fun getPackageFqName(): FqName = (kind as? KotlinFileStubKind.WithPackage)?.packageFqName ?: FqName.ROOT
+    fun isScript(): Boolean = kind is KotlinFileStubKind.WithPackage.Script
+
     fun findImportsByAlias(alias: String): List<KotlinImportDirectiveStub>
+
+    /** @see KotlinFileStubKind */
+    val kind: KotlinFileStubKind
 }
 
 interface KotlinPlaceHolderStub<T : KtElement> : StubElement<T>

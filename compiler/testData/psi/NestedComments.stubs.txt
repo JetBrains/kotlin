@@ -1,4 +1,4 @@
-PsiJetFileStubImpl[package=]
+FILE[kind=Facade[packageFqName=<root>, facadeFqName=NestedCommentsKt]]
   PACKAGE_DIRECTIVE
   IMPORT_LIST
   FUN[fqName=doo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=doo]

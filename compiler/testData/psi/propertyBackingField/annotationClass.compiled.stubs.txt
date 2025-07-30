@@ -1,5 +1,5 @@
 AnnoWithCustomName.class:
-  PsiJetFileStubImpl[package=]
+  FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
     CLASS[classId=/AnnoWithCustomName, fqName=AnnoWithCustomName, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=AnnoWithCustomName, superNames=[Annotation]]
@@ -31,7 +31,7 @@ AnnoWithCustomName.class:
 
 
 AnnoWithCustomNameAndDefaultValue.class:
-  PsiJetFileStubImpl[package=]
+  FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
     CLASS[classId=/AnnoWithCustomNameAndDefaultValue, fqName=AnnoWithCustomNameAndDefaultValue, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=AnnoWithCustomNameAndDefaultValue, superNames=[Annotation]]
@@ -65,7 +65,7 @@ AnnoWithCustomNameAndDefaultValue.class:
 
 
 AnnoWithDefaultName.class:
-  PsiJetFileStubImpl[package=]
+  FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
     CLASS[classId=/AnnoWithDefaultName, fqName=AnnoWithDefaultName, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=AnnoWithDefaultName, superNames=[Annotation]]
@@ -97,7 +97,7 @@ AnnoWithDefaultName.class:
 
 
 AnnoWithDefaultNameAndDefaultValue.class:
-  PsiJetFileStubImpl[package=]
+  FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
     CLASS[classId=/AnnoWithDefaultNameAndDefaultValue, fqName=AnnoWithDefaultNameAndDefaultValue, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=AnnoWithDefaultNameAndDefaultValue, superNames=[Annotation]]
@@ -131,7 +131,7 @@ AnnoWithDefaultNameAndDefaultValue.class:
 
 
 AnnoWithVararg.class:
-  PsiJetFileStubImpl[package=]
+  FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
     CLASS[classId=/AnnoWithVararg, fqName=AnnoWithVararg, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=AnnoWithVararg, superNames=[Annotation]]
@@ -164,7 +164,7 @@ AnnoWithVararg.class:
 
 
 AnnoWithVarargAndDefaultVakue.class:
-  PsiJetFileStubImpl[package=]
+  FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
     CLASS[classId=/AnnoWithVarargAndDefaultVakue, fqName=AnnoWithVarargAndDefaultVakue, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=AnnoWithVarargAndDefaultVakue, superNames=[Annotation]]

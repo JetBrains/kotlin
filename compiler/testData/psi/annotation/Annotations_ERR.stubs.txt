@@ -1,4 +1,4 @@
-PsiJetFileStubImpl[package=foo.bar.goo]
+FILE[kind=File[packageFqName=foo.bar.goo]]
   PACKAGE_DIRECTIVE
     DOT_QUALIFIED_EXPRESSION
       DOT_QUALIFIED_EXPRESSION

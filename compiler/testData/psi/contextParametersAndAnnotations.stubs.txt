@@ -1,4 +1,4 @@
-PsiJetFileStubImpl[package=]
+FILE[kind=Facade[packageFqName=<root>, facadeFqName=ContextParametersAndAnnotationsKt]]
   PACKAGE_DIRECTIVE
   IMPORT_LIST
   CLASS[classId=/Ann, fqName=Ann, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=Ann, superNames=[]]

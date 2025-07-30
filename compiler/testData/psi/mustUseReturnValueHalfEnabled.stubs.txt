@@ -1,5 +1,5 @@
 Marked.kt:
-  PsiJetFileStubImpl[package=]
+  FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
     CLASS[classId=/Marked, fqName=Marked, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=Marked, superNames=[]]
@@ -27,7 +27,7 @@ Marked.kt:
 
 
 MyEnum.kt:
-  PsiJetFileStubImpl[package=]
+  FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
     CLASS[classId=/MyEnum, fqName=MyEnum, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=MyEnum, superNames=[]]
@@ -40,7 +40,7 @@ MyEnum.kt:
 
 
 Unmarked.kt:
-  PsiJetFileStubImpl[package=]
+  FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
     CLASS[classId=/Unmarked, fqName=Unmarked, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=Unmarked, superNames=[]]
@@ -62,7 +62,7 @@ Unmarked.kt:
 
 
 markedTopLevel.kt:
-  PsiJetFileStubImpl[package=]
+  FILE[kind=Facade[packageFqName=<root>, facadeFqName=MarkedTopLevelKt]]
     FILE_ANNOTATION_LIST
       ANNOTATION_ENTRY[hasValueArguments=false, shortName=MustUseReturnValue]
         ANNOTATION_TARGET[useSiteTarget=FILE]
@@ -83,7 +83,7 @@ markedTopLevel.kt:
 
 
 unmarkedTopLevel.kt:
-  PsiJetFileStubImpl[package=]
+  FILE[kind=Facade[packageFqName=<root>, facadeFqName=UnmarkedTopLevelKt]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
     FUN[fqName=unmarkedTopFunction, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=unmarkedTopFunction]

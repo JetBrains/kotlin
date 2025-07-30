@@ -1,4 +1,4 @@
-PsiJetFileStubImpl[package=]
+FILE[kind=Facade[packageFqName=<root>, facadeFqName=RecoveryKt]]
   PACKAGE_DIRECTIVE
   IMPORT_LIST
   CLASS[classId=/A0, fqName=A0, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=A0, superNames=[]]

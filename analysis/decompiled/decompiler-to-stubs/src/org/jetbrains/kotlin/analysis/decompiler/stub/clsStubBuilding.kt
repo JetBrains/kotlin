@@ -39,7 +39,7 @@ fun createTopLevelClassStub(
     classProto: ProtoBuf.Class,
     source: SourceElement?,
     context: ClsStubBuilderContext,
-    isScript: Boolean
+    isScript: Boolean,
 ): KotlinFileStubImpl {
     val fileStub = createFileStub(classId.packageFqName, isScript)
     createClassStub(fileStub, classProto, context.nameResolver, classId, source, context)
@@ -49,10 +49,10 @@ fun createTopLevelClassStub(
 fun createPackageFacadeStub(
     packageProto: ProtoBuf.Package,
     packageFqName: FqName,
-    c: ClsStubBuilderContext
+    c: ClsStubBuilderContext,
 ): KotlinFileStubImpl {
-    val fileStub = KotlinFileStubImpl.forFile(packageFqName, isScript = false)
-    setupFileStub(fileStub, packageFqName)
+    val fileStub = KotlinFileStubImpl.forFile(packageFqName)
+    setupFileStub(fileStub)
     createPackageDeclarationsStubs(
         fileStub, c, ProtoContainer.Package(packageFqName, c.nameResolver, c.typeTable, source = null), packageProto
     )
@@ -60,14 +60,18 @@ fun createPackageFacadeStub(
 }
 
 fun createFileFacadeStub(
+    packageFqName: FqName,
     packageProto: ProtoBuf.Package,
     facadeFqName: FqName,
     jvmFqName: FqName,
-    c: ClsStubBuilderContext
+    c: ClsStubBuilderContext,
 ): KotlinFileStubImpl {
-    val packageFqName = facadeFqName.parent()
-    val fileStub = KotlinFileStubImpl.forFileFacadeStub(facadeFqName)
-    setupFileStub(fileStub, packageFqName)
+    val fileStub = KotlinFileStubImpl.forFacade(
+        packageFqName = packageFqName,
+        facadeFqName = facadeFqName,
+    )
+
+    setupFileStub(fileStub)
     val container = ProtoContainer.Package(
         packageFqName, c.nameResolver, c.typeTable,
         JvmPackagePartSource(
@@ -78,20 +82,25 @@ fun createFileFacadeStub(
             c.nameResolver
         )
     )
+
     createPackageDeclarationsStubs(fileStub, c, container, packageProto)
     return fileStub
 }
 
 fun createMultifileClassStub(
-    header: KotlinClassHeader,
+    packageFqName: FqName,
     partFiles: List<KotlinJvmBinaryClass>,
     facadeFqName: FqName,
-    components: ClsStubBuilderComponents
+    components: ClsStubBuilderComponents,
 ): KotlinFileStubImpl {
-    val packageFqName = header.packageName?.let { FqName(it) } ?: facadeFqName.parent()
-    val partNames = header.data?.asList()?.map { it.substringAfterLast('/') }
-    val fileStub = KotlinFileStubImpl.forMultifileClassStub(packageFqName, facadeFqName, partNames)
-    setupFileStub(fileStub, packageFqName)
+    val partNames = partFiles.map { it.classId.shortClassName.asString() }
+    val fileStub = KotlinFileStubImpl.forMultifileClass(
+        packageFqName = packageFqName,
+        facadeFqName = facadeFqName,
+        partNames = partNames,
+    )
+
+    setupFileStub(fileStub)
     for (partFile in partFiles) {
         val partHeader = partFile.classHeader
         val (nameResolver, packageProto) = JvmProtoBufUtil.readPackageDataFrom(partHeader.data!!, partHeader.strings!!)
@@ -105,17 +114,26 @@ fun createMultifileClassStub(
     return fileStub
 }
 
-fun createIncompatibleAbiVersionFileStub() = createFileStub(FqName.ROOT, isScript = false)
-
-fun createFileStub(packageFqName: FqName, isScript: Boolean): KotlinFileStubImpl {
-    val fileStub = KotlinFileStubImpl.forFile(packageFqName, isScript)
-    setupFileStub(fileStub, packageFqName)
+fun createIncompatibleAbiVersionFileStub(): KotlinFileStubImpl {
+    val fileStub = KotlinFileStubImpl.forFile(FqName.ROOT)
+    setupFileStub(fileStub)
     return fileStub
 }
 
-private fun setupFileStub(fileStub: KotlinFileStubImpl, packageFqName: FqName) {
+fun createFileStub(packageFqName: FqName, isScript: Boolean): KotlinFileStubImpl {
+    val fileStub = if (isScript) {
+        KotlinFileStubImpl.forScript(packageFqName)
+    } else {
+        KotlinFileStubImpl.forFile(packageFqName)
+    }
+
+    setupFileStub(fileStub)
+    return fileStub
+}
+
+private fun setupFileStub(fileStub: KotlinFileStubImpl) {
     val packageDirectiveStub = KotlinPlaceHolderStubImpl<KtPackageDirective>(fileStub, KtStubElementTypes.PACKAGE_DIRECTIVE)
-    createStubForPackageName(packageDirectiveStub, packageFqName)
+    createStubForPackageName(packageDirectiveStub, fileStub.getPackageFqName())
     KotlinPlaceHolderStubImpl<KtImportList>(fileStub, KtStubElementTypes.IMPORT_LIST)
 }
 
@@ -155,7 +173,7 @@ fun createStubForTypeName(
     parent: StubElement<out PsiElement>,
     abbreviatedType: KotlinClassTypeBean? = null,
     upperBoundFun: ((Int) -> KotlinTypeBean?)? = null,
-    bindTypeArguments: (KotlinUserTypeStub, Int) -> Unit = { _, _ -> }
+    bindTypeArguments: (KotlinUserTypeStub, Int) -> Unit = { _, _ -> },
 ): KotlinUserTypeStub {
     val substituteWithAny = typeClassId.isLocal
 
@@ -238,7 +256,7 @@ fun createAnnotationStubs(annotations: List<AnnotationWithArgs>, parent: KotlinS
 
 fun createTargetedAnnotationStubs(
     annotations: List<AnnotationWithTarget>,
-    parent: KotlinStubBaseImpl<*>
+    parent: KotlinStubBaseImpl<*>,
 ) {
     if (annotations.isEmpty()) return
 

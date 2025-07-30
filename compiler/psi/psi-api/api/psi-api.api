@@ -4035,8 +4035,34 @@ public abstract interface class org/jetbrains/kotlin/psi/stubs/KotlinEnumEntrySu
 
 public abstract interface class org/jetbrains/kotlin/psi/stubs/KotlinFileStub : com/intellij/psi/stubs/PsiFileStub {
 	public abstract fun findImportsByAlias (Ljava/lang/String;)Ljava/util/List;
+	public abstract fun getKind ()Lorg/jetbrains/kotlin/psi/stubs/KotlinFileStubKind;
+	public fun getPackageFqName ()Lorg/jetbrains/kotlin/name/FqName;
+	public fun isScript ()Z
+}
+
+public abstract interface class org/jetbrains/kotlin/psi/stubs/KotlinFileStubKind {
+}
+
+public abstract interface class org/jetbrains/kotlin/psi/stubs/KotlinFileStubKind$WithPackage : org/jetbrains/kotlin/psi/stubs/KotlinFileStubKind {
 	public abstract fun getPackageFqName ()Lorg/jetbrains/kotlin/name/FqName;
-	public abstract fun isScript ()Z
+}
+
+public abstract interface class org/jetbrains/kotlin/psi/stubs/KotlinFileStubKind$WithPackage$Facade : org/jetbrains/kotlin/psi/stubs/KotlinFileStubKind$WithPackage {
+	public abstract fun getFacadeFqName ()Lorg/jetbrains/kotlin/name/FqName;
+}
+
+public abstract interface class org/jetbrains/kotlin/psi/stubs/KotlinFileStubKind$WithPackage$Facade$MultifileClass : org/jetbrains/kotlin/psi/stubs/KotlinFileStubKind$WithPackage$Facade {
+	public abstract fun getFacadePartSimpleNames ()Ljava/util/List;
+}
+
+public abstract interface class org/jetbrains/kotlin/psi/stubs/KotlinFileStubKind$WithPackage$Facade$Simple : org/jetbrains/kotlin/psi/stubs/KotlinFileStubKind$WithPackage$Facade {
+	public abstract fun getPartSimpleName ()Ljava/lang/String;
+}
+
+public abstract interface class org/jetbrains/kotlin/psi/stubs/KotlinFileStubKind$WithPackage$File : org/jetbrains/kotlin/psi/stubs/KotlinFileStubKind$WithPackage {
+}
+
+public abstract interface class org/jetbrains/kotlin/psi/stubs/KotlinFileStubKind$WithPackage$Script : org/jetbrains/kotlin/psi/stubs/KotlinFileStubKind$WithPackage {
 }
 
 public abstract interface class org/jetbrains/kotlin/psi/stubs/KotlinFunctionStub : org/jetbrains/kotlin/psi/stubs/KotlinCallableStubBase, org/jetbrains/kotlin/psi/stubs/KotlinDeclarationWithBodyStub {

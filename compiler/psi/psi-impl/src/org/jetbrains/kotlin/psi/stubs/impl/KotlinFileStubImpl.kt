@@ -8,40 +8,32 @@ package org.jetbrains.kotlin.psi.stubs.impl
 import com.intellij.psi.stubs.PsiFileStubImpl
 import com.intellij.psi.tree.IStubFileElementType
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtFile
+import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.stubs.KotlinFileStub
+import org.jetbrains.kotlin.psi.stubs.KotlinFileStubKind
 import org.jetbrains.kotlin.psi.stubs.KotlinImportAliasStub
 import org.jetbrains.kotlin.psi.stubs.KotlinImportDirectiveStub
 import org.jetbrains.kotlin.psi.stubs.elements.KtFileElementType
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes.IMPORT_LIST
 import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
-class KotlinFileStubImpl(
+class KotlinFileStubImpl @KtImplementationDetail internal constructor(
     ktFile: KtFile?,
-    private val packageName: String,
-    private val isScript: Boolean,
-    private val facadeFqNameString: String?,
-    val partSimpleName: String?,
-    val facadePartSimpleNames: List<String>?,
+    override val kind: KotlinFileStubKind,
 ) : PsiFileStubImpl<KtFile>(ktFile), KotlinFileStub {
-    private fun String.relativeToPackage() = getPackageFqName().child(Name.identifier(this))
+    val partSimpleName: String?
+        get() = (kind as? KotlinFileStubKind.WithPackage.Facade.Simple)?.partSimpleName
 
-    /**
-     * Is used from [org.jetbrains.kotlin.psi.stubs.elements.StubIndexService] implementation on the plugin side
-     */
-    @Suppress("unused")
-    val partFqName: FqName?
-        get() = partSimpleName?.relativeToPackage()
+    val facadePartSimpleNames: List<String>?
+        get() = (kind as? KotlinFileStubKind.WithPackage.Facade.MultifileClass)?.facadePartSimpleNames
 
     val facadeFqName: FqName?
-        get() = facadeFqNameString?.let(::FqName)
+        get() = (kind as? KotlinFileStubKind.WithPackage.Facade)?.facadeFqName
 
-    override fun getPackageFqName(): FqName = FqName(packageName)
-    override fun isScript(): Boolean = isScript
     override fun getType(): IStubFileElementType<KotlinFileStub> = KtFileElementType
 
-    override fun toString(): String = "PsiJetFileStubImpl[" + "package=" + getPackageFqName().asString() + "]"
+    override fun toString(): String = "${STUB_TO_STRING_PREFIX}FILE[kind=$kind]"
 
     override fun findImportsByAlias(alias: String): List<KotlinImportDirectiveStub> {
         val importList = childrenStubs.firstOrNull { it.stubType == IMPORT_LIST } ?: return emptyList()
@@ -50,33 +42,41 @@ class KotlinFileStubImpl(
         }
     }
 
+    @OptIn(KtImplementationDetail::class)
     companion object {
-        fun forFile(packageFqName: FqName, isScript: Boolean): KotlinFileStubImpl = KotlinFileStubImpl(
+        fun forFile(packageFqName: FqName): KotlinFileStubImpl = KotlinFileStubImpl(
             ktFile = null,
-            packageName = packageFqName.asString(),
-            facadeFqNameString = null,
-            partSimpleName = null,
-            facadePartSimpleNames = null,
-            isScript = isScript
+            kind = KotlinFileStubKindImpl.File(
+                packageFqName = packageFqName
+            ),
         )
 
-        fun forFileFacadeStub(facadeFqName: FqName): KotlinFileStubImpl = KotlinFileStubImpl(
+        fun forScript(packageFqName: FqName): KotlinFileStubImpl = KotlinFileStubImpl(
             ktFile = null,
-            packageName = facadeFqName.parent().asString(),
-            facadeFqNameString = facadeFqName.asString(),
-            partSimpleName = facadeFqName.shortName().asString(),
-            facadePartSimpleNames = null,
-            isScript = false
+            kind = KotlinFileStubKindImpl.Script(
+                packageFqName = packageFqName
+            ),
         )
 
-        fun forMultifileClassStub(packageFqName: FqName, facadeFqName: FqName, partNames: List<String>?): KotlinFileStubImpl =
-            KotlinFileStubImpl(
-                ktFile = null,
-                packageName = packageFqName.asString(),
-                facadeFqNameString = facadeFqName.asString(),
-                partSimpleName = null,
+        fun forFacade(packageFqName: FqName, facadeFqName: FqName): KotlinFileStubImpl = KotlinFileStubImpl(
+            ktFile = null,
+            kind = KotlinFileStubKindImpl.Facade(
+                packageFqName = packageFqName,
+                facadeFqName = facadeFqName
+            ),
+        )
+
+        fun forMultifileClass(
+            packageFqName: FqName,
+            facadeFqName: FqName,
+            partNames: List<String>,
+        ): KotlinFileStubImpl = KotlinFileStubImpl(
+            ktFile = null,
+            kind = KotlinFileStubKindImpl.MultifileClass(
+                packageFqName = packageFqName,
+                facadeFqName = facadeFqName,
                 facadePartSimpleNames = partNames,
-                isScript = false,
-            )
+            ),
+        )
     }
 }

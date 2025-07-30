@@ -1,4 +1,4 @@
-PsiJetFileStubImpl[package=]
+KotlinStub$FILE[kind=File[packageFqName=<root>]]
 KotlinStub$PACKAGE_DIRECTIVE
 KotlinStub$IMPORT_LIST
 KotlinStub$CLASS[classId=/FlexibleDnnType, fqName=FlexibleDnnType, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=FlexibleDnnType, superNames=[]]

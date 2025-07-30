@@ -1,5 +1,5 @@
 MultifileClass.class:
-  PsiJetFileStubImpl[package=test]
+  FILE[kind=MultifileClass[packageFqName=test, facadeFqName=test.MultifileClass, facadePartSimpleNames=[MultifileClass__MultifileClassKt, MultifileClass__SecondPartKt]]]
     PACKAGE_DIRECTIVE
       REFERENCE_EXPRESSION[referencedName=test]
     IMPORT_LIST
@@ -136,7 +136,7 @@ MultifileClass.class:
 
 
 MultifileClass__MultifileClassKt.class:
-  PsiJetFileStubImpl[package=test]
+  FILE[kind=Facade[packageFqName=test, facadeFqName=test.MultifileClass__MultifileClassKt]]
     PACKAGE_DIRECTIVE
       REFERENCE_EXPRESSION[referencedName=test]
     IMPORT_LIST
@@ -229,7 +229,7 @@ MultifileClass__MultifileClassKt.class:
 
 
 MultifileClass__SecondPartKt.class:
-  PsiJetFileStubImpl[package=test]
+  FILE[kind=Facade[packageFqName=test, facadeFqName=test.MultifileClass__SecondPartKt]]
     PACKAGE_DIRECTIVE
       REFERENCE_EXPRESSION[referencedName=test]
     IMPORT_LIST

@@ -1,4 +1,4 @@
-PsiJetFileStubImpl[package=kotlin.coroutines]
+FILE[kind=Facade[packageFqName=kotlin.coroutines, facadeFqName=kotlin.coroutines.CoroutinesKt]]
   PACKAGE_DIRECTIVE
     DOT_QUALIFIED_EXPRESSION
       REFERENCE_EXPRESSION[referencedName=kotlin]

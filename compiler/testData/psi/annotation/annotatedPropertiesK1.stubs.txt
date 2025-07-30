@@ -1,5 +1,5 @@
 MyAnnotation.kt:
-  PsiJetFileStubImpl[package=]
+  FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
     CLASS[classId=/MyAnnotation, fqName=MyAnnotation, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=MyAnnotation, superNames=[]]
@@ -7,7 +7,7 @@ MyAnnotation.kt:
 
 
 MyAnnotation2.kt:
-  PsiJetFileStubImpl[package=]
+  FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
     CLASS[classId=/MyAnnotation2, fqName=MyAnnotation2, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=MyAnnotation2, superNames=[]]
@@ -15,7 +15,7 @@ MyAnnotation2.kt:
 
 
 MyAnnotation3.kt:
-  PsiJetFileStubImpl[package=]
+  FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
     CLASS[classId=/MyAnnotation3, fqName=MyAnnotation3, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=MyAnnotation3, superNames=[]]
@@ -23,7 +23,7 @@ MyAnnotation3.kt:
 
 
 MyAnnotation4.kt:
-  PsiJetFileStubImpl[package=]
+  FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
     CLASS[classId=/MyAnnotation4, fqName=MyAnnotation4, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=MyAnnotation4, superNames=[]]
@@ -31,7 +31,7 @@ MyAnnotation4.kt:
 
 
 MyAnnotation5.kt:
-  PsiJetFileStubImpl[package=]
+  FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
     CLASS[classId=/MyAnnotation5, fqName=MyAnnotation5, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=MyAnnotation5, superNames=[]]
@@ -39,7 +39,7 @@ MyAnnotation5.kt:
 
 
 MyAnnotation6.kt:
-  PsiJetFileStubImpl[package=]
+  FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
     CLASS[classId=/MyAnnotation6, fqName=MyAnnotation6, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=MyAnnotation6, superNames=[]]
@@ -47,7 +47,7 @@ MyAnnotation6.kt:
 
 
 MyAnnotation7.kt:
-  PsiJetFileStubImpl[package=]
+  FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
     CLASS[classId=/MyAnnotation7, fqName=MyAnnotation7, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=MyAnnotation7, superNames=[]]
@@ -75,7 +75,7 @@ MyAnnotation7.kt:
 
 
 MyAnnotation8.kt:
-  PsiJetFileStubImpl[package=]
+  FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
     CLASS[classId=/MyAnnotation8, fqName=MyAnnotation8, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=MyAnnotation8, superNames=[]]
@@ -93,7 +93,7 @@ MyAnnotation8.kt:
 
 
 Test.kt:
-  PsiJetFileStubImpl[package=]
+  FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
     CLASS[classId=/Test, fqName=Test, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=Test, superNames=[]]

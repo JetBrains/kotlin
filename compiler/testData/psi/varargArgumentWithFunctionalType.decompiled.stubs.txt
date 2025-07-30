@@ -1,5 +1,5 @@
 MyBuilder.class:
-  PsiJetFileStubImpl[package=test]
+  FILE[kind=File[packageFqName=test]]
     PACKAGE_DIRECTIVE
       REFERENCE_EXPRESSION[referencedName=test]
     IMPORT_LIST
@@ -16,7 +16,7 @@ MyBuilder.class:
 
 
 VarargArgumentWithFunctionalType.class:
-  PsiJetFileStubImpl[package=test]
+  FILE[kind=File[packageFqName=test]]
     PACKAGE_DIRECTIVE
       REFERENCE_EXPRESSION[referencedName=test]
     IMPORT_LIST

@@ -1,4 +1,4 @@
-PsiJetFileStubImpl[package=p1.p2]
+FILE[kind=Facade[packageFqName=p1.p2, facadeFqName=p1.p2.DocCommentOnPackageDirectiveLineKt]]
   PACKAGE_DIRECTIVE
     DOT_QUALIFIED_EXPRESSION
       REFERENCE_EXPRESSION[referencedName=p1]

@@ -1,5 +1,5 @@
 TypeAliases.kt:
-  PsiJetFileStubImpl[package=test]
+  FILE[kind=Facade[packageFqName=test, facadeFqName=test.TypeAliasesKt]]
     PACKAGE_DIRECTIVE
       REFERENCE_EXPRESSION[referencedName=test]
     IMPORT_LIST
@@ -202,7 +202,7 @@ TypeAliases.kt:
 
 
 dependency.kt:
-  PsiJetFileStubImpl[package=dependency]
+  FILE[kind=Facade[packageFqName=dependency, facadeFqName=dependency.DependencyKt]]
     PACKAGE_DIRECTIVE
       REFERENCE_EXPRESSION[referencedName=dependency]
     IMPORT_LIST

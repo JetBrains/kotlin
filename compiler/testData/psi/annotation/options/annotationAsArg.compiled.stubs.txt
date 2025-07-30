@@ -1,5 +1,5 @@
 Annotation.class:
-  PsiJetFileStubImpl[package=]
+  FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
     CLASS[classId=/Annotation, fqName=Annotation, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=Annotation, superNames=[]]
@@ -40,7 +40,7 @@ Annotation.class:
 
 
 AnnotationAsArgKt.class:
-  PsiJetFileStubImpl[package=]
+  FILE[kind=Facade[packageFqName=<root>, facadeFqName=AnnotationAsArgKt]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
     FUN[fqName=foo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo]

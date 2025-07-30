@@ -22,10 +22,10 @@ abstract class AbstractAdditionalStubInfoKnmTest : AbstractDecompiledKnmFileTest
     override fun doTest(testDirectoryPath: Path) {
         val stubBuilder = knmTestSupport.createDecompiler().stubBuilder
         val knmFiles = compileToKnmFiles(testDirectoryPath)
-        val knmFile = knmFiles.singleOrNull { "root_package" !in it.path }
-            ?: error("Expected a single non-root .knm file, but received:${System.lineSeparator()}" +
-                             knmFiles.joinToString(separator = System.lineSeparator()) { it.path }
-            )
+        val knmFile = knmFiles.singleOrNull { "root_package" !in it.path } ?: error(
+            "Expected a single non-root .knm file, but received:${System.lineSeparator()}" +
+                    knmFiles.joinToString(separator = System.lineSeparator()) { it.path }
+        )
 
         val stub = stubBuilder.buildFileStub(FileContentImpl.createByFile(knmFile, environment.project))!!
         KotlinTestUtils.assertEqualsToFile(
@@ -35,7 +35,8 @@ abstract class AbstractAdditionalStubInfoKnmTest : AbstractDecompiledKnmFileTest
     }
 
     private fun getExpectedFile(testDirectoryPath: Path): File {
-        return testDirectoryPath.resolve("${testDirectoryPath.name}$DECOMPILED_TEST_DATA_K2_SUFFIX").toFile().takeIf { it.exists() }
+        return testDirectoryPath.resolve("${testDirectoryPath.name}.knm.txt").toFile().takeIf { it.exists() }
+            ?: testDirectoryPath.resolve("${testDirectoryPath.name}$DECOMPILED_TEST_DATA_K2_SUFFIX").toFile().takeIf { it.exists() }
             ?: testDirectoryPath.resolve("${testDirectoryPath.name}$DECOMPILED_TEST_DATA_SUFFIX").toFile().takeIf { it.exists() }
             ?: error("Test data file doesn't exist in: ${testDirectoryPath.absolutePathString()}")
     }

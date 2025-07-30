@@ -1,4 +1,4 @@
-PsiJetFileStubImpl[package=]
+FILE[kind=Facade[packageFqName=<root>, facadeFqName=UnknownKt]]
   PACKAGE_DIRECTIVE
   IMPORT_LIST
     IMPORT_DIRECTIVE[importedFqName=kotlin.contracts, isAllUnder=true, isValid=true]

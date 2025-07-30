@@ -1,4 +1,4 @@
-PsiJetFileStubImpl[package=kotlin.concurrent.atomics]
+FILE[kind=File[packageFqName=kotlin.concurrent.atomics]]
   PACKAGE_DIRECTIVE
     DOT_QUALIFIED_EXPRESSION
       DOT_QUALIFIED_EXPRESSION

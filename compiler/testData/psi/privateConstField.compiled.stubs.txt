@@ -1,5 +1,5 @@
 A.class:
-  PsiJetFileStubImpl[package=test]
+  FILE[kind=File[packageFqName=test]]
     PACKAGE_DIRECTIVE
       REFERENCE_EXPRESSION[referencedName=test]
     IMPORT_LIST
@@ -28,7 +28,7 @@ A.class:
 
 
 PrivateConstField.class:
-  PsiJetFileStubImpl[package=test]
+  FILE[kind=File[packageFqName=test]]
     PACKAGE_DIRECTIVE
       REFERENCE_EXPRESSION[referencedName=test]
     IMPORT_LIST

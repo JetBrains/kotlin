@@ -1,5 +1,5 @@
 TypeAliasExpansion.class:
-  PsiJetFileStubImpl[package=test]
+  FILE[kind=File[packageFqName=test]]
     PACKAGE_DIRECTIVE
       REFERENCE_EXPRESSION[referencedName=test]
     IMPORT_LIST
@@ -478,7 +478,7 @@ TypeAliasExpansion.class:
 
 
 TypeAliasExpansionKt.class:
-  PsiJetFileStubImpl[package=test]
+  FILE[kind=Facade[packageFqName=test, facadeFqName=test.TypeAliasExpansionKt]]
     PACKAGE_DIRECTIVE
       REFERENCE_EXPRESSION[referencedName=test]
     IMPORT_LIST

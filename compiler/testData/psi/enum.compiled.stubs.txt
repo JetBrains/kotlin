@@ -1,5 +1,5 @@
 Ann.class:
-  PsiJetFileStubImpl[package=a.b.c.test.enum]
+  FILE[kind=File[packageFqName=a.b.c.test.enum]]
     PACKAGE_DIRECTIVE
       DOT_QUALIFIED_EXPRESSION
         DOT_QUALIFIED_EXPRESSION
@@ -27,7 +27,7 @@ Ann.class:
 
 
 Enum.class:
-  PsiJetFileStubImpl[package=a.b.c.test.enum]
+  FILE[kind=File[packageFqName=a.b.c.test.enum]]
     PACKAGE_DIRECTIVE
       DOT_QUALIFIED_EXPRESSION
         DOT_QUALIFIED_EXPRESSION

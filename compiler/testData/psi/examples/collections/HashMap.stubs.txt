@@ -1,4 +1,4 @@
-PsiJetFileStubImpl[package=]
+FILE[kind=Facade[packageFqName=<root>, facadeFqName=HashMapKt]]
   PACKAGE_DIRECTIVE
   IMPORT_LIST
   CLASS[classId=/IEquality, fqName=IEquality, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=IEquality, superNames=[]]

@@ -12,10 +12,13 @@ import com.intellij.psi.stubs.*
 import com.intellij.psi.tree.IStubFileElementType
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.parsing.KotlinParser
+import org.jetbrains.kotlin.psi.KtImplementationDetail
 import org.jetbrains.kotlin.psi.stubs.KotlinFileStub
 import org.jetbrains.kotlin.psi.stubs.KotlinStubVersions
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinFileStubImpl
+import org.jetbrains.kotlin.psi.stubs.impl.KotlinFileStubKindImpl
 
+@OptIn(KtImplementationDetail::class)
 object KtFileElementType : IStubFileElementType<KotlinFileStub>(KtFileElementType.NAME, KotlinLanguage.INSTANCE) {
     internal const val NAME = "kotlin.FILE"
 
@@ -32,50 +35,12 @@ object KtFileElementType : IStubFileElementType<KotlinFileStub>(KtFileElementTyp
     }
 
     override fun serialize(stub: KotlinFileStub, dataStream: StubOutputStream) {
-        val fileStub = stub as KotlinFileStubImpl
-        dataStream.writeName(fileStub.getPackageFqName().asString())
-        dataStream.writeBoolean(fileStub.isScript())
-        dataStream.writeName(fileStub.facadeFqName?.asString())
-        dataStream.writeName(fileStub.partSimpleName)
-        val facadePartNames = fileStub.facadePartSimpleNames
-        if (facadePartNames == null) {
-            dataStream.writeInt(0)
-        } else {
-            dataStream.writeInt(facadePartNames.size)
-            for (partName in facadePartNames) {
-                dataStream.writeName(partName)
-            }
-        }
+        KotlinFileStubKindImpl.serialize(stub.kind, dataStream)
     }
 
     override fun deserialize(dataStream: StubInputStream, parentStub: StubElement<*>?): KotlinFileStub {
-        val packageFqNameAsString = dataStream.readNameString()
-        checkNotNull(packageFqNameAsString) { "Can't read package fqname from stream" }
-
-        val isScript = dataStream.readBoolean()
-        val facadeString = dataStream.readNameString()
-        val partSimpleName = dataStream.readNameString()
-        val numPartNames = dataStream.readInt()
-        val facadePartNames: List<String>? = if (numPartNames == 0)
-            null
-        else {
-            ArrayList<String>(numPartNames).apply {
-                repeat(numPartNames) {
-                    val partNameRef = dataStream.readNameString()
-                    checkNotNull(partNameRef) { "Can't read partName from stream" }
-                    add(partNameRef)
-                }
-            }
-        }
-
-        return KotlinFileStubImpl(
-            ktFile = null,
-            packageName = packageFqNameAsString,
-            isScript = isScript,
-            facadeFqNameString = facadeString,
-            partSimpleName = partSimpleName,
-            facadePartSimpleNames = facadePartNames,
-        )
+        val kind = KotlinFileStubKindImpl.deserialize(dataStream)
+        return KotlinFileStubImpl(ktFile = null, kind = kind)
     }
 
     override fun doParseContents(chameleon: ASTNode, psi: PsiElement): ASTNode? {

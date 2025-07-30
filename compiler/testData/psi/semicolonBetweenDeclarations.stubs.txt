@@ -1,4 +1,4 @@
-PsiJetFileStubImpl[package=foo]
+FILE[kind=Facade[packageFqName=foo, facadeFqName=foo.SemicolonBetweenDeclarationsKt]]
   PACKAGE_DIRECTIVE
     REFERENCE_EXPRESSION[referencedName=foo]
   IMPORT_LIST

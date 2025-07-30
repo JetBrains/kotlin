@@ -1,4 +1,4 @@
-PsiJetFileStubImpl[package=a]
+FILE[kind=Facade[packageFqName=a, facadeFqName=a.ImportsWithConflictKt]]
   PACKAGE_DIRECTIVE
     REFERENCE_EXPRESSION[referencedName=a]
   IMPORT_LIST

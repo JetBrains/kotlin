@@ -1,4 +1,4 @@
-PsiJetFileStubImpl[package=foo.bar.goo]
+FILE[kind=Facade[packageFqName=foo.bar.goo, facadeFqName=foo.bar.goo.TypeAliasKt]]
   PACKAGE_DIRECTIVE
     DOT_QUALIFIED_EXPRESSION
       DOT_QUALIFIED_EXPRESSION

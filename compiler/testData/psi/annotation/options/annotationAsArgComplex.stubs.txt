@@ -1,4 +1,4 @@
-PsiJetFileStubImpl[package=]
+FILE[kind=Facade[packageFqName=<root>, facadeFqName=AnnotationAsArgComplexKt]]
   PACKAGE_DIRECTIVE
   IMPORT_LIST
   CLASS[classId=/Annotation, fqName=Annotation, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=Annotation, superNames=[]]

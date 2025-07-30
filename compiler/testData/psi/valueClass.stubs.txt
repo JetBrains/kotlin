@@ -1,4 +1,4 @@
-PsiJetFileStubImpl[package=]
+FILE[kind=Facade[packageFqName=<root>, facadeFqName=ValueClassKt]]
   PACKAGE_DIRECTIVE
   IMPORT_LIST
   CLASS[classId=/value, fqName=value, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=value, superNames=[]]

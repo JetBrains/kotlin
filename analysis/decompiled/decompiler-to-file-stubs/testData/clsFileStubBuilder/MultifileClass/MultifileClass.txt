@@ -1,4 +1,4 @@
-PsiJetFileStubImpl[package=test]
+FILE[kind=MultifileClass[packageFqName=test, facadeFqName=test.MultifileClass, facadePartSimpleNames=[MultifileClass__MultifileClassKt, MultifileClass__SecondPartKt]]]
   PACKAGE_DIRECTIVE
     REFERENCE_EXPRESSION[referencedName=test]
   IMPORT_LIST

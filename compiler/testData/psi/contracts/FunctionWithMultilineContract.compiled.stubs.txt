@@ -1,5 +1,5 @@
 BazKt.class:
-  PsiJetFileStubImpl[package=]
+  FILE[kind=Facade[packageFqName=<root>, facadeFqName=BazKt]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
     FUN[fqName=baz, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=baz]
@@ -33,7 +33,7 @@ BazKt.class:
 
 
 MyElement.class:
-  PsiJetFileStubImpl[package=]
+  FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
     CLASS[classId=/MyElement, fqName=MyElement, isClsStubCompiledToJvmDefaultImplementation=true, isEnumEntry=false, isInterface=true, isLocal=false, isTopLevel=true, name=MyElement, superNames=[]]

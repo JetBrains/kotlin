@@ -1,4 +1,4 @@
-PsiJetFileStubImpl[package=pack]
+KotlinStub$FILE[kind=File[packageFqName=pack]]
 KotlinStub$PACKAGE_DIRECTIVE
   KotlinStub$REFERENCE_EXPRESSION[referencedName=pack]
 KotlinStub$IMPORT_LIST

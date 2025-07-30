@@ -1,4 +1,4 @@
-PsiJetFileStubImpl[package=foo.TopLevelMembers]
+FILE[kind=Facade[packageFqName=foo.TopLevelMembers, facadeFqName=foo.TopLevelMembers.TopLevelMembersKt]]
   PACKAGE_DIRECTIVE
     DOT_QUALIFIED_EXPRESSION
       REFERENCE_EXPRESSION[referencedName=foo]

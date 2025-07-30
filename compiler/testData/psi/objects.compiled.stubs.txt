@@ -1,5 +1,5 @@
 A.class:
-  PsiJetFileStubImpl[package=]
+  FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
     CLASS[classId=/A, fqName=A, isClsStubCompiledToJvmDefaultImplementation=true, isEnumEntry=false, isInterface=true, isLocal=false, isTopLevel=true, name=A, superNames=[]]
@@ -8,7 +8,7 @@ A.class:
 
 
 Objects.class:
-  PsiJetFileStubImpl[package=]
+  FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
     OBJECT_DECLARATION[classId=/Objects, fqName=Objects, isCompanion=false, isLocal=false, isObjectLiteral=false, isTopLevel=true, name=Objects, superNames=[]]

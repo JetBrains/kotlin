@@ -1,5 +1,5 @@
 MainKt.class:
-  PsiJetFileStubImpl[package=]
+  FILE[kind=Facade[packageFqName=<root>, facadeFqName=MainKt]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
     FUN[fqName=test_1, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=test_1]
@@ -21,7 +21,7 @@ MainKt.class:
 
 
 MyBuilder.class:
-  PsiJetFileStubImpl[package=]
+  FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
     CLASS[classId=/MyBuilder, fqName=MyBuilder, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=MyBuilder, superNames=[]]

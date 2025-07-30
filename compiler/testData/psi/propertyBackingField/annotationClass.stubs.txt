@@ -1,5 +1,5 @@
 AnnoWithCustomName.kt:
-  PsiJetFileStubImpl[package=]
+  FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
     CLASS[classId=/AnnoWithCustomName, fqName=AnnoWithCustomName, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=AnnoWithCustomName, superNames=[]]
@@ -13,7 +13,7 @@ AnnoWithCustomName.kt:
 
 
 AnnoWithCustomNameAndDefaultValue.kt:
-  PsiJetFileStubImpl[package=]
+  FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
     CLASS[classId=/AnnoWithCustomNameAndDefaultValue, fqName=AnnoWithCustomNameAndDefaultValue, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=AnnoWithCustomNameAndDefaultValue, superNames=[]]
@@ -27,7 +27,7 @@ AnnoWithCustomNameAndDefaultValue.kt:
 
 
 AnnoWithDefaultName.kt:
-  PsiJetFileStubImpl[package=]
+  FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
     CLASS[classId=/AnnoWithDefaultName, fqName=AnnoWithDefaultName, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=AnnoWithDefaultName, superNames=[]]
@@ -41,7 +41,7 @@ AnnoWithDefaultName.kt:
 
 
 AnnoWithDefaultNameAndDefaultValue.kt:
-  PsiJetFileStubImpl[package=]
+  FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
     CLASS[classId=/AnnoWithDefaultNameAndDefaultValue, fqName=AnnoWithDefaultNameAndDefaultValue, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=AnnoWithDefaultNameAndDefaultValue, superNames=[]]
@@ -55,7 +55,7 @@ AnnoWithDefaultNameAndDefaultValue.kt:
 
 
 AnnoWithVararg.kt:
-  PsiJetFileStubImpl[package=]
+  FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
     CLASS[classId=/AnnoWithVararg, fqName=AnnoWithVararg, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=AnnoWithVararg, superNames=[]]
@@ -70,7 +70,7 @@ AnnoWithVararg.kt:
 
 
 AnnoWithVarargAndDefaultVakue.kt:
-  PsiJetFileStubImpl[package=]
+  FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
     CLASS[classId=/AnnoWithVarargAndDefaultVakue, fqName=AnnoWithVarargAndDefaultVakue, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=AnnoWithVarargAndDefaultVakue, superNames=[]]

@@ -1,4 +1,4 @@
-PsiJetFileStubImpl[package=p]
+FILE[kind=File[packageFqName=p]]
   PACKAGE_DIRECTIVE
     REFERENCE_EXPRESSION[referencedName=p]
   IMPORT_LIST

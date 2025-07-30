@@ -2272,10 +2272,13 @@ org.jetbrains.kotlin.psi.stubs.impl.KotlinContractEffectType.deserialize(StubInp
 org.jetbrains.kotlin.psi.stubs.impl.KotlinContractSerializationVisitor
 org.jetbrains.kotlin.psi.stubs.impl.KotlinEnumEntrySuperclassReferenceExpressionStubImpl
 org.jetbrains.kotlin.psi.stubs.impl.KotlinFileStubImpl
-org.jetbrains.kotlin.psi.stubs.impl.KotlinFileStubImpl.Companion.forFile(FqName, Boolean)
-org.jetbrains.kotlin.psi.stubs.impl.KotlinFileStubImpl.Companion.forFileFacadeStub(FqName)
-org.jetbrains.kotlin.psi.stubs.impl.KotlinFileStubImpl.Companion.forMultifileClassStub(FqName, FqName, List<String>?)
+org.jetbrains.kotlin.psi.stubs.impl.KotlinFileStubImpl.Companion.forFacade(FqName, FqName)
+org.jetbrains.kotlin.psi.stubs.impl.KotlinFileStubImpl.Companion.forFile(FqName)
+org.jetbrains.kotlin.psi.stubs.impl.KotlinFileStubImpl.Companion.forMultifileClass(FqName, FqName, List<String>)
+org.jetbrains.kotlin.psi.stubs.impl.KotlinFileStubImpl.Companion.forScript(FqName)
 org.jetbrains.kotlin.psi.stubs.impl.KotlinFileStubImpl.facadeFqName
+org.jetbrains.kotlin.psi.stubs.impl.KotlinFileStubImpl.facadePartSimpleNames
+org.jetbrains.kotlin.psi.stubs.impl.KotlinFileStubImpl.partSimpleName
 org.jetbrains.kotlin.psi.stubs.impl.KotlinFlexibleTypeBean
 org.jetbrains.kotlin.psi.stubs.impl.KotlinFunctionStubImpl
 org.jetbrains.kotlin.psi.stubs.impl.KotlinFunctionStubImpl.Companion.deserializeContract(StubInputStream)

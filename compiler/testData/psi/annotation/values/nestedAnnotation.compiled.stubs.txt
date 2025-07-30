@@ -1,5 +1,5 @@
 Nested.class:
-  PsiJetFileStubImpl[package=foo]
+  FILE[kind=File[packageFqName=foo]]
     PACKAGE_DIRECTIVE
       REFERENCE_EXPRESSION[referencedName=foo]
     IMPORT_LIST
@@ -45,7 +45,7 @@ Nested.class:
 
 
 Outer.class:
-  PsiJetFileStubImpl[package=]
+  FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
     CLASS[classId=/Outer, fqName=Outer, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=Outer, superNames=[Annotation]]
@@ -90,7 +90,7 @@ Outer.class:
 
 
 WithNested.class:
-  PsiJetFileStubImpl[package=]
+  FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
     CLASS[classId=/WithNested, fqName=WithNested, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithNested, superNames=[]]
@@ -107,7 +107,7 @@ WithNested.class:
 
 
 WithQualifiedNested.class:
-  PsiJetFileStubImpl[package=]
+  FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
     CLASS[classId=/WithQualifiedNested, fqName=WithQualifiedNested, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithQualifiedNested, superNames=[]]

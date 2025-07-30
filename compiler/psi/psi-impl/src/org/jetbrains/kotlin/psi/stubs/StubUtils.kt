@@ -13,6 +13,7 @@ import com.intellij.psi.stubs.StubInputStream
 import com.intellij.psi.stubs.StubOutputStream
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtClassLikeDeclaration
 import org.jetbrains.kotlin.psi.KtEnumEntry
 import org.jetbrains.kotlin.psi.KtObjectDeclaration
@@ -82,6 +83,9 @@ object StubUtils {
         1 -> false
         else -> null
     }
+
+    @JvmStatic
+    internal fun StubInputStream.readFqName(): FqName = FqName(readNameString()!!)
 
     /**
      * `/* hasBackingField: true */` or `/* hasBackingField: false */` are special comments added during conversion

@@ -1,4 +1,4 @@
-PsiJetFileStubImpl[package=]
+FILE[kind=Facade[packageFqName=<root>, facadeFqName=TypeAlias_ERRKt]]
   PACKAGE_DIRECTIVE
   IMPORT_LIST
   TYPEALIAS[classId=/<no name provided>, fqName=<no name provided>, isTopLevel=true, name=null]

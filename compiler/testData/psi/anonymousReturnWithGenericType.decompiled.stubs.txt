@@ -1,5 +1,5 @@
 AnonymousReturnWithGenericType.class:
-  PsiJetFileStubImpl[package=]
+  FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
     CLASS[classId=/AnonymousReturnWithGenericType, fqName=AnonymousReturnWithGenericType, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=AnonymousReturnWithGenericType, superNames=[]]
@@ -49,7 +49,7 @@ AnonymousReturnWithGenericType.class:
 
 
 Foo.class:
-  PsiJetFileStubImpl[package=]
+  FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
     CLASS[classId=/Foo, fqName=Foo, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=true, isLocal=false, isTopLevel=true, name=Foo, superNames=[]]

@@ -1,4 +1,4 @@
-PsiJetFileStubImpl[package=test]
+KotlinStub$FILE[kind=Facade[packageFqName=test, facadeFqName=test.ContractsKt]]
 KotlinStub$PACKAGE_DIRECTIVE
   KotlinStub$REFERENCE_EXPRESSION[referencedName=test]
 KotlinStub$IMPORT_LIST

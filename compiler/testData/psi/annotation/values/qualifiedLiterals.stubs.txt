@@ -1,5 +1,5 @@
 Negative.kt:
-  PsiJetFileStubImpl[package=]
+  FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
       IMPORT_DIRECTIVE[importedFqName=test.Simple, isAllUnder=false, isValid=true]
@@ -18,7 +18,7 @@ Negative.kt:
 
 
 Negative2.kt:
-  PsiJetFileStubImpl[package=]
+  FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
       IMPORT_DIRECTIVE[importedFqName=test.Simple, isAllUnder=false, isValid=true]
@@ -37,7 +37,7 @@ Negative2.kt:
 
 
 Positive.kt:
-  PsiJetFileStubImpl[package=]
+  FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
       IMPORT_DIRECTIVE[importedFqName=test.Simple, isAllUnder=false, isValid=true]
@@ -56,7 +56,7 @@ Positive.kt:
 
 
 Qualified.kt:
-  PsiJetFileStubImpl[package=]
+  FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
       IMPORT_DIRECTIVE[importedFqName=test.Simple, isAllUnder=false, isValid=true]
@@ -82,7 +82,7 @@ Qualified.kt:
 
 
 Simple.kt:
-  PsiJetFileStubImpl[package=test]
+  FILE[kind=File[packageFqName=test]]
     PACKAGE_DIRECTIVE
       REFERENCE_EXPRESSION[referencedName=test]
     IMPORT_LIST
@@ -105,7 +105,7 @@ Simple.kt:
 
 
 Sum.kt:
-  PsiJetFileStubImpl[package=]
+  FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
       IMPORT_DIRECTIVE[importedFqName=test.Simple, isAllUnder=false, isValid=true]

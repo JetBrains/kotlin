@@ -72,7 +72,7 @@ class BuiltinsDecompilerTest : AbstractAnalysisApiExecutionTest("analysis/stubs/
 
         testServices.assertions.assertEquals(
             """
-                PsiJetFileStubImpl[package=]
+                FILE[kind=File[packageFqName=<root>]]
                   PACKAGE_DIRECTIVE
                   IMPORT_LIST
 

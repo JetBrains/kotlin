@@ -1,5 +1,5 @@
 ClassLiteral.class:
-  PsiJetFileStubImpl[package=]
+  FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
     CLASS[classId=/ClassLiteral, fqName=ClassLiteral, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=ClassLiteral, superNames=[Annotation]]
@@ -60,7 +60,7 @@ ClassLiteral.class:
 
 
 WithClassLiteral.class:
-  PsiJetFileStubImpl[package=]
+  FILE[kind=File[packageFqName=<root>]]
     PACKAGE_DIRECTIVE
     IMPORT_LIST
     CLASS[classId=/WithClassLiteral, fqName=WithClassLiteral, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=WithClassLiteral, superNames=[]]

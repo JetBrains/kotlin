@@ -1,5 +1,5 @@
 annotations.kt:
-  PsiJetFileStubImpl[package=d.e.f]
+  FILE[kind=File[packageFqName=d.e.f]]
     PACKAGE_DIRECTIVE
       DOT_QUALIFIED_EXPRESSION
         DOT_QUALIFIED_EXPRESSION
@@ -14,7 +14,7 @@ annotations.kt:
 
 
 topLevelMembersAnnotated.kt:
-  PsiJetFileStubImpl[package=a.b.c.topLevelMembersAnnotated]
+  FILE[kind=Facade[packageFqName=a.b.c.topLevelMembersAnnotated, facadeFqName=a.b.c.topLevelMembersAnnotated.TopLevelMembersAnnotatedKt]]
     PACKAGE_DIRECTIVE
       DOT_QUALIFIED_EXPRESSION
         DOT_QUALIFIED_EXPRESSION

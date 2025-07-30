@@ -1,4 +1,4 @@
-PsiJetFileStubImpl[package=]
+FILE[kind=Facade[packageFqName=<root>, facadeFqName=InfiniteLoopKt]]
   PACKAGE_DIRECTIVE
   IMPORT_LIST
   FUN[fqName=getCondition, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=getCondition]
