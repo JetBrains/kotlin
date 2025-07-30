@@ -88,6 +88,7 @@ import org.jetbrains.kotlin.fir.types.isMarkedNullable
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.test.WrappedException
+import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
 import org.jetbrains.kotlin.test.frontend.fir.TagsGeneratorChecker.FirTags
 import org.jetbrains.kotlin.test.frontend.fir.TagsGeneratorChecker.FirTags.MAX_LINE_LENGTH
 import org.jetbrains.kotlin.test.frontend.fir.TagsGeneratorChecker.FirTags.TAG_PREFIX
@@ -110,6 +111,8 @@ import java.io.File
 
 class TagsGeneratorChecker(testServices: TestServices) : AfterAnalysisChecker(testServices) {
     override fun check(failedAssertions: List<WrappedException>) {
+        if (FirDiagnosticsDirectives.DISABLE_GENERATED_FIR_TAGS in testServices.moduleStructure.allDirectives) return
+
         val originalFile = testServices.moduleStructure.originalTestDataFiles.first()
 
         val existingTestFiles = listOf(
