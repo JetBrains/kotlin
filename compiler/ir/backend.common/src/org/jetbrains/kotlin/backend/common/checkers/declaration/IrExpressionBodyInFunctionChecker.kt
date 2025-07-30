@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.backend.common.checkers.context.CheckerContext
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.expressions.IrExpressionBody
 
-internal object IrFunctionBodyChecker : IrFunctionChecker {
+internal object IrExpressionBodyInFunctionChecker : IrFunctionChecker {
     override fun check(
         declaration: IrFunction,
         context: CheckerContext,

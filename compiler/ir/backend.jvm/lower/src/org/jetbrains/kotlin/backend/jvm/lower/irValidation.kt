@@ -29,7 +29,7 @@ internal class JvmIrValidationBeforeLoweringPhase(
         get() = super.defaultValidationConfig.copy(
             checkCrossFileFieldUsage = false,
             checkAllKotlinFieldsArePrivate = false,
-            checkFunctionBody = false,
+            checkIrExpressionBodyInFunction = false,
         )
 }
 
@@ -41,7 +41,7 @@ internal class JvmIrValidationAfterLoweringPhase(
         get() = super.defaultValidationConfig.copy(
             checkCrossFileFieldUsage = false,
             checkAllKotlinFieldsArePrivate = false,
-            checkFunctionBody = false,
+            checkIrExpressionBodyInFunction = false,
         )
 
     override fun IrValidationContext.additionalValidation(irModule: IrModuleFragment, phaseName: String) {

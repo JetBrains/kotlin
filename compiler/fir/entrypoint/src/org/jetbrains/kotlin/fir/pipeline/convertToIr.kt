@@ -44,7 +44,6 @@ import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.exceptions.rethrowIntellijPlatformExceptionIfNeeded
-import kotlin.reflect.KClass
 
 data class FirResult(val outputs: List<ModuleCompilerAnalyzedOutput>)
 
@@ -344,7 +343,7 @@ private class Fir2IrPipeline(
                 phaseName = "",
                 IrValidatorConfig(
                     checkTreeConsistency = false,
-                    checkFunctionBody = false,
+                    checkIrExpressionBodyInFunction = false,
                     checkUnboundSymbols = true,
                 )
             )

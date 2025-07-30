@@ -43,7 +43,7 @@ data class IrValidatorConfig(
     val checkAllKotlinFieldsArePrivate: Boolean = false,
     val checkVisibilities: Boolean = false,
     val checkVarargTypes: Boolean = false,
-    val checkFunctionBody: Boolean = true,
+    val checkIrExpressionBodyInFunction: Boolean = true,
     val checkUnboundSymbols: Boolean = false,
     val checkInlineFunctionUseSites: InlineFunctionUseSiteChecker? = null,
 )
@@ -170,8 +170,8 @@ private class IrFileValidator(
             throwCheckers.add(IrNothingTypeExpressionChecker)
             fieldAccessExpressionCheckers.add(IrDynamicTypeFieldAccessChecker)
         }
-        if (config.checkFunctionBody) {
-            functionCheckers.add(IrFunctionBodyChecker)
+        if (config.checkIrExpressionBodyInFunction) {
+            functionCheckers.add(IrExpressionBodyInFunctionChecker)
         }
     }
 
