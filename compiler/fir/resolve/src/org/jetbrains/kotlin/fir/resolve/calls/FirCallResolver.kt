@@ -780,44 +780,41 @@ class FirCallResolver(
         }
 
         val diagnostic = when {
-            expectedCallKind != null -> {
-                fun isValueParametersNotEmpty(candidate: Candidate): Boolean {
-                    return (candidate.symbol.fir as? FirFunction)?.valueParameters?.size?.let { it > 0 } ?: false
+            expectedCallKind != null -> when (expectedCallKind) {
+                CallKind.Function -> {
+                    val hasValueParameters = candidates.any {
+                        (it.symbol as? FirFunctionSymbol<*>)?.valueParameterSymbols?.isNotEmpty() == true
+                    }
+                    ConeFunctionCallExpectedError(name, hasValueParameters, candidates)
                 }
+                else -> {
+                    val singleExpectedCandidate = expectedCandidates?.singleOrNull()
+                    var symbol = singleExpectedCandidate?.symbol
+                    if (symbol is FirTypeAliasSymbol) symbol = symbol.fullyExpandedClass(session) ?: symbol
 
-                when (expectedCallKind) {
-                    CallKind.Function -> ConeFunctionCallExpectedError(name, candidates.any { isValueParametersNotEmpty(it) }, candidates)
-                    else -> {
-                        val singleExpectedCandidate = expectedCandidates?.singleOrNull()
-
-                        var fir = singleExpectedCandidate?.symbol?.fir
-                        if (fir is FirTypeAlias) {
-                            fir = fir.expandedTypeRef.coneType.fullyExpandedType(session).toRegularClassSymbol(session)?.fir
+                    when (symbol) {
+                        is FirRegularClassSymbol -> {
+                            ConeResolutionToClassifierError(singleExpectedCandidate!!, symbol)
                         }
+                        else -> {
+                            val receiverType = explicitReceiver?.resolvedType
+                            when {
+                                receiverType != null && !receiverType.isUnit -> {
+                                    val declarationType = (symbol as? FirCallableSymbol)
+                                        ?.let { components.returnTypeCalculator.tryCalculateReturnType(it).coneType }
 
-                        when (fir) {
-                            is FirRegularClass -> {
-                                ConeResolutionToClassifierError(singleExpectedCandidate!!, fir.symbol)
-                            }
-                            else -> {
-                                val coneType = explicitReceiver?.resolvedType
-                                when {
-                                    coneType != null && !coneType.isUnit -> {
-                                        ConeFunctionExpectedError(
-                                            name.asString(),
-                                            (fir as? FirCallableDeclaration)?.let {
-                                                components.returnTypeCalculator.tryCalculateReturnType(it)
-                                            }?.coneType ?: coneType
-                                        )
-                                    }
-                                    singleExpectedCandidate != null && !singleExpectedCandidate.isSuccessful -> {
-                                        createConeDiagnosticForCandidateWithError(
-                                            singleExpectedCandidate.lowestApplicability,
-                                            singleExpectedCandidate
-                                        )
-                                    }
-                                    else -> ConeUnresolvedNameError(name, operatorToken)
+                                    ConeFunctionExpectedError(
+                                        name.asString(),
+                                        declarationType ?: receiverType
+                                    )
                                 }
+                                singleExpectedCandidate != null && !singleExpectedCandidate.isSuccessful -> {
+                                    createConeDiagnosticForCandidateWithError(
+                                        singleExpectedCandidate.lowestApplicability,
+                                        singleExpectedCandidate
+                                    )
+                                }
+                                else -> ConeUnresolvedNameError(name, operatorToken)
                             }
                         }
                     }
