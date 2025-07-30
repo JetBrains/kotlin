@@ -153,7 +153,6 @@ class IrValidatorTest {
                     phaseName = "IrValidatorTest",
                     IrValidatorConfig(
                         checkTypes = true,
-                        checkProperties = true,
                         checkValueScopes = true,
                         checkTypeParameterScopes = true,
                         checkCrossFileFieldUsage = true,
