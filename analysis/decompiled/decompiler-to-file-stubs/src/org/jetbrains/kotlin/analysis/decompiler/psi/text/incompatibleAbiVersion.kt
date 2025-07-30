@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.analysis.decompiler.psi.text
 
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
+import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 
 private const val FILE_METADATA_VERSION_MARKER: String = "FILE_METADATA"
 private const val CURRENT_METADATA_VERSION_MARKER: String = "CURRENT_METADATA"
@@ -18,7 +19,13 @@ private const val INCOMPATIBLE_METADATA_VERSION_COMMENT: String = "$INCOMPATIBLE
         "// The current compiler supports reading only metadata of version $CURRENT_METADATA_VERSION_MARKER or lower.\n" +
         "// The file metadata version is $FILE_METADATA_VERSION_MARKER"
 
-fun <V : BinaryVersion> createIncompatibleMetadataVersionDecompiledText(expectedVersion: V, actualVersion: V): DecompiledText = DecompiledText(
-    INCOMPATIBLE_METADATA_VERSION_COMMENT.replace(CURRENT_METADATA_VERSION_MARKER, expectedVersion.toString())
-        .replace(FILE_METADATA_VERSION_MARKER, actualVersion.toString())
-)
+fun <V : BinaryVersion> createIncompatibleMetadataVersionDecompiledText(
+    expectedVersion: V,
+    actualVersion: V,
+): String = INCOMPATIBLE_METADATA_VERSION_COMMENT
+    .replace(CURRENT_METADATA_VERSION_MARKER, expectedVersion.toString())
+    .replace(FILE_METADATA_VERSION_MARKER, actualVersion.toString())
+
+fun <V : BinaryVersion> createIncompatibleMetadataVersionDecompiledText(actualVersion: V): String {
+    return createIncompatibleMetadataVersionDecompiledText(MetadataVersion.INSTANCE_NEXT, actualVersion)
+}

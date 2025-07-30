@@ -12,6 +12,7 @@ import com.intellij.psi.impl.compiled.ClassFileStubBuilder
 import com.intellij.psi.stubs.PsiFileStub
 import com.intellij.util.indexing.FileContent
 import org.jetbrains.kotlin.SpecialJvmAnnotations
+import org.jetbrains.kotlin.analysis.decompiler.psi.text.createIncompatibleMetadataVersionDecompiledText
 import org.jetbrains.kotlin.analysis.decompiler.stub.*
 import org.jetbrains.kotlin.constant.AnnotationValue
 import org.jetbrains.kotlin.constant.ArrayValue
@@ -65,7 +66,7 @@ open class KotlinClsStubBuilder : ClsStubBuilder() {
         val packageFqName = header.packageName?.let { FqName(it) } ?: classId.packageFqName
 
         if (!header.metadataVersion.isCompatibleWithCurrentCompilerVersion()) {
-            return createIncompatibleAbiVersionFileStub()
+            return createIncompatibleAbiVersionFileStub(createIncompatibleMetadataVersionDecompiledText(header.metadataVersion))
         }
 
         val components = createStubBuilderComponents(file, packageFqName, fileContent, header.metadataVersion)

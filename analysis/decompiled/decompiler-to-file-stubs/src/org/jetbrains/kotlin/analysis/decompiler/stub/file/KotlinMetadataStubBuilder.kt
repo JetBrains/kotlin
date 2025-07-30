@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -11,18 +11,14 @@ import com.intellij.psi.compiled.ClsStubBuilder
 import com.intellij.psi.impl.compiled.ClassFileStubBuilder
 import com.intellij.psi.stubs.PsiFileStub
 import com.intellij.util.indexing.FileContent
+import org.jetbrains.kotlin.analysis.decompiler.psi.text.createIncompatibleMetadataVersionDecompiledText
 import org.jetbrains.kotlin.analysis.decompiler.stub.*
-import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.descriptors.SourceElement
-import org.jetbrains.kotlin.load.kotlin.JvmPackagePartSource
 import org.jetbrains.kotlin.metadata.ProtoBuf
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.metadata.deserialization.NameResolverImpl
 import org.jetbrains.kotlin.metadata.deserialization.TypeTable
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
-import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.resolve.jvm.JvmClassName
 import org.jetbrains.kotlin.serialization.SerializerExtensionProtocol
 import org.jetbrains.kotlin.serialization.deserialization.ClassDeserializer
 import org.jetbrains.kotlin.serialization.deserialization.ProtoBasedClassDataFinder
@@ -42,10 +38,8 @@ open class KotlinMetadataStubBuilder(
         assert(virtualFile.extension == fileType.defaultExtension || virtualFile.fileType == fileType) { "Unexpected file type ${virtualFile.fileType.name}" }
         val file = readFile(virtualFile, content.content) ?: return null
 
-        when (file) {
-            is FileWithMetadata.Incompatible -> {
-                return createIncompatibleAbiVersionFileStub()
-            }
+        return when (file) {
+            is FileWithMetadata.Incompatible -> createIncompatibleAbiVersionFileStub(createIncompatibleMetadataVersionDecompiledText(file.version))
             is FileWithMetadata.Compatible -> {
                 val packageProto = file.proto.`package`
                 val packageFqName = file.packageFqName
@@ -75,7 +69,8 @@ open class KotlinMetadataStubBuilder(
                         fileStub, classProto, nameResolver, nameResolver.getClassId(classProto.fqName), source = null, context = context
                     )
                 }
-                return fileStub
+
+                fileStub
             }
         }
     }

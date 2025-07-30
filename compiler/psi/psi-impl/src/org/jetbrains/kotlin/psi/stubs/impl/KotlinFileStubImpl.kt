@@ -78,5 +78,10 @@ class KotlinFileStubImpl @KtImplementationDetail internal constructor(
                 facadePartSimpleNames = partNames,
             ),
         )
+
+        fun forInvalid(errorMessage: String): KotlinFileStubImpl = KotlinFileStubImpl(
+            ktFile = null,
+            kind = KotlinFileStubKindImpl.Invalid(errorMessage),
+        )
     }
 }

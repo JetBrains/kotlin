@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.psi.KtImplementationDetail
  * * [script][WithPackage.Script]
  * * [facade][WithPackage.Facade.Simple]
  * * [multifile class][WithPackage.Facade.MultifileClass]
+ * * [invalid][Invalid]
  */
 sealed interface KotlinFileStubKind {
     /**
@@ -129,5 +130,19 @@ sealed interface KotlinFileStubKind {
                 val facadePartSimpleNames: List<String>
             }
         }
+    }
+
+    /**
+     * Represents an invalid Kotlin file stub.
+     *
+     * For instance, if the file metadata is corrupted/incompatible.
+     */
+    @SubclassOptInRequired(KtImplementationDetail::class)
+    interface Invalid : KotlinFileStubKind {
+        /**
+         * A human-readable error message that describes the reason why the file stub is invalid.
+         * It is used instead of decompiled text.
+         */
+        val errorMessage: String
     }
 }

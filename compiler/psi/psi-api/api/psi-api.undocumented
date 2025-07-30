@@ -2274,6 +2274,7 @@ org.jetbrains.kotlin.psi.stubs.impl.KotlinEnumEntrySuperclassReferenceExpression
 org.jetbrains.kotlin.psi.stubs.impl.KotlinFileStubImpl
 org.jetbrains.kotlin.psi.stubs.impl.KotlinFileStubImpl.Companion.forFacade(FqName, FqName)
 org.jetbrains.kotlin.psi.stubs.impl.KotlinFileStubImpl.Companion.forFile(FqName)
+org.jetbrains.kotlin.psi.stubs.impl.KotlinFileStubImpl.Companion.forInvalid(String)
 org.jetbrains.kotlin.psi.stubs.impl.KotlinFileStubImpl.Companion.forMultifileClass(FqName, FqName, List<String>)
 org.jetbrains.kotlin.psi.stubs.impl.KotlinFileStubImpl.Companion.forScript(FqName)
 org.jetbrains.kotlin.psi.stubs.impl.KotlinFileStubImpl.facadeFqName

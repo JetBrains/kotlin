@@ -46,6 +46,10 @@ internal sealed class KotlinFileStubKindImpl {
         )
     }
 
+    data class Invalid(override val errorMessage: String) : KotlinFileStubKindImpl(), KotlinFileStubKind.Invalid {
+        override fun toString(): String = toStringGenerator(Invalid::errorMessage)
+    }
+
     companion object {
         fun serialize(kind: KotlinFileStubKind, dataStream: StubOutputStream) {
             kind as KotlinFileStubKindImpl
@@ -72,6 +76,11 @@ internal sealed class KotlinFileStubKindImpl {
                     dataStream.writeName(kind.facadeFqName.asString())
                     dataStream.writeVarInt(kind.facadePartSimpleNames.size)
                     kind.facadePartSimpleNames.forEach(dataStream::writeName)
+                }
+
+                is Invalid -> {
+                    dataStream.writeByte(4)
+                    dataStream.writeName(kind.errorMessage)
                 }
             }
         }
@@ -103,6 +112,11 @@ internal sealed class KotlinFileStubKindImpl {
                     facadeFqName = facadeFqName,
                     facadePartSimpleNames = facadePartSimpleNames,
                 )
+            }
+
+            4 -> {
+                val errorMessage = dataStream.readNameString()!!
+                Invalid(errorMessage)
             }
 
             else -> error("Unknown file stub kind: $kind")

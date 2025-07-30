@@ -81,7 +81,7 @@ abstract class KotlinMetadataDecompiler<out V : BinaryVersion>(
     fun buildDecompiledText(file: KotlinMetadataStubBuilder.FileWithMetadata): DecompiledText {
         return when (file) {
             is KotlinMetadataStubBuilder.FileWithMetadata.Incompatible -> {
-                createIncompatibleMetadataVersionDecompiledText(expectedBinaryVersion(), file.version)
+                DecompiledText(createIncompatibleMetadataVersionDecompiledText(expectedBinaryVersion(), file.version))
             }
             is KotlinMetadataStubBuilder.FileWithMetadata.Compatible -> {
                 val packageFqName = file.packageFqName

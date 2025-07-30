@@ -4043,6 +4043,10 @@ public abstract interface class org/jetbrains/kotlin/psi/stubs/KotlinFileStub : 
 public abstract interface class org/jetbrains/kotlin/psi/stubs/KotlinFileStubKind {
 }
 
+public abstract interface class org/jetbrains/kotlin/psi/stubs/KotlinFileStubKind$Invalid : org/jetbrains/kotlin/psi/stubs/KotlinFileStubKind {
+	public abstract fun getErrorMessage ()Ljava/lang/String;
+}
+
 public abstract interface class org/jetbrains/kotlin/psi/stubs/KotlinFileStubKind$WithPackage : org/jetbrains/kotlin/psi/stubs/KotlinFileStubKind {
 	public abstract fun getPackageFqName ()Lorg/jetbrains/kotlin/name/FqName;
 }

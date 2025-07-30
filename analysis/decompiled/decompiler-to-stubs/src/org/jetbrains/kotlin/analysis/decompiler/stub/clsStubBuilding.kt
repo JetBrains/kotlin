@@ -114,8 +114,8 @@ fun createMultifileClassStub(
     return fileStub
 }
 
-fun createIncompatibleAbiVersionFileStub(): KotlinFileStubImpl {
-    val fileStub = KotlinFileStubImpl.forFile(FqName.ROOT)
+fun createIncompatibleAbiVersionFileStub(errorMessage: String): KotlinFileStubImpl {
+    val fileStub = KotlinFileStubImpl.forInvalid(errorMessage)
     setupFileStub(fileStub)
     return fileStub
 }

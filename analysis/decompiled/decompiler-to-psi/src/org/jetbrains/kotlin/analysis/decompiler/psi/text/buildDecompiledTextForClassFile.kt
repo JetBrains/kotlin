@@ -12,7 +12,6 @@ import org.jetbrains.kotlin.analysis.decompiler.stub.file.ClsClassFinder.findMul
 import org.jetbrains.kotlin.analysis.decompiler.stub.file.ClsKotlinBinaryClassCache
 import org.jetbrains.kotlin.descriptors.DeclarationDescriptor
 import org.jetbrains.kotlin.load.kotlin.header.KotlinClassHeader
-import org.jetbrains.kotlin.metadata.deserialization.MetadataVersion
 import org.jetbrains.kotlin.renderer.DescriptorRenderer
 import org.jetbrains.kotlin.types.asFlexibleType
 import org.jetbrains.kotlin.types.error.ErrorType
@@ -31,7 +30,7 @@ fun buildDecompiledTextForClassFile(
     val classId = classHeader.classId
 
     if (!classHeader.metadataVersion.isCompatibleWithCurrentCompilerVersion()) {
-        return createIncompatibleMetadataVersionDecompiledText(MetadataVersion.INSTANCE_NEXT, classHeader.metadataVersion)
+        return DecompiledText(createIncompatibleMetadataVersionDecompiledText(classHeader.metadataVersion))
     }
 
     fun buildText(declarations: List<DeclarationDescriptor>) = buildDecompiledText(

@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 package org.jetbrains.kotlin.analysis.decompiler.konan
@@ -11,6 +11,7 @@ import com.intellij.psi.compiled.ClsStubBuilder
 import com.intellij.psi.impl.compiled.ClassFileStubBuilder
 import com.intellij.psi.stubs.PsiFileStub
 import com.intellij.util.indexing.FileContent
+import org.jetbrains.kotlin.analysis.decompiler.psi.text.createIncompatibleMetadataVersionDecompiledText
 import org.jetbrains.kotlin.analysis.decompiler.stub.createIncompatibleAbiVersionFileStub
 
 abstract class KlibMetadataStubBuilder(
@@ -29,7 +30,10 @@ abstract class KlibMetadataStubBuilder(
         val fileWithMetadata = readFile(virtualFile) ?: return null
 
         return when (fileWithMetadata) {
-            is FileWithMetadata.Incompatible -> createIncompatibleAbiVersionFileStub()
+            is FileWithMetadata.Incompatible -> createIncompatibleAbiVersionFileStub(
+                createIncompatibleMetadataVersionDecompiledText(fileWithMetadata.version)
+            )
+
             is FileWithMetadata.Compatible -> buildMetadataFileStub(fileWithMetadata, content)
         }
     }
