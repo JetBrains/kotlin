@@ -204,18 +204,3 @@ internal fun IrExpression.ensureTypeIs(expectedType: IrType, context: CheckerCon
         context.error(this, "unexpected type: expected ${expectedType.render()}, got ${type.render()}")
     }
 }
-
-internal fun IrElement.checkFunctionProperties(function: IrFunction, context: CheckerContext) {
-    if (function is IrSimpleFunction) {
-        val property = function.correspondingPropertySymbol?.owner
-        if (property != null && property.getter != function && property.setter != function) {
-            context.error(this, "Orphaned property getter/setter ${function.render()}")
-        }
-    }
-}
-
-internal fun IrElement.checkFunctionDispatchReceiver(function: IrFunction, context: CheckerContext) {
-    if (function.dispatchReceiverParameter?.type is IrDynamicType) {
-        context.error(this, "Dispatch receivers with 'dynamic' type are not allowed")
-    }
-}

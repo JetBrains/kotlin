@@ -1241,28 +1241,6 @@ class IrValidatorTest {
                     WARNING,
                     """
                     [IR VALIDATION] IrValidatorTest: Dispatch receivers with 'dynamic' type are not allowed
-                    FUNCTION_REFERENCE 'public final fun foo (): kotlin.Unit declared in org.sample' type=kotlin.Any origin=null reflectionTarget=<same>
-                      inside BLOCK_BODY
-                        inside FUN name:foo visibility:public modality:FINAL <> (<this>:dynamic) returnType:kotlin.Unit
-                          inside FILE fqName:org.sample fileName:test.kt
-                    """.trimIndent(),
-                    CompilerMessageLocation.create("test.kt", 0, 0, null),
-                ),
-                Message(
-                    WARNING,
-                    """
-                    [IR VALIDATION] IrValidatorTest: Dispatch receivers with 'dynamic' type are not allowed
-                    CALL 'public final fun foo (): kotlin.Unit declared in org.sample' type=kotlin.Unit origin=null
-                      inside BLOCK_BODY
-                        inside FUN name:foo visibility:public modality:FINAL <> (<this>:dynamic) returnType:kotlin.Unit
-                          inside FILE fqName:org.sample fileName:test.kt
-                    """.trimIndent(),
-                    CompilerMessageLocation.create("test.kt", 0, 0, null),
-                ),
-                Message(
-                    WARNING,
-                    """
-                    [IR VALIDATION] IrValidatorTest: Dispatch receivers with 'dynamic' type are not allowed
                     FUN name:foo visibility:public modality:FINAL <> (<this>:dynamic) returnType:kotlin.Unit
                       inside FILE fqName:org.sample fileName:test.kt
                     """.trimIndent(),
@@ -1467,28 +1445,6 @@ class IrValidatorTest {
             IrVerificationMode.WARNING,
             file,
             listOf(
-                Message(
-                    WARNING,
-                    """
-                    [IR VALIDATION] IrValidatorTest: Orphaned property getter/setter FUN name:foo visibility:public modality:FINAL <> () returnType:kotlin.Any
-                    CALL 'public final fun foo (): kotlin.Any declared in org.sample' type=kotlin.Any origin=null
-                      inside BLOCK_BODY
-                        inside FUN name:foo visibility:public modality:FINAL <> () returnType:kotlin.Any
-                          inside FILE fqName:org.sample fileName:test.kt
-                    """.trimIndent(),
-                    CompilerMessageLocation.create("test.kt", 0, 0, null)
-                ),
-                Message(
-                    WARNING,
-                    """
-                    [IR VALIDATION] IrValidatorTest: Orphaned property getter/setter FUN name:foo visibility:public modality:FINAL <> () returnType:kotlin.Any
-                    FUNCTION_REFERENCE 'public final fun foo (): kotlin.Any declared in org.sample' type=kotlin.Any origin=null reflectionTarget=<same>
-                      inside BLOCK_BODY
-                        inside FUN name:foo visibility:public modality:FINAL <> () returnType:kotlin.Any
-                          inside FILE fqName:org.sample fileName:test.kt
-                    """.trimIndent(),
-                    CompilerMessageLocation.create("test.kt", 0, 0, null)
-                ),
                 Message(
                     WARNING,
                     """
