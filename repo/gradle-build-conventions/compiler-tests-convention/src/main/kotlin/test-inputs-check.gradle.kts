@@ -76,7 +76,19 @@ tasks.withType<Test>().names.forEach { taskName ->
                 val javaLibraryPaths = System.getProperty("java.library.path", "")
                     .split(File.pathSeparatorChar)
                     .filterNot { it.isBlank() }
-                    .map { """permission java.io.FilePermission "$it/-", "read";""" }
+                    .flatMap {
+                        listOf(
+                            """permission java.io.FilePermission "$it/libcallbacks.dylib", "read";""",
+                            """permission java.io.FilePermission "$it/libcallbacks.so", "read";""",
+                            """permission java.io.FilePermission "$it/libcallbacks.dll", "read";""",
+                            """permission java.io.FilePermission "$it/libclangstubs.dylib", "read";""",
+                            """permission java.io.FilePermission "$it/libclangstubs.so", "read";""",
+                            """permission java.io.FilePermission "$it/libclangstubs.dll", "read";""",
+                            """permission java.io.FilePermission "$it/libllvmstubs.dylib", "read";""",
+                            """permission java.io.FilePermission "$it/libllvmstubs.so", "read";""",
+                            """permission java.io.FilePermission "$it/libllvmstubs.dll", "read";""",
+                        )
+                    }
 
                 val addedDirs = HashSet<File>()
                 val inputPermissions: Set<String> = inputs.files.flatMapTo(HashSet<String>()) { file ->
@@ -158,6 +170,7 @@ tasks.withType<Test>().names.forEach { taskName ->
                                             listOf(
                                                 """permission java.io.FilePermission "/bin/bash", "execute";""",
                                                 """permission java.io.FilePermission "/usr/bin/xcrun", "execute";""",
+                                                """permission java.io.FilePermission "/usr/bin/codesign", "execute";""", // CompilationToolCall.kt:274
                                                 """permission java.io.FilePermission "${toolchainPath.get()}/-", "read,execute";""",
                                             )
                                         )
