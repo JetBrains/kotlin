@@ -147,11 +147,6 @@ public class CliTestGenerated extends AbstractCliTest {
       runTest("compiler/testData/cli/jvm/hmpp/fragmentWithoutSources.args");
     }
 
-    @TestMetadata("lowLanguageVersion.args")
-    public void testLowLanguageVersion() {
-      runTest("compiler/testData/cli/jvm/hmpp/lowLanguageVersion.args");
-    }
-
     @TestMetadata("missingFragment.args")
     public void testMissingFragment() {
       runTest("compiler/testData/cli/jvm/hmpp/missingFragment.args");
@@ -334,11 +329,6 @@ public class CliTestGenerated extends AbstractCliTest {
     @TestMetadata("classpath.args")
     public void testClasspath() {
       runTest("compiler/testData/cli/jvm/diagnosticTests/classpath.args");
-    }
-
-    @TestMetadata("conflictingJvmDeclarations.args")
-    public void testConflictingJvmDeclarations() {
-      runTest("compiler/testData/cli/jvm/diagnosticTests/conflictingJvmDeclarations.args");
     }
 
     @TestMetadata("conflictingJvmDeclarationsK2.args")
@@ -799,19 +789,9 @@ public class CliTestGenerated extends AbstractCliTest {
       runTest("compiler/testData/cli/jvm/optIn/experimentalDeprecated.args");
     }
 
-    @TestMetadata("experimentalDeprecatedK1.args")
-    public void testExperimentalDeprecatedK1() {
-      runTest("compiler/testData/cli/jvm/optIn/experimentalDeprecatedK1.args");
-    }
-
     @TestMetadata("experimentalDeprecatedWarning.args")
     public void testExperimentalDeprecatedWarning() {
       runTest("compiler/testData/cli/jvm/optIn/experimentalDeprecatedWarning.args");
-    }
-
-    @TestMetadata("experimentalDeprecatedWarningK1.args")
-    public void testExperimentalDeprecatedWarningK1() {
-      runTest("compiler/testData/cli/jvm/optIn/experimentalDeprecatedWarningK1.args");
     }
 
     @TestMetadata("experimentalIsNotAnnotation.args")
@@ -819,19 +799,9 @@ public class CliTestGenerated extends AbstractCliTest {
       runTest("compiler/testData/cli/jvm/optIn/experimentalIsNotAnnotation.args");
     }
 
-    @TestMetadata("experimentalIsNotAnnotationK1.args")
-    public void testExperimentalIsNotAnnotationK1() {
-      runTest("compiler/testData/cli/jvm/optIn/experimentalIsNotAnnotationK1.args");
-    }
-
     @TestMetadata("experimentalIsNotMarker.args")
     public void testExperimentalIsNotMarker() {
       runTest("compiler/testData/cli/jvm/optIn/experimentalIsNotMarker.args");
-    }
-
-    @TestMetadata("experimentalIsNotMarkerK1.args")
-    public void testExperimentalIsNotMarkerK1() {
-      runTest("compiler/testData/cli/jvm/optIn/experimentalIsNotMarkerK1.args");
     }
 
     @TestMetadata("experimentalNested.args")
@@ -839,19 +809,9 @@ public class CliTestGenerated extends AbstractCliTest {
       runTest("compiler/testData/cli/jvm/optIn/experimentalNested.args");
     }
 
-    @TestMetadata("experimentalNestedK1.args")
-    public void testExperimentalNestedK1() {
-      runTest("compiler/testData/cli/jvm/optIn/experimentalNestedK1.args");
-    }
-
     @TestMetadata("experimentalUnresolved.args")
     public void testExperimentalUnresolved() {
       runTest("compiler/testData/cli/jvm/optIn/experimentalUnresolved.args");
-    }
-
-    @TestMetadata("experimentalUnresolvedK1.args")
-    public void testExperimentalUnresolvedK1() {
-      runTest("compiler/testData/cli/jvm/optIn/experimentalUnresolvedK1.args");
     }
 
     @TestMetadata("optInEmptyMessage.args")
@@ -960,11 +920,6 @@ public class CliTestGenerated extends AbstractCliTest {
     @TestMetadata("nonExistingPluginClassPath.args")
     public void testNonExistingPluginClassPath() {
       runTest("compiler/testData/cli/jvm/sourcesCommonChecks/nonExistingPluginClassPath.args");
-    }
-
-    @TestMetadata("nonExistingSourcePath.args")
-    public void testNonExistingSourcePath() {
-      runTest("compiler/testData/cli/jvm/sourcesCommonChecks/nonExistingSourcePath.args");
     }
 
     @TestMetadata("nonExistingSourcePathK2.args")
@@ -1501,16 +1456,6 @@ public class CliTestGenerated extends AbstractCliTest {
       runTest("compiler/testData/cli/jvm/disabledFeatureFromUnsupportedVersion.args");
     }
 
-    @TestMetadata("enumEntriesForJavaNotEnabled.args")
-    public void testEnumEntriesForJavaNotEnabled() {
-      runTest("compiler/testData/cli/jvm/enumEntriesForJavaNotEnabled.args");
-    }
-
-    @TestMetadata("enumEntriesNotEnabled.args")
-    public void testEnumEntriesNotEnabled() {
-      runTest("compiler/testData/cli/jvm/enumEntriesNotEnabled.args");
-    }
-
     @TestMetadata("errorSuppressionNoWarning.args")
     public void testErrorSuppressionNoWarning() {
       runTest("compiler/testData/cli/jvm/errorSuppressionNoWarning.args");
@@ -1536,16 +1481,6 @@ public class CliTestGenerated extends AbstractCliTest {
       runTest("compiler/testData/cli/jvm/explicitReturnTypesEnabled.args");
     }
 
-    @TestMetadata("explicitlyDisableSamConversionsWithOldFlag.args")
-    public void testExplicitlyDisableSamConversionsWithOldFlag() {
-      runTest("compiler/testData/cli/jvm/explicitlyDisableSamConversionsWithOldFlag.args");
-    }
-
-    @TestMetadata("explicitlyDisabledSamConversions.args")
-    public void testExplicitlyDisabledSamConversions() {
-      runTest("compiler/testData/cli/jvm/explicitlyDisabledSamConversions.args");
-    }
-
     @TestMetadata("expression1.args")
     public void testExpression1() {
       runTest("compiler/testData/cli/jvm/expression1.args");
@@ -1564,11 +1499,6 @@ public class CliTestGenerated extends AbstractCliTest {
     @TestMetadata("fastJarFsDisabledAfterK2.args")
     public void testFastJarFsDisabledAfterK2() {
       runTest("compiler/testData/cli/jvm/fastJarFsDisabledAfterK2.args");
-    }
-
-    @TestMetadata("fastJarFsEnabledBeforeK2.args")
-    public void testFastJarFsEnabledBeforeK2() {
-      runTest("compiler/testData/cli/jvm/fastJarFsEnabledBeforeK2.args");
     }
 
     @TestMetadata("firErrorOnLastLine.args")
@@ -1754,11 +1684,6 @@ public class CliTestGenerated extends AbstractCliTest {
     @TestMetadata("noReflect.args")
     public void testNoReflect() {
       runTest("compiler/testData/cli/jvm/noReflect.args");
-    }
-
-    @TestMetadata("noStdlibK1.args")
-    public void testNoStdlibK1() {
-      runTest("compiler/testData/cli/jvm/noStdlibK1.args");
     }
 
     @TestMetadata("noStdlibK2.args")

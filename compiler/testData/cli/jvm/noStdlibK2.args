@@ -1,4 +1,4 @@
 -no-stdlib
-$TESTDATA_DIR$/noStdlibK1.kt
+$TESTDATA_DIR$/noStdlibK2.kt
 -d
 $TEMP_DIR$
