@@ -22,7 +22,7 @@ sourceSets {
 }
 
 compilerTests {
-    testData(project.isolated, "../testData")
+    testData(project(":compiler").isolated, "testData/codegen")
 }
 
 val testTags = findProperty("kotlin.native.tests.tags")?.toString()
