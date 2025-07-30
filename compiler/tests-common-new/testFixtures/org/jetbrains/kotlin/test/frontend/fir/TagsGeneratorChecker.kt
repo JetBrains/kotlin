@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirVisitorVoid
 import org.jetbrains.kotlin.name.SpecialNames
+import org.jetbrains.kotlin.test.directives.FirDiagnosticsDirectives
 import org.jetbrains.kotlin.test.frontend.fir.TagsGeneratorChecker.FirTags
 import org.jetbrains.kotlin.test.frontend.fir.TagsGeneratorChecker.FirTags.MAX_LINE_LENGTH
 import org.jetbrains.kotlin.test.frontend.fir.TagsGeneratorChecker.FirTags.TAG_PREFIX
@@ -68,7 +69,7 @@ class TagsGeneratorChecker(testServices: TestServices) : FirAnalysisHandler(test
     private val shouldSkip: Boolean by lazy { testDataFiles.any { it.readText().contains(TAG_PREFIX) } }
 
     override fun processModule(module: TestModule, info: FirOutputArtifact) {
-        if (shouldSkip) return
+        if (FirDiagnosticsDirectives.DISABLE_GENERATED_FIR_TAGS in module.directives || shouldSkip) return
         for (file in info.allFirFiles.values) {
             val session = file.moduleData.session
             val visitor = TagsCollectorVisitor(session)
