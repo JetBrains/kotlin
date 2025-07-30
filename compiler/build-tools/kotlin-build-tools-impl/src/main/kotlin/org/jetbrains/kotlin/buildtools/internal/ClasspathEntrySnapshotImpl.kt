@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathEntrySnapshotExte
 import org.jetbrains.kotlin.incremental.classpathDiff.InaccessibleClassSnapshot
 import org.jetbrains.kotlin.incremental.storage.saveToFile
 import java.io.File
+import java.nio.file.Path
 
 internal class ClasspathEntrySnapshotImpl(
     private val origin: org.jetbrains.kotlin.incremental.classpathDiff.ClasspathEntrySnapshot,
@@ -25,7 +26,12 @@ internal class ClasspathEntrySnapshotImpl(
             }
         }
 
+    @Deprecated("Use saveSnapshot(Path)", replaceWith = ReplaceWith("saveSnapshot(path.toPath())"))
     override fun saveSnapshot(path: File) {
         ClasspathEntrySnapshotExternalizer.saveToFile(path, origin)
+    }
+
+    override fun saveSnapshot(path: Path) {
+        ClasspathEntrySnapshotExternalizer.saveToFile(path.toFile(), origin)
     }
 }

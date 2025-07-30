@@ -57,6 +57,7 @@ import java.io.ObjectOutputStream
 import java.net.URLClassLoader
 import java.nio.file.Path
 import java.rmi.RemoteException
+import kotlin.collections.plus
 import kotlin.io.path.absolutePathString
 
 internal class JvmCompilationOperationImpl(

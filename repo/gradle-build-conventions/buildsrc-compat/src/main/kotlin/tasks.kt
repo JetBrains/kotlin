@@ -90,6 +90,7 @@ val kotlinGradlePluginAndItsRequired = arrayOf(
     ":compiler:build-tools:kotlin-build-statistics",
     ":compiler:build-tools:kotlin-build-tools-api",
     ":compiler:build-tools:kotlin-build-tools-impl",
+    ":compiler:build-tools:kotlin-build-tools-compat",
     ":libraries:tools:gradle:fus-statistics-gradle-plugin",
     ":kotlin-util-klib-metadata",
     ":libraries:tools:abi-validation:abi-tools-api",

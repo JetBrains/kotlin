@@ -11,24 +11,40 @@ import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.workers.WorkAction
 import org.gradle.workers.WorkParameters
-import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporter
-import org.jetbrains.kotlin.build.report.metrics.GradleBuildPerformanceMetric
-import org.jetbrains.kotlin.build.report.metrics.GradleBuildTime
+import org.jetbrains.kotlin.build.report.metrics.*
 import org.jetbrains.kotlin.buildtools.api.*
-import org.jetbrains.kotlin.buildtools.api.jvm.ClasspathSnapshotBasedIncrementalCompilationApproachParameters
+import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationConfiguration
+import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationOptions
+import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationOptions.Companion.BACKUP_CLASSES
+import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationOptions.Companion.FORCE_RECOMPILATION
+import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationOptions.Companion.KEEP_IC_CACHES_IN_MEMORY
+import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationOptions.Companion.MODULE_BUILD_DIR
+import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationOptions.Companion.OUTPUT_DIRS
+import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationOptions.Companion.PRECISE_JAVA_TRACKING
+import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationOptions.Companion.ROOT_PROJECT_DIR
+import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationOptions.Companion.USE_FIR_RUNNER
+import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation.Companion.COMPILER_ARGUMENTS_LOG_LEVEL
+import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation.Companion.INCREMENTAL_COMPILATION
+import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation.Companion.KOTLINSCRIPT_EXTENSIONS
 import org.jetbrains.kotlin.cli.common.ExitCode
+import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
+import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
+import org.jetbrains.kotlin.compilerRunner.GradleCompilationResults
 import org.jetbrains.kotlin.compilerRunner.GradleKotlinCompilerWorkArguments
 import org.jetbrains.kotlin.compilerRunner.asFinishLogMessage
 import org.jetbrains.kotlin.gradle.internal.ClassLoadersCachingBuildService
 import org.jetbrains.kotlin.gradle.internal.ParentClassLoaderProvider
 import org.jetbrains.kotlin.gradle.plugin.BuildFinishedListenerService
 import org.jetbrains.kotlin.gradle.plugin.internal.BuildIdService
+import org.jetbrains.kotlin.gradle.plugin.internal.state.TaskExecutionResults
 import org.jetbrains.kotlin.gradle.plugin.internal.state.getTaskLogger
+import org.jetbrains.kotlin.gradle.report.TaskExecutionInfo
+import org.jetbrains.kotlin.gradle.report.TaskExecutionResult
 import org.jetbrains.kotlin.gradle.tasks.*
-import org.jetbrains.kotlin.gradle.tasks.FailedCompilationException
-import org.jetbrains.kotlin.gradle.tasks.TaskOutputsBackup
+import org.jetbrains.kotlin.gradle.utils.destinationAsFile
 import org.jetbrains.kotlin.incremental.ClasspathChanges
 import java.io.File
+import java.nio.file.Paths
 import javax.inject.Inject
 
 private const val LOGGER_PREFIX = "[KOTLIN] "
@@ -53,6 +69,12 @@ internal abstract class BuildToolsApiCompilationWork @Inject constructor(
     private val taskPath
         get() = workArguments.taskPath
 
+    private val metrics = if (workArguments.reportingSettings.buildReportOutputs.isNotEmpty()) {
+        BuildMetricsReporterImpl()
+    } else {
+        DoNothingBuildMetricsReporter
+    }
+
     private val log: KotlinLogger = getTaskLogger(taskPath, LOGGER_PREFIX, BuildToolsApiCompilationWork::class.java.simpleName, true)
 
     private fun performCompilation(): CompilationResult {
@@ -60,61 +82,70 @@ internal abstract class BuildToolsApiCompilationWork @Inject constructor(
         try {
             val classLoader = parameters.classLoadersCachingService.get()
                 .getClassLoader(workArguments.compilerFullClasspath, SharedApiClassesClassLoaderProvider)
-            val compilationService = CompilationService.loadImplementation(classLoader)
+            val compilationService = KotlinToolchain.loadImplementation(classLoader)
             val buildId = ProjectId.ProjectUUID(parameters.buildIdService.get().buildId)
+            val build = compilationService.createBuildSession()
             parameters.buildFinishedListenerService.get().onCloseOnceByKey(buildId.toString()) {
-                compilationService.finishProjectCompilation(buildId)
+                build.close()
             }
-            val executionConfig = compilationService.makeCompilerExecutionStrategyConfiguration().apply {
-                when (executionStrategy) {
-                    KotlinCompilerExecutionStrategy.DAEMON -> useDaemonStrategy(
+            val executionConfig = when (executionStrategy) {
+                KotlinCompilerExecutionStrategy.DAEMON -> compilationService.createDaemonExecutionPolicy().apply {
+                    this[ExecutionPolicy.WithDaemon.Companion.JVM_ARGUMENTS] =
                         workArguments.compilerExecutionSettings.daemonJvmArgs ?: emptyList()
-                    )
-                    KotlinCompilerExecutionStrategy.IN_PROCESS -> useInProcessStrategy()
-                    else -> error("The \"$executionStrategy\" execution strategy is not supported by the Build Tools API")
                 }
+                KotlinCompilerExecutionStrategy.IN_PROCESS -> compilationService.createInProcessExecutionPolicy()
+                else -> error("The \"$executionStrategy\" execution strategy is not supported by the Build Tools API")
             }
-            val jvmCompilationConfig = compilationService.makeJvmCompilationConfiguration()
-                .useLogger(log)
-                .useKotlinScriptFilenameExtensions(workArguments.kotlinScriptExtensions.toList())
+            val args = parseCommandLineArguments<K2JVMCompilerArguments>(workArguments.compilerArgs.toList())
+            val jvmCompilationOperation = compilationService.jvm.createJvmCompilationOperation(
+                args.freeArgs.mapNotNull {
+                    try {
+                        Paths.get(it)
+                    } catch (e: Exception) {
+                        null
+                    }
+                },
+                args.destinationAsFile.toPath()
+            )
+            jvmCompilationOperation.compilerArguments.applyArgumentStrings(workArguments.compilerArgs.toList())
+            jvmCompilationOperation[KOTLINSCRIPT_EXTENSIONS] = workArguments.kotlinScriptExtensions
+            jvmCompilationOperation[COMPILER_ARGUMENTS_LOG_LEVEL] = workArguments.compilerArgumentsLogLevel.value
+            @Suppress("DEPRECATION_ERROR")
+            jvmCompilationOperation[BuildOperation.Companion.createCustomOption("XX_KGP_METRICS_COLLECTOR")] = metrics
+
             val icEnv = workArguments.incrementalCompilationEnvironment
             val classpathChanges = icEnv?.classpathChanges
             if (classpathChanges is ClasspathChanges.ClasspathSnapshotEnabled) {
-                // important detail: by using primitive-type single-field setters,
-                // we maintain compatibility of this KGP code with future BuildToolsApi implementations
-                val classpathSnapshotsConfig = jvmCompilationConfig.makeClasspathSnapshotBasedIncrementalCompilationConfiguration()
-                    .setRootProjectDir(icEnv.rootProjectDir)
-                    .setBuildDir(icEnv.buildDir)
-                    .usePreciseJavaTracking(icEnv.icFeatures.usePreciseJavaTracking)
-                    .usePreciseCompilationResultsBackup(icEnv.icFeatures.preciseCompilationResultsBackup)
-                    .keepIncrementalCompilationCachesInMemory(icEnv.icFeatures.keepIncrementalCompilationCachesInMemory)
-                    .useOutputDirs(workArguments.outputFiles)
-                    .forceNonIncrementalMode(classpathChanges !is ClasspathChanges.ClasspathSnapshotEnabled.IncrementalRun)
-                    .useFirRunner(icEnv.useJvmFirRunner)
-
-                val classpathSnapshotsParameters = ClasspathSnapshotBasedIncrementalCompilationApproachParameters(
-                    classpathChanges.classpathSnapshotFiles.currentClasspathEntrySnapshotFiles,
-                    classpathChanges.classpathSnapshotFiles.shrunkPreviousClasspathSnapshotFile,
+                val classpathSnapshotsOptions = jvmCompilationOperation.createSnapshotBasedIcOptions().apply {
+                    this[ROOT_PROJECT_DIR] = icEnv.rootProjectDir.toPath()
+                    this[MODULE_BUILD_DIR] = icEnv.buildDir.toPath()
+                    this[PRECISE_JAVA_TRACKING] = icEnv.icFeatures.usePreciseJavaTracking
+                    this[BACKUP_CLASSES] = icEnv.icFeatures.preciseCompilationResultsBackup
+                    this[KEEP_IC_CACHES_IN_MEMORY] = icEnv.icFeatures.keepIncrementalCompilationCachesInMemory
+                    this[OUTPUT_DIRS] = workArguments.outputFiles.map { it.toPath() }.toSet()
+                    this[FORCE_RECOMPILATION] = classpathChanges !is ClasspathChanges.ClasspathSnapshotEnabled.IncrementalRun
+                    this[USE_FIR_RUNNER] = icEnv.useJvmFirRunner
+                }
+                jvmCompilationOperation[INCREMENTAL_COMPILATION] = JvmSnapshotBasedIncrementalCompilationConfiguration(
+                    icEnv.workingDir.toPath(),
+                    icEnv.changedFiles,
+                    classpathChanges.classpathSnapshotFiles.currentClasspathEntrySnapshotFiles.map { it.toPath() },
+                    classpathChanges.classpathSnapshotFiles.shrunkPreviousClasspathSnapshotFile.toPath(),
+                    classpathSnapshotsOptions
                 )
+
                 when (classpathChanges) {
-                    is ClasspathChanges.ClasspathSnapshotEnabled.IncrementalRun.NoChanges -> classpathSnapshotsConfig.assureNoClasspathSnapshotsChanges()
-                    is ClasspathChanges.ClasspathSnapshotEnabled.NotAvailableForNonIncrementalRun -> classpathSnapshotsConfig.forceNonIncrementalMode()
+                    is ClasspathChanges.ClasspathSnapshotEnabled.IncrementalRun.NoChanges -> {
+                        classpathSnapshotsOptions[JvmSnapshotBasedIncrementalCompilationOptions.Companion.ASSURED_NO_CLASSPATH_SNAPSHOT_CHANGES] =
+                            true
+                    }
+                    is ClasspathChanges.ClasspathSnapshotEnabled.NotAvailableForNonIncrementalRun -> {
+                        classpathSnapshotsOptions[FORCE_RECOMPILATION] = true
+                    }
                     else -> {}
                 }
-                jvmCompilationConfig.useIncrementalCompilation(
-                    icEnv.workingDir,
-                    icEnv.changedFiles,
-                    classpathSnapshotsParameters,
-                    classpathSnapshotsConfig,
-                )
             }
-            return compilationService.compileJvm(
-                buildId,
-                executionConfig,
-                jvmCompilationConfig,
-                emptyList(),
-                workArguments.compilerArgs.toList(),
-            )
+            return build.executeOperation(jvmCompilationOperation, executionConfig, log)
         } catch (e: Throwable) {
             wrapAndRethrowCompilationException(executionStrategy, e)
         } finally {
@@ -135,6 +166,8 @@ internal abstract class BuildToolsApiCompilationWork @Inject constructor(
     }
 
     override fun execute() {
+        metrics.addTimeMetric(GradleBuildPerformanceMetric.START_WORKER_EXECUTION)
+        metrics.startMeasure(GradleBuildTime.RUN_COMPILATION_IN_WORKER)
         val backup = initializeBackup()
         val executionStrategy = workArguments.compilerExecutionSettings.strategy
         try {
@@ -150,6 +183,16 @@ internal abstract class BuildToolsApiCompilationWork @Inject constructor(
             }
             throw e
         } finally {
+            val taskInfo = TaskExecutionInfo(
+                kotlinLanguageVersion = workArguments.kotlinLanguageVersion,
+                changedFiles = workArguments.incrementalCompilationEnvironment?.changedFiles,
+                compilerArguments = if (workArguments.reportingSettings.includeCompilerArguments) workArguments.compilerArgs else emptyArray(),
+//                tags = collectStatTags(),
+            )
+            metrics.endMeasure(GradleBuildTime.RUN_COMPILATION_IN_WORKER)
+            val result =
+                TaskExecutionResult(buildMetrics = metrics.getMetrics(), taskInfo = taskInfo)
+            TaskExecutionResults[workArguments.taskPath] = result
             backup?.deleteSnapshot()
         }
     }
