@@ -1064,7 +1064,7 @@ private fun parseDuration(value: String, strictIso: Boolean, throwException: Boo
     val hasSign = index > 0
     val result = when {
         length <= index -> return throwExceptionOrInvalid(throwException, "No components")
-        value[index] == 'P' -> parseIsoStringFormatFSA(value, index + 1, length, throwException).onInvalid { return Duration.INVALID }
+        value[index] == 'P' -> parseIsoStringFormat(value, index + 1, length, throwException).onInvalid { return Duration.INVALID }
         strictIso -> return throwExceptionOrInvalid(throwException)
         value.regionMatches(index, INFINITY_STRING, 0, length = maxOf(length - index, INFINITY_STRING.length), ignoreCase = true) -> {
             Duration.INFINITE
@@ -1125,7 +1125,7 @@ private const val SECONDS_PER_MINUTE = 60L
 private const val SECONDS_PER_HOUR = SECONDS_PER_MINUTE * 60L
 private const val SECONDS_PER_DAY = SECONDS_PER_HOUR * 24L
 
-private fun parseIsoStringFormatFSA(
+private fun parseIsoStringFormat(
     value: String,
     startIndex: Int,
     length: Int,
