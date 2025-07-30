@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.fir.correspondingProperty
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.impl.FirDefaultPropertyAccessor
 import org.jetbrains.kotlin.fir.declarations.utils.isCompanion
+import org.jetbrains.kotlin.fir.declarations.utils.isInline
 import org.jetbrains.kotlin.fir.declarations.utils.isInner
 import org.jetbrains.kotlin.fir.declarations.utils.isScriptTopLevelDeclaration
 import org.jetbrains.kotlin.fir.expressions.FirCallableReferenceAccess
@@ -147,6 +148,25 @@ class BodyResolveContext(
             anonymousFunctionsAnalyzedInDependentContext.remove(lambda)
         }
     }
+
+    var inlineFunction: FirFunction? = null
+
+    inline fun <T> withInlineFunction(function: FirFunction?, block: () -> T): T {
+        val oldValue = inlineFunction
+        return try {
+            inlineFunction = function
+            block()
+        } finally {
+            inlineFunction = oldValue
+        }
+    }
+
+    inline fun <T> withInlineFunctionIfApplicable(function: FirFunction, block: () -> T): T = when {
+        function.isInline -> withInlineFunction(function, block)
+        else -> block()
+    }
+
+    inline fun <T> withoutInlineFunction(block: () -> T): T = withInlineFunction(null, block)
 
     @PrivateForInline
     inline fun <T> withContainer(declaration: FirDeclaration, f: () -> T): T {
@@ -755,7 +775,9 @@ class BodyResolveContext(
         }
 
         return withTypeParametersOf(simpleFunction) {
-            withContainer(simpleFunction, f)
+            withInlineFunctionIfApplicable(simpleFunction) {
+                withContainer(simpleFunction, f)
+            }
         }
     }
 
@@ -915,7 +937,9 @@ class BodyResolveContext(
         f: () -> T
     ): T {
         storeValueParameterIfNeeded(valueParameter, session)
-        return withContainer(valueParameter, f)
+        return withContainer(valueParameter) {
+            withoutInlineFunction(f)
+        }
     }
 
     fun storeValueParameterIfNeeded(valueParameter: FirValueParameter, session: FirSession) {

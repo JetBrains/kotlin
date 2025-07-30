@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.builtins.functions.FunctionTypeKind
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.*
 import org.jetbrains.kotlin.fir.declarations.*
@@ -471,8 +472,16 @@ private fun FirPropertySymbol.isEffectivelyFinal(session: FirSession): Boolean {
     return containingClass.modality == Modality.FINAL && containingClass.classKind != ClassKind.ENUM_CLASS
 }
 
-fun FirPropertyWithExplicitBackingFieldResolvedNamedReference.getNarrowedDownSymbol(session: FirSession): FirBasedSymbol<*> {
+fun FirPropertyWithExplicitBackingFieldResolvedNamedReference.getNarrowedDownSymbol(
+    closestInlineFunction: FirFunction?,
+    session: FirSession,
+): FirBasedSymbol<*> {
     val propertyReceiver = resolvedSymbol as? FirPropertySymbol ?: return resolvedSymbol
+    val visibilityCheckResult = closestInlineFunction?.visibility?.compareTo(Visibilities.Private)
+
+    if (visibilityCheckResult != null && visibilityCheckResult > 0) {
+        return resolvedSymbol
+    }
 
     if (
         propertyReceiver.isEffectivelyFinal(session) &&
