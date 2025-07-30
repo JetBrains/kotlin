@@ -16,7 +16,6 @@ const val kotlinEmbeddableRootPackage = "org.jetbrains.kotlin"
 
 val packagesToRelocate =
     listOf(
-        "com.google",
         "com.sampullara",
         "org.apache",
         "org.jdom",
@@ -32,6 +31,9 @@ val packagesToRelocate =
         "io.opentelemetry",
         "io.vavr",
     )
+
+val packagesToRelocateWithExclusion: List<Pair<String, String>> =
+    listOf("com.google" to "com.google.errorprone.annotations") // .annotations package is used as a string constant.
 
 // The shaded compiler "dummy" is used to rewrite dependencies in projects that are used with the embeddable compiler
 // on the runtime and use some shaded dependencies from the compiler
@@ -66,6 +68,11 @@ private fun ShadowJar.configureEmbeddableCompilerRelocation(withJavaxInject: Boo
     }
     packagesToRelocate.forEach {
         relocate(it, "$kotlinEmbeddableRootPackage.$it")
+    }
+    packagesToRelocateWithExclusion.forEach { (pkg, excl) ->
+        relocate(pkg, "$kotlinEmbeddableRootPackage.$pkg") {
+            exclude(excl)
+        }
     }
     if (withJavaxInject) {
         relocate("javax.inject", "$kotlinEmbeddableRootPackage.javax.inject")

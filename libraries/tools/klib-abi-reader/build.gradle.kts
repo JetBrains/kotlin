@@ -50,6 +50,11 @@ val relocatedJar by task<ShadowJar> {
         packagesToRelocate.forEach {
             relocate(it, "$kotlinEmbeddableRootPackage.$it")
         }
+        packagesToRelocateWithExclusion.forEach { (pkg, excl) ->
+            relocate(pkg, "$kotlinEmbeddableRootPackage.$pkg") {
+                exclude(excl)
+            }
+        }
     }
 }
 
