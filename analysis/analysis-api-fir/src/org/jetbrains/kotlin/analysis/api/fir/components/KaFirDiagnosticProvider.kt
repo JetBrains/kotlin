@@ -25,6 +25,14 @@ import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
 import org.jetbrains.kotlin.psi.*
 
+private val PHASES_TO_TRIGGER = listOf(
+    FirResolvePhase.COMPILER_REQUIRED_ANNOTATIONS,
+    FirResolvePhase.SUPER_TYPES,
+    FirResolvePhase.TYPES,
+    FirResolvePhase.STATUS,
+    FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE
+)
+
 internal class KaFirDiagnosticProvider(
     override val analysisSessionProvider: () -> KaFirSession
 ) : KaBaseSessionComponent<KaFirSession>(), KaDiagnosticProvider, KaFirSessionComponent {
@@ -75,12 +83,9 @@ internal class KaFirDiagnosticProvider(
         val module = resolutionFacade.getModule(this)
         val session = resolutionFacade.sessionProvider.getResolvableSession(module)
 
-        val phases = FirResolvePhase.entries.filter { !it.noProcessor && it != FirResolvePhase.IMPORTS }
-
-        for (phase in phases) {
+        for (phase in PHASES_TO_TRIGGER) {
             for (declaration in declarations) {
                 pool {
-                    // TODO rewrite with coroutines and proper cancellation
                     runReadAction {
                         if (!declaration.isValid) {
                             return@runReadAction
@@ -99,6 +104,18 @@ internal class KaFirDiagnosticProvider(
                         if (firElement is FirElementWithResolveState) {
                             firElement.lazyResolveToPhase(phase)
                         }
+                    }
+                }
+            }
+        }
+
+        val checkerFilter = DiagnosticCheckerFilter.ONLY_DEFAULT_CHECKERS + DiagnosticCheckerFilter.ONLY_EXTRA_CHECKERS
+
+        for (declaration in declarations) {
+            pool {
+                runReadAction {
+                    if (declaration.isValid) {
+                        declaration.getDiagnostics(resolutionFacade, checkerFilter)
                     }
                 }
             }
