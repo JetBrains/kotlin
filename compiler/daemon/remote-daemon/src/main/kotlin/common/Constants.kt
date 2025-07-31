@@ -9,5 +9,5 @@ const val OUTPUT_FILES_DIR = "compiler/daemon/remote-daemon/src/main/kotlin/serv
 const val CACHED_FILES_DIR = "compiler/daemon/remote-daemon/src/main/kotlin/server/cache"
 const val CACHE_FILE = "compiler/daemon/remote-daemon/src/main/kotlin/server/cache/cache.properties"
 const val CLIENT_COMPILED_DIR = "compiler/daemon/remote-daemon/src/main/kotlin/client/compiled"
-
-
+const val AUTH_FILE = "compiler/daemon/remote-daemon/src/main/kotlin/server/auth/auth.json"
+const val AUTH_KEY = "credential"

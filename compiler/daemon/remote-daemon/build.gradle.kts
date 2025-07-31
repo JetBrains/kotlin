@@ -1,6 +1,7 @@
 plugins {
     kotlin("jvm")
     id("com.google.protobuf") version "0.9.5"
+    id("org.jetbrains.kotlin.plugin.serialization")
     application  // This plugin is required
 }
 
@@ -31,7 +32,7 @@ dependencies {
     compileOnly(project(":core:compiler.common"))
     compileOnly("it.unimi.dsi:fastutil:8.5.12")
     compileOnly(intellijCore())
-    compileOnly("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.10.2")
 
 
 //    implementation("org.jetbrains.kotlin:kotlin-stdlib:2.2.0")
@@ -53,6 +54,7 @@ dependencies {
     runtimeOnly(project(":kotlin-compiler-embeddable"))
 
     testImplementation(kotlin("test"))
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.9.0")
 }
 
 

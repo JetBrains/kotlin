@@ -36,8 +36,10 @@ import org.jetbrains.kotlin.server.ConnectRequestGrpc
 import org.jetbrains.kotlin.server.ConnectResponseGrpc
 import server.CacheHandler
 import server.KotlinDaemonManager
-import server.RemoteKotlinDaemonInterceptor
+import server.interceptors.LoggingInterceptor
 import server.ResponseHandler
+import server.auth.BasicHTTPAuthServer
+import server.interceptors.AuthInterceptor
 import java.io.File
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -50,7 +52,14 @@ class RemoteKotlinDaemonServer(private val port: Int) {
     val server: Server =
         ServerBuilder
             .forPort(port)
-            .addService(ServerInterceptors.intercept(RemoteKotlinDaemonService(), RemoteKotlinDaemonInterceptor()))
+            .addService(
+                ServerInterceptors
+                    .intercept(
+                        RemoteKotlinDaemonService(),
+                        LoggingInterceptor(),
+                        AuthInterceptor(BasicHTTPAuthServer())
+                    )
+            )
             .build()
 
     fun debug(text: String){

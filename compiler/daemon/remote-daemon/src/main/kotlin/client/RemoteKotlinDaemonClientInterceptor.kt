@@ -19,7 +19,7 @@ class RemoteClientInterceptor : ClientInterceptor {
 
     private val formatter = DateTimeFormatter.ofPattern("HH:mm:ss")
 
-    fun debug(text: String){
+    fun debug(text: String) {
         println("[${LocalDateTime.now().format(formatter)}] CLIENT INTERCEPTOR: $text")
     }
 

@@ -5,11 +5,13 @@
 
 package org.jetbrains.kotlin.client
 
+import client.auth.BasicHTTPAuthClient
+import client.auth.CallAuthenticator
+import client.RemoteClientInterceptor
+import client.RequestHandler
 import common.CLIENT_COMPILED_DIR
 import common.OneFileOneChunkStrategy
 import common.buildAbsPath
-import client.RemoteClientInterceptor
-import client.RequestHandler
 import common.toGrpc
 import io.grpc.ManagedChannel
 import io.grpc.ManagedChannelBuilder
@@ -24,11 +26,7 @@ import model.DaemonJVMOptionsConfigurator
 import org.jetbrains.kotlin.daemon.common.CompilationOptions
 import org.jetbrains.kotlin.daemon.common.CompileService
 import org.jetbrains.kotlin.daemon.common.CompilerMode
-import org.jetbrains.kotlin.server.CompileRequestGrpc
-import org.jetbrains.kotlin.server.CompileResponseGrpc
-import org.jetbrains.kotlin.server.CompileServiceGrpcKt
-import org.jetbrains.kotlin.server.ConnectRequestGrpc
-import org.jetbrains.kotlin.server.ConnectResponseGrpc
+import org.jetbrains.kotlin.server.*
 import java.io.Closeable
 import java.io.File
 import java.util.concurrent.TimeUnit
@@ -36,7 +34,16 @@ import java.util.concurrent.TimeUnit
 class RemoteDaemonClient(
     private val channel: ManagedChannel,
 ) : Closeable {
-    private val stub: CompileServiceGrpcKt.CompileServiceCoroutineStub = CompileServiceGrpcKt.CompileServiceCoroutineStub(channel)
+    private val stub: CompileServiceGrpcKt.CompileServiceCoroutineStub = CompileServiceGrpcKt
+        .CompileServiceCoroutineStub(channel)
+        .withCallCredentials(
+            CallAuthenticator(
+                BasicHTTPAuthClient(
+                    username = "dummy",
+                    password = "dummy"
+                )
+            )
+        )
 
     init {
         File(CLIENT_COMPILED_DIR).mkdir()
@@ -130,7 +137,6 @@ suspend fun main(args: Array<String>) {
         .intercept(RemoteClientInterceptor())
         .build()
 
-
     val client = RemoteDaemonClient(channel)
 
     val compilationOptions = CompilationOptions(
@@ -164,6 +170,7 @@ suspend fun main(args: Array<String>) {
                         inheritAdditionalProperties = true,
                     )
                 ).collect { response ->
+                    println("collecting message")
                     when {
                         response.hasDaemonMessage() -> {
                             // TODO handle messages however you want

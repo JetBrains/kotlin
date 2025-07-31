@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package server
+package server.interceptors
 
 import io.grpc.ForwardingServerCall
 import io.grpc.ForwardingServerCallListener
@@ -11,10 +11,11 @@ import io.grpc.Metadata
 import io.grpc.ServerCall
 import io.grpc.ServerCallHandler
 import io.grpc.ServerInterceptor
+import io.grpc.Status
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 
-class RemoteKotlinDaemonInterceptor : ServerInterceptor {
+class LoggingInterceptor : ServerInterceptor {
 
     private val formatter = DateTimeFormatter.ofPattern("HH:mm:ss")
 
@@ -28,6 +29,8 @@ class RemoteKotlinDaemonInterceptor : ServerInterceptor {
         next: ServerCallHandler<ReqT?, RespT?>?,
     ): ServerCall.Listener<ReqT?>? {
 
+        debug("headers are: $headers")
+
         // SERVER ---> CLIENT
         val wrappedCall = object : ForwardingServerCall.SimpleForwardingServerCall<ReqT?, RespT?>(call) {
             override fun sendMessage(message: RespT?) {
@@ -35,7 +38,7 @@ class RemoteKotlinDaemonInterceptor : ServerInterceptor {
                 super.sendMessage(message)
             }
 
-            override fun close(status: io.grpc.Status?, trailers: Metadata?) {
+            override fun close(status: Status?, trailers: Metadata?) {
                 debug("closing call with status: $status")
                 super.close(status, trailers)
             }
