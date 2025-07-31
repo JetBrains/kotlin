@@ -1141,6 +1141,10 @@ class BodyGenerator(
                 body.buildConstI32Symbol(wasmFileCodegenContext.stringPoolSize, location)
             }
 
+            wasmSymbols.getWasmAbiVersion -> {
+                body.buildConstI32Symbol(wasmAbiVersion, location)
+            }
+
             wasmSymbols.wasmArrayNewData0 -> {
                 val arrayGcType = WasmImmediate.GcType(
                     wasmFileCodegenContext.referenceGcType(call.typeArguments[0]!!.getRuntimeClass(irBuiltIns).symbol)
@@ -1552,6 +1556,7 @@ class BodyGenerator(
     }
 
     companion object {
+        val wasmAbiVersion = WasmSymbol(0)
         val anyVtableFieldId = WasmSymbol(0)
         val anyITableFieldId = WasmSymbol(1)
         val anyRttiFieldId = WasmSymbol(2)

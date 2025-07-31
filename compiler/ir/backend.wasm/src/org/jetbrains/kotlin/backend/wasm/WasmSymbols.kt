@@ -228,6 +228,8 @@ class WasmSymbols(
     val stringGetLiteralLatin1 = getFunction("stringLiteralLatin1", StandardNames.BUILT_INS_PACKAGE_FQ_NAME)
     val stringGetPoolSize = getInternalFunction("stringGetPoolSize")
 
+    val getWasmAbiVersion = getInternalFunction("getWasmAbiVersion")
+
     val testFun = maybeGetFunction("test", kotlinTestPackageFqName)
     val suiteFun = maybeGetFunction("suite", kotlinTestPackageFqName)
     val registerRootSuiteBlock = maybeGetFunction("registerRootSuiteBlock", kotlinTestPackageFqName)

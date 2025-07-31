@@ -120,6 +120,9 @@ internal fun consumeFloatIntoVoid(a: Float): Void =
 internal fun consumeDoubleIntoVoid(a: Double): Void =
     implementedAsIntrinsic
 
+// TODO make intrinsic after bootstrap
+internal fun getWasmAbiVersion(): Int = 0
+
 @ExcludedFromCodegen
 internal fun stringGetPoolSize(): Int =
     implementedAsIntrinsic
