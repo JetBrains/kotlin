@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
+import org.jetbrains.kotlin.KtLightSourceElement
+import org.jetbrains.kotlin.KtRealPsiSourceElement
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
@@ -22,12 +24,11 @@ import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
 import org.jetbrains.kotlin.fir.resolve.getClassRepresentativeForContextSensitiveResolution
 import org.jetbrains.kotlin.fir.resolve.getParentChainForContextSensitiveResolution
 import org.jetbrains.kotlin.fir.scopes.getClassifiers
-import org.jetbrains.kotlin.fir.scopes.processClassifiersByName
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.psi
 import org.jetbrains.kotlin.psi.KtNameReferenceExpression
+import org.jetbrains.kotlin.psi.stubs.elements.KtNameReferenceExpressionElementType
 
 object FirContextSensitiveResolutionAmbiguityChecker : FirBasicExpressionChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
@@ -42,7 +43,7 @@ object FirContextSensitiveResolutionAmbiguityChecker : FirBasicExpressionChecker
     context(context: CheckerContext, reporter: DiagnosticReporter)
     fun checkEquality(equalityOperatorCall: FirEqualityOperatorCall) {
         val rhs = equalityOperatorCall.arguments[1]
-        val name = (rhs.source.psi as? KtNameReferenceExpression)?.getReferencedNameAsName() ?: return
+        val name = rhs.getReferencedName() ?: return
 
         val resolvedSymbol = when (rhs) {
             is FirErrorResolvedQualifier -> null
@@ -61,6 +62,13 @@ object FirContextSensitiveResolutionAmbiguityChecker : FirBasicExpressionChecker
             name = name,
             source = rhs.source
         )
+    }
+
+    fun FirExpression.getReferencedName(): Name? = when (val source = source) {
+        is KtRealPsiSourceElement -> (source.psi as? KtNameReferenceExpression)?.getReferencedNameAsName()
+        is KtLightSourceElement if source.elementType is KtNameReferenceExpressionElementType ->
+            Name.identifier(source.lighterASTNode.toString())
+        else -> null
     }
 
     context(context: CheckerContext, reporter: DiagnosticReporter)
