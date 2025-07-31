@@ -1,6 +1,7 @@
 // RUN_PIPELINE_TILL: BACKEND
 
 // MODULE: dep2
+package ui
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.ComposableTargetMarker
@@ -18,6 +19,8 @@ annotation class UiComposable
 @Composable @UiComposable fun Ui() {}
 
 // MODULE: dep1
+package vector
+
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.ComposableTargetMarker
 
@@ -35,6 +38,8 @@ annotation class VectorComposable
 
 // MODULE: main(dep1, dep2)
 import androidx.compose.runtime.Composable
+import ui.*
+import vector.*
 
 @Composable fun VectorContent(content: @Composable @VectorComposable () -> Unit) {
     content()

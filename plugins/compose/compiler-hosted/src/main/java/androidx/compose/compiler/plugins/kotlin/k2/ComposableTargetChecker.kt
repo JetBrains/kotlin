@@ -291,7 +291,7 @@ internal class FirApplierInferencer(
         errorReporter = object : ErrorReporter<FirInferenceNode> {
             private fun descriptionFrom(token: String): String =
                 with(session) {
-                    val symbol = symbolProvider.getClassLikeSymbolByClassId(ClassId.fromString(token))
+                    val symbol = symbolProvider.getClassLikeSymbolByClassId(ClassId.fromString(token.replace('.', '/')))
                     val description = symbol?.annotationArgument(
                         ComposeClassIds.ComposableTargetMarker,
                         ComposeFqNames.ComposableTargetMarkerDescriptionName
