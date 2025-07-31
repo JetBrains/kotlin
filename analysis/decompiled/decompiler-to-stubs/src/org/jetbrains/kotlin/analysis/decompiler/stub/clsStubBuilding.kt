@@ -204,7 +204,7 @@ fun createModifierListStubForDeclaration(
     flags: Int,
     flagsToTranslate: List<FlagsToModifiers>,
     additionalModifiers: List<KtModifierKeywordToken>,
-    mustUseReturnValueFlag: Flags.BooleanFlagField?,
+    returnValueStatus: ProtoBuf.ReturnValueStatus = ProtoBuf.ReturnValueStatus.UNSPECIFIED,
 ): KotlinModifierListStubImpl {
     assert(flagsToTranslate.isNotEmpty())
 
@@ -212,14 +212,14 @@ fun createModifierListStubForDeclaration(
     return createModifierListStub(
         parent,
         modifiers,
-        mustUseReturnValue = mustUseReturnValueFlag?.get(flags) == true,
+        returnValueStatus,
     )!!
 }
 
 fun createModifierListStub(
     parent: StubElement<out PsiElement>,
     modifiers: Collection<KtModifierKeywordToken>,
-    mustUseReturnValue: Boolean,
+    returnValueStatus: ProtoBuf.ReturnValueStatus = ProtoBuf.ReturnValueStatus.UNSPECIFIED,
 ): KotlinModifierListStubImpl? {
     if (modifiers.isEmpty()) {
         return null
@@ -230,7 +230,8 @@ fun createModifierListStub(
     @OptIn(KtImplementationDetail::class)
     val specialMask = ModifierMaskUtils.computeMaskForSpecialFlags { flag ->
         when (flag) {
-            KotlinModifierListStub.SpecialFlag.MustUseReturnValue -> mustUseReturnValue
+            KotlinModifierListStub.SpecialFlag.MustUseReturnValue   -> returnValueStatus == ProtoBuf.ReturnValueStatus.MUST_USE
+            KotlinModifierListStub.SpecialFlag.IgnorableReturnValue -> returnValueStatus == ProtoBuf.ReturnValueStatus.EXPLICITLY_IGNORABLE
         }
     }
 

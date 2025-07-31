@@ -40,7 +40,6 @@ fun createTypeAliasStub(
         typeAliasProto.flags,
         arrayListOf(VISIBILITY),
         additionalModifiers = emptyList(),
-        mustUseReturnValueFlag = null,
     )
 
     val typeStubBuilder = TypeClsStubBuilder(c)

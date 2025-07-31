@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.fir.types.typeContext
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.DataClassResolver
+import org.jetbrains.kotlin.resolve.ReturnValueStatus
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import java.util.*
 
@@ -290,7 +291,7 @@ class FirStatusResolver(
             status.isExpect = true
         }
 
-        status.hasMustUseReturnValue = computeMustUseReturnValue(declaration, isLocal, containingClass, containingProperty, overriddenStatuses)
+        status.returnValueStatus = computeMustUseReturnValue(declaration, isLocal, containingClass, containingProperty, overriddenStatuses)
 
         return status.resolved(visibility, modality, effectiveVisibility)
     }
@@ -301,8 +302,8 @@ class FirStatusResolver(
         containingClass: FirClass?,
         containingProperty: FirProperty?,
         overriddenStatuses: List<FirResolvedDeclarationStatus>,
-    ): Boolean {
-        if (declaration !is FirCallableDeclaration) return false
+    ): ReturnValueStatus {
+        if (declaration !is FirCallableDeclaration) return ReturnValueStatus.Unspecified
 
         return session.mustUseReturnValueStatusComponent.computeMustUseReturnValueForCallable(
             session,

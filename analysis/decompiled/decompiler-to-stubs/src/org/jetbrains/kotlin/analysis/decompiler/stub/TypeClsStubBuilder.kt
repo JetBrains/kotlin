@@ -239,7 +239,6 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
                 createModifierListStub(
                     typeProjection,
                     listOfNotNull(modifierKeywordToken),
-                    mustUseReturnValue = false,
                 )
 
                 createTypeReferenceStub(typeProjection, typeArgumentProto.type(c.typeTable)!!)
@@ -373,7 +372,6 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
             val modifierList = createModifierListStub(
                 parameterStub,
                 modifiers,
-                mustUseReturnValue = false,
             )
 
             if (Flags.HAS_ANNOTATIONS.get(valueParameterProto.flags)) {
@@ -456,7 +454,6 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
         val modifierList = createModifierListStub(
             typeParameterStub,
             modifiers,
-            mustUseReturnValue = false,
         )
 
         val annotations = c.components.annotationLoader.loadTypeParameterAnnotations(typeParameterProto, c.nameResolver)

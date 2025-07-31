@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.fir.types.impl.*
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.packageName
 import org.jetbrains.kotlin.name.SpecialNames
+import org.jetbrains.kotlin.resolve.ReturnValueStatus
 import org.jetbrains.kotlin.util.OperatorNameConventions
 import org.jetbrains.kotlin.util.OperatorNameConventions.STATEMENT_LIKE_OPERATORS
 import org.jetbrains.kotlin.util.wrapIntoFileAnalysisExceptionIfNeeded
@@ -127,7 +128,7 @@ fun FirDeclarationStatus.copy(
     isFromEnumClass: Boolean = this.isFromEnumClass,
     isFun: Boolean = this.isFun,
     hasStableParameterNames: Boolean = this.hasStableParameterNames,
-    hasMustUseReturnValue: Boolean = this.hasMustUseReturnValue,
+    returnValueStatus: ReturnValueStatus = this.returnValueStatus
 ): FirDeclarationStatus {
     val newVisibility = visibility ?: this.visibility
     val newModality = modality ?: this.modality
@@ -159,7 +160,7 @@ fun FirDeclarationStatus.copy(
         isFromEnumClass = isFromEnumClass,
         isFun = isFun,
         hasStableParameterNames = hasStableParameterNames,
-        hasMustUseReturnValue = hasMustUseReturnValue,
+        returnValueStatus = returnValueStatus,
     )
     return newStatus
 }
@@ -210,7 +211,7 @@ private fun copyStatusAttributes(
     isFromEnumClass: Boolean = from.isFromEnumClass,
     isFun: Boolean = from.isFun,
     hasStableParameterNames: Boolean = from.hasStableParameterNames,
-    hasMustUseReturnValue: Boolean = from.hasMustUseReturnValue,
+    returnValueStatus: ReturnValueStatus = from.returnValueStatus,
 ) {
     to.isExpect = isExpect
     to.isActual = isActual
@@ -232,7 +233,7 @@ private fun copyStatusAttributes(
     to.isFromEnumClass = isFromEnumClass
     to.isFun = isFun
     to.hasStableParameterNames = hasStableParameterNames
-    to.hasMustUseReturnValue = hasMustUseReturnValue
+    to.returnValueStatus = returnValueStatus
 }
 
 inline fun <R> whileAnalysing(session: FirSession, element: FirElement, block: () -> R): R {
