@@ -47623,6 +47623,12 @@ public class PhasedJvmDiagnosticPsiTestGenerated extends AbstractPhasedJvmDiagno
         }
 
         @Test
+        @TestMetadata("accessorsAllowedInK2MultiModule.kt")
+        public void testAccessorsAllowedInK2MultiModule() {
+          runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/dsl/accessorsAllowedInK2MultiModule.kt");
+        }
+
+        @Test
         @TestMetadata("callUsualContractFunction.kt")
         public void testCallUsualContractFunction() {
           runTest("compiler/testData/diagnostics/testsWithStdLib/contracts/dsl/callUsualContractFunction.kt");
