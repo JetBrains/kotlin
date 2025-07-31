@@ -3,12 +3,12 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlin.analysis.api.fe10.test.cases.generated.cases.components.typeCreator;
+package org.jetbrains.kotlin.analysis.api.fir.test.cases.generated.cases.components.typeCreator;
 
 import com.intellij.testFramework.TestDataPath;
 import org.jetbrains.kotlin.test.util.KtTestUtil;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.analysis.api.fe10.test.configurator.AnalysisApiFe10TestConfiguratorFactory;
+import org.jetbrains.kotlin.analysis.api.fir.test.configurators.AnalysisApiFirTestConfiguratorFactory;
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfiguratorFactoryData;
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.AnalysisApiTestConfigurator;
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.TestModuleKind;
@@ -26,15 +26,15 @@ import java.util.regex.Pattern;
 @SuppressWarnings("all")
 @TestMetadata("analysis/analysis-api/testData/components/typeCreator/classType")
 @TestDataPath("$PROJECT_ROOT")
-public class Fe10IdeNormalAnalysisSourceModuleBuildClassTypeTestGenerated extends AbstractBuildClassTypeTest {
+public class FirIdeDependentAnalysisSourceModuleBuildClassTypeTestGenerated extends AbstractBuildClassTypeTest {
   @NotNull
   @Override
   public AnalysisApiTestConfigurator getConfigurator() {
-    return AnalysisApiFe10TestConfiguratorFactory.INSTANCE.createConfigurator(
+    return AnalysisApiFirTestConfiguratorFactory.INSTANCE.createConfigurator(
       new AnalysisApiTestConfiguratorFactoryData(
-        FrontendKind.Fe10,
+        FrontendKind.Fir,
         TestModuleKind.Source,
-        AnalysisSessionMode.Normal,
+        AnalysisSessionMode.Dependent,
         AnalysisApiMode.Ide
       )
     );

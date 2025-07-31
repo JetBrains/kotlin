@@ -543,7 +543,7 @@ private fun AnalysisApiTestGroup.generateAnalysisApiComponentsTests() {
             model(it, "typeParameter")
         }
 
-        test<AbstractBuildClassTypeTest>(filter = analysisSessionModeIs(AnalysisSessionMode.Normal)/*no non-file context element*/) {
+        test<AbstractBuildClassTypeTest> {
             model(it, "classType")
         }
     }
