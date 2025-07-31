@@ -90,12 +90,12 @@ public class KtDestructuringDeclaration extends KtDeclarationImpl implements KtV
 
     @Nullable
     public PsiElement getRPar() {
-        return findChildByType(OPENING_BRACES);
+        return findChildByType(CLOSING_BRACES);
     }
 
     @Nullable
     public PsiElement getLPar() {
-        return findChildByType(CLOSING_BRACES);
+        return findChildByType(OPENING_BRACES);
     }
 
     /**
