@@ -18,8 +18,6 @@ internal fun createKType(
 @UsedFromCompilerGeneratedCode
 internal fun createDynamicKType(): KType = DynamicKType
 
-internal fun markKTypeNullable(kType: KType) = KTypeImpl(kType.classifier!!, kType.arguments, true)
-
 @UsedFromCompilerGeneratedCode
 internal fun createKTypeParameter(
     name: String,
