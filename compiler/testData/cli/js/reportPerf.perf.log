@@ -3,8 +3,7 @@ Kotlin to JS compiler performance report
              ANALYZE        $UINT>>$ ms            $REAL>>$ loc/s
    TRANSLATION to IR        $UINT>>$ ms            $REAL>>$ loc/s
      IR PRE-LOWERING        $UINT>>$ ms            $REAL>>$ loc/s
-       DYNAMIC PHASE        $UINT>>$ ms            $REAL>>$ loc/s (UpgradeCallableReferences)
-       DYNAMIC PHASE        $UINT>>$ ms            $REAL>>$ loc/s (AvoidLocalFOsInInlineFunctionsLowering)
+      DYNAMIC PHASES        $UINT>>$ ms            $REAL>>$ loc/s
     IR SERIALIZATION        $UINT>>$ ms            $REAL>>$ loc/s
         KLIB WRITING        $UINT>>$ ms            $REAL>>$ loc/s
 GC time for PS MarkSweep is $UINT$ ms, $UINT$ collections

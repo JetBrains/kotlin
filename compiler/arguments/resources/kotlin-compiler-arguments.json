@@ -1664,6 +1664,37 @@
                         }
                     },
                     {
+                        "name": "Xdetailed-perf",
+                        "shortName": null,
+                        "deprecatedName": null,
+                        "description": {
+                            "current": "Enable more detailed performance statistics (Experimental).\nFor Native, the performance report includes execution time and lines processed per second for every individual lowering.\nFor WASM and JS, the performance report includes execution time and lines per second for each lowering of the first stage of compilation.",
+                            "valueInVersions": []
+                        },
+                        "delimiter": null,
+                        "valueType": {
+                            "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
+                            "isNullable": {
+                                "current": false,
+                                "valueInVersions": []
+                            },
+                            "defaultValue": {
+                                "current": false,
+                                "valueInVersions": []
+                            }
+                        },
+                        "valueDescription": {
+                            "current": null,
+                            "valueInVersions": []
+                        },
+                        "releaseVersionsMetadata": {
+                            "introducedVersion": "2.3.0",
+                            "stabilizedVersion": null,
+                            "deprecatedVersion": null,
+                            "removedVersion": null
+                        }
+                    },
+                    {
                         "name": "Xdump-perf",
                         "shortName": null,
                         "deprecatedName": null,

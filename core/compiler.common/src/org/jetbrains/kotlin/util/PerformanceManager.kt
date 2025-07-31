@@ -65,6 +65,7 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
         private set
     val isPhaseMeasuring: Boolean
         get() = phaseStartTime != null
+    var detailedPerf: Boolean = false
 
     fun getTargetInfo(): String =
         listOfNotNull(targetDescription, outputKind).joinToString("-") + " $files files ($lines lines)"
@@ -371,7 +372,7 @@ abstract class PerformanceManager(val targetPlatform: TargetPlatform, val presen
     fun createPerformanceReport(dumpFormat: DumpFormat): String = when (dumpFormat) {
         DumpFormat.PlainText -> buildString {
             append("$presentableName performance report\n")
-            unitStats.forEachStringMeasurement { appendLine(it) }
+            forEachStringMeasurement { appendLine(it) }
         }
         DumpFormat.Json -> UnitStatsJsonDumper.dump(unitStats)
         DumpFormat.Markdown -> MarkdownReportRenderer(StatsCalculator(SingleReportsData(unitStats))).render()

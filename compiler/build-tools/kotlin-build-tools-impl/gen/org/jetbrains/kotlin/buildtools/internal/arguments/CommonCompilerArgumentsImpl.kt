@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments.Com
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments.Companion.X_CONTEXT_RECEIVERS
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments.Companion.X_CONTEXT_SENSITIVE_RESOLUTION
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments.Companion.X_DATA_FLOW_BASED_EXHAUSTIVENESS
+import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments.Companion.X_DETAILED_PERF
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments.Companion.X_DISABLE_DEFAULT_SCRIPTING_PLUGIN
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments.Companion.X_DISABLE_PHASES
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments.Companion.X_DONT_WARN_ON_ERROR_SUPPRESSION
@@ -104,6 +105,7 @@ public open class CommonCompilerArgumentsImpl : CommonToolArgumentsImpl(),
     if ("X_NEW_INFERENCE" in optionsMap) { arguments.newInference = get(X_NEW_INFERENCE) }
     if ("X_INLINE_CLASSES" in optionsMap) { arguments.inlineClasses = get(X_INLINE_CLASSES) }
     if ("X_REPORT_PERF" in optionsMap) { arguments.reportPerf = get(X_REPORT_PERF) }
+    if ("X_DETAILED_PERF" in optionsMap) { arguments.detailedPerf = get(X_DETAILED_PERF) }
     if ("X_DUMP_PERF" in optionsMap) { arguments.dumpPerf = get(X_DUMP_PERF) }
     if ("X_METADATA_VERSION" in optionsMap) { arguments.metadataVersion = get(X_METADATA_VERSION) }
     if ("X_LIST_PHASES" in optionsMap) { arguments.listPhases = get(X_LIST_PHASES) }

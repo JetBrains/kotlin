@@ -285,7 +285,7 @@ class K2JVMCompiler : CLICompiler<K2JVMCompilerArguments>() {
             val externalManager = services[PerformanceManager::class.java]
             if (externalManager != null) return externalManager
             val argument = arguments.profileCompilerCommand ?: return null
-            return ProfilingCompilerPerformanceManager.create(argument)
+            return ProfilingCompilerPerformanceManager.create(argument, arguments.detailedPerf)
         }
     }
 

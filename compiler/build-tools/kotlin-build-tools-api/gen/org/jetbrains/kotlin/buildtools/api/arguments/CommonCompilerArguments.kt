@@ -145,6 +145,18 @@ public interface CommonCompilerArguments : CommonToolArguments {
         CommonCompilerArgument("X_REPORT_PERF")
 
     /**
+     * Enable more detailed performance statistics (Experimental).
+     * For Native, the performance report includes execution time and lines processed per second for every individual lowering.
+     * For WASM and JS, the performance report includes execution time and lines per second for each lowering of the first stage of compilation.
+     *
+     * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     */
+    @JvmField
+    @ExperimentalCompilerArgument
+    public val X_DETAILED_PERF: CommonCompilerArgument<Boolean> =
+        CommonCompilerArgument("X_DETAILED_PERF")
+
+    /**
      * Dump detailed performance statistics to the specified file in plain text, JSON or markdown format (it's detected by the file's extension).
      * Also, it supports the placeholder `*` and directory for generating file names based on the module being compiled and the current time stamp.
      * Example: `path/to/dir/​*.log` creates logs like `path/to/dir/my-module_2025-06-20-12-22-32.log` in plain text format, `path/to/dir/` creates logs like `path/to/dir/my-log_2025-06-20-12-22-32.json`.

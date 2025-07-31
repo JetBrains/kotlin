@@ -290,7 +290,7 @@ abstract class AbstractFullPipelineModularizedTest : AbstractModularizedTest() {
         configureBaseArguments(args, moduleData, tmp)
         configureArguments(args, moduleData)
 
-        val manager = CompilerPerformanceManager()
+        val manager = CompilerPerformanceManager().apply { detailedPerf = args.detailedPerf }
         val services = Services.Builder().register(PerformanceManager::class.java, manager).build()
         val collector = TestMessageCollector()
         val result = try {

@@ -69,7 +69,7 @@ abstract class AbstractCliPipeline<A : CommonCompilerArguments> {
             performanceManager.notifyCompilationFinished()
             if (arguments.reportPerf) {
                 messageCollector.report(CompilerMessageSeverity.LOGGING, "PERF: " + performanceManager.getTargetInfo())
-                performanceManager.unitStats.forEachStringMeasurement {
+                performanceManager.forEachStringMeasurement {
                     messageCollector.report(CompilerMessageSeverity.LOGGING, "PERF: $it", null)
                 }
             }
@@ -139,7 +139,9 @@ abstract class AbstractCliPipeline<A : CommonCompilerArguments> {
      * Some CLIs might support non-standard performance managers, so this method is needed to be able to create such a manager if needed.
      */
     protected open fun createPerformanceManager(arguments: A, services: Services): PerformanceManager {
-        return defaultPerformanceManager
+        return defaultPerformanceManager.apply {
+            detailedPerf = arguments.detailedPerf
+        }
     }
 
     protected open fun isKaptMode(arguments: A): Boolean = false

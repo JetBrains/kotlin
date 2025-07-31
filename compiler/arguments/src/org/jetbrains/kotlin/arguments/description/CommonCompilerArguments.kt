@@ -314,6 +314,18 @@ val actualCommonCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLev
     }
 
     compilerArgument {
+        name = "Xdetailed-perf"
+        description = ("Enable more detailed performance statistics (Experimental).\n" +
+                "For Native, the performance report includes execution time and lines processed per second for every individual lowering.\n" +
+                "For WASM and JS, the performance report includes execution time and lines per second for each lowering of the first stage of compilation.").asReleaseDependent()
+        valueType = BooleanType.defaultFalse
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_3_0,
+        )
+    }
+
+    compilerArgument {
         name = "Xdump-perf"
         description =
             ("Dump detailed performance statistics to the specified file in plain text, JSON or markdown format (it's detected by the file's extension).\n" +

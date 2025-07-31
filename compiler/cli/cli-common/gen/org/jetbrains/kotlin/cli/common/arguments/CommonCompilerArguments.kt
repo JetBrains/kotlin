@@ -268,6 +268,18 @@ progressive mode enabled may cause compilation errors in progressive mode.""",
         }
 
     @Argument(
+        value = "-Xdetailed-perf",
+        description = """Enable more detailed performance statistics (Experimental).
+For Native, the performance report includes execution time and lines processed per second for every individual lowering.
+For WASM and JS, the performance report includes execution time and lines per second for each lowering of the first stage of compilation.""",
+    )
+    var detailedPerf: Boolean = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
         value = "-Xdump-perf",
         valueDescription = "<path>",
         description = """Dump detailed performance statistics to the specified file in plain text, JSON or markdown format (it's detected by the file's extension).

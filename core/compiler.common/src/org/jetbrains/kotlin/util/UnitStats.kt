@@ -230,49 +230,66 @@ val phaseSideTypeName = mapOf(
     PhaseSideType.BinaryClassFromKotlinFile to "Binary class from Kotlin file"
 )
 
-fun UnitStats.forEachStringMeasurement(action: (String) -> Unit) {
-    forEachPhaseMeasurement { phaseType, time ->
-        if (time == null) return@forEachPhaseMeasurement
+fun PerformanceManager.forEachStringMeasurement(action: (String) -> Unit) {
+    with(unitStats) {
+        forEachPhaseMeasurement { phaseType, time ->
+            if (time == null) return@forEachPhaseMeasurement
 
-        action(
-            "%20s%8s ms".format(phaseTypeName.getValue(phaseType), time.millis) +
-                    if (phaseType != PhaseType.Initialization && linesCount != 0) {
-                        "%12.3f loc/s".format(Locale.ENGLISH, getLinesPerSecond(time))
-                    } else {
-                        ""
-                    }
-        )
-
-        dynamicStats?.filter { it.parentPhaseType == phaseType }?.forEach { (_, dynamicName, dynamicTime) ->
             action(
-                "%20s%8s ms".format("DYNAMIC PHASE", dynamicTime.millis) +
-                        if (linesCount != 0) {
-                            "%12.3f loc/s ($dynamicName)".format(Locale.ENGLISH, getLinesPerSecond(dynamicTime))
+                "%20s%8s ms".format(phaseTypeName.getValue(phaseType), time.millis) +
+                        if (phaseType != PhaseType.Initialization && linesCount != 0) {
+                            "%12.3f loc/s".format(Locale.ENGLISH, getLinesPerSecond(time))
                         } else {
-                            " ($dynamicName)"
+                            ""
                         }
             )
+
+            dynamicStats?.filter { it.parentPhaseType == phaseType }?.let { filteredDynamicStats ->
+                if (detailedPerf) {
+                    filteredDynamicStats.forEach { (_, dynamicName, dynamicTime) ->
+                        action(
+                            "%20s%8s ms".format("DYNAMIC PHASE", dynamicTime.millis) +
+                                    if (linesCount != 0) {
+                                        "%12.3f loc/s ($dynamicName)".format(Locale.ENGLISH, getLinesPerSecond(dynamicTime))
+                                    } else {
+                                        " ($dynamicName)"
+                                    }
+                        )
+                    }
+                } else {
+                    if (filteredDynamicStats.isNotEmpty()) {
+                        var totTime = Time.ZERO
+                        filteredDynamicStats.forEach {
+                            totTime += it.time
+                        }
+                        action(
+                            "%20s%8s ms".format("DYNAMIC PHASES", totTime.millis) +
+                                    if (linesCount != 0) "%12.3f loc/s".format(Locale.ENGLISH, getLinesPerSecond(totTime)) else ""
+                        )
+                    }
+                }
+            }
         }
+
+        forEachPhaseSideMeasurement { phaseSideType, sideStats ->
+            if (sideStats == null) return@forEachPhaseSideMeasurement
+
+            val description = phaseSideTypeName.getValue(phaseSideType)
+
+            action("$description performed ${sideStats.count} times, total time ${sideStats.time.millis} ms")
+        }
+
+        gcStats.forEach {
+            action("GC time for ${it.kind} is ${it.millis} ms, ${it.count} collections")
+        }
+
+        jitTimeMillis?.let {
+            action("JIT time is $it ms")
+        }
+
+        @OptIn(DeprecatedMeasurementForBackCompatibility::class)
+        extendedStats?.forEach { action(it) }
     }
-
-    forEachPhaseSideMeasurement { phaseSideType, sideStats ->
-        if (sideStats == null) return@forEachPhaseSideMeasurement
-
-        val description = phaseSideTypeName.getValue(phaseSideType)
-
-        action("$description performed ${sideStats.count} times, total time ${sideStats.time.millis} ms")
-    }
-
-    gcStats.forEach {
-        action("GC time for ${it.kind} is ${it.millis} ms, ${it.count} collections")
-    }
-
-    jitTimeMillis?.let {
-        action("JIT time is $it ms")
-    }
-
-    @OptIn(DeprecatedMeasurementForBackCompatibility::class)
-    extendedStats?.forEach { action(it) }
 }
 
 val nanosInSecond = TimeUnit.SECONDS.toNanos(1)

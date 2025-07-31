@@ -49,6 +49,9 @@ object CLIConfigurationKeys {
     @JvmField
     val PERF_MANAGER = CompilerConfigurationKey.create<PerformanceManager>("performance manager")
 
+    @JvmField
+    val DETAILED_PERF = CompilerConfigurationKey.create<Boolean>("Enable more detailed performance statistics.")
+
     // Used in Eclipse plugin (see KotlinCLICompiler)
     @JvmField
     val INTELLIJ_PLUGIN_ROOT = CompilerConfigurationKey.create<String>("intellij plugin root")
@@ -113,6 +116,10 @@ var CompilerConfiguration.allowKotlinPackage: Boolean
 var CompilerConfiguration.perfManager: PerformanceManager?
     get() = get(CLIConfigurationKeys.PERF_MANAGER)
     set(value) { put(CLIConfigurationKeys.PERF_MANAGER, requireNotNull(value) { "nullable values are not allowed" }) }
+
+var CompilerConfiguration.detailedPerf: Boolean
+    get() = getBoolean(CLIConfigurationKeys.DETAILED_PERF)
+    set(value) { put(CLIConfigurationKeys.DETAILED_PERF, value) }
 
 var CompilerConfiguration.intellijPluginRoot: String?
     get() = get(CLIConfigurationKeys.INTELLIJ_PLUGIN_ROOT)

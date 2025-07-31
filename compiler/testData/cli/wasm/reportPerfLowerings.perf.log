@@ -3,21 +3,7 @@ Kotlin to JS compiler performance report
              ANALYZE        $UINT>>$ ms            $REAL>>$ loc/s
    TRANSLATION to IR        $UINT>>$ ms            $REAL>>$ loc/s
      IR PRE-LOWERING        $UINT>>$ ms            $REAL>>$ loc/s
-       DYNAMIC PHASE        $UINT>>$ ms            $REAL>>$ loc/s (UpgradeCallableReferences)
-       DYNAMIC PHASE        $UINT>>$ ms            $REAL>>$ loc/s (AvoidLocalFOsInInlineFunctionsLowering)
-       DYNAMIC PHASE        $UINT>>$ ms            $REAL>>$ loc/s (LateinitLowering)
-       DYNAMIC PHASE        $UINT>>$ ms            $REAL>>$ loc/s (SharedVariablesLowering)
-       DYNAMIC PHASE        $UINT>>$ ms            $REAL>>$ loc/s (LocalClassesInInlineLambdasPhase)
-       DYNAMIC PHASE        $UINT>>$ ms            $REAL>>$ loc/s (ArrayConstructor)
-       DYNAMIC PHASE        $UINT>>$ ms            $REAL>>$ loc/s (InlineCallCycleChecker)
-       DYNAMIC PHASE        $UINT>>$ ms            $REAL>>$ loc/s (InlineOnlyPrivateFunctions)
-       DYNAMIC PHASE        $UINT>>$ ms            $REAL>>$ loc/s (InlineDeclarationCheckerAfterInliningOnlyPrivateFunctionsPhase)
-       DYNAMIC PHASE        $UINT>>$ ms            $REAL>>$ loc/s (OuterThisInInlineFunctionsSpecialAccessorLowering)
-       DYNAMIC PHASE        $UINT>>$ ms            $REAL>>$ loc/s (SyntheticAccessorGeneration)
-       DYNAMIC PHASE        $UINT>>$ ms            $REAL>>$ loc/s (IrValidationAfterInliningOnlyPrivateFunctionsPhase)
-       DYNAMIC PHASE        $UINT>>$ ms            $REAL>>$ loc/s (InlineAllFunctions)
-       DYNAMIC PHASE        $UINT>>$ ms            $REAL>>$ loc/s (InlineFunctionSerializationPreProcessing)
-       DYNAMIC PHASE        $UINT>>$ ms            $REAL>>$ loc/s (IrValidationAfterInliningAllFunctionsPhase)
+      DYNAMIC PHASES        $UINT>>$ ms            $REAL>>$ loc/s
     IR SERIALIZATION        $UINT>>$ ms            $REAL>>$ loc/s
         KLIB WRITING        $UINT>>$ ms            $REAL>>$ loc/s
 GC time for PS MarkSweep is $UINT$ ms, $UINT$ collections
