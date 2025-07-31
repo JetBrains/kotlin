@@ -610,7 +610,7 @@ private fun convertJavaMethodToFir(
             isJavaRecordComponent = true
         }
         // Can be called only after .build() because we need to access fir.resolvedAnnotationsWithClassIds
-        methodStatus.hasMustUseReturnValue = session.mustUseReturnValueStatusComponent.computeMustUseReturnValueForJavaCallable(
+        methodStatus.returnValueStatus = session.mustUseReturnValueStatusComponent.computeMustUseReturnValueForJavaCallable(
             session,
             methodSymbol,
             containingClassSymbol,
@@ -694,7 +694,7 @@ private fun convertJavaConstructorToFir(
     }.apply {
         containingClassForStaticMemberAttr = classSymbol.toLookupTag()
         // Can be called only after .build() because we need to access fir.resolvedAnnotationsWithClassIds
-        methodStatus.hasMustUseReturnValue = session.mustUseReturnValueStatusComponent.computeMustUseReturnValueForJavaCallable(
+        methodStatus.returnValueStatus = session.mustUseReturnValueStatusComponent.computeMustUseReturnValueForJavaCallable(
             session,
             constructorSymbol,
             classSymbol,

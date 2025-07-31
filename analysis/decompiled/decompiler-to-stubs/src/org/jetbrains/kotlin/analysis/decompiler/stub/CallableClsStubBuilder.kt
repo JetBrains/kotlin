@@ -139,14 +139,14 @@ abstract class CallableClsStubBuilder(
     protected fun createModifierListStubForCallableDeclaration(
         flags: Int,
         flagsToTranslate: List<FlagsToModifiers>,
-        mustUseReturnValueFlag: Flags.BooleanFlagField?,
+        returnValueStatus: Flags.FlagField<ProtoBuf.ReturnValueStatus>,
     ): KotlinModifierListStubImpl {
         val modifierListStub = createModifierListStubForDeclaration(
             callableStub,
             flags,
             flagsToTranslate,
             additionalModifiers = emptyList(),
-            mustUseReturnValueFlag = mustUseReturnValueFlag,
+            returnValueStatus = returnValueStatus,
         )
 
         typeStubBuilder.createContextReceiverStubs(modifierListStub, contextReceiverTypes)
@@ -203,7 +203,7 @@ private class FunctionClsStubBuilder(
                 SUSPEND,
                 EXPECT_FUNCTION,
             ) + modalityModifier,
-            mustUseReturnValueFlag = Flags.HAS_MUST_USE_RETURN_VALUE_FUNCTION,
+            returnValueStatus = Flags.RETURN_VALUE_STATUS_FUNCTION,
         )
 
         // If function is marked as having no annotations, we don't create stubs for it
@@ -272,7 +272,7 @@ private class PropertyClsStubBuilder(
         val modifierListStubImpl = createModifierListStubForCallableDeclaration(
             flags = flags,
             flagsToTranslate = listOf(VISIBILITY, LATEINIT, EXTERNAL_PROPERTY, EXPECT_PROPERTY) + constModifier + modalityModifier,
-            mustUseReturnValueFlag = Flags.HAS_MUST_USE_RETURN_VALUE_PROPERTY,
+            returnValueStatus = Flags.RETURN_VALUE_STATUS_PROPERTY,
         )
 
         // If field is marked as having no annotations, we don't create stubs for it
@@ -449,7 +449,7 @@ private class PropertyClsStubBuilder(
             accessorFlags,
             ACCESSOR_FLAGS,
             additionalModifiers = emptyList(),
-            mustUseReturnValueFlag = null,
+            returnValueStatus = null,
         )
 
         if (annotations.isNotEmpty()) {
@@ -559,7 +559,7 @@ private class ConstructorClsStubBuilder(
         val modifierListStubImpl = createModifierListStubForCallableDeclaration(
             flags = flags,
             flagsToTranslate = listOf(VISIBILITY),
-            mustUseReturnValueFlag = Flags.HAS_MUST_USE_RETURN_VALUE_CTOR,
+            returnValueStatus = Flags.RETURN_VALUE_STATUS_CTOR,
         )
 
         // If constructor is marked as having no annotations, we don't create stubs for it

@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
+import org.jetbrains.kotlin.resolve.ReturnValueStatus
 
 /**
  * Generated from: [org.jetbrains.kotlin.fir.tree.generator.FirTree.declarationStatus]
@@ -42,7 +43,7 @@ interface FirDeclarationStatus : FirElement {
     val isFromEnumClass: Boolean
     val isFun: Boolean
     val hasStableParameterNames: Boolean
-    val hasMustUseReturnValue: Boolean
+    val returnValueStatus: ReturnValueStatus
     val defaultVisibility: Visibility
     val defaultModality: Modality
 

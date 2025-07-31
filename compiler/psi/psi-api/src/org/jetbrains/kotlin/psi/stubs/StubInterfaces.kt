@@ -134,12 +134,22 @@ interface KotlinModifierListStub : StubElement<KtDeclarationModifierList> {
     @KtImplementationDetail
     enum class SpecialFlag {
         /**
-         * Whether the return type of the modifier list owner must be checked.
+         * Whether the return value of the modifier list owner must be checked for usage.
          * This check is supposed to work only for binary stubs.
          *
-         * See [KT-12719](https://youtrack.jetbrains.com/issue/KT-12719) for details.
+         * See org.jetbrains.kotlin.resolve.ReturnValueStatus and FirResolvedStatus for details.
+         * Feature issue: [KT-12719](https://youtrack.jetbrains.com/issue/KT-12719).
          */
         MustUseReturnValue,
+
+        /**
+         * Whether the return value of the modifier list owner is declared as explicitly ignorable and should not be checked for usage.
+         * This check is supposed to work only for binary stubs.
+         *
+         * See org.jetbrains.kotlin.resolve.ReturnValueStatus and FirResolvedStatus for details.
+         * Feature issue: [KT-12719](https://youtrack.jetbrains.com/issue/KT-12719).
+         */
+        IgnorableReturnValue,
     }
 }
 

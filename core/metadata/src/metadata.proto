@@ -500,6 +500,16 @@ enum MemberKind {
   SYNTHESIZED = 3;
 }
 
+enum ReturnValueStatus {
+   UNSPECIFIED = 0;
+   MUST_USE = 1;
+   EXPLICITLY_IGNORABLE = 2;
+   /*
+    3 represents @MustUse AND @Ignorable state, which is semantically incorrect.
+    We can reserve this state for future potential extensions.
+    */
+}
+
 message VersionRequirement {
   enum Level {
     WARNING = 0;
