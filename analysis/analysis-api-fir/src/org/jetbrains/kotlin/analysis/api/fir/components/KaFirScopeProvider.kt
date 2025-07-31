@@ -36,12 +36,12 @@ import org.jetbrains.kotlin.fir.java.JavaScopeProvider
 import org.jetbrains.kotlin.fir.java.declarations.FirJavaClass
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.resolve.calls.FirSyntheticPropertiesScope
-import org.jetbrains.kotlin.fir.resolve.calls.referencedMemberSymbol
 import org.jetbrains.kotlin.fir.resolve.scope
 import org.jetbrains.kotlin.fir.resolve.scopeSessionKey
 import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.scopes.impl.*
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhaseWithCallableMembers
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
@@ -319,9 +319,10 @@ internal class KaFirScopeProvider(
 
                 val arguments = towerDataElement.contextParameterGroup.orEmpty()
                 for (argument in arguments) {
+                    val argumentSymbol = argument.boundSymbol as? FirValueParameterSymbol ?: continue
                     val argumentValue = KaBaseScopeImplicitArgumentValue(
                         backingType = firSymbolBuilder.typeBuilder.buildKtType(argument.type),
-                        symbol = firSymbolBuilder.variableBuilder.buildContextParameterSymbol(argument.boundSymbol),
+                        symbol = firSymbolBuilder.variableBuilder.buildContextParameterSymbol(argumentSymbol),
                         scopeIndexInTower = index,
                     )
 

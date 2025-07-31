@@ -1469,6 +1469,7 @@ class LightTreeRawFirDeclarationBuilder(
                     }
                     status = FirDeclarationStatusImpl(Visibilities.Local, Modality.FINAL).apply {
                         isLateInit = calculatedModifiers.hasLateinit()
+                        isInject = calculatedModifiers.hasInject()
                     }
 
                     typeParameters += firTypeParameters
@@ -1546,6 +1547,7 @@ class LightTreeRawFirDeclarationBuilder(
                             isConst = calculatedModifiers.isConst()
                             isLateInit = calculatedModifiers.hasLateinit()
                             isExternal = calculatedModifiers.hasExternal()
+                            isInject = calculatedModifiers.hasInject()
                         }
 
                         generateAccessorsByDelegate(

@@ -63,7 +63,7 @@ class ImplicitValueStorage private constructor(
 
     fun addAllContexts(
         contextReceivers: List<ContextReceiverValue>,
-        contextParameters: List<ImplicitContextParameterValue>,
+        contextParameters: List<ImplicitContextParameterValue<*>>,
     ): ImplicitValueStorage {
         if (contextReceivers.isEmpty() && contextParameters.isEmpty()) {
             return this

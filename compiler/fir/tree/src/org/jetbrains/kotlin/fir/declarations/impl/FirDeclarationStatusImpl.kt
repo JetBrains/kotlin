@@ -163,6 +163,12 @@ open class FirDeclarationStatusImpl(
             this[HAS_MUST_USE_RETURN_VALUE] = value
         }
 
+    override var isInject: Boolean
+        get() = this[INJECT]
+        set(value) {
+            this[INJECT] = value
+        }
+
     enum class Modifier(val mask: Int) {
         EXPECT(0x1),
         ACTUAL(0x2),
@@ -184,7 +190,8 @@ open class FirDeclarationStatusImpl(
         FUN(0x20000),
         HAS_STABLE_PARAMETER_NAMES(0x40000),
         VALUE(0x80000),
-        HAS_MUST_USE_RETURN_VALUE(0x100000)
+        HAS_MUST_USE_RETURN_VALUE(0x100000),
+        INJECT(0x200000)
     }
 
     override fun <R, D> acceptChildren(visitor: FirVisitor<R, D>, data: D) {}

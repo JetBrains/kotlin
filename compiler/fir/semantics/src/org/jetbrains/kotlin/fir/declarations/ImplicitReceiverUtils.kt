@@ -10,6 +10,7 @@ import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toPersistentList
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.SessionAndScopeSessionHolder
+import org.jetbrains.kotlin.fir.declarations.utils.isInject
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.resolve.calls.*
 import org.jetbrains.kotlin.fir.scopes.FirContainingNamesAwareScope
@@ -71,6 +72,10 @@ fun SessionAndScopeSessionHolder.collectTowerDataElementsForClass(owner: FirClas
         }
     }.orEmpty()
 
+    val injectProperties = owner.declarations.filterIsInstance<FirProperty>().filter { it.isInject }.map {
+        ImplicitContextParameterValue(boundSymbol = it.symbol, type = it.returnTypeRef.coneType, referencedMemberSymbol = owner.symbol)
+    }
+
     return TowerElementsForClass(
         thisReceiver,
         contextReceivers,
@@ -78,6 +83,7 @@ fun SessionAndScopeSessionHolder.collectTowerDataElementsForClass(owner: FirClas
         companionReceiver,
         companionObject?.staticScope(this),
         superClassesStaticsAndCompanionReceivers.asReversed(),
+        injectProperties
     )
 }
 
@@ -89,6 +95,7 @@ class TowerElementsForClass(
     val companionStaticScope: FirScope?,
     // Ordered from inner scopes to outer scopes.
     val superClassesStaticsAndCompanionReceivers: List<FirTowerDataElement>,
+    val injectProperties: List<ImplicitContextParameterValue<*>>
 )
 
 class FirTowerDataContext private constructor(
@@ -353,5 +360,5 @@ fun FirClass.staticScope(session: FirSession, scopeSession: ScopeSession): FirCo
     scopeProvider.getStaticScope(this, session, scopeSession)
 
 typealias ContextReceiverGroup = List<ContextReceiverValue>
-typealias ContextParameterGroup = List<ImplicitContextParameterValue>
+typealias ContextParameterGroup = List<ImplicitContextParameterValue<*>>
 typealias FirLocalScopes = PersistentList<FirLocalScope>

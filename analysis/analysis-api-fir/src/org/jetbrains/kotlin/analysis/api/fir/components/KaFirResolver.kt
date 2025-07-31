@@ -1093,7 +1093,7 @@ internal class KaFirResolver(
                         fir = firSymbol.fir
                     )
 
-                    null -> return null
+                    is FirPropertySymbol, null -> return null
                 }
 
                 KaBaseImplicitReceiverValue(symbol, resolvedType.asKaType())

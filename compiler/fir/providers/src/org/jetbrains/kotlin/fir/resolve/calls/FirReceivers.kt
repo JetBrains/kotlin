@@ -97,8 +97,9 @@ sealed class ImplicitReceiverValue<S>(
     val useSiteSession: FirSession,
     protected val scopeSession: ScopeSession,
     mutable: Boolean,
+    containingDeclarationSymbol: FirBasedSymbol<*>,
     private val inaccessibleReceiver: Boolean = false,
-) : ImplicitValue<S>(type, originalType, mutable), ReceiverValue
+) : ImplicitValue<S>(type, originalType, mutable, containingDeclarationSymbol), ReceiverValue
         where S : FirThisOwnerSymbol<*>, S : FirBasedSymbol<*> {
 
     abstract val isContextReceiver: Boolean
@@ -183,7 +184,7 @@ class ImplicitDispatchReceiverValue private constructor(
     useSiteSession: FirSession,
     scopeSession: ScopeSession,
     mutable: Boolean,
-) : ImplicitReceiverValue<FirClassSymbol<*>>(boundSymbol, type, originalType, useSiteSession, scopeSession, mutable) {
+) : ImplicitReceiverValue<FirClassSymbol<*>>(boundSymbol, type, originalType, useSiteSession, scopeSession, mutable, containingDeclarationSymbol = boundSymbol) {
     constructor(
         boundSymbol: FirClassSymbol<*>,
         type: ConeKotlinType = boundSymbol.constructType(),
@@ -211,7 +212,7 @@ class ImplicitExtensionReceiverValue private constructor(
     useSiteSession: FirSession,
     scopeSession: ScopeSession,
     mutable: Boolean,
-) : ImplicitReceiverValue<FirReceiverParameterSymbol>(boundSymbol, type, originalType, useSiteSession, scopeSession, mutable) {
+) : ImplicitReceiverValue<FirReceiverParameterSymbol>(boundSymbol, type, originalType, useSiteSession, scopeSession, mutable, boundSymbol.containingDeclarationSymbol) {
     constructor(boundSymbol: FirReceiverParameterSymbol, type: ConeKotlinType, useSiteSession: FirSession, scopeSession: ScopeSession)
             : this(boundSymbol, type, originalType = type, useSiteSession, scopeSession, mutable = true)
 
@@ -237,7 +238,7 @@ class InaccessibleImplicitReceiverValue private constructor(
     scopeSession: ScopeSession,
     mutable: Boolean,
 ) : ImplicitReceiverValue<FirClassSymbol<*>>(
-    boundSymbol, type, originalType, useSiteSession, scopeSession, mutable,
+    boundSymbol, type, originalType, useSiteSession, scopeSession, mutable, boundSymbol,
     inaccessibleReceiver = true
 ) {
     constructor(boundSymbol: FirClassSymbol<*>, type: ConeKotlinType, useSiteSession: FirSession, scopeSession: ScopeSession)
@@ -265,7 +266,7 @@ class ContextReceiverValue private constructor(
     scopeSession: ScopeSession,
     mutable: Boolean,
 ) : ImplicitReceiverValue<FirValueParameterSymbol>(
-    boundSymbol, type, originalType, useSiteSession, scopeSession, mutable,
+    boundSymbol, type, originalType, useSiteSession, scopeSession, mutable, boundSymbol.containingDeclarationSymbol
 ) {
     constructor(
         boundSymbol: FirValueParameterSymbol,
@@ -294,7 +295,7 @@ class ImplicitReceiverValueForScriptOrSnippet private constructor(
     useSiteSession: FirSession,
     scopeSession: ScopeSession,
     mutable: Boolean,
-) : ImplicitReceiverValue<FirReceiverParameterSymbol>(boundSymbol, type, originalType, useSiteSession, scopeSession, mutable) {
+) : ImplicitReceiverValue<FirReceiverParameterSymbol>(boundSymbol, type, originalType, useSiteSession, scopeSession, mutable, boundSymbol.containingDeclarationSymbol) {
 
     constructor(boundSymbol: FirReceiverParameterSymbol, type: ConeKotlinType, useSiteSession: FirSession, scopeSession: ScopeSession)
             : this(boundSymbol, type, originalType = type, useSiteSession, scopeSession, mutable = true)
@@ -310,9 +311,3 @@ class ImplicitReceiverValueForScriptOrSnippet private constructor(
         return ImplicitReceiverValueForScriptOrSnippet(boundSymbol, type, originalType, newSession, newScopeSession, mutable)
     }
 }
-
-val ImplicitReceiverValue<*>.referencedMemberSymbol: FirBasedSymbol<*>
-    get() = when (val boundSymbol = boundSymbol) {
-        is FirReceiverParameterSymbol -> boundSymbol.containingDeclarationSymbol
-        else -> boundSymbol as FirBasedSymbol<*>
-    }

@@ -40,6 +40,7 @@ inline val FirMemberDeclaration.isOverride: Boolean get() = status.isOverride
 inline val FirMemberDeclaration.isOperator: Boolean get() = status.isOperator
 inline val FirMemberDeclaration.isInfix: Boolean get() = status.isInfix
 inline val FirMemberDeclaration.isInline: Boolean get() = status.isInline
+inline val FirMemberDeclaration.isInject: Boolean get() = status.isInject
 
 @RequiresOptIn(message = "Please consider using isInlineOrValue, as separate isInline or isValue calls don't cover other case")
 annotation class SuspiciousValueClassCheck

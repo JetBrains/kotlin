@@ -162,6 +162,7 @@ class ValueParameter(
                 isOverride = modifiers.hasOverride()
                 isConst = modifiers.hasConst()
                 isLateInit = modifiers.hasLateinit()
+                isInject = modifiers.hasInject()
             }
 
             val defaultAccessorSource = propertySource?.fakeElement(KtFakeSourceElementKind.DefaultAccessor)

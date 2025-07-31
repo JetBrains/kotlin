@@ -844,6 +844,7 @@ val FirThisReference.referencedMemberSymbol: FirBasedSymbol<*>?
     get() = when (val boundSymbol = boundSymbol) {
         is FirReceiverParameterSymbol -> boundSymbol.containingDeclarationSymbol
         is FirValueParameterSymbol -> boundSymbol.containingDeclarationSymbol
+        is FirPropertySymbol -> boundSymbol
         is FirClassSymbol -> boundSymbol
         null -> null
         is FirTypeParameterSymbol, is FirTypeAliasSymbol -> errorWithAttachment(

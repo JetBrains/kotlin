@@ -55,6 +55,8 @@ open class ModifierList(var modifiers: Long = ModifierFlag.NONE.value) {
 
     fun hasLateinit(): Boolean = hasFlag(ModifierFlag.MEMBER_LATEINIT)
 
+    fun hasInject(): Boolean = hasFlag(ModifierFlag.MEMBER_INJECT)
+
     fun getVisibility(publicByDefault: Boolean = false): Visibility {
         return when {
             hasFlag(ModifierFlag.VISIBILITY_PRIVATE) -> Visibilities.Private

@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.resolve.calls
 
 import org.jetbrains.kotlin.KtFakeSourceElementKind
 import org.jetbrains.kotlin.fakeElement
+import org.jetbrains.kotlin.fir.declarations.FirDeclaration
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.expressions.FirPropertyAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirThisReceiverExpression
@@ -15,9 +16,12 @@ import org.jetbrains.kotlin.fir.expressions.builder.buildSmartCastExpression
 import org.jetbrains.kotlin.fir.expressions.unwrapSmartcastExpression
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.toResolvedSymbol
+import org.jetbrains.kotlin.fir.resolve.calls.ImplicitContextParameterValue
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirReceiverParameterSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirThisOwnerSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.types.SmartcastStability
@@ -40,6 +44,7 @@ sealed class ImplicitValue<S>(
     type: ConeKotlinType,
     val originalType: ConeKotlinType,
     protected val mutable: Boolean,
+    val referencedMemberSymbol: FirBasedSymbol<*>,
 ) where S : FirThisOwnerSymbol<*>, S : FirBasedSymbol<*> {
     abstract val boundSymbol: S
 
@@ -116,14 +121,17 @@ sealed class ImplicitValue<S>(
     abstract fun createSnapshot(keepMutable: Boolean): ImplicitValue<S>
 }
 
-class ImplicitContextParameterValue private constructor(
-    override val boundSymbol: FirValueParameterSymbol,
+class ImplicitContextParameterValue<S> private constructor(
+    override val boundSymbol: S,
     type: ConeKotlinType,
     originalType: ConeKotlinType,
     mutable: Boolean,
-) : ImplicitValue<FirValueParameterSymbol>(type, originalType, mutable) {
-    constructor(boundSymbol: FirValueParameterSymbol, type: ConeKotlinType)
-            : this(boundSymbol, type, originalType = type, mutable = true)
+    referencedMemberSymbol: FirBasedSymbol<*>
+) : ImplicitValue<S>(type, originalType, mutable, referencedMemberSymbol)
+        where S : FirVariableSymbol<*>, S : FirThisOwnerSymbol<*> {
+
+    constructor(boundSymbol: S, type: ConeKotlinType, referencedMemberSymbol: FirBasedSymbol<*>)
+            : this(boundSymbol, type, originalType = type, mutable = true, referencedMemberSymbol)
 
     override fun computeOriginalExpression(): FirExpression = buildPropertyAccessExpression {
         source = boundSymbol.source?.fakeElement(KtFakeSourceElementKind.ImplicitContextParameterArgument)
@@ -134,7 +142,12 @@ class ImplicitContextParameterValue private constructor(
         coneTypeOrNull = originalType
     }
 
-    override fun createSnapshot(keepMutable: Boolean): ImplicitContextParameterValue {
-        return ImplicitContextParameterValue(boundSymbol, type, originalType, keepMutable)
+    override fun createSnapshot(keepMutable: Boolean): ImplicitContextParameterValue<S> {
+        return ImplicitContextParameterValue(boundSymbol, type, originalType, keepMutable, referencedMemberSymbol)
+    }
+
+    companion object {
+        operator fun invoke(boundSymbol: FirValueParameterSymbol, type: ConeKotlinType): ImplicitContextParameterValue<FirValueParameterSymbol> =
+            ImplicitContextParameterValue(boundSymbol, type, originalType = type, mutable = true, boundSymbol.containingDeclarationSymbol)
     }
 }

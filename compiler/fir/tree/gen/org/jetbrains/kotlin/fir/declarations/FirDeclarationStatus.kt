@@ -43,6 +43,7 @@ interface FirDeclarationStatus : FirElement {
     val isFun: Boolean
     val hasStableParameterNames: Boolean
     val hasMustUseReturnValue: Boolean
+    val isInject: Boolean
     val defaultVisibility: Visibility
     val defaultModality: Modality
 

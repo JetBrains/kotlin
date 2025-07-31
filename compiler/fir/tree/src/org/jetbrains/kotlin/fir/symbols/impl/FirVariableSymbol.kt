@@ -55,7 +55,7 @@ sealed class FirVariableSymbol<out E : FirVariable> : FirCallableSymbol<E>() {
         get() = fir.name
 }
 
-sealed class FirPropertySymbol : FirVariableSymbol<FirProperty>(), PropertySymbolMarker {
+sealed class FirPropertySymbol : FirVariableSymbol<FirProperty>(), PropertySymbolMarker, FirThisOwnerSymbol<FirProperty> {
     abstract val isLocal: Boolean
 
     open val getterSymbol: FirPropertyAccessorSymbol?

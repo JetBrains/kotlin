@@ -259,7 +259,7 @@ object CheckContextArguments : ResolutionStage() {
                 // See KT-74081.
                 context.bodyResolveContext.towerDataContext.implicitValueStorage.implicitValues
                     .groupBy(
-                        keySelector = { it.boundSymbol.containingDeclarationIfParameter() },
+                        keySelector = { it.referencedMemberSymbol },
                         valueTransform = { it.computeExpression() })
                     .values
                     .reversed()
@@ -604,7 +604,7 @@ object CheckReceiverShadowedByContextParameter : CheckShadowedImplicitsStage() {
         if (isContextParameter) return
 
         val closerOrOnTheSameLevelContextParameters =
-            closerOrOnTheSameLevelImplicitValues.filterIsInstance<ImplicitContextParameterValue>().ifEmpty { return }
+            closerOrOnTheSameLevelImplicitValues.filterIsInstance<ImplicitContextParameterValue<*>>().ifEmpty { return }
         val potentialReceiverTypes =
             computePotentialReceiverTypes(candidate, boundSymbolOfReceiverToCheck) ?: return
 

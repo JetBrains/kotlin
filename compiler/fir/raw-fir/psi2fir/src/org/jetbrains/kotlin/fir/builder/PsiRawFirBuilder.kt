@@ -788,6 +788,7 @@ open class PsiRawFirBuilder(
                 isOverride = hasModifier(OVERRIDE_KEYWORD)
                 isConst = hasModifier(CONST_KEYWORD)
                 isLateInit = hasModifier(LATEINIT_KEYWORD)
+                isInject = hasModifier(INJECT_KEYWORD)
             }
 
             val propertyName = nameAsSafeName
@@ -2373,6 +2374,7 @@ open class PsiRawFirBuilder(
 
                         status = FirDeclarationStatusImpl(Visibilities.Local, Modality.FINAL).apply {
                             isLateInit = hasModifier(LATEINIT_KEYWORD)
+                            isInject = hasModifier(INJECT_KEYWORD)
                         }
 
                         if (hasDelegate()) {
@@ -2435,6 +2437,7 @@ open class PsiRawFirBuilder(
                                 isConst = hasModifier(CONST_KEYWORD)
                                 isLateInit = hasModifier(LATEINIT_KEYWORD)
                                 isExternal = hasModifier(EXTERNAL_KEYWORD)
+                                isInject = hasModifier(INJECT_KEYWORD)
                             }
 
                             if (hasDelegate()) {

@@ -53415,6 +53415,18 @@ public class PhasedJvmDiagnosticLightTreeTestGenerated extends AbstractPhasedJvm
       }
 
       @Test
+      @TestMetadata("inject.kt")
+      public void testInject() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/inject.kt");
+      }
+
+      @Test
+      @TestMetadata("injectClass.kt")
+      public void testInjectClass() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/injectClass.kt");
+      }
+
+      @Test
       @TestMetadata("localContextReceiver.kt")
       public void testLocalContextReceiver() {
         runTest("compiler/fir/analysis-tests/testData/resolve/contextParameters/localContextReceiver.kt");

@@ -35,6 +35,7 @@ import org.jetbrains.kotlin.fir.scopes.impl.FirMemberTypeParameterScope
 import org.jetbrains.kotlin.fir.symbols.impl.FirAnonymousFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames.UNDERSCORE_FOR_UNUSED_VAR
@@ -256,6 +257,16 @@ class BodyResolveContext(
     }
 
     @PrivateForInline
+    fun addInjectProperty(property: FirProperty) {
+        val contextParameter = ImplicitContextParameterValue(
+            boundSymbol = property.symbol,
+            type = property.returnTypeRef.coneType,
+            referencedMemberSymbol = containers.last().symbol
+        )
+        replaceTowerDataContext(towerDataContext.addContextGroups(emptyList(), listOf(contextParameter)))
+    }
+
+    @PrivateForInline
     private inline fun updateLastScope(transform: FirLocalScope.() -> FirLocalScope) {
         val lastScope = towerDataContext.localScopes.lastOrNull() ?: return
         replaceTowerDataContext(towerDataContext.setLastLocalScope(lastScope.transform()))
@@ -276,7 +287,7 @@ class BodyResolveContext(
         f: () -> T
     ): T = withTowerDataCleanup {
         val contextReceivers = mutableListOf<ContextReceiverValue>()
-        val contextParameters = mutableListOf<ImplicitContextParameterValue>()
+        val contextParameters = mutableListOf<ImplicitContextParameterValue<*>>()
 
         owner.contextParameters.forEach { receiver ->
             if (receiver.isLegacyContextReceiver()) {
@@ -579,7 +590,7 @@ class BodyResolveContext(
 
         val forMembersResolution = forConstructorHeader
             .addReceiver(labelName, towerElementsForClass.thisReceiver)
-            .addContextGroups(towerElementsForClass.contextReceivers, emptyList())
+            .addContextGroups(towerElementsForClass.contextReceivers, towerElementsForClass.injectProperties)
 
         /*
          * Scope for enum entries is equal to initial scope for constructor header

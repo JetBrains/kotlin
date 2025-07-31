@@ -1,0 +1,42 @@
+FILE: inject.kt
+    public final class A : R|kotlin/Any| {
+        public constructor(): R|A| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    public final class B : R|kotlin/Any| {
+        public constructor(): R|B| {
+            super<R|kotlin/Any|>()
+        }
+
+    }
+    context(a: R|A|)
+    public final fun foo(): R|kotlin/Int| {
+        ^foo Int(4)
+    }
+    public final fun runFoo(): R|kotlin/Unit| {
+        lval a: R|A| = R|/A.A|()
+        context(R|<local>/a|) R|/foo|()
+    }
+    public final fun doNotRunFoo(): R|kotlin/Unit| {
+        lval b: R|B| = R|/B.B|()
+        R|/foo<Inapplicable(INAPPLICABLE): /foo>#|()
+    }
+    public final fun ambiguousFooContext(): R|kotlin/Unit| {
+        R|kotlin/context|<R|A|, R|A|, R|kotlin/Int|>(R|/A.A|(), R|/A.A|(), <L> = context(<unused var>: R|A|, <unused var>: R|A|) context@fun <anonymous>(): R|kotlin/Int| <inline=Inline, kind=EXACTLY_ONCE>  {
+            ^ R|/foo<Inapplicable(INAPPLICABLE): /foo>#|()
+        }
+        )
+    }
+    public final fun ambiguousFooInject(): R|kotlin/Unit| {
+        lval a1: R|A| = R|/A.A|()
+        lval a2: R|A| = R|/A.A|()
+        R|/foo<Inapplicable(INAPPLICABLE): /foo>#|()
+    }
+    public final fun runFooTwice(): R|kotlin/Unit| {
+        lval a1: R|A| = R|/A.A|()
+        context(R|<local>/a1|) R|/foo|()
+        lval a2: R|A| = R|/A.A|()
+        R|/foo<Inapplicable(INAPPLICABLE): /foo>#|()
+    }
