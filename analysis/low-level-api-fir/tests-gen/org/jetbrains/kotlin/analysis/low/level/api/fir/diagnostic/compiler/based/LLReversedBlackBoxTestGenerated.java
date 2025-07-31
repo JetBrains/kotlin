@@ -52505,6 +52505,12 @@ public class LLReversedBlackBoxTestGenerated extends AbstractLLReversedBlackBoxT
         }
 
         @Test
+        @TestMetadata("arrayWithDefaultValue.kt")
+        public void testArrayWithDefaultValue() {
+          runTest("compiler/testData/codegen/box/reflection/annotations/onTypes/arrayWithDefaultValue.kt");
+        }
+
+        @Test
         @TestMetadata("classLiteralWithExpectedType.kt")
         public void testClassLiteralWithExpectedType() {
           runTest("compiler/testData/codegen/box/reflection/annotations/onTypes/classLiteralWithExpectedType.kt");

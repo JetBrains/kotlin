@@ -49,6 +49,12 @@ public class KaptStubConverterTestGenerated extends AbstractKaptStubConverterTes
   }
 
   @Test
+  @TestMetadata("annotationWithArrayArgument.kt")
+  public void testAnnotationWithArrayArgument() {
+    runTest("plugins/kapt/kapt-compiler/testData/converter/annotationWithArrayArgument.kt");
+  }
+
+  @Test
   @TestMetadata("annotationWithCompanion.kt")
   public void testAnnotationWithCompanion() {
     runTest("plugins/kapt/kapt-compiler/testData/converter/annotationWithCompanion.kt");
