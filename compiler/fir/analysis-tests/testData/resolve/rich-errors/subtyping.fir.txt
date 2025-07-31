@@ -1,19 +1,19 @@
 FILE: subtyping.kt
-    public final object E1 : R|kotlin/Any| {
+    public final object E1 : R|kotlin/Nothing | Error| {
         private constructor(): R|kotlin/Nothing | E1| {
-            super<R|kotlin/Any|>()
+            super<R|kotlin/Nothing | Error|>()
         }
 
     }
-    public final object E2 : R|kotlin/Any| {
+    public final object E2 : R|kotlin/Nothing | Error| {
         private constructor(): R|kotlin/Nothing | E2| {
-            super<R|kotlin/Any|>()
+            super<R|kotlin/Nothing | Error|>()
         }
 
     }
-    public final object E3 : R|kotlin/Any| {
+    public final object E3 : R|kotlin/Nothing | Error| {
         private constructor(): R|kotlin/Nothing | E3| {
-            super<R|kotlin/Any|>()
+            super<R|kotlin/Nothing | Error|>()
         }
 
     }

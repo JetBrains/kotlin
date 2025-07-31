@@ -94,7 +94,7 @@ abstract class AbstractConeSubstitutor(protected val typeContext: ConeTypeContex
                 val valueType = substituteOrNull(valueType)
                 val errorType = errorType.substituteRecursive()
                 if (errorType == CEBotType) return valueType
-                if (valueType == null) return null
+                if (valueType == null && errorType == this.errorType) return null
                 if (valueType is ConeFlexibleType) {
                     return ConeFlexibleType(
                         ConeErrorUnionType.createNormalized(valueType.lowerBound as ConeValueType, errorType),
@@ -102,7 +102,7 @@ abstract class AbstractConeSubstitutor(protected val typeContext: ConeTypeContex
                         valueType.isTrivial
                     )
                 }
-                ConeErrorUnionType.createNormalized(valueType as ConeValueType, errorType)
+                ConeErrorUnionType.createNormalized((valueType ?: this.valueType) as ConeValueType, errorType)
             }
         }
     }

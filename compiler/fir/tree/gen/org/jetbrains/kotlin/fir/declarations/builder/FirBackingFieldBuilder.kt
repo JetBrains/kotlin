@@ -23,7 +23,7 @@ import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.symbols.impl.FirBackingFieldSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
-import org.jetbrains.kotlin.fir.types.ConeSimpleKotlinType
+import org.jetbrains.kotlin.fir.types.ConeRigidType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
@@ -83,7 +83,7 @@ class FirBackingFieldBuilder : FirVariableBuilder, FirAnnotationContainerBuilder
         }
 
     @Deprecated("Modification of 'dispatchReceiverType' has no impact for FirBackingFieldBuilder", level = DeprecationLevel.HIDDEN)
-    override var dispatchReceiverType: ConeSimpleKotlinType?
+    override var dispatchReceiverType: ConeRigidType?
         get() = throw IllegalStateException()
         set(_) {
             throw IllegalStateException()

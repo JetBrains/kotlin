@@ -75,6 +75,12 @@ data class ConeErrorUnionType private constructor(
         return ConeErrorUnionType(newValueType, errorType)
     }
 
+    init {
+        if (valueType is ConeLookupTagBasedType && valueType !is ConeClassLikeType && errorType is CEClassifierType) {
+            print("hi")
+        }
+    }
+
     companion object {
         fun create(valueType: ConeValueType, errorType: CEType): ConeErrorUnionType {
             return ConeErrorUnionType(valueType, errorType)

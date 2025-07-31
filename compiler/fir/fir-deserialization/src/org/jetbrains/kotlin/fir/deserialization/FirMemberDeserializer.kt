@@ -85,7 +85,7 @@ class FirDeserializationContext(
     )
 
     val memberDeserializer: FirMemberDeserializer = FirMemberDeserializer(this)
-    val dispatchReceiver: ConeClassLikeType? =
+    val dispatchReceiver: ConeRigidType? =
         relativeClassName?.let { ClassId(packageFqName, it, isLocal = false).defaultType(allTypeParameters) }
 
     companion object {
@@ -283,7 +283,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
                     c.containerSource, proto, local.nameResolver, local.typeTable, getterFlags
                 )
             )
-            containingClassForStaticMemberAttr = c.dispatchReceiver?.lookupTag
+            containingClassForStaticMemberAttr = c.dispatchReceiver?.lookupTagOfDispatchReceiver()
         }
     }
 
@@ -343,7 +343,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
                     c.containerSource, proto, local.nameResolver, local.typeTable, setterFlags
                 )
             )
-            containingClassForStaticMemberAttr = c.dispatchReceiver?.lookupTag
+            containingClassForStaticMemberAttr = c.dispatchReceiver?.lookupTagOfDispatchReceiver()
         }
     }
 
@@ -764,7 +764,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
 
             classProto.contextReceiverTypes(c.typeTable).mapTo(contextParameters) { loadLegacyContextReceiver(it, FirDeclarationOrigin.Library, symbol) }
         }.build().apply {
-            containingClassForStaticMemberAttr = c.dispatchReceiver!!.lookupTag
+            containingClassForStaticMemberAttr = c.dispatchReceiver!!.expectClassLikeSoft()?.lookupTag
             this.versionRequirements = VersionRequirement.create(proto, c)
             deserializeCompilerPluginMetadata(c, proto, ProtoBuf.Constructor::getCompilerPluginDataList)
             setLazyPublishedVisibility(c.session)

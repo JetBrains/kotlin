@@ -55,13 +55,13 @@ fun FirSmartCastExpression.smartcastScope(
     return FirUnstableSmartcastTypeScope(smartcastScope, originalScope)
 }
 
-fun ConeClassLikeType.delegatingConstructorScope(
+fun ConeRigidType.delegatingConstructorScope(
     useSiteSession: FirSession,
     scopeSession: ScopeSession,
     derivedClassLookupTag: ConeClassLikeLookupTag,
     outerType: ConeClassLikeType?
 ): FirTypeScope? {
-    val fir = fullyExpandedType(useSiteSession).lookupTag.toClassSymbol(useSiteSession)?.fir ?: return null
+    val fir = fullyExpandedType(useSiteSession).toClassSymbol(useSiteSession)?.fir ?: return null
 
     val substitutor = when {
         outerType != null -> {
@@ -175,10 +175,7 @@ fun FirClassLikeDeclaration.defaultType(): ConeRigidType =
         ConeClassLikeTypeImpl(
             symbol.toLookupTag(),
             typeParameters.map {
-                ConeTypeParameterTypeImpl.create(
-                    it.symbol.toLookupTag(),
-                    isMarkedNullable = false
-                )
+                it.symbol.constructType()
             }.toTypedArray(),
             isMarkedNullable = false
         )
@@ -210,17 +207,20 @@ fun ConeRigidType.castToSimpleType(): ConeSimpleKotlinType? =
 fun ConeRigidType.castToClassType(): ConeClassLikeType =
     this as ConeClassLikeType
 
+private val kErrorClassId = ClassId.fromString("kotlin/KError")
+
 // TODO: RE: it's a dangerous place where we are not able ro resolve if the classId is of error or value class
-fun ClassId.defaultType(parameters: List<FirTypeParameterSymbol>): ConeClassLikeType =
-    ConeClassLikeTypeImpl(
+fun ClassId.defaultType(parameters: List<FirTypeParameterSymbol>): ConeRigidType {
+    if (this == kErrorClassId) {
+        return ConeErrorUnionType.create(StandardTypes.Nothing, CETopType)
+    }
+    return ConeClassLikeTypeImpl(
         this.toLookupTag(),
         parameters.map {
-            ConeTypeParameterTypeImpl.create(
-                it.toLookupTag(),
-                isMarkedNullable = false
-            )
+            it.constructType()
         }.toTypedArray(),
         isMarkedNullable = false,
     )
+}
 
 val TYPE_PARAMETER_SCOPE_KEY: ScopeSessionKey<FirTypeParameterSymbol, FirTypeScope> = scopeSessionKey()

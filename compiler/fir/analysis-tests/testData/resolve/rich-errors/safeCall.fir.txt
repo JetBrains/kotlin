@@ -1,7 +1,7 @@
 FILE: safeCall.kt
-    public final object E1 : R|kotlin/KError| {
+    public final object E1 : R|kotlin/Nothing | Error| {
         private constructor(): R|kotlin/Nothing | E1| {
-            super<R|kotlin/KError|>()
+            super<R|kotlin/Nothing | Error|>()
         }
 
     }
@@ -33,7 +33,7 @@ FILE: safeCall.kt
         public get(): R|kotlin/Int | E1|
     public final val v32: R|kotlin/Int? | E1| = R|/identity|<R|kotlin/Int? | E1|>(R|/neString|?.{ $subj$.R|/foo|() })
         public get(): R|kotlin/Int? | E1|
-    public final val v42: R|kotlin/Int| = R|/identity<CS errors: /identity>#|<R|kotlin/Int | E1|>(R|/eString|?.{ $subj$.R|/foo|() })
+    public final val v42: R|kotlin/Int| = R|/identity|<R|kotlin/Int | E1|>(R|/eString|?.{ $subj$.R|/foo|() })
         public get(): R|kotlin/Int|
-    public final val v52: R|kotlin/Int?| = R|/identity<CS errors: /identity>#|<R|kotlin/Int? | E1|>(R|/neString|?.{ $subj$.R|/foo|() })
+    public final val v52: R|kotlin/Int?| = R|/identity|<R|kotlin/Int? | E1|>(R|/neString|?.{ $subj$.R|/foo|() })
         public get(): R|kotlin/Int?|

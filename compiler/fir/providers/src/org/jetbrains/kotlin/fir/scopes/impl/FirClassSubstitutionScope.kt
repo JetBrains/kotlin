@@ -118,9 +118,9 @@ class FirClassSubstitutionScope(
         return substitutor.substituteOrNull(this)
     }
 
-    private fun ConeSimpleKotlinType.substituteDispatchReceiverType(substitutor: ConeSubstitutor): ConeSimpleKotlinType? {
+    private fun ConeRigidType.substituteDispatchReceiverType(substitutor: ConeSubstitutor): ConeRigidType? {
         // DNN type is not possible here, so the cast is safe
-        return substitutor.substituteOrNull(this)?.lowerBoundIfFlexible() as ConeSimpleKotlinType?
+        return substitutor.substituteOrNull(this)?.lowerBoundIfFlexible()
     }
 
     fun createSubstitutionOverrideFunction(original: FirNamedFunctionSymbol): FirNamedFunctionSymbol {
@@ -285,7 +285,7 @@ class FirClassSubstitutionScope(
 
     private data class SubstitutedData(
         val typeParameters: List<FirTypeParameterRef>,
-        val dispatchReceiverType: ConeSimpleKotlinType?,
+        val dispatchReceiverType: ConeRigidType?,
         val receiverType: ConeKotlinType?,
         val returnType: ConeKotlinType?,
         val substitutor: ConeSubstitutor,

@@ -21,6 +21,7 @@ fun ConeKotlinType.lookupTagIfTypeParameter(): ConeTypeParameterLookupTag? {
     val valueType = valueType
     val errorType = errorType
     if (valueType is ConeTypeParameterType && errorType is CETypeParameterType && errorType.lookupTag == valueType.lookupTag) return valueType.lookupTag
+    if (valueType.isNothing && errorType is CETypeParameterType) errorType.lookupTag
     return null
 }
 
@@ -32,6 +33,7 @@ fun ConeKotlinType.lookupTagIfTypeParameterIgnoringDnn(): ConeTypeParameterLooku
     val valueType = valueType.unwrapIfDnn()
     val errorType = errorType
     if (valueType is ConeTypeParameterType && errorType is CETypeParameterType && errorType.lookupTag == valueType.lookupTag) return valueType.lookupTag
+    if (valueType.isNothing && errorType is CETypeParameterType) errorType.lookupTag
     return null
 }
 
@@ -43,6 +45,7 @@ fun ConeKotlinType.typeConstructorIfTypeVariableType(): ConeTypeVariableTypeCons
     val valueType = valueType
     val errorType = errorType
     if (valueType is ConeTypeVariableType && errorType is CETypeVariableType && errorType.typeConstructor == valueType.typeConstructor) return valueType.typeConstructor
+    if (valueType.isNothing && errorType is CETypeVariableType) errorType.typeConstructor
     return null
 }
 

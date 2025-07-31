@@ -10,8 +10,16 @@ import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.declarations.FirResolvedDeclarationStatus
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
+import org.jetbrains.kotlin.fir.types.CEClassifierType
+import org.jetbrains.kotlin.fir.types.CETopType
+import org.jetbrains.kotlin.fir.types.ConeClassLikeLookupTag
+import org.jetbrains.kotlin.fir.types.ConeClassLikeType
+import org.jetbrains.kotlin.fir.types.ConeErrorUnionType
+import org.jetbrains.kotlin.fir.types.ConeRigidType
+import org.jetbrains.kotlin.fir.types.isNothing
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirSymbolIdEntry
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import kotlin.reflect.KClass
 
@@ -32,3 +40,11 @@ internal fun FirMemberDeclaration.resolvedStatus(): FirResolvedDeclarationStatus
 
     return status
 }
+
+fun ConeRigidType.lookupTagOfDispatchReceiver(): ConeClassLikeLookupTag? =
+    when (this) {
+        is ConeClassLikeType -> lookupTag
+        is ConeErrorUnionType if valueType.isNothing && errorType is CEClassifierType -> (errorType as CEClassifierType).lookupTag
+        is ConeErrorUnionType if valueType.isNothing && errorType is CETopType -> ConeClassLikeLookupTagImpl(ClassId.fromString("kotlin/KError"))
+        else -> error("Unexpected type: $this")
+    }

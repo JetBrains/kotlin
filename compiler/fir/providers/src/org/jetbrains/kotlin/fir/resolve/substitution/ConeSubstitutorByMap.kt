@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.resolve.substitution
 
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.resolve.substitution.AbstractConeSubstitutor.Companion.updateNullabilityIfNeeded
 import org.jetbrains.kotlin.fir.resolve.withCombinedAttributesFrom
 import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
@@ -31,16 +32,29 @@ fun substitutorByMap(
     val valueSubstitution = mutableMapOf<FirTypeParameterSymbol, ConeKotlinType>()
     val ceSubstitution = mutableMapOf<FirTypeParameterSymbol, CEType>()
     for ((typeParameter, type) in substitution) {
-        with (useSiteSession.typeContext) {
-            val vt = type.projectOnValue() as ConeKotlinType
-            valueSubstitution[typeParameter] = vt
-            val cet = type.projectOnError()
-            if (cet is ConeErrorUnionType) {
-                ceSubstitution[typeParameter] = cet.errorType
-            } else if (cet.isNothing()) {
-                ceSubstitution[typeParameter] = CEBotType
-            } else {
-                error("Unexpected failure. Report with stacktrace if you see this message.")
+        with(useSiteSession.typeContext) {
+            when (typeParameter.typeParameterKind()) {
+                TypeParameterKind.Value -> {
+                    valueSubstitution[typeParameter] = type
+                    ceSubstitution[typeParameter] = CEBotType
+                }
+                TypeParameterKind.Error -> {
+                    check(type is ConeErrorUnionType)
+                    check(type.valueType.isNothing)
+                    ceSubstitution[typeParameter] = type.errorType
+                }
+                TypeParameterKind.Both -> {
+                    val vt = type.projectOnValue() as ConeKotlinType
+                    valueSubstitution[typeParameter] = vt
+                    val cet = type.projectOnError()
+                    if (cet is ConeErrorUnionType) {
+                        ceSubstitution[typeParameter] = cet.errorType
+                    } else if (cet.isNothing()) {
+                        ceSubstitution[typeParameter] = CEBotType
+                    } else {
+                        error("Unexpected failure. Report with stacktrace if you see this message.")
+                    }
+                }
             }
         }
     }

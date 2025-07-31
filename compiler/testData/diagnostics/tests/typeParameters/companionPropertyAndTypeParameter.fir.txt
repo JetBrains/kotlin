@@ -36,7 +36,7 @@ FILE: companionPropertyAndTypeParameter.kt
         public final val test: R|kotlin/String| = String()
             public get(): R|kotlin/String|
 
-        public final val some: R|kotlin/String| = this@R|/C1|.R|/C1.test|
+        public final val some: R|kotlin/String| = this@R|/C1|.R|SubstitutionOverride</C1.test: R|kotlin/String|>|
             public get(): R|kotlin/String|
 
         public final fun f(): R|kotlin/Unit| {

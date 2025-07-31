@@ -583,7 +583,13 @@ class LightTreeRawFirDeclarationBuilder(
                         val classIsKotlinAny = symbol.classId == StandardClassIds.Any
 
                         if (superTypeRefs.isEmpty() && status.isError) {
-                            superTypeRefs += implicitErrorType
+                            superTypeRefs += buildResolvedTypeRef {
+                                coneType = ConeErrorUnionType.create(
+                                    StandardTypes.Nothing,
+                                    CETopType
+                                )
+                                source = classNode.toFirSourceElement(KtFakeSourceElementKind.ImplicitTypeRef)
+                            }
                         }
 
                         if (superTypeRefs.isEmpty() && !classIsKotlinAny) {

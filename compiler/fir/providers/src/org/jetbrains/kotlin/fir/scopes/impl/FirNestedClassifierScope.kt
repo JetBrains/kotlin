@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.scopes.impl
 
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.StandardTypes
 import org.jetbrains.kotlin.fir.declarations.FirClass
 import org.jetbrains.kotlin.fir.declarations.FirRegularClass
 import org.jetbrains.kotlin.fir.declarations.FirTypeAlias
@@ -30,8 +31,10 @@ import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.ConeRigidType
 import org.jetbrains.kotlin.fir.types.ConeTypeParameterType
 import org.jetbrains.kotlin.fir.types.coneTypeSafe
+import org.jetbrains.kotlin.fir.types.constructType
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.utils.SmartList
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
@@ -47,9 +50,12 @@ abstract class FirNestedClassifierScope(val klass: FirClass, val useSiteSession:
             ConeSubstitutor.Empty
         } else {
             val substitution = klass.typeParameters.associate {
-                it.symbol to it.toConeType()
+                it.symbol to ConeTypeParameterTypeImpl.createPure(it.symbol.toLookupTag(), false)
             }
-            substitutorByMap(substitution, useSiteSession, allowIdenticalSubstitution = true)
+            val ceSubstitution = klass.typeParameters.associate {
+                it.symbol to CETypeParameterType(it.symbol.toLookupTag())
+            }
+            substitutorByMap(substitution, ceSubstitution, useSiteSession, allowIdenticalSubstitution = true)
         }
         processor(matchedClass, substitutor)
     }
@@ -136,4 +142,4 @@ fun FirTypeParameterRef.toConeType(): ConeRigidType = symbol.toConeType()
 fun FirTypeParameterSymbol.toConeType(): ConeRigidType = toConeType(false)
 
 fun FirTypeParameterSymbol.toConeType(isNullable: Boolean): ConeRigidType =
-    ConeTypeParameterTypeImpl.create(ConeTypeParameterLookupTag(this), isNullable)
+    ConeTypeParameterLookupTag(this).constructType(isMarkedNullable = isNullable)

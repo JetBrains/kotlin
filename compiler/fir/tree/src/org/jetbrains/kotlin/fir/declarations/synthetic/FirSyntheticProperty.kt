@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.symbols.impl.FirDelegateFieldSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirSyntheticPropertySymbol
+import org.jetbrains.kotlin.fir.types.ConeRigidType
 import org.jetbrains.kotlin.fir.types.ConeSimpleKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
@@ -30,7 +31,7 @@ class FirSyntheticProperty @FirImplementationDetail internal constructor(
     override val symbol: FirSyntheticPropertySymbol,
     private val customStatus: FirDeclarationStatus?,
     override val getter: FirSyntheticPropertyAccessor,
-    override val dispatchReceiverType: ConeSimpleKotlinType?,
+    override val dispatchReceiverType: ConeRigidType?,
     override val setter: FirSyntheticPropertyAccessor? = null,
     override val deprecationsProvider: DeprecationsProvider = UnresolvedDeprecationProvider,
 ) : FirProperty() {

@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.fir.expressions.FirBlock
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirSyntheticPropertyAccessorSymbol
+import org.jetbrains.kotlin.fir.types.ConeRigidType
 import org.jetbrains.kotlin.fir.types.ConeSimpleKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
@@ -42,7 +43,7 @@ class FirSyntheticPropertyAccessor @FirImplementationDetail internal constructor
     override val status: FirDeclarationStatus
         get() = delegate.status
 
-    override val dispatchReceiverType: ConeSimpleKotlinType?
+    override val dispatchReceiverType: ConeRigidType?
         get() = delegate.dispatchReceiverType
 
     override val receiverParameter: FirReceiverParameter?

@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirFieldSymbol
 import org.jetbrains.kotlin.fir.types.ConeSimpleKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.fir.types.expectClassLike
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.fir.visitors.transformSingle
@@ -216,7 +217,7 @@ internal class FirJavaFieldBuilder : FirFieldBuilder() {
             annotationList,
             lazyInitializer ?: lazyOf(initializer),
             lazyHasConstantInitializer,
-            dispatchReceiverType,
+            dispatchReceiverType?.expectClassLike(),
             attributes,
             containingClassSymbol,
         )

@@ -9,6 +9,7 @@ package org.jetbrains.kotlin.fir.types
 import org.jetbrains.kotlin.fir.StandardTypes
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
 import org.jetbrains.kotlin.fir.declarations.utils.isError
+import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
@@ -47,14 +48,6 @@ fun ClassId.constructClassLikeType(
     return ConeClassLikeTypeImpl(this.toLookupTag(), typeArguments, isMarkedNullable, attributes)
 }
 
-fun FirTypeParameterSymbol.constructType(
-    typeArguments: Array<ConeTypeProjection> = ConeTypeProjection.EMPTY_ARRAY,
-    isMarkedNullable: Boolean = false,
-    attributes: ConeAttributes = ConeAttributes.Empty
-): ConeErrorUnionType {
-    return ConeTypeParameterTypeImpl.create(this.toLookupTag(), isMarkedNullable, attributes)
-}
-
 fun FirClassifierSymbol<*>.constructType(
     typeArguments: Array<ConeTypeProjection> = ConeTypeProjection.EMPTY_ARRAY,
     isMarkedNullable: Boolean = false,
@@ -63,19 +56,44 @@ fun FirClassifierSymbol<*>.constructType(
     status: FirDeclarationStatus? = null
 ): ConeRigidType {
     return when (this) {
-        is FirTypeParameterSymbol -> {
-            ConeTypeParameterTypeImpl.create(toLookupTag(), isMarkedNullable, attributes)
-        }
+        is FirTypeParameterSymbol -> constructType(isMarkedNullable, attributes)
         is FirClassLikeSymbol<*> if (status ?: fir.status).isError -> constructErrorUnionType(typeArguments, isMarkedNullable)
         is FirClassLikeSymbol<*> -> constructType(typeArguments, isMarkedNullable, attributes)
     }
+}
+
+fun FirTypeParameterSymbol.constructType(
+    isMarkedNullable: Boolean = false,
+    attributes: ConeAttributes = ConeAttributes.Empty,
+): ConeRigidType {
+    val bounds = fir.bounds
+    if (bounds.all { it is FirResolvedTypeRef }) {
+        return when (typeParameterKind()) {
+            TypeParameterKind.Value -> ConeTypeParameterTypeImpl.createPure(toLookupTag(), isMarkedNullable, attributes)
+            TypeParameterKind.Error -> ConeErrorUnionType.create(StandardTypes.Nothing, CETypeParameterType(toLookupTag()))
+            TypeParameterKind.Both -> ConeTypeParameterTypeImpl.create(toLookupTag(), isMarkedNullable, attributes)
+        }
+    }
+    return ConeTypeParameterTypeImpl.create(toLookupTag(), isMarkedNullable, attributes)
 }
 
 private fun FirClassLikeSymbol<*>.constructType(
     typeArguments: Array<ConeTypeProjection> = ConeTypeProjection.EMPTY_ARRAY,
     isMarkedNullable: Boolean = false,
     attributes: ConeAttributes = ConeAttributes.Empty
-): ConeClassLikeType {
+): ConeRigidType {
+    if (classId == ClassId.fromString("kotlin/KError")) {
+        return ConeErrorUnionType.create(
+            StandardTypes.Nothing,
+            CETopType
+        )
+    }
+//    if (rawStatus.isError) { // rawStatus is not resolved yet
+//        return ConeErrorUnionType.create(
+//            StandardTypes.Nothing,
+//            CEClassifierType(toLookupTag())
+//        )
+//    }
     return ConeClassLikeTypeImpl(this.toLookupTag(), typeArguments, isMarkedNullable, attributes)
 }
 
@@ -106,5 +124,28 @@ fun FirClassSymbol<*>.constructStarProjectedType(
             Array(typeParameterNumber) { ConeStarProjection },
             isMarkedNullable
         )
+    }
+}
+
+enum class TypeParameterKind {
+    Value, Error, Both;
+}
+
+fun FirTypeParameterSymbol.typeParameterKind(): TypeParameterKind {
+    if (fir.bounds.any { it::class.simpleName == "FirJavaTypeRef" }) return TypeParameterKind.Value
+    val haveErrorComponent = fir.bounds.all {
+        it.coneType is ConeErrorUnionType
+    }
+    val haveValueComponent = fir.bounds.all {
+        (it.coneType as? ConeErrorUnionType)?.let { !it.valueType.isNothing } ?: true
+    }
+    return if (haveErrorComponent) {
+        if (haveValueComponent) {
+            TypeParameterKind.Both
+        } else {
+            TypeParameterKind.Error
+        }
+    } else {
+        TypeParameterKind.Value
     }
 }

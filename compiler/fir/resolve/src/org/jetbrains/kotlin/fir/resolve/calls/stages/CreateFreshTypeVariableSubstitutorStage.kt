@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.fir.resolve.calls.stages
 
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.fir.StandardTypes
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.ExplicitTypeArgumentIfMadeFlexibleSyntheticallyTypeAttribute
 import org.jetbrains.kotlin.fir.languageVersionSettings
@@ -204,29 +205,40 @@ internal object CreateFreshTypeVariableSubstitutorStage : ResolutionStage() {
         val typeParameters = declaration.typeParameters
 
         val freshTypeVariables = typeParameters.map { typeParameter ->
-            ConeTypeParameterBasedTypeVariable(typeParameter.symbol)
+            ConeTypeParameterBasedTypeVariable(typeParameter.symbol) to typeParameter.symbol.typeParameterKind()
         }
 
-        val toFreshVariables = substitutorByMap(freshTypeVariables.associate { it.typeParameterSymbol to it.defaultType }, context.session)
-            .let {
-                val typeAliasConstructorSubstitutor = (declaration as? FirConstructor)?.typeAliasConstructorInfo?.substitutor
-                if (typeAliasConstructorSubstitutor != null) {
-                    ChainedSubstitutor(typeAliasConstructorSubstitutor, it)
-                } else {
-                    it
-                }
+        val toFreshVariables = substitutorByMap(freshTypeVariables.associate {
+            it.first.typeParameterSymbol to when (it.second) {
+                TypeParameterKind.Value -> it.first.defaultValueType
+                TypeParameterKind.Error -> ConeErrorUnionType.create(StandardTypes.Nothing, it.first.defaultCEType)
+                TypeParameterKind.Both -> it.first.defaultType
             }
+        }, context.session).let {
+            val typeAliasConstructorSubstitutor = (declaration as? FirConstructor)?.typeAliasConstructorInfo?.substitutor
+            if (typeAliasConstructorSubstitutor != null) {
+                ChainedSubstitutor(typeAliasConstructorSubstitutor, it)
+            } else {
+                it
+            }
+        }
 
         for (freshVariable in freshTypeVariables) {
-            csBuilder.registerVariable(freshVariable)
+            if (freshVariable.second != TypeParameterKind.Error) {
+                csBuilder.registerVariable(freshVariable.first)
+            }
         }
 
-        fun ConeTypeParameterBasedTypeVariable.addSubtypeConstraint(
+        fun Pair<ConeTypeParameterBasedTypeVariable, TypeParameterKind>.addSubtypeConstraint(
             upperBound: ConeKotlinType,
             //position: DeclaredUpperBoundConstraintPosition,
         ) {
             csBuilder.addSubtypeConstraint(
-                defaultType,
+                when (second) {
+                    TypeParameterKind.Value -> first.defaultValueType
+                    TypeParameterKind.Error -> ConeErrorUnionType.create(StandardTypes.Nothing, first.defaultCEType)
+                    TypeParameterKind.Both -> first.defaultType
+                },
                 toFreshVariables.substituteOrSelf(upperBound),
                 ConeDeclaredUpperBoundConstraintPosition()
             )
@@ -243,7 +255,7 @@ internal object CreateFreshTypeVariableSubstitutorStage : ResolutionStage() {
             }
         }
 
-        return toFreshVariables to freshTypeVariables
+        return toFreshVariables to freshTypeVariables.map { it.first }
     }
 
     context(context: ResolutionContext)

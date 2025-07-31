@@ -25,7 +25,7 @@ fun ConstraintStorage.buildAbstractResultingSubstitutor(
     context: TypeSystemInferenceExtensionContext,
     transformTypeVariablesToErrorTypes: Boolean = true,
 ): TypeSubstitutorMarker = with(context) {
-    if (allTypeVariables.isEmpty()) return createEmptySubstitutor()
+//    if (allTypeVariables.isEmpty()) return createEmptySubstitutor()
 
     fun buildValueSubstitutorMap(): Map<TypeConstructorMarker, KotlinTypeMarker> {
         val notFixedSubstitutorMap = if (transformTypeVariablesToErrorTypes) {

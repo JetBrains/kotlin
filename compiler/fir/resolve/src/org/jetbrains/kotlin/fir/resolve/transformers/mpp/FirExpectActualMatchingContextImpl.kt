@@ -36,6 +36,7 @@ import org.jetbrains.kotlin.types.AbstractTypeChecker
 import org.jetbrains.kotlin.types.TypeCheckerState
 import org.jetbrains.kotlin.types.Variance
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
+import org.jetbrains.kotlin.types.model.RigidTypeMarker
 import org.jetbrains.kotlin.types.model.SimpleTypeMarker
 import org.jetbrains.kotlin.types.model.TypeSubstitutorMarker
 import org.jetbrains.kotlin.types.model.TypeSystemContext
@@ -261,7 +262,7 @@ class FirExpectActualMatchingContextImpl private constructor(
         return asSymbol().fir.collectEnumEntries(actualSession).map { it.symbol }
     }
 
-    override val CallableSymbolMarker.dispatchReceiverType: SimpleTypeMarker?
+    override val CallableSymbolMarker.dispatchReceiverType: RigidTypeMarker?
         get() = asSymbol().dispatchReceiverType
     override val CallableSymbolMarker.extensionReceiverType: KotlinTypeMarker?
         get() = asSymbol().resolvedReceiverType

@@ -581,7 +581,7 @@ class FirSyntheticCallGenerator(
         return generateMemberFunction(
             functionSymbol,
             SyntheticCallableId.CHECK_NOT_NULL.callableName,
-            returnType = typeParameterType.makeConeTypeDefinitelyNotNullOrNotNull(
+            returnType = typeParameterType.splitIntoValueAndError().first.makeConeTypeDefinitelyNotNullOrNotNull(
                 session.typeContext,
                 // No checks are necessary because we're sure that the type parameter has default (nullable) upper bound.
                 // At the same time, not having `avoidComprehensiveCheck = true` might lead to plugin initialization issues.

@@ -231,7 +231,7 @@ abstract class FirSyntheticFunctionInterfaceProviderBase(
                         hasStableParameterNames = false
                     }
                     val typeArguments = typeParameters.map {
-                        ConeTypeParameterTypeImpl.create(it.symbol.toLookupTag(), false).toFirResolvedTypeRef()
+                        it.symbol.constructType().toFirResolvedTypeRef()
                     }
 
                     fun createSuperType(kind: FunctionTypeKind): FirResolvedTypeRef {

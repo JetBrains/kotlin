@@ -10,9 +10,9 @@ FirFileImpl
    FirControlFlowGraphReferenceImpl
    FirDelegatedConstructorCallImpl
     FirResolvedArgumentListImpl
-    FirImplicitAnyTypeRef
+    FirResolvedTypeRefImpl
     FirResolvedNamedReferenceImpl
-  FirImplicitAnyTypeRef
+  FirResolvedTypeRefImpl
  FirRegularClassImpl
   FirResolvedDeclarationStatusImpl
   FirControlFlowGraphReferenceImpl
@@ -22,9 +22,9 @@ FirFileImpl
    FirControlFlowGraphReferenceImpl
    FirDelegatedConstructorCallImpl
     FirResolvedArgumentListImpl
-    FirImplicitAnyTypeRef
+    FirResolvedTypeRefImpl
     FirResolvedNamedReferenceImpl
-  FirImplicitAnyTypeRef
+  FirResolvedTypeRefImpl
  FirRegularClassImpl
   FirResolvedDeclarationStatusImpl
   FirControlFlowGraphReferenceImpl
@@ -34,9 +34,9 @@ FirFileImpl
    FirControlFlowGraphReferenceImpl
    FirDelegatedConstructorCallImpl
     FirResolvedArgumentListImpl
-    FirImplicitAnyTypeRef
+    FirResolvedTypeRefImpl
     FirResolvedNamedReferenceImpl
-  FirImplicitAnyTypeRef
+  FirResolvedTypeRefImpl
  FirPropertyImpl
   FirResolvedDeclarationStatusImpl
   FirResolvedTypeRefImpl

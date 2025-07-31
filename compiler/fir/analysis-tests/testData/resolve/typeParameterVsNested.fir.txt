@@ -23,7 +23,7 @@ FILE: typeParameterVsNested.kt
             public get(): R|T|
 
         public final fun foo(arg: R|T|): R|kotlin/Int| {
-            ^foo R|<local>/arg|.R|test/Some.test|().R|kotlin/Int.plus|(this@R|test/My|.R|test/My.x|.R|test/Some.test|())
+            ^foo R|<local>/arg|.R|test/Some.test|().R|kotlin/Int.plus|(this@R|test/My|.R|SubstitutionOverride<test/My.x: R|T|>|.R|test/Some.test|())
         }
 
         public abstract val y: R|test/My.T|
@@ -33,7 +33,7 @@ FILE: typeParameterVsNested.kt
             public get(): R|test/My.T|
 
         public final fun boo(): R|kotlin/String| {
-            ^boo this@R|test/My|.R|test/My.y|.<Unresolved name: test>#().R|kotlin/plus|(this@R|test/My|.R|test/My.z|.<Unresolved name: test>#())
+            ^boo this@R|test/My|.R|SubstitutionOverride<test/My.y: R|test/My.T|>|.<Unresolved name: test>#().R|kotlin/plus|(this@R|test/My|.R|SubstitutionOverride<test/My.z: R|test/My.T|>|.<Unresolved name: test>#())
         }
 
         public final class Some : R|test/My.T| {

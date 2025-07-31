@@ -60,7 +60,7 @@ abstract class FirCallableSymbol<out D : FirCallableDeclaration> : FirBasedSymbo
     val ownTypeParameterSymbols: List<FirTypeParameterSymbol>
         get() = fir.typeParameters.mapNotNull { (it as? FirTypeParameter)?.symbol }
 
-    val dispatchReceiverType: ConeSimpleKotlinType?
+    val dispatchReceiverType: ConeRigidType?
         get() = fir.dispatchReceiverType
 
     val name: Name

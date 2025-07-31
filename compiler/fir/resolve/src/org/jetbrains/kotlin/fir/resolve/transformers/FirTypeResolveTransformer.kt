@@ -282,6 +282,7 @@ open class FirTypeResolveTransformer(
         withScopeCleanup {
             withDeclaration(simpleFunction) {
                 addTypeParametersScope(simpleFunction)
+                simpleFunction.transformTypeParameters(this, data)
                 val result = transformDeclaration(simpleFunction, data).also {
                     unboundCyclesInTypeParametersSupertypes(it as FirTypeParametersOwner)
                 }

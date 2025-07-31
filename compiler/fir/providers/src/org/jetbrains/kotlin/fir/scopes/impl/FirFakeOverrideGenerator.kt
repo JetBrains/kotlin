@@ -40,7 +40,7 @@ object FirFakeOverrideGenerator {
         symbolForSubstitutionOverride: FirNamedFunctionSymbol,
         baseFunction: FirSimpleFunction,
         derivedClassLookupTag: ConeClassLikeLookupTag?,
-        newDispatchReceiverType: ConeSimpleKotlinType?,
+        newDispatchReceiverType: ConeRigidType?,
         origin: FirDeclarationOrigin.SubstitutionOverride,
         newReceiverType: ConeKotlinType? = null,
         newContextParameterTypes: List<ConeKotlinType?>? = null,
@@ -72,7 +72,7 @@ object FirFakeOverrideGenerator {
         session: FirSession,
         baseFunction: FirSimpleFunction,
         derivedClassLookupTag: ConeClassLikeLookupTag?,
-        newDispatchReceiverType: ConeSimpleKotlinType?,
+        newDispatchReceiverType: ConeRigidType?,
         newReceiverType: ConeKotlinType?,
         newContextParameterTypes: List<ConeKotlinType?>?,
         newReturnType: ConeKotlinType?,
@@ -111,7 +111,7 @@ object FirFakeOverrideGenerator {
         session: FirSession,
         origin: FirDeclarationOrigin,
         isExpect: Boolean = baseFunction.isExpect,
-        newDispatchReceiverType: ConeSimpleKotlinType?,
+        newDispatchReceiverType: ConeRigidType?,
         newParameterTypes: List<ConeKotlinType?>? = null,
         newTypeParameters: List<FirTypeParameterRef>? = null,
         newReceiverType: ConeKotlinType? = null,
@@ -154,7 +154,7 @@ object FirFakeOverrideGenerator {
         baseConstructor: FirConstructor,
         derivedClassLookupTag: ConeClassLikeLookupTag?,
         origin: FirDeclarationOrigin,
-        newDispatchReceiverType: ConeSimpleKotlinType?,
+        newDispatchReceiverType: ConeRigidType?,
         newReturnType: ConeKotlinType?,
         newParameterTypes: List<ConeKotlinType?>?,
         newContextParameterTypes: List<ConeKotlinType?>?,
@@ -367,7 +367,7 @@ object FirFakeOverrideGenerator {
         symbolForSubstitutionOverride: FirPropertySymbol,
         baseProperty: FirProperty,
         derivedClassLookupTag: ConeClassLikeLookupTag,
-        newDispatchReceiverType: ConeSimpleKotlinType?,
+        newDispatchReceiverType: ConeRigidType?,
         origin: FirDeclarationOrigin.SubstitutionOverride,
         newReceiverType: ConeKotlinType? = null,
         newContextParameterTypes: List<ConeKotlinType?>? = null,
@@ -401,7 +401,7 @@ object FirFakeOverrideGenerator {
         session: FirSession,
         origin: FirDeclarationOrigin,
         isExpect: Boolean = baseProperty.isExpect,
-        newDispatchReceiverType: ConeSimpleKotlinType?,
+        newDispatchReceiverType: ConeRigidType?,
         newTypeParameters: List<FirTypeParameter>? = null,
         newReceiverType: ConeKotlinType? = null,
         newContextParameterTypes: List<ConeKotlinType?>? = null,
@@ -468,7 +468,7 @@ object FirFakeOverrideGenerator {
         origin: FirDeclarationOrigin,
         propertyReturnTypeRef: FirTypeRef,
         propertySymbol: FirPropertySymbol,
-        dispatchReceiverType: ConeSimpleKotlinType?,
+        dispatchReceiverType: ConeRigidType?,
         derivedClassLookupTag: ConeClassLikeLookupTag?,
         baseProperty: FirProperty,
         newSource: KtSourceElement? = source,
@@ -494,7 +494,7 @@ object FirFakeOverrideGenerator {
         origin: FirDeclarationOrigin,
         propertyReturnTypeRef: FirTypeRef,
         propertySymbol: FirPropertySymbol,
-        dispatchReceiverType: ConeSimpleKotlinType?,
+        dispatchReceiverType: ConeRigidType?,
         derivedClassLookupTag: ConeClassLikeLookupTag?,
         baseProperty: FirProperty,
         newSource: KtSourceElement? = source,
@@ -843,12 +843,28 @@ object FirFakeOverrideGenerator {
         fun substitutorFrom(
             pairs: List<Pair<FirTypeParameterRef, FirTypeParameterBuilder>>,
             useSiteSession: FirSession,
-        ): ConeSubstitutor = substitutorByMap(
-            pairs.associate { (originalTypeParameter, new) ->
-                Pair(originalTypeParameter.symbol, ConeTypeParameterTypeImpl.create(new.symbol.toLookupTag(), isMarkedNullable = false))
-            },
-            useSiteSession
-        )
+        ): ConeSubstitutor {
+            val substitution = mutableMapOf<FirTypeParameterSymbol, ConeKotlinType>()
+            val ceSubstitution = mutableMapOf<FirTypeParameterSymbol, CEType>()
+            pairs.forEach { (original, new) ->
+                val originalSymbol = original.symbol
+                when (originalSymbol.typeParameterKind()) {
+                    TypeParameterKind.Value -> {
+                        substitution[originalSymbol] = ConeTypeParameterTypeImpl.createPure(new.symbol.toLookupTag(), isMarkedNullable = false)
+                        ceSubstitution[originalSymbol] = CEBotType
+                    }
+                    TypeParameterKind.Error -> {
+                        substitution[originalSymbol] = StandardTypes.Nothing
+                        ceSubstitution[originalSymbol] = CETypeParameterType(new.symbol.toLookupTag())
+                    }
+                    TypeParameterKind.Both -> {
+                        substitution[originalSymbol] = ConeTypeParameterTypeImpl.createPure(new.symbol.toLookupTag(), isMarkedNullable = true)
+                        ceSubstitution[originalSymbol] = CETypeParameterType(new.symbol.toLookupTag())
+                    }
+                }
+            }
+            return substitutorByMap(substitution, ceSubstitution, useSiteSession)
+        }
 
         val chainedSubstitutor = ChainedSubstitutor(
             substitutorFrom(ownTypeParameters, useSiteSession),

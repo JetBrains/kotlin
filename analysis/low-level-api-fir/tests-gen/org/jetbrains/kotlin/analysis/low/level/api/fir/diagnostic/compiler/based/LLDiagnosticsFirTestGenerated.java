@@ -6084,9 +6084,27 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
       }
 
       @Test
+      @TestMetadata("bangBang.kt")
+      public void testBangBang() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/rich-errors/bangBang.kt");
+      }
+
+      @Test
       @TestMetadata("genericCalls.kt")
       public void testGenericCalls() {
         runTest("compiler/fir/analysis-tests/testData/resolve/rich-errors/genericCalls.kt");
+      }
+
+      @Test
+      @TestMetadata("kError.kt")
+      public void testKError() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/rich-errors/kError.kt");
+      }
+
+      @Test
+      @TestMetadata("mixedGenerics.kt")
+      public void testMixedGenerics() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/rich-errors/mixedGenerics.kt");
       }
 
       @Test
@@ -6099,6 +6117,12 @@ public class LLDiagnosticsFirTestGenerated extends AbstractLLDiagnosticsTest {
       @TestMetadata("simpleCalls.kt")
       public void testSimpleCalls() {
         runTest("compiler/fir/analysis-tests/testData/resolve/rich-errors/simpleCalls.kt");
+      }
+
+      @Test
+      @TestMetadata("smartCasts.kt")
+      public void testSmartCasts() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/rich-errors/smartCasts.kt");
       }
 
       @Test

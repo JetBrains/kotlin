@@ -266,7 +266,7 @@ internal class StubBasedFirMemberDeserializer(
             }
 
             replaceDeprecationsProvider(getDeprecationsProvider(c.session))
-            containingClassForStaticMemberAttr = c.dispatchReceiver?.lookupTag
+            containingClassForStaticMemberAttr = c.dispatchReceiver?.lookupTagOfDispatchReceiver()
         }
     }
 
@@ -327,7 +327,7 @@ internal class StubBasedFirMemberDeserializer(
             }
 
             replaceDeprecationsProvider(getDeprecationsProvider(c.session))
-            containingClassForStaticMemberAttr = c.dispatchReceiver?.lookupTag
+            containingClassForStaticMemberAttr = c.dispatchReceiver?.lookupTagOfDispatchReceiver()
         }
     }
 
@@ -661,7 +661,7 @@ internal class StubBasedFirMemberDeserializer(
 
             contextParameters.addAll(local.memberDeserializer.createContextReceiversForClass(classOrObject, symbol))
         }.build().apply {
-            containingClassForStaticMemberAttr = c.dispatchReceiver!!.lookupTag
+            containingClassForStaticMemberAttr = c.dispatchReceiver!!.lookupTagOfDispatchReceiver()
             setLazyPublishedVisibility(c.session)
         }
     }
@@ -734,7 +734,7 @@ internal class StubBasedFirMemberDeserializer(
             }
             resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
         }.apply {
-            containingClassForStaticMemberAttr = c.dispatchReceiver!!.lookupTag
+            containingClassForStaticMemberAttr = c.dispatchReceiver!!.lookupTagOfDispatchReceiver()
         }
         return enumEntry
     }

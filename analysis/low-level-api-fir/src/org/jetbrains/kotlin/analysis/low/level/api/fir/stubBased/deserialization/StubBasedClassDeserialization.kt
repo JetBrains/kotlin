@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.ConeRigidType
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.coneType
+import org.jetbrains.kotlin.fir.types.expectClassLike
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.toLookupTag
 import org.jetbrains.kotlin.fir.utils.exceptions.withConeTypeEntry
@@ -269,7 +270,7 @@ internal fun deserializeClassToSymbol(
         addCloneForArrayIfNeeded(classId, context.dispatchReceiver, session)
 
         if (classId == StandardClassIds.Enum) {
-            addCloneForEnumIfNeeded(classOrObject, context.dispatchReceiver)
+            addCloneForEnumIfNeeded(classOrObject, context.dispatchReceiver?.expectClassLike())
         }
 
         session.deserializationExtension?.run {

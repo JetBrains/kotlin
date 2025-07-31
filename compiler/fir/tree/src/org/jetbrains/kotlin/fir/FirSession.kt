@@ -72,7 +72,6 @@ abstract class FirSessionProvider {
 class BuiltinTypes {
     val unitType: FirImplicitBuiltinTypeRef = FirImplicitUnitTypeRef(null)
     val anyType: FirImplicitBuiltinTypeRef = FirImplicitAnyTypeRef(null)
-    val errorType: FirImplicitErrorTypeRef = FirImplicitErrorTypeRef(null)
     val nullableAnyType: FirImplicitBuiltinTypeRef = FirImplicitNullableAnyTypeRef(null)
     val enumType: FirImplicitBuiltinTypeRef = FirImplicitEnumTypeRef(null)
     val annotationType: FirImplicitBuiltinTypeRef = FirImplicitAnnotationTypeRef(null)

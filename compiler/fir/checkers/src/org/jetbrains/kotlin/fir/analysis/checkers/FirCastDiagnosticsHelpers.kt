@@ -48,6 +48,9 @@ fun isCastErased(supertype: ConeKotlinType, subtype: ConeKotlinType, context: Ch
     // if it is a upcast, it's never erased
     if (isUpcast) return false
 
+    // Casts to error types are never erased
+    if (subtype.splitIntoValueAndError().let { it.first.isNothing && it.second !is CEBotType }) return false
+
     // downcasting to a non-reified type parameter is always erased
     if (isNonReifiedTypeParameter) return true
     // downcasting to a reified type parameter is never erased

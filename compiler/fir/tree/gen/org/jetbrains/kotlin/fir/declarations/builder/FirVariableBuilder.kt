@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.fir.builder.FirBuilderDsl
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirExpression
-import org.jetbrains.kotlin.fir.types.ConeSimpleKotlinType
+import org.jetbrains.kotlin.fir.types.ConeRigidType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
@@ -34,7 +34,7 @@ interface FirVariableBuilder : FirDeclarationBuilder {
     abstract var receiverParameter: FirReceiverParameter?
     abstract var deprecationsProvider: DeprecationsProvider
     abstract var containerSource: DeserializedContainerSource?
-    abstract var dispatchReceiverType: ConeSimpleKotlinType?
+    abstract var dispatchReceiverType: ConeRigidType?
     abstract val contextParameters: MutableList<FirValueParameter>
     abstract var name: Name
     abstract var initializer: FirExpression?

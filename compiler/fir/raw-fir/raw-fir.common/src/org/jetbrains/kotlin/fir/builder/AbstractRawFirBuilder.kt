@@ -63,7 +63,6 @@ abstract class AbstractRawFirBuilder<T : Any>(val baseSession: FirSession, val c
 
     protected val implicitUnitType: FirImplicitBuiltinTypeRef = baseSession.builtinTypes.unitType
     protected val implicitAnyType: FirImplicitBuiltinTypeRef = baseSession.builtinTypes.anyType
-    protected val implicitErrorType: FirImplicitBuiltinTypeRef = baseSession.builtinTypes.errorType
     protected val implicitEnumType: FirImplicitBuiltinTypeRef = baseSession.builtinTypes.enumType
     protected val implicitAnnotationType: FirImplicitBuiltinTypeRef = baseSession.builtinTypes.annotationType
 
@@ -348,7 +347,7 @@ abstract class AbstractRawFirBuilder<T : Any>(val baseSession: FirSession, val c
         } else {
             ConeClassLikeTypeImpl(
                 symbol.toLookupTag(),
-                typeParameters.map { ConeTypeParameterTypeImpl.create(it.symbol.toLookupTag(), false) }.toTypedArray(),
+                typeParameters.map { it.symbol.constructType() }.toTypedArray(),
                 false
             )
         }

@@ -457,7 +457,7 @@ interface ConeTypeContext : TypeSystemContext, TypeSystemOptimizationContext, Ty
         return toClassLikeSymbol()?.fir as? FirRegularClass
     }
 
-    override fun nullableAnyType(): ConeClassLikeType = session.builtinTypes.nullableAnyType.coneType
+    override fun nullableAnyType(): ConeClassLikeType = session.builtinTypes.nullableAnyType.coneType as ConeClassLikeType
 
     override fun arrayType(componentType: KotlinTypeMarker): ConeClassLikeType {
         require(componentType is ConeKotlinType)

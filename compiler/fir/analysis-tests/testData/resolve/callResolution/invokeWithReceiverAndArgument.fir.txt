@@ -51,7 +51,7 @@ FILE: invokeWithReceiverAndArgument.kt
         }
 
         public final fun foo(x: R|(Outer.Inner<E>) -> kotlin/Unit|, y: R|Outer.Inner<E>.() -> kotlin/Unit|): R|kotlin/Unit| {
-            this@R|/Outer|.R|/Outer.bar|(this@R|/Outer|.R|SubstitutionOverride</Outer.Inner.Inner>|())
+            this@R|/Outer|.R|SubstitutionOverride</Outer.bar: R|kotlin/Unit|>|(this@R|/Outer|.R|SubstitutionOverride</Outer.Inner.Inner>|())
             R|<local>/x|.R|SubstitutionOverride<kotlin/Function1.invoke: R|kotlin/Unit|>|(this@R|/Outer|.R|SubstitutionOverride</Outer.Inner.Inner>|())
             R|<local>/y|.R|SubstitutionOverride<kotlin/Function1.invoke: R|kotlin/Unit|>|(this@R|/Outer|.R|SubstitutionOverride</Outer.Inner.Inner>|())
         }

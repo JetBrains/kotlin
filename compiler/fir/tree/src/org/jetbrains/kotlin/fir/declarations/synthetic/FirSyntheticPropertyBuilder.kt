@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.fir.declarations.DeprecationsProvider
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationStatus
 import org.jetbrains.kotlin.fir.declarations.FirSimpleFunction
 import org.jetbrains.kotlin.fir.symbols.impl.FirSyntheticPropertySymbol
+import org.jetbrains.kotlin.fir.types.ConeRigidType
 import org.jetbrains.kotlin.fir.types.ConeSimpleKotlinType
 import org.jetbrains.kotlin.name.Name
 
@@ -26,7 +27,7 @@ class FirSyntheticPropertyBuilder {
      */
     var customStatus: FirDeclarationStatus? = null
     var delegateSetter: FirSimpleFunction? = null
-    var dispatchReceiverType: ConeSimpleKotlinType? = null
+    var dispatchReceiverType: ConeRigidType? = null
 
 
     @OptIn(FirImplementationDetail::class)

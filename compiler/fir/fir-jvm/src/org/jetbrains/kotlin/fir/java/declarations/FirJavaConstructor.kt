@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.types.ConeSimpleKotlinType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
+import org.jetbrains.kotlin.fir.types.expectClassLike
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
 import org.jetbrains.kotlin.fir.visitors.transformInplace
@@ -210,7 +211,7 @@ class FirJavaConstructorBuilder : FirConstructorBuilder() {
             typeParameters,
             annotationList,
             status as FirResolvedDeclarationStatusImpl,
-            dispatchReceiverType,
+            dispatchReceiverType?.expectClassLike(),
             containingClassSymbol,
         )
     }

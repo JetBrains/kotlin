@@ -51,7 +51,9 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
+import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.visitors.*
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.name.StandardClassIds
@@ -1567,17 +1569,25 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         dataFlowAnalyzer.exitCallArguments()
 
         val reference = delegatedConstructorCall.calleeReference
-        val constructorType: ConeClassLikeType? = when (reference) {
+        val constructorType: ConeRigidType? = when (reference) {
             is FirThisReference -> containingClass.defaultTypeExpectValue()
             is FirSuperReference -> reference.superTypeRef
-                .coneTypeSafe<ConeClassLikeType>()
+                .coneTypeSafe<ConeRigidType>()
                 ?.takeIf { it !is ConeErrorType }
                 ?.fullyExpandedType(session)
             else -> null
         }
 
+        val constructorType2 = when (constructorType) {
+            is ConeClassLikeType -> constructorType
+            is ConeErrorUnionType if constructorType.valueType.isNothing && constructorType.errorType is CETopType ->
+                ConeClassLikeTypeImpl(ClassId.fromString("kotlin/KError").toLookupTag(), emptyArray(), false)
+            null -> null
+            else -> error("Unexpected constructorType: $constructorType")
+        }
+
         val resolvedCall = context.forDelegatedConstructorCallResolution {
-            callResolver.resolveDelegatingConstructorCall(delegatedConstructorCall, constructorType, containingClass.symbol.toLookupTag())
+            callResolver.resolveDelegatingConstructorCall(delegatedConstructorCall, constructorType2, containingClass.symbol.toLookupTag())
         }
 
         if (reference is FirThisReference && reference.boundSymbol == null) {
@@ -1623,6 +1633,9 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
 
     private fun extractSuperTypeDeclaration(typeRef: FirTypeRef): FirRegularClass? {
         if (typeRef !is FirResolvedTypeRef) return null
+        if (typeRef.coneType == ConeErrorUnionType.create(StandardTypes.Nothing, CETopType)) {
+            return ClassId.fromString("kotlin/KError").toLookupTag().toSymbol(session)?.fir as? FirRegularClass
+        }
         return when (val declaration = typeRef.firClassLike(session)) {
             is FirRegularClass -> declaration
             is FirTypeAlias -> extractSuperTypeDeclaration(declaration.expandedTypeRef)

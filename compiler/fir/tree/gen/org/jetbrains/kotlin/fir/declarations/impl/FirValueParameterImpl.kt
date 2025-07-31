@@ -21,7 +21,7 @@ import org.jetbrains.kotlin.fir.expressions.FirExpression
 import org.jetbrains.kotlin.fir.references.FirControlFlowGraphReference
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
-import org.jetbrains.kotlin.fir.types.ConeSimpleKotlinType
+import org.jetbrains.kotlin.fir.types.ConeRigidType
 import org.jetbrains.kotlin.fir.types.FirTypeRef
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.fir.visitors.FirVisitor
@@ -55,7 +55,7 @@ internal class FirValueParameterImpl(
         get() = null
     override val containerSource: DeserializedContainerSource?
         get() = null
-    override val dispatchReceiverType: ConeSimpleKotlinType?
+    override val dispatchReceiverType: ConeRigidType?
         get() = null
     override val contextParameters: List<FirValueParameter>
         get() = emptyList()

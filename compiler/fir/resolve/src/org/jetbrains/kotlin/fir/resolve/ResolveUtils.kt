@@ -423,7 +423,7 @@ fun FirResolvedQualifier.setTypeOfQualifier(components: BodyResolveComponents) {
     this.resultType = components.session.builtinTypes.unitType.coneType
 }
 
-internal fun typeForReifiedParameterReference(parameterReferenceBuilder: FirResolvedReifiedParameterReferenceBuilder): ConeErrorUnionType {
+internal fun typeForReifiedParameterReference(parameterReferenceBuilder: FirResolvedReifiedParameterReferenceBuilder): ConeRigidType {
     val typeParameterSymbol = parameterReferenceBuilder.symbol
     return typeParameterSymbol.constructType()
 }
@@ -825,8 +825,8 @@ fun FirNamedReferenceWithCandidate.toErrorReference(diagnostic: ConeDiagnostic):
     }
 }
 
-val FirTypeParameterSymbol.defaultType: ConeErrorUnionType
-    get() = ConeTypeParameterTypeImpl.create(toLookupTag(), isMarkedNullable = false)
+val FirTypeParameterSymbol.defaultType: ConeRigidType
+    get() = constructType()
 
 val FirUserTypeRef.shortName: Name get() = qualifier.last().name
 

@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.FirEnumEntrySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirNamedFunctionSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirPropertySymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.lookupTagOfDispatchReceiver
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
@@ -194,7 +195,7 @@ fun deserializeClassToSymbol(
                     }
                     resolvePhase = FirResolvePhase.ANALYZED_DEPENDENCIES
                 }.apply {
-                    containingClassForStaticMemberAttr = context.dispatchReceiver!!.lookupTag
+                    containingClassForStaticMemberAttr = context.dispatchReceiver!!.lookupTagOfDispatchReceiver()
                     replaceAnnotations(
                         context.annotationDeserializer.loadEnumEntryAnnotations(classId, enumEntryProto, context.nameResolver)
                     )
@@ -277,7 +278,7 @@ private val ARRAY_CLASSES: Set<Name> = setOf(
     Name.identifier("BooleanArray"),
 )
 
-fun FirRegularClassBuilder.addCloneForArrayIfNeeded(classId: ClassId, dispatchReceiver: ConeClassLikeType?, session: FirSession) {
+fun FirRegularClassBuilder.addCloneForArrayIfNeeded(classId: ClassId, dispatchReceiver: ConeRigidType?, session: FirSession) {
     if (classId.packageFqName != StandardClassIds.BASE_KOTLIN_PACKAGE) return
     if (classId.shortClassName !in ARRAY_CLASSES) return
     if (session.getRegularClassSymbolByClassId(StandardClassIds.Cloneable) == null) return
