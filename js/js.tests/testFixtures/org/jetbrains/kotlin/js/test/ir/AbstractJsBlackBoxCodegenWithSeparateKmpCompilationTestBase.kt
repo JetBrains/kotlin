@@ -31,7 +31,7 @@ import org.jetbrains.kotlin.test.services.configuration.JsEnvironmentConfigurato
 import org.jetbrains.kotlin.test.services.configuration.MetadataEnvironmentConfiguratorForSeparateKmpCompilation
 import org.jetbrains.kotlin.test.services.isLeafModuleInMppGraph
 
-abstract class AbstractJvmBlackBoxCodegenWithSeparateKmpCompilationTestBase(
+abstract class AbstractJsBlackBoxCodegenWithSeparateKmpCompilationTestBase(
     val parser: FirParser,
     private val pathToTestDir: String,
     private val testGroupOutputDirPrefix: String,
@@ -88,7 +88,7 @@ class JsEnvironmentConfiguratorForSeparateKmpCompilation(
     }
 }
 
-open class AbstractJsLightTreeBlackBoxCodegenWithSeparateKmpCompilationTest : AbstractJvmBlackBoxCodegenWithSeparateKmpCompilationTestBase(
+open class AbstractJsLightTreeBlackBoxCodegenWithSeparateKmpCompilationTest : AbstractJsBlackBoxCodegenWithSeparateKmpCompilationTestBase(
     FirParser.LightTree,
     pathToTestDir = "compiler/testData/codegen/box/multiplatform/k2",
     testGroupOutputDirPrefix = "codegen/irBoxHmpp/lightTree/"
