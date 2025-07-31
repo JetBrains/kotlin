@@ -65,7 +65,6 @@ private object ClassIds {
     val kClassImpl = "KClassImpl".internalClassId
     val kClassUnsupportedImpl = "KClassUnsupportedImpl".internalClassId
     val kTypeParameterImpl = "KTypeParameterImpl".internalClassId
-    val kTypeImpl = "KTypeImpl".internalClassId
     val kTypeImplForTypeParametersWithRecursiveBounds = "KTypeImplForTypeParametersWithRecursiveBounds".internalClassId
     val kTypeProjectionList = "KTypeProjectionList".internalClassId
     val nativePtr = "NativePtr".internalClassId
@@ -112,6 +111,7 @@ private object ClassIds {
     val kMutableProperty1 = "KMutableProperty1".reflectionClassId
     val kMutableProperty2 = "KMutableProperty2".reflectionClassId
     val kType = "KType".reflectionClassId
+    val kTypeImpl = "KTypeImpl".reflectionClassId
 
     // Special standard library classes
     val stringBuilder = ClassId(StandardNames.TEXT_PACKAGE_FQ_NAME, Name.identifier("StringBuilder"))
