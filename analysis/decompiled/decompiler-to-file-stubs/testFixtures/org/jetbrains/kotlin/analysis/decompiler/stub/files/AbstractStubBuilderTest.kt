@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -55,7 +55,7 @@ private fun serializeStubToString(stubElement: StubElement<*>): String {
     // Remove all repeating information (See KotlinStubBaseImpl.toString())
     return treeStr.lines().joinToString(separator = "\n") {
         if (it.contains(STUB_TO_STRING_PREFIX)) {
-            it.takeWhile(Char::isWhitespace) + it.substringAfter("KotlinStub$")
+            it.takeWhile(Char::isWhitespace) + it.substringAfter(STUB_TO_STRING_PREFIX)
         } else {
             it
         }
