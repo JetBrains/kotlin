@@ -9773,6 +9773,12 @@ public class LLReversedDiagnosticsFirTestGenerated extends AbstractLLReversedDia
         }
 
         @Test
+        @TestMetadata("explicitBackingFieldOptIns.kt")
+        public void testExplicitBackingFieldOptIns() {
+          runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/backingField/explicitBackingFieldOptIns.kt");
+        }
+
+        @Test
         @TestMetadata("explicitBackingFieldType.kt")
         public void testExplicitBackingFieldType() {
           runTest("compiler/fir/analysis-tests/testData/resolveWithStdlib/properties/backingField/explicitBackingFieldType.kt");
