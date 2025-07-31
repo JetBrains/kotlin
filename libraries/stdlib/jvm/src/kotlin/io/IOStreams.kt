@@ -64,7 +64,10 @@ public inline fun ByteArray.inputStream(): ByteArrayInputStream = ByteArrayInput
 public inline fun ByteArray.inputStream(offset: Int, length: Int): ByteArrayInputStream = ByteArrayInputStream(this, offset, length)
 
 /**
- * Creates a buffered input stream wrapping this stream.
+ * Creates a [BufferedInputStream] wrapping this stream.
+ *
+ * Refer to [BufferedInputStream] documentation for details about buffering behavior.
+ *
  * @param bufferSize the buffer size to use.
  */
 @kotlin.internal.InlineOnly
@@ -75,12 +78,19 @@ public inline fun InputStream.buffered(bufferSize: Int = DEFAULT_BUFFER_SIZE): B
 @kotlin.internal.InlineOnly
 public inline fun InputStream.reader(charset: Charset = Charsets.UTF_8): InputStreamReader = InputStreamReader(this, charset)
 
-/** Creates a buffered reader on this input stream using UTF-8 or the specified [charset]. */
+/**
+ * Creates a [BufferedReader] on this input stream using UTF-8 or the specified [charset].
+ *
+ * Refer to [BufferedReader] documentation for details about buffering behavior.
+ */
 @kotlin.internal.InlineOnly
 public inline fun InputStream.bufferedReader(charset: Charset = Charsets.UTF_8): BufferedReader = reader(charset).buffered()
 
 /**
- * Creates a buffered output stream wrapping this stream.
+ * Creates a [BufferedOutputStream] wrapping this stream.
+ *
+ * Refer to [BufferedOutputStream] documentation for details about buffering and flushing behavior.
+ *
  * @param bufferSize the buffer size to use.
  */
 @kotlin.internal.InlineOnly
@@ -91,7 +101,11 @@ public inline fun OutputStream.buffered(bufferSize: Int = DEFAULT_BUFFER_SIZE): 
 @kotlin.internal.InlineOnly
 public inline fun OutputStream.writer(charset: Charset = Charsets.UTF_8): OutputStreamWriter = OutputStreamWriter(this, charset)
 
-/** Creates a buffered writer on this output stream using UTF-8 or the specified [charset]. */
+/**
+ * Creates a [BufferedWriter] on this output stream using UTF-8 or the specified [charset].
+ *
+ * Refer to [BufferedWriter] documentation for details about buffering and flushing behavior.
+ */
 @kotlin.internal.InlineOnly
 public inline fun OutputStream.bufferedWriter(charset: Charset = Charsets.UTF_8): BufferedWriter = writer(charset).buffered()
 
