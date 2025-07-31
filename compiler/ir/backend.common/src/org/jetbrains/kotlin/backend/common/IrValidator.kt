@@ -5,16 +5,16 @@
 
 package org.jetbrains.kotlin.backend.common
 
-import org.jetbrains.kotlin.backend.common.checkers.IrValidationError
-import org.jetbrains.kotlin.backend.common.checkers.TreeConsistencyError
-import org.jetbrains.kotlin.backend.common.checkers.checkTreeConsistency
+import org.jetbrains.kotlin.backend.common.checkers.*
 import org.jetbrains.kotlin.backend.common.checkers.context.*
 import org.jetbrains.kotlin.backend.common.checkers.declaration.*
 import org.jetbrains.kotlin.backend.common.checkers.expression.*
 import org.jetbrains.kotlin.backend.common.checkers.symbol.IrSymbolChecker
 import org.jetbrains.kotlin.backend.common.checkers.symbol.IrVisibilityChecker
+import org.jetbrains.kotlin.backend.common.checkers.symbol.check
 import org.jetbrains.kotlin.backend.common.checkers.type.IrTypeChecker
 import org.jetbrains.kotlin.backend.common.checkers.type.IrTypeParameterScopeChecker
+import org.jetbrains.kotlin.backend.common.checkers.type.check
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.IrVerificationMode
@@ -94,40 +94,40 @@ private class IrFileValidator(
 ) : IrTreeSymbolsVisitor() {
     private val contextUpdaters: MutableList<ContextUpdater> = mutableListOf(ParentChainUpdater)
 
-    private val fieldCheckers: MutableList<IrFieldChecker> = mutableListOf()
-    private val fieldAccessExpressionCheckers: MutableList<IrFieldAccessChecker> = mutableListOf()
+    private val fieldCheckers: MutableList<IrElementChecker<IrField>> = mutableListOf()
+    private val fieldAccessExpressionCheckers: MutableList<IrElementChecker<IrFieldAccessExpression>> = mutableListOf()
     private val typeCheckers: MutableList<IrTypeChecker> = mutableListOf()
     private val symbolCheckers: MutableList<IrSymbolChecker> = mutableListOf()
-    private val declarationReferenceCheckers: MutableList<IrDeclarationReferenceChecker> = mutableListOf()
-    private val varargCheckers: MutableList<IrVarargChecker> = mutableListOf()
-    private val valueParameterCheckers: MutableList<IrValueParameterChecker> = mutableListOf()
-    private val valueAccessCheckers: MutableList<IrValueAccessChecker> = mutableListOf()
-    private val functionAccessCheckers: MutableList<IrFunctionAccessChecker> = mutableListOf(IrNoInlineUseSitesChecker)
-    private val functionReferenceCheckers: MutableList<IrFunctionReferenceChecker> = mutableListOf()
-    private val constCheckers: MutableList<IrConstChecker> = mutableListOf()
-    private val stringConcatenationCheckers: MutableList<IrStringConcatenationChecker> = mutableListOf()
-    private val getObjectValueCheckers: MutableList<IrGetObjectValueChecker> = mutableListOf()
-    private val getValueCheckers: MutableList<IrGetValueChecker> = mutableListOf()
-    private val setValueCheckers: MutableList<IrSetValueChecker> = mutableListOf(IrSetValueAssignabilityChecker)
-    private val getFieldCheckers: MutableList<IrGetFieldChecker> = mutableListOf()
-    private val setFieldCheckers: MutableList<IrSetFieldChecker> = mutableListOf()
-    private val delegatingConstructorCallCheckers: MutableList<IrDelegatingConstructorCallChecker> = mutableListOf()
-    private val instanceInitializerCallCheckers: MutableList<IrInstanceInitializerCallChecker> = mutableListOf()
-    private val loopCheckers: MutableList<IrLoopChecker> = mutableListOf()
-    private val breakContinueCheckers: MutableList<IrBreakContinueChecker> = mutableListOf()
-    private val returnCheckers: MutableList<IrReturnChecker> = mutableListOf()
-    private val throwCheckers: MutableList<IrThrowChecker> = mutableListOf()
-    private val functionCheckers: MutableList<IrFunctionChecker> = mutableListOf(
+    private val declarationReferenceCheckers: MutableList<IrElementChecker<IrDeclarationReference>> = mutableListOf()
+    private val varargCheckers: MutableList<IrElementChecker<IrVararg>> = mutableListOf()
+    private val valueParameterCheckers: MutableList<IrElementChecker<IrValueParameter>> = mutableListOf()
+    private val valueAccessCheckers: MutableList<IrElementChecker<IrValueAccessExpression>> = mutableListOf()
+    private val functionAccessCheckers: MutableList<IrElementChecker<IrFunctionAccessExpression>> = mutableListOf(IrNoInlineUseSitesChecker)
+    private val functionReferenceCheckers: MutableList<IrElementChecker<IrFunctionReference>> = mutableListOf()
+    private val constCheckers: MutableList<IrElementChecker<IrConst>> = mutableListOf()
+    private val stringConcatenationCheckers: MutableList<IrElementChecker<IrStringConcatenation>> = mutableListOf()
+    private val getObjectValueCheckers: MutableList<IrElementChecker<IrGetObjectValue>> = mutableListOf()
+    private val getValueCheckers: MutableList<IrElementChecker<IrGetValue>> = mutableListOf()
+    private val setValueCheckers: MutableList<IrElementChecker<IrSetValue>> = mutableListOf(IrSetValueAssignabilityChecker)
+    private val getFieldCheckers: MutableList<IrElementChecker<IrGetField>> = mutableListOf()
+    private val setFieldCheckers: MutableList<IrElementChecker<IrSetField>> = mutableListOf()
+    private val delegatingConstructorCallCheckers: MutableList<IrElementChecker<IrDelegatingConstructorCall>> = mutableListOf()
+    private val instanceInitializerCallCheckers: MutableList<IrElementChecker<IrInstanceInitializerCall>> = mutableListOf()
+    private val loopCheckers: MutableList<IrElementChecker<IrLoop>> = mutableListOf()
+    private val breakContinueCheckers: MutableList<IrElementChecker<IrBreakContinue>> = mutableListOf()
+    private val returnCheckers: MutableList<IrElementChecker<IrReturn>> = mutableListOf()
+    private val throwCheckers: MutableList<IrElementChecker<IrThrow>> = mutableListOf()
+    private val functionCheckers: MutableList<IrElementChecker<IrFunction>> = mutableListOf(
         IrFunctionDispatchReceiverChecker, IrFunctionParametersChecker, IrConstructorReceiverChecker, IrFunctionPropertiesChecker
     )
-    private val declarationBaseCheckers: MutableList<IrDeclarationChecker<IrDeclaration>> = mutableListOf()
-    private val propertyReferenceCheckers: MutableList<IrPropertyReferenceChecker> = mutableListOf()
-    private val localDelegatedPropertyReferenceCheckers: MutableList<IrLocalDelegatedPropertyReferenceChecker> = mutableListOf()
-    private val expressionCheckers: MutableList<IrExpressionChecker<IrExpression>> = mutableListOf()
-    private val typeOperatorCheckers: MutableList<IrTypeOperatorChecker> = mutableListOf(IrTypeOperatorTypeOperandChecker)
-    private val propertyCheckers: MutableList<IrPropertyChecker> = mutableListOf(IrPropertyAccessorsChecker)
+    private val declarationBaseCheckers: MutableList<IrElementChecker<IrDeclaration>> = mutableListOf()
+    private val propertyReferenceCheckers: MutableList<IrElementChecker<IrPropertyReference>> = mutableListOf()
+    private val localDelegatedPropertyReferenceCheckers: MutableList<IrElementChecker<IrLocalDelegatedPropertyReference>> = mutableListOf()
+    private val expressionCheckers: MutableList<IrElementChecker<IrExpression>> = mutableListOf()
+    private val typeOperatorCheckers: MutableList<IrElementChecker<IrTypeOperatorCall>> = mutableListOf(IrTypeOperatorTypeOperandChecker)
+    private val propertyCheckers: MutableList<IrElementChecker<IrProperty>> = mutableListOf(IrPropertyAccessorsChecker)
 
-    private val callCheckers: MutableList<IrCallChecker> = mutableListOf()
+    private val callCheckers: MutableList<IrElementChecker<IrCall>> = mutableListOf()
 
     init {
         if (config.checkValueScopes) {
