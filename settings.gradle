@@ -84,7 +84,6 @@ def buildProperties = BuildPropertiesKt.getKotlinBuildPropertiesForSettings(sett
 
 // modules
 include ":benchmarks",
-        ":compiler:daemon:remote-daemon",
         ":compiler",
         ":compiler:util",
         ":compiler:config",
@@ -96,6 +95,7 @@ include ":benchmarks",
         ":kotlin-util-klib-abi",
         ":daemon-common",
         ":kotlin-daemon",
+        ":kotlin-remote-daemon",
         ":kotlin-daemon-client",
         ":kotlin-daemon-tests",
         ":kotlin-preloader",
@@ -804,6 +804,7 @@ project(':compiler:cli-base').projectDir = "$rootDir/compiler/cli/cli-base" as F
 project(':compiler:cli-js').projectDir = "$rootDir/compiler/cli/cli-js" as File
 project(':kotlin-runner').projectDir = "$rootDir/compiler/cli/cli-runner" as File
 project(':kotlin-daemon').projectDir = "$rootDir/compiler/daemon" as File
+project(':kotlin-remote-daemon').projectDir = "$rootDir/compiler/daemon/remote-daemon" as File
 project(':daemon-common').projectDir = "$rootDir/compiler/daemon/daemon-common" as File
 project(':kotlin-daemon-client').projectDir = "$rootDir/compiler/daemon/daemon-client" as File
 project(':kotlin-daemon-tests').projectDir = "$rootDir/compiler/daemon/daemon-tests" as File

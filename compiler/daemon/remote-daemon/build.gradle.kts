@@ -20,7 +20,7 @@ repositories {
 }
 
 dependencies {
-    compileOnly(project(":compiler:daemon"))
+    compileOnly(project(":kotlin-daemon"))
     compileOnly(project(":daemon-common"))
     compileOnly(project(":kotlin-compiler-runner-unshaded"))
     compileOnly(kotlin("stdlib"))
@@ -55,6 +55,11 @@ dependencies {
     testImplementation(kotlin("test"))
 }
 
+
+// workaround that IDEA run configuration does not properly resolve runtime classpath
+tasks.classes {
+    dependsOn(configurations.runtimeClasspath)
+}
 
 protobuf {
     protoc {
