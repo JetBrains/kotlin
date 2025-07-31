@@ -1437,8 +1437,11 @@ open class IrFileSerializer(
             .build()
 
     private fun getRelevantOffsets(entry: IrFileEntry, relevantLinesRange: IntRange?): List<Int> {
-        val offsets = entry.lineStartOffsetsForSerialization
-        return relevantLinesRange?.let { offsets.slice(it) } ?: offsets
+        return when {
+            relevantLinesRange == null -> entry.lineStartOffsetsForSerialization
+            relevantLinesRange.start < 0 || relevantLinesRange.endInclusive < 0 -> emptyList() // No real offsets.
+            else -> entry.lineStartOffsetsForSerialization.slice(relevantLinesRange)
+        }
     }
 
     open fun backendSpecificExplicitRoot(node: IrAnnotationContainer): Boolean = false
