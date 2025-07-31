@@ -25,7 +25,7 @@ FILE fqName:<root> fileName:/explicitBackingFieldType.kt
               receiver: GET_VAR '<this>: <root>.A declared in <root>.A.<get-it>' type=<root>.A origin=null
     PROPERTY name:invertedTypes visibility:public modality:FINAL [var]
       annotations:
-        Suppress(names = ["INCONSISTENT_BACKING_FIELD_TYPE"] type=kotlin.Array<out kotlin.String> varargElementType=kotlin.String)
+        Suppress(names = ["INCONSISTENT_BACKING_FIELD_TYPE", "VAR_PROPERTY_WITH_EXPLICIT_BACKING_FIELD"] type=kotlin.Array<out kotlin.String> varargElementType=kotlin.String)
       FIELD PROPERTY_BACKING_FIELD name:invertedTypes type:kotlin.Number visibility:private
         EXPRESSION_BODY
           CONST Int type=kotlin.Int value=42

@@ -31,7 +31,7 @@ class A {
     val p = 5
         get() = field
 
-    <!INCONSISTENT_BACKING_FIELD_TYPE!>var setterNeeded: Int<!>
+    <!INCONSISTENT_BACKING_FIELD_TYPE!><!VAR_PROPERTY_WITH_EXPLICIT_BACKING_FIELD!>var<!> setterNeeded: Int<!>
         field = "test"
         <!PROPERTY_WITH_EXPLICIT_FIELD_AND_ACCESSORS!>get()<!> = field.length
 }

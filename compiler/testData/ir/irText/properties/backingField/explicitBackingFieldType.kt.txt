@@ -7,7 +7,7 @@ class A {
     field = 4
     get
 
-  @Suppress(names = ["INCONSISTENT_BACKING_FIELD_TYPE"])
+  @Suppress(names = ["INCONSISTENT_BACKING_FIELD_TYPE", "VAR_PROPERTY_WITH_EXPLICIT_BACKING_FIELD"])
   var invertedTypes: Number
     field = 42
     @Suppress(names = ["PROPERTY_WITH_EXPLICIT_FIELD_AND_ACCESSORS"])
