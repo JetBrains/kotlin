@@ -236,6 +236,13 @@ class WasmCompiledModuleFragment(
                 WasmStructFieldDeclaration("superClassRtti", WasmRefNullType(WasmHeapType.Type(rttiTypeDeclarationSymbol)), false),
                 WasmStructFieldDeclaration("packageNamePoolId", WasmI32, false),
                 WasmStructFieldDeclaration("simpleNamePoolId", WasmI32, false),
+
+                // TODO remove after bootstrap
+                WasmStructFieldDeclaration("dummy0", WasmI32, false),
+                WasmStructFieldDeclaration("dummy1", WasmI32, false),
+                WasmStructFieldDeclaration("dummy2", WasmI32, false),
+                WasmStructFieldDeclaration("dummy3", WasmI32, false),
+
                 WasmStructFieldDeclaration("klassId", WasmI64, false),
                 WasmStructFieldDeclaration("typeInfoFlag", WasmI32, false),
             ),

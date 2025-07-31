@@ -59,7 +59,9 @@ internal fun getQualifiedName(rtti: kotlin.wasm.internal.reftypes.structref): St
 }
 
 internal fun getPackageName(rtti: kotlin.wasm.internal.reftypes.structref): String {
-    val flagFitsOneBitQualifier = wasmGetRttiIntField(5, rtti) and TYPE_INFO_FLAG_FITS_LATIN1_QUALIFIER
+    if (getWasmAbiVersion() < 1) return getPackageName0(rtti)
+
+    val flagFitsOneBitQualifier = wasmGetRttiIntField(9, rtti) and TYPE_INFO_FLAG_FITS_LATIN1_QUALIFIER
     val poolId = wasmGetRttiIntField(2, rtti)
     return if (flagFitsOneBitQualifier != 0)
         stringLiteralLatin1(poolId)
@@ -68,7 +70,9 @@ internal fun getPackageName(rtti: kotlin.wasm.internal.reftypes.structref): Stri
 }
 
 internal fun getSimpleName(rtti: kotlin.wasm.internal.reftypes.structref): String {
-    val flagFitsOneBitSimpleName = wasmGetRttiIntField(5, rtti) and TYPE_INFO_FLAG_FITS_LATIN1_SIMPLE_NAME
+    if (getWasmAbiVersion() < 1) return getSimpleName0(rtti)
+
+    val flagFitsOneBitSimpleName = wasmGetRttiIntField(9, rtti) and TYPE_INFO_FLAG_FITS_LATIN1_SIMPLE_NAME
     val poolId = wasmGetRttiIntField(3, rtti)
     return if (flagFitsOneBitSimpleName != 0)
         stringLiteralLatin1(poolId)
@@ -77,13 +81,13 @@ internal fun getSimpleName(rtti: kotlin.wasm.internal.reftypes.structref): Strin
 }
 
 internal fun getTypeId(rtti: kotlin.wasm.internal.reftypes.structref): Long =
-    wasmGetRttiLongField(4, rtti)
+    wasmGetRttiLongField(8, rtti)
 
 internal fun isAnonymousClass(rtti: kotlin.wasm.internal.reftypes.structref): Boolean =
-    (wasmGetRttiIntField(5, rtti) and TYPE_INFO_FLAG_ANONYMOUS_CLASS) != 0
+    (wasmGetRttiIntField(9, rtti) and TYPE_INFO_FLAG_ANONYMOUS_CLASS) != 0
 
 internal fun isLocalClass(rtti: kotlin.wasm.internal.reftypes.structref): Boolean =
-    (wasmGetRttiIntField(5, rtti) and TYPE_INFO_FLAG_LOCAL_CLASS) != 0
+    (wasmGetRttiIntField(9, rtti) and TYPE_INFO_FLAG_LOCAL_CLASS) != 0
 
 @Suppress("UNUSED_PARAMETER")
 @ExcludedFromCodegen
@@ -121,3 +125,17 @@ internal fun wasmGetRttiLongField(intFieldIndex: Int, obj: kotlin.wasm.internal.
 @ExcludedFromCodegen
 internal fun wasmGetRttiSuperClass(rtti: kotlin.wasm.internal.reftypes.structref): kotlin.wasm.internal.reftypes.structref? =
     implementedAsIntrinsic
+
+// TODO remove following *0 declarations after bootstrap
+
+internal fun getPackageName0(rtti: kotlin.wasm.internal.reftypes.structref): String = stringLiteral(
+    start = wasmGetRttiIntField(2, rtti),
+    length = wasmGetRttiIntField(3, rtti),
+    poolId = wasmGetRttiIntField(4, rtti),
+)
+
+internal fun getSimpleName0(rtti: kotlin.wasm.internal.reftypes.structref): String = stringLiteral(
+    start = wasmGetRttiIntField(5, rtti),
+    length = wasmGetRttiIntField(6, rtti),
+    poolId = wasmGetRttiIntField(7, rtti),
+)

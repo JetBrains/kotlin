@@ -1556,7 +1556,7 @@ class BodyGenerator(
     }
 
     companion object {
-        val wasmAbiVersion = WasmSymbol(0)
+        val wasmAbiVersion = WasmSymbol(1)
         val anyVtableFieldId = WasmSymbol(0)
         val anyITableFieldId = WasmSymbol(1)
         val anyRttiFieldId = WasmSymbol(2)

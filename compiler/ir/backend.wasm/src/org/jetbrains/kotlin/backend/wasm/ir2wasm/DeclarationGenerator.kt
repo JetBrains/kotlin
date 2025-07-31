@@ -390,6 +390,12 @@ class DeclarationGenerator(
             buildConstI32Symbol(packageNamePoolId, location)
             buildConstI32Symbol(simpleNamePoolId, location)
 
+            // TODO remove after bootstrap
+            buildConstI32(0, location)
+            buildConstI32(0, location)
+            buildConstI32(0, location)
+            buildConstI32(0, location)
+
             buildConstI64(wasmFileCodegenContext.referenceTypeId(symbol), location)
 
             val isAnonymousFlag = if (klass.isAnonymousObject) TYPE_INFO_FLAG_ANONYMOUS_CLASS else 0
