@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.fir.diagnostics.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirSingleExpressionBlock
+import org.jetbrains.kotlin.fir.expressions.impl.buildSingleExpressionBlock
 import org.jetbrains.kotlin.fir.lightTree.fir.*
 import org.jetbrains.kotlin.fir.lightTree.fir.modifier.ModifierList
 import org.jetbrains.kotlin.fir.lightTree.fir.modifier.TypeParameterModifierList
@@ -53,6 +54,7 @@ import org.jetbrains.kotlin.lexer.KtModifierKeywordToken
 import org.jetbrains.kotlin.lexer.KtTokens.*
 import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
+import org.jetbrains.kotlin.types.ConstantValueKind
 import org.jetbrains.kotlin.util.getChildren
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
@@ -1239,8 +1241,12 @@ class LightTreeRawFirDeclarationBuilder(
                 typeParameters += constructorTypeParametersFromConstructedClass(classWrapper.classBuilder.typeParameters)
                 valueParameters += firValueParameters.map { it.firValueParameter }
                 // TODO-HEADER-COMPILATION: Potentially remove this and produce an empty constructor body.
-                val (body, contractDescription) = withForcedLocalContext {
-                    convertFunctionBody(block, null, allowLegacyContractDescription = true)
+                val (body, contractDescription) = if (headerCompilationMode) {
+                    buildEmptyExpressionBlock() to null
+                } else {
+                    withForcedLocalContext {
+                        convertFunctionBody(block, null, allowLegacyContractDescription = true)
+                    }
                 }
                 this.body = body
                 contractDescription?.let { this.contractDescription = it }
@@ -1761,8 +1767,12 @@ class LightTreeRawFirDeclarationBuilder(
             }
             val allowLegacyContractDescription = outerContractDescription == null
             // TODO-HEADER-COMPILATION: Potentially remove getter/setter code.
-            val bodyWithContractDescription = withForcedLocalContext {
-                convertFunctionBody(block, expression, allowLegacyContractDescription)
+            val bodyWithContractDescription = if (headerCompilationMode) {
+                buildEmptyExpressionBlock() to null
+            } else {
+                withForcedLocalContext {
+                    convertFunctionBody(block, expression, allowLegacyContractDescription)
+                }
             }
             this.body = bodyWithContractDescription.first
             val contractDescription = outerContractDescription ?: bodyWithContractDescription.second
@@ -2066,8 +2076,39 @@ class LightTreeRawFirDeclarationBuilder(
                     }
 
                     val allowLegacyContractDescription = outerContractDescription == null
-                    val bodyWithContractDescription = withForcedLocalContext {
-                        convertFunctionBody(block, expression, allowLegacyContractDescription)
+
+                    // TODO: HEADER-COMPILATION
+                    // replacing method bodies with `return null!!` doesn't seem to be ideal since it's producing a rather
+                    // long bytecode sequence:
+                    //     Code:
+                    //         0: aconst_null
+                    //         1: dup
+                    //         2: invokestatic  #18                 // Method kotlin/jvm/internal/Intrinsics.checkNotNull:(Ljava/lang/Object;)V
+                    //         5: pop
+                    //         6: new           #26                 // class kotlin/KotlinNothingValueException
+                    //         9: dup
+                    //        10: invokespecial #27                 // Method kotlin/KotlinNothingValueException."<init>":()V
+                    //        13: athrow
+                    //
+                    // Consider unconditionally throwing an exception instead.
+                    fun buildReturnNullExclExclBlock() = (
+                            FirSingleExpressionBlock(
+                                buildReturnExpression {
+                                    this.target = target
+                                    result = buildCheckNotNullCall {
+                                        argumentList = buildUnaryArgumentList(
+                                            buildLiteralExpression(null, ConstantValueKind.Null, null, setType = true)
+                                        )
+                                    }
+                                }
+                            ) to null)
+
+                    val bodyWithContractDescription = if (headerCompilationMode) {
+                        buildReturnNullExclExclBlock()
+                    } else {
+                        withForcedLocalContext {
+                            convertFunctionBody(block, expression, allowLegacyContractDescription)
+                        }
                     }
                     this.body = bodyWithContractDescription.first
                     val contractDescription = outerContractDescription ?: bodyWithContractDescription.second
@@ -2106,10 +2147,6 @@ class LightTreeRawFirDeclarationBuilder(
         expression: LighterASTNode?,
         allowLegacyContractDescription: Boolean
     ): Pair<FirBlock?, FirContractDescription?> {
-        // TODO-HEADER-COMPILATION: Another option to produce empty methods
-        // TODO-HEADER-COMPILATION: is to make this function return nothing.
-        if (headerCompilationMode)
-            return null to null
         return when {
             blockNode != null -> {
                 val block = convertBlock(blockNode)
@@ -2145,8 +2182,6 @@ class LightTreeRawFirDeclarationBuilder(
      * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseBlock
      */
     fun convertBlock(block: LighterASTNode?): FirBlock {
-        // TODO-HEADER-COMPILATION: One option is to prevent the frontend
-        // TODO-HEADER-COMPILATION: from producing IR here.
         if (block == null) return buildEmptyExpressionBlock()
         if (block.tokenType != BLOCK) {
             return FirSingleExpressionBlock(
