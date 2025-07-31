@@ -13,7 +13,7 @@ import kotlin.reflect.KClass
 abstract class IrElementChecker<in E : IrElement>(
     elementClass: KClass<in E>,
 ) {
-    internal abstract fun check(element: E, context: CheckerContext)
+    abstract fun check(element: E, context: CheckerContext)
 }
 
 internal fun <E : IrElement> List<IrElementChecker<E>>.check(element: E, context: CheckerContext) {

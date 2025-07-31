@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.ir.declarations.IrTypeParametersContainer
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 
-internal class CheckerContext(
+class CheckerContext(
     val irBuiltIns: IrBuiltIns,
     val checkInlineFunctionUseSites: InlineFunctionUseSiteChecker?,
     val file: IrFile,

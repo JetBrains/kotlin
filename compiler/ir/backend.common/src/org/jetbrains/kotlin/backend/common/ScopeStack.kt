@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.backend.common
 
-internal class ScopeStack<E> {
+class ScopeStack<E> {
     private class Scope<E>(val isGlobal: Boolean) {
         val values = mutableSetOf<E>()
     }
