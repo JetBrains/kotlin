@@ -5,6 +5,7 @@
 // IGNORE_BACKEND_K1: JVM_IR, JS_IR, JS_IR_ES6, WASM
 
 open class A {
+    @Suppress("VAR_PROPERTY_WITH_EXPLICIT_BACKING_FIELD")
     open var it: Number
         private field = 3
         @Suppress("PROPERTY_WITH_EXPLICIT_FIELD_AND_ACCESSORS")

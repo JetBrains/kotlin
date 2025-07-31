@@ -1,6 +1,6 @@
 // RUN_PIPELINE_TILL: FRONTEND
 open class A {
-    open var it: Number
+    open <!VAR_PROPERTY_WITH_EXPLICIT_BACKING_FIELD!>var<!> it: Number
         private field = 3
         <!PROPERTY_WITH_EXPLICIT_FIELD_AND_ACCESSORS!>set(value)<!> {
             field = value.toInt()

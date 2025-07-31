@@ -840,6 +840,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.VAR_ANNOTATION_PA
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.VAR_IMPLEMENTED_BY_INHERITED_VAL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.VAR_OVERRIDDEN_BY_VAL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.VAR_OVERRIDDEN_BY_VAL_BY_DELEGATION
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.VAR_PROPERTY_WITH_EXPLICIT_BACKING_FIELD
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.VAR_TYPE_MISMATCH_ON_INHERITANCE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.VAR_TYPE_MISMATCH_ON_OVERRIDE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.VERSION_REQUIREMENT_DEPRECATION
@@ -2719,6 +2720,10 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(
             BACKING_FIELD_FOR_DELEGATED_PROPERTY,
             "Delegated properties cannot have explicit backing field declarations."
+        )
+        map.put(
+            VAR_PROPERTY_WITH_EXPLICIT_BACKING_FIELD,
+            "Only 'val' properties with explicit backing fields are supported.",
         )
         map.put(
             INCONSISTENT_BACKING_FIELD_TYPE,
