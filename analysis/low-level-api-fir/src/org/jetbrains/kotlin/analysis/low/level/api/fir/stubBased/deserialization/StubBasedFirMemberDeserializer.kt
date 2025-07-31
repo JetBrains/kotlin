@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.name.*
 import org.jetbrains.kotlin.psi.*
 import org.jetbrains.kotlin.psi.psiUtil.hasExpectModifier
 import org.jetbrains.kotlin.psi.stubs.KotlinModifierListStub
+import org.jetbrains.kotlin.resolve.ReturnValueStatus
 import org.jetbrains.kotlin.serialization.deserialization.descriptors.DeserializedContainerSource
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import org.jetbrains.kotlin.utils.exceptions.withPsiEntry
@@ -673,8 +674,10 @@ internal class StubBasedFirMemberDeserializer(
     private fun FirDeclarationStatusImpl.setSpecialFlags(modifierList: KtModifierList?) {
         if (modifierList == null) return
         val modifierListStub = modifierList.greenStub ?: loadStubByElement(modifierList) ?: return
+        val hasMustUse = modifierListStub.hasSpecialFlag(KotlinModifierListStub.SpecialFlag.MustUseReturnValue)
+        val hasIgnorable = modifierListStub.hasSpecialFlag(KotlinModifierListStub.SpecialFlag.IgnorableReturnValue)
 
-        hasMustUseReturnValue = modifierListStub.hasSpecialFlag(KotlinModifierListStub.SpecialFlag.MustUseReturnValue)
+        returnValueStatus = ReturnValueStatus.fromBitFlags(hasMustUse, hasIgnorable)
     }
 
     private fun valueParameters(

@@ -42,6 +42,21 @@ Marked.class:
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=String]
+        FUN[fqName=Marked.ignorable, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=ignorable]
+          MODIFIER_LIST[public final IgnorableReturnValue]
+            ANNOTATION_ENTRY[hasValueArguments=false, shortName=IgnorableReturnValue]
+              CONSTRUCTOR_CALLEE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    USER_TYPE
+                      REFERENCE_EXPRESSION[referencedName=kotlin]
+                    REFERENCE_EXPRESSION[referencedName=IgnorableReturnValue]
+          VALUE_PARAMETER_LIST
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=kotlin]
+              REFERENCE_EXPRESSION[referencedName=String]
 
 
 MarkedTopLevelKt.class:
@@ -60,6 +75,21 @@ MarkedTopLevelKt.class:
         VALUE_PARAMETER_LIST
     FUN[fqName=markedTopFunction, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=markedTopFunction]
       MODIFIER_LIST[public MustUseReturnValue]
+      VALUE_PARAMETER_LIST
+      TYPE_REFERENCE
+        USER_TYPE
+          USER_TYPE
+            REFERENCE_EXPRESSION[referencedName=kotlin]
+          REFERENCE_EXPRESSION[referencedName=String]
+    FUN[fqName=ignorableTopLvl, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=ignorableTopLvl]
+      MODIFIER_LIST[public IgnorableReturnValue]
+        ANNOTATION_ENTRY[hasValueArguments=false, shortName=IgnorableReturnValue]
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                USER_TYPE
+                  REFERENCE_EXPRESSION[referencedName=kotlin]
+                REFERENCE_EXPRESSION[referencedName=IgnorableReturnValue]
       VALUE_PARAMETER_LIST
       TYPE_REFERENCE
         USER_TYPE
@@ -133,6 +163,21 @@ Unmarked.class:
                     REFERENCE_EXPRESSION[referencedName=String]
         FUN[fqName=Unmarked.getStuff, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=getStuff]
           MODIFIER_LIST[public final MustUseReturnValue]
+          VALUE_PARAMETER_LIST
+          TYPE_REFERENCE
+            USER_TYPE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=kotlin]
+              REFERENCE_EXPRESSION[referencedName=String]
+        FUN[fqName=Unmarked.ignorable, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=ignorable]
+          MODIFIER_LIST[public final IgnorableReturnValue]
+            ANNOTATION_ENTRY[hasValueArguments=false, shortName=IgnorableReturnValue]
+              CONSTRUCTOR_CALLEE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    USER_TYPE
+                      REFERENCE_EXPRESSION[referencedName=kotlin]
+                    REFERENCE_EXPRESSION[referencedName=IgnorableReturnValue]
           VALUE_PARAMETER_LIST
           TYPE_REFERENCE
             USER_TYPE

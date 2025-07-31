@@ -272,6 +272,81 @@ public final class ProtoBuf {
     // @@protoc_insertion_point(enum_scope:org.jetbrains.kotlin.metadata.MemberKind)
   }
 
+  /**
+   * Protobuf enum {@code org.jetbrains.kotlin.metadata.ReturnValueStatus}
+   */
+  public enum ReturnValueStatus
+      implements org.jetbrains.kotlin.protobuf.Internal.EnumLite {
+    /**
+     * <code>UNSPECIFIED = 0;</code>
+     */
+    UNSPECIFIED(0, 0),
+    /**
+     * <code>MUST_USE = 1;</code>
+     */
+    MUST_USE(1, 1),
+    /**
+     * <code>EXPLICITLY_IGNORABLE = 2;</code>
+     *
+     * <pre>
+     *3 represents &#64;MustUse AND &#64;Ignorable state, which is semantically incorrect.
+     *We can reserve this state for future potential extensions.
+     * </pre>
+     */
+    EXPLICITLY_IGNORABLE(2, 2),
+    ;
+
+    /**
+     * <code>UNSPECIFIED = 0;</code>
+     */
+    public static final int UNSPECIFIED_VALUE = 0;
+    /**
+     * <code>MUST_USE = 1;</code>
+     */
+    public static final int MUST_USE_VALUE = 1;
+    /**
+     * <code>EXPLICITLY_IGNORABLE = 2;</code>
+     *
+     * <pre>
+     *3 represents &#64;MustUse AND &#64;Ignorable state, which is semantically incorrect.
+     *We can reserve this state for future potential extensions.
+     * </pre>
+     */
+    public static final int EXPLICITLY_IGNORABLE_VALUE = 2;
+
+
+    public final int getNumber() { return value; }
+
+    public static ReturnValueStatus valueOf(int value) {
+      switch (value) {
+        case 0: return UNSPECIFIED;
+        case 1: return MUST_USE;
+        case 2: return EXPLICITLY_IGNORABLE;
+        default: return null;
+      }
+    }
+
+    public static org.jetbrains.kotlin.protobuf.Internal.EnumLiteMap<ReturnValueStatus>
+        internalGetValueMap() {
+      return internalValueMap;
+    }
+    private static org.jetbrains.kotlin.protobuf.Internal.EnumLiteMap<ReturnValueStatus>
+        internalValueMap =
+          new org.jetbrains.kotlin.protobuf.Internal.EnumLiteMap<ReturnValueStatus>() {
+            public ReturnValueStatus findValueByNumber(int number) {
+              return ReturnValueStatus.valueOf(number);
+            }
+          };
+
+    private final int value;
+
+    private ReturnValueStatus(int index, int value) {
+      this.value = value;
+    }
+
+    // @@protoc_insertion_point(enum_scope:org.jetbrains.kotlin.metadata.ReturnValueStatus)
+  }
+
   public interface StringTableOrBuilder extends
       // @@protoc_insertion_point(interface_extends:org.jetbrains.kotlin.metadata.StringTable)
       org.jetbrains.kotlin.protobuf.MessageLiteOrBuilder {

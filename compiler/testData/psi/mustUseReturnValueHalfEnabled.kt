@@ -9,11 +9,14 @@ class Unmarked {
         set(value) {
             field = value
         }
+
+    @IgnorableReturnValue fun ignorable(): String = ""
 }
 
 // FILE: unmarkedTopLevel.kt
 fun unmarkedTopFunction(): String = ""
 val unmarkedTopProperty get() = 25
+@IgnorableReturnValue fun ignorableTopLvl(): String = ""
 
 // FILE: markedTopLevel.kt
 @file:MustUseReturnValue
@@ -31,6 +34,8 @@ class Marked {
         set(value) {
             field = value
         }
+
+    @IgnorableReturnValue fun ignorable(): String = ""
 }
 
 // FILE: MyEnum.kt

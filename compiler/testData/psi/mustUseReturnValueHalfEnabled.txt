@@ -95,6 +95,35 @@ KtFile: mustUseReturnValueHalfEnabled.kt
                 PsiElement(IDENTIFIER)('value')
             PsiWhiteSpace('\n        ')
             PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n\n    ')
+      FUN
+        MODIFIER_LIST
+          ANNOTATION_ENTRY
+            PsiElement(AT)('@')
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('IgnorableReturnValue')
+        PsiWhiteSpace(' ')
+        PsiElement(fun)('fun')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('ignorable')
+        VALUE_PARAMETER_LIST
+          PsiElement(LPAR)('(')
+          PsiElement(RPAR)(')')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('String')
+        PsiWhiteSpace(' ')
+        PsiElement(EQ)('=')
+        PsiWhiteSpace(' ')
+        STRING_TEMPLATE
+          PsiElement(OPEN_QUOTE)('"')
+          PsiElement(CLOSING_QUOTE)('"')
       PsiWhiteSpace('\n')
       PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n\n')
@@ -135,6 +164,35 @@ KtFile: mustUseReturnValueHalfEnabled.kt
       PsiWhiteSpace(' ')
       INTEGER_CONSTANT
         PsiElement(INTEGER_LITERAL)('25')
+  PsiWhiteSpace('\n')
+  FUN
+    MODIFIER_LIST
+      ANNOTATION_ENTRY
+        PsiElement(AT)('@')
+        CONSTRUCTOR_CALLEE
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION
+                PsiElement(IDENTIFIER)('IgnorableReturnValue')
+    PsiWhiteSpace(' ')
+    PsiElement(fun)('fun')
+    PsiWhiteSpace(' ')
+    PsiElement(IDENTIFIER)('ignorableTopLvl')
+    VALUE_PARAMETER_LIST
+      PsiElement(LPAR)('(')
+      PsiElement(RPAR)(')')
+    PsiElement(COLON)(':')
+    PsiWhiteSpace(' ')
+    TYPE_REFERENCE
+      USER_TYPE
+        REFERENCE_EXPRESSION
+          PsiElement(IDENTIFIER)('String')
+    PsiWhiteSpace(' ')
+    PsiElement(EQ)('=')
+    PsiWhiteSpace(' ')
+    STRING_TEMPLATE
+      PsiElement(OPEN_QUOTE)('"')
+      PsiElement(CLOSING_QUOTE)('"')
   PsiWhiteSpace('\n\n')
   FUN
     PsiComment(EOL_COMMENT)('// FILE: markedTopLevel.kt')
@@ -283,6 +341,35 @@ KtFile: mustUseReturnValueHalfEnabled.kt
                 PsiElement(IDENTIFIER)('value')
             PsiWhiteSpace('\n        ')
             PsiElement(RBRACE)('}')
+      PsiWhiteSpace('\n\n    ')
+      FUN
+        MODIFIER_LIST
+          ANNOTATION_ENTRY
+            PsiElement(AT)('@')
+            CONSTRUCTOR_CALLEE
+              TYPE_REFERENCE
+                USER_TYPE
+                  REFERENCE_EXPRESSION
+                    PsiElement(IDENTIFIER)('IgnorableReturnValue')
+        PsiWhiteSpace(' ')
+        PsiElement(fun)('fun')
+        PsiWhiteSpace(' ')
+        PsiElement(IDENTIFIER)('ignorable')
+        VALUE_PARAMETER_LIST
+          PsiElement(LPAR)('(')
+          PsiElement(RPAR)(')')
+        PsiElement(COLON)(':')
+        PsiWhiteSpace(' ')
+        TYPE_REFERENCE
+          USER_TYPE
+            REFERENCE_EXPRESSION
+              PsiElement(IDENTIFIER)('String')
+        PsiWhiteSpace(' ')
+        PsiElement(EQ)('=')
+        PsiWhiteSpace(' ')
+        STRING_TEMPLATE
+          PsiElement(OPEN_QUOTE)('"')
+          PsiElement(CLOSING_QUOTE)('"')
       PsiWhiteSpace('\n')
       PsiElement(RBRACE)('}')
   PsiWhiteSpace('\n\n')

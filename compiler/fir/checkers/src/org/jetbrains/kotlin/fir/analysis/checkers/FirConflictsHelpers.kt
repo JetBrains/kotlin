@@ -41,6 +41,7 @@ import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.SpecialNames
+import org.jetbrains.kotlin.resolve.ReturnValueStatus
 import org.jetbrains.kotlin.utils.SmartSet
 
 private fun FirResolvedDeclarationStatus.isAllowedForMainFunction(): Boolean {
@@ -49,7 +50,7 @@ private fun FirResolvedDeclarationStatus.isAllowedForMainFunction(): Boolean {
     val cleanedStatus = this.copy(
         // main() function is allowed but not obliged to have the following flags:
         isSuspend = false,
-        hasMustUseReturnValue = false
+        returnValueStatus = ReturnValueStatus.Unspecified
     )
     return cleanedStatus.modifiersRepresentation == defaultStatusForMain.modifiersRepresentation
 }

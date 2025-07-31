@@ -28,6 +28,7 @@ import org.jetbrains.kotlin.resolve.DescriptorUtils
 import org.jetbrains.kotlin.resolve.DescriptorUtils.isEnumEntry
 import org.jetbrains.kotlin.resolve.MemberComparator
 import org.jetbrains.kotlin.resolve.RequireKotlinConstants
+import org.jetbrains.kotlin.resolve.ReturnValueStatus
 import org.jetbrains.kotlin.resolve.calls.components.isActualParameterWithAnyExpectedDefault
 import org.jetbrains.kotlin.resolve.constants.EnumValue
 import org.jetbrains.kotlin.resolve.constants.IntValue
@@ -246,7 +247,7 @@ class DescriptorSerializer private constructor(
             ProtoEnumFlags.modality(descriptor.modality),
             ProtoEnumFlags.memberKind(descriptor.kind),
             descriptor.isVar, hasGetter, hasSetter, hasConstant, descriptor.isConst, descriptor.isLateInit, descriptor.isExternal,
-            descriptor.isDelegated, descriptor.isExpect, /* hasMustUseReturnValue = */ false
+            descriptor.isDelegated, descriptor.isExpect, ProtoBuf.ReturnValueStatus.UNSPECIFIED
         )
         if (flags != builder.flags) {
             builder.flags = flags
@@ -322,7 +323,7 @@ class DescriptorSerializer private constructor(
             ProtoEnumFlags.memberKind(descriptor.kind),
             descriptor.isOperator, descriptor.isInfix, descriptor.isInline, descriptor.isTailrec, descriptor.isExternal,
             descriptor.isSuspend, descriptor.isExpect,
-            shouldSerializeHasStableParameterNames(descriptor), /* hasMustUseReturnValue = */ false
+            shouldSerializeHasStableParameterNames(descriptor), ProtoBuf.ReturnValueStatus.UNSPECIFIED,
         )
         if (flags != builder.flags) {
             builder.flags = flags
@@ -388,7 +389,7 @@ class DescriptorSerializer private constructor(
 
         val flags = Flags.getConstructorFlags(
             hasAnnotations(descriptor), ProtoEnumFlags.descriptorVisibility(normalizeVisibility(descriptor)), !descriptor.isPrimary,
-            shouldSerializeHasStableParameterNames(descriptor), /* hasMustUseReturnValue = */ false
+            shouldSerializeHasStableParameterNames(descriptor), ProtoBuf.ReturnValueStatus.UNSPECIFIED
         )
         if (flags != builder.flags) {
             builder.flags = flags
