@@ -5,21 +5,19 @@
 
 package org.jetbrains.kotlin.backend.common.checkers.expression
 
+import org.jetbrains.kotlin.backend.common.checkers.IrElementChecker
 import org.jetbrains.kotlin.backend.common.checkers.context.CheckerContext
 import org.jetbrains.kotlin.ir.expressions.IrTypeOperator
 import org.jetbrains.kotlin.ir.expressions.IrTypeOperatorCall
 import org.jetbrains.kotlin.ir.types.isUnit
 import org.jetbrains.kotlin.ir.util.render
 
-internal object IrTypeOperatorTypeOperandChecker : IrTypeOperatorChecker {
-    override fun check(
-        expression: IrTypeOperatorCall,
-        context: CheckerContext,
-    ) {
-        val operator = expression.operator
-        val typeOperand = expression.typeOperand
+internal object IrTypeOperatorTypeOperandChecker : IrElementChecker<IrTypeOperatorCall>(IrTypeOperatorCall::class) {
+    override fun check(element: IrTypeOperatorCall, context: CheckerContext) {
+        val operator = element.operator
+        val typeOperand = element.typeOperand
         if (operator == IrTypeOperator.IMPLICIT_COERCION_TO_UNIT && !typeOperand.isUnit()) {
-            context.error(expression, "typeOperand is ${typeOperand.render()}")
+            context.error(element, "typeOperand is ${typeOperand.render()}")
         }
     }
 }

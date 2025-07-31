@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.common.checkers.expression
 
+import org.jetbrains.kotlin.backend.common.checkers.IrElementChecker
 import org.jetbrains.kotlin.backend.common.checkers.context.CheckerContext
 import org.jetbrains.kotlin.ir.expressions.IrFieldAccessExpression
 import org.jetbrains.kotlin.ir.types.IrDynamicType
@@ -12,14 +13,11 @@ import org.jetbrains.kotlin.ir.types.IrDynamicType
 /**
  * Makes sure that [IrDynamicType] is not used as receiver of IrFieldAccessExpression.
  */
-internal object IrDynamicTypeFieldAccessChecker : IrFieldAccessChecker {
-    override fun check(
-        expression: IrFieldAccessExpression,
-        context: CheckerContext,
-    ) {
-        if (expression.receiver?.type is IrDynamicType) {
+internal object IrDynamicTypeFieldAccessChecker : IrElementChecker<IrFieldAccessExpression>(IrFieldAccessExpression::class) {
+    override fun check(element: IrFieldAccessExpression, context: CheckerContext) {
+        if (element.receiver?.type is IrDynamicType) {
             context.error(
-                expression,
+                element,
                 "IrFieldAccessExpression may not access fields using dynamic receiver. " +
                         "IrDynamicMemberExpression must be used instead.",
             )

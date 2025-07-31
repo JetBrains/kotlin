@@ -7,32 +7,30 @@ package org.jetbrains.kotlin.backend.common.checkers.declaration
 
 import org.jetbrains.kotlin.DeprecatedForRemovalCompilerApi
 import org.jetbrains.kotlin.backend.common.checkers.context.CheckerContext
+import org.jetbrains.kotlin.backend.common.checkers.IrElementChecker
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrParameterKind
 
-internal object IrFunctionParametersChecker : IrFunctionChecker {
-    override fun check(
-        declaration: IrFunction,
-        context: CheckerContext,
-    ) {
+internal object IrFunctionParametersChecker : IrElementChecker<IrFunction>(IrFunction::class) {
+    override fun check(element: IrFunction, context: CheckerContext) {
         @OptIn(DeprecatedForRemovalCompilerApi::class)
-        for ((i, param) in declaration.valueParameters.withIndex()) {
+        for ((i, param) in element.valueParameters.withIndex()) {
             if (param.indexInOldValueParameters != i) {
-                context.error(declaration, "Inconsistent index (old API) of value parameter ${param.indexInOldValueParameters} != $i")
+                context.error(element, "Inconsistent index (old API) of value parameter ${param.indexInOldValueParameters} != $i")
             }
         }
 
         var lastKind: IrParameterKind? = null
-        for ((i, param) in declaration.parameters.withIndex()) {
+        for ((i, param) in element.parameters.withIndex()) {
             if (param.indexInParameters != i) {
-                context.error(declaration, "Inconsistent index (new API) of value parameter ${param.indexInParameters} != $i")
+                context.error(element, "Inconsistent index (new API) of value parameter ${param.indexInParameters} != $i")
             }
 
             val kind = param.kind
             if (lastKind != null) {
                 if (kind < lastKind) {
                     context.error(
-                        declaration,
+                        element,
                         "Invalid order of function parameters: $kind is placed after $lastKind.\n" +
                                 "Parameters must follow a strict order: " +
                                 "[dispatch receiver, context parameters, extension receiver, regular parameters]."
@@ -41,7 +39,7 @@ internal object IrFunctionParametersChecker : IrFunctionChecker {
 
                 if (kind == IrParameterKind.DispatchReceiver || kind == IrParameterKind.ExtensionReceiver) {
                     if (kind == lastKind) {
-                        context.error(declaration, "Function may have only one $kind parameter")
+                        context.error(element, "Function may have only one $kind parameter")
                     }
                 }
             }
@@ -49,9 +47,9 @@ internal object IrFunctionParametersChecker : IrFunctionChecker {
             lastKind = kind
         }
 
-        for ((i, param) in declaration.typeParameters.withIndex()) {
+        for ((i, param) in element.typeParameters.withIndex()) {
             if (param.index != i) {
-                context.error(declaration, "Inconsistent index of type parameter ${param.index} != $i")
+                context.error(element, "Inconsistent index of type parameter ${param.index} != $i")
             }
         }
     }

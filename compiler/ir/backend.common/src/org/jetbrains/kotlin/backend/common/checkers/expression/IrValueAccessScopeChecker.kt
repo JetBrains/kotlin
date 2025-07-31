@@ -5,16 +5,14 @@
 
 package org.jetbrains.kotlin.backend.common.checkers.expression
 
+import org.jetbrains.kotlin.backend.common.checkers.IrElementChecker
 import org.jetbrains.kotlin.backend.common.checkers.context.CheckerContext
 import org.jetbrains.kotlin.ir.expressions.IrValueAccessExpression
 
-internal object IrValueAccessScopeChecker : IrValueAccessChecker {
-    override fun check(
-        expression: IrValueAccessExpression,
-        context: CheckerContext,
-    ) {
-        if (!context.valueSymbolScopeStack.isVisibleInCurrentScope(expression.symbol)) {
-            context.error(expression, "The following expression references a value that is not available in the current scope.")
+internal object IrValueAccessScopeChecker : IrElementChecker<IrValueAccessExpression>(IrValueAccessExpression::class) {
+    override fun check(element: IrValueAccessExpression, context: CheckerContext) {
+        if (!context.valueSymbolScopeStack.isVisibleInCurrentScope(element.symbol)) {
+            context.error(element, "The following expression references a value that is not available in the current scope.")
         }
     }
 }

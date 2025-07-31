@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.common.checkers.expression
 
+import org.jetbrains.kotlin.backend.common.checkers.IrElementChecker
 import org.jetbrains.kotlin.backend.common.checkers.context.CheckerContext
 import org.jetbrains.kotlin.backend.common.checkers.ensureTypeIs
 import org.jetbrains.kotlin.ir.expressions.IrCall
@@ -14,12 +15,9 @@ import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.util.resolveFakeOverrideMaybeAbstract
 
-internal object IrCallTypeChecker : IrCallChecker {
-    override fun check(
-        expression: IrCall,
-        context: CheckerContext,
-    ) {
-        val callee = expression.symbol.owner
+internal object IrCallTypeChecker : IrElementChecker<IrCall>(IrCall::class) {
+    override fun check(element: IrCall, context: CheckerContext) {
+        val callee = element.symbol.owner
         // TODO: We don't have the proper type substitution yet, so skip generics for now.
         val actualCallee = callee.resolveFakeOverrideMaybeAbstract {
             it.isFakeOverride || it.returnType.classifierOrNull !is IrTypeParameterSymbol
@@ -29,7 +27,7 @@ internal object IrCallTypeChecker : IrCallChecker {
             returnType.classifier is IrClassSymbol &&
             returnType.arguments.isEmpty()
         ) {
-            expression.ensureTypeIs(callee.returnType, context)
+            element.ensureTypeIs(callee.returnType, context)
         }
     }
 }

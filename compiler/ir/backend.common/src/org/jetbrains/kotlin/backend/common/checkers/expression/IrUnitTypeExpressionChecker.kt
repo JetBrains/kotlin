@@ -5,15 +5,13 @@
 
 package org.jetbrains.kotlin.backend.common.checkers.expression
 
+import org.jetbrains.kotlin.backend.common.checkers.IrElementChecker
 import org.jetbrains.kotlin.backend.common.checkers.context.CheckerContext
 import org.jetbrains.kotlin.backend.common.checkers.ensureTypeIs
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 
-internal object IrUnitTypeExpressionChecker : IrExpressionChecker<IrExpression> {
-    override fun check(
-        expression: IrExpression,
-        context: CheckerContext,
-    ) {
-        expression.ensureTypeIs(context.irBuiltIns.unitType, context)
+internal object IrUnitTypeExpressionChecker : IrElementChecker<IrExpression>(IrExpression::class) {
+    override fun check(element: IrExpression, context: CheckerContext) {
+        element.ensureTypeIs(context.irBuiltIns.unitType, context)
     }
 }
