@@ -62,34 +62,28 @@ class BuiltinsDecompilerTest : AbstractAnalysisApiExecutionTest("analysis/stubs/
     fun wrong(file: KtFile, testServices: TestServices) {
         testServices.assertions.assertEquals(testDataPath.name, file.name)
 
-        val errorText = """
+        val expectedDecompiledText = """
             // This file was compiled with a newer version of Kotlin compiler and can't be decompiled.
             //
             // The current compiler supports reading only metadata of version ${BuiltInsBinaryVersion.INSTANCE} or lower.
             // The file metadata version is 0.42.239
         """.trimIndent()
 
-        testServices.assertions.assertEquals(errorText, file.text)
+        testServices.assertions.assertEquals(expectedDecompiledText, file.text)
 
-        // Decompiled stub
-        testServices.assertions.assertEquals(
-            """
-                FILE[kind=File[packageFqName=<root>]]
-                  PACKAGE_DIRECTIVE
-                  IMPORT_LIST
-
-            """.trimIndent(),
-            file.calcStubTree().root.serializeToString(),
-        )
-
-        // Compiled stub
-        testServices.assertions.assertEquals(
-            """
-                |FILE[kind=Invalid[errorMessage=$errorText]]
+        val expectedInvalidStub = """
+                |FILE[kind=Invalid[errorMessage=$expectedDecompiledText]]
                 |  PACKAGE_DIRECTIVE
                 |  IMPORT_LIST
 
-            """.trimMargin(),
+            """.trimMargin()
+
+        // Decompiled stub
+        testServices.assertions.assertEquals(expectedInvalidStub, file.calcStubTree().root.serializeToString())
+
+        // Compiled stub
+        testServices.assertions.assertEquals(
+            expectedInvalidStub,
             KotlinBuiltInDecompiler().stubBuilder.buildFileStub(FileContentImpl.createByFile(file.virtualFile))?.serializeToString(),
         )
     }
