@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.util.mapToSet
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.fail
 import java.io.File
+import kotlin.time.measureTime
 
 private fun AssertionsMode.assertionsEnabledWith(optimizationMode: OptimizationMode) = when (this) {
     AssertionsMode.ALWAYS_ENABLE -> true
@@ -89,6 +90,7 @@ abstract class BasicCompilation<A : TestCompilationArtifact>(
             add("-enable-assertions")
 
         add(irValidationCompilerOptions)
+        add("-no-default-libs")
 
         threadStateChecker.compilerFlag?.let { compilerFlag -> add(compilerFlag) }
         sanitizer.compilerFlag?.let { compilerFlag -> add(compilerFlag) }
@@ -193,16 +195,23 @@ abstract class BasicCompilation<A : TestCompilationArtifact>(
         val loggedCompilerParameters = LoggedData.CompilerParameters(home, compilerArgs)
 
         val (loggedCompilerCall: LoggedData, result: TestCompilationResult.ImmediateResult<out A>) = try {
-            val compilerToolCallResult = when (compilerOutputInterceptor) {
-                CompilerOutputInterceptor.DEFAULT -> callCompiler(
-                    compilerArgs = compilerArgs,
-                    kotlinNativeClassLoader = classLoader.classLoader
-                )
-                CompilerOutputInterceptor.NONE -> callCompilerWithoutOutputInterceptor(
-                    compilerArgs = compilerArgs,
-                    kotlinNativeClassLoader = classLoader.classLoader
-                )
+            val compilerToolCallResult: CompilationToolCallResult
+
+            System.err.println("Run compiler with args: ${compilerArgs.toList()}")
+            val time = measureTime {
+                compilerToolCallResult = when (compilerOutputInterceptor) {
+                    CompilerOutputInterceptor.DEFAULT -> callCompiler(
+                        compilerArgs = compilerArgs,
+                        kotlinNativeClassLoader = classLoader.classLoader
+                    )
+                    CompilerOutputInterceptor.NONE -> callCompilerWithoutOutputInterceptor(
+                        compilerArgs = compilerArgs,
+                        kotlinNativeClassLoader = classLoader.classLoader
+                    )
+                }
             }
+            System.err.println("Finised in $time")
+
 
             val (exitCode, compilerOutput, compilerOutputHasErrors, duration) = compilerToolCallResult
 
