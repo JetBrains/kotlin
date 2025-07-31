@@ -9,7 +9,7 @@ class A {
     val it: Number
         field = 4
 
-    @Suppress("INCONSISTENT_BACKING_FIELD_TYPE")
+    @Suppress("INCONSISTENT_BACKING_FIELD_TYPE", "VAR_PROPERTY_WITH_EXPLICIT_BACKING_FIELD")
     var invertedTypes: Int
         field: Number = 42
         @Suppress("PROPERTY_WITH_EXPLICIT_FIELD_AND_ACCESSORS")

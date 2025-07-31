@@ -8,7 +8,7 @@ fun createString() = "AAA" + "BBB"
 
 @Suppress("INCONSISTENT_BACKING_FIELD_TYPE")
 class A {
-    @Suppress("INCONSISTENT_BACKING_FIELD_TYPE", "PROPERTY_WITH_EXPLICIT_FIELD_AND_ACCESSORS")
+    @Suppress("INCONSISTENT_BACKING_FIELD_TYPE", "PROPERTY_WITH_EXPLICIT_FIELD_AND_ACCESSORS", "VAR_PROPERTY_WITH_EXPLICIT_BACKING_FIELD")
     var it: Int
         field = 3.14
         get() = (field + 10).toInt()
@@ -20,7 +20,7 @@ class A {
             }
         }
 
-    @Suppress("INCONSISTENT_BACKING_FIELD_TYPE", "PROPERTY_WITH_EXPLICIT_FIELD_AND_ACCESSORS")
+    @Suppress("INCONSISTENT_BACKING_FIELD_TYPE", "PROPERTY_WITH_EXPLICIT_FIELD_AND_ACCESSORS", "VAR_PROPERTY_WITH_EXPLICIT_BACKING_FIELD")
     var that: Int
         field = createString() + "!"
         get() = field.length
