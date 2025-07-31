@@ -467,7 +467,7 @@ class KlibResolverTest : AbstractNativeSimpleTest() {
         fun testNonExistingLibraryPassedToTheCompilerInDifferentWays() = with(NonRepeatedModuleNameGenerator()) {
             sequenceOf("no-such-library")
                 .flatMap { sequenceOf(it, "no-such-directory/$it") }
-                .flatMap { sequenceOf(it, "./$it", "../$it", "$it/../$it") }
+                .flatMap { sequenceOf(it, "./$it", "../build/$it", "$it/../$it") }
                 .flatMap { sequenceOf(it, buildDir.resolve(it).absolutePath) }
                 .flatMap { sequenceOf(it, "$it.klib") }
                 .forEach { libraryNameOrPath ->
@@ -508,7 +508,7 @@ class KlibResolverTest : AbstractNativeSimpleTest() {
 
             sequenceOf(stdlibFile, posixFile)
                 .map { it.name }
-                .flatMap { sequenceOf("./$it", "../$it", "$it/../$it") }
+                .flatMap { sequenceOf("./$it", "../build/$it", "$it/../$it") }
                 .flatMap { sequenceOf(it, "$it.klib") }
                 .forEach { libraryNameOrPath ->
                     expectFailingAsNotFound(libraryNameOrPath) { compileMainModule(libraryNameOrPath) }
