@@ -5,12 +5,15 @@
 
 package org.jetbrains.kotlin.analysis.low.level.api.fir.sessions
 
+import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirModuleResolveComponents
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.fir.BuiltinTypes
+import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.resolve.ScopeSession
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.psi.KtElement
 
 abstract class LLFirResolvableModuleSession(
     ktModule: KaModule,
@@ -28,3 +31,8 @@ internal val FirElementWithResolveState.llFirResolvableSession: LLFirResolvableM
 
 internal val FirBasedSymbol<*>.llFirResolvableSession: LLFirResolvableModuleSession?
     get() = fir.llFirResolvableSession
+
+@KaImplementationDetail
+fun LLFirResolvableModuleSession.getFirForNonKtFileElementNoAnalysis(element: KtElement): FirElement? {
+    return this.moduleComponents.elementsBuilder.getFirForNonKtFileElement(element, requireBodyAnalysis = false)
+}

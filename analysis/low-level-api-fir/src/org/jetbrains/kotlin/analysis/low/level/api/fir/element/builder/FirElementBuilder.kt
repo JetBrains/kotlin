@@ -101,7 +101,8 @@ internal class FirElementBuilder(private val moduleComponents: LLFirModuleResolv
         return firFile
     }
 
-    private fun getFirForNonKtFileElement(element: KtElement): FirElement? {
+    @KaImplementationDetail
+    fun getFirForNonKtFileElement(element: KtElement, requireBodyAnalysis: Boolean = true): FirElement? {
         require(element !is KtFile || element is KtCodeFragment)
 
         if (!doKtElementHasCorrespondingFirElement(element)) {
@@ -120,7 +121,7 @@ internal class FirElementBuilder(private val moduleComponents: LLFirModuleResolv
 
         val firElement = mappings.get(psi)
 
-        if (firElement is FirElementWithResolveState) {
+        if (requireBodyAnalysis && firElement is FirElementWithResolveState) {
             // Partially resolvable declarations might have unresolved bodies in the mapping.
             // Here we forcibly resolve them to obey to the 'getOrBuildFirFor()' contract.
             if (firElement.isPartialBodyResolvable && firElement.resolvePhase < FirResolvePhase.BODY_RESOLVE) {

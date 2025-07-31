@@ -7,14 +7,19 @@ package org.jetbrains.kotlin.analysis.api.fir.components
 
 import com.intellij.openapi.application.runReadAction
 import com.intellij.openapi.progress.ProgressManager
+import com.intellij.psi.util.PsiModificationTracker
 import org.jetbrains.kotlin.analysis.api.components.KaDiagnosticCheckerFilter
 import org.jetbrains.kotlin.analysis.api.components.KaDiagnosticProvider
 import org.jetbrains.kotlin.analysis.api.diagnostics.KaDiagnosticWithPsi
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseSessionComponent
 import org.jetbrains.kotlin.analysis.api.impl.base.components.withPsiValidityAssertion
+import org.jetbrains.kotlin.analysis.api.platform.projectStructure.KotlinProjectStructureProvider
+import org.jetbrains.kotlin.analysis.low.level.api.fir.LLFirInternals
+import org.jetbrains.kotlin.analysis.low.level.api.fir.LLResolutionFacadeService
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.*
 import org.jetbrains.kotlin.analysis.low.level.api.fir.lazy.resolve.elementCanBeLazilyResolved
+import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.getFirForNonKtFileElementNoAnalysis
 import org.jetbrains.kotlin.fir.FirElementWithResolveState
 import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
 import org.jetbrains.kotlin.fir.symbols.lazyResolveToPhase
@@ -40,6 +45,7 @@ internal class KaFirDiagnosticProvider(
         KaDiagnosticCheckerFilter.EXTENDED_AND_COMMON_CHECKERS -> DiagnosticCheckerFilter.ONLY_DEFAULT_CHECKERS + DiagnosticCheckerFilter.ONLY_EXTRA_CHECKERS
     }
 
+    @OptIn(LLFirInternals::class)
     override fun KtFile.analyzeEntirely(pool: (Runnable) -> Unit): Unit = withPsiValidityAssertion {
         val declarations = mutableListOf<KtDeclaration>()
 
@@ -63,20 +69,38 @@ internal class KaFirDiagnosticProvider(
 
         ProgressManager.checkCanceled()
 
+        val modificationTracker = PsiModificationTracker.getInstance(project)
+        val initialModificationCount = modificationTracker.modificationCount
+
+        val module = resolutionFacade.getModule(this)
+        val session = resolutionFacade.sessionProvider.getResolvableSession(module)
+
         val phases = FirResolvePhase.entries.filter { !it.noProcessor && it != FirResolvePhase.IMPORTS }
 
         for (phase in phases) {
             for (declaration in declarations) {
-                pool { performAnalysis(declaration, phase) }
-            }
-        }
-    }
+                pool {
+                    // TODO rewrite with coroutines and proper cancellation
+                    runReadAction {
+                        if (!declaration.isValid) {
+                            return@runReadAction
+                        }
 
-    private fun performAnalysis(declaration: KtDeclaration, phase: FirResolvePhase) {
-        runReadAction {
-            if (declaration.isValid) {
-                val firDeclaration = declaration.getOrBuildFirOfType<FirElementWithResolveState>(resolutionFacade)
-                firDeclaration.lazyResolveToPhase(phase)
+                        val firElement = if (modificationTracker.modificationCount == initialModificationCount) {
+                            session.getFirForNonKtFileElementNoAnalysis(declaration)
+                        } else {
+                            val project = module.project
+                            val newModule = KotlinProjectStructureProvider.getModule(project, declaration, useSiteModule = null)
+                            val newResolutionFacade = LLResolutionFacadeService.getInstance(project).getResolutionFacade(newModule)
+                            val newSession = newResolutionFacade.sessionProvider.getResolvableSession(newModule)
+                            newSession.getFirForNonKtFileElementNoAnalysis(declaration)
+                        }
+
+                        if (firElement is FirElementWithResolveState) {
+                            firElement.lazyResolveToPhase(phase)
+                        }
+                    }
+                }
             }
         }
     }
