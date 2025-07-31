@@ -6752,6 +6752,12 @@ public class FirLightTreeBlackBoxInlineCodegenTestGenerated extends AbstractFirL
         }
 
         @Test
+        @TestMetadata("leakingPrivateTopLevelsThroughEffectivelyInternalInline.kt")
+        public void testLeakingPrivateTopLevelsThroughEffectivelyInternalInline() {
+          runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossFilePrivateLeak/leakingPrivateTopLevelsThroughEffectivelyInternalInline.kt");
+        }
+
+        @Test
         @TestMetadata("leakingPrivateValThroughReferenceInInternalInlineFun.kt")
         public void testLeakingPrivateValThroughReferenceInInternalInlineFun() {
           runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossFilePrivateLeak/leakingPrivateValThroughReferenceInInternalInlineFun.kt");
@@ -7080,6 +7086,12 @@ public class FirLightTreeBlackBoxInlineCodegenTestGenerated extends AbstractFirL
         }
 
         @Test
+        @TestMetadata("leakingPrivateTopLevelsThroughEffectivelyInternalInline.kt")
+        public void testLeakingPrivateTopLevelsThroughEffectivelyInternalInline() {
+          runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossModulePrivateLeak/leakingPrivateTopLevelsThroughEffectivelyInternalInline.kt");
+        }
+
+        @Test
         @TestMetadata("leakingPrivateValThroughReferenceInInternalInlineFun.kt")
         public void testLeakingPrivateValThroughReferenceInInternalInlineFun() {
           runTest("compiler/testData/klib/syntheticAccessors/privateMember/crossModulePrivateLeak/leakingPrivateValThroughReferenceInInternalInlineFun.kt");
@@ -7225,6 +7237,12 @@ public class FirLightTreeBlackBoxInlineCodegenTestGenerated extends AbstractFirL
         @TestMetadata("leakingPrivateMethodWithDifferentVisibility.kt")
         public void testLeakingPrivateMethodWithDifferentVisibility() {
           runTest("compiler/testData/klib/syntheticAccessors/privateMember/singleFile/leakingPrivateMethodWithDifferentVisibility.kt");
+        }
+
+        @Test
+        @TestMetadata("leakingPrivateTopLevelsThroughEffectivelyInternalInline.kt")
+        public void testLeakingPrivateTopLevelsThroughEffectivelyInternalInline() {
+          runTest("compiler/testData/klib/syntheticAccessors/privateMember/singleFile/leakingPrivateTopLevelsThroughEffectivelyInternalInline.kt");
         }
 
         @Test
