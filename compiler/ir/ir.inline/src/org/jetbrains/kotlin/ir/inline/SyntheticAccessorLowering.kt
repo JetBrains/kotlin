@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.backend.common.reportWarning
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities.isPrivate
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
+import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
 import org.jetbrains.kotlin.ir.declarations.*
@@ -287,13 +288,15 @@ private class GeneratedAccessor(
 
     fun computeNarrowedVisibility(): DescriptorVisibility {
         for (inlineFunction in inlineFunctions) {
-            when (val visibility = inlineFunction.visibility) {
-                DescriptorVisibilities.PUBLIC, DescriptorVisibilities.PROTECTED -> return DescriptorVisibilities.PUBLIC
-                DescriptorVisibilities.INTERNAL -> if (inlineFunction.isPublishedApi()) return DescriptorVisibilities.PUBLIC
-                else -> irError("Unexpected visibility of inline function: $visibility") {
-                    withIrEntry("inlineFunction", inlineFunction)
+            val inlineFunctionIsEffectivelyPublicAbi = inlineFunction.parentsWithSelf
+                .filterIsInstance<IrDeclarationWithVisibility>()
+                .all { declaration ->
+                    val visibility = declaration.visibility.delegate
+                    visibility.isPublicAPI || (visibility is Visibilities.Internal && declaration.isPublishedApi())
                 }
-            }
+
+            if (inlineFunctionIsEffectivelyPublicAbi)
+                return DescriptorVisibilities.PUBLIC
         }
 
         return DescriptorVisibilities.INTERNAL

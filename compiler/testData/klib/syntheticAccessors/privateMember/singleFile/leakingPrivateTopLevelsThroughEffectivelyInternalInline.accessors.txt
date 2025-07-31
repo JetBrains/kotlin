@@ -19,9 +19,9 @@ public fun box(): String
     /* ACCESSOR use-site */ access$<set-name>$tLeakingPrivateTopLevelsThroughEffectivelyInternalInlineKt(<set-?> = "Mary")
     /* ACCESSOR use-site */ access$<get-name>$tLeakingPrivateTopLevelsThroughEffectivelyInternalInlineKt()
     /* ACCESSOR use-site */ access$greet$tLeakingPrivateTopLevelsThroughEffectivelyInternalInlineKt(name = access$<get-name>$tLeakingPrivateTopLevelsThroughEffectivelyInternalInlineKt())
-/* ACCESSOR declaration */ public fun access$<get-name>$tLeakingPrivateTopLevelsThroughEffectivelyInternalInlineKt(): String
+/* ACCESSOR declaration */ internal fun access$<get-name>$tLeakingPrivateTopLevelsThroughEffectivelyInternalInlineKt(): String
     /* TARGET use-site */ <get-name>()
-/* ACCESSOR declaration */ public fun access$<set-name>$tLeakingPrivateTopLevelsThroughEffectivelyInternalInlineKt(<set-?>: String)
+/* ACCESSOR declaration */ internal fun access$<set-name>$tLeakingPrivateTopLevelsThroughEffectivelyInternalInlineKt(<set-?>: String)
     /* TARGET use-site */ <set-name>(<set-?> = <set-?>)
-/* ACCESSOR declaration */ public fun access$greet$tLeakingPrivateTopLevelsThroughEffectivelyInternalInlineKt(name: String): String
+/* ACCESSOR declaration */ internal fun access$greet$tLeakingPrivateTopLevelsThroughEffectivelyInternalInlineKt(name: String): String
     /* TARGET use-site */ greet(name = name)

@@ -13,11 +13,11 @@ internal class A
         /* ACCESSOR use-site */ access$<set-name>$tAKt(<set-?> = "Mary")
         /* ACCESSOR use-site */ access$<get-name>$tAKt()
         /* ACCESSOR use-site */ access$greet$tAKt(name = access$<get-name>$tAKt())
-/* ACCESSOR declaration */ public fun access$<get-name>$tAKt(): String
+/* ACCESSOR declaration */ internal fun access$<get-name>$tAKt(): String
     /* TARGET use-site */ <get-name>()
-/* ACCESSOR declaration */ public fun access$<set-name>$tAKt(<set-?>: String)
+/* ACCESSOR declaration */ internal fun access$<set-name>$tAKt(<set-?>: String)
     /* TARGET use-site */ <set-name>(<set-?> = <set-?>)
-/* ACCESSOR declaration */ public fun access$greet$tAKt(name: String): String
+/* ACCESSOR declaration */ internal fun access$greet$tAKt(name: String): String
     /* TARGET use-site */ greet(name = name)
 
 
