@@ -11,7 +11,7 @@ internal abstract class KClassImpl<T : Any> : KClass<T> {
     internal abstract val jClass: JsClass<T>
 
     override val qualifiedName: String?
-        get() = TODO()
+        get() = null
 
     @ExperimentalStdlibApi
     @SinceKotlin("2.2")

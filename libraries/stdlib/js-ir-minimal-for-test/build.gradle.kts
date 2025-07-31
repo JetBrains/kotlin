@@ -102,6 +102,9 @@ val commonMainCollectionSources by task<Sync> {
 val commonNonJvmMainSources by task<Sync> {
     dependsOn(commonNonJvmMainFullSources)
     from {
+        exclude(
+            "libraries/stdlib/common-non-jvm/src/kotlin/reflect/KTypeImpl.kt",
+        )
         commonNonJvmMainFullSources.get().outputs.files.singleFile
     }
 
@@ -149,7 +152,7 @@ val jsMainSources by task<Sync> {
             "kotlin/throwableExtensions.kt",
             "kotlin/text/**",
             "kotlin/reflect/KTypeHelpers.kt",
-            "kotlin/reflect/KTypeImpl.kt",
+            "kotlin/reflect/DynamicKType.kt",
             "kotlin/dom/**",
             "kotlin/browser/**",
             "kotlinx/dom/**",
