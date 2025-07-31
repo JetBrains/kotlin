@@ -27,9 +27,6 @@ import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.Name
 
-/**
- * @see org.jetbrains.kotlin.resolve.checkers.MissingDependencyClassChecker
- */
 object FirMissingDependencyClassChecker : FirQualifiedAccessExpressionChecker(MppCheckerKind.Common), FirMissingDependencyClassProxy {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(expression: FirQualifiedAccessExpression) {
@@ -38,14 +35,14 @@ object FirMissingDependencyClassChecker : FirQualifiedAccessExpressionChecker(Mp
         val missingTypesFromExpression = mutableSetOf<ConeClassLikeType>()
         val containingElements = context.containingElements
         if (!calleeReference.isError()) {
-            expression.resolvedType.forEachType {
+            expression.resolvedType.forEachType { type ->
                 // To report error instead of warning in a known corner case (KT-66356)
                 val partOfErroneousOuterCall =
-                    it is ConeErrorType && containingElements.any {
-                        it is FirFunctionCall && it.calleeReference is FirResolvedErrorReference
+                    type is ConeErrorType && containingElements.any {
+                        (it as? FirFunctionCall)?.calleeReference is FirResolvedErrorReference
                     } && !ForbidUsingExpressionTypesWithInaccessibleContent.isEnabled()
                 considerType(
-                    type = it,
+                    type = type,
                     missingTypes = if (partOfErroneousOuterCall) missingTypes else missingTypesFromExpression
                 )
             }
@@ -144,19 +141,18 @@ internal interface FirMissingDependencyClassProxy {
         for (missingType in missingTypes) {
             // We report an error MISSING_DEPENDENCY_CLASS generally,
             // but report a deprecation warning in two corner cases instead to avoid breaking code immediately
-            when {
-                missingTypeOrigin is LambdaParameter && missingType.typeArguments.isEmpty() &&
+            when (missingTypeOrigin) {
+                is LambdaParameter if missingType.typeArguments.isEmpty() &&
                         !languageVersionSettings.supportsFeature(ForbidLambdaParameterWithMissingDependencyType) -> {
                     reporter.reportOn(
                         source, FirErrors.MISSING_DEPENDENCY_CLASS_IN_LAMBDA_PARAMETER, missingType, missingTypeOrigin.name
                     )
                 }
-                missingTypeOrigin is LambdaReceiver && missingType.typeArguments.isEmpty() &&
+                is LambdaReceiver if missingType.typeArguments.isEmpty() &&
                         !languageVersionSettings.supportsFeature(ForbidLambdaParameterWithMissingDependencyType) -> {
                     reporter.reportOn(source, FirErrors.MISSING_DEPENDENCY_CLASS_IN_LAMBDA_RECEIVER, missingType)
                 }
-                missingTypeOrigin is Expression &&
-                        !languageVersionSettings.supportsFeature(ForbidUsingExpressionTypesWithInaccessibleContent) -> {
+                is Expression if !languageVersionSettings.supportsFeature(ForbidUsingExpressionTypesWithInaccessibleContent) -> {
                     reporter.reportOn(source, FirErrors.MISSING_DEPENDENCY_CLASS_IN_EXPRESSION_TYPE, missingType)
                 }
                 else -> {
