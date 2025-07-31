@@ -1,4 +1,5 @@
 // IGNORE_BACKEND: JS_IR
+// IGNORE_HMPP: JS_IR
 // DUMP_IR
 package bar
 

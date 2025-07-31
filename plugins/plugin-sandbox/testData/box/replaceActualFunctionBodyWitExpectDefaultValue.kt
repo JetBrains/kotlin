@@ -1,5 +1,6 @@
 // LANGUAGE: +MultiPlatformProjects
 // ISSUE: KT-56173
+// IGNORE_HMPP: JVM_IR, JS_IR
 
 // MODULE: common
 // FILE: common.kt

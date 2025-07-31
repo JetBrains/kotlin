@@ -1,5 +1,6 @@
 // LANGUAGE: +MultiPlatformProjects
 // TARGET_BACKEND: JVM
+// IGNORE_HMPP: JVM_IR
 
 // MODULE: lib-common
 package foo

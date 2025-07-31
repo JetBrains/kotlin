@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.plugin.sandbox
 
 import org.jetbrains.kotlin.js.test.fir.AbstractFirJsTest
-import org.jetbrains.kotlin.js.test.fir.AbstractFirLightTreeJsBoxTest
 import org.jetbrains.kotlin.js.test.fir.AbstractFirLoadK2CompiledJsKotlinTest
+import org.jetbrains.kotlin.js.test.ir.AbstractJsBlackBoxCodegenWithSeparateKmpCompilationTestBase
 import org.jetbrains.kotlin.kotlinp.jvm.test.CompareMetadataHandler
 import org.jetbrains.kotlin.plugin.sandbox.PluginSandboxDirectives.DONT_LOAD_IN_SYNTHETIC_MODULES
 import org.jetbrains.kotlin.test.FirParser
@@ -33,8 +33,18 @@ import org.jetbrains.kotlin.test.runners.AbstractFirLoadK2CompiledJvmKotlinTest
 import org.jetbrains.kotlin.test.runners.AbstractFirPsiDiagnosticTest
 import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackendTest
 import org.jetbrains.kotlin.test.runners.codegen.AbstractFirLightTreeBlackBoxCodegenTest
+import org.jetbrains.kotlin.test.runners.codegen.AbstractJvmBlackBoxCodegenWithSeparateKmpCompilationTestBase
 
 open class AbstractFirJvmLightTreePluginBlackBoxCodegenTest : AbstractFirLightTreeBlackBoxCodegenTest() {
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        builder.commonFirWithPluginFrontendConfiguration()
+    }
+}
+
+open class AbstractFirJvmLightTreePluginBlackBoxCodegenWithSeparateKmpCompilationTest :
+    AbstractJvmBlackBoxCodegenWithSeparateKmpCompilationTestBase(parser = FirParser.LightTree) {
+
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         builder.commonFirWithPluginFrontendConfiguration()
@@ -46,6 +56,22 @@ open class AbstractFirJsLightTreePluginBlackBoxCodegenTest : AbstractFirJsTest(
     testGroupOutputDirPrefix = "firPluginSandboxBox/",
     parser = FirParser.LightTree
 ) {
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        builder.commonFirWithPluginFrontendConfiguration(dumpFir = false)
+        builder.defaultDirectives {
+            +DISABLE_FIR_DUMP_HANDLER
+        }
+    }
+}
+
+open class AbstractFirJsLightTreePluginBlackBoxCodegenWithSeparateKmpCompilationTest :
+    AbstractJsBlackBoxCodegenWithSeparateKmpCompilationTestBase(
+        pathToTestDir = "plugins/plugin-sandbox/testData/box",
+        testGroupOutputDirPrefix = "firPluginSandboxBox/",
+        parser = FirParser.LightTree
+    ) {
+
     override fun configure(builder: TestConfigurationBuilder) {
         super.configure(builder)
         builder.commonFirWithPluginFrontendConfiguration(dumpFir = false)
