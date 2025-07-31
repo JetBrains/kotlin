@@ -227,15 +227,13 @@ internal class BridgeLowering(val context: JvmBackendContext) : ClassLoweringPas
                                 isFinal = false,
                             )
 
-                            val superTarget = targetFunction
-
-                            if (superBridge.signature == superTarget.jvmMethod) {
+                            if (superBridge.signature == targetFunction.jvmMethod) {
                                 // If the resulting bridge to a super member matches the signature of the bridge callee,
                                 // bridge is not needed.
                                 irFunction
                             } else {
                                 irClass.declarations.remove(irFunction)
-                                irClass.addSpecialBridge(superBridge, superTarget)
+                                irClass.addSpecialBridge(superBridge, targetFunction)
                             }
                         }
 

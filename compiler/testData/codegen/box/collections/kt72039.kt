@@ -1,7 +1,7 @@
+// TARGET_BACKEND: JVM
 // FULL_JDK
-
 // FILE: kt72039.kt
-fun box():String {
+fun box(): String {
     Test1().test()
     return "OK"
 }
