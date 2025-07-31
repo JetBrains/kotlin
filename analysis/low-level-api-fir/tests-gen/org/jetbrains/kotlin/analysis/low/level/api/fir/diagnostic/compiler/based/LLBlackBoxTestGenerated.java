@@ -56936,12 +56936,6 @@ public class LLBlackBoxTestGenerated extends AbstractLLBlackBoxTest {
           }
 
           @Test
-          @TestMetadata("typeParameterFlags.kt")
-          public void testTypeParameterFlags() {
-            runTest("compiler/testData/codegen/box/reflection/typeOf/noReflect/nonReifiedTypeParameters/typeParameterFlags.kt");
-          }
-
-          @Test
           @TestMetadata("upperBoundUsesOuterClassParameter.kt")
           public void testUpperBoundUsesOuterClassParameter() {
             runTest("compiler/testData/codegen/box/reflection/typeOf/noReflect/nonReifiedTypeParameters/upperBoundUsesOuterClassParameter.kt");

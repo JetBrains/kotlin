@@ -56579,6 +56579,12 @@ public class FirLightTreeSerializeCompileKotlinAgainstInlineKotlinTestGenerated 
         }
 
         @Test
+        @TestMetadata("ktype1_anonymousObject.kt")
+        public void testKtype1_anonymousObject() {
+          runTest("compiler/testData/codegen/box/reflection/typeOf/ktype1_anonymousObject.kt");
+        }
+
+        @Test
         @TestMetadata("localClass.kt")
         public void testLocalClass() {
           runTest("compiler/testData/codegen/box/reflection/typeOf/localClass.kt");
@@ -56778,12 +56784,6 @@ public class FirLightTreeSerializeCompileKotlinAgainstInlineKotlinTestGenerated 
             @TestMetadata("simplePropertyParameter.kt")
             public void testSimplePropertyParameter() {
               runTest("compiler/testData/codegen/box/reflection/typeOf/noReflect/nonReifiedTypeParameters/simplePropertyParameter.kt");
-            }
-
-            @Test
-            @TestMetadata("typeParameterFlags.kt")
-            public void testTypeParameterFlags() {
-              runTest("compiler/testData/codegen/box/reflection/typeOf/noReflect/nonReifiedTypeParameters/typeParameterFlags.kt");
             }
 
             @Test

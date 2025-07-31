@@ -1,5 +1,5 @@
 // WITH_REFLECT
-// KJS_WITH_FULL_RUNTIME
+// WITH_STDLIB
 package test
 
 import kotlin.reflect.*
@@ -22,22 +22,16 @@ fun box(): String {
     assertEquals(KVariance.OUT, c.getOut().variance)
     assertEquals(false, c.getInv().isReified)
 
-    if (!isJS) {
-        val y = getY<Any, Any>()
-        assertEquals(false, y.isReified)
-        val x = y.upperBounds.single().classifier as KTypeParameter
-        assertEquals(true, x.isReified)
-        assertEquals(KVariance.INVARIANT, x.variance)
-        assertEquals("X", x.toString())
-    }
+    val y = getY<Any, Any>()
+    assertEquals(false, y.isReified)
+    val x = y.upperBounds.single().classifier as KTypeParameter
+    assertEquals(true, x.isReified)
+    assertEquals(KVariance.INVARIANT, x.variance)
+    assertEquals("X", x.toString())
 
     assertEquals("INV", c.getInv().toString())
-    if (!isJS) {
-        assertEquals("in IN", c.getIn().toString())
-        assertEquals("out OUT", c.getOut().toString())
-    }
+    assertEquals("in IN", c.getIn().toString())
+    assertEquals("out OUT", c.getOut().toString())
 
     return "OK"
 }
-
-val isJS = 1 as Any is Double
