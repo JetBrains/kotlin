@@ -31,6 +31,8 @@ FILE fqName:<root> fileName:/explicitBackingFieldType.kt
           CONST Int type=kotlin.Int value=42
       FUN name:<get-invertedTypes> visibility:public modality:FINAL returnType:kotlin.Int
         VALUE_PARAMETER kind:DispatchReceiver name:<this> index:0 type:<root>.A
+        annotations:
+          Suppress(names = ["PROPERTY_WITH_EXPLICIT_FIELD_AND_ACCESSORS"] type=kotlin.Array<out kotlin.String> varargElementType=kotlin.String)
         correspondingProperty: PROPERTY name:invertedTypes visibility:public modality:FINAL [var]
         BLOCK_BODY
           RETURN type=kotlin.Nothing from='public final fun <get-invertedTypes> (): kotlin.Int declared in <root>.A'

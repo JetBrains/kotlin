@@ -1,8 +1,8 @@
 // RUN_PIPELINE_TILL: FRONTEND
 <!INCONSISTENT_BACKING_FIELD_TYPE!>var that: Int<!>
     <!WRONG_MODIFIER_TARGET!>lateinit<!> field: String
-    get() = field.length
-    set(value) {
+    <!PROPERTY_WITH_EXPLICIT_FIELD_AND_ACCESSORS!>get()<!> = field.length
+    <!PROPERTY_WITH_EXPLICIT_FIELD_AND_ACCESSORS!>set(value)<!> {
         field = value.toString()
     }
 
@@ -15,7 +15,7 @@ fun test() {
 // custom accessors & backing fields
 <!INAPPLICABLE_LATEINIT_MODIFIER, INAPPLICABLE_LATEINIT_MODIFIER, UNNECESSARY_LATEINIT!>lateinit<!> var number: Number
     field = 4
-    set(value) {
+    <!PROPERTY_WITH_EXPLICIT_FIELD_AND_ACCESSORS!>set(value)<!> {
         field = 10
     }
 
@@ -24,14 +24,14 @@ val something: Number
 
 <!INAPPLICABLE_LATEINIT_MODIFIER, INAPPLICABLE_LATEINIT_MODIFIER, UNNECESSARY_LATEINIT!>lateinit<!> var oneMore: Number
     <!LATEINIT_PROPERTY_FIELD_DECLARATION_WITH_INITIALIZER, WRONG_MODIFIER_TARGET!>lateinit<!> field = 4
-    set(value) {
+    <!PROPERTY_WITH_EXPLICIT_FIELD_AND_ACCESSORS!>set(value)<!> {
         field = 10
     }
 
 <!INCONSISTENT_BACKING_FIELD_TYPE!>var thingWithNullableField: Number<!>
     <!LATEINIT_NULLABLE_BACKING_FIELD, WRONG_MODIFIER_TARGET!>lateinit<!> field: String?
-    get() = 20
-    set(value) {
+    <!PROPERTY_WITH_EXPLICIT_FIELD_AND_ACCESSORS!>get()<!> = 20
+    <!PROPERTY_WITH_EXPLICIT_FIELD_AND_ACCESSORS!>set(value)<!> {
         field = value.toString()
     }
 

@@ -3589,6 +3589,11 @@ internal class InconsistentBackingFieldTypeImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtProperty>(firDiagnostic, token), KaFirDiagnostic.InconsistentBackingFieldType
 
+internal class PropertyWithExplicitFieldAndAccessorsImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<PsiElement>(firDiagnostic, token), KaFirDiagnostic.PropertyWithExplicitFieldAndAccessors
+
 internal class ExplicitBackingFieldInInterfaceImpl(
     firDiagnostic: KtPsiDiagnostic,
     token: KaLifetimeToken,
