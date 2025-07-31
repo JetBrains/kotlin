@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.backend.common.checkers.type
 
 import org.jetbrains.kotlin.backend.common.checkers.IrTypeChecker
 import org.jetbrains.kotlin.backend.common.checkers.context.CheckerContext
+import org.jetbrains.kotlin.backend.common.checkers.context.ContextUpdater
+import org.jetbrains.kotlin.backend.common.checkers.context.TypeParameterScopeUpdater
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.IrSimpleType
@@ -17,6 +19,9 @@ import org.jetbrains.kotlin.ir.util.render
  * Makes sure that all the type parameter references are within the scope of the corresponding type parameters.
  */
 object IrTypeParameterScopeChecker : IrTypeChecker {
+    override val requiredContextUpdaters: Set<ContextUpdater>
+        get() = setOf(TypeParameterScopeUpdater)
+
     override fun check(
         type: IrType,
         container: IrElement,

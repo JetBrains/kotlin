@@ -12,7 +12,10 @@ import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import kotlin.reflect.KClass
 
-sealed interface IrChecker
+sealed interface IrChecker {
+    val requiredContextUpdaters : Set<ContextUpdater>
+        get() = emptySet()
+}
 
 abstract class IrElementChecker<in E : IrElement>(
     elementClass: KClass<in E>,
