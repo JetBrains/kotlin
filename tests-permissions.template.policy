@@ -9,6 +9,7 @@ grant {
     permission java.util.logging.LoggingPermission "control";
     permission com.sun.jdi.JDIPermission "virtualMachineManager";
     permission java.lang.reflect.ReflectPermission "suppressAccessChecks";
+    permission java.lang.reflect.ReflectPermission "newProxyInPackage.net.bytebuddy.description.type";
     permission java.util.PropertyPermission "*", "read";
     permission java.util.PropertyPermission "idea.*", "write";
     permission java.util.PropertyPermission "psi.*", "write";
