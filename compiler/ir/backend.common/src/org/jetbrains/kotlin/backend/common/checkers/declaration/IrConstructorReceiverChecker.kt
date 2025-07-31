@@ -12,9 +12,8 @@ import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrParameterKind
 import org.jetbrains.kotlin.ir.util.constructedClass
 
-object IrConstructorReceiverChecker : IrElementChecker<IrFunction>(IrFunction::class) {
-    override fun check(element: IrFunction, context: CheckerContext) {
-        if (element !is IrConstructor) return
+object IrConstructorReceiverChecker : IrElementChecker<IrConstructor>(IrConstructor::class) {
+    override fun check(element: IrConstructor, context: CheckerContext) {
         if (!element.constructedClass.isInner && element.dispatchReceiverParameter != null) {
             context.error(element, "Constructors of non-inner classes can't have dispatch receiver parameters")
         }
