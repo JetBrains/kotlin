@@ -1,34 +1,53 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.analysis.decompiler.psi
 
 import com.intellij.openapi.vfs.VirtualFile
-import com.intellij.openapi.vfs.impl.jar.CoreJarFileSystem
 import com.intellij.psi.PsiManager
+import com.intellij.util.indexing.FileContentImpl
 import org.jetbrains.kotlin.analysis.decompiler.stub.files.AbstractDecompiledClassTest
+import org.jetbrains.kotlin.analysis.decompiler.stub.files.serializeToString
 import org.jetbrains.kotlin.idea.KotlinLanguage.INSTANCE
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.test.KotlinTestUtils
 import java.nio.file.Files
 import java.nio.file.Paths
+import java.util.*
 import kotlin.io.path.name
-import kotlin.streams.toList
+import kotlin.streams.asSequence
 
 class BuiltinDecompilerToTextTest : AbstractDecompiledClassTest() {
     fun testBuiltinDecompilationToText() {
         val decompiledBuiltInKtFiles = loadBuiltIns()
         val testDataPath = Paths.get(TEST_DATA_PATH)
         for (file in decompiledBuiltInKtFiles) {
-            val resultFileName = file.name + DECOMPILED_TEXT_EXTENSION
-            val expectedFile = testDataPath.resolve(resultFileName)
-            KotlinTestUtils.assertEqualsToFile(expectedFile, file.text)
+            val decompiledTextFileName = file.name + DECOMPILED_TEXT_EXTENSION
+            val decompiledTextExpectedFile = testDataPath.resolve(decompiledTextFileName)
+            KotlinTestUtils.assertEqualsToFile(decompiledTextExpectedFile, file.text)
+
+            val decompiledStubFileName = file.name + DECOMPILED_STUB_EXTENSION
+            val decompiledStubExpectedFile = testDataPath.resolve(decompiledStubFileName)
+            val decompiledStubString = file.calcStubTree().root.serializeToString()
+            KotlinTestUtils.assertEqualsToFile(decompiledStubExpectedFile, decompiledStubString)
+
+            val compiledStubFileName = file.name + COMPILED_STUB_EXTENSION
+            val compiledStubExpectedFile = testDataPath.resolve(compiledStubFileName)
+            val compiledStubString = KotlinBuiltInDecompiler().stubBuilder
+                .buildFileStub(FileContentImpl.createByFile(file.virtualFile))!!
+                .serializeToString()
+
+            KotlinTestUtils.assertEqualsToFile(compiledStubExpectedFile, compiledStubString)
         }
-        val expectedBuiltins = Files.list(testDataPath).toList()
+
+        val expectedBuiltins = Files.list(testDataPath).asSequence().mapTo(TreeSet()) {
+            it.name.substringBefore(KotlinBuiltInFileType.defaultExtension) + KotlinBuiltInFileType.defaultExtension
+        }
+
         assertEquals(
-            expectedBuiltins.map { it.name.removeSuffix(DECOMPILED_TEXT_EXTENSION) }.sorted(),
+            expectedBuiltins.sorted(),
             decompiledBuiltInKtFiles.map { it.name }.sorted(),
         )
     }
@@ -66,5 +85,7 @@ class BuiltinDecompilerToTextTest : AbstractDecompiledClassTest() {
     companion object {
         private const val TEST_DATA_PATH = "analysis/decompiled/decompiler-to-psi/testData/builtins"
         private const val DECOMPILED_TEXT_EXTENSION = ".decompiled.text.kt"
+        private const val DECOMPILED_STUB_EXTENSION = ".decompiled.stubs.txt"
+        private const val COMPILED_STUB_EXTENSION = ".compiled.stubs.txt"
     }
 }
