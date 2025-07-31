@@ -33,11 +33,8 @@ abstract class IrValidationPhase<Context : LoweringContext>(val context: Context
                 phaseName,
                 defaultValidationConfig,
             )
-            additionalValidation(irModule, phaseName)
         }
     }
-
-    protected open fun IrValidationContext.additionalValidation(irModule: IrModuleFragment, phaseName: String) {}
 }
 
 abstract class IrValidationBeforeLoweringPhase<Context : LoweringContext>(context: Context) : IrValidationPhase<Context>(context) {
