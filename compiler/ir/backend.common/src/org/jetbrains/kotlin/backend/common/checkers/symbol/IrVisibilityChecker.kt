@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.common.checkers.symbol
 
+import org.jetbrains.kotlin.backend.common.checkers.IrSymbolChecker
 import org.jetbrains.kotlin.backend.common.checkers.checkVisibility
 import org.jetbrains.kotlin.backend.common.checkers.context.CheckerContext
 import org.jetbrains.kotlin.ir.IrElement

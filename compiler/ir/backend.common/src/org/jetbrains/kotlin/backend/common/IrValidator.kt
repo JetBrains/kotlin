@@ -12,9 +12,9 @@ import org.jetbrains.kotlin.backend.common.checkers.checkTreeConsistency
 import org.jetbrains.kotlin.backend.common.checkers.context.*
 import org.jetbrains.kotlin.backend.common.checkers.declaration.*
 import org.jetbrains.kotlin.backend.common.checkers.expression.*
-import org.jetbrains.kotlin.backend.common.checkers.symbol.IrSymbolChecker
 import org.jetbrains.kotlin.backend.common.checkers.symbol.IrVisibilityChecker
-import org.jetbrains.kotlin.backend.common.checkers.type.IrTypeChecker
+import org.jetbrains.kotlin.backend.common.checkers.IrSymbolChecker
+import org.jetbrains.kotlin.backend.common.checkers.IrTypeChecker
 import org.jetbrains.kotlin.backend.common.checkers.type.IrTypeParameterScopeChecker
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector

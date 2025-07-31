@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.common.checkers.type
 
+import org.jetbrains.kotlin.backend.common.checkers.IrTypeChecker
 import org.jetbrains.kotlin.backend.common.checkers.context.CheckerContext
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
