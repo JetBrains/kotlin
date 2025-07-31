@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.backend.common.checkers.ensureTypeIs
 import org.jetbrains.kotlin.ir.expressions.IrGetObjectValue
 import org.jetbrains.kotlin.ir.types.createType
 
-internal object IrGetObjectValueTypeChecker : IrElementChecker<IrGetObjectValue>(IrGetObjectValue::class) {
+object IrGetObjectValueTypeChecker : IrElementChecker<IrGetObjectValue>(IrGetObjectValue::class) {
     override fun check(element: IrGetObjectValue, context: CheckerContext) {
         element.ensureTypeIs(element.symbol.createType(false, emptyList()), context)
     }

@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.backend.common.checkers.IrElementChecker
 import org.jetbrains.kotlin.ir.declarations.IrProperty
 import org.jetbrains.kotlin.ir.util.render
 
-internal object IrPropertyAccessorsChecker : IrElementChecker<IrProperty>(IrProperty::class) {
+object IrPropertyAccessorsChecker : IrElementChecker<IrProperty>(IrProperty::class) {
     override fun check(element: IrProperty, context: CheckerContext) {
         element.getter?.let {
             if (it.correspondingPropertySymbol != element.symbol) {

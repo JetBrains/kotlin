@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclarationWithVisibility
 import org.jetbrains.kotlin.ir.declarations.IrOverridableDeclaration
 import org.jetbrains.kotlin.ir.util.render
 
-internal object IrPrivateDeclarationOverrideChecker : IrElementChecker<IrDeclaration>(IrDeclaration::class) {
+object IrPrivateDeclarationOverrideChecker : IrElementChecker<IrDeclaration>(IrDeclaration::class) {
     override fun check(element: IrDeclaration, context: CheckerContext) {
         if (element is IrOverridableDeclaration<*>) {
             for (overriddenSymbol in element.overriddenSymbols) {

@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.name.ClassId
 /**
  * Makes sure that all encountered [IrField]s are private unless they participate in Java interop.
  */
-internal object IrFieldVisibilityChecker : IrElementChecker<IrField>(IrField::class) {
+object IrFieldVisibilityChecker : IrElementChecker<IrField>(IrField::class) {
     private val JVM_FIELD_CLASS_ID = ClassId.fromString("kotlin/jvm/JvmField")
 
     // TODO: Some backing fields inherit their visibility from their corresponding properties.

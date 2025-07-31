@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.backend.common.checkers.context
 import org.jetbrains.kotlin.backend.common.temporarilyPushing
 import org.jetbrains.kotlin.ir.IrElement
 
-internal object ParentChainUpdater : ContextUpdater {
+object ParentChainUpdater : ContextUpdater {
     override fun runInNewContext(
         context: CheckerContext,
         element: IrElement,

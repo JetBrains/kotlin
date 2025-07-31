@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.backend.common.checkers.context.CheckerContext
 import org.jetbrains.kotlin.backend.common.checkers.ensureTypeIs
 import org.jetbrains.kotlin.ir.expressions.IrGetValue
 
-internal object IrGetValueTypeChecker : IrElementChecker<IrGetValue>(IrGetValue::class) {
+object IrGetValueTypeChecker : IrElementChecker<IrGetValue>(IrGetValue::class) {
     override fun check(element: IrGetValue, context: CheckerContext) {
         element.ensureTypeIs(element.symbol.owner.type, context)
     }

@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.ir.expressions.IrTypeOperatorCall
 import org.jetbrains.kotlin.ir.types.isUnit
 import org.jetbrains.kotlin.ir.util.render
 
-internal object IrTypeOperatorTypeOperandChecker : IrElementChecker<IrTypeOperatorCall>(IrTypeOperatorCall::class) {
+object IrTypeOperatorTypeOperandChecker : IrElementChecker<IrTypeOperatorCall>(IrTypeOperatorCall::class) {
     override fun check(element: IrTypeOperatorCall, context: CheckerContext) {
         val operator = element.operator
         val typeOperand = element.typeOperand

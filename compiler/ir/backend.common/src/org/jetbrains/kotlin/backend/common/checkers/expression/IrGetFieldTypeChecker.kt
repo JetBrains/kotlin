@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.ir.expressions.IrGetField
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.types.IrSimpleType
 
-internal object IrGetFieldTypeChecker : IrElementChecker<IrGetField>(IrGetField::class) {
+object IrGetFieldTypeChecker : IrElementChecker<IrGetField>(IrGetField::class) {
     override fun check(element: IrGetField, context: CheckerContext) {
         val fieldType = element.symbol.owner.type
         // TODO: We don't have the proper type substitution yet, so skip generics for now.

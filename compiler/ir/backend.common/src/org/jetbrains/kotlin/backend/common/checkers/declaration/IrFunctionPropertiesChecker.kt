@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.util.render
 
-internal object IrFunctionPropertiesChecker : IrElementChecker<IrFunction>(IrFunction::class) {
+object IrFunctionPropertiesChecker : IrElementChecker<IrFunction>(IrFunction::class) {
     override fun check(element: IrFunction, context: CheckerContext) {
         if (element is IrSimpleFunction) {
             val property = element.correspondingPropertySymbol?.owner

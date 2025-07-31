@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.backend.common.checkers.context.CheckerContext
 import org.jetbrains.kotlin.backend.common.checkers.ensureTypeIs
 import org.jetbrains.kotlin.ir.expressions.IrExpression
 
-internal object IrUnitTypeExpressionChecker : IrElementChecker<IrExpression>(IrExpression::class) {
+object IrUnitTypeExpressionChecker : IrElementChecker<IrExpression>(IrExpression::class) {
     override fun check(element: IrExpression, context: CheckerContext) {
         element.ensureTypeIs(context.irBuiltIns.unitType, context)
     }

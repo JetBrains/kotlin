@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.ir.types.IrSimpleType
 import org.jetbrains.kotlin.ir.types.classifierOrNull
 import org.jetbrains.kotlin.ir.util.resolveFakeOverrideMaybeAbstract
 
-internal object IrCallTypeChecker : IrElementChecker<IrCall>(IrCall::class) {
+object IrCallTypeChecker : IrElementChecker<IrCall>(IrCall::class) {
     override fun check(element: IrCall, context: CheckerContext) {
         val callee = element.symbol.owner
         // TODO: We don't have the proper type substitution yet, so skip generics for now.

@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.backend.common.checkers.IrElementChecker
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrParameterKind
 
-internal object IrFunctionParametersChecker : IrElementChecker<IrFunction>(IrFunction::class) {
+object IrFunctionParametersChecker : IrElementChecker<IrFunction>(IrFunction::class) {
     override fun check(element: IrFunction, context: CheckerContext) {
         @OptIn(DeprecatedForRemovalCompilerApi::class)
         for ((i, param) in element.valueParameters.withIndex()) {

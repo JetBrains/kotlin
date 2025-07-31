@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.backend.common.checkers.IrElementChecker
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.types.IrDynamicType
 
-internal object IrFunctionDispatchReceiverChecker : IrElementChecker<IrFunction>(IrFunction::class) {
+object IrFunctionDispatchReceiverChecker : IrElementChecker<IrFunction>(IrFunction::class) {
     override fun check(element: IrFunction, context: CheckerContext) {
         if (element.dispatchReceiverParameter?.type is IrDynamicType) {
             context.error(element, "Dispatch receivers with 'dynamic' type are not allowed")

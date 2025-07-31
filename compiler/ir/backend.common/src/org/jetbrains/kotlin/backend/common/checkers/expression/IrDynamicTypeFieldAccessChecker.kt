@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.ir.types.IrDynamicType
 /**
  * Makes sure that [IrDynamicType] is not used as receiver of IrFieldAccessExpression.
  */
-internal object IrDynamicTypeFieldAccessChecker : IrElementChecker<IrFieldAccessExpression>(IrFieldAccessExpression::class) {
+object IrDynamicTypeFieldAccessChecker : IrElementChecker<IrFieldAccessExpression>(IrFieldAccessExpression::class) {
     override fun check(element: IrFieldAccessExpression, context: CheckerContext) {
         if (element.receiver?.type is IrDynamicType) {
             context.error(

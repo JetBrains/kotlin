@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.utils.addIfNotNull
 
-internal object ValueScopeUpdater : ContextUpdater {
+object ValueScopeUpdater : ContextUpdater {
     override fun runInNewContext(
         context: CheckerContext,
         element: IrElement,

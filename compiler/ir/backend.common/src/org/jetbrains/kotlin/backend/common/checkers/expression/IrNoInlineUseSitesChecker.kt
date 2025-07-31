@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.backend.common.checkers.checkFunctionUseSite
 import org.jetbrains.kotlin.backend.common.checkers.context.CheckerContext
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 
-internal object IrNoInlineUseSitesChecker : IrElementChecker<IrFunctionAccessExpression>(IrFunctionAccessExpression::class) {
+object IrNoInlineUseSitesChecker : IrElementChecker<IrFunctionAccessExpression>(IrFunctionAccessExpression::class) {
     override fun check(element: IrFunctionAccessExpression, context: CheckerContext) {
         context.checkInlineFunctionUseSites?.let {
             checkFunctionUseSite(element, it, context)

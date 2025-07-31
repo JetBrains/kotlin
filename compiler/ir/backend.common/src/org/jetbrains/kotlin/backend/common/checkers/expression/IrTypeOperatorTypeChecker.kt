@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.ir.expressions.IrTypeOperator
 import org.jetbrains.kotlin.ir.expressions.IrTypeOperatorCall
 import org.jetbrains.kotlin.ir.types.makeNullable
 
-internal object IrTypeOperatorTypeChecker : IrElementChecker<IrTypeOperatorCall>(IrTypeOperatorCall::class) {
+object IrTypeOperatorTypeChecker : IrElementChecker<IrTypeOperatorCall>(IrTypeOperatorCall::class) {
     override fun check(element: IrTypeOperatorCall, context: CheckerContext) {
         // TODO: check IMPLICIT_NOTNULL's argument type.
         val operator = element.operator

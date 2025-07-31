@@ -12,7 +12,7 @@ import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrParameterKind
 import org.jetbrains.kotlin.ir.util.constructedClass
 
-internal object IrConstructorReceiverChecker : IrElementChecker<IrFunction>(IrFunction::class) {
+object IrConstructorReceiverChecker : IrElementChecker<IrFunction>(IrFunction::class) {
     override fun check(element: IrFunction, context: CheckerContext) {
         if (element !is IrConstructor) return
         if (!element.constructedClass.isInner && element.dispatchReceiverParameter != null) {

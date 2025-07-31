@@ -8,7 +8,7 @@ package org.jetbrains.kotlin.backend.common.checkers.context
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrTypeParametersContainer
 
-internal object TypeParameterScopeUpdater : ContextUpdater {
+object TypeParameterScopeUpdater : ContextUpdater {
     override fun runInNewContext(
         context: CheckerContext,
         element: IrElement,
