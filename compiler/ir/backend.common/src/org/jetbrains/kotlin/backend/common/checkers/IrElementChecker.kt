@@ -7,17 +7,12 @@ package org.jetbrains.kotlin.backend.common.checkers
 
 import org.jetbrains.kotlin.backend.common.checkers.context.CheckerContext
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.expressions.IrExpression
 import kotlin.reflect.KClass
 
 abstract class IrElementChecker<in E : IrElement>(
     elementClass: KClass<in E>,
 ) {
-    abstract fun check(element: E, context: CheckerContext)
-}
+    internal val elementClass: Class<in E> = elementClass.java
 
-internal fun <E : IrElement> List<IrElementChecker<E>>.check(element: E, context: CheckerContext) {
-    for (checker in this) {
-        checker.check(element, context)
-    }
+    abstract fun check(element: E, context: CheckerContext)
 }

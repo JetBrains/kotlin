@@ -5,23 +5,27 @@
 
 package org.jetbrains.kotlin.backend.common
 
-import org.jetbrains.kotlin.backend.common.checkers.*
+import org.jetbrains.kotlin.backend.common.checkers.IrElementChecker
+import org.jetbrains.kotlin.backend.common.checkers.IrValidationError
+import org.jetbrains.kotlin.backend.common.checkers.TreeConsistencyError
+import org.jetbrains.kotlin.backend.common.checkers.checkTreeConsistency
 import org.jetbrains.kotlin.backend.common.checkers.context.*
 import org.jetbrains.kotlin.backend.common.checkers.declaration.*
 import org.jetbrains.kotlin.backend.common.checkers.expression.*
 import org.jetbrains.kotlin.backend.common.checkers.symbol.IrSymbolChecker
 import org.jetbrains.kotlin.backend.common.checkers.symbol.IrVisibilityChecker
-import org.jetbrains.kotlin.backend.common.checkers.symbol.check
 import org.jetbrains.kotlin.backend.common.checkers.type.IrTypeChecker
 import org.jetbrains.kotlin.backend.common.checkers.type.IrTypeParameterScopeChecker
-import org.jetbrains.kotlin.backend.common.checkers.type.check
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.IrVerificationMode
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
-import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.expressions.*
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationBase
+import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
+import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.util.IrTreeSymbolsVisitor
@@ -93,88 +97,60 @@ private class IrFileValidator(
     private val context: CheckerContext
 ) : IrTreeSymbolsVisitor() {
     private val contextUpdaters: MutableList<ContextUpdater> = mutableListOf(ParentChainUpdater)
-
-    private val fieldCheckers: MutableList<IrElementChecker<IrField>> = mutableListOf()
-    private val fieldAccessExpressionCheckers: MutableList<IrElementChecker<IrFieldAccessExpression>> = mutableListOf()
-    private val typeCheckers: MutableList<IrTypeChecker> = mutableListOf()
-    private val symbolCheckers: MutableList<IrSymbolChecker> = mutableListOf()
-    private val declarationReferenceCheckers: MutableList<IrElementChecker<IrDeclarationReference>> = mutableListOf()
-    private val varargCheckers: MutableList<IrElementChecker<IrVararg>> = mutableListOf()
-    private val valueParameterCheckers: MutableList<IrElementChecker<IrValueParameter>> = mutableListOf()
-    private val valueAccessCheckers: MutableList<IrElementChecker<IrValueAccessExpression>> = mutableListOf()
-    private val functionAccessCheckers: MutableList<IrElementChecker<IrFunctionAccessExpression>> = mutableListOf(IrNoInlineUseSitesChecker)
-    private val functionReferenceCheckers: MutableList<IrElementChecker<IrFunctionReference>> = mutableListOf()
-    private val constCheckers: MutableList<IrElementChecker<IrConst>> = mutableListOf()
-    private val stringConcatenationCheckers: MutableList<IrElementChecker<IrStringConcatenation>> = mutableListOf()
-    private val getObjectValueCheckers: MutableList<IrElementChecker<IrGetObjectValue>> = mutableListOf()
-    private val getValueCheckers: MutableList<IrElementChecker<IrGetValue>> = mutableListOf()
-    private val setValueCheckers: MutableList<IrElementChecker<IrSetValue>> = mutableListOf(IrSetValueAssignabilityChecker)
-    private val getFieldCheckers: MutableList<IrElementChecker<IrGetField>> = mutableListOf()
-    private val setFieldCheckers: MutableList<IrElementChecker<IrSetField>> = mutableListOf()
-    private val delegatingConstructorCallCheckers: MutableList<IrElementChecker<IrDelegatingConstructorCall>> = mutableListOf()
-    private val instanceInitializerCallCheckers: MutableList<IrElementChecker<IrInstanceInitializerCall>> = mutableListOf()
-    private val loopCheckers: MutableList<IrElementChecker<IrLoop>> = mutableListOf()
-    private val breakContinueCheckers: MutableList<IrElementChecker<IrBreakContinue>> = mutableListOf()
-    private val returnCheckers: MutableList<IrElementChecker<IrReturn>> = mutableListOf()
-    private val throwCheckers: MutableList<IrElementChecker<IrThrow>> = mutableListOf()
-    private val functionCheckers: MutableList<IrElementChecker<IrFunction>> = mutableListOf(
-        IrFunctionDispatchReceiverChecker, IrFunctionParametersChecker, IrConstructorReceiverChecker, IrFunctionPropertiesChecker
+    private val elementCheckers: MutableList<IrElementChecker<*>> = mutableListOf(
+        IrNoInlineUseSitesChecker, IrSetValueAssignabilityChecker,
+        IrFunctionDispatchReceiverChecker, IrFunctionParametersChecker, IrConstructorReceiverChecker,
+        IrTypeOperatorTypeOperandChecker,
+        IrPropertyAccessorsChecker, IrFunctionPropertiesChecker,
     )
-    private val declarationBaseCheckers: MutableList<IrElementChecker<IrDeclaration>> = mutableListOf()
-    private val propertyReferenceCheckers: MutableList<IrElementChecker<IrPropertyReference>> = mutableListOf()
-    private val localDelegatedPropertyReferenceCheckers: MutableList<IrElementChecker<IrLocalDelegatedPropertyReference>> = mutableListOf()
-    private val expressionCheckers: MutableList<IrElementChecker<IrExpression>> = mutableListOf()
-    private val typeOperatorCheckers: MutableList<IrElementChecker<IrTypeOperatorCall>> = mutableListOf(IrTypeOperatorTypeOperandChecker)
-    private val propertyCheckers: MutableList<IrElementChecker<IrProperty>> = mutableListOf(IrPropertyAccessorsChecker)
-
-    private val callCheckers: MutableList<IrElementChecker<IrCall>> = mutableListOf()
+    private val symbolCheckers: MutableList<IrSymbolChecker> = mutableListOf()
+    private val typeCheckers: MutableList<IrTypeChecker> = mutableListOf()
 
     init {
         if (config.checkValueScopes) {
             contextUpdaters.add(ValueScopeUpdater)
-            valueAccessCheckers.add(IrValueAccessScopeChecker)
+            elementCheckers.add(IrValueAccessScopeChecker)
         }
         if (config.checkTypeParameterScopes) {
             contextUpdaters.add(TypeParameterScopeUpdater)
             typeCheckers.add(IrTypeParameterScopeChecker)
         }
         if (config.checkAllKotlinFieldsArePrivate) {
-            fieldCheckers.add(IrFieldVisibilityChecker)
+            elementCheckers.add(IrFieldVisibilityChecker)
         }
         if (config.checkCrossFileFieldUsage) {
-            fieldAccessExpressionCheckers.add(IrCrossFileFieldUsageChecker)
+            elementCheckers.add(IrCrossFileFieldUsageChecker)
         }
         if (config.checkVisibilities) {
             symbolCheckers.add(IrVisibilityChecker)
         }
         if (config.checkVarargTypes) {
-            varargCheckers.add(IrVarargTypesChecker)
-            valueParameterCheckers.add(IrValueParameterVarargTypesChecker)
+            elementCheckers.add(IrVarargTypesChecker)
+            elementCheckers.add(IrValueParameterVarargTypesChecker)
         }
         if (config.checkTypes) {
-            constCheckers.add(IrConstTypeChecker)
-            stringConcatenationCheckers.add(IrStringConcatenationTypeChecker)
-            getObjectValueCheckers.add(IrGetObjectValueTypeChecker)
-            getValueCheckers.add(IrGetValueTypeChecker)
-            setValueCheckers.add(IrUnitTypeExpressionChecker)
-            getFieldCheckers.add(IrGetFieldTypeChecker)
-            setFieldCheckers.add(IrUnitTypeExpressionChecker)
-            callCheckers.add(IrCallTypeChecker)
-            delegatingConstructorCallCheckers.add(IrUnitTypeExpressionChecker)
-            instanceInitializerCallCheckers.add(IrUnitTypeExpressionChecker)
-            typeOperatorCheckers.add(IrTypeOperatorTypeChecker)
-            loopCheckers.add(IrUnitTypeExpressionChecker)
-            breakContinueCheckers.add(IrNothingTypeExpressionChecker)
-            returnCheckers.add(IrNothingTypeExpressionChecker)
-            throwCheckers.add(IrNothingTypeExpressionChecker)
-            fieldAccessExpressionCheckers.add(IrDynamicTypeFieldAccessChecker)
+            elementCheckers.add(IrConstTypeChecker)
+            elementCheckers.add(IrStringConcatenationTypeChecker)
+            elementCheckers.add(IrGetObjectValueTypeChecker)
+            elementCheckers.add(IrGetValueTypeChecker)
+            elementCheckers.add(IrUnitTypeExpressionChecker)
+            elementCheckers.add(IrNothingTypeExpressionChecker)
+            elementCheckers.add(IrGetFieldTypeChecker)
+            elementCheckers.add(IrCallTypeChecker)
+            elementCheckers.add(IrTypeOperatorTypeChecker)
+            elementCheckers.add(IrDynamicTypeFieldAccessChecker)
         }
         if (config.checkIrExpressionBodyInFunction) {
-            functionCheckers.add(IrExpressionBodyInFunctionChecker)
+            elementCheckers.add(IrExpressionBodyInFunctionChecker)
         }
         if (config.checkOverridePrivateDeclaration) {
-            declarationBaseCheckers.add(IrPrivateDeclarationOverrideChecker)
+            elementCheckers.add(IrPrivateDeclarationOverrideChecker)
         }
+    }
+
+    private val checkersPerElement = object : ClassValue<List<IrElementChecker<*>>>() {
+        override fun computeValue(type: Class<*>): List<IrElementChecker<*>> =
+            elementCheckers.filter { it.elementClass.isAssignableFrom(type) }
     }
 
     override fun visitElement(element: IrElement) {
@@ -184,167 +160,29 @@ private class IrFileValidator(
             block = { contextUpdater.runInNewContext(context, element, currentBlock) }
         }
         block()
-    }
 
-    override fun visitConst(expression: IrConst) {
-        super.visitConst(expression)
-        constCheckers.check(expression, context)
-    }
-
-    override fun visitStringConcatenation(expression: IrStringConcatenation) {
-        super.visitStringConcatenation(expression)
-        stringConcatenationCheckers.check(expression, context)
-    }
-
-    override fun visitGetObjectValue(expression: IrGetObjectValue) {
-        super.visitGetObjectValue(expression)
-        getObjectValueCheckers.check(expression, context)
-    }
-
-    // TODO: visitGetEnumValue
-
-    override fun visitGetValue(expression: IrGetValue) {
-        super.visitGetValue(expression)
-        getValueCheckers.check(expression, context)
-    }
-
-    override fun visitSetValue(expression: IrSetValue) {
-        super.visitSetValue(expression)
-        setValueCheckers.check(expression, context)
-    }
-
-    override fun visitGetField(expression: IrGetField) {
-        super.visitGetField(expression)
-        getFieldCheckers.check(expression, context)
-    }
-
-    override fun visitSetField(expression: IrSetField) {
-        super.visitSetField(expression)
-        setFieldCheckers.check(expression, context)
-    }
-
-    override fun visitCall(expression: IrCall) {
-        super.visitCall(expression)
-        callCheckers.check(expression, context)
-    }
-
-    override fun visitDelegatingConstructorCall(expression: IrDelegatingConstructorCall) {
-        super.visitDelegatingConstructorCall(expression)
-        delegatingConstructorCallCheckers.check(expression, context)
-    }
-
-    override fun visitInstanceInitializerCall(expression: IrInstanceInitializerCall) {
-        super.visitInstanceInitializerCall(expression)
-        instanceInitializerCallCheckers.check(expression, context)
-    }
-
-    override fun visitTypeOperator(expression: IrTypeOperatorCall) {
-        super.visitTypeOperator(expression)
-        typeOperatorCheckers.check(expression, context)
-    }
-
-    override fun visitLoop(loop: IrLoop) {
-        super.visitLoop(loop)
-        loopCheckers.check(loop, context)
-    }
-
-    override fun visitBreakContinue(jump: IrBreakContinue) {
-        super.visitBreakContinue(jump)
-        breakContinueCheckers.check(jump, context)
-    }
-
-    override fun visitReturn(expression: IrReturn) {
-        super.visitReturn(expression)
-        returnCheckers.check(expression, context)
-    }
-
-    override fun visitThrow(expression: IrThrow) {
-        super.visitThrow(expression)
-        throwCheckers.check(expression, context)
-    }
-
-    override fun visitFunction(declaration: IrFunction) {
-        super.visitFunction(declaration)
-        functionCheckers.check(declaration, context)
-    }
-
-    override fun visitValueAccess(expression: IrValueAccessExpression) {
-        super.visitValueAccess(expression)
-        valueAccessCheckers.check(expression, context)
-    }
-
-    override fun visitField(declaration: IrField) {
-        super.visitField(declaration)
-        fieldCheckers.check(declaration, context)
-    }
-
-    override fun visitFieldAccess(expression: IrFieldAccessExpression) {
-        super.visitFieldAccess(expression)
-        fieldAccessExpressionCheckers.check(expression, context)
-    }
-
-    override fun visitType(container: IrElement, type: IrType) {
-        super.visitType(container, type)
-        typeCheckers.check(type, container, context)
-    }
-
-    override fun visitSymbol(container: IrElement, symbol: IrSymbol) {
-        symbolCheckers.check(symbol, container, context)
-    }
-
-    override fun visitDeclarationReference(expression: IrDeclarationReference) {
-        super.visitDeclarationReference(expression)
-        declarationReferenceCheckers.check(expression, context)
-    }
-
-    override fun visitDeclaration(declaration: IrDeclarationBase) {
-        super.visitDeclaration(declaration)
-        declarationBaseCheckers.check(declaration, context)
-    }
-
-    override fun visitPropertyReference(expression: IrPropertyReference) {
-        super.visitPropertyReference(expression)
-        propertyReferenceCheckers.check(expression, context)
-    }
-
-    override fun visitLocalDelegatedPropertyReference(expression: IrLocalDelegatedPropertyReference) {
-        super.visitLocalDelegatedPropertyReference(expression)
-        localDelegatedPropertyReferenceCheckers.check(expression, context)
-    }
-
-    override fun visitExpression(expression: IrExpression) {
-        super.visitExpression(expression)
-        expressionCheckers.check(expression, context)
-    }
-
-    override fun visitVararg(expression: IrVararg) {
-        super.visitVararg(expression)
-        varargCheckers.check(expression, context)
-    }
-
-    override fun visitValueParameter(declaration: IrValueParameter) {
-        super.visitValueParameter(declaration)
-        valueParameterCheckers.check(declaration, context)
-    }
-
-    override fun visitFunctionReference(expression: IrFunctionReference) {
-        super.visitFunctionReference(expression)
-        functionReferenceCheckers.check(expression, context)
-    }
-
-    override fun visitFunctionAccess(expression: IrFunctionAccessExpression) {
-        super.visitFunctionAccess(expression)
-        functionAccessCheckers.check(expression, context)
-    }
-
-    override fun visitProperty(declaration: IrProperty) {
-        super.visitProperty(declaration)
-        propertyCheckers.check(declaration, context)
+        for (checker in checkersPerElement.get(element.javaClass)) {
+            @Suppress("UNCHECKED_CAST")
+            (checker as IrElementChecker<IrElement>).check(element, context)
+        }
     }
 
     override fun visitAnnotationUsage(annotationUsage: IrConstructorCall) {
         context.withinAnnotationUsageSubTree {
             super.visitAnnotationUsage(annotationUsage)
+        }
+    }
+
+    override fun visitSymbol(container: IrElement, symbol: IrSymbol) {
+        for (checker in symbolCheckers) {
+            checker.check(symbol, container, context)
+        }
+    }
+
+    override fun visitType(container: IrElement, type: IrType) {
+        super.visitType(container, type)
+        for (checker in typeCheckers) {
+            checker.check(type, container, context)
         }
     }
 }
