@@ -10,6 +10,7 @@ class A {
   @Suppress(names = ["INCONSISTENT_BACKING_FIELD_TYPE"])
   var invertedTypes: Number
     field = 42
+    @Suppress(names = ["PROPERTY_WITH_EXPLICIT_FIELD_AND_ACCESSORS"])
     get(): Int {
       return when {
         greater(arg0 = <this>.#invertedTypes.toInt(), arg1 = 10) -> <this>.#invertedTypes.toInt()

@@ -16,6 +16,7 @@ class MutableStorage(override var s: String) : Storage {
 class My {
     val storage: Storage
         field = MutableStorage("OK")
+        @Suppress("PROPERTY_WITH_EXPLICIT_FIELD_AND_ACCESSORS")
         get() = field.asImmutable()
 }
 
