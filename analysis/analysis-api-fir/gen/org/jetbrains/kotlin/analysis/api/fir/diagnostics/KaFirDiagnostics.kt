@@ -2991,6 +2991,10 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = InconsistentBackingFieldType::class
     }
 
+    interface PropertyWithExplicitFieldAndAccessors : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = PropertyWithExplicitFieldAndAccessors::class
+    }
+
     interface ExplicitBackingFieldInInterface : KaFirDiagnostic<KtBackingField> {
         override val diagnosticClass get() = ExplicitBackingFieldInInterface::class
     }

@@ -17,24 +17,24 @@ val simpleNoTypeExpression
 
 <!INCONSISTENT_BACKING_FIELD_TYPE!>val withFieldNoTypeBlock<!>
     field = 3.14
-    get() {
+    <!PROPERTY_WITH_EXPLICIT_FIELD_AND_ACCESSORS!>get()<!> {
         // *TODO: add support for this?
         return <!UNRESOLVED_REFERENCE!>field<!>.toInt()
     }
 
 <!INCONSISTENT_BACKING_FIELD_TYPE!>val withFieldNoTypeExpression<!>
     field = 3.14
-    get() = <!UNRESOLVED_REFERENCE!>field<!>.toInt()
+    <!PROPERTY_WITH_EXPLICIT_FIELD_AND_ACCESSORS!>get()<!> = <!UNRESOLVED_REFERENCE!>field<!>.toInt()
 
 <!INCONSISTENT_BACKING_FIELD_TYPE!>val withFieldTypeBlock: Int<!>
     field = 3.14
-    get() {
+    <!PROPERTY_WITH_EXPLICIT_FIELD_AND_ACCESSORS!>get()<!> {
         return field.toInt()
     }
 
 <!INCONSISTENT_BACKING_FIELD_TYPE!>val withFieldTypeExpression: Int<!>
     field = 3.14
-    get() = field.toInt()
+    <!PROPERTY_WITH_EXPLICIT_FIELD_AND_ACCESSORS!>get()<!> = field.toInt()
 
 // If * is supported, this is a relevant message
 // since adding a getter _may_ be enough
@@ -49,18 +49,18 @@ val simpleNoTypeExpression
 // to access it directly via `myProperty#field`?
 <!INCONSISTENT_BACKING_FIELD_TYPE!>val constWithFieldNoTypeBlock<!>
     field = 3.14
-    get() = 10
+    <!PROPERTY_WITH_EXPLICIT_FIELD_AND_ACCESSORS!>get()<!> = 10
 
 <!INCONSISTENT_BACKING_FIELD_TYPE!>val constWithFieldNoTypeExpression<!>
     field = 3.14
-    get() = 10
+    <!PROPERTY_WITH_EXPLICIT_FIELD_AND_ACCESSORS!>get()<!> = 10
 
 <!INCONSISTENT_BACKING_FIELD_TYPE!>val constWithFieldTypeBlock: Int<!>
     field = 3.14
-    get() = 10
+    <!PROPERTY_WITH_EXPLICIT_FIELD_AND_ACCESSORS!>get()<!> = 10
 
 <!INCONSISTENT_BACKING_FIELD_TYPE!>val constWithFieldTypeExpression: Int<!>
     field = 3.14
-    get() = 10
+    <!PROPERTY_WITH_EXPLICIT_FIELD_AND_ACCESSORS!>get()<!> = 10
 
 /* GENERATED_FIR_TAGS: getter, integerLiteral, propertyDeclaration */

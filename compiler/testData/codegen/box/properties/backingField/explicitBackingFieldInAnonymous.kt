@@ -42,6 +42,7 @@ fun test3(): String? {
         @Suppress("INCONSISTENT_BACKING_FIELD_TYPE")
         override val number: Number
             field = "100"
+            @Suppress("PROPERTY_WITH_EXPLICIT_FIELD_AND_ACCESSORS")
             get() {
                 return field.length
             }

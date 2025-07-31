@@ -8,7 +8,9 @@
 var that: Int
     @Suppress("WRONG_MODIFIER_TARGET")
     lateinit field: String
+    @Suppress("PROPERTY_WITH_EXPLICIT_FIELD_AND_ACCESSORS")
     get() = field.length
+    @Suppress("PROPERTY_WITH_EXPLICIT_FIELD_AND_ACCESSORS")
     set(value) {
         field = value.toString()
     }

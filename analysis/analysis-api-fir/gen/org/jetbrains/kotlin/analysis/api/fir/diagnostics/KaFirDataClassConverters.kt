@@ -4268,6 +4268,12 @@ internal val KT_DIAGNOSTIC_CONVERTER = KaDiagnosticConverterBuilder.buildConvert
             token,
         )
     }
+    add(FirErrors.PROPERTY_WITH_EXPLICIT_FIELD_AND_ACCESSORS) { firDiagnostic ->
+        PropertyWithExplicitFieldAndAccessorsImpl(
+            firDiagnostic as KtPsiDiagnostic,
+            token,
+        )
+    }
     add(FirErrors.EXPLICIT_BACKING_FIELD_IN_INTERFACE) { firDiagnostic ->
         ExplicitBackingFieldInInterfaceImpl(
             firDiagnostic as KtPsiDiagnostic,

@@ -16,14 +16,14 @@ class A {
 
     <!INCONSISTENT_BACKING_FIELD_TYPE!>val invertedTypes: Int<!>
     field: Number = 42
-    get() = 30
+    <!PROPERTY_WITH_EXPLICIT_FIELD_AND_ACCESSORS!>get()<!> = 30
 
     val uninitialized: Number
     <!EXPLICIT_FIELD_MUST_BE_INITIALIZED!>field: Int<!>
 
     val uninitializedWithGetter: Number
     <!EXPLICIT_FIELD_MUST_BE_INITIALIZED!>field: Int<!>
-    get() = 2
+    <!PROPERTY_WITH_EXPLICIT_FIELD_AND_ACCESSORS!>get()<!> = 2
 
     val initiaizedWithExplicitBackingField = <!PROPERTY_INITIALIZER_WITH_EXPLICIT_FIELD_DECLARATION!>listOf(1, 2)<!>
     field: MutableList<Int>
@@ -33,7 +33,7 @@ class A {
 
     <!INCONSISTENT_BACKING_FIELD_TYPE!>var setterNeeded: Int<!>
         field = "test"
-        get() = field.length
+        <!PROPERTY_WITH_EXPLICIT_FIELD_AND_ACCESSORS!>get()<!> = field.length
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, getter, integerLiteral, nullableType, propertyDeclaration, stringLiteral */

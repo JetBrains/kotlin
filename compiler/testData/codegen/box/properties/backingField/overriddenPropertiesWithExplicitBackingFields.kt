@@ -7,6 +7,7 @@
 open class A {
     open var it: Number
         private field = 3
+        @Suppress("PROPERTY_WITH_EXPLICIT_FIELD_AND_ACCESSORS")
         set(value) {
             field = value.toInt()
         }

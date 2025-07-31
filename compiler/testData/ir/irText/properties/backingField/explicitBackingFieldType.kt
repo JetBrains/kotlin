@@ -12,6 +12,7 @@ class A {
     @Suppress("INCONSISTENT_BACKING_FIELD_TYPE")
     var invertedTypes: Int
         field: Number = 42
+        @Suppress("PROPERTY_WITH_EXPLICIT_FIELD_AND_ACCESSORS")
         get() = if (field.toInt() > 10) field.toInt() else 10
 
     val p = 5

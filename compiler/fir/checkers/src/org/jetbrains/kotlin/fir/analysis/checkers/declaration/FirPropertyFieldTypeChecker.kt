@@ -59,8 +59,15 @@ object FirPropertyFieldTypeChecker : FirPropertyChecker(MppCheckerKind.Common) {
         if (!backingField.isSubtypeOf(declaration, typeCheckerContext)) {
             reporter.reportOn(declaration.source, FirErrors.INCONSISTENT_BACKING_FIELD_TYPE)
         }
+
+        // There's already `BACKING_FIELD_FOR_DELEGATED_PROPERTY`
+        if (declaration.delegate == null) {
+            if (declaration.getter.isExplicit) {
+                reporter.reportOn(declaration.getter?.source, FirErrors.PROPERTY_WITH_EXPLICIT_FIELD_AND_ACCESSORS)
+            }
+        }
     }
 
-    private val FirPropertyAccessor?.isNotExplicit
-        get() = this == null || this is FirDefaultPropertyAccessor
+    private val FirPropertyAccessor?.isExplicit
+        get() = this != null && this !is FirDefaultPropertyAccessor
 }
