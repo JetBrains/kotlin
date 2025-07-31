@@ -671,6 +671,11 @@ class ObjCExportHeaderGeneratorTest(private val generator: HeaderGenerator) {
     }
 
     @Test
+    fun `test - private companion`() {
+        doTest(headersTestDataDir.resolve("privateCompanion"))
+    }
+
+    @Test
     fun `test - extensions mangling`() {
         doTest(headersTestDataDir.resolve("extensionsMangling"))
     }

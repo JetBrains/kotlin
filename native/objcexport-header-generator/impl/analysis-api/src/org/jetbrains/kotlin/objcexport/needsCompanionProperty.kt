@@ -6,14 +6,18 @@
 package org.jetbrains.kotlin.objcexport
 
 import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.export.utilities.isCompanion
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassifierSymbol
-import org.jetbrains.kotlin.analysis.api.export.utilities.isCompanion
+import org.jetbrains.kotlin.objcexport.analysisApiUtils.isVisibleInObjC
 
 /**
  * [org.jetbrains.kotlin.backend.konan.objcexport.ObjCExportTranslator.needCompanionObjectProperty]
  */
 internal fun KaSession.hasCompanionObject(symbol: KaClassSymbol): Boolean = getCompanion(symbol) != null
+
+internal fun KaSession.hasVisibleCompanionObject(symbol: KaClassSymbol): Boolean =
+    getCompanion(symbol) != null && isVisibleInObjC(getCompanion(symbol))
 
 internal fun KaSession.getCompanion(symbol: KaClassSymbol): KaClassifierSymbol? =
     symbol.staticMemberScope.classifiers.toList().firstOrNull { (it as? KaClassSymbol)?.isCompanion == true }
