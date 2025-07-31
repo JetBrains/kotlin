@@ -8,6 +8,8 @@ package org.jetbrains.kotlin.fir.extensions
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.FirSessionComponent
 import org.jetbrains.kotlin.fir.caches.*
+import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
+import org.jetbrains.kotlin.fir.declarations.isJavaOrEnhancement
 import org.jetbrains.kotlin.fir.declarations.validate
 import org.jetbrains.kotlin.fir.ownerGenerator
 import org.jetbrains.kotlin.fir.render
@@ -111,7 +113,9 @@ class FirExtensionDeclarationsSymbolProvider private constructor(
                         result = it
                     }
                 }
-                result
+                // Lombok plugin sets the origin of generated declarations to FirDeclarationOrigin.Java.Source.
+                // TODO(KT-79778) Remove check for FirDeclarationOrigin.Java.Source when we have a proper generated Java origin.
+                result?.takeIf { it.origin.generated || it.origin == FirDeclarationOrigin.Java.Source }
             }
             else -> {
                 val matchedExtensions = extensionsByTopLevelClassId.getValue()[classId] ?: return null
