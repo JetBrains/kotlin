@@ -149,7 +149,6 @@ val jsMainSources by task<Sync> {
             "kotlin/throwableExtensions.kt",
             "kotlin/text/**",
             "kotlin/reflect/KTypeHelpers.kt",
-            "kotlin/reflect/KTypeHelpers.old.kt",
             "kotlin/reflect/KTypeImpl.kt",
             "kotlin/dom/**",
             "kotlin/browser/**",
