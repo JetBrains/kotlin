@@ -30,65 +30,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.KtNameReferenceExpression
 import org.jetbrains.kotlin.psi.stubs.elements.KtNameReferenceExpressionElementType
 
-object FirContextSensitiveResolutionAmbiguityChecker : FirBasicExpressionChecker(MppCheckerKind.Common) {
-    context(context: CheckerContext, reporter: DiagnosticReporter)
-    override fun check(expression: FirStatement) {
-        if (!LanguageFeature.ContextSensitiveResolutionUsingExpectedType.isEnabled()) return
-        when (expression) {
-            is FirEqualityOperatorCall -> checkEquality(expression)
-            is FirTypeOperatorCall -> checkTypeOperator(expression)
-        }
-    }
-
-    context(context: CheckerContext, reporter: DiagnosticReporter)
-    fun checkEquality(equalityOperatorCall: FirEqualityOperatorCall) {
-        val rhs = equalityOperatorCall.arguments[1]
-        val name = rhs.getReferencedName() ?: return
-
-        val resolvedSymbol = when (rhs) {
-            is FirErrorResolvedQualifier -> null
-            is FirResolvedQualifier -> rhs.symbol
-            is FirPropertyAccessExpression -> when (val callee = rhs.calleeReference) {
-                is FirErrorNamedReference -> null
-                is FirResolvedNamedReference if !callee.isContextSensitiveResolved -> callee.resolvedSymbol
-                else -> null
-            }
-            else -> null
-        } ?: return
-
-        check(
-            contextualType = equalityOperatorCall.argument.resolvedType,
-            resolvedSymbol = resolvedSymbol,
-            name = name,
-            source = rhs.source
-        )
-    }
-
-    fun FirExpression.getReferencedName(): Name? = when (val source = source) {
-        is KtRealPsiSourceElement -> (source.psi as? KtNameReferenceExpression)?.getReferencedNameAsName()
-        is KtLightSourceElement if source.elementType is KtNameReferenceExpressionElementType ->
-            Name.identifier(source.lighterASTNode.toString())
-        else -> null
-    }
-
-    context(context: CheckerContext, reporter: DiagnosticReporter)
-    fun checkTypeOperator(typeOperatorCall: FirTypeOperatorCall) {
-        val typeRef = typeOperatorCall.conversionTypeRef as? FirResolvedTypeRef ?: return
-        if (typeRef is FirErrorTypeRef) return
-
-        val resolvedClass = typeRef.toClassLikeSymbol(context.session) ?: return
-
-        val userTypeRef = typeRef.delegatedTypeRef as? FirUserTypeRef ?: return
-        val qualifier = userTypeRef.qualifier.singleOrNull() ?: return
-
-        check(
-            contextualType = typeOperatorCall.argument.resolvedType,
-            resolvedSymbol = resolvedClass,
-            name = qualifier.name,
-            source = typeRef.source
-        )
-    }
-
+object FirContextSensitiveResolutionAmbiguityChecker {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     fun check(contextualType: ConeKotlinType, resolvedSymbol: FirBasedSymbol<*>, name: Name, source: KtSourceElement?) {
         val chainToLookAt =
@@ -111,3 +53,56 @@ object FirContextSensitiveResolutionAmbiguityChecker : FirBasicExpressionChecker
         }
     }
 }
+
+object FirContextSensitiveResolutionAmbiguityCheckerForEqualities : FirEqualityOperatorCallChecker(MppCheckerKind.Common) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(expression: FirEqualityOperatorCall) {
+        if (!LanguageFeature.ContextSensitiveResolutionUsingExpectedType.isEnabled()) return
+        val rhs = expression.arguments[1]
+
+        val resolvedSymbol = when (rhs) {
+            is FirErrorResolvedQualifier -> null
+            is FirResolvedQualifier -> rhs.symbol
+            is FirPropertyAccessExpression if rhs.explicitReceiver == null -> when (val callee = rhs.calleeReference) {
+                is FirErrorNamedReference -> null
+                is FirResolvedNamedReference if !callee.isContextSensitiveResolved -> callee.resolvedSymbol
+                else -> null
+            }
+            else -> null
+        } ?: return
+
+        val name = when (val source = expression.source) {
+            is KtRealPsiSourceElement -> (source.psi as? KtNameReferenceExpression)?.getReferencedNameAsName()
+            is KtLightSourceElement if source.elementType is KtNameReferenceExpressionElementType ->
+                Name.identifier(source.lighterASTNode.toString())
+            else -> null
+        } ?: return
+
+        FirContextSensitiveResolutionAmbiguityChecker.check(
+            contextualType = expression.argument.resolvedType,
+            resolvedSymbol = resolvedSymbol,
+            name = name,
+            source = rhs.source
+        )
+    }
+}
+
+object FirContextSensitiveResolutionAmbiguityCheckerForTypeOperators : FirTypeOperatorCallChecker(MppCheckerKind.Common) {
+    context(context: CheckerContext, reporter: DiagnosticReporter)
+    override fun check(expression: FirTypeOperatorCall) {
+        if (!LanguageFeature.ContextSensitiveResolutionUsingExpectedType.isEnabled()) return
+        val typeRef = expression.conversionTypeRef as? FirResolvedTypeRef ?: return
+        if (typeRef is FirErrorTypeRef) return
+
+        val resolvedClass = typeRef.toClassLikeSymbol(context.session) ?: return
+        val name = (typeRef.delegatedTypeRef as? FirUserTypeRef)?.qualifier?.singleOrNull()?.name ?: return
+
+        FirContextSensitiveResolutionAmbiguityChecker.check(
+            contextualType = expression.argument.resolvedType,
+            resolvedSymbol = resolvedClass,
+            name = name,
+            source = typeRef.source
+        )
+    }
+}
+

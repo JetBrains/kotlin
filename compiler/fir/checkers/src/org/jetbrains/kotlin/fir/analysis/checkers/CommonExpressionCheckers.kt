@@ -25,7 +25,6 @@ object CommonExpressionCheckers : ExpressionCheckers() {
         FirExpressionWithErrorTypeChecker,
         FirInlineBodyResolvableExpressionChecker,
         ArrayEqualityCanBeReplacedWithContentEquals,
-        FirContextSensitiveResolutionAmbiguityChecker,
     )
 
     override val throwExpressionCheckers: Set<FirThrowExpressionChecker> = setOf(
@@ -153,6 +152,7 @@ object CommonExpressionCheckers : ExpressionCheckers() {
 
     override val typeOperatorCallCheckers: Set<FirTypeOperatorCallChecker> = setOf(
         FirCastOperatorsChecker,
+        FirContextSensitiveResolutionAmbiguityCheckerForTypeOperators,
     )
 
     override val resolvedQualifierCheckers: Set<FirResolvedQualifierChecker> = setOf(
@@ -169,6 +169,7 @@ object CommonExpressionCheckers : ExpressionCheckers() {
 
     override val equalityOperatorCallCheckers: Set<FirEqualityOperatorCallChecker> = setOf(
         FirEqualityCompatibilityChecker,
+        FirContextSensitiveResolutionAmbiguityCheckerForEqualities,
     )
 
     override val arrayLiteralCheckers: Set<FirArrayLiteralChecker> = setOf(
