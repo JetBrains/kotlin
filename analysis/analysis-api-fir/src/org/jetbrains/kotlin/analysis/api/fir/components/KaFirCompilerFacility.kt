@@ -213,7 +213,13 @@ internal class KaFirCompilerFacility(
         }
 
         val actualizer = LLKindBasedPlatformActualizer(ImplementationPlatformKind.JVM)
-        val compilationPeerData = CompilationPeerCollector.process(mainFirFile, actualizer)
+        val compilationPeerData = CompilationPeerCollector.process(
+            buildList {
+                add(mainFirFile)
+                codeFragmentMappings?.capturedFiles?.forEach { add(getFullyResolvedFirFile(it)) }
+            },
+            actualizer
+        )
 
         val chunkRegistrar = CompilationChunkRegistrar(mainFile, mainFirFile, target, actualizer)
         val chunks = collectCompilationChunks(chunkRegistrar, compilationPeerData, codeFragmentMappings)

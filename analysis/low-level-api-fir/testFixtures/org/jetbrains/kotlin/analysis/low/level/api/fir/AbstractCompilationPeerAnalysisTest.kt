@@ -28,7 +28,7 @@ abstract class AbstractCompilationPeerAnalysisTest : AbstractAnalysisApiBasedTes
 
         val platformKind = ImplementationPlatformKind.fromTargetPlatform(firFile.moduleData.platform)
         val actualizer = platformKind?.let(::LLKindBasedPlatformActualizer)
-        val compilationPeerData = CompilationPeerCollector.process(firFile, actualizer)
+        val compilationPeerData = CompilationPeerCollector.process(listOf(firFile), actualizer)
 
         val filesToCompile = compilationPeerData.peers.values
             .flatten()

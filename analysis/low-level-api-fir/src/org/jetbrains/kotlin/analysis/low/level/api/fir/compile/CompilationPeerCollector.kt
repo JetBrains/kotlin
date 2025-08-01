@@ -51,9 +51,9 @@ import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 @KaImplementationDetail
 class CompilationPeerCollector private constructor(private val actualizer: LLPlatformActualizer?) {
     companion object {
-        fun process(file: FirFile, actualizer: LLPlatformActualizer?): CompilationPeerData {
+        fun process(files: Collection<FirFile>, actualizer: LLPlatformActualizer?): CompilationPeerData {
             val collector = CompilationPeerCollector(actualizer)
-            collector.process(file)
+            files.forEach { collector.process(it) }
 
             return CompilationPeerData(
                 peers = collector.peers,
@@ -143,7 +143,7 @@ class CompilationPeerData(
     val peers: Map<KaModule, List<KtFile>>,
 
     /** Local classes inlined as a part of inline functions. */
-    val inlinedClasses: Set<KtClassOrObject>
+    val inlinedClasses: Set<KtClassOrObject>,
 )
 
 private class CompilationPeerCollectingVisitor(
