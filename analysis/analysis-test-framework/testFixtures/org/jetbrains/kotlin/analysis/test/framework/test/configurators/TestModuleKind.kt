@@ -60,6 +60,11 @@ enum class TestModuleKind(val suffix: String) {
      * This is currently only used in LL FIR tests and not supported by a test framework module factory.
      */
     NotUnderContentRoot("NotUnderContentRoot"),
+
+    /**
+     * This is currently only used in LL FIR tests and not supported by a test framework module factory.
+     */
+    NotUnderContentRootWithDependencies("NotUnderContentRootWithDependencies"),
 }
 
 val TestModule.explicitTestModuleKind: TestModuleKind?

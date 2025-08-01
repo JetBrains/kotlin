@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.AbstractFirLazyDeclaratio
 import org.jetbrains.kotlin.analysis.low.level.api.fir.api.LLResolutionFacade
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirCustomScriptDefinitionTestConfigurator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirOutOfContentRootTestConfigurator
+import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirOutOfContentRootWithDependenciesTestConfigurator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirScriptTestConfigurator
 import org.jetbrains.kotlin.analysis.low.level.api.fir.test.configurators.AnalysisApiFirSourceTestConfigurator
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
@@ -60,6 +61,10 @@ abstract class AbstractFirSourceLazyDeclarationResolveTest : AbstractFirLazyDecl
 
 abstract class AbstractFirOutOfContentRootLazyDeclarationResolveTest : AbstractFirLazyDeclarationResolveTest() {
     override val configurator get() = AnalysisApiFirOutOfContentRootTestConfigurator
+}
+
+abstract class AbstractFirOutOfContentRootWithDependenciesLazyDeclarationResolveTest : AbstractFirLazyDeclarationResolveTest() {
+    override val configurator get() = AnalysisApiFirOutOfContentRootWithDependenciesTestConfigurator
 }
 
 abstract class AbstractFirScriptLazyDeclarationResolveTest : AbstractFirLazyDeclarationResolveTest() {

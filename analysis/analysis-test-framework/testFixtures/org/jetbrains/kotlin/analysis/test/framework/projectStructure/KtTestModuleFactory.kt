@@ -53,6 +53,6 @@ fun TestServices.getKtModuleFactoryForTestModule(testModule: TestModule): KtTest
     TestModuleKind.LibrarySource -> KtLibrarySourceTestModuleFactory
     TestModuleKind.ScriptSource -> KtScriptTestModuleFactory
     TestModuleKind.CodeFragment -> KtCodeFragmentTestModuleFactory
-    TestModuleKind.NotUnderContentRoot -> error("Unsupported test module kind: ${TestModuleKind.NotUnderContentRoot}")
+    TestModuleKind.NotUnderContentRoot, TestModuleKind.NotUnderContentRootWithDependencies -> error("Unsupported test module kind: $testModule")
     else -> ktTestModuleFactory
 }
