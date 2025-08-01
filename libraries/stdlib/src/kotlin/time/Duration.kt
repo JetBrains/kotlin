@@ -1108,17 +1108,10 @@ private inline fun willAddOverflow(a: Long, b: Long): Boolean {
 }
 
 @kotlin.internal.InlineOnly
-private inline fun Long.addWithoutOverflow(other: Long, throwException: Boolean): Long {
-    if (willAddOverflow(this, other)) {
-        return if (this > 0) OVERFLOW_LIMIT else -OVERFLOW_LIMIT
-    }
-    if (this == -OVERFLOW_LIMIT && other == OVERFLOW_LIMIT || this == OVERFLOW_LIMIT && other == -OVERFLOW_LIMIT) {
-        return if (throwException)
-            throw IllegalArgumentException(Duration.SUMMING_INFINITE_DURATIONS_OF_DIFFERENT_SIGN_ERROR_MESSAGE)
-        else
-            Duration.INVALID_RAW_VALUE
-    }
-    return this + other
+private inline fun Long.addWithoutOverflow(other: Long): Long = when {
+    willAddOverflow(this, other) -> if (this > 0) OVERFLOW_LIMIT else -OVERFLOW_LIMIT
+    this == -OVERFLOW_LIMIT && other == OVERFLOW_LIMIT || this == OVERFLOW_LIMIT && other == -OVERFLOW_LIMIT -> Duration.INVALID_RAW_VALUE
+    else -> this + other
 }
 
 private const val SECONDS_PER_MINUTE = 60L
@@ -1199,8 +1192,8 @@ private fun parseIsoStringFormat(
                 else -> {
                     if (!parseLongIfPossible(ch)) return throwExceptionOrInvalid(throwException)
                     totalSeconds = totalSeconds.addWithoutOverflow(
-                        currentLongValue.multiplyWithoutOverflow(SECONDS_PER_DAY), throwException
-                    ).onInvalid { return Duration.INVALID }
+                        currentLongValue.multiplyWithoutOverflow(SECONDS_PER_DAY)
+                    ).onInvalid { return throwExceptionOrInvalid(throwException) }
                     State.AFTER_D_VALUE
                 }
             }
@@ -1229,25 +1222,27 @@ private fun parseIsoStringFormat(
             State.AFTER_T_VALUE -> when (ch) {
                 'H' -> {
                     totalSeconds = totalSeconds.addWithoutOverflow(
-                        currentLongValue.multiplyWithoutOverflow(SECONDS_PER_HOUR), throwException
-                    ).onInvalid { return Duration.INVALID }
+                        currentLongValue.multiplyWithoutOverflow(SECONDS_PER_HOUR)
+                    ).onInvalid { return throwExceptionOrInvalid(throwException) }
                     index++
                     State.AFTER_H
                 }
                 'M' -> {
                     totalSeconds = totalSeconds.addWithoutOverflow(
-                        currentLongValue.multiplyWithoutOverflow(SECONDS_PER_MINUTE), throwException
-                    ).onInvalid { return Duration.INVALID }
+                        currentLongValue.multiplyWithoutOverflow(SECONDS_PER_MINUTE)
+                    ).onInvalid { return throwExceptionOrInvalid(throwException) }
                     index++
                     State.AFTER_M
                 }
                 '.' -> {
-                    totalSeconds = totalSeconds.addWithoutOverflow(currentLongValue, throwException).onInvalid { return Duration.INVALID }
+                    totalSeconds = totalSeconds.addWithoutOverflow(currentLongValue)
+                        .onInvalid { return throwExceptionOrInvalid(throwException) }
                     index++
                     State.AFTER_DOT
                 }
                 'S' -> {
-                    totalSeconds = totalSeconds.addWithoutOverflow(currentLongValue, throwException).onInvalid { return Duration.INVALID }
+                    totalSeconds = totalSeconds.addWithoutOverflow(currentLongValue)
+                        .onInvalid { return throwExceptionOrInvalid(throwException) }
                     index++
                     State.AFTER_S
                 }
@@ -1262,18 +1257,20 @@ private fun parseIsoStringFormat(
             State.AFTER_H_VALUE -> when (ch) {
                 'M' -> {
                     totalSeconds = totalSeconds.addWithoutOverflow(
-                        currentLongValue.multiplyWithoutOverflow(SECONDS_PER_MINUTE), throwException
-                    ).onInvalid { return Duration.INVALID }
+                        currentLongValue.multiplyWithoutOverflow(SECONDS_PER_MINUTE)
+                    ).onInvalid { return throwExceptionOrInvalid(throwException) }
                     index++
                     State.AFTER_M
                 }
                 '.' -> {
-                    totalSeconds = totalSeconds.addWithoutOverflow(currentLongValue, throwException).onInvalid { return Duration.INVALID }
+                    totalSeconds = totalSeconds.addWithoutOverflow(currentLongValue)
+                        .onInvalid { return throwExceptionOrInvalid(throwException) }
                     index++
                     State.AFTER_DOT
                 }
                 'S' -> {
-                    totalSeconds = totalSeconds.addWithoutOverflow(currentLongValue, throwException).onInvalid { return Duration.INVALID }
+                    totalSeconds = totalSeconds.addWithoutOverflow(currentLongValue)
+                        .onInvalid { return throwExceptionOrInvalid(throwException) }
                     index++
                     State.AFTER_S
                 }
@@ -1287,12 +1284,14 @@ private fun parseIsoStringFormat(
 
             State.AFTER_M_VALUE -> when (ch) {
                 '.' -> {
-                    totalSeconds = totalSeconds.addWithoutOverflow(currentLongValue, throwException).onInvalid { return Duration.INVALID }
+                    totalSeconds = totalSeconds.addWithoutOverflow(currentLongValue)
+                        .onInvalid { return throwExceptionOrInvalid(throwException) }
                     index++
                     State.AFTER_DOT
                 }
                 'S' -> {
-                    totalSeconds = totalSeconds.addWithoutOverflow(currentLongValue, throwException).onInvalid { return Duration.INVALID }
+                    totalSeconds = totalSeconds.addWithoutOverflow(currentLongValue)
+                        .onInvalid { return throwExceptionOrInvalid(throwException) }
                     index++
                     State.AFTER_S
                 }
