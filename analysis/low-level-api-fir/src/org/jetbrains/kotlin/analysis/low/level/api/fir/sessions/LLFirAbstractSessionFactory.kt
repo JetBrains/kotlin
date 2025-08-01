@@ -234,7 +234,12 @@ internal abstract class LLFirAbstractSessionFactory(protected val project: Proje
             register(FirProvider::class, provider)
             register(FirLazyDeclarationResolver::class, LLFirLazyDeclarationResolver())
 
-            val dependencyProvider = LLDependenciesSymbolProvider(this) { listOf(builtinsSession.symbolProvider) }
+            val dependencyProvider = LLDependenciesSymbolProvider(this) {
+                buildList {
+                    addMerged(session, collectDependencySymbolProviders(module))
+                    add(builtinsSession.symbolProvider)
+                }
+            }
 
             register(
                 FirSymbolProvider::class,

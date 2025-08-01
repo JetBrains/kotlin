@@ -69,7 +69,7 @@ object AnalysisApiFirTestConfiguratorFactory : AnalysisApiTestConfiguratorFactor
                     data.analysisSessionMode == AnalysisSessionMode.Normal
                 }
 
-                TestModuleKind.NotUnderContentRoot -> false
+                TestModuleKind.NotUnderContentRoot, TestModuleKind.NotUnderContentRootWithDependencies -> false
             }
         }
     }

@@ -412,6 +412,8 @@ public val KaDanglingFileModule.isStable: Boolean
 /**
  * A module which represents a source file living outside the project's content root. For example, test data files, or the source files of
  * another project.
+ *
+ * Depending on the Analysis API platform implementation, the [KaNotUnderContentRootModule] may have dependencies, e.g., dependencies on the Kotlin standard library or the JDK.
  */
 @KaPlatformInterface
 public interface KaNotUnderContentRootModule : KaModule {

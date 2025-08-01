@@ -59,7 +59,9 @@ object DependencyKindModuleStructureTransformer : ModuleStructureTransformer() {
                 DependencyKind.Binary
             }
 
-            TestModuleKind.NotUnderContentRoot -> error("A not-under-content-root module cannot be a dependency.")
+            TestModuleKind.NotUnderContentRoot,
+            TestModuleKind.NotUnderContentRootWithDependencies,
+                -> error("A not-under-content-root module cannot be a dependency.")
 
             null -> {
                 // There is no explicit module kind, so the dependency already has the right kind

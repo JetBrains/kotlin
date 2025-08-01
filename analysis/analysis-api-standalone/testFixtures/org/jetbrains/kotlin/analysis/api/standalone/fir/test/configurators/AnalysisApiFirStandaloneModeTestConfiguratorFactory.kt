@@ -34,7 +34,8 @@ object AnalysisApiFirStandaloneModeTestConfiguratorFactory : AnalysisApiTestConf
 
                 TestModuleKind.ScriptSource,
                 TestModuleKind.LibrarySource,
-                TestModuleKind.NotUnderContentRoot -> {
+                TestModuleKind.NotUnderContentRoot,
+                TestModuleKind.NotUnderContentRootWithDependencies -> {
                     false
                 }
             }

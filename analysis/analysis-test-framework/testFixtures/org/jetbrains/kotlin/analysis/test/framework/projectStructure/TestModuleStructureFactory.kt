@@ -115,8 +115,8 @@ object TestModuleStructureFactory {
         libraryCache: LibraryCache,
     ) {
         when (ktModule) {
-            is KaNotUnderContentRootModule, is KaBuiltinsModule -> {
-                // Not-under-content-root and builtin modules have no external dependencies on purpose
+            is KaBuiltinsModule -> {
+                // builtin modules have no external dependencies on purpose
             }
             is KaDanglingFileModule -> {
                 // Dangling file modules get dependencies from their context
@@ -126,6 +126,9 @@ object TestModuleStructureFactory {
                     addModuleDependencies(testModule, modulesByName, ktModule)
                     addLibraryDependencies(testModule, testServices, ktModule, libraryCache)
                 }
+            }
+            is KaNotUnderContentRootModule -> {
+                // Only not-under-content-root modules which are `KtModuleWithModifiableDependencies` have external dependencies on purpose
             }
             else -> error("Unexpected module type: " + ktModule.javaClass.name)
         }
