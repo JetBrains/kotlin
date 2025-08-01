@@ -86,7 +86,7 @@ fun main(args: Array<String>) {
             }
 
             testClass<AbstractDiagnosticsFirWasmKlibTest> {
-                model("diagnostics/wasmKlibTests", excludedPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX)
+                model("diagnostics/wasmDiagnosticsKlibTests", excludedPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX)
             }
         }
 

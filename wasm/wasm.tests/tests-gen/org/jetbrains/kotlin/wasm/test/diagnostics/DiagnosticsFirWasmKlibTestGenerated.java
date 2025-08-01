@@ -19,7 +19,7 @@ import java.util.regex.Pattern;
 @TestDataPath("$PROJECT_ROOT")
 public class DiagnosticsFirWasmKlibTestGenerated extends AbstractDiagnosticsFirWasmKlibTest {
   @Test
-  public void testAllFilesPresentInWasmKlibTests() {
+  public void testAllFilesPresentInWasmDiagnosticsKlibTests() {
     KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/wasmDiagnosticsKlibTests"), Pattern.compile("^(.+)\\.kt$"), Pattern.compile("^(.+)\\.fir\\.kts?$"), true);
   }
 
