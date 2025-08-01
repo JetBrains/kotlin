@@ -64,4 +64,7 @@ tasks.named<Test>("test") {
     filter {
         excludeTestsMatching("org.jetbrains.kotlin.spec.consistency.SpecTestsConsistencyTest")
     }
+    if (System.getenv("COMPILER_TESTS_REMOTE_DEBUG").equals("true", ignoreCase = true)) {
+        jvmArgs("-Xdebug", "-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005")
+    }
 }
