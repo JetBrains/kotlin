@@ -8,6 +8,7 @@
 # This file is checked by org.jetbrains.kotlin.code.SpaceCodeOwnersTest
 # Directive OWNER_LIST specifies possible values for owner field
 # Directive UNKNOWN specifies that path is unclaimed
+# Directive NO_OWNER specifies that path requires no reviewer, even fallback does not apply
 # Ownership must be exhaustive modulo UNKNOWN
 
 # OWNER_LIST: "Kotlin"
@@ -460,10 +461,8 @@
 
 /wasm/ "Kotlin Wasm"
 
-# Generated files (no review required)
-*Generated.java "Kotlin" "Kotlin Analysis API" "Kotlin Wasm" "Kotlin for Data Science"
-/plugins/compose/**/*Generated.java "Kotlin" "Kotlin Analysis API" "Kotlin Wasm" "Kotlin for Data Science" "Compose"
-/plugins/parcelize/**/*Generated.java "Kotlin" "Kotlin Analysis API" "Kotlin Wasm" "Kotlin for Data Science" "Parcelize"
+# NO_OWNER: *Generated.java
+*Generated.java
 
 # Singular files
 /.gitattributes "Kotlin Build Infrastructure"

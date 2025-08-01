@@ -422,9 +422,7 @@
 
 /wasm/ @JetBrains/kotlin-wasm
 
-*Generated.java @JetBrains/kotlin @JetBrains/kotlin-analysis-api @JetBrains/kotlin-wasm @JetBrains/kotlin-for-data-science
-/plugins/compose/**/*Generated.java @JetBrains/kotlin @JetBrains/kotlin-analysis-api @JetBrains/kotlin-wasm @JetBrains/kotlin-for-data-science ashikov@google.com alanv@google.com lelandr@google.com bentrengrove@google.com anbailey@google.com chuckj@google.com
-/plugins/parcelize/**/*Generated.java @JetBrains/kotlin @JetBrains/kotlin-analysis-api @JetBrains/kotlin-wasm @JetBrains/kotlin-for-data-science nikitanazarov@google.com jobay@google.com troels@google.com jpaupore@google.com jsjeon@google.com jaebaek@google.com laszio@google.com
+*Generated.java
 
 /.gitattributes @JetBrains/kotlin-build-infrastructure
 /tests-permissions.template.policy @JetBrains/kotlin-build-infrastructure
