@@ -412,13 +412,16 @@ object FirContractChecker : FirFunctionChecker(MppCheckerKind.Common) {
             return logicalNot.arg.accept(this, data)
         }
 
-        private fun getParameterType(index: Int): ConeKotlinType =
-            when (index) {
-                -1 -> declaration.symbol.resolvedReceiverType
+        private fun getParameterType(index: Int): ConeKotlinType {
+            val declarationSymbolForReceiverParameter =
+                if (declaration is FirPropertyAccessor) declaration.propertySymbol else declaration.symbol
+            return when (index) {
+                -1 -> declarationSymbolForReceiverParameter.resolvedReceiverType
                     ?: declaration.symbol.dispatchReceiverType
                     ?: error("Contract references non-existent receiver")
                 in declaration.valueParameters.indices -> declaration.valueParameters[index].returnTypeRef.coneType
-                else -> declaration.contextParameters[index - declaration.valueParameters.size].returnTypeRef.coneType
+                else -> declarationSymbolForReceiverParameter.contextParameterSymbols[index - declaration.valueParameters.size].resolvedReturnType
             }
+        }
     }
 }
