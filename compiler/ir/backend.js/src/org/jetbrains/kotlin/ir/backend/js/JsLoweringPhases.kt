@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.ir.interpreter.IrInterpreterConfiguration
 import org.jetbrains.kotlin.platform.js.JsPlatforms
 
 private val validateIrBeforeLowering = makeIrModulePhase(
-    ::IrValidationBeforeLoweringPhase,
+    ::KlibIrValidationBeforeLoweringPhase,
     name = "ValidateIrBeforeLowering",
 )
 

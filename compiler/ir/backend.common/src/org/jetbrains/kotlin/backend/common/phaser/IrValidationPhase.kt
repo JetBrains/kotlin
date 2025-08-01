@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.common.phaser
 
 import org.jetbrains.kotlin.backend.common.*
+import org.jetbrains.kotlin.backend.common.checkers.expression.InlineFunctionUseSiteChecker
 import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 
@@ -30,19 +31,27 @@ abstract class IrValidationPhase<Context : LoweringContext>(val context: Context
 }
 
 @PhaseDescription(name = "ValidateIrBeforeLowering")
-open class IrValidationBeforeLoweringPhase<Context : LoweringContext>(context: Context) : IrValidationPhase<Context>(context) {
+abstract class IrValidationBeforeLoweringPhase<Context : LoweringContext>(context: Context) : IrValidationPhase<Context>(context) {
     override val defaultValidationConfig: IrValidatorConfig
         get() = IrValidatorConfig(
             checkTypes = false, // TODO: Re-enable checking types (KT-68663)
             checkValueScopes = true,
             checkTypeParameterScopes = false, // TODO: Re-enable checking out-of-scope type parameter usages (KT-69305)
+            checkVisibilities = context.configuration.getBoolean(CommonConfigurationKeys.ENABLE_IR_VISIBILITY_CHECKS),
+            checkVarargTypes = context.configuration.getBoolean(CommonConfigurationKeys.ENABLE_IR_VARARG_TYPES_CHECKS),
+            checkIrExpressionBodyInFunction = false,
+        )
+}
+
+class KlibIrValidationBeforeLoweringPhase<Context : LoweringContext>(context: Context) : IrValidationBeforeLoweringPhase<Context>(context) {
+    override val defaultValidationConfig: IrValidatorConfig
+        get() = super.defaultValidationConfig.copy(
             checkCrossFileFieldUsage = context.configuration.getBoolean(CommonConfigurationKeys.ENABLE_IR_VISIBILITY_CHECKS),
             // FIXME(KT-71243): This should be true, but currently the ExplicitBackingFields feature de-facto allows specifying
             //  non-private visibilities for fields.
             checkAllKotlinFieldsArePrivate = context.configuration.getBoolean(CommonConfigurationKeys.ENABLE_IR_VISIBILITY_CHECKS) &&
                     !context.configuration.languageVersionSettings.supportsFeature(LanguageFeature.ExplicitBackingFields),
-            checkVisibilities = context.configuration.getBoolean(CommonConfigurationKeys.ENABLE_IR_VISIBILITY_CHECKS),
-            checkVarargTypes = context.configuration.getBoolean(CommonConfigurationKeys.ENABLE_IR_VARARG_TYPES_CHECKS),
+            checkIrExpressionBodyInFunction = true,
         )
 }
 

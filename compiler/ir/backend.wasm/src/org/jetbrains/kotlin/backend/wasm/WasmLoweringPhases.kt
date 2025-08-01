@@ -34,7 +34,7 @@ private fun List<CompilerPhase<WasmBackendContext, IrModuleFragment, IrModuleFra
     reduce { acc, lowering -> acc.then(lowering) }
 
 private val validateIrBeforeLowering = makeIrModulePhase(
-    ::IrValidationBeforeLoweringPhase,
+    ::KlibIrValidationBeforeLoweringPhase,
     name = "ValidateIrBeforeLowering",
 )
 

@@ -24,14 +24,7 @@ import org.jetbrains.kotlin.ir.visitors.acceptVoid
 @PhaseDescription(name = "JvmValidateIrBeforeLowering")
 internal class JvmIrValidationBeforeLoweringPhase(
     context: JvmBackendContext
-) : IrValidationBeforeLoweringPhase<JvmBackendContext>(context) {
-    override val defaultValidationConfig: IrValidatorConfig
-        get() = super.defaultValidationConfig.copy(
-            checkCrossFileFieldUsage = false,
-            checkAllKotlinFieldsArePrivate = false,
-            checkIrExpressionBodyInFunction = false,
-        )
-}
+) : IrValidationBeforeLoweringPhase<JvmBackendContext>(context)
 
 @PhaseDescription(name = "JvmValidateIrAfterLowering")
 internal class JvmIrValidationAfterLoweringPhase(
