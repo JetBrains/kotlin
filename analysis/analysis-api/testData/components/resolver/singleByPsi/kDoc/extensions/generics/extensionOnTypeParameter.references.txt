@@ -1,0 +1,24 @@
+<caret_1>:
+  KDocName(8,16): 'T.foxAny'
+    KDocReference:
+      Nothing (Unresolved reference)
+
+<caret_2>:
+  KDocName(22,38): 'T.foxAnyNullable'
+    KDocReference:
+      Nothing (Unresolved reference)
+
+<caret_3>:
+  KDocName(44,52): 'T.foxInt'
+    KDocReference:
+      Nothing (Unresolved reference)
+
+<caret_4>:
+  KDocName(58,66): 'T.foxSeq'
+    KDocReference:
+      Nothing (Unresolved reference)
+
+<caret_5>:
+  KDocName(72,88): 'T.foxSeqNullable'
+    KDocReference:
+      Nothing (Unresolved reference)

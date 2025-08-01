@@ -1,0 +1,19 @@
+<caret_1>:
+  KDocName(8,16): 'T.foxAny'
+    null
+
+<caret_2>:
+  KDocName(22,38): 'T.foxAnyNullable'
+    null
+
+<caret_3>:
+  KDocName(44,52): 'T.foxInt'
+    null
+
+<caret_4>:
+  KDocName(58,66): 'T.foxSeq'
+    null
+
+<caret_5>:
+  KDocName(72,88): 'T.foxSeqNullable'
+    null

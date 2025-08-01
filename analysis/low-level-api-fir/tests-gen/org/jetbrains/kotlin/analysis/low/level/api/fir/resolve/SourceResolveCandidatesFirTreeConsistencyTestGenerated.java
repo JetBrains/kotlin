@@ -3440,6 +3440,18 @@ public class SourceResolveCandidatesFirTreeConsistencyTestGenerated extends Abst
         }
 
         @Test
+        @TestMetadata("extensionOnBoundedTypeParameter.kt")
+        public void testExtensionOnBoundedTypeParameter() {
+          runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/kDoc/extensions/generics/extensionOnBoundedTypeParameter.kt");
+        }
+
+        @Test
+        @TestMetadata("extensionOnTypeParameter.kt")
+        public void testExtensionOnTypeParameter() {
+          runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/kDoc/extensions/generics/extensionOnTypeParameter.kt");
+        }
+
+        @Test
         @TestMetadata("extensionsOnIterable.kt")
         public void testExtensionsOnIterable() {
           runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/kDoc/extensions/generics/extensionsOnIterable.kt");
