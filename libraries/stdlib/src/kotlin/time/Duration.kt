@@ -1107,8 +1107,10 @@ private inline fun willAddOverflow(a: Long, b: Long): Boolean = when {
 
 @kotlin.internal.InlineOnly
 private inline fun Long.addWithoutOverflow(other: Long): Long = when {
-    willAddOverflow(this, other) -> if (this > 0) OVERFLOW_LIMIT else -OVERFLOW_LIMIT
     this == -OVERFLOW_LIMIT && other == OVERFLOW_LIMIT || this == OVERFLOW_LIMIT && other == -OVERFLOW_LIMIT -> Duration.INVALID_RAW_VALUE
+    this == OVERFLOW_LIMIT || other == OVERFLOW_LIMIT -> OVERFLOW_LIMIT
+    this == -OVERFLOW_LIMIT || other == -OVERFLOW_LIMIT -> -OVERFLOW_LIMIT
+    willAddOverflow(this, other) -> if (this > 0) OVERFLOW_LIMIT else -OVERFLOW_LIMIT
     else -> this + other
 }
 
