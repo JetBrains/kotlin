@@ -15,8 +15,8 @@ import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.ir.isBoxOrUnboxCall
 import org.jetbrains.kotlin.backend.konan.lower.loweredConstructorFunction
 import org.jetbrains.kotlin.backend.konan.util.IntArrayList
-import org.jetbrains.kotlin.backend.konan.util.LongArrayList
 import org.jetbrains.kotlin.backend.konan.lower.getObjectClassInstanceFunction
+import org.jetbrains.kotlin.backend.konan.util.LongHashSet
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.builders.*
@@ -774,13 +774,11 @@ internal object DevirtualizationAnalysis {
                 index += directEdgesCount[v]
                 directEdgesCount[v] = 0
             }
-            for (bucket in bagOfEdges)
-                if (bucket != null)
-                    for (edge in bucket) {
-                        val from = edge.toInt()
-                        val to = (edge shr 32).toInt()
-                        directEdges[directEdges[from] + (directEdgesCount[from]++)] = to
-                    }
+            for (edge in bagOfEdges) {
+                val from = edge.toInt()
+                val to = (edge shr 32).toInt()
+                directEdges[directEdges[from] + (directEdgesCount[from]++)] = to
+            }
             return ConstraintGraphPrecursor(constraintGraphBuilder.instantiatingClasses, directEdges, reversedEdgesCount)
         }
 
@@ -801,45 +799,7 @@ internal object DevirtualizationAnalysis {
             private val virtualTypeFilter = BitSet().apply { set(VIRTUAL_TYPE_ID) }
             val instantiatingClasses = BitSet()
 
-            private val preliminaryNumberOfNodes =
-                    allTypes.size + // A possible source node for each type.
-                            functions.size * 2 + // <returns> and <throws> nodes for each function.
-                            functions.values.sumOf {
-                                it.body.allScopes.sumOf { it.nodes.size } // A node for each DataFlowIR.Node.
-                            } +
-                            functions.values
-                                    .sumOf { function ->
-                                        function.body.allScopes.sumOf {
-                                            it.nodes.count { node ->
-                                                // A cast if types are different.
-                                                node is DataFlowIR.Node.Call
-                                                        && node.returnType != node.callee.returnParameter.type
-                                            }
-                                        }
-                                    }
-
-            private fun isPrime(x: Int): Boolean {
-                if (x <= 3) return true
-                if (x % 2 == 0) return false
-                var r = 3
-                while (r * r <= x) {
-                    if (x % r == 0) return false
-                    r += 2
-                }
-                return true
-            }
-
-            private fun makePrime(p: Int): Int {
-                var x = p
-                while (true) {
-                    if (isPrime(x)) return x
-                    ++x
-                }
-            }
-
-            // A heuristic: the number of edges in the data flow graph
-            // for any reasonable program is linear in number of nodes.
-            val bagOfEdges = arrayOfNulls<LongArrayList>(makePrime(preliminaryNumberOfNodes * 5))
+            val bagOfEdges = LongHashSet(10, 0.4f)
             val directEdgesCount = IntArrayList()
             val reversedEdgesCount = IntArrayList()
 
@@ -847,13 +807,8 @@ internal object DevirtualizationAnalysis {
                 val fromId = from.id
                 val toId = to.id
                 val value = fromId.toLong() or (toId.toLong() shl 32)
-                // This is 64-bit extension of a hashing method from Knuth's "The Art of Computer Programming".
-                // The magic constant is the closest prime to 2^64 * phi, where phi is the golden ratio.
-                val bucketIdx = ((value.toULong() * 11400714819323198393UL) % bagOfEdges.size.toULong()).toInt()
-                val bucket = bagOfEdges[bucketIdx] ?: LongArrayList().also { bagOfEdges[bucketIdx] = it }
-                for (x in bucket)
-                    if (x == value) return
-                bucket.add(value)
+
+                if (!bagOfEdges.add(value)) return
 
                 directEdgesCount.reserve(fromId + 1)
                 directEdgesCount[fromId]++
@@ -880,7 +835,7 @@ internal object DevirtualizationAnalysis {
 
             private fun concreteClass(type: DataFlowIR.Type) =
                     concreteClasses[type.index]
-                            ?: sourceNode(concreteType(type)) { "Class\$$type" }.also { concreteClasses[type.index] = it}
+                            ?: sourceNode(concreteType(type)) { "Class\$$type" }.also { concreteClasses[type.index] = it }
 
             private fun fieldNode(field: DataFlowIR.Field) =
                     constraintGraph.fields.getOrPut(field) {
@@ -1361,7 +1316,7 @@ internal object DevirtualizationAnalysis {
                               targetType: DataFlowIR.FunctionParameter): DataFlowIR.FunctionSymbol.Declared? {
             if (actualType.boxFunction == null && targetType.boxFunction == null) return null
             if (actualType.boxFunction != null && targetType.boxFunction != null) {
-                assert (actualType.type == targetType.type)
+                assert(actualType.type == targetType.type)
                 { "Inconsistent types: ${actualType.type} and ${targetType.type}" }
                 return null
             }
