@@ -2,15 +2,15 @@ KT element: KtClass
 KT element text:
 public final class Unmarked public constructor() {
     public final var prop: kotlin.String /* compiled code */ /* hasBackingField: true */
-        public final get() {/* compiled code */ }
-        public final set(value: kotlin.String) {/* compiled code */ }
+        public final get() { /* compiled code */ }
+        public final set(value: kotlin.String) { /* compiled code */ }
 
     public final fun getStuff(): kotlin.String { /* compiled code */ }
 
     public final class Marked public constructor() {
         public final var prop: kotlin.String /* compiled code */ /* hasBackingField: true */
-            public final get() {/* compiled code */ }
-            public final set(value: kotlin.String) {/* compiled code */ }
+            public final get() { /* compiled code */ }
+            public final set(value: kotlin.String) { /* compiled code */ }
 
         public final fun alreadyApplied(): kotlin.String { /* compiled code */ }
     }

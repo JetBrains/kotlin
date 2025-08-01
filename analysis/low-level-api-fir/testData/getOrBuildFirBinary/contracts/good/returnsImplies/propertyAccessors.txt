@@ -1,8 +1,8 @@
 KT element: KtProperty
 KT element text:
 public var kotlin.Any?.isNotNull: kotlin.Boolean /* compiled code */ /* hasBackingField: false */
-    public final get() {/* compiled code */ }
-    public final set(value: kotlin.Boolean) {/* compiled code */ }
+    public final get() { /* compiled code */ }
+    public final set(value: kotlin.Boolean) { /* compiled code */ }
 FIR element: FirPropertyImpl
 FIR source kind: KtRealSourceElementKind
 

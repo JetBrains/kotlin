@@ -9,11 +9,11 @@ public final class PrivateToThis<in I> public constructor() {
     private final var bar: I /* compiled code */ /* hasBackingField: true */
 
     private final val val_with_accessors: I /* compiled code */ /* hasBackingField: false */
-        private final get() {/* compiled code */ }
+        private final get() { /* compiled code */ }
 
     private final var var_with_accessors: I /* compiled code */ /* hasBackingField: false */
-        private final get() {/* compiled code */ }
-        private final set(value: I) {/* compiled code */ }
+        private final get() { /* compiled code */ }
+        private final set(value: I) { /* compiled code */ }
 
     private final fun bas(): I { /* compiled code */ }
 }

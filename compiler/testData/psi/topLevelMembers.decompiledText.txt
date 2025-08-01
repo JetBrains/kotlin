@@ -36,12 +36,12 @@ TopLevelMembersKt.class:
   public var mutable: kotlin.Float /* compiled code */ /* hasBackingField: true */
 
   public val kotlin.String.ext: kotlin.String /* compiled code */ /* hasBackingField: false */
-      public final get() {/* compiled code */ }
+      public final get() { /* compiled code */ }
 
   private val certainlyNothing: kotlin.Nothing /* compiled code */ /* hasBackingField: true */
 
   public val foo.TopLevelMembers.D.Main: foo.TopLevelMembers.D? /* compiled code */ /* hasBackingField: false */
-      public final get() {/* compiled code */ }
+      public final get() { /* compiled code */ }
 
   @field:foo.TopLevelMembers.A internal val Main: foo.TopLevelMembers.D? /* compiled code */ /* hasBackingField: true */
 

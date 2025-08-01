@@ -7,7 +7,7 @@ MultifileClass.class:
   public val p1Val: kotlin.Int /* compiled code */ /* hasBackingField: true */
 
   public val kotlin.String.p1ExtVal: kotlin.Int /* compiled code */ /* hasBackingField: false */
-      public final get() {/* compiled code */ }
+      public final get() { /* compiled code */ }
 
   public var p1Var: kotlin.Int /* compiled code */ /* hasBackingField: true */
 
@@ -24,7 +24,7 @@ MultifileClass.class:
   public val p3Val: kotlin.Int /* compiled code */ /* hasBackingField: true */
 
   public val kotlin.String.p3ExtVal: kotlin.Int /* compiled code */ /* hasBackingField: false */
-      public final get() {/* compiled code */ }
+      public final get() { /* compiled code */ }
 
   public fun p3Fun(): kotlin.Unit { /* compiled code */ }
 
@@ -33,7 +33,7 @@ MultifileClass.class:
   public val p2Val: kotlin.Int /* compiled code */ /* hasBackingField: true */
 
   public val kotlin.String.p2ExtVal: kotlin.Int /* compiled code */ /* hasBackingField: false */
-      public final get() {/* compiled code */ }
+      public final get() { /* compiled code */ }
 
   public fun p2Fun(): kotlin.Unit { /* compiled code */ }
 
@@ -48,7 +48,7 @@ MultifileClass__MultifileClassKt.class:
   public val p1Val: kotlin.Int /* compiled code */ /* hasBackingField: true */
 
   public val kotlin.String.p1ExtVal: kotlin.Int /* compiled code */ /* hasBackingField: false */
-      public final get() {/* compiled code */ }
+      public final get() { /* compiled code */ }
 
   public var p1Var: kotlin.Int /* compiled code */ /* hasBackingField: true */
 
@@ -71,7 +71,7 @@ MultifileClass__MultifileClass__PartKt.class:
   public val p3Val: kotlin.Int /* compiled code */ /* hasBackingField: true */
 
   public val kotlin.String.p3ExtVal: kotlin.Int /* compiled code */ /* hasBackingField: false */
-      public final get() {/* compiled code */ }
+      public final get() { /* compiled code */ }
 
   public fun p3Fun(): kotlin.Unit { /* compiled code */ }
 
@@ -86,7 +86,7 @@ MultifileClass__PartKt.class:
   public val p2Val: kotlin.Int /* compiled code */ /* hasBackingField: true */
 
   public val kotlin.String.p2ExtVal: kotlin.Int /* compiled code */ /* hasBackingField: false */
-      public final get() {/* compiled code */ }
+      public final get() { /* compiled code */ }
 
   public fun p2Fun(): kotlin.Unit { /* compiled code */ }
 

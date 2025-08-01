@@ -1,8 +1,8 @@
 KT element: KtProperty
 KT element text:
 @Y public var prop: kotlin.Int /* compiled code */
-    @Y public final get() {/* compiled code */ }
-    @Y public final set(value: kotlin.Int) {/* compiled code */ }
+    @Y public final get() { /* compiled code */ }
+    @Y public final set(value: kotlin.Int) { /* compiled code */ }
 FIR element: FirPropertyImpl
 FIR source kind: KtRealSourceElementKind
 

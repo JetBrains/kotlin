@@ -13,21 +13,21 @@ public final class Foo public constructor(withDefaultGetter: kotlin.Int, withDef
 
     @MyAnnotation4 @field:MyAnnotation5 public final var allAnnotations: kotlin.String /* compiled code */ /* hasBackingField: true */
         @MyAnnotation public final get
-        @MyAnnotation2 public final set(@MyAnnotation3 value: kotlin.String) {/* compiled code */ }
+        @MyAnnotation2 public final set(@MyAnnotation3 value: kotlin.String) { /* compiled code */ }
 
     public final var @receiver:MyAnnotation7 @MyAnnotation8 kotlin.Int.memberPropertyWithReceiver: kotlin.Unit /* compiled code */ /* hasBackingField: false */
-        public final get() {/* compiled code */ }
-        public final set(value: kotlin.Unit) {/* compiled code */ }
+        public final get() { /* compiled code */ }
+        public final set(value: kotlin.Unit) { /* compiled code */ }
 
     @Anno internal final var withCustomSetter: kotlin.String /* compiled code */ /* hasBackingField: true */
-        internal final set(value: kotlin.String) {/* compiled code */ }
+        internal final set(value: kotlin.String) { /* compiled code */ }
 
     @Anno internal final var withCustomGetter: kotlin.String /* compiled code */ /* hasBackingField: true */
-        internal final get() {/* compiled code */ }
+        internal final get() { /* compiled code */ }
 
     @Anno internal final var custom: kotlin.String /* compiled code */ /* hasBackingField: true */
-        internal final get() {/* compiled code */ }
-        internal final set(value: kotlin.String) {/* compiled code */ }
+        internal final get() { /* compiled code */ }
+        internal final set(value: kotlin.String) { /* compiled code */ }
 
     @Anno internal final var variable: kotlin.String /* compiled code */ /* hasBackingField: true */
 

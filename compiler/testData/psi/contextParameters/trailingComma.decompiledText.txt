@@ -2,10 +2,10 @@
 // Implementation of methods is not available
 
 context(kotlin.String) public val foo: kotlin.String /* compiled code */ /* hasBackingField: false */
-    public final get() {/* compiled code */ }
+    public final get() { /* compiled code */ }
 
 context(kotlin.String, kotlin.Int) public val foo: kotlin.String /* compiled code */ /* hasBackingField: false */
-    public final get() {/* compiled code */ }
+    public final get() { /* compiled code */ }
 
 context(kotlin.String) public fun foo(): kotlin.Unit { /* compiled code */ }
 

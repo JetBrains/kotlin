@@ -2,7 +2,7 @@ KT element: KtClass
 KT element text:
 public final class C public constructor() {
     context(kotlin.String) public final val bar: kotlin.String /* compiled code */ /* hasBackingField: false */
-        public final get() {/* compiled code */ }
+        public final get() { /* compiled code */ }
 
     context(kotlin.String) public final fun foo(): kotlin.Unit { /* compiled code */ }
 

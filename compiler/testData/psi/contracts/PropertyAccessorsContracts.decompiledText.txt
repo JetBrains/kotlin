@@ -6,8 +6,8 @@ AnotherClass.class:
       public final val multiplier: kotlin.Int /* compiled code */ /* hasBackingField: true */
 
       public final var anotherInt: kotlin.Int /* compiled code */ /* hasBackingField: true */
-          public final get() {/* compiled code */ }
-          public final set(value: kotlin.Int) {/* compiled code */ }
+          public final get() { /* compiled code */ }
+          public final set(value: kotlin.Int) { /* compiled code */ }
   }
 
 MyClass.class:
@@ -16,8 +16,8 @@ MyClass.class:
 
   public final class MyClass public constructor() {
       public final var myInt: kotlin.Int /* compiled code */ /* hasBackingField: true */
-          public final get() {/* compiled code */ }
-          public final set(value: kotlin.Int) {/* compiled code */ }
+          public final get() { /* compiled code */ }
+          public final set(value: kotlin.Int) { /* compiled code */ }
   }
 
 SomeClass.class:
@@ -26,6 +26,6 @@ SomeClass.class:
 
   public final class SomeClass public constructor(multiplier: kotlin.Int?) {
       public final var someInt: kotlin.Int /* compiled code */ /* hasBackingField: true */
-          public final get() {/* compiled code */ }
-          public final set(value: kotlin.Int) {/* compiled code */ }
+          public final get() { /* compiled code */ }
+          public final set(value: kotlin.Int) { /* compiled code */ }
   }

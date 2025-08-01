@@ -3,7 +3,7 @@ MainKt.class:
   // Implementation of methods is not available
 
   context((@MyAnnotation ParameterizedInterface<@MyAnnotation kotlin.String>)) public val bar: kotlin.String /* compiled code */ /* hasBackingField: false */
-      public final get() {/* compiled code */ }
+      public final get() { /* compiled code */ }
 
   context((@MyAnnotation ParameterizedInterface<@MyAnnotation kotlin.String>)) public fun foo(): kotlin.Unit { /* compiled code */ }
 
@@ -20,4 +20,3 @@ ParameterizedInterface.class:
 
   public interface ParameterizedInterface<T> {
   }
-

@@ -465,7 +465,7 @@ internal fun buildDecompiledText(fileStub: KotlinFileStub): String = PrettyPrint
             accessor.parameterList?.accept(this)
             withPrefix(": ") { accessor.typeReference?.accept(this) }
             if (accessor.hasBody()) {
-                append(" {$DECOMPILED_CODE_COMMENT }") // TODO: add space before body
+                append(" { $DECOMPILED_CODE_COMMENT }")
             }
         }
 

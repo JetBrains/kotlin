@@ -8,32 +8,32 @@ public abstract class Foo public constructor(fromConstructor: kotlin.String) {
     public final var defaultVariable: kotlin.String /* compiled code */ /* hasBackingField: true */
 
     public final var customAccessorAndBackingField: kotlin.String /* compiled code */ /* hasBackingField: true */
-        public final get() {/* compiled code */ }
-        public final set(value: kotlin.String) {/* compiled code */ }
+        public final get() { /* compiled code */ }
+        public final set(value: kotlin.String) { /* compiled code */ }
 
     public final val customGetter: kotlin.String /* compiled code */ /* hasBackingField: false */
-        public final get() {/* compiled code */ }
+        public final get() { /* compiled code */ }
 
     public final var customSetter: kotlin.Int /* compiled code */ /* hasBackingField: true */
-        public final set(value: kotlin.Int) {/* compiled code */ }
+        public final set(value: kotlin.Int) { /* compiled code */ }
 
     public final val customGetterDelegation: kotlin.String by COMPILED_CODE /* compiled code */ /* hasBackingField: false */
-        public final get() {/* compiled code */ }
+        public final get() { /* compiled code */ }
 
     public final val customGetterDelegationWithBackingField: kotlin.String by COMPILED_CODE /* compiled code */ /* hasBackingField: true */
-        public final get() {/* compiled code */ }
+        public final get() { /* compiled code */ }
 
     public final val defaultGetterWithAnnotation: kotlin.String /* compiled code */ /* hasBackingField: true */
         @one.Anno public final get
 
     public final var defaultSetterWithAnotherVisibility: kotlin.String /* compiled code */ /* hasBackingField: true */
-        private final set(value: kotlin.String) {/* compiled code */ }
+        private final set(value: kotlin.String) { /* compiled code */ }
 
     public final val kotlin.Int.extensionProperty: kotlin.Int /* compiled code */ /* hasBackingField: false */
-        public final get() {/* compiled code */ }
+        public final get() { /* compiled code */ }
 
     public final val postponed: kotlin.Int /* compiled code */ /* hasBackingField: true */
-        public final get() {/* compiled code */ }
+        public final get() { /* compiled code */ }
 
     public final lateinit var lateinitVariable: kotlin.String /* compiled code */ /* hasBackingField: true */
 

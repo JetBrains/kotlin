@@ -20,11 +20,11 @@ ContextReceiversCallableMembers.class:
 
   private open class ContextReceiversCallableMembers public constructor() {
       context(A, B) @MyAnnotation private final val kotlin.Int.property: kotlin.Int /* compiled code */ /* hasBackingField: false */
-          private final get() {/* compiled code */ }
+          private final get() { /* compiled code */ }
 
       context(A, B) @MyAnnotation private final var kotlin.Int.propertyWithSetter: kotlin.Int /* compiled code */ /* hasBackingField: false */
-          private final get() {/* compiled code */ }
-          private final set(v: kotlin.Int) {/* compiled code */ }
+          private final get() { /* compiled code */ }
+          private final set(v: kotlin.Int) { /* compiled code */ }
 
       context(A, B) @MyAnnotation private final fun kotlin.Int.function(): kotlin.Int { /* compiled code */ }
   }

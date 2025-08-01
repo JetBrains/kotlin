@@ -17,10 +17,10 @@ Annotations.class:
 
       public final var withCustomAccessors: kotlin.Int /* compiled code */ /* hasBackingField: true */
           @a public final get
-          private final set(value: kotlin.Int) {/* compiled code */ }
+          private final set(value: kotlin.Int) { /* compiled code */ }
 
       public final val @receiver:a kotlin.Int.receiverField: kotlin.String? /* compiled code */ /* hasBackingField: false */
-          public final get() {/* compiled code */ }
+          public final get() { /* compiled code */ }
 
       public final val getterField: kotlin.String? /* compiled code */ /* hasBackingField: true */
           @a public final get
@@ -31,10 +31,10 @@ Annotations.class:
       @field:a public final val ownField: kotlin.String? /* compiled code */ /* hasBackingField: true */
 
       public final var setParam: kotlin.String? /* compiled code */ /* hasBackingField: true */
-          public final set(@a value: kotlin.String?) {/* compiled code */ }
+          public final set(@a value: kotlin.String?) { /* compiled code */ }
 
       @delegate:a public final val deleage: kotlin.Int by COMPILED_CODE /* compiled code */ /* hasBackingField: true */
-          public final get() {/* compiled code */ }
+          public final get() { /* compiled code */ }
 
       @a protected final fun f(): kotlin.Unit { /* compiled code */ }
 

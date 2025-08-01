@@ -2,11 +2,11 @@
 // Implementation of methods is not available
 
 public var privateSetter: kotlin.Int /* compiled code */ /* hasBackingField: true */
-    private final set(value: kotlin.Int) {/* compiled code */ }
+    private final set(value: kotlin.Int) { /* compiled code */ }
 
 private var privateVarPrivateSetter: kotlin.Int /* compiled code */ /* hasBackingField: true */
 
 public val explicitPublicGetter: kotlin.Int /* compiled code */ /* hasBackingField: true */
 
 public val inlineProperty: kotlin.Int /* compiled code */ /* hasBackingField: false */
-    public final inline get() {/* compiled code */ }
+    public final inline get() { /* compiled code */ }

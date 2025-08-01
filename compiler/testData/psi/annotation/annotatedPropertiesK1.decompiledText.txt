@@ -64,8 +64,8 @@ Test.class:
           @MyAnnotation2 public final set
 
       public final var @receiver:MyAnnotation7 @MyAnnotation8 kotlin.Int.fooP: kotlin.Unit /* compiled code */ /* hasBackingField: false */
-          public final get() {/* compiled code */ }
-          public final set(value: kotlin.Unit) {/* compiled code */ }
+          public final get() { /* compiled code */ }
+          public final set(value: kotlin.Unit) { /* compiled code */ }
 
       public final fun @receiver:MyAnnotation7 @MyAnnotation8 kotlin.Int.fooF(): kotlin.Unit { /* compiled code */ }
 

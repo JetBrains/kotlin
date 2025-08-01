@@ -5,6 +5,6 @@ package test
 
 public final class UnderscoreParameterName public constructor() {
     public final var foo: kotlin.String? /* compiled code */ /* hasBackingField: false */
-        public final get() {/* compiled code */ }
-        public final set(_: kotlin.String?) {/* compiled code */ }
+        public final get() { /* compiled code */ }
+        public final set(_: kotlin.String?) { /* compiled code */ }
 }

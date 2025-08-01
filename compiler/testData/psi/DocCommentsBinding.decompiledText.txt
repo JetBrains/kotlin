@@ -6,8 +6,8 @@ A.class:
       public final val p: kotlin.Int /* compiled code */ /* hasBackingField: true */
 
       public final var property: kotlin.Int /* compiled code */ /* hasBackingField: false */
-          public final get() {/* compiled code */ }
-          public final set(value: kotlin.Int) {/* compiled code */ }
+          public final get() { /* compiled code */ }
+          public final set(value: kotlin.Int) { /* compiled code */ }
 
       public final fun foo(): kotlin.Unit { /* compiled code */ }
   }

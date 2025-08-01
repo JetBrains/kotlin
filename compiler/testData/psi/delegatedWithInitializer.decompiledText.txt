@@ -7,5 +7,5 @@ public final class MyClass public constructor() {
     }
 
     public final val token: kotlin.String by COMPILED_CODE /* compiled code */ /* hasBackingField: true */
-        public final get() {/* compiled code */ }
+        public final get() { /* compiled code */ }
 }

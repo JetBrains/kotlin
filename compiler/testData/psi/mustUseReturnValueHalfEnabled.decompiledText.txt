@@ -4,8 +4,8 @@ Marked.class:
 
   @kotlin.MustUseReturnValue public final class Marked public constructor() {
       public final var prop: kotlin.String /* compiled code */ /* hasBackingField: true */
-          public final get() {/* compiled code */ }
-          public final set(value: kotlin.String) {/* compiled code */ }
+          public final get() { /* compiled code */ }
+          public final set(value: kotlin.String) { /* compiled code */ }
 
       public final fun alreadyApplied(): kotlin.String { /* compiled code */ }
   }
@@ -15,7 +15,7 @@ MarkedTopLevelKt.class:
   // Implementation of methods is not available
 
   public val markedTopProperty: kotlin.Int /* compiled code */ /* hasBackingField: false */
-      public final get() {/* compiled code */ }
+      public final get() { /* compiled code */ }
 
   public fun markedTopFunction(): kotlin.String { /* compiled code */ }
 
@@ -37,8 +37,8 @@ Unmarked.class:
 
   public final class Unmarked public constructor() {
       public final var prop: kotlin.String /* compiled code */ /* hasBackingField: true */
-          public final get() {/* compiled code */ }
-          public final set(value: kotlin.String) {/* compiled code */ }
+          public final get() { /* compiled code */ }
+          public final set(value: kotlin.String) { /* compiled code */ }
 
       public final fun getStuff(): kotlin.String { /* compiled code */ }
   }
@@ -48,6 +48,6 @@ UnmarkedTopLevelKt.class:
   // Implementation of methods is not available
 
   public val unmarkedTopProperty: kotlin.Int /* compiled code */ /* hasBackingField: false */
-      public final get() {/* compiled code */ }
+      public final get() { /* compiled code */ }
 
   public fun unmarkedTopFunction(): kotlin.String { /* compiled code */ }

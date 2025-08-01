@@ -35,8 +35,8 @@ Top Level Class.class:
       public constructor(`parameter name`: `one two`.`three four`.`Top Level Object`) { /* compiled code */ }
 
       public final var `one two`.`three four`.`Top Level Class`<`Type Parameter`> /* from: `one two`.`three four`.`Top Level Class`.`Member Level TypeAlias`<`Type Parameter`> */.`member property`: `one two`.`three four`.`Top Level Class`<`Type Parameter`>? /* compiled code */ /* hasBackingField: false */
-          public final get() {/* compiled code */ }
-          public final set(value: `one two`.`three four`.`Top Level Class`<`Type Parameter`>?) {/* compiled code */ }
+          public final get() { /* compiled code */ }
+          public final set(value: `one two`.`three four`.`Top Level Class`<`Type Parameter`>?) { /* compiled code */ }
 
       context(`one two`.`three four`.`Top Level Class`<`Type Parameter`> /* from: `one two`.`three four`.`Top Level Class`.`Member Level TypeAlias`<`Type Parameter`> */) public final fun `one two`.`three four`.`Top Level Object`.`Member Level Interface`.`member function`(`parameter name`: `one two`.`three four`.`Top Level Class`<`Type Parameter`>): kotlin.Unit { /* compiled code */ }
 

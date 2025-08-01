@@ -2,4 +2,4 @@
 // Implementation of methods is not available
 
 public val customGetterOnly: kotlin.Int /* compiled code */ /* hasBackingField: false */
-    public final get() {/* compiled code */ }
+    public final get() { /* compiled code */ }

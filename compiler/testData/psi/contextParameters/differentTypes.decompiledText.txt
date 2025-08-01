@@ -11,16 +11,16 @@ Foo.class:
 
   public final class Foo public constructor() {
       context((@Anno suspend () -> kotlin.Unit), suspend kotlin.String.() -> kotlin.Int) public final val contextParameter2: kotlin.Int /* compiled code */ /* hasBackingField: false */
-          public final get() {/* compiled code */ }
+          public final get() { /* compiled code */ }
 
       context(A & Any, B & Any) public final val <A, B, C> (C & Any).dnnP: kotlin.Int /* compiled code */ /* hasBackingField: false */
-          public final get() {/* compiled code */ }
+          public final get() { /* compiled code */ }
 
       context((@Anno suspend context(kotlin.Int) () -> kotlin.Unit), suspend context(kotlin.String) () -> kotlin.Boolean) public final val contextParameter3: kotlin.Int /* compiled code */ /* hasBackingField: false */
-          public final get() {/* compiled code */ }
+          public final get() { /* compiled code */ }
 
       public final val returnType: @Anno suspend context(kotlin.Int) () -> kotlin.Unit /* compiled code */ /* hasBackingField: false */
-          public final get() {/* compiled code */ }
+          public final get() { /* compiled code */ }
 
       context((@Anno suspend () -> kotlin.Unit), suspend kotlin.String.() -> kotlin.Int) public final fun contextParameter(): kotlin.Unit { /* compiled code */ }
 
@@ -28,4 +28,3 @@ Foo.class:
 
       context((@Anno suspend context(kotlin.Int) () -> kotlin.Unit), suspend context(kotlin.String) () -> kotlin.Boolean) public final fun contextParameter4(): kotlin.Unit { /* compiled code */ }
   }
-

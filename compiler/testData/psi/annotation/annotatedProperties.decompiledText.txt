@@ -61,11 +61,11 @@ Test.class:
   public final class Test public constructor(@MyAnnotation6 bar: kotlin.String) {
       @MyAnnotation4 @field:MyAnnotation5 public final var bar: kotlin.String /* compiled code */ /* hasBackingField: true */
           @MyAnnotation public final get
-          @MyAnnotation2 public final set(@MyAnnotation3 value: kotlin.String) {/* compiled code */ }
+          @MyAnnotation2 public final set(@MyAnnotation3 value: kotlin.String) { /* compiled code */ }
 
       public final var @receiver:MyAnnotation7 @MyAnnotation8 kotlin.Int.fooP: kotlin.Unit /* compiled code */ /* hasBackingField: false */
-          public final get() {/* compiled code */ }
-          public final set(value: kotlin.Unit) {/* compiled code */ }
+          public final get() { /* compiled code */ }
+          public final set(value: kotlin.Unit) { /* compiled code */ }
 
       public final fun @receiver:MyAnnotation7 @MyAnnotation8 kotlin.Int.fooF(): kotlin.Unit { /* compiled code */ }
 

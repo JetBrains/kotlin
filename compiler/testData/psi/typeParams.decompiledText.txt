@@ -5,16 +5,16 @@ package test
 
 public final class TypeParams<in T1 : kotlin.Any, out T2 : kotlin.String, T3 : (kotlin.Int) -> kotlin.Int, T4, T5, T6 : T5, T7 : T6> public constructor() where T1 : kotlin.Cloneable?, T1 : java.io.Serializable {
     public final val <G1> G1.withOwnParam: G1 /* compiled code */ /* hasBackingField: false */
-        public final get() {/* compiled code */ }
+        public final get() { /* compiled code */ }
 
     public final val <G1 : kotlin.Int?> G1.withOwnBoundedParam: G1 /* compiled code */ /* hasBackingField: false */
-        public final get() {/* compiled code */ }
+        public final get() { /* compiled code */ }
 
     public final val <G1 : T4> G1.withOwnBoundedParamByOther: G1 /* compiled code */ /* hasBackingField: false */
-        public final get() {/* compiled code */ }
+        public final get() { /* compiled code */ }
 
     public final val useSomeParam: T2 /* compiled code */ /* hasBackingField: false */
-        public final get() {/* compiled code */ }
+        public final get() { /* compiled code */ }
 
     public final fun useParams(p1: T1, p2: (T2) -> kotlin.Unit, p3: T3, p4: T4, P5: T5): kotlin.Unit { /* compiled code */ }
 

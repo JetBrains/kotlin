@@ -18,11 +18,11 @@ ContextParametersOnTopLevelCallablesKt.class:
   // Implementation of methods is not available
 
   context(A, B) @MyAnnotation public val kotlin.Int.property: kotlin.Int /* compiled code */ /* hasBackingField: false */
-      public final get() {/* compiled code */ }
+      public final get() { /* compiled code */ }
 
   context(A, B) @MyAnnotation public var kotlin.Int.propertyWithSetter: kotlin.Int /* compiled code */ /* hasBackingField: false */
-      public final get() {/* compiled code */ }
-      public final set(v: kotlin.Int) {/* compiled code */ }
+      public final get() { /* compiled code */ }
+      public final set(v: kotlin.Int) { /* compiled code */ }
 
   context(A, B) @MyAnnotation public fun kotlin.Int.function(): kotlin.Int { /* compiled code */ }
 
