@@ -100,6 +100,14 @@ internal inline fun withAnonymousObject() {
 private fun foo() = object { fun bar() {} }
 internal inline fun test() = foo().bar()
 
+private object O {
+    class C
+}
+
+internal inline fun internal5() {
+    O.C()
+}
+
 /* GENERATED_FIR_TAGS: anonymousObjectExpression, assignment, checkNotNullCall, classDeclaration, classReference,
 companionObject, functionDeclaration, functionalType, inline, inner, integerLiteral, interfaceDeclaration, isExpression,
 lambdaLiteral, localClass, nestedClass, nullableType, objectDeclaration, propertyDeclaration, stringLiteral,

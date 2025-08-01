@@ -87,6 +87,14 @@ class C3 {
     }
 }
 
+private object O {
+    class C
+}
+
+internal inline fun internal5() {
+    O.C()
+}
+
 /* GENERATED_FIR_TAGS: anonymousObjectExpression, assignment, checkNotNullCall, classDeclaration, classReference,
 companionObject, functionDeclaration, functionalType, inline, integerLiteral, interfaceDeclaration, isExpression,
 lambdaLiteral, nestedClass, nullableType, objectDeclaration, propertyDeclaration, typeConstraint, typeParameter */
