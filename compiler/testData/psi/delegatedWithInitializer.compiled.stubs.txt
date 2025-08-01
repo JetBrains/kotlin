@@ -11,7 +11,7 @@ FILE[kind=File[packageFqName=<root>]]
         MODIFIER_LIST[public companion]
         CLASS_BODY
           PROPERTY[fqName=MyClass.Companion.token, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=token]
-            MODIFIER_LIST[public final const]
+            MODIFIER_LIST[public const]
             TYPE_REFERENCE
               USER_TYPE
                 USER_TYPE

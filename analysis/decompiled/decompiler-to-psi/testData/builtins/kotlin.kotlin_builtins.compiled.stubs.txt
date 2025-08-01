@@ -706,7 +706,7 @@ FILE[kind=File[packageFqName=kotlin]]
         MODIFIER_LIST[public companion]
         CLASS_BODY
           PROPERTY[fqName=kotlin.Byte.Companion.MIN_VALUE, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=MIN_VALUE]
-            MODIFIER_LIST[public final const MustUseReturnValue]
+            MODIFIER_LIST[public const MustUseReturnValue]
             TYPE_REFERENCE
               USER_TYPE
                 USER_TYPE
@@ -714,7 +714,7 @@ FILE[kind=File[packageFqName=kotlin]]
                 REFERENCE_EXPRESSION[referencedName=Byte]
             REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
           PROPERTY[fqName=kotlin.Byte.Companion.MAX_VALUE, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=MAX_VALUE]
-            MODIFIER_LIST[public final const MustUseReturnValue]
+            MODIFIER_LIST[public const MustUseReturnValue]
             TYPE_REFERENCE
               USER_TYPE
                 USER_TYPE
@@ -722,7 +722,7 @@ FILE[kind=File[packageFqName=kotlin]]
                 REFERENCE_EXPRESSION[referencedName=Byte]
             REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
           PROPERTY[fqName=kotlin.Byte.Companion.SIZE_BYTES, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=SIZE_BYTES]
-            MODIFIER_LIST[public final const MustUseReturnValue]
+            MODIFIER_LIST[public const MustUseReturnValue]
               ANNOTATION_ENTRY[hasValueArguments=false, shortName=SinceKotlin]
                 CONSTRUCTOR_CALLEE
                   TYPE_REFERENCE
@@ -737,7 +737,7 @@ FILE[kind=File[packageFqName=kotlin]]
                 REFERENCE_EXPRESSION[referencedName=Int]
             REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
           PROPERTY[fqName=kotlin.Byte.Companion.SIZE_BITS, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=SIZE_BITS]
-            MODIFIER_LIST[public final const MustUseReturnValue]
+            MODIFIER_LIST[public const MustUseReturnValue]
               ANNOTATION_ENTRY[hasValueArguments=false, shortName=SinceKotlin]
                 CONSTRUCTOR_CALLEE
                   TYPE_REFERENCE
@@ -2140,7 +2140,7 @@ FILE[kind=File[packageFqName=kotlin]]
         MODIFIER_LIST[public companion]
         CLASS_BODY
           PROPERTY[fqName=kotlin.Char.Companion.MIN_VALUE, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=MIN_VALUE]
-            MODIFIER_LIST[public final const MustUseReturnValue]
+            MODIFIER_LIST[public const MustUseReturnValue]
               ANNOTATION_ENTRY[hasValueArguments=false, shortName=SinceKotlin]
                 CONSTRUCTOR_CALLEE
                   TYPE_REFERENCE
@@ -2155,7 +2155,7 @@ FILE[kind=File[packageFqName=kotlin]]
                 REFERENCE_EXPRESSION[referencedName=Char]
             REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
           PROPERTY[fqName=kotlin.Char.Companion.MAX_VALUE, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=MAX_VALUE]
-            MODIFIER_LIST[public final const MustUseReturnValue]
+            MODIFIER_LIST[public const MustUseReturnValue]
               ANNOTATION_ENTRY[hasValueArguments=false, shortName=SinceKotlin]
                 CONSTRUCTOR_CALLEE
                   TYPE_REFERENCE
@@ -2170,7 +2170,7 @@ FILE[kind=File[packageFqName=kotlin]]
                 REFERENCE_EXPRESSION[referencedName=Char]
             REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
           PROPERTY[fqName=kotlin.Char.Companion.MIN_HIGH_SURROGATE, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=MIN_HIGH_SURROGATE]
-            MODIFIER_LIST[public final const MustUseReturnValue]
+            MODIFIER_LIST[public const MustUseReturnValue]
             TYPE_REFERENCE
               USER_TYPE
                 USER_TYPE
@@ -2178,7 +2178,7 @@ FILE[kind=File[packageFqName=kotlin]]
                 REFERENCE_EXPRESSION[referencedName=Char]
             REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
           PROPERTY[fqName=kotlin.Char.Companion.MAX_HIGH_SURROGATE, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=MAX_HIGH_SURROGATE]
-            MODIFIER_LIST[public final const MustUseReturnValue]
+            MODIFIER_LIST[public const MustUseReturnValue]
             TYPE_REFERENCE
               USER_TYPE
                 USER_TYPE
@@ -2186,7 +2186,7 @@ FILE[kind=File[packageFqName=kotlin]]
                 REFERENCE_EXPRESSION[referencedName=Char]
             REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
           PROPERTY[fqName=kotlin.Char.Companion.MIN_LOW_SURROGATE, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=MIN_LOW_SURROGATE]
-            MODIFIER_LIST[public final const MustUseReturnValue]
+            MODIFIER_LIST[public const MustUseReturnValue]
             TYPE_REFERENCE
               USER_TYPE
                 USER_TYPE
@@ -2194,7 +2194,7 @@ FILE[kind=File[packageFqName=kotlin]]
                 REFERENCE_EXPRESSION[referencedName=Char]
             REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
           PROPERTY[fqName=kotlin.Char.Companion.MAX_LOW_SURROGATE, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=MAX_LOW_SURROGATE]
-            MODIFIER_LIST[public final const MustUseReturnValue]
+            MODIFIER_LIST[public const MustUseReturnValue]
             TYPE_REFERENCE
               USER_TYPE
                 USER_TYPE
@@ -2202,7 +2202,7 @@ FILE[kind=File[packageFqName=kotlin]]
                 REFERENCE_EXPRESSION[referencedName=Char]
             REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
           PROPERTY[fqName=kotlin.Char.Companion.MIN_SURROGATE, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=MIN_SURROGATE]
-            MODIFIER_LIST[public final const MustUseReturnValue]
+            MODIFIER_LIST[public const MustUseReturnValue]
             TYPE_REFERENCE
               USER_TYPE
                 USER_TYPE
@@ -2210,7 +2210,7 @@ FILE[kind=File[packageFqName=kotlin]]
                 REFERENCE_EXPRESSION[referencedName=Char]
             REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
           PROPERTY[fqName=kotlin.Char.Companion.MAX_SURROGATE, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=MAX_SURROGATE]
-            MODIFIER_LIST[public final const MustUseReturnValue]
+            MODIFIER_LIST[public const MustUseReturnValue]
             TYPE_REFERENCE
               USER_TYPE
                 USER_TYPE
@@ -2218,7 +2218,7 @@ FILE[kind=File[packageFqName=kotlin]]
                 REFERENCE_EXPRESSION[referencedName=Char]
             REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
           PROPERTY[fqName=kotlin.Char.Companion.SIZE_BYTES, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=SIZE_BYTES]
-            MODIFIER_LIST[public final const MustUseReturnValue]
+            MODIFIER_LIST[public const MustUseReturnValue]
               ANNOTATION_ENTRY[hasValueArguments=false, shortName=SinceKotlin]
                 CONSTRUCTOR_CALLEE
                   TYPE_REFERENCE
@@ -2233,7 +2233,7 @@ FILE[kind=File[packageFqName=kotlin]]
                 REFERENCE_EXPRESSION[referencedName=Int]
             REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
           PROPERTY[fqName=kotlin.Char.Companion.SIZE_BITS, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=SIZE_BITS]
-            MODIFIER_LIST[public final const MustUseReturnValue]
+            MODIFIER_LIST[public const MustUseReturnValue]
               ANNOTATION_ENTRY[hasValueArguments=false, shortName=SinceKotlin]
                 CONSTRUCTOR_CALLEE
                   TYPE_REFERENCE
@@ -2832,7 +2832,7 @@ FILE[kind=File[packageFqName=kotlin]]
         MODIFIER_LIST[public companion]
         CLASS_BODY
           PROPERTY[fqName=kotlin.Double.Companion.MIN_VALUE, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=MIN_VALUE]
-            MODIFIER_LIST[public final const MustUseReturnValue]
+            MODIFIER_LIST[public const MustUseReturnValue]
             TYPE_REFERENCE
               USER_TYPE
                 USER_TYPE
@@ -2840,7 +2840,7 @@ FILE[kind=File[packageFqName=kotlin]]
                 REFERENCE_EXPRESSION[referencedName=Double]
             REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
           PROPERTY[fqName=kotlin.Double.Companion.MAX_VALUE, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=MAX_VALUE]
-            MODIFIER_LIST[public final const MustUseReturnValue]
+            MODIFIER_LIST[public const MustUseReturnValue]
             TYPE_REFERENCE
               USER_TYPE
                 USER_TYPE
@@ -2848,7 +2848,7 @@ FILE[kind=File[packageFqName=kotlin]]
                 REFERENCE_EXPRESSION[referencedName=Double]
             REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
           PROPERTY[fqName=kotlin.Double.Companion.POSITIVE_INFINITY, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=POSITIVE_INFINITY]
-            MODIFIER_LIST[public final const MustUseReturnValue]
+            MODIFIER_LIST[public const MustUseReturnValue]
             TYPE_REFERENCE
               USER_TYPE
                 USER_TYPE
@@ -2856,7 +2856,7 @@ FILE[kind=File[packageFqName=kotlin]]
                 REFERENCE_EXPRESSION[referencedName=Double]
             REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
           PROPERTY[fqName=kotlin.Double.Companion.NEGATIVE_INFINITY, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=NEGATIVE_INFINITY]
-            MODIFIER_LIST[public final const MustUseReturnValue]
+            MODIFIER_LIST[public const MustUseReturnValue]
             TYPE_REFERENCE
               USER_TYPE
                 USER_TYPE
@@ -2864,7 +2864,7 @@ FILE[kind=File[packageFqName=kotlin]]
                 REFERENCE_EXPRESSION[referencedName=Double]
             REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
           PROPERTY[fqName=kotlin.Double.Companion.NaN, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=NaN]
-            MODIFIER_LIST[public final const MustUseReturnValue]
+            MODIFIER_LIST[public const MustUseReturnValue]
             TYPE_REFERENCE
               USER_TYPE
                 USER_TYPE
@@ -2872,7 +2872,7 @@ FILE[kind=File[packageFqName=kotlin]]
                 REFERENCE_EXPRESSION[referencedName=Double]
             REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
           PROPERTY[fqName=kotlin.Double.Companion.SIZE_BYTES, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=SIZE_BYTES]
-            MODIFIER_LIST[public final const MustUseReturnValue]
+            MODIFIER_LIST[public const MustUseReturnValue]
               ANNOTATION_ENTRY[hasValueArguments=false, shortName=SinceKotlin]
                 CONSTRUCTOR_CALLEE
                   TYPE_REFERENCE
@@ -2887,7 +2887,7 @@ FILE[kind=File[packageFqName=kotlin]]
                 REFERENCE_EXPRESSION[referencedName=Int]
             REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
           PROPERTY[fqName=kotlin.Double.Companion.SIZE_BITS, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=SIZE_BITS]
-            MODIFIER_LIST[public final const MustUseReturnValue]
+            MODIFIER_LIST[public const MustUseReturnValue]
               ANNOTATION_ENTRY[hasValueArguments=false, shortName=SinceKotlin]
                 CONSTRUCTOR_CALLEE
                   TYPE_REFERENCE
@@ -4259,7 +4259,7 @@ FILE[kind=File[packageFqName=kotlin]]
         MODIFIER_LIST[public companion]
         CLASS_BODY
           PROPERTY[fqName=kotlin.Float.Companion.MIN_VALUE, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=MIN_VALUE]
-            MODIFIER_LIST[public final const MustUseReturnValue]
+            MODIFIER_LIST[public const MustUseReturnValue]
             TYPE_REFERENCE
               USER_TYPE
                 USER_TYPE
@@ -4267,7 +4267,7 @@ FILE[kind=File[packageFqName=kotlin]]
                 REFERENCE_EXPRESSION[referencedName=Float]
             REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
           PROPERTY[fqName=kotlin.Float.Companion.MAX_VALUE, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=MAX_VALUE]
-            MODIFIER_LIST[public final const MustUseReturnValue]
+            MODIFIER_LIST[public const MustUseReturnValue]
             TYPE_REFERENCE
               USER_TYPE
                 USER_TYPE
@@ -4275,7 +4275,7 @@ FILE[kind=File[packageFqName=kotlin]]
                 REFERENCE_EXPRESSION[referencedName=Float]
             REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
           PROPERTY[fqName=kotlin.Float.Companion.POSITIVE_INFINITY, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=POSITIVE_INFINITY]
-            MODIFIER_LIST[public final const MustUseReturnValue]
+            MODIFIER_LIST[public const MustUseReturnValue]
             TYPE_REFERENCE
               USER_TYPE
                 USER_TYPE
@@ -4283,7 +4283,7 @@ FILE[kind=File[packageFqName=kotlin]]
                 REFERENCE_EXPRESSION[referencedName=Float]
             REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
           PROPERTY[fqName=kotlin.Float.Companion.NEGATIVE_INFINITY, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=NEGATIVE_INFINITY]
-            MODIFIER_LIST[public final const MustUseReturnValue]
+            MODIFIER_LIST[public const MustUseReturnValue]
             TYPE_REFERENCE
               USER_TYPE
                 USER_TYPE
@@ -4291,7 +4291,7 @@ FILE[kind=File[packageFqName=kotlin]]
                 REFERENCE_EXPRESSION[referencedName=Float]
             REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
           PROPERTY[fqName=kotlin.Float.Companion.NaN, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=NaN]
-            MODIFIER_LIST[public final const MustUseReturnValue]
+            MODIFIER_LIST[public const MustUseReturnValue]
             TYPE_REFERENCE
               USER_TYPE
                 USER_TYPE
@@ -4299,7 +4299,7 @@ FILE[kind=File[packageFqName=kotlin]]
                 REFERENCE_EXPRESSION[referencedName=Float]
             REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
           PROPERTY[fqName=kotlin.Float.Companion.SIZE_BYTES, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=SIZE_BYTES]
-            MODIFIER_LIST[public final const MustUseReturnValue]
+            MODIFIER_LIST[public const MustUseReturnValue]
               ANNOTATION_ENTRY[hasValueArguments=false, shortName=SinceKotlin]
                 CONSTRUCTOR_CALLEE
                   TYPE_REFERENCE
@@ -4314,7 +4314,7 @@ FILE[kind=File[packageFqName=kotlin]]
                 REFERENCE_EXPRESSION[referencedName=Int]
             REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
           PROPERTY[fqName=kotlin.Float.Companion.SIZE_BITS, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=SIZE_BITS]
-            MODIFIER_LIST[public final const MustUseReturnValue]
+            MODIFIER_LIST[public const MustUseReturnValue]
               ANNOTATION_ENTRY[hasValueArguments=false, shortName=SinceKotlin]
                 CONSTRUCTOR_CALLEE
                   TYPE_REFERENCE
@@ -5567,7 +5567,7 @@ FILE[kind=File[packageFqName=kotlin]]
         MODIFIER_LIST[public companion]
         CLASS_BODY
           PROPERTY[fqName=kotlin.Int.Companion.MIN_VALUE, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=MIN_VALUE]
-            MODIFIER_LIST[public final const MustUseReturnValue]
+            MODIFIER_LIST[public const MustUseReturnValue]
             TYPE_REFERENCE
               USER_TYPE
                 USER_TYPE
@@ -5575,7 +5575,7 @@ FILE[kind=File[packageFqName=kotlin]]
                 REFERENCE_EXPRESSION[referencedName=Int]
             REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
           PROPERTY[fqName=kotlin.Int.Companion.MAX_VALUE, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=MAX_VALUE]
-            MODIFIER_LIST[public final const MustUseReturnValue]
+            MODIFIER_LIST[public const MustUseReturnValue]
             TYPE_REFERENCE
               USER_TYPE
                 USER_TYPE
@@ -5583,7 +5583,7 @@ FILE[kind=File[packageFqName=kotlin]]
                 REFERENCE_EXPRESSION[referencedName=Int]
             REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
           PROPERTY[fqName=kotlin.Int.Companion.SIZE_BYTES, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=SIZE_BYTES]
-            MODIFIER_LIST[public final const MustUseReturnValue]
+            MODIFIER_LIST[public const MustUseReturnValue]
               ANNOTATION_ENTRY[hasValueArguments=false, shortName=SinceKotlin]
                 CONSTRUCTOR_CALLEE
                   TYPE_REFERENCE
@@ -5598,7 +5598,7 @@ FILE[kind=File[packageFqName=kotlin]]
                 REFERENCE_EXPRESSION[referencedName=Int]
             REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
           PROPERTY[fqName=kotlin.Int.Companion.SIZE_BITS, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=SIZE_BITS]
-            MODIFIER_LIST[public final const MustUseReturnValue]
+            MODIFIER_LIST[public const MustUseReturnValue]
               ANNOTATION_ENTRY[hasValueArguments=false, shortName=SinceKotlin]
                 CONSTRUCTOR_CALLEE
                   TYPE_REFERENCE
@@ -7148,7 +7148,7 @@ FILE[kind=File[packageFqName=kotlin]]
         MODIFIER_LIST[public companion]
         CLASS_BODY
           PROPERTY[fqName=kotlin.Long.Companion.MIN_VALUE, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=MIN_VALUE]
-            MODIFIER_LIST[public final const MustUseReturnValue]
+            MODIFIER_LIST[public const MustUseReturnValue]
             TYPE_REFERENCE
               USER_TYPE
                 USER_TYPE
@@ -7156,7 +7156,7 @@ FILE[kind=File[packageFqName=kotlin]]
                 REFERENCE_EXPRESSION[referencedName=Long]
             REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
           PROPERTY[fqName=kotlin.Long.Companion.MAX_VALUE, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=MAX_VALUE]
-            MODIFIER_LIST[public final const MustUseReturnValue]
+            MODIFIER_LIST[public const MustUseReturnValue]
             TYPE_REFERENCE
               USER_TYPE
                 USER_TYPE
@@ -7164,7 +7164,7 @@ FILE[kind=File[packageFqName=kotlin]]
                 REFERENCE_EXPRESSION[referencedName=Long]
             REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
           PROPERTY[fqName=kotlin.Long.Companion.SIZE_BYTES, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=SIZE_BYTES]
-            MODIFIER_LIST[public final const MustUseReturnValue]
+            MODIFIER_LIST[public const MustUseReturnValue]
               ANNOTATION_ENTRY[hasValueArguments=false, shortName=SinceKotlin]
                 CONSTRUCTOR_CALLEE
                   TYPE_REFERENCE
@@ -7179,7 +7179,7 @@ FILE[kind=File[packageFqName=kotlin]]
                 REFERENCE_EXPRESSION[referencedName=Int]
             REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
           PROPERTY[fqName=kotlin.Long.Companion.SIZE_BITS, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=SIZE_BITS]
-            MODIFIER_LIST[public final const MustUseReturnValue]
+            MODIFIER_LIST[public const MustUseReturnValue]
               ANNOTATION_ENTRY[hasValueArguments=false, shortName=SinceKotlin]
                 CONSTRUCTOR_CALLEE
                   TYPE_REFERENCE
@@ -8825,7 +8825,7 @@ FILE[kind=File[packageFqName=kotlin]]
         MODIFIER_LIST[public companion]
         CLASS_BODY
           PROPERTY[fqName=kotlin.Short.Companion.MIN_VALUE, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=MIN_VALUE]
-            MODIFIER_LIST[public final const MustUseReturnValue]
+            MODIFIER_LIST[public const MustUseReturnValue]
             TYPE_REFERENCE
               USER_TYPE
                 USER_TYPE
@@ -8833,7 +8833,7 @@ FILE[kind=File[packageFqName=kotlin]]
                 REFERENCE_EXPRESSION[referencedName=Short]
             REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
           PROPERTY[fqName=kotlin.Short.Companion.MAX_VALUE, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=MAX_VALUE]
-            MODIFIER_LIST[public final const MustUseReturnValue]
+            MODIFIER_LIST[public const MustUseReturnValue]
             TYPE_REFERENCE
               USER_TYPE
                 USER_TYPE
@@ -8841,7 +8841,7 @@ FILE[kind=File[packageFqName=kotlin]]
                 REFERENCE_EXPRESSION[referencedName=Short]
             REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
           PROPERTY[fqName=kotlin.Short.Companion.SIZE_BYTES, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=SIZE_BYTES]
-            MODIFIER_LIST[public final const MustUseReturnValue]
+            MODIFIER_LIST[public const MustUseReturnValue]
               ANNOTATION_ENTRY[hasValueArguments=false, shortName=SinceKotlin]
                 CONSTRUCTOR_CALLEE
                   TYPE_REFERENCE
@@ -8856,7 +8856,7 @@ FILE[kind=File[packageFqName=kotlin]]
                 REFERENCE_EXPRESSION[referencedName=Int]
             REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
           PROPERTY[fqName=kotlin.Short.Companion.SIZE_BITS, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=SIZE_BITS]
-            MODIFIER_LIST[public final const MustUseReturnValue]
+            MODIFIER_LIST[public const MustUseReturnValue]
               ANNOTATION_ENTRY[hasValueArguments=false, shortName=SinceKotlin]
                 CONSTRUCTOR_CALLEE
                   TYPE_REFERENCE

@@ -102,7 +102,7 @@ Simple.class:
           MODIFIER_LIST[public companion]
           CLASS_BODY
             PROPERTY[fqName=test.Simple.Companion.CONST1, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=CONST1]
-              MODIFIER_LIST[public final const]
+              MODIFIER_LIST[public const]
               TYPE_REFERENCE
                 USER_TYPE
                   USER_TYPE
@@ -110,7 +110,7 @@ Simple.class:
                   REFERENCE_EXPRESSION[referencedName=Int]
               REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
             PROPERTY[fqName=test.Simple.Companion.CONST2, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=CONST2]
-              MODIFIER_LIST[public final const]
+              MODIFIER_LIST[public const]
               TYPE_REFERENCE
                 USER_TYPE
                   USER_TYPE

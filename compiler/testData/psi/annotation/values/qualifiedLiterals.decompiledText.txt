@@ -34,9 +34,9 @@ Simple.class:
 
   public final annotation class Simple public constructor(i: kotlin.Int) : kotlin.Annotation {
       public companion object {
-          public final const val CONST1: kotlin.Int = COMPILED_CODE /* compiled code */ /* hasBackingField: true */
+          public const val CONST1: kotlin.Int = COMPILED_CODE /* compiled code */ /* hasBackingField: true */
 
-          public final const val CONST2: kotlin.Int = COMPILED_CODE /* compiled code */ /* hasBackingField: true */
+          public const val CONST2: kotlin.Int = COMPILED_CODE /* compiled code */ /* hasBackingField: true */
       }
 
       public final val i: kotlin.Int /* compiled code */ /* hasBackingField: false */

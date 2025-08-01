@@ -266,10 +266,9 @@ private class PropertyClsStubBuilder(
     }
 
     override fun createModifierListStub() {
-        val constModifier = if (isVar) listOf() else listOf(CONST)
-        val modalityModifier = if (isTopLevel) listOf() else listOf(MODALITY)
-
         val flags = propertyProto.flags
+        val constModifier = if (isVar) listOf() else listOf(CONST)
+        val modalityModifier = if (isTopLevel || Flags.IS_CONST[flags]) listOf() else listOf(MODALITY)
         val modifierListStubImpl = createModifierListStubForCallableDeclaration(
             flags = flags,
             flagsToTranslate = listOf(VISIBILITY, LATEINIT, EXTERNAL_PROPERTY, EXPECT_PROPERTY) + constModifier + modalityModifier,

@@ -13,7 +13,7 @@ KotlinStub$CLASS[classId=test/PropertyInitializer, fqName=test.PropertyInitializ
       KotlinStub$CLASS_BODY
         KotlinStub$PROPERTY[fqName=test.PropertyInitializer.Companion.MAX_HIGH_SURROGATE, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=MAX_HIGH_SURROGATE]
           initializer: 56319
-          KotlinStub$MODIFIER_LIST[public final const]
+          KotlinStub$MODIFIER_LIST[public const]
           KotlinStub$TYPE_REFERENCE
             KotlinStub$USER_TYPE
               KotlinStub$USER_TYPE
@@ -22,7 +22,7 @@ KotlinStub$CLASS[classId=test/PropertyInitializer, fqName=test.PropertyInitializ
           KotlinStub$REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
         KotlinStub$PROPERTY[fqName=test.PropertyInitializer.Companion.b, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=b]
           initializer: 100
-          KotlinStub$MODIFIER_LIST[public final const]
+          KotlinStub$MODIFIER_LIST[public const]
           KotlinStub$TYPE_REFERENCE
             KotlinStub$USER_TYPE
               KotlinStub$USER_TYPE
@@ -31,7 +31,7 @@ KotlinStub$CLASS[classId=test/PropertyInitializer, fqName=test.PropertyInitializ
           KotlinStub$REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
         KotlinStub$PROPERTY[fqName=test.PropertyInitializer.Companion.b1, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=b1]
           initializer: 1
-          KotlinStub$MODIFIER_LIST[public final const]
+          KotlinStub$MODIFIER_LIST[public const]
           KotlinStub$TYPE_REFERENCE
             KotlinStub$USER_TYPE
               KotlinStub$USER_TYPE
@@ -40,7 +40,7 @@ KotlinStub$CLASS[classId=test/PropertyInitializer, fqName=test.PropertyInitializ
           KotlinStub$REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
         KotlinStub$PROPERTY[fqName=test.PropertyInitializer.Companion.bb, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=bb]
           initializer: 1
-          KotlinStub$MODIFIER_LIST[public final const]
+          KotlinStub$MODIFIER_LIST[public const]
           KotlinStub$TYPE_REFERENCE
             KotlinStub$USER_TYPE
               KotlinStub$USER_TYPE
@@ -49,7 +49,7 @@ KotlinStub$CLASS[classId=test/PropertyInitializer, fqName=test.PropertyInitializ
           KotlinStub$REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
         KotlinStub$PROPERTY[fqName=test.PropertyInitializer.Companion.c, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=c]
           initializer: 960
-          KotlinStub$MODIFIER_LIST[public final const]
+          KotlinStub$MODIFIER_LIST[public const]
           KotlinStub$TYPE_REFERENCE
             KotlinStub$USER_TYPE
               KotlinStub$USER_TYPE
@@ -58,7 +58,7 @@ KotlinStub$CLASS[classId=test/PropertyInitializer, fqName=test.PropertyInitializ
           KotlinStub$REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
         KotlinStub$PROPERTY[fqName=test.PropertyInitializer.Companion.d, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=d]
           initializer: 3.14
-          KotlinStub$MODIFIER_LIST[public final const]
+          KotlinStub$MODIFIER_LIST[public const]
           KotlinStub$TYPE_REFERENCE
             KotlinStub$USER_TYPE
               KotlinStub$USER_TYPE
@@ -67,7 +67,7 @@ KotlinStub$CLASS[classId=test/PropertyInitializer, fqName=test.PropertyInitializ
           KotlinStub$REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
         KotlinStub$PROPERTY[fqName=test.PropertyInitializer.Companion.f, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=f]
           initializer: 3.14
-          KotlinStub$MODIFIER_LIST[public final const]
+          KotlinStub$MODIFIER_LIST[public const]
           KotlinStub$TYPE_REFERENCE
             KotlinStub$USER_TYPE
               KotlinStub$USER_TYPE
@@ -76,7 +76,7 @@ KotlinStub$CLASS[classId=test/PropertyInitializer, fqName=test.PropertyInitializ
           KotlinStub$REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
         KotlinStub$PROPERTY[fqName=test.PropertyInitializer.Companion.i, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=i]
           initializer: 2000000
-          KotlinStub$MODIFIER_LIST[public final const]
+          KotlinStub$MODIFIER_LIST[public const]
           KotlinStub$TYPE_REFERENCE
             KotlinStub$USER_TYPE
               KotlinStub$USER_TYPE
@@ -85,7 +85,7 @@ KotlinStub$CLASS[classId=test/PropertyInitializer, fqName=test.PropertyInitializ
           KotlinStub$REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
         KotlinStub$PROPERTY[fqName=test.PropertyInitializer.Companion.i1, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=i1]
           initializer: 1
-          KotlinStub$MODIFIER_LIST[public final const]
+          KotlinStub$MODIFIER_LIST[public const]
           KotlinStub$TYPE_REFERENCE
             KotlinStub$USER_TYPE
               KotlinStub$USER_TYPE
@@ -94,7 +94,7 @@ KotlinStub$CLASS[classId=test/PropertyInitializer, fqName=test.PropertyInitializ
           KotlinStub$REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
         KotlinStub$PROPERTY[fqName=test.PropertyInitializer.Companion.l, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=l]
           initializer: 2000000000000
-          KotlinStub$MODIFIER_LIST[public final const]
+          KotlinStub$MODIFIER_LIST[public const]
           KotlinStub$TYPE_REFERENCE
             KotlinStub$USER_TYPE
               KotlinStub$USER_TYPE
@@ -103,7 +103,7 @@ KotlinStub$CLASS[classId=test/PropertyInitializer, fqName=test.PropertyInitializ
           KotlinStub$REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
         KotlinStub$PROPERTY[fqName=test.PropertyInitializer.Companion.l1, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=l1]
           initializer: 1
-          KotlinStub$MODIFIER_LIST[public final const]
+          KotlinStub$MODIFIER_LIST[public const]
           KotlinStub$TYPE_REFERENCE
             KotlinStub$USER_TYPE
               KotlinStub$USER_TYPE
@@ -112,7 +112,7 @@ KotlinStub$CLASS[classId=test/PropertyInitializer, fqName=test.PropertyInitializ
           KotlinStub$REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
         KotlinStub$PROPERTY[fqName=test.PropertyInitializer.Companion.nl, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=nl]
           initializer: 10
-          KotlinStub$MODIFIER_LIST[public final const]
+          KotlinStub$MODIFIER_LIST[public const]
           KotlinStub$TYPE_REFERENCE
             KotlinStub$USER_TYPE
               KotlinStub$USER_TYPE
@@ -121,7 +121,7 @@ KotlinStub$CLASS[classId=test/PropertyInitializer, fqName=test.PropertyInitializ
           KotlinStub$REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
         KotlinStub$PROPERTY[fqName=test.PropertyInitializer.Companion.s, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=s]
           initializer: 20000
-          KotlinStub$MODIFIER_LIST[public final const]
+          KotlinStub$MODIFIER_LIST[public const]
           KotlinStub$TYPE_REFERENCE
             KotlinStub$USER_TYPE
               KotlinStub$USER_TYPE
@@ -130,7 +130,7 @@ KotlinStub$CLASS[classId=test/PropertyInitializer, fqName=test.PropertyInitializ
           KotlinStub$REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
         KotlinStub$PROPERTY[fqName=test.PropertyInitializer.Companion.s1, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=s1]
           initializer: 1
-          KotlinStub$MODIFIER_LIST[public final const]
+          KotlinStub$MODIFIER_LIST[public const]
           KotlinStub$TYPE_REFERENCE
             KotlinStub$USER_TYPE
               KotlinStub$USER_TYPE
@@ -139,7 +139,7 @@ KotlinStub$CLASS[classId=test/PropertyInitializer, fqName=test.PropertyInitializ
           KotlinStub$REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
         KotlinStub$PROPERTY[fqName=test.PropertyInitializer.Companion.str, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=str]
           initializer: :)
-          KotlinStub$MODIFIER_LIST[public final const]
+          KotlinStub$MODIFIER_LIST[public const]
           KotlinStub$TYPE_REFERENCE
             KotlinStub$USER_TYPE
               KotlinStub$USER_TYPE

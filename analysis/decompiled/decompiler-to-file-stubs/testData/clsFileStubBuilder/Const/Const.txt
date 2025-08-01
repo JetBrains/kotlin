@@ -6,7 +6,7 @@ FILE[kind=File[packageFqName=test]]
     MODIFIER_LIST[public]
     CLASS_BODY
       PROPERTY[fqName=test.Const.inObject, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=inObject]
-        MODIFIER_LIST[private final const]
+        MODIFIER_LIST[private const]
         TYPE_REFERENCE
           USER_TYPE
             USER_TYPE

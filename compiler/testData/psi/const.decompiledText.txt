@@ -4,5 +4,5 @@
 package test
 
 public object Const {
-    private final const val inObject: kotlin.Int = COMPILED_CODE /* compiled code */ /* hasBackingField: true */
+    private const val inObject: kotlin.Int = COMPILED_CODE /* compiled code */ /* hasBackingField: true */
 }

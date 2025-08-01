@@ -12,7 +12,7 @@ FILE[kind=File[packageFqName=test]]
         MODIFIER_LIST[private companion]
         CLASS_BODY
           PROPERTY[fqName=test.PrivateConstField.Companion.CONST, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=CONST]
-            MODIFIER_LIST[public final const]
+            MODIFIER_LIST[public const]
             TYPE_REFERENCE
               USER_TYPE
                 USER_TYPE
@@ -20,7 +20,7 @@ FILE[kind=File[packageFqName=test]]
                 REFERENCE_EXPRESSION[referencedName=Int]
             REFERENCE_EXPRESSION[referencedName=COMPILED_CODE]
           PROPERTY[fqName=test.PrivateConstField.Companion.CONST_WITH_ANNOTATION, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=CONST_WITH_ANNOTATION]
-            MODIFIER_LIST[public final const]
+            MODIFIER_LIST[public const]
               ANNOTATION_ENTRY[hasValueArguments=false, shortName=A]
                 CONSTRUCTOR_CALLEE
                   TYPE_REFERENCE

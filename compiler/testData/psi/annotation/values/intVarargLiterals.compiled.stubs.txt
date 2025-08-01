@@ -94,7 +94,7 @@ VarArg.class:
           MODIFIER_LIST[public companion]
           CLASS_BODY
             PROPERTY[fqName=VarArg.Companion.CONSTANT, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=CONSTANT]
-              MODIFIER_LIST[public final const]
+              MODIFIER_LIST[public const]
               TYPE_REFERENCE
                 USER_TYPE
                   USER_TYPE

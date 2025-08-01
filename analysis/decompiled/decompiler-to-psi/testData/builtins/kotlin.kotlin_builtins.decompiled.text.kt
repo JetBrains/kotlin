@@ -91,13 +91,13 @@ public final class BooleanArray public constructor(size: kotlin.Int) {
 
 public final class Byte private constructor() : kotlin.Number, kotlin.Comparable<kotlin.Byte> {
     public companion object {
-        public final const val MIN_VALUE: kotlin.Byte = COMPILED_CODE /* compiled code */
+        public const val MIN_VALUE: kotlin.Byte = COMPILED_CODE /* compiled code */
 
-        public final const val MAX_VALUE: kotlin.Byte = COMPILED_CODE /* compiled code */
+        public const val MAX_VALUE: kotlin.Byte = COMPILED_CODE /* compiled code */
 
-        @kotlin.SinceKotlin public final const val SIZE_BYTES: kotlin.Int = COMPILED_CODE /* compiled code */
+        @kotlin.SinceKotlin public const val SIZE_BYTES: kotlin.Int = COMPILED_CODE /* compiled code */
 
-        @kotlin.SinceKotlin public final const val SIZE_BITS: kotlin.Int = COMPILED_CODE /* compiled code */
+        @kotlin.SinceKotlin public const val SIZE_BITS: kotlin.Int = COMPILED_CODE /* compiled code */
     }
 
     @kotlin.internal.IntrinsicConstEvaluation public open operator fun compareTo(other: kotlin.Byte): kotlin.Int { /* compiled code */ }
@@ -229,25 +229,25 @@ public final class ByteArray public constructor(size: kotlin.Int) {
 
 public final class Char private constructor() : kotlin.Comparable<kotlin.Char> {
     public companion object {
-        @kotlin.SinceKotlin public final const val MIN_VALUE: kotlin.Char = COMPILED_CODE /* compiled code */
+        @kotlin.SinceKotlin public const val MIN_VALUE: kotlin.Char = COMPILED_CODE /* compiled code */
 
-        @kotlin.SinceKotlin public final const val MAX_VALUE: kotlin.Char = COMPILED_CODE /* compiled code */
+        @kotlin.SinceKotlin public const val MAX_VALUE: kotlin.Char = COMPILED_CODE /* compiled code */
 
-        public final const val MIN_HIGH_SURROGATE: kotlin.Char = COMPILED_CODE /* compiled code */
+        public const val MIN_HIGH_SURROGATE: kotlin.Char = COMPILED_CODE /* compiled code */
 
-        public final const val MAX_HIGH_SURROGATE: kotlin.Char = COMPILED_CODE /* compiled code */
+        public const val MAX_HIGH_SURROGATE: kotlin.Char = COMPILED_CODE /* compiled code */
 
-        public final const val MIN_LOW_SURROGATE: kotlin.Char = COMPILED_CODE /* compiled code */
+        public const val MIN_LOW_SURROGATE: kotlin.Char = COMPILED_CODE /* compiled code */
 
-        public final const val MAX_LOW_SURROGATE: kotlin.Char = COMPILED_CODE /* compiled code */
+        public const val MAX_LOW_SURROGATE: kotlin.Char = COMPILED_CODE /* compiled code */
 
-        public final const val MIN_SURROGATE: kotlin.Char = COMPILED_CODE /* compiled code */
+        public const val MIN_SURROGATE: kotlin.Char = COMPILED_CODE /* compiled code */
 
-        public final const val MAX_SURROGATE: kotlin.Char = COMPILED_CODE /* compiled code */
+        public const val MAX_SURROGATE: kotlin.Char = COMPILED_CODE /* compiled code */
 
-        @kotlin.SinceKotlin public final const val SIZE_BYTES: kotlin.Int = COMPILED_CODE /* compiled code */
+        @kotlin.SinceKotlin public const val SIZE_BYTES: kotlin.Int = COMPILED_CODE /* compiled code */
 
-        @kotlin.SinceKotlin public final const val SIZE_BITS: kotlin.Int = COMPILED_CODE /* compiled code */
+        @kotlin.SinceKotlin public const val SIZE_BITS: kotlin.Int = COMPILED_CODE /* compiled code */
     }
 
     @kotlin.internal.IntrinsicConstEvaluation public open operator fun compareTo(other: kotlin.Char): kotlin.Int { /* compiled code */ }
@@ -313,19 +313,19 @@ public interface Comparable<in T> {
 
 public final class Double private constructor() : kotlin.Number, kotlin.Comparable<kotlin.Double> {
     public companion object {
-        public final const val MIN_VALUE: kotlin.Double = COMPILED_CODE /* compiled code */
+        public const val MIN_VALUE: kotlin.Double = COMPILED_CODE /* compiled code */
 
-        public final const val MAX_VALUE: kotlin.Double = COMPILED_CODE /* compiled code */
+        public const val MAX_VALUE: kotlin.Double = COMPILED_CODE /* compiled code */
 
-        public final const val POSITIVE_INFINITY: kotlin.Double = COMPILED_CODE /* compiled code */
+        public const val POSITIVE_INFINITY: kotlin.Double = COMPILED_CODE /* compiled code */
 
-        public final const val NEGATIVE_INFINITY: kotlin.Double = COMPILED_CODE /* compiled code */
+        public const val NEGATIVE_INFINITY: kotlin.Double = COMPILED_CODE /* compiled code */
 
-        public final const val NaN: kotlin.Double = COMPILED_CODE /* compiled code */
+        public const val NaN: kotlin.Double = COMPILED_CODE /* compiled code */
 
-        @kotlin.SinceKotlin public final const val SIZE_BYTES: kotlin.Int = COMPILED_CODE /* compiled code */
+        @kotlin.SinceKotlin public const val SIZE_BYTES: kotlin.Int = COMPILED_CODE /* compiled code */
 
-        @kotlin.SinceKotlin public final const val SIZE_BITS: kotlin.Int = COMPILED_CODE /* compiled code */
+        @kotlin.SinceKotlin public const val SIZE_BITS: kotlin.Int = COMPILED_CODE /* compiled code */
     }
 
     @kotlin.internal.IntrinsicConstEvaluation public final operator fun compareTo(other: kotlin.Byte): kotlin.Int { /* compiled code */ }
@@ -460,19 +460,19 @@ public abstract class Enum<E : kotlin.Enum<E>> public constructor(name: kotlin.S
 
 public final class Float private constructor() : kotlin.Number, kotlin.Comparable<kotlin.Float> {
     public companion object {
-        public final const val MIN_VALUE: kotlin.Float = COMPILED_CODE /* compiled code */
+        public const val MIN_VALUE: kotlin.Float = COMPILED_CODE /* compiled code */
 
-        public final const val MAX_VALUE: kotlin.Float = COMPILED_CODE /* compiled code */
+        public const val MAX_VALUE: kotlin.Float = COMPILED_CODE /* compiled code */
 
-        public final const val POSITIVE_INFINITY: kotlin.Float = COMPILED_CODE /* compiled code */
+        public const val POSITIVE_INFINITY: kotlin.Float = COMPILED_CODE /* compiled code */
 
-        public final const val NEGATIVE_INFINITY: kotlin.Float = COMPILED_CODE /* compiled code */
+        public const val NEGATIVE_INFINITY: kotlin.Float = COMPILED_CODE /* compiled code */
 
-        public final const val NaN: kotlin.Float = COMPILED_CODE /* compiled code */
+        public const val NaN: kotlin.Float = COMPILED_CODE /* compiled code */
 
-        @kotlin.SinceKotlin public final const val SIZE_BYTES: kotlin.Int = COMPILED_CODE /* compiled code */
+        @kotlin.SinceKotlin public const val SIZE_BYTES: kotlin.Int = COMPILED_CODE /* compiled code */
 
-        @kotlin.SinceKotlin public final const val SIZE_BITS: kotlin.Int = COMPILED_CODE /* compiled code */
+        @kotlin.SinceKotlin public const val SIZE_BITS: kotlin.Int = COMPILED_CODE /* compiled code */
     }
 
     @kotlin.internal.IntrinsicConstEvaluation public final operator fun compareTo(other: kotlin.Byte): kotlin.Int { /* compiled code */ }
@@ -588,13 +588,13 @@ public final class FloatArray public constructor(size: kotlin.Int) {
 
 public final class Int private constructor() : kotlin.Number, kotlin.Comparable<kotlin.Int> {
     public companion object {
-        public final const val MIN_VALUE: kotlin.Int = COMPILED_CODE /* compiled code */
+        public const val MIN_VALUE: kotlin.Int = COMPILED_CODE /* compiled code */
 
-        public final const val MAX_VALUE: kotlin.Int = COMPILED_CODE /* compiled code */
+        public const val MAX_VALUE: kotlin.Int = COMPILED_CODE /* compiled code */
 
-        @kotlin.SinceKotlin public final const val SIZE_BYTES: kotlin.Int = COMPILED_CODE /* compiled code */
+        @kotlin.SinceKotlin public const val SIZE_BYTES: kotlin.Int = COMPILED_CODE /* compiled code */
 
-        @kotlin.SinceKotlin public final const val SIZE_BITS: kotlin.Int = COMPILED_CODE /* compiled code */
+        @kotlin.SinceKotlin public const val SIZE_BITS: kotlin.Int = COMPILED_CODE /* compiled code */
     }
 
     @kotlin.internal.IntrinsicConstEvaluation public final operator fun compareTo(other: kotlin.Byte): kotlin.Int { /* compiled code */ }
@@ -740,13 +740,13 @@ public final class IntArray public constructor(size: kotlin.Int) {
 
 public final class Long private constructor() : kotlin.Number, kotlin.Comparable<kotlin.Long> {
     public companion object {
-        public final const val MIN_VALUE: kotlin.Long = COMPILED_CODE /* compiled code */
+        public const val MIN_VALUE: kotlin.Long = COMPILED_CODE /* compiled code */
 
-        public final const val MAX_VALUE: kotlin.Long = COMPILED_CODE /* compiled code */
+        public const val MAX_VALUE: kotlin.Long = COMPILED_CODE /* compiled code */
 
-        @kotlin.SinceKotlin public final const val SIZE_BYTES: kotlin.Int = COMPILED_CODE /* compiled code */
+        @kotlin.SinceKotlin public const val SIZE_BYTES: kotlin.Int = COMPILED_CODE /* compiled code */
 
-        @kotlin.SinceKotlin public final const val SIZE_BITS: kotlin.Int = COMPILED_CODE /* compiled code */
+        @kotlin.SinceKotlin public const val SIZE_BITS: kotlin.Int = COMPILED_CODE /* compiled code */
     }
 
     @kotlin.internal.IntrinsicConstEvaluation public final operator fun compareTo(other: kotlin.Byte): kotlin.Int { /* compiled code */ }
@@ -911,13 +911,13 @@ public abstract class Number public constructor() {
 
 public final class Short private constructor() : kotlin.Number, kotlin.Comparable<kotlin.Short> {
     public companion object {
-        public final const val MIN_VALUE: kotlin.Short = COMPILED_CODE /* compiled code */
+        public const val MIN_VALUE: kotlin.Short = COMPILED_CODE /* compiled code */
 
-        public final const val MAX_VALUE: kotlin.Short = COMPILED_CODE /* compiled code */
+        public const val MAX_VALUE: kotlin.Short = COMPILED_CODE /* compiled code */
 
-        @kotlin.SinceKotlin public final const val SIZE_BYTES: kotlin.Int = COMPILED_CODE /* compiled code */
+        @kotlin.SinceKotlin public const val SIZE_BYTES: kotlin.Int = COMPILED_CODE /* compiled code */
 
-        @kotlin.SinceKotlin public final const val SIZE_BITS: kotlin.Int = COMPILED_CODE /* compiled code */
+        @kotlin.SinceKotlin public const val SIZE_BITS: kotlin.Int = COMPILED_CODE /* compiled code */
     }
 
     @kotlin.internal.IntrinsicConstEvaluation public final operator fun compareTo(other: kotlin.Byte): kotlin.Int { /* compiled code */ }

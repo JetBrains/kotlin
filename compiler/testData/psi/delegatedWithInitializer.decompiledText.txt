@@ -3,7 +3,7 @@
 
 public final class MyClass public constructor() {
     public companion object {
-        public final const val token: kotlin.String = COMPILED_CODE /* compiled code */ /* hasBackingField: true */
+        public const val token: kotlin.String = COMPILED_CODE /* compiled code */ /* hasBackingField: true */
     }
 
     public final val token: kotlin.String by COMPILED_CODE /* compiled code */ /* hasBackingField: true */

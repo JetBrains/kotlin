@@ -9,16 +9,16 @@ TARGET: public final [ResolvedTo(RAW_FIR)] class Int : kotlin.Number, kotlin.Com
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final const [ResolvedTo(RAW_FIR)] val MIN_VALUE: kotlin.Int = LAZY_EXPRESSION
+        public final? const [ResolvedTo(RAW_FIR)] val MIN_VALUE: kotlin.Int = LAZY_EXPRESSION
             public [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] get(): kotlin.Int
 
-        public final const [ResolvedTo(RAW_FIR)] val MAX_VALUE: kotlin.Int = LAZY_EXPRESSION
+        public final? const [ResolvedTo(RAW_FIR)] val MAX_VALUE: kotlin.Int = LAZY_EXPRESSION
             public [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] get(): kotlin.Int
 
-        @kotlin.SinceKotlin[Unresolved]() public final const [ResolvedTo(RAW_FIR)] val SIZE_BYTES: kotlin.Int = LAZY_EXPRESSION
+        @kotlin.SinceKotlin[Unresolved]() public final? const [ResolvedTo(RAW_FIR)] val SIZE_BYTES: kotlin.Int = LAZY_EXPRESSION
             public [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] get(): kotlin.Int
 
-        @kotlin.SinceKotlin[Unresolved]() public final const [ResolvedTo(RAW_FIR)] val SIZE_BITS: kotlin.Int = LAZY_EXPRESSION
+        @kotlin.SinceKotlin[Unresolved]() public final? const [ResolvedTo(RAW_FIR)] val SIZE_BITS: kotlin.Int = LAZY_EXPRESSION
             public [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] get(): kotlin.Int
 
     }
@@ -164,16 +164,16 @@ TARGET: public final [ResolvedTo(RAW_FIR)] class Int : kotlin.Number, kotlin.Com
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final const [ResolvedTo(RAW_FIR)] val MIN_VALUE: kotlin.Int = LAZY_EXPRESSION
+        public final? const [ResolvedTo(RAW_FIR)] val MIN_VALUE: kotlin.Int = LAZY_EXPRESSION
             public [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] get(): kotlin.Int
 
-        public final const [ResolvedTo(RAW_FIR)] val MAX_VALUE: kotlin.Int = LAZY_EXPRESSION
+        public final? const [ResolvedTo(RAW_FIR)] val MAX_VALUE: kotlin.Int = LAZY_EXPRESSION
             public [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] get(): kotlin.Int
 
-        @kotlin.SinceKotlin[Unresolved]() public final const [ResolvedTo(RAW_FIR)] val SIZE_BYTES: kotlin.Int = LAZY_EXPRESSION
+        @kotlin.SinceKotlin[Unresolved]() public final? const [ResolvedTo(RAW_FIR)] val SIZE_BYTES: kotlin.Int = LAZY_EXPRESSION
             public [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] get(): kotlin.Int
 
-        @kotlin.SinceKotlin[Unresolved]() public final const [ResolvedTo(RAW_FIR)] val SIZE_BITS: kotlin.Int = LAZY_EXPRESSION
+        @kotlin.SinceKotlin[Unresolved]() public final? const [ResolvedTo(RAW_FIR)] val SIZE_BITS: kotlin.Int = LAZY_EXPRESSION
             public [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] get(): kotlin.Int
 
     }
@@ -319,16 +319,16 @@ TARGET: public final [ResolvedTo(COMPILER_REQUIRED_ANNOTATIONS)] class Int : kot
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final const [ResolvedTo(RAW_FIR)] val MIN_VALUE: kotlin.Int = LAZY_EXPRESSION
+        public final? const [ResolvedTo(RAW_FIR)] val MIN_VALUE: kotlin.Int = LAZY_EXPRESSION
             public [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] get(): kotlin.Int
 
-        public final const [ResolvedTo(RAW_FIR)] val MAX_VALUE: kotlin.Int = LAZY_EXPRESSION
+        public final? const [ResolvedTo(RAW_FIR)] val MAX_VALUE: kotlin.Int = LAZY_EXPRESSION
             public [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] get(): kotlin.Int
 
-        @kotlin.SinceKotlin[Unresolved]() public final const [ResolvedTo(RAW_FIR)] val SIZE_BYTES: kotlin.Int = LAZY_EXPRESSION
+        @kotlin.SinceKotlin[Unresolved]() public final? const [ResolvedTo(RAW_FIR)] val SIZE_BYTES: kotlin.Int = LAZY_EXPRESSION
             public [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] get(): kotlin.Int
 
-        @kotlin.SinceKotlin[Unresolved]() public final const [ResolvedTo(RAW_FIR)] val SIZE_BITS: kotlin.Int = LAZY_EXPRESSION
+        @kotlin.SinceKotlin[Unresolved]() public final? const [ResolvedTo(RAW_FIR)] val SIZE_BITS: kotlin.Int = LAZY_EXPRESSION
             public [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] get(): kotlin.Int
 
     }
@@ -474,16 +474,16 @@ TARGET: public final [ResolvedTo(COMPANION_GENERATION)] class Int : kotlin.Numbe
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final const [ResolvedTo(RAW_FIR)] val MIN_VALUE: kotlin.Int = LAZY_EXPRESSION
+        public final? const [ResolvedTo(RAW_FIR)] val MIN_VALUE: kotlin.Int = LAZY_EXPRESSION
             public [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] get(): kotlin.Int
 
-        public final const [ResolvedTo(RAW_FIR)] val MAX_VALUE: kotlin.Int = LAZY_EXPRESSION
+        public final? const [ResolvedTo(RAW_FIR)] val MAX_VALUE: kotlin.Int = LAZY_EXPRESSION
             public [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] get(): kotlin.Int
 
-        @kotlin.SinceKotlin[Unresolved]() public final const [ResolvedTo(RAW_FIR)] val SIZE_BYTES: kotlin.Int = LAZY_EXPRESSION
+        @kotlin.SinceKotlin[Unresolved]() public final? const [ResolvedTo(RAW_FIR)] val SIZE_BYTES: kotlin.Int = LAZY_EXPRESSION
             public [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] get(): kotlin.Int
 
-        @kotlin.SinceKotlin[Unresolved]() public final const [ResolvedTo(RAW_FIR)] val SIZE_BITS: kotlin.Int = LAZY_EXPRESSION
+        @kotlin.SinceKotlin[Unresolved]() public final? const [ResolvedTo(RAW_FIR)] val SIZE_BITS: kotlin.Int = LAZY_EXPRESSION
             public [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] get(): kotlin.Int
 
     }
@@ -629,16 +629,16 @@ TARGET: public final [ResolvedTo(SUPER_TYPES)] class Int : R|kotlin/Number|, R|k
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final const [ResolvedTo(RAW_FIR)] val MIN_VALUE: kotlin.Int = LAZY_EXPRESSION
+        public final? const [ResolvedTo(RAW_FIR)] val MIN_VALUE: kotlin.Int = LAZY_EXPRESSION
             public [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] get(): kotlin.Int
 
-        public final const [ResolvedTo(RAW_FIR)] val MAX_VALUE: kotlin.Int = LAZY_EXPRESSION
+        public final? const [ResolvedTo(RAW_FIR)] val MAX_VALUE: kotlin.Int = LAZY_EXPRESSION
             public [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] get(): kotlin.Int
 
-        @kotlin.SinceKotlin[Unresolved]() public final const [ResolvedTo(RAW_FIR)] val SIZE_BYTES: kotlin.Int = LAZY_EXPRESSION
+        @kotlin.SinceKotlin[Unresolved]() public final? const [ResolvedTo(RAW_FIR)] val SIZE_BYTES: kotlin.Int = LAZY_EXPRESSION
             public [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] get(): kotlin.Int
 
-        @kotlin.SinceKotlin[Unresolved]() public final const [ResolvedTo(RAW_FIR)] val SIZE_BITS: kotlin.Int = LAZY_EXPRESSION
+        @kotlin.SinceKotlin[Unresolved]() public final? const [ResolvedTo(RAW_FIR)] val SIZE_BITS: kotlin.Int = LAZY_EXPRESSION
             public [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] get(): kotlin.Int
 
     }
@@ -784,16 +784,16 @@ TARGET: public final [ResolvedTo(TYPES)] class Int : R|kotlin/Number|, R|kotlin/
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final const [ResolvedTo(RAW_FIR)] val MIN_VALUE: kotlin.Int = LAZY_EXPRESSION
+        public final? const [ResolvedTo(RAW_FIR)] val MIN_VALUE: kotlin.Int = LAZY_EXPRESSION
             public [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] get(): kotlin.Int
 
-        public final const [ResolvedTo(RAW_FIR)] val MAX_VALUE: kotlin.Int = LAZY_EXPRESSION
+        public final? const [ResolvedTo(RAW_FIR)] val MAX_VALUE: kotlin.Int = LAZY_EXPRESSION
             public [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] get(): kotlin.Int
 
-        @kotlin.SinceKotlin[Unresolved]() public final const [ResolvedTo(RAW_FIR)] val SIZE_BYTES: kotlin.Int = LAZY_EXPRESSION
+        @kotlin.SinceKotlin[Unresolved]() public final? const [ResolvedTo(RAW_FIR)] val SIZE_BYTES: kotlin.Int = LAZY_EXPRESSION
             public [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] get(): kotlin.Int
 
-        @kotlin.SinceKotlin[Unresolved]() public final const [ResolvedTo(RAW_FIR)] val SIZE_BITS: kotlin.Int = LAZY_EXPRESSION
+        @kotlin.SinceKotlin[Unresolved]() public final? const [ResolvedTo(RAW_FIR)] val SIZE_BITS: kotlin.Int = LAZY_EXPRESSION
             public [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] get(): kotlin.Int
 
     }
@@ -939,16 +939,16 @@ TARGET: public final [ResolvedTo(STATUS)] class Int : R|kotlin/Number|, R|kotlin
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final const [ResolvedTo(RAW_FIR)] val MIN_VALUE: kotlin.Int = LAZY_EXPRESSION
+        public final? const [ResolvedTo(RAW_FIR)] val MIN_VALUE: kotlin.Int = LAZY_EXPRESSION
             public [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] get(): kotlin.Int
 
-        public final const [ResolvedTo(RAW_FIR)] val MAX_VALUE: kotlin.Int = LAZY_EXPRESSION
+        public final? const [ResolvedTo(RAW_FIR)] val MAX_VALUE: kotlin.Int = LAZY_EXPRESSION
             public [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] get(): kotlin.Int
 
-        @kotlin.SinceKotlin[Unresolved]() public final const [ResolvedTo(RAW_FIR)] val SIZE_BYTES: kotlin.Int = LAZY_EXPRESSION
+        @kotlin.SinceKotlin[Unresolved]() public final? const [ResolvedTo(RAW_FIR)] val SIZE_BYTES: kotlin.Int = LAZY_EXPRESSION
             public [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] get(): kotlin.Int
 
-        @kotlin.SinceKotlin[Unresolved]() public final const [ResolvedTo(RAW_FIR)] val SIZE_BITS: kotlin.Int = LAZY_EXPRESSION
+        @kotlin.SinceKotlin[Unresolved]() public final? const [ResolvedTo(RAW_FIR)] val SIZE_BITS: kotlin.Int = LAZY_EXPRESSION
             public [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] get(): kotlin.Int
 
     }
@@ -1094,16 +1094,16 @@ TARGET: public final [ResolvedTo(EXPECT_ACTUAL_MATCHING)] class Int : R|kotlin/N
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final const [ResolvedTo(RAW_FIR)] val MIN_VALUE: kotlin.Int = LAZY_EXPRESSION
+        public final? const [ResolvedTo(RAW_FIR)] val MIN_VALUE: kotlin.Int = LAZY_EXPRESSION
             public [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] get(): kotlin.Int
 
-        public final const [ResolvedTo(RAW_FIR)] val MAX_VALUE: kotlin.Int = LAZY_EXPRESSION
+        public final? const [ResolvedTo(RAW_FIR)] val MAX_VALUE: kotlin.Int = LAZY_EXPRESSION
             public [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] get(): kotlin.Int
 
-        @kotlin.SinceKotlin[Unresolved]() public final const [ResolvedTo(RAW_FIR)] val SIZE_BYTES: kotlin.Int = LAZY_EXPRESSION
+        @kotlin.SinceKotlin[Unresolved]() public final? const [ResolvedTo(RAW_FIR)] val SIZE_BYTES: kotlin.Int = LAZY_EXPRESSION
             public [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] get(): kotlin.Int
 
-        @kotlin.SinceKotlin[Unresolved]() public final const [ResolvedTo(RAW_FIR)] val SIZE_BITS: kotlin.Int = LAZY_EXPRESSION
+        @kotlin.SinceKotlin[Unresolved]() public final? const [ResolvedTo(RAW_FIR)] val SIZE_BITS: kotlin.Int = LAZY_EXPRESSION
             public [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] get(): kotlin.Int
 
     }
@@ -1249,16 +1249,16 @@ TARGET: public final [ResolvedTo(CONTRACTS)] class Int : R|kotlin/Number|, R|kot
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final const [ResolvedTo(RAW_FIR)] val MIN_VALUE: kotlin.Int = LAZY_EXPRESSION
+        public final? const [ResolvedTo(RAW_FIR)] val MIN_VALUE: kotlin.Int = LAZY_EXPRESSION
             public [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] get(): kotlin.Int
 
-        public final const [ResolvedTo(RAW_FIR)] val MAX_VALUE: kotlin.Int = LAZY_EXPRESSION
+        public final? const [ResolvedTo(RAW_FIR)] val MAX_VALUE: kotlin.Int = LAZY_EXPRESSION
             public [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] get(): kotlin.Int
 
-        @kotlin.SinceKotlin[Unresolved]() public final const [ResolvedTo(RAW_FIR)] val SIZE_BYTES: kotlin.Int = LAZY_EXPRESSION
+        @kotlin.SinceKotlin[Unresolved]() public final? const [ResolvedTo(RAW_FIR)] val SIZE_BYTES: kotlin.Int = LAZY_EXPRESSION
             public [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] get(): kotlin.Int
 
-        @kotlin.SinceKotlin[Unresolved]() public final const [ResolvedTo(RAW_FIR)] val SIZE_BITS: kotlin.Int = LAZY_EXPRESSION
+        @kotlin.SinceKotlin[Unresolved]() public final? const [ResolvedTo(RAW_FIR)] val SIZE_BITS: kotlin.Int = LAZY_EXPRESSION
             public [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] get(): kotlin.Int
 
     }
@@ -1404,16 +1404,16 @@ TARGET: public final [ResolvedTo(IMPLICIT_TYPES_BODY_RESOLVE)] class Int : R|kot
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final const [ResolvedTo(RAW_FIR)] val MIN_VALUE: kotlin.Int = LAZY_EXPRESSION
+        public final? const [ResolvedTo(RAW_FIR)] val MIN_VALUE: kotlin.Int = LAZY_EXPRESSION
             public [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] get(): kotlin.Int
 
-        public final const [ResolvedTo(RAW_FIR)] val MAX_VALUE: kotlin.Int = LAZY_EXPRESSION
+        public final? const [ResolvedTo(RAW_FIR)] val MAX_VALUE: kotlin.Int = LAZY_EXPRESSION
             public [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] get(): kotlin.Int
 
-        @kotlin.SinceKotlin[Unresolved]() public final const [ResolvedTo(RAW_FIR)] val SIZE_BYTES: kotlin.Int = LAZY_EXPRESSION
+        @kotlin.SinceKotlin[Unresolved]() public final? const [ResolvedTo(RAW_FIR)] val SIZE_BYTES: kotlin.Int = LAZY_EXPRESSION
             public [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] get(): kotlin.Int
 
-        @kotlin.SinceKotlin[Unresolved]() public final const [ResolvedTo(RAW_FIR)] val SIZE_BITS: kotlin.Int = LAZY_EXPRESSION
+        @kotlin.SinceKotlin[Unresolved]() public final? const [ResolvedTo(RAW_FIR)] val SIZE_BITS: kotlin.Int = LAZY_EXPRESSION
             public [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] get(): kotlin.Int
 
     }
@@ -1559,16 +1559,16 @@ TARGET: public final [ResolvedTo(CONSTANT_EVALUATION)] class Int : R|kotlin/Numb
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final const [ResolvedTo(RAW_FIR)] val MIN_VALUE: kotlin.Int = LAZY_EXPRESSION
+        public final? const [ResolvedTo(RAW_FIR)] val MIN_VALUE: kotlin.Int = LAZY_EXPRESSION
             public [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] get(): kotlin.Int
 
-        public final const [ResolvedTo(RAW_FIR)] val MAX_VALUE: kotlin.Int = LAZY_EXPRESSION
+        public final? const [ResolvedTo(RAW_FIR)] val MAX_VALUE: kotlin.Int = LAZY_EXPRESSION
             public [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] get(): kotlin.Int
 
-        @kotlin.SinceKotlin[Unresolved]() public final const [ResolvedTo(RAW_FIR)] val SIZE_BYTES: kotlin.Int = LAZY_EXPRESSION
+        @kotlin.SinceKotlin[Unresolved]() public final? const [ResolvedTo(RAW_FIR)] val SIZE_BYTES: kotlin.Int = LAZY_EXPRESSION
             public [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] get(): kotlin.Int
 
-        @kotlin.SinceKotlin[Unresolved]() public final const [ResolvedTo(RAW_FIR)] val SIZE_BITS: kotlin.Int = LAZY_EXPRESSION
+        @kotlin.SinceKotlin[Unresolved]() public final? const [ResolvedTo(RAW_FIR)] val SIZE_BITS: kotlin.Int = LAZY_EXPRESSION
             public [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] get(): kotlin.Int
 
     }
@@ -1714,16 +1714,16 @@ TARGET: public final [ResolvedTo(ANNOTATION_ARGUMENTS)] class Int : R|kotlin/Num
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final const [ResolvedTo(RAW_FIR)] val MIN_VALUE: kotlin.Int = LAZY_EXPRESSION
+        public final? const [ResolvedTo(RAW_FIR)] val MIN_VALUE: kotlin.Int = LAZY_EXPRESSION
             public [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] get(): kotlin.Int
 
-        public final const [ResolvedTo(RAW_FIR)] val MAX_VALUE: kotlin.Int = LAZY_EXPRESSION
+        public final? const [ResolvedTo(RAW_FIR)] val MAX_VALUE: kotlin.Int = LAZY_EXPRESSION
             public [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] get(): kotlin.Int
 
-        @kotlin.SinceKotlin[Unresolved]() public final const [ResolvedTo(RAW_FIR)] val SIZE_BYTES: kotlin.Int = LAZY_EXPRESSION
+        @kotlin.SinceKotlin[Unresolved]() public final? const [ResolvedTo(RAW_FIR)] val SIZE_BYTES: kotlin.Int = LAZY_EXPRESSION
             public [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] get(): kotlin.Int
 
-        @kotlin.SinceKotlin[Unresolved]() public final const [ResolvedTo(RAW_FIR)] val SIZE_BITS: kotlin.Int = LAZY_EXPRESSION
+        @kotlin.SinceKotlin[Unresolved]() public final? const [ResolvedTo(RAW_FIR)] val SIZE_BITS: kotlin.Int = LAZY_EXPRESSION
             public [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] get(): kotlin.Int
 
     }
@@ -1869,16 +1869,16 @@ TARGET: public final [ResolvedTo(BODY_RESOLVE)] class Int : R|kotlin/Number|, R|
             LAZY_super<R|kotlin/Any|>
         }
 
-        public final const [ResolvedTo(RAW_FIR)] val MIN_VALUE: kotlin.Int = LAZY_EXPRESSION
+        public final? const [ResolvedTo(RAW_FIR)] val MIN_VALUE: kotlin.Int = LAZY_EXPRESSION
             public [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] get(): kotlin.Int
 
-        public final const [ResolvedTo(RAW_FIR)] val MAX_VALUE: kotlin.Int = LAZY_EXPRESSION
+        public final? const [ResolvedTo(RAW_FIR)] val MAX_VALUE: kotlin.Int = LAZY_EXPRESSION
             public [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] get(): kotlin.Int
 
-        @kotlin.SinceKotlin[Unresolved]() public final const [ResolvedTo(RAW_FIR)] val SIZE_BYTES: kotlin.Int = LAZY_EXPRESSION
+        @kotlin.SinceKotlin[Unresolved]() public final? const [ResolvedTo(RAW_FIR)] val SIZE_BYTES: kotlin.Int = LAZY_EXPRESSION
             public [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] get(): kotlin.Int
 
-        @kotlin.SinceKotlin[Unresolved]() public final const [ResolvedTo(RAW_FIR)] val SIZE_BITS: kotlin.Int = LAZY_EXPRESSION
+        @kotlin.SinceKotlin[Unresolved]() public final? const [ResolvedTo(RAW_FIR)] val SIZE_BITS: kotlin.Int = LAZY_EXPRESSION
             public [ResolvedTo(RAW_FIR)] [ContainingClassKey=Companion] get(): kotlin.Int
 
     }
