@@ -406,7 +406,7 @@ internal object KDocReferenceResolver {
      */
     private fun KaSession.canBeReferencedAsExtensionOn(extensionFunctionSymbol: KaCallableSymbol, actualReceiverType: KaType): Boolean {
         val extensionReceiverType = extensionFunctionSymbol.receiverParameter?.returnType ?: return false
-        return isPossiblySubTypeOf(actualReceiverType, extensionReceiverType, extensionFunctionSymbol)
+        return isPossibleSubtypeOf(actualReceiverType, extensionReceiverType, extensionFunctionSymbol)
     }
 
     /**
@@ -416,7 +416,7 @@ internal object KDocReferenceResolver {
      * If [actualReceiverType] is a subtype of [expectedReceiverType], then the corresponding extension function can
      * be references on a receiver of [actualReceiverType].
      */
-    private fun KaSession.isPossiblySubTypeOf(
+    private fun KaSession.isPossibleSubtypeOf(
         actualReceiverType: KaType,
         expectedReceiverType: KaType,
         extensionFunctionSymbol: KaCallableSymbol,
