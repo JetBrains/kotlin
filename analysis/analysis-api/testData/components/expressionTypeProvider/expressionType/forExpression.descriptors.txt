@@ -1,2 +1,2 @@
 expression: for(i in 1..2) {}
-type: null
+type: kotlin.Unit

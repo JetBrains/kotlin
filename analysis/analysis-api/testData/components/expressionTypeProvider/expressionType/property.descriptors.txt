@@ -1,2 +1,2 @@
 expression: val x = 1
-type: null
+type: kotlin.Unit
