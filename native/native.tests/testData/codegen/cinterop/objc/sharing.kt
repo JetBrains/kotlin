@@ -1,4 +1,5 @@
 // DISABLE_NATIVE: isAppleTarget=false
+// WITH_PLATFORM_LIBS
 
 import kotlin.native.concurrent.*
 import kotlin.test.*

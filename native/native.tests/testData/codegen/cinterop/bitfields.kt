@@ -5,6 +5,7 @@
 
 // TARGET_BACKEND: NATIVE
 // DISABLE_NATIVE: gcScheduler=AGGRESSIVE
+// WITH_PLATFORM_LIBS
 // MODULE: cinterop
 // FILE: bitfields.def
 ---

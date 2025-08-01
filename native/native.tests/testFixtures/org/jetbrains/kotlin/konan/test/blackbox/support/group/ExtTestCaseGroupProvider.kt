@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.IGNORE_NA
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.IGNORE_NATIVE_K1
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.IGNORE_NATIVE_K2
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.OUTPUT_DATA_FILE
+import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.WITH_PLATFORM_LIBS
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunCheck
 import org.jetbrains.kotlin.konan.test.blackbox.support.runner.TestRunChecks
 import org.jetbrains.kotlin.konan.test.blackbox.support.settings.*
@@ -192,6 +193,8 @@ private class ExtTestDataFile(
         }
         args += "-opt-in=kotlin.native.internal.InternalForKotlinNative" // for `Any.isPermanent()` and `Any.isStack()`
         args += "-opt-in=kotlin.native.internal.InternalForKotlinNativeTests" // for ReflectionPackageName
+        if (!structure.directives.contains(WITH_PLATFORM_LIBS))
+            args += "-no-default-libs"
         val freeCInteropArgs = structure.directives.listValues(FREE_CINTEROP_ARGS.name)
             .orEmpty().flatMap { it.split(" ") }
             .map { it.replace("\$generatedSourcesDir", testDataFileSettings.generatedSourcesDir.absolutePath) }
