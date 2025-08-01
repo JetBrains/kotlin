@@ -140,7 +140,7 @@ abstract class InfoParser<Info>(protected val infoFile: File) {
 
 }
 
-private fun String.splitAndTrim() = split(",").map { it.trim() }.filter { it.isNotBlank() }
+private fun String.splitAndTrim() = split(",", " ").map { it.trim() }.filter { it.isNotBlank() }
 
 enum class ModelTarget {
     ANY,
