@@ -590,7 +590,6 @@ internal fun buildDecompiledText(fileStub: KotlinFileStub): String = PrettyPrint
         it.accept(visitor)
     }
 }.toString()
-    .replace("final const", "const final") // TODO: drop this hack when old and new test data are aligned
 
 private enum class TypeReferencePosition {
     REGULAR,

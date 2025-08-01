@@ -32,7 +32,7 @@ VarArg.class:
 
   public final annotation class VarArg public constructor(vararg v: kotlin.Int) : kotlin.Annotation {
       public companion object {
-          public const final val CONSTANT: kotlin.Int = COMPILED_CODE /* compiled code */ /* hasBackingField: true */
+          public final const val CONSTANT: kotlin.Int = COMPILED_CODE /* compiled code */ /* hasBackingField: true */
       }
 
       public final val v: kotlin.IntArray /* compiled code */ /* hasBackingField: false */
