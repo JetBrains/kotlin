@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.backend.common.checkers.context
 
-import org.jetbrains.kotlin.backend.common.InlineFunctionUseSiteChecker
 import org.jetbrains.kotlin.backend.common.ReportIrValidationError
 import org.jetbrains.kotlin.backend.common.ScopeStack
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
@@ -20,7 +19,6 @@ import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 
 class CheckerContext(
     val irBuiltIns: IrBuiltIns,
-    val checkInlineFunctionUseSites: InlineFunctionUseSiteChecker?,
     val file: IrFile,
     private val reportError: ReportIrValidationError,
 ) {
