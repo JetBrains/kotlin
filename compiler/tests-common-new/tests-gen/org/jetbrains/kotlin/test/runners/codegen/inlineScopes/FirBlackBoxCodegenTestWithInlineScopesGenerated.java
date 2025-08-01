@@ -15569,6 +15569,12 @@ public class FirBlackBoxCodegenTestWithInlineScopesGenerated extends AbstractFir
       }
 
       @Test
+      @TestMetadata("onNullableArgument.kt")
+      public void testOnNullableArgument() {
+        runTest("compiler/testData/codegen/box/coroutines/suspendConversion/onNullableArgument.kt");
+      }
+
+      @Test
       @TestMetadata("subtypeOfFunctionalTypeToSuspendConversion.kt")
       public void testSubtypeOfFunctionalTypeToSuspendConversion() {
         runTest("compiler/testData/codegen/box/coroutines/suspendConversion/subtypeOfFunctionalTypeToSuspendConversion.kt");
