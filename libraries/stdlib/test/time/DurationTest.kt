@@ -602,7 +602,7 @@ class DurationTest {
             "P1Y", "P1M", "P1S", "PT1D", "PT1Y",
             "PT1S2S", "PT1S2H", "PT1H1D", "PT3M5D",
             "P9999999999999DT-9999999999999H",
-            "PT1.5H", "PT0.5D", "PT.5S", "PT0.25.25S",
+            "PT1.5H", "PT0.5D", "PT.5S", "PT0.25.25S", "PT1.S",
             "PT+-2H", "PT-+2H", "PT+-01234567890123456S"
         )) {
             assertNull(Duration.parseIsoStringOrNull(invalidValue), invalidValue)
