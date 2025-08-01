@@ -582,6 +582,8 @@ class DurationTest {
         test(-1.days + 15.minutes, "-PT23H45M", "PT-23H-45M", "+PT-24H+15M")
         test(-1.days - 15.minutes, "-PT24H15M", "PT-24H-15M", "-PT25H-45M")
         test(Duration.ZERO, "PT0S", "P1DT-24H", "+PT-1H+60M", "-PT1M-60S", "PT-000000000000000000000000H")
+        test((-1.1).seconds, "-PT1.100S", "PT-1.1S")
+        test((-0.5).seconds, "-PT0.500S", "PT-0.5S")
 
         // infinite
         test(Duration.INFINITE, "PT9999999999999H", "PT+10000000000000H", "-PT-9999999999999H", "-PT-1234567890123456789012S", "PT+000000000000000001234567890123456789012H")
