@@ -596,11 +596,11 @@ class DurationTest {
         for (invalidValue in listOf(
             "", " ", "P", "PT", "P1DT", "P1", "PT1", "0", "+P", "+", "-", "h", "H", "something",
             "1m", "1d", "2d 11s", "Infinity", "-Infinity",
-            "P+12+34D", "P12-34D", "PT1234567890-1234567890S", "PhD",
+            "P+12+34D", "P12-34D", "PT1234567890-1234567890S", "PhD", "PT+H",
             " P1D", "PT1S ",
             "P3W",
             "P1Y", "P1M", "P1S", "PT1D", "PT1Y",
-            "PT1S2S", "PT1S2H", "PT1H1D", "PT3M5D",
+            "PT1S2S", "PT1S2H", "PT1H1D", "PT3M5D", "PT0.1S1H",
             "P9999999999999DT-9999999999999H", "P-9999999999999DT+9999999999999H",
             "PT1.5H", "PT0.5D", "PT.5S", "PT0.25.25S", "PT1.S",
             "PT+-2H", "PT-+2H", "PT+-01234567890123456S"
