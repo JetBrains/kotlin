@@ -461,6 +461,7 @@ internal object DevirtualizationAnalysis {
             }
             badEdges.sortBy { it.second.node.priority } // Heuristic.
 
+            val firstPhaseStartTime = System.currentTimeMillis()
             // First phase - greedy phase.
             var iterations = 0
             val maxNumberOfIterations = 2
@@ -499,6 +500,9 @@ internal object DevirtualizationAnalysis {
                     }
                 }
             } while (!end)
+
+            println("First phase took ${System.currentTimeMillis() - firstPhaseStartTime} ms")
+            val secondPhaseStartTime = System.currentTimeMillis()
 
             // Second phase - do BFS.
             val nodesCount = constraintGraph.nodes.size
@@ -558,6 +562,8 @@ internal object DevirtualizationAnalysis {
                     }
                 }
             }
+
+            println("Second phase took ${System.currentTimeMillis() - secondPhaseStartTime} ms")
 
             if (entryPoint == null)
                 propagateFinalTypesFromExternalVirtualCalls(directEdges)
@@ -746,8 +752,11 @@ internal object DevirtualizationAnalysis {
                                                   functions: Map<DataFlowIR.FunctionSymbol, DataFlowIR.Function>,
                                                   rootSet: List<DataFlowIR.FunctionSymbol>
         ): ConstraintGraphPrecursor {
+            println("Starting graph building")
+            val startTime = System.currentTimeMillis()
             val constraintGraphBuilder = ConstraintGraphBuilder(nodesMap, functions, rootSet, true)
             constraintGraphBuilder.build()
+            println("Graph building took ${System.currentTimeMillis() - startTime} ms")
             val bagOfEdges = constraintGraphBuilder.bagOfEdges
             val directEdgesCount = constraintGraphBuilder.directEdgesCount
             val reversedEdgesCount = constraintGraphBuilder.reversedEdgesCount
@@ -1298,7 +1307,12 @@ internal object DevirtualizationAnalysis {
     class DevirtualizedCallSite(val callee: DataFlowIR.FunctionSymbol, val possibleCallees: List<DevirtualizedCallee>)
 
     fun run(context: Context, irModule: IrModuleFragment, moduleDFG: ModuleDFG) =
-            DevirtualizationAnalysisImpl(context, irModule, moduleDFG).analyze()
+            run {
+                val startTime = System.currentTimeMillis()
+                DevirtualizationAnalysisImpl(context, irModule, moduleDFG).analyze().also {
+                    println("Devirtualization took ${System.currentTimeMillis() - startTime} ms")
+                }
+            }
 
     fun devirtualize(irModule: IrModuleFragment, moduleDFG: ModuleDFG, generationState: NativeGenerationState,
                      maxVTableUnfoldFactor: Int, maxITableUnfoldFactor: Int) {
