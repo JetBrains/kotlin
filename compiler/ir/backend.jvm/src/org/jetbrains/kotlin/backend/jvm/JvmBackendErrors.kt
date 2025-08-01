@@ -6,11 +6,14 @@
 package org.jetbrains.kotlin.backend.jvm
 
 import com.intellij.psi.PsiElement
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.*
+import org.jetbrains.kotlin.diagnostics.KtDiagnosticRenderers.CLASS_ID
 import org.jetbrains.kotlin.diagnostics.SourceElementPositioningStrategies.DECLARATION_SIGNATURE_OR_DEFAULT
 import org.jetbrains.kotlin.diagnostics.rendering.BaseDiagnosticRendererFactory
 import org.jetbrains.kotlin.diagnostics.rendering.CommonRenderers.NAME
 import org.jetbrains.kotlin.diagnostics.rendering.CommonRenderers.STRING
+import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 
 object JvmBackendErrors : KtDiagnosticsContainer() {
@@ -34,6 +37,8 @@ object JvmBackendErrors : KtDiagnosticsContainer() {
     val NOT_ALL_MULTIFILE_CLASS_PARTS_ARE_JVM_SYNTHETIC by error0<PsiElement>()
 
     val DUPLICATE_CLASS_NAMES by error2<PsiElement, String, String>()
+
+    val PRIVATE_TYPE_USED_IN_NON_PRIVATE_INLINE_FUNCTION by deprecationError1<PsiElement, ClassId>(LanguageFeature.ForbidExposingLessVisibleTypesInInline)
 
     override fun getRendererFactory(): BaseDiagnosticRendererFactory {
         return KtDefaultJvmErrorMessages
@@ -62,5 +67,10 @@ object KtDefaultJvmErrorMessages : BaseDiagnosticRendererFactory() {
         )
 
         map.put(JvmBackendErrors.DUPLICATE_CLASS_NAMES, "Duplicate JVM class name ''{0}'' generated from: {1}", STRING, STRING)
+
+        map.put(
+            JvmBackendErrors.PRIVATE_TYPE_USED_IN_NON_PRIVATE_INLINE_FUNCTION,
+            "Non-private inline function accesses a private class ''{0}''", CLASS_ID,
+        )
     }
 }
