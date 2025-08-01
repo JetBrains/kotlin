@@ -6506,7 +6506,7 @@
                                                 "valueInVersions": []
                                             },
                                             "defaultValue": {
-                                                "current": false,
+                                                "current": true,
                                                 "valueInVersions": []
                                             }
                                         },
