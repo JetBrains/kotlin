@@ -66,7 +66,8 @@ val FirBasedSymbol<*>.isReplSnippetDeclaration: Boolean?
 
 /**
  * This is an implementation detail attribute to provide proper [hasBackingField]
- * flag for deserialized properties.
+ * flag for properties in case it is impossible to compute it.
+ * This is the case for deserialized properties and properties after Fir2Ir with removed bodies.
  *
  * This attribute mustn't be used directly.
  *

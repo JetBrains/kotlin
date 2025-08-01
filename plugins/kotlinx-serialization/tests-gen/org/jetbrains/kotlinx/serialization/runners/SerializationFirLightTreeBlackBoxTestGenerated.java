@@ -238,6 +238,12 @@ public class SerializationFirLightTreeBlackBoxTestGenerated extends AbstractSeri
     }
 
     @Test
+    @TestMetadata("mppInheritance.kt")
+    public void testMppInheritance() {
+      runTest("plugins/kotlinx-serialization/testData/boxIr/mppInheritance.kt");
+    }
+
+    @Test
     @TestMetadata("multiFieldValueClasses.kt")
     public void testMultiFieldValueClasses() {
       runTest("plugins/kotlinx-serialization/testData/boxIr/multiFieldValueClasses.kt");
