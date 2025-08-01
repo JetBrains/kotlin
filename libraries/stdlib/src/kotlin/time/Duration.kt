@@ -1086,25 +1086,23 @@ internal enum class State {
 private const val OVERFLOW_LIMIT = Long.MAX_VALUE / 1000
 
 @kotlin.internal.InlineOnly
-private inline fun willMultiplyOverflow(a: Long, b: Long): Boolean {
-    if (a == 0L) return false
-    if (a > 0) return a > OVERFLOW_LIMIT / b
-    return a < -OVERFLOW_LIMIT / b
+private inline fun willMultiplyOverflow(a: Long, b: Long): Boolean = when {
+    a == 0L -> false
+    a > 0 -> a > OVERFLOW_LIMIT / b
+    else -> a < -OVERFLOW_LIMIT / b
 }
 
 @kotlin.internal.InlineOnly
-private inline fun Long.multiplyWithoutOverflow(other: Long): Long {
-    if (willMultiplyOverflow(this, other)) {
-        return if (this > 0) OVERFLOW_LIMIT else -OVERFLOW_LIMIT
-    }
-    return this * other
+private inline fun Long.multiplyWithoutOverflow(other: Long): Long = when {
+    willMultiplyOverflow(this, other) -> if (this > 0) OVERFLOW_LIMIT else -OVERFLOW_LIMIT
+    else -> this * other
 }
 
 @kotlin.internal.InlineOnly
-private inline fun willAddOverflow(a: Long, b: Long): Boolean {
-    if (a > 0 && b > 0) return a > OVERFLOW_LIMIT - b
-    if (a < 0 && b < 0) return a < -OVERFLOW_LIMIT - b
-    return false
+private inline fun willAddOverflow(a: Long, b: Long): Boolean = when {
+    a > 0 && b > 0 -> a > OVERFLOW_LIMIT - b
+    a < 0 && b < 0 -> a < -OVERFLOW_LIMIT - b
+    else -> false
 }
 
 @kotlin.internal.InlineOnly
