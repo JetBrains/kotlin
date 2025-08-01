@@ -30,6 +30,8 @@ import org.jetbrains.kotlin.gradle.plugin.sources.android.multiplatformAndroidSo
 import org.jetbrains.kotlin.gradle.targets.jvm.JAVA_TEST_FIXTURES_PLUGIN_ID
 import org.jetbrains.kotlin.gradle.utils.appendLine
 import org.jetbrains.kotlin.gradle.utils.prettyName
+import org.jetbrains.kotlin.konan.target.Family
+import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.tooling.core.KotlinToolingVersion
 import org.jetbrains.kotlin.utils.addToStdlib.flatGroupBy
 import java.io.File
@@ -262,6 +264,44 @@ internal object KotlinToolingDiagnostics {
                         }
                     }
             }
+    }
+
+    object NoApplicationTargetFoundDiagnostic : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Misconfiguration) {
+        operator fun invoke(xcodeProject: File) = buildDiagnostic(
+            title = "No application target found in Xcode project",
+            description = "Could not find any application target in '${xcodeProject.path}'. The Kotlin plugin cannot verify framework integration.",
+            solution = "Please create an application target in your Xcode project to consume the Kotlin framework.",
+            documentationUrl = URI("https://kotl.in/xcode-target-setup"),
+        )
+    }
+
+    object MissingXcodeTargetDiagnostic : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Misconfiguration) {
+        operator fun invoke(missingTargets: List<KonanTarget>, xcodeProject: File) = build {
+            title("Kotlin targets not configured in Xcode")
+                .description {
+                    val missingTargetsString = missingTargets.joinToString("\n") { " - '${it.name}'" }
+                    """
+                    |The following Kotlin targets are not linked to any Xcode application target in '${xcodeProject.name}':
+                    |$missingTargetsString
+                    """.trimMargin()
+                }
+                .solutions {
+                    missingTargets.map {
+                        when (it.family) {
+                            Family.WATCHOS -> "'watchOS Application'"
+                            Family.TVOS -> "'tvOS Application'"
+                            Family.OSX -> "'macOS Application'"
+                            Family.IOS -> "'iOS Application'"
+                            else -> null
+                        }
+                    }.distinct().mapNotNull { app ->
+                        "Add the following new application targets to your Xcode project: $app and setup embedAndSign task invocation for it."
+                    }
+                }
+                .documentationLink(URI("https://kotl.in/xcode-target-setup")) { url ->
+                    "Learn how to set up an application target in your Xcode project: $url"
+                }
+        }
     }
 
     object DeprecatedKotlinNativeTargetsDiagnostic : ToolingDiagnosticFactory(ERROR, DiagnosticGroup.Kgp.Misconfiguration) {
