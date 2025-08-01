@@ -1191,9 +1191,7 @@ private fun parseIsoStringFormat(
                 }
                 else -> {
                     if (!parseLongIfPossible(ch)) return throwExceptionOrInvalid(throwException)
-                    totalSeconds = totalSeconds.addWithoutOverflow(
-                        currentLongValue.multiplyWithoutOverflow(SECONDS_PER_DAY)
-                    ).onInvalid { return throwExceptionOrInvalid(throwException) }
+                    totalSeconds = currentLongValue.multiplyWithoutOverflow(SECONDS_PER_DAY)
                     State.AFTER_D_VALUE
                 }
             }
