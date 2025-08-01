@@ -309,12 +309,15 @@ inline fun inlinedFunctionWithCreationOfOpenClassImpl() {
     check(OpenClassInheritedFromRemovedOpenClass().toString() != "Yellow Submarine")
 }
 
+// A non-inlining version of `kotlin.run`.
+fun <R> myRun(block: () -> R): R = block()
+
 inline fun inlinedFunctionWithCreationOfRemovedOpenClassThroughReference() {
-    check(run(::RemovedOpenClass).toString() != "Yellow Submarine")
+    check(myRun(::RemovedOpenClass).toString() != "Yellow Submarine") // fixme
 }
 
 inline fun inlinedFunctionWithCreationOfOpenClassImplThroughReference() {
-    check(run(::OpenClassInheritedFromRemovedOpenClass).toString() != "Yellow Submarine")
+    check(myRun(::OpenClassInheritedFromRemovedOpenClass).toString() != "Yellow Submarine") // fixme
 }
 
 inline fun inlinedFunctionWithRemovedOpenClassAnonymousObject() {

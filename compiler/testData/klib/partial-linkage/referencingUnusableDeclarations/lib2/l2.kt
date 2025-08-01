@@ -71,6 +71,23 @@ fun invokeInnerToNestedConstructorWithDispatchReceiver(obj: ClassWithChangedMemb
 
 fun referenceFunctionWithUnlinkedParameter(): String = ::functionWithUnlinkedParameter.name
 fun referenceFunctionWithUnlinkedReturnValue(): String = ::functionWithUnlinkedReturnValue.name
+
+class MyList<T> /* A non-inlining version of `kotlin.collections.listOf` */ constructor(vararg items: T) {
+    private val items = items.toMutableList()
+
+    // A non-inlining version of `kotlin.collections.map`.
+    fun <R> myMap(transform: (T) -> R): MyList<R> {
+        val result = MyList<R>()
+        for (item in this.items) {
+            result.items.add(transform(item))
+        }
+        return result
+    }
+
+    // A non-inlining version of `kotlin.collections.joinToString`.
+    fun myJoinToString() = items.joinToString()
+}
+
 fun referenceFunctionWithRemovedTypeParameter(): String {
     /*
      * The syntax of function references does not allow explicitly specifying type arguments.
@@ -78,7 +95,7 @@ fun referenceFunctionWithRemovedTypeParameter(): String {
      * `::functionWithRemovedTypeParameter` statement. So let's put the reference into
      * the context with evident type arguments.
      */
-    return listOf<Any?>(null).map<Any?, RemovedClassImpl>(::functionWithRemovedTypeParameter).joinToString()
+    return MyList<Any?>(null).myMap<RemovedClassImpl>(::functionWithRemovedTypeParameter).myJoinToString()
 }
 
 abstract class StableAbstractFunctionsHolder {
