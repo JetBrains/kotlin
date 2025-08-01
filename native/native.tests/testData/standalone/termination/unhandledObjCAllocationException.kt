@@ -1,6 +1,7 @@
 // EXIT_CODE: !0
 // OUTPUT_REGEX: Hook\R\*\*\* \+\[NSJSONSerialization allocWithZone:\](?!.*FAIL.*).*
 // DISABLE_NATIVE: isAppleTarget=false
+// WITH_PLATFORM_LIBS
 @file:OptIn(kotlinx.cinterop.ExperimentalForeignApi::class)
 
 import kotlinx.cinterop.*

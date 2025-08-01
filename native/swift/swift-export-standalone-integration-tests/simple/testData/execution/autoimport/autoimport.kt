@@ -1,4 +1,5 @@
 // KIND: STANDALONE
+// WITH_PLATFORM_LIBS
 // MODULE: Autoimport
 // FILE: autoimport.kt
 

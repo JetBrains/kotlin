@@ -1,5 +1,6 @@
 // KIND: STANDALONE
 // FREE_COMPILER_ARGS: -opt-in=kotlinx.cinterop.ExperimentalForeignApi
+// WITH_PLATFORM_LIBS
 // APPLE_ONLY_VALIDATION
 // MODULE: main
 // FILE: main.kt
