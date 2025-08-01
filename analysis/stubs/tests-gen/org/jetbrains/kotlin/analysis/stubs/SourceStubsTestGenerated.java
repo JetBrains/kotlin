@@ -3962,6 +3962,12 @@ public class SourceStubsTestGenerated extends AbstractSourceStubsTest {
     }
 
     @Test
+    @TestMetadata("localClass.kts")
+    public void testLocalClass() {
+      runTest("compiler/testData/psi/script/localClass.kts");
+    }
+
+    @Test
     @TestMetadata("manyAnnotationsOnFile.kts")
     public void testManyAnnotationsOnFile() {
       runTest("compiler/testData/psi/script/manyAnnotationsOnFile.kts");

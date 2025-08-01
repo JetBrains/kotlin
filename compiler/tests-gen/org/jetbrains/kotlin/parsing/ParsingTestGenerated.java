@@ -3531,6 +3531,11 @@ public class ParsingTestGenerated extends AbstractParsingTest {
         runTest("compiler/testData/psi/script/Import.kts");
       }
 
+      @TestMetadata("localClass.kts")
+      public void testLocalClass() {
+        runTest("compiler/testData/psi/script/localClass.kts");
+      }
+
       @TestMetadata("manyAnnotationsOnFile.kts")
       public void testManyAnnotationsOnFile() {
         runTest("compiler/testData/psi/script/manyAnnotationsOnFile.kts");
