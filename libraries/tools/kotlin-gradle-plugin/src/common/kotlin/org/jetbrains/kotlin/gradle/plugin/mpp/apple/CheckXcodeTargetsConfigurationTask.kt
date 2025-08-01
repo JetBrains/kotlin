@@ -18,12 +18,11 @@ import org.gradle.api.tasks.*
 import org.gradle.process.ExecOperations
 import org.gradle.work.DisableCachingByDefault
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
-import org.jetbrains.kotlin.gradle.plugin.KotlinProjectSetupAction
+import org.jetbrains.kotlin.gradle.plugin.KotlinProjectSetupCoroutine
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.UsesKotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.ide.Idea222Api
 import org.jetbrains.kotlin.gradle.plugin.ide.ideaImportDependsOn
-import org.jetbrains.kotlin.gradle.plugin.launch
 import org.jetbrains.kotlin.gradle.plugin.mpp.Framework
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
@@ -42,18 +41,28 @@ import javax.inject.Inject
  * This ensures the expensive `plutil` command is only run when the Xcode project changes,
  * while the cheap validation task runs whenever the JSON changes, consistently re-issuing warnings.
  */
-internal val CheckXcodeTargetsConfigurationSetupAction = KotlinProjectSetupAction {
-    launch {
-        if (!shouldSetupXcodeConfiguration()) {
-            return@launch
-        }
-
-        val appleTargets = getAppleTargetsWithFrameworkBinaries()
-        val projectPath = project.xcodeProjectPath ?: return@launch
-
-        val convertTask = registerConvertPbxprojToJsonTask(projectPath)
-        registerCheckXcodeTargetsConfigurationTask(appleTargets, projectPath, convertTask)
+internal val CheckXcodeTargetsConfigurationSetupAction = KotlinProjectSetupCoroutine {
+    // 1. Check if there are any apple targets with frameworks. If not, the check is not needed.
+    if (!shouldSetupXcodeConfiguration()) {
+        return@KotlinProjectSetupCoroutine
     }
+
+    // 2. Check for the Xcode project path. If it's not found, log an informational message.
+    val projectPath = project.xcodeProjectPath
+    if (projectPath == null) {
+        val searchedPaths = project.xcodeProjectSearchedPaths
+        logger.info(
+            "Kotlin Xcode project checker: .xcodeproj directory not found. Searched in:\n" +
+                    searchedPaths.joinToString("\n") { " - ${it.path}" } +
+                    "\nSkipping task registration."
+        )
+        return@KotlinProjectSetupCoroutine
+    }
+
+    // 3. If everything is in place, register the tasks.
+    val appleTargets = getAppleTargetsWithFrameworkBinaries()
+    val convertTask = registerConvertPbxprojToJsonTask(projectPath)
+    registerCheckXcodeTargetsConfigurationTask(appleTargets, projectPath, convertTask)
 }
 
 private suspend fun Project.shouldSetupXcodeConfiguration(): Boolean {
@@ -149,8 +158,11 @@ internal abstract class ConvertPbxprojToJsonTask : DefaultTask() {
                     pbxprojFile.get().asFile.absolutePath
                 )
             }
-        } catch (e: Exception) {
-            logger.error("Failed to execute 'plutil' on '${pbxprojFile.get().asFile.path}'. The file might be malformed or 'plutil' is not in PATH.")
+        } catch (exception: Exception) {
+            logger.error(
+                "Failed to execute 'plutil' on '${pbxprojFile.get().asFile.path}'. The file might be malformed or 'plutil' is not in PATH.",
+                exception
+            )
             jsonFile.get().asFile.writeText("{}") // Write empty JSON on failure
         }
     }
@@ -194,8 +206,13 @@ internal abstract class CheckXcodeTargetsConfigurationTask : DefaultTask(), Uses
         val gson = Gson()
         val xcodeTargets = parseXcodeTargets(pbxprojContent, gson, logger) ?: return
 
+        // We are only interested in Xcode targets that produce a runnable application,
+        // as these are the targets that will consume the Kotlin framework.
+        // These strings are Apple's official "Product Type Identifiers".
         val xcodeAppTargets = xcodeTargets.filter {
+            // Standard identifier for iOS, macOS, and tvOS applications.
             it.productType == "com.apple.product-type.application" ||
+                    // Special identifier for the iOS application that acts as a container for a watchOS app.
                     it.productType == "com.apple.product-type.application.watchapp2-container"
         }
 
@@ -238,9 +255,10 @@ internal abstract class CheckXcodeTargetsConfigurationTask : DefaultTask(), Uses
                 parseSingleNativeTarget(targetId, objects, projectConfigs, gson)
             }.toSet()
 
-        } catch (e: Exception) {
+        } catch (exception: Exception) {
             logger.error(
-                "Failed to parse the JSON file for '${xcodeProjectPath.getFile().path}'. The file might be malformed.\nError: ${e.message ?: "Unknown"}"
+                "Failed to parse the JSON file for '${xcodeProjectPath.getFile().path}'. The file might be malformed.",
+                exception
             )
             return null
         }
@@ -359,16 +377,14 @@ private fun getExpectedSdkRoot(target: KonanTarget) = when (target.family) {
     else -> unknownSdkRoot
 }
 
-private val Project.xcodeProjectPath: File?
+private val Project.xcodeProjectSearchedPaths: List<File>
     get() {
-        // A heuristic to find the `.xcodeproj` directory.
-        // It's not guaranteed to work for all project structures.
         val commonPath = "iosApp/iosApp.xcodeproj"
-        val iosProject = layout.projectDirectory.asFile.resolve(commonPath)
-        if (iosProject.exists()) return iosProject
-
-        val rootProjectIos = rootDir.resolve(commonPath)
-        if (rootProjectIos.exists()) return rootProjectIos
-
-        return null
+        return listOf(
+            layout.projectDirectory.asFile.resolve(commonPath),
+            rootDir.resolve(commonPath)
+        )
     }
+
+private val Project.xcodeProjectPath: File?
+    get() = xcodeProjectSearchedPaths.firstOrNull { it.exists() }
