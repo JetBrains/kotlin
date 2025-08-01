@@ -605,7 +605,8 @@ class DurationTest {
             "P9999999999999DT-9999999999999H", "P-9999999999999DT+9999999999999H",
             "PT1.5H", "PT0.5D", "PT.5S", "PT0.25.25S", "PT1.S",
             "PT+-2H", "PT-+2H", "PT+-01234567890123456S",
-            "PT-9999999999999H1M99999999999999999999999999.1S"
+            "PT-9999999999999H1M99999999999999999999999999.1S",
+            "P9999999999999DT-999999999999999999M"
         )) {
             assertNull(Duration.parseIsoStringOrNull(invalidValue), invalidValue)
             assertFailsWith<IllegalArgumentException>(invalidValue) { Duration.parseIsoString(invalidValue) }.let { e ->
