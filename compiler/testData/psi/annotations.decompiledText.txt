@@ -38,7 +38,7 @@ Annotations.class:
 
       @a protected final fun f(): kotlin.Unit { /* compiled code */ }
 
-      public final inline fun <reified @a T, @a F> inlineFun(): kotlin.Unit { /* compiled code */ }
+      public final inline fun <@a reified T, @a F> inlineFun(): kotlin.Unit { /* compiled code */ }
 
       private final fun annotationWithVararg(@a vararg i: kotlin.Int): kotlin.Unit { /* compiled code */ }
 

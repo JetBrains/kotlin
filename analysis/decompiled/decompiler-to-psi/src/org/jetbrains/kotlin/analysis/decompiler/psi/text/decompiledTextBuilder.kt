@@ -149,16 +149,7 @@ internal fun buildDecompiledText(fileStub: KotlinFileStub): String = PrettyPrint
         }
 
         override fun visitTypeParameter(parameter: KtTypeParameter) {
-            // TODO: use visitor directly. This is a workaround to render `refined` keyword before annotations
-            parameter.modifierList?.let { modifierList ->
-                withSuffix(" ") {
-                    " ".separated(
-                        { printModifiers(modifierList) },
-                        { printAnnotations(modifierList) },
-                    )
-                }
-            }
-
+            withSuffix(" ") { parameter.modifierList?.accept(this) }
             append(parameter.name?.quoteIfNeeded())
             withPrefix(" : ") { parameter.extendsBound?.accept(this) }
         }
