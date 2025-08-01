@@ -73,7 +73,7 @@ context(c: TypeSystemInferenceExtensionContext)
 fun CapturedTypeMarker.typeParameter(): TypeParameterMarker? = with(c) { typeParameter() }
 
 context(c: TypeSystemInferenceExtensionContext)
-fun CapturedTypeMarker.hasRawSuperType(): Boolean = with(c) { hasRawSuperType() }
+fun CapturedTypeMarker.hasRawSuperTypeRecursive(): Boolean = with(c) { hasRawSuperTypeRecursive() }
 
 context(c: TypeSystemInferenceExtensionContext)
 fun TypeVariableMarker.defaultType(): SimpleTypeMarker = with(c) { defaultType() }

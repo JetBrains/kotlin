@@ -403,9 +403,15 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
         return false
     }
 
-    override fun CapturedTypeMarker.hasRawSuperType(): Boolean {
+    override fun CapturedTypeMarker.hasRawSuperTypeRecursive(): Boolean {
         require(this is ConeCapturedType)
-        return constructor.supertypes?.any(ConeKotlinType::isRaw) == true
+        return hasRawSuperTypeInternal(hashSetOf())
+    }
+
+    private fun ConeCapturedType.hasRawSuperTypeInternal(seen: HashSet<ConeCapturedType>): Boolean {
+        return constructor.supertypes?.any { superType ->
+            superType.isRaw() || superType.contains { it is ConeCapturedType && seen.add(it) && it.hasRawSuperTypeInternal(seen) }
+        } == true
     }
 
     override fun DefinitelyNotNullTypeMarker.original(): ConeSimpleKotlinType {

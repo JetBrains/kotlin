@@ -255,7 +255,7 @@ interface TypeSystemInferenceExtensionContext : TypeSystemContext, TypeSystemBui
     /**
      * Only for K2.
      */
-    fun CapturedTypeMarker.hasRawSuperType(): Boolean
+    fun CapturedTypeMarker.hasRawSuperTypeRecursive(): Boolean
 
     fun TypeVariableMarker.defaultType(): SimpleTypeMarker
 

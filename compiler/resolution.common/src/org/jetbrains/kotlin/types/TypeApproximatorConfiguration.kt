@@ -175,7 +175,7 @@ abstract class TypeApproximatorConfiguration {
              * This is an awful hack required to keep K1 compatibility.
              * See [convertToNonRawVersionAfterApproximationInK2].
              */
-            return type.captureStatus() == CaptureStatus.FROM_EXPRESSION && type.hasRawSuperType()
+            return type.captureStatus() == CaptureStatus.FROM_EXPRESSION && type.hasRawSuperTypeRecursive()
         }
     }
 
