@@ -49,11 +49,11 @@ ContextReceiversCallableMembers.class:
         PROPERTY[fqName=ContextReceiversCallableMembers.property, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=true, isTopLevel=false, isVar=false, name=property]
           MODIFIER_LIST[private final]
             CONTEXT_RECEIVER_LIST
-              CONTEXT_RECEIVER[label=null]
+              VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=A]
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=A]
-              CONTEXT_RECEIVER[label=null]
+              VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=B]
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=B]
@@ -78,11 +78,11 @@ ContextReceiversCallableMembers.class:
         PROPERTY[fqName=ContextReceiversCallableMembers.propertyWithSetter, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=true, isTopLevel=false, isVar=true, name=propertyWithSetter]
           MODIFIER_LIST[private final]
             CONTEXT_RECEIVER_LIST
-              CONTEXT_RECEIVER[label=null]
+              VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=A]
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=A]
-              CONTEXT_RECEIVER[label=null]
+              VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=B]
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=B]
@@ -116,11 +116,11 @@ ContextReceiversCallableMembers.class:
         FUN[fqName=ContextReceiversCallableMembers.function, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=false, mayHaveContract=false, name=function]
           MODIFIER_LIST[private final]
             CONTEXT_RECEIVER_LIST
-              CONTEXT_RECEIVER[label=null]
+              VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=A]
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=A]
-              CONTEXT_RECEIVER[label=null]
+              VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=B]
                 TYPE_REFERENCE
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=B]

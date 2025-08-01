@@ -14,7 +14,7 @@ KaNamedFunctionSymbol:
       isVal: true
       location: LOCAL
       modality: FINAL
-      name: <unused var>
+      name: Int
       origin: LIBRARY
       receiverParameter: null
       returnType: KaUsualClassType:
@@ -37,7 +37,7 @@ KaNamedFunctionSymbol:
       isVal: true
       location: LOCAL
       modality: FINAL
-      name: <unused var>
+      name: String
       origin: LIBRARY
       receiverParameter: null
       returnType: KaUsualClassType:
@@ -52,13 +52,13 @@ KaNamedFunctionSymbol:
   ]
   contextReceivers: [
     KaContextReceiver:
-      label: <unused var>
+      label: Int
       type: KaUsualClassType:
         annotations: []
         typeArguments: []
         type: kotlin/Int
     KaContextReceiver:
-      label: <unused var>
+      label: String
       type: KaUsualClassType:
         annotations: []
         typeArguments: []

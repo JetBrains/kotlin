@@ -36,11 +36,11 @@ ContextParametersOnTopLevelCallablesKt.class:
     PROPERTY[fqName=property, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=true, isTopLevel=true, isVar=false, name=property]
       MODIFIER_LIST[public]
         CONTEXT_RECEIVER_LIST
-          CONTEXT_RECEIVER[label=null]
+          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=a]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=A]
-          CONTEXT_RECEIVER[label=null]
+          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=_]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=B]
@@ -65,11 +65,11 @@ ContextParametersOnTopLevelCallablesKt.class:
     PROPERTY[fqName=propertyWithSetter, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=true, isTopLevel=true, isVar=true, name=propertyWithSetter]
       MODIFIER_LIST[public]
         CONTEXT_RECEIVER_LIST
-          CONTEXT_RECEIVER[label=null]
+          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=a]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=A]
-          CONTEXT_RECEIVER[label=null]
+          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=_]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=B]
@@ -103,11 +103,11 @@ ContextParametersOnTopLevelCallablesKt.class:
     FUN[fqName=function, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=true, isTopLevel=true, mayHaveContract=false, name=function]
       MODIFIER_LIST[public]
         CONTEXT_RECEIVER_LIST
-          CONTEXT_RECEIVER[label=null]
+          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=a]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=A]
-          CONTEXT_RECEIVER[label=null]
+          VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=_]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=B]

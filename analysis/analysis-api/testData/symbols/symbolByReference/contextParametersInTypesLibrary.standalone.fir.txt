@@ -14,7 +14,7 @@ KaNamedFunctionSymbol:
       isVal: true
       location: LOCAL
       modality: FINAL
-      name: _
+      name: <unused var>
       origin: LIBRARY
       receiverParameter: null
       returnType: KaTypeParameterType:

@@ -17,14 +17,14 @@ ContextParametersOnTopLevelCallablesKt.class:
   // IntelliJ API Decompiler stub source generated from a class file
   // Implementation of methods is not available
 
-  context(A, B) @MyAnnotation public val kotlin.Int.property: kotlin.Int /* compiled code */
+  context(a: A, _: B) @MyAnnotation public val kotlin.Int.property: kotlin.Int /* compiled code */
       public final get() { /* compiled code */ }
 
-  context(A, B) @MyAnnotation public var kotlin.Int.propertyWithSetter: kotlin.Int /* compiled code */
+  context(a: A, _: B) @MyAnnotation public var kotlin.Int.propertyWithSetter: kotlin.Int /* compiled code */
       public final get() { /* compiled code */ }
       public final set(v: kotlin.Int) { /* compiled code */ }
 
-  context(A, B) @MyAnnotation public fun kotlin.Int.function(): kotlin.Int { /* compiled code */ }
+  context(a: A, _: B) @MyAnnotation public fun kotlin.Int.function(): kotlin.Int { /* compiled code */ }
 
 MyAnnotation.class:
   // IntelliJ API Decompiler stub source generated from a class file

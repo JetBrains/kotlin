@@ -24,6 +24,8 @@ import org.jetbrains.kotlin.metadata.jvm.JvmProtoBuf
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
+import org.jetbrains.kotlin.protobuf.MessageLite
+import org.jetbrains.kotlin.psi.KtContextReceiverList
 import org.jetbrains.kotlin.psi.KtParameterList
 import org.jetbrains.kotlin.psi.stubs.KotlinPropertyStub
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
@@ -107,6 +109,7 @@ abstract class CallableClsStubBuilder(
     protected val typeStubBuilder = TypeClsStubBuilder(c)
     protected val isTopLevel: Boolean get() = protoContainer is ProtoContainer.Package
     protected val callableStub: StubElement<out PsiElement> by lazy(LazyThreadSafetyMode.NONE) { doCreateCallableStub(parent) }
+    protected abstract val callableProto: MessageLite
 
     fun build() {
         createModifierListStub()
@@ -123,6 +126,7 @@ abstract class CallableClsStubBuilder(
 
     abstract val returnType: ProtoBuf.Type?
     abstract val contextReceiverTypes: List<ProtoBuf.Type>
+    abstract val contextParameters: List<ProtoBuf.ValueParameter>
 
     private fun createReceiverTypeReferenceStub() {
         receiverType?.let {
@@ -149,8 +153,35 @@ abstract class CallableClsStubBuilder(
             returnValueStatus = returnValueStatus,
         )
 
-        typeStubBuilder.createContextReceiverStubs(modifierListStub, contextReceiverTypes)
+        createContextParameterStubs(modifierListStub)
         return modifierListStub
+    }
+
+    protected fun createContextParameterStubs(modifierListStub: KotlinModifierListStubImpl) {
+        val contextParameters = contextParameters
+        if (contextParameters.isEmpty()) {
+            // Fallback for old metadata where context parameters don't exist (KT-74546)
+            return typeStubBuilder.createContextReceiverStubs(modifierListStub, contextReceiverTypes)
+        }
+
+        val contextReceiverListStub = KotlinPlaceHolderStubImpl<KtContextReceiverList>(
+            modifierListStub,
+            KtStubElementTypes.CONTEXT_RECEIVER_LIST,
+        )
+
+        typeStubBuilder.createValueParameterStubs(
+            contextParameters,
+            contextReceiverListStub,
+            protoContainer,
+            callableProto,
+            when (callableProto) {
+                is ProtoBuf.Function -> AnnotatedCallableKind.FUNCTION
+                // Context parameters are declared on getters/setters
+                is ProtoBuf.Property -> AnnotatedCallableKind.PROPERTY_GETTER
+                else -> error("Unsupported callable proto: ${callableProto::class.simpleName}")
+            },
+            isContextParameter = true,
+        )
     }
 
     abstract fun createModifierListStub()
@@ -181,8 +212,14 @@ private class FunctionClsStubBuilder(
     override val returnType: ProtoBuf.Type
         get() = functionProto.returnType(c.typeTable)
 
+    override val callableProto: MessageLite
+        get() = functionProto
+
     override val contextReceiverTypes: List<ProtoBuf.Type>
         get() = functionProto.contextReceiverTypes(c.typeTable)
+
+    override val contextParameters: List<ProtoBuf.ValueParameter>
+        get() = functionProto.contextParameterList
 
     override fun createValueParameterList() {
         typeStubBuilder.createValueParameterListStub(callableStub, functionProto, functionProto.valueParameterList, protoContainer)
@@ -259,8 +296,14 @@ private class PropertyClsStubBuilder(
     override val returnType: ProtoBuf.Type
         get() = propertyProto.returnType(c.typeTable)
 
+    override val contextParameters: List<ProtoBuf.ValueParameter>
+        get() = propertyProto.contextParameterList
+
     override val contextReceiverTypes: List<ProtoBuf.Type>
         get() = propertyProto.contextReceiverTypes(c.typeTable)
+
+    override val callableProto: MessageLite
+        get() = propertyProto
 
     override fun createValueParameterList() {
     }
@@ -552,8 +595,14 @@ private class ConstructorClsStubBuilder(
     override val returnType: ProtoBuf.Type?
         get() = null
 
+    override val contextParameters: List<ProtoBuf.ValueParameter>
+        get() = emptyList()
+
     override val contextReceiverTypes: List<ProtoBuf.Type>
         get() = emptyList()
+
+    override val callableProto: MessageLite
+        get() = constructorProto
 
     override fun createValueParameterList() {
         typeStubBuilder.createValueParameterListStub(callableStub, constructorProto, constructorProto.valueParameterList, protoContainer)

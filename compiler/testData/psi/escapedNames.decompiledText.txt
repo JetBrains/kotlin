@@ -38,7 +38,7 @@ Top Level Class.class:
           public final get() { /* compiled code */ }
           public final set(value: `one two`.`three four`.`Top Level Class`<`Type Parameter`>?) { /* compiled code */ }
 
-      context(`one two`.`three four`.`Top Level Class`<`Type Parameter`> /* from: `one two`.`three four`.`Top Level Class`.`Member Level TypeAlias`<`Type Parameter`> */) public final fun `one two`.`three four`.`Top Level Object`.`Member Level Interface`.`member function`(`parameter name`: `one two`.`three four`.`Top Level Class`<`Type Parameter`>): kotlin.Unit { /* compiled code */ }
+      context(`context name`: `one two`.`three four`.`Top Level Class`<`Type Parameter`> /* from: `one two`.`three four`.`Top Level Class`.`Member Level TypeAlias`<`Type Parameter`> */) public final fun `one two`.`three four`.`Top Level Object`.`Member Level Interface`.`member function`(`parameter name`: `one two`.`three four`.`Top Level Class`<`Type Parameter`>): kotlin.Unit { /* compiled code */ }
 
       @`one two`.`three four`.`Annotation Class` public typealias `Member Level TypeAlias`<T> = `one two`.`three four`.`Top Level Class`<T>
   }
@@ -62,4 +62,3 @@ Top Level Object.class:
       public interface `Member Level Interface` {
       }
   }
-

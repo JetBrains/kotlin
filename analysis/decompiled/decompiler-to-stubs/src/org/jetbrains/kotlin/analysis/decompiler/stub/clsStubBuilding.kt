@@ -328,10 +328,8 @@ fun Name.ref() = StringRef.fromString(this.asString())!!
 
 fun FqName.ref() = StringRef.fromString(this.asString())!!
 
-fun computeParameterName(name: Name): Name {
-    return when {
-        name == SpecialNames.IMPLICIT_SET_PARAMETER -> StandardNames.DEFAULT_VALUE_PARAMETER
-        SpecialNames.isAnonymousParameterName(name) -> Name.identifier("_")
-        else -> name
-    }
+fun computeParameterName(name: Name): Name = when {
+    name == SpecialNames.IMPLICIT_SET_PARAMETER -> StandardNames.DEFAULT_VALUE_PARAMETER
+    name == SpecialNames.UNDERSCORE_FOR_UNUSED_VAR || SpecialNames.isAnonymousParameterName(name) -> Name.identifier("_")
+    else -> name
 }

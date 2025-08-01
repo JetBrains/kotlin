@@ -4,7 +4,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=TrailingCommaKt]]
   PROPERTY[fqName=foo, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=foo]
     MODIFIER_LIST[public]
       CONTEXT_RECEIVER_LIST
-        CONTEXT_RECEIVER[label=null]
+        VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=s]
           TYPE_REFERENCE
             USER_TYPE
               USER_TYPE
@@ -21,13 +21,13 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=TrailingCommaKt]]
   PROPERTY[fqName=foo, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=true, isVar=false, name=foo]
     MODIFIER_LIST[public]
       CONTEXT_RECEIVER_LIST
-        CONTEXT_RECEIVER[label=null]
+        VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=s]
           TYPE_REFERENCE
             USER_TYPE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=String]
-        CONTEXT_RECEIVER[label=null]
+        VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=t]
           TYPE_REFERENCE
             USER_TYPE
               USER_TYPE
@@ -44,7 +44,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=TrailingCommaKt]]
   FUN[fqName=foo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo]
     MODIFIER_LIST[public]
       CONTEXT_RECEIVER_LIST
-        CONTEXT_RECEIVER[label=null]
+        VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=s]
           TYPE_REFERENCE
             USER_TYPE
               USER_TYPE
@@ -59,13 +59,13 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=TrailingCommaKt]]
   FUN[fqName=foo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo]
     MODIFIER_LIST[public]
       CONTEXT_RECEIVER_LIST
-        CONTEXT_RECEIVER[label=null]
+        VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=s]
           TYPE_REFERENCE
             USER_TYPE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=String]
-        CONTEXT_RECEIVER[label=null]
+        VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=t]
           TYPE_REFERENCE
             USER_TYPE
               USER_TYPE

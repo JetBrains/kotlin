@@ -39,7 +39,13 @@ Foo.class:
         PROPERTY[fqName=Foo.contextParameter2, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=contextParameter2]
           MODIFIER_LIST[public final]
             CONTEXT_RECEIVER_LIST
-              CONTEXT_RECEIVER[label=null]
+              VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=_]
+                MODIFIER_LIST[]
+                  ANNOTATION_ENTRY[hasValueArguments=false, shortName=Anno]
+                    CONSTRUCTOR_CALLEE
+                      TYPE_REFERENCE
+                        USER_TYPE
+                          REFERENCE_EXPRESSION[referencedName=Anno]
                 TYPE_REFERENCE
                   MODIFIER_LIST[suspend]
                     ANNOTATION_ENTRY[hasValueArguments=false, shortName=Anno]
@@ -54,7 +60,7 @@ Foo.class:
                         USER_TYPE
                           REFERENCE_EXPRESSION[referencedName=kotlin]
                         REFERENCE_EXPRESSION[referencedName=Unit]
-              CONTEXT_RECEIVER[label=null]
+              VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=_]
                 TYPE_REFERENCE
                   MODIFIER_LIST[suspend]
                   FUNCTION_TYPE
@@ -81,7 +87,7 @@ Foo.class:
         PROPERTY[fqName=Foo.dnnP, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=true, isTopLevel=false, isVar=false, name=dnnP]
           MODIFIER_LIST[public final]
             CONTEXT_RECEIVER_LIST
-              CONTEXT_RECEIVER[label=null]
+              VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=_]
                 TYPE_REFERENCE
                   INTERSECTION_TYPE
                     TYPE_REFERENCE
@@ -90,7 +96,7 @@ Foo.class:
                     TYPE_REFERENCE
                       USER_TYPE
                         REFERENCE_EXPRESSION[referencedName=Any]
-              CONTEXT_RECEIVER[label=null]
+              VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=_]
                 TYPE_REFERENCE
                   INTERSECTION_TYPE
                     TYPE_REFERENCE
@@ -122,7 +128,13 @@ Foo.class:
         PROPERTY[fqName=Foo.contextParameter3, hasBackingField=false, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=contextParameter3]
           MODIFIER_LIST[public final]
             CONTEXT_RECEIVER_LIST
-              CONTEXT_RECEIVER[label=null]
+              VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=_]
+                MODIFIER_LIST[]
+                  ANNOTATION_ENTRY[hasValueArguments=false, shortName=Anno]
+                    CONSTRUCTOR_CALLEE
+                      TYPE_REFERENCE
+                        USER_TYPE
+                          REFERENCE_EXPRESSION[referencedName=Anno]
                 TYPE_REFERENCE
                   MODIFIER_LIST[suspend]
                     ANNOTATION_ENTRY[hasValueArguments=false, shortName=Anno]
@@ -144,7 +156,7 @@ Foo.class:
                         USER_TYPE
                           REFERENCE_EXPRESSION[referencedName=kotlin]
                         REFERENCE_EXPRESSION[referencedName=Unit]
-              CONTEXT_RECEIVER[label=null]
+              VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=_]
                 TYPE_REFERENCE
                   MODIFIER_LIST[suspend]
                   FUNCTION_TYPE
@@ -198,7 +210,13 @@ Foo.class:
         FUN[fqName=Foo.contextParameter, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=contextParameter]
           MODIFIER_LIST[public final]
             CONTEXT_RECEIVER_LIST
-              CONTEXT_RECEIVER[label=null]
+              VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=_]
+                MODIFIER_LIST[]
+                  ANNOTATION_ENTRY[hasValueArguments=false, shortName=Anno]
+                    CONSTRUCTOR_CALLEE
+                      TYPE_REFERENCE
+                        USER_TYPE
+                          REFERENCE_EXPRESSION[referencedName=Anno]
                 TYPE_REFERENCE
                   MODIFIER_LIST[suspend]
                     ANNOTATION_ENTRY[hasValueArguments=false, shortName=Anno]
@@ -213,7 +231,7 @@ Foo.class:
                         USER_TYPE
                           REFERENCE_EXPRESSION[referencedName=kotlin]
                         REFERENCE_EXPRESSION[referencedName=Unit]
-              CONTEXT_RECEIVER[label=null]
+              VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=_]
                 TYPE_REFERENCE
                   MODIFIER_LIST[suspend]
                   FUNCTION_TYPE
@@ -238,7 +256,7 @@ Foo.class:
         FUN[fqName=Foo.dnnF, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=true, isTopLevel=false, mayHaveContract=false, name=dnnF]
           MODIFIER_LIST[public final]
             CONTEXT_RECEIVER_LIST
-              CONTEXT_RECEIVER[label=null]
+              VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=_]
                 TYPE_REFERENCE
                   INTERSECTION_TYPE
                     TYPE_REFERENCE
@@ -247,7 +265,7 @@ Foo.class:
                     TYPE_REFERENCE
                       USER_TYPE
                         REFERENCE_EXPRESSION[referencedName=Any]
-              CONTEXT_RECEIVER[label=null]
+              VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=_]
                 TYPE_REFERENCE
                   INTERSECTION_TYPE
                     TYPE_REFERENCE
@@ -277,7 +295,13 @@ Foo.class:
         FUN[fqName=Foo.contextParameter4, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=contextParameter4]
           MODIFIER_LIST[public final]
             CONTEXT_RECEIVER_LIST
-              CONTEXT_RECEIVER[label=null]
+              VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=_]
+                MODIFIER_LIST[]
+                  ANNOTATION_ENTRY[hasValueArguments=false, shortName=Anno]
+                    CONSTRUCTOR_CALLEE
+                      TYPE_REFERENCE
+                        USER_TYPE
+                          REFERENCE_EXPRESSION[referencedName=Anno]
                 TYPE_REFERENCE
                   MODIFIER_LIST[suspend]
                     ANNOTATION_ENTRY[hasValueArguments=false, shortName=Anno]
@@ -299,7 +323,7 @@ Foo.class:
                         USER_TYPE
                           REFERENCE_EXPRESSION[referencedName=kotlin]
                         REFERENCE_EXPRESSION[referencedName=Unit]
-              CONTEXT_RECEIVER[label=null]
+              VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=_]
                 TYPE_REFERENCE
                   MODIFIER_LIST[suspend]
                   FUNCTION_TYPE

@@ -1,12 +1,12 @@
 // IntelliJ API Decompiler stub source generated from a class file
 // Implementation of methods is not available
 
-context(kotlin.String) public val foo: kotlin.String /* compiled code */
+context(s: kotlin.String) public val foo: kotlin.String /* compiled code */
     public final get() { /* compiled code */ }
 
-context(kotlin.String, kotlin.Int) public val foo: kotlin.String /* compiled code */
+context(s: kotlin.String, t: kotlin.Int) public val foo: kotlin.String /* compiled code */
     public final get() { /* compiled code */ }
 
-context(kotlin.String) public fun foo(): kotlin.Unit { /* compiled code */ }
+context(s: kotlin.String) public fun foo(): kotlin.Unit { /* compiled code */ }
 
-context(kotlin.String, kotlin.Int) public fun foo(): kotlin.Unit { /* compiled code */ }
+context(s: kotlin.String, t: kotlin.Int) public fun foo(): kotlin.Unit { /* compiled code */ }
