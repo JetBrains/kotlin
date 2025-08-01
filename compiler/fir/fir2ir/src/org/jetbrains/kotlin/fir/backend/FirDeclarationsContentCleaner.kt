@@ -6,9 +6,13 @@
 package org.jetbrains.kotlin.fir.backend
 
 import org.jetbrains.kotlin.config.AnalysisFlags
+import org.jetbrains.kotlin.fir.FirImplementationDetail
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.declarations.*
+import org.jetbrains.kotlin.fir.declarations.utils.hasBackingField
+import org.jetbrains.kotlin.fir.declarations.utils.hasBackingFieldAttr
 import org.jetbrains.kotlin.fir.expressions.builder.buildExpressionStub
+import org.jetbrains.kotlin.fir.render
 import org.jetbrains.kotlin.fir.serialization.constant.hasConstantValue
 import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
@@ -96,6 +100,14 @@ sealed class FirDeclarationsContentCleaner {
         }
 
         override fun cleanProperty(property: FirProperty) {
+            // Since cleanupPropertyAccessor deletes the getter / setter body,
+            // it may be no longer possible to compute FirProperty.hasBackingField correctly,
+            // so we preserve it here.
+            // Correct backing field information may be required when producing metadata in JvmIrCodegen
+            // for non-final @Serializable classes.
+            @OptIn(FirImplementationDetail::class)
+            property.hasBackingFieldAttr = property.hasBackingField
+
             property.initializer?.let { initializer ->
                 val newInitializer = runIf(initializer.hasConstantValue(session)) {
                     buildExpressionStub {
