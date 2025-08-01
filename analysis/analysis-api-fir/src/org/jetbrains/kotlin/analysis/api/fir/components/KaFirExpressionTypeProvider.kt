@@ -92,12 +92,12 @@ internal class KaFirExpressionTypeProvider(
             } else if (expression is KtUnaryExpression && expression.operationToken in KtTokens.INCREMENT_AND_DECREMENT) {
                 fir.rValue.resolvedType.asKaType()
             } else {
-                analysisSession.builtinTypes.unit
+                null
             }
         }
         is FirExpression -> fir.resolvedType.asKaType()
         is FirNamedReference -> fir.getCorrespondingTypeIfPossible()?.asKaType()
-        is FirStatement -> with(analysisSession) { builtinTypes.unit }
+        is FirStatement -> null
         is FirTypeRef, is FirImport, is FirPackageDirective, is FirLabel, is FirTypeParameterRef -> null
 
         // `listOf<_>(1)` where `expression` is `_`

@@ -1,2 +1,2 @@
 expression: while(true) {}
-type: null
+type: kotlin.Unit

@@ -1,2 +1,2 @@
 expression: param: Int
-type: null
+type: kotlin.Unit
