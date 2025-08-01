@@ -68,7 +68,7 @@ fun getBuildFilePaths(buildFile: File?, sourceFilePaths: List<String>): List<Str
         (File(path).takeIf(File::isAbsolute) ?: buildFile.resolveSibling(path)).absolutePath
     }
 
-fun writeOutput(
+private fun writeOutput(
     configuration: CompilerConfiguration,
     outputFiles: OutputFileCollection,
     mainClassFqName: FqName?
