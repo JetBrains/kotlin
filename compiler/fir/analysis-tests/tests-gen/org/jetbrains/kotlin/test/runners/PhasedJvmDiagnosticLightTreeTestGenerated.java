@@ -34213,6 +34213,12 @@ public class PhasedJvmDiagnosticLightTreeTestGenerated extends AbstractPhasedJvm
       }
 
       @Test
+      @TestMetadata("kt79777.kt")
+      public void testKt79777() {
+        runTest("compiler/testData/diagnostics/tests/rawTypes/kt79777.kt");
+      }
+
+      @Test
       @TestMetadata("overrideRawTypedJavaMethodWithGenericTyped.kt")
       public void testOverrideRawTypedJavaMethodWithGenericTyped() {
         runTest("compiler/testData/diagnostics/tests/rawTypes/overrideRawTypedJavaMethodWithGenericTyped.kt");
