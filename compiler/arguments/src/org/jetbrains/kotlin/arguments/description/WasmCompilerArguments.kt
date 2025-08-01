@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.arguments.description
 import org.jetbrains.kotlin.arguments.dsl.base.*
 import org.jetbrains.kotlin.arguments.dsl.defaultFalse
 import org.jetbrains.kotlin.arguments.dsl.defaultNull
+import org.jetbrains.kotlin.arguments.dsl.defaultTrue
 import org.jetbrains.kotlin.arguments.dsl.types.BooleanType
 import org.jetbrains.kotlin.arguments.dsl.types.StringType
 
@@ -72,7 +73,7 @@ val actualWasmArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.wa
         name = "Xwasm-kclass-fqn"
         compilerName = "wasmKClassFqn"
         description = "Enable support for 'KClass.qualifiedName'.".asReleaseDependent()
-        valueType = BooleanType.defaultFalse
+        valueType = BooleanType.defaultTrue
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_1_20,

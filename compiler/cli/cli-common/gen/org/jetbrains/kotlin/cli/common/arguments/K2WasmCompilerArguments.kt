@@ -63,7 +63,7 @@ abstract class K2WasmCompilerArguments : CommonKlibBasedCompilerArguments() {
         value = "-Xwasm-kclass-fqn",
         description = "Enable support for 'KClass.qualifiedName'.",
     )
-    var wasmKClassFqn: Boolean = false
+    var wasmKClassFqn: Boolean = true
         set(value) {
             checkFrozen()
             field = value
