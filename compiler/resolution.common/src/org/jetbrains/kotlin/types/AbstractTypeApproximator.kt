@@ -270,7 +270,7 @@ abstract class AbstractTypeApproximator(
         // This saves us from doing twice the work unnecessarily in many cases.
         return isK2 &&
                 upperBoundConstructor.isArrayConstructor() &&
-                upperBound.getArgumentOrNull(0).let { it is CapturedTypeMarker && conf.shouldApproximateCapturedType(ctx, it) }
+                upperBound.getArgumentOrNull(0).let { it is CapturedTypeMarker && conf.shouldApproximateCapturedType(it) }
     }
 
     context(conf: TypeApproximatorConfiguration, _: Cache)
@@ -527,7 +527,7 @@ abstract class AbstractTypeApproximator(
         }
         val approximatedSubType by lazy(LazyThreadSafetyMode.NONE) { approximateToSubType(baseSubType, depth) }
 
-        if (!conf.shouldApproximateCapturedType(ctx, capturedType)) {
+        if (!conf.shouldApproximateCapturedType(capturedType)) {
             /**
              * Here everything is ok if bounds for this captured type should not be approximated.
              * But. If such bounds contains some unauthorized types, then we cannot leave this captured type "as is".
@@ -734,7 +734,7 @@ abstract class AbstractTypeApproximator(
 
             fun approximateToSuperTypeWithRecursionPrevention(): ApproximationResult? {
                 if (capturedTypeApproximationReworked && capturedType in cache.capturedTypesBeingApproximatedToSupertype) {
-                    if (conf.shouldApproximateCapturedType(ctx, capturedType!!)) {
+                    if (conf.shouldApproximateCapturedType(capturedType!!)) {
                         newArguments[index] = createStarProjection(parameter)
                     } else {
                         // Just leave the captured argument type as is
@@ -907,7 +907,7 @@ abstract class AbstractTypeApproximator(
         // SomeClass<Captured(*)> cannot be approximated to subtype as SomeClass<*>
         if (!toSuper) return false
         // We should leave the captured type as is
-        if (isK2 && !conf.shouldApproximateCapturedType(ctx, capturedType)) return false
+        if (isK2 && !conf.shouldApproximateCapturedType(capturedType)) return false
 
         // In<Captured(*)> is nicer to approximate to In<*> than In<Nothing>, independently
         // of the relation between type parameters (see below).

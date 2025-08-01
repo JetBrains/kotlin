@@ -74,8 +74,10 @@ abstract class TypeApproximatorConfiguration {
      */
     internal open fun shouldApproximateTypeVariableBasedType(marker: TypeVariableTypeConstructorMarker, isK2: Boolean): Boolean = true
 
-    open fun shouldApproximateCapturedType(ctx: TypeSystemInferenceExtensionContext, type: CapturedTypeMarker): Boolean =
-        true  // false means that this type we can leave as is
+    context(ctx: TypeSystemInferenceExtensionContext)
+    open fun shouldApproximateCapturedType(type: CapturedTypeMarker): Boolean {
+        return true  // false means that this type we can leave as is
+    }
 
     object LocalDeclaration : TypeApproximatorConfiguration() {
         override val approximateAllFlexible: Boolean get() = false
@@ -113,25 +115,23 @@ abstract class TypeApproximatorConfiguration {
         override val approximateErrorTypes: Boolean get() = false
 
         // i.e. will be approximated only approximatedCapturedStatus captured types
-        override fun shouldApproximateCapturedType(ctx: TypeSystemInferenceExtensionContext, type: CapturedTypeMarker): Boolean =
-            approximatedCapturedStatus != null && type.captureStatus(ctx) == approximatedCapturedStatus
+        context(ctx: TypeSystemInferenceExtensionContext)
+        override fun shouldApproximateCapturedType(type: CapturedTypeMarker): Boolean {
+            return approximatedCapturedStatus != null && type.captureStatus() == approximatedCapturedStatus
+        }
 
         override val intersectionStrategy: IntersectionStrategy get() = IntersectionStrategy.ALLOWED
         override fun shouldApproximateTypeVariableBasedType(marker: TypeVariableTypeConstructorMarker, isK2: Boolean): Boolean = false
     }
 
     object IncorporationConfiguration : AbstractCapturedTypesAndILTApproximation(CaptureStatus.FOR_INCORPORATION) {
-        override fun shouldApproximateCapturedType(
-            ctx: TypeSystemInferenceExtensionContext,
-            type: CapturedTypeMarker,
-        ): Boolean {
-            if (super.shouldApproximateCapturedType(ctx, type)) return true
+        context(ctx: TypeSystemInferenceExtensionContext)
+        override fun shouldApproximateCapturedType(type: CapturedTypeMarker): Boolean {
+            if (super.shouldApproximateCapturedType(type)) return true
 
             if (!ctx.isK2) return false
 
-            return with(ctx) {
-                type.contains { nested -> nested is CapturedTypeMarker && super.shouldApproximateCapturedType(ctx, nested) }
-            }
+            return type.contains { nested -> nested is CapturedTypeMarker && super.shouldApproximateCapturedType(nested) }
         }
     }
 
@@ -168,13 +168,14 @@ abstract class TypeApproximatorConfiguration {
 
         override val convertToNonRawVersionAfterApproximationInK2: Boolean get() = true
 
-        override fun shouldApproximateCapturedType(ctx: TypeSystemInferenceExtensionContext, type: CapturedTypeMarker): Boolean {
+        context(ctx: TypeSystemInferenceExtensionContext)
+        override fun shouldApproximateCapturedType(type: CapturedTypeMarker): Boolean {
             /**
              * Only approximate captured types when they contain a raw supertype.
              * This is an awful hack required to keep K1 compatibility.
              * See [convertToNonRawVersionAfterApproximationInK2].
              */
-            return type.captureStatus(ctx) == CaptureStatus.FROM_EXPRESSION && with(ctx) { type.hasRawSuperType() }
+            return type.captureStatus() == CaptureStatus.FROM_EXPRESSION && type.hasRawSuperType()
         }
     }
 
@@ -192,7 +193,8 @@ abstract class TypeApproximatorConfiguration {
         override fun shouldApproximateTypeVariableBasedType(marker: TypeVariableTypeConstructorMarker, isK2: Boolean): Boolean = false
         override val approximateErrorTypes: Boolean get() = false
 
-        override fun shouldApproximateCapturedType(ctx: TypeSystemInferenceExtensionContext, type: CapturedTypeMarker): Boolean = false
+        context(ctx: TypeSystemInferenceExtensionContext)
+        override fun shouldApproximateCapturedType(type: CapturedTypeMarker): Boolean = false
     }
 
     @AllowedToUsedOnlyInK1

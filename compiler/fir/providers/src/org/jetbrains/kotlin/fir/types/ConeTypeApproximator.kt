@@ -65,7 +65,7 @@ class ConeTypeApproximator(inferenceContext: ConeInferenceContext, languageVersi
         conf: TypeApproximatorConfiguration
     ): Boolean = when (type) {
         is ConeIntegerLiteralType -> true
-        is ConeCapturedType -> conf.shouldApproximateCapturedType(ctx, type)
+        is ConeCapturedType -> conf.shouldApproximateCapturedType(type)
         else -> false
     }
 }
