@@ -746,8 +746,11 @@ internal object DevirtualizationAnalysis {
                                                   functions: Map<DataFlowIR.FunctionSymbol, DataFlowIR.Function>,
                                                   rootSet: List<DataFlowIR.FunctionSymbol>
         ): ConstraintGraphPrecursor {
+            println("Starting graph building")
+            val startTime = System.currentTimeMillis()
             val constraintGraphBuilder = ConstraintGraphBuilder(nodesMap, functions, rootSet, true)
             constraintGraphBuilder.build()
+            println("Graph building took ${System.currentTimeMillis() - startTime} ms")
             val bagOfEdges = constraintGraphBuilder.bagOfEdges
             val directEdgesCount = constraintGraphBuilder.directEdgesCount
             val reversedEdgesCount = constraintGraphBuilder.reversedEdgesCount
