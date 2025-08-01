@@ -96,28 +96,39 @@ fun Fir2IrComponents.createSafeCallConstruction(
     val resultType = expressionOnNotNull.type.makeNullable()
     return IrBlockImpl(startOffset, endOffset, resultType, IrStatementOrigin.SAFE_CALL).apply {
         statements += receiverVariable
-        statements += IrWhenImpl(startOffset, endOffset, resultType).apply {
-            val condition = IrCallImplWithShape(
-                startOffset, endOffset, builtins.booleanType,
-                builtins.eqeqSymbol,
-                valueArgumentsCount = 2,
-                typeArgumentsCount = 0,
-                contextParameterCount = 0,
-                hasDispatchReceiver = false,
-                hasExtensionReceiver = false,
-                origin = IrStatementOrigin.EQEQ
-            ).apply {
-                arguments[0] = IrGetValueImpl(startOffset, endOffset, receiverVariableSymbol)
-                arguments[1] = IrConstImpl.constNull(startOffset, endOffset, builtins.nothingNType)
-            }
-            branches += IrBranchImpl(
-                condition, IrConstImpl.constNull(startOffset, endOffset, builtins.nothingNType)
-            )
-            branches += IrElseBranchImpl(
-                IrConstImpl.boolean(startOffset, endOffset, builtins.booleanType, true),
-                expressionOnNotNull
-            )
+        statements += createWhenForSafeFall(resultType, receiverVariableSymbol, expressionOnNotNull)
+    }
+}
+
+fun Fir2IrComponents.createWhenForSafeFall(
+    resultType: IrType,
+    receiverVariableSymbol: IrValueSymbol,
+    expressionOnNotNull: IrExpression,
+): IrWhenImpl {
+    val startOffset = expressionOnNotNull.startOffset
+    val endOffset = expressionOnNotNull.endOffset
+
+    return IrWhenImpl(startOffset, endOffset, resultType).apply {
+        val condition = IrCallImplWithShape(
+            startOffset, endOffset, builtins.booleanType,
+            builtins.eqeqSymbol,
+            valueArgumentsCount = 2,
+            typeArgumentsCount = 0,
+            contextParameterCount = 0,
+            hasDispatchReceiver = false,
+            hasExtensionReceiver = false,
+            origin = IrStatementOrigin.EQEQ
+        ).apply {
+            arguments[0] = IrGetValueImpl(startOffset, endOffset, receiverVariableSymbol)
+            arguments[1] = IrConstImpl.constNull(startOffset, endOffset, builtins.nothingNType)
         }
+        branches += IrBranchImpl(
+            condition, IrConstImpl.constNull(startOffset, endOffset, builtins.nothingNType)
+        )
+        branches += IrElseBranchImpl(
+            IrConstImpl.boolean(startOffset, endOffset, builtins.booleanType, true),
+            expressionOnNotNull
+        )
     }
 }
 
