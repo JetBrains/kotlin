@@ -1137,9 +1137,10 @@ private fun parseIsoStringFormat(
     var fractionalPart = 0.0
     var index = startIndex
     var currentLongValue = 0L
+    var sign = 1
 
     fun parseLong(firstChar: Char): Long {
-        var sign = 1
+        sign = 1
         if (firstChar == '-') {
             sign = -1
             index++
@@ -1300,7 +1301,7 @@ private fun parseIsoStringFormat(
 
             State.AFTER_DOT -> {
                 val prevIndex = index
-                fractionalPart = parseFractionalPartOfDouble() * (if (currentLongValue.sign >= 0) 1 else -1)
+                fractionalPart = parseFractionalPartOfDouble() * sign
                 if (index == prevIndex) return throwExceptionOrInvalid(throwException)
                 State.AFTER_DOUBLE
             }

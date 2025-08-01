@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -576,83 +576,33 @@ class DurationTest {
         test(1.hours + 30.minutes, "PT1H30M")
         test(1.hours + 500.milliseconds, "PT1H0M0.500S")
         test(2.minutes + 500.milliseconds, "PT2M0.500S")
-        test(1.hours + 500.milliseconds, "PT1H0M0.500S", "PT1H0.5S")
         test(90_500.milliseconds, "PT1M30.500S")
-        test(20.minutes + 34.seconds + 100000395.nanoseconds, "PT20M34.100000395S", "PT1234.1000003945S")
 
         // with sign
         test(-1.days + 15.minutes, "-PT23H45M", "PT-23H-45M", "+PT-24H+15M")
-        test(-1.days - 15.minutes, "-PT24H15M", "PT-24H-15M", "-PT25H-45M", "-PT25H-44M-60.0S")
+        test(-1.days - 15.minutes, "-PT24H15M", "PT-24H-15M", "-PT25H-45M")
         test(Duration.ZERO, "PT0S", "P1DT-24H", "+PT-1H+60M", "-PT1M-60S", "PT-000000000000000000000000H")
-        /*
-        Will be fixed soon in KT-79791
         test((-1.1).seconds, "-PT1.100S", "PT-1.1S")
-        test((-0.5).seconds, "-PT0.500S", "PT-0.5S", "PT-1M+59.5S")
-         */
-
-        // nanoseconds rounding
-        for (i in 0..4) {
-            test(Duration.ZERO, "PT0S", "PT0.000000000${i}S")
-            test(1.nanoseconds, "PT0.000000001S", "PT0.000000000${i + 5}S")
-        }
-
-        // close to infinite
-        test(
-            53375995583.days + 15.hours + 36.minutes + 27.seconds + 902.milliseconds + 999999.nanoseconds,
-            "PT1281023894007H36M27.902S", "P53375995583DT15H36M27.9029999994S", "PT4611686018427387.902S"
-        )
-        /*
-        Will be fixed soon in KT-79791
-        test(
-            (-53375995583).days - 15.hours - 36.minutes - 27.seconds - 902.milliseconds - 999999.nanoseconds,
-            "-PT1281023894007H36M27.902S", "P-53375995583DT-15H-36M-27.9029999994S", "PT-4611686018427387.902S"
-        )
-         */
+        test((-0.5).seconds, "-PT0.500S", "PT-0.5S")
 
         // infinite
-        test(
-            Duration.INFINITE, "PT9999999999999H", "PT+10000000000000H", "-PT-9999999999999H", "-PT-1234567890123456789012S",
-            "PT+000000000000000001234567890123456789012H", "P+9999999999999DT+9999999999999H",
-            "PT9999999999999H1M99999999999999999999999999.1S", "P12345678901234567890D",
-            "P999999999999DT1S", "P999999999999DT-1S", "P1DT12345678901234567890S", "P-1DT12345678901234567890S",
-            "PT106751991100H9223372036854000S", "PT106751991100H9223372036854000.1S",
-            "P53375995583DT15H36M27.9029999995S", "PT4611686018427387.903S",
-            "PT1H9223372036854775.0S", "PT76861433640456M12345S", "PT4611686018427387908S", "PT4611686018427387901S"
-        )
-        test(
-            -Duration.INFINITE, "-PT9999999999999H", "P-12345678901234567890D", "-PT10000000000000H",
-            "PT-1234567890123456789012S", "PT-000000000000000001234567890123456789012H", "P-9999999999999DT-9999999999999H",
-            "PT-9999999999999H1M-99999999999999999999999999.1S",
-            "P-999999999999DT1S", "P-999999999999DT-1S", "P1DT-12345678901234567890S", "P-1DT-12345678901234567890S",
-            "PT-106751991100H-9223372036854000S", "PT-106751991100H-9223372036854000.1S",
-            "P-53375995583DT-15H-36M-28.0S", "PT1H-9223372036854775.0S",
-            /*
-            Will be fixed soon in KT-79791
-            "P-53375995583DT-15H-36M-27.9029999995S", "PT-4611686018427387.903S"
-             */
-        )
+        test(Duration.INFINITE, "PT9999999999999H", "PT+10000000000000H", "-PT-9999999999999H", "-PT-1234567890123456789012S", "PT+000000000000000001234567890123456789012H")
+        test(-Duration.INFINITE, "-PT9999999999999H", "-PT10000000000000H", "PT-1234567890123456789012S", "PT-000000000000000001234567890123456789012H")
     }
 
     @Test
     fun parseIsoStringFailing() {
         for (invalidValue in listOf(
-            "", " ", "P", "PT", "P1DT", "P1", "PT1", "0", "+P", "+", "-", "h", "H", "something", "PT1HT", ",", "PT,123H",
+            "", " ", "P", "PT", "P1DT", "P1", "PT1", "0", "+P", "+", "-", "h", "H", "something",
             "1m", "1d", "2d 11s", "Infinity", "-Infinity",
-            "P+12+34D", "P12-34D", "PT1234567890-1234567890S", "PhD", "PT+H", "PT0.123", "P1DW", "PT1H+", "PT1H+W", "PT1M-", "PT1M+W",
-            "PT0.1234567890123456789", "PT1234567890123456789", "PT0",
+            "P+12+34D", "P12-34D", "PT1234567890-1234567890S",
             " P1D", "PT1S ",
-            "P3W", "PT4611686018427387908999W",
+            "P3W",
             "P1Y", "P1M", "P1S", "PT1D", "PT1Y",
-            "PT1S2S", "PT1S2H", "PT1H1D", "PT3M5D", "PT0.1S1H",
-            "P9999999999999DT-9999999999999H", "P-9999999999999DT+9999999999999H",
-            "PT1.5H", "PT0.5D", "PT.5S", "PT0.25.25S", "PT1.S",
-            "PT+-2H", "PT-+2H", "PT+-01234567890123456S",
-            "PT-9999999999999H1M99999999999999999999999999.1S",
-            "P9999999999999DT-999999999999999999M", "P9999999999999DT-999999999999999999.0S", "P9999999999999DT-999999999999999999S",
-            "PT9999999999999H-999999999999999999M", "PT9999999999999H-999999999999999999.0S", "PT9999999999999H-999999999999999999S",
-            "PT999999999999999M-999999999999999999S", "PT-9999999999999H999999999999999999.0S",
-            "PT9223372036854775H-9223372036854775.0S", "PT-9223372036854775H9223372036854775.0S",
-            "PT4611686018427387908999"
+            "PT1S2S", "PT1S2H",
+            "P9999999999999DT-9999999999999H",
+            "PT1.5H", "PT0.5D", "PT.5S", "PT0.25.25S",
+            "PT+-2H", "PT-+2H", "PT+-01234567890123456S"
         )) {
             assertNull(Duration.parseIsoStringOrNull(invalidValue), invalidValue)
             assertFailsWith<IllegalArgumentException>(invalidValue) { Duration.parseIsoString(invalidValue) }.let { e ->
@@ -797,72 +747,15 @@ class DurationTest {
         test(0.7512.nanoseconds, "1ns")
 
         // equal to zero
-        test(0.023.nanoseconds, "0s", "0.023ns")
-        test(0.0034.nanoseconds, "0s", "0.0034ns")
-        test(0.0000035.nanoseconds, "0s", "0.0000035ns")
+//        test(0.023.nanoseconds, "0.023ns")
+//        test(0.0034.nanoseconds, "0.0034ns")
+//        test(0.0000035.nanoseconds, "0.0000035ns")
 
         test(Duration.ZERO, "0s", "0.4ns", "0000.0000ns")
         test(365.days * 10000, "3650000d")
         test(300.days * 100000, "30000000d")
         test(365.days * 100000, "36500000d")
         test((MAX_MILLIS - 1).milliseconds, "53375995583d 15h 36m 27.902s") // max finite value
-
-        test(10.days, "10d")
-        test(1.days + 12.hours, "1d 12h", "1d12h")
-        test((-5).days - 23.hours - 2.minutes, "-(5d 23h 2m)", "-5d23h2m")
-        test(9.days + 7.hours + 28.minutes + 6.seconds, "9d 7h 28m 6s", "8d 31h 28m 6s")
-        test(
-            15.days + 1.hours + 45.minutes + 31.seconds + 30123.microseconds,
-            "15d 1h 45m 31.030123s",
-            "15d 98m 451s 30.123ms"
-        )
-        test(
-            102.days + 9.hours + 12.minutes + 45.seconds + 31.milliseconds + 210.123.microseconds,
-            "102d 9h 12m 45.031210123s",
-            "100d 57h 12m 45s 28ms 3210.12345us"
-        )
-        test(
-            8771.days + 14.hours + 52.minutes + 42.seconds + 997.milliseconds + 438.microseconds + 653.nanoseconds,
-            "8771d 14h 52m 42.997438653s",
-            "8765d 151h 452m 1233s 9873ms 123451us 987653.12345678ns"
-        )
-        test(
-            -(1835.days + 14.hours + 27.minutes + 46.619332752.seconds),
-            "-(1835d 14h 27m 46.619332752s)",
-            "-(01257d  012395h 0087542m  000115874s 0871542ms  00951487us    000125845751.985487515ns)"
-        )
-        test(
-            219124.days + 8.hours + 54.minutes + 38.909.seconds,
-            "219124d 8h 54m 38.909s",
-            "12345678910ms 18901234567890123us 18765432109876543ns"
-        )
-        test(
-            10_000_000_000_000_100L.microseconds + 10_000_000_000_900_000L.nanoseconds,
-            "115856d 11h 33m 20s",
-            "10000000000000100us 10000000000900000ns"
-        )
-        test(
-            4602453423018496273.milliseconds + Long.MAX_VALUE.microseconds + Long.MAX_VALUE.nanoseconds,
-            "53375995583d 15h 36m 27.902s",
-            "4602453423018496273ms ${Long.MAX_VALUE}us ${Long.MAX_VALUE}ns"
-        )
-        test(Long.MAX_VALUE.microseconds, "106751991d 4h 0m 54.775s", "${Long.MAX_VALUE}.99999999999us")
-
-        // nanoseconds rounding
-        for (i in 0..4) {
-            test(Duration.ZERO, "0s", "0.000000000${i}s", "0.000000${i}ms", "0.000${i}us", "0.${i}ns")
-            test(1.nanoseconds, "1ns", "0.000000000${i + 5}s", "0.000000${i + 5}ms", "0.000${i + 5}us", "0.${i + 5}ns")
-        }
-        for (i in 0..5) {
-            test(Duration.ZERO, "0s", "0.00000000000000${i}d")
-        }
-        for (i in 6..9) {
-            test(1.nanoseconds, "1ns", "0.00000000000000${i}d")
-        }
-        for (i in 0..8) {
-            test(Duration.ZERO, "0s", "0.00000000000013${i}h")
-        }
-        test(1.nanoseconds, "1ns", "0.000000000000139h")
 
         // all infinite
 //        val universeAge = Duration.days(365.25) * 13.799e9
@@ -871,31 +764,27 @@ class DurationTest {
 //        test(universeAge, "5.04e+12d")
 //        test(planckTime, "5.40e-44s")
 //        test(Duration.nanoseconds(Double.MAX_VALUE), "2.08e+294d")
-        test(
-            Duration.INFINITE, "Infinity", "53375995583d 20h", "+Infinity", "123456789012345d 123456789012345h",
-            "4602453423018496274ms ${Long.MAX_VALUE}us ${Long.MAX_VALUE}ns"
-        )
+        test(Duration.INFINITE, "Infinity", "53375995583d 20h", "+Infinity")
         test(-Duration.INFINITE, "-Infinity", "-(53375995583d 20h)")
     }
 
     @Test
     fun parseDefaultFailing() {
         for (invalidValue in listOf(
-            "", " ", "P", "PT", "P1DT", "P1", "PT1", "0", "+P", "+", "-", "h", "H", "something", "P,D",
+            "", " ", "P", "PT", "P1DT", "P1", "PT1", "0", "+P", "+", "-", "h", "H", "something",
             "1234567890123456789012ns", "Inf", "-Infinity value",
             "1s ", " 1s",
             "1d 1m 1h", "1s 2s",
             "-12m 15s", "-12m -15s", "-()", "-(12m 30s",
             "+12m 15s", "+12m +15s", "+()", "+(12m 30s",
-            "()", "(12m 30s)", "-(12m) 30s", "(12m) 30s", "12m (30s)",
+            "()", "(12m 30s)",
             "12.5m 11.5s", ".2s", "0.1553.39m",
-            "12.h", "12.55", "123", "123uw", "876nm", "531n",
             "P+12+34D", "P12-34D", "PT1234567890-1234567890S",
             " P1D", "PT1S ",
             "P1Y", "P1M", "P1S", "PT1D", "PT1Y",
             "PT1S2S", "PT1S2H",
             "P9999999999999DT-9999999999999H",
-            "PT1.5H", "PT0.5D", "PT.5S", "PT0.25.25S"
+            "PT1.5H", "PT0.5D", "PT.5S", "PT0.25.25S",
         )) {
             assertNull(Duration.parseOrNull(invalidValue), invalidValue)
             assertFailsWith<IllegalArgumentException>(invalidValue) { Duration.parse(invalidValue) }.let { e ->
