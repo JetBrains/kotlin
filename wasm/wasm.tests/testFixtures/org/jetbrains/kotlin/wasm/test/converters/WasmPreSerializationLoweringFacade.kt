@@ -110,7 +110,6 @@ class WasmPreSerializationLoweringFacade(
             WasmKlibCheckers.makeChecker(
                 irDiagnosticReporter,
                 configuration,
-                doModuleLevelChecks = true,
             )
         )
     }

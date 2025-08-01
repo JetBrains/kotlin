@@ -28,7 +28,6 @@ object WasmKlibCheckers {
     fun makeChecker(
         diagnosticReporter: IrDiagnosticReporter,
         configuration: CompilerConfiguration,
-        doModuleLevelChecks: Boolean,
         cleanFiles: List<SerializedIrFile> = listOf(),
         exportedNames: Map<IrFile, Map<IrDeclarationWithName, String>> = mapOf(),
     ): IrVisitorVoid {
@@ -46,11 +45,9 @@ object WasmKlibCheckers {
             }
 
             override fun visitModuleFragment(declaration: IrModuleFragment) {
-                if (doModuleLevelChecks) {
-                    val exportedDeclarations = JsKlibExportingDeclaration.collectDeclarations(cleanFiles, declaration.files, exportedNames)
-                    for (checker in WasmKlibCheckers.exportedDeclarationsCheckers) {
-                        checker.check(exportedDeclarations, this.diagnosticContext, diagnosticReporter)
-                    }
+                val exportedDeclarations = JsKlibExportingDeclaration.collectDeclarations(cleanFiles, declaration.files, exportedNames)
+                for (checker in exportedDeclarationsCheckers) {
+                    checker.check(exportedDeclarations, this.diagnosticContext, diagnosticReporter)
                 }
                 super.visitModuleFragment(declaration)
             }
