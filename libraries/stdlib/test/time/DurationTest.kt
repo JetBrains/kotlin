@@ -576,6 +576,7 @@ class DurationTest {
         test(1.hours + 30.minutes, "PT1H30M")
         test(1.hours + 500.milliseconds, "PT1H0M0.500S")
         test(2.minutes + 500.milliseconds, "PT2M0.500S")
+        test(1.hours + 500.milliseconds, "PT1H0M0.500S", "PT1H0.5S")
         test(90_500.milliseconds, "PT1M30.500S")
 
         // with sign
@@ -595,7 +596,7 @@ class DurationTest {
         for (invalidValue in listOf(
             "", " ", "P", "PT", "P1DT", "P1", "PT1", "0", "+P", "+", "-", "h", "H", "something",
             "1m", "1d", "2d 11s", "Infinity", "-Infinity",
-            "P+12+34D", "P12-34D", "PT1234567890-1234567890S",
+            "P+12+34D", "P12-34D", "PT1234567890-1234567890S", "PhD",
             " P1D", "PT1S ",
             "P3W",
             "P1Y", "P1M", "P1S", "PT1D", "PT1Y",
