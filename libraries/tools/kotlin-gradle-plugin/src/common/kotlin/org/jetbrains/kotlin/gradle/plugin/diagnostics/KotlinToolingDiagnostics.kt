@@ -221,6 +221,32 @@ internal object KotlinToolingDiagnostics {
             }
     }
 
+    object NoApplicationTargetFoundDiagnostic : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Misconfiguration) {
+        operator fun invoke(xcodeProject: File) = buildDiagnostic(
+            title = "No application target found in Xcode project",
+            description = "Could not find any application target in '${xcodeProject.path}'. The Kotlin plugin cannot verify framework integration.",
+            solution = "Please create an application target in your Xcode project to consume the Kotlin framework."
+        )
+    }
+
+    object MissingXcodeTargetDiagnostic : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Misconfiguration) {
+        operator fun invoke(missingTargets: List<Pair<String, String>>, xcodeProject: File) = build {
+            title("Xcode project is not configured for all Kotlin targets")
+                .description {
+                    val missingTargetsString = missingTargets.joinToString("\n") { (kotlinTargetName, expectedSdkRoot) ->
+                        "  - '$kotlinTargetName' (expected SDK: '$expectedSdkRoot')"
+                    }
+                    """
+                The following Kotlin targets are not configured in any Xcode application target inside '${xcodeProject.name}':
+                $missingTargetsString
+                """.trimIndent()
+                }
+                .solution {
+                    "To use the frameworks produced by these targets, make sure you have an Xcode application target that builds for the corresponding SDKs."
+                }
+        }
+    }
+
     object DeprecatedKotlinNativeTargetsDiagnostic : ToolingDiagnosticFactory(ERROR, DiagnosticGroup.Kgp.Misconfiguration) {
         operator fun invoke(usedTargetIds: List<String>) = buildDiagnostic(
             title = "Deprecated Kotlin/Native Targets",
