@@ -71,7 +71,7 @@ object FirContextSensitiveResolutionAmbiguityCheckerForEqualities : FirEqualityO
             else -> null
         } ?: return
 
-        val name = when (val source = expression.source) {
+        val name = when (val source = rhs.source) {
             is KtRealPsiSourceElement -> (source.psi as? KtNameReferenceExpression)?.getReferencedNameAsName()
             is KtLightSourceElement if source.elementType is KtNameReferenceExpressionElementType ->
                 Name.identifier(source.lighterASTNode.toString())
