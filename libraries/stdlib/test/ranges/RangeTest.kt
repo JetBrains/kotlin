@@ -48,6 +48,10 @@ public class RangeTest {
         assertEquals(closedRange, openRange2)
 
         assertTrue((1 until Int.MIN_VALUE).isEmpty())
+
+        val comparableRange = 1.comparableRangeTo(2)
+        assertTrue(1..2 == comparableRange)
+        assertTrue(comparableRange == 1..2)
     }
 
     @Test fun byteRange() {
@@ -83,6 +87,13 @@ public class RangeTest {
         // byte arguments now construct IntRange so no overflow here
         assertTrue((0.toByte() until Byte.MIN_VALUE).isEmpty())
         assertTrue((0.toByte() until Int.MIN_VALUE).isEmpty())
+
+        // TODO is this fixable? Byte.rangeTo gives us an IntRange
+//        val comparableRange: ClosedRange<Byte> = 1.toByte().comparableRangeTo(2.toByte())
+//        val byteRange: IntRange = 1.toByte()..2.toByte()
+//
+//        assertTrue(byteRange.equals(comparableRange))
+//        assertTrue(comparableRange.equals(byteRange))
     }
 
     @Test fun shortRange() {
@@ -116,6 +127,12 @@ public class RangeTest {
 
         assertTrue((0.toShort() until Short.MIN_VALUE).isEmpty())
         assertTrue((0.toShort() until Int.MIN_VALUE).isEmpty())
+
+        // TODO is this fixable? Short.rangeTo gives us an IntRange
+//        val comparableRange: ClosedRange<Short> = 1.toShort().comparableRangeTo(2.toShort())
+//        val shortRange: IntRange = 1.toShort()..2.toShort()
+//        assertTrue(shortRange.equals(comparableRange))
+//        assertTrue(comparableRange.equals(shortRange))
     }
 
     @Test fun longRange() {
@@ -157,6 +174,10 @@ public class RangeTest {
 
         assertTrue((0 until Long.MIN_VALUE).isEmpty())
         assertTrue((0L until Long.MIN_VALUE).isEmpty())
+
+        val comparableRange = 1L.comparableRangeTo(2L)
+        assertTrue(1L..2L == comparableRange)
+        assertTrue(comparableRange == 1L..2L)
     }
 
     @Test fun charRange() {
@@ -193,6 +214,10 @@ public class RangeTest {
         assertEquals(closedRange, openRange2)
 
         assertTrue(('A' until Char.MIN_VALUE).isEmpty())
+
+        val comparableRange = 'A'.comparableRangeTo('Z')
+        assertTrue('A'..'Z' == comparableRange)
+        assertTrue(comparableRange == 'A'..'Z')
     }
 
     @Test fun doubleRange() {
@@ -248,6 +273,10 @@ public class RangeTest {
         assertFalse(Double.NaN in openNanRange)
         assertFalse(Float.NaN in openNanRange)
         assertTrue(openNanRange.isEmpty())
+
+        val comparableRange = 0.0.comparableRangeTo(1.0)
+        assertTrue(0.0..1.0 == comparableRange)
+        assertTrue(comparableRange == 0.0..1.0)
     }
 
     @Test fun floatRange() {
@@ -302,6 +331,10 @@ public class RangeTest {
         assertFalse(1.0F in openNanRange)
         assertFalse(Float.NaN in openNanRange)
         assertTrue(openNanRange.isEmpty())
+
+        val comparableRange = 0f.comparableRangeTo(1f)
+        assertTrue(0f..1f == comparableRange)
+        assertTrue(comparableRange == 0f..1f)
     }
 
     @Test
@@ -413,7 +446,7 @@ public class RangeTest {
     @Test fun comparableRange() {
         val range = "island".."isle"
         assertEquals("island..isle", range.toString())
-        assertEquals(range, range.start..range.endInclusive)
+        assertEquals(range, range.start.comparableRangeTo(range.endInclusive))
 
         assertFalse("apple" in range)
         assertFalse("icicle" in range)
@@ -528,3 +561,6 @@ public class RangeTest {
         assertNull(IntProgression.fromClosedRange(0, 3, -2).lastOrNull())
     }
 }
+
+// Helper method to create a ComparableRange<T>
+private fun <T : Comparable<T>> T.comparableRangeTo(that: T): ClosedRange<T> = this .. that
