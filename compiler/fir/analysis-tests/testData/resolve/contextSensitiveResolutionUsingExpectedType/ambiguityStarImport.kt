@@ -1,7 +1,16 @@
 // RUN_PIPELINE_TILL: FRONTEND
 // LANGUAGE: +ContextSensitiveResolutionUsingExpectedType
 
+// FILE: foo.kt
+
 package foo
+
+object A
+class B
+
+// FILE: bar.kt
+
+package bar
 
 sealed class Sealed {
     data object A : Sealed()
@@ -10,8 +19,10 @@ sealed class Sealed {
     data class D(val y: Int) : Sealed()
 }
 
-object A
-class B
+// FILE: main.kt
+
+import foo.*
+import bar.*
 
 fun sealed(s: Sealed): Int = when (s) {
     <!CONTEXT_SENSITIVE_RESOLUTION_AMBIGUITY!>A<!> -> 1
@@ -22,8 +33,8 @@ fun sealed(s: Sealed): Int = when (s) {
 }
 
 fun sealedExplicit(s: Sealed): Int = when (s) {
-    Sealed.A -> 1
-    is Sealed.B -> 2
+    bar.Sealed.A -> 1
+    is bar.Sealed.B -> 2
     else -> 5
 }
 

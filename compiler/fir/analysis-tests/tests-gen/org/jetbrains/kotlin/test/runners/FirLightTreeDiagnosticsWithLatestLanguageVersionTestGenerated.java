@@ -2851,6 +2851,12 @@ public class FirLightTreeDiagnosticsWithLatestLanguageVersionTestGenerated exten
         runTest("compiler/fir/analysis-tests/testData/resolve/contextSensitiveResolutionUsingExpectedType/ambiguity.kt");
       }
 
+      @Test
+      @TestMetadata("ambiguityStarImport.kt")
+      public void testAmbiguityStarImport() {
+        runTest("compiler/fir/analysis-tests/testData/resolve/contextSensitiveResolutionUsingExpectedType/ambiguityStarImport.kt");
+      }
+
       @Nested
       @TestMetadata("compiler/fir/analysis-tests/testData/resolve/contextSensitiveResolutionUsingExpectedType/callArgumentPosition")
       @TestDataPath("$PROJECT_ROOT")
