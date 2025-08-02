@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.arguments.dsl.defaultFalse
 import org.jetbrains.kotlin.arguments.dsl.defaultNull
 import org.jetbrains.kotlin.arguments.dsl.defaultTrue
 import org.jetbrains.kotlin.arguments.dsl.types.BooleanType
+import org.jetbrains.kotlin.arguments.dsl.types.IntType
 import org.jetbrains.kotlin.arguments.dsl.types.StringArrayType
 import org.jetbrains.kotlin.arguments.dsl.types.StringType
 
@@ -105,6 +106,18 @@ The only observable effect is that a custom ABI version is written to KLIB manif
 
         lifecycle(
             introducedVersion = KotlinReleaseVersion.v2_2_0,
+        )
+    }
+
+    compilerArgument {
+        name = "Xklib-zip-file-accessor-cache-limit"
+        description = "Size of cache to be used for the klib zip file accessor. Default is 0.".asReleaseDependent()
+        valueType = IntType(
+            defaultValue = 0.asReleaseDependent()
+        )
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_1_21
         )
     }
 }

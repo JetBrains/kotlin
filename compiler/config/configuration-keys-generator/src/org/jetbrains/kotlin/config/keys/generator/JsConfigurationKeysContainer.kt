@@ -98,8 +98,6 @@ object JsConfigurationKeysContainer : KeysContainer("org.jetbrains.kotlin.js.con
 
     val GENERATE_STRICT_IMPLICIT_EXPORT by key<Boolean>("enable strict implicitly exported entities types inside d.ts files")
 
-    val ZIP_FILE_SYSTEM_ACCESSOR by key<ZipFileSystemAccessor>("zip file system accessor, used for klib reading")
-
     val OPTIMIZE_GENERATED_JS by key<Boolean>("perform additional optimizations on the generated JS code")
 
     val USE_ES6_CLASSES by key<Boolean>("perform ES6 class usage")

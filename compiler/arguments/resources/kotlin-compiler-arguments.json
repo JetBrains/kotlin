@@ -6292,6 +6292,37 @@
                                     "deprecatedVersion": null,
                                     "removedVersion": null
                                 }
+                            },
+                            {
+                                "name": "Xklib-zip-file-accessor-cache-limit",
+                                "shortName": null,
+                                "deprecatedName": null,
+                                "description": {
+                                    "current": "Size of cache to be used for the klib zip file accessor. Default is 0.",
+                                    "valueInVersions": []
+                                },
+                                "delimiter": null,
+                                "valueType": {
+                                    "type": "org.jetbrains.kotlin.arguments.dsl.types.IntType",
+                                    "isNullable": {
+                                        "current": false,
+                                        "valueInVersions": []
+                                    },
+                                    "defaultValue": {
+                                        "current": 0,
+                                        "valueInVersions": []
+                                    }
+                                },
+                                "valueDescription": {
+                                    "current": null,
+                                    "valueInVersions": []
+                                },
+                                "releaseVersionsMetadata": {
+                                    "introducedVersion": "2.1.21",
+                                    "stabilizedVersion": null,
+                                    "deprecatedVersion": null,
+                                    "removedVersion": null
+                                }
                             }
                         ],
                         "nestedLevels": [
