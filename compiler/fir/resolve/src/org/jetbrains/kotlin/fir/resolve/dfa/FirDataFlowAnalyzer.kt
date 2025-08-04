@@ -308,7 +308,7 @@ abstract class FirDataFlowAnalyzer(
     }
 
     private fun inferLowerTypesFromSymbol(symbol: FirEnumEntrySymbol): Set<DfaType>? =
-        with(components) { symbol.getComplementary() }
+        with(components) { symbol.getComplementarySymbols() }
             ?.takeIf { it.isNotEmpty() }
             ?.mapTo(mutableSetOf(), DfaType::Symbol)
 
@@ -754,11 +754,13 @@ abstract class FirDataFlowAnalyzer(
             if (symbol != null) {
                 flow.addImplication((expressionVariable eq !isEq) implies (variable valueNotEq symbol))
             }
-            if (symbol is FirEnumEntrySymbol) {
-                val complementary = with(components) { symbol.getComplementary() }?.takeIf { it.isNotEmpty() }
-                if (complementary != null) {
-                    flow.addImplication((expressionVariable eq isEq) implies (variable valueNotEq complementary))
-                }
+            val complementarySymbols = when (symbol) {
+                is FirEnumEntrySymbol -> with(components) { symbol.getComplementarySymbols() }
+                is FirRegularClassSymbol if symbol.classKind.isObject -> with(components) { symbol.getComplementarySymbols() }
+                else -> null
+            }
+            if (complementarySymbols != null && complementarySymbols.isNotEmpty()) {
+                flow.addImplication((expressionVariable eq isEq) implies (variable valueNotEq complementarySymbols))
             }
         }
 

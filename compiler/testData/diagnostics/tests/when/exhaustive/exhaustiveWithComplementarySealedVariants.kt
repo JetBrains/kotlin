@@ -32,7 +32,7 @@ fun checkSomething(stuff: Stuff) {
         "ObjC not supported here"
     }
 
-    <!NO_ELSE_IN_WHEN!>when<!> (stuff) {
+    when (stuff) {
         Stuff.ObjA -> println("ObjA")
         Stuff.ObjB -> println("ObjB")
     }
