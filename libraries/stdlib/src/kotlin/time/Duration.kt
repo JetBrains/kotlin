@@ -1199,7 +1199,7 @@ private fun parseIsoStringFormat(
             continue
         }
         if (!parseLongIfPossible(ch)) return throwExceptionOrInvalid(throwException)
-        var unit = value[index]
+        val unit = value[index]
         if (unit == 'D') {
             if (isTimeComponent) return throwExceptionOrInvalid(throwException)
             totalSeconds = currentLongValue.multiplyWithoutOverflow(SECONDS_PER_DAY)
@@ -1212,7 +1212,7 @@ private fun parseIsoStringFormat(
                 val prevIndex = index
                 totalNanos = parseNanos() * sign
                 if (index == prevIndex || index == length || value[index] != 'S') return throwExceptionOrInvalid(throwException)
-                unit = 'S'
+                prevUnit = 'S'
             } else {
                 if (unit <= prevUnit) return throwExceptionOrInvalid(throwException)
                 totalSeconds = totalSeconds.addWithoutOverflow(
@@ -1225,9 +1225,9 @@ private fun parseIsoStringFormat(
                         }
                     )
                 ).onInvalid { return throwExceptionOrInvalid(throwException) }
+                prevUnit = unit
             }
         }
-        prevUnit = unit
         index++
     }
     return totalSeconds.toDuration(DurationUnit.SECONDS) + totalNanos.toDuration(DurationUnit.NANOSECONDS)
