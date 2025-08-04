@@ -55,6 +55,14 @@ val jsonNativeRuntimeForTests by configurations.creating {
 
 val serializationPluginForTests by configurations.creating
 
+fun DependencyHandlerScope.implicitKotlinApiDependency(notation: Any) {
+    implicitDependencies(notation) {
+        attributes {
+            attribute(Usage.USAGE_ATTRIBUTE, objects.named(KotlinUsages.KOTLIN_API))
+        }
+    }
+}
+
 dependencies {
     embedded(project(":kotlinx-serialization-compiler-plugin.common")) { isTransitive = false }
     embedded(project(":kotlinx-serialization-compiler-plugin.k1")) { isTransitive = false }
@@ -107,57 +115,16 @@ dependencies {
     }
     testImplementation(testFixtures(project(":native:native.tests:klib-ir-inliner")))
 
-    // Implicit dependencies on CORE native artifacts to run native tests on CI
-    implicitDependencies("org.jetbrains.kotlinx:kotlinx-serialization-core-linuxx64:1.7.0") {
-        attributes {
-            attribute(Usage.USAGE_ATTRIBUTE, objects.named(KotlinUsages.KOTLIN_API))
-        }
-    }
-    implicitDependencies("org.jetbrains.kotlinx:kotlinx-serialization-core-macosarm64:1.7.0"){
-        attributes {
-            attribute(Usage.USAGE_ATTRIBUTE, objects.named(KotlinUsages.KOTLIN_API))
-        }
-    }
-    implicitDependencies("org.jetbrains.kotlinx:kotlinx-serialization-core-macosx64:1.7.0"){
-        attributes {
-            attribute(Usage.USAGE_ATTRIBUTE, objects.named(KotlinUsages.KOTLIN_API))
-        }
-    }
-    implicitDependencies("org.jetbrains.kotlinx:kotlinx-serialization-core-iossimulatorarm64:1.7.0"){
-        attributes {
-            attribute(Usage.USAGE_ATTRIBUTE, objects.named(KotlinUsages.KOTLIN_API))
-        }
-    }
-    implicitDependencies("org.jetbrains.kotlinx:kotlinx-serialization-core-mingwx64:1.7.0"){
-        attributes {
-            attribute(Usage.USAGE_ATTRIBUTE, objects.named(KotlinUsages.KOTLIN_API))
-        }
-    }
-    // Implicit dependencies on JSON native artifacts to run native tests on CI
-    implicitDependencies("org.jetbrains.kotlinx:kotlinx-serialization-json-linuxx64:1.7.0") {
-        attributes {
-            attribute(Usage.USAGE_ATTRIBUTE, objects.named(KotlinUsages.KOTLIN_API))
-        }
-    }
-    implicitDependencies("org.jetbrains.kotlinx:kotlinx-serialization-json-macosarm64:1.7.0"){
-        attributes {
-            attribute(Usage.USAGE_ATTRIBUTE, objects.named(KotlinUsages.KOTLIN_API))
-        }
-    }
-    implicitDependencies("org.jetbrains.kotlinx:kotlinx-serialization-json-macosx64:1.7.0"){
-        attributes {
-            attribute(Usage.USAGE_ATTRIBUTE, objects.named(KotlinUsages.KOTLIN_API))
-        }
-    }
-    implicitDependencies("org.jetbrains.kotlinx:kotlinx-serialization-json-iossimulatorarm64:1.7.0"){
-        attributes {
-            attribute(Usage.USAGE_ATTRIBUTE, objects.named(KotlinUsages.KOTLIN_API))
-        }
-    }
-    implicitDependencies("org.jetbrains.kotlinx:kotlinx-serialization-json-mingwx64:1.7.0"){
-        attributes {
-            attribute(Usage.USAGE_ATTRIBUTE, objects.named(KotlinUsages.KOTLIN_API))
-        }
+    // Implicit dependencies on CORE and JSON native artifacts to run native tests on CI
+    listOf(
+        "linuxx64",
+        "macosarm64",
+        "macosx64",
+        "iossimulatorarm64",
+        "mingwx64"
+    ).forEach {
+        implicitKotlinApiDependency("org.jetbrains.kotlinx:kotlinx-serialization-core-$it:1.7.0")
+        implicitKotlinApiDependency("org.jetbrains.kotlinx:kotlinx-serialization-json-$it:1.7.0")
     }
 }
 
