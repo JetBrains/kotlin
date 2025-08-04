@@ -1118,8 +1118,6 @@ private const val SECONDS_PER_MINUTE = 60L
 private const val SECONDS_PER_HOUR = SECONDS_PER_MINUTE * 60L
 private const val SECONDS_PER_DAY = SECONDS_PER_HOUR * 24L
 
-private const val EPS = 1e-10
-
 private fun parseIsoStringFormat(
     value: String,
     startIndex: Int,
