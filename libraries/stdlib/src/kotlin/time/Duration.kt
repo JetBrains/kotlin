@@ -1074,15 +1074,6 @@ private fun parseDuration(value: String, strictIso: Boolean, throwException: Boo
     return if (isNegative) -result else result
 }
 
-internal enum class State {
-    START,
-    AFTER_D_VALUE, AFTER_D,
-    AFTER_T, AFTER_T_VALUE,
-    AFTER_H, AFTER_H_VALUE,
-    AFTER_M, AFTER_M_VALUE,
-    AFTER_DOT, AFTER_DOUBLE, AFTER_S
-}
-
 private const val OVERFLOW_LIMIT = Long.MAX_VALUE / 1000
 
 @kotlin.internal.InlineOnly
