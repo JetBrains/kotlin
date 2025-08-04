@@ -1215,20 +1215,16 @@ private fun parseIsoStringFormat(
                 unit = 'S'
             } else {
                 if (unit <= prevUnit) return throwExceptionOrInvalid(throwException)
-                when (unit) {
-                    'H' -> totalSeconds = totalSeconds.addWithoutOverflow(
-                        currentLongValue.multiplyWithoutOverflow(SECONDS_PER_HOUR)
-                    ).onInvalid { return throwExceptionOrInvalid(throwException) }
-
-                    'M' -> totalSeconds = totalSeconds.addWithoutOverflow(
-                        currentLongValue.multiplyWithoutOverflow(SECONDS_PER_MINUTE)
-                    ).onInvalid { return throwExceptionOrInvalid(throwException) }
-
-                    'S' -> totalSeconds = totalSeconds.addWithoutOverflow(currentLongValue)
-                        .onInvalid { return throwExceptionOrInvalid(throwException) }
-
-                    else -> return throwExceptionOrInvalid(throwException)
-                }
+                totalSeconds = totalSeconds.addWithoutOverflow(
+                    currentLongValue.multiplyWithoutOverflow(
+                        when (unit) {
+                            'H' -> SECONDS_PER_HOUR
+                            'M' -> SECONDS_PER_MINUTE
+                            'S' -> 1
+                            else -> return throwExceptionOrInvalid(throwException)
+                        }
+                    )
+                ).onInvalid { return throwExceptionOrInvalid(throwException) }
             }
         }
         prevUnit = unit
