@@ -1,5 +1,6 @@
 // IGNORE_FIR_DIAGNOSTICS
 // RUN_PIPELINE_TILL: BACKEND
+// LANGUAGE: +ForbidTypeAliasWithMissingDependencyType
 // ISSUE: KT-70179
 
 // MODULE: m1-common

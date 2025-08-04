@@ -1,5 +1,4 @@
-// LANGUAGE: -ForbidTypeAliasWithMissingDependencyType
-// RENDER_DIAGNOSTICS_FULL_TEXT
+// LANGUAGE: +ForbidTypeAliasWithMissingDependencyType
 // RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-79781
 
@@ -19,8 +18,8 @@ typealias TAtoBaseNoTypeParam = BaseNoTypeParam
 // FILE: main.kt
 
 interface MainInterface {
-    fun f(): TAtoBaseWithTypeParam // Error because incorrect type parameters deserialization could cause severe bugs like KT-79633. So, it's better to prohibit it ASAP.
-    fun g(): TAtoBaseNoTypeParam // Warning that will become a error
+    fun f(): <!MISSING_DEPENDENCY_CLASS!>TAtoBaseWithTypeParam<!> // Error (BaseWithTypeParam is not in library dependencies)
+    fun g(): <!MISSING_DEPENDENCY_CLASS!>TAtoBaseNoTypeParam<!> // Error (BaseWithTypeParam is not in library dependencies)
 }
 
 /* GENERATED_FIR_TAGS: functionDeclaration, interfaceDeclaration, nullableType, typeAliasDeclaration, typeParameter */

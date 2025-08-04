@@ -1,4 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: +ForbidTypeAliasWithMissingDependencyType
 // ISSUE: KT-70179
 
 // MODULE: lib
@@ -20,7 +21,7 @@ public typealias KAnn = Ann
 
 import wrapper.<!UNRESOLVED_IMPORT!>KAnn<!>
 
-@<!NOT_AN_ANNOTATION_CLASS!>KAnn<!>
+@<!MISSING_DEPENDENCY_CLASS, NOT_AN_ANNOTATION_CLASS!>KAnn<!>
 fun foo() {}
 
 /* GENERATED_FIR_TAGS: functionDeclaration, typeAliasDeclaration */

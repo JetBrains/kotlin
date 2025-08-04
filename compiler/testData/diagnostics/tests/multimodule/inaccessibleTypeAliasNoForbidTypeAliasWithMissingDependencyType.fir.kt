@@ -19,8 +19,8 @@ typealias TAtoBaseNoTypeParam = BaseNoTypeParam
 // FILE: main.kt
 
 interface MainInterface {
-    fun f(): TAtoBaseWithTypeParam // Error because incorrect type parameters deserialization could cause severe bugs like KT-79633. So, it's better to prohibit it ASAP.
-    fun g(): TAtoBaseNoTypeParam // Warning that will become a error
+    fun f(): <!MISSING_DEPENDENCY_CLASS!>TAtoBaseWithTypeParam<!> // Error because incorrect type parameters deserialization could cause severe bugs like KT-79633. So, it's better to prohibit it ASAP.
+    fun g(): <!MISSING_DEPENDENCY_CLASS_IN_TYPEALIAS!>TAtoBaseNoTypeParam<!> // Warning that will become a error
 }
 
 /* GENERATED_FIR_TAGS: functionDeclaration, interfaceDeclaration, nullableType, typeAliasDeclaration, typeParameter */

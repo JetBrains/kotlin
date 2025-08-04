@@ -1,4 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: +ForbidTypeAliasWithMissingDependencyType
 // ISSUE: KT-70179
 
 // MODULE: lib
