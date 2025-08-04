@@ -45730,6 +45730,12 @@ public class PhasedJvmDiagnosticLightTreeTestGenerated extends AbstractPhasedJvm
         }
 
         @Test
+        @TestMetadata("exhaustiveWithComplementarySealedVariants.kt")
+        public void testExhaustiveWithComplementarySealedVariants() {
+          runTest("compiler/testData/diagnostics/tests/when/exhaustive/exhaustiveWithComplementarySealedVariants.kt");
+        }
+
+        @Test
         @TestMetadata("exhaustiveWithNegativeBooleans.kt")
         public void testExhaustiveWithNegativeBooleans() {
           runTest("compiler/testData/diagnostics/tests/when/exhaustive/exhaustiveWithNegativeBooleans.kt");
