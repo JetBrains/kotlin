@@ -66,11 +66,7 @@ open class LocalDeclarationPopupLowering(
                         extractedLocalDeclarations.add(ExtractedLocalDeclaration(declaration, newContainer, extractedUnder))
                     }
                     is IrDeclarationContainer -> extractedLocalDeclarations.add(
-                        ExtractedLocalDeclaration(
-                            declaration,
-                            newContainer,
-                            extractedUnder
-                        )
+                        ExtractedLocalDeclaration(declaration, newContainer, extractedUnder)
                     )
                     else -> error("Unexpected container type $newContainer")
                 }
