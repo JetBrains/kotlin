@@ -3,15 +3,12 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package org.jetbrains.kotlinx.serialization
+package org.jetbrains.kotlin.generators.tests
 
 import org.jetbrains.kotlin.generators.TestGroup
 import org.jetbrains.kotlin.generators.generateTestGroupSuiteWithJUnit5
 import org.jetbrains.kotlin.generators.model.annotation
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
-import org.jetbrains.kotlin.generators.tests.klibIrInliner
-import org.jetbrains.kotlin.generators.tests.provider
-import org.jetbrains.kotlin.generators.tests.standalone
 import org.jetbrains.kotlin.konan.test.blackbox.AbstractNativeCodegenBoxTest
 import org.jetbrains.kotlin.konan.test.blackbox.support.group.UseExtTestCaseGroupProvider
 import org.jetbrains.kotlin.test.TargetBackend
