@@ -615,7 +615,7 @@ class DurationTest {
     @Test
     fun parseIsoStringFailing() {
         for (invalidValue in listOf(
-            "", " ", "P", "PT", "P1DT", "P1", "PT1", "0", "+P", "+", "-", "h", "H", "something", "PT1HT",
+            "", " ", "P", "PT", "P1DT", "P1", "PT1", "0", "+P", "+", "-", "h", "H", "something", "PT1HT", ",", "PT,123H",
             "1m", "1d", "2d 11s", "Infinity", "-Infinity",
             "P+12+34D", "P12-34D", "PT1234567890-1234567890S", "PhD", "PT+H", "PT0.123", "P1DW", "PT1H+", "PT1H+W", "PT1M-", "PT1M+W",
             "PT0.1234567890123456789", "PT1234567890123456789", "PT0",
