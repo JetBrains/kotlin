@@ -39,8 +39,8 @@ class RemoteDaemonClient(
         .withCallCredentials(
             CallAuthenticator(
                 BasicHTTPAuthClient(
-                    username = "dummy",
-                    password = "dummy"
+                    username = "admin",
+                    password = "admin"
                 )
             )
         )
@@ -49,13 +49,13 @@ class RemoteDaemonClient(
         File(CLIENT_COMPILED_DIR).mkdir()
     }
 
-    fun connect(daemonJVMOptionsConfigurator: DaemonJVMOptionsConfigurator): Flow<ConnectResponseGrpc> {
-        val connectRequest = ConnectRequestGrpc
-            .newBuilder()
-            .setDaemonJvmOptionsConfigurator(daemonJVMOptionsConfigurator.toGrpc())
-            .build()
-        return stub.connect(connectRequest)
-    }
+//    fun connect(daemonJVMOptionsConfigurator: DaemonJVMOptionsConfigurator): Flow<ConnectResponseGrpc> {
+//        val connectRequest = ConnectRequestGrpc
+//            .newBuilder()
+//            .setDaemonJvmOptionsConfigurator(daemonJVMOptionsConfigurator.toGrpc())
+//            .build()
+//        return stub.connect(connectRequest)
+//    }
 
     suspend fun compile(sessionId: Int, compilerArguments: Array<out String>, compilationOptions: CompilationOptions, sourceFiles: List<File>) {
         val requestChannel = Channel<CompileRequestGrpc>(capacity = Channel.UNLIMITED)
@@ -106,7 +106,7 @@ class RemoteDaemonClient(
                 // as a first step we want to send compilation metadata
                 requestChannel.send(
                     requestHandler.buildCompilationMetadata(
-                        sessionId,
+                        "mycustomproject",
                         compilationOptions,
                         compilerArguments,
                         sourceFiles.size
@@ -126,8 +126,6 @@ class RemoteDaemonClient(
     }
 
 }
-
-
 suspend fun main(args: Array<String>) {
     val port = System.getenv("PORT")?.toInt() ?: 50051
 
@@ -150,54 +148,55 @@ suspend fun main(args: Array<String>) {
     val compilerArguments = arrayOf<String>()
 
     val sourceFiles = listOf(
-        File("/Users/michal.svec/Desktop/kotlin/compiler/daemon/remote-daemon/src/main/kotlin/client/input/Input.kt"),
-        File("/Users/michal.svec/Desktop/kotlin/compiler/daemon/remote-daemon/src/main/kotlin/client/input/Input2.kt"),
-        File("/Users/michal.svec/Desktop/kotlin/compiler/daemon/remote-daemon/src/main/kotlin/client/input/Input3.kt")
+        File("compiler/daemon/remote-daemon/src/main/kotlin/client/input/Input.kt"),
+        File("compiler/daemon/remote-daemon/src/main/kotlin/client/input/Input2.kt"),
+        File("compiler/daemon/remote-daemon/src/main/kotlin/client/input/Input3.kt")
     )
 
     var sessionId: Int? = null
+    client.compile(
+        sessionId = 1,
+        compilerArguments = compilerArguments,
+        compilationOptions = compilationOptions,
+        sourceFiles = sourceFiles
+    )
 
-    while (true) {
-        print("Enter command: ")
-        val command = readLine()?.trim()?.lowercase()
-
-        when (command) {
-            "connect" -> {
-                client.connect(
-                    DaemonJVMOptionsConfigurator(
-                        inheritMemoryLimits = true,
-                        inheritOtherJvmOptions = false,
-                        inheritAdditionalProperties = true,
-                    )
-                ).collect { response ->
-                    println("collecting message")
-                    when {
-                        response.hasDaemonMessage() -> {
-                            // TODO handle messages however you want
-                        }
-                        response.hasSessionId() -> {
-                            println("we obtained a sessionID ${response.sessionId}")
-                            sessionId = response.sessionId
-                        }
-                    }
-                }
-            }
-            "compile" -> {
-                if (sessionId == null) {
-                    println("You need to connect first")
-                    continue
-                }
-
-                client.compile(
-                    sessionId = sessionId,
-                    compilerArguments = compilerArguments,
-                    compilationOptions = compilationOptions,
-                    sourceFiles = sourceFiles
-                )
-            }
-            else -> {
-                println("Unknown command")
-            }
-        }
-    }
+//    while (true) {
+//        print("Enter command: ")
+//        val command = readLine()?.trim()?.lowercase()
+//
+//        when (command) {
+//            "connect" -> {
+//                client.connect(
+//                    DaemonJVMOptionsConfigurator(
+//                        inheritMemoryLimits = true,
+//                        inheritOtherJvmOptions = false,
+//                        inheritAdditionalProperties = true,
+//                    )
+//                ).collect { response ->
+//                    println("collecting message")
+//                    when {
+//                        response.hasDaemonMessage() -> {
+//                            // TODO handle messages however you want
+//                        }
+//                        response.hasSessionId() -> {
+//                            println("we obtained a sessionID ${response.sessionId}")
+//                            sessionId = response.sessionId
+//                        }
+//                    }
+//                }
+//            }
+//            "compile" -> {
+//                if (sessionId == null) {
+//                    println("You need to connect first")
+//                    continue
+//                }
+//
+//
+//            }
+//            else -> {
+//                println("Unknown command")
+//            }
+//        }
+//    }
 }

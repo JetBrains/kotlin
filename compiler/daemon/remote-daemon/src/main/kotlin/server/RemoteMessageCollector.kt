@@ -16,13 +16,13 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollectorImpl.Message
  */
 
 
-interface MessageSender{
-    fun send(msg: Message)
+interface OnReport{
+    fun onReport(msg: Message)
 }
 
 class RemoteMessageCollector(
-    private val messageSender: MessageSender
-): MessageCollector {
+    private val onReport: OnReport
+) : MessageCollector {
 
 
     private val messages: MutableList<Message> = mutableListOf<Message>()
@@ -39,14 +39,9 @@ class RemoteMessageCollector(
         message: String,
         location: CompilerMessageSourceLocation?,
     ) {
-        messages.add(Message(severity, message, location))
-        println("message is $message severity is $severity location is $location")
-        try {
-            messageSender.send(Message(severity, message, location))
-        }catch (e: Exception){
-            println("exception is $e")
-            e.printStackTrace()
-        }
+        val msg = Message(severity, message, location)
+        messages.add(msg)
+        onReport.onReport(msg)
     }
 
     override fun hasErrors(): Boolean =
