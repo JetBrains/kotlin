@@ -45933,6 +45933,12 @@ public class PhasedJvmDiagnosticPsiTestGenerated extends AbstractPhasedJvmDiagno
       @TestDataPath("$PROJECT_ROOT")
       public class Exhaustive {
         @Test
+        @TestMetadata("complementarySealedVariantsLimitations.kt")
+        public void testComplementarySealedVariantsLimitations() {
+          runTest("compiler/testData/diagnostics/tests/when/exhaustive/complementarySealedVariantsLimitations.kt");
+        }
+
+        @Test
         @TestMetadata("ExhaustiveStarProjection.kt")
         public void testExhaustiveStarProjection() {
           runTest("compiler/testData/diagnostics/tests/when/exhaustive/ExhaustiveStarProjection.kt");
