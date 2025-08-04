@@ -106,7 +106,7 @@ object PositioningStrategies {
         private fun getElementToMark(declaration: KtDeclaration): PsiElement {
             val (returnTypeRef, nameIdentifierOrPlaceholder) = when (declaration) {
                 is KtCallableDeclaration -> Pair(declaration.typeReference, declaration.nameIdentifier)
-                is KtPropertyAccessor -> Pair(declaration.returnTypeReference, declaration.namePlaceholder)
+                is KtPropertyAccessor -> Pair(declaration.typeReference, declaration.namePlaceholder)
                 else -> Pair(null, null)
             }
 
@@ -253,7 +253,7 @@ object PositioningStrategies {
                 }
                 is KtPropertyAccessor -> {
                     val endOfSignatureElement =
-                        element.returnTypeReference
+                        element.typeReference
                             ?: element.parameterList
                             ?: element.namePlaceholder
 
@@ -295,7 +295,7 @@ object PositioningStrategies {
                 }
                 is KtPropertyAccessor -> {
                     val endOfSignatureElement =
-                        element.returnTypeReference
+                        element.typeReference
                             ?: element.parameterList
                             ?: element.namePlaceholder
 

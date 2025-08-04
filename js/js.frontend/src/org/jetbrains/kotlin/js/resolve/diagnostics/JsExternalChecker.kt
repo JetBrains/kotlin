@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -129,7 +129,7 @@ class JsExternalChecker(
 
                 val elementToReport = when (declaration) {
                     is KtCallableDeclaration -> declaration.typeReference
-                    is KtPropertyAccessor -> declaration.returnTypeReference
+                    is KtPropertyAccessor -> declaration.typeReference
                     else -> declaration
                 }
 

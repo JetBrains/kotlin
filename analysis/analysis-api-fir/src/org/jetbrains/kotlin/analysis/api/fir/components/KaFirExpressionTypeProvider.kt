@@ -215,8 +215,8 @@ internal class KaFirExpressionTypeProvider(
 
         fun KtDeclaration.hasDeclaredReturnType() = when (this) {
             is KtNamedFunction -> typeReference != null
-            is KtProperty -> typeReference != null || getter?.returnTypeReference != null
-            is KtPropertyAccessor -> returnTypeReference != null
+            is KtProperty -> typeReference != null || getter?.typeReference != null
+            is KtPropertyAccessor -> typeReference != null
             else -> false
         }
 

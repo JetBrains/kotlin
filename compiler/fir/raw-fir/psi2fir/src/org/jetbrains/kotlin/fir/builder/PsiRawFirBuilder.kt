@@ -569,9 +569,9 @@ open class PsiRawFirBuilder(
                         moduleData = baseModuleData
                         origin = FirDeclarationOrigin.Source
                         returnTypeRef = if (isGetter) {
-                            returnTypeReference?.toFirType() ?: propertyTypeRefToUse
+                            typeReference?.toFirType() ?: propertyTypeRefToUse
                         } else {
-                            returnTypeReference.toFirOrUnitType()
+                            typeReference.toFirOrUnitType()
                         }
                         this.isGetter = isGetter
                         this.status = status
@@ -676,7 +676,7 @@ open class PsiRawFirBuilder(
             }
             val status = obtainPropertyComponentStatus(componentVisibility, this, property)
             val backingFieldInitializer = this?.toInitializerExpression()
-            val returnType = this?.returnTypeReference.toFirOrImplicitType()
+            val returnType = this?.typeReference.toFirOrImplicitType()
             val source = this?.toFirSourceElement()
             return if (this != null) {
                 buildBackingField {
