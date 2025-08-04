@@ -657,8 +657,8 @@ class ComposerParamTransformer(
     private fun IrSimpleFunction.makeValueClassInaccessibleConstructorDefaultStub(visibilityCheck: IrType.() -> Boolean): IrSimpleFunction? {
         var makeStub = false
         val defaultValueClassesWithPrivateConstructors = BooleanArray(parameters.size)
-        for (i in parameters.indices) {
-            val param = parameters[i]
+        for (i in valueParameters.indices) {
+            val param = valueParameters[i]
             if (
                 hasDefaultExpressionDefinedForValueParameter(i) &&
                 param.type.isInlineClassType() &&
