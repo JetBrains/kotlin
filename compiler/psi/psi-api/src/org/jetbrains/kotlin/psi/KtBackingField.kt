@@ -1,78 +1,50 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
+package org.jetbrains.kotlin.psi
 
-package org.jetbrains.kotlin.psi;
+import com.intellij.lang.ASTNode
+import com.intellij.psi.PsiElement
+import com.intellij.psi.util.PsiTreeUtil
+import org.jetbrains.kotlin.KtStubBasedElementTypes
+import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.psi.stubs.KotlinBackingFieldStub
 
-import com.intellij.lang.ASTNode;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.util.PsiTreeUtil;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.KtStubBasedElementTypes;
-import org.jetbrains.kotlin.lexer.KtTokens;
-import org.jetbrains.kotlin.psi.stubs.KotlinBackingFieldStub;
+class KtBackingField : KtDeclarationStub<KotlinBackingFieldStub>, KtModifierListOwner, KtDeclarationWithInitializer {
+    constructor(node: ASTNode) : super(node)
+    constructor(stub: KotlinBackingFieldStub) : super(stub, KtStubBasedElementTypes.BACKING_FIELD)
 
-public class KtBackingField extends KtDeclarationStub<KotlinBackingFieldStub>
-        implements KtModifierListOwner, KtDeclarationWithInitializer {
-    public KtBackingField(@NotNull ASTNode node) {
-        super(node);
-    }
+    override fun <R, D> accept(visitor: KtVisitor<R, D>, data: D): R =
+        visitor.visitBackingField(this, data)
 
-    public KtBackingField(@NotNull KotlinBackingFieldStub stub) {
-        super(stub, KtStubBasedElementTypes.BACKING_FIELD);
-    }
+    val equalsToken: PsiElement?
+        get() = findChildByType(KtTokens.EQ)
 
-    @Override
-    public <R, D> R accept(@NotNull KtVisitor<R, D> visitor, D data) {
-        return visitor.visitBackingField(this, data);
-    }
+    val returnTypeReference: KtTypeReference?
+        get() = getStubOrPsiChild(KtStubBasedElementTypes.TYPE_REFERENCE)
 
-    @Nullable
-    public PsiElement getEqualsToken() {
-        return findChildByType(KtTokens.EQ);
-    }
+    val namePlaceholder: PsiElement
+        get() = fieldKeyword ?: node.psi
 
-    @Nullable
-    public KtTypeReference getReturnTypeReference() {
-        return getStubOrPsiChild(KtStubBasedElementTypes.TYPE_REFERENCE);
-    }
-
-    @NotNull
-    public PsiElement getNamePlaceholder() {
-        PsiElement it = getFieldKeyword();
-        if (it != null) {
-            return it;
-        }
-        return getNode().getPsi();
-    }
-
-    @Nullable
-    @Override
-    public KtExpression getInitializer() {
-        KotlinBackingFieldStub stub = getGreenStub();
+    override fun getInitializer(): KtExpression? {
+        val stub = greenStub
         if (stub != null && !stub.hasInitializer()) {
-            return null;
+            return null
         }
-        return PsiTreeUtil.getNextSiblingOfType(getEqualsToken(), KtExpression.class);
+        return PsiTreeUtil.getNextSiblingOfType(equalsToken, KtExpression::class.java)
     }
 
-    @Override
-    public boolean hasInitializer() {
-        KotlinBackingFieldStub stub = getGreenStub();
-        if (stub != null) {
-            return stub.hasInitializer();
+    override fun hasInitializer(): Boolean {
+        greenStub?.let {
+            return it.hasInitializer()
         }
-        return getInitializer() != null;
+        return getInitializer() != null
     }
 
-    @Override
-    public int getTextOffset() {
-        return getNamePlaceholder().getTextRange().getStartOffset();
-    }
+    override fun getTextOffset(): Int =
+        namePlaceholder.textRange.startOffset
 
-    public PsiElement getFieldKeyword() {
-        return findChildByType(KtTokens.FIELD_KEYWORD);
-    }
+    val fieldKeyword: PsiElement?
+        get() = findChildByType(KtTokens.FIELD_KEYWORD)
 }

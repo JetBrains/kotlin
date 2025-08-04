@@ -338,12 +338,12 @@ org.jetbrains.kotlin.psi.KtArrayAccessExpression:getLeftBracket()
 org.jetbrains.kotlin.psi.KtArrayAccessExpression:getRightBracket()
 org.jetbrains.kotlin.psi.KtArrayAccessExpression:getTrailingComma()
 org.jetbrains.kotlin.psi.KtBackingField
+org.jetbrains.kotlin.psi.KtBackingField.equalsToken
+org.jetbrains.kotlin.psi.KtBackingField.fieldKeyword
+org.jetbrains.kotlin.psi.KtBackingField.namePlaceholder
+org.jetbrains.kotlin.psi.KtBackingField.returnTypeReference
 org.jetbrains.kotlin.psi.KtBackingField:constructor(ASTNode)
 org.jetbrains.kotlin.psi.KtBackingField:constructor(KotlinBackingFieldStub)
-org.jetbrains.kotlin.psi.KtBackingField:getEqualsToken()
-org.jetbrains.kotlin.psi.KtBackingField:getFieldKeyword()
-org.jetbrains.kotlin.psi.KtBackingField:getNamePlaceholder()
-org.jetbrains.kotlin.psi.KtBackingField:getReturnTypeReference()
 org.jetbrains.kotlin.psi.KtBinaryExpression
 org.jetbrains.kotlin.psi.KtBinaryExpression:constructor(ASTNode)
 org.jetbrains.kotlin.psi.KtBinaryExpression:getLeft()

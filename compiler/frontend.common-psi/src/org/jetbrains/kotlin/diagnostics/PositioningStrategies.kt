@@ -439,7 +439,7 @@ object PositioningStrategies {
     @JvmField
     val FIELD_KEYWORD: PositioningStrategy<KtBackingField> = object : PositioningStrategy<KtBackingField>() {
         override fun mark(element: KtBackingField): List<TextRange> {
-            return markElement(element.fieldKeyword)
+            return markElement(element.fieldKeyword!!)
         }
     }
 

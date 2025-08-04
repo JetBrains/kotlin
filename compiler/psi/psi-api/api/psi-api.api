@@ -870,15 +870,15 @@ public class org/jetbrains/kotlin/psi/KtArrayAccessExpression : org/jetbrains/ko
 	public fun getTrailingComma ()Lcom/intellij/psi/PsiElement;
 }
 
-public class org/jetbrains/kotlin/psi/KtBackingField : org/jetbrains/kotlin/psi/KtDeclarationStub, org/jetbrains/kotlin/psi/KtDeclarationWithInitializer, org/jetbrains/kotlin/psi/KtModifierListOwner {
+public final class org/jetbrains/kotlin/psi/KtBackingField : org/jetbrains/kotlin/psi/KtDeclarationStub, org/jetbrains/kotlin/psi/KtDeclarationWithInitializer, org/jetbrains/kotlin/psi/KtModifierListOwner {
 	public fun <init> (Lcom/intellij/lang/ASTNode;)V
 	public fun <init> (Lorg/jetbrains/kotlin/psi/stubs/KotlinBackingFieldStub;)V
 	public fun accept (Lorg/jetbrains/kotlin/psi/KtVisitor;Ljava/lang/Object;)Ljava/lang/Object;
-	public fun getEqualsToken ()Lcom/intellij/psi/PsiElement;
-	public fun getFieldKeyword ()Lcom/intellij/psi/PsiElement;
+	public final fun getEqualsToken ()Lcom/intellij/psi/PsiElement;
+	public final fun getFieldKeyword ()Lcom/intellij/psi/PsiElement;
 	public fun getInitializer ()Lorg/jetbrains/kotlin/psi/KtExpression;
-	public fun getNamePlaceholder ()Lcom/intellij/psi/PsiElement;
-	public fun getReturnTypeReference ()Lorg/jetbrains/kotlin/psi/KtTypeReference;
+	public final fun getNamePlaceholder ()Lcom/intellij/psi/PsiElement;
+	public final fun getReturnTypeReference ()Lorg/jetbrains/kotlin/psi/KtTypeReference;
 	public fun getTextOffset ()I
 	public fun hasInitializer ()Z
 }
