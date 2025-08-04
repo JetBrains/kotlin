@@ -103,8 +103,9 @@ dependencies {
 
     // Dependencies for Kotlin/Native test infra:
     if (!kotlinBuildProperties.isInIdeaSync) {
-        testImplementation(projectTests(":native:native.tests"))
+        testImplementation(testFixtures(project(":native:native.tests")))
     }
+    testImplementation(testFixtures(project(":native:native.tests:klib-ir-inliner")))
 
     // Implicit dependencies on CORE native artifacts to run native tests on CI
     implicitDependencies("org.jetbrains.kotlinx:kotlinx-serialization-core-linuxx64:1.7.0") {
@@ -229,7 +230,7 @@ val nativeTest = nativeTest(
     compilerPluginDependencies = listOf(serializationPluginForTests)
 )
 
-val generateTests by generator("org.jetbrains.kotlinx.serialization.TestGeneratorKt")
+val generateTests by generator("org.jetbrains.kotlin.generators.tests.GenerateSerializationTestsKt")
 
 fun Test.setUpJsIrBoxTests() {
     useJsIrBoxTests(version = version, buildDir = layout.buildDirectory)
