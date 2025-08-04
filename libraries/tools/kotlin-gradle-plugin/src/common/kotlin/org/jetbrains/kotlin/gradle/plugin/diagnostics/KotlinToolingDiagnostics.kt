@@ -234,12 +234,12 @@ internal object KotlinToolingDiagnostics {
             title("Xcode project is not configured for all Kotlin targets")
                 .description {
                     val missingTargetsString = missingTargets.joinToString("\n") { (kotlinTargetName, expectedSdkRoot) ->
-                        "  - '$kotlinTargetName' (expected SDK: '$expectedSdkRoot')"
+                        " - '$kotlinTargetName' (expected SDK: '$expectedSdkRoot')"
                     }
                     """
-                The following Kotlin targets are not configured in any Xcode application target inside '${xcodeProject.name}':
-                $missingTargetsString
-                """.trimIndent()
+                |The following Kotlin targets are not configured in any Xcode application target inside '${xcodeProject.name}':
+                |$missingTargetsString
+                """.trimMargin()
                 }
                 .solution {
                     "To use the frameworks produced by these targets, make sure you have an Xcode application target that builds for the corresponding SDKs."
