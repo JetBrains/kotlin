@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.backend.common.lower
 import org.jetbrains.kotlin.backend.common.*
 import org.jetbrains.kotlin.backend.common.descriptors.synthesizedString
 import org.jetbrains.kotlin.backend.common.lower.ClosureAnnotator.ClosureBuilder
-import org.jetbrains.kotlin.backend.common.lower.LocalDeclarationsLowering.ScopeWithCounter
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.Modality
@@ -54,8 +53,6 @@ interface VisibilityPolicy {
 val BOUND_VALUE_PARAMETER by IrDeclarationOriginImpl.Synthetic
 
 val BOUND_RECEIVER_PARAMETER by IrDeclarationOriginImpl.Synthetic
-
-private var IrSymbolOwner.scopeWithCounter: ScopeWithCounter? by irAttribute(copyByDefault = false)
 
 /**
  * Prepares local declarations like classes and functions for being lifted into the nearest declaration container, adding explicit
@@ -116,10 +113,7 @@ private var IrSymbolOwner.scopeWithCounter: ScopeWithCounter? by irAttribute(cop
  */
 open class LocalDeclarationsLowering(
     open val context: LoweringContext,
-    val localNameSanitizer: (String) -> String = { it },
     val visibilityPolicy: VisibilityPolicy = VisibilityPolicy.DEFAULT,
-    val suggestUniqueNames: Boolean = true, // When `true` appends a `$#index` suffix to lifted declaration names
-    val compatibilityModeForInlinedLocalDelegatedPropertyAccessors: Boolean = false, // Keep old names because of KT-49030
     val forceFieldsForInlineCaptures: Boolean = false, // See `LocalClassContext`
     val remapCapturedTypesInExtractedLocalDeclarations: Boolean = true,
     val closureBuilders: MutableMap<IrDeclaration, ClosureBuilder> = mutableMapOf<IrDeclaration, ClosureBuilder>(),
@@ -128,8 +122,6 @@ open class LocalDeclarationsLowering(
     val newParameterToOld: MutableMap<IrValueParameter, IrValueParameter> = mutableMapOf(),
     val oldParameterToNew: MutableMap<IrValueParameter, IrValueParameter> = mutableMapOf(),
 ) : BodyLoweringPass {
-    internal val declarationScopesWithCounter: MutableMap<IrClass, MutableMap<Name, ScopeWithCounter>> = mutableMapOf()
-
     open val invalidChars: Set<Char>
         get() = emptySet()
 
@@ -164,14 +156,15 @@ open class LocalDeclarationsLowering(
             newParameterToCaptured,
             newParameterToOld,
             oldParameterToNew,
-            null,
             classesToLower
         ).lowerLocalDeclarations()
     }
 
     fun lower(
-        irBlock: IrBlock, container: IrDeclaration, closestParent: IrDeclarationParent,
-        classesToLower: Set<IrClass>? = null, functionsToSkip: Set<IrSimpleFunction>? = null,
+        irBlock: IrBlock,
+        container: IrDeclaration,
+        classesToLower: Set<IrClass>? = null,
+        functionsToSkip: Set<IrSimpleFunction>? = null,
     ) {
         LocalDeclarationsTransformer(
             irBlock,
@@ -180,7 +173,6 @@ open class LocalDeclarationsLowering(
             newParameterToCaptured,
             newParameterToOld,
             oldParameterToNew,
-            closestParent,
             classesToLower,
             functionsToSkip
         ).lowerLocalDeclarations()
@@ -190,28 +182,6 @@ open class LocalDeclarationsLowering(
 
     protected open fun IrClass.getConstructorsThatCouldCaptureParamsWithoutFieldCreating(): Iterable<IrConstructor> =
         listOfNotNull(primaryConstructor)
-
-    internal class ScopeWithCounter(val irElement: IrElement) {
-        // Continuous numbering across all declarations in the container.
-        var counter: Int = 0
-        val usedLocalFunctionNames: MutableSet<Name> = hashSetOf()
-    }
-
-    // Need to keep LocalFunctionContext.index
-    private fun IrSymbolOwner.getOrCreateScopeWithCounter(): ScopeWithCounter =
-        scopeWithCounter ?: ScopeWithCounter(this).also { scopeWithCounter = it }
-
-    private fun IrField.getOrCreateScopeWithCounter(): ScopeWithCounter? {
-        val klass = parentClassOrNull ?: return null
-        return declarationScopesWithCounter.getOrPut(klass, ::mutableMapOf)
-            .getOrPut(this.name) { ScopeWithCounter(this) }
-    }
-
-    private fun IrFunction.getOrCreateScopeWithCounter(): ScopeWithCounter? {
-        val klass = parentClassOrNull ?: return null
-        return declarationScopesWithCounter.getOrPut(klass, ::mutableMapOf)
-            .getOrPut(this.name) { ScopeWithCounter(this) }
-    }
 
     abstract class LocalContext {
         val capturedTypeParameterToTypeParameter: MutableMap<IrTypeParameter, IrTypeParameter> = mutableMapOf()
@@ -248,35 +218,10 @@ open class LocalDeclarationsLowering(
         }
     }
 
-    sealed class OwnerForLoweredDeclaration(val isLocal: Boolean) {
-        abstract fun addChild(declaration: IrDeclaration)
-        abstract fun closestDeclarationParent(): IrDeclarationParent
-
-        // Usually, just move local functions to the nearest class or file.
-        class DeclarationContainer(private val irDeclarationContainer: IrDeclarationContainer) : OwnerForLoweredDeclaration(false) {
-            override fun addChild(declaration: IrDeclaration) = irDeclarationContainer.addChild(declaration)
-
-            override fun closestDeclarationParent() = irDeclarationContainer
-        }
-
-        // But, local functions defined in an inline lambda need to be popped up to the root inline call.
-        class Block(private val irBlock: IrBlock, private val irDeclarationParent: IrDeclarationParent) : OwnerForLoweredDeclaration(true) {
-            private val initialStatementsCount = irBlock.statements.size
-            override fun addChild(declaration: IrDeclaration) {
-                // Place all children at the block's start but in order they are being added.
-                irBlock.statements.add(irBlock.statements.size - initialStatementsCount, declaration)
-            }
-
-            override fun closestDeclarationParent() = irDeclarationParent
-        }
-    }
-
     class LocalFunctionContext(
         override val declaration: IrSimpleFunction,
-        val index: Int,
-        val ownerForLoweredDeclaration: OwnerForLoweredDeclaration,
+        val isOwnerLocal: Boolean,
         sourceFileWhenInlined: IrFileEntry?,
-        val isNestedInLambda: Boolean,
     ) :
         LocalContextWithClosureAsParameters(sourceFileWhenInlined) {
         lateinit var closure: Closure
@@ -373,7 +318,6 @@ open class LocalDeclarationsLowering(
         val newParameterToCaptured: MutableMap<IrValueParameter, IrValueSymbol>,
         val newParameterToOld: MutableMap<IrValueParameter, IrValueParameter>,
         val oldParameterToNew: MutableMap<IrValueParameter, IrValueParameter>,
-        val closestParent: IrDeclarationParent? = null,
         val classesToLower: Set<IrClass>? = null, val functionsToSkip: Set<IrSimpleFunction>? = null,
     ) {
         val localFunctions: MutableMap<IrFunction, LocalFunctionContext> = LinkedHashMap()
@@ -839,66 +783,19 @@ open class LocalDeclarationsLowering(
             }
         }
 
-        private fun suggestLocalName(declaration: IrDeclarationWithName): String {
-            val declarationName = localNameSanitizer(declaration.name.asString())
-            localFunctions[declaration]?.let {
-                val baseName = when {
-                    declaration.name.isSpecial -> if (it.isNestedInLambda) "" else "lambda"
-                    else -> declarationName
-                }
-                if (it.index >= 0) {
-                    if (!suggestUniqueNames) return baseName
-
-                    val separator = when {
-                        compatibilityModeForInlinedLocalDelegatedPropertyAccessors &&
-                                declaration.origin == IrDeclarationOrigin.DELEGATED_PROPERTY_ACCESSOR &&
-                                container is IrFunction && container.isInline -> "-"
-                        baseName.isEmpty() -> ""
-                        else -> "$"
-                    }
-                    return "$baseName$separator${it.index}"
-                }
-            }
-
-            return declarationName
-        }
-
-        private fun generateNameForLiftedDeclaration(
-            declaration: IrDeclaration,
-            newOwner: IrDeclarationParent,
-        ): Name {
-            val parents = declaration.parentsWithSelf.takeWhile { it != newOwner }.toList().reversed()
-            val nameFromParents = parents.joinToString(separator = "$") { suggestLocalName(it as IrDeclarationWithName) }
-            // Local functions declared in anonymous initializers have classes as their parents.
-            // Such anonymous initializers, however, are inlined into the constructors delegating to super class constructor.
-            // There can be local functions declared in local function in init blocks (and further),
-            // but such functions would have proper "safe" names (outerLocalFun1$outerLocalFun2$...$localFun).
-            return if (parents.size == 1 && declaration.parent is IrClass)
-                Name.identifier("_init_\$$nameFromParents")
-            else
-                Name.identifier(nameFromParents)
-        }
-
         private fun createTransformedSimpleFunction(localFunctionContext: LocalFunctionContext) {
             val oldDeclaration = localFunctionContext.declaration
             if (oldDeclaration.dispatchReceiverParameter != null) {
                 throw AssertionError("local functions must not have dispatch receiver")
             }
 
-            val owner = localFunctionContext.ownerForLoweredDeclaration
-            val ownerParent = owner.closestDeclarationParent()
-
-            // Name invention is based on a parent that will be a final parent after the lifting.
-            // However, to preserve IR consistency newDeclaration.parent will be oldDeclaration.parent till the moment of actual lifting.
-            val newName = generateNameForLiftedDeclaration(oldDeclaration, ownerParent)
-
             // TODO: consider using fields to access the closure of enclosing class.
             val (capturedValues, capturedTypeParameters) = localFunctionContext.closure
 
             val newDeclaration = context.irFactory.buildFun {
                 updateFrom(oldDeclaration)
-                name = newName
-                visibility = if (owner.isLocal) DescriptorVisibilities.LOCAL else DescriptorVisibilities.PRIVATE
+                name = oldDeclaration.name
+                visibility = if (localFunctionContext.isOwnerLocal) DescriptorVisibilities.LOCAL else DescriptorVisibilities.PRIVATE
                 modality = Modality.FINAL
             }
 
@@ -1189,40 +1086,17 @@ open class LocalDeclarationsLowering(
             get() =
                 origin == IrDeclarationOrigin.LOCAL_FUNCTION_FOR_LAMBDA || origin == IrDeclarationOrigin.INLINE_LAMBDA
 
-        private inline fun <reified T : IrElement> getEnclosing(): T? {
-            var currentParent = container as? T ?: container.parent
-            while (currentParent is IrDeclaration && currentParent !is T) {
-                currentParent = currentParent.parent
-            }
-
-            return currentParent as? T
-        }
-
         private fun collectLocalDeclarations() {
-            val enclosingPackageFragment = container.getPackageFragment()
-            val enclosingClass = getEnclosing<IrClass>()
-            val enclosingField = getEnclosing<IrField>().takeIf {
-                it?.parentClassOrNull != null
-            }
-            val enclosingFunction = getEnclosing<IrFunction>().takeIf {
-                it !is IrConstructor && it?.parentClassOrNull != null
-            }
-
             class Data(
-                val currentScope: ScopeWithCounter?,
+                val currentFunction: IrFunction?,
                 val isInInlineFunction: Boolean,
                 val sourceFileWhenInlined: IrFileEntry? = null,
-                val isInLambdaFunction: Boolean,
             ) {
-                fun withCurrentClass(currentClass: IrClass): Data =
-                    // Don't cache local declarations
-                    Data(ScopeWithCounter(currentClass), isInInlineFunction, sourceFileWhenInlined, false)
-
                 fun withCurrentFunction(currentFunction: IrFunction): Data =
-                    Data(ScopeWithCounter(currentFunction), isInInlineFunction, sourceFileWhenInlined, currentFunction.isLambda)
+                    Data(currentFunction, isInInlineFunction, sourceFileWhenInlined)
 
                 fun withInline(isInline: Boolean, sourceFileWhenInlined: IrFileEntry?): Data =
-                    if (isInline && !isInInlineFunction) Data(currentScope, true, sourceFileWhenInlined, false) else this
+                    if (isInline && !isInInlineFunction) Data(currentFunction, true, sourceFileWhenInlined) else this
             }
 
             irElement.accept(object : IrVisitor<Unit, Data>() {
@@ -1265,42 +1139,9 @@ open class LocalDeclarationsLowering(
                     if (functionsToSkip?.contains(declaration) == true) return
 
                     if (declaration.visibility == DescriptorVisibilities.LOCAL) {
-                        val enclosingScope = data.currentScope
-                            ?: enclosingField?.getOrCreateScopeWithCounter()
-                            ?: enclosingFunction?.getOrCreateScopeWithCounter()
-                            ?: enclosingClass?.getOrCreateScopeWithCounter()
-                            // File is required for K/N because file declarations are not split by classes.
-                            ?: enclosingPackageFragment.getOrCreateScopeWithCounter()
-                        val index =
-                            if (declaration.name.isSpecial || declaration.name in enclosingScope.usedLocalFunctionNames)
-                                enclosingScope.counter++
-                            else -1
-                        val ownerForLoweredDeclaration =
-                            data.currentScope?.let {
-                                when (it.irElement) {
-                                    is IrDeclarationContainer -> OwnerForLoweredDeclaration.DeclarationContainer(it.irElement)
-                                    is IrField -> OwnerForLoweredDeclaration.DeclarationContainer(it.irElement.parentClassOrNull!!)
-                                    is IrFunction -> localFunctions[enclosingScope.irElement]!!.ownerForLoweredDeclaration
-                                    else -> error("Unknown owner for lowered declaration")
-                                }
-                            }
-                                ?: (irElement as? IrBlock)?.let { OwnerForLoweredDeclaration.Block(irElement, closestParent!!) }
-                                ?: (enclosingScope.irElement as? IrField)?.let { enclosingField ->
-                                    OwnerForLoweredDeclaration.DeclarationContainer(enclosingField.parentClassOrNull!!)
-                                }
-                                ?: (enclosingScope.irElement as? IrFunction)?.let { enclosingFunction ->
-                                    OwnerForLoweredDeclaration.DeclarationContainer(enclosingFunction.parentClassOrNull!!)
-                                }
-                                ?: OwnerForLoweredDeclaration.DeclarationContainer(enclosingScope.irElement as IrDeclarationContainer)
-                        localFunctions[declaration] = LocalFunctionContext(
-                            declaration,
-                            index,
-                            ownerForLoweredDeclaration,
-                            data.sourceFileWhenInlined,
-                            data.isInLambdaFunction,
-                        )
+                        val isOwnerLocal = localFunctions[data.currentFunction]?.isOwnerLocal ?: (irElement is IrBlock)
 
-                        enclosingScope.usedLocalFunctionNames.add(declaration.name)
+                        localFunctions[declaration] = LocalFunctionContext(declaration, isOwnerLocal, data.sourceFileWhenInlined)
                     }
 
                     val newData = data.withInline(declaration.isInline, data.sourceFileWhenInlined)
@@ -1321,7 +1162,7 @@ open class LocalDeclarationsLowering(
 
                 override fun visitClass(declaration: IrClass, data: Data) {
                     if (classesToLower?.contains(declaration) == false) return
-                    super.visitClass(declaration, data.withCurrentClass(declaration))
+                    super.visitClass(declaration, data)
 
                     if (!declaration.isLocalNotInner()) return
 
@@ -1345,7 +1186,7 @@ open class LocalDeclarationsLowering(
                 private val Data.inInlineFunctionScope: Boolean
                     get() = isInInlineFunction ||
                             generateSequence(container) { it.parent as? IrDeclaration }.any { it is IrFunction && it.isInline }
-            }, Data(null, false, null, false))
+            }, Data(null, false, null))
         }
     }
 }
