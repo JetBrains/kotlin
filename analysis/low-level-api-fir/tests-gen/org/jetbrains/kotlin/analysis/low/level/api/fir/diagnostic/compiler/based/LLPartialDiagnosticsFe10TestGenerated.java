@@ -23797,6 +23797,12 @@ public class LLPartialDiagnosticsFe10TestGenerated extends AbstractLLPartialDiag
       }
 
       @Test
+      @TestMetadata("inlineLambdaAsExtensionReceiver.kt")
+      public void testInlineLambdaAsExtensionReceiver() {
+        runTest("compiler/testData/diagnostics/tests/inline/inlineLambdaAsExtensionReceiver.kt");
+      }
+
+      @Test
       @TestMetadata("inlineLambdaInDefaultInlineParameter.kt")
       public void testInlineLambdaInDefaultInlineParameter() {
         runTest("compiler/testData/diagnostics/tests/inline/inlineLambdaInDefaultInlineParameter.kt");

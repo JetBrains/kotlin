@@ -22978,6 +22978,12 @@ public class PhasedJvmDiagnosticPsiTestGenerated extends AbstractPhasedJvmDiagno
       }
 
       @Test
+      @TestMetadata("inlineLambdaAsExtensionReceiver.kt")
+      public void testInlineLambdaAsExtensionReceiver() {
+        runTest("compiler/testData/diagnostics/tests/inline/inlineLambdaAsExtensionReceiver.kt");
+      }
+
+      @Test
       @TestMetadata("inlineLambdaInDefaultInlineParameter.kt")
       public void testInlineLambdaInDefaultInlineParameter() {
         runTest("compiler/testData/diagnostics/tests/inline/inlineLambdaInDefaultInlineParameter.kt");
