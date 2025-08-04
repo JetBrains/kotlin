@@ -57,6 +57,7 @@ import org.jetbrains.kotlin.incremental.components.EnumWhenTracker
 import org.jetbrains.kotlin.incremental.components.ExpectActualTracker
 import org.jetbrains.kotlin.incremental.components.InlineConstTracker
 import org.jetbrains.kotlin.incremental.components.LookupTracker
+import org.jetbrains.kotlin.ir.InternalSymbolFinderAPI
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrDiagnosticReporter
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
@@ -82,17 +83,18 @@ import org.jetbrains.kotlin.library.*
 import org.jetbrains.kotlin.library.impl.BuiltInsPlatform
 import org.jetbrains.kotlin.library.impl.buildKotlinLibrary
 import org.jetbrains.kotlin.library.metadata.KlibMetadataFactories
-import org.jetbrains.kotlin.library.metadata.NullFlexibleTypeDeserializer
 import org.jetbrains.kotlin.library.metadata.resolver.impl.KotlinResolvedLibraryImpl
 import org.jetbrains.kotlin.load.java.descriptors.JavaCallableMemberDescriptor
 import org.jetbrains.kotlin.load.java.descriptors.JavaClassDescriptor
 import org.jetbrains.kotlin.load.java.lazy.ModuleClassResolver
 import org.jetbrains.kotlin.load.java.lazy.descriptors.LazyJavaPackageFragment
+import org.jetbrains.kotlin.load.kotlin.JavaFlexibleTypeDeserializer
 import org.jetbrains.kotlin.load.java.structure.JavaClass
 import org.jetbrains.kotlin.load.java.structure.impl.VirtualFileBoundJavaClass
 import org.jetbrains.kotlin.metadata.builtins.BuiltInsBinaryVersion
 import org.jetbrains.kotlin.metadata.deserialization.BinaryVersion
 import org.jetbrains.kotlin.metadata.jvm.deserialization.JvmProtoBufUtil
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
@@ -210,7 +212,6 @@ class K2JKlibCompiler : CLICompiler<K2JKlibCompilerArguments>() {
                 return MetadataJVMModuleDeserializer(moduleDescriptor, emptyList())
             }
 
-            klib.moduleHeaderData
             val libraryAbiVersion = klib.versions.abiVersion ?: KotlinAbiVersion.CURRENT
             return JKlibModuleDeserializer(
                 moduleDescriptor,
@@ -363,11 +364,14 @@ class K2JKlibCompiler : CLICompiler<K2JKlibCompilerArguments>() {
 //                require(!it.exists) { "Collision writing intermediate KLib $it" }
 //                it.deleteOnExit()
 //            }
+        // DEBUG
+        // val klibDestination = File(System.getProperty("java.io.tmpdir"), "test.klib")
         val klibDestination = destination
+        println(destination)
         val exitCodeKlib = compileLibrary(arguments, rootDisposable, paths, klibDestination)
         if (outputKind == OutputKind.LIBRARY || exitCodeKlib != ExitCode.OK) return exitCodeKlib
-
-        compileIr(arguments, rootDisposable, klibDestination)
+        // DEBUG
+        // compileIr(arguments, rootDisposable, klibDestination);
         return ExitCode.OK
     }
 
@@ -387,7 +391,6 @@ class K2JKlibCompiler : CLICompiler<K2JKlibCompilerArguments>() {
         )
 
         // Scope for the dependency module contains everything except files present in the scope for the source module
-//        val dependencyScope = GlobalSearchScope.allScope(projectContext.project) // Possibly wrong?
         val scope = TopDownAnalyzerFacadeForJVM.AllJavaSourcesInProjectScope(projectContext.project)
         val dependencyScope = GlobalSearchScope.notScope(scope)
 
@@ -442,10 +445,17 @@ class K2JKlibCompiler : CLICompiler<K2JKlibCompilerArguments>() {
             require(!it.exists) { "Collision writing intermediate KLib $it" }
             it.deleteOnExit()
         }
+        // DEBUG
+		// val klibDestination = File(System.getProperty("java.io.tmpdir"), "test.klib")
         compileLibrary(arguments, rootDisposable, paths, klibDestination)
+        // DEBUG
+        // if (!klibDestination.exists) {
+        //     error("Failed to compile KLIB $klibDestination")
+        // }
         return compileIr(arguments, rootDisposable, klibDestination)
     }
 
+    @OptIn(InternalSymbolFinderAPI::class)
     fun compileIr(
         arguments: K2JKlibCompilerArguments,
         disposable: Disposable,
@@ -471,7 +481,7 @@ class K2JKlibCompiler : CLICompiler<K2JKlibCompilerArguments>() {
 
         klibFactories = KlibMetadataFactories(
             { storageManager -> builtIns },
-            NullFlexibleTypeDeserializer
+            JavaFlexibleTypeDeserializer
         )
         val trace = BindingTraceContext(projectContext.project)
 
@@ -492,7 +502,7 @@ class K2JKlibCompiler : CLICompiler<K2JKlibCompilerArguments>() {
 
         val mainModuleLib = sortedDependencies.find { it.libraryFile == klib }
 
-        val mainModule = getModuleDescriptor(mainModuleLib!! )
+        val mainModule = getModuleDescriptor(mainModuleLib!!)
 
         val mangler = JvmDescriptorMangler(
             MainFunctionDetector(trace.bindingContext, configuration.languageVersionSettings)
@@ -567,12 +577,11 @@ class K2JKlibCompiler : CLICompiler<K2JKlibCompilerArguments>() {
             { DeserializationStrategy.ALL },
             jarDepsModuleDescriptor.name.asString()
         )
-        lateinit var mainModuleFragment: IrModuleFragment
         for (dep in sortedDependencies) {
             val descriptor = getModuleDescriptor(dep)
             when {
                 descriptor == mainModule -> {
-                    mainModuleFragment = linker.deserializeIrModuleHeader(descriptor, dep, { DeserializationStrategy.ALL })
+                    linker.deserializeIrModuleHeader(descriptor, dep, { DeserializationStrategy.ALL })
                 }
                 else -> linker.deserializeIrModuleHeader(descriptor, dep, { DeserializationStrategy.EXPLICITLY_EXPORTED })
             }
@@ -587,28 +596,12 @@ class K2JKlibCompiler : CLICompiler<K2JKlibCompilerArguments>() {
         )
 
 
-        linker.init(null)
+        val generatorContext = translator.createGeneratorContext(mainModule, trace.bindingContext, symbolTable)
+//        linker.init(null)
+        val mainModuleFragment = translator.generateModuleFragment(generatorContext, emptyList(), listOf(linker))
         ExternalDependenciesGenerator(symbolTable, listOf(linker)).generateUnboundSymbolsAsDependencies()
 
         linker.postProcess(inOrAfterLinkageStep = true)
-
-// For debugging
-//        val jarDepsModuleFragment = linker.deserializeIrModuleHeader(
-//            jarDepsModuleDescriptor,
-//            null,
-//            { DeserializationStrategy.ALL },
-//            jarDepsModuleDescriptor.name.asString()
-//        )
-//        val deserializedModuleFragmentsToLib = sortedDependencies.associateBy { klib ->
-//            val descriptor = getModuleDescriptor(klib)
-//            when {
-//                descriptor == mainModule -> linker.deserializeIrModuleHeader(descriptor, klib, { DeserializationStrategy.ALL })
-//                else -> linker.deserializeIrModuleHeader(descriptor, klib, { DeserializationStrategy.EXPLICITLY_EXPORTED })
-//            }
-//        }
-//        val deserializedModuleFragments = deserializedModuleFragmentsToLib.keys.toList() + jarDepsModuleFragment
-//        val moduleFragment = deserializedModuleFragments.last()
-//        println(moduleFragment.dump())
 
         return CompilationResult(pluginContext, mainModuleFragment)
     }
