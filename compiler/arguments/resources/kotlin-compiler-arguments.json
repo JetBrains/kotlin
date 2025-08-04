@@ -8007,7 +8007,7 @@
                                                 "shortName": null,
                                                 "deprecatedName": null,
                                                 "description": {
-                                                    "current": "Compile Long values as ES2015 bigint instead of object. Enabled by default in case of ES2015 target usage",
+                                                    "current": "Compile Long values as ES2020 bigint instead of object.",
                                                     "valueInVersions": []
                                                 },
                                                 "delimiter": null,
