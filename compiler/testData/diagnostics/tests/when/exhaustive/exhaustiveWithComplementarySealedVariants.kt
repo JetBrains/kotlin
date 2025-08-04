@@ -1,5 +1,5 @@
 // FIR_IDENTICAL
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-79672
 // LANGUAGE: +DataFlowBasedExhaustiveness
 // WITH_STDLIB
@@ -12,7 +12,7 @@ fun checkSomething(stuff: Stuff) {
         "ObjC not supported here"
     }
 
-    <!NO_ELSE_IN_WHEN!>when<!> (stuff) {
+    when (stuff) {
         is Stuff.ObjA -> println("ObjA")
         is Stuff.ObjB -> println("ObjB")
     }
