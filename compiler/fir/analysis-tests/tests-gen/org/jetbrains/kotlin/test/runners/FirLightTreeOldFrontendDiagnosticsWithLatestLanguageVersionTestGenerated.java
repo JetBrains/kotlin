@@ -28336,6 +28336,12 @@ public class FirLightTreeOldFrontendDiagnosticsWithLatestLanguageVersionTestGene
     @TestDataPath("$PROJECT_ROOT")
     public class Multimodule {
       @Test
+      @TestMetadata("accessibleTypeAliasIfItsRhsIsInDependencies.kt")
+      public void testAccessibleTypeAliasIfItsRhsIsInDependencies() {
+        runTest("compiler/testData/diagnostics/tests/multimodule/accessibleTypeAliasIfItsRhsIsInDependencies.kt");
+      }
+
+      @Test
       public void testAllFilesPresentInMultimodule() {
         KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("compiler/testData/diagnostics/tests/multimodule"), Pattern.compile("^(.+)\\.(kt)$"), Pattern.compile("^(.+)\\.(reversed|partialBody|fir|ll|latestLV)\\.kts?$"), true, "multiplatform");
       }
@@ -28410,6 +28416,18 @@ public class FirLightTreeOldFrontendDiagnosticsWithLatestLanguageVersionTestGene
       @TestMetadata("inaccessibleSuperTypeWithRepeatedContext.kt")
       public void testInaccessibleSuperTypeWithRepeatedContext() {
         runTest("compiler/testData/diagnostics/tests/multimodule/inaccessibleSuperTypeWithRepeatedContext.kt");
+      }
+
+      @Test
+      @TestMetadata("inaccessibleTypeAliasNoForbidTypeAliasWithMissingDependencyType.kt")
+      public void testInaccessibleTypeAliasNoForbidTypeAliasWithMissingDependencyType() {
+        runTest("compiler/testData/diagnostics/tests/multimodule/inaccessibleTypeAliasNoForbidTypeAliasWithMissingDependencyType.kt");
+      }
+
+      @Test
+      @TestMetadata("inaccessibleTypeAliasWithForbidTypeAliasWithMissingDependencyType.kt")
+      public void testInaccessibleTypeAliasWithForbidTypeAliasWithMissingDependencyType() {
+        runTest("compiler/testData/diagnostics/tests/multimodule/inaccessibleTypeAliasWithForbidTypeAliasWithMissingDependencyType.kt");
       }
 
       @Test

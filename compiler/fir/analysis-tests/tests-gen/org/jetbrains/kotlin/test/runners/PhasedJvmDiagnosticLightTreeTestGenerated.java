@@ -27302,6 +27302,12 @@ public class PhasedJvmDiagnosticLightTreeTestGenerated extends AbstractPhasedJvm
     @TestDataPath("$PROJECT_ROOT")
     public class Multimodule {
       @Test
+      @TestMetadata("accessibleTypeAliasIfItsRhsIsInDependencies.kt")
+      public void testAccessibleTypeAliasIfItsRhsIsInDependencies() {
+        runTest("compiler/testData/diagnostics/tests/multimodule/accessibleTypeAliasIfItsRhsIsInDependencies.kt");
+      }
+
+      @Test
       @TestMetadata("AnonymousFunctionParametersOfInaccessibleTypes.kt")
       public void testAnonymousFunctionParametersOfInaccessibleTypes() {
         runTest("compiler/testData/diagnostics/tests/multimodule/AnonymousFunctionParametersOfInaccessibleTypes.kt");
@@ -27371,6 +27377,18 @@ public class PhasedJvmDiagnosticLightTreeTestGenerated extends AbstractPhasedJvm
       @TestMetadata("inaccessibleSuperTypeWithRepeatedContext.kt")
       public void testInaccessibleSuperTypeWithRepeatedContext() {
         runTest("compiler/testData/diagnostics/tests/multimodule/inaccessibleSuperTypeWithRepeatedContext.kt");
+      }
+
+      @Test
+      @TestMetadata("inaccessibleTypeAliasNoForbidTypeAliasWithMissingDependencyType.kt")
+      public void testInaccessibleTypeAliasNoForbidTypeAliasWithMissingDependencyType() {
+        runTest("compiler/testData/diagnostics/tests/multimodule/inaccessibleTypeAliasNoForbidTypeAliasWithMissingDependencyType.kt");
+      }
+
+      @Test
+      @TestMetadata("inaccessibleTypeAliasWithForbidTypeAliasWithMissingDependencyType.kt")
+      public void testInaccessibleTypeAliasWithForbidTypeAliasWithMissingDependencyType() {
+        runTest("compiler/testData/diagnostics/tests/multimodule/inaccessibleTypeAliasWithForbidTypeAliasWithMissingDependencyType.kt");
       }
 
       @Test

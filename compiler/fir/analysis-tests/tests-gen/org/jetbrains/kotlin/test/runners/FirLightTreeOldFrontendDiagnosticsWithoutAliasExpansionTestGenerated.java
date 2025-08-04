@@ -1031,6 +1031,23 @@ public class FirLightTreeOldFrontendDiagnosticsWithoutAliasExpansionTestGenerate
     @TestMetadata("compiler/testData/diagnostics/tests/multimodule")
     @TestDataPath("$PROJECT_ROOT")
     public class Multimodule {
+      @Test
+      @TestMetadata("accessibleTypeAliasIfItsRhsIsInDependencies.kt")
+      public void testAccessibleTypeAliasIfItsRhsIsInDependencies() {
+        runTest("compiler/testData/diagnostics/tests/multimodule/accessibleTypeAliasIfItsRhsIsInDependencies.kt");
+      }
+
+      @Test
+      @TestMetadata("inaccessibleTypeAliasNoForbidTypeAliasWithMissingDependencyType.kt")
+      public void testInaccessibleTypeAliasNoForbidTypeAliasWithMissingDependencyType() {
+        runTest("compiler/testData/diagnostics/tests/multimodule/inaccessibleTypeAliasNoForbidTypeAliasWithMissingDependencyType.kt");
+      }
+
+      @Test
+      @TestMetadata("inaccessibleTypeAliasWithForbidTypeAliasWithMissingDependencyType.kt")
+      public void testInaccessibleTypeAliasWithForbidTypeAliasWithMissingDependencyType() {
+        runTest("compiler/testData/diagnostics/tests/multimodule/inaccessibleTypeAliasWithForbidTypeAliasWithMissingDependencyType.kt");
+      }
     }
 
     @Nested
