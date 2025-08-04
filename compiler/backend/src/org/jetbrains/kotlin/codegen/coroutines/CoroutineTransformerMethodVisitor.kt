@@ -1057,17 +1057,7 @@ class CoroutineTransformerMethodVisitor(
             cursor = cursor.next
         }
 
-        // Check whether the variable range has meaningful operations in it
-        cursor = local.start
-        while (cursor != null && cursor != local.end) {
-            if (cursor.isMeaningful) {
-                // found at least one meaningful operation
-                return true
-            }
-            cursor = cursor.next
-        }
-
-        return false
+        return true
     }
 
     private fun mapFieldNameToVariable(
