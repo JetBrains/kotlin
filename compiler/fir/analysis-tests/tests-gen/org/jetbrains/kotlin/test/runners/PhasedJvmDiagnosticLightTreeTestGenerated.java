@@ -27434,6 +27434,12 @@ public class PhasedJvmDiagnosticLightTreeTestGenerated extends AbstractPhasedJvm
       }
 
       @Test
+      @TestMetadata("UnrelatedInaccessibleSuperType.kt")
+      public void testUnrelatedInaccessibleSuperType() {
+        runTest("compiler/testData/diagnostics/tests/multimodule/UnrelatedInaccessibleSuperType.kt");
+      }
+
+      @Test
       @TestMetadata("varargConflict.kt")
       public void testVarargConflict() {
         runTest("compiler/testData/diagnostics/tests/multimodule/varargConflict.kt");

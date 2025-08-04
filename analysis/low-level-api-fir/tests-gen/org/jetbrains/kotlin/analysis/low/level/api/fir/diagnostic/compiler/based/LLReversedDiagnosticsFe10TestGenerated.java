@@ -28491,6 +28491,12 @@ public class LLReversedDiagnosticsFe10TestGenerated extends AbstractLLReversedDi
       }
 
       @Test
+      @TestMetadata("UnrelatedInaccessibleSuperType.kt")
+      public void testUnrelatedInaccessibleSuperType() {
+        runTest("compiler/testData/diagnostics/tests/multimodule/UnrelatedInaccessibleSuperType.kt");
+      }
+
+      @Test
       @TestMetadata("varargConflict.kt")
       public void testVarargConflict() {
         runTest("compiler/testData/diagnostics/tests/multimodule/varargConflict.kt");
