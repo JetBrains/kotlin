@@ -425,8 +425,12 @@ abstract class LogicSystem(private val context: ConeInferenceContext) {
             // `commonSuperType()` isn't that critical (remember it's exactly the `commonSuperType` that requires
             // this whole mechanism with lower bounds for DFA-based exhaustiveness).
 
-            statement.lowerTypes.mapNotNull { (it as? DfaType.Cone)?.type }.takeIf { it.isNotEmpty() }
+            val lowers = statement.lowerTypes.mapNotNull { (it as? DfaType.Cone)?.type }.takeIf { it.isNotEmpty() }
                 ?: listOf(context.nothingType())
+            // In general, picking `commonSuperType` may produce unsound solutions, so
+            // we only pick it if it matches one of the bounds: this means we haven't
+            // "stepped too high up" the hierarchy.
+            context.commonSuperTypeOrNull(lowers).takeIf { it in lowers }?.let(::listOf) ?: lowers
         }.let {
             ConeTypeIntersector.intersectTypes(context, it)
         }.takeIf { !it.isNothing }
