@@ -5,6 +5,8 @@
 
 package server.interceptors
 
+import io.grpc.Context
+import io.grpc.Contexts
 import io.grpc.Metadata
 import io.grpc.ServerCall
 import io.grpc.ServerCallHandler
@@ -12,6 +14,10 @@ import io.grpc.ServerInterceptor
 import server.auth.ServerAuth
 
 class AuthInterceptor(private val authenticator: ServerAuth) : ServerInterceptor {
+
+    companion object {
+        val USER_ID_CONTEXT_KEY: Context.Key<String> = Context.key("user-id")
+    }
 
     override fun <ReqT : Any?, RespT : Any?> interceptCall(
         call: ServerCall<ReqT?, RespT?>?,
@@ -25,7 +31,14 @@ class AuthInterceptor(private val authenticator: ServerAuth) : ServerInterceptor
             call?.close(io.grpc.Status.UNAUTHENTICATED, Metadata())
             return object : ServerCall.Listener<ReqT?>() {}
         }
-        return next?.startCall(call, headers)
+
+        val userId = authenticator.getUserId(credential)
+        if (userId == null) {
+            return object : ServerCall.Listener<ReqT?>() {}
+        }
+
+        val contextWithUserId = Context.current().withValue(USER_ID_CONTEXT_KEY, userId)
+        return Contexts.interceptCall(contextWithUserId, call, headers, next)
     }
 
 }
