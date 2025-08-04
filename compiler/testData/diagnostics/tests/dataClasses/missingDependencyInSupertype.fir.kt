@@ -1,4 +1,5 @@
 // RUN_PIPELINE_TILL: FRONTEND
+// LATEST_LV_DIFFERENCE
 // ISSUE: KT-76839
 
 // MODULE: baseLib
@@ -18,7 +19,7 @@ data class Some(<!MISSING_DEPENDENCY_SUPERCLASS!>val x: C<!>) // crashes backend
 
 fun test() {
     foo {
-        it.<!MISSING_DEPENDENCY_SUPERCLASS!>hashCode<!>() // crashes backend
+        it.<!MISSING_DEPENDENCY_SUPERCLASS_WARNING!>hashCode<!>() // crashes backend
     }
 }
 

@@ -15,7 +15,7 @@ fun foo(f: (C) -> Unit) {
 }
 
 // MODULE: main(lib)
-data class Some(val x: C) // crashes backend
+data class Some(<!MISSING_DEPENDENCY_SUPERCLASS!>val x: C<!>) // crashes backend
 
 fun test() {
     foo {

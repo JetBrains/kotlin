@@ -20,13 +20,14 @@ context(context: CheckerContext, reporter: DiagnosticReporter)
 fun checkMissingDependencySuperTypes(
     classifierType: ConeKotlinType?,
     source: KtSourceElement?,
-): Boolean = checkMissingDependencySuperTypes(classifierType?.toSymbol(context.session), source, isEagerCheck = false)
+): Boolean = checkMissingDependencySuperTypes(classifierType?.toSymbol(context.session), source)
 
 context(context: CheckerContext, reporter: DiagnosticReporter)
 fun checkMissingDependencySuperTypes(
     declaration: FirBasedSymbol<*>?,
     source: KtSourceElement?,
-    isEagerCheck: Boolean,
+    isEagerCheck: Boolean = false,
+    isSupertypeUnrelatedToUseSite: Boolean = false,
 ): Boolean {
     if (declaration !is FirClassSymbol<*>) return false
 
@@ -40,6 +41,9 @@ fun checkMissingDependencySuperTypes(
                 ) -> FirErrors.MISSING_DEPENDENCY_SUPERCLASS_IN_TYPE_ARGUMENT
                 isEagerCheck && !languageVersionSettings.supportsFeature(
                     LanguageFeature.AllowEagerSupertypeAccessibilityChecks
+                ) -> FirErrors.MISSING_DEPENDENCY_SUPERCLASS_WARNING
+                isSupertypeUnrelatedToUseSite && !languageVersionSettings.supportsFeature(
+                    LanguageFeature.ForbidUnrelatedMissingSupertypes
                 ) -> FirErrors.MISSING_DEPENDENCY_SUPERCLASS_WARNING
                 else -> FirErrors.MISSING_DEPENDENCY_SUPERCLASS
             }

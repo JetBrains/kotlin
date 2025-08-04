@@ -27458,6 +27458,12 @@ public class PhasedJvmDiagnosticPsiTestGenerated extends AbstractPhasedJvmDiagno
       }
 
       @Test
+      @TestMetadata("UnrelatedInaccessibleSuperTypeForbidden.kt")
+      public void testUnrelatedInaccessibleSuperTypeForbidden() {
+        runTest("compiler/testData/diagnostics/tests/multimodule/UnrelatedInaccessibleSuperTypeForbidden.kt");
+      }
+
+      @Test
       @TestMetadata("varargConflict.kt")
       public void testVarargConflict() {
         runTest("compiler/testData/diagnostics/tests/multimodule/varargConflict.kt");

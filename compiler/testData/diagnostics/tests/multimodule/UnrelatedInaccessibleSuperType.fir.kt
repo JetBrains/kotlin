@@ -1,5 +1,5 @@
-// RUN_PIPELINE_TILL: FRONTEND
-
+// RUN_PIPELINE_TILL: BACKEND
+// LANGUAGE: -ForbidUnrelatedMissingSupertypes
 // ISSUE: KT-79789
 
 // MODULE: platform-core
@@ -18,7 +18,7 @@ public interface StylesheetFile extends PsiFile, StylesheetFileMarker {}
 
 // MODULE: main(platform-core, css)
 fun test(file: StylesheetFile) {
-    file.<!MISSING_DEPENDENCY_SUPERCLASS("StylesheetFileMarker; StylesheetFile")!>self<!>
+    file.<!MISSING_DEPENDENCY_SUPERCLASS_WARNING("StylesheetFileMarker; StylesheetFile")!>self<!>
 }
 
 /* GENERATED_FIR_TAGS: flexibleType, functionDeclaration, ifExpression, isExpression, javaProperty, smartcast */

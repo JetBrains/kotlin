@@ -5,12 +5,14 @@
 
 package org.jetbrains.kotlin.fir.analysis.checkers.expression
 
+import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.analysis.checkers.checkMissingDependencySuperTypes
 import org.jetbrains.kotlin.fir.analysis.checkers.context.CheckerContext
 import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.getOwnerLookupTag
+import org.jetbrains.kotlin.fir.isEnabled
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.toSymbol
@@ -21,9 +23,6 @@ import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.fir.types.unwrapToSimpleTypeUsingLowerBound
 import org.jetbrains.kotlin.utils.SmartSet
 
-/**
- * @see org.jetbrains.kotlin.resolve.checkers.MissingDependencySupertypeChecker
- */
 object FirMissingDependencySupertypeInQualifiedAccessExpressionsChecker : FirQualifiedAccessExpressionChecker(MppCheckerKind.Common) {
     context(context: CheckerContext, reporter: DiagnosticReporter)
     override fun check(expression: FirQualifiedAccessExpression) {
@@ -42,8 +41,16 @@ object FirMissingDependencySupertypeInQualifiedAccessExpressionsChecker : FirQua
 
         val checkedSymbols = SmartSet.create<FirBasedSymbol<*>>()
 
+        var missingSuperTypes = if (!LanguageFeature.ForbidUnrelatedMissingSupertypes.isEnabled()) {
+            val dispatchReceiverCallSiteSpecificSymbol = symbol.dispatchReceiverType?.toSymbol(context.session)
+            val result = checkMissingDependencySuperTypes(dispatchReceiverCallSiteSpecificSymbol, source)
+            dispatchReceiverCallSiteSpecificSymbol?.let(checkedSymbols::add)
+            result
+        } else false
         val dispatchReceiverSymbol = expression.dispatchReceiver?.resolvedType?.toSymbol(context.session)
-        val missingSuperTypes = checkMissingDependencySuperTypes(dispatchReceiverSymbol, source, isEagerCheck = false)
+        missingSuperTypes = checkMissingDependencySuperTypes(
+            dispatchReceiverSymbol, source, isSupertypeUnrelatedToUseSite = true
+        ) || missingSuperTypes
         dispatchReceiverSymbol?.let(checkedSymbols::add)
 
         val lazySupertypesUnresolvedByDefault = symbol is FirConstructorSymbol || symbol is FirAnonymousFunctionSymbol

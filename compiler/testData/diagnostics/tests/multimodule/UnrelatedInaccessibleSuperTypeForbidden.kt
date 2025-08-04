@@ -1,5 +1,5 @@
-// RUN_PIPELINE_TILL: BACKEND
-// LANGUAGE: -ForbidUnrelatedMissingSupertypes
+// RUN_PIPELINE_TILL: FRONTEND
+// LANGUAGE: +ForbidUnrelatedMissingSupertypes
 // ISSUE: KT-79789
 
 // MODULE: platform-core

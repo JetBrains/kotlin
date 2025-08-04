@@ -24,7 +24,7 @@ fun Implementation.test() {
     val x1 = <!MISSING_DEPENDENCY_SUPERCLASS!>onlyClassReferences<!>
     x1
 
-    val x2 = <!MISSING_DEPENDENCY_SUPERCLASS!>allHierarchy<!>
+    val x2 = <!MISSING_DEPENDENCY_CLASS, MISSING_DEPENDENCY_SUPERCLASS, MISSING_DEPENDENCY_SUPERCLASS_WARNING!>allHierarchy<!>
     x1
 }
 
