@@ -41,15 +41,15 @@ fun test(b: B): Int {
         is SubB -> 1
         is SubAandB -> 1
     }
-    i += <!NO_ELSE_IN_WHEN!>when<!>(b) {
+    i += when(b) {
         <!USELESS_IS_CHECK!>is SubA<!> -> 1
         is SubAandB -> 1
     }
     i += when(b) {
-        is A -> 1
+        <!USELESS_IS_CHECK!>is A<!> -> 1
         <!USELESS_IS_CHECK!>is SubA<!> -> 1
         <!USELESS_IS_CHECK!>is B<!> -> 1
-        is SubB -> 1
+        <!USELESS_IS_CHECK!>is SubB<!> -> 1
         is SubAandB -> 1
     }
     return i

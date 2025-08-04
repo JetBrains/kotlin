@@ -36,7 +36,7 @@ fun foo(a: A) {
         <!USELESS_IS_CHECK!>is A.A2<!> -> "v"
     }.length // OK
 
-    <!NO_ELSE_IN_WHEN!>when<!> (a) {
+    when (a) {
         <!USELESS_IS_CHECK!>is A.A1<!> -> ""
         <!USELESS_IS_CHECK!>is B.B1<!> -> "..."
     }.length

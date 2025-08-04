@@ -27,7 +27,7 @@ fun test_1(e: Base) {
 
     val d = when (e) {
         is Base.A -> 1
-        else -> 2
+        <!REDUNDANT_ELSE_IN_WHEN!>else<!> -> 2
     }
 }
 
