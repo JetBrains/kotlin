@@ -1127,7 +1127,7 @@ private fun parseIsoStringFormat(
     throwException: Boolean,
 ): Duration {
     var totalSeconds = 0L
-    var fractionalPart = 0.0
+    var totalNanos = 0L
     var index = startIndex
     var currentLongValue = 0L
     var sign = 1
@@ -1159,19 +1159,29 @@ private fun parseIsoStringFormat(
         return result * sign
     }
 
-    fun parseFractionalPartOfDouble(): Double {
-        var result = 0.0
-        var fractionMultiplier = 0.1
-        while (index < length && fractionMultiplier > EPS) {
+    fun parseNanos(): Long {
+        var result = 0L
+        var fractionMultiplier = 100_000_000L
+        var digitCount = 0
+        while (index < length && digitCount < 9) {
             val ch = value[index]
             if (ch !in '0'..'9') break
             val digit = ch - '0'
             result += digit * fractionMultiplier
-            fractionMultiplier *= 0.1
+            fractionMultiplier /= 10
             index++
+            digitCount++
+        }
+        var roundUp = false
+        if (index < length) {
+            val ch = value[index]
+            if (ch in '0'..'9') {
+                roundUp = (ch - '0') >= 5
+                index++
+            }
         }
         while (index < length && value[index] in '0'..'9') index++
-        return result
+        return result + if (roundUp) 1 else 0
     }
 
     fun parseLongIfPossible(ch: Char): Boolean {
@@ -1298,7 +1308,7 @@ private fun parseIsoStringFormat(
 
             State.AFTER_DOT -> {
                 val prevIndex = index
-                fractionalPart = parseFractionalPartOfDouble() * sign
+                totalNanos = parseNanos() * sign
                 if (index == prevIndex) return throwExceptionOrInvalid(throwException)
                 State.AFTER_DOUBLE
             }
@@ -1318,7 +1328,7 @@ private fun parseIsoStringFormat(
     if (index != length) return throwExceptionOrInvalid(throwException)
     return when (state) {
         State.AFTER_D, State.AFTER_H, State.AFTER_M, State.AFTER_S -> {
-            fractionalPart.toDuration(DurationUnit.SECONDS) + totalSeconds.toDuration(DurationUnit.SECONDS)
+            totalSeconds.toDuration(DurationUnit.SECONDS) + totalNanos.toDuration(DurationUnit.NANOSECONDS)
         }
         else -> throwExceptionOrInvalid(throwException)
     }
