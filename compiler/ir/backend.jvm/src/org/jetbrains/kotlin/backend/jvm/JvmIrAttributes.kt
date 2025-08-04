@@ -30,6 +30,13 @@ var IrElement.localClassType: Type?
 
 var IrFunction.enclosingMethodOverride: IrFunction? by irAttribute(copyByDefault = false)
 
+// function used as the implementation of the bridge
+var IrFunction.bridgeCallee: IrFunction? by irAttribute(copyByDefault = false)
+
+fun IrFunction.copyBridgeCalleeFromOrSetTo(callee: IrFunction) {
+    bridgeCallee = callee.bridgeCallee ?: callee
+}
+
 var IrClass.localDelegatedProperties: List<IrLocalDelegatedPropertySymbol>? by irAttribute(copyByDefault = true)
 
 var IrFunction.hasSpecialBridge: Boolean by irFlag(copyByDefault = false)

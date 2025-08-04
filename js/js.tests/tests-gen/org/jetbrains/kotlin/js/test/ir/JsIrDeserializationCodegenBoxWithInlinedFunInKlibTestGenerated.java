@@ -3625,6 +3625,12 @@ public class JsIrDeserializationCodegenBoxWithInlinedFunInKlibTestGenerated exte
       }
 
       @Test
+      @TestMetadata("suspendBridgeOverrideAndFakeOverride.kt")
+      public void testSuspendBridgeOverrideAndFakeOverride() {
+        runTest("compiler/testData/codegen/box/bridges/suspendBridgeOverrideAndFakeOverride.kt");
+      }
+
+      @Test
       @TestMetadata("test0.kt")
       public void testTest0() {
         runTest("compiler/testData/codegen/box/bridges/test0.kt");

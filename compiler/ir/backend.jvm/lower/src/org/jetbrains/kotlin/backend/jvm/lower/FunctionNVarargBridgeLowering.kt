@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.common.lower.at
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irIfThen
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
+import org.jetbrains.kotlin.backend.jvm.copyBridgeCalleeFromOrSetTo
 import org.jetbrains.kotlin.backend.jvm.ir.createJvmIrBuilder
 import org.jetbrains.kotlin.backend.jvm.ir.irArray
 import org.jetbrains.kotlin.backend.jvm.needsMfvcFlattening
@@ -111,6 +112,7 @@ internal class FunctionNVarargBridgeLowering(val context: JvmBackendContext) :
             origin = IrDeclarationOrigin.BRIDGE
         }.apply {
             overriddenSymbols += superFunction.symbol
+            copyBridgeCalleeFromOrSetTo(invoke)
             parameters = listOf(thisReceiver!!.copyTo(this), superFunction.nonDispatchParameters.single().copyTo(this))
 
             body = context.createIrBuilder(symbol).irBlockBody(startOffset, endOffset) {

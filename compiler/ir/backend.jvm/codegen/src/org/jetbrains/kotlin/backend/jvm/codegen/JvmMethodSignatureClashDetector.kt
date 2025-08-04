@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.linkage.issues.SignatureClashDetector
 import org.jetbrains.kotlin.backend.common.lower.ANNOTATION_IMPLEMENTATION
 import org.jetbrains.kotlin.backend.jvm.JvmBackendErrors
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
+import org.jetbrains.kotlin.backend.jvm.bridgeCallee
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.diagnostics.KtDiagnosticFactory1
 import org.jetbrains.kotlin.diagnostics.chooseFactory
@@ -94,8 +95,7 @@ class JvmMethodSignatureClashDetector(
         when {
             realMethodsCount == 0 && fakeOverridesCount == 1 && specialOverridesCount == 1 -> {
                 val bridge = declarations.single { it.isSpecialOverride() }
-                val bridgeCallee = bridge.originalFunction.takeIf { bridge.origin == IrDeclarationOrigin.BRIDGE }
-                    ?.let { classCodegen.context.inlineClassReplacements.getReplacementFunction(it) ?: it }
+                val bridgeCallee = bridge.bridgeCallee.takeIf { bridge.origin == IrDeclarationOrigin.BRIDGE }
                 if (bridgeCallee is IrSimpleFunction &&
                     !getOverriddenFunctions(bridgeCallee).containsAll(overriddenByFakeOverrideWithSignature(signature))
                 ) {
