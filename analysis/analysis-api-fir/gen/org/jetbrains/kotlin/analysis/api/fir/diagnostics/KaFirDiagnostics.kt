@@ -377,6 +377,12 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         val type: KaType
     }
 
+    interface MissingDependencyClassInTypealias : KaFirDiagnostic<PsiElement> {
+        override val diagnosticClass get() = MissingDependencyClassInTypealias::class
+        val missingType: KaType
+        val declarationType: KaType
+    }
+
     interface CreatingAnInstanceOfAbstractClass : KaFirDiagnostic<KtExpression> {
         override val diagnosticClass get() = CreatingAnInstanceOfAbstractClass::class
     }

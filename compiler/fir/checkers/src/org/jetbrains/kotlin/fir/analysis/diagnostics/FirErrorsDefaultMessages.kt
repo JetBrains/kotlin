@@ -756,6 +756,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPE_PARAMETER_AS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPE_PARAMETER_IN_CATCH_CLAUSE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPE_PARAMETER_IS_NOT_AN_EXPRESSION
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.INCORRECT_TYPE_PARAMETER_OF_PROPERTY
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.MISSING_DEPENDENCY_CLASS_IN_TYPEALIAS
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.NAME_BASED_DESTRUCTURING_UNDERSCORE_WITHOUT_RENAMING
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.OVERRIDING_IGNORABLE_WITH_MUST_USE
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.TYPE_PARAMETER_ON_LHS_OF_DOT
@@ -1023,6 +1024,13 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(
             MISSING_DEPENDENCY_CLASS_IN_LAMBDA_RECEIVER,
             "Class ''{0}'' of the lambda receiver is inaccessible. This may be forbidden soon. Check the module classpath for missing or conflicting dependencies.",
+            RENDER_TYPE,
+        )
+        map.put(
+            MISSING_DEPENDENCY_CLASS_IN_TYPEALIAS,
+            "Cannot access ''{0}'' which typealias ''{1}'' expands to. Check your module classpath for missing or conflicting dependencies."
+                .toDeprecationWarningMessage(LanguageFeature.ForbidTypeAliasWithMissingDependencyType),
+            RENDER_TYPE,
             RENDER_TYPE,
         )
 
