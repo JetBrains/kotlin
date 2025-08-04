@@ -8989,6 +8989,7 @@ public class LLBlackBoxTestGenerated extends AbstractLLBlackBoxTest {
     @Test
     @TestMetadata("kt72039.kt")
     public void testKt72039() {
+      // Edit to test codeowners for generated files
       runTest("compiler/testData/codegen/box/collections/kt72039.kt");
     }
 
