@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.sir.providers
 
 import org.jetbrains.kotlin.export.test.InlineSourceCodeAnalysis
-import org.jetbrains.kotlin.sir.SirExistentialType
 import org.jetbrains.kotlin.sir.providers.support.SirTranslationTest
 import org.jetbrains.kotlin.sir.providers.support.functionsNamed
 import org.jetbrains.kotlin.sir.providers.support.translate
@@ -30,11 +29,11 @@ class AnyTypeTranslationTest : SirTranslationTest() {
             val isMainObject = it.functionsNamed("isMainObject").first()
 
             // Check that the return type of getMainObject() is mapped to KotlinBase
-            assertEquals(SirExistentialType(KotlinRuntimeSupportModule.kotlinBridgeable), getMainObject.returnType)
+            assertEquals(KotlinRuntimeSupportModule.kotlinBridgeableType, getMainObject.returnType)
 
             // Check that the parameter type of isMainObject(obj: Any) is mapped to KotlinBase
             val objParam = isMainObject.parameters.first()
-            assertEquals(SirExistentialType(KotlinRuntimeSupportModule.kotlinBridgeable), objParam.type)
+            assertEquals(KotlinRuntimeSupportModule.kotlinBridgeableType, objParam.type)
         }
     }
 }

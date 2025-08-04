@@ -96,6 +96,8 @@ public object KotlinRuntimeSupportModule : SirModule() {
         }.initializeParentForSelfAndChildren(KotlinRuntimeSupportModule)
     }
 
+    public val kotlinBridgeableType: SirExistentialType = SirExistentialType(kotlinBridgeable)
+
     public val kotlinExistential: SirClass = buildClass {
         origin = KotlinRuntimeElement()
         name = "_KotlinExistential"

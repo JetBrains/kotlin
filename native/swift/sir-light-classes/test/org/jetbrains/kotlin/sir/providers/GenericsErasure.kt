@@ -6,9 +6,7 @@
 package org.jetbrains.kotlin.sir.providers
 
 import org.jetbrains.kotlin.export.test.InlineSourceCodeAnalysis
-import org.jetbrains.kotlin.sir.SirExistentialType
 import org.jetbrains.kotlin.sir.SirNominalType
-import org.jetbrains.kotlin.sir.SirType
 import org.jetbrains.kotlin.sir.SirUnsupportedType
 import org.jetbrains.kotlin.sir.optional
 import org.jetbrains.kotlin.sir.providers.support.SirTranslationTest
@@ -38,12 +36,12 @@ class GenericsErasure : SirTranslationTest() {
         translate(code) {
             val foo = it.functionsNamed("foo").first()
             val tParam = foo.parameters.first()
-            val optionalAny = SirExistentialType(KotlinRuntimeSupportModule.kotlinBridgeable).optional()
+            val optionalAny = KotlinRuntimeSupportModule.kotlinBridgeableType.optional()
             assertEquals(optionalAny, tParam.type)
 
             val id = it.functionsNamed("id").first()
             val aParam = id.parameters.first()
-            assertEquals(SirExistentialType(KotlinRuntimeSupportModule.kotlinBridgeable), aParam.type)
+            assertEquals(KotlinRuntimeSupportModule.kotlinBridgeableType, aParam.type)
 
             val myClassMethod = it.classNamed("MyClass").declarations.functionsNamed("method").first()
             assertEquals(optionalAny, myClassMethod.returnType)
@@ -66,7 +64,7 @@ class GenericsErasure : SirTranslationTest() {
         translate(code) {
             val foo = it.functionsNamed("foo").first()
             val tParam = foo.parameters.first()
-            assertEquals(SirExistentialType(KotlinRuntimeSupportModule.kotlinBridgeable), tParam.type)
+            assertEquals(KotlinRuntimeSupportModule.kotlinBridgeableType, tParam.type)
 
             val bar = it.functionsNamed("bar").first()
             val myClass = it.classNamed("MyClass")
