@@ -2,213 +2,120 @@
  * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
+package org.jetbrains.kotlin.psi
 
-package org.jetbrains.kotlin.psi;
+import com.intellij.lang.ASTNode
+import com.intellij.psi.PsiElement
+import com.intellij.psi.util.PsiTreeUtil
+import org.jetbrains.kotlin.KtStubBasedElementTypes
+import org.jetbrains.kotlin.lexer.KtTokens
+import org.jetbrains.kotlin.psi.psiUtil.isLegacyContractPresentPsiCheck
+import org.jetbrains.kotlin.psi.stubs.KotlinPropertyAccessorStub
 
-import com.intellij.lang.ASTNode;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.util.PsiTreeUtil;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.KtStubBasedElementTypes;
-import org.jetbrains.kotlin.lexer.KtTokens;
-import org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt;
-import org.jetbrains.kotlin.psi.stubs.KotlinPropertyAccessorStub;
+class KtPropertyAccessor : KtDeclarationStub<KotlinPropertyAccessorStub?>, KtDeclarationWithBody, KtModifierListOwner,
+    KtDeclarationWithInitializer {
+    constructor(node: ASTNode) : super(node)
+    constructor(stub: KotlinPropertyAccessorStub) : super(stub, KtStubBasedElementTypes.PROPERTY_ACCESSOR)
 
-import java.util.Collections;
-import java.util.List;
+    override fun <R, D> accept(visitor: KtVisitor<R, D>, data: D): R =
+        visitor.visitPropertyAccessor(this, data)
 
-public class KtPropertyAccessor extends KtDeclarationStub<KotlinPropertyAccessorStub>
-        implements KtDeclarationWithBody, KtModifierListOwner, KtDeclarationWithInitializer {
-    public KtPropertyAccessor(@NotNull ASTNode node) {
-        super(node);
-    }
-
-    public KtPropertyAccessor(@NotNull KotlinPropertyAccessorStub stub) {
-        super(stub, KtStubBasedElementTypes.PROPERTY_ACCESSOR);
-    }
-
-    @Override
-    public <R, D> R accept(@NotNull KtVisitor<R, D> visitor, D data) {
-        return visitor.visitPropertyAccessor(this, data);
-    }
-
-    public boolean isSetter() {
-        KotlinPropertyAccessorStub stub = getGreenStub();
-        if (stub != null) {
-            return !stub.isGetter();
-        }
-        return findChildByType(KtTokens.SET_KEYWORD) != null;
-    }
-
-    public boolean isGetter() {
-        KotlinPropertyAccessorStub stub = getGreenStub();
-        if (stub != null) {
-            return stub.isGetter();
-        }
-        return findChildByType(KtTokens.GET_KEYWORD) != null;
-    }
-
-    @Nullable
-    public KtParameterList getParameterList() {
-        return getStubOrPsiChild(KtStubBasedElementTypes.VALUE_PARAMETER_LIST);
-    }
-
-    @Nullable
-    public KtParameter getParameter() {
-        KtParameterList parameterList = getParameterList();
-        if (parameterList == null) return null;
-        List<KtParameter> parameters = parameterList.getParameters();
-        if (parameters.isEmpty()) return null;
-        return parameters.get(0);
-    }
-
-    @NotNull
-    @Override
-    public List<KtParameter> getValueParameters() {
-        KtParameter parameter = getParameter();
-        if (parameter == null) {
-            return Collections.emptyList();
-        }
-        return Collections.singletonList(parameter);
-    }
-
-    @Nullable
-    @Override
-    public KtExpression getBodyExpression() {
-        KotlinPropertyAccessorStub stub = getStub();
-        if (stub != null) {
-            if (!stub.hasBody()) {
-                return null;
+    val isGetter: Boolean
+        get() {
+            greenStub?.let {
+                return it.isGetter()
             }
+            return findChildByType<PsiElement>(KtTokens.GET_KEYWORD) != null
+        }
 
-            if (getContainingKtFile().isCompiled()) {
-                return null;
+    val isSetter: Boolean
+        get() {
+            greenStub?.let {
+                return !it.isGetter()
             }
+            return findChildByType<PsiElement>(KtTokens.SET_KEYWORD) != null
         }
 
-        return findChildByClass(KtExpression.class);
-    }
+    val parameterList: KtParameterList?
+        get() = getStubOrPsiChild(KtStubBasedElementTypes.VALUE_PARAMETER_LIST)
 
-    @Nullable
-    @Override
-    public KtBlockExpression getBodyBlockExpression() {
-        KotlinPropertyAccessorStub stub = getStub();
-        if (stub != null) {
-            if (!(stub.hasNoExpressionBody() && stub.hasBody())) {
-                return null;
-            }
-            if (getContainingKtFile().isCompiled()) {
-                return null;
-            }
+    val parameter: KtParameter?
+        get() = parameterList?.parameters?.firstOrNull()
+
+    override fun getValueParameters(): List<KtParameter> =
+        listOfNotNull(parameter)
+
+    override fun getBodyExpression(): KtExpression? {
+        stub?.let {
+            if (!it.hasBody()) return null
+            if (containingKtFile.isCompiled) return null
         }
+        return findChildByClass(KtExpression::class.java)
+    }
 
-        KtExpression bodyExpression = findChildByClass(KtExpression.class);
-        if (bodyExpression instanceof KtBlockExpression) {
-            return (KtBlockExpression) bodyExpression;
+    override fun getBodyBlockExpression(): KtBlockExpression? {
+        stub?.let {
+            if (!(it.hasNoExpressionBody() && it.hasBody())) return null
+            if (containingKtFile.isCompiled) return null
         }
-
-        return null;
+        return findChildByClass(KtExpression::class.java) as? KtBlockExpression
     }
 
-    @Override
-    public boolean hasBlockBody() {
-        KotlinPropertyAccessorStub stub = getGreenStub();
-        if (stub != null) {
-            return stub.hasNoExpressionBody();
+    override fun hasBlockBody(): Boolean {
+        greenStub?.let {
+            return it.hasNoExpressionBody()
         }
-        return getEqualsToken() == null;
+        return equalsToken == null
     }
 
-    @Override
-    public boolean hasBody() {
-        KotlinPropertyAccessorStub stub = getGreenStub();
-        if (stub != null) {
-            return stub.hasBody();
+    override fun hasBody(): Boolean {
+        greenStub?.let {
+            return it.hasBody()
         }
-        return getBodyExpression() != null;
+        return getBodyExpression() != null
     }
 
-    @Override
-    @Nullable
-    public PsiElement getEqualsToken() {
-        return findChildByType(KtTokens.EQ);
-    }
+    override fun getEqualsToken(): PsiElement? =
+        findChildByType(KtTokens.EQ)
 
-    @Override
-    public KtContractEffectList getContractDescription() {
-        return getStubOrPsiChild(KtStubBasedElementTypes.CONTRACT_EFFECT_LIST);
-    }
+    override fun getContractDescription(): KtContractEffectList? =
+        getStubOrPsiChild(KtStubBasedElementTypes.CONTRACT_EFFECT_LIST)
 
-    @Override
-    public boolean hasDeclaredReturnType() {
-        return true;
-    }
+    override fun hasDeclaredReturnType(): Boolean = true
 
-    @Nullable
-    public KtTypeReference getReturnTypeReference() {
-        return getStubOrPsiChild(KtStubBasedElementTypes.TYPE_REFERENCE);
-    }
+    val returnTypeReference: KtTypeReference?
+        get() = getStubOrPsiChild(KtStubBasedElementTypes.TYPE_REFERENCE)
 
-    @NotNull
-    public PsiElement getNamePlaceholder() {
-        PsiElement get = findChildByType(KtTokens.GET_KEYWORD);
-        if (get != null) {
-            return get;
+    val namePlaceholder: PsiElement
+        get() = findChildByType(KtTokens.GET_KEYWORD) ?: findChildByType(KtTokens.SET_KEYWORD)!!
+
+    override fun getInitializer(): KtExpression? =
+        PsiTreeUtil.getNextSiblingOfType(equalsToken, KtExpression::class.java)
+
+    override fun hasInitializer(): Boolean =
+        initializer != null
+
+    val property: KtProperty
+        get() = parent as KtProperty
+
+    override fun getTextOffset(): Int =
+        namePlaceholder.textRange.startOffset
+
+    @OptIn(KtImplementationDetail::class)
+    override fun mayHaveContract(): Boolean {
+        greenStub?.let {
+            return it.mayHaveContract()
         }
-        return findChildByType(KtTokens.SET_KEYWORD);
+        return isLegacyContractPresentPsiCheck()
     }
 
-    /**
-     * @deprecated use `parameterList?.rightParenthesis`
-     */
-    @Deprecated
-    @Nullable
-    public PsiElement getRightParenthesis() {
-        KtParameterList parameterList = getParameterList();
-        if (parameterList == null) return null;
-        return parameterList.getRightParenthesis();
-    }
+    @Suppress("unused")
+    @Deprecated("use `parameterList?.leftParenthesis`", ReplaceWith("parameterList?.leftParenthesis"))
+    val leftParenthesis: PsiElement?
+        get() = parameterList?.leftParenthesis
 
-    /**
-     * @deprecated use `parameterList?.leftParenthesis`
-     */
-    @Deprecated
-    @Nullable
-    public PsiElement getLeftParenthesis() {
-        KtParameterList parameterList = getParameterList();
-        if (parameterList == null) return null;
-        return parameterList.getLeftParenthesis();
-    }
-
-    @Nullable
-    @Override
-    public KtExpression getInitializer() {
-        return PsiTreeUtil.getNextSiblingOfType(getEqualsToken(), KtExpression.class);
-    }
-
-    @Override
-    public boolean hasInitializer() {
-        return getInitializer() != null;
-    }
-
-    @NotNull
-    public KtProperty getProperty() {
-        return (KtProperty) getParent();
-    }
-
-    @Override
-    public int getTextOffset() {
-        return getNamePlaceholder().getTextRange().getStartOffset();
-    }
-
-    @Override
-    public boolean mayHaveContract() {
-        KotlinPropertyAccessorStub stub = getGreenStub();
-        if (stub != null) {
-            return stub.mayHaveContract();
-        }
-
-        return KtPsiUtilKt.isLegacyContractPresentPsiCheck(this);
-    }
+    @Suppress("unused")
+    @Deprecated("use `parameterList?.rightParenthesis`", ReplaceWith("parameterList?.rightParenthesis"))
+    val rightParenthesis: PsiElement?
+        get() = parameterList?.rightParenthesis
 }
