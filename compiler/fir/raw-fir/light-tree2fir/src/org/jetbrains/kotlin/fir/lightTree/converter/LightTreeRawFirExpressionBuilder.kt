@@ -166,7 +166,7 @@ class LightTreeRawFirExpressionBuilder(
             SUPER_EXPRESSION -> convertSuperExpression(expression)
 
             OBJECT_LITERAL -> declarationBuilder.convertObjectLiteral(expression)
-            FUN -> declarationBuilder.convertFunctionDeclaration(expression)
+            FUN -> declarationBuilder.convertFunctionDeclaration(expression) ?: buildEmptyExpressionBlock()
             DESTRUCTURING_DECLARATION -> declarationBuilder.convertDestructingDeclaration(expression)
                 .toFirDestructingDeclaration(this, baseModuleData)
             else -> buildErrorExpression(

@@ -33,7 +33,6 @@ import org.jetbrains.kotlin.fir.diagnostics.*
 import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.*
 import org.jetbrains.kotlin.fir.expressions.impl.FirSingleExpressionBlock
-import org.jetbrains.kotlin.fir.expressions.impl.buildSingleExpressionBlock
 import org.jetbrains.kotlin.fir.lightTree.fir.*
 import org.jetbrains.kotlin.fir.lightTree.fir.modifier.ModifierList
 import org.jetbrains.kotlin.fir.lightTree.fir.modifier.TypeParameterModifierList
@@ -98,7 +97,12 @@ class LightTreeRawFirDeclarationBuilder(
                 }
                 IMPORT_LIST -> importList += convertImportDirectives(child)
                 CLASS -> firDeclarationList += convertClass(child)
-                FUN -> firDeclarationList += convertFunctionDeclaration(child) as FirDeclaration
+                FUN -> {
+                    val functionDeclaration = convertFunctionDeclaration(child)
+                    if (functionDeclaration != null) {
+                        firDeclarationList += functionDeclaration as FirDeclaration
+                    }
+                }
                 KtNodeTypes.PROPERTY -> firDeclarationList += convertPropertyDeclaration(child)
                 TYPEALIAS -> firDeclarationList += convertTypeAlias(child)
                 OBJECT_DECLARATION -> firDeclarationList += convertClass(child)
@@ -144,7 +148,12 @@ class LightTreeRawFirDeclarationBuilder(
         val firStatements = block.forEachChildrenReturnList { node, container ->
             when (node.tokenType) {
                 CLASS, OBJECT_DECLARATION -> container += convertClass(node) as FirStatement
-                FUN -> container += convertFunctionDeclaration(node)
+                FUN -> {
+                    val functionDeclaration = convertFunctionDeclaration(node)
+                    if (functionDeclaration != null) {
+                        container += functionDeclaration
+                    }
+                }
                 KtNodeTypes.PROPERTY -> container += convertPropertyDeclaration(node) as FirStatement
                 DESTRUCTURING_DECLARATION -> container +=
                     convertDestructingDeclaration(node).toFirDestructingDeclaration(this, baseModuleData)
@@ -940,7 +949,11 @@ class LightTreeRawFirDeclarationBuilder(
         when (node.tokenType) {
             ENUM_ENTRY -> container += convertEnumEntry(node, classWrapper!!)
             CLASS -> container += convertClass(node)
-            FUN -> container += convertFunctionDeclaration(node) as FirDeclaration
+            FUN -> {
+                val functionDeclaration = convertFunctionDeclaration(node)
+                if (functionDeclaration != null)
+                    container += functionDeclaration as FirDeclaration
+            }
             KtNodeTypes.PROPERTY -> container += convertPropertyDeclaration(node, classWrapper)
             TYPEALIAS -> container += convertTypeAlias(node)
             OBJECT_DECLARATION -> container += convertClass(node)
@@ -1934,7 +1947,7 @@ class LightTreeRawFirDeclarationBuilder(
     /**
      * @see org.jetbrains.kotlin.parsing.KotlinParsing.parseFunction
      */
-    fun convertFunctionDeclaration(functionDeclaration: LighterASTNode): FirStatement {
+    fun convertFunctionDeclaration(functionDeclaration: LighterASTNode): FirStatement? {
         var modifiers: ModifierList? = null
         var identifier: String? = null
         var valueParametersList: LighterASTNode? = null
@@ -1988,8 +2001,17 @@ class LightTreeRawFirDeclarationBuilder(
                     else implicitType
             }
 
+            if (headerCompilationMode) {
+                val functionVisibility = calculatedModifiers.getVisibility()
+                if (functionVisibility == Visibilities.Private || functionVisibility == Visibilities.Protected) {
+                    return null
+                }
+            }
+
             val receiverTypeCalculator = receiverTypeNode?.let { { convertType(it) } }
             val functionBuilder = if (isAnonymousFunction) {
+                if (headerCompilationMode)
+                    return null
                 FirAnonymousFunctionBuilder().apply {
                     source = functionSource
                     receiverParameter = receiverTypeCalculator?.let { createReceiverParameter(it, baseModuleData, functionSymbol) }
