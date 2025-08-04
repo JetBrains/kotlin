@@ -578,6 +578,7 @@ class DurationTest {
         test(2.minutes + 500.milliseconds, "PT2M0.500S")
         test(1.hours + 500.milliseconds, "PT1H0M0.500S", "PT1H0.5S")
         test(90_500.milliseconds, "PT1M30.500S")
+        test(20.minutes + 34.seconds + 100000395.nanoseconds, "PT20M34.100000395S", "PT1234.1000003945S")
 
         // with sign
         test(-1.days + 15.minutes, "-PT23H45M", "PT-23H-45M", "+PT-24H+15M")
