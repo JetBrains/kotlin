@@ -52541,6 +52541,12 @@ public class LLReversedBlackBoxTestGenerated extends AbstractLLReversedBlackBoxT
         }
 
         @Test
+        @TestMetadata("equalsOnTypeAnnotationWithVarargField.kt")
+        public void testEqualsOnTypeAnnotationWithVarargField() {
+          runTest("compiler/testData/codegen/box/reflection/annotations/onTypes/equalsOnTypeAnnotationWithVarargField.kt");
+        }
+
+        @Test
         @TestMetadata("localClass.kt")
         public void testLocalClass() {
           runTest("compiler/testData/codegen/box/reflection/annotations/onTypes/localClass.kt");
