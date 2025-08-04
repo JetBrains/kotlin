@@ -467,4 +467,5 @@ private fun KaSession.isSimpleVariableAccessCall(reference: KtReferenceExpressio
             false
     }
 
-private fun KaSession.returnsUnit(declaration: KtDeclaration): Boolean = declaration.returnType.isUnitType
+private fun KaSession.returnsUnit(declaration: KtDeclarationWithReturnType): Boolean =
+    declaration.returnType.isUnitType

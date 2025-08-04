@@ -189,7 +189,7 @@ internal class KaFirExpressionTypeProvider(
         }
     }
 
-    override val KtDeclaration.returnType: KaType
+    override val KtDeclarationWithReturnType.returnType: KaType
         get() = withPsiValidityAssertion {
             inferReturnTypeByPsi()?.let { return it }
 
@@ -210,17 +210,17 @@ internal class KaFirExpressionTypeProvider(
      * Optimization: try to determine the return type of the declaration (function, property, or property getter)
      * by inspecting its body expression if it has an implicit return type.
      */
-    private fun KtDeclaration.inferReturnTypeByPsi(): KaType? {
-        fun KtDeclaration.isPropertyGetter() = this is KtPropertyAccessor && isGetter
+    private fun KtDeclarationWithReturnType.inferReturnTypeByPsi(): KaType? {
+        fun KtDeclarationWithReturnType.isPropertyGetter() = this is KtPropertyAccessor && isGetter
 
-        fun KtDeclaration.hasDeclaredReturnType() = when (this) {
+        fun KtDeclarationWithReturnType.hasDeclaredReturnType() = when (this) {
             is KtNamedFunction -> typeReference != null
             is KtProperty -> typeReference != null || getter?.typeReference != null
             is KtPropertyAccessor -> typeReference != null
             else -> false
         }
 
-        fun KtDeclaration.isEmptyFunction() =
+        fun KtDeclarationWithReturnType.isEmptyFunction() =
             this is KtNamedFunction && hasBlockBody() && bodyBlockExpression?.statements?.isEmpty() == true
 
         if (this !is KtNamedFunction && this !is KtProperty && !isPropertyGetter()) return null

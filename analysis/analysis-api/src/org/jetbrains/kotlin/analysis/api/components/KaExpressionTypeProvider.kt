@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.analysis.api.KaContextParameterApi
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.psi.KtDeclaration
+import org.jetbrains.kotlin.psi.KtDeclarationWithReturnType
 import org.jetbrains.kotlin.psi.KtExpression
 import org.jetbrains.kotlin.psi.KtFunction
 
@@ -38,13 +39,23 @@ public interface KaExpressionTypeProvider : KaSessionComponent {
     public val KtExpression.expressionType: KaType?
 
     /**
-     * The return type of the given [KtDeclaration].
+     * The return type of the given [KtDeclarationWithReturnType].
      *
      * Note: For a `vararg foo: T` parameter, the resulting type is the full `Array<out T>` type (unlike
      * [KaValueParameterSymbol.returnType][org.jetbrains.kotlin.analysis.api.symbols.KaValueParameterSymbol.returnType],
      * which returns `T`).
      */
+    public val KtDeclarationWithReturnType.returnType: KaType
+
+    /**
+     * The return type of the given [KtDeclaration].
+     *
+     * Note: this property throws an exception if the declaration _can't_ have a return type
+     * (i.e., it is not a [KtDeclarationWithReturnType]).
+     */
+    @Deprecated("Use `KtDeclarationWithReturnType.returnType` overload instead")
     public val KtDeclaration.returnType: KaType
+        get() = (this as KtDeclarationWithReturnType).returnType
 
     /**
      * The function type of the given [KtFunction].
@@ -117,8 +128,19 @@ public val KtExpression.expressionType: KaType?
  */
 @KaContextParameterApi
 context(context: KaExpressionTypeProvider)
-public val KtDeclaration.returnType: KaType
+public val KtDeclarationWithReturnType.returnType: KaType
     get() = with(context) { returnType }
+
+/**
+ * @see KaExpressionTypeProvider.returnType
+ */
+@KaContextParameterApi
+@Deprecated("Use `KtDeclarationWithReturnType.returnType` overload instead")
+context(context: KaExpressionTypeProvider)
+public val KtDeclaration.returnType: KaType
+    get() = with(context) {
+        (this@returnType as KtDeclarationWithReturnType).returnType
+    }
 
 /**
  * @see KaExpressionTypeProvider.functionType

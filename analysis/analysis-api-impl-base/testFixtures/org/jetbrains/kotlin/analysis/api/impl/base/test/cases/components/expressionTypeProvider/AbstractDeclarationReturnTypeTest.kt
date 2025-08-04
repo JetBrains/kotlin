@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -20,15 +20,17 @@ abstract class AbstractDeclarationReturnTypeTest : AbstractAnalysisApiBasedTest(
                 contextFile.accept(object : KtTreeVisitor<Int>() {
                     override fun visitDeclaration(declaration: KtDeclaration, indent: Int): Void? {
                         if (declaration is KtTypeParameter) return null
+
                         append(" ".repeat(indent))
                         if (declaration is KtClassLikeDeclaration) {
                             appendLine(declaration.getNameWithPositionString())
-                        } else {
+                        } else if (declaration is KtDeclarationWithReturnType) {
                             val returnType = declaration.returnType
                             append(declaration.getNameWithPositionString())
                             append(" : ")
                             appendLine(returnType.render(position = Variance.INVARIANT))
                         }
+
                         return super.visitDeclaration(declaration, indent + 2)
                     }
                 }, 0)
