@@ -552,6 +552,8 @@ class DurationTest {
             }
         }
 
+        Duration.parse("PT0.001S")
+
         // zero
         test(Duration.ZERO, "PT0S", "P0D", "PT0H", "PT0M", "P0DT0H", "PT0H0M", "PT0H0S", "PT000000000000000000000000H")
 
