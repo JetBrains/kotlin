@@ -51,6 +51,8 @@ object KotlinElementTypeProviderImpl : KotlinElementTypeProvider {
     override val classInitializerType: KtStubElementType<KotlinPlaceHolderStub<KtClassInitializer>, KtClassInitializer> =
         KtStubElementTypes.CLASS_INITIALIZER
 
+    override val scriptInitializerType: KtStubElementType<KotlinPlaceHolderStub<KtScriptInitializer>, KtScriptInitializer> =
+        KtStubElementTypes.SCRIPT_INITIALIZER
 
     // Callables
 

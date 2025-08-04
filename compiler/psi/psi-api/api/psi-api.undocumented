@@ -58,6 +58,7 @@ org.jetbrains.kotlin.KotlinElementTypeProvider.primaryConstructorType
 org.jetbrains.kotlin.KotlinElementTypeProvider.propertyAccessorType
 org.jetbrains.kotlin.KotlinElementTypeProvider.propertyType
 org.jetbrains.kotlin.KotlinElementTypeProvider.referenceExpressionType
+org.jetbrains.kotlin.KotlinElementTypeProvider.scriptInitializerType
 org.jetbrains.kotlin.KotlinElementTypeProvider.scriptType
 org.jetbrains.kotlin.KotlinElementTypeProvider.secondaryConstructorType
 org.jetbrains.kotlin.KotlinElementTypeProvider.shortStringTemplateEntryType
@@ -1147,7 +1148,8 @@ org.jetbrains.kotlin.psi.KtScript:constructor(ASTNode)
 org.jetbrains.kotlin.psi.KtScript:constructor(KotlinScriptStub)
 org.jetbrains.kotlin.psi.KtScript:getBlockExpression()
 org.jetbrains.kotlin.psi.KtScriptInitializer
-org.jetbrains.kotlin.psi.KtScriptInitializer.getModificationStamp()
+org.jetbrains.kotlin.psi.KtScriptInitializer:constructor(ASTNode)
+org.jetbrains.kotlin.psi.KtScriptInitializer:constructor(KotlinPlaceHolderStub<KtScriptInitializer>)
 org.jetbrains.kotlin.psi.KtSecondaryConstructor
 org.jetbrains.kotlin.psi.KtSecondaryConstructor.getDelegationCall()
 org.jetbrains.kotlin.psi.KtSecondaryConstructor.getDelegationCallOrNull()
@@ -2106,6 +2108,7 @@ org.jetbrains.kotlin.psi.stubs.elements.KtPropertyAccessorElementType:constructo
 org.jetbrains.kotlin.psi.stubs.elements.KtPropertyElementType
 org.jetbrains.kotlin.psi.stubs.elements.KtPropertyElementType:constructor(String)
 org.jetbrains.kotlin.psi.stubs.elements.KtScriptElementType
+org.jetbrains.kotlin.psi.stubs.elements.KtScriptInitializerElementType
 org.jetbrains.kotlin.psi.stubs.elements.KtSecondaryConstructorElementType
 org.jetbrains.kotlin.psi.stubs.elements.KtStringInterpolationPrefixElementType
 org.jetbrains.kotlin.psi.stubs.elements.KtStringTemplateExpressionElementType
@@ -2163,6 +2166,7 @@ org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes:PROPERTY
 org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes:PROPERTY_ACCESSOR
 org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes:REFERENCE_EXPRESSION
 org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes:SCRIPT
+org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes:SCRIPT_INITIALIZER
 org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes:SECONDARY_CONSTRUCTOR
 org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes:SHORT_STRING_TEMPLATE_ENTRY
 org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes:STRING_INTERPOLATION_PREFIX

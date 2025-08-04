@@ -3,3 +3,4 @@ PsiJetFileStubImpl[package=]
   IMPORT_LIST
   SCRIPT[fqName=OneLiner, fqName=OneLiner, name=OneLiner]
     PROPERTY[fqName=OneLiner.x, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=x]
+    SCRIPT_INITIALIZER

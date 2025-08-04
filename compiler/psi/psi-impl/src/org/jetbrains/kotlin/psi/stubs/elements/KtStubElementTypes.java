@@ -19,6 +19,7 @@ public interface KtStubElementTypes {
     KtObjectElementType OBJECT_DECLARATION = new KtObjectElementType("OBJECT_DECLARATION");
     KtPlaceHolderStubElementType<KtClassInitializer> CLASS_INITIALIZER =
             new KtPlaceHolderStubElementType<>("CLASS_INITIALIZER", KtClassInitializer.class);
+    KtPlaceHolderStubElementType<KtScriptInitializer> SCRIPT_INITIALIZER = KtScriptInitializerElementType.INSTANCE;
     KtSecondaryConstructorElementType SECONDARY_CONSTRUCTOR =
             new KtSecondaryConstructorElementType("SECONDARY_CONSTRUCTOR");
     KtPrimaryConstructorElementType PRIMARY_CONSTRUCTOR =

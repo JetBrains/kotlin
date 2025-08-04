@@ -26,7 +26,7 @@ public interface KtNodeTypes {
 
     IElementType ENUM_ENTRY             = KtStubBasedElementTypes.ENUM_ENTRY;
     IElementType CLASS_INITIALIZER      = KtStubBasedElementTypes.CLASS_INITIALIZER;
-    IElementType SCRIPT_INITIALIZER     = new KtNodeType("SCRIPT_INITIALIZER", KtScriptInitializer.class);
+    IElementType SCRIPT_INITIALIZER     = KtStubBasedElementTypes.SCRIPT_INITIALIZER;
     IElementType SECONDARY_CONSTRUCTOR  = KtStubBasedElementTypes.SECONDARY_CONSTRUCTOR;
     IElementType PRIMARY_CONSTRUCTOR    = KtStubBasedElementTypes.PRIMARY_CONSTRUCTOR;
     IElementType CONTEXT_RECEIVER       = KtStubBasedElementTypes.CONTEXT_RECEIVER;

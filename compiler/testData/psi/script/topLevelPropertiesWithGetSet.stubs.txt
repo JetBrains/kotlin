@@ -66,14 +66,17 @@ PsiJetFileStubImpl[package=]
       TYPE_REFERENCE
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=Int]
+    SCRIPT_INITIALIZER
     PROPERTY[fqName=TopLevelPropertiesWithGetSet.testValLineBreakSemiComment1, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=testValLineBreakSemiComment1]
       TYPE_REFERENCE
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=Int]
+    SCRIPT_INITIALIZER
     PROPERTY[fqName=TopLevelPropertiesWithGetSet.testValLineBreakSemiComment2, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=testValLineBreakSemiComment2]
       TYPE_REFERENCE
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=Int]
+    SCRIPT_INITIALIZER
     PROPERTY[fqName=TopLevelPropertiesWithGetSet.testValLineBreakSemiComment3, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=testValLineBreakSemiComment3]
       TYPE_REFERENCE
         USER_TYPE
@@ -81,6 +84,7 @@ PsiJetFileStubImpl[package=]
       PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=false, isGetter=true, mayHaveContract=false]
         VALUE_PARAMETER_LIST
     PROPERTY[fqName=TopLevelPropertiesWithGetSet.testValLineBreakSemiNoType, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=testValLineBreakSemiNoType]
+    SCRIPT_INITIALIZER
     PROPERTY[fqName=TopLevelPropertiesWithGetSet.testVarLineBreak, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=true, name=testVarLineBreak]
       TYPE_REFERENCE
         USER_TYPE
@@ -106,6 +110,8 @@ PsiJetFileStubImpl[package=]
       TYPE_REFERENCE
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=Int]
+    SCRIPT_INITIALIZER
+    SCRIPT_INITIALIZER
     PROPERTY[fqName=TopLevelPropertiesWithGetSet.testExtVarLineBreakSemi, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=true, isTopLevel=false, isVar=true, name=testExtVarLineBreakSemi]
       TYPE_REFERENCE
         USER_TYPE
@@ -113,3 +119,5 @@ PsiJetFileStubImpl[package=]
       TYPE_REFERENCE
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=Int]
+    SCRIPT_INITIALIZER
+    SCRIPT_INITIALIZER

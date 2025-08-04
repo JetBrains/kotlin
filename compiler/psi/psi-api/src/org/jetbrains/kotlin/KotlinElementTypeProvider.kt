@@ -43,6 +43,7 @@ interface KotlinElementTypeProvider {
 
     // Initializers
     val classInitializerType: KtStubElementType<KotlinPlaceHolderStub<KtClassInitializer>, KtClassInitializer>
+    val scriptInitializerType: KtStubElementType<KotlinPlaceHolderStub<KtScriptInitializer>, KtScriptInitializer>
 
     // Callables
     val functionType: KtStubElementType<KotlinFunctionStub, KtNamedFunction>

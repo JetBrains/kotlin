@@ -8,3 +8,5 @@ PsiJetFileStubImpl[package=]
           TYPE_REFERENCE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=String]
+    SCRIPT_INITIALIZER
+    SCRIPT_INITIALIZER

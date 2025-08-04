@@ -2535,14 +2535,13 @@ public class org/jetbrains/kotlin/psi/KtScript : org/jetbrains/kotlin/psi/KtDecl
 	public synthetic fun setName (Ljava/lang/String;)Lcom/intellij/psi/PsiElement;
 }
 
-public final class org/jetbrains/kotlin/psi/KtScriptInitializer : org/jetbrains/kotlin/psi/KtDeclarationImpl, org/jetbrains/kotlin/psi/KtAnonymousInitializer {
+public final class org/jetbrains/kotlin/psi/KtScriptInitializer : org/jetbrains/kotlin/psi/KtDeclarationStub, org/jetbrains/kotlin/psi/KtAnonymousInitializer {
 	public fun <init> (Lcom/intellij/lang/ASTNode;)V
+	public fun <init> (Lorg/jetbrains/kotlin/psi/stubs/KotlinPlaceHolderStub;)V
 	public fun accept (Lorg/jetbrains/kotlin/psi/KtVisitor;Ljava/lang/Object;)Ljava/lang/Object;
 	public fun getBody ()Lorg/jetbrains/kotlin/psi/KtExpression;
 	public synthetic fun getContainingDeclaration ()Lorg/jetbrains/kotlin/psi/KtDeclaration;
 	public fun getContainingDeclaration ()Lorg/jetbrains/kotlin/psi/KtScript;
-	public final fun getModificationStamp ()J
-	public fun subtreeChanged ()V
 }
 
 public final class org/jetbrains/kotlin/psi/KtSecondaryConstructor : org/jetbrains/kotlin/psi/KtConstructor {
