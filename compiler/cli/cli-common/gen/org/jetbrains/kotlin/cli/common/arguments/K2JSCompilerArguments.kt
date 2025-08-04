@@ -410,7 +410,7 @@ class K2JSCompilerArguments : K2WasmCompilerArguments() {
 
     @Argument(
         value = "-Xes-long-as-bigint",
-        description = "Compile Long values as ES2015 bigint instead of object. Enabled by default in case of ES2015 target usage",
+        description = "Compile Long values as ES2020 bigint instead of object.",
     )
     var compileLongAsBigInt: Boolean? = null
         set(value) {

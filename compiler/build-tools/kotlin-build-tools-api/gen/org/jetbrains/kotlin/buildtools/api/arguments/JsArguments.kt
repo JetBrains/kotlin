@@ -348,7 +348,7 @@ public interface JsArguments : WasmArguments {
     public val X_ES_ARROW_FUNCTIONS: JsArgument<Boolean?> = JsArgument("X_ES_ARROW_FUNCTIONS")
 
     /**
-     * Compile Long values as ES2015 bigint instead of object. Enabled by default in case of ES2015 target usage
+     * Compile Long values as ES2020 bigint instead of object.
      *
      * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
      */
