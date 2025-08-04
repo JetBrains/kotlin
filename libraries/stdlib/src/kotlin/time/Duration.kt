@@ -1115,10 +1115,9 @@ private fun parseIsoStringFormat(
     length: Int,
     throwException: Boolean,
 ): Duration {
-    var totalSeconds = 0L
-    var totalNanos = 0L
     var index = startIndex
-    var currentLongValue = 0L
+    if (++index == length) return throwExceptionOrInvalid(throwException)
+
     var sign = 1
 
     fun parseLong(firstChar: Char): Long {
@@ -1173,15 +1172,11 @@ private fun parseIsoStringFormat(
         return result + if (roundUp) 1 else 0
     }
 
-    fun parseLongIfPossible(ch: Char): Boolean {
-        val prevIndex = index
-        currentLongValue = parseLong(ch)
-        return index < length && index != prevIndex + if (ch == '-' || ch == '+') 1 else 0
-    }
-
-    if (++index == length) return throwExceptionOrInvalid(throwException)
+    var totalSeconds = 0L
+    var totalNanos = 0L
     var isTimeComponent = false
     var prevUnit = 'A'
+
     while (index < length) {
         val ch = value[index]
         if (ch == 'T') {
@@ -1189,7 +1184,9 @@ private fun parseIsoStringFormat(
             isTimeComponent = true
             continue
         }
-        if (!parseLongIfPossible(ch)) return throwExceptionOrInvalid(throwException)
+        val prevIndex = index
+        val currentLongValue = parseLong(ch)
+        if (index == length || index == prevIndex + if (ch == '-' || ch == '+') 1 else 0) return throwExceptionOrInvalid(throwException)
         val unit = value[index]
         if (unit == 'D') {
             if (isTimeComponent) return throwExceptionOrInvalid(throwException)
