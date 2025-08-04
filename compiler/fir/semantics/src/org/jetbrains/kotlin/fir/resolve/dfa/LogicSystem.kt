@@ -415,6 +415,16 @@ abstract class LogicSystem(private val context: ConeInferenceContext) {
 
     private fun Collection<TypeStatement>.getIntersectedLowerType(): ConeKotlinType? =
         flatMap { statement ->
+            // This is not quite correct, and what we should do instead is `¬(A | B) | ¬(B | C)` (e.g., for 2 statements),
+            // but because we only have `commonSuperType()` (and it wouldn't preserve `¬B` here), then for the completely
+            // correct approach, we'd have to do `¬(A & B) & ¬(A & C) & ¬(B & B) & ¬(B & C)`, which doesn't seem all that
+            // great: taking all possible permutations with one bound from each statement is an exponential process.
+
+            // Intersecting everything instead isn't unsound, it just loses some information, so it's acceptable.
+            // Note that we do correctly handle the similar situation for upper bounds, but for them the use of
+            // `commonSuperType()` isn't that critical (remember it's exactly the `commonSuperType` that requires
+            // this whole mechanism with lower bounds for DFA-based exhaustiveness).
+
             statement.lowerTypes.mapNotNull { (it as? DfaType.Cone)?.type }.takeIf { it.isNotEmpty() }
                 ?: listOf(context.nothingType())
         }.let {
