@@ -1404,6 +1404,7 @@ private fun foo(
 
     if (++index == length) return throwExceptionOrInvalid(throwException)
     var isTimeComponent = false
+    var prevUnit = 'A'
     while (index < length) {
         val ch = value[index]
         if (ch == 'T') {
@@ -1412,31 +1413,39 @@ private fun foo(
             continue
         }
         if (!parseLongIfPossible(ch)) return throwExceptionOrInvalid(throwException)
-        when (value[index]) {
-            'D' -> totalSeconds = currentLongValue.multiplyWithoutOverflow(SECONDS_PER_DAY)
-
-            'H' -> totalSeconds = totalSeconds.addWithoutOverflow(
-                currentLongValue.multiplyWithoutOverflow(SECONDS_PER_HOUR)
-            ).onInvalid { return throwExceptionOrInvalid(throwException) }
-
-            'M' -> totalSeconds = totalSeconds.addWithoutOverflow(
-                currentLongValue.multiplyWithoutOverflow(SECONDS_PER_MINUTE)
-            ).onInvalid { return throwExceptionOrInvalid(throwException) }
-
-            'S' -> totalSeconds = totalSeconds.addWithoutOverflow(currentLongValue)
-                .onInvalid { return throwExceptionOrInvalid(throwException) }
-
-            '.' -> {
+        var unit = value[index]
+        if (unit == 'D') {
+            if (isTimeComponent) return throwExceptionOrInvalid(throwException)
+            totalSeconds = currentLongValue.multiplyWithoutOverflow(SECONDS_PER_DAY)
+        } else {
+            if (!isTimeComponent) return throwExceptionOrInvalid(throwException)
+            if (unit == '.') {
                 totalSeconds = totalSeconds.addWithoutOverflow(currentLongValue)
                     .onInvalid { return throwExceptionOrInvalid(throwException) }
                 index++
                 val prevIndex = index
                 totalNanos = parseNanos() * sign
                 if (index == prevIndex || index == length || value[index] != 'S') return throwExceptionOrInvalid(throwException)
-            }
+                unit = 'S'
+            } else {
+                if (unit <= prevUnit) return throwExceptionOrInvalid(throwException)
+                when (unit) {
+                    'H' -> totalSeconds = totalSeconds.addWithoutOverflow(
+                        currentLongValue.multiplyWithoutOverflow(SECONDS_PER_HOUR)
+                    ).onInvalid { return throwExceptionOrInvalid(throwException) }
 
-            else -> return throwExceptionOrInvalid(throwException)
+                    'M' -> totalSeconds = totalSeconds.addWithoutOverflow(
+                        currentLongValue.multiplyWithoutOverflow(SECONDS_PER_MINUTE)
+                    ).onInvalid { return throwExceptionOrInvalid(throwException) }
+
+                    'S' -> totalSeconds = totalSeconds.addWithoutOverflow(currentLongValue)
+                        .onInvalid { return throwExceptionOrInvalid(throwException) }
+
+                    else -> return throwExceptionOrInvalid(throwException)
+                }
+            }
         }
+        prevUnit = unit
         index++
     }
     return totalSeconds.toDuration(DurationUnit.SECONDS) + totalNanos.toDuration(DurationUnit.NANOSECONDS)
