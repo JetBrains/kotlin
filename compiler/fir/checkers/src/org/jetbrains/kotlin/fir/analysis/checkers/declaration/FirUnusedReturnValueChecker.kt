@@ -24,8 +24,10 @@ import org.jetbrains.kotlin.fir.references.resolved
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirEnumEntrySymbol
+import org.jetbrains.kotlin.fir.types.ConeErrorType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.classId
+import org.jetbrains.kotlin.fir.types.hasError
 import org.jetbrains.kotlin.fir.types.isMarkedNullable
 import org.jetbrains.kotlin.fir.types.resolvedType
 import org.jetbrains.kotlin.name.CallableId
@@ -154,6 +156,7 @@ object FirUnusedReturnValueChecker : FirUnusedCheckerBase() {
 private val JAVA_LANG_VOID = ClassId.topLevel(FqName("java.lang.Void"))
 
 private fun ConeKotlinType.isIgnorable(): Boolean {
+    if (this is ConeErrorType || this.hasError()) return true
     val classId = classId ?: return false
     if (classId == StandardClassIds.Nothing) return true
     if (classId == StandardClassIds.Unit && !isMarkedNullable) return true

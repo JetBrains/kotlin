@@ -9755,6 +9755,12 @@ public class LLReversedDiagnosticsFe10TestGenerated extends AbstractLLReversedDi
       }
 
       @Test
+      @TestMetadata("unresolveds.kt")
+      public void testUnresolveds() {
+        runTest("compiler/testData/diagnostics/tests/crv/unresolveds.kt");
+      }
+
+      @Test
       @TestMetadata("usageInFunctionCall.kt")
       public void testUsageInFunctionCall() {
         runTest("compiler/testData/diagnostics/tests/crv/usageInFunctionCall.kt");
