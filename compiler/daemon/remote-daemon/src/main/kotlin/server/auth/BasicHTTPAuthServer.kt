@@ -6,22 +6,37 @@
 package server.auth
 
 import common.AUTH_FILE
+import common.UUID_FILE
 import kotlinx.serialization.json.Json
 import model.Credentials
+import model.UUIDMapping
 import java.io.File
+import java.util.UUID
 
 class BasicHTTPAuthServer : ServerAuth {
 
+    private val json = Json { ignoreUnknownKeys = true; prettyPrint = true }
     private val allowedUsers = loadAllowed()
+    private val userUUIDs = loadUserUUIDs()
+
 
     private fun loadAllowed(): Set<String> {
         val jsonFile = File(AUTH_FILE)
-        val json = Json { ignoreUnknownKeys = true; prettyPrint = true }
         return json.decodeFromString<Credentials>(jsonFile.readText()).allowed
+    }
+
+    private fun loadUserUUIDs(): Map<String, String> {
+        val jsonFile = File(UUID_FILE)
+        return json.decodeFromString<List<UUIDMapping>>(jsonFile.readText())
+            .associate { it.credential to it.userId }
     }
 
     override fun authenticate(credential: String): Boolean {
         return allowedUsers.contains(credential)
+    }
+
+    override fun getUserId(credential: String): String? {
+        return userUUIDs[credential]
     }
 
 }

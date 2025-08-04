@@ -4,7 +4,7 @@
  */
 
 package server.auth
-
 interface ServerAuth {
     fun authenticate(credential: String): Boolean
+    fun getUserId(credential: String): String?
 }
