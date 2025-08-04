@@ -1651,6 +1651,12 @@ public class IrJsCodegenBoxTestGenerated extends AbstractIrJsCodegenBoxTest {
     }
 
     @Test
+    @TestMetadata("boxBoolean.kt")
+    public void testBoxBoolean() {
+      runTest("compiler/testData/codegen/box/boxing/boxBoolean.kt");
+    }
+
+    @Test
     @TestMetadata("box_cache0.kt")
     public void testBox_cache0() {
       runTest("compiler/testData/codegen/box/boxing/box_cache0.kt");
