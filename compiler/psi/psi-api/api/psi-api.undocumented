@@ -384,7 +384,6 @@ org.jetbrains.kotlin.psi.KtCallableDeclaration
 org.jetbrains.kotlin.psi.KtCallableDeclaration:getColon()
 org.jetbrains.kotlin.psi.KtCallableDeclaration:getContextReceivers()
 org.jetbrains.kotlin.psi.KtCallableDeclaration:getReceiverTypeReference()
-org.jetbrains.kotlin.psi.KtCallableDeclaration:getTypeReference()
 org.jetbrains.kotlin.psi.KtCallableDeclaration:getValueParameterList()
 org.jetbrains.kotlin.psi.KtCallableDeclaration:getValueParameters()
 org.jetbrains.kotlin.psi.KtCallableDeclaration:setTypeReference(KtTypeReference)

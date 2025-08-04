@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.psi.psiUtil.isLegacyContractPresentPsiCheck
 import org.jetbrains.kotlin.psi.stubs.KotlinPropertyAccessorStub
 
 class KtPropertyAccessor : KtDeclarationStub<KotlinPropertyAccessorStub?>, KtDeclarationWithBody, KtModifierListOwner,
-    KtDeclarationWithInitializer {
+    KtDeclarationWithInitializer, KtDeclarationWithReturnType {
     constructor(node: ASTNode) : super(node)
     constructor(stub: KotlinPropertyAccessorStub) : super(stub, KtStubBasedElementTypes.PROPERTY_ACCESSOR)
 
@@ -83,8 +83,8 @@ class KtPropertyAccessor : KtDeclarationStub<KotlinPropertyAccessorStub?>, KtDec
 
     override fun hasDeclaredReturnType(): Boolean = true
 
-    val returnTypeReference: KtTypeReference?
-        get() = getStubOrPsiChild(KtStubBasedElementTypes.TYPE_REFERENCE)
+    override fun getTypeReference(): KtTypeReference? =
+        getStubOrPsiChild(KtStubBasedElementTypes.TYPE_REFERENCE)
 
     val namePlaceholder: PsiElement
         get() = findChildByType(KtTokens.GET_KEYWORD) ?: findChildByType(KtTokens.SET_KEYWORD)!!
@@ -108,6 +108,11 @@ class KtPropertyAccessor : KtDeclarationStub<KotlinPropertyAccessorStub?>, KtDec
         }
         return isLegacyContractPresentPsiCheck()
     }
+
+    @Suppress("unused")
+    @Deprecated("Use typeReference instead", ReplaceWith("typeReference"))
+    val returnTypeReference: KtTypeReference?
+        get() = typeReference
 
     @Suppress("unused")
     @Deprecated("use `parameterList?.leftParenthesis`", ReplaceWith("parameterList?.leftParenthesis"))

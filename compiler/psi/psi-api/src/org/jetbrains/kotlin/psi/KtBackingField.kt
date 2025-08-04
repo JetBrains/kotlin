@@ -11,7 +11,8 @@ import org.jetbrains.kotlin.KtStubBasedElementTypes
 import org.jetbrains.kotlin.lexer.KtTokens
 import org.jetbrains.kotlin.psi.stubs.KotlinBackingFieldStub
 
-class KtBackingField : KtDeclarationStub<KotlinBackingFieldStub>, KtModifierListOwner, KtDeclarationWithInitializer {
+class KtBackingField : KtDeclarationStub<KotlinBackingFieldStub>, KtModifierListOwner, KtDeclarationWithInitializer,
+    KtDeclarationWithReturnType {
     constructor(node: ASTNode) : super(node)
     constructor(stub: KotlinBackingFieldStub) : super(stub, KtStubBasedElementTypes.BACKING_FIELD)
 
@@ -21,8 +22,8 @@ class KtBackingField : KtDeclarationStub<KotlinBackingFieldStub>, KtModifierList
     val equalsToken: PsiElement?
         get() = findChildByType(KtTokens.EQ)
 
-    val returnTypeReference: KtTypeReference?
-        get() = getStubOrPsiChild(KtStubBasedElementTypes.TYPE_REFERENCE)
+    override fun getTypeReference(): KtTypeReference? =
+        getStubOrPsiChild(KtStubBasedElementTypes.TYPE_REFERENCE)
 
     val namePlaceholder: PsiElement
         get() = fieldKeyword ?: node.psi
@@ -47,4 +48,9 @@ class KtBackingField : KtDeclarationStub<KotlinBackingFieldStub>, KtModifierList
 
     val fieldKeyword: PsiElement?
         get() = findChildByType(KtTokens.FIELD_KEYWORD)
+
+    @Suppress("unused")
+    @Deprecated("Use typeReference instead", ReplaceWith("typeReference"))
+    val returnTypeReference: KtTypeReference?
+        get() = typeReference
 }
