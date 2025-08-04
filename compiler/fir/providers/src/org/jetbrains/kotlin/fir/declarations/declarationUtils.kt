@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.SessionHolder
 import org.jetbrains.kotlin.fir.declarations.utils.isInlineOrValue
+import org.jetbrains.kotlin.fir.declarations.utils.isSealed
 import org.jetbrains.kotlin.fir.resolve.*
 import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
@@ -205,10 +206,24 @@ fun FirClassSymbol<*>.collectEnumEntries(session: FirSession): List<FirEnumEntry
 }
 
 context(holder: SessionHolder)
-fun FirEnumEntrySymbol.getComplementary(): List<FirEnumEntrySymbol>? = resolvedReturnType
+fun FirEnumEntrySymbol.getComplementarySymbols(): List<FirEnumEntrySymbol>? = resolvedReturnType
     .toRegularClassSymbol(holder.session)
     ?.collectEnumEntries(holder.session)
     ?.filter { it != this }
+
+context(holder: SessionHolder)
+fun FirRegularClassSymbol.getComplementarySymbols(): List<FirRegularClassSymbol>? {
+    val superTypes = getSuperTypes(holder.session)
+        .mapNotNullTo(mutableSetOf()) { it.toRegularClassSymbol(holder.session) }
+
+    return superTypes.flatMap { superType ->
+        if (!superType.isSealed) return@flatMap emptyList()
+
+        superType.fir.getSealedClassInheritors(holder.session)
+            .mapNotNull { it.toSymbol(holder.session) as? FirRegularClassSymbol }
+            .filter { it != this@getComplementarySymbols && it !in superTypes }
+    }
+}
 
 /**
  * Returns the FirClassLikeDeclaration that the

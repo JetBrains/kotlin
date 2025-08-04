@@ -27,7 +27,7 @@ FILE: [ResolvedTo(IMPORTS)] onSmartCastExpression.kt
         public open [ResolvedTo(STATUS)] fun foo(): R|kotlin/Int| { LAZY_BLOCK }
 
     }
-    public final? [ResolvedTo(RAW_FIR)] class Derived : Base {
+    public final? [ResolvedTo(SUPER_TYPES)] class Derived : R|Base| {
         public? [ResolvedTo(RAW_FIR)] constructor(): R|Derived| {
             LAZY_super<Base>
         }
