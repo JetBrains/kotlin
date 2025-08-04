@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.js.test.ir
 
 import org.jetbrains.kotlin.js.test.JsAdditionalSourceProvider
-import org.jetbrains.kotlin.js.test.JsFailingTestSuppressor
 import org.jetbrains.kotlin.js.test.converters.JsIrDeserializerFacade
 import org.jetbrains.kotlin.js.test.converters.JsIrPreSerializationLoweringFacade
 import org.jetbrains.kotlin.js.test.converters.JsUnifiedIrDeserializerAndLoweringFacade
@@ -320,7 +319,6 @@ fun TestConfigurationBuilder.setupCommonHandlersForJsTest(
     }
 
     useAfterAnalysisCheckers(
-        ::JsFailingTestSuppressor,
         ::BlackBoxCodegenSuppressor.bind(customIgnoreDirective, additionalIgnoreDirectives),
     )
 

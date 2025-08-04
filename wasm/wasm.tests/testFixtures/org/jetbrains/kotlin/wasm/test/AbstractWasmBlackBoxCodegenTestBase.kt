@@ -87,7 +87,6 @@ abstract class AbstractWasmBlackBoxCodegenTestBase<R : ResultingArtifact.Fronten
         useAdditionalService(::LibraryProvider)
 
         useAfterAnalysisCheckers(
-            ::WasmFailingTestSuppressor,
             ::BlackBoxCodegenSuppressor.bind(customIgnoreDirective, additionalIgnoreDirectives),
         )
 
