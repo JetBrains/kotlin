@@ -587,6 +587,12 @@ class DurationTest {
         test((-1.1).seconds, "-PT1.100S", "PT-1.1S")
         test((-0.5).seconds, "-PT0.500S", "PT-0.5S")
 
+        // nanoseconds rounding
+        for (i in 0..4) {
+            test(Duration.ZERO, "PT0S", "PT0.000000000${i}S")
+            test(1.nanoseconds, "PT0.000000001S", "PT0.000000000${i + 5}S")
+        }
+
         // infinite
         test(
             Duration.INFINITE, "PT9999999999999H", "PT+10000000000000H", "-PT-9999999999999H", "-PT-1234567890123456789012S",
