@@ -16,6 +16,9 @@ import org.gradle.api.logging.Logger
 import org.gradle.api.provider.*
 import org.gradle.api.tasks.InputDirectory
 import org.gradle.api.tasks.Internal
+import org.gradle.api.tasks.Optional
+import org.gradle.api.tasks.PathSensitive
+import org.gradle.api.tasks.PathSensitivity
 import org.gradle.api.tasks.SkipWhenEmpty
 import org.gradle.api.tasks.TaskAction
 import org.gradle.process.ExecOperations
@@ -98,6 +101,8 @@ internal abstract class XcodeTargetsConfigurationTask : DefaultTask(), UsesKotli
     }
 
     @get:InputDirectory
+    @get:PathSensitive(PathSensitivity.RELATIVE)
+    @get:Optional
     @get:SkipWhenEmpty
     abstract val iosProjectPath: DirectoryProperty
 
