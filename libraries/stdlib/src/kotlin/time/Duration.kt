@@ -1064,7 +1064,7 @@ private fun parseDuration(value: String, strictIso: Boolean, throwException: Boo
     val hasSign = index > 0
     val result = when {
         length <= index -> return throwExceptionOrInvalid(throwException, "No components")
-        value[index] == 'P' -> parseIsoStringFormat(value, index + 1, length, throwException).onInvalid { return Duration.INVALID }
+        value[index] == 'P' -> foo(value, index, length, throwException).onInvalid { return Duration.INVALID }
         strictIso -> return throwExceptionOrInvalid(throwException)
         value.regionMatches(index, INFINITY_STRING, 0, length = maxOf(length - index, INFINITY_STRING.length), ignoreCase = true) -> {
             Duration.INFINITE
@@ -1330,6 +1330,116 @@ private fun parseIsoStringFormat(
         }
         else -> throwExceptionOrInvalid(throwException)
     }
+}
+
+private fun foo(
+    value: String,
+    startIndex: Int,
+    length: Int,
+    throwException: Boolean,
+): Duration {
+    var totalSeconds = 0L
+    var totalNanos = 0L
+    var index = startIndex
+    var currentLongValue = 0L
+    var sign = 1
+
+    fun parseLong(firstChar: Char): Long {
+        sign = 1
+        if (firstChar == '-') {
+            sign = -1
+            index++
+        } else if (firstChar == '+') {
+            index++
+        }
+        while (index < length && value[index] == '0') index++
+        var result = 0L
+        while (index < length) {
+            val ch = value[index]
+            if (ch !in '0'..'9') break
+            val digit = ch - '0'
+            index++
+            result = result * 10 + digit
+            if (result > OVERFLOW_LIMIT) {
+                while (index < length) {
+                    if (value[index] !in '0'..'9') break
+                    index++
+                }
+                return OVERFLOW_LIMIT * sign
+            }
+        }
+        return result * sign
+    }
+
+    fun parseNanos(): Long {
+        var result = 0L
+        var fractionMultiplier = 100_000_000L
+        var digitCount = 0
+        while (index < length && digitCount < 9) {
+            val ch = value[index]
+            if (ch !in '0'..'9') break
+            val digit = ch - '0'
+            result += digit * fractionMultiplier
+            fractionMultiplier /= 10
+            index++
+            digitCount++
+        }
+        var roundUp = false
+        if (index < length) {
+            val ch = value[index]
+            if (ch in '0'..'9') {
+                roundUp = (ch - '0') >= 5
+                index++
+            }
+        }
+        while (index < length && value[index] in '0'..'9') index++
+        return result + if (roundUp) 1 else 0
+    }
+
+    fun parseLongIfPossible(ch: Char): Boolean {
+        val prevIndex = index
+        currentLongValue = parseLong(ch)
+        return index < length && index != prevIndex + if (ch == '-' || ch == '+') 1 else 0
+    }
+
+    if (++index == length) return throwExceptionOrInvalid(throwException)
+    var isTimeComponent = false
+    while (index < length) {
+        val ch = value[index]
+        if (ch == 'T') {
+            if (isTimeComponent || ++index == length) return throwExceptionOrInvalid(throwException)
+            isTimeComponent = true
+            continue
+        }
+        if (!parseLongIfPossible(ch)) return throwExceptionOrInvalid(throwException)
+        when (value[index]) {
+            'D' -> totalSeconds = currentLongValue.multiplyWithoutOverflow(SECONDS_PER_DAY)
+
+            'H' -> totalSeconds = totalSeconds.addWithoutOverflow(
+                currentLongValue.multiplyWithoutOverflow(SECONDS_PER_HOUR)
+            ).onInvalid { return throwExceptionOrInvalid(throwException) }
+
+            'M' -> totalSeconds = totalSeconds.addWithoutOverflow(
+                currentLongValue.multiplyWithoutOverflow(SECONDS_PER_MINUTE)
+            ).onInvalid { return throwExceptionOrInvalid(throwException) }
+
+            'S' -> totalSeconds = totalSeconds.addWithoutOverflow(currentLongValue)
+                .onInvalid { return throwExceptionOrInvalid(throwException) }
+
+            '.' -> {
+                totalSeconds = totalSeconds.addWithoutOverflow(currentLongValue)
+                    .onInvalid { return throwExceptionOrInvalid(throwException) }
+                index++
+                val prevIndex = index
+                totalNanos = parseNanos() * sign
+                if (index == prevIndex || index == length || value[index] != 'S') return throwExceptionOrInvalid(throwException)
+            }
+
+            else -> return throwExceptionOrInvalid(throwException)
+        }
+        index++
+    }
+    return totalSeconds.toDuration(DurationUnit.SECONDS) + totalNanos.toDuration(DurationUnit.NANOSECONDS)
 }
 
 @kotlin.internal.InlineOnly
