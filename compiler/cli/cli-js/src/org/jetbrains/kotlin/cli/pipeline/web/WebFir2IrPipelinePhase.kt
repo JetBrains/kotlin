@@ -83,6 +83,7 @@ object WebFir2IrPipelinePhase : PipelinePhase<WebFrontendPipelineArtifact, JsFir
         return firResult.convertToIrAndActualize(
             fir2IrExtensions,
             Fir2IrConfiguration.forKlibCompilation(moduleStructure.compilerConfiguration, diagnosticsReporter),
+            moduleStructure.compilerConfiguration,
             IrGenerationExtension.getInstances(moduleStructure.project),
             irMangler = JsManglerIr,
             visibilityConverter = Fir2IrVisibilityConverter.Default,
@@ -91,7 +92,7 @@ object WebFir2IrPipelinePhase : PipelinePhase<WebFrontendPipelineArtifact, JsFir
             specialAnnotationsProvider = null,
             extraActualDeclarationExtractorsInitializer = { emptyList() },
         ) { irModuleFragment ->
-            (irModuleFragment.descriptor as? FirModuleDescriptor)?.let { it.allDependencyModules = librariesDescriptors }
+                (irModuleFragment.descriptor as? FirModuleDescriptor)?.let { it.allDependencyModules = librariesDescriptors }
         }
     }
 }

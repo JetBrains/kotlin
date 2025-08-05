@@ -101,6 +101,7 @@ fun FirResult.convertToIrAndActualizeForJvm(
     return convertToIrAndActualize(
         fir2IrExtensions,
         fir2IrConfiguration,
+        configuration,
         irGeneratorExtensions,
         JvmIrMangler,
         FirJvmVisibilityConverter,

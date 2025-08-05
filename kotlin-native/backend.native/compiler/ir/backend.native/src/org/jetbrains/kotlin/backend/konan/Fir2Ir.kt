@@ -72,6 +72,7 @@ internal fun PhaseContext.fir2Ir(
     val actualizedResult = input.firResult.convertToIrAndActualize(
             NativeFir2IrExtensions,
             fir2IrConfiguration,
+            configuration,
             IrGenerationExtension.getInstances(config.project),
             irMangler = KonanManglerIr,
             visibilityConverter = Fir2IrVisibilityConverter.Default,
