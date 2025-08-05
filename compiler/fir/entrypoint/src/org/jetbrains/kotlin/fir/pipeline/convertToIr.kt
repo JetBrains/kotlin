@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.config.AnalysisFlags
+import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.IrVerificationMode
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
@@ -78,6 +79,7 @@ fun List<ModuleCompilerAnalyzedOutput>.runPlatformCheckers(reporter: BaseDiagnos
 fun FirResult.convertToIrAndActualize(
     fir2IrExtensions: Fir2IrExtensions,
     fir2IrConfiguration: Fir2IrConfiguration,
+    compilerConfiguration: CompilerConfiguration,
     irGeneratorExtensions: Collection<IrGenerationExtension>,
     irMangler: KotlinMangler.IrMangler,
     visibilityConverter: Fir2IrVisibilityConverter,
@@ -92,6 +94,7 @@ fun FirResult.convertToIrAndActualize(
         outputs,
         fir2IrExtensions,
         fir2IrConfiguration,
+        compilerConfiguration,
         irGeneratorExtensions,
         irMangler,
         visibilityConverter,
@@ -109,6 +112,7 @@ private class Fir2IrPipeline(
     val outputs: List<ModuleCompilerAnalyzedOutput>,
     val fir2IrExtensions: Fir2IrExtensions,
     val fir2IrConfiguration: Fir2IrConfiguration,
+    val compilerConfiguration: CompilerConfiguration,
     val irGeneratorExtensions: Collection<IrGenerationExtension>,
     val irMangler: KotlinMangler.IrMangler,
     val visibilityConverter: Fir2IrVisibilityConverter,
@@ -493,7 +497,7 @@ private class Fir2IrPipeline(
                 "The compiler plugin '${extension.javaClass.name}' generated invalid IR. Please report this bug to the plugin vendor."
             }
         )
-    }
+}
 
     fun IrPluginContext.applyIrGenerationExtensions(
         irModuleFragment: IrModuleFragment,

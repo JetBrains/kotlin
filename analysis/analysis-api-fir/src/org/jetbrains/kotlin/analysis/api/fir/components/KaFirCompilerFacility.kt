@@ -1099,6 +1099,7 @@ internal class KaFirCompilerFacility(
         return firResult.convertToIrAndActualize(
             fir2IrExtensions = fir2IrExtensions,
             fir2IrConfiguration = fir2IrConfiguration,
+            compilerConfiguration = effectiveConfiguration,
             irGeneratorExtensions = irGeneratorExtensions,
             irMangler = JvmIrMangler,
             visibilityConverter = FirJvmVisibilityConverter,
