@@ -35,7 +35,7 @@ internal class SymbolLightFieldForEnumEntry(
         }
 
     @OptIn(KaImplementationDetail::class)
-    private val _modifierList by lazyPub {
+    override fun getModifierList(): PsiModifierList = cachedValue {
         SymbolLightMemberModifierList(
             containingDeclaration = this,
             modifiersBox = InitializedModifiersBox(PsiModifier.STATIC, PsiModifier.FINAL, PsiModifier.PUBLIC),
@@ -53,8 +53,6 @@ internal class SymbolLightFieldForEnumEntry(
     override fun isEquivalentTo(another: PsiElement?): Boolean {
         return super.isEquivalentTo(another) || isOriginEquivalentTo(another)
     }
-
-    override fun getModifierList(): PsiModifierList = _modifierList
 
     override val kotlinOrigin: KtEnumEntry = enumEntry
 
