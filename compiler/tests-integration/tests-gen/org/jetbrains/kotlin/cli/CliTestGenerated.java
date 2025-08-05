@@ -2114,6 +2114,11 @@ public class CliTestGenerated extends AbstractCliTest {
       runTest("compiler/testData/cli/js/reifiedIntersectionType.args");
     }
 
+    @TestMetadata("reportDetailedPerf.args")
+    public void testReportDetailedPerf() {
+      runTest("compiler/testData/cli/js/reportDetailedPerf.args");
+    }
+
     @TestMetadata("reportPerf.args")
     public void testReportPerf() {
       runTest("compiler/testData/cli/js/reportPerf.args");
