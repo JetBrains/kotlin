@@ -598,3 +598,31 @@ fun FirVisibilityChecker.isClassLikeVisible(
         containingDeclarations.map { it.fir },
     )
 }
+
+fun FirCallableDeclaration.isVisibleInClass(parentClass: FirClass): Boolean {
+    return symbol.isVisibleInClass(parentClass.symbol, symbol.resolvedStatus)
+}
+
+fun FirBasedSymbol<*>.isVisibleInClass(parentClassSymbol: FirClassSymbol<*>): Boolean {
+    val status = when (this) {
+        is FirCallableSymbol<*> -> resolvedStatus
+        is FirClassLikeSymbol -> resolvedStatus
+        else -> return true
+    }
+    return isVisibleInClass(parentClassSymbol, status)
+}
+
+fun FirBasedSymbol<*>.isVisibleInClass(classSymbol: FirClassSymbol<*>, status: FirDeclarationStatus): Boolean {
+    val classPackage = classSymbol.classId.packageFqName
+    val packageName = when (this) {
+        is FirCallableSymbol<*> -> callableId.packageName
+        is FirClassLikeSymbol<*> -> classId.packageFqName
+        else -> return true
+    }
+    val visibility = status.visibility
+    if (visibility == Visibilities.Private || !visibility.visibleFromPackage(classPackage, packageName)) return false
+    if (visibility == Visibilities.Internal) {
+        return classSymbol.moduleData.canSeeInternalsOf(moduleData)
+    }
+    return true
+}
