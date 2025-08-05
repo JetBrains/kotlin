@@ -167,7 +167,5 @@ private fun ConeKotlinType.isFinal(session: FirSession): Boolean = when (this) {
 private fun FirVariable.isInCurrentOrFriendModule(session: FirSession): Boolean {
     val propertyModuleData = originalOrSelf().moduleData
     val currentModuleData = session.moduleData
-    return propertyModuleData == currentModuleData ||
-            propertyModuleData in currentModuleData.friendDependencies ||
-            propertyModuleData in currentModuleData.allDependsOnDependencies
+    return currentModuleData.canSeeInternalsOf(propertyModuleData)
 }

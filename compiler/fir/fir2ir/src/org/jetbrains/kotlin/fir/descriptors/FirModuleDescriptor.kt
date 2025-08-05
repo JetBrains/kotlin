@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.descriptors.*
 import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.canSeeInternalsOf
 import org.jetbrains.kotlin.fir.moduleData
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.name.FqName
@@ -36,12 +37,7 @@ class FirModuleDescriptor private constructor(
 
     override fun shouldSeeInternalsOf(targetModule: ModuleDescriptor): Boolean {
         if (targetModule !is FirModuleDescriptor) return false
-        return when (targetModule.moduleData) {
-            this.moduleData,
-            in moduleData.friendDependencies,
-            in moduleData.dependsOnDependencies -> true
-            else -> false
-        }
+        return moduleData.canSeeInternalsOf(targetModule.moduleData)
     }
 
     override val platform: TargetPlatform
