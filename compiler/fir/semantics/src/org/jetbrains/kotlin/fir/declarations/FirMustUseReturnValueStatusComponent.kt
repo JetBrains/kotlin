@@ -123,20 +123,25 @@ abstract class FirMustUseReturnValueStatusComponent : FirSessionComponent {
 
             if (hasIgnorableLikeAnnotation(declaration.resolvedAnnotationClassIds)) return ReturnValueStatus.ExplicitlyIgnorable
 
-            // In the case of inheriting from Ignorable or Unspecified, global FULL setting has lesser priority
+            // In the case of inheriting from Ignorable or Unspecified, global FULL setting has lesser priority than annotations/parent
+            // but we want to check it here first to avoid looking through the containers
             val overridesIgnorableOrUnspecified = overriddenFlag == ReturnValueStatus.ExplicitlyIgnorable || overriddenFlag == ReturnValueStatus.Unspecified
-            if (session.languageVersionSettings.getFlag(AnalysisFlags.returnValueCheckerMode) == ReturnValueCheckerMode.FULL && !overridesIgnorableOrUnspecified) return ReturnValueStatus.MustUse
+            if (session.languageVersionSettings.getFlag(AnalysisFlags.returnValueCheckerMode) == ReturnValueCheckerMode.FULL && !overridesIgnorableOrUnspecified)
+                return ReturnValueStatus.MustUse
 
             if (overriddenFlag == ReturnValueStatus.MustUse) return ReturnValueStatus.MustUse
-            val hasAnnotation = findMustUseAmongContainers(
-                session = session,
-                declaration = declaration,
-                containingClass = containingClass,
-                containingProperty = containingProperty,
-                additionalAnnotations = null,
-            )
+            if (findMustUseAmongContainers(
+                    session = session,
+                    declaration = declaration,
+                    containingClass = containingClass,
+                    containingProperty = containingProperty,
+                    additionalAnnotations = null,
+                )
+            ) return ReturnValueStatus.MustUse
 
-            return if (hasAnnotation) ReturnValueStatus.MustUse else ReturnValueStatus.Unspecified
+            // In case no annotations are provided, we inherit status from the parent.
+            return overriddenFlag ?: ReturnValueStatus.Unspecified
+
         }
 
         private fun findMustUseAmongContainers(

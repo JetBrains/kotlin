@@ -48,7 +48,7 @@ class C2: I2 {
     override fun foo(): String = ""
 }
 
-class C3: I3 {
+open class C3: I3 {
     override fun foo(): String = ""
 }
 
@@ -57,11 +57,17 @@ class C4: I3 {
     override fun foo(): String = "" // Should be a warning on overriding explicit @Ignorable
 }
 
-fun check(c1: C1, c2: C2, c3: C3, c4: C4) {
+@MustUseReturnValue
+class C5: C3() {
+    override fun foo(): String = ""
+}
+
+fun check(c1: C1, c2: C2, c3: C3, c4: C4, c5: C5) {
     c1.foo()
     c2.foo()
     c3.foo()
     c4.foo()
+    c5.foo()
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, override */
