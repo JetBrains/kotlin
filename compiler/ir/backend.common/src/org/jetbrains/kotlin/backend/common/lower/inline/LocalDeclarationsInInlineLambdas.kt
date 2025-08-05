@@ -37,8 +37,8 @@ import org.jetbrains.kotlin.ir.visitors.*
  *    are copied. But the compiler could optimize the usage of some local classes and not copy them.
  *    So in this case all local classes MIGHT BE COPIED.
  */
-@PhaseDescription("LocalClassesInInlineLambdasLowering")
-class LocalClassesInInlineLambdasLowering(val context: LoweringContext) : BodyLoweringPass {
+@PhaseDescription("LocalDeclarationsInInlineLambdasPreparationLowering")
+class LocalDeclarationsInInlineLambdasPreparationLowering(val context: LoweringContext) : BodyLoweringPass {
     override fun lower(irFile: IrFile) {
         runOnFilePostfix(irFile)
     }

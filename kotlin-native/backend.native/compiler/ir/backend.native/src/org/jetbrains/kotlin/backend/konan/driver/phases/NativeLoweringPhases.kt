@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.backend.common.FileLoweringPass
 import org.jetbrains.kotlin.backend.common.ir.Symbols
 import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.common.lower.coroutines.AddContinuationToNonLocalSuspendFunctionsLowering
-import org.jetbrains.kotlin.backend.common.lower.inline.LocalClassesInInlineLambdasLowering
+import org.jetbrains.kotlin.backend.common.lower.inline.LocalDeclarationsInInlineLambdasPreparationLowering
 import org.jetbrains.kotlin.backend.common.lower.optimizations.PropertyAccessorInlineLowering
 import org.jetbrains.kotlin.backend.common.lower.optimizations.LivenessAnalysis
 import org.jetbrains.kotlin.backend.common.phaser.*
@@ -152,9 +152,9 @@ private val sharedVariablesPhase = createFileLoweringPhase(
         prerequisite = setOf(lateinitPhase)
 )
 
-private val extractLocalClassesFromInlineBodies = createFileLoweringPhase(
-        ::LocalClassesInInlineLambdasLowering,
-        name = "ExtractLocalClassesFromInlineBodies",
+private val prepareLocalDeclarationsInInlineLambdasPhase = createFileLoweringPhase(
+        ::LocalDeclarationsInInlineLambdasPreparationLowering,
+        name = "PrepareLocalDeclarationsInInlineLambdas",
         prerequisite = setOf(sharedVariablesPhase),
 )
 
@@ -378,7 +378,7 @@ private val interopPhase = createFileLoweringPhase(
             InteropLowering(generationState.context, generationState.fileLowerState)
         },
         name = "Interop",
-        prerequisite = setOf(extractLocalClassesFromInlineBodies)
+        prerequisite = setOf(prepareLocalDeclarationsInInlineLambdasPhase)
 )
 
 private val specialInteropIntrinsicsPhase = createFileLoweringPhase(
@@ -570,7 +570,7 @@ internal fun getLoweringsUpToAndIncludingSyntheticAccessors(): LoweringList = li
         assertionWrapperPhase,
         lateinitPhase,
         sharedVariablesPhase,
-        extractLocalClassesFromInlineBodies,
+        prepareLocalDeclarationsInInlineLambdasPhase,
         arrayConstructorPhase,
         inlineOnlyPrivateFunctionsPhase,
         outerThisSpecialAccessorInInlineFunctionsPhase,
