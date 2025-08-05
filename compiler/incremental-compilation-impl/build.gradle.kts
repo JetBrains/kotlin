@@ -27,7 +27,7 @@ dependencies {
     testFixturesApi(libs.junit4)
     testFixturesApi(kotlinTest("junit"))
     testFixturesApi(kotlinStdlib())
-    testFixturesApi(testFixtures(project(":kotlin-build-common")))
+    testFixturesApi(projectTests(":kotlin-build-common"))
     testFixturesApi(testFixtures(project(":compiler:tests-common")))
     testFixturesApi(intellijCore())
     testFixturesApi(commonDependency("org.jetbrains.intellij.deps:log4j"))
