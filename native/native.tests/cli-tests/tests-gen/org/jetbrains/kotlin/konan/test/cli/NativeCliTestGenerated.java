@@ -69,6 +69,11 @@ public class NativeCliTestGenerated extends AbstractNativeCliTest {
     runTest("native/native.tests/cli-tests/testData/cli/llvmIrDumpDirectoryDoesntExist.args");
   }
 
+  @TestMetadata("reportDetailedPerfPsi1stPhase.args")
+  public void testReportDetailedPerfPsi1stPhase() {
+    runTest("native/native.tests/cli-tests/testData/cli/reportDetailedPerfPsi1stPhase.args");
+  }
+
   @TestMetadata("reportPerf.args")
   public void testReportPerf() {
     runTest("native/native.tests/cli-tests/testData/cli/reportPerf.args");
