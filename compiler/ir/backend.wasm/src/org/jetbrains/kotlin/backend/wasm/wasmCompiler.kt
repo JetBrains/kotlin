@@ -53,7 +53,7 @@ class WasmCompilerResult(
     val debugInformation: DebugInformation?,
     val dts: String?,
     val useDebuggerCustomFormatters: Boolean,
-    val jsBuiltinsWrapper: String?
+    val jsBuiltinsPolyfillsWrapper: String?
 )
 
 class DebugInformation(
@@ -203,7 +203,7 @@ fun compileWasm(
     val byteArray = os.toByteArray()
     val jsUninstantiatedWrapper: String?
     val jsWrapper: String
-    val jsBuiltinsWrapper: String?
+    val jsBuiltinsPolyfillsWrapper: String?
 
     if (isWasmJsTarget) {
         val jsModuleImports = mutableSetOf<String>()
@@ -231,14 +231,14 @@ fun compileWasm(
             linkedModule.exports,
             useDebuggerCustomFormatters,
         )
-        jsBuiltinsWrapper = wasmCompiledFileFragments.flatMap { fragment ->
+        jsBuiltinsPolyfillsWrapper = wasmCompiledFileFragments.flatMap { fragment ->
             fragment.jsBuiltinsPolyfills.values.toList()
         }.joinToString("\n")
     } else {
         jsUninstantiatedWrapper = null
-        jsBuiltinsWrapper = null
         jsWrapper =
             wasmCompiledModuleFragment.generateAsyncWasiWrapper("./$baseFileName.wasm", linkedModule.exports, useDebuggerCustomFormatters)
+        jsBuiltinsPolyfillsWrapper = null
     }
 
     return WasmCompilerResult(
@@ -252,7 +252,7 @@ fun compileWasm(
         ),
         dts = typeScriptFragment?.raw,
         useDebuggerCustomFormatters = useDebuggerCustomFormatters,
-        jsBuiltinsWrapper = jsBuiltinsWrapper
+        jsBuiltinsPolyfillsWrapper = jsBuiltinsPolyfillsWrapper
     )
 }
 
@@ -326,7 +326,7 @@ fun generateAsyncJsWrapper(
     val pathJsStringLiteral = wasmFilePath.toJsStringLiteral()
 
     val builtinsList = jsModuleImports.filter { it.startsWith("wasm:") }.map { "${it.removePrefix("wasm:")}" }
-    val builtins = "{ builtins: ['${builtinsList.joinToString(", ")}'] }"
+    val options = "{ builtins: ['${builtinsList.joinToString(", ")}'] }"
 
     return """
 export async function instantiate(imports={}, runInitializer=true) {
@@ -392,24 +392,24 @@ $imports
         const filepath = import.meta.resolve(wasmFilePath);
         const wasmBuffer = fs.readFileSync(url.fileURLToPath(filepath));
         const wasmModule = new WebAssembly.Module(wasmBuffer);
-        wasmInstance = new WebAssembly.Instance(wasmModule, importObject, $builtins);
+        wasmInstance = new WebAssembly.Instance(wasmModule, importObject, $options);
       }
       
       if (isDeno) {
         const path = await import(/* webpackIgnore: true */'https://deno.land/std/path/mod.ts');
         const binary = Deno.readFileSync(path.fromFileUrl(import.meta.resolve(wasmFilePath)));
         const module = await WebAssembly.compile(binary);
-        wasmInstance = await WebAssembly.instantiate(module, importObject, $builtins);
+        wasmInstance = await WebAssembly.instantiate(module, importObject, $options);
       }
       
       if (isStandaloneJsVM) {
         const wasmBuffer = read(wasmFilePath, 'binary');
         const wasmModule = new WebAssembly.Module(wasmBuffer);
-        wasmInstance = new WebAssembly.Instance(wasmModule, importObject, $builtins);
+        wasmInstance = new WebAssembly.Instance(wasmModule, importObject, $options);
       }
       
       if (isBrowser) {
-        wasmInstance = (await WebAssembly.instantiateStreaming(fetch(new URL($pathJsStringLiteral,import.meta.url).href), importObject, $builtins)).instance;
+        wasmInstance = (await WebAssembly.instantiateStreaming(fetch(new URL($pathJsStringLiteral,import.meta.url).href), importObject, $options)).instance;
       }
     } catch (e) {
       if (e instanceof WebAssembly.CompileError) {
@@ -539,8 +539,8 @@ fun writeCompilationResult(
         File(dir, "$fileNameBase.d.mts").writeText(result.dts)
     }
 
-    if (result.jsBuiltinsWrapper != null) {
-        File(dir, "js-builtins.mjs").writeText(result.jsBuiltinsWrapper)
+    if (result.jsBuiltinsPolyfillsWrapper != null) {
+        File(dir, "js-builtins.mjs").writeText(result.jsBuiltinsPolyfillsWrapper)
     }
 }
 

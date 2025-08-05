@@ -19,3 +19,10 @@ package kotlin.wasm.internal
 * ```
 */
 internal fun returnArgumentIfItIsKotlinAny(): Unit = implementedAsIntrinsic
+
+@Target(AnnotationTarget.FUNCTION)
+internal annotation class JsBuiltin(
+    val module: String,
+    val name: String = "",
+    val polyfill: String = ""
+)
