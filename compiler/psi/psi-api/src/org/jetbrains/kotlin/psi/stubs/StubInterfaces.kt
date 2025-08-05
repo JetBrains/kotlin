@@ -27,7 +27,7 @@ interface KotlinFileStub : PsiFileStub<KtFile> {
 interface KotlinPlaceHolderStub<T : KtElement> : StubElement<T>
 
 interface KotlinPlaceHolderWithTextStub<T : KtElement> : KotlinPlaceHolderStub<T> {
-    fun text(): String
+    val text: String
 }
 
 interface KotlinStubWithFqName<T : PsiNamedElement> : NamedStub<T> {

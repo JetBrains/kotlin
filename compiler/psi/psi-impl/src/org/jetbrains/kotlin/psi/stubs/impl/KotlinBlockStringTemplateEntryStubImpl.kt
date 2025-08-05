@@ -13,9 +13,6 @@ import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 class KotlinBlockStringTemplateEntryStubImpl(
     parent: StubElement<*>?,
     override val hasMultipleExpressions: Boolean,
-    private val text: String,
+    override val text: String,
 ) : KotlinStubBaseImpl<KtBlockStringTemplateEntry>(parent, KtStubElementTypes.LONG_STRING_TEMPLATE_ENTRY),
-    KotlinBlockStringTemplateEntryStub {
-
-    override fun text(): String = text
-}
+    KotlinBlockStringTemplateEntryStub
