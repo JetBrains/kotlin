@@ -525,7 +525,7 @@ val IrDeclaration.fileOrNull: IrFile?
     get() = getPackageFragment() as? IrFile
 
 val IrDeclaration.file: IrFile
-    get() = fileOrNull ?: TODO("Unknown file")
+    get() = fileOrNull!!
 
 val IrDeclaration.parentClassOrNull: IrClass?
     get() = parent.let {
