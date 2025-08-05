@@ -193,6 +193,12 @@ public class WasmPartialLinkageNoICTestCaseGenerated extends AbstractWasmPartial
   }
 
   @Test
+  @TestMetadata("removeInlineProperty")
+  public void testRemoveInlineProperty() {
+    runTest("compiler/testData/klib/partial-linkage/removeInlineProperty/");
+  }
+
+  @Test
   @TestMetadata("removeSealedSubclass")
   public void testRemoveSealedSubclass() {
     runTest("compiler/testData/klib/partial-linkage/removeSealedSubclass/");

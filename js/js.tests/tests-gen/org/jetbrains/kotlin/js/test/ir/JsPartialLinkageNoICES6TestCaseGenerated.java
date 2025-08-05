@@ -196,6 +196,12 @@ public class JsPartialLinkageNoICES6TestCaseGenerated extends AbstractJsPartialL
   }
 
   @Test
+  @TestMetadata("removeInlineProperty")
+  public void testRemoveInlineProperty() {
+    runTest("compiler/testData/klib/partial-linkage/removeInlineProperty/");
+  }
+
+  @Test
   @TestMetadata("removeSealedSubclass")
   public void testRemoveSealedSubclass() {
     runTest("compiler/testData/klib/partial-linkage/removeSealedSubclass/");
