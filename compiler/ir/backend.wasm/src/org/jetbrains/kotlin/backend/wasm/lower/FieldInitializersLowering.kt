@@ -38,13 +38,11 @@ import org.jetbrains.kotlin.name.Name
  */
 class FieldInitializersLowering(val context: WasmBackendContext) : FileLoweringPass {
     private val stringPoolFqName = FqName("kotlin.wasm.internal.stringPool")
-    private val stringAddressesAndLengthsFqName = FqName("kotlin.wasm.internal.stringAddressesAndLengths")
 
     override fun lower(irFile: IrFile) {
         var nonConstantFieldInitializer: IrSimpleFunction? = null
         var objectInstanceFieldInitializer: IrSimpleFunction? = null
         var stringPoolFieldInitializer: IrSimpleFunction? = null
-        var stringAddressesAndLengthsInitializer: IrSimpleFunction? = null
 
         irFile.acceptVoid(object : IrVisitorVoid() {
             override fun visitElement(element: IrElement) {
@@ -86,7 +84,6 @@ class FieldInitializersLowering(val context: WasmBackendContext) : FileLoweringP
                 val initializeFunction = when {
                     declaration.isObjectInstanceField() -> objectInstanceFieldInitializer
                     declaration.fqNameWhenAvailable == stringPoolFqName -> stringPoolFieldInitializer
-                    declaration.fqNameWhenAvailable == stringAddressesAndLengthsFqName -> stringAddressesAndLengthsInitializer
                     else -> nonConstantFieldInitializer
                 }
 
@@ -97,7 +94,6 @@ class FieldInitializersLowering(val context: WasmBackendContext) : FileLoweringP
                         when {
                             declaration.isObjectInstanceField() -> objectInstanceFieldInitializer = it
                             declaration.fqNameWhenAvailable == stringPoolFqName -> stringPoolFieldInitializer = it
-                            declaration.fqNameWhenAvailable == stringAddressesAndLengthsFqName -> stringAddressesAndLengthsInitializer = it
                             else -> nonConstantFieldInitializer = it
                         }
                     }
@@ -115,11 +111,10 @@ class FieldInitializersLowering(val context: WasmBackendContext) : FileLoweringP
             }
         })
 
-        if (objectInstanceFieldInitializer != null || stringPoolFieldInitializer != null || nonConstantFieldInitializer != null || stringAddressesAndLengthsInitializer != null) {
+        if (objectInstanceFieldInitializer != null || stringPoolFieldInitializer != null || nonConstantFieldInitializer != null) {
             with(context.getFileContext(irFile)) {
                 this.objectInstanceFieldInitializer = objectInstanceFieldInitializer?.also { irFile.declarations.add(it) }
                 this.stringPoolFieldInitializer = stringPoolFieldInitializer?.also { irFile.declarations.add(it) }
-                this.stringAddressesAndLengthsInitializer = stringAddressesAndLengthsInitializer?.also { irFile.declarations.add(it) }
                 this.nonConstantFieldInitializer = nonConstantFieldInitializer?.also { irFile.declarations.add(it) }
             }
         }

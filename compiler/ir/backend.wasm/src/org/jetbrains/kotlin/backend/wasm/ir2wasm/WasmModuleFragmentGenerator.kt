@@ -111,9 +111,6 @@ private fun compileIrFile(
     fileContext.stringPoolFieldInitializer?.apply {
         wasmFileCodegenContext.setStringPoolFieldInitializer(symbol)
     }
-    fileContext.stringAddressesAndLengthsInitializer?.apply {
-        wasmFileCodegenContext.setStringAddressesAndLengthsInitializer(symbol)
-    }
     fileContext.nonConstantFieldInitializer?.apply {
         wasmFileCodegenContext.addNonConstantFieldInitializers(symbol)
     }
@@ -162,11 +159,16 @@ private fun WasmBackendContext.defineBuiltinSignatures(irFile: IrFile, wasmFileC
         irFile == it.owner.fileOrNull
     }
 
+    val createString = wasmSymbols.createString.takeIf {
+        irFile == it.owner.fileOrNull
+    }
+
     wasmFileCodegenContext.defineBuiltinIdSignatures(
         throwable = throwableClass,
         tryGetAssociatedObject = tryGetAssociatedObjectFunction,
         jsToKotlinAnyAdapter = jsToKotlinAnyAdapter,
         unitGetInstance = unitGetInstance?.symbol,
         runRootSuites = runRootSuites,
+        createString = createString,
     )
 }

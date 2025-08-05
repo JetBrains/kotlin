@@ -153,47 +153,8 @@ public actual class String internal @WasmPrimitiveConstructor constructor(
     }
 }
 
-@Suppress("NOTHING_TO_INLINE")
-internal inline fun WasmCharArray.createString(): String =
+internal fun WasmCharArray.createString(): String =
     String(null, this.len(), this)
-
-internal fun stringLiteralUtf16(poolId: Int): String {
-    val cached = stringPool[poolId]
-    if (cached !== null) {
-        return cached
-    }
-
-    val addressAndLength = stringAddressesAndLengths.get(poolId)
-    val length = (addressAndLength shr 32).toInt()
-    val startAddress = (addressAndLength and ((1L shl 32) - 1L)).toInt()
-
-    val chars = array_new_data0<WasmCharArray>(startAddress, length)
-    val newString = String(null, length, chars)
-    stringPool[poolId] = newString
-    return newString
-}
-
-internal fun stringLiteralLatin1(poolId: Int): String {
-    val cached = stringPool[poolId]
-    if (cached !== null) {
-        return cached
-    }
-
-    val addressAndLength = stringAddressesAndLengths.get(poolId)
-    val length = (addressAndLength shr 32).toInt()
-    val startAddress = (addressAndLength and ((1L shl 32) - 1L)).toInt()
-
-    val bytes = array_new_data0<WasmByteArray>(startAddress, length)
-    val chars = WasmCharArray(length)
-    for (i in 0..<length) {
-        val chr = bytes.getU(i).toByte().reinterpretAsInt().reinterpretAsChar()
-        chars.set(i, chr)
-    }
-
-    val newString = String(null, length, chars)
-    stringPool[poolId] = newString
-    return newString
-}
 
 // TODO: remove after bootstrap
 internal fun stringLiteral(poolId: Int, start: Int, length: Int): String {

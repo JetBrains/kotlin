@@ -626,7 +626,7 @@ class WasmSerializer(outputStream: OutputStream) {
             serializeMap(jsFuns, ::serializeIdSignature, ::serializeJsCodeSnippet)
             serializeMap(jsModuleImports, ::serializeIdSignature, ::serializeString)
             serializeList(exports, ::serializeWasmExport)
-            serializeNullable(stringPoolSize) { serializeWasmSymbolReadOnly(it, ::serializeInt) }
+            serializeNullable(wasmStringsElements, ::serializeWasmStringsElements)
             serializeList(mainFunctionWrappers, ::serializeIdSignature)
             serializeList(testFunctionDeclarators, ::serializeIdSignature)
             serializeList(equivalentFunctions) { serializePair(it, ::serializeString, ::serializeIdSignature) }
@@ -636,10 +636,16 @@ class WasmSerializer(outputStream: OutputStream) {
             serializeNullable(specialITableTypes, ::serializeInterfaceTableTypes)
             serializeNullable(rttiElements, ::serializeRttiElements)
             serializeList(objectInstanceFieldInitializers, ::serializeIdSignature)
-            serializeNullable(stringPoolFieldInitializer, ::serializeIdSignature)
-            serializeNullable(stringAddressesAndLengthsInitializer, ::serializeIdSignature)
             serializeList(nonConstantFieldInitializers, ::serializeIdSignature)
         }
+
+    private fun serializeWasmStringsElements(wasmStringsElements: WasmStringsElements) {
+        serializeWasmSymbolReadOnly(wasmStringsElements.createStringLiteralUtf16, ::serializeWasmFunction)
+        serializeWasmSymbolReadOnly(wasmStringsElements.createStringLiteralLatin1, ::serializeWasmFunction)
+        serializeWasmSymbolReadOnly(wasmStringsElements.createStringLiteralType, ::serializeWasmFunctionType)
+        serializeWasmSymbolReadOnly(wasmStringsElements.stringPoolSize, ::serializeInt)
+        serializeNullable(wasmStringsElements.stringPoolFieldInitializer, ::serializeIdSignature)
+    }
 
     private fun serializeRttiElements(rttiElements: RttiElements) {
         serializeList(rttiElements.globals) { rttiGlobal ->
@@ -668,6 +674,7 @@ class WasmSerializer(outputStream: OutputStream) {
         serializeNullable(builtinIdSignatures.jsToKotlinAnyAdapter, ::serializeIdSignature)
         serializeNullable(builtinIdSignatures.unitGetInstance, ::serializeIdSignature)
         serializeNullable(builtinIdSignatures.runRootSuites, ::serializeIdSignature)
+        serializeNullable(builtinIdSignatures.createString, ::serializeIdSignature)
     }
 
     private fun serializeClassAssociatedObjects(classAssociatedObjects: ClassAssociatedObjects) {
