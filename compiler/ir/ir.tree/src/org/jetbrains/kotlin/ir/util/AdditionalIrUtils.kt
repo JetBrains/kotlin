@@ -214,11 +214,11 @@ val IrDeclaration.isAnonymousObject get() = this is IrClass && name == SpecialNa
 val IrDeclaration.isAnonymousFunction get() = this is IrSimpleFunction && name == SpecialNames.NO_NAME_PROVIDED
 
 /**
- * Used to mark local classes that have been lifted out of their local scope and changed their visibility to a non-local one.
+ * Used to mark local declarations that have been lifted out of their local scope and changed their visibility to a non-local one.
  *
- * Sometimes it is useful to be able to distinguish such classes even after they were lifted.
+ * Sometimes it is useful to be able to distinguish such declarations even after they were lifted.
  */
-var IrClass.isOriginallyLocalClass: Boolean by irFlag(copyByDefault = true)
+var IrDeclaration.isOriginallyLocalDeclaration: Boolean by irFlag(copyByDefault = true)
 
 private inline fun IrDeclaration.isLocalImpl(isLocal: (IrDeclarationWithVisibility) -> Boolean): Boolean {
     var current: IrElement = this
@@ -242,7 +242,7 @@ val IrDeclaration.isLocal: Boolean
     get() = isLocalImpl { it.visibility == DescriptorVisibilities.LOCAL }
 
 val IrDeclaration.isOriginallyLocal: Boolean
-    get() = isLocalImpl { it.visibility == DescriptorVisibilities.LOCAL || it is IrClass && it.isOriginallyLocalClass }
+    get() = isLocalImpl { it.visibility == DescriptorVisibilities.LOCAL || it.isOriginallyLocalDeclaration }
 
 @ObsoleteDescriptorBasedAPI
 val IrDeclaration.module get() = this.descriptor.module
