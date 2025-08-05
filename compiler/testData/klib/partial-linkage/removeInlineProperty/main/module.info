@@ -1,0 +1,3 @@
+STEP 0:
+    arguments: -Xcontext-parameters
+    dependencies: stdlib, lib1, lib2
