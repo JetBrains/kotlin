@@ -676,11 +676,11 @@ Kotlin reports a warning every time you use one of them. You can use this flag t
         }
 
     @Argument(
-        value = "--Xdata-flow-based-exhaustiveness",
+        value = "-Xdata-flow-based-exhaustiveness",
         description = "Enable `when` exhaustiveness improvements that rely on data-flow analysis.",
     )
     @Enables(LanguageFeature.DataFlowBasedExhaustiveness)
-    var xdataFlowBasedExhaustiveness: Boolean = false
+    var dataFlowBasedExhaustiveness: Boolean = false
         set(value) {
             checkFrozen()
             field = value
