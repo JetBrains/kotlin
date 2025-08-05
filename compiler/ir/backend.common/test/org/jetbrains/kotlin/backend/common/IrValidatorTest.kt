@@ -50,17 +50,9 @@ class IrValidatorTest {
 
     private lateinit var messageCollector: MessageCollectorImpl
     private lateinit var module: IrModuleFragment
-    private val defaultValidationConfig = IrValidatorConfig(
-        checkTypes = true,
-        checkValueScopes = true,
-        checkTypeParameterScopes = true,
-        checkCrossFileFieldUsage = true,
-        checkAllKotlinFieldsArePrivate = true,
-        checkVisibilities = true,
-        checkVarargTypes = true,
-        checkUnboundSymbols = true,
-        checkInlineFunctionUseSites = { it.symbol.owner.name.toString() != "inlineFunctionUseSiteNotPermitted" }
-    )
+    private val defaultValidationConfig = IrValidatorConfig(checkTreeConsistency = true, checkUnboundSymbols = true)
+        .withAllChecks()
+        .withInlineFunctionCallsiteCheck { it.symbol.owner.name.toString() != "inlineFunctionUseSiteNotPermitted" }
 
     @BeforeTest
     fun setUp() {
@@ -314,10 +306,8 @@ class IrValidatorTest {
                     CompilerMessageLocation.create("test.kt", 1, 7, null),
                 ),
             ),
-            config = IrValidatorConfig(
-                checkTreeConsistency = false,
-                checkTypes = true,
-            )
+            config = IrValidatorConfig()
+                .withTypeChecks()
         )
     }
 

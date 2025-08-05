@@ -7,6 +7,8 @@ package org.jetbrains.kotlin.fir.pipeline
 
 import org.jetbrains.kotlin.backend.common.*
 import org.jetbrains.kotlin.backend.common.actualizer.*
+import org.jetbrains.kotlin.backend.common.checkers.declaration.IrFieldVisibilityChecker
+import org.jetbrains.kotlin.backend.common.checkers.expression.IrCrossFileFieldUsageChecker
 import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
@@ -42,6 +44,7 @@ import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 import org.jetbrains.kotlin.platform.jvm.isJvm
+import org.jetbrains.kotlin.utils.addToStdlib.applyIf
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 import org.jetbrains.kotlin.utils.exceptions.rethrowIntellijPlatformExceptionIfNeeded
 
@@ -341,11 +344,7 @@ private class Fir2IrPipeline(
                 mainIrFragment,
                 irBuiltIns,
                 phaseName = "",
-                IrValidatorConfig(
-                    checkTreeConsistency = false,
-                    checkIrExpressionBodyInFunction = false,
-                    checkUnboundSymbols = true,
-                )
+                IrValidatorConfig(checkUnboundSymbols = true)
             )
         }
     }
@@ -475,16 +474,17 @@ private fun IrPluginContext.runMandatoryIrValidation(
             module,
             irBuiltIns,
             phaseName = "",
-            IrValidatorConfig(
-                // Invalid parents and duplicated IR nodes don't always result in broken KLIBs,
-                // so we disable them not to cause too much breakage.
-                checkTreeConsistency = false,
+            // Invalid parents and duplicated IR nodes don't always result in broken KLIBs,
+            // so we disable them not to cause too much breakage.
+            IrValidatorConfig(checkTreeConsistency = false)
+                .withBasicChecks()
                 // Cross-file field accesses, though, do result in invalid KLIBs, so report them as early as possible.
-                checkCrossFileFieldUsage = true,
-                // FIXME(KT-71243): This should be true, but currently the ExplicitBackingFields feature de-facto allows specifying
-                //  non-private visibilities for fields.
-                checkAllKotlinFieldsArePrivate = !fir2IrConfiguration.languageVersionSettings.supportsFeature(LanguageFeature.ExplicitBackingFields),
-            )
+                .withCheckers(IrCrossFileFieldUsageChecker)
+                .applyIf(!fir2IrConfiguration.languageVersionSettings.supportsFeature(LanguageFeature.ExplicitBackingFields)) {
+                    // FIXME(KT-71243): This checker should be added unconditionally, but currently the ExplicitBackingFields feature de-facto allows specifying
+                    //  non-private visibilities for fields.
+                    withCheckers(IrFieldVisibilityChecker)
+                }
         )
     }
 }
