@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassKind
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.pointers.KaSymbolPointer
-import org.jetbrains.kotlin.asJava.classes.lazyPub
 import org.jetbrains.kotlin.light.classes.symbol.annotations.AbstractClassAdditionalAnnotationsProvider
 import org.jetbrains.kotlin.light.classes.symbol.annotations.GranularAnnotationsBox
 import org.jetbrains.kotlin.light.classes.symbol.annotations.SymbolAnnotationsProvider
@@ -74,11 +73,9 @@ internal abstract class SymbolLightClassForInterfaceOrAnnotationClass : SymbolLi
         ),
     )
 
-    private val _modifierList: PsiModifierList? by lazyPub {
+    final override fun getModifierList(): PsiModifierList? = cachedValue {
         computeModifierList()
     }
-
-    final override fun getModifierList(): PsiModifierList? = _modifierList
 
     override val ownConstructors: Array<PsiMethod> get() = PsiMethod.EMPTY_ARRAY
 
