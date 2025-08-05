@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.buildtools.`internal`.UseFromImplModuleRestricted
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments.Companion.CLASSPATH
-import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments.Companion.INCLUDE_RUNTIME
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments.Companion.JAVA_PARAMETERS
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments.Companion.JDK_HOME
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments.Companion.JVM_DEFAULT
@@ -116,7 +115,6 @@ internal class JvmCompilerArgumentsImpl : CommonCompilerArgumentsImpl(), JvmComp
   public fun toCompilerArguments(arguments: K2JVMCompilerArguments = K2JVMCompilerArguments()): K2JVMCompilerArguments {
     super.toCompilerArguments(arguments)
     if ("CLASSPATH" in optionsMap) { arguments.classpath = get(CLASSPATH) }
-    if ("INCLUDE_RUNTIME" in optionsMap) { arguments.includeRuntime = get(INCLUDE_RUNTIME) }
     if ("JDK_HOME" in optionsMap) { arguments.jdkHome = get(JDK_HOME) }
     if ("NO_JDK" in optionsMap) { arguments.noJdk = get(NO_JDK) }
     if ("NO_STDLIB" in optionsMap) { arguments.noStdlib = get(NO_STDLIB) }
@@ -201,9 +199,6 @@ internal class JvmCompilerArgumentsImpl : CommonCompilerArgumentsImpl(), JvmComp
 
   public companion object {
     public val CLASSPATH: JvmCompilerArgument<String?> = JvmCompilerArgument("CLASSPATH")
-
-    public val INCLUDE_RUNTIME: JvmCompilerArgument<Boolean> =
-        JvmCompilerArgument("INCLUDE_RUNTIME")
 
     public val JDK_HOME: JvmCompilerArgument<String?> = JvmCompilerArgument("JDK_HOME")
 
