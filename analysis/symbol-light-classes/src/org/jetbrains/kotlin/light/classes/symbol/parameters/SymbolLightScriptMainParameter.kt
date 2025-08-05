@@ -43,7 +43,7 @@ internal class SymbolLightScriptMainParameter(
         )
     }
 
-    override fun hasModifierProperty(name: String): Boolean = _modifierList.hasModifierProperty(name)
+    override fun hasModifierProperty(name: String): Boolean = modifierList.hasModifierProperty(name)
 
     override fun isVarArgs(): Boolean = false
 }
