@@ -92,7 +92,7 @@ internal class SymbolLightClassForScript private constructor(
 
     override fun getModifierList(): PsiModifierList = _modifierList
 
-    override fun hasModifierProperty(name: String): Boolean = _modifierList.hasModifierProperty(name)
+    override fun hasModifierProperty(name: String): Boolean = modifierList.hasModifierProperty(name)
 
     private val _containingFile by lazyPub {
         FakeFileForLightClass(
