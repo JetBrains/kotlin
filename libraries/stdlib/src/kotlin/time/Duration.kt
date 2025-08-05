@@ -1049,31 +1049,6 @@ public inline operator fun Double.times(duration: Duration): Duration = duration
 
 private const val INFINITY_STRING = "Infinity"
 
-private fun parseDuration(value: String, strictIso: Boolean, throwException: Boolean = true): Duration {
-    val length = value.length
-    if (length == 0) return throwExceptionOrInvalid(throwException, "The string is empty")
-    var index = 0
-    val firstChar = value[index]
-    var isNegative = false
-    if (firstChar == '-') {
-        isNegative = true
-        index++
-    } else if (firstChar == '+') {
-        index++
-    }
-    val hasSign = index > 0
-    val result = when {
-        length <= index -> return throwExceptionOrInvalid(throwException, "No components")
-        value[index] == 'P' -> parseIsoStringFormat(value, index, length, throwException).onInvalid { return Duration.INVALID }
-        strictIso -> return throwExceptionOrInvalid(throwException)
-        value.regionMatches(index, INFINITY_STRING, 0, length = maxOf(length - index, INFINITY_STRING.length), ignoreCase = true) -> {
-            Duration.INFINITE
-        }
-        else -> parseDefaultStringFormat(value, index, length, hasSign, throwException).onInvalid { return Duration.INVALID }
-    }
-    return if (isNegative) -result else result
-}
-
 private const val OVERFLOW_LIMIT = Long.MAX_VALUE / 1000
 
 @kotlin.internal.InlineOnly
@@ -1109,15 +1084,15 @@ private const val SECONDS_PER_MINUTE = 60L
 private const val SECONDS_PER_HOUR = SECONDS_PER_MINUTE * 60L
 private const val SECONDS_PER_DAY = SECONDS_PER_HOUR * 24L
 
-private fun parseIsoStringFormat(
-    value: String,
-    startIndex: Int,
-    length: Int,
-    throwException: Boolean,
-): Duration {
-    var index = startIndex
-    if (++index == length) return throwExceptionOrInvalid(throwException)
+private fun parseDuration(value: String, strictIso: Boolean, throwException: Boolean = true): Duration {
+    fun throwExceptionOrInvalid(message: String = ""): Duration {
+        if (throwException) throw IllegalArgumentException(message)
+        return Duration.INVALID
+    }
 
+    val length = value.length
+    if (length == 0) return throwExceptionOrInvalid("The string is empty")
+    var index = 0
     var sign = 1
 
     fun parseLong(firstChar: Char): Long {
@@ -1172,53 +1147,75 @@ private fun parseIsoStringFormat(
         return result + if (roundUp) 1 else 0
     }
 
-    var totalSeconds = 0L
-    var totalNanos = 0L
-    var isTimeComponent = false
-    var prevUnit = 'A'
-
-    while (index < length) {
-        val ch = value[index]
-        if (ch == 'T') {
-            if (isTimeComponent || ++index == length) return throwExceptionOrInvalid(throwException)
-            isTimeComponent = true
-            continue
-        }
-        val prevIndex = index
-        val currentLongValue = parseLong(ch)
-        if (index == length || index == prevIndex + if (ch == '-' || ch == '+') 1 else 0) return throwExceptionOrInvalid(throwException)
-        val unit = value[index]
-        if (unit == 'D') {
-            if (isTimeComponent) return throwExceptionOrInvalid(throwException)
-            totalSeconds = currentLongValue.multiplyWithoutOverflow(SECONDS_PER_DAY)
-        } else {
-            if (!isTimeComponent) return throwExceptionOrInvalid(throwException)
-            if (unit == '.') {
-                totalSeconds = totalSeconds.addWithoutOverflow(currentLongValue)
-                    .onInvalid { return throwExceptionOrInvalid(throwException) }
-                index++
-                val prevIndex = index
-                totalNanos = parseNanos() * sign
-                if (index == prevIndex || index == length || value[index] != 'S') return throwExceptionOrInvalid(throwException)
-                prevUnit = 'S'
-            } else {
-                if (unit <= prevUnit) return throwExceptionOrInvalid(throwException)
-                totalSeconds = totalSeconds.addWithoutOverflow(
-                    currentLongValue.multiplyWithoutOverflow(
-                        when (unit) {
-                            'H' -> SECONDS_PER_HOUR
-                            'M' -> SECONDS_PER_MINUTE
-                            'S' -> 1
-                            else -> return throwExceptionOrInvalid(throwException)
-                        }
-                    )
-                ).onInvalid { return throwExceptionOrInvalid(throwException) }
-                prevUnit = unit
+    fun parseIsoStringFormat(): Duration {
+        if (++index == length) return throwExceptionOrInvalid()
+        var totalSeconds = 0L
+        var totalNanos = 0L
+        var isTimeComponent = false
+        var prevUnit = 'A'
+        while (index < length) {
+            val ch = value[index]
+            if (ch == 'T') {
+                if (isTimeComponent || ++index == length) return throwExceptionOrInvalid()
+                isTimeComponent = true
+                continue
             }
+            val prevIndex = index
+            val currentLongValue = parseLong(ch)
+            if (index == length || index == prevIndex + if (ch == '-' || ch == '+') 1 else 0) return throwExceptionOrInvalid()
+            val unit = value[index]
+            if (unit == 'D') {
+                if (isTimeComponent) return throwExceptionOrInvalid()
+                totalSeconds = currentLongValue.multiplyWithoutOverflow(SECONDS_PER_DAY)
+            } else {
+                if (!isTimeComponent) return throwExceptionOrInvalid()
+                if (unit == '.') {
+                    totalSeconds = totalSeconds.addWithoutOverflow(currentLongValue)
+                        .onInvalid { return throwExceptionOrInvalid() }
+                    index++
+                    val prevIndex = index
+                    totalNanos = parseNanos() * sign
+                    if (index == prevIndex || index == length || value[index] != 'S') return throwExceptionOrInvalid()
+                    prevUnit = 'S'
+                } else {
+                    if (unit <= prevUnit) return throwExceptionOrInvalid()
+                    totalSeconds = totalSeconds.addWithoutOverflow(
+                        currentLongValue.multiplyWithoutOverflow(
+                            when (unit) {
+                                'H' -> SECONDS_PER_HOUR
+                                'M' -> SECONDS_PER_MINUTE
+                                'S' -> 1
+                                else -> return throwExceptionOrInvalid()
+                            }
+                        )
+                    ).onInvalid { return throwExceptionOrInvalid() }
+                    prevUnit = unit
+                }
+            }
+            index++
         }
+        return totalSeconds.toDuration(DurationUnit.SECONDS) + totalNanos.toDuration(DurationUnit.NANOSECONDS)
+    }
+
+    val firstChar = value[index]
+    var isNegative = false
+    if (firstChar == '-') {
+        isNegative = true
+        index++
+    } else if (firstChar == '+') {
         index++
     }
-    return totalSeconds.toDuration(DurationUnit.SECONDS) + totalNanos.toDuration(DurationUnit.NANOSECONDS)
+    val hasSign = index > 0
+    val result = when {
+        length <= index -> return throwExceptionOrInvalid("No components")
+        value[index] == 'P' -> parseIsoStringFormat().onInvalid { return Duration.INVALID }
+        strictIso -> return throwExceptionOrInvalid()
+        value.regionMatches(index, INFINITY_STRING, 0, length = maxOf(length - index, INFINITY_STRING.length), ignoreCase = true) -> {
+            Duration.INFINITE
+        }
+        else -> parseDefaultStringFormat(value, index, length, hasSign, throwException).onInvalid { return Duration.INVALID }
+    }
+    return if (isNegative) -result else result
 }
 
 @kotlin.internal.InlineOnly
