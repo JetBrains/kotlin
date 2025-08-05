@@ -850,12 +850,17 @@ tasks {
         dependsOn(":native:native.tests:gc-fuzzing-tests:check")
         dependsOn(":native:native.tests:stress:check")
         dependsOn(":native:native.tests:klib-compatibility:check")
+        dependsOn(":native:native.tests:litmus-tests:check")
+    }
+
+    // Similar to nativeCompilerTest, but should be executed only on macOS host as these tests
+    // technically or semantically depend on Xcode SDK.
+    register("nativeAppleSpecificTests") {
         dependsOn(":native:objcexport-header-generator:check")
-        dependsOn(":native:swift:swift-export-standalone:check")
         dependsOn(":native:swift:swift-export-embeddable:testExternalITWithEmbeddable")
         dependsOn(":native:swift:swift-export-embeddable:testSimpleITWithEmbeddable")
+        dependsOn(":native:swift:swift-export-standalone:check")
         dependsOn(":native:swift:swift-export-ide:test")
-        dependsOn(":native:native.tests:litmus-tests:check")
         dependsOn(":native:swift:sir-light-classes:check")
     }
 
