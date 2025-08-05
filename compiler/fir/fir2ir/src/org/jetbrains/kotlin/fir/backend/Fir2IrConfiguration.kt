@@ -39,9 +39,16 @@ class Fir2IrConfiguration private constructor(
     val expectActualTracker: ExpectActualTracker?,
     val allowNonCachedDeclarations: Boolean,
     val skipBodies: Boolean,
-    val validateIrForKlibSerialization: Boolean,
+    val irVerificationSettings: IrVerificationSettings,
     val carefulApproximationOfContravariantProjectionForSam: Boolean,
 ) {
+    class IrVerificationSettings(
+        val mode: IrVerificationMode,
+        val validateForKlibSerialization: Boolean,
+        val enableIrVisibilityChecks: Boolean,
+        val enableIrVarargTypesChecks: Boolean,
+    )
+
     companion object {
         fun forJvmCompilation(
             compilerConfiguration: CompilerConfiguration,
@@ -59,7 +66,12 @@ class Fir2IrConfiguration private constructor(
                 expectActualTracker = compilerConfiguration[CommonConfigurationKeys.EXPECT_ACTUAL_TRACKER],
                 allowNonCachedDeclarations = false,
                 skipBodies = compilerConfiguration.getBoolean(JVMConfigurationKeys.SKIP_BODIES),
-                validateIrForKlibSerialization = false,
+                irVerificationSettings = IrVerificationSettings(
+                    mode = compilerConfiguration.get(CommonConfigurationKeys.VERIFY_IR, IrVerificationMode.NONE),
+                    enableIrVisibilityChecks = compilerConfiguration.enableIrVisibilityChecks,
+                    enableIrVarargTypesChecks = compilerConfiguration.enableIrVarargTypesChecks,
+                    validateForKlibSerialization = false,
+                ),
                 carefulApproximationOfContravariantProjectionForSam = compilerConfiguration.get(JVMConfigurationKeys.SAM_CONVERSIONS) != JvmClosureGenerationScheme.CLASS
             )
 
@@ -79,7 +91,12 @@ class Fir2IrConfiguration private constructor(
                 expectActualTracker = compilerConfiguration[CommonConfigurationKeys.EXPECT_ACTUAL_TRACKER],
                 allowNonCachedDeclarations = false,
                 skipBodies = false,
-                validateIrForKlibSerialization = true,
+                irVerificationSettings = IrVerificationSettings(
+                    mode = compilerConfiguration.get(CommonConfigurationKeys.VERIFY_IR, IrVerificationMode.NONE),
+                    enableIrVisibilityChecks = compilerConfiguration.enableIrVisibilityChecks,
+                    enableIrVarargTypesChecks = compilerConfiguration.enableIrVarargTypesChecks,
+                    validateForKlibSerialization = true,
+                ),
                 carefulApproximationOfContravariantProjectionForSam = false,
             )
 
@@ -100,7 +117,12 @@ class Fir2IrConfiguration private constructor(
                 expectActualTracker = compilerConfiguration[CommonConfigurationKeys.EXPECT_ACTUAL_TRACKER],
                 allowNonCachedDeclarations = true,
                 skipBodies = false,
-                validateIrForKlibSerialization = false,
+                irVerificationSettings = IrVerificationSettings(
+                    mode = compilerConfiguration.get(CommonConfigurationKeys.VERIFY_IR, IrVerificationMode.NONE),
+                    enableIrVisibilityChecks = compilerConfiguration.enableIrVisibilityChecks,
+                    enableIrVarargTypesChecks = compilerConfiguration.enableIrVarargTypesChecks,
+                    validateForKlibSerialization = false,
+                ),
                 carefulApproximationOfContravariantProjectionForSam = compilerConfiguration.get(JVMConfigurationKeys.SAM_CONVERSIONS) != JvmClosureGenerationScheme.CLASS,
             )
     }
