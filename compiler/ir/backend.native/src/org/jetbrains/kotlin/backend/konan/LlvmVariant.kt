@@ -20,6 +20,11 @@ sealed class LlvmVariant {
 
     }
 
+    object DevWithAsserts : LlvmVariant() {
+        override fun getKonanPropertiesEntry(): Pair<String, String> =
+            konanPropertiesKey to "\$llvm.${HostManager.hostName}.dev-with-asserts"
+    }
+
     class Custom(val path: File) : LlvmVariant() {
         override fun getKonanPropertiesEntry(): Pair<String, String> =
                 konanPropertiesKey to path.canonicalPath

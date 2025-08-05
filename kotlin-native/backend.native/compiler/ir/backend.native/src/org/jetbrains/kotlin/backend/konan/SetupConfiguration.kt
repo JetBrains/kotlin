@@ -317,6 +317,7 @@ fun CompilerConfiguration.setupFromArguments(arguments: K2NativeCompilerArgument
     putIfNotNull(LLVM_VARIANT, when (val variant = arguments.llvmVariant) {
         "user" -> LlvmVariant.User
         "dev" -> LlvmVariant.Dev
+        "dev-with-asserts" -> LlvmVariant.DevWithAsserts
         null -> null
         else -> {
             val file = File(variant)
