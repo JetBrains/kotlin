@@ -120,9 +120,6 @@ class ObjCExportLazyImpl(
         configuration.objcExportBlockExplicitParameterNames
     )
 
-    private val isValid: Boolean
-        get() = codeAnalyzer.moduleDescriptor.isValid
-
     override fun generateBase() = translator.generateBaseDeclarations()
 
     override fun translate(file: KtFile): List<ObjCTopLevel> =
