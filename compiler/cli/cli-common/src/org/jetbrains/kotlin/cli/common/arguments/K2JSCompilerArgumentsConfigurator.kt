@@ -39,9 +39,6 @@ class K2JSCompilerArgumentsConfigurator : CommonKlibBasedCompilerArgumentsConfig
     ): MutableMap<LanguageFeature, LanguageFeature.State> = with(arguments) {
         require(this is K2JSCompilerArguments)
         super.configureLanguageFeatures(arguments, collector).apply {
-            if (extensionFunctionsInExternals) {
-                this[LanguageFeature.JsEnableExtensionFunctionInExternals] = LanguageFeature.State.ENABLED
-            }
             this[LanguageFeature.AllowAnyAsAnActualTypeForExpectInterface] = LanguageFeature.State.ENABLED
             if (wasm) {
                 this[LanguageFeature.JsAllowImplementingFunctionInterface] = LanguageFeature.State.ENABLED
