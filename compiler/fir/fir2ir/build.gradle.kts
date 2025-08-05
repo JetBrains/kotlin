@@ -17,6 +17,8 @@ dependencies {
     compileOnly(project(":compiler:ir.serialization.common"))
     compileOnly(project(":compiler:fir:fir-serialization"))
     compileOnly(project(":compiler:fir:fir-deserialization"))
+    compileOnly(project(":compiler:frontend.common.jvm"))
+    compileOnly(project(":compiler:config.jvm"))
 
     compileOnly(intellijCore())
 
