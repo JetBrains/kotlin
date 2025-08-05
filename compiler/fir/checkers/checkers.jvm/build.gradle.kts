@@ -7,6 +7,9 @@ plugins {
 dependencies {
     api(project(":compiler:fir:checkers"))
     api(project(":compiler:fir:fir-jvm"))
+    implementation(project(":core:compiler.common.jvm"))
+    implementation(project(":compiler:frontend.common.jvm",))
+    implementation(project(":compiler:config.jvm"))
 
     /*
      * We can't remove this dependency until we use

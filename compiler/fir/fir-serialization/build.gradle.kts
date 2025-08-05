@@ -8,6 +8,7 @@ dependencies {
     implementation(project(":compiler:fir:fir-deserialization"))
     implementation(project(":core:metadata"))
     implementation(project(":compiler:serialization"))
+    implementation(project(":compiler:psi:psi-api"))
     implementation(project(":kotlin-util-klib"))
     implementation(project(":kotlin-util-klib-metadata"))
 
