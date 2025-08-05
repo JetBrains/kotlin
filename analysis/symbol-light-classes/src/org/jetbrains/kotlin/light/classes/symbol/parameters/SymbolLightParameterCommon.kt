@@ -41,9 +41,7 @@ internal abstract class SymbolLightParameterCommon(
         }
     }
 
-    override fun getModifierList(): PsiModifierList = _modifierList
-
-    private val _modifierList: PsiModifierList by lazyPub {
+    override fun getModifierList(): PsiModifierList = cachedValue {
         SymbolLightClassModifierList(
             containingDeclaration = this,
             annotationsBox = GranularAnnotationsBox(

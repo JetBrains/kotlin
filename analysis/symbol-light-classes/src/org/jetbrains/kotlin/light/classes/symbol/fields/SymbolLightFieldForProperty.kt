@@ -183,7 +183,7 @@ internal class SymbolLightFieldForProperty private constructor(
         else -> null
     }
 
-    private val _modifierList: PsiModifierList by lazyPub {
+    override fun getModifierList(): PsiModifierList = cachedValue {
         SymbolLightMemberModifierList(
             containingDeclaration = this,
             modifiersBox = GranularModifiersBox(
@@ -206,8 +206,6 @@ internal class SymbolLightFieldForProperty private constructor(
             ),
         )
     }
-
-    override fun getModifierList(): PsiModifierList = _modifierList
 
     private val _initializerValue: KaConstantValue? by lazyPub {
         withPropertySymbol { propertySymbol ->
