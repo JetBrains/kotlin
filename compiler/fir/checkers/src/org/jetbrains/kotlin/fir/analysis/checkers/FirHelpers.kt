@@ -355,13 +355,7 @@ fun FirBasedSymbol<*>.isVisibleInClass(classSymbol: FirClassSymbol<*>, status: F
     val visibility = status.visibility
     if (visibility == Visibilities.Private || !visibility.visibleFromPackage(classPackage, packageName)) return false
     if (visibility == Visibilities.Internal) {
-        val containingClassModuleData = classSymbol.moduleData
-        return when (moduleData) {
-            containingClassModuleData -> true
-            in containingClassModuleData.friendDependencies -> true
-            in containingClassModuleData.dependsOnDependencies -> true
-            else -> false
-        }
+        return classSymbol.moduleData.canSeeInternalsOf(moduleData)
     }
     return true
 }

@@ -145,3 +145,9 @@ private fun FirModuleData.sessionNotBoundError(): Nothing {
 val FirSession.nullableModuleData: FirModuleData? by FirSession.nullableSessionComponentAccessor()
 val FirSession.moduleData: FirModuleData
     get() = nullableModuleData ?: error("Module data is not registered in $this")
+
+fun FirModuleData.canSeeInternalsOf(otherModule: FirModuleData): Boolean {
+    return this == otherModule ||
+            otherModule in this.friendDependencies ||
+            otherModule in this.allDependsOnDependencies
+}
