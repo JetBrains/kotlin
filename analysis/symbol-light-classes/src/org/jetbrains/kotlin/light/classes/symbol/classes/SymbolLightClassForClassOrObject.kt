@@ -283,7 +283,7 @@ internal class SymbolLightClassForClassOrObject : SymbolLightClassForNamedClassL
     override fun isAnnotationType(): Boolean = false
     override fun classKind(): KaClassKind = withClassSymbol { it.classKind }
     override fun isRecord(): Boolean {
-        return _modifierList.hasAnnotation(JvmStandardClassIds.Annotations.JvmRecord.asFqNameString())
+        return modifierList.hasAnnotation(JvmStandardClassIds.Annotations.JvmRecord.asFqNameString())
     }
 
     override fun copy(): SymbolLightClassForClassOrObject = SymbolLightClassForClassOrObject(
