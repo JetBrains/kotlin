@@ -81,8 +81,7 @@ private class IrLinkerFakeOverrideBuilderStrategy(
     private val irBuiltIns: IrBuiltIns,
     private val partialLinkageSupport: PartialLinkageSupportForLinker,
     private val fakeOverrideDeclarationTable: FakeOverrideDeclarationTable,
-    friendModules: Map<String, Collection<String>>,
-) : FakeOverrideBuilderStrategy(friendModules = friendModules) {
+) : FakeOverrideBuilderStrategy() {
 
     override fun <R> inFile(file: IrFile?, block: () -> R): R =
         fakeOverrideDeclarationTable.inFile(file, block)
@@ -293,7 +292,6 @@ class IrLinkerFakeOverrideProvider(
     symbolTable: SymbolTable,
     val mangler: KotlinMangler.IrMangler,
     typeSystem: IrTypeSystemContext,
-    friendModules: Map<String, Collection<String>>,
     private val partialLinkageSupport: PartialLinkageSupportForLinker,
     val platformSpecificClassFilter: FakeOverrideClassFilter = DefaultFakeOverrideClassFilter,
     private val fakeOverrideDeclarationTable: FakeOverrideDeclarationTable = FakeOverrideDeclarationTable(mangler),
@@ -306,8 +304,7 @@ class IrLinkerFakeOverrideProvider(
             symbolTable,
             typeSystem.irBuiltIns,
             partialLinkageSupport,
-            fakeOverrideDeclarationTable,
-            friendModules
+            fakeOverrideDeclarationTable
         ),
         externalOverridabilityConditions
     )

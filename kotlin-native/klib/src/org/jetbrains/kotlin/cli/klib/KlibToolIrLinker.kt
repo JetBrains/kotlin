@@ -30,7 +30,6 @@ internal class KlibToolIrLinker(
         symbolTable = symbolTable,
         mangler = KonanManglerIr,
         typeSystem = IrTypeSystemContextImpl(builtIns),
-        friendModules = emptyMap(),
         partialLinkageSupport = PartialLinkageSupportForLinker.DISABLED,
     )
 

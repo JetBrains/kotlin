@@ -173,8 +173,6 @@ fun loadIr(
         is MainModule.SourceFiles -> {
             assert(filesToLoad == null)
             val psi2IrContext = preparePsi2Ir(modulesStructure, symbolTable, partialLinkageEnabled)
-            val friendModules =
-                mapOf(psi2IrContext.moduleDescriptor.name.asString() to modulesStructure.klibs.friends.map { it.uniqueName })
 
             return getIrModuleInfoForSourceFiles(
                 psi2IrContext = psi2IrContext,
@@ -182,7 +180,6 @@ fun loadIr(
                 configuration = configuration,
                 files = mainModule.files,
                 klibs = modulesStructure.klibs,
-                friendModules = friendModules,
                 symbolTable = symbolTable,
                 messageCollector = messageLogger,
                 loadFunctionInterfacesIntoStdlib = loadFunctionInterfacesIntoStdlib,
@@ -192,12 +189,10 @@ fun loadIr(
             val mainModuleLib = modulesStructure.klibs.included
                 ?: error("No module with ${mainModule.libPath} found")
             val moduleDescriptor = modulesStructure.getModuleDescriptor(mainModuleLib)
-            val friendModules = mapOf(mainModuleLib.uniqueName to modulesStructure.klibs.friends.map { it.uniqueName })
 
             return getIrModuleInfoForKlib(
                 moduleDescriptor = moduleDescriptor,
                 klibs = modulesStructure.klibs,
-                friendModules = friendModules,
                 filesToLoad = filesToLoad,
                 configuration = configuration,
                 symbolTable = symbolTable,
@@ -212,7 +207,6 @@ fun loadIr(
 fun getIrModuleInfoForKlib(
     moduleDescriptor: ModuleDescriptor,
     klibs: LoadedKlibs,
-    friendModules: Map<String, List<String>>,
     filesToLoad: Set<String>?,
     configuration: CompilerConfiguration,
     symbolTable: SymbolTable,
@@ -233,8 +227,7 @@ fun getIrModuleInfoForKlib(
             builtIns = irBuiltIns,
             messageCollector = messageCollector,
         ),
-        icData = null,
-        friendModules = friendModules
+        icData = null
     )
 
     // Deserialize module fragments preserving the order of libraries in `klibs.all`.
@@ -274,7 +267,6 @@ fun getIrModuleInfoForSourceFiles(
     configuration: CompilerConfiguration,
     files: List<KtFile>,
     klibs: LoadedKlibs,
-    friendModules: Map<String, List<String>>,
     symbolTable: SymbolTable,
     messageCollector: MessageCollector,
     loadFunctionInterfacesIntoStdlib: Boolean,
@@ -292,7 +284,6 @@ fun getIrModuleInfoForSourceFiles(
             messageCollector = messageCollector,
         ),
         icData = null,
-        friendModules = friendModules,
     )
 
     // Deserialize module fragments preserving the order of libraries in `klibs.all`.

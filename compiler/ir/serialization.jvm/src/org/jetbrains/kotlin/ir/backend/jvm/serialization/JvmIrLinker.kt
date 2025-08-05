@@ -47,7 +47,6 @@ class JvmIrLinker(
         symbolTable = symbolTable,
         mangler = JvmIrMangler,
         typeSystem = typeSystem,
-        friendModules = emptyMap(), // TODO: provide friend modules
         partialLinkageSupport = PartialLinkageSupportForLinker.DISABLED
     )
 

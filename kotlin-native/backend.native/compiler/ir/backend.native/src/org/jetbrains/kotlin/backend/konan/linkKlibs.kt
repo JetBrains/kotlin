@@ -36,7 +36,6 @@ import org.jetbrains.kotlin.library.isHeader
 import org.jetbrains.kotlin.library.metadata.DeserializedKlibModuleOrigin
 import org.jetbrains.kotlin.library.metadata.KlibModuleOrigin
 import org.jetbrains.kotlin.library.metadata.impl.isForwardDeclarationModule
-import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.psi2ir.Psi2IrConfiguration
 import org.jetbrains.kotlin.psi2ir.Psi2IrTranslator
 import org.jetbrains.kotlin.psi2ir.descriptors.IrBuiltInsOverDescriptors
@@ -136,21 +135,11 @@ internal fun LinkKlibsContext.linkKlibs(
                 stubGenerator = stubGenerator,
         )
 
-        val friendModules = config.resolvedLibraries.getFullList()
-                .filter { it.libraryFile in config.friendModuleFiles }
-                .map { it.uniqueName }
-
-        val friendModulesMap = (
-                listOf(moduleDescriptor.name.asStringStripSpecialMarkers()) +
-                        config.resolve.includedLibraries.map { it.uniqueName }
-                ).associateWith { friendModules }
-
         KonanIrLinker(
                 currentModule = moduleDescriptor,
                 messageCollector = messageCollector,
                 builtIns = generatorContext.irBuiltIns,
                 symbolTable = symbolTable,
-                friendModules = friendModulesMap,
                 forwardModuleDescriptor = forwardDeclarationsModuleDescriptor,
                 stubGenerator = stubGenerator,
                 cInteropModuleDeserializerFactory = cInteropModuleDeserializerFactory,

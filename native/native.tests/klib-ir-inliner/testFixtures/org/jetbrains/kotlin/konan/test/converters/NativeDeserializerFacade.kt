@@ -39,7 +39,6 @@ import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.isNativeStdlib
 import org.jetbrains.kotlin.library.metadata.impl.isForwardDeclarationModule
-import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.psi2ir.descriptors.IrBuiltInsOverDescriptors
 import org.jetbrains.kotlin.psi2ir.generators.DeclarationStubGeneratorImpl
 import org.jetbrains.kotlin.psi2ir.generators.TypeTranslatorImpl
@@ -51,7 +50,6 @@ import org.jetbrains.kotlin.test.frontend.classic.moduleDescriptorProvider
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.services.*
 import org.jetbrains.kotlin.test.services.configuration.NativeEnvironmentConfigurator
-import org.jetbrains.kotlin.test.services.configuration.getDependencies
 
 class NativeDeserializerFacade(
     testServices: TestServices,
@@ -83,14 +81,10 @@ class NativeDeserializerFacade(
 
         val moduleDescriptor = testServices.moduleDescriptorProvider.getModuleDescriptor(module)
         val mainModuleLib = testServices.libraryProvider.getCompiledLibraryByDescriptor(moduleDescriptor)
-        val friendLibraries = getDependencies(module, testServices, DependencyRelation.FriendDependency)
-            .map { testServices.libraryProvider.getCompiledLibraryByDescriptor(it) }
-        val friendModules = mapOf(mainModuleLib.uniqueName to friendLibraries.map { it.uniqueName })
 
         val moduleInfo = getIrModuleInfoForKlib(
             moduleDescriptor,
             sortDependencies(NativeEnvironmentConfigurator.getAllDependenciesMappingFor(module, testServices)) + mainModuleLib,
-            friendModules,
             configuration,
             symbolTable,
             messageCollector,
@@ -114,7 +108,6 @@ class NativeDeserializerFacade(
     private inline fun getIrModuleInfoForKlib(
         moduleDescriptor: ModuleDescriptor,
         sortedDependencies: Collection<KotlinLibrary>,
-        friendModules: Map<String, List<String>>,
         configuration: CompilerConfiguration,
         symbolTable: SymbolTable,
         messageCollector: MessageCollector,
@@ -137,7 +130,6 @@ class NativeDeserializerFacade(
             messageCollector = messageCollector,
             builtIns = irBuiltIns,
             symbolTable = symbolTable,
-            friendModules = friendModules,
             forwardModuleDescriptor = forwardDeclarationsModuleDescriptor,
             stubGenerator = stubGenerator,
             cInteropModuleDeserializerFactory = CInteropModuleDeserializerFactoryMock,

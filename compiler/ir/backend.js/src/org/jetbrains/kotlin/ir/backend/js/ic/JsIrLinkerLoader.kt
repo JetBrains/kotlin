@@ -35,7 +35,6 @@ import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.SymbolTable
 import org.jetbrains.kotlin.library.KotlinLibrary
 import org.jetbrains.kotlin.library.isAnyPlatformStdlib
-import org.jetbrains.kotlin.library.uniqueName
 import org.jetbrains.kotlin.library.unresolvedDependencies
 import org.jetbrains.kotlin.psi2ir.descriptors.IrBuiltInsOverDescriptors
 import org.jetbrains.kotlin.psi2ir.generators.TypeTranslatorImpl
@@ -168,8 +167,7 @@ internal class JsIrLinkerLoader(
                 partialLinkageConfig = compilerConfiguration.partialLinkageConfig,
                 builtIns = irBuiltIns,
                 messageCollector = messageCollector,
-            ),
-            friendModules = mapOf(mainLibrary.uniqueName to mainModuleFriends.map { it.uniqueName })
+            )
         )
         return LinkerContext(symbolTable, typeTranslator, irBuiltIns, linker)
     }

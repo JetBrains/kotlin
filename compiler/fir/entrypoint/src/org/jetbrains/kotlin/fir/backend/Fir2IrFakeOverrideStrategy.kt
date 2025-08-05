@@ -42,11 +42,10 @@ import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 class Fir2IrFakeOverrideStrategy(
-    friendModules: Map<String, List<String>>,
     override val isGenericClashFromSameSupertypeAllowed: Boolean,
     override val isOverrideOfPublishedApiFromOtherModuleDisallowed: Boolean,
     private val delegatedMemberGenerationStrategy: Fir2IrDelegatedMembersGenerationStrategy,
-) : FakeOverrideBuilderStrategy.BindToPrivateSymbols(friendModules) {
+) : FakeOverrideBuilderStrategy.BindToPrivateSymbols() {
     private val fieldOnlyProperties: MutableList<IrPropertyWithLateBinding> = mutableListOf()
 
     override fun postProcessGeneratedFakeOverride(fakeOverride: IrOverridableDeclaration<*>, clazz: IrClass) {
