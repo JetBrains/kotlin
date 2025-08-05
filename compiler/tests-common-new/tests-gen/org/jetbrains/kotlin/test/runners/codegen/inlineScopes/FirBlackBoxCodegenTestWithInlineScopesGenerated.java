@@ -41405,6 +41405,12 @@ public class FirBlackBoxCodegenTestWithInlineScopesGenerated extends AbstractFir
       }
 
       @Test
+      @TestMetadata("internalSetterInCommon.kt")
+      public void testInternalSetterInCommon() {
+        runTest("compiler/testData/codegen/box/multiplatform/k2/internalSetterInCommon.kt");
+      }
+
+      @Test
       @TestMetadata("javaClassReferencedActualType.kt")
       public void testJavaClassReferencedActualType() {
         runTest("compiler/testData/codegen/box/multiplatform/k2/javaClassReferencedActualType.kt");

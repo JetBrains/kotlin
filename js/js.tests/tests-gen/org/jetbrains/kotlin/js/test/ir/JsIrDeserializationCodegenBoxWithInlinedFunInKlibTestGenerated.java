@@ -29271,6 +29271,12 @@ public class JsIrDeserializationCodegenBoxWithInlinedFunInKlibTestGenerated exte
         }
 
         @Test
+        @TestMetadata("internalSetterInCommon.kt")
+        public void testInternalSetterInCommon() {
+          runTest("compiler/testData/codegen/box/multiplatform/k2/internalSetterInCommon.kt");
+        }
+
+        @Test
         @TestMetadata("kt57391.kt")
         public void testKt57391() {
           runTest("compiler/testData/codegen/box/multiplatform/k2/kt57391.kt");
