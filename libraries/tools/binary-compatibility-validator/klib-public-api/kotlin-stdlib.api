@@ -15508,7 +15508,7 @@ final class kotlin.js/JsException : kotlin/Throwable { // kotlin.js/JsException|
 final class kotlin.js/JsNumber : kotlin.js/JsAny // kotlin.js/JsNumber|null[0]
 
 // Targets: [wasmJs]
-final class kotlin.js/JsString : kotlin.js/JsAny // kotlin.js/JsString|null[0]
+open class kotlin.js/JsString : kotlin.js/JsAny // kotlin.js/JsString|null[0]
 
 // Targets: [wasmJs]
 final val kotlin.js/length // kotlin.js/length|@kotlin.js.JsArray<*>{}length[0]
