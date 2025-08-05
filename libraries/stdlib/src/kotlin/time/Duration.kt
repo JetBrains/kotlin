@@ -1161,16 +1161,16 @@ private fun parseDuration(value: String, strictIso: Boolean, throwException: Boo
                 continue
             }
             val prevIndex = index
-            val currentLongValue = parseLong(ch)
+            val longValue = parseLong(ch)
             if (index == length || index == prevIndex + if (ch == '-' || ch == '+') 1 else 0) return throwExceptionOrInvalid()
             val unit = value[index]
             if (unit == 'D') {
                 if (isTimeComponent) return throwExceptionOrInvalid()
-                totalSeconds = currentLongValue.multiplyWithoutOverflow(SECONDS_PER_DAY)
+                totalSeconds = longValue.multiplyWithoutOverflow(SECONDS_PER_DAY)
             } else {
                 if (!isTimeComponent) return throwExceptionOrInvalid()
                 if (unit == '.') {
-                    totalSeconds = totalSeconds.addWithoutOverflow(currentLongValue)
+                    totalSeconds = totalSeconds.addWithoutOverflow(longValue)
                         .onInvalid { return throwExceptionOrInvalid() }
                     index++
                     val prevIndex = index
@@ -1180,7 +1180,7 @@ private fun parseDuration(value: String, strictIso: Boolean, throwException: Boo
                 } else {
                     if (unit <= prevUnit) return throwExceptionOrInvalid()
                     totalSeconds = totalSeconds.addWithoutOverflow(
-                        currentLongValue.multiplyWithoutOverflow(
+                        longValue.multiplyWithoutOverflow(
                             when (unit) {
                                 'H' -> SECONDS_PER_HOUR
                                 'M' -> SECONDS_PER_MINUTE
