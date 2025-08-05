@@ -24,7 +24,7 @@ class KotlinPropertyStubImpl(
     private val hasInitializer: Boolean,
     private val isExtension: Boolean,
     private val hasReturnTypeRef: Boolean,
-    private val fqName: FqName?,
+    override val fqName: FqName?,
     val constantInitializer: ConstantValue<*>?,
     val origin: KotlinStubOrigin?,
     override val hasBackingField: Boolean?,
@@ -39,7 +39,6 @@ class KotlinPropertyStubImpl(
         }
     }
 
-    override fun getFqName() = fqName
     override fun isVar() = isVar
     override fun isTopLevel() = isTopLevel
     override fun hasDelegate() = hasDelegate

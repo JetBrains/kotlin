@@ -22,7 +22,7 @@ class KotlinSecondaryConstructorStubImpl(
     private val mayHaveContract: Boolean,
 ) : KotlinStubBaseImpl<KtSecondaryConstructor>(parent, KtStubElementTypes.SECONDARY_CONSTRUCTOR),
     KotlinConstructorStub<KtSecondaryConstructor> {
-    override fun getFqName(): FqName? = null
+    override val fqName: FqName? get() = null
     override fun getName(): String? = StringRef.toString(containingClassName)
     override fun isTopLevel(): Boolean = false
     override fun isExtension(): Boolean = false

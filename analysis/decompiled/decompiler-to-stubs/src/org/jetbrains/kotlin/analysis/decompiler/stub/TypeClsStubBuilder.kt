@@ -317,7 +317,7 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
 
             val parameter = KotlinParameterStubImpl(
                 parameterList,
-                fqName = null,
+                _fqName = null,
                 name = null,
                 isMutable = false,
                 hasValOrVar = false,
@@ -351,7 +351,7 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
             val parameterStub = KotlinParameterStubImpl(
                 parameterListStub,
                 name = parameterName.ref(),
-                fqName = null,
+                _fqName = null,
                 hasDefaultValue = hasDefaultValue,
                 hasValOrVar = false,
                 isMutable = false

@@ -2044,7 +2044,7 @@ org.jetbrains.kotlin.psi.stubs.KotlinStubVersions.JS_STUB_VERSION
 org.jetbrains.kotlin.psi.stubs.KotlinStubVersions.KOTLIN_NATIVE_STUB_VERSION
 org.jetbrains.kotlin.psi.stubs.KotlinStubVersions.SOURCE_STUB_VERSION
 org.jetbrains.kotlin.psi.stubs.KotlinStubWithFqName
-org.jetbrains.kotlin.psi.stubs.KotlinStubWithFqName.getFqName()
+org.jetbrains.kotlin.psi.stubs.KotlinStubWithFqName.fqName
 org.jetbrains.kotlin.psi.stubs.KotlinTypeAliasStub
 org.jetbrains.kotlin.psi.stubs.KotlinTypeAliasStub.isTopLevel()
 org.jetbrains.kotlin.psi.stubs.KotlinTypeParameterStub
