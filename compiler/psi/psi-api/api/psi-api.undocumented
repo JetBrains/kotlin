@@ -2026,7 +2026,7 @@ org.jetbrains.kotlin.psi.stubs.KotlinParameterStub.hasValOrVar()
 org.jetbrains.kotlin.psi.stubs.KotlinParameterStub.isMutable()
 org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub
 org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderWithTextStub
-org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderWithTextStub.text()
+org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderWithTextStub.text
 org.jetbrains.kotlin.psi.stubs.KotlinPropertyAccessorStub
 org.jetbrains.kotlin.psi.stubs.KotlinPropertyAccessorStub.isGetter()
 org.jetbrains.kotlin.psi.stubs.KotlinPropertyStub

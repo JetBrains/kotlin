@@ -36,7 +36,7 @@ class KtBlockStringTemplateEntryElementType(@NonNls debugName: String) :
         dataStream: StubOutputStream,
     ) {
         dataStream.writeBoolean(stub.hasMultipleExpressions)
-        dataStream.writeUTFFast(stub.text())
+        dataStream.writeUTFFast(stub.text)
     }
 
     override fun deserialize(

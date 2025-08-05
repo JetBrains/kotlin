@@ -25,7 +25,7 @@ class KtPlaceHolderWithTextStubElementType<T : KtElementImplStub<out StubElement
     }
 
     override fun serialize(stub: KotlinPlaceHolderWithTextStubImpl<T>, dataStream: StubOutputStream) {
-        dataStream.writeUTFFast(stub.text())
+        dataStream.writeUTFFast(stub.text)
     }
 
     override fun deserialize(dataStream: StubInputStream, parentStub: StubElement<*>): KotlinPlaceHolderWithTextStubImpl<T> {
