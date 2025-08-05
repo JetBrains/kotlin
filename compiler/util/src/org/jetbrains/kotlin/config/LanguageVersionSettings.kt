@@ -444,6 +444,7 @@ enum class LanguageFeature(
     JsAllowLongInExportedDeclarations(sinceVersion = KOTLIN_2_3, "KT-79222"),
 
     IrRichCallableReferencesInKlibs(sinceVersion = KOTLIN_2_3, "KT-72734"), // KT-72734, KT-74384, KT-74392
+    JsAllowValueClassesInExternals(sinceVersion = KOTLIN_2_3, NO_ISSUE_SPECIFIED),
 
     // 2.4
 
@@ -508,7 +509,6 @@ enum class LanguageFeature(
     ProhibitIntersectionReifiedTypeParameter(sinceVersion = null, enabledInProgressiveMode = true, "KT-71420"),
     ExplicitBackingFields(sinceVersion = null, forcesPreReleaseBinaries = true, issue = "KT-14663"),
     FunctionalTypeWithExtensionAsSupertype(sinceVersion = null, NO_ISSUE_SPECIFIED),
-    JsAllowValueClassesInExternals(sinceVersion = null, NO_ISSUE_SPECIFIED),
     ContextReceivers(sinceVersion = null, NO_ISSUE_SPECIFIED),
     ContextParameters(sinceVersion = null, "KT-72222"),
     ValueClasses(sinceVersion = null, forcesPreReleaseBinaries = true, issue = NO_ISSUE_SPECIFIED),
