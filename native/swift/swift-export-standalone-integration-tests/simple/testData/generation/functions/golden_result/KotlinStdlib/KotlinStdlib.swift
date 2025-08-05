@@ -3,7 +3,7 @@
 import KotlinRuntime
 import KotlinRuntimeSupport
 
-extension ExportedKotlinPackages.kotlin.collections.Iterator where Self : KotlinRuntimeSupport._KotlinBridged {
+extension ExportedKotlinPackages.kotlin.collections.Iterator where Self : KotlinRuntimeSupport._KotlinBridgeable {
     public func hasNext() -> Swift.Bool {
         return kotlin_collections_Iterator_hasNext(self.__externalRCRef())
     }

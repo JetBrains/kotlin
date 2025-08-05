@@ -4,7 +4,7 @@ import KotlinRuntime
 import KotlinRuntimeSupport
 
 extension ExportedKotlinPackages.org.kotlin {
-    public final class Foo: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+    public final class Foo: KotlinRuntime.KotlinBase {
         public init() {
             if Self.self != ExportedKotlinPackages.org.kotlin.Foo.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from ExportedKotlinPackages.org.kotlin.Foo ") }
             let __kt = org_kotlin_Foo_init_allocate()

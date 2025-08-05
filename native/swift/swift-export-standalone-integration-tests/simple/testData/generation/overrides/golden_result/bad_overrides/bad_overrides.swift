@@ -4,7 +4,7 @@ import KotlinRuntime
 import KotlinRuntimeSupport
 
 extension ExportedKotlinPackages.weird {
-    open class A: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+    open class A: KotlinRuntime.KotlinBase {
         open var bar: Swift.Int32 {
             get {
                 return weird_A_bar_get(self.__externalRCRef())

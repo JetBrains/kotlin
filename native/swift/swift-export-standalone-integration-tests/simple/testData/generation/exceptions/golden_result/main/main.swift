@@ -2,7 +2,7 @@
 import KotlinRuntime
 import KotlinRuntimeSupport
 
-public final class Object: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+public final class Object: KotlinRuntime.KotlinBase {
     public init(
         arg: any KotlinRuntimeSupport._KotlinBridgeable
     ) throws {

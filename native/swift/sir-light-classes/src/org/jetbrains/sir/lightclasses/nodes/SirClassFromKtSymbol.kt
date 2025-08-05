@@ -173,8 +173,7 @@ internal abstract class SirAbstractClassFromKtSymbol(
     }
 
     override val protocols: List<SirProtocol> by lazyWithSessions {
-        (translatedProtocols + listOf(KotlinRuntimeSupportModule.kotlinBridged))
-            .filter { superClassDeclaration?.declaresConformance(it) != true }
+        translatedProtocols.filter { superClassDeclaration?.declaresConformance(it) != true }
     }
 
     private val translatedProtocols: List<SirProtocol> by lazyWithSessions {

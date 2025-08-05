@@ -224,10 +224,11 @@ private fun deepTouch(
     symbolHandler: (KaClassLikeSymbol) -> Unit = {},
 ): Unit = with(container.declarations.toList()) {
     // This invokes SirKaClassReferenceHandler under the hood for Kotlin-exported types.
-    when (container) {
-        is SirProtocolConformingDeclaration -> container.protocols
-        is SirClassInhertingDeclaration -> container.superClass
-        else -> {}
+    if (container is SirProtocolConformingDeclaration) {
+        container.protocols
+    }
+    if (container is SirClassInhertingDeclaration) {
+        container.superClass
     }
 
     filterIsInstance<SirCallable>().forEach {

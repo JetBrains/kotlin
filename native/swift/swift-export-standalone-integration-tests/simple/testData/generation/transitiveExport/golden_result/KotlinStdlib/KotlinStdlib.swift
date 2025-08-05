@@ -3,7 +3,7 @@
 import KotlinRuntime
 import KotlinRuntimeSupport
 
-extension ExportedKotlinPackages.kotlin.collections.Iterator where Self : KotlinRuntimeSupport._KotlinBridged {
+extension ExportedKotlinPackages.kotlin.collections.Iterator where Self : KotlinRuntimeSupport._KotlinBridgeable {
     public func hasNext() -> Swift.Bool {
         return kotlin_collections_Iterator_hasNext(self.__externalRCRef())
     }
@@ -21,7 +21,7 @@ extension ExportedKotlinPackages.kotlin.collections {
     @objc(_Iterator)
     package protocol _Iterator {
     }
-    open class ByteIterator: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+    open class ByteIterator: KotlinRuntime.KotlinBase {
         package init() {
             fatalError()
         }
@@ -40,7 +40,7 @@ extension ExportedKotlinPackages.kotlin.collections {
     }
 }
 extension ExportedKotlinPackages.kotlin {
-    public final class Array: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+    public final class Array: KotlinRuntime.KotlinBase {
         public var size: Swift.Int32 {
             get {
                 return kotlin_Array_size_get(self.__externalRCRef())
@@ -83,7 +83,7 @@ extension ExportedKotlinPackages.kotlin {
             }
         }
     }
-    public final class ByteArray: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+    public final class ByteArray: KotlinRuntime.KotlinBase {
         public var size: Swift.Int32 {
             get {
                 return kotlin_ByteArray_size_get(self.__externalRCRef())

@@ -8,14 +8,12 @@ public struct KotlinError: Error {
     }
 }
 
-public protocol _KotlinBridged: KotlinBase {}
-
 public protocol _KotlinBridgeable {
     init(__externalRCRefUnsafe: UnsafeMutableRawPointer!, options: KotlinBaseConstructionOptions)
     func intoRCRefUnsafe() -> UnsafeMutableRawPointer
 }
 
-public class _KotlinExistential<Wrapped>: KotlinBase & _KotlinBridged {
+public class _KotlinExistential<Wrapped>: KotlinBase {
 
 }
 

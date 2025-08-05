@@ -3,7 +3,7 @@
 import KotlinRuntime
 import KotlinRuntimeSupport
 
-open class ABSTRACT_CLASS: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+open class ABSTRACT_CLASS: KotlinRuntime.KotlinBase {
     package init() {
         fatalError()
     }
@@ -14,7 +14,7 @@ open class ABSTRACT_CLASS: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._Kotli
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
     }
 }
-public final class CLASS_WITH_SAME_NAME: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+public final class CLASS_WITH_SAME_NAME: KotlinRuntime.KotlinBase {
     public init() {
         if Self.self != main.CLASS_WITH_SAME_NAME.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.CLASS_WITH_SAME_NAME ") }
         let __kt = __root___CLASS_WITH_SAME_NAME_init_allocate()
@@ -31,7 +31,7 @@ public final class CLASS_WITH_SAME_NAME: KotlinRuntime.KotlinBase, KotlinRuntime
         return CLASS_WITH_SAME_NAME_foo(self.__externalRCRef())
     }
 }
-public final class ClassWithNonPublicConstructor: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+public final class ClassWithNonPublicConstructor: KotlinRuntime.KotlinBase {
     public var a: Swift.Int32 {
         get {
             return ClassWithNonPublicConstructor_a_get(self.__externalRCRef())
@@ -44,7 +44,7 @@ public final class ClassWithNonPublicConstructor: KotlinRuntime.KotlinBase, Kotl
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
     }
 }
-public final class DATA_CLASS: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+public final class DATA_CLASS: KotlinRuntime.KotlinBase {
     public var a: Swift.Int32 {
         get {
             return DATA_CLASS_a_get(self.__externalRCRef())
@@ -87,7 +87,7 @@ public final class DATA_CLASS: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._K
         return DATA_CLASS_toString(self.__externalRCRef())
     }
 }
-public final class DATA_CLASS_WITH_MANY_FIELDS: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+public final class DATA_CLASS_WITH_MANY_FIELDS: KotlinRuntime.KotlinBase {
     public var a: Swift.Int32 {
         get {
             return DATA_CLASS_WITH_MANY_FIELDS_a_get(self.__externalRCRef())
@@ -154,7 +154,7 @@ public final class DATA_CLASS_WITH_MANY_FIELDS: KotlinRuntime.KotlinBase, Kotlin
         return DATA_CLASS_WITH_MANY_FIELDS_toString(self.__externalRCRef())
     }
 }
-public final class DATA_CLASS_WITH_REF: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+public final class DATA_CLASS_WITH_REF: KotlinRuntime.KotlinBase {
     public var o: any KotlinRuntimeSupport._KotlinBridgeable {
         get {
             return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: DATA_CLASS_WITH_REF_o_get(self.__externalRCRef())) as! any KotlinRuntimeSupport._KotlinBridgeable
@@ -197,8 +197,8 @@ public final class DATA_CLASS_WITH_REF: KotlinRuntime.KotlinBase, KotlinRuntimeS
         return DATA_CLASS_WITH_REF_toString(self.__externalRCRef())
     }
 }
-public final class ENUM: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged, Swift.CaseIterable {
-    public final class INSIDE_ENUM: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+public final class ENUM: KotlinRuntime.KotlinBase, Swift.CaseIterable {
+    public final class INSIDE_ENUM: KotlinRuntime.KotlinBase {
         public init() {
             if Self.self != main.ENUM.INSIDE_ENUM.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.ENUM.INSIDE_ENUM ") }
             let __kt = ENUM_INSIDE_ENUM_init_allocate()
@@ -244,8 +244,8 @@ public final class ENUM: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinB
         return main.ENUM.__createClassWrapper(externalRCRef: ENUM_valueOf__TypesOfArguments__Swift_String__(value))
     }
 }
-public final class Foo: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
-    public final class Companion: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+public final class Foo: KotlinRuntime.KotlinBase {
+    public final class Companion: KotlinRuntime.KotlinBase {
         public var my_value_inner: Swift.UInt32 {
             get {
                 return Foo_Companion_my_value_inner_get(self.__externalRCRef())
@@ -277,7 +277,7 @@ public final class Foo: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBr
             return Foo_Companion_my_func(self.__externalRCRef())
         }
     }
-    public final class INSIDE_CLASS: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+    public final class INSIDE_CLASS: KotlinRuntime.KotlinBase {
         public var my_value_inner: Swift.UInt32 {
             get {
                 return Foo_INSIDE_CLASS_my_value_inner_get(self.__externalRCRef())
@@ -346,7 +346,7 @@ public final class Foo: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBr
         return Foo_foo(self.__externalRCRef())
     }
 }
-open class GENERIC_CLASS: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+open class GENERIC_CLASS: KotlinRuntime.KotlinBase {
     public init() {
         if Self.self != main.GENERIC_CLASS.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.GENERIC_CLASS ") }
         let __kt = __root___GENERIC_CLASS_init_allocate()
@@ -388,9 +388,9 @@ public final class INHERITANCE_UNSUPPORTED_BASE: main.INHERITANCE_GENERIC {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
     }
 }
-public final class OBJECT_NO_PACKAGE: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
-    public final class Bar: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
-        public final class CLASS_INSIDE_CLASS_INSIDE_OBJECT: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+public final class OBJECT_NO_PACKAGE: KotlinRuntime.KotlinBase {
+    public final class Bar: KotlinRuntime.KotlinBase {
+        public final class CLASS_INSIDE_CLASS_INSIDE_OBJECT: KotlinRuntime.KotlinBase {
             public init() {
                 if Self.self != main.OBJECT_NO_PACKAGE.Bar.CLASS_INSIDE_CLASS_INSIDE_OBJECT.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.OBJECT_NO_PACKAGE.Bar.CLASS_INSIDE_CLASS_INSIDE_OBJECT ") }
                 let __kt = OBJECT_NO_PACKAGE_Bar_CLASS_INSIDE_CLASS_INSIDE_OBJECT_init_allocate()
@@ -404,7 +404,7 @@ public final class OBJECT_NO_PACKAGE: KotlinRuntime.KotlinBase, KotlinRuntimeSup
                 super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
             }
         }
-        public final class NamedCompanion: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+        public final class NamedCompanion: KotlinRuntime.KotlinBase {
             public static var shared: main.OBJECT_NO_PACKAGE.Bar.NamedCompanion {
                 get {
                     return main.OBJECT_NO_PACKAGE.Bar.NamedCompanion.__createClassWrapper(externalRCRef: OBJECT_NO_PACKAGE_Bar_NamedCompanion_get())
@@ -446,7 +446,7 @@ public final class OBJECT_NO_PACKAGE: KotlinRuntime.KotlinBase, KotlinRuntimeSup
             return OBJECT_NO_PACKAGE_Bar_bar(self.__externalRCRef())
         }
     }
-    public final class Foo: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+    public final class Foo: KotlinRuntime.KotlinBase {
         public init() {
             if Self.self != main.OBJECT_NO_PACKAGE.Foo.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.OBJECT_NO_PACKAGE.Foo ") }
             let __kt = OBJECT_NO_PACKAGE_Foo_init_allocate()
@@ -460,7 +460,7 @@ public final class OBJECT_NO_PACKAGE: KotlinRuntime.KotlinBase, KotlinRuntimeSup
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
         }
     }
-    public final class OBJECT_INSIDE_OBJECT: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+    public final class OBJECT_INSIDE_OBJECT: KotlinRuntime.KotlinBase {
         public static var shared: main.OBJECT_NO_PACKAGE.OBJECT_INSIDE_OBJECT {
             get {
                 return main.OBJECT_NO_PACKAGE.OBJECT_INSIDE_OBJECT.__createClassWrapper(externalRCRef: OBJECT_NO_PACKAGE_OBJECT_INSIDE_OBJECT_get())
@@ -507,7 +507,7 @@ public final class OBJECT_NO_PACKAGE: KotlinRuntime.KotlinBase, KotlinRuntimeSup
         return OBJECT_NO_PACKAGE_foo(self.__externalRCRef())
     }
 }
-public final class OBJECT_WITH_GENERIC_INHERITANCE: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+public final class OBJECT_WITH_GENERIC_INHERITANCE: KotlinRuntime.KotlinBase {
     public static var shared: main.OBJECT_WITH_GENERIC_INHERITANCE {
         get {
             return main.OBJECT_WITH_GENERIC_INHERITANCE.__createClassWrapper(externalRCRef: __root___OBJECT_WITH_GENERIC_INHERITANCE_get())
@@ -541,7 +541,7 @@ public final class OBJECT_WITH_GENERIC_INHERITANCE: KotlinRuntime.KotlinBase, Ko
         return OBJECT_WITH_GENERIC_INHERITANCE_previousIndex(self.__externalRCRef())
     }
 }
-open class SEALED: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+open class SEALED: KotlinRuntime.KotlinBase {
     public final class C: main.SEALED {
         public init() {
             if Self.self != main.SEALED.C.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.SEALED.C ") }
@@ -580,7 +580,7 @@ open class SEALED: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged
     }
 }
 extension ExportedKotlinPackages.namespace.deeper {
-    public final class DATA_OBJECT_WITH_PACKAGE: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+    public final class DATA_OBJECT_WITH_PACKAGE: KotlinRuntime.KotlinBase {
         public static var shared: ExportedKotlinPackages.namespace.deeper.DATA_OBJECT_WITH_PACKAGE {
             get {
                 return ExportedKotlinPackages.namespace.deeper.DATA_OBJECT_WITH_PACKAGE.__createClassWrapper(externalRCRef: namespace_deeper_DATA_OBJECT_WITH_PACKAGE_get())
@@ -629,9 +629,9 @@ extension ExportedKotlinPackages.namespace.deeper {
             return namespace_deeper_DATA_OBJECT_WITH_PACKAGE_toString(self.__externalRCRef())
         }
     }
-    public final class Foo: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
-        public final class INSIDE_CLASS: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
-            public final class DEEPER_INSIDE_CLASS: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+    public final class Foo: KotlinRuntime.KotlinBase {
+        public final class INSIDE_CLASS: KotlinRuntime.KotlinBase {
+            public final class DEEPER_INSIDE_CLASS: KotlinRuntime.KotlinBase {
                 public var my_value: Swift.UInt32 {
                     get {
                         return namespace_deeper_Foo_INSIDE_CLASS_DEEPER_INSIDE_CLASS_my_value_get(self.__externalRCRef())
@@ -719,7 +719,7 @@ extension ExportedKotlinPackages.namespace.deeper {
             return namespace_deeper_Foo_foo(self.__externalRCRef())
         }
     }
-    public final class NAMESPACED_CLASS: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+    public final class NAMESPACED_CLASS: KotlinRuntime.KotlinBase {
         public init() {
             if Self.self != ExportedKotlinPackages.namespace.deeper.NAMESPACED_CLASS.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from ExportedKotlinPackages.namespace.deeper.NAMESPACED_CLASS ") }
             let __kt = namespace_deeper_NAMESPACED_CLASS_init_allocate()
@@ -733,9 +733,9 @@ extension ExportedKotlinPackages.namespace.deeper {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
         }
     }
-    public final class OBJECT_WITH_PACKAGE: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
-        public final class Bar: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
-            public final class OBJECT_INSIDE_CLASS: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+    public final class OBJECT_WITH_PACKAGE: KotlinRuntime.KotlinBase {
+        public final class Bar: KotlinRuntime.KotlinBase {
+            public final class OBJECT_INSIDE_CLASS: KotlinRuntime.KotlinBase {
                 public static var shared: ExportedKotlinPackages.namespace.deeper.OBJECT_WITH_PACKAGE.Bar.OBJECT_INSIDE_CLASS {
                     get {
                         return ExportedKotlinPackages.namespace.deeper.OBJECT_WITH_PACKAGE.Bar.OBJECT_INSIDE_CLASS.__createClassWrapper(externalRCRef: namespace_deeper_OBJECT_WITH_PACKAGE_Bar_OBJECT_INSIDE_CLASS_get())
@@ -774,7 +774,7 @@ extension ExportedKotlinPackages.namespace.deeper {
                 return namespace_deeper_OBJECT_WITH_PACKAGE_Bar_bar(self.__externalRCRef())
             }
         }
-        public final class Foo: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+        public final class Foo: KotlinRuntime.KotlinBase {
             public init() {
                 if Self.self != ExportedKotlinPackages.namespace.deeper.OBJECT_WITH_PACKAGE.Foo.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from ExportedKotlinPackages.namespace.deeper.OBJECT_WITH_PACKAGE.Foo ") }
                 let __kt = namespace_deeper_OBJECT_WITH_PACKAGE_Foo_init_allocate()
@@ -788,7 +788,7 @@ extension ExportedKotlinPackages.namespace.deeper {
                 super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
             }
         }
-        public final class OBJECT_INSIDE_OBJECT: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+        public final class OBJECT_INSIDE_OBJECT: KotlinRuntime.KotlinBase {
             public static var shared: ExportedKotlinPackages.namespace.deeper.OBJECT_WITH_PACKAGE.OBJECT_INSIDE_OBJECT {
                 get {
                     return ExportedKotlinPackages.namespace.deeper.OBJECT_WITH_PACKAGE.OBJECT_INSIDE_OBJECT.__createClassWrapper(externalRCRef: namespace_deeper_OBJECT_WITH_PACKAGE_OBJECT_INSIDE_OBJECT_get())
@@ -837,8 +837,8 @@ extension ExportedKotlinPackages.namespace.deeper {
     }
 }
 extension ExportedKotlinPackages.namespace {
-    public final class Foo: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
-        public final class INSIDE_CLASS: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+    public final class Foo: KotlinRuntime.KotlinBase {
+        public final class INSIDE_CLASS: KotlinRuntime.KotlinBase {
             public init() {
                 if Self.self != ExportedKotlinPackages.namespace.Foo.INSIDE_CLASS.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from ExportedKotlinPackages.namespace.Foo.INSIDE_CLASS ") }
                 let __kt = namespace_Foo_INSIDE_CLASS_init_allocate()
@@ -881,7 +881,7 @@ extension ExportedKotlinPackages.namespace {
             return namespace_Foo_foo(self.__externalRCRef())
         }
     }
-    public final class NAMESPACED_CLASS: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+    public final class NAMESPACED_CLASS: KotlinRuntime.KotlinBase {
         public init() {
             if Self.self != ExportedKotlinPackages.namespace.NAMESPACED_CLASS.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from ExportedKotlinPackages.namespace.NAMESPACED_CLASS ") }
             let __kt = namespace_NAMESPACED_CLASS_init_allocate()
@@ -897,7 +897,7 @@ extension ExportedKotlinPackages.namespace {
     }
 }
 extension ExportedKotlinPackages.why_we_need_module_names {
-    public final class CLASS_WITH_SAME_NAME: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+    public final class CLASS_WITH_SAME_NAME: KotlinRuntime.KotlinBase {
         public init() {
             if Self.self != ExportedKotlinPackages.why_we_need_module_names.CLASS_WITH_SAME_NAME.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from ExportedKotlinPackages.why_we_need_module_names.CLASS_WITH_SAME_NAME ") }
             let __kt = why_we_need_module_names_CLASS_WITH_SAME_NAME_init_allocate()

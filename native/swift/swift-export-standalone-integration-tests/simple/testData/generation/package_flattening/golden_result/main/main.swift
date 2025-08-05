@@ -42,7 +42,7 @@ extension ExportedKotlinPackages.org.kotlin.baz {
 }
 extension ExportedKotlinPackages.org.kotlin.foo {
     public typealias Typealias = Swift.Int32
-    public final class Clazz: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+    public final class Clazz: KotlinRuntime.KotlinBase {
         public init() {
             if Self.self != ExportedKotlinPackages.org.kotlin.foo.Clazz.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from ExportedKotlinPackages.org.kotlin.foo.Clazz ") }
             let __kt = org_kotlin_foo_Clazz_init_allocate()

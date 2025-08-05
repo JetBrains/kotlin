@@ -195,7 +195,7 @@ internal class SirBridgedProtocolImplementationFromKtSymbol(
 
     override val constraints: List<SirTypeConstraint> by lazy {
         listOf(
-            SirTypeConstraint.Conformance(SirNominalType(KotlinRuntimeSupportModule.kotlinBridged))
+            SirTypeConstraint.Conformance(SirNominalType(KotlinRuntimeSupportModule.kotlinBridgeable))
         )
     }
 

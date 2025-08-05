@@ -61,7 +61,6 @@ public object KotlinRuntimeSupportModule : SirModule() {
     override val declarations: MutableList<SirDeclaration> by lazy {
         mutableListOf(
             kotlinError,
-            kotlinBridged,
             kotlinBridgeable
         )
     }
@@ -71,13 +70,6 @@ public object KotlinRuntimeSupportModule : SirModule() {
         name = "KotlinError"
         visibility = SirVisibility.PUBLIC
     }
-
-    public val kotlinBridged: SirProtocol = buildProtocol {
-        origin = KotlinRuntimeElement()
-        name = "_KotlinBridged"
-        visibility = SirVisibility.PUBLIC
-        superClass = SirNominalType(KotlinRuntimeModule.kotlinBase)
-    }.initializeParentForSelfAndChildren(KotlinRuntimeSupportModule)
 
     public val kotlinBridgeableInit: SirInit = buildKotlinBaseDesignatedInit()
 
@@ -103,7 +95,7 @@ public object KotlinRuntimeSupportModule : SirModule() {
         name = "_KotlinExistential"
         visibility = SirVisibility.PUBLIC
         superClass = SirNominalType(KotlinRuntimeModule.kotlinBase)
-        protocols.add(kotlinBridged)
+        protocols.add(kotlinBridgeable)
     }.initializeParentForSelfAndChildren(KotlinRuntimeSupportModule)
 }
 

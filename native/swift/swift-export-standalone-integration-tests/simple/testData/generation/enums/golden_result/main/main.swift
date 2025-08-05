@@ -3,7 +3,7 @@ import KotlinRuntime
 import KotlinRuntimeSupport
 import KotlinStdlib
 
-public final class Enum: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged, Swift.CaseIterable {
+public final class Enum: KotlinRuntime.KotlinBase, Swift.CaseIterable {
     public static var a: main.Enum {
         get {
             return main.Enum.__createClassWrapper(externalRCRef: Enum_a_get())
@@ -42,7 +42,7 @@ public final class Enum: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinB
         return main.Enum.__createClassWrapper(externalRCRef: Enum_valueOf__TypesOfArguments__Swift_String__(value))
     }
 }
-public final class EnumSimple: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged, Swift.CaseIterable {
+public final class EnumSimple: KotlinRuntime.KotlinBase, Swift.CaseIterable {
     public static var FIRST: main.EnumSimple {
         get {
             return main.EnumSimple.__createClassWrapper(externalRCRef: EnumSimple_FIRST_get())
@@ -75,7 +75,7 @@ public final class EnumSimple: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._K
         return main.EnumSimple.__createClassWrapper(externalRCRef: EnumSimple_valueOf__TypesOfArguments__Swift_String__(value))
     }
 }
-public final class EnumWithAbstractMembers: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged, Swift.CaseIterable {
+public final class EnumWithAbstractMembers: KotlinRuntime.KotlinBase, Swift.CaseIterable {
     public static var MAGENTA: main.EnumWithAbstractMembers {
         get {
             return main.EnumWithAbstractMembers.__createClassWrapper(externalRCRef: EnumWithAbstractMembers_MAGENTA_get())
@@ -122,7 +122,7 @@ public final class EnumWithAbstractMembers: KotlinRuntime.KotlinBase, KotlinRunt
         return main.EnumWithAbstractMembers.__createClassWrapper(externalRCRef: EnumWithAbstractMembers_valueOf__TypesOfArguments__Swift_String__(value))
     }
 }
-public final class EnumWithMembers: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged, Swift.CaseIterable {
+public final class EnumWithMembers: KotlinRuntime.KotlinBase, Swift.CaseIterable {
     public static var NORTH: main.EnumWithMembers {
         get {
             return main.EnumWithMembers.__createClassWrapper(externalRCRef: EnumWithMembers_NORTH_get())

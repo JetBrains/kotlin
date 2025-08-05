@@ -6,7 +6,7 @@ public typealias NonoptionalRef = main.Bar
 public typealias OptOptRef = main.OptionalRef
 public typealias OptToNonOptTypealias = main.NonoptionalRef?
 public typealias OptionalRef = main.Bar?
-public final class Bar: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+public final class Bar: KotlinRuntime.KotlinBase {
     public init() {
         if Self.self != main.Bar.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.Bar ") }
         let __kt = __root___Bar_init_allocate()
@@ -20,7 +20,7 @@ public final class Bar: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBr
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
     }
 }
-public final class Foo: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+public final class Foo: KotlinRuntime.KotlinBase {
     public var any_value: (any KotlinRuntimeSupport._KotlinBridgeable)? {
         get {
             return { switch Foo_any_value_get(self.__externalRCRef()) { case nil: .none; case let res: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: res) as! any KotlinRuntimeSupport._KotlinBridgeable; } }()

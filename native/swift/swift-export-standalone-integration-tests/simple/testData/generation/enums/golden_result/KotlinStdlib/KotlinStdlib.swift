@@ -3,7 +3,7 @@
 import KotlinRuntime
 import KotlinRuntimeSupport
 
-extension ExportedKotlinPackages.kotlin.collections.Iterator where Self : KotlinRuntimeSupport._KotlinBridged {
+extension ExportedKotlinPackages.kotlin.collections.Iterator where Self : KotlinRuntimeSupport._KotlinBridgeable {
     public func hasNext() -> Swift.Bool {
         return kotlin_collections_Iterator_hasNext(self.__externalRCRef())
     }
@@ -23,7 +23,7 @@ extension ExportedKotlinPackages.kotlin.collections {
     }
 }
 extension ExportedKotlinPackages.kotlin {
-    public final class Array: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+    public final class Array: KotlinRuntime.KotlinBase {
         public var size: Swift.Int32 {
             get {
                 return kotlin_Array_size_get(self.__externalRCRef())
@@ -66,8 +66,8 @@ extension ExportedKotlinPackages.kotlin {
             }
         }
     }
-    open class Enum: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
-        public final class Companion: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+    open class Enum: KotlinRuntime.KotlinBase {
+        public final class Companion: KotlinRuntime.KotlinBase {
             public static var shared: ExportedKotlinPackages.kotlin.Enum.Companion {
                 get {
                     return ExportedKotlinPackages.kotlin.Enum.Companion.__createClassWrapper(externalRCRef: kotlin_Enum_Companion_get())

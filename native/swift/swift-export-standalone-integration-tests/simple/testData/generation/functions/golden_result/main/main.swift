@@ -4,7 +4,7 @@ import KotlinRuntime
 import KotlinRuntimeSupport
 import KotlinStdlib
 
-public final class Foo: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+public final class Foo: KotlinRuntime.KotlinBase {
     public init() {
         if Self.self != main.Foo.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.Foo ") }
         let __kt = __root___Foo_init_allocate()
@@ -188,8 +188,8 @@ extension ExportedKotlinPackages.namespace3 {
     }
 }
 extension ExportedKotlinPackages.operators {
-    public final class Foo: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
-        public final class EmptyIterator: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+    public final class Foo: KotlinRuntime.KotlinBase {
+        public final class EmptyIterator: KotlinRuntime.KotlinBase {
             public static var shared: ExportedKotlinPackages.operators.Foo.EmptyIterator {
                 get {
                     return ExportedKotlinPackages.operators.Foo.EmptyIterator.__createClassWrapper(externalRCRef: operators_Foo_EmptyIterator_get())
@@ -481,7 +481,7 @@ extension ExportedKotlinPackages.operators {
     }
 }
 extension ExportedKotlinPackages.overload {
-    public final class Foo: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+    public final class Foo: KotlinRuntime.KotlinBase {
         public init() {
             if Self.self != ExportedKotlinPackages.overload.Foo.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from ExportedKotlinPackages.overload.Foo ") }
             let __kt = overload_Foo_init_allocate()

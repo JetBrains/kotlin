@@ -75,7 +75,7 @@ class SirKaClassReferenceHandlerTests : SirTranslationTest() {
             val A = declarations.classNamed("A")
             val MyNumber = declarations.classNamed("MyNumber")
             // _KotlinBridged + CharSequence + _CharSequence(existential marker)
-            assertEquals(3, A.protocols.size)
+            assertEquals(2, A.protocols.size)
             assertContains(referencedTypes, fqName("kotlin", "CharSequence"))
             assert(MyNumber.superClass != null)
             assertContains(referencedTypes, fqName("kotlin", "Number"))

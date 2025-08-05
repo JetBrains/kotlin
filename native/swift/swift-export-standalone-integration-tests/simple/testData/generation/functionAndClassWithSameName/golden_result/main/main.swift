@@ -10,7 +10,7 @@ public protocol InterfaceWithFactory: KotlinRuntime.KotlinBase {
 @objc(_InterfaceWithFactory)
 package protocol _InterfaceWithFactory {
 }
-public final class ClassWithFactoryWithoutParameters: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+public final class ClassWithFactoryWithoutParameters: KotlinRuntime.KotlinBase {
     public var value: Swift.Int32 {
         get {
             return ClassWithFactoryWithoutParameters_value_get(self.__externalRCRef())
@@ -31,7 +31,7 @@ public final class ClassWithFactoryWithoutParameters: KotlinRuntime.KotlinBase, 
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
     }
 }
-public final class EnumWithFactory: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged, Swift.CaseIterable {
+public final class EnumWithFactory: KotlinRuntime.KotlinBase, Swift.CaseIterable {
     public static var ONE: main.EnumWithFactory {
         get {
             return main.EnumWithFactory.__createClassWrapper(externalRCRef: EnumWithFactory_ONE_get())
@@ -54,7 +54,7 @@ public final class EnumWithFactory: KotlinRuntime.KotlinBase, KotlinRuntimeSuppo
         return main.EnumWithFactory.__createClassWrapper(externalRCRef: EnumWithFactory_valueOf__TypesOfArguments__Swift_String__(value))
     }
 }
-public final class ObjectWithFactory: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+public final class ObjectWithFactory: KotlinRuntime.KotlinBase {
     public static var shared: main.ObjectWithFactory {
         get {
             return main.ObjectWithFactory.__createClassWrapper(externalRCRef: __root___ObjectWithFactory_get())
@@ -70,7 +70,7 @@ public final class ObjectWithFactory: KotlinRuntime.KotlinBase, KotlinRuntimeSup
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
     }
 }
-public final class UtcOffset: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+public final class UtcOffset: KotlinRuntime.KotlinBase {
     public init() {
         if Self.self != main.UtcOffset.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from main.UtcOffset ") }
         let __kt = __root___UtcOffset_init_allocate()
@@ -118,12 +118,12 @@ public func utcOffset(
 ) -> main.UtcOffset {
     return main.UtcOffset.__createClassWrapper(externalRCRef: __root___UtcOffset__TypesOfArguments__Swift_Int32__(x))
 }
-extension main.InterfaceWithFactory where Self : KotlinRuntimeSupport._KotlinBridged {
+extension main.InterfaceWithFactory where Self : KotlinRuntimeSupport._KotlinBridgeable {
 }
 extension KotlinRuntimeSupport._KotlinExistential: main.InterfaceWithFactory where Wrapped : main._InterfaceWithFactory {
 }
 extension ExportedKotlinPackages.test.factory {
-    public final class ClassWithFactoryInAPackage: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+    public final class ClassWithFactoryInAPackage: KotlinRuntime.KotlinBase {
         public init() {
             if Self.self != ExportedKotlinPackages.test.factory.ClassWithFactoryInAPackage.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from ExportedKotlinPackages.test.factory.ClassWithFactoryInAPackage ") }
             let __kt = test_factory_ClassWithFactoryInAPackage_init_allocate()
@@ -137,8 +137,8 @@ extension ExportedKotlinPackages.test.factory {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
         }
     }
-    public final class Outer: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
-        public final class Nested: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+    public final class Outer: KotlinRuntime.KotlinBase {
+        public final class Nested: KotlinRuntime.KotlinBase {
             public init() {
                 if Self.self != ExportedKotlinPackages.test.factory.Outer.Nested.self { fatalError("Inheritance from exported Kotlin classes is not supported yet: \(String(reflecting: Self.self)) inherits from ExportedKotlinPackages.test.factory.Outer.Nested ") }
                 let __kt = test_factory_Outer_Nested_init_allocate()

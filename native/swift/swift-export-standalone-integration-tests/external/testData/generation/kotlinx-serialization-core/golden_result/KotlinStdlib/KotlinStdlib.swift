@@ -24,7 +24,7 @@ extension ExportedKotlinPackages.kotlin {
     @objc(_CharSequence)
     package protocol _CharSequence {
     }
-    public final class Array: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+    public final class Array: KotlinRuntime.KotlinBase {
         public var size: Swift.Int32 {
             get {
                 return kotlin_Array_size_get(self.__externalRCRef())
@@ -67,7 +67,7 @@ extension ExportedKotlinPackages.kotlin {
             }
         }
     }
-    public final class IntArray: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+    public final class IntArray: KotlinRuntime.KotlinBase {
         public var size: Swift.Int32 {
             get {
                 return kotlin_IntArray_size_get(self.__externalRCRef())
@@ -115,8 +115,8 @@ extension ExportedKotlinPackages.kotlin {
             }
         }
     }
-    public final class Boolean: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
-        public final class Companion: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+    public final class Boolean: KotlinRuntime.KotlinBase {
+        public final class Companion: KotlinRuntime.KotlinBase {
             public static var shared: ExportedKotlinPackages.kotlin.Boolean.Companion {
                 get {
                     return ExportedKotlinPackages.kotlin.Boolean.Companion.__createClassWrapper(externalRCRef: kotlin_Boolean_Companion_get())
@@ -208,8 +208,8 @@ extension ExportedKotlinPackages.kotlin {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
         }
     }
-    public final class Char: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
-        public final class Companion: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+    public final class Char: KotlinRuntime.KotlinBase {
+        public final class Companion: KotlinRuntime.KotlinBase {
             public var MIN_VALUE: Swift.Unicode.UTF16.CodeUnit {
                 get {
                     return kotlin_Char_Companion_MIN_VALUE_get(self.__externalRCRef())
@@ -513,7 +513,7 @@ extension ExportedKotlinPackages.kotlin {
         }
     }
     public final class Byte: ExportedKotlinPackages.kotlin.Number {
-        public final class Companion: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+        public final class Companion: KotlinRuntime.KotlinBase {
             public var MIN_VALUE: Swift.Int8 {
                 get {
                     return kotlin_Byte_Companion_MIN_VALUE_get(self.__externalRCRef())
@@ -668,7 +668,7 @@ extension ExportedKotlinPackages.kotlin {
         }
     }
     public final class Short: ExportedKotlinPackages.kotlin.Number {
-        public final class Companion: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+        public final class Companion: KotlinRuntime.KotlinBase {
             public var MIN_VALUE: Swift.Int16 {
                 get {
                     return kotlin_Short_Companion_MIN_VALUE_get(self.__externalRCRef())
@@ -823,7 +823,7 @@ extension ExportedKotlinPackages.kotlin {
         }
     }
     public final class Int: ExportedKotlinPackages.kotlin.Number {
-        public final class Companion: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+        public final class Companion: KotlinRuntime.KotlinBase {
             public var MIN_VALUE: Swift.Int32 {
                 get {
                     return kotlin_Int_Companion_MIN_VALUE_get(self.__externalRCRef())
@@ -1081,7 +1081,7 @@ extension ExportedKotlinPackages.kotlin {
         }
     }
     public final class Long: ExportedKotlinPackages.kotlin.Number {
-        public final class Companion: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+        public final class Companion: KotlinRuntime.KotlinBase {
             public var MIN_VALUE: Swift.Int64 {
                 get {
                     return kotlin_Long_Companion_MIN_VALUE_get(self.__externalRCRef())
@@ -1332,7 +1332,7 @@ extension ExportedKotlinPackages.kotlin {
         }
     }
     public final class Float: ExportedKotlinPackages.kotlin.Number {
-        public final class Companion: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+        public final class Companion: KotlinRuntime.KotlinBase {
             public var MIN_VALUE: Swift.Float {
                 get {
                     return kotlin_Float_Companion_MIN_VALUE_get(self.__externalRCRef())
@@ -1680,7 +1680,7 @@ extension ExportedKotlinPackages.kotlin {
         }
     }
     public final class Double: ExportedKotlinPackages.kotlin.Number {
-        public final class Companion: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+        public final class Companion: KotlinRuntime.KotlinBase {
             public var MIN_VALUE: Swift.Double {
                 get {
                     return kotlin_Double_Companion_MIN_VALUE_get(self.__externalRCRef())
@@ -2027,8 +2027,8 @@ extension ExportedKotlinPackages.kotlin {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
         }
     }
-    public final class String: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlin.CharSequence, ExportedKotlinPackages.kotlin._CharSequence, KotlinRuntimeSupport._KotlinBridged {
-        public final class Companion: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+    public final class String: KotlinRuntime.KotlinBase, ExportedKotlinPackages.kotlin.CharSequence, ExportedKotlinPackages.kotlin._CharSequence {
+        public final class Companion: KotlinRuntime.KotlinBase {
             public static var shared: ExportedKotlinPackages.kotlin.String.Companion {
                 get {
                     return ExportedKotlinPackages.kotlin.String.Companion.__createClassWrapper(externalRCRef: kotlin_String_Companion_get())
@@ -2137,7 +2137,7 @@ extension ExportedKotlinPackages.kotlin {
             }
         }
     }
-    open class Throwable: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+    open class Throwable: KotlinRuntime.KotlinBase {
         open var message: Swift.String? {
             get {
                 return kotlin_Throwable_message_get(self.__externalRCRef())
@@ -2195,7 +2195,7 @@ extension ExportedKotlinPackages.kotlin {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
         }
     }
-    open class Number: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+    open class Number: KotlinRuntime.KotlinBase {
         open func toDouble() -> Swift.Double {
             return kotlin_Number_toDouble(self.__externalRCRef())
         }
@@ -2247,7 +2247,7 @@ extension ExportedKotlinPackages.kotlin.collections {
     @objc(_Iterator)
     package protocol _Iterator {
     }
-    open class IntIterator: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+    open class IntIterator: KotlinRuntime.KotlinBase {
         public final func next() -> Swift.Int32 {
             return kotlin_collections_IntIterator_next(self.__externalRCRef())
         }
@@ -2264,7 +2264,7 @@ extension ExportedKotlinPackages.kotlin.collections {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
         }
     }
-    open class CharIterator: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+    open class CharIterator: KotlinRuntime.KotlinBase {
         public final func next() -> Swift.Unicode.UTF16.CodeUnit {
             return kotlin_collections_CharIterator_next(self.__externalRCRef())
         }
@@ -2281,7 +2281,7 @@ extension ExportedKotlinPackages.kotlin.collections {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
         }
     }
-    open class LongIterator: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+    open class LongIterator: KotlinRuntime.KotlinBase {
         public final func next() -> Swift.Int64 {
             return kotlin_collections_LongIterator_next(self.__externalRCRef())
         }
@@ -2299,11 +2299,11 @@ extension ExportedKotlinPackages.kotlin.collections {
         }
     }
 }
-extension ExportedKotlinPackages.kotlin.Annotation where Self : KotlinRuntimeSupport._KotlinBridged {
+extension ExportedKotlinPackages.kotlin.Annotation where Self : KotlinRuntimeSupport._KotlinBridgeable {
 }
 extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlin.Annotation where Wrapped : ExportedKotlinPackages.kotlin._Annotation {
 }
-extension ExportedKotlinPackages.kotlin.collections.Iterable where Self : KotlinRuntimeSupport._KotlinBridged {
+extension ExportedKotlinPackages.kotlin.collections.Iterable where Self : KotlinRuntimeSupport._KotlinBridgeable {
     public func iterator() -> any ExportedKotlinPackages.kotlin.collections.Iterator {
         return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: kotlin_collections_Iterable_iterator(self.__externalRCRef())) as! any ExportedKotlinPackages.kotlin.collections.Iterator
     }
@@ -2312,7 +2312,7 @@ extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlin
 }
 extension ExportedKotlinPackages.kotlin.ranges {
     public final class CharRange: ExportedKotlinPackages.kotlin.ranges.CharProgression {
-        public final class Companion: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+        public final class Companion: KotlinRuntime.KotlinBase {
             public var EMPTY: ExportedKotlinPackages.kotlin.ranges.CharRange {
                 get {
                     return ExportedKotlinPackages.kotlin.ranges.CharRange.__createClassWrapper(externalRCRef: kotlin_ranges_CharRange_Companion_EMPTY_get(self.__externalRCRef()))
@@ -2397,7 +2397,7 @@ extension ExportedKotlinPackages.kotlin.ranges {
         }
     }
     public final class IntRange: ExportedKotlinPackages.kotlin.ranges.IntProgression {
-        public final class Companion: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+        public final class Companion: KotlinRuntime.KotlinBase {
             public var EMPTY: ExportedKotlinPackages.kotlin.ranges.IntRange {
                 get {
                     return ExportedKotlinPackages.kotlin.ranges.IntRange.__createClassWrapper(externalRCRef: kotlin_ranges_IntRange_Companion_EMPTY_get(self.__externalRCRef()))
@@ -2482,7 +2482,7 @@ extension ExportedKotlinPackages.kotlin.ranges {
         }
     }
     public final class LongRange: ExportedKotlinPackages.kotlin.ranges.LongProgression {
-        public final class Companion: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+        public final class Companion: KotlinRuntime.KotlinBase {
             public var EMPTY: ExportedKotlinPackages.kotlin.ranges.LongRange {
                 get {
                     return ExportedKotlinPackages.kotlin.ranges.LongRange.__createClassWrapper(externalRCRef: kotlin_ranges_LongRange_Companion_EMPTY_get(self.__externalRCRef()))
@@ -2566,8 +2566,8 @@ extension ExportedKotlinPackages.kotlin.ranges {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
         }
     }
-    open class CharProgression: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
-        public final class Companion: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+    open class CharProgression: KotlinRuntime.KotlinBase {
+        public final class Companion: KotlinRuntime.KotlinBase {
             public static var shared: ExportedKotlinPackages.kotlin.ranges.CharProgression.Companion {
                 get {
                     return ExportedKotlinPackages.kotlin.ranges.CharProgression.Companion.__createClassWrapper(externalRCRef: kotlin_ranges_CharProgression_Companion_get())
@@ -2614,7 +2614,7 @@ extension ExportedKotlinPackages.kotlin.ranges {
         open func equals(
             other: (any KotlinRuntimeSupport._KotlinBridgeable)?
         ) -> Swift.Bool {
-            return kotlin_ranges_CharProgression_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), other.map { it in it.intoRCRefUnsafe() } ?? nil)
+            return kotlin_ranges_CharProgression_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), other.map { it in it.__externalRCRef() } ?? nil)
         }
         public static func ==(
             this: ExportedKotlinPackages.kotlin.ranges.CharProgression,
@@ -2635,8 +2635,8 @@ extension ExportedKotlinPackages.kotlin.ranges {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
         }
     }
-    open class IntProgression: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
-        public final class Companion: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+    open class IntProgression: KotlinRuntime.KotlinBase {
+        public final class Companion: KotlinRuntime.KotlinBase {
             public static var shared: ExportedKotlinPackages.kotlin.ranges.IntProgression.Companion {
                 get {
                     return ExportedKotlinPackages.kotlin.ranges.IntProgression.Companion.__createClassWrapper(externalRCRef: kotlin_ranges_IntProgression_Companion_get())
@@ -2683,7 +2683,7 @@ extension ExportedKotlinPackages.kotlin.ranges {
         open func equals(
             other: (any KotlinRuntimeSupport._KotlinBridgeable)?
         ) -> Swift.Bool {
-            return kotlin_ranges_IntProgression_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), other.map { it in it.intoRCRefUnsafe() } ?? nil)
+            return kotlin_ranges_IntProgression_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), other.map { it in it.__externalRCRef() } ?? nil)
         }
         public static func ==(
             this: ExportedKotlinPackages.kotlin.ranges.IntProgression,
@@ -2704,8 +2704,8 @@ extension ExportedKotlinPackages.kotlin.ranges {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
         }
     }
-    open class LongProgression: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
-        public final class Companion: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged {
+    open class LongProgression: KotlinRuntime.KotlinBase {
+        public final class Companion: KotlinRuntime.KotlinBase {
             public static var shared: ExportedKotlinPackages.kotlin.ranges.LongProgression.Companion {
                 get {
                     return ExportedKotlinPackages.kotlin.ranges.LongProgression.Companion.__createClassWrapper(externalRCRef: kotlin_ranges_LongProgression_Companion_get())
@@ -2752,7 +2752,7 @@ extension ExportedKotlinPackages.kotlin.ranges {
         open func equals(
             other: (any KotlinRuntimeSupport._KotlinBridgeable)?
         ) -> Swift.Bool {
-            return kotlin_ranges_LongProgression_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), other.map { it in it.intoRCRefUnsafe() } ?? nil)
+            return kotlin_ranges_LongProgression_equals__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(self.__externalRCRef(), other.map { it in it.__externalRCRef() } ?? nil)
         }
         public static func ==(
             this: ExportedKotlinPackages.kotlin.ranges.LongProgression,
@@ -2774,7 +2774,7 @@ extension ExportedKotlinPackages.kotlin.ranges {
         }
     }
 }
-extension ExportedKotlinPackages.kotlin.CharSequence where Self : KotlinRuntimeSupport._KotlinBridged {
+extension ExportedKotlinPackages.kotlin.CharSequence where Self : KotlinRuntimeSupport._KotlinBridgeable {
     public var length: Swift.Int32 {
         get {
             return kotlin_CharSequence_length_get(self.__externalRCRef())
@@ -2801,7 +2801,7 @@ extension ExportedKotlinPackages.kotlin.CharSequence where Self : KotlinRuntimeS
 }
 extension KotlinRuntimeSupport._KotlinExistential: ExportedKotlinPackages.kotlin.CharSequence where Wrapped : ExportedKotlinPackages.kotlin._CharSequence {
 }
-extension ExportedKotlinPackages.kotlin.collections.Iterator where Self : KotlinRuntimeSupport._KotlinBridged {
+extension ExportedKotlinPackages.kotlin.collections.Iterator where Self : KotlinRuntimeSupport._KotlinBridgeable {
     public func next() -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
         return { switch kotlin_collections_Iterator_next(self.__externalRCRef()) { case nil: .none; case let res: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: res) as! any KotlinRuntimeSupport._KotlinBridgeable; } }()
     }
