@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.backend.common.extensions.IrGenerationExtension
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.config.AnalysisFlags
+import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.IrVerificationMode
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.diagnostics.impl.BaseDiagnosticsCollector
@@ -104,7 +105,7 @@ fun FirResult.convertToIrAndActualize(
         specialAnnotationsProvider,
         extraActualDeclarationExtractorsInitializer,
         commonMemberStorage,
-        irModuleFragmentPostCompute
+        irModuleFragmentPostCompute,
     )
     return pipeline.convertToIrAndActualize()
 }
@@ -469,7 +470,8 @@ private class Fir2IrPipeline(
         extension: IrGenerationExtension?,
         module: IrModuleFragment,
     ) {
-        if (!fir2IrConfiguration.validateIrForKlibSerialization) return
+        val validateForKlibSerialization = fir2IrConfiguration.irVerificationSettings.validateForKlibSerialization
+        if (!validateForKlibSerialization) return
         val mode =
             if (languageVersionSettings.supportsFeature(LanguageFeature.ForbidCrossFileIrFieldAccessInKlibs)) IrVerificationMode.ERROR
             else IrVerificationMode.WARNING
@@ -496,7 +498,7 @@ private class Fir2IrPipeline(
                 "The compiler plugin '${extension.javaClass.name}' generated invalid IR. Please report this bug to the plugin vendor."
             }
         )
-    }
+}
 
     fun IrPluginContext.applyIrGenerationExtensions(
         irModuleFragment: IrModuleFragment,
