@@ -143,6 +143,8 @@ where advanced options include:
   -Xcontext-parameters       Enable experimental context parameters.
   -Xcontext-sensitive-resolution Enable experimental context-sensitive resolution.
   -Xnon-local-break-continue Enable experimental non-local break and continue.
+  -Xdata-flow-based-exhaustiveness
+                             Enable `when` exhaustiveness improvements that rely on data-flow analysis.
   -Xdirect-java-actualization Enable experimental direct Java actualization support.
   -Xmulti-dollar-interpolation Enable experimental multi-dollar interpolation.
   -Xenable-incremental-compilation

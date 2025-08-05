@@ -481,10 +481,13 @@ public interface CommonCompilerArguments : CommonToolArguments {
 
     /**
      * Enable `when` exhaustiveness improvements that rely on data-flow analysis.
+     *
+     * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
      */
     @JvmField
-    public val _XDATA_FLOW_BASED_EXHAUSTIVENESS: CommonCompilerArgument<Boolean> =
-        CommonCompilerArgument("_XDATA_FLOW_BASED_EXHAUSTIVENESS")
+    @ExperimentalCompilerArgument
+    public val X_DATA_FLOW_BASED_EXHAUSTIVENESS: CommonCompilerArgument<Boolean> =
+        CommonCompilerArgument("X_DATA_FLOW_BASED_EXHAUSTIVENESS")
 
     /**
      * Enable experimental multi-dollar interpolation.

@@ -2780,7 +2780,7 @@
                         }
                     },
                     {
-                        "name": "-Xdata-flow-based-exhaustiveness",
+                        "name": "Xdata-flow-based-exhaustiveness",
                         "shortName": null,
                         "deprecatedName": null,
                         "description": {
