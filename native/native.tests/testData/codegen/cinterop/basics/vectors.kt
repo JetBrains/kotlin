@@ -1,7 +1,9 @@
 // TARGET_BACKEND: NATIVE
 // MODULE: cinterop
 // FILE: cvectors.def
----
+headers = test.h
+
+// FILE: test.h
 typedef float __attribute__ ((__vector_size__ (16)))   KVector4f;
 typedef int   __attribute__ ((__vector_size__ (16)))   KVector4i32;
 
@@ -11,6 +13,15 @@ struct Complex {
     struct Complex* next;
     int arr[2];
 };
+
+struct Complex produceComplexVector();
+
+float sendV4F(KVector4f v);
+
+int sendV4I(KVector4i32 v);
+
+// FILE: test.c
+#include "test.h"
 
 struct Complex produceComplexVector() {
     struct Complex complex = {
@@ -22,11 +33,11 @@ struct Complex produceComplexVector() {
     return complex;
 };
 
-static float sendV4F(KVector4f v) {
+float sendV4F(KVector4f v) {
     return v[0] + 2 * v[1] + 4 * v[2] + 8 * v[3];
 }
 
-static int sendV4I(KVector4i32 v) {
+int sendV4I(KVector4i32 v) {
     return v[0] + 2 * v[1] + 4 * v[2] + 8 * v[3];
 }
 

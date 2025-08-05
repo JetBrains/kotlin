@@ -1,8 +1,15 @@
 // FREE_COMPILER_ARGS: -Xbinary=latin1Strings=true
 // MODULE: cinterop
 // FILE: cinterop.def
----
-static int checksum(const short* str, int length) {
+headers = checksum.h
+
+// FILE: checksum.h
+int checksum(const short* str, int length);
+
+// FILE: checksum.c
+#include "checksum.h"
+
+int checksum(const short* str, int length) {
     int sum = 0;
     for (int i = 0; i < length; ++i) {
         sum += str[i];

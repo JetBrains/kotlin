@@ -1,1 +1,1 @@
-void kt36766(void (^block)()) {}
+void kt36766(void (^block)());

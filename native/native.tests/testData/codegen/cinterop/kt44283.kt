@@ -1,10 +1,9 @@
 // TARGET_BACKEND: NATIVE
 // MODULE: cinterop
 // FILE: kt44283.def
----
-#include <stdlib.h>
-#include <pthread.h>
+headers = test.h
 
+// FILE: test.h
 typedef struct {
     int d;
 } TestStruct;
@@ -12,6 +11,15 @@ typedef struct {
 typedef struct {
     void (*f)(TestStruct data);
 } ThreadData;
+
+void *dispatch(void *rawArg);
+
+void invokeFromThread(void (*f)(TestStruct data));
+
+// FILE: test.c
+#include "test.h"
+#include <stdlib.h>
+#include <pthread.h>
 
 void *dispatch(void *rawArg) {
     ThreadData *arg = rawArg;

@@ -22,6 +22,15 @@ headers=lib2.h
 // FILE: lib2.h
 #import "../lib1/lib1.h"
 
+Foo* createFoo();
+
+id<Bar> createBar();
+
+struct Baz* createBaz();
+
+// FILE: lib2.m
+#import "lib2.h"
+
 Foo* createFoo() {
     return 0;
 }

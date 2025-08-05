@@ -2,7 +2,18 @@
 // WITH_PLATFORM_LIBS
 // MODULE: cinterop
 // FILE: toKString.def
----
+headers = test.h
+
+// FILE: test.h
+const char* empty();
+const char* foo();
+const char* kuku();
+const char* invalid_utf8();
+const char* zero_in_the_middle();
+
+// FILE: test.c
+#include "test.h"
+
 const char* empty() { return ""; }
 const char* foo() { return "foo"; }
 const char* kuku() { return "куку"; }

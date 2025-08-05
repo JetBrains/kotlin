@@ -1,57 +1,31 @@
 // TARGET_BACKEND: NATIVE
 // MODULE: cinterop
 // FILE: ctypes.def
----
+headers = test.h
 
+// FILE: test.h
 // KT-28065
 struct StructWithConstFields {
     int x;
     const int y;
 };
 
-struct StructWithConstFields getStructWithConstFields() {
-    struct StructWithConstFields result = { 111, 222 };
-    return result;
-}
+struct StructWithConstFields getStructWithConstFields();
 
 enum ForwardDeclaredEnum;
 enum ForwardDeclaredEnum {
     ZERO, ONE, TWO
 };
 
-static int vlaSum(int size, int array[size]) {
-    int result = 0;
-    for (int i = 0; i < size; ++i) {
-        result += array[i];
-    }
-    return result;
-}
+int vlaSum(int size, int array[size]);
 
-static int vlaSum2D(int size, int array[][size]) {
-    int result = 0;
-    for (int i = 0; i < size; ++i) {
-        for (int j = 0; j < size; ++j) {
-            result += array[i][j];
-        }
-    }
-    return result;
-}
+int vlaSum2D(int size, int array[][size]);
 
-static int vlaSum2DBothDimensions(int rows, int columns, int array[rows][columns]) {
-    int result = 0;
-    for (int i = 0; i < rows; ++i) {
-        for (int j = 0; j < columns; ++j) {
-        result += array[i][j];
-    }
-    }
-    return result;
-}
+int vlaSum2DBothDimensions(int rows, int columns, int array[rows][columns]);
 
 /*
 // Not supported by clang:
-static int vlaSum2DForward(int size; int array[][size], int size) {
-    return vlaSum2D(size, array);
-}
+int vlaSum2DForward(int size; int array[][size], int size);
 */
 
 // "Strict" enums heuristic based on whether enum constants are defined explicitly:
@@ -82,15 +56,60 @@ enum EnumCharBase : Char {
     EnumCharBaseB
 };
 
-static int sendEnum(enum EnumCharBase x) {
-    return (int)x + 2;
-}
+int sendEnum(enum EnumCharBase x);
 
 enum EnumExplicitChar : char {
     EnumExplicitCharA = 'a',
     EnumExplicitCharB = 'b',
     EnumExplicitCharDup = 'a'
 };
+
+// FILE: test.c
+#include "test.h"
+
+struct StructWithConstFields getStructWithConstFields() {
+    struct StructWithConstFields result = { 111, 222 };
+    return result;
+}
+
+int vlaSum(int size, int array[size]) {
+    int result = 0;
+    for (int i = 0; i < size; ++i) {
+        result += array[i];
+    }
+    return result;
+}
+
+int vlaSum2D(int size, int array[][size]) {
+    int result = 0;
+    for (int i = 0; i < size; ++i) {
+        for (int j = 0; j < size; ++j) {
+        result += array[i][j];
+    }
+    }
+    return result;
+}
+
+int vlaSum2DBothDimensions(int rows, int columns, int array[rows][columns]) {
+    int result = 0;
+    for (int i = 0; i < rows; ++i) {
+        for (int j = 0; j < columns; ++j) {
+        result += array[i][j];
+    }
+    }
+    return result;
+}
+
+/*
+// Not supported by clang:
+int vlaSum2DForward(int size; int array[][size], int size) {
+    return vlaSum2D(size, array);
+}
+*/
+
+int sendEnum(enum EnumCharBase x) {
+    return (int)x + 2;
+}
 
 // MODULE: main(cinterop)
 // FILE: main.kt

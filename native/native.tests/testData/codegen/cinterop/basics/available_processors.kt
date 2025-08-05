@@ -5,16 +5,23 @@
 // TARGET_BACKEND: NATIVE
 // MODULE: cinterop
 // FILE: cstdlib.def
-headers = stdlib.h processor_count.h
+headers = stdlib.h processor_count.h windows_env_functions.h
 compilerOpts.mingw = -D ADD_WINDOWS_ENV_FUNCTIONS
 
----
-
+// FILE: windows_env_functions.h
 #ifdef ADD_WINDOWS_ENV_FUNCTIONS
+int setenv(const char *name, const char *value, int overwrite);
+int unsetenv(const char *name);
+#endif
+
+// FILE: windows_env_functions.c
+#ifdef ADD_WINDOWS_ENV_FUNCTIONS
+#include <windows_env_functions.h>
+#include <stdlib.h>
 // It is not declared in the included headers.
 __declspec(dllimport) errno_t __cdecl getenv_s(size_t *_ReturnSize,char *_DstBuf,rsize_t _DstSize,const char *_VarName);
 
-static inline int setenv(const char *name, const char *value, int overwrite)
+int setenv(const char *name, const char *value, int overwrite)
 {
     int errcode = 0;
     if (!overwrite) {
@@ -24,7 +31,7 @@ static inline int setenv(const char *name, const char *value, int overwrite)
     }
     return _putenv_s(name, value);
 }
-static inline int unsetenv(const char *name)
+int unsetenv(const char *name)
 {
     return _putenv_s(name, "");
 }

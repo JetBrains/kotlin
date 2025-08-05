@@ -9,44 +9,61 @@ headers = lib.h
 headerFilter = lib.h
 
 // FILE: lib.h
+void* getCapturedPtrBlock(void* ptr);
+
+void* getIntToBoolBlock();
+
+void* getVoidBlock(int* callsCount);
+
+void* getBlockCompositorBlock();
+
+void* getNSArrayOfStringsBlock();
+
+void callKotlinWithStackAllocatedBlock(
+    int blockResult,
+    void (^kotlinBlock)(void*)
+);
+
+// FILE: lib.m
+#include "lib.h"
 #include <objc/objc.h>
 #include <Foundation/NSArray.h>
 
-static void* getCapturedPtrBlock(void* ptr) {
+void* getCapturedPtrBlock(void* ptr) {
     return (__bridge_retained void*)^void* (void) {
         return ptr;
     };
 }
 
-static void* getIntToBoolBlock() {
+void* getIntToBoolBlock() {
     return (__bridge_retained void*)^BOOL (int p) {
         return p != 0;
     };
 }
 
-static void* getVoidBlock(int* callsCount) {
+void* getVoidBlock(int* callsCount) {
     return (__bridge_retained void*)^void (void) {
         ++*callsCount;
     };
 }
 
-static void* getBlockCompositorBlock() {
+void* getBlockCompositorBlock() {
     return (__bridge_retained void*)^ (int (^f)(int), int (^g)(int)) {
         return ^int (int p) {
-            return f(g(p));
-        };
+        return f(g(p));
+    };
     };
 }
 
-static void* getNSArrayOfStringsBlock() {
+void* getNSArrayOfStringsBlock() {
     return (__bridge_retained void*)^NSArray* (NSString* s1, NSString* s2, NSString* s3) {
         return @[s1, s2, s3];
     };
 }
 
-static void callKotlinWithStackAllocatedBlock(
-    int blockResult,
-    void (^kotlinBlock)(void*)
+void callKotlinWithStackAllocatedBlock(
+int blockResult,
+void (^kotlinBlock)(void*)
 ) {
     kotlinBlock((__bridge void*)^{ return blockResult; });
 }

@@ -4,7 +4,9 @@
 // MODULE: cinterop
 // FILE: cstructs.def
 nonStrictEnums = NonStrict
----
+headers = test.h
+
+// FILE: test.h
 typedef struct {
     int i;
 } Trivial;
@@ -32,18 +34,7 @@ struct __attribute__((packed)) Packed {
     enum E e : 2;
 };
 
-struct Complex produceComplex() {
-    struct Complex complex = {
-        .ui = 128,
-        .t = {1},
-        .next = 0,
-        .e = R,
-        .nonStrict = K,
-        .arr = {-51, -19},
-        .b = 1
-    };
-    return complex;
-};
+struct Complex produceComplex();
 
 struct WithFlexibleArray {
     int size;
@@ -56,18 +47,36 @@ struct WithFlexibleArrayWithPadding {
     long long data[];
 };
 
-void fillArray(struct WithFlexibleArrayWithPadding *flex, int count) {
-    flex->size = count;
-    flex->c = '!';
-    for (int i = 0; i < count; i++) {
-        flex->data[i] = (((long long)i) << 32) | (i * 100);
-    }
-}
+void fillArray(struct WithFlexibleArrayWithPadding *flex, int count);
 
 struct WithZeroSizedArray {
     int size;
     int data[0];
 };
+
+// FILE: test.c
+#include "test.h"
+
+struct Complex produceComplex() {
+    struct Complex complex = {
+        .ui = 128,
+        .t = {1},
+        .next = 0,
+        .e = R,
+        .nonStrict = K,
+        .arr = {-51, -19},
+        .b = 1
+    };
+    return complex;
+}
+
+void fillArray(struct WithFlexibleArrayWithPadding *flex, int count) {
+    flex->size = count;
+    flex->c = '!';
+    for (int i = 0; i < count; i++) {
+            flex->data[i] = (((long long)i) << 32) | (i * 100);
+    }
+}
 
 // MODULE: main(cinterop)
 // FILE: main.kt

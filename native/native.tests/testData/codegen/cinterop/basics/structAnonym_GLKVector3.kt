@@ -1,17 +1,13 @@
 // TARGET_BACKEND: NATIVE
 // MODULE: cinterop
 // FILE: structAnonym.def
----
+headers = test.h
 
+// FILE: test.h
 /*
  *  Test of return/send-by-value for aggregate type (struct or union) with anonymous inner struct or union member.
  *  Specific issues: alignment, packed, nested named and anon struct/union, other anon types (named field  of anon struct type; anon bitfield)
  */
-
-#include <inttypes.h>
-
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Winitializer-overrides"
 
 union _GLKVector3
 {
@@ -21,17 +17,22 @@ union _GLKVector3
     float v[3];
 };
 
-static union _GLKVector3 get_GLKVector3() {
+union _GLKVector3 get_GLKVector3();
+
+float hash_GLKVector3(union _GLKVector3 x);
+
+// FILE: test.c
+#include "test.h"
+
+union _GLKVector3 get_GLKVector3() {
     union _GLKVector3 ret = {{1, 2, 3}};
     return ret;
 }
 
-static float hash_GLKVector3(union _GLKVector3 x) {
+float hash_GLKVector3(union _GLKVector3 x) {
     union _GLKVector3 ret = {{1, 2, 3}};
     return x.x + 2.0f * x.y + 4.0f * x.z;
 }
-
-#pragma clang diagnostic pop
 
 // MODULE: main(cinterop)
 // FILE: main.kt

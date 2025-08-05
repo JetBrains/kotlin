@@ -7,68 +7,34 @@
 // OUTPUT_DATA_FILE: funptr.out
 // MODULE: cinterop
 // FILE: cfunptr.def
+headers = test.h
 headerFilter = NOTHING
----
-#include <stdio.h>
-#include <stdlib.h>
+
+// FILE: test.h
 
 typedef int (*atoiPtrType)(const char*);
 
-static atoiPtrType getAtoiPtr() {
-    return &atoi;
-}
-
-static void __printInt(int x) {
-    printf("%d\n", x);
-}
-
-static void* __getPrintIntPtr() {
-    return &__printInt;
-}
+atoiPtrType getAtoiPtr();
 
 typedef void* (*getPrintIntPtrPtrType)(void);
 
-static getPrintIntPtrPtrType getGetPrintIntPtrPtr() {
-    return &__getPrintIntPtr;
-}
-
-static double __add(double x, double y) {
-    return x + y;
-}
+getPrintIntPtrPtrType getGetPrintIntPtrPtr();
 
 typedef double (*addPtrType)(double, double);
 
-static addPtrType getAddPtr() {
-    return &__add;
-}
-
-static int __doubleToInt(double x) {
-    return (int) x;
-}
+addPtrType getAddPtr();
 
 typedef int (*doubleToIntPtrType)(double);
 
-static doubleToIntPtrType getDoubleToIntPtr() {
-    return &__doubleToInt;
-}
-
-static _Bool __isIntPositive(int x) {
-    return x > 0;
-}
+doubleToIntPtrType getDoubleToIntPtr();
 
 typedef _Bool (*isIntPositivePtrType)(int);
 
-static isIntPositivePtrType getIsIntPositivePtr() {
-    return &__isIntPositive;
-}
+isIntPositivePtrType getIsIntPositivePtr();
 
-static unsigned int getMaxUInt(void) {
-    return 0xffffffff;
-}
+unsigned int getMaxUInt(void);
 
-static typeof(&getMaxUInt) getMaxUIntGetter() {
-    return &getMaxUInt;
-}
+typeof(&getMaxUInt) getMaxUIntGetter();
 
 typedef int (*longSignatureFunctionPtrType)(
 int, int, int, int, int, int, int, int, int, int, int, int,
@@ -80,25 +46,81 @@ int, int, int, int, int, int, int, int, int, int, int,
 int, int, int, int, int, int, int, int, int, int, int
 );
 
-static int longSignatureFunction(
+longSignatureFunctionPtrType getLongSignatureFunctionPtr();
+
+notSoLongSignatureFunctionPtrType getNotSoLongSignatureFunctionPtr();
+
+// FILE: test.c
+#include <stdio.h>
+#include <stdlib.h>
+
+atoiPtrType getAtoiPtr() {
+    return &atoi;
+}
+
+void __printInt(int x) {
+    printf("%d\n", x);
+}
+
+void* __getPrintIntPtr() {
+    return &__printInt;
+}
+
+getPrintIntPtrPtrType getGetPrintIntPtrPtr() {
+    return &__getPrintIntPtr;
+}
+
+double __add(double x, double y) {
+    return x + y;
+}
+
+addPtrType getAddPtr() {
+    return &__add;
+}
+
+int __doubleToInt(double x) {
+    return (int) x;
+}
+
+doubleToIntPtrType getDoubleToIntPtr() {
+    return &__doubleToInt;
+}
+
+_Bool __isIntPositive(int x) {
+    return x > 0;
+}
+
+isIntPositivePtrType getIsIntPositivePtr() {
+    return &__isIntPositive;
+}
+
+unsigned int getMaxUInt(void) {
+    return 0xffffffff;
+}
+
+typeof(&getMaxUInt) getMaxUIntGetter() {
+    return &getMaxUInt;
+}
+
+int longSignatureFunction(
 int p1, int p2, int p3, int p4, int p5, int p6, int p7, int p8, int p9, int p10, int p11, int p12,
 int p13, int p14, int p15, int p16, int p17, int p18, int p19, int p20, int p21, int p22, int p23
 ) {
     return 42;
 }
 
-static int notSoLongSignatureFunction(
+int notSoLongSignatureFunction(
 int p1, int p2, int p3, int p4, int p5, int p6, int p7, int p8, int p9, int p10, int p11, int p12,
 int p13, int p14, int p15, int p16, int p17, int p18, int p19, int p20, int p21, int p22
 ) {
     return 42;
 }
 
-static longSignatureFunctionPtrType getLongSignatureFunctionPtr() {
+longSignatureFunctionPtrType getLongSignatureFunctionPtr() {
     return &longSignatureFunction;
 }
 
-static notSoLongSignatureFunctionPtrType getNotSoLongSignatureFunctionPtr() {
+notSoLongSignatureFunctionPtrType getNotSoLongSignatureFunctionPtr() {
     return &notSoLongSignatureFunction;
 }
 

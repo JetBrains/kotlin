@@ -1,17 +1,15 @@
 // TARGET_BACKEND: NATIVE
 // MODULE: cinterop
 // FILE: structAnonym.def
----
+headers = test.h
 
+// FILE: test.h
 /*
  *  Test of return/send-by-value for aggregate type (struct or union) with anonymous inner struct or union member.
  *  Specific issues: alignment, packed, nested named and anon struct/union, other anon types (named field  of anon struct type; anon bitfield)
  */
 
 #include <inttypes.h>
-
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Winitializer-overrides"
 
 // Basic, 2 levels
 
@@ -31,6 +29,11 @@ struct StructAnonRecordMember_Complicate {
     char last;
 };
 
+struct StructAnonRecordMember_Complicate retByValue_StructAnonRecordMember_Complicate();
+
+// FILE: test.c
+#include "test.h"
+
 #define INIT(T, x) 	struct T x = \
 { \
     .first = 'a', \
@@ -42,11 +45,10 @@ struct StructAnonRecordMember_Complicate {
     .Y2 = {11, 12} \
 }
 
-static struct StructAnonRecordMember_Complicate retByValue_StructAnonRecordMember_Complicate() {
+struct StructAnonRecordMember_Complicate retByValue_StructAnonRecordMember_Complicate() {
     INIT(StructAnonRecordMember_Complicate, c);
     return c;
 }
-#pragma clang diagnostic pop
 
 // MODULE: main(cinterop)
 // FILE: main.kt

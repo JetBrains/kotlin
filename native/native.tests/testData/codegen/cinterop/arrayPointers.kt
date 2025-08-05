@@ -2,14 +2,23 @@
 // WITH_PLATFORM_LIBS
 // MODULE: cinterop
 // FILE: carrayPointers.def
----
-int (*arrayPointer)[1];
+headers = test.h
 
-int globalArray[3] = {1, 2, 3};
+// FILE: test.h
+extern int (*arrayPointer)[1];
+
+extern int globalArray[3];
 
 struct StructWithArrayPtr {
     int (*arrayPointer)[1];
 };
+
+// FILE: test.c
+#include "test.h"
+
+int (*arrayPointer)[1];
+
+int globalArray[3] = {1, 2, 3};
 
 // MODULE: main(cinterop)
 // FILE: main.kt

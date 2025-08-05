@@ -6,32 +6,25 @@
 // WITH_PLATFORM_LIBS
 // MODULE: cinterop
 // FILE: ccallbacksAndVarargs.def
----
-#include <stdarg.h>
+headers = test.h
+
+// FILE: test.h
 
 struct S {
     int x;
 };
 
-static int getX(struct S (*callback)(void)) {
-    return callback().x;
-}
+int getX(struct S (*callback)(void));
 
-static void applyCallback(struct S s, void (*callback)(struct S)) {
-    callback(s);
-}
+void applyCallback(struct S s, void (*callback)(struct S));
 
-static struct S makeS(int x, ...) {
-    return (struct S){ x };
-}
+struct S makeS(int x, ...);
 
 enum E {
     ZERO, ONE, TWO
 };
 
-static enum E makeE(int ordinal, ...) {
-    return ordinal;
-}
+enum E makeE(int ordinal, ...);
 
 struct Args {
     char a1;
@@ -51,7 +44,31 @@ struct Args {
     void* a15;
 };
 
-static struct Args getVarargs(int ignore, ...) {
+struct Args getVarargs(int ignore, ...);
+
+int sum(int first, int second);
+
+// FILE: test.c
+#include "test.h"
+#include <stdarg.h>
+
+int getX(struct S (*callback)(void)) {
+    return callback().x;
+}
+
+void applyCallback(struct S s, void (*callback)(struct S)) {
+    callback(s);
+}
+
+struct S makeS(int x, ...) {
+    return (struct S){ x };
+}
+
+enum E makeE(int ordinal, ...) {
+    return ordinal;
+}
+
+struct Args getVarargs(int ignore, ...) {
     va_list args;
     va_start(args, ignore);
 
@@ -78,7 +95,7 @@ static struct Args getVarargs(int ignore, ...) {
     return result;
 }
 
-static int sum(int first, int second) {
+int sum(int first, int second) {
     return first + second;
 }
 

@@ -6,10 +6,18 @@
 // TARGET_BACKEND: NATIVE
 // MODULE: cinterop
 // FILE: cstdio.def
-headers = stdio.h
+headers = test.h
 compilerOpts.osx = -D_ANSI_SOURCE
----
-static inline FILE* getStdout() {
+
+// FILE: test.h
+#include <stdio.h>
+
+FILE* getStdout();
+
+// FILE: test.m
+#include "test.h"
+
+FILE* getStdout() {
     return stdout;
 }
 

@@ -7,7 +7,9 @@
 // MODULE: cinterop
 // FILE: threadStates.def
 language = C
----
+headers = threadStates.h
+
+// FILE: threadStates.h
 void runInNewThread(void(*callback)(void));
 
 // FILE: threadStates.cpp

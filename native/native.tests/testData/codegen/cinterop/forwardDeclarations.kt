@@ -4,9 +4,18 @@
 // WITH_PLATFORM_LIBS
 // MODULE: cinterop
 // FILE: cForwardDeclarations.def
----
+headers = test.h
+
+// FILE: test.h
 struct StructDeclared;
 struct StructDefined { int x; };
+
+int useStructDeclared(struct StructDeclared* declared);
+
+int useStructDefined(struct StructDefined* defined);
+
+// FILE: test.c
+#include "test.h"
 
 int useStructDeclared(struct StructDeclared* declared) {
     return -1;

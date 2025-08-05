@@ -7,5 +7,5 @@ import kotlinx.cinterop.*
 import withSpaces.*
 
 fun main(args: Array<String>) {
-    customCompare("first", "second")
+    custom_strcmp("first", "second")
 }

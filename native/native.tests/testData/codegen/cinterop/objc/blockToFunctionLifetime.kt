@@ -20,16 +20,18 @@ headerFilter = lib.h
 @property BooleanFlag* flag;
 @end
 
-static void* getDeallocFlagSettingBlock(BooleanFlag* flag) {
+void* getDeallocFlagSettingBlock(BooleanFlag* flag);
+
+// FILE: lib.m
+#import "lib.h"
+
+void* getDeallocFlagSettingBlock(BooleanFlag* flag) {
     SetFlagOnDealloc* obj = [SetFlagOnDealloc new];
     obj.flag = flag;
     return (__bridge_retained void*)^SetFlagOnDealloc* (void) {
         return obj; // Captured => the object should be released only after the (copied) block is removed.
     };
 }
-
-// FILE: lib.m
-#import "lib.h"
 
 @implementation BooleanFlag
 @end

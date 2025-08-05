@@ -10,8 +10,15 @@
 // MODULE: cinterop
 // FILE: kt59167.def
 language=Objective-C
----
+headers = test.h
+
+// FILE: test.h
 #import <GameController/GCDevice.h>
+
+id<GCDevice> dummy();
+
+// FILE: test.m
+#import "test.h"
 
 // We only need to touch the problematic header to trigger the problem,
 // so actual code does not matter.

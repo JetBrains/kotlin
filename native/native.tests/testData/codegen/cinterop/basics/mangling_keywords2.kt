@@ -1,7 +1,9 @@
 // TARGET_BACKEND: NATIVE
 // MODULE: cinterop
 // FILE: mangling_keywords2.def
----
+headers = test.h
+
+// FILE: test.h
 enum KotlinKeywordsEnum {
     as,
     class,
@@ -47,6 +49,11 @@ struct KotlinKeywordsStruct {
         int var;
         int when;
     };
+
+struct KotlinKeywordsStruct createKotlinKeywordsStruct();
+
+// FILE: test.c
+#include "test.h"
 
 struct KotlinKeywordsStruct createKotlinKeywordsStruct() {
     struct KotlinKeywordsStruct s = {

@@ -7,22 +7,24 @@
 // WITH_PLATFORM_LIBS
 // MODULE: cinterop
 // FILE: cglobals.def
----
-const int g1 = 42;
+headers = test.h
 
-int g2 = 17;
+// FILE: test.h
+extern const int g1;
 
-struct S {
+extern int g2;
+
+extern struct S {
     int x;
-} g3 = { 128 };
+} g3;
 
-int g4[2] = { 13, 14 };
+extern int g4[2];
 
-int g5[2][2] = { 15, 16, 17, 18 };
+extern int g5[2][2];
 
-struct S* const g6 = &g3;
+extern struct S* const g6;
 
-void globals_foo() {
+static void globals_foo() {
     // Test that local vars are not treated as global ones.
     float g1;
 }
@@ -37,6 +39,25 @@ struct g1 {};
 struct g1_ {};
 
 typedef void* voidptr;
+_Pragma("clang assume_nonnull begin")
+extern const voidptr g8, g9;
+_Pragma("clang assume_nonnull end")
+
+// FILE: test.c
+#include "test.h"
+
+const int g1 = 42;
+
+int g2 = 17;
+
+struct S g3 = { 128 };
+
+int g4[2] = { 13, 14 };
+
+int g5[2][2] = { 15, 16, 17, 18 };
+
+struct S* const g6 = &g3;
+
 _Pragma("clang assume_nonnull begin")
 const voidptr g8 = (voidptr)0x1, g9 = (voidptr)0x2;
 _Pragma("clang assume_nonnull end")

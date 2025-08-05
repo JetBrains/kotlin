@@ -1,12 +1,21 @@
 // TARGET_BACKEND: NATIVE
 // MODULE: cinterop
 // FILE: cvalues.def
----
+headers = test.h
+
+// FILE: test.h
+_Bool isNullString(const char* str);
+
+typedef const short* LPCWSTR;
+
+_Bool isNullWString(LPCWSTR str);
+
+// FILE: test.c
+#include "test.h"
+
 _Bool isNullString(const char* str) {
     return str == (const char*)0;
 }
-
-typedef const short* LPCWSTR;
 
 _Bool isNullWString(LPCWSTR str) {
     return str == (LPCWSTR)0;

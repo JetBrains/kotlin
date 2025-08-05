@@ -9,9 +9,21 @@ headers = objclib.h
 
 // FILE: objclib.h
 #include <objc/NSObject.h>
-#include <pthread.h>
 
 static const int OBJECT_COUNT = 50;
+
+void setObjectAt(int index, NSObject* obj);
+
+void setReady();
+
+void startThreads();
+
+void waitThreads();
+
+// FILE: objclib.m
+#include "objclib.h"
+#include <pthread.h>
+
 static const int THREAD_COUNT = OBJECT_COUNT * 2;
 
 static NSObject* globalObjects1[OBJECT_COUNT];

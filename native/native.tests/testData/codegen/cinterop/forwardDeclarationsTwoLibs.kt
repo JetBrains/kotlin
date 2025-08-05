@@ -3,13 +3,25 @@
 // WITH_PLATFORM_LIBS
 // MODULE: cinterop1
 // FILE: cForwardDeclarationsTwoLibs1.def
----
+headers = lib1.h
+
+// FILE: lib1.h
 struct StructDeclaredUndeclared;
 struct StructDeclaredDeclared;
 struct StructDeclaredDefined;
 struct StructDefinedUndeclared {};
 struct StructDefinedDeclared {};
 struct StructDefinedDefined {};
+
+int use1StructDeclaredUndeclared(struct StructDeclaredUndeclared* declaredUndeclared);
+int use1StructDeclaredDeclared(struct StructDeclaredDeclared* declaredDeclared);
+int use1StructDeclaredDefined(struct StructDeclaredDefined* declaredDefined);
+int use1StructDefinedUndeclared(struct StructDefinedUndeclared* definedUndeclared);
+int use1StructDefinedDeclared(struct StructDefinedDeclared* definedDeclared);
+int use1StructDefinedDefined(struct StructDefinedDefined* definedDefined);
+
+// FILE: lib1.c
+#include "lib1.h"
 
 int use1StructDeclaredUndeclared(struct StructDeclaredUndeclared* declaredUndeclared) { return -3; }
 int use1StructDeclaredDeclared(struct StructDeclaredDeclared* declaredDeclared) { return -4; }
@@ -20,13 +32,25 @@ int use1StructDefinedDefined(struct StructDefinedDefined* definedDefined) { retu
 
 // MODULE: cinterop2
 // FILE: cForwardDeclarationsTwoLibs2.def
----
+headers = lib2.h
+
+// FILE: lib2.h
 struct StructUndeclaredDeclared;
 struct StructUndeclaredDefined {};
 struct StructDeclaredDeclared;
 struct StructDeclaredDefined {};
 struct StructDefinedDeclared;
 struct StructDefinedDefined {};
+
+int use2StructUndeclaredDeclared(struct StructUndeclaredDeclared* undeclaredDeclared);
+int use2StructUndeclaredDefined(struct StructUndeclaredDefined* undeclaredDefined);
+int use2StructDeclaredDeclared(struct StructDeclaredDeclared* declaredDeclared);
+int use2StructDeclaredDefined(struct StructDeclaredDefined* declaredDefined);
+int use2StructDefinedDeclared(struct StructDefinedDeclared* definedDeclared);
+int use2StructDefinedDefined(struct StructDefinedDefined* definedDefined);
+
+// FILE: lib2.c
+#include "lib2.h"
 
 int use2StructUndeclaredDeclared(struct StructUndeclaredDeclared* undeclaredDeclared) { return 1; }
 int use2StructUndeclaredDefined(struct StructUndeclaredDefined* undeclaredDefined) { return 2; }

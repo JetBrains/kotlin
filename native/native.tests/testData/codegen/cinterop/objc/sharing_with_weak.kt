@@ -11,6 +11,13 @@ headerFilter = objclib.h
 // FILE: objclib.h
 #import <objc/NSObject.h>
 
+void setObject(NSObject* obj);
+
+bool isObjectAlive();
+
+// FILE: objclib.m
+#import <objc/NSObject.h>
+
 static NSObject* __weak globalObject = nil;
 
 void setObject(NSObject* obj) {

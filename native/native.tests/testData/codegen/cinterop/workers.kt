@@ -6,10 +6,15 @@
 // WITH_PLATFORM_LIBS
 // MODULE: cinterop
 // FILE: workers.def
----
-#include <stdarg.h>
+headers = test.h
 
-static int sum(int first, int second) {
+// FILE: test.h
+int sum(int first, int second);
+
+// FILE: test.c
+#include "test.h"
+
+int sum(int first, int second) {
     return first + second;
 }
 

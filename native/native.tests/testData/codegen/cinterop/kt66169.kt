@@ -3,12 +3,18 @@
 // MODULE: cinterop
 // FILE: kt66169.def
 language = C
----
+headers = test.h
 
+// FILE: test.h
 typedef struct {
     int x;
     int y;
 } S;
+
+S createS();
+
+// FILE: test.c
+#include "test.h"
 
 S createS() {
     S s = {1, 2};

@@ -8,7 +8,9 @@
 // WITH_PLATFORM_LIBS
 // MODULE: cinterop
 // FILE: bitfields.def
----
+headers = test.h
+
+// FILE: test.h
 enum B2 {
     ZERO, ONE, TWO, THREE
 };
@@ -29,15 +31,29 @@ struct __attribute__((packed)) S {
     struct { int x9:4; };
 };
 
-static long long getX1(struct S* s) { return s->x1; }
-static enum B2 getX2(struct S* s) { return s->x2; }
-static unsigned short getX3(struct S* s) { return s->x3; }
-static unsigned int getX4(struct S* s) { return s->x4; }
-static int getX5(struct S* s) { return s->x5; }
-static long long getX6(struct S* s) { return s->x6; }
-static enum E getX7(struct S* s) { return s->x7; }
-static _Bool getX8(struct S* s) { return s->x8; }
-static int getX9(struct S* s) { return s->x9; }
+long long getX1(struct S* s);
+enum B2 getX2(struct S* s);
+unsigned short getX3(struct S* s);
+unsigned int getX4(struct S* s);
+int getX5(struct S* s);
+long long getX6(struct S* s);
+enum E getX7(struct S* s);
+_Bool getX8(struct S* s);
+int getX9(struct S* s);
+
+
+// FILE: test.c
+#include "test.h"
+
+long long getX1(struct S* s) { return s->x1; }
+enum B2 getX2(struct S* s) { return s->x2; }
+unsigned short getX3(struct S* s) { return s->x3; }
+unsigned int getX4(struct S* s) { return s->x4; }
+int getX5(struct S* s) { return s->x5; }
+long long getX6(struct S* s) { return s->x6; }
+enum E getX7(struct S* s) { return s->x7; }
+_Bool getX8(struct S* s) { return s->x8; }
+int getX9(struct S* s) { return s->x9; }
 
 // MODULE: main(cinterop)
 // FILE: main.kt

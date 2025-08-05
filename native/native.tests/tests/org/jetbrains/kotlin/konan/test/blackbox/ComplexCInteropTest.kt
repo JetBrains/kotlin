@@ -387,11 +387,6 @@ abstract class ComplexCInteropTestBase : AbstractNativeSimpleTest() {
                     """
                     headers = stdio.h "${srcDir.absolutePath}/custom headers/custom.h"
                     linkerOpts = $mapOption
-                    ---
-    
-                    int customCompare(const char* str1, const char* str2) {
-                        return custom_strcmp(str1, str2);
-                    }
                 """.trimIndent()
                 )
             }
@@ -400,6 +395,7 @@ abstract class ComplexCInteropTestBase : AbstractNativeSimpleTest() {
         val (testCase, success) = compileDefAndKtToExecutable(
             testName = "withSpaces",
             defFile = withSpacesDef,
+            cinteropSourceFiles = listOf(srcDir.resolve("withSpaces.c")),
             ktFiles = listOf(srcDir.resolve("withSpaces.kt")),
             freeCompilerArgs = TestCompilerArgs("-opt-in=kotlinx.cinterop.ExperimentalForeignApi"),
             extras = TestCase.NoTestRunnerExtras("main"),

@@ -6,29 +6,36 @@
 // MODULE: a
 // FILE: a.def
 language = Objective-C
----
+headers = a.h
+
+// FILE: a.h
 #import <Foundation/Foundation.h>
-#include <stdio.h>
 
 struct ForwardDeclaredStruct;
 @class ForwardDeclaredClass;
 @protocol ForwardDeclaredProtocol;
 
+NSString* consumeProtocol(id<ForwardDeclaredProtocol> s);
+NSString* consumeClass(ForwardDeclaredClass* s);
+NSString* consumeStruct(struct ForwardDeclaredStruct* s);
+
+// FILE: a.m
+#import "a.h"
+
 NSString* consumeProtocol(id<ForwardDeclaredProtocol> s) {
-	return [NSString stringWithUTF8String:"Protocol"];
+    return [NSString stringWithUTF8String:"Protocol"];
 }
 NSString* consumeClass(ForwardDeclaredClass* s) {
-	return [NSString stringWithUTF8String:"Class"];
+    return [NSString stringWithUTF8String:"Class"];
 }
 NSString* consumeStruct(struct ForwardDeclaredStruct* s) {
-	return [NSString stringWithUTF8String:"Struct"];
+    return [NSString stringWithUTF8String:"Struct"];
 }
 
 // MODULE: b
 // FILE: b.def
 language = Objective-C
 headers = b.h
----
 
 // FILE: b.h
 #define NS_FORMAT_ARGUMENT(X)

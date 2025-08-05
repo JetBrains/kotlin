@@ -1,11 +1,17 @@
 // TARGET_BACKEND: NATIVE
 // MODULE: cinterop
 // FILE: mangling.def
----
+headers = test.h
 
+// FILE: test.h
 // test mangling of special names
 
 enum _Companion {Companion, Any};
+extern enum _Companion companion;
+
+// FILE: test.c
+#include "test.h"
+
 enum _Companion companion = Companion;
 
 // MODULE: main(cinterop)

@@ -1,17 +1,15 @@
 // TARGET_BACKEND: NATIVE
 // MODULE: cinterop
 // FILE: structAnonym.def
----
+headers = test.h
 
+// FILE: test.h
 /*
  *  Test of return/send-by-value for aggregate type (struct or union) with anonymous inner struct or union member.
  *  Specific issues: alignment, packed, nested named and anon struct/union, other anon types (named field  of anon struct type; anon bitfield)
  */
 
 #include <inttypes.h>
-
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Winitializer-overrides"
 
 // Deep nesting
 struct StructAnonRecordMember_Nested {
@@ -26,7 +24,14 @@ struct StructAnonRecordMember_Nested {
     double y;
 };
 
-static struct StructAnonRecordMember_Nested retByValue_StructAnonRecordMember_Nested() {
+struct StructAnonRecordMember_Nested retByValue_StructAnonRecordMember_Nested();
+
+int sendByValue_StructAnonRecordMember_Nested(struct StructAnonRecordMember_Nested c);
+
+// FILE: test.c
+#include "test.h"
+
+struct StructAnonRecordMember_Nested retByValue_StructAnonRecordMember_Nested() {
     struct StructAnonRecordMember_Nested c = {
         .x = 37,
         .b = 42,
@@ -36,10 +41,9 @@ static struct StructAnonRecordMember_Nested retByValue_StructAnonRecordMember_Ne
     return c;
 }
 
-static int sendByValue_StructAnonRecordMember_Nested(struct StructAnonRecordMember_Nested c) {
+int sendByValue_StructAnonRecordMember_Nested(struct StructAnonRecordMember_Nested c) {
     return c.a[0] + 2 * c.a[1];
 }
-#pragma clang diagnostic pop
 
 // MODULE: main(cinterop)
 // FILE: main.kt

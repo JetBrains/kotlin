@@ -13,18 +13,28 @@ headers=objc/objc.h
 // MODULE: lib(objc)
 // FILE: lib.def
 language=Objective-C
----
-#include <objc/NSObject.h>
+headers = test.h
+
+// FILE: test.h
 #include <objc/objc.h>
+
+const char* getProtocolName(Protocol* p);
+
+Protocol* getNSObjectProtocol();
+
+// FILE: test.m
+#include "test.h"
+#include <objc/NSObject.h>
 #include <objc/runtime.h>
 
-static const char* getProtocolName(Protocol* p) {
+const char* getProtocolName(Protocol* p) {
     return p == NULL ? NULL : protocol_getName(p);
 }
 
-static Protocol* getNSObjectProtocol() {
+Protocol* getNSObjectProtocol() {
     return @protocol(NSObject);
 }
+
 // MODULE: main(lib)
 // FILE: main.kt
 import lib.*
