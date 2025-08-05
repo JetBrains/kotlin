@@ -93,7 +93,7 @@ open class JvmClassFileBasedSymbolProvider(
             kotlinClassFinder.findKotlinClass(ClassId.topLevel(it), ownMetadataVersion)
         }
 
-        val moduleData = moduleDataProvider.getModuleData(kotlinClass.containingLibraryPath?.path as? Path) ?: return null
+        val moduleData = moduleDataProvider.getModuleData(kotlinClass.containingLibraryPath?.asNioPath()) ?: return null
 
         val (nameResolver, packageProto) = parseProto(kotlinClass) {
             JvmProtoBufUtil.readPackageDataFrom(data, strings)
@@ -194,7 +194,7 @@ open class JvmClassFileBasedSymbolProvider(
             nameResolver,
             classProto,
             JvmBinaryAnnotationDeserializer(session, kotlinClass, kotlinClassFinder, result.byteContent),
-            moduleDataProvider.getModuleData(kotlinClass.containingLibraryPath?.path as? Path),
+            moduleDataProvider.getModuleData(kotlinClass.containingLibraryPath?.asNioPath()),
             KotlinJvmBinarySourceElement(
                 kotlinClass,
                 kotlinClass.incompatibility,
