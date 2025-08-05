@@ -94,6 +94,12 @@ public class FirStandaloneNormalAnalysisSourceModuleDeclarationReturnTypeTestGen
   }
 
   @Test
+  @TestMetadata("destructuringDeclaration.kt")
+  public void testDestructuringDeclaration() {
+    runTest("analysis/analysis-api/testData/components/expressionTypeProvider/declarationReturnType/destructuringDeclaration.kt");
+  }
+
+  @Test
   @TestMetadata("functionType.kt")
   public void testFunctionType() {
     runTest("analysis/analysis-api/testData/components/expressionTypeProvider/declarationReturnType/functionType.kt");
