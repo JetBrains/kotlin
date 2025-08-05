@@ -48,3 +48,10 @@ public annotation class WasmImport(
 public annotation class WasmExport(
     val name: String = ""
 )
+
+@Target(AnnotationTarget.FUNCTION)
+internal annotation class JsBuiltin(
+    val module: String,
+    val name: String = "",
+    val polyfill: String = ""
+)
