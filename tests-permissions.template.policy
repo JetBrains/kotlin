@@ -2,6 +2,10 @@ grant codeBase "file:{{gradle_user_home}}/-" {
     permission java.security.AllPermission;
 };
 grant {
+    permission java.io.FilePermission "{{gradle_user_home}}/-", "read";
+    permission java.io.FilePermission "{{gradle_user_home}}", "read";
+    permission java.io.FilePermission "/dev/random", "read";
+    permission java.io.FilePermission "/dev/urandom", "read";
     // Basic permissions needed for tests to run
     permission java.lang.RuntimePermission "*";
     permission java.net.SocketPermission "127.0.0.1:0", "connect,resolve";

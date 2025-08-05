@@ -200,6 +200,7 @@
 /compiler/tests-gen/ @JetBrains/kotlin-frontend @JetBrains/kotlin-jvm @JetBrains/kotlin-native @JetBrains/kotlin-wasm @JetBrains/kotlin-common-backend @JetBrains/kotlin-js
 /compiler/tests-java8/ @JetBrains/kotlin-jvm
 /compiler/tests-mutes/ @JetBrains/kotlin-build-infrastructure
+/compiler/test-security-manager/ @JetBrains/kotlin-build-infrastructure
 /compiler/tests-spec/ @JetBrains/kotlin-frontend
 /compiler/util/ @JetBrains/kotlin-frontend
 /compiler/util/src/org/jetbrains/kotlin/config/LanguageVersionSettings.kt @JetBrains/kotlin-language-evolution

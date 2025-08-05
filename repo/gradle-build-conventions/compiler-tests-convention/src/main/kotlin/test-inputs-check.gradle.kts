@@ -3,6 +3,10 @@ import java.io.IOException
 import java.util.HashSet
 import org.gradle.internal.os.OperatingSystem
 
+dependencies {
+    "testImplementation"(project(":compiler:test-security-manager"))
+}
+
 val disableInputsCheck = project.providers.gradleProperty("kotlin.test.instrumentation.disable.inputs.check").orNull?.toBoolean() == true
 tasks.withType<Test>().names.forEach { taskName ->
     tasks.named<Test>(taskName) {
@@ -41,6 +45,7 @@ tasks.withType<Test>().names.forEach { taskName ->
                 if (!permissionsTemplateFile.exists()) {
                     throw GradleException("Security policy template file not found at: ${permissionsTemplateFile.absolutePath}")
                 }
+                val addedDirs = HashSet<File>()
 
                 fun File.parents(): Sequence<File> {
                     return sequence {
@@ -53,8 +58,8 @@ tasks.withType<Test>().names.forEach { taskName ->
                 }
 
                 fun parentsReadPermission(file: File): List<String> {
-                    return file.parents().map { parent ->
-                        """permission java.io.FilePermission "${parent.absolutePath}", "read";"""
+                    return file.parents().mapNotNull { parent ->
+                        """permission java.io.FilePermission "${parent.absolutePath}", "read";""".takeIf { addedDirs.add(parent) }
                     }.toList()
                 }
 
@@ -90,7 +95,6 @@ tasks.withType<Test>().names.forEach { taskName ->
                         )
                     }
 
-                val addedDirs = HashSet<File>()
                 val inputPermissions: Set<String> = inputs.files.flatMapTo(HashSet<String>()) { file ->
                     if (file.isDirectory) {
                         addedDirs.add(file)
@@ -188,7 +192,7 @@ tasks.withType<Test>().names.forEach { taskName ->
                             )
                             .replace(
                                 "{{jdk}}",
-                                ((defineJDKEnvVariables + javaVersion.get()).map { version ->
+                                ((defineJDKEnvVariables + javaVersion.get()).distinct().map { version ->
                                     """permission java.io.FilePermission "${getJDKFromToolchain(service, version)}/-", "read,execute";"""
                                 }).joinToString("\n    ")
                             )
@@ -212,7 +216,7 @@ tasks.withType<Test>().names.forEach { taskName ->
             jvmArgs(
                 "-Djava.security.policy=${policyFileProvider.get().asFile.absolutePath}",
                 "-Djava.security.debug=failure",
-                "-Djava.security.manager=java.lang.SecurityManager",
+                "-Djava.security.manager=org.jetbrains.kotlin.security.KotlinSecurityManager",
             )
         }
     }
