@@ -976,6 +976,26 @@ class BodyGenerator(
                 body.buildStructGet(wasmFileCodegenContext.rttiType, rttiSuperClassFieldId, location)
             }
 
+            wasmSymbols.wasmGetQualifierImpl, wasmSymbols.wasmGetSimpleNameImpl -> {
+                body.buildRefCastStatic(wasmFileCodegenContext.rttiType, location)
+
+                val fieldId =
+                    if (function.symbol == wasmSymbols.wasmGetQualifierImpl) rttiQualifierGetterFieldId else rttiSimpleNameGetterFieldId
+
+                body.buildStructGet(wasmFileCodegenContext.rttiType, fieldId, location)
+
+                body.buildInstr(
+                    op = WasmOp.REF_CAST,
+                    location = location,
+                    WasmImmediate.HeapType(WasmHeapType.Type(wasmFileCodegenContext.wasmStringsElements.createStringLiteralType))
+                )
+                body.buildInstr(
+                    op = WasmOp.CALL_REF,
+                    location = location,
+                    WasmImmediate.TypeIdx(wasmFileCodegenContext.wasmStringsElements.createStringLiteralType),
+                )
+            }
+
             wasmSymbols.reflectionSymbols.wasmGetInterfaceVTableBodyImpl -> {
                 //This is implementation of getInterfaceVTable, so argument locals could be used from the call-site
                 //obj.interfacesArray
@@ -1138,7 +1158,7 @@ class BodyGenerator(
             }
 
             wasmSymbols.stringGetPoolSize -> {
-                body.buildConstI32Symbol(wasmFileCodegenContext.stringPoolSize, location)
+                body.buildConstI32Symbol(wasmFileCodegenContext.wasmStringsElements.stringPoolSize, location)
             }
 
             wasmSymbols.getWasmAbiVersion -> {
@@ -1563,6 +1583,8 @@ class BodyGenerator(
         val vTableSpecialITableFieldId = WasmSymbol(0)
         val rttiImplementedIFacesFieldId = WasmSymbol(0)
         val rttiSuperClassFieldId = WasmSymbol(1)
+        val rttiQualifierGetterFieldId = WasmSymbol(10)
+        val rttiSimpleNameGetterFieldId = WasmSymbol(11)
         private val exceptionTagId = WasmSymbol(0)
         private val relativeTryLevelForRethrowInFinallyBlock = WasmImmediate.LabelIdx(0)
     }

@@ -80,7 +80,6 @@ class WasmBackendContext(
 
         var objectInstanceFieldInitializer: IrSimpleFunction? = null
         var stringPoolFieldInitializer: IrSimpleFunction? = null
-        var stringAddressesAndLengthsInitializer: IrSimpleFunction? = null
         var nonConstantFieldInitializer: IrSimpleFunction? = null
     }
 

@@ -99,20 +99,16 @@ class WasmFileCodegenContext(
         wasmFileFragment.jsModuleImports[irFunction.getReferenceKey()] = module
     }
 
-    val stringPoolSize: WasmSymbol<Int>
-        get() = wasmFileFragment.stringPoolSize
-            ?: WasmSymbol<Int>().also { wasmFileFragment.stringPoolSize = it }
+    val wasmStringsElements: WasmStringsElements
+        get() = wasmFileFragment.wasmStringsElements
+            ?: WasmStringsElements().also { wasmFileFragment.wasmStringsElements = it }
 
     fun addObjectInstanceFieldInitializer(initializer: IrFunctionSymbol) {
         wasmFileFragment.objectInstanceFieldInitializers.add(initializer.getReferenceKey())
     }
 
     fun setStringPoolFieldInitializer(initializer: IrFunctionSymbol) {
-        wasmFileFragment.stringPoolFieldInitializer = initializer.getReferenceKey()
-    }
-
-    fun setStringAddressesAndLengthsInitializer(initializer: IrFunctionSymbol) {
-        wasmFileFragment.stringAddressesAndLengthsInitializer = initializer.getReferenceKey()
+        wasmStringsElements.stringPoolFieldInitializer = initializer.getReferenceKey()
     }
 
     fun addNonConstantFieldInitializers(initializer: IrFunctionSymbol) {
@@ -151,8 +147,9 @@ class WasmFileCodegenContext(
         jsToKotlinAnyAdapter: IrFunctionSymbol?,
         unitGetInstance: IrFunctionSymbol?,
         runRootSuites: IrFunctionSymbol?,
+        createString: IrFunctionSymbol?,
     ) {
-        if (throwable != null || tryGetAssociatedObject != null || jsToKotlinAnyAdapter != null || unitGetInstance != null || runRootSuites != null) {
+        if (throwable != null || tryGetAssociatedObject != null || jsToKotlinAnyAdapter != null || unitGetInstance != null || runRootSuites != null || createString != null) {
             val originalSignatures = wasmFileFragment.builtinIdSignatures
             wasmFileFragment.builtinIdSignatures = BuiltinIdSignatures(
                 throwable = originalSignatures?.throwable
@@ -165,6 +162,8 @@ class WasmFileCodegenContext(
                     ?: unitGetInstance?.getReferenceKey(),
                 runRootSuites = originalSignatures?.runRootSuites
                     ?: runRootSuites?.getReferenceKey(),
+                createString = originalSignatures?.createString
+                    ?: createString?.getReferenceKey(),
             )
         }
     }

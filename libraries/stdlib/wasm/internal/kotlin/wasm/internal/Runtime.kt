@@ -127,13 +127,7 @@ internal fun getWasmAbiVersion(): Int = 0
 internal fun stringGetPoolSize(): Int =
     implementedAsIntrinsic
 
-@Suppress("DEPRECATION")
-@OptIn(ExperimentalStdlibApi::class)
-@EagerInitialization
-internal val stringAddressesAndLengths: WasmLongArray =
-    array_new_data<WasmLongArray>(0, stringGetPoolSize(), 1)
-
-// This initializer is a special case in FieldInitializersLowering
+// This initializer is a special case in FieldInitializersLowering (remove after bootstrap)
 @Suppress("DEPRECATION")
 @OptIn(ExperimentalStdlibApi::class)
 @EagerInitialization

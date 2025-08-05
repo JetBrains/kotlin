@@ -11,8 +11,6 @@ internal class TypeInfoData(val typeId: Long, val packageName: String, val typeN
 
 private const val TYPE_INFO_FLAG_ANONYMOUS_CLASS = 1
 private const val TYPE_INFO_FLAG_LOCAL_CLASS = 2
-private const val TYPE_INFO_FLAG_FITS_LATIN1_QUALIFIER = 4
-private const val TYPE_INFO_FLAG_FITS_LATIN1_SIMPLE_NAME = 8
 
 @Suppress("UNUSED_PARAMETER")
 @WasmArrayOf(Long::class, isNullable = false, isMutable = false)
@@ -60,24 +58,14 @@ internal fun getQualifiedName(rtti: kotlin.wasm.internal.reftypes.structref): St
 
 internal fun getPackageName(rtti: kotlin.wasm.internal.reftypes.structref): String {
     if (getWasmAbiVersion() < 1) return getPackageName0(rtti)
-
-    val flagFitsOneBitQualifier = wasmGetRttiIntField(9, rtti) and TYPE_INFO_FLAG_FITS_LATIN1_QUALIFIER
     val poolId = wasmGetRttiIntField(2, rtti)
-    return if (flagFitsOneBitQualifier != 0)
-        stringLiteralLatin1(poolId)
-    else
-        stringLiteralUtf16(poolId)
+    return wasmGetQualifierImpl(poolId, rtti)
 }
 
 internal fun getSimpleName(rtti: kotlin.wasm.internal.reftypes.structref): String {
     if (getWasmAbiVersion() < 1) return getSimpleName0(rtti)
-
-    val flagFitsOneBitSimpleName = wasmGetRttiIntField(9, rtti) and TYPE_INFO_FLAG_FITS_LATIN1_SIMPLE_NAME
     val poolId = wasmGetRttiIntField(3, rtti)
-    return if (flagFitsOneBitSimpleName != 0)
-        stringLiteralLatin1(poolId)
-    else
-        stringLiteralUtf16(poolId)
+    return wasmGetSimpleNameImpl(poolId, rtti)
 }
 
 internal fun getTypeId(rtti: kotlin.wasm.internal.reftypes.structref): Long =
@@ -139,3 +127,11 @@ internal fun getSimpleName0(rtti: kotlin.wasm.internal.reftypes.structref): Stri
     length = wasmGetRttiIntField(6, rtti),
     poolId = wasmGetRttiIntField(7, rtti),
 )
+
+@Suppress("UNUSED_PARAMETER")
+internal fun wasmGetQualifierImpl(poolId: Int, rtti: kotlin.wasm.internal.reftypes.structref): String =
+    getPackageName0(rtti) // TODO: replace to intrinsic implementation after bootstrap
+
+@Suppress("UNUSED_PARAMETER")
+internal fun wasmGetSimpleNameImpl(poolId: Int, rtti: kotlin.wasm.internal.reftypes.structref): String =
+    getSimpleName0(rtti) // TODO: replace to intrinsic implementation after bootstrap

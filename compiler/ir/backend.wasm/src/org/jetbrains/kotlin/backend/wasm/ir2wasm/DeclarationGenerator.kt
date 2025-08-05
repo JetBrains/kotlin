@@ -31,8 +31,6 @@ import org.jetbrains.kotlin.wasm.ir.source.location.SourceLocation
 
 private const val TYPE_INFO_FLAG_ANONYMOUS_CLASS = 1
 private const val TYPE_INFO_FLAG_LOCAL_CLASS = 2
-private const val TYPE_INFO_FLAG_FITS_LATIN1_QUALIFIER = 4
-private const val TYPE_INFO_FLAG_FITS_LATIN1_SIMPLE_NAME = 8
 
 class DeclarationGenerator(
     private val backendContext: WasmBackendContext,
@@ -400,9 +398,31 @@ class DeclarationGenerator(
 
             val isAnonymousFlag = if (klass.isAnonymousObject) TYPE_INFO_FLAG_ANONYMOUS_CLASS else 0
             val isLocalFlag = if (klass.isOriginallyLocalDeclaration) TYPE_INFO_FLAG_LOCAL_CLASS else 0
-            val fitsLatin1Qualifier = if (qualifier.fitsLatin1) TYPE_INFO_FLAG_FITS_LATIN1_QUALIFIER else 0
-            val fitsLatin1SimpleName = if (simpleName.fitsLatin1) TYPE_INFO_FLAG_FITS_LATIN1_SIMPLE_NAME else 0
-            buildConstI32(isAnonymousFlag or isLocalFlag or fitsLatin1Qualifier or fitsLatin1SimpleName, location)
+            buildConstI32(isAnonymousFlag or isLocalFlag, location)
+
+            val qualifierStringLoaderRef =
+                if (qualifier.fitsLatin1)
+                    wasmFileCodegenContext.wasmStringsElements.createStringLiteralLatin1
+                else
+                    wasmFileCodegenContext.wasmStringsElements.createStringLiteralUtf16
+
+            buildInstr(
+                WasmOp.REF_FUNC,
+                location,
+                WasmImmediate.FuncIdx(qualifierStringLoaderRef),
+            )
+
+            val simpleNameStringLoaderRef =
+                if (simpleName.fitsLatin1)
+                    wasmFileCodegenContext.wasmStringsElements.createStringLiteralLatin1
+                else
+                    wasmFileCodegenContext.wasmStringsElements.createStringLiteralUtf16
+
+            buildInstr(
+                WasmOp.REF_FUNC,
+                location,
+                WasmImmediate.FuncIdx(simpleNameStringLoaderRef),
+            )
 
             buildStructNew(wasmFileCodegenContext.rttiType, location)
         }
@@ -631,9 +651,9 @@ fun generateConstExpression(
             body.commentGroupStart { "const string: \"$stringValue\"" }
             body.buildConstI32Symbol(literalPoolId, location)
             if (stringValue.fitsLatin1) {
-                body.buildCall(context.referenceFunction(backendContext.wasmSymbols.stringGetLiteralLatin1), location)
+                body.buildCall(context.wasmStringsElements.createStringLiteralLatin1, location)
             } else {
-                body.buildCall(context.referenceFunction(backendContext.wasmSymbols.stringGetLiteralUtf16), location)
+                body.buildCall(context.wasmStringsElements.createStringLiteralUtf16, location)
             }
             body.commentGroupEnd()
         }
