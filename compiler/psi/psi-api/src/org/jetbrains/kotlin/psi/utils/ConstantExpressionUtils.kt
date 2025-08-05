@@ -18,7 +18,6 @@ import org.jetbrains.kotlin.psi.stubs.ConstantValueKind
 import org.jetbrains.kotlin.psi.stubs.KotlinConstantExpressionStub
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementType
 import org.jetbrains.kotlin.utils.extractRadix
-import java.lang.IllegalArgumentException
 
 /**
  * Checks whether the [text] representation of a number literal has a long number suffix.
@@ -158,7 +157,7 @@ fun hasIllegallyPositionedUnderscore(text: String, isFloatingPoint: Boolean): Bo
 /**
  * Converts the given [ConstantValueKind] to the corresponding [com.intellij.psi.tree.IElementType].
  */
-fun ConstantValueKind.toConstantExpressionElementType(): KtStubElementType<KotlinConstantExpressionStub, KtConstantExpression> {
+fun ConstantValueKind.toConstantExpressionElementType(): KtStubElementType<out KotlinConstantExpressionStub, KtConstantExpression> {
     return when (this) {
         ConstantValueKind.NULL -> NULL
         ConstantValueKind.BOOLEAN_CONSTANT -> BOOLEAN_CONSTANT
@@ -172,7 +171,7 @@ fun ConstantValueKind.toConstantExpressionElementType(): KtStubElementType<Kotli
  * Converts the given [com.intellij.psi.tree.IElementType] to the corresponding [ConstantValueKind].
  * The element type must be one of the constant expression types. Otherwise, an [IllegalArgumentException] is thrown.
  */
-fun KtStubElementType<KotlinConstantExpressionStub, KtConstantExpression>.toConstantValueKind(): ConstantValueKind {
+fun KtStubElementType<out KotlinConstantExpressionStub, KtConstantExpression>.toConstantValueKind(): ConstantValueKind {
     return when (this) {
         NULL -> ConstantValueKind.NULL
         BOOLEAN_CONSTANT -> ConstantValueKind.BOOLEAN_CONSTANT

@@ -13,13 +13,12 @@ import com.intellij.psi.tree.IStubFileElementType
 import org.jetbrains.kotlin.idea.KotlinLanguage
 import org.jetbrains.kotlin.parsing.KotlinParser
 import org.jetbrains.kotlin.psi.KtImplementationDetail
-import org.jetbrains.kotlin.psi.stubs.KotlinFileStub
 import org.jetbrains.kotlin.psi.stubs.KotlinStubVersions
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinFileStubImpl
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinFileStubKindImpl
 
 @OptIn(KtImplementationDetail::class)
-object KtFileElementType : IStubFileElementType<KotlinFileStub>(KtFileElementType.NAME, KotlinLanguage.INSTANCE) {
+object KtFileElementType : IStubFileElementType<KotlinFileStubImpl>(KtFileElementType.NAME, KotlinLanguage.INSTANCE) {
     internal const val NAME = "kotlin.FILE"
 
     override fun getBuilder(): StubBuilder {
@@ -34,11 +33,11 @@ object KtFileElementType : IStubFileElementType<KotlinFileStub>(KtFileElementTyp
         return NAME
     }
 
-    override fun serialize(stub: KotlinFileStub, dataStream: StubOutputStream) {
+    override fun serialize(stub: KotlinFileStubImpl, dataStream: StubOutputStream) {
         KotlinFileStubKindImpl.serialize(stub.kind, dataStream)
     }
 
-    override fun deserialize(dataStream: StubInputStream, parentStub: StubElement<*>?): KotlinFileStub {
+    override fun deserialize(dataStream: StubInputStream, parentStub: StubElement<*>?): KotlinFileStubImpl {
         val kind = KotlinFileStubKindImpl.deserialize(dataStream)
         return KotlinFileStubImpl(ktFile = null, kind = kind)
     }
@@ -51,6 +50,6 @@ object KtFileElementType : IStubFileElementType<KotlinFileStub>(KtFileElementTyp
     }
 
     override fun indexStub(stub: PsiFileStub<*>, sink: IndexSink) {
-        StubIndexService.getInstance().indexFile(stub as KotlinFileStub, sink)
+        StubIndexService.getInstance().indexFile(stub as KotlinFileStubImpl, sink)
     }
 }

@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.psi.stubs.impl
 
 import com.intellij.psi.stubs.PsiFileStubImpl
-import com.intellij.psi.tree.IStubFileElementType
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.psi.KtImplementationDetail
@@ -31,7 +30,7 @@ class KotlinFileStubImpl @KtImplementationDetail internal constructor(
     val facadeFqName: FqName?
         get() = (kind as? KotlinFileStubKind.WithPackage.Facade)?.facadeFqName
 
-    override fun getType(): IStubFileElementType<KotlinFileStub> = KtFileElementType
+    override fun getType(): KtFileElementType = KtFileElementType
 
     override fun toString(): String = "${STUB_TO_STRING_PREFIX}FILE[kind=$kind]"
 

@@ -459,7 +459,7 @@ org.jetbrains.kotlin.psi.KtCollectionLiteralExpression:getRightBracket()
 org.jetbrains.kotlin.psi.KtCollectionLiteralExpression:getTrailingComma()
 org.jetbrains.kotlin.psi.KtCommonFile.fileAnnotationList
 org.jetbrains.kotlin.psi.KtCommonFile.findAliasByFqName(FqName)
-org.jetbrains.kotlin.psi.KtCommonFile.findChildByTypeOrClass(KtStubElementType<S, P>, Class<P>)
+org.jetbrains.kotlin.psi.KtCommonFile.findChildByTypeOrClass(KtStubElementType<out S, P>, Class<P>)
 org.jetbrains.kotlin.psi.KtCommonFile.findChildrenByTypeOrClass(KtStubElementType<*, T>, Class<T>)
 org.jetbrains.kotlin.psi.KtCommonFile.findImportByAlias(String)
 org.jetbrains.kotlin.psi.KtCommonFile.getNameForGivenImportAlias(Name)

@@ -18,7 +18,10 @@ import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementType
 
 abstract class KtConstructor<T : KtConstructor<T>> : KtDeclarationStub<KotlinConstructorStub<T>>, KtFunction {
     protected constructor(node: ASTNode) : super(node)
-    protected constructor(stub: KotlinConstructorStub<T>, nodeType: KtStubElementType<KotlinConstructorStub<T>, T>) : super(stub, nodeType)
+    protected constructor(
+        stub: KotlinConstructorStub<T>,
+        nodeType: KtStubElementType<out KotlinConstructorStub<T>, T>,
+    ) : super(stub, nodeType)
 
     abstract fun getContainingClassOrObject(): KtClassOrObject
 

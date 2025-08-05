@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.psi.stubs.impl.KotlinStubOrigin;
 
 import java.io.IOException;
 
-public class KtFunctionElementType extends KtStubElementType<KotlinFunctionStub, KtNamedFunction> {
+public class KtFunctionElementType extends KtStubElementType<KotlinFunctionStubImpl, KtNamedFunction> {
 
     private static final String NAME = "kotlin.FUNCTION";
 
@@ -32,7 +32,7 @@ public class KtFunctionElementType extends KtStubElementType<KotlinFunctionStub,
 
     @NotNull
     @Override
-    public KotlinFunctionStub createStub(@NotNull KtNamedFunction psi, @NotNull StubElement parentStub) {
+    public KotlinFunctionStubImpl createStub(@NotNull KtNamedFunction psi, @NotNull StubElement parentStub) {
         boolean isTopLevel = psi.getParent() instanceof KtFile;
         boolean isExtension = psi.getReceiverTypeReference() != null;
         FqName fqName = KtPsiUtilKt.safeFqNameForLazyResolve(psi);
@@ -48,7 +48,7 @@ public class KtFunctionElementType extends KtStubElementType<KotlinFunctionStub,
     }
 
     @Override
-    public void serialize(@NotNull KotlinFunctionStub stub, @NotNull StubOutputStream dataStream) throws IOException {
+    public void serialize(@NotNull KotlinFunctionStubImpl stub, @NotNull StubOutputStream dataStream) throws IOException {
         dataStream.writeName(stub.getName());
         dataStream.writeBoolean(stub.isTopLevel());
 
@@ -61,20 +61,17 @@ public class KtFunctionElementType extends KtStubElementType<KotlinFunctionStub,
         dataStream.writeBoolean(stub.hasTypeParameterListBeforeFunctionName());
         boolean haveContract = stub.mayHaveContract();
         dataStream.writeBoolean(haveContract);
-        if (stub instanceof KotlinFunctionStubImpl) {
-            KotlinFunctionStubImpl stubImpl = (KotlinFunctionStubImpl) stub;
 
-            if (haveContract) {
-                stubImpl.serializeContract(dataStream);
-            }
-
-            KotlinStubOrigin.serialize(stubImpl.getOrigin(), dataStream);
+        if (haveContract) {
+            stub.serializeContract(dataStream);
         }
+
+        KotlinStubOrigin.serialize(stub.getOrigin(), dataStream);
     }
 
     @NotNull
     @Override
-    public KotlinFunctionStub deserialize(@NotNull StubInputStream dataStream, StubElement parentStub) throws IOException {
+    public KotlinFunctionStubImpl deserialize(@NotNull StubInputStream dataStream, StubElement parentStub) throws IOException {
         StringRef name = dataStream.readName();
         boolean isTopLevel = dataStream.readBoolean();
 
@@ -95,7 +92,7 @@ public class KtFunctionElementType extends KtStubElementType<KotlinFunctionStub,
     }
 
     @Override
-    public void indexStub(@NotNull KotlinFunctionStub stub, @NotNull IndexSink sink) {
+    public void indexStub(@NotNull KotlinFunctionStubImpl stub, @NotNull IndexSink sink) {
         StubIndexService.getInstance().indexFunction(stub, sink);
     }
 

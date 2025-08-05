@@ -13,17 +13,21 @@ import org.jetbrains.kotlin.psi.KtContextReceiver
 import org.jetbrains.kotlin.psi.stubs.KotlinContextReceiverStub
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinContextReceiverStubImpl
 
-class KtContextReceiverElementType(debugName: String) : KtStubElementType<KotlinContextReceiverStub, KtContextReceiver>(
+class KtContextReceiverElementType(debugName: String) : KtStubElementType<KotlinContextReceiverStubImpl, KtContextReceiver>(
     debugName,
     KtContextReceiver::class.java,
-    KotlinContextReceiverStub::class.java
+    KotlinContextReceiverStub::class.java,
 ) {
     override fun createStub(
         element: KtContextReceiver,
-        parentStub: StubElement<*>?
-    ): KotlinContextReceiverStub = KotlinContextReceiverStubImpl(parentStub, this, StringRef.fromString(element.labelName()))
+        parentStub: StubElement<*>?,
+    ): KotlinContextReceiverStubImpl = KotlinContextReceiverStubImpl(
+        parent = parentStub,
+        elementType = this,
+        label = StringRef.fromString(element.labelName()),
+    )
 
-    override fun serialize(stub: KotlinContextReceiverStub, dataStream: StubOutputStream) =
+    override fun serialize(stub: KotlinContextReceiverStubImpl, dataStream: StubOutputStream) =
         dataStream.writeName(stub.getLabel())
 
     override fun deserialize(dataStream: StubInputStream, parentStub: StubElement<*>?) =

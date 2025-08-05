@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -14,17 +14,21 @@ import org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderWithTextStub
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinPlaceHolderWithTextStubImpl
 
 class KtPlaceHolderWithTextStubElementType<T : KtElementImplStub<out StubElement<*>>>(@NonNls debugName: String, psiClass: Class<T>) :
-    KtStubElementType<KotlinPlaceHolderWithTextStub<T>, T>(debugName, psiClass, KotlinPlaceHolderWithTextStub::class.java) {
+    KtStubElementType<KotlinPlaceHolderWithTextStubImpl<T>, T>(
+        debugName,
+        psiClass,
+        KotlinPlaceHolderWithTextStub::class.java,
+    ) {
 
-    override fun createStub(psi: T, parentStub: StubElement<*>): KotlinPlaceHolderWithTextStub<T> {
+    override fun createStub(psi: T, parentStub: StubElement<*>): KotlinPlaceHolderWithTextStubImpl<T> {
         return KotlinPlaceHolderWithTextStubImpl(parentStub, this, psi.text)
     }
 
-    override fun serialize(stub: KotlinPlaceHolderWithTextStub<T>, dataStream: StubOutputStream) {
+    override fun serialize(stub: KotlinPlaceHolderWithTextStubImpl<T>, dataStream: StubOutputStream) {
         dataStream.writeUTFFast(stub.text())
     }
 
-    override fun deserialize(dataStream: StubInputStream, parentStub: StubElement<*>): KotlinPlaceHolderWithTextStub<T> {
+    override fun deserialize(dataStream: StubInputStream, parentStub: StubElement<*>): KotlinPlaceHolderWithTextStubImpl<T> {
         val text = dataStream.readUTFFast()
         return KotlinPlaceHolderWithTextStubImpl(parentStub, this, text)
     }
