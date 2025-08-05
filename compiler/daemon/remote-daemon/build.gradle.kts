@@ -45,16 +45,19 @@ dependencies {
 
     implementation(project(":kotlin-daemon-client"))
     implementation("io.grpc:grpc-kotlin-stub:1.4.3")
-    implementation("io.grpc:grpc-stub:1.73.0")
-    implementation("io.grpc:grpc-protobuf:1.73.0")
-    implementation("io.grpc:grpc-netty:1.73.0")
-
+    implementation("io.grpc:grpc-stub:1.74.0")
+    implementation("io.grpc:grpc-protobuf:1.74.0")
+    implementation("io.grpc:grpc-core:1.74.0")
+    implementation("io.grpc:grpc-netty:1.74.0")
     implementation("com.google.protobuf:protobuf-kotlin:4.31.1")
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.9.0")
 
     runtimeOnly(project(":kotlin-compiler-embeddable"))
 
     testImplementation(kotlin("test"))
-    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.9.0")
+    testImplementation("io.grpc:grpc-testing:1.74.0")
+    testImplementation("io.grpc:grpc-inprocess:1.74.0")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.10.2")
 }
 
 

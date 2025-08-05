@@ -2,24 +2,23 @@
  * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
-
-
+import client.RequestHandler
 import client.auth.BasicHTTPAuthClient
 import client.auth.CallAuthenticator
 import common.OneFileOneChunkStrategy
-import common.SERVER_CACHE_CACHE_DIR
+import common.SERVER_CACHE_DIR
 import common.SERVER_COMPILATION_WORKSPACE_DIR
 import common.SERVER_SOURCE_FILES_CACHE_DIR
 import common.computeSha256
 import common.toCompileRequest
 import io.grpc.ManagedChannel
 import io.grpc.Server
+import io.grpc.ServerInterceptors
 import io.grpc.inprocess.InProcessChannelBuilder
 import io.grpc.inprocess.InProcessServerBuilder
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.receiveAsFlow
+import kotlinx.coroutines.flow.takeWhile
 import kotlinx.coroutines.test.runTest
 import model.CompilationMetadata
 import model.FileTransferRequest
@@ -29,25 +28,25 @@ import org.jetbrains.kotlin.daemon.common.CompileService
 import org.jetbrains.kotlin.daemon.common.CompilerMode
 import org.jetbrains.kotlin.server.CompileRequestGrpc
 import org.jetbrains.kotlin.server.CompileServiceGrpcKt
-import org.jetbrains.kotlin.server.FileTransferReplyGrpc
-import org.jetbrains.kotlin.server.FileTransferRequestGrpc
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.BeforeAll
 import server.CacheHandler
 import server.GrpcRemoteCompilationService
 import server.InProcessCompilationService
+import server.auth.BasicHTTPAuthServer
+import server.interceptors.AuthInterceptor
+import server.interceptors.LoggingInterceptor
 import java.io.File
-import kotlin.collections.forEach
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
-import kotlin.test.expect
 
 class CachingTest {
 
     companion object {
 
-        private const val serverName = "test-kotlin-daemon-server"
+        private const val SERVER_NAME = "test-kotlin-daemon-server"
+        private const val PROJECT_NAME = "testProject"
         private lateinit var server: Server
         private lateinit var channel: ManagedChannel
 
@@ -57,15 +56,21 @@ class CachingTest {
             val cacheHandler = CacheHandler(OneFileOneChunkStrategy())
             val compilationService = InProcessCompilationService()
             server = InProcessServerBuilder
-                .forName(serverName)
+                .forName(SERVER_NAME)
                 .addService(
-                    GrpcRemoteCompilationService(
-                        cacheHandler, compilationService
-                    )
+                    ServerInterceptors
+                        .intercept(
+                            GrpcRemoteCompilationService(
+                                cacheHandler,
+                                compilationService
+                            ),
+                            LoggingInterceptor(),
+                            AuthInterceptor(BasicHTTPAuthServer())
+                        )
                 )
                 .build()
                 .start()
-            channel = InProcessChannelBuilder.forName(serverName).build()
+            channel = InProcessChannelBuilder.forName(SERVER_NAME).build()
         }
 
 
@@ -87,23 +92,9 @@ class CachingTest {
 
     @AfterEach
     fun cleanup() {
-        println("after each called ")
-        val currentDir = File(System.getProperty("user.dir"))
-
-        println("current dir: ${currentDir.absolutePath}")
-        val cacheDir = File(SERVER_CACHE_CACHE_DIR)
-        val cacheDirAbsolute = File("/Users/michal.svec/Desktop/kotlin/compiler/daemon/remote-daemon/src/main/kotlin/server/cache")
-
-        println("cache dir aboslute exists: ${cacheDirAbsolute.exists()}")
-        println("cache dir aboslute path: ${cacheDirAbsolute.absolutePath}")
-        println("Same canonical path: ${cacheDir.canonicalFile == cacheDirAbsolute.canonicalFile}")
-
-        println("cache dir: ${cacheDir.absolutePath}")
-        println("cache exist: ${cacheDir.exists()}")
-        cacheDir.deleteRecursively()
+        File(SERVER_CACHE_DIR).deleteRecursively()
         File(SERVER_COMPILATION_WORKSPACE_DIR).deleteRecursively()
     }
-
 
     @Test
     fun testIfAbsentFileIsSavedInCache() = runTest {
@@ -115,32 +106,41 @@ class CachingTest {
 
         val sourceFileFingerprint = computeSha256(sourceFile)
 
-        val compileRequestFlow = flow{
-            emit(CompilationMetadata(
-                    "testingProject",
-                    1,
-                    listOf(),
-                    CompilationOptions(
-                        compilerMode = CompilerMode.NON_INCREMENTAL_COMPILER,
-                        targetPlatform = CompileService.TargetPlatform.JVM,
-                        reportSeverity = 0,
-                        reportCategories = arrayOf(),
-                        requestedCompilationResults = arrayOf(),
-                    )
-                ).toGrpc().toCompileRequest())
+        val channel = Channel<CompileRequestGrpc>(capacity = Channel.UNLIMITED)
 
-            emit(
-                FileTransferRequest(
-                    sourceFile.path,
-                    sourceFileFingerprint
-                ).toGrpc().toCompileRequest()
-            )
-        }
+        channel.send(
+            CompilationMetadata(
+                PROJECT_NAME,
+                1,
+                listOf(),
+                CompilationOptions(
+                    compilerMode = CompilerMode.NON_INCREMENTAL_COMPILER,
+                    targetPlatform = CompileService.TargetPlatform.JVM,
+                    reportSeverity = 0,
+                    reportCategories = arrayOf(),
+                    requestedCompilationResults = arrayOf(),
+                )
+            ).toGrpc().toCompileRequest()
+        )
 
-        val response = client.compile(compileRequestFlow).first()
-        assertTrue { response.hasFileTransferReply() }
-        assertFalse { response.fileTransferReply.isPresent }
-        Thread.sleep(10000)
+        channel.send(
+            FileTransferRequest(
+                sourceFile.path,
+                sourceFileFingerprint
+            ).toGrpc().toCompileRequest()
+        )
+
+        client.compile(channel.receiveAsFlow())
+            .takeWhile { !it.hasCompiledFileChunk() }
+            .collect {
+                assertTrue { it.hasFileTransferReply() }
+                assertFalse { it.fileTransferReply.isPresent }
+                RequestHandler(OneFileOneChunkStrategy())
+                    .buildFileChunkStream(sourceFile.path).collect { chunk ->
+                        channel.send(chunk)
+                    }
+            }
+
         assertTrue { File("$SERVER_SOURCE_FILES_CACHE_DIR/$sourceFileFingerprint").exists() }
     }
 }

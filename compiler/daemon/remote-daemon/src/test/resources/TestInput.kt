@@ -3,8 +3,6 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package input
-
 fun main(){
-    println("This is TestInput.kt file")
+    kotlin.io.println("This is TestInput.kt file")
 }
