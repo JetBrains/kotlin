@@ -61,17 +61,12 @@ class CustomBitSet private constructor(size: Int, data: LongArray) {
 
     fun forEachBit(block: (Int) -> Unit) {
         for (index in 0 until size) {
-            val d = data[index]
-            if (d == 0L) continue
-            var idx = index shl 6
-            var mask = 1L
-            for (offset in 0 until 64) {
-                val bit = d and mask
-                if (bit != 0L) {
-                    block(idx)
-                }
-                mask = mask shl 1
-                ++idx
+            var d = data[index]
+            val idx = index shl 6
+            while (d != 0L) {
+                val t = d and -d
+                d -= t
+                block(idx + t.countTrailingZeroBits())
             }
         }
     }
