@@ -12,6 +12,10 @@ import kotlin.wasm.internal.reftypes.anyref
 import kotlin.wasm.unsafe.withScopedMemoryAllocator
 import kotlin.wasm.unsafe.UnsafeWasmMemoryApi
 
+@ExcludedFromCodegen
+@ExperimentalWasmJsInterop
+internal external class JsStringRef internal constructor() : JsAny
+
 internal typealias ExternalInterfaceType = JsAny
 
 internal class JsExternalBox @WasmPrimitiveConstructor constructor(val ref: ExternalInterfaceType) {
