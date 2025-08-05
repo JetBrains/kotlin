@@ -204,6 +204,7 @@ fun Project.projectTest(
         if (jUnitMode == JUnitMode.JUnit4) {
             jvmArgumentProviders.add {
                 listOf(
+                    "-verbose:class",
                     "-javaagent:${classpath.find { it.name.contains("junit-foundation") }?.absolutePath ?:
                     error("junit-foundation not found in ${classpath.joinToString("\n")}")}"
                 )
