@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.backend.common.lower.LateinitLowering
 import org.jetbrains.kotlin.backend.common.lower.SharedVariablesLowering
 import org.jetbrains.kotlin.backend.common.lower.inline.AvoidLocalFOsInInlineFunctionsLowering
 import org.jetbrains.kotlin.backend.common.lower.inline.InlineCallCycleCheckerLowering
+import org.jetbrains.kotlin.backend.common.lower.inline.LocalDeclarationsInInlineLambdasPopupLowering
 import org.jetbrains.kotlin.backend.common.lower.inline.LocalDeclarationsInInlineLambdasPreparationLowering
 import org.jetbrains.kotlin.backend.common.phaser.IrValidationAfterInliningAllFunctionsPhase
 import org.jetbrains.kotlin.backend.common.phaser.IrValidationAfterInliningOnlyPrivateFunctionsPhase
@@ -42,6 +43,12 @@ private val sharedVariablesLoweringPhase = makeIrModulePhase(
 private val prepareLocalDeclarationsInInlineLambdasPhase = makeIrModulePhase(
     ::LocalDeclarationsInInlineLambdasPreparationLowering,
     name = "LocalDeclarationsInInlineLambdasPreparationPhase",
+)
+
+private val popupLocalDeclarationsInInlineLambdasPhase = makeIrModulePhase(
+    ::LocalDeclarationsInInlineLambdasPopupLowering,
+    name = "LocalDeclarationsInInlineLambdasPopupPhase",
+    prerequisite = setOf(prepareLocalDeclarationsInInlineLambdasPhase)
 )
 
 private val arrayConstructorPhase = makeIrModulePhase(
@@ -145,6 +152,7 @@ fun loweringsOfTheFirstPhase(
         this += lateinitPhase
         this += sharedVariablesLoweringPhase
         this += prepareLocalDeclarationsInInlineLambdasPhase
+        this += popupLocalDeclarationsInInlineLambdasPhase
         this += arrayConstructorPhase
         this += checkInlineCallCyclesPhase
         this += inlineOnlyPrivateFunctionsPhase

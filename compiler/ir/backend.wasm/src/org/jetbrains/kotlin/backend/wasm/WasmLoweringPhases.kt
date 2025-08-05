@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.LoweringContext
 import org.jetbrains.kotlin.backend.common.ir.Symbols
 import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.common.lower.coroutines.AddContinuationToNonLocalSuspendFunctionsLowering
+import org.jetbrains.kotlin.backend.common.lower.inline.LocalDeclarationsInInlineLambdasPopupLowering
 import org.jetbrains.kotlin.backend.common.lower.inline.LocalDeclarationsInInlineLambdasPreparationLowering
 import org.jetbrains.kotlin.backend.common.lower.loops.ForLoopsLowering
 import org.jetbrains.kotlin.backend.common.lower.optimizations.PropertyAccessorInlineLowering
@@ -123,6 +124,12 @@ private val specializeSharedVariableBoxesPhase = makeIrModulePhase<WasmBackendCo
 private val prepareLocalDeclarationsInInlineLambdasPhase = makeIrModulePhase(
     ::LocalDeclarationsInInlineLambdasPreparationLowering,
     name = "LocalDeclarationsInInlineLambdasPreparationPhase",
+)
+
+private val popupLocalDeclarationsInInlineLambdasPhase = makeIrModulePhase(
+    ::LocalDeclarationsInInlineLambdasPopupLowering,
+    name = "LocalDeclarationsInInlineLambdasPopupLowering",
+    prerequisite = setOf(prepareLocalDeclarationsInInlineLambdasPhase),
 )
 
 /**
@@ -606,6 +613,7 @@ fun getWasmLowerings(
         lateinitPhase,
         sharedVariablesLoweringPhase,
         prepareLocalDeclarationsInInlineLambdasPhase,
+        popupLocalDeclarationsInInlineLambdasPhase,
         arrayConstructorPhase,
         inlineOnlyPrivateFunctionsPhase,
         outerThisSpecialAccessorInInlineFunctionsPhase,

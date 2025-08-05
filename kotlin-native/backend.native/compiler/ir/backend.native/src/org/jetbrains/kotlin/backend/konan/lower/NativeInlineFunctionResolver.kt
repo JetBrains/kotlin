@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.lower.ArrayConstructorLowering
 import org.jetbrains.kotlin.backend.common.lower.LateinitLowering
 import org.jetbrains.kotlin.backend.common.lower.SharedVariablesLowering
 import org.jetbrains.kotlin.backend.common.lower.UpgradeCallableReferences
+import org.jetbrains.kotlin.backend.common.lower.inline.LocalDeclarationsInInlineLambdasPopupLowering
 import org.jetbrains.kotlin.backend.common.lower.inline.LocalDeclarationsInInlineLambdasPreparationLowering
 import org.jetbrains.kotlin.backend.konan.Context
 import org.jetbrains.kotlin.backend.konan.NativeGenerationState
@@ -60,6 +61,7 @@ internal class NativeInlineFunctionResolver(
         SharedVariablesLowering(context).lower(body, function)
 
         LocalDeclarationsInInlineLambdasPreparationLowering(context).lower(body, function)
+        LocalDeclarationsInInlineLambdasPopupLowering(context).lower(body, function)
 
         ArrayConstructorLowering(context).lower(body, function)
 

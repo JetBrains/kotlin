@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.common.ir.Symbols
 import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.common.lower.coroutines.AddContinuationToLocalSuspendFunctionsLowering
 import org.jetbrains.kotlin.backend.common.lower.coroutines.AddContinuationToNonLocalSuspendFunctionsLowering
+import org.jetbrains.kotlin.backend.common.lower.inline.LocalDeclarationsInInlineLambdasPopupLowering
 import org.jetbrains.kotlin.backend.common.lower.inline.LocalDeclarationsInInlineLambdasPreparationLowering
 import org.jetbrains.kotlin.backend.common.lower.loops.ForLoopsLowering
 import org.jetbrains.kotlin.backend.common.phaser.*
@@ -178,6 +179,12 @@ private val sharedVariablesLoweringPhase = makeIrModulePhase(
 private val prepareLocalDeclarationsInInlineLambdasPhase = makeIrModulePhase(
     ::LocalDeclarationsInInlineLambdasPreparationLowering,
     name = "LocalDeclarationsInInlineLambdasPreparationPhase",
+)
+
+private val popupLocalDeclarationsInInlineLambdasPhase = makeIrModulePhase(
+    ::LocalDeclarationsInInlineLambdasPopupLowering,
+    name = "LocalDeclarationsInInlineLambdasPopupLowering",
+    prerequisite = setOf(prepareLocalDeclarationsInInlineLambdasPhase)
 )
 
 private val replaceSuspendIntrinsicLowering = makeIrModulePhase(
@@ -739,6 +746,7 @@ fun getJsLowerings(
     lateinitPhase,
     sharedVariablesLoweringPhase,
     prepareLocalDeclarationsInInlineLambdasPhase,
+    popupLocalDeclarationsInInlineLambdasPhase,
     arrayConstructorPhase,
     inlineOnlyPrivateFunctionsPhase,
     outerThisSpecialAccessorInInlineFunctionsPhase,

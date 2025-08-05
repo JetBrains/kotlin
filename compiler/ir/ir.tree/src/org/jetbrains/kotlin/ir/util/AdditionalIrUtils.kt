@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.ir.*
 import org.jetbrains.kotlin.ir.declarations.*
+import org.jetbrains.kotlin.ir.expressions.IrBlock
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.expressions.IrGetEnumValue
 import org.jetbrains.kotlin.ir.expressions.IrVararg
@@ -219,6 +220,8 @@ val IrDeclaration.isAnonymousFunction get() = this is IrSimpleFunction && name =
  * Sometimes it is useful to be able to distinguish such declarations even after they were lifted.
  */
 var IrDeclaration.isOriginallyLocalDeclaration: Boolean by irFlag(copyByDefault = true)
+
+var IrBlock.isSyntheticBlockForInlineCall: Boolean by irFlag(copyByDefault = true)
 
 private inline fun IrDeclaration.isLocalImpl(isLocal: (IrDeclarationWithVisibility) -> Boolean): Boolean {
     var current: IrElement = this

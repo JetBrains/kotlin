@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.backend.common.lower.LocalDeclarationPopupLowering
 import org.jetbrains.kotlin.backend.common.lower.LocalDeclarationsLowering
 import org.jetbrains.kotlin.backend.common.lower.VisibilityPolicy
 import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
-import org.jetbrains.kotlin.backend.common.runOnFilePostfix
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.IrStatement
@@ -22,6 +21,7 @@ import org.jetbrains.kotlin.ir.expressions.impl.IrCompositeImpl
 import org.jetbrains.kotlin.ir.transformStatement
 import org.jetbrains.kotlin.ir.util.isInlineParameter
 import org.jetbrains.kotlin.ir.util.isOriginallyLocalDeclaration
+import org.jetbrains.kotlin.ir.util.isSyntheticBlockForInlineCall
 import org.jetbrains.kotlin.ir.util.setDeclarationsParent
 import org.jetbrains.kotlin.ir.visitors.*
 
@@ -39,10 +39,6 @@ import org.jetbrains.kotlin.ir.visitors.*
  */
 @PhaseDescription("LocalDeclarationsInInlineLambdasPreparationLowering")
 class LocalDeclarationsInInlineLambdasPreparationLowering(val context: LoweringContext) : BodyLoweringPass {
-    override fun lower(irFile: IrFile) {
-        runOnFilePostfix(irFile)
-    }
-
     override fun lower(irBody: IrBody, container: IrDeclaration) {
         irBody.transformChildren(object : IrTransformer<IrDeclarationParent>() {
             override fun visitDeclaration(declaration: IrDeclarationBase, data: IrDeclarationParent) =
@@ -53,20 +49,7 @@ class LocalDeclarationsInInlineLambdasPreparationLowering(val context: LoweringC
                 if (!rootCallee.isInline)
                     return super.visitCall(expression, data)
 
-                val inlineLambdas = mutableListOf<IrFunction>()
-                for (index in expression.arguments.indices) {
-                    val argument = expression.arguments[index]
-                    val inlineLambda = when (argument) {
-                        is IrRichPropertyReference -> argument.getterFunction
-                        is IrRichFunctionReference -> argument.invokeFunction
-                        else -> null
-                    }?.takeIf { rootCallee.parameters[index].isInlineParameter() }
-                    if (inlineLambda == null)
-                        expression.arguments[index] = argument?.transform(this, data)
-                    else
-                        inlineLambdas.add(inlineLambda)
-                }
-
+                val inlineLambdas = collectInlineLambdas(expression, rootCallee, this, data)
                 if (inlineLambdas.isEmpty())
                     return expression
 
@@ -102,8 +85,10 @@ class LocalDeclarationsInInlineLambdasPreparationLowering(val context: LoweringC
                 // TODO: Remove fragment above after fixing KT-77103
 
                 val irBlock = IrBlockImpl(expression.startOffset, expression.endOffset, expression.type).apply {
+                    isSyntheticBlockForInlineCall = true
                     statements += expression
                 }
+
                 LocalDeclarationsLowering(
                     context,
                     visibilityPolicy = object : VisibilityPolicy {
@@ -122,11 +107,53 @@ class LocalDeclarationsInInlineLambdasPreparationLowering(val context: LoweringC
                     remapCapturedTypesInExtractedLocalDeclarations = false,
                 ).lower(irBlock, container, data)
 
-                val localDeclarationsToPopUp = mutableListOf<IrDeclaration>()
-
                 val outerTransformer = this
                 for (lambda in inlineLambdas) {
-                    lambda.transformChildrenVoid(object : IrElementTransformerVoid() {
+                    lambda.transformChildrenVoid(object : LocalDeclarationsInInlineLambdasTransformer() {
+                        override fun visitSimpleFunctionOrClass(declaration: IrDeclaration): IrStatement {
+                            // Recursive call to outer transformer for handling nested inline lambdas
+                            declaration.transformChildren(outerTransformer, declaration as IrDeclarationParent)
+                            return declaration
+                        }
+                    })
+                }
+
+                return irBlock
+            }
+        }, container as? IrDeclarationParent ?: container.parent)
+    }
+}
+
+@PhaseDescription("LocalDeclarationsInInlineLambdasPopupLowering")
+class LocalDeclarationsInInlineLambdasPopupLowering(val context: LoweringContext) : BodyLoweringPass {
+    override fun lower(irBody: IrBody, container: IrDeclaration) {
+        irBody.transformChildren(object : IrTransformer<IrDeclarationParent>() {
+            override fun visitDeclaration(declaration: IrDeclarationBase, data: IrDeclarationParent) =
+                super.visitDeclaration(declaration, (declaration as? IrDeclarationParent) ?: data)
+
+            override fun visitBlock(expression: IrBlock, data: IrDeclarationParent): IrExpression {
+                if (!expression.isSyntheticBlockForInlineCall) return super.visitBlock(expression, data)
+
+                val call = expression.statements.firstOrNull() as? IrCall ?: return expression
+                val rootCallee = call.symbol.owner
+                val inlineLambdas = collectInlineLambdas(call, rootCallee, this, data)
+
+                val localDeclarationsToPopUp = mutableListOf<IrDeclaration>()
+                val outerTransformer = this
+                for (lambda in inlineLambdas) {
+                    lambda.transformChildrenVoid(object : LocalDeclarationsInInlineLambdasTransformer() {
+                        override fun visitSimpleFunctionOrClass(declaration: IrDeclaration): IrStatement {
+                            // Recursive call to outer transformer for handling nested inline lambdas
+                            declaration.transformChildren(outerTransformer, declaration as IrDeclarationParent)
+                            return if (declaration.isOriginallyLocalDeclaration) {
+                                localDeclarationsToPopUp += declaration
+                                IrCompositeImpl(
+                                    declaration.startOffset, declaration.endOffset,
+                                    context.irBuiltIns.unitType
+                                )
+                            } else declaration
+                        }
+
                         override fun visitLocalDelegatedProperty(declaration: IrLocalDelegatedProperty): IrStatement {
                             declaration.getter.transformStatement(this)
                             declaration.setter?.transformStatement(this)
@@ -145,32 +172,45 @@ class LocalDeclarationsInInlineLambdasPreparationLowering(val context: LoweringC
                             expression.setterFunction?.transformChildrenVoid(this)
                             return expression
                         }
-
-                        override fun visitClass(declaration: IrClass): IrStatement = visitSimpleFunctionOrClass(declaration)
-
-                        override fun visitSimpleFunction(declaration: IrSimpleFunction): IrStatement =
-                            visitSimpleFunctionOrClass(declaration)
-
-                        private fun visitSimpleFunctionOrClass(declaration: IrDeclaration): IrStatement {
-                            // Recursive call to outer transformer for handling nested inline lambdas
-                            declaration.transformChildren(outerTransformer, declaration as IrDeclarationParent)
-                            return if (declaration.isOriginallyLocalDeclaration) {
-                                localDeclarationsToPopUp += declaration
-                                IrCompositeImpl(
-                                    declaration.startOffset, declaration.endOffset,
-                                    context.irBuiltIns.unitType
-                                )
-                            } else declaration
-                        }
-
                     })
                 }
 
-                irBlock.statements.addAll(0, localDeclarationsToPopUp)
+                expression.statements.addAll(0, localDeclarationsToPopUp)
                 localDeclarationsToPopUp.forEach { it.setDeclarationsParent(data) }
 
-                return irBlock
+                return expression
             }
         }, container as? IrDeclarationParent ?: container.parent)
     }
+}
+
+private abstract class LocalDeclarationsInInlineLambdasTransformer() : IrElementTransformerVoid() {
+    abstract fun visitSimpleFunctionOrClass(declaration: IrDeclaration): IrStatement
+
+    override fun visitSimpleFunction(declaration: IrSimpleFunction): IrStatement = visitSimpleFunctionOrClass(declaration)
+
+    override fun visitClass(declaration: IrClass): IrStatement = visitSimpleFunctionOrClass(declaration)
+}
+
+private fun collectInlineLambdas(
+    expression: IrCall,
+    rootCallee: IrSimpleFunction,
+    transformer: IrTransformer<IrDeclarationParent>,
+    data: IrDeclarationParent,
+): MutableList<IrFunction> {
+    val inlineLambdas = mutableListOf<IrFunction>()
+    for (index in expression.arguments.indices) {
+        val argument = expression.arguments[index]
+        val inlineLambda = when (argument) {
+            is IrRichPropertyReference -> argument.getterFunction
+            is IrRichFunctionReference -> argument.invokeFunction
+            else -> null
+        }?.takeIf { rootCallee.parameters[index].isInlineParameter() }
+        if (inlineLambda == null) {
+            expression.arguments[index] = argument?.transform(transformer, data)
+        } else
+            inlineLambdas.add(inlineLambda)
+    }
+
+    return inlineLambdas
 }
