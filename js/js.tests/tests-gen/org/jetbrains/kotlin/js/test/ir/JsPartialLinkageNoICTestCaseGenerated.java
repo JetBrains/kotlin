@@ -183,6 +183,12 @@ public class JsPartialLinkageNoICTestCaseGenerated extends AbstractJsPartialLink
   }
 
   @Test
+  @TestMetadata("removeInlineFunction")
+  public void testRemoveInlineFunction() {
+    runTest("compiler/testData/klib/partial-linkage/removeInlineFunction/");
+  }
+
+  @Test
   @TestMetadata("removeSealedSubclass")
   public void testRemoveSealedSubclass() {
     runTest("compiler/testData/klib/partial-linkage/removeSealedSubclass/");
