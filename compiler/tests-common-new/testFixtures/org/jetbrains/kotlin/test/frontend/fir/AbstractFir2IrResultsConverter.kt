@@ -98,6 +98,7 @@ abstract class AbstractFir2IrResultsConverter(
         val fir2irResult = firResult.convertToIrAndActualize(
             fir2IrExtensions,
             fir2IrConfiguration,
+            compilerConfiguration,
             module.irGenerationExtensions(testServices),
             irMangler,
             createFir2IrVisibilityConverter(),
