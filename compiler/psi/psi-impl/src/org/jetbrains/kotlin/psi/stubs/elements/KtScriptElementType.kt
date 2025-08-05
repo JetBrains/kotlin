@@ -25,7 +25,7 @@ class KtScriptElementType(debugName: String) : KtStubElementType<KotlinScriptStu
     }
 
     override fun serialize(stub: KotlinScriptStubImpl, dataStream: StubOutputStream) {
-        dataStream.writeName(stub.getFqName().asString())
+        dataStream.writeName(stub.fqName.asString())
     }
 
     override fun deserialize(dataStream: StubInputStream, parentStub: StubElement<PsiElement>): KotlinScriptStubImpl {

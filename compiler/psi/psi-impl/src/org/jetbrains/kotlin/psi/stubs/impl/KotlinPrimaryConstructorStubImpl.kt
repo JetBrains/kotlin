@@ -18,7 +18,7 @@ class KotlinPrimaryConstructorStubImpl(
     private val containingClassName: StringRef?,
 ) : KotlinStubBaseImpl<KtPrimaryConstructor>(parent, KtStubElementTypes.PRIMARY_CONSTRUCTOR),
     KotlinConstructorStub<KtPrimaryConstructor> {
-    override fun getFqName(): FqName? = null
+    override val fqName: FqName? get() = null
     override fun getName(): String? = StringRef.toString(containingClassName)
     override fun isTopLevel(): Boolean = false
     override fun isExtension(): Boolean = false
