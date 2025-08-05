@@ -74,6 +74,7 @@ private class CheckTreeConsistencyVisitor(val reportError: ReportIrValidationErr
     }
 
     private fun handleParent(declaration: IrDeclaration, actualParent: IrDeclarationParent?) {
+        if (!config.checkTreeConsistency) return
         if (actualParent == null) return
         try {
             val assignedParent = declaration.parent
@@ -102,12 +103,17 @@ private class CheckTreeConsistencyVisitor(val reportError: ReportIrValidationErr
 
     private fun checkDuplicateNode(element: IrElement) {
         if (!visitedElements.add(element)) {
-            val renderString = if (element is IrTypeParameter) element.render() + " of " + element.parent.render() else element.render()
-            reportError(null, element, "Duplicate IR node: $renderString", parentChain)
+            if (config.checkTreeConsistency) {
+                hasInconsistency = true
+                val renderString = if (element is IrTypeParameter) element.render() + " of " + element.parent.render() else element.render()
+                reportError(null, element, "Duplicate IR node: $renderString", parentChain)
+            }
 
-            // The IR tree is completely messed up if it includes one element twice. It may not be a tree at all, there may be cycles.
-            // Give up early to avoid stack overflow.
-            throw TreeConsistencyError(element)
+            if (element in parentChain) {
+                // Not only is the same element twice in the tree, there is some cycle, so it is not a tree at all.
+                // Give up early to avoid stack overflow.
+                throw TreeConsistencyError(element)
+            }
         }
     }
 }

@@ -50,6 +50,17 @@ class IrValidatorTest {
 
     private lateinit var messageCollector: MessageCollectorImpl
     private lateinit var module: IrModuleFragment
+    private val defaultValidationConfig = IrValidatorConfig(
+        checkTypes = true,
+        checkValueScopes = true,
+        checkTypeParameterScopes = true,
+        checkCrossFileFieldUsage = true,
+        checkAllKotlinFieldsArePrivate = true,
+        checkVisibilities = true,
+        checkVarargTypes = true,
+        checkUnboundSymbols = true,
+        checkInlineFunctionUseSites = { it.symbol.owner.name.toString() != "inlineFunctionUseSiteNotPermitted" }
+    )
 
     @BeforeTest
     fun setUp() {
@@ -145,24 +156,19 @@ class IrValidatorTest {
         }
     }
 
-    private fun testValidation(mode: IrVerificationMode, tree: IrElement, expectedMessages: List<Message>) {
+    private fun testValidation(
+        mode: IrVerificationMode,
+        tree: IrElement,
+        expectedMessages: List<Message>,
+        config: IrValidatorConfig = defaultValidationConfig,
+    ) {
         runValidationAndAssert(mode) {
             validateIr(messageCollector, mode) {
                 performBasicIrValidation(
                     tree,
                     TestIrBuiltins,
                     phaseName = "IrValidatorTest",
-                    IrValidatorConfig(
-                        checkTypes = true,
-                        checkValueScopes = true,
-                        checkTypeParameterScopes = true,
-                        checkCrossFileFieldUsage = true,
-                        checkAllKotlinFieldsArePrivate = true,
-                        checkVisibilities = true,
-                        checkVarargTypes = true,
-                        checkUnboundSymbols = true,
-                        checkInlineFunctionUseSites = { it.symbol.owner.name.toString() != "inlineFunctionUseSiteNotPermitted" }
-                    )
+                    config
                 )
                 assertEquals(expectedMessages, messageCollector.messages)
             }
@@ -263,6 +269,55 @@ class IrValidatorTest {
                     CompilerMessageLocation.create(null, 1, 10, null),
                 ),
             ),
+        )
+    }
+
+    @Test
+    fun `duplicated nodes do not stop validation if checkTreeConsistency = false`() {
+        testValidation(
+            IrVerificationMode.WARNING,
+            buildInvalidIrTreeWithLocations(),
+            listOf(
+                Message(
+                    WARNING,
+                    $$"""
+                    [IR VALIDATION] IrValidatorTest: unexpected type: expected kotlin.String, got kotlin.Any
+                    STRING_CONCATENATION type=kotlin.Any
+                      inside CALL 'public final fun foo ($receiver: kotlin.String, p0: kotlin.Any): kotlin.Unit declared in org.sample' type=kotlin.Any origin=null
+                        inside BLOCK_BODY
+                          inside FUN name:foo visibility:public modality:FINAL <> ($receiver:kotlin.String, p0:kotlin.Any) returnType:kotlin.Unit
+                            inside FILE fqName:org.sample fileName:test.kt
+                    """.trimIndent(),
+                    CompilerMessageLocation.create("test.kt", 1, 10, null),
+                ),
+                Message(
+                    WARNING,
+                    $$"""
+                    [IR VALIDATION] IrValidatorTest: unexpected type: expected kotlin.String, got kotlin.Any
+                    STRING_CONCATENATION type=kotlin.Any
+                      inside CALL 'public final fun foo ($receiver: kotlin.String, p0: kotlin.Any): kotlin.Unit declared in org.sample' type=kotlin.Any origin=null
+                        inside BLOCK_BODY
+                          inside FUN name:foo visibility:public modality:FINAL <> ($receiver:kotlin.String, p0:kotlin.Any) returnType:kotlin.Unit
+                            inside FILE fqName:org.sample fileName:test.kt
+                    """.trimIndent(),
+                    CompilerMessageLocation.create("test.kt", 1, 10, null),
+                ),
+                Message(
+                    WARNING,
+                    $$"""
+                    [IR VALIDATION] IrValidatorTest: unexpected type: expected kotlin.Unit, got kotlin.Any
+                    CALL 'public final fun foo ($receiver: kotlin.String, p0: kotlin.Any): kotlin.Unit declared in org.sample' type=kotlin.Any origin=null
+                      inside BLOCK_BODY
+                        inside FUN name:foo visibility:public modality:FINAL <> ($receiver:kotlin.String, p0:kotlin.Any) returnType:kotlin.Unit
+                          inside FILE fqName:org.sample fileName:test.kt
+                    """.trimIndent(),
+                    CompilerMessageLocation.create("test.kt", 1, 7, null),
+                ),
+            ),
+            config = IrValidatorConfig(
+                checkTreeConsistency = false,
+                checkTypes = true,
+            )
         )
     }
 

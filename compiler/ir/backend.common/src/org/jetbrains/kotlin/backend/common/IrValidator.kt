@@ -185,7 +185,7 @@ private fun performBasicIrValidation(
 ) {
     // Phase 1: Traverse the IR tree to check for structural consistency.
     // If any issues are detected, validation stops here to avoid problems like infinite recursion during the next phase.
-    if (validatorConfig.checkTreeConsistency) {
+    if (validatorConfig.checkTreeConsistency || validatorConfig.checkUnboundSymbols) {
         try {
             element.checkTreeConsistency(reportError, validatorConfig)
         } catch (_: TreeConsistencyError) {
