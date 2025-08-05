@@ -1896,6 +1896,12 @@ public class PhasedJvmDiagnosticPsiTestGenerated extends AbstractPhasedJvmDiagno
     }
 
     @Test
+    @TestMetadata("returnTypeMismatchOnComplexAnonymousFunctionInReturnOfLambda.kt")
+    public void testReturnTypeMismatchOnComplexAnonymousFunctionInReturnOfLambda() {
+      runTest("compiler/testData/diagnostics/tests/returnTypeMismatchOnComplexAnonymousFunctionInReturnOfLambda.kt");
+    }
+
+    @Test
     @TestMetadata("safeCall.kt")
     public void testSafeCall() {
       runTest("compiler/testData/diagnostics/tests/safeCall.kt");
