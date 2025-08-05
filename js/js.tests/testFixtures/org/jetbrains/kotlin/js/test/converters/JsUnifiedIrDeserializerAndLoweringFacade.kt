@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.js.test.converters
 
 import org.jetbrains.kotlin.test.backend.ir.IrBackendInput
+import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.model.AbstractTestFacade
 import org.jetbrains.kotlin.test.model.ArtifactKinds
 import org.jetbrains.kotlin.test.model.BinaryArtifacts
@@ -34,6 +35,9 @@ class JsUnifiedIrDeserializerAndLoweringFacade(
 
     override val additionalServices: List<ServiceRegistrationData>
         get() = deserializerFacade.additionalServices + loweringFacade.additionalServices
+
+    override val directiveContainers: List<DirectivesContainer>
+        get() = deserializerFacade.directiveContainers + loweringFacade.directiveContainers
 
     override fun shouldTransform(module: TestModule): Boolean {
         return deserializerFacade.shouldTransform(module) && loweringFacade.shouldTransform(module)
