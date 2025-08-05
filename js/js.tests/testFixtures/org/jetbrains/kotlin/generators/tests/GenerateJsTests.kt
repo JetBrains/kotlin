@@ -197,6 +197,13 @@ fun main(args: Array<String>) {
             }
         }
 
+        testGroup("js/js.tests/tests-gen", "/Users/Artem.Kobzar/Projects/jetbrains/kotlin-js-inner-stand", testRunnerMethodName = "runTest0") {
+            testClass<AbstractClosureComparisonFirJsES6BoxTest>(annotations = listOf(*es6())) {
+                model()
+            }
+        }
+
+
         testGroup("js/js.tests/tests-gen", "compiler/testData/codegen", testRunnerMethodName = "runTest0") {
             testClass<AbstractIrJsCodegenBoxTest>(annotations = listOf(*legacyFrontend())) {
                 model("box", excludeDirs = jvmOnlyBoxTests + k2BoxTestDir)

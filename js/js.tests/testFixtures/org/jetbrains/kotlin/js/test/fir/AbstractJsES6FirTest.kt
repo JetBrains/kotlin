@@ -27,6 +27,21 @@ open class AbstractFirJsES6BoxTest : AbstractFirJsES6Test(
     testGroupOutputDirPrefix = "firEs6Box/"
 )
 
+open class AbstractClosureComparisonFirJsES6BoxTest : AbstractFirJsES6Test(
+    pathToTestDir = "/Users/Artem.Kobzar/Projects/jetbrains/kotlin-js-inner-stand/",
+    testGroupOutputDirPrefix = "closureComparison/"
+) {
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        builder.defaultDirectives {
+            +JsEnvironmentConfigurationDirectives.ES_MODULES
+            +JsEnvironmentConfigurationDirectives.SPLIT_PER_FILE
+            +JsEnvironmentConfigurationDirectives.KJS_WITH_FULL_RUNTIME
+            JsEnvironmentConfigurationDirectives.DONT_RUN_GENERATED_CODE.with("JS_IR_ES6")
+        }
+    }
+}
+
 open class AbstractFirJsES6CodegenBoxTest : AbstractFirJsES6Test(
     pathToTestDir = "compiler/testData/codegen/box/",
     testGroupOutputDirPrefix = "codegen/firEs6Box/"

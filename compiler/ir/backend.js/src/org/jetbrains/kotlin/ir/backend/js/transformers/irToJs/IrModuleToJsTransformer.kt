@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 import org.jetbrains.kotlin.backend.common.serialization.checkIsFunctionInterface
 import org.jetbrains.kotlin.backend.js.JsGenerationGranularity
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
+import org.jetbrains.kotlin.config.phaser.PhaserState
 import org.jetbrains.kotlin.ir.backend.js.*
 import org.jetbrains.kotlin.ir.backend.js.export.*
 import org.jetbrains.kotlin.ir.backend.js.lower.JsCodeOutliningLowering
@@ -205,15 +206,22 @@ class IrModuleToJsTransformer(
         val exportData = associateIrAndExport(modules)
         doStaticMembersLowering(modules)
 
+        val phaserState = PhaserState()
+        optimizationLoweringList.forEachIndexed { _, lowering ->
+            modules.forEach { module ->
+                lowering.invoke(backendContext.phaseConfig, phaserState, backendContext, module)
+            }
+        }
+
         val result = EnumMap<TranslationMode, CompilationOutputs>(TranslationMode::class.java)
 
         modes.filter { !it.production }.forEach {
             result[it] = makeJsCodeGeneratorFromIr(exportData, it).generateJsCode(relativeRequirePath, true)
         }
 
-        if (modes.any { it.production }) {
-            optimizeProgramByIr(modules, backendContext, moduleKind, removeUnusedAssociatedObjects)
-        }
+//        if (modes.any { it.production }) {
+//            optimizeProgramByIr(modules, backendContext, moduleKind, removeUnusedAssociatedObjects)
+//        }
 
         modes.filter { it.production }.forEach {
             result[it] = makeJsCodeGeneratorFromIr(exportData, it).generateJsCode(relativeRequirePath, true)
@@ -228,6 +236,13 @@ class IrModuleToJsTransformer(
 
         if (mode.production) {
             optimizeProgramByIr(modules, backendContext, moduleKind, removeUnusedAssociatedObjects)
+        } else {
+            val phaserState = PhaserState()
+            optimizationLoweringList.forEachIndexed { _, lowering ->
+                modules.forEach { module ->
+                    lowering.invoke(backendContext.phaseConfig, phaserState, backendContext, module)
+                }
+            }
         }
 
         return makeJsCodeGeneratorFromIr(exportData, mode)
