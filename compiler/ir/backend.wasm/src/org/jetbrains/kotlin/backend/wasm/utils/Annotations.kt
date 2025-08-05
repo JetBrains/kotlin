@@ -30,6 +30,7 @@ private val wasmArrayOfFqName = FqName("kotlin.wasm.internal.WasmArrayOf")
 private val jsFunFqName = FqName("kotlin.JsFun")
 private val jsPrimitiveFqName = FqName("kotlin.wasm.internal.JsPrimitive")
 private val wasmExportFqName = FqName("kotlin.wasm.WasmExport")
+private val jsBuiltinFqName = FqName("kotlin.wasm.internal.JsBuiltin")
 
 fun IrAnnotationContainer.hasExcludedFromCodegenAnnotation(): Boolean =
     hasAnnotation(excludedFromCodegenFqName)
@@ -47,7 +48,7 @@ fun IrFunction.getWasmImportDescriptor(): WasmImportDescriptor? {
 }
 
 fun IrFunction.getJsBuiltinDescriptor(): JsBuiltinDescriptor? {
-    val annotation = getAnnotation(FqName("kotlin.wasm.JsBuiltin"))
+    val annotation = getAnnotation(jsBuiltinFqName)
         ?: return null
 
     val moduleName = (annotation.arguments[0] as IrConst).value as String
@@ -55,7 +56,7 @@ fun IrFunction.getJsBuiltinDescriptor(): JsBuiltinDescriptor? {
     val polyfillImpl = (annotation.arguments[2] as? IrConst)?.value as String
     return JsBuiltinDescriptor(
         "wasm:$moduleName",
-        WasmSymbol(declarationName ?: this.name.asString()),
+        declarationName ?: this.name.asString(),
         polyfillImpl
     )
 }

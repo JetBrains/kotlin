@@ -208,6 +208,6 @@ data class WasmImportDescriptor(
 
 data class JsBuiltinDescriptor(
     val moduleName: String,
-    val declarationName: WasmSymbolReadOnly<String>,
+    val declarationName: String,
     val polyfillImpl: String
 )
