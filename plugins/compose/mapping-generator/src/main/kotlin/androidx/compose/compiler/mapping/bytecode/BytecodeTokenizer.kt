@@ -39,7 +39,9 @@ private class CompositeInstructionTokenizer(
     constructor(vararg children: BytecodeTokenizer) : this(children.toList())
 
     override fun nextToken(context: TokenizerContext): Result<BytecodeToken>? {
-        return children.firstNotNullOfOrNull { tokenizer -> tokenizer.nextToken(context) }
+        return children.firstNotNullOfOrNull { tokenizer ->
+            tokenizer.nextToken(context)
+        }
     }
 }
 
@@ -125,14 +127,21 @@ private object EndRestartGroupTokenizer : BytecodeTokenizer {
 
 private object StartReplaceGroupTokenizer : BytecodeTokenizer {
     override fun nextToken(context: TokenizerContext): Result<BytecodeToken>? {
-        val expectedLdc = context[0] ?: return null
-        val expectedMethodInsn = context[1] ?: return null
+        val expectedMethodInsn = context[0] ?: return null
 
         if (expectedMethodInsn is MethodInsnNode) {
             val method = MethodId(expectedMethodInsn)
             if (method == ComposeIds.Composer.startReplaceGroup || method == ComposeIds.Composer.startReplaceableGroup) {
-                val keyValue = expectedLdc.intValueOrNull()
-                    ?: return tokenizerError("Failed parsing startReplaceGroup token: expected key value")
+                val expectedLdc = when (context[-1]) {
+                    // Compose compiler sometimes generates the call on a different line from LDC instruction
+                    // This usually happens inside the if / else body (b/436584119)
+                    is LineNumberNode -> {
+                        if (context[-2] is LabelNode) context[-3] else context[-2]
+                    }
+                    else -> context[-1]
+                }
+                val keyValue = expectedLdc?.intValueOrNull()
+                    ?: return tokenizerError("Failed parsing startReplaceGroup token: expected key value, got ${expectedLdc?.opcode}")
 
                 return Result.success(
                     StartReplaceGroup(keyValue, listOf(expectedLdc, expectedMethodInsn))
