@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -17,9 +17,9 @@ import org.jetbrains.kotlin.psi.stubs.StubUtils
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinTypeAliasStubImpl
 
 class KtTypeAliasElementType(debugName: String) :
-    KtStubElementType<KotlinTypeAliasStub, KtTypeAlias>(debugName, KtTypeAlias::class.java, KotlinTypeAliasStub::class.java) {
+    KtStubElementType<KotlinTypeAliasStubImpl, KtTypeAlias>(debugName, KtTypeAlias::class.java, KotlinTypeAliasStub::class.java) {
 
-    override fun createStub(psi: KtTypeAlias, parentStub: StubElement<*>): KotlinTypeAliasStub {
+    override fun createStub(psi: KtTypeAlias, parentStub: StubElement<*>): KotlinTypeAliasStubImpl {
         val name = StringRef.fromString(psi.name)
         val fqName = StringRef.fromString(psi.safeFqNameForLazyResolve()?.asString())
         val classId = StubUtils.createNestedClassId(parentStub, psi)
@@ -27,14 +27,14 @@ class KtTypeAliasElementType(debugName: String) :
         return KotlinTypeAliasStubImpl(parentStub, name, fqName, classId, isTopLevel)
     }
 
-    override fun serialize(stub: KotlinTypeAliasStub, dataStream: StubOutputStream) {
+    override fun serialize(stub: KotlinTypeAliasStubImpl, dataStream: StubOutputStream) {
         dataStream.writeName(stub.name)
         dataStream.writeName(stub.getFqName()?.asString())
         StubUtils.serializeClassId(dataStream, stub.getClassId())
         dataStream.writeBoolean(stub.isTopLevel())
     }
 
-    override fun deserialize(dataStream: StubInputStream, parentStub: StubElement<*>?): KotlinTypeAliasStub {
+    override fun deserialize(dataStream: StubInputStream, parentStub: StubElement<*>?): KotlinTypeAliasStubImpl {
         val name = dataStream.readName()
         val fqName = dataStream.readName()
         val classId = StubUtils.deserializeClassId(dataStream)
@@ -42,7 +42,7 @@ class KtTypeAliasElementType(debugName: String) :
         return KotlinTypeAliasStubImpl(parentStub, name, fqName, classId, isTopLevel)
     }
 
-    override fun indexStub(stub: KotlinTypeAliasStub, sink: IndexSink) {
+    override fun indexStub(stub: KotlinTypeAliasStubImpl, sink: IndexSink) {
         StubIndexService.getInstance().indexTypeAlias(stub, sink)
     }
 }

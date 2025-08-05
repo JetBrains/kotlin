@@ -20,10 +20,10 @@ import org.jetbrains.kotlin.psi.utils.toConstantExpressionElementType
 import org.jetbrains.kotlin.psi.utils.toConstantValueKind
 
 class KtConstantExpressionElementType(@NonNls debugName: String) :
-    KtStubElementType<KotlinConstantExpressionStub, KtConstantExpression>(
+    KtStubElementType<KotlinConstantExpressionStubImpl, KtConstantExpression>(
         debugName,
         KtConstantExpression::class.java,
-        KotlinConstantExpressionStub::class.java
+        KotlinConstantExpressionStub::class.java,
     ) {
 
     override fun shouldCreateStub(node: ASTNode): Boolean {
@@ -34,7 +34,7 @@ class KtConstantExpressionElementType(@NonNls debugName: String) :
         return super.shouldCreateStub(node)
     }
 
-    override fun createStub(psi: KtConstantExpression, parentStub: StubElement<*>?): KotlinConstantExpressionStub {
+    override fun createStub(psi: KtConstantExpression, parentStub: StubElement<*>?): KotlinConstantExpressionStubImpl {
         val elementType = psi.node.elementType as? KtConstantExpressionElementType
             ?: throw IllegalStateException("Stub element type is expected for constant")
 
@@ -48,12 +48,12 @@ class KtConstantExpressionElementType(@NonNls debugName: String) :
         )
     }
 
-    override fun serialize(stub: KotlinConstantExpressionStub, dataStream: StubOutputStream) {
+    override fun serialize(stub: KotlinConstantExpressionStubImpl, dataStream: StubOutputStream) {
         dataStream.writeVarInt(stub.kind().ordinal)
         dataStream.writeName(stub.value())
     }
 
-    override fun deserialize(dataStream: StubInputStream, parentStub: StubElement<*>?): KotlinConstantExpressionStub {
+    override fun deserialize(dataStream: StubInputStream, parentStub: StubElement<*>?): KotlinConstantExpressionStubImpl {
         val kindOrdinal = dataStream.readVarInt()
         val value = dataStream.readName() ?: StringRef.fromString("")
 

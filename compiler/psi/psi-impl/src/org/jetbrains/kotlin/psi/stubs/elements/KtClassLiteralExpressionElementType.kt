@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -14,21 +14,20 @@ import org.jetbrains.kotlin.psi.stubs.KotlinClassLiteralExpressionStub
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinClassLiteralExpressionStubImpl
 
 class KtClassLiteralExpressionElementType(@NonNls debugName: String) :
-    KtStubElementType<KotlinClassLiteralExpressionStub, KtClassLiteralExpression>(
+    KtStubElementType<KotlinClassLiteralExpressionStubImpl, KtClassLiteralExpression>(
         debugName,
         KtClassLiteralExpression::class.java,
-        KotlinClassLiteralExpressionStub::class.java
+        KotlinClassLiteralExpressionStub::class.java,
     ) {
 
-    override fun createStub(psi: KtClassLiteralExpression, parentStub: StubElement<*>?): KotlinClassLiteralExpressionStub {
-        return KotlinClassLiteralExpressionStubImpl(
-            parentStub)
+    override fun createStub(psi: KtClassLiteralExpression, parentStub: StubElement<*>?): KotlinClassLiteralExpressionStubImpl {
+        return KotlinClassLiteralExpressionStubImpl(parentStub)
     }
 
-    override fun serialize(stub: KotlinClassLiteralExpressionStub, dataStream: StubOutputStream) {
+    override fun serialize(stub: KotlinClassLiteralExpressionStubImpl, dataStream: StubOutputStream) {
     }
 
-    override fun deserialize(dataStream: StubInputStream, parentStub: StubElement<*>?): KotlinClassLiteralExpressionStub {
+    override fun deserialize(dataStream: StubInputStream, parentStub: StubElement<*>?): KotlinClassLiteralExpressionStubImpl {
         return KotlinClassLiteralExpressionStubImpl(parentStub)
     }
 }

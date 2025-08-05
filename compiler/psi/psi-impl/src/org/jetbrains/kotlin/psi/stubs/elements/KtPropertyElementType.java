@@ -24,14 +24,14 @@ import org.jetbrains.kotlin.psi.stubs.impl.KotlinStubOrigin;
 
 import java.io.IOException;
 
-public class KtPropertyElementType extends KtStubElementType<KotlinPropertyStub, KtProperty> {
+public class KtPropertyElementType extends KtStubElementType<KotlinPropertyStubImpl, KtProperty> {
     public KtPropertyElementType(@NotNull @NonNls String debugName) {
         super(debugName, KtProperty.class, KotlinPropertyStub.class);
     }
 
     @NotNull
     @Override
-    public KotlinPropertyStub createStub(@NotNull KtProperty psi, StubElement parentStub) {
+    public KotlinPropertyStubImpl createStub(@NotNull KtProperty psi, StubElement parentStub) {
         assert !psi.isLocal() :
                 String.format("Should not store local property: %s, parent %s",
                               psi.getText(), psi.getParent() != null ? psi.getParent().getText() : "<no parent>");
@@ -55,7 +55,7 @@ public class KtPropertyElementType extends KtStubElementType<KotlinPropertyStub,
     }
 
     @Override
-    public void serialize(@NotNull KotlinPropertyStub stub, @NotNull StubOutputStream dataStream) throws IOException {
+    public void serialize(@NotNull KotlinPropertyStubImpl stub, @NotNull StubOutputStream dataStream) throws IOException {
         dataStream.writeName(stub.getName());
         dataStream.writeBoolean(stub.isVar());
         dataStream.writeBoolean(stub.isTopLevel());
@@ -68,21 +68,17 @@ public class KtPropertyElementType extends KtStubElementType<KotlinPropertyStub,
         FqName fqName = stub.getFqName();
         dataStream.writeName(fqName != null ? fqName.asString() : null);
 
-        if (stub instanceof KotlinPropertyStubImpl) {
-            KotlinPropertyStubImpl stubImpl = (KotlinPropertyStubImpl) stub;
+        ConstantValue<?> constantInitializer = stub.getConstantInitializer();
+        KotlinConstantValueKt.serializeConstantValue(constantInitializer, dataStream);
 
-            ConstantValue<?> constantInitializer = ((KotlinPropertyStubImpl) stub).getConstantInitializer();
-            KotlinConstantValueKt.serializeConstantValue(constantInitializer, dataStream);
-
-            KotlinStubOrigin.serialize(stubImpl.getOrigin(), dataStream);
-        }
+        KotlinStubOrigin.serialize(stub.getOrigin(), dataStream);
 
         StubUtils.writeNullableBoolean$psi_impl(dataStream, stub.getHasBackingField());
     }
 
     @NotNull
     @Override
-    public KotlinPropertyStub deserialize(@NotNull StubInputStream dataStream, StubElement parentStub) throws IOException {
+    public KotlinPropertyStubImpl deserialize(@NotNull StubInputStream dataStream, StubElement parentStub) throws IOException {
         StringRef name = dataStream.readName();
         boolean isVar = dataStream.readBoolean();
         boolean isTopLevel = dataStream.readBoolean();
@@ -116,7 +112,7 @@ public class KtPropertyElementType extends KtStubElementType<KotlinPropertyStub,
     }
 
     @Override
-    public void indexStub(@NotNull KotlinPropertyStub stub, @NotNull IndexSink sink) {
+    public void indexStub(@NotNull KotlinPropertyStubImpl stub, @NotNull IndexSink sink) {
         StubIndexService.getInstance().indexProperty(stub, sink);
     }
 }

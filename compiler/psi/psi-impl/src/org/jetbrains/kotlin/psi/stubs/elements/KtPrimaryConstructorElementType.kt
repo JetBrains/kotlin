@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.psi.stubs.impl.KotlinPrimaryConstructorStubImpl
 import java.io.IOException
 
 class KtPrimaryConstructorElementType(@NonNls debugName: String) :
-    KtStubElementType<KotlinConstructorStub<KtPrimaryConstructor>, KtPrimaryConstructor>(
+    KtStubElementType<KotlinPrimaryConstructorStubImpl, KtPrimaryConstructor>(
         /* debugName = */ debugName,
         /* psiClass = */ KtPrimaryConstructor::class.java,
         /* stubClass = */ KotlinConstructorStub::class.java,
@@ -24,18 +24,18 @@ class KtPrimaryConstructorElementType(@NonNls debugName: String) :
     override fun createStub(
         psi: KtPrimaryConstructor,
         parentStub: StubElement<*>,
-    ): KotlinConstructorStub<KtPrimaryConstructor> = KotlinPrimaryConstructorStubImpl(
+    ): KotlinPrimaryConstructorStubImpl = KotlinPrimaryConstructorStubImpl(
         parent = parentStub,
         containingClassName = StringRef.fromString(psi.name),
     )
 
     @Throws(IOException::class)
-    override fun serialize(stub: KotlinConstructorStub<KtPrimaryConstructor>, dataStream: StubOutputStream) {
+    override fun serialize(stub: KotlinPrimaryConstructorStubImpl, dataStream: StubOutputStream) {
         dataStream.writeName(stub.name)
     }
 
     @Throws(IOException::class)
-    override fun deserialize(dataStream: StubInputStream, parentStub: StubElement<*>): KotlinConstructorStub<KtPrimaryConstructor> {
+    override fun deserialize(dataStream: StubInputStream, parentStub: StubElement<*>): KotlinPrimaryConstructorStubImpl {
         val name = dataStream.readName()
         return KotlinPrimaryConstructorStubImpl(
             parent = parentStub,

@@ -17,7 +17,7 @@ import org.jetbrains.kotlin.psi.stubs.impl.KotlinSecondaryConstructorStubImpl
 import java.io.IOException
 
 class KtSecondaryConstructorElementType(@NonNls debugName: String) :
-    KtStubElementType<KotlinConstructorStub<KtSecondaryConstructor>, KtSecondaryConstructor>(
+    KtStubElementType<KotlinSecondaryConstructorStubImpl, KtSecondaryConstructor>(
         /* debugName = */ debugName,
         /* psiClass = */ KtSecondaryConstructor::class.java,
         /* stubClass = */ KotlinConstructorStub::class.java,
@@ -26,7 +26,7 @@ class KtSecondaryConstructorElementType(@NonNls debugName: String) :
     override fun createStub(
         psi: KtSecondaryConstructor,
         parentStub: StubElement<*>,
-    ): KotlinConstructorStub<KtSecondaryConstructor> {
+    ): KotlinSecondaryConstructorStubImpl {
         val hasBody = psi.hasBody()
         val isDelegatedCallToThis = psi.getDelegationCallOrNull()?.isCallToThis ?: true
         val isExplicitDelegationCall = psi.getDelegationCallOrNull()?.isImplicit == false
@@ -44,7 +44,7 @@ class KtSecondaryConstructorElementType(@NonNls debugName: String) :
     }
 
     @Throws(IOException::class)
-    override fun serialize(stub: KotlinConstructorStub<KtSecondaryConstructor>, dataStream: StubOutputStream) {
+    override fun serialize(stub: KotlinSecondaryConstructorStubImpl, dataStream: StubOutputStream) {
         dataStream.writeName(stub.name)
         dataStream.writeBoolean(stub.hasBody())
         dataStream.writeBoolean(stub.isDelegatedCallToThis())
@@ -53,7 +53,7 @@ class KtSecondaryConstructorElementType(@NonNls debugName: String) :
     }
 
     @Throws(IOException::class)
-    override fun deserialize(dataStream: StubInputStream, parentStub: StubElement<*>): KotlinConstructorStub<KtSecondaryConstructor> {
+    override fun deserialize(dataStream: StubInputStream, parentStub: StubElement<*>): KotlinSecondaryConstructorStubImpl{
         val name = dataStream.readName()
         val hasBody = dataStream.readBoolean()
         val isDelegatedCallToThis = dataStream.readBoolean()

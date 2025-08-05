@@ -17,13 +17,14 @@ import org.jetbrains.kotlin.psi.stubs.impl.KotlinPropertyAccessorStubImpl;
 
 import java.io.IOException;
 
-public class KtPropertyAccessorElementType extends KtStubElementType<KotlinPropertyAccessorStub, KtPropertyAccessor> {
+public class KtPropertyAccessorElementType extends KtStubElementType<KotlinPropertyAccessorStubImpl, KtPropertyAccessor> {
     public KtPropertyAccessorElementType(@NotNull @NonNls String debugName) {
         super(debugName, KtPropertyAccessor.class, KotlinPropertyAccessorStub.class);
     }
 
+    @NotNull
     @Override
-    public KotlinPropertyAccessorStub createStub(@NotNull KtPropertyAccessor psi, StubElement parentStub) {
+    public KotlinPropertyAccessorStubImpl createStub(@NotNull KtPropertyAccessor psi, StubElement parentStub) {
         return new KotlinPropertyAccessorStubImpl(
                 parentStub,
                 psi.isGetter(),
@@ -34,7 +35,7 @@ public class KtPropertyAccessorElementType extends KtStubElementType<KotlinPrope
     }
 
     @Override
-    public void serialize(@NotNull KotlinPropertyAccessorStub stub, @NotNull StubOutputStream dataStream) throws IOException {
+    public void serialize(@NotNull KotlinPropertyAccessorStubImpl stub, @NotNull StubOutputStream dataStream) throws IOException {
         dataStream.writeBoolean(stub.isGetter());
         dataStream.writeBoolean(stub.hasBody());
         dataStream.writeBoolean(stub.hasNoExpressionBody());
@@ -43,7 +44,7 @@ public class KtPropertyAccessorElementType extends KtStubElementType<KotlinPrope
 
     @NotNull
     @Override
-    public KotlinPropertyAccessorStub deserialize(@NotNull StubInputStream dataStream, StubElement parentStub) throws IOException {
+    public KotlinPropertyAccessorStubImpl deserialize(@NotNull StubInputStream dataStream, StubElement parentStub) throws IOException {
         boolean isGetter = dataStream.readBoolean();
         boolean hasBody = dataStream.readBoolean();
         boolean hasNoExpressionBody = dataStream.readBoolean();

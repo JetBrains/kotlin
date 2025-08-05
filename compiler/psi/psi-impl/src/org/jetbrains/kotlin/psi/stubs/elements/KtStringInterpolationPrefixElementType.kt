@@ -14,7 +14,7 @@ import org.jetbrains.kotlin.psi.stubs.KotlinStringInterpolationPrefixStub
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinStringInterpolationPrefixStubImpl
 
 class KtStringInterpolationPrefixElementType(debugName: String) :
-    KtStubElementType<KotlinStringInterpolationPrefixStub, KtStringInterpolationPrefix>(
+    KtStubElementType<KotlinStringInterpolationPrefixStubImpl, KtStringInterpolationPrefix>(
         debugName,
         KtStringInterpolationPrefix::class.java,
         KotlinStringInterpolationPrefixStub::class.java,
@@ -23,13 +23,13 @@ class KtStringInterpolationPrefixElementType(debugName: String) :
     override fun createStub(
         psi: KtStringInterpolationPrefix,
         parentStub: StubElement<out PsiElement?>?,
-    ): KotlinStringInterpolationPrefixStub = KotlinStringInterpolationPrefixStubImpl(
+    ): KotlinStringInterpolationPrefixStubImpl = KotlinStringInterpolationPrefixStubImpl(
         parent = parentStub,
         dollarSignCount = psi.interpolationPrefixElement?.textLength ?: 0,
     )
 
     override fun serialize(
-        stub: KotlinStringInterpolationPrefixStub,
+        stub: KotlinStringInterpolationPrefixStubImpl,
         dataStream: StubOutputStream,
     ) {
         dataStream.writeVarInt(stub.dollarSignCount)
@@ -38,7 +38,7 @@ class KtStringInterpolationPrefixElementType(debugName: String) :
     override fun deserialize(
         dataStream: StubInputStream,
         parentStub: StubElement<*>?,
-    ): KotlinStringInterpolationPrefixStub {
+    ): KotlinStringInterpolationPrefixStubImpl {
         val dollarSignCount = dataStream.readVarInt()
         return KotlinStringInterpolationPrefixStubImpl(
             parent = parentStub,
