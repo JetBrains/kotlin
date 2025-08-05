@@ -42,6 +42,10 @@ import java.io.Serializable
 import java.nio.charset.Charset
 import javax.inject.Inject
 
+/**
+ * Registers the [XcodeTargetsConfigurationTask] to check for mismatches between
+ * the Xcode project and the Kotlin Gradle project.
+ */
 internal val XcodeTargetsConfigurationSetupAction = KotlinProjectSetupAction {
     launch {
         val hasAppleTargets = multiplatformExtension.awaitTargets().any { it is KotlinNativeTarget && it.konanTarget.family.isAppleFamily }
@@ -60,6 +64,11 @@ internal val XcodeTargetsConfigurationSetupAction = KotlinProjectSetupAction {
     }
 }
 
+/**
+ * A Gradle [ValueSource] that executes the `plutil` command to convert an Xcode
+ * project file into JSON format. It catches execution errors and returns an empty
+ * string to signal failure gracefully.
+ */
 internal abstract class PlistToJsonValueSource : ValueSource<String, PlistToJsonValueSource.Params> {
 
     interface Params : ValueSourceParameters {
@@ -72,28 +81,42 @@ internal abstract class PlistToJsonValueSource : ValueSource<String, PlistToJson
     override fun obtain(): String {
         val output = ByteArrayOutputStream()
         val file = parameters.pbxprojFile.get().absolutePath
-        val result = execOperations.exec { spec ->
-            spec.executable = "/usr/bin/plutil"
-            spec.args("-convert", "json", "-o", "-", file)
-            spec.standardOutput = output
-            spec.isIgnoreExitValue = true // Don't throw an exception on failure
-        }
+        return try {
+            execOperations.exec { spec ->
+                spec.executable = "/usr/bin/plutil"
+                spec.args("-convert", "json", "-o", "-", file)
+                spec.standardOutput = output
+            }
 
-        return if (result.exitValue == 0) {
-            // Success, return the JSON content
             String(output.toByteArray(), Charset.defaultCharset())
-        } else {
-            // Failure, return an empty string.
+        } catch (e: Exception) {
+            // Failure (e.g., plutil not found or malformed file), return an empty string.
             ""
         }
     }
 }
 
+/**
+ * A task that checks for configuration mismatches between Xcode and Kotlin projects.
+ * It verifies that for every Apple target defined in Gradle, there is a corresponding
+ * application target in the Xcode project.
+ */
 @DisableCachingByDefault(because = "Xcode targets configuration is not cacheable, it depends on the Xcode project structure and settings.")
 internal abstract class XcodeTargetsConfigurationTask : DefaultTask(), UsesKotlinToolingDiagnostics {
     init {
         onlyIf("Task can only run on macOS") { HostManager.hostIsMac }
-        onlyIf("Xcode project content is available and not empty") { pbxprojContent.orNull.isNullOrEmpty().not() }
+        onlyIf("Xcode project content is available and not empty") {
+            val content = pbxprojContent.orNull
+            if (content.isNullOrEmpty()) {
+                logger.error(
+                    "Failed to read Xcode project file. This may be due to a missing 'plutil' command or a malformed project file. " +
+                            "Please ensure Xcode command-line tools are installed."
+                )
+                false
+            } else {
+                true
+            }
+        }
     }
 
     companion object {

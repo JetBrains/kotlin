@@ -231,18 +231,27 @@ internal object KotlinToolingDiagnostics {
 
     object MissingXcodeTargetDiagnostic : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Misconfiguration) {
         operator fun invoke(missingTargets: List<Pair<String, String>>, xcodeProject: File) = build {
-            title("Xcode project is not configured for all Kotlin targets")
+            title("Kotlin targets not configured in Xcode")
                 .description {
                     val missingTargetsString = missingTargets.joinToString("\n") { (kotlinTargetName, expectedSdkRoot) ->
                         " - '$kotlinTargetName' (expected SDK: '$expectedSdkRoot')"
                     }
                     """
-                |The following Kotlin targets are not configured in any Xcode application target inside '${xcodeProject.name}':
+                |The following Kotlin targets are not linked to any Xcode application target in '${xcodeProject.name}':
                 |$missingTargetsString
                 """.trimMargin()
                 }
-                .solution {
-                    "To use the frameworks produced by these targets, make sure you have an Xcode application target that builds for the corresponding SDKs."
+                .solutions {
+                    missingTargets.map { (_, expectedSdkRoot) ->
+                        when (expectedSdkRoot) {
+                            "watchos" -> "'watchOS Application'"
+                            "appletvos" -> "'tvOS Application'"
+                            "macosx" -> "'macOS Application'"
+                            else -> "'iOS Application'"
+                        }
+                    }.map { app ->
+                        "Add the following new application targets to your Xcode project: $app}."
+                    }.distinct()
                 }
         }
     }
