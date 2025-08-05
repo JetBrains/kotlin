@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.ir.util.defaultType
 import org.jetbrains.kotlin.ir.util.getAnnotation
 import org.jetbrains.kotlin.ir.util.hasAnnotation
 import org.jetbrains.kotlin.name.FqName
+import org.jetbrains.kotlin.wasm.ir.JsBuiltinDescriptor
 import org.jetbrains.kotlin.wasm.ir.WasmImportDescriptor
 import org.jetbrains.kotlin.wasm.ir.WasmSymbol
 
@@ -42,6 +43,20 @@ fun IrFunction.getWasmImportDescriptor(): WasmImportDescriptor? {
     return WasmImportDescriptor(
         moduleName,
         WasmSymbol(declarationName ?: this.name.asString())
+    )
+}
+
+fun IrFunction.getJsBuiltinDescriptor(): JsBuiltinDescriptor? {
+    val annotation = getAnnotation(FqName("kotlin.wasm.JsBuiltin"))
+        ?: return null
+
+    val moduleName = (annotation.arguments[0] as IrConst).value as String
+    val declarationName = (annotation.arguments[1] as? IrConst)?.value as? String
+    val polyfillImpl = (annotation.arguments[2] as? IrConst)?.value as String
+    return JsBuiltinDescriptor(
+        "wasm:$moduleName",
+        WasmSymbol(declarationName ?: this.name.asString()),
+        polyfillImpl
     )
 }
 
