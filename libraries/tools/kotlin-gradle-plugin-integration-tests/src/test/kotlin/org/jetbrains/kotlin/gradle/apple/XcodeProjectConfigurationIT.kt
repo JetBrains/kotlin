@@ -161,6 +161,7 @@ class XcodeProjectConfigurationIT : KGPBaseTest() {
                 }
             }
             build(xcodeCheckTask) {
+                assertOutputContains("Failed to read Xcode project file")
                 assertTasksSkipped(xcodeCheckTask)
                 assertNoDiagnostic(KotlinToolingDiagnostics.MissingXcodeTargetDiagnostic)
                 assertNoDiagnostic(KotlinToolingDiagnostics.NoApplicationTargetFoundDiagnostic)
