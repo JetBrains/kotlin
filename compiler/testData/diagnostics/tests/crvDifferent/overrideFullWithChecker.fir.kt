@@ -48,7 +48,7 @@ class C2: I2 {
     override fun foo(): String = ""
 }
 
-class C3: I3 {
+open class C3: I3 {
     override fun foo(): String = ""
 }
 
@@ -57,11 +57,17 @@ class C4: I3 {
     override fun <!OVERRIDING_IGNORABLE_WITH_MUST_USE!>foo<!>(): String = "" // Should be a warning on overriding explicit @Ignorable
 }
 
-fun check(c1: C1, c2: C2, c3: C3, c4: C4) {
+@MustUseReturnValue
+class C5: C3() {
+    override fun <!OVERRIDING_IGNORABLE_WITH_MUST_USE!>foo<!>(): String = ""
+}
+
+fun check(c1: C1, c2: C2, c3: C3, c4: C4, c5: C5) {
     <!RETURN_VALUE_NOT_USED!>c1.foo()<!>
     <!RETURN_VALUE_NOT_USED!>c2.foo()<!>
     c3.foo()
     <!RETURN_VALUE_NOT_USED!>c4.foo()<!>
+    <!RETURN_VALUE_NOT_USED!>c5.foo()<!>
 }
 
 /* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, interfaceDeclaration, override */
