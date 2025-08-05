@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -14,15 +14,19 @@ import org.jetbrains.kotlin.psi.stubs.KotlinContractEffectStub
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinContractEffectStubImpl
 
 class KtContractEffectElementType(debugName: String, psiClass: Class<KtContractEffect>) :
-    KtStubElementType<KotlinContractEffectStub, KtContractEffect>(debugName, psiClass, KotlinContractEffectStub::class.java) {
-    override fun serialize(stub: KotlinContractEffectStub, dataStream: StubOutputStream) {
+    KtStubElementType<KotlinContractEffectStubImpl, KtContractEffect>(
+        debugName,
+        psiClass,
+        KotlinContractEffectStub::class.java,
+    ) {
+    override fun serialize(stub: KotlinContractEffectStubImpl, dataStream: StubOutputStream) {
     }
 
-    override fun deserialize(dataStream: StubInputStream, parentStub: StubElement<PsiElement>?): KotlinContractEffectStub {
+    override fun deserialize(dataStream: StubInputStream, parentStub: StubElement<PsiElement>?): KotlinContractEffectStubImpl {
         return KotlinContractEffectStubImpl(parentStub, this)
     }
 
-    override fun createStub(psi: KtContractEffect, parentStub: StubElement<*>?): KotlinContractEffectStub {
+    override fun createStub(psi: KtContractEffect, parentStub: StubElement<*>?): KotlinContractEffectStubImpl {
         return KotlinContractEffectStubImpl(parentStub, this)
     }
 }

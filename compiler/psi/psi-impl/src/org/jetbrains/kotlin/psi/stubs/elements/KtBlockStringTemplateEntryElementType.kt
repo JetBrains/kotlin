@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.psi.stubs.KotlinBlockStringTemplateEntryStub
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinBlockStringTemplateEntryStubImpl
 
 class KtBlockStringTemplateEntryElementType(@NonNls debugName: String) :
-    KtStubElementType<KotlinBlockStringTemplateEntryStub, KtBlockStringTemplateEntry>(
+    KtStubElementType<KotlinBlockStringTemplateEntryStubImpl, KtBlockStringTemplateEntry>(
         debugName,
         KtBlockStringTemplateEntry::class.java,
         KotlinBlockStringTemplateEntryStub::class.java,
@@ -25,14 +25,14 @@ class KtBlockStringTemplateEntryElementType(@NonNls debugName: String) :
     override fun createStub(
         psi: KtBlockStringTemplateEntry,
         parentStub: StubElement<*>?,
-    ): KotlinBlockStringTemplateEntryStub = KotlinBlockStringTemplateEntryStubImpl(
+    ): KotlinBlockStringTemplateEntryStubImpl = KotlinBlockStringTemplateEntryStubImpl(
         parentStub,
         hasMultipleExpressions = psi.childrenOfType<KtExpression>().size > 1,
         text = psi.text,
     )
 
     override fun serialize(
-        stub: KotlinBlockStringTemplateEntryStub,
+        stub: KotlinBlockStringTemplateEntryStubImpl,
         dataStream: StubOutputStream,
     ) {
         dataStream.writeBoolean(stub.hasMultipleExpressions)
@@ -42,7 +42,7 @@ class KtBlockStringTemplateEntryElementType(@NonNls debugName: String) :
     override fun deserialize(
         dataStream: StubInputStream,
         parentStub: StubElement<*>?,
-    ): KotlinBlockStringTemplateEntryStub {
+    ): KotlinBlockStringTemplateEntryStubImpl {
         val hasMultipleExpressions = dataStream.readBoolean()
         val text = dataStream.readUTFFast()
         return KotlinBlockStringTemplateEntryStubImpl(

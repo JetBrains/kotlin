@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2023 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -24,14 +24,14 @@ import org.jetbrains.kotlin.psi.stubs.impl.Utils;
 import java.io.IOException;
 import java.util.List;
 
-public class KtObjectElementType extends KtStubElementType<KotlinObjectStub, KtObjectDeclaration> {
+public class KtObjectElementType extends KtStubElementType<KotlinObjectStubImpl, KtObjectDeclaration> {
     public KtObjectElementType(@NotNull @NonNls String debugName) {
         super(debugName, KtObjectDeclaration.class, KotlinObjectStub.class);
     }
 
     @NotNull
     @Override
-    public KotlinObjectStub createStub(@NotNull KtObjectDeclaration psi, StubElement parentStub) {
+    public KotlinObjectStubImpl createStub(@NotNull KtObjectDeclaration psi, StubElement parentStub) {
         String name = psi.getName();
         FqName fqName = KtPsiUtilKt.safeFqNameForLazyResolve(psi);
         List<String> superNames = KtPsiUtilKt.getSuperNames(psi);
@@ -43,7 +43,7 @@ public class KtObjectElementType extends KtStubElementType<KotlinObjectStub, KtO
     }
 
     @Override
-    public void serialize(@NotNull KotlinObjectStub stub, @NotNull StubOutputStream dataStream) throws IOException {
+    public void serialize(@NotNull KotlinObjectStubImpl stub, @NotNull StubOutputStream dataStream) throws IOException {
         dataStream.writeName(stub.getName());
 
         FqName fqName = stub.getFqName();
@@ -65,7 +65,7 @@ public class KtObjectElementType extends KtStubElementType<KotlinObjectStub, KtO
 
     @NotNull
     @Override
-    public KotlinObjectStub deserialize(@NotNull StubInputStream dataStream, StubElement parentStub) throws IOException {
+    public KotlinObjectStubImpl deserialize(@NotNull StubInputStream dataStream, StubElement parentStub) throws IOException {
         StringRef name = dataStream.readName();
 
         StringRef fqNameStr = dataStream.readName();
@@ -90,7 +90,7 @@ public class KtObjectElementType extends KtStubElementType<KotlinObjectStub, KtO
     }
 
     @Override
-    public void indexStub(@NotNull KotlinObjectStub stub, @NotNull IndexSink sink) {
+    public void indexStub(@NotNull KotlinObjectStubImpl stub, @NotNull IndexSink sink) {
         StubIndexService.getInstance().indexObject(stub, sink);
     }
 }
