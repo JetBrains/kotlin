@@ -99,6 +99,10 @@ class WasmFileCodegenContext(
         wasmFileFragment.jsModuleImports[irFunction.getReferenceKey()] = module
     }
 
+    fun addJsBuiltin(declarationName: String, polyfillImpl: String) {
+        wasmFileFragment.jsBuiltinsPolyfills[declarationName] = polyfillImpl
+    }
+
     val wasmStringsElements: WasmStringsElements
         get() = wasmFileFragment.wasmStringsElements
             ?: WasmStringsElements().also { wasmFileFragment.wasmStringsElements = it }

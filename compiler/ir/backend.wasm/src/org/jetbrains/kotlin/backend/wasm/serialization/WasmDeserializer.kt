@@ -602,6 +602,7 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
         constantArrayDataSegmentId = deserializeConstantArrayDataSegmentId(),
         jsFuns = deserializeJsFuns(),
         jsModuleImports = deserializeJsModuleImports(),
+        jsBuiltinsPolyfills = deserializeJsBuiltinsPolyfills(),
         exports = deserializeExports(),
         wasmStringsElements = deserializeWasmStringsElements(),
         mainFunctionWrappers = deserializeMainFunctionWrappers(),
@@ -628,6 +629,7 @@ class WasmDeserializer(inputStream: InputStream, private val skipLocalNames: Boo
     private fun deserializeConstantArrayDataSegmentId(): ReferencableElements<Pair<List<Long>, WasmType>, Int> = deserializeReferencableElements({ deserializePair({ deserializeList(::deserializeLong) }, ::deserializeType) }, ::deserializeInt)
     private fun deserializeJsFuns() = deserializeMap(::deserializeIdSignature, ::deserializeJsCodeSnippet)
     private fun deserializeJsModuleImports() = deserializeMap(::deserializeIdSignature, ::deserializeString)
+    private fun deserializeJsBuiltinsPolyfills() = deserializeMap(::deserializeString, ::deserializeString)
     private fun deserializeExports() = deserializeList(::deserializeExport)
     private fun deserializeMainFunctionWrappers() = deserializeList(::deserializeIdSignature)
     private fun deserializeTestFunctionDeclarators() = deserializeList(::deserializeIdSignature)

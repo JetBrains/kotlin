@@ -70,6 +70,7 @@ class WasmCompiledFileFragment(
     val constantArrayDataSegmentId: ReferencableElements<Pair<List<Long>, WasmType>, Int> = ReferencableElements(),
     val jsFuns: MutableMap<IdSignature, JsCodeSnippet> = mutableMapOf(),
     val jsModuleImports: MutableMap<IdSignature, String> = mutableMapOf(),
+    val jsBuiltinsPolyfills: MutableMap<String, String> = mutableMapOf(),
     val exports: MutableList<WasmExport<*>> = mutableListOf(),
     var wasmStringsElements: WasmStringsElements? = null,
     val mainFunctionWrappers: MutableList<IdSignature> = mutableListOf(),
