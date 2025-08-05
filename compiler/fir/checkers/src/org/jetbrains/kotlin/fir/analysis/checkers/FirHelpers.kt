@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.builtins.StandardNames.HASHCODE_NAME
 import org.jetbrains.kotlin.config.LanguageFeature
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.annotations.KotlinTarget
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.diagnostics.SourceElementPositioningStrategy
@@ -35,7 +34,6 @@ import org.jetbrains.kotlin.fir.resolve.dfa.cfg.FinallyBlockExitNode
 import org.jetbrains.kotlin.fir.resolve.dfa.cfg.JumpNode
 import org.jetbrains.kotlin.fir.resolve.dfa.controlFlowGraph
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
-import org.jetbrains.kotlin.fir.resolve.providers.firProvider
 import org.jetbrains.kotlin.fir.scopes.*
 import org.jetbrains.kotlin.fir.scopes.impl.declaredMemberScope
 import org.jetbrains.kotlin.fir.scopes.impl.multipleDelegatesWithTheSameSignature
@@ -150,51 +148,6 @@ private fun ConeKotlinType.isRecursiveValueClassType(visited: HashSet<ConeKotlin
         it.resolvedReturnType.isRecursiveValueClassType(visited, session, onlyInline)
     }.also { visited.remove(this) }
 }
-
-/**
- * Returns the FirRegularClass associated with this
- * or null of something goes wrong.
- */
-fun FirTypeRef.toRegularClassSymbol(session: FirSession): FirRegularClassSymbol? {
-    return coneType.toRegularClassSymbol(session)
-}
-
-/**
- * Returns the ClassLikeDeclaration where the Fir object has been defined
- * or null if no proper declaration has been found.
- * The containing symbol is resolved using the declaration-site session.
- * For example:
- *
- * ```kotlin
- * expect class MyClass {
- *     fun test() // (1)
- * }
- *
- * actual class MyClass {
- *     actual fun test() {} // (2)
- * }
- * ```
- *
- * Calling [getContainingClassSymbol] for the symbol of `(1)` will return
- * `expect class MyClass`, but calling it for `(2)` will give `actual class MyClass`.
- */
-fun FirBasedSymbol<*>.getContainingClassSymbol(): FirClassLikeSymbol<*>? {
-    return moduleData.session.firProvider.getContainingClass(this)
-}
-
-/**
- * Returns the containing class or file if the callable is top-level.
- * The containing symbol is resolved using the declaration-site session.
- */
-fun FirCallableSymbol<*>.getContainingSymbol(session: FirSession): FirBasedSymbol<*>? {
-    return getContainingClassSymbol()
-        ?: session.firProvider.getFirCallableContainerFile(this)?.symbol
-}
-
-/**
- * The containing symbol is resolved using the declaration-site session.
- */
-fun FirDeclaration.getContainingClassSymbol(): FirClassLikeSymbol<*>? = symbol.getContainingClassSymbol()
 
 context(context: CheckerContext)
 fun FirClassLikeSymbol<*>.outerClassSymbol(): FirClassLikeSymbol<*>? {
@@ -332,33 +285,6 @@ fun isSubtypeForTypeMismatch(context: ConeInferenceContext, subtype: ConeKotlinT
     )
 }
 
-fun FirCallableDeclaration.isVisibleInClass(parentClass: FirClass): Boolean {
-    return symbol.isVisibleInClass(parentClass.symbol, symbol.resolvedStatus)
-}
-
-fun FirBasedSymbol<*>.isVisibleInClass(parentClassSymbol: FirClassSymbol<*>): Boolean {
-    val status = when (this) {
-        is FirCallableSymbol<*> -> resolvedStatus
-        is FirClassLikeSymbol -> resolvedStatus
-        else -> return true
-    }
-    return isVisibleInClass(parentClassSymbol, status)
-}
-
-fun FirBasedSymbol<*>.isVisibleInClass(classSymbol: FirClassSymbol<*>, status: FirDeclarationStatus): Boolean {
-    val classPackage = classSymbol.classId.packageFqName
-    val packageName = when (this) {
-        is FirCallableSymbol<*> -> callableId.packageName
-        is FirClassLikeSymbol<*> -> classId.packageFqName
-        else -> return true
-    }
-    val visibility = status.visibility
-    if (visibility == Visibilities.Private || !visibility.visibleFromPackage(classPackage, packageName)) return false
-    if (visibility == Visibilities.Internal) {
-        return classSymbol.moduleData.canSeeInternalsOf(moduleData)
-    }
-    return true
-}
 
 /**
  * Get the [ImplementationStatus] for this member.
