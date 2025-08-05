@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.buildtools.internal.jvm.operations
 
-import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporterImpl
-import org.jetbrains.kotlin.build.report.metrics.DoNothingBuildMetricsReporter
 import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
 import org.jetbrains.kotlin.buildtools.api.KotlinLogger
 import org.jetbrains.kotlin.buildtools.api.ProjectId
@@ -14,12 +12,8 @@ import org.jetbrains.kotlin.buildtools.api.internal.BaseOption
 import org.jetbrains.kotlin.buildtools.api.jvm.ClassSnapshotGranularity
 import org.jetbrains.kotlin.buildtools.api.jvm.ClasspathEntrySnapshot
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmClasspathSnapshottingOperation
-import org.jetbrains.kotlin.buildtools.api.trackers.BuildMetricsCollector
-import org.jetbrains.kotlin.buildtools.internal.BuildOperationImpl
-import org.jetbrains.kotlin.buildtools.internal.ClasspathEntrySnapshotImpl
-import org.jetbrains.kotlin.buildtools.internal.Options
-import org.jetbrains.kotlin.buildtools.internal.OptionsDelegate
-import org.jetbrains.kotlin.buildtools.internal.UseFromImplModuleRestricted
+import org.jetbrains.kotlin.buildtools.internal.*
+import org.jetbrains.kotlin.buildtools.internal.trackers.getMetricsReporter
 import org.jetbrains.kotlin.incremental.classpathDiff.ClasspathEntrySnapshotter
 import java.nio.file.Path
 
@@ -45,18 +39,9 @@ internal class JvmClasspathSnapshottingOperationImpl(
     override fun execute(projectId: ProjectId, executionPolicy: ExecutionPolicy, logger: KotlinLogger?): ClasspathEntrySnapshot {
         val granularity: ClassSnapshotGranularity = options["GRANULARITY"]
         val parseInlinedLocalClasses: Boolean = options["PARSE_INLINED_LOCAL_CLASSES"]
-        val metricsReporter = this[METRICS_COLLECTOR]?.let { BuildMetricsReporterImpl() }
-            ?: DoNothingBuildMetricsReporter
         val origin = ClasspathEntrySnapshotter.snapshot(
-            classpathEntry.toFile(),
-            ClasspathEntrySnapshotter.Settings(granularity, parseInlinedLocalClasses),
-            metricsReporter
+            classpathEntry.toFile(), ClasspathEntrySnapshotter.Settings(granularity, parseInlinedLocalClasses), getMetricsReporter()
         )
-        this[METRICS_COLLECTOR]?.let { metricsCollector ->
-            metricsReporter.getMetrics().buildTimes.buildTimesMapMs().forEach { (key, value) ->
-                metricsCollector.collectMetric(key.name, BuildMetricsCollector.ValueType.MILLISECONDS, value)
-            }
-        }
         return ClasspathEntrySnapshotImpl(origin)
     }
 

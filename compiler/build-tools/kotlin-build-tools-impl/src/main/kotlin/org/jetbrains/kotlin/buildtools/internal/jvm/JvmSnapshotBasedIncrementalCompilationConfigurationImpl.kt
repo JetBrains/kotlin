@@ -24,6 +24,8 @@ internal class JvmSnapshotBasedIncrementalCompilationOptionsImpl() : JvmSnapshot
         this[OUTPUT_DIRS] = null
         this[USE_FIR_RUNNER] = false
         this[ASSURED_NO_CLASSPATH_SNAPSHOT_CHANGES] = false
+        this[ROOT_PROJECT_DIR] = null
+        this[MODULE_BUILD_DIR] = null
     }
 
     @OptIn(UseFromImplModuleRestricted::class)
@@ -45,9 +47,9 @@ internal class JvmSnapshotBasedIncrementalCompilationOptionsImpl() : JvmSnapshot
     class Option<V>(id: String) : BaseOption<V>(id)
 
     companion object {
-        val ROOT_PROJECT_DIR: Option<Path> = Option("ROOT_PROJECT_DIR")
+        val ROOT_PROJECT_DIR: Option<Path?> = Option("ROOT_PROJECT_DIR")
 
-        val MODULE_BUILD_DIR: Option<Path> = Option("MODULE_BUILD_DIR")
+        val MODULE_BUILD_DIR: Option<Path?> = Option("MODULE_BUILD_DIR")
 
         val PRECISE_JAVA_TRACKING: Option<Boolean> =
             Option("PRECISE_JAVA_TRACKING")

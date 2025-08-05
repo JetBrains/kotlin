@@ -19,7 +19,8 @@ public interface BuildMetricsCollector {
         NUMBER,
         NANOSECONDS,
         MILLISECONDS,
-        TIME
+        TIME,
+        ATTRIBUTE,
     }
 
     /**
