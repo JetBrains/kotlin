@@ -5,17 +5,10 @@
 
 package org.jetbrains.kotlin.backend.common
 
-import org.jetbrains.kotlin.backend.common.checkers.IrElementChecker
-import org.jetbrains.kotlin.backend.common.checkers.IrValidationError
-import org.jetbrains.kotlin.backend.common.checkers.TreeConsistencyError
-import org.jetbrains.kotlin.backend.common.checkers.checkTreeConsistency
-import org.jetbrains.kotlin.backend.common.checkers.context.*
-import org.jetbrains.kotlin.backend.common.checkers.declaration.*
-import org.jetbrains.kotlin.backend.common.checkers.expression.*
-import org.jetbrains.kotlin.backend.common.checkers.symbol.IrVisibilityChecker
-import org.jetbrains.kotlin.backend.common.checkers.IrSymbolChecker
-import org.jetbrains.kotlin.backend.common.checkers.IrTypeChecker
-import org.jetbrains.kotlin.backend.common.checkers.type.IrTypeParameterScopeChecker
+import org.jetbrains.kotlin.backend.common.checkers.*
+import org.jetbrains.kotlin.backend.common.checkers.context.CheckerContext
+import org.jetbrains.kotlin.backend.common.checkers.context.ContextUpdater
+import org.jetbrains.kotlin.backend.common.checkers.context.ParentChainUpdater
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.IrVerificationMode
@@ -35,21 +28,6 @@ import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 
 typealias ReportIrValidationError = (IrFile?, IrElement, String, List<IrElement>) -> Unit
-
-data class IrValidatorConfig(
-    val checkTreeConsistency: Boolean = true,
-    val checkTypes: Boolean = false,
-    val checkValueScopes: Boolean = false,
-    val checkTypeParameterScopes: Boolean = false,
-    val checkCrossFileFieldUsage: Boolean = false,
-    val checkAllKotlinFieldsArePrivate: Boolean = false,
-    val checkVisibilities: Boolean = false,
-    val checkVarargTypes: Boolean = false,
-    val checkIrExpressionBodyInFunction: Boolean = true,
-    val checkUnboundSymbols: Boolean = false,
-    val checkInlineFunctionUseSites: InlineFunctionUseSiteChecker? = null,
-    val checkOverridePrivateDeclaration: Boolean = true,
-)
 
 private class IrValidator(
     val validatorConfig: IrValidatorConfig,
@@ -78,62 +56,10 @@ private class IrFileValidator(
     config: IrValidatorConfig,
     private val context: CheckerContext
 ) : IrTreeSymbolsVisitor() {
-    private val contextUpdaters: MutableSet<ContextUpdater> = mutableSetOf(ParentChainUpdater)
-    private val elementCheckers: MutableList<IrElementChecker<*>> = mutableListOf(
-        IrSetValueAssignabilityChecker,
-        IrFunctionDispatchReceiverChecker, IrFunctionParametersChecker, IrConstructorReceiverChecker,
-        IrTypeOperatorTypeOperandChecker,
-        IrPropertyAccessorsChecker, IrFunctionPropertiesChecker,
-    )
-    private val symbolCheckers: MutableList<IrSymbolChecker> = mutableListOf()
-    private val typeCheckers: MutableList<IrTypeChecker> = mutableListOf()
-
-    init {
-        if (config.checkValueScopes) {
-            elementCheckers.add(IrValueAccessScopeChecker)
-        }
-        if (config.checkTypeParameterScopes) {
-            typeCheckers.add(IrTypeParameterScopeChecker)
-        }
-        if (config.checkAllKotlinFieldsArePrivate) {
-            elementCheckers.add(IrFieldVisibilityChecker)
-        }
-        if (config.checkCrossFileFieldUsage) {
-            elementCheckers.add(IrCrossFileFieldUsageChecker)
-        }
-        if (config.checkVisibilities) {
-            symbolCheckers.add(IrVisibilityChecker)
-        }
-        if (config.checkVarargTypes) {
-            elementCheckers.add(IrVarargTypesChecker)
-            elementCheckers.add(IrValueParameterVarargTypesChecker)
-        }
-        if (config.checkTypes) {
-            elementCheckers.add(IrConstTypeChecker)
-            elementCheckers.add(IrStringConcatenationTypeChecker)
-            elementCheckers.add(IrGetObjectValueTypeChecker)
-            elementCheckers.add(IrGetValueTypeChecker)
-            elementCheckers.add(IrUnitTypeExpressionChecker)
-            elementCheckers.add(IrNothingTypeExpressionChecker)
-            elementCheckers.add(IrGetFieldTypeChecker)
-            elementCheckers.add(IrCallTypeChecker)
-            elementCheckers.add(IrTypeOperatorTypeChecker)
-            elementCheckers.add(IrDynamicTypeFieldAccessChecker)
-        }
-        if (config.checkIrExpressionBodyInFunction) {
-            elementCheckers.add(IrExpressionBodyInFunctionChecker)
-        }
-        if (config.checkOverridePrivateDeclaration) {
-            elementCheckers.add(IrPrivateDeclarationOverrideChecker)
-        }
-        config.checkInlineFunctionUseSites?.let {
-            elementCheckers.add(IrNoInlineUseSitesChecker(it))
-        }
-
-        for (checker in elementCheckers + symbolCheckers + typeCheckers) {
-            contextUpdaters += checker.requiredContextUpdaters
-        }
-    }
+    private val contextUpdaters: List<ContextUpdater> = listOf(ParentChainUpdater) + config.checkers.flatMap { it.requiredContextUpdaters }
+    private val elementCheckers: List<IrElementChecker<*>> = config.checkers.filterIsInstance<IrElementChecker<*>>()
+    private val symbolCheckers: List<IrSymbolChecker> = config.checkers.filterIsInstance<IrSymbolChecker>()
+    private val typeCheckers: List<IrTypeChecker> = config.checkers.filterIsInstance<IrTypeChecker>()
 
     private val checkersPerElement = object : ClassValue<List<IrElementChecker<*>>>() {
         override fun computeValue(type: Class<*>): List<IrElementChecker<*>> =
@@ -193,9 +119,11 @@ private fun performBasicIrValidation(
         }
     }
 
-    // Phase 2: Traverse the IR tree again to run additional checks based on the validator configuration.
-    val validator = IrValidator(validatorConfig, irBuiltIns, reportError)
-    element.acceptVoid(validator)
+    if (validatorConfig.checkers.isNotEmpty()) {
+        // Phase 2: Traverse the IR tree again to run additional checks based on the validator configuration.
+        val validator = IrValidator(validatorConfig, irBuiltIns, reportError)
+        element.acceptVoid(validator)
+    }
 }
 
 /**
