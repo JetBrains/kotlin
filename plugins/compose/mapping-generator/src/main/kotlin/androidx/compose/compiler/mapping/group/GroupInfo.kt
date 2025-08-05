@@ -15,4 +15,6 @@ enum class GroupType {
     Root,
     RestartGroup,
     ReplaceGroup,
+    // TODO(ashikov): support MovableGroup
+    //   parsing it is not trivial because its argument can be an arbitrary expression
 }

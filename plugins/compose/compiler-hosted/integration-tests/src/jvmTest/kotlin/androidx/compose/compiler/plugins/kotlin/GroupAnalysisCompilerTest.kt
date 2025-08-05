@@ -270,6 +270,23 @@ class GroupAnalysisCompilerTest(
         checkFunctionMeta = true
     )
 
+    @Test
+    fun key() = groups(
+        """
+            @Composable
+            fun targetEnterExit(param: String): String =
+                key(param) {
+                    if (param.isEmpty()) {
+                        "Empty"
+                    } else {
+                        val state = remember { mutableStateOf("") }
+                        state.value
+                    }
+                }
+        """,
+        checkOptimizeGroups = true
+    )
+
     @JvmField
     @Rule
     val goldenTransformRule = GoldenTransformRule()

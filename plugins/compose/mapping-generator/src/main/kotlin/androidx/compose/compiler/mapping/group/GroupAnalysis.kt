@@ -107,7 +107,7 @@ private fun parseGroupInfoFromTokens(
             is EndGroupToken -> {
                 if (currentNode != null && currentNode.incompleteLabels.isEmpty()) {
                     if (currentNode.type != token.type) {
-                        return parseError("EndRestartGroup is not allowed in ${currentNode.type} scope")
+                        return parseError("${token.type} is not allowed in ${currentNode.type} scope")
                     }
 
                     val node = nodeStack.removeLast()
