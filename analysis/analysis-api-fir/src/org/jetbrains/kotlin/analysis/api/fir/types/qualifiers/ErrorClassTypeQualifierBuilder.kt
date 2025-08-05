@@ -10,7 +10,7 @@ import org.jetbrains.kotlin.analysis.api.impl.base.types.KaBaseResolvedClassType
 import org.jetbrains.kotlin.analysis.api.impl.base.types.KaBaseUnresolvedClassTypeQualifier
 import org.jetbrains.kotlin.analysis.api.types.KaClassTypeQualifier
 import org.jetbrains.kotlin.analysis.api.types.KaResolvedClassTypeQualifier
-import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClassSymbol
+import org.jetbrains.kotlin.fir.resolve.getContainingClassSymbol
 import org.jetbrains.kotlin.fir.resolve.diagnostics.*
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.types.toConeTypeProjection

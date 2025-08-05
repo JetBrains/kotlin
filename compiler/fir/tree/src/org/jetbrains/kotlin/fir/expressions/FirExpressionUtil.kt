@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.fir.expressions
 
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.fir.FirElement
+import org.jetbrains.kotlin.fir.declarations.FirAnonymousFunction
 import org.jetbrains.kotlin.fir.declarations.FirDeclarationOrigin
 import org.jetbrains.kotlin.fir.declarations.FirProperty
 import org.jetbrains.kotlin.fir.declarations.FirValueParameter
@@ -204,4 +205,10 @@ inline fun FirFunctionCall.forAllReifiedTypeParameters(block: (ConeKotlinType, F
             block(type, typeArgument)
         }
     }
+}
+
+tailrec fun FirExpression.unwrapAnonymousFunctionExpression(): FirAnonymousFunction? = when (this) {
+    is FirAnonymousFunctionExpression -> anonymousFunction
+    is FirWrappedArgumentExpression -> expression.unwrapAnonymousFunctionExpression()
+    else -> null
 }

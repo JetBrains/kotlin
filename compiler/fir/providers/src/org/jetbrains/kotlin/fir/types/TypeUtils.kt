@@ -26,6 +26,7 @@ import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
 import org.jetbrains.kotlin.fir.resolve.substitution.substitutorByMap
 import org.jetbrains.kotlin.fir.resolve.substitution.wrapProjection
 import org.jetbrains.kotlin.fir.resolve.toClassSymbol
+import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.resolvedTypeFromPrototype
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
@@ -1071,4 +1072,12 @@ inline fun outerType(
     return containingSymbol.constructType(
         fullyExpandedType.typeArguments.drop(currentTypeArgumentsNumber).toTypedArray(),
     )
+}
+
+/**
+ * Returns the FirRegularClass associated with this
+ * or null of something goes wrong.
+ */
+fun FirTypeRef.toRegularClassSymbol(session: FirSession): FirRegularClassSymbol? {
+    return coneType.toRegularClassSymbol(session)
 }
