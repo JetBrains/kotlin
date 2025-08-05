@@ -12,6 +12,7 @@ grant {
     permission java.lang.reflect.ReflectPermission "newProxyInPackage.net.bytebuddy.description.type";
     permission java.lang.reflect.ReflectPermission "newProxyInPackage.net.bytebuddy.agent.builder";
     permission java.lang.reflect.ReflectPermission "newProxyInPackage.net.bytebuddy.utility";
+    permission java.lang.reflect.ReflectPermission "newProxyInPackage.net.bytebuddy.dynamic.loading";
     permission java.util.PropertyPermission "*", "read";
     permission java.util.PropertyPermission "idea.*", "write";
     permission java.util.PropertyPermission "psi.*", "write";
