@@ -49,6 +49,7 @@ kotlin {
                 implementation(project(":compiler:cli"))
                 implementation(project(":compiler:backend.jvm"))
                 implementation(project(":compiler:fir:fir2ir:jvm-backend"))
+                implementation(project(":compiler:fir:fir-deserialization"))
                 implementation(project(":compiler:backend.jvm.entrypoint"))
                 implementation(intellijCore())
 

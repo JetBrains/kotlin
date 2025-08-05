@@ -21,6 +21,7 @@ dependencies {
     api(project(":compiler:fir:fir-jvm"))
     api(project(":compiler:fir:entrypoint"))
     api(project(":compiler:fir:fir2ir"))
+    implementation(project(":compiler:fir:fir-deserialization"))
     implementation(project(":compiler:fir:fir2ir:jvm-backend"))
     api(project(":compiler:fir:checkers"))
     api(project(":compiler:fir:checkers:checkers.jvm"))

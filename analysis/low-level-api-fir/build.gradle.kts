@@ -30,6 +30,7 @@ dependencies {
 
     implementation(project(":compiler:frontend.common"))
     implementation(project(":compiler:fir:entrypoint"))
+    implementation(project(":compiler:fir:fir-deserialization"))
     implementation(project(":analysis:analysis-api-platform-interface"))
     implementation(project(":analysis:analysis-api"))
     implementation(project(":analysis:analysis-internal-utils"))

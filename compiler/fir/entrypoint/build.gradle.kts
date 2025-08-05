@@ -24,6 +24,7 @@ dependencies {
     implementation(project(":compiler:fir:resolve"))
     implementation(project(":compiler:fir:fir-js"))
     implementation(project(":compiler:fir:fir-serialization"))
+    implementation(project(":compiler:fir:fir-deserialization"))
     implementation(project(":compiler:fir:fir2ir:jvm-backend"))
     implementation(project(":compiler:ir.backend.common"))
     implementation(project(":compiler:ir.serialization.common"))
