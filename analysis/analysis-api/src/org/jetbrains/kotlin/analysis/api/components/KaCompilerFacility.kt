@@ -27,7 +27,10 @@ import java.io.File
  * [analysis block][org.jetbrains.kotlin.analysis.api.analyze].
  */
 @KaExperimentalApi
-public sealed class KaCompilationResult {
+public sealed class KaCompilationResult(
+    /** A list of exceptions that were thrown during compilation but workaround somehow */
+    public val mutedExceptions: List<Throwable>,
+) {
     /**
      * A successful compilation result.
      *
@@ -53,7 +56,8 @@ public sealed class KaCompilationResult {
         public val output: List<KaCompiledFile>,
         public val capturedValues: List<CodeFragmentCapturedValue>,
         public var canBeCached: Boolean,
-    ) : KaCompilationResult()
+        mutedExceptions: List<Throwable> = emptyList(),
+    ) : KaCompilationResult(mutedExceptions)
 
     /**
      * A failed compilation result.
@@ -61,7 +65,10 @@ public sealed class KaCompilationResult {
      * @property errors Non-recoverable errors which occurred either during code analysis or during code generation.
      */
     @KaExperimentalApi
-    public class Failure(public val errors: List<KaDiagnostic>) : KaCompilationResult()
+    public class Failure(
+        public val errors: List<KaDiagnostic>,
+        mutedExceptions: List<Throwable> = emptyList(),
+    ) : KaCompilationResult(mutedExceptions)
 }
 
 @KaExperimentalApi

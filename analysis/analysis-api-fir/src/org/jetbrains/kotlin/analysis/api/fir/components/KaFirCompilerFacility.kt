@@ -176,14 +176,31 @@ internal class KaFirCompilerFacility(
         allowedErrorFilter: (KaDiagnostic) -> Boolean,
     ): KaCompilationResult {
         val disabledIrExtensions = mutableListOf<Class<out IrGenerationExtension>>()
+        val mutedExceptions = mutableListOf<Throwable>()
         while (true) {
             try {
-                return compileUnsafe(file, configuration, target as KaCompilerTarget.Jvm, allowedErrorFilter, disabledIrExtensions)
+                val result = compileUnsafe(file, configuration, target as KaCompilerTarget.Jvm, allowedErrorFilter, disabledIrExtensions)
+                if (mutedExceptions.isNotEmpty()) {
+                    return when (result) {
+                        is KaCompilationResult.Failure -> KaCompilationResult.Failure(
+                            errors = result.errors,
+                            mutedExceptions = mutedExceptions,
+                        )
+                        is KaCompilationResult.Success -> KaCompilationResult.Success(
+                            output = result.output,
+                            capturedValues = result.capturedValues,
+                            canBeCached = result.canBeCached,
+                            mutedExceptions = mutedExceptions,
+                        )
+                    }
+                }
+                return result
             } catch (e: IrGenerationExtensionException) {
                 val extensionClass = e.extensionClass
                 if (disabledIrExtensions.contains(extensionClass)) {
                     throw KaCodeCompilationException(e) // very strange
                 }
+                mutedExceptions.add(e)
                 disabledIrExtensions.add(extensionClass)
             } catch (e: Throwable) {
                 rethrowIntellijPlatformExceptionIfNeeded(e)
