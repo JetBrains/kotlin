@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.analysis.api.standalone.buildStandaloneAnalysisAPISe
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaSourceModule
-import org.jetbrains.kotlin.analysis.api.scopes.KaScope
 import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
 import org.jetbrains.kotlin.analysis.project.structure.builder.KtModuleProviderBuilder
 import org.jetbrains.kotlin.analysis.project.structure.builder.buildKtLibraryModule
@@ -26,7 +25,7 @@ import org.jetbrains.kotlin.sir.util.addChild
 import org.jetbrains.kotlin.swiftexport.standalone.*
 import org.jetbrains.kotlin.swiftexport.standalone.config.SwiftExportConfig
 import org.jetbrains.kotlin.swiftexport.standalone.config.SwiftModuleConfig
-import org.jetbrains.kotlin.swiftexport.standalone.klib.KlibScope
+import org.jetbrains.kotlin.swiftexport.standalone.klib.getAllDeclarations
 import org.jetbrains.kotlin.swiftexport.standalone.session.StandaloneSirSession
 
 internal fun buildSirSession(
@@ -54,10 +53,9 @@ internal fun buildSirSession(
  */
 internal fun SirAndKaSession.translateModule(
     module: KaLibraryModule,
-    scopeToDeclarations: (KaScope) -> Sequence<KaDeclarationSymbol> = { it.declarations },
+    moduleToDeclarations: (KaLibraryModule) -> Sequence<KaDeclarationSymbol> = { it.getAllDeclarations() },
 ): SirModule {
-    val scope = KlibScope(module, useSiteSession)
-    extractAllTransitively(scopeToDeclarations(scope))
+    extractAllTransitively(moduleToDeclarations(module))
         .toList()
         .forEach { (oldParent, children) ->
             children
