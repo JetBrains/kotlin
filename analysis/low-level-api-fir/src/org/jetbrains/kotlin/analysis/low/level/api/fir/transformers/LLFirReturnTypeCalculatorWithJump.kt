@@ -40,7 +40,7 @@ internal class LLFirReturnTypeCalculatorWithJump(
 
         // Report recursion error if we found cycle during resolution
         if (computationSession.popCycledSymbolIfExists() == declaration.symbol) {
-            return recursionInImplicitTypeRef()
+            return recursionInImplicitTypeRef
         }
 
         LLFirImplicitTypesLazyResolver.checkIsResolved(declaration)

@@ -256,9 +256,9 @@ open class ReturnTypeCalculatorWithJump(
     }
 
     private fun resolvedToContractsIfNecessary(declaration: FirCallableDeclaration) {
-        val canHaveContracts = when {
-            declaration is FirProperty && !declaration.isLocal -> true
-            declaration is FirSimpleFunction && !declaration.isLocal -> true
+        val canHaveContracts = when (declaration) {
+            is FirProperty if !declaration.isLocal -> true
+            is FirSimpleFunction if !declaration.isLocal -> true
             else -> false
         }
 
@@ -267,15 +267,16 @@ open class ReturnTypeCalculatorWithJump(
         }
     }
 
-
-    protected fun recursionInImplicitTypeRef(): FirErrorTypeRef = buildErrorTypeRef {
-        diagnostic = ConeSimpleDiagnostic("cycle", DiagnosticKind.RecursionInImplicitTypes)
+    protected val recursionInImplicitTypeRef: FirErrorTypeRef by lazy {
+        buildErrorTypeRef {
+            diagnostic = ConeSimpleDiagnostic("cycle", DiagnosticKind.RecursionInImplicitTypes)
+        }
     }
 
     private fun computeReturnTypeRef(declaration: FirCallableDeclaration): FirResolvedTypeRef {
         val computedReturnType = when (val status = implicitBodyResolveComputationSession.getStatus(declaration.symbol)) {
             is ImplicitBodyResolveComputationStatus.Computed -> status.resolvedTypeRef
-            is ImplicitBodyResolveComputationStatus.Computing -> recursionInImplicitTypeRef()
+            is ImplicitBodyResolveComputationStatus.Computing -> recursionInImplicitTypeRef
             else -> null
         }
 
