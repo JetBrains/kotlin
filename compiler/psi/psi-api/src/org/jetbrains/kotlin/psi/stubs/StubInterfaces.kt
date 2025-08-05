@@ -31,7 +31,7 @@ interface KotlinPlaceHolderWithTextStub<T : KtElement> : KotlinPlaceHolderStub<T
 }
 
 interface KotlinStubWithFqName<T : PsiNamedElement> : NamedStub<T> {
-    fun getFqName(): FqName?
+    val fqName: FqName?
 }
 
 interface KotlinClassifierStub {
@@ -235,7 +235,7 @@ interface KotlinUserTypeStub : StubElement<KtUserType>
 interface KotlinFunctionTypeStub : StubElement<KtFunctionType>
 
 interface KotlinScriptStub : KotlinStubWithFqName<KtScript> {
-    override fun getFqName(): FqName
+    override val fqName: FqName
 }
 
 interface KotlinContextReceiverStub : StubElement<KtContextReceiver> {

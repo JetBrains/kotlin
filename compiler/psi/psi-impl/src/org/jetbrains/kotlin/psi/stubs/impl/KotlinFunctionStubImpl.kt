@@ -21,7 +21,7 @@ class KotlinFunctionStubImpl(
     parent: StubElement<out PsiElement>?,
     private val nameRef: StringRef?,
     private val isTopLevel: Boolean,
-    private val fqName: FqName?,
+    override val fqName: FqName?,
     private val isExtension: Boolean,
     private val hasNoExpressionBody: Boolean,
     private val hasBody: Boolean,
@@ -35,8 +35,6 @@ class KotlinFunctionStubImpl(
             throw IllegalArgumentException("fqName shouldn't be null for top level functions")
         }
     }
-
-    override fun getFqName() = fqName
 
     override fun getName() = StringRef.toString(nameRef)
     override fun isTopLevel() = isTopLevel

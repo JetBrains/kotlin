@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -30,10 +30,11 @@ class KotlinClassStubImpl(
     val valueClassRepresentation: KotlinValueClassRepresentation?,
 ) : KotlinStubBaseImpl<KtClass>(parent, type), KotlinClassStub {
 
-    override fun getFqName(): FqName? {
-        val stringRef = StringRef.toString(qualifiedName) ?: return null
-        return FqName(stringRef)
-    }
+    override val fqName: FqName?
+        get() {
+            val stringRef = StringRef.toString(qualifiedName) ?: return null
+            return FqName(stringRef)
+        }
 
     override fun isInterface(): Boolean = isInterface
     override fun isEnumEntry(): Boolean = isEnumEntry
