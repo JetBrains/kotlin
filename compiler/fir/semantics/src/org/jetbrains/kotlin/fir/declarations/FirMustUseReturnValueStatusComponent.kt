@@ -68,7 +68,7 @@ abstract class FirMustUseReturnValueStatusComponent : FirSessionComponent {
             containingProperty: FirPropertySymbol?,
             overriddenStatuses: List<FirResolvedDeclarationStatus>,
         ): ReturnValueStatus {
-            return ReturnValueStatus.Unspecified
+            return overriddenStatuses.firstOrNull()?.returnValueStatus ?: ReturnValueStatus.Unspecified
         }
 
         override fun computeMustUseReturnValueForJavaCallable(
@@ -122,6 +122,7 @@ abstract class FirMustUseReturnValueStatusComponent : FirSessionComponent {
             val overriddenFlag = overriddenStatuses.firstOrNull()?.returnValueStatus
 
             if (hasIgnorableLikeAnnotation(declaration.resolvedAnnotationClassIds)) return ReturnValueStatus.ExplicitlyIgnorable
+            if (overriddenFlag == ReturnValueStatus.MustUse) return ReturnValueStatus.MustUse
 
             // In the case of inheriting from Ignorable or Unspecified, global FULL setting has lesser priority than annotations/parent
             // but we want to check it here first to avoid looking through the containers
@@ -129,7 +130,6 @@ abstract class FirMustUseReturnValueStatusComponent : FirSessionComponent {
             if (session.languageVersionSettings.getFlag(AnalysisFlags.returnValueCheckerMode) == ReturnValueCheckerMode.FULL && !overridesIgnorableOrUnspecified)
                 return ReturnValueStatus.MustUse
 
-            if (overriddenFlag == ReturnValueStatus.MustUse) return ReturnValueStatus.MustUse
             if (findMustUseAmongContainers(
                     session = session,
                     declaration = declaration,
