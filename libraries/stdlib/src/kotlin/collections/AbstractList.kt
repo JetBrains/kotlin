@@ -32,9 +32,10 @@ public abstract class AbstractList<out E> protected constructor() : AbstractColl
 
     override fun listIterator(index: Int): ListIterator<E> = ListIteratorImpl(index)
 
-    override fun subList(fromIndex: Int, toIndex: Int): List<E> = SubList(this, fromIndex, toIndex)
+    override fun subList(fromIndex: Int, toIndex: Int): List<E> =
+        if (this is RandomAccess) RandomAccessSubList(this, fromIndex, toIndex) else SubList(this, fromIndex, toIndex)
 
-    private class SubList<out E>(private val list: AbstractList<E>, private val fromIndex: Int, toIndex: Int) : AbstractList<E>(), RandomAccess {
+    private open class SubList<out E>(private val list: AbstractList<E>, private val fromIndex: Int, toIndex: Int) : AbstractList<E>() {
         private var _size: Int = 0
 
         init {
@@ -55,6 +56,9 @@ public abstract class AbstractList<out E> protected constructor() : AbstractColl
             return SubList(list, this.fromIndex + fromIndex, this.fromIndex + toIndex)
         }
     }
+
+    private class RandomAccessSubList<out E>(list: AbstractList<E>, fromIndex: Int, toIndex: Int)
+        : SubList<E>(list, fromIndex, toIndex), RandomAccess
 
     /**
      * Checks if the two specified lists are *structurally* equal to one another.
