@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.backend.konan.llvm.localHash
 import org.jetbrains.kotlin.backend.konan.lower.DECLARATION_ORIGIN_BRIDGE_METHOD
 import org.jetbrains.kotlin.backend.konan.lower.bridgeTarget
 import org.jetbrains.kotlin.backend.konan.lower.getDefaultValueForOverriddenBuiltinFunction
+import org.jetbrains.kotlin.backend.konan.util.CustomBitSet
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
@@ -425,10 +426,10 @@ internal object DataFlowIR {
 
     class TypeHierarchy(val allTypes: Array<Type>) {
         private val typesSubTypes = Array(allTypes.size) { mutableListOf<Type>() }
-        private val allInheritors = Array(allTypes.size) { BitSet() }
+        private val allInheritors = Array(allTypes.size) { CustomBitSet() }
 
         init {
-            val visited = BitSet()
+            val visited = CustomBitSet()
 
             fun processType(type: Type) {
                 if (visited[type.index]) return
@@ -444,7 +445,7 @@ internal object DataFlowIR {
             allTypes.forEach { processType(it) }
         }
 
-        fun inheritorsOf(type: Type): BitSet {
+        fun inheritorsOf(type: Type): CustomBitSet {
             val typeId = type.index
             val inheritors = allInheritors[typeId]
             if (!inheritors.isEmpty || type == Type.Virtual) return inheritors

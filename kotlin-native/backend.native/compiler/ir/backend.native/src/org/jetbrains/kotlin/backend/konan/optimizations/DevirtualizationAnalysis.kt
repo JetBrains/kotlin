@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.backend.konan.ir.isBoxOrUnboxCall
 import org.jetbrains.kotlin.backend.konan.lower.loweredConstructorFunction
 import org.jetbrains.kotlin.backend.konan.util.IntArrayList
 import org.jetbrains.kotlin.backend.konan.lower.getObjectClassInstanceFunction
+import org.jetbrains.kotlin.backend.konan.util.CustomBitSet
 import org.jetbrains.kotlin.backend.konan.util.LongHashSet
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.ir.IrElement
@@ -121,7 +122,7 @@ internal object DevirtualizationAnalysis {
         return (exported + globalInitializers + explicitlyExported + associatedObjectConstructors + leakingThroughFunctionReferences).distinct()
     }
 
-    fun BitSet.format(allTypes: Array<DataFlowIR.Type>): String {
+    fun CustomBitSet.format(allTypes: Array<DataFlowIR.Type>): String {
         return allTypes.withIndex().filter { this[it.index] }.joinToString { it.value.toString() }
     }
 
@@ -139,7 +140,7 @@ internal object DevirtualizationAnalysis {
             var directCastEdges: MutableList<CastEdge>? = null
             var reversedCastEdges: MutableList<CastEdge>? = null
 
-            val types = BitSet()
+            val types = CustomBitSet()
 
             var priority = -1
 
@@ -177,7 +178,7 @@ internal object DevirtualizationAnalysis {
                 }
             }
 
-            class CastEdge(val node: Node, val suitableTypes: BitSet)
+            class CastEdge(val node: Node, val suitableTypes: CustomBitSet)
         }
 
         class Function(val symbol: DataFlowIR.FunctionSymbol, val parameters: Array<Node>, val returns: Node, val throws: Node)
@@ -206,7 +207,7 @@ internal object DevirtualizationAnalysis {
 
         private val constraintGraph = ConstraintGraph()
 
-        private inline fun forEachBitInBoth(first: BitSet, second: BitSet, block: (Int) -> Unit) {
+        private inline fun forEachBitInBoth(first: CustomBitSet, second: CustomBitSet, crossinline block: (Int) -> Unit) {
             if (first.cardinality() < second.cardinality())
                 first.forEachBit {
                     if (second[it])
@@ -237,7 +238,7 @@ internal object DevirtualizationAnalysis {
 
         fun logPathToType(reversedEdges: IntArray, node: Node, type: Int) {
             val nodes = constraintGraph.nodes
-            val visited = BitSet()
+            val visited = CustomBitSet()
             val prev = mutableMapOf<Node, Node>()
             var front = mutableListOf<Node>()
             front.add(node)
@@ -302,7 +303,7 @@ internal object DevirtualizationAnalysis {
             val nodesCount = nodes.size
             val order = IntArray(nodesCount)
             val multiNodes = IntArray(nodesCount)
-            val visited = BitSet(nodesCount)
+            val visited = CustomBitSet(nodesCount)
 
             private fun calculateTopologicalSort() {
                 require(directEdges.size == reversedEdges.size)
@@ -472,7 +473,7 @@ internal object DevirtualizationAnalysis {
                 for (multiNode in topologicalOrder) {
                     if (multiNode.multiNodeSize == 1 && multiNode is Node.Source)
                         continue // A source has no incoming edges.
-                    val types = BitSet()
+                    val types = CustomBitSet()
                     condensation.forEachNode(multiNode) { node ->
                         reversedEdges.forEachEdge(node.id) {
                             types.or(constraintGraph.nodes[it].types)
@@ -492,11 +493,8 @@ internal object DevirtualizationAnalysis {
                 var end = true
                 for ((sourceNode, edge) in badEdges) {
                     val distNode = edge.node
-                    val missingTypes = sourceNode.types.copy().apply { andNot(distNode.types) }
-                    missingTypes.and(edge.suitableTypes)
-                    if (!missingTypes.isEmpty) {
+                    if (distNode.types.or2(sourceNode.types, edge.suitableTypes)) {
                         end = false
-                        distNode.types.or(missingTypes)
                     }
                 }
             } while (!end)
@@ -506,19 +504,13 @@ internal object DevirtualizationAnalysis {
 
             // Second phase - do BFS.
             val nodesCount = constraintGraph.nodes.size
-            val marked = BitSet(nodesCount)
+            val marked = CustomBitSet(nodesCount)
             var front = IntArray(nodesCount)
             var prevFront = IntArray(nodesCount)
             var frontSize = 0
-            val tempBitSet = BitSet()
             for ((sourceNode, edge) in badEdges) {
                 val distNode = edge.node
-                tempBitSet.clear()
-                tempBitSet.or(sourceNode.types)
-                tempBitSet.andNot(distNode.types)
-                tempBitSet.and(edge.suitableTypes)
-                distNode.types.or(tempBitSet)
-                if (!marked[distNode.id] && !tempBitSet.isEmpty) {
+                if (distNode.types.or2(sourceNode.types, edge.suitableTypes) && !marked[distNode.id]) {
                     marked.set(distNode.id)
                     front[frontSize++] = distNode.id
                 }
@@ -538,11 +530,7 @@ internal object DevirtualizationAnalysis {
                         if (marked[distNode.id])
                             distNode.types.or(node.types)
                         else {
-                            tempBitSet.clear()
-                            tempBitSet.or(node.types)
-                            tempBitSet.andNot(distNode.types)
-                            distNode.types.or(node.types)
-                            if (!marked[distNode.id] && !tempBitSet.isEmpty) {
+                            if (distNode.types.or2(node.types) && !marked[distNode.id]) {
                                 marked.set(distNode.id)
                                 front[frontSize++] = distNode.id
                             }
@@ -550,12 +538,7 @@ internal object DevirtualizationAnalysis {
                     }
                     node.directCastEdges?.forEach { edge ->
                         val distNode = edge.node
-                        tempBitSet.clear()
-                        tempBitSet.or(node.types)
-                        tempBitSet.andNot(distNode.types)
-                        tempBitSet.and(edge.suitableTypes)
-                        distNode.types.or(tempBitSet)
-                        if (!marked[distNode.id] && !tempBitSet.isEmpty) {
+                        if (distNode.types.or2(node.types, edge.suitableTypes) && !marked[distNode.id]) {
                             marked.set(distNode.id)
                             front[frontSize++] = distNode.id
                         }
@@ -672,7 +655,7 @@ internal object DevirtualizationAnalysis {
             constraintGraph.externalVirtualCalls
                     .groupBy { it.returnType }
                     .forEach { (type, list) ->
-                        val visited = BitSet(nodesCount)
+                        val visited = CustomBitSet(nodesCount)
                         val stack = mutableListOf<Node>()
                         list.forEach { call ->
                             val returnsNode = call.returnsNode
@@ -708,7 +691,7 @@ internal object DevirtualizationAnalysis {
 
         // Both [directEdges] and [reversedEdges] are the array representation of a graph:
         // for each node v the edges of that node are stored in edges[edges[v] until edges[v + 1]].
-        private data class ConstraintGraphBuildResult(val instantiatingClasses: BitSet,
+        private data class ConstraintGraphBuildResult(val instantiatingClasses: CustomBitSet,
                                                       val directEdges: IntArray, val reversedEdges: IntArray)
 
         // Here we're dividing the build process onto two phases:
@@ -725,7 +708,7 @@ internal object DevirtualizationAnalysis {
                     buildReversedEdges(precursor.directEdges, precursor.reversedEdgesCount))
         }
 
-        private class ConstraintGraphPrecursor(val instantiatingClasses: BitSet,
+        private class ConstraintGraphPrecursor(val instantiatingClasses: CustomBitSet,
                                                val directEdges: IntArray, val reversedEdgesCount: IntArrayList)
 
         private fun buildReversedEdges(directEdges: IntArray, reversedEdgesCount: IntArrayList): IntArray {
@@ -794,10 +777,10 @@ internal object DevirtualizationAnalysis {
             private val allTypes = typeHierarchy.allTypes
             private val variables = mutableMapOf<DataFlowIR.Node.Variable, Node>()
             private val typesVirtualCallSites = Array(allTypes.size) { mutableListOf<ConstraintGraphVirtualCall>() }
-            private val suitableTypes = arrayOfNulls<BitSet?>(allTypes.size)
+            private val suitableTypes = arrayOfNulls<CustomBitSet?>(allTypes.size)
             private val concreteClasses = arrayOfNulls<Node?>(allTypes.size)
-            private val virtualTypeFilter = BitSet().apply { set(VIRTUAL_TYPE_ID) }
-            val instantiatingClasses = BitSet()
+            private val virtualTypeFilter = CustomBitSet().apply { set(VIRTUAL_TYPE_ID) }
+            val instantiatingClasses = CustomBitSet()
 
             val bagOfEdges = LongHashSet(10, 0.4f)
             val directEdgesCount = IntArrayList()
@@ -945,7 +928,7 @@ internal object DevirtualizationAnalysis {
                 if (instantiatingClasses[type.index]) return
                 instantiatingClasses.set(type.index)
                 context.log { "Adding instantiating class: $type" }
-                checkSupertypes(type, type, BitSet())
+                checkSupertypes(type, type, CustomBitSet())
             }
 
             private fun processVirtualCall(virtualCall: ConstraintGraphVirtualCall,
@@ -963,7 +946,7 @@ internal object DevirtualizationAnalysis {
 
             private fun checkSupertypes(type: DataFlowIR.Type,
                                         inheritor: DataFlowIR.Type,
-                                        seenTypes: BitSet) {
+                                        seenTypes: CustomBitSet) {
                 seenTypes.set(type.index)
 
                 context.logMultiple {
