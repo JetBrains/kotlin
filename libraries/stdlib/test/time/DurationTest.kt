@@ -585,7 +585,7 @@ class DurationTest {
         test(-1.days - 15.minutes, "-PT24H15M", "PT-24H-15M", "-PT25H-45M", "-PT25H-44M-60.0S")
         test(Duration.ZERO, "PT0S", "P1DT-24H", "+PT-1H+60M", "-PT1M-60S", "PT-000000000000000000000000H")
         test((-1.1).seconds, "-PT1.100S", "PT-1.1S")
-        test((-0.5).seconds, "-PT0.500S", "PT-0.5S", "PT-1M+60.5S")
+        test((-0.5).seconds, "-PT0.500S", "PT-0.5S", "PT-1M+59.5S")
 
         // nanoseconds rounding
         for (i in 0..4) {
