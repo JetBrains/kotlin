@@ -1076,7 +1076,8 @@ private fun parseDuration(value: String, strictIso: Boolean, throwException: Boo
 
 private const val INFINITY_STRING = "Infinity"
 
-private const val OVERFLOW_LIMIT = Long.MAX_VALUE / 1000
+private const val OVERFLOW_LIMIT = Long.MAX_VALUE / 2
+private const val LAST_DIGIT_MAX = OVERFLOW_LIMIT % 10
 
 @kotlin.internal.InlineOnly
 private inline fun willMultiplyOverflow(a: Long, b: Long): Boolean = when {
@@ -1107,9 +1108,10 @@ private inline fun Long.addWithoutOverflow(other: Long): Long = when {
     else -> this + other
 }
 
-private const val SECONDS_PER_MINUTE = 60L
-private const val SECONDS_PER_HOUR = SECONDS_PER_MINUTE * 60L
-private const val SECONDS_PER_DAY = SECONDS_PER_HOUR * 24L
+private const val MILLIS_PER_SECOND = 1000L
+private const val MILLIS_PER_MINUTE = MILLIS_PER_SECOND * 60L
+private const val MILLIS_PER_HOUR = MILLIS_PER_MINUTE * 60L
+private const val MILLIS_PER_DAY = MILLIS_PER_HOUR * 24L
 
 private data class NumericParseData(val value: Long, val index: Int, val sign: Int = 1)
 
@@ -1126,19 +1128,17 @@ private inline fun String.parseLong(startIndex: Int): NumericParseData {
     }
     while (index < length && this[index] == '0') index++
     var result = 0L
+    val overflowThreshold = OVERFLOW_LIMIT / 10
     while (index < length) {
         val ch = this[index]
         if (ch !in '0'..'9') break
         val digit = ch - '0'
-        index++
-        result = result * 10 + digit
-        if (result > OVERFLOW_LIMIT) {
-            while (index < length) {
-                if (this[index] !in '0'..'9') break
-                index++
-            }
+        if (result > overflowThreshold || (result == overflowThreshold && digit > LAST_DIGIT_MAX)) {
+            while (index < length && this[index] in '0'..'9') index++
             return NumericParseData(OVERFLOW_LIMIT * sign, index, sign)
         }
+        result = result * 10 + digit
+        index++
     }
     return NumericParseData(result * sign, index, sign)
 }
@@ -1179,7 +1179,7 @@ private inline fun parseIsoStringFormat(
 ): Duration {
     var index = startIndex
     if (++index == length) return throwExceptionOrInvalid(throwException)
-    var totalSeconds = 0L
+    var totalMillis = 0L
     var totalNanos = 0L
     var isTimeComponent = false
     var prevUnit = 'A'
@@ -1197,11 +1197,11 @@ private inline fun parseIsoStringFormat(
         val unit = value[index]
         if (unit == 'D') {
             if (isTimeComponent) return throwExceptionOrInvalid(throwException)
-            totalSeconds = longValue.multiplyWithoutOverflow(SECONDS_PER_DAY)
+            totalMillis = longValue.multiplyWithoutOverflow(MILLIS_PER_DAY)
         } else {
             if (!isTimeComponent) return throwExceptionOrInvalid(throwException)
             if (unit == '.') {
-                totalSeconds = totalSeconds.addWithoutOverflow(longValue)
+                totalMillis = totalMillis.addWithoutOverflow(longValue.multiplyWithoutOverflow(MILLIS_PER_SECOND))
                     .onInvalid { return throwExceptionOrInvalid(throwException) }
                 index++
                 val prevIndex = index
@@ -1212,12 +1212,12 @@ private inline fun parseIsoStringFormat(
                 prevUnit = 'S'
             } else {
                 if (unit <= prevUnit) return throwExceptionOrInvalid(throwException)
-                totalSeconds = totalSeconds.addWithoutOverflow(
+                totalMillis = totalMillis.addWithoutOverflow(
                     longValue.multiplyWithoutOverflow(
                         when (unit) {
-                            'H' -> SECONDS_PER_HOUR
-                            'M' -> SECONDS_PER_MINUTE
-                            'S' -> 1
+                            'H' -> MILLIS_PER_HOUR
+                            'M' -> MILLIS_PER_MINUTE
+                            'S' -> MILLIS_PER_SECOND
                             else -> return throwExceptionOrInvalid(throwException)
                         }
                     )
@@ -1227,7 +1227,7 @@ private inline fun parseIsoStringFormat(
         }
         index++
     }
-    return totalSeconds.toDuration(DurationUnit.SECONDS) + totalNanos.toDuration(DurationUnit.NANOSECONDS)
+    return totalMillis.toDuration(DurationUnit.MILLISECONDS) + totalNanos.toDuration(DurationUnit.NANOSECONDS)
 }
 
 @kotlin.internal.InlineOnly
