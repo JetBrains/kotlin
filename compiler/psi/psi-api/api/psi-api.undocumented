@@ -1971,7 +1971,7 @@ org.jetbrains.kotlin.psi.stubs.KotlinAnnotationEntryStub
 org.jetbrains.kotlin.psi.stubs.KotlinAnnotationEntryStub.hasValueArguments
 org.jetbrains.kotlin.psi.stubs.KotlinAnnotationEntryStub.shortName
 org.jetbrains.kotlin.psi.stubs.KotlinAnnotationUseSiteTargetStub
-org.jetbrains.kotlin.psi.stubs.KotlinAnnotationUseSiteTargetStub.getUseSiteTarget()
+org.jetbrains.kotlin.psi.stubs.KotlinAnnotationUseSiteTargetStub.useSiteTarget
 org.jetbrains.kotlin.psi.stubs.KotlinBackingFieldStub
 org.jetbrains.kotlin.psi.stubs.KotlinBackingFieldStub.hasInitializer()
 org.jetbrains.kotlin.psi.stubs.KotlinBlockStringTemplateEntryStub

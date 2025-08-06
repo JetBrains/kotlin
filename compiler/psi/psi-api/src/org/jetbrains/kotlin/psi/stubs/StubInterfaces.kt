@@ -75,7 +75,7 @@ interface KotlinAnnotationEntryStub : StubElement<KtAnnotationEntry> {
 }
 
 interface KotlinAnnotationUseSiteTargetStub : StubElement<KtAnnotationUseSiteTarget> {
-    fun getUseSiteTarget(): String
+    val useSiteTarget: String
 }
 
 /**
