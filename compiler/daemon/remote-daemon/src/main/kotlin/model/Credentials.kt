@@ -11,3 +11,9 @@ import kotlinx.serialization.Serializable
 data class Credentials(
     val allowed: Set<String> = emptySet(),
 )
+
+@Serializable
+data class UUIDMapping(
+    val credential: String,
+    val userId: String
+)

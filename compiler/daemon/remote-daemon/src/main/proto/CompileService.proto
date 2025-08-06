@@ -8,27 +8,27 @@ import "google/protobuf/any.proto";
 import "google/protobuf/timestamp.proto";
 
 service CompileService {
-  rpc Connect (ConnectRequestGrpc) returns (stream ConnectResponseGrpc) {}
+//  rpc Connect (ConnectRequestGrpc) returns (stream ConnectResponseGrpc) {}
   rpc Compile (stream CompileRequestGrpc) returns (stream CompileResponseGrpc) {}
 }
 
-message ConnectRequestGrpc {
-  DaemonJVMOptionsConfiguratorGrpc daemon_jvm_options_configurator = 1;
-}
+//message ConnectRequestGrpc {
+//  DaemonJVMOptionsConfiguratorGrpc daemon_jvm_options_configurator = 1;
+//}
 
-message ConnectResponseGrpc {
-  oneof response_payload {
-    uint32 session_id = 1;
-    DaemonMessageGrpc daemon_message = 2;
-  }
-}
+//message ConnectResponseGrpc {
+//  oneof response_payload {
+//    uint32 session_id = 1;
+//    DaemonMessageGrpc daemon_message = 2;
+//  }
+//}
 
-message DaemonJVMOptionsConfiguratorGrpc{
-  bool inherit_memory_limits = 1;
-  bool inherit_other_jvm_options = 2;
-  bool inherit_additional_properties = 3;
-  repeated string additional_params = 4;
-}
+//message DaemonJVMOptionsConfiguratorGrpc{
+//  bool inherit_memory_limits = 1;
+//  bool inherit_other_jvm_options = 2;
+//  bool inherit_additional_properties = 3;
+//  repeated string additional_params = 4;
+//}
 
 message CompileRequestGrpc {
   oneof request_payload {
@@ -43,11 +43,12 @@ message CompileResponseGrpc {
     DaemonMessageGrpc daemon_message = 1;
     FileChunkGrpc compiled_file_chunk = 2;
     FileTransferReplyGrpc file_transfer_reply = 3;
+    CompilationResultGrpc compilation_result = 4;
   }
 }
 
 message CompilationMetadataGrpc{
-  int32 session_id = 1;
+  string project_name = 1;
   int32 file_count = 2;
   repeated string compiler_arguments = 3;
   CompilationOptionsGrpc compilation_options = 4;
@@ -58,8 +59,14 @@ message CompilationOptionsGrpc {
   TargetPlatformGrpc target_platform = 2;
   repeated int32 report_categories = 3;
   int32 report_severity = 4;
-  repeated int32 requested_compilation_results = 5;
+  repeated int32 requested_compilation_results = 5; // idk what it is
   repeated string kotlin_script_extensions = 6;
+}
+
+message CompilationResultGrpc{
+  uint32 exit_code = 1;
+  CompilationResultSourceGrpc result_source = 2;
+//  uint32 file_count = 2;
 }
 
 message FileChunkGrpc {
@@ -100,6 +107,10 @@ enum CompilerMessageSeverityGrpc {
   OUTPUT = 7;
 }
 
+enum CompilationResultSourceGrpc {
+  COMPILER = 0;
+  CACHE = 1;
+}
 
 message FileTransferRequestGrpc{
   string file_path = 1;
