@@ -4168,8 +4168,6 @@ public abstract interface class org/jetbrains/kotlin/psi/stubs/KotlinTypeAliasSt
 }
 
 public abstract interface class org/jetbrains/kotlin/psi/stubs/KotlinTypeParameterStub : org/jetbrains/kotlin/psi/stubs/KotlinStubWithFqName {
-	public abstract fun isInVariance ()Z
-	public abstract fun isOutVariance ()Z
 }
 
 public abstract interface class org/jetbrains/kotlin/psi/stubs/KotlinTypeProjectionStub : com/intellij/psi/stubs/StubElement {

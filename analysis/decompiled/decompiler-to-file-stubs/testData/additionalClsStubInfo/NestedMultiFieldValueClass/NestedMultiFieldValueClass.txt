@@ -15,7 +15,7 @@ KotlinStub$CLASS[classId=test/NestedMultiFieldValueClass, fqName=test.NestedMult
               KotlinStub$REFERENCE_EXPRESSION[referencedName=jvm]
             KotlinStub$REFERENCE_EXPRESSION[referencedName=JvmInline]
   KotlinStub$TYPE_PARAMETER_LIST
-    KotlinStub$TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T]
+    KotlinStub$TYPE_PARAMETER[fqName=null, name=T]
   KotlinStub$PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=NestedMultiFieldValueClass]
     KotlinStub$MODIFIER_LIST[public]
     KotlinStub$VALUE_PARAMETER_LIST

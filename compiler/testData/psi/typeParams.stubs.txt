@@ -10,14 +10,14 @@ FILE[kind=File[packageFqName=test]]
         REFERENCE_EXPRESSION[referencedName=Serializable]
   CLASS[classId=test/TypeParams, fqName=test.TypeParams, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=TypeParams, superNames=[]]
     TYPE_PARAMETER_LIST
-      TYPE_PARAMETER[fqName=null, isInVariance=true, isOutVariance=false, name=T1]
+      TYPE_PARAMETER[fqName=null, name=T1]
         MODIFIER_LIST[in]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=Any]
-      TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=true, name=T2]
+      TYPE_PARAMETER[fqName=null, name=T2]
         MODIFIER_LIST[out]
-      TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T3]
+      TYPE_PARAMETER[fqName=null, name=T3]
         TYPE_REFERENCE
           FUNCTION_TYPE
             VALUE_PARAMETER_LIST
@@ -28,17 +28,17 @@ FILE[kind=File[packageFqName=test]]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=Int]
-      TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T4]
-      TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T5]
+      TYPE_PARAMETER[fqName=null, name=T4]
+      TYPE_PARAMETER[fqName=null, name=T5]
         TYPE_REFERENCE
           NULLABLE_TYPE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=Any]
-      TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T6]
+      TYPE_PARAMETER[fqName=null, name=T6]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=T5]
-      TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T7]
+      TYPE_PARAMETER[fqName=null, name=T7]
     TYPE_CONSTRAINT_LIST
       TYPE_CONSTRAINT
         REFERENCE_EXPRESSION[referencedName=T1]
@@ -160,9 +160,9 @@ FILE[kind=File[packageFqName=test]]
                     REFERENCE_EXPRESSION[referencedName=T1]
       FUN[fqName=test.TypeParams.withOwnParams, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=false, mayHaveContract=false, name=withOwnParams]
         TYPE_PARAMETER_LIST
-          TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=G1]
-          TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=G2]
-          TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=G3]
+          TYPE_PARAMETER[fqName=null, name=G1]
+          TYPE_PARAMETER[fqName=null, name=G2]
+          TYPE_PARAMETER[fqName=null, name=G3]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=p1]
             TYPE_REFERENCE
@@ -193,17 +193,17 @@ FILE[kind=File[packageFqName=test]]
                     REFERENCE_EXPRESSION[referencedName=Unit]
       FUN[fqName=test.TypeParams.withOwnParamsAndTypeConstraints, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=false, mayHaveContract=false, name=withOwnParamsAndTypeConstraints]
         TYPE_PARAMETER_LIST
-          TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=G1]
+          TYPE_PARAMETER[fqName=null, name=G1]
             TYPE_REFERENCE
               NULLABLE_TYPE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=Any]
-          TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=G2]
+          TYPE_PARAMETER[fqName=null, name=G2]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=G1]
-          TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=G3]
-          TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=G4]
+          TYPE_PARAMETER[fqName=null, name=G3]
+          TYPE_PARAMETER[fqName=null, name=G4]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=p1]
             TYPE_REFERENCE
@@ -251,9 +251,9 @@ FILE[kind=File[packageFqName=test]]
                   REFERENCE_EXPRESSION[referencedName=Serializable]
       FUN[fqName=test.TypeParams.withOwnParamsClashing, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=false, mayHaveContract=false, name=withOwnParamsClashing]
         TYPE_PARAMETER_LIST
-          TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T1]
-          TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T2]
-          TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T3]
+          TYPE_PARAMETER[fqName=null, name=T1]
+          TYPE_PARAMETER[fqName=null, name=T2]
+          TYPE_PARAMETER[fqName=null, name=T3]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=p1]
             TYPE_REFERENCE
@@ -277,7 +277,7 @@ FILE[kind=File[packageFqName=test]]
                 REFERENCE_EXPRESSION[referencedName=T5]
       FUN[fqName=test.TypeParams.withOwnParamExtension, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=true, isTopLevel=false, mayHaveContract=false, name=withOwnParamExtension]
         TYPE_PARAMETER_LIST
-          TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T1]
+          TYPE_PARAMETER[fqName=null, name=T1]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=T1]
@@ -288,7 +288,7 @@ FILE[kind=File[packageFqName=test]]
                 REFERENCE_EXPRESSION[referencedName=T1]
       PROPERTY[fqName=test.TypeParams.withOwnParam, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=true, isTopLevel=false, isVar=false, name=withOwnParam]
         TYPE_PARAMETER_LIST
-          TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=G1]
+          TYPE_PARAMETER[fqName=null, name=G1]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=G1]
@@ -299,7 +299,7 @@ FILE[kind=File[packageFqName=test]]
           VALUE_PARAMETER_LIST
       PROPERTY[fqName=test.TypeParams.withOwnBoundedParam, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=true, isTopLevel=false, isVar=false, name=withOwnBoundedParam]
         TYPE_PARAMETER_LIST
-          TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=G1]
+          TYPE_PARAMETER[fqName=null, name=G1]
             TYPE_REFERENCE
               NULLABLE_TYPE
                 USER_TYPE
@@ -314,7 +314,7 @@ FILE[kind=File[packageFqName=test]]
           VALUE_PARAMETER_LIST
       PROPERTY[fqName=test.TypeParams.withOwnBoundedParamByOther, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=true, isTopLevel=false, isVar=false, name=withOwnBoundedParamByOther]
         TYPE_PARAMETER_LIST
-          TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=G1]
+          TYPE_PARAMETER[fqName=null, name=G1]
             TYPE_REFERENCE
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=T4]
@@ -335,9 +335,9 @@ FILE[kind=File[packageFqName=test]]
       FUN[fqName=test.TypeParams.f, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=false, mayHaveContract=false, name=f]
         MODIFIER_LIST[public inline]
         TYPE_PARAMETER_LIST
-          TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=G]
+          TYPE_PARAMETER[fqName=null, name=G]
             MODIFIER_LIST[reified]
-          TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T]
+          TYPE_PARAMETER[fqName=null, name=T]
             MODIFIER_LIST[reified]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=g]

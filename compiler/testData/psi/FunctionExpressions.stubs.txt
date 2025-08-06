@@ -66,7 +66,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=FunctionExpressionsKt]]
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=T]
       TYPE_PARAMETER_LIST
-        TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T]
+        TYPE_PARAMETER[fqName=null, name=T]
           TYPE_REFERENCE
             FUNCTION_TYPE
               VALUE_PARAMETER_LIST
@@ -142,7 +142,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=FunctionExpressionsKt]]
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=T]
       TYPE_PARAMETER_LIST
-        TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T]
+        TYPE_PARAMETER[fqName=null, name=T]
           TYPE_REFERENCE
             FUNCTION_TYPE
               VALUE_PARAMETER_LIST
@@ -182,7 +182,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=FunctionExpressionsKt]]
   PROPERTY[fqName=b, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=true, isVar=false, name=b]
     FUN[fqName=null, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=false, mayHaveContract=false, name=null]
       TYPE_PARAMETER_LIST
-        TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T]
+        TYPE_PARAMETER[fqName=null, name=T]
       VALUE_PARAMETER_LIST
       TYPE_CONSTRAINT_LIST
         TYPE_CONSTRAINT
@@ -251,7 +251,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=FunctionExpressionsKt]]
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=T]
       TYPE_PARAMETER_LIST
-        TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T]
+        TYPE_PARAMETER[fqName=null, name=T]
           TYPE_REFERENCE
             FUNCTION_TYPE
               VALUE_PARAMETER_LIST
@@ -282,7 +282,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=FunctionExpressionsKt]]
         USER_TYPE
           REFERENCE_EXPRESSION[referencedName=T]
       TYPE_PARAMETER_LIST
-        TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T]
+        TYPE_PARAMETER[fqName=null, name=T]
           TYPE_REFERENCE
             MODIFIER_LIST[]
               ANNOTATION

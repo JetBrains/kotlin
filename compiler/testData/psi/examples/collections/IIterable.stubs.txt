@@ -4,7 +4,7 @@ FILE[kind=File[packageFqName=<root>]]
   CLASS[classId=/IIterable, fqName=IIterable, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=IIterable, superNames=[]]
     MODIFIER_LIST[open]
     TYPE_PARAMETER_LIST
-      TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=true, name=T]
+      TYPE_PARAMETER[fqName=null, name=T]
         MODIFIER_LIST[out]
     CLASS_BODY
       FUN[fqName=IIterable.iterator, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=iterator]

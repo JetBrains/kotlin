@@ -100,9 +100,9 @@ Foo.class:
                       USER_TYPE
                         REFERENCE_EXPRESSION[referencedName=Any]
           TYPE_PARAMETER_LIST
-            TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=A]
-            TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=B]
-            TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=C]
+            TYPE_PARAMETER[fqName=null, name=A]
+            TYPE_PARAMETER[fqName=null, name=B]
+            TYPE_PARAMETER[fqName=null, name=C]
           TYPE_REFERENCE
             INTERSECTION_TYPE
               TYPE_REFERENCE
@@ -257,9 +257,9 @@ Foo.class:
                       USER_TYPE
                         REFERENCE_EXPRESSION[referencedName=Any]
           TYPE_PARAMETER_LIST
-            TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=A]
-            TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=B]
-            TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=C]
+            TYPE_PARAMETER[fqName=null, name=A]
+            TYPE_PARAMETER[fqName=null, name=B]
+            TYPE_PARAMETER[fqName=null, name=C]
           TYPE_REFERENCE
             INTERSECTION_TYPE
               TYPE_REFERENCE

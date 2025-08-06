@@ -42,7 +42,7 @@ FILE[kind=Facade[packageFqName=test, facadeFqName=test.TypeAliasExpansionKt]]
         REFERENCE_EXPRESSION[referencedName=FunctionAlias]
   TYPEALIAS[classId=test/ParameterizedListAlias, fqName=test.ParameterizedListAlias, isTopLevel=true, name=ParameterizedListAlias]
     TYPE_PARAMETER_LIST
-      TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=A]
+      TYPE_PARAMETER[fqName=null, name=A]
     TYPE_REFERENCE
       USER_TYPE
         REFERENCE_EXPRESSION[referencedName=List]
@@ -80,7 +80,7 @@ FILE[kind=Facade[packageFqName=test, facadeFqName=test.TypeAliasExpansionKt]]
                 REFERENCE_EXPRESSION[referencedName=NestedStringAlias]
   TYPEALIAS[classId=test/NestedParameterizedListAlias, fqName=test.NestedParameterizedListAlias, isTopLevel=true, name=NestedParameterizedListAlias]
     TYPE_PARAMETER_LIST
-      TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=A]
+      TYPE_PARAMETER[fqName=null, name=A]
     TYPE_REFERENCE
       USER_TYPE
         REFERENCE_EXPRESSION[referencedName=ParameterizedListAlias]

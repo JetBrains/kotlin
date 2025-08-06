@@ -4,7 +4,7 @@ FILE[kind=File[packageFqName=<root>]]
   CLASS[classId=/IComparable, fqName=IComparable, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=IComparable, superNames=[]]
     MODIFIER_LIST[open]
     TYPE_PARAMETER_LIST
-      TYPE_PARAMETER[fqName=null, isInVariance=true, isOutVariance=false, name=T]
+      TYPE_PARAMETER[fqName=null, name=T]
         MODIFIER_LIST[in]
     CLASS_BODY
       FUN[fqName=IComparable.compareTo, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=compareTo]

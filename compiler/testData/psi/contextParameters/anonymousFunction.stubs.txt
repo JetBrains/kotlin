@@ -19,7 +19,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=AnonymousFunctionKt]]
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=A]
       TYPE_PARAMETER_LIST
-        TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=A]
+        TYPE_PARAMETER[fqName=null, name=A]
       VALUE_PARAMETER_LIST
   PROPERTY[fqName=t, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=true, isVar=false, name=t]
     FUN[fqName=null, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=null]

@@ -4,7 +4,7 @@ FILE[kind=File[packageFqName=<root>]]
   CLASS[classId=/IList, fqName=IList, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=IList, superNames=[IIterable, ISized]]
     MODIFIER_LIST[open]
     TYPE_PARAMETER_LIST
-      TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=true, name=T]
+      TYPE_PARAMETER[fqName=null, name=T]
         MODIFIER_LIST[out]
     SUPER_TYPE_LIST
       SUPER_TYPE_ENTRY

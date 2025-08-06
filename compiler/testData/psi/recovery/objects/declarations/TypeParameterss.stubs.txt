@@ -3,17 +3,17 @@ FILE[kind=File[packageFqName=<root>]]
   IMPORT_LIST
   OBJECT_DECLARATION[classId=/Foo, fqName=Foo, isLocal=false, isObjectLiteral=false, isTopLevel=true, name=Foo, superNames=[]]
     TYPE_PARAMETER_LIST
-      TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T]
-      TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=R]
+      TYPE_PARAMETER[fqName=null, name=T]
+      TYPE_PARAMETER[fqName=null, name=R]
   OBJECT_DECLARATION[classId=/Foo, fqName=Foo, isLocal=false, isObjectLiteral=false, isTopLevel=true, name=Foo, superNames=[]]
     TYPE_PARAMETER_LIST
-      TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T]
-      TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=R]
+      TYPE_PARAMETER[fqName=null, name=T]
+      TYPE_PARAMETER[fqName=null, name=R]
     CLASS_BODY
   OBJECT_DECLARATION[classId=/Foo, fqName=Foo, isLocal=false, isObjectLiteral=false, isTopLevel=true, name=Foo, superNames=[Bar]]
     TYPE_PARAMETER_LIST
-      TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T]
-      TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=R]
+      TYPE_PARAMETER[fqName=null, name=T]
+      TYPE_PARAMETER[fqName=null, name=R]
     SUPER_TYPE_LIST
       SUPER_TYPE_ENTRY
         TYPE_REFERENCE

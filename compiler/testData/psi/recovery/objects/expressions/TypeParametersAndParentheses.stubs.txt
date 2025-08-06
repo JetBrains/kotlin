@@ -4,8 +4,8 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=TypeParametersAndParentheses
   PROPERTY[fqName=foo, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=true, isVar=false, name=foo]
     OBJECT_DECLARATION[classId=null, fqName=null, isLocal=true, isObjectLiteral=true, isTopLevel=false, name=null, superNames=[]]
       TYPE_PARAMETER_LIST
-        TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T]
-        TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=R]
+        TYPE_PARAMETER[fqName=null, name=T]
+        TYPE_PARAMETER[fqName=null, name=R]
       PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=null]
         VALUE_PARAMETER_LIST
           VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=x]
@@ -16,8 +16,8 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=TypeParametersAndParentheses
   PROPERTY[fqName=foo, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=true, isVar=false, name=foo]
     OBJECT_DECLARATION[classId=null, fqName=null, isLocal=true, isObjectLiteral=true, isTopLevel=false, name=null, superNames=[Bar]]
       TYPE_PARAMETER_LIST
-        TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T]
-        TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=R]
+        TYPE_PARAMETER[fqName=null, name=T]
+        TYPE_PARAMETER[fqName=null, name=R]
       PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=null]
         VALUE_PARAMETER_LIST
       SUPER_TYPE_LIST
@@ -29,8 +29,8 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=TypeParametersAndParentheses
   PROPERTY[fqName=foo, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=true, isVar=false, name=foo]
     OBJECT_DECLARATION[classId=null, fqName=null, isLocal=true, isObjectLiteral=true, isTopLevel=false, name=null, superNames=[]]
       TYPE_PARAMETER_LIST
-        TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T]
-        TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=R]
+        TYPE_PARAMETER[fqName=null, name=T]
+        TYPE_PARAMETER[fqName=null, name=R]
       PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=null]
         VALUE_PARAMETER_LIST
       CLASS_BODY

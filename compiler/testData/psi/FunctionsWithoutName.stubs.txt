@@ -25,7 +25,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=FunctionsWithoutNameKt]]
       USER_TYPE
         REFERENCE_EXPRESSION[referencedName=T]
     TYPE_PARAMETER_LIST
-      TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T]
+      TYPE_PARAMETER[fqName=null, name=T]
         TYPE_REFERENCE
           FUNCTION_TYPE
             VALUE_PARAMETER_LIST
@@ -68,7 +68,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=FunctionsWithoutNameKt]]
       USER_TYPE
         REFERENCE_EXPRESSION[referencedName=T]
     TYPE_PARAMETER_LIST
-      TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T]
+      TYPE_PARAMETER[fqName=null, name=T]
         TYPE_REFERENCE
           FUNCTION_TYPE
             VALUE_PARAMETER_LIST
@@ -132,7 +132,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=FunctionsWithoutNameKt]]
       USER_TYPE
         REFERENCE_EXPRESSION[referencedName=T]
     TYPE_PARAMETER_LIST
-      TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T]
+      TYPE_PARAMETER[fqName=null, name=T]
         TYPE_REFERENCE
           FUNCTION_TYPE
             VALUE_PARAMETER_LIST
@@ -163,7 +163,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=FunctionsWithoutNameKt]]
       USER_TYPE
         REFERENCE_EXPRESSION[referencedName=T]
     TYPE_PARAMETER_LIST
-      TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T]
+      TYPE_PARAMETER[fqName=null, name=T]
         TYPE_REFERENCE
           MODIFIER_LIST[]
             ANNOTATION

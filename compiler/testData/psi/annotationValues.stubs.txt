@@ -147,7 +147,7 @@ FILE[kind=Facade[packageFqName=test, facadeFqName=test.AnnotationValuesKt]]
                 CLASS_LITERAL_EXPRESSION
                   REFERENCE_EXPRESSION[referencedName=String]
         TYPE_PARAMETER_LIST
-          TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T]
+          TYPE_PARAMETER[fqName=null, name=T]
       CLASS[classId=test/AnnotationValues.WithNested, fqName=test.AnnotationValues.WithNested, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=WithNested, superNames=[]]
         MODIFIER_LIST[]
           ANNOTATION_ENTRY[hasValueArguments=true, shortName=Outer]

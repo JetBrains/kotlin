@@ -5,6 +5,6 @@ FILE[kind=File[packageFqName=<root>]]
     CLASS_BODY
       FUN[fqName=Outer.<no name provided>, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=false, mayHaveContract=false, name=null]
         TYPE_PARAMETER_LIST
-          TYPE_PARAMETER[fqName=null, isInVariance=true, isOutVariance=false, name=null]
+          TYPE_PARAMETER[fqName=null, name=null]
             MODIFIER_LIST[in]
   CLASS[classId=/Next, fqName=Next, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=Next, superNames=[]]

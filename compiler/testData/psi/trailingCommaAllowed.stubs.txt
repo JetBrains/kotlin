@@ -175,11 +175,11 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=TrailingCommaAllowedKt]]
     VALUE_PARAMETER_LIST
   CLASS[classId=/A, fqName=A, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=A, superNames=[]]
     TYPE_PARAMETER_LIST
-      TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T1]
+      TYPE_PARAMETER[fqName=null, name=T1]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=Number]
-      TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T2]
+      TYPE_PARAMETER[fqName=null, name=T2]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=Iterable]
@@ -198,7 +198,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=TrailingCommaAllowedKt]]
                                 TYPE_REFERENCE
                                   USER_TYPE
                                     REFERENCE_EXPRESSION[referencedName=Number]
-      TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T3]
+      TYPE_PARAMETER[fqName=null, name=T3]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=Comparable]
@@ -220,7 +220,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=TrailingCommaAllowedKt]]
     CLASS_BODY
   FUN[fqName=foo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo]
     TYPE_PARAMETER_LIST
-      TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T1]
+      TYPE_PARAMETER[fqName=null, name=T1]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=Comparable]
@@ -234,7 +234,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=TrailingCommaAllowedKt]]
                         TYPE_REFERENCE
                           USER_TYPE
                             REFERENCE_EXPRESSION[referencedName=Number]
-      TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T2]
+      TYPE_PARAMETER[fqName=null, name=T2]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=Iterable]

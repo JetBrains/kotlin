@@ -11,7 +11,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=EmptyNameKt]]
     CLASS_BODY
   FUN[fqName=f, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=true, mayHaveContract=false, name=f]
     TYPE_PARAMETER_LIST
-      TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=null]
+      TYPE_PARAMETER[fqName=null, name=null]
     VALUE_PARAMETER_LIST
   CLASS[classId=/Data, fqName=Data, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=Data, superNames=[]]
     PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Data]
