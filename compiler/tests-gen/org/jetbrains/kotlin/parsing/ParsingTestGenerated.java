@@ -456,6 +456,11 @@ public class ParsingTestGenerated extends AbstractParsingTest {
       runTest("compiler/testData/psi/Enums.kt");
     }
 
+    @TestMetadata("escapedNames.kt")
+    public void testEscapedNames() {
+      runTest("compiler/testData/psi/escapedNames.kt");
+    }
+
     @TestMetadata("Expressions_ERR.kt")
     public void testExpressions_ERR() {
       runTest("compiler/testData/psi/Expressions_ERR.kt");
