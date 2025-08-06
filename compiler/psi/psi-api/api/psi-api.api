@@ -4135,10 +4135,10 @@ public abstract interface class org/jetbrains/kotlin/psi/stubs/KotlinPropertyAcc
 
 public abstract interface class org/jetbrains/kotlin/psi/stubs/KotlinPropertyStub : org/jetbrains/kotlin/psi/stubs/KotlinCallableStubBase {
 	public abstract fun getHasBackingField ()Ljava/lang/Boolean;
-	public abstract fun hasDelegate ()Z
-	public abstract fun hasDelegateExpression ()Z
-	public abstract fun hasInitializer ()Z
-	public abstract fun hasReturnTypeRef ()Z
+	public abstract fun getHasDelegate ()Z
+	public abstract fun getHasDelegateExpression ()Z
+	public abstract fun getHasInitializer ()Z
+	public abstract fun getHasReturnTypeRef ()Z
 	public abstract fun isVar ()Z
 }
 

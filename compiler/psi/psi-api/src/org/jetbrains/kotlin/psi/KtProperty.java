@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2024 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -134,7 +134,7 @@ public class KtProperty extends KtTypeParameterListOwnerStub<KotlinPropertyStub>
     public KtTypeReference getTypeReference() {
         KotlinPropertyStub stub = getGreenStub();
         if (stub != null) {
-            if (!stub.hasReturnTypeRef()) {
+            if (!stub.getHasReturnTypeRef()) {
                 return null;
             }
             else {
@@ -202,7 +202,7 @@ public class KtProperty extends KtTypeParameterListOwnerStub<KotlinPropertyStub>
     public boolean hasDelegate() {
         KotlinPropertyStub stub = getGreenStub();
         if (stub != null) {
-            return stub.hasDelegate();
+            return stub.getHasDelegate();
         }
 
         return getDelegate() != null;
@@ -211,7 +211,7 @@ public class KtProperty extends KtTypeParameterListOwnerStub<KotlinPropertyStub>
     @Nullable
     public KtPropertyDelegate getDelegate() {
         KotlinPropertyStub stub = getStub();
-        if (stub != null && !stub.hasDelegate()) {
+        if (stub != null && !stub.getHasDelegate()) {
             return null;
         }
 
@@ -221,7 +221,7 @@ public class KtProperty extends KtTypeParameterListOwnerStub<KotlinPropertyStub>
     public boolean hasDelegateExpression() {
         KotlinPropertyStub stub = getGreenStub();
         if (stub != null) {
-            return stub.hasDelegateExpression();
+            return stub.getHasDelegateExpression();
         }
 
         return getDelegateExpression() != null;
@@ -230,7 +230,7 @@ public class KtProperty extends KtTypeParameterListOwnerStub<KotlinPropertyStub>
     @Nullable
     public KtExpression getDelegateExpression() {
         KotlinPropertyStub stub = getStub();
-        if (stub != null && !stub.hasDelegateExpression()) {
+        if (stub != null && !stub.getHasDelegateExpression()) {
             return null;
         }
 
@@ -246,7 +246,7 @@ public class KtProperty extends KtTypeParameterListOwnerStub<KotlinPropertyStub>
     public boolean hasInitializer() {
         KotlinPropertyStub stub = getGreenStub();
         if (stub != null) {
-            return stub.hasInitializer();
+            return stub.getHasInitializer();
         }
 
         return getInitializer() != null;
@@ -257,7 +257,7 @@ public class KtProperty extends KtTypeParameterListOwnerStub<KotlinPropertyStub>
     public KtExpression getInitializer() {
         KotlinPropertyStub stub = getStub();
         if (stub != null) {
-            if (!stub.hasInitializer()) {
+            if (!stub.getHasInitializer()) {
                 return null;
             }
 
