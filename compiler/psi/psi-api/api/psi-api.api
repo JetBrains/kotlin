@@ -1354,7 +1354,7 @@ public abstract class org/jetbrains/kotlin/psi/KtDeclarationStub : org/jetbrains
 	public fun <init> (Lcom/intellij/lang/ASTNode;)V
 	public fun <init> (Lcom/intellij/psi/stubs/StubElement;Lcom/intellij/psi/stubs/IStubElementType;)V
 	public fun getDocComment ()Lorg/jetbrains/kotlin/kdoc/psi/api/KDoc;
-	public fun getModificationStamp ()J
+	public final fun getModificationStamp ()J
 	public fun getNavigationElement ()Lcom/intellij/psi/PsiElement;
 	public fun getOriginalElement ()Lcom/intellij/psi/PsiElement;
 	public fun getParent ()Lcom/intellij/psi/PsiElement;

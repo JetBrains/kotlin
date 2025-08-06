@@ -532,9 +532,9 @@ org.jetbrains.kotlin.psi.KtDeclarationModifierList
 org.jetbrains.kotlin.psi.KtDeclarationModifierList:constructor(ASTNode)
 org.jetbrains.kotlin.psi.KtDeclarationModifierList:constructor(KotlinModifierListStub)
 org.jetbrains.kotlin.psi.KtDeclarationStub
+org.jetbrains.kotlin.psi.KtDeclarationStub.modificationStamp
 org.jetbrains.kotlin.psi.KtDeclarationStub:constructor(ASTNode)
-org.jetbrains.kotlin.psi.KtDeclarationStub:constructor(T, IStubElementType)
-org.jetbrains.kotlin.psi.KtDeclarationStub:getModificationStamp()
+org.jetbrains.kotlin.psi.KtDeclarationStub:constructor(T, IStubElementType<*, *>)
 org.jetbrains.kotlin.psi.KtDeclarationWithBody
 org.jetbrains.kotlin.psi.KtDeclarationWithBody:getBodyBlockExpression()
 org.jetbrains.kotlin.psi.KtDeclarationWithBody:getBodyExpression()

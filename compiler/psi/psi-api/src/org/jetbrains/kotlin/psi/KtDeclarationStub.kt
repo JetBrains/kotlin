@@ -1,81 +1,55 @@
 /*
- * Copyright 2010-2015 JetBrains s.r.o.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
+package org.jetbrains.kotlin.psi
 
-package org.jetbrains.kotlin.psi;
+import com.intellij.lang.ASTNode
+import com.intellij.openapi.application.ApplicationManager
+import com.intellij.openapi.components.serviceOrNull
+import com.intellij.psi.PsiElement
+import com.intellij.psi.stubs.IStubElementType
+import com.intellij.psi.stubs.StubElement
+import org.jetbrains.kotlin.kdoc.psi.api.KDoc
+import org.jetbrains.kotlin.psi.findDocComment.findDocComment
+import org.jetbrains.kotlin.psi.stubs.KotlinClassOrObjectStub
+import java.util.concurrent.atomic.AtomicLong
 
-import com.intellij.lang.ASTNode;
-import com.intellij.openapi.application.ApplicationManager;
-import com.intellij.psi.PsiElement;
-import com.intellij.psi.stubs.IStubElementType;
-import com.intellij.psi.stubs.StubElement;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.kdoc.psi.api.KDoc;
-import org.jetbrains.kotlin.psi.findDocComment.FindDocCommentKt;
-import org.jetbrains.kotlin.psi.stubs.KotlinClassOrObjectStub;
+abstract class KtDeclarationStub<T : StubElement<*>> : KtModifierListOwnerStub<T>, KtDeclaration {
+    private val _modificationStamp = AtomicLong()
 
-import java.util.concurrent.atomic.AtomicLong;
+    constructor(stub: T, nodeType: IStubElementType<*, *>) : super(stub, nodeType)
 
-public abstract class KtDeclarationStub<T extends StubElement<?>> extends KtModifierListOwnerStub<T> implements KtDeclaration {
-    private final AtomicLong modificationStamp = new AtomicLong();
+    constructor(node: ASTNode) : super(node)
 
-    public KtDeclarationStub(@NotNull T stub, @NotNull IStubElementType nodeType) {
-        super(stub, nodeType);
+    override fun subtreeChanged() {
+        super.subtreeChanged()
+        _modificationStamp.getAndIncrement()
     }
 
-    public KtDeclarationStub(@NotNull ASTNode node) {
-        super(node);
+    val modificationStamp: Long get() = _modificationStamp.get()
+
+    override fun getDocComment(): KDoc? {
+        return findDocComment(this)
     }
 
-    @Override
-    public void subtreeChanged() {
-        super.subtreeChanged();
-        modificationStamp.getAndIncrement();
-    }
-
-    public long getModificationStamp() {
-        return modificationStamp.get();
-    }
-
-    @Nullable
-    @Override
-    public KDoc getDocComment() {
-        return FindDocCommentKt.findDocComment(this);
-    }
-
-    @Override
-    public PsiElement getParent() {
-        T stub = getStub();
+    override fun getParent(): PsiElement {
+        val stub = getStub()
         // we build stubs for local classes/objects too but they have wrong parent
-        if (stub != null && !(stub instanceof KotlinClassOrObjectStub && ((KotlinClassOrObjectStub) stub).isLocal())) {
-            return stub.getParentStub().getPsi();
+        if ((stub as? KotlinClassOrObjectStub<*>)?.isLocal() == true) {
+            return stub.parentStub.getPsi()
         }
-        return super.getParent();
+
+        return super.getParent()
     }
 
-    @Override
-    public PsiElement getOriginalElement() {
-        KotlinDeclarationNavigationPolicy navigationPolicy = ApplicationManager.getApplication().getService(KotlinDeclarationNavigationPolicy.class);
-        return navigationPolicy != null ? navigationPolicy.getOriginalElement(this) : this;
+    override fun getOriginalElement(): PsiElement {
+        val navigationPolicy = ApplicationManager.getApplication().serviceOrNull<KotlinDeclarationNavigationPolicy>()
+        return navigationPolicy?.getOriginalElement(this) ?: this
     }
 
-    @NotNull
-    @Override
-    public PsiElement getNavigationElement() {
-        KotlinDeclarationNavigationPolicy navigationPolicy = ApplicationManager.getApplication().getService(KotlinDeclarationNavigationPolicy.class);
-        return navigationPolicy != null ? navigationPolicy.getNavigationElement(this) : this;
+    override fun getNavigationElement(): PsiElement {
+        val navigationPolicy = ApplicationManager.getApplication().serviceOrNull<KotlinDeclarationNavigationPolicy>()
+        return navigationPolicy?.getNavigationElement(this) ?: this
     }
 }
