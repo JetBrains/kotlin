@@ -1990,8 +1990,8 @@ org.jetbrains.kotlin.psi.stubs.KotlinClassifierStub
 org.jetbrains.kotlin.psi.stubs.KotlinClassifierStub.classId
 org.jetbrains.kotlin.psi.stubs.KotlinCollectionLiteralExpressionStub
 org.jetbrains.kotlin.psi.stubs.KotlinConstantExpressionStub
-org.jetbrains.kotlin.psi.stubs.KotlinConstantExpressionStub.kind()
-org.jetbrains.kotlin.psi.stubs.KotlinConstantExpressionStub.value()
+org.jetbrains.kotlin.psi.stubs.KotlinConstantExpressionStub.kind
+org.jetbrains.kotlin.psi.stubs.KotlinConstantExpressionStub.value
 org.jetbrains.kotlin.psi.stubs.KotlinConstructorStub
 org.jetbrains.kotlin.psi.stubs.KotlinConstructorStub.isDelegatedCallToThis
 org.jetbrains.kotlin.psi.stubs.KotlinConstructorStub.isExplicitDelegationCall

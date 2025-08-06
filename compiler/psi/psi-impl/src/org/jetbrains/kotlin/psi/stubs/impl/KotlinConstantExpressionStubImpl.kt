@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2018 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -16,9 +16,8 @@ import org.jetbrains.kotlin.psi.stubs.elements.KtConstantExpressionElementType
 class KotlinConstantExpressionStubImpl(
     parent: StubElement<out PsiElement>?,
     elementType: KtConstantExpressionElementType,
-    private val kind: ConstantValueKind,
-    private val value: StringRef
+    override val kind: ConstantValueKind,
+    private val _value: StringRef
 ) : KotlinStubBaseImpl<KtConstantExpression>(parent, elementType), KotlinConstantExpressionStub {
-    override fun kind(): ConstantValueKind = kind
-    override fun value(): String = StringRef.toString(value)
+    override val value: String get() = StringRef.toString(_value)
 }

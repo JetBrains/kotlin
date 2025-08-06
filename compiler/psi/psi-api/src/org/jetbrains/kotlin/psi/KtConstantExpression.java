@@ -19,7 +19,7 @@ public class KtConstantExpression
     }
 
     public KtConstantExpression(@NotNull KotlinConstantExpressionStub stub) {
-        super(stub, ConstantExpressionUtils.toConstantExpressionElementType(stub.kind()));
+        super(stub, ConstantExpressionUtils.toConstantExpressionElementType(stub.getKind()));
     }
 
     @Override
@@ -36,7 +36,7 @@ public class KtConstantExpression
     public @NotNull String getText() {
         KotlinConstantExpressionStub stub = getGreenStub();
         if (stub != null) {
-            return stub.value();
+            return stub.getValue();
         }
 
         return super.getText();

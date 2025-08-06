@@ -4026,8 +4026,8 @@ public abstract interface class org/jetbrains/kotlin/psi/stubs/KotlinCollectionL
 }
 
 public abstract interface class org/jetbrains/kotlin/psi/stubs/KotlinConstantExpressionStub : com/intellij/psi/stubs/StubElement {
-	public abstract fun kind ()Lorg/jetbrains/kotlin/psi/stubs/ConstantValueKind;
-	public abstract fun value ()Ljava/lang/String;
+	public abstract fun getKind ()Lorg/jetbrains/kotlin/psi/stubs/ConstantValueKind;
+	public abstract fun getValue ()Ljava/lang/String;
 }
 
 public abstract interface class org/jetbrains/kotlin/psi/stubs/KotlinConstructorStub : org/jetbrains/kotlin/psi/stubs/KotlinCallableStubBase, org/jetbrains/kotlin/psi/stubs/KotlinDeclarationWithBodyStub {

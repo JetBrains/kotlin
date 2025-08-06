@@ -49,8 +49,8 @@ class KtConstantExpressionElementType(@NonNls debugName: String) :
     }
 
     override fun serialize(stub: KotlinConstantExpressionStubImpl, dataStream: StubOutputStream) {
-        dataStream.writeVarInt(stub.kind().ordinal)
-        dataStream.writeName(stub.value())
+        dataStream.writeVarInt(stub.kind.ordinal)
+        dataStream.writeName(stub.value)
     }
 
     override fun deserialize(dataStream: StubInputStream, parentStub: StubElement<*>?): KotlinConstantExpressionStubImpl {
