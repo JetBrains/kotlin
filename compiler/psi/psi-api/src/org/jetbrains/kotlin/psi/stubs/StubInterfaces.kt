@@ -43,9 +43,9 @@ interface KotlinTypeAliasStub : KotlinClassifierStub, KotlinStubWithFqName<KtTyp
 }
 
 interface KotlinClassOrObjectStub<T : KtClassOrObject> : KotlinClassifierStub, KotlinStubWithFqName<T> {
-    fun isLocal(): Boolean
-    fun getSuperNames(): List<String>
-    fun isTopLevel(): Boolean
+    val isLocal: Boolean
+    val superNames: List<String>
+    val isTopLevel: Boolean
 }
 
 interface KotlinClassStub : KotlinClassOrObjectStub<KtClass> {
