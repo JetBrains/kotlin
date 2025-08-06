@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.buildtools.options.generator
 import com.squareup.kotlinpoet.TypeName
 import org.jetbrains.kotlin.arguments.description.kotlinCompilerArguments
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinCompilerArgumentsLevel
+import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersion
 import org.jetbrains.kotlin.generators.util.GeneratorsFileUtil
 import org.jetbrains.kotlin.utils.addToStdlib.popLast
 import java.nio.file.Path
@@ -24,6 +25,13 @@ import kotlin.io.path.walk
  */
 fun main(args: Array<String>) {
     val genDir = Paths.get(args[0])
+    val kotlinVersion = args[1].let { argVersionString ->
+        try {
+            KotlinReleaseVersion.valueOf(argVersionString)
+        } catch (_: IllegalArgumentException) {
+            parseLastKotlinReleaseVersion(argVersionString)
+        }
+    }.also { println("Generating BTA compiler arguments for Kotlin version $it") }
     val apiArgsStart = args.indexOf("api").let { if (it == -1) null else it }
     val implArgsStart = args.indexOf("impl").let { if (it == -1) null else it }
 
@@ -41,9 +49,9 @@ fun main(args: Array<String>) {
             localArgs[2]
         } else null
         if (localArgs[0] == "api") {
-            BtaApiGenerator(targetPackage ?: API_PACKAGE, skipXX = true) to allowedLevels
+            BtaApiGenerator(targetPackage ?: API_PACKAGE, skipXX = true, kotlinVersion) to allowedLevels
         } else {
-            BtaImplGenerator(targetPackage ?: IMPL_PACKAGE, skipXX = false) to allowedLevels
+            BtaImplGenerator(targetPackage ?: IMPL_PACKAGE, skipXX = false, kotlinVersion) to allowedLevels
         }
     }.forEach { (generator, allowedLevels) ->
         val levels = mutableListOf<Pair<KotlinCompilerArgumentsLevel, TypeName?>>(kotlinCompilerArguments.topLevel to null)
@@ -77,3 +85,22 @@ interface BtaGenerator {
 }
 
 class GeneratorOutputs(val argumentTypeName: TypeName, val generatedFiles: List<Pair<Path, String>>)
+
+private fun parseLastKotlinReleaseVersion(kotlinVersionString: String): KotlinReleaseVersion {
+    val baseVersion = kotlinVersionString.split("-", limit = 2)[0]
+    val classifier = kotlinVersionString.split("-", limit = 2).getOrNull(1)
+
+    val baseVersionSplit = baseVersion.split(".")
+
+    val majorVersion =
+        baseVersionSplit[0].toIntOrNull() ?: error("Invalid Kotlin version: $kotlinVersionString (Failed parsing major version)")
+    val minorVersion =
+        baseVersionSplit.getOrNull(1)?.toIntOrNull() ?: error("Invalid Kotlin version: $kotlinVersionString (Failed parsing minor version)")
+    val patchVersion = baseVersionSplit.getOrNull(2)?.toIntOrNull() ?: 0
+
+    return KotlinReleaseVersion.entries.last { releaseVersion ->
+        releaseVersion.major < majorVersion ||
+                (releaseVersion.major == majorVersion && releaseVersion.minor < minorVersion) ||
+                (releaseVersion.major == majorVersion && releaseVersion.minor == minorVersion && releaseVersion.patch <= patchVersion)
+    }
+}

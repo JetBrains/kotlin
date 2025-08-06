@@ -56,13 +56,13 @@ internal abstract class CommonToolArgumentsImpl : ArgumentsCommonToolArguments {
 
   @Suppress("DEPRECATION")
   public fun toCompilerArguments(arguments: CommonToolArguments): CommonToolArguments {
-    try { if ("HELP" in optionsMap) { arguments.help = get(HELP) } } catch (_: NoSuchMethodError) {}
-    try { if ("X" in optionsMap) { arguments.extraHelp = get(X) } } catch (_: NoSuchMethodError) {}
-    try { if ("VERSION" in optionsMap) { arguments.version = get(VERSION) } } catch (_: NoSuchMethodError) {}
-    try { if ("VERBOSE" in optionsMap) { arguments.verbose = get(VERBOSE) } } catch (_: NoSuchMethodError) {}
-    try { if ("NOWARN" in optionsMap) { arguments.suppressWarnings = get(NOWARN) } } catch (_: NoSuchMethodError) {}
-    try { if ("WERROR" in optionsMap) { arguments.allWarningsAsErrors = get(WERROR) } } catch (_: NoSuchMethodError) {}
-    try { if ("WEXTRA" in optionsMap) { arguments.extraWarnings = get(WEXTRA) } } catch (_: NoSuchMethodError) {}
+    try { if ("HELP" in optionsMap) { arguments.help = get(HELP)} } catch (_: NoSuchMethodError) {}
+    try { if ("X" in optionsMap) { arguments.extraHelp = get(X)} } catch (_: NoSuchMethodError) {}
+    try { if ("VERSION" in optionsMap) { arguments.version = get(VERSION)} } catch (_: NoSuchMethodError) {}
+    try { if ("VERBOSE" in optionsMap) { arguments.verbose = get(VERBOSE)} } catch (_: NoSuchMethodError) {}
+    try { if ("NOWARN" in optionsMap) { arguments.suppressWarnings = get(NOWARN)} } catch (_: NoSuchMethodError) {}
+    try { if ("WERROR" in optionsMap) { arguments.allWarningsAsErrors = get(WERROR)} } catch (_: NoSuchMethodError) {}
+    try { if ("WEXTRA" in optionsMap) { arguments.extraWarnings = get(WEXTRA)} } catch (_: NoSuchMethodError) {}
     return arguments
   }
 

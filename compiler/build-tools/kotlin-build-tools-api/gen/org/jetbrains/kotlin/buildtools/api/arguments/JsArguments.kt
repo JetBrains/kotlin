@@ -4,6 +4,7 @@
 package org.jetbrains.kotlin.buildtools.api.arguments
 
 import kotlin.Boolean
+import kotlin.Deprecated
 import kotlin.String
 import kotlin.jvm.JvmField
 
@@ -38,6 +39,10 @@ public interface JsArguments : WasmArguments {
   )
 
   public companion object {
+    @JvmField
+    @Deprecated("Argument was removed in Kotlin version v2_2_0.")
+    public val OUTPUT: JsArgument<String?> = JsArgument("OUTPUT")
+
     /**
      * Destination for generated files.
      */
@@ -366,6 +371,7 @@ public interface JsArguments : WasmArguments {
      */
     @JvmField
     @ExperimentalCompilerArgument
+    @Deprecated("Deprecated in Kotlin version v2_1_0.")
     public val X_TYPED_ARRAYS: JsArgument<Boolean> = JsArgument("X_TYPED_ARRAYS")
 
     /**

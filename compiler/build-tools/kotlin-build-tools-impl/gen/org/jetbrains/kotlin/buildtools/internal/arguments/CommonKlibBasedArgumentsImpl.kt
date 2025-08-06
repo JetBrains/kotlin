@@ -60,14 +60,14 @@ internal abstract class CommonKlibBasedArgumentsImpl : CommonCompilerArgumentsIm
   @Suppress("DEPRECATION")
   public fun toCompilerArguments(arguments: CommonKlibBasedCompilerArguments): CommonKlibBasedCompilerArguments {
     super.toCompilerArguments(arguments)
-    try { if ("X_KLIB_RELATIVE_PATH_BASE" in optionsMap) { arguments.relativePathBases = get(X_KLIB_RELATIVE_PATH_BASE) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_KLIB_NORMALIZE_ABSOLUTE_PATH" in optionsMap) { arguments.normalizeAbsolutePath = get(X_KLIB_NORMALIZE_ABSOLUTE_PATH) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_KLIB_ENABLE_SIGNATURE_CLASH_CHECKS" in optionsMap) { arguments.enableSignatureClashChecks = get(X_KLIB_ENABLE_SIGNATURE_CLASH_CHECKS) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_PARTIAL_LINKAGE" in optionsMap) { arguments.partialLinkageMode = get(X_PARTIAL_LINKAGE) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_PARTIAL_LINKAGE_LOGLEVEL" in optionsMap) { arguments.partialLinkageLogLevel = get(X_PARTIAL_LINKAGE_LOGLEVEL) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_KLIB_DUPLICATED_UNIQUE_NAME_STRATEGY" in optionsMap) { arguments.duplicatedUniqueNameStrategy = get(X_KLIB_DUPLICATED_UNIQUE_NAME_STRATEGY) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_KLIB_IR_INLINER" in optionsMap) { arguments.irInlinerBeforeKlibSerialization = get(X_KLIB_IR_INLINER) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_KLIB_ABI_VERSION" in optionsMap) { arguments.customKlibAbiVersion = get(X_KLIB_ABI_VERSION) } } catch (_: NoSuchMethodError) {}
+    try { if ("X_KLIB_RELATIVE_PATH_BASE" in optionsMap) { arguments.relativePathBases = get(X_KLIB_RELATIVE_PATH_BASE)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_KLIB_NORMALIZE_ABSOLUTE_PATH" in optionsMap) { arguments.normalizeAbsolutePath = get(X_KLIB_NORMALIZE_ABSOLUTE_PATH)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_KLIB_ENABLE_SIGNATURE_CLASH_CHECKS" in optionsMap) { arguments.enableSignatureClashChecks = get(X_KLIB_ENABLE_SIGNATURE_CLASH_CHECKS)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_PARTIAL_LINKAGE" in optionsMap) { arguments.partialLinkageMode = get(X_PARTIAL_LINKAGE)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_PARTIAL_LINKAGE_LOGLEVEL" in optionsMap) { arguments.partialLinkageLogLevel = get(X_PARTIAL_LINKAGE_LOGLEVEL)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_KLIB_DUPLICATED_UNIQUE_NAME_STRATEGY" in optionsMap) { arguments.duplicatedUniqueNameStrategy = get(X_KLIB_DUPLICATED_UNIQUE_NAME_STRATEGY)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_KLIB_IR_INLINER" in optionsMap) { arguments.irInlinerBeforeKlibSerialization = get(X_KLIB_IR_INLINER)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_KLIB_ABI_VERSION" in optionsMap) { arguments.customKlibAbiVersion = get(X_KLIB_ABI_VERSION)} } catch (_: NoSuchMethodError) {}
     return arguments
   }
 

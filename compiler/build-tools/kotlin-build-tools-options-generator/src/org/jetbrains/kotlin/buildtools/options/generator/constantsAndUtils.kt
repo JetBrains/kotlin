@@ -8,11 +8,13 @@ package org.jetbrains.kotlin.buildtools.options.generator
 import com.squareup.kotlinpoet.ClassName
 import org.jetbrains.kotlin.arguments.description.CompilerArgumentsLevelNames
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinCompilerArgument
+import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersion
 import org.jetbrains.kotlin.arguments.dsl.types.ExplicitApiMode
 import org.jetbrains.kotlin.arguments.dsl.types.JvmTarget
 import org.jetbrains.kotlin.arguments.dsl.types.KotlinVersion
 import org.jetbrains.kotlin.arguments.dsl.types.ReturnValueCheckerMode
 import org.jetbrains.kotlin.generators.util.GeneratorsFileUtil
+import kotlin.math.max
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty1
 
@@ -68,5 +70,11 @@ internal val enumNameAccessors = mutableMapOf(
 internal fun KClass<*>.accessor(): KProperty1<Any, String> = enumNameAccessors[this] as? KProperty1<Any, String>
     ?: error("Unknown enum in compiler arguments. Must be one of: ${enumNameAccessors.keys.joinToString()}.")
 
-fun createGeneratedFileAppendable(): StringBuilder = StringBuilder(GeneratorsFileUtil.GENERATED_MESSAGE_PREFIX)
+internal fun createGeneratedFileAppendable(): StringBuilder = StringBuilder(GeneratorsFileUtil.GENERATED_MESSAGE_PREFIX)
     .appendLine("the README.md file").appendLine(GeneratorsFileUtil.GENERATED_MESSAGE_SUFFIX).appendLine()
+
+internal fun getOldestSupportedVersion(kotlinVersion: KotlinReleaseVersion): KotlinReleaseVersion =
+    KotlinReleaseVersion.entries.filter { it.patch == 0 }
+        .indexOfFirst { it.major == kotlinVersion.major && it.minor == kotlinVersion.minor }.let {
+            KotlinReleaseVersion.entries[max(it - 3, 0)]
+        }

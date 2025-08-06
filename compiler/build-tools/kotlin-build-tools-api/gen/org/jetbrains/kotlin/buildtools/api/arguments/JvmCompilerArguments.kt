@@ -5,6 +5,7 @@ package org.jetbrains.kotlin.buildtools.api.arguments
 
 import kotlin.Array
 import kotlin.Boolean
+import kotlin.Deprecated
 import kotlin.Int
 import kotlin.String
 import kotlin.jvm.JvmField
@@ -367,6 +368,7 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
      */
     @JvmField
     @ExperimentalCompilerArgument
+    @Deprecated("Deprecated in Kotlin version v2_2_0.")
     public val X_JVM_DEFAULT: JvmCompilerArgument<String?> = JvmCompilerArgument("X_JVM_DEFAULT")
 
     /**
@@ -646,6 +648,7 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
      */
     @JvmField
     @ExperimentalCompilerArgument
+    @Deprecated("Deprecated in Kotlin version v2_0_0.")
     public val X_LINK_VIA_SIGNATURES: JvmCompilerArgument<Boolean> =
         JvmCompilerArgument("X_LINK_VIA_SIGNATURES")
 
@@ -690,6 +693,16 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
     @ExperimentalCompilerArgument
     public val X_VALUE_CLASSES: JvmCompilerArgument<Boolean> =
         JvmCompilerArgument("X_VALUE_CLASSES")
+
+    /**
+     * Inline functions using the IR inliner instead of the bytecode inliner.
+     *
+     * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     */
+    @JvmField
+    @ExperimentalCompilerArgument
+    @Deprecated("Argument was removed in Kotlin version v2_3_0.")
+    public val X_IR_INLINER: JvmCompilerArgument<Boolean> = JvmCompilerArgument("X_IR_INLINER")
 
     /**
      * Use inline scopes numbers for inline marker variables.

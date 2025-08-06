@@ -9,6 +9,7 @@ import com.squareup.kotlinpoet.*
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinCompilerArgument
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinCompilerArgumentsLevel
+import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersion
 import org.jetbrains.kotlin.arguments.dsl.types.KotlinArgumentValueType
 import org.jetbrains.kotlin.generators.kotlinpoet.annotation
 import org.jetbrains.kotlin.generators.kotlinpoet.function
@@ -17,11 +18,13 @@ import org.jetbrains.kotlin.generators.kotlinpoet.property
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 import java.nio.file.Path
 import kotlin.io.path.Path
+import kotlin.math.max
 import kotlin.reflect.KClass
 import kotlin.reflect.KProperty1
 import kotlin.reflect.full.isSubclassOf
 
-class BtaApiGenerator(private val targetPackage: String, private val skipXX: Boolean) : BtaGenerator {
+class BtaApiGenerator(private val targetPackage: String, private val skipXX: Boolean, private val kotlinVersion: KotlinReleaseVersion) :
+    BtaGenerator {
     private val outputs = mutableListOf<Pair<Path, String>>()
 
     override fun generateArgumentsForLevel(level: KotlinCompilerArgumentsLevel, parentClass: TypeName?): GeneratorOutputs {
@@ -72,9 +75,21 @@ class BtaApiGenerator(private val targetPackage: String, private val skipXX: Boo
             if (skipXX && name.startsWith("XX_")) return@forEach
             val experimental = name.startsWith("XX_") || name.startsWith("X_")
 
-            if (argument.releaseVersionsMetadata.removedVersion != null) {
+
+            // argument is newer than current version
+            if (argument.releaseVersionsMetadata.introducedVersion > kotlinVersion) {
                 return@forEach
             }
+
+            // argument was removed in or before current version - 3
+            argument.releaseVersionsMetadata.removedVersion?.let { removedVersion ->
+                if (removedVersion <= getOldestSupportedVersion(kotlinVersion)) {
+                    return@forEach
+                }
+            }
+
+            val wasDeprecatedInVersion =
+                argument.releaseVersionsMetadata.deprecatedVersion?.takeIf { it <= kotlinVersion }
 
             val argumentTypeParameter =
                 argument.valueType::class.supertypes.single { it.classifier == KotlinArgumentValueType::class }.arguments.first().type!!.let {
@@ -101,10 +116,9 @@ class BtaApiGenerator(private val targetPackage: String, private val skipXX: Boo
                 // KT-28979 Need a way to escape /* in kdoc comments
                 // inserting a zero-width space is not ideal, but we do actually have one compiler argument that breaks the KDoc without it
                 addKdoc(argument.description.current.replace("/*", "/\u200B*").replace("*/", "*\u200B/"))
-                if (experimental) {
-                    addAnnotation(ANNOTATION_EXPERIMENTAL)
-                    addKdoc("\n\nWARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.")
-                }
+                maybeAddExperimentalAnnotation(experimental)
+                maybeAddDeprecatedAnnotation(argument.releaseVersionsMetadata.removedVersion, wasDeprecatedInVersion)
+
                 initializer("%T(%S)", argumentTypeName, name)
             }
         }
@@ -114,6 +128,28 @@ class BtaApiGenerator(private val targetPackage: String, private val skipXX: Boo
                 typeSpecBuilder.addAnnotation(ANNOTATION_EXPERIMENTAL)
             }
             writeEnumFile(typeSpecBuilder.build(), type)
+        }
+    }
+
+    private fun PropertySpec.Builder.maybeAddExperimentalAnnotation(experimental: Boolean) {
+        if (experimental) {
+            addAnnotation(ANNOTATION_EXPERIMENTAL)
+            addKdoc("\n\nWARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.")
+        }
+    }
+
+    private fun PropertySpec.Builder.maybeAddDeprecatedAnnotation(
+        removedVersion: KotlinReleaseVersion?,
+        wasDeprecatedInVersion: KotlinReleaseVersion?,
+    ) {
+        if (removedVersion != null && removedVersion <= kotlinVersion) {
+            annotation<Deprecated> {
+                addMember("%S", "Argument was removed in Kotlin version $removedVersion.")
+            }
+        } else if (wasDeprecatedInVersion != null) {
+            annotation<Deprecated> {
+                addMember("%S", "Deprecated in Kotlin version $wasDeprecatedInVersion.")
+            }
         }
     }
 

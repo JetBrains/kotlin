@@ -68,24 +68,24 @@ internal abstract class WasmArgumentsImpl : CommonKlibBasedArgumentsImpl(), Wasm
   @Suppress("DEPRECATION")
   public fun toCompilerArguments(arguments: K2WasmCompilerArguments): K2WasmCompilerArguments {
     super.toCompilerArguments(arguments)
-    try { if ("X_WASM" in optionsMap) { arguments.wasm = get(X_WASM) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_WASM_TARGET" in optionsMap) { arguments.wasmTarget = get(X_WASM_TARGET) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_WASM_DEBUG_INFO" in optionsMap) { arguments.wasmDebug = get(X_WASM_DEBUG_INFO) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_WASM_DEBUG_FRIENDLY" in optionsMap) { arguments.forceDebugFriendlyCompilation = get(X_WASM_DEBUG_FRIENDLY) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_WASM_GENERATE_WAT" in optionsMap) { arguments.wasmGenerateWat = get(X_WASM_GENERATE_WAT) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_WASM_KCLASS_FQN" in optionsMap) { arguments.wasmKClassFqn = get(X_WASM_KCLASS_FQN) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_WASM_ENABLE_ARRAY_RANGE_CHECKS" in optionsMap) { arguments.wasmEnableArrayRangeChecks = get(X_WASM_ENABLE_ARRAY_RANGE_CHECKS) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_WASM_ENABLE_ASSERTS" in optionsMap) { arguments.wasmEnableAsserts = get(X_WASM_ENABLE_ASSERTS) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_WASM_USE_TRAPS_INSTEAD_OF_EXCEPTIONS" in optionsMap) { arguments.wasmUseTrapsInsteadOfExceptions = get(X_WASM_USE_TRAPS_INSTEAD_OF_EXCEPTIONS) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_WASM_USE_NEW_EXCEPTION_PROPOSAL" in optionsMap) { arguments.wasmUseNewExceptionProposal = get(X_WASM_USE_NEW_EXCEPTION_PROPOSAL) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_WASM_NO_JSTAG" in optionsMap) { arguments.wasmNoJsTag = get(X_WASM_NO_JSTAG) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_WASM_DEBUGGER_CUSTOM_FORMATTERS" in optionsMap) { arguments.debuggerCustomFormatters = get(X_WASM_DEBUGGER_CUSTOM_FORMATTERS) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_WASM_SOURCE_MAP_INCLUDE_MAPPINGS_FROM_UNAVAILABLE_SOURCES" in optionsMap) { arguments.includeUnavailableSourcesIntoSourceMap = get(X_WASM_SOURCE_MAP_INCLUDE_MAPPINGS_FROM_UNAVAILABLE_SOURCES) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_WASM_PRESERVE_IC_ORDER" in optionsMap) { arguments.preserveIcOrder = get(X_WASM_PRESERVE_IC_ORDER) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_WASM_IC_CACHE_READONLY" in optionsMap) { arguments.icCacheReadonly = get(X_WASM_IC_CACHE_READONLY) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_WASM_GENERATE_DWARF" in optionsMap) { arguments.generateDwarf = get(X_WASM_GENERATE_DWARF) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_IR_DCE_DUMP_REACHABILITY_INFO_TO_FILE" in optionsMap) { arguments.irDceDumpReachabilityInfoToFile = get(X_IR_DCE_DUMP_REACHABILITY_INFO_TO_FILE) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_IR_DUMP_DECLARATION_IR_SIZES_TO_FILE" in optionsMap) { arguments.irDceDumpDeclarationIrSizesToFile = get(X_IR_DUMP_DECLARATION_IR_SIZES_TO_FILE) } } catch (_: NoSuchMethodError) {}
+    try { if ("X_WASM" in optionsMap) { arguments.wasm = get(X_WASM)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_WASM_TARGET" in optionsMap) { arguments.wasmTarget = get(X_WASM_TARGET)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_WASM_DEBUG_INFO" in optionsMap) { arguments.wasmDebug = get(X_WASM_DEBUG_INFO)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_WASM_DEBUG_FRIENDLY" in optionsMap) { arguments.forceDebugFriendlyCompilation = get(X_WASM_DEBUG_FRIENDLY)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_WASM_GENERATE_WAT" in optionsMap) { arguments.wasmGenerateWat = get(X_WASM_GENERATE_WAT)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_WASM_KCLASS_FQN" in optionsMap) { arguments.wasmKClassFqn = get(X_WASM_KCLASS_FQN)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_WASM_ENABLE_ARRAY_RANGE_CHECKS" in optionsMap) { arguments.wasmEnableArrayRangeChecks = get(X_WASM_ENABLE_ARRAY_RANGE_CHECKS)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_WASM_ENABLE_ASSERTS" in optionsMap) { arguments.wasmEnableAsserts = get(X_WASM_ENABLE_ASSERTS)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_WASM_USE_TRAPS_INSTEAD_OF_EXCEPTIONS" in optionsMap) { arguments.wasmUseTrapsInsteadOfExceptions = get(X_WASM_USE_TRAPS_INSTEAD_OF_EXCEPTIONS)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_WASM_USE_NEW_EXCEPTION_PROPOSAL" in optionsMap) { arguments.wasmUseNewExceptionProposal = get(X_WASM_USE_NEW_EXCEPTION_PROPOSAL)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_WASM_NO_JSTAG" in optionsMap) { arguments.wasmNoJsTag = get(X_WASM_NO_JSTAG)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_WASM_DEBUGGER_CUSTOM_FORMATTERS" in optionsMap) { arguments.debuggerCustomFormatters = get(X_WASM_DEBUGGER_CUSTOM_FORMATTERS)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_WASM_SOURCE_MAP_INCLUDE_MAPPINGS_FROM_UNAVAILABLE_SOURCES" in optionsMap) { arguments.includeUnavailableSourcesIntoSourceMap = get(X_WASM_SOURCE_MAP_INCLUDE_MAPPINGS_FROM_UNAVAILABLE_SOURCES)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_WASM_PRESERVE_IC_ORDER" in optionsMap) { arguments.preserveIcOrder = get(X_WASM_PRESERVE_IC_ORDER)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_WASM_IC_CACHE_READONLY" in optionsMap) { arguments.icCacheReadonly = get(X_WASM_IC_CACHE_READONLY)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_WASM_GENERATE_DWARF" in optionsMap) { arguments.generateDwarf = get(X_WASM_GENERATE_DWARF)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_IR_DCE_DUMP_REACHABILITY_INFO_TO_FILE" in optionsMap) { arguments.irDceDumpReachabilityInfoToFile = get(X_IR_DCE_DUMP_REACHABILITY_INFO_TO_FILE)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_IR_DUMP_DECLARATION_IR_SIZES_TO_FILE" in optionsMap) { arguments.irDceDumpDeclarationIrSizesToFile = get(X_IR_DUMP_DECLARATION_IR_SIZES_TO_FILE)} } catch (_: NoSuchMethodError) {}
     return arguments
   }
 

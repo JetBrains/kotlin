@@ -5,6 +5,7 @@ package org.jetbrains.kotlin.buildtools.api.arguments
 
 import kotlin.Array
 import kotlin.Boolean
+import kotlin.Deprecated
 import kotlin.String
 import kotlin.jvm.JvmField
 import org.jetbrains.kotlin.buildtools.api.arguments.enums.ExplicitApiMode
@@ -323,6 +324,7 @@ public interface CommonCompilerArguments : CommonToolArguments {
      */
     @JvmField
     @ExperimentalCompilerArgument
+    @Deprecated("Deprecated in Kotlin version v2_2_20.")
     public val X_USE_FIR_EXPERIMENTAL_CHECKERS: CommonCompilerArgument<Boolean> =
         CommonCompilerArgument("X_USE_FIR_EXPERIMENTAL_CHECKERS")
 

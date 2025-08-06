@@ -9,6 +9,7 @@ import com.squareup.kotlinpoet.*
 import com.squareup.kotlinpoet.ParameterizedTypeName.Companion.parameterizedBy
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinCompilerArgument
 import org.jetbrains.kotlin.arguments.dsl.base.KotlinCompilerArgumentsLevel
+import org.jetbrains.kotlin.arguments.dsl.base.KotlinReleaseVersion
 import org.jetbrains.kotlin.arguments.dsl.types.IntType
 import org.jetbrains.kotlin.arguments.dsl.types.KotlinArgumentValueType
 import org.jetbrains.kotlin.cli.arguments.generator.calculateName
@@ -23,7 +24,8 @@ import kotlin.io.path.Path
 import kotlin.reflect.KClass
 import kotlin.reflect.full.isSubclassOf
 
-class BtaImplGenerator(private val targetPackage: String, private val skipXX: Boolean) : BtaGenerator {
+class BtaImplGenerator(private val targetPackage: String, private val skipXX: Boolean, private val kotlinVersion: KotlinReleaseVersion) :
+    BtaGenerator {
 
     private val outputs = mutableListOf<Pair<Path, String>>()
 
@@ -34,8 +36,7 @@ class BtaImplGenerator(private val targetPackage: String, private val skipXX: Bo
         val mainFile = FileSpec.Companion.builder(targetPackage, implClassName).apply {
             addAliasedImport(MemberName("org.jetbrains.kotlin.compilerRunner", "toArgumentStrings"), "compilerToArgumentStrings")
             addAnnotation(
-                AnnotationSpec.Companion.builder(ClassName("kotlin", "OptIn"))
-                    .addMember("%T::class", ANNOTATION_EXPERIMENTAL).build()
+                AnnotationSpec.Companion.builder(ClassName("kotlin", "OptIn")).addMember("%T::class", ANNOTATION_EXPERIMENTAL).build()
             )
             addType(
                 TypeSpec.Companion.classBuilder(implClassName).apply {
@@ -117,14 +118,22 @@ class BtaImplGenerator(private val targetPackage: String, private val skipXX: Bo
             val name = argument.extractName()
             if (skipXX && name.startsWith("XX_")) return@forEach
 
-            if (argument.releaseVersionsMetadata.removedVersion != null) {
+            // argument is newer than current version
+            if (argument.releaseVersionsMetadata.introducedVersion > kotlinVersion) {
                 return@forEach
             }
 
+            val wasRemoved = argument.releaseVersionsMetadata.removedVersion?.let { removedVersion ->
+                // argument was removed in or before current version - 3, skip it
+                if (removedVersion <= getOldestSupportedVersion(kotlinVersion)) {
+                    return@forEach
+                }
+                true
+            } ?: false
+
             // generate impl mirror of arguments
-            val type = argument.valueType::class
-                .supertypes.single { it.classifier == KotlinArgumentValueType::class }
-                .arguments.first().type!!
+            val type =
+                argument.valueType::class.supertypes.single { it.classifier == KotlinArgumentValueType::class }.arguments.first().type!!
             val argumentTypeParameter = when (val classifier = type.classifier) {
                 is KClass<*> if classifier.isSubclassOf(Enum::class) && classifier in enumNameAccessors -> {
                     ClassName("$API_PACKAGE.enums", classifier.simpleName!!)
@@ -137,79 +146,60 @@ class BtaImplGenerator(private val targetPackage: String, private val skipXX: Bo
                 initializer("%T(%S)", argumentTypeName, name)
             }
 
-            // add argument to the converter function
+            // add argument to the converter functions
             val member = MemberName(ClassName(targetPackage, implClassName, "Companion"), name)
-            when {
-                type.classifier in enumNameAccessors -> {
-                    toCompilerConverterFun.addSafeMethodAccessStatement(
-                        "if (%S in optionsMap) { arguments.%N = get(%M)${if (argument.valueType.isNullable.current) "?" else ""}.stringValue }",
-                        name,
-                        argument.calculateName(),
-                        member
-                    )
 
-//                    toArgumentStringsFun.addStatement(
-//                        "if (%S in optionsMap && optionsMap[%S] != null) { arguments.add(%S + get(%M)${if (argument.valueType.isNullable.current) "?" else ""}.stringValue) }",
-//                        name,
-//                        name,
-//                        "-${argument.name}=",
-//                        member
-//                    )
-                    applyCompilerArgumentsFun.addSafeMethodAccessStatement(
-                        "this[%M] = arguments.%N${if (argument.valueType.isNullable.current) "?" else ""}.let { %T.entries.first { entry -> entry.stringValue == it } }",
-                        member,
-                        argument.calculateName(),
-                        argumentTypeParameter.copy(nullable = false)
+            toCompilerConverterFun.addSafeMethodAccessStatement(CodeBlock.builder().apply {
+                add("if (%S in optionsMap) { ", name)
+                val valueToAssign = CodeBlock.builder().apply {
+                    add("get(%M)", member)
+                    add(
+                        when {
+                            type.classifier in enumNameAccessors -> maybeGetNullabilitySign(argument) + ".stringValue"
+                            argument.valueType is IntType -> maybeGetNullabilitySign(argument) + ".toString()"
+                            else -> ""
+                        }
                     )
+                }.build()
+                if (wasRemoved) {
+                    add(
+                        "arguments.%M(%S, %L)",
+                        MemberName(targetPackage, "setUsingReflection", isExtension = true),
+                        argument.calculateName(),
+                        valueToAssign
+                    )
+                } else {
+                    add("arguments.%N = %L", argument.calculateName(), valueToAssign)
                 }
-                argument.valueType is IntType -> {
-                    toCompilerConverterFun.addSafeMethodAccessStatement(
-                        "if (%S in optionsMap) { arguments.%N = get(%M)${if (argument.valueType.isNullable.current) "?" else ""}.toString() }",
-                        name,
-                        argument.calculateName(),
-                        member
-                    )
-//                    toArgumentStringsFun.addStatement(
-//                        "if (%S in optionsMap && optionsMap[%S] != null) { arguments.add(%S + get(%M)${if (argument.valueType.isNullable.current) "?" else ""}.toString()) }",
-//                        name,
-//                        name,
-//                        "-${argument.name}=",
-//                        member
-//                    )
-                    applyCompilerArgumentsFun.addSafeMethodAccessStatement(
-                        "this[%M] = arguments.%N${if (argument.valueType.isNullable.current) "?" else ""}.let { it.toInt() }",
-                        member,
-                        argument.calculateName(),
-                    )
+                add("}")
+            }.build())
+
+            applyCompilerArgumentsFun.addSafeMethodAccessStatement(CodeBlock.builder().apply {
+                add("this[%M] = ", member)
+                if (wasRemoved) {
+                    add("arguments.%M(%S)", MemberName(targetPackage, "getUsingReflection", isExtension = true), argument.calculateName())
+                } else {
+                    add("arguments.%N", argument.calculateName())
                 }
-                else -> {
-                    toCompilerConverterFun.addSafeMethodAccessStatement(
-                        "if (%S in optionsMap) { arguments.%N = get(%M) }",
-                        name,
-                        argument.calculateName(),
-                        member
-                    )
-//                    toArgumentStringsFun.addStatement(
-//                        "if (%S in optionsMap && optionsMap[%S] != null) { arguments.add(%S + get(%M)) }",
-//                        name,
-//                        name,
-//                        "-${argument.name}=",
-//                        member
-//                    )
-                    applyCompilerArgumentsFun.addSafeMethodAccessStatement(
-                        "this[%M] = arguments.%N",
-                        member,
-                        argument.calculateName(),
-                    )
+
+                when {
+                    type.classifier in enumNameAccessors -> {
+                        add(maybeGetNullabilitySign(argument))
+                        add(".let { %T.entries.first { entry -> entry.stringValue == it } }", argumentTypeParameter.copy(nullable = false))
+                    }
+                    argument.valueType is IntType -> {
+                        add(maybeGetNullabilitySign(argument))
+                        add(".let { it.toInt() }")
+                    }
+                    else -> ""
                 }
-            }
+            }.build())
         }
     }
 
     fun TypeSpec.Builder.generateGetPutFunctions(parameter: ClassName, implParameter: ClassName) {
         val mapProperty = property(
-            "optionsMap",
-            ClassName("kotlin.collections", "MutableMap").parameterizedBy(typeNameOf<String>(), ANY.copy(nullable = true))
+            "optionsMap", ClassName("kotlin.collections", "MutableMap").parameterizedBy(typeNameOf<String>(), ANY.copy(nullable = true))
         ) {
             addModifiers(KModifier.PRIVATE)
             initializer("%M()", MemberName("kotlin.collections", "mutableMapOf"))
@@ -278,18 +268,19 @@ class BtaImplGenerator(private val targetPackage: String, private val skipXX: Bo
     fun TypeSpec.Builder.generateArgumentType(argumentsClassName: String): String {
         require(argumentsClassName.endsWith("Arguments"))
         val argumentTypeName = argumentsClassName.removeSuffix("s")
-        val typeSpec =
-            TypeSpec.classBuilder(argumentTypeName).apply {
-                addTypeVariable(TypeVariableName("V"))
-                property<String>("id") {
-                    initializer("id")
-                }
-                primaryConstructor(FunSpec.constructorBuilder().addParameter("id", String::class).build())
-            }.build()
+        val typeSpec = TypeSpec.classBuilder(argumentTypeName).apply {
+            addTypeVariable(TypeVariableName("V"))
+            property<String>("id") {
+                initializer("id")
+            }
+            primaryConstructor(FunSpec.constructorBuilder().addParameter("id", String::class).build())
+        }.build()
         addType(typeSpec)
         return argumentTypeName
     }
 }
+
+private fun maybeGetNullabilitySign(argument: KotlinCompilerArgument): String = (if (argument.valueType.isNullable.current) "?" else "")
 
 private fun toArgumentsStringFunBuilder(parentClass: TypeName?): FunSpec.Builder = FunSpec.builder("toArgumentStrings").apply {
     addModifiers(KModifier.OVERRIDE)
@@ -375,3 +366,6 @@ private fun KotlinCompilerArgumentsLevel.getCompilerArgumentsClassName(): ClassN
 
 private fun FunSpec.Builder.addSafeMethodAccessStatement(format: String, vararg args: Any) =
     addStatement("try { $format } catch (_: NoSuchMethodError) {}", *args)
+
+private fun FunSpec.Builder.addSafeMethodAccessStatement(codeBlock: CodeBlock) =
+    addStatement("try { %L } catch (_: NoSuchMethodError) {}", codeBlock)

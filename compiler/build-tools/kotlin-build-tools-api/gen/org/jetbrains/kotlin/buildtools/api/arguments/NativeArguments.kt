@@ -5,6 +5,7 @@ package org.jetbrains.kotlin.buildtools.api.arguments
 
 import kotlin.Array
 import kotlin.Boolean
+import kotlin.Deprecated
 import kotlin.Int
 import kotlin.String
 import kotlin.jvm.JvmField
@@ -90,6 +91,7 @@ public interface NativeArguments : CommonKlibBasedArguments {
      * Note: This option is deprecated and will be removed in one of the future releases.
      */
     @JvmField
+    @Deprecated("Deprecated in Kotlin version v2_0_20.")
     public val LIBRARY_VERSION: NativeArgument<String?> = NativeArgument("LIBRARY_VERSION")
 
     /**
@@ -132,6 +134,7 @@ public interface NativeArguments : CommonKlibBasedArguments {
      * Don't link endorsed libraries from the dist automatically. This option has been deprecated, as the dist no longer has any endorsed libraries.
      */
     @JvmField
+    @Deprecated("Deprecated in Kotlin version v1_9_20.")
     public val NO_ENDORSED_LIBS: NativeArgument<Boolean> = NativeArgument("NO_ENDORSED_LIBS")
 
     /**
@@ -331,6 +334,7 @@ public interface NativeArguments : CommonKlibBasedArguments {
      */
     @JvmField
     @ExperimentalCompilerArgument
+    @Deprecated("Deprecated in Kotlin version v1_5_20.")
     public val X_G0: NativeArgument<Boolean> = NativeArgument("X_G0")
 
     /**

@@ -95,6 +95,7 @@ import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgume
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.X_USE_FIR_EXPERIMENTAL_CHECKERS
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.X_USE_FIR_IC
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.X_USE_FIR_LT
+import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.X_USE_K2
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.X_VERBOSE_PHASES
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.X_VERIFY_IR
 import org.jetbrains.kotlin.buildtools.`internal`.arguments.CommonCompilerArgumentsImpl.Companion.X_VERIFY_IR_VISIBILITY
@@ -139,90 +140,91 @@ internal abstract class CommonCompilerArgumentsImpl : CommonToolArgumentsImpl(),
   @Suppress("DEPRECATION")
   public fun toCompilerArguments(arguments: CommonCompilerArguments): CommonCompilerArguments {
     super.toCompilerArguments(arguments)
-    try { if ("LANGUAGE_VERSION" in optionsMap) { arguments.languageVersion = get(LANGUAGE_VERSION)?.stringValue } } catch (_: NoSuchMethodError) {}
-    try { if ("API_VERSION" in optionsMap) { arguments.apiVersion = get(API_VERSION)?.stringValue } } catch (_: NoSuchMethodError) {}
-    try { if ("KOTLIN_HOME" in optionsMap) { arguments.kotlinHome = get(KOTLIN_HOME) } } catch (_: NoSuchMethodError) {}
-    try { if ("PROGRESSIVE" in optionsMap) { arguments.progressiveMode = get(PROGRESSIVE) } } catch (_: NoSuchMethodError) {}
-    try { if ("SCRIPT" in optionsMap) { arguments.script = get(SCRIPT) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_REPL" in optionsMap) { arguments.repl = get(X_REPL) } } catch (_: NoSuchMethodError) {}
-    try { if ("OPT_IN" in optionsMap) { arguments.optIn = get(OPT_IN) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_NO_INLINE" in optionsMap) { arguments.noInline = get(X_NO_INLINE) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_SKIP_METADATA_VERSION_CHECK" in optionsMap) { arguments.skipMetadataVersionCheck = get(X_SKIP_METADATA_VERSION_CHECK) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_SKIP_PRERELEASE_CHECK" in optionsMap) { arguments.skipPrereleaseCheck = get(X_SKIP_PRERELEASE_CHECK) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_ALLOW_KOTLIN_PACKAGE" in optionsMap) { arguments.allowKotlinPackage = get(X_ALLOW_KOTLIN_PACKAGE) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_STDLIB_COMPILATION" in optionsMap) { arguments.stdlibCompilation = get(X_STDLIB_COMPILATION) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_REPORT_OUTPUT_FILES" in optionsMap) { arguments.reportOutputFiles = get(X_REPORT_OUTPUT_FILES) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_PLUGIN" in optionsMap) { arguments.pluginClasspaths = get(X_PLUGIN) } } catch (_: NoSuchMethodError) {}
-    try { if ("P" in optionsMap) { arguments.pluginOptions = get(P) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_COMPILER_PLUGIN" in optionsMap) { arguments.pluginConfigurations = get(X_COMPILER_PLUGIN) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_MULTI_PLATFORM" in optionsMap) { arguments.multiPlatform = get(X_MULTI_PLATFORM) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_NO_CHECK_ACTUAL" in optionsMap) { arguments.noCheckActual = get(X_NO_CHECK_ACTUAL) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_INTELLIJ_PLUGIN_ROOT" in optionsMap) { arguments.intellijPluginRoot = get(X_INTELLIJ_PLUGIN_ROOT) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_NEW_INFERENCE" in optionsMap) { arguments.newInference = get(X_NEW_INFERENCE) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_INLINE_CLASSES" in optionsMap) { arguments.inlineClasses = get(X_INLINE_CLASSES) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_REPORT_PERF" in optionsMap) { arguments.reportPerf = get(X_REPORT_PERF) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_DUMP_PERF" in optionsMap) { arguments.dumpPerf = get(X_DUMP_PERF) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_METADATA_VERSION" in optionsMap) { arguments.metadataVersion = get(X_METADATA_VERSION) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_COMMON_SOURCES" in optionsMap) { arguments.commonSources = get(X_COMMON_SOURCES) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_LIST_PHASES" in optionsMap) { arguments.listPhases = get(X_LIST_PHASES) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_DISABLE_PHASES" in optionsMap) { arguments.disablePhases = get(X_DISABLE_PHASES) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_VERBOSE_PHASES" in optionsMap) { arguments.verbosePhases = get(X_VERBOSE_PHASES) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_PHASES_TO_DUMP_BEFORE" in optionsMap) { arguments.phasesToDumpBefore = get(X_PHASES_TO_DUMP_BEFORE) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_PHASES_TO_DUMP_AFTER" in optionsMap) { arguments.phasesToDumpAfter = get(X_PHASES_TO_DUMP_AFTER) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_PHASES_TO_DUMP" in optionsMap) { arguments.phasesToDump = get(X_PHASES_TO_DUMP) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_DUMP_DIRECTORY" in optionsMap) { arguments.dumpDirectory = get(X_DUMP_DIRECTORY) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_DUMP_FQNAME" in optionsMap) { arguments.dumpOnlyFqName = get(X_DUMP_FQNAME) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_PHASES_TO_VALIDATE_BEFORE" in optionsMap) { arguments.phasesToValidateBefore = get(X_PHASES_TO_VALIDATE_BEFORE) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_PHASES_TO_VALIDATE_AFTER" in optionsMap) { arguments.phasesToValidateAfter = get(X_PHASES_TO_VALIDATE_AFTER) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_PHASES_TO_VALIDATE" in optionsMap) { arguments.phasesToValidate = get(X_PHASES_TO_VALIDATE) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_VERIFY_IR" in optionsMap) { arguments.verifyIr = get(X_VERIFY_IR) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_VERIFY_IR_VISIBILITY" in optionsMap) { arguments.verifyIrVisibility = get(X_VERIFY_IR_VISIBILITY) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_PROFILE_PHASES" in optionsMap) { arguments.profilePhases = get(X_PROFILE_PHASES) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_CHECK_PHASE_CONDITIONS" in optionsMap) { arguments.checkPhaseConditions = get(X_CHECK_PHASE_CONDITIONS) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_USE_FIR_EXPERIMENTAL_CHECKERS" in optionsMap) { arguments.useFirExperimentalCheckers = get(X_USE_FIR_EXPERIMENTAL_CHECKERS) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_USE_FIR_IC" in optionsMap) { arguments.useFirIC = get(X_USE_FIR_IC) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_USE_FIR_LT" in optionsMap) { arguments.useFirLT = get(X_USE_FIR_LT) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_METADATA_KLIB" in optionsMap) { arguments.metadataKlib = get(X_METADATA_KLIB) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_DISABLE_DEFAULT_SCRIPTING_PLUGIN" in optionsMap) { arguments.disableDefaultScriptingPlugin = get(X_DISABLE_DEFAULT_SCRIPTING_PLUGIN) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_EXPLICIT_API" in optionsMap) { arguments.explicitApi = get(X_EXPLICIT_API).stringValue } } catch (_: NoSuchMethodError) {}
-    try { if ("XX_EXPLICIT_RETURN_TYPES" in optionsMap) { arguments.explicitReturnTypes = get(XX_EXPLICIT_RETURN_TYPES).stringValue } } catch (_: NoSuchMethodError) {}
-    try { if ("X_RETURN_VALUE_CHECKER" in optionsMap) { arguments.returnValueChecker = get(X_RETURN_VALUE_CHECKER).stringValue } } catch (_: NoSuchMethodError) {}
-    try { if ("X_SUPPRESS_VERSION_WARNINGS" in optionsMap) { arguments.suppressVersionWarnings = get(X_SUPPRESS_VERSION_WARNINGS) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_SUPPRESS_API_VERSION_GREATER_THAN_LANGUAGE_VERSION_ERROR" in optionsMap) { arguments.suppressApiVersionGreaterThanLanguageVersionError = get(X_SUPPRESS_API_VERSION_GREATER_THAN_LANGUAGE_VERSION_ERROR) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_EXPECT_ACTUAL_CLASSES" in optionsMap) { arguments.expectActualClasses = get(X_EXPECT_ACTUAL_CLASSES) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_CONSISTENT_DATA_CLASS_COPY_VISIBILITY" in optionsMap) { arguments.consistentDataClassCopyVisibility = get(X_CONSISTENT_DATA_CLASS_COPY_VISIBILITY) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_UNRESTRICTED_BUILDER_INFERENCE" in optionsMap) { arguments.unrestrictedBuilderInference = get(X_UNRESTRICTED_BUILDER_INFERENCE) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_CONTEXT_RECEIVERS" in optionsMap) { arguments.contextReceivers = get(X_CONTEXT_RECEIVERS) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_CONTEXT_PARAMETERS" in optionsMap) { arguments.contextParameters = get(X_CONTEXT_PARAMETERS) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_CONTEXT_SENSITIVE_RESOLUTION" in optionsMap) { arguments.contextSensitiveResolution = get(X_CONTEXT_SENSITIVE_RESOLUTION) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_NON_LOCAL_BREAK_CONTINUE" in optionsMap) { arguments.nonLocalBreakContinue = get(X_NON_LOCAL_BREAK_CONTINUE) } } catch (_: NoSuchMethodError) {}
-    try { if ("_XDATA_FLOW_BASED_EXHAUSTIVENESS" in optionsMap) { arguments.xdataFlowBasedExhaustiveness = get(_XDATA_FLOW_BASED_EXHAUSTIVENESS) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_DIRECT_JAVA_ACTUALIZATION" in optionsMap) { arguments.directJavaActualization = get(X_DIRECT_JAVA_ACTUALIZATION) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_MULTI_DOLLAR_INTERPOLATION" in optionsMap) { arguments.multiDollarInterpolation = get(X_MULTI_DOLLAR_INTERPOLATION) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_ENABLE_INCREMENTAL_COMPILATION" in optionsMap) { arguments.incrementalCompilation = get(X_ENABLE_INCREMENTAL_COMPILATION) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_RENDER_INTERNAL_DIAGNOSTIC_NAMES" in optionsMap) { arguments.renderInternalDiagnosticNames = get(X_RENDER_INTERNAL_DIAGNOSTIC_NAMES) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_ALLOW_ANY_SCRIPTS_IN_SOURCE_ROOTS" in optionsMap) { arguments.allowAnyScriptsInSourceRoots = get(X_ALLOW_ANY_SCRIPTS_IN_SOURCE_ROOTS) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_REPORT_ALL_WARNINGS" in optionsMap) { arguments.reportAllWarnings = get(X_REPORT_ALL_WARNINGS) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_FRAGMENTS" in optionsMap) { arguments.fragments = get(X_FRAGMENTS) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_FRAGMENT_SOURCES" in optionsMap) { arguments.fragmentSources = get(X_FRAGMENT_SOURCES) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_FRAGMENT_REFINES" in optionsMap) { arguments.fragmentRefines = get(X_FRAGMENT_REFINES) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_FRAGMENT_DEPENDENCY" in optionsMap) { arguments.fragmentDependencies = get(X_FRAGMENT_DEPENDENCY) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_SEPARATE_KMP_COMPILATION" in optionsMap) { arguments.separateKmpCompilationScheme = get(X_SEPARATE_KMP_COMPILATION) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_IGNORE_CONST_OPTIMIZATION_ERRORS" in optionsMap) { arguments.ignoreConstOptimizationErrors = get(X_IGNORE_CONST_OPTIMIZATION_ERRORS) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_DONT_WARN_ON_ERROR_SUPPRESSION" in optionsMap) { arguments.dontWarnOnErrorSuppression = get(X_DONT_WARN_ON_ERROR_SUPPRESSION) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_WHEN_GUARDS" in optionsMap) { arguments.whenGuards = get(X_WHEN_GUARDS) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_NESTED_TYPE_ALIASES" in optionsMap) { arguments.nestedTypeAliases = get(X_NESTED_TYPE_ALIASES) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_SUPPRESS_WARNING" in optionsMap) { arguments.suppressedDiagnostics = get(X_SUPPRESS_WARNING) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_WARNING_LEVEL" in optionsMap) { arguments.warningLevels = get(X_WARNING_LEVEL) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_ANNOTATION_DEFAULT_TARGET" in optionsMap) { arguments.annotationDefaultTarget = get(X_ANNOTATION_DEFAULT_TARGET) } } catch (_: NoSuchMethodError) {}
-    try { if ("XX_DEBUG_LEVEL_COMPILER_CHECKS" in optionsMap) { arguments.debugLevelCompilerChecks = get(XX_DEBUG_LEVEL_COMPILER_CHECKS) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_ANNOTATION_TARGET_ALL" in optionsMap) { arguments.annotationTargetAll = get(X_ANNOTATION_TARGET_ALL) } } catch (_: NoSuchMethodError) {}
-    try { if ("XX_LENIENT_MODE" in optionsMap) { arguments.lenientMode = get(XX_LENIENT_MODE) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_ALLOW_REIFIED_TYPE_IN_CATCH" in optionsMap) { arguments.allowReifiedTypeInCatch = get(X_ALLOW_REIFIED_TYPE_IN_CATCH) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_ALLOW_CONTRACTS_ON_MORE_FUNCTIONS" in optionsMap) { arguments.allowContractsOnMoreFunctions = get(X_ALLOW_CONTRACTS_ON_MORE_FUNCTIONS) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_ALLOW_CONDITION_IMPLIES_RETURNS_CONTRACTS" in optionsMap) { arguments.allowConditionImpliesReturnsContracts = get(X_ALLOW_CONDITION_IMPLIES_RETURNS_CONTRACTS) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_ALLOW_HOLDSIN_CONTRACT" in optionsMap) { arguments.allowHoldsinContract = get(X_ALLOW_HOLDSIN_CONTRACT) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_NAME_BASED_DESTRUCTURING" in optionsMap) { arguments.nameBasedDestructuring = get(X_NAME_BASED_DESTRUCTURING) } } catch (_: NoSuchMethodError) {}
+    try { if ("LANGUAGE_VERSION" in optionsMap) { arguments.languageVersion = get(LANGUAGE_VERSION)?.stringValue} } catch (_: NoSuchMethodError) {}
+    try { if ("API_VERSION" in optionsMap) { arguments.apiVersion = get(API_VERSION)?.stringValue} } catch (_: NoSuchMethodError) {}
+    try { if ("KOTLIN_HOME" in optionsMap) { arguments.kotlinHome = get(KOTLIN_HOME)} } catch (_: NoSuchMethodError) {}
+    try { if ("PROGRESSIVE" in optionsMap) { arguments.progressiveMode = get(PROGRESSIVE)} } catch (_: NoSuchMethodError) {}
+    try { if ("SCRIPT" in optionsMap) { arguments.script = get(SCRIPT)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_REPL" in optionsMap) { arguments.repl = get(X_REPL)} } catch (_: NoSuchMethodError) {}
+    try { if ("OPT_IN" in optionsMap) { arguments.optIn = get(OPT_IN)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_NO_INLINE" in optionsMap) { arguments.noInline = get(X_NO_INLINE)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_SKIP_METADATA_VERSION_CHECK" in optionsMap) { arguments.skipMetadataVersionCheck = get(X_SKIP_METADATA_VERSION_CHECK)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_SKIP_PRERELEASE_CHECK" in optionsMap) { arguments.skipPrereleaseCheck = get(X_SKIP_PRERELEASE_CHECK)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_ALLOW_KOTLIN_PACKAGE" in optionsMap) { arguments.allowKotlinPackage = get(X_ALLOW_KOTLIN_PACKAGE)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_STDLIB_COMPILATION" in optionsMap) { arguments.stdlibCompilation = get(X_STDLIB_COMPILATION)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_REPORT_OUTPUT_FILES" in optionsMap) { arguments.reportOutputFiles = get(X_REPORT_OUTPUT_FILES)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_PLUGIN" in optionsMap) { arguments.pluginClasspaths = get(X_PLUGIN)} } catch (_: NoSuchMethodError) {}
+    try { if ("P" in optionsMap) { arguments.pluginOptions = get(P)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_COMPILER_PLUGIN" in optionsMap) { arguments.pluginConfigurations = get(X_COMPILER_PLUGIN)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_MULTI_PLATFORM" in optionsMap) { arguments.multiPlatform = get(X_MULTI_PLATFORM)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_NO_CHECK_ACTUAL" in optionsMap) { arguments.noCheckActual = get(X_NO_CHECK_ACTUAL)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_INTELLIJ_PLUGIN_ROOT" in optionsMap) { arguments.intellijPluginRoot = get(X_INTELLIJ_PLUGIN_ROOT)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_NEW_INFERENCE" in optionsMap) { arguments.newInference = get(X_NEW_INFERENCE)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_INLINE_CLASSES" in optionsMap) { arguments.inlineClasses = get(X_INLINE_CLASSES)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_REPORT_PERF" in optionsMap) { arguments.reportPerf = get(X_REPORT_PERF)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_DUMP_PERF" in optionsMap) { arguments.dumpPerf = get(X_DUMP_PERF)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_METADATA_VERSION" in optionsMap) { arguments.metadataVersion = get(X_METADATA_VERSION)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_COMMON_SOURCES" in optionsMap) { arguments.commonSources = get(X_COMMON_SOURCES)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_LIST_PHASES" in optionsMap) { arguments.listPhases = get(X_LIST_PHASES)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_DISABLE_PHASES" in optionsMap) { arguments.disablePhases = get(X_DISABLE_PHASES)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_VERBOSE_PHASES" in optionsMap) { arguments.verbosePhases = get(X_VERBOSE_PHASES)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_PHASES_TO_DUMP_BEFORE" in optionsMap) { arguments.phasesToDumpBefore = get(X_PHASES_TO_DUMP_BEFORE)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_PHASES_TO_DUMP_AFTER" in optionsMap) { arguments.phasesToDumpAfter = get(X_PHASES_TO_DUMP_AFTER)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_PHASES_TO_DUMP" in optionsMap) { arguments.phasesToDump = get(X_PHASES_TO_DUMP)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_DUMP_DIRECTORY" in optionsMap) { arguments.dumpDirectory = get(X_DUMP_DIRECTORY)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_DUMP_FQNAME" in optionsMap) { arguments.dumpOnlyFqName = get(X_DUMP_FQNAME)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_PHASES_TO_VALIDATE_BEFORE" in optionsMap) { arguments.phasesToValidateBefore = get(X_PHASES_TO_VALIDATE_BEFORE)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_PHASES_TO_VALIDATE_AFTER" in optionsMap) { arguments.phasesToValidateAfter = get(X_PHASES_TO_VALIDATE_AFTER)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_PHASES_TO_VALIDATE" in optionsMap) { arguments.phasesToValidate = get(X_PHASES_TO_VALIDATE)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_VERIFY_IR" in optionsMap) { arguments.verifyIr = get(X_VERIFY_IR)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_VERIFY_IR_VISIBILITY" in optionsMap) { arguments.verifyIrVisibility = get(X_VERIFY_IR_VISIBILITY)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_PROFILE_PHASES" in optionsMap) { arguments.profilePhases = get(X_PROFILE_PHASES)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_CHECK_PHASE_CONDITIONS" in optionsMap) { arguments.checkPhaseConditions = get(X_CHECK_PHASE_CONDITIONS)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_USE_K2" in optionsMap) { arguments.setUsingReflection("useK2", get(X_USE_K2))} } catch (_: NoSuchMethodError) {}
+    try { if ("X_USE_FIR_EXPERIMENTAL_CHECKERS" in optionsMap) { arguments.useFirExperimentalCheckers = get(X_USE_FIR_EXPERIMENTAL_CHECKERS)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_USE_FIR_IC" in optionsMap) { arguments.useFirIC = get(X_USE_FIR_IC)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_USE_FIR_LT" in optionsMap) { arguments.useFirLT = get(X_USE_FIR_LT)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_METADATA_KLIB" in optionsMap) { arguments.metadataKlib = get(X_METADATA_KLIB)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_DISABLE_DEFAULT_SCRIPTING_PLUGIN" in optionsMap) { arguments.disableDefaultScriptingPlugin = get(X_DISABLE_DEFAULT_SCRIPTING_PLUGIN)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_EXPLICIT_API" in optionsMap) { arguments.explicitApi = get(X_EXPLICIT_API).stringValue} } catch (_: NoSuchMethodError) {}
+    try { if ("XX_EXPLICIT_RETURN_TYPES" in optionsMap) { arguments.explicitReturnTypes = get(XX_EXPLICIT_RETURN_TYPES).stringValue} } catch (_: NoSuchMethodError) {}
+    try { if ("X_RETURN_VALUE_CHECKER" in optionsMap) { arguments.returnValueChecker = get(X_RETURN_VALUE_CHECKER).stringValue} } catch (_: NoSuchMethodError) {}
+    try { if ("X_SUPPRESS_VERSION_WARNINGS" in optionsMap) { arguments.suppressVersionWarnings = get(X_SUPPRESS_VERSION_WARNINGS)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_SUPPRESS_API_VERSION_GREATER_THAN_LANGUAGE_VERSION_ERROR" in optionsMap) { arguments.suppressApiVersionGreaterThanLanguageVersionError = get(X_SUPPRESS_API_VERSION_GREATER_THAN_LANGUAGE_VERSION_ERROR)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_EXPECT_ACTUAL_CLASSES" in optionsMap) { arguments.expectActualClasses = get(X_EXPECT_ACTUAL_CLASSES)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_CONSISTENT_DATA_CLASS_COPY_VISIBILITY" in optionsMap) { arguments.consistentDataClassCopyVisibility = get(X_CONSISTENT_DATA_CLASS_COPY_VISIBILITY)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_UNRESTRICTED_BUILDER_INFERENCE" in optionsMap) { arguments.unrestrictedBuilderInference = get(X_UNRESTRICTED_BUILDER_INFERENCE)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_CONTEXT_RECEIVERS" in optionsMap) { arguments.contextReceivers = get(X_CONTEXT_RECEIVERS)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_CONTEXT_PARAMETERS" in optionsMap) { arguments.contextParameters = get(X_CONTEXT_PARAMETERS)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_CONTEXT_SENSITIVE_RESOLUTION" in optionsMap) { arguments.contextSensitiveResolution = get(X_CONTEXT_SENSITIVE_RESOLUTION)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_NON_LOCAL_BREAK_CONTINUE" in optionsMap) { arguments.nonLocalBreakContinue = get(X_NON_LOCAL_BREAK_CONTINUE)} } catch (_: NoSuchMethodError) {}
+    try { if ("_XDATA_FLOW_BASED_EXHAUSTIVENESS" in optionsMap) { arguments.xdataFlowBasedExhaustiveness = get(_XDATA_FLOW_BASED_EXHAUSTIVENESS)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_DIRECT_JAVA_ACTUALIZATION" in optionsMap) { arguments.directJavaActualization = get(X_DIRECT_JAVA_ACTUALIZATION)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_MULTI_DOLLAR_INTERPOLATION" in optionsMap) { arguments.multiDollarInterpolation = get(X_MULTI_DOLLAR_INTERPOLATION)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_ENABLE_INCREMENTAL_COMPILATION" in optionsMap) { arguments.incrementalCompilation = get(X_ENABLE_INCREMENTAL_COMPILATION)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_RENDER_INTERNAL_DIAGNOSTIC_NAMES" in optionsMap) { arguments.renderInternalDiagnosticNames = get(X_RENDER_INTERNAL_DIAGNOSTIC_NAMES)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_ALLOW_ANY_SCRIPTS_IN_SOURCE_ROOTS" in optionsMap) { arguments.allowAnyScriptsInSourceRoots = get(X_ALLOW_ANY_SCRIPTS_IN_SOURCE_ROOTS)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_REPORT_ALL_WARNINGS" in optionsMap) { arguments.reportAllWarnings = get(X_REPORT_ALL_WARNINGS)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_FRAGMENTS" in optionsMap) { arguments.fragments = get(X_FRAGMENTS)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_FRAGMENT_SOURCES" in optionsMap) { arguments.fragmentSources = get(X_FRAGMENT_SOURCES)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_FRAGMENT_REFINES" in optionsMap) { arguments.fragmentRefines = get(X_FRAGMENT_REFINES)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_FRAGMENT_DEPENDENCY" in optionsMap) { arguments.fragmentDependencies = get(X_FRAGMENT_DEPENDENCY)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_SEPARATE_KMP_COMPILATION" in optionsMap) { arguments.separateKmpCompilationScheme = get(X_SEPARATE_KMP_COMPILATION)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_IGNORE_CONST_OPTIMIZATION_ERRORS" in optionsMap) { arguments.ignoreConstOptimizationErrors = get(X_IGNORE_CONST_OPTIMIZATION_ERRORS)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_DONT_WARN_ON_ERROR_SUPPRESSION" in optionsMap) { arguments.dontWarnOnErrorSuppression = get(X_DONT_WARN_ON_ERROR_SUPPRESSION)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_WHEN_GUARDS" in optionsMap) { arguments.whenGuards = get(X_WHEN_GUARDS)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_NESTED_TYPE_ALIASES" in optionsMap) { arguments.nestedTypeAliases = get(X_NESTED_TYPE_ALIASES)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_SUPPRESS_WARNING" in optionsMap) { arguments.suppressedDiagnostics = get(X_SUPPRESS_WARNING)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_WARNING_LEVEL" in optionsMap) { arguments.warningLevels = get(X_WARNING_LEVEL)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_ANNOTATION_DEFAULT_TARGET" in optionsMap) { arguments.annotationDefaultTarget = get(X_ANNOTATION_DEFAULT_TARGET)} } catch (_: NoSuchMethodError) {}
+    try { if ("XX_DEBUG_LEVEL_COMPILER_CHECKS" in optionsMap) { arguments.debugLevelCompilerChecks = get(XX_DEBUG_LEVEL_COMPILER_CHECKS)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_ANNOTATION_TARGET_ALL" in optionsMap) { arguments.annotationTargetAll = get(X_ANNOTATION_TARGET_ALL)} } catch (_: NoSuchMethodError) {}
+    try { if ("XX_LENIENT_MODE" in optionsMap) { arguments.lenientMode = get(XX_LENIENT_MODE)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_ALLOW_REIFIED_TYPE_IN_CATCH" in optionsMap) { arguments.allowReifiedTypeInCatch = get(X_ALLOW_REIFIED_TYPE_IN_CATCH)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_ALLOW_CONTRACTS_ON_MORE_FUNCTIONS" in optionsMap) { arguments.allowContractsOnMoreFunctions = get(X_ALLOW_CONTRACTS_ON_MORE_FUNCTIONS)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_ALLOW_CONDITION_IMPLIES_RETURNS_CONTRACTS" in optionsMap) { arguments.allowConditionImpliesReturnsContracts = get(X_ALLOW_CONDITION_IMPLIES_RETURNS_CONTRACTS)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_ALLOW_HOLDSIN_CONTRACT" in optionsMap) { arguments.allowHoldsinContract = get(X_ALLOW_HOLDSIN_CONTRACT)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_NAME_BASED_DESTRUCTURING" in optionsMap) { arguments.nameBasedDestructuring = get(X_NAME_BASED_DESTRUCTURING)} } catch (_: NoSuchMethodError) {}
     return arguments
   }
 
@@ -274,6 +276,7 @@ internal abstract class CommonCompilerArgumentsImpl : CommonToolArgumentsImpl(),
     try { this[X_VERIFY_IR_VISIBILITY] = arguments.verifyIrVisibility } catch (_: NoSuchMethodError) {}
     try { this[X_PROFILE_PHASES] = arguments.profilePhases } catch (_: NoSuchMethodError) {}
     try { this[X_CHECK_PHASE_CONDITIONS] = arguments.checkPhaseConditions } catch (_: NoSuchMethodError) {}
+    try { this[X_USE_K2] = arguments.getUsingReflection("useK2") } catch (_: NoSuchMethodError) {}
     try { this[X_USE_FIR_EXPERIMENTAL_CHECKERS] = arguments.useFirExperimentalCheckers } catch (_: NoSuchMethodError) {}
     try { this[X_USE_FIR_IC] = arguments.useFirIC } catch (_: NoSuchMethodError) {}
     try { this[X_USE_FIR_LT] = arguments.useFirLT } catch (_: NoSuchMethodError) {}
@@ -435,6 +438,8 @@ internal abstract class CommonCompilerArgumentsImpl : CommonToolArgumentsImpl(),
 
     public val X_CHECK_PHASE_CONDITIONS: CommonCompilerArgument<Boolean> =
         CommonCompilerArgument("X_CHECK_PHASE_CONDITIONS")
+
+    public val X_USE_K2: CommonCompilerArgument<Boolean> = CommonCompilerArgument("X_USE_K2")
 
     public val X_USE_FIR_EXPERIMENTAL_CHECKERS: CommonCompilerArgument<Boolean> =
         CommonCompilerArgument("X_USE_FIR_EXPERIMENTAL_CHECKERS")

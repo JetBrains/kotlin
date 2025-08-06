@@ -57,12 +57,12 @@ internal class MetadataArgumentsImpl : CommonCompilerArgumentsImpl(), MetadataAr
   @Suppress("DEPRECATION")
   public fun toCompilerArguments(arguments: K2MetadataCompilerArguments = K2MetadataCompilerArguments()): K2MetadataCompilerArguments {
     super.toCompilerArguments(arguments)
-    try { if ("D" in optionsMap) { arguments.destination = get(D) } } catch (_: NoSuchMethodError) {}
-    try { if ("CLASSPATH" in optionsMap) { arguments.classpath = get(CLASSPATH) } } catch (_: NoSuchMethodError) {}
-    try { if ("MODULE_NAME" in optionsMap) { arguments.moduleName = get(MODULE_NAME) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_FRIEND_PATHS" in optionsMap) { arguments.friendPaths = get(X_FRIEND_PATHS) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_REFINES_PATHS" in optionsMap) { arguments.refinesPaths = get(X_REFINES_PATHS) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_LEGACY_METADATA_JAR_K2" in optionsMap) { arguments.legacyMetadataJar = get(X_LEGACY_METADATA_JAR_K2) } } catch (_: NoSuchMethodError) {}
+    try { if ("D" in optionsMap) { arguments.destination = get(D)} } catch (_: NoSuchMethodError) {}
+    try { if ("CLASSPATH" in optionsMap) { arguments.classpath = get(CLASSPATH)} } catch (_: NoSuchMethodError) {}
+    try { if ("MODULE_NAME" in optionsMap) { arguments.moduleName = get(MODULE_NAME)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_FRIEND_PATHS" in optionsMap) { arguments.friendPaths = get(X_FRIEND_PATHS)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_REFINES_PATHS" in optionsMap) { arguments.refinesPaths = get(X_REFINES_PATHS)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_LEGACY_METADATA_JAR_K2" in optionsMap) { arguments.legacyMetadataJar = get(X_LEGACY_METADATA_JAR_K2)} } catch (_: NoSuchMethodError) {}
     arguments.internalArguments = parseCommandLineArguments<K2MetadataCompilerArguments>(internalArguments.toList()).internalArguments
     return arguments
   }

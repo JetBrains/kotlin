@@ -50,6 +50,7 @@ import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.JvmCompilerAr
 import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.JvmCompilerArgumentsImpl.Companion.X_GENERATE_STRICT_METADATA_VERSION
 import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.JvmCompilerArgumentsImpl.Companion.X_INDY_ALLOW_ANNOTATED_LAMBDAS
 import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.JvmCompilerArgumentsImpl.Companion.X_IR_DO_NOT_CLEAR_BINDING_CONTEXT
+import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.JvmCompilerArgumentsImpl.Companion.X_IR_INLINER
 import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.JvmCompilerArgumentsImpl.Companion.X_JAVAC_ARGUMENTS
 import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.JvmCompilerArgumentsImpl.Companion.X_JAVA_PACKAGE_PREFIX
 import org.jetbrains.kotlin.buildtools.`internal`.compat.arguments.JvmCompilerArgumentsImpl.Companion.X_JAVA_SOURCE_ROOTS
@@ -127,83 +128,84 @@ internal class JvmCompilerArgumentsImpl : CommonCompilerArgumentsImpl(), JvmComp
   @Suppress("DEPRECATION")
   public fun toCompilerArguments(arguments: K2JVMCompilerArguments = K2JVMCompilerArguments()): K2JVMCompilerArguments {
     super.toCompilerArguments(arguments)
-    try { if ("D" in optionsMap) { arguments.destination = get(D) } } catch (_: NoSuchMethodError) {}
-    try { if ("CLASSPATH" in optionsMap) { arguments.classpath = get(CLASSPATH) } } catch (_: NoSuchMethodError) {}
-    try { if ("INCLUDE_RUNTIME" in optionsMap) { arguments.includeRuntime = get(INCLUDE_RUNTIME) } } catch (_: NoSuchMethodError) {}
-    try { if ("JDK_HOME" in optionsMap) { arguments.jdkHome = get(JDK_HOME) } } catch (_: NoSuchMethodError) {}
-    try { if ("NO_JDK" in optionsMap) { arguments.noJdk = get(NO_JDK) } } catch (_: NoSuchMethodError) {}
-    try { if ("NO_STDLIB" in optionsMap) { arguments.noStdlib = get(NO_STDLIB) } } catch (_: NoSuchMethodError) {}
-    try { if ("NO_REFLECT" in optionsMap) { arguments.noReflect = get(NO_REFLECT) } } catch (_: NoSuchMethodError) {}
-    try { if ("EXPRESSION" in optionsMap) { arguments.expression = get(EXPRESSION) } } catch (_: NoSuchMethodError) {}
-    try { if ("SCRIPT_TEMPLATES" in optionsMap) { arguments.scriptTemplates = get(SCRIPT_TEMPLATES) } } catch (_: NoSuchMethodError) {}
-    try { if ("MODULE_NAME" in optionsMap) { arguments.moduleName = get(MODULE_NAME) } } catch (_: NoSuchMethodError) {}
-    try { if ("JVM_TARGET" in optionsMap) { arguments.jvmTarget = get(JVM_TARGET)?.stringValue } } catch (_: NoSuchMethodError) {}
-    try { if ("JAVA_PARAMETERS" in optionsMap) { arguments.javaParameters = get(JAVA_PARAMETERS) } } catch (_: NoSuchMethodError) {}
-    try { if ("JVM_DEFAULT" in optionsMap) { arguments.jvmDefaultStable = get(JVM_DEFAULT) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_ALLOW_UNSTABLE_DEPENDENCIES" in optionsMap) { arguments.allowUnstableDependencies = get(X_ALLOW_UNSTABLE_DEPENDENCIES) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_ABI_STABILITY" in optionsMap) { arguments.abiStability = get(X_ABI_STABILITY) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_IR_DO_NOT_CLEAR_BINDING_CONTEXT" in optionsMap) { arguments.doNotClearBindingContext = get(X_IR_DO_NOT_CLEAR_BINDING_CONTEXT) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_BACKEND_THREADS" in optionsMap) { arguments.backendThreads = get(X_BACKEND_THREADS).toString() } } catch (_: NoSuchMethodError) {}
-    try { if ("X_MODULE_PATH" in optionsMap) { arguments.javaModulePath = get(X_MODULE_PATH) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_ADD_MODULES" in optionsMap) { arguments.additionalJavaModules = get(X_ADD_MODULES) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_NO_CALL_ASSERTIONS" in optionsMap) { arguments.noCallAssertions = get(X_NO_CALL_ASSERTIONS) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_NO_RECEIVER_ASSERTIONS" in optionsMap) { arguments.noReceiverAssertions = get(X_NO_RECEIVER_ASSERTIONS) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_NO_PARAM_ASSERTIONS" in optionsMap) { arguments.noParamAssertions = get(X_NO_PARAM_ASSERTIONS) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_NO_OPTIMIZE" in optionsMap) { arguments.noOptimize = get(X_NO_OPTIMIZE) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_ASSERTIONS" in optionsMap) { arguments.assertionsMode = get(X_ASSERTIONS) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_BUILD_FILE" in optionsMap) { arguments.buildFile = get(X_BUILD_FILE) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_MULTIFILE_PARTS_INHERIT" in optionsMap) { arguments.inheritMultifileParts = get(X_MULTIFILE_PARTS_INHERIT) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_USE_TYPE_TABLE" in optionsMap) { arguments.useTypeTable = get(X_USE_TYPE_TABLE) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_USE_OLD_CLASS_FILES_READING" in optionsMap) { arguments.useOldClassFilesReading = get(X_USE_OLD_CLASS_FILES_READING) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_USE_FAST_JAR_FILE_SYSTEM" in optionsMap) { arguments.useFastJarFileSystem = get(X_USE_FAST_JAR_FILE_SYSTEM) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_SUPPRESS_MISSING_BUILTINS_ERROR" in optionsMap) { arguments.suppressMissingBuiltinsError = get(X_SUPPRESS_MISSING_BUILTINS_ERROR) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_SCRIPT_RESOLVER_ENVIRONMENT" in optionsMap) { arguments.scriptResolverEnvironment = get(X_SCRIPT_RESOLVER_ENVIRONMENT) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_USE_JAVAC" in optionsMap) { arguments.useJavac = get(X_USE_JAVAC) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_COMPILE_JAVA" in optionsMap) { arguments.compileJava = get(X_COMPILE_JAVA) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_JAVAC_ARGUMENTS" in optionsMap) { arguments.javacArguments = get(X_JAVAC_ARGUMENTS) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_JAVA_SOURCE_ROOTS" in optionsMap) { arguments.javaSourceRoots = get(X_JAVA_SOURCE_ROOTS) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_JAVA_PACKAGE_PREFIX" in optionsMap) { arguments.javaPackagePrefix = get(X_JAVA_PACKAGE_PREFIX) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_JSR305" in optionsMap) { arguments.jsr305 = get(X_JSR305) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_NULLABILITY_ANNOTATIONS" in optionsMap) { arguments.nullabilityAnnotations = get(X_NULLABILITY_ANNOTATIONS) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_SUPPORT_COMPATQUAL_CHECKER_FRAMEWORK_ANNOTATIONS" in optionsMap) { arguments.supportCompatqualCheckerFrameworkAnnotations = get(X_SUPPORT_COMPATQUAL_CHECKER_FRAMEWORK_ANNOTATIONS) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_JSPECIFY_ANNOTATIONS" in optionsMap) { arguments.jspecifyAnnotations = get(X_JSPECIFY_ANNOTATIONS) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_JVM_DEFAULT" in optionsMap) { arguments.jvmDefault = get(X_JVM_DEFAULT) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_DEFAULT_SCRIPT_EXTENSION" in optionsMap) { arguments.defaultScriptExtension = get(X_DEFAULT_SCRIPT_EXTENSION) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_DISABLE_STANDARD_SCRIPT" in optionsMap) { arguments.disableStandardScript = get(X_DISABLE_STANDARD_SCRIPT) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_GENERATE_STRICT_METADATA_VERSION" in optionsMap) { arguments.strictMetadataVersionSemantics = get(X_GENERATE_STRICT_METADATA_VERSION) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_SANITIZE_PARENTHESES" in optionsMap) { arguments.sanitizeParentheses = get(X_SANITIZE_PARENTHESES) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_FRIEND_PATHS" in optionsMap) { arguments.friendPaths = get(X_FRIEND_PATHS) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_ALLOW_NO_SOURCE_FILES" in optionsMap) { arguments.allowNoSourceFiles = get(X_ALLOW_NO_SOURCE_FILES) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_EMIT_JVM_TYPE_ANNOTATIONS" in optionsMap) { arguments.emitJvmTypeAnnotations = get(X_EMIT_JVM_TYPE_ANNOTATIONS) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_JVM_EXPOSE_BOXED" in optionsMap) { arguments.jvmExposeBoxed = get(X_JVM_EXPOSE_BOXED) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_STRING_CONCAT" in optionsMap) { arguments.stringConcat = get(X_STRING_CONCAT) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_JDK_RELEASE" in optionsMap) { arguments.jdkRelease = get(X_JDK_RELEASE) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_SAM_CONVERSIONS" in optionsMap) { arguments.samConversions = get(X_SAM_CONVERSIONS) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_LAMBDAS" in optionsMap) { arguments.lambdas = get(X_LAMBDAS) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_INDY_ALLOW_ANNOTATED_LAMBDAS" in optionsMap) { arguments.indyAllowAnnotatedLambdas = get(X_INDY_ALLOW_ANNOTATED_LAMBDAS) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_KLIB" in optionsMap) { arguments.klibLibraries = get(X_KLIB) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_NO_RESET_JAR_TIMESTAMPS" in optionsMap) { arguments.noResetJarTimestamps = get(X_NO_RESET_JAR_TIMESTAMPS) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_NO_UNIFIED_NULL_CHECKS" in optionsMap) { arguments.noUnifiedNullChecks = get(X_NO_UNIFIED_NULL_CHECKS) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_NO_SOURCE_DEBUG_EXTENSION" in optionsMap) { arguments.noSourceDebugExtension = get(X_NO_SOURCE_DEBUG_EXTENSION) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_PROFILE" in optionsMap) { arguments.profileCompilerCommand = get(X_PROFILE) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_USE_14_INLINE_CLASSES_MANGLING_SCHEME" in optionsMap) { arguments.useOldInlineClassesManglingScheme = get(X_USE_14_INLINE_CLASSES_MANGLING_SCHEME) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_JVM_ENABLE_PREVIEW" in optionsMap) { arguments.enableJvmPreview = get(X_JVM_ENABLE_PREVIEW) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_SUPPRESS_DEPRECATED_JVM_TARGET_WARNING" in optionsMap) { arguments.suppressDeprecatedJvmTargetWarning = get(X_SUPPRESS_DEPRECATED_JVM_TARGET_WARNING) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_TYPE_ENHANCEMENT_IMPROVEMENTS_STRICT_MODE" in optionsMap) { arguments.typeEnhancementImprovementsInStrictMode = get(X_TYPE_ENHANCEMENT_IMPROVEMENTS_STRICT_MODE) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_SERIALIZE_IR" in optionsMap) { arguments.serializeIr = get(X_SERIALIZE_IR) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_VALIDATE_BYTECODE" in optionsMap) { arguments.validateBytecode = get(X_VALIDATE_BYTECODE) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_ENHANCE_TYPE_PARAMETER_TYPES_TO_DEF_NOT_NULL" in optionsMap) { arguments.enhanceTypeParameterTypesToDefNotNull = get(X_ENHANCE_TYPE_PARAMETER_TYPES_TO_DEF_NOT_NULL) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_LINK_VIA_SIGNATURES" in optionsMap) { arguments.linkViaSignatures = get(X_LINK_VIA_SIGNATURES) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_DEBUG" in optionsMap) { arguments.enableDebugMode = get(X_DEBUG) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_ENHANCED_COROUTINES_DEBUGGING" in optionsMap) { arguments.enhancedCoroutinesDebugging = get(X_ENHANCED_COROUTINES_DEBUGGING) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_NO_NEW_JAVA_ANNOTATION_TARGETS" in optionsMap) { arguments.noNewJavaAnnotationTargets = get(X_NO_NEW_JAVA_ANNOTATION_TARGETS) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_VALUE_CLASSES" in optionsMap) { arguments.valueClasses = get(X_VALUE_CLASSES) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_USE_INLINE_SCOPES_NUMBERS" in optionsMap) { arguments.useInlineScopesNumbers = get(X_USE_INLINE_SCOPES_NUMBERS) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_USE_K2_KAPT" in optionsMap) { arguments.useK2Kapt = get(X_USE_K2_KAPT) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_COMPILE_BUILTINS_AS_PART_OF_STDLIB" in optionsMap) { arguments.expectBuiltinsAsPartOfStdlib = get(X_COMPILE_BUILTINS_AS_PART_OF_STDLIB) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_OUTPUT_BUILTINS_METADATA" in optionsMap) { arguments.outputBuiltinsMetadata = get(X_OUTPUT_BUILTINS_METADATA) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_ANNOTATIONS_IN_METADATA" in optionsMap) { arguments.annotationsInMetadata = get(X_ANNOTATIONS_IN_METADATA) } } catch (_: NoSuchMethodError) {}
-    try { if ("X_WHEN_EXPRESSIONS" in optionsMap) { arguments.whenExpressionsGeneration = get(X_WHEN_EXPRESSIONS) } } catch (_: NoSuchMethodError) {}
+    try { if ("D" in optionsMap) { arguments.destination = get(D)} } catch (_: NoSuchMethodError) {}
+    try { if ("CLASSPATH" in optionsMap) { arguments.classpath = get(CLASSPATH)} } catch (_: NoSuchMethodError) {}
+    try { if ("INCLUDE_RUNTIME" in optionsMap) { arguments.includeRuntime = get(INCLUDE_RUNTIME)} } catch (_: NoSuchMethodError) {}
+    try { if ("JDK_HOME" in optionsMap) { arguments.jdkHome = get(JDK_HOME)} } catch (_: NoSuchMethodError) {}
+    try { if ("NO_JDK" in optionsMap) { arguments.noJdk = get(NO_JDK)} } catch (_: NoSuchMethodError) {}
+    try { if ("NO_STDLIB" in optionsMap) { arguments.noStdlib = get(NO_STDLIB)} } catch (_: NoSuchMethodError) {}
+    try { if ("NO_REFLECT" in optionsMap) { arguments.noReflect = get(NO_REFLECT)} } catch (_: NoSuchMethodError) {}
+    try { if ("EXPRESSION" in optionsMap) { arguments.expression = get(EXPRESSION)} } catch (_: NoSuchMethodError) {}
+    try { if ("SCRIPT_TEMPLATES" in optionsMap) { arguments.scriptTemplates = get(SCRIPT_TEMPLATES)} } catch (_: NoSuchMethodError) {}
+    try { if ("MODULE_NAME" in optionsMap) { arguments.moduleName = get(MODULE_NAME)} } catch (_: NoSuchMethodError) {}
+    try { if ("JVM_TARGET" in optionsMap) { arguments.jvmTarget = get(JVM_TARGET)?.stringValue} } catch (_: NoSuchMethodError) {}
+    try { if ("JAVA_PARAMETERS" in optionsMap) { arguments.javaParameters = get(JAVA_PARAMETERS)} } catch (_: NoSuchMethodError) {}
+    try { if ("JVM_DEFAULT" in optionsMap) { arguments.jvmDefaultStable = get(JVM_DEFAULT)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_ALLOW_UNSTABLE_DEPENDENCIES" in optionsMap) { arguments.allowUnstableDependencies = get(X_ALLOW_UNSTABLE_DEPENDENCIES)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_ABI_STABILITY" in optionsMap) { arguments.abiStability = get(X_ABI_STABILITY)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_IR_DO_NOT_CLEAR_BINDING_CONTEXT" in optionsMap) { arguments.doNotClearBindingContext = get(X_IR_DO_NOT_CLEAR_BINDING_CONTEXT)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_BACKEND_THREADS" in optionsMap) { arguments.backendThreads = get(X_BACKEND_THREADS).toString()} } catch (_: NoSuchMethodError) {}
+    try { if ("X_MODULE_PATH" in optionsMap) { arguments.javaModulePath = get(X_MODULE_PATH)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_ADD_MODULES" in optionsMap) { arguments.additionalJavaModules = get(X_ADD_MODULES)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_NO_CALL_ASSERTIONS" in optionsMap) { arguments.noCallAssertions = get(X_NO_CALL_ASSERTIONS)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_NO_RECEIVER_ASSERTIONS" in optionsMap) { arguments.noReceiverAssertions = get(X_NO_RECEIVER_ASSERTIONS)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_NO_PARAM_ASSERTIONS" in optionsMap) { arguments.noParamAssertions = get(X_NO_PARAM_ASSERTIONS)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_NO_OPTIMIZE" in optionsMap) { arguments.noOptimize = get(X_NO_OPTIMIZE)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_ASSERTIONS" in optionsMap) { arguments.assertionsMode = get(X_ASSERTIONS)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_BUILD_FILE" in optionsMap) { arguments.buildFile = get(X_BUILD_FILE)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_MULTIFILE_PARTS_INHERIT" in optionsMap) { arguments.inheritMultifileParts = get(X_MULTIFILE_PARTS_INHERIT)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_USE_TYPE_TABLE" in optionsMap) { arguments.useTypeTable = get(X_USE_TYPE_TABLE)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_USE_OLD_CLASS_FILES_READING" in optionsMap) { arguments.useOldClassFilesReading = get(X_USE_OLD_CLASS_FILES_READING)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_USE_FAST_JAR_FILE_SYSTEM" in optionsMap) { arguments.useFastJarFileSystem = get(X_USE_FAST_JAR_FILE_SYSTEM)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_SUPPRESS_MISSING_BUILTINS_ERROR" in optionsMap) { arguments.suppressMissingBuiltinsError = get(X_SUPPRESS_MISSING_BUILTINS_ERROR)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_SCRIPT_RESOLVER_ENVIRONMENT" in optionsMap) { arguments.scriptResolverEnvironment = get(X_SCRIPT_RESOLVER_ENVIRONMENT)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_USE_JAVAC" in optionsMap) { arguments.useJavac = get(X_USE_JAVAC)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_COMPILE_JAVA" in optionsMap) { arguments.compileJava = get(X_COMPILE_JAVA)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_JAVAC_ARGUMENTS" in optionsMap) { arguments.javacArguments = get(X_JAVAC_ARGUMENTS)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_JAVA_SOURCE_ROOTS" in optionsMap) { arguments.javaSourceRoots = get(X_JAVA_SOURCE_ROOTS)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_JAVA_PACKAGE_PREFIX" in optionsMap) { arguments.javaPackagePrefix = get(X_JAVA_PACKAGE_PREFIX)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_JSR305" in optionsMap) { arguments.jsr305 = get(X_JSR305)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_NULLABILITY_ANNOTATIONS" in optionsMap) { arguments.nullabilityAnnotations = get(X_NULLABILITY_ANNOTATIONS)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_SUPPORT_COMPATQUAL_CHECKER_FRAMEWORK_ANNOTATIONS" in optionsMap) { arguments.supportCompatqualCheckerFrameworkAnnotations = get(X_SUPPORT_COMPATQUAL_CHECKER_FRAMEWORK_ANNOTATIONS)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_JSPECIFY_ANNOTATIONS" in optionsMap) { arguments.jspecifyAnnotations = get(X_JSPECIFY_ANNOTATIONS)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_JVM_DEFAULT" in optionsMap) { arguments.jvmDefault = get(X_JVM_DEFAULT)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_DEFAULT_SCRIPT_EXTENSION" in optionsMap) { arguments.defaultScriptExtension = get(X_DEFAULT_SCRIPT_EXTENSION)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_DISABLE_STANDARD_SCRIPT" in optionsMap) { arguments.disableStandardScript = get(X_DISABLE_STANDARD_SCRIPT)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_GENERATE_STRICT_METADATA_VERSION" in optionsMap) { arguments.strictMetadataVersionSemantics = get(X_GENERATE_STRICT_METADATA_VERSION)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_SANITIZE_PARENTHESES" in optionsMap) { arguments.sanitizeParentheses = get(X_SANITIZE_PARENTHESES)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_FRIEND_PATHS" in optionsMap) { arguments.friendPaths = get(X_FRIEND_PATHS)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_ALLOW_NO_SOURCE_FILES" in optionsMap) { arguments.allowNoSourceFiles = get(X_ALLOW_NO_SOURCE_FILES)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_EMIT_JVM_TYPE_ANNOTATIONS" in optionsMap) { arguments.emitJvmTypeAnnotations = get(X_EMIT_JVM_TYPE_ANNOTATIONS)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_JVM_EXPOSE_BOXED" in optionsMap) { arguments.jvmExposeBoxed = get(X_JVM_EXPOSE_BOXED)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_STRING_CONCAT" in optionsMap) { arguments.stringConcat = get(X_STRING_CONCAT)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_JDK_RELEASE" in optionsMap) { arguments.jdkRelease = get(X_JDK_RELEASE)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_SAM_CONVERSIONS" in optionsMap) { arguments.samConversions = get(X_SAM_CONVERSIONS)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_LAMBDAS" in optionsMap) { arguments.lambdas = get(X_LAMBDAS)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_INDY_ALLOW_ANNOTATED_LAMBDAS" in optionsMap) { arguments.indyAllowAnnotatedLambdas = get(X_INDY_ALLOW_ANNOTATED_LAMBDAS)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_KLIB" in optionsMap) { arguments.klibLibraries = get(X_KLIB)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_NO_RESET_JAR_TIMESTAMPS" in optionsMap) { arguments.noResetJarTimestamps = get(X_NO_RESET_JAR_TIMESTAMPS)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_NO_UNIFIED_NULL_CHECKS" in optionsMap) { arguments.noUnifiedNullChecks = get(X_NO_UNIFIED_NULL_CHECKS)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_NO_SOURCE_DEBUG_EXTENSION" in optionsMap) { arguments.noSourceDebugExtension = get(X_NO_SOURCE_DEBUG_EXTENSION)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_PROFILE" in optionsMap) { arguments.profileCompilerCommand = get(X_PROFILE)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_USE_14_INLINE_CLASSES_MANGLING_SCHEME" in optionsMap) { arguments.useOldInlineClassesManglingScheme = get(X_USE_14_INLINE_CLASSES_MANGLING_SCHEME)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_JVM_ENABLE_PREVIEW" in optionsMap) { arguments.enableJvmPreview = get(X_JVM_ENABLE_PREVIEW)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_SUPPRESS_DEPRECATED_JVM_TARGET_WARNING" in optionsMap) { arguments.suppressDeprecatedJvmTargetWarning = get(X_SUPPRESS_DEPRECATED_JVM_TARGET_WARNING)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_TYPE_ENHANCEMENT_IMPROVEMENTS_STRICT_MODE" in optionsMap) { arguments.typeEnhancementImprovementsInStrictMode = get(X_TYPE_ENHANCEMENT_IMPROVEMENTS_STRICT_MODE)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_SERIALIZE_IR" in optionsMap) { arguments.serializeIr = get(X_SERIALIZE_IR)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_VALIDATE_BYTECODE" in optionsMap) { arguments.validateBytecode = get(X_VALIDATE_BYTECODE)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_ENHANCE_TYPE_PARAMETER_TYPES_TO_DEF_NOT_NULL" in optionsMap) { arguments.enhanceTypeParameterTypesToDefNotNull = get(X_ENHANCE_TYPE_PARAMETER_TYPES_TO_DEF_NOT_NULL)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_LINK_VIA_SIGNATURES" in optionsMap) { arguments.linkViaSignatures = get(X_LINK_VIA_SIGNATURES)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_DEBUG" in optionsMap) { arguments.enableDebugMode = get(X_DEBUG)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_ENHANCED_COROUTINES_DEBUGGING" in optionsMap) { arguments.enhancedCoroutinesDebugging = get(X_ENHANCED_COROUTINES_DEBUGGING)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_NO_NEW_JAVA_ANNOTATION_TARGETS" in optionsMap) { arguments.noNewJavaAnnotationTargets = get(X_NO_NEW_JAVA_ANNOTATION_TARGETS)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_VALUE_CLASSES" in optionsMap) { arguments.valueClasses = get(X_VALUE_CLASSES)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_IR_INLINER" in optionsMap) { arguments.setUsingReflection("enableIrInliner", get(X_IR_INLINER))} } catch (_: NoSuchMethodError) {}
+    try { if ("X_USE_INLINE_SCOPES_NUMBERS" in optionsMap) { arguments.useInlineScopesNumbers = get(X_USE_INLINE_SCOPES_NUMBERS)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_USE_K2_KAPT" in optionsMap) { arguments.useK2Kapt = get(X_USE_K2_KAPT)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_COMPILE_BUILTINS_AS_PART_OF_STDLIB" in optionsMap) { arguments.expectBuiltinsAsPartOfStdlib = get(X_COMPILE_BUILTINS_AS_PART_OF_STDLIB)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_OUTPUT_BUILTINS_METADATA" in optionsMap) { arguments.outputBuiltinsMetadata = get(X_OUTPUT_BUILTINS_METADATA)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_ANNOTATIONS_IN_METADATA" in optionsMap) { arguments.annotationsInMetadata = get(X_ANNOTATIONS_IN_METADATA)} } catch (_: NoSuchMethodError) {}
+    try { if ("X_WHEN_EXPRESSIONS" in optionsMap) { arguments.whenExpressionsGeneration = get(X_WHEN_EXPRESSIONS)} } catch (_: NoSuchMethodError) {}
     arguments.internalArguments = parseCommandLineArguments<K2JVMCompilerArguments>(internalArguments.toList()).internalArguments
     return arguments
   }
@@ -292,6 +294,7 @@ internal class JvmCompilerArgumentsImpl : CommonCompilerArgumentsImpl(), JvmComp
     try { this[X_ENHANCED_COROUTINES_DEBUGGING] = arguments.enhancedCoroutinesDebugging } catch (_: NoSuchMethodError) {}
     try { this[X_NO_NEW_JAVA_ANNOTATION_TARGETS] = arguments.noNewJavaAnnotationTargets } catch (_: NoSuchMethodError) {}
     try { this[X_VALUE_CLASSES] = arguments.valueClasses } catch (_: NoSuchMethodError) {}
+    try { this[X_IR_INLINER] = arguments.getUsingReflection("enableIrInliner") } catch (_: NoSuchMethodError) {}
     try { this[X_USE_INLINE_SCOPES_NUMBERS] = arguments.useInlineScopesNumbers } catch (_: NoSuchMethodError) {}
     try { this[X_USE_K2_KAPT] = arguments.useK2Kapt } catch (_: NoSuchMethodError) {}
     try { this[X_COMPILE_BUILTINS_AS_PART_OF_STDLIB] = arguments.expectBuiltinsAsPartOfStdlib } catch (_: NoSuchMethodError) {}
@@ -494,6 +497,8 @@ internal class JvmCompilerArgumentsImpl : CommonCompilerArgumentsImpl(), JvmComp
 
     public val X_VALUE_CLASSES: JvmCompilerArgument<Boolean> =
         JvmCompilerArgument("X_VALUE_CLASSES")
+
+    public val X_IR_INLINER: JvmCompilerArgument<Boolean> = JvmCompilerArgument("X_IR_INLINER")
 
     public val X_USE_INLINE_SCOPES_NUMBERS: JvmCompilerArgument<Boolean> =
         JvmCompilerArgument("X_USE_INLINE_SCOPES_NUMBERS")
