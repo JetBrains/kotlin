@@ -73,31 +73,37 @@ class FunctionInlining(
 
         return CallInlining(
             context,
-            actualCallee,
             data.file,
             parent = data as? IrDeclarationParent ?: data.parent
-        ).inline(
-            callSite = expression,
-        )
+        ).inline(expression, actualCallee)
     }
 }
 
 private class CallInlining(
     private val context: LoweringContext,
-    private val callee: IrFunction,
     private val currentFile: IrFile,
     private val parent: IrDeclarationParent
 ) {
     private val parents = (parent as? IrDeclaration)?.parentsWithSelf?.toSet() ?: setOf(parent)
     private val elementsWithLocationToPatch = hashSetOf<IrGetValue>()
 
-    fun inline(callSite: IrFunctionAccessExpression) =
-        inlineFunction(callSite, callee, callee).patchDeclarationParents(parent)
+    // Callee can be different from callSite.symbol if resolver returned a non-trivial result.
+    // For example, if it is a call of function from another module, callSite.symbol can be equal to lazy function,
+    // while callee is a function loaded from klib.
+    fun inline(
+        callSite: IrFunctionAccessExpression,
+        callee: IrFunction,
+    ) =
+        inlineFunction(
+            callSite = callSite,
+            callee = callee,
+            inlinedFunctionSymbol = (callee.originalOfErasedTopLevelCopy ?: callee).symbol
+        ).patchDeclarationParents(parent)
 
     private fun inlineFunction(
         callSite: IrFunctionAccessExpression,
         callee: IrFunction,
-        originalInlinedElement: IrElement,
+        inlinedFunctionSymbol: IrFunctionSymbol?,
     ): IrExpression {
         val copiedCallee = run {
             val allTypeParameters = extractTypeParameters(callee)
@@ -134,7 +140,7 @@ private class CallInlining(
                     inlinedFunctionStartOffset = callee.startOffset,
                     inlinedFunctionEndOffset = callee.endOffset,
                     resultType = returnType,
-                    inlinedFunctionSymbol = (callee.originalOfErasedTopLevelCopy ?: callee).symbol.takeIf { originalInlinedElement is IrFunction },
+                    inlinedFunctionSymbol = inlinedFunctionSymbol,
                     inlinedFunctionFileEntry = callee.fileEntry,
                     origin = null,
                 ) {
@@ -252,7 +258,7 @@ private class CallInlining(
             val newExpression = inlineFunction(
                 callSite = callToInline,
                 callee = callToInline.symbol.owner,
-                originalInlinedElement = expression
+                inlinedFunctionSymbol = null,
             )
 
             // Substitute lambda arguments with target function arguments.
