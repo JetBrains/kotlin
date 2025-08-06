@@ -34,7 +34,7 @@ class DeclaredUpperBoundConstraintPositionImpl(
     override fun toString() = "DeclaredUpperBound ${typeParameter.name} from ${typeParameter.containingDeclaration}"
 }
 
-class ArgumentConstraintPositionImpl(argument: KotlinCallArgument) : ArgumentConstraintPosition<KotlinCallArgument>(argument)
+class ArgumentConstraintPositionImpl(argument: KotlinCallArgument) : RegularArgumentConstraintPosition<KotlinCallArgument>(argument)
 
 class CallableReferenceConstraintPositionImpl(val callableReferenceCall: CallableReferenceKotlinCall) :
     CallableReferenceConstraintPosition<CallableReferenceResolutionAtom>(callableReferenceCall)

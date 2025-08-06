@@ -423,7 +423,8 @@ fun ConeLambdaWithTypeVariableAsExpectedTypeAtom.transformToResolvedLambda(
         .substituteOrSelf(expectedType ?: this.expectedType)
     val resolvedAtom = ArgumentCheckingProcessor.createResolvedLambdaAtomDuringCompletion(
         candidateOfOuterCall, csBuilder, ConeResolutionAtomWithPostponedChild(expression), fixedExpectedType,
-        context, returnTypeVariable = returnTypeVariable
+        context, returnTypeVariable = returnTypeVariable,
+        anonymousFunctionIfReturnExpression = anonymousFunctionIfReturnExpression,
     )
 
     subAtom = resolvedAtom
