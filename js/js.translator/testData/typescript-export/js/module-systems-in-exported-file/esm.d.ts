@@ -6,7 +6,8 @@ export declare interface KtList<E> /* extends Collection<E> */ {
         readonly "kotlin.collections.KtList": unique symbol;
     };
 }
-export declare abstract class KtList<E> extends KtSingleton<KtList.$metadata$.constructor>() {
+export declare abstract class KtList<E> {
+    static readonly getInstance: () => typeof KtList.$metadata$.type;
     private constructor();
 }
 export declare namespace KtList {
@@ -14,6 +15,9 @@ export declare namespace KtList {
     namespace $metadata$ {
         abstract class constructor {
             fromJsArray<E>(array: ReadonlyArray<E>): KtList<E>;
+            private constructor();
+        }
+        abstract class type<E> extends KtSingleton<constructor>() {
             private constructor();
         }
     }
@@ -80,11 +84,15 @@ export declare interface AnInterfaceWithCompanion {
         readonly "foo.AnInterfaceWithCompanion": unique symbol;
     };
 }
-export declare abstract class AnInterfaceWithCompanion extends KtSingleton<AnInterfaceWithCompanion.$metadata$.constructor>() {
+export declare abstract class AnInterfaceWithCompanion {
+    static readonly getInstance: () => typeof AnInterfaceWithCompanion.$metadata$.type;
     private constructor();
 }
 /** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
 export declare namespace AnInterfaceWithCompanion.$metadata$ {
+    abstract class type extends KtSingleton<constructor>() {
+        private constructor();
+    }
     abstract class constructor {
         get someValue(): string;
         private constructor();
