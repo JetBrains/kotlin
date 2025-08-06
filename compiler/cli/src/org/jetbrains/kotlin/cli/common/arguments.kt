@@ -42,14 +42,15 @@ fun CompilerConfiguration.setupCommonArguments(
         IrVerificationMode.resolveMode(verifyIrString).also {
             if (it == null) {
                 messageCollector.report(CompilerMessageSeverity.ERROR, "Unsupported IR verification mode $verifyIrString")
+            } else {
+                put(CommonConfigurationKeys.VERIFY_IR, it)
             }
         }
-    } ?: IrVerificationMode.NONE
-    put(CommonConfigurationKeys.VERIFY_IR, irVerificationMode)
+    }
 
     if (arguments.verifyIrVisibility) {
         put(CommonConfigurationKeys.ENABLE_IR_VISIBILITY_CHECKS, true)
-        if (irVerificationMode == IrVerificationMode.NONE) {
+        if (!(irVerificationMode == IrVerificationMode.WARNING || irVerificationMode == IrVerificationMode.ERROR)) {
             messageCollector.report(
                 CompilerMessageSeverity.WARNING,
                 "'-Xverify-ir-visibility' has no effect unless '-Xverify-ir=warning' or '-Xverify-ir=error' is specified"
