@@ -4117,8 +4117,8 @@ public abstract interface class org/jetbrains/kotlin/psi/stubs/KotlinObjectStub 
 }
 
 public abstract interface class org/jetbrains/kotlin/psi/stubs/KotlinParameterStub : org/jetbrains/kotlin/psi/stubs/KotlinStubWithFqName {
-	public abstract fun hasDefaultValue ()Z
-	public abstract fun hasValOrVar ()Z
+	public abstract fun getHasDefaultValue ()Z
+	public abstract fun getHasValOrVar ()Z
 	public abstract fun isMutable ()Z
 }
 

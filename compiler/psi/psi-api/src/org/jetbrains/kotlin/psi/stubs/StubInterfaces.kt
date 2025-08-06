@@ -158,9 +158,9 @@ interface KotlinEnumEntrySuperclassReferenceExpressionStub : StubElement<KtEnumE
 }
 
 interface KotlinParameterStub : KotlinStubWithFqName<KtParameter> {
-    fun isMutable(): Boolean
-    fun hasValOrVar(): Boolean
-    fun hasDefaultValue(): Boolean
+    val isMutable: Boolean
+    val hasValOrVar: Boolean
+    val hasDefaultValue: Boolean
 }
 
 interface KotlinPropertyAccessorStub : KotlinDeclarationWithBodyStub<KtPropertyAccessor> {

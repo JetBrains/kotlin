@@ -2019,9 +2019,9 @@ org.jetbrains.kotlin.psi.stubs.KotlinNameReferenceExpressionStub.referencedName
 org.jetbrains.kotlin.psi.stubs.KotlinObjectStub
 org.jetbrains.kotlin.psi.stubs.KotlinObjectStub.isObjectLiteral
 org.jetbrains.kotlin.psi.stubs.KotlinParameterStub
-org.jetbrains.kotlin.psi.stubs.KotlinParameterStub.hasDefaultValue()
-org.jetbrains.kotlin.psi.stubs.KotlinParameterStub.hasValOrVar()
-org.jetbrains.kotlin.psi.stubs.KotlinParameterStub.isMutable()
+org.jetbrains.kotlin.psi.stubs.KotlinParameterStub.hasDefaultValue
+org.jetbrains.kotlin.psi.stubs.KotlinParameterStub.hasValOrVar
+org.jetbrains.kotlin.psi.stubs.KotlinParameterStub.isMutable
 org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub
 org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderWithTextStub
 org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderWithTextStub.text
