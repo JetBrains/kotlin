@@ -17,9 +17,9 @@ class KotlinParameterStubImpl(
     parent: StubElement<out PsiElement>?,
     private val _fqName: StringRef?,
     private val name: StringRef?,
-    private val isMutable: Boolean,
-    private val hasValOrVar: Boolean,
-    private val hasDefaultValue: Boolean,
+    override val isMutable: Boolean,
+    override val hasValOrVar: Boolean,
+    override val hasDefaultValue: Boolean,
     val functionTypeParameterName: String? = null
 ) : KotlinStubBaseImpl<KtParameter>(parent, KtStubElementTypes.VALUE_PARAMETER), KotlinParameterStub {
 
@@ -29,8 +29,4 @@ class KotlinParameterStubImpl(
 
     override val fqName: FqName?
         get() = if (_fqName != null) FqName(_fqName.string) else null
-
-    override fun isMutable() = isMutable
-    override fun hasValOrVar() = hasValOrVar
-    override fun hasDefaultValue() = hasDefaultValue
 }

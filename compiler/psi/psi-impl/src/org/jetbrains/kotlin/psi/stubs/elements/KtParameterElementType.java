@@ -39,8 +39,8 @@ public class KtParameterElementType extends KtStubElementType<KotlinParameterStu
     public void serialize(@NotNull KotlinParameterStubImpl stub, @NotNull StubOutputStream dataStream) throws IOException {
         dataStream.writeName(stub.getName());
         dataStream.writeBoolean(stub.isMutable());
-        dataStream.writeBoolean(stub.hasValOrVar());
-        dataStream.writeBoolean(stub.hasDefaultValue());
+        dataStream.writeBoolean(stub.getHasValOrVar());
+        dataStream.writeBoolean(stub.getHasDefaultValue());
         FqName name = stub.getFqName();
         dataStream.writeName(name != null ? name.asString() : null);
         dataStream.writeName(stub.getFunctionTypeParameterName());
