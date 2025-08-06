@@ -49,14 +49,14 @@ interface KotlinClassOrObjectStub<T : KtClassOrObject> : KotlinClassifierStub, K
 }
 
 interface KotlinClassStub : KotlinClassOrObjectStub<KtClass> {
-    fun isInterface(): Boolean
-    fun isEnumEntry(): Boolean
+    val isInterface: Boolean
+    val isEnumEntry: Boolean
 
     /**
      * When we build [KotlinClassStub] for source stubs, this function always returns `false`. For binary stubs, it returns whether
      * the binary class was compiled with `-jvm-default={enable|no-compatibility}` option or not.
      */
-    fun isClsStubCompiledToJvmDefaultImplementation(): Boolean
+    val isClsStubCompiledToJvmDefaultImplementation: Boolean
 }
 
 interface KotlinObjectStub : KotlinClassOrObjectStub<KtObjectDeclaration> {

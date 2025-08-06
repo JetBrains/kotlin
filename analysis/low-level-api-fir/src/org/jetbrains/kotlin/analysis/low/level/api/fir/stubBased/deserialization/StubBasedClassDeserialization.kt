@@ -318,7 +318,7 @@ internal fun deserializeClassToSymbol(
             session
         )
 
-        val clsStubCompiledToJvmDefaultImplementation = classStub?.isClsStubCompiledToJvmDefaultImplementation()
+        val clsStubCompiledToJvmDefaultImplementation = classStub?.isClsStubCompiledToJvmDefaultImplementation
         if (clsStubCompiledToJvmDefaultImplementation == true) {
             symbol.fir.isNewPlaceForBodyGeneration = clsStubCompiledToJvmDefaultImplementation
         }
