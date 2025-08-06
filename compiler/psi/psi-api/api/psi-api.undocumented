@@ -1968,8 +1968,8 @@ org.jetbrains.kotlin.psi.stubs.ConstantValueKind.FLOAT_CONSTANT
 org.jetbrains.kotlin.psi.stubs.ConstantValueKind.INTEGER_CONSTANT
 org.jetbrains.kotlin.psi.stubs.ConstantValueKind.NULL
 org.jetbrains.kotlin.psi.stubs.KotlinAnnotationEntryStub
-org.jetbrains.kotlin.psi.stubs.KotlinAnnotationEntryStub.getShortName()
-org.jetbrains.kotlin.psi.stubs.KotlinAnnotationEntryStub.hasValueArguments()
+org.jetbrains.kotlin.psi.stubs.KotlinAnnotationEntryStub.hasValueArguments
+org.jetbrains.kotlin.psi.stubs.KotlinAnnotationEntryStub.shortName
 org.jetbrains.kotlin.psi.stubs.KotlinAnnotationUseSiteTargetStub
 org.jetbrains.kotlin.psi.stubs.KotlinAnnotationUseSiteTargetStub.getUseSiteTarget()
 org.jetbrains.kotlin.psi.stubs.KotlinBackingFieldStub

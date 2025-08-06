@@ -44,7 +44,7 @@ public class KtAnnotationEntryElementType extends KtStubElementType<KotlinAnnota
     @Override
     public void serialize(@NotNull KotlinAnnotationEntryStubImpl stub, @NotNull StubOutputStream dataStream) throws IOException {
         dataStream.writeName(stub.getShortName());
-        dataStream.writeBoolean(stub.hasValueArguments());
+        dataStream.writeBoolean(stub.getHasValueArguments());
         Map<Name, ConstantValue<?>> arguments = stub.getValueArguments();
         dataStream.writeVarInt(arguments != null ? arguments.size() : 0);
         if (arguments != null) {
