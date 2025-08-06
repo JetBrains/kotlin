@@ -403,6 +403,7 @@ interface ConeInferenceContext : TypeSystemInferenceExtensionContext, ConeTypeCo
         return false
     }
 
+    @K2Only
     override fun CapturedTypeMarker.hasRawSuperTypeRecursive(): Boolean {
         require(this is ConeCapturedType)
         return hasRawSuperTypeInternal(hashSetOf())

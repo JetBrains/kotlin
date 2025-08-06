@@ -252,9 +252,7 @@ interface TypeSystemInferenceExtensionContext : TypeSystemContext, TypeSystemBui
     @AllowedToUsedOnlyInK1
     fun CapturedTypeMarker.withNotNullProjection(): KotlinTypeMarker
 
-    /**
-     * Only for K2.
-     */
+    @K2Only
     fun CapturedTypeMarker.hasRawSuperTypeRecursive(): Boolean
 
     fun TypeVariableMarker.defaultType(): SimpleTypeMarker

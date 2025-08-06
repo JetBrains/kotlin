@@ -72,6 +72,7 @@ fun CapturedTypeMarker.typeConstructorProjection(): TypeArgumentMarker = with(c)
 context(c: TypeSystemInferenceExtensionContext)
 fun CapturedTypeMarker.typeParameter(): TypeParameterMarker? = with(c) { typeParameter() }
 
+@K2Only
 context(c: TypeSystemInferenceExtensionContext)
 fun CapturedTypeMarker.hasRawSuperTypeRecursive(): Boolean = with(c) { hasRawSuperTypeRecursive() }
 

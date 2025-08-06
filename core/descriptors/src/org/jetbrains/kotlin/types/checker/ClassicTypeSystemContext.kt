@@ -531,6 +531,7 @@ interface ClassicTypeSystemContext : TypeSystemInferenceExtensionContext, TypeSy
 
     override fun CapturedTypeMarker.isOldCapturedType(): Boolean = this is CapturedType
 
+    @K2Only
     override fun CapturedTypeMarker.hasRawSuperTypeRecursive(): Boolean {
         error("Is not expected to be called in K1")
     }

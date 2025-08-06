@@ -160,6 +160,7 @@ abstract class TypeApproximatorConfiguration {
         override val convertToNonRawVersionAfterApproximationInK2: Boolean get() = true
     }
 
+    @K2Only
     object IntermediateApproximationToSupertypeAfterCompletionInK2 :
         AbstractCapturedTypesAndILTApproximation(null) {
         override val approximateIntegerLiteralConstantTypes: Boolean get() = true
@@ -179,6 +180,7 @@ abstract class TypeApproximatorConfiguration {
         }
     }
 
+    @K2Only
     object TypeArgumentApproximationAfterCompletionInK2 : AbstractCapturedTypesAndILTApproximation(null) {
         override val approximateIntegerLiteralConstantTypes: Boolean get() = true
         override val approximateIntegerConstantOperatorTypes: Boolean get() = true
