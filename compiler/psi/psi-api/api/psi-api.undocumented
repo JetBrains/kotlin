@@ -2009,9 +2009,9 @@ org.jetbrains.kotlin.psi.stubs.KotlinFunctionStub.hasTypeParameterListBeforeFunc
 org.jetbrains.kotlin.psi.stubs.KotlinFunctionTypeStub
 org.jetbrains.kotlin.psi.stubs.KotlinImportAliasStub
 org.jetbrains.kotlin.psi.stubs.KotlinImportDirectiveStub
-org.jetbrains.kotlin.psi.stubs.KotlinImportDirectiveStub.getImportedFqName()
-org.jetbrains.kotlin.psi.stubs.KotlinImportDirectiveStub.isAllUnder()
-org.jetbrains.kotlin.psi.stubs.KotlinImportDirectiveStub.isValid()
+org.jetbrains.kotlin.psi.stubs.KotlinImportDirectiveStub.importedFqName
+org.jetbrains.kotlin.psi.stubs.KotlinImportDirectiveStub.isAllUnder
+org.jetbrains.kotlin.psi.stubs.KotlinImportDirectiveStub.isValid
 org.jetbrains.kotlin.psi.stubs.KotlinModifierListStub
 org.jetbrains.kotlin.psi.stubs.KotlinModifierListStub.hasModifier(KtModifierKeywordToken)
 org.jetbrains.kotlin.psi.stubs.KotlinNameReferenceExpressionStub

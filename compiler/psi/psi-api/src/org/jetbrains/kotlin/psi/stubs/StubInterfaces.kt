@@ -112,9 +112,9 @@ interface KotlinConstructorStub<T : KtConstructor<T>> : KotlinCallableStubBase<T
 interface KotlinImportAliasStub : NamedStub<KtImportAlias>
 
 interface KotlinImportDirectiveStub : StubElement<KtImportDirective> {
-    fun isAllUnder(): Boolean
-    fun getImportedFqName(): FqName?
-    fun isValid(): Boolean
+    val isAllUnder: Boolean
+    val importedFqName: FqName?
+    val isValid: Boolean
 }
 
 interface KotlinModifierListStub : StubElement<KtDeclarationModifierList> {
