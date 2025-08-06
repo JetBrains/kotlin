@@ -4095,8 +4095,7 @@ public abstract interface class org/jetbrains/kotlin/psi/stubs/KotlinFunctionStu
 public abstract interface class org/jetbrains/kotlin/psi/stubs/KotlinFunctionTypeStub : com/intellij/psi/stubs/StubElement {
 }
 
-public abstract interface class org/jetbrains/kotlin/psi/stubs/KotlinImportAliasStub : com/intellij/psi/stubs/StubElement {
-	public abstract fun getName ()Ljava/lang/String;
+public abstract interface class org/jetbrains/kotlin/psi/stubs/KotlinImportAliasStub : com/intellij/psi/stubs/NamedStub {
 }
 
 public abstract interface class org/jetbrains/kotlin/psi/stubs/KotlinImportDirectiveStub : com/intellij/psi/stubs/StubElement {
