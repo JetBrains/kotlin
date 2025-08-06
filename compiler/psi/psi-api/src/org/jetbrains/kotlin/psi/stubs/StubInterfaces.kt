@@ -35,7 +35,7 @@ interface KotlinStubWithFqName<T : PsiNamedElement> : NamedStub<T> {
 }
 
 interface KotlinClassifierStub {
-    fun getClassId(): ClassId?
+    val classId: ClassId?
 }
 
 interface KotlinTypeAliasStub : KotlinClassifierStub, KotlinStubWithFqName<KtTypeAlias> {
