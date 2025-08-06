@@ -2005,7 +2005,7 @@ org.jetbrains.kotlin.psi.stubs.KotlinFileStub.findImportsByAlias(String)
 org.jetbrains.kotlin.psi.stubs.KotlinFileStub.getPackageFqName()
 org.jetbrains.kotlin.psi.stubs.KotlinFileStub.isScript()
 org.jetbrains.kotlin.psi.stubs.KotlinFunctionStub
-org.jetbrains.kotlin.psi.stubs.KotlinFunctionStub.hasTypeParameterListBeforeFunctionName()
+org.jetbrains.kotlin.psi.stubs.KotlinFunctionStub.hasTypeParameterListBeforeFunctionName
 org.jetbrains.kotlin.psi.stubs.KotlinFunctionTypeStub
 org.jetbrains.kotlin.psi.stubs.KotlinImportAliasStub
 org.jetbrains.kotlin.psi.stubs.KotlinImportAliasStub.getName()

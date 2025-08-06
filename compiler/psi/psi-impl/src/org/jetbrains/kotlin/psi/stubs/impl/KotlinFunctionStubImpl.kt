@@ -25,7 +25,7 @@ class KotlinFunctionStubImpl(
     private val isExtension: Boolean,
     override val hasNoExpressionBody: Boolean,
     override val hasBody: Boolean,
-    private val hasTypeParameterListBeforeFunctionName: Boolean,
+    override val hasTypeParameterListBeforeFunctionName: Boolean,
     override val mayHaveContract: Boolean,
     val contract: List<KtContractDescriptionElement<KotlinTypeBean, Nothing?>>?,
     val origin: KotlinStubOrigin?
@@ -39,7 +39,6 @@ class KotlinFunctionStubImpl(
     override fun getName() = StringRef.toString(nameRef)
     override fun isTopLevel() = isTopLevel
     override fun isExtension() = isExtension
-    override fun hasTypeParameterListBeforeFunctionName() = hasTypeParameterListBeforeFunctionName
 
     @Throws(IOException::class)
     fun serializeContract(dataStream: StubOutputStream) {
