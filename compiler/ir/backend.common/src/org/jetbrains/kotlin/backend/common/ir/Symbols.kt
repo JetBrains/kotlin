@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.name.Name
 
 @OptIn(InternalSymbolFinderAPI::class)
 open class BuiltinSymbolsBase(val irBuiltIns: IrBuiltIns) {
-    val symbolFinder = irBuiltIns.symbolFinder
+    protected val symbolFinder = irBuiltIns.symbolFinder
 
     private fun getClass(name: Name, vararg packageNameSegments: String = arrayOf("kotlin")): IrClassSymbol =
         symbolFinder.findClass(name, *packageNameSegments)
