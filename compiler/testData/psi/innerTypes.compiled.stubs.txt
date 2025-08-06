@@ -5,8 +5,8 @@ FILE[kind=File[packageFqName=test]]
   CLASS[classId=test/InnerTypes, fqName=test.InnerTypes, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=InnerTypes, superNames=[]]
     MODIFIER_LIST[public final]
     TYPE_PARAMETER_LIST
-      TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=E]
-      TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=F]
+      TYPE_PARAMETER[fqName=null, name=E]
+      TYPE_PARAMETER[fqName=null, name=F]
     PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=InnerTypes]
       MODIFIER_LIST[public]
       VALUE_PARAMETER_LIST
@@ -60,8 +60,8 @@ FILE[kind=File[packageFqName=test]]
       CLASS[classId=test/InnerTypes.Inner, fqName=test.InnerTypes.Inner, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=Inner, superNames=[]]
         MODIFIER_LIST[public final inner]
         TYPE_PARAMETER_LIST
-          TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=G]
-          TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=H]
+          TYPE_PARAMETER[fqName=null, name=G]
+          TYPE_PARAMETER[fqName=null, name=H]
         PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Inner]
           MODIFIER_LIST[public]
           VALUE_PARAMETER_LIST
@@ -69,7 +69,7 @@ FILE[kind=File[packageFqName=test]]
           CLASS[classId=test/InnerTypes.Inner.Inner3, fqName=test.InnerTypes.Inner.Inner3, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=Inner3, superNames=[]]
             MODIFIER_LIST[public final inner]
             TYPE_PARAMETER_LIST
-              TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=I]
+              TYPE_PARAMETER[fqName=null, name=I]
             PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Inner3]
               MODIFIER_LIST[public]
               VALUE_PARAMETER_LIST

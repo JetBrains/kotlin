@@ -36,7 +36,7 @@ FILE[kind=Facade[packageFqName=one two.three four, facadeFqName=one two.three fo
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=Annotation Class]
     TYPE_PARAMETER_LIST
-      TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=Type Parameter]
+      TYPE_PARAMETER[fqName=null, name=Type Parameter]
         TYPE_REFERENCE
           USER_TYPE
             USER_TYPE
@@ -101,7 +101,7 @@ FILE[kind=Facade[packageFqName=one two.three four, facadeFqName=one two.three fo
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=Annotation Class]
         TYPE_PARAMETER_LIST
-          TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T]
+          TYPE_PARAMETER[fqName=null, name=T]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=Top Level Class]
@@ -118,7 +118,7 @@ FILE[kind=Facade[packageFqName=one two.three four, facadeFqName=one two.three fo
                 REFERENCE_EXPRESSION[referencedName=Top Level Object]
   TYPEALIAS[classId=one two/three four/Top Level TypeAlias, fqName=one two.three four.Top Level TypeAlias, isTopLevel=true, name=Top Level TypeAlias]
     TYPE_PARAMETER_LIST
-      TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=Type Parameter]
+      TYPE_PARAMETER[fqName=null, name=Type Parameter]
     TYPE_REFERENCE
       USER_TYPE
         REFERENCE_EXPRESSION[referencedName=Top Level Class]

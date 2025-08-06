@@ -3,18 +3,18 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=TypeParametersBeforeNameKt]]
   IMPORT_LIST
   FUN[fqName=foo, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo]
     TYPE_PARAMETER_LIST
-      TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=A]
-      TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=B]
+      TYPE_PARAMETER[fqName=null, name=A]
+      TYPE_PARAMETER[fqName=null, name=B]
     VALUE_PARAMETER_LIST
   FUN[fqName=foo, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo]
     TYPE_PARAMETER_LIST
-      TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=A]
-      TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=B]
+      TYPE_PARAMETER[fqName=null, name=A]
+      TYPE_PARAMETER[fqName=null, name=B]
     VALUE_PARAMETER_LIST
   FUN[fqName=foo, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=true, isTopLevel=true, mayHaveContract=false, name=foo]
     TYPE_PARAMETER_LIST
-      TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=A]
-      TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=B]
+      TYPE_PARAMETER[fqName=null, name=A]
+      TYPE_PARAMETER[fqName=null, name=B]
     TYPE_REFERENCE
       MODIFIER_LIST[]
         ANNOTATION
@@ -28,7 +28,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=TypeParametersBeforeNameKt]]
     VALUE_PARAMETER_LIST
   PROPERTY[fqName=foo, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=false, isExtension=true, isTopLevel=true, isVar=false, name=foo]
     TYPE_PARAMETER_LIST
-      TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=A]
+      TYPE_PARAMETER[fqName=null, name=A]
     TYPE_REFERENCE
       USER_TYPE
         REFERENCE_EXPRESSION[referencedName=List]
@@ -39,7 +39,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=TypeParametersBeforeNameKt]]
                 REFERENCE_EXPRESSION[referencedName=A]
   PROPERTY[fqName=foo, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=false, isExtension=true, isTopLevel=true, isVar=true, name=foo]
     TYPE_PARAMETER_LIST
-      TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=A]
+      TYPE_PARAMETER[fqName=null, name=A]
     TYPE_REFERENCE
       USER_TYPE
         REFERENCE_EXPRESSION[referencedName=List]

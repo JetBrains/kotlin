@@ -4,7 +4,7 @@ FILE[kind=File[packageFqName=<root>]]
   CLASS[classId=/IPriorityQueue, fqName=IPriorityQueue, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=IPriorityQueue, superNames=[]]
     MODIFIER_LIST[open]
     TYPE_PARAMETER_LIST
-      TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T]
+      TYPE_PARAMETER[fqName=null, name=T]
     CLASS_BODY
       FUN[fqName=IPriorityQueue.extract, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=extract]
         VALUE_PARAMETER_LIST

@@ -4,7 +4,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=IOSamplesKt]]
   CLASS[classId=/IAdder, fqName=IAdder, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=IAdder, superNames=[]]
     MODIFIER_LIST[open]
     TYPE_PARAMETER_LIST
-      TYPE_PARAMETER[fqName=null, isInVariance=true, isOutVariance=false, name=T]
+      TYPE_PARAMETER[fqName=null, name=T]
         MODIFIER_LIST[in]
     CLASS_BODY
       FUN[fqName=IAdder.add, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=add]
@@ -41,7 +41,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=IOSamplesKt]]
               REFERENCE_EXPRESSION[referencedName=ICloseable]
   FUN[fqName=streamCopy, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=true, mayHaveContract=false, name=streamCopy]
     TYPE_PARAMETER_LIST
-      TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T]
+      TYPE_PARAMETER[fqName=null, name=T]
     VALUE_PARAMETER_LIST
       VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=from]
         TYPE_REFERENCE

@@ -124,8 +124,8 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=PropertiesWithFunctionReceiv
         REFERENCE_EXPRESSION[referencedName=P]
   PROPERTY[fqName=foo, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=true, isTopLevel=true, isVar=false, name=foo]
     TYPE_PARAMETER_LIST
-      TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=A]
-      TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=B]
+      TYPE_PARAMETER[fqName=null, name=A]
+      TYPE_PARAMETER[fqName=null, name=B]
     TYPE_REFERENCE
       MODIFIER_LIST[]
         ANNOTATION
@@ -151,8 +151,8 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=PropertiesWithFunctionReceiv
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=a]
     TYPE_PARAMETER_LIST
-      TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=A]
-      TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=B]
+      TYPE_PARAMETER[fqName=null, name=A]
+      TYPE_PARAMETER[fqName=null, name=B]
     TYPE_REFERENCE
       MODIFIER_LIST[]
         ANNOTATION

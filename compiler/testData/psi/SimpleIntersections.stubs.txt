@@ -3,7 +3,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=SimpleIntersectionsKt]]
   IMPORT_LIST
   FUN[fqName=foo1, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo1]
     TYPE_PARAMETER_LIST
-      TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T]
+      TYPE_PARAMETER[fqName=null, name=T]
     VALUE_PARAMETER_LIST
       VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=x]
         TYPE_REFERENCE
@@ -16,7 +16,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=SimpleIntersectionsKt]]
                 REFERENCE_EXPRESSION[referencedName=Any]
   FUN[fqName=foo2, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo2]
     TYPE_PARAMETER_LIST
-      TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T]
+      TYPE_PARAMETER[fqName=null, name=T]
     VALUE_PARAMETER_LIST
       VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=x]
         TYPE_REFERENCE
@@ -34,7 +34,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=SimpleIntersectionsKt]]
                         REFERENCE_EXPRESSION[referencedName=Any]
   FUN[fqName=foo3, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo3]
     TYPE_PARAMETER_LIST
-      TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T]
+      TYPE_PARAMETER[fqName=null, name=T]
     VALUE_PARAMETER_LIST
       VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=x]
         TYPE_REFERENCE
@@ -53,7 +53,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=SimpleIntersectionsKt]]
                         REFERENCE_EXPRESSION[referencedName=Any]
   FUN[fqName=foo4, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo4]
     TYPE_PARAMETER_LIST
-      TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T]
+      TYPE_PARAMETER[fqName=null, name=T]
     VALUE_PARAMETER_LIST
       VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=x]
         TYPE_REFERENCE
@@ -66,7 +66,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=SimpleIntersectionsKt]]
                 REFERENCE_EXPRESSION[referencedName=Any]
   FUN[fqName=foo5, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo5]
     TYPE_PARAMETER_LIST
-      TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T]
+      TYPE_PARAMETER[fqName=null, name=T]
     VALUE_PARAMETER_LIST
       VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=x]
         TYPE_REFERENCE
@@ -81,7 +81,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=SimpleIntersectionsKt]]
                   REFERENCE_EXPRESSION[referencedName=Any]
   FUN[fqName=foo6, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo6]
     TYPE_PARAMETER_LIST
-      TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T]
+      TYPE_PARAMETER[fqName=null, name=T]
     VALUE_PARAMETER_LIST
       VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=x]
         TYPE_REFERENCE
@@ -99,7 +99,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=SimpleIntersectionsKt]]
                     REFERENCE_EXPRESSION[referencedName=Any]
   FUN[fqName=foo7, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo7]
     TYPE_PARAMETER_LIST
-      TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T]
+      TYPE_PARAMETER[fqName=null, name=T]
     VALUE_PARAMETER_LIST
       VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=x]
         TYPE_REFERENCE
@@ -117,11 +117,11 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=SimpleIntersectionsKt]]
                     REFERENCE_EXPRESSION[referencedName=Any]
   FUN[fqName=T, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=true, mayHaveContract=false, name=T]
     TYPE_PARAMETER_LIST
-      TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T]
+      TYPE_PARAMETER[fqName=null, name=T]
   FUN[fqName=<no name provided>, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=null]
   FUN[fqName=foo9, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=true, isTopLevel=true, mayHaveContract=false, name=foo9]
     TYPE_PARAMETER_LIST
-      TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T]
+      TYPE_PARAMETER[fqName=null, name=T]
     TYPE_REFERENCE
       INTERSECTION_TYPE
         TYPE_REFERENCE
@@ -133,7 +133,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=SimpleIntersectionsKt]]
     VALUE_PARAMETER_LIST
   FUN[fqName=foo10, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo10]
     TYPE_PARAMETER_LIST
-      TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T]
+      TYPE_PARAMETER[fqName=null, name=T]
     VALUE_PARAMETER_LIST
       VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=x]
         TYPE_REFERENCE
@@ -153,7 +153,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=SimpleIntersectionsKt]]
                     REFERENCE_EXPRESSION[referencedName=Unit]
   FUN[fqName=foo11, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo11]
     TYPE_PARAMETER_LIST
-      TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T]
+      TYPE_PARAMETER[fqName=null, name=T]
     VALUE_PARAMETER_LIST
       VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=x]
         TYPE_REFERENCE

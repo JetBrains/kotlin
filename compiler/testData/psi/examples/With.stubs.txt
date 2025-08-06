@@ -4,7 +4,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=WithKt]]
   FUN[fqName=with, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=true, mayHaveContract=false, name=with]
     MODIFIER_LIST[inline]
     TYPE_PARAMETER_LIST
-      TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T]
+      TYPE_PARAMETER[fqName=null, name=T]
     VALUE_PARAMETER_LIST
       VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=receiver]
         TYPE_REFERENCE

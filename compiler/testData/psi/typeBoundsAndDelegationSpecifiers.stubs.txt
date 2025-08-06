@@ -7,16 +7,16 @@ FILE[kind=File[packageFqName=test]]
   CLASS[classId=test/T, fqName=test.T, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=true, isLocal=false, isTopLevel=true, name=T, superNames=[]]
   CLASS[classId=test/TypeBoundsAndDelegationSpecifiers, fqName=test.TypeBoundsAndDelegationSpecifiers, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=TypeBoundsAndDelegationSpecifiers, superNames=[A, T]]
     TYPE_PARAMETER_LIST
-      TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=H]
+      TYPE_PARAMETER[fqName=null, name=H]
         TYPE_REFERENCE
           NULLABLE_TYPE
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=Any]
-      TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=G]
+      TYPE_PARAMETER[fqName=null, name=G]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=Any]
-      TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=C]
+      TYPE_PARAMETER[fqName=null, name=C]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=T]

@@ -3,7 +3,7 @@ FILE[kind=File[packageFqName=<root>]]
   IMPORT_LIST
   CLASS[classId=/foo, fqName=foo, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=foo, superNames=[]]
     TYPE_PARAMETER_LIST
-      TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T]
+      TYPE_PARAMETER[fqName=null, name=T]
     TYPE_CONSTRAINT_LIST
       TYPE_CONSTRAINT
         REFERENCE_EXPRESSION[referencedName=T]

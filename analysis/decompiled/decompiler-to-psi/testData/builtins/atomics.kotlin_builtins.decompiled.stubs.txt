@@ -27,7 +27,7 @@ FILE[kind=File[packageFqName=kotlin.concurrent.atomics]]
                 REFERENCE_EXPRESSION[referencedName=atomics]
               REFERENCE_EXPRESSION[referencedName=ExperimentalAtomicApi]
     TYPE_PARAMETER_LIST
-      TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T]
+      TYPE_PARAMETER[fqName=null, name=T]
     CLASS_BODY
       SECONDARY_CONSTRUCTOR[fqName=null, hasBody=true, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=AtomicArray]
         MODIFIER_LIST[public]
@@ -965,7 +965,7 @@ FILE[kind=File[packageFqName=kotlin.concurrent.atomics]]
                 REFERENCE_EXPRESSION[referencedName=atomics]
               REFERENCE_EXPRESSION[referencedName=ExperimentalAtomicApi]
     TYPE_PARAMETER_LIST
-      TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T]
+      TYPE_PARAMETER[fqName=null, name=T]
     PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=AtomicReference]
       MODIFIER_LIST[public]
       VALUE_PARAMETER_LIST

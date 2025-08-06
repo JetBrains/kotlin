@@ -9,7 +9,7 @@ FILE[kind=File[packageFqName=foo.bar.goo]]
   CLASS[classId=foo/bar/goo/Bar, fqName=foo.bar.goo.Bar, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=Bar, superNames=[]]
     MODIFIER_LIST[public protected private internal open abstract override annotation out in]
     TYPE_PARAMETER_LIST
-      TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=true, name=T]
+      TYPE_PARAMETER[fqName=null, name=T]
         MODIFIER_LIST[public protected private internal open abstract override enum annotation out in]
     CLASS_BODY
       PROPERTY[fqName=foo.bar.goo.Bar.abstract, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=abstract]

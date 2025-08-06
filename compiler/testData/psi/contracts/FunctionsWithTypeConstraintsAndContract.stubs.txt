@@ -34,8 +34,8 @@ main.kt:
     IMPORT_LIST
     FUN[fqName=someFunctionWithTypeConstraints, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=true, mayHaveContract=false, name=someFunctionWithTypeConstraints]
       TYPE_PARAMETER_LIST
-        TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T]
-        TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=E]
+        TYPE_PARAMETER[fqName=null, name=T]
+        TYPE_PARAMETER[fqName=null, name=E]
       VALUE_PARAMETER_LIST
         VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=arg]
           TYPE_REFERENCE
@@ -68,8 +68,8 @@ main.kt:
               REFERENCE_EXPRESSION[referencedName=MyOtherClass]
     FUN[fqName=anotherFunctionWithTypeConstraints, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=true, mayHaveContract=false, name=anotherFunctionWithTypeConstraints]
       TYPE_PARAMETER_LIST
-        TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=D]
-        TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T]
+        TYPE_PARAMETER[fqName=null, name=D]
+        TYPE_PARAMETER[fqName=null, name=T]
       VALUE_PARAMETER_LIST
         VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=data]
           TYPE_REFERENCE

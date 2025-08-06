@@ -75,7 +75,7 @@ FILE[kind=File[packageFqName=foo.bar.goo]]
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=sdfsdf]
     TYPE_PARAMETER_LIST
-      TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=true, name=T]
+      TYPE_PARAMETER[fqName=null, name=T]
         MODIFIER_LIST[public protected private internal open abstract override enum annotation out in]
           ANNOTATION
             ANNOTATION_ENTRY[hasValueArguments=true, shortName=sdfsdf]

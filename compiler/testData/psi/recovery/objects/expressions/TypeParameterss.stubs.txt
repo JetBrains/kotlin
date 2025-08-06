@@ -4,14 +4,14 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=TypeParameterssKt]]
   PROPERTY[fqName=foo, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=true, isVar=false, name=foo]
     OBJECT_DECLARATION[classId=null, fqName=null, isLocal=true, isObjectLiteral=true, isTopLevel=false, name=null, superNames=[]]
       TYPE_PARAMETER_LIST
-        TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T]
-        TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=R]
+        TYPE_PARAMETER[fqName=null, name=T]
+        TYPE_PARAMETER[fqName=null, name=R]
       CLASS_BODY
   PROPERTY[fqName=foo, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=true, isVar=false, name=foo]
     OBJECT_DECLARATION[classId=null, fqName=null, isLocal=true, isObjectLiteral=true, isTopLevel=false, name=null, superNames=[Bar]]
       TYPE_PARAMETER_LIST
-        TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T]
-        TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=R]
+        TYPE_PARAMETER[fqName=null, name=T]
+        TYPE_PARAMETER[fqName=null, name=R]
       SUPER_TYPE_LIST
         SUPER_TYPE_ENTRY
           TYPE_REFERENCE

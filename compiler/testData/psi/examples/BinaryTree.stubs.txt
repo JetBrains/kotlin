@@ -3,7 +3,7 @@ FILE[kind=File[packageFqName=<root>]]
   IMPORT_LIST
   CLASS[classId=/BinaryTree, fqName=BinaryTree, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=BinaryTree, superNames=[IMutableSet]]
     TYPE_PARAMETER_LIST
-      TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T]
+      TYPE_PARAMETER[fqName=null, name=T]
     SUPER_TYPE_LIST
       SUPER_TYPE_ENTRY
         TYPE_REFERENCE

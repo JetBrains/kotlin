@@ -2046,8 +2046,6 @@ org.jetbrains.kotlin.psi.stubs.KotlinStubWithFqName.fqName
 org.jetbrains.kotlin.psi.stubs.KotlinTypeAliasStub
 org.jetbrains.kotlin.psi.stubs.KotlinTypeAliasStub.isTopLevel
 org.jetbrains.kotlin.psi.stubs.KotlinTypeParameterStub
-org.jetbrains.kotlin.psi.stubs.KotlinTypeParameterStub.isInVariance()
-org.jetbrains.kotlin.psi.stubs.KotlinTypeParameterStub.isOutVariance()
 org.jetbrains.kotlin.psi.stubs.KotlinTypeProjectionStub
 org.jetbrains.kotlin.psi.stubs.KotlinTypeProjectionStub.getProjectionKind()
 org.jetbrains.kotlin.psi.stubs.KotlinUserTypeStub

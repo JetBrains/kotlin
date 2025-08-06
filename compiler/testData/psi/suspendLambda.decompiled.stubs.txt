@@ -35,7 +35,7 @@ Continuation.class:
     CLASS[classId=test/Continuation, fqName=test.Continuation, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=Continuation, superNames=[]]
       MODIFIER_LIST[public final]
       TYPE_PARAMETER_LIST
-        TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T]
+        TYPE_PARAMETER[fqName=null, name=T]
       PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Continuation]
         MODIFIER_LIST[public]
         VALUE_PARAMETER_LIST
@@ -187,7 +187,7 @@ SuspendLambda.class:
         FUN[fqName=test.SuspendLambda.createCoroutine1, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=true, isTopLevel=false, mayHaveContract=false, name=createCoroutine1]
           MODIFIER_LIST[public final]
           TYPE_PARAMETER_LIST
-            TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T]
+            TYPE_PARAMETER[fqName=null, name=T]
           TYPE_REFERENCE
             MODIFIER_LIST[suspend]
             FUNCTION_TYPE
@@ -215,8 +215,8 @@ SuspendLambda.class:
         FUN[fqName=test.SuspendLambda.createCoroutine2, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=true, isTopLevel=false, mayHaveContract=false, name=createCoroutine2]
           MODIFIER_LIST[public final]
           TYPE_PARAMETER_LIST
-            TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=R]
-            TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T]
+            TYPE_PARAMETER[fqName=null, name=R]
+            TYPE_PARAMETER[fqName=null, name=T]
           TYPE_REFERENCE
             MODIFIER_LIST[suspend]
             FUNCTION_TYPE
@@ -252,8 +252,8 @@ SuspendLambda.class:
         FUN[fqName=test.SuspendLambda.createCoroutineAnother, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=true, isTopLevel=false, mayHaveContract=false, name=createCoroutineAnother]
           MODIFIER_LIST[public final]
           TYPE_PARAMETER_LIST
-            TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=R]
-            TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T]
+            TYPE_PARAMETER[fqName=null, name=R]
+            TYPE_PARAMETER[fqName=null, name=T]
           TYPE_REFERENCE
             MODIFIER_LIST[suspend]
               ANNOTATION_ENTRY[hasValueArguments=false, shortName=A]
@@ -282,7 +282,7 @@ SuspendLambda.class:
         FUN[fqName=test.SuspendLambda.testCoroutine, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=false, mayHaveContract=false, name=testCoroutine]
           MODIFIER_LIST[public final]
           TYPE_PARAMETER_LIST
-            TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T]
+            TYPE_PARAMETER[fqName=null, name=T]
           VALUE_PARAMETER_LIST
             VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=f]
               TYPE_REFERENCE
@@ -307,7 +307,7 @@ SuspendLambda.class:
         FUN[fqName=test.SuspendLambda.testCoroutineWithAnnotation, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=false, mayHaveContract=false, name=testCoroutineWithAnnotation]
           MODIFIER_LIST[public final]
           TYPE_PARAMETER_LIST
-            TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T]
+            TYPE_PARAMETER[fqName=null, name=T]
           VALUE_PARAMETER_LIST
             VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=f]
               TYPE_REFERENCE

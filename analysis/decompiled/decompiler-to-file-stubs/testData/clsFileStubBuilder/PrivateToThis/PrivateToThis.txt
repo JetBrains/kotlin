@@ -5,7 +5,7 @@ FILE[kind=File[packageFqName=p]]
   CLASS[classId=p/PrivateToThis, fqName=p.PrivateToThis, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=PrivateToThis, superNames=[]]
     MODIFIER_LIST[public final]
     TYPE_PARAMETER_LIST
-      TYPE_PARAMETER[fqName=null, isInVariance=true, isOutVariance=false, name=I]
+      TYPE_PARAMETER[fqName=null, name=I]
         MODIFIER_LIST[in]
     PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=PrivateToThis]
       MODIFIER_LIST[public]

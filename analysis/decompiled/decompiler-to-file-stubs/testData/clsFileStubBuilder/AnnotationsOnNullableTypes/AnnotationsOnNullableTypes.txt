@@ -158,7 +158,7 @@ FILE[kind=File[packageFqName=<root>]]
       FUN[fqName=AnnotationsOnNullableTypes.returnTypeParameterValue, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=false, mayHaveContract=false, name=returnTypeParameterValue]
         MODIFIER_LIST[public final]
         TYPE_PARAMETER_LIST
-          TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T]
+          TYPE_PARAMETER[fqName=null, name=T]
         VALUE_PARAMETER_LIST
         TYPE_REFERENCE
           MODIFIER_LIST[]

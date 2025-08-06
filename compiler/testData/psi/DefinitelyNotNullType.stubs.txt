@@ -3,7 +3,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=DefinitelyNotNullTypeKt]]
   IMPORT_LIST
   FUN[fqName=foo1, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo1]
     TYPE_PARAMETER_LIST
-      TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T]
+      TYPE_PARAMETER[fqName=null, name=T]
     VALUE_PARAMETER_LIST
       VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=x]
         TYPE_REFERENCE
@@ -12,7 +12,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=DefinitelyNotNullTypeKt]]
   FUN[fqName=<no name provided>, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=null]
   FUN[fqName=foo2, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo2]
     TYPE_PARAMETER_LIST
-      TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T]
+      TYPE_PARAMETER[fqName=null, name=T]
     VALUE_PARAMETER_LIST
       VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=x]
         TYPE_REFERENCE

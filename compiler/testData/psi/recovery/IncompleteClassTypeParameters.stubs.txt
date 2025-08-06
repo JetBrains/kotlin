@@ -5,5 +5,5 @@ FILE[kind=File[packageFqName=<root>]]
     CLASS_BODY
       CLASS[classId=/Outer.Inner, fqName=Outer.Inner, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=Inner, superNames=[]]
         TYPE_PARAMETER_LIST
-          TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T]
+          TYPE_PARAMETER[fqName=null, name=T]
   CLASS[classId=/Next, fqName=Next, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=Next, superNames=[]]

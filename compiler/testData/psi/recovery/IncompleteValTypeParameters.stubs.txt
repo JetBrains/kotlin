@@ -5,5 +5,5 @@ FILE[kind=File[packageFqName=<root>]]
     CLASS_BODY
       PROPERTY[fqName=C.<no name provided>, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=null]
         TYPE_PARAMETER_LIST
-          TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T]
+          TYPE_PARAMETER[fqName=null, name=T]
   CLASS[classId=/D, fqName=D, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=D, superNames=[]]
