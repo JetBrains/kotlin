@@ -63,7 +63,7 @@ public class KtNamedFunction extends KtTypeParameterListOwnerStub<KotlinFunction
     public boolean hasBlockBody() {
         KotlinFunctionStub stub = getGreenStub();
         if (stub != null) {
-            return stub.hasNoExpressionBody();
+            return stub.getHasNoExpressionBody();
         }
         return getEqualsToken() == null;
     }
@@ -114,7 +114,7 @@ public class KtNamedFunction extends KtTypeParameterListOwnerStub<KotlinFunction
     public KtExpression getBodyExpression() {
         KotlinFunctionStub stub = getStub();
         if (stub != null) {
-            if (!stub.hasBody()) {
+            if (!stub.getHasBody()) {
                 return null;
             }
             if (getContainingKtFile().isCompiled()) {
@@ -131,7 +131,7 @@ public class KtNamedFunction extends KtTypeParameterListOwnerStub<KotlinFunction
     public KtBlockExpression getBodyBlockExpression() {
         KotlinFunctionStub stub = getStub();
         if (stub != null) {
-            if (!(stub.hasNoExpressionBody() && stub.hasBody())) {
+            if (!(stub.getHasNoExpressionBody() && stub.getHasBody())) {
                 return null;
             }
             if (getContainingKtFile().isCompiled()) {
@@ -152,7 +152,7 @@ public class KtNamedFunction extends KtTypeParameterListOwnerStub<KotlinFunction
     public boolean hasBody() {
         KotlinFunctionStub stub = getGreenStub();
         if (stub != null) {
-            return stub.hasBody();
+            return stub.getHasBody();
         }
         return getBodyExpression() != null;
     }
@@ -269,7 +269,7 @@ public class KtNamedFunction extends KtTypeParameterListOwnerStub<KotlinFunction
     public boolean mayHaveContract() {
         KotlinFunctionStub stub = getGreenStub();
         if (stub != null) {
-            return stub.mayHaveContract();
+            return stub.getMayHaveContract();
         }
 
         return KtPsiUtilKt.isLegacyContractPresentPsiCheck(this);
@@ -278,7 +278,7 @@ public class KtNamedFunction extends KtTypeParameterListOwnerStub<KotlinFunction
     public boolean mayHaveContract(boolean isAllowedOnMembers) {
         KotlinFunctionStub stub = getGreenStub();
         if (stub != null) {
-            return stub.mayHaveContract();
+            return stub.getMayHaveContract();
         }
 
         return KtPsiUtilKt.isContractPresentPsiCheck(this, isAllowedOnMembers);
