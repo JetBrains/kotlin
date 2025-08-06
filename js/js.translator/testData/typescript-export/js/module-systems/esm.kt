@@ -35,6 +35,13 @@ object Parent {
 }
 
 @JsExport
+interface AnInterfaceWithCompanion {
+    companion object {
+        val someValue = "OK"
+    }
+}
+
+@JsExport
 fun box(): String = "OK"
 
 @JsExport

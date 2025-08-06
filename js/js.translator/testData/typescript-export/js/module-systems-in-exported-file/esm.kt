@@ -40,6 +40,13 @@ object Parent {
 }
 
 
+interface AnInterfaceWithCompanion {
+    companion object {
+        val someValue = "OK"
+    }
+}
+
+
 fun box(): String = "OK"
 
 

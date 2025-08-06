@@ -75,6 +75,21 @@ export declare namespace Parent {
         }
     }
 }
+export declare interface AnInterfaceWithCompanion {
+    readonly __doNotUseOrImplementIt: {
+        readonly "foo.AnInterfaceWithCompanion": unique symbol;
+    };
+}
+export declare abstract class AnInterfaceWithCompanion extends KtSingleton<AnInterfaceWithCompanion.$metadata$.constructor>() {
+    private constructor();
+}
+/** @deprecated $metadata$ is used for internal purposes, please don't use it in your code, because it can be removed at any moment */
+export declare namespace AnInterfaceWithCompanion.$metadata$ {
+    abstract class constructor {
+        get someValue(): string;
+        private constructor();
+    }
+}
 export declare function box(): string;
 export declare function asyncList(): Promise<KtList<number>>;
 export declare function arrayOfLists(): Array<KtList<number>>;
