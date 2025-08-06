@@ -19,16 +19,16 @@ class KotlinObjectStubImpl(
     private val name: StringRef?,
     override val fqName: FqName?,
     override val classId: ClassId?,
-    private val superNames: Array<StringRef>,
-    private val isTopLevel: Boolean,
+    private val _superNames: Array<StringRef>,
+    override val isTopLevel: Boolean,
     private val isDefault: Boolean,
-    private val isLocal: Boolean,
+    override val isLocal: Boolean,
     private val isObjectLiteral: Boolean,
 ) : KotlinStubBaseImpl<KtObjectDeclaration>(parent, KtStubElementTypes.OBJECT_DECLARATION), KotlinObjectStub {
     override fun getName() = StringRef.toString(name)
-    override fun getSuperNames() = superNames.map { it.toString() }
-    override fun isTopLevel() = isTopLevel
+    override val superNames: List<String>
+        get() = _superNames.map { it.toString() }
+
     override fun isCompanion() = isDefault
     override fun isObjectLiteral() = isObjectLiteral
-    override fun isLocal() = isLocal
 }

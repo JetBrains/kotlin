@@ -224,7 +224,7 @@ private class ClassClsStubBuilder(
                 qualifiedName = c.containerFqName.child(name).ref(),
                 classId = null, // enum entry do not have class id
                 name = name.ref(),
-                superNames = arrayOf(),
+                _superNames = arrayOf(),
                 isInterface = false,
                 isEnumEntry = true,
                 isClsStubCompiledToJvmDefaultImplementation = JvmProtoBufUtil.isNewPlaceForBodyGeneration(classProto),

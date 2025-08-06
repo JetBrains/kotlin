@@ -84,7 +84,7 @@ abstract class KtClassOrObject :
         return getOrCreateBody().addBefore(declaration, anchorAfter) as T
     }
 
-    fun isTopLevel(): Boolean = greenStub?.isTopLevel() ?: isKtFile(parent)
+    fun isTopLevel(): Boolean = greenStub?.isTopLevel ?: isKtFile(parent)
 
     override fun getClassId(): ClassId? {
         greenStub?.let { return it.classId }
@@ -98,7 +98,7 @@ abstract class KtClassOrObject :
     private var isLocal: Boolean? = null
 
     override fun isLocal(): Boolean {
-        greenStub?.isLocal()?.let { return it }
+        greenStub?.isLocal?.let { return it }
 
         isLocal?.let { return it }
 
