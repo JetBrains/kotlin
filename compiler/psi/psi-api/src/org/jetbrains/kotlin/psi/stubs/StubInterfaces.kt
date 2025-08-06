@@ -188,8 +188,8 @@ interface KotlinPropertyStub : KotlinCallableStubBase<KtProperty> {
 }
 
 interface KotlinCallableStubBase<TDeclaration : KtCallableDeclaration> : KotlinStubWithFqName<TDeclaration> {
-    fun isTopLevel(): Boolean
-    fun isExtension(): Boolean
+    val isTopLevel: Boolean
+    val isExtension: Boolean
 }
 
 interface KotlinTypeParameterStub : KotlinStubWithFqName<KtTypeParameter> {

@@ -20,9 +20,9 @@ import java.io.IOException
 class KotlinFunctionStubImpl(
     parent: StubElement<out PsiElement>?,
     private val nameRef: StringRef?,
-    private val isTopLevel: Boolean,
+    override val isTopLevel: Boolean,
     override val fqName: FqName?,
-    private val isExtension: Boolean,
+    override val isExtension: Boolean,
     override val hasNoExpressionBody: Boolean,
     override val hasBody: Boolean,
     override val hasTypeParameterListBeforeFunctionName: Boolean,
@@ -37,8 +37,6 @@ class KotlinFunctionStubImpl(
     }
 
     override fun getName() = StringRef.toString(nameRef)
-    override fun isTopLevel() = isTopLevel
-    override fun isExtension() = isExtension
 
     @Throws(IOException::class)
     fun serializeContract(dataStream: StubOutputStream) {

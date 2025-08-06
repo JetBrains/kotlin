@@ -1976,8 +1976,8 @@ org.jetbrains.kotlin.psi.stubs.KotlinBackingFieldStub
 org.jetbrains.kotlin.psi.stubs.KotlinBackingFieldStub.hasInitializer
 org.jetbrains.kotlin.psi.stubs.KotlinBlockStringTemplateEntryStub
 org.jetbrains.kotlin.psi.stubs.KotlinCallableStubBase
-org.jetbrains.kotlin.psi.stubs.KotlinCallableStubBase.isExtension()
-org.jetbrains.kotlin.psi.stubs.KotlinCallableStubBase.isTopLevel()
+org.jetbrains.kotlin.psi.stubs.KotlinCallableStubBase.isExtension
+org.jetbrains.kotlin.psi.stubs.KotlinCallableStubBase.isTopLevel
 org.jetbrains.kotlin.psi.stubs.KotlinClassLiteralExpressionStub
 org.jetbrains.kotlin.psi.stubs.KotlinClassOrObjectStub
 org.jetbrains.kotlin.psi.stubs.KotlinClassOrObjectStub.isLocal

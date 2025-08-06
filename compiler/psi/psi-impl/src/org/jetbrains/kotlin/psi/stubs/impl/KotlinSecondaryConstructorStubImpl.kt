@@ -24,8 +24,8 @@ class KotlinSecondaryConstructorStubImpl(
     KotlinConstructorStub<KtSecondaryConstructor> {
     override val fqName: FqName? get() = null
     override fun getName(): String? = StringRef.toString(containingClassName)
-    override fun isTopLevel(): Boolean = false
-    override fun isExtension(): Boolean = false
+    override val isTopLevel: Boolean get() = false
+    override val isExtension: Boolean get() = false
 
     // It cannot have expression body
     override val hasNoExpressionBody: Boolean
