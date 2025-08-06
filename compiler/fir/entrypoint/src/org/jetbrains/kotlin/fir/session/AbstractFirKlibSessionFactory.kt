@@ -151,6 +151,6 @@ abstract class AbstractFirKlibSessionFactory<LIBRARY_CONTEXT, SOURCE_CONTEXT> : 
         return FirKotlinScopeProvider()
     }
 
-    final override val requiresSpecialSetupOfSourceProvidersInHmppCompilation: Boolean
+    override val requiresSpecialSetupOfSourceProvidersInHmppCompilation: Boolean
         get() = true
 }
