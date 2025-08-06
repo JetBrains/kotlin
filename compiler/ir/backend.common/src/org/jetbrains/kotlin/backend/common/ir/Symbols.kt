@@ -146,8 +146,6 @@ open class BuiltinSymbolsBase(val irBuiltIns: IrBuiltIns) {
     fun getBinaryOperator(name: Name, lhsType: IrType, rhsType: IrType): IrSimpleFunctionSymbol =
         irBuiltIns.getBinaryOperator(name, lhsType, rhsType)
 
-    fun getUnaryOperator(name: Name, receiverType: IrType): IrSimpleFunctionSymbol = irBuiltIns.getUnaryOperator(name, receiverType)
-
     open fun functionN(n: Int): IrClassSymbol = irBuiltIns.functionN(n).symbol
     open fun suspendFunctionN(n: Int): IrClassSymbol = irBuiltIns.suspendFunctionN(n).symbol
 
