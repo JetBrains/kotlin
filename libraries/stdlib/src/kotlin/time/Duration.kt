@@ -1199,7 +1199,7 @@ private inline fun parseIsoStringFormat(
                         'H' -> MILLIS_PER_HOUR
                         'M' -> MILLIS_PER_MINUTE
                         'S', '.' -> MILLIS_PER_SECOND
-                        else -> return throwExceptionOrInvalid(throwException)
+                        else -> return throwExceptionOrInvalid(throwException, "Missing unit for value $longValue")
                     }
                 )
             ).onInvalid { return throwExceptionOrInvalid(throwException) }
@@ -1212,7 +1212,7 @@ private inline fun parseIsoStringFormat(
                 totalNanos = sign * fractionValue.toNanos(DurationUnit.SECONDS)
                 unit = 'S'
             }
-            if (unit <= prevUnit) return throwExceptionOrInvalid(throwException)
+            if (unit <= prevUnit) return throwExceptionOrInvalid(throwException, "Unexpected order of duration components")
             prevUnit = unit
         }
         index++
