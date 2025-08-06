@@ -140,7 +140,8 @@ fun <F> prepareNativeSessions(
     fileBelongsToModule: (F, String) -> Boolean,
 ): List<SessionWithSources<F>> {
     return prepareKlibSessions(
-        FirNativeSessionFactory, NativePlatforms.unspecifiedNativePlatform, files, configuration, rootModuleName, resolvedLibraries,
+        if (metadataCompilationMode) FirNativeSessionFactory.ForMetadata else FirNativeSessionFactory,
+        NativePlatforms.unspecifiedNativePlatform, files, configuration, rootModuleName, resolvedLibraries,
         libraryList, extensionRegistrars, isCommonSource, fileBelongsToModule, metadataCompilationMode, icData = null
     )
 }

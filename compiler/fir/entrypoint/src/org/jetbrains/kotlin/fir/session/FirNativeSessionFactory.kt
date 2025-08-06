@@ -28,7 +28,14 @@ import org.jetbrains.kotlin.library.metadata.impl.KlibResolvedModuleDescriptorsF
 import org.jetbrains.kotlin.resolve.konan.platform.NativePlatformAnalyzerServices
 
 @OptIn(SessionConfiguration::class)
-object FirNativeSessionFactory : AbstractFirKlibSessionFactory<Nothing?, Nothing?>() {
+abstract class FirNativeSessionFactory : AbstractFirKlibSessionFactory<Nothing?, Nothing?>() {
+    companion object : FirNativeSessionFactory()
+
+    object ForMetadata : FirNativeSessionFactory() {
+        override val requiresSpecialSetupOfSourceProvidersInHmppCompilation: Boolean
+            get() = false
+    }
+
 
     // ==================================== Library session ====================================
 
