@@ -14,7 +14,6 @@ import kotlin.io.FilesKt;
 import kotlin.text.Charsets;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.kotlin.TestHelperGeneratorKt;
 import org.jetbrains.kotlin.TestsCompilerError;
 import org.jetbrains.kotlin.TestsCompiletimeError;
 import org.jetbrains.kotlin.checkers.utils.CheckerTestUtil;
@@ -475,18 +474,13 @@ public abstract class CodegenTestCase extends KotlinBaseTest<KotlinBaseTest.Test
     @Override
     @NotNull
     protected List<TestFile> createTestFilesFromFile(@NotNull File file, @NotNull String expectedText) {
-        List<TestFile> testFiles =
-                TestFiles.createTestFiles(file.getName(), expectedText, new TestFiles.TestFileFactoryNoModules<TestFile>() {
-                    @NotNull
-                    @Override
-                    public TestFile create(@NotNull String fileName, @NotNull String text, @NotNull Directives directives) {
-                        return new TestFile(fileName, text, directives);
-                    }
-                }, false, parseDirectivesPerFiles());
-        if (InTextDirectivesUtils.isDirectiveDefined(expectedText, "WITH_HELPERS")) {
-            testFiles.add(new TestFile("CodegenTestHelpers.kt", TestHelperGeneratorKt.createTextForCodegenTestHelpers(getBackend())));
-        }
-        return testFiles;
+        return TestFiles.createTestFiles(file.getName(), expectedText, new TestFiles.TestFileFactoryNoModules<TestFile>() {
+            @NotNull
+            @Override
+            public TestFile create(@NotNull String fileName, @NotNull String text, @NotNull Directives directives) {
+                return new TestFile(fileName, text, directives);
+            }
+        }, false, parseDirectivesPerFiles());
     }
 
     @NotNull
