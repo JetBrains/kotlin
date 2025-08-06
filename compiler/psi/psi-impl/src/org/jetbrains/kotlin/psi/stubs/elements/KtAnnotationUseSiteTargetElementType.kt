@@ -29,7 +29,7 @@ class KtAnnotationUseSiteTargetElementType(debugName: String) :
     }
 
     override fun serialize(stub: KotlinAnnotationUseSiteTargetStubImpl, dataStream: StubOutputStream) {
-        dataStream.writeName(stub.getUseSiteTarget())
+        dataStream.writeName(stub.useSiteTarget)
     }
 
     override fun deserialize(dataStream: StubInputStream, parentStub: StubElement<PsiElement>): KotlinAnnotationUseSiteTargetStubImpl {
