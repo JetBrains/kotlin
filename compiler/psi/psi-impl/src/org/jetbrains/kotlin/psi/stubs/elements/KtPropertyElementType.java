@@ -59,11 +59,11 @@ public class KtPropertyElementType extends KtStubElementType<KotlinPropertyStubI
         dataStream.writeName(stub.getName());
         dataStream.writeBoolean(stub.isVar());
         dataStream.writeBoolean(stub.isTopLevel());
-        dataStream.writeBoolean(stub.hasDelegate());
-        dataStream.writeBoolean(stub.hasDelegateExpression());
-        dataStream.writeBoolean(stub.hasInitializer());
+        dataStream.writeBoolean(stub.getHasDelegate());
+        dataStream.writeBoolean(stub.getHasDelegateExpression());
+        dataStream.writeBoolean(stub.getHasInitializer());
         dataStream.writeBoolean(stub.isExtension());
-        dataStream.writeBoolean(stub.hasReturnTypeRef());
+        dataStream.writeBoolean(stub.getHasReturnTypeRef());
 
         FqName fqName = stub.getFqName();
         dataStream.writeName(fqName != null ? fqName.asString() : null);
