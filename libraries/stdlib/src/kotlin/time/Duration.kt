@@ -1047,6 +1047,33 @@ public inline operator fun Int.times(duration: Duration): Duration = duration * 
 public inline operator fun Double.times(duration: Duration): Duration = duration * this
 
 
+
+private fun parseDuration(value: String, strictIso: Boolean, throwException: Boolean = true): Duration {
+    val length = value.length
+    if (length == 0) return throwExceptionOrInvalid(throwException, "The string is empty")
+    var index = 0
+
+    val firstChar = value[index]
+    var isNegative = false
+    if (firstChar == '-') {
+        isNegative = true
+        index++
+    } else if (firstChar == '+') {
+        index++
+    }
+    val hasSign = index > 0
+    val result = when {
+        length <= index -> return throwExceptionOrInvalid(throwException, "No components")
+        value[index] == 'P' -> parseIsoStringFormat(value, index, length, throwException).onInvalid { return Duration.INVALID }
+        strictIso -> return throwExceptionOrInvalid(throwException)
+        value.regionMatches(index, INFINITY_STRING, 0, length = maxOf(length - index, INFINITY_STRING.length), ignoreCase = true) -> {
+            Duration.INFINITE
+        }
+        else -> parseDefaultStringFormat(value, index, length, hasSign, throwException).onInvalid { return Duration.INVALID }
+    }
+    return if (isNegative) -result else result
+}
+
 private const val INFINITY_STRING = "Infinity"
 
 private const val OVERFLOW_LIMIT = Long.MAX_VALUE / 1000
@@ -1201,32 +1228,6 @@ private inline fun parseIsoStringFormat(
         index++
     }
     return totalSeconds.toDuration(DurationUnit.SECONDS) + totalNanos.toDuration(DurationUnit.NANOSECONDS)
-}
-
-private fun parseDuration(value: String, strictIso: Boolean, throwException: Boolean = true): Duration {
-    val length = value.length
-    if (length == 0) return throwExceptionOrInvalid(throwException, "The string is empty")
-    var index = 0
-
-    val firstChar = value[index]
-    var isNegative = false
-    if (firstChar == '-') {
-        isNegative = true
-        index++
-    } else if (firstChar == '+') {
-        index++
-    }
-    val hasSign = index > 0
-    val result = when {
-        length <= index -> return throwExceptionOrInvalid(throwException, "No components")
-        value[index] == 'P' -> parseIsoStringFormat(value, index, length, throwException).onInvalid { return Duration.INVALID }
-        strictIso -> return throwExceptionOrInvalid(throwException)
-        value.regionMatches(index, INFINITY_STRING, 0, length = maxOf(length - index, INFINITY_STRING.length), ignoreCase = true) -> {
-            Duration.INFINITE
-        }
-        else -> parseDefaultStringFormat(value, index, length, hasSign, throwException).onInvalid { return Duration.INVALID }
-    }
-    return if (isNegative) -result else result
 }
 
 @kotlin.internal.InlineOnly
