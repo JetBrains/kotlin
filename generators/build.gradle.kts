@@ -40,7 +40,6 @@ dependencies {
     }
 
     builtinsApi("org.jetbrains.kotlin:kotlin-stdlib:$bootstrapKotlinVersion") { isTransitive = false }
-    evaluateApi(project(":core:deserialization"))
     wasmApi(project(":wasm:wasm.ir"))
     wasmApi(kotlinStdlib())
     evaluateApi(project(":compiler:ir.tree"))
@@ -114,7 +113,6 @@ val generateGradleOptions by generator("org.jetbrains.kotlin.generators.argument
 val generateKeywordStrings by generator("org.jetbrains.kotlin.generators.frontend.GenerateKeywordStrings")
 
 val generateBuiltins by generator("org.jetbrains.kotlin.generators.builtins.generateBuiltIns.GenerateBuiltInsKt", builtinsSourceSet)
-val generateOperationsMap by generator("org.jetbrains.kotlin.generators.evaluate.GenerateOperationsMapKt", evaluateSourceSet)
 val generateEvaluationMap by generator("org.jetbrains.kotlin.generators.evaluate.GenerateEvaluationMapKt", evaluateSourceSet)
 val generateWasmIntrinsics by generator("org.jetbrains.kotlin.generators.wasm.WasmIntrinsicGeneratorKt", wasmSourceSet)
 
