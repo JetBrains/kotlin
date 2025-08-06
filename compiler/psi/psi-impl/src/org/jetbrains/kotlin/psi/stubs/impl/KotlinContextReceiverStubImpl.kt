@@ -15,7 +15,7 @@ import org.jetbrains.kotlin.psi.stubs.elements.KtContextReceiverElementType
 class KotlinContextReceiverStubImpl(
     parent: StubElement<out PsiElement>?,
     elementType: KtContextReceiverElementType,
-    private val label: StringRef?,
+    private val _label: StringRef?,
 ) : KotlinStubBaseImpl<KtContextReceiver>(parent, elementType), KotlinContextReceiverStub {
-    override fun getLabel(): String? = label?.string
+    override val label: String? get() = _label?.string
 }

@@ -479,7 +479,7 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
             KotlinPlaceHolderStubImpl<KtContextReceiverList>(parent, KtStubElementTypes.CONTEXT_RECEIVER_LIST)
         for (contextReceiverType in contextReceiverTypes) {
             val contextReceiverStub =
-                KotlinContextReceiverStubImpl(contextReceiverListStub, KtStubElementTypes.CONTEXT_RECEIVER, label = null)
+                KotlinContextReceiverStubImpl(contextReceiverListStub, KtStubElementTypes.CONTEXT_RECEIVER, _label = null)
             createTypeReferenceStub(contextReceiverStub, contextReceiverType)
         }
     }
