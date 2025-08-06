@@ -109,9 +109,7 @@ interface KotlinConstructorStub<T : KtConstructor<T>> : KotlinCallableStubBase<T
     val isExplicitDelegationCall: Boolean
 }
 
-interface KotlinImportAliasStub : StubElement<KtImportAlias> {
-    fun getName(): String?
-}
+interface KotlinImportAliasStub : NamedStub<KtImportAlias>
 
 interface KotlinImportDirectiveStub : StubElement<KtImportDirective> {
     fun isAllUnder(): Boolean

@@ -25,7 +25,7 @@ class KtImportAliasElementType(debugName: String) :
     }
 
     override fun serialize(stub: KotlinImportAliasStubImpl, dataStream: StubOutputStream) {
-        dataStream.writeName(stub.getName())
+        dataStream.writeName(stub.name)
     }
 
     override fun deserialize(dataStream: StubInputStream, parentStub: StubElement<*>?): KotlinImportAliasStubImpl {
