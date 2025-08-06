@@ -1,0 +1,7 @@
+Diagnostics from file:
+  for PSI element of type KtImportDirective at (3,1-24)
+    UNRESOLVED_IMPORT      text ranges: [(40,49)]
+      PSI: KtImportDirective at (3,1-24)
+  for PSI element of type KtNameReferenceExpression at (5,18-27)
+    UNRESOLVED_REFERENCE      text ranges: [(68,77)]
+      PSI: KtNameReferenceExpression at (5,18-27)

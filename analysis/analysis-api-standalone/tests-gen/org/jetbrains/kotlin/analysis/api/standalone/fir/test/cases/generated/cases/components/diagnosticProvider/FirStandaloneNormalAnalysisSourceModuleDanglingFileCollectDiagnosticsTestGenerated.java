@@ -455,6 +455,22 @@ public class FirStandaloneNormalAnalysisSourceModuleDanglingFileCollectDiagnosti
   }
 
   @Nested
+  @TestMetadata("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/wasm")
+  @TestDataPath("$PROJECT_ROOT")
+  public class Wasm {
+    @Test
+    public void testAllFilesPresentInWasm() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/wasm"), Pattern.compile("^(.+)\\.kt$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("Cloneable.kt")
+    public void testCloneable() {
+      runTest("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/wasm/Cloneable.kt");
+    }
+  }
+
+  @Nested
   @TestMetadata("analysis/analysis-api/testData/components/diagnosticsProvider/diagnostics/when")
   @TestDataPath("$PROJECT_ROOT")
   public class When {

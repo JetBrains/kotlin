@@ -1825,6 +1825,46 @@ public class SourceResolveCandidatesFirTreeConsistencyTestGenerated extends Abst
   }
 
   @Nested
+  @TestMetadata("analysis/analysis-api/testData/components/resolver/singleByPsi/cloneable")
+  @TestDataPath("$PROJECT_ROOT")
+  public class Cloneable {
+    @Test
+    public void testAllFilesPresentInCloneable() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/cloneable"), Pattern.compile("^(.+)\\.(kt)$"), null, true);
+    }
+
+    @Test
+    @TestMetadata("cloneableCommon.kt")
+    public void testCloneableCommon() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/cloneable/cloneableCommon.kt");
+    }
+
+    @Test
+    @TestMetadata("cloneableJs.kt")
+    public void testCloneableJs() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/cloneable/cloneableJs.kt");
+    }
+
+    @Test
+    @TestMetadata("cloneableJvm.kt")
+    public void testCloneableJvm() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/cloneable/cloneableJvm.kt");
+    }
+
+    @Test
+    @TestMetadata("cloneableNative.kt")
+    public void testCloneableNative() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/cloneable/cloneableNative.kt");
+    }
+
+    @Test
+    @TestMetadata("cloneableWasm.kt")
+    public void testCloneableWasm() {
+      runTest("analysis/analysis-api/testData/components/resolver/singleByPsi/cloneable/cloneableWasm.kt");
+    }
+  }
+
+  @Nested
   @TestMetadata("analysis/analysis-api/testData/components/resolver/singleByPsi/codeFragment")
   @TestDataPath("$PROJECT_ROOT")
   public class CodeFragment {
