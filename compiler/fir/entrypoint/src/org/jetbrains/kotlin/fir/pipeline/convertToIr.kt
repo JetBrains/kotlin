@@ -345,6 +345,7 @@ private class Fir2IrPipeline(
                 irBuiltIns,
                 phaseName = "",
                 IrValidatorConfig(checkUnboundSymbols = true)
+                    .withBasicChecks()
             )
         }
     }

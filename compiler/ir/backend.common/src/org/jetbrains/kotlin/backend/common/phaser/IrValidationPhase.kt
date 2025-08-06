@@ -39,7 +39,7 @@ abstract class IrValidationPhase<Context : LoweringContext>(val context: Context
 
 abstract class IrValidationBeforeLoweringPhase<Context : LoweringContext>(context: Context) : IrValidationPhase<Context>(context) {
     override val defaultValidationConfig: IrValidatorConfig
-        get() = IrValidatorConfig(checkTreeConsistency = true, checkUnboundSymbols = true)
+        get() = IrValidatorConfig(checkTreeConsistency = true)
             .withBasicChecks()
             .withCheckers(IrValueAccessScopeChecker)
             //.withTypeChecks() // TODO: Re-enable checking types (KT-68663)
@@ -89,6 +89,7 @@ class IrValidationAfterInliningAllFunctionsOnTheSecondStagePhase<Context : Lower
 ) : IrValidationPhase<Context>(context) {
     override val defaultValidationConfig: IrValidatorConfig
         get() = IrValidatorConfig(checkTreeConsistency = true)
+            .withBasicChecks()
             //.withTypeChecks() // TODO: Re-enable checking types (KT-68663)
             .applyIf(context.configuration.enableIrVisibilityChecks) {
                 withCheckers(IrVisibilityChecker, IrCrossFileFieldUsageChecker, IrValueAccessScopeChecker)
@@ -112,4 +113,5 @@ class IrValidationAfterInliningAllFunctionsOnTheFirstStagePhase<Context : Loweri
 open class IrValidationAfterLoweringPhase<Context : LoweringContext>(context: Context) : IrValidationPhase<Context>(context) {
     override val defaultValidationConfig: IrValidatorConfig
         get() = IrValidatorConfig(checkTreeConsistency = true)
+            .withBasicChecks()
 }
