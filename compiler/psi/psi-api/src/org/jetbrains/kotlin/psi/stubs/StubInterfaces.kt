@@ -70,8 +70,8 @@ interface KotlinValueArgumentStub<T : KtValueArgument> : KotlinPlaceHolderStub<T
 interface KotlinContractEffectStub : KotlinPlaceHolderStub<KtContractEffect> {}
 
 interface KotlinAnnotationEntryStub : StubElement<KtAnnotationEntry> {
-    fun getShortName(): String?
-    fun hasValueArguments(): Boolean
+    val shortName: String?
+    val hasValueArguments: Boolean
 }
 
 interface KotlinAnnotationUseSiteTargetStub : StubElement<KtAnnotationUseSiteTarget> {

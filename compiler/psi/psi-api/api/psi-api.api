@@ -3981,8 +3981,8 @@ public final class org/jetbrains/kotlin/psi/stubs/ConstantValueKind : java/lang/
 }
 
 public abstract interface class org/jetbrains/kotlin/psi/stubs/KotlinAnnotationEntryStub : com/intellij/psi/stubs/StubElement {
+	public abstract fun getHasValueArguments ()Z
 	public abstract fun getShortName ()Ljava/lang/String;
-	public abstract fun hasValueArguments ()Z
 }
 
 public abstract interface class org/jetbrains/kotlin/psi/stubs/KotlinAnnotationUseSiteTargetStub : com/intellij/psi/stubs/StubElement {
