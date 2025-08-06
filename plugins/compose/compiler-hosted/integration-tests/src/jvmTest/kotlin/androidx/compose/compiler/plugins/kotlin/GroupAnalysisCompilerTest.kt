@@ -368,7 +368,7 @@ class GroupAnalysisCompilerTest(
                     .forEach { file ->
                         mapping.append(file.asByteArray())
                     }
-                p to mapping.asProguardMapping(linePrefix = "").trim()
+                p to mapping.asProguardMapping().trim()
             }
         } else {
             val lambdaKeyCache = LambdaKeyCache()

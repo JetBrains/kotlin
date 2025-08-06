@@ -18,10 +18,12 @@ fun targetEnterExit(param: String): String =
 // ------------------------------------------
 
 ========= FunctionMeta: true, OptimizeGroups: true =========
-1:1:java.lang.String TestKt.targetEnterExit(java.lang.String,androidx.compose.runtime.Composer,int):7:7 -> m$1165841240
-1:1:java.lang.String TestKt.targetEnterExit(java.lang.String,androidx.compose.runtime.Composer,int):9:9 -> m$1165879804
-1:1:java.lang.String TestKt.targetEnterExit(java.lang.String,androidx.compose.runtime.Composer,int):6:6 -> m$724204843
+ComposeStackTrace -> $$compose:
+  1:1:java.lang.String TestKt.targetEnterExit(java.lang.String,androidx.compose.runtime.Composer,int):7:7 -> m$1165841240
+  1:1:java.lang.String TestKt.targetEnterExit(java.lang.String,androidx.compose.runtime.Composer,int):9:9 -> m$1165879804
+  1:1:java.lang.String TestKt.targetEnterExit(java.lang.String,androidx.compose.runtime.Composer,int):6:6 -> m$724204843
 ========= FunctionMeta: true, OptimizeGroups: false =========
-1:1:java.lang.String TestKt.targetEnterExit(java.lang.String,androidx.compose.runtime.Composer,int):8:8 -> m$1849434622
-1:1:java.lang.String TestKt.targetEnterExit(java.lang.String,androidx.compose.runtime.Composer,int):6:6 -> m$176154560
-1:1:java.lang.String TestKt.targetEnterExit(java.lang.String,androidx.compose.runtime.Composer,int):6:6 -> m$724204843
+ComposeStackTrace -> $$compose:
+  1:1:java.lang.String TestKt.targetEnterExit(java.lang.String,androidx.compose.runtime.Composer,int):8:8 -> m$1849434622
+  1:1:java.lang.String TestKt.targetEnterExit(java.lang.String,androidx.compose.runtime.Composer,int):6:6 -> m$176154560
+  1:1:java.lang.String TestKt.targetEnterExit(java.lang.String,androidx.compose.runtime.Composer,int):6:6 -> m$724204843

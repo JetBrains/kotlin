@@ -22,12 +22,6 @@ class ComposeMapping(
         val group: GroupInfo
     )
 
-    fun asProguardMapping(linePrefix: String = "  "): String = buildString {
-        entries.forEach { entry ->
-            appendEntry(entry.cls, entry.method, entry.group, linePrefix)
-        }
-    }
-
     fun append(bytecode: ByteArray) {
         val cls = context(reporter, keyCache) { ClassInfo(bytecode) }
         val entries = buildList {
@@ -40,11 +34,25 @@ class ComposeMapping(
         this.entries.addAll(entries)
     }
 
+    fun asProguardMapping(): String = buildString {
+        appendLine("ComposeStackTrace -> ${"$$"}compose:")
+        val additionalFileNames = mutableListOf<Entry>()
+        entries.forEach { entry ->
+            appendEntry(entry.cls, entry.method, entry.group)
+            if (entry.cls.classId.value.contains("ComposableSingletons$")) {
+                additionalFileNames.add(entry)
+            }
+        }
+
+        additionalFileNames.forEach { entry ->
+            appendFileName(entry.cls)
+        }
+    }
+
     private fun StringBuilder.appendEntry(
         cls: ClassInfo,
         method: MethodInfo,
-        group: GroupInfo,
-        linePrefix: String
+        group: GroupInfo
     ) {
         var key = group.key
         if (key == null) {
@@ -56,7 +64,7 @@ class ComposeMapping(
         if (key == null) return
         if (group.line == -1) return
 
-        append(linePrefix)
+        append("  ")
         append("1:1:")
         append(descriptorToProguardString("${cls.classId.fqName}.${method.id.methodName}", method.id.methodDescriptor))
         append(":")
@@ -66,6 +74,19 @@ class ComposeMapping(
         append(" -> ")
         append("m$")
         append(key)
+        appendLine()
+    }
+
+    private fun StringBuilder.appendFileName(cls: ClassInfo) {
+        val fqName = cls.classId.fqName
+        append(fqName)
+        append(" -> ")
+        append(fqName)
+        append(":")
+        appendLine()
+        append("# {\"id\":\"sourceFile\",\"fileName\":\"")
+        append(cls.fileName)
+        append("\"}")
         appendLine()
     }
 

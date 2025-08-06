@@ -9,6 +9,12 @@ val a = @Composable {}
 // ------------------------------------------
 
 ========= FunctionMeta: true, OptimizeGroups: true =========
-1:1:kotlin.Unit ComposableSingletons$TestKt.lambda__486040309$lambda$0(androidx.compose.runtime.Composer,int):4:4 -> m$-486040309
+ComposeStackTrace -> $$compose:
+  1:1:kotlin.Unit ComposableSingletons$TestKt.lambda__486040309$lambda$0(androidx.compose.runtime.Composer,int):4:4 -> m$-486040309
+ComposableSingletons$TestKt -> ComposableSingletons$TestKt:
+# {"id":"sourceFile","fileName":"Test.kt"}
 ========= FunctionMeta: false, OptimizeGroups: true =========
-1:1:kotlin.Unit ComposableSingletons$TestKt.lambda__486040309$lambda$0(androidx.compose.runtime.Composer,int):4:4 -> m$-486040309
+ComposeStackTrace -> $$compose:
+  1:1:kotlin.Unit ComposableSingletons$TestKt.lambda__486040309$lambda$0(androidx.compose.runtime.Composer,int):4:4 -> m$-486040309
+ComposableSingletons$TestKt -> ComposableSingletons$TestKt:
+# {"id":"sourceFile","fileName":"Test.kt"}

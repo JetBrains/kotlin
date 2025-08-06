@@ -13,6 +13,12 @@ class Test {
 // ------------------------------------------
 
 ========= FunctionMeta: true, OptimizeGroups: true =========
-1:1:kotlin.Unit ComposableSingletons$TestKt.lambda__1246884903$lambda$0(androidx.compose.runtime.Composer,int):6:6 -> m$-1246884903
+ComposeStackTrace -> $$compose:
+  1:1:kotlin.Unit ComposableSingletons$TestKt.lambda__1246884903$lambda$0(androidx.compose.runtime.Composer,int):6:6 -> m$-1246884903
+ComposableSingletons$TestKt -> ComposableSingletons$TestKt:
+# {"id":"sourceFile","fileName":"Test.kt"}
 ========= FunctionMeta: false, OptimizeGroups: true =========
-1:1:kotlin.Unit ComposableSingletons$TestKt.lambda__1246884903$lambda$0(androidx.compose.runtime.Composer,int):6:6 -> m$-1246884903
+ComposeStackTrace -> $$compose:
+  1:1:kotlin.Unit ComposableSingletons$TestKt.lambda__1246884903$lambda$0(androidx.compose.runtime.Composer,int):6:6 -> m$-1246884903
+ComposableSingletons$TestKt -> ComposableSingletons$TestKt:
+# {"id":"sourceFile","fileName":"Test.kt"}
