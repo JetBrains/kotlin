@@ -115,6 +115,12 @@ public class WasmPartialLinkageNoICTestCaseGenerated extends AbstractWasmPartial
   }
 
   @Test
+  @TestMetadata("modifyInlineFunction")
+  public void testModifyInlineFunction() {
+    runTest("compiler/testData/klib/partial-linkage/modifyInlineFunction/");
+  }
+
+  @Test
   @TestMetadata("noNonImplementedCallableFalsePositives")
   public void testNoNonImplementedCallableFalsePositives() {
     runTest("compiler/testData/klib/partial-linkage/noNonImplementedCallableFalsePositives/");
