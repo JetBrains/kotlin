@@ -95,6 +95,16 @@ public class FirIdeNormalAnalysisScriptSourceModuleResolveCallTestGenerated exte
   }
 
   @Nested
+  @TestMetadata("analysis/analysis-api/testData/components/resolver/singleByPsi/cloneable")
+  @TestDataPath("$PROJECT_ROOT")
+  public class Cloneable {
+    @Test
+    public void testAllFilesPresentInCloneable() {
+      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("analysis/analysis-api/testData/components/resolver/singleByPsi/cloneable"), Pattern.compile("^(.+)\\.kts$"), null, true);
+    }
+  }
+
+  @Nested
   @TestMetadata("analysis/analysis-api/testData/components/resolver/singleByPsi/codeFragment")
   @TestDataPath("$PROJECT_ROOT")
   public class CodeFragment {

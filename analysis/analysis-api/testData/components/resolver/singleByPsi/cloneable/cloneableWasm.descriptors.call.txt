@@ -1,0 +1,2 @@
+KtNameReferenceExpression(67,76): 'Cloneable'
+  null

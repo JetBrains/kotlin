@@ -99,6 +99,10 @@ internal fun AnalysisApiTestGroup.generateAnalysisApiTests() {
                         // Main modules in tests which rely on missing dependencies (e.g. the main module missing a dependency to a library
                         // module) cannot be compiled to a library.
                         add("missingDependency")
+
+                        // For some platforms, `Cloneable` is unresolved and the test cannot be compiled to a library. We could place these
+                        // tests under `withErrors`, but it'd split the test data, which is undesirable.
+                        add("cloneable")
                     }
 
                     else -> {}
