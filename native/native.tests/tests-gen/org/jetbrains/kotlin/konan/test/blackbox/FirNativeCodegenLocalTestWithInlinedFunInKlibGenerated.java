@@ -513,6 +513,36 @@ public class FirNativeCodegenLocalTestWithInlinedFunInKlibGenerated extends Abst
       }
 
       @Test
+      @TestMetadata("protocolMetaTypecheck.kt")
+      public void testProtocolMetaTypecheck() {
+        runTest("native/native.tests/testData/codegen/cinterop/cCallDirect/protocolMetaTypecheck.kt");
+      }
+
+      @Test
+      @TestMetadata("protocolTypecheck.kt")
+      public void testProtocolTypecheck() {
+        runTest("native/native.tests/testData/codegen/cinterop/cCallDirect/protocolTypecheck.kt");
+      }
+
+      @Test
+      @TestMetadata("protocolTypecheckWithCustomRuntimeName.kt")
+      public void testProtocolTypecheckWithCustomRuntimeName() {
+        runTest("native/native.tests/testData/codegen/cinterop/cCallDirect/protocolTypecheckWithCustomRuntimeName.kt");
+      }
+
+      @Test
+      @TestMetadata("protocolTypecheckWithForwardDeclaration.kt")
+      public void testProtocolTypecheckWithForwardDeclaration() {
+        runTest("native/native.tests/testData/codegen/cinterop/cCallDirect/protocolTypecheckWithForwardDeclaration.kt");
+      }
+
+      @Test
+      @TestMetadata("protocolTypecheckWithKotlinSubclass.kt")
+      public void testProtocolTypecheckWithKotlinSubclass() {
+        runTest("native/native.tests/testData/codegen/cinterop/cCallDirect/protocolTypecheckWithKotlinSubclass.kt");
+      }
+
+      @Test
       @TestMetadata("sameFunctionWithDifferentSignatures.kt")
       public void testSameFunctionWithDifferentSignatures() {
         runTest("native/native.tests/testData/codegen/cinterop/cCallDirect/sameFunctionWithDifferentSignatures.kt");

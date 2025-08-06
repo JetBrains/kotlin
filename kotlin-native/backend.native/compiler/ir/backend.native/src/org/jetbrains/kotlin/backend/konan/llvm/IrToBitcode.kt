@@ -1625,15 +1625,7 @@ internal class CodeGeneratorVisitor(
             functionGenerationContext.icmpEq(objCObject, genGetObjCClass(dstClass.parentAsClass))
         } else if (dstClass.isObjCClass()) {
             if (dstClass.isInterface) {
-                val isMeta = if (dstClass.isObjCMetaClass()) kTrue else kFalse
-                call(
-                        llvm.Kotlin_Interop_DoesObjectConformToProtocol,
-                        listOf(
-                                objCObject,
-                                genGetObjCProtocol(dstClass),
-                                isMeta
-                        )
-                )
+                genInstanceOfObjCProtocol(obj, objCObject, dstClass)
             } else {
                 call(
                         llvm.Kotlin_Interop_IsObjectKindOfClass,
@@ -1668,6 +1660,69 @@ internal class CodeGeneratorVisitor(
             }
         }
     }
+
+    /**
+     * This function generates a type check for a Kotlin object against an Objective-C protocol.
+     *
+     * The compiler supports two methods for generating protocol type checks, using the information provided by cinterop:
+     * [genInstanceOfProtocolViaProtocolGetter] and [genInstanceOfObjCProtocolByName].
+     *
+     * `cinterop` generates information necessary for both, based on the `-Xccall-mode`:
+     * - if `indirect` mode is allowed, it generates a `protocolGetter`.
+     * - if `direct` mode is allowed, it generates a `binaryName`.
+     *
+     * This function decides which to use the same way as for other `-Xccall-mode`-dependant entities:
+     * it selects one of the available methods based on the `cCallMode` passed to the compiler.
+     *
+     * Note: it is possible that both methods return `null`.
+     * This can happen when cinterop uses `-Xccall-mode direct` (so `protocolGetter` is not available),
+     * but `cinterop` couldn't deduce the `binaryName` (KT-82200).
+     */
+    private fun genInstanceOfObjCProtocol(
+            kotlinObject: LLVMValueRef,
+            objCObject: LLVMValueRef,
+            dstClass: IrClass
+    ): LLVMValueRef = context.config.cCallMode.select(
+            indirect = { genInstanceOfProtocolViaProtocolGetter(objCObject, dstClass) },
+            direct = { genInstanceOfObjCProtocolByName(kotlinObject, objCObject, dstClass) }
+    ) ?: error("can't generate a type check for an Objective-C protocol ${dstClass.name}")
+
+    private fun genInstanceOfProtocolViaProtocolGetter(objCObject: LLVMValueRef, dstClass: IrClass): LLVMValueRef? {
+        val protocol = genGetObjCProtocol(dstClass) ?: return null
+        val isMeta = if (dstClass.isObjCMetaClass()) kTrue else kFalse
+        return call(
+                llvm.Kotlin_Interop_DoesObjectConformToProtocol,
+                listOf(
+                        objCObject,
+                        protocol,
+                        isMeta
+                )
+        )
+    }
+
+    private fun genInstanceOfObjCProtocolByName(
+            kotlinObject: LLVMValueRef,
+            objCObject: LLVMValueRef,
+            dstClass: IrClass
+    ): LLVMValueRef? {
+        val protocolName = dstClass.getExternalObjCProtocolBinaryName() ?: return null
+
+        val isMeta = if (dstClass.isObjCMetaClass()) kTrue else kFalse
+        val protocolCache = codegen.staticData.objCProtocolCache(protocolName).llvm
+        val protocolNameLiteral = codegen.staticData.cStringLiteral(protocolName).llvm
+
+        return call(
+                llvm.Kotlin_Interop_DoesObjectConformToProtocolByName,
+                listOf(
+                        kotlinObject,
+                        objCObject,
+                        protocolNameLiteral,
+                        protocolCache,
+                        isMeta
+                )
+        )
+    }
+
 
     //-------------------------------------------------------------------------//
 
@@ -2476,14 +2531,14 @@ internal class CodeGeneratorVisitor(
         return functionGenerationContext.getObjCClass(irClass, currentCodeContext.exceptionHandler)
     }
 
-    private fun genGetObjCProtocol(irClass: IrClass): LLVMValueRef {
+    private fun genGetObjCProtocol(irClass: IrClass): LLVMValueRef? {
         // Note: this function will return the same result for Obj-C protocol and corresponding meta-class.
 
         assert(irClass.isInterface)
         assert(irClass.isExternalObjCClass())
 
         val annotation = irClass.annotations.findAnnotation(externalObjCClassFqName)!!
-        val protocolGetterName = annotation.getAnnotationStringValue("protocolGetter")
+        val protocolGetterName = annotation.getAnnotationValueOrNull<String>("protocolGetter") ?: return null
         val protocolGetterProto = LlvmFunctionProto(
                 protocolGetterName,
                 LlvmFunctionSignature(LlvmRetType(llvm.int8PtrType, isObjectType = false)),

@@ -63,6 +63,11 @@ RUNTIME_NOTHROW bool IsKotlinObjCClass(Class cls);
 
 RUNTIME_NOTHROW const TypeInfo* GetObjCKotlinTypeInfo(ObjHeader* obj);
 
+// Returns `true` iff `obj` is an instance of an `IsKotlinObjCClass`-class
+// that implements the protocol with name `protocolName`.
+// It only checks direct super interfaces, not the ones adopted by super classes.
+RUNTIME_NOTHROW bool IsInstanceOfKotlinClassImplementingObjCProtocol(ObjHeader* kotlinObj, id obj, const char* protocolName);
+
 } // extern "C"
 
 const char* Kotlin_ObjCInterop_getUniquePrefix();

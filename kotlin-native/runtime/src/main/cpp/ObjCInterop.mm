@@ -144,6 +144,41 @@ RUNTIME_NOTHROW const TypeInfo* GetObjCKotlinTypeInfo(ObjHeader* obj) {
     return GetKotlinClassData(reinterpret_cast<id>(objcPtr))->typeInfo;
 }
 
+RUNTIME_NOTHROW bool IsInstanceOfKotlinClassImplementingObjCProtocol(ObjHeader* kotlinObj, id obj, const char* protocolName) {
+    // Same as `IsKotlinObjCClass`, but more efficient:
+    if ((kotlinObj->type_info()->flags_ & TF_KOTLIN_OBJC_CLASS) == 0) {
+        // Not an instance of an `IsKotlinObjCClass`-class. The contract requires returning false.
+        return false;
+    }
+
+    /*
+    The implementation below intentionally avoids getting a `Protocol*` by name with `objc_getProtocol`
+    and compares the names instead.
+
+    The reason: `CreateKotlinObjCClass`, when creating the obj's class,
+    looks up protocols by name and doesn't mark the class as adopting the protocol when can't find it.
+    But this can legitimately happen when the protocol has neither properly adopting Objective-C classes
+    nor @protocol references, because the Objective-C compiler creates `__OBJC_PROTOCOL` data on demand.
+    No data => no protocol by name at runtime => no adoption.
+    But this function makes the best effort to keep the type checking behaviour working properly:
+    if the Kotlin class is defined as implementing the protocol, the type check should return `true`.
+
+    So, the implementation below checks `KotlinObjCClassInfo.protocolNames` which contains all the implemented protocols
+    as defined in the source code, regardless of whether they can be found with `objc_getProtocol` at runtime or not.
+
+    Reminder: a Kotlin class can't implement an Objective-C protocol unless it subclasses an Objective-C class.
+    Also, Kotlin subclasses of Objective-C classes (= `IsKotlinObjCClass`) must be final.
+    */
+    auto* classData = GetKotlinClassData(obj);
+    auto* info = classData->classInfo;
+    for (size_t i = 0;; ++i) {
+        const char* name = info->protocolNames[i];
+        if (name == nullptr) break;
+        // Note: the check below might wrongly fail if the protocol has the `objc_runtime_name` attribute. See KT-82296.
+        if (strcmp(protocolName, name) == 0) return true;
+    }
+    return false;
+}
 
 static void AddNSObjectOverride(bool isClassMethod, Class clazz, SEL selector, void* imp) {
   Class nsObjectClass = Kotlin_Interop_getObjCClass("NSObject");

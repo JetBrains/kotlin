@@ -269,5 +269,8 @@ fun IrClass.getExternalObjCMetaClassBinaryName(): String =
         this.getExplicitExternalObjCClassBinaryName()
                 ?: this.name.asString().removeSuffix("Meta")
 
+fun IrClass.getExternalObjCProtocolBinaryName(): String? =
+    this.getExplicitExternalObjCClassBinaryName()
+
 private fun IrClass.getExplicitExternalObjCClassBinaryName() =
         this.annotations.findAnnotation(externalObjCClassFqName)!!.getAnnotationValueOrNull<String>("binaryName")

@@ -15,6 +15,7 @@
 #import "KString.h"
 #import "ObjCInteropUtils.h"
 #import "ObjCInteropUtilsPrivate.h"
+#import "ObjCInterop.h"
 
 namespace {
   Class nsStringClass = nullptr;
@@ -120,6 +121,51 @@ KBoolean Kotlin_Interop_DoesObjectConformToProtocol(id obj, void* prot, KBoolean
   BOOL objectIsClass = class_isMetaClass(object_getClass(obj));
   if ((isMeta && !objectIsClass) || (!isMeta && objectIsClass)) return false;
   // TODO: handle root classes properly.
+
+  return [((id<NSObject>)obj) conformsToProtocol:(Protocol*)prot];
+}
+
+// This basically returns `objc_getProtocol(protName)`, but caches the result using `protCache`.
+static Protocol* getProtocolByName(const char* protName, Protocol** protCache) {
+    // This value stored into the `*protCache` indicates that `objc_getProtocol(protName) == nullptr`.
+    static Protocol* const notFoundMarker = reinterpret_cast<Protocol*>(1);
+
+    Protocol* cachedValue = *protCache;
+    if (cachedValue != nullptr) return cachedValue == notFoundMarker ? nullptr : cachedValue;
+
+    Protocol* result = objc_getProtocol(protName);
+    *protCache = result == nullptr ? notFoundMarker : result;
+
+    RuntimeAssert(result != notFoundMarker, "protocol pointer equals %p", notFoundMarker);
+
+    return result;
+}
+
+KBoolean Kotlin_Interop_DoesObjectConformToProtocolByName(
+    ObjHeader* kotlinObj,
+    id obj,
+    const char* protName,
+    Protocol** protCache,
+    KBoolean isMeta
+) {
+  BOOL objectIsClass = class_isMetaClass(object_getClass(obj));
+  if ((isMeta && !objectIsClass) || (!isMeta && objectIsClass)) return false;
+  // TODO: handle root classes properly.
+
+  Protocol* prot = getProtocolByName(protName, protCache);
+  if (prot == nullptr) {
+    /*
+    This doesn't mean that the object doesn't conform to the protocol.
+    If `IsKotlinObjCClass` is true for the class, it can still conform to the protocol even if `prot == nullptr`.
+    See the comment in `IsInstanceOfKotlinClassImplementingObjCProtocol` for the details.
+
+    On the other hand, since `prot == nullptr`, if the object conforms to the protocol,
+    this can't be a regular Objective-C conformance, since the latter makes the protocol runtime
+    info exist. So it is safe to assume that checking the Kotlin case is enough.
+    */
+
+    return IsInstanceOfKotlinClassImplementingObjCProtocol(kotlinObj, obj, protName);
+  }
 
   return [((id<NSObject>)obj) conformsToProtocol:(Protocol*)prot];
 }
