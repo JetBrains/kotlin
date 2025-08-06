@@ -10,15 +10,21 @@ import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.StandardNames.KOTLIN_REFLECT_FQ_NAME
 import org.jetbrains.kotlin.ir.InternalSymbolFinderAPI
 import org.jetbrains.kotlin.ir.IrBuiltIns
+import org.jetbrains.kotlin.ir.declarations.IrFunction
+import org.jetbrains.kotlin.ir.declarations.IrParameterKind
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classOrNull
+import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.types.makeNullable
 import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
+import kotlin.getValue
 
 // Some symbols below are used in kotlin-native, so they can't be private
 @Suppress("MemberVisibilityCanBePrivate")
@@ -72,11 +78,15 @@ abstract class Symbols(val irBuiltIns: IrBuiltIns) {
 
     abstract val getProgressionLastElementByReturnType: Map<IrClassifierSymbol, IrSimpleFunctionSymbol>
 
-    open val toUIntByExtensionReceiver: Map<IrClassifierSymbol, IrSimpleFunctionSymbol> =
-        irBuiltIns.getNonBuiltInFunctionsByExtensionReceiver(Name.identifier("toUInt"), "kotlin")
+    val toUIntByExtensionReceiver: Map<IrClassifierSymbol, IrSimpleFunctionSymbol> by CallableId(StandardNames.BUILT_INS_PACKAGE_FQ_NAME, Name.identifier("toUInt")).functionSymbolAssociatedBy {
+        it.parameters.firstOrNull { it.kind == IrParameterKind.ExtensionReceiver }?.type?.classifierOrFail
+            ?: error("Expected extension receiver for ${it.render()}")
+    }
 
-    open val toULongByExtensionReceiver: Map<IrClassifierSymbol, IrSimpleFunctionSymbol> =
-        irBuiltIns.getNonBuiltInFunctionsByExtensionReceiver(Name.identifier("toULong"), "kotlin")
+    val toULongByExtensionReceiver: Map<IrClassifierSymbol, IrSimpleFunctionSymbol> by CallableId(StandardNames.BUILT_INS_PACKAGE_FQ_NAME, Name.identifier("toULong")).functionSymbolAssociatedBy {
+        it.parameters.firstOrNull { it.kind == IrParameterKind.ExtensionReceiver }?.type?.classifierOrFail
+            ?: error("Expected extension receiver for ${it.render()}")
+    }
 
     val any get() = irBuiltIns.anyClass
     val unit get() = irBuiltIns.unitClass
@@ -176,6 +186,43 @@ abstract class Symbols(val irBuiltIns: IrBuiltIns) {
         return functionSymbol == plusSymbol
     }
 
+    protected fun ClassId.classSymbol() = symbolFinder.findClass(this) ?: error("Class $this is not found")
+    protected fun CallableId.propertySymbols() = symbolFinder.findProperties(this).toList()
+    protected fun CallableId.functionSymbols() = symbolFinder.findFunctions(this).toList()
+    protected fun ClassId.primaryConstructorSymbol(): Lazy<IrConstructorSymbol> {
+        val clazz = classSymbol()
+        return lazy { (clazz.owner.primaryConstructor ?: error("Class ${this} has no primary constructor")).symbol }
+    }
+
+    protected fun ClassId.noParametersConstructorSymbol(): Lazy<IrConstructorSymbol> {
+        val clazz = classSymbol()
+        return lazy { (clazz.owner.constructors.singleOrNull { it.parameters.isEmpty() } ?: error("Class ${this} has no constructor without parameters")).symbol }
+    }
+
+    protected fun CallableId.functionSymbol(): IrSimpleFunctionSymbol {
+        val elements = functionSymbols()
+        require(elements.isNotEmpty()) { "No function $this found" }
+        require(elements.size == 1) { "Several functions $this found:\n${elements.joinToString("\n")}" }
+        return elements.single()
+    }
+
+    protected inline fun CallableId.functionSymbol(crossinline condition: (IrSimpleFunction) -> Boolean): Lazy<IrSimpleFunctionSymbol> {
+        val unfilteredElements = functionSymbols()
+        return lazy {
+            val elements = unfilteredElements.filter { condition(it.owner) }
+            require(elements.isNotEmpty()) { "No function $this found corresponding given condition" }
+            require(elements.size == 1) { "Several functions $this found corresponding given condition:\n${elements.joinToString("\n")}" }
+            elements.single()
+        }
+    }
+
+    protected inline fun <K> CallableId.functionSymbolAssociatedBy(crossinline getKey: (IrSimpleFunction) -> K): Lazy<Map<K, IrSimpleFunctionSymbol>> {
+        val unfilteredElements = functionSymbols()
+        return lazy {
+            unfilteredElements.associateBy { getKey(it.owner) }
+        }
+    }
+
     abstract val throwNullPointerException: IrSimpleFunctionSymbol
     abstract val throwTypeCastException: IrSimpleFunctionSymbol
 
@@ -248,8 +295,9 @@ abstract class Symbols(val irBuiltIns: IrBuiltIns) {
 
 @OptIn(InternalSymbolFinderAPI::class)
 abstract class KlibSymbols(irBuiltIns: IrBuiltIns) : Symbols(irBuiltIns) {
-    override val getProgressionLastElementByReturnType: Map<IrClassifierSymbol, IrSimpleFunctionSymbol> =
-        irBuiltIns.getNonBuiltinFunctionsByReturnType(Name.identifier("getProgressionLastElement"), "kotlin", "internal")
+    final override val getProgressionLastElementByReturnType: Map<IrClassifierSymbol, IrSimpleFunctionSymbol> by CallableId(StandardNames.KOTLIN_INTERNAL_FQ_NAME, Name.identifier("getProgressionLastElement")).functionSymbolAssociatedBy {
+        it.returnType.classifierOrFail
+    }
 
     class SharedVariableBoxClassInfo(val klass: IrClassSymbol) {
         val constructor by lazy { klass.constructors.single() }

@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.psi2ir.descriptors
 
-import org.jetbrains.kotlin.builtins.BuiltInsPackageFragment
 import org.jetbrains.kotlin.builtins.KotlinBuiltIns
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.builtins.StandardNames.BUILT_INS_PACKAGE_FQ_NAME
@@ -27,7 +26,6 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.descriptors.*
 import org.jetbrains.kotlin.ir.expressions.impl.IrConstructorCallImpl
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
-import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
@@ -551,38 +549,6 @@ class IrBuiltInsOverDescriptors(
     override val linkageErrorSymbol: IrSimpleFunctionSymbol = defineOperator("linkageError", nothingType, listOf(stringType))
 
     override val enumClass = builtIns.enum.toIrSymbol()
-
-    private fun <T : Any> getFunctionsByKey(
-        name: Name,
-        vararg packageNameSegments: String,
-        makeKey: (SimpleFunctionDescriptor) -> T?
-    ): Map<T, IrSimpleFunctionSymbol> {
-        val result = mutableMapOf<T, IrSimpleFunctionSymbol>()
-        for (d in symbolFinder.builtInsPackage(*packageNameSegments).getContributedFunctions(name, NoLookupLocation.FROM_BACKEND)) {
-            makeKey(d)?.let { key ->
-                result[key] = d.toIrSymbol()
-            }
-        }
-        return result
-    }
-
-    override fun getNonBuiltInFunctionsByExtensionReceiver(
-        name: Name, vararg packageNameSegments: String
-    ): Map<IrClassifierSymbol, IrSimpleFunctionSymbol> =
-        getFunctionsByKey(name, *packageNameSegments) {
-            if (it.containingDeclaration !is BuiltInsPackageFragment && it.extensionReceiverParameter != null) {
-                symbolTable.referenceClassifier(it.extensionReceiverParameter!!.type.constructor.declarationDescriptor!!)
-            } else null
-        }
-
-    override fun getNonBuiltinFunctionsByReturnType(
-        name: Name, vararg packageNameSegments: String
-    ): Map<IrClassifierSymbol, IrSimpleFunctionSymbol> =
-        getFunctionsByKey(Name.identifier("getProgressionLastElement"), *packageNameSegments) { d ->
-            if (d.containingDeclaration !is BuiltInsPackageFragment) {
-                d.returnType?.constructor?.declarationDescriptor?.let { symbolTable.referenceClassifier(it) }
-            } else null
-        }
 
     override val extensionToString: IrSimpleFunctionSymbol = symbolFinder.findFunctions(OperatorNameConventions.TO_STRING, "kotlin").first {
         val descriptor = it.descriptor

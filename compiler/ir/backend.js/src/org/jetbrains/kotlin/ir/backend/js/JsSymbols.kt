@@ -118,29 +118,6 @@ class JsSymbols(
             }
         }
 
-    private val getProgressionLastElementSymbols =
-        symbolFinder.findFunctions(Name.identifier("getProgressionLastElement"), "kotlin", "internal")
-
-    override val getProgressionLastElementByReturnType: Map<IrClassifierSymbol, IrSimpleFunctionSymbol> by lazy(LazyThreadSafetyMode.NONE) {
-        getProgressionLastElementSymbols.associateBy { it.owner.returnType.classifierOrFail }
-    }
-
-    private val toUIntSymbols = symbolFinder.findFunctions(Name.identifier("toUInt"), "kotlin")
-
-    override val toUIntByExtensionReceiver: Map<IrClassifierSymbol, IrSimpleFunctionSymbol> by lazy(LazyThreadSafetyMode.NONE) {
-        toUIntSymbols.associateBy {
-            it.owner.parameters[0].type.classifierOrFail
-        }
-    }
-
-    private val toULongSymbols = symbolFinder.findFunctions(Name.identifier("toULong"), "kotlin")
-
-    override val toULongByExtensionReceiver: Map<IrClassifierSymbol, IrSimpleFunctionSymbol> by lazy(LazyThreadSafetyMode.NONE) {
-        toULongSymbols.associateBy {
-            it.owner.parameters[0].type.classifierOrFail
-        }
-    }
-
     override fun isSideEffectFree(call: IrCall): Boolean =
         call.symbol in intrinsics.primitiveToLiteralConstructor.values ||
                 call.symbol == intrinsics.arrayLiteral ||

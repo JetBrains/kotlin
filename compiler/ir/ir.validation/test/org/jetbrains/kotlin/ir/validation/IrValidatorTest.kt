@@ -2887,20 +2887,6 @@ private object TestIrBuiltins : IrBuiltIns() {
         missingBuiltIn()
     }
 
-    override fun getNonBuiltInFunctionsByExtensionReceiver(
-        name: Name,
-        vararg packageNameSegments: String,
-    ): Map<IrClassifierSymbol, IrSimpleFunctionSymbol> {
-        missingBuiltIn()
-    }
-
-    override fun getNonBuiltinFunctionsByReturnType(
-        name: Name,
-        vararg packageNameSegments: String,
-    ): Map<IrClassifierSymbol, IrSimpleFunctionSymbol> {
-        missingBuiltIn()
-    }
-
     override val operatorsPackageFragment: IrExternalPackageFragment
         get() = missingBuiltIn()
     override val kotlinInternalPackageFragment: IrExternalPackageFragment

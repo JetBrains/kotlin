@@ -316,32 +316,6 @@ class IrBuiltInsOverFir(
 
     // ------------------------------------- function types -------------------------------------
 
-    override fun getNonBuiltInFunctionsByExtensionReceiver(
-        name: Name,
-        vararg packageNameSegments: String,
-    ): Map<IrClassifierSymbol, IrSimpleFunctionSymbol> {
-        return fir2irBuiltins.getFunctionsByKey(
-            name,
-            *packageNameSegments,
-            mapKey = { symbol ->
-                with(c) { symbol.resolvedReceiverTypeRef?.toIrType()?.classifierOrNull }
-            },
-            mapValue = { _, irSymbol -> irSymbol }
-        )
-    }
-
-    override fun getNonBuiltinFunctionsByReturnType(
-        name: Name,
-        vararg packageNameSegments: String,
-    ): Map<IrClassifierSymbol, IrSimpleFunctionSymbol> {
-        return fir2irBuiltins.getFunctionsByKey(
-            name,
-            *packageNameSegments,
-            mapKey = { with(c) { it.resolvedReturnType.toIrType().classifierOrNull } },
-            mapValue = { _, irSymbol -> irSymbol }
-        )
-    }
-
     private val functionNMap: MutableMap<Int, IrClass> = mutableMapOf()
     private val kFunctionNMap: MutableMap<Int, IrClass> = mutableMapOf()
     private val suspendFunctionNMap: MutableMap<Int, IrClass> = mutableMapOf()
