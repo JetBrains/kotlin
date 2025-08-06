@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.fir.backend
 import org.jetbrains.kotlin.KtSourceElement
 import org.jetbrains.kotlin.backend.common.extensions.FirIncompatiblePluginAPI
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
-import org.jetbrains.kotlin.backend.common.ir.BuiltinSymbolsBase
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.LanguageVersionSettings
 import org.jetbrains.kotlin.descriptors.ModuleDescriptor
@@ -83,8 +82,6 @@ class Fir2IrPluginContext(
 
     override val platform: TargetPlatform
         get() = c.session.moduleData.platform
-
-    override val symbols: BuiltinSymbolsBase = BuiltinSymbolsBase(irBuiltIns)
 
     private val symbolProvider: FirSymbolProvider
         get() = c.session.symbolProvider

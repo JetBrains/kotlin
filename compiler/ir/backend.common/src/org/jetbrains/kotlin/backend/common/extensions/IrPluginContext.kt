@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.backend.common.extensions
 
-import org.jetbrains.kotlin.backend.common.ir.BuiltinSymbolsBase
 import org.jetbrains.kotlin.backend.common.linkage.IrDeserializer
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.LanguageVersionSettings
@@ -44,8 +43,6 @@ interface IrPluginContext : IrGeneratorContext {
      * Indicates that the plugin works after FIR. Effectively it means that all descriptor-based API may contain incorrect and/or incomplete information, and declarations marked with `@FirIncompatibleApi` will throw runtime exceptions.
      */
     val afterK2: Boolean
-
-    val symbols: BuiltinSymbolsBase
 
     val platform: TargetPlatform?
 
