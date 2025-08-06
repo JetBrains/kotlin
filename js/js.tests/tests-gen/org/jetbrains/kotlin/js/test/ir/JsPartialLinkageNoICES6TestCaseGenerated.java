@@ -130,6 +130,12 @@ public class JsPartialLinkageNoICES6TestCaseGenerated extends AbstractJsPartialL
   }
 
   @Test
+  @TestMetadata("modifyInlinePropertySetter")
+  public void testModifyInlinePropertySetter() {
+    runTest("compiler/testData/klib/partial-linkage/modifyInlinePropertySetter/");
+  }
+
+  @Test
   @TestMetadata("noNonImplementedCallableFalsePositives")
   public void testNoNonImplementedCallableFalsePositives() {
     runTest("compiler/testData/klib/partial-linkage/noNonImplementedCallableFalsePositives/");
