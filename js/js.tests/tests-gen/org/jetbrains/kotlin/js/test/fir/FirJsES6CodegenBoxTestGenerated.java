@@ -41276,6 +41276,12 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
     }
 
     @Test
+    @TestMetadata("kt79516.kt")
+    public void testKt79516() {
+      runTest("compiler/testData/codegen/box/regressions/kt79516.kt");
+    }
+
+    @Test
     @TestMetadata("kt998.kt")
     public void testKt998() {
       runTest("compiler/testData/codegen/box/regressions/kt998.kt");
