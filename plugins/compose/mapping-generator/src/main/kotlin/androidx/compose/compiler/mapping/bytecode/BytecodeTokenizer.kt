@@ -59,6 +59,7 @@ private val GroupTokenizer by lazy {
         LineTokenizer,
         LabelTokenizer,
         JumpTokenizer,
+        ThrowTokenizer,
         CurrentMarkerTokenizer,
         EndToMarkerTokenizer,
         StartRestartGroupTokenizer,
@@ -88,6 +89,14 @@ private val LabelTokenizer = SingleInstructionTokenizer { instruction ->
 private val JumpTokenizer = SingleInstructionTokenizer { instruction ->
     if (instruction is JumpInsnNode) {
         JumpToken(instruction)
+    } else {
+        null
+    }
+}
+
+private val ThrowTokenizer = SingleInstructionTokenizer { instruction ->
+    if (instruction is InsnNode && instruction.opcode == Opcodes.ATHROW) {
+        ThrowToken(instruction)
     } else {
         null
     }
