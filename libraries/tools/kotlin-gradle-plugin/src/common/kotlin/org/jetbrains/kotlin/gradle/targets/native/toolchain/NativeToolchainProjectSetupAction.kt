@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.gradle.targets.native.toolchain
 
+import org.gradle.api.Project
 import org.jetbrains.kotlin.gradle.dsl.multiplatformExtension
 import org.jetbrains.kotlin.gradle.internal.properties.nativeProperties
 import org.jetbrains.kotlin.gradle.plugin.KotlinPluginLifecycle
@@ -18,12 +19,29 @@ internal val NativeToolchainProjectSetupAction = KotlinProjectSetupCoroutine {
     val kotlinTargets = project.multiplatformExtension.awaitTargets()
     if (!project.nativeProperties.isToolchainEnabled.get()) return@KotlinProjectSetupCoroutine
     KotlinPluginLifecycle.Stage.AfterFinaliseCompilations.await()
+
+    // register kotlin native bundle configuration resolution
+    // when it is necessary i.e. there are native compilations that can be invoked on the current host
     if (kotlinTargets.flatMap { target -> target.compilations }
             .filterIsInstance<AbstractKotlinNativeCompilation>()
             .any { it.crossCompilationOnCurrentHostSupported.getOrThrow() }
     ) {
-        addKotlinNativeBundleConfiguration(project)
-        KotlinNativeBundleArtifactFormat.setupAttributesMatchingStrategy(project.dependencies.attributesSchema)
-        KotlinNativeBundleArtifactFormat.setupTransform(project)
+        project.configureKotlinNativeBundleConfigurationResolution()
     }
+}
+
+internal fun Project.configureKotlinNativeBundleConfigurationResolution() {
+    /** this method can be called from multiple sources:
+     * * [NativeToolchainProjectSetupAction]
+     * * [org.jetbrains.kotlin.gradle.targets.native.internal.configureRootGradleProjectForKotlinCommonizer]
+     *
+     * Thus, it should be idempotent
+     * */
+    val idempotencyKey = "org.jetbrains.kotlin.configureKotlinNativeBundleConfigurationResolution"
+    if (extensions.extraProperties.has(idempotencyKey)) return
+    extensions.extraProperties[idempotencyKey] = true
+
+    addKotlinNativeBundleConfiguration(this)
+    KotlinNativeBundleArtifactFormat.setupAttributesMatchingStrategy(dependencies.attributesSchema)
+    KotlinNativeBundleArtifactFormat.setupTransform(this)
 }

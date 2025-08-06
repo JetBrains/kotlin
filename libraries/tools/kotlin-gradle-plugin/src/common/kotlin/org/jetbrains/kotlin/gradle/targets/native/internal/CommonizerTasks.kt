@@ -27,10 +27,9 @@ import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPro
 import org.jetbrains.kotlin.gradle.plugin.await
 import org.jetbrains.kotlin.gradle.plugin.ide.Idea222Api
 import org.jetbrains.kotlin.gradle.plugin.ide.ideaImportDependsOn
-import org.jetbrains.kotlin.gradle.targets.native.toolchain.KotlinNativeBundleArtifactFormat
-import org.jetbrains.kotlin.gradle.targets.native.toolchain.KotlinNativeBundleArtifactFormat.addKotlinNativeBundleConfiguration
 import org.jetbrains.kotlin.gradle.targets.native.toolchain.KotlinNativeBundleBuildService
 import org.jetbrains.kotlin.gradle.targets.native.toolchain.KotlinNativeFromToolchainProvider
+import org.jetbrains.kotlin.gradle.targets.native.toolchain.configureKotlinNativeBundleConfigurationResolution
 import org.jetbrains.kotlin.gradle.utils.whenEvaluated
 import org.jetbrains.kotlin.gradle.tasks.dependsOn
 import org.jetbrains.kotlin.gradle.tasks.locateOrRegisterTask
@@ -150,6 +149,9 @@ private fun getCommonizedPlatformLibrariesFor(commonizerFile: File, target: Shar
 private fun File.listLibraryFiles(): List<File> = listFiles().orEmpty()
     .filter { it.isDirectory || it.extension == "klib" }
 
+/**
+ * When project isolation mode is enabled, we no longer can register commonizer on the root project.
+ */
 private val Project.addCommonizerTaskToProject
     get() = if (kotlinPropertiesProvider.kotlinKmpProjectIsolationEnabled) {
         this
@@ -157,34 +159,40 @@ private val Project.addCommonizerTaskToProject
         rootProject
     }
 
+private fun TaskProvider<NativeDistributionCommonizerTask>.configureRootGradleProjectForKotlinCommonizer(rootProject: Project) {
+    // It can happen that many sub-projects will try to configure the Root project via this method, so it should be idempotent
+    val idempotencyKey = "org.jetbrains.kotlin.configureRootGradleProjectForKotlinCommonizer"
+    if (rootProject.extensions.extraProperties.has(idempotencyKey)) return
+    rootProject.extensions.extraProperties[idempotencyKey] = true
+
+    KotlinNativeBundleBuildService.registerIfAbsent(rootProject)
+
+    if (rootProject.nativeProperties.isToolchainEnabled.get()) {
+        rootProject.configureKotlinNativeBundleConfigurationResolution()
+    }
+
+    /**
+     * https://github.com/gradle/gradle/issues/13252
+     * https://github.com/gradle/gradle/issues/20145
+     * https://youtrack.jetbrains.com/issue/KT-51583
+     */
+    if (rootProject.plugins.findPlugin("jvm-ecosystem") == null) {
+        rootProject.plugins.apply("jvm-ecosystem")
+    }
+    rootProject.commonizeTask.dependsOn(this)
+}
+
 internal val Project.commonizeNativeDistributionTask: TaskProvider<NativeDistributionCommonizerTask>?
     get() {
         if (!isAllowCommonizer()) return null
         val projectIsolationEnabled = kotlinPropertiesProvider.kotlinKmpProjectIsolationEnabled
         val addCommonizerTaskToProject = addCommonizerTaskToProject
 
-        val projectForAddingKotlinNativeBundleResolvableConfiguration =
-            if (projectIsolationEnabled) this else rootProject
-        if (projectForAddingKotlinNativeBundleResolvableConfiguration.nativeProperties.isToolchainEnabled.get()) {
-            KotlinNativeBundleArtifactFormat.setupAttributesMatchingStrategy(projectForAddingKotlinNativeBundleResolvableConfiguration.dependencies.attributesSchema)
-            KotlinNativeBundleArtifactFormat.setupTransform(projectForAddingKotlinNativeBundleResolvableConfiguration)
-            addKotlinNativeBundleConfiguration(projectForAddingKotlinNativeBundleResolvableConfiguration)
-        }
-        KotlinNativeBundleBuildService.registerIfAbsent(projectForAddingKotlinNativeBundleResolvableConfiguration)
-
         return addCommonizerTaskToProject.locateOrRegisterTask(
             "commonizeNativeDistribution",
             invokeWhenRegistered = {
                 if (!projectIsolationEnabled) {
-                    /**
-                     * https://github.com/gradle/gradle/issues/13252
-                     * https://github.com/gradle/gradle/issues/20145
-                     * https://youtrack.jetbrains.com/issue/KT-51583
-                     */
-                    if (rootProject.plugins.findPlugin("jvm-ecosystem") == null) {
-                        rootProject.plugins.apply("jvm-ecosystem")
-                    }
-                    rootProject.commonizeTask.dependsOn(this)
+                    configureRootGradleProjectForKotlinCommonizer(rootProject)
                 }
                 commonizeTask.dependsOn(this)
                 cleanNativeDistributionCommonizerTask
