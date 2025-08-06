@@ -39,7 +39,7 @@ interface KotlinClassifierStub {
 }
 
 interface KotlinTypeAliasStub : KotlinClassifierStub, KotlinStubWithFqName<KtTypeAlias> {
-    fun isTopLevel(): Boolean
+    val isTopLevel: Boolean
 }
 
 interface KotlinClassOrObjectStub<T : KtClassOrObject> : KotlinClassifierStub, KotlinStubWithFqName<T> {

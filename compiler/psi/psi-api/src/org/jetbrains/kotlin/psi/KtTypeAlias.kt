@@ -22,7 +22,7 @@ class KtTypeAlias : KtTypeParameterListOwnerStub<KotlinTypeAliasStub>, KtNamedDe
     override fun <R, D> accept(visitor: KtVisitor<R, D>, data: D): R =
         visitor.visitTypeAlias(this, data)
 
-    fun isTopLevel(): Boolean = greenStub?.isTopLevel() ?: isKtFile(parent)
+    fun isTopLevel(): Boolean = greenStub?.isTopLevel ?: isKtFile(parent)
 
     @IfNotParsed
     fun getTypeAliasKeyword(): PsiElement? =

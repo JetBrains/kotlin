@@ -31,7 +31,7 @@ class KtTypeAliasElementType(debugName: String) :
         dataStream.writeName(stub.name)
         dataStream.writeName(stub.fqName?.asString())
         StubUtils.serializeClassId(dataStream, stub.classId)
-        dataStream.writeBoolean(stub.isTopLevel())
+        dataStream.writeBoolean(stub.isTopLevel)
     }
 
     override fun deserialize(dataStream: StubInputStream, parentStub: StubElement<*>?): KotlinTypeAliasStubImpl {
