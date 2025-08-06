@@ -2053,7 +2053,7 @@ org.jetbrains.kotlin.psi.stubs.KotlinTypeProjectionStub
 org.jetbrains.kotlin.psi.stubs.KotlinTypeProjectionStub.getProjectionKind()
 org.jetbrains.kotlin.psi.stubs.KotlinUserTypeStub
 org.jetbrains.kotlin.psi.stubs.KotlinValueArgumentStub
-org.jetbrains.kotlin.psi.stubs.KotlinValueArgumentStub.isSpread()
+org.jetbrains.kotlin.psi.stubs.KotlinValueArgumentStub.isSpread
 org.jetbrains.kotlin.psi.stubs.StubUtils
 org.jetbrains.kotlin.psi.stubs.StubUtils.createNestedClassId(StubElement<*>, KtClassLikeDeclaration)
 org.jetbrains.kotlin.psi.stubs.StubUtils.deserializeClassId(StubInputStream)
