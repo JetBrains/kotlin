@@ -40,7 +40,6 @@ import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.expressions.*
 import org.jetbrains.kotlin.ir.expressions.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
-import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.isUnit
@@ -49,7 +48,6 @@ import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
 import org.jetbrains.kotlin.load.kotlin.PackagePartClassUtils
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.isJs
-import org.jetbrains.kotlin.platform.isWasm
 import org.jetbrains.kotlin.platform.jvm.isJvm
 
 private class CaptureCollector {
@@ -423,7 +421,9 @@ class ComposerLambdaMemoization(
         declarationContextStack.push(context)
         val oldFunctionContext = currentFunctionContext
         currentFunctionContext = context
+
         val result = super.visitFunction(declaration)
+
         currentFunctionContext = oldFunctionContext
         declarationContextStack.pop()
         return result
@@ -435,7 +435,12 @@ class ComposerLambdaMemoization(
             declarationContextStack.recordLocalDeclaration(context)
         }
         declarationContextStack.push(context)
+        val oldFunctionContext = currentFunctionContext
+        currentFunctionContext = null
+
         val result = super.visitClass(declaration)
+
+        currentFunctionContext = oldFunctionContext
         declarationContextStack.pop()
         return result
     }

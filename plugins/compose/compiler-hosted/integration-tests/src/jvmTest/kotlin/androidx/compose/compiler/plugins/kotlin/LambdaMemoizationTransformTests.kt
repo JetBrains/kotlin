@@ -1161,4 +1161,36 @@ class LambdaMemoizationTransformTests(useFir: Boolean) : AbstractIrTransformTest
             }
         """
     )
+
+
+    // Regression test for b/436870733
+    @Test
+    fun lambdaInAnonymousClass() = verifyGoldenComposeIrTransform(
+        """
+        import androidx.compose.runtime.Composable
+
+        @Composable
+        fun test() {
+          val foo =
+            object {
+              val bar = run { {} }
+            }
+        }
+        """,
+    )
+
+    // Regression test for b/436870733
+    @Test
+    fun lambdaInNamedClass() = verifyGoldenComposeIrTransform(
+        """
+        import androidx.compose.runtime.Composable
+
+        @Composable
+        fun test() {
+            class Foo {
+              val bar = run { {} }
+            }
+        }
+        """,
+    )
 }

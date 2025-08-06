@@ -1,0 +1,42 @@
+//
+// Source
+// ------------------------------------------
+
+import androidx.compose.runtime.Composable
+
+@Composable
+fun test() {
+    class Foo {
+      val bar = run { {} }
+    }
+}
+
+//
+// Transformed IR
+// ------------------------------------------
+
+@Composable
+@FunctionKeyMeta(key = 956630616, startOffset = 81, endOffset = 176)
+fun test(%composer: Composer?, %changed: Int) {
+  %composer = %composer.startRestartGroup(<>)
+  sourceInformation(%composer, "C(test):Test.kt")
+  if (%composer.shouldExecute(%changed != 0, %changed and 0b0001)) {
+    if (isTraceInProgress()) {
+      traceEventStart(<>, %changed, -1, <>)
+    }
+    class Foo {
+      val bar: Function0<Unit> = run {
+        {
+        }
+      }
+    }
+    if (isTraceInProgress()) {
+      traceEventEnd()
+    }
+  } else {
+    %composer.skipToGroupEnd()
+  }
+  %composer.endRestartGroup()?.updateScope { %composer: Composer?, %force: Int ->
+    test(%composer, updateChangedFlags(%changed or 0b0001))
+  }
+}
