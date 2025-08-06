@@ -64,7 +64,7 @@ interface KotlinObjectStub : KotlinClassOrObjectStub<KtObjectDeclaration> {
 }
 
 interface KotlinValueArgumentStub<T : KtValueArgument> : KotlinPlaceHolderStub<T> {
-    fun isSpread(): Boolean
+    val isSpread: Boolean
 }
 
 interface KotlinContractEffectStub : KotlinPlaceHolderStub<KtContractEffect> {}

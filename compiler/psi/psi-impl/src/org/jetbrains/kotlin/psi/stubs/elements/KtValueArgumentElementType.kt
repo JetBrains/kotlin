@@ -25,7 +25,7 @@ class KtValueArgumentElementType<T : KtValueArgument>(debugName: String, psiClas
     }
 
     override fun serialize(stub: KotlinValueArgumentStubImpl<T>, dataStream: StubOutputStream) {
-        dataStream.writeBoolean(stub.isSpread())
+        dataStream.writeBoolean(stub.isSpread)
     }
 
     override fun deserialize(dataStream: StubInputStream, parentStub: StubElement<PsiElement>?): KotlinValueArgumentStubImpl<T> {
