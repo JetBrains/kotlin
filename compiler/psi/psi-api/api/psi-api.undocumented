@@ -2008,7 +2008,6 @@ org.jetbrains.kotlin.psi.stubs.KotlinFunctionStub
 org.jetbrains.kotlin.psi.stubs.KotlinFunctionStub.hasTypeParameterListBeforeFunctionName
 org.jetbrains.kotlin.psi.stubs.KotlinFunctionTypeStub
 org.jetbrains.kotlin.psi.stubs.KotlinImportAliasStub
-org.jetbrains.kotlin.psi.stubs.KotlinImportAliasStub.getName()
 org.jetbrains.kotlin.psi.stubs.KotlinImportDirectiveStub
 org.jetbrains.kotlin.psi.stubs.KotlinImportDirectiveStub.getImportedFqName()
 org.jetbrains.kotlin.psi.stubs.KotlinImportDirectiveStub.isAllUnder()
