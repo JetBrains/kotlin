@@ -20,6 +20,7 @@ import org.jetbrains.kotlin.fir.FirModuleData
 import org.jetbrains.kotlin.fir.FirSession
 import org.jetbrains.kotlin.fir.analysis.checkers.MppCheckerKind
 import org.jetbrains.kotlin.fir.backend.*
+import org.jetbrains.kotlin.fir.backend.Fir2IrCommonMemberStorage.DataValueClassGeneratedMembersInfo
 import org.jetbrains.kotlin.fir.backend.generators.Fir2IrDataClassGeneratedMemberBodyGenerator
 import org.jetbrains.kotlin.fir.backend.utils.generatedBuiltinsDeclarationsFileName
 import org.jetbrains.kotlin.fir.declarations.FirFile
@@ -123,6 +124,7 @@ private class Fir2IrPipeline(
         val dependentIrFragments: List<IrModuleFragmentImpl>,
         val componentsStoragePerSourceSession: Map<FirSession, Fir2IrComponentsStorage>,
         val commonMemberStorage: Fir2IrCommonMemberStorage,
+        val generatedDataValueClassSyntheticFunctions: Map<IrClass, DataValueClassGeneratedMembersInfo>,
         val irBuiltIns: IrBuiltIns,
         val symbolTable: SymbolTable,
         val irTypeSystemContext: IrTypeSystemContext,
@@ -150,6 +152,13 @@ private class Fir2IrPipeline(
         val fakeOverrideResolver = SpecialFakeOverrideSymbolsResolver()
 
         val componentsStorages = mutableMapOf<FirSession, Fir2IrComponentsStorage>()
+
+        /**
+         * Contains information about synthetic methods generated for data and value classes
+         * It will be used to generate bodies of those methods after fir2ir conversion is over
+         */
+        val generatedDataValueClassSyntheticFunctions = mutableMapOf<IrClass, DataValueClassGeneratedMembersInfo>()
+
         val fragments = outputs.map { output ->
             val componentsStorage = Fir2IrComponentsStorage(
                 output.session,
@@ -159,6 +168,7 @@ private class Fir2IrPipeline(
                 fir2IrConfiguration,
                 visibilityConverter,
                 commonMemberStorage,
+                generatedDataValueClassSyntheticFunctions,
                 irMangler,
                 kotlinBuiltIns,
                 specialAnnotationsProvider,
@@ -188,6 +198,7 @@ private class Fir2IrPipeline(
             dependentIrFragments,
             componentsStorages,
             commonMemberStorage,
+            generatedDataValueClassSyntheticFunctions,
             irBuiltIns,
             symbolTable,
             irTypeSystemContext,
@@ -288,10 +299,7 @@ private class Fir2IrPipeline(
 
     private fun Fir2IrConversionResult.generateSyntheticBodiesOfDataValueMembers() {
         Fir2IrDataClassGeneratedMemberBodyGenerator(irBuiltIns)
-            .generateBodiesForClassesWithSyntheticDataClassMembers(
-                commonMemberStorage.generatedDataValueClassSyntheticFunctions,
-                symbolTable
-            )
+            .generateBodiesForClassesWithSyntheticDataClassMembers(generatedDataValueClassSyntheticFunctions, symbolTable)
     }
 
     private fun Fir2IrConversionResult.createFakeOverrideBuilder(

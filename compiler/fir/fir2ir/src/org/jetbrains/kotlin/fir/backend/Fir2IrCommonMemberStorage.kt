@@ -71,12 +71,6 @@ class Fir2IrCommonMemberStorage {
     val delegatedClassesInfo: MutableMap<IrClassSymbol, MutableMap<IrClassSymbol, IrFieldSymbol>> = mutableMapOf()
     val firClassesWithInheritanceByDelegation: MutableSet<FirClass> = mutableSetOf()
 
-    /**
-     * Contains information about synthetic methods generated for data and value classes
-     * It will be used to generate bodies of those methods after fir2ir conversion is over
-     */
-    val generatedDataValueClassSyntheticFunctions: MutableMap<IrClass, DataValueClassGeneratedMembersInfo> = mutableMapOf()
-
     // Should be updated respectively when adding new properties
     fun cloneFilteringSymbols(filterOutSymbols: Set<FirBasedSymbol<*>>): Fir2IrCommonMemberStorage {
         val original = this
@@ -103,7 +97,6 @@ class Fir2IrCommonMemberStorage {
             firClassesWithInheritanceByDelegation.addAll(original.firClassesWithInheritanceByDelegation.filter {
                 !filterOutSymbols.contains(it.symbol)
             })
-            generatedDataValueClassSyntheticFunctions.putAll(original.generatedDataValueClassSyntheticFunctions)
         }
     }
 
