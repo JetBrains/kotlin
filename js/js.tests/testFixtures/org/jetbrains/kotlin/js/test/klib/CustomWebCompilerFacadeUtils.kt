@@ -41,7 +41,7 @@ internal fun TestModule.customWebCompilerSettings(testServices: TestServices): C
     if (isWasmModule(testServices)) customWasmJsCompilerSettings else customJsCompilerSettings
 
 /**
- * Note: To be used only internally in [CustomWebCompilerFirstPhaseFacade].
+ * Note: To be used only internally in [CustomWebCompilerFirstPhaseFacade] and [CustomJsCompilerSecondPhaseFacade].
  */
 internal fun TestModule.collectDependencies(testServices: TestServices): Pair<Set<String>, Set<String>> {
     val runtimeLibraries: List<File> = when (wasmTargetOrNull(testServices)) {
