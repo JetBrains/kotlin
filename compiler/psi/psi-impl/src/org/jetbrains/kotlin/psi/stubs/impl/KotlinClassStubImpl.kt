@@ -19,7 +19,7 @@ class KotlinClassStubImpl(
     type: KtClassElementType,
     parent: StubElement<out PsiElement>?,
     private val qualifiedName: StringRef?,
-    private val classId: ClassId?,
+    override val classId: ClassId?,
     private val name: StringRef?,
     private val superNames: Array<StringRef>,
     private val isInterface: Boolean,
@@ -43,8 +43,6 @@ class KotlinClassStubImpl(
     override fun getName(): String? = StringRef.toString(name)
 
     override fun getSuperNames(): List<String> = superNames.map(StringRef::toString)
-
-    override fun getClassId(): ClassId? = classId
 
     override fun isTopLevel() = isTopLevel
 }

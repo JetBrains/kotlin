@@ -18,7 +18,7 @@ class KotlinObjectStubImpl(
     parent: StubElement<out PsiElement>?,
     private val name: StringRef?,
     override val fqName: FqName?,
-    private val classId: ClassId?,
+    override val classId: ClassId?,
     private val superNames: Array<StringRef>,
     private val isTopLevel: Boolean,
     private val isDefault: Boolean,
@@ -31,5 +31,4 @@ class KotlinObjectStubImpl(
     override fun isCompanion() = isDefault
     override fun isObjectLiteral() = isObjectLiteral
     override fun isLocal() = isLocal
-    override fun getClassId(): ClassId? = classId
 }

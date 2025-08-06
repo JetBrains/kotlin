@@ -1987,7 +1987,7 @@ org.jetbrains.kotlin.psi.stubs.KotlinClassStub
 org.jetbrains.kotlin.psi.stubs.KotlinClassStub.isEnumEntry()
 org.jetbrains.kotlin.psi.stubs.KotlinClassStub.isInterface()
 org.jetbrains.kotlin.psi.stubs.KotlinClassifierStub
-org.jetbrains.kotlin.psi.stubs.KotlinClassifierStub.getClassId()
+org.jetbrains.kotlin.psi.stubs.KotlinClassifierStub.classId
 org.jetbrains.kotlin.psi.stubs.KotlinCollectionLiteralExpressionStub
 org.jetbrains.kotlin.psi.stubs.KotlinConstantExpressionStub
 org.jetbrains.kotlin.psi.stubs.KotlinConstantExpressionStub.kind()
