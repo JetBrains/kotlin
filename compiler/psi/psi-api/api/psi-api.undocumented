@@ -1973,7 +1973,7 @@ org.jetbrains.kotlin.psi.stubs.KotlinAnnotationEntryStub.shortName
 org.jetbrains.kotlin.psi.stubs.KotlinAnnotationUseSiteTargetStub
 org.jetbrains.kotlin.psi.stubs.KotlinAnnotationUseSiteTargetStub.useSiteTarget
 org.jetbrains.kotlin.psi.stubs.KotlinBackingFieldStub
-org.jetbrains.kotlin.psi.stubs.KotlinBackingFieldStub.hasInitializer()
+org.jetbrains.kotlin.psi.stubs.KotlinBackingFieldStub.hasInitializer
 org.jetbrains.kotlin.psi.stubs.KotlinBlockStringTemplateEntryStub
 org.jetbrains.kotlin.psi.stubs.KotlinCallableStubBase
 org.jetbrains.kotlin.psi.stubs.KotlinCallableStubBase.isExtension()
