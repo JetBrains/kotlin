@@ -117,12 +117,7 @@ tasks.apiBuild {
 
 apiValidation {
     ignoredPackages.add("kotlin.metadata.internal")
-    nonPublicMarkers.addAll(
-        listOf(
-            "kotlin.metadata.internal.IgnoreInApiDump",
-            "kotlin.metadata.jvm.internal.IgnoreInApiDump"
-        )
-    )
+    nonPublicMarkers.add("kotlin.metadata.internal.IgnoreInApiDump")
 }
 
 tasks.dokkaHtml.configure {
