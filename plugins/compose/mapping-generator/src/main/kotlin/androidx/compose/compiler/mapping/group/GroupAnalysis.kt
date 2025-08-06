@@ -155,6 +155,16 @@ private fun parseGroupInfoFromTokens(
                     }
                 }
             }
+
+            is ThrowToken -> {
+                val nodeIndex = nodeStack.indexOfFirst { it.incompleteLabels.isNotEmpty() }
+                for (i in (nodeStack.size - 1) downTo nodeIndex + 1) {
+                    val node = nodeStack[i]
+                    nodeStack.removeAt(i)
+                    result += node.build()
+                }
+            }
+
             is ComposableLambdaToken -> {
                 val clsFqName = token.handle.owner.replace("/", ".")
                 val desc = if (token.isIndy) {
