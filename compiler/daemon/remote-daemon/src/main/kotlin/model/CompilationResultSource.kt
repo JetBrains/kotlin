@@ -18,3 +18,11 @@ fun CompilationResultSource.toGrpc(): CompilationResultSourceGrpc {
         CompilationResultSource.CACHE -> CompilationResultSourceGrpc.CACHE
     }
 }
+
+fun CompilationResultSourceGrpc.toDomain(): CompilationResultSource {
+    return when (this) {
+        CompilationResultSourceGrpc.COMPILER -> CompilationResultSource.COMPILER
+        CompilationResultSourceGrpc.CACHE -> CompilationResultSource.CACHE
+        CompilationResultSourceGrpc.UNRECOGNIZED -> CompilationResultSource.COMPILER // TODO double check
+    }
+}
