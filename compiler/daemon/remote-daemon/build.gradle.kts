@@ -50,6 +50,7 @@ dependencies {
     implementation("io.grpc:grpc-core:1.74.0")
     implementation("io.grpc:grpc-netty:1.74.0")
     implementation("com.google.protobuf:protobuf-kotlin:4.31.1")
+    implementation("com.google.protobuf:protobuf-java-util:4.31.1") // printing default values of messages
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.9.0")
 
     runtimeOnly(project(":kotlin-compiler-embeddable"))

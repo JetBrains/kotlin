@@ -5,6 +5,7 @@
 
 package server.interceptors
 
+import com.google.protobuf.MessageOrBuilder
 import io.grpc.ForwardingServerCall
 import io.grpc.ForwardingServerCallListener
 import io.grpc.Metadata
@@ -14,10 +15,15 @@ import io.grpc.ServerInterceptor
 import io.grpc.Status
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
+import com.google.protobuf.util.JsonFormat
+import org.jetbrains.kotlin.server.CompileResponseGrpc
 
 class LoggingInterceptor : ServerInterceptor {
 
     private val formatter = DateTimeFormatter.ofPattern("HH:mm:ss")
+    // grpc does not send default values, therefore they are not printed,
+    // we use this printer that prints all fields of a message
+    private val printer = JsonFormat.printer().alwaysPrintFieldsWithNoPresence()
 
     fun debug(text: String){
         println("[${LocalDateTime.now().format(formatter)}] SERVER INTERCEPTOR: $text")
@@ -34,7 +40,7 @@ class LoggingInterceptor : ServerInterceptor {
         // SERVER ---> CLIENT
         val wrappedCall = object : ForwardingServerCall.SimpleForwardingServerCall<ReqT?, RespT?>(call) {
             override fun sendMessage(message: RespT?) {
-                debug("sending message: $message")
+                debug("sending message: ${printer.print(message as MessageOrBuilder)}")
                 super.sendMessage(message)
             }
 

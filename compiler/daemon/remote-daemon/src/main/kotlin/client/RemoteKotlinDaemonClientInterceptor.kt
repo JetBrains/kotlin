@@ -4,6 +4,8 @@
 
 package client
 
+import com.google.protobuf.MessageOrBuilder
+import com.google.protobuf.util.JsonFormat
 import io.grpc.CallOptions
 import io.grpc.Channel
 import io.grpc.ClientCall
@@ -18,6 +20,9 @@ import java.time.format.DateTimeFormatter
 class RemoteClientInterceptor : ClientInterceptor {
 
     private val formatter = DateTimeFormatter.ofPattern("HH:mm:ss")
+    // grpc does not send default values therefore, they are not printed, we use
+    // this printer that prints all fields of a message
+    private val printer = JsonFormat.printer().alwaysPrintFieldsWithNoPresence()
 
     fun debug(text: String) {
         println("[${LocalDateTime.now().format(formatter)}] CLIENT INTERCEPTOR: $text")
@@ -33,7 +38,7 @@ class RemoteClientInterceptor : ClientInterceptor {
         // CLIENT ---> SERVER
         return object : ForwardingClientCall.SimpleForwardingClientCall<ReqT?, RespT?>(call) {
             override fun sendMessage(message: ReqT?) {
-                debug("sending message: $message")
+                debug("sending message: ${printer.print(message as MessageOrBuilder)}")
                 super.sendMessage(message)
             }
 
@@ -47,7 +52,7 @@ class RemoteClientInterceptor : ClientInterceptor {
                 super.cancel(message, cause)
             }
 
-            override fun start(responseListener: ClientCall.Listener<RespT?>?, headers: Metadata?) {
+            override fun start(responseListener: Listener<RespT?>?, headers: Metadata?) {
 
                 // SERVER ---> CLIENT
                 val wrappedListener = object : ForwardingClientCallListener.SimpleForwardingClientCallListener<RespT?>(responseListener) {
