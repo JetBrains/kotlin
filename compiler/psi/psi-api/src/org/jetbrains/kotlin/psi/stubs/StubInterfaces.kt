@@ -232,7 +232,7 @@ interface KotlinScriptStub : KotlinStubWithFqName<KtScript> {
 }
 
 interface KotlinContextReceiverStub : StubElement<KtContextReceiver> {
-    fun getLabel(): String?
+    val label: String?
 }
 
 interface KotlinStringInterpolationPrefixStub : StubElement<KtStringInterpolationPrefix> {
