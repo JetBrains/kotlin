@@ -203,8 +203,8 @@ enum class ConstantValueKind {
 }
 
 interface KotlinConstantExpressionStub : StubElement<KtConstantExpression> {
-    fun kind(): ConstantValueKind
-    fun value(): String
+    val kind: ConstantValueKind
+    val value: String
 }
 
 interface KotlinClassLiteralExpressionStub : StubElement<KtClassLiteralExpression>
