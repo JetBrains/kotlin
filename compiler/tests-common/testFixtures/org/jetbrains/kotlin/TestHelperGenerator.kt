@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin
 
-import org.jetbrains.kotlin.test.TargetBackend
-
 // Add the directive `// WITH_COROUTINES` to use these helpers in codegen tests (see TestFiles.java).
 fun createTextForCoroutineHelpers(checkStateMachine: Boolean, checkTailCallOptimization: Boolean): String {
     fun continuationBody(t: String, useResult: (String) -> String) =
@@ -133,11 +131,3 @@ fun createTextForCoroutineHelpers(checkStateMachine: Boolean, checkTailCallOptim
             |${if (checkTailCallOptimization) checkTailCallOptimizationString else ""}
         """.trimMargin()
 }
-
-// Add the directive `// WITH_HELPERS` to use these helpers in codegen tests (see CodegenTestCase.java).
-fun createTextForCodegenTestHelpers(backend: TargetBackend) =
-    """
-        |package helpers
-        |
-        |fun isIR() = ${backend.isIR}
-    """.trimMargin()

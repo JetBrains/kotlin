@@ -127,7 +127,6 @@
 /compiler/testData/codegen/composeLike/ @JetBrains/kotlin-jvm
 /compiler/testData/codegen/composeLikeBytecodeText/ @JetBrains/kotlin-jvm
 /compiler/testData/codegen/customScript/ @JetBrains/kotlin-frontend
-/compiler/testData/codegen/helpers/ @JetBrains/kotlin-jvm
 /compiler/testData/codegen/innerClassInfo/ @JetBrains/kotlin-jvm
 /compiler/testData/codegen/notNullAssertions/ @JetBrains/kotlin-jvm
 /compiler/testData/codegen/outerClassInfo/ @JetBrains/kotlin-jvm

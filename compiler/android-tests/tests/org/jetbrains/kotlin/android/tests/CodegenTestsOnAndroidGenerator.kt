@@ -38,7 +38,6 @@ import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigu
 import org.jetbrains.kotlin.test.services.configuration.JvmEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.impl.TemporaryDirectoryManagerImpl
 import org.jetbrains.kotlin.test.services.sourceProviders.AdditionalDiagnosticsSourceFilesProvider
-import org.jetbrains.kotlin.test.services.sourceProviders.CodegenHelpersSourceFilesProvider
 import org.jetbrains.kotlin.test.services.sourceProviders.CoroutineHelpersSourceFilesProvider
 import org.jetbrains.kotlin.test.util.KtTestUtil
 import org.jetbrains.kotlin.test.utils.TransformersFunctions.Android
@@ -407,7 +406,6 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
         useAdditionalSourceProviders(
             ::AdditionalDiagnosticsSourceFilesProvider,
             ::CoroutineHelpersSourceFilesProvider,
-            ::CodegenHelpersSourceFilesProvider,
         )
 
         assertions = JUnit5Assertions
@@ -417,6 +415,7 @@ class CodegenTestsOnAndroidGenerator private constructor(private val pathManager
         useAdditionalService<KotlinStandardLibrariesPathProvider> { StandardLibrariesPathProviderForKotlinProject }
         useSourcePreprocessor(*AbstractKotlinCompilerTest.defaultPreprocessors.toTypedArray())
         useDirectives(*AbstractKotlinCompilerTest.defaultDirectiveContainers.toTypedArray())
+        useDirectives(CodegenTestDirectives)
         class AndroidTransformingPreprocessor(testServices: TestServices) : SourceFilePreprocessor(testServices) {
             override fun process(file: TestFile, content: String): String {
                 val transformers = Android.forAll + (Android.forSpecificFile[file.originalFile]?.let { listOf(it) } ?: emptyList())

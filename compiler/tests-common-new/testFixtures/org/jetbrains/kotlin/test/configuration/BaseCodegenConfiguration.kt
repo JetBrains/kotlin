@@ -32,7 +32,6 @@ import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.services.AdditionalSourceProvider
 import org.jetbrains.kotlin.test.services.configuration.*
 import org.jetbrains.kotlin.test.services.sourceProviders.AdditionalDiagnosticsSourceFilesProvider
-import org.jetbrains.kotlin.test.services.sourceProviders.CodegenHelpersSourceFilesProvider
 import org.jetbrains.kotlin.test.services.sourceProviders.CoroutineHelpersSourceFilesProvider
 import org.jetbrains.kotlin.utils.bind
 
@@ -90,7 +89,6 @@ fun TestConfigurationBuilder.commonServicesConfigurationForCodegenAndDebugTest(t
 
     useAdditionalSourceProviders(
         ::AdditionalDiagnosticsSourceFilesProvider,
-        ::CodegenHelpersSourceFilesProvider,
         ::CoroutineHelpersSourceFilesProvider,
     )
 }

@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.codegen.getClassFiles
 import org.jetbrains.kotlin.codegen.getKotlinModuleFile
 import org.jetbrains.kotlin.test.backend.ir.ignoredByBackend
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
+import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.model.*
 import org.jetbrains.kotlin.test.services.JUnit5Assertions
 import org.jetbrains.kotlin.test.services.TestServices
@@ -32,6 +33,8 @@ class JvmAbiConsistencyHandler(testServices: TestServices) : AnalysisHandler<Bin
     override val artifactKind: TestArtifactKind<BinaryArtifacts.JvmFromK1AndK2>
         get() = ArtifactKinds.JvmFromK1AndK2
 
+    override val directiveContainers: List<DirectivesContainer>
+        get() = listOf(CodegenTestDirectives)
 
     private class ModuleReport(
         val missingInK1: Set<String>,

@@ -20,7 +20,6 @@ import org.jetbrains.kotlin.test.model.AfterAnalysisChecker
 import org.jetbrains.kotlin.test.services.configuration.CommonEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.configuration.JvmEnvironmentConfigurator
 import org.jetbrains.kotlin.test.services.sourceProviders.AdditionalDiagnosticsSourceFilesProvider
-import org.jetbrains.kotlin.test.services.sourceProviders.CodegenHelpersSourceFilesProvider
 import org.jetbrains.kotlin.test.services.sourceProviders.CoroutineHelpersSourceFilesProvider
 import java.io.File
 
@@ -46,7 +45,6 @@ abstract class AbstractLLBlackBoxTestBase : AbstractLLCompilerBasedTest() {
             useAdditionalSourceProviders(
                 ::AdditionalDiagnosticsSourceFilesProvider,
                 ::CoroutineHelpersSourceFilesProvider,
-                ::CodegenHelpersSourceFilesProvider,
             )
 
             firHandlersStep {

@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.test.runners.AbstractKotlinCompilerWithTargetBackend
 import org.jetbrains.kotlin.test.services.PhasedPipelineChecker
 import org.jetbrains.kotlin.test.services.TestPhase
 import org.jetbrains.kotlin.test.services.sourceProviders.AdditionalDiagnosticsSourceFilesProvider
-import org.jetbrains.kotlin.test.services.sourceProviders.CodegenHelpersSourceFilesProvider
 import org.jetbrains.kotlin.test.services.sourceProviders.CoroutineHelpersSourceFilesProvider
 import org.jetbrains.kotlin.utils.bind
 
@@ -83,9 +82,6 @@ abstract class AbstractNonJvmIrTextTest<FrontendOutput : ResultingArtifact.Front
             ::PhasedPipelineChecker.bind(TestPhase.BACKEND)
         )
         enableMetaInfoHandler()
-        useAdditionalSourceProviders(
-            ::CodegenHelpersSourceFilesProvider,
-        )
         facadeStep(converter)
         irHandlersStep {
             setupIrTextDumpHandlers()
