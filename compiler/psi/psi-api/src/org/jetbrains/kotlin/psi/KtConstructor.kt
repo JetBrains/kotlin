@@ -65,7 +65,7 @@ abstract class KtConstructor<T : KtConstructor<T>> : KtDeclarationStub<KotlinCon
     }
 
     override fun hasBody(): Boolean {
-        greenStub?.let { return it.hasBody() }
+        greenStub?.let { return it.hasBody }
         return bodyExpression != null
     }
 
@@ -103,7 +103,7 @@ abstract class KtConstructor<T : KtConstructor<T>> : KtDeclarationStub<KotlinCon
     override fun mayHaveContract(): Boolean {
         val stub = greenStub
         if (stub != null) {
-            return stub.mayHaveContract()
+            return stub.mayHaveContract
         }
 
         @OptIn(KtImplementationDetail::class)

@@ -56,10 +56,10 @@ public class KtFunctionElementType extends KtStubElementType<KotlinFunctionStubI
         dataStream.writeName(fqName != null ? fqName.asString() : null);
 
         dataStream.writeBoolean(stub.isExtension());
-        dataStream.writeBoolean(stub.hasNoExpressionBody());
-        dataStream.writeBoolean(stub.hasBody());
+        dataStream.writeBoolean(stub.getHasNoExpressionBody());
+        dataStream.writeBoolean(stub.getHasBody());
         dataStream.writeBoolean(stub.hasTypeParameterListBeforeFunctionName());
-        boolean haveContract = stub.mayHaveContract();
+        boolean haveContract = stub.getMayHaveContract();
         dataStream.writeBoolean(haveContract);
 
         if (haveContract) {

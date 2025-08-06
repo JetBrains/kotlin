@@ -4043,9 +4043,9 @@ public abstract interface class org/jetbrains/kotlin/psi/stubs/KotlinContractEff
 }
 
 public abstract interface class org/jetbrains/kotlin/psi/stubs/KotlinDeclarationWithBodyStub : com/intellij/psi/stubs/StubElement {
-	public abstract fun hasBody ()Z
-	public abstract fun hasNoExpressionBody ()Z
-	public abstract fun mayHaveContract ()Z
+	public abstract fun getHasBody ()Z
+	public abstract fun getHasNoExpressionBody ()Z
+	public abstract fun getMayHaveContract ()Z
 }
 
 public abstract interface class org/jetbrains/kotlin/psi/stubs/KotlinEnumEntrySuperclassReferenceExpressionStub : com/intellij/psi/stubs/StubElement {

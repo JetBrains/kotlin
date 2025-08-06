@@ -22,9 +22,9 @@ class KotlinPrimaryConstructorStubImpl(
     override fun getName(): String? = StringRef.toString(containingClassName)
     override fun isTopLevel(): Boolean = false
     override fun isExtension(): Boolean = false
-    override fun mayHaveContract(): Boolean = false
-    override fun hasNoExpressionBody(): Boolean = true
-    override fun hasBody(): Boolean = false
+    override val mayHaveContract: Boolean get() = false
+    override val hasNoExpressionBody: Boolean get() = true
+    override val hasBody: Boolean get() = false
     override fun isDelegatedCallToThis(): Boolean = false
     override fun isExplicitDelegationCall(): Boolean = false
 }
