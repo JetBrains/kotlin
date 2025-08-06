@@ -296,9 +296,7 @@ internal class WasmVarargExpressionLowering(
 }
 
 private fun IrBlockBuilder.irIntPlus(rhs: IrExpression, lhs: IrExpression, wasmContext: WasmBackendContext): IrExpression {
-    val plusOp = wasmContext.wasmSymbols.getBinaryOperator(
-        OperatorNameConventions.PLUS, context.irBuiltIns.intType, context.irBuiltIns.intType
-    ).owner
+    val plusOp = wasmContext.irBuiltIns.intPlusSymbol
 
     return irCall(plusOp).apply {
         dispatchReceiver = rhs

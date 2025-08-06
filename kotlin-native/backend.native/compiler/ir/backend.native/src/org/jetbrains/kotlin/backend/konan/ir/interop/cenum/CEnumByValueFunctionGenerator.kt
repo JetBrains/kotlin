@@ -67,7 +67,7 @@ internal class CEnumByValueFunctionGenerator(
                         irCall.dispatchReceiver = irGet(values)
                     }
                     val getElementFn = symbols.arrayGet.getValue(arrayClass)
-                    val plusFun = symbols.getBinaryOperator(OperatorNameConventions.PLUS, irBuiltIns.intType, irBuiltIns.intType)
+                    val plusFun = irBuiltIns.intPlusSymbol
                     val lessFunctionSymbol = irBuiltIns.lessFunByOperandType.getValue(irBuiltIns.intClass)
                     +irWhile().also { loop ->
                         loop.condition = irCall(lessFunctionSymbol, irBuiltIns.booleanType).also { irCall ->

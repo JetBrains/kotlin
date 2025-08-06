@@ -38,13 +38,19 @@ import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.symbols.impl.IrValueParameterSymbolImpl
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.types.classOrFail
+import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.types.isPrimitiveType
 import org.jetbrains.kotlin.ir.types.makeNullable
+import org.jetbrains.kotlin.ir.util.classId
 import org.jetbrains.kotlin.ir.util.defaultValueForType
+import org.jetbrains.kotlin.ir.util.functions
 import org.jetbrains.kotlin.ir.util.hasDefaultValue
+import org.jetbrains.kotlin.ir.util.hasShape
 import org.jetbrains.kotlin.ir.util.statements
 import org.jetbrains.kotlin.ir.visitors.IrElementTransformerVoid
 import org.jetbrains.kotlin.ir.visitors.transformChildrenVoid
+import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.EnvironmentConfigurator
@@ -266,8 +272,16 @@ private class ComposeLikeDefaultArgumentRewriter(
         return irGet(variable.type, variable.symbol)
     }
 
-    private fun IrType.binaryOperator(name: Name, paramType: IrType): IrFunctionSymbol =
-        context.irBuiltIns.getBinaryOperator(name, this, paramType)
+    private fun IrType.binaryOperator(name: Name, paramType: IrType): IrFunctionSymbol {
+        return context.referenceFunctions(CallableId(this.classOrFail.owner.classId!!, name))
+            .single {
+                it.owner.hasShape(
+                    dispatchReceiver = true,
+                    regularParameters = 1,
+                    parameterTypes = listOf(this, paramType)
+                )
+            }
+    }
 
     private fun irAnd(lhs: IrExpression, rhs: IrExpression): IrCallImpl {
         return irCall(
