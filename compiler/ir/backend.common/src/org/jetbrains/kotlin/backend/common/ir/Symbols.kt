@@ -20,8 +20,10 @@ import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.Name
 
+// Some symbols below are used in kotlin-native, so they can't be private
+@Suppress("MemberVisibilityCanBePrivate")
 @OptIn(InternalSymbolFinderAPI::class)
-open class BuiltinSymbolsBase(val irBuiltIns: IrBuiltIns) {
+abstract class Symbols(val irBuiltIns: IrBuiltIns) {
     protected val symbolFinder = irBuiltIns.symbolFinder
 
     private fun getClass(name: Name, vararg packageNameSegments: String = arrayOf("kotlin")): IrClassSymbol =
@@ -174,13 +176,6 @@ open class BuiltinSymbolsBase(val irBuiltIns: IrBuiltIns) {
 
         return functionSymbol == plusSymbol
     }
-}
-
-// Some symbols below are used in kotlin-native, so they can't be private
-@Suppress("MemberVisibilityCanBePrivate")
-abstract class Symbols(
-    irBuiltIns: IrBuiltIns,
-) : BuiltinSymbolsBase(irBuiltIns) {
 
     abstract val throwNullPointerException: IrSimpleFunctionSymbol
     abstract val throwTypeCastException: IrSimpleFunctionSymbol
