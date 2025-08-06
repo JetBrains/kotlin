@@ -58,7 +58,6 @@ class SerialInfoImplJvmIrGenerator(
     private val implementor = JvmAnnotationImplementationTransformer.AnnotationPropertyImplementor(
         context.irFactory,
         context.irBuiltIns,
-        context.symbols,
         javaLangClass,
         kClassJava.owner.getter!!.symbol,
         SERIALIZATION_PLUGIN_ORIGIN

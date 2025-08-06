@@ -84,7 +84,9 @@ class Fir2IrPluginContext(
     override val platform: TargetPlatform
         get() = c.session.moduleData.platform
 
-    override val symbols: BuiltinSymbolsBase = BuiltinSymbolsBase(irBuiltIns)
+    @Deprecated("This API is deprecated. Use `irBuiltIns` instead.", level = DeprecationLevel.ERROR)
+    override val symbols: BuiltinSymbolsBase
+        get() = error("`symbols` are deprecated")
 
     private val symbolProvider: FirSymbolProvider
         get() = c.session.symbolProvider

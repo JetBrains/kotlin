@@ -57,8 +57,10 @@ open class IrPluginContextImpl(
     )
     override val messageCollector: MessageCollector,
     diagnosticReporter: DiagnosticReporter = DiagnosticReporterFactory.createReporter(messageCollector),
-    override val symbols: BuiltinSymbolsBase = BuiltinSymbolsBase(irBuiltIns)
 ) : IrPluginContext {
+    @Deprecated("This API is deprecated. Use `irBuiltIns` instead.", level = DeprecationLevel.ERROR)
+    override val symbols: BuiltinSymbolsBase
+        get() = error("`symbols` are deprecated")
 
     override val afterK2: Boolean = false
 
