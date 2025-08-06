@@ -5,5 +5,5 @@ FILE[kind=File[packageFqName=<root>]]
       DOT_QUALIFIED_EXPRESSION
         REFERENCE_EXPRESSION[referencedName=some]
         REFERENCE_EXPRESSION[referencedName=test]
-  OBJECT_DECLARATION[classId=/StyleSheetOrigin, fqName=StyleSheetOrigin, isCompanion=false, isLocal=false, isObjectLiteral=false, isTopLevel=true, name=StyleSheetOrigin, superNames=[]]
+  OBJECT_DECLARATION[classId=/StyleSheetOrigin, fqName=StyleSheetOrigin, isLocal=false, isObjectLiteral=false, isTopLevel=true, name=StyleSheetOrigin, superNames=[]]
     CLASS_BODY

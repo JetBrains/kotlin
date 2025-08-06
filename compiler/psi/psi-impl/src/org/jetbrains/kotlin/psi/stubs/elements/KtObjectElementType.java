@@ -38,7 +38,7 @@ public class KtObjectElementType extends KtStubElementType<KotlinObjectStubImpl,
         ClassId classId = StubUtils.createNestedClassId(parentStub, psi);
         return new KotlinObjectStubImpl(
                 (StubElement<?>) parentStub, StringRef.fromString(name), fqName, classId, Utils.INSTANCE.wrapStrings(superNames),
-                psi.isTopLevel(), psi.isCompanion(), psi.isLocal(), psi.isObjectLiteral()
+                psi.isTopLevel(), psi.isLocal(), psi.isObjectLiteral()
         );
     }
 
@@ -52,7 +52,6 @@ public class KtObjectElementType extends KtStubElementType<KotlinObjectStubImpl,
         StubUtils.serializeClassId(dataStream, stub.getClassId());
 
         dataStream.writeBoolean(stub.isTopLevel());
-        dataStream.writeBoolean(stub.isCompanion());
         dataStream.writeBoolean(stub.isLocal());
         dataStream.writeBoolean(stub.isObjectLiteral());
 
@@ -74,7 +73,6 @@ public class KtObjectElementType extends KtStubElementType<KotlinObjectStubImpl,
         ClassId classId = StubUtils.deserializeClassId(dataStream);
 
         boolean isTopLevel = dataStream.readBoolean();
-        boolean isCompanion = dataStream.readBoolean();
         boolean isLocal = dataStream.readBoolean();
         boolean isObjectLiteral = dataStream.readBoolean();
 
@@ -85,7 +83,7 @@ public class KtObjectElementType extends KtStubElementType<KotlinObjectStubImpl,
         }
 
         return new KotlinObjectStubImpl(
-                (StubElement<?>) parentStub, name, fqName, classId, superNames, isTopLevel, isCompanion, isLocal, isObjectLiteral
+                (StubElement<?>) parentStub, name, fqName, classId, superNames, isTopLevel, isLocal, isObjectLiteral
         );
     }
 

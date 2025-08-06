@@ -8,7 +8,7 @@ FILE[kind=File[packageFqName=test]]
       MODIFIER_LIST[public]
       VALUE_PARAMETER_LIST
     CLASS_BODY
-      OBJECT_DECLARATION[classId=test/PrivateConstField.Companion, fqName=test.PrivateConstField.Companion, isCompanion=true, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
+      OBJECT_DECLARATION[classId=test/PrivateConstField.Companion, fqName=test.PrivateConstField.Companion, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
         MODIFIER_LIST[private companion]
         CLASS_BODY
           PROPERTY[fqName=test.PrivateConstField.Companion.CONST, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=CONST]

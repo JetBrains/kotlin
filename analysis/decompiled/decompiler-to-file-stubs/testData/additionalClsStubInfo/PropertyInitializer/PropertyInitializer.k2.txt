@@ -8,7 +8,7 @@ KotlinStub$CLASS[classId=test/PropertyInitializer, fqName=test.PropertyInitializ
     KotlinStub$MODIFIER_LIST[public]
     KotlinStub$VALUE_PARAMETER_LIST
   KotlinStub$CLASS_BODY
-    KotlinStub$OBJECT_DECLARATION[classId=test/PropertyInitializer.Companion, fqName=test.PropertyInitializer.Companion, isCompanion=true, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
+    KotlinStub$OBJECT_DECLARATION[classId=test/PropertyInitializer.Companion, fqName=test.PropertyInitializer.Companion, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
       KotlinStub$MODIFIER_LIST[public companion]
       KotlinStub$CLASS_BODY
         KotlinStub$PROPERTY[fqName=test.PropertyInitializer.Companion.b, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=b]

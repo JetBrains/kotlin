@@ -2018,7 +2018,6 @@ org.jetbrains.kotlin.psi.stubs.KotlinModifierListStub.hasModifier(KtModifierKeyw
 org.jetbrains.kotlin.psi.stubs.KotlinNameReferenceExpressionStub
 org.jetbrains.kotlin.psi.stubs.KotlinNameReferenceExpressionStub.getReferencedName()
 org.jetbrains.kotlin.psi.stubs.KotlinObjectStub
-org.jetbrains.kotlin.psi.stubs.KotlinObjectStub.isCompanion
 org.jetbrains.kotlin.psi.stubs.KotlinObjectStub.isObjectLiteral
 org.jetbrains.kotlin.psi.stubs.KotlinParameterStub
 org.jetbrains.kotlin.psi.stubs.KotlinParameterStub.hasDefaultValue()

@@ -10,7 +10,7 @@ FILE[kind=File[packageFqName=test.class_object]]
       MODIFIER_LIST[public]
       VALUE_PARAMETER_LIST
     CLASS_BODY
-      OBJECT_DECLARATION[classId=test/class_object/ClassObject.Companion, fqName=test.class_object.ClassObject.Companion, isCompanion=true, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
+      OBJECT_DECLARATION[classId=test/class_object/ClassObject.Companion, fqName=test.class_object.ClassObject.Companion, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
         MODIFIER_LIST[public companion]
         CLASS_BODY
           PROPERTY[fqName=test.class_object.ClassObject.Companion.j, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=j]
@@ -76,7 +76,7 @@ FILE[kind=File[packageFqName=test.class_object]]
           MODIFIER_LIST[public]
           VALUE_PARAMETER_LIST
         CLASS_BODY
-          OBJECT_DECLARATION[classId=test/class_object/ClassObject.B.Companion, fqName=test.class_object.ClassObject.B.Companion, isCompanion=true, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
+          OBJECT_DECLARATION[classId=test/class_object/ClassObject.B.Companion, fqName=test.class_object.ClassObject.B.Companion, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
             MODIFIER_LIST[public companion]
             CLASS_BODY
               CLASS[classId=test/class_object/ClassObject.B.Companion.C, fqName=test.class_object.ClassObject.B.Companion.C, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=C, superNames=[]]
@@ -85,7 +85,7 @@ FILE[kind=File[packageFqName=test.class_object]]
                   MODIFIER_LIST[public]
                   VALUE_PARAMETER_LIST
                 CLASS_BODY
-                  OBJECT_DECLARATION[classId=test/class_object/ClassObject.B.Companion.C.Companion, fqName=test.class_object.ClassObject.B.Companion.C.Companion, isCompanion=true, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
+                  OBJECT_DECLARATION[classId=test/class_object/ClassObject.B.Companion.C.Companion, fqName=test.class_object.ClassObject.B.Companion.C.Companion, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
                     MODIFIER_LIST[public companion]
                     CLASS_BODY
                       CLASS[classId=test/class_object/ClassObject.B.Companion.C.Companion.D, fqName=test.class_object.ClassObject.B.Companion.C.Companion.D, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=D, superNames=[]]
@@ -94,7 +94,7 @@ FILE[kind=File[packageFqName=test.class_object]]
                           MODIFIER_LIST[public]
                           VALUE_PARAMETER_LIST
                         CLASS_BODY
-                          OBJECT_DECLARATION[classId=test/class_object/ClassObject.B.Companion.C.Companion.D.Companion, fqName=test.class_object.ClassObject.B.Companion.C.Companion.D.Companion, isCompanion=true, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
+                          OBJECT_DECLARATION[classId=test/class_object/ClassObject.B.Companion.C.Companion.D.Companion, fqName=test.class_object.ClassObject.B.Companion.C.Companion.D.Companion, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
                             MODIFIER_LIST[public companion]
                             CLASS_BODY
                               PROPERTY[fqName=test.class_object.ClassObject.B.Companion.C.Companion.D.Companion.i, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=i]

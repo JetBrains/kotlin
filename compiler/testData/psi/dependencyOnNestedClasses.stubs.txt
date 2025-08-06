@@ -71,7 +71,7 @@ dependency.kt:
           MODIFIER_LIST[open]
           CLASS_BODY
             CLASS[classId=dependency/D.Nested.Nested, fqName=dependency.D.Nested.Nested, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=Nested, superNames=[]]
-        OBJECT_DECLARATION[classId=dependency/D.Companion, fqName=dependency.D.Companion, isCompanion=true, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
+        OBJECT_DECLARATION[classId=dependency/D.Companion, fqName=dependency.D.Companion, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
           MODIFIER_LIST[companion]
           CLASS_BODY
             CLASS[classId=dependency/D.Companion.NestedInClassObject, fqName=dependency.D.Companion.NestedInClassObject, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=false, name=NestedInClassObject, superNames=[]]
