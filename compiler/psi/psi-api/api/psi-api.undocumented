@@ -2015,7 +2015,7 @@ org.jetbrains.kotlin.psi.stubs.KotlinImportDirectiveStub.isValid
 org.jetbrains.kotlin.psi.stubs.KotlinModifierListStub
 org.jetbrains.kotlin.psi.stubs.KotlinModifierListStub.hasModifier(KtModifierKeywordToken)
 org.jetbrains.kotlin.psi.stubs.KotlinNameReferenceExpressionStub
-org.jetbrains.kotlin.psi.stubs.KotlinNameReferenceExpressionStub.getReferencedName()
+org.jetbrains.kotlin.psi.stubs.KotlinNameReferenceExpressionStub.referencedName
 org.jetbrains.kotlin.psi.stubs.KotlinObjectStub
 org.jetbrains.kotlin.psi.stubs.KotlinObjectStub.isObjectLiteral
 org.jetbrains.kotlin.psi.stubs.KotlinParameterStub

@@ -588,7 +588,7 @@ private fun <T : PsiElement> cloneStubRecursively(
 
         is KotlinNameReferenceExpressionStubImpl -> KotlinNameReferenceExpressionStubImpl(
             copyParentStub,
-            StringRef.fromString(originalStub.getReferencedName()),
+            StringRef.fromString(originalStub.referencedName),
             originalStub.isClassRef,
         )
 
