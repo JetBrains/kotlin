@@ -92,3 +92,16 @@ internal inline fun durationUnitByShortNameInPlace(str: String, start: Int, end:
         else -> if (throwException) throw IllegalArgumentException("Unknown duration unit short name") else null
     }
 }
+
+@Suppress("REDUNDANT_ELSE_IN_WHEN")
+internal val DurationUnit.multiplier: Double
+    get() = when (this) {
+        DurationUnit.NANOSECONDS -> 0.000000000000001
+        DurationUnit.MICROSECONDS -> 0.000000000001
+        DurationUnit.MILLISECONDS -> 0.000000001
+        DurationUnit.SECONDS -> 0.000001
+        DurationUnit.MINUTES -> 0.00006
+        DurationUnit.HOURS -> 0.0036
+        DurationUnit.DAYS -> 0.0864
+        else -> error("Unknown unit: $this")
+    }

@@ -1144,31 +1144,24 @@ private inline fun String.parseLong(startIndex: Int): NumericParseData {
 }
 
 @kotlin.internal.InlineOnly
-private inline fun String.parseNanos(startIndex: Int): NumericParseData {
+private inline fun String.parseFraction(startIndex: Int): NumericParseData {
     var result = 0L
     var index = startIndex
-    var fractionMultiplier = 100_000_000L
-    var digitCount = 0
-    while (index < length && digitCount < 9) {
+    var multiplier = 100_000_000_000_000L
+    while (index < length && multiplier > 0) {
         val ch = this[index]
         if (ch !in '0'..'9') break
         val digit = ch - '0'
-        result += digit * fractionMultiplier
-        fractionMultiplier /= 10
+        result += digit * multiplier
+        multiplier /= 10
         index++
-        digitCount++
-    }
-    var roundUp = false
-    if (index < length) {
-        val ch = this[index]
-        if (ch in '0'..'9') {
-            roundUp = (ch - '0') >= 5
-            index++
-        }
     }
     while (index < length && this[index] in '0'..'9') index++
-    return NumericParseData(result + if (roundUp) 1 else 0, index)
+    return NumericParseData(result, index)
 }
+
+@kotlin.internal.InlineOnly
+private inline fun Long.toNanos(unit: DurationUnit): Long = (this * unit.multiplier).roundToLong()
 
 @kotlin.internal.InlineOnly
 private inline fun parseIsoStringFormat(
@@ -1205,10 +1198,10 @@ private inline fun parseIsoStringFormat(
                     .onInvalid { return throwExceptionOrInvalid(throwException) }
                 index++
                 val prevIndex = index
-                val (nanosValue, nextIndex) = value.parseNanos(index)
+                val (fractionValue, nextIndex) = value.parseFraction(index)
                 index = nextIndex
                 if (index == prevIndex || index == length || value[index] != 'S') return throwExceptionOrInvalid(throwException)
-                totalNanos = nanosValue * sign
+                totalNanos = sign * fractionValue.toNanos(DurationUnit.SECONDS)
                 prevUnit = 'S'
             } else {
                 if (unit <= prevUnit) return throwExceptionOrInvalid(throwException)
