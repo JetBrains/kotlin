@@ -32,6 +32,7 @@ abstract class MutableTable<Element, Table, TableBuilder>
     operator fun get(type: Element): Int =
         interner.intern(TableElementWrapper(type))
 
+    @Suppress("UNCHECKED_CAST")
     fun serialize(): Table? =
         if (interner.isEmpty) null
         else createTableBuilder().apply {
