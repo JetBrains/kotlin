@@ -15,12 +15,21 @@ import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.ir.declarations.IrAnonymousInitializer
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFile
+import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.declarations.IrProperty
 
 @PhaseDescription(name = "JvmValidateIrBeforeLowering")
-internal class JvmIrValidationBeforeLoweringPhase(
+internal class JvmK1IrValidationBeforeLoweringPhase(
     context: JvmBackendContext,
-) : IrValidationBeforeLoweringPhase<JvmBackendContext>(context)
+) : IrValidationBeforeLoweringPhase<JvmBackendContext>(context) {
+    override fun lower(irModule: IrModuleFragment) {
+        if (context.config.useFir) {
+            // In K2, the validation is performed in FIR2IR, right before lowerings, so no need to repeat it here.
+            return
+        }
+        super.lower(irModule)
+    }
+}
 
 @PhaseDescription(name = "JvmValidateIrAfterLowering")
 internal class JvmIrValidationAfterLoweringPhase(

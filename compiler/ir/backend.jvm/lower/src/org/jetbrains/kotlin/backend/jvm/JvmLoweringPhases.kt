@@ -122,7 +122,7 @@ private val jvmFilePhases = createFilePhases<JvmBackendContext>(
 val jvmLoweringPhases = createModulePhases(
     ::ExternalPackageParentPatcherLowering,
     ::FragmentSharedVariablesLowering,
-    ::JvmIrValidationBeforeLoweringPhase,
+    ::JvmK1IrValidationBeforeLoweringPhase,
     ::ProcessOptionalAnnotations,
     ::JvmExpectDeclarationRemover,
     ::ConstEvaluationLowering,
