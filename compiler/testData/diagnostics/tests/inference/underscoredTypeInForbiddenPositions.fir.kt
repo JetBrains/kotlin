@@ -49,9 +49,9 @@ fun test() {
     val x2 = foo<Int, (Int) -> <!UNRESOLVED_REFERENCE!>_<!>> { <!UNRESOLVED_REFERENCE!>{ it }<!> }
     val x3 = foo<Int, ((<!UNRESOLVED_REFERENCE!>_<!>)) -> <!UNRESOLVED_REFERENCE!>_<!>> { <!CANNOT_INFER_VALUE_PARAMETER_TYPE("it")!>{ it }<!> }
     val x4 = <!CANNOT_INFER_PARAMETER_TYPE, CANNOT_INFER_PARAMETER_TYPE, FUNCTION_CALL_EXPECTED!>foo<!><!UNRESOLVED_REFERENCE!><<!>Int<!SYNTAX!>, _ -> Float><!> <!CANNOT_INFER_IT_PARAMETER_TYPE!>{ { <!UNRESOLVED_REFERENCE!>it<!> } }<!>
-    val x5 = foo<Int, Foo<(<!UNRESOLVED_REFERENCE!>_<!>) -> Float>> { <!ARGUMENT_TYPE_MISMATCH!>{ it }<!> }
-    val x6 = foo<Int, Foo<(<!UNRESOLVED_REFERENCE!>_<!>) -> <!UNRESOLVED_REFERENCE!>_<!>>> { <!ARGUMENT_TYPE_MISMATCH!>{ it }<!> }
-    val x7 = foo<Int, Foo<(Int) -> <!UNRESOLVED_REFERENCE!>_<!>>> { <!ARGUMENT_TYPE_MISMATCH!>{ it }<!> }
+    val x5 = foo<Int, Foo<(<!UNRESOLVED_REFERENCE!>_<!>) -> Float>> { <!RETURN_TYPE_MISMATCH!>{ it }<!> }
+    val x6 = foo<Int, Foo<(<!UNRESOLVED_REFERENCE!>_<!>) -> <!UNRESOLVED_REFERENCE!>_<!>>> { <!RETURN_TYPE_MISMATCH!>{ it }<!> }
+    val x7 = foo<Int, Foo<(Int) -> <!UNRESOLVED_REFERENCE!>_<!>>> { <!RETURN_TYPE_MISMATCH!>{ it }<!> }
 
     val z32: Pair<<!UNRESOLVED_REFERENCE!>_<!>, Float> = 1 to 1f
     val z34: Pair<((<!UNRESOLVED_REFERENCE!>_<!>)), Float> = 1 to 1f

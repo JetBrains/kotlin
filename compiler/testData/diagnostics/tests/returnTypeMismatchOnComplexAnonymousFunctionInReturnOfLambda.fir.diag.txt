@@ -1,6 +1,6 @@
 /returnTypeMismatchOnComplexAnonymousFunctionInReturnOfLambda.fir.kt:(331,454): error: Initializer type mismatch: expected 'String', actual 'Function0<String>'.
 
-/returnTypeMismatchOnComplexAnonymousFunctionInReturnOfLambda.fir.kt:(349,448): error: Argument type mismatch: actual type is 'Function0<String>', but 'String' was expected.
+/returnTypeMismatchOnComplexAnonymousFunctionInReturnOfLambda.fir.kt:(349,448): error: Return type mismatch: expected 'String', actual 'Function0<String>'.
 
 /returnTypeMismatchOnComplexAnonymousFunctionInReturnOfLambda.fir.kt:(349,448): error: Return type mismatch: expected 'String', actual 'Function0<String>'.
 
@@ -8,6 +8,6 @@
 
 /returnTypeMismatchOnComplexAnonymousFunctionInReturnOfLambda.fir.kt:(465,580): error: Assignment type mismatch: actual type is 'Function0<String>', but 'String' was expected.
 
-/returnTypeMismatchOnComplexAnonymousFunctionInReturnOfLambda.fir.kt:(483,574): error: Argument type mismatch: actual type is 'Function0<String>', but 'String' was expected.
+/returnTypeMismatchOnComplexAnonymousFunctionInReturnOfLambda.fir.kt:(483,574): error: Return type mismatch: expected 'String', actual 'Function0<String>'.
 
 /returnTypeMismatchOnComplexAnonymousFunctionInReturnOfLambda.fir.kt:(483,574): error: Return type mismatch: expected 'String', actual 'Function0<String>'.

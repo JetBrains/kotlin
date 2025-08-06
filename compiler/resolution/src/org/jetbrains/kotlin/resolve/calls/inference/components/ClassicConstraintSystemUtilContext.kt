@@ -54,10 +54,6 @@ class ClassicConstraintSystemUtilContext(
         return ArgumentConstraintPositionImpl(argument.atom as KotlinCallArgument)
     }
 
-    override fun createLambdaArgumentConstraintPositionIfPossible(argument: PostponedAtomWithRevisableExpectedType): ConstraintPosition {
-        return createArgumentConstraintPosition(argument)
-    }
-
     override fun <T> createFixVariableConstraintPosition(variable: TypeVariableMarker, atom: T): FixVariableConstraintPosition<T> {
         require(atom is ResolvedAtom)
         @Suppress("UNCHECKED_CAST")

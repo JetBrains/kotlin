@@ -25,6 +25,7 @@ import org.jetbrains.kotlin.fir.resolve.inference.csBuilder
 import org.jetbrains.kotlin.fir.resolve.inference.extractLambdaInfoFromFunctionType
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeArgumentConstraintPosition
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeExplicitTypeParameterConstraintPosition
+import org.jetbrains.kotlin.fir.resolve.inference.model.ConeLambdaArgumentConstraintPosition
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeReceiverConstraintPosition
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.types.*
@@ -101,11 +102,13 @@ internal object ArgumentCheckingProcessor {
         atom: ConeResolutionAtomWithPostponedChild,
         expectedType: ConeKotlinType?,
         context: ResolutionContext,
-        returnTypeVariable: ConeTypeVariableForLambdaReturnType?
+        returnTypeVariable: ConeTypeVariableForLambdaReturnType?,
+        anonymousFunctionIfReturnExpression: FirAnonymousFunction? = null,
     ): ConeResolvedLambdaAtom {
         val argumentContext = ArgumentContext(
             candidate, csBuilder, expectedType, sink = null,
-            context, isReceiver = false, isDispatch = false
+            context, isReceiver = false, isDispatch = false,
+            anonymousFunctionIfReturnExpression,
         )
         return argumentContext.createResolvedLambdaAtom(atom, duringCompletion = true, returnTypeVariable)
     }
@@ -175,6 +178,13 @@ internal object ArgumentCheckingProcessor {
         resolvePlainArgumentType(atom, argumentType, useNullableArgumentType)
     }
 
+    private fun ArgumentContext.createArgumentConstraintPosition(atom: ConeResolutionAtom): ConstraintPosition {
+        return when (val containingLambda = anonymousFunctionIfReturnExpression) {
+            null -> ConeArgumentConstraintPosition(atom.expression)
+            else -> ConeLambdaArgumentConstraintPosition(containingLambda, atom.expression)
+        }
+    }
+
     private fun ArgumentContext.resolvePlainArgumentType(
         atom: ConeResolutionAtom,
         argumentType: ConeKotlinType,
@@ -184,7 +194,7 @@ internal object ArgumentCheckingProcessor {
         val expression = atom.expression
         val position = when {
             isReceiver -> ConeReceiverConstraintPosition(expression, sourceForReceiver)
-            else -> ConeArgumentConstraintPosition(expression)
+            else -> createArgumentConstraintPosition(atom)
         }
 
         val capturedType = prepareCapturedType(argumentType, context.session)
@@ -418,7 +428,7 @@ internal object ArgumentCheckingProcessor {
                 contextParameters = resolvedArgument.contextParameterTypes,
             )
 
-            val position = ConeArgumentConstraintPosition(resolvedArgument.anonymousFunction)
+            val position = createArgumentConstraintPosition(resolvedArgument)
             if (duringCompletion) {
                 csBuilder.addSubtypeConstraint(lambdaType, expectedType, position)
             } else {
