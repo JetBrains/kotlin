@@ -196,14 +196,6 @@ abstract class IrBuiltIns {
 
     abstract fun getKPropertyClass(mutable: Boolean, n: Int): IrClassSymbol
 
-    abstract fun getNonBuiltInFunctionsByExtensionReceiver(
-        name: Name, vararg packageNameSegments: String
-    ): Map<IrClassifierSymbol, IrSimpleFunctionSymbol>
-
-    abstract fun getNonBuiltinFunctionsByReturnType(
-        name: Name, vararg packageNameSegments: String
-    ): Map<IrClassifierSymbol, IrSimpleFunctionSymbol>
-
     abstract fun getBinaryOperator(name: Name, lhsType: IrType, rhsType: IrType): IrSimpleFunctionSymbol
 
     abstract val operatorsPackageFragment: IrExternalPackageFragment

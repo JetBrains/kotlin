@@ -2885,20 +2885,6 @@ private object TestIrBuiltins : IrBuiltIns() {
         missingBuiltIn()
     }
 
-    override fun getNonBuiltInFunctionsByExtensionReceiver(
-        name: Name,
-        vararg packageNameSegments: String,
-    ): Map<IrClassifierSymbol, IrSimpleFunctionSymbol> {
-        missingBuiltIn()
-    }
-
-    override fun getNonBuiltinFunctionsByReturnType(
-        name: Name,
-        vararg packageNameSegments: String,
-    ): Map<IrClassifierSymbol, IrSimpleFunctionSymbol> {
-        missingBuiltIn()
-    }
-
     override fun getBinaryOperator(name: Name, lhsType: IrType, rhsType: IrType): IrSimpleFunctionSymbol {
         missingBuiltIn()
     }
