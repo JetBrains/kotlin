@@ -32,6 +32,7 @@ internal class NativeInlineFunctionResolver(
     override fun getFunctionDeclaration(symbol: IrFunctionSymbol): IrFunction? {
         val function = super.getFunctionDeclaration(symbol) ?: return null
 
+        if (function.isExternal && function.body == null) return null
         if (function.body != null) {
             // TODO this `if` check can be dropped after KT-72441
             if (function.wasLowered != true) {

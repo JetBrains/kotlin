@@ -56,7 +56,6 @@ abstract class InlineFunctionResolverReplacingCoroutineIntrinsics<Ctx : Lowering
             else -> realOwner
         }
         if (inlineMode == InlineMode.PRIVATE_INLINE_FUNCTIONS && !result.isEffectivelyPrivate()) return null
-        if (!context.allowExternalInlining && result.isExternal) return null
         return result
     }
 }
