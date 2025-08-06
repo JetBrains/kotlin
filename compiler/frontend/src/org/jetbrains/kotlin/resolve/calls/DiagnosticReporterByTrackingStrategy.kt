@@ -517,7 +517,7 @@ class DiagnosticReporterByTrackingStrategy(
         val report = if (isWarning) trace::reportDiagnosticOnce else trace::report
 
         when (position) {
-            is ArgumentConstraintPosition<*> -> {
+            is RegularArgumentConstraintPosition<*> -> {
                 reportArgumentConstraintErrorByPosition(
                     error, position.argument as KotlinCallArgument,
                     isWarning, typeMismatchDiagnostic,
