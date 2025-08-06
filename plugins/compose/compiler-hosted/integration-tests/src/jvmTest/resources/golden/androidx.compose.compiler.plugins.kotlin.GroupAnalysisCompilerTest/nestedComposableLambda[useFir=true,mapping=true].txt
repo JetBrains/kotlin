@@ -16,14 +16,16 @@
 // ------------------------------------------
 
 ========= FunctionMeta: true, OptimizeGroups: true =========
-1:1:void TestKt.Test(java.lang.String,java.lang.String,androidx.compose.runtime.Composer,int):4:4 -> m$1007387836
-1:1:kotlin.Unit TestKt.Test$lambda$0(java.lang.String,java.lang.String,androidx.compose.runtime.Composer,int):6:6 -> m$1007659786
-1:1:kotlin.Unit TestKt.Test$lambda$0$0(java.lang.String,java.lang.String,androidx.compose.runtime.Composer,int):7:7 -> m$1464104060
-1:1:void ExtraKt.Text(java.lang.String,androidx.compose.runtime.Composer,int):4:4 -> m$-1960580374
-1:1:void ExtraKt.Content(kotlin.jvm.functions.Function2,androidx.compose.runtime.Composer,int):5:5 -> m$1826047962
+ComposeStackTrace -> $$compose:
+  1:1:void TestKt.Test(java.lang.String,java.lang.String,androidx.compose.runtime.Composer,int):4:4 -> m$1007387836
+  1:1:kotlin.Unit TestKt.Test$lambda$0(java.lang.String,java.lang.String,androidx.compose.runtime.Composer,int):6:6 -> m$1007659786
+  1:1:kotlin.Unit TestKt.Test$lambda$0$0(java.lang.String,java.lang.String,androidx.compose.runtime.Composer,int):7:7 -> m$1464104060
+  1:1:void ExtraKt.Text(java.lang.String,androidx.compose.runtime.Composer,int):4:4 -> m$-1960580374
+  1:1:void ExtraKt.Content(kotlin.jvm.functions.Function2,androidx.compose.runtime.Composer,int):5:5 -> m$1826047962
 ========= FunctionMeta: false, OptimizeGroups: true =========
-1:1:void TestKt.Test(java.lang.String,java.lang.String,androidx.compose.runtime.Composer,int):4:4 -> m$1007387836
-1:1:kotlin.Unit TestKt.Test$lambda$0(java.lang.String,java.lang.String,androidx.compose.runtime.Composer,int):6:6 -> m$1007659786
-1:1:kotlin.Unit TestKt.Test$lambda$0$0(java.lang.String,java.lang.String,androidx.compose.runtime.Composer,int):7:7 -> m$1464104060
-1:1:void ExtraKt.Text(java.lang.String,androidx.compose.runtime.Composer,int):4:4 -> m$-1960580374
-1:1:void ExtraKt.Content(kotlin.jvm.functions.Function2,androidx.compose.runtime.Composer,int):5:5 -> m$1826047962
+ComposeStackTrace -> $$compose:
+  1:1:void TestKt.Test(java.lang.String,java.lang.String,androidx.compose.runtime.Composer,int):4:4 -> m$1007387836
+  1:1:kotlin.Unit TestKt.Test$lambda$0(java.lang.String,java.lang.String,androidx.compose.runtime.Composer,int):6:6 -> m$1007659786
+  1:1:kotlin.Unit TestKt.Test$lambda$0$0(java.lang.String,java.lang.String,androidx.compose.runtime.Composer,int):7:7 -> m$1464104060
+  1:1:void ExtraKt.Text(java.lang.String,androidx.compose.runtime.Composer,int):4:4 -> m$-1960580374
+  1:1:void ExtraKt.Content(kotlin.jvm.functions.Function2,androidx.compose.runtime.Composer,int):5:5 -> m$1826047962
