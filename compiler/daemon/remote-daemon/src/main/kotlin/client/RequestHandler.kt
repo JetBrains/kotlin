@@ -39,12 +39,11 @@ class RequestHandler(private val fileChunkingStrategy: FileChunkingStrategy) {
         return CompileRequestGrpc.newBuilder().setMetadata(builder.build()).build()
     }
 
-    fun buildFileChunkStream(filePath: String): Flow<CompileRequestGrpc> {
+    fun buildFileChunkStream(file: File): Flow<CompileRequestGrpc> {
         return flow {
-            val file = File(filePath)
             fileChunkingStrategy.chunk(file).collect { chunk ->
                 val fileChunk = FileChunkGrpc.newBuilder()
-                    .setFilePath(filePath)
+                    .setFilePath(file.path)
                     .setContent(chunk.content.toByteString())
                     .setFileSize(file.length())
                     .setIsLast(chunk.isLast)

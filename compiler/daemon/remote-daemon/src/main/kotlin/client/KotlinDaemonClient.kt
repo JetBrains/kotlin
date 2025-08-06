@@ -12,17 +12,14 @@ import client.RequestHandler
 import common.CLIENT_COMPILED_DIR
 import common.OneFileOneChunkStrategy
 import common.buildAbsPath
-import common.toGrpc
 import io.grpc.ManagedChannel
 import io.grpc.ManagedChannelBuilder
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.consumeAsFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
-import model.DaemonJVMOptionsConfigurator
 import org.jetbrains.kotlin.daemon.common.CompilationOptions
 import org.jetbrains.kotlin.daemon.common.CompileService
 import org.jetbrains.kotlin.daemon.common.CompilerMode
@@ -80,8 +77,7 @@ class RemoteDaemonClient(
                             if (!it.fileTransferReply.isPresent){
                                 val filePath = it.fileTransferReply.filePath
                                 launch {
-                                    // a file is chunked based on a selected strategy and streamed to server
-                                    requestHandler.buildFileChunkStream(filePath).collect { fileChunk ->
+                                    requestHandler.buildFileChunkStream(File(filePath)).collect { fileChunk ->
                                         requestChannel.send(fileChunk)
                                     }
                                 }
@@ -148,9 +144,9 @@ suspend fun main(args: Array<String>) {
     val compilerArguments = arrayOf<String>()
 
     val sourceFiles = listOf(
-        File("compiler/daemon/remote-daemon/src/main/kotlin/client/input/Input.kt"),
-        File("compiler/daemon/remote-daemon/src/main/kotlin/client/input/Input2.kt"),
-        File("compiler/daemon/remote-daemon/src/main/kotlin/client/input/Input3.kt")
+        File("src/main/kotlin/client/input/Input.kt"),
+        File("src/main/kotlin/client/input/Input2.kt"),
+        File("src/main/kotlin/client/input/Input3.kt")
     )
 
     var sessionId: Int? = null

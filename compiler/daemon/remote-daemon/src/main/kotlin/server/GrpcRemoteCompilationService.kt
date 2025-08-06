@@ -5,12 +5,7 @@
 
 package server
 
-import common.OUTPUT_FILES_DIR
 import common.OneFileOneChunkStrategy
-import common.SERVER_COMPILATION_WORKSPACE_DIR
-import common.SERVER_SOURCE_FILES_CACHE_DIR
-import common.buildAbsPath
-import common.computeSha256
 import common.toCompileResponseGrpc
 import common.toGrpc
 import kotlinx.coroutines.Dispatchers
@@ -31,7 +26,6 @@ import org.jetbrains.kotlin.daemon.common.JpsCompilerServicesFacade
 import org.jetbrains.kotlin.daemon.report.DaemonMessageReporter
 import org.jetbrains.kotlin.daemon.report.getBuildReporter
 import org.jetbrains.kotlin.server.CompilationMetadataGrpc
-import org.jetbrains.kotlin.server.CompilationResultGrpc
 import org.jetbrains.kotlin.server.CompileRequestGrpc
 import org.jetbrains.kotlin.server.CompileResponseGrpc
 import org.jetbrains.kotlin.server.CompileServiceGrpcKt

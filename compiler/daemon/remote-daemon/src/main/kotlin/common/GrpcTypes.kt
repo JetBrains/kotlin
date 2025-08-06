@@ -9,7 +9,6 @@ import com.google.protobuf.ByteString
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import model.DaemonJVMOptionsConfigurator
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation
 import org.jetbrains.kotlin.cli.common.messages.MessageCollectorImpl
@@ -121,22 +120,6 @@ fun FileChunkGrpc.fromBytes(fileName: String, bytes: List<Byte>): FileChunkGrpc 
         .build()
 }
 
-//fun DaemonJVMOptionsConfigurator.toGrpc(): DaemonJVMOptionsConfiguratorGrpc {
-//
-//    val builder = DaemonJVMOptionsConfiguratorGrpc.newBuilder()
-//
-//    additionalParams.forEachIndexed { index, param ->
-//        builder.setAdditionalParams(index, param)
-//    }
-//
-//    return builder
-//        .setInheritMemoryLimits(inheritMemoryLimits)
-//        .setInheritAdditionalProperties(inheritAdditionalProperties)
-//        .setInheritOtherJvmOptions(inheritOtherJvmOptions)
-//        .build()
-//}
-
-
 fun CompilerMessageSeverity.toGrpc(): CompilerMessageSeverityGrpc{
     return when(this){
         CompilerMessageSeverity.INFO -> CompilerMessageSeverityGrpc.INFO
@@ -149,31 +132,3 @@ fun CompilerMessageSeverity.toGrpc(): CompilerMessageSeverityGrpc{
         CompilerMessageSeverity.FIXED_WARNING -> CompilerMessageSeverityGrpc.FIXED_WARNING
     }
 }
-
-
-
-fun generateDummyCompilerMessages(): Flow<CompileResponseGrpc> = flow {
-
-    for (i in 1..100) {
-        val location = CompilerMessageSourceLocationGrpc.newBuilder()
-            .setPath("this/is/random/path")
-            .setLine(23)
-            .setColumn(324)
-            .setLineEnd(42)
-            .setColumnEnd(42)
-            .setLineContent("this is some random message")
-            .build()
-
-
-        val message = DaemonMessageGrpc.newBuilder()
-            .setCompilerMessageSeverity(CompilerMessageSeverityGrpc.INFO)
-            .setMessage("RANDOM MESSAGE [#$i]: this is random message ")
-            .setCompilerMessageSourceLocation(location)
-            .build()
-
-        emit(CompileResponseGrpc.newBuilder().setDaemonMessage(message).build())
-        delay(900)
-    }
-}
-
-

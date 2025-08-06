@@ -583,7 +583,7 @@ abstract class CompileServiceImplBase(
         sessionId: Int,
         body: (ClientOrSessionProxy<Any>?) -> CompileService.CallResult<R>,
     ): CompileService.CallResult<R> {
-        val session: ClientOrSessionProxy<Any>? =
+        val session =
             if (sessionId == CompileService.NO_SESSION) null
             else state.sessions[sessionId] ?: return CompileService.CallResult.Error("Unknown or invalid session $sessionId")
         try {
