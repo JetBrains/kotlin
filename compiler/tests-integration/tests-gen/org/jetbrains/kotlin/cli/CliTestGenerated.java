@@ -2119,6 +2119,11 @@ public class CliTestGenerated extends AbstractCliTest {
       runTest("compiler/testData/cli/js/reportPerf.args");
     }
 
+    @TestMetadata("reportPerf2ndStage.args")
+    public void testReportPerf2ndStage() {
+      runTest("compiler/testData/cli/js/reportPerf2ndStage.args");
+    }
+
     @TestMetadata("reportPerfLowerings.args")
     public void testReportPerfLowerings() {
       runTest("compiler/testData/cli/js/reportPerfLowerings.args");
