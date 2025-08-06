@@ -5,7 +5,7 @@
 
 package org.jetbrains.kotlin.backend.common.extensions
 
-import org.jetbrains.kotlin.backend.common.ir.BuiltinSymbolsBase
+import org.jetbrains.kotlin.backend.common.ir.Symbols
 import org.jetbrains.kotlin.backend.common.linkage.IrDeserializer
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.LanguageVersionSettings
@@ -46,7 +46,7 @@ interface IrPluginContext : IrGeneratorContext {
     val afterK2: Boolean
 
     @Deprecated("This API is deprecated. Use `irBuiltIns` instead.", level = DeprecationLevel.ERROR)
-    val symbols: BuiltinSymbolsBase
+    val symbols: Symbols
 
     val platform: TargetPlatform?
 
