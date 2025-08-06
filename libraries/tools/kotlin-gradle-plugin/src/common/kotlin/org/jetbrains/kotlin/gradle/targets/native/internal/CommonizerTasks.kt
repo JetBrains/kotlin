@@ -169,8 +169,8 @@ internal val Project.commonizeNativeDistributionTask: TaskProvider<NativeDistrib
             KotlinNativeBundleArtifactFormat.setupAttributesMatchingStrategy(projectForAddingKotlinNativeBundleResolvableConfiguration.dependencies.attributesSchema)
             KotlinNativeBundleArtifactFormat.setupTransform(projectForAddingKotlinNativeBundleResolvableConfiguration)
             addKotlinNativeBundleConfiguration(projectForAddingKotlinNativeBundleResolvableConfiguration)
-            KotlinNativeBundleBuildService.registerIfAbsent(projectForAddingKotlinNativeBundleResolvableConfiguration)
         }
+        KotlinNativeBundleBuildService.registerIfAbsent(projectForAddingKotlinNativeBundleResolvableConfiguration)
 
         return addCommonizerTaskToProject.locateOrRegisterTask(
             "commonizeNativeDistribution",
