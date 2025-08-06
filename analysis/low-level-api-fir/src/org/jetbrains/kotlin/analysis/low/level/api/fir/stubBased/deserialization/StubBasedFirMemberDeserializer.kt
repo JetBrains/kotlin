@@ -447,7 +447,7 @@ internal class StubBasedFirMemberDeserializer(
                 isDeserializedPropertyFromAnnotation = true
             }
 
-            stub?.hasDelegate()?.let { hasDelegate ->
+            stub?.hasDelegate?.let { hasDelegate ->
                 if (hasDelegate) {
                     @OptIn(FirImplementationDetail::class)
                     isDelegatedPropertyAttr = true

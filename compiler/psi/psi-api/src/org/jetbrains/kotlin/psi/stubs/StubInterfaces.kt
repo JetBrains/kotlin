@@ -172,11 +172,11 @@ interface KotlinBackingFieldStub : StubElement<KtBackingField> {
 }
 
 interface KotlinPropertyStub : KotlinCallableStubBase<KtProperty> {
-    fun isVar(): Boolean
-    fun hasDelegate(): Boolean
-    fun hasDelegateExpression(): Boolean
-    fun hasInitializer(): Boolean
-    fun hasReturnTypeRef(): Boolean
+    val isVar: Boolean
+    val hasDelegate: Boolean
+    val hasDelegateExpression: Boolean
+    val hasInitializer: Boolean
+    val hasReturnTypeRef: Boolean
 
     /**
      * Whether the property has a backing field.

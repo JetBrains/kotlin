@@ -17,13 +17,13 @@ import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementTypes
 class KotlinPropertyStubImpl(
     parent: StubElement<out PsiElement>?,
     private val name: StringRef?,
-    private val isVar: Boolean,
+    override val isVar: Boolean,
     private val isTopLevel: Boolean,
-    private val hasDelegate: Boolean,
-    private val hasDelegateExpression: Boolean,
-    private val hasInitializer: Boolean,
+    override val hasDelegate: Boolean,
+    override val hasDelegateExpression: Boolean,
+    override val hasInitializer: Boolean,
     private val isExtension: Boolean,
-    private val hasReturnTypeRef: Boolean,
+    override val hasReturnTypeRef: Boolean,
     override val fqName: FqName?,
     val constantInitializer: ConstantValue<*>?,
     val origin: KotlinStubOrigin?,
@@ -39,12 +39,7 @@ class KotlinPropertyStubImpl(
         }
     }
 
-    override fun isVar() = isVar
     override fun isTopLevel() = isTopLevel
-    override fun hasDelegate() = hasDelegate
-    override fun hasDelegateExpression() = hasDelegateExpression
-    override fun hasInitializer() = hasInitializer
     override fun isExtension() = isExtension
-    override fun hasReturnTypeRef() = hasReturnTypeRef
     override fun getName() = StringRef.toString(name)
 }

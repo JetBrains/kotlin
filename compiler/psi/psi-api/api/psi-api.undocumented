@@ -2028,11 +2028,11 @@ org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderWithTextStub.text
 org.jetbrains.kotlin.psi.stubs.KotlinPropertyAccessorStub
 org.jetbrains.kotlin.psi.stubs.KotlinPropertyAccessorStub.isGetter
 org.jetbrains.kotlin.psi.stubs.KotlinPropertyStub
-org.jetbrains.kotlin.psi.stubs.KotlinPropertyStub.hasDelegate()
-org.jetbrains.kotlin.psi.stubs.KotlinPropertyStub.hasDelegateExpression()
-org.jetbrains.kotlin.psi.stubs.KotlinPropertyStub.hasInitializer()
-org.jetbrains.kotlin.psi.stubs.KotlinPropertyStub.hasReturnTypeRef()
-org.jetbrains.kotlin.psi.stubs.KotlinPropertyStub.isVar()
+org.jetbrains.kotlin.psi.stubs.KotlinPropertyStub.hasDelegate
+org.jetbrains.kotlin.psi.stubs.KotlinPropertyStub.hasDelegateExpression
+org.jetbrains.kotlin.psi.stubs.KotlinPropertyStub.hasInitializer
+org.jetbrains.kotlin.psi.stubs.KotlinPropertyStub.hasReturnTypeRef
+org.jetbrains.kotlin.psi.stubs.KotlinPropertyStub.isVar
 org.jetbrains.kotlin.psi.stubs.KotlinScriptStub
 org.jetbrains.kotlin.psi.stubs.KotlinStringInterpolationPrefixStub
 org.jetbrains.kotlin.psi.stubs.KotlinStubVersions
