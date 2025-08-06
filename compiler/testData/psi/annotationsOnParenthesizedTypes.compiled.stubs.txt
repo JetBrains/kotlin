@@ -197,7 +197,7 @@ AnnotationsOnParenthesizedTypes.class:
         FUN[fqName=AnnotationsOnParenthesizedTypes.returnTypeParameterValue, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=false, mayHaveContract=false, name=returnTypeParameterValue]
           MODIFIER_LIST[public final]
           TYPE_PARAMETER_LIST
-            TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T]
+            TYPE_PARAMETER[fqName=null, name=T]
           VALUE_PARAMETER_LIST
           TYPE_REFERENCE
             MODIFIER_LIST[]
@@ -234,7 +234,7 @@ B.class:
     CLASS[classId=/B, fqName=B, isClsStubCompiledToJvmDefaultImplementation=true, isEnumEntry=false, isInterface=true, isLocal=false, isTopLevel=true, name=B, superNames=[]]
       MODIFIER_LIST[public]
       TYPE_PARAMETER_LIST
-        TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T]
+        TYPE_PARAMETER[fqName=null, name=T]
       CLASS_BODY
 
 

@@ -14,7 +14,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.kotlin.psi.KtTypeParameter;
 import org.jetbrains.kotlin.psi.stubs.KotlinTypeParameterStub;
 import org.jetbrains.kotlin.psi.stubs.impl.KotlinTypeParameterStubImpl;
-import org.jetbrains.kotlin.types.Variance;
 
 import java.io.IOException;
 
@@ -27,25 +26,19 @@ public class KtTypeParameterElementType extends KtStubElementType<KotlinTypePara
     @Override
     public KotlinTypeParameterStubImpl createStub(@NotNull KtTypeParameter psi, StubElement parentStub) {
         return new KotlinTypeParameterStubImpl(
-                (StubElement<?>) parentStub, StringRef.fromString(psi.getName()),
-                psi.getVariance() == Variance.IN_VARIANCE, psi.getVariance() == Variance.OUT_VARIANCE
+                (StubElement<?>) parentStub, StringRef.fromString(psi.getName())
         );
     }
 
     @Override
     public void serialize(@NotNull KotlinTypeParameterStubImpl stub, @NotNull StubOutputStream dataStream) throws IOException {
         dataStream.writeName(stub.getName());
-        dataStream.writeBoolean(stub.isInVariance());
-        dataStream.writeBoolean(stub.isOutVariance());
     }
 
     @NotNull
     @Override
     public KotlinTypeParameterStubImpl deserialize(@NotNull StubInputStream dataStream, StubElement parentStub) throws IOException {
         StringRef name = dataStream.readName();
-        boolean isInVariance = dataStream.readBoolean();
-        boolean isOutVariance = dataStream.readBoolean();
-
-        return new KotlinTypeParameterStubImpl((StubElement<?>) parentStub, name, isInVariance, isOutVariance);
+        return new KotlinTypeParameterStubImpl((StubElement<?>) parentStub, name);
     }
 }

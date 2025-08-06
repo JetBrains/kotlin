@@ -118,8 +118,8 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=FunctionsWithFunctionReceive
     VALUE_PARAMETER_LIST
   FUN[fqName=<no name provided>, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=true, isTopLevel=true, mayHaveContract=false, name=null]
     TYPE_PARAMETER_LIST
-      TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=A]
-      TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=B]
+      TYPE_PARAMETER[fqName=null, name=A]
+      TYPE_PARAMETER[fqName=null, name=B]
     TYPE_REFERENCE
       MODIFIER_LIST[]
         ANNOTATION
@@ -150,8 +150,8 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=FunctionsWithFunctionReceive
             REFERENCE_EXPRESSION[referencedName=Unit]
   FUN[fqName=foo, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=true, isTopLevel=true, mayHaveContract=false, name=foo]
     TYPE_PARAMETER_LIST
-      TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=A]
-      TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=B]
+      TYPE_PARAMETER[fqName=null, name=A]
+      TYPE_PARAMETER[fqName=null, name=B]
     TYPE_REFERENCE
       MODIFIER_LIST[]
         ANNOTATION
@@ -203,6 +203,6 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=FunctionsWithFunctionReceive
     VALUE_PARAMETER_LIST
   FUN[fqName=f, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=true, mayHaveContract=false, name=f]
     TYPE_PARAMETER_LIST
-      TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T]
+      TYPE_PARAMETER[fqName=null, name=T]
     VALUE_PARAMETER_LIST
   CLASS[classId=/C, fqName=C, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=C, superNames=[]]

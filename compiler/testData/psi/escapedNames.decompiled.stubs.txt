@@ -90,7 +90,7 @@ EscapedNamesKt.class:
     TYPEALIAS[classId=one two/three four/Top Level TypeAlias, fqName=one two.three four.Top Level TypeAlias, isTopLevel=true, name=Top Level TypeAlias]
       MODIFIER_LIST[public]
       TYPE_PARAMETER_LIST
-        TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=Type Parameter]
+        TYPE_PARAMETER[fqName=null, name=Type Parameter]
       TYPE_REFERENCE
         USER_TYPE
           USER_TYPE
@@ -124,7 +124,7 @@ Top Level Class.class:
                   REFERENCE_EXPRESSION[referencedName=three four]
                 REFERENCE_EXPRESSION[referencedName=Annotation Class]
       TYPE_PARAMETER_LIST
-        TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=Type Parameter]
+        TYPE_PARAMETER[fqName=null, name=Type Parameter]
           TYPE_REFERENCE
             USER_TYPE
               USER_TYPE
@@ -249,7 +249,7 @@ Top Level Class.class:
                       REFERENCE_EXPRESSION[referencedName=three four]
                     REFERENCE_EXPRESSION[referencedName=Annotation Class]
           TYPE_PARAMETER_LIST
-            TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T]
+            TYPE_PARAMETER[fqName=null, name=T]
           TYPE_REFERENCE
             USER_TYPE
               USER_TYPE

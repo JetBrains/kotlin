@@ -405,9 +405,8 @@ class TypeClsStubBuilder(private val c: ClsStubBuilderContext) {
             val typeParameterStub = KotlinTypeParameterStubImpl(
                 typeParameterListStub,
                 name = name.ref(),
-                isInVariance = proto.variance == Variance.IN,
-                isOutVariance = proto.variance == Variance.OUT
             )
+
             createTypeParameterModifierListStub(typeParameterStub, proto)
             val upperBoundProtos = proto.upperBounds(c.typeTable)
             if (upperBoundProtos.isNotEmpty()) {

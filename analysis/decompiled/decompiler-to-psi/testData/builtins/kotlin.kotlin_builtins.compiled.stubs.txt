@@ -5,7 +5,7 @@ FILE[kind=File[packageFqName=kotlin]]
   FUN[fqName=kotlin.arrayOf, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=true, mayHaveContract=false, name=arrayOf]
     MODIFIER_LIST[public inline MustUseReturnValue]
     TYPE_PARAMETER_LIST
-      TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T]
+      TYPE_PARAMETER[fqName=null, name=T]
         MODIFIER_LIST[reified]
     VALUE_PARAMETER_LIST
       VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=elements]
@@ -26,7 +26,7 @@ FILE[kind=File[packageFqName=kotlin]]
   FUN[fqName=kotlin.arrayOfNulls, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=true, mayHaveContract=false, name=arrayOfNulls]
     MODIFIER_LIST[public MustUseReturnValue]
     TYPE_PARAMETER_LIST
-      TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T]
+      TYPE_PARAMETER[fqName=null, name=T]
         MODIFIER_LIST[reified]
     VALUE_PARAMETER_LIST
       VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=size]
@@ -109,7 +109,7 @@ FILE[kind=File[packageFqName=kotlin]]
   FUN[fqName=kotlin.emptyArray, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=true, mayHaveContract=false, name=emptyArray]
     MODIFIER_LIST[public inline MustUseReturnValue]
     TYPE_PARAMETER_LIST
-      TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T]
+      TYPE_PARAMETER[fqName=null, name=T]
         MODIFIER_LIST[reified]
     VALUE_PARAMETER_LIST
     TYPE_REFERENCE
@@ -132,7 +132,7 @@ FILE[kind=File[packageFqName=kotlin]]
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=SinceKotlin]
     TYPE_PARAMETER_LIST
-      TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T]
+      TYPE_PARAMETER[fqName=null, name=T]
         MODIFIER_LIST[reified]
         TYPE_REFERENCE
           USER_TYPE
@@ -164,7 +164,7 @@ FILE[kind=File[packageFqName=kotlin]]
                 REFERENCE_EXPRESSION[referencedName=kotlin]
               REFERENCE_EXPRESSION[referencedName=SinceKotlin]
     TYPE_PARAMETER_LIST
-      TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T]
+      TYPE_PARAMETER[fqName=null, name=T]
         MODIFIER_LIST[reified]
         TYPE_REFERENCE
           USER_TYPE
@@ -325,7 +325,7 @@ FILE[kind=File[packageFqName=kotlin]]
   CLASS[classId=kotlin/Array, fqName=kotlin.Array, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=Array, superNames=[]]
     MODIFIER_LIST[public final]
     TYPE_PARAMETER_LIST
-      TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T]
+      TYPE_PARAMETER[fqName=null, name=T]
     CLASS_BODY
       SECONDARY_CONSTRUCTOR[fqName=null, hasBody=true, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Array]
         MODIFIER_LIST[public MustUseReturnValue]
@@ -2787,7 +2787,7 @@ FILE[kind=File[packageFqName=kotlin]]
   CLASS[classId=kotlin/Comparable, fqName=kotlin.Comparable, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=true, isLocal=false, isTopLevel=true, name=Comparable, superNames=[]]
     MODIFIER_LIST[public]
     TYPE_PARAMETER_LIST
-      TYPE_PARAMETER[fqName=null, isInVariance=true, isOutVariance=false, name=T]
+      TYPE_PARAMETER[fqName=null, name=T]
         MODIFIER_LIST[in]
     CLASS_BODY
       FUN[fqName=kotlin.Comparable.compareTo, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=compareTo]
@@ -4113,7 +4113,7 @@ FILE[kind=File[packageFqName=kotlin]]
   CLASS[classId=kotlin/Enum, fqName=kotlin.Enum, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=Enum, superNames=[Comparable]]
     MODIFIER_LIST[public abstract]
     TYPE_PARAMETER_LIST
-      TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=E]
+      TYPE_PARAMETER[fqName=null, name=E]
         TYPE_REFERENCE
           USER_TYPE
             USER_TYPE

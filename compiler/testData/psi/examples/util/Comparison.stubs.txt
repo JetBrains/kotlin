@@ -3,7 +3,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=ComparisonKt]]
   IMPORT_LIST
   FUN[fqName=naturalOrder, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=naturalOrder]
     TYPE_PARAMETER_LIST
-      TYPE_PARAMETER[fqName=null, isInVariance=true, isOutVariance=false, name=T]
+      TYPE_PARAMETER[fqName=null, name=T]
         MODIFIER_LIST[in]
         TYPE_REFERENCE
           USER_TYPE
@@ -46,7 +46,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=ComparisonKt]]
       ENUM_ENTRY[classId=null, fqName=ComparisonResult.GR, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=true, isInterface=false, isLocal=false, isTopLevel=false, name=GR, superNames=[]]
   FUN[fqName=asMatchableComparison, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=true, mayHaveContract=false, name=asMatchableComparison]
     TYPE_PARAMETER_LIST
-      TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T]
+      TYPE_PARAMETER[fqName=null, name=T]
     VALUE_PARAMETER_LIST
       VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=cmp]
         TYPE_REFERENCE

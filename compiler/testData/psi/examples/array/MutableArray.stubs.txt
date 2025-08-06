@@ -4,7 +4,7 @@ FILE[kind=File[packageFqName=<root>]]
   CLASS[classId=/ReadOnlyArray, fqName=ReadOnlyArray, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=ReadOnlyArray, superNames=[ISized]]
     MODIFIER_LIST[open]
     TYPE_PARAMETER_LIST
-      TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=true, name=T]
+      TYPE_PARAMETER[fqName=null, name=T]
         MODIFIER_LIST[out]
     SUPER_TYPE_LIST
       SUPER_TYPE_ENTRY
@@ -31,7 +31,7 @@ FILE[kind=File[packageFqName=<root>]]
   CLASS[classId=/WriteOnlyArray, fqName=WriteOnlyArray, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=WriteOnlyArray, superNames=[ISized]]
     MODIFIER_LIST[open]
     TYPE_PARAMETER_LIST
-      TYPE_PARAMETER[fqName=null, isInVariance=true, isOutVariance=false, name=T]
+      TYPE_PARAMETER[fqName=null, name=T]
         MODIFIER_LIST[in]
     SUPER_TYPE_LIST
       SUPER_TYPE_ENTRY
@@ -58,7 +58,7 @@ FILE[kind=File[packageFqName=<root>]]
                 REFERENCE_EXPRESSION[referencedName=T]
   CLASS[classId=/MutableArray, fqName=MutableArray, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=MutableArray, superNames=[ReadOnlyArray, WriteOnlyArray]]
     TYPE_PARAMETER_LIST
-      TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T]
+      TYPE_PARAMETER[fqName=null, name=T]
     SUPER_TYPE_LIST
       SUPER_TYPE_ENTRY
         TYPE_REFERENCE

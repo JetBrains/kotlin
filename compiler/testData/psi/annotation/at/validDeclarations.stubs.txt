@@ -222,7 +222,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=ValidDeclarationsKt]]
         VALUE_PARAMETER_LIST
       FUN[fqName=A.foo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=false, mayHaveContract=false, name=foo]
         TYPE_PARAMETER_LIST
-          TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T]
+          TYPE_PARAMETER[fqName=null, name=T]
             MODIFIER_LIST[]
               ANNOTATION_ENTRY[hasValueArguments=true, shortName=ann]
                 CONSTRUCTOR_CALLEE

@@ -59,7 +59,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=AnnotationsOnParenthesizedTy
         REFERENCE_EXPRESSION[referencedName=C]
   FUN[fqName=returnTypeParameterValue, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=true, mayHaveContract=false, name=returnTypeParameterValue]
     TYPE_PARAMETER_LIST
-      TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T]
+      TYPE_PARAMETER[fqName=null, name=T]
     VALUE_PARAMETER_LIST
     TYPE_REFERENCE
       MODIFIER_LIST[]

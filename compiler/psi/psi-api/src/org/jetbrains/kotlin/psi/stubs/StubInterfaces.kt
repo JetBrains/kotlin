@@ -192,10 +192,7 @@ interface KotlinCallableStubBase<TDeclaration : KtCallableDeclaration> : KotlinS
     val isExtension: Boolean
 }
 
-interface KotlinTypeParameterStub : KotlinStubWithFqName<KtTypeParameter> {
-    fun isInVariance(): Boolean
-    fun isOutVariance(): Boolean
-}
+interface KotlinTypeParameterStub : KotlinStubWithFqName<KtTypeParameter>
 
 enum class ConstantValueKind {
     NULL,

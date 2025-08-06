@@ -16,8 +16,8 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=TrailingCommaForbiddenKt]]
     CLASS_BODY
   CLASS[classId=/A, fqName=A, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=A, superNames=[]]
     TYPE_PARAMETER_LIST
-      TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T1]
-      TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T2]
+      TYPE_PARAMETER[fqName=null, name=T1]
+      TYPE_PARAMETER[fqName=null, name=T2]
     TYPE_CONSTRAINT_LIST
       TYPE_CONSTRAINT
         REFERENCE_EXPRESSION[referencedName=T1]
@@ -133,17 +133,17 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=TrailingCommaForbiddenKt]]
     VALUE_PARAMETER_LIST
   FUN[fqName=Number, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=true, mayHaveContract=false, name=Number]
     TYPE_PARAMETER_LIST
-      TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T]
+      TYPE_PARAMETER[fqName=null, name=T]
   FUN[fqName=<no name provided>, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=null]
     FUN[fqName=null, hasBody=false, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Comparable]
       TYPE_PARAMETER_LIST
-        TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T1]
-        TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T2]
-        TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T3]
+        TYPE_PARAMETER[fqName=null, name=T1]
+        TYPE_PARAMETER[fqName=null, name=T2]
+        TYPE_PARAMETER[fqName=null, name=T3]
   FUN[fqName=foo, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo]
     VALUE_PARAMETER_LIST
   FUN[fqName=foo, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=true, mayHaveContract=false, name=foo]
     TYPE_PARAMETER_LIST
-      TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T1]
-      TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T2]
+      TYPE_PARAMETER[fqName=null, name=T1]
+      TYPE_PARAMETER[fqName=null, name=T2]
     VALUE_PARAMETER_LIST

@@ -16,7 +16,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=UnderscoredTypeArgumentsOfTy
                     REFERENCE_EXPRESSION[referencedName=_]
   TYPEALIAS[classId=/Foo, fqName=Foo, isTopLevel=true, name=Foo]
     TYPE_PARAMETER_LIST
-      TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=K]
+      TYPE_PARAMETER[fqName=null, name=K]
     TYPE_REFERENCE
       USER_TYPE
         REFERENCE_EXPRESSION[referencedName=Foo]

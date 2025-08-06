@@ -69,14 +69,14 @@ FILE[kind=File[packageFqName=<root>]]
       FUN[fqName=Annotations.inlineFun, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=true, isExtension=false, isTopLevel=false, mayHaveContract=false, name=inlineFun]
         MODIFIER_LIST[inline]
         TYPE_PARAMETER_LIST
-          TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T]
+          TYPE_PARAMETER[fqName=null, name=T]
             MODIFIER_LIST[reified]
               ANNOTATION_ENTRY[hasValueArguments=false, shortName=a]
                 CONSTRUCTOR_CALLEE
                   TYPE_REFERENCE
                     USER_TYPE
                       REFERENCE_EXPRESSION[referencedName=a]
-          TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=F]
+          TYPE_PARAMETER[fqName=null, name=F]
             MODIFIER_LIST[]
               ANNOTATION_ENTRY[hasValueArguments=false, shortName=a]
                 CONSTRUCTOR_CALLEE

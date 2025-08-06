@@ -3,9 +3,9 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=SoftKeywordsInTypeArgumentsK
   IMPORT_LIST
   CLASS[classId=/Foo, fqName=Foo, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=Foo, superNames=[]]
     TYPE_PARAMETER_LIST
-      TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=true, name=abstract]
+      TYPE_PARAMETER[fqName=null, name=abstract]
         MODIFIER_LIST[out]
-      TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=true, name=out]
+      TYPE_PARAMETER[fqName=null, name=out]
         MODIFIER_LIST[out]
     CLASS_BODY
   FUN[fqName=f, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=f]

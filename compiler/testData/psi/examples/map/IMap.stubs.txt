@@ -4,8 +4,8 @@ FILE[kind=File[packageFqName=<root>]]
   CLASS[classId=/IMap, fqName=IMap, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=IMap, superNames=[]]
     MODIFIER_LIST[open]
     TYPE_PARAMETER_LIST
-      TYPE_PARAMETER[fqName=null, isInVariance=true, isOutVariance=false, name=K]
+      TYPE_PARAMETER[fqName=null, name=K]
         MODIFIER_LIST[in]
-      TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=true, name=V]
+      TYPE_PARAMETER[fqName=null, name=V]
         MODIFIER_LIST[out]
     CLASS_BODY
