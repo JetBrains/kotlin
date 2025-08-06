@@ -235,9 +235,8 @@
 /generators/ReadMe.md @JetBrains/kotlin-build-infrastructure
 /generators/analysis-api-generator/ @JetBrains/kotlin-analysis-api
 /generators/builtins/ vsevolod.tolstopyatov@jetbrains.com ilya.gorbunov@jetbrains.com filipp.zhinkin@jetbrains.com
-/generators/evaluate/ @JetBrains/kotlin-frontend
+/generators/evaluate/ @JetBrains/kotlin-frontend @JetBrains/kotlin-common-backend
 /generators/ide-iml-to-gradle-generator/ @JetBrains/kotlin-build-infrastructure
-/generators/interpreter/ @JetBrains/kotlin-common-backend
 /generators/main/ @JetBrains/kotlin-build-infrastructure
 /generators/nativeInteropRuntime/ @JetBrains/kotlin-native
 /generators/sir-tests-generator/ @JetBrains/kotlin-native

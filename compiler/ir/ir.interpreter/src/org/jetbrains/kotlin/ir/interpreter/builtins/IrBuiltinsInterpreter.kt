@@ -5,6 +5,10 @@
 
 package org.jetbrains.kotlin.ir.interpreter.builtins
 
+import org.jetbrains.kotlin.builtins.EvalMethodNotFoundException
+import org.jetbrains.kotlin.builtins.evalBinaryFunction
+import org.jetbrains.kotlin.builtins.evalTernaryFunction
+import org.jetbrains.kotlin.builtins.evalUnaryFunction
 import org.jetbrains.kotlin.ir.interpreter.exceptions.InterpreterMethodNotFoundError
 import org.jetbrains.kotlin.ir.interpreter.proxy.Proxy
 

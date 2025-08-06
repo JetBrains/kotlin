@@ -27,7 +27,6 @@ fun extraSourceSet(name: String, extendMain: Boolean = true, jpsKind: String? = 
 
 val (builtinsSourceSet, builtinsApi) = extraSourceSet("builtins", extendMain = false)
 val (evaluateSourceSet, evaluateApi) = extraSourceSet("evaluate")
-val (interpreterSourceSet, interpreterApi) = extraSourceSet("interpreter")
 val (protobufSourceSet, protobufApi) = extraSourceSet("protobuf")
 val (protobufCompareSourceSet, protobufCompareApi) = extraSourceSet("protobufCompare", jpsKind = SourceSet.TEST_SOURCE_SET_NAME)
 val (wasmSourceSet, wasmApi) = extraSourceSet("wasm")
@@ -44,14 +43,13 @@ dependencies {
     evaluateApi(project(":core:deserialization"))
     wasmApi(project(":wasm:wasm.ir"))
     wasmApi(kotlinStdlib())
-    interpreterApi(project(":compiler:ir.tree"))
+    evaluateApi(project(":compiler:ir.tree"))
     protobufApi(kotlinStdlib())
     protobufCompareApi(projectTests(":kotlin-build-common"))
     nativeInteropRuntimeApi(kotlinStdlib())
 
     testApi(builtinsSourceSet.output)
     testApi(evaluateSourceSet.output)
-    testApi(interpreterSourceSet.output)
     testApi(protobufSourceSet.output)
     testApi(protobufCompareSourceSet.output)
 
@@ -117,7 +115,7 @@ val generateKeywordStrings by generator("org.jetbrains.kotlin.generators.fronten
 
 val generateBuiltins by generator("org.jetbrains.kotlin.generators.builtins.generateBuiltIns.GenerateBuiltInsKt", builtinsSourceSet)
 val generateOperationsMap by generator("org.jetbrains.kotlin.generators.evaluate.GenerateOperationsMapKt", evaluateSourceSet)
-val generateInterpreterMap by generator("org.jetbrains.kotlin.generators.interpreter.GenerateInterpreterMapKt", interpreterSourceSet)
+val generateEvaluationMap by generator("org.jetbrains.kotlin.generators.evaluate.GenerateEvaluationMapKt", evaluateSourceSet)
 val generateWasmIntrinsics by generator("org.jetbrains.kotlin.generators.wasm.WasmIntrinsicGeneratorKt", wasmSourceSet)
 
 val generateNativeInteropRuntime by generator(
