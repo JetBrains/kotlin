@@ -386,7 +386,7 @@ internal object ArgumentCheckingProcessor {
             atom.lambdaExpression,
             expectedType,
             candidate,
-            anonymousFunctionIfReturnExpression = anonymousFunctionIfReturnExpression
+            anonymousFunctionIfReturnExpression,
         ).also {
             candidate.addPostponedAtom(it)
             atom.setPostponedSubAtom(it)
