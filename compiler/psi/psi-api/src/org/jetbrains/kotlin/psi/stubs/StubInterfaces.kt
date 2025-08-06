@@ -154,7 +154,7 @@ interface KotlinNameReferenceExpressionStub : StubElement<KtNameReferenceExpress
 }
 
 interface KotlinEnumEntrySuperclassReferenceExpressionStub : StubElement<KtEnumEntrySuperclassReferenceExpression> {
-    fun getReferencedName(): String
+    val referencedName: String
 }
 
 interface KotlinParameterStub : KotlinStubWithFqName<KtParameter> {
