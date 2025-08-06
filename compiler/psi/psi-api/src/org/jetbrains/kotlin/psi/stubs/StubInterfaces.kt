@@ -210,7 +210,7 @@ interface KotlinCollectionLiteralExpressionStub : StubElement<KtCollectionLitera
 }
 
 interface KotlinTypeProjectionStub : StubElement<KtTypeProjection> {
-    fun getProjectionKind(): KtProjectionKind
+    val projectionKind: KtProjectionKind
 }
 
 interface KotlinUserTypeStub : StubElement<KtUserType>
