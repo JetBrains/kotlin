@@ -12,7 +12,9 @@
 -keep public class kotlin.metadata.* { public protected *; }
 -keep public class kotlin.metadata.jvm.* { public protected *; }
 -keep class kotlin.metadata.jvm.internal.JvmMetadataExtensions
--keep class kotlin.metadata.internal.common.BuiltInsMetadataExtensions
+
+# Used to load .kotlin_builtins files, in kotlinx-reflect-lite and will be used in kotlin-reflect after KT-75463
+-keep class kotlin.metadata.internal.common.* { *; }
 
 # Required for protobuf java lite mode: https://github.com/protocolbuffers/protobuf/issues/6463
 -keepclassmembers class * extends org.jetbrains.kotlin.protobuf.AbstractMessageLite { <fields>; }
