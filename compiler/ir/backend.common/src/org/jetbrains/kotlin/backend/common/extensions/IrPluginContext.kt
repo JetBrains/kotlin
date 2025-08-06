@@ -45,6 +45,7 @@ interface IrPluginContext : IrGeneratorContext {
      */
     val afterK2: Boolean
 
+    @Deprecated("This API is deprecated. Use `irBuiltIns` instead.", level = DeprecationLevel.ERROR)
     val symbols: BuiltinSymbolsBase
 
     val platform: TargetPlatform?
