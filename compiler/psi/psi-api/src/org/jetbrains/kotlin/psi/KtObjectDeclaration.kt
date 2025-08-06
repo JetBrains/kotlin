@@ -43,7 +43,7 @@ class KtObjectDeclaration : KtClassOrObject {
         }
     }
 
-    fun isCompanion(): Boolean = _stub?.isCompanion() ?: hasModifier(KtTokens.COMPANION_KEYWORD)
+    fun isCompanion(): Boolean = _stub?.isCompanion ?: hasModifier(KtTokens.COMPANION_KEYWORD)
 
     override fun getTextOffset(): Int = nameIdentifier?.textRange?.startOffset
         ?: getObjectKeyword()!!.textRange.startOffset
@@ -52,7 +52,7 @@ class KtObjectDeclaration : KtClassOrObject {
         return visitor.visitObjectDeclaration(this, data)
     }
 
-    fun isObjectLiteral(): Boolean = _stub?.isObjectLiteral() ?: (parent is KtObjectLiteralExpression)
+    fun isObjectLiteral(): Boolean = _stub?.isObjectLiteral ?: (parent is KtObjectLiteralExpression)
 
     fun getObjectKeyword(): PsiElement? = findChildByType(KtTokens.OBJECT_KEYWORD)
 
