@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.ir.inline
 
 import org.jetbrains.kotlin.backend.common.*
 import org.jetbrains.kotlin.backend.common.ir.Symbols
-import org.jetbrains.kotlin.backend.common.ir.isInlineLambdaBlock
 import org.jetbrains.kotlin.backend.common.lower.at
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
@@ -223,8 +222,10 @@ private class CallInlining(
             // Here `isLambdaCall` guarantees that `expression` is call of `Function.invoke`.
             // So `expression.arguments.first()` is exactly dispatch receiver and not some other parameter.
             val dispatchReceiver = expression.arguments.first()?.unwrapAdditionalImplicitCastsIfNeeded() as IrGetValue
-            val functionArgument = substituteMap[dispatchReceiver.symbol.owner] ?: return super.visitCall(expression)
-            if ((dispatchReceiver.symbol.owner as? IrValueParameter)?.isNoinline == true) return super.visitCall(expression)
+            val functionArgument = substituteMap[dispatchReceiver.symbol.owner] as? IrRichCallableReference<*>
+            if ((dispatchReceiver.symbol.owner as? IrValueParameter)?.isNoinline == true || functionArgument == null) {
+                return super.visitCall(expression)
+            }
 
             fun asCallOf(function: IrSimpleFunction, boundArguments: List<IrExpression>): IrCall {
                 return IrCallImpl.fromSymbolOwner(expression.startOffset, expression.endOffset, function.symbol).also {
@@ -237,14 +238,11 @@ private class CallInlining(
                 }
             }
 
-            return when (functionArgument) {
-                is IrCallableReference<*> -> error("Can't inline given reference, it should've been lowered\n${functionArgument.render()}")
-                is IrFunctionExpression ->
-                    inlineFunctionExpression(asCallOf(functionArgument.function, emptyList()), functionArgument.function, functionArgument)
-                is IrRichCallableReference<*> ->
-                    inlineFunctionExpression(asCallOf(functionArgument.invokeFunction, functionArgument.boundValues), functionArgument.invokeFunction, functionArgument)
-                else -> super.visitCall(expression)
-            }
+            return inlineFunctionExpression(
+                asCallOf(functionArgument.invokeFunction, functionArgument.boundValues),
+                functionArgument.invokeFunction,
+                functionArgument
+            )
         }
 
         fun inlineFunctionExpression(irCall: IrCall, function: IrSimpleFunction, originalInlinedElement: IrElement): IrExpression {
@@ -325,24 +323,6 @@ private class CallInlining(
         val isDefaultArg: Boolean = false
     ) {
         val argumentExpression: IrExpression = originalArgumentExpression.unwrapAdditionalImplicitCastsIfNeeded()
-
-        val isInlinable: Boolean
-            // must take "original" parameter because it can have generic type and so considered as no inline; see `lambdaAsGeneric.kt`
-            get() = parameter.isInlineParameter() &&
-                    (argumentExpression is IrFunctionReference
-                            || argumentExpression is IrFunctionExpression
-                            || argumentExpression is IrRichFunctionReference
-                            || argumentExpression is IrPropertyReference
-                            || argumentExpression is IrRichPropertyReference
-                            || argumentExpression.isAdaptedFunctionReference()
-                            || argumentExpression.isInlineLambdaBlock()
-                            || argumentExpression.isLambdaBlock()
-                            )
-
-        val isImmutableVariableLoad: Boolean
-            get() = argumentExpression.let { argument ->
-                argument is IrGetValue && !argument.symbol.owner.let { it is IrVariable && it.isVar }
-            }
     }
 
     // callee might be a copied version of callsite.symbol.owner
@@ -398,30 +378,6 @@ private class CallInlining(
 
     //-------------------------------------------------------------------------//
 
-    private fun IrStatementsBuilder<*>.evaluateArguments(
-        reference: IrCallableReference<*>
-    ) {
-        val arguments = reference.getArgumentsWithIr().map { ParameterToArgument(it.first, it.second) }
-        for (argument in arguments) {
-            val irExpression = argument.argumentExpression
-            val variableSymbol = if (argument.isImmutableVariableLoad) {
-                (irExpression as IrGetValue).symbol
-            } else {
-                if (argument.isDefaultArg) {
-                    at(UNDEFINED_OFFSET, UNDEFINED_OFFSET)
-                } else {
-                    at(irExpression)
-                }
-                irTemporary(
-                    irExpression.doImplicitCastIfNeededTo(argument.parameter.type),
-                    nameHint = callee.symbol.owner.name.asStringStripSpecialMarkers() + "_" + argument.parameter.name.asStringStripSpecialMarkers(),
-                    origin = IrDeclarationOrigin.IR_TEMPORARY_VARIABLE_FOR_INLINED_PARAMETER,
-                ).symbol
-            }
-            reference.arguments[argument.parameter] = irGetValueWithoutLocation(variableSymbol)
-        }
-    }
-
     private fun IrStatementsBuilder<*>.evaluateCapturedValues(
         parameters: List<IrValueParameter>,
         expressions: MutableList<IrExpression>
@@ -462,21 +418,13 @@ private class CallInlining(
              * For simplicity and to produce simpler IR we don't create temporaries for every immutable variable,
              * not only for those referring to inlinable lambdas.
              */
-            if (argument.isInlinable) {
+            if (parameter.isInlineParameter() && variableInitializer is IrRichCallableReference<*>) {
                 val evaluationBuilder = if (argument.isDefaultArg) inlinedBlockBuilder else callSiteBuilder
                 substituteMap[parameter] = variableInitializer
-                when (variableInitializer) {
-                    is IrCallableReference<*> -> error("Can't inline given reference, it should've been lowered\n${variableInitializer.render()}")
-                    is IrRichCallableReference<*> -> {
-                        evaluationBuilder.evaluateCapturedValues(
-                            variableInitializer.invokeFunction.parameters,
-                            variableInitializer.boundValues
-                        )
-                    }
-                    is IrBlock -> if (variableInitializer.origin == IrStatementOrigin.ADAPTED_FUNCTION_REFERENCE || variableInitializer.origin == IrStatementOrigin.LAMBDA) {
-                        evaluationBuilder.evaluateArguments(variableInitializer.statements.last() as IrFunctionReference)
-                    }
-                }
+                evaluationBuilder.evaluateCapturedValues(
+                    variableInitializer.invokeFunction.parameters,
+                    variableInitializer.boundValues
+                )
                 continue
             }
             // inline parameters should never be stored to temporaries, as it would prevent their inlining
