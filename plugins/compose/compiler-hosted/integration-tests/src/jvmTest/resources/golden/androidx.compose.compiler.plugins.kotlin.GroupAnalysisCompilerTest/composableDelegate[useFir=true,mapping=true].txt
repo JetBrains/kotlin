@@ -1,0 +1,21 @@
+//
+// Source
+// ------------------------------------------
+
+interface Test {
+    @Composable fun Content()
+}
+
+class Delegate(val test: Test) : Test by test
+
+//
+// Transformed IR
+// ------------------------------------------
+
+========= FunctionMeta: true, OptimizeGroups: true =========
+
+========= FunctionMeta: false, OptimizeGroups: true =========
+
+========= FunctionMeta: true, OptimizeGroups: false =========
+
+========= FunctionMeta: false, OptimizeGroups: false =========

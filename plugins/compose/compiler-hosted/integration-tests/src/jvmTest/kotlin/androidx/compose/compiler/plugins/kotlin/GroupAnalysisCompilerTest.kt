@@ -312,6 +312,19 @@ class GroupAnalysisCompilerTest(
         checkOptimizeGroups = true,
     )
 
+    @Test
+    fun composableDelegate() = groups(
+        """
+            interface Test {
+                @Composable fun Content()
+            }
+
+            class Delegate(val test: Test) : Test by test
+        """,
+        checkFunctionMeta = true,
+        checkOptimizeGroups = true
+    )
+
     @JvmField
     @Rule
     val goldenTransformRule = GoldenTransformRule()

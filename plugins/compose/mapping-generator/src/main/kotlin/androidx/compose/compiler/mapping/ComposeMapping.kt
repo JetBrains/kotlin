@@ -51,9 +51,10 @@ class ComposeMapping(
             if (group.type != GroupType.Root) return
 
             key = keyCache[cls.classId.fqName] ?: keyCache[method.id.toString()]
-
-            if (key == null) return
         }
+
+        if (key == null) return
+        if (group.line == -1) return
 
         append(linePrefix)
         append("1:1:")
