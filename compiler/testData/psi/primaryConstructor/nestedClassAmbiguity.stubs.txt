@@ -41,11 +41,11 @@ FILE[kind=File[packageFqName=<root>]]
         CLASS_BODY
   CLASS[classId=/Outer4, fqName=Outer4, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=Outer4, superNames=[]]
     CLASS_BODY
-      OBJECT_DECLARATION[classId=/Outer4.Nested4, fqName=Outer4.Nested4, isCompanion=false, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Nested4, superNames=[]]
+      OBJECT_DECLARATION[classId=/Outer4.Nested4, fqName=Outer4.Nested4, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Nested4, superNames=[]]
         PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Nested4]
           VALUE_PARAMETER_LIST
         CLASS_BODY
-      OBJECT_DECLARATION[classId=/Outer4.Nested5, fqName=Outer4.Nested5, isCompanion=false, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Nested5, superNames=[]]
+      OBJECT_DECLARATION[classId=/Outer4.Nested5, fqName=Outer4.Nested5, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Nested5, superNames=[]]
         PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=Nested5]
           MODIFIER_LIST[private]
           VALUE_PARAMETER_LIST
@@ -54,7 +54,7 @@ FILE[kind=File[packageFqName=<root>]]
             CONSTRUCTOR_CALLEE
               TYPE_REFERENCE
         CLASS_BODY
-  OBJECT_DECLARATION[classId=/TopLevel, fqName=TopLevel, isCompanion=false, isLocal=false, isObjectLiteral=false, isTopLevel=true, name=TopLevel, superNames=[]]
+  OBJECT_DECLARATION[classId=/TopLevel, fqName=TopLevel, isLocal=false, isObjectLiteral=false, isTopLevel=true, name=TopLevel, superNames=[]]
     PRIMARY_CONSTRUCTOR[fqName=null, hasBody=false, hasNoExpressionBody=true, isDelegatedCallToThis=false, isExplicitDelegationCall=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=TopLevel]
       VALUE_PARAMETER_LIST
         VALUE_PARAMETER[fqName=TopLevel.x, hasDefaultValue=false, hasValOrVar=true, isMutable=false, name=x]

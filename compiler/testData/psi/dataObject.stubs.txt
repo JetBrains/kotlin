@@ -1,5 +1,5 @@
 FILE[kind=File[packageFqName=<root>]]
   PACKAGE_DIRECTIVE
   IMPORT_LIST
-  OBJECT_DECLARATION[classId=/DataObject, fqName=DataObject, isCompanion=false, isLocal=false, isObjectLiteral=false, isTopLevel=true, name=DataObject, superNames=[]]
+  OBJECT_DECLARATION[classId=/DataObject, fqName=DataObject, isLocal=false, isObjectLiteral=false, isTopLevel=true, name=DataObject, superNames=[]]
     MODIFIER_LIST[data]

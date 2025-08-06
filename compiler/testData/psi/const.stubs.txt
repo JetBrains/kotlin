@@ -2,7 +2,7 @@ FILE[kind=File[packageFqName=test]]
   PACKAGE_DIRECTIVE
     REFERENCE_EXPRESSION[referencedName=test]
   IMPORT_LIST
-  OBJECT_DECLARATION[classId=test/Const, fqName=test.Const, isCompanion=false, isLocal=false, isObjectLiteral=false, isTopLevel=true, name=Const, superNames=[]]
+  OBJECT_DECLARATION[classId=test/Const, fqName=test.Const, isLocal=false, isObjectLiteral=false, isTopLevel=true, name=Const, superNames=[]]
     CLASS_BODY
       PROPERTY[fqName=test.Const.inObject, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=inObject]
         MODIFIER_LIST[private const]

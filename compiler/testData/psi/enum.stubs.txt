@@ -26,7 +26,7 @@ FILE[kind=File[packageFqName=a.b.c.test.enum]]
       FUN[fqName=a.b.c.test.enum.Enum.f, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=f]
         MODIFIER_LIST[open]
         VALUE_PARAMETER_LIST
-      OBJECT_DECLARATION[classId=a/b/c/test/enum/Enum.Companion, fqName=a.b.c.test.enum.Enum.Companion, isCompanion=true, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
+      OBJECT_DECLARATION[classId=a/b/c/test/enum/Enum.Companion, fqName=a.b.c.test.enum.Enum.Companion, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
         MODIFIER_LIST[companion]
         CLASS_BODY
           PROPERTY[fqName=a.b.c.test.enum.Enum.Companion.c, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=c]

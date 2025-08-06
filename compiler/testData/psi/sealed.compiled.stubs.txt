@@ -21,7 +21,7 @@ FILE[kind=File[packageFqName=test]]
                   REFERENCE_EXPRESSION[referencedName=test]
                 REFERENCE_EXPRESSION[referencedName=Sealed]
         CLASS_BODY
-      OBJECT_DECLARATION[classId=test/Sealed.Top, fqName=test.Sealed.Top, isCompanion=false, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Top, superNames=[Sealed]]
+      OBJECT_DECLARATION[classId=test/Sealed.Top, fqName=test.Sealed.Top, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Top, superNames=[Sealed]]
         MODIFIER_LIST[public]
         SUPER_TYPE_LIST
           SUPER_TYPE_ENTRY

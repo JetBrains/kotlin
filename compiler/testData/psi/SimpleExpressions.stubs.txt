@@ -96,7 +96,7 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=SimpleExpressionsKt]]
         TYPE_REFERENCE
           USER_TYPE
             REFERENCE_EXPRESSION[referencedName=foo]
-        OBJECT_DECLARATION[classId=null, fqName=null, isCompanion=false, isLocal=true, isObjectLiteral=true, isTopLevel=false, name=null, superNames=[Foo]]
+        OBJECT_DECLARATION[classId=null, fqName=null, isLocal=true, isObjectLiteral=true, isTopLevel=false, name=null, superNames=[Foo]]
           SUPER_TYPE_LIST
             SUPER_TYPE_ENTRY
               TYPE_REFERENCE

@@ -1,7 +1,7 @@
 FILE[kind=File[packageFqName=<root>]]
   PACKAGE_DIRECTIVE
   IMPORT_LIST
-  OBJECT_DECLARATION[classId=/DataObject, fqName=DataObject, isCompanion=false, isLocal=false, isObjectLiteral=false, isTopLevel=true, name=DataObject, superNames=[]]
+  OBJECT_DECLARATION[classId=/DataObject, fqName=DataObject, isLocal=false, isObjectLiteral=false, isTopLevel=true, name=DataObject, superNames=[]]
     MODIFIER_LIST[public data]
     CLASS_BODY
       FUN[fqName=DataObject.equals, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=equals]
