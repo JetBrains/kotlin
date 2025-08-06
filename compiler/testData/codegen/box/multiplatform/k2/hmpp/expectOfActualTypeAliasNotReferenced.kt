@@ -1,6 +1,5 @@
 // LANGUAGE: +MultiPlatformProjects
 // ISSUE: KT-79829
-// IGNORE_HMPP: JS_IR, JVM_IR
 
 // MODULE: lib-common
 expect class Foo

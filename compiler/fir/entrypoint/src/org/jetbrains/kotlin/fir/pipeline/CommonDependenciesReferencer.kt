@@ -5,39 +5,24 @@
 
 package org.jetbrains.kotlin.fir.pipeline
 
+import org.jetbrains.kotlin.config.AnalysisFlags
 import org.jetbrains.kotlin.fir.FirElement
 import org.jetbrains.kotlin.fir.FirSession
-import org.jetbrains.kotlin.fir.analysis.checkers.getContainingClassSymbol
-import org.jetbrains.kotlin.fir.declarations.FirResolvePhase
-import org.jetbrains.kotlin.fir.declarations.staticScope
-import org.jetbrains.kotlin.fir.expressions.FirAnnotation
 import org.jetbrains.kotlin.fir.expressions.FirExpression
+import org.jetbrains.kotlin.fir.expressions.FirQualifiedAccessExpression
 import org.jetbrains.kotlin.fir.expressions.FirResolvedQualifier
+import org.jetbrains.kotlin.fir.expressions.toResolvedCallableSymbol
+import org.jetbrains.kotlin.fir.languageVersionSettings
 import org.jetbrains.kotlin.fir.references.FirResolvedNamedReference
-import org.jetbrains.kotlin.fir.resolve.*
-import org.jetbrains.kotlin.fir.resolve.providers.impl.FirCachingCompositeSymbolProvider
-import org.jetbrains.kotlin.fir.resolve.providers.impl.FirCommonDeclarationsMappingSymbolProvider
 import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
-import org.jetbrains.kotlin.fir.scopes.CallableCopyTypeCalculator
-import org.jetbrains.kotlin.fir.scopes.processAllCallables
-import org.jetbrains.kotlin.fir.symbols.SymbolInternals
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.visitors.FirDefaultVisitorVoid
-import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 
 fun referenceAllCommonDependencies(outputs: List<ModuleCompilerAnalyzedOutput>) {
-    val (platformSession, scopeSession, _) = outputs.last()
-    val commonDeclarationsMappingProvider = (platformSession.symbolProvider as FirCachingCompositeSymbolProvider)
-        .providers
-        .firstIsInstanceOrNull<FirCommonDeclarationsMappingSymbolProvider>()
-        ?: return
-    val visitor = Visitor(platformSession, scopeSession)
-    val platformClassesReferencedDuringResolution = commonDeclarationsMappingProvider.classMapping.values.map { it.platformClass }
-    for (platformClass in platformClassesReferencedDuringResolution) {
-        visitor.lookupEverythingInClass(platformClass)
-    }
+    val platformSession = outputs.last().session
+    if (!platformSession.languageVersionSettings.getFlag(AnalysisFlags.hierarchicalMultiplatformCompilation)) return
+    val visitor = Visitor(platformSession)
 
     val dependantFragments = outputs.dropLast(1)
     for ((_, _, files) in dependantFragments) {
@@ -47,14 +32,20 @@ fun referenceAllCommonDependencies(outputs: List<ModuleCompilerAnalyzedOutput>) 
     }
 }
 
-private class Visitor(val session: FirSession, val scopeSession: ScopeSession) : FirDefaultVisitorVoid() {
-    private val visited = mutableSetOf<ClassId>()
-
+private class Visitor(val session: FirSession) : FirDefaultVisitorVoid() {
     override fun visitElement(element: FirElement) {
         if (element is FirExpression) {
             lookupInType(element.resolvedType)
         }
         element.acceptChildren(this)
+    }
+
+    override fun visitQualifiedAccessExpression(qualifiedAccessExpression: FirQualifiedAccessExpression) {
+        val callableId = qualifiedAccessExpression.toResolvedCallableSymbol()?.callableId
+        if (callableId != null && callableId.className == null) {
+            session.symbolProvider.getTopLevelCallableSymbols(callableId.packageName, callableId.callableName)
+        }
+        super.visitQualifiedAccessExpression(qualifiedAccessExpression)
     }
 
     override fun visitResolvedNamedReference(resolvedNamedReference: FirResolvedNamedReference) {
@@ -76,78 +67,7 @@ private class Visitor(val session: FirSession, val scopeSession: ScopeSession) :
         type.forEachType l@{
             val lookupTag = it.classLikeLookupTagIfAny ?: return@l
             if (lookupTag is ConeClassLikeLookupTagWithFixedSymbol) return@l
-            val classId = lookupTag.classId
-            val symbol = session.symbolProvider.getClassLikeSymbolByClassId(classId) ?: return@l
-            lookupEverythingInClass(symbol)
-        }
-    }
-
-    fun lookupEverythingInClass(symbol: FirClassLikeSymbol<*>) {
-        if (!visited.add(symbol.classId)) return
-        for (supertype in symbol.getSuperTypes(session, recursive = true)) {
-            lookupInType(supertype)
-        }
-        lookupInTypeParameters(symbol.typeParameterSymbols)
-        symbol.getContainingClassSymbol()?.let { lookupEverythingInClass(it) }
-        @OptIn(SymbolInternals::class)
-        lookupInAnnotations(symbol.annotations)
-        val scope = symbol.defaultType().scope(
-            session,
-            scopeSession,
-            CallableCopyTypeCalculator.CalculateDeferredForceLazyResolution,
-            FirResolvePhase.IMPLICIT_TYPES_BODY_RESOLVE
-        ) ?: return
-        scope.processDeclaredConstructors {
-            lookupInMember(it)
-        }
-        scope.processAllCallables {
-            lookupInMember(it)
-        }
-        if (symbol is FirClassSymbol<*>) {
-            val staticScope = symbol.staticScope(session, scopeSession) ?: return
-            staticScope.processAllCallables {
-                lookupInMember(it)
-            }
-        }
-    }
-
-    private fun lookupInMember(memberSymbol: FirCallableSymbol<*>) {
-        @OptIn(SymbolInternals::class)
-        lookupInAnnotations(memberSymbol.annotations)
-        lookupInTypeParameters(memberSymbol.typeParameterSymbols)
-        lookupInParameters(memberSymbol.contextParameterSymbols)
-        memberSymbol.receiverParameterSymbol?.let { parameterSymbol ->
-            lookupInType(parameterSymbol.resolvedType)
-            @OptIn(SymbolInternals::class)
-            lookupInAnnotations(parameterSymbol.annotations)
-        }
-        lookupInType(memberSymbol.resolvedReturnType)
-        if (memberSymbol is FirFunctionSymbol<*>) {
-            lookupInParameters(memberSymbol.valueParameterSymbols)
-        }
-    }
-
-    private fun lookupInTypeParameters(typeParameterSymbols: List<FirTypeParameterSymbol>) {
-        for (typeParameterSymbol in typeParameterSymbols) {
-            @OptIn(SymbolInternals::class)
-            lookupInAnnotations(typeParameterSymbol.annotations)
-            for (typeRef in typeParameterSymbol.resolvedBounds) {
-                lookupInType(typeRef.coneType)
-            }
-        }
-    }
-
-    private fun lookupInParameters(parameterSymbols: List<FirValueParameterSymbol>) {
-        for (parameterSymbol in parameterSymbols) {
-            lookupInType(parameterSymbol.resolvedReturnType)
-            @OptIn(SymbolInternals::class)
-            lookupInAnnotations(parameterSymbol.annotations)
-        }
-    }
-
-    private fun lookupInAnnotations(annotations: List<FirAnnotation>) {
-        for (annotation in annotations) {
-            annotation.resolvedType.toClassLikeSymbol(session)?.let { lookupEverythingInClass(it) }
+            session.symbolProvider.getClassLikeSymbolByClassId(lookupTag.classId)
         }
     }
 }
