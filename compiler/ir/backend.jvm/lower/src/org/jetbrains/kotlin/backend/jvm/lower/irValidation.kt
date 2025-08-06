@@ -24,9 +24,17 @@ import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 
 @PhaseDescription(name = "JvmValidateIrBeforeLowering")
-internal class JvmIrValidationBeforeLoweringPhase(
+internal class JvmK1IrValidationBeforeLoweringPhase(
     context: JvmBackendContext,
-) : IrValidationBeforeLoweringPhase<JvmBackendContext>(context)
+) : IrValidationBeforeLoweringPhase<JvmBackendContext>(context) {
+    override fun lower(irModule: IrModuleFragment) {
+        if (context.config.useFir) {
+            // In K2, the validation is performed in FIR2IR, right before lowerings, so no need to repeat it here.
+            return
+        }
+        super.lower(irModule)
+    }
+}
 
 @PhaseDescription(name = "JvmValidateIrAfterLowering")
 internal class JvmIrValidationAfterLoweringPhase(
