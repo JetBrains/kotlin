@@ -19,13 +19,11 @@ class KotlinTypeAliasStubImpl(
     private val name: StringRef?,
     private val qualifiedName: StringRef?,
     override val classId: ClassId?,
-    private val isTopLevel: Boolean
+    override val isTopLevel: Boolean
 ) : KotlinStubBaseImpl<KtTypeAlias>(parent, KtStubElementTypes.TYPEALIAS), KotlinTypeAliasStub {
     override fun getName(): String? =
         StringRef.toString(name)
 
     override val fqName: FqName?
         get() = StringRef.toString(qualifiedName)?.let(::FqName)
-
-    override fun isTopLevel(): Boolean = isTopLevel
 }
