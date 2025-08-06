@@ -1999,7 +1999,7 @@ org.jetbrains.kotlin.psi.stubs.KotlinContextReceiverStub
 org.jetbrains.kotlin.psi.stubs.KotlinContextReceiverStub.getLabel()
 org.jetbrains.kotlin.psi.stubs.KotlinContractEffectStub
 org.jetbrains.kotlin.psi.stubs.KotlinEnumEntrySuperclassReferenceExpressionStub
-org.jetbrains.kotlin.psi.stubs.KotlinEnumEntrySuperclassReferenceExpressionStub.getReferencedName()
+org.jetbrains.kotlin.psi.stubs.KotlinEnumEntrySuperclassReferenceExpressionStub.referencedName
 org.jetbrains.kotlin.psi.stubs.KotlinFileStub
 org.jetbrains.kotlin.psi.stubs.KotlinFileStub.findImportsByAlias(String)
 org.jetbrains.kotlin.psi.stubs.KotlinFileStub.getPackageFqName()
