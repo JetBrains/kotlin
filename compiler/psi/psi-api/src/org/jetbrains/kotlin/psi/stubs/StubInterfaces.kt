@@ -140,7 +140,7 @@ interface KotlinModifierListStub : StubElement<KtDeclarationModifierList> {
 }
 
 interface KotlinNameReferenceExpressionStub : StubElement<KtNameReferenceExpression> {
-    fun getReferencedName(): String
+    val referencedName: String
 }
 
 interface KotlinEnumEntrySuperclassReferenceExpressionStub : StubElement<KtEnumEntrySuperclassReferenceExpression> {
