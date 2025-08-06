@@ -29,7 +29,7 @@ public class KtBackingFieldElementType extends KtStubElementType<KotlinBackingFi
 
     @Override
     public void serialize(@NotNull KotlinBackingFieldStubImpl stub, @NotNull StubOutputStream dataStream) throws IOException {
-        dataStream.writeBoolean(stub.hasInitializer());
+        dataStream.writeBoolean(stub.getHasInitializer());
     }
 
     @NotNull
