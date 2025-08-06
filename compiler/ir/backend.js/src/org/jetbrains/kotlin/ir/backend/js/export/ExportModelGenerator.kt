@@ -348,15 +348,12 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
                     members.addIfNotNull(exportProperty(candidate)?.withAttributesFor(candidate))
 
                 is IrClass -> {
-                    if (klass.isInterface) {
-                        nestedClasses.addIfNotNull(klass.companionObject()?.let { exportClass(it) as? ExportedClass }?.withAttributesFor(candidate))
+                    if (klass.isInterface && !candidate.isCompanion) continue
+                    val ec = exportClass(candidate)?.withAttributesFor(candidate)
+                    if (ec is ExportedClass) {
+                        nestedClasses.add(ec)
                     } else {
-                        val ec = exportClass(candidate)?.withAttributesFor(candidate)
-                        if (ec is ExportedClass) {
-                            nestedClasses.add(ec)
-                        } else {
-                            members.addIfNotNull(ec)
-                        }
+                        members.addIfNotNull(ec)
                     }
                 }
 
