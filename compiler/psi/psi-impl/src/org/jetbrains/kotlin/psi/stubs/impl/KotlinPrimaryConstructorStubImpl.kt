@@ -25,6 +25,6 @@ class KotlinPrimaryConstructorStubImpl(
     override val mayHaveContract: Boolean get() = false
     override val hasNoExpressionBody: Boolean get() = true
     override val hasBody: Boolean get() = false
-    override fun isDelegatedCallToThis(): Boolean = false
-    override fun isExplicitDelegationCall(): Boolean = false
+    override val isDelegatedCallToThis: Boolean get() = false
+    override val isExplicitDelegationCall: Boolean get() = false
 }

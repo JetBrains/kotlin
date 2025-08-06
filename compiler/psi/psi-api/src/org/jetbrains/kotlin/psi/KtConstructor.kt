@@ -47,7 +47,7 @@ abstract class KtConstructor<T : KtConstructor<T>> : KtDeclarationStub<KotlinCon
     override fun hasBlockBody() = hasBody()
 
     fun isDelegatedCallToThis(): Boolean {
-        greenStub?.let { return it.isDelegatedCallToThis() }
+        greenStub?.let { return it.isDelegatedCallToThis }
         return when (this) {
             is KtPrimaryConstructor -> false
             is KtSecondaryConstructor -> getDelegationCallOrNull()?.isCallToThis() ?: true
@@ -56,7 +56,7 @@ abstract class KtConstructor<T : KtConstructor<T>> : KtDeclarationStub<KotlinCon
     }
 
     fun isExplicitDelegationCall(): Boolean {
-        greenStub?.let { return it.isExplicitDelegationCall() }
+        greenStub?.let { return it.isExplicitDelegationCall }
         return when (this) {
             is KtPrimaryConstructor -> false
             is KtSecondaryConstructor -> getDelegationCallOrNull()?.isImplicit == false

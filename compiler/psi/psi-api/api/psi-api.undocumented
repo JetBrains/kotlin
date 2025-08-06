@@ -1993,8 +1993,8 @@ org.jetbrains.kotlin.psi.stubs.KotlinConstantExpressionStub
 org.jetbrains.kotlin.psi.stubs.KotlinConstantExpressionStub.kind()
 org.jetbrains.kotlin.psi.stubs.KotlinConstantExpressionStub.value()
 org.jetbrains.kotlin.psi.stubs.KotlinConstructorStub
-org.jetbrains.kotlin.psi.stubs.KotlinConstructorStub.isDelegatedCallToThis()
-org.jetbrains.kotlin.psi.stubs.KotlinConstructorStub.isExplicitDelegationCall()
+org.jetbrains.kotlin.psi.stubs.KotlinConstructorStub.isDelegatedCallToThis
+org.jetbrains.kotlin.psi.stubs.KotlinConstructorStub.isExplicitDelegationCall
 org.jetbrains.kotlin.psi.stubs.KotlinContextReceiverStub
 org.jetbrains.kotlin.psi.stubs.KotlinContextReceiverStub.getLabel()
 org.jetbrains.kotlin.psi.stubs.KotlinContractEffectStub

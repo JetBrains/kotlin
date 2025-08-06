@@ -17,8 +17,8 @@ class KotlinSecondaryConstructorStubImpl(
     parent: StubElement<out PsiElement>?,
     private val containingClassName: StringRef?,
     override val hasBody: Boolean,
-    private val isDelegatedCallToThis: Boolean,
-    private val isExplicitDelegationCall: Boolean,
+    override val isDelegatedCallToThis: Boolean,
+    override val isExplicitDelegationCall: Boolean,
     override val mayHaveContract: Boolean,
 ) : KotlinStubBaseImpl<KtSecondaryConstructor>(parent, KtStubElementTypes.SECONDARY_CONSTRUCTOR),
     KotlinConstructorStub<KtSecondaryConstructor> {
@@ -30,7 +30,4 @@ class KotlinSecondaryConstructorStubImpl(
     // It cannot have expression body
     override val hasNoExpressionBody: Boolean
         get() = true
-
-    override fun isDelegatedCallToThis(): Boolean = isDelegatedCallToThis
-    override fun isExplicitDelegationCall(): Boolean = isExplicitDelegationCall
 }
