@@ -23,7 +23,7 @@ class KtPropertyAccessor : KtDeclarationStub<KotlinPropertyAccessorStub?>, KtDec
     val isGetter: Boolean
         get() {
             greenStub?.let {
-                return it.isGetter()
+                return it.isGetter
             }
             return findChildByType<PsiElement>(KtTokens.GET_KEYWORD) != null
         }
@@ -31,7 +31,7 @@ class KtPropertyAccessor : KtDeclarationStub<KotlinPropertyAccessorStub?>, KtDec
     val isSetter: Boolean
         get() {
             greenStub?.let {
-                return !it.isGetter()
+                return !it.isGetter
             }
             return findChildByType<PsiElement>(KtTokens.SET_KEYWORD) != null
         }

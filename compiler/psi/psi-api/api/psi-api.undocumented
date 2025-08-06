@@ -2026,7 +2026,7 @@ org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderStub
 org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderWithTextStub
 org.jetbrains.kotlin.psi.stubs.KotlinPlaceHolderWithTextStub.text
 org.jetbrains.kotlin.psi.stubs.KotlinPropertyAccessorStub
-org.jetbrains.kotlin.psi.stubs.KotlinPropertyAccessorStub.isGetter()
+org.jetbrains.kotlin.psi.stubs.KotlinPropertyAccessorStub.isGetter
 org.jetbrains.kotlin.psi.stubs.KotlinPropertyStub
 org.jetbrains.kotlin.psi.stubs.KotlinPropertyStub.hasDelegate()
 org.jetbrains.kotlin.psi.stubs.KotlinPropertyStub.hasDelegateExpression()
