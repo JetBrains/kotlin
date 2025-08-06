@@ -22,7 +22,4 @@ class WasmPreSerializationLoweringContext(
     }
 
     override val sharedVariablesManager: SharedVariablesManager by lazy { KlibSharedVariablesManager(symbols) }
-
-    override val allowExternalInlining: Boolean
-        get() = true
 }

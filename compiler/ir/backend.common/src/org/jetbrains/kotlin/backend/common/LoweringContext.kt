@@ -38,9 +38,6 @@ interface LoweringContext : LoggingContext, ErrorReportingContext {
     val irFactory: IrFactory
     val sharedVariablesManager: SharedVariablesManager
 
-    val allowExternalInlining: Boolean
-        get() = false
-
     override val messageCollector: MessageCollector
         get() = configuration.messageCollector
 

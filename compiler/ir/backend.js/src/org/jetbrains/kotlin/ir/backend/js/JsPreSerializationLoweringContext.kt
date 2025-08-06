@@ -27,7 +27,4 @@ class JsPreSerializationLoweringContext(
     }
 
     override val sharedVariablesManager by lazy { KlibSharedVariablesManager(symbols) }
-
-    override val allowExternalInlining: Boolean
-        get() = true
 }
