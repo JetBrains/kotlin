@@ -101,7 +101,7 @@ interface KotlinDeclarationWithBodyStub<T : KtDeclarationWithBody> : StubElement
 }
 
 interface KotlinFunctionStub : KotlinCallableStubBase<KtNamedFunction>, KotlinDeclarationWithBodyStub<KtNamedFunction> {
-    fun hasTypeParameterListBeforeFunctionName(): Boolean
+    val hasTypeParameterListBeforeFunctionName: Boolean
 }
 
 interface KotlinConstructorStub<T : KtConstructor<T>> :

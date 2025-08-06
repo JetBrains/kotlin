@@ -4089,7 +4089,7 @@ public abstract interface class org/jetbrains/kotlin/psi/stubs/KotlinFileStubKin
 }
 
 public abstract interface class org/jetbrains/kotlin/psi/stubs/KotlinFunctionStub : org/jetbrains/kotlin/psi/stubs/KotlinCallableStubBase, org/jetbrains/kotlin/psi/stubs/KotlinDeclarationWithBodyStub {
-	public abstract fun hasTypeParameterListBeforeFunctionName ()Z
+	public abstract fun getHasTypeParameterListBeforeFunctionName ()Z
 }
 
 public abstract interface class org/jetbrains/kotlin/psi/stubs/KotlinFunctionTypeStub : com/intellij/psi/stubs/StubElement {

@@ -42,7 +42,7 @@ public class KtNamedFunction extends KtTypeParameterListOwnerStub<KotlinFunction
     public boolean hasTypeParameterListBeforeFunctionName() {
         KotlinFunctionStub stub = getGreenStub();
         if (stub != null) {
-            return stub.hasTypeParameterListBeforeFunctionName();
+            return stub.getHasTypeParameterListBeforeFunctionName();
         }
         return hasTypeParameterListBeforeFunctionNameByTree();
     }
