@@ -464,7 +464,7 @@ private class Fir2IrPipeline(
         extension: IrGenerationExtension?,
         module: IrModuleFragment,
     ) {
-        val irVerificationMode = compilerConfiguration.get(CommonConfigurationKeys.VERIFY_IR, IrVerificationMode.NONE)
+        val irVerificationMode = compilerConfiguration.get(CommonConfigurationKeys.VERIFY_IR, IrVerificationMode.ERROR)
         if (irVerificationMode == IrVerificationMode.NONE && !fir2IrConfiguration.validateIrForKlibSerialization) {
             return
         }
