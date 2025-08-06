@@ -24,11 +24,11 @@ class KtContextReceiverElementType(debugName: String) : KtStubElementType<Kotlin
     ): KotlinContextReceiverStubImpl = KotlinContextReceiverStubImpl(
         parent = parentStub,
         elementType = this,
-        label = StringRef.fromString(element.labelName()),
+        _label = StringRef.fromString(element.labelName()),
     )
 
     override fun serialize(stub: KotlinContextReceiverStubImpl, dataStream: StubOutputStream) =
-        dataStream.writeName(stub.getLabel())
+        dataStream.writeName(stub.label)
 
     override fun deserialize(dataStream: StubInputStream, parentStub: StubElement<*>?) =
         KotlinContextReceiverStubImpl(parentStub, this, dataStream.readName())
