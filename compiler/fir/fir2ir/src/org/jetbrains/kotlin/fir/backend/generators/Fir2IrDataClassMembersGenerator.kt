@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.builtins.StandardNames.HASHCODE_NAME
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.fir.backend.Fir2IrCommonMemberStorage
 import org.jetbrains.kotlin.fir.backend.Fir2IrCommonMemberStorage.DataValueClassGeneratedMembersInfo
 import org.jetbrains.kotlin.fir.backend.Fir2IrComponents
 import org.jetbrains.kotlin.fir.backend.FirMetadataSource
@@ -61,7 +60,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
  */
 class Fir2IrDataClassMembersGenerator(
     private val c: Fir2IrComponents,
-    private val commonMemberStorage: Fir2IrCommonMemberStorage,
+    private val generatedDataValueClassSyntheticFunctionsStorage: MutableMap<IrClass, DataValueClassGeneratedMembersInfo>,
 ) : Fir2IrComponents by c {
     fun generateSingleFieldValueClassMembers(klass: FirRegularClass, irClass: IrClass): List<FirDeclaration> {
         return MyDataClassMethodsGenerator(irClass, klass, GENERATED_SINGLE_FIELD_VALUE_CLASS_MEMBER).generateHeaders()
@@ -76,7 +75,7 @@ class Fir2IrDataClassMembersGenerator(
     }
 
     fun registerCopyOrComponentFunction(irFunction: IrSimpleFunction) {
-        commonMemberStorage.generatedDataValueClassSyntheticFunctions.getValue(irFunction.parentAsClass).generatedFunctions += irFunction
+        generatedDataValueClassSyntheticFunctionsStorage.getValue(irFunction.parentAsClass).generatedFunctions += irFunction
     }
 
     private inner class MyDataClassMethodsGenerator(val irClass: IrClass, val klass: FirRegularClass, val origin: IrDeclarationOrigin) {
@@ -133,7 +132,7 @@ class Fir2IrDataClassMembersGenerator(
                 generatedIrFunctions += equalsFunction
             }
 
-            commonMemberStorage.generatedDataValueClassSyntheticFunctions[irClass] = DataValueClassGeneratedMembersInfo(
+            generatedDataValueClassSyntheticFunctionsStorage[irClass] = DataValueClassGeneratedMembersInfo(
                 c, klass, origin, generatedIrFunctions
             )
 
