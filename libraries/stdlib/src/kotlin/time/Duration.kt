@@ -1187,36 +1187,33 @@ private inline fun parseIsoStringFormat(
         val (longValue, nextIndex, sign) = value.parseLong(index)
         index = nextIndex
         if (index == length || index == prevIndex + if (ch == '-' || ch == '+') 1 else 0) return throwExceptionOrInvalid(throwException)
-        val unit = value[index]
+        var unit = value[index]
         if (unit == 'D') {
             if (isTimeComponent) return throwExceptionOrInvalid(throwException)
             totalMillis = longValue.multiplyWithoutOverflow(MILLIS_PER_DAY)
         } else {
             if (!isTimeComponent) return throwExceptionOrInvalid(throwException)
+            totalMillis = totalMillis.addWithoutOverflow(
+                longValue.multiplyWithoutOverflow(
+                    when (unit) {
+                        'H' -> MILLIS_PER_HOUR
+                        'M' -> MILLIS_PER_MINUTE
+                        'S', '.' -> MILLIS_PER_SECOND
+                        else -> return throwExceptionOrInvalid(throwException)
+                    }
+                )
+            ).onInvalid { return throwExceptionOrInvalid(throwException) }
             if (unit == '.') {
-                totalMillis = totalMillis.addWithoutOverflow(longValue.multiplyWithoutOverflow(MILLIS_PER_SECOND))
-                    .onInvalid { return throwExceptionOrInvalid(throwException) }
                 index++
                 val prevIndex = index
                 val (fractionValue, nextIndex) = value.parseFraction(index)
                 index = nextIndex
                 if (index == prevIndex || index == length || value[index] != 'S') return throwExceptionOrInvalid(throwException)
                 totalNanos = sign * fractionValue.toNanos(DurationUnit.SECONDS)
-                prevUnit = 'S'
-            } else {
-                if (unit <= prevUnit) return throwExceptionOrInvalid(throwException)
-                totalMillis = totalMillis.addWithoutOverflow(
-                    longValue.multiplyWithoutOverflow(
-                        when (unit) {
-                            'H' -> MILLIS_PER_HOUR
-                            'M' -> MILLIS_PER_MINUTE
-                            'S' -> MILLIS_PER_SECOND
-                            else -> return throwExceptionOrInvalid(throwException)
-                        }
-                    )
-                ).onInvalid { return throwExceptionOrInvalid(throwException) }
-                prevUnit = unit
+                unit = 'S'
             }
+            if (unit <= prevUnit) return throwExceptionOrInvalid(throwException)
+            prevUnit = unit
         }
         index++
     }
