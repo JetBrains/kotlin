@@ -20,8 +20,8 @@ class KotlinPrimaryConstructorStubImpl(
     KotlinConstructorStub<KtPrimaryConstructor> {
     override val fqName: FqName? get() = null
     override fun getName(): String? = StringRef.toString(containingClassName)
-    override fun isTopLevel(): Boolean = false
-    override fun isExtension(): Boolean = false
+    override val isTopLevel: Boolean get() = false
+    override val isExtension: Boolean get() = false
     override val mayHaveContract: Boolean get() = false
     override val hasNoExpressionBody: Boolean get() = true
     override val hasBody: Boolean get() = false
