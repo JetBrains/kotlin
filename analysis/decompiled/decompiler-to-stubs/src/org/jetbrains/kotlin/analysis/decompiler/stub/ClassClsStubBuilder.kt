@@ -143,7 +143,7 @@ private class ClassClsStubBuilder(
                     classId = classId,
                     superTypeRefs,
                     isTopLevel = !this.classId.isNestedClass,
-                    isDefault = isCompanionObject,
+                    isCompanion = isCompanionObject,
                     isLocal = false,
                     isObjectLiteral = false,
                 )
