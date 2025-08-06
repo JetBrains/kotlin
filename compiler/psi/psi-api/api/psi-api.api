@@ -3990,7 +3990,7 @@ public abstract interface class org/jetbrains/kotlin/psi/stubs/KotlinAnnotationU
 }
 
 public abstract interface class org/jetbrains/kotlin/psi/stubs/KotlinBackingFieldStub : com/intellij/psi/stubs/StubElement {
-	public abstract fun hasInitializer ()Z
+	public abstract fun getHasInitializer ()Z
 }
 
 public abstract interface class org/jetbrains/kotlin/psi/stubs/KotlinBlockStringTemplateEntryStub : org/jetbrains/kotlin/psi/stubs/KotlinPlaceHolderWithTextStub {

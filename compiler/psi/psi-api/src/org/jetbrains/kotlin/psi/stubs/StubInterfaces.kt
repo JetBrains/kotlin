@@ -168,7 +168,7 @@ interface KotlinPropertyAccessorStub : KotlinDeclarationWithBodyStub<KtPropertyA
 }
 
 interface KotlinBackingFieldStub : StubElement<KtBackingField> {
-    fun hasInitializer(): Boolean
+    val hasInitializer: Boolean
 }
 
 interface KotlinPropertyStub : KotlinCallableStubBase<KtProperty> {
