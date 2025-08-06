@@ -290,31 +290,6 @@ class WasmSymbols(
 
     fun findContentHashCodeOverload(arrayType: IrType): IrSimpleFunctionSymbol = findNullableOverloadForReceiver(arrayType, contentHashCode)
 
-    private val getProgressionLastElementSymbols =
-        symbolFinder.findFunctions(Name.identifier("getProgressionLastElement"), "kotlin", "internal")
-
-    override val getProgressionLastElementByReturnType: Map<IrClassifierSymbol, IrSimpleFunctionSymbol> by lazy {
-        getProgressionLastElementSymbols.associateBy { it.owner.returnType.classifierOrFail }
-    }
-
-    private val toUIntSymbols = symbolFinder.findFunctions(Name.identifier("toUInt"), "kotlin")
-
-    override val toUIntByExtensionReceiver: Map<IrClassifierSymbol, IrSimpleFunctionSymbol> by lazy {
-        toUIntSymbols.associateBy {
-            it.owner.parameters.firstOrNull { it.kind == IrParameterKind.ExtensionReceiver }?.type?.classifierOrFail
-                ?: error("Expected extension receiver for ${it.owner.render()}")
-        }
-    }
-
-    private val toULongSymbols = symbolFinder.findFunctions(Name.identifier("toULong"), "kotlin")
-
-    override val toULongByExtensionReceiver: Map<IrClassifierSymbol, IrSimpleFunctionSymbol> by lazy {
-        toULongSymbols.associateBy {
-            it.owner.parameters.firstOrNull { it.kind == IrParameterKind.ExtensionReceiver }?.type?.classifierOrFail
-                ?: error("Expected extension receiver for ${it.owner.render()}")
-        }
-    }
-
     private val wasmStructRefClass = getIrClass(FqName("kotlin.wasm.internal.reftypes.structref"))
     val wasmStructRefType by lazy { wasmStructRefClass.defaultType }
 

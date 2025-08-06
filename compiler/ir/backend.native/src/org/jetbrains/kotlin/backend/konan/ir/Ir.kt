@@ -707,36 +707,6 @@ class KonanSymbols(
         }
     }
 
-    private fun ClassId.classSymbol() = symbolFinder.findClass(this) ?: error("Class $this is not found")
-    private fun CallableId.propertySymbols() = symbolFinder.findProperties(this).toList()
-    private fun CallableId.functionSymbols() = symbolFinder.findFunctions(this).toList()
-    private fun ClassId.primaryConstructorSymbol() : Lazy<IrConstructorSymbol> {
-        val clazz = classSymbol()
-        return lazy { (clazz.owner.primaryConstructor ?: error("Class ${this} has no primary constructor")).symbol }
-    }
-    private fun ClassId.noParametersConstructorSymbol() : Lazy<IrConstructorSymbol> {
-        val clazz = classSymbol()
-        return lazy { (clazz.owner.constructors.singleOrNull { it.parameters.isEmpty() } ?: error("Class ${this} has no constructor without parameters")).symbol }
-    }
-
-    private fun CallableId.functionSymbol(): IrSimpleFunctionSymbol {
-        val elements = functionSymbols()
-        require(elements.isNotEmpty()) { "No function $this found" }
-        require(elements.size == 1) { "Several functions $this found:\n${elements.joinToString("\n")}" }
-        return elements.single()
-    }
-
-    private inline fun CallableId.functionSymbol(crossinline condition: (IrFunction) -> Boolean): Lazy<IrSimpleFunctionSymbol> {
-        val unfilteredElements = functionSymbols()
-        require(unfilteredElements.isNotEmpty()) { "No function $this found" }
-        return lazy {
-            val elements = unfilteredElements.filter { condition(it.owner) }
-            require(elements.isNotEmpty()) { "No function $this found corresponding given condition" }
-            require(elements.size == 1) { "Several functions $this found corresponding given condition:\n${elements.joinToString("\n")}" }
-            elements.single()
-        }
-    }
-
     val baseClassSuite = ClassIds.baseClassSuite.classSymbol()
     val topLevelSuite = ClassIds.topLevelSuite.classSymbol()
     val testFunctionKind = ClassIds.testFunctionKind.classSymbol()
