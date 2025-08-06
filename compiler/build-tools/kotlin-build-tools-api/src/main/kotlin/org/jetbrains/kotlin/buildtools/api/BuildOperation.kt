@@ -50,5 +50,8 @@ public interface BuildOperation<R> {
          */
         @JvmField
         public val METRICS_COLLECTOR: Option<BuildMetricsCollector?> = Option("METRICS_COLLECTOR")
+
+        @Deprecated("Internal use only.", level = DeprecationLevel.ERROR)
+        public fun <V> createCustomOption(id: String): Option<V> = Option(id)
     }
 }

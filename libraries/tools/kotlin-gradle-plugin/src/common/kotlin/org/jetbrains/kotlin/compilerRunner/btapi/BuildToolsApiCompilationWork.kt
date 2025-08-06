@@ -11,9 +11,7 @@ import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Property
 import org.gradle.workers.WorkAction
 import org.gradle.workers.WorkParameters
-import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporter
-import org.jetbrains.kotlin.build.report.metrics.GradleBuildPerformanceMetric
-import org.jetbrains.kotlin.build.report.metrics.GradleBuildTime
+import org.jetbrains.kotlin.build.report.metrics.*
 import org.jetbrains.kotlin.buildtools.api.*
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationOptions
@@ -31,13 +29,17 @@ import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperatio
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
+import org.jetbrains.kotlin.compilerRunner.GradleCompilationResults
 import org.jetbrains.kotlin.compilerRunner.GradleKotlinCompilerWorkArguments
 import org.jetbrains.kotlin.compilerRunner.asFinishLogMessage
 import org.jetbrains.kotlin.gradle.internal.ClassLoadersCachingBuildService
 import org.jetbrains.kotlin.gradle.internal.ParentClassLoaderProvider
 import org.jetbrains.kotlin.gradle.plugin.BuildFinishedListenerService
 import org.jetbrains.kotlin.gradle.plugin.internal.BuildIdService
+import org.jetbrains.kotlin.gradle.plugin.internal.state.TaskExecutionResults
 import org.jetbrains.kotlin.gradle.plugin.internal.state.getTaskLogger
+import org.jetbrains.kotlin.gradle.report.TaskExecutionInfo
+import org.jetbrains.kotlin.gradle.report.TaskExecutionResult
 import org.jetbrains.kotlin.gradle.tasks.*
 import org.jetbrains.kotlin.gradle.utils.destinationAsFile
 import org.jetbrains.kotlin.incremental.ClasspathChanges
@@ -66,6 +68,12 @@ internal abstract class BuildToolsApiCompilationWork @Inject constructor(
 
     private val taskPath
         get() = workArguments.taskPath
+
+    private val metrics = if (workArguments.reportingSettings.buildReportOutputs.isNotEmpty()) {
+        BuildMetricsReporterImpl()
+    } else {
+        DoNothingBuildMetricsReporter
+    }
 
     private val log: KotlinLogger = getTaskLogger(taskPath, LOGGER_PREFIX, BuildToolsApiCompilationWork::class.java.simpleName, true)
 
@@ -102,6 +110,8 @@ internal abstract class BuildToolsApiCompilationWork @Inject constructor(
             jvmCompilationOperation.compilerArguments.applyArgumentStrings(workArguments.compilerArgs.toList())
             jvmCompilationOperation[KOTLINSCRIPT_EXTENSIONS] = workArguments.kotlinScriptExtensions
             jvmCompilationOperation[COMPILER_ARGUMENTS_LOG_LEVEL] = workArguments.compilerArgumentsLogLevel.value
+            @Suppress("DEPRECATION_ERROR")
+            jvmCompilationOperation[BuildOperation.Companion.createCustomOption("XX_KGP_METRICS_COLLECTOR")] = metrics
 
             val icEnv = workArguments.incrementalCompilationEnvironment
             val classpathChanges = icEnv?.classpathChanges
@@ -126,7 +136,8 @@ internal abstract class BuildToolsApiCompilationWork @Inject constructor(
 
                 when (classpathChanges) {
                     is ClasspathChanges.ClasspathSnapshotEnabled.IncrementalRun.NoChanges -> {
-                        classpathSnapshotsOptions[JvmSnapshotBasedIncrementalCompilationOptions.Companion.ASSURED_NO_CLASSPATH_SNAPSHOT_CHANGES] = true
+                        classpathSnapshotsOptions[JvmSnapshotBasedIncrementalCompilationOptions.Companion.ASSURED_NO_CLASSPATH_SNAPSHOT_CHANGES] =
+                            true
                     }
                     is ClasspathChanges.ClasspathSnapshotEnabled.NotAvailableForNonIncrementalRun -> {
                         classpathSnapshotsOptions[FORCE_RECOMPILATION] = true
@@ -155,6 +166,8 @@ internal abstract class BuildToolsApiCompilationWork @Inject constructor(
     }
 
     override fun execute() {
+        metrics.addTimeMetric(GradleBuildPerformanceMetric.START_WORKER_EXECUTION)
+        metrics.startMeasure(GradleBuildTime.RUN_COMPILATION_IN_WORKER)
         val backup = initializeBackup()
         val executionStrategy = workArguments.compilerExecutionSettings.strategy
         try {
@@ -170,6 +183,16 @@ internal abstract class BuildToolsApiCompilationWork @Inject constructor(
             }
             throw e
         } finally {
+            val taskInfo = TaskExecutionInfo(
+                kotlinLanguageVersion = workArguments.kotlinLanguageVersion,
+                changedFiles = workArguments.incrementalCompilationEnvironment?.changedFiles,
+                compilerArguments = if (workArguments.reportingSettings.includeCompilerArguments) workArguments.compilerArgs else emptyArray(),
+//                tags = collectStatTags(),
+            )
+            metrics.endMeasure(GradleBuildTime.RUN_COMPILATION_IN_WORKER)
+            val result =
+                TaskExecutionResult(buildMetrics = metrics.getMetrics(), taskInfo = taskInfo)
+            TaskExecutionResults[workArguments.taskPath] = result
             backup?.deleteSnapshot()
         }
     }
