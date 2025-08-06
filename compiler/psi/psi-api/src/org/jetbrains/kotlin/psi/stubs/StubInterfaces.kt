@@ -87,17 +87,17 @@ interface KotlinDeclarationWithBodyStub<T : KtDeclarationWithBody> : StubElement
      * **false** means that the declaration is definitely having no contract,
      * but **true** doesn't guarantee that the declaration has a contract.
      */
-    fun mayHaveContract(): Boolean
+    val mayHaveContract: Boolean
 
     /**
      * Whether the declaration has a block body or no bodies at all.
      */
-    fun hasNoExpressionBody(): Boolean
+    val hasNoExpressionBody: Boolean
 
     /**
      * Whether the declaration has a body (expression or block).
      */
-    fun hasBody(): Boolean
+    val hasBody: Boolean
 }
 
 interface KotlinFunctionStub : KotlinCallableStubBase<KtNamedFunction>, KotlinDeclarationWithBodyStub<KtNamedFunction> {

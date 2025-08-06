@@ -36,17 +36,17 @@ public class KotlinPropertyAccessorStubImpl extends KotlinStubBaseImpl<KtPropert
     }
 
     @Override
-    public boolean hasBody() {
+    public boolean getHasBody() {
         return hasBody;
     }
 
     @Override
-    public boolean hasNoExpressionBody() {
+    public boolean getHasNoExpressionBody() {
         return hasNoExpressionBody;
     }
 
     @Override
-    public boolean mayHaveContract() {
+    public boolean getMayHaveContract() {
         return mayHaveContract;
     }
 }

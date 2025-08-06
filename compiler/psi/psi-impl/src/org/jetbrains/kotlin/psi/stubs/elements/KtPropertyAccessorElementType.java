@@ -37,9 +37,9 @@ public class KtPropertyAccessorElementType extends KtStubElementType<KotlinPrope
     @Override
     public void serialize(@NotNull KotlinPropertyAccessorStubImpl stub, @NotNull StubOutputStream dataStream) throws IOException {
         dataStream.writeBoolean(stub.isGetter());
-        dataStream.writeBoolean(stub.hasBody());
-        dataStream.writeBoolean(stub.hasNoExpressionBody());
-        dataStream.writeBoolean(stub.mayHaveContract());
+        dataStream.writeBoolean(stub.getHasBody());
+        dataStream.writeBoolean(stub.getHasNoExpressionBody());
+        dataStream.writeBoolean(stub.getMayHaveContract());
     }
 
     @NotNull
