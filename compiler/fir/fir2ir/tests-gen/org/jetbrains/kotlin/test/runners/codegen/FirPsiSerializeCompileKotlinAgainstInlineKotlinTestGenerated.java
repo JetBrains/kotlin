@@ -146,6 +146,12 @@ public class FirPsiSerializeCompileKotlinAgainstInlineKotlinTestGenerated extend
       }
 
       @Test
+      @TestMetadata("checkReturnValue.kt")
+      public void testCheckReturnValue() {
+        runTest("compiler/testData/codegen/box/annotations/checkReturnValue.kt");
+      }
+
+      @Test
       @TestMetadata("constValInAnnotation.kt")
       public void testConstValInAnnotation() {
         runTest("compiler/testData/codegen/box/annotations/constValInAnnotation.kt");

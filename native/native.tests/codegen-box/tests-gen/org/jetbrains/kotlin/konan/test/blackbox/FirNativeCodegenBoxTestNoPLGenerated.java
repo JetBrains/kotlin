@@ -66,6 +66,12 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
       }
 
       @Test
+      @TestMetadata("checkReturnValue.kt")
+      public void testCheckReturnValue() {
+        runTest("compiler/testData/codegen/box/annotations/checkReturnValue.kt");
+      }
+
+      @Test
       @TestMetadata("deserializedLocalClassArgument.kt")
       public void testDeserializedLocalClassArgument() {
         runTest("compiler/testData/codegen/box/annotations/deserializedLocalClassArgument.kt");
