@@ -11,13 +11,19 @@ import common.SERVER_COMPILATION_WORKSPACE_DIR
 import common.SERVER_SOURCE_FILES_CACHE_DIR
 import common.buildAbsPath
 import common.computeSha256
+import common.toCompileResponseGrpc
+import common.toGrpc
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
+import model.CompilationResult
+import model.CompilationResultSource
+import model.toCompileResponse
 import model.toDomain
+import model.toGrpc
 import org.jetbrains.kotlin.cli.common.messages.MessageCollectorImpl
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.daemon.client.BasicCompilerServicesWithResultsFacadeServer
@@ -25,6 +31,7 @@ import org.jetbrains.kotlin.daemon.common.JpsCompilerServicesFacade
 import org.jetbrains.kotlin.daemon.report.DaemonMessageReporter
 import org.jetbrains.kotlin.daemon.report.getBuildReporter
 import org.jetbrains.kotlin.server.CompilationMetadataGrpc
+import org.jetbrains.kotlin.server.CompilationResultGrpc
 import org.jetbrains.kotlin.server.CompileRequestGrpc
 import org.jetbrains.kotlin.server.CompileResponseGrpc
 import org.jetbrains.kotlin.server.CompileServiceGrpcKt
@@ -38,8 +45,7 @@ class GrpcRemoteCompilationService(
     private val compilationService: InProcessCompilationService
 ) : CompileServiceGrpcKt.CompileServiceCoroutineImplBase() {
 
-
-    val workspaceManager = WorkspaceManager()
+    private val workspaceManager = WorkspaceManager()
 
     fun debug(text: String) {
         val formatter = DateTimeFormatter.ofPattern("HH:mm:ss")
@@ -48,8 +54,8 @@ class GrpcRemoteCompilationService(
 
     override fun compile(requests: Flow<CompileRequestGrpc>): Flow<CompileResponseGrpc> {
         return channelFlow {
-            val sourceFilesChannel = Channel<String>(capacity = Channel.UNLIMITED)
-            val sourceFiles = mutableListOf<String>()
+            val sourceFilesChannel = Channel<File>(capacity = Channel.UNLIMITED)
+            val sourceFiles = mutableListOf<File>()
 
             val fileChunkStrategy = OneFileOneChunkStrategy()
             val responseHandler = ResponseHandler(fileChunkStrategy)
@@ -75,9 +81,14 @@ class GrpcRemoteCompilationService(
                                     val compileResponse = when (cachedFile) {
                                         is File -> {
                                             debug("file $clientFilePath is available in cache")
-                                            val projectFilePath = workspaceManager.copyFileToProject(cachedFile.absolutePath, clientFilePath,userId, compilationMetadata.projectName)
+                                            val projectFilePath = workspaceManager.copyFileToProject(
+                                                cachedFile.absolutePath,
+                                                clientFilePath,
+                                                userId,
+                                                compilationMetadata.projectName
+                                            )
                                             println("project file path = $projectFilePath")
-                                            sourceFilesChannel.send(projectFilePath?.toAbsolutePath().toString())
+                                            sourceFilesChannel.send(projectFilePath.toFile())
                                             responseHandler.buildFileTransferReply(clientFilePath, true)
                                         }
                                         else -> {
@@ -90,7 +101,7 @@ class GrpcRemoteCompilationService(
                             }
                         }
                         request.hasSourceFileChunk() -> {
-                            compilationMetadata?.let{
+                            compilationMetadata?.let {
                                 val chunk = request.sourceFileChunk.content.toByteArray()
                                 val filePath = request.sourceFileChunk.filePath
                                 fileChunkStrategy.addChunks(filePath, chunk)
@@ -98,9 +109,14 @@ class GrpcRemoteCompilationService(
                                     launch {
                                         val allFileChunks = fileChunkStrategy.getChunks(filePath)
                                         val (fingerprint, cachedFile) = cacheHandler.addSourceFile(allFileChunks)
-                                        val projectFilePath = workspaceManager.copyFileToProject(cachedFile.absolutePath, filePath,userId, compilationMetadata.projectName)
+                                        val projectFilePath = workspaceManager.copyFileToProject(
+                                            cachedFile.absolutePath,
+                                            filePath,
+                                            userId,
+                                            compilationMetadata.projectName
+                                        )
                                         println("project file path = $projectFilePath")
-                                        sourceFilesChannel.send(projectFilePath?.toAbsolutePath().toString())
+                                        sourceFilesChannel.send(projectFilePath.toFile())
                                     }
                                 }
                             }
@@ -116,48 +132,69 @@ class GrpcRemoteCompilationService(
                     sourceFiles.add(filePath)
                     if (sourceFiles.size == compilationMetadata?.fileCount){
                         launch(Dispatchers.Default) {
-                            val compilerArguments =
-                                sourceFiles.toTypedArray() + "-d" + buildAbsPath(OUTPUT_FILES_DIR) + "-cp" + "/Users/michal.svec/Desktop/jars/kotlin-stdlib-2.2.0.jar" + compilationMetadata.compilerArgumentsList.toTypedArray()
-                            println("DEBUG SERVER: compilerArguments=${compilerArguments.contentToString()}")
+                            val outputDirectory = workspaceManager.getOutputDir(userId, compilationMetadata.projectName)
+                            val compilerArguments = InProcessCompilationService.buildCompilerArgsWithoutSourceFiles(
+                                outputDirectory,
+                                compilationMetadata.compilerArgumentsList
+                            )
 
-                            val remoteMessageCollector = RemoteMessageCollector(object: OnReport{
-                                override fun onReport(msg: MessageCollectorImpl.Message) {
-                                    println("ON REPORT")
+                            // TODO: I made up compiler version
+                            val (isCompilationResultCached, inputFingerprint) = cacheHandler.isCompilationResultCached(
+                                sourceFiles,
+                                compilerArguments,
+                                compilerVersion = "2.0"
+                            )
+                            if (isCompilationResultCached) {
+                                val compilationResultDirectory = cacheHandler.getCompilationResultDirectory(inputFingerprint)
+                                send(CompilationResult(exitCode = 0, CompilationResultSource.CACHE).toGrpc().toCompileResponse())
+                                responseHandler.buildFileChunkStream(compilationResultDirectory).collect { fileChunk ->
+                                    send(fileChunk)
                                 }
-                            })
+                                close()
+                            } else {
+                                val remoteMessageCollector = RemoteMessageCollector(object : OnReport {
+                                    override fun onReport(msg: MessageCollectorImpl.Message) {
+                                        trySend(msg.toGrpc().toCompileResponseGrpc())// TODO double check trySend
+                                    }
+                                })
 
-                            val outputsCollector = { x: File, y: List<File> -> println("$x $y") }
-                            val servicesFacade = BasicCompilerServicesWithResultsFacadeServer(remoteMessageCollector, outputsCollector)
+                                val outputsCollector = { x: File, y: List<File> -> println("$x $y") }
+                                val servicesFacade = BasicCompilerServicesWithResultsFacadeServer(remoteMessageCollector, outputsCollector)
 
-                            debug("compilation started")
-                            try {
-                                val result = compilationService.compileImpl(
-                                    compilerArguments = compilerArguments,
+                                debug("compilation started")
+                                val exitCode = compilationService.compileImpl(
+                                    compilerArguments = (sourceFiles.map { it.path } + compilerArguments).toTypedArray(),
                                     compilationOptions = compilationMetadata.compilationOptions.toDomain(),
                                     servicesFacade = servicesFacade,
                                     compilationResults = null,
                                     hasIncrementalCaches = JpsCompilerServicesFacade::hasIncrementalCaches,
                                     createMessageCollector = { facade, options ->
-                                        RemoteMessageCollector(object : OnReport {
-                                            override fun onReport(msg: MessageCollectorImpl.Message) {
-                                                println("this is our compilation message $msg")
-                                            }
-                                        })
+                                        remoteMessageCollector
                                     },
                                     createReporter = ::DaemonMessageReporter,
                                     createServices = { facade, eventManager ->
                                         Services.EMPTY
                                     },
-                                    getICReporter = { a, b, c -> getBuildReporter(a, b!!, c) }
+                                    getICReporter = { a, b, c ->
+                                        getBuildReporter(a, b!!, c)
+                                    }
                                 )
-                                debug("compilation finished and exist code is $result")
-                                responseHandler.buildFileChunkStream(File(buildAbsPath(OUTPUT_FILES_DIR))).collect { fileChunk->
-                                    send(fileChunk)
+                                debug("compilation finished and exist code is $exitCode")
+
+                                send(CompilationResult(exitCode, CompilationResultSource.COMPILER).toGrpc().toCompileResponse())
+
+                                if (exitCode == 0) {
+                                    val cachedCompilationResult = cacheHandler.addCompilationResult(
+                                        sourceFiles,
+                                        outputDirectory.toFile(),
+                                        compilerArguments,
+                                        "2.0" // TODO I just made up this
+                                    )
+                                    responseHandler.buildFileChunkStream(cachedCompilationResult.file).collect { fileChunk ->
+                                        send(fileChunk)
+                                    }
                                 }
-                            } catch (e: Exception) {
-                                println("error occurred: ${e.message}")
-                                e.printStackTrace()
-                                // TODO handle case when daemon is no longer alive
+                                close()
                             }
                         }
                     }

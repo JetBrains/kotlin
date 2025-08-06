@@ -5,9 +5,7 @@
 
 package server
 
-import common.OUTPUT_FILES_DIR
 import common.SERVER_COMPILATION_WORKSPACE_DIR
-import common.buildAbsPath
 import org.jetbrains.kotlin.build.report.RemoteBuildReporter
 import org.jetbrains.kotlin.build.report.metrics.GradleBuildPerformanceMetric
 import org.jetbrains.kotlin.build.report.metrics.GradleBuildTime
@@ -51,6 +49,7 @@ import org.jetbrains.kotlin.util.forEachPhaseMeasurement
 import org.jetbrains.kotlin.util.getLinesPerSecond
 import java.io.File
 import java.nio.file.Files
+import java.nio.file.Path
 import java.util.concurrent.TimeUnit
 import java.util.logging.Level
 import java.util.logging.Logger
@@ -62,6 +61,26 @@ class InProcessCompilationService(
 
     init {
         Files.createDirectories(File(SERVER_COMPILATION_WORKSPACE_DIR).toPath())
+    }
+
+    companion object {
+
+//        fun buildCompilerArgs(sourceFiles: List<File>, outputDirectory: Path, additionalArguments: List<String>): List<String> {
+//            return buildCompilerArgsWithoutSourceFiles(outputDirectory, additionalArguments).toMutableList().apply {
+//                addAll(0, sourceFiles.map { it.path })
+//            }
+//        }
+
+        fun buildCompilerArgsWithoutSourceFiles(outputDirectory: Path, additionalArguments: List<String>): List<String> {
+            return mutableListOf<String>().apply {
+                add("-d")
+                add(outputDirectory.toString())
+                add("-cp")
+                add("/Users/michal.svec/Desktop/jars/kotlin-stdlib-2.2.0.jar") // TODO fix
+                addAll(additionalArguments)
+            }
+        }
+
     }
 
     private val log by lazy { Logger.getLogger("compiler") }
@@ -287,61 +306,56 @@ class InProcessCompilationService(
             throw e
         }
     }
-
-
-    fun createCompilationWorkspace(compilationOptions: CompilationOptions) {
-
-    }
 }
 
-fun main(){
-    val sourceFiles = listOf(
-        File("compiler/daemon/remote-daemon/src/main/kotlin/client/input/Input.kt")
-    )
-    val staticArguments = listOf(
-        "-no-stdlib",
-        "-no-reflect",
-    )
-    val compilerArguments =
-        sourceFiles.map { it-> it.absolutePath} + "-d" + buildAbsPath(OUTPUT_FILES_DIR) + "-cp" + "libraries/stdlib/build/classes/kotlin/jvm/main" + staticArguments
-//    println("DEBUG SERVER: compilerArguments=${compilerArguments.contentToString()}")
-
-    val remoteMessageCollector = RemoteMessageCollector(object : OnReport {
-        override fun onReport(msg: MessageCollectorImpl.Message) {
-        }
-    })
-
-    val outputsCollector = { x: File, y: List<File> -> println("OUTPUTS COLLECTOR: $x $y") }
-    val servicesFacade = BasicCompilerServicesWithResultsFacadeServer(remoteMessageCollector, outputsCollector)
-
-    val compilationOptions = CompilationOptions(
-        compilerMode = CompilerMode.NON_INCREMENTAL_COMPILER,
-        targetPlatform = CompileService.TargetPlatform.JVM,
-        reportSeverity = ReportSeverity.DEBUG.code,
-        reportCategories = arrayOf(),
-        requestedCompilationResults = arrayOf(),
-    )
-
-    val cs = InProcessCompilationService(reportPerf = true)
-    val exitCode = cs.compileImpl(
-        compilerArguments = compilerArguments.toTypedArray(),
-        compilationOptions = compilationOptions,
-        servicesFacade = servicesFacade,
-        compilationResults = null,
-        hasIncrementalCaches = JpsCompilerServicesFacade::hasIncrementalCaches,
-        createMessageCollector = { facade, options ->
-            RemoteMessageCollector(object : OnReport {
-                override fun onReport(msg: MessageCollectorImpl.Message) {
-                    println("this is our compilation message $msg")
-                }
-            })
-        },
-        createReporter = ::DaemonMessageReporter,
-        createServices = { facade, eventManager ->
-            Services.EMPTY
-        },
-        getICReporter = { a, b, c -> getBuildReporter(a, b!!, c) }
-    )
-
-    println("exit code is $exitCode")
-}
+//fun main() {
+//    val sourceFiles = listOf(
+//        File("compiler/daemon/remote-daemon/src/main/kotlin/client/input/Input.kt")
+//    )
+//    val staticArguments = listOf(
+//        "-no-stdlib",
+//        "-no-reflect",
+//    )
+//    val compilerArguments =
+//        sourceFiles.map { it-> it.absolutePath} + "-d" + buildAbsPath(OUTPUT_FILES_DIR) + "-cp" + "libraries/stdlib/build/classes/kotlin/jvm/main" + staticArguments
+////    println("DEBUG SERVER: compilerArguments=${compilerArguments.contentToString()}")
+//
+//    val remoteMessageCollector = RemoteMessageCollector(object : OnReport {
+//        override fun onReport(msg: MessageCollectorImpl.Message) {
+//        }
+//    })
+//
+//    val outputsCollector = { x: File, y: List<File> -> println("OUTPUTS COLLECTOR: $x $y") }
+//    val servicesFacade = BasicCompilerServicesWithResultsFacadeServer(remoteMessageCollector, outputsCollector)
+//
+//    val compilationOptions = CompilationOptions(
+//        compilerMode = CompilerMode.NON_INCREMENTAL_COMPILER,
+//        targetPlatform = CompileService.TargetPlatform.JVM,
+//        reportSeverity = ReportSeverity.DEBUG.code,
+//        reportCategories = arrayOf(),
+//        requestedCompilationResults = arrayOf(),
+//    )
+//
+//    val cs = InProcessCompilationService(reportPerf = true)
+//    val exitCode = cs.compileImpl(
+//        compilerArguments = compilerArguments.toTypedArray(),
+//        compilationOptions = compilationOptions,
+//        servicesFacade = servicesFacade,
+//        compilationResults = null,
+//        hasIncrementalCaches = JpsCompilerServicesFacade::hasIncrementalCaches,
+//        createMessageCollector = { facade, options ->
+//            RemoteMessageCollector(object : OnReport {
+//                override fun onReport(msg: MessageCollectorImpl.Message) {
+//                    println("this is our compilation message $msg")
+//                }
+//            })
+//        },
+//        createReporter = ::DaemonMessageReporter,
+//        createServices = { facade, eventManager ->
+//            Services.EMPTY
+//        },
+//        getICReporter = { a, b, c -> getBuildReporter(a, b!!, c) }
+//    )
+//
+//    println("exit code is $exitCode")
+//}

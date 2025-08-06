@@ -7,14 +7,15 @@ package server
 
 import common.SERVER_SOURCE_FILES_CACHE_DIR
 import common.FileChunkingStrategy
+import common.SERVER_CACHE_DIR
 import common.SERVER_COMPILATION_RESULT_DIR
+import common.calculateCompilationInputHash
 import common.computeSha256
 import common.copyDirectoryRecursively
 import model.CacheItem
 import java.io.File
 import java.nio.file.Files
 import java.nio.file.Paths
-import java.security.MessageDigest
 
 class CacheHandler(
     private val fileChunkingStrategy: FileChunkingStrategy
@@ -24,6 +25,14 @@ class CacheHandler(
     private val compilationResults = mutableMapOf<String, String>()
 
     init {
+        Files.createDirectories(Paths.get(SERVER_SOURCE_FILES_CACHE_DIR))
+        Files.createDirectories(Paths.get(SERVER_COMPILATION_RESULT_DIR))
+    }
+
+    fun clear() {
+        File(SERVER_CACHE_DIR).deleteRecursively()
+        sourceFilePaths.clear()
+        compilationResults.clear()
         Files.createDirectories(Paths.get(SERVER_SOURCE_FILES_CACHE_DIR))
         Files.createDirectories(Paths.get(SERVER_COMPILATION_RESULT_DIR))
     }
@@ -51,22 +60,44 @@ class CacheHandler(
         }
     }
 
-    fun addCompilationResultIfAbsent(
+    fun addCompilationResult(
+        sourceFiles: List<File>,
         compilationResultDirectory: File,
         compilerArguments: List<String>,
         compilerVersion: String
     ): CacheItem {
-        val inputFingerprint = calculateCompilationInputHash(compilationResultDirectory.listFiles()?.toList() ?: emptyList(), compilerArguments, compilerVersion)
+        val inputFingerprint = calculateCompilationInputHash(
+            sourceFiles,
+            compilerArguments,
+            compilerVersion
+        )
         val cachedCompilationResultPath = Paths.get(SERVER_COMPILATION_RESULT_DIR, inputFingerprint)
-        if (!compilationResults.containsKey(inputFingerprint)) {
-            copyDirectoryRecursively(compilationResultDirectory.toPath(), cachedCompilationResultPath)
-            compilationResults[inputFingerprint] = cachedCompilationResultPath.toAbsolutePath().toString()
-        }
+        copyDirectoryRecursively(compilationResultDirectory.toPath(), cachedCompilationResultPath, overwrite = true)
+        compilationResults[inputFingerprint] = cachedCompilationResultPath.toAbsolutePath().toString()
         return CacheItem(inputFingerprint, cachedCompilationResultPath.toFile())
     }
 
-    fun isCompilationResultCached(fingerprint: String): Boolean {
-        return compilationResults.containsKey(fingerprint)
+    fun addCompilationResult(
+        inputFingerprint: String,
+        compilationResultDirectory: File
+    ): CacheItem {
+        val cachedCompilationResultPath = Paths.get(SERVER_COMPILATION_RESULT_DIR, inputFingerprint)
+        copyDirectoryRecursively(compilationResultDirectory.toPath(), cachedCompilationResultPath, overwrite = true)
+        compilationResults[inputFingerprint] = cachedCompilationResultPath.toAbsolutePath().toString()
+        return CacheItem(inputFingerprint, cachedCompilationResultPath.toFile())
+    }
+
+    fun isCompilationResultCached(
+        sourceFiles: List<File>,
+        compilerArguments: List<String>,
+        compilerVersion: String
+    ): Pair<Boolean, String> {
+        val inputFingerprint = calculateCompilationInputHash(
+            sourceFiles,
+            compilerArguments,
+            compilerVersion
+        )
+        return compilationResults.containsKey(inputFingerprint) to inputFingerprint
     }
 
     fun getCompilationResultDirectory(inputFingerprint: String): File {
@@ -74,23 +105,4 @@ class CacheHandler(
     }
 
     private fun isSourceFileCached(fingerprint: String): Boolean = sourceFilePaths.containsKey(fingerprint)
-
-
-    private fun calculateCompilationInputHash(sourceFiles: List<File>, compilerArguments: List<String>, compilerVersion: String = "2.0"): String{
-        val digest = MessageDigest.getInstance("SHA-256")
-        sourceFiles.sortedBy { it.path }.forEach { file->
-            file.inputStream().use { input ->
-                val buffer = ByteArray(8192)
-                var bytesRead: Int
-                while (input.read(buffer).also { bytesRead = it } != -1) {
-                    digest.update(buffer, 0, bytesRead)
-                }
-            }
-        }
-        compilerArguments.sorted().forEach { arg->
-            digest.update(arg.toByteArray())
-        }
-        digest.update(compilerVersion.toByteArray())
-        return digest.digest().joinToString("") { "%02x".format(it) }
-    }
 }

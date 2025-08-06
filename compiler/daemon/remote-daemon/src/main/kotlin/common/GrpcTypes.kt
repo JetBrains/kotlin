@@ -16,15 +16,18 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollectorImpl
 import org.jetbrains.kotlin.daemon.common.CompilationOptions
 import org.jetbrains.kotlin.daemon.common.CompileService
 import org.jetbrains.kotlin.daemon.common.CompilerMode
+import org.jetbrains.kotlin.server.CompilationMetadataGrpc
 import org.jetbrains.kotlin.server.CompilationOptionsGrpc
+import org.jetbrains.kotlin.server.CompileRequestGrpc
 import org.jetbrains.kotlin.server.CompileResponseGrpc
 import org.jetbrains.kotlin.server.CompilerMessageSeverityGrpc
 import org.jetbrains.kotlin.server.CompilerMessageSourceLocationGrpc
 import org.jetbrains.kotlin.server.CompilerModeGrpc
-import org.jetbrains.kotlin.server.ConnectResponseGrpc
-import org.jetbrains.kotlin.server.DaemonJVMOptionsConfiguratorGrpc
+//import org.jetbrains.kotlin.server.ConnectResponseGrpc
+//import org.jetbrains.kotlin.server.DaemonJVMOptionsConfiguratorGrpc
 import org.jetbrains.kotlin.server.DaemonMessageGrpc
 import org.jetbrains.kotlin.server.FileChunkGrpc
+import org.jetbrains.kotlin.server.FileTransferRequestGrpc
 import org.jetbrains.kotlin.server.TargetPlatformGrpc
 
 /*
@@ -32,11 +35,18 @@ import org.jetbrains.kotlin.server.TargetPlatformGrpc
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-fun CompilationOptions.toCompilationOptionsGrpc(): CompilationOptionsGrpc {
-    return CompilationOptionsGrpc.newBuilder()
-        .setCompilerMode(this.compilerMode.toGrpc())
-        .setTargetPlatform(this.targetPlatform.toGrpc())
-        .setReportSeverity(this.reportSeverity)
+
+fun CompilationMetadataGrpc.toCompileRequest(): CompileRequestGrpc {
+    return CompileRequestGrpc
+        .newBuilder()
+        .setMetadata(this)
+        .build()
+}
+
+fun FileTransferRequestGrpc.toCompileRequest(): CompileRequestGrpc {
+    return CompileRequestGrpc
+        .newBuilder()
+        .setFileTransferRequest(this)
         .build()
 }
 
@@ -94,24 +104,15 @@ fun MessageCollectorImpl.Message.toGrpc(): DaemonMessageGrpc {
     return daemonMessage.build()
 }
 
-fun DaemonMessageGrpc.toConnectResponseGrpc(): ConnectResponseGrpc {
-    return ConnectResponseGrpc.newBuilder().setDaemonMessage(this).build()
-}
+//fun DaemonMessageGrpc.toConnectResponseGrpc(): ConnectResponseGrpc {
+//    return ConnectResponseGrpc.newBuilder().setDaemonMessage(this).build()
+//}
 
 fun DaemonMessageGrpc.toCompileResponseGrpc(): CompileResponseGrpc {
     return CompileResponseGrpc.newBuilder().setDaemonMessage(this).build()
 }
 
-fun CompilationOptionsGrpc.toDomain(): CompilationOptions {
-    return CompilationOptions(
-        compilerMode = compilerMode.toDomain(),
-        targetPlatform = targetPlatform.toDomain(),
-        reportSeverity = reportSeverity,
-        requestedCompilationResults = requestedCompilationResultsList.toTypedArray(),
-        reportCategories = reportCategoriesList.toTypedArray(),
-        kotlinScriptExtensions = kotlinScriptExtensionsList.toTypedArray()
-    )
-}
+
 
 fun FileChunkGrpc.fromBytes(fileName: String, bytes: List<Byte>): FileChunkGrpc {
     return FileChunkGrpc.newBuilder()
@@ -120,20 +121,20 @@ fun FileChunkGrpc.fromBytes(fileName: String, bytes: List<Byte>): FileChunkGrpc 
         .build()
 }
 
-fun DaemonJVMOptionsConfigurator.toGrpc(): DaemonJVMOptionsConfiguratorGrpc {
-
-    val builder = DaemonJVMOptionsConfiguratorGrpc.newBuilder()
-
-    additionalParams.forEachIndexed { index, param ->
-        builder.setAdditionalParams(index, param)
-    }
-
-    return builder
-        .setInheritMemoryLimits(inheritMemoryLimits)
-        .setInheritAdditionalProperties(inheritAdditionalProperties)
-        .setInheritOtherJvmOptions(inheritOtherJvmOptions)
-        .build()
-}
+//fun DaemonJVMOptionsConfigurator.toGrpc(): DaemonJVMOptionsConfiguratorGrpc {
+//
+//    val builder = DaemonJVMOptionsConfiguratorGrpc.newBuilder()
+//
+//    additionalParams.forEachIndexed { index, param ->
+//        builder.setAdditionalParams(index, param)
+//    }
+//
+//    return builder
+//        .setInheritMemoryLimits(inheritMemoryLimits)
+//        .setInheritAdditionalProperties(inheritAdditionalProperties)
+//        .setInheritOtherJvmOptions(inheritOtherJvmOptions)
+//        .build()
+//}
 
 
 fun CompilerMessageSeverity.toGrpc(): CompilerMessageSeverityGrpc{

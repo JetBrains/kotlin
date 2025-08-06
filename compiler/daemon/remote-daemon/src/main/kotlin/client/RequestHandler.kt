@@ -7,10 +7,11 @@ package client
 
 import common.FileChunkingStrategy
 import com.google.protobuf.kotlin.toByteString
-import common.toCompilationOptionsGrpc
 import common.computeSha256
+import common.toCompileRequest
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import model.toGrpc
 import org.jetbrains.kotlin.daemon.common.CompilationOptions
 import org.jetbrains.kotlin.server.CompilationMetadataGrpc
 import org.jetbrains.kotlin.server.CompileRequestGrpc
@@ -21,15 +22,15 @@ import java.io.File
 class RequestHandler(private val fileChunkingStrategy: FileChunkingStrategy) {
 
     fun buildCompilationMetadata(
-        sessionId: Int,
+        projectName: String,
         compilationOptions: CompilationOptions,
         compilerArguments: Array<out String>,
         fileCount: Int
     ): CompileRequestGrpc {
         val builder = CompilationMetadataGrpc
             .newBuilder()
-            .setSessionId(sessionId)
-            .setCompilationOptions(compilationOptions.toCompilationOptionsGrpc())
+            .setCompilationOptions(compilationOptions.toGrpc())
+            .setProjectName(projectName)
             .setFileCount(fileCount)
 
         compilerArguments.forEach { argument ->
@@ -58,15 +59,10 @@ class RequestHandler(private val fileChunkingStrategy: FileChunkingStrategy) {
         return flow {
             sourceFiles.forEach { file ->
                 emit(
-                    CompileRequestGrpc
+                    FileTransferRequestGrpc
                         .newBuilder()
-                        .setFileTransferRequest(
-                            FileTransferRequestGrpc
-                                .newBuilder()
-                                .setFilePath(file.path)
-                                .setFileFingerprint(computeSha256(file))
-                        )
-                        .build()
+                        .setFilePath(file.path)
+                        .setFileFingerprint(computeSha256(file)).build().toCompileRequest()
                 )
             }
         }
@@ -76,7 +72,7 @@ class RequestHandler(private val fileChunkingStrategy: FileChunkingStrategy) {
         fileChunkingStrategy.addChunks(filePath, chunk)
         if (isLast) {
             println("reconstructing file $filePath to $newFilePath, size = ${File(filePath).length()} bytes")
-            fileChunkingStrategy.reconstruct(filePath, newFilePath)
+            fileChunkingStrategy.reconstruct(fileChunkingStrategy.getChunks(filePath), newFilePath)
         }
     }
 }

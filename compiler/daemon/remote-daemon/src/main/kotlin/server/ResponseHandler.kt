@@ -30,9 +30,9 @@ class ResponseHandler(private val fileChunkingStrategy: FileChunkingStrategy) {
 
 
     fun buildFileChunkStream(directory: File): Flow<CompileResponseGrpc> = flow {
-        directory.listFiles()?.forEach { file ->
-            if (!file.isDirectory) {
-
+        directory.walkTopDown()
+            .filter { it.isFile }
+            .forEach { file ->
                 fileChunkingStrategy.chunk(file).collect { chunk ->
                     val fileChunk = FileChunkGrpc.newBuilder()
                         .setFilePath(file.path)
@@ -44,10 +44,8 @@ class ResponseHandler(private val fileChunkingStrategy: FileChunkingStrategy) {
                     val response = CompileResponseGrpc.newBuilder()
                         .setCompiledFileChunk(fileChunk)
                         .build()
-
                     emit(response)
                 }
             }
-        }
     }
 }
