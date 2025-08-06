@@ -205,7 +205,6 @@ abstract class IrBuiltIns {
     ): Map<IrClassifierSymbol, IrSimpleFunctionSymbol>
 
     abstract fun getBinaryOperator(name: Name, lhsType: IrType, rhsType: IrType): IrSimpleFunctionSymbol
-    abstract fun getUnaryOperator(name: Name, receiverType: IrType): IrSimpleFunctionSymbol
 
     abstract val operatorsPackageFragment: IrExternalPackageFragment
     abstract val kotlinInternalPackageFragment: IrExternalPackageFragment

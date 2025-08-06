@@ -2903,10 +2903,6 @@ private object TestIrBuiltins : IrBuiltIns() {
         missingBuiltIn()
     }
 
-    override fun getUnaryOperator(name: Name, receiverType: IrType): IrSimpleFunctionSymbol {
-        missingBuiltIn()
-    }
-
     override val operatorsPackageFragment: IrExternalPackageFragment
         get() = missingBuiltIn()
     override val kotlinInternalPackageFragment: IrExternalPackageFragment
