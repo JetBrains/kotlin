@@ -154,7 +154,7 @@ interface KotlinParameterStub : KotlinStubWithFqName<KtParameter> {
 }
 
 interface KotlinPropertyAccessorStub : KotlinDeclarationWithBodyStub<KtPropertyAccessor> {
-    fun isGetter(): Boolean
+    val isGetter: Boolean
 }
 
 interface KotlinBackingFieldStub : StubElement<KtBackingField> {
