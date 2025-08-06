@@ -18,11 +18,11 @@ class KotlinPropertyStubImpl(
     parent: StubElement<out PsiElement>?,
     private val name: StringRef?,
     override val isVar: Boolean,
-    private val isTopLevel: Boolean,
+    override val isTopLevel: Boolean,
     override val hasDelegate: Boolean,
     override val hasDelegateExpression: Boolean,
     override val hasInitializer: Boolean,
-    private val isExtension: Boolean,
+    override val isExtension: Boolean,
     override val hasReturnTypeRef: Boolean,
     override val fqName: FqName?,
     val constantInitializer: ConstantValue<*>?,
@@ -39,7 +39,5 @@ class KotlinPropertyStubImpl(
         }
     }
 
-    override fun isTopLevel() = isTopLevel
-    override fun isExtension() = isExtension
     override fun getName() = StringRef.toString(name)
 }
