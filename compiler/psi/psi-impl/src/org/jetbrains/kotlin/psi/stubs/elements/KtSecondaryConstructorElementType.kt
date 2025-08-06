@@ -47,8 +47,8 @@ class KtSecondaryConstructorElementType(@NonNls debugName: String) :
     override fun serialize(stub: KotlinSecondaryConstructorStubImpl, dataStream: StubOutputStream) {
         dataStream.writeName(stub.name)
         dataStream.writeBoolean(stub.hasBody)
-        dataStream.writeBoolean(stub.isDelegatedCallToThis())
-        dataStream.writeBoolean(stub.isExplicitDelegationCall())
+        dataStream.writeBoolean(stub.isDelegatedCallToThis)
+        dataStream.writeBoolean(stub.isExplicitDelegationCall)
         dataStream.writeBoolean(stub.mayHaveContract)
     }
 

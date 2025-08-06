@@ -104,10 +104,9 @@ interface KotlinFunctionStub : KotlinCallableStubBase<KtNamedFunction>, KotlinDe
     val hasTypeParameterListBeforeFunctionName: Boolean
 }
 
-interface KotlinConstructorStub<T : KtConstructor<T>> :
-    KotlinCallableStubBase<T>, KotlinDeclarationWithBodyStub<T> {
-    fun isDelegatedCallToThis(): Boolean
-    fun isExplicitDelegationCall(): Boolean
+interface KotlinConstructorStub<T : KtConstructor<T>> : KotlinCallableStubBase<T>, KotlinDeclarationWithBodyStub<T> {
+    val isDelegatedCallToThis: Boolean
+    val isExplicitDelegationCall: Boolean
 }
 
 interface KotlinImportAliasStub : StubElement<KtImportAlias> {
