@@ -22,9 +22,9 @@ class KotlinClassStubImpl(
     override val classId: ClassId?,
     private val name: StringRef?,
     private val _superNames: Array<StringRef>,
-    private val isInterface: Boolean,
-    private val isEnumEntry: Boolean,
-    private val isClsStubCompiledToJvmDefaultImplementation: Boolean,
+    override val isInterface: Boolean,
+    override val isEnumEntry: Boolean,
+    override val isClsStubCompiledToJvmDefaultImplementation: Boolean,
     override val isLocal: Boolean,
     override val isTopLevel: Boolean,
     val valueClassRepresentation: KotlinValueClassRepresentation?,
@@ -36,9 +36,6 @@ class KotlinClassStubImpl(
             return FqName(stringRef)
         }
 
-    override fun isInterface(): Boolean = isInterface
-    override fun isEnumEntry(): Boolean = isEnumEntry
-    override fun isClsStubCompiledToJvmDefaultImplementation(): Boolean = isClsStubCompiledToJvmDefaultImplementation
     override fun getName(): String? = StringRef.toString(name)
 
     override val superNames: List<String>

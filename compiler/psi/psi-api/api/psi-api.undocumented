@@ -1984,8 +1984,8 @@ org.jetbrains.kotlin.psi.stubs.KotlinClassOrObjectStub.isLocal
 org.jetbrains.kotlin.psi.stubs.KotlinClassOrObjectStub.isTopLevel
 org.jetbrains.kotlin.psi.stubs.KotlinClassOrObjectStub.superNames
 org.jetbrains.kotlin.psi.stubs.KotlinClassStub
-org.jetbrains.kotlin.psi.stubs.KotlinClassStub.isEnumEntry()
-org.jetbrains.kotlin.psi.stubs.KotlinClassStub.isInterface()
+org.jetbrains.kotlin.psi.stubs.KotlinClassStub.isEnumEntry
+org.jetbrains.kotlin.psi.stubs.KotlinClassStub.isInterface
 org.jetbrains.kotlin.psi.stubs.KotlinClassifierStub
 org.jetbrains.kotlin.psi.stubs.KotlinClassifierStub.classId
 org.jetbrains.kotlin.psi.stubs.KotlinCollectionLiteralExpressionStub
