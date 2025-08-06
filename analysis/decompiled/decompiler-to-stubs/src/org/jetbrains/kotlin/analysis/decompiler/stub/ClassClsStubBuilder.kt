@@ -128,7 +128,6 @@ private class ClassClsStubBuilder(
     }
 
     private fun doCreateClassOrObjectStub(): StubElement<out PsiElement> {
-        val isCompanionObject = classKind == ProtoBuf.Class.Kind.COMPANION_OBJECT
         val fqName = classId.asSingleFqName()
         val shortName = fqName.shortName().ref()
         val superTypeRefs = supertypeIds.filterNot {
@@ -143,7 +142,6 @@ private class ClassClsStubBuilder(
                     classId = classId,
                     superTypeRefs,
                     isTopLevel = !this.classId.isNestedClass,
-                    isCompanion = isCompanionObject,
                     isLocal = false,
                     isObjectLiteral = false,
                 )

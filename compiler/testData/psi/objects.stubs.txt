@@ -1,7 +1,7 @@
 FILE[kind=File[packageFqName=<root>]]
   PACKAGE_DIRECTIVE
   IMPORT_LIST
-  OBJECT_DECLARATION[classId=/Objects, fqName=Objects, isCompanion=false, isLocal=false, isObjectLiteral=false, isTopLevel=true, name=Objects, superNames=[]]
+  OBJECT_DECLARATION[classId=/Objects, fqName=Objects, isLocal=false, isObjectLiteral=false, isTopLevel=true, name=Objects, superNames=[]]
     MODIFIER_LIST[public]
     CLASS_BODY
       PROPERTY[fqName=Objects.c, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=c]
@@ -9,7 +9,7 @@ FILE[kind=File[packageFqName=<root>]]
         VALUE_PARAMETER_LIST
       FUN[fqName=Objects.g, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=g]
         VALUE_PARAMETER_LIST
-      OBJECT_DECLARATION[classId=/Objects.InnerObject, fqName=Objects.InnerObject, isCompanion=false, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=InnerObject, superNames=[A]]
+      OBJECT_DECLARATION[classId=/Objects.InnerObject, fqName=Objects.InnerObject, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=InnerObject, superNames=[A]]
         MODIFIER_LIST[private]
         SUPER_TYPE_LIST
           SUPER_TYPE_ENTRY
@@ -20,7 +20,7 @@ FILE[kind=File[packageFqName=<root>]]
           PROPERTY[fqName=Objects.InnerObject.c, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=c]
           FUN[fqName=Objects.InnerObject.f, hasBody=true, hasNoExpressionBody=true, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=f]
             VALUE_PARAMETER_LIST
-      OBJECT_DECLARATION[classId=/Objects.OtherObject, fqName=Objects.OtherObject, isCompanion=false, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=OtherObject, superNames=[NestedClass]]
+      OBJECT_DECLARATION[classId=/Objects.OtherObject, fqName=Objects.OtherObject, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=OtherObject, superNames=[NestedClass]]
         MODIFIER_LIST[public]
         SUPER_TYPE_LIST
           SUPER_TYPE_CALL_ENTRY

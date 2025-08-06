@@ -193,14 +193,14 @@ FILE[kind=Facade[packageFqName=<root>, facadeFqName=ValidDeclarationsKt]]
               TYPE_REFERENCE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=ann]
-      OBJECT_DECLARATION[classId=/A.<no name provided>, fqName=A.<no name provided>, isCompanion=false, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=null, superNames=[]]
+      OBJECT_DECLARATION[classId=/A.<no name provided>, fqName=A.<no name provided>, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=null, superNames=[]]
         MODIFIER_LIST[]
           ANNOTATION_ENTRY[hasValueArguments=false, shortName=companion]
             CONSTRUCTOR_CALLEE
               TYPE_REFERENCE
                 USER_TYPE
                   REFERENCE_EXPRESSION[referencedName=companion]
-      OBJECT_DECLARATION[classId=/A.B, fqName=A.B, isCompanion=true, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=B, superNames=[]]
+      OBJECT_DECLARATION[classId=/A.B, fqName=A.B, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=B, superNames=[]]
         MODIFIER_LIST[companion]
           ANNOTATION_ENTRY[hasValueArguments=false, shortName=private]
             CONSTRUCTOR_CALLEE

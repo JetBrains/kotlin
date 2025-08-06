@@ -3,7 +3,7 @@ FILE[kind=File[packageFqName=<root>]]
   IMPORT_LIST
   CLASS[classId=/MyClass, fqName=MyClass, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=false, isLocal=false, isTopLevel=true, name=MyClass, superNames=[]]
     CLASS_BODY
-      OBJECT_DECLARATION[classId=/MyClass.Companion, fqName=MyClass.Companion, isCompanion=true, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
+      OBJECT_DECLARATION[classId=/MyClass.Companion, fqName=MyClass.Companion, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
         MODIFIER_LIST[companion]
         CLASS_BODY
           PROPERTY[fqName=MyClass.Companion.token, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=token]

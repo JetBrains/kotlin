@@ -283,7 +283,7 @@ Top Level Object.class:
         REFERENCE_EXPRESSION[referencedName=one two]
         REFERENCE_EXPRESSION[referencedName=three four]
     IMPORT_LIST
-    OBJECT_DECLARATION[classId=one two/three four/Top Level Object, fqName=one two.three four.Top Level Object, isCompanion=false, isLocal=false, isObjectLiteral=false, isTopLevel=true, name=Top Level Object, superNames=[Top Level Interface]]
+    OBJECT_DECLARATION[classId=one two/three four/Top Level Object, fqName=one two.three four.Top Level Object, isLocal=false, isObjectLiteral=false, isTopLevel=true, name=Top Level Object, superNames=[Top Level Interface]]
       MODIFIER_LIST[public]
       SUPER_TYPE_LIST
         SUPER_TYPE_ENTRY

@@ -43,7 +43,7 @@ class KtObjectDeclaration : KtClassOrObject {
         }
     }
 
-    fun isCompanion(): Boolean = _stub?.isCompanion ?: hasModifier(KtTokens.COMPANION_KEYWORD)
+    fun isCompanion(): Boolean = hasModifier(KtTokens.COMPANION_KEYWORD)
 
     override fun getTextOffset(): Int = nameIdentifier?.textRange?.startOffset
         ?: getObjectKeyword()!!.textRange.startOffset

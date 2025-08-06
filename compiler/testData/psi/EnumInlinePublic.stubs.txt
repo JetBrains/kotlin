@@ -8,6 +8,6 @@ FILE[kind=File[packageFqName=<root>]]
         MODIFIER_LIST[inline]
       ENUM_ENTRY[classId=null, fqName=My.private, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=true, isInterface=false, isLocal=false, isTopLevel=false, name=private, superNames=[]]
         MODIFIER_LIST[inner]
-      OBJECT_DECLARATION[classId=/My.Companion, fqName=My.Companion, isCompanion=true, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
+      OBJECT_DECLARATION[classId=/My.Companion, fqName=My.Companion, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
         MODIFIER_LIST[companion]
         CLASS_BODY

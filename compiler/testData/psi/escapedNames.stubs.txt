@@ -128,7 +128,7 @@ FILE[kind=Facade[packageFqName=one two.three four, facadeFqName=one two.three fo
               USER_TYPE
                 REFERENCE_EXPRESSION[referencedName=Type Parameter]
   CLASS[classId=one two/three four/Top Level Interface, fqName=one two.three four.Top Level Interface, isClsStubCompiledToJvmDefaultImplementation=false, isEnumEntry=false, isInterface=true, isLocal=false, isTopLevel=true, name=Top Level Interface, superNames=[]]
-  OBJECT_DECLARATION[classId=one two/three four/Top Level Object, fqName=one two.three four.Top Level Object, isCompanion=false, isLocal=false, isObjectLiteral=false, isTopLevel=true, name=Top Level Object, superNames=[Top Level Interface]]
+  OBJECT_DECLARATION[classId=one two/three four/Top Level Object, fqName=one two.three four.Top Level Object, isLocal=false, isObjectLiteral=false, isTopLevel=true, name=Top Level Object, superNames=[Top Level Interface]]
     SUPER_TYPE_LIST
       SUPER_TYPE_ENTRY
         TYPE_REFERENCE

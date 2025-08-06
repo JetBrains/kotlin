@@ -7,7 +7,7 @@ FILE[kind=File[packageFqName=<root>]]
       MODIFIER_LIST[public]
       VALUE_PARAMETER_LIST
     CLASS_BODY
-      OBJECT_DECLARATION[classId=/MyClass.Companion, fqName=MyClass.Companion, isCompanion=true, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
+      OBJECT_DECLARATION[classId=/MyClass.Companion, fqName=MyClass.Companion, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
         MODIFIER_LIST[public companion]
         CLASS_BODY
           PROPERTY[fqName=MyClass.Companion.token, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=token]

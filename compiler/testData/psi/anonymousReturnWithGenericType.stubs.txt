@@ -9,7 +9,7 @@ FILE[kind=File[packageFqName=<root>]]
       TYPE_PARAMETER[fqName=null, isInVariance=false, isOutVariance=false, name=T]
     CLASS_BODY
       PROPERTY[fqName=AnonymousReturnWithGenericType.v1, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=v1]
-        OBJECT_DECLARATION[classId=null, fqName=null, isCompanion=false, isLocal=true, isObjectLiteral=true, isTopLevel=false, name=null, superNames=[Foo]]
+        OBJECT_DECLARATION[classId=null, fqName=null, isLocal=true, isObjectLiteral=true, isTopLevel=false, name=null, superNames=[Foo]]
           SUPER_TYPE_LIST
             SUPER_TYPE_ENTRY
               TYPE_REFERENCE
@@ -23,7 +23,7 @@ FILE[kind=File[packageFqName=<root>]]
           CLASS_BODY
       FUN[fqName=AnonymousReturnWithGenericType.f1, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=f1]
         VALUE_PARAMETER_LIST
-        OBJECT_DECLARATION[classId=null, fqName=null, isCompanion=false, isLocal=true, isObjectLiteral=true, isTopLevel=false, name=null, superNames=[Foo]]
+        OBJECT_DECLARATION[classId=null, fqName=null, isLocal=true, isObjectLiteral=true, isTopLevel=false, name=null, superNames=[Foo]]
           SUPER_TYPE_LIST
             SUPER_TYPE_ENTRY
               TYPE_REFERENCE
@@ -37,7 +37,7 @@ FILE[kind=File[packageFqName=<root>]]
           CLASS_BODY
       PROPERTY[fqName=AnonymousReturnWithGenericType.v2, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=false, isExtension=false, isTopLevel=false, isVar=false, name=v2]
         MODIFIER_LIST[private]
-        OBJECT_DECLARATION[classId=null, fqName=null, isCompanion=false, isLocal=true, isObjectLiteral=true, isTopLevel=false, name=null, superNames=[Foo]]
+        OBJECT_DECLARATION[classId=null, fqName=null, isLocal=true, isObjectLiteral=true, isTopLevel=false, name=null, superNames=[Foo]]
           SUPER_TYPE_LIST
             SUPER_TYPE_ENTRY
               TYPE_REFERENCE
@@ -52,7 +52,7 @@ FILE[kind=File[packageFqName=<root>]]
       FUN[fqName=AnonymousReturnWithGenericType.f2, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=f2]
         MODIFIER_LIST[private]
         VALUE_PARAMETER_LIST
-        OBJECT_DECLARATION[classId=null, fqName=null, isCompanion=false, isLocal=true, isObjectLiteral=true, isTopLevel=false, name=null, superNames=[Foo]]
+        OBJECT_DECLARATION[classId=null, fqName=null, isLocal=true, isObjectLiteral=true, isTopLevel=false, name=null, superNames=[Foo]]
           SUPER_TYPE_LIST
             SUPER_TYPE_ENTRY
               TYPE_REFERENCE

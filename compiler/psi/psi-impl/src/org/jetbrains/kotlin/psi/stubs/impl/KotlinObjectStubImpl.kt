@@ -21,7 +21,6 @@ class KotlinObjectStubImpl(
     override val classId: ClassId?,
     private val _superNames: Array<StringRef>,
     override val isTopLevel: Boolean,
-    override val isCompanion: Boolean,
     override val isLocal: Boolean,
     override val isObjectLiteral: Boolean,
 ) : KotlinStubBaseImpl<KtObjectDeclaration>(parent, KtStubElementTypes.OBJECT_DECLARATION), KotlinObjectStub {

@@ -1,7 +1,7 @@
 FILE[kind=File[packageFqName=<root>]]
   PACKAGE_DIRECTIVE
   IMPORT_LIST
-  OBJECT_DECLARATION[classId=/Objects, fqName=Objects, isCompanion=false, isLocal=false, isObjectLiteral=false, isTopLevel=true, name=Objects, superNames=[]]
+  OBJECT_DECLARATION[classId=/Objects, fqName=Objects, isLocal=false, isObjectLiteral=false, isTopLevel=true, name=Objects, superNames=[]]
     MODIFIER_LIST[public]
     CLASS_BODY
       PROPERTY[fqName=Objects.c, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=c]
@@ -27,7 +27,7 @@ FILE[kind=File[packageFqName=<root>]]
             USER_TYPE
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=Int]
-      OBJECT_DECLARATION[classId=/Objects.InnerObject, fqName=Objects.InnerObject, isCompanion=false, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=InnerObject, superNames=[A]]
+      OBJECT_DECLARATION[classId=/Objects.InnerObject, fqName=Objects.InnerObject, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=InnerObject, superNames=[A]]
         MODIFIER_LIST[private]
         SUPER_TYPE_LIST
           SUPER_TYPE_ENTRY
@@ -56,7 +56,7 @@ FILE[kind=File[packageFqName=<root>]]
           MODIFIER_LIST[public]
           VALUE_PARAMETER_LIST
         CLASS_BODY
-      OBJECT_DECLARATION[classId=/Objects.OtherObject, fqName=Objects.OtherObject, isCompanion=false, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=OtherObject, superNames=[NestedClass]]
+      OBJECT_DECLARATION[classId=/Objects.OtherObject, fqName=Objects.OtherObject, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=OtherObject, superNames=[NestedClass]]
         MODIFIER_LIST[public]
         SUPER_TYPE_LIST
           SUPER_TYPE_ENTRY

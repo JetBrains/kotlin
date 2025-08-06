@@ -421,7 +421,7 @@ FILE[kind=File[packageFqName=kotlin]]
                       REFERENCE_EXPRESSION[referencedName=kotlin]
                     REFERENCE_EXPRESSION[referencedName=Boolean]
     CLASS_BODY
-      OBJECT_DECLARATION[classId=kotlin/Boolean.Companion, fqName=kotlin.Boolean.Companion, isCompanion=true, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
+      OBJECT_DECLARATION[classId=kotlin/Boolean.Companion, fqName=kotlin.Boolean.Companion, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
         MODIFIER_LIST[public companion]
           ANNOTATION_ENTRY[hasValueArguments=false, shortName=SinceKotlin]
             CONSTRUCTOR_CALLEE
@@ -702,7 +702,7 @@ FILE[kind=File[packageFqName=kotlin]]
                       REFERENCE_EXPRESSION[referencedName=kotlin]
                     REFERENCE_EXPRESSION[referencedName=Byte]
     CLASS_BODY
-      OBJECT_DECLARATION[classId=kotlin/Byte.Companion, fqName=kotlin.Byte.Companion, isCompanion=true, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
+      OBJECT_DECLARATION[classId=kotlin/Byte.Companion, fqName=kotlin.Byte.Companion, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
         MODIFIER_LIST[public companion]
         CLASS_BODY
           PROPERTY[fqName=kotlin.Byte.Companion.MIN_VALUE, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=MIN_VALUE]
@@ -2136,7 +2136,7 @@ FILE[kind=File[packageFqName=kotlin]]
                       REFERENCE_EXPRESSION[referencedName=kotlin]
                     REFERENCE_EXPRESSION[referencedName=Char]
     CLASS_BODY
-      OBJECT_DECLARATION[classId=kotlin/Char.Companion, fqName=kotlin.Char.Companion, isCompanion=true, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
+      OBJECT_DECLARATION[classId=kotlin/Char.Companion, fqName=kotlin.Char.Companion, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
         MODIFIER_LIST[public companion]
         CLASS_BODY
           PROPERTY[fqName=kotlin.Char.Companion.MIN_VALUE, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=MIN_VALUE]
@@ -2828,7 +2828,7 @@ FILE[kind=File[packageFqName=kotlin]]
                       REFERENCE_EXPRESSION[referencedName=kotlin]
                     REFERENCE_EXPRESSION[referencedName=Double]
     CLASS_BODY
-      OBJECT_DECLARATION[classId=kotlin/Double.Companion, fqName=kotlin.Double.Companion, isCompanion=true, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
+      OBJECT_DECLARATION[classId=kotlin/Double.Companion, fqName=kotlin.Double.Companion, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
         MODIFIER_LIST[public companion]
         CLASS_BODY
           PROPERTY[fqName=kotlin.Double.Companion.MIN_VALUE, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=MIN_VALUE]
@@ -4152,7 +4152,7 @@ FILE[kind=File[packageFqName=kotlin]]
                   USER_TYPE
                     REFERENCE_EXPRESSION[referencedName=E]
     CLASS_BODY
-      OBJECT_DECLARATION[classId=kotlin/Enum.Companion, fqName=kotlin.Enum.Companion, isCompanion=true, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
+      OBJECT_DECLARATION[classId=kotlin/Enum.Companion, fqName=kotlin.Enum.Companion, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
         MODIFIER_LIST[public companion]
         CLASS_BODY
       PROPERTY[fqName=kotlin.Enum.name, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=name]
@@ -4255,7 +4255,7 @@ FILE[kind=File[packageFqName=kotlin]]
                       REFERENCE_EXPRESSION[referencedName=kotlin]
                     REFERENCE_EXPRESSION[referencedName=Float]
     CLASS_BODY
-      OBJECT_DECLARATION[classId=kotlin/Float.Companion, fqName=kotlin.Float.Companion, isCompanion=true, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
+      OBJECT_DECLARATION[classId=kotlin/Float.Companion, fqName=kotlin.Float.Companion, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
         MODIFIER_LIST[public companion]
         CLASS_BODY
           PROPERTY[fqName=kotlin.Float.Companion.MIN_VALUE, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=MIN_VALUE]
@@ -5563,7 +5563,7 @@ FILE[kind=File[packageFqName=kotlin]]
                       REFERENCE_EXPRESSION[referencedName=kotlin]
                     REFERENCE_EXPRESSION[referencedName=Int]
     CLASS_BODY
-      OBJECT_DECLARATION[classId=kotlin/Int.Companion, fqName=kotlin.Int.Companion, isCompanion=true, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
+      OBJECT_DECLARATION[classId=kotlin/Int.Companion, fqName=kotlin.Int.Companion, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
         MODIFIER_LIST[public companion]
         CLASS_BODY
           PROPERTY[fqName=kotlin.Int.Companion.MIN_VALUE, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=MIN_VALUE]
@@ -7144,7 +7144,7 @@ FILE[kind=File[packageFqName=kotlin]]
                       REFERENCE_EXPRESSION[referencedName=kotlin]
                     REFERENCE_EXPRESSION[referencedName=Long]
     CLASS_BODY
-      OBJECT_DECLARATION[classId=kotlin/Long.Companion, fqName=kotlin.Long.Companion, isCompanion=true, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
+      OBJECT_DECLARATION[classId=kotlin/Long.Companion, fqName=kotlin.Long.Companion, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
         MODIFIER_LIST[public companion]
         CLASS_BODY
           PROPERTY[fqName=kotlin.Long.Companion.MIN_VALUE, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=MIN_VALUE]
@@ -8821,7 +8821,7 @@ FILE[kind=File[packageFqName=kotlin]]
                       REFERENCE_EXPRESSION[referencedName=kotlin]
                     REFERENCE_EXPRESSION[referencedName=Short]
     CLASS_BODY
-      OBJECT_DECLARATION[classId=kotlin/Short.Companion, fqName=kotlin.Short.Companion, isCompanion=true, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
+      OBJECT_DECLARATION[classId=kotlin/Short.Companion, fqName=kotlin.Short.Companion, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
         MODIFIER_LIST[public companion]
         CLASS_BODY
           PROPERTY[fqName=kotlin.Short.Companion.MIN_VALUE, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=true, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=MIN_VALUE]
@@ -10261,7 +10261,7 @@ FILE[kind=File[packageFqName=kotlin]]
               REFERENCE_EXPRESSION[referencedName=kotlin]
             REFERENCE_EXPRESSION[referencedName=CharSequence]
     CLASS_BODY
-      OBJECT_DECLARATION[classId=kotlin/String.Companion, fqName=kotlin.String.Companion, isCompanion=true, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
+      OBJECT_DECLARATION[classId=kotlin/String.Companion, fqName=kotlin.String.Companion, isLocal=false, isObjectLiteral=false, isTopLevel=false, name=Companion, superNames=[]]
         MODIFIER_LIST[public companion]
         CLASS_BODY
       PROPERTY[fqName=kotlin.String.length, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=length]

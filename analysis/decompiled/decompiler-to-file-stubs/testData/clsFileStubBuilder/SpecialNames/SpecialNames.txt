@@ -1,7 +1,7 @@
 FILE[kind=File[packageFqName=<root>]]
   PACKAGE_DIRECTIVE
   IMPORT_LIST
-  OBJECT_DECLARATION[classId=/SpecialNames, fqName=SpecialNames, isCompanion=false, isLocal=false, isObjectLiteral=false, isTopLevel=true, name=SpecialNames, superNames=[]]
+  OBJECT_DECLARATION[classId=/SpecialNames, fqName=SpecialNames, isLocal=false, isObjectLiteral=false, isTopLevel=true, name=SpecialNames, superNames=[]]
     MODIFIER_LIST[public]
     CLASS_BODY
       PROPERTY[fqName=SpecialNames.1M, hasBackingField=true, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=true, isExtension=false, isTopLevel=false, isVar=false, name=1M]

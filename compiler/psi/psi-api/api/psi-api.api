@@ -4114,7 +4114,6 @@ public abstract interface class org/jetbrains/kotlin/psi/stubs/KotlinNameReferen
 }
 
 public abstract interface class org/jetbrains/kotlin/psi/stubs/KotlinObjectStub : org/jetbrains/kotlin/psi/stubs/KotlinClassOrObjectStub {
-	public abstract fun isCompanion ()Z
 	public abstract fun isObjectLiteral ()Z
 }
 
