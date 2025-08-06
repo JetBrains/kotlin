@@ -21,14 +21,11 @@ class KotlinObjectStubImpl(
     override val classId: ClassId?,
     private val _superNames: Array<StringRef>,
     override val isTopLevel: Boolean,
-    private val isDefault: Boolean,
+    override val isCompanion: Boolean,
     override val isLocal: Boolean,
-    private val isObjectLiteral: Boolean,
+    override val isObjectLiteral: Boolean,
 ) : KotlinStubBaseImpl<KtObjectDeclaration>(parent, KtStubElementTypes.OBJECT_DECLARATION), KotlinObjectStub {
     override fun getName() = StringRef.toString(name)
     override val superNames: List<String>
         get() = _superNames.map { it.toString() }
-
-    override fun isCompanion() = isDefault
-    override fun isObjectLiteral() = isObjectLiteral
 }

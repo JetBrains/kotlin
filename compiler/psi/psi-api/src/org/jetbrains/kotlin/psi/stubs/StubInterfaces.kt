@@ -60,8 +60,8 @@ interface KotlinClassStub : KotlinClassOrObjectStub<KtClass> {
 }
 
 interface KotlinObjectStub : KotlinClassOrObjectStub<KtObjectDeclaration> {
-    fun isCompanion(): Boolean
-    fun isObjectLiteral(): Boolean
+    val isCompanion: Boolean
+    val isObjectLiteral: Boolean
 }
 
 interface KotlinValueArgumentStub<T : KtValueArgument> : KotlinPlaceHolderStub<T> {
