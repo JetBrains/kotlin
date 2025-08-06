@@ -12,6 +12,8 @@ repositories {
     mavenLocal()
 }
 
+val composeCompilerPlugin by configurations.creating
+
 dependencies {
     testApi(intellijCore())
 
@@ -31,6 +33,8 @@ dependencies {
 
     testRuntimeOnly(project(":compiler:fir:plugin-utils"))
 
+    composeCompilerPlugin(project(":plugins:compose-compiler-plugin:compiler-hosted")) { isTransitive = false }
+
     val asyncProfilerClasspath = project.findProperty("fir.bench.async.profiler.classpath") as? String
     if (asyncProfilerClasspath != null) {
         testRuntimeOnly(files(*asyncProfilerClasspath.split(File.pathSeparatorChar).toTypedArray()))
@@ -45,9 +49,13 @@ sourceSets {
 optInToK1Deprecation()
 
 projectTest(minHeapSizeMb = 8192, maxHeapSizeMb = 8192, reservedCodeCacheSizeMb = 512) {
-    dependsOn(":dist")
+    dependsOn(":dist", ":plugins:compose-compiler-plugin:compiler-hosted:jar")
     systemProperties(project.properties.filterKeys { it.startsWith("fir.") })
     workingDir = rootDir
+    val composePluginClasspath = composeCompilerPlugin.asPath
+    doFirst {
+        systemProperty("fir.bench.compose.plugin.classpath", composePluginClasspath)
+    }
 
     run {
         val argsExt = project.findProperty("fir.modularized.jvm.args") as? String
