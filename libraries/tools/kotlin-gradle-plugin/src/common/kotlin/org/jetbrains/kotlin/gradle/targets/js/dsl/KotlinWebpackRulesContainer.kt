@@ -11,7 +11,11 @@ import org.gradle.api.model.ObjectFactory
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackRule
 
 /**
+ * Container for [KotlinWebpackRule]s.
  *
+ * The rules must be configured using [WebpackRulesDsl].
+ *
+ * **Note:** This class is not intended to be instantiated by build script or plugin authors.
  */
 class KotlinWebpackRulesContainer(
     container: ExtensiblePolymorphicDomainObjectContainer<KotlinWebpackRule>,

@@ -23,7 +23,7 @@ import javax.inject.Inject
  *
  * KGP will translate [enabled] rules into Webpack configuration.
  *
- * **Note:** This interface is not intended for implementation by build script or plugin authors.
+ * **Note:** This class is not intended for implementation by build script or plugin authors.
  */
 @Suppress("LeakingThis")
 abstract class KotlinWebpackRule
@@ -56,6 +56,11 @@ constructor(
     @get:Input
     abstract val exclude: ListProperty<String>
 
+    /**
+     * A description of this rule.
+     *
+     * Defaults to the [simple class name][kotlin.reflect.KClass.simpleName] of the rule.
+     */
     @get:Input
     protected open val description: String
         get() = (this::class.simpleName?.removeSuffix("_Decorated") ?: "KotlinWebpackRule") + "[${getName()}]"
@@ -66,7 +71,8 @@ constructor(
 
     /**
      * Validates the rule state just before it getting applied.
-     * Returning false will skip the rule silently. To terminate the build instead, throw an error.
+     * Returning `false` will skip the rule silently.
+     * To terminate the build instead, throw an error.
      */
     open fun validate(): Boolean = true
 
@@ -140,16 +146,30 @@ constructor(
 
     @Internal
     override fun getName(): String = name
+
+    /**
+     * Two rules are considered equal if they have the same name.
+     * All other fields are ignored.
+     */
     override fun equals(other: Any?): Boolean = other is KotlinWebpackRule && getName() == other.getName()
+
     override fun hashCode(): Int = getName().hashCode()
 
+    /**
+     * Define loader configuration.
+     *
+     * KGP will generate configuration for each loader.
+     * Loaders should be
+     *
+     * See https://webpack.js.org/loaders/
+     */
     data class Loader(
         /**
          * Raw `loader` field value. Needs to be wrapped in quotes if using string notation.
          */
         val loader: String,
         /**
-         * Loader options map if any. Will be converted to json object via Gson.
+         * Loader options map if any. Will be converted to JSON object via Gson.
          */
         val options: Map<String, Any?> = mapOf(),
         /**

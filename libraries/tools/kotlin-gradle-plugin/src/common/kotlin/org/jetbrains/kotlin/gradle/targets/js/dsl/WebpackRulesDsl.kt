@@ -63,6 +63,8 @@ interface WebpackRulesDsl {
     }
 
     companion object {
+
+        /** Reified utility function, calls [ExtensiblePolymorphicDomainObjectContainer.registerFactory]. */
         private inline fun <reified T : KotlinWebpackRule> ObjectFactory.bindTo(
             container: ExtensiblePolymorphicDomainObjectContainer<KotlinWebpackRule>,
         ) = container.registerFactory(T::class.java) { newInstance<T>(it) }

@@ -14,8 +14,29 @@ import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackCssMode.IMPOR
 import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpackCssMode.INLINE
 import javax.inject.Inject
 
+/**
+ * Configures CSS support for Webpack.
+ *
+ * This rule applies to `.css` files.
+ *
+ * The `.css` files will be processed with loaders.
+ * The enabled loaders are controlled by the [mode].
+ *
+ * See [org.jetbrains.kotlin.gradle.targets.js.dsl.WebpackRulesDsl.cssSupport]
+ */
 @Suppress("LeakingThis")
 abstract class KotlinWebpackCssRule @Inject constructor(name: String) : KotlinWebpackRule(name) {
+
+    /**
+     * Controls the loaders that will be applied to `.css` files.
+     *
+     * Must be one of:
+     * - [KotlinWebpackCssMode.EXTRACT]
+     * - [KotlinWebpackCssMode.INLINE]
+     * - [KotlinWebpackCssMode.IMPORT]
+     *
+     * Default: [KotlinWebpackCssMode.INLINE]
+     */
     @get:Input
     abstract val mode: Property<String>
 
@@ -66,8 +87,16 @@ abstract class KotlinWebpackCssRule @Inject constructor(name: String) : KotlinWe
     } + Loader(loader = "'css-loader'")
 }
 
+/**
+ * Valid values for [KotlinWebpackCssRule.mode].
+ */
 object KotlinWebpackCssMode {
+    /** Enable `MiniCssExtractPlugin.loader` and `css-loader` loaders. */
     const val EXTRACT = "extract"
+
+    /** Enable `style-loader` and `css-loader` loaders. */
     const val INLINE = "inline"
+
+    /** Enable `to-string-loader` and `css-loader` loaders. */
     const val IMPORT = "import"
 }
