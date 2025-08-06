@@ -30807,6 +30807,12 @@ public class FirJsES6CodegenBoxTestGenerated extends AbstractFirJsES6CodegenBoxT
         }
 
         @Test
+        @TestMetadata("stdlibRegressions.kt")
+        public void testStdlibRegressions() {
+          runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/stdlibRegressions.kt");
+        }
+
+        @Test
         @TestMetadata("typealiasActualisation2-2.kt")
         public void testTypealiasActualisation2_2() {
           runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/typealiasActualisation2-2.kt");
