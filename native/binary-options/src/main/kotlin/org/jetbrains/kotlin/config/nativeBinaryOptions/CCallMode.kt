@@ -19,6 +19,8 @@ package org.jetbrains.kotlin.config.nativeBinaryOptions
  *
  * The same flags are used for other similar concepts.
  * For example, C global access (indirect with `@CCall`, direct with `@CGlobalAccess`).
+ * Or Objective-C protocol type checks
+ * (indirect with `protocolGetter` parameter in `@ExternalObjCClass`, direct with `binaryName` parameter).
  */
 enum class CCallMode {
     /**
