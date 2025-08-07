@@ -160,7 +160,7 @@ private const val TWO_PWR_63_DBL_ = (((1 shl 16).toDouble() * (1 shl 16).toDoubl
 
 // TODO(KT-70480): Remove this function when we drop the ES5 target
 @LongAsBigIntApi
-internal fun longFromTwoInts(low: Int, high: Int): Long = high.toLong() shl 32 or low.toLong()
+internal fun longFromTwoInts(low: Int, high: Int): Long = high.toLong() shl 32 or (low.toLong() and 0xFFFFFFFFL)
 
 // TODO(KT-70480): Remove this function when we drop the ES5 target
 @LongAsBigIntApi
