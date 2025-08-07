@@ -9,6 +9,7 @@ import org.jetbrains.kotlin.backend.common.*
 import org.jetbrains.kotlin.backend.common.actualizer.*
 import org.jetbrains.kotlin.backend.common.checkers.declaration.IrExpressionBodyInFunctionChecker
 import org.jetbrains.kotlin.backend.common.checkers.declaration.IrFieldVisibilityChecker
+import org.jetbrains.kotlin.backend.common.checkers.expression.IrCallTypeAndValueArgumentCountChecker
 import org.jetbrains.kotlin.backend.common.checkers.expression.IrCrossFileFieldUsageChecker
 import org.jetbrains.kotlin.backend.common.checkers.expression.IrValueAccessScopeChecker
 import org.jetbrains.kotlin.backend.common.checkers.symbol.IrVisibilityChecker
@@ -483,6 +484,12 @@ private class Fir2IrPipeline(
                     IrCrossFileFieldUsageChecker,
                     //IrTypeParameterScopeChecker // TODO: Re-enable checking out-of-scope type parameter usages (KT-69305),
                 )
+                .applyIf(
+                    extension?.javaClass?.name != "org.jetbrains.kotlinx.serialization.compiler.extensions.SerializationLoweringExtension" &&
+                            extension?.javaClass?.name != "org.jetbrains.kotlin.scripting.compiler.plugin.extensions.ReplLoweringExtension"
+                ) {
+                    withCheckers(IrCallTypeAndValueArgumentCountChecker)
+                }
                 .applyIf(fir2IrConfiguration.validateIrForKlibSerialization) {
                     withCheckers(IrValueAccessScopeChecker)
                 }
