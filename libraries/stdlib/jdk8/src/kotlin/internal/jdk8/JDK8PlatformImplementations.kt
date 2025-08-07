@@ -57,7 +57,6 @@ internal open class JDK8PlatformImplementations : JDK7PlatformImplementations() 
         // then.
         if (sdkIsNullOrAtLeast(34)) PlatformThreadLocalRandom() else super.defaultPlatformRandom()
 
-    @ExperimentalTime
     override fun getSystemClock(): Clock {
         // java.time.Instant is available since SDK 26
         return if (sdkIsNullOrAtLeast(26)) object : Clock {
