@@ -316,8 +316,8 @@ internal open class CommonCompilerArgumentsImpl : CommonToolArgumentsImpl(),
     public val X_NON_LOCAL_BREAK_CONTINUE: CommonCompilerArgument<Boolean> =
         CommonCompilerArgument("X_NON_LOCAL_BREAK_CONTINUE")
 
-    public val _XDATA_FLOW_BASED_EXHAUSTIVENESS: CommonCompilerArgument<Boolean> =
-        CommonCompilerArgument("_XDATA_FLOW_BASED_EXHAUSTIVENESS")
+    public val X_DATA_FLOW_BASED_EXHAUSTIVENESS: CommonCompilerArgument<Boolean> =
+        CommonCompilerArgument("X_DATA_FLOW_BASED_EXHAUSTIVENESS")
 
     public val X_MULTI_DOLLAR_INTERPOLATION: CommonCompilerArgument<Boolean> =
         CommonCompilerArgument("X_MULTI_DOLLAR_INTERPOLATION")

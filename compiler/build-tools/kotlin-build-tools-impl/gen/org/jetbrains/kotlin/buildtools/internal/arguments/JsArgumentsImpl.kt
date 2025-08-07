@@ -228,8 +228,6 @@ internal class JsArgumentsImpl : WasmArgumentsImpl(), JsArguments {
 
     public val X_ES_LONG_AS_BIGINT: JsArgument<Boolean?> = JsArgument("X_ES_LONG_AS_BIGINT")
 
-    public val X_TYPED_ARRAYS: JsArgument<Boolean> = JsArgument("X_TYPED_ARRAYS")
-
     public val X_FRIEND_MODULES_DISABLED: JsArgument<Boolean> =
         JsArgument("X_FRIEND_MODULES_DISABLED")
 
