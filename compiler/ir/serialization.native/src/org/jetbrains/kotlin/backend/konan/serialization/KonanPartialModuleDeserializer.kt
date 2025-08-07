@@ -34,14 +34,12 @@ class KonanPartialModuleDeserializer(
     private val stubGenerator: DeclarationStubGenerator,
     strategyResolver: (String) -> DeserializationStrategy,
     private val cacheDeserializationStrategy: CacheDeserializationStrategy,
-    containsErrorCode: Boolean = false,
 ) : BasicIrModuleDeserializer(
-    kotlinIrLinker,
-    moduleDescriptor,
-    klib,
-    { fileName -> if (cacheDeserializationStrategy.contains(fileName)) strategyResolver(fileName) else DeserializationStrategy.ON_DEMAND },
-    klib.versions.abiVersion ?: KotlinAbiVersion.Companion.CURRENT,
-    containsErrorCode
+    linker = kotlinIrLinker,
+    moduleDescriptor = moduleDescriptor,
+    klib = klib,
+    strategyResolver = { fileName -> if (cacheDeserializationStrategy.contains(fileName)) strategyResolver(fileName) else DeserializationStrategy.ON_DEMAND },
+    libraryAbiVersion = klib.versions.abiVersion ?: KotlinAbiVersion.CURRENT,
 ) {
     private val descriptorSignatures = mutableMapOf<DeclarationDescriptor, IdSignature>()
 
