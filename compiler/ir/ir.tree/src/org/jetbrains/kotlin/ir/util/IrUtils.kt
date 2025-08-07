@@ -328,18 +328,17 @@ tailrec fun IrDeclaration.getPackageFragment(): IrPackageFragment {
         ?: (parent as IrDeclaration).getPackageFragment()
 }
 
-fun IrConstructorCall.isAnnotation(name: FqName) = symbol.owner.parentAsClass.fqNameWhenAvailable == name
+// Just delegate to IrConstructorCall.isAnnotationWithEqualFqName(FqName) which is capable to correctly handle unbound symbols.
+fun IrConstructorCall.isAnnotation(name: FqName): Boolean = isAnnotationWithEqualFqName(name)
 
 fun IrAnnotationContainer.getAnnotation(name: FqName): IrConstructorCall? =
-    annotations.find { it.isAnnotation(name) }
+    annotations.find { it.isAnnotationWithEqualFqName(name) }
 
-fun IrAnnotationContainer.hasAnnotation(name: FqName) =
-    annotations.any {
-        it.symbol.owner.parentAsClass.hasEqualFqName(name)
-    }
+// Just delegate to List<IrConstructorCall>.hasAnnotation(FqName) which is capable to correctly handle unbound symbols.
+fun IrAnnotationContainer.hasAnnotation(name: FqName): Boolean = annotations.hasAnnotation(name)
 
-fun IrAnnotationContainer.hasAnnotation(classId: ClassId) =
-    annotations.any { it.symbol.owner.parentAsClass.classId == classId }
+// Just delegate to List<IrConstructorCall>.hasAnnotation(ClassId) which is capable to correctly handle unbound symbols.
+fun IrAnnotationContainer.hasAnnotation(classId: ClassId): Boolean = annotations.hasAnnotation(classId)
 
 fun IrAnnotationContainer.hasAnnotation(symbol: IrClassSymbol) =
     annotations.any {
