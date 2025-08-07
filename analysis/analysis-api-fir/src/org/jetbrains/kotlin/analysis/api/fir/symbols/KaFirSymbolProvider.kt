@@ -145,7 +145,7 @@ internal class KaFirSymbolProvider(
         get() = withPsiValidityAssertion {
             when (val parent = parent) {
                 is KtDestructuringDeclaration -> {
-                    if (parent.parent?.parent is KtScript) {
+                    if (parent.parent.parent is KtScript) {
                         KaFirKotlinPropertySymbol.create(this, analysisSession)
                     } else {
                         KaFirLocalVariableSymbol(this, analysisSession)

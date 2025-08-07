@@ -89,5 +89,6 @@ abstract class KtElementImplStub<T : StubElement<*>> : StubBasedPsiElementBase<T
 
     override fun getPsiOrParent(): KtElement = this
 
+    @Suppress("DEPRECATION")
     override fun getParent(): PsiElement = parentSubstitute ?: super.getParent()
 }

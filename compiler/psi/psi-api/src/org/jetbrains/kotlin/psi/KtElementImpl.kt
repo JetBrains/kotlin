@@ -59,5 +59,7 @@ open class KtElementImpl(node: ASTNode) : ASTWrapperPsiElement(node), KtElement 
     }
 
     override fun getPsiOrParent(): KtElement = this
+
+    @Suppress("DEPRECATION")
     override fun getParent(): PsiElement = parentSubstitute ?: super.getParent()
 }
