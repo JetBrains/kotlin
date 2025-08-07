@@ -1186,23 +1186,20 @@ private inline fun parseDefaultStringFormat(
         }
         prevUnit = unit
 
-        when {
-            unit >= DurationUnit.MILLISECONDS -> {
-                val multiplier = when (unit) {
-                    DurationUnit.DAYS -> MILLIS_IN_DAY
-                    DurationUnit.HOURS -> MILLIS_IN_HOUR
-                    DurationUnit.MINUTES -> MILLIS_IN_MINUTE
-                    DurationUnit.SECONDS -> MILLIS_IN_SECOND
-                    else -> 1L
-                }
-                totalMillis = totalMillis.addWithoutOverflow(integralValue.multiplyWithoutOverflow(multiplier))
-                    .onInvalid { return throwExceptionOrInvalid(throwException) }
+        if (unit >= DurationUnit.MILLISECONDS) {
+            val multiplier = when (unit) {
+                DurationUnit.DAYS -> MILLIS_IN_DAY
+                DurationUnit.HOURS -> MILLIS_IN_HOUR
+                DurationUnit.MINUTES -> MILLIS_IN_MINUTE
+                DurationUnit.SECONDS -> MILLIS_IN_SECOND
+                else -> 1L
             }
-            else -> {
-                val multiplier = if (unit == DurationUnit.MICROSECONDS) NANOS_IN_MICROS else 1L
-                totalNanos = totalNanos.addWithoutOverflow(integralValue.multiplyWithoutOverflow(multiplier))
-                    .onInvalid { return throwExceptionOrInvalid(throwException) }
-            }
+            totalMillis = totalMillis.addWithoutOverflow(integralValue.multiplyWithoutOverflow(multiplier))
+                .onInvalid { return throwExceptionOrInvalid(throwException) }
+        } else {
+            val multiplier = if (unit == DurationUnit.MICROSECONDS) NANOS_IN_MICROS else 1L
+            totalNanos = totalNanos.addWithoutOverflow(integralValue.multiplyWithoutOverflow(multiplier))
+                .onInvalid { return throwExceptionOrInvalid(throwException) }
         }
 
         totalNanos += fractionValue.toNanos(unit)
