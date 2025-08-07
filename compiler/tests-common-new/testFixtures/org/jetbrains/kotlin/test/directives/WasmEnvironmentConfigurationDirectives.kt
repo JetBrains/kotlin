@@ -81,4 +81,8 @@ object WasmEnvironmentConfigurationDirectives : SimpleDirectivesContainer() {
         """.trimIndent(),
         applicability = DirectiveApplicability.Global,
     )
+
+    val USE_SHARED_OBJECTS by directive(
+        description = "Generate wasm with the 'Shared-Everything Threads' proposal turned on",
+    )
 }

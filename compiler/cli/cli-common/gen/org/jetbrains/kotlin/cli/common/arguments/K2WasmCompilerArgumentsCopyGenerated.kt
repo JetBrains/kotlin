@@ -27,6 +27,7 @@ fun copyK2WasmCompilerArguments(from: K2WasmCompilerArguments, to: K2WasmCompile
     to.wasmNoJsTag = from.wasmNoJsTag
     to.wasmTarget = from.wasmTarget
     to.wasmUseNewExceptionProposal = from.wasmUseNewExceptionProposal
+    to.wasmUseSharedObjects = from.wasmUseSharedObjects
     to.wasmUseTrapsInsteadOfExceptions = from.wasmUseTrapsInsteadOfExceptions
 
     return to
