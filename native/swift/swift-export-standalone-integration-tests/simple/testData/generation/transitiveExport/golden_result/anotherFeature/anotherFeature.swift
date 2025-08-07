@@ -21,4 +21,7 @@ public final class FeatureC: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._Kot
     ) {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
     }
+    public func baz() -> ExportedKotlinPackages.oh.my.state.ToExtract {
+        return ExportedKotlinPackages.oh.my.state.ExtractedByTypealias.__createClassWrapper(externalRCRef: FeatureC_baz(self.__externalRCRef()))
+    }
 }

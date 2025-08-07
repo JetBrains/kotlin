@@ -239,6 +239,10 @@ private fun deepTouch(
         it.type
     }
 
+    filterIsInstance<SirTypealias>().forEach {
+        it.type
+    }
+
     filterIsInstance<SirDeclarationContainer>().forEach {
         deepTouch(it)
     }
