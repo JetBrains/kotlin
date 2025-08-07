@@ -78,16 +78,6 @@ internal fun ThrowNoWhenBranchMatchedException(): Nothing {
     throw NoWhenBranchMatchedException()
 }
 
-@PublishedApi
-internal fun ThrowUninitializedPropertyAccessException(propertyName: String): Nothing {
-    throw UninitializedPropertyAccessException("lateinit property $propertyName has not been initialized")
-}
-
-@PublishedApi
-internal fun ThrowUnsupportedOperationException(message: String): Nothing {
-    throw UnsupportedOperationException(message)
-}
-
 @ExportForCppRuntime
 internal fun ThrowIllegalArgumentException() : Nothing {
     throw IllegalArgumentException()
