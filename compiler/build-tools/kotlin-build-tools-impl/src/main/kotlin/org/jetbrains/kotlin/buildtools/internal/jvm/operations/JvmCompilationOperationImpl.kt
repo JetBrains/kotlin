@@ -71,7 +71,6 @@ internal class JvmCompilationOperationImpl(
         options[key] = value
     }
 
-    @OptIn(UseFromImplModuleRestricted::class)
     private operator fun <V> get(key: Option<V>): V = options[key]
 
     @OptIn(UseFromImplModuleRestricted::class)

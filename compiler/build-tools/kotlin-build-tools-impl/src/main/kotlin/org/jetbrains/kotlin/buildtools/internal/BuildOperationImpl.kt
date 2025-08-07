@@ -24,7 +24,6 @@ internal abstract class BuildOperationImpl<R> : BuildOperation<R> {
 
     abstract fun execute(projectId: ProjectId, executionPolicy: ExecutionPolicy, logger: KotlinLogger? = null): R
 
-    @OptIn(UseFromImplModuleRestricted::class)
     operator fun <V> get(key: Option<V>): V = options[key]
 
     @OptIn(UseFromImplModuleRestricted::class)

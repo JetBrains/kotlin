@@ -333,7 +333,6 @@ public final class org/jetbrains/kotlin/buildtools/api/arguments/JsArguments$JsA
 public abstract interface class org/jetbrains/kotlin/buildtools/api/arguments/JvmCompilerArguments : org/jetbrains/kotlin/buildtools/api/arguments/CommonCompilerArguments {
 	public static final field CLASSPATH Lorg/jetbrains/kotlin/buildtools/api/arguments/JvmCompilerArguments$JvmCompilerArgument;
 	public static final field Companion Lorg/jetbrains/kotlin/buildtools/api/arguments/JvmCompilerArguments$Companion;
-	public static final field INCLUDE_RUNTIME Lorg/jetbrains/kotlin/buildtools/api/arguments/JvmCompilerArguments$JvmCompilerArgument;
 	public static final field JAVA_PARAMETERS Lorg/jetbrains/kotlin/buildtools/api/arguments/JvmCompilerArguments$JvmCompilerArgument;
 	public static final field JDK_HOME Lorg/jetbrains/kotlin/buildtools/api/arguments/JvmCompilerArguments$JvmCompilerArgument;
 	public static final field JVM_DEFAULT Lorg/jetbrains/kotlin/buildtools/api/arguments/JvmCompilerArguments$JvmCompilerArgument;
@@ -793,6 +792,7 @@ public abstract interface class org/jetbrains/kotlin/buildtools/api/trackers/Bui
 }
 
 public final class org/jetbrains/kotlin/buildtools/api/trackers/BuildMetricsCollector$ValueType : java/lang/Enum {
+	public static final field ATTRIBUTE Lorg/jetbrains/kotlin/buildtools/api/trackers/BuildMetricsCollector$ValueType;
 	public static final field BYTES Lorg/jetbrains/kotlin/buildtools/api/trackers/BuildMetricsCollector$ValueType;
 	public static final field MILLISECONDS Lorg/jetbrains/kotlin/buildtools/api/trackers/BuildMetricsCollector$ValueType;
 	public static final field NANOSECONDS Lorg/jetbrains/kotlin/buildtools/api/trackers/BuildMetricsCollector$ValueType;
