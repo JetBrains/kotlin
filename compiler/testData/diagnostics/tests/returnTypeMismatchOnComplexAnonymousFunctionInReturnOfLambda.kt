@@ -23,5 +23,5 @@ fun test() {
     }<!>
 }
 
-/* GENERATED_FIR_TAGS: anonymousFunction, functionDeclaration, functionalType, ifExpression, lambdaLiteral,
-localProperty, nullableType, propertyDeclaration, stringLiteral, typeParameter */
+/* GENERATED_FIR_TAGS: anonymousFunction, functionalType, ifExpression, lambdaLiteral,
+nullableType, typeParameter */
