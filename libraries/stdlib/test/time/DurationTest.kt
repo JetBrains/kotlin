@@ -838,7 +838,7 @@ class DurationTest {
     fun parseDefaultFailing() {
         for (invalidValue in listOf(
             "", " ", "P", "PT", "P1DT", "P1", "PT1", "0", "+P", "+", "-", "h", "H", "something",
-            "Inf", "-Infinity value",
+            "1234567890123456789012ns", "Inf", "-Infinity value",
             "1s ", " 1s",
             "1d 1m 1h", "1s 2s",
             "-12m 15s", "-12m -15s", "-()", "-(12m 30s",
@@ -850,8 +850,7 @@ class DurationTest {
             "P1Y", "P1M", "P1S", "PT1D", "PT1Y",
             "PT1S2S", "PT1S2H",
             "P9999999999999DT-9999999999999H",
-            "PT1.5H", "PT0.5D", "PT.5S", "PT0.25.25S",
-//            "1234567890123456789012ns",
+            "PT1.5H", "PT0.5D", "PT.5S", "PT0.25.25S"
         )) {
             assertNull(Duration.parseOrNull(invalidValue), invalidValue)
             assertFailsWith<IllegalArgumentException>(invalidValue) { Duration.parse(invalidValue) }.let { e ->

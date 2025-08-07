@@ -1162,10 +1162,11 @@ private inline fun parseDefaultStringFormat(
         isFirstComponent = false
 
         val integralStartIndex = index
-        val (integralValue, afterIntegerIndex) = value.parseLong(index, withSign = false)
+        val (integralValue, afterIntegerIndex, sign) = value.parseLong(index, withSign = false)
         if (afterIntegerIndex == integralStartIndex || afterIntegerIndex == length) {
             return throwExceptionOrInvalid(throwException)
         }
+        if (sign == -1) return throwExceptionOrInvalid(throwException)
         index = afterIntegerIndex
 
         val hasFractionalPart = index < length && value[index] == '.'
@@ -1265,7 +1266,7 @@ private inline fun String.parseLong(startIndex: Int, withSign: Boolean = true): 
         val digit = ch - '0'
         if (result > overflowThreshold || (result == overflowThreshold && digit > LAST_DIGIT_MAX)) {
             while (index < length && this[index] in '0'..'9') index++
-            return NumericParseData(MAX_MILLIS * sign, index, sign)
+            return NumericParseData(MAX_MILLIS * sign, index, if (!withSign) -1 else sign)
         }
         result = result * 10 + digit
         index++
