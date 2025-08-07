@@ -154,15 +154,15 @@ class IrValidatorTest {
         config: IrValidatorConfig = defaultValidationConfig,
     ) {
         runValidationAndAssert(mode) {
-            validateIr(messageCollector, mode) {
-                performBasicIrValidation(
-                    tree,
-                    TestIrBuiltins,
-                    phaseName = "IrValidatorTest",
-                    config
-                )
-                assertEquals(expectedMessages, messageCollector.messages)
-            }
+            validateIr(
+                tree,
+                TestIrBuiltins,
+                config,
+                messageCollector,
+                mode,
+                phaseName = "IrValidatorTest",
+            )
+            assertEquals(expectedMessages, messageCollector.messages)
         }
     }
 

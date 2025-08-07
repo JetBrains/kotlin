@@ -113,16 +113,16 @@ fun <Context : ErrorReportingContext, Data> getIrValidator(checkTypes: Boolean):
             )
             return
         }
-        validateIr(messageCollector, IrVerificationMode.ERROR) {
-            performBasicIrValidation(
-                element,
-                context.heldBackendContext.irBuiltIns,
-                phaseName = "${state.beforeOrAfter.name.toLowerCaseAsciiOnly()} ${state.phase}",
-                config = IrValidatorConfig(checkTreeConsistency = true)
-                    .withBasicChecks()
-                    .applyIf(checkTypes) { withTypeChecks() }
-            )
-        }
+        validateIr(
+            element,
+            context.heldBackendContext.irBuiltIns,
+            IrValidatorConfig(checkTreeConsistency = true)
+                .withBasicChecks()
+                .applyIf(checkTypes) { withTypeChecks() },
+            messageCollector,
+            IrVerificationMode.ERROR,
+            phaseName = "${state.beforeOrAfter.name.toLowerCaseAsciiOnly()} ${state.phase}",
+        )
     }
 
 fun <Data, Context : ErrorReportingContext> getIrDumper(): Action<Data, Context> =
