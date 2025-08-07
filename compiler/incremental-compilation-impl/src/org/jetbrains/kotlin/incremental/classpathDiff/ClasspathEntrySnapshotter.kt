@@ -37,10 +37,10 @@ object ClasspathEntrySnapshotter {
     fun snapshot(
         classpathEntry: File,
         settings: Settings,
-        metrics: BuildMetricsReporter<GradleBuildTime, GradleBuildPerformanceMetric> = DoNothingBuildMetricsReporter
+        metrics: BuildMetricsReporter = DoNothingBuildMetricsReporter
     ): ClasspathEntrySnapshot {
         DirectoryOrJarReader.create(classpathEntry).use { directoryOrJarReader ->
-            val classes = metrics.measure(GradleBuildTime.LOAD_CLASSES_PATHS_ONLY) {
+            val classes = metrics.measure(LOAD_CLASSES_PATHS_ONLY) {
                 directoryOrJarReader.getUnixStyleRelativePaths(DEFAULT_CLASS_FILTER).map { unixStyleRelativePath ->
                     ClassFileWithContentsProvider(
                         classFile = ClassFile(classpathEntry, unixStyleRelativePath),
@@ -48,7 +48,7 @@ object ClasspathEntrySnapshotter {
                     )
                 }
             }
-            val snapshots = metrics.measure(GradleBuildTime.SNAPSHOT_CLASSES) {
+            val snapshots = metrics.measure(SNAPSHOT_CLASSES) {
                 val classListSnapshotter: ClassListSnapshotter = if (settings.parseInlinedLocalClasses) {
                     ClassListSnapshotterWithInlinedClassSupport(classes, settings, metrics)
                 } else {

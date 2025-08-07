@@ -22,8 +22,8 @@ class JpsCompilationResult : CompilationResults,
     var icLogLines: List<String> = emptyList()
     val compiledFiles = ArrayList<String>()
 
-    private val buildMetricsReporter = BuildMetricsReporterImpl<JpsBuildTime, JpsBuildPerformanceMetric>()
-    val buildMetrics: BuildMetrics<JpsBuildTime, JpsBuildPerformanceMetric>
+    private val buildMetricsReporter = BuildMetricsReporterImpl()
+    val buildMetrics: BuildMetrics
         get() = buildMetricsReporter.getMetrics()
     private val log = JpsKotlinLogger(KotlinBuilder.LOG)
     @Throws(RemoteException::class)
@@ -34,7 +34,7 @@ class JpsCompilationResult : CompilationResults,
                 val compileIterationResult = value as? CompileIterationResult
                 if (compileIterationResult != null) {
                     val sourceFiles = compileIterationResult.sourceFiles
-                    buildMetrics.buildPerformanceMetrics.addLong(JpsBuildPerformanceMetric.IC_COMPILE_ITERATION)
+                    buildMetrics.buildPerformanceMetrics.addLong(IC_COMPILE_ITERATION)
                     compiledFiles.addAll(sourceFiles.map { it.path })
                 }
             }
@@ -46,13 +46,13 @@ class JpsCompilationResult : CompilationResults,
             CompilationResultCategory.BUILD_METRICS.code -> {
                 (value as BuildMetricsValue).let {
                     when (it.key) {
-                        CompilationPerformanceMetrics.CODE_GENERATION -> buildMetrics.buildTimes.addTimeMs(JpsBuildTime.CODE_GENERATION, it.value)
-                        CompilationPerformanceMetrics.CODE_ANALYSIS -> buildMetrics.buildTimes.addTimeMs(JpsBuildTime.CODE_ANALYSIS, it.value)
-                        CompilationPerformanceMetrics.COMPILER_INITIALIZATION -> buildMetrics.buildTimes.addTimeMs(JpsBuildTime.COMPILER_INITIALIZATION, it.value)
+                        CompilationPerformanceMetrics.CODE_GENERATION -> buildMetrics.buildTimes.addTimeMs(CODE_GENERATION, it.value)
+                        CompilationPerformanceMetrics.CODE_ANALYSIS -> buildMetrics.buildTimes.addTimeMs(CODE_ANALYSIS, it.value)
+                        CompilationPerformanceMetrics.COMPILER_INITIALIZATION -> buildMetrics.buildTimes.addTimeMs(COMPILER_INITIALIZATION, it.value)
 
-                        CompilationPerformanceMetrics.SOURCE_LINES_NUMBER -> buildMetrics.buildPerformanceMetrics.addLong(JpsBuildPerformanceMetric.SOURCE_LINES_NUMBER, it.value)
-                        CompilationPerformanceMetrics.ANALYSIS_LPS -> buildMetrics.buildPerformanceMetrics.addLong(JpsBuildPerformanceMetric.ANALYSIS_LPS, it.value)
-                        CompilationPerformanceMetrics.CODE_GENERATION_LPS -> buildMetrics.buildPerformanceMetrics.addLong(JpsBuildPerformanceMetric.CODE_GENERATION_LPS, it.value)
+                        CompilationPerformanceMetrics.SOURCE_LINES_NUMBER -> buildMetrics.buildPerformanceMetrics.addLong(SOURCE_LINES_NUMBER, it.value)
+                        CompilationPerformanceMetrics.ANALYSIS_LPS -> buildMetrics.buildPerformanceMetrics.addLong(ANALYSIS_LPS, it.value)
+                        CompilationPerformanceMetrics.CODE_GENERATION_LPS -> buildMetrics.buildPerformanceMetrics.addLong(CODE_GENERATION_LPS, it.value)
                     }
                 }
             }

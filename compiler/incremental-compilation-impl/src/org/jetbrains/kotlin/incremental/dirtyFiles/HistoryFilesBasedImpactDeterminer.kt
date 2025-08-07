@@ -8,8 +8,7 @@ package org.jetbrains.kotlin.incremental.dirtyFiles
 import org.jetbrains.kotlin.build.report.BuildReporter
 import org.jetbrains.kotlin.build.report.debug
 import org.jetbrains.kotlin.build.report.metrics.BuildAttribute
-import org.jetbrains.kotlin.build.report.metrics.GradleBuildPerformanceMetric
-import org.jetbrains.kotlin.build.report.metrics.GradleBuildTime
+import org.jetbrains.kotlin.build.report.metrics.IC_ANALYZE_CHANGES_IN_DEPENDENCIES
 import org.jetbrains.kotlin.build.report.metrics.measure
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
@@ -29,7 +28,7 @@ internal class HistoryFilesBasedImpactDeterminer(
     private val buildHistoryFile: File?,
     private val lastBuildInfoFile: File,
     private val icFeatures: IncrementalCompilationFeatures,
-    private val reporter: BuildReporter<GradleBuildTime, GradleBuildPerformanceMetric>,
+    private val reporter: BuildReporter,
     private val messageCollector: MessageCollector,
 ) : ImpactedFilesDeterminer {
 
@@ -51,7 +50,7 @@ internal class HistoryFilesBasedImpactDeterminer(
     }
 
     override fun determineChangedAndImpactedSymbols(): ChangesEither {
-        reporter.measure(GradleBuildTime.IC_ANALYZE_CHANGES_IN_DEPENDENCIES) {
+        reporter.measure(IC_ANALYZE_CHANGES_IN_DEPENDENCIES) {
             verifyBuildHistoryFilesState()?.let { rebuildReason ->
                 return ChangesEither.Unknown(rebuildReason)
             }

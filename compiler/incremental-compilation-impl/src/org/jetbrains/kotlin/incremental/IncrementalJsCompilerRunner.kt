@@ -12,8 +12,6 @@ import org.jetbrains.kotlin.build.report.ICReporter
 import org.jetbrains.kotlin.build.report.info
 import org.jetbrains.kotlin.build.report.metrics.BuildAttribute
 import org.jetbrains.kotlin.build.report.metrics.DoNothingBuildMetricsReporter
-import org.jetbrains.kotlin.build.report.metrics.GradleBuildPerformanceMetric
-import org.jetbrains.kotlin.build.report.metrics.GradleBuildTime
 import org.jetbrains.kotlin.build.report.reportPerformanceData
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
@@ -76,7 +74,7 @@ inline fun <R> withJsIC(args: CommonCompilerArguments, enabled: Boolean = true, 
 
 class IncrementalJsCompilerRunner(
     workingDir: File,
-    reporter: BuildReporter<GradleBuildTime, GradleBuildPerformanceMetric>,
+    reporter: BuildReporter,
     buildHistoryFile: File?,
     private val modulesApiHistory: ModulesApiHistory,
     private val scopeExpansion: CompileScopeExpansionMode = CompileScopeExpansionMode.NEVER,

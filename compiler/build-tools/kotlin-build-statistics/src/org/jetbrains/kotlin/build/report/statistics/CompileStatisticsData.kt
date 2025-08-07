@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.build.report.statistics
 
 import org.jetbrains.kotlin.build.report.metrics.BuildAttribute
 import org.jetbrains.kotlin.build.report.metrics.BuildPerformanceMetric
-import org.jetbrains.kotlin.build.report.metrics.BuildTime
+import org.jetbrains.kotlin.build.report.metrics.BuildTimeMetric
 import org.jetbrains.kotlin.build.report.metrics.DynamicBuildTimeKey
 import java.text.SimpleDateFormat
 import java.util.*
@@ -15,8 +15,8 @@ import java.util.*
 //Sensitive data. This object is used directly for statistic via http
 internal val formatter = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss").also { it.timeZone = TimeZone.getTimeZone("UTC") }
 
-interface CompileStatisticsData<B : BuildTime, P : BuildPerformanceMetric> {
-    fun getVersion(): Int = 4
+interface CompileStatisticsData {
+    fun getVersion(): Int = 5
     fun getProjectName(): String?
     fun getLabel(): String?
     fun getTaskName(): String
@@ -35,9 +35,9 @@ interface CompileStatisticsData<B : BuildTime, P : BuildPerformanceMetric> {
     fun getNonIncrementalAttributes(): Set<BuildAttribute>
 
     //TODO think about it,time in milliseconds
-    fun getBuildTimesMetrics(): Map<B, Long>
+    fun getBuildTimesMetrics(): Map<BuildTimeMetric, Long>
     fun getDynamicBuildTimeMetrics(): Map<DynamicBuildTimeKey, Long>
-    fun getPerformanceMetrics(): Map<P, Long>
+    fun getPerformanceMetrics(): Map<BuildPerformanceMetric, Long>
     fun getGcTimeMetrics(): Map<String, Long>?
     fun getGcCountMetrics(): Map<String, Long>?
     fun getType(): String = BuildDataType.TASK_DATA.name

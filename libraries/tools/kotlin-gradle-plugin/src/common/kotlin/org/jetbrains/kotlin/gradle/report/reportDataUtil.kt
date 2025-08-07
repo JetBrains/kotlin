@@ -10,6 +10,7 @@ import org.gradle.tooling.events.task.TaskFinishEvent
 import org.gradle.tooling.events.task.TaskSkippedResult
 import org.gradle.tooling.events.task.TaskSuccessResult
 import org.jetbrains.kotlin.build.report.metrics.*
+import org.jetbrains.kotlin.build.report.metrics.BuildPerformanceMetric
 import org.jetbrains.kotlin.build.report.statistics.StatTag
 import org.jetbrains.kotlin.buildtools.api.SourcesChanges
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
@@ -111,51 +112,51 @@ fun collectCompilerArguments(buildOperationRecord: BuildOperationRecord?): List<
     } else emptyList()
 }
 
-private fun <E : BuildTime> filterMetrics(
+private fun <E : BuildTime<E>> filterMetrics(
     expectedMetrics: Set<String>?,
     buildTimesMetrics: Map<E, Long>
-): Map<E, Long> = expectedMetrics?.let { buildTimesMetrics.filterKeys { metric -> it.contains(metric.getName()) } } ?: buildTimesMetrics
+): Map<E, Long> = expectedMetrics?.let { buildTimesMetrics.filterKeys { metric -> it.contains(metric.name) } } ?: buildTimesMetrics
 
-private fun collectBuildAttributes(buildMetrics: BuildMetrics<GradleBuildTime, GradleBuildPerformanceMetric>?): Set<BuildAttribute> {
+private fun collectBuildAttributes(buildMetrics: BuildMetrics?): Set<BuildAttribute> {
     return buildMetrics?.buildAttributes?.asMap()?.filter { it.value > 0 }?.keys ?: emptySet()
 }
 
 
 private fun collectBuildPerformanceMetrics(
-    buildMetrics: BuildMetrics<GradleBuildTime, GradleBuildPerformanceMetric>?
-): Map<GradleBuildPerformanceMetric, Long> {
+    buildMetrics: BuildMetrics?
+): Map<BuildPerformanceMetric, Long> {
     return buildMetrics?.buildPerformanceMetrics?.asMap()
         ?.filterValues { value -> value != 0L }
         ?.filterKeys { key ->
             key !in listOf(
-                GradleBuildPerformanceMetric.START_WORKER_EXECUTION,
-                GradleBuildPerformanceMetric.CALL_WORKER,
-                GradleBuildPerformanceMetric.CALL_KOTLIN_DAEMON,
-                GradleBuildPerformanceMetric.START_KOTLIN_DAEMON_EXECUTION
+                START_WORKER_EXECUTION,
+                CALL_WORKER,
+                CALL_KOTLIN_DAEMON,
+                START_KOTLIN_DAEMON_EXECUTION
             )
         }
         ?: emptyMap()
 }
 private fun collectBuildMetrics(
-    buildMetrics: BuildMetrics<GradleBuildTime, GradleBuildPerformanceMetric>?,
+    buildMetrics: BuildMetrics?,
     gradleTaskStartTime: Long? = null,
     taskFinishEventTime: Long? = null,
-): Map<GradleBuildTime, Long> {
-    val taskBuildMetrics = HashMap<GradleBuildTime, Long>(buildMetrics?.buildTimes?.buildTimesMapMs())
+): Map<BuildTimeMetric, Long> {
+    val taskBuildMetrics = HashMap<BuildTimeMetric, Long>(buildMetrics?.buildTimes?.buildTimesMapMs())
     val performanceMetrics = buildMetrics?.buildPerformanceMetrics?.asMap() ?: emptyMap()
     gradleTaskStartTime?.let { startTime ->
-        performanceMetrics[GradleBuildPerformanceMetric.START_TASK_ACTION_EXECUTION]?.let { actionStartTime ->
-            taskBuildMetrics.put(GradleBuildTime.GRADLE_TASK_PREPARATION, actionStartTime - startTime)
+        performanceMetrics[START_TASK_ACTION_EXECUTION]?.let { actionStartTime ->
+            taskBuildMetrics.put(GRADLE_TASK_PREPARATION, actionStartTime - startTime)
         }
     }
     taskFinishEventTime?.let { listenerNotificationTime ->
-        performanceMetrics[GradleBuildPerformanceMetric.FINISH_KOTLIN_DAEMON_EXECUTION]?.let { daemonFinishTime ->
-            taskBuildMetrics.put(GradleBuildTime.TASK_FINISH_LISTENER_NOTIFICATION, listenerNotificationTime - daemonFinishTime)
+        performanceMetrics[FINISH_KOTLIN_DAEMON_EXECUTION]?.let { daemonFinishTime ->
+            taskBuildMetrics.put(TASK_FINISH_LISTENER_NOTIFICATION, listenerNotificationTime - daemonFinishTime)
         }
     }
-    performanceMetrics[GradleBuildPerformanceMetric.CALL_WORKER]?.let { callWorkerTime ->
-        performanceMetrics[GradleBuildPerformanceMetric.START_WORKER_EXECUTION]?.let { startWorkerExecutionTime ->
-            taskBuildMetrics.put(GradleBuildTime.RUN_WORKER_DELAY, TimeUnit.NANOSECONDS.toMillis(startWorkerExecutionTime - callWorkerTime))
+    performanceMetrics[CALL_WORKER]?.let { callWorkerTime ->
+        performanceMetrics[START_WORKER_EXECUTION]?.let { startWorkerExecutionTime ->
+            taskBuildMetrics.put(RUN_WORKER_DELAY, TimeUnit.NANOSECONDS.toMillis(startWorkerExecutionTime - callWorkerTime))
         }
     }
     return taskBuildMetrics.filterValues { value -> value != 0L }

@@ -7,15 +7,15 @@ package org.jetbrains.kotlin.build.report
 
 import org.jetbrains.kotlin.build.report.metrics.*
 
-open class BuildReporter<B : BuildTime, P : BuildPerformanceMetric>(
+open class BuildReporter(
     protected open val icReporter: ICReporter,
-    protected open val buildMetricsReporter: BuildMetricsReporter<B, P>,
-) : ICReporter by icReporter, BuildMetricsReporter<B, P> by buildMetricsReporter
+    protected open val buildMetricsReporter: BuildMetricsReporter,
+) : ICReporter by icReporter, BuildMetricsReporter by buildMetricsReporter
 
-class RemoteBuildReporter<B : BuildTime, P : BuildPerformanceMetric>(
+class RemoteBuildReporter(
     override val icReporter: RemoteICReporter,
-    override val buildMetricsReporter: RemoteBuildMetricsReporter<B, P>,
-) : BuildReporter<B, P>(icReporter, buildMetricsReporter), RemoteReporter {
+    override val buildMetricsReporter: RemoteBuildMetricsReporter,
+) : BuildReporter(icReporter, buildMetricsReporter), RemoteReporter {
     override fun flush() {
         icReporter.flush()
         buildMetricsReporter.flush()
@@ -23,4 +23,4 @@ class RemoteBuildReporter<B : BuildTime, P : BuildPerformanceMetric>(
 }
 
 object DoNothingBuildReporter :
-    BuildReporter<GradleBuildTime, GradleBuildPerformanceMetric>(DoNothingICReporter, DoNothingBuildMetricsReporter)
+    BuildReporter(DoNothingICReporter, DoNothingBuildMetricsReporter)

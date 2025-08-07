@@ -9,8 +9,6 @@ import org.jetbrains.jps.ModuleChunk
 import org.jetbrains.jps.incremental.CompileContext
 import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporter
 import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporterImpl
-import org.jetbrains.kotlin.build.report.metrics.JpsBuildPerformanceMetric
-import org.jetbrains.kotlin.build.report.metrics.JpsBuildTime
 import org.jetbrains.kotlin.build.report.statistics.BuildDataType
 import org.jetbrains.kotlin.build.report.statistics.StatTag
 import org.jetbrains.kotlin.compilerRunner.JpsCompilationResult
@@ -19,11 +17,11 @@ import java.util.*
 
 class JpsBuilderMetricReporterImpl(
     chunk: ModuleChunk,
-    private val reporter: BuildMetricsReporterImpl<JpsBuildTime, JpsBuildPerformanceMetric>,
+    private val reporter: BuildMetricsReporterImpl,
     private val label: String? = null,
     private val kotlinVersion: String = "kotlin_version"
 ) :
-    JpsBuilderMetricReporter, BuildMetricsReporter<JpsBuildTime, JpsBuildPerformanceMetric> by reporter {
+    JpsBuilderMetricReporter, BuildMetricsReporter by reporter {
 
     companion object {
         private val hostName: String? = try {

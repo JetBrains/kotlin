@@ -6,9 +6,9 @@
 package org.jetbrains.kotlin.gradle.report.data
 
 import org.jetbrains.kotlin.build.report.metrics.BuildAttribute
+import org.jetbrains.kotlin.build.report.metrics.BuildPerformanceMetric
+import org.jetbrains.kotlin.build.report.metrics.BuildTimeMetric
 import org.jetbrains.kotlin.build.report.metrics.DynamicBuildTimeKey
-import org.jetbrains.kotlin.build.report.metrics.GradleBuildPerformanceMetric
-import org.jetbrains.kotlin.build.report.metrics.GradleBuildTime
 import org.jetbrains.kotlin.build.report.statistics.BuildDataType
 import org.jetbrains.kotlin.build.report.statistics.CompileStatisticsData
 import org.jetbrains.kotlin.build.report.statistics.StatTag
@@ -29,9 +29,9 @@ class GradleCompileStatisticsData(
     private val finishTime: Long,
     private val compilerArguments: List<String>,
     private val nonIncrementalAttributes: Set<BuildAttribute>,
-    private val buildTimesMetrics: Map<GradleBuildTime, Long>,
+    private val buildTimesMetrics: Map<BuildTimeMetric, Long>,
     private val dynamicBuildTimesMetrics: Map<DynamicBuildTimeKey, Long>,
-    private val performanceMetrics: Map<GradleBuildPerformanceMetric, Long>,
+    private val performanceMetrics: Map<BuildPerformanceMetric, Long>,
     private val gcTimeMetrics: Map<String, Long>?,
     private val gcCountMetrics: Map<String, Long>?,
     private val type: String = BuildDataType.TASK_DATA.name,
@@ -39,7 +39,7 @@ class GradleCompileStatisticsData(
     private val compiledSources: List<String> = emptyList(),
     private val skipMessage: String?,
     private val icLogLines: List<String>,
-) : CompileStatisticsData<GradleBuildTime, GradleBuildPerformanceMetric> {
+) : CompileStatisticsData {
     override fun getProjectName(): String? = projectName
 
     override fun getLabel(): String? = label
@@ -67,11 +67,11 @@ class GradleCompileStatisticsData(
 
     override fun getNonIncrementalAttributes(): Set<BuildAttribute> = nonIncrementalAttributes
 
-    override fun getBuildTimesMetrics(): Map<GradleBuildTime, Long> = buildTimesMetrics
+    override fun getBuildTimesMetrics(): Map<BuildTimeMetric, Long> = buildTimesMetrics
 
     override fun getDynamicBuildTimeMetrics(): Map<DynamicBuildTimeKey, Long> = dynamicBuildTimesMetrics
 
-    override fun getPerformanceMetrics(): Map<GradleBuildPerformanceMetric, Long> = performanceMetrics
+    override fun getPerformanceMetrics(): Map<BuildPerformanceMetric, Long> = performanceMetrics
 
     override fun getGcTimeMetrics(): Map<String, Long>? = gcTimeMetrics
 

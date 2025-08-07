@@ -7,10 +7,10 @@ package org.jetbrains.kotlin.build.report.statistics.file
 import org.jetbrains.kotlin.build.report.metrics.*
 import org.jetbrains.kotlin.build.report.statistics.*
 
-internal fun <B : BuildTime, P : BuildPerformanceMetric> Printer.printBuildReport(
-    data: ReadableFileReportData<B, P>,
+internal fun Printer.printBuildReport(
+    data: ReadableFileReportData,
     printMetrics: Boolean,
-    printCustomTaskMetrics: Printer.(CompileStatisticsData<B, P>) -> Unit,
+    printCustomTaskMetrics: Printer.(CompileStatisticsData) -> Unit,
 ) {
     // NOTE: BuildExecutionData / BuildOperationRecord contains data for both tasks and transforms.
     // Where possible, we still use the term "tasks" because saying "tasks/transforms" is a bit verbose and "build operations" may sound
@@ -56,7 +56,7 @@ private fun Printer.printBuildInfo(startParameters: BuildStartParameters, failur
 }
 
 private fun Printer.printMetrics(
-    buildTimesMetrics: Map<out BuildTime, Long>,
+    buildTimesMetrics: Map<out BuildTimeMetric, Long>,
     dynamicBuildTimesMetrics: Map<DynamicBuildTimeKey, Long>,
     performanceMetrics: Map<out BuildPerformanceMetric, Long>,
     nonIncrementalAttributes: Collection<BuildAttribute>,
@@ -98,12 +98,12 @@ private fun Printer.printGcMetrics(
     }
 }
 
-private fun Printer.printBuildTimes(buildTimes: Map<out BuildTime, Long>, dynamicBuildTimes: Map<DynamicBuildTimeKey, Long>) {
+private fun Printer.printBuildTimes(buildTimes: Map<out BuildTimeMetric, Long>, dynamicBuildTimes: Map<DynamicBuildTimeKey, Long>) {
     if (buildTimes.isEmpty()) return
 
     println("Time metrics:")
     withIndent {
-        val visitedBuildTimes = HashSet<BuildTime>()
+        val visitedBuildTimes = HashSet<BuildTimeMetric>()
         val dynamicBuildTimesMap = dynamicBuildTimes.map { (key, time) ->
             key.parent to (key.name to time)
         }.groupBy(
@@ -111,26 +111,27 @@ private fun Printer.printBuildTimes(buildTimes: Map<out BuildTime, Long>, dynami
             valueTransform = { it.second }
         )
 
-        fun printBuildTime(buildTime: BuildTime) {
-            if (!visitedBuildTimes.add(buildTime)) return
+        fun printBuildTime(buildTimeMetric: BuildTimeMetric) {
+            if (!visitedBuildTimes.add(buildTimeMetric)) return
 
-            val timeMs = buildTimes[buildTime]
+            val timeMs = buildTimes[buildTimeMetric]
             if (timeMs != null) {
-                println("${buildTime.getReadableString()}: ${formatTime(timeMs)}")
+                println("${buildTimeMetric.readableString}: ${formatTime(timeMs)}")
                 withIndent {
-                    dynamicBuildTimesMap[buildTime]?.forEach { (name, timeMs) ->
+                    dynamicBuildTimesMap[buildTimeMetric]?.forEach { (name, timeMs) ->
                         println("$name: ${formatTime(timeMs)}")
                     }
-                    buildTime.children()?.forEach { printBuildTime(it) }
+                    buildTimeMetric.children().forEach { printBuildTime(it) }
                 }
             } else {
                 //Skip formatting if parent metric does not set
-                buildTime.children()?.forEach { printBuildTime(it) }
+                buildTimeMetric.children().forEach { printBuildTime(it) }
             }
         }
 
-        for (buildTime in buildTimes.keys.first().getAllMetrics()) {
-            if (buildTime.getParent() != null) continue
+        //TODO do we need to sort them?
+        for (buildTime in buildTimes.keys) {
+            if (buildTime.parent != null) continue
 
             printBuildTime(buildTime)
         }
@@ -141,7 +142,7 @@ private fun Printer.printBuildPerformanceMetrics(buildMetrics: Map<out BuildPerf
     if (buildMetrics.isEmpty()) return
 
     withIndent("Size metrics:") {
-        for (metric in buildMetrics.keys.first().getAllMetrics()) {
+        for (metric in buildMetrics.keys) {
             buildMetrics[metric]?.let { printSizeMetric(metric, it) }
         }
     }
@@ -150,10 +151,10 @@ private fun Printer.printBuildPerformanceMetrics(buildMetrics: Map<out BuildPerf
 private fun Printer.printSizeMetric(sizeMetric: BuildPerformanceMetric, value: Long) {
     fun BuildPerformanceMetric.numberOfAncestors(): Int {
         var count = 0
-        var parent: BuildPerformanceMetric? = getParent()
+        var parent: BuildPerformanceMetric? = parent
         while (parent != null) {
             count++
-            parent = parent.getParent()
+            parent = parent.parent
         }
         return count
     }
@@ -161,12 +162,12 @@ private fun Printer.printSizeMetric(sizeMetric: BuildPerformanceMetric, value: L
     val indentLevel = sizeMetric.numberOfAncestors()
 
     repeat(indentLevel) { pushIndent() }
-    when (sizeMetric.getType()) {
-        ValueType.BYTES -> println("${sizeMetric.getReadableString()}: ${formatSize(value)}")
-        ValueType.NUMBER -> println("${sizeMetric.getReadableString()}: $value")
-        ValueType.NANOSECONDS -> println("${sizeMetric.getReadableString()}: $value")
-        ValueType.MILLISECONDS -> println("${sizeMetric.getReadableString()}: ${formatTime(value)}")
-        ValueType.TIME -> println("${sizeMetric.getReadableString()}: ${formatter.format(value)}")
+    when (sizeMetric.type) {
+        ValueType.BYTES -> println("${sizeMetric.readableString}: ${formatSize(value)}")
+        ValueType.NUMBER -> println("${sizeMetric.readableString}: $value")
+        ValueType.NANOSECONDS -> println("${sizeMetric.readableString}: $value")
+        ValueType.MILLISECONDS -> println("${sizeMetric.readableString}: ${formatTime(value)}")
+        ValueType.TIME -> println("${sizeMetric.readableString}: ${formatter.format(value)}")
     }
     repeat(indentLevel) { popIndent() }
 }
@@ -183,10 +184,10 @@ private fun Printer.printBuildAttributes(buildAttributes: Collection<BuildAttrib
     }
 }
 
-private fun <B : BuildTime, P : BuildPerformanceMetric> Printer.printTaskOverview(statisticsData: Collection<CompileStatisticsData<B, P>>) {
+private fun Printer.printTaskOverview(statisticsData: Collection<CompileStatisticsData>) {
     var allTasksTimeMs = 0L
     var kotlinTotalTimeMs = 0L
-    val kotlinTasks = ArrayList<CompileStatisticsData<B, P>>()
+    val kotlinTasks = ArrayList<CompileStatisticsData>()
 
     for (task in statisticsData) {
         val taskTimeMs = task.getDurationMs()
@@ -216,10 +217,10 @@ private fun <B : BuildTime, P : BuildPerformanceMetric> Printer.printTaskOvervie
     println()
 }
 
-private fun <B : BuildTime, P : BuildPerformanceMetric> Printer.printTasksLog(
-    statisticsData: List<CompileStatisticsData<B, P>>,
+private fun Printer.printTasksLog(
+    statisticsData: List<CompileStatisticsData>,
     printMetrics: Boolean,
-    printCustomTaskMetrics: Printer.(CompileStatisticsData<B, P>) -> Unit,
+    printCustomTaskMetrics: Printer.(CompileStatisticsData) -> Unit,
 ) {
     for (taskData in statisticsData.sortedWith(compareBy({ -it.getDurationMs() }, { it.getStartTimeMs() }))) {
         printTaskLog(taskData)
@@ -239,8 +240,8 @@ private fun <B : BuildTime, P : BuildPerformanceMetric> Printer.printTasksLog(
 }
 
 
-private fun <B : BuildTime, P : BuildPerformanceMetric> Printer.printTaskLog(
-    statisticsData: CompileStatisticsData<B, P>,
+private fun Printer.printTaskLog(
+    statisticsData: CompileStatisticsData,
 ) {
     val skipMessage = statisticsData.getSkipMessage()
     if (skipMessage != null) {

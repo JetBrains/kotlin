@@ -21,8 +21,8 @@ internal class GradleCompilationResults(
     ) {
 
     var icLogLines: List<String> = emptyList()
-    private val buildMetricsReporter = BuildMetricsReporterImpl<GradleBuildTime, GradleBuildPerformanceMetric>()
-    val buildMetrics: BuildMetrics<GradleBuildTime, GradleBuildPerformanceMetric>
+    private val buildMetricsReporter = BuildMetricsReporterImpl()
+    val buildMetrics: BuildMetrics
         get() = buildMetricsReporter.getMetrics()
 
     @Throws(RemoteException::class)
@@ -34,7 +34,7 @@ internal class GradleCompilationResults(
                     val sourceFiles = compileIterationResult.sourceFiles
                     if (sourceFiles.any()) {
                         log.kotlinDebug { "compile iteration: ${sourceFiles.pathsAsStringRelativeTo(projectRootFile)}" }
-                        buildMetrics.buildPerformanceMetrics.addLong(GradleBuildPerformanceMetric.COMPILE_ITERATION)
+                        buildMetrics.buildPerformanceMetrics.addLong(COMPILE_ITERATION)
                     }
                     val exitCode = compileIterationResult.exitCode
                     log.kotlinDebug { "compiler exit code: $exitCode" }
@@ -47,7 +47,7 @@ internal class GradleCompilationResults(
             }
             CompilationResultCategory.BUILD_METRICS.code -> {
                 @Suppress("UNCHECKED_CAST")
-                (value as? BuildMetrics<GradleBuildTime, GradleBuildPerformanceMetric>)?.let { buildMetricsReporter.addMetrics(it) }
+                (value as? BuildMetrics)?.let { buildMetricsReporter.addMetrics(it) }
             }
         }
     }
