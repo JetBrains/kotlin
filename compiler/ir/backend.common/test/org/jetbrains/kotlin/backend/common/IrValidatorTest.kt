@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.backend.common
 
 import org.jetbrains.kotlin.DeprecatedForRemovalCompilerApi
-import org.jetbrains.kotlin.backend.common.checkers.IrValidationError
 import org.jetbrains.kotlin.backend.common.ir.createExtensionReceiver
 import org.jetbrains.kotlin.builtins.DefaultBuiltIns
 import org.jetbrains.kotlin.builtins.PrimitiveType
@@ -142,7 +141,7 @@ class IrValidatorTest {
 
     private inline fun runValidationAndAssert(mode: IrVerificationMode, block: () -> Unit) {
         if (mode == IrVerificationMode.ERROR) {
-            assertFailsWith<IrValidationError>(block = block)
+            assertFailsWith<IrValidationException>(block = block)
         } else {
             block()
         }
