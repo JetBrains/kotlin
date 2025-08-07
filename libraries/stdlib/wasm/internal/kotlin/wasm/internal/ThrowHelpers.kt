@@ -55,13 +55,3 @@ internal fun throwNoBranchMatchedException(): Nothing {
 internal fun rangeCheck(index: Int, size: Int) {
   if (index < 0 || index >= size) throw IndexOutOfBoundsException()
 }
-
-@PublishedApi
-internal fun throwUninitializedPropertyAccessException(name: String): Nothing {
-    throw UninitializedPropertyAccessException("lateinit property $name has not been initialized")
-}
-
-@PublishedApi
-internal fun throwUnsupportedOperationException(message: String): Nothing {
-    throw UnsupportedOperationException(message)
-}

@@ -170,8 +170,8 @@ private object CallableIds {
     val throwIllegalStateExceptionWithMessage = "ThrowIllegalStateExceptionWithMessage".internalCallableId
     val throwIllegalArgumentException = "ThrowIllegalArgumentException".internalCallableId
     val throwIllegalArgumentExceptionWithMessage = "ThrowIllegalArgumentExceptionWithMessage".internalCallableId
-    val throwUninitializedPropertyAccessException = "ThrowUninitializedPropertyAccessException".internalCallableId
-    val throwUnsupportedOperationException = "ThrowUnsupportedOperationException".internalCallableId
+    val throwUninitializedPropertyAccessException = "throwUninitializedPropertyAccessException".builtInsCallableId
+    val throwUnsupportedOperationException = "throwUnsupportedOperationException".builtInsCallableId
     val valuesForEnum = "valuesForEnum".internalCallableId
     val valueOfForEnum = "valueOfForEnum".internalCallableId
     val createUninitializedInstance = "createUninitializedInstance".internalCallableId
