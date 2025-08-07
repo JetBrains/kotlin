@@ -76,7 +76,7 @@ internal abstract class BuildToolsApiCompilationWork @Inject constructor(
         val compilerWorkArguments: Property<GradleKotlinCompilerWorkArguments>
         val taskOutputsToRestore: ListProperty<File>
         val snapshotsDir: DirectoryProperty
-        val metricsReporter: Property<BuildMetricsReporter<GradleBuildTime, GradleBuildPerformanceMetric>>
+        val metricsReporter: Property<BuildMetricsReporter>
     }
 
     private val workArguments

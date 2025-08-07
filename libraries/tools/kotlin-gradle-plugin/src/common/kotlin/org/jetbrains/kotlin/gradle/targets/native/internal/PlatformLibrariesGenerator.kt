@@ -14,8 +14,6 @@ import org.gradle.api.provider.Provider
 import org.gradle.api.services.BuildService
 import org.gradle.api.services.BuildServiceParameters
 import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporter
-import org.jetbrains.kotlin.build.report.metrics.GradleBuildPerformanceMetric
-import org.jetbrains.kotlin.build.report.metrics.GradleBuildTime
 import org.jetbrains.kotlin.compilerRunner.KotlinCompilerArgumentsLogLevel
 import org.jetbrains.kotlin.gradle.dsl.NativeCacheKind
 import org.jetbrains.kotlin.gradle.internal.ClassLoadersCachingBuildService
@@ -41,7 +39,7 @@ internal class PlatformLibrariesGenerator(
     val konanTarget: KonanTarget,
     private val kotlinCompilerArgumentsLogLevel: Provider<KotlinCompilerArgumentsLogLevel>,
     private val konanPropertiesService: Provider<KonanPropertiesBuildService>,
-    metricsReporter: Provider<BuildMetricsReporter<GradleBuildTime, GradleBuildPerformanceMetric>>,
+    metricsReporter: Provider<BuildMetricsReporter>,
     classLoadersCachingService: Provider<ClassLoadersCachingBuildService>,
     private val platformLibrariesService: Provider<GeneratedPlatformLibrariesService>,
     useXcodeMessageStyle: Provider<Boolean>,

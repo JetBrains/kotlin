@@ -6,8 +6,6 @@
 package org.jetbrains.kotlin.gradle.report
 
 import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporterImpl
-import org.jetbrains.kotlin.build.report.metrics.GradleBuildPerformanceMetric
-import org.jetbrains.kotlin.build.report.metrics.GradleBuildTime
 
-class GradleBuildMetricsReporter : BuildMetricsReporterImpl<GradleBuildTime, GradleBuildPerformanceMetric>() {
+class GradleBuildMetricsReporter : BuildMetricsReporterImpl() {
 }

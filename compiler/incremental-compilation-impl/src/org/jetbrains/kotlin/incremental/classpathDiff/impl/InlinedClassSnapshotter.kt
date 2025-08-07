@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.incremental.classpathDiff.impl
 
 import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporter
-import org.jetbrains.kotlin.build.report.metrics.GradleBuildPerformanceMetric
-import org.jetbrains.kotlin.build.report.metrics.GradleBuildTime
+import org.jetbrains.kotlin.build.report.metrics.LOAD_CONTENTS_OF_CLASSES
+import org.jetbrains.kotlin.build.report.metrics.SNAPSHOT_INLINED_CLASSES
 import org.jetbrains.kotlin.build.report.metrics.measure
 import org.jetbrains.kotlin.incremental.classpathDiff.impl.ClassListSnapshotterWithInlinedClassSupport.ClassDescriptorForProcessing
 import org.jetbrains.kotlin.incremental.impl.ExtraClassInfoGenerator
@@ -52,7 +52,7 @@ internal class ExtraInfoGeneratorWithInlinedClassSnapshotting(
 private class InstanceBasedSnapshotter(
     private val classNameToClassFileMap: Map<JvmClassName, ClassFileWithContentsProvider>,
     private val classFileToDescriptorMap: Map<ClassFileWithContentsProvider, ClassDescriptorForProcessing>,
-    private val metrics: BuildMetricsReporter<GradleBuildTime, GradleBuildPerformanceMetric>,
+    private val metrics: BuildMetricsReporter,
 ) {
 
     private val knownClassUsages = HashMap<JvmClassName, Set<JvmClassName>>()
@@ -91,7 +91,7 @@ private class InstanceBasedSnapshotter(
             for ((jvmClassName, descriptor) in incompleteClasses) {
                 val classFileWithContentsProvider =
                     classNameToClassFileMap[jvmClassName]!! // not null by virtue of `descriptor != null` above
-                val classFileWithContents = metrics.measure(GradleBuildTime.LOAD_CONTENTS_OF_CLASSES) {
+                val classFileWithContents = metrics.measure(LOAD_CONTENTS_OF_CLASSES) {
                     // Assuming that it's OK because these classes are tiny
                     classFileWithContentsProvider.loadContents()
                 }
@@ -174,14 +174,14 @@ private class PrefixBasedSnapshotter(
 internal class InlinedClassSnapshotter(
     private val classNameToClassFileMap: Map<JvmClassName, ClassFileWithContentsProvider>,
     private val classFileToDescriptorMap: Map<ClassFileWithContentsProvider, ClassDescriptorForProcessing>,
-    private val metrics: BuildMetricsReporter<GradleBuildTime, GradleBuildPerformanceMetric>,
+    private val metrics: BuildMetricsReporter,
 ): ClassMultiHashProvider {
     private val instanceBasedSnapshotter = InstanceBasedSnapshotter(classNameToClassFileMap, classFileToDescriptorMap, metrics)
     private val prefixBasedSnapshotter = PrefixBasedSnapshotter(classNameToClassFileMap)
 
     override fun searchAndGetFullAbiHashOfUsedClasses(rootClasses: Set<JvmClassName>, initialPrefix: String): Long {
 
-        metrics.measure(GradleBuildTime.SNAPSHOT_INLINED_CLASSES) {
+        metrics.measure(SNAPSHOT_INLINED_CLASSES) {
             var initialClassSet = rootClasses + prefixBasedSnapshotter.getSetOfClasses(initialPrefix)
             var instanceExpandedClassSet = instanceBasedSnapshotter.findInlinedClassesRecursively(initialClassSet)
 

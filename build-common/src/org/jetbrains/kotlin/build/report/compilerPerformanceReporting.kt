@@ -5,16 +5,15 @@
 
 package org.jetbrains.kotlin.build.report
 
-import org.jetbrains.kotlin.build.report.metrics.GradleBuildPerformanceMetric
-import org.jetbrains.kotlin.build.report.metrics.GradleBuildTime
+import org.jetbrains.kotlin.build.report.metrics.*
 import org.jetbrains.kotlin.util.*
 
-fun BuildReporter<GradleBuildTime, GradleBuildPerformanceMetric>.reportPerformanceData(moduleStats: UnitStats) {
+fun BuildReporter.reportPerformanceData(moduleStats: UnitStats) {
     if (moduleStats.linesCount > 0) {
-        addMetric(GradleBuildPerformanceMetric.SOURCE_LINES_NUMBER, moduleStats.linesCount.toLong())
+        addMetric(SOURCE_LINES_NUMBER, moduleStats.linesCount.toLong())
     }
 
-    fun reportLps(lpsMetrics: GradleBuildPerformanceMetric, time: Time) {
+    fun reportLps(lpsMetrics: BuildPerformanceMetric, time: Time) {
         if (time != Time.ZERO) {
             addMetric(lpsMetrics, moduleStats.getLinesPerSecond(time).toLong())
         }
@@ -26,19 +25,19 @@ fun BuildReporter<GradleBuildTime, GradleBuildPerformanceMetric>.reportPerforman
         if (time == null) return@forEachPhaseMeasurement
 
         val gradleBuildTime = when (phaseType) {
-            PhaseType.Initialization -> GradleBuildTime.COMPILER_INITIALIZATION
-            PhaseType.Analysis -> GradleBuildTime.CODE_ANALYSIS
-            PhaseType.TranslationToIr -> GradleBuildTime.TRANSLATION_TO_IR
-            PhaseType.IrPreLowering -> GradleBuildTime.IR_PRE_LOWERING
-            PhaseType.IrSerialization -> GradleBuildTime.IR_SERIALIZATION
-            PhaseType.KlibWriting -> GradleBuildTime.KLIB_WRITING
+            PhaseType.Initialization -> COMPILER_INITIALIZATION
+            PhaseType.Analysis -> CODE_ANALYSIS
+            PhaseType.TranslationToIr -> TRANSLATION_TO_IR
+            PhaseType.IrPreLowering -> IR_PRE_LOWERING
+            PhaseType.IrSerialization -> IR_SERIALIZATION
+            PhaseType.KlibWriting -> KLIB_WRITING
             PhaseType.IrLowering -> {
                 codegenTime += time
-                GradleBuildTime.IR_LOWERING
+                IR_LOWERING
             }
             PhaseType.Backend -> {
                 codegenTime += time
-                GradleBuildTime.BACKEND
+                BACKEND
             }
         }
 
@@ -49,12 +48,12 @@ fun BuildReporter<GradleBuildTime, GradleBuildPerformanceMetric>.reportPerforman
         }
 
         if (phaseType == PhaseType.Analysis) {
-            reportLps(GradleBuildPerformanceMetric.ANALYSIS_LPS, time)
+            reportLps(ANALYSIS_LPS, time)
         }
     }
 
     if (codegenTime != Time.ZERO) {
-        addTimeMetricNs(GradleBuildTime.CODE_GENERATION, codegenTime.nanos)
-        reportLps(GradleBuildPerformanceMetric.CODE_GENERATION_LPS, codegenTime)
+        addTimeMetricNs(CODE_GENERATION, codegenTime.nanos)
+        reportLps(CODE_GENERATION_LPS, codegenTime)
     }
 }
