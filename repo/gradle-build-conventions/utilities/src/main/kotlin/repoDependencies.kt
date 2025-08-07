@@ -12,7 +12,6 @@ import org.gradle.api.artifacts.ProjectDependency
 import org.gradle.api.artifacts.dsl.DependencyHandler
 import org.gradle.api.file.FileCollection
 import org.gradle.internal.jvm.Jvm
-import org.gradle.kotlin.dsl.closureOf
 import org.gradle.kotlin.dsl.extra
 import org.gradle.kotlin.dsl.project
 import org.jetbrains.kotlin.gradle.plugin.KotlinDependencyHandler
@@ -117,15 +116,6 @@ fun KotlinDependencyHandler.projectTests(name: String): ProjectDependency = proj
 
 enum class JpsDepScope {
     COMPILE, TEST, RUNTIME, PROVIDED
-}
-
-fun DependencyHandler.add(configurationName: String, dependencyNotation: Any, configure: (ModuleDependency.() -> Unit)?) {
-    // Avoid `dependencyNotation` to `ModuleDependency` class cast exception if possible
-    if (configure != null) {
-        add(configurationName, dependencyNotation, closureOf(configure))
-    } else {
-        add(configurationName, dependencyNotation)
-    }
 }
 
 @Suppress("unused") // Used in cooperative mode with IDEA Kotlin plugin

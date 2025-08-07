@@ -3,6 +3,7 @@ import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 
 plugins {
     `kotlin-dsl`
+    `java-gradle-plugin`
     id("org.jetbrains.kotlin.jvm")
 }
 
@@ -12,18 +13,45 @@ kotlin {
     jvmToolchain(11)
 
     compilerOptions {
-        allWarningsAsErrors.set(true)
         freeCompilerArgs.add("-Xsuppress-version-warnings")
+    }
+
+    target.compilations.getByName("main").compileTaskProvider.configure {
+        compilerOptions.allWarningsAsErrors.set(true)
+    }
+}
+
+gradlePlugin {
+    plugins {
+        register("kotlin-build-publishing") {
+            id = "kotlin-build-publishing"
+            implementationClass = "plugins.KotlinBuildPublishingPlugin"
+        }
     }
 }
 
 repositories {
     maven("https://redirector.kotlinlang.org/maven/kotlin-dependencies")
     mavenCentral { setUrl("https://cache-redirector.jetbrains.com/maven-central") }
+    google { setUrl("https://cache-redirector.jetbrains.com/dl.google.com/dl/android/maven2") }
+    maven("https://packages.jetbrains.team/maven/p/ij/intellij-dependencies")
+    gradlePluginPortal()
 }
-dependencies {
-    implementation("org.jetbrains.kotlin:kotlin-build-gradle-plugin:${kotlinBuildProperties.buildGradlePluginVersion}")
 
+dependencies {
+    api(project(":utilities"))
+    implementation("org.jetbrains.kotlin:kotlin-build-gradle-plugin:${kotlinBuildProperties.buildGradlePluginVersion}")
+    implementation("org.jetbrains.kotlin:kotlin-gradle-plugin:${project.bootstrapKotlinVersion}")
+    implementation(libs.gradle.pluginPublish.gradlePlugin)
+    implementation(libs.spdx.gradlePlugin)
+    implementation(libs.shadow.gradlePlugin)
+    implementation("org.slf4j:slf4j-api:2.0.17")
+
+    compileOnly(gradleApi())
+
+    testImplementation(kotlin("test"))
+    testImplementation(gradleKotlinDsl())
+    testImplementation(gradleApi())
     testImplementation(libs.junit.jupiter.api)
     testRuntimeOnly(libs.junit.platform.launcher)
     testRuntimeOnly(libs.junit.jupiter.engine)

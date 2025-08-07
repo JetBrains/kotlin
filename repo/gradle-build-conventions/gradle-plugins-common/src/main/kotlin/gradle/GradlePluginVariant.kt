@@ -36,7 +36,7 @@ enum class GradlePluginVariant(
     ;
 
     companion object {
-        const val GRADLE_COMMON = "8.14"
+        const val GRADLE_COMMON_COMPILE_API_VERSION = "8.14"
 
         /**
          * These values are used in [org.jetbrains.kotlin.gradle.GradleCompatibilityIT.buildScriptResolvesGradleVersionSpecificJars] and [GradlePluginTests]

@@ -60,7 +60,7 @@ configurations.all {
         }
 
         if (requested.group.startsWith("com.fasterxml.jackson")) {
-            useVersion("2.15.0")
+            useVersion("2.16.0")
             because("CVE-2025-49128, CVE-2025-52999")
         }
     }
