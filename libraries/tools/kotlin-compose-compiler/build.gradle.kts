@@ -74,9 +74,9 @@ if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
                 functionalTests.compileClasspathConfigurationName,
                 functionalTests.runtimeClasspathConfigurationName,
             ).forEach {
-                configurations.getByName(it).attributes.attribute(
-                    GradlePluginApiVersion.GRADLE_PLUGIN_API_VERSION_ATTRIBUTE,
-                    objects.named(GradlePluginVariant.MAXIMUM_SUPPORTED_GRADLE_VARIANT.minimalSupportedGradleVersion)
+                configurations.getByName(it).useDependenciesCompiledForGradle(
+                    GradlePluginVariant.MAXIMUM_SUPPORTED_GRADLE_VARIANT,
+                    objects,
                 )
             }
         }
