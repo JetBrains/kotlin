@@ -1230,38 +1230,52 @@ private inline fun parseDefaultStringFormat(
     var index = startIndex
     var length = initialLength
     var allowSpaces = !hasSign
+
     if (hasSign && value[index] == '(' && value.last() == ')') {
         allowSpaces = true
-        if (++index == --length) return throwExceptionOrInvalid(throwException, "No components")
+        index++
+        length--
+        if (index == length) return throwExceptionOrInvalid(throwException, "No components")
     }
-    var afterFirst = false
+
     var totalMillis = 0L
     var totalNanos = 0L
     var prevUnit: DurationUnit? = null
+    var isFirstComponent = true
+
     while (index < length) {
-        if (afterFirst && allowSpaces) {
+        if (!isFirstComponent && allowSpaces) {
             index = value.skipWhile(index) { it == ' ' }
         }
-        afterFirst = true
+        isFirstComponent = false
+
         val integralStartIndex = index
         val (integralValue, afterIntegerIndex) = value.parseLong(index, withSign = false)
-        if (afterIntegerIndex == length || afterIntegerIndex == integralStartIndex) return throwExceptionOrInvalid(throwException)
+        if (afterIntegerIndex == integralStartIndex || afterIntegerIndex == length) {
+            return throwExceptionOrInvalid(throwException)
+        }
         index = afterIntegerIndex
-        var inFractionalPart = false
-        val fractionValue = if (index < length && value[index] == '.') {
-            inFractionalPart = true
+
+        val hasFractionalPart = index < length && value[index] == '.'
+        val fractionValue = if (hasFractionalPart) {
             index++
             val fractionStartIndex = index
             val (fraction, afterFractionIndex) = value.parseFraction(index)
-            if (afterFractionIndex == fractionStartIndex || afterFractionIndex == length) return throwExceptionOrInvalid(throwException)
+            if (afterFractionIndex == fractionStartIndex || afterFractionIndex == length) {
+                return throwExceptionOrInvalid(throwException)
+            }
             index = afterFractionIndex
             fraction
         } else 0L
+
         val unit = durationUnitByShortNameOrNull(value, index) ?: return throwExceptionOrInvalid(throwException)
-        if (prevUnit != null && prevUnit <= unit) return throwExceptionOrInvalid(throwException, "Unexpected order of duration components")
+        if (prevUnit != null && prevUnit <= unit) {
+            return throwExceptionOrInvalid(throwException, "Unexpected order of duration components")
+        }
         prevUnit = unit
-        when (unit) {
-            DurationUnit.DAYS, DurationUnit.HOURS, DurationUnit.MINUTES, DurationUnit.SECONDS, DurationUnit.MILLISECONDS -> {
+
+        when {
+            unit >= DurationUnit.MILLISECONDS -> {
                 val multiplier = when (unit) {
                     DurationUnit.DAYS -> MILLIS_PER_DAY
                     DurationUnit.HOURS -> MILLIS_PER_HOUR
@@ -1272,17 +1286,20 @@ private inline fun parseDefaultStringFormat(
                 totalMillis = totalMillis.addWithoutOverflow(integralValue.multiplyWithoutOverflow(multiplier))
                     .onInvalid { return throwExceptionOrInvalid(throwException) }
             }
-            DurationUnit.MICROSECONDS, DurationUnit.NANOSECONDS -> {
+            else -> {
                 val multiplier = if (unit == DurationUnit.MICROSECONDS) NANOS_IN_MICROS else 1L
                 totalNanos = totalNanos.addWithoutOverflow(integralValue.multiplyWithoutOverflow(multiplier))
                     .onInvalid { return throwExceptionOrInvalid(throwException) }
             }
-            else -> error("Unknown unit: $unit")
         }
+
         totalNanos += fractionValue.toNanos(unit)
         index += unit.length
-        if (inFractionalPart && index < length) return throwExceptionOrInvalid(throwException, "Fractional component must be last")
+        if (hasFractionalPart && index < length) {
+            return throwExceptionOrInvalid(throwException, "Fractional component must be last")
+        }
     }
+
     return totalMillis.toDuration(DurationUnit.MILLISECONDS) + totalNanos.toDuration(DurationUnit.NANOSECONDS)
 }
 
