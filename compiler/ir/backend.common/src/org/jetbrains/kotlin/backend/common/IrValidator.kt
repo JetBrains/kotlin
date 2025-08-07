@@ -29,6 +29,8 @@ import org.jetbrains.kotlin.ir.visitors.acceptVoid
 
 typealias ReportIrValidationError = (IrFile?, IrElement, String, List<IrElement>) -> Unit
 
+open class IrValidationException(message: String? = null, cause: Throwable? = null) : IllegalStateException(message, cause)
+
 private class IrValidator(
     val validatorConfig: IrValidatorConfig,
     val irBuiltIns: IrBuiltIns,
@@ -114,7 +116,7 @@ private fun performBasicIrValidation(
     if (validatorConfig.checkTreeConsistency || validatorConfig.checkUnboundSymbols) {
         try {
             element.checkTreeConsistency(reportError, validatorConfig)
-        } catch (_: TreeConsistencyError) {
+        } catch (_: IrTreeConsistencyException) {
             return
         }
     }
@@ -127,7 +129,7 @@ private fun performBasicIrValidation(
 }
 
 /**
- * [IrValidationContext] is responsible for collecting validation errors, logging them and optionally throwing [IrValidationError]
+ * [IrValidationContext] is responsible for collecting validation errors, logging them and optionally throwing [IrValidationException]
  * (if the verification mode passed to [validateIr] is [IrVerificationMode.ERROR])
  */
 sealed interface IrValidationContext {
@@ -159,8 +161,8 @@ sealed interface IrValidationContext {
      *
      * Reports errors to [CommonBackendContext.messageCollector].
      *
-     * **Note:** this method does **not** throw [IrValidationError]. Use [throwValidationErrorIfNeeded] for checking for errors and throwing
-     * [IrValidationError]. This gives the caller the opportunity to perform additional (for example, backend-specific) validation before
+     * **Note:** this method does **not** throw [IrValidationException]. Use [throwValidationErrorIfNeeded] for checking for errors and throwing
+     * [IrValidationException]. This gives the caller the opportunity to perform additional (for example, backend-specific) validation before
      * aborting. The caller decides when it's time to abort.
      */
     fun performBasicIrValidation(
@@ -224,7 +226,7 @@ private class IrValidationContextImpl(
 
     override fun throwValidationErrorIfNeeded() {
         if (hasValidationErrors && mode == IrVerificationMode.ERROR) {
-            throw IrValidationError()
+            throw IrValidationException()
         }
     }
 }
@@ -232,7 +234,7 @@ private class IrValidationContextImpl(
 /**
  * Logs validation errors encountered during the execution of the [runValidationRoutines] closure into [messageCollector].
  *
- * If [mode] is [IrVerificationMode.ERROR], throws [IrValidationError] after [runValidationRoutines] has finished,
+ * If [mode] is [IrVerificationMode.ERROR], throws [IrValidationException] after [runValidationRoutines] has finished,
  * thus allowing to collect as many errors as possible instead of aborting after the first one.
  */
 fun validateIr(
