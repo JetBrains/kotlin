@@ -6,13 +6,15 @@
 package org.jetbrains.kotlin.backend.common.serialization
 
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
+import org.jetbrains.kotlin.ir.expressions.IrErrorExpression
 import org.jetbrains.kotlin.ir.types.IrErrorType
 
 /**
  * Various settings used during deserialization of IR modules and IR files.
  *
- * @property allowErrorNodes Whether serialization of [IrErrorType] is permitted.
- *   TODO Consider removing in KT-65375.
+ * @property allowErrorNodes Whether serialization of [IrErrorType] and [IrErrorExpression] is permitted.
+ *   Caution: This setting is not safe to use, as it can lead to crashes in the frontend or backend.
+ *   The only legal case for using this setting is the `dump-ir` command of the `klib` command-line tool.
  * @property allowAlreadyBoundSymbols Don't attempt to create a new declaration (IR entity) during deserialization
  *   if it turns out that the symbol is already bound. This is needed for specific JVM-related scenarios when it's
  *   necessary to deserialize IR for already existing declarations.
