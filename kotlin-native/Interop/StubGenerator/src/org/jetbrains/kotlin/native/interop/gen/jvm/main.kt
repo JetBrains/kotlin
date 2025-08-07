@@ -336,7 +336,10 @@ private fun processCLib(
             disableDesignatedInitializerChecks = def.config.disableDesignatedInitializerChecks,
             disableExperimentalAnnotation = cinteropArguments.disableExperimentalAnnotation ?: false,
             target = target,
-            cCallMode = cinteropArguments.cCallMode,
+            cCallMode = when (flavor) {
+                KotlinPlatform.JVM -> CCallMode.BOTH
+                KotlinPlatform.NATIVE -> cinteropArguments.cCallMode
+            },
     )
 
 
