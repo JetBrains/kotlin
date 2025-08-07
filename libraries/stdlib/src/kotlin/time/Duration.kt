@@ -1217,6 +1217,37 @@ private inline fun parseIsoStringFormat(
     return totalMillis.toDuration(DurationUnit.MILLISECONDS) + totalNanos.toDuration(DurationUnit.NANOSECONDS)
 }
 
+private fun foo(
+    value: String,
+    startIndex: Int,
+    initialLength: Int,
+    hasSign: Boolean,
+    throwException: Boolean,
+): Duration {
+    var index = startIndex
+    var length = initialLength
+    var allowSpaces = !hasSign
+    if (hasSign && value[index] == '(' && value.last() == ')') {
+        allowSpaces = true
+        if (++index == --length) return throwExceptionOrInvalid(throwException, "No components")
+    }
+    var afterFirst = false
+    var totalMillis = 0L
+    var totalNanos = 0L
+    while (index < length) {
+        if (afterFirst && allowSpaces) {
+            index = value.skipWhile(index) { it == ' ' }
+        }
+        afterFirst = true
+        val prevIndex = index
+        val (longValue, nextIndex, sign) = value.parseLong(index)
+        index = nextIndex
+        if (index == length || index == prevIndex) return throwExceptionOrInvalid(throwException)
+    }
+
+    return Duration.ZERO
+}
+
 @kotlin.internal.InlineOnly
 private inline fun parseDefaultStringFormat(
     value: String,
