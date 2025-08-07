@@ -77,7 +77,7 @@ private open class NativeArgsProvider @Inject constructor(
 
     @get:Input
     @get:Optional
-    protected val forceStandalone = providers.testProperty(FORCE_STANDALONE)
+    protected val forceStandalone = providers.provider { true }
 
     @get:Input
     @get:Optional

@@ -3,6 +3,8 @@
  * that can be found in the LICENSE file.
  */
 // TARGET_BACKEND: NATIVE
+// FREE_CINTEROP_ARGS: -Xccall-mode both
+// FREE_COMPILER_ARGS: -Xbinary=cCallMode=IndirectOrDirect
 // MODULE: cinterop
 // FILE: cmacros.def
 excludedMacros = EXCLUDED

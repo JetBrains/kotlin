@@ -149,10 +149,10 @@ open class CInteropArguments(argParser: ArgParser =
             ArgType.Choice<CCallMode>(),
             CCALL_MODE,
             description = "CCall mode: " +
-                    "${CCallMode.DIRECT.name.lowercase()} - generate only @CCall.Direct, " +
-                    "${CCallMode.INDIRECT.name.lowercase()} - generate only @CCall (default), " +
+                    "${CCallMode.DIRECT.name.lowercase()} - generate only @CCall.Direct (default), " +
+                    "${CCallMode.INDIRECT.name.lowercase()} - generate only @CCall, " +
                     "${CCallMode.BOTH.name.lowercase()} - generate both"
-    ).default(CCallMode.INDIRECT)
+    ).default(CCallMode.DIRECT)
 }
 
 internal fun warn(msg: String) {

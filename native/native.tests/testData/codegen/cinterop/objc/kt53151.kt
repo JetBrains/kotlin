@@ -1,4 +1,6 @@
 // TARGET_BACKEND: NATIVE
+// FREE_CINTEROP_ARGS: -Xccall-mode both
+// FREE_COMPILER_ARGS: -Xbinary=cCallMode=IndirectOrDirect
 // DISABLE_NATIVE: isAppleTarget=false
 
 // FREE_CINTEROP_ARGS: -compiler-option -F$generatedSourcesDir/cinterop
