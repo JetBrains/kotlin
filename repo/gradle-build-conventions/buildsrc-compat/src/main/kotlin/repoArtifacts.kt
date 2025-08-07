@@ -106,31 +106,6 @@ fun Project.noDefaultJar() {
     configurations.named("archives", removeJarTaskArtifact(jarTask))
 }
 
-@JvmOverloads
-fun Jar.addEmbeddedRuntime(embeddedConfigurationName: String = "embedded") {
-    project.configurations.findByName(embeddedConfigurationName)?.let { embedded ->
-        dependsOn(embedded)
-        val archiveOperations = project.serviceOf<ArchiveOperations>()
-        from {
-            embedded.map { dependency: File ->
-                check(!dependency.path.contains("kotlin-stdlib")) {
-                    """
-                    |There's an attempt to have an embedded kotlin-stdlib in $project which is likely a misconfiguration
-                    |All embedded dependencies:
-                    |    ${embedded.files.joinToString(separator = "\n|    ")}
-                    """.trimMargin()
-                }
-
-                if (dependency.extension.equals("jar", ignoreCase = true)) {
-                    archiveOperations.zipTree(dependency)
-                } else {
-                    dependency
-                }
-            }
-        }
-    }
-}
-
 fun Project.runtimeJar(body: Jar.() -> Unit = {}): TaskProvider<out Jar> {
     val jarTask = tasks.named<Jar>("jar")
     jarTask.configure {
@@ -186,11 +161,6 @@ fun Project.runtimeJar(task: TaskProvider<ShadowJar>, body: ShadowJar.() -> Unit
 
     return task
 }
-
-private fun Project.mainJavaPluginSourceSet() = findJavaPluginExtension()?.sourceSets?.findByName("main")
-private fun Project.mainKotlinSourceSet() =
-    (extensions.findByName("kotlin") as? KotlinSourceSetContainer)?.sourceSets?.findByName("main")
-private fun Project.sources() = mainJavaPluginSourceSet()?.allSource ?: mainKotlinSourceSet()?.kotlin
 
 @JvmOverloads
 fun Project.sourcesJar(body: Jar.() -> Unit = {}): TaskProvider<Jar> {
@@ -464,30 +434,6 @@ fun Project.publishTestJar(projects: List<String>, projectWithFixturesNames: Lis
     javadocJar()
 }
 
-fun ConfigurationContainer.getOrCreate(name: String): Configuration = findByName(name) ?: create(name)
-
-fun Jar.setupPublicJar(
-    baseName: String,
-    classifier: String = ""
-) = setupPublicJar(
-    project.provider { baseName },
-    project.provider { classifier }
-)
-
-fun Jar.setupPublicJar(
-    baseName: Provider<String>,
-    classifier: Provider<String> = project.provider { "" }
-) {
-    val buildNumber = project.rootProject.extra["buildNumber"] as String
-    this.archiveBaseName.set(baseName)
-    this.archiveClassifier.set(classifier)
-    manifest.attributes.apply {
-        put("Implementation-Vendor", "JetBrains")
-        put("Implementation-Title", baseName.get())
-        put("Implementation-Version", buildNumber)
-    }
-}
-
 fun Project.addArtifact(configuration: Configuration, task: Task, artifactRef: Any, body: ConfigurablePublishArtifact.() -> Unit = {}) {
     artifacts.add(configuration.name, artifactRef) {
         builtBy(task)
@@ -497,15 +443,6 @@ fun Project.addArtifact(configuration: Configuration, task: Task, artifactRef: A
 
 fun Project.addArtifact(configurationName: String, task: Task, artifactRef: Any, body: ConfigurablePublishArtifact.() -> Unit = {}) =
     addArtifact(configurations.getOrCreate(configurationName), task, artifactRef, body)
-
-fun <T : Task> Project.addArtifact(
-    configurationName: String,
-    task: TaskProvider<T>,
-    body: ConfigurablePublishArtifact.() -> Unit = {}
-): PublishArtifact {
-    configurations.maybeCreate(configurationName)
-    return artifacts.add(configurationName, task, body)
-}
 
 fun <T : Task> Project.addArtifact(
     configurationName: String,

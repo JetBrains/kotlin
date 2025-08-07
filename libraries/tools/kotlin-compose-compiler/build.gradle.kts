@@ -76,7 +76,7 @@ if (!kotlinBuildProperties.isInJpsBuildIdeaSync) {
             ).forEach {
                 configurations.getByName(it).attributes.attribute(
                     GradlePluginApiVersion.GRADLE_PLUGIN_API_VERSION_ATTRIBUTE,
-                    objects.named(GradlePluginVariant.values().maxBy { GradleVersion.version(it.minimalSupportedGradleVersion) }.minimalSupportedGradleVersion)
+                    objects.named(GradlePluginVariant.MAXIMUM_SUPPORTED_GRADLE_VARIANT.minimalSupportedGradleVersion)
                 )
             }
         }

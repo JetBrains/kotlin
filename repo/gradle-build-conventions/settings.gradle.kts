@@ -17,14 +17,6 @@ plugins {
     id("cache-redirector")
 }
 
-dependencyResolutionManagement {
-    versionCatalogs {
-        create("libs") {
-            from(files("../../gradle/libs.versions.toml"))
-        }
-    }
-}
-
 include(":buildsrc-compat")
 include(":prepare-deps")
 include(":generators")
@@ -37,3 +29,4 @@ include(":gradle-plugins-common")
 include(":d8-configuration")
 include(":binaryen-configuration")
 include(":nodejs-configuration")
+include(":utilities")
