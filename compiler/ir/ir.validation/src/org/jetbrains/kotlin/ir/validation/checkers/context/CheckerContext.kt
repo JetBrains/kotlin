@@ -14,13 +14,13 @@ import org.jetbrains.kotlin.ir.declarations.IrScript
 import org.jetbrains.kotlin.ir.declarations.IrTypeParametersContainer
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
-import org.jetbrains.kotlin.ir.validation.ReportIrValidationError
+import org.jetbrains.kotlin.ir.validation.IrValidationError
 import org.jetbrains.kotlin.ir.validation.ScopeStack
 
 class CheckerContext(
     val irBuiltIns: IrBuiltIns,
     val file: IrFile,
-    private val reportError: ReportIrValidationError,
+    private val reportError: (IrValidationError) -> Unit,
 ) {
     val parentChain: MutableList<IrElement> = mutableListOf()
     val typeParameterScopeStack = ScopeStack<IrTypeParameterSymbol>()
@@ -29,7 +29,7 @@ class CheckerContext(
     var withinAnnotationUsageSubTree: Boolean = false
         private set
 
-    fun error(element: IrElement, message: String) = reportError(file, element, message, parentChain)
+    fun error(element: IrElement, message: String) = reportError(IrValidationError(file, element, message, parentChain))
 
     fun withTypeParametersInScope(container: IrTypeParametersContainer, block: () -> Unit) {
         typeParameterScopeStack.withNewScope(
