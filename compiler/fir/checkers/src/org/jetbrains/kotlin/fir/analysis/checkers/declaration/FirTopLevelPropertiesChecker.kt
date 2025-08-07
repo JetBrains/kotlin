@@ -229,6 +229,7 @@ internal fun checkPropertyInitializer(
                 if (LanguageFeature.EnableDfaWarningsInK2.isEnabled()) {
                     if (
                         backingFieldRequired &&
+                        !propertySymbol.hasExplicitBackingField &&
                         !inInterface &&
                         isCorrectlyInitialized &&
                         propertySymbol.backingFieldSymbol?.hasAnnotation(StandardClassIds.Annotations.Transient, context.session) != true &&
