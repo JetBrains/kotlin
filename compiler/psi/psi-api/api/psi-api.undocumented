@@ -585,8 +585,9 @@ org.jetbrains.kotlin.psi.KtElement.acceptChildren(KtVisitor<Void, D>, D)
 org.jetbrains.kotlin.psi.KtElementImpl
 org.jetbrains.kotlin.psi.KtElementImpl:constructor(ASTNode)
 org.jetbrains.kotlin.psi.KtElementImplStub
+org.jetbrains.kotlin.psi.KtElementImplStub.getStubOrPsiChildrenAsList(KtStubElementType<StubT, PsiT>)
 org.jetbrains.kotlin.psi.KtElementImplStub:constructor(ASTNode)
-org.jetbrains.kotlin.psi.KtElementImplStub:constructor(T, IStubElementType)
+org.jetbrains.kotlin.psi.KtElementImplStub:constructor(T, IStubElementType<*, *>)
 org.jetbrains.kotlin.psi.KtEnumEntry
 org.jetbrains.kotlin.psi.KtEnumEntry:constructor(ASTNode)
 org.jetbrains.kotlin.psi.KtEnumEntry:constructor(KotlinClassStub)

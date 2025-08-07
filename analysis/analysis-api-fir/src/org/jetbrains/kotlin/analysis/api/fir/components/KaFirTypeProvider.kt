@@ -43,7 +43,10 @@ import org.jetbrains.kotlin.fir.psi
 import org.jetbrains.kotlin.fir.resolve.defaultType
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeUnsupported
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
-import org.jetbrains.kotlin.fir.symbols.impl.*
+import org.jetbrains.kotlin.fir.symbols.impl.FirCallableSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirTypeParameterSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirSymbolEntry
 import org.jetbrains.kotlin.name.Name
@@ -239,7 +242,7 @@ internal class KaFirTypeProvider(
             parent is KtConstructorCalleeExpression && parent.parent is KtAnnotationEntry -> {
                 fun getFirDeclaration(annotationEntry: KtAnnotationEntry, ktTypeReference: KtTypeReference): FirMemberDeclaration? {
                     if (annotationEntry.typeReference !== ktTypeReference) return null
-                    val declaration = annotationEntry.parent?.parent as? KtNamedDeclaration ?: return null
+                    val declaration = annotationEntry.parent.parent as? KtNamedDeclaration ?: return null
                     return when {
                         declaration is KtClassOrObject -> declaration.resolveToFirSymbolOfTypeSafe<FirClassLikeSymbol<*>>(
                             resolutionFacade, FirResolvePhase.TYPES

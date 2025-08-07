@@ -1,134 +1,93 @@
 /*
- * Copyright 2010-2020 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
+package org.jetbrains.kotlin.psi
 
-package org.jetbrains.kotlin.psi;
+import com.intellij.extapi.psi.StubBasedPsiElementBase
+import com.intellij.lang.ASTNode
+import com.intellij.lang.Language
+import com.intellij.psi.PsiElement
+import com.intellij.psi.PsiElementVisitor
+import com.intellij.psi.PsiReference
+import com.intellij.psi.StubBasedPsiElement
+import com.intellij.psi.impl.source.PsiFileImpl
+import com.intellij.psi.stubs.IStubElementType
+import com.intellij.psi.stubs.StubElement
+import org.jetbrains.kotlin.idea.KotlinLanguage
+import org.jetbrains.kotlin.psi.KotlinReferenceProvidersService.Companion.getReferencesFromProviders
+import org.jetbrains.kotlin.psi.psiUtil.parentSubstitute
+import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementType
 
-import com.intellij.extapi.psi.StubBasedPsiElementBase;
-import com.intellij.lang.ASTNode;
-import com.intellij.lang.Language;
-import com.intellij.psi.*;
-import com.intellij.psi.impl.source.PsiFileImpl;
-import com.intellij.psi.stubs.IStubElementType;
-import com.intellij.psi.stubs.StubElement;
-import com.intellij.util.IncorrectOperationException;
-import org.jetbrains.annotations.NotNull;
-import org.jetbrains.kotlin.idea.KotlinLanguage;
-import org.jetbrains.kotlin.psi.psiUtil.KtPsiUtilKt;
-import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementType;
+abstract class KtElementImplStub<T : StubElement<*>> : StubBasedPsiElementBase<T>, KtElement, StubBasedPsiElement<T> {
+    constructor(stub: T, nodeType: IStubElementType<*, *>) : super(stub, nodeType)
 
-import java.util.Arrays;
-import java.util.List;
+    constructor(node: ASTNode) : super(node)
 
-public class KtElementImplStub<T extends StubElement<?>> extends StubBasedPsiElementBase<T>
-        implements KtElement, StubBasedPsiElement<T> {
-    public KtElementImplStub(@NotNull T stub, @NotNull IStubElementType nodeType) {
-        super(stub, nodeType);
-    }
+    override fun getLanguage(): Language = KotlinLanguage.INSTANCE
 
-    public KtElementImplStub(@NotNull ASTNode node) {
-        super(node);
-    }
+    override fun toString(): String = elementType.toString()
 
-    @NotNull
-    @Override
-    public Language getLanguage() {
-        return KotlinLanguage.INSTANCE;
-    }
-
-    @Override
-    public String toString() {
-        return getElementType().toString();
-    }
-
-    @Override
-    @SuppressWarnings("unchecked")
-    public final void accept(@NotNull PsiElementVisitor visitor) {
-        if (visitor instanceof KtVisitor) {
-            accept((KtVisitor) visitor, null);
-        }
-        else {
-            visitor.visitElement(this);
+    final override fun accept(visitor: PsiElementVisitor) {
+        if (visitor is KtVisitorVoid) {
+            accept(visitor, null)
+        } else {
+            visitor.visitElement(this)
         }
     }
 
-    @NotNull
-    @Override
-    public KtFile getContainingKtFile() {
-        PsiFile file = getContainingFile();
-        if (!(file instanceof KtFile)) {
+    override fun getContainingKtFile(): KtFile {
+        val file = containingFile
+        if (file !is KtFile) {
             // KtElementImpl.copy() might be the reason for this exception
-            String fileString = "";
-            if (file.isValid()) {
+            var fileString = ""
+            if (file.isValid) {
                 try {
-                    fileString = " " + file.getText();
-                }
-                catch (Exception e) {
+                    fileString = " " + file.text
+                } catch (_: Exception) {
                     // ignore when failed to get file text
                 }
             }
             // getNode() will fail if getContainingFile() returns not PsiFileImpl instance
-            String nodeString = (file instanceof PsiFileImpl ? (" node = " + getNode()) : "");
+            val nodeString = (if (file is PsiFileImpl) (" node = " + getNode()) else "")
 
-            throw new IllegalStateException("KtElement not inside KtFile: " +
-                                            file + fileString + " of type " + file.getClass() +
-                                            " for element " + this + " of type " + this.getClass() + nodeString);
+            throw IllegalStateException(
+                "KtElement not inside KtFile: " +
+                        file + fileString + " of type " + file.javaClass +
+                        " for element " + this + " of type " + this.javaClass + nodeString
+            )
         }
-        return (KtFile) file;
+        return file
     }
 
-    @Override
-    public <D> void acceptChildren(@NotNull KtVisitor<Void, D> visitor, D data) {
-        PsiElement child = getFirstChild();
+    override fun <D> acceptChildren(visitor: KtVisitor<Void, D>, data: D) {
+        var child = firstChild
         while (child != null) {
-            if (child instanceof KtElement) {
-                ((KtElement) child).accept(visitor, data);
+            if (child is KtElement) {
+                child.accept(visitor, data)
             }
-            child = child.getNextSibling();
+            child = child.nextSibling
         }
     }
 
-    @Override
-    public <R, D> R accept(@NotNull KtVisitor<R, D> visitor, D data) {
-        return visitor.visitKtElement(this, data);
+    override fun <R, D> accept(visitor: KtVisitor<R, D>, data: D): R {
+        return visitor.visitKtElement(this, data)
     }
 
-    @Override
-    public void delete() throws IncorrectOperationException {
-        KtElementUtilsKt.deleteSemicolon(this);
-        super.delete();
+    override fun delete() {
+        this.deleteSemicolon()
+        super.delete()
     }
 
-    @Override
-    @SuppressWarnings("deprecation")
-    public PsiReference getReference() {
-        PsiReference[] references = getReferences();
-        return (references.length > 0) ? references[0] : null;
-    }
+    override fun getReference(): PsiReference? = references.firstOrNull()
 
-    @NotNull
-    @Override
-    public PsiReference[] getReferences() {
-        return KotlinReferenceProvidersService.getReferencesFromProviders(this);
-    }
+    override fun getReferences(): Array<PsiReference> = getReferencesFromProviders(this)
 
-    @NotNull
-    protected <PsiT extends KtElementImplStub<?>, StubT extends StubElement<?>> List<PsiT> getStubOrPsiChildrenAsList(
-            @NotNull KtStubElementType<StubT, PsiT> elementType
-    ) {
-        return Arrays.asList(getStubOrPsiChildren(elementType, elementType.getArrayFactory()));
-    }
+    fun <PsiT : KtElementImplStub<*>, StubT : StubElement<*>> getStubOrPsiChildrenAsList(
+        elementType: KtStubElementType<StubT, PsiT>
+    ): List<PsiT> = getStubOrPsiChildren(elementType, elementType.getArrayFactory()).asList()
 
-    @NotNull
-    @Override
-    public KtElement getPsiOrParent() {
-        return this;
-    }
+    override fun getPsiOrParent(): KtElement = this
 
-    @Override
-    public PsiElement getParent() {
-        PsiElement substitute = KtPsiUtilKt.getParentSubstitute(this);
-        return substitute != null ? substitute : super.getParent();
-    }
+    override fun getParent(): PsiElement = parentSubstitute ?: super.getParent()
 }
