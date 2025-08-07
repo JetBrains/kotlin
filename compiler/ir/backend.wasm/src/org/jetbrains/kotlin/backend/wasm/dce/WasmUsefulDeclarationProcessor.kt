@@ -123,6 +123,11 @@ internal class WasmUsefulDeclarationProcessor(
             if (function.hasWasmNoOpCastAnnotation()) return
             if (function.getWasmOpAnnotation() != null) return
 
+            if (function == context.wasmSymbols.tryGetAssociatedObject.owner) {
+                context.wasmSymbols.registerModuleDescriptor.owner
+                    .enqueue(function, "Module descriptor is a part of AO runtime")
+            }
+
             val isSuperCall = expression.superQualifierSymbol != null
             if (function is IrSimpleFunction && function.isOverridable && !isSuperCall) {
                 val klass = function.parentAsClass
