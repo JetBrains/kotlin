@@ -8,14 +8,14 @@ package org.jetbrains.kotlin.build.report.metrics
 import java.io.Serializable
 import java.util.*
 
-class BuildPerformanceMetrics<T: BuildPerformanceMetric> : Serializable {
+class BuildPerformanceMetrics<T : BuildPerformanceMetric> : Serializable {
     companion object {
         const val serialVersionUID = 0L
     }
 
     private val myBuildMetrics = HashMap<T, Long>()
 
-    fun addAll(other: BuildPerformanceMetrics<T>) {
+    fun addAll(other: BuildPerformanceMetrics<out T>) {
         for ((bt, value) in other.myBuildMetrics) {
             addLong(bt, value)
         }

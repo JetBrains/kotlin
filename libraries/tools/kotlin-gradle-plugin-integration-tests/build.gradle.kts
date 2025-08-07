@@ -78,10 +78,11 @@ dependencies {
     testImplementation(project(":native:kotlin-native-utils"))
     testImplementation(project(":native:kotlin-klib-commonizer-api"))
 
+    testImplementation(project(":compiler:build-tools:kotlin-build-statistics"))
     testImplementation(project(":kotlin-compiler-embeddable"))
     testImplementation(intellijJDom())
     testImplementation(intellijPlatformUtil())
-    testImplementation(project(":compiler:build-tools:kotlin-build-statistics"))
+    testImplementation(project(":compiler:cli-common"))
     // testCompileOnly dependency on non-shaded artifacts is needed for IDE support
     // testRuntimeOnly on shaded artifact is needed for running tests with shaded compiler
     testCompileOnly(project(":kotlin-gradle-plugin-test-utils-embeddable"))

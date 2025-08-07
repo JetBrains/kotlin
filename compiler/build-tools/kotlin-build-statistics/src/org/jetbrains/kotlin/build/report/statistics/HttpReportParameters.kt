@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.build.report.statistics
 
 import com.google.gson.Gson
+import org.jetbrains.kotlin.build.report.statistics.json.buildExecutionDataGson
 import org.jetbrains.kotlin.buildtools.api.KotlinLogger
 import java.io.IOException
 import java.io.Serializable
@@ -86,7 +87,7 @@ class HttpReportService : AutoCloseable {
                 connection.requestMethod = "POST"
                 connection.doOutput = true
                 connection.outputStream.use {
-                    it.write(Gson().toJson(data).toByteArray())
+                    it.write(buildExecutionDataGson.toJson(data).toByteArray())
                 }
                 connection.connect()
                 checkResponseAndLog(httpReportParameters, connection, log)

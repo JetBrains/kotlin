@@ -9,8 +9,9 @@ import org.gradle.api.provider.Provider
 import org.gradle.workers.WorkQueue
 import org.gradle.workers.WorkerExecutor
 import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporter
-import org.jetbrains.kotlin.build.report.metrics.GradleBuildPerformanceMetric
-import org.jetbrains.kotlin.build.report.metrics.GradleBuildTime
+import org.jetbrains.kotlin.build.report.metrics.BuildPerformanceMetric
+import org.jetbrains.kotlin.build.report.metrics.CALL_WORKER
+import org.jetbrains.kotlin.build.report.metrics.BuildTimeMetric
 import org.jetbrains.kotlin.compilerRunner.CompilerExecutionSettings
 import org.jetbrains.kotlin.compilerRunner.GradleCompilerRunner
 import org.jetbrains.kotlin.compilerRunner.GradleKotlinCompilerWorkArguments
@@ -26,7 +27,7 @@ internal class GradleBuildToolsApiCompilerRunner(
     taskProvider: GradleCompileTaskProvider,
     jdkToolsJar: File?,
     compilerExecutionSettings: CompilerExecutionSettings,
-    buildMetrics: BuildMetricsReporter<GradleBuildTime, GradleBuildPerformanceMetric>,
+    buildMetrics: BuildMetricsReporter<BuildTimeMetric, BuildPerformanceMetric>,
     private val workerExecutor: WorkerExecutor,
     private val cachedClassLoadersService: Provider<ClassLoadersCachingBuildService>,
     private val buildFinishedListenerService: Provider<BuildFinishedListenerService>,
@@ -40,7 +41,7 @@ internal class GradleBuildToolsApiCompilerRunner(
         workArgs: GradleKotlinCompilerWorkArguments,
         taskOutputsBackup: TaskOutputsBackup?
     ): WorkQueue {
-        buildMetrics.addTimeMetric(GradleBuildPerformanceMetric.CALL_WORKER)
+        buildMetrics.addTimeMetric(CALL_WORKER)
         val workQueue = workerExecutor.noIsolation()
         workQueue.submit(BuildToolsApiCompilationWork::class.java) { params ->
             params.compilerWorkArguments.set(workArgs)

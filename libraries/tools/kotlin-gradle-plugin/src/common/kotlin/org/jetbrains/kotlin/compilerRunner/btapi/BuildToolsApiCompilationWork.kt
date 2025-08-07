@@ -76,7 +76,7 @@ internal abstract class BuildToolsApiCompilationWork @Inject constructor(
         val compilerWorkArguments: Property<GradleKotlinCompilerWorkArguments>
         val taskOutputsToRestore: ListProperty<File>
         val snapshotsDir: DirectoryProperty
-        val metricsReporter: Property<BuildMetricsReporter<GradleBuildTime, GradleBuildPerformanceMetric>>
+        val metricsReporter: Property<BuildMetricsReporter<BuildTimeMetric, BuildPerformanceMetric>>
     }
 
     private val workArguments
@@ -165,7 +165,7 @@ internal abstract class BuildToolsApiCompilationWork @Inject constructor(
                 else -> error("The \"$executionStrategy\" execution strategy is not supported by the Build Tools API")
             }
 
-            return metrics.measure(GradleBuildTime.RUN_COMPILATION) {
+            return metrics.measure(RUN_COMPILATION) {
                 buildSession.executeOperation(jvmCompilationOperation, executionConfig, log)
             }.also { extractMetrics(jvmCompilationOperation) }
         } catch (e: Throwable) {
@@ -181,7 +181,7 @@ internal abstract class BuildToolsApiCompilationWork @Inject constructor(
                 ByteArrayInputStream(jvmCompilationOperation[key]).use {
                     @Suppress("UNCHECKED_CAST")
                     val metricsFromBta =
-                        ObjectInputStream(it).readObject() as BuildMetricsReporterImpl<GradleBuildTime, GradleBuildPerformanceMetric>
+                        ObjectInputStream(it).readObject() as BuildMetricsReporterImpl<GradleBuildTimeMetric, GradleBuildPerformanceMetric>
                     metrics.addMetrics(metricsFromBta.getMetrics())
                 }
             } catch (_: Exception) {
@@ -250,8 +250,8 @@ internal abstract class BuildToolsApiCompilationWork @Inject constructor(
     }
 
     override fun execute() {
-        metrics.addTimeMetric(GradleBuildPerformanceMetric.START_WORKER_EXECUTION)
-        metrics.startMeasure(GradleBuildTime.RUN_COMPILATION_IN_WORKER)
+        metrics.addTimeMetric(START_WORKER_EXECUTION)
+        metrics.startMeasure(RUN_COMPILATION_IN_WORKER)
         val exceptionReportingKotlinLogger = ExceptionReportingKotlinLogger()
         val printingLogger = getTaskLogger(taskPath, LOGGER_PREFIX, BuildToolsApiCompilationWork::class.java.simpleName, true)
         val log: KotlinLogger = CompositeKotlinLogger(
@@ -289,7 +289,7 @@ internal abstract class BuildToolsApiCompilationWork @Inject constructor(
         } catch (e: FailedCompilationException) {
             // Restore outputs only for CompilationErrorException or OOMErrorException (see GradleKotlinCompilerWorkAction.execute)
             backup?.tryRestoringOnRecoverableException(e) { restoreAction ->
-                metrics.measure(GradleBuildTime.RESTORE_OUTPUT_FROM_BACKUP) {
+                metrics.measure(RESTORE_OUTPUT_FROM_BACKUP) {
                     restoreAction()
                 }
             }
@@ -313,7 +313,7 @@ internal abstract class BuildToolsApiCompilationWork @Inject constructor(
                 exceptionReportingKotlinLogger.extractExceptionMessages()
                     .reportToIde(it, workArguments.kotlinPluginVersion, logger = printingLogger)
             }
-            metrics.endMeasure(GradleBuildTime.RUN_COMPILATION_IN_WORKER)
+            metrics.endMeasure(RUN_COMPILATION_IN_WORKER)
             val result =
                 TaskExecutionResult(buildMetrics = metrics.getMetrics(), taskInfo = taskInfo)
             TaskExecutionResults[workArguments.taskPath] = result

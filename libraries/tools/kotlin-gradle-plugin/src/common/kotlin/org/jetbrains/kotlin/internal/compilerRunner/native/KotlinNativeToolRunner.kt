@@ -11,9 +11,7 @@ import org.gradle.api.logging.Logging
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Provider
 import org.gradle.process.ExecOperations
-import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporter
-import org.jetbrains.kotlin.build.report.metrics.GradleBuildPerformanceMetric
-import org.jetbrains.kotlin.build.report.metrics.GradleBuildTime
+import org.jetbrains.kotlin.build.report.metrics.*
 import org.jetbrains.kotlin.build.report.metrics.measure
 import org.jetbrains.kotlin.buildtools.internal.KotlinBuildToolsInternalJdkUtils
 import org.jetbrains.kotlin.buildtools.internal.getJdkClassesClassLoader
@@ -42,7 +40,7 @@ import java.util.*
 import javax.inject.Inject
 
 internal abstract class KotlinNativeToolRunner @Inject constructor(
-    private val metricsReporterProvider: Provider<BuildMetricsReporter<GradleBuildTime, GradleBuildPerformanceMetric>>,
+    private val metricsReporterProvider: Provider<BuildMetricsReporter<BuildTimeMetric, BuildPerformanceMetric>>,
     private val classLoadersCachingBuildServiceProvider: Provider<ClassLoadersCachingBuildService>,
     private val toolSpec: ToolSpec,
     private val fusMetricsConsumer: Provider<out BuildFusService<out BuildFusService.Parameters>>,
@@ -60,7 +58,7 @@ internal abstract class KotlinNativeToolRunner @Inject constructor(
     private val metricsReporter get() = metricsReporterProvider.get()
 
     fun runTool(args: ToolArguments) {
-        metricsReporter.measure(GradleBuildTime.RUN_COMPILATION_IN_WORKER) {
+        metricsReporter.measure(RUN_COMPILATION_IN_WORKER) {
             fusMetricsConsumer.orNull?.let { metricsConsumer ->
                 NativeArgumentMetrics.collectMetrics(args.arguments, metricsConsumer.getFusMetricsConsumer())
             }
@@ -73,7 +71,7 @@ internal abstract class KotlinNativeToolRunner @Inject constructor(
     }
 
     private fun runViaExec(args: ToolArguments) {
-        metricsReporter.measure(GradleBuildTime.NATIVE_IN_EXECUTOR) {
+        metricsReporter.measure(NATIVE_IN_EXECUTOR) {
             val systemProperties = System.getProperties()
                 /* Capture 'System.getProperties()' current state to avoid potential 'ConcurrentModificationException' */
                 .snapshot()
@@ -136,7 +134,7 @@ internal abstract class KotlinNativeToolRunner @Inject constructor(
     }
 
     private fun runInProcess(args: ToolArguments) {
-        metricsReporter.measure(GradleBuildTime.NATIVE_IN_PROCESS) {
+        metricsReporter.measure(NATIVE_IN_PROCESS) {
             val isolatedClassLoader = classLoadersCachingBuildService.getClassLoader(
                 toolSpec.classpath.files.toList(),
                 // Required for KotlinNativePaths to properly detect konan home directory
@@ -170,7 +168,7 @@ internal abstract class KotlinNativeToolRunner @Inject constructor(
                     .singleOrNull { it.name == toolSpec.daemonEntryPoint.get() }
                     ?: error("Couldn't find daemon entry point '${toolSpec.daemonEntryPoint.get()}'")
 
-                metricsReporter.measure(GradleBuildTime.RUN_ENTRY_POINT) {
+                metricsReporter.measure(RUN_ENTRY_POINT) {
                     if (toolSpec.collectNativeCompilerMetrics.get()) {
                         val reportFile = Files.createTempFile("native_compiler_${::runInProcess.name}_report", ".json")
                         val toolArgsWithPerformance = toolArgs.toMutableList()
@@ -292,7 +290,7 @@ internal abstract class KotlinNativeToolRunner @Inject constructor(
     )
 
 
-    internal fun BuildMetricsReporter<GradleBuildTime, GradleBuildPerformanceMetric>.parseCompilerMetricsFromFile(
+    internal fun BuildMetricsReporter<BuildTimeMetric, BuildPerformanceMetric>.parseCompilerMetricsFromFile(
         jsonFile: File,
     ) {
         if (!jsonFile.isFile()) return
@@ -306,7 +304,7 @@ internal abstract class KotlinNativeToolRunner @Inject constructor(
             }
 
             unitStats.dynamicStats?.forEach { (parentPhaseType, name, time) ->
-                addDynamicTimeMetricNs(name, parentPhaseType.toGradleBuildTime(), time.nanos)
+                addTimeMetricNs(CustomBuildTimeMetric.createIfDoesNotExistAndReturn(name, parentPhaseType.toGradleBuildTime()), time.nanos)
             }
         } catch (e: Exception) {
             errorMessageCollector.report(FusMetricRetrievalException("Failed to parse metrics from file ${jsonFile.absolutePath}", e), location = null)
@@ -315,12 +313,12 @@ internal abstract class KotlinNativeToolRunner @Inject constructor(
 }
 
 private fun PhaseType.toGradleBuildTime() = when (this) {
-    PhaseType.Initialization -> GradleBuildTime.COMPILER_INITIALIZATION
-    PhaseType.Analysis -> GradleBuildTime.CODE_ANALYSIS
-    PhaseType.TranslationToIr -> GradleBuildTime.TRANSLATION_TO_IR
-    PhaseType.IrPreLowering -> GradleBuildTime.IR_PRE_LOWERING
-    PhaseType.IrSerialization -> GradleBuildTime.IR_SERIALIZATION
-    PhaseType.KlibWriting -> GradleBuildTime.KLIB_WRITING
-    PhaseType.IrLowering -> GradleBuildTime.IR_LOWERING
-    PhaseType.Backend -> GradleBuildTime.BACKEND
+    PhaseType.Initialization -> COMPILER_INITIALIZATION
+    PhaseType.Analysis -> CODE_ANALYSIS
+    PhaseType.TranslationToIr -> TRANSLATION_TO_IR
+    PhaseType.IrPreLowering -> IR_PRE_LOWERING
+    PhaseType.IrSerialization -> IR_SERIALIZATION
+    PhaseType.KlibWriting -> KLIB_WRITING
+    PhaseType.IrLowering -> IR_LOWERING
+    PhaseType.Backend -> BACKEND
 }

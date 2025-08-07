@@ -5,28 +5,20 @@
 
 package org.jetbrains.kotlin.build.report.statistics
 
-import com.google.gson.*
+import org.jetbrains.kotlin.build.report.statistics.json.buildExecutionDataGson
 import java.io.File
-import java.lang.reflect.Type
 
 class JsonReportService(
     buildReportDir: File,
     projectName: String,
 ) : FileReportService<Any>(buildReportDir, projectName, "json") {
-    private val gson = GsonBuilder()
-        .registerTypeAdapter(File::class.java, object : JsonSerializer<File> {
-            override fun serialize(src: File?, typeOfSrc: Type?, context: JsonSerializationContext?): JsonElement {
-                return src?.path?.let { JsonPrimitive(it) } ?: JsonNull.INSTANCE
-            }
-        })
-        .create()
 
     /**
      * Prints general build information and task/transform build metrics
      */
     override fun printBuildReport(data: Any, outputFile: File) {
         outputFile.bufferedWriter().use {
-            it.write(gson.toJson(data))
+            it.write(buildExecutionDataGson.toJson(data))
         }
     }
 }

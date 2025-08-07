@@ -2020,16 +2020,18 @@ public final class org/jetbrains/kotlin/gradle/report/TaskExecutionState : java/
 }
 
 public final class org/jetbrains/kotlin/gradle/report/data/BuildExecutionData {
-	public fun <init> (Lorg/jetbrains/kotlin/build/report/statistics/BuildStartParameters;Ljava/util/List;Ljava/util/Collection;)V
-	public final fun component1 ()Lorg/jetbrains/kotlin/build/report/statistics/BuildStartParameters;
-	public final fun component2 ()Ljava/util/List;
-	public final fun component3 ()Ljava/util/Collection;
-	public final fun copy (Lorg/jetbrains/kotlin/build/report/statistics/BuildStartParameters;Ljava/util/List;Ljava/util/Collection;)Lorg/jetbrains/kotlin/gradle/report/data/BuildExecutionData;
-	public static synthetic fun copy$default (Lorg/jetbrains/kotlin/gradle/report/data/BuildExecutionData;Lorg/jetbrains/kotlin/build/report/statistics/BuildStartParameters;Ljava/util/List;Ljava/util/Collection;ILjava/lang/Object;)Lorg/jetbrains/kotlin/gradle/report/data/BuildExecutionData;
+	public fun <init> (Ljava/util/List;Lorg/jetbrains/kotlin/build/report/statistics/BuildStartParameters;Ljava/util/List;Ljava/util/Collection;)V
+	public final fun component1 ()Ljava/util/List;
+	public final fun component2 ()Lorg/jetbrains/kotlin/build/report/statistics/BuildStartParameters;
+	public final fun component3 ()Ljava/util/List;
+	public final fun component4 ()Ljava/util/Collection;
+	public final fun copy (Ljava/util/List;Lorg/jetbrains/kotlin/build/report/statistics/BuildStartParameters;Ljava/util/List;Ljava/util/Collection;)Lorg/jetbrains/kotlin/gradle/report/data/BuildExecutionData;
+	public static synthetic fun copy$default (Lorg/jetbrains/kotlin/gradle/report/data/BuildExecutionData;Ljava/util/List;Lorg/jetbrains/kotlin/build/report/statistics/BuildStartParameters;Ljava/util/List;Ljava/util/Collection;ILjava/lang/Object;)Lorg/jetbrains/kotlin/gradle/report/data/BuildExecutionData;
 	public fun equals (Ljava/lang/Object;)Z
 	public final fun getAggregatedMetrics ()Lorg/jetbrains/kotlin/build/report/metrics/BuildMetrics;
 	public final fun getBuildOperationRecord ()Ljava/util/Collection;
 	public final fun getFailureMessages ()Ljava/util/List;
+	public final fun getMetrics ()Ljava/util/List;
 	public final fun getStartParameters ()Lorg/jetbrains/kotlin/build/report/statistics/BuildStartParameters;
 	public fun hashCode ()I
 	public fun toString ()Ljava/lang/String;
@@ -2048,13 +2050,12 @@ public abstract interface class org/jetbrains/kotlin/gradle/report/data/BuildOpe
 }
 
 public final class org/jetbrains/kotlin/gradle/report/data/GradleCompileStatisticsData : org/jetbrains/kotlin/build/report/statistics/CompileStatisticsData {
-	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;JJLjava/util/Set;Ljava/util/List;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;JLjava/util/List;Ljava/util/Set;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;Ljava/lang/String;Ljava/lang/Boolean;Ljava/util/List;Ljava/lang/String;Ljava/util/List;)V
-	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;JJLjava/util/Set;Ljava/util/List;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;JLjava/util/List;Ljava/util/Set;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;Ljava/lang/String;Ljava/lang/Boolean;Ljava/util/List;Ljava/lang/String;Ljava/util/List;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
+	public fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;JJLjava/util/Set;Ljava/util/List;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;JLjava/util/List;Ljava/util/Set;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;Ljava/lang/String;Ljava/lang/Boolean;Ljava/util/List;Ljava/lang/String;Ljava/util/List;)V
+	public synthetic fun <init> (Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;JJLjava/util/Set;Ljava/util/List;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;JLjava/util/List;Ljava/util/Set;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;Ljava/util/Map;Ljava/lang/String;Ljava/lang/Boolean;Ljava/util/List;Ljava/lang/String;Ljava/util/List;ILkotlin/jvm/internal/DefaultConstructorMarker;)V
 	public fun getBuildTimesMetrics ()Ljava/util/Map;
 	public fun getChanges ()Ljava/util/List;
 	public fun getCompilerArguments ()Ljava/util/List;
 	public fun getDurationMs ()J
-	public fun getDynamicBuildTimeMetrics ()Ljava/util/Map;
 	public fun getFinishTime ()J
 	public fun getFromKotlinPlugin ()Ljava/lang/Boolean;
 	public fun getGcCountMetrics ()Ljava/util/Map;
