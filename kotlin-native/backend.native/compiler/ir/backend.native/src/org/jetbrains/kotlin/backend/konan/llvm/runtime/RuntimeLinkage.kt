@@ -40,10 +40,10 @@ internal fun linkRuntimeModules(generationState: NativeGenerationState, runtimeN
     }
     val config = createLTOPipelineConfigForRuntime(generationState)
 
-    MandatoryOptimizationPipeline(config, generationState).use {
+    MandatoryOptimizationPipeline(config, generationState.performanceManager, generationState).use {
         it.execute(runtimeModule)
     }
-    ModuleOptimizationPipeline(config, generationState).use {
+    ModuleOptimizationPipeline(config, generationState.performanceManager, generationState).use {
         it.execute(runtimeModule)
     }
 

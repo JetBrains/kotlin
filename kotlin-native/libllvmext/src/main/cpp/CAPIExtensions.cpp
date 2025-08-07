@@ -9,6 +9,8 @@
 #include <llvm/Support/Timer.h>
 #include <llvm/Transforms/Utils/Cloning.h>
 
+#include "PassesProfileHandler.h"
+
 using namespace llvm;
 
 namespace {
@@ -57,8 +59,10 @@ extern "C" LLVMErrorRef LLVMKotlinRunPasses(
         LLVMModuleRef M,
         const char *Passes,
         LLVMTargetMachineRef TM,
-        int InlinerThreshold
+        int InlinerThreshold,
+        LLVMKotlinPassesProfileRef* Profile
 ) {
+    // Implementation is taken from https://github.com/Kotlin/llvm-project/blob/0fa53d5183ec3c0654631d719dd6dfa7a270ca98/llvm/lib/Passes/PassBuilderBindings.cpp#L47
     TargetMachine *Machine = unwrap(TM);
     Module *Mod = unwrap(M);
 
@@ -81,10 +85,20 @@ extern "C" LLVMErrorRef LLVMKotlinRunPasses(
     StandardInstrumentations SI(Mod->getContext(), false, false);
     SI.registerCallbacks(PIC, &MAM);
 
+    PassesProfileHandler PPH(Profile != nullptr);
+    // Putting last to make this the last callback for before* events;
+    // the handler will additionally make sure its after* events are handled before anything else.
+    // This makes it so the profile tracks phases only, ignoring other callbacks.
+    PPH.registerCallbacks(PIC);
+
     ModulePassManager MPM;
     if (auto Err = PB.parsePassPipeline(MPM, Passes))
         return wrap(std::move(Err));
     MPM.run(*Mod, MAM);
+
+    if (Profile != nullptr) {
+        *Profile = wrap(new PassesProfile(PPH.serialize()));
+    }
 
     return LLVMErrorSuccess;
 }
