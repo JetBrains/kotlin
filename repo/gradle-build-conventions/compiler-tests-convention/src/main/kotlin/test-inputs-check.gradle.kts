@@ -70,13 +70,14 @@ tasks.withType<Test>().names.forEach { taskName ->
                         ?: error("Can't find toolchain for $version")
                 }
 
-                val debuggerAgentJar: String? = System.getenv("PROCESS_OPTIONS")
+                val debuggerAgentPath: String? = System.getenv("PROCESS_OPTIONS")
                     ?.split(", ")?.asSequence()
                     ?.map { it.trim() }
                     ?.filter { it.isNotEmpty() }
                     ?.find { it.startsWith("-javaagent:") && it.contains("debugger-agent.jar") }
                     ?.removePrefix("-javaagent:")
                     ?.substringBefore("=")
+                    ?.removeSuffix("/debugger-agent.jar")
 
                 val javaLibraryPaths = System.getProperty("java.library.path", "")
                     .split(File.pathSeparatorChar)
@@ -204,7 +205,7 @@ tasks.withType<Test>().names.forEach { taskName ->
                             .replace("{{java_library_paths}}", javaLibraryPaths.joinToString("\n    "))
                             .replace(
                                 "{{debugger_agent_jar}}",
-                                debuggerAgentJar?.let { """permission java.io.FilePermission "$it", "read";""" } ?: "")
+                                debuggerAgentPath?.let { """permission java.io.FilePermission "$it/-", "read";""" } ?: "")
                             .replace("{{inputs}}", inputPermissions.sorted().joinToString("\n    "))
                     )
                 } catch (e: IOException) {
