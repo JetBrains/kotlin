@@ -9,8 +9,6 @@ import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.Property
 import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporter
-import org.jetbrains.kotlin.build.report.metrics.GradleBuildPerformanceMetric
-import org.jetbrains.kotlin.build.report.metrics.GradleBuildTime
 import org.jetbrains.kotlin.cli.common.messages.MessageRenderer
 import org.jetbrains.kotlin.gradle.internal.ClassLoadersCachingBuildService
 import org.jetbrains.kotlin.gradle.plugin.statistics.BuildFusService
@@ -21,7 +19,7 @@ import org.jetbrains.kotlin.gradle.utils.property
 import java.io.File
 
 internal fun ObjectFactory.KotlinNativeCompilerRunner(
-    metricsReporter: Provider<BuildMetricsReporter<GradleBuildTime, GradleBuildPerformanceMetric>>,
+    metricsReporter: Provider<BuildMetricsReporter>,
     classLoadersCachingBuildService: Provider<ClassLoadersCachingBuildService>,
     shouldDisableKonanDaemon: Provider<Boolean>,
     useXcodeMessageStyle: Provider<Boolean>,

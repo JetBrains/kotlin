@@ -9,8 +9,11 @@ import com.intellij.openapi.util.io.FileUtil
 import org.jetbrains.kotlin.build.report.DoNothingICReporter
 import org.jetbrains.kotlin.build.report.debug
 import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporter
-import org.jetbrains.kotlin.build.report.metrics.GradleBuildPerformanceMetric
-import org.jetbrains.kotlin.build.report.metrics.GradleBuildTime
+import org.jetbrains.kotlin.build.report.metrics.COMPUTE_CHANGED_AND_IMPACTED_SET
+import org.jetbrains.kotlin.build.report.metrics.COMPUTE_CLASS_CHANGES
+import org.jetbrains.kotlin.build.report.metrics.COMPUTE_IMPACTED_SET
+import org.jetbrains.kotlin.build.report.metrics.COMPUTE_KOTLIN_CLASS_CHANGES
+import org.jetbrains.kotlin.build.report.metrics.COMPUTE_JAVA_CLASS_CHANGES
 import org.jetbrains.kotlin.build.report.metrics.measure
 import org.jetbrains.kotlin.incremental.*
 import org.jetbrains.kotlin.incremental.classpathDiff.BreadthFirstSearch.findReachableNodes
@@ -51,7 +54,7 @@ internal object ClasspathChangesComputer {
             "Loaded shrunk previous classpath snapshot for diffing, found ${shrunkPreviousClasspathSnapshot.size} classes"
         }
 
-        return reporter.measure(GradleBuildTime.COMPUTE_CHANGED_AND_IMPACTED_SET) {
+        return reporter.measure(COMPUTE_CHANGED_AND_IMPACTED_SET) {
             computeChangedAndImpactedSet(shrunkCurrentClasspathAgainstPreviousLookups, shrunkPreviousClasspathSnapshot, reporter)
         }
     }
@@ -83,7 +86,7 @@ internal object ClasspathChangesComputer {
             } else null
         }
 
-        val changedSet = reporter.measure(GradleBuildTime.COMPUTE_CLASS_CHANGES) {
+        val changedSet = reporter.measure(COMPUTE_CLASS_CHANGES) {
             computeClassChanges(changedCurrentClasses, changedPreviousClasses, reporter)
         }
         reporter.reportVerboseWithLimit { "Changed set = ${changedSet.toDebugString()}" }
@@ -92,7 +95,7 @@ internal object ClasspathChangesComputer {
             return changedSet
         }
 
-        val changedAndImpactedSet = reporter.measure(GradleBuildTime.COMPUTE_IMPACTED_SET) {
+        val changedAndImpactedSet = reporter.measure(COMPUTE_IMPACTED_SET) {
             // Note that changes may contain added symbols (they can also impact recompilation -- see examples in JavaClassChangesComputer).
             // So ideally, the result should be:
             //     computeImpactedSymbols(changes = changesOnPreviousClasspath, allClasses = classesOnPreviousClasspath) +
@@ -127,13 +130,13 @@ internal object ClasspathChangesComputer {
     private fun computeClassChanges(
         currentClassSnapshots: List<AccessibleClassSnapshot>,
         previousClassSnapshots: List<AccessibleClassSnapshot>,
-        metrics: BuildMetricsReporter<GradleBuildTime, GradleBuildPerformanceMetric>
+        metrics: BuildMetricsReporter
     ): ProgramSymbolSet {
         val (currentKotlinClassSnapshots, currentJavaClassSnapshots) = currentClassSnapshots.partition { it is KotlinClassSnapshot }
         val (previousKotlinClassSnapshots, previousJavaClassSnapshots) = previousClassSnapshots.partition { it is KotlinClassSnapshot }
 
         @Suppress("UNCHECKED_CAST")
-        val kotlinClassChanges = metrics.measure(GradleBuildTime.COMPUTE_KOTLIN_CLASS_CHANGES) {
+        val kotlinClassChanges = metrics.measure(COMPUTE_KOTLIN_CLASS_CHANGES) {
             computeKotlinClassChanges(
                 currentKotlinClassSnapshots as List<KotlinClassSnapshot>,
                 previousKotlinClassSnapshots as List<KotlinClassSnapshot>
@@ -141,7 +144,7 @@ internal object ClasspathChangesComputer {
         }
 
         @Suppress("UNCHECKED_CAST")
-        val javaClassChanges = metrics.measure(GradleBuildTime.COMPUTE_JAVA_CLASS_CHANGES) {
+        val javaClassChanges = metrics.measure(COMPUTE_JAVA_CLASS_CHANGES) {
             JavaClassChangesComputer.compute(
                 currentJavaClassSnapshots as List<JavaClassSnapshot>,
                 previousJavaClassSnapshots as List<JavaClassSnapshot>

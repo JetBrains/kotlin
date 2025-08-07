@@ -17,7 +17,6 @@ import io.ktor.server.routing.*
 import kotlinx.coroutines.runBlocking
 import org.gradle.api.logging.LogLevel
 import org.gradle.util.GradleVersion
-import org.jetbrains.kotlin.build.report.metrics.GradleBuildTime
 import org.jetbrains.kotlin.build.report.statistics.BuildDataType
 import org.jetbrains.kotlin.build.report.statistics.BuildFinishStatisticsData
 import org.jetbrains.kotlin.build.report.statistics.StatTag
@@ -323,7 +322,7 @@ class BuildStatisticsWithKtorIT : KGPBaseTest() {
 
                 assertContains(
                     taskReport.getBuildTimesMetrics().keys,
-                    GradleBuildTime.NATIVE_IN_EXECUTOR,
+                    NATIVE_IN_EXECUTOR,
                     "Assertion failed for task \"$commonizerNativeDistributionTask\""
                 )
                 assertEquals(
@@ -344,12 +343,12 @@ class BuildStatisticsWithKtorIT : KGPBaseTest() {
 
                     assertContains(
                         taskReport.getBuildTimesMetrics().keys,
-                        GradleBuildTime.NATIVE_IN_PROCESS,
+                        NATIVE_IN_PROCESS,
                         "Assertion failed for task \"$task\""
                     )
                     assertContains(
                         taskReport.getBuildTimesMetrics().keys,
-                        GradleBuildTime.RUN_ENTRY_POINT,
+                        RUN_ENTRY_POINT,
                         "Assertion failed for task \"$task\""
                     )
                     assertEquals(

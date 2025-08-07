@@ -10,7 +10,9 @@ import org.gradle.api.logging.Logger
 import org.gradle.tooling.events.FailureResult
 import org.gradle.tooling.events.FinishEvent
 import org.gradle.tooling.events.task.TaskFinishEvent
-import org.jetbrains.kotlin.build.report.metrics.GradleBuildPerformanceMetric
+import org.jetbrains.kotlin.build.report.metrics.ANALYSIS_LPS
+import org.jetbrains.kotlin.build.report.metrics.CODE_GENERATION_LPS
+import org.jetbrains.kotlin.build.report.metrics.SOURCE_LINES_NUMBER
 import org.jetbrains.kotlin.cli.common.arguments.*
 import org.jetbrains.kotlin.compilerRunner.ArgumentUtils
 import org.jetbrains.kotlin.compilerRunner.isKonanIncrementalCompilationEnabled
@@ -183,14 +185,14 @@ internal object KotlinTaskExecutionMetrics : FusMetrics {
 
         val metricsMap = buildMetrics.buildPerformanceMetrics.asMap()
 
-        val linesOfCode = metricsMap[GradleBuildPerformanceMetric.SOURCE_LINES_NUMBER]
+        val linesOfCode = metricsMap[SOURCE_LINES_NUMBER]
         if (linesOfCode != null && linesOfCode > 0 && totalTimeMs > 0) {
             metricsConsumer.report(NumericalMetrics.COMPILED_LINES_OF_CODE, linesOfCode)
             metricsConsumer.report(NumericalMetrics.COMPILATION_LINES_PER_SECOND, linesOfCode * 1000 / totalTimeMs, null, linesOfCode)
-            metricsMap[GradleBuildPerformanceMetric.ANALYSIS_LPS]?.also { value ->
+            metricsMap[ANALYSIS_LPS]?.also { value ->
                 metricsConsumer.report(NumericalMetrics.ANALYSIS_LINES_PER_SECOND, value, null, linesOfCode)
             }
-            metricsMap[GradleBuildPerformanceMetric.CODE_GENERATION_LPS]?.also { value ->
+            metricsMap[CODE_GENERATION_LPS]?.also { value ->
                 metricsConsumer.report(NumericalMetrics.CODE_GENERATION_LINES_PER_SECOND, value, null, linesOfCode)
             }
         }

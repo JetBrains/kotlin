@@ -63,7 +63,7 @@ sealed class JpsStatisticsReportService {
         }
     }
 
-    abstract fun <T> reportMetrics(chunk: ModuleChunk, metric: JpsBuildTime, action: () -> T): T
+    abstract fun <T> reportMetrics(chunk: ModuleChunk, metric: BuildTimeMetric, action: () -> T): T
     abstract fun buildStarted(context: CompileContext)
     abstract fun buildFinish(context: CompileContext)
 
@@ -77,7 +77,7 @@ sealed class JpsStatisticsReportService {
 
 
 object DummyJpsStatisticsReportService : JpsStatisticsReportService() {
-    override fun <T> reportMetrics(chunk: ModuleChunk, metric: JpsBuildTime, action: () -> T): T {
+    override fun <T> reportMetrics(chunk: ModuleChunk, metric: BuildTimeMetric, action: () -> T): T {
         return action()
     }
 
@@ -159,7 +159,7 @@ class JpsStatisticsReportServiceImpl(
         }
     }
 
-    override fun <T> reportMetrics(chunk: ModuleChunk, metric: JpsBuildTime, action: () -> T): T {
+    override fun <T> reportMetrics(chunk: ModuleChunk, metric: BuildTimeMetric, action: () -> T): T {
         return getMetricReporter(chunk)?.measure(metric, action) ?: action.invoke()
     }
 

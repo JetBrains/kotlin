@@ -94,7 +94,7 @@ internal fun TaskWithLocalState.cleanOutputsAndLocalState(reason: String? = null
 internal fun cleanOutputsAndLocalState(
     outputFiles: Iterable<File>,
     log: KotlinLogger,
-    metrics: BuildMetricsReporter<GradleBuildTime, GradleBuildPerformanceMetric>,
+    metrics: BuildMetricsReporter,
     reason: String? = null
 ) {
     log.kotlinDebug {
@@ -102,7 +102,7 @@ internal fun cleanOutputsAndLocalState(
         "Cleaning output$suffix:"
     }
 
-    metrics.measure(GradleBuildTime.CLEAR_OUTPUT) {
+    metrics.measure(CLEAR_OUTPUT) {
         for (file in outputFiles) {
             when {
                 file.isDirectory -> {

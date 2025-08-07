@@ -19,10 +19,9 @@ import org.gradle.deployment.internal.DeploymentHandle
 import org.gradle.deployment.internal.DeploymentRegistry
 import org.gradle.process.ExecOperations
 import org.gradle.work.NormalizeLineEndings
+import org.jetbrains.kotlin.build.report.metrics.BUNDLE_SIZE
 import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporter
 import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporterImpl
-import org.jetbrains.kotlin.build.report.metrics.GradleBuildPerformanceMetric
-import org.jetbrains.kotlin.build.report.metrics.GradleBuildTime
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.report.UsesBuildMetricsService
 import org.jetbrains.kotlin.gradle.targets.js.NpmVersions
@@ -80,7 +79,7 @@ internal constructor(
     open val execHandleFactory: Nothing
         get() = injected
 
-    private val metrics: Property<BuildMetricsReporter<GradleBuildTime, GradleBuildPerformanceMetric>> = project.objects
+    private val metrics: Property<BuildMetricsReporter> = project.objects
         .property(BuildMetricsReporterImpl())
 
     @Suppress("unused")
@@ -353,7 +352,7 @@ internal constructor(
                 .map { it.length() }
                 .sum()
                 .let {
-                    buildMetrics.addMetric(GradleBuildPerformanceMetric.BUNDLE_SIZE, it)
+                    buildMetrics.addMetric(BUNDLE_SIZE, it)
                 }
 
             buildMetricsService.orNull?.also { it.addTask(path, this.javaClass, buildMetrics) }
