@@ -126,6 +126,14 @@ tasks.withType<Test>().names.forEach { taskName ->
                     } else emptyList()
                 }
 
+                val allPermissionsForGradleRoDepCache = System.getenv("GRADLE_RO_DEP_CACHE")?.let {
+                    listOf(
+                        """grant codeBase "file:${File(it).absolutePath}/-" {""",
+                        """    permission java.security.AllPermission;""",
+                        """};""",
+                    ).joinToString("\n")
+                }
+
                 fun calcCanonicalTempPath(): String {
                     val file = File(System.getProperty("java.io.tmpdir"))
                     try {
@@ -199,6 +207,7 @@ tasks.withType<Test>().names.forEach { taskName ->
                                 }).joinToString("\n    ")
                             )
                             .replace("{{gradle_user_home}}", """$gradleUserHomeDir""")
+                            .replace("{{all_permissions_for_gradle_ro_dep_cache}}", allPermissionsForGradleRoDepCache ?: "")
                             .replace(
                                 "{{build_dir}}",
                                 """permission java.io.FilePermission "${buildDir.get().asFile.absolutePath}/-", "read,write,execute,delete";"""

@@ -1,6 +1,7 @@
 grant codeBase "file:{{gradle_user_home}}/-" {
     permission java.security.AllPermission;
 };
+{{all_permissions_for_gradle_ro_dep_cache}}
 grant {
     permission java.io.FilePermission "{{gradle_user_home}}/-", "read";
     permission java.io.FilePermission "{{gradle_user_home}}", "read";
