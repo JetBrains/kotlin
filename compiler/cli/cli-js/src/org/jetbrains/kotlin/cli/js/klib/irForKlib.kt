@@ -80,7 +80,7 @@ fun generateIrForKlibSerialization(
                 builtIns = psi2IrContext.irBuiltIns,
                 messageCollector = messageCollector,
             ),
-            ICData(icData.map { it.irData!! }, containsErrorCode = false),
+            ICData(icData.map { it.irData!! }),
             stubGenerator = stubGenerator
         )
 

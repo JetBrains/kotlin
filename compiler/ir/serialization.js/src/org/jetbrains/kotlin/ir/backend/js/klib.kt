@@ -107,7 +107,6 @@ fun generateKLib(
         irBuiltIns = irBuiltIns,
         cleanFiles = icData,
         nopack = nopack,
-        containsErrorCode = modulesStructure.jsFrontEndResult.hasErrors,
         jsOutputName = jsOutputName,
         builtInsPlatform = builtInsPlatform,
         wasmTarget = wasmTarget,
@@ -423,7 +422,6 @@ fun serializeModuleIntoKlib(
     irBuiltIns: IrBuiltIns,
     cleanFiles: List<KotlinFileSerializedData>,
     nopack: Boolean,
-    containsErrorCode: Boolean = false,
     jsOutputName: String?,
     builtInsPlatform: BuiltInsPlatform = BuiltInsPlatform.JS,
     wasmTarget: WasmTarget? = null,
@@ -504,9 +502,6 @@ fun serializeModuleIntoKlib(
         val wasmTargets = listOfNotNull(/* in the future there might be multiple WASM targets */ wasmTarget)
         if (wasmTargets.isNotEmpty()) {
             p.setProperty(KLIB_PROPERTY_WASM_TARGETS, wasmTargets.joinToString(" ") { it.alias })
-        }
-        if (containsErrorCode) {
-            p.setProperty(KLIB_PROPERTY_CONTAINS_ERROR_CODE, "true")
         }
 
         val fingerprints = fullSerializedIr.files.sortedBy { it.path }.map { SerializedIrFileFingerprint(it) }

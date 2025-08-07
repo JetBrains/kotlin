@@ -39,7 +39,6 @@ const val KLIB_PROPERTY_SHORT_NAME = "short_name"
 const val KLIB_PROPERTY_DEPENDS = "depends"
 const val KLIB_PROPERTY_PACKAGE = "package"
 const val KLIB_PROPERTY_BUILTINS_PLATFORM = "builtins_platform"
-const val KLIB_PROPERTY_CONTAINS_ERROR_CODE = "contains_error_code"
 
 // Native-specific:
 const val KLIB_PROPERTY_INTEROP = "interop"
@@ -187,9 +186,6 @@ val BaseKotlinLibrary.nativeTargets: List<String>
 
 val BaseKotlinLibrary.wasmTargets: List<String>
     get() = manifestProperties.propertyList(KLIB_PROPERTY_WASM_TARGETS)
-
-val KotlinLibrary.containsErrorCode: Boolean
-    get() = manifestProperties.getProperty(KLIB_PROPERTY_CONTAINS_ERROR_CODE) == "true"
 
 val BaseKotlinLibrary.commonizerTarget: String?
     get() = manifestProperties.getProperty(KLIB_PROPERTY_COMMONIZER_TARGET)

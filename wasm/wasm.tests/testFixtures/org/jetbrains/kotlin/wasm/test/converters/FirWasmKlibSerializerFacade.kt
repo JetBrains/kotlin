@@ -69,7 +69,6 @@ class FirWasmKlibSerializerFacade(
                 irBuiltIns = inputArtifact.irPluginContext.irBuiltIns,
                 cleanFiles = inputArtifact.icData,
                 nopack = true,
-                containsErrorCode = inputArtifact.hasErrors,
                 jsOutputName = null,
                 builtInsPlatform = BuiltInsPlatform.WASM,
                 wasmTarget = target,
