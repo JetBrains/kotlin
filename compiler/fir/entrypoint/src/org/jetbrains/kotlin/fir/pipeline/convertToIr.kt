@@ -347,14 +347,13 @@ private class Fir2IrPipeline(
     }
 
     private fun Fir2IrConversionResult.checkUnboundSymbols() {
-        validateIr(fir2IrConfiguration.messageCollector, IrVerificationMode.ERROR) {
-            performBasicIrValidation(
-                mainIrFragment,
-                irBuiltIns,
-                phaseName = "",
-                IrValidatorConfig(checkUnboundSymbols = true)
-            )
-        }
+        validateIr(
+            mainIrFragment,
+            irBuiltIns,
+            IrValidatorConfig(checkUnboundSymbols = true),
+            fir2IrConfiguration.messageCollector,
+            IrVerificationMode.ERROR,
+        )
     }
 
     private fun Fir2IrConversionResult.evaluateConstants() {
@@ -472,29 +471,30 @@ private fun IrPluginContext.runMandatoryIrValidation(
     val mode =
         if (languageVersionSettings.supportsFeature(LanguageFeature.ForbidCrossFileIrFieldAccessInKlibs)) IrVerificationMode.ERROR
         else IrVerificationMode.WARNING
-    validateIr(fir2IrConfiguration.messageCollector, mode) {
+    validateIr(
+        module,
+        irBuiltIns,
+
+        // Invalid parents and duplicated IR nodes don't always result in broken KLIBs,
+        // so we disable them not to cause too much breakage.
+        IrValidatorConfig(checkTreeConsistency = false)
+            .withBasicChecks()
+            // Cross-file field accesses, though, do result in invalid KLIBs, so report them as early as possible.
+            .withCheckers(IrCrossFileFieldUsageChecker)
+            .applyIf(!fir2IrConfiguration.languageVersionSettings.supportsFeature(LanguageFeature.ExplicitBackingFields)) {
+                // FIXME(KT-71243): This checker should be added unconditionally, but currently the ExplicitBackingFields feature de-facto allows specifying
+                //  non-private visibilities for fields.
+                withCheckers(IrFieldVisibilityChecker)
+            },
+        fir2IrConfiguration.messageCollector,
+        mode,
+        phaseName = "",
         customMessagePrefix = if (extension == null) {
             "The frontend generated invalid IR. This is a compiler bug, please report it to https://kotl.in/issue."
         } else {
             "The compiler plugin '${extension.javaClass.name}' generated invalid IR. Please report this bug to the plugin vendor."
         }
-        performBasicIrValidation(
-            module,
-            irBuiltIns,
-            phaseName = "",
-            // Invalid parents and duplicated IR nodes don't always result in broken KLIBs,
-            // so we disable them not to cause too much breakage.
-            IrValidatorConfig(checkTreeConsistency = false)
-                .withBasicChecks()
-                // Cross-file field accesses, though, do result in invalid KLIBs, so report them as early as possible.
-                .withCheckers(IrCrossFileFieldUsageChecker)
-                .applyIf(!fir2IrConfiguration.languageVersionSettings.supportsFeature(LanguageFeature.ExplicitBackingFields)) {
-                    // FIXME(KT-71243): This checker should be added unconditionally, but currently the ExplicitBackingFields feature de-facto allows specifying
-                    //  non-private visibilities for fields.
-                    withCheckers(IrFieldVisibilityChecker)
-                }
-        )
-    }
+    )
 }
 
 class IrGenerationExtensionException(cause: Throwable, val extensionClass: Class<out IrGenerationExtension>) :
