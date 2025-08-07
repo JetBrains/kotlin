@@ -202,12 +202,12 @@ internal object KotlinToolingDiagnostics {
     }
 
     object CrossCompilationWithCinterops : ToolingDiagnosticFactory(WARNING, DiagnosticGroup.Kgp.Misconfiguration) {
-        operator fun invoke(target: String, interops: List<String>, hostname: String) =
+        operator fun invoke(projectName: String, target: String, interops: List<String>, hostname: String) =
             build {
-                title("Cross Compilation with Cinterop Not Supported")
+                title("Cross Compilation with Cinterop Not Supported in Project '$projectName'")
                     .description {
                         """
-                    Cross compilation to target '$target' has been disabled because it contains cinterops: '${interops.joinToString("', '")}' which cannot be processed on host '$hostname'.
+                    In project '$projectName', cross compilation to target '$target' has been disabled because it contains cinterops: '${interops.joinToString("', '")}' which cannot be processed on host '$hostname'.
                     Cinterop libraries require platform-specific native toolchains that aren't available on the current host system.
                     """.trimIndent()
                     }

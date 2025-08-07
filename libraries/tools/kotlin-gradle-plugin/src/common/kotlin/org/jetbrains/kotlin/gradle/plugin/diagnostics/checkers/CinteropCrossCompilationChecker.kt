@@ -35,6 +35,7 @@ internal object CinteropCrossCompilationChecker : KotlinGradleProjectChecker {
                             collector.report(
                                 project,
                                 KotlinToolingDiagnostics.CrossCompilationWithCinterops(
+                                    project.name,
                                     target.targetName,
                                     allCinterops,
                                     HostManager.hostName
