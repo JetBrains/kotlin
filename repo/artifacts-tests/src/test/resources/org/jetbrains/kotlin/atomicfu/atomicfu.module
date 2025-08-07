@@ -151,12 +151,6 @@
                             "group": "org.jetbrains.kotlin",
                             "module": "kotlin-stdlib-jdk8"
                         }
-                    ],
-                    "requestedCapabilities": [
-                        {
-                            "group": "org.jetbrains.kotlin",
-                            "name": "kotlin-gradle-plugin-api-gradle80"
-                        }
                     ]
                 }
             ],
@@ -249,12 +243,6 @@
                         {
                             "group": "org.jetbrains.kotlin",
                             "module": "kotlin-stdlib-jdk8"
-                        }
-                    ],
-                    "requestedCapabilities": [
-                        {
-                            "group": "org.jetbrains.kotlin",
-                            "name": "kotlin-gradle-plugin-api-gradle80"
                         }
                     ]
                 }
@@ -349,12 +337,6 @@
                             "group": "org.jetbrains.kotlin",
                             "module": "kotlin-stdlib-jdk8"
                         }
-                    ],
-                    "requestedCapabilities": [
-                        {
-                            "group": "org.jetbrains.kotlin",
-                            "name": "kotlin-gradle-plugin-api-gradle811"
-                        }
                     ]
                 }
             ],
@@ -447,12 +429,6 @@
                         {
                             "group": "org.jetbrains.kotlin",
                             "module": "kotlin-stdlib-jdk8"
-                        }
-                    ],
-                    "requestedCapabilities": [
-                        {
-                            "group": "org.jetbrains.kotlin",
-                            "name": "kotlin-gradle-plugin-api-gradle811"
                         }
                     ]
                 }
@@ -547,12 +523,6 @@
                             "group": "org.jetbrains.kotlin",
                             "module": "kotlin-stdlib-jdk8"
                         }
-                    ],
-                    "requestedCapabilities": [
-                        {
-                            "group": "org.jetbrains.kotlin",
-                            "name": "kotlin-gradle-plugin-api-gradle813"
-                        }
                     ]
                 }
             ],
@@ -645,12 +615,6 @@
                         {
                             "group": "org.jetbrains.kotlin",
                             "module": "kotlin-stdlib-jdk8"
-                        }
-                    ],
-                    "requestedCapabilities": [
-                        {
-                            "group": "org.jetbrains.kotlin",
-                            "name": "kotlin-gradle-plugin-api-gradle813"
                         }
                     ]
                 }
@@ -745,12 +709,6 @@
                             "group": "org.jetbrains.kotlin",
                             "module": "kotlin-stdlib-jdk8"
                         }
-                    ],
-                    "requestedCapabilities": [
-                        {
-                            "group": "org.jetbrains.kotlin",
-                            "name": "kotlin-gradle-plugin-api-gradle81"
-                        }
                     ]
                 }
             ],
@@ -843,12 +801,6 @@
                         {
                             "group": "org.jetbrains.kotlin",
                             "module": "kotlin-stdlib-jdk8"
-                        }
-                    ],
-                    "requestedCapabilities": [
-                        {
-                            "group": "org.jetbrains.kotlin",
-                            "name": "kotlin-gradle-plugin-api-gradle81"
                         }
                     ]
                 }
@@ -943,12 +895,6 @@
                             "group": "org.jetbrains.kotlin",
                             "module": "kotlin-stdlib-jdk8"
                         }
-                    ],
-                    "requestedCapabilities": [
-                        {
-                            "group": "org.jetbrains.kotlin",
-                            "name": "kotlin-gradle-plugin-api-gradle82"
-                        }
                     ]
                 }
             ],
@@ -1041,12 +987,6 @@
                         {
                             "group": "org.jetbrains.kotlin",
                             "module": "kotlin-stdlib-jdk8"
-                        }
-                    ],
-                    "requestedCapabilities": [
-                        {
-                            "group": "org.jetbrains.kotlin",
-                            "name": "kotlin-gradle-plugin-api-gradle82"
                         }
                     ]
                 }
@@ -1141,12 +1081,6 @@
                             "group": "org.jetbrains.kotlin",
                             "module": "kotlin-stdlib-jdk8"
                         }
-                    ],
-                    "requestedCapabilities": [
-                        {
-                            "group": "org.jetbrains.kotlin",
-                            "name": "kotlin-gradle-plugin-api-gradle85"
-                        }
                     ]
                 }
             ],
@@ -1239,12 +1173,6 @@
                         {
                             "group": "org.jetbrains.kotlin",
                             "module": "kotlin-stdlib-jdk8"
-                        }
-                    ],
-                    "requestedCapabilities": [
-                        {
-                            "group": "org.jetbrains.kotlin",
-                            "name": "kotlin-gradle-plugin-api-gradle85"
                         }
                     ]
                 }
@@ -1339,12 +1267,6 @@
                             "group": "org.jetbrains.kotlin",
                             "module": "kotlin-stdlib-jdk8"
                         }
-                    ],
-                    "requestedCapabilities": [
-                        {
-                            "group": "org.jetbrains.kotlin",
-                            "name": "kotlin-gradle-plugin-api-gradle86"
-                        }
                     ]
                 }
             ],
@@ -1437,12 +1359,6 @@
                         {
                             "group": "org.jetbrains.kotlin",
                             "module": "kotlin-stdlib-jdk8"
-                        }
-                    ],
-                    "requestedCapabilities": [
-                        {
-                            "group": "org.jetbrains.kotlin",
-                            "name": "kotlin-gradle-plugin-api-gradle86"
                         }
                     ]
                 }
@@ -1537,12 +1453,6 @@
                             "group": "org.jetbrains.kotlin",
                             "module": "kotlin-stdlib-jdk8"
                         }
-                    ],
-                    "requestedCapabilities": [
-                        {
-                            "group": "org.jetbrains.kotlin",
-                            "name": "kotlin-gradle-plugin-api-gradle88"
-                        }
                     ]
                 }
             ],
@@ -1635,12 +1545,6 @@
                         {
                             "group": "org.jetbrains.kotlin",
                             "module": "kotlin-stdlib-jdk8"
-                        }
-                    ],
-                    "requestedCapabilities": [
-                        {
-                            "group": "org.jetbrains.kotlin",
-                            "name": "kotlin-gradle-plugin-api-gradle88"
                         }
                     ]
                 }
