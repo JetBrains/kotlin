@@ -1900,9 +1900,21 @@ public class LLDiagnosticsFe10TestGenerated extends AbstractLLDiagnosticsTest {
     }
 
     @Test
+    @TestMetadata("returnTypeMismatchOnCallableReferenceInReturnOfLambda.kt")
+    public void testReturnTypeMismatchOnCallableReferenceInReturnOfLambda() {
+      runTest("compiler/testData/diagnostics/tests/returnTypeMismatchOnCallableReferenceInReturnOfLambda.kt");
+    }
+
+    @Test
     @TestMetadata("returnTypeMismatchOnComplexAnonymousFunctionInReturnOfLambda.kt")
     public void testReturnTypeMismatchOnComplexAnonymousFunctionInReturnOfLambda() {
       runTest("compiler/testData/diagnostics/tests/returnTypeMismatchOnComplexAnonymousFunctionInReturnOfLambda.kt");
+    }
+
+    @Test
+    @TestMetadata("returnTypeMismatchOnLambdaInReturnOfLambda.kt")
+    public void testReturnTypeMismatchOnLambdaInReturnOfLambda() {
+      runTest("compiler/testData/diagnostics/tests/returnTypeMismatchOnLambdaInReturnOfLambda.kt");
     }
 
     @Test
