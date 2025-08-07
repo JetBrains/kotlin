@@ -25,7 +25,6 @@ fun Project.configureSbom(
     gradleConfigurations: Iterable<String> = setOf("runtimeClasspath"),
     publication: NamedDomainObjectProvider<MavenPublication>? = null,
 ): TaskProvider<SpdxSbomTask> {
-    assert(target == null && publication != null) { "provided publication will be ignored when target is null" }
     val project = this
     val targetName = target ?: "${mainPublicationName}Publication"
     apply<SpdxSbomPlugin>()

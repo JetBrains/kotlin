@@ -41,7 +41,6 @@ import org.gradle.plugin.devel.PluginDeclaration
 import org.gradle.plugin.devel.plugins.JavaGradlePluginPlugin
 import org.gradle.plugin.devel.tasks.ValidatePlugins
 import org.gradle.plugin.use.resolve.internal.ArtifactRepositoriesPluginResolver.PLUGIN_MARKER_SUFFIX
-import org.gradle.process.CommandLineArgumentProvider
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.buildtools.api.ExperimentalBuildToolsApi
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
@@ -52,10 +51,8 @@ import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
-import plugins.KotlinBuildPublishingPlugin.Companion.DEFAULT_MAIN_PUBLICATION_NAME
 import plugins.configureDefaultPublishing
 import plugins.configureKotlinPomAttributes
-import plugins.signLibraryPublication
 import java.io.File
 
 /**
@@ -182,7 +179,7 @@ fun Project.createGradleCommonSourceSet(): SourceSet {
 
         dependencies {
             compileOnlyConfigurationName("org.jetbrains.kotlin:kotlin-stdlib:${GradlePluginVariant.GRADLE_MIN.bundledKotlinVersion}.0")
-            "commonGradleApiCompileOnly"("org.gradle.experimental:gradle-public-api:${GradlePluginVariant.GRADLE_COMMON}") {
+            "commonGradleApiCompileOnly"("org.gradle.experimental:gradle-public-api:${GradlePluginVariant.GRADLE_COMMON_COMPILE_API_VERSION}") {
                 capabilities {
                     requireCapability("org.gradle.experimental:gradle-public-api-internal")
                 }
@@ -209,7 +206,7 @@ fun Project.createGradleCommonSourceSet(): SourceSet {
             outgoingVariant.attributes {
                 attribute(
                     GradlePluginApiVersion.GRADLE_PLUGIN_API_VERSION_ATTRIBUTE,
-                    objects.named(GradlePluginVariant.GRADLE_COMMON),
+                    objects.named(GradlePluginVariant.GRADLE_COMMON_COMPILE_API_VERSION),
                 )
             }
         }
@@ -672,6 +669,7 @@ private fun KotlinCompile.configureRunViaKotlinBuildToolsApi() {
  */
 @OptIn(ExperimentalBuildToolsApi::class, ExperimentalKotlinGradlePluginApi::class)
 fun Project.configureBuildToolsApiVersionForGradleCompatibility() {
+    if (extra.properties["avoidSettingCompilerVersionForBTA"].toString().toBoolean()) return
     val catalogs = extensions.getByType<VersionCatalogsExtension>()
     val libsCatalog = catalogs.named("libs")
     val kgpCompilerVersion = libsCatalog.findVersion("kotlin.for.gradle.plugins.compilation").get().requiredVersion
@@ -872,39 +870,6 @@ fun Project.excludeGradleEmbeddedStdlibFromTestTasksRuntimeClasspath() {
 }
 
 private fun Project.gradleEmbeddedStdlib(): File = (dependencies.gradleApi() as FileCollectionDependency).files.single { it.name.startsWith("kotlin-stdlib") }
-
-fun Project.configureGradlePluginDependency(
-    withPublication: Boolean,
-) {
-    plugins.apply("java-library")
-    plugins.apply("org.jetbrains.kotlin.jvm")
-    if (withPublication) {
-        plugins.apply("maven-publish")
-    }
-
-    configureBuildToolsApiVersionForGradleCompatibility()
-    configureCommonPublicationSettingsForGradle(signLibraryPublication)
-    addBomCheckTask()
-    extensions.extraProperties["kotlin.stdlib.default.dependency"] = "false"
-
-    val commonSourceSet = createGradleCommonSourceSet()
-    reconfigureMainSourcesSetForGradlePlugin(commonSourceSet)
-    createGradlePluginVariants(
-        commonSourceSet = commonSourceSet,
-        publishShadowedJar = false
-    )
-
-    if (withPublication) {
-        (extensions.getByName("publishing") as PublishingExtension).apply {
-            publications {
-                register<MavenPublication>(DEFAULT_MAIN_PUBLICATION_NAME) {
-                    from(components["java"])
-                    suppressAllPomMetadataWarnings() // Don't warn about additional published variants
-                }
-            }
-        }
-    }
-}
 
 fun Project.createGradlePluginVariants(
     commonSourceSet: SourceSet,
