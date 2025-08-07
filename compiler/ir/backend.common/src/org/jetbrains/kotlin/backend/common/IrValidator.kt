@@ -108,9 +108,11 @@ private class IrFileValidator(
 }
 
 /**
- * Verifies common IR invariants that should hold in all the backends.
+ * Verifies IR invariants, invokes [reportError] callback for each validation errors.
+ *
+ * Tries not to throw, even if the IR tree is severely broken, but that is not guaranteed.
  */
-private fun performBasicIrValidation(
+fun validateIr(
     element: IrElement,
     irBuiltIns: IrBuiltIns,
     validatorConfig: IrValidatorConfig,
@@ -134,109 +136,66 @@ private fun performBasicIrValidation(
 }
 
 /**
- * [IrValidationContext] is responsible for collecting validation errors, logging them and optionally throwing [IrValidationException]
- * (if the verification mode passed to [validateIr] is [IrVerificationMode.ERROR])
- */
-sealed interface IrValidationContext {
-
-    /**
-     * A string that each validation error will begin with.
-     */
-    var customMessagePrefix: String?
-
-    /**
-     * Logs the validation error into the underlying [MessageCollector].
-     */
-    fun reportIrValidationError(phaseName: String, error: IrValidationError)
-
-    /**
-     * Allows to abort the compilation process if after or during validating the IR there were errors and the verification mode is
-     * [IrVerificationMode.ERROR].
-     */
-    fun throwValidationErrorIfNeeded()
-
-    /**
-     * Verifies common IR invariants that should hold in all the backends.
-     *
-     * Reports errors to [CommonBackendContext.messageCollector].
-     *
-     * **Note:** this method does **not** throw [IrValidationException]. Use [throwValidationErrorIfNeeded] for checking for errors and throwing
-     * [IrValidationException]. This gives the caller the opportunity to perform additional (for example, backend-specific) validation before
-     * aborting. The caller decides when it's time to abort.
-     */
-    fun performBasicIrValidation(
-        fragment: IrElement,
-        irBuiltIns: IrBuiltIns,
-        phaseName: String,
-        config: IrValidatorConfig,
-    ) {
-        performBasicIrValidation(fragment, irBuiltIns, config) { error ->
-            reportIrValidationError(phaseName, error)
-        }
-    }
-}
-
-private class IrValidationContextImpl(
-    private val messageCollector: MessageCollector,
-    private val mode: IrVerificationMode,
-) : IrValidationContext {
-
-    override var customMessagePrefix: String? = null
-
-    private var hasValidationErrors: Boolean = false
-
-    override fun reportIrValidationError(phaseName: String, error: IrValidationError) {
-        val severity = when (mode) {
-            IrVerificationMode.WARNING -> CompilerMessageSeverity.WARNING
-            IrVerificationMode.ERROR -> CompilerMessageSeverity.ERROR
-            IrVerificationMode.NONE -> return
-        }
-        hasValidationErrors = true
-        val phaseMessage = if (phaseName.isNotEmpty()) "$phaseName: " else ""
-        messageCollector.report(
-            severity,
-            buildString {
-                val customMessagePrefix = customMessagePrefix
-                if (customMessagePrefix == null) {
-                    append("[IR VALIDATION] ")
-                    append(phaseMessage)
-                } else {
-                    append(customMessagePrefix)
-                    append(" ")
-                }
-                appendLine(error.message)
-                append(error.element.render())
-                for ((i, parent) in error.parentChain.asReversed().withIndex()) {
-                    appendLine()
-                    append("  ".repeat(i + 1))
-                    append("inside ")
-                    append(parent.render())
-                }
-            },
-            error.file?.let(error.element::getCompilerMessageLocation),
-        )
-    }
-
-    override fun throwValidationErrorIfNeeded() {
-        if (hasValidationErrors && mode == IrVerificationMode.ERROR) {
-            throw IrValidationException()
-        }
-    }
-}
-
-/**
- * Logs validation errors encountered during the execution of the [runValidationRoutines] closure into [messageCollector].
+ * Verifies IR invariants, logs validation errors into [messageCollector].
  *
- * If [mode] is [IrVerificationMode.ERROR], throws [IrValidationException] after [runValidationRoutines] has finished,
+ * If [mode] is [IrVerificationMode.ERROR], throws [IrValidationException] at the end,
  * thus allowing to collect as many errors as possible instead of aborting after the first one.
  */
 fun validateIr(
+    element: IrElement,
+    irBuiltIns: IrBuiltIns,
+    validatorConfig: IrValidatorConfig,
     messageCollector: MessageCollector,
     mode: IrVerificationMode,
-    runValidationRoutines: IrValidationContext.() -> Unit,
+    phaseName: String? = null,
+    customMessagePrefix: String? = null,
 ) {
-    if (mode == IrVerificationMode.NONE) return
-    val validationContext = IrValidationContextImpl(messageCollector, mode)
-    validationContext.runValidationRoutines()
-    validationContext.throwValidationErrorIfNeeded()
+    val severity = when (mode) {
+        IrVerificationMode.NONE -> return
+        IrVerificationMode.WARNING -> CompilerMessageSeverity.WARNING
+        IrVerificationMode.ERROR -> CompilerMessageSeverity.ERROR
+    }
+    var hasAnyErrors = false
+    validateIr(element, irBuiltIns, validatorConfig) { error ->
+        val phaseMessage = if (!phaseName.isNullOrEmpty()) "$phaseName: " else ""
+        messageCollector.report(error, severity, phaseName, customMessagePrefix)
+        hasAnyErrors = true
+    }
+
+    if (mode == IrVerificationMode.ERROR && hasAnyErrors) {
+        throw IrValidationException()
+    }
+}
+
+fun MessageCollector.report(
+    error: IrValidationError,
+    severity: CompilerMessageSeverity,
+    phaseName: String?,
+    customMessagePrefix: String?,
+) {
+    report(
+        severity,
+        error.render(phaseName, customMessagePrefix),
+        error.file?.let(error.element::getCompilerMessageLocation),
+    )
+}
+
+fun IrValidationError.render(phaseName: String?, customMessagePrefix: String?): String = buildString {
+    val phaseMessage = if (!phaseName.isNullOrEmpty()) "$phaseName: " else ""
+    val customMessagePrefix = customMessagePrefix
+    if (customMessagePrefix == null) {
+        append("[IR VALIDATION] ")
+        append(phaseMessage)
+    } else {
+        append(customMessagePrefix)
+        append(" ")
+    }
+    appendLine(message)
+    append(element.render())
+    for ((i, parent) in parentChain.asReversed().withIndex()) {
+        appendLine()
+        append("  ".repeat(i + 1))
+        append("inside ")
+        append(parent.render())
+    }
 }
