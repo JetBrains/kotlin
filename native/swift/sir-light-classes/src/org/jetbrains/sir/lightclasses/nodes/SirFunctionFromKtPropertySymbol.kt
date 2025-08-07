@@ -23,7 +23,10 @@ import org.jetbrains.kotlin.sir.SirParameter
 import org.jetbrains.kotlin.sir.SirType
 import org.jetbrains.kotlin.sir.SirVisibility
 import org.jetbrains.kotlin.sir.providers.SirSession
+import org.jetbrains.kotlin.sir.providers.generateFunctionBridge
+import org.jetbrains.kotlin.sir.providers.getSirParent
 import org.jetbrains.kotlin.sir.providers.impl.BridgeProvider.BridgeFunctionProxy
+import org.jetbrains.kotlin.sir.providers.sirDeclarationName
 import org.jetbrains.kotlin.sir.providers.source.KotlinPropertyAccessorOrigin
 import org.jetbrains.kotlin.sir.providers.utils.throwsAnnotation
 import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
@@ -41,6 +44,7 @@ import org.jetbrains.sir.lightclasses.utils.translateParameters
 import org.jetbrains.sir.lightclasses.utils.translateReturnType
 import org.jetbrains.sir.lightclasses.utils.translatedAttributes
 import kotlin.getValue
+import kotlin.lazy
 
 /**
  * Kotlin extension property accessors in Swift
@@ -77,7 +81,7 @@ internal class SirFunctionFromKtPropertySymbol(
 
     override var parent: SirDeclarationParent
         get() = withSessions {
-            ktPropertySymbol.getSirParent(useSiteSession)
+            ktPropertySymbol.getSirParent()
         }
         set(_) = Unit
 

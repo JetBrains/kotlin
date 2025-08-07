@@ -8,6 +8,14 @@ package org.jetbrains.kotlin.sir.providers.impl
 import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.components.DefaultTypeClassIds
+import org.jetbrains.kotlin.analysis.api.components.containingModule
+import org.jetbrains.kotlin.analysis.api.components.containingSymbol
+import org.jetbrains.kotlin.analysis.api.components.expandedSymbol
+import org.jetbrains.kotlin.analysis.api.components.fullyExpandedType
+import org.jetbrains.kotlin.analysis.api.components.isClassType
+import org.jetbrains.kotlin.analysis.api.components.isFunctionType
+import org.jetbrains.kotlin.analysis.api.components.isNothingType
+import org.jetbrains.kotlin.analysis.api.components.isPrimitive
 import org.jetbrains.kotlin.analysis.api.export.utilities.isAllSuperTypesExported
 import org.jetbrains.kotlin.analysis.api.export.utilities.isClone
 import org.jetbrains.kotlin.analysis.api.symbols.*
@@ -24,6 +32,7 @@ import org.jetbrains.kotlin.sir.SirAvailability
 import org.jetbrains.kotlin.sir.SirVisibility
 import org.jetbrains.kotlin.sir.providers.SirSession
 import org.jetbrains.kotlin.sir.providers.SirVisibilityChecker
+import org.jetbrains.kotlin.sir.providers.sirModule
 import org.jetbrains.kotlin.sir.providers.utils.UnsupportedDeclarationReporter
 import org.jetbrains.kotlin.sir.providers.utils.deprecatedAnnotation
 import org.jetbrains.kotlin.sir.providers.utils.isAbstract
@@ -41,12 +50,14 @@ public class SirVisibilityCheckerImpl(
     private val unsupportedDeclarationReporter: UnsupportedDeclarationReporter,
 ) : SirVisibilityChecker {
     @OptIn(KaExperimentalApi::class)
-    override fun KaDeclarationSymbol.sirAvailability(ktAnalysisSession: KaSession): SirAvailability = sirSession.withSessions {
+    override fun KaDeclarationSymbol.sirAvailability(): SirAvailability = sirSession.withSessions {
         val ktSymbol = this@sirAvailability
 
         val visibility = object {
             var value: SirVisibility = SirVisibility.entries.last()
-                set(newValue) { field = minOf(field, newValue) }
+                set(newValue) {
+                    field = minOf(field, newValue)
+                }
         }
 
         val containingModule = ktSymbol.containingModule.sirModule()
@@ -86,7 +97,7 @@ public class SirVisibilityCheckerImpl(
         if (containsHidesFromObjCAnnotation(ktSymbol)) {
             return@withSessions SirAvailability.Unavailable("Declaration is @HiddenFromObjC")
         }
-        if ((ktSymbol.containingSymbol as? KaDeclarationSymbol?)?.sirAvailability(useSiteSession) is SirAvailability.Unavailable) {
+        if ((ktSymbol.containingSymbol as? KaDeclarationSymbol?)?.sirAvailability() is SirAvailability.Unavailable) {
             return@withSessions SirAvailability.Unavailable("Declaration's lexical parent is unavailable")
         }
         visibility.value = when (ktSymbol) {
@@ -185,7 +196,7 @@ public class SirVisibilityCheckerImpl(
             return@withSessions SirAvailability.Available(SirVisibility.PUBLIC)
         }
 
-        if (!(isAllSuperTypesExported(this) { this.isExported() is SirAvailability.Available})) {
+        if (!(isAllSuperTypesExported { this.isExported() is SirAvailability.Available })) {
             return@withSessions SirAvailability.Hidden("Some super type isn't available")
         }
 
@@ -198,7 +209,7 @@ public class SirVisibilityCheckerImpl(
     }
 
     private fun KaType.availability(): SirAvailability = sirSession.withSessions {
-        (expandedSymbol as? KaDeclarationSymbol)?.sirAvailability(useSiteSession)
+        (expandedSymbol as? KaDeclarationSymbol)?.sirAvailability()
             ?: SirAvailability.Unavailable("Type is not a declaration")
     }
 
@@ -215,7 +226,8 @@ public class SirVisibilityCheckerImpl(
         }
     }
 
-    private fun KaSession.isValueOfOnEnum(function: KaNamedFunctionSymbol): Boolean {
+    context(ka: KaSession)
+    private fun isValueOfOnEnum(function: KaNamedFunctionSymbol): Boolean {
         with(function) {
             val parent = containingSymbol as? KaClassSymbol ?: return false
             return isStatic && name == StandardNames.ENUM_VALUE_OF && parent.classKind == KaClassKind.ENUM_CLASS
@@ -228,7 +240,8 @@ public class SirVisibilityCheckerImpl(
     }
 }
 
-private fun KaSession.containsHidesFromObjCAnnotation(symbol: KaAnnotatedSymbol): Boolean {
+context(ka: KaSession)
+private fun containsHidesFromObjCAnnotation(symbol: KaAnnotatedSymbol): Boolean {
     return symbol.annotations.any { annotation ->
         val annotationClassId = annotation.classId ?: return@any false
         val annotationClassSymbol = findClass(annotationClassId) ?: return@any false
@@ -240,7 +253,8 @@ private fun KaSession.containsHidesFromObjCAnnotation(symbol: KaAnnotatedSymbol)
 private val SUPPORTED_SYMBOL_ORIGINS = setOf(KaSymbolOrigin.SOURCE, KaSymbolOrigin.LIBRARY)
 
 @OptIn(KaExperimentalApi::class)
-private fun KaSession.hasUnboundTypeParameters(type: KaType): Boolean = (type.fullyExpandedType as? KaClassType)?.let { classType ->
+context(ka: KaSession)
+private fun hasUnboundTypeParameters(type: KaType): Boolean = (type.fullyExpandedType as? KaClassType)?.let { classType ->
     val typeParameters = classType.symbol.typeParameters.also { it.ifEmpty { return@let false } }
 
     if (typeParameters.isEmpty()) return@let false
@@ -253,3 +267,6 @@ private fun KaSession.hasUnboundTypeParameters(type: KaType): Boolean = (type.fu
 
 @OptIn(KaExperimentalApi::class)
 private val KaFunctionSymbol.allParameters get() = valueParameters + listOfNotNull(receiverParameter, receiverParameter) + contextParameters
+
+context(ka: KaSession)
+private fun isClone(symbol: KaNamedFunctionSymbol): Boolean = with(ka) { isClone(symbol) }

@@ -23,16 +23,12 @@ internal class SirAsSwiftSourcesPrinter private constructor(
 ) : ContextualizedPrinter<Context> by printer {
     public companion object {
 
-        private val fatalErrorBodyStub: SirFunctionBody = SirFunctionBody(
-            listOf("fatalError()")
-        )
-
         public fun print(
             module: SirModule,
             stableDeclarationsOrder: Boolean,
             renderDocComments: Boolean,
             renderDeclarationOrigins: Boolean,
-            emptyBodyStub: SirFunctionBody = fatalErrorBodyStub
+            emptyBodyStub: SirFunctionBody
         ): String {
             val childrenPrinter = SirAsSwiftSourcesPrinter(
                 ContextualizedPrinterImpl(SmartPrinter(StringBuilder()), Context(module)),

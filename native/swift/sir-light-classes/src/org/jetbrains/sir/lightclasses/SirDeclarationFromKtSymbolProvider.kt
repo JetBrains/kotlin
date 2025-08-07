@@ -5,7 +5,6 @@
 
 package org.jetbrains.sir.lightclasses
 
-import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.sir.SirFunction
@@ -17,7 +16,6 @@ import org.jetbrains.sir.lightclasses.nodes.*
 import org.jetbrains.sir.lightclasses.utils.SirOperatorTranslationStrategy
 
 public class SirDeclarationFromKtSymbolProvider(
-    private val ktModule: KaModule,
     private val sirSession: SirSession,
 ) : SirDeclarationProvider {
     public override fun KaDeclarationSymbol.toSir(): SirTranslationResult =
@@ -72,6 +70,7 @@ public class SirDeclarationFromKtSymbolProvider(
             }
             else -> TODO("encountered unknown symbol type - $ktSymbol. Error system should be reworked KT-65980")
         }
+
     private fun KaPropertyAccessorSymbol.toSirFunction(ktPropertySymbol: KaPropertySymbol): SirFunction = SirFunctionFromKtPropertySymbol(
         ktPropertySymbol = ktPropertySymbol,
         ktSymbol = this,

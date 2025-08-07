@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.swiftexport.standalone.builders
 
+import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.analyze
 import org.jetbrains.kotlin.analysis.api.standalone.buildStandaloneAnalysisAPISession
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaLibraryModule
@@ -17,10 +18,12 @@ import org.jetbrains.kotlin.analysis.project.structure.builder.buildKtSourceModu
 import org.jetbrains.kotlin.platform.TargetPlatform
 import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.builder.buildModule
-import org.jetbrains.kotlin.sir.providers.SirAndKaSession
 import org.jetbrains.kotlin.sir.providers.SirSession
+import org.jetbrains.kotlin.sir.providers.extractDeclarations
 import org.jetbrains.kotlin.sir.providers.impl.SirKaClassReferenceHandler
 import org.jetbrains.kotlin.sir.providers.impl.SirOneToOneModuleProvider
+import org.jetbrains.kotlin.sir.providers.sirModule
+import org.jetbrains.kotlin.sir.providers.trampolineDeclarations
 import org.jetbrains.kotlin.sir.util.addChild
 import org.jetbrains.kotlin.swiftexport.standalone.*
 import org.jetbrains.kotlin.swiftexport.standalone.config.SwiftExportConfig
@@ -51,10 +54,11 @@ internal fun buildSirSession(
  * The result is stored as a side effect in [this.sirSession]'s [org.jetbrains.kotlin.sir.providers.SirModuleProvider].
  * [scopeToDeclarations] allows filtering declarations during translation.
  */
-internal fun SirAndKaSession.translateModule(
+context(sir: SirSession)
+internal fun translateModule(
     module: KaLibraryModule,
-    moduleToDeclarations: (KaLibraryModule) -> Sequence<KaDeclarationSymbol> = { it.getAllDeclarations() },
-): SirModule {
+    moduleToDeclarations: context(KaSession) (KaLibraryModule) -> Sequence<KaDeclarationSymbol> = { it.getAllDeclarations() },
+): SirModule = analyze(sir.useSiteModule) {
     extractAllTransitively(moduleToDeclarations(module))
         .toList()
         .forEach { (oldParent, children) ->
@@ -65,13 +69,14 @@ internal fun SirAndKaSession.translateModule(
                     newParent.addChild { declaration }
                 }
         }
-    return module.sirModule()
+    return@analyze module.sirModule()
 }
 
-private fun SirAndKaSession.extractAllTransitively(
+context(sir: SirSession)
+private fun extractAllTransitively(
     declarations: Sequence<KaDeclarationSymbol>,
 ): Sequence<Pair<SirDeclarationParent, List<SirDeclaration>>> = generateSequence(
-    declarations.extractDeclarations(useSiteSession)
+    declarations.extractDeclarations()
         .flatMap { listOf(it) + it.trampolineDeclarations() }
         .groupBy { it.parent }.toList()
 ) {

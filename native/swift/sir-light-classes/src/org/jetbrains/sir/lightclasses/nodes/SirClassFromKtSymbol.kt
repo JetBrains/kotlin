@@ -5,15 +5,23 @@
 
 package org.jetbrains.sir.lightclasses.nodes
 
-import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.components.DefaultTypeClassIds
+import org.jetbrains.kotlin.analysis.api.components.combinedDeclaredMemberScope
+import org.jetbrains.kotlin.analysis.api.components.containingModule
+import org.jetbrains.kotlin.analysis.api.components.expandedSymbol
 import org.jetbrains.kotlin.analysis.api.export.utilities.isCloneable
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.types.KaClassType
 import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.builder.buildInitCopy
 import org.jetbrains.kotlin.sir.providers.SirSession
+import org.jetbrains.kotlin.sir.providers.extractDeclarations
+import org.jetbrains.kotlin.sir.providers.getSirParent
+import org.jetbrains.kotlin.sir.providers.sirAvailability
+import org.jetbrains.kotlin.sir.providers.sirDeclarationName
+import org.jetbrains.kotlin.sir.providers.sirModule
 import org.jetbrains.kotlin.sir.providers.source.KotlinSource
+import org.jetbrains.kotlin.sir.providers.toSir
 import org.jetbrains.kotlin.sir.providers.utils.KotlinRuntimeModule
 import org.jetbrains.kotlin.sir.providers.utils.KotlinRuntimeSupportModule
 import org.jetbrains.kotlin.sir.providers.utils.containingModule
@@ -32,7 +40,7 @@ import org.jetbrains.sir.lightclasses.utils.OverrideStatus
 import org.jetbrains.sir.lightclasses.utils.computeIsOverride
 import org.jetbrains.sir.lightclasses.utils.superClassDeclaration
 import org.jetbrains.sir.lightclasses.utils.translatedAttributes
-import kotlin.getValue
+import kotlin.lazy
 
 internal fun createSirClassFromKtSymbol(
     ktSymbol: KaNamedClassSymbol,
@@ -115,7 +123,7 @@ internal abstract class SirAbstractClassFromKtSymbol(
 
     override var parent: SirDeclarationParent
         get() = withSessions {
-            ktSymbol.getSirParent(useSiteSession)
+            ktSymbol.getSirParent()
         }
         set(_) = Unit
 
@@ -139,7 +147,7 @@ internal abstract class SirAbstractClassFromKtSymbol(
 
     protected val childDeclarations: List<SirDeclaration> by lazyWithSessions {
         ktSymbol.combinedDeclaredMemberScope
-            .extractDeclarations(useSiteSession)
+            .extractDeclarations()
             .toList()
     }
 
@@ -169,7 +177,6 @@ internal abstract class SirAbstractClassFromKtSymbol(
             .filter { superClassDeclaration?.declaresConformance(it) != true }
     }
 
-    @OptIn(KaExperimentalApi::class)
     private val translatedProtocols: List<SirProtocol> by lazyWithSessions {
         ktSymbol.superTypes
             .filterIsInstance<KaClassType>()
@@ -177,7 +184,7 @@ internal abstract class SirAbstractClassFromKtSymbol(
             .filter { it.classKind == KaClassKind.INTERFACE }
             .filter { it.typeParameters.isEmpty() } //Exclude generics
             .filter {
-                it.sirAvailability(this@lazyWithSessions).let {
+                it.sirAvailability().let {
                     it is SirAvailability.Available && it.visibility > SirVisibility.INTERNAL
                 }
             }

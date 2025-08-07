@@ -5,13 +5,16 @@
 
 package org.jetbrains.kotlin.sir.providers.impl
 
-import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.components.containingDeclaration
+import org.jetbrains.kotlin.analysis.api.components.containingModule
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.builder.buildExtension
 import org.jetbrains.kotlin.sir.providers.SirEnumGenerator
 import org.jetbrains.kotlin.sir.providers.SirParentProvider
 import org.jetbrains.kotlin.sir.providers.SirSession
+import org.jetbrains.kotlin.sir.providers.sirModule
+import org.jetbrains.kotlin.sir.providers.toSir
 import org.jetbrains.kotlin.sir.providers.utils.containingModule
 import org.jetbrains.kotlin.sir.providers.utils.updateImport
 import org.jetbrains.kotlin.sir.providers.withSessions
@@ -25,16 +28,16 @@ public class SirParentProviderImpl(
 
     private val createdExtensionsForModule: MutableMap<SirModule, MutableMap<SirEnum, SirExtension>> = mutableMapOf()
 
-    override fun KaDeclarationSymbol.getOriginalSirParent(ktAnalysisSession: KaSession): SirElement = sirSession.withSessions {
+    override fun KaDeclarationSymbol.getOriginalSirParent(): SirElement = sirSession.withSessions {
         this@getOriginalSirParent.containingDeclaration?.toSir()?.primaryDeclaration
             ?: this@getOriginalSirParent.containingModule.sirModule()
     }
 
-    override fun KaDeclarationSymbol.getSirParent(ktAnalysisSession: KaSession): SirDeclarationContainer {
+    override fun KaDeclarationSymbol.getSirParent(): SirDeclarationContainer = sirSession.withSessions {
         val symbol = this@getSirParent
-        val parentSymbol = with(ktAnalysisSession) { symbol.containingDeclaration }
+        val parentSymbol = symbol.containingDeclaration
 
-        return if (parentSymbol == null) {
+        return@withSessions if (parentSymbol == null) {
             // top level function. -> parent is either extension for package, of plain module in case of <root> package
             val packageFqName = when (symbol) {
                 is KaNamedClassSymbol -> symbol.classId?.packageFqName
@@ -43,9 +46,9 @@ public class SirParentProviderImpl(
                 else -> null
             } ?: error("encountered unknown origin: $symbol. This exception should be reworked during KT-65980")
 
-            val ktModule = with(ktAnalysisSession) { symbol.containingModule }
+            val ktModule = symbol.containingModule
             val sirModule = with(sirSession) { ktModule.sirModule() }
-            return if (packageFqName.isRoot || sirModule is SirPlatformModule) {
+            return@withSessions if (packageFqName.isRoot || sirModule is SirPlatformModule) {
                 sirModule
             } else {
                 val enumAsPackage = with(packageEnumGenerator) { packageFqName.sirPackageEnum() }
@@ -69,15 +72,11 @@ public class SirParentProviderImpl(
                 extensionForPackage
             }
         } else {
-            with(sirSession) {
-                if (symbol is KaClassSymbol && parentSymbol is KaNamedClassSymbol && parentSymbol.classKind == KaClassKind.INTERFACE) {
-                    with(ktAnalysisSession) {
-                        parentSymbol.containingModule.sirModule()
-                    }
-                } else {
-                    parentSymbol.toSir().primaryDeclaration as? SirDeclarationContainer
-                        ?: error("parent declaration does not produce suitable SIR")
-                }
+            if (symbol is KaClassSymbol && parentSymbol is KaNamedClassSymbol && parentSymbol.classKind == KaClassKind.INTERFACE) {
+                parentSymbol.containingModule.sirModule()
+            } else {
+                parentSymbol.toSir().primaryDeclaration as? SirDeclarationContainer
+                    ?: error("parent declaration does not produce suitable SIR")
             }
         }
     }

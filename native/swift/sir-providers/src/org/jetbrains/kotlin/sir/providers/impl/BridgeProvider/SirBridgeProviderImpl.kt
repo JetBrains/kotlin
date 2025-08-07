@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.sir.providers.impl.BridgeProvider
 
+import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
 import org.jetbrains.kotlin.sir.*
@@ -73,16 +74,17 @@ public class SirBridgeProviderImpl(private val session: SirSession, private val 
     }
 }
 
-internal fun SirAndKaSession.isSupported(type: SirType): Boolean = when (type) {
+context(ka: KaSession, sir: SirSession)
+internal fun isSupported(type: SirType): Boolean = when (type) {
     is SirNominalType -> {
         val declarationSupported = when (val declaration = type.typeDeclaration) {
             is SirTypealias -> isSupported(declaration.type)
-            else -> type.typeDeclaration.kaSymbolOrNull<KaNamedClassSymbol>()?.sirAvailability(useSiteSession)?.let { it is SirAvailability.Available } != false
+            else -> type.typeDeclaration.kaSymbolOrNull<KaNamedClassSymbol>()?.sirAvailability()?.let { it is SirAvailability.Available } != false
         }
-        declarationSupported && type.typeArguments.all(::isSupported)
+        declarationSupported && type.typeArguments.all { isSupported(it) }
     }
-    is SirFunctionalType -> isSupported(type.returnType) && type.parameterTypes.all(::isSupported)
-    is SirExistentialType -> type.protocols.all { it.kaSymbolOrNull<KaClassSymbol>()?.sirAvailability(useSiteSession) is SirAvailability.Available != false }
+    is SirFunctionalType -> isSupported(type.returnType) && type.parameterTypes.all { isSupported(it) }
+    is SirExistentialType -> type.protocols.all { it.kaSymbolOrNull<KaClassSymbol>()?.sirAvailability() is SirAvailability.Available != false }
     else -> false
 }
 

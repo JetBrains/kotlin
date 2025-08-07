@@ -5,6 +5,9 @@
 
 package org.jetbrains.sir.lightclasses.nodes
 
+import org.jetbrains.kotlin.analysis.api.components.containingSymbol
+import org.jetbrains.kotlin.analysis.api.components.defaultType
+import org.jetbrains.kotlin.analysis.api.components.isArrayOrPrimitiveArray
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaConstructorSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionSymbol
@@ -12,10 +15,14 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
 import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.providers.SirSession
 import org.jetbrains.kotlin.sir.providers.SirTypeNamer
+import org.jetbrains.kotlin.sir.providers.generateFunctionBridge
+import org.jetbrains.kotlin.sir.providers.getSirParent
 import org.jetbrains.kotlin.sir.providers.impl.BridgeProvider.BridgeFunctionProxy
+import org.jetbrains.kotlin.sir.providers.sirAvailability
 import org.jetbrains.kotlin.sir.providers.source.InnerInitSource
 import org.jetbrains.kotlin.sir.providers.source.KotlinSource
 import org.jetbrains.kotlin.sir.providers.source.kaSymbolOrNull
+import org.jetbrains.kotlin.sir.providers.translateType
 import org.jetbrains.kotlin.sir.providers.utils.isAbstract
 import org.jetbrains.kotlin.sir.providers.utils.throwsAnnotation
 import org.jetbrains.kotlin.sir.util.SirSwiftModule
@@ -31,6 +38,7 @@ import org.jetbrains.sir.lightclasses.utils.OverrideStatus
 import org.jetbrains.sir.lightclasses.utils.computeIsOverride
 import org.jetbrains.sir.lightclasses.utils.translateParameters
 import org.jetbrains.sir.lightclasses.utils.translatedAttributes
+import kotlin.lazy
 
 private val obj = SirParameter("", "__kt",SirNominalType(SirSwiftModule.unsafeMutableRawPointer))
 
@@ -40,7 +48,7 @@ internal class SirInitFromKtSymbol(
 ) : SirInit(), SirFromKtSymbol<KaConstructorSymbol> {
 
     override val visibility: SirVisibility by lazyWithSessions {
-        ktSymbol.sirAvailability(useSiteSession).visibility ?: error("$ktSymbol shouldn't be exposed to SIR")
+        ktSymbol.sirAvailability().visibility ?: error("$ktSymbol shouldn't be exposed to SIR")
     }
 
     override val isFailable: Boolean = false
@@ -65,7 +73,7 @@ internal class SirInitFromKtSymbol(
 
     override var parent: SirDeclarationParent
         get() = withSessions {
-            ktSymbol.getSirParent(useSiteSession)
+            ktSymbol.getSirParent()
         }
         set(_) = Unit
 
@@ -201,7 +209,6 @@ private inline fun <reified T : KaFunctionSymbol> SirFromKtSymbol<T>.getOuterPar
         if (sirFromKtSymbol is SirInitFromKtSymbol && isInner(sirFromKtSymbol)) {
             val outSymbol = (ktSymbol.containingSymbol?.containingSymbol as? KaNamedClassSymbol)
             val outType = outSymbol?.defaultType?.translateType(
-                this.useSiteSession,
                 { error("Error translating type") },
                 { error("Unsupported type") },
                 {})

@@ -28,7 +28,6 @@ import org.jetbrains.kotlin.sir.providers.SirSession
 import org.jetbrains.kotlin.sir.util.SirSwiftModule
 import org.jetbrains.kotlin.sir.util.allParameters
 import org.jetbrains.kotlin.sir.util.name
-import org.jetbrains.sir.lightclasses.extensions.lazyWithSessions
 import kotlin.getValue
 
 internal interface SirOperatorAuxiliaryDeclaration

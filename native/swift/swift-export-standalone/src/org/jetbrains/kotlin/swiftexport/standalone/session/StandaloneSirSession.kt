@@ -39,7 +39,6 @@ internal class StandaloneSirSession(
             declarationsProvider = StubbingSirDeclarationProvider(
                 sirSession = sirSession,
                 declarationsProvider = SirDeclarationFromKtSymbolProvider(
-                    ktModule = useSiteModule,
                     sirSession = sirSession,
                 )
             ),

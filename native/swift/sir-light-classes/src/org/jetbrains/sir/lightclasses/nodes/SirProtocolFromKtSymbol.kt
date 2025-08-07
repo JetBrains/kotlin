@@ -5,6 +5,9 @@
 
 package org.jetbrains.sir.lightclasses.nodes
 
+import org.jetbrains.kotlin.analysis.api.components.combinedDeclaredMemberScope
+import org.jetbrains.kotlin.analysis.api.components.containingModule
+import org.jetbrains.kotlin.analysis.api.components.samConstructor
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassKind
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
@@ -13,9 +16,15 @@ import org.jetbrains.kotlin.analysis.api.types.symbol
 import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.builder.buildTypealias
 import org.jetbrains.kotlin.sir.providers.SirSession
+import org.jetbrains.kotlin.sir.providers.extractDeclarations
+import org.jetbrains.kotlin.sir.providers.getSirParent
+import org.jetbrains.kotlin.sir.providers.sirAvailability
+import org.jetbrains.kotlin.sir.providers.sirDeclarationName
+import org.jetbrains.kotlin.sir.providers.sirModule
 import org.jetbrains.kotlin.sir.providers.source.KotlinMarkerProtocol
 import org.jetbrains.kotlin.sir.providers.source.KotlinSource
 import org.jetbrains.kotlin.sir.providers.source.kaSymbolOrNull
+import org.jetbrains.kotlin.sir.providers.toSir
 import org.jetbrains.kotlin.sir.providers.utils.KotlinRuntimeModule
 import org.jetbrains.kotlin.sir.providers.utils.KotlinRuntimeSupportModule
 import org.jetbrains.kotlin.sir.providers.utils.containingModule
@@ -31,6 +40,7 @@ import org.jetbrains.sir.lightclasses.utils.decapitalizeNameSemantically
 import org.jetbrains.sir.lightclasses.utils.objcClassSymbolName
 import org.jetbrains.sir.lightclasses.utils.relocatedDeclarationNamePrefix
 import org.jetbrains.sir.lightclasses.utils.translatedAttributes
+import kotlin.lazy
 
 internal open class SirProtocolFromKtSymbol(
     override val ktSymbol: KaNamedClassSymbol,
@@ -46,7 +56,7 @@ internal open class SirProtocolFromKtSymbol(
     }
     override var parent: SirDeclarationParent
         get() = withSessions {
-            ktSymbol.getSirParent(useSiteSession)
+            ktSymbol.getSirParent()
         }
         set(_) = Unit
 
@@ -59,7 +69,7 @@ internal open class SirProtocolFromKtSymbol(
             .mapNotNull { it.symbol as? KaClassSymbol }
             .filter { it.classKind == KaClassKind.INTERFACE }
             .filter {
-                it.sirAvailability(this@lazyWithSessions).let {
+                it.sirAvailability().let {
                     it is SirAvailability.Available && it.visibility > SirVisibility.INTERNAL
                 }
             }
@@ -74,7 +84,7 @@ internal open class SirProtocolFromKtSymbol(
 
     override val declarations: MutableList<SirDeclaration> by lazyWithSessions {
         ktSymbol.combinedDeclaredMemberScope
-            .extractDeclarations(useSiteSession)
+            .extractDeclarations()
             .flatMap { declaration ->
                 when (declaration) {
                     is SirOperatorAuxiliaryDeclaration -> emptyList() // FIXME: rectify where auxiliary declarations should go.
@@ -142,11 +152,12 @@ internal class SirMarkerProtocolFromKtSymbol(
     override val protocols: List<SirProtocol> get() = target.protocols.filterIsInstance<SirProtocolFromKtSymbol>().map { it.existentialMarker }
 
     override val bridges: List<SirBridge> by lazyWithSessions {
-        listOfNotNull(sirSession.generateTypeBridge(
-            ktSymbol.classId?.asSingleFqName()?.pathSegments()?.map { it.toString() } ?: emptyList(),
-            swiftFqName = swiftFqName,
-            swiftSymbolName = objcClassSymbolName,
-        ))
+        listOfNotNull(
+            sirSession.generateTypeBridge(
+                ktSymbol.classId?.asSingleFqName()?.pathSegments()?.map { it.toString() } ?: emptyList(),
+                swiftFqName = swiftFqName,
+                swiftSymbolName = objcClassSymbolName,
+            ))
     }
 }
 
@@ -192,7 +203,7 @@ internal class SirBridgedProtocolImplementationFromKtSymbol(
 
     override val declarations: MutableList<SirDeclaration> by lazyWithSessions {
         ktSymbol.combinedDeclaredMemberScope
-            .extractDeclarations(useSiteSession)
+            .extractDeclarations()
             .mapNotNull {
                 when (it) {
                     is SirFunction -> SirRelocatedFunction(it).also { it.parent = this@SirBridgedProtocolImplementationFromKtSymbol }

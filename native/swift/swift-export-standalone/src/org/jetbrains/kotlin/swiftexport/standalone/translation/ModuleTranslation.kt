@@ -11,7 +11,6 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaClassLikeSymbol
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.builder.buildModule
-import org.jetbrains.kotlin.sir.providers.SirAndKaSession
 import org.jetbrains.kotlin.sir.providers.SirSession
 import org.jetbrains.kotlin.sir.providers.impl.SirKaClassReferenceHandler
 import org.jetbrains.kotlin.sir.providers.source.kaSymbolOrNull
@@ -54,7 +53,7 @@ internal fun translateModulePublicApi(module: InputModule, kaModules: KaModules,
             val sirModule = translateModule(
                 module = kaModules.mainModules.single { it.libraryName == module.name }
             )
-            sirSession.createTranslationResult(sirModule, config, module.config, externalTypeDeclarationReferences)
+            createTranslationResult(sirModule, config, module.config, externalTypeDeclarationReferences)
         }
     }
 }
@@ -134,19 +133,22 @@ internal fun translateCrossReferencingModulesTransitively(
             }
     }
     return translationStates.mapNotNull {
-        val sirModule = with(it.sirSession) { it.kaModule.sirModule() }
-        // Avoid generation of empty modules.
-        if (sirModule.declarations.isEmpty()) return@mapNotNull null
-        it.sirSession.createTranslationResult(
-            sirModule,
-            config,
-            it.moduleConfig,
-            emptyMap(),
-        )
+        with(it.sirSession) {
+            val sirModule = it.kaModule.sirModule()
+            // Avoid generation of empty modules.
+            if (sirModule.declarations.isEmpty()) return@mapNotNull null
+            createTranslationResult(
+                sirModule,
+                config,
+                it.moduleConfig,
+                emptyMap(),
+            )
+        }
     }
 }
 
-private fun SirSession.createTranslationResult(
+context(sir: SirSession)
+private fun createTranslationResult(
     sirModule: SirModule,
     config: SwiftExportConfig,
     moduleConfig: SwiftModuleConfig,
@@ -178,7 +180,7 @@ private fun SirSession.createTranslationResult(
         swiftModuleName = sirModule.name,
         swiftModuleSources = swiftSourceCode,
         referencedSwiftModules = referencedSwiftModules,
-        packages = sirSession.enumGenerator.collectedPackages,
+        packages = sir.enumGenerator.collectedPackages,
         bridgeSources = bridgeSources,
         moduleConfig = moduleConfig,
         bridgesModuleName = bridgeModuleName,
@@ -217,7 +219,7 @@ internal class TranslationResult(
     val externalTypeDeclarationReferences: Map<KaLibraryModule, List<FqName>>,
 )
 
-private fun SirAndKaSession.deepTouch(
+private fun deepTouch(
     container: SirDeclarationContainer,
     symbolHandler: (KaClassLikeSymbol) -> Unit = {},
 ): Unit = with(container.declarations.toList()) {

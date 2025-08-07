@@ -5,26 +5,28 @@
 
 package org.jetbrains.kotlin.sir.providers.impl
 
-import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.symbols.KaDeclarationSymbol
 import org.jetbrains.kotlin.sir.SirAvailability
 import org.jetbrains.kotlin.sir.SirDeclaration
 import org.jetbrains.kotlin.sir.SirVisibility
-import org.jetbrains.kotlin.sir.providers.SirAndKaSession
 import org.jetbrains.kotlin.sir.providers.SirChildrenProvider
 import org.jetbrains.kotlin.sir.providers.SirSession
+import org.jetbrains.kotlin.sir.providers.sirAvailability
+import org.jetbrains.kotlin.sir.providers.toSir
+import org.jetbrains.kotlin.sir.providers.trampolineDeclarations
 import org.jetbrains.kotlin.sir.providers.withSessions
 
 public class SirDeclarationChildrenProviderImpl(private val sirSession: SirSession) : SirChildrenProvider {
-    override fun Sequence<KaDeclarationSymbol>.extractDeclarations(kaSession: KaSession): Sequence<SirDeclaration> =
+    override fun Sequence<KaDeclarationSymbol>.extractDeclarations(): Sequence<SirDeclaration> =
         sirSession.withSessions {
             filter { isAccessible(it) }
                 .flatMap { it.toSir().allDeclarations }
                 .flatMap { decl -> listOf(decl) + decl.trampolineDeclarations().filter { it.parent == decl } }
         }
 
-    private fun SirAndKaSession.isAccessible(symbol: KaDeclarationSymbol): Boolean =
-        when (val availability = symbol.sirAvailability(useSiteSession)) {
+    context(sir: SirSession)
+    private fun isAccessible(symbol: KaDeclarationSymbol): Boolean =
+        when (val availability = symbol.sirAvailability()) {
             is SirAvailability.Available -> when (availability.visibility) {
                 SirVisibility.PUBLIC, SirVisibility.PACKAGE -> true
                 SirVisibility.PRIVATE, SirVisibility.FILEPRIVATE, SirVisibility.INTERNAL -> false

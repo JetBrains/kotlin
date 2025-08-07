@@ -5,6 +5,8 @@
 
 package org.jetbrains.sir.lightclasses.utils
 
+import org.jetbrains.kotlin.analysis.api.components.containingSymbol
+import org.jetbrains.kotlin.analysis.api.components.declaredMemberScope
 import org.jetbrains.kotlin.analysis.api.symbols.KaClassSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaSymbol
@@ -13,6 +15,7 @@ import org.jetbrains.kotlin.sir.SirFunction
 import org.jetbrains.kotlin.sir.providers.SirSession
 import org.jetbrains.kotlin.sir.providers.SirTranslationResult
 import org.jetbrains.kotlin.sir.providers.source.KotlinSource
+import org.jetbrains.kotlin.sir.providers.toSir
 import org.jetbrains.kotlin.sir.providers.withSessions
 import org.jetbrains.kotlin.sir.util.allParameters
 import org.jetbrains.sir.lightclasses.nodes.SirBinaryMathOperatorTrampolineFunction
@@ -154,7 +157,7 @@ public sealed class SirOperatorTranslationStrategy(public val kaSymbol: KaNamedF
             when (kaSymbol.name.asString()) {
                 "get" -> {
                     val getterFunction = SirRenamedFunction(kaSymbol, sirSession = sirSession)
-                    val setterFunction = sirSession.withSessions {
+                    val setterFunction: SirFunction? = sirSession.withSessions {
                         (kaSymbol.containingSymbol as? KaClassSymbol)?.declaredMemberScope?.callables
                             ?.filterIsInstance<KaNamedFunctionSymbol>()
                             ?.filter { it.isOperator && it.name.asString() == "set" }

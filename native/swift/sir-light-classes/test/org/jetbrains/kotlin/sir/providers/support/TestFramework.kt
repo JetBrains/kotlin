@@ -38,7 +38,6 @@ class TestSirSession(
     override val declarationProvider: SirDeclarationProvider = CachingSirDeclarationProvider(
         declarationsProvider = ObservingSirDeclarationProvider(
             declarationsProvider = SirDeclarationFromKtSymbolProvider(
-                ktModule = kaModule,
                 sirSession = sirSession,
             ),
             kaClassReferenceHandler = referencedTypeHandler
@@ -76,7 +75,7 @@ inline fun <R> translate(
 ) {
     analyze(file) {
         with(sirSessionBuilder(useSiteModule)) {
-            action(file.symbol.fileScope.extractDeclarations(useSiteSession).toList())
+            action(file.symbol.fileScope.extractDeclarations().toList())
         }
     }
 }

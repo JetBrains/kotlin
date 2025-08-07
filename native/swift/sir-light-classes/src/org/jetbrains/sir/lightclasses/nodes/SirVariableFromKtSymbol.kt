@@ -5,15 +5,21 @@
 
 package org.jetbrains.sir.lightclasses.nodes
 
-import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
+import org.jetbrains.kotlin.analysis.api.KaSession
+import org.jetbrains.kotlin.analysis.api.components.containingModule
+import org.jetbrains.kotlin.analysis.api.components.render
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.types.KaClassType
 import org.jetbrains.kotlin.sir.*
-import org.jetbrains.kotlin.sir.providers.SirAndKaSession
 import org.jetbrains.kotlin.sir.providers.SirSession
+import org.jetbrains.kotlin.sir.providers.generateFunctionBridge
+import org.jetbrains.kotlin.sir.providers.getSirParent
 import org.jetbrains.kotlin.sir.providers.impl.BridgeProvider.BridgeFunctionProxy
+import org.jetbrains.kotlin.sir.providers.sirDeclarationName
+import org.jetbrains.kotlin.sir.providers.sirModule
 import org.jetbrains.kotlin.sir.providers.source.KotlinSource
 import org.jetbrains.kotlin.sir.providers.source.kaSymbolOrNull
+import org.jetbrains.kotlin.sir.providers.translateType
 import org.jetbrains.kotlin.sir.providers.utils.throwsAnnotation
 import org.jetbrains.kotlin.sir.providers.utils.updateImports
 import org.jetbrains.kotlin.sir.providers.withSessions
@@ -23,12 +29,10 @@ import org.jetbrains.kotlin.utils.addToStdlib.ifTrue
 import org.jetbrains.sir.lightclasses.SirFromKtSymbol
 import org.jetbrains.sir.lightclasses.extensions.*
 import org.jetbrains.sir.lightclasses.extensions.documentation
-import org.jetbrains.sir.lightclasses.extensions.lazyWithSessions
-import org.jetbrains.sir.lightclasses.extensions.withSessions
 import org.jetbrains.sir.lightclasses.utils.*
 import org.jetbrains.sir.lightclasses.utils.translateReturnType
 import org.jetbrains.sir.lightclasses.utils.translatedAttributes
-import kotlin.getValue
+import kotlin.lazy
 
 internal abstract class SirAbstractVariableFromKtSymbol(
     override val ktSymbol: KaVariableSymbol,
@@ -87,7 +91,7 @@ internal abstract class SirAbstractVariableFromKtSymbol(
 
     override var parent: SirDeclarationParent
         get() = withSessions {
-            ktSymbol.getSirParent(useSiteSession)
+            ktSymbol.getSirParent()
         }
         set(_) = Unit
 
@@ -114,7 +118,6 @@ internal class SirVariableFromKtSymbol(
         get() = !ktSymbol.isTopLevel && !(ktSymbol is KaPropertySymbol && ktSymbol.isStatic)
 }
 
-@OptIn(KaExperimentalApi::class)
 internal class SirEnumEntriesStaticPropertyFromKtSymbol(
     ktSymbol: KaPropertySymbol,
     sirSession: SirSession,
@@ -130,7 +133,6 @@ internal class SirEnumEntriesStaticPropertyFromKtSymbol(
             (ktSymbol.returnType as KaClassType)
                 .typeArguments.first().type!!
                 .translateType(
-                    useSiteSession,
                     reportErrorType = { error("Can't translate return type in ${ktSymbol.render()}: ${it}") },
                     reportUnsupportedType = { error("Can't translate return type in ${ktSymbol.render()}: type is not supported") },
                     processTypeImports = ktSymbol.containingModule.sirModule()::updateImports
@@ -197,7 +199,7 @@ internal abstract class SirAbstractGetter(
         set(value) {}
         get() = bridgeProxy?.createSwiftInvocation { "return $it" }?.let(::SirFunctionBody)
 
-    private inline fun <R> lazyWithSessions(crossinline block: SirAndKaSession.() -> R): Lazy<R> = lazy {
+    private inline fun <R> lazyWithSessions(crossinline block: context(KaSession, SirSession) () -> R): Lazy<R> = lazy {
         sirSession.withSessions(block)
     }
 }
@@ -210,20 +212,6 @@ internal class SirGetterFromKtSymbol(
     override val documentation: String? by lazy { ktSymbol.documentation() }
     override val attributes: List<SirAttribute> by lazy { this.translatedAttributes }
     override val errorType: SirType get() = if (ktSymbol.throwsAnnotation != null) SirType.any else SirType.never
-
-//    private val bridgeTemplate = lazyWithSessions {
-//        (parent as? SirDeclaration)?.kaSymbolOrNull<KaVariableSymbol>()?.callableId?.asSingleFqName()?.pathSegments()?.map { it.toString() }?.let {
-//                SirGetterBridgeTemplate(this@SirGetterFromKtSymbol, sirSession, it)
-//            }
-//    }
-//
-//    override val bridges: List<SirBridge> by lazy {
-//        bridgeTemplate.value?.bridges ?: emptyList()
-//    }
-//
-//    override var body: SirFunctionBody?
-//        set(value) = Unit
-//        get() = bridgeTemplate.value?.body
 }
 
 internal abstract class SirAbstractSetter(
@@ -278,7 +266,7 @@ internal abstract class SirAbstractSetter(
         set(value) {}
         get() = bridgeProxy?.createSwiftInvocation { "return $it" }?.let(::SirFunctionBody)
 
-    private inline fun <R> lazyWithSessions(crossinline block: SirAndKaSession.() -> R): Lazy<R> = lazy {
+    private inline fun <R> lazyWithSessions(crossinline block: context(KaSession, SirSession) () -> R): Lazy<R> = lazy {
         sirSession.withSessions(block)
     }
 }

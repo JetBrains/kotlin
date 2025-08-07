@@ -1,3 +1,6 @@
+import org.gradle.kotlin.dsl.withType
+import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
+
 plugins {
     kotlin("jvm")
     id("jps-compatible")
@@ -43,3 +46,10 @@ publish()
 runtimeJar()
 sourcesJar()
 javadocJar()
+
+tasks.withType<KotlinJvmCompile>().configureEach {
+    compilerOptions.optIn.addAll(
+        "org.jetbrains.kotlin.analysis.api.KaContextParameterApi",
+        "org.jetbrains.kotlin.analysis.api.KaExperimentalApi",
+    )
+}
