@@ -41,4 +41,8 @@ public class WasmConfigurationKeys {
 
     public static final CompilerConfigurationKey<Boolean> WASM_FORCE_DEBUG_FRIENDLY_COMPILATION =
             CompilerConfigurationKey.create("avoid optimizations that can break debugging.");
+
+    public static final CompilerConfigurationKey<Boolean> WASM_USE_SHARED_OBJECTS =
+            CompilerConfigurationKey.create("Use 'shared' for object's heap types.");
+
 }

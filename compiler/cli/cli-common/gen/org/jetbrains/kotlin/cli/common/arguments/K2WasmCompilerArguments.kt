@@ -170,6 +170,16 @@ abstract class K2WasmCompilerArguments : CommonKlibBasedCompilerArguments() {
         }
 
     @Argument(
+        value = "-Xwasm-use-shared-objects",
+        description = "Mark heap types as shared in accordance to \"Shared-Everything Threads\" proposal.",
+    )
+    var wasmUseSharedObjects: Boolean = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
         value = "-Xir-dce-dump-reachability-info-to-file",
         valueDescription = "<path>",
         description = "Dump reachability information collected about declarations while performing DCE to a file. The format will be chosen automatically based on the file extension. Supported output formats include JSON for .json, a JS const initialized with a plain object containing information for .js, and plain text for all other file types.",

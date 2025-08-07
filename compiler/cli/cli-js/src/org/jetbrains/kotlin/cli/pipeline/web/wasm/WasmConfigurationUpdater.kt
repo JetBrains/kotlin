@@ -50,6 +50,7 @@ object WasmConfigurationUpdater : ConfigurationUpdater<K2JSCompilerArguments>() 
         configuration.put(WasmConfigurationKeys.WASM_NO_JS_TAG, arguments.wasmNoJsTag)
         configuration.put(WasmConfigurationKeys.WASM_GENERATE_DWARF, arguments.generateDwarf)
         configuration.put(WasmConfigurationKeys.WASM_FORCE_DEBUG_FRIENDLY_COMPILATION, arguments.forceDebugFriendlyCompilation)
+        configuration.put(WasmConfigurationKeys.WASM_USE_SHARED_OBJECTS, arguments.wasmUseSharedObjects)
         configuration.putIfNotNull(WasmConfigurationKeys.WASM_TARGET, arguments.wasmTarget?.let(WasmTarget::fromName))
         configuration.putIfNotNull(WasmConfigurationKeys.DCE_DUMP_DECLARATION_IR_SIZES_TO_FILE, arguments.irDceDumpDeclarationIrSizesToFile)
         configuration.propertyLazyInitialization = arguments.irPropertyLazyInitialization
