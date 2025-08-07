@@ -13,7 +13,7 @@ import org.jetbrains.kotlin.js.backend.ast.*
 class JsAstMapper(private val scope: JsScope, private val fileName: String) {
     companion object {
         private fun createParserException(message: String, ctx: ParserRuleContext): JsParserException {
-            return JsParserException("Parser encountered internal error: $message", ctx.codePosition)
+            return JsParserException("Parser encountered internal error: $message", ctx.startPosition)
         }
     }
 
