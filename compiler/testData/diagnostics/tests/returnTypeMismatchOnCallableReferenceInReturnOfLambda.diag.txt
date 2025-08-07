@@ -1,0 +1,22 @@
+/returnTypeMismatchOnCallableReferenceInReturnOfLambda.kt:13:23: error: type mismatch: inferred type is KFunction0<String> but String was expected
+    var str: String = runLike {
+                      ^^^^^^^^^
+/returnTypeMismatchOnCallableReferenceInReturnOfLambda.kt:14:9: error: type mismatch: inferred type is KFunction0<String> but String was expected
+        ::callable
+        ^^^^^^^^^^
+/returnTypeMismatchOnCallableReferenceInReturnOfLambda.kt:17:9: error: type mismatch: inferred type is KFunction0<???> but String was expected
+        ::genericCallable
+        ^^^^^^^^^^^^^^^^^
+/returnTypeMismatchOnCallableReferenceInReturnOfLambda.kt:20:9: error: type mismatch: inferred type is KFunction0<String> but String was expected
+        ::callable
+        ^^^^^^^^^^
+/returnTypeMismatchOnCallableReferenceInReturnOfLambda.kt:23:9: error: type mismatch: inferred type is KFunction0<???> but String was expected
+        ::genericCallable
+        ^^^^^^^^^^^^^^^^^
+/returnTypeMismatchOnCallableReferenceInReturnOfLambda.kt:26:9: error: type mismatch: inferred type is KFunction0<String> but String was expected
+        ::callable
+        ^^^^^^^^^^
+/returnTypeMismatchOnCallableReferenceInReturnOfLambda.kt:29:9: error: type mismatch: inferred type is KFunction0<???> but String was expected
+        ::genericCallable
+        ^^^^^^^^^^^^^^^^^
+
