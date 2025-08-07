@@ -221,16 +221,22 @@ class ConeResolvedLambdaAtom(
     }
 }
 
-sealed class ConePostponedAtomWithRevisableExpectedType : ConeFunctionTypeRelatedPostponedResolvedAtom() {
-    abstract val anonymousFunctionIfReturnExpression: FirAnonymousFunction?
-}
+sealed class ConePostponedAtomWithRevisableExpectedType(
+    /**
+     * If the atom is created for a return statement of the lambda, its anonymous function is stored
+     * to report RETURN_TYPE_MISMATCH in case of a new constraint error.
+     * Note that for other kinds of resolution atoms, the new constraint error, if any, can be reported right away
+     * when creating the atom, hence no need to store this field.
+     */
+    val anonymousFunctionIfReturnExpression: FirAnonymousFunction?
+) : ConeFunctionTypeRelatedPostponedResolvedAtom()
 
 class ConeLambdaWithTypeVariableAsExpectedTypeAtom(
     override val expression: FirAnonymousFunctionExpression,
     private val initialExpectedTypeType: ConeKotlinType,
     val candidateOfOuterCall: Candidate,
-    override val anonymousFunctionIfReturnExpression: FirAnonymousFunction? = null,
-) : ConePostponedAtomWithRevisableExpectedType(), LambdaWithTypeVariableAsExpectedTypeMarker {
+    anonymousFunctionIfReturnExpression: FirAnonymousFunction? = null,
+) : ConePostponedAtomWithRevisableExpectedType(anonymousFunctionIfReturnExpression), LambdaWithTypeVariableAsExpectedTypeMarker {
     val anonymousFunction: FirAnonymousFunction = expression.anonymousFunction
 
     var subAtom: ConeResolvedLambdaAtom? = null
@@ -269,8 +275,8 @@ class ConeResolvedCallableReferenceAtom(
     private val initialExpectedType: ConeKotlinType?,
     val lhs: DoubleColonLHS?,
     private val session: FirSession,
-    override val anonymousFunctionIfReturnExpression: FirAnonymousFunction? = null,
-) : ConePostponedAtomWithRevisableExpectedType(), PostponedCallableReferenceMarker {
+    anonymousFunctionIfReturnExpression: FirAnonymousFunction? = null,
+) : ConePostponedAtomWithRevisableExpectedType(anonymousFunctionIfReturnExpression), PostponedCallableReferenceMarker {
     var subAtom: ConeAtomWithCandidate? = null
         private set
 
