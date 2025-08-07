@@ -34,7 +34,35 @@ val library = lib("llvmext")
 native {
     val obj = if (HostManager.hostIsMingw) "obj" else "o"
     val cxxflags = mutableListOf(
-        "--std=c++17",
+        // Using the same flags as the release llvm build.
+        "-Werror=date-time",
+        "-Werror=unguarded-availability-new",
+        "-Wall",
+        "-Wextra",
+        "-Wno-unused-parameter",
+        "-Wwrite-strings",
+        "-Wcast-qual",
+        "-Wmissing-field-initializers",
+        "-pedantic",
+        "-Wno-long-long",
+        "-Wc++98-compat-extra-semi",
+        "-Wimplicit-fallthrough",
+        "-Wcovered-switch-default",
+        "-Wno-noexcept-type",
+        "-Wnon-virtual-dtor",
+        "-Wdelete-non-virtual-dtor",
+        "-Wsuggest-override",
+        "-Wno-comment",
+        "-Wstring-conversion",
+        "-Wmisleading-indentation",
+        "-Wctad-maybe-unsupported",
+        "-O3",
+        "-DNDEBUG",
+        "-std=c++17",
+        "-fno-exceptions",
+        "-funwind-tables",
+        "-fno-rtti",
+        "-Werror", // fail on any warning, or we won't ever catch them
         "-I${llvmDir}/include",
         "-Isrc/main/include"
     )
