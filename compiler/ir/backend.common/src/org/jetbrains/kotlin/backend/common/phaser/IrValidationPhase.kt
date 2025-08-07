@@ -106,7 +106,6 @@ class IrValidationAfterInliningAllFunctionsOnTheFirstStagePhase<Context : Loweri
 ) : IrValidationPhase<Context>(context) {
     override val defaultValidationConfig: IrValidatorConfig
         get() = IrValidatorConfig()
-            .withBasicChecks().withoutCheckers(IrPrivateDeclarationOverrideChecker)
             .withInlineFunctionCallsiteCheck(checkInlineFunctionCallSites)
 }
 
