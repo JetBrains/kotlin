@@ -2390,6 +2390,12 @@ public class DecompiledTextTestGenerated extends AbstractDecompiledTextTest {
     }
 
     @Test
+    @TestMetadata("freezeKt79951.kt")
+    public void testFreezeKt79951() {
+      runTest("compiler/testData/psi/destructuring/freezeKt79951.kt");
+    }
+
+    @Test
     @TestMetadata("fullNameBasedDestructuring.kt")
     public void testFullNameBasedDestructuring() {
       runTest("compiler/testData/psi/destructuring/fullNameBasedDestructuring.kt");

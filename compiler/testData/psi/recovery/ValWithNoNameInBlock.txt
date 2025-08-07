@@ -79,7 +79,7 @@ KtFile: ValWithNoNameInBlock.kt
             PsiWhiteSpace('\n\n    ')
             PsiElement(RBRACE)('}')
       PsiWhiteSpace('\n\n    ')
-      PROPERTY
+      DESTRUCTURING_DECLARATION
         PsiElement(val)('val')
         PsiErrorElement:Expecting property name or receiver type
           <empty list>

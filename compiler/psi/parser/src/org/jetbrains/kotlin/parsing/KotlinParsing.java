@@ -1509,9 +1509,14 @@ public class KotlinParsing extends AbstractKotlinParsing {
         if (!parsePropertyDelegateOrAssignment() && isNameOnTheNextLine && noTypeReference && !receiverTypeDeclared) {
             // Do not parse property identifier on the next line if declaration is invalid
             // In most cases this identifier relates to next statement/declaration
-            beforeName.rollbackTo();
-            error("Expecting property name or receiver type");
-            return PROPERTY;
+            if (!multiDeclaration || isShortForm) {
+                beforeName.rollbackTo();
+                error("Expecting property name or receiver type");
+            } else {
+                beforeName.drop();
+            }
+
+            return multiDeclaration ? DESTRUCTURING_DECLARATION : PROPERTY;
         }
 
         beforeName.drop();

@@ -1639,9 +1639,14 @@ internal class KotlinParsing private constructor(builder: SemanticWhitespaceAwar
         if (!parsePropertyDelegateOrAssignment() && isNameOnTheNextLine && noTypeReference && !receiverTypeDeclared) {
             // Do not parse property identifier on the next line if declaration is invalid
             // In most cases this identifier relates to next statement/declaration
-            beforeName.rollbackTo()
-            error("Expecting property name or receiver type")
-            return KtNodeTypes.PROPERTY
+            if (!multiDeclaration || isShortForm) {
+                beforeName.rollbackTo()
+                error("Expecting property name or receiver type")
+            } else {
+                beforeName.drop()
+            }
+
+            return if (multiDeclaration) KtNodeTypes.DESTRUCTURING_DECLARATION else KtNodeTypes.PROPERTY
         }
 
         beforeName.drop()
