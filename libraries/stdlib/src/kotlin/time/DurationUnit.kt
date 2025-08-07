@@ -121,3 +121,9 @@ internal val DurationUnit.multiplier: Double
         DurationUnit.DAYS -> 0.0864
         else -> error("Unknown unit: $this")
     }
+
+internal val DurationUnit.length: Int
+    get() = when (this) {
+        DurationUnit.MILLISECONDS, DurationUnit.MICROSECONDS, DurationUnit.NANOSECONDS -> 2
+        else -> 1
+    }
