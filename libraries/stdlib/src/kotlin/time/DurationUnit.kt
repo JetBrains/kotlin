@@ -93,6 +93,22 @@ internal inline fun durationUnitByShortNameInPlace(str: String, start: Int, end:
     }
 }
 
+@kotlin.internal.InlineOnly
+internal inline fun durationUnitByShortNameOrNull(text: String, start: Int): DurationUnit? {
+    val first = text[start]
+    val second = text.getOrElse(start + 1) { '\u0000' }
+
+    return when (first) {
+        'd' -> DurationUnit.DAYS
+        'h' -> DurationUnit.HOURS
+        's' -> DurationUnit.SECONDS
+        'm' -> if (second == 's') DurationUnit.MILLISECONDS else DurationUnit.MINUTES
+        'u' -> if (second == 's') DurationUnit.MICROSECONDS else null
+        'n' -> if (second == 's') DurationUnit.NANOSECONDS else null
+        else -> null
+    }
+}
+
 @Suppress("REDUNDANT_ELSE_IN_WHEN")
 internal val DurationUnit.multiplier: Double
     get() = when (this) {
