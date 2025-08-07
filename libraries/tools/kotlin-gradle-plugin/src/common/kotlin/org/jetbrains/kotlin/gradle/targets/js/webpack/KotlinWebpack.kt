@@ -253,7 +253,25 @@ internal constructor(
     @Internal
     var generateConfigOnly: Boolean = false
 
+    private val fakeWebpackConfig: KotlinWebpackConfig = KotlinWebpackConfig(
+        rules = project.objects.webpackRulesContainer()
+    )
+
     fun webpackConfigApplier(body: Action<KotlinWebpackConfig>) {
+        body.execute(fakeWebpackConfig)
+        fakeWebpackConfig.let {
+            it.outputFileName?.let { mainOutputFileName.set(it) }
+            it.devtool?.let { devtool = it }
+            it.output?.let {
+                output.library = it.library
+                output.libraryTarget = it.libraryTarget
+                output.globalObject = it.globalObject
+                output.clean = it.clean
+            }
+            it.devServer?.let {
+                devServerProperty.set(it)
+            }
+        }
         webpackConfigAppliers.add(body)
     }
 
