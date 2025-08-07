@@ -39,9 +39,13 @@ abstract class FirMustUseReturnValueStatusComponent : FirSessionComponent {
         javaPackageAnnotations: List<ClassId>? = null,
     ): Boolean
 
+    // FIXME (KTI-2545): One can't simply write errorprone package name, because whole com.google. package is relocated in kotlin-compiler-embeddable.
+    // For the time being, string literal should be split.
+    internal val errorPronePackageFqName: FqName = FqName.fromSegments(listOf("com", "google", "errorprone", "annotations"))
+
     private val ignorableReturnValueLikeAnnotations: Set<ClassId> = setOf(
         StandardClassIds.Annotations.IgnorableReturnValue,
-        ClassId(FqName("com.google.errorprone.annotations"), Name.identifier("CanIgnoreReturnValue")),
+        ClassId(errorPronePackageFqName, Name.identifier("CanIgnoreReturnValue")),
         // Apparently, org.jetbrains.annotations and org.springframework.lang do not have CanIgnoreReturnValue because they have slightly different design
     )
 
@@ -79,7 +83,7 @@ abstract class FirMustUseReturnValueStatusComponent : FirSessionComponent {
     private class Default : FirMustUseReturnValueStatusComponent() {
         private val mustUseReturnValueLikeAnnotations: Set<ClassId> = setOf(
             StandardClassIds.Annotations.MustUseReturnValue,
-            ClassId(FqName("com.google.errorprone.annotations"), Name.identifier("CheckReturnValue")),
+            ClassId(errorPronePackageFqName, Name.identifier("CheckReturnValue")),
             ClassId(FqName("org.jetbrains.annotations"), Name.identifier("CheckReturnValue")),
             ClassId(FqName("org.springframework.lang"), Name.identifier("CheckReturnValue")),
         )
