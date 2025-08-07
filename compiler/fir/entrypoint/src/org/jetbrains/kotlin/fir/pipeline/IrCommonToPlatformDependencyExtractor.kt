@@ -18,6 +18,7 @@ import org.jetbrains.kotlin.fir.session.structuredProviders
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.symbols.IrPropertySymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeAliasSymbol
 import org.jetbrains.kotlin.ir.symbols.UnsafeDuringIrConstructionAPI
@@ -146,11 +147,30 @@ class IrCommonToPlatformDependencyActualizerMapContributor(
         return classesMap
     }
 
+    @OptIn(UnsafeDuringIrConstructionAPI::class)
     private val topLevelCallablesMap by lazy {
-        platformMappingProvider.commonCallableToPlatformCallableMap.entries.associate { (commonFirSymbol, platformFirSymbol) ->
-            val commonIrSymbol = commonFirSymbol.toIrSymbol()
-            val platformIrSymbol = platformFirSymbol.toIrSymbol()
-            commonIrSymbol to platformIrSymbol
+        buildMap {
+            for ((commonFirSymbol, platformFirSymbol) in platformMappingProvider.commonCallableToPlatformCallableMap) {
+                val commonIrSymbol = commonFirSymbol.toIrSymbol()
+                val platformIrSymbol = platformFirSymbol.toIrSymbol()
+                put(commonIrSymbol, platformIrSymbol)
+
+                if (commonIrSymbol is IrPropertySymbol && platformIrSymbol is IrPropertySymbol) {
+                    val commonIrGetterSymbol = commonIrSymbol.owner.getter?.symbol
+                    val platformIrGetterSymbol = platformIrSymbol.owner.getter?.symbol
+
+                    if (commonIrGetterSymbol != null && platformIrGetterSymbol != null) {
+                        put(commonIrGetterSymbol, platformIrGetterSymbol)
+                    }
+
+                    val commonIrSetterSymbol = commonIrSymbol.owner.setter?.symbol
+                    val platformIrSetterSymbol = platformIrSymbol.owner.setter?.symbol
+
+                    if (commonIrSetterSymbol != null && platformIrSetterSymbol != null) {
+                        put(commonIrSetterSymbol, platformIrSetterSymbol)
+                    }
+                }
+            }
         }
     }
 
