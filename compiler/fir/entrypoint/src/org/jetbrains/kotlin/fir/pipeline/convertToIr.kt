@@ -9,6 +9,8 @@ import org.jetbrains.kotlin.backend.common.*
 import org.jetbrains.kotlin.backend.common.actualizer.*
 import org.jetbrains.kotlin.backend.common.checkers.declaration.IrExpressionBodyInFunctionChecker
 import org.jetbrains.kotlin.backend.common.checkers.declaration.IrFieldVisibilityChecker
+import org.jetbrains.kotlin.backend.common.checkers.expression.IrCallTypeArgumentCountChecker
+import org.jetbrains.kotlin.backend.common.checkers.expression.IrCallValueArgumentCountChecker
 import org.jetbrains.kotlin.backend.common.checkers.expression.IrCrossFileFieldUsageChecker
 import org.jetbrains.kotlin.backend.common.checkers.expression.IrValueAccessScopeChecker
 import org.jetbrains.kotlin.backend.common.checkers.symbol.IrVisibilityChecker
@@ -501,6 +503,12 @@ private class Fir2IrPipeline(
                     // FIXME(KT-80071): This checker should be added unconditionally, but currently the koltin scripting plugin
                     //  may produce some out of scope value accesses.
                     withCheckers(IrValueAccessScopeChecker)
+                }
+                .applyIf(extension == null) {
+                    withCheckers(
+                        IrCallValueArgumentCountChecker, // TODO: Enable for plugins after KT-80062
+                        IrCallTypeArgumentCountChecker, // TODO: Enable for plugins (KT-80065)
+                    )
                 }
                 .applyIf(compilerConfiguration.enableIrVisibilityChecks && !hasScriptingPlugin) {
                     // User code may use @Suppress("INVISIBLE_REFERENCE") or similar, and at this point we do allow that,
