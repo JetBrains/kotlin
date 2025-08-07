@@ -5,19 +5,14 @@
 
 package org.jetbrains.kotlin.buildtools.internal
 
-import org.jetbrains.kotlin.buildtools.api.KotlinLogger
-import org.jetbrains.kotlin.buildtools.api.ProjectId
 import org.jetbrains.kotlin.buildtools.api.BuildOperation
 import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
-import org.jetbrains.kotlin.buildtools.api.internal.BaseOption
+import org.jetbrains.kotlin.buildtools.api.KotlinLogger
+import org.jetbrains.kotlin.buildtools.api.ProjectId
 import org.jetbrains.kotlin.buildtools.api.trackers.BuildMetricsCollector
 
 internal abstract class BuildOperationImpl<R> : BuildOperation<R> {
-    private val options: Options by OptionsDelegate()
-
-    init {
-        this[METRICS_COLLECTOR] = null
-    }
+    private val options: Options = Options(BuildOperation::class)
 
     @UseFromImplModuleRestricted
     override fun <V> get(key: BuildOperation.Option<V>): V = options[key.id]
@@ -37,9 +32,12 @@ internal abstract class BuildOperationImpl<R> : BuildOperation<R> {
         options[key] = value
     }
 
-    class Option<V>(id: String) : BaseOption<V>(id)
+    class Option<V> : BaseOptionWithDefault<V> {
+        constructor(id: String) : super(id)
+        constructor(id: String, default: V) : super(id, default = default)
+    }
 
     companion object {
-        val METRICS_COLLECTOR: Option<BuildMetricsCollector?> = Option("METRICS_COLLECTOR")
+        val METRICS_COLLECTOR: Option<BuildMetricsCollector?> = Option("METRICS_COLLECTOR", default = null)
     }
 }

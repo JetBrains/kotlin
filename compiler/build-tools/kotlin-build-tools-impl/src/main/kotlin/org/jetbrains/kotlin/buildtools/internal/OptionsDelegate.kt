@@ -6,21 +6,12 @@
 package org.jetbrains.kotlin.buildtools.internal
 
 import org.jetbrains.kotlin.buildtools.api.internal.BaseOption
-import kotlin.reflect.KProperty
+import kotlin.reflect.KClass
 import kotlin.reflect.jvm.jvmName
 
-
-internal class OptionsDelegate() {
-    private lateinit var options: Options
-    operator fun getValue(thisRef: Any, property: KProperty<*>): Options {
-        if (!::options.isInitialized) {
-            options = Options(thisRef::class.qualifiedName ?: thisRef::class.jvmName)
-        }
-        return options
-    }
-}
-
 internal class Options(private val optionsName: String) {
+    constructor(typeForName: KClass<*>) : this(typeForName::class.qualifiedName ?: typeForName::class.jvmName)
+
     private val optionsMap: MutableMap<String, Any?> = mutableMapOf()
 
     @UseFromImplModuleRestricted
@@ -32,12 +23,18 @@ internal class Options(private val optionsName: String) {
     @Suppress("UNCHECKED_CAST")
     operator fun <V> get(key: BaseOption<V>): V = get(key.id)
 
+    operator fun <V> get(key: BaseOptionWithDefault<V>): V = if (key.id in optionsMap) {
+        get(key.id)
+    } else {
+        key.defaultValue
+    }
+
     operator fun set(key: String, value: Any?) {
         optionsMap[key] = value
     }
 
-    @Suppress("UNCHECKED_CAST")
     operator fun <V> get(key: String): V {
+        @Suppress("UNCHECKED_CAST")
         return if (key !in optionsMap) {
             error("$key was not set in $optionsName")
         } else optionsMap[key] as V

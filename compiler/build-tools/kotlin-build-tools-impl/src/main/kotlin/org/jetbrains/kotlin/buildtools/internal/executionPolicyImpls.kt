@@ -6,19 +6,13 @@
 package org.jetbrains.kotlin.buildtools.internal
 
 import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
-import org.jetbrains.kotlin.buildtools.api.internal.BaseOption
 import kotlin.time.Duration
 
 internal object InProcessExecutionPolicyImpl : ExecutionPolicy.InProcess
 
 internal class DaemonExecutionPolicyImpl : ExecutionPolicy.WithDaemon {
 
-    private val options: Options by OptionsDelegate()
-
-    init {
-        this[JVM_ARGUMENTS] = null
-        this[SHUTDOWN_DELAY] = null
-    }
+    private val options: Options = Options(ExecutionPolicy.WithDaemon::class)
 
     @UseFromImplModuleRestricted
     override fun <V> get(key: ExecutionPolicy.WithDaemon.Option<V>): V = options[key.id]
@@ -36,17 +30,20 @@ internal class DaemonExecutionPolicyImpl : ExecutionPolicy.WithDaemon {
         options[key] = value
     }
 
-    class Option<V>(id: String) : BaseOption<V>(id)
+    class Option<V> : BaseOptionWithDefault<V> {
+        constructor(id: String) : super(id)
+        constructor(id: String, default: V) : super(id, default = default)
+    }
 
     companion object {
         /**
          * A list of JVM arguments to pass to the Kotlin daemon.
          */
-        val JVM_ARGUMENTS: Option<List<String>?> = Option("JVM_ARGUMENTS")
+        val JVM_ARGUMENTS: Option<List<String>?> = Option("JVM_ARGUMENTS", default = null)
 
         /**
          * The time that the daemon process continues to live after all clients have disconnected.
          */
-        val SHUTDOWN_DELAY: Option<Duration?> = Option("SHUTDOWN_DELAY")
+        val SHUTDOWN_DELAY: Option<Duration?> = Option("SHUTDOWN_DELAY", null)
     }
 }

@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.buildtools.internal.jvm.operations
 import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
 import org.jetbrains.kotlin.buildtools.api.KotlinLogger
 import org.jetbrains.kotlin.buildtools.api.ProjectId
-import org.jetbrains.kotlin.buildtools.api.internal.BaseOption
 import org.jetbrains.kotlin.buildtools.api.jvm.ClassSnapshotGranularity
 import org.jetbrains.kotlin.buildtools.api.jvm.ClasspathEntrySnapshot
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmClasspathSnapshottingOperation
@@ -21,12 +20,7 @@ internal class JvmClasspathSnapshottingOperationImpl(
     private val classpathEntry: Path,
 ) : BuildOperationImpl<ClasspathEntrySnapshot>(), JvmClasspathSnapshottingOperation {
 
-    private val options: Options by OptionsDelegate()
-
-    init {
-        this[GRANULARITY] = ClassSnapshotGranularity.CLASS_MEMBER_LEVEL
-        this[PARSE_INLINED_LOCAL_CLASSES] = true
-    }
+    private val options: Options = Options(JvmClasspathSnapshottingOperation::class)
 
     @UseFromImplModuleRestricted
     override fun <V> get(key: JvmClasspathSnapshottingOperation.Option<V>): V = options[key]
@@ -53,13 +47,16 @@ internal class JvmClasspathSnapshottingOperationImpl(
         options[key] = value
     }
 
-    class Option<V>(id: String) : BaseOption<V>(id)
+    class Option<V> : BaseOptionWithDefault<V> {
+        constructor(id: String) : super(id)
+        constructor(id: String, default: V) : super(id, default = default)
+    }
 
     companion object {
         @JvmField
-        val GRANULARITY: Option<ClassSnapshotGranularity> = Option("GRANULARITY")
+        val GRANULARITY: Option<ClassSnapshotGranularity> = Option("GRANULARITY", ClassSnapshotGranularity.CLASS_MEMBER_LEVEL)
 
         @JvmField
-        val PARSE_INLINED_LOCAL_CLASSES: Option<Boolean> = Option("PARSE_INLINED_LOCAL_CLASSES")
+        val PARSE_INLINED_LOCAL_CLASSES: Option<Boolean> = Option("PARSE_INLINED_LOCAL_CLASSES", true)
     }
 }

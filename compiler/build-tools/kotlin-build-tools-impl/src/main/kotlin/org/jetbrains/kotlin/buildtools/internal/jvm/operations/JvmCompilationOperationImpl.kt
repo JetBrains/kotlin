@@ -16,7 +16,6 @@ import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
 import org.jetbrains.kotlin.buildtools.api.KotlinLogger
 import org.jetbrains.kotlin.buildtools.api.ProjectId
 import org.jetbrains.kotlin.buildtools.api.arguments.ExperimentalCompilerArgument
-import org.jetbrains.kotlin.buildtools.api.internal.BaseOption
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmIncrementalCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationOptions
@@ -29,10 +28,6 @@ import org.jetbrains.kotlin.buildtools.internal.arguments.CommonCompilerArgument
 import org.jetbrains.kotlin.buildtools.internal.arguments.CommonCompilerArgumentsImpl.Companion.X_USE_FIR_IC
 import org.jetbrains.kotlin.buildtools.internal.arguments.JvmCompilerArgumentsImpl
 import org.jetbrains.kotlin.buildtools.internal.jvm.JvmSnapshotBasedIncrementalCompilationOptionsImpl
-import org.jetbrains.kotlin.buildtools.internal.jvm.JvmSnapshotBasedIncrementalCompilationOptionsImpl.Companion.ASSURED_NO_CLASSPATH_SNAPSHOT_CHANGES
-import org.jetbrains.kotlin.buildtools.internal.jvm.JvmSnapshotBasedIncrementalCompilationOptionsImpl.Companion.BACKUP_CLASSES
-import org.jetbrains.kotlin.buildtools.internal.jvm.JvmSnapshotBasedIncrementalCompilationOptionsImpl.Companion.FORCE_RECOMPILATION
-import org.jetbrains.kotlin.buildtools.internal.jvm.JvmSnapshotBasedIncrementalCompilationOptionsImpl.Companion.KEEP_IC_CACHES_IN_MEMORY
 import org.jetbrains.kotlin.buildtools.internal.jvm.JvmSnapshotBasedIncrementalCompilationOptionsImpl.Companion.MODULE_BUILD_DIR
 import org.jetbrains.kotlin.buildtools.internal.jvm.JvmSnapshotBasedIncrementalCompilationOptionsImpl.Companion.OUTPUT_DIRS
 import org.jetbrains.kotlin.buildtools.internal.jvm.JvmSnapshotBasedIncrementalCompilationOptionsImpl.Companion.PRECISE_JAVA_TRACKING
@@ -58,7 +53,6 @@ import java.net.URLClassLoader
 import java.nio.file.Path
 import java.rmi.RemoteException
 import kotlin.io.path.absolutePathString
-import kotlin.io.path.exists
 
 internal class JvmCompilationOperationImpl(
     private val kotlinSources: List<Path>,
@@ -67,13 +61,7 @@ internal class JvmCompilationOperationImpl(
     private val buildIdToSessionFlagFile: MutableMap<ProjectId, File>,
 ) : BuildOperationImpl<CompilationResult>(), JvmCompilationOperation {
 
-    private val options: Options by OptionsDelegate()
-
-    init {
-        this[INCREMENTAL_COMPILATION] = null
-        this[LOOKUP_TRACKER] = null
-        this[KOTLINSCRIPT_EXTENSIONS] = null
-    }
+    private val options: Options = Options(JvmCompilationOperation::class)
 
     @UseFromImplModuleRestricted
     override fun <V> get(key: JvmCompilationOperation.Option<V>): V = options[key]
@@ -91,7 +79,10 @@ internal class JvmCompilationOperationImpl(
         options[key] = value
     }
 
-    class Option<V>(id: String) : BaseOption<V>(id)
+    class Option<V> : BaseOptionWithDefault<V> {
+        constructor(id: String) : super(id)
+        constructor(id: String, default: V) : super(id, default = default)
+    }
 
     override fun createSnapshotBasedIcOptions(): JvmSnapshotBasedIncrementalCompilationOptions {
         return JvmSnapshotBasedIncrementalCompilationOptionsImpl()
@@ -385,44 +376,13 @@ internal class JvmCompilationOperationImpl(
 
 
     companion object {
-        val INCREMENTAL_COMPILATION: Option<JvmIncrementalCompilationConfiguration?> = Option("INCREMENTAL_COMPILATION")
+        val INCREMENTAL_COMPILATION: Option<JvmIncrementalCompilationConfiguration?> = Option("INCREMENTAL_COMPILATION", null)
 
-        val LOOKUP_TRACKER: Option<CompilerLookupTracker?> = Option("LOOKUP_TRACKER")
+        val LOOKUP_TRACKER: Option<CompilerLookupTracker?> = Option("LOOKUP_TRACKER", null)
 
-        val KOTLINSCRIPT_EXTENSIONS: Option<Array<String>?> = Option("KOTLINSCRIPT_EXTENSIONS")
+        val KOTLINSCRIPT_EXTENSIONS: Option<Array<String>?> = Option("KOTLINSCRIPT_EXTENSIONS", null)
     }
 }
-
-private fun JvmSnapshotBasedIncrementalCompilationConfiguration.extractIncrementalCompilationFeatures(): IncrementalCompilationFeatures {
-    val options = options as JvmSnapshotBasedIncrementalCompilationOptionsImpl
-    return IncrementalCompilationFeatures(
-        usePreciseJavaTracking = options[PRECISE_JAVA_TRACKING],
-        withAbiSnapshot = false,
-        preciseCompilationResultsBackup = options[BACKUP_CLASSES],
-        keepIncrementalCompilationCachesInMemory = options[KEEP_IC_CACHES_IN_MEMORY],
-    )
-}
-
-private val JvmSnapshotBasedIncrementalCompilationConfiguration.classpathChanges: ClasspathChanges.ClasspathSnapshotEnabled
-    get() {
-        val options = options as JvmSnapshotBasedIncrementalCompilationOptionsImpl
-        val snapshotFiles =
-            ClasspathSnapshotFiles(dependenciesSnapshotFiles.map { it.toFile() }, shrunkClasspathSnapshot.toFile().parentFile)
-        return when {
-            !shrunkClasspathSnapshot.exists() -> ClasspathChanges.ClasspathSnapshotEnabled.NotAvailableDueToMissingClasspathSnapshot(
-                snapshotFiles
-            )
-            options[FORCE_RECOMPILATION] -> ClasspathChanges.ClasspathSnapshotEnabled.NotAvailableForNonIncrementalRun(
-                snapshotFiles
-            )
-            options[ASSURED_NO_CLASSPATH_SNAPSHOT_CHANGES] -> ClasspathChanges.ClasspathSnapshotEnabled.IncrementalRun.NoChanges(
-                snapshotFiles
-            )
-            else -> {
-                ClasspathChanges.ClasspathSnapshotEnabled.IncrementalRun.ToBeComputedByIncrementalCompiler(snapshotFiles)
-            }
-        }
-    }
 
 private fun checkJvmFirRequirements(
     arguments: JvmCompilerArgumentsImpl,
