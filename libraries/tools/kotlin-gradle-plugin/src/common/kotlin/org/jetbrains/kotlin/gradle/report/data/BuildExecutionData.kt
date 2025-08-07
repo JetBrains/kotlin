@@ -6,8 +6,6 @@
 package org.jetbrains.kotlin.gradle.report.data
 
 import org.jetbrains.kotlin.build.report.metrics.BuildMetrics
-import org.jetbrains.kotlin.build.report.metrics.GradleBuildPerformanceMetric
-import org.jetbrains.kotlin.build.report.metrics.GradleBuildTime
 import org.jetbrains.kotlin.build.report.statistics.BuildStartParameters
 
 data class BuildExecutionData(
@@ -15,7 +13,7 @@ data class BuildExecutionData(
     val failureMessages: List<String?>,
     val buildOperationRecord: Collection<BuildOperationRecord>,
 ) {
-    val aggregatedMetrics = BuildMetrics<GradleBuildTime, GradleBuildPerformanceMetric>().also { acc ->
+    val aggregatedMetrics = BuildMetrics().also { acc ->
         buildOperationRecord.forEach { acc.addAll(it.buildMetrics) }
     }
 

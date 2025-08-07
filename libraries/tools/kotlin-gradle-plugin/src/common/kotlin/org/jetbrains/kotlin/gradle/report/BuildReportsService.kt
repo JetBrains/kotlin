@@ -314,12 +314,12 @@ class BuildReportsService {
 
         val timeData =
             data.getBuildTimesMetrics()
-                .map { (key, value) -> "${key.getReadableString()}: ${value}ms" } //sometimes it is better to have separate variable to be able debug
+                .map { (key, value) -> "${key.readableString}: ${value}ms" } //sometimes it is better to have separate variable to be able debug
         val perfData = data.getPerformanceMetrics().map { (key, value) ->
-            when (key.getType()) {
-                ValueType.BYTES -> "${key.getReadableString()}: ${formatSize(value)}"
+            when (key.type) {
+                ValueType.BYTES -> "${key.readableString}: ${formatSize(value)}"
                 ValueType.MILLISECONDS -> DATE_FORMATTER.format(value)
-                else -> "${key.getReadableString()}: $value"
+                else -> "${key.readableString}: $value"
             }
         }
         timeData.union(perfData).joinTo(readableString, ",", "Performance: [", "]")

@@ -8,7 +8,6 @@ package org.jetbrains.kotlin.gradle
 import org.gradle.api.logging.LogLevel
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.build.report.metrics.DynamicBuildTimeKey
-import org.jetbrains.kotlin.build.report.metrics.GradleBuildTime
 import org.jetbrains.kotlin.build.report.statistics.formatSize
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.internal.build.metrics.GradleBuildMetricsData
@@ -32,6 +31,7 @@ import kotlin.test.assertContains
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
+import  org.jetbrains.kotlin.build.report.metrics.*
 
 @DisplayName("Build reports")
 class BuildReportsIT : KGPBaseTest() {
@@ -946,22 +946,22 @@ class BuildReportsIT : KGPBaseTest() {
                 val jsonReportFile = projectPath.getSingleFileInDir("report")
                 assertTrue { jsonReportFile.exists() }
                 val jsonReport = readJsonReport(jsonReportFile)
-                assertContains(jsonReport.aggregatedMetrics.buildTimes.buildTimesMapMs().keys, GradleBuildTime.NATIVE_IN_PROCESS)
+                assertContains(jsonReport.aggregatedMetrics.buildTimes.buildTimesMapMs().keys, NATIVE_IN_PROCESS)
 
-                val compilerMetrics = GradleBuildTime.COMPILER_PERFORMANCE.allChildrenMetrics()
+                val compilerMetrics = COMPILER_PERFORMANCE.allChildrenMetrics()
                 val reportedCompilerMetrics =
                     jsonReport.aggregatedMetrics.buildTimes.buildTimesMapMs().keys.filter { it in compilerMetrics }
 
                 // Recursively (only two levels) gather leaves of subtree under COMPILER_PERFORMANCE, excluding nodes like CODE_GENERATION
-                val expected = GradleBuildTime.COMPILER_PERFORMANCE.children()?.flatMap { it.children() ?: listOf(it) }
+                val expected = COMPILER_PERFORMANCE.children().flatMap { it.children() }.map { it.name }
                 assertEquals(
                     expected,
-                    reportedCompilerMetrics.sorted()
+                    reportedCompilerMetrics.map { it.name }.sorted()
                 )
 
                 assertTrue {
                     jsonReport.aggregatedMetrics.buildTimes.dynamicBuildTimesMapMs().keys.contains(
-                        DynamicBuildTimeKey("AvoidLocalFOsInInlineFunctionsLowering", GradleBuildTime.IR_PRE_LOWERING)
+                        DynamicBuildTimeKey("AvoidLocalFOsInInlineFunctionsLowering", IR_PRE_LOWERING)
                     )
                 }
                 assertTrue {
@@ -1001,15 +1001,15 @@ class BuildReportsIT : KGPBaseTest() {
                 assertTrue { jsonReportFile.exists() }
                 val jsonReport = readJsonReport(jsonReportFile)
                 val bulidTimesKeys = jsonReport.aggregatedMetrics.buildTimes.buildTimesMapMs().keys
-                assertContains(bulidTimesKeys, GradleBuildTime.NATIVE_IN_PROCESS)
+                assertContains(bulidTimesKeys, NATIVE_IN_PROCESS)
 
-                val compilerMetrics = GradleBuildTime.COMPILER_PERFORMANCE.allChildrenMetrics()
-                val reportedCompilerMetrics = bulidTimesKeys.filter { it in compilerMetrics }
+                val compilerMetrics = COMPILER_PERFORMANCE.children()
+                val reportedCompilerMetrics = bulidTimesKeys.filter { it in compilerMetrics }.map { it.name }
 
                 // Recursively (only two levels) gather leaves of subtree under COMPILER_PERFORMANCE, excluding nodes like CODE_GENERATION
-                val expected = GradleBuildTime.COMPILER_PERFORMANCE.children()?.flatMap { it.children() ?: listOf(it) }
+                val expected = COMPILER_PERFORMANCE.children() + COMPILER_PERFORMANCE.children().flatMap { it.children()}
                 assertEquals(
-                    expected,
+                    expected.map { it.name }.sorted(),
                     reportedCompilerMetrics.sorted()
                 )
 
@@ -1021,7 +1021,7 @@ class BuildReportsIT : KGPBaseTest() {
                         "LateinitLowering", // first lowering in K/N 1st phase lowerings, specific for `+IrIntraModuleInlinerBeforeKlibSerialization` and `+IrCrossModuleInlinerBeforeKlibSerialization` features
                     ),
                     jsonReport.aggregatedMetrics.buildTimes.dynamicBuildTimesMapMs().keys
-                        .filter { it.parent == GradleBuildTime.IR_PRE_LOWERING }
+                        .filter { it.parent == IR_PRE_LOWERING }
                         .map { it.name }
                         .take(4)
                 )

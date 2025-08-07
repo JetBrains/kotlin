@@ -49,7 +49,7 @@ class ReportDataTest {
         assertTrue(statisticData.getTags().contains(StatTag.KOTLIN_2))
     }
 
-    private fun taskRecord(buildMetrics: BuildMetrics<GradleBuildTime, GradleBuildPerformanceMetric>) = TaskRecord(
+    private fun taskRecord(buildMetrics: BuildMetrics) = TaskRecord(
         path = kotlinTaskPath,
         classFqName = "org.jetbrains.kotlin.TestTask",
         startTimeMs = 10,
@@ -68,13 +68,13 @@ class ReportDataTest {
     fun testMetricFilter() {
         val buildOperationRecord = taskRecord(
             BuildMetrics(
-                buildPerformanceMetrics = BuildPerformanceMetrics<GradleBuildPerformanceMetric>().also {
+                buildPerformanceMetrics = BuildPerformanceMetrics().also {
                     it.addLong(GradleBuildPerformanceMetric.COMPILE_ITERATION)
                     it.addLong(GradleBuildPerformanceMetric.CLASSPATH_ENTRY_COUNT)
                     it.addLong(GradleBuildPerformanceMetric.BUNDLE_SIZE)
                     it.addLong(GradleBuildPerformanceMetric.CACHE_DIRECTORY_SIZE)
                 },
-                buildTimes = BuildTimes<GradleBuildTime>().also {
+                buildTimes = BuildTimes().also {
                     it.addTimeMs(GradleBuildTime.STORE_BUILD_INFO, 20)
                     it.addTimeMs(GradleBuildTime.GRADLE_TASK_ACTION, 100)
                     it.addTimeMs(GradleBuildTime.RESTORE_OUTPUT_FROM_BACKUP, 10)
@@ -121,8 +121,8 @@ class ReportDataTest {
         val finishGradleTask = System.nanoTime()
 
         val buildOperationRecord = taskRecord(
-            BuildMetrics<GradleBuildTime, GradleBuildPerformanceMetric>(
-                buildPerformanceMetrics = BuildPerformanceMetrics<GradleBuildPerformanceMetric>().also {
+            BuildMetrics(
+                buildPerformanceMetrics = BuildPerformanceMetrics().also {
                     it.addLong(GradleBuildPerformanceMetric.FINISH_KOTLIN_DAEMON_EXECUTION, System.currentTimeMillis())
                     it.addLong(GradleBuildPerformanceMetric.START_WORKER_EXECUTION, TimeUnit.MILLISECONDS.toNanos(startWorker))
                     it.addLong(GradleBuildPerformanceMetric.START_TASK_ACTION_EXECUTION, startTaskAction)

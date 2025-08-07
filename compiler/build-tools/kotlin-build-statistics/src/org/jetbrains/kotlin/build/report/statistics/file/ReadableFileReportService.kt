@@ -5,24 +5,25 @@
 
 package org.jetbrains.kotlin.build.report.statistics.file
 
-import org.jetbrains.kotlin.build.report.metrics.*
-import org.jetbrains.kotlin.build.report.statistics.*
+import org.jetbrains.kotlin.build.report.statistics.BuildStartParameters
+import org.jetbrains.kotlin.build.report.statistics.CompileStatisticsData
+import org.jetbrains.kotlin.build.report.statistics.FileReportService
 import java.io.File
 
-data class ReadableFileReportData<B : BuildTime, P : BuildPerformanceMetric>(
-    val statisticsData: List<CompileStatisticsData<B, P>>,
+data class ReadableFileReportData(
+    val statisticsData: List<CompileStatisticsData>,
     val startParameters: BuildStartParameters,
     val failureMessages: List<String> = emptyList(),
     val version: Int = 1
 )
 
-open class ReadableFileReportService<B : BuildTime, P : BuildPerformanceMetric>(
+open class ReadableFileReportService(
     buildReportDir: File,
     projectName: String,
     private val printMetrics: Boolean,
-) : FileReportService<ReadableFileReportData<B, P>>(buildReportDir, projectName, "txt") {
+) : FileReportService<ReadableFileReportData>(buildReportDir, projectName, "txt") {
 
-    open fun printCustomTaskMetrics(statisticsData: CompileStatisticsData<B, P>, printer: Printer) {}
+    open fun printCustomTaskMetrics(statisticsData: CompileStatisticsData, printer: Printer) {}
 
     /**
      * Prints general build information, sum up compile metrics and detailed task and transform information.
@@ -30,7 +31,7 @@ open class ReadableFileReportService<B : BuildTime, P : BuildPerformanceMetric>(
      * BuildExecutionData / BuildOperationRecord contains data for both tasks and transforms.
      * We still use the term "tasks" because saying "tasks/transforms" is a bit verbose and "build operations" may sound a bit unfamiliar.
      */
-    override fun printBuildReport(data: ReadableFileReportData<B, P>, outputFile: File) {
+    override fun printBuildReport(data: ReadableFileReportData, outputFile: File) {
         outputFile.bufferedWriter().use { writer ->
             Printer(writer).printBuildReport(data, printMetrics) { compileStatisticsData ->
                 printCustomTaskMetrics(

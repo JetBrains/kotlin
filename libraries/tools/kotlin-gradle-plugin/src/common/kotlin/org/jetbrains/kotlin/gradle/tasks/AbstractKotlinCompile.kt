@@ -233,8 +233,8 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
     fun execute(inputChanges: InputChanges) {
         kotlinGradleBuildServices.orNull // KT-76379: just instantiate the build service if it wasn't yet
         val buildMetrics = metrics.get()
-        buildMetrics.addTimeMetric(GradleBuildPerformanceMetric.START_TASK_ACTION_EXECUTION)
-        buildMetrics.measure(GradleBuildTime.OUT_OF_WORKER_TASK_ACTION) {
+        buildMetrics.addTimeMetric(START_TASK_ACTION_EXECUTION)
+        buildMetrics.measure(OUT_OF_WORKER_TASK_ACTION) {
             buildFusService.orNull?.reportFusMetrics {
                 CompileKotlinTaskMetrics.collectMetrics(
                     name,
@@ -253,7 +253,7 @@ abstract class AbstractKotlinCompile<T : CommonCompilerArguments> @Inject constr
             // To prevent this, we backup outputs before incremental build and restore when exception is thrown
             val outputsBackup: TaskOutputsBackup? =
                 if (isIncrementalCompilationEnabled() && inputChanges.isIncremental)
-                    buildMetrics.measure(GradleBuildTime.BACKUP_OUTPUT) {
+                    buildMetrics.measure(BACKUP_OUTPUT) {
                         TaskOutputsBackup(
                             fileSystemOperations,
                             projectLayout.buildDirectory.dir("snapshot/kotlin/$name"),

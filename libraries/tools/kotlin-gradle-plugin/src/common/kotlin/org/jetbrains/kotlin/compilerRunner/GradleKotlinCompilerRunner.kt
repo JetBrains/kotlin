@@ -60,7 +60,7 @@ internal fun createGradleCompilerRunner(
     taskProvider: GradleCompileTaskProvider,
     toolsJar: File?,
     compilerExecutionSettings: CompilerExecutionSettings,
-    buildMetricsReporter: BuildMetricsReporter<GradleBuildTime, GradleBuildPerformanceMetric>,
+    buildMetricsReporter: BuildMetricsReporter,
     workerExecutor: WorkerExecutor,
     runViaBuildToolsApi: Boolean,
     cachedClassLoadersService: Property<ClassLoadersCachingBuildService>,
@@ -101,7 +101,7 @@ internal open class GradleCompilerRunner(
     protected val taskProvider: GradleCompileTaskProvider,
     protected val jdkToolsJar: File?,
     protected val compilerExecutionSettings: CompilerExecutionSettings,
-    protected val buildMetrics: BuildMetricsReporter<GradleBuildTime, GradleBuildPerformanceMetric>,
+    protected val buildMetrics: BuildMetricsReporter,
     protected val fusMetricsConsumer: StatisticsValuesConsumer?,
 ) {
 
@@ -209,13 +209,13 @@ internal open class GradleCompilerRunner(
         taskOutputsBackup: TaskOutputsBackup?,
     ): WorkQueue? {
         try {
-            buildMetrics.addTimeMetric(GradleBuildPerformanceMetric.CALL_WORKER)
+            buildMetrics.addTimeMetric(CALL_WORKER)
             val kotlinCompilerRunnable = GradleKotlinCompilerWork(workArgs)
             kotlinCompilerRunnable.run()
         } catch (e: FailedCompilationException) {
             // Restore outputs only for CompilationErrorException or OOMErrorException (see GradleKotlinCompilerWorkAction.execute)
             taskOutputsBackup?.tryRestoringOnRecoverableException(e) { restoreAction ->
-                buildMetrics.measure(GradleBuildTime.RESTORE_OUTPUT_FROM_BACKUP) {
+                buildMetrics.measure(RESTORE_OUTPUT_FROM_BACKUP) {
                     restoreAction()
                 }
             }
