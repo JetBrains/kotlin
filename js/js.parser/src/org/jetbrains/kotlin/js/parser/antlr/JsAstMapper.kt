@@ -7,17 +7,66 @@ package org.jetbrains.kotlin.js.parser.antlr
 
 import JavaScriptParser
 import com.google.gwt.dev.js.parserExceptions.JsParserException
-import org.jetbrains.kotlin.js.backend.ast.JsStatement
+import org.antlr.v4.runtime.ParserRuleContext
+import org.jetbrains.kotlin.js.backend.ast.*
 
-class JsAstMapper {
-    @Throws(JsParserException::class)
-    fun mapStatements(nodeStmts: JavaScriptParser.StatementListContext): MutableList<JsStatement?> {
-        return nodeStmts.statement().map {
-            mapStatement(it)
+class JsAstMapper(private val scope: JsScope, private val fileName: String) {
+    companion object {
+        private fun createParserException(message: String, ctx: ParserRuleContext): JsParserException {
+            return JsParserException("Parser encountered internal error: $message", ctx.codePosition)
         }
     }
 
-    private fun mapStatement(statement: JavaScriptParser.StatementContext): JsStatement? {
-
+    public fun mapStatement(statement: ParserRuleContext): JsStatement? {
+        throw NotImplementedError("mapStatement")
     }
+
+    public fun mapFunction(function: ParserRuleContext): JsStatement? {
+        throw NotImplementedError("mapFunction")
+    }
+
+    public fun mapExpression(expression: ParserRuleContext): JsExpression? {
+        val targetExpr = map(expression)
+        if (targetExpr !is JsExpression)
+            throw createParserException("Expecting an expression", expression)
+
+        return targetExpr
+    }
+
+    private fun map(node: ParserRuleContext): JsNode {
+        return mapWithoutLocation(node).applyLocation(node)
+    }
+
+    private fun mapWithoutLocation(node: ParserRuleContext): JsNode {
+        val visitor = JsAstMapperVisitor()
+        return node.accept(visitor)
+    }
+
+    private fun <T : JsNode> T.applyLocation(sourceNode: ParserRuleContext): T =
+        this.also { targetNode ->
+            val location = when (sourceNode) {
+                is JavaScriptParser.FunctionDeclarationContext ->
+                    // For functions, consider their location to be at the opening parenthesis.
+                    sourceNode.OpenParen().symbol.codePosition
+                is JavaScriptParser.MemberDotExpressionContext ->
+                    // For dot-qualified references, consider their position to be at the rightmost name reference.
+                    sourceNode.identifierName().startPosition
+                else ->
+                    sourceNode.startPosition
+            }
+
+            val originalName = when (targetNode) {
+                is JsFunction, is JsVars.JsVar, is JsParameter -> targetNode.name?.toString()
+                else -> null
+            }
+
+            val jsLocation = JsLocation(fileName, location.line, location.offset, originalName)
+
+            when (targetNode) {
+                is SourceInfoAwareJsNode ->
+                    targetNode.source = jsLocation
+                is JsExpressionStatement if targetNode.expression.source == null ->
+                    targetNode.expression.source = jsLocation
+            }
+        }
 }

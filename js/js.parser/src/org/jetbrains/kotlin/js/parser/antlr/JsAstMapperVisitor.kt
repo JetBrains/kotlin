@@ -6,19 +6,14 @@
 package org.jetbrains.kotlin.js.parser.antlr
 
 import JavaScriptParserVisitor
-import org.antlr.v4.runtime.ParserRuleContext
 import org.antlr.v4.runtime.tree.ErrorNode
 import org.antlr.v4.runtime.tree.ParseTree
 import org.antlr.v4.runtime.tree.RuleNode
 import org.antlr.v4.runtime.tree.TerminalNode
 import org.jetbrains.kotlin.js.backend.ast.JsBreak
-import org.jetbrains.kotlin.js.backend.ast.JsLocation
 import org.jetbrains.kotlin.js.backend.ast.JsNode
 
-class JsAstMapper {
-}
-
-class JsAstMapperVisitor(private val offsetLocation: JsLocation) : JavaScriptParserVisitor<JsNode> {
+class JsAstMapperVisitor() : JavaScriptParserVisitor<JsNode> {
     override fun visitProgram(ctx: JavaScriptParser.ProgramContext?): JsNode? {
         TODO("Not yet implemented")
     }
@@ -586,6 +581,56 @@ class JsAstMapperVisitor(private val offsetLocation: JsLocation) : JavaScriptPar
     override fun visitKeyword(ctx: JavaScriptParser.KeywordContext?): JsNode? {
         when (ctx?.start?.type) {
             JavaScriptParser.Break -> return JsBreak()
+            JavaScriptParser.Do -> return JsBreak()
+            JavaScriptParser.Instanceof -> return JsBreak()
+            JavaScriptParser.Typeof -> return JsBreak()
+            JavaScriptParser.Case -> return JsBreak()
+            JavaScriptParser.Else -> return JsBreak()
+            JavaScriptParser.New -> return JsBreak()
+            JavaScriptParser.Var -> return JsBreak()
+            JavaScriptParser.Catch -> return JsBreak()
+            JavaScriptParser.Finally -> return JsBreak()
+            JavaScriptParser.Return -> return JsBreak()
+            JavaScriptParser.Void -> return JsBreak()
+            JavaScriptParser.Continue -> return JsBreak()
+            JavaScriptParser.For -> return JsBreak()
+            JavaScriptParser.Switch -> return JsBreak()
+            JavaScriptParser.While -> return JsBreak()
+            JavaScriptParser.Debugger -> return JsBreak()
+            JavaScriptParser.Function_ -> return JsBreak()
+            JavaScriptParser.This -> return JsBreak()
+            JavaScriptParser.With -> return JsBreak()
+            JavaScriptParser.Default -> return JsBreak()
+            JavaScriptParser.If -> return JsBreak()
+            JavaScriptParser.Throw -> return JsBreak()
+            JavaScriptParser.Delete -> return JsBreak()
+            JavaScriptParser.In -> return JsBreak()
+            JavaScriptParser.Try -> return JsBreak()
+            JavaScriptParser.Class -> return JsBreak()
+            JavaScriptParser.Enum -> return JsBreak()
+            JavaScriptParser.Extends -> return JsBreak()
+            JavaScriptParser.Super -> return JsBreak()
+            JavaScriptParser.Const -> return JsBreak()
+            JavaScriptParser.Export -> return JsBreak()
+            JavaScriptParser.Import -> return JsBreak()
+            JavaScriptParser.Implements -> return JsBreak()
+            JavaScriptParser.NonStrictLet -> return visitLet_(ctx.let_())
+            JavaScriptParser.StrictLet -> return visitLet_(ctx.let_())
+            JavaScriptParser.Private -> return JsBreak()
+            JavaScriptParser.Public -> return JsBreak()
+            JavaScriptParser.Interface -> return JsBreak()
+            JavaScriptParser.Package -> return JsBreak()
+            JavaScriptParser.Protected -> return JsBreak()
+            JavaScriptParser.Static -> return JsBreak()
+            JavaScriptParser.Yield -> return JsBreak()
+            JavaScriptParser.YieldStar -> return JsBreak()
+            JavaScriptParser.Async -> return JsBreak()
+            JavaScriptParser.Await -> return JsBreak()
+            JavaScriptParser.From -> return JsBreak()
+            JavaScriptParser.As -> return JsBreak()
+            JavaScriptParser.Of -> return JsBreak()
+            // For complex nodes like 'let'
+            else -> return visitChildren(ctx)
         }
     }
 
@@ -611,13 +656,5 @@ class JsAstMapperVisitor(private val offsetLocation: JsLocation) : JavaScriptPar
 
     override fun visitErrorNode(node: ErrorNode?): JsNode? {
         TODO("Not yet implemented")
-    }
-
-    private fun ParserRuleContext.getLocation(): JsLocation {
-        val startLine = start.line
-        val startColumn = start.charPositionInLine
-
-        offsetLocation.copy(startLine = startLine, )
-        return JsLocation(offsetLocation.file, offsetLocation.startLine + startLine, startColumn)
     }
 }
