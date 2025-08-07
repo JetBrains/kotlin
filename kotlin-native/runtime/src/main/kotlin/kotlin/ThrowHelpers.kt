@@ -4,6 +4,14 @@
  */
 package kotlin
 
+import kotlin.native.internal.ExportForCppRuntime
+
+@ExportForCppRuntime
+@PublishedApi
+internal fun throwKotlinNothingValueException(): Nothing {
+    throw KotlinNothingValueException()
+}
+
 @PublishedApi
 internal fun throwUninitializedPropertyAccessException(propertyName: String): Nothing {
     throw UninitializedPropertyAccessException("lateinit property $propertyName has not been initialized")

@@ -48,12 +48,6 @@ internal fun ThrowTypeCastException(instance: Any, typeName: String): Nothing {
 
 @ExportForCppRuntime
 @PublishedApi
-internal fun ThrowKotlinNothingValueException(): Nothing {
-    throw KotlinNothingValueException()
-}
-
-@ExportForCppRuntime
-@PublishedApi
 internal fun ThrowInvalidReceiverTypeException(klass: KClass<*>): Nothing {
     throw RuntimeException("Unexpected receiver type: " + (klass.qualifiedName ?: "noname"))
 }

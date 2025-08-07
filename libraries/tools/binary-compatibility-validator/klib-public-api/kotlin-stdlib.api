@@ -9695,6 +9695,9 @@ final fun (kotlin/Long).kotlin/countOneBits(): kotlin/Int // kotlin/countOneBits
 final fun (kotlin/Long).kotlin/countTrailingZeroBits(): kotlin/Int // kotlin/countTrailingZeroBits|countTrailingZeroBits@kotlin.Long(){}[0]
 
 // Targets: [js, native]
+final fun kotlin/throwKotlinNothingValueException(): kotlin/Nothing // kotlin/throwKotlinNothingValueException|throwKotlinNothingValueException(){}[0]
+
+// Targets: [js, native]
 final fun kotlin/uintCompare(kotlin/Int, kotlin/Int): kotlin/Int // kotlin/uintCompare|uintCompare(kotlin.Int;kotlin.Int){}[0]
 
 // Targets: [js, native]
@@ -12802,9 +12805,6 @@ final fun kotlin.native.internal/ThrowClassCastException(kotlin/Any, kotlin.nati
 final fun kotlin.native.internal/ThrowInvalidReceiverTypeException(kotlin.reflect/KClass<*>): kotlin/Nothing // kotlin.native.internal/ThrowInvalidReceiverTypeException|ThrowInvalidReceiverTypeException(kotlin.reflect.KClass<*>){}[0]
 
 // Targets: [native]
-final fun kotlin.native.internal/ThrowKotlinNothingValueException(): kotlin/Nothing // kotlin.native.internal/ThrowKotlinNothingValueException|ThrowKotlinNothingValueException(){}[0]
-
-// Targets: [native]
 final fun kotlin.native.internal/ThrowNoWhenBranchMatchedException(): kotlin/Nothing // kotlin.native.internal/ThrowNoWhenBranchMatchedException|ThrowNoWhenBranchMatchedException(){}[0]
 
 // Targets: [native]
@@ -14883,9 +14883,6 @@ final fun kotlin.js/parseInt(kotlin/String): kotlin/Int // kotlin.js/parseInt|pa
 
 // Targets: [js]
 final fun kotlin.js/parseInt(kotlin/String, kotlin/Int = ...): kotlin/Int // kotlin.js/parseInt|parseInt(kotlin.String;kotlin.Int){}[0]
-
-// Targets: [js]
-final fun kotlin/throwKotlinNothingValueException(): kotlin/Nothing // kotlin/throwKotlinNothingValueException|throwKotlinNothingValueException(){}[0]
 
 // Targets: [js]
 final inline fun (kotlin.js/RegExpMatch).kotlin.js/asArray(): kotlin/Array<out kotlin/String?> // kotlin.js/asArray|asArray@kotlin.js.RegExpMatch(){}[0]
