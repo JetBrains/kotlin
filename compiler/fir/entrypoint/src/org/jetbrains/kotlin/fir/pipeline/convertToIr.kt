@@ -466,7 +466,7 @@ private class Fir2IrPipeline(
         extension: IrGenerationExtension?,
         module: IrModuleFragment,
     ) {
-        if (!fir2IrConfiguration.validateIrAfterPlugins) return
+        if (!fir2IrConfiguration.validateIrForKlibSerialization) return
         val mode =
             if (languageVersionSettings.supportsFeature(LanguageFeature.ForbidCrossFileIrFieldAccessInKlibs)) IrVerificationMode.ERROR
             else IrVerificationMode.WARNING
