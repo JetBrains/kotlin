@@ -1076,35 +1076,32 @@ private fun parseDuration(value: String, strictIso: Boolean, throwException: Boo
 
 private const val INFINITY_STRING = "Infinity"
 
-private const val OVERFLOW_LIMIT = Long.MAX_VALUE / 2
-private const val LAST_DIGIT_MAX = OVERFLOW_LIMIT % 10
-
 @kotlin.internal.InlineOnly
 private inline fun willMultiplyOverflow(a: Long, b: Long): Boolean = when {
     a == 0L -> false
-    a > 0 -> a > OVERFLOW_LIMIT / b
-    else -> a < -OVERFLOW_LIMIT / b
+    a > 0 -> a > MAX_MILLIS / b
+    else -> a < -MAX_MILLIS / b
 }
 
 @kotlin.internal.InlineOnly
 private inline fun Long.multiplyWithoutOverflow(other: Long): Long = when {
-    willMultiplyOverflow(this, other) -> if (this > 0) OVERFLOW_LIMIT else -OVERFLOW_LIMIT
+    willMultiplyOverflow(this, other) -> if (this > 0) MAX_MILLIS else -MAX_MILLIS
     else -> this * other
 }
 
 @kotlin.internal.InlineOnly
 private inline fun willAddOverflow(a: Long, b: Long): Boolean = when {
-    a > 0 && b > 0 -> a > OVERFLOW_LIMIT - b
-    a < 0 && b < 0 -> a < -OVERFLOW_LIMIT - b
+    a > 0 && b > 0 -> a > MAX_MILLIS - b
+    a < 0 && b < 0 -> a < -MAX_MILLIS - b
     else -> false
 }
 
 @kotlin.internal.InlineOnly
 private inline fun Long.addWithoutOverflow(other: Long): Long = when {
-    this == -OVERFLOW_LIMIT && other == OVERFLOW_LIMIT || this == OVERFLOW_LIMIT && other == -OVERFLOW_LIMIT -> Duration.INVALID_RAW_VALUE
-    this == OVERFLOW_LIMIT || other == OVERFLOW_LIMIT -> OVERFLOW_LIMIT
-    this == -OVERFLOW_LIMIT || other == -OVERFLOW_LIMIT -> -OVERFLOW_LIMIT
-    willAddOverflow(this, other) -> if (this > 0) OVERFLOW_LIMIT else -OVERFLOW_LIMIT
+    this == -MAX_MILLIS && other == MAX_MILLIS || this == MAX_MILLIS && other == -MAX_MILLIS -> Duration.INVALID_RAW_VALUE
+    this == MAX_MILLIS || other == MAX_MILLIS -> MAX_MILLIS
+    this == -MAX_MILLIS || other == -MAX_MILLIS -> -MAX_MILLIS
+    willAddOverflow(this, other) -> if (this > 0) MAX_MILLIS else -MAX_MILLIS
     else -> this + other
 }
 
@@ -1128,14 +1125,14 @@ private inline fun String.parseLong(startIndex: Int): NumericParseData {
     }
     while (index < length && this[index] == '0') index++
     var result = 0L
-    val overflowThreshold = OVERFLOW_LIMIT / 10
+    val overflowThreshold = MAX_MILLIS / 10
     while (index < length) {
         val ch = this[index]
         if (ch !in '0'..'9') break
         val digit = ch - '0'
         if (result > overflowThreshold || (result == overflowThreshold && digit > LAST_DIGIT_MAX)) {
             while (index < length && this[index] in '0'..'9') index++
-            return NumericParseData(OVERFLOW_LIMIT * sign, index, sign)
+            return NumericParseData(MAX_MILLIS * sign, index, sign)
         }
         result = result * 10 + digit
         index++
@@ -1409,6 +1406,7 @@ internal const val NANOS_IN_MILLIS = 1_000_000
 internal const val MAX_NANOS = Long.MAX_VALUE / 2 / NANOS_IN_MILLIS * NANOS_IN_MILLIS - 1 // ends in ..._999_999
 // maximum number duration can store in millisecond range, also encodes an infinite value
 internal const val MAX_MILLIS = Long.MAX_VALUE / 2
+private const val LAST_DIGIT_MAX = MAX_MILLIS % 10
 // MAX_NANOS expressed in milliseconds
 private const val MAX_NANOS_IN_MILLIS = MAX_NANOS / NANOS_IN_MILLIS
 
