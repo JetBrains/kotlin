@@ -212,43 +212,37 @@ abstract class LlvmOptimizationPipeline(
     private val targetMachine: LLVMTargetMachineRef by targetMachineDelegate
 
     fun execute(llvmModule: LLVMModuleRef) {
-        val options: LLVMPassBuilderOptionsRef = LLVMCreatePassBuilderOptions()!!
-        try {
-            initLLVMOnce()
-            config.inlineThreshold?.let { threshold ->
-                if (threshold >= 0) {
-                    LLVMPassBuilderOptionsSetInlinerThreshold(options, threshold)
-                }
-            }
-            LLVMPassBuilderOptionsSetMaxDevirtIterations(options, 0)
-            if (config.timePasses) {
-                LLVMSetTimePasses(1)
-            }
-            executeCustomPreprocessing(config, llvmModule)
-            val passDescription = passes.joinToString(",")
-            logger?.log {
-                """
-                    Running ${pipelineName} with the following parameters:
-                    target_triple: ${config.targetTriple}
-                    cpu_model: ${config.cpuModel}
-                    cpu_features: ${config.cpuFeatures}
-                    optimization_level: ${config.optimizationLevel.value}
-                    size_level: ${config.sizeLevel.value}
-                    inline_threshold: ${config.inlineThreshold ?: "default"}
-                    passes: ${passDescription}
-                """.trimIndent()
-            }
-            if (passDescription.isEmpty()) return
-            val errorCode = LLVMRunPasses(llvmModule, passDescription, targetMachine, options)
-            require(errorCode == null) {
-                LLVMGetErrorMessage(errorCode)!!.toKString()
-            }
-            if (config.timePasses) {
-                LLVMPrintAllTimersToStdOut()
-                LLVMClearAllTimers()
-            }
-        } finally {
-            LLVMDisposePassBuilderOptions(options)
+        initLLVMOnce()
+        if (config.timePasses) {
+            LLVMSetTimePasses(1)
+        }
+        executeCustomPreprocessing(config, llvmModule)
+        val passDescription = passes.joinToString(",")
+        logger?.log {
+            """
+                Running ${pipelineName} with the following parameters:
+                target_triple: ${config.targetTriple}
+                cpu_model: ${config.cpuModel}
+                cpu_features: ${config.cpuFeatures}
+                optimization_level: ${config.optimizationLevel.value}
+                size_level: ${config.sizeLevel.value}
+                inline_threshold: ${config.inlineThreshold ?: "default"}
+                passes: ${passDescription}
+            """.trimIndent()
+        }
+        if (passDescription.isEmpty()) return
+        val errorCode = LLVMKotlinRunPasses(
+                llvmModule,
+                passDescription,
+                targetMachine,
+                InlinerThreshold = config.inlineThreshold ?: -1,
+        )
+        require(errorCode == null) {
+            LLVMGetErrorMessage(errorCode)!!.toKString()
+        }
+        if (config.timePasses) {
+            LLVMPrintAllTimersToStdOut()
+            LLVMClearAllTimers()
         }
     }
 

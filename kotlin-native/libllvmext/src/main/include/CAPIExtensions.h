@@ -6,8 +6,10 @@
 #define LIBLLVMEXT_EXTENSIONS_H
 
 #include <llvm-c/Core.h>
+#include <llvm-c/Error.h>
 #include <llvm-c/Target.h>
-
+#include <llvm-c/TargetMachine.h>
+#include <llvm-c/Transforms/PassBuilder.h>
 
 # ifdef __cplusplus
 extern "C" {
@@ -27,6 +29,14 @@ void LLVMPrintAllTimersToStdOut(void);
 
 /// Clear all LLVM timers. Allows avoiding automatic printing on shutdown
 void LLVMClearAllTimers(void);
+
+/// Run `Passes` on module `M`.
+LLVMErrorRef LLVMKotlinRunPasses(
+        LLVMModuleRef M,
+        const char *Passes,
+        LLVMTargetMachineRef TM,
+        int InlinerThreshold
+);
 
 # ifdef __cplusplus
 }
