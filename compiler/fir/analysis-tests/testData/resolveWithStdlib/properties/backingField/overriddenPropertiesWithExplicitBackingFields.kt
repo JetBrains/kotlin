@@ -2,7 +2,7 @@
 open class A {
     open <!VAR_PROPERTY_WITH_EXPLICIT_BACKING_FIELD!>var<!> it: Number
         <!NON_FINAL_PROPERTY_WITH_EXPLICIT_BACKING_FIELD!>private field = 3<!>
-        <!PROPERTY_WITH_EXPLICIT_FIELD_AND_ACCESSORS!>set(value)<!> {
+        set(value) {
             field = value.toInt()
         }
 
