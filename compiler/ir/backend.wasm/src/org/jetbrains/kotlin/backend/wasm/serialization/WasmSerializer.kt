@@ -671,11 +671,13 @@ class WasmSerializer(outputStream: OutputStream) {
 
     private fun serializeBuiltinIdSignatures(builtinIdSignatures: BuiltinIdSignatures) {
         serializeNullable(builtinIdSignatures.throwable, ::serializeIdSignature)
+        serializeNullable(builtinIdSignatures.kotlinAny, ::serializeIdSignature)
         serializeNullable(builtinIdSignatures.tryGetAssociatedObject, ::serializeIdSignature)
         serializeNullable(builtinIdSignatures.jsToKotlinAnyAdapter, ::serializeIdSignature)
         serializeNullable(builtinIdSignatures.unitGetInstance, ::serializeIdSignature)
         serializeNullable(builtinIdSignatures.runRootSuites, ::serializeIdSignature)
         serializeNullable(builtinIdSignatures.createString, ::serializeIdSignature)
+        serializeNullable(builtinIdSignatures.registerModuleDescriptor, ::serializeIdSignature)
     }
 
     private fun serializeClassAssociatedObjects(classAssociatedObjects: ClassAssociatedObjects) {

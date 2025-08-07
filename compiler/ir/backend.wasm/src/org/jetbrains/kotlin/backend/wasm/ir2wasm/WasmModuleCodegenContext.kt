@@ -147,17 +147,21 @@ class WasmFileCodegenContext(
 
     fun defineBuiltinIdSignatures(
         throwable: IrClassSymbol?,
+        kotlinAny: IrClassSymbol?,
         tryGetAssociatedObject: IrFunctionSymbol?,
         jsToKotlinAnyAdapter: IrFunctionSymbol?,
         unitGetInstance: IrFunctionSymbol?,
         runRootSuites: IrFunctionSymbol?,
         createString: IrFunctionSymbol?,
+        registerModuleDescriptor: IrFunctionSymbol?,
     ) {
-        if (throwable != null || tryGetAssociatedObject != null || jsToKotlinAnyAdapter != null || unitGetInstance != null || runRootSuites != null || createString != null) {
+        if (throwable != null || kotlinAny != null || tryGetAssociatedObject != null || jsToKotlinAnyAdapter != null || unitGetInstance != null || runRootSuites != null || createString != null || registerModuleDescriptor != null) {
             val originalSignatures = wasmFileFragment.builtinIdSignatures
             wasmFileFragment.builtinIdSignatures = BuiltinIdSignatures(
                 throwable = originalSignatures?.throwable
                     ?: throwable?.getReferenceKey(),
+                kotlinAny = originalSignatures?.kotlinAny
+                    ?: kotlinAny?.getReferenceKey(),
                 tryGetAssociatedObject = originalSignatures?.tryGetAssociatedObject
                     ?: tryGetAssociatedObject?.getReferenceKey(),
                 jsToKotlinAnyAdapter = originalSignatures?.jsToKotlinAnyAdapter
@@ -168,6 +172,8 @@ class WasmFileCodegenContext(
                     ?: runRootSuites?.getReferenceKey(),
                 createString = originalSignatures?.createString
                     ?: createString?.getReferenceKey(),
+                registerModuleDescriptor = originalSignatures?.registerModuleDescriptor
+                    ?: registerModuleDescriptor?.getReferenceKey(),
             )
         }
     }
