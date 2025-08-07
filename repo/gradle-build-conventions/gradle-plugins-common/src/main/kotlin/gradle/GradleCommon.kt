@@ -20,6 +20,7 @@ import org.gradle.api.attributes.java.TargetJvmVersion
 import org.gradle.api.attributes.plugin.GradlePluginApiVersion
 import org.gradle.api.component.AdhocComponentWithVariants
 import org.gradle.api.file.SourceDirectorySet
+import org.gradle.api.model.ObjectFactory
 import org.gradle.api.plugins.JavaBasePlugin
 import org.gradle.api.plugins.JavaLibraryPlugin
 import org.gradle.api.plugins.JavaPlugin
@@ -477,9 +478,9 @@ fun Project.reconfigureMainSourcesSetForGradlePlugin(
             compileClasspathConfigurationName,
             runtimeClasspathConfigurationName,
         ).forEach {
-            configurations.getByName(it).attributes.attribute(
-                GradlePluginApiVersion.GRADLE_PLUGIN_API_VERSION_ATTRIBUTE,
-                objects.named(GradlePluginVariant.GRADLE_MIN.minimalSupportedGradleVersion),
+            configurations.getByName(it).useDependenciesCompiledForGradle(
+                GradlePluginVariant.GRADLE_MIN,
+                objects,
             )
         }
     }
@@ -556,12 +557,10 @@ private fun Project.createGradlePluginVariant(
 
     configurations.configureEach {
         if (this@configureEach.name.startsWith(variantSourceSet.name) && (isCanBeResolved || isCanBeConsumed)) {
-            attributes {
-                attribute(
-                    GradlePluginApiVersion.GRADLE_PLUGIN_API_VERSION_ATTRIBUTE,
-                    objects.named(variant.minimalSupportedGradleVersion)
-                )
-            }
+            useDependenciesCompiledForGradle(
+                variant,
+                objects,
+            )
         }
     }
 
@@ -892,3 +891,19 @@ fun Project.createGradlePluginVariants(
         )
     }
 }
+
+fun Configuration.useDependenciesCompiledForGradle(
+    variant: GradlePluginVariant,
+    objects: ObjectFactory,
+) = useDependenciesCompiledForGradle(
+    variant.minimalSupportedGradleVersion,
+    objects,
+)
+
+fun Configuration.useDependenciesCompiledForGradle(
+    version: String,
+    objects: ObjectFactory,
+) = attributes.attribute(
+    GradlePluginApiVersion.GRADLE_PLUGIN_API_VERSION_ATTRIBUTE,
+    objects.named(version),
+)
