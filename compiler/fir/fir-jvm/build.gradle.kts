@@ -15,7 +15,7 @@ dependencies {
     implementation(project(":compiler:fir:checkers"))
     implementation(project(":compiler:fir:fir-deserialization"))
 
-    implementation(project(":core:deserialization.common.jvm"))
+    api(project(":core:deserialization.common.jvm"))
 
     compileOnly(intellijCore())
     compileOnly(libs.intellij.asm)

@@ -24,7 +24,6 @@ dependencies {
     testFixturesApi(project(":compiler:serialization"))
     testFixturesApi(project(":compiler:fir:entrypoint"))
     testFixturesApi(project(":compiler:fir:fir2ir:jvm-backend"))
-    testFixturesApi(project(":compiler:fir:fir-deserialization"))
     testFixturesApi(project(":compiler:backend.jvm.entrypoint"))
     testFixturesApi(testFixtures(project(":compiler:test-infrastructure-utils")))
     testFixturesApi(project(":kotlin-preloader"))
