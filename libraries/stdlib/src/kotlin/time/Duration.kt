@@ -1280,10 +1280,7 @@ private inline fun parseDefaultStringFormat(
             else -> error("Unknown unit: $unit")
         }
         totalNanos += fractionValue.toNanos(unit)
-        index += when (unit) {
-            DurationUnit.MILLISECONDS, DurationUnit.MICROSECONDS, DurationUnit.NANOSECONDS -> 2
-            else -> 1
-        }
+        index += unit.length
         if (inFractionalPart && index < length) return throwExceptionOrInvalid(throwException, "Fractional component must be last")
     }
     return totalMillis.toDuration(DurationUnit.MILLISECONDS) + totalNanos.toDuration(DurationUnit.NANOSECONDS)
