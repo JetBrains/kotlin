@@ -27,14 +27,19 @@ import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.ir.visitors.acceptVoid
 
-typealias ReportIrValidationError = (IrFile?, IrElement, String, List<IrElement>) -> Unit
+class IrValidationError(
+    val file: IrFile?,
+    val element: IrElement,
+    val message: String,
+    val parentChain: List<IrElement>,
+)
 
 open class IrValidationException(message: String? = null, cause: Throwable? = null) : IllegalStateException(message, cause)
 
 private class IrValidator(
     val validatorConfig: IrValidatorConfig,
     val irBuiltIns: IrBuiltIns,
-    val reportError: ReportIrValidationError,
+    val reportError: (IrValidationError) -> Unit,
 ) : IrVisitorVoid() {
     override fun visitElement(element: IrElement) =
         throw IllegalStateException("IR validation must start from files, modules, or declarations")
@@ -109,7 +114,7 @@ private fun performBasicIrValidation(
     element: IrElement,
     irBuiltIns: IrBuiltIns,
     validatorConfig: IrValidatorConfig,
-    reportError: ReportIrValidationError,
+    reportError: (IrValidationError) -> Unit,
 ) {
     // Phase 1: Traverse the IR tree to check for structural consistency.
     // If any issues are detected, validation stops here to avoid problems like infinite recursion during the next phase.
@@ -142,13 +147,7 @@ sealed interface IrValidationContext {
     /**
      * Logs the validation error into the underlying [MessageCollector].
      */
-    fun reportIrValidationError(
-        file: IrFile?,
-        element: IrElement,
-        message: String,
-        phaseName: String,
-        parentChain: List<IrElement> = emptyList(),
-    )
+    fun reportIrValidationError(phaseName: String, error: IrValidationError)
 
     /**
      * Allows to abort the compilation process if after or during validating the IR there were errors and the verification mode is
@@ -171,8 +170,8 @@ sealed interface IrValidationContext {
         phaseName: String,
         config: IrValidatorConfig,
     ) {
-        performBasicIrValidation(fragment, irBuiltIns, config) { file, element, message, parentChain ->
-            reportIrValidationError(file, element, message, phaseName, parentChain)
+        performBasicIrValidation(fragment, irBuiltIns, config) { error ->
+            reportIrValidationError(phaseName, error)
         }
     }
 }
@@ -186,13 +185,7 @@ private class IrValidationContextImpl(
 
     private var hasValidationErrors: Boolean = false
 
-    override fun reportIrValidationError(
-        file: IrFile?,
-        element: IrElement,
-        message: String,
-        phaseName: String,
-        parentChain: List<IrElement>,
-    ) {
+    override fun reportIrValidationError(phaseName: String, error: IrValidationError) {
         val severity = when (mode) {
             IrVerificationMode.WARNING -> CompilerMessageSeverity.WARNING
             IrVerificationMode.ERROR -> CompilerMessageSeverity.ERROR
@@ -211,16 +204,16 @@ private class IrValidationContextImpl(
                     append(customMessagePrefix)
                     append(" ")
                 }
-                appendLine(message)
-                append(element.render())
-                for ((i, parent) in parentChain.asReversed().withIndex()) {
+                appendLine(error.message)
+                append(error.element.render())
+                for ((i, parent) in error.parentChain.asReversed().withIndex()) {
                     appendLine()
                     append("  ".repeat(i + 1))
                     append("inside ")
                     append(parent.render())
                 }
             },
-            file?.let(element::getCompilerMessageLocation),
+            error.file?.let(error.element::getCompilerMessageLocation),
         )
     }
 
