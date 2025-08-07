@@ -151,12 +151,6 @@
                             "group": "org.jetbrains.kotlin",
                             "module": "kotlin-stdlib-jdk8"
                         }
-                    ],
-                    "requestedCapabilities": [
-                        {
-                            "group": "org.jetbrains.kotlin",
-                            "name": "kotlin-gradle-plugin-api-gradle80"
-                        }
                     ]
                 }
             ],
@@ -174,7 +168,7 @@
             "capabilities": [
                 {
                     "group": "org.jetbrains.kotlin",
-                    "name": "kotlin-gradle-plugin-model-gradle80",
+                    "name": "kotlin-gradle-plugin-model",
                     "version": "ArtifactsTest.version"
                 }
             ]
@@ -202,7 +196,7 @@
             "capabilities": [
                 {
                     "group": "org.jetbrains.kotlin",
-                    "name": "kotlin-gradle-plugin-model-gradle80",
+                    "name": "kotlin-gradle-plugin-model",
                     "version": "ArtifactsTest.version"
                 }
             ]
@@ -250,12 +244,6 @@
                             "group": "org.jetbrains.kotlin",
                             "module": "kotlin-stdlib-jdk8"
                         }
-                    ],
-                    "requestedCapabilities": [
-                        {
-                            "group": "org.jetbrains.kotlin",
-                            "name": "kotlin-gradle-plugin-api-gradle80"
-                        }
                     ]
                 }
             ],
@@ -273,7 +261,7 @@
             "capabilities": [
                 {
                     "group": "org.jetbrains.kotlin",
-                    "name": "kotlin-gradle-plugin-model-gradle80",
+                    "name": "kotlin-gradle-plugin-model",
                     "version": "ArtifactsTest.version"
                 }
             ]
@@ -301,7 +289,7 @@
             "capabilities": [
                 {
                     "group": "org.jetbrains.kotlin",
-                    "name": "kotlin-gradle-plugin-model-gradle80",
+                    "name": "kotlin-gradle-plugin-model",
                     "version": "ArtifactsTest.version"
                 }
             ]
@@ -349,12 +337,6 @@
                             "group": "org.jetbrains.kotlin",
                             "module": "kotlin-stdlib-jdk8"
                         }
-                    ],
-                    "requestedCapabilities": [
-                        {
-                            "group": "org.jetbrains.kotlin",
-                            "name": "kotlin-gradle-plugin-api-gradle811"
-                        }
                     ]
                 }
             ],
@@ -372,7 +354,7 @@
             "capabilities": [
                 {
                     "group": "org.jetbrains.kotlin",
-                    "name": "kotlin-gradle-plugin-model-gradle811",
+                    "name": "kotlin-gradle-plugin-model",
                     "version": "ArtifactsTest.version"
                 }
             ]
@@ -400,7 +382,7 @@
             "capabilities": [
                 {
                     "group": "org.jetbrains.kotlin",
-                    "name": "kotlin-gradle-plugin-model-gradle811",
+                    "name": "kotlin-gradle-plugin-model",
                     "version": "ArtifactsTest.version"
                 }
             ]
@@ -448,12 +430,6 @@
                             "group": "org.jetbrains.kotlin",
                             "module": "kotlin-stdlib-jdk8"
                         }
-                    ],
-                    "requestedCapabilities": [
-                        {
-                            "group": "org.jetbrains.kotlin",
-                            "name": "kotlin-gradle-plugin-api-gradle811"
-                        }
                     ]
                 }
             ],
@@ -471,7 +447,7 @@
             "capabilities": [
                 {
                     "group": "org.jetbrains.kotlin",
-                    "name": "kotlin-gradle-plugin-model-gradle811",
+                    "name": "kotlin-gradle-plugin-model",
                     "version": "ArtifactsTest.version"
                 }
             ]
@@ -499,7 +475,7 @@
             "capabilities": [
                 {
                     "group": "org.jetbrains.kotlin",
-                    "name": "kotlin-gradle-plugin-model-gradle811",
+                    "name": "kotlin-gradle-plugin-model",
                     "version": "ArtifactsTest.version"
                 }
             ]
@@ -547,12 +523,6 @@
                             "group": "org.jetbrains.kotlin",
                             "module": "kotlin-stdlib-jdk8"
                         }
-                    ],
-                    "requestedCapabilities": [
-                        {
-                            "group": "org.jetbrains.kotlin",
-                            "name": "kotlin-gradle-plugin-api-gradle813"
-                        }
                     ]
                 }
             ],
@@ -570,7 +540,7 @@
             "capabilities": [
                 {
                     "group": "org.jetbrains.kotlin",
-                    "name": "kotlin-gradle-plugin-model-gradle813",
+                    "name": "kotlin-gradle-plugin-model",
                     "version": "ArtifactsTest.version"
                 }
             ]
@@ -598,7 +568,7 @@
             "capabilities": [
                 {
                     "group": "org.jetbrains.kotlin",
-                    "name": "kotlin-gradle-plugin-model-gradle813",
+                    "name": "kotlin-gradle-plugin-model",
                     "version": "ArtifactsTest.version"
                 }
             ]
@@ -646,12 +616,6 @@
                             "group": "org.jetbrains.kotlin",
                             "module": "kotlin-stdlib-jdk8"
                         }
-                    ],
-                    "requestedCapabilities": [
-                        {
-                            "group": "org.jetbrains.kotlin",
-                            "name": "kotlin-gradle-plugin-api-gradle813"
-                        }
                     ]
                 }
             ],
@@ -669,7 +633,7 @@
             "capabilities": [
                 {
                     "group": "org.jetbrains.kotlin",
-                    "name": "kotlin-gradle-plugin-model-gradle813",
+                    "name": "kotlin-gradle-plugin-model",
                     "version": "ArtifactsTest.version"
                 }
             ]
@@ -697,7 +661,7 @@
             "capabilities": [
                 {
                     "group": "org.jetbrains.kotlin",
-                    "name": "kotlin-gradle-plugin-model-gradle813",
+                    "name": "kotlin-gradle-plugin-model",
                     "version": "ArtifactsTest.version"
                 }
             ]
@@ -745,12 +709,6 @@
                             "group": "org.jetbrains.kotlin",
                             "module": "kotlin-stdlib-jdk8"
                         }
-                    ],
-                    "requestedCapabilities": [
-                        {
-                            "group": "org.jetbrains.kotlin",
-                            "name": "kotlin-gradle-plugin-api-gradle81"
-                        }
                     ]
                 }
             ],
@@ -768,7 +726,7 @@
             "capabilities": [
                 {
                     "group": "org.jetbrains.kotlin",
-                    "name": "kotlin-gradle-plugin-model-gradle81",
+                    "name": "kotlin-gradle-plugin-model",
                     "version": "ArtifactsTest.version"
                 }
             ]
@@ -796,7 +754,7 @@
             "capabilities": [
                 {
                     "group": "org.jetbrains.kotlin",
-                    "name": "kotlin-gradle-plugin-model-gradle81",
+                    "name": "kotlin-gradle-plugin-model",
                     "version": "ArtifactsTest.version"
                 }
             ]
@@ -844,12 +802,6 @@
                             "group": "org.jetbrains.kotlin",
                             "module": "kotlin-stdlib-jdk8"
                         }
-                    ],
-                    "requestedCapabilities": [
-                        {
-                            "group": "org.jetbrains.kotlin",
-                            "name": "kotlin-gradle-plugin-api-gradle81"
-                        }
                     ]
                 }
             ],
@@ -867,7 +819,7 @@
             "capabilities": [
                 {
                     "group": "org.jetbrains.kotlin",
-                    "name": "kotlin-gradle-plugin-model-gradle81",
+                    "name": "kotlin-gradle-plugin-model",
                     "version": "ArtifactsTest.version"
                 }
             ]
@@ -895,7 +847,7 @@
             "capabilities": [
                 {
                     "group": "org.jetbrains.kotlin",
-                    "name": "kotlin-gradle-plugin-model-gradle81",
+                    "name": "kotlin-gradle-plugin-model",
                     "version": "ArtifactsTest.version"
                 }
             ]
@@ -943,12 +895,6 @@
                             "group": "org.jetbrains.kotlin",
                             "module": "kotlin-stdlib-jdk8"
                         }
-                    ],
-                    "requestedCapabilities": [
-                        {
-                            "group": "org.jetbrains.kotlin",
-                            "name": "kotlin-gradle-plugin-api-gradle82"
-                        }
                     ]
                 }
             ],
@@ -966,7 +912,7 @@
             "capabilities": [
                 {
                     "group": "org.jetbrains.kotlin",
-                    "name": "kotlin-gradle-plugin-model-gradle82",
+                    "name": "kotlin-gradle-plugin-model",
                     "version": "ArtifactsTest.version"
                 }
             ]
@@ -994,7 +940,7 @@
             "capabilities": [
                 {
                     "group": "org.jetbrains.kotlin",
-                    "name": "kotlin-gradle-plugin-model-gradle82",
+                    "name": "kotlin-gradle-plugin-model",
                     "version": "ArtifactsTest.version"
                 }
             ]
@@ -1042,12 +988,6 @@
                             "group": "org.jetbrains.kotlin",
                             "module": "kotlin-stdlib-jdk8"
                         }
-                    ],
-                    "requestedCapabilities": [
-                        {
-                            "group": "org.jetbrains.kotlin",
-                            "name": "kotlin-gradle-plugin-api-gradle82"
-                        }
                     ]
                 }
             ],
@@ -1065,7 +1005,7 @@
             "capabilities": [
                 {
                     "group": "org.jetbrains.kotlin",
-                    "name": "kotlin-gradle-plugin-model-gradle82",
+                    "name": "kotlin-gradle-plugin-model",
                     "version": "ArtifactsTest.version"
                 }
             ]
@@ -1093,7 +1033,7 @@
             "capabilities": [
                 {
                     "group": "org.jetbrains.kotlin",
-                    "name": "kotlin-gradle-plugin-model-gradle82",
+                    "name": "kotlin-gradle-plugin-model",
                     "version": "ArtifactsTest.version"
                 }
             ]
@@ -1141,12 +1081,6 @@
                             "group": "org.jetbrains.kotlin",
                             "module": "kotlin-stdlib-jdk8"
                         }
-                    ],
-                    "requestedCapabilities": [
-                        {
-                            "group": "org.jetbrains.kotlin",
-                            "name": "kotlin-gradle-plugin-api-gradle85"
-                        }
                     ]
                 }
             ],
@@ -1164,7 +1098,7 @@
             "capabilities": [
                 {
                     "group": "org.jetbrains.kotlin",
-                    "name": "kotlin-gradle-plugin-model-gradle85",
+                    "name": "kotlin-gradle-plugin-model",
                     "version": "ArtifactsTest.version"
                 }
             ]
@@ -1192,7 +1126,7 @@
             "capabilities": [
                 {
                     "group": "org.jetbrains.kotlin",
-                    "name": "kotlin-gradle-plugin-model-gradle85",
+                    "name": "kotlin-gradle-plugin-model",
                     "version": "ArtifactsTest.version"
                 }
             ]
@@ -1240,12 +1174,6 @@
                             "group": "org.jetbrains.kotlin",
                             "module": "kotlin-stdlib-jdk8"
                         }
-                    ],
-                    "requestedCapabilities": [
-                        {
-                            "group": "org.jetbrains.kotlin",
-                            "name": "kotlin-gradle-plugin-api-gradle85"
-                        }
                     ]
                 }
             ],
@@ -1263,7 +1191,7 @@
             "capabilities": [
                 {
                     "group": "org.jetbrains.kotlin",
-                    "name": "kotlin-gradle-plugin-model-gradle85",
+                    "name": "kotlin-gradle-plugin-model",
                     "version": "ArtifactsTest.version"
                 }
             ]
@@ -1291,7 +1219,7 @@
             "capabilities": [
                 {
                     "group": "org.jetbrains.kotlin",
-                    "name": "kotlin-gradle-plugin-model-gradle85",
+                    "name": "kotlin-gradle-plugin-model",
                     "version": "ArtifactsTest.version"
                 }
             ]
@@ -1339,12 +1267,6 @@
                             "group": "org.jetbrains.kotlin",
                             "module": "kotlin-stdlib-jdk8"
                         }
-                    ],
-                    "requestedCapabilities": [
-                        {
-                            "group": "org.jetbrains.kotlin",
-                            "name": "kotlin-gradle-plugin-api-gradle86"
-                        }
                     ]
                 }
             ],
@@ -1362,7 +1284,7 @@
             "capabilities": [
                 {
                     "group": "org.jetbrains.kotlin",
-                    "name": "kotlin-gradle-plugin-model-gradle86",
+                    "name": "kotlin-gradle-plugin-model",
                     "version": "ArtifactsTest.version"
                 }
             ]
@@ -1390,7 +1312,7 @@
             "capabilities": [
                 {
                     "group": "org.jetbrains.kotlin",
-                    "name": "kotlin-gradle-plugin-model-gradle86",
+                    "name": "kotlin-gradle-plugin-model",
                     "version": "ArtifactsTest.version"
                 }
             ]
@@ -1438,12 +1360,6 @@
                             "group": "org.jetbrains.kotlin",
                             "module": "kotlin-stdlib-jdk8"
                         }
-                    ],
-                    "requestedCapabilities": [
-                        {
-                            "group": "org.jetbrains.kotlin",
-                            "name": "kotlin-gradle-plugin-api-gradle86"
-                        }
                     ]
                 }
             ],
@@ -1461,7 +1377,7 @@
             "capabilities": [
                 {
                     "group": "org.jetbrains.kotlin",
-                    "name": "kotlin-gradle-plugin-model-gradle86",
+                    "name": "kotlin-gradle-plugin-model",
                     "version": "ArtifactsTest.version"
                 }
             ]
@@ -1489,7 +1405,7 @@
             "capabilities": [
                 {
                     "group": "org.jetbrains.kotlin",
-                    "name": "kotlin-gradle-plugin-model-gradle86",
+                    "name": "kotlin-gradle-plugin-model",
                     "version": "ArtifactsTest.version"
                 }
             ]
@@ -1537,12 +1453,6 @@
                             "group": "org.jetbrains.kotlin",
                             "module": "kotlin-stdlib-jdk8"
                         }
-                    ],
-                    "requestedCapabilities": [
-                        {
-                            "group": "org.jetbrains.kotlin",
-                            "name": "kotlin-gradle-plugin-api-gradle88"
-                        }
                     ]
                 }
             ],
@@ -1560,7 +1470,7 @@
             "capabilities": [
                 {
                     "group": "org.jetbrains.kotlin",
-                    "name": "kotlin-gradle-plugin-model-gradle88",
+                    "name": "kotlin-gradle-plugin-model",
                     "version": "ArtifactsTest.version"
                 }
             ]
@@ -1588,7 +1498,7 @@
             "capabilities": [
                 {
                     "group": "org.jetbrains.kotlin",
-                    "name": "kotlin-gradle-plugin-model-gradle88",
+                    "name": "kotlin-gradle-plugin-model",
                     "version": "ArtifactsTest.version"
                 }
             ]
@@ -1636,12 +1546,6 @@
                             "group": "org.jetbrains.kotlin",
                             "module": "kotlin-stdlib-jdk8"
                         }
-                    ],
-                    "requestedCapabilities": [
-                        {
-                            "group": "org.jetbrains.kotlin",
-                            "name": "kotlin-gradle-plugin-api-gradle88"
-                        }
                     ]
                 }
             ],
@@ -1659,7 +1563,7 @@
             "capabilities": [
                 {
                     "group": "org.jetbrains.kotlin",
-                    "name": "kotlin-gradle-plugin-model-gradle88",
+                    "name": "kotlin-gradle-plugin-model",
                     "version": "ArtifactsTest.version"
                 }
             ]
@@ -1687,7 +1591,7 @@
             "capabilities": [
                 {
                     "group": "org.jetbrains.kotlin",
-                    "name": "kotlin-gradle-plugin-model-gradle88",
+                    "name": "kotlin-gradle-plugin-model",
                     "version": "ArtifactsTest.version"
                 }
             ]
