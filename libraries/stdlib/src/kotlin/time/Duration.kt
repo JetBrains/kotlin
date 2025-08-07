@@ -1113,15 +1113,17 @@ private const val MILLIS_PER_DAY = MILLIS_PER_HOUR * 24L
 private data class NumericParseData(val value: Long, val index: Int, val sign: Int = 1)
 
 @kotlin.internal.InlineOnly
-private inline fun String.parseLong(startIndex: Int): NumericParseData {
+private inline fun String.parseLong(startIndex: Int, withSign: Boolean = true): NumericParseData {
     var sign = 1
     var index = startIndex
-    val firstChar = this[index]
-    if (firstChar == '-') {
-        sign = -1
-        index++
-    } else if (firstChar == '+') {
-        index++
+    if (withSign) {
+        val firstChar = this[index]
+        if (firstChar == '-') {
+            sign = -1
+            index++
+        } else if (firstChar == '+') {
+            index++
+        }
     }
     while (index < length && this[index] == '0') index++
     var result = 0L
@@ -1217,7 +1219,8 @@ private inline fun parseIsoStringFormat(
     return totalMillis.toDuration(DurationUnit.MILLISECONDS) + totalNanos.toDuration(DurationUnit.NANOSECONDS)
 }
 
-private fun foo(
+@kotlin.internal.InlineOnly
+private inline fun parseDefaultStringFormat(
     value: String,
     startIndex: Int,
     initialLength: Int,
@@ -1234,86 +1237,56 @@ private fun foo(
     var afterFirst = false
     var totalMillis = 0L
     var totalNanos = 0L
-    while (index < length) {
-        if (afterFirst && allowSpaces) {
-            index = value.skipWhile(index) { it == ' ' }
-        }
-        afterFirst = true
-        val prevIndex = index
-        val (longValue, nextIndex, sign) = value.parseLong(index)
-        index = nextIndex
-        if (index == length || index == prevIndex) return throwExceptionOrInvalid(throwException)
-    }
-
-    return Duration.ZERO
-}
-
-@kotlin.internal.InlineOnly
-private inline fun parseDefaultStringFormat(
-    value: String,
-    startIndex: Int,
-    initialLength: Int,
-    hasSign: Boolean,
-    throwException: Boolean,
-): Duration {
-    var index = startIndex
-    var length = initialLength
-    var result = Duration.ZERO
     var prevUnit: DurationUnit? = null
-    var afterFirst = false
-    var allowSpaces = !hasSign
-    if (hasSign && value[index] == '(' && value.last() == ')') {
-        allowSpaces = true
-        if (++index == --length) return throwExceptionOrInvalid(throwException, "No components")
-    }
     while (index < length) {
         if (afterFirst && allowSpaces) {
             index = value.skipWhile(index) { it == ' ' }
         }
         afterFirst = true
-        val componentStart = index
-        val componentResult = value.parseNumericComponent(index, length)
-        val dotIndex = componentResult.dotIndex
-        if (!componentResult.isValid) {
-            return throwExceptionOrInvalid(
-                throwException,
-                if (dotIndex >= 0) "Multiple dots in numeric component" else "componentEnd <= componentStart"
-            )
-        }
-        val componentEnd = componentResult.componentEnd
-        index = componentEnd
-        val unitStart = index
-        val unitEnd = value.skipWhile(index) { it in 'a'..'z' }
-        index = unitEnd
-        val unit = durationUnitByShortNameInPlace(value, unitStart, unitEnd, throwException) ?: return Duration.INVALID
+        val integralStartIndex = index
+        val (integralValue, afterIntegerIndex) = value.parseLong(index, withSign = false)
+        if (afterIntegerIndex == length || afterIntegerIndex == integralStartIndex) return throwExceptionOrInvalid(throwException)
+        index = afterIntegerIndex
+        var inFractionalPart = false
+        val fractionValue = if (index < length && value[index] == '.') {
+            inFractionalPart = true
+            index++
+            val fractionStartIndex = index
+            val (fraction, afterFractionIndex) = value.parseFraction(index)
+            if (afterFractionIndex == fractionStartIndex || afterFractionIndex == length) return throwExceptionOrInvalid(throwException)
+            index = afterFractionIndex
+            fraction
+        } else 0L
+        val unit = durationUnitByShortNameOrNull(value, index) ?: return throwExceptionOrInvalid(throwException)
         if (prevUnit != null && prevUnit <= unit) return throwExceptionOrInvalid(throwException, "Unexpected order of duration components")
         prevUnit = unit
-        if (dotIndex >= 0) {
-            val whole = value.parseLongInPlace(componentStart, dotIndex)
-                .also { if (it == Duration.INVALID_RAW_VALUE) return throwExceptionOrInvalid(throwException) }
-                .also {
-                    val firstChar = value[componentStart]
-                    if (it == Long.MAX_VALUE && firstChar == '-' ||
-                        it == Long.MIN_VALUE && firstChar != '-'
-                    ) return throwExceptionOrInvalid(throwException)
+        when (unit) {
+            DurationUnit.DAYS, DurationUnit.HOURS, DurationUnit.MINUTES, DurationUnit.SECONDS, DurationUnit.MILLISECONDS -> {
+                val multiplier = when (unit) {
+                    DurationUnit.DAYS -> MILLIS_PER_DAY
+                    DurationUnit.HOURS -> MILLIS_PER_HOUR
+                    DurationUnit.MINUTES -> MILLIS_PER_MINUTE
+                    DurationUnit.SECONDS -> MILLIS_PER_SECOND
+                    else -> 1L
                 }
-            result = result.plus(whole.toDuration(unit), throwException).onInvalid { return Duration.INVALID }
-            val fractional = value.parseFractionalPartOfDoubleInPlace(dotIndex + 1, componentEnd) ?: return throwExceptionOrInvalid(throwException)
-            result = result.plus(fractional.toDuration(unit), throwException).onInvalid { return Duration.INVALID }
-            if (index < length) return throwExceptionOrInvalid(throwException, "Fractional component must be last")
-        } else {
-            val componentValue = value.parseLongInPlace(componentStart, componentEnd)
-                .also { if (it == Duration.INVALID_RAW_VALUE) return throwExceptionOrInvalid(throwException) }
-                .also {
-                    val firstChar = value[componentStart]
-                    if (it == Long.MAX_VALUE && firstChar == '-' ||
-                        it == Long.MIN_VALUE && firstChar != '-'
-                    ) return throwExceptionOrInvalid(throwException)
-                }
-            result = result.plus(componentValue.toDuration(unit), throwException).onInvalid { return Duration.INVALID }
+                totalMillis = totalMillis.addWithoutOverflow(integralValue.multiplyWithoutOverflow(multiplier))
+                    .onInvalid { return throwExceptionOrInvalid(throwException) }
+            }
+            DurationUnit.MICROSECONDS, DurationUnit.NANOSECONDS -> {
+                val multiplier = if (unit == DurationUnit.MICROSECONDS) NANOS_IN_MICROS else 1L
+                totalNanos = totalNanos.addWithoutOverflow(integralValue.multiplyWithoutOverflow(multiplier))
+                    .onInvalid { return throwExceptionOrInvalid(throwException) }
+            }
+            else -> error("Unknown unit: $unit")
         }
+        totalNanos += fractionValue.toNanos(unit)
+        index += when (unit) {
+            DurationUnit.MILLISECONDS, DurationUnit.MICROSECONDS, DurationUnit.NANOSECONDS -> 2
+            else -> 1
+        }
+        if (inFractionalPart && index < length) return throwExceptionOrInvalid(throwException, "Fractional component must be last")
     }
-    return result
+    return totalMillis.toDuration(DurationUnit.MILLISECONDS) + totalNanos.toDuration(DurationUnit.NANOSECONDS)
 }
 
 @kotlin.internal.InlineOnly
@@ -1330,95 +1303,6 @@ private inline fun Long.onInvalid(block: () -> Nothing): Long {
     return if (this == Duration.INVALID_RAW_VALUE) block() else this
 }
 
-@JvmInline
-private value class NumericComponentResult(private val packed: Long) {
-    constructor(componentEnd: Int, dotIndex: Int, isValid: Boolean) : this(
-        (componentEnd.toLong() shl 33) or
-                ((dotIndex + 1).toLong() shl 1) or
-                (if (isValid) 1L else 0L)
-    )
-
-    inline val componentEnd: Int get() = (packed shr 33).toInt()
-    inline val dotIndex: Int get() = ((packed shr 1) and 0x7FFFFFFFL).toInt() - 1
-    inline val isValid: Boolean get() = (packed and 1L) != 0L
-}
-
-@kotlin.internal.InlineOnly
-private inline fun String.parseNumericComponent(startIndex: Int, length: Int): NumericComponentResult {
-    var componentEnd = startIndex
-    if (startIndex < length && this[startIndex] in "+-") componentEnd++
-    var dotIndex = -1
-    val componentStart = componentEnd
-    while (componentEnd < length) {
-        when (val ch = this[componentEnd]) {
-            in '0'..'9' -> componentEnd++
-            '.' -> {
-                if (dotIndex >= 0) return NumericComponentResult(componentEnd, dotIndex, false)
-                dotIndex = componentEnd
-                componentEnd++
-            }
-            else -> break
-        }
-    }
-    val isValid = componentEnd > componentStart
-    return NumericComponentResult(componentEnd, dotIndex, isValid)
-}
-
-private fun String.parseLongInPlace(start: Int, end: Int): Long {
-    if (start >= end) return Duration.INVALID_RAW_VALUE
-
-    var index = start
-    val firstChar = this[start]
-    val isNegative = firstChar == '-'
-
-    if (firstChar == '+' || firstChar == '-') {
-        index++
-        if (index >= end) return Duration.INVALID_RAW_VALUE
-    }
-
-    var result = 0L
-    val limit = if (isNegative) Long.MIN_VALUE else -Long.MAX_VALUE
-    val multiplyLimit = limit / 10
-    while (index < end) {
-        val digit = this[index] - '0'
-        if (digit !in 0..9) return Duration.INVALID_RAW_VALUE
-        if (result < multiplyLimit) {
-            return if (isNegative) Long.MAX_VALUE else Long.MIN_VALUE
-        }
-        result *= 10
-        if (result < limit + digit) {
-            return if (isNegative) Long.MAX_VALUE else Long.MIN_VALUE
-        }
-        result -= digit
-        index++
-    }
-
-    return if (isNegative) result else -result
-}
-
-private fun String.parseFractionalPartOfDoubleInPlace(start: Int, end: Int): Double? {
-    if (start >= end) return null
-
-    var index = start
-    var result = 0.0
-    var fractionMultiplier = 0.1
-
-    while (index < end) {
-        val ch = this[index]
-        when (ch) {
-            in '0'..'9' -> {
-                val digit = ch - '0'
-                result += digit * fractionMultiplier
-                fractionMultiplier *= 0.1
-            }
-            else -> return null
-        }
-        index++
-    }
-
-    return result
-}
-
 private inline fun String.skipWhile(startIndex: Int, predicate: (Char) -> Boolean): Int {
     var i = startIndex
     while (i < length && predicate(this[i])) i++
@@ -1433,6 +1317,7 @@ private inline fun String.skipWhile(startIndex: Int, predicate: (Char) -> Boolea
 // - non-overlapping, but adjacent: the first value that doesn't fit in nanos range, can be exactly represented in millis.
 
 internal const val NANOS_IN_MILLIS = 1_000_000
+internal const val NANOS_IN_MICROS = 1_000L
 // maximum number duration can store in nanosecond range
 internal const val MAX_NANOS = Long.MAX_VALUE / 2 / NANOS_IN_MILLIS * NANOS_IN_MILLIS - 1 // ends in ..._999_999
 // maximum number duration can store in millisecond range, also encodes an infinite value
