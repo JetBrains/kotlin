@@ -17,6 +17,7 @@ enum class JvmFieldApplicabilityProblem(val errorMessage: String) {
     INSIDE_COMPANION_OF_INTERFACE("JvmField cannot be applied to a property defined in companion object of interface"),
     NOT_PUBLIC_VAL_WITH_JVMFIELD("JvmField could be applied only if all interface companion properties are 'public final val' with '@JvmField' annotation"),
     TOP_LEVEL_PROPERTY_OF_MULTIFILE_FACADE("JvmField cannot be applied to top level property of a file annotated with ${JVM_MULTIFILE_CLASS_SHORT}"),
+    PROPERTY_WITH_EXPLICIT_FIELD("@JvmField cannot be applied to a property with an explicit backing fields"),
     DELEGATE("JvmField cannot be applied to delegated property"),
     RETURN_TYPE_IS_VALUE_CLASS("JvmField cannot be applied to a property of a value class type"),
     ANNOTATION("JvmField has no effect on an annotation property"),

@@ -4492,10 +4492,6 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         val hidden: KaVariableSymbol
     }
 
-    interface JvmFieldPropertyWithExplicitBackingField : KaFirDiagnostic<KtElement> {
-        override val diagnosticClass get() = JvmFieldPropertyWithExplicitBackingField::class
-    }
-
     interface JavaTypeMismatch : KaFirDiagnostic<KtExpression> {
         override val diagnosticClass get() = JavaTypeMismatch::class
         val expectedType: KaType

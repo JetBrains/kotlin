@@ -55,11 +55,6 @@ object JvmDeclarationCheckers : DeclarationCheckers() {
             FirPropertyJavaNullabilityWarningChecker,
         )
 
-    override val backingFieldCheckers: Set<FirBackingFieldChecker>
-        get() = setOf(
-            FirExplicitBackingFieldJvmChecker,
-        )
-
     override val functionCheckers: Set<FirFunctionChecker>
         get() = setOf(
             FirSynchronizedAnnotationChecker,
