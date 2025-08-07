@@ -7154,6 +7154,37 @@
                                         }
                                     },
                                     {
+                                        "name": "Xwasm-use-shared-objects",
+                                        "shortName": null,
+                                        "deprecatedName": null,
+                                        "description": {
+                                            "current": "Mark heap types as shared in accordance to \"Shared-Everything Threads\" proposal.",
+                                            "valueInVersions": []
+                                        },
+                                        "delimiter": null,
+                                        "valueType": {
+                                            "type": "org.jetbrains.kotlin.arguments.dsl.types.BooleanType",
+                                            "isNullable": {
+                                                "current": false,
+                                                "valueInVersions": []
+                                            },
+                                            "defaultValue": {
+                                                "current": false,
+                                                "valueInVersions": []
+                                            }
+                                        },
+                                        "valueDescription": {
+                                            "current": null,
+                                            "valueInVersions": []
+                                        },
+                                        "releaseVersionsMetadata": {
+                                            "introducedVersion": "2.3.0",
+                                            "stabilizedVersion": null,
+                                            "deprecatedVersion": null,
+                                            "removedVersion": null
+                                        }
+                                    },
+                                    {
                                         "name": "Xwasm-use-traps-instead-of-exceptions",
                                         "shortName": null,
                                         "deprecatedName": null,

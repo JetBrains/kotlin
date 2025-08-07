@@ -44,4 +44,8 @@ public class WasmConfigurationKeys {
 
     public static final CompilerConfigurationKey<Boolean> WASM_INCLUDED_MODULE_ONLY =
             CompilerConfigurationKey.create("compile single module.");
+
+    public static final CompilerConfigurationKey<Boolean> WASM_USE_SHARED_OBJECTS =
+            CompilerConfigurationKey.create("Use 'shared' for object's heap types.");
+
 }

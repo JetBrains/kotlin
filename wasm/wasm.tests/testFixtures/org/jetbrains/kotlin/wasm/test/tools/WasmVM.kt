@@ -25,6 +25,7 @@ internal sealed class WasmVM(
         jsFiles: List<String>,
         workingDirectory: File?,
         useNewExceptionHandling: Boolean = false,
+        useSharedThreads: Boolean = false,
         toolArgs: List<String> = emptyList(),
     ): String
 
@@ -34,6 +35,7 @@ internal sealed class WasmVM(
             jsFiles: List<String>,
             workingDirectory: File?,
             useNewExceptionHandling: Boolean,
+            useSharedThreads: Boolean,
             toolArgs: List<String>,
         ) =
             tool.run(
@@ -41,6 +43,7 @@ internal sealed class WasmVM(
                 *jsFiles.toTypedArray(),
                 "--module",
                 *if (useNewExceptionHandling) arrayOf("--no-experimental-wasm-legacy-eh", "--experimental-wasm-exnref") else emptyArray(),
+                *if (useSharedThreads) arrayOf("--experimental-wasm-shared") else emptyArray(),
                 entryFile,
                 workingDirectory = workingDirectory,
             )
@@ -52,6 +55,7 @@ internal sealed class WasmVM(
             jsFiles: List<String>,
             workingDirectory: File?,
             useNewExceptionHandling: Boolean,
+            useSharedThreads: Boolean,
             toolArgs: List<String>,
         ) =
             tool.run(
@@ -69,6 +73,7 @@ internal sealed class WasmVM(
             jsFiles: List<String>,
             workingDirectory: File?,
             useNewExceptionHandling: Boolean,
+            useSharedThreads: Boolean,
             toolArgs: List<String>
         ) =
             tool.run(
@@ -85,6 +90,7 @@ internal sealed class WasmVM(
             jsFiles: List<String>,
             workingDirectory: File?,
             useNewExceptionHandling: Boolean,
+            useSharedThreads: Boolean,
             toolArgs: List<String>,
         ) =
             tool.run(
@@ -103,6 +109,7 @@ internal sealed class WasmVM(
             jsFiles: List<String>,
             workingDirectory: File?,
             useNewExceptionHandling: Boolean,
+            useSharedThreads: Boolean,
             toolArgs: List<String>
         ) =
             tool.run(

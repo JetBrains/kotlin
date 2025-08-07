@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectiv
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.USE_NEW_EXCEPTION_HANDLING_PROPOSAL
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.USE_OLD_EXCEPTION_HANDLING_PROPOSAL
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.WASM_DISABLE_FQNAME_IN_KCLASS
+import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.USE_SHARED_OBJECTS
 import org.jetbrains.kotlin.test.directives.WasmEnvironmentConfigurationDirectives.WASM_NO_JS_TAG
 import org.jetbrains.kotlin.test.directives.model.DirectivesContainer
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
@@ -142,6 +143,7 @@ class WasmSecondStageEnvironmentConfigurator(
             WasmConfigurationKeys.WASM_FORCE_DEBUG_FRIENDLY_COMPILATION,
             FORCE_DEBUG_FRIENDLY_COMPILATION in registeredDirectives
         )
+        configuration.put(WasmConfigurationKeys.WASM_USE_SHARED_OBJECTS, USE_SHARED_OBJECTS in registeredDirectives)
 
         val firstPhaseConfiguration = testServices.compilerConfigurationProvider.getCompilerConfiguration(module, CompilationStage.FIRST)
         configuration.putIfAbsent(

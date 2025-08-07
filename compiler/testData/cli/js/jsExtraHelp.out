@@ -63,6 +63,7 @@ where advanced options include:
   -Xwasm-target              Set up the Wasm target (wasm-js or wasm-wasi).
   -Xwasm-use-new-exception-proposal
                              Use an updated version of the exception proposal with try_table.
+  -Xwasm-use-shared-objects  Mark heap types as shared in accordance to "Shared-Everything Threads" proposal
   -Xwasm-use-traps-instead-of-exceptions
                              Use traps instead of throwing exceptions.
   -Xklib-abi-version=<version> Specify the custom ABI version to be written in KLIB. This option is intended only for tests.

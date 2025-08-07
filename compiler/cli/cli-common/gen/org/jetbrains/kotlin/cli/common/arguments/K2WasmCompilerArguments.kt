@@ -192,6 +192,16 @@ abstract class K2WasmCompilerArguments : CommonKlibBasedCompilerArguments() {
         }
 
     @Argument(
+        value = "-Xwasm-use-shared-objects",
+        description = "Mark heap types as shared in accordance to \"Shared-Everything Threads\" proposal.",
+    )
+    var wasmUseSharedObjects: Boolean = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
         value = "-Xwasm-use-traps-instead-of-exceptions",
         description = "Use traps instead of throwing exceptions.",
     )

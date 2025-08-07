@@ -85,11 +85,13 @@ class WasiBoxRunner(
 
             val configuration = testServices.compilerConfigurationProvider.getCompilerConfiguration(modulesToArtifact.keys.first())
             val useNewExceptionProposal = configuration.getNotNull(WasmConfigurationKeys.WASM_USE_NEW_EXCEPTION_PROPOSAL)
+            val useSharedThreadsProposal = configuration.getNotNull(WasmConfigurationKeys.WASM_USE_SHARED_OBJECTS)
 
             val exceptions = vmsToCheck.mapNotNull { vm ->
                 vm.runWithCaughtExceptions(
                     debugMode = debugMode,
                     useNewExceptionHandling = useNewExceptionProposal,
+                    useSharedThreads = useSharedThreadsProposal,
                     failsIn = failsIn,
                     entryFile = if (!vm.entryPointIsJsFile) "$baseFileName.wasm" else collectedJsArtifacts.entryPath ?: "test.mjs",
                     jsFilePaths = jsFilePaths,

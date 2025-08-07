@@ -207,6 +207,16 @@ val actualWasmArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.wa
     }
 
     compilerArgument {
+        name = "Xwasm-use-shared-objects"
+        description = "Mark heap types as shared in accordance to \"Shared-Everything Threads\" proposal.".asReleaseDependent()
+        valueType = BooleanType.defaultFalse
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_3_0,
+        )
+    }
+
+    compilerArgument {
         name = "Xir-dce-dump-reachability-info-to-file"
         description = ("Dump reachability information collected about declarations while performing DCE to a file. " +
                 "The format will be chosen automatically based on the file extension. " +
