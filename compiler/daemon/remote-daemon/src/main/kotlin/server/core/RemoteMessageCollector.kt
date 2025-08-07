@@ -3,8 +3,9 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package server
+package server.core
 
+import model.CompilerMessage
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
@@ -17,7 +18,7 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollectorImpl.Message
 
 
 interface OnReport{
-    fun onReport(msg: Message)
+    fun onReport(msg: CompilerMessage)
 }
 
 class RemoteMessageCollector(
@@ -39,8 +40,8 @@ class RemoteMessageCollector(
         message: String,
         location: CompilerMessageSourceLocation?,
     ) {
-        val msg = Message(severity, message, location)
-        messages.add(msg)
+        val msg = CompilerMessage(severity, message, location)
+        messages.add(Message(severity, message, location))
         onReport.onReport(msg)
     }
 

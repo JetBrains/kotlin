@@ -14,7 +14,7 @@ class OneFileOneChunkStrategy : FileChunkingStrategy() {
 
     override fun chunk(file: File): Flow<FileChunk> {
         return flow {
-            emit(FileChunk(file.readBytes(), isLast = true))
+            emit(FileChunk(file.path, file.readBytes(), isLast = true))
         }
     }
 }

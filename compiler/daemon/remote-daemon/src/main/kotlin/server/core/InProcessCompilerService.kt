@@ -3,7 +3,7 @@
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
-package server
+package server.core
 
 import common.SERVER_COMPILATION_WORKSPACE_DIR
 import org.jetbrains.kotlin.build.report.RemoteBuildReporter
@@ -16,14 +16,12 @@ import org.jetbrains.kotlin.cli.common.arguments.parseCommandLineArguments
 import org.jetbrains.kotlin.cli.common.arguments.validateArguments
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
-import org.jetbrains.kotlin.cli.common.messages.MessageCollectorImpl
 import org.jetbrains.kotlin.cli.js.K2JSCompiler
 import org.jetbrains.kotlin.cli.jvm.K2JVMCompiler
 import org.jetbrains.kotlin.cli.metadata.KotlinMetadataCompiler
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.daemon.EventManager
 import org.jetbrains.kotlin.daemon.EventManagerImpl
-import org.jetbrains.kotlin.daemon.client.BasicCompilerServicesWithResultsFacadeServer
 import org.jetbrains.kotlin.daemon.common.BuildMetricsValue
 import org.jetbrains.kotlin.daemon.common.CompilationOptions
 import org.jetbrains.kotlin.daemon.common.CompilationPerformanceMetrics
@@ -33,16 +31,14 @@ import org.jetbrains.kotlin.daemon.common.CompileService
 import org.jetbrains.kotlin.daemon.common.CompilerMode
 import org.jetbrains.kotlin.daemon.common.DummyProfiler
 import org.jetbrains.kotlin.daemon.common.IncrementalCompilationOptions
-import org.jetbrains.kotlin.daemon.common.JpsCompilerServicesFacade
 import org.jetbrains.kotlin.daemon.common.ReportSeverity
 import org.jetbrains.kotlin.daemon.common.WallAndThreadAndMemoryTotalProfiler
 import org.jetbrains.kotlin.daemon.common.usedMemory
 import org.jetbrains.kotlin.daemon.common.withMeasure
 import org.jetbrains.kotlin.daemon.report.DaemonMessageReporter
-import org.jetbrains.kotlin.daemon.report.getBuildReporter
 import org.jetbrains.kotlin.incremental.withIncrementalCompilation
 import org.jetbrains.kotlin.incremental.withJsIC
-import org.jetbrains.kotlin.util.PerformanceManager.DumpFormat
+import org.jetbrains.kotlin.util.PerformanceManager
 import org.jetbrains.kotlin.util.PhaseType
 import org.jetbrains.kotlin.util.Time
 import org.jetbrains.kotlin.util.forEachPhaseMeasurement
@@ -54,7 +50,7 @@ import java.util.concurrent.TimeUnit
 import java.util.logging.Level
 import java.util.logging.Logger
 
-class InProcessCompilationService(
+class InProcessCompilerService(
     var reportPerf: Boolean = false
 ) {
 
@@ -92,10 +88,10 @@ class InProcessCompilationService(
             performanceMetrics.add(BuildMetricsValue(CompilationPerformanceMetrics.SOURCE_LINES_NUMBER, moduleStats.linesCount.toLong()))
         }
 
-        var codegenTime = Time.ZERO
+        var codegenTime = Time.Companion.ZERO
 
         fun reportLps(lpsMetrics: CompilationPerformanceMetrics, time: Time) {
-            if (time != Time.ZERO) {
+            if (time != Time.Companion.ZERO) {
                 performanceMetrics.add(BuildMetricsValue(lpsMetrics, moduleStats.getLinesPerSecond(time).toLong()))
             }
         }
@@ -125,7 +121,7 @@ class InProcessCompilationService(
             }
         }
 
-        if (codegenTime != Time.ZERO) {
+        if (codegenTime != Time.Companion.ZERO) {
             performanceMetrics.add(BuildMetricsValue(CompilationPerformanceMetrics.CODE_GENERATION, codegenTime.millis))
             reportLps(CompilationPerformanceMetrics.CODE_GENERATION_LPS, codegenTime)
         }
@@ -185,9 +181,9 @@ class InProcessCompilationService(
             }
             CompilerMode.NON_INCREMENTAL_COMPILER -> {
                 doCompile(daemonReporter) { _ ->
-                    val exitCode = compiler.exec(messageCollector, Services.EMPTY, k2PlatformArgs)
+                    val exitCode = compiler.exec(messageCollector, Services.Companion.EMPTY, k2PlatformArgs)
 
-                    val perfString = compiler.defaultPerformanceManager.createPerformanceReport(dumpFormat = DumpFormat.PlainText)
+                    val perfString = compiler.defaultPerformanceManager.createPerformanceReport(dumpFormat = PerformanceManager.DumpFormat.PlainText)
                     compilationResults?.also {
                         (it as CompilationResults).add(
                             CompilationResultCategory.BUILD_REPORT_LINES.code,
@@ -306,55 +302,3 @@ class InProcessCompilationService(
         }
     }
 }
-
-//fun main() {
-//    val sourceFiles = listOf(
-//        File("compiler/daemon/remote-daemon/src/main/kotlin/client/input/Input.kt")
-//    )
-//    val staticArguments = listOf(
-//        "-no-stdlib",
-//        "-no-reflect",
-//    )
-//    val compilerArguments =
-//        sourceFiles.map { it-> it.absolutePath} + "-d" + buildAbsPath(OUTPUT_FILES_DIR) + "-cp" + "libraries/stdlib/build/classes/kotlin/jvm/main" + staticArguments
-////    println("DEBUG SERVER: compilerArguments=${compilerArguments.contentToString()}")
-//
-//    val remoteMessageCollector = RemoteMessageCollector(object : OnReport {
-//        override fun onReport(msg: MessageCollectorImpl.Message) {
-//        }
-//    })
-//
-//    val outputsCollector = { x: File, y: List<File> -> println("OUTPUTS COLLECTOR: $x $y") }
-//    val servicesFacade = BasicCompilerServicesWithResultsFacadeServer(remoteMessageCollector, outputsCollector)
-//
-//    val compilationOptions = CompilationOptions(
-//        compilerMode = CompilerMode.NON_INCREMENTAL_COMPILER,
-//        targetPlatform = CompileService.TargetPlatform.JVM,
-//        reportSeverity = ReportSeverity.DEBUG.code,
-//        reportCategories = arrayOf(),
-//        requestedCompilationResults = arrayOf(),
-//    )
-//
-//    val cs = InProcessCompilationService(reportPerf = true)
-//    val exitCode = cs.compileImpl(
-//        compilerArguments = compilerArguments.toTypedArray(),
-//        compilationOptions = compilationOptions,
-//        servicesFacade = servicesFacade,
-//        compilationResults = null,
-//        hasIncrementalCaches = JpsCompilerServicesFacade::hasIncrementalCaches,
-//        createMessageCollector = { facade, options ->
-//            RemoteMessageCollector(object : OnReport {
-//                override fun onReport(msg: MessageCollectorImpl.Message) {
-//                    println("this is our compilation message $msg")
-//                }
-//            })
-//        },
-//        createReporter = ::DaemonMessageReporter,
-//        createServices = { facade, eventManager ->
-//            Services.EMPTY
-//        },
-//        getICReporter = { a, b, c -> getBuildReporter(a, b!!, c) }
-//    )
-//
-//    println("exit code is $exitCode")
-//}

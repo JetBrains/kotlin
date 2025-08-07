@@ -5,14 +5,12 @@
 
 package org.jetbrains.kotlin.client
 
-import client.auth.BasicHTTPAuthClient
-import client.auth.CallAuthenticator
 import client.RemoteClientInterceptor
-import client.RequestHandler
+import client.GrpcClientRemoteCompilationService
 import common.CLIENT_COMPILED_DIR
 import common.OneFileOneChunkStrategy
 import common.buildAbsPath
-import io.grpc.ManagedChannel
+import common.computeSha256
 import io.grpc.ManagedChannelBuilder
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
@@ -20,79 +18,67 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.consumeAsFlow
 import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.launch
+import model.CompilationMetadata
+import model.CompilationResult
+import model.CompileRequest
+import model.CompileResponse
+import model.CompilerMessage
+import model.FileChunk
+import model.FileTransferReply
+import model.FileTransferRequest
 import org.jetbrains.kotlin.daemon.common.CompilationOptions
 import org.jetbrains.kotlin.daemon.common.CompileService
 import org.jetbrains.kotlin.daemon.common.CompilerMode
-import org.jetbrains.kotlin.server.*
-import java.io.Closeable
 import java.io.File
-import java.util.concurrent.TimeUnit
 
-class RemoteDaemonClient(
-    private val channel: ManagedChannel,
-) : Closeable {
-    private val stub: CompileServiceGrpcKt.CompileServiceCoroutineStub = CompileServiceGrpcKt
-        .CompileServiceCoroutineStub(channel)
-        .withCallCredentials(
-            CallAuthenticator(
-                BasicHTTPAuthClient(
-                    username = "admin",
-                    password = "admin"
-                )
-            )
-        )
+class RemoteDaemonClient {
 
     init {
         File(CLIENT_COMPILED_DIR).mkdir()
     }
 
-//    fun connect(daemonJVMOptionsConfigurator: DaemonJVMOptionsConfigurator): Flow<ConnectResponseGrpc> {
-//        val connectRequest = ConnectRequestGrpc
-//            .newBuilder()
-//            .setDaemonJvmOptionsConfigurator(daemonJVMOptionsConfigurator.toGrpc())
-//            .build()
-//        return stub.connect(connectRequest)
-//    }
+    private val client = GrpcClientRemoteCompilationService()
 
-    suspend fun compile(sessionId: Int, compilerArguments: Array<out String>, compilationOptions: CompilationOptions, sourceFiles: List<File>) {
-        val requestChannel = Channel<CompileRequestGrpc>(capacity = Channel.UNLIMITED)
-        val responseChannel = Channel<CompileResponseGrpc>(capacity = Channel.UNLIMITED)
+    suspend fun compile(compilerArguments: Array<out String>, compilationOptions: CompilationOptions, sourceFiles: List<File>) {
+        val requestChannel = Channel<CompileRequest>(capacity = Channel.UNLIMITED)
+        val responseChannel = Channel<CompileResponse>(capacity = Channel.UNLIMITED)
 
         val fileChunkStrategy = OneFileOneChunkStrategy()
-        val requestHandler = RequestHandler(
-            fileChunkingStrategy = fileChunkStrategy
-        )
 
         coroutineScope {
             // start consuming response
             launch(Dispatchers.IO) {
-                stub.compile(requestChannel.receiveAsFlow()).collect { responseChannel.send(it) }
+                client.compile(requestChannel.receiveAsFlow()).collect { responseChannel.send(it) }
             }
 
-            // start consuming our request channel
             launch {
                 responseChannel.consumeAsFlow().collect {
-                    when {
-                        it.hasFileTransferReply() -> {
-                            if (!it.fileTransferReply.isPresent){
-                                val filePath = it.fileTransferReply.filePath
+                    when (it) {
+                        is FileTransferReply -> {
+                            if (!it.isPresent) {
                                 launch {
-                                    requestHandler.buildFileChunkStream(File(filePath)).collect { fileChunk ->
-                                        requestChannel.send(fileChunk)
+                                    fileChunkStrategy.chunk(File(it.filePath)).collect { chunk ->
+                                        requestChannel.send(chunk)
                                     }
                                 }
                             }
                         }
-                        it.hasCompiledFileChunk() ->{
+                        is FileChunk -> {
                             launch {
-                                val fileName = it.compiledFileChunk.filePath.split("/").last()
-                                requestHandler.receiveFile(
-                                    filePath = it.compiledFileChunk.filePath,
-                                    newFilePath = buildAbsPath("$CLIENT_COMPILED_DIR/$fileName"),
-                                    chunk = it.compiledFileChunk.content.toByteArray(),
-                                    isLast = it.compiledFileChunk.isLast
-                                )
+                                val fileName = it.filePath.split("/").last()
+                                fileChunkStrategy.addChunks(it.filePath, it.content)
+                                if (it.isLast) {
+                                    fileChunkStrategy.reconstruct(fileChunkStrategy.getChunks(it.filePath),
+                                        buildAbsPath("$CLIENT_COMPILED_DIR/$fileName")
+                                    )
+                                }
                             }
+                        }
+                        is CompilationResult -> {
+                            println("COMPILATION RESULT: $it")
+                        }
+                        is CompilerMessage -> {
+                            println("COMPILER MESSAGE: $it")
                         }
                     }
                 }
@@ -101,37 +87,30 @@ class RemoteDaemonClient(
             launch {
                 // as a first step we want to send compilation metadata
                 requestChannel.send(
-                    requestHandler.buildCompilationMetadata(
+                    CompilationMetadata(
                         "mycustomproject",
-                        compilationOptions,
-                        compilerArguments,
-                        sourceFiles.size
+                        sourceFiles.size,
+                        compilerArguments.toMutableList(),
+                        compilationOptions
                     )
                 )
 
-                // process a stream of file request and pass it to a request channel
-                requestHandler.buildFileTransferRequestStream(sourceFiles).collect {
-                    requestChannel.send(it)
+                // then we will send a question for a server for each file
+                sourceFiles.forEach {
+                    requestChannel.send(
+                        FileTransferRequest(
+                            it.path,
+                            computeSha256(it)
+                        )
+                    )
                 }
             }
         }
     }
 
-    override fun close() {
-        channel.shutdown().awaitTermination(5, TimeUnit.SECONDS)
-    }
-
 }
 suspend fun main(args: Array<String>) {
-    val port = System.getenv("PORT")?.toInt() ?: 50051
-
-    val channel = ManagedChannelBuilder
-        .forAddress("localhost", port)
-        .usePlaintext()
-        .intercept(RemoteClientInterceptor())
-        .build()
-
-    val client = RemoteDaemonClient(channel)
+    val client = RemoteDaemonClient()
 
     val compilationOptions = CompilationOptions(
         compilerMode = CompilerMode.NON_INCREMENTAL_COMPILER,
@@ -149,50 +128,9 @@ suspend fun main(args: Array<String>) {
         File("src/main/kotlin/client/input/Input3.kt")
     )
 
-    var sessionId: Int? = null
     client.compile(
-        sessionId = 1,
         compilerArguments = compilerArguments,
         compilationOptions = compilationOptions,
         sourceFiles = sourceFiles
     )
-
-//    while (true) {
-//        print("Enter command: ")
-//        val command = readLine()?.trim()?.lowercase()
-//
-//        when (command) {
-//            "connect" -> {
-//                client.connect(
-//                    DaemonJVMOptionsConfigurator(
-//                        inheritMemoryLimits = true,
-//                        inheritOtherJvmOptions = false,
-//                        inheritAdditionalProperties = true,
-//                    )
-//                ).collect { response ->
-//                    println("collecting message")
-//                    when {
-//                        response.hasDaemonMessage() -> {
-//                            // TODO handle messages however you want
-//                        }
-//                        response.hasSessionId() -> {
-//                            println("we obtained a sessionID ${response.sessionId}")
-//                            sessionId = response.sessionId
-//                        }
-//                    }
-//                }
-//            }
-//            "compile" -> {
-//                if (sessionId == null) {
-//                    println("You need to connect first")
-//                    continue
-//                }
-//
-//
-//            }
-//            else -> {
-//                println("Unknown command")
-//            }
-//        }
-//    }
 }

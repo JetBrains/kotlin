@@ -11,7 +11,7 @@ import org.jetbrains.kotlin.server.CompileResponseGrpc
 data class CompilationResult(
     val exitCode: Int,
     val compilationResultSource: CompilationResultSource
-)
+) : CompileResponse
 
 fun CompilationResult.toGrpc(): CompilationResultGrpc {
     return CompilationResultGrpc
@@ -19,6 +19,10 @@ fun CompilationResult.toGrpc(): CompilationResultGrpc {
         .setExitCode(exitCode)
         .setResultSource(compilationResultSource.toGrpc())
         .build()
+}
+
+fun CompilationResultGrpc.toDomain(): CompilationResult {
+    return CompilationResult(exitCode, resultSource.toDomain())
 }
 
 fun CompilationResultGrpc.toCompileResponse(): CompileResponseGrpc{

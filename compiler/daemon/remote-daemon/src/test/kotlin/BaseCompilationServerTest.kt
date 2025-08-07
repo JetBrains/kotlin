@@ -1,7 +1,8 @@
-import client.RequestHandler
 import client.auth.BasicHTTPAuthClient
 import client.auth.CallAuthenticator
+import client.GrpcClientRemoteCompilationService
 import common.OneFileOneChunkStrategy
+import common.RemoteCompilationService
 import common.SERVER_COMPILATION_WORKSPACE_DIR
 import common.computeSha256
 import io.grpc.ManagedChannel
@@ -12,10 +13,12 @@ import io.grpc.inprocess.InProcessServerBuilder
 import org.jetbrains.kotlin.server.CompileServiceGrpcKt
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
-import server.CacheHandler
+import server.core.CacheHandler
 import server.GrpcRemoteCompilationService
-import server.InProcessCompilationService
+import server.core.InProcessCompilerService
 import server.auth.BasicHTTPAuthServer
+import server.core.RemoteCompilationServiceImpl
+import server.core.WorkspaceManager
 import server.interceptors.AuthInterceptor
 import server.interceptors.LoggingInterceptor
 import java.io.File
@@ -34,38 +37,32 @@ abstract class BaseCompilationCompilationTest {
         ?: throw IllegalStateException("Resource /TestInput.kt not found")
 
     protected val sourceFileFingerprint = computeSha256(sourceFile)
+    protected val fileChunkingStrategy = OneFileOneChunkStrategy()
 
     companion object {
         protected const val SERVER_NAME = "test-kotlin-daemon-server"
         protected lateinit var server: Server
         protected lateinit var channel: ManagedChannel
         protected val cacheHandler = CacheHandler(OneFileOneChunkStrategy())
+    }
 
-        fun getClient(): CompileServiceGrpcKt.CompileServiceCoroutineStub {
-            return CompileServiceGrpcKt
-                .CompileServiceCoroutineStub(channel)
-                .withCallCredentials(
-                    CallAuthenticator(
-                        BasicHTTPAuthClient(
-                            username = "admin",
-                            password = "admin"
-                        )
-                    )
-                )
-        }
+    fun getGrpcClient(): RemoteCompilationService{
+        return GrpcClientRemoteCompilationService()
     }
 
     @BeforeEach
     fun setup() {
-        val compilationService = InProcessCompilationService()
         server = InProcessServerBuilder
             .forName(SERVER_NAME)
             .addService(
                 ServerInterceptors
                     .intercept(
                         GrpcRemoteCompilationService(
-                            cacheHandler,
-                            compilationService
+                            RemoteCompilationServiceImpl(
+                                cacheHandler,
+                                InProcessCompilerService(),
+                                WorkspaceManager()
+                            )
                         ),
                         LoggingInterceptor(),
                         AuthInterceptor(BasicHTTPAuthServer())

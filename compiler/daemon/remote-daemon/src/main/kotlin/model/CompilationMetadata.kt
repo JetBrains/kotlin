@@ -13,10 +13,10 @@ data class CompilationMetadata(
     val fileCount: Int,
     val compilerArguments: List<String>,
     val compilationOptions: CompilationOptions
-)
+) : CompileRequest
 
 
-fun CompilationMetadata.toGrpc(): CompilationMetadataGrpc{
+fun CompilationMetadata.toGrpc(): CompilationMetadataGrpc {
 
     val builder = CompilationMetadataGrpc.newBuilder()
 

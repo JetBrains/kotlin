@@ -9,24 +9,17 @@ import com.google.protobuf.ByteString
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import model.CompileRequest
+import model.toDomain
+import org.jetbrains.kotlin.cli.common.messages.CompilerMessageLocation
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSourceLocation
-import org.jetbrains.kotlin.cli.common.messages.MessageCollectorImpl
-import org.jetbrains.kotlin.daemon.common.CompilationOptions
 import org.jetbrains.kotlin.daemon.common.CompileService
 import org.jetbrains.kotlin.daemon.common.CompilerMode
-import org.jetbrains.kotlin.server.CompilationMetadataGrpc
-import org.jetbrains.kotlin.server.CompilationOptionsGrpc
 import org.jetbrains.kotlin.server.CompileRequestGrpc
-import org.jetbrains.kotlin.server.CompileResponseGrpc
 import org.jetbrains.kotlin.server.CompilerMessageSeverityGrpc
 import org.jetbrains.kotlin.server.CompilerMessageSourceLocationGrpc
 import org.jetbrains.kotlin.server.CompilerModeGrpc
-//import org.jetbrains.kotlin.server.ConnectResponseGrpc
-//import org.jetbrains.kotlin.server.DaemonJVMOptionsConfiguratorGrpc
-import org.jetbrains.kotlin.server.DaemonMessageGrpc
-import org.jetbrains.kotlin.server.FileChunkGrpc
-import org.jetbrains.kotlin.server.FileTransferRequestGrpc
 import org.jetbrains.kotlin.server.TargetPlatformGrpc
 
 /*
@@ -35,19 +28,14 @@ import org.jetbrains.kotlin.server.TargetPlatformGrpc
  */
 
 
-fun CompilationMetadataGrpc.toCompileRequest(): CompileRequestGrpc {
-    return CompileRequestGrpc
-        .newBuilder()
-        .setMetadata(this)
-        .build()
+// You'll need these extension functions:
+fun CompileRequestGrpc.toDomain(): CompileRequest = when {
+    hasMetadata() -> metadata.toDomain()
+    hasSourceFileChunk() -> sourceFileChunk.toDomain()
+    hasFileTransferRequest() -> fileTransferRequest.toDomain()
+    else -> error("Unknown CompileRequestGrpc type") // TODO fix
 }
 
-fun FileTransferRequestGrpc.toCompileRequest(): CompileRequestGrpc {
-    return CompileRequestGrpc
-        .newBuilder()
-        .setFileTransferRequest(this)
-        .build()
-}
 
 fun CompilerMode.toGrpc(): CompilerModeGrpc {
     return when (this) {
@@ -93,33 +81,6 @@ fun CompilerMessageSourceLocation.toGrpc(): CompilerMessageSourceLocationGrpc {
         .build()
 }
 
-fun MessageCollectorImpl.Message.toGrpc(): DaemonMessageGrpc {
-    val daemonMessage = DaemonMessageGrpc.newBuilder()
-    daemonMessage.setMessage(message)
-    daemonMessage.setCompilerMessageSeverity(severity.toGrpc())
-    location?.let { location ->
-        daemonMessage.setCompilerMessageSourceLocation(location.toGrpc())
-    }
-    return daemonMessage.build()
-}
-
-//fun DaemonMessageGrpc.toConnectResponseGrpc(): ConnectResponseGrpc {
-//    return ConnectResponseGrpc.newBuilder().setDaemonMessage(this).build()
-//}
-
-fun DaemonMessageGrpc.toCompileResponseGrpc(): CompileResponseGrpc {
-    return CompileResponseGrpc.newBuilder().setDaemonMessage(this).build()
-}
-
-
-
-fun FileChunkGrpc.fromBytes(fileName: String, bytes: List<Byte>): FileChunkGrpc {
-    return FileChunkGrpc.newBuilder()
-        .setFilePath(fileName)
-        .setContent(ByteString.copyFrom(bytes.toByteArray()))
-        .build()
-}
-
 fun CompilerMessageSeverity.toGrpc(): CompilerMessageSeverityGrpc{
     return when(this){
         CompilerMessageSeverity.INFO -> CompilerMessageSeverityGrpc.INFO
@@ -131,4 +92,23 @@ fun CompilerMessageSeverity.toGrpc(): CompilerMessageSeverityGrpc{
         CompilerMessageSeverity.STRONG_WARNING -> CompilerMessageSeverityGrpc.STRONG_WARNING
         CompilerMessageSeverity.FIXED_WARNING -> CompilerMessageSeverityGrpc.FIXED_WARNING
     }
+}
+
+fun CompilerMessageSeverityGrpc.toDomain(): CompilerMessageSeverity {
+    return when (this) {
+        CompilerMessageSeverityGrpc.INFO -> CompilerMessageSeverity.INFO
+        CompilerMessageSeverityGrpc.ERROR -> CompilerMessageSeverity.ERROR
+        CompilerMessageSeverityGrpc.WARNING -> CompilerMessageSeverity.WARNING
+        CompilerMessageSeverityGrpc.LOGGING -> CompilerMessageSeverity.LOGGING
+        CompilerMessageSeverityGrpc.OUTPUT -> CompilerMessageSeverity.OUTPUT
+        CompilerMessageSeverityGrpc.EXCEPTION -> CompilerMessageSeverity.EXCEPTION
+        CompilerMessageSeverityGrpc.STRONG_WARNING -> CompilerMessageSeverity.STRONG_WARNING
+        CompilerMessageSeverityGrpc.FIXED_WARNING -> CompilerMessageSeverity.FIXED_WARNING
+        CompilerMessageSeverityGrpc.UNRECOGNIZED -> CompilerMessageSeverity.INFO // TODO double check
+    }
+}
+
+fun CompilerMessageSourceLocationGrpc.toDomain(): CompilerMessageSourceLocation? {
+    // TODO: there also exist class CompilerMessageLocationWithRange, investigate the difference
+    return CompilerMessageLocation.create(path, line, column, lineContent)
 }

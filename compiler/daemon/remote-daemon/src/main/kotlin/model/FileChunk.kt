@@ -5,7 +5,24 @@
 
 package model
 
+import com.google.protobuf.kotlin.toByteString
+import org.jetbrains.kotlin.server.FileChunkGrpc
+
 class FileChunk(
+    val filePath: String,
     val content: ByteArray,
-    val isLast: Boolean
-)
+    val isLast: Boolean,
+
+) : CompileRequest, CompileResponse
+
+fun FileChunk.toGrpc(): FileChunkGrpc {
+    return FileChunkGrpc.newBuilder()
+        .setFilePath(filePath)
+        .setContent(content.toByteString())
+        .setIsLast(isLast)
+        .build()
+}
+
+fun FileChunkGrpc.toDomain(): FileChunk {
+    return FileChunk(filePath, content.toByteArray(), isLast)
+}

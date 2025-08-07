@@ -40,7 +40,7 @@ message CompileRequestGrpc {
 
 message CompileResponseGrpc {
   oneof response_payload{
-    DaemonMessageGrpc daemon_message = 1;
+    CompilerMessageGrpc compiler_message = 1;
     FileChunkGrpc compiled_file_chunk = 2;
     FileTransferReplyGrpc file_transfer_reply = 3;
     CompilationResultGrpc compilation_result = 4;
@@ -66,19 +66,19 @@ message CompilationOptionsGrpc {
 message CompilationResultGrpc{
   uint32 exit_code = 1;
   CompilationResultSourceGrpc result_source = 2;
+  // TODO, here it would be maybe good to send info what chunking of source file do we use so client can process the files accordingly
 //  uint32 file_count = 2;
 }
 
 message FileChunkGrpc {
   string file_path = 1;
-  int64 file_size = 2; // do we need this? maybe it would be appropriate to set it to size of the original file
 //  google.protobuf.Timestamp modified_at = 3;
 //  google.protobuf.Timestamp created_at = 4;
-  bytes content = 3;
-  bool is_last = 4;
+  bytes content = 2;
+  bool is_last = 3;
 }
 
-message DaemonMessageGrpc{
+message CompilerMessageGrpc{
   CompilerMessageSeverityGrpc compiler_message_severity = 1;
   string message = 2;
   optional CompilerMessageSourceLocationGrpc compiler_message_source_location = 3;
