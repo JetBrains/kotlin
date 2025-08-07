@@ -1,3 +1,4 @@
+import gradle.GradlePluginVariant
 import org.gradle.api.tasks.testing.logging.TestExceptionFormat
 import org.jetbrains.kotlin.build.androidsdkprovisioner.ProvisioningType
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
@@ -422,6 +423,11 @@ tasks.withType<Test>().configureEach {
     if (installCocoapods != null) {
         systemProperty("installCocoapods", installCocoapods)
     }
+
+    systemProperty(
+        "kotlin.gradle.maximumSupportedGradleVariant.artifactSuffix",
+        GradlePluginVariant.MAXIMUM_SUPPORTED_GRADLE_VARIANT.sourceSetName,
+    )
 
     // Gradle 8.10 requires running on at least JDK 17
     javaLauncher.value(project.getToolchainLauncherFor(JdkMajorVersion.JDK_17_0)).disallowChanges()
