@@ -35,7 +35,7 @@ ifTrue#(R|<local>/flag|, <L> = ifTrue@fun <implicit>.<anonymous>(): <implicit> <
 ##### Resolution Stages > CheckArguments:
 
 1. `kotlin/Boolean <: kotlin/Boolean` _from Argument R|<local>/flag|_
-2. `kotlin/Function0<TypeVariable(T)?> <: kotlin/Function0<TypeVariable(T)?>` _from Argument ifTrue <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {↩    try {↩        parse#(decode#(token#))↩    }↩    catch (e: Exception) {↩        Null(null)↩    }↩↩}↩_
+2. `kotlin/Function0<TypeVariable(T)?> <: kotlin/Function0<TypeVariable(T)?>` _from Argument <L> = ifTrue <implicit>.<anonymous>(): <implicit> <inline=Unknown>  {↩    try {↩        parse#(decode#(token#))↩    }↩    catch (e: Exception) {↩        Null(null)↩    }↩↩}↩_
 
 ##### Resolution Stages > CheckLambdaAgainstTypeVariableContradiction:
 
@@ -118,7 +118,7 @@ ifTrue#(R|<local>/flag|, <L> = ifTrue@fun <implicit>.<anonymous>(): <implicit> <
 #### Candidate 1: `FirNamedFunctionSymbol /ifTrue` --- `fun <T : Any> ifTrue(condition: Boolean, exec: () -> T?): T?`
 ##### Continue Call Completion:
 
-1. `TypeVariable(K) <: TypeVariable(T)?` _from Argument try {↩    R?C|/parse|(R|/decode|(R|<local>/token|))↩}↩catch (e: R|{kotlin/Exception=} java/lang/Exception|) {↩    Null(null)↩}↩_
+1. `TypeVariable(K) <: TypeVariable(T)?` _from LambdaArgument_
     1. `TypeVariable(K) & Any <: TypeVariable(T)`
 2. Combine `TypeVariable(K) & Any <: TypeVariable(T)` with `TypeVariable(T) <: kotlin/Any`
     1. `TypeVariable(K) <: kotlin/Any?`
