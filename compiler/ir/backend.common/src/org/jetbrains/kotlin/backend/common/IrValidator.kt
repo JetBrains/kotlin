@@ -142,6 +142,38 @@ fun validateIr(
 /**
  * Verifies IR invariants, logs validation errors into [messageCollector].
  *
+ * If any error with [CompilerMessageSeverity.ERROR] severity is found, throws [IrValidationException] at the end,
+ * thus allowing to collect as many errors as possible instead of aborting after the first one.
+ */
+fun validateIr(
+    element: IrElement,
+    irBuiltIns: IrBuiltIns,
+    validatorConfig: IrValidatorConfig,
+    messageCollector: MessageCollector,
+    getSeverity: (IrValidationError) -> CompilerMessageSeverity?,
+    phaseName: String? = null,
+    customMessagePrefix: String? = null,
+) {
+    var hasAnyErrors = false
+    validateIr(element, irBuiltIns, validatorConfig) { validation ->
+        val severity = getSeverity(validation)
+        if (severity != null) {
+            val phaseMessage = if (!phaseName.isNullOrEmpty()) "$phaseName: " else ""
+            messageCollector.report(validation, severity, phaseName, customMessagePrefix)
+        }
+        if (severity == CompilerMessageSeverity.ERROR) {
+            hasAnyErrors = true
+        }
+    }
+
+    if (hasAnyErrors) {
+        throw IrValidationException()
+    }
+}
+
+/**
+ * Verifies IR invariants, logs validation errors into [messageCollector].
+ *
  * If [mode] is [IrVerificationMode.ERROR], throws [IrValidationException] at the end,
  * thus allowing to collect as many errors as possible instead of aborting after the first one.
  */
@@ -159,16 +191,7 @@ fun validateIr(
         IrVerificationMode.WARNING -> CompilerMessageSeverity.WARNING
         IrVerificationMode.ERROR -> CompilerMessageSeverity.ERROR
     }
-    var hasAnyErrors = false
-    validateIr(element, irBuiltIns, validatorConfig) { validation ->
-        val phaseMessage = if (!phaseName.isNullOrEmpty()) "$phaseName: " else ""
-        messageCollector.report(validation, severity, phaseName, customMessagePrefix)
-        hasAnyErrors = true
-    }
-
-    if (mode == IrVerificationMode.ERROR && hasAnyErrors) {
-        throw IrValidationException()
-    }
+    validateIr(element, irBuiltIns, validatorConfig, messageCollector, { severity }, phaseName, customMessagePrefix)
 }
 
 fun MessageCollector.report(

@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.ir.declarations.IrDeclaration
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationBase
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationParent
 import org.jetbrains.kotlin.ir.declarations.IrPackageFragment
+import org.jetbrains.kotlin.ir.declarations.IrReplSnippet
 import org.jetbrains.kotlin.ir.declarations.IrTypeParameter
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.IrSimpleType
@@ -88,7 +89,10 @@ private class CheckTreeConsistencyVisitor(val reportError: (IrValidationError) -
         try {
             val assignedParent = declaration.parent
             if (assignedParent != actualParent) {
-                reportWrongParent(declaration, assignedParent, actualParent)
+                // FIXME(KT-79807): There are known invalid parents set in children of IrReplSnippet.
+                if (actualParent !is IrReplSnippet) {
+                    reportWrongParent(declaration, assignedParent, actualParent)
+                }
             }
         } catch (_: Exception) {
             reportWrongParent(declaration, null, actualParent)
@@ -116,17 +120,20 @@ private class CheckTreeConsistencyVisitor(val reportError: (IrValidationError) -
     private fun checkDuplicateNode(element: IrElement) {
         if (!visitedElements.add(element)) {
             if (config.checkTreeConsistency) {
-                hasInconsistency = true
-                val renderString = if (element is IrTypeParameter) element.render() + " of " + element.parent.render() else element.render()
-                reportError(
-                    IrValidationError(
-                        null,
-                        element,
-                        IrValidationError.Cause.IrTreeInconsistency,
-                        "Duplicate IR node: $renderString",
-                        parentChain
+                // FIXME(KT-79807): There are known duplicated elements in IrReplSnippet.
+                if (!parentChain.any { it is IrReplSnippet }) {
+                    hasInconsistency = true
+                    val renderString = if (element is IrTypeParameter) element.render() + " of " + element.parent.render() else element.render()
+                    reportError(
+                        IrValidationError(
+                            null,
+                            element,
+                            IrValidationError.Cause.IrTreeInconsistency,
+                            "Duplicate IR node: $renderString",
+                            parentChain
+                        )
                     )
-                )
+                }
             }
 
             if (element in parentChain) {
