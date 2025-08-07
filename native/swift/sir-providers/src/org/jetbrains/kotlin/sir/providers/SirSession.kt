@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.sir.providers
 
-import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
 import org.jetbrains.kotlin.analysis.api.analyze
 import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
@@ -76,6 +75,7 @@ public interface SirSession :
 
     override fun KaType.translateType(
         ktAnalysisSession: KaSession,
+        position: SirTypeVariance,
         reportErrorType: (String) -> Nothing,
         reportUnsupportedType: () -> Nothing,
         processTypeImports: (List<SirImport>) -> Unit,
@@ -83,6 +83,7 @@ public interface SirSession :
         with(typeProvider) {
             this@translateType.translateType(
                 ktAnalysisSession,
+                position,
                 reportErrorType,
                 reportUnsupportedType,
                 processTypeImports
@@ -339,6 +340,7 @@ public interface SirTypeProvider {
      */
     public fun KaType.translateType(
         ktAnalysisSession: KaSession,
+        position: SirTypeVariance,
         reportErrorType: (String) -> Nothing,
         reportUnsupportedType: () -> Nothing,
         processTypeImports: (List<SirImport>) -> Unit,
@@ -347,10 +349,11 @@ public interface SirTypeProvider {
 
 context(ka: KaSession, sir: SirSession)
 public fun KaType.translateType(
+    position: SirTypeVariance,
     reportErrorType: (String) -> Nothing,
     reportUnsupportedType: () -> Nothing,
     processTypeImports: (List<SirImport>) -> Unit,
-): SirType = with(sir) { translateType(ka, reportErrorType, reportUnsupportedType, processTypeImports) }
+): SirType = with(sir) { translateType(ka, position, reportErrorType, reportUnsupportedType, processTypeImports) }
 
 /**
  * Generates a list of [SirBridge] for given [SirDeclaration].

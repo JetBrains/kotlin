@@ -133,10 +133,11 @@ internal class SirEnumEntriesStaticPropertyFromKtSymbol(
             (ktSymbol.returnType as KaClassType)
                 .typeArguments.first().type!!
                 .translateType(
+                    SirTypeVariance.INVARIANT,
                     reportErrorType = { error("Can't translate return type in ${ktSymbol.render()}: ${it}") },
                     reportUnsupportedType = { error("Can't translate return type in ${ktSymbol.render()}: type is not supported") },
                     processTypeImports = ktSymbol.containingModule.sirModule()::updateImports
-                )
+                ),
         )
     }
 }

@@ -209,6 +209,7 @@ private inline fun <reified T : KaFunctionSymbol> SirFromKtSymbol<T>.getOuterPar
         if (sirFromKtSymbol is SirInitFromKtSymbol && isInner(sirFromKtSymbol)) {
             val outSymbol = (ktSymbol.containingSymbol?.containingSymbol as? KaNamedClassSymbol)
             val outType = outSymbol?.defaultType?.translateType(
+                SirTypeVariance.INVARIANT,
                 { error("Error translating type") },
                 { error("Unsupported type") },
                 {})

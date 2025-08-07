@@ -354,18 +354,12 @@ open class SEALED: KotlinRuntime.KotlinBase, KotlinRuntimeSupport._KotlinBridged
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
     }
 }
-public var block: main.closure {
+public var block: Swift.Never {
     get {
-        return {
-            let nativeBlock = __root___block_get()
-            return { nativeBlock() }
-        }()
+        fatalError()
     }
     set {
-        return __root___block_set__TypesOfArguments__U2829202D_U20Swift_Void__({
-            let originalBlock = newValue
-            return { return originalBlock() }
-        }())
+        fatalError()
     }
 }
 public func consume_closure(
@@ -378,25 +372,16 @@ public func consume_closure(
 }
 public func deeper_closure_typealiase(
     block: @escaping main.deeper_closure_typealias
-) -> main.deeper_closure_typealias {
-    return {
-        let nativeBlock = __root___deeper_closure_typealiase__TypesOfArguments__U2829202D_U20Swift_Void__({
-        let originalBlock = block
-        return { return originalBlock() }
-    }())
-        return { nativeBlock() }
-    }()
+) -> Swift.Never {
+    fatalError()
 }
 public func increment(
     integer: main.DefaultInteger
 ) -> main.RegularInteger {
     return __root___increment__TypesOfArguments__Swift_Int32__(integer)
 }
-public func produce_closure() -> main.closure {
-    return {
-        let nativeBlock = __root___produce_closure()
-        return { nativeBlock() }
-    }()
+public func produce_closure() -> Swift.Never {
+    fatalError()
 }
 extension main.OUTSIDE_PROTO where Self : KotlinRuntimeSupport._KotlinBridged {
 }

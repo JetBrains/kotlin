@@ -5,9 +5,10 @@
 
 fun foo_sus(): suspend ()->Unit = TODO()
 fun foo_1(): ()->Unit = TODO()
-fun foo_2(): Function0<Unit> = foo_1()
 
 fun foo_consume_simple(block: ()->Unit): Unit = TODO()
+
+fun foo_consume_recursive(block: (()->Unit)->(()->Unit)): Unit = TODO()
 
 var closure_property: () -> Unit = {}
 
@@ -41,6 +42,9 @@ fun consume_block_with_byte_id(block: (Byte) -> Byte): Byte = TODO()
 // FILE: optional_closure.kt
 
 fun consume_opt_closure(arg: (()->Unit)?): Unit = TODO()
+fun produce_opt_closure(arg: Unit): (()->Unit)? = TODO()
+fun consume_producing_opt_closure(arg: (()->(()->Unit)?)?): Unit = TODO()
+fun consume_consuming_opt_closure(arg: (((()->Unit)?)->Unit)?): Unit = TODO()
 
 // MODULE: functional_types
 // EXPORT_TO_SWIFT
@@ -83,6 +87,13 @@ fun fooString(i: String?.()->Unit): Unit = TODO()
 fun fooAny(i: Any.()->Unit): Unit = TODO()
 fun fooList(i: List<Int>.()->Unit): Unit = TODO()
 
+// MODULE: typealias_to_closure
+// EXPORT_TO_SWIFT
+// FILE: typealias_to_closure.kt
+
+typealias Closure = () -> Unit
+
+fun typealias_demo(input: Closure): Closure = TODO()
 
 // MODULE: data
 // EXPORT_TO_SWIFT

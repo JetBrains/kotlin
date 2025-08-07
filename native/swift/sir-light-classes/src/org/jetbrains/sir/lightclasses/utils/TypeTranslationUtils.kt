@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.sir.SirFunctionalType
 import org.jetbrains.kotlin.sir.SirNominalType
 import org.jetbrains.kotlin.sir.SirParameter
 import org.jetbrains.kotlin.sir.SirType
+import org.jetbrains.kotlin.sir.SirTypeVariance
 import org.jetbrains.kotlin.sir.SirTypealias
 import org.jetbrains.kotlin.sir.providers.SirSession
 import org.jetbrains.kotlin.sir.providers.sirModule
@@ -29,6 +30,7 @@ import org.jetbrains.sir.lightclasses.extensions.withSessions
 internal inline fun <reified T : KaCallableSymbol> SirFromKtSymbol<T>.translateReturnType(): SirType {
     return withSessions {
         this@translateReturnType.ktSymbol.returnType.translateType(
+            SirTypeVariance.COVARIANT,
             reportErrorType = { error("Can't translate return type in ${ktSymbol.render()}: ${it}") },
             reportUnsupportedType = { error("Can't translate return type in ${ktSymbol.render()}: type is not supported") },
             processTypeImports = this@translateReturnType.ktSymbol.containingModule.sirModule()::updateImports
@@ -73,6 +75,7 @@ internal inline fun <reified T : KaCallableSymbol> SirFromKtSymbol<T>.translateE
 context(ka: KaSession, sir: SirSession)
 private fun <P : KaParameterSymbol> createParameterType(ktSymbol: KaDeclarationSymbol, parameter: P): SirType {
     return parameter.returnType.translateType(
+        position = SirTypeVariance.CONTRAVARIANT,
         reportErrorType = { error("Can't translate parameter ${parameter.render()} type in ${ktSymbol.render()}: $it") },
         reportUnsupportedType = { error("Can't translate parameter ${parameter.render()} type in ${ktSymbol.render()}: type is not supported") },
         processTypeImports = ktSymbol.containingModule.sirModule()::updateImports

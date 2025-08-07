@@ -93,17 +93,9 @@ void * __root___OPEN_CLASS_init_allocate();
 
 void __root___OPEN_CLASS_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer__(void * __kt);
 
-void (^__root___block_get())(void);
-
-void __root___block_set__TypesOfArguments__U2829202D_U20Swift_Void__(void (^newValue)(void));
-
 void __root___consume_closure__TypesOfArguments__U2829202D_U20Swift_Void__(void (^block)(void));
 
-void (^__root___deeper_closure_typealiase__TypesOfArguments__U2829202D_U20Swift_Void__(void (^block)(void)))(void);
-
 int32_t __root___increment__TypesOfArguments__Swift_Int32__(int32_t integer);
-
-void (^__root___produce_closure())(void);
 
 void * typealiases_Foo_init_allocate();
 

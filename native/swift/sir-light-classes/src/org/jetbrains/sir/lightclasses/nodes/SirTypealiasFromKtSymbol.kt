@@ -38,6 +38,7 @@ internal class SirTypealiasFromKtSymbol(
 
     override val type: SirType by lazyWithSessions {
         ktSymbol.expandedType.translateType(
+            SirTypeVariance.INVARIANT,
             reportErrorType = { error("Can't translate ${ktSymbol.render()} type: $it") },
             reportUnsupportedType = { error("Can't translate ${ktSymbol.render()} type: it is not supported") },
             processTypeImports = ktSymbol.containingModule.sirModule()::updateImports
