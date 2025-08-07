@@ -28,7 +28,9 @@ import org.jetbrains.kotlin.backend.konan.llvm.name
 import org.jetbrains.kotlin.backend.konan.llvm.verifyModule
 import org.jetbrains.kotlin.backend.konan.optimizations.RemoveRedundantSafepointsPass
 import org.jetbrains.kotlin.backend.konan.optimizations.removeMultipleThreadDataLoads
+import org.jetbrains.kotlin.cli.common.perfManager
 import org.jetbrains.kotlin.config.nativeBinaryOptions.SanitizerKind
+import org.jetbrains.kotlin.util.PerformanceManager
 import java.io.File
 import kotlin.sequences.forEach
 
@@ -71,12 +73,12 @@ internal class OptimizationState(
         val llvmConfig: LlvmPipelineConfig
 ) : BasicPhaseContext(konanConfig)
 
-internal fun optimizationPipelinePass(name: String, pipeline: (LlvmPipelineConfig, LoggingContext) -> LlvmOptimizationPipeline) =
+internal fun optimizationPipelinePass(name: String, pipeline: (LlvmPipelineConfig, PerformanceManager?, LoggingContext) -> LlvmOptimizationPipeline) =
         createSimpleNamedCompilerPhase<OptimizationState, LLVMModuleRef>(
                 name = name,
                 postactions = getDefaultLlvmModuleActions(),
         ) { context, module ->
-            pipeline(context.llvmConfig, context).use {
+            pipeline(context.llvmConfig, context.config.configuration.perfManager, context).use {
                 it.execute(module)
             }
         }
