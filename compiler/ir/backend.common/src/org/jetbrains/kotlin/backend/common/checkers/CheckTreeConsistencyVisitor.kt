@@ -70,7 +70,15 @@ private class CheckTreeConsistencyVisitor(val reportError: (IrValidationError) -
     override fun visitSymbol(container: IrElement, symbol: IrSymbol) {
         if (config.checkUnboundSymbols && !symbol.isBound) {
             hasInconsistency = true
-            reportError(IrValidationError(null, container, "Unexpected unbound symbol", parentChain))
+            reportError(
+                IrValidationError(
+                    null,
+                    container,
+                    IrValidationError.Cause.UnboundSymbol,
+                    "Unexpected unbound symbol",
+                    parentChain
+                )
+            )
         }
     }
 
@@ -93,6 +101,7 @@ private class CheckTreeConsistencyVisitor(val reportError: (IrValidationError) -
             IrValidationError(
                 null,
                 declaration,
+                IrValidationError.Cause.IrTreeInconsistency,
                 buildString {
                     appendLine("Declaration with wrong parent:")
                     appendLine("declaration: ${declaration.render()}")
@@ -109,7 +118,15 @@ private class CheckTreeConsistencyVisitor(val reportError: (IrValidationError) -
             if (config.checkTreeConsistency) {
                 hasInconsistency = true
                 val renderString = if (element is IrTypeParameter) element.render() + " of " + element.parent.render() else element.render()
-                reportError(IrValidationError(null, element, "Duplicate IR node: $renderString", parentChain))
+                reportError(
+                    IrValidationError(
+                        null,
+                        element,
+                        IrValidationError.Cause.IrTreeInconsistency,
+                        "Duplicate IR node: $renderString",
+                        parentChain
+                    )
+                )
             }
 
             if (element in parentChain) {
