@@ -1075,87 +1075,6 @@ private fun parseDuration(value: String, strictIso: Boolean, throwException: Boo
 }
 
 @kotlin.internal.InlineOnly
-private inline fun willMultiplyOverflow(a: Long, b: Long): Boolean = when {
-    a == 0L -> false
-    a > 0 -> a > MAX_MILLIS / b
-    else -> a < -MAX_MILLIS / b
-}
-
-@kotlin.internal.InlineOnly
-private inline fun Long.multiplyWithoutOverflow(other: Long): Long = when {
-    willMultiplyOverflow(this, other) -> if (this > 0) MAX_MILLIS else -MAX_MILLIS
-    else -> this * other
-}
-
-@kotlin.internal.InlineOnly
-private inline fun willAddOverflow(a: Long, b: Long): Boolean = when {
-    a > 0 && b > 0 -> a > MAX_MILLIS - b
-    a < 0 && b < 0 -> a < -MAX_MILLIS - b
-    else -> false
-}
-
-@kotlin.internal.InlineOnly
-private inline fun Long.addWithoutOverflow(other: Long): Long = when {
-    this == -MAX_MILLIS && other == MAX_MILLIS || this == MAX_MILLIS && other == -MAX_MILLIS -> Duration.INVALID_RAW_VALUE
-    this == MAX_MILLIS || other == MAX_MILLIS -> MAX_MILLIS
-    this == -MAX_MILLIS || other == -MAX_MILLIS -> -MAX_MILLIS
-    willAddOverflow(this, other) -> if (this > 0) MAX_MILLIS else -MAX_MILLIS
-    else -> this + other
-}
-
-private data class NumericParseData(val value: Long, val index: Int, val sign: Int = 1)
-
-@kotlin.internal.InlineOnly
-private inline fun String.parseLong(startIndex: Int, withSign: Boolean = true): NumericParseData {
-    var sign = 1
-    var index = startIndex
-    if (withSign) {
-        val firstChar = this[index]
-        if (firstChar == '-') {
-            sign = -1
-            index++
-        } else if (firstChar == '+') {
-            index++
-        }
-    }
-    while (index < length && this[index] == '0') index++
-    var result = 0L
-    val overflowThreshold = MAX_MILLIS / 10
-    while (index < length) {
-        val ch = this[index]
-        if (ch !in '0'..'9') break
-        val digit = ch - '0'
-        if (result > overflowThreshold || (result == overflowThreshold && digit > LAST_DIGIT_MAX)) {
-            while (index < length && this[index] in '0'..'9') index++
-            return NumericParseData(MAX_MILLIS * sign, index, sign)
-        }
-        result = result * 10 + digit
-        index++
-    }
-    return NumericParseData(result * sign, index, sign)
-}
-
-@kotlin.internal.InlineOnly
-private inline fun String.parseFraction(startIndex: Int): NumericParseData {
-    var result = 0L
-    var index = startIndex
-    var multiplier = 100_000_000_000_000L
-    while (index < length && multiplier > 0) {
-        val ch = this[index]
-        if (ch !in '0'..'9') break
-        val digit = ch - '0'
-        result += digit * multiplier
-        multiplier /= 10
-        index++
-    }
-    while (index < length && this[index] in '0'..'9') index++
-    return NumericParseData(result, index)
-}
-
-@kotlin.internal.InlineOnly
-private inline fun Long.toNanos(unit: DurationUnit): Long = (this * unit.multiplier).roundToLong()
-
-@kotlin.internal.InlineOnly
 private inline fun parseIsoStringFormat(
     value: String,
     startIndex: Int,
@@ -1295,6 +1214,87 @@ private inline fun parseDefaultStringFormat(
 
     return totalMillis.toDuration(DurationUnit.MILLISECONDS) + totalNanos.toDuration(DurationUnit.NANOSECONDS)
 }
+
+@kotlin.internal.InlineOnly
+private inline fun willMultiplyOverflow(a: Long, b: Long): Boolean = when {
+    a == 0L -> false
+    a > 0 -> a > MAX_MILLIS / b
+    else -> a < -MAX_MILLIS / b
+}
+
+@kotlin.internal.InlineOnly
+private inline fun Long.multiplyWithoutOverflow(other: Long): Long = when {
+    willMultiplyOverflow(this, other) -> if (this > 0) MAX_MILLIS else -MAX_MILLIS
+    else -> this * other
+}
+
+@kotlin.internal.InlineOnly
+private inline fun willAddOverflow(a: Long, b: Long): Boolean = when {
+    a > 0 && b > 0 -> a > MAX_MILLIS - b
+    a < 0 && b < 0 -> a < -MAX_MILLIS - b
+    else -> false
+}
+
+@kotlin.internal.InlineOnly
+private inline fun Long.addWithoutOverflow(other: Long): Long = when {
+    this == -MAX_MILLIS && other == MAX_MILLIS || this == MAX_MILLIS && other == -MAX_MILLIS -> Duration.INVALID_RAW_VALUE
+    this == MAX_MILLIS || other == MAX_MILLIS -> MAX_MILLIS
+    this == -MAX_MILLIS || other == -MAX_MILLIS -> -MAX_MILLIS
+    willAddOverflow(this, other) -> if (this > 0) MAX_MILLIS else -MAX_MILLIS
+    else -> this + other
+}
+
+private data class NumericParseData(val value: Long, val index: Int, val sign: Int = 1)
+
+@kotlin.internal.InlineOnly
+private inline fun String.parseLong(startIndex: Int, withSign: Boolean = true): NumericParseData {
+    var sign = 1
+    var index = startIndex
+    if (withSign) {
+        val firstChar = this[index]
+        if (firstChar == '-') {
+            sign = -1
+            index++
+        } else if (firstChar == '+') {
+            index++
+        }
+    }
+    while (index < length && this[index] == '0') index++
+    var result = 0L
+    val overflowThreshold = MAX_MILLIS / 10
+    while (index < length) {
+        val ch = this[index]
+        if (ch !in '0'..'9') break
+        val digit = ch - '0'
+        if (result > overflowThreshold || (result == overflowThreshold && digit > LAST_DIGIT_MAX)) {
+            while (index < length && this[index] in '0'..'9') index++
+            return NumericParseData(MAX_MILLIS * sign, index, sign)
+        }
+        result = result * 10 + digit
+        index++
+    }
+    return NumericParseData(result * sign, index, sign)
+}
+
+@kotlin.internal.InlineOnly
+private inline fun String.parseFraction(startIndex: Int): NumericParseData {
+    var result = 0L
+    var index = startIndex
+    var multiplier = 100_000_000_000_000L
+    while (index < length && multiplier > 0) {
+        val ch = this[index]
+        if (ch !in '0'..'9') break
+        val digit = ch - '0'
+        result += digit * multiplier
+        multiplier /= 10
+        index++
+    }
+    while (index < length && this[index] in '0'..'9') index++
+    return NumericParseData(result, index)
+}
+
+@kotlin.internal.InlineOnly
+private inline fun Long.toNanos(unit: DurationUnit): Long = (this * unit.multiplier).roundToLong()
 
 @kotlin.internal.InlineOnly
 private inline fun throwExceptionOrInvalid(throwException: Boolean, message: String = ""): Duration {
