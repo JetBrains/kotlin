@@ -27,6 +27,7 @@ class KotlinParameterStubImpl(
         return StringRef.toString(name)
     }
 
+    // val/var parameters from a primary constructor might have fqName
     override val fqName: FqName?
         get() = if (_fqName != null) FqName(_fqName.string) else null
 }
