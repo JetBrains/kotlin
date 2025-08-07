@@ -32,5 +32,4 @@ fun test() {
     }
 }
 
-/* GENERATED_FIR_TAGS: assignment, functionDeclaration, functionalType, lambdaLiteral, localProperty, nullableType,
-propertyDeclaration, typeParameter */
+/* GENERATED_FIR_TAGS: functionalType, lambdaLiteral, nullableType, typeParameter */
