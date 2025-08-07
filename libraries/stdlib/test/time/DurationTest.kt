@@ -798,6 +798,31 @@ class DurationTest {
         test(365.days * 100000, "36500000d")
         test((MAX_MILLIS - 1).milliseconds, "53375995583d 15h 36m 27.902s") // max finite value
 
+        test(10.days, "10d")
+        test(1.days + 12.hours, "1d 12h", "1d12h")
+        test((-5).days - 23.hours - 2.minutes, "-(5d 23h 2m)", "-5d23h2m")
+        test(9.days + 7.hours + 28.minutes + 6.seconds, "9d 7h 28m 6s", "8d 31h 28m 6s")
+        test(
+            15.days + 1.hours + 45.minutes + 31.seconds + 30123.microseconds,
+            "15d 1h 45m 31.030123s",
+            "15d 98m 451s 30.123ms"
+        )
+        test(
+            102.days + 9.hours + 12.minutes + 45.seconds + 31.milliseconds + 210.123.microseconds,
+            "102d 9h 12m 45.031210123s",
+            "100d 57h 12m 45s 28ms 3210.12345us"
+        )
+        test(
+            8771.days + 14.hours + 52.minutes + 42.seconds + 997.milliseconds + 438.microseconds + 653.nanoseconds,
+            "8771d 14h 52m 42.997438653s",
+            "8765d 151h 452m 1233s 9873ms 123451us 987653.12345678ns"
+        )
+        test(
+            -(1835.days + 14.hours + 27.minutes + 46.619332752.seconds),
+            "-(1835d 14h 27m 46.619332752s)",
+            "-(01257d  012395h 0087542m  000115874s 0871542ms  00951487us    000125845751.985487515ns)"
+        )
+
         // all infinite
 //        val universeAge = Duration.days(365.25) * 13.799e9
 //        val planckTime = Duration.seconds(5.4e-44)
