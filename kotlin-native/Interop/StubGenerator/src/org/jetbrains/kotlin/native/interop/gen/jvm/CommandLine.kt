@@ -144,10 +144,10 @@ open class CInteropArguments(argParser: ArgParser =
             ArgType.Choice<CCallMode>(),
             CCALL_MODE,
             description = "CCall mode: " +
-                    "${CCallMode.DIRECT.name.lowercase()} - generate only @CCall.Direct, " +
+                    "${CCallMode.DIRECT.name.lowercase()} - generate only @CCall.Direct (default), " +
                     "${CCallMode.INDIRECT.name.lowercase()} - generate only @CCall, " +
-                    "${CCallMode.BOTH.name.lowercase()} - generate both (default)"
-    ).default(CCallMode.BOTH)
+                    "${CCallMode.BOTH.name.lowercase()} - generate both"
+    ).default(CCallMode.DIRECT)
 
     val klibAbiCompatibilityLevel by argParser.option(
             type = ArgType.Choice(
