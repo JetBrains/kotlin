@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.ir.util.render
 import org.jetbrains.kotlin.ir.validation.IrValidatorConfig
 import org.jetbrains.kotlin.ir.validation.ReportIrValidationError
 import org.jetbrains.kotlin.ir.validation.temporarilyPushing
+import org.jetbrains.kotlin.ir.validation.IrValidationException
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 
 private class CheckTreeConsistencyVisitor(val reportError: ReportIrValidationError, val config: IrValidatorConfig) :
@@ -108,7 +109,7 @@ private class CheckTreeConsistencyVisitor(val reportError: ReportIrValidationErr
             if (element in parentChain) {
                 // Not only is the same element twice in the tree, there is some cycle, so it is not a tree at all.
                 // Give up early to avoid stack overflow.
-                throw TreeConsistencyError(element)
+                throw IrTreeConsistencyException(element)
             }
         }
     }
@@ -117,9 +118,7 @@ private class CheckTreeConsistencyVisitor(val reportError: ReportIrValidationErr
 internal fun IrElement.checkTreeConsistency(reportError: ReportIrValidationError, config: IrValidatorConfig) {
     val checker = CheckTreeConsistencyVisitor(reportError, config)
     accept(checker, null)
-    if (checker.hasInconsistency) throw TreeConsistencyError(this)
+    if (checker.hasInconsistency) throw IrTreeConsistencyException(this)
 }
 
-open class IrValidationError(message: String? = null, cause: Throwable? = null) : IllegalStateException(message, cause)
-
-class TreeConsistencyError(element: IrElement) : IrValidationError(element.render())
+class IrTreeConsistencyException(element: IrElement) : IrValidationException(element.render())
