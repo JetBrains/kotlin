@@ -118,7 +118,7 @@ internal val KtDestructuringDeclarationEntry.entryName: Name
 internal val KtParameter.parameterName: Name
     get() = when {
         destructuringDeclaration != null -> SpecialNames.DESTRUCT
-        isSingleUnderscore -> SpecialNames.UNDERSCORE_FOR_UNUSED_VAR
+        name == "_" -> SpecialNames.UNDERSCORE_FOR_UNUSED_VAR
         else -> nameAsSafeName
     }
 
