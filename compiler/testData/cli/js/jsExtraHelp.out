@@ -60,6 +60,7 @@ where advanced options include:
   -Xwasm-preserve-ic-order   Preserve wasm file structure between IC runs.
   -Xwasm-ic-cache-readonly   Do not commit IC cache updates.
   -Xwasm-generate-dwarf      Generate DWARF debug information.
+  -Xwasm-use-shared-objects  Mark heap types as shared in accordance to "Shared-Everything Threads" proposal
   -Xir-dce-dump-reachability-info-to-file=<path>
                              Dump reachability information collected about declarations while performing DCE to a file. The format will be chosen automatically based on the file extension. Supported output formats include JSON for .json, a JS const initialized with a plain object containing information for .js, and plain text for all other file types.
   -Xir-dump-declaration-ir-sizes-to-file=<path>
