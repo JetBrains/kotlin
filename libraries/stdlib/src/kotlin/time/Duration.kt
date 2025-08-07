@@ -1074,8 +1074,6 @@ private fun parseDuration(value: String, strictIso: Boolean, throwException: Boo
     return if (isNegative) -result else result
 }
 
-private const val INFINITY_STRING = "Infinity"
-
 @kotlin.internal.InlineOnly
 private inline fun willMultiplyOverflow(a: Long, b: Long): Boolean = when {
     a == 0L -> false
@@ -1104,11 +1102,6 @@ private inline fun Long.addWithoutOverflow(other: Long): Long = when {
     willAddOverflow(this, other) -> if (this > 0) MAX_MILLIS else -MAX_MILLIS
     else -> this + other
 }
-
-private const val MILLIS_PER_SECOND = 1000L
-private const val MILLIS_PER_MINUTE = MILLIS_PER_SECOND * 60L
-private const val MILLIS_PER_HOUR = MILLIS_PER_MINUTE * 60L
-private const val MILLIS_PER_DAY = MILLIS_PER_HOUR * 24L
 
 private data class NumericParseData(val value: Long, val index: Int, val sign: Int = 1)
 
@@ -1189,15 +1182,15 @@ private inline fun parseIsoStringFormat(
         var unit = value[index]
         if (unit == 'D') {
             if (isTimeComponent) return throwExceptionOrInvalid(throwException)
-            totalMillis = longValue.multiplyWithoutOverflow(MILLIS_PER_DAY)
+            totalMillis = longValue.multiplyWithoutOverflow(MILLIS_IN_DAY)
         } else {
             if (!isTimeComponent) return throwExceptionOrInvalid(throwException)
             totalMillis = totalMillis.addWithoutOverflow(
                 longValue.multiplyWithoutOverflow(
                     when (unit) {
-                        'H' -> MILLIS_PER_HOUR
-                        'M' -> MILLIS_PER_MINUTE
-                        'S', '.' -> MILLIS_PER_SECOND
+                        'H' -> MILLIS_IN_HOUR
+                        'M' -> MILLIS_IN_MINUTE
+                        'S', '.' -> MILLIS_IN_SECOND
                         else -> return throwExceptionOrInvalid(throwException, "Missing unit for value $longValue")
                     }
                 )
@@ -1277,10 +1270,10 @@ private inline fun parseDefaultStringFormat(
         when {
             unit >= DurationUnit.MILLISECONDS -> {
                 val multiplier = when (unit) {
-                    DurationUnit.DAYS -> MILLIS_PER_DAY
-                    DurationUnit.HOURS -> MILLIS_PER_HOUR
-                    DurationUnit.MINUTES -> MILLIS_PER_MINUTE
-                    DurationUnit.SECONDS -> MILLIS_PER_SECOND
+                    DurationUnit.DAYS -> MILLIS_IN_DAY
+                    DurationUnit.HOURS -> MILLIS_IN_HOUR
+                    DurationUnit.MINUTES -> MILLIS_IN_MINUTE
+                    DurationUnit.SECONDS -> MILLIS_IN_SECOND
                     else -> 1L
                 }
                 totalMillis = totalMillis.addWithoutOverflow(integralValue.multiplyWithoutOverflow(multiplier))
@@ -1339,6 +1332,13 @@ internal const val MAX_MILLIS = Long.MAX_VALUE / 2
 private const val LAST_DIGIT_MAX = MAX_MILLIS % 10
 // MAX_NANOS expressed in milliseconds
 private const val MAX_NANOS_IN_MILLIS = MAX_NANOS / NANOS_IN_MILLIS
+
+private const val MILLIS_IN_SECOND = 1000L
+private const val MILLIS_IN_MINUTE = MILLIS_IN_SECOND * 60L
+private const val MILLIS_IN_HOUR = MILLIS_IN_MINUTE * 60L
+private const val MILLIS_IN_DAY = MILLIS_IN_HOUR * 24L
+
+private const val INFINITY_STRING = "Infinity"
 
 private fun nanosToMillis(nanos: Long): Long = nanos / NANOS_IN_MILLIS
 private fun millisToNanos(millis: Long): Long = millis * NANOS_IN_MILLIS
