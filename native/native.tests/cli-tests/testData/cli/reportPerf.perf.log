@@ -9,6 +9,7 @@ Kotlin to Native compiler performance report
          IR LOWERING        $UINT>>$ ms            $REAL>>$ loc/s
       DYNAMIC PHASES        $UINT>>$ ms            $REAL>>$ loc/s
              BACKEND        $UINT>>$ ms            $REAL>>$ loc/s
+      DYNAMIC PHASES        $UINT>>$ ms            $REAL>>$ loc/s
 GC time for PS MarkSweep is $UINT$ ms, $UINT$ collections
 GC time for PS Scavenge is $UINT$ ms, $UINT$ collections
 JIT time is $UINT$ ms
