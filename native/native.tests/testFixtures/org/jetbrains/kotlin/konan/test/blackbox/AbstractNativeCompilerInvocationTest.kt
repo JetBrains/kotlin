@@ -93,9 +93,9 @@ class NativeCompilerInvocationTestArtifactBuilder(
         check(!hasKtFiles || defFiles.isEmpty()) { "Both .kt and .def files are specified" }
         check(defFiles.size <= 1) { "More than one .def file is specified" }
 
-        if (hasKtFiles) {
-            val klibArtifact = KLIB(module.klibFile)
+        val klibArtifact = KLIB(module.klibFile)
 
+        if (hasKtFiles) {
             val testCase = createTestCase(
                 moduleName = module.moduleInfo.moduleName,
                 moduleSourceDir = module.sourceDir,
@@ -111,15 +111,7 @@ class NativeCompilerInvocationTestArtifactBuilder(
             )
 
             compilation.result.assertSuccess() // <-- trigger compilation
-
-            // Remember the artifact with its dependencies.
-            producedKlibs += ProducedKlib(
-                module.moduleInfo.moduleName,
-                klibArtifact,
-                dependencies
-            )
         } else {
-            val klibArtifact = KLIB(module.klibFile)
             val compilation = CInteropCompilation(
                 settings.get(),
                 settings.get(),
@@ -131,10 +123,14 @@ class NativeCompilerInvocationTestArtifactBuilder(
             )
 
             compilation.result.assertSuccess() // <-- trigger compilation
-
-            // Remember the artifact with its dependencies.
-            producedKlibs += ProducedKlib(module.moduleInfo.moduleName, klibArtifact, dependencies)
         }
+
+        // Remember the artifact with its dependencies.
+        producedKlibs += ProducedKlib(
+            module.moduleInfo.moduleName,
+            klibArtifact,
+            dependencies
+        )
     }
 
     override fun buildBinary(
