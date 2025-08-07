@@ -79,6 +79,19 @@ public final class IrType extends
             kindCase_ = 2;
             break;
           }
+          case 26: {
+            org.jetbrains.kotlin.backend.common.serialization.proto.IrErrorType.Builder subBuilder = null;
+            if (kindCase_ == 3) {
+              subBuilder = ((org.jetbrains.kotlin.backend.common.serialization.proto.IrErrorType) kind_).toBuilder();
+            }
+            kind_ = input.readMessage(org.jetbrains.kotlin.backend.common.serialization.proto.IrErrorType.PARSER, extensionRegistry);
+            if (subBuilder != null) {
+              subBuilder.mergeFrom((org.jetbrains.kotlin.backend.common.serialization.proto.IrErrorType) kind_);
+              kind_ = subBuilder.buildPartial();
+            }
+            kindCase_ = 3;
+            break;
+          }
           case 34: {
             org.jetbrains.kotlin.backend.common.serialization.proto.IrDefinitelyNotNullType.Builder subBuilder = null;
             if (kindCase_ == 4) {
@@ -145,6 +158,7 @@ public final class IrType extends
       implements org.jetbrains.kotlin.protobuf.Internal.EnumLite {
     LEGACYSIMPLE(1),
     DYNAMIC(2),
+    ERROR(3),
     DNN(4),
     SIMPLE(5),
     KIND_NOT_SET(0);
@@ -156,6 +170,7 @@ public final class IrType extends
       switch (value) {
         case 1: return LEGACYSIMPLE;
         case 2: return DYNAMIC;
+        case 3: return ERROR;
         case 4: return DNN;
         case 5: return SIMPLE;
         case 0: return KIND_NOT_SET;
@@ -206,6 +221,23 @@ public final class IrType extends
        return (org.jetbrains.kotlin.backend.common.serialization.proto.IrDynamicType) kind_;
     }
     return org.jetbrains.kotlin.backend.common.serialization.proto.IrDynamicType.getDefaultInstance();
+  }
+
+  public static final int ERROR_FIELD_NUMBER = 3;
+  /**
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrErrorType error = 3;</code>
+   */
+  public boolean hasError() {
+    return kindCase_ == 3;
+  }
+  /**
+   * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrErrorType error = 3;</code>
+   */
+  public org.jetbrains.kotlin.backend.common.serialization.proto.IrErrorType getError() {
+    if (kindCase_ == 3) {
+       return (org.jetbrains.kotlin.backend.common.serialization.proto.IrErrorType) kind_;
+    }
+    return org.jetbrains.kotlin.backend.common.serialization.proto.IrErrorType.getDefaultInstance();
   }
 
   public static final int DNN_FIELD_NUMBER = 4;
@@ -262,6 +294,12 @@ public final class IrType extends
         return false;
       }
     }
+    if (hasError()) {
+      if (!getError().isInitialized()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
+    }
     if (hasSimple()) {
       if (!getSimple().isInitialized()) {
         memoizedIsInitialized = 0;
@@ -280,6 +318,9 @@ public final class IrType extends
     }
     if (kindCase_ == 2) {
       output.writeMessage(2, (org.jetbrains.kotlin.backend.common.serialization.proto.IrDynamicType) kind_);
+    }
+    if (kindCase_ == 3) {
+      output.writeMessage(3, (org.jetbrains.kotlin.backend.common.serialization.proto.IrErrorType) kind_);
     }
     if (kindCase_ == 4) {
       output.writeMessage(4, (org.jetbrains.kotlin.backend.common.serialization.proto.IrDefinitelyNotNullType) kind_);
@@ -303,6 +344,10 @@ public final class IrType extends
     if (kindCase_ == 2) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
         .computeMessageSize(2, (org.jetbrains.kotlin.backend.common.serialization.proto.IrDynamicType) kind_);
+    }
+    if (kindCase_ == 3) {
+      size += org.jetbrains.kotlin.protobuf.CodedOutputStream
+        .computeMessageSize(3, (org.jetbrains.kotlin.backend.common.serialization.proto.IrErrorType) kind_);
     }
     if (kindCase_ == 4) {
       size += org.jetbrains.kotlin.protobuf.CodedOutputStream
@@ -437,6 +482,9 @@ public final class IrType extends
       if (kindCase_ == 2) {
         result.kind_ = kind_;
       }
+      if (kindCase_ == 3) {
+        result.kind_ = kind_;
+      }
       if (kindCase_ == 4) {
         result.kind_ = kind_;
       }
@@ -457,6 +505,10 @@ public final class IrType extends
         }
         case DYNAMIC: {
           mergeDynamic(other.getDynamic());
+          break;
+        }
+        case ERROR: {
+          mergeError(other.getError());
           break;
         }
         case DNN: {
@@ -485,6 +537,12 @@ public final class IrType extends
       }
       if (hasDynamic()) {
         if (!getDynamic().isInitialized()) {
+          
+          return false;
+        }
+      }
+      if (hasError()) {
+        if (!getError().isInitialized()) {
           
           return false;
         }
@@ -652,6 +710,70 @@ public final class IrType extends
      */
     public Builder clearDynamic() {
       if (kindCase_ == 2) {
+        kindCase_ = 0;
+        kind_ = null;
+        
+      }
+      return this;
+    }
+
+    /**
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrErrorType error = 3;</code>
+     */
+    public boolean hasError() {
+      return kindCase_ == 3;
+    }
+    /**
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrErrorType error = 3;</code>
+     */
+    public org.jetbrains.kotlin.backend.common.serialization.proto.IrErrorType getError() {
+      if (kindCase_ == 3) {
+        return (org.jetbrains.kotlin.backend.common.serialization.proto.IrErrorType) kind_;
+      }
+      return org.jetbrains.kotlin.backend.common.serialization.proto.IrErrorType.getDefaultInstance();
+    }
+    /**
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrErrorType error = 3;</code>
+     */
+    public Builder setError(org.jetbrains.kotlin.backend.common.serialization.proto.IrErrorType value) {
+      if (value == null) {
+        throw new NullPointerException();
+      }
+      kind_ = value;
+
+      kindCase_ = 3;
+      return this;
+    }
+    /**
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrErrorType error = 3;</code>
+     */
+    public Builder setError(
+        org.jetbrains.kotlin.backend.common.serialization.proto.IrErrorType.Builder builderForValue) {
+      kind_ = builderForValue.build();
+
+      kindCase_ = 3;
+      return this;
+    }
+    /**
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrErrorType error = 3;</code>
+     */
+    public Builder mergeError(org.jetbrains.kotlin.backend.common.serialization.proto.IrErrorType value) {
+      if (kindCase_ == 3 &&
+          kind_ != org.jetbrains.kotlin.backend.common.serialization.proto.IrErrorType.getDefaultInstance()) {
+        kind_ = org.jetbrains.kotlin.backend.common.serialization.proto.IrErrorType.newBuilder((org.jetbrains.kotlin.backend.common.serialization.proto.IrErrorType) kind_)
+            .mergeFrom(value).buildPartial();
+      } else {
+        kind_ = value;
+      }
+
+      kindCase_ = 3;
+      return this;
+    }
+    /**
+     * <code>optional .org.jetbrains.kotlin.backend.common.serialization.proto.IrErrorType error = 3;</code>
+     */
+    public Builder clearError() {
+      if (kindCase_ == 3) {
         kindCase_ = 0;
         kind_ = null;
         

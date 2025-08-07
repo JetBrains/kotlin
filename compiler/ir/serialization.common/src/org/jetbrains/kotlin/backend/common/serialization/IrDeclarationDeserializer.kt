@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.common.serialization
 
+import org.jetbrains.kotlin.backend.common.linkage.issues.IrDisallowedErrorNode
 import org.jetbrains.kotlin.backend.common.linkage.issues.IrSymbolTypeMismatchException
 import org.jetbrains.kotlin.backend.common.serialization.IrDeserializationSettings.DeserializeFunctionBodies
 import org.jetbrains.kotlin.backend.common.serialization.encodings.*
@@ -40,6 +41,7 @@ import org.jetbrains.kotlin.backend.common.serialization.proto.IrDeclarationBase
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrDefinitelyNotNullType as ProtoDefinitelyNotNullType
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrDynamicType as ProtoDynamicType
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrEnumEntry as ProtoEnumEntry
+import org.jetbrains.kotlin.backend.common.serialization.proto.IrErrorType as ProtoErrorType
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrExpression as ProtoExpression
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrField as ProtoField
 import org.jetbrains.kotlin.backend.common.serialization.proto.IrFunction as ProtoFunction
@@ -149,6 +151,12 @@ class IrDeclarationDeserializer(
         }
     }
 
+    private fun deserializeErrorType(proto: ProtoErrorType): IrErrorType {
+        if (!settings.allowErrorNodes) throw IrDisallowedErrorNode(IrErrorType::class.java)
+        val annotations = deserializeAnnotations(proto.annotationList)
+        return IrErrorTypeImpl(null, annotations, Variance.INVARIANT)
+    }
+
     private fun deserializeDefinitelyNotNullType(proto: ProtoDefinitelyNotNullType): IrSimpleType {
         assert(proto.typesCount == 1) { "Only DefinitelyNotNull type is now supported" }
         // TODO support general case of intersection type
@@ -161,6 +169,7 @@ class IrDeclarationDeserializer(
             SIMPLE -> deserializeSimpleType(proto.simple)
             LEGACYSIMPLE -> deserializeLegacySimpleType(proto.legacySimple)
             DYNAMIC -> deserializeDynamicType(proto.dynamic)
+            ERROR -> deserializeErrorType(proto.error)
             else -> error("Unexpected IrType kind: ${proto.kindCase}")
         }
     }
