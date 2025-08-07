@@ -24,8 +24,7 @@ import org.gradle.work.DisableCachingByDefault
 import org.gradle.work.NormalizeLineEndings
 import org.jetbrains.kotlin.backend.common.linkage.partial.PartialLinkageMode
 import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporter
-import org.jetbrains.kotlin.build.report.metrics.GradleBuildPerformanceMetric
-import org.jetbrains.kotlin.build.report.metrics.GradleBuildTime
+import org.jetbrains.kotlin.build.report.metrics.OUT_OF_WORKER_TASK_ACTION
 import org.jetbrains.kotlin.build.report.metrics.measure
 import org.jetbrains.kotlin.cli.common.arguments.CommonToolArguments
 import org.jetbrains.kotlin.cli.common.arguments.K2NativeCompilerArguments
@@ -583,7 +582,7 @@ internal constructor(
             languageVersion = resolveLanguageVersion()
         ) {
             val arguments = createCompilerArguments()
-            val buildArguments = buildMetrics.measure(GradleBuildTime.OUT_OF_WORKER_TASK_ACTION) {
+            val buildArguments = buildMetrics.measure(OUT_OF_WORKER_TASK_ACTION) {
                 val output = outputFile.get()
                 output.parentFile.mkdirs()
 
@@ -1246,7 +1245,7 @@ abstract class CInteropProcess @Inject internal constructor(params: Params) :
     val extraOpts: List<String> get() = settings.extraOpts
 
     @get:Internal
-    val metrics: Property<BuildMetricsReporter<GradleBuildTime, GradleBuildPerformanceMetric>> = project.objects
+    val metrics: Property<BuildMetricsReporter> = project.objects
         .property(GradleBuildMetricsReporter())
 
     private val isInIdeaSync = project.isInIdeaSync

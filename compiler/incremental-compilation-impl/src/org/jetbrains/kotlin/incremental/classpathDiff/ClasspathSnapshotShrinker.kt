@@ -110,14 +110,14 @@ internal object ClasspathSnapshotShrinker {
     }
 
     /**
-     * Helper class to allow the caller of [ClasspathSnapshotShrinker] to provide a list of [BuildTime]s as different callers may want to
-     * record different [BuildTime]s (because the [BuildTime.parent]s are different).
+     * Helper class to allow the caller of [ClasspathSnapshotShrinker] to provide a list of [BuildTimeMetric]s as different callers may want to
+     * record different [BuildTimeMetric]s (because the [BuildTimeMetric.parent]s are different).
      */
     class MetricsReporter(
-        private val metrics: BuildMetricsReporter<GradleBuildTime, GradleBuildPerformanceMetric>? = null,
-        private val getLookupSymbols: GradleBuildTime? = null,
-        private val findReferencedClasses: GradleBuildTime? = null,
-        private val findTransitivelyReferencedClasses: GradleBuildTime? = null
+        private val metrics: BuildMetricsReporter? = null,
+        private val getLookupSymbols: BuildTimeMetric? = null,
+        private val findReferencedClasses: BuildTimeMetric? = null,
+        private val findTransitivelyReferencedClasses: BuildTimeMetric? = null
     ) {
         fun <T> getLookupSymbols(fn: () -> T) = metrics?.measure(getLookupSymbols!!, fn) ?: fn()
         fun <T> findReferencedClasses(fn: () -> T) = metrics?.measure(findReferencedClasses!!, fn) ?: fn()
@@ -257,7 +257,7 @@ internal fun shrinkAndSaveClasspathSnapshot(
             // shrunkCurrentClasspathAgainst[*Current*]Lookups == shrunkCurrentClasspathAgainst[*Previous*]Lookups
             shrinkMode.currentClasspathSnapshot to shrinkMode.shrunkCurrentClasspathAgainstPreviousLookups
         }
-        is ShrinkMode.ChangedLookups -> reporter.measure(GradleBuildTime.INCREMENTAL_SHRINK_CURRENT_CLASSPATH_SNAPSHOT) {
+        is ShrinkMode.ChangedLookups -> reporter.measure(INCREMENTAL_SHRINK_CURRENT_CLASSPATH_SNAPSHOT) {
             // There are changes in the lookups, so we will shrink incrementally.
             val currentClasspath = lazyClasspathSnapshot.getCurrentClasspathSnapshot(LazySnapshotLoadingMetrics.OnIncrementalShrunkClasspathUpdate)
             val shrunkCurrentClasspathAgainstPrevLookups = when (shrinkMode) {
@@ -289,7 +289,7 @@ internal fun shrinkAndSaveClasspathSnapshot(
             "File '${classpathChanges.classpathSnapshotFiles.shrunkPreviousClasspathSnapshotFile.path}' does not exist"
         }
     } else {
-        reporter.measure(GradleBuildTime.SAVE_SHRUNK_CURRENT_CLASSPATH_SNAPSHOT) {
+        reporter.measure(SAVE_SHRUNK_CURRENT_CLASSPATH_SNAPSHOT) {
             ListExternalizer(AccessibleClassSnapshotExternalizer).saveToFile(
                 classpathChanges.classpathSnapshotFiles.shrunkPreviousClasspathSnapshotFile,
                 shrunkCurrentClasspath!!
@@ -304,17 +304,17 @@ internal fun shrinkAndSaveClasspathSnapshot(
         }
     }
 
-    reporter.addMetric(GradleBuildPerformanceMetric.SHRINK_AND_SAVE_CLASSPATH_SNAPSHOT_EXECUTION_COUNT, 1)
+    reporter.addMetric(SHRINK_AND_SAVE_CLASSPATH_SNAPSHOT_EXECUTION_COUNT, 1)
     reporter.addMetric(
-        GradleBuildPerformanceMetric.CLASSPATH_ENTRY_COUNT,
+        CLASSPATH_ENTRY_COUNT,
         classpathChanges.classpathSnapshotFiles.currentClasspathEntrySnapshotFiles.size.toLong()
     )
     reporter.addMetric(
-        GradleBuildPerformanceMetric.CLASSPATH_SNAPSHOT_SIZE,
+        CLASSPATH_SNAPSHOT_SIZE,
         classpathChanges.classpathSnapshotFiles.currentClasspathEntrySnapshotFiles.sumOf { it.length() }
     )
     reporter.addMetric(
-        GradleBuildPerformanceMetric.SHRUNK_CLASSPATH_SNAPSHOT_SIZE,
+        SHRUNK_CLASSPATH_SNAPSHOT_SIZE,
         classpathChanges.classpathSnapshotFiles.shrunkPreviousClasspathSnapshotFile.length()
     )
 }

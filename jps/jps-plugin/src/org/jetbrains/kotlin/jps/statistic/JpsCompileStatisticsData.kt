@@ -6,9 +6,9 @@
 package org.jetbrains.kotlin.jps.statistic
 
 import org.jetbrains.kotlin.build.report.metrics.BuildAttribute
+import org.jetbrains.kotlin.build.report.metrics.BuildPerformanceMetric
+import org.jetbrains.kotlin.build.report.metrics.BuildTimeMetric
 import org.jetbrains.kotlin.build.report.metrics.DynamicBuildTimeKey
-import org.jetbrains.kotlin.build.report.metrics.JpsBuildPerformanceMetric
-import org.jetbrains.kotlin.build.report.metrics.JpsBuildTime
 import org.jetbrains.kotlin.build.report.statistics.CompileStatisticsData
 import org.jetbrains.kotlin.build.report.statistics.StatTag
 
@@ -28,9 +28,9 @@ class JpsCompileStatisticsData(
     private val finishTime: Long,
     private val compilerArguments: List<String>,
     private val nonIncrementalAttributes: Set<BuildAttribute>,
-    private val buildTimesMetrics: Map<JpsBuildTime, Long>,
+    private val buildTimesMetrics: Map<BuildTimeMetric, Long>,
     private val dynamicBuildTimesMetrics: Map<DynamicBuildTimeKey, Long>,
-    private val performanceMetrics: Map<JpsBuildPerformanceMetric, Long>,
+    private val performanceMetrics: Map<BuildPerformanceMetric, Long>,
     private val gcTimeMetrics: Map<String, Long>?,
     private val gcCountMetrics: Map<String, Long>?,
     private val type: String,
@@ -38,7 +38,7 @@ class JpsCompileStatisticsData(
     private val compiledSources: List<String> = emptyList(),
     private val skipMessage: String?,
     private val icLogLines: List<String>,
-) : CompileStatisticsData<JpsBuildTime, JpsBuildPerformanceMetric> {
+) : CompileStatisticsData {
     override fun getProjectName(): String? = projectName
     override fun getLabel(): String? = label
 
@@ -64,11 +64,11 @@ class JpsCompileStatisticsData(
 
     override fun getNonIncrementalAttributes(): Set<BuildAttribute> = nonIncrementalAttributes
 
-    override fun getBuildTimesMetrics(): Map<JpsBuildTime, Long> = buildTimesMetrics
+    override fun getBuildTimesMetrics(): Map<BuildTimeMetric, Long> = buildTimesMetrics
 
     override fun getDynamicBuildTimeMetrics(): Map<DynamicBuildTimeKey, Long> = dynamicBuildTimesMetrics
 
-    override fun getPerformanceMetrics(): Map<JpsBuildPerformanceMetric, Long> = performanceMetrics
+    override fun getPerformanceMetrics(): Map<BuildPerformanceMetric, Long> = performanceMetrics
 
     override fun getGcTimeMetrics(): Map<String, Long>? = gcTimeMetrics
 

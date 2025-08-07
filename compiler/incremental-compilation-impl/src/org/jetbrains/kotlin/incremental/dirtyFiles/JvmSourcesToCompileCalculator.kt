@@ -7,8 +7,9 @@ package org.jetbrains.kotlin.incremental.dirtyFiles
 
 import org.jetbrains.kotlin.build.report.BuildReporter
 import org.jetbrains.kotlin.build.report.info
-import org.jetbrains.kotlin.build.report.metrics.GradleBuildPerformanceMetric
-import org.jetbrains.kotlin.build.report.metrics.GradleBuildTime
+import org.jetbrains.kotlin.build.report.metrics.IC_ANALYZE_CHANGES_IN_ANDROID_LAYOUTS
+import org.jetbrains.kotlin.build.report.metrics.IC_ANALYZE_CHANGES_IN_JAVA_SOURCES
+import org.jetbrains.kotlin.build.report.metrics.IC_DETECT_REMOVED_CLASSES
 import org.jetbrains.kotlin.build.report.metrics.measure
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
@@ -32,7 +33,7 @@ internal class JvmSourcesToCompileCalculator(
     private val kotlinSourceFilesExtensions: Set<String>,
     private val javaInteropCoordinator: JavaInteropCoordinator,
     private val dirtyFilesProvider: DirtyFilesProvider,
-    private val reporter: BuildReporter<GradleBuildTime, GradleBuildPerformanceMetric>,
+    private val reporter: BuildReporter,
 ) {
 
     private fun calculateSourcesToCompileImpl(
@@ -63,17 +64,17 @@ internal class JvmSourcesToCompileCalculator(
         dirtyFiles.addByDirtySymbols(changedAndImpactedSymbols.lookupSymbols)
         dirtyFiles.addByDirtyClasses(changedAndImpactedSymbols.fqNames)
 
-        reporter.measure(GradleBuildTime.IC_ANALYZE_CHANGES_IN_JAVA_SOURCES) {
+        reporter.measure(IC_ANALYZE_CHANGES_IN_JAVA_SOURCES) {
             val javaRebuildReason = javaInteropCoordinator.analyzeChangesInJavaSources(caches, changedFiles, dirtyFiles)
             if (javaRebuildReason != null) {
                 return javaRebuildReason
             }
         }
 
-        val androidLayoutChanges = reporter.measure(GradleBuildTime.IC_ANALYZE_CHANGES_IN_ANDROID_LAYOUTS) {
+        val androidLayoutChanges = reporter.measure(IC_ANALYZE_CHANGES_IN_ANDROID_LAYOUTS) {
             processLookupSymbolsForAndroidLayouts(changedFiles)
         }
-        val removedClassesChanges = reporter.measure(GradleBuildTime.IC_DETECT_REMOVED_CLASSES) {
+        val removedClassesChanges = reporter.measure(IC_DETECT_REMOVED_CLASSES) {
             getRemovedClassesChanges(caches, changedFiles, kotlinSourceFilesExtensions, reporter)
         }
 

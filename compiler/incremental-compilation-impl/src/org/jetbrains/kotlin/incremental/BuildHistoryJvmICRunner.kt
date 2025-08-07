@@ -6,8 +6,6 @@
 package org.jetbrains.kotlin.incremental
 
 import org.jetbrains.kotlin.build.report.BuildReporter
-import org.jetbrains.kotlin.build.report.metrics.GradleBuildPerformanceMetric
-import org.jetbrains.kotlin.build.report.metrics.GradleBuildTime
 import org.jetbrains.kotlin.build.report.warn
 import org.jetbrains.kotlin.cli.common.arguments.K2JVMCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
@@ -24,7 +22,7 @@ import java.io.File
  */
 open class BuildHistoryJvmICRunner(
     workingDir: File,
-    reporter: BuildReporter<GradleBuildTime, GradleBuildPerformanceMetric>,
+    reporter: BuildReporter,
     buildHistoryFile: File,
     outputDirs: Collection<File>?,
     private val modulesApiHistory: ModulesApiHistory,
@@ -72,7 +70,7 @@ open class BuildHistoryJvmICRunner(
         }
     }
 
-    override fun setupJarDependencies(args: K2JVMCompilerArguments, reporter: BuildReporter<GradleBuildTime, GradleBuildPerformanceMetric>): Map<String, AbiSnapshot> {
+    override fun setupJarDependencies(args: K2JVMCompilerArguments, reporter: BuildReporter): Map<String, AbiSnapshot> {
         //fill abiSnapshots
         val abiSnapshots = HashMap<String, AbiSnapshot>()
         args.classpathAsList

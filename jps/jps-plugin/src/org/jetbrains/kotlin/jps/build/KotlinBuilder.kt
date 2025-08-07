@@ -22,7 +22,7 @@ import org.jetbrains.kotlin.build.GeneratedJvmClass
 import org.jetbrains.kotlin.build.report.ICReporter.ReportSeverity
 import org.jetbrains.kotlin.build.report.ICReporterBase
 import org.jetbrains.kotlin.build.report.debug
-import org.jetbrains.kotlin.build.report.metrics.JpsBuildTime
+import org.jetbrains.kotlin.build.report.metrics.JPS_ITERATION
 import org.jetbrains.kotlin.build.report.statistics.StatTag
 import org.jetbrains.kotlin.cli.common.ExitCode
 import org.jetbrains.kotlin.cli.common.arguments.CommonCompilerArguments
@@ -339,7 +339,7 @@ class KotlinBuilder : ModuleLevelBuilder(BuilderCategory.SOURCE_PROCESSOR) {
         try {
             val reportService = JpsStatisticsReportService.getFromContext(context)
             reportService.reportDirtyFiles(kotlinDirtyFilesHolder)
-            return reportService.reportMetrics(chunk, JpsBuildTime.JPS_ITERATION) {
+            return reportService.reportMetrics(chunk, JPS_ITERATION) {
                 val proposedExitCode =
                     doBuild(chunk, kotlinTarget, context, kotlinDirtyFilesHolder, messageCollector, outputConsumer, fsOperations)
 

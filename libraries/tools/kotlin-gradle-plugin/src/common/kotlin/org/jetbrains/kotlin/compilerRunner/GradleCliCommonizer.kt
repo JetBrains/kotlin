@@ -17,8 +17,6 @@ import org.gradle.api.model.ObjectFactory
 import org.gradle.api.provider.ListProperty
 import org.gradle.api.provider.Provider
 import org.jetbrains.kotlin.build.report.metrics.BuildMetricsReporter
-import org.jetbrains.kotlin.build.report.metrics.GradleBuildPerformanceMetric
-import org.jetbrains.kotlin.build.report.metrics.GradleBuildTime
 import org.jetbrains.kotlin.commonizer.CliCommonizer
 import org.jetbrains.kotlin.internal.compilerRunner.native.KotlinNativeToolRunner
 import org.jetbrains.kotlin.gradle.internal.ClassLoadersCachingBuildService
@@ -62,7 +60,7 @@ internal fun Project.maybeCreateCommonizerClasspathConfiguration(): Configuratio
 }
 
 internal fun ObjectFactory.KotlinNativeCommonizerToolRunner(
-    metricsReporter: Provider<BuildMetricsReporter<GradleBuildTime, GradleBuildPerformanceMetric>>,
+    metricsReporter: Provider<BuildMetricsReporter>,
     classLoadersCachingBuildService: Provider<ClassLoadersCachingBuildService>,
     toolClasspath: FileCollection,
     toolJvmArgs: ListProperty<String>,

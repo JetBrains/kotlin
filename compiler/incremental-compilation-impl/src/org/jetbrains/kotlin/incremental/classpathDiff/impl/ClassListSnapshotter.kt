@@ -36,14 +36,14 @@ internal sealed interface ClassListSnapshotter {
 internal class PlainClassListSnapshotter(
     private val classes: List<ClassFileWithContentsProvider>,
     private val settings: ClasspathEntrySnapshotter.Settings,
-    private val metrics: BuildMetricsReporter<GradleBuildTime, GradleBuildPerformanceMetric> = DoNothingBuildMetricsReporter
+    private val metrics: BuildMetricsReporter = DoNothingBuildMetricsReporter
 ) : ClassListSnapshotter {
     private val classNameToClassFileMap: Map<JvmClassName, ClassFileWithContentsProvider> = classes.associateBy { it.classFile.getClassName() }
     private val classFileToSnapshotMap = mutableMapOf<ClassFileWithContentsProvider, ClassSnapshot>()
 
     private fun snapshotClass(classFile: ClassFileWithContentsProvider): ClassSnapshot {
         return classFileToSnapshotMap.getOrPut(classFile) {
-            val clazz = metrics.measure(GradleBuildTime.LOAD_CONTENTS_OF_CLASSES) {
+            val clazz = metrics.measure(LOAD_CONTENTS_OF_CLASSES) {
                 classFile.loadContents()
             }
             // Snapshot outer class first as we need this info to determine whether a class is transitively inaccessible (see below)
@@ -58,7 +58,7 @@ internal class PlainClassListSnapshotter(
                 clazz.classInfo.isInaccessible() || outerClassSnapshot is InaccessibleClassSnapshot -> {
                     InaccessibleClassSnapshot
                 }
-                clazz.classInfo.isKotlinClass -> metrics.measure(GradleBuildTime.SNAPSHOT_KOTLIN_CLASSES) {
+                clazz.classInfo.isKotlinClass -> metrics.measure(SNAPSHOT_KOTLIN_CLASSES) {
                     val kotlinClassInfo = KotlinClassInfo.createFrom(
                         clazz.classInfo.classId,
                         clazz.classInfo.kotlinClassHeader!!,
@@ -66,7 +66,7 @@ internal class PlainClassListSnapshotter(
                     )
                     snapshotKotlinClass(clazz, settings.granularity, kotlinClassInfo)
                 }
-                else -> metrics.measure(GradleBuildTime.SNAPSHOT_JAVA_CLASSES) {
+                else -> metrics.measure(SNAPSHOT_JAVA_CLASSES) {
                     snapshotJavaClass(clazz, settings.granularity)
                 }
             }
@@ -98,7 +98,7 @@ internal class PlainClassListSnapshotter(
 internal class ClassListSnapshotterWithInlinedClassSupport(
     private val classes: List<ClassFileWithContentsProvider>,
     private val settings: ClasspathEntrySnapshotter.Settings,
-    private val metrics: BuildMetricsReporter<GradleBuildTime, GradleBuildPerformanceMetric> = DoNothingBuildMetricsReporter
+    private val metrics: BuildMetricsReporter = DoNothingBuildMetricsReporter
 ) : ClassListSnapshotter {
 
     private val classNameToClassFileMap = classes.associateByTo(
@@ -150,7 +150,7 @@ internal class ClassListSnapshotterWithInlinedClassSupport(
 
         descriptor.snapshot?.let { return it }
 
-        val classFileWithContents = metrics.measure(GradleBuildTime.LOAD_CONTENTS_OF_CLASSES) {
+        val classFileWithContents = metrics.measure(LOAD_CONTENTS_OF_CLASSES) {
             classFile.loadContents()
         }
 
@@ -165,7 +165,7 @@ internal class ClassListSnapshotterWithInlinedClassSupport(
         val snapshot = if (isInaccessible(classFileWithContents)) {
             InaccessibleClassSnapshot
         } else if (classFileWithContents.classInfo.isKotlinClass) {
-            metrics.measure(GradleBuildTime.SNAPSHOT_KOTLIN_CLASSES) {
+            metrics.measure(SNAPSHOT_KOTLIN_CLASSES) {
                 /**
                  * This part is sensitive: extra info computation might require inlinedSnapshots,
                  * so inlinedSnapshots calculation must not directly call regular snapshotting to prevent infinite loops
@@ -185,7 +185,7 @@ internal class ClassListSnapshotterWithInlinedClassSupport(
                 snapshotKotlinClass(classFileWithContents, settings.granularity, kotlinClassInfo)
             }
         } else {
-            metrics.measure(GradleBuildTime.SNAPSHOT_JAVA_CLASSES) {
+            metrics.measure(SNAPSHOT_JAVA_CLASSES) {
                 snapshotJavaClass(classFileWithContents, settings.granularity)
             }
         }
