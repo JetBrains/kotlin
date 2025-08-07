@@ -9,6 +9,8 @@ import org.jetbrains.kotlin.backend.common.*
 import org.jetbrains.kotlin.backend.common.actualizer.*
 import org.jetbrains.kotlin.backend.common.checkers.declaration.IrExpressionBodyInFunctionChecker
 import org.jetbrains.kotlin.backend.common.checkers.declaration.IrFieldVisibilityChecker
+import org.jetbrains.kotlin.backend.common.checkers.expression.IrCallTypeArgumentCountChecker
+import org.jetbrains.kotlin.backend.common.checkers.expression.IrCallValueArgumentCountChecker
 import org.jetbrains.kotlin.backend.common.checkers.expression.IrCrossFileFieldUsageChecker
 import org.jetbrains.kotlin.backend.common.checkers.expression.IrValueAccessScopeChecker
 import org.jetbrains.kotlin.backend.common.checkers.symbol.IrVisibilityChecker
@@ -502,12 +504,18 @@ private class Fir2IrPipeline(
                     //  OOTH, kotlin scripting is supported only in JVM, and the compiled code is executed immediately,
                     //  which means the severity of those violations is not that critical.
                     withCheckers(
+                        IrCallValueArgumentCountChecker, // KT-80062
                         IrValueAccessScopeChecker, // KT-80071
                     ).applyIf(compilerConfiguration.enableIrVisibilityChecks) { // KT-80071
                         // User code may use @Suppress("INVISIBLE_REFERENCE") or similar, and at this point we do allow that,
                         // so visibility checks are only performed if requested via a flag, and in tests.
                         withCheckers(IrVisibilityChecker)
                     }
+                }
+                .applyIf(extension == null) {
+                    // KT-80065: This checker is known to trigger on a lot of internal and external compiler plugins,
+                    //  while most of them, somehow, work. It is disabled for now, not to cause too much breakage.
+                    withCheckers(IrCallTypeArgumentCountChecker)
                 }
                 .applyIf(compilerConfiguration.enableIrVarargTypesChecks) {
                     withVarargChecks()
