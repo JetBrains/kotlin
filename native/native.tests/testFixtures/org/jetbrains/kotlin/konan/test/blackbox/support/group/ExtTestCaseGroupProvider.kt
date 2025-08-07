@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.cli.jvm.compiler.KotlinCoreEnvironment
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.config.LanguageFeature
+import org.jetbrains.kotlin.config.ReturnValueCheckerMode
 import org.jetbrains.kotlin.konan.test.blackbox.support.*
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestCase.WithTestRunnerExtras
 import org.jetbrains.kotlin.konan.test.blackbox.support.TestDirectives.ASSERTIONS_MODE
@@ -48,6 +49,8 @@ import org.jetbrains.kotlin.test.InTextDirectivesUtils.isCompatibleTarget
 import org.jetbrains.kotlin.test.InTextDirectivesUtils.isDirectiveDefined
 import org.jetbrains.kotlin.test.directives.CodegenTestDirectives
 import org.jetbrains.kotlin.test.directives.KlibBasedCompilerTestDirectives
+import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives
+import org.jetbrains.kotlin.test.directives.LanguageSettingsDirectives.RETURN_VALUE_CHECKER_MODE
 import org.jetbrains.kotlin.test.directives.model.RegisteredDirectives
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertFalse
 import org.jetbrains.kotlin.test.services.JUnit5Assertions.assertTrue
@@ -162,6 +165,7 @@ private class ExtTestDataFile(
                 testDataFile = testDataFile
             ),
             assertionsMode = structure.directives.singleOrZeroValue(ASSERTIONS_MODE) ?: AssertionsMode.DEFAULT,
+            returnValueCheckerMode = structure.directives.singleOrZeroValue(RETURN_VALUE_CHECKER_MODE)
         )
     }
 
@@ -198,6 +202,9 @@ private class ExtTestDataFile(
         val freeCInteropArgs = structure.directives.listValues(FREE_CINTEROP_ARGS.name)
             .orEmpty().flatMap { it.split(" ") }
             .map { it.replace("\$generatedSourcesDir", testDataFileSettings.generatedSourcesDir.absolutePath) }
+        testDataFileSettings.returnValueCheckerMode?.let {
+            args += "-Xreturn-value-checker=${it.state}"
+        }
         return TestCompilerArgs(args, freeCInteropArgs, testDataFileSettings.assertionsMode)
     }
 
@@ -630,6 +637,7 @@ private class ExtTestDataFileSettings(
     val generatedSourcesDir: File,
     val nominalPackageName: PackageName,
     val assertionsMode: AssertionsMode,
+    val returnValueCheckerMode: ReturnValueCheckerMode? = null,
 )
 
 private typealias SharedModuleGenerator = (sharedModulesDir: File) -> TestModule.Shared?
