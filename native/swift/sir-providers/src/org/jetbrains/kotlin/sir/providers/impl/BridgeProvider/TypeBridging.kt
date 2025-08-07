@@ -235,7 +235,7 @@ internal sealed class Bridge(
                 typeNamer: SirTypeNamer,
                 valueExpression: String,
             ): String {
-                return "$valueExpression.intoRCRefUnsafe()"
+                return "$valueExpression.__externalRCRef()"
             }
 
             override fun kotlinToSwift(typeNamer: SirTypeNamer, valueExpression: String) =

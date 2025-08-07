@@ -82,8 +82,8 @@ public object KotlinRuntimeSupportModule : SirModule() {
 
             declarations += buildFunction {
                 origin = KotlinRuntimeElement()
-                name = "intoRCRefUnsafe"
-                returnType = SirNominalType(SirSwiftModule.unsafeMutableRawPointer)
+                name = "__externalRCRef"
+                returnType = SirNominalType(SirSwiftModule.unsafeMutableRawPointer).optional()
             }
         }.initializeParentForSelfAndChildren(KotlinRuntimeSupportModule)
     }

@@ -10,7 +10,7 @@ public struct KotlinError: Error {
 
 public protocol _KotlinBridgeable {
     init(__externalRCRefUnsafe: UnsafeMutableRawPointer!, options: KotlinBaseConstructionOptions)
-    func intoRCRefUnsafe() -> UnsafeMutableRawPointer
+    func __externalRCRef() -> UnsafeMutableRawPointer!
 }
 
 public class _KotlinExistential<Wrapped>: KotlinBase {
@@ -18,9 +18,6 @@ public class _KotlinExistential<Wrapped>: KotlinBase {
 }
 
 extension KotlinBase : _KotlinBridgeable {
-    public func intoRCRefUnsafe() -> UnsafeMutableRawPointer {
-        return __externalRCRef()
-    }
 }
 
 extension NSObject {

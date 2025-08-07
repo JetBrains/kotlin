@@ -78,7 +78,7 @@ public var foo: any KotlinRuntimeSupport._KotlinBridgeable {
         return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: __root___foo_get()) as! any KotlinRuntimeSupport._KotlinBridgeable
     }
     set {
-        return __root___foo_set__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__(newValue.intoRCRefUnsafe())
+        return __root___foo_set__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__(newValue.__externalRCRef())
     }
 }
 public var lateinit_foo: any KotlinRuntimeSupport._KotlinBridgeable {
@@ -86,7 +86,7 @@ public var lateinit_foo: any KotlinRuntimeSupport._KotlinBridgeable {
         return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: __root___lateinit_foo_get()) as! any KotlinRuntimeSupport._KotlinBridgeable
     }
     set {
-        return __root___lateinit_foo_set__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__(newValue.intoRCRefUnsafe())
+        return __root___lateinit_foo_set__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__(newValue.__externalRCRef())
     }
 }
 extension ExportedKotlinPackages.namespace.main {

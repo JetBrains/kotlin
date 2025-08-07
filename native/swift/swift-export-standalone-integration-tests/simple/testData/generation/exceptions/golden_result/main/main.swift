@@ -10,7 +10,7 @@ public final class Object: KotlinRuntime.KotlinBase {
         let __kt = __root___Object_init_allocate()
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
         var __error: UnsafeMutableRawPointer? = nil
-        __root___Object_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_anyU20KotlinRuntimeSupport__KotlinBridgeable__(__kt, arg.intoRCRefUnsafe(), &__error)
+        __root___Object_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_anyU20KotlinRuntimeSupport__KotlinBridgeable__(__kt, arg.__externalRCRef(), &__error)
         guard __error == nil else { throw KotlinError(wrapped: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: __error)) }
     }
     public init(
@@ -70,7 +70,7 @@ public final class Object: KotlinRuntime.KotlinBase {
         let __kt = __root___Object_init_allocate()
         super.init(__externalRCRefUnsafe: __kt, options: .asBoundBridge)
         var __error: UnsafeMutableRawPointer? = nil
-        __root___Object_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(__kt, arg.map { it in it.intoRCRefUnsafe() } ?? nil, &__error)
+        __root___Object_init_initialize__TypesOfArguments__Swift_UnsafeMutableRawPointer_Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(__kt, arg.map { it in it.__externalRCRef() } ?? nil, &__error)
         guard __error == nil else { throw KotlinError(wrapped: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: __error)) }
     }
     package override init(
@@ -90,7 +90,7 @@ public func throwing_fun_any(
     arg: any KotlinRuntimeSupport._KotlinBridgeable
 ) throws -> any KotlinRuntimeSupport._KotlinBridgeable {
     var _out_error: UnsafeMutableRawPointer? = nil
-    let _result = __root___throwing_fun_any__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__(arg.intoRCRefUnsafe(), &_out_error)
+    let _result = __root___throwing_fun_any__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__(arg.__externalRCRef(), &_out_error)
     guard _out_error == nil else { throw KotlinError(wrapped: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: _out_error)) }
     return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: _result) as! any KotlinRuntimeSupport._KotlinBridgeable
 }
@@ -166,7 +166,7 @@ public func throwing_fun_nullable(
     arg: (any KotlinRuntimeSupport._KotlinBridgeable)?
 ) throws -> (any KotlinRuntimeSupport._KotlinBridgeable)? {
     var _out_error: UnsafeMutableRawPointer? = nil
-    let _result = __root___throwing_fun_nullable__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(arg.map { it in it.intoRCRefUnsafe() } ?? nil, &_out_error)
+    let _result = __root___throwing_fun_nullable__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(arg.map { it in it.__externalRCRef() } ?? nil, &_out_error)
     guard _out_error == nil else { throw KotlinError(wrapped: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: _out_error)) }
     return { switch _result { case nil: .none; case let res: KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: res) as! any KotlinRuntimeSupport._KotlinBridgeable; } }()
 }
@@ -180,7 +180,7 @@ public func throwing_fun_object(
     arg: any KotlinRuntimeSupport._KotlinBridgeable
 ) throws -> main.Object {
     var _out_error: UnsafeMutableRawPointer? = nil
-    let _result = __root___throwing_fun_object__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__(arg.intoRCRefUnsafe(), &_out_error)
+    let _result = __root___throwing_fun_object__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__(arg.__externalRCRef(), &_out_error)
     guard _out_error == nil else { throw KotlinError(wrapped: KotlinRuntime.KotlinBase.__createClassWrapper(externalRCRef: _out_error)) }
     return main.Object.__createClassWrapper(externalRCRef: _result)
 }

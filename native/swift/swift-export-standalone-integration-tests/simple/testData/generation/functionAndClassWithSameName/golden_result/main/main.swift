@@ -108,7 +108,7 @@ public func interfaceWithFactory() -> any main.InterfaceWithFactory {
 public func interfaceWithFactory(
     arg: any KotlinRuntimeSupport._KotlinBridgeable
 ) -> any main.InterfaceWithFactory {
-    return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: __root___InterfaceWithFactory__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__(arg.intoRCRefUnsafe())) as! any main.InterfaceWithFactory
+    return KotlinRuntime.KotlinBase.__createProtocolWrapper(externalRCRef: __root___InterfaceWithFactory__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__(arg.__externalRCRef())) as! any main.InterfaceWithFactory
 }
 public func objectWithFactory() -> main.ObjectWithFactory {
     return main.ObjectWithFactory.__createClassWrapper(externalRCRef: __root___ObjectWithFactory())
@@ -167,12 +167,12 @@ extension ExportedKotlinPackages.test.factory {
         public func ClassWithFactoryInAPackage(
             arg: any KotlinRuntimeSupport._KotlinBridgeable
         ) -> ExportedKotlinPackages.test.factory.ClassWithFactoryInAPackage {
-            return ExportedKotlinPackages.test.factory.ClassWithFactoryInAPackage.__createClassWrapper(externalRCRef: test_factory_Outer_ClassWithFactoryInAPackage__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__(self.__externalRCRef(), arg.intoRCRefUnsafe()))
+            return ExportedKotlinPackages.test.factory.ClassWithFactoryInAPackage.__createClassWrapper(externalRCRef: test_factory_Outer_ClassWithFactoryInAPackage__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__(self.__externalRCRef(), arg.__externalRCRef()))
         }
         public func Nested(
             x: any KotlinRuntimeSupport._KotlinBridgeable
         ) -> ExportedKotlinPackages.test.factory.Outer.Nested {
-            return ExportedKotlinPackages.test.factory.Outer.Nested.__createClassWrapper(externalRCRef: test_factory_Outer_Nested__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__(self.__externalRCRef(), x.intoRCRefUnsafe()))
+            return ExportedKotlinPackages.test.factory.Outer.Nested.__createClassWrapper(externalRCRef: test_factory_Outer_Nested__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__(self.__externalRCRef(), x.__externalRCRef()))
         }
     }
     public static func Nested() -> ExportedKotlinPackages.test.factory.Outer.Nested {
@@ -181,21 +181,21 @@ extension ExportedKotlinPackages.test.factory {
     public static func classWithFactoryInAPackage(
         arg: any KotlinRuntimeSupport._KotlinBridgeable
     ) -> ExportedKotlinPackages.test.factory.ClassWithFactoryInAPackage {
-        return ExportedKotlinPackages.test.factory.ClassWithFactoryInAPackage.__createClassWrapper(externalRCRef: test_factory_ClassWithFactoryInAPackage__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__(arg.intoRCRefUnsafe()))
+        return ExportedKotlinPackages.test.factory.ClassWithFactoryInAPackage.__createClassWrapper(externalRCRef: test_factory_ClassWithFactoryInAPackage__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__(arg.__externalRCRef()))
     }
 }
 extension ExportedKotlinPackages.test.not.factory {
     public static func ClassWithFactoryInAPackage(
         arg: any KotlinRuntimeSupport._KotlinBridgeable
     ) -> ExportedKotlinPackages.test.factory.ClassWithFactoryInAPackage {
-        return ExportedKotlinPackages.test.factory.ClassWithFactoryInAPackage.__createClassWrapper(externalRCRef: test_not_factory_ClassWithFactoryInAPackage__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__(arg.intoRCRefUnsafe()))
+        return ExportedKotlinPackages.test.factory.ClassWithFactoryInAPackage.__createClassWrapper(externalRCRef: test_not_factory_ClassWithFactoryInAPackage__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__(arg.__externalRCRef()))
     }
 }
 extension ExportedKotlinPackages.test.factory.modules {
     public static func classFromDependency(
         arg: any KotlinRuntimeSupport._KotlinBridgeable
     ) -> ExportedKotlinPackages.test.factory.modules.ClassFromDependency {
-        return ExportedKotlinPackages.test.factory.modules.ClassFromDependency.__createClassWrapper(externalRCRef: test_factory_modules_ClassFromDependency__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__(arg.intoRCRefUnsafe()))
+        return ExportedKotlinPackages.test.factory.modules.ClassFromDependency.__createClassWrapper(externalRCRef: test_factory_modules_ClassFromDependency__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__(arg.__externalRCRef()))
     }
 }
 extension ExportedKotlinPackages.typealiases {

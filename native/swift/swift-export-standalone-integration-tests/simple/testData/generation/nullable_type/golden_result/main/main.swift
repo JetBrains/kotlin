@@ -91,12 +91,12 @@ public func foo(
 public func foo_any(
     a: any KotlinRuntimeSupport._KotlinBridgeable
 ) -> Swift.Void {
-    return __root___foo_any__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__(a.intoRCRefUnsafe())
+    return __root___foo_any__TypesOfArguments__anyU20KotlinRuntimeSupport__KotlinBridgeable__(a.__externalRCRef())
 }
 public func foo_any(
     a: (any KotlinRuntimeSupport._KotlinBridgeable)?
 ) -> Swift.Void {
-    return __root___foo_any__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(a.map { it in it.intoRCRefUnsafe() } ?? nil)
+    return __root___foo_any__TypesOfArguments__Swift_Optional_anyU20KotlinRuntimeSupport__KotlinBridgeable___(a.map { it in it.__externalRCRef() } ?? nil)
 }
 public func opt_to_non_opt_usage(
     i: main.OptToNonOptTypealias
