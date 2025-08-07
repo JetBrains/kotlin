@@ -10,6 +10,7 @@ import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.targets.js.dsl.Distribution
 import org.jetbrains.kotlin.gradle.targets.js.npm.NpmProject
 import org.jetbrains.kotlin.gradle.targets.js.npm.fromSrcPackageJson
+import org.jetbrains.kotlin.gradle.targets.js.webpack.KotlinWebpack
 import org.jetbrains.kotlin.gradle.targets.wasm.binaryen.BinaryenEnvSpec
 import org.jetbrains.kotlin.gradle.targets.wasm.binaryen.BinaryenPlugin
 import org.jetbrains.kotlin.gradle.targets.wasm.d8.D8EnvSpec
@@ -554,6 +555,43 @@ class KotlinWasmGradlePluginIT : KGPBaseTest() {
 
             build("wasmJsTest") {
                 assertTasksExecuted(":wasmJsTest")
+            }
+        }
+    }
+
+    @DisplayName("Check js target webpack config changes reflected in webpack task properties")
+    @GradleTest
+    fun webpackConfigChangesReflectedInWebpackTask(gradleVersion: GradleVersion) {
+        project("new-mpp-wasm-js", gradleVersion) {
+            buildGradleKts.modify {
+                it.replace(
+                    "<JsEngine>",
+                    "browser"
+                )
+            }
+
+            @OptIn(ExperimentalWasmDsl::class)
+            buildScriptInjection {
+                kotlinMultiplatform.wasmJs {
+                    browser {
+                        commonWebpackConfig {
+                            it.outputFileName = "check.js"
+                        }
+                    }
+                }
+
+                project.tasks.withType(KotlinWebpack::class.java).named("wasmJsBrowserProductionWebpack") {
+                    it.doLast { task ->
+                        task as KotlinWebpack
+                        println("File output name: " + task.mainOutputFileName.get())
+                    }
+                }
+            }
+
+            build("assemble") {
+                assertTasksExecuted(":wasmJsBrowserProductionWebpack")
+
+                assertOutputContains("File output name: check.js")
             }
         }
     }
