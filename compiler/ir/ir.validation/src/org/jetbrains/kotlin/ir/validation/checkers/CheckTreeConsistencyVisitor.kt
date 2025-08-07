@@ -13,13 +13,13 @@ import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.IrTypeProjection
 import org.jetbrains.kotlin.ir.util.IrTreeSymbolsVisitor
 import org.jetbrains.kotlin.ir.util.render
-import org.jetbrains.kotlin.ir.validation.IrValidatorConfig
-import org.jetbrains.kotlin.ir.validation.ReportIrValidationError
 import org.jetbrains.kotlin.ir.validation.temporarilyPushing
+import org.jetbrains.kotlin.ir.validation.IrValidatorConfig
+import org.jetbrains.kotlin.ir.validation.IrValidationError
 import org.jetbrains.kotlin.ir.validation.IrValidationException
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 
-private class CheckTreeConsistencyVisitor(val reportError: ReportIrValidationError, val config: IrValidatorConfig) :
+private class CheckTreeConsistencyVisitor(val reportError: (IrValidationError) -> Unit, val config: IrValidatorConfig) :
     IrTreeSymbolsVisitor() {
     var hasInconsistency = false
 
@@ -66,7 +66,7 @@ private class CheckTreeConsistencyVisitor(val reportError: ReportIrValidationErr
     override fun visitSymbol(container: IrElement, symbol: IrSymbol) {
         if (config.checkUnboundSymbols && !symbol.isBound) {
             hasInconsistency = true
-            reportError(null, container, "Unexpected unbound symbol", parentChain)
+            reportError(IrValidationError(null, container, "Unexpected unbound symbol", parentChain))
         }
     }
 
@@ -86,15 +86,17 @@ private class CheckTreeConsistencyVisitor(val reportError: ReportIrValidationErr
     private fun reportWrongParent(declaration: IrDeclaration, expectedParent: IrDeclarationParent?, actualParent: IrDeclarationParent) {
         hasInconsistency = true
         reportError(
-            null,
-            declaration,
-            buildString {
-                appendLine("Declaration with wrong parent:")
-                appendLine("declaration: ${declaration.render()}")
-                appendLine("expectedParent: ${expectedParent?.render()}")
-                appendLine("actualParent: ${actualParent.render()}")
-            },
-            parentChain,
+            IrValidationError(
+                null,
+                declaration,
+                buildString {
+                    appendLine("Declaration with wrong parent:")
+                    appendLine("declaration: ${declaration.render()}")
+                    appendLine("expectedParent: ${expectedParent?.render()}")
+                    appendLine("actualParent: ${actualParent.render()}")
+                },
+                parentChain,
+            )
         )
     }
 
@@ -103,7 +105,7 @@ private class CheckTreeConsistencyVisitor(val reportError: ReportIrValidationErr
             if (config.checkTreeConsistency) {
                 hasInconsistency = true
                 val renderString = if (element is IrTypeParameter) element.render() + " of " + element.parent.render() else element.render()
-                reportError(null, element, "Duplicate IR node: $renderString", parentChain)
+                reportError(IrValidationError(null, element, "Duplicate IR node: $renderString", parentChain))
             }
 
             if (element in parentChain) {
@@ -115,7 +117,7 @@ private class CheckTreeConsistencyVisitor(val reportError: ReportIrValidationErr
     }
 }
 
-internal fun IrElement.checkTreeConsistency(reportError: ReportIrValidationError, config: IrValidatorConfig) {
+internal fun IrElement.checkTreeConsistency(reportError: (IrValidationError) -> Unit, config: IrValidatorConfig) {
     val checker = CheckTreeConsistencyVisitor(reportError, config)
     accept(checker, null)
     if (checker.hasInconsistency) throw IrTreeConsistencyException(this)
