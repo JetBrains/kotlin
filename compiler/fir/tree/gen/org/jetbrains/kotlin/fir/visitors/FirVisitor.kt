@@ -392,6 +392,9 @@ abstract class FirVisitor<out R, in D> {
     open fun visitResolvedNamedReference(resolvedNamedReference: FirResolvedNamedReference, data: D): R =
         visitElement(resolvedNamedReference, data)
 
+    open fun visitPropertyWithExplicitBackingFieldResolvedNamedReference(propertyWithExplicitBackingFieldResolvedNamedReference: FirPropertyWithExplicitBackingFieldResolvedNamedReference, data: D): R =
+        visitElement(propertyWithExplicitBackingFieldResolvedNamedReference, data)
+
     open fun visitResolvedCallableReference(resolvedCallableReference: FirResolvedCallableReference, data: D): R =
         visitElement(resolvedCallableReference, data)
 
