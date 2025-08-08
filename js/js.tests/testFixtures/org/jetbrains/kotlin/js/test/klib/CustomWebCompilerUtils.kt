@@ -78,6 +78,9 @@ private fun createCustomWebCompilerSettings(
                 // The main embeddable compiler artifact.
                 artifacts.resolve("kotlin-compiler-embeddable", "jar"),
 
+                // Since Kotlin 2.1.0, the compiler's CLI requires the Coroutines library during the runtime.
+                artifacts.resolve("kotlinx-coroutines-core-jvm", "jar", sameVersionAsCompiler = false, optional = true),
+
                 // This artifact was removed in Kotlin 2.2.0-Beta1.
                 // But it is still available in older compiler versions, where we need to load it.
                 artifacts.resolve("trove4j", "jar", sameVersionAsCompiler = false, optional = true),

@@ -3,6 +3,9 @@
 // IGNORE_BACKEND_K1: NATIVE
 // ^ Native test runner passes `-language-version 1.9`, and we use the UUID API here, which is @SinceKotlin("2.0").
 
+// IGNORE_KLIB_BACKEND_ERRORS_WITH_CUSTOM_FIRST_PHASE: 2.1.0 2.2.0
+// ^^^ KT-79916 fixed in 2.3.0-Beta1
+
 // NOTE: Please keep the content of this file in sync with kt79977.kt!
 
 // FILE: main.kt
