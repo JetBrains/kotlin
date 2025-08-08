@@ -2,7 +2,6 @@
 // WITH_STDLIB
 // IGNORE_BACKEND_K1: NATIVE
 // ^ Native test runner passes `-language-version 1.9`, and we use the UUID API here, which is @SinceKotlin("2.0").
-// IGNORE_BACKEND: JS_IR_ES6
 
 // NOTE: Please keep the content of this file in sync with kt79977.kt!
 

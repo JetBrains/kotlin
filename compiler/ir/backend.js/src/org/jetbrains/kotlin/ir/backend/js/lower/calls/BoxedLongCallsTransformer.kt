@@ -14,15 +14,9 @@ import org.jetbrains.kotlin.ir.expressions.IrFieldAccessExpression
 import org.jetbrains.kotlin.ir.expressions.IrFunctionAccessExpression
 import org.jetbrains.kotlin.ir.expressions.impl.IrCallImpl
 import org.jetbrains.kotlin.ir.types.getPrimitiveType
-import org.jetbrains.kotlin.ir.util.classId
-import org.jetbrains.kotlin.ir.util.constructors
-import org.jetbrains.kotlin.ir.util.fields
-import org.jetbrains.kotlin.ir.util.irCall
-import org.jetbrains.kotlin.ir.util.parentClassOrNull
-import org.jetbrains.kotlin.ir.util.primaryConstructor
+import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.js.config.compileLongAsBigint
 import org.jetbrains.kotlin.name.JsStandardClassIds
-import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.utils.addToStdlib.assignFrom
 
 /**
@@ -35,6 +29,8 @@ internal class BoxedLongCallsTransformer(context: JsIrBackendContext) : CallsTra
     private val irBuiltIns = context.irBuiltIns
     private val intrinsics = context.intrinsics
     private val longAsBigInt = context.configuration.compileLongAsBigint
+    private val longLowGetter = intrinsics.longClassSymbol.getPropertyGetter("low")
+    private val longHighGetter = intrinsics.longClassSymbol.getPropertyGetter("high")
     private val longLowField = intrinsics.longClassSymbol.fields.single { it.owner.name.asString() == "low" }
     private val longHighField = intrinsics.longClassSymbol.fields.single { it.owner.name.asString() == "high" }
 
@@ -50,6 +46,12 @@ internal class BoxedLongCallsTransformer(context: JsIrBackendContext) : CallsTra
                 // The first parameter of the primary constructor replacement function is actually `this`.
                 arguments.assignFrom(call.arguments.drop(1))
             }
+        }
+        if (longAsBigInt && call.symbol == longLowGetter) {
+            return irCall(call, intrinsics.longLowBits!!)
+        }
+        if (longAsBigInt && call.symbol == longHighGetter) {
+            return irCall(call, intrinsics.longHighBits!!)
         }
         insertNumberConversionInDateConstructorCall(call)?.let { return it }
         return call
