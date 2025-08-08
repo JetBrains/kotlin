@@ -1169,7 +1169,7 @@ private inline fun parseDefaultStringFormat(
         if (sign == -1) return throwExceptionOrInvalid(throwException)
         index = afterIntegerIndex
 
-        val hasFractionalPart = index < length && value[index] == '.'
+        val hasFractionalPart = value[index] == '.'
         val fractionValue = if (hasFractionalPart) {
             index++
             val fractionStartIndex = index
