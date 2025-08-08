@@ -22,10 +22,10 @@ message IrFile {
   repeated int32 fq_name = 3 [packed=true];
   repeated IrConstructorCall annotation = 4;
   repeated int64 explicitly_exported_to_compiler = 5 [packed=true];
-  repeated int32 preprocessed_inline_functions = 8 [packed=true];
 
   // WARNING: Don't occupy index 6 which was previously used for storing expect/actual table.
   // repeated Actual actual = 6;
+  //repeated int32 preprocessed_inline_functions = 8 [packed=true];
 }
 
 /* ------ IdSignature -------------------------------------------- */

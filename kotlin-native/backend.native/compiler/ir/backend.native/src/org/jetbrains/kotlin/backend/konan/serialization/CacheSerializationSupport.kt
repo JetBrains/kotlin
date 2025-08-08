@@ -565,7 +565,6 @@ internal object ClassFieldsSerializer {
         val signatureStrings = IrArrayReader(reader.tableItemBytes(1))
         val libFile: IrLibraryFile = object: IrLibraryFile() {
             override fun declaration(index: Int) = error("Declarations are not needed for IdSignature deserialization")
-            override fun inlineDeclaration(index: Int) = error("Inline declarations are not needed for IdSignature deserialization")
             override fun type(index: Int) = error("Types are not needed for IdSignature deserialization")
             override fun expressionBody(index: Int) = error("Expression bodies are not needed for IdSignature deserialization")
             override fun statementBody(index: Int) = error("Statement bodies are not needed for IdSignature deserialization")
