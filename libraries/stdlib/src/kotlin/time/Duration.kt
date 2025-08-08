@@ -1083,10 +1083,12 @@ private inline fun parseIsoStringFormat(
 ): Duration {
     var index = startIndex
     if (++index == length) return throwExceptionOrInvalid(throwException)
+
     var totalMillis = 0L
     var totalNanos = 0L
     var isTimeComponent = false
     var prevUnit = 'A'
+
     while (index < length) {
         val ch = value[index]
         if (ch == 'T') {
@@ -1094,11 +1096,14 @@ private inline fun parseIsoStringFormat(
             isTimeComponent = true
             continue
         }
-        val prevIndex = index
-        val (longValue, nextIndex, sign) = value.parseLong(index)
-        index = nextIndex
-        if (index == length || index == prevIndex + if (ch == '-' || ch == '+') 1 else 0) return throwExceptionOrInvalid(throwException)
+
+        val longStartIndex = index
+        val (longValue, longEndIndex, sign) = value.parseLong(index)
+        index = longEndIndex
+        if (index == length || index == longStartIndex + if (ch == '-' || ch == '+') 1 else 0) return throwExceptionOrInvalid(throwException)
+
         var unit = value[index]
+
         if (unit == 'D') {
             if (isTimeComponent) return throwExceptionOrInvalid(throwException)
             totalMillis = longValue.multiplyWithoutOverflow(MILLIS_IN_DAY)
@@ -1114,18 +1119,21 @@ private inline fun parseIsoStringFormat(
                     }
                 )
             ).onInvalid { return throwExceptionOrInvalid(throwException) }
+
             if (unit == '.') {
                 index++
-                val prevIndex = index
-                val (fractionValue, nextIndex) = value.parseFraction(index)
-                index = nextIndex
-                if (index == prevIndex || index == length || value[index] != 'S') return throwExceptionOrInvalid(throwException)
+                val fractionStartIndex = index
+                val (fractionValue, fractionEndIndex) = value.parseFraction(index)
+                index = fractionEndIndex
+                if (index == fractionStartIndex || index == length || value[index] != 'S') return throwExceptionOrInvalid(throwException)
                 totalNanos = sign * fractionValue.toNanos(DurationUnit.SECONDS)
                 unit = 'S'
             }
+
             if (unit <= prevUnit) return throwExceptionOrInvalid(throwException, "Unexpected order of duration components")
             prevUnit = unit
         }
+
         index++
     }
     return totalMillis.toDuration(DurationUnit.MILLISECONDS) + totalNanos.toDuration(DurationUnit.NANOSECONDS)
@@ -1161,23 +1169,23 @@ private inline fun parseDefaultStringFormat(
         }
         isFirstComponent = false
 
-        val integralStartIndex = index
-        val (integralValue, afterIntegerIndex, sign) = value.parseLong(index, withSign = false, overflowLimit = Long.MAX_VALUE)
-        if (afterIntegerIndex == integralStartIndex || afterIntegerIndex == length) {
+        val longStartIndex = index
+        val (longValue, longEndIndex, sign) = value.parseLong(index, withSign = false, overflowLimit = Long.MAX_VALUE)
+        if (longEndIndex == longStartIndex || longEndIndex == length) {
             return throwExceptionOrInvalid(throwException)
         }
         if (sign == -1) return throwExceptionOrInvalid(throwException)
-        index = afterIntegerIndex
+        index = longEndIndex
 
         val hasFractionalPart = value[index] == '.'
         val fractionValue = if (hasFractionalPart) {
             index++
             val fractionStartIndex = index
-            val (fraction, afterFractionIndex) = value.parseFraction(index)
-            if (afterFractionIndex == fractionStartIndex || afterFractionIndex == length) {
+            val (fraction, fractionEndIndex) = value.parseFraction(index)
+            if (fractionEndIndex == fractionStartIndex || fractionEndIndex == length) {
                 return throwExceptionOrInvalid(throwException)
             }
-            index = afterFractionIndex
+            index = fractionEndIndex
             fraction
         } else 0L
 
@@ -1189,16 +1197,16 @@ private inline fun parseDefaultStringFormat(
 
         when (unit) {
             DurationUnit.MICROSECONDS -> {
-                totalMillis += integralValue / MICROS_IN_MILLIS
-                totalNanos += (integralValue % MICROS_IN_MILLIS) * NANOS_IN_MICROS
+                totalMillis += longValue / MICROS_IN_MILLIS
+                totalNanos += (longValue % MICROS_IN_MILLIS) * NANOS_IN_MICROS
             }
             DurationUnit.NANOSECONDS -> {
-                totalMillis += integralValue / NANOS_IN_MILLIS
-                totalNanos += integralValue % NANOS_IN_MILLIS
+                totalMillis += longValue / NANOS_IN_MILLIS
+                totalNanos += longValue % NANOS_IN_MILLIS
             }
             else -> {
                 val multiplier = unit.millisMultiplier
-                totalMillis = totalMillis.addWithoutOverflow(integralValue.multiplyWithoutOverflow(multiplier))
+                totalMillis = totalMillis.addWithoutOverflow(longValue.multiplyWithoutOverflow(multiplier))
             }
         }
 
