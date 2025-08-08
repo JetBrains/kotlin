@@ -111,12 +111,22 @@ fun Project.customFirstPhaseTest(rawVersion: String): TaskProvider<out Task> {
     )
 }
 
+fun Project.customSecondPhaseTest(rawVersion: String): TaskProvider<out Task> = customCompilerTest(
+    version = CustomCompilerVersion(rawVersion),
+    taskName = "testCustomSecondPhase",
+    tag = "custom-second-phase"
+)
+
 /* Custom-first-phase test tasks for different compiler versions. */
 customFirstPhaseTest("1.9.20")
 customFirstPhaseTest("2.0.0")
 customFirstPhaseTest("2.1.0")
 customFirstPhaseTest("2.2.0")
 // TODO: Add a new task for the "custom-first-phase" test here.
+
+/* Custom-second-phase test task for the latest compiler version. */
+// TODO: Update the compiler version to the latest one.
+customSecondPhaseTest("2.2.0")
 
 tasks.test {
     // The default test task does not resolve the necessary dependencies and does not set up the environment.
