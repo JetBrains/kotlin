@@ -1,12 +1,10 @@
-/*
- * Copyright 2010-2019 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license
- * that can be found in the LICENSE file.
- */
+// DONT_TARGET_EXACT_BACKEND: JVM_IR
+// WITH_STDLIB
+// WITH_REFLECT
 
 import kotlin.test.*
 import kotlin.reflect.*
 
-@OptIn(ExperimentalStdlibApi::class)
 inline fun <reified R> kType() = typeOf<R>()
 
 inline fun <reified R> kType(obj: R) = kType<R>()

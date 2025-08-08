@@ -44244,6 +44244,12 @@ public class FirNativeCodegenBoxTestNoPLGenerated extends AbstractNativeCodegenB
         }
 
         @Test
+        @TestMetadata("ktype1_anonymousObject.kt")
+        public void testKtype1_anonymousObject() {
+          runTest("compiler/testData/codegen/box/reflection/typeOf/ktype1_anonymousObject.kt");
+        }
+
+        @Test
         @TestMetadata("localClass.kt")
         public void testLocalClass() {
           runTest("compiler/testData/codegen/box/reflection/typeOf/localClass.kt");
