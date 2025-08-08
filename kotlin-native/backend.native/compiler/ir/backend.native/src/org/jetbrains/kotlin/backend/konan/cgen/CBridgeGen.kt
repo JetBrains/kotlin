@@ -1158,9 +1158,9 @@ private class ObjCReferenceValuePassing(
     override val kotlinBridgeType: IrType
         get() = symbols.nativePtrType
     override val cBridgeType: CType
-        get() = CTypes.voidPtr
+        get() = CTypes.id
     override val cType: CType
-        get() = CTypes.voidPtr
+        get() = CTypes.id
 
     override fun IrBuilderWithScope.kotlinToBridged(expression: IrExpression): IrExpression {
         val ptr = irCall(symbols.interopObjCObjectRawValueGetter.owner).apply {
