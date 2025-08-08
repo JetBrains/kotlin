@@ -1,4 +1,5 @@
 // DONT_TARGET_EXACT_BACKEND: JVM_IR
+// ^ In Kotlin/JVM, KType.toString() of an anonymous object returns a synthetic name, not "???".
 // WITH_STDLIB
 // WITH_REFLECT
 
@@ -13,7 +14,7 @@ fun box(): String {
     val obj = object {}
     val objType = kType(obj)
 
-    assertEquals("(non-denotable type)", objType.toString())
+    assertEquals("???", objType.toString())
     assertEquals(obj::class, objType.classifier)
 
     assertTrue(objType.arguments.isEmpty())
