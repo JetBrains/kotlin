@@ -959,7 +959,7 @@ private inline fun parseIsoStringFormat(
     var totalMillis = 0L
     var totalNanos = 0L
     var isTimeComponent = false
-    var prevUnit = 'A'
+    var prevUnit = '\u0000'
 
     while (index < length) {
         val ch = value[index]
