@@ -1151,6 +1151,7 @@ private inline fun parseDefaultStringFormat(
     }
 
     var totalMillis = 0L
+    var totalMicros = 0L
     var totalNanos = 0L
     var prevUnit: DurationUnit? = null
     var isFirstComponent = true
@@ -1162,7 +1163,7 @@ private inline fun parseDefaultStringFormat(
         isFirstComponent = false
 
         val integralStartIndex = index
-        val (integralValue, afterIntegerIndex, sign) = value.parseLong(index, withSign = false)
+        val (integralValue, afterIntegerIndex, sign) = value.parseLong(index, withSign = false, overflowLimit = Long.MAX_VALUE)
         if (afterIntegerIndex == integralStartIndex || afterIntegerIndex == length) {
             return throwExceptionOrInvalid(throwException)
         }
@@ -1187,20 +1188,19 @@ private inline fun parseDefaultStringFormat(
         }
         prevUnit = unit
 
-        if (unit >= DurationUnit.MILLISECONDS) {
-            val multiplier = when (unit) {
-                DurationUnit.DAYS -> MILLIS_IN_DAY
-                DurationUnit.HOURS -> MILLIS_IN_HOUR
-                DurationUnit.MINUTES -> MILLIS_IN_MINUTE
-                DurationUnit.SECONDS -> MILLIS_IN_SECOND
-                else -> 1L
+        when (unit) {
+            DurationUnit.MICROSECONDS -> {
+                totalMillis += integralValue / MICROS_IN_MILLIS
+                totalMicros = integralValue % MICROS_IN_MILLIS
             }
-            totalMillis = totalMillis.addWithoutOverflow(integralValue.multiplyWithoutOverflow(multiplier))
-                .onInvalid { return throwExceptionOrInvalid(throwException) }
-        } else {
-            val multiplier = if (unit == DurationUnit.MICROSECONDS) NANOS_IN_MICROS else 1L
-            totalNanos = totalNanos.addWithoutOverflow(integralValue.multiplyWithoutOverflow(multiplier))
-                .onInvalid { return throwExceptionOrInvalid(throwException) }
+            DurationUnit.NANOSECONDS -> {
+                totalMicros += integralValue / NANOS_IN_MICROS
+                totalNanos += integralValue % NANOS_IN_MICROS
+            }
+            else -> {
+                val multiplier = unit.millisMultiplier
+                totalMillis = totalMillis.addWithoutOverflow(integralValue.multiplyWithoutOverflow(multiplier))
+            }
         }
 
         totalNanos += fractionValue.toNanos(unit)
@@ -1210,7 +1210,9 @@ private inline fun parseDefaultStringFormat(
         }
     }
 
-    return totalMillis.toDuration(DurationUnit.MILLISECONDS) + totalNanos.toDuration(DurationUnit.NANOSECONDS)
+    return totalMillis.toDuration(DurationUnit.MILLISECONDS) +
+            totalMicros.toDuration(DurationUnit.MICROSECONDS) +
+            totalNanos.toDuration(DurationUnit.NANOSECONDS)
 }
 
 @kotlin.internal.InlineOnly
@@ -1245,7 +1247,7 @@ private inline fun Long.addWithoutOverflow(other: Long): Long = when {
 private data class NumericParseData(val value: Long, val index: Int, val sign: Int = 1)
 
 @kotlin.internal.InlineOnly
-private inline fun String.parseLong(startIndex: Int, withSign: Boolean = true): NumericParseData {
+private inline fun String.parseLong(startIndex: Int, withSign: Boolean = true, overflowLimit: Long = MAX_MILLIS): NumericParseData {
     var sign = 1
     var index = startIndex
     if (withSign) {
@@ -1259,14 +1261,15 @@ private inline fun String.parseLong(startIndex: Int, withSign: Boolean = true): 
     }
     while (index < length && this[index] == '0') index++
     var result = 0L
-    val overflowThreshold = MAX_MILLIS / 10
+    val overflowThreshold = overflowLimit / 10
+    val lastDigitMax = overflowLimit % 10
     while (index < length) {
         val ch = this[index]
         if (ch !in '0'..'9') break
         val digit = ch - '0'
-        if (result > overflowThreshold || (result == overflowThreshold && digit > LAST_DIGIT_MAX)) {
+        if (result > overflowThreshold || (result == overflowThreshold && digit > lastDigitMax)) {
             while (index < length && this[index] in '0'..'9') index++
-            return NumericParseData(MAX_MILLIS * sign, index, if (!withSign) -1 else sign)
+            return NumericParseData(overflowLimit * sign, index, if (!withSign) -1 else sign)
         }
         result = result * 10 + digit
         index++
@@ -1292,7 +1295,7 @@ private inline fun String.parseFraction(startIndex: Int): NumericParseData {
 }
 
 @kotlin.internal.InlineOnly
-private inline fun Long.toNanos(unit: DurationUnit): Long = (this * unit.multiplier).roundToLong()
+private inline fun Long.toNanos(unit: DurationUnit): Long = (this * unit.fractionMultiplier).roundToLong()
 
 @kotlin.internal.InlineOnly
 private inline fun throwExceptionOrInvalid(throwException: Boolean, message: String = ""): Duration {
@@ -1322,19 +1325,19 @@ private inline fun String.skipWhile(startIndex: Int, predicate: (Char) -> Boolea
 // - non-overlapping, but adjacent: the first value that doesn't fit in nanos range, can be exactly represented in millis.
 
 internal const val NANOS_IN_MILLIS = 1_000_000
+internal const val MICROS_IN_MILLIS = 1_000L
 internal const val NANOS_IN_MICROS = 1_000L
 // maximum number duration can store in nanosecond range
 internal const val MAX_NANOS = Long.MAX_VALUE / 2 / NANOS_IN_MILLIS * NANOS_IN_MILLIS - 1 // ends in ..._999_999
 // maximum number duration can store in millisecond range, also encodes an infinite value
 internal const val MAX_MILLIS = Long.MAX_VALUE / 2
-private const val LAST_DIGIT_MAX = MAX_MILLIS % 10
 // MAX_NANOS expressed in milliseconds
 private const val MAX_NANOS_IN_MILLIS = MAX_NANOS / NANOS_IN_MILLIS
 
-private const val MILLIS_IN_SECOND = 1000L
-private const val MILLIS_IN_MINUTE = MILLIS_IN_SECOND * 60L
-private const val MILLIS_IN_HOUR = MILLIS_IN_MINUTE * 60L
-private const val MILLIS_IN_DAY = MILLIS_IN_HOUR * 24L
+internal const val MILLIS_IN_SECOND = 1000L
+internal const val MILLIS_IN_MINUTE = MILLIS_IN_SECOND * 60L
+internal const val MILLIS_IN_HOUR = MILLIS_IN_MINUTE * 60L
+internal const val MILLIS_IN_DAY = MILLIS_IN_HOUR * 24L
 
 private const val INFINITY_STRING = "Infinity"
 
