@@ -133,10 +133,9 @@ private fun generateArgumentsClass(
         dir = dir.resolve(packagePart)
     }
     dir.mkdirs()
-    dir.resolve(info.className + ".kt").printWriter().use {
-        val printer = SmartPrinter(it)
-        printer.generateArgumentsClass(level, parent, info)
-    }
+    val file = dir.resolve(info.className + ".kt")
+    val newText = buildString { SmartPrinter(this).generateArgumentsClass(level, parent, info) }
+    GeneratorsFileUtil.writeFileIfContentChanged(file, newText, logNotChanged = false)
 }
 
 private fun SmartPrinter.generateArgumentsClass(
