@@ -17,9 +17,11 @@ import org.jetbrains.kotlin.fir.types.ConeClassLikeType
 import org.jetbrains.kotlin.fir.types.ConeErrorUnionType
 import org.jetbrains.kotlin.fir.types.ConeRigidType
 import org.jetbrains.kotlin.fir.types.isNothing
+import org.jetbrains.kotlin.fir.types.toLookupTag
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirSymbolIdEntry
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 import kotlin.reflect.KClass
 
@@ -45,6 +47,6 @@ fun ConeRigidType.lookupTagOfDispatchReceiver(): ConeClassLikeLookupTag? =
     when (this) {
         is ConeClassLikeType -> lookupTag
         is ConeErrorUnionType if valueType.isNothing && errorType is CEClassifierType -> (errorType as CEClassifierType).lookupTag
-        is ConeErrorUnionType if valueType.isNothing && errorType is CETopType -> ConeClassLikeLookupTagImpl(ClassId.fromString("kotlin/KError"))
+        is ConeErrorUnionType if valueType.isNothing && errorType is CETopType -> StandardClassIds.KError.toLookupTag()
         else -> error("Unexpected type: $this")
     }

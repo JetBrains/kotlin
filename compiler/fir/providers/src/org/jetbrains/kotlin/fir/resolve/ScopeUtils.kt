@@ -24,6 +24,7 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.StandardClassIds
 
 fun FirSmartCastExpression.smartcastScope(
     useSiteSession: FirSession,
@@ -103,7 +104,7 @@ private fun ConeKotlinType.scope(
         if (lookupTag != null) {
             lookupTag.symbol.scope(scopeSession, useSiteSession, requiredMembersPhase)
         } else {
-            valueType.scope(useSiteSession, scopeSession, requiredMembersPhase)
+            StandardTypes.NullableAny.scope(useSiteSession, scopeSession, requiredMembersPhase)
         }
     }
     is ConeRawType -> lowerBound.scope(useSiteSession, scopeSession, requiredMembersPhase)
@@ -207,11 +208,9 @@ fun ConeRigidType.castToSimpleType(): ConeSimpleKotlinType? =
 fun ConeRigidType.castToClassType(): ConeClassLikeType =
     this as ConeClassLikeType
 
-private val kErrorClassId = ClassId.fromString("kotlin/KError")
-
 // TODO: RE: it's a dangerous place where we are not able ro resolve if the classId is of error or value class
 fun ClassId.defaultType(parameters: List<FirTypeParameterSymbol>): ConeRigidType {
-    if (this == kErrorClassId) {
+    if (this == StandardClassIds.KError) {
         return ConeErrorUnionType.create(StandardTypes.Nothing, CETopType)
     }
     return ConeClassLikeTypeImpl(

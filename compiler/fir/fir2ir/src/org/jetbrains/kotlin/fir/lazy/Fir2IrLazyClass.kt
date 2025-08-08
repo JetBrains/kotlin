@@ -131,11 +131,7 @@ class Fir2IrLazyClass(
         set(_) = mutationNotSupported()
 
     override var superTypes: List<IrType> by lazyVar(lock) {
-        if (fir.isError) {
-            listOf(builtins.errorType)
-        } else {
-            fir.superTypeRefs.map { it.toIrType() }
-        }
+        fir.superTypeRefs.map { it.toIrType() }
     }
 
     override var sealedSubclasses: List<IrClassSymbol> by lazyVar(lock) {

@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 
 error object E1
 error object E2

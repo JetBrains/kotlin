@@ -252,7 +252,9 @@ class FirClassSubstitutionScope(
             callableCopySubstitutionForTypeUpdater == null &&
             newContextParameterTypes.all { it == null }
         ) {
-            if (original.dispatchReceiverType?.substituteDispatchReceiverType(substitutor) != null) {
+            if (original.dispatchReceiverType?.let { originalDr ->
+                    originalDr.substituteDispatchReceiverType(substitutor).takeUnless { it == originalDr }
+                } != null) {
                 return FirFakeOverrideGenerator.createSubstitutionOverrideProperty(
                     session,
                     symbolForOverride,
@@ -312,7 +314,7 @@ class FirClassSubstitutionScope(
 
         val returnType = member.returnTypeRef.coneTypeSafe<ConeKotlinType>()
         val deferredReturnTypeOfSubstitution = runIf(returnType == null) { DeferredReturnTypeOfSubstitution(substitutor, member.symbol) }
-        val newReturnType = returnType?.substitute(substitutor)
+        val newReturnType = returnType?.substitute(substitutor).takeUnless { it == returnType }
         return SubstitutedData(
             newTypeParameters,
             newDispatchReceiverType,

@@ -95,6 +95,8 @@ object StandardClassIds {
 
     val Function = "Function".baseId()
 
+    val KError = "KError".baseId()
+
     fun byName(name: String) = name.baseId()
     fun reflectByName(name: String) = name.reflectId()
 

@@ -14,6 +14,6 @@ fun <T : Any? | KError> foo(v: T) {
     val tmp: T & Any = v!!
 }
 
-fun <T : Any, E: KError> foo(v: T | E) {
+fun <T : Any, E: KError> foo2(v: T | E) {
     val tmp: T = v!!
 }

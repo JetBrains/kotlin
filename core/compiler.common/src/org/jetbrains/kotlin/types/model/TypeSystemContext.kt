@@ -450,12 +450,8 @@ interface TypeSystemContext : TypeSystemOptimizationContext {
 
     @Deprecated(level = DeprecationLevel.ERROR, message = "This call does effectively nothing, please drop it")
     fun CapturedTypeMarker.asCapturedTypeUnwrappingDnn(): CapturedTypeMarker = this
-    fun RigidTypeMarker.asCapturedTypeUnwrappingDnn(): CapturedTypeMarker? = try {
-        originalIfDefinitelyNotNullable().asCapturedType()
-    } catch (e: ClassCastException) {
-        // TODO: RE: HIGH: requires logic rewriting in all use-sites
-        null
-    }
+    fun RigidTypeMarker.asCapturedTypeUnwrappingDnn(): CapturedTypeMarker? =
+        (asDefinitelyNotNullType()?.original() ?: this as? SimpleTypeMarker)?.asCapturedType()
 
     fun KotlinTypeMarker.isCapturedType() = asRigidType()?.asCapturedTypeUnwrappingDnn() != null
 

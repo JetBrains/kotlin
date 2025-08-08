@@ -437,8 +437,7 @@ class FirTypeResolverImpl(private val session: FirSession) : FirTypeResolver() {
                             valueType = leftType
                         }
                         is ConeErrorUnionType -> {
-                            check(leftType.valueType.isNothing)
-                            valueType = StandardTypes.Nothing
+                            valueType = leftType.valueType
                             add(leftType.errorType)
                         }
                         else -> error("unexpected")

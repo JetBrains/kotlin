@@ -270,7 +270,7 @@ private fun JavaClassifierType.toConeKotlinTypeForFlexibleBound(
         is JavaTypeParameter -> {
             val symbol = javaTypeParameterStack[classifier]
             if (symbol != null) {
-                ConeTypeParameterTypeImpl.create(symbol.toLookupTag(), isMarkedNullable = lowerBound != null, attributes)
+                ConeTypeParameterTypeImpl.createPure(symbol.toLookupTag(), isMarkedNullable = lowerBound != null, attributes)
             } else {
                 ConeErrorType(ConeUnresolvedNameError(classifier.name))
             }

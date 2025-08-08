@@ -24,7 +24,10 @@ import org.jetbrains.kotlin.fir.resolve.providers.symbolProvider
 import org.jetbrains.kotlin.fir.resolve.toRegularClassSymbol
 import org.jetbrains.kotlin.fir.resolve.toSymbol
 import org.jetbrains.kotlin.fir.resolve.transformers.WhenOnSealedClassExhaustivenessChecker.ConditionChecker.processBranch
+import org.jetbrains.kotlin.fir.resolve.transformers.WhenOnSealedClassExhaustivenessChecker.Flags
+import org.jetbrains.kotlin.fir.resolve.transformers.WhenOnSealedClassExhaustivenessChecker.collectAllSubclasses
 import org.jetbrains.kotlin.fir.symbols.FirBasedSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirClassLikeSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirRegularClassSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirVariableSymbol
@@ -97,22 +100,25 @@ class FirWhenExhaustivenessTransformer(private val bodyResolveComponents: BodyRe
                     -> original.unwrapTypeParameterAndIntersectionTypes(session)
                     .map { it.makeConeTypeDefinitelyNotNullOrNotNull(session.typeContext) }
                 this is ConeErrorUnionType && session.languageVersionSettings.supportsFeature(LanguageFeature.ImprovedExhaustivenessChecksIn21)
-                    -> buildList {
+                    -> {
                     lookupTagIfTypeParameter()?.let { lookupTag ->
-                        lookupTag.typeParameterSymbol.resolvedBounds.flatMapTo(this) {
-                            it.coneType.unwrapTypeParameterAndIntersectionTypes(session)
+                        return buildList {
+                            lookupTag.typeParameterSymbol.resolvedBounds.flatMapTo(this) {
+                                it.coneType.unwrapTypeParameterAndIntersectionTypes(session)
+                            }
+                            add(this@unwrapTypeParameterAndIntersectionTypes)
                         }
-                        add(this@unwrapTypeParameterAndIntersectionTypes)
-                        return@buildList
                     }
                     lookupTagIfTypeParameterIgnoringDnn()?.let { lookupTag ->
-                        lookupTag.typeParameterSymbol.resolvedBounds.flatMapTo(this) {
-                            it.coneType.unwrapTypeParameterAndIntersectionTypes(session)
-                                .map { it.makeConeTypeDefinitelyNotNullOrNotNull(session.typeContext) }
+                        return buildList {
+                            lookupTag.typeParameterSymbol.resolvedBounds.flatMapTo(this) {
+                                it.coneType.unwrapTypeParameterAndIntersectionTypes(session)
+                                    .map { it.makeConeTypeDefinitelyNotNullOrNotNull(session.typeContext) }
+                            }
+                            add(this@unwrapTypeParameterAndIntersectionTypes)
                         }
-                        add(this@unwrapTypeParameterAndIntersectionTypes)
-                        return@buildList
                     }
+                    listOf(this)
                 }
                 else -> listOf(this)
             }
@@ -120,7 +126,7 @@ class FirWhenExhaustivenessTransformer(private val bodyResolveComponents: BodyRe
 
         private fun getCheckers(
             subjectType: ConeKotlinType,
-            session: FirSession
+            session: FirSession,
         ): List<WhenExhaustivenessChecker> {
             return buildList<WhenExhaustivenessChecker> {
                 exhaustivenessCheckers.filterTo(this) {
@@ -134,6 +140,9 @@ class FirWhenExhaustivenessTransformer(private val bodyResolveComponents: BodyRe
                     // as it reports WhenMissingCase.Unknown when it fails.
                     add(WhenSelfTypeExhaustivenessChecker)
                 }
+                if (WhenOnErrorUnionExhaustivenessChecker.isApplicable(subjectType, session)) {
+                    add(WhenOnErrorUnionExhaustivenessChecker)
+                }
             }
         }
 
@@ -141,7 +150,7 @@ class FirWhenExhaustivenessTransformer(private val bodyResolveComponents: BodyRe
             checkers: List<WhenExhaustivenessChecker>,
             whenExpression: FirWhenExpression,
             subjectType: ConeKotlinType,
-            session: FirSession
+            session: FirSession,
         ) {
             for (checker in checkers) {
                 checker.computeMissingCases(whenExpression, subjectType, session, this)
@@ -273,7 +282,7 @@ private sealed class WhenExhaustivenessChecker {
         whenExpression: FirWhenExpression,
         subjectType: ConeKotlinType,
         session: FirSession,
-        destination: MutableCollection<WhenMissingCase>
+        destination: MutableCollection<WhenMissingCase>,
     )
 
     protected abstract class AbstractConditionChecker<in D : Any> : FirVisitor<Unit, D>() {
@@ -308,7 +317,7 @@ private object WhenOnNullableExhaustivenessChecker : WhenExhaustivenessChecker()
         whenExpression: FirWhenExpression,
         subjectType: ConeKotlinType,
         session: FirSession,
-        destination: MutableCollection<WhenMissingCase>
+        destination: MutableCollection<WhenMissingCase>,
     ) {
         if (isNullBranchMissing(whenExpression)) {
             destination.add(WhenMissingCase.NullIsMissing)
@@ -343,7 +352,7 @@ private object WhenOnNullableExhaustivenessChecker : WhenExhaustivenessChecker()
 
 private object WhenOnBooleanExhaustivenessChecker : WhenExhaustivenessChecker() {
     override fun isApplicable(subjectType: ConeKotlinType, session: FirSession): Boolean {
-        return subjectType.classId == StandardClassIds.Boolean
+        return subjectType.splitIntoValueAndError().first.classId == StandardClassIds.Boolean
     }
 
     private class Flags {
@@ -399,7 +408,7 @@ private object WhenOnBooleanExhaustivenessChecker : WhenExhaustivenessChecker() 
 
 private object WhenOnEnumExhaustivenessChecker : WhenExhaustivenessChecker() {
     override fun isApplicable(subjectType: ConeKotlinType, session: FirSession): Boolean {
-        val symbol = subjectType.toRegularClassSymbol(session) ?: return false
+        val symbol = subjectType.splitIntoValueAndError().first.toRegularClassSymbol(session) ?: return false
         return symbol.fir.classKind == ClassKind.ENUM_CLASS
     }
 
@@ -407,7 +416,7 @@ private object WhenOnEnumExhaustivenessChecker : WhenExhaustivenessChecker() {
         whenExpression: FirWhenExpression,
         subjectType: ConeKotlinType,
         session: FirSession,
-        destination: MutableCollection<WhenMissingCase>
+        destination: MutableCollection<WhenMissingCase>,
     ) {
         if (WhenSelfTypeExhaustivenessChecker.isExhaustiveThroughSelfTypeCheck(whenExpression, subjectType, session)) return
 
@@ -441,16 +450,119 @@ private object WhenOnEnumExhaustivenessChecker : WhenExhaustivenessChecker() {
     }
 }
 
-private object WhenOnSealedClassExhaustivenessChecker : WhenExhaustivenessChecker() {
+private object WhenOnErrorUnionExhaustivenessChecker : WhenExhaustivenessChecker() {
     override fun isApplicable(subjectType: ConeKotlinType, session: FirSession): Boolean {
-        return subjectType.toRegularClassSymbol(session)?.fir?.modality == Modality.SEALED
+        return subjectType.splitIntoValueAndError().second !is CEBotType
     }
 
     override fun computeMissingCases(
         whenExpression: FirWhenExpression,
         subjectType: ConeKotlinType,
         session: FirSession,
-        destination: MutableCollection<WhenMissingCase>
+        destination: MutableCollection<WhenMissingCase>,
+    ) {
+        val checkedEntries = mutableListOf<CEType>()
+
+        if (session.languageVersionSettings.supportsFeature(LanguageFeature.DataFlowBasedExhaustiveness)) {
+            whenExpression.subjectVariable?.initializer?.let { initializer ->
+                val knownNonValues = (initializer as? FirSmartCastExpression)
+                    ?.lowerTypesFromSmartCast
+                    ?.mapNotNull {
+                        when (it) {
+                            is DfaType.BooleanLiteral -> null
+                            is DfaType.Cone -> it.type.splitIntoValueAndError().second
+                            is DfaType.Symbol -> {
+                                val symbol = it.symbol
+                                if (symbol is FirClassLikeSymbol && symbol.resolvedStatus.isError) {
+                                    CEClassifierType(symbol.toLookupTag())
+                                } else {
+                                    null
+                                }
+                            }
+                        }
+                    }
+                    .orEmpty()
+                checkedEntries.addAll(knownNonValues)
+            }
+        }
+
+        whenExpression.accept(ConditionChecker, checkedEntries)
+
+        if (checkedEntries.contains(CETopType)) return
+
+        val errorType = subjectType.splitIntoValueAndError().second
+        val coneErrorType = ConeErrorUnionType.create(StandardTypes.Nothing, errorType)
+
+        val checkedType = ConeErrorUnionType.create(StandardTypes.Nothing, CEUnionType.create(checkedEntries))
+
+        when (errorType) {
+            CETopType -> {
+                destination.add(WhenMissingCase.IsTypeCheckIsMissing(StandardClassIds.KError, false, 0))
+            }
+            is CEClassifierType -> {
+                if (!coneErrorType.isSubtypeOf(checkedType, session)) {
+                    destination.add(WhenMissingCase.IsTypeCheckIsMissing(errorType.lookupTag.classId, false, 0))
+                }
+            }
+            is CELookupTagBasedType -> {
+                if (!coneErrorType.isSubtypeOf(checkedType, session)) {
+                    destination.add(WhenMissingCase.IsTypeCheckIsMissing(StandardClassIds.KError, false, 0))
+                }
+            }
+            CEBotType, is CETypeVariableType -> error("Should not happen")
+            is CEUnionType -> {
+                errorType.types.forEach {
+                    when (it) {
+                        CETopType -> {
+                            destination.add(WhenMissingCase.IsTypeCheckIsMissing(StandardClassIds.KError, false, 0))
+                        }
+                        is CEClassifierType -> {
+                            if (!coneErrorType.isSubtypeOf(checkedType, session)) {
+                                destination.add(WhenMissingCase.IsTypeCheckIsMissing(it.lookupTag.classId, false, 0))
+                            }
+                        }
+                        is CELookupTagBasedType -> {
+                            if (!coneErrorType.isSubtypeOf(checkedType, session)) {
+                                destination.add(WhenMissingCase.IsTypeCheckIsMissing(StandardClassIds.KError, false, 0))
+                            }
+                        }
+                        CEBotType, is CETypeVariableType, is CEUnionType -> error("Should not happen")
+                    }
+                }
+            }
+        }
+    }
+
+    private object ConditionChecker : AbstractConditionChecker<MutableList<CEType>>() {
+        override fun visitEqualityOperatorCall(equalityOperatorCall: FirEqualityOperatorCall, data: MutableList<CEType>) {
+            when (equalityOperatorCall.operation) {
+                FirOperation.EQ, FirOperation.IDENTITY -> false
+                else -> return
+            }
+            val checkedType = equalityOperatorCall.arguments[1].resolvedType.splitIntoValueAndError().second
+            data.add(checkedType)
+        }
+
+        override fun visitTypeOperatorCall(typeOperatorCall: FirTypeOperatorCall, data: MutableList<CEType>) {
+            when (typeOperatorCall.operation) {
+                FirOperation.IS -> false
+                else -> return
+            }
+            data.add(typeOperatorCall.conversionTypeRef.coneType.splitIntoValueAndError().second)
+        }
+    }
+}
+
+private object WhenOnSealedClassExhaustivenessChecker : WhenExhaustivenessChecker() {
+    override fun isApplicable(subjectType: ConeKotlinType, session: FirSession): Boolean {
+        return subjectType.splitIntoValueAndError().first.toRegularClassSymbol(session)?.fir?.modality == Modality.SEALED
+    }
+
+    override fun computeMissingCases(
+        whenExpression: FirWhenExpression,
+        subjectType: ConeKotlinType,
+        session: FirSession,
+        destination: MutableCollection<WhenMissingCase>,
     ) {
         val allSubclasses = subjectType.toSymbol(session)?.collectAllSubclasses(session) ?: return
         val checkedSubclasses = mutableSetOf<FirBasedSymbol<*>>()
@@ -478,7 +590,7 @@ private object WhenOnSealedClassExhaustivenessChecker : WhenExhaustivenessChecke
     private class Flags(
         val allSubclasses: Set<FirBasedSymbol<*>>,
         val checkedSubclasses: MutableSet<FirBasedSymbol<*>>,
-        val session: FirSession
+        val session: FirSession,
     )
 
     private fun inferVariantsFromSubjectSmartCast(subject: FirExpression, data: Flags) {
@@ -561,14 +673,14 @@ private object WhenOnSealedClassExhaustivenessChecker : WhenExhaustivenessChecke
 
 private object WhenOnNothingExhaustivenessChecker : WhenExhaustivenessChecker() {
     override fun isApplicable(subjectType: ConeKotlinType, session: FirSession): Boolean {
-        return subjectType.isNullableNothing || subjectType.isNothing
+        return subjectType.splitIntoValueAndError().first.let { it.isNothing || it.isNullableNothing }
     }
 
     override fun computeMissingCases(
         whenExpression: FirWhenExpression,
         subjectType: ConeKotlinType,
         session: FirSession,
-        destination: MutableCollection<WhenMissingCase>
+        destination: MutableCollection<WhenMissingCase>,
     ) {
         // Nothing has no branches. The null case for `Nothing?` is handled by WhenOnNullableExhaustivenessChecker
     }
@@ -592,7 +704,9 @@ private data object WhenSelfTypeExhaustivenessChecker : WhenExhaustivenessChecke
         // This checker should only be used when no other missing cases are being reported.
         if (destination.isNotEmpty()) return
 
-        if (!isExhaustiveThroughSelfTypeCheck(whenExpression, subjectType, session)) {
+        val subjectValueType = subjectType.splitIntoValueAndError().first
+
+        if (!isExhaustiveThroughSelfTypeCheck(whenExpression, subjectValueType, session)) {
             // If there are no cases that check for self-type or super-type, report an Unknown missing case,
             // since we do not want to suggest this sort of check.
             destination.add(WhenMissingCase.Unknown)

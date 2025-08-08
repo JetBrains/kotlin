@@ -1581,7 +1581,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
         val constructorType2 = when (constructorType) {
             is ConeClassLikeType -> constructorType
             is ConeErrorUnionType if constructorType.valueType.isNothing && constructorType.errorType is CETopType ->
-                ConeClassLikeTypeImpl(ClassId.fromString("kotlin/KError").toLookupTag(), emptyArray(), false)
+                ConeClassLikeTypeImpl(StandardClassIds.KError.toLookupTag(), emptyArray(), false)
             null -> null
             else -> error("Unexpected constructorType: $constructorType")
         }
@@ -1634,7 +1634,7 @@ open class FirExpressionsResolveTransformer(transformer: FirAbstractBodyResolveT
     private fun extractSuperTypeDeclaration(typeRef: FirTypeRef): FirRegularClass? {
         if (typeRef !is FirResolvedTypeRef) return null
         if (typeRef.coneType == ConeErrorUnionType.create(StandardTypes.Nothing, CETopType)) {
-            return ClassId.fromString("kotlin/KError").toLookupTag().toSymbol(session)?.fir as? FirRegularClass
+            return StandardClassIds.KError.toSymbol(session)?.fir as? FirRegularClass
         }
         return when (val declaration = typeRef.firClassLike(session)) {
             is FirRegularClass -> declaration

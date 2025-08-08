@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.descriptors.Visibilities
 import org.jetbrains.kotlin.descriptors.Visibility
 import org.jetbrains.kotlin.fakeElement
 import org.jetbrains.kotlin.fir.FirSession
+import org.jetbrains.kotlin.fir.StandardTypes
 import org.jetbrains.kotlin.fir.copyWithNewSource
 import org.jetbrains.kotlin.fir.declarations.*
 import org.jetbrains.kotlin.fir.declarations.utils.isEnumClass
@@ -776,6 +777,8 @@ private class CapturedArguments(val capturedArguments: Array<out ConeTypeProject
         return true
     }
 }
+
+fun CEType.toConeType(): ConeRigidType = ConeErrorUnionType.create(StandardTypes.Nothing, this)
 
 fun ConeKotlinType.isSubtypeOf(superType: ConeKotlinType, session: FirSession, errorTypesEqualToAnything: Boolean = false): Boolean =
     AbstractTypeChecker.isSubtypeOf(

@@ -43,7 +43,6 @@ import org.jetbrains.kotlin.fir.types.builder.buildErrorTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildResolvedTypeRef
 import org.jetbrains.kotlin.fir.types.builder.buildTypeProjectionWithVariance
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
-import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.fir.visitors.FirTransformer
 import org.jetbrains.kotlin.name.ClassId
@@ -360,7 +359,7 @@ fun BodyResolveComponents.buildResolvedQualifierForClass(
     diagnostic: ConeDiagnostic?,
     nonFatalDiagnostics: List<ConeDiagnostic>?,
     annotations: List<FirAnnotation>,
-    explicitParent: FirResolvedQualifier?
+    explicitParent: FirResolvedQualifier?,
 ): FirResolvedQualifier {
     val builder: FirAbstractResolvedQualifierBuilder = if (diagnostic == null) {
         FirResolvedQualifierBuilder()
@@ -429,7 +428,7 @@ internal fun typeForReifiedParameterReference(parameterReferenceBuilder: FirReso
 }
 
 internal fun typeForQualifierByDeclaration(
-    declaration: FirDeclaration, session: FirSession, element: FirElement, file: FirFile
+    declaration: FirDeclaration, session: FirSession, element: FirElement, file: FirFile,
 ): ConeKotlinType? {
     if (declaration is FirTypeAlias) {
         val expandedDeclaration = declaration.expandedConeType?.lookupTag?.toSymbol(session)?.fir ?: return null
@@ -546,16 +545,66 @@ fun BodyResolveComponents.transformExpressionUsingSmartcastInfo(expression: FirE
 
     val intersectedUpperType = when {
         allUpperTypes.any { it !is ConeDynamicType } -> ConeTypeIntersector.intersectTypes(session.typeContext, allUpperTypes)
-        else -> null
-    }.takeUnless {
-        it == originalType && it !is ConeDynamicType
+        else -> originalType
     }
 
     if (
         smartcastStatement.lowerTypes.isEmpty() &&
-        (intersectedUpperType == null || intersectedUpperType == originalType && intersectedUpperType !is ConeDynamicType)
+        (intersectedUpperType == originalType && intersectedUpperType !is ConeDynamicType)
     ) {
         return expression
+    }
+
+    val finalType = if (smartcastStatement.lowerTypes.isNotEmpty() && intersectedUpperType is ConeErrorUnionType) {
+        val negatedErrorType = CEUnionType.create(smartcastStatement.lowerTypes.flatMap {
+            val errorComponent = when (it) {
+                is DfaType.BooleanLiteral -> CEBotType
+                is DfaType.Cone -> it.type.splitIntoValueAndError().second
+                is DfaType.Symbol -> (it.symbol as? FirClassLikeSymbol)?.let {
+                    if (it.isError) {
+                        CEClassifierType(it.toLookupTag())
+                    } else {
+                        CEBotType
+                    }
+                } ?: CEBotType
+            }
+            when (errorComponent) {
+                is CEBotType -> emptyList()
+                is CEUnionType -> errorComponent.types
+                else -> listOf(errorComponent)
+            }
+        })
+        val newErrorComponent = when (val errorType = intersectedUpperType.errorType) {
+            is CEBotType, is CETypeVariableType -> error("Should not happen")
+            is CEUnionType -> CEUnionType.create(errorType.types.filter {
+                !it.toConeType().isSubtypeOf(negatedErrorType.toConeType(), session)
+            })
+            else -> if (errorType.toConeType().isSubtypeOf(negatedErrorType.toConeType(), session)) CEBotType else errorType
+        }
+        val negatedValueTypes = smartcastStatement.lowerTypes.map {
+            when (it) {
+                is DfaType.BooleanLiteral -> StandardTypes.Nothing
+                is DfaType.Cone -> it.type.splitIntoValueAndError().first
+                is DfaType.Symbol -> (it.symbol as? FirClassLikeSymbol)?.let {
+                    if (it.isError) {
+                        StandardTypes.Nothing
+                    } else {
+                        it.defaultTypeExpectValue()
+                    }
+                } ?: StandardTypes.Nothing
+            }
+        }
+        val valueType = intersectedUpperType.valueType
+        val newValueComponent = if (negatedValueTypes.any { valueType.isSubtypeOf(it, session) }) {
+            StandardTypes.Nothing
+        } else if (negatedValueTypes.any { valueType.isSubtypeOf(it.withNullability(true, session.typeContext), session) }) {
+            StandardTypes.Nothing.withNullability(true, session.typeContext)
+        } else {
+            valueType
+        }
+        ConeErrorUnionType.create(newValueComponent, newErrorComponent)
+    } else {
+        intersectedUpperType
     }
 
     return buildSmartCastExpression {
@@ -563,7 +612,7 @@ fun BodyResolveComponents.transformExpressionUsingSmartcastInfo(expression: FirE
         smartcastStability = smartcastStatement.upperTypesStability
         smartcastType = buildResolvedTypeRef {
             source = expression.source?.fakeElement(KtFakeSourceElementKind.SmartCastedTypeRef)
-            coneType = intersectedUpperType ?: originalType
+            coneType = finalType
         }
         // Example (1): if (x is String) { ... }, where x: dynamic
         //   the dynamic type will "consume" all other, erasing information.
@@ -571,7 +620,7 @@ fun BodyResolveComponents.transformExpressionUsingSmartcastInfo(expression: FirE
         //   we need to track the type without `Nothing?` so that resolution with this as receiver can go through properly.
         val nonNothingTypes = allUpperTypes.filter { !it.isKindOfNothing }
         if (
-            intersectedUpperType?.isKindOfNothing == true &&
+            finalType.isKindOfNothing &&
             !originalType.isNullableNothing &&
             !originalType.isNothing &&
             originalType !is ConeStubType &&
@@ -584,7 +633,7 @@ fun BodyResolveComponents.transformExpressionUsingSmartcastInfo(expression: FirE
         }
         this.upperTypesFromSmartCast = smartcastStatement.upperTypes
         coneTypeOrNull = when {
-            smartcastStatement.upperTypesStability == SmartcastStability.STABLE_VALUE && intersectedUpperType != null -> intersectedUpperType
+            smartcastStatement.upperTypesStability == SmartcastStability.STABLE_VALUE -> finalType
             else -> originalTypeWithAliases
         }
         // We don't have an analogue of `coneTypeOrNull` for non-types because we can't denote a union,

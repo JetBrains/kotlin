@@ -269,6 +269,8 @@ class FirCallCompleter(
             return false
         }
 
+        if (expectedType is ConeErrorUnionType) return false
+
         return true
     }
 

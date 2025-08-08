@@ -233,4 +233,3 @@ fun ConeKotlinType.splitIntoValueAndError(): Pair<ConeKotlinType, CEType> {
 }
 
 fun ConeRigidType.expectClassLike(): ConeClassLikeType = this as ConeClassLikeType
-fun ConeRigidType.expectClassLikeSoft(): ConeClassLikeType? = this as? ConeClassLikeType

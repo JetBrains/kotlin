@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.fir.declarations.utils.isLocal
 import org.jetbrains.kotlin.fir.declarations.utils.isSynthetic
 import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.*
+import org.jetbrains.kotlin.name.StandardClassIds
 
 fun FirCallableSymbol<*>.dispatchReceiverClassTypeOrNull(): ConeClassLikeType? =
     fir.dispatchReceiverClassTypeOrNull()
@@ -23,8 +24,21 @@ fun FirCallableDeclaration.dispatchReceiverClassTypeOrNull(): ConeClassLikeType?
 fun FirCallableSymbol<*>.dispatchReceiverClassLookupTagOrNull(): ConeClassLikeLookupTag? =
     fir.dispatchReceiverClassLookupTagOrNull()
 
-fun FirCallableDeclaration.dispatchReceiverClassLookupTagOrNull(): ConeClassLikeLookupTag? =
-    dispatchReceiverClassTypeOrNull()?.lookupTag
+fun FirCallableDeclaration.dispatchReceiverClassLookupTagOrNull(): ConeClassLikeLookupTag? {
+    if (dispatchReceiverType is ConeIntersectionType && isIntersectionOverride) {
+        return baseForIntersectionOverride!!.dispatchReceiverClassLookupTagOrNull()
+    }
+    return when (val type = dispatchReceiverType) {
+        is ConeClassLikeType -> type.lookupTag
+        is ConeErrorUnionType if type.valueType.isNothing && type.errorType is CEClassifierType -> {
+            (type.errorType as CEClassifierType).lookupTag
+        }
+        is ConeErrorUnionType if type.valueType.isNothing && type.errorType is CETopType -> {
+            StandardClassIds.KError.toLookupTag()
+        }
+        else -> null
+    }
+}
 
 fun FirCallableSymbol<*>.containingClassLookupTag(): ConeClassLikeLookupTag? =
     fir.containingClassLookupTag()

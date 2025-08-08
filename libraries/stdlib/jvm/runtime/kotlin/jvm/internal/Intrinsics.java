@@ -5,10 +5,12 @@
 
 package kotlin.jvm.internal;
 
-import kotlin.KotlinNullPointerException;
-import kotlin.SinceKotlin;
-import kotlin.UninitializedPropertyAccessException;
+import kotlin.*;
 
+import java.lang.Double;
+import java.lang.Float;
+import java.lang.String;
+import java.lang.Throwable;
 import java.util.Arrays;
 
 @SuppressWarnings({"unused", "WeakerAccess"})
@@ -24,11 +26,17 @@ public class Intrinsics {
         if (object == null) {
             throwJavaNpe();
         }
+        if (object instanceof KError) {
+            throwJavaNpe("KError: " + object);
+        }
     }
 
     public static void checkNotNull(Object object, String message) {
         if (object == null) {
             throwJavaNpe(message);
+        }
+        if (object instanceof KError) {
+            throwJavaNpe("KError: " + object + "; " + message);
         }
     }
 

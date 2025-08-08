@@ -764,7 +764,7 @@ class FirMemberDeserializer(private val c: FirDeserializationContext) {
 
             classProto.contextReceiverTypes(c.typeTable).mapTo(contextParameters) { loadLegacyContextReceiver(it, FirDeclarationOrigin.Library, symbol) }
         }.build().apply {
-            containingClassForStaticMemberAttr = c.dispatchReceiver!!.expectClassLikeSoft()?.lookupTag
+            containingClassForStaticMemberAttr = c.dispatchReceiver!!.lookupTagOfDispatchReceiver()
             this.versionRequirements = VersionRequirement.create(proto, c)
             deserializeCompilerPluginMetadata(c, proto, ProtoBuf.Constructor::getCompilerPluginDataList)
             setLazyPublishedVisibility(c.session)

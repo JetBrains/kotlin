@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.fir.symbols.impl.*
 import org.jetbrains.kotlin.fir.types.impl.ConeClassLikeTypeImpl
 import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.StandardClassIds
 
 fun ConeClassifierLookupTag.constructType(
     typeArguments: Array<out ConeTypeProjection> = ConeTypeProjection.EMPTY_ARRAY,
@@ -82,7 +83,7 @@ private fun FirClassLikeSymbol<*>.constructType(
     isMarkedNullable: Boolean = false,
     attributes: ConeAttributes = ConeAttributes.Empty
 ): ConeRigidType {
-    if (classId == ClassId.fromString("kotlin/KError")) {
+    if (classId == StandardClassIds.KError) {
         return ConeErrorUnionType.create(
             StandardTypes.Nothing,
             CETopType
@@ -132,12 +133,13 @@ enum class TypeParameterKind {
 }
 
 fun FirTypeParameterSymbol.typeParameterKind(): TypeParameterKind {
+    if (!this.isBound) return TypeParameterKind.Value
     if (fir.bounds.any { it::class.simpleName == "FirJavaTypeRef" }) return TypeParameterKind.Value
     val haveErrorComponent = fir.bounds.all {
-        it.coneType is ConeErrorUnionType
+        it.coneTypeOrNull is ConeErrorUnionType?
     }
     val haveValueComponent = fir.bounds.all {
-        (it.coneType as? ConeErrorUnionType)?.let { !it.valueType.isNothing } ?: true
+        (it.coneTypeOrNull as? ConeErrorUnionType)?.let { !it.valueType.isNothing } ?: true
     }
     return if (haveErrorComponent) {
         if (haveValueComponent) {

@@ -75,12 +75,6 @@ data class ConeErrorUnionType private constructor(
         return ConeErrorUnionType(newValueType, errorType)
     }
 
-    init {
-        if (valueType is ConeLookupTagBasedType && valueType !is ConeClassLikeType && errorType is CEClassifierType) {
-            print("hi")
-        }
-    }
-
     companion object {
         fun create(valueType: ConeValueType, errorType: CEType): ConeErrorUnionType {
             return ConeErrorUnionType(valueType, errorType)
@@ -135,9 +129,10 @@ data class CEUnionType private constructor(
     companion object {
         fun create(types: List<CEType>): CEType {
             if (types.isEmpty()) return CEBotType
-            val nonTopTypes = if (types.any { it is CETopType }) types else types.filter { it !is CETopType }
+            if (types.any { it is CETopType }) return CETopType
+            val nonTopTypes = types.filter { it !is CETopType }
             return when (nonTopTypes.size) {
-                0 -> CETopType
+                0 -> error("Unreachable")
                 1 -> nonTopTypes.single()
                 else -> CEUnionType(nonTopTypes)
             }
