@@ -8,6 +8,8 @@ Marked.class:
           public final set(value: kotlin.String) { /* compiled code */ }
 
       public final fun alreadyApplied(): kotlin.String { /* compiled code */ }
+
+      @kotlin.IgnorableReturnValue public final fun ignorable(): kotlin.String { /* compiled code */ }
   }
 
 MarkedTopLevelKt.class:
@@ -41,6 +43,8 @@ Unmarked.class:
           public final set(value: kotlin.String) { /* compiled code */ }
 
       public final fun getStuff(): kotlin.String { /* compiled code */ }
+
+      @kotlin.IgnorableReturnValue public final fun ignorable(): kotlin.String { /* compiled code */ }
   }
 
 UnmarkedTopLevelKt.class:
@@ -51,3 +55,5 @@ UnmarkedTopLevelKt.class:
       public final get() { /* compiled code */ }
 
   public fun unmarkedTopFunction(): kotlin.String { /* compiled code */ }
+
+  @kotlin.IgnorableReturnValue public fun ignorableTopLvl(): kotlin.String { /* compiled code */ }

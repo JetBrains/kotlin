@@ -24,6 +24,17 @@ Marked.kt:
           PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=true, isGetter=false, mayHaveContract=false]
             VALUE_PARAMETER_LIST
               VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=value]
+        FUN[fqName=Marked.ignorable, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=ignorable]
+          MODIFIER_LIST[]
+            ANNOTATION_ENTRY[hasValueArguments=false, shortName=IgnorableReturnValue]
+              CONSTRUCTOR_CALLEE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=IgnorableReturnValue]
+          VALUE_PARAMETER_LIST
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=String]
 
 
 MyEnum.kt:
@@ -59,6 +70,17 @@ Unmarked.kt:
           PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=true, isGetter=false, mayHaveContract=false]
             VALUE_PARAMETER_LIST
               VALUE_PARAMETER[fqName=null, hasDefaultValue=false, hasValOrVar=false, isMutable=false, name=value]
+        FUN[fqName=Unmarked.ignorable, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=false, mayHaveContract=false, name=ignorable]
+          MODIFIER_LIST[]
+            ANNOTATION_ENTRY[hasValueArguments=false, shortName=IgnorableReturnValue]
+              CONSTRUCTOR_CALLEE
+                TYPE_REFERENCE
+                  USER_TYPE
+                    REFERENCE_EXPRESSION[referencedName=IgnorableReturnValue]
+          VALUE_PARAMETER_LIST
+          TYPE_REFERENCE
+            USER_TYPE
+              REFERENCE_EXPRESSION[referencedName=String]
 
 
 markedTopLevel.kt:
@@ -94,3 +116,14 @@ unmarkedTopLevel.kt:
     PROPERTY[fqName=unmarkedTopProperty, hasBackingField=null, hasDelegate=false, hasDelegateExpression=false, hasInitializer=false, hasReturnTypeRef=false, isExtension=false, isTopLevel=true, isVar=false, name=unmarkedTopProperty]
       PROPERTY_ACCESSOR[hasBody=true, hasNoExpressionBody=false, isGetter=true, mayHaveContract=false]
         VALUE_PARAMETER_LIST
+    FUN[fqName=ignorableTopLvl, hasBody=true, hasNoExpressionBody=false, hasTypeParameterListBeforeFunctionName=false, isExtension=false, isTopLevel=true, mayHaveContract=false, name=ignorableTopLvl]
+      MODIFIER_LIST[]
+        ANNOTATION_ENTRY[hasValueArguments=false, shortName=IgnorableReturnValue]
+          CONSTRUCTOR_CALLEE
+            TYPE_REFERENCE
+              USER_TYPE
+                REFERENCE_EXPRESSION[referencedName=IgnorableReturnValue]
+      VALUE_PARAMETER_LIST
+      TYPE_REFERENCE
+        USER_TYPE
+          REFERENCE_EXPRESSION[referencedName=String]
