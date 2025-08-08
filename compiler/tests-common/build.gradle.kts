@@ -85,6 +85,14 @@ dependencies {
     testRuntimeOnly(libs.junit.jupiter.engine)
 }
 
+tasks.processTestFixturesResources.configure {
+    into("legacy") {
+        from(project(":compiler").layout.projectDirectory.dir("testData")) {
+            include("/diagnostics/helpers/types/checkTypeWithExact.kt")
+        }
+    }
+}
+
 optInToExperimentalCompilerApi()
 optInToUnsafeDuringIrConstructionAPI()
 optInToK1Deprecation()
