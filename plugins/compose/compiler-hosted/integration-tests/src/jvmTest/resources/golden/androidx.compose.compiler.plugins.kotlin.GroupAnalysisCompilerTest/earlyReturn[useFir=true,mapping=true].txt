@@ -14,5 +14,5 @@ fun Test(text: String) {
 
 ========= FunctionMeta: true, OptimizeGroups: true =========
 ComposeStackTrace -> $$compose:
-  1:1:void TestKt.Test(java.lang.String,androidx.compose.runtime.Composer,int):5:5 -> m$-1971298841
-  1:1:void ExtraKt.Text(java.lang.String,androidx.compose.runtime.Composer,int):4:4 -> m$-1960580374
+  1:1:void TestKt.Test(java.lang.String,androidx.compose.runtime.Composer,int):5:5 -> m$<key>
+  1:1:void ExtraKt.Text(java.lang.String,androidx.compose.runtime.Composer,int):4:4 -> m$<key>

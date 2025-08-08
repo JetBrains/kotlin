@@ -22,10 +22,10 @@ fun Test() {
 TestKt {
     file: Test.kt
     Content(ILandroidx/compose/runtime/Composer;I)V
-        RestartGroup { key: -482540690, line: 5 }
+        RestartGroup { key: <key>, line: 5 }
     Test(Landroidx/compose/runtime/Composer;I)V
-        ReplaceGroup { key: -2081044797, line: 8 }
-        RestartGroup { key: -1794342280, line: 8 }
+        ReplaceGroup { key: <key>, line: 8 }
+        RestartGroup { key: <key>, line: 8 }
 }
 
 TestKt$Content$1 {

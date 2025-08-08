@@ -17,4 +17,4 @@ fun Content() {
 
 ========= FunctionMeta: true, OptimizeGroups: true =========
 ComposeStackTrace -> $$compose:
-  1:1:void TestKt$Content$1.Test(androidx.compose.runtime.Composer,int):10:10 -> m$369503962
+  1:1:void TestKt$Content$1.Test(androidx.compose.runtime.Composer,int):10:10 -> m$<key>

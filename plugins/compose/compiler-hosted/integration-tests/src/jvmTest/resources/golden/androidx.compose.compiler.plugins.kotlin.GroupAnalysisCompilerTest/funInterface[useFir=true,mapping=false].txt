@@ -19,5 +19,5 @@ fun Content() {
 TestKt$Content$1 {
     file: Test.kt
     Test(Landroidx/compose/runtime/Composer;I)V
-        RestartGroup { key: 369503962, line: 10 }
+        RestartGroup { key: <key>, line: 10 }
 }
