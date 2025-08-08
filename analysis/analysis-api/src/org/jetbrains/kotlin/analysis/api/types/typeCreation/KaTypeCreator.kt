@@ -173,7 +173,7 @@ public interface KaTypeCreator : KaLifetimeOwner {
      * Builds a [KaDynamicType].
      */
     @KaExperimentalApi
-    public fun dynamicType(): KaDynamicType
+    public fun dynamicType(init: KaDynamicTypeBuilder.() -> Unit = {}): KaDynamicType
 
     /**
      * Builds a [KaTypeArgumentWithVariance].
@@ -209,7 +209,42 @@ public annotation class KaTypeCreatorDslMarker
  */
 @KaExperimentalApi
 @SubclassOptInRequired(KaImplementationDetail::class)
-public interface KaTypeBuilder : KaTypeCreator
+public interface KaTypeBuilder : KaTypeCreator {
+    /**
+     * A list of annotation [ClassId]s, which are used to construct annotations of the resulting type.
+     *
+     * @see KaType.annotations
+     */
+    public val annotations: List<ClassId>
+
+    /**
+     * Adds [annotationClassId] to [annotations].
+     *
+     * @see KaType.annotations
+     */
+    public fun annotation(annotationClassId: ClassId)
+
+    /**
+     * Adds the annotation produced by [annotationClassId] to [annotations].
+     *
+     * @see KaType.annotations
+     */
+    public fun annotation(annotationClassId: () -> ClassId)
+
+    /**
+     * Adds [annotationClassIds] to [annotations].
+     *
+     * @see KaType.annotations
+     */
+    public fun annotations(annotationClassIds: Iterable<ClassId>)
+
+    /**
+     * Adds [annotationClassIds] to [annotations].
+     *
+     * @see KaType.annotations
+     */
+    public fun annotations(annotationClassIds: () -> Iterable<ClassId>)
+}
 
 /**
  * A builder for [KaClassType].
@@ -412,3 +447,12 @@ public interface KaIntersectionTypeBuilder : KaTypeBuilder {
      */
     public fun conjuncts(conjuncts: Iterable<KaType>)
 }
+
+/**
+ * A builder for dynamic types.
+ *
+ * @see KaTypeCreator.dynamicType
+ */
+@KaExperimentalApi
+@OptIn(KaImplementationDetail::class)
+public interface KaDynamicTypeBuilder : KaTypeBuilder
