@@ -1011,6 +1011,14 @@ abstract class FirTransformer<in D> : FirVisitor<FirElement, D>() {
         return transformResolvedNamedReference(resolvedNamedReference, data)
     }
 
+    open fun transformPropertyWithExplicitBackingFieldResolvedNamedReference(propertyWithExplicitBackingFieldResolvedNamedReference: FirPropertyWithExplicitBackingFieldResolvedNamedReference, data: D): FirReference {
+        return transformElement(propertyWithExplicitBackingFieldResolvedNamedReference, data)
+    }
+
+    final override fun visitPropertyWithExplicitBackingFieldResolvedNamedReference(propertyWithExplicitBackingFieldResolvedNamedReference: FirPropertyWithExplicitBackingFieldResolvedNamedReference, data: D): FirReference {
+        return transformPropertyWithExplicitBackingFieldResolvedNamedReference(propertyWithExplicitBackingFieldResolvedNamedReference, data)
+    }
+
     open fun transformResolvedCallableReference(resolvedCallableReference: FirResolvedCallableReference, data: D): FirReference {
         return transformElement(resolvedCallableReference, data)
     }

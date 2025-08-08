@@ -206,6 +206,9 @@ abstract class FirDefaultVisitor<out R, in D> : FirVisitor<R, D>() {
     override fun visitResolvedNamedReference(resolvedNamedReference: FirResolvedNamedReference, data: D): R =
         visitNamedReference(resolvedNamedReference, data)
 
+    override fun visitPropertyWithExplicitBackingFieldResolvedNamedReference(propertyWithExplicitBackingFieldResolvedNamedReference: FirPropertyWithExplicitBackingFieldResolvedNamedReference, data: D): R =
+        visitResolvedNamedReference(propertyWithExplicitBackingFieldResolvedNamedReference, data)
+
     override fun visitResolvedCallableReference(resolvedCallableReference: FirResolvedCallableReference, data: D): R =
         visitResolvedNamedReference(resolvedCallableReference, data)
 

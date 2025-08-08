@@ -267,6 +267,10 @@ abstract class FirDefaultVisitorVoid : FirVisitorVoid() {
         visitNamedReference(resolvedNamedReference)
     }
 
+    override fun visitPropertyWithExplicitBackingFieldResolvedNamedReference(propertyWithExplicitBackingFieldResolvedNamedReference: FirPropertyWithExplicitBackingFieldResolvedNamedReference) {
+        visitResolvedNamedReference(propertyWithExplicitBackingFieldResolvedNamedReference)
+    }
+
     override fun visitResolvedCallableReference(resolvedCallableReference: FirResolvedCallableReference) {
         visitResolvedNamedReference(resolvedCallableReference)
     }
