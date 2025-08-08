@@ -154,11 +154,12 @@ class CacheTest : BaseCompilationCompilationTest() {
         client.compile(requestChannel.receiveAsFlow()).collect {
             if (it is FileTransferReply && !it.isPresent) {
                 fileChunkingStrategy.chunk(sourceFile).collect { chunk ->
-                    requestChannel.send(FileChunk(
-                        chunk.filePath,
-                        chunk.content,
-                        chunk.isLast
-                    )
+                    requestChannel.send(
+                        FileChunk(
+                            chunk.filePath,
+                            chunk.content,
+                            chunk.isLast
+                        )
                     )
                 }
             }
@@ -182,7 +183,8 @@ class CacheTest : BaseCompilationCompilationTest() {
         client2.compile(requestChannel2.receiveAsFlow()).collect {
             if (it is FileTransferReply && !it.isPresent) {
                 fileChunkingStrategy.chunk(sourceFile).collect { chunk ->
-                    requestChannel.send(FileChunk(
+                    requestChannel.send(
+                        FileChunk(
                             chunk.filePath,
                             chunk.content,
                             chunk.isLast

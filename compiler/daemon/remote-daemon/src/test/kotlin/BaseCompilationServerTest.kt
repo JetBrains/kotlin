@@ -46,8 +46,8 @@ abstract class BaseCompilationCompilationTest {
         protected val cacheHandler = CacheHandler(OneFileOneChunkStrategy())
     }
 
-    fun getGrpcClient(): RemoteCompilationService{
-        return GrpcClientRemoteCompilationService()
+    fun getGrpcClient(): RemoteCompilationService {
+        return GrpcClientRemoteCompilationService(channel)
     }
 
     @BeforeEach
@@ -71,6 +71,7 @@ abstract class BaseCompilationCompilationTest {
             .build()
             .start()
         channel = InProcessChannelBuilder.forName(SERVER_NAME).build()
+        println("server started, ${server.port}")
     }
 
     @AfterEach

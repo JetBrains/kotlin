@@ -8,6 +8,7 @@ package client
 import client.auth.BasicHTTPAuthClient
 import client.auth.CallAuthenticator
 import common.RemoteCompilationService
+import io.grpc.ManagedChannel
 import io.grpc.ManagedChannelBuilder
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.channelFlow
@@ -20,13 +21,14 @@ import org.jetbrains.kotlin.server.CompileServiceGrpcKt
 import java.io.Closeable
 import java.util.concurrent.TimeUnit
 
-class GrpcClientRemoteCompilationService : RemoteCompilationService, Closeable {
-
-    private val channel = ManagedChannelBuilder
+class GrpcClientRemoteCompilationService(
+    private val channel: ManagedChannel
+    = ManagedChannelBuilder
         .forAddress("localhost", 50051)
         .usePlaintext()
         .intercept(RemoteClientInterceptor())
         .build()
+) : RemoteCompilationService, Closeable {
 
     private val stub: CompileServiceGrpcKt.CompileServiceCoroutineStub = CompileServiceGrpcKt
         .CompileServiceCoroutineStub(channel)
@@ -40,10 +42,7 @@ class GrpcClientRemoteCompilationService : RemoteCompilationService, Closeable {
         )
 
     override fun compile(compileRequests: Flow<CompileRequest>): Flow<CompileResponse> {
-        return channelFlow {
-            val grpcRequestFlow = compileRequests.map { it.toGrpc() }
-            stub.compile(grpcRequestFlow).collect { send(it.toDomain()) }
-        }
+        return stub.compile(compileRequests.map { it.toGrpc() }).map { it.toDomain() }
     }
 
     override fun close() {

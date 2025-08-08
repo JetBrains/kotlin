@@ -23,15 +23,11 @@ import model.CompilerMessage
 import model.FileChunk
 import model.FileTransferReply
 import model.FileTransferRequest
-import model.toCompileResponse
-import model.toDomain
-import model.toGrpc
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.daemon.client.BasicCompilerServicesWithResultsFacadeServer
 import org.jetbrains.kotlin.daemon.common.JpsCompilerServicesFacade
 import org.jetbrains.kotlin.daemon.report.DaemonMessageReporter
 import org.jetbrains.kotlin.daemon.report.getBuildReporter
-import org.jetbrains.kotlin.server.FileChunkGrpc
 import server.interceptors.AuthInterceptor
 import java.io.File
 import java.time.LocalDateTime
