@@ -9,18 +9,18 @@ import org.gradle.kotlin.dsl.kotlin
 import org.gradle.testkit.runner.BuildResult
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
-import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
-import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.PublisherConfiguration
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
 import org.jetbrains.kotlin.gradle.uklibs.setupMavenPublication
+import org.jetbrains.kotlin.gradle.util.setupCInteropForTarget
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.statistics.metrics.BooleanMetrics
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.condition.OS
+import java.io.File
 import java.nio.file.Path
 import kotlin.io.path.exists
 import kotlin.io.path.listDirectoryEntries
@@ -110,9 +110,11 @@ class MppCrossCompilationPublicationIT : KGPBaseTest() {
                 mingwX64()
                 linuxX64()
 
-                setupCInteropForTarget("mylib", KonanTarget.MACOS_ARM64, "mylib_macos.def")
-                setupCInteropForTarget("mylib", KonanTarget.LINUX_X64, "mylib_linux.def")
-                setupCInteropForTarget("mylib", KonanTarget.MINGW_X64, "mylib_windows.def")
+                val defFile: (String) -> File = { project.file("src/nativeInterop/cinterop/$it") }
+
+                setupCInteropForTarget("mylib", KonanTarget.MACOS_ARM64, defFile("mylib_macos.def"))
+                setupCInteropForTarget("mylib", KonanTarget.LINUX_X64, defFile("mylib_linux.def"))
+                setupCInteropForTarget("mylib", KonanTarget.MINGW_X64, defFile("mylib_windows.def"))
             },
             builder = { project, taskName, assertions ->
                 project.build(taskName, assertions = assertions)
@@ -246,17 +248,20 @@ class MppCrossCompilationPublicationIT : KGPBaseTest() {
                 kotlin("multiplatform")
             }
             buildScriptInjection {
-                project.applyMultiplatform {
-                    linuxX64()
-                    mingwX64()
-                    macosArm64()
-                    iosArm64()
-                    sourceSets.commonMain.get().compileStubSourceWithSourceSetName()
+                with(project) {
+                    val defFile: (String) -> File = { file("src/nativeInterop/cinterop/$it") }
+                    applyMultiplatform {
+                        linuxX64()
+                        mingwX64()
+                        macosArm64()
+                        iosArm64()
+                        sourceSets.commonMain.get().compileStubSourceWithSourceSetName()
 
-                    setupCInteropForTarget("mylib", KonanTarget.IOS_ARM64, "mylib_ios_arm64.def")
-                    setupCInteropForTarget("mylib", KonanTarget.MACOS_ARM64, "mylib_macos.def")
-                    setupCInteropForTarget("mylib", KonanTarget.LINUX_X64, "mylib_linux.def")
-                    setupCInteropForTarget("mylib", KonanTarget.MINGW_X64, "mylib_windows.def")
+                        setupCInteropForTarget("mylib", KonanTarget.IOS_ARM64, defFile("mylib_ios_arm64.def"))
+                        setupCInteropForTarget("mylib", KonanTarget.MACOS_ARM64, defFile("mylib_macos.def"))
+                        setupCInteropForTarget("mylib", KonanTarget.LINUX_X64, defFile("mylib_linux.def"))
+                        setupCInteropForTarget("mylib", KonanTarget.MINGW_X64, defFile("mylib_windows.def"))
+                    }
                 }
             }
 
@@ -330,24 +335,6 @@ private fun KGPBaseTest.publishMultiplatformLibrary(
     }
 
     builder(this, "publishAllPublicationsToCrossTestRepository", assertions)
-}
-
-private fun KotlinMultiplatformExtension.setupCInteropForTarget(
-    name: String,
-    konanTarget: KonanTarget,
-    defFileName: String,
-) {
-    targets.withType(KotlinNativeTarget::class.java)
-        .matching { it.konanTarget == konanTarget }
-        .configureEach { target ->
-            target.compilations
-                .getByName(KotlinCompilation.MAIN_COMPILATION_NAME)
-                .cinterops
-                .create(name) { interop ->
-                    interop.defFile(project.file("src/nativeInterop/cinterop/$defFileName"))
-                    interop.includeDirs(project.file("include"))
-                }
-        }
 }
 
 private fun getActualModules(libraryRoot: Path): Set<String> {
