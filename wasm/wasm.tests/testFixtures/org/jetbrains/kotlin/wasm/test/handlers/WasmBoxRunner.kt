@@ -20,7 +20,7 @@ import java.io.File
 class WasmBoxRunner(
     testServices: TestServices
 ) : AbstractWasmArtifactsCollector(testServices) {
-    private val vmsToCheck: List<WasmVM> = listOf(WasmVM.V8, WasmVM.SpiderMonkey, WasmVM.JavaScriptCore)
+    private val vmsToCheck: List<WasmVM> = listOfNotNull(WasmVM.V8, WasmVM.SpiderMonkey, WasmVM.JavaScriptCoreOrNull)
 
     override fun processAfterAllModules(someAssertionWasFailed: Boolean) {
         if (!someAssertionWasFailed) {
