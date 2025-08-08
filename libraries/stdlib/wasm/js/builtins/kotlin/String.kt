@@ -16,6 +16,8 @@ import kotlin.wasm.internal.*
 
 public actual class String internal @WasmPrimitiveConstructor constructor(
     public val internalStr: JsString,
+    @kotlin.internal.IntrinsicConstEvaluation
+    private var _chars: WasmCharArray?
 ) : Comparable<String>, CharSequence {
     public actual companion object {}
 
@@ -31,7 +33,7 @@ public actual class String internal @WasmPrimitiveConstructor constructor(
     @kotlin.internal.IntrinsicConstEvaluation
     public actual operator fun plus(other: Any?): String {
         val right = other.toString()
-        return String(jsConcat(this.internalStr, right.internalStr))
+        return String(jsConcat(this.internalStr, right.internalStr), null)
     }
 
     @kotlin.internal.IntrinsicConstEvaluation
@@ -40,17 +42,19 @@ public actual class String internal @WasmPrimitiveConstructor constructor(
         return jsCharCodeAt(this.internalStr, index).reinterpretAsChar()
     }
 
-    @kotlin.internal.IntrinsicConstEvaluation
     internal val chars: WasmCharArray
         get() {
-            val copy = WasmCharArray(length)
-            jsIntoCharCodeArray(internalStr, copy, 0)
-            return copy
+            if (_chars == null) {
+                val copy = WasmCharArray(length)
+                jsIntoCharCodeArray(internalStr, copy, 0)
+                _chars = copy
+            }
+            return _chars!!
         }
 
     public actual override fun subSequence(startIndex: Int, endIndex: Int): CharSequence {
         checkStringBounds(startIndex, endIndex, length)
-        return String(jsSubstring(this.internalStr, startIndex, endIndex))
+        return String(jsSubstring(this.internalStr, startIndex, endIndex), null)
     }
 
     private fun checkStringBounds(startIndex: Int, endIndex: Int, length: Int) {
@@ -108,6 +112,6 @@ public actual class String internal @WasmPrimitiveConstructor constructor(
 
 @Suppress("NOTHING_TO_INLINE")
 internal actual inline fun WasmCharArray.createString(): String =
-    String(jsFromCharCodeArray(this, 0, this.len()))
+    String(jsFromCharCodeArray(this, 0, this.len()), this)
 
 internal actual fun String.getChars() = this.chars

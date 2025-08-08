@@ -190,7 +190,7 @@ internal fun jsCheckIsNullOrUndefinedAdapter(x: ExternalInterfaceType?): Externa
 
 internal fun jsToKotlinStringAdapter(x: ExternalInterfaceType): String {
     val jsStr: JsString = x.unsafeCast()
-    return String(jsStr)
+    return String(jsStr, null)
 }
 
 
