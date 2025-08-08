@@ -9,7 +9,7 @@ import org.jetbrains.kotlin.buildtools.api.CompilationResult
 import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
 import org.jetbrains.kotlin.buildtools.api.KotlinToolchain
 import org.jetbrains.kotlin.buildtools.api.SourcesChanges
-import org.jetbrains.kotlin.buildtools.api.jvm.JvmIncrementalCompilationConfiguration
+import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationOptions
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation
 import org.jetbrains.kotlin.buildtools.api.tests.CompilerExecutionStrategyConfiguration
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.BaseCompilationTest
@@ -25,7 +25,7 @@ internal abstract class BaseScenarioModule(
     internal val outputs: MutableSet<String>,
     private val strategyConfig: ExecutionPolicy,
     private val compilationOptionsModifier: ((JvmCompilationOperation) -> Unit)?,
-    private val incrementalCompilationOptionsModifier: ((JvmIncrementalCompilationConfiguration) -> Unit)?,
+    private val incrementalCompilationOptionsModifier: ((JvmSnapshotBasedIncrementalCompilationOptions) -> Unit)?,
 ) : ScenarioModule {
     override fun changeFile(
         fileName: String,
@@ -95,7 +95,7 @@ internal class ExternallyTrackedScenarioModuleImpl(
     outputs: MutableSet<String>,
     strategyConfig: ExecutionPolicy,
     compilationOptionsModifier: ((JvmCompilationOperation) -> Unit)?,
-    incrementalCompilationOptionsModifier: ((JvmIncrementalCompilationConfiguration) -> Unit)?,
+    incrementalCompilationOptionsModifier: ((JvmSnapshotBasedIncrementalCompilationOptions) -> Unit)?,
 ) : BaseScenarioModule(module, outputs, strategyConfig, compilationOptionsModifier, incrementalCompilationOptionsModifier) {
     private var sourcesChanges = SourcesChanges.Known(emptyList(), emptyList())
 
@@ -155,7 +155,7 @@ internal class AutoTrackedScenarioModuleImpl(
     outputs: MutableSet<String>,
     strategyConfig: ExecutionPolicy,
     compilationOptionsModifier: ((JvmCompilationOperation) -> Unit)?,
-    incrementalCompilationOptionsModifier: ((JvmIncrementalCompilationConfiguration) -> Unit)?,
+    incrementalCompilationOptionsModifier: ((JvmSnapshotBasedIncrementalCompilationOptions) -> Unit)?,
 ) : BaseScenarioModule(module, outputs, strategyConfig, compilationOptionsModifier, incrementalCompilationOptionsModifier) {
     override fun getSourcesChanges() = SourcesChanges.ToBeCalculated
 }
@@ -171,7 +171,7 @@ private class ScenarioDsl(
         snapshotConfig: SnapshotConfig,
         compilationOperationConfig: (JvmCompilationOperation) -> Unit,
         compilationOptionsModifier: ((JvmCompilationOperation) -> Unit)?,
-        incrementalCompilationOptionsModifier: ((JvmIncrementalCompilationConfiguration) -> Unit)?,
+        incrementalCompilationOptionsModifier: ((JvmSnapshotBasedIncrementalCompilationOptions) -> Unit)?,
     ): ScenarioModule {
         val transformedDependencies = dependencies.map { (it as BaseScenarioModule).module }
         val module =
@@ -187,7 +187,7 @@ private class ScenarioDsl(
         snapshotConfig: SnapshotConfig,
         compilationOperationConfig: (JvmCompilationOperation) -> Unit,
         compilationOptionsModifier: ((JvmCompilationOperation) -> Unit)?,
-        incrementalCompilationOptionsModifier: ((JvmIncrementalCompilationConfiguration) -> Unit)?,
+        incrementalCompilationOptionsModifier: ((JvmSnapshotBasedIncrementalCompilationOptions) -> Unit)?,
     ): ScenarioModule {
         val transformedDependencies = dependencies.map { (it as BaseScenarioModule).module }
         val module =

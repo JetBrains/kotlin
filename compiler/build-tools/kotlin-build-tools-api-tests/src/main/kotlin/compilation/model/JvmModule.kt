@@ -5,10 +5,14 @@
 
 package org.jetbrains.kotlin.buildtools.api.tests.compilation.model
 
-import org.jetbrains.kotlin.buildtools.api.*
+import org.jetbrains.kotlin.buildtools.api.CompilationResult
+import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
+import org.jetbrains.kotlin.buildtools.api.KotlinToolchain
+import org.jetbrains.kotlin.buildtools.api.SourcesChanges
 import org.jetbrains.kotlin.buildtools.api.arguments.JvmCompilerArguments
 import org.jetbrains.kotlin.buildtools.api.jvm.AccessibleClassSnapshot
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationConfiguration
+import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationOptions
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationOptions.Companion.FORCE_RECOMPILATION
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationOptions.Companion.MODULE_BUILD_DIR
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationOptions.Companion.ROOT_PROJECT_DIR
@@ -57,7 +61,7 @@ class JvmModule(
         compilationConfigAction: (JvmCompilationOperation) -> Unit,
         kotlinLogger: TestKotlinLogger
     ): CompilationResult {
-        val allowedExtensions = setOf("kt", "kts") // TODO add from config
+        val allowedExtensions = setOf("kt", "kts", "java")
 
         val compilationOperation = kotlinToolchain.jvm.createJvmCompilationOperation(
             sourcesDirectory.walk()
@@ -80,7 +84,7 @@ class JvmModule(
             dependency.location
         )
         snapshotOperation[JvmClasspathSnapshottingOperation.GRANULARITY] = snapshotConfig.granularity
-        snapshotOperation[PARSE_INLINED_LOCAL_CLASSES] = snapshotConfig.useInlineLambdaSnapshotting //todo is it the same setting?
+        snapshotOperation[PARSE_INLINED_LOCAL_CLASSES] = snapshotConfig.useInlineLambdaSnapshotting
         val snapshotResult = kotlinBuild.executeOperation(snapshotOperation)
         val hash = snapshotResult.classSnapshots.values
             .filterIsInstance<AccessibleClassSnapshot>()
@@ -99,8 +103,8 @@ class JvmModule(
         forceOutput: LogLevel?,
         forceNonIncrementalCompilation: Boolean,
         compilationConfigAction: (JvmCompilationOperation) -> Unit,
-        incrementalCompilationConfigAction: (JvmSnapshotBasedIncrementalCompilationConfiguration) -> Unit,
-        assertions: CompilationOutcome.(Module) -> Unit
+        incrementalCompilationConfigAction: (JvmSnapshotBasedIncrementalCompilationOptions) -> Unit,
+        assertions: CompilationOutcome.(Module) -> Unit,
     ): CompilationResult {
         return compile(strategyConfig, forceOutput, { compilationOperation ->
             val snapshots = dependencies.map {
@@ -120,7 +124,7 @@ class JvmModule(
                 snapshotIcOptions
             )
 
-            incrementalCompilationConfigAction(incrementalConfiguration)
+            incrementalCompilationConfigAction(incrementalConfiguration.options)
 
             compilationOperation[JvmCompilationOperation.Companion.INCREMENTAL_COMPILATION] = incrementalConfiguration
         }, assertions)

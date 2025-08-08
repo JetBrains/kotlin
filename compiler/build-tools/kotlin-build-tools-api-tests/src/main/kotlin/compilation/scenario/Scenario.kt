@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.buildtools.api.tests.compilation.scenario
 
 import org.jetbrains.kotlin.buildtools.api.jvm.ClassSnapshotGranularity
-import org.jetbrains.kotlin.buildtools.api.jvm.JvmIncrementalCompilationConfiguration
+import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationOptions
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.SnapshotConfig
 
@@ -32,7 +32,7 @@ interface Scenario {
         snapshotConfig: SnapshotConfig = SnapshotConfig(ClassSnapshotGranularity.CLASS_MEMBER_LEVEL, true),
         compilationOperationConfig: (JvmCompilationOperation) -> Unit = {},
         compilationOptionsModifier: ((JvmCompilationOperation) -> Unit)? = null,
-        incrementalCompilationOptionsModifier: ((JvmIncrementalCompilationConfiguration) -> Unit)? = null,
+        incrementalCompilationOptionsModifier: ((JvmSnapshotBasedIncrementalCompilationOptions) -> Unit)? = null,
     ): ScenarioModule
 
     /**
@@ -58,6 +58,6 @@ interface Scenario {
         snapshotConfig: SnapshotConfig = SnapshotConfig(ClassSnapshotGranularity.CLASS_MEMBER_LEVEL, true),
         compilationOperationConfig: (JvmCompilationOperation) -> Unit = {},
         compilationOptionsModifier: ((JvmCompilationOperation) -> Unit)? = null,
-        incrementalCompilationOptionsModifier: ((JvmIncrementalCompilationConfiguration) -> Unit)? = null,
+        incrementalCompilationOptionsModifier: ((JvmSnapshotBasedIncrementalCompilationOptions) -> Unit)? = null,
     ): ScenarioModule
 }

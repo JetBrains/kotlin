@@ -5,10 +5,8 @@
 
 package org.jetbrains.kotlin.buildtools.api.tests.compilation
 
-import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
-import org.jetbrains.kotlin.buildtools.api.KotlinToolchain
-import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationConfiguration
 import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationOptions.Companion.KEEP_IC_CACHES_IN_MEMORY
+import org.jetbrains.kotlin.buildtools.api.tests.CompilerExecutionStrategyConfiguration
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.assertions.assertCompiledSources
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.assertions.assertNoCompiledSources
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.DefaultStrategyAgnosticCompilationTest
@@ -70,7 +68,7 @@ class ExampleIncrementalScenarioTest : BaseCompilationTest() {
             val module1 = module(
                 "jvm-module-1",
                 incrementalCompilationOptionsModifier = {
-                    (it as JvmSnapshotBasedIncrementalCompilationConfiguration).options[KEEP_IC_CACHES_IN_MEMORY] = false
+                    it[KEEP_IC_CACHES_IN_MEMORY] = false
                 },
             )
 

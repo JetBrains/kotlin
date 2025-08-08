@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.buildtools.api.tests.compilation
 
+import org.jetbrains.kotlin.buildtools.api.tests.CompilerExecutionStrategyConfiguration
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.assertions.assertLogContainsPatterns
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.assertions.assertOutputs
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.assertions.expectFailWithError
@@ -18,7 +19,7 @@ class ExampleNonIncrementalCompilationTest : BaseCompilationTest() {
     @DisplayName("Sample non-incremental compilation test with two modules")
     @DefaultStrategyAgnosticCompilationTest
     fun myTest(strategyConfig: CompilerExecutionStrategyConfiguration) {
-        project(strategyConfig){
+        project(strategyConfig) {
             val module1 = module("jvm-module-1")
             val module2 = module("jvm-module-2", listOf(module1))
 

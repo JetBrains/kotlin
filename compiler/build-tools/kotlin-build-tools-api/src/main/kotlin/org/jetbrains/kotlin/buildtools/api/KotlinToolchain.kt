@@ -115,7 +115,7 @@ public interface KotlinToolchain {
         public fun loadImplementation(classLoader: ClassLoader): KotlinToolchain =
             try {
                 loadImplementation(KotlinToolchain::class, classLoader)
-            } catch (_: IllegalStateException) {
+            } catch (_: NoImplementationFoundException) {
                 classLoader.loadClass("org.jetbrains.kotlin.buildtools.internal.compat.KotlinToolchainV1Adapter").constructors.first()
                     .newInstance(CompilationService.loadImplementation(classLoader)) as KotlinToolchain
             }

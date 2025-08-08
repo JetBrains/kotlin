@@ -17,10 +17,15 @@ import kotlin.io.path.walk
 
 /**
  * Arguments are as follows:
- * 1. &lt;path> - Output directory for generated classes
- * TODO rest
- * 2. &lt;api | impl> - whether the generator should generate API interfaces or implementations
- * 3. (optional) <argumentsLevelName1,argumentsLevelName2> - only generate classes for the specified list of argument level names (see CompilerArgumentsLevelNames.kt)
+ * 1. `<path>` - Output directory for generated classes
+ * 2. `"api"` - (optional) turns on API classes generation and marks the start of parameters for the API generator:
+ *     1. `"*"` or `<argumentsLevelName1,argumentsLevelName2>` - generate classes for all levels (`*`) or only generate classes for the specified list of argument level names (see CompilerArgumentsLevelNames.kt)
+ *     2. `<package>` - (optional) the target package for generated arguments
+ * 2. `"impl"` - (optional) turns on implementation classes generator and marks the start of parameters for the implementation generator:
+ *     1. `"*"` or `<argumentsLevelName1,argumentsLevelName2>` - generate classes for all levels (`*`) or only generate classes for the specified list of argument level names (see CompilerArgumentsLevelNames.kt)
+ *     2. `<package>` - (optional) the target package for generated arguments
+ *
+ * You must specify at least one of "api" or "impl", and if both are specified "api" must come before "impl".
  */
 fun main(args: Array<String>) {
     val genDir = Paths.get(args[0])

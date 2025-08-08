@@ -26,10 +26,13 @@ public fun SharedApiClassesClassLoader(): ClassLoader = SharedApiClassesClassLoa
 
 internal fun <T : Any> loadImplementation(cls: KClass<T>, classLoader: ClassLoader): T {
     val implementations = ServiceLoader.load(cls.java, classLoader)
-    implementations.firstOrNull() ?: error("The classpath contains no implementation for ${cls.qualifiedName}")
+    implementations.firstOrNull() ?: throw NoImplementationFoundException(cls)
     return implementations.singleOrNull()
         ?: error("The classpath contains more than one implementation for ${cls.qualifiedName}")
 }
+
+internal class NoImplementationFoundException(cls: KClass<*>) :
+    IllegalStateException("The classpath contains no implementation for ${cls.qualifiedName}")
 
 private class SharedApiClassesClassLoaderImpl(
     private val parent: ClassLoader,

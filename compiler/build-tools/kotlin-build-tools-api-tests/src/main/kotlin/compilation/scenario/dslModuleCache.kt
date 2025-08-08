@@ -6,7 +6,7 @@ package org.jetbrains.kotlin.buildtools.api.tests.compilation.scenario
 
 import org.jetbrains.kotlin.buildtools.api.ExecutionPolicy
 import org.jetbrains.kotlin.buildtools.api.SourcesChanges
-import org.jetbrains.kotlin.buildtools.api.jvm.JvmIncrementalCompilationConfiguration
+import org.jetbrains.kotlin.buildtools.api.jvm.JvmSnapshotBasedIncrementalCompilationOptions
 import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmCompilationOperation
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.DependencyScenarioDslCacheKey
 import org.jetbrains.kotlin.buildtools.api.tests.compilation.model.Module
@@ -23,7 +23,7 @@ private data class GlobalCompiledProjectsCacheKey(
     val moduleKey: DependencyScenarioDslCacheKey,
     val snapshotConfig: SnapshotConfig,
     val compilationOptionsModifier: ((JvmCompilationOperation) -> Unit)?,
-    val incrementalCompilationOptionsModifier: ((JvmIncrementalCompilationConfiguration) -> Unit)?,
+    val incrementalCompilationOptionsModifier: ((JvmSnapshotBasedIncrementalCompilationOptions) -> Unit)?,
     val icSourceTracking: Boolean,
 )
 
@@ -38,7 +38,7 @@ internal object GlobalCompiledProjectsCache {
         strategyConfig: ExecutionPolicy,
         snapshotConfig: SnapshotConfig,
         compilationOptionsModifier: ((JvmCompilationOperation) -> Unit)?,
-        incrementalCompilationOptionsModifier: ((JvmIncrementalCompilationConfiguration) -> Unit)?,
+        incrementalCompilationOptionsModifier: ((JvmSnapshotBasedIncrementalCompilationOptions) -> Unit)?,
         icSourceTracking: Boolean,
     ): BaseScenarioModule? {
         val (initialOutputs, cachedBuildDirPath) = compiledProjectsCache[GlobalCompiledProjectsCacheKey(
@@ -61,7 +61,7 @@ internal object GlobalCompiledProjectsCache {
         strategyConfig: ExecutionPolicy,
         snapshotConfig: SnapshotConfig,
         compilationOptionsModifier: ((JvmCompilationOperation) -> Unit)?,
-        incrementalCompilationOptionsModifier: ((JvmIncrementalCompilationConfiguration) -> Unit)?,
+        incrementalCompilationOptionsModifier: ((JvmSnapshotBasedIncrementalCompilationOptions) -> Unit)?,
         icSourceTracking: Boolean,
     ): BaseScenarioModule {
         module.compileIncrementally(
