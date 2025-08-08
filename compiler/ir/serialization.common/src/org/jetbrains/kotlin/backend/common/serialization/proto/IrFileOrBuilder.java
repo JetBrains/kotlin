@@ -93,17 +93,4 @@ public interface IrFileOrBuilder extends
    * <code>repeated int64 explicitly_exported_to_compiler = 5 [packed = true];</code>
    */
   long getExplicitlyExportedToCompiler(int index);
-
-  /**
-   * <code>repeated int32 preprocessed_inline_functions = 8 [packed = true];</code>
-   */
-  java.util.List<java.lang.Integer> getPreprocessedInlineFunctionsList();
-  /**
-   * <code>repeated int32 preprocessed_inline_functions = 8 [packed = true];</code>
-   */
-  int getPreprocessedInlineFunctionsCount();
-  /**
-   * <code>repeated int32 preprocessed_inline_functions = 8 [packed = true];</code>
-   */
-  int getPreprocessedInlineFunctions(int index);
 }

@@ -135,22 +135,8 @@ class NonLinkingIrInlineFunctionDeserializer(
             irInterner = irInterner,
         )
 
-        /**
-         * Deserialize declarations only on demand. Cache top-level declarations to avoid repetitive deserialization
-         * if the declaration happens to have multiple inline functions.
-         */
-        private val indexWithLazyValues: Map<IdSignature, Lazy<IrFunction>> =
-            fileProto.preprocessedInlineFunctionsList.associate { signatureIndex ->
-                val signature = symbolDeserializer.deserializeIdSignature(signatureIndex)
-
-                val lazyDeclaration = lazy {
-                    val declarationProto = fileReader.inlineDeclaration(signatureIndex)
-                    declarationDeserializer.deserializeDeclaration(declarationProto) as IrFunction
-                }
-
-                signature to lazyDeclaration
-            }
-
-        fun getTopLevelDeclarationOrNull(topLevelSignature: IdSignature): IrFunction? = indexWithLazyValues[topLevelSignature]?.value
+        fun getTopLevelDeclarationOrNull(topLevelSignature: IdSignature): IrFunction? {
+            return null // Will be re-implemented in the next commit
+        }
     }
 }

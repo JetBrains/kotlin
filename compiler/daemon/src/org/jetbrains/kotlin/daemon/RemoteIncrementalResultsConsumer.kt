@@ -21,7 +21,6 @@ class RemoteIncrementalResultsConsumer(
         signatures: ByteArray,
         strings: ByteArray,
         declarations: ByteArray,
-        inlineDeclarations: ByteArray,
         bodies: ByteArray,
         fqn: ByteArray,
         fileMetadata: ByteArray,

@@ -50,7 +50,6 @@ internal class KotlinLoadedLibraryHeader(
             val deserializer = IdSignatureDeserializer(IrLibraryFileFromBytes(object : IrLibraryBytesSource() {
                 private fun err(): Nothing = icError("Not supported")
                 override fun irDeclaration(index: Int): ByteArray = err()
-                override fun irInlineDeclaration(index: Int): ByteArray = err()
                 override fun type(index: Int): ByteArray = err()
                 override fun signature(index: Int): ByteArray = library.signature(index, it)
                 override fun string(index: Int): ByteArray = library.string(index, it)

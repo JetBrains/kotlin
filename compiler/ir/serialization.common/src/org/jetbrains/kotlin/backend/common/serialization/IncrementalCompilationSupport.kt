@@ -48,7 +48,6 @@ class ICKotlinLibrary(private val icData: List<SerializedIrFile>) : IrLibrary {
     }
 
     private val indexedDeclarations = arrayOfNulls<DeclarationIdTableReader>(icData.size)
-    private val indexedInlineDeclarations = arrayOfNulls<DeclarationIdTableReader>(icData.size)
     private val indexedTypes = arrayOfNulls<IrArrayReader>(icData.size)
     private val indexedSignatures = arrayOfNulls<IrArrayReader>(icData.size)
     private val indexedStrings = arrayOfNulls<IrArrayReader>(icData.size)
@@ -59,11 +58,6 @@ class ICKotlinLibrary(private val icData: List<SerializedIrFile>) : IrLibrary {
     override fun irDeclaration(index: Int, fileIndex: Int): ByteArray =
         indexedDeclarations.itemBytes(fileIndex, DeclarationId(index)) {
             DeclarationIdTableReader(icData[fileIndex].declarations)
-        }
-
-    override fun irInlineDeclaration(index: Int, fileIndex: Int): ByteArray =
-        indexedInlineDeclarations.itemBytes(fileIndex, DeclarationId(index)) {
-            DeclarationIdTableReader(icData[fileIndex].inlineDeclarations)
         }
 
     override fun type(index: Int, fileIndex: Int): ByteArray =

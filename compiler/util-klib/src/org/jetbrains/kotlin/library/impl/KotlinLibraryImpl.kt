@@ -101,8 +101,6 @@ class IrLibraryImpl(val access: IrLibraryAccess<IrKotlinLibraryLayout>) : IrLibr
 
     override fun irDeclaration(index: Int, fileIndex: Int) = loadIrDeclaration(index, fileIndex)
 
-    override fun irInlineDeclaration(index: Int, fileIndex: Int) = loadIrInlineDeclaration(index, fileIndex)
-
     override fun type(index: Int, fileIndex: Int) = types.tableItemBytes(fileIndex, index)
 
     override fun signature(index: Int, fileIndex: Int) = signatures.tableItemBytes(fileIndex, index)
@@ -122,13 +120,6 @@ class IrLibraryImpl(val access: IrLibraryAccess<IrKotlinLibraryLayout>) : IrLibr
 
     private val combinedDeclarations: DeclarationIdMultiTableReader by lazy {
         DeclarationIdMultiTableReader(access, IrKotlinLibraryLayout::irDeclarations)
-    }
-
-    private fun loadIrInlineDeclaration(index: Int, fileIndex: Int) =
-        combinedInlineDeclarations.tableItemBytes(fileIndex, DeclarationId(index))
-
-    private val combinedInlineDeclarations: DeclarationIdMultiTableReader by lazy {
-        DeclarationIdMultiTableReader(access, IrKotlinLibraryLayout::irInlineDeclarations)
     }
 
     private val types: IrMultiArrayReader by lazy {

@@ -67,9 +67,6 @@ internal class IrSignaturesExtractor(private val library: KotlinLibrary) {
             for (topLevelDeclarationIndex in fileProto.declarationIdList) {
                 extractSignature(declarationProto = fileReader.declaration(topLevelDeclarationIndex), isParentPrivate = false)
             }
-            for (topLevelInlineDeclarationIndex in fileProto.preprocessedInlineFunctionsList) {
-                extractSignature(declarationProto = fileReader.inlineDeclaration(topLevelInlineDeclarationIndex), isParentPrivate = false)
-            }
         }
 
         private fun extractSignature(declarationProto: ProtoDeclaration, isParentPrivate: Boolean) {
