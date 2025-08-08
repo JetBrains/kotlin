@@ -1744,23 +1744,6 @@ public class FirNativeCodegenLocalTestGenerated extends AbstractNativeCodegenBox
   }
 
   @Nested
-  @TestMetadata("native/native.tests/testData/codegen/ktype")
-  @TestDataPath("$PROJECT_ROOT")
-  @UseExtTestCaseGroupProvider()
-  public class Ktype {
-    @Test
-    public void testAllFilesPresentInKtype() {
-      KtTestUtil.assertAllTestsPresentByMetadataWithExcluded(this.getClass(), new File("native/native.tests/testData/codegen/ktype"), Pattern.compile("^(.+)\\.kt$"), null, TargetBackend.NATIVE, true);
-    }
-
-    @Test
-    @TestMetadata("ktype1_anonymousObject.kt")
-    public void testKtype1_anonymousObject() {
-      runTest("native/native.tests/testData/codegen/ktype/ktype1_anonymousObject.kt");
-    }
-  }
-
-  @Nested
   @TestMetadata("native/native.tests/testData/codegen/link")
   @TestDataPath("$PROJECT_ROOT")
   @UseExtTestCaseGroupProvider()

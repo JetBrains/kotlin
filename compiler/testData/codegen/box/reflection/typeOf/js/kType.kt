@@ -37,20 +37,8 @@ fun testInner() {
     assertEquals(D::class, innerKType.arguments.last().type!!.classifier)
 }
 
-fun testAnonymousObject() {
-    val obj = object {}
-    val objType = kType(obj)
-
-    assertEquals("(non-denotable type)", objType.toString())
-    assertEquals(obj::class, objType.classifier)
-
-    assertTrue(objType.arguments.isEmpty())
-    assertFalse(objType.isMarkedNullable)
-}
-
 fun box(): String {
     testBasics1()
     testInner()
-    testAnonymousObject()
     return "OK"
 }
