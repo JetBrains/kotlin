@@ -40,7 +40,7 @@ public value class Duration internal constructor(private val rawValue: Long) : C
     private val storageUnit get() = if (isInNanos()) DurationUnit.NANOSECONDS else DurationUnit.MILLISECONDS
 
     init {
-        if (durationAssertionsEnabled) {
+        if (durationAssertionsEnabled && rawValue != INVALID_RAW_VALUE) {
             if (isInNanos()) {
                 if (value !in -MAX_NANOS..MAX_NANOS) throw AssertionError("$value ns is out of nanoseconds range")
             } else {
