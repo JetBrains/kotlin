@@ -13,13 +13,14 @@ import org.jetbrains.kotlin.fir.analysis.checkers.delegatedPropertySourceOrThis
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirOptInUsageBaseChecker.Experimentality
 import org.jetbrains.kotlin.fir.analysis.checkers.expression.FirOptInUsageBaseChecker.loadExperimentalities
 import org.jetbrains.kotlin.fir.analysis.checkers.isLhsOfAssignment
-import org.jetbrains.kotlin.fir.analysis.checkers.secondToLastContainer
 import org.jetbrains.kotlin.fir.declarations.utils.hasExplicitBackingField
 import org.jetbrains.kotlin.fir.declarations.utils.isFromEnumClass
 import org.jetbrains.kotlin.fir.expressions.*
+import org.jetbrains.kotlin.fir.references.FirPropertyWithExplicitBackingFieldResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.toResolvedBaseSymbol
 import org.jetbrains.kotlin.fir.references.toResolvedPropertySymbol
 import org.jetbrains.kotlin.fir.resolve.fullyExpandedType
+import org.jetbrains.kotlin.fir.resolve.tryAccessExplicitFieldSymbol
 import org.jetbrains.kotlin.fir.symbols.impl.FirConstructorSymbol
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.resolvedType
@@ -68,10 +69,12 @@ object FirOptInUsageAccessChecker : FirBasicExpressionChecker(MppCheckerKind.Com
     context(context: CheckerContext)
     fun loadExperimentalitiesFromExplicitField(expression: FirStatement, dispatchReceiver: ConeKotlinType?): Set<Experimentality> {
         if (expression !is FirPropertyAccessExpression) return emptySet()
-        val property = expression.calleeReference.toResolvedPropertySymbol()?.takeIf { it.hasExplicitBackingField } ?: return emptySet()
+        val reference = expression.calleeReference as? FirPropertyWithExplicitBackingFieldResolvedNamedReference ?: return emptySet()
+        val property = reference.toResolvedPropertySymbol()?.takeIf { it.hasExplicitBackingField } ?: return emptySet()
+        val field = reference.tryAccessExplicitFieldSymbol(context.inlineFunctionBodyContext?.inlineFunction, context.session)
 
-        return when (context.secondToLastContainer) {
-            is FirSmartCastExpression -> property.backingFieldSymbol?.loadExperimentalities(fromSetter = false, dispatchReceiver).orEmpty()
+        return when (property.backingFieldSymbol) {
+            field -> field.loadExperimentalities(fromSetter = false, dispatchReceiver)
             else -> emptySet()
         }
     }

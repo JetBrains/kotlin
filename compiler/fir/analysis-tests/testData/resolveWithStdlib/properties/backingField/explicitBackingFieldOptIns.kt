@@ -17,5 +17,17 @@ fun test() {
     val b: MutableList<Int> = <!OPT_IN_USAGE_ERROR!>numbersB<!>
 }
 
+object MyObject {
+    val x: Number
+        @ExperimentalAPI
+        field = 123.4
+}
+
+fun foo() {
+    if (MyObject.x is Float) {
+        MyObject.x.isNaN()
+    }
+}
+
 /* GENERATED_FIR_TAGS: annotationDeclaration, annotationUseSiteTargetPropertyGetter, functionDeclaration, localProperty,
 propertyDeclaration, smartcast */
