@@ -71,6 +71,7 @@ private constructor(
     visibilityChecker = KaFirVisibilityChecker(analysisSessionProvider),
     originalPsiProvider = KaFirOriginalPsiProvider(analysisSessionProvider),
     typeCreator = KaFirTypeCreator(analysisSessionProvider),
+    typeCreatorProvider = KaFirTypeCreatorProvider(analysisSessionProvider),
     analysisScopeProvider = KaBaseAnalysisScopeProviderImpl(analysisSessionProvider, useSiteScope),
     signatureSubstitutor = KaFirSignatureSubstitutor(analysisSessionProvider),
     resolveExtensionInfoProvider = KaFirResolveExtensionInfoProvider(analysisSessionProvider),
