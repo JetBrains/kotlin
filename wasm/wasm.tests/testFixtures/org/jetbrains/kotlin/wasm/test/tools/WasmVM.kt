@@ -115,7 +115,8 @@ internal sealed class WasmVM(
     }
 
     companion object {
-        private const val propertyWithPathToJavaScriptCore = "javascript.engine.path.JavaScriptCore"
+        // TODO remove .local
+        private const val propertyWithPathToJavaScriptCore = "javascript.engine.path.JavaScriptCore.local"
 
         val JavaScriptCoreOrNull: WasmVM? get() = if (System.getProperty(propertyWithPathToJavaScriptCore) != null) JavaScriptCore else null
     }
