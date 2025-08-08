@@ -11,6 +11,9 @@ pluginManagement {
 }
 
 buildscript {
+    repositories {
+        maven(url = "file:///dump")
+    }
     val buildGradlePluginVersion = extra.get("kotlin.build.gradlePlugin.version")
     dependencies {
         classpath("org.jetbrains.kotlin:kotlin-build-gradle-plugin:$buildGradlePluginVersion")
