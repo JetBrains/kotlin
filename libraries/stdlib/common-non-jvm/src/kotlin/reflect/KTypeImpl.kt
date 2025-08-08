@@ -22,7 +22,7 @@ internal class KTypeImpl(
             is KClass<*> -> classifier.qualifiedName ?: classifier.simpleName
             is KTypeParameter -> classifier.name
             else -> null
-        } ?: return "(non-denotable type)"
+        } ?: return "???"
 
         return buildString {
             append(classifierString)
