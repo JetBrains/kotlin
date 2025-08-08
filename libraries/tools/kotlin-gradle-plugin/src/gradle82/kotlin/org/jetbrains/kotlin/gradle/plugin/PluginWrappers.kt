@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.gradle.plugin
 
 import org.gradle.api.Project
-import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.ProblemsReporter
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.ProblemsReporterG82
@@ -17,13 +16,10 @@ import org.jetbrains.kotlin.gradle.plugin.internal.MavenPublicationComponentAcce
 import org.jetbrains.kotlin.gradle.plugin.internal.ProjectIsolationStartParameterAccessor
 import org.jetbrains.kotlin.gradle.plugin.internal.ProjectIsolationStartParameterAccessorG82
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.gradleVersion
-import javax.inject.Inject
 
 private const val PLUGIN_VARIANT_NAME = "gradle82"
 
-open class KotlinPluginWrapper @Inject constructor(
-    registry: ToolingModelBuilderRegistry
-) : AbstractKotlinPluginWrapper(registry) {
+open class KotlinPluginWrapper : AbstractKotlinPluginWrapper() {
 
     override val pluginVariant: String = PLUGIN_VARIANT_NAME
 
@@ -33,9 +29,7 @@ open class KotlinPluginWrapper @Inject constructor(
     }
 }
 
-open class KotlinAndroidPluginWrapper @Inject constructor(
-    registry: ToolingModelBuilderRegistry
-) : AbstractKotlinAndroidPluginWrapper(registry) {
+open class KotlinAndroidPluginWrapper : AbstractKotlinAndroidPluginWrapper() {
 
     override val pluginVariant: String = PLUGIN_VARIANT_NAME
 

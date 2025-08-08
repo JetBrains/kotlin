@@ -59,7 +59,6 @@ val kotlinGradlePluginAndItsRequired = arrayOf(
     ":kotlin-gradle-plugin-idea",
     ":kotlin-gradle-plugin-idea-proto",
     ":kotlin-gradle-plugin",
-    ":kotlin-gradle-plugin-model",
     ":kotlin-tooling-metadata",
     ":kotlin-tooling-core",
     ":kotlin-reflect",

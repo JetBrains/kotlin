@@ -93,13 +93,6 @@
                 },
                 {
                     "group": "org.jetbrains.kotlin",
-                    "module": "kotlin-gradle-plugin-model",
-                    "version": {
-                        "requires": "ArtifactsTest.version"
-                    }
-                },
-                {
-                    "group": "org.jetbrains.kotlin",
                     "module": "kotlin-lombok",
                     "version": {
                         "requires": "ArtifactsTest.version"
@@ -222,13 +215,6 @@
                 {
                     "group": "org.jetbrains.kotlin",
                     "module": "kotlin-gradle-plugin-api",
-                    "version": {
-                        "requires": "ArtifactsTest.version"
-                    }
-                },
-                {
-                    "group": "org.jetbrains.kotlin",
-                    "module": "kotlin-gradle-plugin-model",
                     "version": {
                         "requires": "ArtifactsTest.version"
                     }

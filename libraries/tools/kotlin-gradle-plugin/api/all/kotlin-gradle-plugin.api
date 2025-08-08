@@ -386,143 +386,9 @@ public final class org/jetbrains/kotlin/gradle/logging/GradleErrorMessageCollect
 	public fun report (Lorg/jetbrains/kotlin/cli/common/messages/CompilerMessageSeverity;Ljava/lang/String;Lorg/jetbrains/kotlin/cli/common/messages/CompilerMessageSourceLocation;)V
 }
 
-public final class org/jetbrains/kotlin/gradle/model/builder/KaptModelBuilder : org/gradle/tooling/provider/model/ToolingModelBuilder {
-	public static final field Companion Lorg/jetbrains/kotlin/gradle/model/builder/KaptModelBuilder$Companion;
-	public fun <init> ()V
-	public fun buildAll (Ljava/lang/String;Lorg/gradle/api/Project;)Ljava/lang/Object;
-	public fun canBuild (Ljava/lang/String;)Z
-}
-
-public final class org/jetbrains/kotlin/gradle/model/builder/KaptModelBuilder$Companion {
-}
-
-public final class org/jetbrains/kotlin/gradle/model/builder/KotlinModelBuilder : org/gradle/tooling/provider/model/ToolingModelBuilder {
-	public static final field Companion Lorg/jetbrains/kotlin/gradle/model/builder/KotlinModelBuilder$Companion;
-	public fun <init> (Ljava/lang/String;Lorg/jetbrains/kotlin/gradle/plugin/mpp/KotlinAndroidTarget;)V
-	public fun buildAll (Ljava/lang/String;Lorg/gradle/api/Project;)Ljava/lang/Object;
-	public fun canBuild (Ljava/lang/String;)Z
-}
-
-public final class org/jetbrains/kotlin/gradle/model/builder/KotlinModelBuilder$Companion {
-}
-
-public final class org/jetbrains/kotlin/gradle/model/impl/CompilerArgumentsImpl : java/io/Serializable, org/jetbrains/kotlin/gradle/model/CompilerArguments {
-	public static final field Companion Lorg/jetbrains/kotlin/gradle/model/impl/CompilerArgumentsImpl$Companion;
-	public fun <init> (Ljava/util/List;Ljava/util/List;Ljava/util/List;)V
-	public final fun component1 ()Ljava/util/List;
-	public final fun component2 ()Ljava/util/List;
-	public final fun component3 ()Ljava/util/List;
-	public final fun copy (Ljava/util/List;Ljava/util/List;Ljava/util/List;)Lorg/jetbrains/kotlin/gradle/model/impl/CompilerArgumentsImpl;
-	public static synthetic fun copy$default (Lorg/jetbrains/kotlin/gradle/model/impl/CompilerArgumentsImpl;Ljava/util/List;Ljava/util/List;Ljava/util/List;ILjava/lang/Object;)Lorg/jetbrains/kotlin/gradle/model/impl/CompilerArgumentsImpl;
-	public fun equals (Ljava/lang/Object;)Z
-	public fun getCompileClasspath ()Ljava/util/List;
-	public fun getCurrentArguments ()Ljava/util/List;
-	public fun getDefaultArguments ()Ljava/util/List;
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
-}
-
-public final class org/jetbrains/kotlin/gradle/model/impl/CompilerArgumentsImpl$Companion {
-}
-
-public final class org/jetbrains/kotlin/gradle/model/impl/KaptImpl : java/io/Serializable, org/jetbrains/kotlin/gradle/model/Kapt {
-	public static final field Companion Lorg/jetbrains/kotlin/gradle/model/impl/KaptImpl$Companion;
-	public fun <init> (Ljava/lang/String;Ljava/util/Collection;)V
-	public final fun component1 ()Ljava/lang/String;
-	public final fun component2 ()Ljava/util/Collection;
-	public final fun copy (Ljava/lang/String;Ljava/util/Collection;)Lorg/jetbrains/kotlin/gradle/model/impl/KaptImpl;
-	public static synthetic fun copy$default (Lorg/jetbrains/kotlin/gradle/model/impl/KaptImpl;Ljava/lang/String;Ljava/util/Collection;ILjava/lang/Object;)Lorg/jetbrains/kotlin/gradle/model/impl/KaptImpl;
-	public fun equals (Ljava/lang/Object;)Z
-	public fun getKaptSourceSets ()Ljava/util/Collection;
-	public fun getModelVersion ()J
-	public fun getName ()Ljava/lang/String;
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
-}
-
-public final class org/jetbrains/kotlin/gradle/model/impl/KaptImpl$Companion {
-}
-
-public final class org/jetbrains/kotlin/gradle/model/impl/KaptSourceSetImpl : java/io/Serializable, org/jetbrains/kotlin/gradle/model/KaptSourceSet {
-	public static final field Companion Lorg/jetbrains/kotlin/gradle/model/impl/KaptSourceSetImpl$Companion;
-	public fun <init> (Ljava/lang/String;Lorg/jetbrains/kotlin/gradle/model/KaptSourceSet$KaptSourceSetType;Ljava/io/File;Ljava/io/File;Ljava/io/File;)V
-	public final fun component1 ()Ljava/lang/String;
-	public final fun component2 ()Lorg/jetbrains/kotlin/gradle/model/KaptSourceSet$KaptSourceSetType;
-	public final fun component3 ()Ljava/io/File;
-	public final fun component4 ()Ljava/io/File;
-	public final fun component5 ()Ljava/io/File;
-	public final fun copy (Ljava/lang/String;Lorg/jetbrains/kotlin/gradle/model/KaptSourceSet$KaptSourceSetType;Ljava/io/File;Ljava/io/File;Ljava/io/File;)Lorg/jetbrains/kotlin/gradle/model/impl/KaptSourceSetImpl;
-	public static synthetic fun copy$default (Lorg/jetbrains/kotlin/gradle/model/impl/KaptSourceSetImpl;Ljava/lang/String;Lorg/jetbrains/kotlin/gradle/model/KaptSourceSet$KaptSourceSetType;Ljava/io/File;Ljava/io/File;Ljava/io/File;ILjava/lang/Object;)Lorg/jetbrains/kotlin/gradle/model/impl/KaptSourceSetImpl;
-	public fun equals (Ljava/lang/Object;)Z
-	public fun getGeneratedClassesDirectory ()Ljava/io/File;
-	public fun getGeneratedKotlinSourcesDirectory ()Ljava/io/File;
-	public fun getGeneratedSourcesDirectory ()Ljava/io/File;
-	public fun getName ()Ljava/lang/String;
-	public fun getType ()Lorg/jetbrains/kotlin/gradle/model/KaptSourceSet$KaptSourceSetType;
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
-}
-
-public final class org/jetbrains/kotlin/gradle/model/impl/KaptSourceSetImpl$Companion {
-}
-
-public final class org/jetbrains/kotlin/gradle/model/impl/KotlinProjectImpl : java/io/Serializable, org/jetbrains/kotlin/gradle/model/KotlinProject {
-	public static final field Companion Lorg/jetbrains/kotlin/gradle/model/impl/KotlinProjectImpl$Companion;
-	public fun <init> (Ljava/lang/String;Ljava/lang/String;Lorg/jetbrains/kotlin/gradle/model/KotlinProject$ProjectType;Ljava/util/Collection;Ljava/util/Collection;)V
-	public final fun component1 ()Ljava/lang/String;
-	public final fun component2 ()Ljava/lang/String;
-	public final fun component3 ()Lorg/jetbrains/kotlin/gradle/model/KotlinProject$ProjectType;
-	public final fun component4 ()Ljava/util/Collection;
-	public final fun component5 ()Ljava/util/Collection;
-	public final fun copy (Ljava/lang/String;Ljava/lang/String;Lorg/jetbrains/kotlin/gradle/model/KotlinProject$ProjectType;Ljava/util/Collection;Ljava/util/Collection;)Lorg/jetbrains/kotlin/gradle/model/impl/KotlinProjectImpl;
-	public static synthetic fun copy$default (Lorg/jetbrains/kotlin/gradle/model/impl/KotlinProjectImpl;Ljava/lang/String;Ljava/lang/String;Lorg/jetbrains/kotlin/gradle/model/KotlinProject$ProjectType;Ljava/util/Collection;Ljava/util/Collection;ILjava/lang/Object;)Lorg/jetbrains/kotlin/gradle/model/impl/KotlinProjectImpl;
-	public fun equals (Ljava/lang/Object;)Z
-	public fun getExpectedByDependencies ()Ljava/util/Collection;
-	public fun getKotlinVersion ()Ljava/lang/String;
-	public fun getModelVersion ()J
-	public fun getName ()Ljava/lang/String;
-	public fun getProjectType ()Lorg/jetbrains/kotlin/gradle/model/KotlinProject$ProjectType;
-	public fun getSourceSets ()Ljava/util/Collection;
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
-}
-
-public final class org/jetbrains/kotlin/gradle/model/impl/KotlinProjectImpl$Companion {
-}
-
-public final class org/jetbrains/kotlin/gradle/model/impl/SourceSetImpl : java/io/Serializable, org/jetbrains/kotlin/gradle/model/SourceSet {
-	public static final field Companion Lorg/jetbrains/kotlin/gradle/model/impl/SourceSetImpl$Companion;
-	public fun <init> (Ljava/lang/String;Lorg/jetbrains/kotlin/gradle/model/SourceSet$SourceSetType;Ljava/util/Collection;Ljava/util/Collection;Ljava/util/Collection;Ljava/io/File;Ljava/io/File;Lorg/jetbrains/kotlin/gradle/model/CompilerArguments;)V
-	public final fun component1 ()Ljava/lang/String;
-	public final fun component2 ()Lorg/jetbrains/kotlin/gradle/model/SourceSet$SourceSetType;
-	public final fun component3 ()Ljava/util/Collection;
-	public final fun component4 ()Ljava/util/Collection;
-	public final fun component5 ()Ljava/util/Collection;
-	public final fun component6 ()Ljava/io/File;
-	public final fun component7 ()Ljava/io/File;
-	public final fun component8 ()Lorg/jetbrains/kotlin/gradle/model/CompilerArguments;
-	public final fun copy (Ljava/lang/String;Lorg/jetbrains/kotlin/gradle/model/SourceSet$SourceSetType;Ljava/util/Collection;Ljava/util/Collection;Ljava/util/Collection;Ljava/io/File;Ljava/io/File;Lorg/jetbrains/kotlin/gradle/model/CompilerArguments;)Lorg/jetbrains/kotlin/gradle/model/impl/SourceSetImpl;
-	public static synthetic fun copy$default (Lorg/jetbrains/kotlin/gradle/model/impl/SourceSetImpl;Ljava/lang/String;Lorg/jetbrains/kotlin/gradle/model/SourceSet$SourceSetType;Ljava/util/Collection;Ljava/util/Collection;Ljava/util/Collection;Ljava/io/File;Ljava/io/File;Lorg/jetbrains/kotlin/gradle/model/CompilerArguments;ILjava/lang/Object;)Lorg/jetbrains/kotlin/gradle/model/impl/SourceSetImpl;
-	public fun equals (Ljava/lang/Object;)Z
-	public fun getClassesOutputDirectory ()Ljava/io/File;
-	public fun getCompilerArguments ()Lorg/jetbrains/kotlin/gradle/model/CompilerArguments;
-	public fun getFriendSourceSets ()Ljava/util/Collection;
-	public fun getName ()Ljava/lang/String;
-	public fun getResourcesDirectories ()Ljava/util/Collection;
-	public fun getResourcesOutputDirectory ()Ljava/io/File;
-	public fun getSourceDirectories ()Ljava/util/Collection;
-	public fun getType ()Lorg/jetbrains/kotlin/gradle/model/SourceSet$SourceSetType;
-	public fun hashCode ()I
-	public fun toString ()Ljava/lang/String;
-}
-
-public final class org/jetbrains/kotlin/gradle/model/impl/SourceSetImpl$Companion {
-}
-
 public abstract class org/jetbrains/kotlin/gradle/plugin/AbstractKotlinAndroidPluginWrapper : org/jetbrains/kotlin/gradle/plugin/KotlinBasePluginWrapper {
-	public fun <init> (Lorg/gradle/tooling/provider/model/ToolingModelBuilderRegistry;)V
+	public fun <init> ()V
 	public fun getProjectExtensionClass ()Lkotlin/reflect/KClass;
-	protected final fun getRegistry ()Lorg/gradle/tooling/provider/model/ToolingModelBuilderRegistry;
 }
 
 public abstract class org/jetbrains/kotlin/gradle/plugin/AbstractKotlinJsPluginWrapper : org/jetbrains/kotlin/gradle/plugin/KotlinBasePluginWrapper {
@@ -543,9 +409,8 @@ public final class org/jetbrains/kotlin/gradle/plugin/AbstractKotlinPluginKt {
 }
 
 public abstract class org/jetbrains/kotlin/gradle/plugin/AbstractKotlinPluginWrapper : org/jetbrains/kotlin/gradle/plugin/KotlinBasePluginWrapper {
-	public fun <init> (Lorg/gradle/tooling/provider/model/ToolingModelBuilderRegistry;)V
+	public fun <init> ()V
 	public fun getProjectExtensionClass ()Lkotlin/reflect/KClass;
-	protected final fun getRegistry ()Lorg/gradle/tooling/provider/model/ToolingModelBuilderRegistry;
 }
 
 public abstract class org/jetbrains/kotlin/gradle/plugin/AbstractKotlinTargetConfigurator : org/jetbrains/kotlin/gradle/plugin/KotlinTargetConfigurator {
@@ -658,7 +523,7 @@ public class org/jetbrains/kotlin/gradle/plugin/KaptExtension : org/jetbrains/ko
 }
 
 public class org/jetbrains/kotlin/gradle/plugin/KotlinAndroidPluginWrapper : org/jetbrains/kotlin/gradle/plugin/AbstractKotlinAndroidPluginWrapper {
-	public fun <init> (Lorg/gradle/tooling/provider/model/ToolingModelBuilderRegistry;)V
+	public fun <init> ()V
 	public synthetic fun apply (Ljava/lang/Object;)V
 	public fun apply (Lorg/gradle/api/Project;)V
 	public fun getPluginVariant ()Ljava/lang/String;
@@ -788,7 +653,7 @@ public final class org/jetbrains/kotlin/gradle/plugin/KotlinPluginInMultipleProj
 }
 
 public class org/jetbrains/kotlin/gradle/plugin/KotlinPluginWrapper : org/jetbrains/kotlin/gradle/plugin/AbstractKotlinPluginWrapper {
-	public fun <init> (Lorg/gradle/tooling/provider/model/ToolingModelBuilderRegistry;)V
+	public fun <init> ()V
 	public synthetic fun apply (Ljava/lang/Object;)V
 	public fun apply (Lorg/gradle/api/Project;)V
 	public fun getPluginVariant ()Ljava/lang/String;

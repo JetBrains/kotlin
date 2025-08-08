@@ -67,7 +67,6 @@ dependencies {
     testImplementation(project(":gradle:kotlin-gradle-ecosystem-plugin"))
     testImplementation(project(":kotlin-gradle-statistics"))
 
-    testImplementation(project(":kotlin-gradle-plugin-model"))
     testImplementation(project(":kotlin-gradle-build-metrics"))
     testImplementation(project(":kotlin-tooling-metadata"))
     testImplementation(kotlinGradlePluginTest)

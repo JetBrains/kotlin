@@ -13,8 +13,6 @@ import org.gradle.testkit.runner.internal.DefaultGradleRunner
 import org.gradle.tooling.GradleConnector
 import org.gradle.util.GradleVersion
 import org.jetbrains.kotlin.cli.common.CompilerSystemProperties
-import org.jetbrains.kotlin.gradle.model.ModelContainer
-import org.jetbrains.kotlin.gradle.model.ModelFetcherBuildAction
 import org.jetbrains.kotlin.gradle.report.BuildReportType
 import org.jetbrains.kotlin.gradle.util.isTeamCityRun
 import org.jetbrains.kotlin.gradle.util.runProcess
@@ -351,36 +349,6 @@ private fun TestProject.ensureKotlinCompilerArgumentsPluginAppliedCorrectly(buil
     // plugin's not applied
     check(buildOptions.languageVersion == null && buildOptions.languageApiVersion == null) {
         "Kotlin language or API version passed on the build level, but the plugin wasn't applied"
-    }
-}
-
-internal inline fun <reified T> TestProject.getModels(
-    crossinline assertions: ModelContainer<T>.() -> Unit,
-) {
-    val allBuildArguments = commonBuildSetup(
-        buildArguments = emptyList(),
-        buildOptions = buildOptions,
-        enableBuildCacheDebug = false,
-        enableBuildScan = enableBuildScan,
-        enableGradleDaemonMemoryLimitInMb = enableGradleDaemonMemoryLimitInMb,
-        enableKotlinDaemonMemoryLimitInMb = enableKotlinDaemonMemoryLimitInMb,
-        connectSubprocessVMToDebugger = false,
-        gradleVersion = gradleVersion
-    )
-
-    val connector = GradleConnector
-        .newConnector()
-        .useGradleUserHomeDir(getGradleUserHome())
-        .useDistribution(URI("https://cache-redirector.jetbrains.com/services.gradle.org/distributions/gradle-${gradleVersion.version}-bin.zip"))
-        .forProjectDirectory(projectPath.toAbsolutePath().toFile())
-
-    connector.connect().use {
-        assertions(
-            it
-                .action(ModelFetcherBuildAction(T::class.java))
-                .withArguments(allBuildArguments)
-                .run()
-        )
     }
 }
 

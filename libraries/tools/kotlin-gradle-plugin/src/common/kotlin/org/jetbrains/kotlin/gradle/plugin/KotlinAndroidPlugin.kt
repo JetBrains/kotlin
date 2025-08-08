@@ -9,18 +9,14 @@ import com.android.build.gradle.BaseExtension
 import org.gradle.api.GradleException
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
 import org.jetbrains.kotlin.gradle.dsl.*
-import org.jetbrains.kotlin.gradle.model.builder.KotlinModelBuilder
 import org.jetbrains.kotlin.gradle.plugin.KotlinJvmPlugin.Companion.configureCompilerOptionsForTarget
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinAndroidTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinTasksProvider
 import org.jetbrains.kotlin.gradle.utils.androidPluginIds
 import org.jetbrains.kotlin.gradle.utils.whenEvaluated
 
-internal open class KotlinAndroidPlugin(
-    private val registry: ToolingModelBuilderRegistry
-) : Plugin<Project> {
+internal open class KotlinAndroidPlugin() : Plugin<Project> {
 
     override fun apply(project: Project) {
         project.dynamicallyApplyWhenAndroidPluginIsApplied(
@@ -41,7 +37,6 @@ internal open class KotlinAndroidPlugin(
                 target
             }
         ) { androidTarget ->
-            registry.register(KotlinModelBuilder(project.getKotlinPluginVersion(), androidTarget))
             project.whenEvaluated { project.components.addAll(androidTarget.components) }
         }
     }

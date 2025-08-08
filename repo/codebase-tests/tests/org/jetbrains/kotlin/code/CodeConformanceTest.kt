@@ -123,7 +123,6 @@ class CodeConformanceTest : TestCase() {
                 "libraries/tools/kotlin-gradle-plugin-integration-tests/build",
                 "libraries/tools/kotlin-gradle-plugin-integration-tests/.testKitDir",
                 "libraries/tools/kotlin-gradle-plugin-integration-tests/out",
-                "libraries/tools/kotlin-gradle-plugin-model/build",
                 "libraries/tools/kotlin-gradle-statistics/build",
                 "libraries/tools/kotlin-lombok/build",
                 "libraries/tools/kotlin-maven-plugin-test/target",

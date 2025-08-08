@@ -46,11 +46,6 @@
       </dependency>
       <dependency>
         <groupId>org.jetbrains.kotlin</groupId>
-        <artifactId>kotlin-gradle-plugin-model</artifactId>
-        <version>ArtifactsTest.version</version>
-      </dependency>
-      <dependency>
-        <groupId>org.jetbrains.kotlin</groupId>
         <artifactId>kotlin-native-utils</artifactId>
         <version>ArtifactsTest.version</version>
       </dependency>

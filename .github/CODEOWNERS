@@ -321,7 +321,6 @@
 /libraries/tools/kotlin-gradle-plugin-integration-tests/src/test/resources/testProject/js-*/ @JetBrains/kotlin-build-tools @JetBrains/kotlin-js
 /libraries/tools/kotlin-gradle-plugin-integration-tests/src/test/resources/testProject/kotlin-js-*/ @JetBrains/kotlin-build-tools @JetBrains/kotlin-js
 /libraries/tools/kotlin-gradle-plugin-integration-tests/src/test/resources/testProject/new-mpp-js-*/ @JetBrains/kotlin-build-tools @JetBrains/kotlin-js
-/libraries/tools/kotlin-gradle-plugin-model/ @JetBrains/kotlin-build-tools
 /libraries/tools/kotlin-gradle-plugin-npm-versions-codegen/ ilya.goncharov@jetbrains.com
 /libraries/tools/kotlin-gradle-plugin-test-utils-embeddable/ @JetBrains/kotlin-build-tools
 /libraries/tools/kotlin-gradle-plugin-tcs-android/ @JetBrains/kotlin-build-tools
