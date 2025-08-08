@@ -12,12 +12,12 @@ val a = @Composable {}
 ComposableSingletons$TestKt$lambda$-486040309$1 {
     file: Test.kt
     invoke(Landroidx/compose/runtime/Composer;I)V
-        Root { key: -486040309, line: 4 }
+        Root { key: <key>, line: 4 }
 }
 
 ========= FunctionMeta: false, OptimizeGroups: true =========
 ComposableSingletons$TestKt$lambda$-486040309$1 {
     file: Test.kt
     invoke(Landroidx/compose/runtime/Composer;I)V
-        Root { key: -486040309, line: 4 }
+        Root { key: <key>, line: 4 }
 }

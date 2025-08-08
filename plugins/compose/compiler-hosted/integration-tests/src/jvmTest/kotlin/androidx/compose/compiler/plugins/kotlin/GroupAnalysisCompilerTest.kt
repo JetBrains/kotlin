@@ -368,7 +368,7 @@ class GroupAnalysisCompilerTest(
                     .forEach { file ->
                         mapping.append(file.asByteArray())
                     }
-                p to mapping.asProguardMapping().trim()
+                p to mapping.asProguardMapping().trim().redactGroupKeys(regex = MAPPING_REGEX)
             }
         } else {
             val lambdaKeyCache = LambdaKeyCache()
@@ -382,7 +382,7 @@ class GroupAnalysisCompilerTest(
                             }?.render()
                         }
                     }.joinToString(separator = "\n")
-                p to info
+                p to info.redactGroupKeys(regex = GROUP_DUMP_REGEX)
             }
         }
 
@@ -435,4 +435,23 @@ class GroupAnalysisCompilerTest(
             )
         }
     }
+
+    private fun String.redactGroupKeys(regex: Regex): String {
+        val previousKeys = mutableSetOf<String>()
+        return regex.replace(this) {
+            val keyMatch = it.groups[1] ?: error("Match without a key: ${it.value}")
+            val keyValue = keyMatch.value
+            val value = if (keyValue == "null") {
+                keyValue
+            } else if (previousKeys.add(keyValue)) {
+                "<key>"
+            } else {
+                "<!DUPLICATED KEY: $keyValue!>"
+            }
+            it.value.replace(keyValue, value)
+        }
+    }
 }
+
+private val GROUP_DUMP_REGEX = Regex("\\{ key: (.*?), line: .*? }")
+private val MAPPING_REGEX = Regex(" -> m\\$(.*?)$", RegexOption.MULTILINE)

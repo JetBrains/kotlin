@@ -13,7 +13,7 @@ fun Test() {}
 TestKt {
     file: Test.kt
     Test(Landroidx/compose/runtime/Composer;I)V
-        RestartGroup { key: -1794342280, line: 5 }
+        RestartGroup { key: <key>, line: 5 }
 }
 
 TestKt$Test$1 {

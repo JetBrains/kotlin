@@ -19,19 +19,19 @@
 TestKt {
     file: Test.kt
     Test(Ljava/lang/String;Ljava/lang/String;Landroidx/compose/runtime/Composer;I)V
-        RestartGroup { key: 1007387836, line: 4 }
+        RestartGroup { key: <key>, line: 4 }
 }
 
 TestKt$Test$1 {
     file: Test.kt
     invoke(Landroidx/compose/runtime/Composer;I)V
-        Root { key: 1007659786, line: 6 }
+        Root { key: <key>, line: 6 }
 }
 
 TestKt$Test$1$1 {
     file: Test.kt
     invoke(Landroidx/compose/runtime/Composer;I)V
-        Root { key: 1464104060, line: 7 }
+        Root { key: <key>, line: 7 }
 }
 
 TestKt$Test$2 {
@@ -44,20 +44,20 @@ TestKt$Test$2 {
 TestKt {
     file: Test.kt
     Test(Ljava/lang/String;Ljava/lang/String;Landroidx/compose/runtime/Composer;I)V
-        RestartGroup { key: 1007387836, line: 4 }
+        RestartGroup { key: <key>, line: 4 }
         Root { key: null, line: 4 }
 }
 
 TestKt$Test$1 {
     file: Test.kt
     invoke(Landroidx/compose/runtime/Composer;I)V
-        Root { key: 1007659786, line: 6 }
+        Root { key: <key>, line: 6 }
 }
 
 TestKt$Test$1$1 {
     file: Test.kt
     invoke(Landroidx/compose/runtime/Composer;I)V
-        Root { key: 1464104060, line: 7 }
+        Root { key: <key>, line: 7 }
 }
 
 TestKt$Test$2 {

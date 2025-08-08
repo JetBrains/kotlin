@@ -18,4 +18,4 @@ class TestImpl : Test {
 
 ========= FunctionMeta: true, OptimizeGroups: true =========
 ComposeStackTrace -> $$compose:
-  1:1:void TestImpl.Test(androidx.compose.runtime.Composer,int):11:11 -> m$-1049054300
+  1:1:void TestImpl.Test(androidx.compose.runtime.Composer,int):11:11 -> m$<key>

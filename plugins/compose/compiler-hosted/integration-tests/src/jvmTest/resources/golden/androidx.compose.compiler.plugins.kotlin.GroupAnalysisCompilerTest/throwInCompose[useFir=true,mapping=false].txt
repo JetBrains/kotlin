@@ -29,26 +29,26 @@ private fun throwError(): Nothing = TODO()
 TestKt {
     file: Test.kt
     Test(Ljava/lang/String;Landroidx/compose/runtime/Composer;I)Ljava/lang/String;
-        Root { key: 942225780, line: 6 }
+        Root { key: <key>, line: 6 }
     TestConditional(Ljava/lang/String;Landroidx/compose/runtime/Composer;I)Ljava/lang/String;
-        ReplaceGroup { key: -1751647333, line: 10 }
-        ReplaceGroup { key: -1751597299, line: 13 }
-        Root { key: -1274088742, line: 10 }
+        ReplaceGroup { key: <key>, line: 10 }
+        ReplaceGroup { key: <key>, line: 13 }
+        Root { key: <key>, line: 10 }
     TestFunctionThrow(Ljava/lang/String;Landroidx/compose/runtime/Composer;I)Ljava/lang/String;
-        Root { key: 901646402, line: 19 }
+        Root { key: <key>, line: 19 }
 }
 
 ========= FunctionMeta: true, OptimizeGroups: false =========
 TestKt {
     file: Test.kt
     Test(Ljava/lang/String;Landroidx/compose/runtime/Composer;I)Ljava/lang/String;
-        ReplaceGroup { key: 942225780, line: 6 }
-        Root { key: 942225780, line: 5 }
+        ReplaceGroup { key: <key>, line: 6 }
+        Root { key: <!DUPLICATED KEY: 942225780!>, line: 5 }
     TestConditional(Ljava/lang/String;Landroidx/compose/runtime/Composer;I)Ljava/lang/String;
-        ReplaceGroup { key: -1751647333, line: 10 }
-        ReplaceGroup { key: -1751597299, line: 13 }
-        ReplaceGroup { key: -1274088742, line: 10 }
+        ReplaceGroup { key: <key>, line: 10 }
+        ReplaceGroup { key: <key>, line: 13 }
+        ReplaceGroup { key: <key>, line: 10 }
     TestFunctionThrow(Ljava/lang/String;Landroidx/compose/runtime/Composer;I)Ljava/lang/String;
-        ReplaceGroup { key: 901646402, line: 19 }
-        Root { key: 901646402, line: 18 }
+        ReplaceGroup { key: <key>, line: 19 }
+        Root { key: <!DUPLICATED KEY: 901646402!>, line: 18 }
 }

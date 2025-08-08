@@ -15,12 +15,12 @@
 TestKt {
     file: Test.kt
     Test(Ljava/lang/Object;Landroidx/compose/runtime/Composer;I)Ljava/lang/Object;
-        Root { key: 1033748938, line: 5 }
+        Root { key: <key>, line: 5 }
 }
 
 ========= FunctionMeta: true, OptimizeGroups: false =========
 TestKt {
     file: Test.kt
     Test(Ljava/lang/Object;Landroidx/compose/runtime/Composer;I)Ljava/lang/Object;
-        ReplaceGroup { key: 1033748938, line: 5 }
+        ReplaceGroup { key: <key>, line: 5 }
 }

@@ -11,4 +11,4 @@ fun Test() {}
 
 ========= FunctionMeta: true, OptimizeGroups: true =========
 ComposeStackTrace -> $$compose:
-  1:1:void TestKt.Test(androidx.compose.runtime.Composer,int):5:5 -> m$-1794342280
+  1:1:void TestKt.Test(androidx.compose.runtime.Composer,int):5:5 -> m$<key>

@@ -16,14 +16,14 @@ class Delegate(val test: Test) : Test by test
 Delegate {
     file: Test.kt
     Content(Landroidx/compose/runtime/Composer;I)V
-        RestartGroup { key: 920808044, line: -1 }
+        RestartGroup { key: <key>, line: -1 }
 }
 
 ========= FunctionMeta: false, OptimizeGroups: true =========
 Delegate {
     file: Test.kt
     Content(Landroidx/compose/runtime/Composer;I)V
-        RestartGroup { key: 920808044, line: -1 }
+        RestartGroup { key: <key>, line: -1 }
         Root { key: null, line: -1 }
 }
 
@@ -31,13 +31,13 @@ Delegate {
 Delegate {
     file: Test.kt
     Content(Landroidx/compose/runtime/Composer;I)V
-        RestartGroup { key: 920808044, line: -1 }
+        RestartGroup { key: <key>, line: -1 }
 }
 
 ========= FunctionMeta: false, OptimizeGroups: false =========
 Delegate {
     file: Test.kt
     Content(Landroidx/compose/runtime/Composer;I)V
-        RestartGroup { key: 920808044, line: -1 }
+        RestartGroup { key: <key>, line: -1 }
         Root { key: null, line: -1 }
 }

@@ -29,55 +29,55 @@ private fun contentOf(
 
 ========= FunctionMeta: true, OptimizeGroups: true =========
 ComposeStackTrace -> $$compose:
-  1:1:kotlin.Unit ComposableSingletons$TestKt.lambda_412467906$lambda$0(androidx.compose.runtime.Composer,int):21:21 -> m$412467906
-  1:1:kotlin.Unit TestKt.contentOf$lambda$0(kotlin.jvm.functions.Function3,kotlin.jvm.functions.Function3,kotlin.jvm.functions.Function3,androidx.compose.runtime.Composer,int):13:13 -> m$-721096242
-  1:1:kotlin.Unit TestKt.contentOf$lambda$0(kotlin.jvm.functions.Function3,kotlin.jvm.functions.Function3,kotlin.jvm.functions.Function3,androidx.compose.runtime.Composer,int):13:13 -> m$-879126839
-  1:1:kotlin.Unit TestKt.contentOf$lambda$0(kotlin.jvm.functions.Function3,kotlin.jvm.functions.Function3,kotlin.jvm.functions.Function3,androidx.compose.runtime.Composer,int):14:14 -> m$-721093234
-  1:1:kotlin.Unit TestKt.contentOf$lambda$0(kotlin.jvm.functions.Function3,kotlin.jvm.functions.Function3,kotlin.jvm.functions.Function3,androidx.compose.runtime.Composer,int):14:14 -> m$-879033591
-  1:1:kotlin.Unit TestKt.contentOf$lambda$0(kotlin.jvm.functions.Function3,kotlin.jvm.functions.Function3,kotlin.jvm.functions.Function3,androidx.compose.runtime.Composer,int):15:15 -> m$-721090418
-  1:1:kotlin.Unit TestKt.contentOf$lambda$0(kotlin.jvm.functions.Function3,kotlin.jvm.functions.Function3,kotlin.jvm.functions.Function3,androidx.compose.runtime.Composer,int):15:15 -> m$-878946295
-  1:1:kotlin.Unit TestKt.contentOf$lambda$0(kotlin.jvm.functions.Function3,kotlin.jvm.functions.Function3,kotlin.jvm.functions.Function3,androidx.compose.runtime.Composer,int):18:18 -> m$-721085962
-  1:1:kotlin.Unit TestKt.contentOf$lambda$0(kotlin.jvm.functions.Function3,kotlin.jvm.functions.Function3,kotlin.jvm.functions.Function3,androidx.compose.runtime.Composer,int):18:18 -> m$-878800471
-  1:1:kotlin.Unit TestKt.contentOf$lambda$0(kotlin.jvm.functions.Function3,kotlin.jvm.functions.Function3,kotlin.jvm.functions.Function3,androidx.compose.runtime.Composer,int):11:11 -> m$1366845881
-  1:1:void ExtraKt.SubcomposeAsyncImageContent(androidx.compose.runtime.Composer,int):11:11 -> m$738339482
+  1:1:kotlin.Unit ComposableSingletons$TestKt.lambda_412467906$lambda$0(androidx.compose.runtime.Composer,int):21:21 -> m$<key>
+  1:1:kotlin.Unit TestKt.contentOf$lambda$0(kotlin.jvm.functions.Function3,kotlin.jvm.functions.Function3,kotlin.jvm.functions.Function3,androidx.compose.runtime.Composer,int):13:13 -> m$<key>
+  1:1:kotlin.Unit TestKt.contentOf$lambda$0(kotlin.jvm.functions.Function3,kotlin.jvm.functions.Function3,kotlin.jvm.functions.Function3,androidx.compose.runtime.Composer,int):13:13 -> m$<key>
+  1:1:kotlin.Unit TestKt.contentOf$lambda$0(kotlin.jvm.functions.Function3,kotlin.jvm.functions.Function3,kotlin.jvm.functions.Function3,androidx.compose.runtime.Composer,int):14:14 -> m$<key>
+  1:1:kotlin.Unit TestKt.contentOf$lambda$0(kotlin.jvm.functions.Function3,kotlin.jvm.functions.Function3,kotlin.jvm.functions.Function3,androidx.compose.runtime.Composer,int):14:14 -> m$<key>
+  1:1:kotlin.Unit TestKt.contentOf$lambda$0(kotlin.jvm.functions.Function3,kotlin.jvm.functions.Function3,kotlin.jvm.functions.Function3,androidx.compose.runtime.Composer,int):15:15 -> m$<key>
+  1:1:kotlin.Unit TestKt.contentOf$lambda$0(kotlin.jvm.functions.Function3,kotlin.jvm.functions.Function3,kotlin.jvm.functions.Function3,androidx.compose.runtime.Composer,int):15:15 -> m$<key>
+  1:1:kotlin.Unit TestKt.contentOf$lambda$0(kotlin.jvm.functions.Function3,kotlin.jvm.functions.Function3,kotlin.jvm.functions.Function3,androidx.compose.runtime.Composer,int):18:18 -> m$<key>
+  1:1:kotlin.Unit TestKt.contentOf$lambda$0(kotlin.jvm.functions.Function3,kotlin.jvm.functions.Function3,kotlin.jvm.functions.Function3,androidx.compose.runtime.Composer,int):18:18 -> m$<key>
+  1:1:kotlin.Unit TestKt.contentOf$lambda$0(kotlin.jvm.functions.Function3,kotlin.jvm.functions.Function3,kotlin.jvm.functions.Function3,androidx.compose.runtime.Composer,int):11:11 -> m$<key>
+  1:1:void ExtraKt.SubcomposeAsyncImageContent(androidx.compose.runtime.Composer,int):11:11 -> m$<key>
 ComposableSingletons$TestKt -> ComposableSingletons$TestKt:
 # {"id":"sourceFile","fileName":"Test.kt"}
 ========= FunctionMeta: false, OptimizeGroups: true =========
 ComposeStackTrace -> $$compose:
-  1:1:kotlin.Unit ComposableSingletons$TestKt.lambda_412467906$lambda$0(androidx.compose.runtime.Composer,int):21:21 -> m$412467906
-  1:1:kotlin.Unit TestKt.contentOf$lambda$0(kotlin.jvm.functions.Function3,kotlin.jvm.functions.Function3,kotlin.jvm.functions.Function3,androidx.compose.runtime.Composer,int):13:13 -> m$-721096242
-  1:1:kotlin.Unit TestKt.contentOf$lambda$0(kotlin.jvm.functions.Function3,kotlin.jvm.functions.Function3,kotlin.jvm.functions.Function3,androidx.compose.runtime.Composer,int):13:13 -> m$-879126839
-  1:1:kotlin.Unit TestKt.contentOf$lambda$0(kotlin.jvm.functions.Function3,kotlin.jvm.functions.Function3,kotlin.jvm.functions.Function3,androidx.compose.runtime.Composer,int):14:14 -> m$-721093234
-  1:1:kotlin.Unit TestKt.contentOf$lambda$0(kotlin.jvm.functions.Function3,kotlin.jvm.functions.Function3,kotlin.jvm.functions.Function3,androidx.compose.runtime.Composer,int):14:14 -> m$-879033591
-  1:1:kotlin.Unit TestKt.contentOf$lambda$0(kotlin.jvm.functions.Function3,kotlin.jvm.functions.Function3,kotlin.jvm.functions.Function3,androidx.compose.runtime.Composer,int):15:15 -> m$-721090418
-  1:1:kotlin.Unit TestKt.contentOf$lambda$0(kotlin.jvm.functions.Function3,kotlin.jvm.functions.Function3,kotlin.jvm.functions.Function3,androidx.compose.runtime.Composer,int):15:15 -> m$-878946295
-  1:1:kotlin.Unit TestKt.contentOf$lambda$0(kotlin.jvm.functions.Function3,kotlin.jvm.functions.Function3,kotlin.jvm.functions.Function3,androidx.compose.runtime.Composer,int):18:18 -> m$-721085962
-  1:1:kotlin.Unit TestKt.contentOf$lambda$0(kotlin.jvm.functions.Function3,kotlin.jvm.functions.Function3,kotlin.jvm.functions.Function3,androidx.compose.runtime.Composer,int):18:18 -> m$-878800471
-  1:1:kotlin.Unit TestKt.contentOf$lambda$0(kotlin.jvm.functions.Function3,kotlin.jvm.functions.Function3,kotlin.jvm.functions.Function3,androidx.compose.runtime.Composer,int):11:11 -> m$1366845881
-  1:1:void ExtraKt.SubcomposeAsyncImageContent(androidx.compose.runtime.Composer,int):11:11 -> m$738339482
+  1:1:kotlin.Unit ComposableSingletons$TestKt.lambda_412467906$lambda$0(androidx.compose.runtime.Composer,int):21:21 -> m$<key>
+  1:1:kotlin.Unit TestKt.contentOf$lambda$0(kotlin.jvm.functions.Function3,kotlin.jvm.functions.Function3,kotlin.jvm.functions.Function3,androidx.compose.runtime.Composer,int):13:13 -> m$<key>
+  1:1:kotlin.Unit TestKt.contentOf$lambda$0(kotlin.jvm.functions.Function3,kotlin.jvm.functions.Function3,kotlin.jvm.functions.Function3,androidx.compose.runtime.Composer,int):13:13 -> m$<key>
+  1:1:kotlin.Unit TestKt.contentOf$lambda$0(kotlin.jvm.functions.Function3,kotlin.jvm.functions.Function3,kotlin.jvm.functions.Function3,androidx.compose.runtime.Composer,int):14:14 -> m$<key>
+  1:1:kotlin.Unit TestKt.contentOf$lambda$0(kotlin.jvm.functions.Function3,kotlin.jvm.functions.Function3,kotlin.jvm.functions.Function3,androidx.compose.runtime.Composer,int):14:14 -> m$<key>
+  1:1:kotlin.Unit TestKt.contentOf$lambda$0(kotlin.jvm.functions.Function3,kotlin.jvm.functions.Function3,kotlin.jvm.functions.Function3,androidx.compose.runtime.Composer,int):15:15 -> m$<key>
+  1:1:kotlin.Unit TestKt.contentOf$lambda$0(kotlin.jvm.functions.Function3,kotlin.jvm.functions.Function3,kotlin.jvm.functions.Function3,androidx.compose.runtime.Composer,int):15:15 -> m$<key>
+  1:1:kotlin.Unit TestKt.contentOf$lambda$0(kotlin.jvm.functions.Function3,kotlin.jvm.functions.Function3,kotlin.jvm.functions.Function3,androidx.compose.runtime.Composer,int):18:18 -> m$<key>
+  1:1:kotlin.Unit TestKt.contentOf$lambda$0(kotlin.jvm.functions.Function3,kotlin.jvm.functions.Function3,kotlin.jvm.functions.Function3,androidx.compose.runtime.Composer,int):18:18 -> m$<key>
+  1:1:kotlin.Unit TestKt.contentOf$lambda$0(kotlin.jvm.functions.Function3,kotlin.jvm.functions.Function3,kotlin.jvm.functions.Function3,androidx.compose.runtime.Composer,int):11:11 -> m$<key>
+  1:1:void ExtraKt.SubcomposeAsyncImageContent(androidx.compose.runtime.Composer,int):11:11 -> m$<key>
 ComposableSingletons$TestKt -> ComposableSingletons$TestKt:
 # {"id":"sourceFile","fileName":"Test.kt"}
 ========= FunctionMeta: true, OptimizeGroups: false =========
 ComposeStackTrace -> $$compose:
-  1:1:kotlin.Unit ComposableSingletons$TestKt.lambda_412467906$lambda$0(androidx.compose.runtime.Composer,int):21:21 -> m$412467906
-  1:1:kotlin.Unit TestKt.contentOf$lambda$0(kotlin.jvm.functions.Function3,kotlin.jvm.functions.Function3,kotlin.jvm.functions.Function3,androidx.compose.runtime.Composer,int):13:13 -> m$-879181616
-  1:1:kotlin.Unit TestKt.contentOf$lambda$0(kotlin.jvm.functions.Function3,kotlin.jvm.functions.Function3,kotlin.jvm.functions.Function3,androidx.compose.runtime.Composer,int):14:14 -> m$-879088368
-  1:1:kotlin.Unit TestKt.contentOf$lambda$0(kotlin.jvm.functions.Function3,kotlin.jvm.functions.Function3,kotlin.jvm.functions.Function3,androidx.compose.runtime.Composer,int):15:15 -> m$-878997228
-  1:1:kotlin.Unit TestKt.contentOf$lambda$0(kotlin.jvm.functions.Function3,kotlin.jvm.functions.Function3,kotlin.jvm.functions.Function3,androidx.compose.runtime.Composer,int):16:16 -> m$-878911513
-  1:1:kotlin.Unit TestKt.contentOf$lambda$0(kotlin.jvm.functions.Function3,kotlin.jvm.functions.Function3,kotlin.jvm.functions.Function3,androidx.compose.runtime.Composer,int):12:12 -> m$-721099189
-  1:1:kotlin.Unit TestKt.contentOf$lambda$0(kotlin.jvm.functions.Function3,kotlin.jvm.functions.Function3,kotlin.jvm.functions.Function3,androidx.compose.runtime.Composer,int):11:11 -> m$1366845881
-  1:1:void ExtraKt.SubcomposeAsyncImageContent(androidx.compose.runtime.Composer,int):11:11 -> m$738339482
+  1:1:kotlin.Unit ComposableSingletons$TestKt.lambda_412467906$lambda$0(androidx.compose.runtime.Composer,int):21:21 -> m$<key>
+  1:1:kotlin.Unit TestKt.contentOf$lambda$0(kotlin.jvm.functions.Function3,kotlin.jvm.functions.Function3,kotlin.jvm.functions.Function3,androidx.compose.runtime.Composer,int):13:13 -> m$<key>
+  1:1:kotlin.Unit TestKt.contentOf$lambda$0(kotlin.jvm.functions.Function3,kotlin.jvm.functions.Function3,kotlin.jvm.functions.Function3,androidx.compose.runtime.Composer,int):14:14 -> m$<key>
+  1:1:kotlin.Unit TestKt.contentOf$lambda$0(kotlin.jvm.functions.Function3,kotlin.jvm.functions.Function3,kotlin.jvm.functions.Function3,androidx.compose.runtime.Composer,int):15:15 -> m$<key>
+  1:1:kotlin.Unit TestKt.contentOf$lambda$0(kotlin.jvm.functions.Function3,kotlin.jvm.functions.Function3,kotlin.jvm.functions.Function3,androidx.compose.runtime.Composer,int):16:16 -> m$<key>
+  1:1:kotlin.Unit TestKt.contentOf$lambda$0(kotlin.jvm.functions.Function3,kotlin.jvm.functions.Function3,kotlin.jvm.functions.Function3,androidx.compose.runtime.Composer,int):12:12 -> m$<key>
+  1:1:kotlin.Unit TestKt.contentOf$lambda$0(kotlin.jvm.functions.Function3,kotlin.jvm.functions.Function3,kotlin.jvm.functions.Function3,androidx.compose.runtime.Composer,int):11:11 -> m$<key>
+  1:1:void ExtraKt.SubcomposeAsyncImageContent(androidx.compose.runtime.Composer,int):11:11 -> m$<key>
 ComposableSingletons$TestKt -> ComposableSingletons$TestKt:
 # {"id":"sourceFile","fileName":"Test.kt"}
 ========= FunctionMeta: false, OptimizeGroups: false =========
 ComposeStackTrace -> $$compose:
-  1:1:kotlin.Unit ComposableSingletons$TestKt.lambda_412467906$lambda$0(androidx.compose.runtime.Composer,int):21:21 -> m$412467906
-  1:1:kotlin.Unit TestKt.contentOf$lambda$0(kotlin.jvm.functions.Function3,kotlin.jvm.functions.Function3,kotlin.jvm.functions.Function3,androidx.compose.runtime.Composer,int):13:13 -> m$-879181616
-  1:1:kotlin.Unit TestKt.contentOf$lambda$0(kotlin.jvm.functions.Function3,kotlin.jvm.functions.Function3,kotlin.jvm.functions.Function3,androidx.compose.runtime.Composer,int):14:14 -> m$-879088368
-  1:1:kotlin.Unit TestKt.contentOf$lambda$0(kotlin.jvm.functions.Function3,kotlin.jvm.functions.Function3,kotlin.jvm.functions.Function3,androidx.compose.runtime.Composer,int):15:15 -> m$-878997228
-  1:1:kotlin.Unit TestKt.contentOf$lambda$0(kotlin.jvm.functions.Function3,kotlin.jvm.functions.Function3,kotlin.jvm.functions.Function3,androidx.compose.runtime.Composer,int):16:16 -> m$-878911513
-  1:1:kotlin.Unit TestKt.contentOf$lambda$0(kotlin.jvm.functions.Function3,kotlin.jvm.functions.Function3,kotlin.jvm.functions.Function3,androidx.compose.runtime.Composer,int):12:12 -> m$-721099189
-  1:1:kotlin.Unit TestKt.contentOf$lambda$0(kotlin.jvm.functions.Function3,kotlin.jvm.functions.Function3,kotlin.jvm.functions.Function3,androidx.compose.runtime.Composer,int):11:11 -> m$1366845881
-  1:1:void ExtraKt.SubcomposeAsyncImageContent(androidx.compose.runtime.Composer,int):11:11 -> m$738339482
+  1:1:kotlin.Unit ComposableSingletons$TestKt.lambda_412467906$lambda$0(androidx.compose.runtime.Composer,int):21:21 -> m$<key>
+  1:1:kotlin.Unit TestKt.contentOf$lambda$0(kotlin.jvm.functions.Function3,kotlin.jvm.functions.Function3,kotlin.jvm.functions.Function3,androidx.compose.runtime.Composer,int):13:13 -> m$<key>
+  1:1:kotlin.Unit TestKt.contentOf$lambda$0(kotlin.jvm.functions.Function3,kotlin.jvm.functions.Function3,kotlin.jvm.functions.Function3,androidx.compose.runtime.Composer,int):14:14 -> m$<key>
+  1:1:kotlin.Unit TestKt.contentOf$lambda$0(kotlin.jvm.functions.Function3,kotlin.jvm.functions.Function3,kotlin.jvm.functions.Function3,androidx.compose.runtime.Composer,int):15:15 -> m$<key>
+  1:1:kotlin.Unit TestKt.contentOf$lambda$0(kotlin.jvm.functions.Function3,kotlin.jvm.functions.Function3,kotlin.jvm.functions.Function3,androidx.compose.runtime.Composer,int):16:16 -> m$<key>
+  1:1:kotlin.Unit TestKt.contentOf$lambda$0(kotlin.jvm.functions.Function3,kotlin.jvm.functions.Function3,kotlin.jvm.functions.Function3,androidx.compose.runtime.Composer,int):12:12 -> m$<key>
+  1:1:kotlin.Unit TestKt.contentOf$lambda$0(kotlin.jvm.functions.Function3,kotlin.jvm.functions.Function3,kotlin.jvm.functions.Function3,androidx.compose.runtime.Composer,int):11:11 -> m$<key>
+  1:1:void ExtraKt.SubcomposeAsyncImageContent(androidx.compose.runtime.Composer,int):11:11 -> m$<key>
 ComposableSingletons$TestKt -> ComposableSingletons$TestKt:
 # {"id":"sourceFile","fileName":"Test.kt"}

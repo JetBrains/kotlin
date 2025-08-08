@@ -31,76 +31,76 @@ private fun contentOf(
 ComposableSingletons$TestKt {
     file: Test.kt
     lambda_412467906$lambda$0(Landroidx/compose/runtime/Composer;I)Lkotlin/Unit;
-        Root { key: 412467906, line: 21 }
+        Root { key: <key>, line: 21 }
 }
 
 TestKt {
     file: Test.kt
     contentOf$lambda$0(Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;I)Lkotlin/Unit;
-        ReplaceGroup { key: -721096242, line: 13 }
-        ReplaceGroup { key: -879126839, line: 13 }
-        ReplaceGroup { key: -721093234, line: 14 }
-        ReplaceGroup { key: -879033591, line: 14 }
-        ReplaceGroup { key: -721090418, line: 15 }
-        ReplaceGroup { key: -878946295, line: 15 }
-        ReplaceGroup { key: -721085962, line: 18 }
-        ReplaceGroup { key: -878800471, line: 18 }
-        Root { key: 1366845881, line: 11 }
+        ReplaceGroup { key: <key>, line: 13 }
+        ReplaceGroup { key: <key>, line: 13 }
+        ReplaceGroup { key: <key>, line: 14 }
+        ReplaceGroup { key: <key>, line: 14 }
+        ReplaceGroup { key: <key>, line: 15 }
+        ReplaceGroup { key: <key>, line: 15 }
+        ReplaceGroup { key: <key>, line: 18 }
+        ReplaceGroup { key: <key>, line: 18 }
+        Root { key: <key>, line: 11 }
 }
 
 ========= FunctionMeta: false, OptimizeGroups: true =========
 ComposableSingletons$TestKt {
     file: Test.kt
     lambda_412467906$lambda$0(Landroidx/compose/runtime/Composer;I)Lkotlin/Unit;
-        Root { key: 412467906, line: 21 }
+        Root { key: <key>, line: 21 }
 }
 
 TestKt {
     file: Test.kt
     contentOf$lambda$0(Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;I)Lkotlin/Unit;
-        ReplaceGroup { key: -721096242, line: 13 }
-        ReplaceGroup { key: -879126839, line: 13 }
-        ReplaceGroup { key: -721093234, line: 14 }
-        ReplaceGroup { key: -879033591, line: 14 }
-        ReplaceGroup { key: -721090418, line: 15 }
-        ReplaceGroup { key: -878946295, line: 15 }
-        ReplaceGroup { key: -721085962, line: 18 }
-        ReplaceGroup { key: -878800471, line: 18 }
-        Root { key: 1366845881, line: 11 }
+        ReplaceGroup { key: <key>, line: 13 }
+        ReplaceGroup { key: <key>, line: 13 }
+        ReplaceGroup { key: <key>, line: 14 }
+        ReplaceGroup { key: <key>, line: 14 }
+        ReplaceGroup { key: <key>, line: 15 }
+        ReplaceGroup { key: <key>, line: 15 }
+        ReplaceGroup { key: <key>, line: 18 }
+        ReplaceGroup { key: <key>, line: 18 }
+        Root { key: <key>, line: 11 }
 }
 
 ========= FunctionMeta: true, OptimizeGroups: false =========
 ComposableSingletons$TestKt {
     file: Test.kt
     lambda_412467906$lambda$0(Landroidx/compose/runtime/Composer;I)Lkotlin/Unit;
-        Root { key: 412467906, line: 21 }
+        Root { key: <key>, line: 21 }
 }
 
 TestKt {
     file: Test.kt
     contentOf$lambda$0(Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;I)Lkotlin/Unit;
-        ReplaceGroup { key: -879181616, line: 13 }
-        ReplaceGroup { key: -879088368, line: 14 }
-        ReplaceGroup { key: -878997228, line: 15 }
-        ReplaceGroup { key: -878911513, line: 16 }
-        ReplaceGroup { key: -721099189, line: 12 }
-        Root { key: 1366845881, line: 11 }
+        ReplaceGroup { key: <key>, line: 13 }
+        ReplaceGroup { key: <key>, line: 14 }
+        ReplaceGroup { key: <key>, line: 15 }
+        ReplaceGroup { key: <key>, line: 16 }
+        ReplaceGroup { key: <key>, line: 12 }
+        Root { key: <key>, line: 11 }
 }
 
 ========= FunctionMeta: false, OptimizeGroups: false =========
 ComposableSingletons$TestKt {
     file: Test.kt
     lambda_412467906$lambda$0(Landroidx/compose/runtime/Composer;I)Lkotlin/Unit;
-        Root { key: 412467906, line: 21 }
+        Root { key: <key>, line: 21 }
 }
 
 TestKt {
     file: Test.kt
     contentOf$lambda$0(Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Lkotlin/jvm/functions/Function3;Landroidx/compose/runtime/Composer;I)Lkotlin/Unit;
-        ReplaceGroup { key: -879181616, line: 13 }
-        ReplaceGroup { key: -879088368, line: 14 }
-        ReplaceGroup { key: -878997228, line: 15 }
-        ReplaceGroup { key: -878911513, line: 16 }
-        ReplaceGroup { key: -721099189, line: 12 }
-        Root { key: 1366845881, line: 11 }
+        ReplaceGroup { key: <key>, line: 13 }
+        ReplaceGroup { key: <key>, line: 14 }
+        ReplaceGroup { key: <key>, line: 15 }
+        ReplaceGroup { key: <key>, line: 16 }
+        ReplaceGroup { key: <key>, line: 12 }
+        Root { key: <key>, line: 11 }
 }
