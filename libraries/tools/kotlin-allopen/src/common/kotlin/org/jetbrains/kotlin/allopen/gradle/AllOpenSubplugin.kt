@@ -18,14 +18,11 @@ package org.jetbrains.kotlin.allopen.gradle
 
 import org.gradle.api.Project
 import org.gradle.api.provider.Provider
-import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
-import org.jetbrains.kotlin.allopen.gradle.model.builder.AllOpenModelBuilder
 import org.jetbrains.kotlin.gradle.plugin.*
 import javax.inject.Inject
 
 class AllOpenGradleSubplugin
 @Inject internal constructor(
-    private val registry: ToolingModelBuilderRegistry
 ) : KotlinCompilerPluginSupportPlugin {
 
     companion object {
@@ -41,7 +38,6 @@ class AllOpenGradleSubplugin
 
     override fun apply(target: Project) {
         target.extensions.create("allOpen", AllOpenExtension::class.java)
-        registry.register(AllOpenModelBuilder())
     }
 
     override fun isApplicable(kotlinCompilation: KotlinCompilation<*>): Boolean = true

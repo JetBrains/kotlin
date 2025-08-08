@@ -8,21 +8,15 @@ package org.jetbrains.kotlin.compose.compiler.gradle
 import org.gradle.api.Project
 import org.gradle.api.logging.LogLevel
 import org.gradle.api.provider.Provider
-import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
 import org.jetbrains.kotlin.compose.compiler.gradle.internal.ComposeWithAgpConfig
-import org.jetbrains.kotlin.compose.compiler.gradle.model.builder.ComposeCompilerModelBuilder
 import org.jetbrains.kotlin.gradle.plugin.*
-import javax.inject.Inject
 
 // Internal visibility could not be set until will properly support custom friendPaths:
 // https://youtrack.jetbrains.com/issue/KT-65266/friendPathsSet-input-property-breaks-build-cache-reuse
 /**
  * @suppress
  */
-class ComposeCompilerGradleSubplugin
-@Inject internal constructor(
-    private val registry: ToolingModelBuilderRegistry,
-) : KotlinCompilerPluginSupportPlugin {
+class ComposeCompilerGradleSubplugin : KotlinCompilerPluginSupportPlugin {
 
     /**
      * @suppress
@@ -37,7 +31,6 @@ class ComposeCompilerGradleSubplugin
 
     override fun apply(target: Project) {
         composeExtension = target.extensions.create("composeCompiler", ComposeCompilerGradlePluginExtension::class.java)
-        registry.register(ComposeCompilerModelBuilder())
     }
 
     override fun isApplicable(kotlinCompilation: KotlinCompilation<*>): Boolean {

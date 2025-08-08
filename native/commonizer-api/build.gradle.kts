@@ -19,7 +19,6 @@ dependencies {
     testRuntimeOnly(project(":native:kotlin-klib-commonizer"))
     testImplementation(project(":kotlin-gradle-plugin"))
     testImplementation(project(":kotlin-gradle-statistics"))
-    testImplementation(project(":kotlin-gradle-plugin-model"))
     testImplementation(gradleApi())
     testImplementation(gradleTestKit())
     testImplementation(gradleKotlinDsl())
