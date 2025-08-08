@@ -236,7 +236,7 @@ private fun assertExpectedSizesMatchActual(
 
         val diff = totalSize - expectedSize
 
-        val message = "Total size of $extension files in ${testDir.name} dir is $totalSize," +
+        val message = "Total size of $extension files in ${testDir.name} dir is ${totalSize.toFormattedString()}," +
                 " but expected $expectedSize ∓ $thresholdInBytes [$expectedMinSize .. $expectedMaxSize]." +
                 " Diff: $diff (${diff * 100 / expectedSize}%)"
 
@@ -250,4 +250,8 @@ private fun assertExpectedSizesMatchActual(
     if (errors.isNotEmpty()) return listOf(AssertionError(errors.joinToString("\n")))
 
     return emptyList()
+}
+
+private fun Long.toFormattedString(): String {
+    return this.toString().reversed().chunked(3).joinToString("_").reversed()
 }
