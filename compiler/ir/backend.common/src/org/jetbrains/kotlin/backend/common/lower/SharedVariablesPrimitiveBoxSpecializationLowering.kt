@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.common.lower
 
 import org.jetbrains.kotlin.backend.common.BodyLoweringPass
 import org.jetbrains.kotlin.backend.common.CommonBackendContext
+import org.jetbrains.kotlin.backend.common.ir.FrontendKlibSymbols
 import org.jetbrains.kotlin.backend.common.ir.KlibSymbols
 import org.jetbrains.kotlin.backend.common.runOnFilePostfix
 import org.jetbrains.kotlin.ir.IrStatement
@@ -42,7 +43,7 @@ class SharedVariablesPrimitiveBoxSpecializationLowering(
         runOnFilePostfix(irFile, withLocalDeclarations = true)
     }
 
-    private fun IrType.getPrimitiveBoxClassIfPossible(): KlibSymbols.SharedVariableBoxClassInfo? {
+    private fun IrType.getPrimitiveBoxClassIfPossible(): FrontendKlibSymbols.SharedVariableBoxClassInfo? {
         if (this !is IrSimpleType) return null
         if (classifier != genericSharedVariableBox.klass) return null
         val argument = arguments.getOrNull(0)?.typeOrNull ?: return null

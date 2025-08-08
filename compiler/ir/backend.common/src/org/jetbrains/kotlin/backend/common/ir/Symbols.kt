@@ -302,23 +302,4 @@ abstract class KlibSymbols(irBuiltIns: IrBuiltIns) : FrontendKlibSymbols, Symbol
     final override val getProgressionLastElementByReturnType: Map<IrClassifierSymbol, IrSimpleFunctionSymbol> by CallableId(StandardNames.KOTLIN_INTERNAL_FQ_NAME, Name.identifier("getProgressionLastElement")).functionSymbolAssociatedBy {
         it.returnType.classifierOrFail
     }
-
-    class SharedVariableBoxClassInfo(val klass: IrClassSymbol) {
-        val constructor by lazy { klass.constructors.single() }
-        val load by lazy { klass.getPropertyGetter("element")!! }
-        val store by lazy { klass.getPropertySetter("element")!! }
-    }
-
-    private fun findSharedVariableBoxClass(suffix: String): SharedVariableBoxClassInfo {
-        val classId = ClassId(StandardNames.KOTLIN_INTERNAL_FQ_NAME, Name.identifier("SharedVariableBox$suffix"))
-        val boxClass = symbolFinder.findClass(classId)
-            ?: error("Could not find class $classId")
-        return SharedVariableBoxClassInfo(boxClass)
-    }
-
-    // The SharedVariableBox family of classes exists only in non-JVM stdlib variants, hence the nullability of the properties below.
-    val genericSharedVariableBox: SharedVariableBoxClassInfo = findSharedVariableBoxClass("")
-    val primitiveSharedVariableBoxes: Map<IrType, SharedVariableBoxClassInfo> = PrimitiveType.entries.associate {
-        irBuiltIns.primitiveTypeToIrType[it]!! to findSharedVariableBoxClass(it.typeName.asString())
-    }
 }
