@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.uklibs.PublisherConfiguration
 import org.jetbrains.kotlin.gradle.uklibs.applyMultiplatform
+import org.jetbrains.kotlin.gradle.uklibs.include
 import org.jetbrains.kotlin.gradle.uklibs.setupMavenPublication
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
@@ -113,9 +114,6 @@ class MppCrossCompilationPublicationIT : KGPBaseTest() {
                 setupCInteropForTarget("mylib", KonanTarget.MACOS_ARM64, "mylib_macos.def")
                 setupCInteropForTarget("mylib", KonanTarget.LINUX_X64, "mylib_linux.def")
                 setupCInteropForTarget("mylib", KonanTarget.MINGW_X64, "mylib_windows.def")
-            },
-            builder = { project, taskName, assertions ->
-                project.build(taskName, assertions = assertions)
             },
             assertions = {
                 if (HostManager.hostIsMac) {
@@ -283,6 +281,98 @@ class MppCrossCompilationPublicationIT : KGPBaseTest() {
                 )
             }
         }
+    }
+
+    @DisplayName("Cross compilation enabled, with Linux, Windows and macOS cinterops in nested project, publish library to mavenLocal")
+    @GradleTest
+    fun testCrossCompilationPublicationWithNestedCinterops(
+        gradleVersion: GradleVersion,
+    ) {
+        val multiplatformLibrary = publishMultiplatformLibrary(
+            gradleVersion,
+            test = {
+                val subprojectWithCinterops = project("empty", gradleVersion) {
+                    embedDirectoryFromTestData("cinterop-lib/cinterop", "src/nativeInterop/cinterop")
+                    embedDirectoryFromTestData("cinterop-lib/src", "include")
+                    embedDirectoryFromTestData("cinterop-lib/libs", "libs")
+
+                    buildScriptInjection {
+                        project.applyMultiplatform {
+                            macosArm64()
+                            mingwX64()
+                            linuxX64()
+
+                            setupCInteropForTarget("mylib", KonanTarget.MACOS_ARM64, "mylib_macos.def")
+                            setupCInteropForTarget("mylib", KonanTarget.LINUX_X64, "mylib_linux.def")
+                            setupCInteropForTarget("mylib", KonanTarget.MINGW_X64, "mylib_windows.def")
+
+                            sourceSets.commonMain.get().compileSource(
+                                """
+                                package org.foo
+                                class One
+                                """.trimIndent()
+                            )
+
+                            sourceSets.macosMain.get().compileSource(
+                                """
+                                package org.foo
+                                import kotlinx.cinterop.*
+                                import mylib_macos.hello
+                                class OneMac
+                                """.trimIndent()
+                            )
+                        }
+                    }
+                }
+
+                include(subprojectWithCinterops, "cinteropdependency")
+            },
+            kmpSetup = {
+                macosArm64()
+                mingwX64()
+                linuxX64()
+
+                sourceSets.commonMain {
+                    compileSource(
+                        """
+                            import org.foo.One
+                            fun foo(): One = One()
+                            """.trimIndent()
+                    )
+
+                    dependencies {
+                        implementation(project(":cinteropdependency"))
+                    }
+                }
+            },
+
+            assertions = {
+                if (HostManager.hostIsMac) {
+                    assertNoDiagnostic(KotlinToolingDiagnostics.CrossCompilationWithCinterops)
+                } else {
+                    assertHasDiagnostic(KotlinToolingDiagnostics.CrossCompilationWithCinterops)
+                }
+            }
+        )
+
+        val mavenUrl = multiplatformLibrary.projectPath.resolve("build/repo")
+        val libraryRoot = mavenUrl.resolve("com/jetbrains/library")
+
+        val expectedModules = buildSet {
+            add("multiplatformLibrary")
+            add("multiplatformLibrary-linuxx64")
+            add("multiplatformLibrary-mingwx64")
+            if (HostManager.hostIsMac) {
+                add("multiplatformLibrary-macosarm64")
+            }
+        }
+
+        // Check exact match of published modules
+        val actualModules = getActualModules(libraryRoot)
+        assertEquals(expectedModules, actualModules, "Published modules don't match expected set with cinterops")
+
+        // Verify module contents
+        verifyModuleContents(libraryRoot, expectedModules)
     }
 }
 
