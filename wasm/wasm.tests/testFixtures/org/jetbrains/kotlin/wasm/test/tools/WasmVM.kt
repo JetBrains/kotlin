@@ -63,7 +63,7 @@ internal sealed class WasmVM(
             )
     }
 
-    object JavaScriptCore : WasmVM(shortName = "JSC", property = "javascript.engine.path.JavaScriptCore", entryPointIsJsFile = true) {
+    private object JavaScriptCore : WasmVM(shortName = "JSC", property = propertyWithPathToJavaScriptCore, entryPointIsJsFile = true) {
         override fun run(
             entryFile: String,
             jsFiles: List<String>,
@@ -112,6 +112,13 @@ internal sealed class WasmVM(
                 entryFile,
                 workingDirectory = workingDirectory
             )
+    }
+
+    companion object {
+        // TODO remove .local
+        private const val propertyWithPathToJavaScriptCore = "javascript.engine.path.JavaScriptCore.local"
+
+        val JavaScriptCoreOrNull: WasmVM? get() = if (System.getProperty(propertyWithPathToJavaScriptCore) != null) JavaScriptCore else null
     }
 }
 
