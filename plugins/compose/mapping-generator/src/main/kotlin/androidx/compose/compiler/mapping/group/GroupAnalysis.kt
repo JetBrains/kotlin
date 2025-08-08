@@ -157,7 +157,7 @@ private fun parseGroupInfoFromTokens(
             }
 
             is ThrowToken -> {
-                val nodeIndex = nodeStack.indexOfFirst { it.incompleteLabels.isNotEmpty() }
+                val nodeIndex = nodeStack.indexOfLast { it.type == GroupType.Root || it.incompleteLabels.isNotEmpty() }
                 for (i in (nodeStack.size - 1) downTo nodeIndex + 1) {
                     val node = nodeStack[i]
                     nodeStack.removeAt(i)
