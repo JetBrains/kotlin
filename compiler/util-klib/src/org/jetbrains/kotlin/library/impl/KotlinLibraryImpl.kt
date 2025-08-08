@@ -179,6 +179,66 @@ class IrLibraryImpl(val access: IrLibraryAccess<IrKotlinLibraryLayout>) : IrLibr
     override fun fileEntries(fileIndex: Int): ByteArray? {
         return fileEntries?.tableItemBytes(fileIndex)
     }
+
+
+
+    override val hasIrForPreprocessedInlineFuns by lazy {
+        access.inPlace { it: IrKotlinLibraryLayout ->
+            it.irForPreprocessedInlineFunsDir.exists
+        }
+    }
+
+    override fun irDeclarationForPreprocessedInlineFuns(index: Int) = loadIrDeclarationForPreprocessedInlineFuns(index)
+
+    override fun typeForPreprocessedInlineFuns(index: Int) = typesForPreprocessedInlineFuns.tableItemBytes(0, index)
+
+    override fun signatureForPreprocessedInlineFuns(index: Int) = signaturesForPreprocessedInlineFuns.tableItemBytes(0, index)
+
+    override fun stringForPreprocessedInlineFuns(index: Int) = stringsForPreprocessedInlineFuns.tableItemBytes(0, index)
+
+    override fun bodyForPreprocessedInlineFuns(index: Int) = bodiesForPreprocessedInlineFuns.tableItemBytes(0, index)
+
+    override fun debugInfoForPreprocessedInlineFuns(index: Int) = debugInfosForPreprocessedInlineFuns?.tableItemBytes(0, index)
+
+    override fun fileEntryForPreprocessedInlineFuns(index: Int) = fileEntriesForPreprocessedInlineFuns.tableItemBytes(0, index)
+
+    private fun loadIrDeclarationForPreprocessedInlineFuns(index: Int) =
+        combinedDeclarationsForPreprocessedInlineFuns.tableItemBytes(0, DeclarationId(index))
+
+    private val combinedDeclarationsForPreprocessedInlineFuns: DeclarationIdMultiTableReader by lazy {
+        DeclarationIdMultiTableReader(access, IrKotlinLibraryLayout::irDeclarationsForPreprocessedInlineFuns)
+    }
+
+    private val typesForPreprocessedInlineFuns: IrMultiArrayReader by lazy {
+        IrMultiArrayReader(access, IrKotlinLibraryLayout::irTypesForPreprocessedInlineFuns)
+    }
+
+    private val signaturesForPreprocessedInlineFuns: IrMultiArrayReader by lazy {
+        IrMultiArrayReader(access, IrKotlinLibraryLayout::irSignaturesForPreprocessedInlineFuns)
+    }
+
+    private val stringsForPreprocessedInlineFuns: IrMultiArrayReader by lazy {
+        IrMultiArrayReader(access, IrKotlinLibraryLayout::irStringsForPreprocessedInlineFuns)
+    }
+
+    private val bodiesForPreprocessedInlineFuns: IrMultiArrayReader by lazy {
+        IrMultiArrayReader(access, IrKotlinLibraryLayout::irBodiesForPreprocessedInlineFuns)
+    }
+
+    private val debugInfosForPreprocessedInlineFuns: IrMultiArrayReader? by lazy {
+        if (access.inPlace { it.irDebugInfoForPreprocessedInlineFuns.exists })
+            IrMultiArrayReader(access, IrKotlinLibraryLayout::irDebugInfoForPreprocessedInlineFuns)
+        else
+            null
+    }
+
+    private val fileEntriesForPreprocessedInlineFuns: IrMultiArrayReader by lazy {
+        IrMultiArrayReader(access, IrKotlinLibraryLayout::irFileEntriesForPreprocessedInlineFuns)
+    }
+
+    override fun signaturesForPreprocessedInlineFuns(): ByteArray {
+        return signaturesForPreprocessedInlineFuns.tableItemBytes(0)
+    }
 }
 
 class KotlinLibraryImpl(

@@ -40,4 +40,21 @@ public interface IrFunctionOrBuilder extends
    * </pre>
    */
   long getOverridden(int index);
+
+  /**
+   * <code>optional int32 containing_file_entry_id = 3;</code>
+   *
+   * <pre>
+   *optional UniqId corresponding_property = 7;
+   * </pre>
+   */
+  boolean hasContainingFileEntryId();
+  /**
+   * <code>optional int32 containing_file_entry_id = 3;</code>
+   *
+   * <pre>
+   *optional UniqId corresponding_property = 7;
+   * </pre>
+   */
+  int getContainingFileEntryId();
 }

@@ -25,6 +25,20 @@ class IrWriterImpl(val irLayout: IrKotlinLibraryLayout) : IrWriter {
             serializeNullableEntries(SerializedIrFile::debugInfo, irLayout::irDebugInfo)
             serializeNullableEntries(SerializedIrFile::fileEntries, irLayout::irFileEntries)
         }
+
+        if (ir.preprocessedInlineFunctionsFile != null) {
+            irLayout.irForPreprocessedInlineFunsDir.mkdirs()
+            with(listOf(ir.preprocessedInlineFunctionsFile)) {
+                //serializeNonNullableEntities(SerializedIrFile::fileData, irLayout::irFilesForPreprocessedInlineFuns)
+                serializeNonNullableEntities(SerializedIrFile::declarations, irLayout::irDeclarationsForPreprocessedInlineFuns)
+                serializeNonNullableEntities(SerializedIrFile::types, irLayout::irTypesForPreprocessedInlineFuns)
+                serializeNonNullableEntities(SerializedIrFile::signatures, irLayout::irSignaturesForPreprocessedInlineFuns)
+                serializeNonNullableEntities(SerializedIrFile::strings, irLayout::irStringsForPreprocessedInlineFuns)
+                serializeNonNullableEntities(SerializedIrFile::bodies, irLayout::irBodiesForPreprocessedInlineFuns)
+                serializeNullableEntries(SerializedIrFile::debugInfo, irLayout::irDebugInfoForPreprocessedInlineFuns)
+                serializeNullableEntries(SerializedIrFile::fileEntries, irLayout::irFileEntriesForPreprocessedInlineFuns)
+            }
+        }
     }
 
     private inline fun List<SerializedIrFile>.serializeNonNullableEntities(

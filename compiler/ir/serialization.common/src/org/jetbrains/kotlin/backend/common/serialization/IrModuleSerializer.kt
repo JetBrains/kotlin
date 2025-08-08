@@ -7,17 +7,23 @@ package org.jetbrains.kotlin.backend.common.serialization
 
 import org.jetbrains.kotlin.builtins.FunctionInterfacePackageFragment
 import org.jetbrains.kotlin.ir.IrDiagnosticReporter
+import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.declarations.packageFragmentDescriptor
+import org.jetbrains.kotlin.ir.util.erasedTopLevelCopy
+import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
+import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 import org.jetbrains.kotlin.library.SerializedIrFile
 import org.jetbrains.kotlin.library.SerializedIrModule
+import org.jetbrains.kotlin.utils.addIfNotNull
 
 abstract class IrModuleSerializer<Serializer : IrFileSerializer>(
     protected val settings: IrSerializationSettings,
     protected val diagnosticReporter: IrDiagnosticReporter,
 ) {
-    abstract fun createSerializerForFile(file: IrFile): Serializer
+    abstract fun createSerializer(): Serializer
 
     /**
      * Allows to skip [file] during serialization.
@@ -30,8 +36,26 @@ abstract class IrModuleSerializer<Serializer : IrFileSerializer>(
     protected abstract val globalDeclarationTable: GlobalDeclarationTable
 
     private fun serializeIrFile(file: IrFile): SerializedIrFile {
-        val fileSerializer = createSerializerForFile(file)
+        val fileSerializer = createSerializer()
         return fileSerializer.serializeIrFile(file)
+    }
+
+    private fun serializePreprocessedInlineFunctions(module: IrModuleFragment): SerializedIrFile {
+        val functions = buildList {
+            module.acceptChildrenVoid(object : IrVisitorVoid() {
+                override fun visitElement(element: IrElement) {
+                    element.acceptChildrenVoid(this)
+                }
+
+                override fun visitSimpleFunction(declaration: IrSimpleFunction) {
+                    addIfNotNull(declaration.erasedTopLevelCopy)
+                    super.visitSimpleFunction(declaration)
+                }
+            })
+        }
+
+        val fileSerializer = createSerializer()
+        return fileSerializer.serializeIrFileWithPreprocessedInlineFunctions(functions)
     }
 
     fun serializedIrModule(module: IrModuleFragment): SerializedIrModule {
@@ -42,6 +66,10 @@ abstract class IrModuleSerializer<Serializer : IrFileSerializer>(
         if (settings.shouldCheckSignaturesOnUniqueness) {
             globalDeclarationTable.clashDetector.reportErrorsTo(diagnosticReporter)
         }
-        return SerializedIrModule(serializedFiles)
+
+        val preprocessedInlineFunctionsFile = if (settings.serializePreprocessedInlineFuns)
+            serializePreprocessedInlineFunctions(module)
+        else null
+        return SerializedIrModule(serializedFiles, preprocessedInlineFunctionsFile)
     }
 }

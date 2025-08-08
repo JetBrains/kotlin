@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.ir.expressions.IrInlinedFunctionBlock
 import org.jetbrains.kotlin.ir.types.extractTypeParameters
 import org.jetbrains.kotlin.ir.util.erasedTopLevelCopy
 import org.jetbrains.kotlin.ir.util.file
+import org.jetbrains.kotlin.ir.util.originalOfErasedTopLevelCopy
 import org.jetbrains.kotlin.ir.visitors.IrVisitorVoid
 import org.jetbrains.kotlin.ir.visitors.acceptChildrenVoid
 
@@ -29,7 +30,9 @@ class InlineFunctionSerializationPreProcessing(private val context: LoweringCont
 
     override fun visitSimpleFunction(declaration: IrSimpleFunction) {
         if (!declaration.isInline || declaration.body == null || declaration.symbol.isConsideredAsPrivateForInlining()) return
-        declaration.erasedTopLevelCopy = declaration.copyAndEraseTypeParameters().convertToPrivateTopLevel().erasePrivateSymbols()
+        val preprocessed = declaration.copyAndEraseTypeParameters().convertToPrivateTopLevel().erasePrivateSymbols()
+        declaration.erasedTopLevelCopy = preprocessed
+        preprocessed.originalOfErasedTopLevelCopy = declaration
     }
 
     private fun IrSimpleFunction.copyAndEraseTypeParameters(): IrSimpleFunction {
@@ -41,7 +44,7 @@ class InlineFunctionSerializationPreProcessing(private val context: LoweringCont
     private fun IrSimpleFunction.convertToPrivateTopLevel(): IrSimpleFunction {
         // TODO KT-77597: there is a problem with header KLib.
         //  This function must be serialized into header klib, but private functions are not serialized.
-        visibility = DescriptorVisibilities.PRIVATE
+        visibility = DescriptorVisibilities.PUBLIC
         correspondingPropertySymbol = null
         parent = file
 

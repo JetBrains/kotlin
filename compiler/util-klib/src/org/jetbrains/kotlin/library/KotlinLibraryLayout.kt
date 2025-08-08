@@ -22,6 +22,7 @@ const val KLIB_MANIFEST_FILE_NAME = "manifest"
 const val KLIB_MODULE_METADATA_FILE_NAME = "module"
 const val KLIB_METADATA_FOLDER_NAME = "linkdata"
 const val KLIB_IR_FOLDER_NAME = "ir"
+const val KLIB_IR_PREPROCESSED_INLINE_FUNS_DIR_NAME = "preprocessed_inline_functions_ir"
 
 /**
  * This scheme describes the Kotlin/Native Library (KLIB) layout.
@@ -71,10 +72,28 @@ interface IrKotlinLibraryLayout : KotlinLibraryLayout {
         get() = File(irDir, IR_FILES_FILE_NAME)
     val irDebugInfo
         get() = File(irDir, IR_DEBUG_INFO_FILE_NAME)
-
     // Please check `hasFileEntriesTable` before getter invocation, otherwise it may crash in override getter
     val irFileEntries
         get() = File(irDir, IR_FILE_ENTRIES_FILE_NAME)
+
+    val irForPreprocessedInlineFunsDir
+        get() = File(componentDir, KLIB_IR_PREPROCESSED_INLINE_FUNS_DIR_NAME)
+    val irDeclarationsForPreprocessedInlineFuns
+        get() = File(irForPreprocessedInlineFunsDir, IR_DECLARATIONS_FILE_NAME)
+    val irTypesForPreprocessedInlineFuns
+        get() = File(irForPreprocessedInlineFunsDir, IR_TYPES_FILE_NAME)
+    val irSignaturesForPreprocessedInlineFuns
+        get() = File(irForPreprocessedInlineFunsDir, IR_SIGNATURES_FILE_NAME)
+    val irStringsForPreprocessedInlineFuns
+        get() = File(irForPreprocessedInlineFunsDir, IR_STRINGS_FILE_NAME)
+    val irBodiesForPreprocessedInlineFuns
+        get() = File(irForPreprocessedInlineFunsDir, IR_BODIES_FILE_NAME)
+    //val irFilesForPreprocessedInlineFuns
+    //    get() = File(irForPreprocessedInlineFunsDir, IR_FILES_FILE_NAME)
+    val irDebugInfoForPreprocessedInlineFuns
+        get() = File(irForPreprocessedInlineFunsDir, IR_DEBUG_INFO_FILE_NAME)
+    val irFileEntriesForPreprocessedInlineFuns
+        get() = File(irForPreprocessedInlineFunsDir, IR_FILE_ENTRIES_FILE_NAME)
 
     companion object {
         const val IR_DECLARATIONS_FILE_NAME = "irDeclarations.knd"

@@ -29,6 +29,6 @@ class KonanIrModuleSerializer(
     override fun backendSpecificFileFilter(file: IrFile): Boolean =
         file.fileEntry.name != NativeStandardInteropNames.cTypeDefinitionsFileName
 
-    override fun createSerializerForFile(file: IrFile): KonanIrFileSerializer =
+    override fun createSerializer(): KonanIrFileSerializer =
             KonanIrFileSerializer(settings, KonanDeclarationTable(globalDeclarationTable))
 }

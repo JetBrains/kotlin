@@ -297,7 +297,11 @@ open class IrFileSerializer(
                 ?: error("Given symbol is unbound and have no signature: $symbol")
             symbol is IrFileSymbol -> IdSignature.FileSignature(symbol) // TODO: special signature for files?
             else -> {
-                val symbolOwner = symbol.owner
+                var symbolOwner = symbol.owner
+
+                (symbolOwner as? IrSimpleFunction)?.originalOfErasedTopLevelCopy?.let {
+                    symbolOwner = it
+                }
 
                 // Compute the signature:
                 when {
@@ -1217,6 +1221,9 @@ open class IrFileSerializer(
         declaration.overriddenSymbols.forEach {
             proto.addOverridden(serializeIrSymbol(it))
         }
+        declaration.originalOfErasedTopLevelCopy?.let { original ->
+            proto.containingFileEntryId = serializeFileEntryId(original.fileEntry)
+        }
 
         return proto.build()
     }
@@ -1570,6 +1577,36 @@ open class IrFileSerializer(
                     null
                 }
             },
+        )
+    }
+
+    fun serializeIrFileWithPreprocessedInlineFunctions(functions: List<IrSimpleFunction>): SerializedIrFile {
+        val topLevelDeclarations = mutableListOf<SerializedDeclaration>()
+        for (function in functions) {
+            val byteArray = serializeDeclaration(function).toByteArray()
+
+            val idSig = declarationTable.signatureByDeclaration(
+                function.originalOfErasedTopLevelCopy!!,
+                compatibleMode = false,
+                recordInSignatureClashDetector = false
+            )
+            val sigIndex = idSignatureSerializer.protoIdSignature(idSig)
+
+            topLevelDeclarations.add(SerializedDeclaration(sigIndex, byteArray))
+        }
+
+        return SerializedIrFile(
+            fileData = ByteArray(0),
+            fqName = "",
+            path = "",
+            types = IrArrayWriter(protoTypeArray.byteArrays).writeIntoMemory(),
+            signatures = IrArrayWriter(protoIdSignatureArray.map { it.toByteArray() }).writeIntoMemory(),
+            strings = IrStringWriter(protoStringArray).writeIntoMemory(),
+            bodies = IrArrayWriter(protoBodyArray.map { it.toByteArray() }).writeIntoMemory(),
+            declarations = IrDeclarationWriter(topLevelDeclarations).writeIntoMemory(),
+            debugInfo = IrStringWriter(protoDebugInfoArray).writeIntoMemory(),
+            backendSpecificMetadata = null,
+            fileEntries = IrArrayWriter(protoIrFileEntryArray.map { it.toByteArray() }).writeIntoMemory(),
         )
     }
 

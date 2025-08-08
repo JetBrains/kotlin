@@ -198,7 +198,11 @@ fun <Dependency : KotlinLibrary, SourceFile> serializeModuleIntoKlib(
 
     return SerializerOutput(
         serializedMetadata = serializedMetadata,
-        serializedIr = if (serializedIr == null) null else SerializedIrModule(compiledKotlinFiles.mapNotNull { it.irData }),
+        serializedIr = if (serializedIr == null) null
+        else SerializedIrModule(
+            compiledKotlinFiles.mapNotNull { it.irData },
+            serializedIr.preprocessedInlineFunctionsFile,
+        ),
         neededLibraries = dependencies,
     )
 }

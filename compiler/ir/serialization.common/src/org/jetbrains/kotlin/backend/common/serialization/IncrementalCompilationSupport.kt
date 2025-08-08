@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.library.IrLibrary
 import org.jetbrains.kotlin.library.KotlinAbiVersion
 import org.jetbrains.kotlin.library.SerializedIrFile
 import org.jetbrains.kotlin.library.impl.*
+import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
 class ICData(val icData: List<SerializedIrFile>)
 
@@ -105,6 +106,17 @@ class ICKotlinLibrary(private val icData: List<SerializedIrFile>) : IrLibrary {
     override fun bodies(fileIndex: Int): ByteArray = icData[fileIndex].bodies
 
     override fun fileEntries(fileIndex: Int): ByteArray? = icData[fileIndex].fileEntries
+
+
+    override val hasIrForPreprocessedInlineFuns: Boolean get() = false
+    override fun irDeclarationForPreprocessedInlineFuns(index: Int): ByteArray = shouldNotBeCalled()
+    override fun typeForPreprocessedInlineFuns(index: Int): ByteArray = shouldNotBeCalled()
+    override fun signatureForPreprocessedInlineFuns(index: Int): ByteArray = shouldNotBeCalled()
+    override fun stringForPreprocessedInlineFuns(index: Int): ByteArray = shouldNotBeCalled()
+    override fun bodyForPreprocessedInlineFuns(index: Int): ByteArray = shouldNotBeCalled()
+    override fun debugInfoForPreprocessedInlineFuns(index: Int): ByteArray? = shouldNotBeCalled()
+    override fun fileEntryForPreprocessedInlineFuns(index: Int): ByteArray = shouldNotBeCalled()
+    override fun signaturesForPreprocessedInlineFuns(): ByteArray = shouldNotBeCalled()
 }
 
 class CurrentModuleWithICDeserializer(

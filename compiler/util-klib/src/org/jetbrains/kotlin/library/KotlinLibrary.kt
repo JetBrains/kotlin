@@ -118,6 +118,17 @@ interface IrLibrary {
     fun declarations(fileIndex: Int): ByteArray
     fun bodies(fileIndex: Int): ByteArray
     fun fileEntries(fileIndex: Int): ByteArray?
+
+    val hasIrForPreprocessedInlineFuns: Boolean
+    fun irDeclarationForPreprocessedInlineFuns(index: Int): ByteArray
+    fun typeForPreprocessedInlineFuns(index: Int): ByteArray
+    fun signatureForPreprocessedInlineFuns(index: Int): ByteArray
+    fun stringForPreprocessedInlineFuns(index: Int): ByteArray
+    fun bodyForPreprocessedInlineFuns(index: Int): ByteArray
+    fun debugInfoForPreprocessedInlineFuns(index: Int): ByteArray?
+    fun fileEntryForPreprocessedInlineFuns(index: Int): ByteArray
+
+    fun signaturesForPreprocessedInlineFuns(): ByteArray
 }
 
 /** Whether [this] is a Kotlin/Native stdlib. */
