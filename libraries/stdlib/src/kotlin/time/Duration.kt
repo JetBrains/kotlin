@@ -327,7 +327,7 @@ public value class Duration internal constructor(private val rawValue: Long) : C
          *   @sample samples.time.Durations.parse
          */
         public fun parseOrNull(value: String): Duration? =
-            parseDuration(value, strictIso = false, throwException = false).let { if (it == INVALID) null else it }
+            parseDuration(value, strictIso = false, throwException = false).onInvalid { return null }
 
         /**
          * Parses a string that represents a duration in restricted ISO-8601 composite representation
@@ -337,7 +337,7 @@ public value class Duration internal constructor(private val rawValue: Long) : C
          * @sample samples.time.Durations.parseIsoString
          */
         public fun parseIsoStringOrNull(value: String): Duration? =
-            parseDuration(value, strictIso = true, throwException = false).let { if (it == INVALID) null else it }
+            parseDuration(value, strictIso = true, throwException = false).onInvalid { return null }
     }
 
     // arithmetic operators
@@ -1041,14 +1041,14 @@ private fun parseDuration(value: String, strictIso: Boolean, throwException: Boo
     val hasSign = index > 0
     val result = when {
         length <= index -> return throwExceptionOrInvalid(throwException, "No components")
-        value[index] == 'P' -> parseIsoStringFormat(value, index, length, throwException).onInvalid { return Duration.INVALID }
+        value[index] == 'P' -> parseIsoStringFormat(value, index, length, throwException)
         strictIso -> return throwExceptionOrInvalid(throwException)
         value.regionMatches(index, INFINITY_STRING, 0, length = maxOf(length - index, INFINITY_STRING.length), ignoreCase = true) -> {
             Duration.INFINITE
         }
-        else -> parseDefaultStringFormat(value, index, length, hasSign, throwException).onInvalid { return Duration.INVALID }
+        else -> parseDefaultStringFormat(value, index, length, hasSign, throwException)
     }
-    return if (isNegative) -result else result
+    return if (isNegative && result != Duration.INVALID) -result else result
 }
 
 @kotlin.internal.InlineOnly
@@ -1095,7 +1095,7 @@ private inline fun parseIsoStringFormat(
                         else -> return throwExceptionOrInvalid(throwException, "Missing unit for value $longValue")
                     }
                 )
-            ).onInvalid { return throwExceptionOrInvalid(throwException) }
+            ).also { if (it == Duration.INVALID_RAW_VALUE) return throwExceptionOrInvalid(throwException) }
 
             if (unit == '.') {
                 index++
@@ -1287,10 +1287,6 @@ private inline fun throwExceptionOrInvalid(throwException: Boolean, message: Str
 
 private inline fun Duration.onInvalid(block: () -> Nothing): Duration {
     return if (this == Duration.INVALID) block() else this
-}
-
-private inline fun Long.onInvalid(block: () -> Nothing): Long {
-    return if (this == Duration.INVALID_RAW_VALUE) block() else this
 }
 
 private inline fun String.skipWhile(startIndex: Int, predicate: (Char) -> Boolean): Int {
