@@ -42661,6 +42661,12 @@ public class LLReversedBlackBoxTestGenerated extends AbstractLLReversedBlackBoxT
         }
 
         @Test
+        @TestMetadata("fakeOverrideExpectSuperType.kt")
+        public void testFakeOverrideExpectSuperType() {
+          runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/fakeOverrideExpectSuperType.kt");
+        }
+
+        @Test
         @TestMetadata("iheritanceFromExpected2-2.kt")
         public void testIheritanceFromExpected2_2() {
           runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/iheritanceFromExpected2-2.kt");
