@@ -328,7 +328,10 @@ export async function instantiate(imports={}, runInitializer=true) {
     }
 
 $referencesToQualifiedAndImportedDeclarations
-    
+
+    const wasmJsTag = WebAssembly.JSTag;
+    const wasmTag =${if (useJsTag) " wasmJsTag ??" else "" } new WebAssembly.Tag({ parameters: ['externref'] });
+
     const js_code = {
 $jsCodeBodyIndented
     }
@@ -353,8 +356,6 @@ $jsCodeBodyIndented
     }
 
     const wasmFilePath = $pathJsStringLiteral;
-
-    const wasmTag =${if (useJsTag) " WebAssembly.JSTag ??" else "" } new WebAssembly.Tag({ parameters: ['externref'] });
 
     const importObject = {
         js_code,
