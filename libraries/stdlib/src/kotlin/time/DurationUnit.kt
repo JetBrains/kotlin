@@ -75,7 +75,7 @@ internal fun DurationUnit.shortName(): String = when (this) {
 @kotlin.internal.InlineOnly
 internal inline fun durationUnitByShortNameOrNull(text: String, start: Int): DurationUnit? {
     val first = text[start]
-    val second = text.getOrElse(start + 1) { '\u0000' }
+    val second = if (start < text.lastIndex) text[start + 1] else '\u0000'
 
     return when (first) {
         'd' -> DurationUnit.DAYS
