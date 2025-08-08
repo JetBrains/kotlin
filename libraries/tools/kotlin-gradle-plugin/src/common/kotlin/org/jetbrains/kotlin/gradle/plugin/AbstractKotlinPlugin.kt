@@ -11,10 +11,8 @@ import org.gradle.api.attributes.Category
 import org.gradle.api.plugins.JavaPlugin
 import org.gradle.api.publish.PublishingExtension
 import org.gradle.api.publish.maven.MavenPublication
-import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
 import org.jetbrains.kotlin.gradle.dsl.KotlinSingleJavaTargetExtension
 import org.jetbrains.kotlin.gradle.dsl.kotlinExtension
-import org.jetbrains.kotlin.gradle.model.builder.KotlinModelBuilder
 import org.jetbrains.kotlin.gradle.plugin.internal.compatibilityConventionRegistrar
 import org.jetbrains.kotlin.gradle.plugin.mpp.*
 import org.jetbrains.kotlin.gradle.plugin.mpp.publishing.rewriteKmpDependenciesInPomForTargetPublication
@@ -38,7 +36,6 @@ internal const val KOTLIN_BOUNCY_CASTLE_CONFIGURATION_NAME = "kotlinBouncyCastle
 
 internal abstract class AbstractKotlinPlugin(
     val tasksProvider: KotlinTasksProvider,
-    val registry: ToolingModelBuilderRegistry,
 ) : Plugin<Project> {
 
     internal abstract fun buildSourceSetProcessor(
@@ -47,7 +44,6 @@ internal abstract class AbstractKotlinPlugin(
     ): KotlinSourceSetProcessor<*>
 
     override fun apply(project: Project) {
-        val kotlinPluginVersion = project.getKotlinPluginVersion()
         project.plugins.apply(JavaPlugin::class.java)
 
         val target = (project.kotlinExtension as KotlinSingleJavaTargetExtension).target
@@ -58,11 +54,7 @@ internal abstract class AbstractKotlinPlugin(
         )
 
         rewriteMppDependenciesInPom(target)
-
-        registry.register(KotlinModelBuilder(kotlinPluginVersion, null))
-
         project.components.addAll(target.components)
-
     }
 
     private fun rewriteMppDependenciesInPom(target: AbstractKotlinTarget) {

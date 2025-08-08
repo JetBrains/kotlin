@@ -8,13 +8,11 @@ package org.jetbrains.kotlin.assignment.plugin.gradle
 import org.gradle.api.Project
 import org.gradle.api.provider.Provider
 import org.gradle.tooling.provider.model.ToolingModelBuilderRegistry
-import org.jetbrains.kotlin.assignment.plugin.gradle.model.builder.AssignmentModelBuilder
 import org.jetbrains.kotlin.gradle.plugin.*
 import javax.inject.Inject
 
 class AssignmentSubplugin
 @Inject internal constructor(
-    private val registry: ToolingModelBuilderRegistry
 ) : KotlinCompilerPluginSupportPlugin {
 
     companion object {
@@ -25,7 +23,6 @@ class AssignmentSubplugin
 
     override fun apply(target: Project) {
         target.extensions.create("assignment", AssignmentExtension::class.java)
-        registry.register(AssignmentModelBuilder())
     }
 
     override fun isApplicable(kotlinCompilation: KotlinCompilation<*>): Boolean = true

@@ -105,18 +105,12 @@ val unpublishedCompilerRuntimeDependencies = listOf(
 dependencies {
     commonApi(platform(project(":kotlin-gradle-plugins-bom")))
     commonApi(project(":kotlin-gradle-plugin-api"))
-    commonApi(project(":kotlin-gradle-plugin-model"))
     commonApi(project(":libraries:tools:gradle:fus-statistics-gradle-plugin"))
 
     // Following two dependencies is a workaround for IDEA import to pick-up them correctly
     commonCompileOnly(project(":kotlin-gradle-plugin-api")) {
         capabilities {
             requireCapability("org.jetbrains.kotlin:kotlin-gradle-plugin-api-common")
-        }
-    }
-    commonCompileOnly(project(":kotlin-gradle-plugin-model")) {
-        capabilities {
-            requireCapability("org.jetbrains.kotlin:kotlin-gradle-plugin-model-common")
         }
     }
 
@@ -356,7 +350,6 @@ tasks {
         asmDeprecation {
             val exclusions = listOf(
                 "org.jetbrains.kotlin.gradle.**", // part of the plugin
-                "org.jetbrains.kotlin.project.model.**", // part of the plugin
                 "org.jetbrains.kotlin.statistics.**", // part of the plugin
                 "org.jetbrains.kotlin.tooling.**", // part of the plugin
                 "org.jetbrains.kotlin.org.**", // already shadowed dependencies
