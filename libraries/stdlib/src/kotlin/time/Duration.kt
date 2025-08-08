@@ -1052,7 +1052,6 @@ private fun parseDuration(value: String, strictIso: Boolean, throwException: Boo
     val length = value.length
     if (length == 0) return throwExceptionOrInvalid(throwException, "The string is empty")
     var index = 0
-
     val firstChar = value[index]
     var isNegative = false
     if (firstChar == '-') {
