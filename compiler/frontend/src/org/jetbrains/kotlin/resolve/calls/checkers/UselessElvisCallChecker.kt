@@ -27,6 +27,12 @@ class UselessElvisCallChecker : CallChecker {
         val left = elvisBinaryExpression.left ?: return
         val right = elvisBinaryExpression.right ?: return
 
+        // Check if left side is null constant
+        if (KtPsiUtil.isNullConstant(left)) {
+            context.trace.reportDiagnosticOnce(Errors.USELESS_ELVIS_LEFT_IS_NULL.on(elvisBinaryExpression))
+            return
+        }
+
         val leftType = context.trace.getType(left) ?: return
 
         // if type contains not fixed `TypeVariable` it means that call wasn't completed, we should wait for its completion first
