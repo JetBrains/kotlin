@@ -113,6 +113,7 @@ fun Project.customFirstPhaseTest(rawVersion: String): TaskProvider<out Task> {
 
 /* Custom-first-phase test tasks for different compiler versions. */
 customFirstPhaseTest("1.9.20")
+customFirstPhaseTest("2.0.0")
 // TODO: Add a new task for the "custom-first-phase" test here.
 
 tasks.test {
