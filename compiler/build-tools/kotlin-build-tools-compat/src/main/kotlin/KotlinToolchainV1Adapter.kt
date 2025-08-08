@@ -63,8 +63,8 @@ public class KotlinToolchainV1Adapter(
         return compilationService.getCompilerVersion()
     }
 
-    override fun createBuild(projectId: ProjectId?): KotlinToolchain.Build {
-        return BuildV1Adapter(this, projectId ?: RandomProjectUUID(), compilationService)
+    override fun createBuildSession(): KotlinToolchain.BuildSession {
+        return BuildV1Adapter(this, RandomProjectUUID(), compilationService)
     }
 }
 
@@ -296,7 +296,7 @@ private class BuildV1Adapter(
     override val kotlinToolchain: KotlinToolchain,
     override val projectId: ProjectId,
     private val compilationService: CompilationService,
-) : KotlinToolchain.Build {
+) : KotlinToolchain.BuildSession {
     override fun <R> executeOperation(operation: BuildOperation<R>): R {
         return executeOperation(operation, logger = null)
     }

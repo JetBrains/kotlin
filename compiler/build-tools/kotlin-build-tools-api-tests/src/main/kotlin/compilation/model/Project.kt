@@ -23,7 +23,7 @@ class Project(
     val projectDirectory: Path,
 ) : AutoCloseable {
     private val invalidModuleNameCharactersRegex = """[\\/\r\n\t]""".toRegex()
-    private val kotlinBuild = kotlinToolchain.createBuild()
+    private val kotlinBuild = kotlinToolchain.createBuildSession()
 
     fun module(
         moduleName: String,

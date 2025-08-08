@@ -24,7 +24,7 @@ import kotlin.io.path.walk
 
 class JvmModule(
     private val kotlinToolchain: KotlinToolchain,
-    val kotlinBuild: KotlinToolchain.Build,
+    val kotlinBuild: KotlinToolchain.BuildSession,
     project: Project,
     moduleName: String,
     moduleDirectory: Path,

@@ -183,7 +183,6 @@ internal class JsArgumentsImpl : WasmArgumentsImpl(), JsArguments {
     if ("X_ES_GENERATORS" in optionsMap) { arguments.add("-Xes-generators=" + get(X_ES_GENERATORS)) }
     if ("X_ES_ARROW_FUNCTIONS" in optionsMap) { arguments.add("-Xes-arrow-functions=" + get(X_ES_ARROW_FUNCTIONS)) }
     if ("X_ES_LONG_AS_BIGINT" in optionsMap) { arguments.add("-Xes-long-as-bigint=" + get(X_ES_LONG_AS_BIGINT)) }
-    if ("X_TYPED_ARRAYS" in optionsMap) { arguments.add("-Xtyped-arrays=" + get(X_TYPED_ARRAYS)) }
     if ("X_FRIEND_MODULES_DISABLED" in optionsMap) { arguments.add("-Xfriend-modules-disabled=" + get(X_FRIEND_MODULES_DISABLED)) }
     if ("X_FRIEND_MODULES" in optionsMap) { arguments.add("-Xfriend-modules=" + get(X_FRIEND_MODULES)) }
     if ("X_ENABLE_EXTENSION_FUNCTIONS_IN_EXTERNALS" in optionsMap) { arguments.add("-Xenable-extension-functions-in-externals=" + get(X_ENABLE_EXTENSION_FUNCTIONS_IN_EXTERNALS)) }
@@ -233,7 +232,6 @@ internal class JsArgumentsImpl : WasmArgumentsImpl(), JsArguments {
     this[X_ES_GENERATORS] = arguments.useEsGenerators
     this[X_ES_ARROW_FUNCTIONS] = arguments.useEsArrowFunctions
     this[X_ES_LONG_AS_BIGINT] = arguments.compileLongAsBigInt
-    this[X_TYPED_ARRAYS] = arguments.typedArrays
     this[X_FRIEND_MODULES_DISABLED] = arguments.friendModulesDisabled
     this[X_FRIEND_MODULES] = arguments.friendModules
     this[X_ENABLE_EXTENSION_FUNCTIONS_IN_EXTERNALS] = arguments.extensionFunctionsInExternals

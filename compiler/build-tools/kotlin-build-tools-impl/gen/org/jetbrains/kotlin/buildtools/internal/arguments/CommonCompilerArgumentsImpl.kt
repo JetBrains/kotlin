@@ -235,7 +235,7 @@ internal open class CommonCompilerArgumentsImpl : CommonToolArgumentsImpl(),
     if ("X_CONTEXT_PARAMETERS" in optionsMap) { arguments.add("-Xcontext-parameters=" + get(X_CONTEXT_PARAMETERS)) }
     if ("X_CONTEXT_SENSITIVE_RESOLUTION" in optionsMap) { arguments.add("-Xcontext-sensitive-resolution=" + get(X_CONTEXT_SENSITIVE_RESOLUTION)) }
     if ("X_NON_LOCAL_BREAK_CONTINUE" in optionsMap) { arguments.add("-Xnon-local-break-continue=" + get(X_NON_LOCAL_BREAK_CONTINUE)) }
-    if ("_XDATA_FLOW_BASED_EXHAUSTIVENESS" in optionsMap) { arguments.add("--Xdata-flow-based-exhaustiveness=" + get(_XDATA_FLOW_BASED_EXHAUSTIVENESS)) }
+    if ("X_DATA_FLOW_BASED_EXHAUSTIVENESS" in optionsMap) { arguments.add("-Xdata-flow-based-exhaustiveness=" + get(X_DATA_FLOW_BASED_EXHAUSTIVENESS)) }
     if ("X_MULTI_DOLLAR_INTERPOLATION" in optionsMap) { arguments.add("-Xmulti-dollar-interpolation=" + get(X_MULTI_DOLLAR_INTERPOLATION)) }
     if ("X_RENDER_INTERNAL_DIAGNOSTIC_NAMES" in optionsMap) { arguments.add("-Xrender-internal-diagnostic-names=" + get(X_RENDER_INTERNAL_DIAGNOSTIC_NAMES)) }
     if ("X_ALLOW_ANY_SCRIPTS_IN_SOURCE_ROOTS" in optionsMap) { arguments.add("-Xallow-any-scripts-in-source-roots=" + get(X_ALLOW_ANY_SCRIPTS_IN_SOURCE_ROOTS)) }
@@ -304,7 +304,7 @@ internal open class CommonCompilerArgumentsImpl : CommonToolArgumentsImpl(),
     this[X_CONTEXT_PARAMETERS] = arguments.contextParameters
     this[X_CONTEXT_SENSITIVE_RESOLUTION] = arguments.contextSensitiveResolution
     this[X_NON_LOCAL_BREAK_CONTINUE] = arguments.nonLocalBreakContinue
-    this[_XDATA_FLOW_BASED_EXHAUSTIVENESS] = arguments.xdataFlowBasedExhaustiveness
+    this[X_DATA_FLOW_BASED_EXHAUSTIVENESS] = arguments.dataFlowBasedExhaustiveness
     this[X_MULTI_DOLLAR_INTERPOLATION] = arguments.multiDollarInterpolation
     this[X_RENDER_INTERNAL_DIAGNOSTIC_NAMES] = arguments.renderInternalDiagnosticNames
     this[X_ALLOW_ANY_SCRIPTS_IN_SOURCE_ROOTS] = arguments.allowAnyScriptsInSourceRoots
