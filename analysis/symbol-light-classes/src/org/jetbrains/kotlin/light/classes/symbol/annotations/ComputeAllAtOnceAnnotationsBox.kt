@@ -38,7 +38,7 @@ internal class ComputeAllAtOnceAnnotationsBox(
         private val fieldUpdater = AtomicReferenceFieldUpdater.newUpdater(
             /* tclass = */ ComputeAllAtOnceAnnotationsBox::class.java,
             /* vclass = */ Collection::class.java,
-            /* fieldName = */ "cachedAnnotations",
+            /* fieldName = */ ComputeAllAtOnceAnnotationsBox::cachedAnnotations.name,
         )
     }
 }
