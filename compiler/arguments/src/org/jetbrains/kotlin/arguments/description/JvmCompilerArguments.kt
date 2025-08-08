@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.arguments.description
 
 import org.jetbrains.kotlin.arguments.dsl.types.JvmTarget
 import org.jetbrains.kotlin.arguments.dsl.base.*
+import org.jetbrains.kotlin.arguments.dsl.base.ReleaseDependent
 import org.jetbrains.kotlin.arguments.dsl.defaultFalse
 import org.jetbrains.kotlin.arguments.dsl.defaultNull
 import org.jetbrains.kotlin.arguments.dsl.defaultOne
@@ -19,7 +20,6 @@ import org.jetbrains.kotlin.cli.common.arguments.DefaultValue
 import org.jetbrains.kotlin.cli.common.arguments.Enables
 import org.jetbrains.kotlin.cli.common.arguments.GradleInputTypes
 import org.jetbrains.kotlin.cli.common.arguments.GradleOption
-import org.jetbrains.kotlin.config.KotlinCompilerVersion
 import org.jetbrains.kotlin.config.LanguageFeature
 
 val actualJvmCompilerArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.jvmCompilerArguments) {
@@ -539,8 +539,15 @@ The default value is 'enable'.""".asReleaseDependent()
 
     compilerArgument {
         name = "Xjspecify-annotations"
-        description = """Specify the behavior of 'jspecify' annotations.
-The default value is 'warn'.""".asReleaseDependent()
+        description = ReleaseDependent(
+            """
+                Specify the behavior of 'jspecify' annotations.
+                The default value is 'strict'.""".trimIndent(),
+            KotlinReleaseVersion.v1_4_30..KotlinReleaseVersion.v2_0_21 to
+                    """
+                       Specify the behavior of 'jspecify' annotations.
+                       The default value is 'warn'.""".trimIndent()
+        )
         valueType = StringType.defaultNull
         valueDescription = "ignore|strict|warn".asReleaseDependent()
 

@@ -457,7 +457,7 @@ The default value is 'enable'.""",
         value = "-Xjspecify-annotations",
         valueDescription = "ignore|strict|warn",
         description = """Specify the behavior of 'jspecify' annotations.
-The default value is 'warn'.""",
+The default value is 'strict'.""",
     )
     var jspecifyAnnotations: String? = null
         set(value) {

@@ -359,7 +359,7 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
 
     /**
      * Specify the behavior of 'jspecify' annotations.
-     * The default value is 'warn'.
+     * The default value is 'strict'.
      *
      * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
      */

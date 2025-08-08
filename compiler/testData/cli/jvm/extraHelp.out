@@ -59,7 +59,7 @@ where advanced options include:
                              The default value is 'enable'.
   -Xjspecify-annotations=ignore|strict|warn
                              Specify the behavior of 'jspecify' annotations.
-                             The default value is 'warn'.
+                             The default value is 'strict'.
   -Xjvm-default={all|all-compatibility|disable}
                              This option is deprecated. Migrate to -jvm-default as follows:
                              -Xjvm-default=disable            -> -jvm-default=disable

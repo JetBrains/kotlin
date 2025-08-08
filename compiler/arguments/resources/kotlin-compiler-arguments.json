@@ -4866,8 +4866,14 @@
                                 "shortName": null,
                                 "deprecatedName": null,
                                 "description": {
-                                    "current": "Specify the behavior of 'jspecify' annotations.\nThe default value is 'warn'.",
-                                    "valueInVersions": []
+                                    "current": "Specify the behavior of 'jspecify' annotations.\nThe default value is 'strict'.",
+                                    "valueInVersions": [
+                                        {
+                                            "minReleaseVersion": "1.4.30",
+                                            "maxReleaseVersion": "2.0.21",
+                                            "value": "Specify the behavior of 'jspecify' annotations.\nThe default value is 'warn'."
+                                        }
+                                    ]
                                 },
                                 "delimiter": null,
                                 "valueType": {
