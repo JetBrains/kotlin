@@ -19,14 +19,20 @@ import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
 import org.jetbrains.kotlin.analysis.api.types.*
 import org.jetbrains.kotlin.analysis.api.types.typeCreation.*
 import org.jetbrains.kotlin.descriptors.ClassDescriptor
+import org.jetbrains.kotlin.descriptors.SourceElement
 import org.jetbrains.kotlin.descriptors.TypeParameterDescriptor
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptor
+import org.jetbrains.kotlin.descriptors.annotations.AnnotationDescriptorImpl
+import org.jetbrains.kotlin.descriptors.annotations.Annotations
 import org.jetbrains.kotlin.descriptors.findClassAcrossModuleDependencies
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.SpecialNames
 import org.jetbrains.kotlin.resolve.calls.inference.CapturedType
 import org.jetbrains.kotlin.types.*
+import org.jetbrains.kotlin.types.error.ErrorType
 import org.jetbrains.kotlin.types.error.ErrorTypeKind
 import org.jetbrains.kotlin.types.error.ErrorUtils
+import org.jetbrains.kotlin.types.typeUtil.replaceAnnotations
 import org.jetbrains.kotlin.utils.exceptions.errorWithAttachment
 
 internal class KaFe10TypeCreator(
@@ -58,7 +64,9 @@ internal class KaFe10TypeCreator(
                         ?: builder.symbol.name?.asString()
                         ?: SpecialNames.ANONYMOUS_STRING
             }
-            val kotlinType = ErrorUtils.createErrorType(ErrorTypeKind.UNRESOLVED_CLASS_TYPE, name)
+            val kotlinType =
+                ErrorUtils.createErrorType(ErrorTypeKind.UNRESOLVED_CLASS_TYPE, name)
+                    .withAnnotations(builder.annotations) as ErrorType
             return KaFe10ClassErrorType(kotlinType, analysisContext)
         }
 
@@ -74,7 +82,7 @@ internal class KaFe10TypeCreator(
             TypeUtils.substituteProjectionsForParameters(descriptor, projections)
         } else {
             descriptor.defaultType
-        }
+        }.withAnnotations(builder.annotations)
 
         val typeWithNullability = TypeUtils.makeNullableAsSpecified(type, builder.isMarkedNullable)
         return KaFe10UsualClassType(typeWithNullability as SimpleType, descriptor, analysisContext)
@@ -87,7 +95,7 @@ internal class KaFe10TypeCreator(
             val kotlinType = descriptor?.defaultType
                 ?: ErrorUtils.createErrorType(ErrorTypeKind.NOT_FOUND_DESCRIPTOR_FOR_TYPE_PARAMETER, builder.toString())
             val typeWithNullability = TypeUtils.makeNullableAsSpecified(kotlinType, builder.isMarkedNullable)
-            return typeWithNullability.toKtType(analysisContext) as KaTypeParameterType
+            return typeWithNullability.withAnnotations(builder.annotations).toKtType(analysisContext) as KaTypeParameterType
         }
 
     override fun capturedType(
@@ -130,7 +138,11 @@ internal class KaFe10TypeCreator(
                 }
             }
 
-            val kotlinType = CapturedType(typeProjection = projection, isMarkedNullable = builder.isMarkedNullable)
+            val kotlinType = CapturedType(
+                typeProjection = projection,
+                isMarkedNullable = builder.isMarkedNullable,
+                attributes = constructTypeAttributes(builder.annotations)
+            )
             return kotlinType.toKtType(analysisContext) as KaCapturedType
         }
     }
@@ -148,6 +160,7 @@ internal class KaFe10TypeCreator(
                 }
 
                 return DefinitelyNotNullType.makeDefinitelyNotNull(type.fe10Type, avoidCheckingActualTypeNullability = true)
+                    ?.withAnnotations(builder.annotations)
                     ?.toKtType(analysisContext) as KaDefinitelyNotNullType
             }
         }
@@ -198,7 +211,7 @@ internal class KaFe10TypeCreator(
                 }
 
                 val kotlinType = FlexibleTypeImpl(lowerBound.fe10Type.asSimpleType(), upperBound.fe10Type.asSimpleType())
-                return kotlinType.toKtType(analysisContext) as KaFlexibleType
+                return kotlinType.withAnnotations(builder.annotations).toKtType(analysisContext) as KaFlexibleType
             }
         }
     }
@@ -232,7 +245,7 @@ internal class KaFe10TypeCreator(
                 typesToIntersect = conjuncts.map { conjunctType -> (conjunctType as KaFe10Type).fe10Type }
             )
             val simpleType = KotlinTypeFactory.simpleType(
-                attributes = TypeAttributes.Empty,
+                attributes = constructTypeAttributes(builder.annotations),
                 constructor = intersectionConstructor,
                 arguments = emptyList(),
                 nullable = false
@@ -242,10 +255,41 @@ internal class KaFe10TypeCreator(
         }
     }
 
-    override fun dynamicType(): KaDynamicType {
+    override fun dynamicType(init: KaDynamicTypeBuilder.() -> Unit): KaDynamicType {
         withValidityAssertion {
+            val builder = KaBaseDynamicTypeBuilder(this).apply(init)
             val kotlinType = createDynamicType(analysisContext.builtIns)
-            return kotlinType.toKtType(analysisContext) as KaDynamicType
+            return kotlinType.withAnnotations(builder.annotations).toKtType(analysisContext) as KaDynamicType
         }
+    }
+
+    private fun KotlinType.withAnnotations(annotationClassIds: List<ClassId>): KotlinType {
+        if (annotationClassIds.isEmpty()) {
+            return this
+        }
+
+        return replaceAnnotations(constructAnnotations(annotationClassIds))
+    }
+
+    private fun constructTypeAttributes(annotationClassIds: List<ClassId>): TypeAttributes {
+        val annotations = constructAnnotations(annotationClassIds)
+        val annotationsTypeAttribute = AnnotationsTypeAttribute(annotations)
+
+        return TypeAttributes.create(listOf(annotationsTypeAttribute))
+    }
+
+    private fun constructAnnotations(annotationClassIds: List<ClassId>): Annotations = Annotations.create(
+        annotationClassIds.mapNotNull(::constructAnnotationDescriptor)
+    )
+
+    private fun constructAnnotationDescriptor(annotationClassId: ClassId): AnnotationDescriptor? {
+        val descriptor: ClassDescriptor =
+            analysisContext.resolveSession.moduleDescriptor.findClassAcrossModuleDependencies(annotationClassId) ?: return null
+
+        return AnnotationDescriptorImpl(
+            descriptor.defaultType,
+            emptyMap(),
+            SourceElement.NO_SOURCE
+        )
     }
 }
