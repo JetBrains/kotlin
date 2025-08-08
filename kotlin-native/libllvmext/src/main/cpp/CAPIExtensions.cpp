@@ -6,7 +6,6 @@
 #include <llvm/IR/Module.h>
 #include <llvm/Passes/PassBuilder.h>
 #include <llvm/Passes/StandardInstrumentations.h>
-#include <llvm/Support/Timer.h>
 #include <llvm/Transforms/Utils/Cloning.h>
 
 #include "PassesProfileHandler.h"
@@ -41,18 +40,6 @@ void LLVMSetNoTailCall(LLVMValueRef Call) {
 int LLVMInlineCall(LLVMValueRef call) {
   InlineFunctionInfo IFI;
   return InlineFunction(*unwrap<CallBase>(call), IFI).isSuccess();
-}
-
-void LLVMSetTimePasses(int enabled) {
-    llvm::TimePassesIsEnabled = static_cast<bool>(enabled);
-}
-
-void LLVMPrintAllTimersToStdOut() {
-    llvm::TimerGroup::printAll(llvm::outs());
-}
-
-void LLVMClearAllTimers() {
-    llvm::TimerGroup::clearAll();
 }
 
 extern "C" LLVMErrorRef LLVMKotlinRunPasses(

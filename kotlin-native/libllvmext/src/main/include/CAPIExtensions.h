@@ -22,15 +22,6 @@ void LLVMSetNoTailCall(LLVMValueRef Call);
 
 int LLVMInlineCall(LLVMValueRef call);
 
-/// Control LLVM -time-passes flag.
-void LLVMSetTimePasses(int enabled);
-
-/// Print timing results. Useful in combination with LLVMSetTimePasses.
-void LLVMPrintAllTimersToStdOut(void);
-
-/// Clear all LLVM timers. Allows avoiding automatic printing on shutdown
-void LLVMClearAllTimers(void);
-
 /// Run `Passes` on module `M`.
 /// When `Profile` is not `NULL` also collect profiling data and store the result in it.
 LLVMErrorRef LLVMKotlinRunPasses(
