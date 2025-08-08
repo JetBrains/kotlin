@@ -29,7 +29,7 @@ import kotlin.getValue
 // Some symbols below are used in kotlin-native, so they can't be private
 @Suppress("MemberVisibilityCanBePrivate")
 @OptIn(InternalSymbolFinderAPI::class)
-abstract class Symbols(val irBuiltIns: IrBuiltIns) {
+abstract class Symbols(val irBuiltIns: IrBuiltIns) : FrontendSymbols {
     protected val symbolFinder = irBuiltIns.symbolFinder
 
     private fun getClass(name: Name, vararg packageNameSegments: String = arrayOf("kotlin")): IrClassSymbol =
