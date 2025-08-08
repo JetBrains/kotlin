@@ -7,66 +7,105 @@ package server.core
 
 import common.FileChunkingStrategy
 import common.SERVER_CACHE_DIR
-import common.SERVER_COMPILATION_RESULT_DIR
+import common.SERVER_COMPILATION_RESULT_CACHE_DIR
+import common.SERVER_DEPENDENCIES_CACHE_DIR
 import common.SERVER_SOURCE_FILES_CACHE_DIR
 import common.calculateCompilationInputHash
 import common.computeSha256
 import common.copyDirectoryRecursively
+import common.isFileDependency
 import model.CacheItem
 import java.io.File
 import java.nio.file.Files
 import java.nio.file.Paths
+import kotlin.io.path.extension
 
 class CacheHandler(
     private val fileChunkingStrategy: FileChunkingStrategy
 ) {
 
-    private val sourceFilePaths = mutableMapOf<String, String>()
+    private val sourceFiles = mutableMapOf<String, String>()
     private val compilationResults = mutableMapOf<String, String>()
+    private val dependencies = mutableMapOf<String, String>()
 
     init {
         Files.createDirectories(Paths.get(SERVER_SOURCE_FILES_CACHE_DIR))
-        Files.createDirectories(Paths.get(SERVER_COMPILATION_RESULT_DIR))
+        Files.createDirectories(Paths.get(SERVER_COMPILATION_RESULT_CACHE_DIR))
+        Files.createDirectories(Paths.get(SERVER_DEPENDENCIES_CACHE_DIR))
         loadCache()
     }
 
     fun clear() {
-        File(SERVER_CACHE_DIR).deleteRecursively()
-        sourceFilePaths.clear()
+        sourceFiles.clear()
         compilationResults.clear()
+        dependencies.clear()
+        File(SERVER_CACHE_DIR).deleteRecursively()
         Files.createDirectories(Paths.get(SERVER_SOURCE_FILES_CACHE_DIR))
-        Files.createDirectories(Paths.get(SERVER_COMPILATION_RESULT_DIR))
+        Files.createDirectories(Paths.get(SERVER_COMPILATION_RESULT_CACHE_DIR))
+        Files.createDirectories(Paths.get(SERVER_DEPENDENCIES_CACHE_DIR))
     }
 
     fun loadCache() {
-        sourceFilePaths.clear()
+        sourceFiles.clear()
         compilationResults.clear()
+        dependencies.clear()
 
         Files.list(Paths.get(SERVER_SOURCE_FILES_CACHE_DIR)).forEach {
             val fingerprint = it.fileName.toString()
             val actualFilePath = it.toAbsolutePath().toString()
-            sourceFilePaths[fingerprint] = actualFilePath
+            sourceFiles[fingerprint] = actualFilePath
         }
 
-        Files.list(Paths.get(SERVER_COMPILATION_RESULT_DIR)).forEach {
+        Files.list(Paths.get(SERVER_COMPILATION_RESULT_CACHE_DIR)).forEach {
             val fingerprint = it.fileName.toString()
             val actualFilePath = it.toAbsolutePath().toString()
             compilationResults[fingerprint] = actualFilePath
         }
+
+        Files.list(Paths.get(SERVER_DEPENDENCIES_CACHE_DIR)).forEach {
+            val fingerprint = it.fileName.toString()
+            val actualFilePath = it.toAbsolutePath().toString()
+            dependencies[fingerprint] = actualFilePath
+        }
     }
 
-    fun addSourceFile(fileChunks: List<ByteArray>): CacheItem {
-        // TODO here we computing hash again, consider using that one that we received from client
+    fun cacheFile(clientFilePath: String, fileChunks: List<ByteArray>): CacheItem {
+        return if (isFileDependency(clientFilePath)) {
+            cacheSourceFile(fileChunks)
+        } else {
+            cacheDependency(fileChunks)
+        }
+    }
+
+    fun isFileCached(clientFilePath: String, fingerprint: String): Boolean {
+        return if (isFileDependency(clientFilePath)) {
+            dependencies.containsKey(fingerprint)
+        } else {
+            sourceFiles.containsKey(fingerprint)
+        }
+    }
+
+    fun getFile(clientFilePath: String, fingerprint: String): File {
+        return if (isFileDependency(clientFilePath)) {
+            File(dependencies[fingerprint])
+        } else {
+            File(sourceFiles[fingerprint])
+        }
+    }
+
+    fun cacheDependency(fileChunks: List<ByteArray>): CacheItem {
         val fingerprint = computeSha256(fileChunks)
-        val file = fileChunkingStrategy.reconstruct(fileChunks, "${SERVER_SOURCE_FILES_CACHE_DIR}/$fingerprint")
-        sourceFilePaths[fingerprint] = file.absolutePath
+        val file = fileChunkingStrategy.reconstruct(fileChunks, "${SERVER_DEPENDENCIES_CACHE_DIR}/$fingerprint")
+        dependencies[fingerprint] = file.absolutePath
         return CacheItem(fingerprint, file)
     }
 
-    fun getSourceFile(fingerprint: String): File? {
-        return sourceFilePaths[fingerprint]?.let {
-            File(it)
-        }
+    fun cacheSourceFile(fileChunks: List<ByteArray>): CacheItem {
+        // TODO here we computing hash again, consider using that one that we received from client
+        val fingerprint = computeSha256(fileChunks)
+        val file = fileChunkingStrategy.reconstruct(fileChunks, "${SERVER_SOURCE_FILES_CACHE_DIR}/$fingerprint")
+        sourceFiles[fingerprint] = file.absolutePath
+        return CacheItem(fingerprint, file)
     }
 
     fun addCompilationResult(
@@ -80,7 +119,7 @@ class CacheHandler(
             compilerArguments,
             compilerVersion
         )
-        val cachedCompilationResultPath = Paths.get(SERVER_COMPILATION_RESULT_DIR, inputFingerprint)
+        val cachedCompilationResultPath = Paths.get(SERVER_COMPILATION_RESULT_CACHE_DIR, inputFingerprint)
         copyDirectoryRecursively(compilationResultDirectory.toPath(), cachedCompilationResultPath, overwrite = true)
         compilationResults[inputFingerprint] = cachedCompilationResultPath.toAbsolutePath().toString()
         return CacheItem(inputFingerprint, cachedCompilationResultPath.toFile())
@@ -90,7 +129,7 @@ class CacheHandler(
         inputFingerprint: String,
         compilationResultDirectory: File
     ): CacheItem {
-        val cachedCompilationResultPath = Paths.get(SERVER_COMPILATION_RESULT_DIR, inputFingerprint)
+        val cachedCompilationResultPath = Paths.get(SERVER_COMPILATION_RESULT_CACHE_DIR, inputFingerprint)
         copyDirectoryRecursively(compilationResultDirectory.toPath(), cachedCompilationResultPath, overwrite = true)
         compilationResults[inputFingerprint] = cachedCompilationResultPath.toAbsolutePath().toString()
         return CacheItem(inputFingerprint, cachedCompilationResultPath.toFile())
@@ -110,8 +149,7 @@ class CacheHandler(
     }
 
     fun getCompilationResultDirectory(inputFingerprint: String): File {
-        return File("${SERVER_COMPILATION_RESULT_DIR}/$inputFingerprint")
+        return File("${SERVER_COMPILATION_RESULT_CACHE_DIR}/$inputFingerprint")
     }
 
-    private fun isSourceFileCached(fingerprint: String): Boolean = sourceFilePaths.containsKey(fingerprint)
 }
