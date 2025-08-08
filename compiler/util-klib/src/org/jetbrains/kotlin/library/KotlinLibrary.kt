@@ -103,7 +103,6 @@ interface IrLibrary {
     val hasIr: Boolean
     val hasFileEntriesTable: Boolean
     fun irDeclaration(index: Int, fileIndex: Int): ByteArray
-    fun irInlineDeclaration(index: Int, fileIndex: Int): ByteArray
     fun type(index: Int, fileIndex: Int): ByteArray
     fun signature(index: Int, fileIndex: Int): ByteArray
     fun string(index: Int, fileIndex: Int): ByteArray

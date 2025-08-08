@@ -139,10 +139,6 @@ private class IrLibraryFileFromAnnotation(
         error("This method is never supposed to be called")
     }
 
-    override fun inlineDeclaration(index: Int): ProtoDeclaration {
-        error("This method is never supposed to be called")
-    }
-
     override fun type(index: Int): ProtoType = types[index]
     override fun signature(index: Int): ProtoIdSignature = signatures[index]
     override fun string(index: Int): String = strings[index]
