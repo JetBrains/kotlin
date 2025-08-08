@@ -25,7 +25,6 @@ sourceSets {
 
 compilerTests {
     testData(project(":compiler").isolated, "testData/codegen")
-    testData(project(":compiler").isolated, "testData/diagnostics")
 }
 
 val testTags = findProperty("kotlin.native.tests.tags")?.toString()
