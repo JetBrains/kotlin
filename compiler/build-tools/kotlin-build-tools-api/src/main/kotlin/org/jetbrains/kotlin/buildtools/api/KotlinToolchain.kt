@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.buildtools.api.knative.NativePlatformToolchain
  *  ```
  *   val toolchain = KotlinToolchain.loadImplementation(ClassLoader.getSystemClassLoader())
  *   val operation = toolchain.jvm.createJvmCompilationOperation(listOf(Path("/path/foo.kt")), Path("/path/to/outputDirectory"))
- *   toolchain.executeOperation(operation)
+ *   toolchain.createBuildSession().use { it.executeOperation(operation) }
  *  ```
  *
  * @since 2.3.0
@@ -48,21 +48,19 @@ public interface KotlinToolchain {
     public fun getCompilerVersion(): String
 
     /**
-     * Create a new [Build] that can be used to execute multiple [BuildOperations][BuildOperation] while retaining certain caches.
+     * Create a new [BuildSession] that can be used to execute multiple [BuildOperations][BuildOperation] while retaining certain caches.
      *
-     * Remember to call [Build.close] when all build operations are finished.
-     *
-     * @param projectId an optional [ProjectId] to identify this build. If not specified, a random one will be generated.
+     * Remember to call [BuildSession.close] when all build operations are finished.
      */
-    public fun createBuild(projectId: ProjectId? = null): Build
+    public fun createBuildSession(): BuildSession
 
     /**
-     * Represents a project build that can execute (see [executeOperation])
+     * Represents a build session that can execute (see [executeOperation])
      * multiple [BuildOperations][BuildOperation] while retaining certain caches.
      *
-     * Remember to call [close] after all operations are finished and no more operations in this build are planned.
+     * Remember to call [close] after all operations are finished and no more operations in this session are planned.
      */
-    public interface Build : AutoCloseable {
+    public interface BuildSession : AutoCloseable {
         /**
          * Access to the [KotlinToolchain] that created this build.
          */
@@ -110,7 +108,8 @@ public interface KotlinToolchain {
          * Make sure that the classloader has access to a Build Tools API implementation,
          * which usually means that it has the Kotlin compiler and related dependencies in its classpath.
          *
-         * @param classLoader a [ClassLoader] that contains exactly one implementation of KotlinToolchain
+         * @param classLoader a [ClassLoader] that contains exactly one implementation of KotlinToolchain.
+         * If executing operations using [ExecutionPolicy.WithDaemon], a [java.net.URLClassLoader] must be used here.
          */
         @JvmStatic
         public fun loadImplementation(classLoader: ClassLoader): KotlinToolchain =

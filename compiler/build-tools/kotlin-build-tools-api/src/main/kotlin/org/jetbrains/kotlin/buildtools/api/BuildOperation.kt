@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.buildtools.api.trackers.BuildMetricsCollector
  * Instances of concrete implementations for operations can be obtained from [KotlinToolchain] and related classes, e.g.
  * [JvmPlatformToolchain.createClasspathSnapshottingOperation] or [JvmPlatformToolchain.createJvmCompilationOperation]
  *
- * @see KotlinToolchain.Build.executeOperation
+ * @see KotlinToolchain.BuildSession.executeOperation
  * @since 2.3.0
  */
 @ExperimentalBuildToolsApi

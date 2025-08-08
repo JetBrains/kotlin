@@ -30,7 +30,7 @@ import org.jetbrains.kotlin.buildtools.api.jvm.operations.JvmClasspathSnapshotti
  *   val toolchain = KotlinToolchain.loadImplementation(ClassLoader.getSystemClassLoader())
  *   val operation = toolchain.jvm.createClasspathSnapshottingOperation(classesDir)
  *   operation[GRANULARITY] = ClassSnapshotGranularity.CLASS_LEVEL
- *   toolchain.executeOperation(operation)
+ *   toolchain.createBuildSession().use { it.executeOperation(operation) }
  *  ```
  *
  * @since 2.3.0

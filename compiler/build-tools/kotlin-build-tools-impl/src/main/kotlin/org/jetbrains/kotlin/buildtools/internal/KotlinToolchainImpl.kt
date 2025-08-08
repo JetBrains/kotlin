@@ -36,15 +36,15 @@ internal class KotlinToolchainImpl(
 
     override fun getCompilerVersion(): String = KotlinCompilerVersion.VERSION
 
-    override fun createBuild(projectId: ProjectId?): KotlinToolchain.Build {
-        return BuildImpl(this, projectId ?: RandomProjectUUID(), buildIdToSessionFlagFile)
+    override fun createBuildSession(): KotlinToolchain.BuildSession {
+        return BuildSessionImpl(this, RandomProjectUUID(), buildIdToSessionFlagFile)
     }
 
-    private class BuildImpl(
+    private class BuildSessionImpl(
         override val kotlinToolchain: KotlinToolchain,
         override val projectId: ProjectId,
         private val buildIdToSessionFlagFile: MutableMap<ProjectId, File>,
-    ) : KotlinToolchain.Build {
+    ) : KotlinToolchain.BuildSession {
         override fun <R> executeOperation(operation: BuildOperation<R>): R {
             return executeOperation(operation, logger = null)
         }

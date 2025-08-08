@@ -27,7 +27,7 @@ import org.jetbrains.kotlin.buildtools.api.trackers.CompilerLookupTracker
  *   val toolchain = KotlinToolchain.loadImplementation(ClassLoader.getSystemClassLoader())
  *   val operation = toolchain.jvm.createJvmCompilationOperation(listOf(Path("/path/foo.kt")), Path("/path/to/outputDirectory"))
  *   operation.compilerArguments[CommonCompilerArguments.LANGUAGE_VERSION] = KotlinVersion.V2_0
- *   toolchain.executeOperation(operation, toolchain.createDaemonExecutionPolicy())
+ *   toolchain.createBuildSession().use { it.executeOperation(operation, toolchain.createDaemonExecutionPolicy()) }
  *  ```
  *
  * @since 2.3.0

@@ -109,7 +109,7 @@ internal class JvmCompilationOperationImpl(
         val ktsExtensionsAsArray = get(KOTLINSCRIPT_EXTENSIONS)
         val reportCategories = arrayOf(
             ReportCategory.COMPILER_MESSAGE.code, ReportCategory.IC_MESSAGE.code
-        ) // TODO: automagically compute the value, related to BasicCompilerServicesWithResultsFacadeServer
+        ) // TODO: KT-79976 automagically compute the value, related to BasicCompilerServicesWithResultsFacadeServer
         val reportSeverity = if (logger.isDebugEnabled) {
             ReportSeverity.DEBUG.code
         } else {
@@ -386,9 +386,9 @@ internal class JvmCompilationOperationImpl(
 private fun checkJvmFirRequirements(
     arguments: JvmCompilerArgumentsImpl,
 ): Boolean {
-    val languageVersion: LanguageVersion = try {
+    val languageVersion = if (LANGUAGE_VERSION in arguments) {
         arguments[LANGUAGE_VERSION]
-    } catch (_: Exception) {
+    } else {
         null
     }?.let {
         LanguageVersion.fromVersionString(it.stringValue)
