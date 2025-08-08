@@ -5,6 +5,7 @@
 // TARGET_BACKEND: NATIVE
 // `import objcnames` somehow works only with NATIVE_STANDALONE test directive
 // NATIVE_STANDALONE
+// WITH_PLATFORM_LIBS
 // The test checks no collision between kt49034.__darwin_fp_control and platform.posix.__darwin_fp_control
 // The test makes sense only on Apple x64 targets, where `class __darwin_fp_control` present in posix platform lib
 // DISABLE_NATIVE: isAppleTarget=false
