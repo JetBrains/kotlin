@@ -7,18 +7,25 @@
 
 package org.jetbrains.kotlin.gradle.unitTests
 
+import org.gradle.api.publish.PublishingExtension
+import org.gradle.api.publish.maven.MavenPublication
+import org.jetbrains.kotlin.gradle.dependencyResolutionTests.configureRepositoriesForTests
 import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.plugin.KotlinCompilation
 import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.PropertyNames.KOTLIN_NATIVE_ENABLE_KLIBS_CROSSCOMPILATION
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
 import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinNativeTarget
 import org.jetbrains.kotlin.gradle.tasks.KotlinNativeCompile
+import org.jetbrains.kotlin.gradle.unitTests.utils.applyEmbedAndSignEnvironment
 import org.jetbrains.kotlin.gradle.util.*
 import org.jetbrains.kotlin.konan.target.HostManager
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.junit.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
+import kotlin.test.assertNull
+import kotlin.test.assertTrue
+import kotlin.test.fail
 
 class CrossCompilationWithCinteropTests {
 
@@ -73,6 +80,71 @@ class CrossCompilationWithCinteropTests {
                 "compileKotlinMacosX64 task should be disabled on non-macOS"
             )
         }
+    }
+
+    @Test
+    fun `cross compilation with nested cinterops`() {
+        val rootProject = buildProjectWithMPP {
+            kotlin {
+                macosX64()
+                linuxX64()
+                mingwX64()
+            }
+        }
+
+        val projectDependency = buildProjectWithMPP(
+            projectBuilder = {
+                withParent(rootProject)
+                    .withName("projectDependency")
+            },
+            preApplyCode = {
+                configureRepositoriesForTests()
+            },
+            code = {
+                kotlin {
+                    macosX64()
+                    linuxX64()
+                    mingwX64()
+
+                    addDummyCinterop { it.konanTarget == KonanTarget.MACOS_X64 }
+                    addDummyCinterop { it.konanTarget == KonanTarget.LINUX_X64 }
+                    addDummyCinterop { it.konanTarget == KonanTarget.MINGW_X64 }
+                }
+            }
+        )
+
+        rootProject.plugins.apply("maven-publish")
+
+        rootProject.evaluate()
+        projectDependency.evaluate()
+
+        val compileKotlinMacosX64 = rootProject.tasks.findByName("compileKotlinMacosX64") as? KotlinNativeCompile
+        val compileKotlinMingwX64 = rootProject.tasks.findByName("compileKotlinMingwX64") as? KotlinNativeCompile
+        val compileKotlinLinuxX64 = rootProject.tasks.findByName("compileKotlinLinuxX64") as? KotlinNativeCompile
+
+        assertNotNull(compileKotlinMingwX64, "compileKotlinMingwX64 task should be present")
+        assertNotNull(compileKotlinLinuxX64, "compileKotlinLinuxX64 task should be present")
+        assertNotNull(compileKotlinMacosX64, "compileKotlinMacosX64 task should be present")
+
+        val publishing = rootProject.extensions.getByType(PublishingExtension::class.java)
+
+        publishing.publications
+            .withType(MavenPublication::class.java)
+            .findByName("linuxX64") ?: fail("Missing 'linuxX64' publication")
+
+        publishing.publications
+            .withType(MavenPublication::class.java)
+            .findByName("macosX64").let { publication ->
+                if (HostManager.hostIsMac) {
+                    assertNotNull(publication, "Missing 'mingwX64' publication")
+                } else {
+                    assertNull(publication, "'mingwX64' publication should not be registered on non-macOS host")
+                }
+            }
+
+        publishing.publications
+            .withType(MavenPublication::class.java)
+            .findByName("mingwX64") ?: fail("Missing 'mingwX64' publication")
     }
 
     @Test
