@@ -19,6 +19,7 @@ private val supportedHosts = listOf(KonanTarget.LINUX_X64, KonanTarget.MACOS_ARM
 /**
  * Which components are contained in LLVM distribution:
  * - [DEV] - almost every component;
+ * - [DEV_WITH_ASSERTS] - almost every component;
  * - [ESSENTIALS] - only necessary for the Native distribution
  *
  * *NOTE*: `kotlin-native/konan/konan.properties` uses [DEV], because it's required to build the Native compiler itself.
@@ -30,6 +31,11 @@ enum class LLVMDistributionKind {
      * Suitable for building/testing Native compiler itself.
      */
     DEV,
+
+    /**
+     * Same as [DEV], but with assertions enabled.
+     */
+    DEV_WITH_ASSERTS,
 
     /**
      * Includes only necessary components.
@@ -107,6 +113,7 @@ val Project.llvmDistributionSource: LLVMDistributionSource
 val LLVMDistributionKind.nameForProperties: String
     get() = when (this) {
         LLVMDistributionKind.DEV -> "dev"
+        LLVMDistributionKind.DEV_WITH_ASSERTS -> "dev-with-asserts"
         LLVMDistributionKind.ESSENTIALS -> "user"
     }
 
