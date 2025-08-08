@@ -830,14 +830,14 @@ class DurationTest {
 //        test(universeAge, "5.04e+12d")
 //        test(planckTime, "5.40e-44s")
 //        test(Duration.nanoseconds(Double.MAX_VALUE), "2.08e+294d")
-        test(Duration.INFINITE, "Infinity", "53375995583d 20h", "+Infinity")
+        test(Duration.INFINITE, "Infinity", "53375995583d 20h", "+Infinity", "123456789012345d 123456789012345h")
         test(-Duration.INFINITE, "-Infinity", "-(53375995583d 20h)")
     }
 
     @Test
     fun parseDefaultFailing() {
         for (invalidValue in listOf(
-            "", " ", "P", "PT", "P1DT", "P1", "PT1", "0", "+P", "+", "-", "h", "H", "something",
+            "", " ", "P", "PT", "P1DT", "P1", "PT1", "0", "+P", "+", "-", "h", "H", "something", "P,D",
             "1234567890123456789012ns", "Inf", "-Infinity value",
             "1s ", " 1s",
             "1d 1m 1h", "1s 2s",
