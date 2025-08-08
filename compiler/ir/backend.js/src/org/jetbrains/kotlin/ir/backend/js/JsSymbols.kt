@@ -5,9 +5,9 @@
 
 package org.jetbrains.kotlin.ir.backend.js
 
-import org.jetbrains.kotlin.backend.common.ir.FrontendJsSymbols
-import org.jetbrains.kotlin.backend.common.ir.FrontendJsSymbolsImpl
-import org.jetbrains.kotlin.backend.common.ir.FrontendWebSymbols
+import org.jetbrains.kotlin.backend.common.ir.PreSerializationJsSymbols
+import org.jetbrains.kotlin.backend.common.ir.PreSerializationJsSymbolsImpl
+import org.jetbrains.kotlin.backend.common.ir.PreSerializationWebSymbols
 import org.jetbrains.kotlin.backend.common.ir.KlibSymbols
 import org.jetbrains.kotlin.builtins.StandardNames.COLLECTIONS_PACKAGE_FQ_NAME
 import org.jetbrains.kotlin.builtins.StandardNames.TEXT_PACKAGE_FQ_NAME
@@ -28,7 +28,7 @@ import org.jetbrains.kotlin.name.JsStandardClassIds.BASE_JS_PACKAGE
 // TODO KT-77388 rename to `BackendWebSymbolsImpl`
 abstract class JsCommonSymbols(
     irBuiltIns: IrBuiltIns,
-) : FrontendWebSymbols, KlibSymbols(irBuiltIns) {
+) : PreSerializationWebSymbols, KlibSymbols(irBuiltIns) {
     @OptIn(InternalSymbolFinderAPI::class)
     val coroutineSymbols = JsCommonCoroutineSymbols(irBuiltIns.symbolFinder)
 }
@@ -38,7 +38,7 @@ class JsSymbols(
     irBuiltIns: IrBuiltIns,
     private val stageController: StageController,
     private val intrinsics: JsIntrinsics,
-) : FrontendJsSymbols by FrontendJsSymbolsImpl(irBuiltIns), JsCommonSymbols(irBuiltIns) {
+) : PreSerializationJsSymbols by PreSerializationJsSymbolsImpl(irBuiltIns), JsCommonSymbols(irBuiltIns) {
     override val throwNullPointerException =
         symbolFinder.topLevelFunction(kotlinPackageFqn, "THROW_NPE")
 
