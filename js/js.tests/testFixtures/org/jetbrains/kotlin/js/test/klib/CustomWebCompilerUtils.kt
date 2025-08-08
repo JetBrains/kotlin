@@ -65,18 +65,24 @@ private fun createCustomWebCompilerSettings(
     }
 
     override val version: String get() = artifacts.version
-    override val stdlib: File by lazy { artifacts.resolve(stdlibArtifactName, "klib") }
+    override val stdlib: File by lazy { artifacts.resolve(stdlibArtifactName, "klib")!! }
 
     override val kotlinTest: File by lazy {
         // Older versions of Kotlin/JS 'kotlin-test' had KLIBs with *.jar file extension.
-        artifacts.resolve(kotlinTestArtifactName, "klib", "jar")
+        artifacts.resolve(kotlinTestArtifactName, "klib", "jar")!!
     }
 
     override val customCompiler: CustomWebCompiler by lazy {
         CustomWebCompiler(
             listOfNotNull(
+                // The main embeddable compiler artifact.
                 artifacts.resolve("kotlin-compiler-embeddable", "jar"),
-                artifacts.resolveOptionalTrove4j(),
+
+                // This artifact was removed in Kotlin 2.2.0-Beta1.
+                // But it is still available in older compiler versions, where we need to load it.
+                artifacts.resolve("trove4j", "jar", sameVersionAsCompiler = false, optional = true),
+
+                // The Kotlin/JVM standard library.
                 artifacts.resolve("kotlin-stdlib", "jar"),
             )
         )
@@ -122,33 +128,39 @@ private sealed interface CustomWebCompilerArtifacts {
     val version: String
 
     /**
-     * Resolves the mandatory artifact '$baseName-$version.$extension', where $extension is one of the passed [extensions].
+     * Resolves the '$baseName-$version.$extension' artifact, where $extension is one of the passed [extensions].
+     * If [sameVersionAsCompiler] is `true`, then the artifact should have exactly the same version as [version].
+     * If [optional] is `true`, then the artifact is returned only if it exists.
      */
-    fun resolve(baseName: String, vararg extensions: String): File
-
-    /**
-     * This artifact was removed in Kotlin 2.2.0-Beta1.
-     * But it is still available in older compiler versions, where we need to load it.
-     */
-    fun resolveOptionalTrove4j(): File?
+    fun resolve(baseName: String, vararg extensions: String, sameVersionAsCompiler: Boolean = true, optional: Boolean = false): File?
 
     private class Resolvable(override val version: String, private val artifactsDir: File) : CustomWebCompilerArtifacts {
-        override fun resolve(baseName: String, vararg extensions: String): File {
-            val candidates: List<File> = extensions.map { extension -> artifactsDir.resolve("$baseName-$version.$extension") }
-            return candidates.firstOrNull { it.exists() } ?: fail("Artifact $baseName is not found. Candidates tested: $candidates")
-        }
+        override fun resolve(baseName: String, vararg extensions: String, sameVersionAsCompiler: Boolean, optional: Boolean): File? {
+            val artifacts = artifactsDir.listFiles().orEmpty().mapNotNull { file ->
+                if (file.isFile && file.extension in extensions) {
+                    val nameWithoutExtension = file.nameWithoutExtension
 
-        override fun resolveOptionalTrove4j(): File? {
-            return artifactsDir.listFiles()?.firstOrNull { file ->
-                file.isFile && file.name.run { startsWith("trove4j") && endsWith("jar") }
+                    if ((sameVersionAsCompiler && nameWithoutExtension == "$baseName-$version")
+                        || (!sameVersionAsCompiler && nameWithoutExtension.startsWith("$baseName-"))
+                    ) {
+                        return@mapNotNull file
+                    }
+                }
+
+                null
+            }
+
+            return when (artifacts.size) {
+                0 -> if (optional) null else fail("Artifact $baseName is not found.")
+                1 -> artifacts.first()
+                else -> fail("More than one $baseName artifact is found: $artifacts")
             }
         }
     }
 
     private class Unresolvable(val reason: String) : CustomWebCompilerArtifacts {
         override val version get() = fail(reason)
-        override fun resolve(baseName: String, vararg extensions: String) = fail(reason)
-        override fun resolveOptionalTrove4j() = fail(reason)
+        override fun resolve(baseName: String, vararg extensions: String, sameVersionAsCompiler: Boolean, optional: Boolean) = fail(reason)
     }
 
     companion object {
