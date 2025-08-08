@@ -44,7 +44,7 @@ internal class GranularModifiersBox(
         private val fieldUpdater = AtomicReferenceFieldUpdater.newUpdater(
             /* tclass = */ GranularModifiersBox::class.java,
             /* vclass = */ PersistentMap::class.java,
-            /* fieldName = */ "modifiersMapReference",
+            /* fieldName = */ GranularModifiersBox::modifiersMapReference.name,
         )
 
         internal val VISIBILITY_MODIFIERS = setOf(PsiModifier.PUBLIC, PsiModifier.PACKAGE_LOCAL, PsiModifier.PROTECTED, PsiModifier.PRIVATE)
