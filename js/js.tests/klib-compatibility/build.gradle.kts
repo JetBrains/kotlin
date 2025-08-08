@@ -17,6 +17,10 @@ node {
     }
 }
 
+repositories {
+    maven("https://packages.jetbrains.team/maven/p/kt/experimental")
+}
+
 dependencies {
     testApi(platform(libs.junit.bom))
     testImplementation(libs.junit.jupiter.api)
