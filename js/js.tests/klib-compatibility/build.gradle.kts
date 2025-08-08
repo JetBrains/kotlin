@@ -115,6 +115,7 @@ fun Project.customFirstPhaseTest(rawVersion: String): TaskProvider<out Task> {
 customFirstPhaseTest("1.9.20")
 customFirstPhaseTest("2.0.0")
 customFirstPhaseTest("2.1.0")
+customFirstPhaseTest("2.2.0")
 // TODO: Add a new task for the "custom-first-phase" test here.
 
 tasks.test {
