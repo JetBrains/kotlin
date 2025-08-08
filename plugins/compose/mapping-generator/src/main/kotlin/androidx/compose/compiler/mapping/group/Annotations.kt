@@ -9,10 +9,10 @@ import androidx.compose.compiler.mapping.bytecode.ComposeIds
 import org.objectweb.asm.tree.AnnotationNode
 import org.objectweb.asm.tree.MethodNode
 
-private val MethodNode.allAnnotations: List<AnnotationNode>
-    get() = buildList {
-        addAll(visibleAnnotations.orEmpty())
-        addAll(invisibleAnnotations.orEmpty())
+private val MethodNode.allAnnotations: Sequence<AnnotationNode>
+    get() = sequence {
+        yieldAll(visibleAnnotations.orEmpty())
+        yieldAll(invisibleAnnotations.orEmpty())
     }
 
 internal fun MethodNode.readFunctionKeyMetaAnnotation(): Int? {
