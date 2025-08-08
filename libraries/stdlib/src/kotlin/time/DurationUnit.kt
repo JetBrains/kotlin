@@ -89,7 +89,7 @@ internal inline fun String.durationUnitByShortNameOrNull(start: Int): DurationUn
 }
 
 @Suppress("REDUNDANT_ELSE_IN_WHEN")
-internal val DurationUnit.multiplier: Double
+internal val DurationUnit.fractionMultiplier: Double
     get() = when (this) {
         DurationUnit.NANOSECONDS -> 0.000000000000001
         DurationUnit.MICROSECONDS -> 0.000000000001
@@ -99,6 +99,16 @@ internal val DurationUnit.multiplier: Double
         DurationUnit.HOURS -> 0.0036
         DurationUnit.DAYS -> 0.0864
         else -> error("Unknown unit: $this")
+    }
+
+internal val DurationUnit.millisMultiplier: Long
+    get() = when (this) {
+        DurationUnit.DAYS -> MILLIS_IN_DAY
+        DurationUnit.HOURS -> MILLIS_IN_HOUR
+        DurationUnit.MINUTES -> MILLIS_IN_MINUTE
+        DurationUnit.SECONDS -> MILLIS_IN_SECOND
+        DurationUnit.MILLISECONDS -> 1L
+        else -> error("Wrong unit for millisMultiplier: $this")
     }
 
 internal val DurationUnit.length: Int
