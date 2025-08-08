@@ -81,6 +81,13 @@ abstract class DefaultKotlinBasePlugin : KotlinBasePlugin {
         BuildFusService.registerIfAbsent(project, pluginVersion, buildUidService)
         PropertiesBuildService.registerIfAbsent(project)
 
+        val crossCompilationService = CrossCompilationService.registerIfAbsent(project).get()
+        project.launchInStage(KotlinPluginLifecycle.Stage.AfterEvaluateBuildscript) {
+            if (project.kotlinPropertiesProvider.enableKlibsCrossCompilation) {
+                crossCompilationService.detectCinteropUsagesInMultipleProjects(project, pluginVersion)
+            }
+        }
+
         project.gradle.projectsEvaluated {
             whenBuildEvaluated(project)
         }
