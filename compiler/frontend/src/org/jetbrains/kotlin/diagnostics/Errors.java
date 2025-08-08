@@ -1243,6 +1243,8 @@ public interface Errors {
             DiagnosticFactory1.create(WARNING, PositioningStrategies.USELESS_ELVIS);
     DiagnosticFactory0<KtBinaryExpression> USELESS_ELVIS_RIGHT_IS_NULL =
             DiagnosticFactory0.create(WARNING, PositioningStrategies.USELESS_ELVIS);
+    DiagnosticFactory0<KtBinaryExpression> USELESS_ELVIS_LEFT_IS_NULL =
+            DiagnosticFactory0.create(WARNING, PositioningStrategies.USELESS_ELVIS);
 
     // Compile-time values
 
