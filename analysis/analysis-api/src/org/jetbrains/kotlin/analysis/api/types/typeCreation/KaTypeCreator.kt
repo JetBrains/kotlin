@@ -124,6 +124,7 @@ public interface KaTypeCreator : KaLifetimeOwner {
     @KaExperimentalApi
     public fun definitelyNotNullType(
         type: KaCapturedType,
+        init: KaDefinitelyNotNullTypeBuilder.() -> Unit = {}
     ): KaType
 
     /**
@@ -135,6 +136,7 @@ public interface KaTypeCreator : KaLifetimeOwner {
     @KaExperimentalApi
     public fun definitelyNotNullType(
         type: KaTypeParameterType,
+        init: KaDefinitelyNotNullTypeBuilder.() -> Unit = {}
     ): KaType
 
     /**
@@ -193,6 +195,8 @@ public interface KaTypeCreator : KaLifetimeOwner {
      * If there are no conjuncts, returns [Any?][org.jetbrains.kotlin.analysis.api.components.KaBuiltinTypes.nullableAny]
      * as a neutral element of intersection operation.
      * If a single conjunct is passed, returns that conjunct.
+     *
+     * Note that currently it's impossible to provide annotations in [KaIntersectionTypeBuilder] due to KT-80749.
      */
     @KaExperimentalApi
     public fun intersectionType(init: KaIntersectionTypeBuilder.() -> Unit = {}): KaType
@@ -201,7 +205,7 @@ public interface KaTypeCreator : KaLifetimeOwner {
      * Builds a [KaDynamicType].
      */
     @KaExperimentalApi
-    public fun dynamicType(): KaDynamicType
+    public fun dynamicType(init: KaDynamicTypeBuilder.() -> Unit = {}): KaDynamicType
 
     /**
      * Builds a [KaTypeArgumentWithVariance].
@@ -240,13 +244,71 @@ public annotation class KaTypeCreatorDslMarker
 public interface KaTypeBuilder : KaTypeCreator
 
 /**
+ * A builder interface derived from [KaTypeBuilder] allowing creating annotated types.
+ *
+ * At the moment, the builder only supports annotations that accept no value arguments.
+ *
+ * Should only be used for types, for which constructing annotations makes sense.
+ */
+@KaExperimentalApi
+@SubclassOptInRequired(KaImplementationDetail::class)
+public interface KaTypeBuilderWithAnnotations : KaTypeBuilder {
+    /**
+     * A list of annotation [ClassId]s, which are used to construct annotations of the resulting type.
+     *
+     * @see KaType.annotations
+     */
+    public val annotations: List<ClassId>
+
+    /**
+     * Adds [annotationClassId] to [annotations].
+     *
+     * Note that the builder only supports annotations that accept no value arguments.
+     * All annotation classes requiring value arguments are discarded.
+     *
+     * @see KaType.annotations
+     */
+    public fun annotation(annotationClassId: ClassId)
+
+    /**
+     * Adds the annotation produced by [annotationClassId] to [annotations].
+     *
+     * Note that the builder only supports annotations that accept no value arguments.
+     * All annotation classes requiring value arguments are discarded.
+     *
+     * @see KaType.annotations
+     */
+    public fun annotation(annotationClassId: () -> ClassId)
+
+    /**
+     * Adds [annotationClassIds] to [annotations].
+     *
+     * Note that the builder only supports annotations that accept no value arguments.
+     * All annotation classes requiring value arguments are discarded.
+     *
+     * @see KaType.annotations
+     */
+    public fun annotations(annotationClassIds: Iterable<ClassId>)
+
+    /**
+     * Adds [annotationClassIds] to [annotations].
+     *
+     * Note that the builder only supports annotations that accept no value arguments.
+     * All annotation classes requiring value arguments are discarded.
+     *
+     * @see KaType.annotations
+     */
+    public fun annotations(annotationClassIds: () -> Iterable<ClassId>)
+}
+
+/**
  * A builder for [KaClassType].
  *
  * @see KaTypeCreator.classType
  */
 @KaExperimentalApi
 @SubclassOptInRequired(KaImplementationDetail::class)
-public interface KaClassTypeBuilder : KaTypeBuilder {
+public interface KaClassTypeBuilder : KaTypeBuilderWithAnnotations {
     /**
      * Whether the type is marked as nullable, i.e., the type is represented as `T?`.
      *
@@ -305,7 +367,7 @@ public interface KaClassTypeBuilder : KaTypeBuilder {
  */
 @KaExperimentalApi
 @SubclassOptInRequired(KaImplementationDetail::class)
-public interface KaTypeParameterTypeBuilder : KaTypeBuilder {
+public interface KaTypeParameterTypeBuilder : KaTypeBuilderWithAnnotations {
     /**
      * Whether the type is marked as nullable, i.e., the type is represented as `T?`.
      *
@@ -323,7 +385,7 @@ public interface KaTypeParameterTypeBuilder : KaTypeBuilder {
  */
 @KaExperimentalApi
 @SubclassOptInRequired(KaImplementationDetail::class)
-public interface KaArrayTypeBuilder : KaTypeBuilder {
+public interface KaArrayTypeBuilder : KaTypeBuilderWithAnnotations {
     /**
      * Whether the resulting array type is marked as nullable, i.e., the type is represented as `Array<T>?`.
      *
@@ -360,7 +422,7 @@ public interface KaArrayTypeBuilder : KaTypeBuilder {
  */
 @KaExperimentalApi
 @SubclassOptInRequired(KaImplementationDetail::class)
-public interface KaCapturedTypeBuilder : KaTypeBuilder {
+public interface KaCapturedTypeBuilder : KaTypeBuilderWithAnnotations {
     /**
      * Whether the type is marked as nullable, i.e., the type is represented as `T?`.
      *
@@ -378,7 +440,7 @@ public interface KaCapturedTypeBuilder : KaTypeBuilder {
  */
 @KaExperimentalApi
 @SubclassOptInRequired(KaImplementationDetail::class)
-public interface KaDefinitelyNotNullTypeBuilder : KaTypeBuilder
+public interface KaDefinitelyNotNullTypeBuilder : KaTypeBuilderWithAnnotations
 
 /**
  * A builder for [KaFlexibleType].
@@ -387,7 +449,7 @@ public interface KaDefinitelyNotNullTypeBuilder : KaTypeBuilder
  */
 @KaExperimentalApi
 @SubclassOptInRequired(KaImplementationDetail::class)
-public interface KaFlexibleTypeBuilder : KaTypeBuilder {
+public interface KaFlexibleTypeBuilder : KaTypeBuilderWithAnnotations {
     /**
      * The lower bound, such as `String` in `String!`.
      *
@@ -440,3 +502,12 @@ public interface KaIntersectionTypeBuilder : KaTypeBuilder {
      */
     public fun conjuncts(conjuncts: Iterable<KaType>)
 }
+
+/**
+ * A builder for [KaDynamicType].
+ *
+ * @see KaTypeCreator.dynamicType
+ */
+@KaExperimentalApi
+@SubclassOptInRequired(KaImplementationDetail::class)
+public interface KaDynamicTypeBuilder : KaTypeBuilderWithAnnotations
