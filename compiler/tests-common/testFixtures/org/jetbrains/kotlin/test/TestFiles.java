@@ -11,11 +11,11 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.jetbrains.kotlin.ObsoleteTestInfrastructure;
 import org.jetbrains.kotlin.TestHelperGeneratorKt;
-import org.jetbrains.kotlin.codegen.forTestCompile.ForTestCompileRuntime;
 
+import java.io.BufferedReader;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -45,9 +45,6 @@ public class TestFiles {
     private static final Pattern FILE_PATTERN = Pattern.compile("//\\s*FILE:\\s*(.*)(?:\\r\\n|\\n)");
 
     private static final Pattern LINE_SEPARATOR_PATTERN = Pattern.compile("\\r\\n|\\r|\\n");
-
-    // Must be same as in AdditionalDiagnosticsSourceFilesProvider.directiveToFileMap
-    private static final String checkTypeWithExact = ForTestCompileRuntime.transformTestDataPath("compiler/testData/diagnostics/helpers/types/checkTypeWithExact.kt").getPath();
 
     @NotNull
     public static <M extends KotlinBaseTest.TestModule, F> List<F> createTestFiles(@Nullable String testFileName, String expectedText, TestFileFactory<M, F> factory) {
@@ -173,12 +170,14 @@ public class TestFiles {
 
         if (isDirectiveDefined(expectedText, "CHECK_TYPE_WITH_EXACT")) {
             M supportModule = hasModules ? factory.createModule("support", Collections.emptyList(), Collections.emptyList(), Collections.emptyList()) : null;
+            InputStream checkTypeWithExact = TestFiles.class.getClassLoader().getResourceAsStream("legacy/diagnostics/helpers/types/checkTypeWithExact.kt");
             String checkTypeWithExactText;
-            try {
-                checkTypeWithExactText = String.join("\n", Files.readAllLines(Paths.get(checkTypeWithExact)));
-            } catch (IOException ioe) {
-                checkTypeWithExactText = "ERROR: File " +
-                                         checkTypeWithExact + " is required, when CHECK_TYPE_WITH_EXACT directive is specified";
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(checkTypeWithExact))) {
+                checkTypeWithExactText = reader.lines().collect(Collectors.joining("\n"));
+            }
+            catch (IOException ioe) {
+                checkTypeWithExactText =
+                        "ERROR: Failed to read checkTypeWithExact.kt file which is required when CHECK_TYPE_WITH_EXACT directive is specified";
             }
             testFiles.add(
                     factory.createFile(
