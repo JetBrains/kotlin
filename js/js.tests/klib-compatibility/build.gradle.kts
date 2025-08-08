@@ -82,6 +82,15 @@ projectTest(
     useJUnitPlatform { includeTags("custom-first-phase") }
 }
 
+projectTest(
+    taskName = "testCustomSecondPhase",
+    jUnitMode = JUnitMode.JUnit5,
+) {
+    setUpJsBoxTests()
+    setUpCustomCompiler()
+    useJUnitPlatform { includeTags("custom-second-phase") }
+}
+
 @Suppress("unused")
 val generateTests by generator("org.jetbrains.kotlin.generators.tests.GenerateJsKlibCompatibilityTestsKt") {
     dependsOn(":compiler:generateTestData")

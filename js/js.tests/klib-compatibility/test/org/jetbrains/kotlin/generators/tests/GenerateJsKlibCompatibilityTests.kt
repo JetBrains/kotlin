@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.generators.tests
 
 import org.jetbrains.kotlin.generators.generateTestGroupSuiteWithJUnit5
 import org.jetbrains.kotlin.js.test.klib.AbstractCustomJsCompilerFirstPhaseTest
+import org.jetbrains.kotlin.js.test.klib.AbstractCustomJsCompilerSecondPhaseTest
 
 fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
@@ -16,6 +17,12 @@ fun main(args: Array<String>) {
     generateTestGroupSuiteWithJUnit5(args) {
         testGroup("js/js.tests/klib-compatibility/tests-gen", "compiler/testData/codegen", testRunnerMethodName = "runTest") {
             testClass<AbstractCustomJsCompilerFirstPhaseTest> {
+                model("box", excludeDirs = jvmOnlyBoxTests)
+                model("boxInline")
+            }
+        }
+        testGroup("js/js.tests/klib-compatibility/tests-gen", "compiler/testData/codegen", testRunnerMethodName = "runTest") {
+            testClass<AbstractCustomJsCompilerSecondPhaseTest> {
                 model("box", excludeDirs = jvmOnlyBoxTests)
                 model("boxInline")
             }
