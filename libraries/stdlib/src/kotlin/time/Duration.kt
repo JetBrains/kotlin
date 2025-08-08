@@ -1024,7 +1024,6 @@ private inline fun parseDefaultStringFormat(
     }
 
     var totalMillis = 0L
-    var totalMicros = 0L
     var totalNanos = 0L
     var prevUnit: DurationUnit? = null
     var isFirstComponent = true
@@ -1064,11 +1063,11 @@ private inline fun parseDefaultStringFormat(
         when (unit) {
             DurationUnit.MICROSECONDS -> {
                 totalMillis += integralValue / MICROS_IN_MILLIS
-                totalMicros = integralValue % MICROS_IN_MILLIS
+                totalNanos += (integralValue % MICROS_IN_MILLIS) * NANOS_IN_MICROS
             }
             DurationUnit.NANOSECONDS -> {
-                totalMicros += integralValue / NANOS_IN_MICROS
-                totalNanos += integralValue % NANOS_IN_MICROS
+                totalMillis += integralValue / NANOS_IN_MILLIS
+                totalNanos += integralValue % NANOS_IN_MILLIS
             }
             else -> {
                 val multiplier = unit.millisMultiplier
@@ -1083,9 +1082,7 @@ private inline fun parseDefaultStringFormat(
         }
     }
 
-    return totalMillis.toDuration(DurationUnit.MILLISECONDS) +
-            totalMicros.toDuration(DurationUnit.MICROSECONDS) +
-            totalNanos.toDuration(DurationUnit.NANOSECONDS)
+    return totalMillis.toDuration(DurationUnit.MILLISECONDS) + totalNanos.toDuration(DurationUnit.NANOSECONDS)
 }
 
 @kotlin.internal.InlineOnly
