@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.StandardNames.KOTLIN_REFLECT_FQ_NAME
 import org.jetbrains.kotlin.ir.InternalSymbolFinderAPI
 import org.jetbrains.kotlin.ir.IrBuiltIns
-import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrParameterKind
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrCall
@@ -29,7 +28,7 @@ import kotlin.getValue
 // Some symbols below are used in kotlin-native, so they can't be private
 @Suppress("MemberVisibilityCanBePrivate")
 @OptIn(InternalSymbolFinderAPI::class)
-abstract class Symbols(val irBuiltIns: IrBuiltIns) {
+abstract class Symbols(val irBuiltIns: IrBuiltIns) : PreSerializationSymbols {
     protected val symbolFinder = irBuiltIns.symbolFinder
 
     private fun getClass(name: Name, vararg packageNameSegments: String = arrayOf("kotlin")): IrClassSymbol =
