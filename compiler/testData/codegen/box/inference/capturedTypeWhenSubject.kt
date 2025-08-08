@@ -1,4 +1,8 @@
 // DUMP_IR
+
+// IGNORE_KLIB_BACKEND_ERRORS_WITH_CUSTOM_FIRST_PHASE: 2.0.0 2.1.0
+// ^^^ KT-75983 fixed in 2.2.0-Beta2
+
 sealed interface OperandType<J> {
     fun operand1(instruction: OneOperand<*, *>): J = instruction.operand1 as J
 }

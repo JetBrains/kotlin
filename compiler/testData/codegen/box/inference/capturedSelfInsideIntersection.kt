@@ -2,6 +2,9 @@
 // WITH_REFLECT
 // DUMP_IR
 
+// IGNORE_KLIB_BACKEND_ERRORS_WITH_CUSTOM_FIRST_PHASE: 2.0.0 2.1.0
+// ^^^ KT-74999 fixed in 2.2.0-Beta2
+
 import kotlin.reflect.KClass
 
 interface GraphQlTester {

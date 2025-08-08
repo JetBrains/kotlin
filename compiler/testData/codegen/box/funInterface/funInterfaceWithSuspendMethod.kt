@@ -1,6 +1,9 @@
 // WITH_STDLIB
 // ISSUE: KT-68849
 
+// IGNORE_KLIB_BACKEND_ERRORS_WITH_CUSTOM_FIRST_PHASE: 2.0.0
+// ^^^ KT-68849 fixed in 2.0.20-Beta2
+
 import kotlin.coroutines.Continuation
 import kotlin.coroutines.EmptyCoroutineContext
 import kotlin.coroutines.startCoroutine
