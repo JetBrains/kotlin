@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.analysis.api.fir.components.*
 import org.jetbrains.kotlin.analysis.api.fir.symbols.KaFirSymbolProvider
 import org.jetbrains.kotlin.analysis.api.impl.base.KaBaseSession
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseAnalysisScopeProviderImpl
+import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseTypeCreatorProvider
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaRendererImpl
 import org.jetbrains.kotlin.analysis.api.impl.base.util.createSession
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
@@ -72,6 +73,12 @@ private constructor(
     visibilityChecker = KaFirVisibilityChecker(analysisSessionProvider),
     originalPsiProvider = KaFirOriginalPsiProvider(analysisSessionProvider),
     typeCreator = KaFirTypeCreator(analysisSessionProvider),
+    typeCreatorProvider = KaBaseTypeCreatorProvider(
+        analysisSessionProvider,
+        org.jetbrains.kotlin.analysis.api.fir.types.typeCreation.KaFirTypeCreator(
+            analysisSessionProvider
+        )
+    ),
     analysisScopeProvider = KaBaseAnalysisScopeProviderImpl(analysisSessionProvider, useSiteScope),
     signatureSubstitutor = KaFirSignatureSubstitutor(analysisSessionProvider),
     resolveExtensionInfoProvider = KaFirResolveExtensionInfoProvider(analysisSessionProvider),
