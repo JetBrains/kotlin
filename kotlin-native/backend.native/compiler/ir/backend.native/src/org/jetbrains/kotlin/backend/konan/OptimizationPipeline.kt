@@ -215,9 +215,6 @@ abstract class LlvmOptimizationPipeline(
 
     fun execute(llvmModule: LLVMModuleRef) {
         initLLVMOnce()
-        if (config.timePasses) {
-            LLVMSetTimePasses(1)
-        }
         executeCustomPreprocessing(config, llvmModule)
         val passDescription = passes.joinToString(",")
         logger?.log {
@@ -233,7 +230,7 @@ abstract class LlvmOptimizationPipeline(
             """.trimIndent()
         }
         if (passDescription.isEmpty()) return
-        val (errorCode, profile) = withLLVMPassesProfile(performanceManager != null, pipelineName) {
+        val (errorCode, profile) = withLLVMPassesProfile(performanceManager != null || config.timePasses, pipelineName) {
             LLVMKotlinRunPasses(
                     llvmModule,
                     passDescription,
@@ -247,10 +244,9 @@ abstract class LlvmOptimizationPipeline(
         }
         profile?.let {
             performanceManager?.addLlvmPassesProfile(it)
-        }
-        if (config.timePasses) {
-            LLVMPrintAllTimersToStdOut()
-            LLVMClearAllTimers()
+            if (config.timePasses) {
+                it.print()
+            }
         }
     }
 

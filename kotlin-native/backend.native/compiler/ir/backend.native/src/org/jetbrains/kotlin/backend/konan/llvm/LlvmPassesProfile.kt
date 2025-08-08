@@ -67,6 +67,9 @@ internal inline fun <T> withLLVMPassesProfile(
     }
 }
 
+/**
+ * Record [LlvmPassesProfile] in [PerformanceManager] as dynamic stats.
+ */
 internal fun PerformanceManager.addLlvmPassesProfile(profile: LlvmPassesProfile) {
     addOtherUnitStats(UnitStats(
             name = "$presentableName (llvm)",
@@ -86,4 +89,15 @@ internal fun PerformanceManager.addLlvmPassesProfile(profile: LlvmPassesProfile)
                 DynamicStats(PhaseType.Backend, pass, duration)
             }
     ))
+}
+
+/**
+ * Print out [LlvmPassesProfile] in a format similar to `-Xprofile-phases`.
+ *
+ * @see org.jetbrains.kotlin.config.phaser.NamedCompilerPhase.runAndProfile
+ */
+internal fun LlvmPassesProfile.print() {
+    entries.forEach { (pass, duration) ->
+        println("$pass: ${duration.millis} msec")
+    }
 }
