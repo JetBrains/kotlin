@@ -978,6 +978,30 @@ public class LibraryGetOrBuildFirTestGenerated extends AbstractLibraryGetOrBuild
     }
 
     @Test
+    @TestMetadata("ignorableFunctionsChecker.kt")
+    public void testIgnorableFunctionsChecker() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/mustUseReturnValue/ignorableFunctionsChecker.kt");
+    }
+
+    @Test
+    @TestMetadata("ignorableFunctionsCheckerOverriding.kt")
+    public void testIgnorableFunctionsCheckerOverriding() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/mustUseReturnValue/ignorableFunctionsCheckerOverriding.kt");
+    }
+
+    @Test
+    @TestMetadata("ignorableFunctionsFull.kt")
+    public void testIgnorableFunctionsFull() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/mustUseReturnValue/ignorableFunctionsFull.kt");
+    }
+
+    @Test
+    @TestMetadata("ignorableFunctionsFullOverriding.kt")
+    public void testIgnorableFunctionsFullOverriding() {
+      runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/mustUseReturnValue/ignorableFunctionsFullOverriding.kt");
+    }
+
+    @Test
     @TestMetadata("markedFullEnabled.kt")
     public void testMarkedFullEnabled() {
       runTest("analysis/low-level-api-fir/testData/getOrBuildFirBinary/mustUseReturnValue/markedFullEnabled.kt");
