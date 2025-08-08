@@ -691,6 +691,11 @@ public class ParsingTestGenerated extends AbstractParsingTest {
       runTest("compiler/testData/psi/multifileClass2.kt");
     }
 
+    @TestMetadata("mustUseReturnValueAndOverrides.kt")
+    public void testMustUseReturnValueAndOverrides() {
+      runTest("compiler/testData/psi/mustUseReturnValueAndOverrides.kt");
+    }
+
     @TestMetadata("mustUseReturnValueFullEnabled.kt")
     public void testMustUseReturnValueFullEnabled() {
       runTest("compiler/testData/psi/mustUseReturnValueFullEnabled.kt");

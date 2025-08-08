@@ -817,6 +817,12 @@ public class DecompiledTextTestGenerated extends AbstractDecompiledTextTest {
   }
 
   @Test
+  @TestMetadata("mustUseReturnValueAndOverrides.kt")
+  public void testMustUseReturnValueAndOverrides() {
+    runTest("compiler/testData/psi/mustUseReturnValueAndOverrides.kt");
+  }
+
+  @Test
   @TestMetadata("mustUseReturnValueFullEnabled.kt")
   public void testMustUseReturnValueFullEnabled() {
     runTest("compiler/testData/psi/mustUseReturnValueFullEnabled.kt");
