@@ -43700,6 +43700,12 @@ public class IrBlackBoxCodegenTestGenerated extends AbstractIrBlackBoxCodegenTes
     }
 
     @Test
+    @TestMetadata("kt79977_withIncrementalCompilation.kt")
+    public void testKt79977_withIncrementalCompilation() {
+      runTest("compiler/testData/codegen/box/primitiveTypes/kt79977_withIncrementalCompilation.kt");
+    }
+
+    @Test
     @TestMetadata("kt828.kt")
     public void testKt828() {
       runTest("compiler/testData/codegen/box/primitiveTypes/kt828.kt");
