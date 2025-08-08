@@ -5,8 +5,12 @@
 
 package org.jetbrains.kotlin.js.parser.antlr
 
+import JavaScriptLexer
+import JavaScriptParser
 import com.google.gwt.dev.js.rhino.CodePosition
 import com.google.gwt.dev.js.rhino.ErrorReporter
+import org.antlr.v4.runtime.CharStreams
+import org.antlr.v4.runtime.CommonTokenStream
 import org.jetbrains.kotlin.js.backend.ast.JsFunction
 import org.jetbrains.kotlin.js.backend.ast.JsScope
 import org.jetbrains.kotlin.js.backend.ast.JsStatement
@@ -18,7 +22,7 @@ object JsAntlrParser {
         scope: JsScope,
         fileName: String
     ): List<JsStatement>? {
-
+        val parser = createJsParser(code, )
     }
 
     fun parseExpressionOrStatement(
@@ -40,5 +44,16 @@ object JsAntlrParser {
         scope: JsScope
     ): JsFunction? {
 
+    }
+
+    private fun createJsParser(file: String, code: String, startPosition: CodePosition): JavaScriptParser {
+        val inputStream = CharStreams.fromString(code, file)
+        val offsetStream = OffsetCharStream(
+            inputStream,
+            startPosition.line,
+            startPosition.offset)
+        val lexer = JavaScriptLexer(offsetStream)
+        val tokenStream = CommonTokenStream(lexer)
+        return JavaScriptParser(tokenStream)
     }
 }

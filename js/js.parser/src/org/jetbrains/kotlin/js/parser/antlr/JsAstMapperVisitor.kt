@@ -22,6 +22,7 @@ class JsAstMapperVisitor() : JavaScriptParserVisitor<JsNode> {
         TODO("Not yet implemented")
     }
 
+    // ENTRY POINT
     override fun visitStatement(ctx: JavaScriptParser.StatementContext?): JsNode? {
         TODO("Not yet implemented")
     }

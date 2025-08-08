@@ -18,11 +18,11 @@ class JsAstMapper(private val scope: JsScope, private val fileName: String) {
     }
 
     public fun mapStatement(statement: ParserRuleContext): JsStatement? {
-        throw NotImplementedError("mapStatement")
+        TODO("mapStatement")
     }
 
     public fun mapFunction(function: ParserRuleContext): JsStatement? {
-        throw NotImplementedError("mapFunction")
+        TODO("mapFunction")
     }
 
     public fun mapExpression(expression: ParserRuleContext): JsExpression? {
