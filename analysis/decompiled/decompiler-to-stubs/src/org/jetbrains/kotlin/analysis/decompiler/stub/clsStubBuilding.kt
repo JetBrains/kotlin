@@ -204,7 +204,7 @@ fun createModifierListStubForDeclaration(
     flags: Int,
     flagsToTranslate: List<FlagsToModifiers>,
     additionalModifiers: List<KtModifierKeywordToken>,
-    returnValueStatus: ProtoBuf.ReturnValueStatus = ProtoBuf.ReturnValueStatus.UNSPECIFIED,
+    returnValueStatus: Flags.FlagField<ProtoBuf.ReturnValueStatus>?,
 ): KotlinModifierListStubImpl {
     assert(flagsToTranslate.isNotEmpty())
 
@@ -212,14 +212,14 @@ fun createModifierListStubForDeclaration(
     return createModifierListStub(
         parent,
         modifiers,
-        returnValueStatus,
+        returnValueStatus?.get(flags) ?: ProtoBuf.ReturnValueStatus.UNSPECIFIED,
     )!!
 }
 
 fun createModifierListStub(
     parent: StubElement<out PsiElement>,
     modifiers: Collection<KtModifierKeywordToken>,
-    returnValueStatus: ProtoBuf.ReturnValueStatus = ProtoBuf.ReturnValueStatus.UNSPECIFIED,
+    returnValueStatus: ProtoBuf.ReturnValueStatus,
 ): KotlinModifierListStubImpl? {
     if (modifiers.isEmpty()) {
         return null

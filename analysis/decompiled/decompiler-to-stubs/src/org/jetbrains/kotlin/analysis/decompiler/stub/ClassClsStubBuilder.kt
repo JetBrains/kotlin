@@ -123,6 +123,7 @@ private class ClassClsStubBuilder(
             classProto.flags,
             relevantFlags,
             additionalModifiers,
+            returnValueStatus = null,
         )
     }
 

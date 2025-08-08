@@ -139,7 +139,7 @@ abstract class CallableClsStubBuilder(
     protected fun createModifierListStubForCallableDeclaration(
         flags: Int,
         flagsToTranslate: List<FlagsToModifiers>,
-        returnValueStatus: ProtoBuf.ReturnValueStatus,
+        returnValueStatus: Flags.FlagField<ProtoBuf.ReturnValueStatus>,
     ): KotlinModifierListStubImpl {
         val modifierListStub = createModifierListStubForDeclaration(
             callableStub,
@@ -191,7 +191,6 @@ private class FunctionClsStubBuilder(
     override fun createModifierListStub() {
         val modalityModifier = if (isTopLevel) listOf() else listOf(MODALITY)
         val flags = functionProto.flags
-        val returnValueStatus = Flags.RETURN_VALUE_STATUS_FUNCTION.get(flags)
         val modifierListStubImpl = createModifierListStubForCallableDeclaration(
             flags = flags,
             flagsToTranslate = listOf(
@@ -204,7 +203,7 @@ private class FunctionClsStubBuilder(
                 SUSPEND,
                 EXPECT_FUNCTION,
             ) + modalityModifier,
-            returnValueStatus = returnValueStatus,
+            returnValueStatus = Flags.RETURN_VALUE_STATUS_FUNCTION,
         )
 
         // If function is marked as having no annotations, we don't create stubs for it
@@ -270,11 +269,10 @@ private class PropertyClsStubBuilder(
         val flags = propertyProto.flags
         val constModifier = if (isVar) listOf() else listOf(CONST)
         val modalityModifier = if (isTopLevel || Flags.IS_CONST[flags]) listOf() else listOf(MODALITY)
-        val returnValueStatus = Flags.RETURN_VALUE_STATUS_PROPERTY.get(flags)
         val modifierListStubImpl = createModifierListStubForCallableDeclaration(
             flags = flags,
             flagsToTranslate = listOf(VISIBILITY, LATEINIT, EXTERNAL_PROPERTY, EXPECT_PROPERTY) + constModifier + modalityModifier,
-            returnValueStatus = returnValueStatus,
+            returnValueStatus = Flags.RETURN_VALUE_STATUS_PROPERTY,
         )
 
         // If field is marked as having no annotations, we don't create stubs for it
@@ -451,6 +449,7 @@ private class PropertyClsStubBuilder(
             accessorFlags,
             ACCESSOR_FLAGS,
             additionalModifiers = emptyList(),
+            returnValueStatus = null,
         )
 
         if (annotations.isNotEmpty()) {
@@ -557,11 +556,10 @@ private class ConstructorClsStubBuilder(
 
     override fun createModifierListStub() {
         val flags = constructorProto.flags
-        val returnValueStatus = Flags.RETURN_VALUE_STATUS_CTOR.get(flags)
         val modifierListStubImpl = createModifierListStubForCallableDeclaration(
             flags = flags,
             flagsToTranslate = listOf(VISIBILITY),
-            returnValueStatus = returnValueStatus,
+            returnValueStatus = Flags.RETURN_VALUE_STATUS_CTOR,
         )
 
         // If constructor is marked as having no annotations, we don't create stubs for it
