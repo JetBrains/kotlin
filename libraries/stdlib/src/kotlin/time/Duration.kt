@@ -61,9 +61,6 @@ public value class Duration internal constructor(private val rawValue: Long) : C
         internal const val INVALID_RAW_VALUE = 0x7FFFFFFFFBADC0DE
         internal val INVALID: Duration = Duration(INVALID_RAW_VALUE)
 
-        internal const val SUMMING_INFINITE_DURATIONS_OF_DIFFERENT_SIGN_ERROR_MESSAGE =
-            "Summing infinite durations of different signs yields an undefined result."
-
         /** Converts the given time duration [value] expressed in the specified [sourceUnit] into the specified [targetUnit]. */
         @ExperimentalTime
         public fun convert(value: Double, sourceUnit: DurationUnit, targetUnit: DurationUnit): Double =
@@ -360,30 +357,11 @@ public value class Duration internal constructor(private val rawValue: Long) : C
                 if (other.isFinite() || (this.rawValue xor other.rawValue >= 0))
                     return this
                 else
-                    throw IllegalArgumentException(SUMMING_INFINITE_DURATIONS_OF_DIFFERENT_SIGN_ERROR_MESSAGE)
+                    throw IllegalArgumentException("Summing infinite durations of different signs yields an undefined result.")
             }
             other.isInfinite() -> return other
         }
 
-        return addFiniteDurations(other)
-    }
-
-    @kotlin.internal.InlineOnly
-    internal inline fun plus(other: Duration, throwException: Boolean): Duration {
-        when {
-            this.isInfinite() -> {
-                if (other.isFinite() || (this.rawValue xor other.rawValue >= 0))
-                    return this
-                else
-                    if (throwException) throw IllegalArgumentException(SUMMING_INFINITE_DURATIONS_OF_DIFFERENT_SIGN_ERROR_MESSAGE) else return INVALID
-            }
-            other.isInfinite() -> return other
-        }
-
-        return addFiniteDurations(other)
-    }
-
-    private fun addFiniteDurations(other: Duration): Duration {
         return when {
             this.unitDiscriminator == other.unitDiscriminator -> {
                 val result = this.value + other.value // never overflows long, but can overflow long63
