@@ -40,8 +40,8 @@ kotlinx-html = "0.9.1"
 jetbrains-markdown = "0.7.3"
 
 ## JSON
-jackson = "2.12.7" # jackson 2.13.X does not support kotlin language version 1.4, check before updating
-jacksonDatabind = "2.12.7.1" # fixes CVE-2022-42003
+# jackson 2.15.3 is the latest version, which works correctly with Kotlin API/Language 1.4 and Gradle 7.6.3+
+jackson = "2.15.3"
 
 ## Maven
 apacheMaven-core = "3.5.0"
@@ -136,7 +136,7 @@ jetbrains-markdown = { module = "org.jetbrains:markdown", version.ref = "jetbrai
 #### Jackson ####
 jackson-kotlin = { module = "com.fasterxml.jackson.module:jackson-module-kotlin", version.ref = "jackson" }
 jackson-xml = { module = "com.fasterxml.jackson.dataformat:jackson-dataformat-xml", version.ref = "jackson" }
-jackson-databind = { module = "com.fasterxml.jackson.core:jackson-databind", version.ref = "jacksonDatabind" }
+jackson-databind = { module = "com.fasterxml.jackson.core:jackson-databind", version.ref = "jackson" }
 
 #### Apache Maven ####
 apacheMaven-archiver = { module = "org.apache.maven:maven-archiver", version.ref = "apacheMaven-archiver" }
