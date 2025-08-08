@@ -1091,6 +1091,12 @@ object FirTree : AbstractFirTreeBuilder() {
         +referencedSymbol("resolvedSymbol", firBasedSymbolType.withArgs(TypeRef.Star))
     }
 
+    val propertyWithExplicitBackingFieldResolvedNamedReference: Element by element(Reference) {
+        parent(resolvedNamedReference)
+
+        +field("hasVisibleBackingField", boolean)
+    }
+
     val resolvedCallableReference: Element by element(Reference) {
         parent(resolvedNamedReference)
 

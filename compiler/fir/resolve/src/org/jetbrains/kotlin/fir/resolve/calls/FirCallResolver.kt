@@ -19,6 +19,7 @@ import org.jetbrains.kotlin.fir.expressions.*
 import org.jetbrains.kotlin.fir.expressions.builder.buildResolvedReifiedParameterReference
 import org.jetbrains.kotlin.fir.getPrimaryConstructorSymbol
 import org.jetbrains.kotlin.fir.references.*
+import org.jetbrains.kotlin.fir.references.builder.FirPropertyWithExplicitBackingFieldResolvedNamedReferenceBuilder
 import org.jetbrains.kotlin.fir.references.builder.buildBackingFieldReference
 import org.jetbrains.kotlin.fir.references.builder.buildResolvedNamedReference
 import org.jetbrains.kotlin.fir.references.impl.FirSimpleNamedReference
@@ -873,9 +874,12 @@ class FirCallResolver(
             }
         }
         if ((coneSymbol as? FirPropertySymbol)?.hasExplicitBackingField == true) {
-            return FirPropertyWithExplicitBackingFieldResolvedNamedReference(
-                source, name, candidate.symbol, candidate.hasVisibleBackingField
-            )
+            return FirPropertyWithExplicitBackingFieldResolvedNamedReferenceBuilder().apply {
+                this.source = source
+                this.name = name
+                this.resolvedSymbol = candidate.symbol
+                hasVisibleBackingField = candidate.hasVisibleBackingField
+            }.build()
         }
         /*
          * This `if` is an optimization for local variables and properties without type parameters.

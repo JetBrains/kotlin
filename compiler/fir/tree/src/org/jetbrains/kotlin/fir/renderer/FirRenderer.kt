@@ -980,6 +980,10 @@ class FirRenderer(
             visitResolvedNamedReference(resolvedCallableReference)
         }
 
+        override fun visitPropertyWithExplicitBackingFieldResolvedNamedReference(propertyWithExplicitBackingFieldResolvedNamedReference: FirPropertyWithExplicitBackingFieldResolvedNamedReference) {
+            visitResolvedNamedReference(propertyWithExplicitBackingFieldResolvedNamedReference)
+        }
+
         override fun visitThisReference(thisReference: FirThisReference) {
             print("this")
             val labelName = thisReference.labelName
