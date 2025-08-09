@@ -5,6 +5,7 @@ package org.jetbrains.kotlin.buildtools.api.arguments
 
 import kotlin.Array
 import kotlin.Boolean
+import kotlin.Int
 import kotlin.String
 import kotlin.jvm.JvmField
 
@@ -118,5 +119,15 @@ public interface CommonKlibBasedArguments : CommonCompilerArguments {
     @ExperimentalCompilerArgument
     public val X_KLIB_ABI_VERSION: CommonKlibBasedArgument<String?> =
         CommonKlibBasedArgument("X_KLIB_ABI_VERSION")
+
+    /**
+     * Size of cache to be used for the klib zip file accessor. Default is 0.
+     *
+     * WARNING: this option is EXPERIMENTAL and it may be changed in the future without notice or may be removed entirely.
+     */
+    @JvmField
+    @ExperimentalCompilerArgument
+    public val X_KLIB_ZIP_FILE_ACCESSOR_CACHE_LIMIT: CommonKlibBasedArgument<Int> =
+        CommonKlibBasedArgument("X_KLIB_ZIP_FILE_ACCESSOR_CACHE_LIMIT")
   }
 }

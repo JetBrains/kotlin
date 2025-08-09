@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.config.keys.generator
 import org.jetbrains.kotlin.config.DuplicatedUniqueNameStrategy
 import org.jetbrains.kotlin.config.KlibAbiCompatibilityLevel
 import org.jetbrains.kotlin.config.keys.generator.model.KeysContainer
+import org.jetbrains.kotlin.konan.file.ZipFileSystemAccessor
 import org.jetbrains.kotlin.library.KotlinAbiVersion
 
 @Suppress("unused")
@@ -26,4 +27,6 @@ object KlibConfigurationKeysContainer : KeysContainer("org.jetbrains.kotlin.conf
         "KLIB ABI compatibility level",
         defaultValue = "KlibAbiCompatibilityLevel.LATEST_STABLE"
     )
+
+    val ZIP_FILE_SYSTEM_ACCESSOR by key<ZipFileSystemAccessor>("zip file system accessor, used for klib reading")
 }

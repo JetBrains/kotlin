@@ -29,6 +29,7 @@ import org.jetbrains.kotlin.cli.pipeline.web.CommonWebConfigurationUpdater
 import org.jetbrains.kotlin.cli.pipeline.web.WebCliPipeline
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.KlibConfigurationKeys
 import org.jetbrains.kotlin.config.Services
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporterFactory
 import org.jetbrains.kotlin.ir.backend.js.*
@@ -124,7 +125,7 @@ class K2JSCompiler : CLICompiler<K2JSCompilerArguments>() {
 
         val zipAccessor = DisposableZipFileSystemAccessor(64)
         Disposer.register(rootDisposable, zipAccessor)
-        targetEnvironment.configuration.put(JSConfigurationKeys.ZIP_FILE_SYSTEM_ACCESSOR, zipAccessor)
+        targetEnvironment.configuration.put(KlibConfigurationKeys.ZIP_FILE_SYSTEM_ACCESSOR, zipAccessor)
 
         val sourcesFiles = targetEnvironment.getSourceFiles()
 

@@ -95,4 +95,14 @@ The only observable effect is that a custom ABI version is written to KLIB manif
             field = if (value.isNullOrEmpty()) null else value
         }
 
+    @Argument(
+        value = "-Xklib-zip-file-accessor-cache-limit",
+        description = "Size of cache to be used for the klib zip file accessor. Default is 0.",
+    )
+    var klibZipFileAccessorCacheLimit: String = "0"
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
 }
