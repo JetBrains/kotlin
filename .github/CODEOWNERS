@@ -284,6 +284,7 @@
 /libraries/stdlib/wasm/builtins/ @JetBrains/kotlin-wasm
 /libraries/stdlib/wasm/internal/ @JetBrains/kotlin-wasm
 /libraries/stdlib/wasm/src/generated/wasm/internal/ @JetBrains/kotlin-wasm
+/libraries/stdlib/wasm/js/internal @JetBrains/kotlin-wasm
 
 /libraries/tools/abi-comparator @JetBrains/kotlin-jvm
 /libraries/tools/atomicfu/ @JetBrains/kotlin-libraries
