@@ -63,6 +63,22 @@ internal sealed class WasmVM(
             )
     }
 
+    object JavaScriptCore : WasmVM(shortName = "JSC", property = "javascript.engine.path.JavaScriptCore", entryPointIsJsFile = true) {
+        override fun run(
+            entryFile: String,
+            jsFiles: List<String>,
+            workingDirectory: File?,
+            useNewExceptionHandling: Boolean,
+            toolArgs: List<String>
+        ) =
+            tool.run(
+                *toolArgs.toTypedArray(),
+                *jsFiles.toTypedArray(),
+                "--module-file=$entryFile",
+                workingDirectory = workingDirectory,
+            )
+    }
+
     object WasmEdge : WasmVM(shortName = "WasmEdge", property = "wasm.engine.path.WasmEdge", entryPointIsJsFile = false) {
         override fun run(
             entryFile: String,
