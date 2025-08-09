@@ -33,9 +33,11 @@ public class CharRange(start: Char, endInclusive: Char) : CharProgression(start,
      */
     override fun isEmpty(): Boolean = first > last
 
-    override fun equals(other: Any?): Boolean =
-        other is CharRange && (isEmpty() && other.isEmpty() ||
-        first == other.first && last == other.last)
+    override fun equals(other: Any?): Boolean = when (other) {
+        is CharRange -> (isEmpty() && other.isEmpty()) || (first == other.first && last == other.last)
+        is ClosedRange<*> -> (isEmpty() && other.isEmpty()) || (start == other.start && endInclusive == other.endInclusive)
+        else -> false
+    }
 
     override fun hashCode(): Int =
         if (isEmpty()) -1 else (31 * first.code + last.code)
@@ -72,9 +74,11 @@ public class IntRange(start: Int, endInclusive: Int) : IntProgression(start, end
      */
     override fun isEmpty(): Boolean = first > last
 
-    override fun equals(other: Any?): Boolean =
-        other is IntRange && (isEmpty() && other.isEmpty() ||
-        first == other.first && last == other.last)
+    override fun equals(other: Any?): Boolean = when (other) {
+        is IntRange -> (isEmpty() && other.isEmpty()) || (first == other.first && last == other.last)
+        is ClosedRange<*> -> (isEmpty() && other.isEmpty()) || (start == other.start && endInclusive == other.endInclusive)
+        else -> false
+    }
 
     override fun hashCode(): Int =
         if (isEmpty()) -1 else (31 * first + last)
@@ -111,9 +115,11 @@ public class LongRange(start: Long, endInclusive: Long) : LongProgression(start,
      */
     override fun isEmpty(): Boolean = first > last
 
-    override fun equals(other: Any?): Boolean =
-        other is LongRange && (isEmpty() && other.isEmpty() ||
-        first == other.first && last == other.last)
+    override fun equals(other: Any?): Boolean = when (other) {
+        is LongRange -> (isEmpty() && other.isEmpty()) || (first == other.first && last == other.last)
+        is ClosedRange<*> -> (isEmpty() && other.isEmpty()) || (start == other.start && endInclusive == other.endInclusive)
+        else -> false
+    }
 
     override fun hashCode(): Int =
         if (isEmpty()) -1 else (31 * (first xor (first ushr 32)) + (last xor (last ushr 32))).toInt()
