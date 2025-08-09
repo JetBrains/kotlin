@@ -9,6 +9,9 @@ fun throwSomeKotlinException(): Int = throw IllegalStateException("Test")
 fun throwNumberFromJs(): Int = js("{ throw 42; }")
 fun throwNullFromJs(): Int = js("{ throw null; }")
 
+private fun String.contains(moduleName: String, funName: String) =
+    contains("$moduleName.$funName") || contains("$funName@$moduleName")
+
 @JsName("TypeError")
 external class JsTypeError : JsAny
 
@@ -113,8 +116,8 @@ fun jsExceptionWithCatchThrowable(): Boolean {
                 e.message == "Test" &&
                 e.thrownValue is JsTypeError &&
                 stacktrace.contains("throwSomeJsException") &&
-                stacktrace.contains("<main>.jsExceptionWithCatchThrowable") &&
-                stacktrace.contains("<main>.box")
+                stacktrace.contains("<main>", "jsExceptionWithCatchThrowable") &&
+                stacktrace.contains("<main>", "box")
     }
     return false
 }
@@ -165,8 +168,8 @@ fun jsExceptionWithCatchJsException(): Boolean {
         return e.message == "Test" &&
                 e.thrownValue is JsTypeError &&
                 stacktrace.contains("throwSomeJsException") &&
-                stacktrace.contains("<main>.jsExceptionWithCatchJsException") &&
-                stacktrace.contains("<main>.box")
+                stacktrace.contains("<main>", "jsExceptionWithCatchJsException") &&
+                stacktrace.contains("<main>", "box")
     }
     return false
 }
@@ -277,8 +280,8 @@ fun jsExceptionWithCatchThrowableAndFinally(): Boolean {
                 finalException.message == "Test" &&
                 finalException.thrownValue is JsTypeError &&
                 stacktrace.contains("throwSomeJsException") &&
-                stacktrace.contains("<main>.jsExceptionWithCatchThrowableAndFinally") &&
-                stacktrace.contains("<main>.box")
+                stacktrace.contains("<main>", "jsExceptionWithCatchThrowableAndFinally") &&
+                stacktrace.contains("<main>", "box")
     }
     return false
 }
@@ -344,8 +347,8 @@ fun jsExceptionWithCatchJsExceptionAndFinally(): Boolean {
         return finalException?.message == "Test" &&
                 finalException.thrownValue is JsTypeError &&
                 stacktrace.contains("throwSomeJsException") &&
-                stacktrace.contains("<main>.jsExceptionWithCatchJsExceptionAndFinally") &&
-                stacktrace.contains("<main>.box")
+                stacktrace.contains("<main>", "jsExceptionWithCatchJsExceptionAndFinally") &&
+                stacktrace.contains("<main>", "box")
     }
     return false
 }
@@ -445,8 +448,8 @@ fun jsExceptionWithCatchJsExceptionAndThrowable(): Boolean {
         return e.message == "Test" &&
                 e.thrownValue is JsTypeError &&
                 stacktrace.contains("throwSomeJsException") &&
-                stacktrace.contains("<main>.jsExceptionWithCatchJsExceptionAndThrowable") &&
-                stacktrace.contains("<main>.box")
+                stacktrace.contains("<main>", "jsExceptionWithCatchJsExceptionAndThrowable") &&
+                stacktrace.contains("<main>", "box")
     } catch (e: Throwable) {
         return false
     }
@@ -488,8 +491,8 @@ fun jsExceptionWithCatchIllegalStateExceptionAndThrowable(): Boolean {
                 e.message == "Test" &&
                 e.thrownValue is JsTypeError &&
                 stacktrace.contains("throwSomeJsException") &&
-                stacktrace.contains("<main>.jsExceptionWithCatchIllegalStateExceptionAndThrowable") &&
-                stacktrace.contains("<main>.box")
+                stacktrace.contains("<main>", "jsExceptionWithCatchIllegalStateExceptionAndThrowable") &&
+                stacktrace.contains("<main>", "box")
     }
     return false
 }
@@ -527,8 +530,8 @@ fun jsExceptionWithCatchThrowableAndJsException(): Boolean {
                 e.message == "Test" &&
                 e.thrownValue is JsTypeError &&
                 stacktrace.contains("throwSomeJsException") &&
-                stacktrace.contains("<main>.jsExceptionWithCatchThrowableAndJsException") &&
-                stacktrace.contains("<main>.box")
+                stacktrace.contains("<main>", "jsExceptionWithCatchThrowableAndJsException") &&
+                stacktrace.contains("<main>", "box")
     } catch (e: JsException) {
         return false
     }
@@ -569,8 +572,8 @@ fun jsExceptionWithCatchIllegalStateExceptionAndJsException(): Boolean {
         return e.message == "Test" &&
                 e.thrownValue is JsTypeError &&
                 stacktrace.contains("throwSomeJsException") &&
-                stacktrace.contains("<main>.jsExceptionWithCatchIllegalStateExceptionAndJsException") &&
-                stacktrace.contains("<main>.box")
+                stacktrace.contains("<main>", "jsExceptionWithCatchIllegalStateExceptionAndJsException") &&
+                stacktrace.contains("<main>", "box")
     }
     return false
 }
@@ -608,8 +611,8 @@ fun jsExceptionWithCatchThrowableAndIllegalStateException(): Boolean {
                 e.message == "Test" &&
                 e.thrownValue is JsTypeError &&
                 stacktrace.contains("throwSomeJsException") &&
-                stacktrace.contains("<main>.jsExceptionWithCatchThrowableAndIllegalStateException") &&
-                stacktrace.contains("<main>.box")
+                stacktrace.contains("<main>", "jsExceptionWithCatchThrowableAndIllegalStateException") &&
+                stacktrace.contains("<main>", "box")
     } catch (e: IllegalStateException) {
         return false
     }
@@ -648,8 +651,8 @@ fun jsExceptionWithCatchJsExceptionAndIllegalStateException(): Boolean {
         return e.message == "Test" &&
                 e.thrownValue is JsTypeError &&
                 stacktrace.contains("throwSomeJsException") &&
-                stacktrace.contains("<main>.jsExceptionWithCatchJsExceptionAndIllegalStateException") &&
-                stacktrace.contains("<main>.box")
+                stacktrace.contains("<main>", "jsExceptionWithCatchJsExceptionAndIllegalStateException") &&
+                stacktrace.contains("<main>", "box")
     } catch (e: IllegalStateException) {
         return false
     }
@@ -703,8 +706,8 @@ fun jsExceptionWithCatchJsExceptionAndThrowableAndFinally(): Boolean {
                 finalException?.message == "Test" &&
                 finalException.thrownValue is JsTypeError &&
                 stacktrace.contains("throwSomeJsException") &&
-                stacktrace.contains("<main>.jsExceptionWithCatchJsExceptionAndThrowableAndFinally") &&
-                stacktrace.contains("<main>.box")
+                stacktrace.contains("<main>", "jsExceptionWithCatchJsExceptionAndThrowableAndFinally") &&
+                stacktrace.contains("<main>", "box")
     }
     return false
 }
@@ -816,8 +819,8 @@ fun jsExceptionWithCatchThrowableAndJsExceptionAndFinally(): Boolean {
                 finalException.message == "Test" &&
                 finalException.thrownValue is JsTypeError &&
                 stacktrace.contains("throwSomeJsException") &&
-                stacktrace.contains("<main>.jsExceptionWithCatchThrowableAndJsExceptionAndFinally") &&
-                stacktrace.contains("<main>.box")
+                stacktrace.contains("<main>", "jsExceptionWithCatchThrowableAndJsExceptionAndFinally") &&
+                stacktrace.contains("<main>", "box")
     }
     return false
 }
@@ -929,8 +932,8 @@ fun jsExceptionWithCatchThrowableAndIllegalStateExceptionAndFinally(): Boolean {
                 finalException.message == "Test" &&
                 finalException.thrownValue is JsTypeError &&
                 stacktrace.contains("throwSomeJsException") &&
-                stacktrace.contains("<main>.jsExceptionWithCatchThrowableAndIllegalStateExceptionAndFinally") &&
-                stacktrace.contains("<main>.box")
+                stacktrace.contains("<main>", "jsExceptionWithCatchThrowableAndIllegalStateExceptionAndFinally") &&
+                stacktrace.contains("<main>", "box")
     }
     return false
 }
@@ -988,8 +991,8 @@ fun jsExceptionWithCatchJsExceptionAndIllegalStateExceptionAndFinally(): Boolean
                 finalException?.message == "Test" &&
                 finalException.thrownValue is JsTypeError &&
                 stacktrace.contains("throwSomeJsException") &&
-                stacktrace.contains("<main>.jsExceptionWithCatchJsExceptionAndIllegalStateExceptionAndFinally") &&
-                stacktrace.contains("<main>.box")
+                stacktrace.contains("<main>", "jsExceptionWithCatchJsExceptionAndIllegalStateExceptionAndFinally") &&
+                stacktrace.contains("<main>", "box")
     }
     return false
 }
@@ -1034,8 +1037,8 @@ fun jsExceptionWithCatchJsExceptionAndThrowableAndIllegalStateException(): Boole
         return e.message == "Test" &&
                 e.thrownValue is JsTypeError &&
                 stacktrace.contains("throwSomeJsException") &&
-                stacktrace.contains("<main>.jsExceptionWithCatchJsExceptionAndThrowableAndIllegalStateException") &&
-                stacktrace.contains("<main>.box")
+                stacktrace.contains("<main>", "jsExceptionWithCatchJsExceptionAndThrowableAndIllegalStateException") &&
+                stacktrace.contains("<main>", "box")
     } catch (e: Throwable) {
         return false
     } catch (e: IllegalStateException) {
@@ -1083,8 +1086,8 @@ fun jsExceptionWithCatchIllegalStateExceptionAndThrowableAndJsException(): Boole
                 e.message == "Test" &&
                 e.thrownValue is JsTypeError &&
                 stacktrace.contains("throwSomeJsException") &&
-                stacktrace.contains("<main>.jsExceptionWithCatchIllegalStateExceptionAndThrowableAndJsException") &&
-                stacktrace.contains("<main>.box")
+                stacktrace.contains("<main>", "jsExceptionWithCatchIllegalStateExceptionAndThrowableAndJsException") &&
+                stacktrace.contains("<main>", "box")
     } catch (e: JsException) {
         return false
     }
@@ -1128,8 +1131,8 @@ fun jsExceptionWithCatchThrowableAndJsExceptionAndIllegalStateException(): Boole
                 e.message == "Test" &&
                 e.thrownValue is JsTypeError &&
                 stacktrace.contains("throwSomeJsException") &&
-                stacktrace.contains("<main>.jsExceptionWithCatchThrowableAndJsExceptionAndIllegalStateException") &&
-                stacktrace.contains("<main>.box")
+                stacktrace.contains("<main>", "jsExceptionWithCatchThrowableAndJsExceptionAndIllegalStateException") &&
+                stacktrace.contains("<main>", "box")
     } catch (e: JsException) {
         return false
     } catch (e: IllegalStateException) {
@@ -1176,8 +1179,8 @@ fun jsExceptionWithCatchIllegalStateExceptionAndJsExceptionAndThrowable(): Boole
         return e.message == "Test" &&
                 e.thrownValue is JsTypeError &&
                 stacktrace.contains("throwSomeJsException") &&
-                stacktrace.contains("<main>.jsExceptionWithCatchIllegalStateExceptionAndJsExceptionAndThrowable") &&
-                stacktrace.contains("<main>.box")
+                stacktrace.contains("<main>", "jsExceptionWithCatchIllegalStateExceptionAndJsExceptionAndThrowable") &&
+                stacktrace.contains("<main>", "box")
     } catch (e: Throwable) {
         return false
     }
@@ -1221,8 +1224,8 @@ fun jsExceptionWithCatchThrowableAndIllegalStateExceptionAndJsException(): Boole
                 e.message == "Test" &&
                 e.thrownValue is JsTypeError &&
                 stacktrace.contains("throwSomeJsException") &&
-                stacktrace.contains("<main>.jsExceptionWithCatchThrowableAndIllegalStateExceptionAndJsException") &&
-                stacktrace.contains("<main>.box")
+                stacktrace.contains("<main>", "jsExceptionWithCatchThrowableAndIllegalStateExceptionAndJsException") &&
+                stacktrace.contains("<main>", "box")
     } catch (e: IllegalStateException) {
         return false
     } catch (e: JsException) {
@@ -1267,8 +1270,8 @@ fun jsExceptionWithCatchJsExceptionAndIllegalStateExceptionAndThrowable(): Boole
         return e.message == "Test" &&
                 e.thrownValue is JsTypeError &&
                 stacktrace.contains("throwSomeJsException") &&
-                stacktrace.contains("<main>.jsExceptionWithCatchJsExceptionAndIllegalStateExceptionAndThrowable") &&
-                stacktrace.contains("<main>.box")
+                stacktrace.contains("<main>", "jsExceptionWithCatchJsExceptionAndIllegalStateExceptionAndThrowable") &&
+                stacktrace.contains("<main>", "box")
     } catch (e: IllegalStateException) {
         return false
     } catch (e: Throwable) {
@@ -1332,8 +1335,8 @@ fun jsExceptionWithCatchJsExceptionAndThrowableAndIllegalStateExceptionAndFinall
                 finalException?.message == "Test" &&
                 finalException.thrownValue is JsTypeError &&
                 stacktrace.contains("throwSomeJsException") &&
-                stacktrace.contains("<main>.jsExceptionWithCatchJsExceptionAndThrowableAndIllegalStateExceptionAndFinally") &&
-                stacktrace.contains("<main>.box")
+                stacktrace.contains("<main>", "jsExceptionWithCatchJsExceptionAndThrowableAndIllegalStateExceptionAndFinally") &&
+                stacktrace.contains("<main>", "box")
     }
     return false
 }
@@ -1463,8 +1466,8 @@ fun jsExceptionWithCatchThrowableAndJsExceptionAndIllegalStateExceptionAndFinall
                 finalException.message == "Test" &&
                 finalException.thrownValue is JsTypeError &&
                 stacktrace.contains("throwSomeJsException") &&
-                stacktrace.contains("<main>.jsExceptionWithCatchThrowableAndJsExceptionAndIllegalStateExceptionAndFinally") &&
-                stacktrace.contains("<main>.box")
+                stacktrace.contains("<main>", "jsExceptionWithCatchThrowableAndJsExceptionAndIllegalStateExceptionAndFinally") &&
+                stacktrace.contains("<main>", "box")
     }
     return false
 }
@@ -1594,8 +1597,8 @@ fun jsExceptionWithCatchThrowableAndIllegalStateExceptionAndJsExceptionAndFinall
                 finalException.message == "Test" &&
                 finalException.thrownValue is JsTypeError &&
                 stacktrace.contains("throwSomeJsException") &&
-                stacktrace.contains("<main>.jsExceptionWithCatchThrowableAndIllegalStateExceptionAndJsExceptionAndFinally") &&
-                stacktrace.contains("<main>.box")
+                stacktrace.contains("<main>", "jsExceptionWithCatchThrowableAndIllegalStateExceptionAndJsExceptionAndFinally") &&
+                stacktrace.contains("<main>", "box")
     }
     return false
 }
@@ -1662,8 +1665,8 @@ fun jsExceptionWithCatchJsExceptionAndIllegalStateExceptionAndThrowableAndFinall
                 finalException?.message == "Test" &&
                 finalException.thrownValue is JsTypeError &&
                 stacktrace.contains("throwSomeJsException") &&
-                stacktrace.contains("<main>.jsExceptionWithCatchJsExceptionAndIllegalStateExceptionAndThrowableAndFinally") &&
-                stacktrace.contains("<main>.box")
+                stacktrace.contains("<main>", "jsExceptionWithCatchJsExceptionAndIllegalStateExceptionAndThrowableAndFinally") &&
+                stacktrace.contains("<main>", "box")
     }
     return false
 }
