@@ -6,9 +6,7 @@ import kotlin.wasm.WasmExport
 
 @WasmExport
 fun runWithException() {
-    throw AssertionError("Some random exception").apply {
-        println(this.stackTraceToString())
-    }
+    throw AssertionError("Some random exception")
 }
 
 fun box() = "OK"
