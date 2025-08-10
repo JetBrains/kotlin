@@ -100,6 +100,7 @@ abstract class FirMustUseReturnValueStatusComponent : FirSessionComponent {
             ClassId(FqName("org.jetbrains.annotations"), Name.identifier("CheckReturnValue")),
             ClassId(FqName("org.springframework.lang"), Name.identifier("CheckReturnValue")),
             ClassId(FqName("org.jooq"), Name.identifier("CheckReturnValue")),
+            ClassId(FqName("edu.umd.cs.findbugs.annotations"), Name.identifier("CheckReturnValue")),
         )
 
         private fun List<ClassId>?.hasMustUseReturnValueLikeAnnotation() = this.orEmpty().any { it in mustUseReturnValueLikeAnnotations }
