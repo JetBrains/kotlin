@@ -9547,6 +9547,12 @@ public class PhasedJvmDiagnosticLightTreeTestGenerated extends AbstractPhasedJvm
         }
 
         @Test
+        @TestMetadata("spotbugs.kt")
+        public void testSpotbugs() {
+          runTest("compiler/testData/diagnostics/tests/crv/otherAnnotations/spotbugs.kt");
+        }
+
+        @Test
         @TestMetadata("springframework.kt")
         public void testSpringframework() {
           runTest("compiler/testData/diagnostics/tests/crv/otherAnnotations/springframework.kt");
