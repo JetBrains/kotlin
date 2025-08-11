@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.common.checkers
 
+import org.jetbrains.kotlin.backend.common.IrValidationError
 import org.jetbrains.kotlin.backend.common.checkers.context.CheckerContext
 import org.jetbrains.kotlin.backend.common.checkers.context.ContextUpdater
 import org.jetbrains.kotlin.ir.IrElement
@@ -12,7 +13,7 @@ import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import kotlin.reflect.KClass
 
-sealed interface IrChecker {
+sealed interface IrChecker : IrValidationError.Cause {
     val requiredContextUpdaters : Set<ContextUpdater>
         get() = emptySet()
 }

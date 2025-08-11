@@ -30,9 +30,15 @@ import org.jetbrains.kotlin.ir.visitors.acceptVoid
 class IrValidationError(
     val file: IrFile?,
     val element: IrElement,
+    val cause: Cause,
     val message: String,
     val parentChain: List<IrElement>,
-)
+) {
+    interface Cause {
+        object IrTreeInconsistency : Cause
+        object UnboundSymbol : Cause
+    }
+}
 
 open class IrValidationException(message: String? = null, cause: Throwable? = null) : IllegalStateException(message, cause)
 
