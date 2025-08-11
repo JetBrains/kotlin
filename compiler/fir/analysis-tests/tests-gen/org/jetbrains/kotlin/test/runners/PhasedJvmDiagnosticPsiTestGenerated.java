@@ -9477,18 +9477,6 @@ public class PhasedJvmDiagnosticPsiTestGenerated extends AbstractPhasedJvmDiagno
       }
 
       @Test
-      @TestMetadata("otherAnnotations.kt")
-      public void testOtherAnnotations() {
-        runTest("compiler/testData/diagnostics/tests/crv/otherAnnotations.kt");
-      }
-
-      @Test
-      @TestMetadata("packageInfoJava.kt")
-      public void testPackageInfoJava() {
-        runTest("compiler/testData/diagnostics/tests/crv/packageInfoJava.kt");
-      }
-
-      @Test
       @TestMetadata("receiverInFunctionalCall.kt")
       public void testReceiverInFunctionalCall() {
         runTest("compiler/testData/diagnostics/tests/crv/receiverInFunctionalCall.kt");
@@ -9510,6 +9498,23 @@ public class PhasedJvmDiagnosticPsiTestGenerated extends AbstractPhasedJvmDiagno
       @TestMetadata("usageInFunctionCall.kt")
       public void testUsageInFunctionCall() {
         runTest("compiler/testData/diagnostics/tests/crv/usageInFunctionCall.kt");
+      }
+
+      @Nested
+      @TestMetadata("compiler/testData/diagnostics/tests/crv/otherAnnotations")
+      @TestDataPath("$PROJECT_ROOT")
+      public class OtherAnnotations {
+        @Test
+        @TestMetadata("googleErrorProne.kt")
+        public void testGoogleErrorProne() {
+          runTest("compiler/testData/diagnostics/tests/crv/otherAnnotations/googleErrorProne.kt");
+        }
+
+        @Test
+        @TestMetadata("googleErrorProne_packageInfoJava.kt")
+        public void testGoogleErrorProne_packageInfoJava() {
+          runTest("compiler/testData/diagnostics/tests/crv/otherAnnotations/googleErrorProne_packageInfoJava.kt");
+        }
       }
     }
 
