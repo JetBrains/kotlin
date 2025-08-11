@@ -18,7 +18,7 @@ import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.calls.inference.components.ConstraintSystemUtilContext
 import org.jetbrains.kotlin.resolve.calls.inference.components.PostponedArgumentInputTypesResolver
-import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintPosition
+import org.jetbrains.kotlin.resolve.calls.inference.model.ArgumentConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.inference.model.FixVariableConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.model.PostponedAtomWithRevisableExpectedType
 import org.jetbrains.kotlin.types.model.KotlinTypeMarker
@@ -80,11 +80,11 @@ object ConeConstraintSystemUtilContext : ConstraintSystemUtilContext {
         return this
     }
 
-    override fun createArgumentConstraintPosition(argument: PostponedAtomWithRevisableExpectedType): ConstraintPosition {
-        require(argument is ConePostponedResolvedAtom) {
+    override fun createArgumentConstraintPosition(argument: PostponedAtomWithRevisableExpectedType): ArgumentConstraintPosition<*> {
+        require(argument is ConePostponedAtomWithRevisableExpectedType) {
             "${argument::class}"
         }
-        return (argument as? ConePostponedAtomWithRevisableExpectedType)?.anonymousFunctionIfReturnExpression?.let {
+        return argument.anonymousFunctionIfReturnExpression?.let {
             ConeLambdaArgumentConstraintPosition(it, argument.expression)
         } ?: ConeArgumentConstraintPosition(argument.expression)
     }

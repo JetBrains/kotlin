@@ -33,6 +33,7 @@ import org.jetbrains.kotlin.fir.types.impl.ConeTypeParameterTypeImpl
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.resolve.calls.inference.ConstraintSystemBuilder
 import org.jetbrains.kotlin.resolve.calls.inference.addSubtypeConstraintIfCompatible
+import org.jetbrains.kotlin.resolve.calls.inference.model.ArgumentConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintKind
 import org.jetbrains.kotlin.resolve.calls.inference.model.ConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.inference.model.SimpleConstraintSystemConstraintPosition
@@ -178,7 +179,7 @@ internal object ArgumentCheckingProcessor {
         resolvePlainArgumentType(atom, argumentType, useNullableArgumentType)
     }
 
-    private fun ArgumentContext.createArgumentConstraintPosition(atom: ConeResolutionAtom): ConstraintPosition {
+    private fun ArgumentContext.createArgumentConstraintPosition(atom: ConeResolutionAtom): ArgumentConstraintPosition<*> {
         return when (val containingLambda = anonymousFunctionIfReturnExpression) {
             null -> ConeArgumentConstraintPosition(atom.expression)
             else -> ConeLambdaArgumentConstraintPosition(containingLambda, atom.expression)

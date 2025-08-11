@@ -22,6 +22,7 @@ import org.jetbrains.kotlin.fir.resolve.shouldBeResolvedInContextSensitiveMode
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.fir.utils.exceptions.withFirEntry
 import org.jetbrains.kotlin.resolve.calls.model.LambdaWithTypeVariableAsExpectedTypeMarker
+import org.jetbrains.kotlin.resolve.calls.model.PostponedAtomWithRevisableExpectedType
 import org.jetbrains.kotlin.resolve.calls.model.PostponedCallableReferenceMarker
 import org.jetbrains.kotlin.resolve.calls.model.PostponedResolvedAtomMarker
 import org.jetbrains.kotlin.types.AbstractTypeChecker
@@ -229,7 +230,7 @@ sealed class ConePostponedAtomWithRevisableExpectedType(
      * when creating the atom, hence no need to store this field.
      */
     val anonymousFunctionIfReturnExpression: FirAnonymousFunction?
-) : ConeFunctionTypeRelatedPostponedResolvedAtom()
+) : ConeFunctionTypeRelatedPostponedResolvedAtom(), PostponedAtomWithRevisableExpectedType
 
 class ConeLambdaWithTypeVariableAsExpectedTypeAtom(
     override val expression: FirAnonymousFunctionExpression,

@@ -75,11 +75,14 @@ abstract class KnownTypeParameterConstraintPosition<T : KotlinTypeMarker>(val ty
     override fun toString(): String = "TypeArgument $typeArgument"
 }
 
-abstract class LambdaArgumentConstraintPosition<T>(val lambda: T) : ConstraintPosition() {
+abstract class LambdaArgumentConstraintPosition<out T>(lambda: T) : ArgumentConstraintPosition<T>(lambda) {
     override fun toString(): String {
-        return "LambdaArgument $lambda"
+        return "LambdaArgument $argument"
     }
 }
+
+val <T> LambdaArgumentConstraintPosition<T>.lambda
+    get() = argument
 
 open class DelegatedPropertyConstraintPosition<T>(val topLevelCall: T) : ConstraintPosition() {
     override fun toString(): String = "Constraint from call $topLevelCall for delegated property"
