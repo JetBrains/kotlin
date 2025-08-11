@@ -129,7 +129,6 @@ class ExportModelToJsStatements(
                     es6mode || namespace == null -> generateDeclarationExport(
                         ExportedProperty(
                             declaration.name,
-                            ExportedType.Primitive.Any,
                             isStatic = parentClass?.isObject != true,
                             irGetter = declaration.irGetter,
                             isMember = parentClass != null

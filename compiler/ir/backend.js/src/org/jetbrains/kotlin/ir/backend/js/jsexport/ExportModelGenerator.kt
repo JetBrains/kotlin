@@ -5,32 +5,20 @@
 
 package org.jetbrains.kotlin.ir.backend.js.jsexport
 
-import org.jetbrains.kotlin.backend.common.report
-import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
-import org.jetbrains.kotlin.ir.util.isExpect
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
-import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
-import org.jetbrains.kotlin.ir.backend.js.correspondingEnumEntry
-import org.jetbrains.kotlin.ir.backend.js.getInstanceFun
-import org.jetbrains.kotlin.ir.backend.js.initEntryInstancesFun
+import org.jetbrains.kotlin.ir.backend.js.*
 import org.jetbrains.kotlin.ir.backend.js.lower.ES6_BOX_PARAMETER
 import org.jetbrains.kotlin.ir.backend.js.lower.isBoxParameter
 import org.jetbrains.kotlin.ir.backend.js.lower.isEs6ConstructorReplacement
-import org.jetbrains.kotlin.ir.backend.js.objectGetInstanceFunction
 import org.jetbrains.kotlin.ir.backend.js.utils.*
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.IrParameterKind
-import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
-import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.util.isNullable
-import org.jetbrains.kotlin.js.config.compileLongAsBigint
 import org.jetbrains.kotlin.utils.*
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
 
@@ -87,8 +75,6 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
                 val realOverrideTarget = function.realOverrideTarget
                 ExportedFunction(
                     function.getExportedIdentifier(),
-                    returnType = exportType(function.returnType, function),
-                    typeParameters = function.typeParameters.memoryOptimizedMap { exportTypeParameter(it, function) },
                     isMember = parent is IrClass,
                     isStatic = function.isStaticMethod,
                     isAbstract = parent is IrClass && !parent.isInterface && function.modality == Modality.ABSTRACT,
@@ -125,7 +111,6 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
 
         return ExportedParameter(
             parameterName,
-            exportType(parameter.type, parameter),
             hasDefaultValue
         )
     }
@@ -149,7 +134,6 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
 
     private fun exportPropertyUnsafely(
         property: IrProperty,
-        specializeType: ExportedType? = null
     ): ExportedDeclaration {
         val parentClass = property.parent as? IrClass
         val isOptional = property.isEffectivelyExternal() &&
@@ -158,7 +142,6 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
 
         return ExportedProperty(
             name = property.getExportedIdentifier(),
-            type = specializeType ?: exportType(property.getter!!.returnType, property),
             mutable = property.isVar,
             isMember = parentClass != null,
             isAbstract = parentClass?.isInterface == false && property.modality == Modality.ABSTRACT,
@@ -183,26 +166,19 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
         val name = irEnumEntry.getExportedIdentifier()
         val ordinal = enumEntries.getValue(irEnumEntry)
 
-        fun fakeProperty(name: String, type: ExportedType) =
-            ExportedProperty(name = name, type = type, mutable = false, isMember = true)
+        fun fakeProperty(name: String) =
+            ExportedProperty(name = name, mutable = false, isMember = true)
 
         val nameProperty = fakeProperty(
             name = "name",
-            type = ExportedType.LiteralType.StringLiteralType(name),
         )
 
         val ordinalProperty = fakeProperty(
             name = "ordinal",
-            type = ExportedType.LiteralType.NumberLiteralType(ordinal),
-        )
-
-        val type = ExportedType.InlineInterfaceType(
-            listOf(nameProperty, ordinalProperty)
         )
 
         return ExportedProperty(
             name = name,
-            type = ExportedType.IntersectionType(exportType(parentClass.defaultType), type),
             mutable = false,
             isMember = true,
             isStatic = true,
@@ -238,21 +214,12 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
     }
 
     private fun exportDeclarationImplicitly(klass: IrClass, superTypes: Iterable<IrType>): ExportedDeclaration {
-        val typeParameters = klass.typeParameters.memoryOptimizedMap { exportTypeParameter(it, klass) }
-        val superInterfaces = superTypes
-            .filter { (it.classifierOrFail.owner as? IrDeclaration)?.isExportedImplicitlyOrExplicitly(context) ?: false }
-            .map { exportType(it) }
-            .memoryOptimizedFilter { it !is ExportedType.ErrorType }
-
         val name = klass.getExportedIdentifier()
         val (members, nestedClasses) = exportClassDeclarations(klass, superTypes)
         return ExportedRegularClass(
             name = name,
             isInterface = true,
             isAbstract = false,
-            superClasses = emptyList(),
-            superInterfaces = superInterfaces,
-            typeParameters = typeParameters,
             members = members,
             nestedClasses = nestedClasses,
             ir = klass
@@ -405,7 +372,7 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
     }
 
     private fun MutableList<ExportedDeclaration>.addMagicInterfaceProperty(klass: IrClass) {
-        add(ExportedProperty(name = magicPropertyName, type = klass.generateTagType(), mutable = false, isMember = true, isField = true))
+        add(ExportedProperty(name = magicPropertyName, mutable = false, isMember = true, isField = true))
     }
 
     private fun MutableList<ExportedDeclaration>.addMagicPropertyForInterfaceImplementation(klass: IrClass, superTypes: Iterable<IrType>) {
@@ -415,12 +382,7 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
             return
         }
 
-        val intersectionOfTypes = allSuperTypesWithMagicProperty
-            .map { ExportedType.PropertyType(exportType(it), ExportedType.LiteralType.StringLiteralType(magicPropertyName)) }
-            .reduce(ExportedType::IntersectionType)
-            .let { if (klass.shouldNotBeImplemented()) ExportedType.IntersectionType(klass.generateTagType(), it) else it }
-
-        add(ExportedProperty(name = magicPropertyName, type = intersectionOfTypes, mutable = false, isMember = true, isField = true))
+        add(ExportedProperty(name = magicPropertyName, mutable = false, isMember = true, isField = true))
     }
 
     private fun IrType.shouldAddMagicPropertyOfSuper(): Boolean {
@@ -435,38 +397,12 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
         }
     }
 
-    private fun IrClass.generateTagType(): ExportedType {
-        return ExportedType.InlineInterfaceType(
-            listOf(
-                ExportedProperty(
-                    name = getFqNameWithJsNameWhenAvailable(true).asString(),
-                    type = ExportedType.Primitive.UniqueSymbol,
-                    mutable = false,
-                    isMember = true,
-                    isField = true,
-                )
-            )
-        )
-    }
-
     private fun exportClass(
         klass: IrClass,
         superTypes: Iterable<IrType>,
         members: List<ExportedDeclaration>,
         nestedClasses: List<ExportedClass>,
     ): ExportedDeclaration {
-        val typeParameters = klass.typeParameters.memoryOptimizedMap { exportTypeParameter(it, klass) }
-
-        val superClasses = superTypes
-            .filter { !it.classifierOrFail.isInterface && it.canBeUsedAsSuperTypeOfExportedClasses() }
-            .map { exportType(it, shouldCalculateExportedSupertypeForImplicit = false) }
-            .memoryOptimizedFilter { it !is ExportedType.ErrorType }
-
-        val superInterfaces = superTypes
-            .filter { it.shouldPresentInsideImplementsClause() }
-            .map { exportType(it, shouldCalculateExportedSupertypeForImplicit = false) }
-            .memoryOptimizedFilter { it !is ExportedType.ErrorType }
-
         val name = klass.getExportedIdentifierForClass()
 
         return if (klass.kind == ClassKind.OBJECT) {
@@ -474,9 +410,7 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
                 ir = klass,
                 name = name,
                 members = members,
-                superClasses = superClasses,
                 nestedClasses = nestedClasses,
-                superInterfaces = superInterfaces,
                 irGetter = klass.objectGetInstanceFunction!!
             )
         } else {
@@ -484,9 +418,6 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
                 name = name,
                 isInterface = klass.isInterface,
                 isAbstract = klass.modality == Modality.ABSTRACT || klass.modality == Modality.SEALED || klass.isEnumClass,
-                superClasses = superClasses,
-                superInterfaces = superInterfaces,
-                typeParameters = typeParameters,
                 members = members,
                 nestedClasses = nestedClasses,
                 ir = klass
@@ -506,23 +437,11 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
         candidate: IrDeclarationWithName,
         enumEntriesToOrdinal: Map<IrEnumEntry, Int>
     ): ExportedDeclaration? {
-        val enumEntries = enumEntriesToOrdinal.keys
         return when (candidate) {
             is IrProperty -> {
                 if (candidate.isAllowedFakeOverriddenDeclaration(context)) {
-                    val type: ExportedType = when (candidate.getExportedIdentifier()) {
-                        "name" -> enumEntries
-                            .map { it.getExportedIdentifier() }
-                            .map { ExportedType.LiteralType.StringLiteralType(it) }
-                            .reduceOrNull { acc: ExportedType, s: ExportedType -> ExportedType.UnionType(acc, s) } ?: return null
-                        "ordinal" -> enumEntriesToOrdinal
-                            .map { (_, ordinal) -> ExportedType.LiteralType.NumberLiteralType(ordinal) }
-                            .reduceOrNull { acc: ExportedType, s: ExportedType -> ExportedType.UnionType(acc, s) } ?: return null
-                        else -> return null
-                    }
                     exportPropertyUnsafely(
                         candidate,
-                        type
                     )
                 } else null
             }
@@ -544,141 +463,7 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
                 classifierOrNull != context.irBuiltIns.enumClass &&
                 (classifierOrNull?.owner as? IrDeclaration)?.isJsImplicitExport() != true
 
-    private fun exportTypeArgument(type: IrTypeArgument, typeOwner: IrDeclaration?): ExportedType {
-        if (type is IrTypeProjection)
-            return exportType(type.type, typeOwner)
-
-        return ExportedType.ErrorType("UnknownType ${type.render()}")
-    }
-
-    fun exportTypeParameter(typeParameter: IrTypeParameter, typeOwner: IrDeclaration?): ExportedType.TypeParameter {
-        val constraint = typeParameter.superTypes.asSequence()
-            .filter { it != context.irBuiltIns.anyNType }
-            .map {
-                val exportedType = exportType(it, typeOwner)
-                if (exportedType is ExportedType.ImplicitlyExportedType && exportedType.exportedSupertype == ExportedType.Primitive.Any) {
-                    exportedType.copy(exportedSupertype = ExportedType.Primitive.Unknown)
-                } else {
-                    exportedType
-                }
-            }
-            .filter { it !is ExportedType.ErrorType }
-            .toList()
-
-        return ExportedType.TypeParameter(
-            typeParameter.name.identifier,
-            constraint.run {
-                when (size) {
-                    0 -> null
-                    1 -> single()
-                    else -> reduce(ExportedType::IntersectionType)
-                }
-            }
-        )
-    }
-
     private val currentlyProcessedTypes = hashSetOf<IrType>()
-
-    private fun exportType(
-        type: IrType,
-        typeOwner: IrDeclaration? = null,
-        shouldCalculateExportedSupertypeForImplicit: Boolean = true,
-    ): ExportedType {
-        if (type is IrDynamicType || type in currentlyProcessedTypes)
-            return ExportedType.Primitive.Any
-
-        if (type !is IrSimpleType)
-            return ExportedType.ErrorType("NonSimpleType ${type.render()}")
-
-        currentlyProcessedTypes.add(type)
-
-        val classifier = type.classifier
-        val isMarkedNullable = type.isMarkedNullable()
-        val nonNullType = type.makeNotNull() as IrSimpleType
-
-        val exportedType = when {
-            nonNullType.isBoolean() -> ExportedType.Primitive.Boolean
-            nonNullType.isLong() || nonNullType.isULong() -> {
-                if (!context.configuration.compileLongAsBigint) {
-                    context.report(
-                        CompilerMessageSeverity.ERROR,
-                        typeOwner,
-                        typeOwner?.file,
-                        "Long can't be exported without using of the bigint type. Add -Xes-long-as-bigint compiler argument or set target to 'es2015'"
-                    )
-                }
-                ExportedType.Primitive.BigInt
-            }
-            nonNullType.isPrimitiveType() && !nonNullType.isChar() ->
-                ExportedType.Primitive.Number
-
-            nonNullType.isByteArray() -> ExportedType.Primitive.ByteArray
-            nonNullType.isShortArray() -> ExportedType.Primitive.ShortArray
-            nonNullType.isIntArray() -> ExportedType.Primitive.IntArray
-            nonNullType.isFloatArray() -> ExportedType.Primitive.FloatArray
-            nonNullType.isDoubleArray() -> ExportedType.Primitive.DoubleArray
-
-            // TODO: Cover these in frontend
-            nonNullType.isBooleanArray() -> ExportedType.ErrorType("BooleanArray")
-            // TODO: Add BigInt64Array usage (KT-79284)
-            nonNullType.isLongArray() -> ExportedType.ErrorType("LongArray")
-            nonNullType.isCharArray() -> ExportedType.ErrorType("CharArray")
-
-            nonNullType.isString() -> ExportedType.Primitive.String
-            nonNullType.isThrowable() -> ExportedType.Primitive.Throwable
-            nonNullType.isAny() -> ExportedType.Primitive.Any  // TODO: Should we wrap Any in a Nullable type?
-            nonNullType.isUnit() -> ExportedType.Primitive.Unit
-            nonNullType.isNothing() -> ExportedType.Primitive.Nothing
-            nonNullType.isArray() -> ExportedType.Array(exportTypeArgument(nonNullType.arguments[0], typeOwner))
-            nonNullType.isSuspendFunction() -> ExportedType.ErrorType("Suspend functions are not supported")
-            nonNullType.isFunction() -> ExportedType.Function(
-                parameterTypes = nonNullType.arguments.dropLast(1).memoryOptimizedMap { exportTypeArgument(it, typeOwner) },
-                returnType = exportTypeArgument(nonNullType.arguments.last(), typeOwner)
-            )
-
-            classifier is IrTypeParameterSymbol -> ExportedType.TypeParameter(classifier.owner.name.identifier)
-
-            classifier is IrClassSymbol -> {
-                val klass = classifier.owner
-                val isExported = klass.isExportedImplicitlyOrExplicitly(context)
-                val isImplicitlyExported = !isExported && !klass.isExternal
-                val isNonExportedExternal = klass.isExternal && !isExported
-                val name = klass.getFqNameWithJsNameWhenAvailable(!isNonExportedExternal && generateNamespacesForPackages).asString()
-
-                val exportedSupertype = runIf(shouldCalculateExportedSupertypeForImplicit && isImplicitlyExported) {
-                    val transitiveExportedType = nonNullType.collectSuperTransitiveHierarchy()
-                    if (transitiveExportedType.isEmpty()) return@runIf null
-                    transitiveExportedType
-                        .memoryOptimizedMap { exportType(it, typeOwner) }
-                        .reduce(ExportedType::IntersectionType)
-                } ?: ExportedType.Primitive.Any
-
-                when (klass.kind) {
-                    ClassKind.ANNOTATION_CLASS,
-                    ClassKind.ENUM_ENTRY ->
-                        ExportedType.ErrorType("Class $name with kind: ${klass.kind}")
-
-                    ClassKind.OBJECT ->
-                        ExportedType.TypeOf(ExportedType.ClassType(name, emptyList(), klass))
-
-                    ClassKind.CLASS,
-                    ClassKind.ENUM_CLASS,
-                    ClassKind.INTERFACE -> ExportedType.ClassType(
-                        name,
-                        type.arguments.memoryOptimizedMap { exportTypeArgument(it, typeOwner) },
-                        klass
-                    )
-                }.withImplicitlyExported(isImplicitlyExported, exportedSupertype)
-            }
-
-            else -> irError("Unexpected classifier") {
-                withIrEntry("classifier.owner", classifier.owner)
-            }
-        }
-
-        return exportedType.withNullability(isMarkedNullable)
-            .also { currentlyProcessedTypes.remove(type) }
-    }
 
     private fun functionExportability(function: IrSimpleFunction): Exportability {
         if (function.isInline && function.typeParameters.any { it.isReified })
