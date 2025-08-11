@@ -129,7 +129,6 @@ class ExportModelGenerator(val context: WasmBackendContext) {
                 function.getExportedIdentifier(),
                 returnType = exportType(function.returnType),
                 typeParameters = function.typeParameters.memoryOptimizedMap(::exportTypeParameter),
-                ir = function,
                 isMember = parentClass != null,
                 isStatic = function.isStaticMethodOfClass,
                 isProtected = function.visibility == DescriptorVisibilities.PROTECTED,

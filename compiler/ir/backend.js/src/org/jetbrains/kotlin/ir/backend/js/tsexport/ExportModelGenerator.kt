@@ -94,7 +94,6 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
                     isStatic = function.isStaticMethod,
                     isAbstract = parent is IrClass && !parent.isInterface && function.modality == Modality.ABSTRACT,
                     isProtected = function.visibility == DescriptorVisibilities.PROTECTED,
-                    ir = function,
                     parameters = function.nonDispatchParameters
                         .filter { it.shouldBeExported() }
                         .memoryOptimizedMap {

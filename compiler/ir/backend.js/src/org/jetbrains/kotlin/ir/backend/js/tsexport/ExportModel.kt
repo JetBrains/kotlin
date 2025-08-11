@@ -39,7 +39,6 @@ data class ExportedFunction(
     val isStatic: Boolean = false,
     val isAbstract: Boolean = false,
     val isProtected: Boolean,
-    val ir: IrSimpleFunction
 ) : ExportedDeclaration()
 
 data class ExportedConstructor(
