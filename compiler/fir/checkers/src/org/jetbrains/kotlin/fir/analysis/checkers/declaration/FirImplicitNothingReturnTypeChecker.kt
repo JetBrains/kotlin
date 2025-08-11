@@ -33,6 +33,7 @@ object FirImplicitNothingReturnTypeChecker : FirCallableDeclarationChecker(MppCh
             val notDeclaredAsNothing = !declaration.returnTypeRef.coneType.abbreviatedTypeOrSelf.isNothing
             val expandedNothing = declaration.returnTypeRef.coneType.fullyExpandedType().isNothing
             if (notDeclaredAsNothing && expandedNothing) {
+                @Suppress("REDUNDANT_ELSE_IN_WHEN")
                 val factory = when (declaration) {
                     is FirSimpleFunction -> FirErrors.ABBREVIATED_NOTHING_RETURN_TYPE
                     is FirProperty -> FirErrors.ABBREVIATED_NOTHING_PROPERTY_TYPE
@@ -43,6 +44,7 @@ object FirImplicitNothingReturnTypeChecker : FirCallableDeclarationChecker(MppCh
             return
         }
         if (declaration.returnTypeRef.coneType.isNothing) {
+            @Suppress("REDUNDANT_ELSE_IN_WHEN")
             val factory = when (declaration) {
                 is FirSimpleFunction -> FirErrors.IMPLICIT_NOTHING_RETURN_TYPE
                 is FirProperty -> FirErrors.IMPLICIT_NOTHING_PROPERTY_TYPE
