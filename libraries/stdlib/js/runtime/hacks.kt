@@ -7,7 +7,7 @@ package kotlin
 
 import kotlin.internal.UsedFromCompilerGeneratedCode
 
-@PublishedApi
+@UsedFromCompilerGeneratedCode
 internal fun throwKotlinNothingValueException(): Nothing =
     throw KotlinNothingValueException()
 
