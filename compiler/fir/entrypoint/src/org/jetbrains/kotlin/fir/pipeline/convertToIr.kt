@@ -269,6 +269,7 @@ private class Fir2IrPipeline(
 
         removeGeneratedBuiltinsDeclarationsIfNeeded()
 
+        pluginContext.runMandatoryIrValidation(extension = null, mainIrFragment)
         pluginContext.applyIrGenerationExtensions(mainIrFragment, irGeneratorExtensions)
 
         return Fir2IrActualizedResult(mainIrFragment, componentsStorage, pluginContext, actualizationResult, irBuiltIns, symbolTable)
@@ -501,7 +502,6 @@ private class Fir2IrPipeline(
         irModuleFragment: IrModuleFragment,
         irGenerationExtensions: Collection<IrGenerationExtension>,
     ) {
-        runMandatoryIrValidation(null, irModuleFragment)
         for (extension in irGenerationExtensions) {
             try {
                 extension.generate(irModuleFragment, this)
