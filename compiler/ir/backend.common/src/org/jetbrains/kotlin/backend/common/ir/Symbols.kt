@@ -10,9 +10,10 @@ import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.ir.InternalSymbolFinderAPI
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.declarations.IrParameterKind
-import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
-import org.jetbrains.kotlin.ir.expressions.IrCall
-import org.jetbrains.kotlin.ir.symbols.*
+import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
+import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
+import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
+import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.ir.types.defaultType
@@ -40,8 +41,6 @@ abstract class Symbols(irBuiltIns: IrBuiltIns) : FrontendSymbolsImpl(irBuiltIns)
         val iteratorClass = getClass(Name.identifier(type.typeName.asString() + "Iterator"), "kotlin", "collections")
         type to iteratorClass
     }
-
-    val asserts = symbolFinder.findFunctions(Name.identifier("assert"), "kotlin")
 
     private fun progression(name: String) = getClass(Name.identifier(name), "kotlin", "ranges")
     private fun progressionOrNull(name: String) = symbolFinder.findClass(Name.identifier(name), "kotlin", "ranges")
@@ -128,8 +127,6 @@ abstract class Symbols(irBuiltIns: IrBuiltIns) : FrontendSymbolsImpl(irBuiltIns)
     val primitiveArraysToPrimitiveTypes get() = irBuiltIns.primitiveArraysToPrimitiveTypes
     val unsignedTypesToUnsignedArrays get() = irBuiltIns.unsignedTypesToUnsignedArrays
 
-    val arrays get() = primitiveTypesToPrimitiveArrays.values + unsignedTypesToUnsignedArrays.values + array
-
     val collection get() = irBuiltIns.collectionClass
     val set get() = irBuiltIns.setClass
     val list get() = irBuiltIns.listClass
@@ -189,9 +186,6 @@ abstract class Symbols(irBuiltIns: IrBuiltIns) : FrontendSymbolsImpl(irBuiltIns)
     abstract val throwNullPointerException: IrSimpleFunctionSymbol
     abstract val throwTypeCastException: IrSimpleFunctionSymbol
 
-    abstract val throwUninitializedPropertyAccessException: IrSimpleFunctionSymbol
-    abstract val throwUnsupportedOperationException: IrSimpleFunctionSymbol
-
     abstract val throwKotlinNothingValueException: IrSimpleFunctionSymbol
 
     open val throwISE: IrSimpleFunctionSymbol
@@ -201,8 +195,6 @@ abstract class Symbols(irBuiltIns: IrBuiltIns) : FrontendSymbolsImpl(irBuiltIns)
         get() = error("throwIAE is not implemented")
 
     abstract val stringBuilder: IrClassSymbol
-
-    abstract val defaultConstructorMarker: IrClassSymbol
 
     abstract val coroutineImpl: IrClassSymbol
 
@@ -223,10 +215,6 @@ abstract class Symbols(irBuiltIns: IrBuiltIns) : FrontendSymbolsImpl(irBuiltIns)
     open val setWithoutBoundCheckName: Name? = null
 
     open val arraysContentEquals: Map<IrType, IrSimpleFunctionSymbol>? = null
-
-    open fun isSideEffectFree(call: IrCall): Boolean {
-        return false
-    }
 }
 
 // TODO KT-77388 rename to `BackendKlibSymbolsImpl`

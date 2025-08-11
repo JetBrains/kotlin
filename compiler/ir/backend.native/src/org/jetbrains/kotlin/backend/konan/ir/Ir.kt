@@ -50,7 +50,6 @@ private object ClassIds {
 
     // Internal classes
     private val String.internalClassId get() = ClassId(RuntimeNames.kotlinNativeInternalPackageName, Name.identifier(this))
-    val refClass = "Ref".internalClassId
     val kFunctionImpl = "KFunctionImpl".internalClassId
     val kFunctionDescription = "KFunctionDescription".internalClassId
     val kFunctionDescriptionCorrect = kFunctionDescription.createNestedClassId(Name.identifier("Correct"))
@@ -70,7 +69,6 @@ private object ClassIds {
     val kTypeImpl = "KTypeImpl".internalClassId
     val kTypeImplForTypeParametersWithRecursiveBounds = "KTypeImplForTypeParametersWithRecursiveBounds".internalClassId
     val kTypeProjectionList = "KTypeProjectionList".internalClassId
-    val defaultConstructorMarker = "DefaultConstructorMarker".internalClassId
     val nativePtr = "NativePtr".internalClassId
     val functionAdapter = "FunctionAdapter".internalClassId
 
@@ -169,8 +167,6 @@ private object CallableIds {
     val throwIllegalStateExceptionWithMessage = "ThrowIllegalStateExceptionWithMessage".internalCallableId
     val throwIllegalArgumentException = "ThrowIllegalArgumentException".internalCallableId
     val throwIllegalArgumentExceptionWithMessage = "ThrowIllegalArgumentExceptionWithMessage".internalCallableId
-    val throwUninitializedPropertyAccessException = "ThrowUninitializedPropertyAccessException".internalCallableId
-    val throwUnsupportedOperationException = "ThrowUnsupportedOperationException".internalCallableId
     val valuesForEnum = "valuesForEnum".internalCallableId
     val valueOfForEnum = "valueOfForEnum".internalCallableId
     val createUninitializedInstance = "createUninitializedInstance".internalCallableId
@@ -231,7 +227,6 @@ private object CallableIds {
     // Built-ins functions
     private val String.builtInsCallableId get() = CallableId(StandardNames.BUILT_INS_PACKAGE_FQ_NAME, Name.identifier(this))
     val isAssertionThrowingErrorEnabled = "isAssertionThrowingErrorEnabled".builtInsCallableId
-    val isAssertionArgumentEvaluationEnabled = "isAssertionArgumentEvaluationEnabled".builtInsCallableId
     val getOrThrow = "getOrThrow".builtInsCallableId
 
     // Special stdlib public functions
@@ -265,7 +260,6 @@ private fun CompilerConfiguration.getMainCallableId() : CallableId? {
         TestRunnerKind.NONE, null -> CallableId(FqName.ROOT, StandardNames.MAIN)
     }
 }
-
 
 // TODO KT-77388 rename to `BackendNativeSymbolsImpl`
 @OptIn(InternalSymbolFinderAPI::class, InternalKotlinNativeApi::class)
@@ -532,13 +526,7 @@ class KonanSymbols(
     val throwIllegalArgumentException = CallableIds.throwIllegalArgumentException.functionSymbol()
     val throwIllegalArgumentExceptionWithMessage = CallableIds.throwIllegalArgumentExceptionWithMessage.functionSymbol()
 
-
-    override val throwUninitializedPropertyAccessException = CallableIds.throwUninitializedPropertyAccessException.functionSymbol()
-    override val throwUnsupportedOperationException = CallableIds.throwUnsupportedOperationException.functionSymbol()
-
     override val stringBuilder = ClassIds.stringBuilder.classSymbol()
-
-    override val defaultConstructorMarker = ClassIds.defaultConstructorMarker.classSymbol()
 
     private fun arrayToExtensionSymbolMap(callableId: CallableId, condition: (IrFunction) -> Boolean = { true }): Lazy<Map<IrClassSymbol, IrSimpleFunctionSymbol>> {
         val allSymbols = callableId.functionSymbols()
@@ -676,7 +664,6 @@ class KonanSymbols(
     val primitiveVarTypePrimaryConstructor by ClassIds.interopCPrimitiveVarType.primaryConstructorSymbol()
 
     val isAssertionThrowingErrorEnabled = CallableIds.isAssertionThrowingErrorEnabled.functionSymbol()
-    val isAssertionArgumentEvaluationEnabled = CallableIds.isAssertionArgumentEvaluationEnabled.functionSymbol()
 
     val baseClassSuite = ClassIds.baseClassSuite.classSymbol()
     val topLevelSuite = ClassIds.topLevelSuite.classSymbol()

@@ -20,7 +20,7 @@ import org.jetbrains.kotlin.ir.symbols.impl.IrVariableSymbolImpl
 import org.jetbrains.kotlin.ir.types.typeWith
 import org.jetbrains.kotlin.ir.util.defaultValueForType
 
-class KlibSharedVariablesManager(private val symbols: KlibSymbols): SharedVariablesManager() {
+class KlibSharedVariablesManager(private val symbols: FrontendKlibSymbols): SharedVariablesManager() {
     override fun declareSharedVariable(originalDeclaration: IrVariable): IrVariable {
         return with(originalDeclaration) {
             val valueType = type
@@ -79,7 +79,7 @@ class KlibSharedVariablesManager(private val symbols: KlibSymbols): SharedVariab
             IrCallImpl(
                 startOffset,
                 endOffset,
-                symbols.irBuiltIns.unitType,
+                originalSet.type,
                 symbols.genericSharedVariableBox.store,
                 typeArgumentsCount = 0,
                 origin,
