@@ -5,14 +5,7 @@
 
 package org.jetbrains.kotlin.ir.backend.js.tsexport
 
-import org.jetbrains.kotlin.ir.backend.js.utils.getJsNameOrKotlinName
 import org.jetbrains.kotlin.ir.backend.js.utils.sanitizeName
-import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.util.classId
-import org.jetbrains.kotlin.ir.util.isEffectivelyExternal
-import org.jetbrains.kotlin.ir.util.isInterface
-import org.jetbrains.kotlin.ir.util.isObject
-import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.js.common.isValidES5Identifier
 import org.jetbrains.kotlin.serialization.js.ModuleKind
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
@@ -199,8 +192,7 @@ class ExportModelToTsDeclarations(private val moduleKind: ModuleKind) {
     }
 
     private fun ExportedObject.generateTypeScriptString(indent: String, prefix: String): String {
-        val shouldGenerateObjectWithGetInstance =
-            isEsModules && !ir.isEffectivelyExternal() && (ir.parent as? IrClass).let { it == null || (it.isInterface && !ir.isCompanion) }
+        val shouldGenerateObjectWithGetInstance = isEsModules && !isExternal && !(isInsideInterface && isCompanion)
 
         val constructorTypeReference =
             if (shouldGenerateObjectWithGetInstance) MetadataConstructor else "$name.$Metadata.$MetadataConstructor"
@@ -211,8 +203,8 @@ class ExportModelToTsDeclarations(private val moduleKind: ModuleKind) {
                     name,
                     emptyList(),
                     isObject = true,
-                    isExternal = ir.isEffectivelyExternal(),
-                    classId = ir.classId,
+                    isExternal = isExternal,
+                    classId = originalClassId,
                 )
             )
                     to ExportedType.ClassType(MetadataConstructor, emptyList())
@@ -222,27 +214,29 @@ class ExportModelToTsDeclarations(private val moduleKind: ModuleKind) {
             name = MetadataConstructor,
             isInterface = false,
             isAbstract = true,
+            isExternal = isExternal,
             requireMetadata = false,
-            ir = ir,
             typeParameters = emptyList(),
             nestedClasses = emptyList(),
             superClasses = superClasses.map { it.replaceTypes(substitutionOfObjectTypeToItsShapeClass) },
             superInterfaces = superInterfaces,
             members = members + ExportedConstructor(emptyList(), ExportedVisibility.PRIVATE),
+            originalClassId = originalClassId,
         )
 
         val classContainingType = ExportedRegularClass(
             name = if (shouldGenerateObjectWithGetInstance) MetadataType else name,
             isInterface = false,
             isAbstract = true,
-            ir = ir,
+            isExternal = isExternal,
             requireMetadata = false,
             typeParameters = typeParameters,
             nestedClasses = nestedClasses,
             superClasses = listOfNotNull(
                 ExportedType.ObjectsParentType(ExportedType.ClassType(constructorTypeReference, emptyList()))
             ),
-            members = listOf(ExportedConstructor(emptyList(), ExportedVisibility.PRIVATE))
+            members = listOf(ExportedConstructor(emptyList(), ExportedVisibility.PRIVATE)),
+            originalClassId = originalClassId,
         )
 
         val extraClassWithGetInstanceMethod = runIf(shouldGenerateObjectWithGetInstance) {
@@ -250,7 +244,7 @@ class ExportModelToTsDeclarations(private val moduleKind: ModuleKind) {
                 name = name,
                 isInterface = false,
                 isAbstract = true,
-                ir = ir,
+                isExternal = isExternal,
                 requireMetadata = false,
                 typeParameters = typeParameters,
                 nestedClasses = emptyList(),
@@ -268,7 +262,8 @@ class ExportModelToTsDeclarations(private val moduleKind: ModuleKind) {
                         isField = true
                     ),
                     ExportedConstructor(emptyList(), ExportedVisibility.PRIVATE),
-                )
+                ),
+                originalClassId = originalClassId,
             )
         }
 
@@ -283,14 +278,14 @@ class ExportModelToTsDeclarations(private val moduleKind: ModuleKind) {
 
     private fun ExportedRegularClass.generateTypeScriptString(indent: String, prefix: String): String {
         val keyword = if (isInterface) "interface" else "class"
-        val (interfaceCompanions, allNestedClasses) = nestedClasses.partition { isInterface && it.ir.isCompanion }
+        val (interfaceCompanions, allNestedClasses) = nestedClasses.partition { isInterface && it.isCompanion }
         val superInterfacesKeyword = if (isInterface) "extends" else "implements"
 
         val superClassClause = superClasses.toExtendsClause(indent)
         val superInterfacesClause = superInterfaces.toImplementsClause(superInterfacesKeyword, indent)
 
         val members = members.map {
-            if (!ir.isInner || it !is ExportedFunction || !it.isStatic) {
+            if (innerClassReference == null || it !is ExportedFunction || !it.isStatic) {
                 it
             } else {
                 // Remove $outer argument from secondary constructors of inner classes
@@ -298,8 +293,8 @@ class ExportModelToTsDeclarations(private val moduleKind: ModuleKind) {
             }
         }
 
-        val (innerClasses, nonInnerClasses) = allNestedClasses.partition { it.ir.isInner }
-        val innerClassesProperties = innerClasses.map { it.toReadonlyProperty() }
+        val (innerClasses, nonInnerClasses) = allNestedClasses.partition { it is ExportedRegularClass && it.innerClassReference != null }
+        val innerClassesProperties = innerClasses.map { (it as ExportedRegularClass).toReadonlyProperty() }
         val membersString = (members + innerClassesProperties)
             .joinToString("") { it.toTypeScript("$indent    ") + "\n" }
 
@@ -336,8 +331,8 @@ class ExportModelToTsDeclarations(private val moduleKind: ModuleKind) {
                         name,
                         typeParameters.map { it.copy(constraint = null) },
                         isObject = false,
-                        isExternal = ir.isEffectivelyExternal(),
-                        classId = ir.classId,
+                        isExternal,
+                        originalClassId,
                     )
                 ),
                 mutable = false,
@@ -408,8 +403,8 @@ class ExportModelToTsDeclarations(private val moduleKind: ModuleKind) {
         })
     }
 
-    private fun ExportedClass.toReadonlyProperty(): ExportedProperty {
-        val innerClassReference = ir.asNestedClassAccess()
+    private fun ExportedRegularClass.toReadonlyProperty(): ExportedProperty {
+        require(innerClassReference != null) { "Can't create readonly property for non-inner class" }
         val allPublicConstructors = members.asSequence()
             .filterIsInstance<ExportedConstructor>()
             .filterNot { it.isProtected }
@@ -427,9 +422,9 @@ class ExportModelToTsDeclarations(private val moduleKind: ModuleKind) {
                 ExportedType.ClassType(
                     innerClassReference,
                     emptyList(),
-                    isObject = ir.isObject,
-                    isExternal = ir.isEffectivelyExternal(),
-                    classId = ir.classId,
+                    isObject = false,
+                    isExternal,
+                    originalClassId,
                 )
             )
         )
@@ -453,12 +448,6 @@ class ExportModelToTsDeclarations(private val moduleKind: ModuleKind) {
         } else type
         val questionMark = if (hasDefaultValue && couldBeOptional) "?" else ""
         return "$name$questionMark: ${type.toTypeScript(indent)}"
-    }
-
-    private fun IrClass.asNestedClassAccess(): String {
-        val name = getJsNameOrKotlinName().identifier
-        if (parent !is IrClass) return name
-        return "${parentAsClass.asNestedClassAccess()}.$name"
     }
 
     private fun ExportedType.toTypeScript(indent: String, isInCommentContext: Boolean = false): String = when (this) {

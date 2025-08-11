@@ -236,12 +236,14 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
             name = name,
             isInterface = true,
             isAbstract = false,
+            isExternal = klass.isExternal,
             superClasses = emptyList(),
             superInterfaces = superInterfaces,
             typeParameters = typeParameters,
             members = members,
             nestedClasses = nestedClasses,
-            ir = klass
+            originalClassId = klass.classId,
+            innerClassReference = runIf(klass.isInner) { klass.typeScriptInnerClassReference() },
         )
     }
 
@@ -457,24 +459,29 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
 
         return if (klass.kind == ClassKind.OBJECT) {
             return ExportedObject(
-                ir = klass,
                 name = name,
                 members = members,
                 superClasses = superClasses,
                 nestedClasses = nestedClasses,
                 superInterfaces = superInterfaces,
+                originalClassId = klass.classId,
+                isCompanion = klass.isCompanion,
+                isExternal = klass.isExternal,
+                isInsideInterface = (klass.parent as? IrClass)?.isInterface == true,
             )
         } else {
             ExportedRegularClass(
                 name = name,
                 isInterface = klass.isInterface,
                 isAbstract = klass.modality == Modality.ABSTRACT || klass.modality == Modality.SEALED || klass.isEnumClass,
+                isExternal = klass.isExternal,
                 superClasses = superClasses,
                 superInterfaces = superInterfaces,
                 typeParameters = typeParameters,
                 members = members,
                 nestedClasses = nestedClasses,
-                ir = klass
+                originalClassId = klass.classId,
+                innerClassReference = runIf(klass.isInner) { klass.typeScriptInnerClassReference() },
             )
         }
     }

@@ -118,3 +118,12 @@ fun IrClass.findDefaultConstructorForReflection(): IrFunction? =
 
 val IrClass.primaryConstructorReplacement: IrSimpleFunction?
     get() = findDeclaration<IrSimpleFunction> { it.isEs6PrimaryConstructorReplacement }
+
+val IrClass.shouldGenerateObjectWithGetInstanceInEsModuleTypeScript: Boolean
+    get() = !isEffectivelyExternal() && (parent as? IrClass).let { it == null || (it.isInterface && !isCompanion) }
+
+fun IrClass.typeScriptInnerClassReference(): String {
+    val name = getJsNameOrKotlinName().identifier
+    if (parent !is IrClass) return name
+    return "${parentAsClass.typeScriptInnerClassReference()}.$name"
+}

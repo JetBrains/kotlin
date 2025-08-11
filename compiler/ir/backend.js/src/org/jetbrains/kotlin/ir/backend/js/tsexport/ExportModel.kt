@@ -5,9 +5,7 @@
 
 package org.jetbrains.kotlin.ir.backend.js.tsexport
 
-import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.serialization.js.ModuleKind
 
 sealed class ExportedDeclaration {
@@ -74,11 +72,13 @@ class ErrorDeclaration(val message: String) : ExportedDeclaration()
 
 sealed class ExportedClass : ExportedDeclaration() {
     abstract val name: String
-    abstract val ir: IrClass
     abstract val members: List<ExportedDeclaration>
     abstract val superClasses: List<ExportedType>
     abstract val superInterfaces: List<ExportedType>
     abstract val nestedClasses: List<ExportedClass>
+    abstract val originalClassId: ClassId?
+    abstract val isCompanion: Boolean
+    abstract val isExternal: Boolean
 }
 
 data class ExportedRegularClass(
@@ -91,8 +91,13 @@ data class ExportedRegularClass(
     val typeParameters: List<ExportedType.TypeParameter>,
     override val members: List<ExportedDeclaration>,
     override val nestedClasses: List<ExportedClass>,
-    override val ir: IrClass,
-) : ExportedClass()
+    override val originalClassId: ClassId?,
+    val innerClassReference: String? = null,
+    override val isExternal: Boolean,
+) : ExportedClass() {
+    override val isCompanion: Boolean
+        get() = false
+}
 
 data class ExportedObject(
     override val name: String,
@@ -100,8 +105,11 @@ data class ExportedObject(
     override val superInterfaces: List<ExportedType> = emptyList(),
     override val members: List<ExportedDeclaration>,
     override val nestedClasses: List<ExportedClass>,
-    override val ir: IrClass,
     val typeParameters: List<ExportedType.TypeParameter> = emptyList(),
+    override val originalClassId: ClassId?,
+    override val isExternal: Boolean,
+    override val isCompanion: Boolean,
+    val isInsideInterface: Boolean,
 ) : ExportedClass()
 
 class ExportedParameter(

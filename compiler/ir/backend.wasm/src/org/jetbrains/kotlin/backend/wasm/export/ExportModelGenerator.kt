@@ -12,9 +12,11 @@ import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
 import org.jetbrains.kotlin.ir.backend.js.tsexport.*
+import org.jetbrains.kotlin.ir.backend.js.utils.typeScriptInnerClassReference
 import org.jetbrains.kotlin.ir.backend.js.utils.getFqNameWithJsNameWhenAvailable
 import org.jetbrains.kotlin.ir.backend.js.utils.isJsExport
 import org.jetbrains.kotlin.ir.backend.js.utils.realOverrideTarget
+import org.jetbrains.kotlin.ir.backend.js.utils.shouldGenerateObjectWithGetInstanceInEsModuleTypeScript
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
@@ -305,24 +307,29 @@ class ExportModelGenerator(val context: WasmBackendContext) {
 
         val exportedDeclaration = if (declaration.kind == ClassKind.OBJECT) {
             ExportedObject(
-                ir = declaration,
                 name = name,
                 members = members,
                 superClasses = listOfNotNull(superClass),
                 nestedClasses = emptyList(),
-                superInterfaces = superInterfaces
+                superInterfaces = superInterfaces,
+                originalClassId = declaration.classId,
+                isExternal = declaration.isEffectivelyExternal(),
+                isCompanion = declaration.isCompanion,
+                isInsideInterface = (declaration.parent as? IrClass)?.isInterface == true,
             )
         } else {
             ExportedRegularClass(
                 name = name,
                 isInterface = declaration.isInterface,
                 isAbstract = declaration.modality == Modality.ABSTRACT || declaration.modality == Modality.SEALED,
+                isExternal = declaration.isEffectivelyExternal(),
                 superClasses = listOfNotNull(superClass),
                 superInterfaces = superInterfaces,
                 typeParameters = typeParameters,
                 members = members,
                 nestedClasses = emptyList(),
-                ir = declaration
+                originalClassId = declaration.classId,
+                innerClassReference = runIf(declaration.isInner) { declaration.typeScriptInnerClassReference() },
             )
         }
 
