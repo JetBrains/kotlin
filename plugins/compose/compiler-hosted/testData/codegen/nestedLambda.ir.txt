@@ -156,7 +156,6 @@ MODULE_FRAGMENT
                   VALUE_PARAMETER kind:Regular name:$changed index:1 type:kotlin.Int
                   annotations:
                     Composable
-                    FunctionKeyMeta(key = -1263890955, startOffset = 1075, endOffset = 1086)
                   BLOCK_BODY
                     CALL 'public final fun sourceInformation (composer: androidx.compose.runtime.Composer, sourceInformation: kotlin.String): kotlin.Unit declared in androidx.compose.runtime' type=kotlin.Unit origin=null
                       ARG composer: GET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in home.ComposableSingletons$MainKt.lambda$-1263890955.<anonymous>' type=androidx.compose.runtime.Composer? origin=null
@@ -209,7 +208,6 @@ MODULE_FRAGMENT
       VALUE_PARAMETER kind:Regular name:$changed index:2 type:kotlin.Int
       annotations:
         Composable
-        FunctionKeyMeta(key = -1724293486, startOffset = 851, endOffset = 910)
       BLOCK_BODY
         CALL 'public final fun sourceInformationMarkerStart (composer: androidx.compose.runtime.Composer, key: kotlin.Int, sourceInformation: kotlin.String): kotlin.Unit declared in androidx.compose.runtime' type=kotlin.Unit origin=null
           ARG composer: GET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in home.Column' type=androidx.compose.runtime.Composer? origin=null
@@ -225,7 +223,6 @@ MODULE_FRAGMENT
       VALUE_PARAMETER MASK_FOR_DEFAULT_FUNCTION kind:Regular name:$default index:4 type:kotlin.Int
       annotations:
         Composable
-        FunctionKeyMeta(key = -435887556, startOffset = 510, endOffset = 666)
       BLOCK_BODY
         BLOCK type=kotlin.Unit origin=null
           SET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in home.DynamicThemePrimaryColorsFromImage' type=kotlin.Unit origin=null
@@ -362,7 +359,6 @@ MODULE_FRAGMENT
       VALUE_PARAMETER kind:Regular name:$changed index:1 type:kotlin.Int
       annotations:
         Composable
-        FunctionKeyMeta(key = 289538687, startOffset = 924, endOffset = 1094)
       BLOCK_BODY
         BLOCK type=kotlin.Unit origin=null
           SET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in home.Home' type=kotlin.Unit origin=null
@@ -400,7 +396,6 @@ MODULE_FRAGMENT
                     VALUE_PARAMETER kind:Regular name:$changed index:2 type:kotlin.Int
                     annotations:
                       Composable
-                      FunctionKeyMeta(key = -964333332, startOffset = 948, endOffset = 1092)
                     BLOCK_BODY
                       BLOCK type=kotlin.Unit origin=null
                         CALL 'public final fun sourceInformationMarkerStart (composer: androidx.compose.runtime.Composer, key: kotlin.Int, sourceInformation: kotlin.String): kotlin.Unit declared in androidx.compose.runtime' type=kotlin.Unit origin=null
@@ -468,7 +463,6 @@ MODULE_FRAGMENT
       VALUE_PARAMETER MASK_FOR_DEFAULT_FUNCTION kind:Regular name:$default index:3 type:kotlin.Int
       annotations:
         Composable
-        FunctionKeyMeta(key = -227885952, startOffset = 356, endOffset = 496)
       BLOCK_BODY
         CALL 'public final fun sourceInformationMarkerStart (composer: androidx.compose.runtime.Composer, key: kotlin.Int, sourceInformation: kotlin.String): kotlin.Unit declared in androidx.compose.runtime' type=kotlin.Unit origin=null
           ARG composer: GET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in home.rememberDominantColorState' type=androidx.compose.runtime.Composer? origin=null

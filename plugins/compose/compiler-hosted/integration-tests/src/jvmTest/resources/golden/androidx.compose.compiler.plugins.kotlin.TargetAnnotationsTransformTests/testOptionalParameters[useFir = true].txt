@@ -55,7 +55,6 @@ fun UseOptional() {
 
 @Composable
 @ComposableTarget(applier = "UI")
-@FunctionKeyMeta(key = -202444732, startOffset = 104, endOffset = 118)
 fun Leaf(%composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(Leaf):Test.kt")
@@ -75,7 +74,6 @@ fun Leaf(%composer: Composer?, %changed: Int) {
 }
 @Composable
 @ComposableInferredTarget(scheme = "[0[0]]")
-@FunctionKeyMeta(key = -283819720, startOffset = 148, endOffset = 206)
 fun Wrapper(content: Function2<Composer, Int, Unit>, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(Wrapper)N(content)<conten...>:Test.kt")
@@ -100,7 +98,6 @@ fun Wrapper(content: Function2<Composer, Int, Unit>, %composer: Composer?, %chan
 }
 @Composable
 @ComposableInferredTarget(scheme = "[0[0][0][0][0][0][0][0]]")
-@FunctionKeyMeta(key = -951428043, startOffset = 279, endOffset = 1056)
 fun Optional(one: Function2<Composer, Int, Unit>?, two: Function2<Composer, Int, Unit>?, three: Function2<Composer, Int, Unit>?, four: Function2<Composer, Int, Unit>?, five: Function2<Composer, Int, Unit>?, six: Function2<Composer, Int, Unit>?, content: Function2<Composer, Int, Unit>, %composer: Composer?, %changed: Int, %default: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(Optional)N(one,two,three,four,five,six,content)<one()>,<conten...>:Test.kt")
@@ -245,7 +242,6 @@ fun Optional(one: Function2<Composer, Int, Unit>?, two: Function2<Composer, Int,
 }
 @Composable
 @ComposableTarget(applier = "UI")
-@FunctionKeyMeta(key = -1897219311, startOffset = 1086, endOffset = 1175)
 fun UseOptional(%composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(UseOptional)<Option...>:Test.kt")

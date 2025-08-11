@@ -40,7 +40,6 @@ fun BrokenComposable(
 // ------------------------------------------
 
 @Composable
-@FunctionKeyMeta(key = 810265841, startOffset = 84, endOffset = 1027)
 fun BrokenComposable(composableParameter: Function13<@[ParameterName(name = 'parameter1')] String, @[ParameterName(name = 'parameter2')] String, @[ParameterName(name = 'parameter3')] String, @[ParameterName(name = 'parameter4')] String, @[ParameterName(name = 'parameter5')] String, @[ParameterName(name = 'parameter6')] String, @[ParameterName(name = 'parameter7')] String, @[ParameterName(name = 'parameter8')] String, @[ParameterName(name = 'parameter9')] String, @[ParameterName(name = 'parameter10')] String, Composer, Int, Int, Unit>, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(BrokenComposable)<{>:Test.kt")

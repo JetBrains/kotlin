@@ -5,7 +5,6 @@ MODULE_FRAGMENT
       VALUE_PARAMETER kind:Regular name:$changed index:1 type:kotlin.Int
       annotations:
         Composable
-        FunctionKeyMeta(key = -519357155, startOffset = 94, endOffset = 130)
       BLOCK_BODY
         BLOCK type=kotlin.Unit origin=null
           SET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in <root>.Content' type=kotlin.Unit origin=null

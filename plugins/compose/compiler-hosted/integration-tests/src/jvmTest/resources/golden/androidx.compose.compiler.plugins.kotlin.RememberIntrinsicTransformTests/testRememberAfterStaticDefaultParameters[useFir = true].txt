@@ -17,7 +17,6 @@ fun Test(a: Int = 1, b: Foo = Foo.B, c: Int = swizzle(1, 2) ) {
 // ------------------------------------------
 
 @Composable
-@FunctionKeyMeta(key = -367294500, startOffset = 98, endOffset = 215)
 fun Test(a: Int, b: Foo?, c: Int, %composer: Composer?, %changed: Int, %default: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(Test)N(a,b,c)<rememb...>,<used(s...>:Test.kt")

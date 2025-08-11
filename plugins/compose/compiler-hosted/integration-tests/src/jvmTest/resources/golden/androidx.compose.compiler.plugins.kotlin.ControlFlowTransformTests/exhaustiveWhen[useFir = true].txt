@@ -16,7 +16,6 @@ fun <T> Test(alpha: Alpha<T>): Float =
 // ------------------------------------------
 
 @Composable
-@FunctionKeyMeta(key = 605835676, startOffset = 84, endOffset = 245)
 fun <T> Test(alpha: Alpha<T>, %composer: Composer?, %changed: Int): Float {
   sourceInformationMarkerStart(%composer, <>, "C(Test)N(alpha):Test.kt")
   if (isTraceInProgress()) {

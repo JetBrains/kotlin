@@ -95,7 +95,6 @@ class Foo<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, T16,
 }
 fun used(any: Any? = null) { }
 @Composable
-@FunctionKeyMeta(key = -1050124420, startOffset = 1312, endOffset = 2448)
 fun A(y: Any?, %composer: Composer?, %changed: Int, %default: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(A)<A(>:Test.kt#2p")

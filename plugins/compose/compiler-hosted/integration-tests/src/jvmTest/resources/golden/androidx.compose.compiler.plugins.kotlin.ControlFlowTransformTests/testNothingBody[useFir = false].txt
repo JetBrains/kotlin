@@ -22,7 +22,6 @@ fun Test3() {
 
 val test1: Function2<Composer, Int, Unit> = TODO()
 @Composable
-@FunctionKeyMeta(key = 297549482, startOffset = 124, endOffset = 150)
 fun Test2(%composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(Test2):Test.kt")
@@ -42,7 +41,6 @@ fun Test2(%composer: Composer?, %changed: Int) {
   }
 }
 @Composable
-@FunctionKeyMeta(key = 648349419, startOffset = 180, endOffset = 262)
 fun Test3(%composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(Test3)<Wrappe...>:Test.kt")

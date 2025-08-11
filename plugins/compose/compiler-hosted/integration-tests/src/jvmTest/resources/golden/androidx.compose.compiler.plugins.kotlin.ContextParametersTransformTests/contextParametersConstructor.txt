@@ -41,7 +41,6 @@ class Test(huh: String, val v: Int) {
   }
 }
 @Composable
-@FunctionKeyMeta(key = 1970342417, startOffset = 179, endOffset = 242)
 fun Content(t: Test, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(Content)N(t:Test)<Conten...>:Test.kt")

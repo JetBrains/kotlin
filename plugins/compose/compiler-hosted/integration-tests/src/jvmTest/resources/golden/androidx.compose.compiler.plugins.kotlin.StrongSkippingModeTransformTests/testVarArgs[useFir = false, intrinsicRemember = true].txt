@@ -18,7 +18,6 @@ import androidx.compose.runtime.ReadOnlyComposable
 // ------------------------------------------
 
 @Composable
-@FunctionKeyMeta(key = 484645956, startOffset = 226, endOffset = 271)
 fun Varargs(ints: IntArray, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   val %dirty = %changed
@@ -48,7 +47,6 @@ fun Varargs(ints: IntArray, %composer: Composer?, %changed: Int) {
   }
 }
 @Composable
-@FunctionKeyMeta(key = -1794342280, startOffset = 296, endOffset = 355)
 fun Test(%composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   if (%composer.shouldExecute(%changed != 0, %changed and 0b0001)) {

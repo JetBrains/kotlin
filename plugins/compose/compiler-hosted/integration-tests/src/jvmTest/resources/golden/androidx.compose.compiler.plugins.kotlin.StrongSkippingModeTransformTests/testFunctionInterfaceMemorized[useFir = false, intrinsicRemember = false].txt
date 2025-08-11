@@ -25,7 +25,6 @@ import androidx.compose.runtime.ReadOnlyComposable
 // ------------------------------------------
 
 @Composable
-@FunctionKeyMeta(key = 1461782433, startOffset = 226, endOffset = 275)
 fun TestMemoizedFun(compute: TestFunInterface, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   if (%composer.shouldExecute(%changed and 0b0001 != 0, %changed and 0b0001)) {
@@ -43,7 +42,6 @@ fun TestMemoizedFun(compute: TestFunInterface, %composer: Composer?, %changed: I
   }
 }
 @Composable
-@FunctionKeyMeta(key = -1794342280, startOffset = 300, endOffset = 597)
 fun Test(%composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   if (%composer.shouldExecute(%changed != 0, %changed and 0b0001)) {

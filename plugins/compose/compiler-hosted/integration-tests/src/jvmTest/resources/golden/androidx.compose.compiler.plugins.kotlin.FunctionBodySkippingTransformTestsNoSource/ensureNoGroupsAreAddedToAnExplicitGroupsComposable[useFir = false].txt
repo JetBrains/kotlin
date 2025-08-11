@@ -23,7 +23,6 @@ inline fun Test(active: Boolean, content: @Composable () -> Unit) {
 @ExplicitGroupsComposable
 @Composable
 @ComposableInferredTarget(scheme = "[0[0]]")
-@FunctionKeyMeta(key = 1644433716, startOffset = 129, endOffset = 481)
 fun Test(active: Boolean, content: Function2<Composer, Int, Unit>, %composer: Composer?, %changed: Int) {
   %composer.startReusableGroup(1, null)
   if (active) {

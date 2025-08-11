@@ -14,7 +14,6 @@ fun Ref(intf: Intf, content: @Composable () -> Unit) {
 // ------------------------------------------
 
 @Composable
-@FunctionKeyMeta(key = -704485017, startOffset = 84, endOffset = 188)
 fun Ref(intf: Intf, content: Function2<Composer, Int, Unit>, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(Ref)N(intf,content)<intf::...>,<intf::...>,<Ref(in...>:Test.kt")
@@ -36,7 +35,6 @@ fun Ref(intf: Intf, content: Function2<Composer, Int, Unit>, %composer: Composer
       sourceInformationMarkerStart(%composer, <>, "CC(remember):Test.kt#9igjgp")
       val tmp0_group = %composer.cache(%dirty and 0b1110 == 0b0100 || %dirty and 0b1000 != 0 && %composer.changedInstance(tmp0)) {
         @Composable
-        @FunctionKeyMeta(key = -1747373846, startOffset = 165, endOffset = 173)
         fun Intf.Fn(%composer: Composer?, %changed: Int) {
           Fn%default(0, receiver, %composer, 0b01110000 and %changed shl 0b0011, 0b0001)
         }

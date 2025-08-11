@@ -34,7 +34,6 @@ import androidx.compose.runtime.NonRestartableComposable
 
 @Composable
 @ComposableInferredTarget(scheme = "[0[0]]")
-@FunctionKeyMeta(key = -948566972, startOffset = 282, endOffset = 444)
 fun composeVector(composable: Function2<Composer, Int, Unit>, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(composeVector)N(composable)<emit>:Test.kt#2487m")
@@ -67,7 +66,6 @@ fun composeVector(composable: Function2<Composer, Int, Unit>, %composer: Compose
 }
 @Composable
 @ComposableInferredTarget(scheme = "[0[0]]")
-@FunctionKeyMeta(key = 948077386, startOffset = 472, endOffset = 545)
 fun emit(composable: Function2<Composer, Int, Unit>, %composer: Composer?, %changed: Int) {
   sourceInformationMarkerStart(%composer, <>, "CC(emit)N(composable)<compos...>:Test.kt#2487m")
   composable(%composer, 0b1110 and %changed)

@@ -23,13 +23,11 @@ class PresenterImpl(
 
 interface Presenter {
   @Composable
-  @FunctionKeyMeta(key = -1788911769, startOffset = 110, endOffset = 123)
   abstract fun Content(%composer: Composer?, %changed: Int)
 }
 @StabilityInferred(parameters = 1)
 class PresenterImpl(val onCompose: Function0<Unit>) : Presenter {
   @Composable
-  @FunctionKeyMeta(key = 902114215, startOffset = 303, endOffset = 368)
   override fun Content(%composer: Composer?, %changed: Int) {
     %composer = %composer.startRestartGroup(<>)
     val %dirty = %changed

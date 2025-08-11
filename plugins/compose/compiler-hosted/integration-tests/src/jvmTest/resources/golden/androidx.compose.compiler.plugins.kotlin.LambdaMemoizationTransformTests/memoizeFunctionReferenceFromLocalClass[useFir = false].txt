@@ -28,7 +28,6 @@ class MainActivity {
     }
   }
   @Composable
-  @FunctionKeyMeta(key = -763171782, startOffset = 304, endOffset = 365)
   fun Test(%composer: Composer?, %changed: Int) {
     %composer = %composer.startRestartGroup(<>)
     sourceInformation(%composer, "C(Test)<test::...>:Test.kt")

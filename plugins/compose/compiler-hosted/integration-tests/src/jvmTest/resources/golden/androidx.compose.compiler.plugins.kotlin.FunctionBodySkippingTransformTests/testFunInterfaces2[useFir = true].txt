@@ -24,7 +24,6 @@ fun Test() {
 
 @Composable
 @ComposableInferredTarget(scheme = "[0[0]]")
-@FunctionKeyMeta(key = -9633418, startOffset = 165, endOffset = 252)
 fun Button(colors: ButtonColors, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(Button)N(colors)<getCol...>,<Text("...>:Test.kt")
@@ -53,7 +52,6 @@ fun Button(colors: ButtonColors, %composer: Composer?, %changed: Int) {
   }
 }
 @Composable
-@FunctionKeyMeta(key = -1794342280, startOffset = 265, endOffset = 349)
 fun Test(%composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(Test)<Button>:Test.kt")
@@ -64,7 +62,6 @@ fun Test(%composer: Composer?, %changed: Int) {
     Button(<block>{
       class <no name provided> : ButtonColors {
         @Composable
-        @FunctionKeyMeta(key = -1319121241, startOffset = 289, endOffset = 347)
         override fun getColor(%composer: Composer?, %changed: Int): Color {
           %composer.startReplaceGroup(<>)
           sourceInformation(%composer, "C(getColor)<condit...>:Test.kt")

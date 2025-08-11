@@ -16,7 +16,6 @@ class SomeClassImpl: SomeClass() {
 @StabilityInferred(parameters = 1)
 class SomeClassImpl : SomeClass {
   @Composable
-  @FunctionKeyMeta(key = -1552515385, startOffset = 148, endOffset = 176)
   override fun SomeFunction(%composer: Composer?, %changed: Int): Int {
     %composer.startReplaceGroup(<>)
     sourceInformation(%composer, "C(SomeFunction):Test.kt")

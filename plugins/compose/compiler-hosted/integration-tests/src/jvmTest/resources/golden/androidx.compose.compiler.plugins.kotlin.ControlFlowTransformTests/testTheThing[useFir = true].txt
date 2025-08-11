@@ -56,7 +56,6 @@ fun NoCallsAfter() {
 
 @NonRestartableComposable
 @Composable
-@FunctionKeyMeta(key = -245849064, startOffset = 227, endOffset = 424)
 fun Simple(%composer: Composer?, %changed: Int) {
   sourceInformationMarkerStart(%composer, <>, "C(Simple)<A()>:Test.kt")
   if (isTraceInProgress()) {
@@ -76,7 +75,6 @@ fun Simple(%composer: Composer?, %changed: Int) {
 }
 @NonRestartableComposable
 @Composable
-@FunctionKeyMeta(key = -1884638724, startOffset = 464, endOffset = 615)
 fun WithReturn(%composer: Composer?, %changed: Int) {
   %composer.startReplaceGroup(<>)
   sourceInformation(%composer, "C(WithReturn)<A()>:Test.kt")
@@ -103,7 +101,6 @@ fun WithReturn(%composer: Composer?, %changed: Int) {
 }
 @NonRestartableComposable
 @Composable
-@FunctionKeyMeta(key = 707339742, startOffset = 655, endOffset = 803)
 fun NoCalls(%composer: Composer?, %changed: Int) {
   sourceInformationMarkerStart(%composer, <>, "C(NoCalls)<A()>:Test.kt")
   if (isTraceInProgress()) {
@@ -120,7 +117,6 @@ fun NoCalls(%composer: Composer?, %changed: Int) {
 }
 @NonRestartableComposable
 @Composable
-@FunctionKeyMeta(key = 1499017998, startOffset = 843, endOffset = 1039)
 fun NoCallsAfter(%composer: Composer?, %changed: Int) {
   sourceInformationMarkerStart(%composer, <>, "C(NoCallsAfter):Test.kt")
   if (isTraceInProgress()) {

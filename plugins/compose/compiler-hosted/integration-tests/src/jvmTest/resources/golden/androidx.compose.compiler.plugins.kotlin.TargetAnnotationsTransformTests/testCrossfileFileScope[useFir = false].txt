@@ -13,7 +13,6 @@ fun InferN() { N() }
 
 @Composable
 @ComposableTarget(applier = "NComposable")
-@FunctionKeyMeta(key = -1523564634, startOffset = 84, endOffset = 104)
 fun InferN(%composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(InferN)<N()>:Test.kt")

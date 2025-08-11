@@ -24,7 +24,6 @@ abstract class Test {
 // ------------------------------------------
 
 @Composable
-@FunctionKeyMeta(key = 2079548765, startOffset = 80, endOffset = 148)
 fun Example(data: Data?, intData: IntData, %composer: Composer?, %changed: Int, %default: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(Example)P(0:Data,1:IntData):Test.kt")
@@ -49,7 +48,6 @@ fun Example(data: Data?, intData: IntData, %composer: Composer?, %changed: Int, 
   }
 }
 @Composable
-@FunctionKeyMeta(key = -1137812578, startOffset = 177, endOffset = 254)
 fun ExampleNullable(data: Data?, intData: IntData, %composer: Composer?, %changed: Int, %default: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(ExampleNullable)P(0:Data,1:IntData):Test.kt")
@@ -74,7 +72,6 @@ fun ExampleNullable(data: Data?, intData: IntData, %composer: Composer?, %change
   }
 }
 @Composable
-@FunctionKeyMeta(key = -1599459577, startOffset = 283, endOffset = 381)
 fun ExampleNullableData(data: NullableData?, intData: IntData, %composer: Composer?, %changed: Int, %default: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(ExampleNullableData)P(0:NullableData,1:IntData):Test.kt")
@@ -99,7 +96,6 @@ fun ExampleNullableData(data: NullableData?, intData: IntData, %composer: Compos
   }
 }
 @Composable
-@FunctionKeyMeta(key = -597728330, startOffset = 418, endOffset = 493)
 private fun PrivateExample(data: Data?, intData: IntData, %composer: Composer?, %changed: Int, %default: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(PrivateExample)P(0:Data,1:IntData):Test.kt")
@@ -124,7 +120,6 @@ private fun PrivateExample(data: Data?, intData: IntData, %composer: Composer?, 
   }
 }
 @Composable
-@FunctionKeyMeta(key = 645501472, startOffset = 531, endOffset = 607)
 internal fun InternalExample(data: Data?, intData: IntData, %composer: Composer?, %changed: Int, %default: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(InternalExample)P(0:Data,1:IntData):Test.kt")
@@ -150,7 +145,6 @@ internal fun InternalExample(data: Data?, intData: IntData, %composer: Composer?
 }
 @Composable
 @PublishedApi
-@FunctionKeyMeta(key = -2145623253, startOffset = 659, endOffset = 736)
 internal fun PublishedExample(data: Data?, intData: IntData, %composer: Composer?, %changed: Int, %default: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(PublishedExample)P(0:Data,1:IntData):Test.kt")
@@ -177,7 +171,6 @@ internal fun PublishedExample(data: Data?, intData: IntData, %composer: Composer
 @StabilityInferred(parameters = 1)
 abstract class Test {
   @Composable
-  @FunctionKeyMeta(key = 954383737, startOffset = 816, endOffset = 860)
   private fun PrivateExample(data: Data?, %composer: Composer?, %changed: Int, %default: Int) {
     %composer = %composer.startRestartGroup(<>)
     sourceInformation(%composer, "C(PrivateExample)P(0:Data):Test.kt")
@@ -200,7 +193,6 @@ abstract class Test {
     }
   }
   @Composable
-  @FunctionKeyMeta(key = 1435451387, startOffset = 893, endOffset = 936)
   fun PublicExample(data: Data?, %composer: Composer?, %changed: Int, %default: Int) {
     %composer = %composer.startRestartGroup(<>)
     sourceInformation(%composer, "C(PublicExample)P(0:Data):Test.kt")
@@ -223,7 +215,6 @@ abstract class Test {
     }
   }
   @Composable
-  @FunctionKeyMeta(key = -1784545585, startOffset = 978, endOffset = 1023)
   internal fun InternalExample(data: Data?, %composer: Composer?, %changed: Int, %default: Int) {
     %composer = %composer.startRestartGroup(<>)
     sourceInformation(%composer, "C(InternalExample)P(0:Data):Test.kt")
@@ -247,7 +238,6 @@ abstract class Test {
   }
   @Composable
   @PublishedApi
-  @FunctionKeyMeta(key = -1614377500, startOffset = 1079, endOffset = 1125)
   internal fun PublishedExample(data: Data?, %composer: Composer?, %changed: Int, %default: Int) {
     %composer = %composer.startRestartGroup(<>)
     sourceInformation(%composer, "C(PublishedExample)P(0:Data):Test.kt")
@@ -270,7 +260,6 @@ abstract class Test {
     }
   }
   @Composable
-  @FunctionKeyMeta(key = 345896868, startOffset = 1168, endOffset = 1214)
   protected fun ProtectedExample(data: Data?, %composer: Composer?, %changed: Int, %default: Int) {
     %composer = %composer.startRestartGroup(<>)
     sourceInformation(%composer, "C(ProtectedExample)P(0:Data):Test.kt")

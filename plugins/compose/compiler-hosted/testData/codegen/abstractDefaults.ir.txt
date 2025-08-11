@@ -30,7 +30,6 @@ MODULE_FRAGMENT
         annotations:
           Composable
           ComposableInferredTarget(scheme = "[androidx.compose.ui.UiComposable[_]]")
-          FunctionKeyMeta(key = 732992142, startOffset = 314, endOffset = 544)
         overridden:
           public abstract fun Popup (onDismissRequest: kotlin.Function0<kotlin.Unit>?, onPreviewKeyEvent: kotlin.Function1<androidx.compose.ui.input.key.KeyEvent, kotlin.Boolean>?, onKeyEvent: kotlin.Function1<androidx.compose.ui.input.key.KeyEvent, kotlin.Boolean>?, content: kotlin.Function2<androidx.compose.runtime.Composer, kotlin.Int, kotlin.Unit>, $composer: androidx.compose.runtime.Composer?, $changed: kotlin.Int): kotlin.Unit declared in <root>.PopupRenderer
         BLOCK_BODY

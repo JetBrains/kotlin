@@ -10,7 +10,6 @@ MODULE_FRAGMENT
       VALUE_PARAMETER MASK_FOR_DEFAULT_FUNCTION kind:Regular name:$default index:6 type:kotlin.Int
       annotations:
         Composable
-        FunctionKeyMeta(key = 312387330, startOffset = 446, endOffset = 865)
       BLOCK_BODY
         BLOCK type=kotlin.Unit origin=null
           SET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in home.ReplyNavHost' type=kotlin.Unit origin=null
@@ -198,7 +197,6 @@ MODULE_FRAGMENT
                                             VALUE_PARAMETER kind:Regular name:$changed index:3 type:kotlin.Int
                                             annotations:
                                               Composable
-                                              FunctionKeyMeta(key = 1233631192, startOffset = 749, endOffset = 857)
                                             BLOCK_BODY
                                               CALL 'public final fun sourceInformation (composer: androidx.compose.runtime.Composer, sourceInformation: kotlin.String): kotlin.Unit declared in androidx.compose.runtime' type=kotlin.Unit origin=null
                                                 ARG composer: GET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in home.ReplyNavHost.<anonymous>.<anonymous>.<anonymous>' type=androidx.compose.runtime.Composer? origin=null

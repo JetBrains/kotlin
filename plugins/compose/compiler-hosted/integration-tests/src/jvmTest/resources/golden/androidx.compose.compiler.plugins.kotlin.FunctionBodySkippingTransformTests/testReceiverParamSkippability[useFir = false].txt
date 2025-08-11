@@ -25,7 +25,6 @@ class Foo {
 class Foo {
   var counter: Int = 0
   @Composable
-  @FunctionKeyMeta(key = -973227539, startOffset = 200, endOffset = 237)
   fun A(%composer: Composer?, %changed: Int) {
     %composer = %composer.startRestartGroup(<>)
     sourceInformation(%composer, "C(A):Test.kt")
@@ -46,7 +45,6 @@ class Foo {
     }
   }
   @Composable
-  @FunctionKeyMeta(key = 1386079470, startOffset = 251, endOffset = 282)
   fun B(%composer: Composer?, %changed: Int) {
     %composer = %composer.startRestartGroup(<>)
     sourceInformation(%composer, "C(B):Test.kt")

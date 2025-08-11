@@ -17,7 +17,6 @@ fun Test(a: Int, b: Boolean, c: Int = 0, d: Foo = Foo(), e: List<Int> = emptyLis
 // ------------------------------------------
 
 @Composable
-@FunctionKeyMeta(key = -1868175978, startOffset = 165, endOffset = 274)
 fun Test(a: Int, b: Boolean, c: Int, d: Foo?, e: List<Int>?, %composer: Composer?, %changed: Int, %default: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(Test)<A(a,>:Test.kt")

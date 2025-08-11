@@ -21,7 +21,6 @@ fun Test() {
 // ------------------------------------------
 
 @Composable
-@FunctionKeyMeta(key = -1794342280, startOffset = 295, endOffset = 445)
 fun Test(%composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   if (%composer.shouldExecute(%changed != 0, %changed and 0b0001)) {

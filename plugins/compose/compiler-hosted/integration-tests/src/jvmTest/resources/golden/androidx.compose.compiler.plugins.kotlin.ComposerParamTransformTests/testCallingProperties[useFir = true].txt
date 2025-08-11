@@ -24,7 +24,7 @@ val bar: Int @Composable get() { return 123 }
 // ------------------------------------------
 
 val bar: Int
-  @Composable @JvmName(name = "getBar") @FunctionKeyMeta(key = -592249968, startOffset = 275, endOffset = 307)
+  @Composable @JvmName(name = "getBar")
   get() {
     sourceInformationMarkerStart(%composer, <>, "C(<get-bar>):Test.kt#2487m")
     if (isTraceInProgress()) {
@@ -39,7 +39,6 @@ val bar: Int
   }
 @NonRestartableComposable
 @Composable
-@FunctionKeyMeta(key = -866191870, startOffset = 347, endOffset = 372)
 fun Example(%composer: Composer?, %changed: Int) {
   sourceInformationMarkerStart(%composer, <>, "C(Example)<bar>:Test.kt#2487m")
   if (isTraceInProgress()) {

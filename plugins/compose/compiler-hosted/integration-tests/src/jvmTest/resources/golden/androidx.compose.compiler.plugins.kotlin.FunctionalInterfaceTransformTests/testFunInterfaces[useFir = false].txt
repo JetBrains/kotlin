@@ -21,7 +21,6 @@ interface A {
   abstract fun compute(value: Int)
 }
 @Composable
-@FunctionKeyMeta(key = -1738207125, startOffset = 175, endOffset = 256)
 fun Example(a: A, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(Example)<{>,<Exampl...>:Test.kt")

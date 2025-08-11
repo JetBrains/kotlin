@@ -26,7 +26,6 @@ fun testInline_M1_W_Return_Func(condition: Boolean) {
 // ------------------------------------------
 
 @Composable
-@FunctionKeyMeta(key = 1916355210, startOffset = 105, endOffset = 513)
 fun testInline_M1_W_Return_Func(condition: Boolean, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(testInline_M1_W_Return_Func)<A()>,<M1>,<A()>:Test.kt")

@@ -17,7 +17,6 @@ fun Test(inlineInt: InlineInt) {
 // ------------------------------------------
 
 @Composable
-@FunctionKeyMeta(key = 1133028498, startOffset = 98, endOffset = 206)
 fun Test(inlineInt: InlineInt, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(Test)P(0:InlineInt)<rememb...>:Test.kt")

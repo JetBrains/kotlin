@@ -33,7 +33,6 @@ class FooImpl : BaseFoo() {
 abstract class BaseFoo {
   @NonRestartableComposable
   @Composable
-  @FunctionKeyMeta(key = -620957956, startOffset = 346, endOffset = 355)
   abstract fun bar(%composer: Composer?, %changed: Int)
   static val %stable: Int = 0
 }
@@ -41,7 +40,6 @@ abstract class BaseFoo {
 class FooImpl : BaseFoo {
   @NonRestartableComposable
   @Composable
-  @FunctionKeyMeta(key = -748024819, startOffset = 446, endOffset = 458)
   override fun bar(%composer: Composer?, %changed: Int) {
     %composer.startReplaceGroup(<>)
     sourceInformation(%composer, "C(bar):Test.kt#2487m")

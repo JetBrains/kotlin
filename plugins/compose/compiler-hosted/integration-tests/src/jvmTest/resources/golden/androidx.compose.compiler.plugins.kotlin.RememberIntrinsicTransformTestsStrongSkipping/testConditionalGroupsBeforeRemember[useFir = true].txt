@@ -21,7 +21,6 @@ fun LoginInputFields(
 // ------------------------------------------
 
 @Composable
-@FunctionKeyMeta(key = -323477903, startOffset = 96, endOffset = 386)
 fun LoginInputFields(loginError: Int?, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(LoginInputFields)N(loginError)<{}>,<Checkb...>:Test.kt")
