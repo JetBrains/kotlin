@@ -163,7 +163,14 @@ class Fir2IrTypeConverter(
                     if (isAlreadyPresentInAnnotations) continue
                     typeAnnotations += callGenerator.convertToIrConstructorCall(attributeAnnotation) as? IrConstructorCall ?: continue
                 }
-                val approximatedType = type.approximateForIrOrSelf()
+                val approximatedType =
+                    if (!type.isArrayTypeOrNullableArrayType || type.typeArguments.any {
+                            it.kind != ProjectionKind.INVARIANT || it.type is ConeCapturedType || it.type is ConeIntersectionType
+                        }
+                    )
+                        type.approximateForIrOrSelf()
+                    else
+                        type
 
                 if (approximatedType is ConeTypeParameterType && conversionScope.shouldEraseType(approximatedType)) {
                     // This hack is about type parameter leak in case of generic delegated property

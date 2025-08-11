@@ -33,4 +33,4 @@ fun main() {
     foo3()
 }
 
-// 1 INVOKESTATIC test/FooKt.foo1\$default \(\[Lerror/NonExistentClass;ILjava/lang/Object;\)V
+// 0 INVOKESTATIC test/FooKt.foo1\$default \(\[Lerror/NonExistentClass;ILjava/lang/Object;\)V
