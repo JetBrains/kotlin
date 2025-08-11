@@ -64,7 +64,7 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
             else -> irError("Can't export declaration") {
                 withIrEntry("candidate", candidate)
             }
-        }?.withAttributesFor(candidate)
+        }
     }
 
     private fun exportClass(candidate: IrClass): ExportedDeclaration? {
@@ -340,19 +340,19 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
 
             when (candidate) {
                 is IrSimpleFunction ->
-                    members.addIfNotNull(exportFunction(candidate)?.withAttributesFor(candidate))
+                    members.addIfNotNull(exportFunction(candidate))
 
                 is IrConstructor ->
-                    members.addIfNotNull(exportConstructor(candidate)?.withAttributesFor(candidate))
+                    members.addIfNotNull(exportConstructor(candidate))
 
                 is IrProperty ->
-                    members.addIfNotNull(exportProperty(candidate)?.withAttributesFor(candidate))
+                    members.addIfNotNull(exportProperty(candidate))
 
                 is IrClass -> {
                     if (klass.isInterface) {
-                        nestedClasses.addIfNotNull(klass.companionObject()?.let { exportClass(it) as? ExportedClass }?.withAttributesFor(candidate))
+                        nestedClasses.addIfNotNull(klass.companionObject()?.let { exportClass(it) as? ExportedClass })
                     } else {
-                        val ec = exportClass(candidate)?.withAttributesFor(candidate)
+                        val ec = exportClass(candidate)
                         if (ec is ExportedClass) {
                             nestedClasses.add(ec)
                         } else {
@@ -913,12 +913,6 @@ val strictModeReservedWords = setOf(
 )
 
 private val allReservedWords = reservedWords + strictModeReservedWords
-
-fun <T : ExportedDeclaration> T.withAttributesFor(declaration: IrDeclaration): T {
-    declaration.getDeprecated()?.let { attributes.add(ExportedAttribute.DeprecatedAttribute(it)) }
-
-    return this
-}
 
 fun IrClass.getExportedIdentifierForClass(): String {
     val parentClass = parentClassOrNull
