@@ -13,8 +13,8 @@
 
 # OWNER_LIST: "Kotlin"
 # OWNER_LIST: "Kotlin Libraries"
-# OWNER_LIST: "Kotlin JVM" "Kotlin Native" "Kotlin Wasm" "Kotlin Common Backend" "Kotlin JS"
-# OWNER_LIST: "Kotlin Frontend"
+# OWNER_LIST: "Kotlin JVM" "Kotlin Native" "Kotlin Wasm" "Kotlin Common Backend" "Kotlin JS" "Kotlin Frontend"
+# OWNER_LIST: "Kotlin Compiler"
 # OWNER_LIST: "Kotlin Build Infrastructure" "Kotlin Build Tools"
 # OWNER_LIST: "Kotlin Performance QA"
 # OWNER_LIST: "Kotlin Analysis API"
@@ -90,7 +90,7 @@
 /compiler/fir/checkers/checkers.native/src/org/jetbrains/kotlin/fir/analysis/diagnostics/native/FirNativeErrorsDefaultMessages.kt alejandro.serrano.mena@jetbrains.com brian.norman@jetbrains.com ilya.chernikov@jetbrains.com kirill.rakhman@jetbrains.com
 /compiler/fir/checkers/checkers.wasm/src/org/jetbrains/kotlin/fir/analysis/diagnostics/wasm/FirWasmErrorsDefaultMessages.kt alejandro.serrano.mena@jetbrains.com brian.norman@jetbrains.com ilya.chernikov@jetbrains.com kirill.rakhman@jetbrains.com
 /compiler/fir/raw-fir/raw-fir.common/src/org/jetbrains/kotlin/fir/builder/FirSyntaxErrorsDefaultMessages.kt alejandro.serrano.mena@jetbrains.com brian.norman@jetbrains.com ilya.chernikov@jetbrains.com kirill.rakhman@jetbrains.com
-/compiler/fir/fir2ir/tests-gen/ "Kotlin Frontend" "Kotlin JVM" "Kotlin Native" "Kotlin Wasm" "Kotlin Common Backend" "Kotlin JS"
+/compiler/fir/fir2ir/tests-gen/ "Kotlin Compiler"
 /compiler/frontend/ "Kotlin Frontend"
 /compiler/frontend.common/ "Kotlin Frontend"
 /compiler/frontend.common.jvm/ "Kotlin Frontend"
@@ -144,7 +144,7 @@
 /compiler/testData/cli/jvm/ "Kotlin JVM" "Kotlin Frontend"
 /compiler/testData/cli/metadata/ "Kotlin Frontend"
 /compiler/testData/codegen/asmLike/ "Kotlin JVM"
-/compiler/testData/codegen/box/ "Kotlin Frontend" "Kotlin JVM" "Kotlin Native" "Kotlin Wasm" "Kotlin Common Backend" "Kotlin JS"
+/compiler/testData/codegen/box/ "Kotlin Compiler"
 /compiler/testData/codegen/box/size/ zalim.bashorov@jetbrains.com
 /compiler/testData/codegen/boxInline/ "Kotlin JVM" "Kotlin Native" "Kotlin Wasm" "Kotlin Common Backend" "Kotlin JS"
 /compiler/testData/codegen/boxKlib/ "Kotlin JVM"
@@ -177,7 +177,7 @@
 # UNKNOWN: /compiler/testData/integration/
 /compiler/testData/ir/closureAnnotator/ "Kotlin JVM"
 /compiler/testData/ir/interpreter/ "Kotlin Common Backend"
-/compiler/testData/ir/irText/ "Kotlin Frontend" "Kotlin JVM" "Kotlin Native" "Kotlin Wasm" "Kotlin Common Backend" "Kotlin JS"
+/compiler/testData/ir/irText/ "Kotlin Compiler"
 /compiler/testData/ir/klibLayout/ "Kotlin Common Backend"
 /compiler/testData/ir/sourceRanges/ "Kotlin Frontend"
 /compiler/testData/javaModules/ "Kotlin JVM"
@@ -207,7 +207,7 @@
 /compiler/testData/resolveConstructorDelegationCalls/ "Kotlin Frontend"
 /compiler/testData/resolvedCalls/ "Kotlin Frontend"
 /compiler/testData/serialization/builtinsSerializer/ "Kotlin Frontend"
-/compiler/testData/serialization/nonStableParameterNames/ "Kotlin Frontend" "Kotlin JVM" "Kotlin Native" "Kotlin Wasm" "Kotlin Common Backend" "Kotlin JS"
+/compiler/testData/serialization/nonStableParameterNames/ "Kotlin Compiler"
 /compiler/testData/serialization/klib/ "Kotlin Common Backend"
 /compiler/testData/type/ "Kotlin Frontend"
 /compiler/testData/typeQualifierNickname/ "Kotlin Frontend"
@@ -216,9 +216,9 @@
 /compiler/testData/writeSignature/ "Kotlin JVM"
 /compiler/testData/type-checker-test.kt "Kotlin Frontend"
 /compiler/testData/type-substitutor.kt "Kotlin Frontend"
-/compiler/tests/ "Kotlin Frontend" "Kotlin JVM" "Kotlin Native" "Kotlin Wasm" "Kotlin Common Backend" "Kotlin JS"
+/compiler/tests/ "Kotlin Compiler"
 /compiler/tests-against-klib/ "Kotlin JVM"
-/compiler/tests-common/ "Kotlin Frontend" "Kotlin JVM" "Kotlin Native" "Kotlin Wasm" "Kotlin Common Backend" "Kotlin JS"
+/compiler/tests-common/ "Kotlin Compiler"
 /compiler/tests-common/testFixtures/org/jetbrains/kotlin/asJava/ "Kotlin Analysis API"
 /compiler/tests-common-new/ "Kotlin Frontend"
 /compiler/tests-common-new/tests-gen/org/jetbrains/kotlin/test/runners/codegen/ "Kotlin Frontend" "Kotlin JVM" "Kotlin JS" "Kotlin Native" "Kotlin Wasm"
@@ -227,12 +227,12 @@
 /compiler/tests-common-new/testFixtures/org/jetbrains/kotlin/test/services/configuration/WasmEnvironmentConfigurator.kt "Kotlin Wasm"
 /compiler/tests-common-new/testFixtures/org/jetbrains/kotlin/test/directives/JsEnvironmentConfigurationDirectives.kt "Kotlin JS"
 /compiler/tests-common-new/testFixtures/org/jetbrains/kotlin/test/services/configuration/JsEnvironmentConfigurator.kt "Kotlin JS"
-/compiler/tests-compiler-utils/ "Kotlin Frontend" "Kotlin Common Backend" "Kotlin JVM" "Kotlin Native" "Kotlin Wasm" "Kotlin JS"
-/compiler/tests-integration/ "Kotlin Frontend" "Kotlin Common Backend" "Kotlin JVM" "Kotlin Native" "Kotlin Wasm" "Kotlin JS"
+/compiler/tests-compiler-utils/ "Kotlin Compiler"
+/compiler/tests-integration/ "Kotlin Compiler"
 /compiler/tests-integration/tests/org/jetbrains/kotlin/klib/ "Kotlin Common Backend"
 /compiler/tests-different-jdk/ "Kotlin JVM"
-/compiler/tests-for-compiler-generator/ "Kotlin Frontend" "Kotlin JVM" "Kotlin Native" "Kotlin Wasm" "Kotlin Common Backend" "Kotlin JS"
-/compiler/tests-gen/ "Kotlin Frontend" "Kotlin JVM" "Kotlin Native" "Kotlin Wasm" "Kotlin Common Backend" "Kotlin JS"
+/compiler/tests-for-compiler-generator/ "Kotlin Compiler"
+/compiler/tests-gen/ "Kotlin Compiler"
 /compiler/tests-java8/ "Kotlin JVM"
 /compiler/tests-mutes/ "Kotlin Build Infrastructure"
 /compiler/test-security-manager/ "Kotlin Build Infrastructure"
@@ -280,8 +280,8 @@
 /generators/sir-tests-generator/ "Kotlin Native"
 /generators/protobuf/ "Kotlin Build Infrastructure"
 # UNKNOWN: /generators/protobufCompare/
-/generators/test-generator/ "Kotlin Frontend" "Kotlin JVM" "Kotlin Native" "Kotlin Wasm" "Kotlin Common Backend" "Kotlin JS"
-/generators/tests/ "Kotlin Frontend" "Kotlin JVM" "Kotlin Native" "Kotlin Wasm" "Kotlin Common Backend" "Kotlin JS"
+/generators/test-generator/ "Kotlin Compiler"
+/generators/tests/ "Kotlin Compiler"
 /generators/tree-generator-common/ "Kotlin Frontend" "Kotlin Common Backend" sergej.jaskiewicz@jetbrains.com
 /generators/wasm/ "Kotlin Wasm"
 
