@@ -25,6 +25,12 @@ public class FirJsLightTreePluginBlackBoxCodegenForComposeTestGenerated extends 
   }
 
   @Test
+  @TestMetadata("testOverrideLambda.kt")
+  public void testTestOverrideLambda() {
+    runTest("plugins/compose/compiler-hosted/testData/js/testOverrideLambda.kt");
+  }
+
+  @Test
   @TestMetadata("testValueClassJs.kt")
   public void testTestValueClassJs() {
     runTest("plugins/compose/compiler-hosted/testData/js/testValueClassJs.kt");
