@@ -9782,6 +9782,12 @@ public class DiagnosticTestGenerated extends AbstractDiagnosticTest {
         }
 
         @Test
+        @TestMetadata("jooq.kt")
+        public void testJooq() {
+          runTest("compiler/testData/diagnostics/tests/crv/otherAnnotations/jooq.kt");
+        }
+
+        @Test
         @TestMetadata("springframework.kt")
         public void testSpringframework() {
           runTest("compiler/testData/diagnostics/tests/crv/otherAnnotations/springframework.kt");
