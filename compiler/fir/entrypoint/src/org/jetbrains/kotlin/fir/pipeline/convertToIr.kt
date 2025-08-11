@@ -270,8 +270,12 @@ private class Fir2IrPipeline(
 
         removeGeneratedBuiltinsDeclarationsIfNeeded()
 
-        pluginContext.runMandatoryIrValidation(null, mainIrFragment)
-        pluginContext.applyIrGenerationExtensions(mainIrFragment, irGeneratorExtensions)
+        val hasScriptingPlugin = irGeneratorExtensions.any {
+            it.javaClass.name == "org.jetbrains.kotlin.scripting.compiler.plugin.extensions.ScriptLoweringExtension"
+        }
+
+        pluginContext.runMandatoryIrValidation(null, mainIrFragment, hasScriptingPlugin)
+        pluginContext.applyIrGenerationExtensions(mainIrFragment, irGeneratorExtensions, hasScriptingPlugin)
 
         return Fir2IrActualizedResult(mainIrFragment, componentsStorage, pluginContext, actualizationResult, irBuiltIns, symbolTable)
     }
@@ -470,6 +474,7 @@ private class Fir2IrPipeline(
     private fun IrPluginContext.runMandatoryIrValidation(
         extension: IrGenerationExtension?,
         module: IrModuleFragment,
+        hasScriptingPlugin: Boolean,
     ) {
         val irVerificationMode = compilerConfiguration.get(CommonConfigurationKeys.VERIFY_IR, IrVerificationMode.NONE)
         if (irVerificationMode == IrVerificationMode.NONE && !fir2IrConfiguration.validateIrForKlibSerialization) {
@@ -489,13 +494,20 @@ private class Fir2IrPipeline(
                 //.withTypeChecks() // TODO: Re-enable checking types (KT-68663)
                 .withCheckers(
                     IrCrossFileFieldUsageChecker,
-                    IrValueAccessScopeChecker,
                     //IrTypeParameterScopeChecker // TODO: Re-enable checking out-of-scope type parameter usages (KT-69305),
                 )
-                .applyIf(compilerConfiguration.enableIrVisibilityChecks) { // KT-80071
-                    // User code may use @Suppress("INVISIBLE_REFERENCE") or similar, and at this point we do allow that,
-                    // so visibility checks are only performed if requested via a flag, and in tests.
-                    withCheckers(IrVisibilityChecker)
+                .applyIf(!hasScriptingPlugin) {
+                    // FIXME: Those checks are (temporarily) disabled when using the kotlin scripting plugin, because it is the only
+                    //  known core compiler plugin which produces such wrong IR.
+                    //  OOTH, kotlin scripting is supported only in JVM, and the compiled code is executed immediately,
+                    //  which means the severity of those violations is not that critical.
+                    withCheckers(
+                        IrValueAccessScopeChecker, // KT-80071
+                    ).applyIf(compilerConfiguration.enableIrVisibilityChecks) { // KT-80071
+                        // User code may use @Suppress("INVISIBLE_REFERENCE") or similar, and at this point we do allow that,
+                        // so visibility checks are only performed if requested via a flag, and in tests.
+                        withCheckers(IrVisibilityChecker)
+                    }
                 }
                 .applyIf(compilerConfiguration.enableIrVarargTypesChecks) {
                     withVarargChecks()
@@ -540,11 +552,12 @@ private class Fir2IrPipeline(
     fun IrPluginContext.applyIrGenerationExtensions(
         irModuleFragment: IrModuleFragment,
         irGenerationExtensions: Collection<IrGenerationExtension>,
+        hasScriptingPlugin: Boolean,
     ) {
         for (extension in irGenerationExtensions) {
             try {
                 extension.generate(irModuleFragment, this)
-                runMandatoryIrValidation(extension, irModuleFragment)
+                runMandatoryIrValidation(extension, irModuleFragment, hasScriptingPlugin)
             } catch (e: Throwable) {
                 rethrowIntellijPlatformExceptionIfNeeded(e)
                 throw IrGenerationExtensionException(e, extension::class.java)
