@@ -27332,6 +27332,18 @@ public class PhasedJvmDiagnosticLightTreeTestGenerated extends AbstractPhasedJvm
       }
 
       @Test
+      @TestMetadata("FalseNegativeInaccessibleTypeInDefaultArg.kt")
+      public void testFalseNegativeInaccessibleTypeInDefaultArg() {
+        runTest("compiler/testData/diagnostics/tests/multimodule/FalseNegativeInaccessibleTypeInDefaultArg.kt");
+      }
+
+      @Test
+      @TestMetadata("FalseNegativeInaccessibleTypeInDefaultArgWithError.kt")
+      public void testFalseNegativeInaccessibleTypeInDefaultArgWithError() {
+        runTest("compiler/testData/diagnostics/tests/multimodule/FalseNegativeInaccessibleTypeInDefaultArgWithError.kt");
+      }
+
+      @Test
       @TestMetadata("FalsePositiveInaccessibleGenericType.kt")
       public void testFalsePositiveInaccessibleGenericType() {
         runTest("compiler/testData/diagnostics/tests/multimodule/FalsePositiveInaccessibleGenericType.kt");
