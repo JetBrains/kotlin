@@ -22,6 +22,11 @@ dependencies {
     implementation(gradleApi())
 }
 
+tasks.compileJava {
+    sourceCompatibility = "1.8"
+    targetCompatibility = "1.8"
+}
+
 tasks {
     compileKotlin {
         kotlinOptions.jvmTarget = "1.8"
