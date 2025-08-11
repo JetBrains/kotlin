@@ -13,7 +13,7 @@ import kotlin.contracts.contract
 /**
  * Throws an [IllegalArgumentException] if the [value] is false.
  *
- * @sample samples.misc.Preconditions.failRequireWithLazyMessage
+ * @sample samples.misc.Preconditions.failRequireWithoutLazyMessage
  */
 @kotlin.internal.InlineOnly
 public inline fun require(value: Boolean): Unit {
