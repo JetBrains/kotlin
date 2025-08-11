@@ -56,12 +56,14 @@ internal fun rangeCheck(index: Int, size: Int) {
   if (index < 0 || index >= size) throw IndexOutOfBoundsException()
 }
 
+// TODO KT-79334: Drop this fun after bootstrap update, and use `kotlin.internal.throwUninitializedPropertyAccessException` instead
 @PublishedApi
 internal fun throwUninitializedPropertyAccessException(name: String): Nothing {
-    throw UninitializedPropertyAccessException("lateinit property $name has not been initialized")
+    kotlin.internal.throwUninitializedPropertyAccessException(name)
 }
 
+// TODO KT-79334: Drop this fun after bootstrap update, and use `kotlin.internal.throwUnsupportedOperationException` instead
 @PublishedApi
 internal fun throwUnsupportedOperationException(message: String): Nothing {
-    throw UnsupportedOperationException(message)
+    kotlin.internal.throwUnsupportedOperationException(message)
 }

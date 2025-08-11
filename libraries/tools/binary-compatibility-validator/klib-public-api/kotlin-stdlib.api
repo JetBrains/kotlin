@@ -6666,6 +6666,8 @@ final fun kotlin.internal/getProgressionLastElement(kotlin/Int, kotlin/Int, kotl
 final fun kotlin.internal/getProgressionLastElement(kotlin/Long, kotlin/Long, kotlin/Long): kotlin/Long // kotlin.internal/getProgressionLastElement|getProgressionLastElement(kotlin.Long;kotlin.Long;kotlin.Long){}[0]
 final fun kotlin.internal/getProgressionLastElement(kotlin/UInt, kotlin/UInt, kotlin/Int): kotlin/UInt // kotlin.internal/getProgressionLastElement|getProgressionLastElement(kotlin.UInt;kotlin.UInt;kotlin.Int){}[0]
 final fun kotlin.internal/getProgressionLastElement(kotlin/ULong, kotlin/ULong, kotlin/Long): kotlin/ULong // kotlin.internal/getProgressionLastElement|getProgressionLastElement(kotlin.ULong;kotlin.ULong;kotlin.Long){}[0]
+final fun kotlin.internal/throwUninitializedPropertyAccessException(kotlin/String): kotlin/Nothing // kotlin.internal/throwUninitializedPropertyAccessException|throwUninitializedPropertyAccessException(kotlin.String){}[0]
+final fun kotlin.internal/throwUnsupportedOperationException(kotlin/String): kotlin/Nothing // kotlin.internal/throwUnsupportedOperationException|throwUnsupportedOperationException(kotlin.String){}[0]
 final fun kotlin.io/print(kotlin/Any?) // kotlin.io/print|print(kotlin.Any?){}[0]
 final fun kotlin.io/println() // kotlin.io/println|println(){}[0]
 final fun kotlin.io/println(kotlin/Any?) // kotlin.io/println|println(kotlin.Any?){}[0]
