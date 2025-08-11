@@ -4329,6 +4329,11 @@ internal class UselessElvisRightIsNullImpl(
     token: KaLifetimeToken,
 ) : KaAbstractFirDiagnostic<KtBinaryExpression>(firDiagnostic, token), KaFirDiagnostic.UselessElvisRightIsNull
 
+internal class UselessElvisLeftIsNullImpl(
+    firDiagnostic: KtPsiDiagnostic,
+    token: KaLifetimeToken,
+) : KaAbstractFirDiagnostic<KtBinaryExpression>(firDiagnostic, token), KaFirDiagnostic.UselessElvisLeftIsNull
+
 internal class CannotCheckForErasedImpl(
     override val type: KaType,
     firDiagnostic: KtPsiDiagnostic,
