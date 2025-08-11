@@ -40,7 +40,8 @@ import org.jetbrains.kotlin.types.model.TypeSystemContext
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
 internal abstract class IrExpectActualMatchingContext(
-    val typeContext: IrTypeSystemContext
+    val typeContext: IrTypeSystemContext,
+    val expectToActualClassMap: ClassActualizationInfo.ActualClassMapping
 ) : ExpectActualMatchingContext<IrSymbol>, TypeSystemContext by typeContext {
     // Default params are not checked on backend because backend ignores expect classes in fake override builder.
     // See https://github.com/JetBrains/kotlin/commit/8d725753f8f8d430101a17bc1049463a6319359b
@@ -446,7 +447,7 @@ internal abstract class IrExpectActualMatchingContext(
 
         private fun substituteOrNull(type: IrType): IrType? {
             if (type !is IrSimpleType) return null
-            val newClassifier = (type.classifier.owner as? IrClass)?.let { actualizeClass(it.classIdOrFail) }
+            val newClassifier = (type.classifier.owner as? IrClass)?.let { expectToActualClassMap[it.classIdOrFail] }
             val newArguments = ArrayList<IrTypeArgument>(type.arguments.size)
             var argumentsChanged = false
             for (argument in type.arguments) {
@@ -480,8 +481,6 @@ internal abstract class IrExpectActualMatchingContext(
             }
         }
     }
-
-    protected abstract fun actualizeClass(classId: ClassId): IrClassSymbol?
 
     override fun RegularClassSymbolMarker.isSamInterface(): Boolean =
         this.asIr().functions.singleOrNull { it.modality == Modality.ABSTRACT } != null
@@ -555,7 +554,7 @@ internal abstract class IrExpectActualMatchingContext(
     }
 
     internal fun getClassIdAfterActualization(classId: ClassId): ClassId {
-        return actualizeClass(classId)?.classId ?: classId
+        return expectToActualClassMap[classId]?.classId ?: classId
     }
 
     private inner class AnnotationCallInfoImpl(val irElement: IrConstructorCall) : AnnotationCallInfo {
@@ -572,7 +571,7 @@ internal abstract class IrExpectActualMatchingContext(
 
         private fun getAnnotationClass(): IrClass? {
             val annotationClass = irElement.type.getClass() ?: return null
-            return annotationClass.classId?.let { actualizeClass(it) }?.owner ?: annotationClass
+            return expectToActualClassMap[annotationClass.classId]?.owner ?: annotationClass
         }
     }
 
