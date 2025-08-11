@@ -19,6 +19,9 @@ fun main() {
             testClass<AbstractPhasedJvmDiagnosticLightTreeForComposeTest> {
                 model("diagnostics")
             }
+            testClass<AbstractFirJsLightTreePluginBlackBoxCodegenForComposeTest> {
+                model("js")
+            }
         }
     }
 }
