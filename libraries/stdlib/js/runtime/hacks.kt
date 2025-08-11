@@ -7,13 +7,15 @@ package kotlin
 
 import kotlin.internal.UsedFromCompilerGeneratedCode
 
+// TODO KT-79334: Drop this fun after bootstrap update, and use `kotlin.internal.throwUninitializedPropertyAccessException` instead
 @PublishedApi
 internal fun throwUninitializedPropertyAccessException(name: String): Nothing =
-    throw UninitializedPropertyAccessException("lateinit property $name has not been initialized")
+    kotlin.internal.throwUninitializedPropertyAccessException(name)
 
+// TODO KT-79334: Drop this fun after bootstrap update, and use `kotlin.internal.throwUnsupportedOperationException` instead
 @PublishedApi
 internal fun throwUnsupportedOperationException(message: String): Nothing =
-    throw UnsupportedOperationException(message)
+    kotlin.internal.throwUnsupportedOperationException(message)
 
 @PublishedApi
 internal fun throwKotlinNothingValueException(): Nothing =
