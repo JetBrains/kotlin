@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.backend.konan.lower
 
 import org.jetbrains.kotlin.backend.common.*
-import org.jetbrains.kotlin.backend.common.ir.Symbols
+import org.jetbrains.kotlin.backend.common.ir.FrontendSymbols
 import org.jetbrains.kotlin.backend.common.lower.Closure
 import org.jetbrains.kotlin.backend.common.lower.ClosureAnnotator
 import org.jetbrains.kotlin.backend.konan.*
@@ -493,7 +493,7 @@ private class BackendChecker(
                             reportError(it, "incorrect value for binary data: $value")
                     }
                 }
-                Symbols.isTypeOfIntrinsic(callee.symbol) ->
+                FrontendSymbols.isTypeOfIntrinsic(callee.symbol) ->
                     checkIrKType(expression, expression.typeArguments[0]!!)
             }
         }

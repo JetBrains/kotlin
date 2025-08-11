@@ -6,7 +6,7 @@
 package org.jetbrains.kotlin.ir.inline
 
 import org.jetbrains.kotlin.backend.common.*
-import org.jetbrains.kotlin.backend.common.ir.Symbols
+import org.jetbrains.kotlin.backend.common.ir.FrontendSymbols
 import org.jetbrains.kotlin.backend.common.lower.at
 import org.jetbrains.kotlin.backend.common.lower.createIrBuilder
 import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
@@ -57,7 +57,7 @@ class FunctionInlining(
         expression.transformChildren(this, data)
 
         val actualCallee = inlineFunctionResolver.getFunctionDeclarationToInline(expression) ?: return expression
-        if (expression is IrCall && Symbols.isTypeOfIntrinsic(actualCallee.symbol)) {
+        if (expression is IrCall && FrontendSymbols.isTypeOfIntrinsic(actualCallee.symbol)) {
             return expression
         }
         if (actualCallee.body == null) {

@@ -18,6 +18,7 @@ package org.jetbrains.kotlin.backend.common.lower
 
 import org.jetbrains.kotlin.backend.common.LoweringContext
 import org.jetbrains.kotlin.backend.common.FileLoweringPass
+import org.jetbrains.kotlin.backend.common.ir.FrontendSymbols
 import org.jetbrains.kotlin.backend.common.ir.Symbols
 import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.ir.IrStatement
@@ -128,7 +129,7 @@ open class LateinitLowering(
     override fun visitCall(expression: IrCall): IrExpression {
         expression.transformChildrenVoid()
 
-        if (!Symbols.isLateinitIsInitializedPropertyGetter(expression.symbol)) return expression
+        if (!FrontendSymbols.isLateinitIsInitializedPropertyGetter(expression.symbol)) return expression
 
         return expression.arguments[0]!!.replaceTailExpression {
             val (property, dispatchReceiver) = when (it) {

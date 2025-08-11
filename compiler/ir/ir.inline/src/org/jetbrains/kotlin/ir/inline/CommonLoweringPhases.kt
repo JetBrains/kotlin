@@ -7,7 +7,7 @@ package org.jetbrains.kotlin.ir.inline
 
 import org.jetbrains.kotlin.backend.common.LoweringContext
 import org.jetbrains.kotlin.backend.common.PreSerializationLoweringContext
-import org.jetbrains.kotlin.backend.common.ir.Symbols.Companion.isTypeOfIntrinsic
+import org.jetbrains.kotlin.backend.common.ir.FrontendSymbols
 import org.jetbrains.kotlin.backend.common.lower.ArrayConstructorLowering
 import org.jetbrains.kotlin.backend.common.lower.LateinitLowering
 import org.jetbrains.kotlin.backend.common.lower.SharedVariablesLowering
@@ -127,7 +127,7 @@ private fun validateIrAfterInliningAllFunctionsPhase(irMangler: IrMangler) = mak
                 when {
                     actualCallee?.body == null -> true // does not have a body <=> should not be inlined
                     // it's fine to have typeOf<T>, it would be ignored by inliner and handled on the second stage of compilation
-                    isTypeOfIntrinsic(actualCallee.symbol) -> true
+                    FrontendSymbols.isTypeOfIntrinsic(actualCallee.symbol) -> true
                     else -> false // forbidden
                 }
             }

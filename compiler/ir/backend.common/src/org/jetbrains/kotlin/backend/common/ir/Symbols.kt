@@ -7,16 +7,13 @@ package org.jetbrains.kotlin.backend.common.ir
 
 import org.jetbrains.kotlin.builtins.PrimitiveType
 import org.jetbrains.kotlin.builtins.StandardNames
-import org.jetbrains.kotlin.builtins.StandardNames.KOTLIN_REFLECT_FQ_NAME
 import org.jetbrains.kotlin.ir.InternalSymbolFinderAPI
 import org.jetbrains.kotlin.ir.IrBuiltIns
-import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrParameterKind
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.symbols.*
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.ir.types.defaultType
 import org.jetbrains.kotlin.ir.types.makeNullable
@@ -272,27 +269,6 @@ abstract class Symbols(irBuiltIns: IrBuiltIns) : FrontendSymbolsImpl(irBuiltIns)
 
     open fun isSideEffectFree(call: IrCall): Boolean {
         return false
-    }
-
-    companion object {
-        fun isLateinitIsInitializedPropertyGetter(symbol: IrFunctionSymbol): Boolean =
-            symbol is IrSimpleFunctionSymbol && symbol.owner.let { function ->
-                function.name.asString() == "<get-isInitialized>" &&
-                        function.isTopLevel &&
-                        function.getPackageFragment().packageFqName.asString() == "kotlin" &&
-                        function.hasShape(extensionReceiver = true) &&
-                        function.parameters[0].type.classOrNull?.owner?.fqNameWhenAvailable?.toUnsafe() == StandardNames.FqNames.kProperty0
-            }
-
-        fun isTypeOfIntrinsic(symbol: IrFunctionSymbol): Boolean {
-            return if (symbol.isBound) {
-                symbol is IrSimpleFunctionSymbol && symbol.owner.let { function ->
-                    function.isTopLevelInPackage("typeOf", KOTLIN_REFLECT_FQ_NAME) && function.hasShape()
-                }
-            } else {
-                symbol.hasTopLevelEqualFqName(KOTLIN_REFLECT_FQ_NAME.asString(), "typeOf")
-            }
-        }
     }
 }
 
