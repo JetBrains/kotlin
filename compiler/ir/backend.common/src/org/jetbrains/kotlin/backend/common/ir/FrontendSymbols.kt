@@ -128,6 +128,12 @@ abstract class BaseSymbolsImpl(val irBuiltIns: IrBuiltIns) {
 }
 
 interface FrontendSymbols {
+    val coroutineContextGetter: IrSimpleFunctionSymbol
+
+    val suspendCoroutineUninterceptedOrReturn: IrSimpleFunctionSymbol
+
+    val coroutineGetContext: IrSimpleFunctionSymbol
+
     companion object {
         fun isLateinitIsInitializedPropertyGetter(symbol: IrFunctionSymbol): Boolean =
             symbol is IrSimpleFunctionSymbol && symbol.owner.let { function ->
@@ -165,7 +171,6 @@ interface FrontendKlibSymbols : FrontendSymbols {
     val primitiveSharedVariableBoxes: Map<IrType, SharedVariableBoxClassInfo>
 }
 
-@OptIn(InternalSymbolFinderAPI::class)
 abstract class FrontendKlibSymbolsImpl(irBuiltIns: IrBuiltIns) : FrontendKlibSymbols, FrontendSymbolsImpl(irBuiltIns) {
     private fun findSharedVariableBoxClass(suffix: String): FrontendKlibSymbols.SharedVariableBoxClassInfo {
         val classId = ClassId(StandardNames.KOTLIN_INTERNAL_FQ_NAME, Name.identifier("SharedVariableBox$suffix"))
@@ -176,13 +181,19 @@ abstract class FrontendKlibSymbolsImpl(irBuiltIns: IrBuiltIns) : FrontendKlibSym
 
     // The SharedVariableBox family of classes exists only in non-JVM stdlib variants, hence the nullability of the properties below.
     override val genericSharedVariableBox: FrontendKlibSymbols.SharedVariableBoxClassInfo = findSharedVariableBoxClass("")
-    override val primitiveSharedVariableBoxes: Map<IrType, FrontendKlibSymbols.SharedVariableBoxClassInfo> = PrimitiveType.entries.associate {
-        irBuiltIns.primitiveTypeToIrType[it]!! to findSharedVariableBoxClass(it.typeName.asString())
-    }
+    override val primitiveSharedVariableBoxes: Map<IrType, FrontendKlibSymbols.SharedVariableBoxClassInfo> =
+        PrimitiveType.entries.associate {
+            irBuiltIns.primitiveTypeToIrType[it]!! to findSharedVariableBoxClass(it.typeName.asString())
+        }
 }
 
 interface FrontendWebSymbols : FrontendKlibSymbols {
-
+    companion object {
+        val GET_COROUTINE_CONTEXT_NAME = "getCoroutineContext"
+        val COROUTINE_CONTEXT_NAME = Name.identifier("coroutineContext")
+        val COROUTINE_PACKAGE_FQNAME = FqName.fromSegments(listOf("kotlin", "coroutines"))
+        val COROUTINE_SUSPEND_OR_RETURN_JS_NAME = "suspendCoroutineUninterceptedOrReturnJS"
+    }
 }
 
 abstract class FrontendWebSymbolsImpl(irBuiltIns: IrBuiltIns) : FrontendWebSymbols, FrontendKlibSymbolsImpl(irBuiltIns) {
@@ -192,17 +203,41 @@ abstract class FrontendWebSymbolsImpl(irBuiltIns: IrBuiltIns) : FrontendWebSymbo
 interface FrontendJsSymbols : FrontendWebSymbols {}
 
 open class FrontendJsSymbolsImpl(irBuiltIns: IrBuiltIns) : FrontendJsSymbols, FrontendWebSymbolsImpl(irBuiltIns) {
-
+    override val coroutineContextGetter =
+        symbolFinder.findTopLevelPropertyGetter(FrontendWebSymbols.COROUTINE_PACKAGE_FQNAME, FrontendWebSymbols.COROUTINE_CONTEXT_NAME.asString())
+    override val suspendCoroutineUninterceptedOrReturn = symbolFinder.topLevelFunction(BASE_JS_PACKAGE, FrontendWebSymbols.COROUTINE_SUSPEND_OR_RETURN_JS_NAME)
+    override val coroutineGetContext = symbolFinder.topLevelFunction(BASE_JS_PACKAGE, FrontendWebSymbols.GET_COROUTINE_CONTEXT_NAME)
 }
 
 interface FrontendWasmSymbols : FrontendWebSymbols {}
 
 open class FrontendWasmSymbolsImpl(irBuiltIns: IrBuiltIns) : FrontendWasmSymbols, FrontendWebSymbolsImpl(irBuiltIns) {
-
+    override val coroutineContextGetter =
+        symbolFinder.findTopLevelPropertyGetter(FrontendWebSymbols.COROUTINE_PACKAGE_FQNAME, FrontendWebSymbols.COROUTINE_CONTEXT_NAME.asString())
+    override val suspendCoroutineUninterceptedOrReturn =
+        getInternalWasmFunction("suspendCoroutineUninterceptedOrReturn")
+    override val coroutineGetContext =
+        getInternalWasmFunction("getCoroutineContext")
 }
 
 interface FrontendNativeSymbols : FrontendKlibSymbols {}
 
 open class FrontendNativeSymbolsImpl(irBuiltIns: IrBuiltIns) : FrontendNativeSymbols, FrontendKlibSymbolsImpl(irBuiltIns) {
+    private object RuntimeNames {
+        val kotlinNativeInternalPackageName = FqName.fromSegments(listOf("kotlin", "native", "internal"))
+    }
 
+    private object CallableIds {
+        // Internal functions
+        private val String.internalCallableId get() = CallableId(RuntimeNames.kotlinNativeInternalPackageName, Name.identifier(this))
+        val suspendCoroutineUninterceptedOrReturn = "suspendCoroutineUninterceptedOrReturn".internalCallableId
+        val getCoroutineContext = "getCoroutineContext".internalCallableId
+
+        // Special stdlib public functions
+        val coroutineContext = CallableId(StandardNames.COROUTINES_PACKAGE_FQ_NAME, Name.identifier("coroutineContext"))
+    }
+
+    override val coroutineContextGetter by CallableIds.coroutineContext.getterSymbol()
+    override val suspendCoroutineUninterceptedOrReturn = CallableIds.suspendCoroutineUninterceptedOrReturn.functionSymbol()
+    override val coroutineGetContext = CallableIds.getCoroutineContext.functionSymbol()
 }

@@ -180,8 +180,6 @@ private object CallableIds {
     val isSubtype = "isSubtype".internalCallableId
     val getContinuation = "getContinuation".internalCallableId
     val returnIfSuspended = "returnIfSuspended".internalCallableId
-    val suspendCoroutineUninterceptedOrReturn = "suspendCoroutineUninterceptedOrReturn".internalCallableId
-    val getCoroutineContext = "getCoroutineContext".internalCallableId
     val saveCoroutineState = "saveCoroutineState".internalCallableId
     val restoreCoroutineState = "restoreCoroutineState".internalCallableId
     val getObjectTypeInfo = "getObjectTypeInfo".internalCallableId
@@ -241,7 +239,6 @@ private object CallableIds {
     val println = CallableId(FqName("kotlin.io"), Name.identifier("println"))
     val executeImpl = CallableId(KonanFqNames.packageName.child(Name.identifier("concurrent")), Name.identifier("executeImpl"))
     val createCleaner = CallableId(KonanFqNames.packageName.child(Name.identifier("ref")), Name.identifier("createCleaner"))
-    val coroutineContext = CallableId(StandardNames.COROUTINES_PACKAGE_FQ_NAME, Name.identifier("coroutineContext"))
     val coroutineSuspended = CallableId(StandardNames.COROUTINES_INTRINSICS_PACKAGE_FQ_NAME, StandardNames.COROUTINE_SUSPENDED_NAME)
     val invokeSuspend = CallableId(ClassIds.baseContinuationImpl, Name.identifier("invokeSuspend"))
     val anyEquals = CallableId(StandardClassIds.Any, StandardNames.EQUALS_NAME)
@@ -610,12 +607,6 @@ class KonanSymbols(
     override val continuationClass = ClassIds.continuation.classSymbol()
 
     override val returnIfSuspended = CallableIds.returnIfSuspended.functionSymbol()
-
-    override val suspendCoroutineUninterceptedOrReturn = CallableIds.suspendCoroutineUninterceptedOrReturn.functionSymbol()
-
-    override val coroutineContextGetter by CallableIds.coroutineContext.getterSymbol()
-
-    override val coroutineGetContext = CallableIds.getCoroutineContext.functionSymbol()
 
     override val coroutineImpl get() = TODO()
 
