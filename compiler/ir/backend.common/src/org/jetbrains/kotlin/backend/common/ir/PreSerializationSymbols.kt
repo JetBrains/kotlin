@@ -14,20 +14,22 @@ import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrParameterKind
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
-import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
+import org.jetbrains.kotlin.ir.types.IrDynamicType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.types.defaultType
+import org.jetbrains.kotlin.ir.types.impl.IrDynamicTypeImpl
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds.BASE_KOTLIN_PACKAGE
+import org.jetbrains.kotlin.types.Variance
 
 abstract class BaseSymbolsImpl(val irBuiltIns: IrBuiltIns) {
     protected val symbolFinder = irBuiltIns.symbolFinder
@@ -42,12 +44,12 @@ abstract class BaseSymbolsImpl(val irBuiltIns: IrBuiltIns) {
     }
 
     // JS
-    protected val BASE_JS_PACKAGE = BASE_KOTLIN_PACKAGE.child(Name.identifier("js"))
+    companion object {
+        val BASE_JS_PACKAGE = BASE_KOTLIN_PACKAGE.child(Name.identifier("js"))
+    }
+
     protected fun getInternalJsFunction(name: String): IrSimpleFunctionSymbol =
         symbolFinder.findFunctions(Name.identifier(name), BASE_JS_PACKAGE).single()
-
-    protected fun getInternalJsInRootPackage(name: String): IrSimpleFunctionSymbol? =
-        symbolFinder.findFunctions(Name.identifier(name), FqName.ROOT).singleOrNull()
 
     // WASM
     protected val enumsInternalPackageFqName = FqName("kotlin.enums")
@@ -204,7 +206,13 @@ abstract class PreSerializationWebSymbolsImpl(irBuiltIns: IrBuiltIns) : PreSeria
 
 }
 
-interface PreSerializationJsSymbols : PreSerializationWebSymbols {}
+interface PreSerializationJsSymbols : PreSerializationWebSymbols {
+    val dynamicType: IrDynamicType
+        get() = IrDynamicTypeImpl(emptyList(), Variance.INVARIANT)
+
+    val jsCode: IrSimpleFunctionSymbol
+    val jsOutlinedFunctionAnnotationSymbol: IrClassSymbol
+}
 
 open class PreSerializationJsSymbolsImpl(irBuiltIns: IrBuiltIns) : PreSerializationJsSymbols, PreSerializationWebSymbolsImpl(irBuiltIns) {
     override val throwUninitializedPropertyAccessException =
@@ -220,6 +228,13 @@ open class PreSerializationJsSymbolsImpl(irBuiltIns: IrBuiltIns) : PreSerializat
         symbolFinder.findTopLevelPropertyGetter(PreSerializationWebSymbols.COROUTINE_PACKAGE_FQNAME, PreSerializationWebSymbols.COROUTINE_CONTEXT_NAME.asString())
     override val suspendCoroutineUninterceptedOrReturn = symbolFinder.topLevelFunction(BASE_JS_PACKAGE, PreSerializationWebSymbols.COROUTINE_SUSPEND_OR_RETURN_JS_NAME)
     override val coroutineGetContext = symbolFinder.topLevelFunction(BASE_JS_PACKAGE, PreSerializationWebSymbols.GET_COROUTINE_CONTEXT_NAME)
+
+    override val jsCode: IrSimpleFunctionSymbol = getInternalJsFunction("js")
+    override val jsOutlinedFunctionAnnotationSymbol: IrClassSymbol = symbolFinder.topLevelClass(JsOutlinedFunction)
+
+    companion object {
+        private val JsOutlinedFunction = ClassId(BASE_JS_PACKAGE, Name.identifier("JsOutlinedFunction"))
+    }
 }
 
 interface PreSerializationWasmSymbols : PreSerializationWebSymbols {}
