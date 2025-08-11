@@ -24,6 +24,8 @@ import org.jetbrains.kotlin.fir.references.isError
 import org.jetbrains.kotlin.fir.references.toResolvedCallableSymbol
 import org.jetbrains.kotlin.fir.resolve.diagnostics.ConeDiagnosticWithSingleCandidate
 import org.jetbrains.kotlin.fir.resolve.toSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirFunctionSymbol
+import org.jetbrains.kotlin.fir.symbols.impl.FirValueParameterSymbol
 import org.jetbrains.kotlin.fir.types.*
 import org.jetbrains.kotlin.name.Name
 
@@ -60,16 +62,27 @@ object FirMissingDependencyClassChecker : FirQualifiedAccessExpressionChecker(Mp
         symbol.resolvedReceiverType?.let { type ->
             considerType(type, missingTypes)
             type.forEachType {
-                considerType(it, missingTypesFromExpression)
+                considerType(it, if (type.isArrayTypeOrNullableArrayType) missingTypes else missingTypesFromExpression)
             }
         }
         if (expression is FirFunctionCall) {
             val argumentList = expression.argumentList as? FirResolvedArgumentList
+            val visitedParameterSymbols = hashSetOf<FirValueParameterSymbol>()
             argumentList?.mapping?.forEach { (_, parameter) ->
+                visitedParameterSymbols += parameter.symbol
                 val type = parameter.returnTypeRef.coneType
                 considerType(type, missingTypes)
                 type.forEachType {
-                    considerType(it, missingTypesFromExpression)
+                    considerType(it, if (type.isArrayTypeOrNullableArrayType) missingTypes else missingTypesFromExpression)
+                }
+            }
+            (symbol as? FirFunctionSymbol<*>)?.valueParameterSymbols?.forEach { parameterSymbol ->
+                if (parameterSymbol in visitedParameterSymbols) return@forEach
+                val type = parameterSymbol.resolvedReturnTypeRef.coneType
+                if (type.isArrayTypeOrNullableArrayType) {
+                    type.forEachType {
+                        considerType(it, missingTypes)
+                    }
                 }
             }
         }

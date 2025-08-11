@@ -27,10 +27,10 @@ fun foo3(bar: Bar<*>? = null) {}
 package test
 
 fun main() {
-    foo1()
+    <!MISSING_DEPENDENCY_CLASS!>foo1<!>()
     <!MISSING_DEPENDENCY_CLASS!>foo1<!>(<!MISSING_DEPENDENCY_CLASS!>arrayOf<!>())
     <!MISSING_DEPENDENCY_CLASS!>foo1<!>(null)
-    foo2()
+    <!MISSING_DEPENDENCY_CLASS!>foo2<!>()
     <!MISSING_DEPENDENCY_CLASS!>foo2<!>(<!MISSING_DEPENDENCY_CLASS!>arrayOf<!>())
     <!MISSING_DEPENDENCY_CLASS!>foo2<!>(null)
     foo3()
