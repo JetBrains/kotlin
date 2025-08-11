@@ -136,6 +136,12 @@ abstract class BaseSymbolsImpl(val irBuiltIns: IrBuiltIns) {
 }
 
 interface PreSerializationSymbols {
+    val coroutineContextGetter: IrSimpleFunctionSymbol
+
+    val suspendCoroutineUninterceptedOrReturn: IrSimpleFunctionSymbol
+
+    val coroutineGetContext: IrSimpleFunctionSymbol
+
     companion object {
         fun isLateinitIsInitializedPropertyGetter(symbol: IrFunctionSymbol): Boolean =
             symbol is IrSimpleFunctionSymbol && symbol.owner.let { function ->
@@ -172,13 +178,17 @@ interface PreSerializationKlibSymbols : PreSerializationSymbols {
     val genericSharedVariableBox: SharedVariableBoxClassInfo
 }
 
-@OptIn(InternalSymbolFinderAPI::class)
 abstract class PreSerializationKlibSymbolsImpl(irBuiltIns: IrBuiltIns) : PreSerializationKlibSymbols, PreSerializationSymbolsImpl(irBuiltIns) {
     override val genericSharedVariableBox: PreSerializationKlibSymbols.SharedVariableBoxClassInfo = findSharedVariableBoxClass(null)
 }
 
 interface PreSerializationWebSymbols : PreSerializationKlibSymbols {
-
+    companion object {
+        val GET_COROUTINE_CONTEXT_NAME = "getCoroutineContext"
+        val COROUTINE_CONTEXT_NAME = Name.identifier("coroutineContext")
+        val COROUTINE_PACKAGE_FQNAME = FqName.fromSegments(listOf("kotlin", "coroutines"))
+        val COROUTINE_SUSPEND_OR_RETURN_JS_NAME = "suspendCoroutineUninterceptedOrReturnJS"
+    }
 }
 
 abstract class PreSerializationWebSymbolsImpl(irBuiltIns: IrBuiltIns) : PreSerializationWebSymbols, PreSerializationKlibSymbolsImpl(irBuiltIns) {
@@ -188,17 +198,41 @@ abstract class PreSerializationWebSymbolsImpl(irBuiltIns: IrBuiltIns) : PreSeria
 interface PreSerializationJsSymbols : PreSerializationWebSymbols {}
 
 open class PreSerializationJsSymbolsImpl(irBuiltIns: IrBuiltIns) : PreSerializationJsSymbols, PreSerializationWebSymbolsImpl(irBuiltIns) {
-
+    override val coroutineContextGetter =
+        symbolFinder.findTopLevelPropertyGetter(PreSerializationWebSymbols.COROUTINE_PACKAGE_FQNAME, PreSerializationWebSymbols.COROUTINE_CONTEXT_NAME.asString())
+    override val suspendCoroutineUninterceptedOrReturn = symbolFinder.topLevelFunction(BASE_JS_PACKAGE, PreSerializationWebSymbols.COROUTINE_SUSPEND_OR_RETURN_JS_NAME)
+    override val coroutineGetContext = symbolFinder.topLevelFunction(BASE_JS_PACKAGE, PreSerializationWebSymbols.GET_COROUTINE_CONTEXT_NAME)
 }
 
 interface PreSerializationWasmSymbols : PreSerializationWebSymbols {}
 
 open class PreSerializationWasmSymbolsImpl(irBuiltIns: IrBuiltIns) : PreSerializationWasmSymbols, PreSerializationWebSymbolsImpl(irBuiltIns) {
-
+    override val coroutineContextGetter =
+        symbolFinder.findTopLevelPropertyGetter(PreSerializationWebSymbols.COROUTINE_PACKAGE_FQNAME, PreSerializationWebSymbols.COROUTINE_CONTEXT_NAME.asString())
+    override val suspendCoroutineUninterceptedOrReturn =
+        getInternalWasmFunction("suspendCoroutineUninterceptedOrReturn")
+    override val coroutineGetContext =
+        getInternalWasmFunction("getCoroutineContext")
 }
 
 interface PreSerializationNativeSymbols : PreSerializationKlibSymbols {}
 
 open class PreSerializationNativeSymbolsImpl(irBuiltIns: IrBuiltIns) : PreSerializationNativeSymbols, PreSerializationKlibSymbolsImpl(irBuiltIns) {
+    private object RuntimeNames {
+        val kotlinNativeInternalPackageName = FqName.fromSegments(listOf("kotlin", "native", "internal"))
+    }
 
+    private object CallableIds {
+        // Internal functions
+        private val String.internalCallableId get() = CallableId(RuntimeNames.kotlinNativeInternalPackageName, Name.identifier(this))
+        val suspendCoroutineUninterceptedOrReturn = "suspendCoroutineUninterceptedOrReturn".internalCallableId
+        val getCoroutineContext = "getCoroutineContext".internalCallableId
+
+        // Special stdlib public functions
+        val coroutineContext = CallableId(StandardNames.COROUTINES_PACKAGE_FQ_NAME, Name.identifier("coroutineContext"))
+    }
+
+    override val coroutineContextGetter by CallableIds.coroutineContext.getterSymbol()
+    override val suspendCoroutineUninterceptedOrReturn = CallableIds.suspendCoroutineUninterceptedOrReturn.functionSymbol()
+    override val coroutineGetContext = CallableIds.getCoroutineContext.functionSymbol()
 }

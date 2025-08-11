@@ -85,13 +85,9 @@ class JsCommonCoroutineSymbols(
             return contextGetter.symbol
         }
 
-    val coroutineContextGetter =
-        symbolFinder.findTopLevelPropertyGetter(COROUTINE_PACKAGE_FQNAME, COROUTINE_CONTEXT_NAME.asString())
-
     companion object {
         private val INTRINSICS_PACKAGE_NAME = Name.identifier("intrinsics")
         private val COROUTINE_SUSPENDED_NAME = Name.identifier("COROUTINE_SUSPENDED")
-        private val COROUTINE_CONTEXT_NAME = Name.identifier("coroutineContext")
         private val COROUTINE_IMPL_NAME = Name.identifier("CoroutineImpl")
         private val CONTINUATION_NAME = Name.identifier("Continuation")
         private val CONTINUATION_CONTEXT_GETTER_NAME = Name.special("<get-context>")
