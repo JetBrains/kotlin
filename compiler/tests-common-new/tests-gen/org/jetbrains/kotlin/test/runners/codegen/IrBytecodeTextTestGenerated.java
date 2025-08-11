@@ -158,6 +158,12 @@ public class IrBytecodeTextTestGenerated extends AbstractIrBytecodeTextTest {
   }
 
   @Test
+  @TestMetadata("inaccessibleTypeInArray.kt")
+  public void testInaccessibleTypeInArray() {
+    runTest("compiler/testData/codegen/bytecodeText/inaccessibleTypeInArray.kt");
+  }
+
+  @Test
   @TestMetadata("inheritedPropertyAnnotations.kt")
   public void testInheritedPropertyAnnotations() {
     runTest("compiler/testData/codegen/bytecodeText/inheritedPropertyAnnotations.kt");

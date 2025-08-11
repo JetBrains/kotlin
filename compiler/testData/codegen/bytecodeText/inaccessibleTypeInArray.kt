@@ -1,5 +1,5 @@
-// RUN_PIPELINE_TILL: FRONTEND
 // ISSUE: KT-79866
+// IGNORE_BACKEND_K1: JVM_IR
 // LANGUAGE: -ForbidUsingExpressionTypesWithInaccessibleContent
 // MODULE: bar
 // FILE: Bar.kt
@@ -26,14 +26,11 @@ fun foo3(bar: Bar<*>? = null) {}
 
 package test
 
+@Suppress("MISSING_DEPENDENCY_CLASS")
 fun main() {
     foo1()
-    foo1(arrayOf())
-    foo1(null)
     foo2()
-    foo2(arrayOf())
-    foo2(null)
     foo3()
 }
 
-/* GENERATED_FIR_TAGS: classDeclaration, functionDeclaration, nullableType, starProjection, typeParameter */
+// 1 INVOKESTATIC test/FooKt.foo1\$default \(\[Lerror/NonExistentClass;ILjava/lang/Object;\)V
