@@ -16,6 +16,10 @@ object IrValueAccessScopeChecker : IrElementChecker<IrValueAccessExpression>(IrV
         get() = setOf(ValueScopeUpdater)
 
     override fun check(element: IrValueAccessExpression, context: CheckerContext) {
+        // FIXME: KT-80071
+        if (context.withinScripOrScriptClass)
+            return
+
         if (!context.valueSymbolScopeStack.isVisibleInCurrentScope(element.symbol)) {
             context.error(element, "The following expression references a value that is not available in the current scope.")
         }

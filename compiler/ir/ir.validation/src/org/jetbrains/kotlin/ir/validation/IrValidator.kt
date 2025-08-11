@@ -11,9 +11,12 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.IrVerificationMode
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
+import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrDeclarationBase
+import org.jetbrains.kotlin.ir.declarations.IrDeclarationOrigin
 import org.jetbrains.kotlin.ir.declarations.IrFile
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
+import org.jetbrains.kotlin.ir.declarations.IrReplSnippet
 import org.jetbrains.kotlin.ir.expressions.IrConstructorCall
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.IrType
@@ -97,6 +100,22 @@ private class IrFileValidator(
     override fun visitAnnotationUsage(annotationUsage: IrConstructorCall) {
         context.withinAnnotationUsageSubTree {
             super.visitAnnotationUsage(annotationUsage)
+        }
+    }
+
+    override fun visitReplSnippet(declaration: IrReplSnippet) {
+        context.withinScripOrScriptClass {
+            super.visitReplSnippet(declaration)
+        }
+    }
+
+    override fun visitClass(declaration: IrClass) {
+        if (declaration.origin == IrDeclarationOrigin.REPL_SNIPPET_CLASS || declaration.origin == IrDeclarationOrigin.SCRIPT_CLASS) {
+            context.withinScripOrScriptClass {
+                super.visitClass(declaration)
+            }
+        } else {
+            super.visitClass(declaration)
         }
     }
 

@@ -17,6 +17,10 @@ object IrVisibilityChecker : IrSymbolChecker {
         container: IrElement,
         context: CheckerContext,
     ) {
+        // FIXME: KT-80071
+        if (context.withinScripOrScriptClass)
+            return
+
         checkVisibility(symbol, container, context)
     }
 }
