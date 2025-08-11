@@ -21,9 +21,6 @@ class JsPreSerializationLoweringContext(
     configuration: CompilerConfiguration,
     diagnosticReporter: DiagnosticReporter,
 ) : PreSerializationLoweringContext(irBuiltIns, configuration, diagnosticReporter) {
-    val dynamicType: IrDynamicType = IrDynamicTypeImpl(emptyList(), Variance.INVARIANT)
-    val intrinsics: JsIntrinsics by lazy { JsIntrinsics(irBuiltIns, configuration) }
-
     override val symbols: FrontendJsSymbols by lazy {
         FrontendJsSymbolsImpl(irBuiltIns)
     }

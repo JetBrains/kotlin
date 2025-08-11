@@ -19,22 +19,29 @@ import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrConstructorSymbol
 import org.jetbrains.kotlin.ir.symbols.IrFunctionSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
+import org.jetbrains.kotlin.ir.types.IrDynamicType
 import org.jetbrains.kotlin.ir.types.IrType
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.types.defaultType
+import org.jetbrains.kotlin.ir.types.impl.IrDynamicTypeImpl
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.name.CallableId
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.name.StandardClassIds.BASE_KOTLIN_PACKAGE
+import org.jetbrains.kotlin.types.Variance
+import org.jetbrains.kotlin.util.capitalizeDecapitalize.toLowerCaseAsciiOnly
+import java.util.*
 
 abstract class BaseSymbolsImpl(val irBuiltIns: IrBuiltIns) {
     protected val symbolFinder = irBuiltIns.symbolFinder
 
     // TODO KT-79436 unify backend specific functions and remove the old ones
     // JS
-    protected val BASE_JS_PACKAGE = BASE_KOTLIN_PACKAGE.child(Name.identifier("js"))
+    companion object {
+        val BASE_JS_PACKAGE = BASE_KOTLIN_PACKAGE.child(Name.identifier("js"))
+    }
     protected fun getInternalJsFunction(name: String): IrSimpleFunctionSymbol =
         symbolFinder.findFunctions(Name.identifier(name), BASE_JS_PACKAGE).single()
 
@@ -211,7 +218,18 @@ abstract class FrontendWebSymbolsImpl(irBuiltIns: IrBuiltIns) : FrontendWebSymbo
 
 }
 
-interface FrontendJsSymbols : FrontendWebSymbols {}
+interface FrontendJsSymbols : FrontendWebSymbols {
+    val dynamicType: IrDynamicType
+        get() = IrDynamicTypeImpl(emptyList(), Variance.INVARIANT)
+
+    val jsCode: IrSimpleFunctionSymbol
+    val arrayLiteral: IrSimpleFunctionSymbol
+    val primitiveToLiteralConstructor: Map<PrimitiveType, IrSimpleFunctionSymbol>
+    val arrayConcat: IrSimpleFunctionSymbol
+    val jsOutlinedFunctionAnnotationSymbol: IrClassSymbol
+    val jsBoxIntrinsic: IrSimpleFunctionSymbol
+    val jsUnboxIntrinsic: IrSimpleFunctionSymbol
+}
 
 open class FrontendJsSymbolsImpl(irBuiltIns: IrBuiltIns) : FrontendJsSymbols, FrontendWebSymbolsImpl(irBuiltIns) {
     override val throwUninitializedPropertyAccessException =
@@ -227,6 +245,41 @@ open class FrontendJsSymbolsImpl(irBuiltIns: IrBuiltIns) : FrontendJsSymbols, Fr
         symbolFinder.findTopLevelPropertyGetter(FrontendWebSymbols.COROUTINE_PACKAGE_FQNAME, FrontendWebSymbols.COROUTINE_CONTEXT_NAME.asString())
     override val suspendCoroutineUninterceptedOrReturn = symbolFinder.topLevelFunction(BASE_JS_PACKAGE, FrontendWebSymbols.COROUTINE_SUSPEND_OR_RETURN_JS_NAME)
     override val coroutineGetContext = symbolFinder.topLevelFunction(BASE_JS_PACKAGE, FrontendWebSymbols.GET_COROUTINE_CONTEXT_NAME)
+
+    override val jsCode: IrSimpleFunctionSymbol = getInternalJsFunction("js")
+    override val arrayLiteral: IrSimpleFunctionSymbol = getInternalJsFunction("arrayLiteral")
+
+    private val primitiveToTypedArrayMap = EnumMap(
+        mapOf(
+            PrimitiveType.BYTE to "Int8",
+            PrimitiveType.SHORT to "Int16",
+            PrimitiveType.INT to "Int32",
+            PrimitiveType.FLOAT to "Float32",
+            PrimitiveType.DOUBLE to "Float64"
+        )
+    )
+
+    override val primitiveToLiteralConstructor: Map<PrimitiveType, IrSimpleFunctionSymbol> = PrimitiveType.entries.associate { type ->
+        type to (primitiveToTypedArrayMap[type]?.let {
+            getInternalJsFunction("${it.toLowerCaseAsciiOnly()}ArrayOf")
+        } ?: getInternalJsFunction("${type.typeName.asString().toLowerCaseAsciiOnly()}ArrayOf"))
+    }
+
+    override val arrayConcat: IrSimpleFunctionSymbol = getInternalJsInRootPackage("arrayConcat")!!
+    override val jsOutlinedFunctionAnnotationSymbol: IrClassSymbol = symbolFinder.topLevelClass(JsOutlinedFunction)
+    override val jsBoxIntrinsic: IrSimpleFunctionSymbol = getInternalJsFunction("boxIntrinsic")
+    override val jsUnboxIntrinsic: IrSimpleFunctionSymbol = getInternalJsFunction("unboxIntrinsic")
+
+    override fun isSideEffectFree(call: IrCall): Boolean =
+        call.symbol in primitiveToLiteralConstructor.values ||
+                call.symbol == arrayLiteral ||
+                call.symbol == arrayConcat ||
+                call.symbol == jsBoxIntrinsic ||
+                call.symbol == jsUnboxIntrinsic
+
+    companion object {
+        private val JsOutlinedFunction = ClassId(BASE_JS_PACKAGE, Name.identifier("JsOutlinedFunction"))
+    }
 }
 
 interface FrontendWasmSymbols : FrontendWebSymbols {}
