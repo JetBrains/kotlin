@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.backend.common
 
+import org.jetbrains.kotlin.backend.common.ir.Symbols
 import org.jetbrains.kotlin.backend.common.lower.InnerClassesSupport
 import org.jetbrains.kotlin.backend.common.phaser.BackendContextHolder
 import org.jetbrains.kotlin.ir.declarations.IrClass
@@ -23,6 +24,7 @@ import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
  * (those that are executed after deserializing IR from KLIBs, or any lowering in the JVM backend).
  */
 interface CommonBackendContext : LoweringContext, BackendContextHolder {
+    abstract override val symbols: Symbols
     val typeSystem: IrTypeSystemContext
 
     override val heldBackendContext: CommonBackendContext

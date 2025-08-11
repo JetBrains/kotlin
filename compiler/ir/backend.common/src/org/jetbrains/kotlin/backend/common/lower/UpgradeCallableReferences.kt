@@ -106,7 +106,7 @@ open class UpgradeCallableReferences(
         private fun IrType.arrayDepth(): Int {
             if (this !is IrSimpleType) return 0
             return when (classOrNull) {
-                context.symbols.array -> 1 + (arguments[0].typeOrNull?.arrayDepth() ?: 0)
+                context.irBuiltIns.arrayClass -> 1 + (arguments[0].typeOrNull?.arrayDepth() ?: 0)
                 in context.symbols.arrays -> 1
                 else -> 0
             }

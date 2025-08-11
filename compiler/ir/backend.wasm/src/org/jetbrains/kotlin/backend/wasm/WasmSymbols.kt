@@ -86,12 +86,6 @@ class WasmSymbols(
     override val throwIAE = getInternalWasmFunction("THROW_IAE")
     val throwNoBranchMatchedException =
         getInternalWasmFunction("throwNoBranchMatchedException")
-    override val throwUninitializedPropertyAccessException =
-        getInternalWasmFunction("throwUninitializedPropertyAccessException")
-    override val throwUnsupportedOperationException =
-        getInternalWasmFunction("throwUnsupportedOperationException")
-    override val defaultConstructorMarker =
-        getIrClass(FqName("kotlin.wasm.internal.DefaultConstructorMarker"))
     override val throwKotlinNothingValueException: IrSimpleFunctionSymbol
         get() = TODO()
     override val stringBuilder =

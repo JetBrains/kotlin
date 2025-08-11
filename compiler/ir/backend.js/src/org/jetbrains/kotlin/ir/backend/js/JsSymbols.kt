@@ -23,7 +23,6 @@ import org.jetbrains.kotlin.ir.types.makeNotNull
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.hasShape
 import org.jetbrains.kotlin.ir.util.kotlinPackageFqn
-import org.jetbrains.kotlin.name.JsStandardClassIds.BASE_JS_PACKAGE
 
 // TODO KT-77388 rename to `BackendWebSymbolsImpl`
 abstract class JsCommonSymbols(
@@ -49,17 +48,8 @@ class JsSymbols(
     override val throwTypeCastException =
         symbolFinder.topLevelFunction(kotlinPackageFqn, "THROW_CCE")
 
-    override val throwUninitializedPropertyAccessException =
-        symbolFinder.topLevelFunction(kotlinPackageFqn, "throwUninitializedPropertyAccessException")
-
-    override val throwUnsupportedOperationException =
-        symbolFinder.topLevelFunction(kotlinPackageFqn, "throwUnsupportedOperationException")
-
     override val throwKotlinNothingValueException: IrSimpleFunctionSymbol =
         symbolFinder.topLevelFunction(kotlinPackageFqn, "throwKotlinNothingValueException")
-
-    override val defaultConstructorMarker =
-        symbolFinder.topLevelClass(BASE_JS_PACKAGE, "DefaultConstructorMarker")
 
     override val throwISE: IrSimpleFunctionSymbol =
         symbolFinder.topLevelFunction(kotlinPackageFqn, "THROW_ISE")
