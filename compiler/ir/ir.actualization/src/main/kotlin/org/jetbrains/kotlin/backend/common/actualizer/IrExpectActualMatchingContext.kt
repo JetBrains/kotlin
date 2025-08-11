@@ -512,7 +512,11 @@ internal abstract class IrExpectActualMatchingContext(
         get() = this is IrPropertySymbol && owner.isPropertyForJavaField()
 
     override val CallableSymbolMarker.canBeActualizedByJavaField: Boolean
-        get() = this is IrPropertySymbol && callableId == abstractMutableListModCountCallableId
+        get() = this is IrPropertySymbol && canBeActualizedByJavaField()
+
+    private fun IrPropertySymbol.canBeActualizedByJavaField(): Boolean {
+        return callableId == abstractMutableListModCountCallableId || owner.overriddenSymbols.any { it.canBeActualizedByJavaField() }
+    }
 
     override fun onMatchedMembers(
         expectSymbol: DeclarationSymbolMarker,
