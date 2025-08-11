@@ -5,6 +5,8 @@
 
 package org.jetbrains.kotlin.backend.wasm
 
+import org.jetbrains.kotlin.backend.common.ir.FrontendWasmSymbols
+import org.jetbrains.kotlin.backend.common.ir.FrontendWasmSymbolsImpl
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.builtins.StandardNames.COLLECTIONS_PACKAGE_FQ_NAME
 import org.jetbrains.kotlin.builtins.isFunctionType
@@ -35,7 +37,7 @@ import org.jetbrains.kotlin.wasm.config.wasmTarget
 class WasmSymbols(
     irBuiltIns: IrBuiltIns,
     configuration: CompilerConfiguration,
-) : JsCommonSymbols(irBuiltIns) {
+) : FrontendWasmSymbols by FrontendWasmSymbolsImpl(irBuiltIns), JsCommonSymbols(irBuiltIns) {
 
     private val enumsInternalPackageFqName = FqName("kotlin.enums")
     private val wasmInternalFqName = FqName("kotlin.wasm.internal")
