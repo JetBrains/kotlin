@@ -145,7 +145,7 @@ private val stripTypeAliasDeclarationsPhase = makeIrModulePhase<JsIrBackendConte
 )
 
 private val jsCodeOutliningPhaseOnSecondStage = makeIrModulePhase(
-    { context: JsIrBackendContext -> JsCodeOutliningLowering(context, context.intrinsics, context.dynamicType) },
+    { context: JsIrBackendContext -> JsCodeOutliningLowering(context) },
     name = "JsCodeOutliningLoweringOnSecondStage",
 )
 
@@ -156,7 +156,7 @@ private val jsCodeOutliningPhaseOnFirstStage = makeIrModulePhase(
             context.configuration.languageVersionSettings
         )
 
-        JsCodeOutliningLowering(context, context.intrinsics, context.dynamicType) { jsCall, valueDeclaration, container ->
+        JsCodeOutliningLowering(context) { jsCall, valueDeclaration, container ->
             irDiagnosticReporter.at(jsCall, container)
                 .report(JsKlibErrors.JS_CODE_CAPTURES_INLINABLE_FUNCTION, valueDeclaration)
         }
