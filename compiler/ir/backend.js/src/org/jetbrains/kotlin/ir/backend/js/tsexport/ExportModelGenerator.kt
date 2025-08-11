@@ -7,24 +7,16 @@ package org.jetbrains.kotlin.ir.backend.js.tsexport
 
 import org.jetbrains.kotlin.backend.common.report
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
-import org.jetbrains.kotlin.ir.util.isExpect
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.Modality
-import org.jetbrains.kotlin.ir.backend.js.Exportability
-import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
-import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
-import org.jetbrains.kotlin.ir.backend.js.correspondingEnumEntry
-import org.jetbrains.kotlin.ir.backend.js.getInstanceFun
-import org.jetbrains.kotlin.ir.backend.js.initEntryInstancesFun
+import org.jetbrains.kotlin.ir.backend.js.*
 import org.jetbrains.kotlin.ir.backend.js.lower.ES6_BOX_PARAMETER
 import org.jetbrains.kotlin.ir.backend.js.lower.isBoxParameter
 import org.jetbrains.kotlin.ir.backend.js.lower.isEs6ConstructorReplacement
-import org.jetbrains.kotlin.ir.backend.js.objectGetInstanceFunction
 import org.jetbrains.kotlin.ir.backend.js.utils.*
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.declarations.IrParameterKind
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
@@ -652,14 +644,24 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
                         ExportedType.ErrorType("Class $name with kind: ${klass.kind}")
 
                     ClassKind.OBJECT ->
-                        ExportedType.TypeOf(ExportedType.ClassType(name, emptyList(), klass))
+                        ExportedType.TypeOf(
+                            ExportedType.ClassType(
+                                name,
+                                emptyList(),
+                                isObject = true,
+                                isExternal = klass.isEffectivelyExternal(),
+                                classId = klass.classId,
+                            )
+                        )
 
                     ClassKind.CLASS,
                     ClassKind.ENUM_CLASS,
                     ClassKind.INTERFACE -> ExportedType.ClassType(
                         name,
                         type.arguments.memoryOptimizedMap { exportTypeArgument(it, typeOwner) },
-                        klass
+                        isObject = false,
+                        isExternal = klass.isEffectivelyExternal(),
+                        classId = klass.classId,
                     )
                 }.withImplicitlyExported(isImplicitlyExported, exportedSupertype)
             }

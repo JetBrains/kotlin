@@ -218,14 +218,24 @@ class ExportModelGenerator(val context: WasmBackendContext) {
 
                 when (klass.kind) {
                     ClassKind.OBJECT ->
-                        ExportedType.TypeOf(ExportedType.ClassType(name, emptyList(), klass))
+                        ExportedType.TypeOf(
+                            ExportedType.ClassType(
+                                name,
+                                emptyList(),
+                                isObject = true,
+                                isExternal = klass.isEffectivelyExternal(),
+                                classId = klass.classId,
+                            )
+                        )
 
                     ClassKind.CLASS,
                     ClassKind.INTERFACE ->
                         ExportedType.ClassType(
                             name,
                             type.arguments.memoryOptimizedMap { exportTypeArgument(it) },
-                            klass
+                            isObject = false,
+                            isExternal = klass.isEffectivelyExternal(),
+                            classId = klass.classId,
                         )
                     else -> error("Unexpected class kind ${klass.kind}")
                 }

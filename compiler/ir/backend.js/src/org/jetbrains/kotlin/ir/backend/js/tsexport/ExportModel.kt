@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.ir.backend.js.tsexport
 
 import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.serialization.js.ModuleKind
 
 sealed class ExportedDeclaration {
@@ -155,12 +157,18 @@ sealed class ExportedType {
         val returnType: ExportedType
     ) : ExportedType()
 
-    class ClassType(val name: String, val arguments: List<ExportedType>, val ir: IrClass? = null) : ExportedType() {
-        override fun equals(other: Any?) = this === other || other is ClassType && ir === other.ir
-        override fun hashCode() = ir.hashCode()
+    data class ClassType(
+        val name: String,
+        val arguments: List<ExportedType>,
+        val isObject: Boolean = false,
+        val isExternal: Boolean = false,
+        val classId: ClassId? = null,
+    ) : ExportedType() {
+        override fun equals(other: Any?) = this === other || other is ClassType && classId == other.classId
+        override fun hashCode() = classId.hashCode()
 
         override fun replaceTypes(substitution: Map<ExportedType, ExportedType>) =
-            substitution[this] ?: ClassType(name, arguments.map { it.replaceTypes(substitution) }, ir)
+            substitution[this] ?: copy(arguments = arguments.map { it.replaceTypes(substitution) })
     }
 
     data class TypeParameter(val name: String, val constraint: ExportedType? = null) : ExportedType()

@@ -8,6 +8,7 @@ package org.jetbrains.kotlin.ir.backend.js.tsexport
 import org.jetbrains.kotlin.ir.backend.js.utils.getJsNameOrKotlinName
 import org.jetbrains.kotlin.ir.backend.js.utils.sanitizeName
 import org.jetbrains.kotlin.ir.declarations.IrClass
+import org.jetbrains.kotlin.ir.util.classId
 import org.jetbrains.kotlin.ir.util.isEffectivelyExternal
 import org.jetbrains.kotlin.ir.util.isInterface
 import org.jetbrains.kotlin.ir.util.isObject
@@ -205,7 +206,15 @@ class ExportModelToTsDeclarations(private val moduleKind: ModuleKind) {
             if (shouldGenerateObjectWithGetInstance) MetadataConstructor else "$name.$Metadata.$MetadataConstructor"
 
         val substitutionOfObjectTypeToItsShapeClass = mapOf<ExportedType, ExportedType>(
-            ExportedType.TypeOf(ExportedType.ClassType(name, emptyList(), ir))
+            ExportedType.TypeOf(
+                ExportedType.ClassType(
+                    name,
+                    emptyList(),
+                    isObject = true,
+                    isExternal = ir.isEffectivelyExternal(),
+                    classId = ir.classId,
+                )
+            )
                     to ExportedType.ClassType(MetadataConstructor, emptyList())
         )
 
@@ -323,7 +332,13 @@ class ExportModelToTsDeclarations(private val moduleKind: ModuleKind) {
                 name = MetadataConstructor,
                 type = ExportedType.ConstructorType(
                     typeParameters,
-                    ExportedType.ClassType(name, typeParameters.map { it.copy(constraint = null) }, ir)
+                    ExportedType.ClassType(
+                        name,
+                        typeParameters.map { it.copy(constraint = null) },
+                        isObject = false,
+                        isExternal = ir.isEffectivelyExternal(),
+                        classId = ir.classId,
+                    )
                 ),
                 mutable = false,
                 isQualified = true
@@ -354,7 +369,9 @@ class ExportModelToTsDeclarations(private val moduleKind: ModuleKind) {
                 is ExportedType.ClassType -> ExportedType.ClassType(
                     "${parentType.name}.$Metadata.$MetadataConstructor",
                     parentType.arguments,
-                    parentType.ir
+                    parentType.isObject,
+                    parentType.isExternal,
+                    parentType.classId,
                 )
                 else -> parentType
             }.toTypeScript(indent, false)
@@ -406,7 +423,15 @@ class ExportModelToTsDeclarations(private val moduleKind: ModuleKind) {
 
         val type = ExportedType.IntersectionType(
             ExportedType.InlineInterfaceType(allPublicConstructors),
-            ExportedType.TypeOf(ExportedType.ClassType(innerClassReference, emptyList(), ir))
+            ExportedType.TypeOf(
+                ExportedType.ClassType(
+                    innerClassReference,
+                    emptyList(),
+                    isObject = ir.isObject,
+                    isExternal = ir.isEffectivelyExternal(),
+                    classId = ir.classId,
+                )
+            )
         )
 
         return ExportedProperty(name = name, type = type, mutable = false, isMember = true)
@@ -458,7 +483,7 @@ class ExportModelToTsDeclarations(private val moduleKind: ModuleKind) {
             }>" else "") + "() => ${returnType.toTypeScript(indent, isInCommentContext)}"
 
         is ExportedType.ClassType -> {
-            val classTypeReference = if (ir?.isObject == true && !ir.isEffectivelyExternal() && isEsModules) "$name.$Metadata.$MetadataType" else name
+            val classTypeReference = if (isObject && !isExternal && isEsModules) "$name.$Metadata.$MetadataType" else name
             classTypeReference + if (arguments.isNotEmpty()) "<${arguments.joinToString(", ") { it.toTypeScript(indent, isInCommentContext) }}>" else ""
         }
 
