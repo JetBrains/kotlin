@@ -78,7 +78,8 @@ abstract class RegularArgumentConstraintPosition<out T>(argument: T) : ArgumentC
     override fun toString(): String = "Argument $argument"
 }
 
-abstract class LambdaArgumentConstraintPosition<out T>(lambda: T) : ArgumentConstraintPosition<T>(lambda) {
+abstract class LambdaArgumentConstraintPosition<out T>(lambda: T) : ArgumentConstraintPosition<T>(lambda),
+    OnlyInputTypeConstraintPosition {
     override fun toString(): String {
         return "LambdaArgument $argument"
     }
