@@ -4,7 +4,6 @@ import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.attributes.Usage
 import org.gradle.api.file.ConfigurableFileCollection
-import org.gradle.api.file.ConfigurableFileTree
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.FileCollection
 import org.gradle.api.model.ObjectFactory
@@ -166,7 +165,13 @@ private open class NativeArgsProvider @Inject constructor(
     @get:Classpath
     protected val nativeHome: ConfigurableFileCollection = objects.fileCollection().apply {
         if (customNativeHome.isPresent) {
-            from(customNativeHome)
+            val filteredTree = objects.fileTree().from(customNativeHome)
+                .exclude { it.path.endsWith("/compiler.fingerprint") }
+                .exclude { it.path.endsWith("/konan.properties") }
+                .exclude { it.path.endsWith("/metadata.properties") }
+                .exclude { it.path.endsWith("/manifest") }
+                .exclude { it.path.endsWith(".a") }
+            from(filteredTree)
         } else {
             val nativeHomeBuiltBy: Provider<List<String>> = testTarget.map {
                 listOfNotNull(
