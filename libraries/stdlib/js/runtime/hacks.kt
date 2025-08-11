@@ -19,7 +19,7 @@ internal fun throwUninitializedPropertyAccessException(name: String): Nothing =
 internal fun throwUnsupportedOperationException(message: String): Nothing =
     kotlin.internal.throwUnsupportedOperationException(message)
 
-@PublishedApi
+@UsedFromCompilerGeneratedCode
 internal fun throwKotlinNothingValueException(): Nothing =
     throw KotlinNothingValueException()
 
