@@ -29,9 +29,7 @@ import kotlin.getValue
 // Some symbols below are used in kotlin-native, so they can't be private
 @Suppress("MemberVisibilityCanBePrivate")
 @OptIn(InternalSymbolFinderAPI::class)
-abstract class Symbols(val irBuiltIns: IrBuiltIns) : FrontendSymbols {
-    protected val symbolFinder = irBuiltIns.symbolFinder
-
+abstract class Symbols(irBuiltIns: IrBuiltIns) : FrontendSymbolsImpl(irBuiltIns) {
     private fun getClass(name: Name, vararg packageNameSegments: String = arrayOf("kotlin")): IrClassSymbol =
         symbolFinder.findClass(name, *packageNameSegments)
             ?: error("Class '$name' not found in package '${packageNameSegments.joinToString(".")}'")
@@ -298,8 +296,9 @@ abstract class Symbols(val irBuiltIns: IrBuiltIns) : FrontendSymbols {
     }
 }
 
+// TODO KT-77388 rename to `BackendKlibSymbolsImpl`
 @OptIn(InternalSymbolFinderAPI::class)
-abstract class KlibSymbols(irBuiltIns: IrBuiltIns) : Symbols(irBuiltIns) {
+abstract class KlibSymbols(irBuiltIns: IrBuiltIns) : FrontendKlibSymbols, Symbols(irBuiltIns) {
     final override val getProgressionLastElementByReturnType: Map<IrClassifierSymbol, IrSimpleFunctionSymbol> by CallableId(StandardNames.KOTLIN_INTERNAL_FQ_NAME, Name.identifier("getProgressionLastElement")).functionSymbolAssociatedBy {
         it.returnType.classifierOrFail
     }

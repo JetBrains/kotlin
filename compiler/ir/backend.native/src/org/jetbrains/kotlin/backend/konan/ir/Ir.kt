@@ -6,6 +6,8 @@
 package org.jetbrains.kotlin.backend.konan.ir
 
 import org.jetbrains.kotlin.backend.common.ErrorReportingContext
+import org.jetbrains.kotlin.backend.common.ir.FrontendNativeSymbols
+import org.jetbrains.kotlin.backend.common.ir.FrontendNativeSymbolsImpl
 import org.jetbrains.kotlin.backend.common.ir.KlibSymbols
 import org.jetbrains.kotlin.backend.konan.*
 import org.jetbrains.kotlin.backend.konan.lower.TestProcessorFunctionKind
@@ -276,7 +278,7 @@ class KonanSymbols(
         context: ErrorReportingContext,
         irBuiltIns: IrBuiltIns,
         config: CompilerConfiguration,
-) : KlibSymbols(irBuiltIns) {
+) : FrontendNativeSymbols by FrontendNativeSymbolsImpl(irBuiltIns), KlibSymbols(irBuiltIns) {
     val entryPoint by run {
         val mainCallableId = config.getMainCallableId()
         val unfilteredCandidates = mainCallableId?.functionSymbols()
