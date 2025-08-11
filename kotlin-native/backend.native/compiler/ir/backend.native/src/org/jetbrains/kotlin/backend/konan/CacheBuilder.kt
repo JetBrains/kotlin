@@ -19,7 +19,6 @@ import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.library.isNativeStdlib
 import org.jetbrains.kotlin.library.metadata.isCInteropLibrary
 import org.jetbrains.kotlin.library.unresolvedDependencies
-import org.jetbrains.kotlin.utils.fileUtils.resolveSymlinksGracefully
 import java.io.FileInputStream
 import java.io.FileNotFoundException
 import java.io.IOException
@@ -52,7 +51,7 @@ class CacheBuilder(
     private val configuration = konanConfig.configuration
     private val autoCacheableFrom = configuration.get(KonanConfigKeys.AUTO_CACHEABLE_FROM)!!.map { File(it) }
     private val icEnabled = configuration.get(CommonConfigurationKeys.INCREMENTAL_COMPILATION)!!
-    private val includedLibraries = configuration.getList(KonanConfigKeys.INCLUDED_LIBRARIES).map { resolveSymlinksGracefully(it).toString() }.toSet()
+    private val includedLibraries = configuration.get(KonanConfigKeys.INCLUDED_LIBRARIES).orEmpty().toSet()
     private val generateTestRunner = configuration.getNotNull(KonanConfigKeys.GENERATE_TEST_RUNNER)
 
     fun needToBuild() = konanConfig.ignoreCacheReason == null

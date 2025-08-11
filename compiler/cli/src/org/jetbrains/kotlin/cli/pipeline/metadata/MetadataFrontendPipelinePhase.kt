@@ -57,10 +57,10 @@ object MetadataFrontendPipelinePhase : PipelinePhase<ConfigurationPipelineArtifa
 
         val libraryList = DependencyListForCliModule.build(rootModuleName) {
             val refinedPaths = configuration.get(K2MetadataConfigurationKeys.REFINES_PATHS)?.map { File(it) }.orEmpty()
-            dependencies(configuration.jvmClasspathRoots.filter { it !in refinedPaths }.map { it.absolutePath })
-            dependencies(configuration.jvmModularRoots.map { it.absolutePath })
+            dependencies(configuration.jvmClasspathRoots.filter { it !in refinedPaths }.map { it.path })
+            dependencies(configuration.jvmModularRoots.map { it.path })
             friendDependencies(configuration[K2MetadataConfigurationKeys.FRIEND_PATHS] ?: emptyList())
-            dependsOnDependencies(refinedPaths.map { it.absolutePath })
+            dependsOnDependencies(refinedPaths.map { it.path })
         }
 
         val klibs: List<KotlinLibrary> = loadMetadataKlibs(

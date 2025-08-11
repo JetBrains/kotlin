@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.platform.jvm.JvmPlatforms
 import java.nio.file.Path
 import kotlin.io.path.absolutePathString
+import kotlin.io.path.pathString
 
 object FirTestSessionFactoryHelper {
     @ObsoleteTestInfrastructure
@@ -48,7 +49,7 @@ object FirTestSessionFactoryHelper {
             extensionRegistrars = emptyList(),
             needRegisterJavaElementFinder = true,
             dependenciesConfigurator = {
-                friendDependencies(friendsPaths.map { it.absolutePathString() })
+                friendDependencies(friendsPaths.map { it.pathString })
             }
         )
     }
@@ -78,7 +79,7 @@ object FirTestSessionFactoryHelper {
             extensionRegistrars = emptyList(),
             needRegisterJavaElementFinder = true,
             dependenciesConfigurator = {
-                friendDependencies(friendsPaths.map { it.absolutePathString() })
+                friendDependencies(friendsPaths.map { it.pathString })
             }
         )
     }

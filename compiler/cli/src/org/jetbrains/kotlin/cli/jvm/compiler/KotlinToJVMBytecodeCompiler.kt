@@ -51,7 +51,6 @@ import org.jetbrains.kotlin.resolve.jvm.KotlinJavaPsiFacade
 import org.jetbrains.kotlin.util.PhaseType
 import org.jetbrains.kotlin.util.tryMeasurePhaseTime
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
-import org.jetbrains.kotlin.utils.fileUtils.resolveSymlinksGracefully
 import java.io.File
 
 object KotlinToJVMBytecodeCompiler {
@@ -461,11 +460,10 @@ fun CompilerConfiguration.configureSourceRoots(chunk: List<Module>, buildFile: F
 
     for (module in chunk) {
         for (classpathRoot in module.getClasspathRoots()) {
-            val file = resolveSymlinksGracefully(classpathRoot).toFile()
             if (isJava9Module) {
-                add(CLIConfigurationKeys.CONTENT_ROOTS, JvmModulePathRoot(file))
+                add(CLIConfigurationKeys.CONTENT_ROOTS, JvmModulePathRoot(File(classpathRoot)))
             }
-            add(CLIConfigurationKeys.CONTENT_ROOTS, JvmClasspathRoot(file))
+            add(CLIConfigurationKeys.CONTENT_ROOTS, JvmClasspathRoot(File(classpathRoot)))
         }
     }
 

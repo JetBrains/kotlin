@@ -17,7 +17,6 @@ import org.jetbrains.kotlin.library.RequiredUnresolvedLibrary
 import org.jetbrains.kotlin.library.metadata.resolver.impl.libraryResolver
 import org.jetbrains.kotlin.library.toUnresolvedLibraries
 import org.jetbrains.kotlin.library.validateNoLibrariesWerePassedViaCliByUniqueName
-import org.jetbrains.kotlin.utils.fileUtils.resolveSymlinksGracefully
 
 class KonanLibrariesResolveSupport(
         configuration: CompilerConfiguration,
@@ -26,12 +25,12 @@ class KonanLibrariesResolveSupport(
         resolveManifestDependenciesLenient: Boolean
 ) {
     private val includedLibraryFiles =
-            configuration.getList(KonanConfigKeys.INCLUDED_LIBRARIES).map { File(resolveSymlinksGracefully(it)) }
+            configuration.getList(KonanConfigKeys.INCLUDED_LIBRARIES).map { File(it) }
 
     private val libraryToCacheFile =
-                    configuration.get(KonanConfigKeys.LIBRARY_TO_ADD_TO_CACHE)?.let { File(resolveSymlinksGracefully(it)) }
+                    configuration.get(KonanConfigKeys.LIBRARY_TO_ADD_TO_CACHE)?.let { File(it) }
 
-    private val libraryPaths = configuration.getList(KonanConfigKeys.LIBRARY_FILES).map { resolveSymlinksGracefully(it).toString() }
+    private val libraryPaths = configuration.getList(KonanConfigKeys.LIBRARY_FILES)
 
     private val unresolvedLibraries = libraryPaths.toUnresolvedLibraries
 

@@ -8,7 +8,6 @@ import org.jetbrains.kotlin.util.Logger
 import org.jetbrains.kotlin.util.WithLogger
 import org.jetbrains.kotlin.util.removeSuffixIfPresent
 import java.nio.file.InvalidPathException
-import java.nio.file.Path
 import java.nio.file.Paths
 
 const val KOTLIN_NATIVE_STDLIB_NAME: String = "stdlib"
@@ -53,32 +52,28 @@ interface SearchPathResolver<L : KotlinLibrary> : WithLogger {
         }
 
         companion object {
-            fun lookUpByAbsolutePath(absoluteLibraryPath: File): File? {
-                if (absoluteLibraryPath.isFile) {
-                    // It's a really existing file.
-                    val extension = absoluteLibraryPath.extension
-                    if (extension != KLIB_FILE_EXTENSION &&
-                        /* A special workaround for old JS stdlib, that was packed in a JAR file. */ extension != "jar"
-                    ) {
-                        return null
+            fun lookUpByAbsolutePath(absoluteLibraryPath: File): File? =
+                when {
+                    absoluteLibraryPath.isFile -> {
+                        // It's a really existing file.
+                        when (absoluteLibraryPath.extension) {
+                            KLIB_FILE_EXTENSION -> absoluteLibraryPath
+                            "jar" -> {
+                                // A special workaround for old JS stdlib, that was packed in a JAR file.
+                                absoluteLibraryPath
+                            }
+                            else -> {
+                                // A file with an unexpected extension.
+                                null
+                            }
+                        }
                     }
-                } else if (!absoluteLibraryPath.isDirectory) {
-                    // Neither a directory.
-                    return null
+                    absoluteLibraryPath.isDirectory -> {
+                        // It's a really existing directory.
+                        absoluteLibraryPath
+                    }
+                    else -> null
                 }
-
-                val rawPath: String = absoluteLibraryPath.path
-                // The "official" way of `Paths.get(path).toRealPath()` does not work on Windows
-                //   if the path starts with `/C:` - `sun.nio.fs.WindowsPathParser.normalize`
-                //   throws `InvalidPathException: Illegal char <:>`.
-                val javaPath: Path = if (System.getProperty("os.name").contains("Windows") && rawPath.startsWith("/"))
-                    Paths.get(rawPath.removePrefix("/"))
-                else
-                    Paths.get(rawPath)
-
-                // Resolve the path to eliminate symlinks that might be in any path segment.
-                return File(javaPath.toRealPath().toString())
-            }
         }
     }
 
