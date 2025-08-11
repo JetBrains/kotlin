@@ -30,6 +30,7 @@ pluginApiReference {
     failOnWarning = true
 
     additionalDokkaConfiguration {
+        includes.from("api-reference-description.md")
         reportUndocumented.set(true)
         perPackageOption {
             matchingRegex.set("org\\.jetbrains\\.kotlin\\.compose\\.compiler\\.gradle\\.model(\$|\\.).*")
