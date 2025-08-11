@@ -118,7 +118,7 @@ ifTrue#(R|<local>/flag|, <L> = ifTrue@fun <implicit>.<anonymous>(): <implicit> <
 #### Candidate 1: `FirNamedFunctionSymbol /ifTrue` --- `fun <T : Any> ifTrue(condition: Boolean, exec: () -> T?): T?↩`
 ##### Continue Call Completion:
 
-1. `TypeVariable(K) <: TypeVariable(T)?` _from LambdaArgument_
+1. `TypeVariable(K) <: TypeVariable(T)?` _from InsideLambdaArgument_
     1. `TypeVariable(K) & Any <: TypeVariable(T)`
 2. Combine `TypeVariable(K) & Any <: TypeVariable(T)` with `TypeVariable(T) <: kotlin/Any`
     1. `TypeVariable(K) <: kotlin/Any?`

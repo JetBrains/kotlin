@@ -43,12 +43,21 @@ class ConeExplicitTypeParameterConstraintPosition(
     override fun toString(): String = "TypeParameter ${typeArgument.render()}"
 }
 
-class ConeLambdaArgumentConstraintPosition(
+open class ConeLambdaArgumentConstraintPosition(
     anonymousFunction: FirAnonymousFunction,
     val anonymousFunctionReturnExpression: FirExpression?,
 ) : LambdaArgumentConstraintPosition<FirAnonymousFunction>(anonymousFunction) {
     override fun toString(): String {
         return "LambdaArgument"
+    }
+}
+
+class ConeInsideLambdaArgumentConstraintPosition(
+    anonymousFunction: FirAnonymousFunction,
+    anonymousFunctionReturnExpression: FirExpression?,
+) : ConeLambdaArgumentConstraintPosition(anonymousFunction, anonymousFunctionReturnExpression), OnlyInputTypeConstraintPosition {
+    override fun toString(): String {
+        return "InsideLambdaArgument"
     }
 }
 

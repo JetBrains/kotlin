@@ -1,4 +1,4 @@
-// RUN_PIPELINE_TILL: FRONTEND
+// RUN_PIPELINE_TILL: BACKEND
 @Suppress("INVISIBLE_MEMBER", "INVISIBLE_REFERENCE")
 fun <@kotlin.internal.OnlyInputTypes T> expect(expected: T, block: () -> T) {}
 
