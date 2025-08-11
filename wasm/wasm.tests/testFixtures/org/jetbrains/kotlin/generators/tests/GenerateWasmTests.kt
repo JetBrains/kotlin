@@ -12,10 +12,7 @@ import org.jetbrains.kotlin.incremental.AbstractFirWasmInvalidationWithPLTest
 import org.jetbrains.kotlin.wasm.test.AbstractWasmPartialLinkageWithICTestCase
 import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.wasm.test.*
-import org.jetbrains.kotlin.wasm.test.diagnostics.AbstractDiagnosticsWasmTest
-import org.jetbrains.kotlin.wasm.test.diagnostics.AbstractDiagnosticsFirWasmTest
-import org.jetbrains.kotlin.wasm.test.diagnostics.AbstractDiagnosticsFirWasmWasiTest
-import org.jetbrains.kotlin.wasm.test.diagnostics.AbstractDiagnosticsWasmWasiTest
+import org.jetbrains.kotlin.wasm.test.diagnostics.*
 
 fun main(args: Array<String>) {
     System.setProperty("java.awt.headless", "true")
@@ -86,6 +83,10 @@ fun main(args: Array<String>) {
 
             testClass<AbstractDiagnosticsFirWasmWasiTest> {
                 model("diagnostics/wasmWasiTests", excludedPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX)
+            }
+
+            testClass<AbstractDiagnosticsFirWasmKlibTest> {
+                model("diagnostics/wasmDiagnosticsKlibTests", excludedPattern = TestGeneratorUtil.KT_OR_KTS_WITH_FIR_PREFIX)
             }
         }
 
