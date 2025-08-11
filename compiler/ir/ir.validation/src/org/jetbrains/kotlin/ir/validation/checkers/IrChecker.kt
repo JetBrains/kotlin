@@ -8,11 +8,12 @@ package org.jetbrains.kotlin.ir.validation.checkers
 import org.jetbrains.kotlin.ir.IrElement
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.IrType
+import org.jetbrains.kotlin.ir.validation.IrValidationError
 import org.jetbrains.kotlin.ir.validation.checkers.context.CheckerContext
 import org.jetbrains.kotlin.ir.validation.checkers.context.ContextUpdater
 import kotlin.reflect.KClass
 
-sealed interface IrChecker {
+sealed interface IrChecker : IrValidationError.Cause {
     val requiredContextUpdaters : Set<ContextUpdater>
         get() = emptySet()
 }

@@ -16,6 +16,7 @@ import org.jetbrains.kotlin.ir.symbols.IrTypeParameterSymbol
 import org.jetbrains.kotlin.ir.symbols.IrValueSymbol
 import org.jetbrains.kotlin.ir.validation.IrValidationError
 import org.jetbrains.kotlin.ir.validation.ScopeStack
+import org.jetbrains.kotlin.ir.validation.checkers.IrChecker
 
 class CheckerContext(
     val irBuiltIns: IrBuiltIns,
@@ -29,7 +30,11 @@ class CheckerContext(
     var withinAnnotationUsageSubTree: Boolean = false
         private set
 
-    fun error(element: IrElement, message: String) = reportError(IrValidationError(file, element, message, parentChain))
+    fun error(element: IrElement, cause: IrValidationError.Cause, message: String) =
+        reportError(IrValidationError(file, element, cause, message, parentChain))
+
+    context(checker: IrChecker)
+    fun error(element: IrElement, message: String) = error(element, checker, message)
 
     fun withTypeParametersInScope(container: IrTypeParametersContainer, block: () -> Unit) {
         typeParameterScopeStack.withNewScope(
