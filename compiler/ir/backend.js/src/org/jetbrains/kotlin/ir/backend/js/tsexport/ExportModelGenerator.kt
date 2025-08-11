@@ -471,7 +471,6 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
                 superClasses = superClasses,
                 nestedClasses = nestedClasses,
                 superInterfaces = superInterfaces,
-                irGetter = klass.objectGetInstanceFunction!!
             )
         } else {
             ExportedRegularClass(

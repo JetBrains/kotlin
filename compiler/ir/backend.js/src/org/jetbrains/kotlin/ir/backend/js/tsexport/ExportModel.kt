@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.ir.backend.js.tsexport
 
 import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.serialization.js.ModuleKind
 
 sealed class ExportedDeclaration {
@@ -100,7 +99,6 @@ data class ExportedObject(
     override val members: List<ExportedDeclaration>,
     override val nestedClasses: List<ExportedClass>,
     override val ir: IrClass,
-    val irGetter: IrSimpleFunction? = null,
     val typeParameters: List<ExportedType.TypeParameter> = emptyList(),
 ) : ExportedClass()
 
