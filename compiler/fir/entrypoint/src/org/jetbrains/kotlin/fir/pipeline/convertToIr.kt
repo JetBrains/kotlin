@@ -265,7 +265,7 @@ private class Fir2IrPipeline(
 
         removeGeneratedBuiltinsDeclarationsIfNeeded()
 
-        pluginContext.applyIrGenerationExtensions(fir2IrConfiguration, mainIrFragment, irGeneratorExtensions)
+        pluginContext.applyIrGenerationExtensions(mainIrFragment, irGeneratorExtensions)
 
         return Fir2IrActualizedResult(mainIrFragment, componentsStorage, pluginContext, actualizationResult, irBuiltIns, symbolTable)
     }
@@ -460,59 +460,57 @@ private class Fir2IrPipeline(
             mainIrFragment.files.removeAll { it.name == generatedBuiltinsDeclarationsFileName }
         }
     }
-}
 
-private fun IrPluginContext.runMandatoryIrValidation(
-    extension: IrGenerationExtension?,
-    module: IrModuleFragment,
-    fir2IrConfiguration: Fir2IrConfiguration,
-) {
-    if (!fir2IrConfiguration.validateIrAfterPlugins) return
-    val mode =
-        if (languageVersionSettings.supportsFeature(LanguageFeature.ForbidCrossFileIrFieldAccessInKlibs)) IrVerificationMode.ERROR
-        else IrVerificationMode.WARNING
-    validateIr(
-        module,
-        irBuiltIns,
+    private fun IrPluginContext.runMandatoryIrValidation(
+        extension: IrGenerationExtension?,
+        module: IrModuleFragment,
+    ) {
+        if (!fir2IrConfiguration.validateIrAfterPlugins) return
+        val mode =
+            if (languageVersionSettings.supportsFeature(LanguageFeature.ForbidCrossFileIrFieldAccessInKlibs)) IrVerificationMode.ERROR
+            else IrVerificationMode.WARNING
+        validateIr(
+            module,
+            irBuiltIns,
+            // Invalid parents and duplicated IR nodes don't always result in broken KLIBs,
+            // so we disable them not to cause too much breakage.
+            IrValidatorConfig(checkTreeConsistency = false)
+                .withBasicChecks()
+                // Cross-file field accesses, though, do result in invalid KLIBs, so report them as early as possible.
+                .withCheckers(IrCrossFileFieldUsageChecker)
+                .applyIf(!fir2IrConfiguration.languageVersionSettings.supportsFeature(LanguageFeature.ExplicitBackingFields)) {
+                    // FIXME(KT-71243): This checker should be added unconditionally, but currently the ExplicitBackingFields feature de-facto allows specifying
+                    //  non-private visibilities for fields.
+                    withCheckers(IrFieldVisibilityChecker)
+                },
+            fir2IrConfiguration.messageCollector,
+            mode,
+            phaseName = "",
+            customMessagePrefix = if (extension == null) {
+                "The frontend generated invalid IR. This is a compiler bug, please report it to https://kotl.in/issue."
+            } else {
+                "The compiler plugin '${extension.javaClass.name}' generated invalid IR. Please report this bug to the plugin vendor."
+            }
+        )
+    }
 
-        // Invalid parents and duplicated IR nodes don't always result in broken KLIBs,
-        // so we disable them not to cause too much breakage.
-        IrValidatorConfig(checkTreeConsistency = false)
-            .withBasicChecks()
-            // Cross-file field accesses, though, do result in invalid KLIBs, so report them as early as possible.
-            .withCheckers(IrCrossFileFieldUsageChecker)
-            .applyIf(!fir2IrConfiguration.languageVersionSettings.supportsFeature(LanguageFeature.ExplicitBackingFields)) {
-                // FIXME(KT-71243): This checker should be added unconditionally, but currently the ExplicitBackingFields feature de-facto allows specifying
-                //  non-private visibilities for fields.
-                withCheckers(IrFieldVisibilityChecker)
-            },
-        fir2IrConfiguration.messageCollector,
-        mode,
-        phaseName = "",
-        customMessagePrefix = if (extension == null) {
-            "The frontend generated invalid IR. This is a compiler bug, please report it to https://kotl.in/issue."
-        } else {
-            "The compiler plugin '${extension.javaClass.name}' generated invalid IR. Please report this bug to the plugin vendor."
+    fun IrPluginContext.applyIrGenerationExtensions(
+        irModuleFragment: IrModuleFragment,
+        irGenerationExtensions: Collection<IrGenerationExtension>,
+    ) {
+        runMandatoryIrValidation(null, irModuleFragment)
+        for (extension in irGenerationExtensions) {
+            try {
+                extension.generate(irModuleFragment, this)
+                runMandatoryIrValidation(extension, irModuleFragment)
+            } catch (e: Throwable) {
+                rethrowIntellijPlatformExceptionIfNeeded(e)
+                throw IrGenerationExtensionException(e, extension::class.java)
+            }
         }
-    )
+    }
 }
 
 class IrGenerationExtensionException(cause: Throwable, val extensionClass: Class<out IrGenerationExtension>) :
     RuntimeException(cause.message, cause)
 
-fun IrPluginContext.applyIrGenerationExtensions(
-    fir2IrConfiguration: Fir2IrConfiguration,
-    irModuleFragment: IrModuleFragment,
-    irGenerationExtensions: Collection<IrGenerationExtension>,
-) {
-    runMandatoryIrValidation(null, irModuleFragment, fir2IrConfiguration)
-    for (extension in irGenerationExtensions) {
-        try {
-            extension.generate(irModuleFragment, this)
-            runMandatoryIrValidation(extension, irModuleFragment, fir2IrConfiguration)
-        } catch (e: Throwable) {
-            rethrowIntellijPlatformExceptionIfNeeded(e)
-            throw IrGenerationExtensionException(e, extension::class.java)
-        }
-    }
-}
