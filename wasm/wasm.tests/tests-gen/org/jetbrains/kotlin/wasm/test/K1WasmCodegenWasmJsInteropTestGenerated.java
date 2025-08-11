@@ -332,6 +332,12 @@ public class K1WasmCodegenWasmJsInteropTestGenerated extends AbstractK1WasmCodeg
   }
 
   @Test
+  @TestMetadata("testShared.kt")
+  public void testTestShared() {
+    runTest("compiler/testData/codegen/boxWasmJsInterop/testShared.kt");
+  }
+
+  @Test
   @TestMetadata("types.kt")
   public void testTypes() {
     runTest("compiler/testData/codegen/boxWasmJsInterop/types.kt");
