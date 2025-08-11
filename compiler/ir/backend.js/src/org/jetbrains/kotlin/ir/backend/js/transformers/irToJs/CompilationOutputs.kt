@@ -6,8 +6,8 @@
 package org.jetbrains.kotlin.ir.backend.js.transformers.irToJs
 
 import org.jetbrains.kotlin.backend.js.TsCompilationStrategy
-import org.jetbrains.kotlin.ir.backend.js.export.TypeScriptFragment
-import org.jetbrains.kotlin.ir.backend.js.export.toTypeScript
+import org.jetbrains.kotlin.ir.backend.js.tsexport.TypeScriptFragment
+import org.jetbrains.kotlin.ir.backend.js.tsexport.toTypeScript
 import org.jetbrains.kotlin.js.backend.ast.ESM_EXTENSION
 import org.jetbrains.kotlin.js.backend.ast.ESM_TS_DEFINITION_EXTENSION
 import org.jetbrains.kotlin.js.backend.ast.JsProgram

@@ -9,10 +9,10 @@ import org.jetbrains.kotlin.backend.common.serialization.checkIsFunctionInterfac
 import org.jetbrains.kotlin.backend.js.JsGenerationGranularity
 import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.ir.backend.js.*
-import org.jetbrains.kotlin.ir.backend.js.export.ExportModelGenerator as TsExportModelGenerator
-import org.jetbrains.kotlin.ir.backend.js.export.TypeScriptFragment
-import org.jetbrains.kotlin.ir.backend.js.export.joinTypeScriptFragments
-import org.jetbrains.kotlin.ir.backend.js.export.toTypeScriptFragment
+import org.jetbrains.kotlin.ir.backend.js.tsexport.ExportModelGenerator as TsExportModelGenerator
+import org.jetbrains.kotlin.ir.backend.js.tsexport.TypeScriptFragment
+import org.jetbrains.kotlin.ir.backend.js.tsexport.joinTypeScriptFragments
+import org.jetbrains.kotlin.ir.backend.js.tsexport.toTypeScriptFragment
 import org.jetbrains.kotlin.ir.backend.js.jsexport.ExportModelGenerator as JsExportModelGenerator
 import org.jetbrains.kotlin.ir.backend.js.jsexport.ExportModelToJsStatements
 import org.jetbrains.kotlin.ir.backend.js.jsexport.ExportedDeclaration

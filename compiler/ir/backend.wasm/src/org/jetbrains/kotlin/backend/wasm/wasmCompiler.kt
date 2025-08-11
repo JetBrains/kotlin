@@ -20,8 +20,8 @@ import org.jetbrains.kotlin.cli.common.messages.MessageCollector
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.ir.backend.js.MainModule
 import org.jetbrains.kotlin.ir.backend.js.WholeWorldStageController
-import org.jetbrains.kotlin.ir.backend.js.export.ExportModelToTsDeclarations
-import org.jetbrains.kotlin.ir.backend.js.export.TypeScriptFragment
+import org.jetbrains.kotlin.ir.backend.js.tsexport.ExportModelToTsDeclarations
+import org.jetbrains.kotlin.ir.backend.js.tsexport.TypeScriptFragment
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.util.ExternalDependenciesGenerator
 import org.jetbrains.kotlin.ir.util.patchDeclarationParents

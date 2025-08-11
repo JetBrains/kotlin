@@ -10,10 +10,10 @@ import org.jetbrains.kotlin.backend.common.lower.AbstractSuspendFunctionsLowerin
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
-import org.jetbrains.kotlin.ir.backend.js.export.isAllowedFakeOverriddenDeclaration
-import org.jetbrains.kotlin.ir.backend.js.export.isExported
-import org.jetbrains.kotlin.ir.backend.js.export.isOverriddenEnumProperty
-import org.jetbrains.kotlin.ir.backend.js.export.isOverriddenExported
+import org.jetbrains.kotlin.ir.backend.js.tsexport.isAllowedFakeOverriddenDeclaration
+import org.jetbrains.kotlin.ir.backend.js.tsexport.isExported
+import org.jetbrains.kotlin.ir.backend.js.tsexport.isOverriddenEnumProperty
+import org.jetbrains.kotlin.ir.backend.js.tsexport.isOverriddenExported
 import org.jetbrains.kotlin.backend.common.lower.WebCallableReferenceLowering
 import org.jetbrains.kotlin.ir.backend.js.JsIntrinsics.RuntimeMetadataKind
 import org.jetbrains.kotlin.ir.backend.js.lower.coroutines.suspendArityStore
