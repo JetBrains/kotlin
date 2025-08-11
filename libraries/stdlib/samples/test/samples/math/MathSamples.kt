@@ -132,6 +132,75 @@ class MathSamples {
             assertPrints(sign(Double.NaN), "NaN")
             assertPrints(sign(-0.0), "-0.0")
         }
+
+        @Test
+        fun naturalLogarithm() {
+            assertPrints(ln(E), "1.0")
+            assertPrints(ln(1.0), "0.0")
+            assertPrints(ln(E * E), "2.0")
+
+            // Special cases
+            assertPrints(ln(Double.NaN), "NaN")
+            assertPrints(ln(-1.0), "NaN")
+            assertPrints(ln(0.0), "-Infinity")
+            assertPrints(ln(Double.POSITIVE_INFINITY), "Infinity")
+        }
+
+        @Test
+        fun logBase2() {
+            assertPrints(log2(2.0), "1.0")
+            assertPrints(log2(1.0), "0.0")
+            assertPrints(log2(8.0), "3.0")
+
+            // Special cases
+            assertPrints(log2(Double.NaN), "NaN")
+            assertPrints(log2(-1.0), "NaN")
+            assertPrints(log2(0.0), "-Infinity")
+            assertPrints(log2(Double.POSITIVE_INFINITY), "Infinity")
+        }
+
+        @Test
+        fun logBase10() {
+            assertPrints(log10(10.0), "1.0")
+            assertPrints(log10(1.0), "0.0")
+            assertPrints(log10(1000.0), "3.0")
+
+            // Special cases
+            assertPrints(log10(Double.NaN), "NaN")
+            assertPrints(log10(-1.0), "NaN")
+            assertPrints(log10(0.0), "-Infinity")
+            assertPrints(log10(Double.POSITIVE_INFINITY), "Infinity")
+        }
+
+        @Test
+        fun logarithm() {
+            assertPrints(log(64.0, 4.0), "3.0")
+            assertPrints(log(100.0, 10.0), "2.0")
+            // √4 = 2 -> log₄2 = ½
+            assertPrints(log(2.0, 4.0), "0.5")
+
+            // Special cases
+            assertPrints(log(Double.NaN, 2.0), "NaN")
+            assertPrints(log(-1.0, 2.0), "NaN")
+            assertPrints(log(1.0, 1.0), "NaN")
+            assertPrints(log(Double.POSITIVE_INFINITY, 0.5), "-Infinity")
+            assertPrints(log(0.0, 0.5), "Infinity")
+        }
+
+        @Test
+        fun naturalLogarithmPlusOne() {
+            // ln1p has better precision for arguments close to zero
+            assertTrue(ln1p(1e-20) > 0.0)
+            println(ln1p(1e-20))
+            // compared to adding 1.0 to a value and passing it to ln
+            assertPrints(ln(1e-20 + 1.0), "0.0")
+
+            // Special cases
+            assertPrints(ln1p(Double.NaN), "NaN")
+            assertPrints(ln1p(-2.0), "NaN")
+            assertPrints(ln1p(-1.0), "-Infinity")
+            assertPrints(ln1p(Double.POSITIVE_INFINITY), "Infinity")
+        }
     }
 
     class Floats {
@@ -254,6 +323,75 @@ class MathSamples {
             // Special cases
             assertPrints(sign(Float.NaN), "NaN")
             assertPrints(sign(-0.0f), "-0.0")
+        }
+
+        @Test
+        fun naturalLogarithm() {
+            assertTrue(abs(ln(E.toFloat()) - 1.0f) < 1e7f)
+            assertPrints(ln(1.0f), "0.0")
+            assertPrints(ln(E.toFloat() * E.toFloat()), "2.0")
+
+            // Special cases
+            assertPrints(ln(Float.NaN), "NaN")
+            assertPrints(ln(-1.0f), "NaN")
+            assertPrints(ln(0.0f), "-Infinity")
+            assertPrints(ln(Float.POSITIVE_INFINITY), "Infinity")
+        }
+
+        @Test
+        fun logBase2() {
+            assertPrints(log2(2.0f), "1.0")
+            assertPrints(log2(1.0f), "0.0")
+            assertPrints(log2(8.0f), "3.0")
+
+            // Special cases
+            assertPrints(log2(Float.NaN), "NaN")
+            assertPrints(log2(-1.0f), "NaN")
+            assertPrints(log2(0.0f), "-Infinity")
+            assertPrints(log2(Float.POSITIVE_INFINITY), "Infinity")
+        }
+
+        @Test
+        fun logBase10() {
+            assertPrints(log10(10.0f), "1.0")
+            assertPrints(log10(1.0f), "0.0")
+            assertPrints(log10(1000.0f), "3.0")
+
+            // Special cases
+            assertPrints(log10(Float.NaN), "NaN")
+            assertPrints(log10(-1.0f), "NaN")
+            assertPrints(log10(0.0f), "-Infinity")
+            assertPrints(log10(Float.POSITIVE_INFINITY), "Infinity")
+        }
+
+        @Test
+        fun logarithm() {
+            assertPrints(log(9.0f, 3.0f), "2.0")
+            assertPrints(log(1000.0f, 10.0f), "3.0")
+            // √4 = 2 -> log₄2 = ½
+            assertPrints(log(2.0f, 4.0f), "0.5")
+
+            // Special cases
+            assertPrints(log(Float.NaN, 2.0f), "NaN")
+            assertPrints(log(-1.0f, 2.0f), "NaN")
+            assertPrints(log(1.0f, 1.0f), "NaN")
+            assertPrints(log(Float.POSITIVE_INFINITY, 0.5f), "-Infinity")
+            assertPrints(log(0.0f, 0.5f), "Infinity")
+        }
+
+        @Test
+        fun naturalLogarithmPlusOne() {
+            // ln1p has better precision for arguments close to zero
+            assertTrue(ln1p(1e-20f) > 0.0f)
+            println(ln1p(1e-20f))
+            // compared to adding 1.0 to a value and passing it to ln
+            assertPrints(ln(1e-20f + 1.0f), "0.0")
+
+            // Special cases
+            assertPrints(ln1p(Float.NaN), "NaN")
+            assertPrints(ln1p(-2.0f), "NaN")
+            assertPrints(ln1p(-1.0f), "-Infinity")
+            assertPrints(ln1p(Float.POSITIVE_INFINITY), "Infinity")
         }
     }
 }
