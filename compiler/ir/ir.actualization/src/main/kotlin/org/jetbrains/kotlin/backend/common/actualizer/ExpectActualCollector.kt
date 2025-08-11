@@ -70,8 +70,7 @@ internal class ExpectActualCollector(
             diagnosticsReporter,
             expectActualTracker,
             classActualizationInfo,
-            missingActualProvider,
-            actualizerMapContributor,
+            missingActualProvider
         )
         dependentFragments.forEach { linkCollector.collectAndCheckMapping(it, linkCollectorContext) }
         // It doesn't make sense to link expects from the last module because actuals always should be located in another module
@@ -109,17 +108,24 @@ data class ClassActualizationInfo(
         return actualTypeAliases[classId] ?: actualClasses[classId]
     }
 
-    class ActualClassMapping(private val actualClasses: Map<ClassId, IrClassSymbol>) {
+    class ActualClassMapping(
+        private val actualClasses: Map<ClassId, IrClassSymbol>,
+        private val actualizerMapContributor: IrActualizerMapContributor?,
+    ) {
         /*
          * expect class may be actualized to another expect class via actual typealias, so
          *   we need to actualize them recursively until there will be a non-expect class
          */
         operator fun get(classId: ClassId?): IrClassSymbol? {
-            val actualized = actualClasses[classId] ?: return null
+            if (classId == null) return null
+            val mappedClass = actualClasses[classId]
+            // We prefer mappedClass?.owner?.classId because it could be changed by an actual typealias
+            val actualized = actualizerMapContributor?.actualizeClass(mappedClass?.owner?.classId ?: classId) ?: mappedClass ?: return null
             if (actualized.owner.isExpect) {
                 val actualizedClassId = actualized.owner.classIdOrFail
                 if (actualizedClassId == classId) {
-                    error("Expect class registered as actual class: $actualized")
+                    // In case of optional expectations, actualizerMapContributor will return the expect class
+                    return null
                 }
                 return get(actualizedClassId)
             }
@@ -183,10 +189,10 @@ private class ActualDeclarationsCollector(
                 collector.collectExtraActualDeclarations(extractor)
             }
             return ClassActualizationInfo(
-                ClassActualizationInfo.ActualClassMapping(collector.actualClasses),
+                ClassActualizationInfo.ActualClassMapping(collector.actualClasses, actualizerMapContributor),
                 collector.actualTypeAliasesWithoutExpansion,
                 collector.actualTopLevels,
-                collector.actualSymbolsToFile
+                collector.actualSymbolsToFile,
             )
         }
     }
@@ -414,10 +420,9 @@ internal class ExpectActualLinkCollector {
         private val expectActualTracker: ExpectActualTracker?,
         val classActualizationInfo: ClassActualizationInfo,
         private val missingActualProvider: IrMissingActualDeclarationProvider?,
-        private val actualizerMapContributor: IrActualizerMapContributor?,
         val expectActualMap: IrExpectActualMap,
         private val currentExpectFile: IrFile?,
-    ) : IrExpectActualMatchingContext(typeSystemContext) {
+    ) : IrExpectActualMatchingContext(typeSystemContext, classActualizationInfo.actualClasses) {
 
         constructor(
             typeSystemContext: IrTypeSystemContext,
@@ -426,7 +431,6 @@ internal class ExpectActualLinkCollector {
             expectActualTracker: ExpectActualTracker?,
             classActualizationInfo: ClassActualizationInfo,
             missingActualProvider: IrMissingActualDeclarationProvider?,
-            actualizerMapContributor: IrActualizerMapContributor?
         ) : this(
             typeSystemContext = typeSystemContext,
             languageVersionSettings = languageVersionSettings,
@@ -434,7 +438,6 @@ internal class ExpectActualLinkCollector {
             expectActualTracker = expectActualTracker,
             classActualizationInfo = classActualizationInfo,
             missingActualProvider = missingActualProvider,
-            actualizerMapContributor = actualizerMapContributor,
             expectActualMap = IrExpectActualMap(),
             currentExpectFile = null,
         )
@@ -449,20 +452,9 @@ internal class ExpectActualLinkCollector {
                 expectActualTracker,
                 classActualizationInfo,
                 missingActualProvider,
-                actualizerMapContributor,
                 expectActualMap,
                 newCurrentFile
             )
-
-        override fun actualizeClass(classId: ClassId): IrClassSymbol? {
-            // When the classId is from a source class, it must be present in classActualizationInfo.actualClasses.
-            // In KMP separate compilation, we also run expect actual matching on binary classes referenced from common
-            // modules. They can reference other common types. In order for expect actual matching to succeed, they need to be
-            // actualized as well.
-            // For this, we use `actualizerMapContributor` which uses the platform symbol provider to map any common type to its
-            // platform equivalent.
-            return classActualizationInfo.actualClasses[classId] ?: actualizerMapContributor?.actualizeClass(classId)
-        }
 
         override fun onMatchedDeclarations(expectSymbol: IrSymbol, actualSymbol: IrSymbol) {
             expectActualTracker?.reportWithCurrentFile(actualSymbol)

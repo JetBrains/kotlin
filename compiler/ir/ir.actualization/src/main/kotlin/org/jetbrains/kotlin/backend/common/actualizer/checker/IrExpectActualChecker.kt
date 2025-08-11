@@ -10,10 +10,8 @@ import org.jetbrains.kotlin.backend.common.actualizer.ClassActualizationInfo
 import org.jetbrains.kotlin.backend.common.actualizer.IrExpectActualMap
 import org.jetbrains.kotlin.backend.common.actualizer.IrExpectActualMatchingContext
 import org.jetbrains.kotlin.config.LanguageVersionSettings
-import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSymbol
 import org.jetbrains.kotlin.ir.types.IrTypeSystemContext
-import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
 internal interface IrExpectActualChecker {
@@ -24,13 +22,9 @@ internal interface IrExpectActualChecker {
         val languageVersionSettings: LanguageVersionSettings,
         val diagnosticsReporter: IrDiagnosticReporter,
     ) {
-        val matchingContext = object : IrExpectActualMatchingContext(typeSystemContext) {
+        val matchingContext = object : IrExpectActualMatchingContext(typeSystemContext, classActualizationInfo.actualClasses) {
             override fun onMatchedDeclarations(expectSymbol: IrSymbol, actualSymbol: IrSymbol) {
                 shouldNotBeCalled()
-            }
-
-            override fun actualizeClass(classId: ClassId): IrClassSymbol? {
-                return classActualizationInfo.actualClasses[classId]
             }
         }
     }

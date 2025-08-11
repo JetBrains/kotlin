@@ -1,5 +1,4 @@
 // LANGUAGE: +MultiPlatformProjects
-// IGNORE_HMPP: ANY
 // MODULE: lib-common
 
 // MODULE: lib-inter()()(lib-common)

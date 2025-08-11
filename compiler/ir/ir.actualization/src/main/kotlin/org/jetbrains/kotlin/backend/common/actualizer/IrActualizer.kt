@@ -61,7 +61,6 @@ class IrActualizer(
                 if (!hmppSchemeEnabled && !symbol.owner.isExpect) return symbol
                 if (symbol.owner.containsOptionalExpectation()) return symbol
                 val classId = symbol.owner.classId ?: return symbol
-                classActualizationInfo.actualTypeAliases[classId]?.let { return it.owner.expandedType.classOrFail }
                 classActualizationInfo.actualClasses[classId]?.let { return it }
                 // Can't happen normally, but possible on incorrect code.
                 // In that case, it would later fail with error in matching inside [actualizeCallablesAndMergeModules]
