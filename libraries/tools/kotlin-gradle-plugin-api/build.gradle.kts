@@ -16,6 +16,7 @@ pluginApiReference {
 
     additionalDokkaConfiguration {
         reportUndocumented.set(true)
+        includes.from("api-reference-description.md")
     }
 }
 
