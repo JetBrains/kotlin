@@ -123,7 +123,7 @@ internal abstract class KotlinLegacyAbiDumpTaskImpl : AbiToolsTask(), KotlinLega
             val dumpFile = dirForDump.resolve(jvmDumpName)
 
             dumpFile.bufferedWriter().use { writer ->
-                tools.v2.printJvmDump(writer, classfiles, filters)
+                tools.v2.printJvmDump(writer, filters, classfiles)
             }
         }
 

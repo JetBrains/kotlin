@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.tools.tests
 
-import kotlinx.validation.api.*
 import java.io.File
 import java.util.LinkedList
 import kotlin.test.assertEquals
@@ -14,13 +13,13 @@ import kotlin.test.fail
 
 private val OVERWRITE_EXPECTED_OUTPUT = System.getProperty("overwrite.output")?.toBoolean() ?: false // use -Doverwrite.output=true
 
-fun List<ClassBinarySignature>.dumpAndCompareWith(to: File) {
+fun dumpAndCompareWith(dump: (Appendable) -> Unit, to: File) {
     if (!to.exists()) {
         to.parentFile?.mkdirs()
-        to.bufferedWriter().use { dump(to = it) }
+        to.bufferedWriter().use { dump(it) }
         fail("Expected data file did not exist. Generating: $to")
     } else {
-        val actual = dump(to = StringBuilder())
+        val actual = buildString { dump(this) }
         assertEqualsToFile(to, actual)
     }
 }

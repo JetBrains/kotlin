@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.abi.tools.v2
 
+import org.jetbrains.kotlin.abi.tools.api.KotlinClassNamePredicate
 import kotlin.metadata.*
 import kotlin.metadata.jvm.*
 import org.jetbrains.org.objectweb.asm.tree.*
@@ -19,6 +20,8 @@ internal class ClassVisibility(
     val isCompanion: Boolean get() = classKind == ClassKind.COMPANION_OBJECT
     var companionVisibilities: ClassVisibility? = null
     val partVisibilities = mutableListOf<ClassVisibility>()
+    var packageName: String = ""
+    var kotlinName: String = ""
 }
 
 internal fun ClassVisibility.findMember(signature: JvmMemberSignature): MemberVisibility? =
@@ -151,9 +154,10 @@ internal fun KotlinClassMetadata.toClassVisibility(classNode: ClassNode): ClassV
     return ClassVisibility(classNode.name, visibility, kind, members.associateBy { it.member }, _facadeClassName)
 }
 
-internal fun ClassNode.toClassVisibility() = kotlinMetadata?.toClassVisibility(this)
-
-internal fun Map<String, ClassNode>.readKotlinVisibilities(visibilityFilter: (String) -> Boolean = { true }): Map<String, ClassVisibility> =
+internal fun Map<String, ClassNode>.readKotlinVisibilities(
+    packageCache: MutableMap<String, String>,
+    internalDeclarationsAsPublic: KotlinClassNamePredicate
+): Map<String, ClassVisibility> =
     /*
      * Optimized sequence of:
      * 1) Map values to visibility
@@ -162,8 +166,17 @@ internal fun Map<String, ClassNode>.readKotlinVisibilities(visibilityFilter: (St
      */
     entries
         .mapNotNull { (name, classNode) ->
-            if (!visibilityFilter(name)) return@mapNotNull null
-            val visibility = classNode.toClassVisibility() ?: return@mapNotNull null
+            val metadata = classNode.kotlinMetadata
+
+            val qualifiedName = classNode.qualifiedClassName(metadata, packageCache)
+            if (internalDeclarationsAsPublic.test(qualifiedName.first, qualifiedName.second)) {
+                return@mapNotNull null
+            }
+
+            val visibility = metadata?.toClassVisibility(classNode) ?: return@mapNotNull null
+            visibility.packageName = qualifiedName.first
+            visibility.kotlinName = qualifiedName.second
+
             name to visibility
         }.toMap().apply {
             values.forEach {

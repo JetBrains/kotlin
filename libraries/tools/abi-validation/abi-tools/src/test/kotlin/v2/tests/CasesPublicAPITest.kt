@@ -177,12 +177,12 @@ internal fun doCheck(testClassPaths: List<File>, target: File, filters: AbiFilte
 
     if (!target.exists()) {
         target.bufferedWriter().use { writer ->
-            ToolsV2.printJvmDump(writer, testClasses, filters)
+            ToolsV2.printJvmDump(writer, filters, testClasses)
         }
         fail("Expected data file did not exist. Generating: $target")
     } else {
         val stringBuffer = StringBuffer()
-        ToolsV2.printJvmDump(stringBuffer, testClasses, filters)
+        ToolsV2.printJvmDump(stringBuffer, filters, testClasses)
         assertEqualsToFile(target, stringBuffer.toString())
     }
 }

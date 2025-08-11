@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.abi.tools.api.v2
 
 import org.jetbrains.kotlin.abi.tools.api.AbiFilters
+import org.jetbrains.kotlin.abi.tools.api.KotlinClassNamePredicate
 import java.io.File
 
 /**
@@ -17,11 +18,19 @@ import java.io.File
 public interface AbiToolsV2 {
     /**
      * Print ABI dump for JVM class-files into specified [appendable].
+     *
+     * @param internalDeclarationsAsPublic
      */
-    public fun <T : Appendable> printJvmDump(appendable: T, classfiles: Iterable<File>, filters: AbiFilters)
+    public fun <T : Appendable> printJvmDump(
+        appendable: T,
+        filters: AbiFilters,
+        classfiles: Iterable<File> = emptyList(),
+        jarFiles: Iterable<File> = emptyList(),
+        internalDeclarationsAsPublic: KotlinClassNamePredicate = KotlinClassNamePredicate.NONE,
+    )
 
     /**
-     * Create empty KLib dump without any declarations and targets.
+     * Create an empty KLib dump without any declarations and targets.
      */
     public fun createKlibDump(): KlibDump
 
@@ -50,5 +59,5 @@ public interface AbiToolsV2 {
      * @throws IllegalStateException if a KLib could not be loaded from [klib].
      * @throws java.io.FileNotFoundException if file or directory [klib] does not exist.
      */
-    public fun extractKlibAbi(klib: File, target: KlibTarget, filters: AbiFilters = AbiFilters.Companion.EMPTY): KlibDump
+    public fun extractKlibAbi(klib: File, target: KlibTarget? = null, filters: AbiFilters = AbiFilters.Companion.EMPTY): KlibDump
 }

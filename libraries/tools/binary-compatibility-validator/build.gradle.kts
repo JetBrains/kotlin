@@ -5,14 +5,12 @@ plugins {
 val testArtifacts by configurations.creating
 
 dependencies {
-    api(libs.kotlinx.bcv)
-    runtimeOnly("org.ow2.asm:asm-tree:9.7")
-    runtimeOnly("org.jetbrains.kotlin:kotlin-metadata-jvm:${project.bootstrapKotlinVersion}")
-    if (kotlinBuildProperties.isKotlinNativeEnabled) {
-        runtimeOnly(project(":kotlin-compiler-embeddable"))
-    } else {
-        runtimeOnly(kotlin("compiler-embeddable", bootstrapKotlinVersion))
-    }
+    implementation(project(":libraries:tools:abi-validation:abi-tools-api"))
+    runtimeOnly(project(":libraries:tools:abi-validation:abi-tools"))
+    /*
+    implementation("org.jetbrains.kotlin:abi-tools-api:${project.bootstrapKotlinVersion}")
+    runtimeOnly("org.jetbrains.kotlin:abi-tools:${project.bootstrapKotlinVersion}")
+     */
 
     testApi(kotlinTest("junit"))
 
@@ -30,7 +28,7 @@ sourceSets {
     }
 }
 
-val test by tasks.existing(Test::class) {
+tasks.test {
     dependsOn(testArtifacts)
     dependsOn(":kotlin-stdlib:assemble")
     if (kotlinBuildProperties.isKotlinNativeEnabled) {
@@ -40,6 +38,6 @@ val test by tasks.existing(Test::class) {
     systemProperty("native.enabled", kotlinBuildProperties.isKotlinNativeEnabled)
     systemProperty("overwrite.output", project.providers.gradleProperty("overwrite.output").orNull ?: System.getProperty("overwrite.output", "false"))
     systemProperty("kotlinVersion", project.version)
-    systemProperty("testCasesClassesDirs", sourceSets["test"].output.classesDirs.asPath)
+    systemProperty("testCasesClassesDirs", sourceSets.test.get().output.classesDirs.asPath)
     jvmArgs("-ea")
 }

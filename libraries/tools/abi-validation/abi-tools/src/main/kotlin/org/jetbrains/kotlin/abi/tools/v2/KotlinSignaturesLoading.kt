@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.abi.tools.v2
 
+import org.jetbrains.kotlin.abi.tools.api.KotlinClassNamePredicate
 import org.jetbrains.kotlin.abi.tools.filtering.FilterResult
 import org.jetbrains.kotlin.abi.tools.filtering.FiltersMatcher
 import org.jetbrains.kotlin.abi.tools.naming.jvmInternalToCanonical
@@ -18,7 +19,7 @@ import java.util.*
 import java.util.jar.*
 import kotlin.metadata.KmProperty
 
-internal fun Sequence<InputStream>.loadApiFromJvmClasses(): List<ClassBinarySignature> {
+internal fun Sequence<InputStream>.loadApiFromJvmClasses(internalDeclarationsAsPublic: KotlinClassNamePredicate): List<ClassBinarySignature> {
     val classNodes = mapNotNull {
         val node = it.use { stream ->
             val classNode = ClassNode()
@@ -33,7 +34,7 @@ internal fun Sequence<InputStream>.loadApiFromJvmClasses(): List<ClassBinarySign
 
     // Note: map is sorted, so the dump will produce stable result
     val classNodeMap = classNodes.associateByTo(TreeMap()) { it.name }
-    val visibilityMap = classNodeMap.readKotlinVisibilities()
+    val visibilityMap = classNodeMap.readKotlinVisibilities(packageCache, internalDeclarationsAsPublic)
     return classNodeMap
         .values
         .map { classNode ->
@@ -75,11 +76,19 @@ internal fun Sequence<InputStream>.loadApiFromJvmClasses(): List<ClassBinarySign
                     }
                 }
 
-                val qualifiedName = qualifiedClassName(metadata)
-                val packageName = packageCache.getOrPut(qualifiedName.first) { qualifiedName.first }
+                val packageName: String
+                val kotlinName: String
+                if (mVisibility != null) {
+                    packageName = mVisibility.packageName
+                    kotlinName = mVisibility.kotlinName
+                } else {
+                    val qualifiedName = qualifiedClassName(metadata, packageCache)
+                    packageName = qualifiedName.first
+                    kotlinName = qualifiedName.second
+                }
 
                 ClassBinarySignature(
-                    name, packageName, qualifiedName.second, superName, outerClassName, supertypes,
+                    name, packageName, kotlinName, superName, outerClassName, supertypes,
                     fieldSignatures + methodSignatures, classAccess, isEffectivelyPublic(mVisibility),
                     metadata.isFileOrMultipartFacade() || isDefaultImpls(metadata),
                     annotations(visibleAnnotations, invisibleAnnotations) + inheritedAnnotations
@@ -172,8 +181,8 @@ private fun List<AnnotationNode>.extractAnnotationQualifiedNames(): List<String>
     return map { it.desc.jvmTypeDescToCanonical().run { "$first.$second" } }
 }
 
-private fun ClassNode.qualifiedClassName(metadata: KotlinClassMetadata?): Pair<String, String> {
-    return when {
+internal fun ClassNode.qualifiedClassName(metadata: KotlinClassMetadata?, packageCache: MutableMap<String, String>): Pair<String, String> {
+    val qualifiedName = when {
         metadata is KotlinClassMetadata.Class -> metadata.kmClass.name.metadataNameToQualified()
         metadata is KotlinClassMetadata.FileFacade -> name.jvmInternalToCanonical()
         isDefaultImpls(metadata) && outerClassName != null -> outerClassName!!.metadataNameToQualified()
@@ -182,6 +191,10 @@ private fun ClassNode.qualifiedClassName(metadata: KotlinClassMetadata?): Pair<S
         // it's Java class
         else -> name.jvmInternalToCanonical()
     }
+
+    val packageName = packageCache.getOrPut(qualifiedName.first) { qualifiedName.first }
+
+    return packageName to qualifiedName.second
 }
 
 private fun MethodNode.buildMethodSignature(

@@ -98,3 +98,11 @@ public class AbiFilters(
     public val isEmpty: Boolean =
         includedClasses.isEmpty() && excludedClasses.isEmpty() && includedAnnotatedWith.isEmpty() && excludedAnnotatedWith.isEmpty()
 }
+
+public fun interface KotlinClassNamePredicate {
+    public fun test(packageName: String, className: String): Boolean
+
+    public object NONE : KotlinClassNamePredicate {
+        override fun test(packageName: String, className: String): Boolean = false
+    }
+}

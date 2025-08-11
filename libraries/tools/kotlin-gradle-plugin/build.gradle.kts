@@ -1,6 +1,9 @@
+@file:OptIn(ExperimentalAbiValidation::class)
+
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import gradle.GradlePluginVariant
 import org.jetbrains.kotlin.build.androidsdkprovisioner.ProvisioningType
+import org.jetbrains.kotlin.gradle.dsl.abi.ExperimentalAbiValidation
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
@@ -66,6 +69,8 @@ binaryCompatibilityValidator {
 
         inputClasses.from(project.sourceSets.main.map { it.output.classesDirs })
         inputClasses.from(project.sourceSets.common.map { it.output.classesDirs })
+
+        inputClasses.from()
     }
 
     val externalApiMarkers = setOf(
