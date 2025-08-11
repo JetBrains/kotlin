@@ -205,9 +205,11 @@ public actual fun expm1(x: Double): Double = kotlin.math.fdlibm.expm1(x)
  *   - `log(x, b)` is `NaN` when `x < 0` or `b <= 0` or `b == 1.0`
  *   - `log(+Inf, +Inf)` is `NaN`
  *   - `log(+Inf, b)` is `+Inf` for `b > 1` and `-Inf` for `b < 1`
- *   - `log(0.0, b)` is `-Inf` for `b > 1` and `+Inf` for `b > 1`
+ *   - `log(0.0, b)` is `-Inf` for `b > 1` and `+Inf` for `b < 1`
  *
  * See also logarithm functions for common fixed bases: [ln], [log10] and [log2].
+ *
+ * @sample samples.math.MathSamples.Doubles.logarithm
  */
 @SinceKotlin("1.2")
 public actual fun log(x: Double, base: Double): Double {
@@ -226,6 +228,8 @@ public actual fun log(x: Double, base: Double): Double {
  *   - `ln(x)` is `NaN` when `x < 0.0`
  *   - `ln(+Inf)` is `+Inf`
  *   - `ln(0.0)` is `-Inf`
+ *
+ * @sample samples.math.MathSamples.Doubles.naturalLogarithm
  */
 @SinceKotlin("1.2")
 public actual fun ln(x: Double): Double = kotlin.math.fdlibm.__ieee754_log(x)
@@ -234,6 +238,8 @@ public actual fun ln(x: Double): Double = kotlin.math.fdlibm.__ieee754_log(x)
  * Computes the common logarithm (base 10) of the value [x].
  *
  * @see [ln] function for special cases.
+ *
+ * @sample samples.math.MathSamples.Doubles.logBase10
  */
 @SinceKotlin("1.2")
 public actual fun log10(x: Double): Double = kotlin.math.fdlibm.__ieee754_log10(x)
@@ -242,6 +248,8 @@ public actual fun log10(x: Double): Double = kotlin.math.fdlibm.__ieee754_log10(
  * Computes the binary logarithm (base 2) of the value [x].
  *
  * @see [ln] function for special cases.
+ *
+ * @sample samples.math.MathSamples.Doubles.logBase2
  */
 @SinceKotlin("1.2")
 public actual fun log2(x: Double): Double = kotlin.math.fdlibm.__ieee754_log2(x)
@@ -259,6 +267,8 @@ public actual fun log2(x: Double): Double = kotlin.math.fdlibm.__ieee754_log2(x)
  *
  * @see [ln] function
  * @see [expm1] function
+ *
+ * @sample samples.math.MathSamples.Doubles.naturalLogarithmPlusOne
  */
 @SinceKotlin("1.2")
 public actual fun ln1p(x: Double): Double = kotlin.math.fdlibm.log1p(x)
@@ -728,9 +738,11 @@ public actual fun expm1(x: Float): Float = kotlin.math.fdlibm.expm1(x.toDouble()
  *   - `log(x, b)` is `NaN` when `x < 0` or `b <= 0` or `b == 1.0`
  *   - `log(+Inf, +Inf)` is `NaN`
  *   - `log(+Inf, b)` is `+Inf` for `b > 1` and `-Inf` for `b < 1`
- *   - `log(0.0, b)` is `-Inf` for `b > 1` and `+Inf` for `b > 1`
+ *   - `log(0.0, b)` is `-Inf` for `b > 1` and `+Inf` for `b < 1`
  *
  * See also logarithm functions for common fixed bases: [ln], [log10] and [log2].
+ *
+ * @sample samples.math.MathSamples.Floats.logarithm
  */
 @SinceKotlin("1.2")
 public actual fun log(x: Float, base: Float): Float {
@@ -746,6 +758,8 @@ public actual fun log(x: Float, base: Float): Float {
  *   - `ln(x)` is `NaN` when `x < 0.0`
  *   - `ln(+Inf)` is `+Inf`
  *   - `ln(0.0)` is `-Inf`
+ *
+ * @sample samples.math.MathSamples.Floats.naturalLogarithm
  */
 @SinceKotlin("1.2")
 public actual fun ln(x: Float): Float = kotlin.math.fdlibm.__ieee754_log(x.toDouble()).toFloat()
@@ -754,6 +768,8 @@ public actual fun ln(x: Float): Float = kotlin.math.fdlibm.__ieee754_log(x.toDou
  * Computes the common logarithm (base 10) of the value [x].
  *
  * @see [ln] function for special cases.
+ *
+ * @sample samples.math.MathSamples.Floats.logBase10
  */
 @SinceKotlin("1.2")
 public actual fun log10(x: Float): Float = kotlin.math.fdlibm.__ieee754_log10(x.toDouble()).toFloat()
@@ -762,6 +778,8 @@ public actual fun log10(x: Float): Float = kotlin.math.fdlibm.__ieee754_log10(x.
  * Computes the binary logarithm (base 2) of the value [x].
  *
  * @see [ln] function for special cases.
+ *
+ * @sample samples.math.MathSamples.Floats.logBase2
  */
 @SinceKotlin("1.2")
 public actual fun log2(x: Float): Float = kotlin.math.fdlibm.__ieee754_log2(x.toDouble()).toFloat()
@@ -779,6 +797,8 @@ public actual fun log2(x: Float): Float = kotlin.math.fdlibm.__ieee754_log2(x.to
  *
  * @see [ln] function
  * @see [expm1] function
+ *
+ * @sample samples.math.MathSamples.Floats.naturalLogarithmPlusOne
  */
 @SinceKotlin("1.2")
 public actual fun ln1p(x: Float): Float = kotlin.math.fdlibm.log1p(x.toDouble()).toFloat()
