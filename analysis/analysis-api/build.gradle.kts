@@ -3,7 +3,6 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
 plugins {
     kotlin("jvm")
     id("jps-compatible")
-    id("org.jetbrains.kotlinx.binary-compatibility-validator")
 }
 
 kotlin {
@@ -42,15 +41,26 @@ sourceSets {
     "test" { projectDefault() }
 }
 
-apiValidation {
-    nonPublicMarkers += listOf(
-        "org.jetbrains.kotlin.analysis.api.KaImplementationDetail",
-        "org.jetbrains.kotlin.analysis.api.KaNonPublicApi",
-        "org.jetbrains.kotlin.analysis.api.KaIdeApi",
-        "org.jetbrains.kotlin.analysis.api.KaExperimentalApi",
-        "org.jetbrains.kotlin.analysis.api.KaPlatformInterface", // Platform interface is not stable yet
-        "org.jetbrains.kotlin.analysis.api.KaContextParameterApi",
-    )
+kotlin {
+    @OptIn(org.jetbrains.kotlin.gradle.dsl.abi.ExperimentalAbiValidation::class)
+    abiValidation {
+        enabled = true
+
+        filters {
+            excluded.annotatedWith.addAll(
+                "org.jetbrains.kotlin.analysis.api.KaImplementationDetail",
+                "org.jetbrains.kotlin.analysis.api.KaNonPublicApi",
+                "org.jetbrains.kotlin.analysis.api.KaIdeApi",
+                "org.jetbrains.kotlin.analysis.api.KaExperimentalApi",
+                "org.jetbrains.kotlin.analysis.api.KaPlatformInterface", // Platform interface is not stable yet
+                "org.jetbrains.kotlin.analysis.api.KaContextParameterApi",
+            )
+        }
+    }
+}
+
+tasks.check {
+    dependsOn(tasks.checkLegacyAbi)
 }
 
 testsJar()

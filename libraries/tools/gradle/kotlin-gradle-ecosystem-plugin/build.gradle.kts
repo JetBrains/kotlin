@@ -21,5 +21,6 @@ dependencies {
 }
 
 tasks.named<KotlinApiBuildTask>("apiBuild") {
+    // local jar
     inputJar.value(tasks.named<Jar>("jar").flatMap { it.archiveFile })
 }

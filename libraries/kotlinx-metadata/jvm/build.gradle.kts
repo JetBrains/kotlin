@@ -62,6 +62,7 @@ val runtimeJar = runtimeJarWithRelocation {
 }
 
 tasks.apiBuild {
+    // dependency on local jar
     inputJar.value(runtimeJar.flatMap { it.archiveFile })
 }
 

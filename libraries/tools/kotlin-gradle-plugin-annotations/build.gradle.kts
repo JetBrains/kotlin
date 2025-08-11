@@ -22,6 +22,7 @@ apiValidation {
 
 tasks {
     apiBuild {
+        // local jar
         inputJar.value(jar.flatMap { it.archiveFile })
     }
 }

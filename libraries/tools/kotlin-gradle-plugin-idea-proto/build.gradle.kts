@@ -61,6 +61,7 @@ run {
 
     tasks {
         apiBuild {
+            // actually we use only `mainSourceSet.output` classes, classes from `FileCollection`
             inputJar.value(binaryValidationApiJar.flatMap { it.archiveFile })
         }
     }

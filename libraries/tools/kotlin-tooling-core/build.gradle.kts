@@ -17,6 +17,7 @@ dependencies {
 
 tasks {
     apiBuild {
+        // use output of local JAR task
         inputJar.value(jar.flatMap { it.archiveFile })
     }
 }

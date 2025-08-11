@@ -1,6 +1,5 @@
 plugins {
     kotlin("jvm")
-    id("org.jetbrains.kotlinx.binary-compatibility-validator")
 }
 
 kotlin {
@@ -12,6 +11,16 @@ configureKotlinCompileTasksGradleCompatibility()
 publish()
 
 standardPublicJars()
+
+kotlin {
+    @OptIn(org.jetbrains.kotlin.gradle.dsl.abi.ExperimentalAbiValidation::class)
+    abiValidation {
+        enabled = true
+    }
+}
+tasks.check {
+    dependsOn(tasks.checkLegacyAbi)
+}
 
 dependencies {
     // remove stdlib dependency from api artifact in order not to affect the dependencies of the user project

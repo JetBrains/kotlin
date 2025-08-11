@@ -4,7 +4,6 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
     kotlin("jvm")
     id("jps-compatible")
-    id("org.jetbrains.kotlinx.binary-compatibility-validator")
 }
 
 configureKotlinCompileTasksGradleCompatibility()
@@ -23,6 +22,16 @@ dependencies {
 
 kotlin {
     explicitApi()
+}
+
+kotlin {
+    @OptIn(org.jetbrains.kotlin.gradle.dsl.abi.ExperimentalAbiValidation::class)
+    abiValidation {
+        enabled = true
+    }
+}
+tasks.check {
+    dependsOn(tasks.checkLegacyAbi)
 }
 
 publish()

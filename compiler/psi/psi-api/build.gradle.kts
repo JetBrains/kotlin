@@ -1,7 +1,6 @@
 plugins {
     kotlin("jvm")
     id("jps-compatible")
-    id("org.jetbrains.kotlinx.binary-compatibility-validator")
     id("java-test-fixtures")
 }
 
@@ -31,10 +30,18 @@ sourceSets {
     "testFixtures" { projectDefault() }
 }
 
-apiValidation {
-    nonPublicMarkers += listOf(
-        "org.jetbrains.kotlin.psi.KtImplementationDetail",
-    )
+kotlin {
+    @OptIn(org.jetbrains.kotlin.gradle.dsl.abi.ExperimentalAbiValidation::class)
+    abiValidation {
+        enabled = true
+
+        filters {
+            excluded.annotatedWith.add("org.jetbrains.kotlin.psi.KtImplementationDetail")
+        }
+    }
+}
+tasks.check {
+    dependsOn(tasks.checkLegacyAbi)
 }
 
 testsJar()

@@ -1,6 +1,5 @@
 plugins {
     kotlin("jvm")
-    id("org.jetbrains.kotlinx.binary-compatibility-validator")
 }
 
 kotlin {
@@ -27,6 +26,16 @@ tasks.compileTestKotlin {
         // fix signatures and binary declarations
         freeCompilerArgs.add("-Xjvm-default=all-compatibility")
     }
+}
+
+kotlin {
+    @OptIn(org.jetbrains.kotlin.gradle.dsl.abi.ExperimentalAbiValidation::class)
+    abiValidation {
+        enabled = true
+    }
+}
+tasks.check {
+    dependsOn(tasks.checkLegacyAbi)
 }
 
 dependencies {
