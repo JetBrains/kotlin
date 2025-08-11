@@ -33027,6 +33027,12 @@ public class FirNativeCodegenBoxTestGenerated extends AbstractNativeCodegenBoxTe
           }
 
           @Test
+          @TestMetadata("arrayDeque.kt")
+          public void testArrayDeque() {
+            runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/arrayDeque.kt");
+          }
+
+          @Test
           @TestMetadata("expectActualChain2-2.kt")
           public void testExpectActualChain2_2() {
             runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/expectActualChain2-2.kt");
