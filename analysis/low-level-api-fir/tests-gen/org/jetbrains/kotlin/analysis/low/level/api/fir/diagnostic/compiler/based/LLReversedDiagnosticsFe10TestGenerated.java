@@ -52208,6 +52208,12 @@ public class LLReversedDiagnosticsFe10TestGenerated extends AbstractLLReversedDi
         }
 
         @Test
+        @TestMetadata("onlyInputTypesWithLambda.kt")
+        public void testOnlyInputTypesWithLambda() {
+          runTest("compiler/testData/diagnostics/testsWithStdLib/inference/annotationsForResolve/onlyInputTypesWithLambda.kt");
+        }
+
+        @Test
         @TestMetadata("onlyInputTypesWithVarargs.kt")
         public void testOnlyInputTypesWithVarargs() {
           runTest("compiler/testData/diagnostics/testsWithStdLib/inference/annotationsForResolve/onlyInputTypesWithVarargs.kt");
