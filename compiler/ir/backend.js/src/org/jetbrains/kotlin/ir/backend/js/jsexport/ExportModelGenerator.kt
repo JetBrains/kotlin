@@ -6,8 +6,6 @@
 package org.jetbrains.kotlin.ir.backend.js.jsexport
 
 import org.jetbrains.kotlin.descriptors.ClassKind
-import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
-import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.backend.js.*
 import org.jetbrains.kotlin.ir.backend.js.lower.ES6_BOX_PARAMETER
@@ -78,7 +76,6 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
                     isMember = parent is IrClass,
                     isStatic = function.isStaticMethod,
                     isAbstract = parent is IrClass && !parent.isInterface && function.modality == Modality.ABSTRACT,
-                    isProtected = function.visibility == DescriptorVisibilities.PROTECTED,
                     ir = function,
                     parameters = function.nonDispatchParameters
                         .filter { it.shouldBeExported() }
@@ -99,7 +96,6 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
             parameters = constructor.nonDispatchParameters
                 .filterNot { it.isBoxParameter }
                 .memoryOptimizedMap { exportParameter(it, it.hasDefaultValue) },
-            visibility = constructor.visibility.toExportedVisibility()
         )
     }
 
@@ -145,7 +141,6 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
             mutable = property.isVar,
             isMember = parentClass != null,
             isAbstract = parentClass?.isInterface == false && property.modality == Modality.ABSTRACT,
-            isProtected = property.visibility == DescriptorVisibilities.PROTECTED,
             isField = parentClass?.isInterface == true,
             irGetter = property.getter,
             irSetter = property.setter,
@@ -182,7 +177,6 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
             mutable = false,
             isMember = true,
             isStatic = true,
-            isProtected = parentClass.visibility == DescriptorVisibilities.PROTECTED,
             irGetter = irEnumEntry.getInstanceFun
                 ?: irError("Unable to find get instance fun") {
                     withIrEntry("field", field)
@@ -272,7 +266,6 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
 
         val privateConstructor = ExportedConstructor(
             parameters = emptyList(),
-            visibility = ExportedVisibility.PRIVATE
         )
 
         return exportClass(
@@ -638,12 +631,6 @@ fun IrDeclaration.isExportedImplicitlyOrExplicitly(context: JsIrBackendContext):
     val candidate = getExportCandidate(this) ?: return false
     return shouldDeclarationBeExportedImplicitlyOrExplicitly(candidate, context, this)
 }
-
-fun DescriptorVisibility.toExportedVisibility() =
-    when (this) {
-        DescriptorVisibilities.PROTECTED -> ExportedVisibility.PROTECTED
-        else -> ExportedVisibility.DEFAULT
-    }
 
 private val reservedWords = setOf(
     "break",

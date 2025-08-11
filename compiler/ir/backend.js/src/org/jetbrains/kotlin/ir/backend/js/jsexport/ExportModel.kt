@@ -21,7 +21,6 @@ data class ExportedModule(
 class ExportedNamespace(
     val name: String,
     val declarations: List<ExportedDeclaration>,
-    val isPrivate: Boolean = false
 ) : ExportedDeclaration()
 
 data class ExportedFunction(
@@ -30,17 +29,12 @@ data class ExportedFunction(
     val isMember: Boolean = false,
     val isStatic: Boolean = false,
     val isAbstract: Boolean = false,
-    val isProtected: Boolean,
     val ir: IrSimpleFunction
 ) : ExportedDeclaration()
 
 data class ExportedConstructor(
     val parameters: List<ExportedParameter>,
-    val visibility: ExportedVisibility
-) : ExportedDeclaration() {
-    val isProtected: Boolean
-        get() = visibility == ExportedVisibility.PROTECTED
-}
+) : ExportedDeclaration()
 
 data class ExportedConstructSignature(
     val parameters: List<ExportedParameter>,
@@ -52,7 +46,6 @@ data class ExportedProperty(
     val isMember: Boolean = false,
     val isStatic: Boolean = false,
     val isAbstract: Boolean = false,
-    val isProtected: Boolean = false,
     val isField: Boolean = false,
     val irGetter: IrFunction? = null,
     val irSetter: IrFunction? = null,
@@ -94,9 +87,3 @@ class ExportedParameter(
     val name: String,
     val hasDefaultValue: Boolean = false
 )
-
-enum class ExportedVisibility(val keyword: String) {
-    DEFAULT(""),
-    PRIVATE("private "),
-    PROTECTED("protected ")
-}
