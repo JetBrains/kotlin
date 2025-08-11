@@ -13,9 +13,17 @@ import kotlin.math.min
  * implemented as instances of this class.
  */
 public actual class String internal @WasmPrimitiveConstructor constructor(
+    /**
+     * Used for string concatenation operations.
+     * Internal visibility prevents synthetic accessor generation, improving performance.
+     */
     internal var leftIfInSum: String?,
     @kotlin.internal.IntrinsicConstEvaluation
     public actual override val length: Int,
+    /**
+     * Stores the character array for the string.
+     * Internal visibility prevents synthetic accessor generation, improving performance.
+     */
     internal var _chars: WasmCharArray,
 ) : Comparable<String>, CharSequence {
     public actual companion object {}
