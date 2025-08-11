@@ -1048,7 +1048,9 @@ private inline fun parseDefaultStringFormat(
         when (unit) {
             DurationUnit.MICROSECONDS -> {
                 totalMillis += longValue / MICROS_IN_MILLIS
-                totalNanos += (longValue % MICROS_IN_MILLIS) * NANOS_IN_MICROS
+                if (longValue <= MAX_NANOS / NANOS_IN_MICROS) {
+                    totalNanos += (longValue % MICROS_IN_MILLIS) * NANOS_IN_MICROS
+                }
             }
             DurationUnit.NANOSECONDS -> {
                 totalMillis += longValue / NANOS_IN_MILLIS
