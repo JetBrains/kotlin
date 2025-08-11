@@ -30,7 +30,8 @@ import org.jetbrains.kotlin.utils.addToStdlib.firstIsInstanceOrNull
 import org.jetbrains.kotlin.utils.addToStdlib.shouldNotBeCalled
 
 
-class IrCommonToPlatformDependencyActualizerMapContributor(
+class IrCommonToPlatformDependencyActualizerMapContributor private constructor(
+    private val platformSession: FirSession,
     private val platformMappingProvider: FirCommonDeclarationsMappingSymbolProvider,
     private val commonMappingProviders: List<FirCommonDeclarationsMappingSymbolProvider>,
     private val componentsPerSession: Map<FirSession, Fir2IrComponents>,
@@ -57,6 +58,7 @@ class IrCommonToPlatformDependencyActualizerMapContributor(
             if (platformMappingProviders.isEmpty()) return null
             val platformMappingProvider = platformMappingProviders.single()
             return IrCommonToPlatformDependencyActualizerMapContributor(
+                platformSession,
                 platformMappingProvider,
                 commonMappingProviders,
                 componentsPerSession
@@ -180,8 +182,9 @@ class IrCommonToPlatformDependencyActualizerMapContributor(
     }
 
     override fun actualizeClass(classId: ClassId): IrClassSymbol? {
-        val symbol = platformMappingProvider.getClassLikeSymbolByClassId(classId) ?: return null
+        val symbol = platformSession.symbolProvider.getClassLikeSymbolByClassId(classId) ?: return null
         val fullyExpandedClass = symbol.fullyExpandedClass(platformMappingProvider.session) ?: return null
+        if (fullyExpandedClass.moduleData !in dependencyToSourceSession) return null
         return fullyExpandedClass.toIrSymbol() as? IrClassSymbol
     }
 
