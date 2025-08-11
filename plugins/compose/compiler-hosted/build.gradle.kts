@@ -1,5 +1,10 @@
+import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
+import org.jetbrains.kotlin.gradle.plugin.mpp.KotlinUsages
+import org.jetbrains.kotlin.gradle.targets.js.KotlinJsCompilerAttribute
+
 plugins {
     kotlin("jvm")
+    id("d8-configuration")
 }
 
 repositories {
@@ -17,6 +22,15 @@ fun DependencyHandler.testImplementationArtifactOnly(dependency: String) {
 }
 
 description = "Contains the Kotlin compiler plugin for Compose used in Android Studio and IDEA"
+
+val testJsRuntime: Configuration by configurations.creating {
+    attributes {
+        attribute(Category.CATEGORY_ATTRIBUTE, objects.named(Category.LIBRARY))
+        attribute(Usage.USAGE_ATTRIBUTE, objects.named(KotlinUsages.KOTLIN_RUNTIME))
+        attribute(KotlinPlatformType.attribute, KotlinPlatformType.js)
+        attribute(KotlinJsCompilerAttribute.jsCompilerAttribute, KotlinJsCompilerAttribute.ir)
+    }
+}
 
 dependencies {
     implementation(project(":kotlin-stdlib"))
@@ -43,12 +57,22 @@ dependencies {
     testImplementation(testFixtures(project(":generators:analysis-api-generator")))
     testApi(project(":compiler:plugin-api"))
     testImplementation(testFixtures(project(":compiler:tests-common-new")))
+    testImplementation(testFixtures(project(":js:js.tests")))
 
-    // runtime tests
+    // compose runtime for tests
     testImplementation(composeRuntime()) { isTransitive = false }
-    testImplementation(composeRuntimeTestUtils()) { isTransitive = false }
     testImplementation(composeRuntimeAnnotations()) { isTransitive = false }
     testImplementation(libs.androidx.collections)
+
+    // js runtimes for tests
+    testJsRuntime(composeRuntime()) { isTransitive = false }
+    testJsRuntime(composeRuntimeAnnotations()) { isTransitive = false }
+    testJsRuntime(libs.androidx.collections) {
+        // Avoid kotlin stdlib dependency since we are compiling against the newest one
+        exclude(group = "org.jetbrains.kotlin")
+    }
+    testJsRuntime(libs.kotlinx.coroutines.core) { isTransitive = false }
+    testJsRuntime("org.jetbrains.kotlinx:atomicfu-js:0.25.0") { isTransitive = false }
 
     // other compose
     testImplementationArtifactOnly(compose("foundation", "foundation"))
@@ -104,8 +128,10 @@ projectTest(parallel = true, jUnitMode = JUnitMode.JUnit5) {
     dependsOn(":dist")
     dependsOn(runtimeJar)
     systemProperty("compose.compiler.hosted.jar.path", runtimeJar.get().outputs.files.singleFile.relativeTo(rootDir))
+    systemProperty("compose.compiler.test.js.classpath", testJsRuntime.asPath)
     workingDir = rootDir
     useJUnitPlatform()
+    useJsIrBoxTests(version = version, buildDir = layout.buildDirectory)
 }
 
 val generateTests by generator("androidx.compose.compiler.plugins.kotlin.TestGeneratorKt")

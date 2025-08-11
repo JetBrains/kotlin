@@ -10,11 +10,13 @@ import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.platform.jvm.isJvm
 import org.jetbrains.kotlin.test.model.TestModule
 import org.jetbrains.kotlin.test.services.EnvironmentConfigurator
+import org.jetbrains.kotlin.test.services.RuntimeClasspathJsProvider
 import org.jetbrains.kotlin.test.services.TestServices
 import org.jetbrains.kotlin.test.services.targetPlatform
 import java.io.File
 
 private const val JAVA_CLASS_PATH = "java.class.path"
+private const val JS_RUNTIME_PATHS = "compose.compiler.test.js.classpath"
 
 private val defaultClassPath by lazy {
     val classPath = System.getProperty(JAVA_CLASS_PATH) ?: error("System property \"$JAVA_CLASS_PATH\" is not found")
@@ -22,7 +24,13 @@ private val defaultClassPath by lazy {
     classPath.split(separator).map { File(it) }
 }
 
-class ComposePluginAnnotationsProvider(testServices: TestServices) : EnvironmentConfigurator(testServices) {
+private val jsClassPath by lazy {
+    val classPath = System.getProperty(JS_RUNTIME_PATHS) ?: error("System property \"$JS_RUNTIME_PATHS\" is not found")
+    val separator = File.pathSeparator ?: error("File path separator is null")
+    classPath.split(separator).map { File(it) }
+}
+
+class ComposeJvmClasspathConfigurator(testServices: TestServices) : EnvironmentConfigurator(testServices) {
     override fun configureCompilerConfiguration(configuration: CompilerConfiguration, module: TestModule) {
         val platform = module.targetPlatform(testServices)
         when {
@@ -34,4 +42,9 @@ class ComposePluginAnnotationsProvider(testServices: TestServices) : Environment
             else -> error("CodeGen API and compiler tests with Compose compiler plugin are currently supporting only JVM")
         }
     }
+}
+
+class ComposeJsClasspathProvider(testServices: TestServices) : RuntimeClasspathJsProvider(testServices) {
+    override fun runtimeClassPaths(module: TestModule): List<File> =
+        super.runtimeClassPaths(module) + jsClassPath
 }

@@ -6,14 +6,23 @@
 package androidx.compose.compiler.plugins.kotlin
 
 import androidx.compose.compiler.plugins.kotlin.services.ComposeExtensionRegistrarConfigurator
-import androidx.compose.compiler.plugins.kotlin.services.ComposePluginAnnotationsProvider
+import androidx.compose.compiler.plugins.kotlin.services.ComposeJsClasspathProvider
+import androidx.compose.compiler.plugins.kotlin.services.ComposeJvmClasspathConfigurator
 import org.jetbrains.kotlin.analysis.api.fir.test.configurators.AnalysisApiFirTestConfiguratorFactory.createConfigurator
 import org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.compilerFacility.AbstractCompilerFacilityTest
 import org.jetbrains.kotlin.analysis.test.framework.services.libraries.TestModuleCompiler.Directives.COMPILER_ARGUMENTS
 import org.jetbrains.kotlin.analysis.test.framework.test.configurators.*
+import org.jetbrains.kotlin.js.test.fir.AbstractFirJsTest
+import org.jetbrains.kotlin.test.TargetBackend
 import org.jetbrains.kotlin.test.builders.TestConfigurationBuilder
+import org.jetbrains.kotlin.test.builders.configureFirHandlersStep
+import org.jetbrains.kotlin.test.builders.configureIrHandlersStep
+import org.jetbrains.kotlin.test.configuration.setupIrTextDumpHandlers
+import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DISABLE_IR_VISIBILITY_CHECKS
+import org.jetbrains.kotlin.test.directives.CodegenTestDirectives.DUMP_KT_IR
 import org.jetbrains.kotlin.test.directives.ConfigurationDirectives.WITH_STDLIB
 import org.jetbrains.kotlin.test.directives.DiagnosticsDirectives.RENDER_DIAGNOSTICS_FULL_TEXT
+import org.jetbrains.kotlin.test.frontend.fir.handlers.FirDiagnosticsHandler
 import org.jetbrains.kotlin.test.runners.AbstractPhasedJvmDiagnosticLightTreeTest
 import java.io.File
 
@@ -31,6 +40,7 @@ abstract class AbstractCompilerFacilityTestForComposeCompilerPlugin : AbstractCo
     override fun configureTest(builder: TestConfigurationBuilder) {
         super.configureTest(builder)
         builder.composeCompilerPluginConfiguration()
+        builder.useConfigurators(::ComposeJvmClasspathConfigurator)
     }
 }
 
@@ -43,6 +53,32 @@ open class AbstractPhasedJvmDiagnosticLightTreeForComposeTest : AbstractPhasedJv
         }
 
         builder.composeCompilerPluginConfiguration()
+        builder.useConfigurators(::ComposeJvmClasspathConfigurator)
+    }
+}
+
+open class AbstractFirJsLightTreePluginBlackBoxCodegenForComposeTest : AbstractFirJsTest(
+    pathToTestDir = "plugins/compose/compiler-hosted/testData/js",
+    testGroupOutputDirPrefix = "compose/js/",
+) {
+    override fun configure(builder: TestConfigurationBuilder) {
+        super.configure(builder)
+        builder.composeCompilerPluginConfiguration()
+        builder.defaultDirectives {
+            +WITH_STDLIB
+            // triggered by kotlinx.coroutines
+            DISABLE_IR_VISIBILITY_CHECKS.with(TargetBackend.JS_IR)
+            +DUMP_KT_IR
+        }
+        builder.useCustomRuntimeClasspathProviders(::ComposeJsClasspathProvider)
+        builder.configureIrHandlersStep {
+            setupIrTextDumpHandlers()
+        }
+        builder.configureFirHandlersStep {
+            useHandlers(
+                ::FirDiagnosticsHandler
+            )
+        }
     }
 }
 
@@ -53,7 +89,6 @@ fun TestConfigurationBuilder.composeCompilerPluginConfiguration() {
 
     useConfigurators(
         ::ComposeExtensionRegistrarConfigurator,
-        ::ComposePluginAnnotationsProvider,
     )
 }
 
