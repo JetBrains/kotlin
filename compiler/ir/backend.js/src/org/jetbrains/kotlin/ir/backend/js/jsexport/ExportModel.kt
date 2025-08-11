@@ -8,13 +8,11 @@ package org.jetbrains.kotlin.ir.backend.js.jsexport
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
-import org.jetbrains.kotlin.serialization.js.ModuleKind
 
 sealed class ExportedDeclaration
 
 data class ExportedModule(
     val name: String,
-    val moduleKind: ModuleKind,
     val declarations: List<ExportedDeclaration>
 )
 
@@ -25,24 +23,15 @@ class ExportedNamespace(
 
 data class ExportedFunction(
     val name: String,
-    val isMember: Boolean = false,
     val isStatic: Boolean = false,
-    val isAbstract: Boolean = false,
     val ir: IrSimpleFunction
 ) : ExportedDeclaration()
 
 data class ExportedProperty(
     val name: String,
-    val mutable: Boolean = true,
-    val isMember: Boolean = false,
     val isStatic: Boolean = false,
-    val isAbstract: Boolean = false,
-    val isField: Boolean = false,
     val irGetter: IrFunction? = null,
     val irSetter: IrFunction? = null,
-    val isOptional: Boolean = false,
-    val isQualified: Boolean = false,
-    val isObjectGetter: Boolean = false,
 ) : ExportedDeclaration()
 
 sealed class ExportedClass : ExportedDeclaration() {
@@ -55,8 +44,6 @@ sealed class ExportedClass : ExportedDeclaration() {
 data class ExportedRegularClass(
     override val name: String,
     val isInterface: Boolean = false,
-    val isAbstract: Boolean = false,
-    val requireMetadata: Boolean = !isInterface,
     override val members: List<ExportedDeclaration>,
     override val nestedClasses: List<ExportedClass>,
     override val ir: IrClass,

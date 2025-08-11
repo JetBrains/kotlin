@@ -126,7 +126,6 @@ class ExportModelToJsStatements(
                             declaration.name,
                             isStatic = parentClass?.isObject != true,
                             irGetter = declaration.irGetter,
-                            isMember = parentClass != null
                         ),
                         namespace,
                         esModules,
