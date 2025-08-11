@@ -54,6 +54,7 @@ open class SExpressionBuilder {
 class WasmIrToText(
     private val debugInformationGenerator: DebugInformationGenerator? = null,
     private val optimizeInstructionFlow: Boolean = true,
+    private val emitSharedObjects: Boolean = false,
 ) : SExpressionBuilder(), DebugInformationConsumer {
     override fun consumeDebugInformation(debugInformation: DebugInformation) {
         debugInformation.forEach {
@@ -360,20 +361,33 @@ class WasmIrToText(
         newLineList("type") {
             appendModuleFieldReference(type)
             maybeSubType(type.superType?.owner) {
-                sameLineList("struct") {
-                    type.fields.forEach {
-                        appendStructField(it)
+                maybeShared(emitSharedObjects) {
+                    sameLineList("struct") {
+                        type.fields.forEach {
+                            appendStructField(it)
+                        }
                     }
                 }
             }
         }
     }
 
+    private fun maybeShared(isShared: Boolean, body: () -> Unit) =
+        if (isShared) shared { body() } else body()
+
+    private fun shared(body: () -> Unit) {
+        sameLineList("shared") {
+            body()
+        }
+    }
+
     private fun appendArrayTypeDeclaration(type: WasmArrayDeclaration) {
         newLineList("type") {
             appendModuleFieldReference(type)
-            sameLineList("array") {
-                appendFieldType(type.field)
+            maybeShared(emitSharedObjects) {
+                sameLineList("array") {
+                    appendFieldType(type.field)
+                }
             }
         }
     }
@@ -538,7 +552,7 @@ class WasmIrToText(
     fun appendHeapType(type: WasmHeapType) {
         when (type) {
             is WasmHeapType.Simple ->
-                appendElement(type.name)
+                maybeShared(emitSharedObjects && type.isShareable()) { appendElement(type.name) }
 
             is WasmHeapType.Type -> {
 //                appendElement("opt")
@@ -572,7 +586,10 @@ class WasmIrToText(
             }
 
             else ->
-                appendElement(type.name)
+                if (type.isShareableRefType())
+                    maybeShared(emitSharedObjects) { appendElement(type.name) }
+                else
+                    appendElement(type.name)
         }
     }
 

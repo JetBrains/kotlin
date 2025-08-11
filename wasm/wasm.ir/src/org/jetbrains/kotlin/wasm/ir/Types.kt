@@ -66,7 +66,6 @@ sealed class WasmBlockType {
     class Value(val type: WasmType) : WasmBlockType()
 }
 
-
 fun WasmType.getHeapType(): WasmHeapType =
     when (this) {
         is WasmRefType -> heapType
@@ -79,6 +78,28 @@ fun WasmType.getHeapType(): WasmHeapType =
         is WasmExternRef -> WasmHeapType.Simple.Extern
         else -> error("Unknown heap type for type $this")
     }
+
+fun WasmHeapType.Simple.isShareable() = when (this) {
+    WasmHeapType.Simple.Any -> true
+    WasmHeapType.Simple.Eq -> true
+    WasmHeapType.Simple.Struct -> true
+    WasmHeapType.Simple.None -> true
+    // while extern are potentially shareable, most of JS objects are actually non-shared
+    WasmHeapType.Simple.Extern -> false
+    WasmHeapType.Simple.NoExtern -> false
+    else -> false
+}
+
+fun WasmType.isShareableRefType() = when (this) {
+    is WasmAnyRef -> true
+    is WasmEqRef -> true
+    is WasmI31Ref -> true
+    is WasmStructRef -> true
+    is WasmRefNullrefType -> true
+    is WasmExternRef -> false
+    is WasmRefNullExternrefType -> false
+    else -> false
+}
 
 fun WasmFunctionType.referencesTypeDeclarations(): Boolean =
     parameterTypes.any { it.referencesTypeDeclaration() } or resultTypes.any { it.referencesTypeDeclaration() }
