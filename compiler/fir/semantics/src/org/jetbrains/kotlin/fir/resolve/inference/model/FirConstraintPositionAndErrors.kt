@@ -27,7 +27,7 @@ class ConeFixVariableConstraintPosition(variable: TypeVariableMarker) : FixVaria
     override fun toString(): String = "Fix variable ${(variable as ConeTypeVariable).typeConstructor.name}"
 }
 
-class ConeArgumentConstraintPosition(argument: FirElement) : ArgumentConstraintPosition<FirElement>(argument) {
+class ConeArgumentConstraintPosition(argument: FirElement) : RegularArgumentConstraintPosition<FirElement>(argument) {
     override fun toString(): String {
         return "Argument ${argument.render()}"
     }
