@@ -195,10 +195,6 @@ class ExportModelToJsStatements(
         }
     }
 
-    private fun IrDeclaration?.isOverridden(): Boolean {
-        return this == null || this is IrOverridableDeclaration<*> && this.overriddenSymbols.isNotEmpty()
-    }
-
     private fun ExportedProperty.generateTopLevelGetters(): JsVars.JsVar {
         val getter = irGetter?.let { staticContext.getNameForStaticDeclaration(it) }
         val setter = irSetter?.let { staticContext.getNameForStaticDeclaration(it) }
