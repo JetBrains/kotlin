@@ -832,6 +832,11 @@ class DurationTest {
             "115856d 11h 33m 20s",
             "10000000000000100us 10000000000900000ns"
         )
+        test(
+            4602453423018496273.milliseconds + Long.MAX_VALUE.microseconds + Long.MAX_VALUE.nanoseconds,
+            "53375995583d 15h 36m 27.902s",
+            "4602453423018496273ms ${Long.MAX_VALUE}us ${Long.MAX_VALUE}ns"
+        )
 
         // all infinite
 //        val universeAge = Duration.days(365.25) * 13.799e9
