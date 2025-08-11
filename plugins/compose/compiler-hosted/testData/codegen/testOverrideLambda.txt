@@ -1,0 +1,6 @@
+public final class Module_main_testOverrideLambdaKt {
+    // source: 'module_main_testOverrideLambda.kt'
+    private final static method Content$lambda$0$0(): kotlin.Unit
+    private final static method Content$lambda$1(p0: int, p1: androidx.compose.runtime.Composer, p2: int): kotlin.Unit
+    public final static method Content(p0: androidx.compose.runtime.Composer, p1: int): void
+}
