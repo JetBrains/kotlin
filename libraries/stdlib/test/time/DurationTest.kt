@@ -846,7 +846,10 @@ class DurationTest {
 //        test(universeAge, "5.04e+12d")
 //        test(planckTime, "5.40e-44s")
 //        test(Duration.nanoseconds(Double.MAX_VALUE), "2.08e+294d")
-        test(Duration.INFINITE, "Infinity", "53375995583d 20h", "+Infinity", "123456789012345d 123456789012345h")
+        test(
+            Duration.INFINITE, "Infinity", "53375995583d 20h", "+Infinity", "123456789012345d 123456789012345h",
+            "4602453423018496274ms ${Long.MAX_VALUE}us ${Long.MAX_VALUE}ns"
+        )
         test(-Duration.INFINITE, "-Infinity", "-(53375995583d 20h)")
     }
 
