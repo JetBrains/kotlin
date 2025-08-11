@@ -9,8 +9,8 @@ import org.jetbrains.kotlin.fir.deserialization.LibraryPathFilter
 import org.jetbrains.kotlin.fir.deserialization.ModuleDataProvider
 import org.jetbrains.kotlin.fir.deserialization.MultipleModuleDataProvider
 import org.jetbrains.kotlin.name.Name
-import org.jetbrains.kotlin.utils.fileUtils.resolveSymlinksGracefully
 import java.nio.file.Path
+import java.nio.file.Paths
 
 /**
  * This class represents the set of dependencies for some source module.
@@ -106,9 +106,7 @@ class DependencyListForCliModule @PrivateSessionConstructor constructor(
             destination.add(moduleData)
             if (paths.isEmpty()) return
             val filterSet = filtersMap.getOrPut(moduleData) { mutableSetOf() }
-            paths.mapTo(filterSet) { rawPath ->
-                resolveSymlinksGracefully(rawPath)
-            }
+            paths.mapTo(filterSet) { Paths.get(it) }
         }
 
         fun build(): DependencyListForCliModule {

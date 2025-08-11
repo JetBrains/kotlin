@@ -46,27 +46,3 @@ fun File.descendantRelativeTo(base: File): File {
     val filePath = this.absoluteFile.normalize()
     return if (filePath.startsWith(cwd)) filePath.relativeTo(cwd) else this
 }
-
-/**
- * Try to resolve all symbolic links that might appear in any path segment.
- * In case of unresolvable symlinks (or any other type of [IOException]) return the unresolved absolute path.
- */
-fun resolveSymlinksGracefully(rawPath: String): Path {
-    // The "official" way of `Paths.get(path).toRealPath()` does not work on Windows
-    //   if the path starts with `/C:` - `sun.nio.fs.WindowsPathParser.normalize`
-    //   throws `InvalidPathException: Illegal char <:>`.
-    val correctedPath: Path = if (System.getProperty("os.name").contains("Windows") && rawPath.startsWith("/"))
-        Paths.get(rawPath.removePrefix("/"))
-    else
-        Paths.get(rawPath)
-
-    return runCatching {
-        // Try to resolve the path that might have a symlink in any path segment.
-        correctedPath.toRealPath()
-    }.recover { exception ->
-        if (exception !is IOException) throw exception
-        // In case of unresolvable symlinks (or any other IO error happened during the path resolution)
-        // fall back to the original (unresolved) path.
-        Paths.get(rawPath)
-    }.getOrThrow()
-}

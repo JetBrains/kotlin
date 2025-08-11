@@ -203,8 +203,8 @@ fun createLibraryListForJvm(
         dependencies(
             contentRoots.mapNotNull {
                 when (it) {
-                    is JvmClasspathRoot -> it.file.absolutePath
-                    is VirtualJvmClasspathRoot if !it.isFriend -> it.file.toNioPath().toAbsolutePath().toString()
+                    is JvmClasspathRoot -> it.file.path
+                    is VirtualJvmClasspathRoot if !it.isFriend -> it.file.toNioPath().toString()
                     else -> null
                 }
             }
@@ -212,9 +212,9 @@ fun createLibraryListForJvm(
         friendDependencies(contentRoots
                                .filterIsInstance<VirtualJvmClasspathRoot>()
                                .filter { it.isFriend }
-                               .map { it.file.toNioPath().toAbsolutePath().toString() })
+                               .map { it.file.toNioPath().toString() })
 
-        dependencies(configuration.jvmModularRoots.map { it.absolutePath })
+        dependencies(configuration.jvmModularRoots.map { it.path })
         friendDependencies(configuration[JVMConfigurationKeys.FRIEND_PATHS] ?: emptyList())
         friendDependencies(friendPaths)
     }
