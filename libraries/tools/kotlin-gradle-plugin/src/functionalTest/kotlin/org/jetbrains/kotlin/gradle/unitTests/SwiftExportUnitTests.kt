@@ -461,14 +461,6 @@ class SwiftExportUnitTests {
     }
 
     @Test
-    fun `test swift export experimental feature message`() {
-        val project = swiftExportProject()
-        project.evaluate()
-
-        project.assertContainsDiagnostic(KotlinToolingDiagnostics.ExperimentalFeatureWarning, "Swift Export".toIdSuffix())
-    }
-
-    @Test
     fun `test swift export custom settings`() {
         val customSettings = mapOf("SWIFT_EXPORT_CUSTOM_SETTING" to "CUSTOM_VALUE")
         val project = swiftExportProject {
