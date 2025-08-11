@@ -37,6 +37,7 @@ import org.jetbrains.kotlin.ir.IrDiagnosticReporter
 import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.backend.js.checkers.JsKlibCheckers
 import org.jetbrains.kotlin.ir.backend.js.lower.serialization.ir.*
+import org.jetbrains.kotlin.ir.backend.js.wasm.WasmKlibCheckers
 import org.jetbrains.kotlin.ir.declarations.IrFactory
 import org.jetbrains.kotlin.ir.declarations.IrModuleFragment
 import org.jetbrains.kotlin.ir.descriptors.IrDescriptorBasedFunctionFactory
@@ -459,7 +460,16 @@ fun serializeModuleIntoKlib(
                         cleanFilesIrData,
                         moduleExportedNames,
                     )
-                }.takeIf { builtInsPlatform == BuiltInsPlatform.JS }
+                }.takeIf { builtInsPlatform == BuiltInsPlatform.JS },
+                { irDiagnosticReporter: IrDiagnosticReporter ->
+                    val cleanFilesIrData = cleanFiles.map { it.irData ?: error("Metadata-only KLIBs are not supported in Kotlin/Wasm") }
+                    WasmKlibCheckers.makeChecker(
+                        irDiagnosticReporter,
+                        configuration,
+                        cleanFilesIrData,
+                        moduleExportedNames,
+                    )
+                }.takeIf { builtInsPlatform == BuiltInsPlatform.WASM }
             ),
             processCompiledFileData = { ioFile, compiledFile ->
                 incrementalResultsConsumer?.run {
