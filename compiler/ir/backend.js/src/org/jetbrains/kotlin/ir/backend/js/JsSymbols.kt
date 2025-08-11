@@ -5,6 +5,9 @@
 
 package org.jetbrains.kotlin.ir.backend.js
 
+import org.jetbrains.kotlin.backend.common.ir.FrontendJsSymbols
+import org.jetbrains.kotlin.backend.common.ir.FrontendJsSymbolsImpl
+import org.jetbrains.kotlin.backend.common.ir.FrontendWebSymbols
 import org.jetbrains.kotlin.backend.common.ir.KlibSymbols
 import org.jetbrains.kotlin.builtins.StandardNames.COLLECTIONS_PACKAGE_FQ_NAME
 import org.jetbrains.kotlin.builtins.StandardNames.TEXT_PACKAGE_FQ_NAME
@@ -14,20 +17,18 @@ import org.jetbrains.kotlin.ir.ObsoleteDescriptorBasedAPI
 import org.jetbrains.kotlin.ir.declarations.StageController
 import org.jetbrains.kotlin.ir.expressions.IrCall
 import org.jetbrains.kotlin.ir.symbols.IrClassSymbol
-import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.symbols.IrSimpleFunctionSymbol
 import org.jetbrains.kotlin.ir.types.IrType
-import org.jetbrains.kotlin.ir.types.classifierOrFail
 import org.jetbrains.kotlin.ir.types.makeNotNull
 import org.jetbrains.kotlin.ir.util.IdSignature
 import org.jetbrains.kotlin.ir.util.hasShape
 import org.jetbrains.kotlin.ir.util.kotlinPackageFqn
 import org.jetbrains.kotlin.name.JsStandardClassIds.BASE_JS_PACKAGE
-import org.jetbrains.kotlin.name.Name
 
+// TODO KT-77388 rename to `BackendWebSymbolsImpl`
 abstract class JsCommonSymbols(
     irBuiltIns: IrBuiltIns,
-) : KlibSymbols(irBuiltIns) {
+) : FrontendWebSymbols, KlibSymbols(irBuiltIns) {
     @OptIn(InternalSymbolFinderAPI::class)
     val coroutineSymbols = JsCommonCoroutineSymbols(irBuiltIns.symbolFinder)
 }
@@ -37,7 +38,7 @@ class JsSymbols(
     irBuiltIns: IrBuiltIns,
     private val stageController: StageController,
     private val intrinsics: JsIntrinsics,
-) : JsCommonSymbols(irBuiltIns) {
+) : FrontendJsSymbols by FrontendJsSymbolsImpl(irBuiltIns), JsCommonSymbols(irBuiltIns) {
     override val throwNullPointerException =
         symbolFinder.topLevelFunction(kotlinPackageFqn, "THROW_NPE")
 
