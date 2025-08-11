@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.ir.backend.js.tsexport
 
 import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.declarations.IrFunction
 import org.jetbrains.kotlin.ir.declarations.IrSimpleFunction
 import org.jetbrains.kotlin.serialization.js.ModuleKind
 
@@ -63,8 +62,7 @@ data class ExportedProperty(
     val isAbstract: Boolean = false,
     val isProtected: Boolean = false,
     val isField: Boolean = false,
-    val irGetter: IrFunction? = null,
-    val irSetter: IrFunction? = null,
+    val isObjectGetter: Boolean = false,
     val isOptional: Boolean = false,
     val isQualified: Boolean = false,
 ) : ExportedDeclaration()

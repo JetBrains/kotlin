@@ -1,14 +1,17 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
 package org.jetbrains.kotlin.ir.backend.js.tsexport
 
-import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
-import org.jetbrains.kotlin.ir.backend.js.utils.*
+import org.jetbrains.kotlin.ir.backend.js.utils.getJsNameOrKotlinName
+import org.jetbrains.kotlin.ir.backend.js.utils.sanitizeName
 import org.jetbrains.kotlin.ir.declarations.IrClass
-import org.jetbrains.kotlin.ir.util.*
+import org.jetbrains.kotlin.ir.util.isEffectivelyExternal
+import org.jetbrains.kotlin.ir.util.isInterface
+import org.jetbrains.kotlin.ir.util.isObject
+import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.js.common.isValidES5Identifier
 import org.jetbrains.kotlin.serialization.js.ModuleKind
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
@@ -122,7 +125,6 @@ class ExportModelToTsDeclarations(private val moduleKind: ModuleKind) {
         val optional = if (isOptional) "?" else ""
         val containsUnresolvedChar = !name.isValidES5Identifier()
         val memberName = if (containsUnresolvedChar) "\"$name\"" else name
-        val isObjectGetter = irGetter?.origin == JsLoweredDeclarationOrigin.OBJECT_GET_INSTANCE_FUNCTION
 
         val typeToTypeScript = type.toTypeScript(if (!isMember && isEsModules && isObjectGetter) extraIndent else indent)
 

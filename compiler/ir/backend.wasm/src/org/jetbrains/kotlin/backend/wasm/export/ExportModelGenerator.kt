@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.config.CommonConfigurationKeys
 import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
 import org.jetbrains.kotlin.ir.backend.js.tsexport.*
 import org.jetbrains.kotlin.ir.backend.js.utils.getFqNameWithJsNameWhenAvailable
 import org.jetbrains.kotlin.ir.backend.js.utils.isJsExport
@@ -163,8 +164,7 @@ class ExportModelGenerator(val context: WasmBackendContext) {
             isAbstract = parentClass?.isInterface == false && property.modality == Modality.ABSTRACT,
             isProtected = property.visibility == DescriptorVisibilities.PROTECTED,
             isField = parentClass?.isInterface == true,
-            irGetter = property.getter,
-            irSetter = property.setter,
+            isObjectGetter = property.getter?.origin == JsLoweredDeclarationOrigin.OBJECT_GET_INSTANCE_FUNCTION,
             isOptional = isOptional,
             isStatic = (property.getter ?: property.setter)?.isStaticMethodOfClass == true,
         )

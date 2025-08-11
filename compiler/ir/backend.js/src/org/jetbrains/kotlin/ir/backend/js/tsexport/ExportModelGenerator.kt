@@ -164,8 +164,7 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
             isAbstract = parentClass?.isInterface == false && property.modality == Modality.ABSTRACT,
             isProtected = property.visibility == DescriptorVisibilities.PROTECTED,
             isField = parentClass?.isInterface == true,
-            irGetter = property.getter,
-            irSetter = property.setter,
+            isObjectGetter = property.getter?.origin == JsLoweredDeclarationOrigin.OBJECT_GET_INSTANCE_FUNCTION,
             isOptional = isOptional,
             isStatic = (property.getter ?: property.setter)?.isStaticMethodOfClass == true,
         )
@@ -206,10 +205,6 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
             isMember = true,
             isStatic = true,
             isProtected = parentClass.visibility == DescriptorVisibilities.PROTECTED,
-            irGetter = irEnumEntry.getInstanceFun
-                ?: irError("Unable to find get instance fun") {
-                    withIrEntry("field", field)
-                },
         )
     }
 
