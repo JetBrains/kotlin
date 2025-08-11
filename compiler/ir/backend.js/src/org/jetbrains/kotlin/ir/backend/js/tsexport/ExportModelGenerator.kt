@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2019 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.descriptors.Modality
+import org.jetbrains.kotlin.ir.backend.js.Exportability
 import org.jetbrains.kotlin.ir.backend.js.JsIrBackendContext
 import org.jetbrains.kotlin.ir.backend.js.JsLoweredDeclarationOrigin
 import org.jetbrains.kotlin.ir.backend.js.correspondingEnumEntry
@@ -720,13 +721,6 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
 
         return Exportability.Allowed
     }
-}
-
-sealed class Exportability {
-    object Allowed : Exportability()
-    object NotNeeded : Exportability()
-    object Implicit : Exportability()
-    class Prohibited(val reason: String) : Exportability()
 }
 
 private class ExportedClassDeclarationsInfo(

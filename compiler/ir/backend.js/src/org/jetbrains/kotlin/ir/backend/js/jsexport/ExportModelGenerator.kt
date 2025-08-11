@@ -348,13 +348,6 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
     }
 }
 
-private sealed class Exportability {
-    object Allowed : Exportability()
-    object NotNeeded : Exportability()
-    object Implicit : Exportability()
-    class Prohibited(val reason: String) : Exportability()
-}
-
 private class ExportedClassDeclarationsInfo(
     val members: List<ExportedDeclaration>,
     val nestedClasses: List<ExportedClass>
