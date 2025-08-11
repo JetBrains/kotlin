@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.backend.common.checkers.context
 
 import org.jetbrains.kotlin.backend.common.IrValidationError
 import org.jetbrains.kotlin.backend.common.ScopeStack
+import org.jetbrains.kotlin.backend.common.checkers.IrChecker
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.ir.IrBuiltIns
 import org.jetbrains.kotlin.ir.IrElement
@@ -29,7 +30,11 @@ class CheckerContext(
     var withinAnnotationUsageSubTree: Boolean = false
         private set
 
-    fun error(element: IrElement, message: String) = reportError(IrValidationError(file, element, message, parentChain))
+    fun error(element: IrElement, cause: IrValidationError.Cause, message: String) =
+        reportError(IrValidationError(file, element, cause, message, parentChain))
+
+    context(checker: IrChecker)
+    fun error(element: IrElement, message: String) = error(element, checker, message)
 
     fun withTypeParametersInScope(container: IrTypeParametersContainer, block: () -> Unit) {
         typeParameterScopeStack.withNewScope(
