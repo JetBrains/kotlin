@@ -10,7 +10,6 @@ import org.jetbrains.kotlin.ir.backend.js.*
 import org.jetbrains.kotlin.ir.backend.js.lower.isEs6ConstructorReplacement
 import org.jetbrains.kotlin.ir.backend.js.utils.*
 import org.jetbrains.kotlin.ir.declarations.*
-import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
@@ -18,11 +17,7 @@ import org.jetbrains.kotlin.utils.filterIsInstanceAnd
 import org.jetbrains.kotlin.utils.keysToMap
 import org.jetbrains.kotlin.utils.memoryOptimizedMapNotNull
 
-private const val magicPropertyName = "__doNotUseOrImplementIt"
-
 class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespacesForPackages: Boolean) {
-    private val transitiveExportCollector = TransitiveExportCollector(context)
-
     fun generateExport(file: IrPackageFragment): List<ExportedDeclaration> {
         val namespaceFqName = file.packageFqName
         val exports = file.declarations.memoryOptimizedMapNotNull { declaration ->
@@ -52,12 +47,10 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
     }
 
     private fun exportClass(candidate: IrClass): ExportedDeclaration? {
-        val superTypes = candidate.defaultType.collectSuperTransitiveHierarchy() + candidate.superTypes
-
         return if (candidate.isEnumClass) {
-            exportEnumClass(candidate, superTypes)
+            exportEnumClass(candidate)
         } else {
-            exportOrdinaryClass(candidate, superTypes)
+            exportOrdinaryClass(candidate)
         }
     }
 
@@ -136,9 +129,9 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
         return Exportability.Allowed
     }
 
-    private fun exportDeclarationImplicitly(klass: IrClass, superTypes: Iterable<IrType>): ExportedDeclaration {
+    private fun exportDeclarationImplicitly(klass: IrClass): ExportedDeclaration {
         val name = klass.getExportedIdentifier()
-        val (members, nestedClasses) = exportClassDeclarations(klass, superTypes)
+        val (members, nestedClasses) = exportClassDeclarations(klass)
         return ExportedRegularClass(
             name = name,
             isInterface = true,
@@ -148,17 +141,17 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
         )
     }
 
-    private fun exportOrdinaryClass(klass: IrClass, superTypes: Iterable<IrType>): ExportedDeclaration? {
+    private fun exportOrdinaryClass(klass: IrClass): ExportedDeclaration? {
         when (val exportability = classExportability(klass)) {
             is Exportability.Prohibited -> irError(exportability.reason) {
                 withIrEntry("klass", klass)
             }
             Exportability.NotNeeded -> return null
-            Exportability.Implicit -> return exportDeclarationImplicitly(klass, superTypes)
+            Exportability.Implicit -> return exportDeclarationImplicitly(klass)
             Exportability.Allowed -> {}
         }
 
-        val (members, nestedClasses) = exportClassDeclarations(klass, superTypes)
+        val (members, nestedClasses) = exportClassDeclarations(klass)
 
         return exportClass(
             klass,
@@ -167,13 +160,13 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
         )
     }
 
-    private fun exportEnumClass(klass: IrClass, superTypes: Iterable<IrType>): ExportedDeclaration? {
+    private fun exportEnumClass(klass: IrClass): ExportedDeclaration? {
         when (val exportability = classExportability(klass)) {
             is Exportability.Prohibited -> irError(exportability.reason) {
                 withIrEntry("klass", klass)
             }
             Exportability.NotNeeded -> return null
-            Exportability.Implicit -> return exportDeclarationImplicitly(klass, superTypes)
+            Exportability.Implicit -> return exportDeclarationImplicitly(klass)
             Exportability.Allowed -> {}
         }
 
@@ -185,7 +178,7 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
         enumEntries
             .keysToMap(enumEntries::indexOf)
 
-        val (members, nestedClasses) = exportClassDeclarations(klass, superTypes) { candidate ->
+        val (members, nestedClasses) = exportClassDeclarations(klass) { candidate ->
             val enumExportedMember = exportAsEnumMember(candidate)
             enumExportedMember
         }
@@ -199,7 +192,6 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
 
     private fun exportClassDeclarations(
         klass: IrClass,
-        superTypes: Iterable<IrType>,
         specialProcessing: (IrDeclarationWithName) -> ExportedDeclaration? = { null }
     ): ExportedClassDeclarationsInfo {
         val members = mutableListOf<ExportedDeclaration>()
@@ -257,53 +249,10 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
             }
         }
 
-        if (klass.shouldContainImplementationOfMagicProperty(superTypes)) {
-            members.addMagicPropertyForInterfaceImplementation(superTypes)
-        } else if (klass.shouldNotBeImplemented()) {
-            members.addMagicInterfaceProperty()
-        }
-
         return ExportedClassDeclarationsInfo(
             specialMembers + members,
             nestedClasses
         )
-    }
-
-    private fun IrClass.shouldNotBeImplemented(): Boolean {
-        return isInterface && !isExternal || isJsImplicitExport()
-    }
-
-    private fun IrClass.shouldContainImplementationOfMagicProperty(superTypes: Iterable<IrType>): Boolean {
-        return !isExternal && superTypes.any {
-            val superClass = it.classOrNull?.owner ?: return@any false
-            superClass.isInterface && it.shouldAddMagicPropertyOfSuper() || superClass.isJsImplicitExport()
-        }
-    }
-
-    private fun MutableList<ExportedDeclaration>.addMagicInterfaceProperty() {
-        add(ExportedProperty(name = magicPropertyName))
-    }
-
-    private fun MutableList<ExportedDeclaration>.addMagicPropertyForInterfaceImplementation(superTypes: Iterable<IrType>) {
-        val allSuperTypesWithMagicProperty = superTypes.filter { it.shouldAddMagicPropertyOfSuper() }
-
-        if (allSuperTypesWithMagicProperty.isEmpty()) {
-            return
-        }
-
-        add(ExportedProperty(name = magicPropertyName))
-    }
-
-    private fun IrType.shouldAddMagicPropertyOfSuper(): Boolean {
-        return classOrNull?.owner?.isOwnMagicPropertyAdded() ?: false
-    }
-
-    private fun IrClass.isOwnMagicPropertyAdded(): Boolean {
-        if (isJsImplicitExport()) return true
-        if (!isExported(context)) return false
-        return isInterface && !isExternal || superTypes.any {
-            it.classOrNull?.owner?.isOwnMagicPropertyAdded() == true
-        }
     }
 
     private fun exportClass(
@@ -331,9 +280,6 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
             )
         }
     }
-
-    private fun IrSimpleType.collectSuperTransitiveHierarchy(): Set<IrType> =
-        transitiveExportCollector.collectSuperTypesTransitiveHierarchyFor(this)
 
     private fun exportAsEnumMember(
         candidate: IrDeclarationWithName
