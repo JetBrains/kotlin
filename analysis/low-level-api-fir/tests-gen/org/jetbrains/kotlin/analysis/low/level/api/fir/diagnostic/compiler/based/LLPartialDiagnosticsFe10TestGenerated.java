@@ -9774,6 +9774,18 @@ public class LLPartialDiagnosticsFe10TestGenerated extends AbstractLLPartialDiag
         public void testGoogleErrorProne_packageInfoJava() {
           runTest("compiler/testData/diagnostics/tests/crv/otherAnnotations/googleErrorProne_packageInfoJava.kt");
         }
+
+        @Test
+        @TestMetadata("jetbrainsAnnotations.kt")
+        public void testJetbrainsAnnotations() {
+          runTest("compiler/testData/diagnostics/tests/crv/otherAnnotations/jetbrainsAnnotations.kt");
+        }
+
+        @Test
+        @TestMetadata("springframework.kt")
+        public void testSpringframework() {
+          runTest("compiler/testData/diagnostics/tests/crv/otherAnnotations/springframework.kt");
+        }
       }
     }
 
