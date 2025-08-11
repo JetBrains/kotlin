@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.descriptors.ClassKind
 import org.jetbrains.kotlin.descriptors.Modality
 import org.jetbrains.kotlin.ir.backend.js.*
 import org.jetbrains.kotlin.ir.backend.js.lower.ES6_BOX_PARAMETER
-import org.jetbrains.kotlin.ir.backend.js.lower.isBoxParameter
 import org.jetbrains.kotlin.ir.backend.js.lower.isEs6ConstructorReplacement
 import org.jetbrains.kotlin.ir.backend.js.utils.*
 import org.jetbrains.kotlin.ir.declarations.*
@@ -17,8 +16,11 @@ import org.jetbrains.kotlin.ir.symbols.IrClassifierSymbol
 import org.jetbrains.kotlin.ir.types.*
 import org.jetbrains.kotlin.ir.util.*
 import org.jetbrains.kotlin.ir.util.isNullable
-import org.jetbrains.kotlin.utils.*
+import org.jetbrains.kotlin.utils.addIfNotNull
 import org.jetbrains.kotlin.utils.addToStdlib.runIf
+import org.jetbrains.kotlin.utils.filterIsInstanceAnd
+import org.jetbrains.kotlin.utils.keysToMap
+import org.jetbrains.kotlin.utils.memoryOptimizedMapNotNull
 
 private const val magicPropertyName = "__doNotUseOrImplementIt"
 
@@ -65,50 +67,19 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
 
 
     private fun exportFunction(function: IrSimpleFunction): ExportedDeclaration? {
-        return when (val exportability = functionExportability(function)) {
-            is Exportability.NotNeeded, is Exportability.Implicit -> null
-            is Exportability.Prohibited -> ErrorDeclaration(exportability.reason)
+        return when (functionExportability(function)) {
+            is Exportability.NotNeeded, is Exportability.Implicit, is Exportability.Prohibited -> null
             is Exportability.Allowed -> {
                 val parent = function.parent
-                val realOverrideTarget = function.realOverrideTarget
                 ExportedFunction(
                     function.getExportedIdentifier(),
                     isMember = parent is IrClass,
                     isStatic = function.isStaticMethod,
                     isAbstract = parent is IrClass && !parent.isInterface && function.modality == Modality.ABSTRACT,
                     ir = function,
-                    parameters = function.nonDispatchParameters
-                        .filter { it.shouldBeExported() }
-                        .memoryOptimizedMap {
-                            exportParameter(
-                                it,
-                                it.hasDefaultValue || realOverrideTarget.parameters[it.indexInParameters].hasDefaultValue
-                            )
-                        }
                 )
             }
         }
-    }
-
-    private fun exportConstructor(constructor: IrConstructor): ExportedDeclaration? {
-        if (!constructor.isPrimary) return null
-        return ExportedConstructor(
-            parameters = constructor.nonDispatchParameters
-                .filterNot { it.isBoxParameter }
-                .memoryOptimizedMap { exportParameter(it, it.hasDefaultValue) },
-        )
-    }
-
-    private fun exportParameter(parameter: IrValueParameter, hasDefaultValue: Boolean): ExportedParameter {
-        // Parameter names do not matter in d.ts files. They can be renamed as we like
-        var parameterName = sanitizeName(parameter.name.asString(), withHash = false)
-        if (parameterName in allReservedWords)
-            parameterName = "_$parameterName"
-
-        return ExportedParameter(
-            parameterName,
-            hasDefaultValue
-        )
     }
 
     private val IrValueParameter.hasDefaultValue: Boolean
@@ -264,14 +235,10 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
             enumExportedMember
         }
 
-        val privateConstructor = ExportedConstructor(
-            parameters = emptyList(),
-        )
-
         return exportClass(
             klass,
             superTypes,
-            listOf(privateConstructor) memoryOptimizedPlus members,
+            members,
             nestedClasses
         )
     }
@@ -302,8 +269,7 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
                 is IrSimpleFunction ->
                     members.addIfNotNull(exportFunction(candidate))
 
-                is IrConstructor ->
-                    members.addIfNotNull(exportConstructor(candidate))
+                is IrConstructor -> continue
 
                 is IrProperty ->
                     members.addIfNotNull(exportProperty(candidate))
@@ -501,7 +467,7 @@ class ExportModelGenerator(val context: JsIrBackendContext, val generateNamespac
     }
 }
 
-sealed class Exportability {
+private sealed class Exportability {
     object Allowed : Exportability()
     object NotNeeded : Exportability()
     object Implicit : Exportability()

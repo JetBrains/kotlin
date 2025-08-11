@@ -25,19 +25,10 @@ class ExportedNamespace(
 
 data class ExportedFunction(
     val name: String,
-    val parameters: List<ExportedParameter>,
     val isMember: Boolean = false,
     val isStatic: Boolean = false,
     val isAbstract: Boolean = false,
     val ir: IrSimpleFunction
-) : ExportedDeclaration()
-
-data class ExportedConstructor(
-    val parameters: List<ExportedParameter>,
-) : ExportedDeclaration()
-
-data class ExportedConstructSignature(
-    val parameters: List<ExportedParameter>,
 ) : ExportedDeclaration()
 
 data class ExportedProperty(
@@ -53,10 +44,6 @@ data class ExportedProperty(
     val isQualified: Boolean = false,
     val isObjectGetter: Boolean = false,
 ) : ExportedDeclaration()
-
-// TODO: Cover all cases with frontend and disable error declarations
-class ErrorDeclaration(val message: String) : ExportedDeclaration()
-
 
 sealed class ExportedClass : ExportedDeclaration() {
     abstract val name: String
@@ -82,8 +69,3 @@ data class ExportedObject(
     override val ir: IrClass,
     val irGetter: IrSimpleFunction? = null,
 ) : ExportedClass()
-
-class ExportedParameter(
-    val name: String,
-    val hasDefaultValue: Boolean = false
-)

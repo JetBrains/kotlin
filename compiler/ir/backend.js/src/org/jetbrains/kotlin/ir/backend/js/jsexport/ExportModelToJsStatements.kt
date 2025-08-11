@@ -89,9 +89,6 @@ class ExportModelToJsStatements(
                 }
             }
 
-            is ExportedConstructor -> emptyList()
-            is ExportedConstructSignature -> emptyList()
-
             is ExportedProperty -> {
                 require(namespace != null || esModules) { "Only namespaced properties are allowed" }
                 when (namespace) {
@@ -115,8 +112,6 @@ class ExportModelToJsStatements(
                     }
                 }
             }
-
-            is ErrorDeclaration -> emptyList()
 
             is ExportedObject -> {
                 require(namespace != null || esModules) { "Only namespaced properties are allowed" }
