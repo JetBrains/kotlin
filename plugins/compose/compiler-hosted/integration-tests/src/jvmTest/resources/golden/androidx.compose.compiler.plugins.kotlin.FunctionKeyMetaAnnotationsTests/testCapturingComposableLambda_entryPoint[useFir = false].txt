@@ -27,6 +27,6 @@ TestKt {
 
 TestKt$Foo$1 {
     <init> (Lkotlin/jvm/internal/Ref$IntRef;)V null
-    invoke (Landroidx/compose/runtime/Composer;I)V null
+    invoke (Landroidx/compose/runtime/Composer;I)V [key=2066003522, startOffset=180, endOffset=213]
     invoke (Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object; null
 }

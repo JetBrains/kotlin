@@ -19,7 +19,6 @@ fun VarargComposable(state: MutableState<Int>, vararg values: String = Array(1) 
 // ------------------------------------------
 
 @Composable
-@FunctionKeyMeta(key = 1027935146, startOffset = 211, endOffset = 329)
 fun VarargComposable(state: MutableState<Int>, values: Array<out String>?, %composer: Composer?, %changed: Int, %default: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(VarargComposable)N(state,values):Test.kt")

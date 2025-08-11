@@ -23,7 +23,6 @@ fun Err(y: Int, z: Int) {
 
 @NonRestartableComposable
 @Composable
-@FunctionKeyMeta(key = -597149505, startOffset = 200, endOffset = 460)
 fun Err(y: Int, z: Int, %composer: Composer?, %changed: Int) {
   sourceInformationMarkerStart(%composer, <>, "C(Err)<{>:Test.kt")
   if (isTraceInProgress()) {

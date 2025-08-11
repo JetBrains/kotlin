@@ -85,7 +85,6 @@ fun Test() {
 // ------------------------------------------
 
 @Composable
-@FunctionKeyMeta(key = 1249786770, startOffset = 48, endOffset = 1097)
 fun Example(a00: Int, a01: Int, a02: Int, a03: Int, a04: Int, a05: Int, a06: Int, a07: Int, a08: Int, a09: Foo?, a10: Int, a11: Int, a12: Int, a13: Int, a14: Int, a15: Int, a16: Int, a17: Int, a18: Int, a19: Int, a20: Int, a21: Int, a22: Int, a23: Int, a24: Int, a25: Int, a26: Int, a27: Int, a28: Int, a29: Int, a30: Int, a31: Foo?, %composer: Composer?, %changed: Int, %changed1: Int, %changed2: Int, %changed3: Int, %default: Int, %default1: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(Example):Test.kt")
@@ -407,7 +406,6 @@ fun Example(a00: Int, a01: Int, a02: Int, a03: Int, a04: Int, a05: Int, a06: Int
 }
 @Composable
 @NonRestartableComposable
-@FunctionKeyMeta(key = -1794342280, startOffset = 1137, endOffset = 1165)
 fun Test(%composer: Composer?, %changed: Int) {
   sourceInformationMarkerStart(%composer, <>, "C(Test)<Exampl...>:Test.kt")
   if (isTraceInProgress()) {

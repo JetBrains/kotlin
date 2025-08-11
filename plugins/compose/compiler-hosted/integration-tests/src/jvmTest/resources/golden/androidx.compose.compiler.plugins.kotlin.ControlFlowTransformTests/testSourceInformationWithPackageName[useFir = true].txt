@@ -16,7 +16,6 @@ fun Test(value: LocalInlineClass) {
 // ------------------------------------------
 
 @Composable
-@FunctionKeyMeta(key = 957056538, startOffset = 145, endOffset = 222)
 fun Test(value: LocalInlineClass, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(Test)N(value:c#runtime.tests.LocalInlineClass):Test.kt#992ot2")

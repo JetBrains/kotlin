@@ -20,7 +20,6 @@ internal fun someFun(a: Boolean): Boolean {
 
 @Composable
 @ReadOnlyComposable
-@FunctionKeyMeta(key = 1434459471, startOffset = 125, endOffset = 299)
 internal fun someFun(a: Boolean, %composer: Composer?, %changed: Int): Boolean {
   sourceInformationMarkerStart(%composer, <>, "C(someFun)N(a):Test.kt")
   if (isTraceInProgress()) {

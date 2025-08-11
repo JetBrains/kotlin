@@ -37,7 +37,6 @@ class ClassScope {
 
 val topLevelScope: Function2<Composer, Int, Unit> = ComposableSingletons%TestKt.lambda%-548887921
 @Composable
-@FunctionKeyMeta(key = 1718769478, startOffset = 109, endOffset = 184)
 fun functionScope(%composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(functionScope)<Box>:Test.kt")
@@ -59,7 +58,6 @@ fun functionScope(%composer: Composer?, %changed: Int) {
 @StabilityInferred(parameters = 1)
 class ClassScope {
   @Composable
-  @FunctionKeyMeta(key = 1185234436, startOffset = 225, endOffset = 305)
   fun classScope(%composer: Composer?, %changed: Int) {
     %composer = %composer.startRestartGroup(<>)
     sourceInformation(%composer, "C(classScope)<Box>:Test.kt")
@@ -82,7 +80,6 @@ class ClassScope {
   @StabilityInferred(parameters = 1)
   class NestedClassScope {
     @Composable
-    @FunctionKeyMeta(key = 1758484386, startOffset = 364, endOffset = 472)
     fun nestedClassScope(%composer: Composer?, %changed: Int) {
       %composer = %composer.startRestartGroup(<>)
       sourceInformation(%composer, "C(nestedClassScope)<Box>:Test.kt")

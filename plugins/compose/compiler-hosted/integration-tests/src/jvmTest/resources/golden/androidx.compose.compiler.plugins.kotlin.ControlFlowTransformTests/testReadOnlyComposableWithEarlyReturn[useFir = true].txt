@@ -21,7 +21,6 @@ fun getSomeValue(a: Int): Int {
 
 @ReadOnlyComposable
 @Composable
-@FunctionKeyMeta(key = 485241333, startOffset = 221, endOffset = 293)
 fun getSomeValue(a: Int, %composer: Composer?, %changed: Int): Int {
   sourceInformationMarkerStart(%composer, <>, "C(getSomeValue)N(a):Test.kt")
   if (isTraceInProgress()) {

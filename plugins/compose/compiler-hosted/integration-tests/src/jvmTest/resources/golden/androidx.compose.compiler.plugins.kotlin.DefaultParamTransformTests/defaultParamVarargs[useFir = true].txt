@@ -27,7 +27,6 @@ fun VarargWContent(vararg values: Int = intArrayOf(1), content: @Composable () -
 // ------------------------------------------
 
 @Composable
-@FunctionKeyMeta(key = -1794342280, startOffset = 71, endOffset = 183)
 fun Test(%composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(Test)<Vararg...>,<Vararg...>,<Vararg...>,<Vararg...>:Test.kt")
@@ -50,7 +49,6 @@ fun Test(%composer: Composer?, %changed: Int) {
   }
 }
 @Composable
-@FunctionKeyMeta(key = 1060834389, startOffset = 197, endOffset = 271)
 fun VarargWDefault(values: IntArray?, %composer: Composer?, %changed: Int, %default: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(VarargWDefault)N(values):Test.kt")
@@ -97,7 +95,6 @@ fun VarargWDefault(values: IntArray?, %composer: Composer?, %changed: Int, %defa
   }
 }
 @Composable
-@FunctionKeyMeta(key = 1815113582, startOffset = 285, endOffset = 393)
 fun VarargWContent(values: IntArray?, content: Function2<Composer, Int, Unit>, %composer: Composer?, %changed: Int, %default: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(VarargWContent)N(values,content):Test.kt")

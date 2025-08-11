@@ -25,7 +25,6 @@ import androidx.compose.runtime.*
 // ------------------------------------------
 
 @Composable
-@FunctionKeyMeta(key = -607362160, startOffset = 47, endOffset = 71)
 fun Foo(%composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(Foo)<Box>:Test.kt")
@@ -45,7 +44,6 @@ fun Foo(%composer: Composer?, %changed: Int) {
   }
 }
 @Composable
-@FunctionKeyMeta(key = -643616831, startOffset = 85, endOffset = 115)
 fun Foo(x: Int, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(Foo)<Box>:Test.kt")
@@ -65,7 +63,6 @@ fun Foo(x: Int, %composer: Composer?, %changed: Int) {
   }
 }
 @Composable
-@FunctionKeyMeta(key = 1823679537, startOffset = 129, endOffset = 157)
 fun Int.Foo(%composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(Foo)<Box>:Test.kt")
@@ -85,7 +82,6 @@ fun Int.Foo(%composer: Composer?, %changed: Int) {
   }
 }
 @Composable
-@FunctionKeyMeta(key = -710341377, startOffset = 171, endOffset = 204)
 fun Foo(x: String, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(Foo)<Box>:Test.kt")

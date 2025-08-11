@@ -27,7 +27,6 @@ open class OpenImpl : Open() {
 @StabilityInferred(parameters = 1)
 open class Open {
   @Composable
-  @FunctionKeyMeta(key = 281716636, startOffset = 111, endOffset = 124)
   open fun Test(%composer: Composer?, %changed: Int) {
     %composer.startReplaceGroup(<>)
     %composer.endReplaceGroup()
@@ -37,7 +36,6 @@ open class Open {
 @StabilityInferred(parameters = 1)
 class Impl : Open {
   @Composable
-  @FunctionKeyMeta(key = -874036878, startOffset = 211, endOffset = 274)
   override fun Test(%composer: Composer?, %changed: Int) {
     %composer = %composer.startRestartGroup(<>)
     val %dirty = %changed
@@ -59,7 +57,6 @@ class Impl : Open {
 @StabilityInferred(parameters = 1)
 open class OpenImpl : Open {
   @Composable
-  @FunctionKeyMeta(key = -46706340, startOffset = 370, endOffset = 433)
   override fun Test(%composer: Composer?, %changed: Int) {
     %composer.startReplaceGroup(<>)
     super<Open>.Test(%composer, 0b1110 and %changed)

@@ -26,7 +26,6 @@ class TestImpl : Test {
 
 interface Test {
   @Composable
-  @FunctionKeyMeta(key = -1445649412, startOffset = 69, endOffset = 109)
   abstract fun Int.foo(param: Int, %composer: Composer?, %changed: Int)
   class ComposeDefaultImpls {
     @Composable
@@ -80,7 +79,6 @@ interface Test {
 @StabilityInferred(parameters = 1)
 class TestImpl : Test {
   @Composable
-  @FunctionKeyMeta(key = -638804548, startOffset = 162, endOffset = 188)
   override fun Int.foo(param: Int, %composer: Composer?, %changed: Int) {
     %composer.startReplaceGroup(<>)
     sourceInformation(%composer, "C(foo)N(param):Test.kt")
@@ -95,7 +93,6 @@ class TestImpl : Test {
   static val %stable: Int = 0
 }
 @Composable
-@FunctionKeyMeta(key = 53166890, startOffset = 204, endOffset = 298)
 fun CallWithDefaults(test: Test, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(CallWithDefaults)N(test)*<foo()>,<foo(0)>:Test.kt")

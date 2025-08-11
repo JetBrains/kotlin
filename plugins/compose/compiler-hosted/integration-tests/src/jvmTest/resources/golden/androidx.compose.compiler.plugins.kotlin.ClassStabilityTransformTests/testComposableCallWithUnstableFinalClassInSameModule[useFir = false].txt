@@ -22,7 +22,6 @@ class Foo(var bar: Int = 0) {
   static val %stable: Int = 8
 }
 @Composable
-@FunctionKeyMeta(key = 1541583180, startOffset = 121, endOffset = 203)
 fun A(y: Int, x: Foo, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(A)P(1)<B(x)>:Test.kt")
@@ -50,7 +49,6 @@ fun A(y: Int, x: Foo, %composer: Composer?, %changed: Int) {
   }
 }
 @Composable
-@FunctionKeyMeta(key = 1814695496, startOffset = 228, endOffset = 281)
 fun B(x: Any, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(B):Test.kt")

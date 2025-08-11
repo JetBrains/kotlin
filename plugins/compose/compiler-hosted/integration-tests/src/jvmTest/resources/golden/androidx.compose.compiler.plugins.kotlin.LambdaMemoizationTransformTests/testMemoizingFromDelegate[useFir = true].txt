@@ -27,7 +27,6 @@ fun StrongSkippingIssue(
 // ------------------------------------------
 
 @Composable
-@FunctionKeyMeta(key = -786846595, startOffset = 84, endOffset = 517)
 fun StrongSkippingIssue(data: ClassWithData, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(StrongSkippingIssue)N(data)<rememb...>,<{>:Test.kt")

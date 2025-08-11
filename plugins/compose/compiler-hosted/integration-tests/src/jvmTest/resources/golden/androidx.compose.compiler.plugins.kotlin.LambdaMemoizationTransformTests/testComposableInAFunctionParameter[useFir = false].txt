@@ -17,7 +17,6 @@ fun Test(enabled: Boolean, content: @Composable () -> Unit = {
 // ------------------------------------------
 
 @Composable
-@FunctionKeyMeta(key = 1644433716, startOffset = 93, endOffset = 273)
 fun Test(enabled: Boolean, content: Function2<Composer, Int, Unit>?, %composer: Composer?, %changed: Int, %default: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(Test)P(1)<{>,<Wrap(c...>:Test.kt")

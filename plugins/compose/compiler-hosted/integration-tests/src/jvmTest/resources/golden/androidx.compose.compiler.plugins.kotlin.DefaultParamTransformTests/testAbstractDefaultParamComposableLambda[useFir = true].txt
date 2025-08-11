@@ -20,10 +20,8 @@ private interface DefaultParamInterface {
 
 private interface DefaultParamInterface {
   @Composable
-  @FunctionKeyMeta(key = 1531877915, startOffset = 94, endOffset = 206)
   abstract fun Content(content: Function2<Composer, Int, Unit>, %composer: Composer?, %changed: Int)
   @Composable
-  @FunctionKeyMeta(key = -57199539, startOffset = 223, endOffset = 323)
   abstract fun ComposedContent(content: Function2<Composer, Int, Unit>, %composer: Composer?, %changed: Int)
   class ComposeDefaultImpls {
     @Composable

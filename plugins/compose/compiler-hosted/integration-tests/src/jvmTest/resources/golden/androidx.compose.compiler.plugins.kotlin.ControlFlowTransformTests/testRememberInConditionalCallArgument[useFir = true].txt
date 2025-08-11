@@ -20,7 +20,6 @@ private fun Test(param: String?) {
 // ------------------------------------------
 
 @Composable
-@FunctionKeyMeta(key = -1971298841, startOffset = 92, endOffset = 333)
 private fun Test(param: String?, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(Test)N(param)<Test(>:Test.kt")

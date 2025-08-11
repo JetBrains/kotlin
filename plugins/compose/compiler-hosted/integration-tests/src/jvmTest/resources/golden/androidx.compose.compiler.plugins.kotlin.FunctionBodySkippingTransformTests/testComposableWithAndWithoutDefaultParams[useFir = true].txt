@@ -25,7 +25,6 @@ fun Test(x: Int = 0, y: Int = 0) {
 
 @Composable
 @ComposableInferredTarget(scheme = "[0[0]]")
-@FunctionKeyMeta(key = -124740703, startOffset = 165, endOffset = 239)
 fun Wrap(y: Int, content: Function3<@[ParameterName(name = 'x')] Int, Composer, Int, Unit>, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(Wrap)N(y,content)<conten...>:Test.kt")
@@ -52,7 +51,6 @@ fun Wrap(y: Int, content: Function3<@[ParameterName(name = 'x')] Int, Composer, 
   }
 }
 @Composable
-@FunctionKeyMeta(key = -1700906474, startOffset = 252, endOffset = 351)
 fun Test(x: Int, y: Int, %composer: Composer?, %changed: Int, %default: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(Test)N(x,y)<{>,<Wrap(1...>:Test.kt")

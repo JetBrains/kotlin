@@ -17,7 +17,6 @@ fun Test() {
 
 @Composable
 @ComposableTarget(applier = "UI")
-@FunctionKeyMeta(key = -1794342280, startOffset = 81, endOffset = 160)
 fun Test(%composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(Test)<Wrappe...>:Test.kt")

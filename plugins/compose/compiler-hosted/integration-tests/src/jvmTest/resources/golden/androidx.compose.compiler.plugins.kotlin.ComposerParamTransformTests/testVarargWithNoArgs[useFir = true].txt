@@ -28,7 +28,6 @@ fun VarArgsCaller() {
 // ------------------------------------------
 
 @Composable
-@FunctionKeyMeta(key = -1432450653, startOffset = 274, endOffset = 329)
 fun VarArgsFirst(foo: Array<out Any?>, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(VarArgsFirst)N(foo):Test.kt#2487m")
@@ -60,7 +59,6 @@ fun VarArgsFirst(foo: Array<out Any?>, %composer: Composer?, %changed: Int) {
   }
 }
 @Composable
-@FunctionKeyMeta(key = -442597657, startOffset = 343, endOffset = 385)
 fun VarArgsCaller(%composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(VarArgsCaller)<VarArg...>:Test.kt#2487m")

@@ -27,7 +27,6 @@ fun Skippable3(a: Unstable, b: Stable, c: MaybeStable) { }
 // ------------------------------------------
 
 @Composable
-@FunctionKeyMeta(key = -577006022, startOffset = 165, endOffset = 236)
 fun Unskippable(a: Unstable, b: Stable, c: MaybeStable, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(Unskippable)N(a,b,c):Test.kt")
@@ -51,7 +50,6 @@ fun Unskippable(a: Unstable, b: Stable, c: MaybeStable, %composer: Composer?, %c
   }
 }
 @Composable
-@FunctionKeyMeta(key = -1828306198, startOffset = 249, endOffset = 319)
 fun Skippable1(a: Unstable, b: Stable, c: MaybeStable, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(Skippable1)N(a,b,c):Test.kt")
@@ -75,7 +73,6 @@ fun Skippable1(a: Unstable, b: Stable, c: MaybeStable, %composer: Composer?, %ch
   }
 }
 @Composable
-@FunctionKeyMeta(key = 536041993, startOffset = 332, endOffset = 402)
 fun Skippable2(a: Unstable, b: Stable, c: MaybeStable, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(Skippable2)N(a,b,c):Test.kt")
@@ -104,7 +101,6 @@ fun Skippable2(a: Unstable, b: Stable, c: MaybeStable, %composer: Composer?, %ch
   }
 }
 @Composable
-@FunctionKeyMeta(key = -1394577112, startOffset = 415, endOffset = 473)
 fun Skippable3(a: Unstable, b: Stable, c: MaybeStable, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(Skippable3)N(a,b,c):Test.kt")

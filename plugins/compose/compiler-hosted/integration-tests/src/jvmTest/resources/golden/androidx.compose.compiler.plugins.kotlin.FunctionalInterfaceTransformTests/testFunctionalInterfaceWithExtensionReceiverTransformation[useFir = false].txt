@@ -25,12 +25,10 @@ fun CallTest() {
 
 interface TestContent {
   @Composable
-  @FunctionKeyMeta(key = -1467193883, startOffset = 82, endOffset = 102)
   abstract fun String.Content(%composer: Composer?, %changed: Int)
 }
 @Composable
 @ComposableInferredTarget(scheme = "[0[0]]")
-@FunctionKeyMeta(key = 1834188609, startOffset = 117, endOffset = 198)
 fun Test(content: TestContent, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(Test)*<Conten...>:Test.kt")
@@ -61,7 +59,6 @@ fun Test(content: TestContent, %composer: Composer?, %changed: Int) {
   }
 }
 @Composable
-@FunctionKeyMeta(key = 537729654, startOffset = 212, endOffset = 255)
 fun CallTest(%composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(CallTest)<Test>:Test.kt")
@@ -72,7 +69,6 @@ fun CallTest(%composer: Composer?, %changed: Int) {
     Test(<block>{
       class <no name provided> : TestContent {
         @Composable
-        @FunctionKeyMeta(key = 1239804493, startOffset = 238, endOffset = 253)
         override fun String.Content(%composer: Composer?, %changed: Int) {
           %composer = %composer.startRestartGroup(<>)
           sourceInformation(%composer, "C(Content):Test.kt")

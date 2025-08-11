@@ -24,7 +24,6 @@ import androidx.compose.runtime.NonRestartableComposable
 
 @NonRestartableComposable
 @Composable
-@FunctionKeyMeta(key = -866191870, startOffset = 300, endOffset = 331)
 fun Example(%composer: Composer?, %changed: Int) {
   sourceInformationMarkerStart(%composer, <>, "C(Example)<Exampl...>:Test.kt#2487m")
   if (isTraceInProgress()) {

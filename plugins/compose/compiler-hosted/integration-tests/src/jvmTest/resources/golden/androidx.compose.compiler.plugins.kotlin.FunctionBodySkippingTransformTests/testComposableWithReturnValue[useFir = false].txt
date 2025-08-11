@@ -18,7 +18,6 @@ fun Test(x: Int = 0, y: Int = 0): Int {
 // ------------------------------------------
 
 @Composable
-@FunctionKeyMeta(key = 361769123, startOffset = 165, endOffset = 235)
 fun Test(x: Int, y: Int, %composer: Composer?, %changed: Int, %default: Int): Int {
   sourceInformationMarkerStart(%composer, <>, "C(Test)<A(x,>:Test.kt")
   if (%default and 0b0001 != 0) {

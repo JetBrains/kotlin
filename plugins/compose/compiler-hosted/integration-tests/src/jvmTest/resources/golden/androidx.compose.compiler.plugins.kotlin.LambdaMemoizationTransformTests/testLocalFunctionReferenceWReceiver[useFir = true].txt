@@ -17,7 +17,6 @@ fun Something(param: String, rcvr: Int) {
 // ------------------------------------------
 
 @Composable
-@FunctionKeyMeta(key = 216170096, startOffset = 93, endOffset = 273)
 fun Something(param: String, rcvr: Int, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(Something)N(param,rcvr)<rcvr::...>:Test.kt")

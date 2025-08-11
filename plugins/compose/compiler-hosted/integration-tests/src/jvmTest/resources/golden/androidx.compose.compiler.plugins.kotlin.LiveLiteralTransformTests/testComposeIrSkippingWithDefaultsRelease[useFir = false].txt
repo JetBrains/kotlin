@@ -32,7 +32,6 @@ object Ui {
 }
 @Composable
 @ComposableTarget(applier = "androidx.compose.ui.UiComposable")
-@FunctionKeyMeta(key = 82577783, startOffset = 214, endOffset = 481)
 fun Ui.UiTextField(isError: Boolean, keyboardActions2: Boolean, %composer: Composer?, %changed: Int, %default: Int) {
   %composer = %composer.startRestartGroup(<>)
   val %dirty = %changed

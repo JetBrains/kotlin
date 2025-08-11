@@ -21,7 +21,6 @@ fun NFromInference() {
 // ------------------------------------------
 
 @Composable
-@FunctionKeyMeta(key = -1148065890, startOffset = 115, endOffset = 169)
 fun NFromFile(%composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(NFromFile)<Open()>:Test.kt")
@@ -41,7 +40,6 @@ fun NFromFile(%composer: Composer?, %changed: Int) {
   }
 }
 @Composable
-@FunctionKeyMeta(key = 850421223, startOffset = 207, endOffset = 263)
 fun NFromInference(%composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(NFromInference)<N()>:Test.kt")

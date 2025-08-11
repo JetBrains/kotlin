@@ -17,7 +17,6 @@ fun Test(vararg strings: String) {
 // ------------------------------------------
 
 @Composable
-@FunctionKeyMeta(key = 707287983, startOffset = 84, endOffset = 282)
 fun Test(strings: Array<out String>, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(Test)<rememb...>:Test.kt")

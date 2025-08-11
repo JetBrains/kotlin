@@ -68,7 +68,6 @@ fun Example(
 // ------------------------------------------
 
 @Composable
-@FunctionKeyMeta(key = -1920009101, startOffset = 165, endOffset = 919)
 fun Example(a00: Int, a01: Int, a02: Int, a03: Int, a04: Int, a05: Int, a06: Int, a07: Int, a08: Int, a09: Int, a10: Int, a11: Int, a12: Int, a13: Int, a14: Int, %composer: Composer?, %changed: Int, %changed1: Int, %default: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(Example)N(a00,a01,a02,a03,a04,a05,a06,a07,a08,a09,a10,a11,a12,a13,a14)<Exampl...>,<Exampl...>:Test.kt")

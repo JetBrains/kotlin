@@ -23,7 +23,6 @@ fun <T> loadResourceInternal(
 // ------------------------------------------
 
 @Composable
-@FunctionKeyMeta(key = -630679012, startOffset = 98, endOffset = 332)
 fun <T> loadResourceInternal(key: String, pendingResource: T?, failedResource: T?, %composer: Composer?, %changed: Int, %default: Int): Boolean {
   sourceInformationMarkerStart(%composer, <>, "C(loadResourceInternal)N(key,pendingResource,failedResource)<rememb...>:Test.kt")
   if (%default and 0b0010 != 0) {

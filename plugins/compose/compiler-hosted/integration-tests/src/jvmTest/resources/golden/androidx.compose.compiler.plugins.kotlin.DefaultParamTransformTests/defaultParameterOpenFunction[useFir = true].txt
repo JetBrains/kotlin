@@ -24,7 +24,6 @@ class TestImpl : Test() {
 @StabilityInferred(parameters = 1)
 open class Test {
   @Composable
-  @FunctionKeyMeta(key = -23789308, startOffset = 183, endOffset = 230)
   open fun doSomething(value: Int, %composer: Composer?, %changed: Int) {
     %composer.startReplaceGroup(<>)
     sourceInformation(%composer, "C(doSomething)N(value):Test.kt")
@@ -87,7 +86,6 @@ open class Test {
 @StabilityInferred(parameters = 1)
 class TestImpl : Test {
   @Composable
-  @FunctionKeyMeta(key = -504973628, startOffset = 285, endOffset = 353)
   override fun doSomething(value: Int, %composer: Composer?, %changed: Int) {
     %composer.startReplaceGroup(<>)
     sourceInformation(%composer, "C(doSomething)N(value)<doSome...>:Test.kt")

@@ -29,7 +29,6 @@ inline fun ReusableContentHost(active: Boolean, crossinline content: @Composable
 @Composable
 @ExplicitGroupsComposable
 @ComposableInferredTarget(scheme = "[0[0]]")
-@FunctionKeyMeta(key = -816725895, startOffset = 233, endOffset = 584)
 fun ReusableContentHost(active: Boolean, crossinline content: Function2<Composer, Int, Unit>, %composer: Composer?, %changed: Int) {
   sourceInformationMarkerStart(%composer, <>, "CC(ReusableContentHost)N(active,content)<conten...>:Test.kt")
   %composer.startReusableGroup(200, active)

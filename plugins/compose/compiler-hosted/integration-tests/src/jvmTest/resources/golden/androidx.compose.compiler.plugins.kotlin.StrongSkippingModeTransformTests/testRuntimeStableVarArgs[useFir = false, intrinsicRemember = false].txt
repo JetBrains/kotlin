@@ -21,7 +21,6 @@ class Holder<T> {
 @StabilityInferred(parameters = 2)
 class Holder<T>  {
   @Composable
-  @FunctionKeyMeta(key = 2062208359, startOffset = 276, endOffset = 349)
   fun Test(x: Array<out T>, %composer: Composer?, %changed: Int) {
     %composer = %composer.startRestartGroup(<>)
     val %dirty = %changed

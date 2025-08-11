@@ -39,7 +39,6 @@ class TestImpl : TestBetween {
 
 interface Test {
   @Composable
-  @FunctionKeyMeta(key = -1866428133, startOffset = 69, endOffset = 105)
   abstract fun foo(param: Int, %composer: Composer?, %changed: Int)
   class ComposeDefaultImpls {
     @Composable
@@ -89,7 +88,6 @@ interface Test {
 }
 interface TestBetween : Test {
   @Composable
-  @FunctionKeyMeta(key = 1683310143, startOffset = 157, endOffset = 200)
   abstract fun betweenFoo(param: Int, %composer: Composer?, %changed: Int)
   class ComposeDefaultImpls {
     @Composable
@@ -140,7 +138,6 @@ interface TestBetween : Test {
 @StabilityInferred(parameters = 1)
 class TestImpl : TestBetween {
   @Composable
-  @FunctionKeyMeta(key = 1427006299, startOffset = 260, endOffset = 282)
   override fun foo(param: Int, %composer: Composer?, %changed: Int) {
     %composer.startReplaceGroup(<>)
     sourceInformation(%composer, "C(foo)N(param):Test.kt")
@@ -153,7 +150,6 @@ class TestImpl : TestBetween {
     %composer.endReplaceGroup()
   }
   @Composable
-  @FunctionKeyMeta(key = -830699377, startOffset = 308, endOffset = 337)
   override fun betweenFoo(param: Int, %composer: Composer?, %changed: Int) {
     %composer.startReplaceGroup(<>)
     sourceInformation(%composer, "C(betweenFoo)N(param):Test.kt")
@@ -168,7 +164,6 @@ class TestImpl : TestBetween {
   static val %stable: Int = 0
 }
 @Composable
-@FunctionKeyMeta(key = -190439358, startOffset = 353, endOffset = 664)
 fun CallWithDefaults(test: Test, testBetween: TestBetween, testImpl: TestImpl, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(CallWithDefaults)N(test,testBetween,testImpl)<foo()>,<foo(0)>,<foo()>,<foo(0)>,<betwee...>,<betwee...>,<foo()>,<foo(0)>,<betwee...>,<betwee...>:Test.kt")

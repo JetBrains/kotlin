@@ -17,7 +17,6 @@ import androidx.compose.runtime.ReadOnlyComposable
 
 @Composable
 @ComposableInferredTarget(scheme = "[0[0]]")
-@FunctionKeyMeta(key = -170732332, startOffset = 165, endOffset = 236)
 fun Example(content: Function2<Composer, Int, Unit>, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(Example)<invoke...>:Test.kt")

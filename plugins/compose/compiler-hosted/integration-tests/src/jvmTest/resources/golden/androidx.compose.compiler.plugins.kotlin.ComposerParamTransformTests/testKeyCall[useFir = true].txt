@@ -40,7 +40,6 @@ import androidx.compose.runtime.NonRestartableComposable
 
 @Composable
 @ComposableInferredTarget(scheme = "[0[0]]")
-@FunctionKeyMeta(key = -1658892282, startOffset = 323, endOffset = 389)
 fun Wrapper(block: Function2<Composer, Int, Unit>, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(Wrapper)N(block)<block(...>:Test.kt#2487m")
@@ -64,7 +63,6 @@ fun Wrapper(block: Function2<Composer, Int, Unit>, %composer: Composer?, %change
   }
 }
 @Composable
-@FunctionKeyMeta(key = -438930367, startOffset = 411, endOffset = 460)
 fun Leaf(text: String, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(Leaf)N(text):Test.kt#2487m")
@@ -88,7 +86,6 @@ fun Leaf(text: String, %composer: Composer?, %changed: Int) {
   }
 }
 @Composable
-@FunctionKeyMeta(key = -721614105, startOffset = 482, endOffset = 614)
 fun Test(value: Int, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(Test)N(value):Test.kt#2487m")

@@ -20,7 +20,6 @@ fun UnskippableComposable(instant: Instant) {
 // ------------------------------------------
 
 @Composable
-@FunctionKeyMeta(key = 637373796, startOffset = 81, endOffset = 142)
 fun SkippableComposable(list: List<String>, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   val %dirty = %changed
@@ -43,7 +42,6 @@ fun SkippableComposable(list: List<String>, %composer: Composer?, %changed: Int)
   }
 }
 @Composable
-@FunctionKeyMeta(key = -961358826, startOffset = 156, endOffset = 220)
 fun UnskippableComposable(instant: Instant, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   if (isTraceInProgress()) {

@@ -20,7 +20,6 @@ fun Test(condition: Boolean) {
 // ------------------------------------------
 
 @Composable
-@FunctionKeyMeta(key = -378182080, startOffset = 105, endOffset = 363)
 fun Test(condition: Boolean, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(Test)<Text("...>,<M1>,<Text("...>:Test.kt")

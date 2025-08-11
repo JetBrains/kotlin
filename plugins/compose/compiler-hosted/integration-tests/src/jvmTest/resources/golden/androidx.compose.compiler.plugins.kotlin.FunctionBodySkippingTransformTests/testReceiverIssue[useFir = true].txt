@@ -33,7 +33,6 @@ inline fun c(foo: Foo, label: String) {
 
 @Composable
 @ExplicitGroupsComposable
-@FunctionKeyMeta(key = -433742449, startOffset = 249, endOffset = 280)
 fun A(foo: Foo, %composer: Composer?, %changed: Int) {
   sourceInformationMarkerStart(%composer, <>, "C(A)N(foo)<b()>:Test.kt")
   if (isTraceInProgress()) {
@@ -47,7 +46,6 @@ fun A(foo: Foo, %composer: Composer?, %changed: Int) {
 }
 @Composable
 @ExplicitGroupsComposable
-@FunctionKeyMeta(key = -1783581965, startOffset = 327, endOffset = 379)
 fun Foo.b(label: String?, %composer: Composer?, %changed: Int, %default: Int) {
   sourceInformationMarkerStart(%composer, <>, "CC(b)N(label)<c(this...>:Test.kt")
   if (%default and 0b0001 != 0) {
@@ -58,7 +56,6 @@ fun Foo.b(label: String?, %composer: Composer?, %changed: Int, %default: Int) {
 }
 @Composable
 @ExplicitGroupsComposable
-@FunctionKeyMeta(key = -1344500170, startOffset = 426, endOffset = 477)
 fun c(foo: Foo, label: String, %composer: Composer?, %changed: Int) {
   sourceInformationMarkerStart(%composer, <>, "CC(c)N(foo,label):Test.kt")
   print(label)

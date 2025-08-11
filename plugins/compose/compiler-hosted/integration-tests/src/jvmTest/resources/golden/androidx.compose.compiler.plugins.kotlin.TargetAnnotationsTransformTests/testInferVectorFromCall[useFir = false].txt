@@ -15,7 +15,6 @@ fun Test() {
 
 @Composable
 @ComposableTarget(applier = "Vector")
-@FunctionKeyMeta(key = -1794342280, startOffset = 81, endOffset = 124)
 fun Test(%composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(Test)<Circle...>:Test.kt")

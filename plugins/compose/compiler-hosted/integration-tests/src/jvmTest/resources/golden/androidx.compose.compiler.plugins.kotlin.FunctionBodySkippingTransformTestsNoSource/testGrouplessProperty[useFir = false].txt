@@ -30,14 +30,13 @@ fun getHashCode(): Int = currentComposer.hashCode()
 @StabilityInferred(parameters = 1)
 open class Foo {
   val current: Int
-    @Composable @ReadOnlyComposable @JvmName(name = "getCurrent") @FunctionKeyMeta(key = 205912272, startOffset = 295, endOffset = 329)
+    @Composable @ReadOnlyComposable @JvmName(name = "getCurrent")
     get() {
       val tmp0 = %composer.hashCode()
       return tmp0
     }
   @ReadOnlyComposable
   @Composable
-  @FunctionKeyMeta(key = 425837728, startOffset = 375, endOffset = 426)
   fun getHashCode(%composer: Composer?, %changed: Int): Int {
     val tmp0 = %composer.hashCode()
     return tmp0
@@ -46,7 +45,6 @@ open class Foo {
 }
 @ReadOnlyComposable
 @Composable
-@FunctionKeyMeta(key = 1497411806, startOffset = 462, endOffset = 513)
 fun getHashCode(%composer: Composer?, %changed: Int): Int {
   val tmp0 = %composer.hashCode()
   return tmp0

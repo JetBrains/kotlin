@@ -21,7 +21,6 @@ inline fun <T> Bug(items: List<T>, content: @Composable (item: T) -> Unit) {
 // ------------------------------------------
 
 @Composable
-@FunctionKeyMeta(key = -1794342280, startOffset = 84, endOffset = 207)
 fun Test(%composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(Test)<Bug(li...>:Test.kt")
@@ -46,7 +45,6 @@ fun Test(%composer: Composer?, %changed: Int) {
 }
 @Composable
 @ComposableInferredTarget(scheme = "[0[0]]")
-@FunctionKeyMeta(key = 1884885184, startOffset = 252, endOffset = 385)
 fun <T> Bug(items: List<T>, content: Function3<@[ParameterName(name = 'item')] T, Composer, Int, Unit>, %composer: Composer?, %changed: Int) {
   sourceInformationMarkerStart(%composer, <>, "CC(Bug)N(items,content):Test.kt")
   %composer.startReplaceGroup(<>)

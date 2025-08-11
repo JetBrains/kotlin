@@ -6,7 +6,6 @@ MODULE_FRAGMENT
       VALUE_PARAMETER kind:Regular name:$changed index:2 type:kotlin.Int
       annotations:
         Composable
-        FunctionKeyMeta(key = -1624399469, startOffset = 211, endOffset = 235)
       BLOCK_BODY
         BLOCK type=kotlin.Unit origin=null
           SET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in com.example.home.callMe' type=kotlin.Unit origin=null
@@ -80,7 +79,6 @@ MODULE_FRAGMENT
       VALUE_PARAMETER kind:Regular name:$changed index:2 type:kotlin.Int
       annotations:
         Composable
-        FunctionKeyMeta(key = -196892449, startOffset = 130, endOffset = 197)
       BLOCK_BODY
         BLOCK type=kotlin.Unit origin=null
           SET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in com.example.home.ttt' type=kotlin.Unit origin=null

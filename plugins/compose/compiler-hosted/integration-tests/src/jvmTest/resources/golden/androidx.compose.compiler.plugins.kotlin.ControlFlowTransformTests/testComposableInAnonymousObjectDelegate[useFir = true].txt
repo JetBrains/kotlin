@@ -22,7 +22,7 @@ import androidx.compose.runtime.Composable
 interface A
 interface B {
   val property: A
-    @Composable @JvmName(name = "getProperty") @FunctionKeyMeta(key = -1422684740, startOffset = 152, endOffset = 178)
+    @Composable @JvmName(name = "getProperty")
     get() {
       %composer.startReplaceGroup(<>)
       sourceInformation(%composer, "C(<get-property>):Test.kt")
@@ -37,7 +37,6 @@ interface B {
     }
 }
 @Composable
-@FunctionKeyMeta(key = 1378736710, startOffset = 226, endOffset = 347)
 fun Test(b: B, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(Test)N(b):Test.kt")

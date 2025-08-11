@@ -19,7 +19,6 @@ fun Test(value: InlineClass) {
 // ------------------------------------------
 
 @Composable
-@FunctionKeyMeta(key = -724836503, startOffset = 201, endOffset = 257)
 fun Test(value: InlineClass, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(Test)P(0:InlineClass)<A()>:Test.kt")

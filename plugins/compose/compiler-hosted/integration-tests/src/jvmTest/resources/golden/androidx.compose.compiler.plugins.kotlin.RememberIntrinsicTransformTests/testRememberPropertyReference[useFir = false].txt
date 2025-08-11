@@ -16,7 +16,6 @@ fun Test(a: A) {
 // ------------------------------------------
 
 @Composable
-@FunctionKeyMeta(key = 1367420583, startOffset = 98, endOffset = 148)
 fun Test(a: A, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(Test)<rememb...>:Test.kt")

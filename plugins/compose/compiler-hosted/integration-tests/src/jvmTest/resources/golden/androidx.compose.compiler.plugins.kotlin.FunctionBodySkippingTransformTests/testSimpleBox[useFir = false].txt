@@ -19,7 +19,6 @@ fun SimpleBox(modifier: Modifier = Modifier, content: @Composable() () -> Unit =
 
 @Composable
 @ComposableInferredTarget(scheme = "[0[0]]")
-@FunctionKeyMeta(key = -872495584, startOffset = 165, endOffset = 286)
 fun SimpleBox(modifier: Modifier?, content: Function2<Composer, Int, Unit>?, %composer: Composer?, %changed: Int, %default: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(SimpleBox)P(1)<conten...>:Test.kt")

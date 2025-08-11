@@ -18,7 +18,6 @@ fun String.B() { }
 // ------------------------------------------
 
 @Composable
-@FunctionKeyMeta(key = 1899537321, startOffset = 85, endOffset = 103)
 context(foo: Foo, bar: Bar)
 fun String.A(%composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
@@ -38,7 +37,6 @@ fun String.A(%composer: Composer?, %changed: Int) {
   }
 }
 @Composable
-@FunctionKeyMeta(key = 784865119, startOffset = 161, endOffset = 179)
 context(foo: Foo, bar: Bar, fooBar: FooBar)
 fun String.B(%composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)

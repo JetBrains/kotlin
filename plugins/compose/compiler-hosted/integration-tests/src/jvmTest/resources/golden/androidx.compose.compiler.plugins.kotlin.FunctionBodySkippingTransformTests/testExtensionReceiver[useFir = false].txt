@@ -21,7 +21,6 @@ val example: @Composable MaybeStable.(Int) -> Unit = {
 // ------------------------------------------
 
 @Composable
-@FunctionKeyMeta(key = 861933416, startOffset = 165, endOffset = 227)
 fun MaybeStable.example(x: Int, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(example):Test.kt")

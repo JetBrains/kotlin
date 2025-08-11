@@ -22,11 +22,9 @@ private interface DefaultParamInterface {
 
 private interface DefaultParamInterface {
   @Composable
-  @FunctionKeyMeta(key = 1531877915, startOffset = 95, endOffset = 207)
   abstract fun Content(content: Function2<Composer, Int, Unit>, %composer: Composer?, %changed: Int)
   @Composable
   @ComposableInferredTarget(scheme = "[0[0]]")
-  @FunctionKeyMeta(key = -57199539, startOffset = 224, endOffset = 350)
   open fun ComposedContent(content: Function2<Composer, Int, Unit>, %composer: Composer?, %changed: Int) {
     %composer.startReplaceGroup(<>)
     sourceInformation(%composer, "C(ComposedContent)N(content)<conten...>:Test.kt")

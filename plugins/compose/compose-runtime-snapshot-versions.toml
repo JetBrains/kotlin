@@ -1,5 +1,5 @@
 # Versions of Compose runtime snapshot from androidx.dev used in compiler testing
 # See libs.versions.toml to update versions of other Compose libraries
 [versions]
-snapshot-id = "13618353"
-snapshot-version = "1.9.0-20250609.194955-1"
+snapshot-id = "13911742"
+snapshot-version = "1.10.0-20250811.121908-1"

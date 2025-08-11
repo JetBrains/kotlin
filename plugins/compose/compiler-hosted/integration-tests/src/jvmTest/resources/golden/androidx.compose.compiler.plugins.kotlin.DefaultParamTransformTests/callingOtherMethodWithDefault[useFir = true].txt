@@ -29,7 +29,6 @@ object Impl : Combined
 // ------------------------------------------
 
 @Composable
-@FunctionKeyMeta(key = 578291039, startOffset = 48, endOffset = 75)
 fun Main(%composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(Main)<B()>:Test.kt")
@@ -50,7 +49,6 @@ fun Main(%composer: Composer?, %changed: Int) {
 }
 interface A {
   @Composable
-  @FunctionKeyMeta(key = 2080335258, startOffset = 111, endOffset = 166)
   open fun A(default: Function0<Float>, %composer: Composer?, %changed: Int) {
     %composer.startReplaceGroup(<>)
     sourceInformation(%composer, "C(A)N(default):Test.kt")
@@ -118,7 +116,6 @@ interface A {
 }
 interface B {
   @Composable
-  @FunctionKeyMeta(key = 215550777, startOffset = 204, endOffset = 240)
   open fun B(param: String, %composer: Composer?, %changed: Int) {
     %composer.startReplaceGroup(<>)
     sourceInformation(%composer, "C(B)N(param)<A()>:Test.kt")

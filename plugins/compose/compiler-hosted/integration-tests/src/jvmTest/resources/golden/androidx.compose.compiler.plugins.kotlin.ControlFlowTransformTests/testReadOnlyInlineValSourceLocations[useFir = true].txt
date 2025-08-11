@@ -44,7 +44,7 @@ fun Test() {
 @StabilityInferred(parameters = 1)
 class CurrentHolder {
   val current: Int
-    @ReadOnlyComposable @Composable @JvmName(name = "getCurrent") @FunctionKeyMeta(key = -1234923825, startOffset = 214, endOffset = 295)
+    @ReadOnlyComposable @Composable @JvmName(name = "getCurrent")
     get() {
       sourceInformationMarkerStart(%composer, <>, "CC(<get-current>):Test.kt")
       val tmp0 = 0
@@ -57,7 +57,7 @@ class CurrentHolder {
 class HolderHolder {
   val _currentHolder: CurrentHolder = CurrentHolder()
   val current: Int
-    @ReadOnlyComposable @Composable @JvmName(name = "getCurrent") @FunctionKeyMeta(key = 1636580468, startOffset = 458, endOffset = 560)
+    @ReadOnlyComposable @Composable @JvmName(name = "getCurrent")
     get() {
       sourceInformationMarkerStart(%composer, <>, "C(<get-current>)<curren...>:Test.kt")
       if (isTraceInProgress()) {
@@ -75,7 +75,6 @@ class HolderHolder {
 val holderHolder: HolderHolder = HolderHolder()
 @Composable
 @ReadOnlyComposable
-@FunctionKeyMeta(key = 902964415, startOffset = 691, endOffset = 762)
 fun calculateSomething(%composer: Composer?, %changed: Int): Int {
   sourceInformationMarkerStart(%composer, <>, "C(calculateSomething):Test.kt")
   if (isTraceInProgress()) {
@@ -89,7 +88,6 @@ fun calculateSomething(%composer: Composer?, %changed: Int): Int {
   return tmp0
 }
 @Composable
-@FunctionKeyMeta(key = -1794342280, startOffset = 800, endOffset = 995)
 fun Test(%composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(Test)<curren...>,<calcul...>,<Layout>:Test.kt")

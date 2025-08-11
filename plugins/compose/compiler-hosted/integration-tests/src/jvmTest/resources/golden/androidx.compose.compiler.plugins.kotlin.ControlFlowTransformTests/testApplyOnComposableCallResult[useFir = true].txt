@@ -22,7 +22,6 @@ fun <T> provided(value: T): State<T> = remember { mutableStateOf(value) }.apply 
 // ------------------------------------------
 
 @Composable
-@FunctionKeyMeta(key = 1237006232, startOffset = 328, endOffset = 434)
 fun <T> provided(value: T, %composer: Composer?, %changed: Int): State<T> {
   sourceInformationMarkerStart(%composer, <>, "C(provided)N(value)<rememb...>:Test.kt")
   if (isTraceInProgress()) {

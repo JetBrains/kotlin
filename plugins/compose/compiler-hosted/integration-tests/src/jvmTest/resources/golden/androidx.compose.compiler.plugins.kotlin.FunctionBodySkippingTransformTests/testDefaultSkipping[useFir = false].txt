@@ -17,7 +17,6 @@ fun Example(a: Int = newInt()) {
 // ------------------------------------------
 
 @Composable
-@FunctionKeyMeta(key = -1008580451, startOffset = 165, endOffset = 211)
 fun Example(a: Int, %composer: Composer?, %changed: Int, %default: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(Example):Test.kt")

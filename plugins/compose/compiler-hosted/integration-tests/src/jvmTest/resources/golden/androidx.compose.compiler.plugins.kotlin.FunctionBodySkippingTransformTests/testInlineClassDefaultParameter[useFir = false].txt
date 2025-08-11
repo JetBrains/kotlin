@@ -23,7 +23,6 @@ fun B(text: String, color: Color = Color.Unset) {
 // ------------------------------------------
 
 @Composable
-@FunctionKeyMeta(key = 7490458, startOffset = 165, endOffset = 200)
 fun A(text: String, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(A)<B(text...>:Test.kt")
@@ -47,7 +46,6 @@ fun A(text: String, %composer: Composer?, %changed: Int) {
   }
 }
 @Composable
-@FunctionKeyMeta(key = -1547393116, startOffset = 214, endOffset = 296)
 fun B(text: String, color: Color, %composer: Composer?, %changed: Int, %default: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(B)P(1,0:Color):Test.kt")

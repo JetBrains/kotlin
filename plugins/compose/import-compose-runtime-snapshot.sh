@@ -17,7 +17,7 @@ echo "Requesting maven-metadata.xml from $snapshotRuntimeRepo"
 snapshotMetadata=$(curl --request GET -L --url "$snapshotRuntimeRepo/runtime/maven-metadata.xml")
 snapshotVersion=$(echo "$snapshotMetadata" | sed -nE "s/^.*<version>(.*)<\/version>.*$/\1/p" )
 
-runtimeMetadataUrl="$snapshotRuntimeRepo/runtime-jvmstubs/$snapshotVersion/maven-metadata.xml"
+runtimeMetadataUrl="$snapshotRuntimeRepo/runtime-desktop/$snapshotVersion/maven-metadata.xml"
 echo "Requesting artifact metadata from $snapshotRuntimeRepo"
 artifactMetadata=$(curl --request GET -L --url "$runtimeMetadataUrl")
 artifactVersion=$(echo "$artifactMetadata" | sed -nE "s/^.*<value>(.*)<\/value>.*/\1/p" | head -n 1)

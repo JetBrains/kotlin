@@ -36,12 +36,10 @@ fun Test() {
 
 interface CustomComposable {
   @Composable
-  @FunctionKeyMeta(key = 607754244, startOffset = 130, endOffset = 140)
   abstract fun call(%composer: Composer?, %changed: Int)
 }
 @Composable
 @ComposableInferredTarget(scheme = "[0[0]]")
-@FunctionKeyMeta(key = 799442755, startOffset = 180, endOffset = 260)
 fun OpenCustom(content: CustomComposable, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(OpenCustom)N(content)<call()>:Test.kt")
@@ -71,7 +69,6 @@ fun OpenCustom(content: CustomComposable, %composer: Composer?, %changed: Int) {
 }
 @Composable
 @ComposableInferredTarget(scheme = "[UI[UI]]")
-@FunctionKeyMeta(key = -1487019547, startOffset = 290, endOffset = 397)
 fun ClosedCustom(content: CustomComposable, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(ClosedCustom)N(content)<Text("...>,<call()>:Test.kt")
@@ -102,7 +99,6 @@ fun ClosedCustom(content: CustomComposable, %composer: Composer?, %changed: Int)
 }
 @Composable
 @ComposableTarget(applier = "UI")
-@FunctionKeyMeta(key = -1794342280, startOffset = 427, endOffset = 588)
 fun Test(%composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(Test)<OpenCu...>,<Closed...>:Test.kt")
@@ -114,7 +110,6 @@ fun Test(%composer: Composer?, %changed: Int) {
       class <no name provided> : CustomComposable {
         @Composable
         @ComposableTarget(applier = "UI")
-        @FunctionKeyMeta(key = 1579781544, startOffset = 463, endOffset = 507)
         override fun call(%composer: Composer?, %changed: Int) {
           %composer = %composer.startRestartGroup(<>)
           sourceInformation(%composer, "C(call)<Text("...>:Test.kt")
@@ -145,7 +140,6 @@ fun Test(%composer: Composer?, %changed: Int) {
       class <no name provided> : CustomComposable {
         @Composable
         @ComposableTarget(applier = "UI")
-        @FunctionKeyMeta(key = -1274072378, startOffset = 534, endOffset = 578)
         override fun call(%composer: Composer?, %changed: Int) {
           %composer = %composer.startRestartGroup(<>)
           sourceInformation(%composer, "C(call)<Text("...>:Test.kt")

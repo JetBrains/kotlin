@@ -60,7 +60,6 @@ val localBoxMeasurePolicy: MeasurePolicy = MeasurePolicy { <unused var>: List<Me
 }
 @Composable
 @ComposableInferredTarget(scheme = "[androidx.compose.ui.UiComposable[androidx.compose.ui.UiComposable]]")
-@FunctionKeyMeta(key = 865887407, startOffset = 650, endOffset = 974)
 fun LocalBox(modifier: Modifier?, content: @[ExtensionFunctionType] Function3<LocalBoxScope, Composer, Int, Unit>, %composer: Composer?, %changed: Int, %default: Int) {
   sourceInformationMarkerStart(%composer, <>, "CC(LocalBox)N(modifier,content)<Layout...>:Test.kt")
   if (%default and 0b0001 != 0) {

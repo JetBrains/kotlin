@@ -53,7 +53,6 @@ class UnstableDelegateProp {
   static val %stable: Int = UnstableDelegate.%stable
 }
 @Composable
-@FunctionKeyMeta(key = 789203497, startOffset = 340, endOffset = 640)
 fun A(y: Any, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(A)<A(X(li...>,<A(Stab...>,<A(Unst...>,<A(Sing...>,<A(Sing...>,<A(Sing...>:Test.kt")

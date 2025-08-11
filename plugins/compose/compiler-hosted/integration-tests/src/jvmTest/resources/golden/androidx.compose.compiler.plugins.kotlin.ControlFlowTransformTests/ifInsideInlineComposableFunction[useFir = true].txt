@@ -21,7 +21,6 @@ fun Label(test: Boolean) {
 // ------------------------------------------
 
 @Composable
-@FunctionKeyMeta(key = 1339463994, startOffset = 84, endOffset = 346)
 fun Label(test: Boolean, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(Label)N(test)<Layout...>:Test.kt")

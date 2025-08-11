@@ -31,7 +31,6 @@ object obj {
   static val %stable: Int = 0
 }
 @Composable
-@FunctionKeyMeta(key = -378182080, startOffset = 242, endOffset = 361)
 fun Test(condition: Boolean, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(Test)<A()>:Test.kt")

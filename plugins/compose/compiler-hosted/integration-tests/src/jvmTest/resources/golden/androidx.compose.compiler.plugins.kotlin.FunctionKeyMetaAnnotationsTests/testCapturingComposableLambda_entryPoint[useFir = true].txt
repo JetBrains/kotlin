@@ -23,5 +23,5 @@ fun Foo() {
 TestKt {
     runApplication (Lkotlin/jvm/functions/Function2;)V null
     Foo ()V null
-    Foo$lambda$0 (Lkotlin/jvm/internal/Ref$IntRef;Landroidx/compose/runtime/Composer;I)Lkotlin/Unit; null
+    Foo$lambda$0 (Lkotlin/jvm/internal/Ref$IntRef;Landroidx/compose/runtime/Composer;I)Lkotlin/Unit; [key=2066003522, startOffset=180, endOffset=213]
 }

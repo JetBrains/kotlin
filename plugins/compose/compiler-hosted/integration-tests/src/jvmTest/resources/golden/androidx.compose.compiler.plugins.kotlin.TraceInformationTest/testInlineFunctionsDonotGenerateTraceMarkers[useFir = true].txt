@@ -24,14 +24,12 @@ fun Test(condition: Boolean) {
 
 @Composable
 @ComposableInferredTarget(scheme = "[0[0]]")
-@FunctionKeyMeta(key = -283819720, startOffset = 91, endOffset = 147)
 fun Wrapper(content: Function2<Composer, Int, Unit>, %composer: Composer?, %changed: Int) {
   sourceInformationMarkerStart(%composer, <>, "CC(Wrapper)N(content)<conten...>:Test.kt")
   content(%composer, 0b1110 and %changed)
   sourceInformationMarkerEnd(%composer)
 }
 @Composable
-@FunctionKeyMeta(key = -378182080, startOffset = 185, endOffset = 404)
 fun Test(condition: Boolean, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(Test)N(condition)<A()>,<Wrappe...>,<A()>:Test.kt")

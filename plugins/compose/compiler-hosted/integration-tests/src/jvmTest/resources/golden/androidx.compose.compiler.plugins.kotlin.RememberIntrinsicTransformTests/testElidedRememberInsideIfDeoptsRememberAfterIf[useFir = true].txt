@@ -21,7 +21,6 @@ fun app(x: Boolean) {
 
 @Composable
 @NonRestartableComposable
-@FunctionKeyMeta(key = 1574868365, startOffset = 182, endOffset = 281)
 fun app(x: Boolean, %composer: Composer?, %changed: Int) {
   sourceInformationMarkerStart(%composer, <>, "C(app)N(x)<rememb...>:Test.kt")
   if (isTraceInProgress()) {

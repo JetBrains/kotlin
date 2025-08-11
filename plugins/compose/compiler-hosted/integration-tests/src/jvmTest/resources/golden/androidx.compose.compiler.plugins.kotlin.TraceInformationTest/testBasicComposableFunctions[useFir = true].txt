@@ -18,7 +18,6 @@ fun C() { A().B(1337) }
 @StabilityInferred(parameters = 1)
 class A {
   @Composable
-  @FunctionKeyMeta(key = 666085442, startOffset = 105, endOffset = 122)
   fun B(x: Int, %composer: Composer?, %changed: Int) {
     %composer = %composer.startRestartGroup(<>)
     sourceInformation(%composer, "C(B)N(x):Test.kt")
@@ -40,7 +39,6 @@ class A {
   static val %stable: Int = 0
 }
 @Composable
-@FunctionKeyMeta(key = -713751827, startOffset = 174, endOffset = 197)
 fun C(%composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(C)<B(1337...>:Test.kt")

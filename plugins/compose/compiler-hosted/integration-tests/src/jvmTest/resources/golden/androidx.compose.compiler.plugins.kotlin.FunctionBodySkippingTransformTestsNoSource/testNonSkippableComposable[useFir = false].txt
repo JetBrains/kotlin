@@ -20,7 +20,6 @@ fun Test(i: Int) {
 
 @Composable
 @NonSkippableComposable
-@FunctionKeyMeta(key = -1502623783, startOffset = 292, endOffset = 324)
 fun Test(i: Int, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   used(i)

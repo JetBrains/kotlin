@@ -29,7 +29,6 @@ class Test : Enum<Test> {
     }
 }
 @Composable
-@FunctionKeyMeta(key = 412537606, startOffset = 153, endOffset = 246)
 fun Test(parameter: Test, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(Test)<{>:Test.kt")

@@ -30,7 +30,7 @@ fun Test() {
 // ------------------------------------------
 
 val current: Int
-  @Composable @ReadOnlyComposable @JvmName(name = "getCurrent") @FunctionKeyMeta(key = 1407148302, startOffset = 224, endOffset = 233)
+  @Composable @ReadOnlyComposable @JvmName(name = "getCurrent")
   get() {
     sourceInformationMarkerStart(%composer, <>, "C(<get-current>):Test.kt")
     if (isTraceInProgress()) {
@@ -45,7 +45,6 @@ val current: Int
   }
 @Composable
 @ReadOnlyComposable
-@FunctionKeyMeta(key = 1306618855, startOffset = 303, endOffset = 373)
 fun calculateSometing(%composer: Composer?, %changed: Int): Int {
   sourceInformationMarkerStart(%composer, <>, "C(calculateSometing):Test.kt")
   if (isTraceInProgress()) {
@@ -59,7 +58,6 @@ fun calculateSometing(%composer: Composer?, %changed: Int): Int {
   return tmp0
 }
 @Composable
-@FunctionKeyMeta(key = -1794342280, startOffset = 411, endOffset = 592)
 fun Test(%composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(Test)<curren...>,<calcul...>,<Layout>:Test.kt")

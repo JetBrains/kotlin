@@ -27,7 +27,6 @@ fun BasicText(
 // ------------------------------------------
 
 @Composable
-@FunctionKeyMeta(key = 373000955, startOffset = 308, endOffset = 527)
 fun BasicText(style: TextStyle?, onTextLayout: Function1<TextLayoutResult, Unit>?, overflow: TextOverflow, %composer: Composer?, %changed: Int, %default: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(BasicText)N(style,onTextLayout,overflow:c#ui.text.style.TextOverflow)<{}>:Test.kt")

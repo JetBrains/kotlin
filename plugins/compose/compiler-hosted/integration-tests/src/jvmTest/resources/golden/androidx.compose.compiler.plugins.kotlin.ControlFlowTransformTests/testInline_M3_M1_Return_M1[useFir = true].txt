@@ -24,7 +24,6 @@ fun Test_M3_M1_Return_M1(condition: Boolean) {
 // ------------------------------------------
 
 @Composable
-@FunctionKeyMeta(key = 854236110, startOffset = 105, endOffset = 444)
 fun Test_M3_M1_Return_M1(condition: Boolean, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(Test_M3_M1_Return_M1)N(condition)<A()>,<M3>,<A()>:Test.kt")

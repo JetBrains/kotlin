@@ -35,7 +35,6 @@ private fun KeyContent2(items: List<Int>) {
 // ------------------------------------------
 
 @Composable
-@FunctionKeyMeta(key = 1265283811, startOffset = 92, endOffset = 426)
 private fun KeyContent1(items: List<Int>, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(KeyContent1):Test.kt")
@@ -80,7 +79,6 @@ private fun KeyContent1(items: List<Int>, %composer: Composer?, %changed: Int) {
   }
 }
 @Composable
-@FunctionKeyMeta(key = -1304202588, startOffset = 472, endOffset = 804)
 private fun KeyContent2(items: List<Int>, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(KeyContent2):Test.kt")

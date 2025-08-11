@@ -24,7 +24,6 @@ fun Example(items: List<Int>) {
 
 @NonRestartableComposable
 @Composable
-@FunctionKeyMeta(key = -612922826, startOffset = 227, endOffset = 442)
 fun Example(items: List<Int>, %composer: Composer?, %changed: Int) {
   sourceInformationMarkerStart(%composer, <>, "C(Example)N(items)<A()>:Test.kt")
   if (isTraceInProgress()) {

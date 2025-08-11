@@ -25,7 +25,6 @@ fun test() {
 fun test() {
   object : C {
     @Composable
-    @FunctionKeyMeta(key = 2092313701, startOffset = 184, endOffset = 411)
     override fun Render(%composer: Composer?, %changed: Int) {
       %composer.startReplaceGroup(<>)
       sourceInformation(%composer, "C(Render)<B()>:Test.kt")
@@ -33,7 +32,6 @@ fun test() {
         traceEventStart(<>, %changed, -1, <>)
       }
       @Composable
-      @FunctionKeyMeta(key = -1870925541, startOffset = 267, endOffset = 352)
       fun B(%composer: Composer?, %changed: Int) {
         sourceInformationMarkerStart(%composer, <>, "C(B)<Button...>:Test.kt")
         if (isTraceInProgress()) {

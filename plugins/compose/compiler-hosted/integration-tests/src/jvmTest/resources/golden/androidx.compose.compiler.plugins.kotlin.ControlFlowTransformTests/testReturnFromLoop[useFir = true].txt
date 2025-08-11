@@ -32,7 +32,6 @@ fun Example(items: Iterator<Int>) {
 
 @NonRestartableComposable
 @Composable
-@FunctionKeyMeta(key = 1376619110, startOffset = 227, endOffset = 511)
 fun Example(items: Iterator<Int>, %composer: Composer?, %changed: Int) {
   %composer.startReplaceGroup(<>)
   sourceInformation(%composer, "C(Example)N(items)*<P(i)>,<P(l)>:Test.kt")

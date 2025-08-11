@@ -20,7 +20,6 @@ fun Example(a: Int) {
 // ------------------------------------------
 
 @Composable
-@FunctionKeyMeta(key = -1008580451, startOffset = 165, endOffset = 249)
 fun Example(a: Int, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(Example)N(a)<Inner(...>:Test.kt")
@@ -33,7 +32,6 @@ fun Example(a: Int, %composer: Composer?, %changed: Int) {
       traceEventStart(<>, %dirty, -1, <>)
     }
     @Composable
-    @FunctionKeyMeta(key = -151232801, startOffset = 203, endOffset = 235)
     fun Inner(%composer: Composer?, %changed: Int) {
       sourceInformationMarkerStart(%composer, <>, "C(Inner)<A(a)>:Test.kt")
       if (isTraceInProgress()) {

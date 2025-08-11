@@ -30,7 +30,6 @@ fun test3(x: Uncertain) {
 
 @Composable
 @NonRestartableComposable
-@FunctionKeyMeta(key = -473819879, startOffset = 182, endOffset = 233)
 fun test1(x: KnownStable, %composer: Composer?, %changed: Int) {
   sourceInformationMarkerStart(%composer, <>, "C(test1)<rememb...>:Test.kt")
   if (isTraceInProgress()) {
@@ -49,7 +48,6 @@ fun test1(x: KnownStable, %composer: Composer?, %changed: Int) {
 }
 @Composable
 @NonRestartableComposable
-@FunctionKeyMeta(key = -301765569, startOffset = 272, endOffset = 325)
 fun test2(x: KnownUnstable, %composer: Composer?, %changed: Int) {
   sourceInformationMarkerStart(%composer, <>, "C(test2)<rememb...>:Test.kt")
   if (isTraceInProgress()) {
@@ -68,7 +66,6 @@ fun test2(x: KnownUnstable, %composer: Composer?, %changed: Int) {
 }
 @Composable
 @NonRestartableComposable
-@FunctionKeyMeta(key = -2145116948, startOffset = 364, endOffset = 413)
 fun test3(x: Uncertain, %composer: Composer?, %changed: Int) {
   sourceInformationMarkerStart(%composer, <>, "C(test3)<rememb...>:Test.kt")
   if (isTraceInProgress()) {

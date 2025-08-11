@@ -16,7 +16,6 @@ fun Test(): String {
 // ------------------------------------------
 
 @Composable
-@FunctionKeyMeta(key = -801210939, startOffset = 84, endOffset = 194)
 fun Test(%composer: Composer?, %changed: Int): String {
   %composer.startReplaceGroup(<>)
   sourceInformation(%composer, "C(Test):Test.kt")

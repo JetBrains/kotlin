@@ -20,7 +20,6 @@ fun Label(test: Boolean) {
 
 @Composable
 @ComposableTarget(applier = "androidx.compose.ui.UiComposable")
-@FunctionKeyMeta(key = 1339463994, startOffset = 140, endOffset = 356)
 fun Label(test: Boolean, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   val %dirty = %changed

@@ -36,7 +36,6 @@ object obj {
 }
 @Composable
 @ReadOnlyComposable
-@FunctionKeyMeta(key = -84223702, startOffset = 312, endOffset = 491)
 fun Calculate(condition: Boolean, %composer: Composer?, %changed: Int): Boolean {
   sourceInformationMarkerStart(%composer, <>, "C(Calculate):Test.kt")
   if (isTraceInProgress()) {

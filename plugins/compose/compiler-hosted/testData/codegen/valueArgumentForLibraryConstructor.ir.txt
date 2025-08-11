@@ -6,7 +6,6 @@ MODULE_FRAGMENT
       VALUE_PARAMETER kind:Regular name:$changed index:2 type:kotlin.Int
       annotations:
         Composable
-        FunctionKeyMeta(key = 2012689166, startOffset = 387, endOffset = 454)
       BLOCK_BODY
         BLOCK type=kotlin.Unit origin=null
           SET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in home.CategoryPodcasts' type=kotlin.Unit origin=null
@@ -84,7 +83,6 @@ MODULE_FRAGMENT
       VALUE_PARAMETER MASK_FOR_DEFAULT_FUNCTION kind:Regular name:$default index:6 type:kotlin.Int
       annotations:
         Composable
-        FunctionKeyMeta(key = -1059684346, startOffset = 468, endOffset = 601)
       BLOCK_BODY
         BLOCK type=kotlin.Unit origin=null
           SET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in home.EpisodeListItem' type=kotlin.Unit origin=null
@@ -184,7 +182,6 @@ MODULE_FRAGMENT
                 VALUE_PARAMETER kind:Regular name:$changed index:2 type:kotlin.Int
                 annotations:
                   Composable
-                  FunctionKeyMeta(key = -1614294205, startOffset = 776, endOffset = 833)
                 BLOCK_BODY
                   CALL 'public final fun sourceInformation (composer: androidx.compose.runtime.Composer, sourceInformation: kotlin.String): kotlin.Unit declared in androidx.compose.runtime' type=kotlin.Unit origin=null
                     ARG composer: GET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in home.podcastCategory.<anonymous>' type=androidx.compose.runtime.Composer? origin=null
@@ -242,7 +239,6 @@ MODULE_FRAGMENT
               VALUE_PARAMETER kind:Regular name:$changed index:3 type:kotlin.Int
               annotations:
                 Composable
-                FunctionKeyMeta(key = 1385636771, startOffset = 877, endOffset = 1092)
               BLOCK_BODY
                 BLOCK type=kotlin.Unit origin=null
                   BLOCK type=kotlin.Unit origin=null

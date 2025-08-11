@@ -5,7 +5,6 @@ MODULE_FRAGMENT
       VALUE_PARAMETER kind:Regular name:$changed index:1 type:kotlin.Int
       annotations:
         Composable
-        FunctionKeyMeta(key = 289538687, startOffset = 282, endOffset = 403)
       BLOCK_BODY
         BLOCK type=kotlin.Unit origin=null
           SET_VAR '$composer: androidx.compose.runtime.Composer? [assignable] declared in home.Home' type=kotlin.Unit origin=null
@@ -73,7 +72,6 @@ MODULE_FRAGMENT
                     VALUE_PARAMETER kind:Regular name:$changed index:2 type:kotlin.Int
                     annotations:
                       Composable
-                      FunctionKeyMeta(key = -964333332, startOffset = 370, endOffset = 401)
                     BLOCK_BODY
                       BLOCK type=kotlin.Unit origin=null
                         CALL 'public final fun sourceInformationMarkerStart (composer: androidx.compose.runtime.Composer, key: kotlin.Int, sourceInformation: kotlin.String): kotlin.Unit declared in androidx.compose.runtime' type=kotlin.Unit origin=null

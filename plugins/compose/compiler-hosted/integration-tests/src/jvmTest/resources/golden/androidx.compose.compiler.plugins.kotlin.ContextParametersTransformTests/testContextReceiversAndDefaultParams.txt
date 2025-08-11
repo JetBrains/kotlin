@@ -22,7 +22,6 @@ fun C(a: Int, bar: Bar = Bar()) { }
 // ------------------------------------------
 
 @Composable
-@FunctionKeyMeta(key = 1146828261, startOffset = 75, endOffset = 96)
 context(%context_receiver_0: Foo, %context_receiver_1: Bar)
 fun A(a: Int, %composer: Composer?, %changed: Int, %default: Int) {
   %composer = %composer.startRestartGroup(<>)
@@ -45,7 +44,6 @@ fun A(a: Int, %composer: Composer?, %changed: Int, %default: Int) {
   }
 }
 @Composable
-@FunctionKeyMeta(key = -1264785437, startOffset = 136, endOffset = 181)
 context(%context_receiver_0: Foo, %context_receiver_1: Bar, %context_receiver_2: FooBar)
 fun B(a: Int, b: String?, c: Int, %composer: Composer?, %changed: Int, %default: Int) {
   %composer = %composer.startRestartGroup(<>)
@@ -71,7 +69,6 @@ fun B(a: Int, b: String?, c: Int, %composer: Composer?, %changed: Int, %default:
   }
 }
 @Composable
-@FunctionKeyMeta(key = 1772367395, startOffset = 208, endOffset = 243)
 context(%context_receiver_0: Foo)
 fun C(a: Int, bar: Bar?, %composer: Composer?, %changed: Int, %default: Int) {
   %composer = %composer.startRestartGroup(<>)

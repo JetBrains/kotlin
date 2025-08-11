@@ -22,7 +22,6 @@ fun A(
 // ------------------------------------------
 
 @Composable
-@FunctionKeyMeta(key = 2088557461, startOffset = 283, endOffset = 361)
 fun A(arrangement: Vertical?, %composer: Composer?, %changed: Int, %default: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(A)N(arrangement):Test.kt")

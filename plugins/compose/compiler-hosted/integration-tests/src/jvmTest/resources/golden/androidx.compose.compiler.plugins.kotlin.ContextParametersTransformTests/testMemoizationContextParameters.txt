@@ -27,7 +27,6 @@ fun <T : Any> TypeCrossfade(
 // ------------------------------------------
 
 @Composable
-@FunctionKeyMeta(key = -17462497, startOffset = 84, endOffset = 384)
 fun <T: Any> TypeCrossfade(state: T, content: @[ExtensionFunctionType] Function4<BoxScope, T, Composer, Int, Unit>, %composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(TypeCrossfade)N(state,content)<{>,<Crossf...>:Test.kt")
@@ -83,7 +82,6 @@ fun <T: Any> TypeCrossfade(state: T, content: @[ExtensionFunctionType] Function4
   }
 }
 @Composable
-@FunctionKeyMeta(key = 61783979, startOffset = 410, endOffset = 539)
 fun App(%composer: Composer?, %changed: Int) {
   %composer = %composer.startRestartGroup(<>)
   sourceInformation(%composer, "C(App)<TypeCr...>:Test.kt")

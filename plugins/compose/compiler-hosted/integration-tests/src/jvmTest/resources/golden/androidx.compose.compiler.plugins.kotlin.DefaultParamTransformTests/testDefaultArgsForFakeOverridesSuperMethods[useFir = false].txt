@@ -22,7 +22,6 @@ class Bar: Foo() {
 open class Foo {
   @NonRestartableComposable
   @Composable
-  @FunctionKeyMeta(key = -855967837, startOffset = 95, endOffset = 117)
   fun foo(x: Int, %composer: Composer?, %changed: Int, %default: Int) {
     sourceInformationMarkerStart(%composer, <>, "C(foo):Test.kt")
     if (%default and 0b0001 != 0) {
@@ -42,7 +41,6 @@ open class Foo {
 class Bar : Foo {
   @NonRestartableComposable
   @Composable
-  @FunctionKeyMeta(key = -2055352125, startOffset = 181, endOffset = 216)
   fun Example(%composer: Composer?, %changed: Int) {
     sourceInformationMarkerStart(%composer, <>, "C(Example)<foo()>:Test.kt")
     if (isTraceInProgress()) {
