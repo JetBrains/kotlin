@@ -2,18 +2,19 @@ package org.jetbrains.kotlin.gradle
 
 import org.gradle.api.logging.LogLevel
 import org.gradle.util.GradleVersion
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
-import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.gradle.plugin.KotlinSourceSet
 import org.jetbrains.kotlin.gradle.plugin.diagnostics.KotlinToolingDiagnostics
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompilerExecutionStrategy
+import org.jetbrains.kotlin.gradle.testbase.*
 import org.jetbrains.kotlin.test.TestMetadata
 import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.io.TempDir
 import java.nio.file.Path
 import java.util.zip.ZipFile
-import kotlin.io.path.*
-import kotlin.test.Ignore
+import kotlin.io.path.absolute
+import kotlin.io.path.appendText
+import kotlin.io.path.invariantSeparatorsPathString
 
 @JvmGradlePluginTests
 @DisplayName("KGP simple tests")
@@ -280,7 +281,7 @@ class SimpleKotlinGradleIT : KGPBaseTest() {
             gradleProperties.appendText(
                 """
                 |
-                |kotlin.user.home=${tempDir.resolve("kotlin-cache").absolutePathString().normalizePath()}
+                |kotlin.user.home=${tempDir.resolve("kotlin-cache").absolute().normalize().invariantSeparatorsPathString}
                 """.trimMargin()
             )
 

@@ -32,7 +32,6 @@ import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
 import kotlin.io.path.*
-import kotlin.io.resolve
 import kotlin.test.assertTrue
 import kotlin.test.fail
 
@@ -1077,7 +1076,8 @@ internal fun Path.enableAndroidSdk() {
 
 internal fun Path.enableCacheRedirector() {
     // Path relative to the current Gradle module project dir
-    val redirectorScript = Paths.get("../../../repo/gradle-settings-conventions/cache-redirector/src/main/kotlin/cache-redirector.settings.gradle.kts")
+    val redirectorScript =
+        Paths.get("../../../repo/gradle-settings-conventions/cache-redirector/src/main/kotlin/cache-redirector.settings.gradle.kts")
     assert(redirectorScript.exists()) {
         "$redirectorScript does not exist! Please provide correct path to 'cache-redirector.settings.gradle.kts' file."
     }
@@ -1123,11 +1123,12 @@ internal fun Path.enableCacheRedirector() {
 }
 
 private fun GradleProject.addHeapDumpOptions() {
+    val heapDumpPath = Path(System.getProperty("user.dir")).resolve("build").absolute().normalize().invariantSeparatorsPathString
     addPropertyToGradleProperties(
         propertyName = "org.gradle.jvmargs",
         mapOf(
             "-XX:+HeapDumpOnOutOfMemoryError" to "-XX:+HeapDumpOnOutOfMemoryError",
-            "-XX:HeapDumpPath" to "-XX:HeapDumpPath=\"${System.getProperty("user.dir")}${File.separatorChar}build\""
+            "-XX:HeapDumpPath" to "-XX:HeapDumpPath=\"$heapDumpPath\""
         ),
     )
 }

@@ -10,10 +10,7 @@ import org.jetbrains.kotlin.gradle.util.assertProcessRunResult
 import org.jetbrains.kotlin.gradle.util.runProcess
 import java.nio.file.Path
 import java.util.*
-import kotlin.io.path.exists
-import kotlin.io.path.isRegularFile
-import kotlin.io.path.name
-import kotlin.io.path.walk
+import kotlin.io.path.*
 import kotlin.test.assertEquals
 
 internal sealed class XcodeBuildAction(
@@ -127,7 +124,7 @@ internal fun TestProject.prepareForXcodebuild(appendToProperties: () -> String =
                 it.append(extraProperties)
             }
             buildOptions.konanDataDir?.let { konanDataDir ->
-                it.append("konan.data.dir=${konanDataDir.toAbsolutePath().normalize()}")
+                it.append("konan.data.dir=${konanDataDir.absolute().normalize().invariantSeparatorsPathString}")
             }
             val configurationCacheFlag = buildOptions.configurationCache.toBooleanFlag(gradleVersion)
             if (configurationCacheFlag != null) {
