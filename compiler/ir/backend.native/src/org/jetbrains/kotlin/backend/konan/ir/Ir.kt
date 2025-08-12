@@ -136,9 +136,6 @@ private object ClassIds {
     val testFunctionKind = "TestFunctionKind".internalTestClassId
 }
 
-private val IrFunction.extensionReceiverType get() = parameters.singleOrNull { it.kind == IrParameterKind.ExtensionReceiver }?.type
-private val IrFunction.extensionReceiverClass get() = extensionReceiverType?.classOrNull
-
 // TODO: KT-77494 - move this callable ids into more appropriate places.
 private object CallableIds {
 
@@ -689,26 +686,6 @@ class KonanSymbols(
 
     val isAssertionThrowingErrorEnabled = CallableIds.isAssertionThrowingErrorEnabled.functionSymbol()
     val isAssertionArgumentEvaluationEnabled = CallableIds.isAssertionArgumentEvaluationEnabled.functionSymbol()
-
-    private fun CallableId.getterSymbol() : Lazy<IrSimpleFunctionSymbol> {
-        val elements = propertySymbols()
-        require(elements.isNotEmpty()) { "No properties $this found" }
-        require(elements.size == 1) { "Several properties $this found:\n${elements.joinToString("\n")}" }
-        return lazy {
-            elements.single().owner.getter!!.symbol
-        }
-    }
-
-    private fun CallableId.getterSymbol(extensionReceiverClass: IrClassSymbol?) : Lazy<IrSimpleFunctionSymbol> {
-        val unfilteredElements = propertySymbols()
-        require(unfilteredElements.isNotEmpty()) { "No properties $this found" }
-        return lazy {
-            val elements = unfilteredElements.filter { it.owner.getter?.extensionReceiverClass == extensionReceiverClass }
-            require(elements.isNotEmpty()) { "No properties $this found with ${extensionReceiverClass} receiver" }
-            require(elements.size == 1) { "Several properties $this found with ${extensionReceiverClass} receiver:\n${elements.joinToString("\n")}" }
-            elements.single().owner.getter!!.symbol
-        }
-    }
 
     val baseClassSuite = ClassIds.baseClassSuite.classSymbol()
     val topLevelSuite = ClassIds.topLevelSuite.classSymbol()
