@@ -8,11 +8,12 @@ dependencies {
 }
 
 base {
-    archivesName = "compose-mapping-generator"
+    archivesName = "compose-group-mapping"
 }
 
+description = "Generator of proguard mappings from Compose groups in bytecode"
 publish {
-    artifactId = "compose-mapping-generator"
+    artifactId = "compose-group-mapping"
     pom {
         name.set("AndroidX Compose Group Mapping Generator")
         developers {
