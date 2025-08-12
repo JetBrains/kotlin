@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.fir.resolve.inference.csBuilder
 import org.jetbrains.kotlin.fir.resolve.inference.extractLambdaInfoFromFunctionType
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeArgumentConstraintPosition
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeExplicitTypeParameterConstraintPosition
-import org.jetbrains.kotlin.fir.resolve.inference.model.ConeLambdaArgumentConstraintPosition
+import org.jetbrains.kotlin.fir.resolve.inference.model.ConeRegularLambdaArgumentConstraintPosition
 import org.jetbrains.kotlin.fir.resolve.inference.model.ConeReceiverConstraintPosition
 import org.jetbrains.kotlin.fir.symbols.ConeTypeParameterLookupTag
 import org.jetbrains.kotlin.fir.types.*
@@ -182,7 +182,7 @@ internal object ArgumentCheckingProcessor {
     private fun ArgumentContext.createArgumentConstraintPosition(atom: ConeResolutionAtom): ArgumentConstraintPosition<*> {
         return when (val containingLambda = anonymousFunctionIfReturnExpression) {
             null -> ConeArgumentConstraintPosition(atom.expression)
-            else -> ConeLambdaArgumentConstraintPosition(containingLambda, atom.expression)
+            else -> ConeRegularLambdaArgumentConstraintPosition(containingLambda, atom.expression)
         }
     }
 

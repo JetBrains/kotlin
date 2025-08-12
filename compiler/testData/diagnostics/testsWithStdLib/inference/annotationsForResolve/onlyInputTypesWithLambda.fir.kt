@@ -23,7 +23,7 @@ fun test() {
     }
 
     // T := String?, must be OK
-    <!TYPE_INFERENCE_ONLY_INPUT_TYPES_ERROR!>expect<!>(null) {
+    expect(null) {
         returnNullableString()
     }
 
@@ -38,7 +38,7 @@ fun test() {
     }
 
     // T := Unit, must be OK
-    <!TYPE_INFERENCE_ONLY_INPUT_TYPES_ERROR!>expect<!>(returnNothing()) {
+    expect(returnNothing()) {
         Unit
     }
 
@@ -51,12 +51,12 @@ fun test() {
     }
 
     // T := String, must be OK
-    <!TYPE_INFERENCE_ONLY_INPUT_TYPES_ERROR!>expect<!> {
+    expect {
         returnString()
     }
 
     // T := Unit, must be OK
-    <!TYPE_INFERENCE_ONLY_INPUT_TYPES_ERROR!>expect<!> {
+    expect {
         Unit
     }
 
