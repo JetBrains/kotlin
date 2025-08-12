@@ -208,13 +208,17 @@ abstract class Symbols(irBuiltIns: IrBuiltIns) : FrontendSymbolsImpl(irBuiltIns)
 
     abstract val functionAdapter: IrClassSymbol
 
-    open val unsafeCoerceIntrinsic: IrSimpleFunctionSymbol? = null
+    open val unsafeCoerceIntrinsic: IrSimpleFunctionSymbol?
+        get() = null
 
-    open val getWithoutBoundCheckName: Name? = null
+    open val getWithoutBoundCheckName: Name?
+        get() = null
 
-    open val setWithoutBoundCheckName: Name? = null
+    open val setWithoutBoundCheckName: Name?
+        get() = null
 
-    open val arraysContentEquals: Map<IrType, IrSimpleFunctionSymbol>? = null
+    open val arraysContentEquals: Map<IrType, IrSimpleFunctionSymbol>?
+        get() = null
 }
 
 // TODO KT-77388 rename to `BackendKlibSymbolsImpl`
