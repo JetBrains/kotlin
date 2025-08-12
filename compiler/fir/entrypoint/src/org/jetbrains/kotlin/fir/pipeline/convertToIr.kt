@@ -275,7 +275,7 @@ private class Fir2IrPipeline(
 
         removeGeneratedBuiltinsDeclarationsIfNeeded()
 
-        pluginContext.runMandatoryIrValidation(extension = null, mainIrFragment)
+        hasIrValidationErrorFromFrontend = pluginContext.runMandatoryIrValidation(extension = null, mainIrFragment)
         pluginContext.applyIrGenerationExtensions(mainIrFragment, irGeneratorExtensions)
 
         return Fir2IrActualizedResult(mainIrFragment, componentsStorage, pluginContext, actualizationResult, irBuiltIns, symbolTable)
@@ -471,23 +471,30 @@ private class Fir2IrPipeline(
         }
     }
 
+    private var hasIrValidationErrorFromFrontend = false
+    private var hasIrValidationErrorFromPlugin = false
+
     private fun IrPluginContext.runMandatoryIrValidation(
         extension: IrGenerationExtension?,
         module: IrModuleFragment,
-    ) {
+    ): Boolean {
         val verificationMode = fir2IrConfiguration.irVerificationSettings.mode
         val validateForKlibSerialization = fir2IrConfiguration.irVerificationSettings.validateForKlibSerialization
 
         if (verificationMode == IrVerificationMode.NONE && !validateForKlibSerialization) {
-            return
+            return false
         }
-        val regularSeverity = when (verificationMode) {
-            IrVerificationMode.NONE -> null
-            IrVerificationMode.WARNING -> CompilerMessageSeverity.WARNING
-            IrVerificationMode.ERROR -> CompilerMessageSeverity.ERROR
+        val regularSeverity = when {
+            // Do not report regular violations in compiler plugins if frontend itself produced an incorrect IR.
+            // It would be too confusing to blame plugins, even if one really contributed to an invalid IR as well,
+            // when it is primarily our fault.
+            hasIrValidationErrorFromFrontend -> null
+            verificationMode == IrVerificationMode.WARNING -> CompilerMessageSeverity.WARNING
+            verificationMode == IrVerificationMode.ERROR -> CompilerMessageSeverity.ERROR
+            else -> null
         }
 
-        validateIr(
+        return validateIr(
             module,
             irBuiltIns,
             IrValidatorConfig(checkTreeConsistency = true, checkUnboundSymbols = true)
@@ -548,7 +555,9 @@ private class Fir2IrPipeline(
             customMessagePrefix = if (extension == null) {
                 "The frontend generated invalid IR. This is a compiler bug, please report it to https://kotl.in/issue."
             } else {
-                "The compiler plugin '${extension.javaClass.name}' generated invalid IR. Please report this bug to the plugin vendor."
+                "The compiler plugin '${extension.javaClass.name}'" +
+                        (if (hasIrValidationErrorFromPlugin) " (or another, previously executed plugin, check error above)" else "") +
+                        " generated invalid IR. Please report this bug to the plugin vendor."
             }
         )
     }
@@ -560,7 +569,9 @@ private class Fir2IrPipeline(
         for (extension in irGenerationExtensions) {
             try {
                 extension.generate(irModuleFragment, this)
-                runMandatoryIrValidation(extension, irModuleFragment)
+                if (runMandatoryIrValidation(extension, irModuleFragment)) {
+                    hasIrValidationErrorFromPlugin = true
+                }
             } catch (e: Throwable) {
                 rethrowIntellijPlatformExceptionIfNeeded(e)
                 throw IrGenerationExtensionException(e, extension::class.java)
