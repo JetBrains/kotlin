@@ -120,7 +120,7 @@ class LocalClassesInInlineLambdasLowering(val context: LoweringContext) : BodyLo
                     // are also present in the inline lambda's parent declaration,
                     // which we will extract the local class to.
                     remapCapturedTypesInExtractedLocalDeclarations = false,
-                ).lower(irBlock, container, data)
+                ).lower(irBlock = irBlock, container = container, closestParent = data)
 
                 val localDeclarationsToPopUp = mutableListOf<IrDeclaration>()
 
