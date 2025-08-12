@@ -17,7 +17,7 @@ struct PassesProfile {
     std::string SerializedProfile;
 };
 
-DEFINE_SIMPLE_CONVERSION_FUNCTIONS(PassesProfile, LLVMKotlinPassesProfileRef);
+DEFINE_SIMPLE_CONVERSION_FUNCTIONS(PassesProfile, LLVMKotlinPassesProfileRef)
 
 class PassesProfileHandler {
 public:
