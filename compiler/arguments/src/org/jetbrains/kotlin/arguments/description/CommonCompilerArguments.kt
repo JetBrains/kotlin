@@ -819,6 +819,19 @@ Kotlin reports a warning every time you use one of them. You can use this flag t
 
 
     compilerArgument {
+        name = "Xexplicit-backing-fields"
+        description = "Enable experimental language support for explicit backing fields.".asReleaseDependent()
+        valueType = BooleanType.defaultFalse
+
+        additionalAnnotations(Enables(LanguageFeature.ExplicitBackingFields))
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_3_0,
+        )
+    }
+
+
+    compilerArgument {
         name = "Xdirect-java-actualization"
         description = "Enable experimental direct Java actualization support.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
