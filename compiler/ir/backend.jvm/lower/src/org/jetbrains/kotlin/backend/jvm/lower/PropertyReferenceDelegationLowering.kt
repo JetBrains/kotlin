@@ -183,7 +183,7 @@ private class PropertyReferenceDelegationTransformer(val context: JvmBackendCont
     }
 
     private fun IrFunction.getReceiverParameterOrNull(): IrValueParameter? {
-        return dispatchReceiverParameter ?: parameters.find { it.kind == IrParameterKind.ExtensionReceiver }
+        return parameters.find { it.kind == IrParameterKind.ExtensionReceiver } ?: dispatchReceiverParameter
     }
 
     private fun IrPropertyReference.getReceiverOrNull(): IrExpression? {
