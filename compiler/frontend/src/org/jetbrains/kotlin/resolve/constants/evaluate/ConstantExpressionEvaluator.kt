@@ -1236,31 +1236,14 @@ private fun typeStrToCompileTimeType(str: String) = when (str) {
     else -> throw IllegalArgumentException("Unsupported type: $str")
 }
 
-fun evaluateUnary(name: String, typeStr: String, value: Any): Any? =
-    evalUnaryOp(name, typeStrToCompileTimeType(typeStr), value)
+private fun evaluateUnaryAndCheck(name: String, type: CompileTimeType, value: Any, reportIntegerOverflow: () -> Unit): Any? {
+    val forbiddenFunctions = listOf("trim", "trimEnd", "trimIndent", "trimMargin", "trimStart")
+    if (forbiddenFunctions.contains(name)) return null
 
-private fun evaluateUnaryAndCheck(name: String, type: CompileTimeType, value: Any, reportIntegerOverflow: () -> Unit): Any? =
-    evalUnaryOp(name, type, value).also { result ->
+    return evalUnaryOp(name, type, value).also { result ->
         if (isIntegerType(value) && (name == "minus" || name == "unaryMinus") && value == result && !isZero(value)) {
             reportIntegerOverflow()
         }
-    }
-
-fun evaluateBinary(
-    name: String,
-    receiverTypeStr: String,
-    receiverValue: Any,
-    parameterTypeStr: String,
-    parameterValue: Any
-): Any? {
-    val receiverType = typeStrToCompileTimeType(receiverTypeStr)
-    val parameterType = typeStrToCompileTimeType(parameterTypeStr)
-
-    return try {
-        evalBinaryOp(name, receiverType, receiverValue, parameterType, parameterValue)
-    } catch (e: Exception) {
-        rethrowIntellijPlatformExceptionIfNeeded(e)
-        null
     }
 }
 
@@ -1272,6 +1255,9 @@ private fun evaluateBinaryAndCheck(
     parameterValue: Any,
     reportIntegerOverflow: () -> Unit,
 ): Any? {
+    val forbiddenFunctions = listOf("trimMargin")
+    if (forbiddenFunctions.contains(name)) return null
+
     val actualResult = try {
         evalBinaryOp(name, receiverType, receiverValue, parameterType, parameterValue)
     } catch (e: Exception) {

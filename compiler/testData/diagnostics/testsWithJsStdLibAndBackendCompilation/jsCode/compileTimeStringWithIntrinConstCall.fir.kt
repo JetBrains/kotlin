@@ -9,15 +9,15 @@
 )
 
 fun testTrimMargin() {
-    js(<!JSCODE_ARGUMENT_NON_CONST_EXPRESSION!>"""
+    js("""
     |   var x = 1;
-    """.<!JSCODE_CAN_NOT_VERIFY_JAVASCRIPT!>trimMargin()<!><!>)
+    """.trimMargin())
 }
 
 fun testTrimIndent() {
-    js(<!JSCODE_ARGUMENT_NON_CONST_EXPRESSION!>"""
+    js("""
         var x = 1;
-    """.<!JSCODE_CAN_NOT_VERIFY_JAVASCRIPT!>trimIndent()<!><!>)
+    """.trimIndent())
 }
 
 const val ONE = 1
@@ -67,11 +67,11 @@ fun testArithmeticOperations() {
 
     js("{ var a = '${"foo" + "bar"}'; }")
     js("{ var a = '${"foo" + 'c'}'; }")
-    js(<!JSCODE_CAN_NOT_VERIFY_JAVASCRIPT!>"{ var a = '${<!JSCODE_ARGUMENT_NON_CONST_EXPRESSION!>'c' + "foo"<!>}'; }"<!>)
+    js(<!JSCODE_CAN_NOT_VERIFY_JAVASCRIPT!>"{ var a = '${'c' + "foo"}'; }"<!>)
 
     js("{ var a = ${STR + STR}; }")
     js("{ var a = ${STR + CHAR}; }")
-    js(<!JSCODE_CAN_NOT_VERIFY_JAVASCRIPT!>"{ var a = ${<!JSCODE_ARGUMENT_NON_CONST_EXPRESSION!>CHAR + STR<!>}; }"<!>)
+    js(<!JSCODE_CAN_NOT_VERIFY_JAVASCRIPT!>"{ var a = ${CHAR + STR}; }"<!>)
 }
 
 fun testLogicOperations() {
