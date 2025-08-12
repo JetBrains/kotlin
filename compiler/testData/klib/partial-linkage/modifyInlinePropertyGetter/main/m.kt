@@ -8,20 +8,20 @@ fun box() = abiTest {
 
 
     expectSuccess("inlineProperty.v1") { directCall1() }
-    expectSuccess("receiver.inlineExtensionProperty.v1 with context c") { directCall2() }
+    expectSuccess("directReceiver.inlineExtensionProperty.v1 with context directContext") { directCall2() }
     expectSuccess("inlineClassProperty.v1") { directCall3() }
-    expectSuccess("receiver.inlineClassExtensionProperty.v1 with context c") { directCall4() }
+    expectSuccess("directClassReceiver.inlineClassExtensionProperty.v1 with context directClassContext") { directCall4() }
 
-    expectSuccess("inlineProperty.v1") { inlineCall1() }
-    expectSuccess("receiver.inlineExtensionProperty.v1 with context c") { inlineCall2() }
-    expectSuccess("inlineClassProperty.v1") { inlineCall3() }
-    expectSuccess("receiver.inlineClassExtensionProperty.v1 with context c") { inlineCall4() }
+    expectSuccess("inlineProperty.v1") { directCall5() }
+    expectSuccess("inlineReceiver.inlineExtensionProperty.v1 with context inlineContext") { directCall6() }
+    expectSuccess("inlineClassProperty.v1") { directCall7() }
+    expectSuccess("inlineClassReceiver.inlineClassExtensionProperty.v1 with context inlineClassContext") { directCall8() }
 
-    expectSuccess("inlineProperty.v1") { lambdaCall1() }
-    expectSuccess("receiver.inlineExtensionProperty.v1 with context c") { lambdaCall2() }
-    expectSuccess("inlineClassProperty.v1") { lambdaCall3() }
-    expectSuccess("receiver.inlineClassExtensionProperty.v1 with context c") { lambdaCall4() }
+    expectSuccess("inlineProperty.v1") { directCall9() }
+    expectSuccess("lambdaReceiver.inlineExtensionProperty.v1 with context lambdaContext") { directCall10() }
+    expectSuccess("inlineClassProperty.v1") { directCall11() }
+    expectSuccess("lambdaClassReceiver.inlineClassExtensionProperty.v1 with context lambdaClassContext") { directCall12() }
 
-    expectSuccess("inlineProperty.v1") { defaultParamFunction1() }
-    expectSuccess("inlineClassProperty.v1") { defaultParamFunction2() }
+    expectSuccess("inlineProperty.v1") { directCall13() }
+    expectSuccess("inlineClassProperty.v1") { directCall14() }
 }
