@@ -25,13 +25,14 @@ private fun LLVMKotlinPassesProfileRef.parse(pipelineName: String) = LLVMKotlinP
         .filter { it.isNotEmpty() }
         .map {
             val line = it.split("\t")
-            check(line.size == 4) {
-                "Expected line `$it` to have exactly 4 tab-separated columns"
+            check(line.size == 2) {
+                "Expected line `$it` to have exactly 2 tab-separated columns"
             }
             val pass = "$pipelineName.${line[0]}"
             val nanos = line[1].toLong()
-            val userNanos = line[2].toLong()
-            val cpuNanos = line[3].toLong()
+            // Computing user and system times for each llvm phase gives a big overhead.
+            val userNanos = 0L
+            val cpuNanos = 0L
             LlvmPassProfile(pass, Time(nanos, userNanos, cpuNanos))
         }
 

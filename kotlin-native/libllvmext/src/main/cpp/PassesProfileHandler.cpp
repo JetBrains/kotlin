@@ -3,45 +3,35 @@
 
 #include "PassesProfileHandler.h"
 
+#include <chrono>
 #include <sstream>
 
 #include <llvm/ADT/StringMap.h>
 #include <llvm/ADT/Twine.h>
 #include <llvm/Support/Error.h>
-#include <llvm/Support/Timer.h>
 
 using namespace llvm;
 
-namespace {
-
-int64_t secondsToNanos(double s) {
-    return int64_t(s * 1'000'000'000.0);
-}
-
-} // namespace
-
 struct PassesProfileHandler::Event {
     std::string Name;
-    TimeRecord Duration;
+    std::chrono::nanoseconds Duration;
 };
 
 struct PassesProfileHandler::PendingEvent {
 public:
-    explicit PendingEvent(PendingEvent* Parent, StringRef P) : Name(Parent ? (Parent->Name + "." + P).str() : P), Pass(P), StartedAt(TimeRecord::getCurrentTime(true)) {}
+    explicit PendingEvent(PendingEvent* Parent, StringRef P) : Name(Parent ? (Parent->Name + "." + P).str() : P), Pass(P), StartedAt(std::chrono::system_clock::now()) {}
 
     Event finalize(StringRef P) {
         if (P != Pass) {
             report_fatal_error(Twine("Mismatched event finalization. Expected pass ") + Pass + "; actual " + P);
         }
-        auto Duration = TimeRecord::getCurrentTime(false);
-        Duration -= StartedAt;
-        return { Name, Duration };
+        return { Name, std::chrono::system_clock::now() - StartedAt };
     }
 
 private:
     std::string Name;
     std::string Pass;
-    TimeRecord StartedAt;
+    std::chrono::system_clock::time_point StartedAt;
 };
 
 PassesProfileHandler::PassesProfileHandler(bool enabled) : enabled_(enabled) {}
@@ -54,7 +44,7 @@ PassesProfile PassesProfileHandler::serialize() const {
     }
 
     // Combine same passes into one entry.
-    StringMap<TimeRecord> events;
+    StringMap<std::chrono::nanoseconds> events;
     for (const auto& [name, duration] : events_) {
         auto [it, inserted] = events.insert(std::make_pair(name, duration));
         if (!inserted) {
@@ -64,9 +54,7 @@ PassesProfile PassesProfileHandler::serialize() const {
     std::stringstream out;
     for (const auto& kvp : events) {
         out << std::string_view(kvp.first())
-            << "\t" << secondsToNanos(kvp.second.getWallTime())
-            << "\t" << secondsToNanos(kvp.second.getUserTime())
-            << "\t" << secondsToNanos(kvp.second.getProcessTime())
+            << "\t" << kvp.second.count()
             << "\n";
     }
     return PassesProfile{out.str()};
