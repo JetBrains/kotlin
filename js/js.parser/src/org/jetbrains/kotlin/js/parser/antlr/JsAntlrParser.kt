@@ -5,8 +5,6 @@
 
 package org.jetbrains.kotlin.js.parser.antlr
 
-import JavaScriptLexer
-import JavaScriptParser
 import com.google.gwt.dev.js.rhino.CodePosition
 import com.google.gwt.dev.js.rhino.ErrorReporter
 import org.antlr.v4.runtime.CharStreams
@@ -14,6 +12,8 @@ import org.antlr.v4.runtime.CommonTokenStream
 import org.jetbrains.kotlin.js.backend.ast.JsFunction
 import org.jetbrains.kotlin.js.backend.ast.JsScope
 import org.jetbrains.kotlin.js.backend.ast.JsStatement
+import org.jetbrains.kotlin.js.parser.antlr.generated.JavaScriptLexer
+import org.jetbrains.kotlin.js.parser.antlr.generated.JavaScriptParser
 
 object JsAntlrParser {
     fun parse(
@@ -22,7 +22,17 @@ object JsAntlrParser {
         scope: JsScope,
         fileName: String
     ): List<JsStatement>? {
-        val parser = createJsParser(code, )
+        val parser = createJsParser(fileName, code, CodePosition(0, 0)).apply {
+            addErrorListener(reporter)
+        }
+        val mapper = JsAstMapper(scope, fileName)
+        val statements = parser.statementList()
+        val jsStatements = statements.statement().map {
+            mapper.mapStatement(it)
+                ?: throw Exception("unexpected null statement")
+        }
+
+        return jsStatements
     }
 
     fun parseExpressionOrStatement(
@@ -32,7 +42,7 @@ object JsAntlrParser {
         startPosition: CodePosition,
         fileName: String
     ): List<JsStatement>? {
-
+        TODO()
     }
 
     fun parseFunction(
@@ -43,7 +53,12 @@ object JsAntlrParser {
         reporter: ErrorReporter,
         scope: JsScope
     ): JsFunction? {
-
+        val parser = createJsParser(fileName, code, position).apply {
+            addErrorListener(reporter)
+        }
+        val mapper = JsAstMapper(scope, fileName)
+        val function = parser.functionDeclaration()
+        return mapper.mapFunction(function)
     }
 
     private fun createJsParser(file: String, code: String, startPosition: CodePosition): JavaScriptParser {

@@ -5,10 +5,10 @@
 
 package org.jetbrains.kotlin.js.parser.antlr
 
-import JavaScriptParser
 import com.google.gwt.dev.js.parserExceptions.JsParserException
 import org.antlr.v4.runtime.ParserRuleContext
 import org.jetbrains.kotlin.js.backend.ast.*
+import org.jetbrains.kotlin.js.parser.antlr.generated.JavaScriptParser
 
 class JsAstMapper(private val scope: JsScope, private val fileName: String) {
     companion object {
@@ -21,7 +21,7 @@ class JsAstMapper(private val scope: JsScope, private val fileName: String) {
         TODO("mapStatement")
     }
 
-    public fun mapFunction(function: ParserRuleContext): JsStatement? {
+    public fun mapFunction(function: ParserRuleContext): JsFunction? {
         TODO("mapFunction")
     }
 

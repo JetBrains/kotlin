@@ -5,15 +5,16 @@
 
 package org.jetbrains.kotlin.js.parser.antlr
 
-import JavaScriptParserVisitor
 import org.antlr.v4.runtime.tree.ErrorNode
 import org.antlr.v4.runtime.tree.ParseTree
 import org.antlr.v4.runtime.tree.RuleNode
 import org.antlr.v4.runtime.tree.TerminalNode
 import org.jetbrains.kotlin.js.backend.ast.JsBreak
 import org.jetbrains.kotlin.js.backend.ast.JsNode
+import org.jetbrains.kotlin.js.parser.antlr.generated.JavaScriptParser
+import org.jetbrains.kotlin.js.parser.antlr.generated.JavaScriptParserVisitor
 
-class JsAstMapperVisitor() : JavaScriptParserVisitor<JsNode> {
+class JsAstMapperVisitor() : JavaScriptParserVisitor<JsNode?> {
     override fun visitProgram(ctx: JavaScriptParser.ProgramContext?): JsNode? {
         TODO("Not yet implemented")
     }

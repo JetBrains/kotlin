@@ -10,11 +10,11 @@ import org.antlr.v4.runtime.ParserRuleContext
 import org.antlr.v4.runtime.Token
 import org.jetbrains.kotlin.js.backend.ast.JsLocation
 
-internal fun ParserRuleContext.getJsAstLocation(file: String): JsLocation {
+internal fun ParserRuleContext.toJsLocationRelativeTo(file: String): JsLocation {
     return JsLocation(file, start.line, start.charPositionInLine)
 }
 
-internal fun ParserRuleContext.getJsAstLocation(origin: JsLocation): JsLocation {
+internal fun ParserRuleContext.toJsLocationRelativeTo(origin: JsLocation): JsLocation {
     return JsLocation(origin.file, origin.startLine + start.line, origin.startChar + start.charPositionInLine)
 }
 

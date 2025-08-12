@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.js.parser.antlr
 
-import JavaScriptLexer
 import org.antlr.v4.runtime.CharStream
 
 /**
