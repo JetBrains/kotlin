@@ -195,7 +195,7 @@ abstract class ComplexCInteropTestBase : AbstractNativeSimpleTest() {
     @Test
     @TestMetadata("kt42172")
     fun testKt42172() {
-        Assumptions.assumeFalse(testRunSettings.get<GCType>().gc != GC.NOOP)
+        Assumptions.assumeFalse(testRunSettings.get<GCType>().gc == GC.NOOP)
         val execResult = testDylibCinteropExe("kt42172")
         Assumptions.assumingThat(!testRunSettings.get<ForcedNoopTestRunner>().value) {
             assertEquals("Executed finalizer", execResult.stdout)
@@ -244,7 +244,7 @@ abstract class ComplexCInteropTestBase : AbstractNativeSimpleTest() {
     @Test
     @TestMetadata("friendly_dealloc")
     fun testFriendly_dealloc() {
-        Assumptions.assumeFalse(testRunSettings.get<GCType>().gc != GC.NOOP)
+        Assumptions.assumeFalse(testRunSettings.get<GCType>().gc == GC.NOOP)
         val execResult = testDylibCinteropExe(
             "friendly_dealloc",
             extraClangOpts = listOf("-fno-objc-arc"),
