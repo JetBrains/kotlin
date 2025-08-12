@@ -18,9 +18,9 @@ class MavenMetadataTest {
     fun generateMavenMetadataTests(): Stream<DynamicTest> {
         findActualArtifacts(".pom", mustContainKotlinVersion = true).map { actual ->
             val expectedPomPath = actual.toExpectedPath()
-            println("Expected ${expectedPomPath.absolutePathString()} exists – ${expectedPomPath.exists()}")
 
-//            DynamicTest.dynamicTest(expectedPomPath.fileName.toString()) {
+            DynamicTest.dynamicTest(expectedPomPath.fileName.toString()) {
+                println("Expected ${expectedPomPath.absolutePathString()} exists – ${expectedPomPath.exists()}")
 //                if ("${expectedPomPath.parent.fileName}" !in excludedProjects) {
 //                    if ("${expectedPomPath.parent.fileName}" !in nativeBundles) {
 //                        val regex = Regex(
@@ -32,7 +32,7 @@ class MavenMetadataTest {
 //                } else {
 //                    if (isTeamCityBuild) fail("Excluded project in actual artifacts: $actual")
 //                }
-//            }
+            }
         }.asStream()
         return emptySequence<DynamicTest>().asStream()
     }
@@ -41,7 +41,8 @@ class MavenMetadataTest {
     fun allExpectedPomsPresentInActual(): Stream<DynamicTest> {
         val publishedPoms = findActualArtifacts(".pom", mustContainKotlinVersion = true)
             .map { it.toExpectedPath() }
-            .filter { "${it.parent.fileName}" !in excludedProjects }.toSet()
+            .filter { "${it.parent.fileName}" !in excludedProjects }
+            .toSet()
 
         return findExpectedArtifacts(".pom").map { expected ->
             DynamicTest.dynamicTest(expected.fileName.toString()) {
