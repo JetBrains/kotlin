@@ -35,6 +35,10 @@
 
 lexer grammar JavaScriptLexer;
 
+@header {
+import org.jetbrains.kotlin.js.parser.antlr.JavaScriptLexerBase;
+}
+
 channels {
     ERROR,
     COMMENTS

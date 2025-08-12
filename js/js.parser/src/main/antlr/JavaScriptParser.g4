@@ -34,7 +34,9 @@
 
 parser grammar JavaScriptParser;
 
-// Insert here @header for C++ parser.
+@header {
+import org.jetbrains.kotlin.js.parser.antlr.JavaScriptParserBase;
+}
 
 options {
     tokenVocab = JavaScriptLexer;

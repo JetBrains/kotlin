@@ -20,7 +20,7 @@ sourceSets {
 }
 
 tasks.generateGrammarSource {
-    val outputPackage = "org.jetbrains.kotlin.js.parser.antlr"
+    val outputPackage = "org.jetbrains.kotlin.js.parser.antlr.generated"
 
     maxHeapSize = "64m"
     arguments = arguments + listOf(
@@ -29,7 +29,7 @@ tasks.generateGrammarSource {
         "-package", outputPackage
     )
 
-    outputDirectory = file("${layout.buildDirectory.get().asFile}/generated-src/antlr/main/${outputPackage.replace('.', '/')}")
+    outputDirectory = layout.projectDirectory.dir("src/${outputPackage.replace('.', '/')}").asFile
 }
 
 tasks.compileKotlin {
