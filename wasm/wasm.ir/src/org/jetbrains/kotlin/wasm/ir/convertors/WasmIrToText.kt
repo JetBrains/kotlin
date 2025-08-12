@@ -133,6 +133,7 @@ class WasmIrToText(
             indent--
 
         newLine()
+
         stringBuilder.append(wasmInstr.operator.mnemonic)
 
         if (
@@ -151,11 +152,13 @@ class WasmIrToText(
             wasmInstr.immediates.reversed().forEach {
                 appendImmediate(it)
             }
+            stringBuilder.append(wasmInstr.operator.tailMnemonic)
             return
         }
         wasmInstr.immediates.forEach {
             appendImmediate(it)
         }
+        stringBuilder.append(wasmInstr.operator.tailMnemonic)
     }
 
     private fun appendImmediate(x: WasmImmediate) {
@@ -628,6 +631,7 @@ class WasmIrToText(
             stringBuilder.append(s)
             stringBuilder.append('"')
         } else {
+            stringBuilder.append(' ')
             stringBuilder.append(s.toByteArray().toWatData())
         }
     }
