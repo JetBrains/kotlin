@@ -22,7 +22,7 @@ import kotlin.io.path.Path
 import kotlin.reflect.KClass
 import kotlin.reflect.full.isSubclassOf
 
-class BtaImplGenerator() : BtaGenerator {
+internal class BtaImplGenerator(private val targetPackage: String) : BtaGenerator {
 
     private val outputs = mutableListOf<Pair<Path, String>>()
 
@@ -30,7 +30,7 @@ class BtaImplGenerator() : BtaGenerator {
         val apiClassName = level.name.capitalizeAsciiOnly()
         val implClassName = apiClassName + "Impl"
         val mainFileAppendable = createGeneratedFileAppendable()
-        val mainFile = FileSpec.Companion.builder(IMPL_PACKAGE, implClassName).apply {
+        val mainFile = FileSpec.Companion.builder(targetPackage, implClassName).apply {
             addAnnotation(
                 AnnotationSpec.Companion.builder(ClassName("kotlin", "OptIn"))
                     .addMember("%T::class", ANNOTATION_EXPERIMENTAL).build()
@@ -64,7 +64,7 @@ class BtaImplGenerator() : BtaGenerator {
 
                     val argument = generateArgumentType(apiClassName)
                     val argumentTypeName = ClassName(API_PACKAGE, apiClassName, argument)
-                    val argumentImplTypeName = ClassName(IMPL_PACKAGE, implClassName, argument)
+                    val argumentImplTypeName = ClassName(targetPackage, implClassName, argument)
                     generateGetPutFunctions(argumentTypeName, argumentImplTypeName)
                     addType(TypeSpec.companionObjectBuilder().apply {
                         generateOptions(level.filterOutDroppedArguments(), apiClassName, argumentImplTypeName, converterFun, skipXX)
@@ -76,7 +76,7 @@ class BtaImplGenerator() : BtaGenerator {
         }.build()
         mainFile.writeTo(mainFileAppendable)
         outputs += Path(mainFile.relativePath) to mainFileAppendable.toString()
-        return GeneratorOutputs(ClassName(IMPL_PACKAGE, implClassName), outputs)
+        return GeneratorOutputs(ClassName(targetPackage, implClassName), outputs)
     }
 
     private fun TypeSpec.Builder.generateOptions(
@@ -148,7 +148,9 @@ class BtaImplGenerator() : BtaGenerator {
             annotation<Suppress> {
                 addMember("%S", "UNCHECKED_CAST")
             }
-            annotation(ANNOTATION_USE_FROM_IMPL_RESTRICTED) {}
+            if (targetPackage == IMPL_PACKAGE) {
+                annotation(ANNOTATION_USE_FROM_IMPL_RESTRICTED) {}
+            }
             returns(typeParameter)
             addModifiers(KModifier.OVERRIDE, KModifier.OPERATOR)
             addTypeVariable(typeParameter)
@@ -156,13 +158,22 @@ class BtaImplGenerator() : BtaGenerator {
             addStatement("return %N[key.id] as %T", mapProperty, typeParameter)
         }
         function("set") {
-            annotation(ANNOTATION_USE_FROM_IMPL_RESTRICTED) {}
+            if (targetPackage == IMPL_PACKAGE) {
+                annotation(ANNOTATION_USE_FROM_IMPL_RESTRICTED) {}
+            }
             val typeParameter = TypeVariableName("V")
             addModifiers(KModifier.OVERRIDE, KModifier.OPERATOR)
             addTypeVariable(typeParameter)
             addParameter("key", parameter.parameterizedBy(typeParameter))
             addParameter("value", typeParameter)
             addStatement("%N[key.id] = %N", mapProperty, "value")
+        }
+
+        function("contains") {
+            addModifiers(KModifier.OVERRIDE, KModifier.OPERATOR)
+            returns(BOOLEAN)
+            addParameter("key", parameter.parameterizedBy(STAR))
+            addStatement("return key.id in optionsMap")
         }
 
         function("get") {

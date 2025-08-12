@@ -41,6 +41,14 @@ internal val KDOC_OPTIONS_SET = """
     Set the [value] for option specified by [key], overriding any previous value for that option.
 """.trimIndent()
 
+internal val KDOC_OPTIONS_CONTAINS = """
+    Check if an option specified by [key] has a value set.
+    
+    Note: trying to read an option (by using [get]) that has not been set will result in an exception.
+
+    @return true if the option has a value set, false otherwise
+""".trimIndent()
+
 internal val experimentalLevelNames = listOf(
     CompilerArgumentsLevelNames.commonKlibBasedArguments,
     CompilerArgumentsLevelNames.jsArguments,

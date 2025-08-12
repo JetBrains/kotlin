@@ -15,25 +15,66 @@ import kotlin.io.path.deleteExisting
 import kotlin.io.path.isRegularFile
 import kotlin.io.path.walk
 
+/**
+ * Arguments are as follows:
+ * 1. `<path>` - Output directory for generated classes
+ * 2. `"api"` - (optional) turns on API classes generation and marks the start of parameters for the API generator:
+ *     1. `"*"` or `<argumentsLevelName1,argumentsLevelName2>` -
+ *     generate classes for all levels (`*`) or only generate classes for the specified list of argument level names and their parents
+ *     (see CompilerArgumentsLevelNames.kt)
+ *     2. `<package>` - (optional) the target package for generated arguments
+ * 2. `"impl"` - (optional) turns on implementation classes generator and marks the start of parameters for the implementation generator:
+ *     1. `"*"` or `<argumentsLevelName1,argumentsLevelName2>` -
+ *     generate classes for all levels (`*`) or only generate classes for the specified list of argument level names and their parents
+ *     (see CompilerArgumentsLevelNames.kt)
+ *     2. `<package>` - (optional) the target package for generated arguments
+ *
+ * You must specify at least one of "api" or "impl", and if both are specified "api" must come before "impl".
+ */
 fun main(args: Array<String>) {
     val genDir = Paths.get(args[0])
-    val apiOnly = args[1] == "api"
-    val generator = if (apiOnly) {
-        BtaApiGenerator()
-    } else {
-        BtaImplGenerator()
-    }
-    val levels = mutableListOf<Pair<KotlinCompilerArgumentsLevel, TypeName?>>(kotlinCompilerArguments.topLevel to null)
+    val apiArgsStart = args.indexOf("api").let { if (it == -1) null else it }
+    val implArgsStart = args.indexOf("impl").let { if (it == -1) null else it }
+
     val generatedFiles = mutableListOf<Path>()
-    while (levels.isNotEmpty()) {
-        val level = levels.popLast()
-        val output = generator.generateArgumentsForLevel(level.first, level.second)
-        output.generatedFiles.forEach { (path, content) ->
-            val genFile = genDir.resolve(path)
-            GeneratorsFileUtil.writeFileIfContentChanged(genFile.toFile(), content, logNotChanged = false)
-            generatedFiles.add(genFile)
+    listOfNotNull(
+        apiArgsStart?.let { args.copyOfRange(apiArgsStart, implArgsStart ?: args.size) },
+        implArgsStart?.let { args.copyOfRange(implArgsStart, args.size) }
+    ).map { localArgs ->
+        val allowedLevels = if (localArgs[1] == "*") {
+            null
+        } else {
+            localArgs[1].split(",").flatMap { leafName -> kotlinCompilerArguments.topLevel.findPathToLeaf(leafName) }.toSet()
         }
-        levels += level.first.nestedLevels.map { it to output.argumentTypeName }
+        val targetPackage = if (localArgs.size > 2) {
+            localArgs[2]
+        } else null
+        when (localArgs[0]) {
+            "api" -> {
+                BtaApiGenerator(targetPackage ?: API_PACKAGE) to allowedLevels
+            }
+            "impl" -> {
+                BtaImplGenerator(targetPackage ?: IMPL_PACKAGE) to allowedLevels
+            }
+            else -> {
+                error("Only `api` and `impl` are supported as arguments for the main function of the options generator")
+            }
+        }
+    }.forEach { (generator, allowedLevels) ->
+        val levelsToProcess = mutableListOf(LevelWithParent(kotlinCompilerArguments.topLevel, null))
+        while (levelsToProcess.isNotEmpty()) {
+            val currentLevel = levelsToProcess.popLast()
+            if (allowedLevels != null && currentLevel.level !in allowedLevels) {
+                continue
+            }
+            val output = generator.generateArgumentsForLevel(currentLevel.level, currentLevel.parentName)
+            output.generatedFiles.forEach { (path, content) ->
+                val genFile = genDir.resolve(path)
+                GeneratorsFileUtil.writeFileIfContentChanged(genFile.toFile(), content, logNotChanged = false)
+                generatedFiles.add(genFile)
+            }
+            levelsToProcess += currentLevel.level.nestedLevels.map { LevelWithParent(it, output.argumentTypeName) }
+        }
     }
     genDir.walk().filter { it.isRegularFile() }.forEach {
         if (it !in generatedFiles) {
@@ -43,7 +84,7 @@ fun main(args: Array<String>) {
     }
 }
 
-interface BtaGenerator {
+internal interface BtaGenerator {
     fun generateArgumentsForLevel(
         level: KotlinCompilerArgumentsLevel,
         parentClass: TypeName? = null,
@@ -51,4 +92,19 @@ interface BtaGenerator {
     ): GeneratorOutputs
 }
 
-class GeneratorOutputs(val argumentTypeName: TypeName, val generatedFiles: List<Pair<Path, String>>)
+internal class GeneratorOutputs(val argumentTypeName: TypeName, val generatedFiles: List<Pair<Path, String>>)
+private class LevelWithParent(val level: KotlinCompilerArgumentsLevel, val parentName: TypeName?)
+
+private fun KotlinCompilerArgumentsLevel.findPathToLeaf(leafName: String): Set<KotlinCompilerArgumentsLevel> {
+    if (name == leafName) {
+        return setOf(this)
+    }
+
+    for (nestedLevel in nestedLevels) {
+        val path = nestedLevel.findPathToLeaf(leafName)
+        if (path.isNotEmpty()) {
+            return setOf(this) + path
+        }
+    }
+    return emptySet()
+}
