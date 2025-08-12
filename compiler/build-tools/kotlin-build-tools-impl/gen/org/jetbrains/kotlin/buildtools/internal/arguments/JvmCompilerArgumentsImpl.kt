@@ -102,6 +102,8 @@ internal class JvmCompilerArgumentsImpl : CommonCompilerArgumentsImpl(), JvmComp
     optionsMap[key.id] = `value`
   }
 
+  override operator fun contains(key: JvmCompilerArguments.JvmCompilerArgument<*>): Boolean = key.id in optionsMap
+
   @Suppress("UNCHECKED_CAST")
   public operator fun <V> `get`(key: JvmCompilerArgument<V>): V = optionsMap[key.id] as V
 
@@ -187,12 +189,6 @@ internal class JvmCompilerArgumentsImpl : CommonCompilerArgumentsImpl(), JvmComp
     return arguments
   }
 
-  /**
-   * Base class for [JvmCompilerArguments] options.
-   *
-   * @see get
-   * @see set    
-   */
   public class JvmCompilerArgument<V>(
     public val id: String,
   )

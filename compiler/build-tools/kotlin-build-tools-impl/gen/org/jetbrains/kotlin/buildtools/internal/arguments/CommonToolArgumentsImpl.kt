@@ -34,6 +34,8 @@ internal open class CommonToolArgumentsImpl : ArgumentsCommonToolArguments {
     optionsMap[key.id] = `value`
   }
 
+  override operator fun contains(key: ArgumentsCommonToolArguments.CommonToolArgument<*>): Boolean = key.id in optionsMap
+
   @Suppress("UNCHECKED_CAST")
   public operator fun <V> `get`(key: CommonToolArgument<V>): V = optionsMap[key.id] as V
 
@@ -53,12 +55,6 @@ internal open class CommonToolArgumentsImpl : ArgumentsCommonToolArguments {
     return arguments
   }
 
-  /**
-   * Base class for [ArgumentsCommonToolArguments] options.
-   *
-   * @see get
-   * @see set    
-   */
   public class CommonToolArgument<V>(
     public val id: String,
   )

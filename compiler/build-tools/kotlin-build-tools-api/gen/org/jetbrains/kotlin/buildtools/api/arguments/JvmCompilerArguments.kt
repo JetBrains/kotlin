@@ -28,6 +28,15 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
   public operator fun <V> `set`(key: JvmCompilerArgument<V>, `value`: V)
 
   /**
+   * Check if an option specified by [key] has a value set.
+   *
+   * Note: trying to read an option (by using [get]) that has not been set will result in an exception.
+   *
+   * @return true if the option has a value set, false otherwise
+   */
+  public operator fun contains(key: JvmCompilerArgument<*>): Boolean
+
+  /**
    * Base class for [JvmCompilerArguments] options.
    *
    * @see get
