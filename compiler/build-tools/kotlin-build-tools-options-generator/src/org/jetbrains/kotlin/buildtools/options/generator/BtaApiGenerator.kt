@@ -20,13 +20,13 @@ import kotlin.reflect.KClass
 import kotlin.reflect.KProperty1
 import kotlin.reflect.full.isSubclassOf
 
-class BtaApiGenerator() : BtaGenerator {
+internal class BtaApiGenerator(private val targetPackage: String) : BtaGenerator {
     private val outputs = mutableListOf<Pair<Path, String>>()
 
     override fun generateArgumentsForLevel(level: KotlinCompilerArgumentsLevel, parentClass: TypeName?, skipXX: Boolean): GeneratorOutputs {
         val className = level.name.capitalizeAsciiOnly()
         val mainFileAppendable = createGeneratedFileAppendable()
-        val mainFile = FileSpec.builder(API_PACKAGE, className).apply {
+        val mainFile = FileSpec.builder(targetPackage, className).apply {
             addType(
                 TypeSpec.interfaceBuilder(className).apply {
                     addKdoc(KDOC_SINCE_2_3_0)
@@ -34,8 +34,9 @@ class BtaApiGenerator() : BtaGenerator {
                         addAnnotation(ANNOTATION_EXPERIMENTAL)
                     }
                     parentClass?.let { addSuperinterface(it) }
-                    val argument = generateArgumentType(className)
-                    val argumentTypeName = ClassName(API_PACKAGE, className, argument)
+                    val argument =
+                        generateArgumentType(className, CodeBlock.of(KDOC_BASE_OPTIONS_CLASS, ClassName(targetPackage, className)))
+                    val argumentTypeName = ClassName(targetPackage, className, argument)
                     generateGetPutFunctions(argumentTypeName)
                     addType(TypeSpec.companionObjectBuilder().apply {
                         generateOptions(level.filterOutDroppedArguments(), argumentTypeName, skipXX)
@@ -45,7 +46,7 @@ class BtaApiGenerator() : BtaGenerator {
         }.build()
         mainFile.writeTo(mainFileAppendable)
         outputs += Path(mainFile.relativePath) to mainFileAppendable.toString()
-        return GeneratorOutputs(ClassName(API_PACKAGE, className), outputs)
+        return GeneratorOutputs(ClassName(targetPackage, className), outputs)
     }
 
     private fun TypeSpec.Builder.generateOptions(
@@ -78,7 +79,7 @@ class BtaApiGenerator() : BtaGenerator {
                                 // then the enum is not experimental itself
                                 enumsExperimental[type] = false
                             }
-                            ClassName("$API_PACKAGE.enums", type.simpleName!!)
+                            ClassName("$targetPackage.enums", type.simpleName!!)
                         }
                         else -> {
                             it.asTypeName()
@@ -110,7 +111,7 @@ class BtaApiGenerator() : BtaGenerator {
         sourceEnum: Collection<Enum<*>>,
         nameAccessor: KProperty1<Any, String>,
     ): TypeSpec.Builder {
-        val className = ClassName("$API_PACKAGE.enums", sourceEnum.first()::class.simpleName!!)
+        val className = ClassName("$targetPackage.enums", sourceEnum.first()::class.simpleName!!)
         return TypeSpec.enumBuilder(className).apply {
             property<String>("stringValue") {
                 initializer("stringValue")
@@ -127,7 +128,7 @@ class BtaApiGenerator() : BtaGenerator {
     }
 
     fun writeEnumFile(typeSpec: TypeSpec, sourceEnum: KClass<*>) {
-        val className = ClassName("$API_PACKAGE.enums", sourceEnum.simpleName!!)
+        val className = ClassName("$targetPackage.enums", sourceEnum.simpleName!!)
         val enumFileAppendable = createGeneratedFileAppendable()
         val enumFile = FileSpec.builder(className).apply {
             addType(typeSpec)
@@ -136,56 +137,44 @@ class BtaApiGenerator() : BtaGenerator {
         outputs += Path(enumFile.relativePath) to enumFileAppendable.toString()
     }
 
-
-    fun TypeSpec.Builder.generateArgumentType(argumentsClassName: String): String {
-        require(argumentsClassName.endsWith("Arguments"))
-        val argumentTypeName = argumentsClassName.removeSuffix("s")
-        val typeSpec = TypeSpec.Companion.classBuilder(argumentTypeName).apply {
-            addKdoc(KDOC_BASE_OPTIONS_CLASS, ClassName(API_PACKAGE, argumentsClassName))
-            addTypeVariable(TypeVariableName.Companion("V"))
-            property<String>("id") {
-                initializer("id")
-            }
-            primaryConstructor(FunSpec.Companion.constructorBuilder().addParameter("id", String::class).build())
-        }.build()
-        addType(typeSpec)
-        return argumentTypeName
-    }
-
     fun TypeSpec.Builder.generateGetPutFunctions(parameter: ClassName) {
         function("get") {
             addKdoc(KDOC_OPTIONS_GET)
-            addModifiers(KModifier.ABSTRACT)
+            addModifiers(KModifier.OPERATOR, KModifier.ABSTRACT)
             val typeParameter = TypeVariableName("V")
             returns(typeParameter)
-            addModifiers(KModifier.OPERATOR)
             addTypeVariable(typeParameter)
             addParameter("key", parameter.parameterizedBy(typeParameter))
         }
         function("set") {
             addKdoc(KDOC_OPTIONS_SET)
-            addModifiers(KModifier.ABSTRACT)
+            addModifiers(KModifier.OPERATOR, KModifier.ABSTRACT)
             val typeParameter = TypeVariableName("V")
-            addModifiers(KModifier.OPERATOR)
             addTypeVariable(typeParameter)
             addParameter("key", parameter.parameterizedBy(typeParameter))
             addParameter("value", typeParameter)
         }
+
+        function("contains") {
+            addKdoc(KDOC_OPTIONS_CONTAINS)
+            addModifiers(KModifier.OPERATOR, KModifier.ABSTRACT)
+            returns(BOOLEAN)
+            addParameter("key", parameter.parameterizedBy(STAR))
+        }
     }
 }
 
-fun TypeSpec.Builder.generateArgumentType(argumentsClassName: String): String {
+internal fun TypeSpec.Builder.generateArgumentType(argumentsClassName: String, kDoc: CodeBlock? = null): String {
     require(argumentsClassName.endsWith("Arguments"))
     val argumentTypeName = argumentsClassName.removeSuffix("s")
-    val typeSpec =
-        TypeSpec.classBuilder(argumentTypeName).apply {
-            addKdoc(KDOC_BASE_OPTIONS_CLASS, ClassName(API_PACKAGE, argumentsClassName))
-            addTypeVariable(TypeVariableName("V"))
-            property<String>("id") {
-                initializer("id")
-            }
-            primaryConstructor(FunSpec.constructorBuilder().addParameter("id", String::class).build())
-        }.build()
+    val typeSpec = TypeSpec.classBuilder(argumentTypeName).apply {
+        kDoc?.let { addKdoc(it) }
+        addTypeVariable(TypeVariableName("V"))
+        property<String>("id") {
+            initializer("id")
+        }
+        primaryConstructor(FunSpec.constructorBuilder().addParameter("id", String::class).build())
+    }.build()
     addType(typeSpec)
     return argumentTypeName
 }

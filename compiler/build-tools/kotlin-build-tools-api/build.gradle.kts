@@ -45,16 +45,16 @@ projectTest(jUnitMode = JUnitMode.JUnit5) {
     useJUnitPlatform()
 }
 
-
 generatedSourcesTask(
     taskName = "generateBtaArguments",
     generatorProject = ":compiler:build-tools:kotlin-build-tools-options-generator",
-    generatorRoot = "compiler/build-tools/kotlin-build-tools-impl/src",
+    generatorRoot = "compiler/build-tools/kotlin-build-tools-options-generator/src",
     generatorMainClass = "org.jetbrains.kotlin.buildtools.options.generator.MainKt",
     argsProvider = { generationRoot ->
         listOf(
             generationRoot.toString(),
-            "api"
+            "api",
+            "jvmCompilerArguments",
         )
     }
 )
