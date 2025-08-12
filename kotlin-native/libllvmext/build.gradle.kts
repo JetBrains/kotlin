@@ -35,27 +35,8 @@ native {
     val obj = if (HostManager.hostIsMingw) "obj" else "o"
     val cxxflags = mutableListOf(
         // Using the same flags as the release llvm build.
-        "-Werror=date-time",
-        "-Werror=unguarded-availability-new",
+        // But only keep -Wall diagnostics.
         "-Wall",
-        "-Wextra",
-        "-Wno-unused-parameter",
-        "-Wwrite-strings",
-        "-Wcast-qual",
-        "-Wmissing-field-initializers",
-        "-pedantic",
-        "-Wno-long-long",
-        "-Wc++98-compat-extra-semi",
-        "-Wimplicit-fallthrough",
-        "-Wcovered-switch-default",
-        "-Wno-noexcept-type",
-        "-Wnon-virtual-dtor",
-        "-Wdelete-non-virtual-dtor",
-        "-Wsuggest-override",
-        "-Wno-comment",
-        "-Wstring-conversion",
-        "-Wmisleading-indentation",
-        "-Wctad-maybe-unsupported",
         "-O3",
         "-DNDEBUG",
         "-std=c++17",
@@ -71,7 +52,10 @@ native {
             cxxflags.addAll(listOf("-DKONAN_LINUX=1"))
         }
         MINGW -> {
-            cxxflags += listOf("-DKONAN_WINDOWS=1", "-Wno-unused-command-line-argument")
+            cxxflags += listOf(
+                "-DKONAN_WINDOWS=1",
+                "-Wno-unused-command-line-argument",
+            )
         }
         OSX -> {
             cxxflags += "-DKONAN_MACOS=1"
