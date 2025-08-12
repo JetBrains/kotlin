@@ -156,23 +156,7 @@ open class LocalDeclarationsLowering(
         ).lowerLocalDeclarations()
     }
 
-    fun lower(irElement: IrElement, container: IrDeclaration, classesToLower: Set<IrClass>) {
-        LocalDeclarationsTransformer(
-            irElement = irElement,
-            container = container,
-            transformedDeclarations = transformedDeclarations,
-            newParameterToCaptured = newParameterToCaptured,
-            newParameterToOld = newParameterToOld,
-            oldParameterToNew = oldParameterToNew,
-            closestParent = null,
-            classesToLower = classesToLower
-        ).lowerLocalDeclarations()
-    }
-
-    fun lower(
-        irBlock: IrBlock, container: IrDeclaration, closestParent: IrDeclarationParent,
-        classesToLower: Set<IrClass>? = null, functionsToSkip: Set<IrSimpleFunction>? = null,
-    ) {
+    fun lower(irBlock: IrBlock, container: IrDeclaration, closestParent: IrDeclarationParent) {
         LocalDeclarationsTransformer(
             irElement = irBlock,
             container = container,
@@ -181,8 +165,6 @@ open class LocalDeclarationsLowering(
             newParameterToOld = newParameterToOld,
             oldParameterToNew = oldParameterToNew,
             closestParent = closestParent,
-            classesToLower = classesToLower,
-            functionsToSkip = functionsToSkip
         ).lowerLocalDeclarations()
     }
 
@@ -374,7 +356,6 @@ open class LocalDeclarationsLowering(
         val newParameterToOld: MutableMap<IrValueParameter, IrValueParameter>,
         val oldParameterToNew: MutableMap<IrValueParameter, IrValueParameter>,
         val closestParent: IrDeclarationParent? = null,
-        val classesToLower: Set<IrClass>? = null, val functionsToSkip: Set<IrSimpleFunction>? = null,
     ) {
         val localFunctions: MutableMap<IrFunction, LocalFunctionContext> = LinkedHashMap()
         val localClasses: MutableMap<IrClass, LocalClassContext> = LinkedHashMap()
@@ -1262,8 +1243,6 @@ open class LocalDeclarationsLowering(
                 }
 
                 override fun visitSimpleFunction(declaration: IrSimpleFunction, data: Data) {
-                    if (functionsToSkip?.contains(declaration) == true) return
-
                     if (declaration.visibility == DescriptorVisibilities.LOCAL) {
                         val enclosingScope = data.currentScope
                             ?: enclosingField?.getOrCreateScopeWithCounter()
@@ -1320,7 +1299,6 @@ open class LocalDeclarationsLowering(
                 }
 
                 override fun visitClass(declaration: IrClass, data: Data) {
-                    if (classesToLower?.contains(declaration) == false) return
                     super.visitClass(declaration, data.withCurrentClass(declaration))
 
                     if (!declaration.isLocalNotInner()) return
