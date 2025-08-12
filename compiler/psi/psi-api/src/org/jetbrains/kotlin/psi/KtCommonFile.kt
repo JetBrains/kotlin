@@ -23,6 +23,7 @@ import org.jetbrains.kotlin.name.Name
 import org.jetbrains.kotlin.psi.psiUtil.children
 import org.jetbrains.kotlin.psi.psiUtil.hasExpectModifier
 import org.jetbrains.kotlin.psi.stubs.KotlinFileStub
+import org.jetbrains.kotlin.psi.stubs.KotlinFileStubKind
 import org.jetbrains.kotlin.psi.stubs.KotlinImportDirectiveStub
 import org.jetbrains.kotlin.psi.stubs.elements.KtStubElementType
 
@@ -270,11 +271,17 @@ open class KtCommonFile(viewProvider: FileViewProvider, val isCompiled: Boolean)
     fun hasTopLevelCallables(): Boolean {
         hasTopLevelCallables?.let { return it }
 
-        val result = declarations.any {
-            (it is KtProperty ||
-                    it is KtNamedFunction ||
-                    it is KtScript ||
-                    it is KtTypeAlias) && !it.hasExpectModifier()
+        val greenStub = greenStub
+        val result = if (greenStub != null) {
+            greenStub.kind is KotlinFileStubKind.WithPackage.Facade
+        } else {
+            node.children().any {
+                val psi = it.psi
+                (psi is KtProperty ||
+                        psi is KtNamedFunction ||
+                        psi is KtScript ||
+                        psi is KtTypeAlias) && !psi.hasExpectModifier()
+            }
         }
 
         hasTopLevelCallables = result
