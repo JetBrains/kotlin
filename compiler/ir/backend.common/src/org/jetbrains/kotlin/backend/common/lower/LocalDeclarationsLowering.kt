@@ -165,6 +165,7 @@ open class LocalDeclarationsLowering(
             newParameterToOld = newParameterToOld,
             oldParameterToNew = oldParameterToNew,
             closestParent = closestParent,
+            dontCaptureOutsideOfContainer = true
         ).lowerLocalDeclarations()
     }
 
@@ -370,6 +371,7 @@ open class LocalDeclarationsLowering(
         val newParameterToOld: MutableMap<IrValueParameter, IrValueParameter>,
         val oldParameterToNew: MutableMap<IrValueParameter, IrValueParameter>,
         val closestParent: IrDeclarationParent? = null,
+        val dontCaptureOutsideOfContainer: Boolean = false,
     ) {
         val localFunctions: MutableMap<IrFunction, LocalFunctionContext> = LinkedHashMap()
         val localClasses: MutableMap<IrClass, LocalClassContext> = LinkedHashMap()
@@ -1167,16 +1169,33 @@ open class LocalDeclarationsLowering(
                 }
             }
 
-        private fun collectClosureForLocalDeclarations() {
-            //TODO: maybe use for granular declarations
-            val annotator = ClosureAnnotator(irElement, container, closureBuilders)
-
+        private inline fun setClosures(block: (IrDeclaration) -> Closure) {
             localFunctions.forEach { (declaration, context) ->
-                context.closure = annotator.getFunctionClosure(declaration)
+                context.closure = block(declaration)
             }
 
             localClasses.forEach { (declaration, context) ->
-                context.closure = annotator.getClassClosure(declaration)
+                context.closure = block(declaration)
+            }
+        }
+
+        private fun collectClosureForLocalDeclarations() {
+            if (dontCaptureOutsideOfContainer) {
+                val annotator = ClosureAnnotator(irElement, closureBuilders, closestParent = closestParent as? IrDeclaration)
+
+                val rootCapturedValues = annotator.rootClosure.capturedValues.toSet()
+                val rootCapturedTypeParameters = annotator.rootClosure.capturedTypeParameters.toSet()
+
+                setClosures {
+                    val closure = annotator.getClosure(it)
+                    Closure(
+                        closure.capturedValues - rootCapturedValues,
+                        closure.capturedTypeParameters - rootCapturedTypeParameters,
+                    )
+                }
+            } else {
+                val annotator = ClosureAnnotator(irElement, container, closureBuilders)
+                setClosures { annotator.getClosure(it) }
             }
         }
 
