@@ -1,24 +1,24 @@
 import abitestutils.abiTest
 
 fun box() = abiTest {
-    expectFailure(linkage("Function 'topLevelInlineFunction' can not be called: No function found for symbol '/topLevelInlineFunction'")) { directCall1() }
-    expectFailure(linkage("Function 'topLevelInlineFunctionWithParam' can not be called: No function found for symbol '/topLevelInlineFunctionWithParam'")) { directCall2() }
-    expectFailure(linkage("Function 'topLevelInlineFunctionWithReceiver' can not be called: No function found for symbol '/topLevelInlineFunctionWithReceiver'")) { directCall3() }
-    expectFailure(linkage("Function 'classlInlineFunction' can not be called: No function found for symbol '/C.classlInlineFunction'")) { directCall4() }
-    expectFailure(linkage("Function 'classlInlineFunctionWithParam' can not be called: No function found for symbol '/C.classlInlineFunctionWithParam'")) { directCall5() }
-    expectFailure(linkage("Function 'classlInlineFunctionWithReceiver' can not be called: No function found for symbol '/C.classlInlineFunctionWithReceiver'")) { directCall6() }
+    expectSuccess("topLevelInlineFunction") { directCall1() }
+    expectSuccess("topLevelInlineFunctionWithParam directParamValue") { directCall2() }
+    expectSuccess("directReceiverValue.topLevelInlineFunctionWithReceiver with context directContextValue") { directCall3() }
+    expectSuccess("classlInlineFunction") { directCall4() }
+    expectSuccess("classlInlineFunctionWithParam directClassParamValue") { directCall5() }
+    expectSuccess("directClassReceiverValue.classlInlineFunctionWithReceiver with context directClassContextValue") { directCall6() }
 
-    expectFailure(linkage("Function 'topLevelInlineFunction' can not be called: No function found for symbol '/topLevelInlineFunction'")) { inlineCall1() }
-    expectFailure(linkage("Function 'topLevelInlineFunctionWithParam' can not be called: No function found for symbol '/topLevelInlineFunctionWithParam'")) { inlineCall2() }
-    expectFailure(linkage("Function 'topLevelInlineFunctionWithReceiver' can not be called: No function found for symbol '/topLevelInlineFunctionWithReceiver'")) { inlineCall3() }
-    expectFailure(linkage("Function 'classlInlineFunction' can not be called: No function found for symbol '/C.classlInlineFunction'")) { inlineCall4() }
-    expectFailure(linkage("Function 'classlInlineFunctionWithParam' can not be called: No function found for symbol '/C.classlInlineFunctionWithParam'")) { inlineCall5() }
-    expectFailure(linkage("Function 'classlInlineFunctionWithReceiver' can not be called: No function found for symbol '/C.classlInlineFunctionWithReceiver'")) { inlineCall6() }
+    expectSuccess("topLevelInlineFunction") { directCall7() }
+    expectSuccess("topLevelInlineFunctionWithParam inlineParamValue") { directCall8() }
+    expectSuccess("inlineReceiverValue.topLevelInlineFunctionWithReceiver with context inlineContextValue") { directCall9() }
+    expectSuccess("classlInlineFunction") { directCall10() }
+    expectSuccess("classlInlineFunctionWithParam inlineClassParamValue") { directCall11() }
+    expectSuccess("inlineClassReceiverValue.classlInlineFunctionWithReceiver with context inlineClassContextValue") { directCall12() }
 
-    expectFailure(linkage("Function 'topLevelInlineFunction' can not be called: No function found for symbol '/topLevelInlineFunction'")) { lambdaCall1() }
-    expectFailure(linkage("Function 'topLevelInlineFunctionWithParam' can not be called: No function found for symbol '/topLevelInlineFunctionWithParam'")) { lambdaCall2() }
-    expectFailure(linkage("Function 'topLevelInlineFunctionWithReceiver' can not be called: No function found for symbol '/topLevelInlineFunctionWithReceiver'")) { lambdaCall3() }
-    expectFailure(linkage("Function 'classlInlineFunction' can not be called: No function found for symbol '/C.classlInlineFunction'")) { lambdaCall4() }
-    expectFailure(linkage("Function 'classlInlineFunctionWithParam' can not be called: No function found for symbol '/C.classlInlineFunctionWithParam'")) { lambdaCall5() }
-    expectFailure(linkage("Function 'classlInlineFunctionWithReceiver' can not be called: No function found for symbol '/C.classlInlineFunctionWithReceiver'")) { lambdaCall6() }
+    expectSuccess("topLevelInlineFunction") { directCall13() }
+    expectSuccess("topLevelInlineFunctionWithParam lambdaParamValue") { directCall14() }
+    expectSuccess("lambdaReceiverValue.topLevelInlineFunctionWithReceiver with context lambdaContextValue") { directCall15() }
+    expectSuccess("classlInlineFunction") { directCall16() }
+    expectSuccess("classlInlineFunctionWithParam lambdaClassParamValue") { directCall17() }
+    expectSuccess("lambdaClassReceiverValue.classlInlineFunctionWithReceiver with context lambdaClassContextValue") { directCall18() }
 }
