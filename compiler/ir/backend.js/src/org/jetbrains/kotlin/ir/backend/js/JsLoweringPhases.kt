@@ -114,6 +114,11 @@ private val inventNamesForLocalClassesPhase = makeIrModulePhase(
     name = "InventNamesForLocalClasses",
 )
 
+private val inventNamesForLocalFunctionsPhase = makeIrModulePhase(
+    { _: JsIrBackendContext -> KlibInventNamesForLocalFunctions(suggestUniqueNames = false) },
+    name = "InventNamesForLocalFunctions",
+)
+
 private val annotationInstantiationLowering = makeIrModulePhase(
     ::JsCommonAnnotationImplementationTransformer,
     name = "AnnotationImplementation",
@@ -391,7 +396,7 @@ private val localDelegatedPropertiesLoweringPhase = makeIrModulePhase<JsIrBacken
 )
 
 private val localDeclarationsLoweringPhase = makeIrModulePhase(
-    { context -> LocalDeclarationsLowering(context, suggestUniqueNames = false) },
+    ::LocalDeclarationsLowering,
     name = "LocalDeclarationsLowering",
     prerequisite = setOf(sharedVariablesLoweringPhase, localDelegatedPropertiesLoweringPhase)
 )
@@ -771,6 +776,7 @@ fun getJsLowerings(
     enumClassConstructorLoweringPhase,
     enumClassConstructorBodyLoweringPhase,
     localDelegatedPropertiesLoweringPhase,
+    inventNamesForLocalFunctionsPhase,
     localDeclarationsLoweringPhase,
     localDeclarationExtractionPhase,
     innerClassesLoweringPhase,
