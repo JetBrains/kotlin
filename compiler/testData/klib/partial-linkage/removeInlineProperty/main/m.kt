@@ -1,34 +1,34 @@
 import abitestutils.abiTest
 
 fun box() = abiTest {
-    expectFailure(linkage("Property accessor 'topLevelProperty.<get-topLevelProperty>' can not be called: No property accessor found for symbol '/topLevelProperty.<get-topLevelProperty>'")) { getterDirectCall1() }
-    expectFailure(linkage("Property accessor 'topLevelPropertyWithReceiver.<get-topLevelPropertyWithReceiver>' can not be called: No property accessor found for symbol '/topLevelPropertyWithReceiver.<get-topLevelPropertyWithReceiver>'")) { getterDirectCall2() }
-    expectFailure(linkage("Property accessor 'classProperty.<get-classProperty>' can not be called: No property accessor found for symbol '/C.classProperty.<get-classProperty>'")) { getterDirectCall3() }
-    expectFailure(linkage("Property accessor 'classPropertyWithReceiver.<get-classPropertyWithReceiver>' can not be called: No property accessor found for symbol '/C.classPropertyWithReceiver.<get-classPropertyWithReceiver>'")) { getterDirectCall4() }
+    expectSuccess("topLevelProperty") { getterDirectCall1() }
+    expectSuccess("topLevelPropertyWithReceiver") { getterDirectCall2() }
+    expectSuccess("classProperty") { getterDirectCall3() }
+    expectSuccess("classPropertyWithReceiver") { getterDirectCall4() }
 
-    expectFailure(linkage("Property accessor 'topLevelProperty.<get-topLevelProperty>' can not be called: No property accessor found for symbol '/topLevelProperty.<get-topLevelProperty>'")) { getterInlineCall1() }
-    expectFailure(linkage("Property accessor 'topLevelPropertyWithReceiver.<get-topLevelPropertyWithReceiver>' can not be called: No property accessor found for symbol '/topLevelPropertyWithReceiver.<get-topLevelPropertyWithReceiver>'")) { getterInlineCall2() }
-    expectFailure(linkage("Property accessor 'classProperty.<get-classProperty>' can not be called: No property accessor found for symbol '/C.classProperty.<get-classProperty>'")) { getterInlineCall3() }
-    expectFailure(linkage("Property accessor 'classPropertyWithReceiver.<get-classPropertyWithReceiver>' can not be called: No property accessor found for symbol '/C.classPropertyWithReceiver.<get-classPropertyWithReceiver>'")) { getterInlineCall4() }
+    expectSuccess("topLevelProperty") { getterDirectCall5() }
+    expectSuccess("topLevelPropertyWithReceiver") { getterDirectCall6() }
+    expectSuccess("classProperty") { getterDirectCall7() }
+    expectSuccess("classPropertyWithReceiver") { getterDirectCall8() }
 
-    expectFailure(linkage("Property accessor 'topLevelProperty.<get-topLevelProperty>' can not be called: No property accessor found for symbol '/topLevelProperty.<get-topLevelProperty>'")) { getterLambdaCall1() }
-    expectFailure(linkage("Property accessor 'topLevelPropertyWithReceiver.<get-topLevelPropertyWithReceiver>' can not be called: No property accessor found for symbol '/topLevelPropertyWithReceiver.<get-topLevelPropertyWithReceiver>'")) { getterLambdaCall2() }
-    expectFailure(linkage("Property accessor 'classProperty.<get-classProperty>' can not be called: No property accessor found for symbol '/C.classProperty.<get-classProperty>'")) { getterLambdaCall3() }
-    expectFailure(linkage("Property accessor 'classPropertyWithReceiver.<get-classPropertyWithReceiver>' can not be called: No property accessor found for symbol '/C.classPropertyWithReceiver.<get-classPropertyWithReceiver>'")) { getterLambdaCall4() }
+    expectSuccess("topLevelProperty") { getterDirectCall9() }
+    expectSuccess("topLevelPropertyWithReceiver") { getterDirectCall10() }
+    expectSuccess("classProperty") { getterDirectCall11() }
+    expectSuccess("classPropertyWithReceiver") { getterDirectCall12() }
 
 
-    expectFailure(linkage("Property accessor 'topLevelProperty.<set-topLevelProperty>' can not be called: No property accessor found for symbol '/topLevelProperty.<set-topLevelProperty>'")) { setterDirectCall1() }
-    expectFailure(linkage("Property accessor 'topLevelPropertyWithReceiver.<set-topLevelPropertyWithReceiver>' can not be called: No property accessor found for symbol '/topLevelPropertyWithReceiver.<set-topLevelPropertyWithReceiver>'")) { setterDirectCall2() }
-    expectFailure(linkage("Property accessor 'classProperty.<set-classProperty>' can not be called: No property accessor found for symbol '/C.classProperty.<set-classProperty>'")) { setterDirectCall3() }
-    expectFailure(linkage("Property accessor 'classPropertyWithReceiver.<set-classPropertyWithReceiver>' can not be called: No property accessor found for symbol '/C.classPropertyWithReceiver.<set-classPropertyWithReceiver>'")) { setterDirectCall4() }
+    expectSuccess("directSetterValue") { setterDirectCall1() }
+    expectSuccess("directReceiverValue.directSetterValue with context directContextValue") { setterDirectCall2() }
+    expectSuccess("directClassSetterValue") { setterDirectCall3() }
+    expectSuccess("directClassReceiverValue.directClassSetterValue with context directClassContextValue") { setterDirectCall4() }
 
-    expectFailure(linkage("Property accessor 'topLevelProperty.<set-topLevelProperty>' can not be called: No property accessor found for symbol '/topLevelProperty.<set-topLevelProperty>'")) { setterInlineCall1() }
-    expectFailure(linkage("Property accessor 'topLevelPropertyWithReceiver.<set-topLevelPropertyWithReceiver>' can not be called: No property accessor found for symbol '/topLevelPropertyWithReceiver.<set-topLevelPropertyWithReceiver>'")) { setterInlineCall2() }
-    expectFailure(linkage("Property accessor 'classProperty.<set-classProperty>' can not be called: No property accessor found for symbol '/C.classProperty.<set-classProperty>'")) { setterInlineCall3() }
-    expectFailure(linkage("Property accessor 'classPropertyWithReceiver.<set-classPropertyWithReceiver>' can not be called: No property accessor found for symbol '/C.classPropertyWithReceiver.<set-classPropertyWithReceiver>'")) { setterInlineCall4() }
+    expectSuccess("inlineSetterValue") { setterDirectCall5() }
+    expectSuccess("inlineReceiverValue.inlineSetterValue with context inlineContextValue") { setterDirectCall6() }
+    expectSuccess("inlineClassSetterValue") { setterDirectCall7() }
+    expectSuccess("inlineClassReceiverValue.inlineClassSetterValue with context inlineClassContextValue") { setterDirectCall8() }
 
-    expectFailure(linkage("Property accessor 'topLevelProperty.<set-topLevelProperty>' can not be called: No property accessor found for symbol '/topLevelProperty.<set-topLevelProperty>'")) { setterLambdaCall1() }
-    expectFailure(linkage("Property accessor 'topLevelPropertyWithReceiver.<set-topLevelPropertyWithReceiver>' can not be called: No property accessor found for symbol '/topLevelPropertyWithReceiver.<set-topLevelPropertyWithReceiver>'")) { setterLambdaCall2() }
-    expectFailure(linkage("Property accessor 'classProperty.<set-classProperty>' can not be called: No property accessor found for symbol '/C.classProperty.<set-classProperty>'")) { setterLambdaCall3() }
-    expectFailure(linkage("Property accessor 'classPropertyWithReceiver.<set-classPropertyWithReceiver>' can not be called: No property accessor found for symbol '/C.classPropertyWithReceiver.<set-classPropertyWithReceiver>'")) { setterLambdaCall4() }
+    expectSuccess("lambdaSetterValue") { setterDirectCall9() }
+    expectSuccess("lambdaReceiverValue.lambdaSetterValue with context lambdaContextValue") { setterDirectCall10() }
+    expectSuccess("lambdaClassSetterValue") { setterDirectCall11() }
+    expectSuccess("lambdaClassReceiverValue.lambdaClassSetterValue with context lambdaClassContextValue") { setterDirectCall12() }
 }
