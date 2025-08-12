@@ -21,7 +21,7 @@ import java.nio.file.Path
  *  ```
  *   val toolchain = KotlinToolchain.loadImplementation(ClassLoader.getSystemClassLoader())
  *   val operation = toolchain.jvm.createJvmCompilationOperation(listOf(Path("/path/foo.kt")), Path("/path/to/outputDirectory"))
- *   toolchain.executeOperation(operation)
+ *   toolchain.createBuildSession().use { it.executeOperation(operation) }
  *  ```
  *
  * @since 2.3.0
@@ -37,7 +37,7 @@ public interface JvmPlatformToolchain {
      *
      * @param sources all sources of the compilation unit. This includes Java source files.
      * @param destinationDirectory where to put the output of the compilation
-     * @see org.jetbrains.kotlin.buildtools.api.KotlinToolchain.executeOperation
+     * @see org.jetbrains.kotlin.buildtools.api.KotlinToolchain.BuildSession.executeOperation
      */
     public fun createJvmCompilationOperation(sources: List<Path>, destinationDirectory: Path): JvmCompilationOperation
 
@@ -49,7 +49,7 @@ public interface JvmPlatformToolchain {
      * changes in dependent modules have no effect on the current module.
      *
      * @param classpathEntry path to existing classpath entry
-     * @see org.jetbrains.kotlin.buildtools.api.KotlinToolchain.executeOperation
+     * @see org.jetbrains.kotlin.buildtools.api.KotlinToolchain.BuildSession.executeOperation
      */
     public fun createClasspathSnapshottingOperation(classpathEntry: Path): JvmClasspathSnapshottingOperation
 }

@@ -37,7 +37,11 @@ private class SharedApiClassesClassLoaderImpl(
 ) : ClassLoader(@OptIn(KotlinBuildToolsInternalJdkUtils::class) getJdkClassesClassLoader()) {
     override fun loadClass(name: String, resolve: Boolean): Class<*> {
         return if (name.startsWith(allowedPackage)) {
-            parent.loadClass(name)
+            try {
+                parent.loadClass(name)
+            } catch (_: ClassNotFoundException) {
+                super.loadClass(name, resolve)
+            }
         } else {
             super.loadClass(name, resolve)
         }

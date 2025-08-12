@@ -20,8 +20,9 @@ internal const val IMPL_PACKAGE = "org.jetbrains.kotlin.buildtools.internal.argu
 internal const val API_PACKAGE = "org.jetbrains.kotlin.buildtools.api.arguments"
 
 internal val ANNOTATION_EXPERIMENTAL = ClassName(API_PACKAGE, "ExperimentalCompilerArgument")
+internal val ANNOTATION_USE_FROM_IMPL_RESTRICTED = ClassName("org.jetbrains.kotlin.buildtools.internal", "UseFromImplModuleRestricted")
 
-internal val KDOC_SINCE_2_3_0 = "@since 2.3.0"
+internal const val KDOC_SINCE_2_3_0 = "@since 2.3.0"
 internal val KDOC_BASE_OPTIONS_CLASS = """
     Base class for [%T] options.
 

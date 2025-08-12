@@ -41,7 +41,7 @@ import java.util.concurrent.ConcurrentHashMap
 import kotlin.io.path.toPath
 import kotlin.script.experimental.jvm.defaultJvmScriptingHostConfiguration
 
-private val ExitCode.asCompilationResult
+internal val ExitCode.asCompilationResult
     get() = when (this) {
         ExitCode.OK -> CompilationResult.COMPILATION_SUCCESS
         ExitCode.COMPILATION_ERROR -> CompilationResult.COMPILATION_ERROR
@@ -57,7 +57,7 @@ private fun getCurrentClasspath() = (CompilationServiceImpl::class.java.classLoa
  *
  * Example: URL containing "some%20path" should be transformed to a File object pointing to "some path"
  */
-private fun transformUrlToFile(url: URL) = url.toURI().toPath().toFile()
+internal fun transformUrlToFile(url: URL) = url.toURI().toPath().toFile()
 
 internal object CompilationServiceImpl : CompilationService {
     private val buildIdToSessionFlagFile: MutableMap<ProjectId, File> = ConcurrentHashMap()
