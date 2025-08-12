@@ -27,6 +27,11 @@ const val equals3 = <!EVALUATED("false")!>otherStr == someStr<!>
 
 const val toString1 = someStr.<!EVALUATED("123")!>toString()<!>
 
+const val trimIndent1 = """
+    Hello
+    There
+    """.<!EVALUATED("Hello\nThere")!>trimIndent()<!>
+
 // STOP_EVALUATION_CHECKS
 fun box(): String {
     if (plus1.id() != "123other")    return "Fail 1.1"
@@ -48,5 +53,7 @@ fun box(): String {
     if (equals3.id() != false)   return "Fail 5.3"
 
     if (toString1.id() != "123") return "Fail 6.1"
+
+    if (trimIndent1 != "Hello\nThere") return "Fail 7.1"
     return "OK"
 }

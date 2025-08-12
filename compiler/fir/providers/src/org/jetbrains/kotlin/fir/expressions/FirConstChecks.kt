@@ -475,11 +475,13 @@ private class FirConstCheckVisitor(
 
         if (receiverClassId in StandardClassIds.unsignedTypes) return false
 
+        val trimFunctions = listOf("trim", "trimIndent", "trimMargin").map { Name.identifier(it) }
         if (
             name in compileTimeFunctions ||
             name in compileTimeExtensionFunctions ||
             name == OperatorNameConventions.TO_STRING ||
-            name in OperatorNameConventions.NUMBER_CONVERSIONS
+            name in OperatorNameConventions.NUMBER_CONVERSIONS ||
+            name in trimFunctions
         ) return true
 
         if (calleeReference.name == OperatorNameConventions.GET && receiverClassId == StandardClassIds.String) return true
@@ -498,7 +500,7 @@ private class FirConstCheckVisitor(
     }
 
     private fun FirCallableSymbol<*>?.fromKotlin(): Boolean {
-        return this?.callableId?.packageName?.asString() == "kotlin"
+        return this?.callableId?.packageName?.asString()?.startsWith("kotlin") ?: false
     }
 
     private fun FirCallableSymbol<*>?.getReferencedClassSymbol(): FirBasedSymbol<*>? =

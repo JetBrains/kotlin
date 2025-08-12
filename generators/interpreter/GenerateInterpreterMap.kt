@@ -37,6 +37,9 @@ fun generateMap(): String {
         this += Operation(BuiltInOperatorNames.CHECK_NOT_NULL, listOf("T0?"), customExpression = "a!!")
         this += Operation("toString", listOf("Any?"), customExpression = "a?.toString() ?: \"null\"")
         this += Operation("code", listOf("Char"), customExpression = "(a as Char).code")
+        for (name in listOf("trim", "trimIndent", "trimMargin")) {
+            this += Operation(name, listOf("String"))
+        }
         // TODO next operation can be dropped after serialization introduction
         this += Operation("toString", listOf("Unit"), customExpression = "Unit.toString()")
     }

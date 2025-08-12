@@ -90,12 +90,16 @@ sealed class EvaluationMode {
             "floorDiv", "mod", "NumbersKt.floorDiv", "NumbersKt.mod", "<get-code>"
         ).map { StandardClassIds.BASE_KOTLIN_PACKAGE.child(Name.identifier(it)) }.toSet()
 
-        private val allowedBuiltinExtensionFunctions = listOf(
-            BuiltInOperatorNames.LESS, BuiltInOperatorNames.LESS_OR_EQUAL,
-            BuiltInOperatorNames.GREATER, BuiltInOperatorNames.GREATER_OR_EQUAL,
-            BuiltInOperatorNames.EQEQ, BuiltInOperatorNames.IEEE754_EQUALS,
-            BuiltInOperatorNames.ANDAND, BuiltInOperatorNames.OROR
-        ).map { IrBuiltIns.KOTLIN_INTERNAL_IR_FQN.child(Name.identifier(it)) }.toSet()
+        private val allowedBuiltinExtensionFunctions = (
+                listOf(
+                    BuiltInOperatorNames.LESS, BuiltInOperatorNames.LESS_OR_EQUAL,
+                    BuiltInOperatorNames.GREATER, BuiltInOperatorNames.GREATER_OR_EQUAL,
+                    BuiltInOperatorNames.EQEQ, BuiltInOperatorNames.IEEE754_EQUALS,
+                    BuiltInOperatorNames.ANDAND, BuiltInOperatorNames.OROR,
+                ).map { IrBuiltIns.KOTLIN_INTERNAL_IR_FQN.child(Name.identifier(it)) }
+                        +
+                        listOf("trim", "trimIndent", "trimMargin").map { FqName.fromSegments(listOf("kotlin", "text", it)) }
+                ).toSet()
 
         private val allowedOriginsForWhen = setOf(IrStatementOrigin.ANDAND, IrStatementOrigin.OROR)
 

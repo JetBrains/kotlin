@@ -189,6 +189,15 @@ internal fun interpretUnaryFunction(name: String, type: String, a: Any?): Any? {
         "code" -> when (type) {
             "kotlin.Char" -> return (a as Char).code
         }
+        "trim" -> when (type) {
+            "kotlin.String" -> return (a as String).trim()
+        }
+        "trimIndent" -> when (type) {
+            "kotlin.String" -> return (a as String).trimIndent()
+        }
+        "trimMargin" -> when (type) {
+            "kotlin.String" -> return (a as String).trimMargin()
+        }
     }
     throw InterpreterMethodNotFoundError("Unknown function: $name($type)")
 }
