@@ -97,7 +97,6 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
         when {
             it != SanitizerKind.THREAD -> "${it.name} sanitizer is not supported yet"
             produce == CompilerOutputKind.STATIC -> "${it.name} sanitizer is unsupported for static library"
-            produce == CompilerOutputKind.FRAMEWORK && produceStaticFramework -> "${it.name} sanitizer is unsupported for static framework"
             it.toObsoleteKind() !in target.supportedSanitizers()-> "${it.name} sanitizer is unsupported on ${target.name}"
             else -> null
         }?.let { message ->

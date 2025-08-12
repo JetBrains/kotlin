@@ -255,9 +255,6 @@ class MacOSBasedLinker(targetProperties: AppleConfigurables)
         }
 
         if (kind == LinkerOutputKind.STATIC_LIBRARY) {
-            require(sanitizer == null) {
-                "Sanitizers are unsupported"
-            }
             return listOf(Command(libtool).apply {
                 +"-static"
                 +listOf("-o", executable)
