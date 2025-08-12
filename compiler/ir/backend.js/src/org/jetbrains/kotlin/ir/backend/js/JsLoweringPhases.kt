@@ -114,6 +114,11 @@ private val inventNamesForLocalClassesPhase = makeIrModulePhase(
     name = "InventNamesForLocalClasses",
 )
 
+val inventNamesForLocalFunctionsPhase = makeIrModulePhase(
+    ::KlibInventNamesForLocalFunctions,
+    name = "InventNamesForLocalFunctions",
+)
+
 private val annotationInstantiationLowering = makeIrModulePhase(
     ::JsCommonAnnotationImplementationTransformer,
     name = "AnnotationImplementation",
@@ -758,6 +763,7 @@ fun getJsLowerings(
     preventExportOfSyntheticDeclarationsLowering,
     jsStaticLowering,
     inventNamesForLocalClassesPhase,
+    inventNamesForLocalFunctionsPhase,
     collectClassIdentifiersLowering,
     annotationInstantiationLowering,
     expectDeclarationsRemovingPhase,

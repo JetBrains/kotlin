@@ -531,6 +531,11 @@ private val inventNamesForLocalClasses = createFileLoweringPhase(
         name = "InventNamesForLocalClasses",
 )
 
+private val inventNamesForLocalFunctions = createFileLoweringPhase(
+        lowering = ::KlibInventNamesForLocalFunctions,
+        name = "InventNamesForLocalFunctions",
+)
+
 private val useInternalAbiPhase = createSimpleNamedCompilerPhase<NativeGenerationState, IrFile, IrFile>(
         name = "UseInternalAbi",
         outputIfNotEnabled = { _, _, _, irFile -> irFile },
@@ -604,6 +609,7 @@ internal fun KonanConfig.getLoweringsAfterInlining(): LoweringList = listOfNotNu
         initializersPhase,
         inventNamesForInteropBridgesPhase,
         inventNamesForLocalClasses,
+        inventNamesForLocalFunctions,
         localFunctionsPhase,
         tailrecPhase,
         defaultParameterExtentPhase,
