@@ -1,56 +1,72 @@
 fun directCall1(): String {
-    inlineProperty = "direct"
+    inlineProperty = "directSetterValue"
     return inlineProperty
 }
 
 fun directCall2(): String  {
-    with("c") {
-        val s = "receiver"
-        s.inlineExtensionProperty = "direct"
+    with("directContext") {
+        val s = "directReceiver"
+        s.inlineExtensionProperty = "directSetterValue"
         return s.inlineExtensionProperty
     }
 }
 
 fun directCall3(): String  {
     val c = C()
-    c.inlineClassProperty = "direct"
+    c.inlineClassProperty = "directSetterValue"
     return c.inlineClassProperty
 }
 
 fun directCall4(): String  {
     C().run {
-        with("c") {
-            val s = "receiver"
-            s.inlineClassExtensionProperty = "direct"
+        with("directClassContext") {
+            val s = "directClassReceiver"
+            s.inlineClassExtensionProperty = "directSetterValue"
             return s.inlineClassExtensionProperty
         }
     }
 }
 
+fun directCall5(): String = inlineCall1()
+
+fun directCall6(): String = inlineCall2()
+
+fun directCall7(): String = inlineCall3()
+
+fun directCall8(): String = inlineCall4()
+
+fun directCall9(): String = lambdaCall1()
+
+fun directCall10(): String = lambdaCall2()
+
+fun directCall11(): String = lambdaCall3()
+
+fun directCall12(): String = lambdaCall4()
+
 fun inlineCall1(): String {
-    inlineProperty = "inline"
+    inlineProperty = "inlineSetterValue"
     return inlineProperty
 }
 
 fun inlineCall2(): String  {
-    with("c") {
-        val s = "receiver"
-        s.inlineExtensionProperty = "inline"
+    with("inlineContext") {
+        val s = "inlineReceiver"
+        s.inlineExtensionProperty = "inlineSetterValue"
         return s.inlineExtensionProperty
     }
 }
 
 fun inlineCall3(): String  {
     val c = C()
-    c.inlineClassProperty = "inline"
+    c.inlineClassProperty = "inlineSetterValue"
     return c.inlineClassProperty
 }
 
 fun inlineCall4(): String  {
     C().run {
-        with("c") {
-            val s = "receiver"
-            s.inlineClassExtensionProperty = "inline"
+        with("inlineClassContext") {
+            val s = "inlineClassReceiver"
+            s.inlineClassExtensionProperty = "inlineSetterValue"
             return s.inlineClassExtensionProperty
         }
     }
@@ -59,29 +75,29 @@ fun inlineCall4(): String  {
 inline fun useLambda(f: () -> String) = f()
 
 fun lambdaCall1(): String = useLambda {
-    inlineProperty = "lambda"
+    inlineProperty = "lambdaSetterValue"
     inlineProperty
 }
 
 fun lambdaCall2(): String = useLambda {
-    with("c") {
-        val s = "receiver"
-        s.inlineExtensionProperty = "lambda"
+    with("lambdaContext") {
+        val s = "lambdaReceiver"
+        s.inlineExtensionProperty = "lambdaSetterValue"
         s.inlineExtensionProperty
     }
 }
 
 fun lambdaCall3(): String = useLambda {
     val c = C()
-    c.inlineClassProperty = "lambda"
+    c.inlineClassProperty = "lambdaSetterValue"
     c.inlineClassProperty
 }
 
 fun lambdaCall4(): String = useLambda {
     C().run {
-        with("c") {
-            val s = "receiver"
-            s.inlineClassExtensionProperty = "lambda"
+        with("lambdaClassContext") {
+            val s = "lambdaClassReceiver"
+            s.inlineClassExtensionProperty = "lambdaSetterValue"
             s.inlineClassExtensionProperty
         }
     }
