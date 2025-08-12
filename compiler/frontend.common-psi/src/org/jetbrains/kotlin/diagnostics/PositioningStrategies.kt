@@ -921,6 +921,13 @@ object PositioningStrategies {
     }
 
     @JvmField
+    val USELESS_ELVIS_LEFT: PositioningStrategy<KtBinaryExpression> = object : PositioningStrategy<KtBinaryExpression>() {
+        override fun mark(element: KtBinaryExpression): List<TextRange> {
+            return listOf(TextRange(element.startOffset, element.operationReference.endOffset))
+        }
+    }
+
+    @JvmField
     val IMPORT_ALIAS: PositioningStrategy<KtImportDirective> = object : PositioningStrategy<KtImportDirective>() {
         override fun mark(element: KtImportDirective): List<TextRange> {
             element.alias?.nameIdentifier?.let { return markElement(it) }

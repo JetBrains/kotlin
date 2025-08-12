@@ -1778,7 +1778,7 @@ object DIAGNOSTICS_LIST : DiagnosticList("FirErrors") {
             parameter<ConeKotlinType>("receiverType")
         }
         val USELESS_ELVIS_RIGHT_IS_NULL by warning<KtBinaryExpression>(PositioningStrategy.USELESS_ELVIS)
-        val USELESS_ELVIS_LEFT_IS_NULL by warning<KtBinaryExpression>(PositioningStrategy.USELESS_ELVIS)
+        val USELESS_ELVIS_LEFT_IS_NULL by warning<KtBinaryExpression>(PositioningStrategy.USELESS_ELVIS_LEFT)
     }
 
     val CASTS_AND_IS_CHECKS by object : DiagnosticGroup("Casts and is-checks") {

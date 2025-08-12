@@ -78,6 +78,7 @@ enum class PositioningStrategy {
     SAFE_ACCESS,
     AS_TYPE,
     USELESS_ELVIS,
+    USELESS_ELVIS_LEFT,
     NAME_OF_NAMED_ARGUMENT,
     VALUE_ARGUMENTS,
     VALUE_ARGUMENTS_LIST,
