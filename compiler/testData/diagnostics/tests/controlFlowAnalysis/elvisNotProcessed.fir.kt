@@ -21,15 +21,15 @@ else {
     null!!
 }
 
-val n = null ?: (null ?: { true })
+val n = <!USELESS_ELVIS_LEFT_IS_NULL!>null ?:<!> (<!USELESS_ELVIS_LEFT_IS_NULL!>null ?:<!> { true })
 
 fun l(): (() -> Boolean)? = null
 
-val b = null ?: ( l() ?: false)
+val b = <!USELESS_ELVIS_LEFT_IS_NULL!>null ?:<!> ( l() ?: false)
 
-val bb = null ?: ( l() ?: null!!)
+val bb = <!USELESS_ELVIS_LEFT_IS_NULL!>null ?:<!> ( l() ?: null!!)
 
-val bbb = null ?: ( l() <!USELESS_ELVIS_RIGHT_IS_NULL!>?: null<!>)
+val bbb = <!USELESS_ELVIS_LEFT_IS_NULL!>null ?:<!> ( l() <!USELESS_ELVIS_RIGHT_IS_NULL!>?: null<!>)
 
 val bbbb = ( l() <!USELESS_ELVIS_RIGHT_IS_NULL!>?: null<!>) ?: ( l() <!USELESS_ELVIS_RIGHT_IS_NULL!>?: null<!>)
 
