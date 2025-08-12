@@ -71,7 +71,7 @@ native {
             cxxflags.addAll(listOf("-DKONAN_LINUX=1"))
         }
         MINGW -> {
-            cxxflags += "-DKONAN_WINDOWS=1"
+            cxxflags += listOf("-DKONAN_WINDOWS=1", "-Wno-unused-command-line-argument")
         }
         OSX -> {
             cxxflags += "-DKONAN_MACOS=1"
