@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.test.services.JUnit5Assertions.isTeamCityBuild
 import org.junit.jupiter.api.DynamicTest
 import org.junit.jupiter.api.TestFactory
 import java.util.stream.Stream
+import kotlin.io.path.exists
 import kotlin.streams.asStream
 import kotlin.test.assertTrue
 import kotlin.test.fail
@@ -19,6 +20,8 @@ class MavenMetadataTest {
     fun generateMavenMetadataTests(): Stream<DynamicTest> {
         return findActualArtifacts(".pom", mustContainKotlinVersion = true).map { actual ->
             val expectedPomPath = actual.toExpectedPath()
+            println("Expected ${expectedPomPath.fileName} exists – ${expectedPomPath.exists()}")
+
             DynamicTest.dynamicTest(expectedPomPath.fileName.toString()) {
                 if ("${expectedPomPath.parent.fileName}" !in excludedProjects) {
                     if ("${expectedPomPath.parent.fileName}" !in nativeBundles) {
