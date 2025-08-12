@@ -181,43 +181,6 @@ abstract class Symbols(irBuiltIns: IrBuiltIns) : PreSerializationSymbolsImpl(irB
         return functionSymbol == plusSymbol
     }
 
-    protected fun ClassId.classSymbol() = symbolFinder.findClass(this) ?: error("Class $this is not found")
-    protected fun CallableId.propertySymbols() = symbolFinder.findProperties(this).toList()
-    protected fun CallableId.functionSymbols() = symbolFinder.findFunctions(this).toList()
-    protected fun ClassId.primaryConstructorSymbol(): Lazy<IrConstructorSymbol> {
-        val clazz = classSymbol()
-        return lazy { (clazz.owner.primaryConstructor ?: error("Class ${this} has no primary constructor")).symbol }
-    }
-
-    protected fun ClassId.noParametersConstructorSymbol(): Lazy<IrConstructorSymbol> {
-        val clazz = classSymbol()
-        return lazy { (clazz.owner.constructors.singleOrNull { it.parameters.isEmpty() } ?: error("Class ${this} has no constructor without parameters")).symbol }
-    }
-
-    protected fun CallableId.functionSymbol(): IrSimpleFunctionSymbol {
-        val elements = functionSymbols()
-        require(elements.isNotEmpty()) { "No function $this found" }
-        require(elements.size == 1) { "Several functions $this found:\n${elements.joinToString("\n")}" }
-        return elements.single()
-    }
-
-    protected inline fun CallableId.functionSymbol(crossinline condition: (IrSimpleFunction) -> Boolean): Lazy<IrSimpleFunctionSymbol> {
-        val unfilteredElements = functionSymbols()
-        return lazy {
-            val elements = unfilteredElements.filter { condition(it.owner) }
-            require(elements.isNotEmpty()) { "No function $this found corresponding given condition" }
-            require(elements.size == 1) { "Several functions $this found corresponding given condition:\n${elements.joinToString("\n")}" }
-            elements.single()
-        }
-    }
-
-    protected inline fun <K> CallableId.functionSymbolAssociatedBy(crossinline getKey: (IrSimpleFunction) -> K): Lazy<Map<K, IrSimpleFunctionSymbol>> {
-        val unfilteredElements = functionSymbols()
-        return lazy {
-            unfilteredElements.associateBy { getKey(it.owner) }
-        }
-    }
-
     abstract val throwNullPointerException: IrSimpleFunctionSymbol
     abstract val throwTypeCastException: IrSimpleFunctionSymbol
 

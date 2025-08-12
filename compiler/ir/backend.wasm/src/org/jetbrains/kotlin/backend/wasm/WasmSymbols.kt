@@ -39,8 +39,6 @@ class WasmSymbols(
     configuration: CompilerConfiguration,
 ) : PreSerializationWasmSymbols by PreSerializationWasmSymbolsImpl(irBuiltIns), JsCommonSymbols(irBuiltIns) {
 
-    private val enumsInternalPackageFqName = FqName("kotlin.enums")
-    private val wasmInternalFqName = FqName("kotlin.wasm.internal")
     private val kotlinJsPackageFqName = FqName("kotlin.js")
     private val kotlinTestPackageFqName = FqName("kotlin.test")
 
@@ -393,25 +391,4 @@ class WasmSymbols(
         }
 
     val invokeOnExportedFunctionExit get() = invokeOnExportedFunctionExitIfWasi ?: error("Cannot access to wasi related std in js mode")
-
-    private fun getFunction(name: String, ownerPackage: FqName): IrSimpleFunctionSymbol {
-        return maybeGetFunction(name, ownerPackage) ?: throw IllegalArgumentException("Function $name not found")
-    }
-
-    private fun maybeGetFunction(name: String, ownerPackage: FqName): IrSimpleFunctionSymbol? {
-        return symbolFinder.topLevelFunctions(ownerPackage, name).singleOrNull()
-    }
-
-    private fun getInternalWasmFunction(name: String): IrSimpleFunctionSymbol = getFunction(name, wasmInternalFqName)
-
-    private fun getEnumsFunction(name: String) = getFunction(name, enumsInternalPackageFqName)
-
-    private fun getIrClassOrNull(fqName: FqName): IrClassSymbol? = symbolFinder.findClass(fqName.shortName(), fqName.parent())
-
-    private fun getIrClass(fqName: FqName): IrClassSymbol =
-        getIrClassOrNull(fqName)
-            ?: error("Class \"${fqName.asString()}\" not found! Please make sure that your stdlib version is the same as the compiler.")
-
-    private fun getIrType(fqName: String): IrType = getIrClass(FqName(fqName)).defaultType
-    private fun getInternalWasmClass(name: String): IrClassSymbol = getIrClass(wasmInternalFqName.child(Name.identifier(name)))
 }
