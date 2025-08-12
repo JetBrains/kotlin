@@ -18242,6 +18242,12 @@ public class LLBlackBoxTestGenerated extends AbstractLLBlackBoxTest {
       }
 
       @Test
+      @TestMetadata("kt79979_memberExtension.kt")
+      public void testKt79979_memberExtension() {
+        runTest("compiler/testData/codegen/box/delegatedProperty/delegateToAnother/kt79979_memberExtension.kt");
+      }
+
+      @Test
       @TestMetadata("mutable.kt")
       public void testMutable() {
         runTest("compiler/testData/codegen/box/delegatedProperty/delegateToAnother/mutable.kt");
