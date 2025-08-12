@@ -1,4 +1,6 @@
-﻿import org.antlr.v4.runtime.CharStream
+﻿package org.jetbrains.kotlin.js.parser.antlr
+
+import org.antlr.v4.runtime.CharStream
 import org.antlr.v4.runtime.Lexer
 import org.antlr.v4.runtime.Token
 import java.util.*
