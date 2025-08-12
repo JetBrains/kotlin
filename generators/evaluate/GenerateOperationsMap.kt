@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.types.KotlinType
 import org.jetbrains.kotlin.types.typeUtil.makeNotNullable
 import org.jetbrains.kotlin.utils.Printer
 import java.io.File
+import kotlin.reflect.full.memberFunctions
 
 val DEST_FILE: File = File("compiler/frontend.common/src/org/jetbrains/kotlin/resolve/constants/evaluate/OperationsMapGenerated.kt")
 private val EXCLUDED_FUNCTIONS: List<String> = listOf("rangeTo", "rangeUntil", "hashCode", "inc", "dec", "subSequence")
@@ -38,9 +39,9 @@ fun generate(): String {
     return sb.toString()
 }
 
-private fun getOperationMaps(): Pair<ArrayList<Triple<String, List<KotlinType>, Boolean>>, ArrayList<Pair<String, List<KotlinType>>>> {
-    val unaryOperationsMap = arrayListOf<Triple<String, List<KotlinType>, Boolean>>()
-    val binaryOperationsMap = arrayListOf<Pair<String, List<KotlinType>>>()
+private fun getOperationMaps(): Pair<ArrayList<Triple<String, List<String>, Boolean>>, ArrayList<Pair<String, List<String>>>> {
+    val unaryOperationsMap = arrayListOf<Triple<String, List<String>, Boolean>>()
+    val binaryOperationsMap = arrayListOf<Pair<String, List<String>>>()
 
     val builtIns = DefaultBuiltIns.Instance
 
@@ -69,11 +70,11 @@ private fun getOperationMaps(): Pair<ArrayList<Triple<String, List<KotlinType>, 
         }
     }
 
-    unaryOperationsMap.add(Triple("code", listOf(builtIns.charType), false))
+    unaryOperationsMap.add(Triple("code", listOf(builtIns.charType.toString()), false))
 
     for (type in integerTypes) {
         for (otherType in integerTypes) {
-            val parameters = listOf(type, otherType)
+            val parameters = listOf(type, otherType).map {it.toString()}
             binaryOperationsMap.add("mod" to parameters)
             binaryOperationsMap.add("floorDiv" to parameters)
         }
@@ -81,10 +82,39 @@ private fun getOperationMaps(): Pair<ArrayList<Triple<String, List<KotlinType>, 
 
     for (type in fpTypes) {
         for (otherType in fpTypes) {
-            val parameters = listOf(type, otherType)
+            val parameters = listOf(type, otherType).map {it.toString()}
             binaryOperationsMap.add("mod" to parameters)
         }
     }
+
+    val unsignedClasses = listOf(UInt::class, ULong::class, UByte::class, UShort::class)
+    for (unsignedClass in unsignedClasses) {
+        unsignedClass.memberFunctions
+            .filter { !EXCLUDED_FUNCTIONS.contains(it.name) }
+            .forEach { function ->
+                val args = function.parameters.map { it.type.toString().removePrefix("kotlin.") }
+                when (function.parameters.size) {
+                    1 -> unaryOperationsMap.add(Triple(function.name, args, true))
+                    2 -> binaryOperationsMap.add(function.name to args)
+                }
+            }
+    }
+
+    val uintConversionExtensions = mapOf(
+        "Long" to listOf("toULong", "toUInt", "toUShort", "toUByte"),
+        "Int" to listOf("toULong", "toUInt", "toUShort", "toUByte"),
+        "Short" to listOf("toULong", "toUInt", "toUShort", "toUByte"),
+        "Byte" to listOf("toULong", "toUInt", "toUShort", "toUByte"),
+        "Double" to listOf("toULong", "toUInt"),
+        "Float" to listOf("toULong", "toUInt"),
+    )
+
+    for ((type, extensions) in uintConversionExtensions) {
+        for (extension in extensions) {
+            unaryOperationsMap.add(Triple(extension, listOf(type), true))
+        }
+    }
+
     return Pair(unaryOperationsMap, binaryOperationsMap)
 }
 
@@ -104,18 +134,18 @@ private fun generateHeader(p: Printer) {
 
 private fun generateUnaryOp(
     p: Printer,
-    unaryOperationsMap: ArrayList<Triple<String, List<KotlinType>, Boolean>>,
+    unaryOperationsMap: ArrayList<Triple<String, List<String>, Boolean>>,
 ) {
     p.println("fun evalUnaryOp(name: String, type: CompileTimeType, value: Any): Any? {")
     p.pushIndent()
     p.println("when (type) {")
     p.pushIndent()
     for ((type, operations) in unaryOperationsMap.groupBy { (_, parameters, _) -> parameters.single() }) {
-        p.println("${type.asString()} -> when (name) {")
+        p.println("${type.formatCompileTypeEnum()} -> when (name) {")
         p.pushIndent()
         for ((name, _, isFunction) in operations) {
             val parenthesesOrBlank = if (isFunction) "()" else ""
-            p.println("\"$name\" -> return (value as ${type.typeName}).$name$parenthesesOrBlank")
+            p.println("\"$name\" -> return (value as ${type}).$name$parenthesesOrBlank")
         }
         p.popIndent()
         p.println("}")
@@ -131,21 +161,21 @@ private fun generateUnaryOp(
 
 private fun generateBinaryOp(
     p: Printer,
-    binaryOperationsMap: ArrayList<Pair<String, List<KotlinType>>>,
+    binaryOperationsMap: ArrayList<Pair<String, List<String>>>,
 ) {
     p.println("fun evalBinaryOp(name: String, leftType: CompileTimeType, left: Any, rightType: CompileTimeType, right: Any): Any? {")
     p.pushIndent()
     p.println("when (leftType) {")
     p.pushIndent()
     for ((leftType, operationsOnThisLeftType) in binaryOperationsMap.groupBy { (_, parameters) -> parameters.first() }) {
-        p.println("${leftType.asString()} -> when (rightType) {")
+        p.println("${leftType.formatCompileTypeEnum()} -> when (rightType) {")
         p.pushIndent()
         for ((rightType, operations) in operationsOnThisLeftType.groupBy { (_, parameters) -> parameters[1] }) {
-            p.println("${rightType.asString()} -> when (name) {")
+            p.println("${rightType.formatCompileTypeEnum()} -> when (name) {")
             p.pushIndent()
             for ((name, _) in operations) {
-                val castToRightType = if (rightType.typeName == "Any") "" else " as ${rightType.typeName}"
-                p.println("\"$name\" -> return (left as ${leftType.typeName}).$name(right$castToRightType)")
+                val castToRightType = if (rightType.removeSuffix("?") == "Any") "" else " as ${rightType}"
+                p.println("\"$name\" -> return (left as ${leftType}).$name(right$castToRightType)")
             }
             p.popIndent()
             p.println("}")
@@ -166,7 +196,7 @@ private fun generateBinaryOp(
 // TODO: Can be dropped with K1
 private fun generateBinaryOpCheck(
     p: Printer,
-    binaryOperationsMap: ArrayList<Pair<String, List<KotlinType>>>,
+    binaryOperationsMap: ArrayList<Pair<String, List<String>>>,
 ) {
     p.println("fun checkBinaryOp(")
     p.println("    name: String, leftType: CompileTimeType, left: BigInteger, rightType: CompileTimeType, right: BigInteger")
@@ -177,10 +207,10 @@ private fun generateBinaryOpCheck(
     val checkedBinaryOperations =
         binaryOperationsMap.filter { (name, parameters) -> getBinaryCheckerName(name, parameters[0], parameters[1]) != null }
     for ((leftType, operationsOnThisLeftType) in checkedBinaryOperations.groupBy { (_, parameters) -> parameters.first() }) {
-        p.println("${leftType.asString()} -> when (rightType) {")
+        p.println("${leftType.formatCompileTypeEnum()} -> when (rightType) {")
         p.pushIndent()
         for ((rightType, operations) in operationsOnThisLeftType.groupBy { (_, parameters) -> parameters[1] }) {
-            p.println("${rightType.asString()} -> when (name) {")
+            p.println("${rightType.formatCompileTypeEnum()} -> when (name) {")
             p.pushIndent()
             for ((name, _) in operations) {
                 val checkerName = getBinaryCheckerName(name, leftType, rightType)!!
@@ -201,8 +231,9 @@ private fun generateBinaryOpCheck(
     p.println("}")
 }
 
-private fun getBinaryCheckerName(name: String, leftType: KotlinType, rightType: KotlinType): String? {
-    if (!leftType.isIntegerType() || !rightType.isIntegerType()) return null
+private fun getBinaryCheckerName(name: String, leftType: String, rightType: String): String? {
+    val integerTypes = listOf("Int", "Short", "Byte", "Long")
+    if (!integerTypes.contains(leftType) || !integerTypes.contains(rightType)) return null
 
     return when (name) {
         "plus" -> "add"
@@ -220,11 +251,11 @@ private fun KotlinType.isIntegerType(): Boolean =
 private fun KotlinType.isFpType(): Boolean =
     KotlinBuiltIns.isDouble(this) || KotlinBuiltIns.isFloat(this)
 
-private fun CallableDescriptor.getParametersTypes(): List<KotlinType> =
-    listOf((containingDeclaration as ClassDescriptor).defaultType) +
-            valueParameters.map { it.type.makeNotNullable() }
+private fun CallableDescriptor.getParametersTypes(): List<String> =
+    (listOf((containingDeclaration as ClassDescriptor).defaultType.toString()) +
+            valueParameters.map { it.type.makeNotNullable().toString() })
 
-private fun KotlinType.asString(): String = typeName.uppercase()
+private fun String.formatCompileTypeEnum(): String = this.uppercase().removeSuffix("?")
 
 private val KotlinType.typeName: String
     get(): String = constructor.declarationDescriptor!!.name.asString()
