@@ -5,14 +5,14 @@ import KotlinRuntimeSupport
 import dep
 import flattened
 
-public enum EnumWithFactory {
+public enum EnumWithFactory: KotlinRuntimeSupport._KotlinBridgeable, Swift.CaseIterable {
     case ONE
     public static var allCases: [main.EnumWithFactory] {
         get {
             return EnumWithFactory_entries_get() as! Swift.Array<main.EnumWithFactory>
         }
     }
-    package override init(
+    package init(
         __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
         options: KotlinRuntime.KotlinBaseConstructionOptions
     ) {
