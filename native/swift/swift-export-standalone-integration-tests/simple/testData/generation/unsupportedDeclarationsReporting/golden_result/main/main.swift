@@ -59,7 +59,7 @@ public final class Foo: KotlinRuntime.KotlinBase {
     }
 }
 extension ExportedKotlinPackages.a.b.c {
-    public enum E {
+    public enum E: KotlinRuntimeSupport._KotlinBridgeable, Swift.CaseIterable {
         case A
         case B
         case C
@@ -68,7 +68,7 @@ extension ExportedKotlinPackages.a.b.c {
                 return a_b_c_E_entries_get() as! Swift.Array<ExportedKotlinPackages.a.b.c.E>
             }
         }
-        package override init(
+        package init(
             __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
