@@ -3,6 +3,7 @@
 import org.antlr.v4.runtime.CharStream
 import org.antlr.v4.runtime.Lexer
 import org.antlr.v4.runtime.Token
+import org.jetbrains.kotlin.js.parser.antlr.generated.JavaScriptLexer
 import java.util.*
 
 /**
@@ -41,7 +42,7 @@ abstract class JavaScriptLexerBase(input: CharStream?) : Lexer(input) {
      */
     private var templateDepthStack: Deque<Int?> = ArrayDeque<Int?>()
 
-    fun IsStartOfFile(): Boolean {
+    fun isStartOfFile(): Boolean {
         return lastToken == null
     }
 
@@ -50,11 +51,11 @@ abstract class JavaScriptLexerBase(input: CharStream?) : Lexer(input) {
         useStrictCurrent = value
     }
 
-    fun IsStrictMode(): Boolean {
+    fun isStrictMode(): Boolean {
         return useStrictCurrent
     }
 
-    fun IsInTemplateString(): Boolean {
+    fun isInTemplateString(): Boolean {
         return !templateDepthStack.isEmpty() && templateDepthStack.peek() == currentDepth
     }
 
@@ -78,28 +79,28 @@ abstract class JavaScriptLexerBase(input: CharStream?) : Lexer(input) {
         return next
     }
 
-    protected fun ProcessOpenBrace() {
+    protected fun processOpenBrace() {
         currentDepth++
         useStrictCurrent = if (scopeStrictModes.isNotEmpty() && scopeStrictModes.peek() == true) true else this.strictDefault
         scopeStrictModes.push(useStrictCurrent)
     }
 
-    protected fun ProcessCloseBrace() {
+    protected fun processCloseBrace() {
         useStrictCurrent = (if (scopeStrictModes.isNotEmpty()) scopeStrictModes.pop() else this.strictDefault)!!
         currentDepth--
     }
 
-    protected fun ProcessTemplateOpenBrace() {
+    protected fun processTemplateOpenBrace() {
         currentDepth++
         this.templateDepthStack.push(currentDepth)
     }
 
-    protected fun ProcessTemplateCloseBrace() {
+    protected fun processTemplateCloseBrace() {
         this.templateDepthStack.pop()
         currentDepth--
     }
 
-    protected fun ProcessStringLiteral() {
+    protected fun processStringLiteral() {
         if (lastToken == null || lastToken!!.getType() == JavaScriptLexer.OpenBrace) {
             val text = getText()
             if (text == "\"use strict\"" || text == "'use strict'") {
@@ -113,19 +114,28 @@ abstract class JavaScriptLexerBase(input: CharStream?) : Lexer(input) {
     /**
      * Returns `true` if the lexer can match a regex literal.
      */
-    protected fun IsRegexPossible(): Boolean {
+    protected fun isRegexPossible(): Boolean {
         if (this.lastToken == null) {
             // No token has been produced yet: at the start of the input,
             // no division is possible, so a regex literal _is_ possible.
             return true
         }
 
-        when (this.lastToken!!.getType()) {
-            JavaScriptLexer.Identifier, JavaScriptLexer.NullLiteral, JavaScriptLexer.BooleanLiteral, JavaScriptLexer.This, JavaScriptLexer.CloseBracket, JavaScriptLexer.CloseParen, JavaScriptLexer.OctalIntegerLiteral, JavaScriptLexer.DecimalLiteral, JavaScriptLexer.HexIntegerLiteral, JavaScriptLexer.StringLiteral, JavaScriptLexer.PlusPlus, JavaScriptLexer.MinusMinus ->                 // After any of the tokens above, no regex literal can follow.
-                return false
-
-            else ->                 // In all other cases, a regex literal _is_ possible.
-                return true
+        return when (this.lastToken!!.type) {
+            JavaScriptLexer.Identifier,
+            JavaScriptLexer.NullLiteral,
+            JavaScriptLexer.BooleanLiteral,
+            JavaScriptLexer.This,
+            JavaScriptLexer.CloseBracket,
+            JavaScriptLexer.CloseParen,
+            JavaScriptLexer.OctalIntegerLiteral,
+            JavaScriptLexer.DecimalLiteral,
+            JavaScriptLexer.HexIntegerLiteral,
+            JavaScriptLexer.StringLiteral,
+            JavaScriptLexer.PlusPlus,
+            JavaScriptLexer.MinusMinus
+                -> false // After any of the tokens above, no regex literal can follow.
+            else -> true // In all other cases, a regex literal _is_ possible.
         }
     }
 

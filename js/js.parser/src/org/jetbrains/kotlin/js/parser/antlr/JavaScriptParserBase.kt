@@ -3,6 +3,8 @@
 import org.antlr.v4.runtime.Lexer
 import org.antlr.v4.runtime.Parser
 import org.antlr.v4.runtime.TokenStream
+import org.jetbrains.kotlin.js.parser.antlr.generated.JavaScriptLexer
+import org.jetbrains.kotlin.js.parser.antlr.generated.JavaScriptParser
 
 /**
  * All parser methods that used in grammar (p, prev, notLineTerminator, etc.)
@@ -20,7 +22,7 @@ abstract class JavaScriptParserBase(input: TokenStream?) : Parser(input) {
      * Whether the previous token value equals to @param str
      */
     protected fun prev(str: String?): Boolean {
-        return _input.LT(-1).getText() == str
+        return _input.LT(-1).text == str
     }
 
     /**
@@ -42,12 +44,12 @@ abstract class JavaScriptParserBase(input: TokenStream?) : Parser(input) {
     }
 
     protected fun notOpenBraceAndNotFunction(): Boolean {
-        val nextTokenType = _input.LT(1).getType()
+        val nextTokenType = _input.LT(1).type
         return nextTokenType != JavaScriptParser.OpenBrace && nextTokenType != JavaScriptParser.Function_
     }
 
     protected fun closeBrace(): Boolean {
-        return _input.LT(1).getType() == JavaScriptParser.CloseBrace
+        return _input.LT(1).type == JavaScriptParser.CloseBrace
     }
 
     /**
@@ -64,33 +66,33 @@ abstract class JavaScriptParserBase(input: TokenStream?) : Parser(input) {
     protected fun lineTerminatorAhead(): Boolean {
         // Get the token ahead of the current index.
 
-        var possibleIndexEosToken = this.getCurrentToken().getTokenIndex() - 1
+        var possibleIndexEosToken = this.currentToken.tokenIndex - 1
         if (possibleIndexEosToken < 0) return false
         var ahead = _input.get(possibleIndexEosToken)
 
-        if (ahead.getChannel() != Lexer.HIDDEN) {
+        if (ahead.channel != Lexer.HIDDEN || ahead.channel != JavaScriptLexer.COMMENTS) {
             // We're only interested in tokens on the HIDDEN channel.
             return false
         }
 
-        if (ahead.getType() == JavaScriptParser.LineTerminator) {
+        if (ahead.type == JavaScriptParser.LineTerminator) {
             // There is definitely a line terminator ahead.
             return true
         }
 
-        if (ahead.getType() == JavaScriptParser.WhiteSpaces) {
+        if (ahead.type == JavaScriptParser.WhiteSpaces) {
             // Get the token ahead of the current whitespaces.
-            possibleIndexEosToken = this.getCurrentToken().getTokenIndex() - 2
+            possibleIndexEosToken = this.currentToken.tokenIndex - 2
             if (possibleIndexEosToken < 0) return false
             ahead = _input.get(possibleIndexEosToken)
         }
 
         // Get the token's text and type.
-        val text = ahead.getText()
-        val type = ahead.getType()
+        val text = ahead.text
+        val type = ahead.type
 
         // Check if the token is, or contains a line terminator.
-        return (type == JavaScriptParser.MultiLineComment && (text.contains("\r") || text.contains("\n"))) ||
-            (type == JavaScriptParser.LineTerminator)
+        return type == JavaScriptParser.MultiLineComment && (text.contains("\r") || text.contains("\n"))
+                || type == JavaScriptParser.LineTerminator
     }
 }

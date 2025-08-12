@@ -222,35 +222,35 @@ public class JavaScriptLexer extends JavaScriptLexerBase {
 	private void OpenBrace_action(RuleContext _localctx, int actionIndex) {
 		switch (actionIndex) {
 		case 0:
-			this.ProcessOpenBrace();
+			this.processOpenBrace();
 			break;
 		}
 	}
 	private void TemplateCloseBrace_action(RuleContext _localctx, int actionIndex) {
 		switch (actionIndex) {
 		case 1:
-			this.ProcessTemplateCloseBrace();
+			this.processTemplateCloseBrace();
 			break;
 		}
 	}
 	private void CloseBrace_action(RuleContext _localctx, int actionIndex) {
 		switch (actionIndex) {
 		case 2:
-			this.ProcessCloseBrace();
+			this.processCloseBrace();
 			break;
 		}
 	}
 	private void StringLiteral_action(RuleContext _localctx, int actionIndex) {
 		switch (actionIndex) {
 		case 3:
-			this.ProcessStringLiteral();
+			this.processStringLiteral();
 			break;
 		}
 	}
 	private void TemplateStringStartExpression_action(RuleContext _localctx, int actionIndex) {
 		switch (actionIndex) {
 		case 4:
-			this.ProcessTemplateOpenBrace();
+			this.processTemplateOpenBrace();
 			break;
 		}
 	}
@@ -289,91 +289,91 @@ public class JavaScriptLexer extends JavaScriptLexerBase {
 	private boolean HashBangLine_sempred(RuleContext _localctx, int predIndex) {
 		switch (predIndex) {
 		case 0:
-			return  this.IsStartOfFile();
+			return  this.isStartOfFile();
 		}
 		return true;
 	}
 	private boolean RegularExpressionLiteral_sempred(RuleContext _localctx, int predIndex) {
 		switch (predIndex) {
 		case 1:
-			return this.IsRegexPossible();
+			return this.isRegexPossible();
 		}
 		return true;
 	}
 	private boolean TemplateCloseBrace_sempred(RuleContext _localctx, int predIndex) {
 		switch (predIndex) {
 		case 2:
-			return this.IsInTemplateString();
+			return this.isInTemplateString();
 		}
 		return true;
 	}
 	private boolean OctalIntegerLiteral_sempred(RuleContext _localctx, int predIndex) {
 		switch (predIndex) {
 		case 3:
-			return !this.IsStrictMode();
+			return !this.isStrictMode();
 		}
 		return true;
 	}
 	private boolean Implements_sempred(RuleContext _localctx, int predIndex) {
 		switch (predIndex) {
 		case 4:
-			return this.IsStrictMode();
+			return this.isStrictMode();
 		}
 		return true;
 	}
 	private boolean StrictLet_sempred(RuleContext _localctx, int predIndex) {
 		switch (predIndex) {
 		case 5:
-			return this.IsStrictMode();
+			return this.isStrictMode();
 		}
 		return true;
 	}
 	private boolean NonStrictLet_sempred(RuleContext _localctx, int predIndex) {
 		switch (predIndex) {
 		case 6:
-			return !this.IsStrictMode();
+			return !this.isStrictMode();
 		}
 		return true;
 	}
 	private boolean Private_sempred(RuleContext _localctx, int predIndex) {
 		switch (predIndex) {
 		case 7:
-			return this.IsStrictMode();
+			return this.isStrictMode();
 		}
 		return true;
 	}
 	private boolean Public_sempred(RuleContext _localctx, int predIndex) {
 		switch (predIndex) {
 		case 8:
-			return this.IsStrictMode();
+			return this.isStrictMode();
 		}
 		return true;
 	}
 	private boolean Interface_sempred(RuleContext _localctx, int predIndex) {
 		switch (predIndex) {
 		case 9:
-			return this.IsStrictMode();
+			return this.isStrictMode();
 		}
 		return true;
 	}
 	private boolean Package_sempred(RuleContext _localctx, int predIndex) {
 		switch (predIndex) {
 		case 10:
-			return this.IsStrictMode();
+			return this.isStrictMode();
 		}
 		return true;
 	}
 	private boolean Protected_sempred(RuleContext _localctx, int predIndex) {
 		switch (predIndex) {
 		case 11:
-			return this.IsStrictMode();
+			return this.isStrictMode();
 		}
 		return true;
 	}
 	private boolean Static_sempred(RuleContext _localctx, int predIndex) {
 		switch (predIndex) {
 		case 12:
-			return this.IsStrictMode();
+			return this.isStrictMode();
 		}
 		return true;
 	}
