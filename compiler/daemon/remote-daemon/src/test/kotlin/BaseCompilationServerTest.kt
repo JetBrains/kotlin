@@ -1,5 +1,3 @@
-import client.auth.BasicHTTPAuthClient
-import client.auth.CallAuthenticator
 import client.GrpcClientRemoteCompilationService
 import common.OneFileOneChunkStrategy
 import common.RemoteCompilationService
@@ -10,7 +8,6 @@ import io.grpc.Server
 import io.grpc.ServerInterceptors
 import io.grpc.inprocess.InProcessChannelBuilder
 import io.grpc.inprocess.InProcessServerBuilder
-import org.jetbrains.kotlin.server.CompileServiceGrpcKt
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 import server.core.CacheHandler
@@ -76,7 +73,7 @@ abstract class BaseCompilationCompilationTest {
 
     @AfterEach
     fun cleanup() {
-        cacheHandler.clear()
+        cacheHandler.cleanup()
         File(SERVER_COMPILATION_WORKSPACE_DIR).deleteRecursively()
         server.shutdownNow()
         channel.shutdownNow()

@@ -37,10 +37,7 @@ dependencies {
 
 //    implementation("org.jetbrains.kotlin:kotlin-stdlib:2.2.0")
 //    implementation("org.jetbrains.kotlin:kotlin-reflect:2.2.0")
-
-
 //    implementation("org.jetbrains.kotlin:kotlin-compiler-embeddable:$kotlinVersion")
-        // or
 //    implementation("org.jetbrains.kotlin:kotlin-compiler:2.2.0")
 
     implementation(project(":kotlin-daemon-client"))
@@ -61,7 +58,6 @@ dependencies {
     testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.10.2")
 }
 
-
 // workaround that IDEA run configuration does not properly resolve runtime classpath
 tasks.classes {
     dependsOn(configurations.runtimeClasspath)
@@ -80,8 +76,6 @@ protobuf {
         create("grpckt") {  // Add the Kotlin gRPC plugin
             artifact = "io.grpc:protoc-gen-grpc-kotlin:1.4.0:jdk8@jar"
         }
-
-
     }
 
     generateProtoTasks {
