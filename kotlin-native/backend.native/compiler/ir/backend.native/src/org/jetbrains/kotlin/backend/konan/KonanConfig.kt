@@ -291,9 +291,12 @@ class KonanConfig(val project: Project, val configuration: CompilerConfiguration
         }
     } ?: false // Disabled by default because of KT-68928
 
-    val globalDataLazyInit: Boolean by lazy {
-        configuration.get(BinaryOptions.globalDataLazyInit) ?: true
-    }
+    val globalDataLazyInit: Boolean
+        get() = configuration.get(BinaryOptions.globalDataLazyInit)?.also {
+            if (!it) {
+                configuration.report(CompilerMessageSeverity.STRONG_WARNING, "Eager Global Data initialization is deprecated")
+            }
+        } ?: true
 
     val genericSafeCasts: Boolean by lazy {
         configuration.get(BinaryOptions.genericSafeCasts)
