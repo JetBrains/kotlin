@@ -39,6 +39,7 @@ fun copyCommonCompilerArguments(from: CommonCompilerArguments, to: CommonCompile
     to.dumpPerf = from.dumpPerf
     to.expectActualClasses = from.expectActualClasses
     to.explicitApi = from.explicitApi
+    to.explicitBackingFields = from.explicitBackingFields
     to.explicitReturnTypes = from.explicitReturnTypes
     to.fragmentDependencies = from.fragmentDependencies?.copyOf()
     to.fragmentRefines = from.fragmentRefines?.copyOf()

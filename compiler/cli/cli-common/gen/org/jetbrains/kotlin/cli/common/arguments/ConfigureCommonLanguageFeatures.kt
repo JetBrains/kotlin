@@ -50,6 +50,10 @@ internal fun MutableMap<LanguageFeature, LanguageFeature.State>.configureCommonL
         put(LanguageFeature.DataFlowBasedExhaustiveness, LanguageFeature.State.ENABLED)
     }
 
+    if (arguments.explicitBackingFields) {
+        put(LanguageFeature.ExplicitBackingFields, LanguageFeature.State.ENABLED)
+    }
+
     if (arguments.directJavaActualization) {
         put(LanguageFeature.DirectJavaActualization, LanguageFeature.State.ENABLED)
     }

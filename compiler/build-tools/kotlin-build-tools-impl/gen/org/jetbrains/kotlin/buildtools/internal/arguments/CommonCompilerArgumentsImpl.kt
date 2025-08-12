@@ -42,6 +42,7 @@ import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments.Com
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments.Companion.X_DUMP_PERF
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments.Companion.X_EXPECT_ACTUAL_CLASSES
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments.Companion.X_EXPLICIT_API
+import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments.Companion.X_EXPLICIT_BACKING_FIELDS
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments.Companion.X_IGNORE_CONST_OPTIMIZATION_ERRORS
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments.Companion.X_INLINE_CLASSES
 import org.jetbrains.kotlin.buildtools.api.arguments.CommonCompilerArguments.Companion.X_LIST_PHASES
@@ -159,6 +160,7 @@ internal open class CommonCompilerArgumentsImpl : CommonToolArgumentsImpl(),
     if ("X_CONTEXT_SENSITIVE_RESOLUTION" in optionsMap) { arguments.contextSensitiveResolution = get(X_CONTEXT_SENSITIVE_RESOLUTION) }
     if ("X_NON_LOCAL_BREAK_CONTINUE" in optionsMap) { arguments.nonLocalBreakContinue = get(X_NON_LOCAL_BREAK_CONTINUE) }
     if ("X_DATA_FLOW_BASED_EXHAUSTIVENESS" in optionsMap) { arguments.dataFlowBasedExhaustiveness = get(X_DATA_FLOW_BASED_EXHAUSTIVENESS) }
+    if ("X_EXPLICIT_BACKING_FIELDS" in optionsMap) { arguments.explicitBackingFields = get(X_EXPLICIT_BACKING_FIELDS) }
     if ("X_MULTI_DOLLAR_INTERPOLATION" in optionsMap) { arguments.multiDollarInterpolation = get(X_MULTI_DOLLAR_INTERPOLATION) }
     if ("X_RENDER_INTERNAL_DIAGNOSTIC_NAMES" in optionsMap) { arguments.renderInternalDiagnosticNames = get(X_RENDER_INTERNAL_DIAGNOSTIC_NAMES) }
     if ("X_ALLOW_ANY_SCRIPTS_IN_SOURCE_ROOTS" in optionsMap) { arguments.allowAnyScriptsInSourceRoots = get(X_ALLOW_ANY_SCRIPTS_IN_SOURCE_ROOTS) }
@@ -328,6 +330,9 @@ internal open class CommonCompilerArgumentsImpl : CommonToolArgumentsImpl(),
 
     public val X_DATA_FLOW_BASED_EXHAUSTIVENESS: CommonCompilerArgument<Boolean> =
         CommonCompilerArgument("X_DATA_FLOW_BASED_EXHAUSTIVENESS")
+
+    public val X_EXPLICIT_BACKING_FIELDS: CommonCompilerArgument<Boolean> =
+        CommonCompilerArgument("X_EXPLICIT_BACKING_FIELDS")
 
     public val X_MULTI_DOLLAR_INTERPOLATION: CommonCompilerArgument<Boolean> =
         CommonCompilerArgument("X_MULTI_DOLLAR_INTERPOLATION")

@@ -690,6 +690,17 @@ Kotlin reports a warning every time you use one of them. You can use this flag t
         }
 
     @Argument(
+        value = "-Xexplicit-backing-fields",
+        description = "Enable experimental language support for explicit backing fields.",
+    )
+    @Enables(LanguageFeature.ExplicitBackingFields)
+    var explicitBackingFields: Boolean = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
         value = "-Xdirect-java-actualization",
         description = "Enable experimental direct Java actualization support.",
     )
