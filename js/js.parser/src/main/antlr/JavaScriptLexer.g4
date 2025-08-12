@@ -36,7 +36,8 @@
 lexer grammar JavaScriptLexer;
 
 channels {
-    ERROR
+    ERROR,
+    COMMENTS
 }
 
 options {
@@ -46,8 +47,8 @@ options {
 // Insert here @header for C++ lexer.
 
 HashBangLine      :                           { this.IsStartOfFile()}? '#!' ~[\r\n\u2028\u2029]*; // only allowed at start
-MultiLineComment  : '/*' .*? '*/';
-SingleLineComment : '//' ~[\r\n\u2028\u2029]*;
+MultiLineComment  : '/*' .*? '*/'               -> channel(COMMENTS);
+SingleLineComment : '//' ~[\r\n\u2028\u2029]*   -> channel(COMMENTS);
 RegularExpressionLiteral:
     '/' RegularExpressionFirstChar RegularExpressionChar* {this.IsRegexPossible()}? '/' IdentifierPart*
 ;
@@ -215,8 +216,8 @@ LineTerminator: [\r\n\u2028\u2029] -> channel(HIDDEN);
 
 /// Comments
 
-HtmlComment         : '<!--' .*? '-->'      -> channel(HIDDEN);
-CDataComment        : '<![CDATA[' .*? ']]>' -> channel(HIDDEN);
+HtmlComment         : '<!--' .*? '-->'      -> channel(COMMENTS);
+CDataComment        : '<![CDATA[' .*? ']]>' -> channel(COMMENTS);
 UnexpectedCharacter : .                     -> channel(ERROR);
 
 mode TEMPLATE;
