@@ -204,13 +204,17 @@ abstract class Symbols(irBuiltIns: IrBuiltIns) : PreSerializationSymbolsImpl(irB
 
     abstract val functionAdapter: IrClassSymbol
 
-    open val unsafeCoerceIntrinsic: IrSimpleFunctionSymbol? = null
+    open val unsafeCoerceIntrinsic: IrSimpleFunctionSymbol?
+        get() = null
 
-    open val getWithoutBoundCheckName: Name? = null
+    open val getWithoutBoundCheckName: Name?
+        get() = null
 
-    open val setWithoutBoundCheckName: Name? = null
+    open val setWithoutBoundCheckName: Name?
+        get() = null
 
-    open val arraysContentEquals: Map<IrType, IrSimpleFunctionSymbol>? = null
+    open val arraysContentEquals: Map<IrType, IrSimpleFunctionSymbol>?
+        get() = null
 
     /**
      * Determines whether the provided function call is free of side effects.
