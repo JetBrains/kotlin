@@ -580,7 +580,8 @@ class ComposerParamTransformer(
         modality == Modality.OPEN && (
                 origin == IrDeclarationOrigin.IR_EXTERNAL_DECLARATION_STUB &&
                         composeMetadata?.supportsOpenFunctionsWithDefaultParams() != true
-        ) || overriddenSymbols.any { it.owner.isLegacyOpenFunctionWithDefault() }
+                ) && overriddenSymbols.any { it.owner.parameters.any { param -> param.defaultValue != null } }
+                || overriddenSymbols.any { it.owner.isLegacyOpenFunctionWithDefault() }
 
 
     private fun IrSimpleFunction.hasDefaultForParam(index: Int): Boolean {
