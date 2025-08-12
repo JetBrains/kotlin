@@ -2,7 +2,7 @@
  * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
-import common.SERVER_COMPILATION_RESULT_DIR
+import common.SERVER_COMPILATION_RESULT_CACHE_DIR
 import common.SERVER_SOURCE_FILES_CACHE_DIR
 import common.calculateCompilationInputHash
 import kotlinx.coroutines.channels.Channel
@@ -121,7 +121,7 @@ class CacheTest : BaseCompilationCompilationTest() {
                 listOf("")
             ), "2.0"
         )
-        assertTrue { File("$SERVER_COMPILATION_RESULT_DIR/$compilerInputFingerprint").exists() }
+        assertTrue { File("$SERVER_COMPILATION_RESULT_CACHE_DIR/$compilerInputFingerprint").exists() }
     }
 
     @Test

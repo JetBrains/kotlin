@@ -5,7 +5,6 @@
 
 package server.core
 
-import com.google.protobuf.kotlin.toByteString
 import common.OneFileOneChunkStrategy
 import common.RemoteCompilationService
 import kotlinx.coroutines.Dispatchers
@@ -44,6 +43,11 @@ class RemoteCompilationServiceImpl(
         println("[${LocalDateTime.now().format(formatter)}] [thread=${Thread.currentThread().name}] DEBUG SERVER: $text")
     }
 
+    override fun cleanup() {
+        workspaceManager.cleanup()
+        cacheHandler.cleanup()
+    }
+
     override fun compile(compileRequests: Flow<CompileRequest>): Flow<CompileResponse> {
         return channelFlow {
             val sourceFilesChannel = Channel<File>(capacity = Channel.UNLIMITED)
@@ -64,30 +68,27 @@ class RemoteCompilationServiceImpl(
                         is FileTransferRequest -> {
                             compilationMetadata?.let { metadata ->
                                 launch {
-                                    val clientFilePath = it.filePath
-                                    val cachedFile = cacheHandler.getSourceFile(it.fileFingerprint)
-                                    debug("client file path = $clientFilePath")
-                                    debug("cached file path = ${cachedFile?.path}")
-                                    val compileResponse = when (cachedFile) {
-                                        is File -> {
-                                            debug("file $clientFilePath is available in cache")
+                                    val compileResponse = when (cacheHandler.isFileCached(it.filePath, it.fileFingerprint)) {
+                                        true -> {
+                                            debug("file ${it.filePath} is available in cache")
+                                            val cachedFile = cacheHandler.getFile(it.filePath, it.fileFingerprint)
                                             val projectFilePath = workspaceManager.copyFileToProject(
-                                                cachedFile.absolutePath,
-                                                clientFilePath,
+                                                cachedFilePath = cachedFile.absolutePath,
+                                                clientFilePath = it.filePath,
                                                 userId,
                                                 compilationMetadata.projectName
                                             )
                                             println("project file path = $projectFilePath")
                                             sourceFilesChannel.send(projectFilePath.toFile())
                                             FileTransferReply(
-                                                clientFilePath,
+                                                it.filePath,
                                                 isPresent = true
                                             )
                                         }
-                                        else -> {
-                                            debug("file $clientFilePath is not available in cache")
+                                        false -> {
+                                            debug("file ${it.filePath} is not available in cache")
                                             FileTransferReply(
-                                                clientFilePath,
+                                                it.filePath,
                                                 isPresent = false
                                             )
                                         }
@@ -102,7 +103,7 @@ class RemoteCompilationServiceImpl(
                                 if (it.isLast) {
                                     launch {
                                         val allFileChunks = fileChunkStrategy.getChunks(it.filePath)
-                                        val (fingerprint, cachedFile) = cacheHandler.addSourceFile(allFileChunks)
+                                        val (fingerprint, cachedFile) = cacheHandler.cacheSourceFile(allFileChunks)
                                         val projectFilePath = workspaceManager.copyFileToProject(
                                             cachedFile.absolutePath,
                                             it.filePath,

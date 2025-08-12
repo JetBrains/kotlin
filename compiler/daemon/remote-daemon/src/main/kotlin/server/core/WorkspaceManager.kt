@@ -6,6 +6,7 @@
 package server.core
 
 import common.SERVER_COMPILATION_WORKSPACE_DIR
+import java.io.File
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -13,19 +14,30 @@ import java.nio.file.StandardCopyOption
 
 class WorkspaceManager {
 
+
+    init {
+        Files.createDirectories(Paths.get(SERVER_COMPILATION_WORKSPACE_DIR))
+    }
+
     fun getOutputDir(userId: String, projectName: String): Path {
         return Paths.get(SERVER_COMPILATION_WORKSPACE_DIR, userId, projectName, "output")
     }
 
     fun copyFileToProject(cachedFilePath: String, clientFilePath: String, userId: String, projectName: String): Path {
-        val projectDir = Paths.get(SERVER_COMPILATION_WORKSPACE_DIR, userId, projectName)
-        println("Copying file to project: $projectDir")
-        val cp = Paths.get(cachedFilePath)
-        println("cp is $cp")
-        val tp = Paths.get(projectDir.toString(), clientFilePath)
-        println("Copying file from $cp to $tp")
-        Files.createDirectories(tp.parent)
-        return Files.copy(cp, tp, StandardCopyOption.REPLACE_EXISTING)
+        val projectDir = getUserProjectFolder(userId, projectName)
+        val targetPath = Paths.get(projectDir, clientFilePath)
+        Files.createDirectories(targetPath.parent)
+        // TODO: .copy is not atomic operation, in case the same user will try to compile this file mutliple times
+        return Files.copy(Paths.get(cachedFilePath), targetPath, StandardCopyOption.REPLACE_EXISTING)
     }
 
+    fun getUserProjectFolder(userId: String, projectName: String) =
+        "$SERVER_COMPILATION_WORKSPACE_DIR/$userId/$projectName"
+
+    fun getUserProjectSourceFolder(userId: String, projectName: String) =
+        "$SERVER_COMPILATION_WORKSPACE_DIR/$userId/$projectName/output"
+
+    fun cleanup() {
+        File(SERVER_COMPILATION_WORKSPACE_DIR).deleteRecursively()
+    }
 }

@@ -18,10 +18,12 @@ import server.core.RemoteCompilationServiceImpl
 import server.core.WorkspaceManager
 import server.interceptors.AuthInterceptor
 
-
 class RemoteKotlinDaemonServer(private val port: Int) {
 
     private val fileChunkingStrategy = OneFileOneChunkStrategy()
+    private val cacheHandler = CacheHandler(fileChunkingStrategy)
+    private val workspaceManager = WorkspaceManager()
+
     val server: Server =
         ServerBuilder
             .forPort(port)
@@ -30,9 +32,9 @@ class RemoteKotlinDaemonServer(private val port: Int) {
                     .intercept(
                         GrpcRemoteCompilationService(
                             RemoteCompilationServiceImpl(
-                                CacheHandler(fileChunkingStrategy),
+                                cacheHandler,
                                 InProcessCompilerService(),
-                                WorkspaceManager()
+                                workspaceManager
                             )
                         ),
                         LoggingInterceptor(),
@@ -40,8 +42,6 @@ class RemoteKotlinDaemonServer(private val port: Int) {
                     )
             )
             .build()
-
-
 
     fun start() {
         server.start()
@@ -56,11 +56,17 @@ class RemoteKotlinDaemonServer(private val port: Int) {
     }
 
     private fun stop() {
+        cleanup()
         server.shutdown()
     }
 
     fun blockUntilShutdown() {
         server.awaitTermination()
+    }
+
+    fun cleanup() {
+        cacheHandler.cleanup()
+        workspaceManager.cleanup()
     }
 }
 
@@ -70,7 +76,7 @@ fun main() {
         val server = RemoteKotlinDaemonServer(port)
         server.start()
         server.blockUntilShutdown()
-    }catch (e: Exception) {
+    } catch (e: Exception) {
         println("error occurred: ${e.message}")
         e.printStackTrace()
     }

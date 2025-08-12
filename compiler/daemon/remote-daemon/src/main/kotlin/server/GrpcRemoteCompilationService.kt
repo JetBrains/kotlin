@@ -5,6 +5,7 @@
 
 package server
 
+import com.google.protobuf.Empty
 import common.RemoteCompilationService
 import common.toDomain
 import kotlinx.coroutines.flow.Flow
@@ -20,5 +21,10 @@ class GrpcRemoteCompilationService(
 
     override fun compile(requests: Flow<CompileRequestGrpc>): Flow<CompileResponseGrpc> {
         return impl.compile(requests.map { it.toDomain() }).map { it.toGrpc() }
+    }
+
+    override suspend fun cleanup(request: Empty): Empty {
+        impl.cleanup()
+        return Empty.getDefaultInstance()
     }
 }

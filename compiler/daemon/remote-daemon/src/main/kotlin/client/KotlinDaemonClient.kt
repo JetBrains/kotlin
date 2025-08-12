@@ -68,7 +68,8 @@ class RemoteDaemonClient {
                                 val fileName = it.filePath.split("/").last()
                                 fileChunkStrategy.addChunks(it.filePath, it.content)
                                 if (it.isLast) {
-                                    fileChunkStrategy.reconstruct(fileChunkStrategy.getChunks(it.filePath),
+                                    fileChunkStrategy.reconstruct(
+                                        fileChunkStrategy.getChunks(it.filePath),
                                         buildAbsPath("$CLIENT_COMPILED_DIR/$fileName")
                                     )
                                 }

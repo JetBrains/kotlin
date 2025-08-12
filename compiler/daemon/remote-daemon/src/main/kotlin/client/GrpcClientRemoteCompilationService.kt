@@ -11,7 +11,6 @@ import common.RemoteCompilationService
 import io.grpc.ManagedChannel
 import io.grpc.ManagedChannelBuilder
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.channelFlow
 import kotlinx.coroutines.flow.map
 import model.CompileRequest
 import model.CompileResponse
@@ -45,8 +44,11 @@ class GrpcClientRemoteCompilationService(
         return stub.compile(compileRequests.map { it.toGrpc() }).map { it.toDomain() }
     }
 
+    override fun cleanup() {
+        // TODO: atm we do not care
+    }
+
     override fun close() {
         channel.shutdown().awaitTermination(5, TimeUnit.SECONDS)
     }
-
 }

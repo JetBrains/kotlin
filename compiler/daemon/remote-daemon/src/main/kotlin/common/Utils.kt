@@ -6,7 +6,9 @@
 package common
 
 import java.io.File
+import java.nio.file.Paths
 import java.security.MessageDigest
+import kotlin.io.path.extension
 
 fun calculateCompilationInputHash(sourceFiles: List<File>, compilerArguments: List<String>, compilerVersion: String): String{
     // TODO: at this stage I'm computing input hash with these arguments
@@ -40,4 +42,9 @@ fun calculateCompilationInputHash(sourceFiles: List<File>, compilerArguments: Li
     }
     digest.update(compilerVersion.toByteArray())
     return digest.digest().joinToString("") { "%02x".format(it) }
+}
+
+fun isFileDependency(path: String): Boolean {
+    // TODO are there any other extensions ?
+    return Paths.get(path).extension in setOf("jar", "klib", "class")
 }

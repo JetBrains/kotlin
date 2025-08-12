@@ -11,4 +11,5 @@ import model.CompileResponse
 
 interface RemoteCompilationService {
     fun compile(compileRequests: Flow<CompileRequest>): Flow<CompileResponse>
+    fun cleanup()
 }
