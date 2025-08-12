@@ -51,12 +51,15 @@ private val levelsToArgumentTransforms: Map<String, Map<String, ArgumentTransfor
     })
     put(actualMetadataArguments.name, buildMap {
         with(actualMetadataArguments) {
+            drop("d") // destination is configured explicitly when instantiating operations
             drop("Xlegacy-metadata-jar-k2")
         }
     })
     put(actualJvmCompilerArguments.name, buildMap {
         with(actualJvmCompilerArguments) {
+            drop("d") // destination is configured explicitly when instantiating operations
             drop("expression")
+            drop("include-runtime") // we're only considering building into directories for now (not jars)
             drop("Xbuild-file")
             drop("Xuse-javac")
             drop("Xcompile-java")

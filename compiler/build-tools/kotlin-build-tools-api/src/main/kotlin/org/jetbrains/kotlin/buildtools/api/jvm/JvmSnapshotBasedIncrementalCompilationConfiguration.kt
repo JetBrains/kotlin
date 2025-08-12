@@ -77,7 +77,7 @@ public interface JvmSnapshotBasedIncrementalCompilationOptions {
          * If it is not specified, incremental compilation caches will be non-relocatable.
          */
         @JvmField
-        public val ROOT_PROJECT_DIR: Option<Path> = Option("ROOT_PROJECT_DIR")
+        public val ROOT_PROJECT_DIR: Option<Path?> = Option("ROOT_PROJECT_DIR")
 
         /**
          * The build directory, used for computing relative paths for output files in the incremental compilation caches.
@@ -85,7 +85,7 @@ public interface JvmSnapshotBasedIncrementalCompilationOptions {
          * If it is not specified, incremental compilation caches will be non-relocatable.
          */
         @JvmField
-        public val MODULE_BUILD_DIR: Option<Path> = Option("MODULE_BUILD_DIR")
+        public val MODULE_BUILD_DIR: Option<Path?> = Option("MODULE_BUILD_DIR")
 
         /**
          * Controls whether incremental compilation will analyze Java files precisely for better changes detection.

@@ -25,7 +25,7 @@ import org.jetbrains.kotlin.buildtools.api.knative.NativePlatformToolchain
  *  ```
  *   val toolchain = KotlinToolchain.loadImplementation(ClassLoader.getSystemClassLoader())
  *   val operation = toolchain.jvm.createJvmCompilationOperation(listOf(Path("/path/foo.kt")), Path("/path/to/outputDirectory"))
- *   toolchain.executeOperation(operation)
+ *   toolchain.createBuildSession().use { it.executeOperation(operation) }
  *  ```
  *
  * @since 2.3.0
@@ -48,34 +48,58 @@ public interface KotlinToolchain {
     public fun getCompilerVersion(): String
 
     /**
-     * Execute the given [operation] using [ExecutionPolicy.InProcess].
+     * Create a new [BuildSession] that can be used to execute multiple [BuildOperations][BuildOperation] while retaining certain caches.
      *
-     * @param operation the [BuildOperation] to execute.
-     * Operations can be obtained from platform toolchains, e.g. [JvmPlatformToolchain.createJvmCompilationOperation]
+     * Remember to call [BuildSession.close] when all build operations are finished.
      */
-    public suspend fun <R> executeOperation(
-        operation: BuildOperation<R>,
-    ): R
+    public fun createBuildSession(): BuildSession
 
     /**
-     * Execute the given [operation] using the given [executionPolicy].
+     * Represents a build session that can execute (see [executeOperation])
+     * multiple [BuildOperations][BuildOperation] while retaining certain caches.
      *
-     * @param operation the [BuildOperation] to execute.
-     * Operations can be obtained from platform toolchains, e.g. [JvmPlatformToolchain.createJvmCompilationOperation]
-     * @param executionPolicy an [ExecutionPolicy] obtained from [createInProcessExecutionPolicy] or [createDaemonExecutionPolicy]
-     * @param logger an optional [KotlinLogger]
+     * Remember to call [close] after all operations are finished and no more operations in this session are planned.
      */
-    public suspend fun <R> executeOperation(
-        operation: BuildOperation<R>,
-        executionPolicy: ExecutionPolicy = createInProcessExecutionPolicy(),
-        logger: KotlinLogger? = null,
-    ): R
+    public interface BuildSession : AutoCloseable {
+        /**
+         * Access to the [KotlinToolchain] that created this build.
+         */
+        public val kotlinToolchain: KotlinToolchain
 
-    /**
-     * This must be called at the end of the project build (i.e., all build operations scoped to the project are finished)
-     * iff [projectId] is configured via [BuildOperation.PROJECT_ID]
-     */
-    public fun finishBuild(projectId: ProjectId)
+        /**
+         * The [ProjectId] that identifies this build.
+         */
+        public val projectId: ProjectId
+
+        /**
+         * Execute the given [operation] using [ExecutionPolicy.InProcess].
+         *
+         * @param operation the [BuildOperation] to execute.
+         * Operations can be obtained from platform toolchains, e.g. [JvmPlatformToolchain.createJvmCompilationOperation]
+         */
+        public fun <R> executeOperation(
+            operation: BuildOperation<R>,
+        ): R
+
+        /**
+         * Execute the given [operation] using the given [executionPolicy].
+         *
+         * @param operation the [BuildOperation] to execute.
+         * Operations can be obtained from platform toolchains, e.g. [JvmPlatformToolchain.createJvmCompilationOperation]
+         * @param executionPolicy an [ExecutionPolicy] obtained from [createInProcessExecutionPolicy] or [createDaemonExecutionPolicy]
+         * @param logger an optional [KotlinLogger]
+         */
+        public fun <R> executeOperation(
+            operation: BuildOperation<R>,
+            executionPolicy: ExecutionPolicy = kotlinToolchain.createInProcessExecutionPolicy(),
+            logger: KotlinLogger? = null,
+        ): R
+
+        /**
+         * This must be called at the end of the project build (that is when all build operations scoped to the project are finished).
+         */
+        public override fun close()
+    }
 
     public companion object {
         /**
@@ -84,7 +108,8 @@ public interface KotlinToolchain {
          * Make sure that the classloader has access to a Build Tools API implementation,
          * which usually means that it has the Kotlin compiler and related dependencies in its classpath.
          *
-         * @param classLoader a [ClassLoader] that contains exactly one implementation of KotlinToolchain
+         * @param classLoader a [ClassLoader] that contains exactly one implementation of KotlinToolchain.
+         * If executing operations using [ExecutionPolicy.WithDaemon], a [java.net.URLClassLoader] must be used here.
          */
         @JvmStatic
         public fun loadImplementation(classLoader: ClassLoader): KotlinToolchain =

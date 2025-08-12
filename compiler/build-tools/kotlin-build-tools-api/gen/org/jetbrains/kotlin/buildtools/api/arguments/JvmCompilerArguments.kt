@@ -39,23 +39,10 @@ public interface JvmCompilerArguments : CommonCompilerArguments {
 
   public companion object {
     /**
-     * Destination for generated class files.
-     */
-    @JvmField
-    public val D: JvmCompilerArgument<String?> = JvmCompilerArgument("D")
-
-    /**
      * List of directories and JAR/ZIP archives to search for user class files.
      */
     @JvmField
     public val CLASSPATH: JvmCompilerArgument<String?> = JvmCompilerArgument("CLASSPATH")
-
-    /**
-     * Include the Kotlin runtime in the resulting JAR.
-     */
-    @JvmField
-    public val INCLUDE_RUNTIME: JvmCompilerArgument<Boolean> =
-        JvmCompilerArgument("INCLUDE_RUNTIME")
 
     /**
      * Include a custom JDK from the specified location in the classpath instead of the default 'JAVA_HOME'.
