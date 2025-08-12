@@ -147,25 +147,25 @@ open class LocalDeclarationsLowering(
 
     override fun lower(irBody: IrBody, container: IrDeclaration) {
         LocalDeclarationsTransformer(
-            irBody,
-            container,
-            transformedDeclarations,
-            newParameterToCaptured,
-            newParameterToOld,
-            oldParameterToNew
+            irElement = irBody,
+            container = container,
+            transformedDeclarations = transformedDeclarations,
+            newParameterToCaptured = newParameterToCaptured,
+            newParameterToOld = newParameterToOld,
+            oldParameterToNew = oldParameterToNew
         ).lowerLocalDeclarations()
     }
 
     fun lower(irElement: IrElement, container: IrDeclaration, classesToLower: Set<IrClass>) {
         LocalDeclarationsTransformer(
-            irElement,
-            container,
-            transformedDeclarations,
-            newParameterToCaptured,
-            newParameterToOld,
-            oldParameterToNew,
-            null,
-            classesToLower
+            irElement = irElement,
+            container = container,
+            transformedDeclarations = transformedDeclarations,
+            newParameterToCaptured = newParameterToCaptured,
+            newParameterToOld = newParameterToOld,
+            oldParameterToNew = oldParameterToNew,
+            closestParent = null,
+            classesToLower = classesToLower
         ).lowerLocalDeclarations()
     }
 
@@ -174,15 +174,15 @@ open class LocalDeclarationsLowering(
         classesToLower: Set<IrClass>? = null, functionsToSkip: Set<IrSimpleFunction>? = null,
     ) {
         LocalDeclarationsTransformer(
-            irBlock,
-            container,
-            transformedDeclarations,
-            newParameterToCaptured,
-            newParameterToOld,
-            oldParameterToNew,
-            closestParent,
-            classesToLower,
-            functionsToSkip
+            irElement = irBlock,
+            container = container,
+            transformedDeclarations = transformedDeclarations,
+            newParameterToCaptured = newParameterToCaptured,
+            newParameterToOld = newParameterToOld,
+            oldParameterToNew = oldParameterToNew,
+            closestParent = closestParent,
+            classesToLower = classesToLower,
+            functionsToSkip = functionsToSkip
         ).lowerLocalDeclarations()
     }
 
