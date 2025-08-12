@@ -3,7 +3,7 @@
 import KotlinRuntime
 import KotlinRuntimeSupport
 
-public enum ENUM {
+public enum ENUM: KotlinRuntimeSupport._KotlinBridgeable, Swift.CaseIterable {
     case A
     case B
     case C
@@ -26,7 +26,7 @@ public enum ENUM {
             return ENUM_entries_get() as! Swift.Array<main.ENUM>
         }
     }
-    package override init(
+    package init(
         __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
         options: KotlinRuntime.KotlinBaseConstructionOptions
     ) {

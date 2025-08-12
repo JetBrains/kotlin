@@ -3,7 +3,7 @@ import KotlinRuntime
 import KotlinRuntimeSupport
 import KotlinStdlib
 
-public enum Enum {
+public enum Enum: KotlinRuntimeSupport._KotlinBridgeable, Swift.CaseIterable {
     case a
     case b
     public static var allCases: [main.Enum] {
@@ -19,7 +19,7 @@ public enum Enum {
             return Enum_i_set__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), newValue)
         }
     }
-    package override init(
+    package init(
         __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
         options: KotlinRuntime.KotlinBaseConstructionOptions
     ) {
@@ -34,7 +34,7 @@ public enum Enum {
         return main.Enum.__createClassWrapper(externalRCRef: Enum_valueOf__TypesOfArguments__Swift_String__(value))
     }
 }
-public enum EnumSimple {
+public enum EnumSimple: KotlinRuntimeSupport._KotlinBridgeable, Swift.CaseIterable {
     case FIRST
     case SECOND
     case LAST
@@ -43,7 +43,7 @@ public enum EnumSimple {
             return EnumSimple_entries_get() as! Swift.Array<main.EnumSimple>
         }
     }
-    package override init(
+    package init(
         __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
         options: KotlinRuntime.KotlinBaseConstructionOptions
     ) {
@@ -55,7 +55,7 @@ public enum EnumSimple {
         return main.EnumSimple.__createClassWrapper(externalRCRef: EnumSimple_valueOf__TypesOfArguments__Swift_String__(value))
     }
 }
-public enum EnumWithAbstractMembers {
+public enum EnumWithAbstractMembers: KotlinRuntimeSupport._KotlinBridgeable, Swift.CaseIterable {
     case YELLOW
     case SKY
     case MAGENTA
@@ -69,7 +69,7 @@ public enum EnumWithAbstractMembers {
             return EnumWithAbstractMembers_red_get(self.__externalRCRef())
         }
     }
-    package override init(
+    package init(
         __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
         options: KotlinRuntime.KotlinBaseConstructionOptions
     ) {
@@ -90,7 +90,7 @@ public enum EnumWithAbstractMembers {
         return main.EnumWithAbstractMembers.__createClassWrapper(externalRCRef: EnumWithAbstractMembers_valueOf__TypesOfArguments__Swift_String__(value))
     }
 }
-public enum EnumWithMembers {
+public enum EnumWithMembers: KotlinRuntimeSupport._KotlinBridgeable, Swift.CaseIterable {
     case NORTH
     case SOUTH
     public static var allCases: [main.EnumWithMembers] {
@@ -103,7 +103,7 @@ public enum EnumWithMembers {
             return EnumWithMembers_isNorth_get(self.__externalRCRef())
         }
     }
-    package override init(
+    package init(
         __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
         options: KotlinRuntime.KotlinBaseConstructionOptions
     ) {

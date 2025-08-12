@@ -92,6 +92,9 @@ internal class SirEnumFromKtSymbol(
     override val name: String by lazyWithSessions {
         (this@SirEnumFromKtSymbol.relocatedDeclarationNamePrefix() ?: "") + ktSymbol.sirDeclarationName()
     }
+    override val protocols: List<SirProtocol> by lazyWithSessions {
+        listOf(KotlinRuntimeSupportModule.kotlinBridgeable, SirSwiftModule.caseIterable)
+    }
     override var parent: SirDeclarationParent
         get() = withSessions {
             ktSymbol.getSirParent()
@@ -118,7 +121,6 @@ internal class SirEnumFromKtSymbol(
     private fun kotlinBaseInitDeclaration(): SirDeclaration = buildInitCopy(KotlinRuntimeModule.kotlinBaseDesignatedInit) {
         origin = SirOrigin.KotlinBaseInitOverride(`for` = KotlinSource(ktSymbol))
         visibility = SirVisibility.PACKAGE // Hide from users, but not from other Swift Export modules.
-        isOverride = true
         body = SirFunctionBody(
             listOf("super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)")
         )
