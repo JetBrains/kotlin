@@ -171,7 +171,7 @@ abstract class AbstractInvalidationTest(
         includedLibrary?.let { copy.includes = includedLibrary }
 
         zipAccessor.reset()
-        copy.put(JSConfigurationKeys.ZIP_FILE_SYSTEM_ACCESSOR, zipAccessor)
+        copy.put(KlibConfigurationKeys.ZIP_FILE_SYSTEM_ACCESSOR, zipAccessor)
         return copy
     }
 

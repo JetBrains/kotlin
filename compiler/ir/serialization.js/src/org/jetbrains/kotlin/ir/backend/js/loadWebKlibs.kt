@@ -16,7 +16,7 @@ import org.jetbrains.kotlin.ir.backend.js.checkers.WasmLibrarySpecialCompatibili
 import org.jetbrains.kotlin.js.config.friendLibraries
 import org.jetbrains.kotlin.js.config.includes
 import org.jetbrains.kotlin.js.config.libraries
-import org.jetbrains.kotlin.js.config.zipFileSystemAccessor
+import org.jetbrains.kotlin.config.zipFileSystemAccessor
 import org.jetbrains.kotlin.library.KotlinAbiVersion
 import org.jetbrains.kotlin.library.loader.KlibLoader
 import org.jetbrains.kotlin.library.loader.KlibPlatformChecker

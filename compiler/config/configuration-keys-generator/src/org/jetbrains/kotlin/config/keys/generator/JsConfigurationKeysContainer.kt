@@ -14,7 +14,6 @@ import org.jetbrains.kotlin.backend.js.TsCompilationStrategy
 import org.jetbrains.kotlin.js.config.EcmaVersion
 import org.jetbrains.kotlin.js.config.SourceMapNamesPolicy
 import org.jetbrains.kotlin.js.config.SourceMapSourceEmbedding
-import org.jetbrains.kotlin.konan.file.ZipFileSystemAccessor
 import org.jetbrains.kotlin.serialization.js.ModuleKind
 import java.io.File
 
@@ -97,8 +96,6 @@ object JsConfigurationKeysContainer : KeysContainer("org.jetbrains.kotlin.js.con
     val GENERATE_INLINE_ANONYMOUS_FUNCTIONS by key<Boolean>("translate lambdas into in-line anonymous functions")
 
     val GENERATE_STRICT_IMPLICIT_EXPORT by key<Boolean>("enable strict implicitly exported entities types inside d.ts files")
-
-    val ZIP_FILE_SYSTEM_ACCESSOR by key<ZipFileSystemAccessor>("zip file system accessor, used for klib reading")
 
     val OPTIMIZE_GENERATED_JS by key<Boolean>("perform additional optimizations on the generated JS code")
 
