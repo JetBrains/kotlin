@@ -288,6 +288,11 @@ private val callableReferencePhase = makeIrModulePhase(
     name = "WasmCallableReferenceLowering",
 )
 
+private val inventNamesForLocalFunctionsPhase = makeIrModulePhase<WasmBackendContext>(
+    { KlibInventNamesForLocalFunctions() },
+    name = "InventNamesForLocalFunctions",
+)
+
 private val singleAbstractMethodPhase = makeIrModulePhase(
     ::JsSingleAbstractMethodLowering,
     name = "SingleAbstractMethod",
@@ -648,6 +653,7 @@ fun getWasmLowerings(
 
         singleAbstractMethodPhase,
         localDelegatedPropertiesLoweringPhase,
+        inventNamesForLocalFunctionsPhase,
         localDeclarationsLoweringPhase,
         localDeclarationExtractionPhase,
         staticCallableReferenceLoweringPhase,

@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.backend.common.lower.*
 import org.jetbrains.kotlin.backend.common.phaser.PhaseDescription
 import org.jetbrains.kotlin.backend.jvm.JvmBackendContext
 import org.jetbrains.kotlin.backend.jvm.JvmLoweredDeclarationOrigin
-import org.jetbrains.kotlin.backend.jvm.ir.anonymousContextParameterName
 import org.jetbrains.kotlin.descriptors.DescriptorVisibilities
 import org.jetbrains.kotlin.descriptors.DescriptorVisibility
 import org.jetbrains.kotlin.ir.builders.declarations.addValueParameter
@@ -24,7 +23,6 @@ import org.jetbrains.kotlin.ir.util.isAnonymousObject
 import org.jetbrains.kotlin.ir.util.parentAsClass
 import org.jetbrains.kotlin.ir.util.parentDeclarationsWithSelf
 import org.jetbrains.kotlin.load.java.JavaDescriptorVisibilities
-import org.jetbrains.kotlin.name.NameUtils
 import org.jetbrains.kotlin.resolve.jvm.JvmConstants
 import org.jetbrains.kotlin.utils.filterIsInstanceAnd
 
@@ -37,9 +35,7 @@ import org.jetbrains.kotlin.utils.filterIsInstanceAnd
 )
 internal class JvmLocalDeclarationsLowering(override val context: JvmBackendContext) : LocalDeclarationsLowering(
     context,
-    NameUtils::sanitizeAsJavaIdentifier,
     JvmVisibilityPolicy,
-    compatibilityModeForInlinedLocalDelegatedPropertyAccessors = true,
     forceFieldsForInlineCaptures = true,
     remapCapturedTypesInExtractedLocalDeclarations = false,
     closureBuilders = context.evaluatorData?.localDeclarationsData?.closureBuilders ?: mutableMapOf(),
