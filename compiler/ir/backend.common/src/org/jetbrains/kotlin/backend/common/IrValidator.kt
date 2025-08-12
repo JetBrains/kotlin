@@ -155,13 +155,15 @@ fun validateIr(
     getSeverity: (IrValidationError) -> CompilerMessageSeverity?,
     phaseName: String? = null,
     customMessagePrefix: String? = null,
-) {
+): Boolean {
+    var hasAnyViolations = false
     var hasAnyErrors = false
     validateIr(element, irBuiltIns, validatorConfig) { error ->
         val severity = getSeverity(error)
         if (severity != null) {
             val phaseMessage = if (!phaseName.isNullOrEmpty()) "$phaseName: " else ""
             messageCollector.report(error, severity, phaseName, customMessagePrefix)
+            hasAnyViolations = true
         }
         if (severity == CompilerMessageSeverity.ERROR) {
             hasAnyErrors = true
@@ -171,6 +173,7 @@ fun validateIr(
     if (hasAnyErrors) {
         throw IrValidationException()
     }
+    return hasAnyViolations
 }
 
 /**
@@ -187,13 +190,13 @@ fun validateIr(
     mode: IrVerificationMode,
     phaseName: String? = null,
     customMessagePrefix: String? = null,
-) {
+): Boolean {
     val severity = when (mode) {
-        IrVerificationMode.NONE -> return
+        IrVerificationMode.NONE -> return false
         IrVerificationMode.WARNING -> CompilerMessageSeverity.WARNING
         IrVerificationMode.ERROR -> CompilerMessageSeverity.ERROR
     }
-    validateIr(element, irBuiltIns, validatorConfig, messageCollector, { severity }, phaseName, customMessagePrefix)
+    return validateIr(element, irBuiltIns, validatorConfig, messageCollector, { severity }, phaseName, customMessagePrefix)
 }
 
 fun MessageCollector.report(
