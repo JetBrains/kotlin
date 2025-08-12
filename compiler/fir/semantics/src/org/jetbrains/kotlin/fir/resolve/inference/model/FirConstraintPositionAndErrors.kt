@@ -43,14 +43,24 @@ class ConeExplicitTypeParameterConstraintPosition(
     override fun toString(): String = "TypeParameter ${typeArgument.render()}"
 }
 
-class ConeLambdaArgumentConstraintPosition(
-    anonymousFunction: FirAnonymousFunction,
-    val anonymousFunctionReturnExpression: FirExpression?,
-) : LambdaArgumentConstraintPosition<FirAnonymousFunction>(anonymousFunction) {
-    override fun toString(): String {
-        return "LambdaArgument"
-    }
+sealed class ConeLambdaArgumentConstraintPosition(anonymousFunction: FirAnonymousFunction) :
+    LambdaArgumentConstraintPosition<FirAnonymousFunction>(anonymousFunction) {
+    abstract val anonymousFunctionReturnExpression: FirExpression?
+
+    override fun toString(): String = "LambdaArgument"
 }
+
+class ConeRegularLambdaArgumentConstraintPosition(
+    anonymousFunction: FirAnonymousFunction,
+    override val anonymousFunctionReturnExpression: FirExpression,
+) : ConeLambdaArgumentConstraintPosition(anonymousFunction), OnlyInputTypeConstraintPosition
+
+// TODO: This class is different from `ConeRegularLambdaArgumentConstraintPosition` to not inherit it from `OnlyInputTypesConstraintPosition`
+//  marker. Most probably, it actually should be inherited as well (see KT-80079). If so, these classes should be merged.
+class ConeLambdaArgumentConstraintPositionWithCoercionToUnit(
+    anonymousFunction: FirAnonymousFunction,
+    override val anonymousFunctionReturnExpression: FirExpression?,
+) : ConeLambdaArgumentConstraintPosition(anonymousFunction)
 
 class ConeReceiverConstraintPosition(
     receiver: FirExpression,
