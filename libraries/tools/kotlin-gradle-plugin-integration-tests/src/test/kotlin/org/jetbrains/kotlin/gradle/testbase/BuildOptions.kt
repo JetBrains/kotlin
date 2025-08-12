@@ -21,7 +21,8 @@ import org.junit.jupiter.api.condition.OS
 import java.io.File
 import java.nio.file.Path
 import java.util.*
-import kotlin.io.path.absolutePathString
+import kotlin.io.path.absolute
+import kotlin.io.path.invariantSeparatorsPathString
 
 val DEFAULT_LOG_LEVEL = LogLevel.INFO
 
@@ -329,11 +330,11 @@ data class BuildOptions(
         }
 
         konanDataDir?.let {
-            arguments.add("-Pkonan.data.dir=${konanDataDir.toAbsolutePath().normalize()}")
+            arguments.add("-Pkonan.data.dir=${konanDataDir.normalize().absolute().invariantSeparatorsPathString}")
         }
 
         if (kotlinUserHome != null) {
-            arguments.add("-Pkotlin.user.home=${kotlinUserHome.absolutePathString()}")
+            arguments.add("-Pkotlin.user.home=${kotlinUserHome.normalize().absolute().invariantSeparatorsPathString}")
         }
 
         if (compilerArgumentsLogLevel != null) {
@@ -466,7 +467,7 @@ fun BuildOptions.disableIsolatedProjectsBecauseOfSubprojectGroupAccessInPublicat
 )
 
 fun BuildOptions.suppressWarningForOldKotlinVersion(
-    currentGradleVersion: GradleVersion
+    currentGradleVersion: GradleVersion,
 ) = suppressDeprecationWarningsSinceGradleVersion(
     gradleVersion = TestVersions.Gradle.G_8_14,
     currentGradleVersion = currentGradleVersion,
