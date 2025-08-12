@@ -10,6 +10,8 @@ import kotlin.test.*
 
 import kotlin.time.*
 import kotlin.time.Duration.Companion.days
+import kotlin.time.Duration.Companion.hours
+import kotlin.time.Duration.Companion.microseconds
 import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.nanoseconds
@@ -69,6 +71,185 @@ class Durations {
         assertPrints(Duration.parseIsoString(isoFormatString), "1h 30m")
         assertFails { Duration.parseIsoString(defaultFormatString) }
         assertPrints(Duration.parseIsoStringOrNull(defaultFormatString), "null")
+    }
+
+    @Sample
+    fun fromNanoseconds() {
+        assertPrints(15.nanoseconds, "15ns")
+
+        // Large values can be accurately represented only with millisecond precision
+        assertPrints(9000000000_054_775_807.nanoseconds, "104166d 16h 0m 0.054s")
+
+        // Fractional part is rounded to the nearest integer nanosecond value
+        assertPrints(999.4.nanoseconds, "999ns")
+        assertPrints(999.9.nanoseconds, "1us")
+
+        assertFailsWith<IllegalArgumentException> { Double.NaN.nanoseconds }
+    }
+
+    @Sample
+    fun fromMicroseconds() {
+        assertPrints(15.microseconds, "15us")
+
+        // Large values can be accurately represented only with millisecond precision
+        assertPrints(9000000000000_775_807.microseconds, "104166666d 16h 0m 0.775s")
+
+        // Fractional part is rounded to the nearest integer nanosecond value
+        assertPrints(999.0004.microseconds, "999us")
+        assertPrints(999.0009.microseconds, "999.001us")
+
+        assertFailsWith<IllegalArgumentException> { Double.NaN.microseconds }
+    }
+
+
+    @Sample
+    fun fromMilliseconds() {
+        assertPrints(1500.milliseconds, "1.5s")
+
+        // Large values can be converted to an infinite duration
+        assertPrints(9_000_000_000_000_000_807.milliseconds, "Infinity")
+
+        // Fractional part is rounded to the nearest integer nanosecond value
+        assertPrints(2.000_000_4.milliseconds, "2ms")
+        assertPrints(2.000_000_9.milliseconds, "2.000001ms")
+        // Or to the nearest integer millisecond value
+        assertPrints(9_000_000_000_000_807.5.milliseconds, "104166666d 16h 0m 0.808s")
+
+        assertFailsWith<IllegalArgumentException> { Double.NaN.milliseconds }
+    }
+
+
+    @Sample
+    fun fromSeconds() {
+        assertPrints(61.seconds, "1m 1s")
+        assertPrints(0.5.seconds, "500ms")
+
+        // Large values can be converted to an infinite duration
+        assertPrints(9_000_000_000_000_000.seconds, "Infinity")
+
+        // Fractional part is rounded to the nearest integer nanosecond value
+        assertPrints(2.000_000_000_4.seconds, "2s")
+        assertPrints(2.000_000_000_9.seconds, "2.000000001s")
+        // Or to the nearest integer millisecond value
+        assertPrints(9_000_000_000_000.001_5.seconds, "104166666d 16h 0m 0.002s")
+
+        assertFailsWith<IllegalArgumentException> { Double.NaN.seconds }
+    }
+
+    @Sample
+    fun fromMinutes() {
+        assertPrints(61.minutes, "1h 1m")
+        assertPrints(0.5.minutes, "30s")
+
+        // Large values can be converted to an infinite duration
+        assertPrints(90_000_000_000_000.minutes, "Infinity")
+
+        assertFailsWith<IllegalArgumentException> { Double.NaN.minutes }
+    }
+
+    @Sample
+    fun fromHours() {
+        assertPrints(26.hours, "1d 2h")
+        assertPrints(0.5.hours, "30m")
+
+        // Large values can be converted to an infinite duration
+        assertPrints(10_000_000_000_000.hours, "Infinity")
+
+        assertFailsWith<IllegalArgumentException> { Double.NaN.hours }
+    }
+
+    @Sample
+    fun fromDays() {
+        assertPrints(366.days, "366d")
+        assertPrints(0.5.days, "12h")
+
+        // Large values can be converted to an infinite duration
+        assertPrints(100_000_000_000.days, "Infinity")
+
+        assertFailsWith<IllegalArgumentException> { Double.NaN.days }
+    }
+
+    @Sample
+    fun inWholeNanoseconds() {
+        assertPrints(3.milliseconds.inWholeNanoseconds, "3000000")
+
+        assertTrue(1_000_000_000.days.inWholeNanoseconds == Long.MAX_VALUE)
+        assertTrue((-Duration.INFINITE).inWholeNanoseconds == Long.MIN_VALUE)
+    }
+
+    @Sample
+    fun inWholeMicroseconds() {
+        assertPrints(25_900.nanoseconds.inWholeMicroseconds, "25")
+
+        assertTrue(1_000_000_000.days.inWholeMicroseconds == Long.MAX_VALUE)
+        assertTrue((-Duration.INFINITE).inWholeMicroseconds == Long.MIN_VALUE)
+    }
+
+    @Sample
+    fun inWholeMilliseconds() {
+        assertPrints(25_999_999.nanoseconds.inWholeMilliseconds, "25")
+
+        assertTrue((-Duration.INFINITE).inWholeMilliseconds == Long.MIN_VALUE)
+    }
+
+    @Sample
+    fun inWholeSeconds() {
+        assertPrints(25_900.milliseconds.inWholeSeconds, "25")
+
+        assertTrue((-Duration.INFINITE).inWholeSeconds == Long.MIN_VALUE)
+    }
+
+    @Sample
+    fun inWholeMinutes() {
+        assertPrints(59.seconds.inWholeMinutes, "0")
+        assertPrints(120.seconds.inWholeMinutes, "2")
+
+        assertTrue((-Duration.INFINITE).inWholeMinutes == Long.MIN_VALUE)
+    }
+
+    @Sample
+    fun inWholeHours() {
+        assertPrints(59.minutes.inWholeHours, "0")
+        assertPrints(120.minutes.inWholeHours, "2")
+
+        assertTrue((-Duration.INFINITE).inWholeHours == Long.MIN_VALUE)
+    }
+
+
+    @Sample
+    fun inWholeDays() {
+        assertPrints(23.5.hours.inWholeDays, "0")
+        assertPrints(48.hours.inWholeDays, "2")
+
+        assertTrue((-Duration.INFINITE).inWholeDays == Long.MIN_VALUE)
+    }
+
+    @Sample
+    fun toIntUnits() {
+        assertPrints(2900.milliseconds.toInt(DurationUnit.SECONDS), "2")
+        assertPrints(3.hours.toInt(DurationUnit.MINUTES), "180")
+
+        assertTrue(1.minutes.toInt(DurationUnit.NANOSECONDS) == Int.MAX_VALUE)
+        assertTrue((-Duration.INFINITE).toInt(DurationUnit.DAYS) == Int.MIN_VALUE)
+    }
+
+
+    @Sample
+    fun toLongUnits() {
+        assertPrints(2900.milliseconds.toLong(DurationUnit.SECONDS), "2")
+        assertPrints(3.hours.toLong(DurationUnit.MINUTES), "180")
+        assertPrints(1.minutes.toLong(DurationUnit.NANOSECONDS), "60000000000")
+
+        assertTrue((365 * 300).days.toLong(DurationUnit.NANOSECONDS) == Long.MAX_VALUE)
+        assertTrue((-Duration.INFINITE).toLong(DurationUnit.DAYS) == Long.MIN_VALUE)
+    }
+
+    @Sample
+    fun toDoubleUnits() {
+        assertPrints(2900.milliseconds.toDouble(DurationUnit.SECONDS), "2.9")
+        assertPrints(1.seconds.toDouble(DurationUnit.MINUTES), "0.016666666666666666")
+
+        assertPrints(Duration.INFINITE.toDouble(DurationUnit.SECONDS), "Infinity")
     }
 
 }
