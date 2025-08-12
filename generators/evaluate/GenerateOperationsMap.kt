@@ -70,6 +70,11 @@ fun generate(): String {
 
     unaryOperationsMap.add(Triple("code", listOf(builtIns.charType), false))
 
+    for (name in listOf("trim", "trimEnd", "trimIndent", "trimMargin", "trimStart")) {
+        unaryOperationsMap.add(Triple(name, listOf(builtIns.stringType), true))
+    }
+    binaryOperationsMap.add("trimMargin" to listOf(builtIns.stringType, builtIns.stringType))
+
     for (type in integerTypes) {
         for (otherType in integerTypes) {
             val parameters = listOf(type, otherType)
