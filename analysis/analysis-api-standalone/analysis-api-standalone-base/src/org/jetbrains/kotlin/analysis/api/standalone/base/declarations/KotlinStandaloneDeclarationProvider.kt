@@ -26,9 +26,11 @@ import com.intellij.util.io.StringRef
 import com.intellij.util.io.UnsyncByteArrayOutputStream
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.impl.base.symbols.pointers.SmartPointerIncompatiblePsiFile
+import org.jetbrains.kotlin.analysis.api.platform.KotlinDeserializedDeclarationsOrigin
+import org.jetbrains.kotlin.analysis.api.platform.KotlinPlatformSettings
 import org.jetbrains.kotlin.analysis.api.platform.declarations.*
 import org.jetbrains.kotlin.analysis.api.platform.mergeSpecificProviders
-import org.jetbrains.kotlin.analysis.api.projectStructure.KaModule
+import org.jetbrains.kotlin.analysis.api.projectStructure.*
 import org.jetbrains.kotlin.analysis.decompiler.konan.K2KotlinNativeMetadataDecompiler
 import org.jetbrains.kotlin.analysis.decompiler.konan.KlibMetaFileType
 import org.jetbrains.kotlin.analysis.decompiler.psi.BuiltinsVirtualFileProvider
@@ -54,8 +56,8 @@ import java.util.concurrent.ConcurrentHashMap
 class KotlinStandaloneDeclarationProvider internal constructor(
     private val index: KotlinStandaloneDeclarationIndex,
     val scope: GlobalSearchScope,
+    private val contextualModule: KaModule?,
 ) : KotlinDeclarationProvider {
-
     private val KtElement.inScope: Boolean
         get() = containingKtFile.virtualFile in scope
 
@@ -109,23 +111,45 @@ class KotlinStandaloneDeclarationProvider internal constructor(
         return index.scriptMap[scriptFqName].orEmpty().filter { it.containingKtFile.virtualFile in scope }
     }
 
-    override val hasSpecificClassifierPackageNamesComputation: Boolean get() = true
+    // It is generally an *advantage* to have non-specific package set computations, as some components only work with general package sets.
+    override val hasSpecificClassifierPackageNamesComputation: Boolean get() = false
+    override val hasSpecificCallablePackageNamesComputation: Boolean get() = false
 
-    override fun computePackageNamesWithTopLevelClassifiers(): Set<String> =
-        buildPackageNamesSetFrom(index.classMap.keys, index.typeAliasMap.keys)
+    override fun computePackageNames(): Set<String>? =
+        when (contextualModule) {
+            is KaSourceModule, is KaScriptModule, is KaNotUnderContentRootModule ->
+                computePackageSetFromIndex()
 
-    override val hasSpecificCallablePackageNamesComputation: Boolean get() = true
+            is KaLibraryModule ->
+                if (contextualModule.canComputePackageSetFromIndex) {
+                    computePackageSetFromIndex()
+                } else null
 
-    override fun computePackageNamesWithTopLevelCallables(): Set<String> =
-        buildPackageNamesSetFrom(index.topLevelPropertyMap.keys, index.topLevelFunctionMap.keys)
+            else -> null
+        }
 
-    @Suppress("NOTHING_TO_INLINE")
-    private inline fun buildPackageNamesSetFrom(vararg fqNameSets: Set<FqName>): Set<String> =
+    /**
+     * For library modules, we can only compute a package set from the index when we use stubs, as we don't index binary dependencies
+     * otherwise.
+     */
+    private val KaLibraryModule.canComputePackageSetFromIndex: Boolean
+        get() = KotlinPlatformSettings.getInstance(project).deserializedDeclarationsOrigin == KotlinDeserializedDeclarationsOrigin.STUBS
+
+    private fun computePackageSetFromIndex(): Set<String> =
         buildSet {
-            for (fqNameSet in fqNameSets) {
-                fqNameSet.mapTo(this, FqName::asString)
+            addPackageNamesInScope(index.classMap)
+            addPackageNamesInScope(index.typeAliasMap)
+            addPackageNamesInScope(index.topLevelPropertyMap)
+            addPackageNamesInScope(index.topLevelFunctionMap)
+        }
+
+    private fun <T : KtDeclaration> MutableSet<String>.addPackageNamesInScope(map: Map<FqName, MutableSet<T>>) {
+        map.forEach { (fqName, declarations) ->
+            if (declarations.any { it.inScope }) {
+                add(fqName.asString())
             }
         }
+    }
 
     override fun getTopLevelProperties(callableId: CallableId): Collection<KtProperty> =
         index.topLevelPropertyMap[callableId.packageName]
@@ -164,7 +188,6 @@ class KotlinStandaloneDeclarationProviderFactory(
     skipBuiltins: Boolean = false,
     shouldBuildStubsForBinaryLibraries: Boolean = false,
 ) : KotlinDeclarationProviderFactory {
-
     private val index = KotlinStandaloneDeclarationIndex()
 
     private val psiManager = PsiManager.getInstance(project)
@@ -506,7 +529,7 @@ class KotlinStandaloneDeclarationProviderFactory(
     }
 
     override fun createDeclarationProvider(scope: GlobalSearchScope, contextualModule: KaModule?): KotlinDeclarationProvider {
-        return KotlinStandaloneDeclarationProvider(index, scope)
+        return KotlinStandaloneDeclarationProvider(index, scope, contextualModule)
     }
 
     fun getAdditionalCreatedKtFiles(): List<KtFile> {

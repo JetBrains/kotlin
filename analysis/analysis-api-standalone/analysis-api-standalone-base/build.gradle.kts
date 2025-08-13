@@ -23,4 +23,11 @@ sourceSets {
     "test" { none() }
 }
 
+kotlin {
+    compilerOptions {
+        optIn.add("org.jetbrains.kotlin.analysis.api.KaExperimentalApi")
+        optIn.add("org.jetbrains.kotlin.analysis.api.KaPlatformInterface")
+    }
+}
+
 optInToK1Deprecation()
