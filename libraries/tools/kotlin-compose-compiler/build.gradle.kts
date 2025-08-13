@@ -29,6 +29,8 @@ pluginApiReference {
 
     failOnWarning = true
 
+    moduleName("The Compose compiler Gradle plugin")
+
     additionalDokkaConfiguration {
         includes.from("api-reference-description.md")
         reportUndocumented.set(true)

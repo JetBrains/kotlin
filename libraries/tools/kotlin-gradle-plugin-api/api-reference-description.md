@@ -1,4 +1,4 @@
-# Module kotlin-gradle-plugin-api
+# Module The Kotlin Gradle plugins API
 
 The API reference for the Kotlin Gradle plugins. For example, "org.jetbrains.kotlin.jvm" and "org.jetbrains.kotlin.multiplatform".
 

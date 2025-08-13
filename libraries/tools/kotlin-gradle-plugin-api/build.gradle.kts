@@ -13,6 +13,7 @@ pluginApiReference {
     enableKotlinlangDocumentation()
 
     failOnWarning = true
+    moduleName("The Kotlin Gradle plugins API")
 
     additionalDokkaConfiguration {
         reportUndocumented.set(true)
