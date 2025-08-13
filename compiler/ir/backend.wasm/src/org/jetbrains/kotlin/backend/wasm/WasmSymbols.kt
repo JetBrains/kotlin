@@ -36,7 +36,7 @@ import org.jetbrains.kotlin.wasm.config.wasmTarget
 class WasmSymbols(
     irBuiltIns: IrBuiltIns,
     configuration: CompilerConfiguration,
-) : PreSerializationWasmSymbols by PreSerializationWasmSymbols.PreSerializationWasmSymbolsImpl(irBuiltIns), JsCommonSymbols(irBuiltIns) {
+) : PreSerializationWasmSymbols by PreSerializationWasmSymbols.Impl(irBuiltIns), JsCommonSymbols(irBuiltIns) {
 
     private val kotlinJsPackageFqName = FqName("kotlin.js")
     private val kotlinTestPackageFqName = FqName("kotlin.test")

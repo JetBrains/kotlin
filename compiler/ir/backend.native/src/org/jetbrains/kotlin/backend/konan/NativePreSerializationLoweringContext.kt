@@ -17,7 +17,7 @@ class NativePreSerializationLoweringContext(
         configuration: CompilerConfiguration,
         diagnosticReporter: DiagnosticReporter,
 ) : PreSerializationLoweringContext(irBuiltIns, configuration, diagnosticReporter) {
-    override val symbols: PreSerializationNativeSymbols = PreSerializationNativeSymbols.PreSerializationNativeSymbolsImpl(irBuiltIns)
+    override val symbols: PreSerializationNativeSymbols = PreSerializationNativeSymbols.Impl(irBuiltIns)
 
     override val sharedVariablesManager = KlibSharedVariablesManager(symbols)
 }

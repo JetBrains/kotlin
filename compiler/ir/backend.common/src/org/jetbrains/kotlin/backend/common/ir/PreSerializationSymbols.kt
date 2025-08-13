@@ -170,7 +170,7 @@ interface PreSerializationSymbols {
         }
     }
 
-abstract class PreSerializationSymbolsImpl(irBuiltIns: IrBuiltIns) : PreSerializationSymbols, BaseSymbolsImpl(irBuiltIns) {
+    abstract class Impl(irBuiltIns: IrBuiltIns) : PreSerializationSymbols, BaseSymbolsImpl(irBuiltIns) {
         override val asserts: Iterable<IrSimpleFunctionSymbol> = symbolFinder.findFunctions(Name.identifier("assert"), "kotlin")
 
         override val arrays: List<IrClassSymbol>
@@ -188,7 +188,7 @@ interface PreSerializationKlibSymbols : PreSerializationSymbols {
 
     val genericSharedVariableBox: SharedVariableBoxClassInfo
 
-    abstract class PreSerializationKlibSymbolsImpl(irBuiltIns: IrBuiltIns) : PreSerializationKlibSymbols, PreSerializationSymbols.PreSerializationSymbolsImpl(irBuiltIns) {
+    abstract class Impl(irBuiltIns: IrBuiltIns) : PreSerializationKlibSymbols, PreSerializationSymbols.Impl(irBuiltIns) {
         override val genericSharedVariableBox: PreSerializationKlibSymbols.SharedVariableBoxClassInfo = findSharedVariableBoxClass(null)
     }
 }
@@ -201,7 +201,7 @@ interface PreSerializationWebSymbols : PreSerializationKlibSymbols {
         val COROUTINE_SUSPEND_OR_RETURN_JS_NAME = "suspendCoroutineUninterceptedOrReturnJS"
     }
 
-    abstract class PreSerializationWebSymbolsImpl(irBuiltIns: IrBuiltIns) : PreSerializationWebSymbols, PreSerializationKlibSymbols.PreSerializationKlibSymbolsImpl(irBuiltIns)
+    abstract class Impl(irBuiltIns: IrBuiltIns) : PreSerializationWebSymbols, PreSerializationKlibSymbols.Impl(irBuiltIns)
 }
 
 interface PreSerializationJsSymbols : PreSerializationWebSymbols {
@@ -211,7 +211,7 @@ interface PreSerializationJsSymbols : PreSerializationWebSymbols {
     val jsCode: IrSimpleFunctionSymbol
     val jsOutlinedFunctionAnnotationSymbol: IrClassSymbol
 
-    open class PreSerializationJsSymbolsImpl(irBuiltIns: IrBuiltIns) : PreSerializationJsSymbols, PreSerializationWebSymbols.PreSerializationWebSymbolsImpl(irBuiltIns) {
+    open class Impl(irBuiltIns: IrBuiltIns) : PreSerializationJsSymbols, PreSerializationWebSymbols.Impl(irBuiltIns) {
         override val throwUninitializedPropertyAccessException =
             symbolFinder.topLevelFunction(kotlinPackageFqn, "throwUninitializedPropertyAccessException")
 
@@ -236,7 +236,7 @@ interface PreSerializationJsSymbols : PreSerializationWebSymbols {
 }
 
 interface PreSerializationWasmSymbols : PreSerializationWebSymbols {
-    open class PreSerializationWasmSymbolsImpl(irBuiltIns: IrBuiltIns) : PreSerializationWasmSymbols, PreSerializationWebSymbols.PreSerializationWebSymbolsImpl(irBuiltIns) {
+    open class Impl(irBuiltIns: IrBuiltIns) : PreSerializationWasmSymbols, PreSerializationWebSymbols.Impl(irBuiltIns) {
         override val throwUninitializedPropertyAccessException =
             getInternalWasmFunction("throwUninitializedPropertyAccessException")
 
@@ -258,7 +258,7 @@ interface PreSerializationWasmSymbols : PreSerializationWebSymbols {
 interface PreSerializationNativeSymbols : PreSerializationKlibSymbols {
     val isAssertionArgumentEvaluationEnabled: IrSimpleFunctionSymbol
 
-    open class PreSerializationNativeSymbolsImpl(irBuiltIns: IrBuiltIns) : PreSerializationNativeSymbols, PreSerializationKlibSymbols.PreSerializationKlibSymbolsImpl(irBuiltIns) {
+    open class Impl(irBuiltIns: IrBuiltIns) : PreSerializationNativeSymbols, PreSerializationKlibSymbols.Impl(irBuiltIns) {
         private object RuntimeNames {
             val kotlinNativeInternalPackageName = FqName.fromSegments(listOf("kotlin", "native", "internal"))
         }
