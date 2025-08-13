@@ -21,6 +21,7 @@ import org.jetbrains.kotlin.fir.types.ConeErrorType
 import org.jetbrains.kotlin.fir.types.ConeKotlinType
 import org.jetbrains.kotlin.fir.types.ConeTypeVariable
 import org.jetbrains.kotlin.resolve.calls.inference.components.*
+import org.jetbrains.kotlin.resolve.calls.inference.model.ExpectedTypeConstraintPosition
 import org.jetbrains.kotlin.resolve.calls.inference.model.NewConstraintSystemImpl
 import org.jetbrains.kotlin.resolve.calls.inference.model.NotEnoughInformationForTypeParameter
 import org.jetbrains.kotlin.resolve.calls.inference.model.VariableWithConstraints
@@ -274,7 +275,15 @@ class ConstraintSystemCompleter(components: BodyResolveComponents) {
         val variableWithConstraints = notFixedTypeVariables.getValue(variableForFixation.variable)
         if (!variableForFixation.isReady) return false
 
-        fixVariable(this, variableWithConstraints)
+        val isReadyToBeFixedUp =
+            variableForFixation.readiness == VariableFixationFinder.TypeVariableFixationReadiness.READY_FOR_FIXATION_UPPER
+        val hasExpectedTypeConstraint = variableWithConstraints.constraints
+            .any { it.position.initialConstraint.position is ExpectedTypeConstraintPosition<*> }
+        val direction = when {
+            isReadyToBeFixedUp && hasExpectedTypeConstraint -> TypeVariableDirectionCalculator.ResolveDirection.TO_SUPERTYPE
+            else -> TypeVariableDirectionCalculator.ResolveDirection.UNKNOWN
+        }
+        fixVariable(this, variableWithConstraints, direction)
 
         return true
     }
@@ -385,12 +394,10 @@ class ConstraintSystemCompleter(components: BodyResolveComponents) {
     private fun fixVariable(
         c: ConstraintSystemCompletionContext,
         variableWithConstraints: VariableWithConstraints,
+        direction: TypeVariableDirectionCalculator.ResolveDirection = TypeVariableDirectionCalculator.ResolveDirection.UNKNOWN,
     ) {
         val resultType = with(c) {
-            inferenceComponents.resultTypeResolver.findResultType(
-                variableWithConstraints,
-                TypeVariableDirectionCalculator.ResolveDirection.UNKNOWN
-            )
+            inferenceComponents.resultTypeResolver.findResultType(variableWithConstraints, direction)
         }
 
         val variable = variableWithConstraints.typeVariable

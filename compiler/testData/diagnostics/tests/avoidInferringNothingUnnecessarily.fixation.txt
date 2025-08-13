@@ -6,6 +6,6 @@ CHOSEN for fixation: TypeVariable(K) --- READY_FOR_FIXATION_LOWER
 CHOSEN for fixation: TypeVariable(T) --- READY_FOR_FIXATION_UPPER
      <: kotlin/Any
      >: kotlin/Nothing
-     = kotlin/Nothing (inferred during fixation)
-    FIXED TO: kotlin/Nothing
+     = kotlin/Any (inferred during fixation)
+    FIXED TO: kotlin/Any
 ********************************
