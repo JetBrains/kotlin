@@ -43,6 +43,7 @@ where advanced options include:
   -Xwasm-target              Set up the Wasm target (wasm-js or wasm-wasi).
   -Xwasm-debug-info          Add debug info to the compiled WebAssembly module.
   -Xwasm-debug-friendly      Avoid optimizations that can break debugging.
+  -Xwasm-included-module-only Compile only a module passed using `-include` option.
   -Xwasm-generate-wat        Generate a .wat file.
   -Xwasm-kclass-fqn          Enable support for 'KClass.qualifiedName'.
   -Xwasm-enable-array-range-checks
