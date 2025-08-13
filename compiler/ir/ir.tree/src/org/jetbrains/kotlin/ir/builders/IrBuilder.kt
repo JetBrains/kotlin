@@ -315,19 +315,3 @@ fun <T : IrElement> IrStatementsBuilder<T>.createTmpVariable(
     +variable
     return variable
 }
-
-fun Scope.createTmpVariable(
-    irType: IrType,
-    nameHint: String? = null,
-    isMutable: Boolean = false,
-    initializer: IrExpression? = null,
-    origin: IrDeclarationOrigin = IrDeclarationOrigin.IR_TEMPORARY_VARIABLE,
-    startOffset: Int = UNDEFINED_OFFSET,
-    endOffset: Int = UNDEFINED_OFFSET
-): IrVariable =
-    buildVariable(
-        getLocalDeclarationParent(), startOffset, endOffset, origin, Name.identifier(nameHint ?: "tmp"),
-        irType, isMutable
-    ).apply {
-        this.initializer = initializer
-    }
