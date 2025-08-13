@@ -520,6 +520,10 @@ private class Fir2IrPipeline(
                         // User code may use @Suppress("INVISIBLE_REFERENCE") or similar, and at this point we do allow that,
                         // so visibility checks are only performed if requested via a flag, and in tests.
                         withCheckers(IrVisibilityChecker)
+                    }.applyIf(!fir2IrConfiguration.languageVersionSettings.supportsFeature(LanguageFeature.ExplicitBackingFields)) {
+                        // FIXME(KT-71243): This checker should be added unconditionally, but currently the ExplicitBackingFields feature de-facto allows specifying
+                        //  non-private visibilities for fields.
+                        withCheckers(IrFieldVisibilityChecker)
                     }
                 }
                 .applyIf(extension == null) {
@@ -529,11 +533,6 @@ private class Fir2IrPipeline(
                 }
                 .applyIf(enableIrVarargTypesChecks) {
                     withVarargChecks()
-                }
-                .applyIf(!fir2IrConfiguration.languageVersionSettings.supportsFeature(LanguageFeature.ExplicitBackingFields)) {
-                    // FIXME(KT-71243): This checker should be added unconditionally, but currently the ExplicitBackingFields feature de-facto allows specifying
-                    //  non-private visibilities for fields.
-                    withCheckers(IrFieldVisibilityChecker)
                 }
                 .applyIf(fir2IrConfiguration.validateIrForKlibSerialization) {
                     // Serializing IrExpressionBody in IrFunction.body is not supported
