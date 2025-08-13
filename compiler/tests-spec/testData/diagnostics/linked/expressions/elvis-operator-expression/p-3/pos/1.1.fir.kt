@@ -14,7 +14,7 @@
 
 // TESTCASE NUMBER: 1
 fun case1() {
-    val x = null ?: getNull()
+    val x = <!USELESS_ELVIS_LEFT_IS_NULL!>null ?:<!> getNull()
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Boolean?")!>x<!>
 }
 
@@ -31,12 +31,12 @@ class A(val b: Set<Any>? = null)
 
 // TESTCASE NUMBER: 3
 fun case3() {
-    val x = null?: throw Exception()
+    val x = <!USELESS_ELVIS_LEFT_IS_NULL!>null?:<!> throw Exception()
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing")!>x<!>
 }
 
 // TESTCASE NUMBER: 4
 fun case4() {
-    val x = null <!USELESS_ELVIS_RIGHT_IS_NULL!>?: null<!>
+    val x = <!USELESS_ELVIS_LEFT_IS_NULL!>null ?:<!> null
     <!DEBUG_INFO_EXPRESSION_TYPE("kotlin.Nothing?")!>x<!>
 }

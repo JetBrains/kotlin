@@ -3628,6 +3628,10 @@ sealed interface KaFirDiagnostic<PSI : PsiElement> : KaDiagnosticWithPsi<PSI> {
         override val diagnosticClass get() = UselessElvisRightIsNull::class
     }
 
+    interface UselessElvisLeftIsNull : KaFirDiagnostic<KtBinaryExpression> {
+        override val diagnosticClass get() = UselessElvisLeftIsNull::class
+    }
+
     interface CannotCheckForErased : KaFirDiagnostic<PsiElement> {
         override val diagnosticClass get() = CannotCheckForErased::class
         val type: KaType

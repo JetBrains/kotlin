@@ -26,6 +26,14 @@ object FirUselessElvisChecker : FirElvisExpressionChecker(MppCheckerKind.Common)
         // where an error type is recorded as the expression's return type.
         if (expression.resolvedType is ConeErrorType) return
 
+        // Check if left side is null literal
+        if (expression.lhs.isNullLiteral) {
+            if (LanguageFeature.EnableDfaWarningsInK2.isEnabled()) {
+                reporter.reportOn(expression.source, FirErrors.USELESS_ELVIS_LEFT_IS_NULL)
+            }
+            return
+        }
+
         val lhsType = expression.lhs.resolvedType
         if (lhsType is ConeErrorType) return
         if (!lhsType.canBeNull(context.session)) {

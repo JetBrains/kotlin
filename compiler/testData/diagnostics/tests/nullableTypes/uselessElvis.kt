@@ -48,6 +48,21 @@ fun testFrom13648() {
 
 fun bar() = <!UNRESOLVED_REFERENCE!>unresolved<!>
 
+fun testUselessElvisLeftIsNull(l: List<String>) {
+    val result1 = null ?: "default"
+    val result2 = null ?: 42
+    val result3 = null ?: l
+
+    takeNotNull(null ?: "value")
+
+    // Should not trigger - left is not null literal
+    val x: String? = null
+    val result4 = x ?: "default"
+
+    // Should not trigger - left is not null literal
+    val result5 = nullable() ?: "default"
+}
+
 /* GENERATED_FIR_TAGS: asExpression, checkNotNullCall, elvisExpression, equalityExpression, functionDeclaration,
 ifExpression, inline, integerLiteral, localProperty, nullableType, propertyDeclaration, reified, smartcast,
-stringLiteral, typeConstraint, typeParameter */
+stringLiteral, typeConstraint, typeParameter, uselessElvisLeftIsNull */

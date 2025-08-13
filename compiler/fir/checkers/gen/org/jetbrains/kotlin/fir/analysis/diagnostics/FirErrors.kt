@@ -871,6 +871,7 @@ object FirErrors : KtDiagnosticsContainer() {
     val NOT_NULL_ASSERTION_ON_CALLABLE_REFERENCE: KtDiagnosticFactory0 = KtDiagnosticFactory0("NOT_NULL_ASSERTION_ON_CALLABLE_REFERENCE", WARNING, SourceElementPositioningStrategies.OPERATOR, KtExpression::class, getRendererFactory())
     val USELESS_ELVIS: KtDiagnosticFactory1<ConeKotlinType> = KtDiagnosticFactory1("USELESS_ELVIS", WARNING, SourceElementPositioningStrategies.USELESS_ELVIS, KtBinaryExpression::class, getRendererFactory())
     val USELESS_ELVIS_RIGHT_IS_NULL: KtDiagnosticFactory0 = KtDiagnosticFactory0("USELESS_ELVIS_RIGHT_IS_NULL", WARNING, SourceElementPositioningStrategies.USELESS_ELVIS, KtBinaryExpression::class, getRendererFactory())
+    val USELESS_ELVIS_LEFT_IS_NULL: KtDiagnosticFactory0 = KtDiagnosticFactory0("USELESS_ELVIS_LEFT_IS_NULL", WARNING, SourceElementPositioningStrategies.USELESS_ELVIS_LEFT, KtBinaryExpression::class, getRendererFactory())
 
     // Casts and is-checks
     val CANNOT_CHECK_FOR_ERASED: KtDiagnosticFactory1<ConeKotlinType> = KtDiagnosticFactory1("CANNOT_CHECK_FOR_ERASED", ERROR, SourceElementPositioningStrategies.DEFAULT, PsiElement::class, getRendererFactory())

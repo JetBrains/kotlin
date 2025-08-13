@@ -2,7 +2,7 @@
 fun error(): Nothing = null!!
 
 fun test0(): String {
-    null ?: return ""
+    <!USELESS_ELVIS_LEFT_IS_NULL!>null ?:<!> return ""
 }
 
 fun test1(): String {
