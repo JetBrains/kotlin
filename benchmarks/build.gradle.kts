@@ -52,6 +52,7 @@ benchmark {
 
             include("CommonCallsBenchmark")
             include("ControlFlowAnalysisBenchmark")
+            include("BigMapInitialization")
             //include("InferenceBaselineCallsBenchmark")
         }
 
@@ -68,6 +69,10 @@ benchmark {
             include("InferenceForInApplicableCandidate")
             include("InferenceFromArgumentCallsBenchmark")
             include("InferenceFromReturnTypeCallsBenchmark")
+        }
+
+        register("stdlib") {
+            include("ForEachBenchmark")
         }
     }
     targets {
