@@ -120,7 +120,10 @@ internal class SirEnumFromKtSymbol(
 
     private fun kotlinBaseInitDeclaration(): SirDeclaration = buildInitCopy(KotlinRuntimeModule.kotlinBaseDesignatedInit) {
         origin = SirOrigin.KotlinBaseInitOverride(`for` = KotlinSource(ktSymbol))
-        visibility = SirVisibility.PACKAGE // Hide from users, but not from other Swift Export modules.
+        parameters[0] = SirParameter(
+            argumentName = "__externalRCRefUnsafe",
+            type = SirNominalType(SirSwiftModule.unsafeMutableRawPointer).implicitlyUnwrappedOptional()
+        )
         body = SirFunctionBody(
             listOf("super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)")
         )

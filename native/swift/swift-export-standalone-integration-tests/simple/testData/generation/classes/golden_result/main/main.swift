@@ -26,8 +26,8 @@ public enum ENUM: KotlinRuntimeSupport._KotlinBridgeable, Swift.CaseIterable {
             return ENUM_entries_get() as! Swift.Array<main.ENUM>
         }
     }
-    package init(
-        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+    public init(
+        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer!,
         options: KotlinRuntime.KotlinBaseConstructionOptions
     ) {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
