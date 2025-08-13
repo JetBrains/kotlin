@@ -31,6 +31,7 @@ import org.jetbrains.kotlin.name.StandardClassIds.BASE_KOTLIN_PACKAGE
 abstract class BaseSymbolsImpl(val irBuiltIns: IrBuiltIns) {
     protected val symbolFinder = irBuiltIns.symbolFinder
 
+    // TODO KT-79436 unify backend specific functions and remove the old ones
     // JS
     protected val BASE_JS_PACKAGE = BASE_KOTLIN_PACKAGE.child(Name.identifier("js"))
     protected fun getInternalJsFunction(name: String): IrSimpleFunctionSymbol =
