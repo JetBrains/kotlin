@@ -43,10 +43,10 @@ FILE fqName:<root> fileName:/kt47527.kt
     VALUE_PARAMETER kind:Regular name:value index:0 type:kotlin.Any?
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun test_1 (value: kotlin.Any?): kotlin.String? declared in <root>'
-        BLOCK type=kotlin.Nothing? origin=SAFE_CALL
+        BLOCK type=kotlin.String? origin=SAFE_CALL
           VAR IR_TEMPORARY_VARIABLE name:tmp_2 type:kotlin.Any? [val]
             GET_VAR 'value: kotlin.Any? declared in <root>.test_1' type=kotlin.Any? origin=null
-          WHEN type=kotlin.Nothing? origin=null
+          WHEN type=kotlin.String? origin=null
             BRANCH
               if: CALL 'public final fun EQEQ (arg0: kotlin.Any?, arg1: kotlin.Any?): kotlin.Boolean declared in kotlin.internal.ir' type=kotlin.Boolean origin=EQEQ
                 ARG arg0: GET_VAR 'val tmp_2: kotlin.Any? declared in <root>.test_1' type=kotlin.Any? origin=null
@@ -54,13 +54,13 @@ FILE fqName:<root> fileName:/kt47527.kt
               then: CONST Null type=kotlin.Nothing? value=null
             BRANCH
               if: CONST Boolean type=kotlin.Boolean value=true
-              then: CALL 'public final fun let <T, R> (<this>: T of kotlin.let, block: kotlin.Function1<T of kotlin.let, R of kotlin.let>): R of kotlin.let declared in kotlin' type=kotlin.Nothing origin=null
+              then: CALL 'public final fun let <T, R> (<this>: T of kotlin.let, block: kotlin.Function1<T of kotlin.let, R of kotlin.let>): R of kotlin.let declared in kotlin' type=kotlin.String? origin=null
                 TYPE_ARG T: kotlin.Any
-                TYPE_ARG R: kotlin.Nothing
+                TYPE_ARG R: kotlin.String?
                 ARG <this>: TYPE_OP type=kotlin.Any origin=IMPLICIT_CAST typeOperand=kotlin.Any
                   GET_VAR 'val tmp_2: kotlin.Any? declared in <root>.test_1' type=kotlin.Any? origin=null
-                ARG block: FUN_EXPR type=kotlin.Function1<kotlin.Any, kotlin.Nothing> origin=LAMBDA
-                  FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.Nothing
+                ARG block: FUN_EXPR type=kotlin.Function1<kotlin.Any, kotlin.String?> origin=LAMBDA
+                  FUN LOCAL_FUNCTION_FOR_LAMBDA name:<anonymous> visibility:local modality:FINAL returnType:kotlin.String?
                     VALUE_PARAMETER kind:Regular name:it index:0 type:kotlin.Any
                     BLOCK_BODY
                       RETURN type=kotlin.Nothing from='public final fun test_1 (value: kotlin.Any?): kotlin.String? declared in <root>'

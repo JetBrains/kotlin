@@ -51,7 +51,7 @@ FILE fqName:<root> fileName:/smartCastAside2.kt
     TYPE_PARAMETER name:K index:0 variance: superTypes:[kotlin.Any?] reified:false
     BLOCK_BODY
       RETURN type=kotlin.Nothing from='public final fun materialize <K> (): K of <root>.materialize declared in <root>'
-        CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type=kotlin.Nothing origin=EXCLEXCL
+        CALL 'public final fun CHECK_NOT_NULL <T0> (arg0: T0 of kotlin.internal.ir.CHECK_NOT_NULL?): {T0 of kotlin.internal.ir.CHECK_NOT_NULL & Any} declared in kotlin.internal.ir' type={K of <root>.materialize & Any} origin=EXCLEXCL
           TYPE_ARG T0: kotlin.Nothing
           ARG arg0: CONST Null type=kotlin.Nothing? value=null
   FUN name:test_1 visibility:public modality:FINAL returnType:kotlin.Unit

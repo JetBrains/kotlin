@@ -70,6 +70,7 @@ class VariableFixationFinder(
     class VariableForFixation(
         val variable: TypeConstructorMarker,
         private val hasProperConstraint: Boolean,
+        val readiness: TypeVariableFixationReadiness,
         private val hasDependencyOnOuterTypeVariable: Boolean = false,
     ) {
         val isReady: Boolean get() = hasProperConstraint && !hasDependencyOnOuterTypeVariable
@@ -125,7 +126,7 @@ class VariableFixationFinder(
         get() = languageVersionSettings.supportsFeature(LanguageFeature.FixationEnhancementsIn22)
 
     context(c: Context)
-    private fun TypeConstructorMarker.getReadiness(
+    fun TypeConstructorMarker.getReadiness(
         dependencyProvider: TypeVariableDependencyInformationProvider
     ): TypeVariableFixationReadiness {
         return when {
@@ -223,13 +224,13 @@ class VariableFixationFinder(
 
         val candidate = chooseBestTypeVariableCandidateWithLogging(allTypeVariables, dependencyProvider) ?: return null
 
-        return when (candidate.getReadiness(dependencyProvider)) {
+        return when (val readiness = candidate.getReadiness(dependencyProvider)) {
             TypeVariableFixationReadiness.FORBIDDEN -> null
-            TypeVariableFixationReadiness.WITHOUT_PROPER_ARGUMENT_CONSTRAINT -> VariableForFixation(candidate, false)
+            TypeVariableFixationReadiness.WITHOUT_PROPER_ARGUMENT_CONSTRAINT -> VariableForFixation(candidate, false, readiness)
             TypeVariableFixationReadiness.OUTER_TYPE_VARIABLE_DEPENDENCY ->
-                VariableForFixation(candidate, hasProperConstraint = true, hasDependencyOnOuterTypeVariable = true)
+                VariableForFixation(candidate, hasProperConstraint = true, readiness, hasDependencyOnOuterTypeVariable = true)
 
-            else -> VariableForFixation(candidate, true)
+            else -> VariableForFixation(candidate, true, readiness)
         }
     }
 
