@@ -11,7 +11,6 @@ import org.gradle.api.Project
 import org.gradle.api.attributes.Attribute
 import org.jetbrains.kotlin.gradle.dsl.*
 import org.jetbrains.kotlin.gradle.plugin.*
-import org.jetbrains.kotlin.gradle.plugin.PropertiesProvider.Companion.kotlinPropertiesProvider
 import org.jetbrains.kotlin.gradle.plugin.mpp.resources.publication.setUpResourcesVariant
 import org.jetbrains.kotlin.gradle.plugin.sources.awaitPlatformCompilations
 import org.jetbrains.kotlin.gradle.plugin.sources.internal
@@ -43,15 +42,16 @@ abstract class KotlinNativeTarget @Inject constructor(
      * Indicates whether cross-compilation is supported on the current host for the associated Kotlin Native Target.
      */
     internal val crossCompilationOnCurrentHostSupported: Future<Boolean> = project.future {
-        val crossCompilationEnabled = project.kotlinPropertiesProvider.enableKlibsCrossCompilation
         val isSupportedHost = hostManager.isEnabled(konanTarget)
 
         // Supported hosts can always compile
         if (isSupportedHost) return@future true
 
-        // Unsupported hosts require cross-compilation enabled and no cinterops
-        KotlinPluginLifecycle.Stage.AfterFinaliseCompilations.await()
-        crossCompilationEnabled && compilations.none { it.cinterops.isNotEmpty() }
+        // Get the cross-compilation service
+        val crossCompilationService = crossCompilationServiceProvider.get()
+
+        // Fetch the service result
+        crossCompilationService.isCrossCompilationSupported()
     }
 
     override val kotlinComponents: Set<KotlinTargetComponent> by lazy {
