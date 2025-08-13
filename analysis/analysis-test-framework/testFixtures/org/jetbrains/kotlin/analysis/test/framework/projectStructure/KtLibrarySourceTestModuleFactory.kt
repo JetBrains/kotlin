@@ -64,7 +64,7 @@ fun createKtLibrarySourceModule(
     val libraryKtModule = object : KaLibraryModuleImpl(
         testModule.name,
         targetPlatform,
-        StandaloneProjectFactory.createSearchScopeByLibraryRoots(
+        StandaloneProjectFactory.createLibraryModuleSearchScope(
             libraryJars,
             emptyList(),
             testServices.environmentManager.getApplicationEnvironment(),

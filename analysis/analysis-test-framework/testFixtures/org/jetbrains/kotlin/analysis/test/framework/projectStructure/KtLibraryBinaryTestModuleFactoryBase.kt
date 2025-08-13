@@ -36,7 +36,7 @@ abstract class KtLibraryBinaryTestModuleFactoryBase : KtTestModuleFactory {
         val libraryModule = KaLibraryModuleImpl(
             testModule.name,
             testModule.targetPlatform(testServices),
-            StandaloneProjectFactory.createSearchScopeByLibraryRoots(
+            StandaloneProjectFactory.createLibraryModuleSearchScope(
                 binaryRoots,
                 emptyList(),
                 testServices.environmentManager.getApplicationEnvironment(),
