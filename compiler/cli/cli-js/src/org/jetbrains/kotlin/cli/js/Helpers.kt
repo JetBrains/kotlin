@@ -5,7 +5,6 @@
 
 package org.jetbrains.kotlin.cli.js
 
-import com.intellij.openapi.Disposable
 import com.intellij.util.ExceptionUtil
 import org.jetbrains.kotlin.backend.js.JsGenerationGranularity
 import org.jetbrains.kotlin.backend.js.TsCompilationStrategy
@@ -23,8 +22,6 @@ import org.jetbrains.kotlin.js.config.EcmaVersion
 import org.jetbrains.kotlin.js.config.SourceMapNamesPolicy
 import org.jetbrains.kotlin.js.config.SourceMapSourceEmbedding
 import org.jetbrains.kotlin.js.config.wasmCompilation
-import org.jetbrains.kotlin.konan.file.ZipFileSystemAccessor
-import org.jetbrains.kotlin.konan.file.ZipFileSystemCacheableAccessor
 import org.jetbrains.kotlin.library.loader.KlibPlatformChecker
 import org.jetbrains.kotlin.psi.KtFile
 import org.jetbrains.kotlin.serialization.js.ModuleKind
@@ -59,16 +56,6 @@ val K2JSCompilerArguments.dtsStrategy: TsCompilationStrategy
         this.irPerFile -> TsCompilationStrategy.EACH_FILE
         else -> TsCompilationStrategy.MERGED
     }
-
-internal class DisposableZipFileSystemAccessor private constructor(
-    private val zipAccessor: ZipFileSystemCacheableAccessor,
-) : Disposable, ZipFileSystemAccessor by zipAccessor {
-    constructor(cacheLimit: Int) : this(ZipFileSystemCacheableAccessor(cacheLimit))
-
-    override fun dispose() {
-        zipAccessor.reset()
-    }
-}
 
 internal val sourceMapContentEmbeddingMap: Map<String, SourceMapSourceEmbedding> = mapOf(
     K2JsArgumentConstants.SOURCE_MAP_SOURCE_CONTENT_ALWAYS to SourceMapSourceEmbedding.ALWAYS,

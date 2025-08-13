@@ -5,22 +5,17 @@
 
 package org.jetbrains.kotlin.cli.common
 
+import com.intellij.openapi.Disposable
+import com.intellij.openapi.util.Disposer
 import org.jetbrains.kotlin.cli.common.arguments.CommonKlibBasedCompilerArguments
 import org.jetbrains.kotlin.cli.common.messages.CompilerMessageSeverity
 import org.jetbrains.kotlin.cli.common.messages.MessageCollector
+import org.jetbrains.kotlin.config.*
 import org.jetbrains.kotlin.config.CommonConfigurationKeys.LANGUAGE_VERSION_SETTINGS
-import org.jetbrains.kotlin.config.CompilerConfiguration
-import org.jetbrains.kotlin.config.DuplicatedUniqueNameStrategy
-import org.jetbrains.kotlin.config.KlibAbiCompatibilityLevel
-import org.jetbrains.kotlin.config.LanguageFeature
-import org.jetbrains.kotlin.config.LanguageVersion
-import org.jetbrains.kotlin.config.customKlibAbiVersion
-import org.jetbrains.kotlin.config.duplicatedUniqueNameStrategy
-import org.jetbrains.kotlin.config.klibAbiCompatibilityLevel
-import org.jetbrains.kotlin.config.klibNormalizeAbsolutePath
-import org.jetbrains.kotlin.config.klibRelativePathBases
-import org.jetbrains.kotlin.config.messageCollector
-import org.jetbrains.kotlin.config.produceKlibSignaturesClashChecks
+import org.jetbrains.kotlin.config.zipFileSystemAccessor
+import org.jetbrains.kotlin.konan.file.ZipFileSystemAccessor
+import org.jetbrains.kotlin.konan.file.ZipFileSystemCacheableAccessor
+import org.jetbrains.kotlin.konan.file.ZipFileSystemInPlaceAccessor
 import org.jetbrains.kotlin.library.KotlinAbiVersion
 import java.util.EnumMap
 import kotlin.collections.plus
@@ -31,7 +26,8 @@ import kotlin.collections.plus
  */
 fun CompilerConfiguration.setupCommonKlibArguments(
     arguments: CommonKlibBasedCompilerArguments,
-    canBeMetadataKlibCompilation: Boolean
+    canBeMetadataKlibCompilation: Boolean,
+    rootDisposable: Disposable,
 ) {
     val isKlibMetadataCompilation = canBeMetadataKlibCompilation && arguments.metadataKlib
 
@@ -55,6 +51,8 @@ fun CompilerConfiguration.setupCommonKlibArguments(
     if (!isKlibMetadataCompilation) {
         setupKlibAbiCompatibilityLevel()
     }
+
+    zipFileSystemAccessor = getZipFileSystemAccessor(arguments, messageCollector, rootDisposable)
 }
 
 /**
@@ -76,6 +74,8 @@ fun CompilerConfiguration.copyCommonKlibArgumentsFrom(source: CompilerConfigurat
 
     // ABI compatibility level (the one that actually affects the KLIB serialization).
     klibAbiCompatibilityLevel = source.klibAbiCompatibilityLevel
+
+    zipFileSystemAccessor = source.zipFileSystemAccessor
 }
 
 private fun parseCustomKotlinAbiVersion(customKlibAbiVersion: String?, collector: MessageCollector): KotlinAbiVersion? {
@@ -97,6 +97,39 @@ private fun parseCustomKotlinAbiVersion(customKlibAbiVersion: String?, collector
         return null
     }
     return KotlinAbiVersion(version[0], version[1], version[2])
+}
+
+private fun getZipFileSystemAccessor(
+    arguments: CommonKlibBasedCompilerArguments,
+    collector: MessageCollector,
+    rootDisposable: Disposable,
+): ZipFileSystemAccessor? {
+    val cacheLimit = arguments.klibZipFileAccessorCacheLimit.toIntOrNull()
+    if (cacheLimit == null || cacheLimit < 0) {
+        collector.report(
+            CompilerMessageSeverity.ERROR,
+            buildString {
+                append("Cannot parse -Xklib-zip-file-accessor-cache-limit value: \"${arguments.klibZipFileAccessorCacheLimit}\". ")
+                append("It must be an integer >= 0.")
+            }
+        )
+        return null
+    }
+    return if (cacheLimit > 0) {
+        DisposableZipFileSystemAccessor(cacheLimit).also { Disposer.register(rootDisposable, it) }
+    } else {
+        ZipFileSystemInPlaceAccessor
+    }
+}
+
+private class DisposableZipFileSystemAccessor(
+    private val zipAccessor: ZipFileSystemCacheableAccessor
+) : Disposable, ZipFileSystemAccessor by zipAccessor {
+    constructor(cacheLimit: Int) : this(ZipFileSystemCacheableAccessor(cacheLimit))
+
+    override fun dispose() {
+        zipAccessor.reset()
+    }
 }
 
 private fun CompilerConfiguration.setupKlibAbiCompatibilityLevel() {
