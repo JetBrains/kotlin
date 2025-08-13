@@ -12,6 +12,7 @@ import org.jetbrains.kotlin.arguments.dsl.base.KotlinCompilerArgumentsLevel
 import org.jetbrains.kotlin.arguments.dsl.types.KotlinArgumentValueType
 import org.jetbrains.kotlin.generators.kotlinpoet.annotation
 import org.jetbrains.kotlin.generators.kotlinpoet.function
+import org.jetbrains.kotlin.generators.kotlinpoet.listTypeNameOf
 import org.jetbrains.kotlin.generators.kotlinpoet.property
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 import java.nio.file.Path
@@ -37,6 +38,10 @@ internal class BtaApiGenerator(private val targetPackage: String) : BtaGenerator
                     val argument =
                         generateArgumentType(className, CodeBlock.of(KDOC_BASE_OPTIONS_CLASS, ClassName(targetPackage, className)))
                     val argumentTypeName = ClassName(targetPackage, className, argument)
+                    if (parentClass == null) {
+                        addToArgumentStringsFun()
+                        addApplyArgumentStringsFun()
+                    }
                     generateGetPutFunctions(argumentTypeName)
                     addType(TypeSpec.companionObjectBuilder().apply {
                         generateOptions(level.filterOutDroppedArguments(), argumentTypeName, skipXX)
@@ -177,4 +182,23 @@ internal fun TypeSpec.Builder.generateArgumentType(argumentsClassName: String, k
     }.build()
     addType(typeSpec)
     return argumentTypeName
+}
+
+private fun TypeSpec.Builder.addApplyArgumentStringsFun() {
+    function("applyArgumentStrings") {
+        addKdoc("Takes a list of string arguments in the format recognized by the Kotlin CLI compiler and applies the options parsed from them into this instance.")
+        addParameter(
+            ParameterSpec.builder("arguments", listTypeNameOf<String>())
+                .addKdoc("a list of arguments for the Kotlin CLI compiler").build()
+        )
+        this.addModifiers(KModifier.ABSTRACT)
+    }
+}
+
+private fun TypeSpec.Builder.addToArgumentStringsFun() {
+    function("toArgumentStrings") {
+        addKdoc("Converts the options to a list of string arguments recognized by the Kotlin CLI compiler.")
+        returns(listTypeNameOf<String>())
+        this.addModifiers(KModifier.ABSTRACT)
+    }
 }
