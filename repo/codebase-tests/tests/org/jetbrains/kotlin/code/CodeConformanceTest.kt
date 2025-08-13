@@ -174,6 +174,7 @@ class CodeConformanceTest : TestCase() {
             "compiler/build-tools/kotlin-build-statistics/src",
             "compiler/build-tools/kotlin-build-tools-api/src",
             "compiler/build-tools/kotlin-build-tools-impl/src",
+            "compiler/build-tools/kotlin-build-tools-compat/src",
             "compiler/build-tools/kotlin-build-tools-jdk-utils/src",
             "compiler/daemon/daemon-client/src",
             "compiler/daemon/daemon-common/src",
