@@ -29,6 +29,15 @@ public interface CommonCompilerArguments : CommonToolArguments {
   public operator fun <V> `set`(key: CommonCompilerArgument<V>, `value`: V)
 
   /**
+   * Check if an option specified by [key] has a value set.
+   *
+   * Note: trying to read an option (by using [get]) that has not been set will result in an exception.
+   *
+   * @return true if the option has a value set, false otherwise
+   */
+  public operator fun contains(key: CommonCompilerArgument<*>): Boolean
+
+  /**
    * Base class for [CommonCompilerArguments] options.
    *
    * @see get
