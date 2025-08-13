@@ -70,8 +70,7 @@ abstract class Symbols(val irBuiltIns: IrBuiltIns) {
 
     val closedRange = progression("ClosedRange")
 
-    open val getProgressionLastElementByReturnType: Map<IrClassifierSymbol, IrSimpleFunctionSymbol> =
-        irBuiltIns.getNonBuiltinFunctionsByReturnType(Name.identifier("getProgressionLastElement"), "kotlin", "internal")
+    abstract val getProgressionLastElementByReturnType: Map<IrClassifierSymbol, IrSimpleFunctionSymbol>
 
     open val toUIntByExtensionReceiver: Map<IrClassifierSymbol, IrSimpleFunctionSymbol> =
         irBuiltIns.getNonBuiltInFunctionsByExtensionReceiver(Name.identifier("toUInt"), "kotlin")
@@ -249,6 +248,9 @@ abstract class Symbols(val irBuiltIns: IrBuiltIns) {
 
 @OptIn(InternalSymbolFinderAPI::class)
 abstract class KlibSymbols(irBuiltIns: IrBuiltIns) : Symbols(irBuiltIns) {
+    override val getProgressionLastElementByReturnType: Map<IrClassifierSymbol, IrSimpleFunctionSymbol> =
+        irBuiltIns.getNonBuiltinFunctionsByReturnType(Name.identifier("getProgressionLastElement"), "kotlin", "internal")
+
     class SharedVariableBoxClassInfo(val klass: IrClassSymbol) {
         val constructor by lazy { klass.constructors.single() }
         val load by lazy { klass.getPropertyGetter("element")!! }
