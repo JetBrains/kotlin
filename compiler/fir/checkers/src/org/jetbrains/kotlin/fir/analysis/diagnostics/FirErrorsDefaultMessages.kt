@@ -811,6 +811,7 @@ import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.USAGE_IS_NOT_INLI
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.USELESS_CALL_ON_NOT_NULL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.USELESS_CAST
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.USELESS_ELVIS
+import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.USELESS_ELVIS_LEFT_IS_NULL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.USELESS_ELVIS_RIGHT_IS_NULL
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.USELESS_IS_CHECK
 import org.jetbrains.kotlin.fir.analysis.diagnostics.FirErrors.USELESS_VARARG_ON_PARAMETER
@@ -3057,6 +3058,7 @@ object FirErrorsDefaultMessages : BaseDiagnosticRendererFactory() {
         map.put(NOT_NULL_ASSERTION_ON_CALLABLE_REFERENCE, "Non-null assertion (!!) called on a callable reference expression.")
         map.put(USELESS_ELVIS, "Elvis operator (?:) always returns the left operand of non-nullable type ''{0}''.", RENDER_TYPE)
         map.put(USELESS_ELVIS_RIGHT_IS_NULL, "Right operand of elvis operator (?:) is useless if it is null.")
+        map.put(USELESS_ELVIS_LEFT_IS_NULL, "Elvis operator (?:) is useless if the left operand is null.")
 
         // Casts and is-checks
         map.put(CANNOT_CHECK_FOR_ERASED, "Cannot check for instance of erased type ''{0}''.", RENDER_TYPE)
