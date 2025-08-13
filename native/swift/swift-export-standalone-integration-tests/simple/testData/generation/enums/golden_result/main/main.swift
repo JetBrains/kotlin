@@ -25,6 +25,9 @@ public enum Enum: KotlinRuntimeSupport._KotlinBridgeable, Swift.CaseIterable {
     ) {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
     }
+    public func __externalRCRef() -> Swift.UnsafeMutableRawPointer! {
+        return nil
+    }
     public func print() -> Swift.String {
         return Enum_print(self.__externalRCRef())
     }
@@ -48,6 +51,9 @@ public enum EnumSimple: KotlinRuntimeSupport._KotlinBridgeable, Swift.CaseIterab
         options: KotlinRuntime.KotlinBaseConstructionOptions
     ) {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+    }
+    public func __externalRCRef() -> Swift.UnsafeMutableRawPointer! {
+        return nil
     }
     public static func valueOf(
         value: Swift.String
@@ -74,6 +80,9 @@ public enum EnumWithAbstractMembers: KotlinRuntimeSupport._KotlinBridgeable, Swi
         options: KotlinRuntime.KotlinBaseConstructionOptions
     ) {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+    }
+    public func __externalRCRef() -> Swift.UnsafeMutableRawPointer! {
+        return nil
     }
     public func blue() -> Swift.Int32 {
         return EnumWithAbstractMembers_blue(self.__externalRCRef())
@@ -108,6 +117,9 @@ public enum EnumWithMembers: KotlinRuntimeSupport._KotlinBridgeable, Swift.CaseI
         options: KotlinRuntime.KotlinBaseConstructionOptions
     ) {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+    }
+    public func __externalRCRef() -> Swift.UnsafeMutableRawPointer! {
+        return nil
     }
     public func foo() -> Swift.String {
         return EnumWithMembers_foo(self.__externalRCRef())
