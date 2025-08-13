@@ -50,6 +50,16 @@ abstract class K2WasmCompilerArguments : CommonKlibBasedCompilerArguments() {
         }
 
     @Argument(
+        value = "-Xwasm-included-module-only",
+        description = "Compile only a module passed using `-include` option.",
+    )
+    var wasmIncludedModuleOnly: Boolean = false
+        set(value) {
+            checkFrozen()
+            field = value
+        }
+
+    @Argument(
         value = "-Xwasm-generate-wat",
         description = "Generate a .wat file.",
     )
