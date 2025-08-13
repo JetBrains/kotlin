@@ -11,9 +11,12 @@ import org.jetbrains.kotlin.analysis.api.components.containingModule
 import org.jetbrains.kotlin.analysis.api.components.expandedSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.types.KaClassType
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.FqName
 import org.jetbrains.kotlin.sir.*
 import org.jetbrains.kotlin.sir.builder.buildGetter
 import org.jetbrains.kotlin.sir.builder.buildInit
+import org.jetbrains.kotlin.sir.builder.buildFunctionCopy
 import org.jetbrains.kotlin.sir.builder.buildInitCopy
 import org.jetbrains.kotlin.sir.builder.buildVariable
 import org.jetbrains.kotlin.sir.providers.SirSession
@@ -28,6 +31,7 @@ import org.jetbrains.kotlin.sir.providers.source.KotlinSource
 import org.jetbrains.kotlin.sir.providers.toSir
 import org.jetbrains.kotlin.sir.providers.utils.KotlinRuntimeModule
 import org.jetbrains.kotlin.sir.providers.utils.KotlinRuntimeSupportModule.kotlinBridgeable
+import org.jetbrains.kotlin.sir.providers.utils.KotlinRuntimeSupportModule.kotlinBridgeableExternalRcRef
 import org.jetbrains.kotlin.sir.providers.utils.containingModule
 import org.jetbrains.kotlin.sir.providers.utils.updateImport
 import org.jetbrains.kotlin.sir.providers.utils.throwsAnnotation
@@ -124,6 +128,7 @@ internal class SirEnumFromKtSymbol(
 
     private fun syntheticDeclarations(): List<SirDeclaration> = listOf(
         kotlinBaseInitDeclaration(),
+        kotlinBridgeableExternalRcRef(),
         description(),
         rawValue(),
         failableInitFromInteger(),
@@ -133,12 +138,70 @@ internal class SirEnumFromKtSymbol(
         origin = SirOrigin.KotlinBaseInitOverride(`for` = KotlinSource(ktSymbol))
         parameters[0] = SirParameter(
             argumentName = "__externalRCRefUnsafe",
-            type = SirNominalType(SirSwiftModule.unsafeMutableRawPointer).implicitlyUnwrappedOptional()
+            type = unsafeMutableRawPointerFlexibleType()
         )
+        val caseSelector = if (cases.isEmpty()) {
+            "default: fatalError()"
+        } else {
+            cases.joinToString(separator = "\n                    ") {
+                val condition =
+                    if (it === cases.last()) "default" else "case ${ktSymbol.classId?.underscoredRepresentation() ?: name}_${it.name}()"
+                "$condition: self = .${it.name}"
+            }
+        }
         body = SirFunctionBody(
-            listOf("super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)")
+            listOf(
+                """
+                    switch __externalRCRefUnsafe {
+                    $caseSelector
+                    }
+                """.trimIndent()
+            )
         )
     }.also { it.parent = this }
+
+    private fun kotlinBridgeableExternalRcRef(): SirFunction = buildFunctionCopy(kotlinBridgeableExternalRcRef) {
+        origin = SirOrigin.KotlinBridgeableExternalRcRefOverride(`for` = KotlinSource(ktSymbol))
+        returnType = unsafeMutableRawPointerFlexibleType()
+        val caseSelector = if (cases.isEmpty()) {
+            "default: fatalError()"
+        } else {
+            cases.joinToString(separator = "\n                    ") {
+                val condition = if (it === cases.last()) "default" else "case .${it.name}"
+                "$condition: ${ktSymbol.classId?.underscoredRepresentation() ?: name}_${it.name}()"
+            }
+        }
+        body = SirFunctionBody(
+            listOf(
+                """
+                    return switch self {
+                    $caseSelector
+                    }
+                """.trimIndent()
+            )
+        )
+    }.also { it.parent = this }
+
+    private fun unsafeMutableRawPointerFlexibleType(): SirNominalType =
+        SirNominalType(SirSwiftModule.unsafeMutableRawPointer).implicitlyUnwrappedOptional()
+
+    private fun ClassId.underscoredRepresentation(): String = buildString {
+        if (!packageFqName.isRoot) {
+            appendUnderscoredRepresentation(packageFqName)
+            append("_")
+        }
+        appendUnderscoredRepresentation(relativeClassName)
+    }
+
+    private fun StringBuilder.appendUnderscoredRepresentation(fqName: FqName) {
+        if (fqName.isRoot) return
+        val parent = fqName.parent()
+        if (!parent.isRoot) {
+            appendUnderscoredRepresentation(parent)
+            append("_")
+        }
+        append(fqName.shortName().asString())
+    }
 
     private fun description(): SirVariable = buildVariable {
         name = "description"

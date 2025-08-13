@@ -101,7 +101,18 @@ extension ExportedKotlinPackages.a.b.c {
             __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer!,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
-            super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+            switch __externalRCRefUnsafe {
+            case a_b_c_E_A(): self = .A
+            case a_b_c_E_B(): self = .B
+            default: self = .C
+            }
+        }
+        public func __externalRCRef() -> Swift.UnsafeMutableRawPointer! {
+            return switch self {
+            case .A: a_b_c_E_A()
+            case .B: a_b_c_E_B()
+            default: a_b_c_E_C()
+            }
         }
     }
 }

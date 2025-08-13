@@ -39,7 +39,14 @@ public enum EnumWithFactory: KotlinRuntimeSupport._KotlinBridgeable, Swift.CaseI
         __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer!,
         options: KotlinRuntime.KotlinBaseConstructionOptions
     ) {
-        super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
+        switch __externalRCRefUnsafe {
+        default: self = .ONE
+        }
+    }
+    public func __externalRCRef() -> Swift.UnsafeMutableRawPointer! {
+        return switch self {
+        default: EnumWithFactory_ONE()
+        }
     }
 }
 public protocol InterfaceWithFactory: KotlinRuntime.KotlinBase {
