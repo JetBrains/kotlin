@@ -66,8 +66,12 @@ object FirCastOperatorsChecker : FirTypeOperatorCallChecker(MppCheckerKind.Commo
             }
             // For `as`-casts, `CAST_ERASED` is an error and is more important, whereas
             // for `is`-checks, usually, diagnostics for useless checks are more useful.
-            else -> checkAnyApplicability(l, r, expression, Applicability.IMPOSSIBLE_CAST, Applicability.USELESS_CAST)
-                .orIfApplicable { checkCastErased(l, r) }
+            else -> checkAnyApplicability(
+                l, r, expression,
+                Applicability.IMPOSSIBLE_CAST,
+                Applicability.USELESS_CAST,
+                considerImpossibleWhenBothAreNull = false,
+            ).orIfApplicable { checkCastErased(l, r) }
         }
     }
 
@@ -87,13 +91,14 @@ object FirCastOperatorsChecker : FirTypeOperatorCallChecker(MppCheckerKind.Commo
         expression: FirTypeOperatorCall,
         impossible: Applicability,
         useless: Applicability,
+        considerImpossibleWhenBothAreNull: Boolean = true,
     ): Applicability {
         val oneIsNotNull = !l.type.isMarkedOrFlexiblyNullable || !r.type.isMarkedOrFlexiblyNullable
 
         return when {
             isRefinementUseless(l.directType.upperBoundIfFlexible(), r.directType, expression) -> useless
             shouldReportAsPerRules1(l, r) -> when {
-                oneIsNotNull -> impossible
+                considerImpossibleWhenBothAreNull || oneIsNotNull -> impossible
                 else -> useless
             }
             else -> Applicability.APPLICABLE
