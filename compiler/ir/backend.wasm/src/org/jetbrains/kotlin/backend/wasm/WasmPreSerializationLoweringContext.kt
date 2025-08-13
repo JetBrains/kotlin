@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.backend.wasm
 
 import org.jetbrains.kotlin.backend.common.PreSerializationLoweringContext
 import org.jetbrains.kotlin.backend.common.ir.FrontendWasmSymbols
-import org.jetbrains.kotlin.backend.common.ir.FrontendWasmSymbolsImpl
 import org.jetbrains.kotlin.backend.common.ir.KlibSharedVariablesManager
 import org.jetbrains.kotlin.backend.common.ir.SharedVariablesManager
 import org.jetbrains.kotlin.config.CompilerConfiguration
@@ -20,7 +19,7 @@ class WasmPreSerializationLoweringContext(
     diagnosticReporter: DiagnosticReporter,
 ) : PreSerializationLoweringContext(irBuiltIns, configuration, diagnosticReporter) {
     override val symbols: FrontendWasmSymbols by lazy {
-        FrontendWasmSymbolsImpl(irBuiltIns)
+        FrontendWasmSymbols.FrontendWasmSymbolsImpl(irBuiltIns)
     }
 
     override val sharedVariablesManager: SharedVariablesManager by lazy { KlibSharedVariablesManager(symbols) }

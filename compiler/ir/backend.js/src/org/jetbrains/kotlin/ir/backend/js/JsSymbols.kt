@@ -6,7 +6,6 @@
 package org.jetbrains.kotlin.ir.backend.js
 
 import org.jetbrains.kotlin.backend.common.ir.FrontendJsSymbols
-import org.jetbrains.kotlin.backend.common.ir.FrontendJsSymbolsImpl
 import org.jetbrains.kotlin.backend.common.ir.FrontendWebSymbols
 import org.jetbrains.kotlin.backend.common.ir.KlibSymbols
 import org.jetbrains.kotlin.builtins.StandardNames.COLLECTIONS_PACKAGE_FQ_NAME
@@ -37,7 +36,7 @@ class JsSymbols(
     irBuiltIns: IrBuiltIns,
     private val stageController: StageController,
     private val intrinsics: JsIntrinsics,
-) : FrontendJsSymbols by FrontendJsSymbolsImpl(irBuiltIns), JsCommonSymbols(irBuiltIns) {
+) : FrontendJsSymbols by FrontendJsSymbols.FrontendJsSymbolsImpl(irBuiltIns), JsCommonSymbols(irBuiltIns) {
     override val throwNullPointerException =
         symbolFinder.topLevelFunction(kotlinPackageFqn, "THROW_NPE")
 

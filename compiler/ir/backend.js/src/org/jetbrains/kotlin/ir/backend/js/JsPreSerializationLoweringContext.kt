@@ -7,14 +7,10 @@ package org.jetbrains.kotlin.ir.backend.js
 
 import org.jetbrains.kotlin.backend.common.PreSerializationLoweringContext
 import org.jetbrains.kotlin.backend.common.ir.FrontendJsSymbols
-import org.jetbrains.kotlin.backend.common.ir.FrontendJsSymbolsImpl
 import org.jetbrains.kotlin.backend.common.ir.KlibSharedVariablesManager
 import org.jetbrains.kotlin.config.CompilerConfiguration
 import org.jetbrains.kotlin.diagnostics.DiagnosticReporter
 import org.jetbrains.kotlin.ir.IrBuiltIns
-import org.jetbrains.kotlin.ir.types.IrDynamicType
-import org.jetbrains.kotlin.ir.types.impl.IrDynamicTypeImpl
-import org.jetbrains.kotlin.types.Variance
 
 class JsPreSerializationLoweringContext(
     irBuiltIns: IrBuiltIns,
@@ -22,7 +18,7 @@ class JsPreSerializationLoweringContext(
     diagnosticReporter: DiagnosticReporter,
 ) : PreSerializationLoweringContext(irBuiltIns, configuration, diagnosticReporter) {
     override val symbols: FrontendJsSymbols by lazy {
-        FrontendJsSymbolsImpl(irBuiltIns)
+        FrontendJsSymbols.FrontendJsSymbolsImpl(irBuiltIns)
     }
 
     override val sharedVariablesManager by lazy { KlibSharedVariablesManager(symbols) }
