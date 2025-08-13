@@ -9,7 +9,6 @@ import org.jetbrains.kotlin.backend.common.CommonBackendContext
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.backend.common.lower.irIfThen
 import org.jetbrains.kotlin.ir.IrStatement
-import org.jetbrains.kotlin.ir.builders.createTmpVariable
 import org.jetbrains.kotlin.ir.builders.irGet
 import org.jetbrains.kotlin.ir.builders.irNotEquals
 import org.jetbrains.kotlin.ir.declarations.IrVariable
@@ -56,10 +55,11 @@ class ProgressionLoopHeader(
         with(builder) {
             // loopVariable is used in the loop condition if it can overflow. If no loopVariable was provided, create one.
             this@ProgressionLoopHeader.loopVariable = if (headerInfo.canOverflow && loopVariable == null) {
-                scope.createTmpVariable(
+                scope.createTemporaryVariable(
                     irGet(inductionVariable),
                     nameHint = "loopVariable",
-                    isMutable = true
+                    isMutable = true,
+                    inventUniqueName = false,
                 )
             } else {
                 loopVariable?.initializer = irGet(inductionVariable).let {

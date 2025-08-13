@@ -311,7 +311,7 @@ fun <T : IrElement> IrStatementsBuilder<T>.createTmpVariable(
     origin: IrDeclarationOrigin = IrDeclarationOrigin.IR_TEMPORARY_VARIABLE,
     irType: IrType? = null
 ): IrVariable {
-    val variable = scope.createTmpVariable(irExpression, nameHint, isMutable, origin, irType)
+    val variable = scope.createTemporaryVariable(irExpression, nameHint, isMutable, origin, irType, inventUniqueName = false)
     +variable
     return variable
 }
@@ -330,18 +330,4 @@ fun Scope.createTmpVariable(
         irType, isMutable
     ).apply {
         this.initializer = initializer
-    }
-
-fun Scope.createTmpVariable(
-    irExpression: IrExpression,
-    nameHint: String? = null,
-    isMutable: Boolean = false,
-    origin: IrDeclarationOrigin = IrDeclarationOrigin.IR_TEMPORARY_VARIABLE,
-    irType: IrType? = null
-): IrVariable =
-    buildVariable(
-        getLocalDeclarationParent(), irExpression.startOffset, irExpression.endOffset, origin, Name.identifier(nameHint ?: "tmp"),
-        irType ?: irExpression.type, isMutable
-    ).apply {
-        initializer = irExpression
     }
