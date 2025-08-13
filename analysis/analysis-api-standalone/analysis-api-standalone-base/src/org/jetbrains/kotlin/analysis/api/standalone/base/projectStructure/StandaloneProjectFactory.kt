@@ -19,6 +19,7 @@ import com.intellij.openapi.roots.PackageIndex
 import com.intellij.openapi.util.io.FileUtil
 import com.intellij.openapi.vfs.VirtualFile
 import com.intellij.openapi.vfs.VirtualFileManager
+import com.intellij.openapi.vfs.toNioPathOrNull
 import com.intellij.psi.*
 import com.intellij.psi.impl.file.impl.JavaFileManager
 import com.intellij.psi.impl.smartPointers.PsiClassReferenceTypePointerFactory
@@ -367,6 +368,32 @@ object StandaloneProjectFactory {
 
                 addAll(roots)
             }
+        }
+    }
+
+    fun createLibraryModuleSearchScope(
+        binaryRoots: Collection<Path>,
+        binaryVirtualFiles: Collection<VirtualFile>,
+        coreApplicationEnvironment: CoreApplicationEnvironment,
+        project: Project,
+    ): GlobalSearchScope {
+        return if (binaryVirtualFiles.any { it.toNioPathOrNull() == null }) {
+            // I.e., in-memory file system
+            // Fall back: file-based search scope
+            createSearchScopeByLibraryRoots(
+                binaryRoots,
+                binaryVirtualFiles,
+                coreApplicationEnvironment,
+                project,
+            )
+        } else {
+            // Optimization: Trie-based search scope
+            createTrieBasedSearchScopeByLibraryRoots(
+                binaryRoots,
+                binaryVirtualFiles,
+                coreApplicationEnvironment,
+                project,
+            )
         }
     }
 

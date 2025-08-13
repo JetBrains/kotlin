@@ -30,19 +30,10 @@ public open class KtLibraryModuleBuilder(
     override fun build(): KaLibraryModule {
         val binaryRoots = getBinaryRoots()
         val binaryVirtualFiles = getBinaryVirtualFiles()
+
         val contentScope = contentScope
-            ?: if (binaryVirtualFiles.any { it.toNioPathOrNull() == null }) {
-                // I.e., in-memory file system
-                // Fall back: file-based search scope
-                StandaloneProjectFactory.createSearchScopeByLibraryRoots(
-                    binaryRoots, binaryVirtualFiles, coreApplicationEnvironment, project
-                )
-            } else {
-                // Trie-based search scope
-                StandaloneProjectFactory.createTrieBasedSearchScopeByLibraryRoots(
-                    binaryRoots, binaryVirtualFiles, coreApplicationEnvironment, project
-                )
-            }
+            ?: StandaloneProjectFactory.createLibraryModuleSearchScope(binaryRoots, binaryVirtualFiles, coreApplicationEnvironment, project)
+
         return KaLibraryModuleImpl(
             directRegularDependencies,
             directDependsOnDependencies,

@@ -71,7 +71,7 @@ abstract class KtModuleByCompilerConfiguration(
 
     private fun createJdkFromConfiguration(): KaLibraryModule? = configuration.get(JVMConfigurationKeys.JDK_HOME)?.let { jdkHome ->
         val jdkHomePaths = StandaloneProjectFactory.getDefaultJdkModulePaths(project, jdkHome.toPath())
-        val scope = StandaloneProjectFactory.createSearchScopeByLibraryRoots(
+        val scope = StandaloneProjectFactory.createLibraryModuleSearchScope(
             jdkHomePaths,
             emptyList(),
             testServices.environmentManager.getApplicationEnvironment(),
@@ -178,7 +178,7 @@ private class LibraryByRoots(
     override val project: Project,
     testServices: TestServices,
 ) : KaLibraryModule, KaModuleBase() {
-    override val baseContentScope: GlobalSearchScope = StandaloneProjectFactory.createSearchScopeByLibraryRoots(
+    override val baseContentScope: GlobalSearchScope = StandaloneProjectFactory.createLibraryModuleSearchScope(
         roots,
         emptyList(),
         testServices.environmentManager.getApplicationEnvironment(),
