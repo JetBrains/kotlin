@@ -5,6 +5,8 @@
 
 package kotlin.coroutines.cancellation
 
+import kotlin.internal.InlineOnly
+
 @SinceKotlin("1.4")
 public actual open class CancellationException : IllegalStateException {
     public actual constructor() : super()
@@ -18,7 +20,7 @@ public actual open class CancellationException : IllegalStateException {
  */
 @SinceKotlin("1.4")
 @Deprecated("Provided for expect-actual matching", level = DeprecationLevel.HIDDEN)
-@kotlin.internal.InlineOnly
+@InlineOnly
 public actual inline fun CancellationException(message: String?, cause: Throwable?): CancellationException =
     CancellationException(message, cause)
 
@@ -27,6 +29,6 @@ public actual inline fun CancellationException(message: String?, cause: Throwabl
  */
 @SinceKotlin("1.4")
 @Deprecated("Provided for expect-actual matching", level = DeprecationLevel.HIDDEN)
-@kotlin.internal.InlineOnly
+@InlineOnly
 public actual inline fun CancellationException(cause: Throwable?): CancellationException =
     CancellationException(cause)
