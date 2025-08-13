@@ -172,11 +172,16 @@ abstract class AbstractModularizedTest : KtUsefulTestCase() {
         val root = File(testDataPath)
 
         println("BASE PATH: ${root.absolutePath}")
+        with (root) {
+            println("BASE PATH ATTRS: exists: ${exists()}, isDirectory: $isDirectory, canRead: ${canRead()}")
+        }
 
         val filterRegex = OUTPUT_DIR_REGEX_FILTER.toRegex()
         val moduleName = MODULE_NAME_FILTER
         val moduleNameRegexOutFilter = MODULE_NAME_REGEX_OUT?.toRegex()
         val files = root.listFiles() ?: emptyArray()
+        println("FILES:\n  ${files.joinToString("\n  ") { "${it.name} - ${it.length()} bytes, readable: ${it.canRead()}" }}\n ---")
+        println("FILTER: $moduleNameRegexOutFilter")
         val modules = files.filter {
             it.extension == "xml" && (moduleNameRegexOutFilter == null || !it.name.matches(moduleNameRegexOutFilter))
         }
