@@ -654,6 +654,12 @@ public class PhasedJvmDiagnosticPsiTestGenerated extends AbstractPhasedJvmDiagno
     }
 
     @Test
+    @TestMetadata("falseAlwaysTrueIsCheck.kt")
+    public void testFalseAlwaysTrueIsCheck() {
+      runTest("compiler/testData/diagnostics/tests/falseAlwaysTrueIsCheck.kt");
+    }
+
+    @Test
     @TestMetadata("falseNegativeDuplicateDefaultValues1.kt")
     public void testFalseNegativeDuplicateDefaultValues1() {
       runTest("compiler/testData/diagnostics/tests/falseNegativeDuplicateDefaultValues1.kt");
