@@ -5,15 +5,16 @@
 
 package org.jetbrains.kotlin.objcexport.tests
 
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.analyze
 import org.jetbrains.kotlin.builtins.StandardNames
 import org.jetbrains.kotlin.export.test.InlineSourceCodeAnalysis
-import org.jetbrains.kotlin.name.ClassId
-import org.jetbrains.kotlin.name.StandardClassIds
-import org.jetbrains.kotlin.objcexport.getObjCReceiverType
 import org.jetbrains.kotlin.export.test.getClassOrFail
 import org.jetbrains.kotlin.export.test.getFunctionOrFail
 import org.jetbrains.kotlin.export.test.getPropertyOrFail
+import org.jetbrains.kotlin.name.ClassId
+import org.jetbrains.kotlin.name.StandardClassIds
+import org.jetbrains.kotlin.objcexport.getObjCReceiverType
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
@@ -122,6 +123,7 @@ class ObjCReceiverTypeTest(
         }
     }
 
+    @OptIn(KaExperimentalApi::class)
     @Test
     fun `test - regular extensions`() {
         val file = inlineSourceCodeAnalysis.createKtFile(
@@ -144,9 +146,9 @@ class ObjCReceiverTypeTest(
             val setter = fooClass.memberScope.getPropertyOrFail("prop").setter
             val getter = fooClass.memberScope.getPropertyOrFail("prop").getter
 
-            assertEquals(buildClassType(StandardClassIds.Boolean), getObjCReceiverType(foo))
-            assertEquals(buildClassType(StandardClassIds.String), getObjCReceiverType(setter))
-            assertEquals(buildClassType(StandardClassIds.String), getObjCReceiverType(getter))
+            assertEquals(typeCreator.classType(StandardClassIds.Boolean), getObjCReceiverType(foo))
+            assertEquals(typeCreator.classType(StandardClassIds.String), getObjCReceiverType(setter))
+            assertEquals(typeCreator.classType(StandardClassIds.String), getObjCReceiverType(getter))
         }
     }
 }

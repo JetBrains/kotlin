@@ -31,8 +31,8 @@ abstract class AbstractSubstitutorBuilderTest : AbstractAnalysisApiBasedTest() {
                 substitution(getSymbolByName(mainFile, "B"), builtinTypes.long)
                 substitution(
                     getSymbolByName(mainFile, "C"),
-                    buildClassType(StandardClassIds.List) {
-                        argument(builtinTypes.string)
+                    typeCreator.classType(StandardClassIds.List) {
+                        invariantTypeArgument(builtinTypes.string)
                     }
                 )
             }

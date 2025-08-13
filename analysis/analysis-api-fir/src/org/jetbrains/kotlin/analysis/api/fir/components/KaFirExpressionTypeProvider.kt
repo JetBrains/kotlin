@@ -250,8 +250,8 @@ internal class KaFirExpressionTypeProvider(
         StandardClassIds.Double to lazy { analysisSession.builtinTypes.double },
         StandardClassIds.Char to lazy { analysisSession.builtinTypes.char },
         StandardClassIds.Boolean to lazy { analysisSession.builtinTypes.boolean },
-        StandardClassIds.UInt to lazy { analysisSession.buildClassType(StandardClassIds.UInt) },
-        StandardClassIds.ULong to lazy { analysisSession.buildClassType(StandardClassIds.ULong) },
+        StandardClassIds.UInt to lazy { analysisSession.typeCreator.classType(StandardClassIds.UInt) },
+        StandardClassIds.ULong to lazy { analysisSession.typeCreator.classType(StandardClassIds.ULong) },
     )
 
     override val KtFunction.functionType: KaType

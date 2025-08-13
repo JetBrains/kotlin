@@ -6,8 +6,6 @@
 package org.jetbrains.kotlin.analysis.test.framework.services
 
 import org.jetbrains.kotlin.analysis.api.KaSession
-import org.jetbrains.kotlin.analysis.api.components.buildClassType
-import org.jetbrains.kotlin.analysis.api.components.buildTypeParameterType
 import org.jetbrains.kotlin.analysis.api.symbols.KaTypeParameterSymbol
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.name.ClassId
@@ -25,21 +23,26 @@ object TypeParser {
         return convertType(type.typeElement ?: incorrectType(type), scopeForTypeParameters)
     }
 
-    context(_: KaSession)
+    context(session: KaSession)
     private fun convertType(type: KtTypeElement, scopeForTypeParameters: KtElement): KaType =
         when (type) {
             is KtUserType -> {
                 val qualifier = fullQualifier(type)
                 when (val typeParameter = getSymbolByNameSafe<KaTypeParameterSymbol>(scopeForTypeParameters, qualifier)) {
                     null -> {
-                        buildClassType(ClassId.topLevel(FqName(qualifier))) {
+                        session.typeCreator.classType(ClassId.topLevel(FqName(qualifier))) {
                             type.typeArguments.forEach { argument ->
-                                argument(convertType(argument.typeReference?.typeElement ?: incorrectType(type), scopeForTypeParameters))
+                                invariantTypeArgument(
+                                    convertType(
+                                        argument.typeReference?.typeElement ?: incorrectType(type),
+                                        scopeForTypeParameters
+                                    )
+                                )
                             }
                         }
                     }
                     else -> {
-                        buildTypeParameterType(typeParameter) {
+                        session.typeCreator.typeParameterType(typeParameter) {
                             isMarkedNullable = false
                         }
 

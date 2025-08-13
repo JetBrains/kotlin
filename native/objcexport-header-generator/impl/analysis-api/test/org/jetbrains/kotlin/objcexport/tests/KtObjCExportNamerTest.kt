@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.objcexport.tests
 
 import org.intellij.lang.annotations.Language
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.scopes.KaScope
 import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaNamedClassSymbol
@@ -82,12 +83,13 @@ class KtObjCExportNamerTest(
         }
     }
 
+    @OptIn(KaExperimentalApi::class)
     @Test
     fun `test - function signature override`() {
         getSymbol<KaFunctionSymbol>("fun foo(param1: Boolean, param2: String) {}", "foo", KaScope::callables) { symbol ->
-            val type1 = with(analysisSession) { buildClassType(StandardClassIds.Int) }
-            val type2 = with(analysisSession) { buildClassType(StandardClassIds.Double) }
-            val returnType = with(analysisSession) { buildClassType(StandardClassIds.Float) }
+            val type1 = with(analysisSession) { typeCreator.classType(StandardClassIds.Int) }
+            val type2 = with(analysisSession) { typeCreator.classType(StandardClassIds.Double) }
+            val returnType = with(analysisSession) { typeCreator.classType(StandardClassIds.Float) }
 
             val valueParams = listOf(
                 bridgeParameter(type1) to KtObjCParameterData(Name.identifier("intParam"), false, type1, false),

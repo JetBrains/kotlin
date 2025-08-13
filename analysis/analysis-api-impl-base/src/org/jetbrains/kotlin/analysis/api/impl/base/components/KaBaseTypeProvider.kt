@@ -20,6 +20,6 @@ abstract class KaBaseTypeProvider<T : KaSession> : KaBaseSessionComponent<T>(), 
                 return null
             }
 
-            return analysisSession.buildVarargArrayType(returnType)
+            return analysisSession.typeCreator.varargArrayType(returnType)
         }
 }

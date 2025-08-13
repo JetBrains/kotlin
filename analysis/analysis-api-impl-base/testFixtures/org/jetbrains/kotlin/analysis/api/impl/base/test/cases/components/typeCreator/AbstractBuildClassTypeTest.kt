@@ -5,10 +5,10 @@
 
 package org.jetbrains.kotlin.analysis.api.impl.base.test.cases.components.typeCreator
 
-import org.jetbrains.kotlin.analysis.api.components.KaClassTypeBuilder
 import org.jetbrains.kotlin.analysis.api.renderer.types.impl.KaTypeRendererForDebug
 import org.jetbrains.kotlin.analysis.api.types.KaType
 import org.jetbrains.kotlin.analysis.api.types.symbol
+import org.jetbrains.kotlin.analysis.api.types.typeCreation.KaClassTypeBuilder
 import org.jetbrains.kotlin.analysis.test.framework.base.AbstractAnalysisApiBasedTest
 import org.jetbrains.kotlin.analysis.test.framework.projectStructure.KtTestModule
 import org.jetbrains.kotlin.analysis.test.framework.services.expressionMarkerProvider
@@ -73,10 +73,10 @@ abstract class AbstractBuildClassTypeTest : AbstractAnalysisApiBasedTest() {
 
                 argumentDirectives.forEach { typeArgument ->
                     when (typeArgument) {
-                        is TypeArgument.StarProjection -> argument(buildStarTypeProjection())
+                        is TypeArgument.StarProjection -> typeArgument(typeCreator.starTypeProjection())
                         is TypeArgument.TypeArgumentWithVariance -> {
                             val type = allTypesById[typeArgument.caretId] ?: error("No type with id ${typeArgument.caretId}")
-                            argument(type, typeArgument.variance)
+                            typeArgument(typeArgument.variance, type)
                         }
                     }
                 }
@@ -91,7 +91,7 @@ abstract class AbstractBuildClassTypeTest : AbstractAnalysisApiBasedTest() {
                 if (classId == null) {
                     appendLine("   ClassId is null")
                 } else {
-                    val classTypeByClassId = buildClassType(classId, builderConfiguration)
+                    val classTypeByClassId = typeCreator.classType(classId, builderConfiguration)
 
                     appendLine(
                         "   ${KaType::class.simpleName}: ${
@@ -103,7 +103,7 @@ abstract class AbstractBuildClassTypeTest : AbstractAnalysisApiBasedTest() {
                     )
                 }
 
-                val classTypeBySymbol = buildClassType(symbol, builderConfiguration)
+                val classTypeBySymbol = typeCreator.classType(symbol, builderConfiguration)
 
                 appendLine("CLASS_TYPE_BY_SYMBOL")
                 appendLine(

@@ -5,15 +5,16 @@
 
 package org.jetbrains.kotlin.objcexport
 
+import org.jetbrains.kotlin.analysis.api.KaExperimentalApi
 import org.jetbrains.kotlin.analysis.api.symbols.KaFunctionSymbol
 import org.jetbrains.kotlin.analysis.api.symbols.KaPropertySetterSymbol
 import org.jetbrains.kotlin.backend.konan.objcexport.*
 import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.objcexport.analysisApiUtils.errorParameterName
-import org.jetbrains.kotlin.objcexport.extras.objCTypeExtras
 import org.jetbrains.kotlin.objcexport.extras.*
 import org.jetbrains.kotlin.objcexport.mangling.unifyName
 
+@OptIn(KaExperimentalApi::class)
 internal fun ObjCExportContext.translateToObjCParameters(symbol: KaFunctionSymbol, baseMethodBridge: MethodBridge): List<ObjCParameter> {
     val valueParametersAssociated = valueParametersAssociated(baseMethodBridge, symbol)
     val parameters = mutableListOf<ObjCParameter>()
@@ -46,7 +47,7 @@ internal fun ObjCExportContext.translateToObjCParameters(symbol: KaFunctionSymbo
                 val returnType = parameter!!.type
                 if (parameter.isVararg) {
                     //vararg is a special case, [parameter.returnType] is T, we need Array<T>
-                    val classType = analysisSession.buildClassType(StandardClassIds.Array) { argument(parameter.type) }
+                    val classType = analysisSession.typeCreator.classType(StandardClassIds.Array) { invariantTypeArgument(parameter.type) }
                     translateToObjCType(classType, bridge.bridge)
                 } else {
                     translateToObjCType(returnType, bridge.bridge)

@@ -5,8 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.descriptors.components
 
-import org.jetbrains.kotlin.analysis.api.components.KaClassTypeBuilder
-import org.jetbrains.kotlin.analysis.api.components.KaTypeParameterTypeBuilder
+import org.jetbrains.kotlin.analysis.api.components.*
 import org.jetbrains.kotlin.analysis.api.descriptors.KaFe10Session
 import org.jetbrains.kotlin.analysis.api.descriptors.components.base.KaFe10SessionComponent
 import org.jetbrains.kotlin.analysis.api.descriptors.symbols.descriptorBased.base.getSymbolDescriptor
@@ -39,10 +38,22 @@ import org.jetbrains.kotlin.types.error.ErrorUtils
 internal class KaFe10TypeCreator(
     override val analysisSessionProvider: () -> KaFe10Session
 ) : KaBaseTypeCreator<KaFe10Session>(), KaFe10SessionComponent {
+    @Deprecated(
+        "Use `typeCreator.classType` instead. " +
+                "See the KDoc for `org.jetbrains.kotlin.analysis.api.components.KaTypeCreator` for the migration guide.",
+        replaceWith = ReplaceWith("typeCreator.classType")
+    )
+    @Suppress("DEPRECATION")
     override fun buildClassType(classId: ClassId, init: KaClassTypeBuilder.() -> Unit): KaType = withValidityAssertion {
         return buildClassType(KaBaseClassTypeBuilder.ByClassId(classId, token).apply(init))
     }
 
+    @Deprecated(
+        "Use `typeCreator.classType` instead. " +
+                "See the KDoc for `org.jetbrains.kotlin.analysis.api.components.KaTypeCreator` for the migration guide.",
+        replaceWith = ReplaceWith("typeCreator.classType")
+    )
+    @Suppress("DEPRECATION")
     override fun buildClassType(symbol: KaClassLikeSymbol, init: KaClassTypeBuilder.() -> Unit): KaType = withValidityAssertion {
         return buildClassType(KaBaseClassTypeBuilder.BySymbol(symbol, token).apply(init))
     }
@@ -87,6 +98,12 @@ internal class KaFe10TypeCreator(
         return KaFe10UsualClassType(typeWithNullability as SimpleType, descriptor, analysisContext)
     }
 
+    @Deprecated(
+        "Use `typeCreator.typeParameterType` instead. " +
+                "See the KDoc for `org.jetbrains.kotlin.analysis.api.components.KaTypeCreator` for the migration guide.",
+        replaceWith = ReplaceWith("typeCreator.typeParameterType")
+    )
+    @Suppress("DEPRECATION")
     override fun buildTypeParameterType(symbol: KaTypeParameterSymbol, init: KaTypeParameterTypeBuilder.() -> Unit): KaTypeParameterType {
         withValidityAssertion {
             val builder = KaBaseTypeParameterTypeBuilder.BySymbol(symbol, token).apply(init)

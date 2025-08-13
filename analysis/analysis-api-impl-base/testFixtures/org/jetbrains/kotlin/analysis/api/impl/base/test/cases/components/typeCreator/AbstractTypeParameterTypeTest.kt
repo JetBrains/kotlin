@@ -51,7 +51,7 @@ abstract class AbstractTypeParameterTypeTest : AbstractAnalysisApiBasedTest() {
                 Pair(targetExpression.text, targetExpression.symbol)
             }
 
-            val ktType = buildTypeParameterType(typeParameterSymbol) {
+            val ktType = typeCreator.typeParameterType(typeParameterSymbol) {
                 isMarkedNullable = false
             }
 

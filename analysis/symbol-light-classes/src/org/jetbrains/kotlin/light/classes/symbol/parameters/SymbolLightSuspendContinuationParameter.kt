@@ -39,7 +39,7 @@ internal class SymbolLightSuspendContinuationParameter(
 
     private val _type by lazyPub {
         withFunctionSymbol { functionSymbol ->
-            val ktType = buildClassType(StandardClassIds.Continuation) { argument(functionSymbol.returnType) }
+            val ktType = typeCreator.classType(StandardClassIds.Continuation) { invariantTypeArgument(functionSymbol.returnType) }
             ktType.asPsiType(
                 this@SymbolLightSuspendContinuationParameter,
                 allowErrorTypes = true,
