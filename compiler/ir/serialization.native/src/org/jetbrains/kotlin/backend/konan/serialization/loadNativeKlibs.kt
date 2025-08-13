@@ -10,6 +10,7 @@ import org.jetbrains.kotlin.backend.common.eliminateLibrariesWithDuplicatedUniqu
 import org.jetbrains.kotlin.backend.common.loadFriendLibraries
 import org.jetbrains.kotlin.backend.common.reportLoadingProblemsIfAny
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.zipFileSystemAccessor
 import org.jetbrains.kotlin.konan.target.KonanTarget
 import org.jetbrains.kotlin.library.KotlinAbiVersion
 import org.jetbrains.kotlin.library.loader.KlibLoader
@@ -38,6 +39,7 @@ fun loadNativeKlibsInTestPipeline(
         libraryPaths(libraryPaths)
         platformChecker(KlibPlatformChecker.Native(nativeTarget.name))
         maxPermittedAbiVersion(KotlinAbiVersion.CURRENT)
+        configuration.zipFileSystemAccessor?.let { zipFileSystemAccessor(it)}
     }.load()
         .apply { reportLoadingProblemsIfAny(configuration, allAsErrors = true) }
         // TODO (KT-76785): Handling of duplicated names is a workaround that needs to be removed in the future.

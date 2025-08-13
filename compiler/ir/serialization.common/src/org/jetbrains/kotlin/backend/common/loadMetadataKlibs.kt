@@ -6,6 +6,7 @@
 package org.jetbrains.kotlin.backend.common
 
 import org.jetbrains.kotlin.config.CompilerConfiguration
+import org.jetbrains.kotlin.config.zipFileSystemAccessor
 import org.jetbrains.kotlin.library.loader.KlibLoader
 
 /**
@@ -17,6 +18,7 @@ import org.jetbrains.kotlin.library.loader.KlibLoader
 fun loadMetadataKlibs(libraryPaths: List<String>, configuration: CompilerConfiguration): LoadedKlibs {
     val result = KlibLoader {
         libraryPaths(libraryPaths)
+        configuration.zipFileSystemAccessor?.let { zipFileSystemAccessor(it)}
         // IMPORTANT: Do not set any ABI version requirements - metadata libraries are not supposed to have any ABI.
     }.load()
     result.reportLoadingProblemsIfAny(configuration)
