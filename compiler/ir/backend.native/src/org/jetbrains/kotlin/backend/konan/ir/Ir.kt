@@ -273,6 +273,7 @@ private fun CompilerConfiguration.getMainCallableId() : CallableId? {
 }
 
 
+// TODO KT-77388 rename to `BackendNativeSymbolsImpl`
 @OptIn(InternalSymbolFinderAPI::class, InternalKotlinNativeApi::class)
 class KonanSymbols(
         context: ErrorReportingContext,
