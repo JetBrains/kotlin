@@ -12,8 +12,8 @@ public enum EnumWithFactory: KotlinRuntimeSupport._KotlinBridgeable, Swift.CaseI
             return EnumWithFactory_entries_get() as! Swift.Array<main.EnumWithFactory>
         }
     }
-    package init(
-        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+    public init(
+        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer!,
         options: KotlinRuntime.KotlinBaseConstructionOptions
     ) {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)

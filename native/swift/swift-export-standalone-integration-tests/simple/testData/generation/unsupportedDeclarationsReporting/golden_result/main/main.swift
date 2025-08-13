@@ -68,8 +68,8 @@ extension ExportedKotlinPackages.a.b.c {
                 return a_b_c_E_entries_get() as! Swift.Array<ExportedKotlinPackages.a.b.c.E>
             }
         }
-        package init(
-            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+        public init(
+            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer!,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
