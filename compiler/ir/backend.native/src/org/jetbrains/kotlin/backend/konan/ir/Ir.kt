@@ -266,7 +266,7 @@ class KonanSymbols(
         context: ErrorReportingContext,
         irBuiltIns: IrBuiltIns,
         config: CompilerConfiguration,
-) : PreSerializationNativeSymbols by PreSerializationNativeSymbols.PreSerializationNativeSymbolsImpl(irBuiltIns), KlibSymbols(irBuiltIns) {
+) : PreSerializationNativeSymbols by PreSerializationNativeSymbols.Impl(irBuiltIns), KlibSymbols(irBuiltIns) {
     val entryPoint by run {
         val mainCallableId = config.getMainCallableId()
         val unfilteredCandidates = mainCallableId?.functionSymbols()

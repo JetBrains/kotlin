@@ -36,7 +36,7 @@ class JsSymbols(
     irBuiltIns: IrBuiltIns,
     private val stageController: StageController,
     private val intrinsics: JsIntrinsics,
-) : PreSerializationJsSymbols by PreSerializationJsSymbols.PreSerializationJsSymbolsImpl(irBuiltIns), JsCommonSymbols(irBuiltIns) {
+) : PreSerializationJsSymbols by PreSerializationJsSymbols.Impl(irBuiltIns), JsCommonSymbols(irBuiltIns) {
     override val throwNullPointerException =
         symbolFinder.topLevelFunction(kotlinPackageFqn, "THROW_NPE")
 
