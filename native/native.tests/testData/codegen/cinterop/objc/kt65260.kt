@@ -45,11 +45,11 @@ import kotlinx.cinterop.*
 import kotlin.test.*
 
 class ANativeHeir : A() {
-    companion object
+    companion object : AMeta()
 }
 
 class BNativeHeir : B() {
-    companion object
+    companion object : BMeta()
 }
 
 fun testExternalObjCMetaClassCast() {
