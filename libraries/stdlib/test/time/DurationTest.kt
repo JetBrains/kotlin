@@ -1,5 +1,5 @@
 /*
- * Copyright 2010-2021 JetBrains s.r.o. and Kotlin Programming Language contributors.
+ * Copyright 2010-2025 JetBrains s.r.o. and Kotlin Programming Language contributors.
  * Use of this source code is governed by the Apache 2.0 license that can be found in the license/LICENSE.txt file.
  */
 
@@ -619,8 +619,8 @@ class DurationTest {
             "PT-9999999999999H1M-99999999999999999999999999.1S",
             "P-999999999999DT1S", "P-999999999999DT-1S", "P1DT-12345678901234567890S", "P-1DT-12345678901234567890S",
             "PT-106751991100H-9223372036854000S", "PT-106751991100H-9223372036854000.1S",
-            "P-53375995583DT-15H-36M-27.9029999995S", "PT-4611686018427387.903S", "P-53375995583DT-15H-36M-28.0S",
-            "PT1H-9223372036854775.0S"
+            "P-53375995583DT-15H-36M-28.0S", "PT1H-9223372036854775.0S",
+            "P-53375995583DT-15H-36M-27.9029999995S", "PT-4611686018427387.903S"
         )
     }
 
@@ -839,6 +839,22 @@ class DurationTest {
         )
         test(Long.MAX_VALUE.microseconds, "106751991d 4h 0m 54.775s", "${Long.MAX_VALUE}.99999999999us")
 
+        // nanoseconds rounding
+        for (i in 0..4) {
+            test(Duration.ZERO, "0s", "0.000000000${i}s", "0.000000${i}ms", "0.000${i}us", "0.${i}ns")
+            test(1.nanoseconds, "1ns", "0.000000000${i + 5}s", "0.000000${i + 5}ms", "0.000${i + 5}us", "0.${i + 5}ns")
+        }
+        for (i in 0..5) {
+            test(Duration.ZERO, "0s", "0.00000000000000${i}d")
+        }
+        for (i in 6..9) {
+            test(1.nanoseconds, "1ns", "0.00000000000000${i}d")
+        }
+        for (i in 0..8) {
+            test(Duration.ZERO, "0s", "0.00000000000013${i}h")
+        }
+        test(1.nanoseconds, "1ns", "0.000000000000139h")
+
         // all infinite
 //        val universeAge = Duration.days(365.25) * 13.799e9
 //        val planckTime = Duration.seconds(5.4e-44)
@@ -862,7 +878,7 @@ class DurationTest {
             "1d 1m 1h", "1s 2s",
             "-12m 15s", "-12m -15s", "-()", "-(12m 30s",
             "+12m 15s", "+12m +15s", "+()", "+(12m 30s",
-            "()", "(12m 30s)",
+            "()", "(12m 30s)", "-(12m) 30s", "(12m) 30s", "12m (30s)",
             "12.5m 11.5s", ".2s", "0.1553.39m",
             "12.h", "12.55", "123", "123uw", "876nm", "531n",
             "P+12+34D", "P12-34D", "PT1234567890-1234567890S",
