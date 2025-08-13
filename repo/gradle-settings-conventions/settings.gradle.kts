@@ -4,6 +4,7 @@ pluginManagement {
 
     repositories {
         maven(url = "file:///dump")
+        mavenLocal()
         maven(url = "https://maven.pkg.jetbrains.space/kotlin/p/kotlin/kotlin-dependencies")
         mavenCentral()
         gradlePluginPortal()
@@ -13,6 +14,7 @@ pluginManagement {
 buildscript {
     repositories {
         maven(url = "file:///dump")
+        mavenLocal()
     }
     val buildGradlePluginVersion = extra.get("kotlin.build.gradlePlugin.version")
     dependencies {
