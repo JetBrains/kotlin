@@ -58,7 +58,7 @@ public value class Duration internal constructor(private val rawValue: Long) : C
         public val INFINITE: Duration = durationOfMillis(MAX_MILLIS)
         internal val NEG_INFINITE: Duration = durationOfMillis(-MAX_MILLIS)
 
-        internal const val INVALID_RAW_VALUE = 0x7FFFFFFFFBADC0DE
+        internal const val INVALID_RAW_VALUE = 0x7FFFFFFFFFFFC0DE
         internal val INVALID: Duration = Duration(INVALID_RAW_VALUE)
 
         /** Converts the given time duration [value] expressed in the specified [sourceUnit] into the specified [targetUnit]. */
