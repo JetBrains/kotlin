@@ -11,6 +11,7 @@ import org.jetbrains.kotlin.backend.konan.driver.PhaseContext
 import org.jetbrains.kotlin.backend.konan.driver.utilities.CExportFiles
 import org.jetbrains.kotlin.backend.konan.driver.utilities.createTempFiles
 import org.jetbrains.kotlin.backend.konan.ir.konanLibrary
+import org.jetbrains.kotlin.backend.konan.optimizations.ModuleDFG
 import org.jetbrains.kotlin.backend.konan.serialization.CacheDeserializationStrategy
 import org.jetbrains.kotlin.backend.konan.serialization.PartialCacheInfo
 import org.jetbrains.kotlin.cli.common.config.kotlinSourceRoots
@@ -32,6 +33,7 @@ import org.jetbrains.kotlin.library.impl.javaFile
 import org.jetbrains.kotlin.util.PerformanceManager
 import org.jetbrains.kotlin.util.PerformanceManagerImpl
 import org.jetbrains.kotlin.util.PhaseType
+import org.jetbrains.kotlin.util.tryMeasureDynamicPhaseTime
 import org.jetbrains.kotlin.util.tryMeasurePhaseTime
 import java.util.concurrent.Callable
 import java.util.concurrent.Executors
@@ -211,7 +213,13 @@ internal fun <C : PhaseContext> PhaseEngine<C>.runBackend(backendContext: Contex
                         )
                     } else null
                     // TODO: Make this work if we first compile all the fragments and only after that run the link phases.
-                    generationStateEngine.compileModule(fragment.irModule, backendContext.irBuiltIns, bitcodeFile, cExportFiles)
+                    generationStateEngine.compileModule(
+                            fragment.irModule,
+                            backendContext.irBuiltIns,
+                            bitcodeFile,
+                            cExportFiles,
+                            fragment.performanceManager,
+                    )
                     // Split here
                     val dependenciesTrackingResult = generationState.dependenciesTracker.collectResult()
                     val depsFilePath = config.writeSerializedDependencies
@@ -377,9 +385,10 @@ internal fun PhaseEngine<NativeGenerationState>.compileModule(
         module: IrModuleFragment,
         irBuiltIns: IrBuiltIns,
         bitcodeFile: java.io.File,
-        cExportFiles: CExportFiles?
+        cExportFiles: CExportFiles?,
+        performanceManager: PerformanceManager?,
 ) {
-    runBackendCodegen(module, irBuiltIns, cExportFiles)
+    runBackendCodegen(module, irBuiltIns, cExportFiles, performanceManager)
     val checkExternalCalls = context.config.checkStateAtExternalCalls
     if (checkExternalCalls) {
         runPhase(CheckExternalCallsPhase)
@@ -462,7 +471,12 @@ internal fun PhaseEngine<NativeGenerationState>.partiallyLowerModuleWithDependen
     runModuleWisePhase(lowering, allModulesToLower, performanceManager)
 }
 
-internal fun PhaseEngine<NativeGenerationState>.runBackendCodegen(module: IrModuleFragment, irBuiltIns: IrBuiltIns, cExportFiles: CExportFiles?) {
+internal fun PhaseEngine<NativeGenerationState>.runBackendCodegen(
+        module: IrModuleFragment,
+        irBuiltIns: IrBuiltIns,
+        cExportFiles: CExportFiles?,
+        performanceManager: PerformanceManager?,
+) {
     runCodegen(module, irBuiltIns)
     val generatedBitcodeFiles = if (context.config.produceCInterface) {
         require(cExportFiles != null)
@@ -496,15 +510,21 @@ internal fun PhaseEngine<NativeGenerationState>.runBackendCodegen(module: IrModu
  * Compile lowered [module] to object file.
  * @return absolute path to object file.
  */
-private fun PhaseEngine<NativeGenerationState>.runCodegen(module: IrModuleFragment, irBuiltIns: IrBuiltIns) {
+private fun PhaseEngine<NativeGenerationState>.runCodegen(
+        module: IrModuleFragment,
+        irBuiltIns: IrBuiltIns,
+        performanceManager: PerformanceManager?,
+) {
     val optimize = context.shouldOptimize()
     val enablePreCodegenInliner = context.config.preCodegenInlineThreshold != 0U && optimize
-    module.files.forEach {
-        runPhase(ReturnsInsertionPhase, it)
-        // Have to run after link dependencies phase, because fields from dependencies can be changed during lowerings.
-        // Inline accessors only in optimized builds due to separate compilation and possibility to get broken debug information.
-        runPhase(PropertyAccessorInlinePhase, it, disable = !optimize)
-        runPhase(InlineClassPropertyAccessorsPhase, it, disable = !optimize)
+    performanceManager?.tryMeasurePhaseTime(PhaseType.IrLowering) {
+        module.files.forEach {
+            runPhase(ReturnsInsertionPhase, it)
+            // Have to run after link dependencies phase, because fields from dependencies can be changed during lowerings.
+            // Inline accessors only in optimized builds due to separate compilation and possibility to get broken debug information.
+            runPhase(PropertyAccessorInlinePhase, it, disable = !optimize)
+            runPhase(InlineClassPropertyAccessorsPhase, it, disable = !optimize)
+        }
     }
     val moduleDFG = runPhase(BuildDFGPhase, module, disable = !optimize)
     runPhase(RemoveRedundantCallsToStaticInitializersPhase, RedundantCallsInput(moduleDFG, module), disable = !enablePreCodegenInliner)
