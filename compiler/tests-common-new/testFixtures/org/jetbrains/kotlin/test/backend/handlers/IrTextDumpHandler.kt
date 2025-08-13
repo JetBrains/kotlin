@@ -7,6 +7,7 @@ package org.jetbrains.kotlin.test.backend.handlers
 
 import org.jetbrains.kotlin.backend.common.extensions.IrPluginContext
 import org.jetbrains.kotlin.ir.IrBuiltIns
+import org.jetbrains.kotlin.ir.IrFileEntry
 import org.jetbrains.kotlin.ir.declarations.*
 import org.jetbrains.kotlin.ir.types.classOrNull
 import org.jetbrains.kotlin.ir.util.DumpIrTreeOptions
@@ -98,10 +99,10 @@ class IrTextDumpHandler(
         fun renderFilePathForIrFile(
             testFileToIrFile: List<Pair<Pair<TestModule, TestFile>?, IrFile>>,
             testServices: TestServices,
-            irFile: IrFile,
+            irFileEntry: IrFileEntry,
             fullPath: String,
         ): String {
-            val (correspondingModule, _) = testFileToIrFile.firstOrNull { it.second == irFile }?.first ?: return fullPath
+            val (correspondingModule, _) = testFileToIrFile.firstOrNull { it.second.fileEntry == irFileEntry }?.first ?: return fullPath
             return fullPath.removePrefix(correspondingModule.independentSourceDirectoryPath(testServices))
         }
     }
@@ -133,8 +134,8 @@ class IrTextDumpHandler(
             },
             isHiddenDeclaration = { isHiddenDeclaration(it, info.irPluginContext.irBuiltIns) },
             stableOrder = true,
-            filePathRenderer = { irFile, fullPath ->
-                renderFilePathForIrFile(testFileToIrFile, testServices, irFile, fullPath)
+            filePathRenderer = { irFileEntry, fullPath ->
+                renderFilePathForIrFile(testFileToIrFile, testServices, irFileEntry, fullPath)
             }
         )
         val builder = baseDumper.builderForModule(module.name)
