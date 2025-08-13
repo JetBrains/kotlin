@@ -5,12 +5,25 @@ package org.jetbrains.kotlin.buildtools.api.arguments
 
 import kotlin.Boolean
 import kotlin.String
+import kotlin.collections.List
 import kotlin.jvm.JvmField
 
 /**
  * @since 2.3.0
  */
 public interface CommonToolArguments {
+  /**
+   * Converts the options to a list of string arguments recognized by the Kotlin CLI compiler.
+   */
+  public fun toArgumentStrings(): List<String>
+
+  /**
+   * Takes a list of string arguments in the format recognized by the Kotlin CLI compiler and applies the options parsed from them into this instance.
+   *
+   * @param arguments a list of arguments for the Kotlin CLI compiler
+   */
+  public fun applyArgumentStrings(arguments: List<String>)
+
   /**
    * Get the value for option specified by [key] if it was previously [set] or if it has a default value.
    *
@@ -23,6 +36,15 @@ public interface CommonToolArguments {
    * Set the [value] for option specified by [key], overriding any previous value for that option.
    */
   public operator fun <V> `set`(key: CommonToolArgument<V>, `value`: V)
+
+  /**
+   * Check if an option specified by [key] has a value set.
+   *
+   * Note: trying to read an option (by using [get]) that has not been set will result in an exception.
+   *
+   * @return true if the option has a value set, false otherwise
+   */
+  public operator fun contains(key: CommonToolArgument<*>): Boolean
 
   /**
    * Base class for [CommonToolArguments] options.

@@ -219,6 +219,7 @@ public abstract interface class org/jetbrains/kotlin/buildtools/api/arguments/Co
 	public static final field X_VERIFY_IR_VISIBILITY Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonCompilerArguments$CommonCompilerArgument;
 	public static final field X_WARNING_LEVEL Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonCompilerArguments$CommonCompilerArgument;
 	public static final field X_WHEN_GUARDS Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonCompilerArguments$CommonCompilerArgument;
+	public abstract fun contains (Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonCompilerArguments$CommonCompilerArgument;)Z
 	public abstract fun get (Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonCompilerArguments$CommonCompilerArgument;)Ljava/lang/Object;
 	public abstract fun set (Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonCompilerArguments$CommonCompilerArgument;Ljava/lang/Object;)V
 }
@@ -231,28 +232,6 @@ public final class org/jetbrains/kotlin/buildtools/api/arguments/CommonCompilerA
 public final class org/jetbrains/kotlin/buildtools/api/arguments/CommonCompilerArguments$Companion {
 }
 
-public abstract interface class org/jetbrains/kotlin/buildtools/api/arguments/CommonKlibBasedArguments : org/jetbrains/kotlin/buildtools/api/arguments/CommonCompilerArguments {
-	public static final field Companion Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonKlibBasedArguments$Companion;
-	public static final field X_KLIB_ABI_VERSION Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonKlibBasedArguments$CommonKlibBasedArgument;
-	public static final field X_KLIB_DUPLICATED_UNIQUE_NAME_STRATEGY Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonKlibBasedArguments$CommonKlibBasedArgument;
-	public static final field X_KLIB_ENABLE_SIGNATURE_CLASH_CHECKS Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonKlibBasedArguments$CommonKlibBasedArgument;
-	public static final field X_KLIB_IR_INLINER Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonKlibBasedArguments$CommonKlibBasedArgument;
-	public static final field X_KLIB_NORMALIZE_ABSOLUTE_PATH Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonKlibBasedArguments$CommonKlibBasedArgument;
-	public static final field X_KLIB_RELATIVE_PATH_BASE Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonKlibBasedArguments$CommonKlibBasedArgument;
-	public static final field X_PARTIAL_LINKAGE Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonKlibBasedArguments$CommonKlibBasedArgument;
-	public static final field X_PARTIAL_LINKAGE_LOGLEVEL Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonKlibBasedArguments$CommonKlibBasedArgument;
-	public abstract fun get (Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonKlibBasedArguments$CommonKlibBasedArgument;)Ljava/lang/Object;
-	public abstract fun set (Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonKlibBasedArguments$CommonKlibBasedArgument;Ljava/lang/Object;)V
-}
-
-public final class org/jetbrains/kotlin/buildtools/api/arguments/CommonKlibBasedArguments$CommonKlibBasedArgument {
-	public fun <init> (Ljava/lang/String;)V
-	public final fun getId ()Ljava/lang/String;
-}
-
-public final class org/jetbrains/kotlin/buildtools/api/arguments/CommonKlibBasedArguments$Companion {
-}
-
 public abstract interface class org/jetbrains/kotlin/buildtools/api/arguments/CommonToolArguments {
 	public static final field Companion Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonToolArguments$Companion;
 	public static final field NOWARN Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonToolArguments$CommonToolArgument;
@@ -260,8 +239,11 @@ public abstract interface class org/jetbrains/kotlin/buildtools/api/arguments/Co
 	public static final field VERSION Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonToolArguments$CommonToolArgument;
 	public static final field WERROR Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonToolArguments$CommonToolArgument;
 	public static final field WEXTRA Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonToolArguments$CommonToolArgument;
+	public abstract fun applyArgumentStrings (Ljava/util/List;)V
+	public abstract fun contains (Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonToolArguments$CommonToolArgument;)Z
 	public abstract fun get (Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonToolArguments$CommonToolArgument;)Ljava/lang/Object;
 	public abstract fun set (Lorg/jetbrains/kotlin/buildtools/api/arguments/CommonToolArguments$CommonToolArgument;Ljava/lang/Object;)V
+	public abstract fun toArgumentStrings ()Ljava/util/List;
 }
 
 public final class org/jetbrains/kotlin/buildtools/api/arguments/CommonToolArguments$CommonToolArgument {
@@ -273,63 +255,6 @@ public final class org/jetbrains/kotlin/buildtools/api/arguments/CommonToolArgum
 }
 
 public abstract interface annotation class org/jetbrains/kotlin/buildtools/api/arguments/ExperimentalCompilerArgument : java/lang/annotation/Annotation {
-}
-
-public abstract interface class org/jetbrains/kotlin/buildtools/api/arguments/JsArguments : org/jetbrains/kotlin/buildtools/api/arguments/WasmArguments {
-	public static final field Companion Lorg/jetbrains/kotlin/buildtools/api/arguments/JsArguments$Companion;
-	public static final field IR_OUTPUT_DIR Lorg/jetbrains/kotlin/buildtools/api/arguments/JsArguments$JsArgument;
-	public static final field IR_OUTPUT_NAME Lorg/jetbrains/kotlin/buildtools/api/arguments/JsArguments$JsArgument;
-	public static final field LIBRARIES Lorg/jetbrains/kotlin/buildtools/api/arguments/JsArguments$JsArgument;
-	public static final field MAIN Lorg/jetbrains/kotlin/buildtools/api/arguments/JsArguments$JsArgument;
-	public static final field MODULE_KIND Lorg/jetbrains/kotlin/buildtools/api/arguments/JsArguments$JsArgument;
-	public static final field SOURCE_MAP Lorg/jetbrains/kotlin/buildtools/api/arguments/JsArguments$JsArgument;
-	public static final field SOURCE_MAP_BASE_DIRS Lorg/jetbrains/kotlin/buildtools/api/arguments/JsArguments$JsArgument;
-	public static final field SOURCE_MAP_EMBED_SOURCES Lorg/jetbrains/kotlin/buildtools/api/arguments/JsArguments$JsArgument;
-	public static final field SOURCE_MAP_NAMES_POLICY Lorg/jetbrains/kotlin/buildtools/api/arguments/JsArguments$JsArgument;
-	public static final field SOURCE_MAP_PREFIX Lorg/jetbrains/kotlin/buildtools/api/arguments/JsArguments$JsArgument;
-	public static final field TARGET Lorg/jetbrains/kotlin/buildtools/api/arguments/JsArguments$JsArgument;
-	public static final field X_CACHE_DIRECTORY Lorg/jetbrains/kotlin/buildtools/api/arguments/JsArguments$JsArgument;
-	public static final field X_ENABLE_EXTENSION_FUNCTIONS_IN_EXTERNALS Lorg/jetbrains/kotlin/buildtools/api/arguments/JsArguments$JsArgument;
-	public static final field X_ES_ARROW_FUNCTIONS Lorg/jetbrains/kotlin/buildtools/api/arguments/JsArguments$JsArgument;
-	public static final field X_ES_CLASSES Lorg/jetbrains/kotlin/buildtools/api/arguments/JsArguments$JsArgument;
-	public static final field X_ES_GENERATORS Lorg/jetbrains/kotlin/buildtools/api/arguments/JsArguments$JsArgument;
-	public static final field X_ES_LONG_AS_BIGINT Lorg/jetbrains/kotlin/buildtools/api/arguments/JsArguments$JsArgument;
-	public static final field X_FAKE_OVERRIDE_VALIDATOR Lorg/jetbrains/kotlin/buildtools/api/arguments/JsArguments$JsArgument;
-	public static final field X_FRIEND_MODULES Lorg/jetbrains/kotlin/buildtools/api/arguments/JsArguments$JsArgument;
-	public static final field X_FRIEND_MODULES_DISABLED Lorg/jetbrains/kotlin/buildtools/api/arguments/JsArguments$JsArgument;
-	public static final field X_GENERATE_DTS Lorg/jetbrains/kotlin/buildtools/api/arguments/JsArguments$JsArgument;
-	public static final field X_GENERATE_POLYFILLS Lorg/jetbrains/kotlin/buildtools/api/arguments/JsArguments$JsArgument;
-	public static final field X_INCLUDE Lorg/jetbrains/kotlin/buildtools/api/arguments/JsArguments$JsArgument;
-	public static final field X_IR_BUILD_CACHE Lorg/jetbrains/kotlin/buildtools/api/arguments/JsArguments$JsArgument;
-	public static final field X_IR_DCE Lorg/jetbrains/kotlin/buildtools/api/arguments/JsArguments$JsArgument;
-	public static final field X_IR_DCE_PRINT_REACHABILITY_INFO Lorg/jetbrains/kotlin/buildtools/api/arguments/JsArguments$JsArgument;
-	public static final field X_IR_DCE_RUNTIME_DIAGNOSTIC Lorg/jetbrains/kotlin/buildtools/api/arguments/JsArguments$JsArgument;
-	public static final field X_IR_GENERATE_INLINE_ANONYMOUS_FUNCTIONS Lorg/jetbrains/kotlin/buildtools/api/arguments/JsArguments$JsArgument;
-	public static final field X_IR_KEEP Lorg/jetbrains/kotlin/buildtools/api/arguments/JsArguments$JsArgument;
-	public static final field X_IR_MINIMIZED_MEMBER_NAMES Lorg/jetbrains/kotlin/buildtools/api/arguments/JsArguments$JsArgument;
-	public static final field X_IR_MODULE_NAME Lorg/jetbrains/kotlin/buildtools/api/arguments/JsArguments$JsArgument;
-	public static final field X_IR_PER_FILE Lorg/jetbrains/kotlin/buildtools/api/arguments/JsArguments$JsArgument;
-	public static final field X_IR_PER_MODULE Lorg/jetbrains/kotlin/buildtools/api/arguments/JsArguments$JsArgument;
-	public static final field X_IR_PER_MODULE_OUTPUT_NAME Lorg/jetbrains/kotlin/buildtools/api/arguments/JsArguments$JsArgument;
-	public static final field X_IR_PRODUCE_JS Lorg/jetbrains/kotlin/buildtools/api/arguments/JsArguments$JsArgument;
-	public static final field X_IR_PRODUCE_KLIB_DIR Lorg/jetbrains/kotlin/buildtools/api/arguments/JsArguments$JsArgument;
-	public static final field X_IR_PRODUCE_KLIB_FILE Lorg/jetbrains/kotlin/buildtools/api/arguments/JsArguments$JsArgument;
-	public static final field X_IR_PROPERTY_LAZY_INITIALIZATION Lorg/jetbrains/kotlin/buildtools/api/arguments/JsArguments$JsArgument;
-	public static final field X_IR_SAFE_EXTERNAL_BOOLEAN Lorg/jetbrains/kotlin/buildtools/api/arguments/JsArguments$JsArgument;
-	public static final field X_IR_SAFE_EXTERNAL_BOOLEAN_DIAGNOSTIC Lorg/jetbrains/kotlin/buildtools/api/arguments/JsArguments$JsArgument;
-	public static final field X_OPTIMIZE_GENERATED_JS Lorg/jetbrains/kotlin/buildtools/api/arguments/JsArguments$JsArgument;
-	public static final field X_PLATFORM_ARGUMENTS_IN_MAIN_FUNCTION Lorg/jetbrains/kotlin/buildtools/api/arguments/JsArguments$JsArgument;
-	public static final field X_STRICT_IMPLICIT_EXPORT_TYPES Lorg/jetbrains/kotlin/buildtools/api/arguments/JsArguments$JsArgument;
-	public abstract fun get (Lorg/jetbrains/kotlin/buildtools/api/arguments/JsArguments$JsArgument;)Ljava/lang/Object;
-	public abstract fun set (Lorg/jetbrains/kotlin/buildtools/api/arguments/JsArguments$JsArgument;Ljava/lang/Object;)V
-}
-
-public final class org/jetbrains/kotlin/buildtools/api/arguments/JsArguments$Companion {
-}
-
-public final class org/jetbrains/kotlin/buildtools/api/arguments/JsArguments$JsArgument {
-	public fun <init> (Ljava/lang/String;)V
-	public final fun getId ()Ljava/lang/String;
 }
 
 public abstract interface class org/jetbrains/kotlin/buildtools/api/arguments/JvmCompilerArguments : org/jetbrains/kotlin/buildtools/api/arguments/CommonCompilerArguments {
@@ -403,6 +328,7 @@ public abstract interface class org/jetbrains/kotlin/buildtools/api/arguments/Jv
 	public static final field X_VALIDATE_BYTECODE Lorg/jetbrains/kotlin/buildtools/api/arguments/JvmCompilerArguments$JvmCompilerArgument;
 	public static final field X_VALUE_CLASSES Lorg/jetbrains/kotlin/buildtools/api/arguments/JvmCompilerArguments$JvmCompilerArgument;
 	public static final field X_WHEN_EXPRESSIONS Lorg/jetbrains/kotlin/buildtools/api/arguments/JvmCompilerArguments$JvmCompilerArgument;
+	public abstract fun contains (Lorg/jetbrains/kotlin/buildtools/api/arguments/JvmCompilerArguments$JvmCompilerArgument;)Z
 	public abstract fun get (Lorg/jetbrains/kotlin/buildtools/api/arguments/JvmCompilerArguments$JvmCompilerArgument;)Ljava/lang/Object;
 	public abstract fun set (Lorg/jetbrains/kotlin/buildtools/api/arguments/JvmCompilerArguments$JvmCompilerArgument;Ljava/lang/Object;)V
 }
@@ -411,157 +337,6 @@ public final class org/jetbrains/kotlin/buildtools/api/arguments/JvmCompilerArgu
 }
 
 public final class org/jetbrains/kotlin/buildtools/api/arguments/JvmCompilerArguments$JvmCompilerArgument {
-	public fun <init> (Ljava/lang/String;)V
-	public final fun getId ()Ljava/lang/String;
-}
-
-public abstract interface class org/jetbrains/kotlin/buildtools/api/arguments/MetadataArguments : org/jetbrains/kotlin/buildtools/api/arguments/CommonCompilerArguments {
-	public static final field CLASSPATH Lorg/jetbrains/kotlin/buildtools/api/arguments/MetadataArguments$MetadataArgument;
-	public static final field Companion Lorg/jetbrains/kotlin/buildtools/api/arguments/MetadataArguments$Companion;
-	public static final field MODULE_NAME Lorg/jetbrains/kotlin/buildtools/api/arguments/MetadataArguments$MetadataArgument;
-	public static final field X_FRIEND_PATHS Lorg/jetbrains/kotlin/buildtools/api/arguments/MetadataArguments$MetadataArgument;
-	public static final field X_REFINES_PATHS Lorg/jetbrains/kotlin/buildtools/api/arguments/MetadataArguments$MetadataArgument;
-	public abstract fun get (Lorg/jetbrains/kotlin/buildtools/api/arguments/MetadataArguments$MetadataArgument;)Ljava/lang/Object;
-	public abstract fun set (Lorg/jetbrains/kotlin/buildtools/api/arguments/MetadataArguments$MetadataArgument;Ljava/lang/Object;)V
-}
-
-public final class org/jetbrains/kotlin/buildtools/api/arguments/MetadataArguments$Companion {
-}
-
-public final class org/jetbrains/kotlin/buildtools/api/arguments/MetadataArguments$MetadataArgument {
-	public fun <init> (Ljava/lang/String;)V
-	public final fun getId ()Ljava/lang/String;
-}
-
-public abstract interface class org/jetbrains/kotlin/buildtools/api/arguments/NativeArguments : org/jetbrains/kotlin/buildtools/api/arguments/CommonKlibBasedArguments {
-	public static final field Companion Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeArguments$Companion;
-	public static final field ENABLE_ASSERTIONS Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeArguments$NativeArgument;
-	public static final field ENTRY Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeArguments$NativeArgument;
-	public static final field FRIEND_MODULES Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeArguments$NativeArgument;
-	public static final field G Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeArguments$NativeArgument;
-	public static final field GENERATE_NO_EXIT_TEST_RUNNER Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeArguments$NativeArgument;
-	public static final field GENERATE_TEST_RUNNER Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeArguments$NativeArgument;
-	public static final field GENERATE_WORKER_TEST_RUNNER Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeArguments$NativeArgument;
-	public static final field INCLUDE_BINARY Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeArguments$NativeArgument;
-	public static final field LIBRARY Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeArguments$NativeArgument;
-	public static final field LIBRARY_VERSION Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeArguments$NativeArgument;
-	public static final field LINKER_OPTION Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeArguments$NativeArgument;
-	public static final field LINKER_OPTIONS Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeArguments$NativeArgument;
-	public static final field LIST_TARGETS Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeArguments$NativeArgument;
-	public static final field MANIFEST Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeArguments$NativeArgument;
-	public static final field MEMORY_MODEL Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeArguments$NativeArgument;
-	public static final field MODULE_NAME Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeArguments$NativeArgument;
-	public static final field NATIVE_LIBRARY Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeArguments$NativeArgument;
-	public static final field NOMAIN Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeArguments$NativeArgument;
-	public static final field NOPACK Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeArguments$NativeArgument;
-	public static final field NOSTDLIB Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeArguments$NativeArgument;
-	public static final field NO_DEFAULT_LIBS Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeArguments$NativeArgument;
-	public static final field NO_ENDORSED_LIBS Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeArguments$NativeArgument;
-	public static final field OPT Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeArguments$NativeArgument;
-	public static final field OUTPUT Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeArguments$NativeArgument;
-	public static final field PRODUCE Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeArguments$NativeArgument;
-	public static final field TARGET Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeArguments$NativeArgument;
-	public static final field X_ADD_CACHE Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeArguments$NativeArgument;
-	public static final field X_ADD_LIGHT_DEBUG Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeArguments$NativeArgument;
-	public static final field X_ALLOCATOR Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeArguments$NativeArgument;
-	public static final field X_AUTO_CACHE_DIR Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeArguments$NativeArgument;
-	public static final field X_AUTO_CACHE_FROM Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeArguments$NativeArgument;
-	public static final field X_BACKEND_THREADS Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeArguments$NativeArgument;
-	public static final field X_BINARY Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeArguments$NativeArgument;
-	public static final field X_BUNDLE_ID Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeArguments$NativeArgument;
-	public static final field X_CACHED_LIBRARY Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeArguments$NativeArgument;
-	public static final field X_CACHE_DIRECTORY Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeArguments$NativeArgument;
-	public static final field X_CHECK_DEPENDENCIES Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeArguments$NativeArgument;
-	public static final field X_CHECK_STATE_AT_EXTERNAL_CALLS Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeArguments$NativeArgument;
-	public static final field X_COMPILE_FROM_BITCODE Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeArguments$NativeArgument;
-	public static final field X_DEBUG_INFO_VERSION Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeArguments$NativeArgument;
-	public static final field X_DEBUG_PREFIX_MAP Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeArguments$NativeArgument;
-	public static final field X_DESTROY_RUNTIME_MODE Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeArguments$NativeArgument;
-	public static final field X_DUMP_TESTS_TO Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeArguments$NativeArgument;
-	public static final field X_EMIT_LAZY_OBJC_HEADER Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeArguments$NativeArgument;
-	public static final field X_EXPORT_KDOC Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeArguments$NativeArgument;
-	public static final field X_EXPORT_LIBRARY Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeArguments$NativeArgument;
-	public static final field X_EXTERNAL_DEPENDENCIES Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeArguments$NativeArgument;
-	public static final field X_FAKE_OVERRIDE_VALIDATOR Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeArguments$NativeArgument;
-	public static final field X_FILE_TO_CACHE Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeArguments$NativeArgument;
-	public static final field X_FRAMEWORK_IMPORT_HEADER Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeArguments$NativeArgument;
-	public static final field X_G0 Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeArguments$NativeArgument;
-	public static final field X_GC Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeArguments$NativeArgument;
-	public static final field X_G_GENERATE_DEBUG_TRAMPOLINE Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeArguments$NativeArgument;
-	public static final field X_HEADER_KLIB_PATH Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeArguments$NativeArgument;
-	public static final field X_IC_CACHE_DIR Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeArguments$NativeArgument;
-	public static final field X_INCLUDE Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeArguments$NativeArgument;
-	public static final field X_IR_PROPERTY_LAZY_INITIALIZATION Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeArguments$NativeArgument;
-	public static final field X_KONAN_DATA_DIR Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeArguments$NativeArgument;
-	public static final field X_LAZY_IR_FOR_CACHES Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeArguments$NativeArgument;
-	public static final field X_LLVM_LTO_PASSES Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeArguments$NativeArgument;
-	public static final field X_LLVM_MODULE_PASSES Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeArguments$NativeArgument;
-	public static final field X_LLVM_VARIANT Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeArguments$NativeArgument;
-	public static final field X_MAKE_PER_FILE_CACHE Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeArguments$NativeArgument;
-	public static final field X_MANIFEST_NATIVE_TARGETS Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeArguments$NativeArgument;
-	public static final field X_NO_OBJC_GENERICS Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeArguments$NativeArgument;
-	public static final field X_OMIT_FRAMEWORK_BINARY Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeArguments$NativeArgument;
-	public static final field X_OVERRIDE_CLANG_OPTIONS Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeArguments$NativeArgument;
-	public static final field X_OVERRIDE_KONAN_PROPERTIES Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeArguments$NativeArgument;
-	public static final field X_PRE_LINK_CACHES Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeArguments$NativeArgument;
-	public static final field X_PRINT_BITCODE Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeArguments$NativeArgument;
-	public static final field X_PRINT_FILES Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeArguments$NativeArgument;
-	public static final field X_PRINT_IR Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeArguments$NativeArgument;
-	public static final field X_PURGE_USER_LIBS Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeArguments$NativeArgument;
-	public static final field X_READ_DEPENDENCIES_FROM Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeArguments$NativeArgument;
-	public static final field X_REFINES_PATHS Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeArguments$NativeArgument;
-	public static final field X_RUNTIME Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeArguments$NativeArgument;
-	public static final field X_RUNTIME_LOGS Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeArguments$NativeArgument;
-	public static final field X_SAVE_LLVM_IR_AFTER Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeArguments$NativeArgument;
-	public static final field X_SAVE_LLVM_IR_DIRECTORY Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeArguments$NativeArgument;
-	public static final field X_SHORT_MODULE_NAME Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeArguments$NativeArgument;
-	public static final field X_STATIC_FRAMEWORK Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeArguments$NativeArgument;
-	public static final field X_TEMPORARY_FILES_DIR Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeArguments$NativeArgument;
-	public static final field X_VERIFY_BITCODE Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeArguments$NativeArgument;
-	public static final field X_VERIFY_COMPILER Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeArguments$NativeArgument;
-	public static final field X_WORKER_EXCEPTION_HANDLING Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeArguments$NativeArgument;
-	public static final field X_WRITE_DEPENDENCIES_OF_PRODUCED_KLIB_TO Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeArguments$NativeArgument;
-	public static final field X_WRITE_DEPENDENCIES_TO Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeArguments$NativeArgument;
-	public abstract fun get (Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeArguments$NativeArgument;)Ljava/lang/Object;
-	public abstract fun set (Lorg/jetbrains/kotlin/buildtools/api/arguments/NativeArguments$NativeArgument;Ljava/lang/Object;)V
-}
-
-public final class org/jetbrains/kotlin/buildtools/api/arguments/NativeArguments$Companion {
-}
-
-public final class org/jetbrains/kotlin/buildtools/api/arguments/NativeArguments$NativeArgument {
-	public fun <init> (Ljava/lang/String;)V
-	public final fun getId ()Ljava/lang/String;
-}
-
-public abstract interface class org/jetbrains/kotlin/buildtools/api/arguments/WasmArguments : org/jetbrains/kotlin/buildtools/api/arguments/CommonKlibBasedArguments {
-	public static final field Companion Lorg/jetbrains/kotlin/buildtools/api/arguments/WasmArguments$Companion;
-	public static final field X_IR_DCE_DUMP_REACHABILITY_INFO_TO_FILE Lorg/jetbrains/kotlin/buildtools/api/arguments/WasmArguments$WasmArgument;
-	public static final field X_IR_DUMP_DECLARATION_IR_SIZES_TO_FILE Lorg/jetbrains/kotlin/buildtools/api/arguments/WasmArguments$WasmArgument;
-	public static final field X_WASM Lorg/jetbrains/kotlin/buildtools/api/arguments/WasmArguments$WasmArgument;
-	public static final field X_WASM_DEBUGGER_CUSTOM_FORMATTERS Lorg/jetbrains/kotlin/buildtools/api/arguments/WasmArguments$WasmArgument;
-	public static final field X_WASM_DEBUG_FRIENDLY Lorg/jetbrains/kotlin/buildtools/api/arguments/WasmArguments$WasmArgument;
-	public static final field X_WASM_DEBUG_INFO Lorg/jetbrains/kotlin/buildtools/api/arguments/WasmArguments$WasmArgument;
-	public static final field X_WASM_ENABLE_ARRAY_RANGE_CHECKS Lorg/jetbrains/kotlin/buildtools/api/arguments/WasmArguments$WasmArgument;
-	public static final field X_WASM_ENABLE_ASSERTS Lorg/jetbrains/kotlin/buildtools/api/arguments/WasmArguments$WasmArgument;
-	public static final field X_WASM_GENERATE_DWARF Lorg/jetbrains/kotlin/buildtools/api/arguments/WasmArguments$WasmArgument;
-	public static final field X_WASM_GENERATE_WAT Lorg/jetbrains/kotlin/buildtools/api/arguments/WasmArguments$WasmArgument;
-	public static final field X_WASM_IC_CACHE_READONLY Lorg/jetbrains/kotlin/buildtools/api/arguments/WasmArguments$WasmArgument;
-	public static final field X_WASM_KCLASS_FQN Lorg/jetbrains/kotlin/buildtools/api/arguments/WasmArguments$WasmArgument;
-	public static final field X_WASM_NO_JSTAG Lorg/jetbrains/kotlin/buildtools/api/arguments/WasmArguments$WasmArgument;
-	public static final field X_WASM_PRESERVE_IC_ORDER Lorg/jetbrains/kotlin/buildtools/api/arguments/WasmArguments$WasmArgument;
-	public static final field X_WASM_SOURCE_MAP_INCLUDE_MAPPINGS_FROM_UNAVAILABLE_SOURCES Lorg/jetbrains/kotlin/buildtools/api/arguments/WasmArguments$WasmArgument;
-	public static final field X_WASM_TARGET Lorg/jetbrains/kotlin/buildtools/api/arguments/WasmArguments$WasmArgument;
-	public static final field X_WASM_USE_NEW_EXCEPTION_PROPOSAL Lorg/jetbrains/kotlin/buildtools/api/arguments/WasmArguments$WasmArgument;
-	public static final field X_WASM_USE_TRAPS_INSTEAD_OF_EXCEPTIONS Lorg/jetbrains/kotlin/buildtools/api/arguments/WasmArguments$WasmArgument;
-	public abstract fun get (Lorg/jetbrains/kotlin/buildtools/api/arguments/WasmArguments$WasmArgument;)Ljava/lang/Object;
-	public abstract fun set (Lorg/jetbrains/kotlin/buildtools/api/arguments/WasmArguments$WasmArgument;Ljava/lang/Object;)V
-}
-
-public final class org/jetbrains/kotlin/buildtools/api/arguments/WasmArguments$Companion {
-}
-
-public final class org/jetbrains/kotlin/buildtools/api/arguments/WasmArguments$WasmArgument {
 	public fun <init> (Ljava/lang/String;)V
 	public final fun getId ()Ljava/lang/String;
 }
