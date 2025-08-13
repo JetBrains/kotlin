@@ -296,6 +296,7 @@ internal constructor(
         outputFileName = mainOutputFileName.get(),
         configDirectory = configDirectory,
         rules = rules,
+        watchOptions = watchOptions,
         devServer = devServerProperty.orNull,
         devtool = devtool,
         sourceMaps = sourceMaps,

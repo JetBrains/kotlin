@@ -110,7 +110,7 @@ data class KotlinWebpackConfig(
         var open: Any = true,
         var port: Int? = null,
         var proxy: MutableList<Proxy>? = null,
-        var static: MutableList<String>? = null,
+        var static: MutableList<out Any>? = null,
         var contentBase: MutableList<String>? = null,
         var client: Client? = null,
     ) : Serializable {
@@ -130,6 +130,11 @@ data class KotlinWebpackConfig(
             val secure: Boolean? = null,
             val changeOrigin: Boolean? = null,
         ) : Serializable
+
+        data class Static(
+            val directory: String,
+            val watch: Boolean = false,
+        )
     }
 
     @Suppress("unused")

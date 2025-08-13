@@ -179,11 +179,19 @@ class WebpackConfigurator(private val subTarget: KotlinJsIrSubTarget) : SubTarge
                             KotlinWebpackConfig.DevServer(
                                 open = true,
                                 static = mutableListOf(
-                                    distDirectory.asFile.normalize().relativeOrAbsolute(dir.asFile),
-                                    resourcesDir.relativeOrAbsolute(dir.asFile),
+                                    KotlinWebpackConfig.DevServer.Static(
+                                        distDirectory.asFile.normalize().relativeOrAbsolute(dir.asFile)
+                                    ),
+                                    KotlinWebpackConfig.DevServer.Static(
+                                        resourcesDir.normalize().relativeOrAbsolute(dir.asFile)
+                                    ),
                                 ).apply {
                                     if (mode == KotlinJsBinaryMode.DEVELOPMENT) {
-                                        add(rootDir.relativeOrAbsolute(dir.asFile))
+                                        add(
+                                            KotlinWebpackConfig.DevServer.Static(
+                                                rootDir.normalize().relativeOrAbsolute(dir.asFile)
+                                            )
+                                        )
                                     }
                                 },
                                 client = KotlinWebpackConfig.DevServer.Client(
@@ -197,7 +205,10 @@ class WebpackConfigurator(private val subTarget: KotlinJsIrSubTarget) : SubTarge
                     )
 
                     task.watchOptions = KotlinWebpackConfig.WatchOptions(
-                        ignored = arrayOf("*.kt")
+                        ignored = arrayOf(
+                            "**/node_modules",
+                            "**/*.kt"
+                        )
                     )
 
 
