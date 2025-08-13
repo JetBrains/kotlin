@@ -141,11 +141,13 @@ object AnalysisApiBaseTestServiceRegistrar : AnalysisApiTestServiceRegistrar() {
 
                 val declarationProviderFactory = KotlinStandaloneDeclarationProviderFactory(
                     project,
+                    testServices.environmentManager.getApplicationEnvironment(),
                     testKtFiles,
                     binaryRoots = mainBinaryRoots + mainBinaryVirtualFiles,
                     sharedBinaryRoots = sharedBinaryRoots + sharedBinaryVirtualFiles,
                     skipBuiltins = testServices.moduleStructure.allDirectives.contains(NO_RUNTIME),
                     shouldBuildStubsForBinaryLibraries = shouldBuildStubsForBinaryLibraries,
+                    shouldComputeBinaryLibraryPackageSets = true,
                 )
 
                 ktFilesForBinaries = declarationProviderFactory.getAdditionalCreatedKtFiles()
