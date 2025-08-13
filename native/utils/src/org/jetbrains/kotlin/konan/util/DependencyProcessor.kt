@@ -178,6 +178,7 @@ class DependencyProcessor(
     }
 
     private fun downloadDependency(dependency: String, baseUrl: String, archiveExtractor: ArchiveExtractor) {
+        println("Considering dependency: $dependency at location: $baseUrl/$dependency")
         val depDir = File(dependenciesDirectory, dependency)
         val depName = depDir.name
 
@@ -186,17 +187,21 @@ class DependencyProcessor(
         val url = URL("$baseUrl/$fileName")
 
         val extractedDependencies = DependencyFile(dependenciesDirectory, ".extracted")
+        println("Extracted dependencies file: ${extractedDependencies.file.absolutePath} ${if (extractedDependencies.contains(depName)) { "contains" } else { "does NOT contain " }} dependency $dependency")
+        println("Dependency directoyr: $depDir")
         if (extractedDependencies.contains(depName) &&
             depDir.exists() &&
             depDir.isDirectory &&
             depDir.list().isNotEmpty()) {
-
+            println("Dependency directory $depDir contents: ${depDir.list().toString()}")
             if (!keepUnstable && depDir.list().contains(".unstable")) {
+                println("Downloading $dependency as it is unstable.")
                 // The downloaded version of the dependency is unstable -> redownload it.
                 depDir.deleteRecursively()
                 archive.delete()
                 extractedDependencies.removeAndSave(dependency)
             } else {
+                println("depDir $depDir is not empty, skipping download.")
                 return
             }
         }
