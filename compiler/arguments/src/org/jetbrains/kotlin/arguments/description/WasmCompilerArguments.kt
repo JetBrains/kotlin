@@ -60,6 +60,16 @@ val actualWasmArguments by compilerArgumentsLevel(CompilerArgumentsLevelNames.wa
     }
 
     compilerArgument {
+        name = "Xwasm-included-module-only"
+        description = "Compile only a module passed using `-include` option.".asReleaseDependent()
+        valueType = BooleanType.defaultFalse
+
+        lifecycle(
+            introducedVersion = KotlinReleaseVersion.v2_3_0,
+        )
+    }
+
+    compilerArgument {
         name = "Xwasm-generate-wat"
         description = "Generate a .wat file.".asReleaseDependent()
         valueType = BooleanType.defaultFalse
