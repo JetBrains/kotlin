@@ -101,7 +101,7 @@ data class DumpIrTreeOptions(
     val printSealedSubclasses: Boolean = true,
     val replaceImplicitSetterParameterNameWith: Name? = null,
     val isHiddenDeclaration: (IrDeclaration) -> Boolean = { false },
-    val filePathRenderer: (IrFile, String) -> String = { _, name -> name },
+    val filePathRenderer: (IrFileEntry, String) -> String = { _, name -> name },
     val printSourceOffsets: Boolean = false,
     val referenceRenderingStrategy: ReferenceRenderingStrategy = ReferenceRenderingStrategy.Default,
 ) {

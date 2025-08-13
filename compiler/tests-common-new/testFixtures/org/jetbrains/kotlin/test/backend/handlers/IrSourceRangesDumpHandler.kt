@@ -63,8 +63,8 @@ class IrSourceRangesDumpHandler(
         val builder = baseDumper.builderForModule(module.name)
         val testFileToIrFile = info.irModuleFragment.files.groupWithTestFiles(testServices, ordered = true)
         val dumpOptions = DumpIrTreeOptions(
-            filePathRenderer = { irFile, fullPath ->
-                renderFilePathForIrFile(testFileToIrFile, testServices, irFile, fullPath)
+            filePathRenderer = { irFileEntry, fullPath ->
+                renderFilePathForIrFile(testFileToIrFile, testServices, irFileEntry, fullPath)
             }
         )
         for (irFile in info.irModuleFragment.files) {
