@@ -16,7 +16,6 @@ fun test(z: Int): String {
             "1" + z + "1" + z + "1" + z + "1" + z + "1" + z + "1" + z + "1" + z + "1" + z + "1" + z + "1" + z + "1" + z + "1" + z + "1" +
             z + "1" + z + "1" + z + "1" + z + "1" + z + "1" + z + "1" + z + "1" + z + "1" + z + "1" + z + "1" + z + "1" + z + "1" + z +
             "1" + z + "1" + z + "1" + z + "1" + z + "1" + z + "1" + z + "1" + z + "1" + z + "1" + z + "1" + z + "1" + z + "1" + z + "1" +
-            z + "1" + z + "1" + z + "1" + z + "1" + z + "1" + z + "1" + z + "1" + z + "1" + z + "1" + z + "1" + z + "1" + z + "1" + z +
-            "1" + z + "1" + z + "1" + z + "1" + z + "1" + z + "1" + z + "1" + z + "1" + z + "1" + z + "1" + z + "1" + z + "1" + z + "1"
+            z + "1" + z + "1" + z + "1" + z + "1" + z + "1" + z + "1" + z + "1" + z + "1" + z + "1" + z + "1" + z + "1" + z + "1" + z
 // Note: Adding 2 more lines results in SOE in IrFileValidator on CI during FirLightTreeJvmIrTextTestGenerated
 }
