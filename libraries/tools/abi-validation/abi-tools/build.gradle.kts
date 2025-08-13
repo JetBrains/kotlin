@@ -35,12 +35,21 @@ dependencies {
     implementation(project(":kotlin-metadata-jvm"))
     implementation(project(":kotlin-klib-abi-reader"))
 
-    implementation(libs.intellij.asm)
+    compileOnly(libs.intellij.asm)
+    embedded(libs.intellij.asm)
+
     implementation(libs.diff.utils)
 
     testImplementation(kotlinTest("junit"))
+    testImplementation(libs.intellij.asm)
     testImplementation(libs.junit4)
     // using `KonanTarget` class
     testImplementation(project(":native:kotlin-native-utils"))
 }
 
+runtimeJarWithRelocation {
+    from(mainSourceSet.output)
+    relocate("org.jetbrains.org.objectweb.asm", "org.jetbrains.kotlin.abi.tools.org.objectweb.asm")
+}
+
+// we create ABI dump only for `mainSourceSet.output` because in `libs.intellij.asm` is not a part of ABI, and we will exclude it in any way
