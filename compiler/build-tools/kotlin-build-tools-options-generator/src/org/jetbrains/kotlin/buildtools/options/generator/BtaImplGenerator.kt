@@ -15,6 +15,7 @@ import org.jetbrains.kotlin.cli.arguments.generator.calculateName
 import org.jetbrains.kotlin.cli.arguments.generator.levelToClassNameMap
 import org.jetbrains.kotlin.generators.kotlinpoet.annotation
 import org.jetbrains.kotlin.generators.kotlinpoet.function
+import org.jetbrains.kotlin.generators.kotlinpoet.listTypeNameOf
 import org.jetbrains.kotlin.generators.kotlinpoet.property
 import org.jetbrains.kotlin.util.capitalizeDecapitalize.capitalizeAsciiOnly
 import java.nio.file.Path
@@ -43,34 +44,35 @@ internal class BtaImplGenerator(private val targetPackage: String) : BtaGenerato
                     if (level.nestedLevels.isNotEmpty()) {
                         addModifiers(KModifier.OPEN)
                     }
-                    val converterFun = FunSpec.Companion.builder("toCompilerArguments").apply {
-                        val compilerArgumentInfo = levelToClassNameMap.getValue(level.name)
-                        val compilerArgumentsClass = ClassName(compilerArgumentInfo.classPackage, compilerArgumentInfo.className)
-                        addParameter(
-                            ParameterSpec.Companion.builder("arguments", compilerArgumentsClass).apply {
-                                if (level.nestedLevels.isEmpty()) {
-                                    defaultValue("%T()", compilerArgumentsClass)
-                                }
-                            }.build()
-                        )
-                        annotation<Suppress> {
-                            addMember("%S", "DEPRECATION")
-                        }
-                        if (parentClass != null) {
-                            addStatement("super.toCompilerArguments(arguments)")
-                        }
-                        returns(compilerArgumentsClass)
-                    }
+                    val toCompilerConverterFun = toCompilerConverterFunBuilder(level, parentClass)
+                    val applyCompilerArgumentsFun = applyCompilerArgumentsFunBuilder(level, parentClass)
+                    val applyArgumentStringsFun = applyArgumentStringsFunBuilder(level, parentClass)
+                    val toArgumentStringsFun = toArgumentStringsFunBuilder(parentClass)
 
                     val argument = generateArgumentType(apiClassName)
                     val argumentTypeName = ClassName(API_PACKAGE, apiClassName, argument)
                     val argumentImplTypeName = ClassName(targetPackage, implClassName, argument)
                     generateGetPutFunctions(argumentTypeName, argumentImplTypeName)
                     addType(TypeSpec.companionObjectBuilder().apply {
-                        generateOptions(level.filterOutDroppedArguments(), apiClassName, argumentImplTypeName, converterFun, skipXX)
+                        generateOptions(
+                            level.filterOutDroppedArguments(),
+                            apiClassName,
+                            argumentImplTypeName,
+                            toCompilerConverterFun,
+                            applyCompilerArgumentsFun,
+                            toArgumentStringsFun,
+                            skipXX
+                        )
                     }.build())
-                    converterFun.addStatement("return arguments")
-                    addFunction(converterFun.build())
+                    toCompilerConverterFun.addStatement("return arguments")
+                    if (targetPackage == IMPL_PACKAGE) {
+                        addFunction(toCompilerConverterFun.build())
+                    }
+                    addFunction(applyArgumentStringsFun.build())
+                    toArgumentStringsFun.addStatement("return arguments")
+                    addFunction(toArgumentStringsFun.build())
+                    addFunction(applyCompilerArgumentsFun.build())
+
                 }.build()
             )
         }.build()
@@ -83,7 +85,9 @@ internal class BtaImplGenerator(private val targetPackage: String) : BtaGenerato
         arguments: Collection<KotlinCompilerArgument>,
         apiClassName: String,
         argumentTypeName: ClassName,
-        converterFun: FunSpec.Builder,
+        toCompilerConverterFun: FunSpec.Builder,
+        applyCompilerArgumentsFun: FunSpec.Builder,
+        toArgumentStringsFun: FunSpec.Builder,
         skipXX: Boolean,
     ) {
         arguments.forEach { argument ->
@@ -113,24 +117,65 @@ internal class BtaImplGenerator(private val targetPackage: String) : BtaGenerato
             // add argument to the converter function
             val member = MemberName(ClassName(API_PACKAGE, apiClassName, "Companion"), name)
             when {
-                type.classifier in enumNameAccessors -> converterFun.addStatement(
-                    "if (%S in optionsMap) { arguments.%N = get(%M)${if (argument.valueType.isNullable.current) "?" else ""}.stringValue }",
-                    name,
-                    argument.calculateName(),
-                    member
-                )
-                argument.valueType is IntType -> converterFun.addStatement(
-                    "if (%S in optionsMap) { arguments.%N = get(%M)${if (argument.valueType.isNullable.current) "?" else ""}.toString() }",
-                    name,
-                    argument.calculateName(),
-                    member
-                )
-                else -> converterFun.addStatement(
-                    "if (%S in optionsMap) { arguments.%N = get(%M) }",
-                    name,
-                    argument.calculateName(),
-                    member
-                )
+                type.classifier in enumNameAccessors -> {
+                    toCompilerConverterFun.addStatement(
+                        "if (%S in optionsMap) { arguments.%N = get(%M)${if (argument.valueType.isNullable.current) "?" else ""}.stringValue }",
+                        name,
+                        argument.calculateName(),
+                        member
+                    )
+
+                    toArgumentStringsFun.addStatement(
+                        "if (%S in optionsMap) { arguments.add(%S + get(%M)${if (argument.valueType.isNullable.current) "?" else ""}.stringValue) }",
+                        name,
+                        "-${argument.name}=",
+                        member
+                    )
+                    applyCompilerArgumentsFun.addStatement(
+                        "this[%M] = arguments.%N${if (argument.valueType.isNullable.current) "?" else ""}.let { %T.valueOf(it) }",
+                        member,
+                        argument.calculateName(),
+                        argumentTypeParameter.copy(nullable = false)
+                    )
+                }
+                argument.valueType is IntType -> {
+                    toCompilerConverterFun.addStatement(
+                        "if (%S in optionsMap) { arguments.%N = get(%M)${if (argument.valueType.isNullable.current) "?" else ""}.toString() }",
+                        name,
+                        argument.calculateName(),
+                        member
+                    )
+                    toArgumentStringsFun.addStatement(
+                        "if (%S in optionsMap) { arguments.add(%S + get(%M)${if (argument.valueType.isNullable.current) "?" else ""}.toString()) }",
+                        name,
+                        "-${argument.name}=",
+                        member
+                    )
+                    applyCompilerArgumentsFun.addStatement(
+                        "this[%M] = arguments.%N${if (argument.valueType.isNullable.current) "?" else ""}.let { it.toInt() }",
+                        member,
+                        argument.calculateName(),
+                    )
+                }
+                else -> {
+                    toCompilerConverterFun.addStatement(
+                        "if (%S in optionsMap) { arguments.%N = get(%M) }",
+                        name,
+                        argument.calculateName(),
+                        member
+                    )
+                    toArgumentStringsFun.addStatement(
+                        "if (%S in optionsMap) { arguments.add(%S + get(%M)) }",
+                        name,
+                        "-${argument.name}=",
+                        member
+                    )
+                    applyCompilerArgumentsFun.addStatement(
+                        "this[%M] = arguments.%N",
+                        member,
+                        argument.calculateName(),
+                    )
+                }
             }
         }
     }
@@ -202,5 +247,94 @@ internal class BtaImplGenerator(private val targetPackage: String) : BtaGenerato
             addParameter("key", implParameter.parameterizedBy(STAR))
             addStatement("return key.id in optionsMap")
         }
+    }
+
+    fun TypeSpec.Builder.generateArgumentType(argumentsClassName: String): String {
+        require(argumentsClassName.endsWith("Arguments"))
+        val argumentTypeName = argumentsClassName.removeSuffix("s")
+        val typeSpec =
+            TypeSpec.classBuilder(argumentTypeName).apply {
+                addTypeVariable(TypeVariableName("V"))
+                property<String>("id") {
+                    initializer("id")
+                }
+                primaryConstructor(FunSpec.constructorBuilder().addParameter("id", String::class).build())
+            }.build()
+        addType(typeSpec)
+        return argumentTypeName
+    }
+}
+
+private fun toArgumentStringsFunBuilder(parentClass: TypeName?): FunSpec.Builder = FunSpec.builder("toArgumentStrings").apply {
+    annotation<Suppress> {
+        addMember("%S", "DEPRECATION")
+    }
+    addAnnotation(
+        AnnotationSpec.Companion.builder(ClassName("kotlin", "OptIn"))
+            .addMember("%T::class", ANNOTATION_EXPERIMENTAL).build()
+    )
+    addStatement("val arguments = %M<String>()", MemberName("kotlin.collections", "mutableListOf"))
+    addModifiers(KModifier.OVERRIDE)
+    if (parentClass != null) {
+        addStatement("arguments.addAll(super.toArgumentStrings())")
+    } else {
+        addModifiers(KModifier.OPEN)
+    }
+    returns(listTypeNameOf<String>())
+}
+
+private fun toCompilerConverterFunBuilder(
+    level: KotlinCompilerArgumentsLevel,
+    parentClass: TypeName?,
+): FunSpec.Builder = FunSpec.Companion.builder("toCompilerArguments").apply {
+    val compilerArgumentInfo = levelToClassNameMap.getValue(level.name)
+    val compilerArgumentsClass = ClassName(compilerArgumentInfo.classPackage, compilerArgumentInfo.className)
+    addParameter(
+        ParameterSpec.Companion.builder("arguments", compilerArgumentsClass).apply {
+            if (level.nestedLevels.isEmpty()) {
+                defaultValue("%T()", compilerArgumentsClass)
+            }
+        }.build()
+    )
+    annotation<Suppress> {
+        addMember("%S", "DEPRECATION")
+    }
+    if (parentClass != null) {
+        addStatement("super.toCompilerArguments(arguments)")
+    }
+    returns(compilerArgumentsClass)
+}
+
+private fun applyArgumentStringsFunBuilder(
+    level: KotlinCompilerArgumentsLevel,
+    parentClass: TypeName?,
+): FunSpec.Builder = FunSpec.Companion.builder("applyArgumentStrings").apply {
+    addModifiers(KModifier.OVERRIDE)
+    if (parentClass == null) {
+        addModifiers(KModifier.OPEN)
+    }
+    val compilerArgumentInfo = levelToClassNameMap.getValue(level.name)
+    val compilerArgumentsClass = ClassName(compilerArgumentInfo.classPackage, compilerArgumentInfo.className)
+    addParameter("arguments", listTypeNameOf<String>())
+    addStatement(
+        "val compilerArgs: %T = %M(arguments)",
+        compilerArgumentsClass,
+        MemberName("org.jetbrains.kotlin.cli.common.arguments", "parseCommandLineArguments")
+    )
+    addStatement("applyCompilerArguments(compilerArgs)")
+}
+
+private fun applyCompilerArgumentsFunBuilder(
+    level: KotlinCompilerArgumentsLevel,
+    parentClass: TypeName?,
+): FunSpec.Builder = FunSpec.Companion.builder("applyCompilerArguments").apply {
+    if (parentClass != null) {
+        addStatement("super.applyCompilerArguments(arguments)")
+    }
+    val compilerArgumentInfo = levelToClassNameMap.getValue(level.name)
+    val compilerArgumentsClass = ClassName(compilerArgumentInfo.classPackage, compilerArgumentInfo.className)
+    addParameter("arguments", compilerArgumentsClass)
+    annotation<Suppress> {
+        addMember("%S", "DEPRECATION")
     }
 }
