@@ -5,6 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.standalone.base.declarations
 
+import com.intellij.core.CoreApplicationEnvironment
 import com.intellij.ide.highlighter.JavaClassFileType
 import com.intellij.openapi.application.ApplicationManager
 import com.intellij.openapi.components.serviceOrNull
@@ -31,6 +32,7 @@ import org.jetbrains.kotlin.analysis.api.platform.KotlinPlatformSettings
 import org.jetbrains.kotlin.analysis.api.platform.declarations.*
 import org.jetbrains.kotlin.analysis.api.platform.mergeSpecificProviders
 import org.jetbrains.kotlin.analysis.api.projectStructure.*
+import org.jetbrains.kotlin.analysis.api.standalone.base.projectStructure.StandaloneProjectFactory
 import org.jetbrains.kotlin.analysis.decompiler.konan.K2KotlinNativeMetadataDecompiler
 import org.jetbrains.kotlin.analysis.decompiler.konan.KlibMetaFileType
 import org.jetbrains.kotlin.analysis.decompiler.psi.BuiltinsVirtualFileProvider
@@ -57,6 +59,8 @@ class KotlinStandaloneDeclarationProvider internal constructor(
     private val index: KotlinStandaloneDeclarationIndex,
     val scope: GlobalSearchScope,
     private val contextualModule: KaModule?,
+    private val environment: CoreApplicationEnvironment,
+    private val shouldComputeBinaryLibraryPackageSets: Boolean,
 ) : KotlinDeclarationProvider {
     private val KtElement.inScope: Boolean
         get() = containingKtFile.virtualFile in scope
@@ -123,7 +127,9 @@ class KotlinStandaloneDeclarationProvider internal constructor(
             is KaLibraryModule ->
                 if (contextualModule.canComputePackageSetFromIndex) {
                     computePackageSetFromIndex()
-                } else null
+                } else {
+                    computeBinaryLibraryModulePackageSet(contextualModule)
+                }
 
             else -> null
         }
@@ -149,6 +155,49 @@ class KotlinStandaloneDeclarationProvider internal constructor(
                 add(fqName.asString())
             }
         }
+    }
+
+    /**
+     * The computation only supports JARs for now and is intended for test purposes.
+     */
+    private fun computeBinaryLibraryModulePackageSet(module: KaLibraryModule): Set<String>? {
+        if (!shouldComputeBinaryLibraryPackageSets) return null
+
+        // The current situation is a bit awkward in Standalone because we have binary root paths and separate binary virtual files, while
+        // the IDE keeps them in sync. See KT-72676 for further information.
+        val binaryVirtualFiles =
+            StandaloneProjectFactory.getVirtualFilesForLibraryRoots(module.binaryRoots, environment) + module.binaryVirtualFiles
+
+        if (binaryVirtualFiles.any { it.fileSystem != environment.jarFileSystem }) {
+            return null
+        }
+
+        return buildSet {
+            binaryVirtualFiles.forEach { jarRoot ->
+                VfsUtilCore.visitChildrenRecursively(jarRoot, object : VirtualFileVisitor<Void>() {
+                    override fun visitFileEx(file: VirtualFile): Result {
+                        if (file.isDirectory) return CONTINUE
+
+                        if (
+                            file.extension == JavaClassFileType.DEFAULT_EXTENSION ||
+                            file.fileType == JavaClassFileType.INSTANCE
+                        ) {
+                            addIfNotNull(reconstructPackageNameForJarClassFile(file, jarRoot))
+                        }
+                        return CONTINUE
+                    }
+                })
+            }
+        }
+    }
+
+    /**
+     * The function assumes that the directory story of the JAR corresponds to each class's package name (which should be true). This allows
+     * us to avoid reading the class file.
+     */
+    private fun reconstructPackageNameForJarClassFile(virtualFile: VirtualFile, jarRoot: VirtualFile): String? {
+        val relativePath = VfsUtilCore.findRelativePath(jarRoot, virtualFile.parent, '/') ?: return null
+        return relativePath.trim('.').replace('/', '.')
     }
 
     override fun getTopLevelProperties(callableId: CallableId): Collection<KtProperty> =
@@ -178,15 +227,20 @@ class KotlinStandaloneDeclarationProvider internal constructor(
  *
  * @param binaryRoots Binary roots of the binary libraries that are specific to [project].
  * @param sharedBinaryRoots Binary roots that are shared between multiple different projects. This allows Kotlin tests to cache stubs for
- * shared libraries like the Kotlin stdlib.
+ *  shared libraries like the Kotlin stdlib.
+ * @param shouldComputeBinaryLibraryPackageSets Whether to compute package sets for binary libraries when they are NOT indexed by default.
+ *  It is risky to enable this in production because in some file systems, file traversal can be slow. So we shouldn't enable this without
+ *  further investigation.
  */
 class KotlinStandaloneDeclarationProviderFactory(
     private val project: Project,
+    private val environment: CoreApplicationEnvironment,
     sourceKtFiles: Collection<KtFile>,
     binaryRoots: List<VirtualFile> = emptyList(),
     sharedBinaryRoots: List<VirtualFile> = emptyList(),
     skipBuiltins: Boolean = false,
     shouldBuildStubsForBinaryLibraries: Boolean = false,
+    private val shouldComputeBinaryLibraryPackageSets: Boolean = false,
 ) : KotlinDeclarationProviderFactory {
     private val index = KotlinStandaloneDeclarationIndex()
 
@@ -529,7 +583,7 @@ class KotlinStandaloneDeclarationProviderFactory(
     }
 
     override fun createDeclarationProvider(scope: GlobalSearchScope, contextualModule: KaModule?): KotlinDeclarationProvider {
-        return KotlinStandaloneDeclarationProvider(index, scope, contextualModule)
+        return KotlinStandaloneDeclarationProvider(index, scope, contextualModule, environment, shouldComputeBinaryLibraryPackageSets)
     }
 
     fun getAdditionalCreatedKtFiles(): List<KtFile> {
