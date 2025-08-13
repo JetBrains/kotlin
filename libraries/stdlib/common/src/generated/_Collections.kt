@@ -1701,6 +1701,9 @@ public inline fun <T, K> Iterable<T>.distinctBy(selector: (T) -> K): List<T> {
  * 
  * The returned set preserves the element iteration order of the original collection.
  * 
+ * The returned set uses structural equality (`==`) to distinguish elements, meaning there will be no two
+ * structurally equal, but otherwise different elements in it.
+ * 
  * To get a set containing all elements that are contained at least in one of these collections use [union].
  */
 public infix fun <T> Iterable<T>.intersect(other: Iterable<T>): Set<T> {
@@ -1718,6 +1721,9 @@ public infix fun <T> Iterable<T>.intersect(other: Iterable<T>): Set<T> {
  * Returns a set containing all elements that are contained by this collection and not contained by the specified collection.
  * 
  * The returned set preserves the element iteration order of the original collection.
+ * 
+ * The returned set uses structural equality (`==`) to distinguish elements, meaning there will be no two
+ * structurally equal, but otherwise different elements in it.
  */
 public infix fun <T> Iterable<T>.subtract(other: Iterable<T>): Set<T> {
     val otherCollection = other.convertToListIfNotCollection()
@@ -1748,6 +1754,9 @@ public fun <T> Iterable<T>.toMutableSet(): MutableSet<T> {
  * The returned set preserves the element iteration order of the original collection.
  * Those elements of the [other] collection that are unique are iterated in the end
  * in the order of the [other] collection.
+ * 
+ * The returned set uses structural equality (`==`) to distinguish elements, meaning there will be no two
+ * structurally equal, but otherwise different elements in it.
  * 
  * To get a set containing all elements that are contained in both collections use [intersect].
  */

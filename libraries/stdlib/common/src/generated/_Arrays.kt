@@ -12468,6 +12468,9 @@ public inline fun <K> CharArray.distinctBy(selector: (Char) -> K): List<Char> {
  * 
  * The returned set preserves the element iteration order of the original array.
  * 
+ * The returned set uses structural equality (`==`) to distinguish elements, meaning there will be no two
+ * structurally equal, but otherwise different elements in it.
+ * 
  * To get a set containing all elements that are contained at least in one of these collections use [union].
  */
 public infix fun <T> Array<out T>.intersect(other: Iterable<T>): Set<T> {
@@ -12486,6 +12489,9 @@ public infix fun <T> Array<out T>.intersect(other: Iterable<T>): Set<T> {
  * 
  * The returned set preserves the element iteration order of the original array.
  * 
+ * The returned set uses structural equality (`==`) to distinguish elements, meaning there will be no two
+ * structurally equal, but otherwise different elements in it.
+ * 
  * To get a set containing all elements that are contained at least in one of these collections use [union].
  */
 public infix fun ByteArray.intersect(other: Iterable<Byte>): Set<Byte> {
@@ -12498,6 +12504,9 @@ public infix fun ByteArray.intersect(other: Iterable<Byte>): Set<Byte> {
  * Returns a set containing all elements that are contained by both this array and the specified collection.
  * 
  * The returned set preserves the element iteration order of the original array.
+ * 
+ * The returned set uses structural equality (`==`) to distinguish elements, meaning there will be no two
+ * structurally equal, but otherwise different elements in it.
  * 
  * To get a set containing all elements that are contained at least in one of these collections use [union].
  */
@@ -12512,6 +12521,9 @@ public infix fun ShortArray.intersect(other: Iterable<Short>): Set<Short> {
  * 
  * The returned set preserves the element iteration order of the original array.
  * 
+ * The returned set uses structural equality (`==`) to distinguish elements, meaning there will be no two
+ * structurally equal, but otherwise different elements in it.
+ * 
  * To get a set containing all elements that are contained at least in one of these collections use [union].
  */
 public infix fun IntArray.intersect(other: Iterable<Int>): Set<Int> {
@@ -12524,6 +12536,9 @@ public infix fun IntArray.intersect(other: Iterable<Int>): Set<Int> {
  * Returns a set containing all elements that are contained by both this array and the specified collection.
  * 
  * The returned set preserves the element iteration order of the original array.
+ * 
+ * The returned set uses structural equality (`==`) to distinguish elements, meaning there will be no two
+ * structurally equal, but otherwise different elements in it.
  * 
  * To get a set containing all elements that are contained at least in one of these collections use [union].
  */
@@ -12538,6 +12553,9 @@ public infix fun LongArray.intersect(other: Iterable<Long>): Set<Long> {
  * 
  * The returned set preserves the element iteration order of the original array.
  * 
+ * The returned set uses structural equality (`==`) to distinguish elements, meaning there will be no two
+ * structurally equal, but otherwise different elements in it.
+ * 
  * To get a set containing all elements that are contained at least in one of these collections use [union].
  */
 public infix fun FloatArray.intersect(other: Iterable<Float>): Set<Float> {
@@ -12550,6 +12568,9 @@ public infix fun FloatArray.intersect(other: Iterable<Float>): Set<Float> {
  * Returns a set containing all elements that are contained by both this array and the specified collection.
  * 
  * The returned set preserves the element iteration order of the original array.
+ * 
+ * The returned set uses structural equality (`==`) to distinguish elements, meaning there will be no two
+ * structurally equal, but otherwise different elements in it.
  * 
  * To get a set containing all elements that are contained at least in one of these collections use [union].
  */
@@ -12564,6 +12585,9 @@ public infix fun DoubleArray.intersect(other: Iterable<Double>): Set<Double> {
  * 
  * The returned set preserves the element iteration order of the original array.
  * 
+ * The returned set uses structural equality (`==`) to distinguish elements, meaning there will be no two
+ * structurally equal, but otherwise different elements in it.
+ * 
  * To get a set containing all elements that are contained at least in one of these collections use [union].
  */
 public infix fun BooleanArray.intersect(other: Iterable<Boolean>): Set<Boolean> {
@@ -12577,6 +12601,9 @@ public infix fun BooleanArray.intersect(other: Iterable<Boolean>): Set<Boolean> 
  * 
  * The returned set preserves the element iteration order of the original array.
  * 
+ * The returned set uses structural equality (`==`) to distinguish elements, meaning there will be no two
+ * structurally equal, but otherwise different elements in it.
+ * 
  * To get a set containing all elements that are contained at least in one of these collections use [union].
  */
 public infix fun CharArray.intersect(other: Iterable<Char>): Set<Char> {
@@ -12589,6 +12616,9 @@ public infix fun CharArray.intersect(other: Iterable<Char>): Set<Char> {
  * Returns a set containing all elements that are contained by this array and not contained by the specified collection.
  * 
  * The returned set preserves the element iteration order of the original array.
+ * 
+ * The returned set uses structural equality (`==`) to distinguish elements, meaning there will be no two
+ * structurally equal, but otherwise different elements in it.
  */
 public infix fun <T> Array<out T>.subtract(other: Iterable<T>): Set<T> {
     val otherCollection = other.convertToListIfNotCollection()
@@ -12605,6 +12635,9 @@ public infix fun <T> Array<out T>.subtract(other: Iterable<T>): Set<T> {
  * Returns a set containing all elements that are contained by this array and not contained by the specified collection.
  * 
  * The returned set preserves the element iteration order of the original array.
+ * 
+ * The returned set uses structural equality (`==`) to distinguish elements, meaning there will be no two
+ * structurally equal, but otherwise different elements in it.
  */
 public infix fun ByteArray.subtract(other: Iterable<Byte>): Set<Byte> {
     val set = this.toMutableSet()
@@ -12616,6 +12649,9 @@ public infix fun ByteArray.subtract(other: Iterable<Byte>): Set<Byte> {
  * Returns a set containing all elements that are contained by this array and not contained by the specified collection.
  * 
  * The returned set preserves the element iteration order of the original array.
+ * 
+ * The returned set uses structural equality (`==`) to distinguish elements, meaning there will be no two
+ * structurally equal, but otherwise different elements in it.
  */
 public infix fun ShortArray.subtract(other: Iterable<Short>): Set<Short> {
     val set = this.toMutableSet()
@@ -12627,6 +12663,9 @@ public infix fun ShortArray.subtract(other: Iterable<Short>): Set<Short> {
  * Returns a set containing all elements that are contained by this array and not contained by the specified collection.
  * 
  * The returned set preserves the element iteration order of the original array.
+ * 
+ * The returned set uses structural equality (`==`) to distinguish elements, meaning there will be no two
+ * structurally equal, but otherwise different elements in it.
  */
 public infix fun IntArray.subtract(other: Iterable<Int>): Set<Int> {
     val set = this.toMutableSet()
@@ -12638,6 +12677,9 @@ public infix fun IntArray.subtract(other: Iterable<Int>): Set<Int> {
  * Returns a set containing all elements that are contained by this array and not contained by the specified collection.
  * 
  * The returned set preserves the element iteration order of the original array.
+ * 
+ * The returned set uses structural equality (`==`) to distinguish elements, meaning there will be no two
+ * structurally equal, but otherwise different elements in it.
  */
 public infix fun LongArray.subtract(other: Iterable<Long>): Set<Long> {
     val set = this.toMutableSet()
@@ -12649,6 +12691,9 @@ public infix fun LongArray.subtract(other: Iterable<Long>): Set<Long> {
  * Returns a set containing all elements that are contained by this array and not contained by the specified collection.
  * 
  * The returned set preserves the element iteration order of the original array.
+ * 
+ * The returned set uses structural equality (`==`) to distinguish elements, meaning there will be no two
+ * structurally equal, but otherwise different elements in it.
  */
 public infix fun FloatArray.subtract(other: Iterable<Float>): Set<Float> {
     val set = this.toMutableSet()
@@ -12660,6 +12705,9 @@ public infix fun FloatArray.subtract(other: Iterable<Float>): Set<Float> {
  * Returns a set containing all elements that are contained by this array and not contained by the specified collection.
  * 
  * The returned set preserves the element iteration order of the original array.
+ * 
+ * The returned set uses structural equality (`==`) to distinguish elements, meaning there will be no two
+ * structurally equal, but otherwise different elements in it.
  */
 public infix fun DoubleArray.subtract(other: Iterable<Double>): Set<Double> {
     val set = this.toMutableSet()
@@ -12671,6 +12719,9 @@ public infix fun DoubleArray.subtract(other: Iterable<Double>): Set<Double> {
  * Returns a set containing all elements that are contained by this array and not contained by the specified collection.
  * 
  * The returned set preserves the element iteration order of the original array.
+ * 
+ * The returned set uses structural equality (`==`) to distinguish elements, meaning there will be no two
+ * structurally equal, but otherwise different elements in it.
  */
 public infix fun BooleanArray.subtract(other: Iterable<Boolean>): Set<Boolean> {
     val set = this.toMutableSet()
@@ -12682,6 +12733,9 @@ public infix fun BooleanArray.subtract(other: Iterable<Boolean>): Set<Boolean> {
  * Returns a set containing all elements that are contained by this array and not contained by the specified collection.
  * 
  * The returned set preserves the element iteration order of the original array.
+ * 
+ * The returned set uses structural equality (`==`) to distinguish elements, meaning there will be no two
+ * structurally equal, but otherwise different elements in it.
  */
 public infix fun CharArray.subtract(other: Iterable<Char>): Set<Char> {
     val set = this.toMutableSet()
@@ -12777,6 +12831,9 @@ public fun CharArray.toMutableSet(): MutableSet<Char> {
  * Those elements of the [other] collection that are unique are iterated in the end
  * in the order of the [other] collection.
  * 
+ * The returned set uses structural equality (`==`) to distinguish elements, meaning there will be no two
+ * structurally equal, but otherwise different elements in it.
+ * 
  * To get a set containing all elements that are contained in both collections use [intersect].
  */
 public infix fun <T> Array<out T>.union(other: Iterable<T>): Set<T> {
@@ -12791,6 +12848,9 @@ public infix fun <T> Array<out T>.union(other: Iterable<T>): Set<T> {
  * The returned set preserves the element iteration order of the original array.
  * Those elements of the [other] collection that are unique are iterated in the end
  * in the order of the [other] collection.
+ * 
+ * The returned set uses structural equality (`==`) to distinguish elements, meaning there will be no two
+ * structurally equal, but otherwise different elements in it.
  * 
  * To get a set containing all elements that are contained in both collections use [intersect].
  */
@@ -12807,6 +12867,9 @@ public infix fun ByteArray.union(other: Iterable<Byte>): Set<Byte> {
  * Those elements of the [other] collection that are unique are iterated in the end
  * in the order of the [other] collection.
  * 
+ * The returned set uses structural equality (`==`) to distinguish elements, meaning there will be no two
+ * structurally equal, but otherwise different elements in it.
+ * 
  * To get a set containing all elements that are contained in both collections use [intersect].
  */
 public infix fun ShortArray.union(other: Iterable<Short>): Set<Short> {
@@ -12821,6 +12884,9 @@ public infix fun ShortArray.union(other: Iterable<Short>): Set<Short> {
  * The returned set preserves the element iteration order of the original array.
  * Those elements of the [other] collection that are unique are iterated in the end
  * in the order of the [other] collection.
+ * 
+ * The returned set uses structural equality (`==`) to distinguish elements, meaning there will be no two
+ * structurally equal, but otherwise different elements in it.
  * 
  * To get a set containing all elements that are contained in both collections use [intersect].
  */
@@ -12837,6 +12903,9 @@ public infix fun IntArray.union(other: Iterable<Int>): Set<Int> {
  * Those elements of the [other] collection that are unique are iterated in the end
  * in the order of the [other] collection.
  * 
+ * The returned set uses structural equality (`==`) to distinguish elements, meaning there will be no two
+ * structurally equal, but otherwise different elements in it.
+ * 
  * To get a set containing all elements that are contained in both collections use [intersect].
  */
 public infix fun LongArray.union(other: Iterable<Long>): Set<Long> {
@@ -12851,6 +12920,9 @@ public infix fun LongArray.union(other: Iterable<Long>): Set<Long> {
  * The returned set preserves the element iteration order of the original array.
  * Those elements of the [other] collection that are unique are iterated in the end
  * in the order of the [other] collection.
+ * 
+ * The returned set uses structural equality (`==`) to distinguish elements, meaning there will be no two
+ * structurally equal, but otherwise different elements in it.
  * 
  * To get a set containing all elements that are contained in both collections use [intersect].
  */
@@ -12867,6 +12939,9 @@ public infix fun FloatArray.union(other: Iterable<Float>): Set<Float> {
  * Those elements of the [other] collection that are unique are iterated in the end
  * in the order of the [other] collection.
  * 
+ * The returned set uses structural equality (`==`) to distinguish elements, meaning there will be no two
+ * structurally equal, but otherwise different elements in it.
+ * 
  * To get a set containing all elements that are contained in both collections use [intersect].
  */
 public infix fun DoubleArray.union(other: Iterable<Double>): Set<Double> {
@@ -12882,6 +12957,9 @@ public infix fun DoubleArray.union(other: Iterable<Double>): Set<Double> {
  * Those elements of the [other] collection that are unique are iterated in the end
  * in the order of the [other] collection.
  * 
+ * The returned set uses structural equality (`==`) to distinguish elements, meaning there will be no two
+ * structurally equal, but otherwise different elements in it.
+ * 
  * To get a set containing all elements that are contained in both collections use [intersect].
  */
 public infix fun BooleanArray.union(other: Iterable<Boolean>): Set<Boolean> {
@@ -12896,6 +12974,9 @@ public infix fun BooleanArray.union(other: Iterable<Boolean>): Set<Boolean> {
  * The returned set preserves the element iteration order of the original array.
  * Those elements of the [other] collection that are unique are iterated in the end
  * in the order of the [other] collection.
+ * 
+ * The returned set uses structural equality (`==`) to distinguish elements, meaning there will be no two
+ * structurally equal, but otherwise different elements in it.
  * 
  * To get a set containing all elements that are contained in both collections use [intersect].
  */
