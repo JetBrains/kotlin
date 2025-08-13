@@ -439,8 +439,8 @@ extension ExportedKotlinPackages.packagewithprotocols {
                 return packagewithprotocols_ENUM_WITH_INTERFACE_INHERITANCE_entries_get() as! Swift.Array<ExportedKotlinPackages.packagewithprotocols.ENUM_WITH_INTERFACE_INHERITANCE>
             }
         }
-        package init(
-            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+        public init(
+            __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer!,
             options: KotlinRuntime.KotlinBaseConstructionOptions
         ) {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)

@@ -19,8 +19,8 @@ public enum Enum: KotlinRuntimeSupport._KotlinBridgeable, Swift.CaseIterable {
             return Enum_i_set__TypesOfArguments__Swift_Int32__(self.__externalRCRef(), newValue)
         }
     }
-    package init(
-        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+    public init(
+        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer!,
         options: KotlinRuntime.KotlinBaseConstructionOptions
     ) {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
@@ -43,8 +43,8 @@ public enum EnumSimple: KotlinRuntimeSupport._KotlinBridgeable, Swift.CaseIterab
             return EnumSimple_entries_get() as! Swift.Array<main.EnumSimple>
         }
     }
-    package init(
-        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+    public init(
+        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer!,
         options: KotlinRuntime.KotlinBaseConstructionOptions
     ) {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
@@ -69,8 +69,8 @@ public enum EnumWithAbstractMembers: KotlinRuntimeSupport._KotlinBridgeable, Swi
             return EnumWithAbstractMembers_red_get(self.__externalRCRef())
         }
     }
-    package init(
-        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+    public init(
+        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer!,
         options: KotlinRuntime.KotlinBaseConstructionOptions
     ) {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
@@ -103,8 +103,8 @@ public enum EnumWithMembers: KotlinRuntimeSupport._KotlinBridgeable, Swift.CaseI
             return EnumWithMembers_isNorth_get(self.__externalRCRef())
         }
     }
-    package init(
-        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer?,
+    public init(
+        __externalRCRefUnsafe: Swift.UnsafeMutableRawPointer!,
         options: KotlinRuntime.KotlinBaseConstructionOptions
     ) {
         super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
