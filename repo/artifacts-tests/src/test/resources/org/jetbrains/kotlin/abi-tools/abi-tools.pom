@@ -45,12 +45,6 @@
       <scope>runtime</scope>
     </dependency>
     <dependency>
-      <groupId>org.jetbrains.intellij.deps</groupId>
-      <artifactId>asm-all</artifactId>
-      <version>9.6.1</version>
-      <scope>runtime</scope>
-    </dependency>
-    <dependency>
       <groupId>io.github.java-diff-utils</groupId>
       <artifactId>java-diff-utils</artifactId>
       <version>4.12</version>
