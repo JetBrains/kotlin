@@ -37,3 +37,11 @@ FILE: longElvisChain.kt
         ) } ?: R|<local>/a| ?: ^test_4 Unit
         throw R|<local>/a|
     }
+    public final fun test_5(): R|kotlin/Unit| {
+        lvar a: R|kotlin/Throwable?| = Null(null)
+        R|<local>/a| = R|<local>/a| ?: R|kotlin/run|<R|kotlin/Nothing|>(<L> = run@fun <anonymous>(): R|kotlin/Nothing| <inline=Inline, kind=EXACTLY_ONCE>  {
+            throw R|java/lang/Exception.Exception|()
+        }
+        )
+        throw R|<local>/a|
+    }

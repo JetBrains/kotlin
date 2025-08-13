@@ -1,5 +1,5 @@
 // RUN_PIPELINE_TILL: BACKEND
-// ISSUE: KT-49249
+// ISSUE: KT-49249, KT-51634
 // WITH_STDLIB
 
 fun test_1() {
@@ -29,6 +29,12 @@ fun test_4() {
     val a: Throwable? = null;
     val b: Unit? = null
     val c = b?.let { return it } ?: a ?: return
+    throw a
+}
+
+fun test_5() {
+    var a: Throwable? = null
+    a = a ?: run { throw Exception() }
     throw a
 }
 
