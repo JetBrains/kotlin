@@ -169,7 +169,7 @@ interface FrontendSymbols {
         }
     }
 
-    abstract class FrontendSymbolsImpl(irBuiltIns: IrBuiltIns) : FrontendSymbols, BaseSymbolsImpl(irBuiltIns) {
+    abstract class Impl(irBuiltIns: IrBuiltIns) : FrontendSymbols, BaseSymbolsImpl(irBuiltIns) {
         override val asserts: Iterable<IrSimpleFunctionSymbol> = symbolFinder.findFunctions(Name.identifier("assert"), "kotlin")
 
         override val arrays: List<IrClassSymbol>
@@ -188,7 +188,7 @@ interface FrontendKlibSymbols : FrontendSymbols {
     val genericSharedVariableBox: SharedVariableBoxClassInfo
     val primitiveSharedVariableBoxes: Map<IrType, SharedVariableBoxClassInfo>
 
-    abstract class FrontendKlibSymbolsImpl(irBuiltIns: IrBuiltIns) : FrontendKlibSymbols, FrontendSymbols.FrontendSymbolsImpl(irBuiltIns) {
+    abstract class Impl(irBuiltIns: IrBuiltIns) : FrontendKlibSymbols, FrontendSymbols.Impl(irBuiltIns) {
         private fun findSharedVariableBoxClass(suffix: String): FrontendKlibSymbols.SharedVariableBoxClassInfo {
             val classId = ClassId(StandardNames.KOTLIN_INTERNAL_FQ_NAME, Name.identifier("SharedVariableBox$suffix"))
             val boxClass = symbolFinder.findClass(classId)
@@ -213,7 +213,7 @@ interface FrontendWebSymbols : FrontendKlibSymbols {
         val COROUTINE_SUSPEND_OR_RETURN_JS_NAME = "suspendCoroutineUninterceptedOrReturnJS"
     }
 
-    abstract class FrontendWebSymbolsImpl(irBuiltIns: IrBuiltIns) : FrontendWebSymbols, FrontendKlibSymbols.FrontendKlibSymbolsImpl(irBuiltIns)
+    abstract class Impl(irBuiltIns: IrBuiltIns) : FrontendWebSymbols, FrontendKlibSymbols.Impl(irBuiltIns)
 }
 
 interface FrontendJsSymbols : FrontendWebSymbols {
@@ -228,7 +228,7 @@ interface FrontendJsSymbols : FrontendWebSymbols {
     val jsBoxIntrinsic: IrSimpleFunctionSymbol
     val jsUnboxIntrinsic: IrSimpleFunctionSymbol
 
-    open class FrontendJsSymbolsImpl(irBuiltIns: IrBuiltIns) : FrontendJsSymbols, FrontendWebSymbols.FrontendWebSymbolsImpl(irBuiltIns) {
+    open class Impl(irBuiltIns: IrBuiltIns) : FrontendJsSymbols, FrontendWebSymbols.Impl(irBuiltIns) {
         override val throwUninitializedPropertyAccessException =
             symbolFinder.topLevelFunction(kotlinPackageFqn, "throwUninitializedPropertyAccessException")
 
@@ -281,7 +281,7 @@ interface FrontendJsSymbols : FrontendWebSymbols {
 }
 
 interface FrontendWasmSymbols : FrontendWebSymbols {
-    open class FrontendWasmSymbolsImpl(irBuiltIns: IrBuiltIns) : FrontendWasmSymbols, FrontendWebSymbols.FrontendWebSymbolsImpl(irBuiltIns) {
+    open class Impl(irBuiltIns: IrBuiltIns) : FrontendWasmSymbols, FrontendWebSymbols.Impl(irBuiltIns) {
         override val throwUninitializedPropertyAccessException =
             getInternalWasmFunction("throwUninitializedPropertyAccessException")
 
@@ -303,7 +303,7 @@ interface FrontendWasmSymbols : FrontendWebSymbols {
 interface FrontendNativeSymbols : FrontendKlibSymbols {
     val isAssertionArgumentEvaluationEnabled: IrSimpleFunctionSymbol
 
-    open class FrontendNativeSymbolsImpl(irBuiltIns: IrBuiltIns) : FrontendNativeSymbols, FrontendKlibSymbols.FrontendKlibSymbolsImpl(irBuiltIns) {
+    open class Impl(irBuiltIns: IrBuiltIns) : FrontendNativeSymbols, FrontendKlibSymbols.Impl(irBuiltIns) {
         private object RuntimeNames {
             val kotlinNativeInternalPackageName = FqName.fromSegments(listOf("kotlin", "native", "internal"))
         }

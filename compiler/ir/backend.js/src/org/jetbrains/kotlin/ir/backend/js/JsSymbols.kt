@@ -36,7 +36,7 @@ class JsSymbols(
     irBuiltIns: IrBuiltIns,
     private val stageController: StageController,
     private val intrinsics: JsIntrinsics,
-) : FrontendJsSymbols by FrontendJsSymbols.FrontendJsSymbolsImpl(irBuiltIns), JsCommonSymbols(irBuiltIns) {
+) : FrontendJsSymbols by FrontendJsSymbols.Impl(irBuiltIns), JsCommonSymbols(irBuiltIns) {
     override val throwNullPointerException =
         symbolFinder.topLevelFunction(kotlinPackageFqn, "THROW_NPE")
 

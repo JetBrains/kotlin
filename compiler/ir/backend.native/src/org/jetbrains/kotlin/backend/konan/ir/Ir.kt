@@ -266,7 +266,7 @@ class KonanSymbols(
         context: ErrorReportingContext,
         irBuiltIns: IrBuiltIns,
         config: CompilerConfiguration,
-) : FrontendNativeSymbols by FrontendNativeSymbols.FrontendNativeSymbolsImpl(irBuiltIns), KlibSymbols(irBuiltIns) {
+) : FrontendNativeSymbols by FrontendNativeSymbols.Impl(irBuiltIns), KlibSymbols(irBuiltIns) {
     val entryPoint by run {
         val mainCallableId = config.getMainCallableId()
         val unfilteredCandidates = mainCallableId?.functionSymbols()

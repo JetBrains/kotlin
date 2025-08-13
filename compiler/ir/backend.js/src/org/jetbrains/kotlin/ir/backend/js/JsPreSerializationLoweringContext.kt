@@ -18,7 +18,7 @@ class JsPreSerializationLoweringContext(
     diagnosticReporter: DiagnosticReporter,
 ) : PreSerializationLoweringContext(irBuiltIns, configuration, diagnosticReporter) {
     override val symbols: FrontendJsSymbols by lazy {
-        FrontendJsSymbols.FrontendJsSymbolsImpl(irBuiltIns)
+        FrontendJsSymbols.Impl(irBuiltIns)
     }
 
     override val sharedVariablesManager by lazy { KlibSharedVariablesManager(symbols) }

@@ -19,7 +19,7 @@ class WasmPreSerializationLoweringContext(
     diagnosticReporter: DiagnosticReporter,
 ) : PreSerializationLoweringContext(irBuiltIns, configuration, diagnosticReporter) {
     override val symbols: FrontendWasmSymbols by lazy {
-        FrontendWasmSymbols.FrontendWasmSymbolsImpl(irBuiltIns)
+        FrontendWasmSymbols.Impl(irBuiltIns)
     }
 
     override val sharedVariablesManager: SharedVariablesManager by lazy { KlibSharedVariablesManager(symbols) }
