@@ -39,12 +39,16 @@ private fun String.prefixIfNotEmpty(prefix: String): String = takeIf { it.isNotE
 
 private val SirProtocolConformingDeclaration.renderProtocols: String get() = protocols.joinToString { it.swiftFqName }
 
-private val SirType.render: String get() = when (this) {
+private val SirType.render: String
+    get() = when (this) {
+        is SirImplicitlyUnwrappedOptionalType -> "${wrappedType.render}!"
         is SirOptionalType -> "${wrappedType.render}?"
         is SirArrayType -> "[${elementType.render}]"
         is SirDictionaryType -> "[${keyType.render} : ${valueType.render}]"
-        is SirExistentialType -> protocols.takeIf { it.isNotEmpty() }?.joinToString(prefix = "any ", separator = " & ") { it.swiftFqName } ?: "Any"
-        is SirNominalType -> "${typeDeclaration.swiftFqName}"
+        is SirExistentialType -> protocols.takeIf {
+            it.isNotEmpty()
+        }?.joinToString(prefix = "any ", separator = " & ") { it.swiftFqName } ?: "Any"
+        is SirNominalType -> typeDeclaration.swiftFqName
         is SirErrorType -> "<ERROR>"
         is SirUnsupportedType -> "<UNSUPPORTED>"
         is SirFunctionalType -> "(${parameterTypes.joinToString { it.render }}) -> ${returnType.render}"
