@@ -59,12 +59,14 @@ open class SirNominalType(
         SirNominalType(typeDeclaration, typeArguments, parent, this.attributes + attributes)
 }
 
-class SirOptionalType(type: SirType) : SirNominalType(
+open class SirOptionalType(type: SirType) : SirNominalType(
     typeDeclaration = SirSwiftModule.optional,
     typeArguments = listOf(type)
 ) {
     val wrappedType: SirType get() = super.typeArguments.single()
 }
+
+class SirImplicitlyUnwrappedOptionalType(type: SirType) : SirOptionalType(type)
 
 class SirArrayType(type: SirType) : SirNominalType(
     typeDeclaration = SirSwiftModule.array,
@@ -118,3 +120,5 @@ data object SirUnsupportedType : SirType {
 }
 
 fun SirType.optional(): SirNominalType = SirOptionalType(this)
+
+fun SirType.implicitlyUnwrappedOptional(): SirNominalType = SirImplicitlyUnwrappedOptionalType(this)
