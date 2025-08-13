@@ -97,7 +97,6 @@ fun FirResult.convertToIrAndActualize(
         outputs,
         fir2IrExtensions,
         fir2IrConfiguration,
-        compilerConfiguration,
         irGeneratorExtensions,
         irMangler,
         visibilityConverter,
@@ -106,7 +105,10 @@ fun FirResult.convertToIrAndActualize(
         specialAnnotationsProvider,
         extraActualDeclarationExtractorsInitializer,
         commonMemberStorage,
-        irModuleFragmentPostCompute
+        irModuleFragmentPostCompute,
+        irVerificationMode = compilerConfiguration.get(CommonConfigurationKeys.VERIFY_IR, IrVerificationMode.NONE),
+        enableIrVisibilityChecks = compilerConfiguration.enableIrVisibilityChecks,
+        enableIrVarargTypesChecks = compilerConfiguration.enableIrVarargTypesChecks,
     )
     return pipeline.convertToIrAndActualize()
 }
@@ -115,7 +117,6 @@ private class Fir2IrPipeline(
     val outputs: List<ModuleCompilerAnalyzedOutput>,
     val fir2IrExtensions: Fir2IrExtensions,
     val fir2IrConfiguration: Fir2IrConfiguration,
-    val compilerConfiguration: CompilerConfiguration,
     val irGeneratorExtensions: Collection<IrGenerationExtension>,
     val irMangler: KotlinMangler.IrMangler,
     val visibilityConverter: Fir2IrVisibilityConverter,
@@ -125,6 +126,9 @@ private class Fir2IrPipeline(
     val extraActualDeclarationExtractorsInitializer: (Fir2IrComponents) -> List<IrExtraActualDeclarationExtractor>,
     val commonMemberStorage: Fir2IrCommonMemberStorage,
     val irModuleFragmentPostCompute: (IrModuleFragment) -> Unit,
+    val irVerificationMode: IrVerificationMode,
+    val enableIrVisibilityChecks: Boolean,
+    val enableIrVarargTypesChecks: Boolean,
 ) {
     private class Fir2IrConversionResult(
         val mainIrFragment: IrModuleFragmentImpl,
@@ -481,7 +485,6 @@ private class Fir2IrPipeline(
         module: IrModuleFragment,
         hasScriptingPlugin: Boolean,
     ): Boolean {
-        val irVerificationMode = compilerConfiguration.get(CommonConfigurationKeys.VERIFY_IR, IrVerificationMode.NONE)
         if (irVerificationMode == IrVerificationMode.NONE && !fir2IrConfiguration.validateIrForKlibSerialization) {
             return false
         }
@@ -513,7 +516,7 @@ private class Fir2IrPipeline(
                     withCheckers(
                         IrCallValueArgumentCountChecker, // KT-80062
                         IrValueAccessScopeChecker, // KT-80071
-                    ).applyIf(compilerConfiguration.enableIrVisibilityChecks) { // KT-80071
+                    ).applyIf(enableIrVisibilityChecks) { // KT-80071
                         // User code may use @Suppress("INVISIBLE_REFERENCE") or similar, and at this point we do allow that,
                         // so visibility checks are only performed if requested via a flag, and in tests.
                         withCheckers(IrVisibilityChecker)
@@ -524,7 +527,7 @@ private class Fir2IrPipeline(
                     //  while most of them, somehow, work. It is disabled for now, not to cause too much breakage.
                     withCheckers(IrCallTypeArgumentCountChecker)
                 }
-                .applyIf(compilerConfiguration.enableIrVarargTypesChecks) {
+                .applyIf(enableIrVarargTypesChecks) {
                     withVarargChecks()
                 }
                 .applyIf(!fir2IrConfiguration.languageVersionSettings.supportsFeature(LanguageFeature.ExplicitBackingFields)) {
