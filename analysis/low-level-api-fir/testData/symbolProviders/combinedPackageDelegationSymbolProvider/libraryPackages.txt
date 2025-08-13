@@ -1,11 +1,11 @@
 HAS_PACKAGE '<root>':
-  false
+  true
 
 HAS_PACKAGE 'library1':
-  false
+  true
 
 HAS_PACKAGE 'library1.foo':
-  false
+  true
 
 HAS_PACKAGE 'library1.foo.bar':
   true
@@ -17,10 +17,10 @@ HAS_PACKAGE 'library1.foo.bar.baz.fake':
   false
 
 HAS_PACKAGE 'library2':
-  false
+  true
 
 HAS_PACKAGE 'library2.foo':
-  false
+  true
 
 HAS_PACKAGE 'library2.foo.bar':
   true
@@ -35,10 +35,10 @@ HAS_PACKAGE 'library3':
   true
 
 HAS_PACKAGE 'library3.foo':
-  false
+  true
 
 HAS_PACKAGE 'library3.foo.bar':
-  false
+  true
 
 HAS_PACKAGE 'library3.foo.bar.baz':
   true
@@ -47,7 +47,7 @@ HAS_PACKAGE 'library3.foo.bar.baz.fake':
   false
 
 HAS_PACKAGE 'library':
-  false
+  true
 
 HAS_PACKAGE 'library.other1':
   true
