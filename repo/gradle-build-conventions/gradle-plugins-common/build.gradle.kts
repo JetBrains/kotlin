@@ -19,6 +19,9 @@ kotlin {
     target.compilations.getByName("main").compileTaskProvider.configure {
         compilerOptions.allWarningsAsErrors.set(true)
     }
+    target.compilations.getByName("test").compileTaskProvider.configure {
+        compilerOptions.freeCompilerArgs.add("-Xskip-metadata-version-check")
+    }
 }
 
 gradlePlugin {
@@ -45,6 +48,8 @@ dependencies {
     implementation(libs.gradle.pluginPublish.gradlePlugin)
     implementation(libs.spdx.gradlePlugin)
     implementation(libs.shadow.gradlePlugin)
+
+    // Bump a transitive slf4j version to a version in verification-metadata.xml
     implementation("org.slf4j:slf4j-api:2.0.17")
 
     compileOnly(gradleApi())
@@ -53,6 +58,8 @@ dependencies {
     testImplementation(gradleKotlinDsl())
     testImplementation(gradleApi())
     testImplementation(libs.junit.jupiter.api)
+    testImplementation(libs.dokka.gradlePlugin)
+    testImplementation(project(":gradle-plugins-documentation"))
     testRuntimeOnly(libs.junit.platform.launcher)
     testRuntimeOnly(libs.junit.jupiter.engine)
 }

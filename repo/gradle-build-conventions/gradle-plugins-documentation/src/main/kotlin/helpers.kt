@@ -35,7 +35,7 @@ internal fun Project.generateJavadocForPluginVariant(gradlePluginVariant: Gradle
     val commonSourceSet = javaExtension.sourceSets.getByName(commonSourceSetName)
     val variantSourceSet = javaExtension.sourceSets.getByName(gradlePluginVariant.sourceSetName)
 
-    val dokkaTaskSuffix = if (gradlePluginVariant.sourceSetName == "main") {
+    val dokkaTaskSuffix = if (gradlePluginVariant == GradlePluginVariant.GRADLE_MIN) {
         ""
     } else {
         gradlePluginVariant.sourceSetName.replaceFirstChar { it.uppercaseChar() }
@@ -102,11 +102,13 @@ fun AbstractDokkaLeafTask.configureCommonDokkaConfiguration(
     }
 
     /**
-     * The "main" source set is a peer of [variantSourceSet], so it should be suppressed in the Dokka generation for the variant source set.
+     * The [GradlePluginVariant.GRADLE_MIN] ("main") source set is a peer of [variantSourceSet], so it should be suppressed in the Dokka generation for the variant source set.
      *
      * This hack relies on dokkaSourceSets set being unique per AbstractDokkaLeafTask.
      */
-    dokkaSourceSets.named("main") {
-        suppress.set(true)
+    if (gradlePluginVariant != GradlePluginVariant.GRADLE_MIN) {
+        dokkaSourceSets.named(GradlePluginVariant.GRADLE_MIN.sourceSetName) {
+            suppress.set(true)
+        }
     }
 }
