@@ -22,7 +22,9 @@ object IrFieldVisibilityChecker : IrElementChecker<IrField>(IrField::class) {
     //   We disable validation for such properties until KT-71243 is resolved.
     private val IrField.isExemptFromValidation: Boolean
         get() = correspondingPropertySymbol?.owner?.isConst == true ||
-                hasAnnotation(JVM_FIELD_CLASS_ID)
+                hasAnnotation(JVM_FIELD_CLASS_ID) ||
+                // Compose compiler plugin still generates some public fields in JVM, see CMP-6788.
+                (isStatic && name.asString() == $$"$stable")
 
     override fun check(element: IrField, context: CheckerContext) {
         if (element.visibility != DescriptorVisibilities.PRIVATE && !element.isExemptFromValidation) {
