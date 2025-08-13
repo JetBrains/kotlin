@@ -42619,6 +42619,12 @@ public class LLBlackBoxTestGenerated extends AbstractLLBlackBoxTest {
         }
 
         @Test
+        @TestMetadata("differentDependenciesWithTheSameName.kt")
+        public void testDifferentDependenciesWithTheSameName() {
+          runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/differentDependenciesWithTheSameName.kt");
+        }
+
+        @Test
         @TestMetadata("expectActualChain2-2.kt")
         public void testExpectActualChain2_2() {
           runTest("compiler/testData/codegen/box/multiplatform/k2/hmpp/expectActualChain2-2.kt");
