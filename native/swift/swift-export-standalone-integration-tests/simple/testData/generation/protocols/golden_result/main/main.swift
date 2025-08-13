@@ -445,6 +445,9 @@ extension ExportedKotlinPackages.packagewithprotocols {
         ) {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
         }
+        public func __externalRCRef() -> Swift.UnsafeMutableRawPointer! {
+            return nil
+        }
         public static func valueOf(
             value: Swift.String
         ) -> ExportedKotlinPackages.packagewithprotocols.ENUM_WITH_INTERFACE_INHERITANCE {
