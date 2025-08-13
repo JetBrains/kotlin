@@ -1,5 +1,6 @@
 // RUN_PIPELINE_TILL: BACKEND
 // ISSUE: KT-51634
+// DUMP_INFERENCE_LOGS: FIXATION
 
 object A {
     fun <T> genericFunction(block: () -> T): T {
