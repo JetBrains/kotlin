@@ -74,6 +74,9 @@ extension ExportedKotlinPackages.a.b.c {
         ) {
             super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)
         }
+        public func __externalRCRef() -> Swift.UnsafeMutableRawPointer! {
+            return nil
+        }
         public static func valueOf(
             value: Swift.String
         ) -> ExportedKotlinPackages.a.b.c.E {

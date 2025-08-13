@@ -13,6 +13,7 @@ import org.jetbrains.kotlin.analysis.api.export.utilities.isCloneable
 import org.jetbrains.kotlin.analysis.api.symbols.*
 import org.jetbrains.kotlin.analysis.api.types.KaClassType
 import org.jetbrains.kotlin.sir.*
+import org.jetbrains.kotlin.sir.builder.buildFunctionCopy
 import org.jetbrains.kotlin.sir.builder.buildInitCopy
 import org.jetbrains.kotlin.sir.providers.SirSession
 import org.jetbrains.kotlin.sir.providers.extractDeclarations
@@ -115,19 +116,31 @@ internal class SirEnumFromKtSymbol(
     }
 
     private fun syntheticDeclarations(): List<SirDeclaration> = listOf(
-        kotlinBaseInitDeclaration()
+        kotlinBaseInitDeclaration(),
+        kotlinBridgeableExternalRcRef(),
     )
 
     private fun kotlinBaseInitDeclaration(): SirDeclaration = buildInitCopy(KotlinRuntimeModule.kotlinBaseDesignatedInit) {
         origin = SirOrigin.KotlinBaseInitOverride(`for` = KotlinSource(ktSymbol))
         parameters[0] = SirParameter(
             argumentName = "__externalRCRefUnsafe",
-            type = SirNominalType(SirSwiftModule.unsafeMutableRawPointer).implicitlyUnwrappedOptional()
+            type = unsafeMutableRawPointerFlexibleType()
         )
         body = SirFunctionBody(
             listOf("super.init(__externalRCRefUnsafe: __externalRCRefUnsafe, options: options)")
         )
     }.also { it.parent = this }
+
+    private fun kotlinBridgeableExternalRcRef(): SirFunction = buildFunctionCopy(KotlinRuntimeSupportModule.kotlinBridgeableExternalRcRef) {
+        origin = SirOrigin.KotlinBridgeableExternalRcRefOverride(`for` = KotlinSource(ktSymbol))
+        returnType = unsafeMutableRawPointerFlexibleType()
+        body = SirFunctionBody(
+            listOf("return nil")
+        )
+    }.also { it.parent = this }
+
+    private fun unsafeMutableRawPointerFlexibleType(): SirNominalType =
+        SirNominalType(SirSwiftModule.unsafeMutableRawPointer).implicitlyUnwrappedOptional()
 }
 
 internal class SirEnumClassFromKtSymbol(
