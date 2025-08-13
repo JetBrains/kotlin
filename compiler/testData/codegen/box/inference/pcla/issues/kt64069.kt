@@ -4,6 +4,8 @@
 // IGNORE_BACKEND_K1: JVM_IR, WASM
 // REASON: java.lang.ClassCastException: class java.lang.String cannot be cast to class java.lang.Void (see corresponding issue)
 
+// IGNORE_NATIVE_K1: optimizationMode=DEBUG
+
 private var enable: Boolean = true
 private val string: String? by lazy {
     if (enable) {

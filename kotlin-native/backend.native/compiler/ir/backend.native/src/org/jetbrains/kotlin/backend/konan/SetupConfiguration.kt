@@ -354,6 +354,7 @@ internal fun CompilerConfiguration.setupCommonOptionsForCaches(konanConfig: Kona
     setupPartialLinkageConfig(konanConfig.partialLinkageConfig)
     putIfNotNull(EXTERNAL_DEPENDENCIES, konanConfig.externalDependenciesFile?.absolutePath)
     put(PROPERTY_LAZY_INITIALIZATION, konanConfig.propertyLazyInitialization)
+    put(BinaryOptions.genericSafeCasts, konanConfig.genericSafeCasts)
     put(BinaryOptions.stripDebugInfoFromNativeLibs, !konanConfig.useDebugInfoInNativeLibs)
     put(ALLOCATION_MODE, konanConfig.allocationMode)
     put(BinaryOptions.gc, konanConfig.gc)
