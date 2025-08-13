@@ -53,6 +53,7 @@ benchmark {
             include("CommonCallsBenchmark")
             include("ControlFlowAnalysisBenchmark")
             include("BigMapInitialization")
+            include("ArrayOfChain")
             //include("InferenceBaselineCallsBenchmark")
         }
 
