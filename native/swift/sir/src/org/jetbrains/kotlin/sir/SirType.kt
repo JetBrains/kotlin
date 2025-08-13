@@ -19,11 +19,17 @@ sealed interface SirType {
     }
 }
 
+/**
+ * This marker interface underscores that the type contains some unwrapped type(s) inside.
+ * It's important mainly for rendering purposes.
+ */
+sealed interface SirWrappedType : SirType
+
 class SirFunctionalType(
     val parameterTypes: List<SirType>,
     val returnType: SirType,
     override val attributes: List<SirAttribute> = emptyList(),
-) : SirType {
+) : SirWrappedType {
     fun copyAppendingAttributes(vararg attributes: SirAttribute): SirFunctionalType =
         SirFunctionalType(parameterTypes, returnType, this.attributes + attributes)
 }
@@ -59,24 +65,26 @@ open class SirNominalType(
         SirNominalType(typeDeclaration, typeArguments, parent, this.attributes + attributes)
 }
 
-class SirOptionalType(type: SirType) : SirNominalType(
+open class SirOptionalType(type: SirType) : SirNominalType(
     typeDeclaration = SirSwiftModule.optional,
     typeArguments = listOf(type)
-) {
+), SirWrappedType {
     val wrappedType: SirType get() = super.typeArguments.single()
 }
+
+class SirImplicitlyUnwrappedOptionalType(type: SirType) : SirOptionalType(type)
 
 class SirArrayType(type: SirType) : SirNominalType(
     typeDeclaration = SirSwiftModule.array,
     typeArguments = listOf(type),
-) {
+), SirWrappedType {
     val elementType: SirType get() = super.typeArguments.single()
 }
 
 class SirDictionaryType(keyType: SirType, valueType: SirType) : SirNominalType(
     typeDeclaration = SirSwiftModule.dictionary,
     typeArguments = listOf(keyType, valueType)
-) {
+), SirWrappedType {
     val keyType: SirType get() = super.typeArguments[0]
     val valueType: SirType get() = super.typeArguments[1]
 }
@@ -118,3 +126,5 @@ data object SirUnsupportedType : SirType {
 }
 
 fun SirType.optional(): SirNominalType = SirOptionalType(this)
+
+fun SirType.implicitlyUnwrappedOptional(): SirNominalType = SirImplicitlyUnwrappedOptionalType(this)
