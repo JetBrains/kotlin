@@ -5,8 +5,7 @@
 
 package org.jetbrains.kotlin.analysis.api.fir.components
 
-import org.jetbrains.kotlin.analysis.api.components.KaClassTypeBuilder
-import org.jetbrains.kotlin.analysis.api.components.KaTypeParameterTypeBuilder
+import org.jetbrains.kotlin.analysis.api.components.*
 import org.jetbrains.kotlin.analysis.api.fir.KaFirSession
 import org.jetbrains.kotlin.analysis.api.fir.utils.firSymbol
 import org.jetbrains.kotlin.analysis.api.impl.base.components.KaBaseClassTypeBuilder
@@ -26,10 +25,22 @@ import org.jetbrains.kotlin.name.ClassId
 internal class KaFirTypeCreator(
     override val analysisSessionProvider: () -> KaFirSession,
 ) : KaBaseTypeCreator<KaFirSession>(), KaFirSessionComponent {
+    @Deprecated(
+        "Use `typeCreator.classType` instead. " +
+                "See the KDoc for `org.jetbrains.kotlin.analysis.api.components.KaTypeCreator` for the migration guide.",
+        replaceWith = ReplaceWith("typeCreator.classType")
+    )
+    @Suppress("DEPRECATION")
     override fun buildClassType(classId: ClassId, init: KaClassTypeBuilder.() -> Unit): KaType = withValidityAssertion {
         return buildClassType(KaBaseClassTypeBuilder.ByClassId(classId, token).apply(init))
     }
 
+    @Deprecated(
+        "Use `typeCreator.classType` instead. " +
+                "See the KDoc for `org.jetbrains.kotlin.analysis.api.components.KaTypeCreator` for the migration guide.",
+        replaceWith = ReplaceWith("typeCreator.classType")
+    )
+    @Suppress("DEPRECATION")
     override fun buildClassType(symbol: KaClassLikeSymbol, init: KaClassTypeBuilder.() -> Unit): KaType = withValidityAssertion {
         return buildClassType(KaBaseClassTypeBuilder.BySymbol(symbol, token).apply(init))
     }
@@ -57,6 +68,12 @@ internal class KaFirTypeCreator(
         return coneType.asKaType()
     }
 
+    @Deprecated(
+        "Use `typeCreator.typeParameterType` instead. " +
+                "See the KDoc for `org.jetbrains.kotlin.analysis.api.components.KaTypeCreator` for the migration guide.",
+        replaceWith = ReplaceWith("typeCreator.typeParameterType")
+    )
+    @Suppress("DEPRECATION")
     override fun buildTypeParameterType(symbol: KaTypeParameterSymbol, init: KaTypeParameterTypeBuilder.() -> Unit): KaTypeParameterType {
         withValidityAssertion {
             val builder = KaBaseTypeParameterTypeBuilder.BySymbol(symbol, token).apply(init)

@@ -15,7 +15,20 @@ import org.jetbrains.kotlin.analysis.api.types.*
 import org.jetbrains.kotlin.name.ClassId
 import org.jetbrains.kotlin.types.Variance
 
+/**
+ * [KaTypeCreator] is deprecated and soon will no longer be a session component.
+ * It will be replaced by another component [KaTypeCreatorProvider], which provides a single entry point
+ * for all the type-building infrastructure [org.jetbrains.kotlin.analysis.api.types.typeCreation.KaTypeCreator].
+ *
+ * It has the same set of type building APIs as [KaTypeCreator] and some newer APIs covering all [KaType]s.
+ *
+ * See KT-65912, KT-66566, KT-66043
+ */
 @SubclassOptInRequired(KaImplementationDetail::class)
+@Deprecated(
+    "Use `org.jetbrains.kotlin.analysis.api.components.KaTypeCreatorProvider.typeCreator` instead. " +
+            "See the KDoc for `org.jetbrains.kotlin.analysis.api.components.KaTypeCreator` for the migration guide."
+)
 public interface KaTypeCreator : KaSessionComponent {
     /**
      * Builds a class type with the given class ID.
@@ -34,6 +47,12 @@ public interface KaTypeCreator : KaSessionComponent {
      * }
      * ```
      */
+    @Deprecated(
+        "Use `typeCreator.classType` instead. " +
+                "See the KDoc for `org.jetbrains.kotlin.analysis.api.components.KaTypeCreator` for the migration guide.",
+        ReplaceWith("typeCreator.classType")
+    )
+    @Suppress("DEPRECATION")
     public fun buildClassType(classId: ClassId, init: KaClassTypeBuilder.() -> Unit = {}): KaType
 
     /**
@@ -48,29 +67,57 @@ public interface KaTypeCreator : KaSessionComponent {
      * buildClassType(builtinTypes.string)
      * ```
      */
+    @Deprecated(
+        "Use `typeCreator.classType` instead. " +
+                "See the KDoc for `org.jetbrains.kotlin.analysis.api.components.KaTypeCreator` for the migration guide.",
+        ReplaceWith("typeCreator.classType")
+    )
+    @Suppress("DEPRECATION")
     public fun buildClassType(symbol: KaClassLikeSymbol, init: KaClassTypeBuilder.() -> Unit = {}): KaType
 
     /**
      * Builds a boxed / primitive (depending on the [init] block) array type from the given [elementType].
      */
+    @Deprecated(
+        "Use `typeCreator.arrayType` instead. " +
+                "See the KDoc for `org.jetbrains.kotlin.analysis.api.components.KaTypeCreator` for the migration guide.",
+        ReplaceWith("typeCreator.arrayType")
+    )
     @KaExperimentalApi
+    @Suppress("DEPRECATION")
     public fun buildArrayType(elementType: KaType, init: KaArrayTypeBuilder.() -> Unit = {}): KaType
 
     /**
      * Builds the underlying array type of [vararg](https://kotlinlang.org/docs/functions.html#variable-number-of-arguments-varargs)
      * function parameter with the given [elementType].
      */
+    @Deprecated(
+        "Use `typeCreator.varargArrayType` instead. " +
+                "See the KDoc for `org.jetbrains.kotlin.analysis.api.components.KaTypeCreator` for the migration guide.",
+        ReplaceWith("typeCreator.varargArrayType")
+    )
     @KaExperimentalApi
     public fun buildVarargArrayType(elementType: KaType): KaType
 
     /**
      * Builds a [KaTypeParameterType] with the given type parameter symbol.
      */
+    @Deprecated(
+        "Use `typeCreator.typeParameterType` instead. " +
+                "See the KDoc for `org.jetbrains.kotlin.analysis.api.components.KaTypeCreator` for the migration guide.",
+        ReplaceWith("typeCreator.typeParameterType")
+    )
+    @Suppress("DEPRECATION")
     public fun buildTypeParameterType(symbol: KaTypeParameterSymbol, init: KaTypeParameterTypeBuilder.() -> Unit = {}): KaTypeParameterType
 
     /**
      * Builds a [KaStarTypeProjection] (`*`).
      */
+    @Deprecated(
+        "Use `typeCreator.starTypeProjection` instead. " +
+                "See the KDoc for `org.jetbrains.kotlin.analysis.api.components.KaTypeCreator` for the migration guide.",
+        ReplaceWith("typeCreator.starTypeProjection")
+    )
     @KaExperimentalApi
     public fun buildStarTypeProjection(): KaStarTypeProjection
 }
@@ -83,6 +130,10 @@ public interface KaTypeBuilder : KaLifetimeOwner
  *
  * @see KaTypeCreator.buildClassType
  */
+@Deprecated(
+    "Use `org.jetbrains.kotlin.analysis.api.components.KaTypeCreatorProvider.typeCreator` instead. " +
+            "See the KDoc for `org.jetbrains.kotlin.analysis.api.components.KaTypeCreator` for the migration guide."
+)
 @SubclassOptInRequired(KaImplementationDetail::class)
 public interface KaClassTypeBuilder : KaTypeBuilder {
     /**
@@ -119,6 +170,10 @@ public interface KaClassTypeBuilder : KaTypeBuilder {
  *
  * @see KaTypeCreator.buildTypeParameterType
  */
+@Deprecated(
+    "Use `org.jetbrains.kotlin.analysis.api.components.KaTypeCreatorProvider.typeCreator` instead. " +
+            "See the KDoc for `org.jetbrains.kotlin.analysis.api.components.KaTypeCreator` for the migration guide."
+)
 @SubclassOptInRequired(KaImplementationDetail::class)
 public interface KaTypeParameterTypeBuilder : KaTypeBuilder {
     /**
@@ -141,8 +196,12 @@ public interface KaTypeParameterTypeBuilder : KaTypeBuilder {
 /**
  * A builder for array types.
  *
- * @see KaTypeCreator.buildTypeParameterType
+ * @see KaTypeCreator.buildArrayType
  */
+@Deprecated(
+    "Use `org.jetbrains.kotlin.analysis.api.components.KaTypeCreatorProvider.typeCreator` instead. " +
+            "See the KDoc for `org.jetbrains.kotlin.analysis.api.components.KaTypeCreator` for the migration guide."
+)
 @KaExperimentalApi
 @SubclassOptInRequired(KaImplementationDetail::class)
 public interface KaArrayTypeBuilder : KaTypeBuilder {
@@ -178,7 +237,12 @@ public interface KaArrayTypeBuilder : KaTypeBuilder {
 /**
  * @see KaTypeCreator.buildClassType
  */
+@Deprecated(
+    "Use `org.jetbrains.kotlin.analysis.api.components.KaTypeCreatorProvider.typeCreator` instead. " +
+            "See the KDoc for `org.jetbrains.kotlin.analysis.api.components.KaTypeCreator` for the migration guide."
+)
 @KaContextParameterApi
+@Suppress("DEPRECATION")
 context(context: KaTypeCreator)
 public fun buildClassType(classId: ClassId, init: KaClassTypeBuilder.() -> Unit = {}): KaType {
     return with(context) { buildClassType(classId, init) }
@@ -187,7 +251,12 @@ public fun buildClassType(classId: ClassId, init: KaClassTypeBuilder.() -> Unit 
 /**
  * @see KaTypeCreator.buildClassType
  */
+@Deprecated(
+    "Use `org.jetbrains.kotlin.analysis.api.components.KaTypeCreatorProvider.typeCreator` instead. " +
+            "See the KDoc for `org.jetbrains.kotlin.analysis.api.components.KaTypeCreator` for the migration guide."
+)
 @KaContextParameterApi
+@Suppress("DEPRECATION")
 context(context: KaTypeCreator)
 public fun buildClassType(symbol: KaClassLikeSymbol, init: KaClassTypeBuilder.() -> Unit = {}): KaType {
     return with(context) { buildClassType(symbol, init) }
@@ -196,8 +265,13 @@ public fun buildClassType(symbol: KaClassLikeSymbol, init: KaClassTypeBuilder.()
 /**
  * @see KaTypeCreator.buildArrayType
  */
+@Deprecated(
+    "Use `org.jetbrains.kotlin.analysis.api.components.KaTypeCreatorProvider.typeCreator` instead. " +
+            "See the KDoc for `org.jetbrains.kotlin.analysis.api.components.KaTypeCreator` for the migration guide."
+)
 @KaExperimentalApi
 @KaContextParameterApi
+@Suppress("DEPRECATION")
 context(context: KaTypeCreator)
 public fun buildArrayType(elementType: KaType, init: KaArrayTypeBuilder.() -> Unit = {}): KaType {
     return with(context) { buildArrayType(elementType, init) }
@@ -206,8 +280,13 @@ public fun buildArrayType(elementType: KaType, init: KaArrayTypeBuilder.() -> Un
 /**
  * @see KaTypeCreator.buildVarargArrayType
  */
+@Deprecated(
+    "Use `org.jetbrains.kotlin.analysis.api.components.KaTypeCreatorProvider.typeCreator` instead. " +
+            "See the KDoc for `org.jetbrains.kotlin.analysis.api.components.KaTypeCreator` for the migration guide."
+)
 @KaExperimentalApi
 @KaContextParameterApi
+@Suppress("DEPRECATION")
 context(context: KaTypeCreator)
 public fun buildVarargArrayType(elementType: KaType): KaType {
     return with(context) { buildVarargArrayType(elementType) }
@@ -216,7 +295,12 @@ public fun buildVarargArrayType(elementType: KaType): KaType {
 /**
  * @see KaTypeCreator.buildTypeParameterType
  */
+@Deprecated(
+    "Use `org.jetbrains.kotlin.analysis.api.components.KaTypeCreatorProvider.typeCreator` instead. " +
+            "See the KDoc for `org.jetbrains.kotlin.analysis.api.components.KaTypeCreator` for the migration guide."
+)
 @KaContextParameterApi
+@Suppress("DEPRECATION")
 context(context: KaTypeCreator)
 public fun buildTypeParameterType(symbol: KaTypeParameterSymbol, init: KaTypeParameterTypeBuilder.() -> Unit = {}): KaTypeParameterType {
     return with(context) { buildTypeParameterType(symbol, init) }
@@ -225,8 +309,13 @@ public fun buildTypeParameterType(symbol: KaTypeParameterSymbol, init: KaTypePar
 /**
  * @see KaTypeCreator.buildStarTypeProjection
  */
+@Deprecated(
+    "Use `org.jetbrains.kotlin.analysis.api.components.KaTypeCreatorProvider.typeCreator` instead. " +
+            "See the KDoc for `org.jetbrains.kotlin.analysis.api.components.KaTypeCreator` for the migration guide."
+)
 @KaExperimentalApi
 @KaContextParameterApi
+@Suppress("DEPRECATION")
 context(context: KaTypeCreator)
 public fun buildStarTypeProjection(): KaStarTypeProjection {
     return with(context) { buildStarTypeProjection() }

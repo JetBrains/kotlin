@@ -7,10 +7,7 @@ package org.jetbrains.kotlin.analysis.api.impl.base.components
 
 import org.jetbrains.kotlin.analysis.api.KaImplementationDetail
 import org.jetbrains.kotlin.analysis.api.KaSession
-import org.jetbrains.kotlin.analysis.api.components.KaArrayTypeBuilder
-import org.jetbrains.kotlin.analysis.api.components.KaClassTypeBuilder
-import org.jetbrains.kotlin.analysis.api.components.KaTypeCreator
-import org.jetbrains.kotlin.analysis.api.components.KaTypeParameterTypeBuilder
+import org.jetbrains.kotlin.analysis.api.components.*
 import org.jetbrains.kotlin.analysis.api.impl.base.types.KaBaseStarTypeProjection
 import org.jetbrains.kotlin.analysis.api.impl.base.types.KaBaseTypeArgumentWithVariance
 import org.jetbrains.kotlin.analysis.api.lifetime.KaLifetimeToken
@@ -27,9 +24,18 @@ import org.jetbrains.kotlin.name.StandardClassIds
 import org.jetbrains.kotlin.types.Variance
 
 @KaImplementationDetail
+@Suppress("DEPRECATION")
 abstract class KaBaseTypeCreator<T : KaSession> : KaBaseSessionComponent<T>(), KaTypeCreator {
+    @Deprecated(
+        "Use `typeCreator.starTypeProjection` instead. See the KDoc for `org.jetbrains.kotlin.analysis.api.components.KaTypeCreator` for the migration guide.",
+        replaceWith = ReplaceWith("typeCreator.starTypeProjection")
+    )
     override fun buildStarTypeProjection(): KaStarTypeProjection = KaBaseStarTypeProjection(token)
 
+    @Deprecated(
+        "Use `typeCreator.arrayType` instead. See the KDoc for `org.jetbrains.kotlin.analysis.api.components.KaTypeCreator` for the migration guide.",
+        replaceWith = ReplaceWith("typeCreator.arrayType")
+    )
     override fun buildArrayType(elementType: KaType, init: KaArrayTypeBuilder.() -> Unit): KaType = withValidityAssertion {
         with(analysisSession) {
             val builder = KaBaseArrayTypeBuilder.ByElementType(elementType, token).apply(init)
@@ -42,19 +48,23 @@ abstract class KaBaseTypeCreator<T : KaSession> : KaBaseSessionComponent<T>(), K
                     StandardClassIds.primitiveArrayTypeByElementType[classId]
                         ?: StandardClassIds.unsignedArrayTypeByElementType[classId]
                 if (primitiveArrayId != null) {
-                    return buildClassType(primitiveArrayId) {
+                    return typeCreator.classType(primitiveArrayId) {
                         isMarkedNullable = builder.isMarkedNullable
                     }
                 }
             }
 
-            return buildClassType(StandardClassIds.Array) {
+            return typeCreator.classType(StandardClassIds.Array) {
                 isMarkedNullable = builder.isMarkedNullable
-                argument(builderElementType, builder.variance)
+                typeArgument(builder.variance, builderElementType)
             }
         }
     }
 
+    @Deprecated(
+        "Use `typeCreator.varargArrayType` instead. See the KDoc for `org.jetbrains.kotlin.analysis.api.components.KaTypeCreator` for the migration guide.",
+        replaceWith = ReplaceWith("typeCreator.varargArrayType")
+    )
     override fun buildVarargArrayType(elementType: KaType): KaType = withValidityAssertion {
         buildArrayType(elementType) {
             variance = Variance.OUT_VARIANCE
@@ -63,6 +73,7 @@ abstract class KaBaseTypeCreator<T : KaSession> : KaBaseSessionComponent<T>(), K
 }
 
 @KaImplementationDetail
+@Suppress("DEPRECATION")
 sealed class KaBaseClassTypeBuilder : KaClassTypeBuilder {
     private val backingArguments = mutableListOf<KaTypeProjection>()
 
@@ -108,6 +119,7 @@ sealed class KaBaseClassTypeBuilder : KaClassTypeBuilder {
 }
 
 @KaImplementationDetail
+@Suppress("DEPRECATION")
 sealed class KaBaseArrayTypeBuilder : KaArrayTypeBuilder {
     override var isMarkedNullable: Boolean = false
         get() = withValidityAssertion { field }
@@ -139,6 +151,7 @@ sealed class KaBaseArrayTypeBuilder : KaArrayTypeBuilder {
 }
 
 @KaImplementationDetail
+@Suppress("DEPRECATION")
 sealed class KaBaseTypeParameterTypeBuilder : KaTypeParameterTypeBuilder {
     @Deprecated("Use `isMarkedNullable` instead.", replaceWith = ReplaceWith("isMarkedNullable"))
     @Suppress("DEPRECATION")

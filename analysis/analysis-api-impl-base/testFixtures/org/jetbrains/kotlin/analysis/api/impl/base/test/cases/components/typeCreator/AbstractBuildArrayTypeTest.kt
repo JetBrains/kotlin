@@ -58,13 +58,13 @@ abstract class AbstractBuildArrayTypeTest : AbstractAnalysisApiBasedTest() {
             val variance = mainModule.testModule.directives.singleOrZeroValue(Directives.VARIANCE).parseVariance()
             val preferPrimitive = Directives.PREFER_PRIMITIVE in mainModule.testModule.directives
 
-            val arrayType = buildArrayType(expressionType) {
+            val arrayType = typeCreator.arrayType(expressionType) {
                 this.isMarkedNullable = isMarkedNullable
                 this.variance = variance
                 this.shouldPreferPrimitiveTypes = preferPrimitive
             }
 
-            val varargArrayType = buildVarargArrayType(expressionType)
+            val varargArrayType = typeCreator.varargArrayType(expressionType)
 
             buildString {
                 appendLine("ARRAY_TYPE")

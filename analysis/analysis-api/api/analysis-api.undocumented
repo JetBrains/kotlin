@@ -52,7 +52,6 @@ org.jetbrains.kotlin.analysis.api.components.KaSubstitutorProvider
 org.jetbrains.kotlin.analysis.api.components.KaSymbolInformationProvider
 org.jetbrains.kotlin.analysis.api.components.KaSymbolRelationProvider
 org.jetbrains.kotlin.analysis.api.components.KaTypeBuilder
-org.jetbrains.kotlin.analysis.api.components.KaTypeCreator
 org.jetbrains.kotlin.analysis.api.components.KaTypeInformationProvider
 org.jetbrains.kotlin.analysis.api.components.KaTypeProvider
 org.jetbrains.kotlin.analysis.api.components.KaTypeProvider.defaultType
