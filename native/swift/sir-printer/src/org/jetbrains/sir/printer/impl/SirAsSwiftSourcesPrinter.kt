@@ -544,6 +544,7 @@ internal class SirAsSwiftSourcesPrinter private constructor(
     private val SirType.swiftRender: String
         get() = "Self".takeIf { currentContext.declaration.let { it is SirExtension && it.extendedType == this && it.extendedType.isBivariantSelf == true } }
             ?: when (this) {
+                is SirImplicitlyUnwrappedOptionalType -> wrappedType.swiftRender.let { if (it.any { it.isWhitespace() }) "($it)" else it } + "!"
                 is SirOptionalType -> wrappedType.swiftRender.let { if (it.any { it.isWhitespace() }) "($it)" else it } + "?"
                 is SirArrayType -> "[${elementType.swiftRender}]"
                 is SirDictionaryType -> "[${keyType.swiftRender}: ${valueType.swiftRender}]"
