@@ -74,7 +74,7 @@ internal fun readJsonReport(jsonReport: Path): BuildExecutionData {
                 typeOfT: Type?,
                 context: JsonDeserializationContext?,
             ): DynamicBuildTimeKey? = json?.asString?.let { keyStr ->
-                val regex = "name=([^,)]+), parent=([^,)]+)".toRegex()
+                val regex = "name=(.+), parent=([^,)]+)".toRegex()
                 val (_, name, parentStr) = regex.find(keyStr)?.groupValues
                     ?: error("Could not deserialize org.jetbrains.kotlin.build.report.metrics.DynamicBuildTimeKey")
                 val parent = GradleBuildTime.valueOf(parentStr)
