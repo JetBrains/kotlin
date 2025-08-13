@@ -125,6 +125,9 @@ idea {
                 "dokka-integration-tests/gradle/projects/it-android/expectedData",
                 "dokka-integration-tests/gradle/projects/it-android-compose/expectedData",
                 "dokka-integration-tests/gradle/projects/it-kotlin-multiplatform/expectedData",
+
+                "examples/gradle/dokka-versioning-multimodule-example/previousDocVersions/",
+                "examples/gradle-v2/versioning-multimodule-example/docs/previousDocVersions/",
             )
         )
     }
