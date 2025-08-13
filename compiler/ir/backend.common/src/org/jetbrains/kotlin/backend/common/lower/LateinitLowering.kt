@@ -168,8 +168,9 @@ open class LateinitLowering(
         getter.body = loweringContext.irFactory.createBlockBody(startOffset, endOffset) {
             val irBuilder = loweringContext.createIrBuilder(getter.symbol, startOffset, endOffset)
             irBuilder.run {
-                val resultVar = scope.createTmpVariable(
-                    irGetField(getter.dispatchReceiverParameter?.let { irGet(it) }, backingField, type)
+                val resultVar = scope.createTemporaryVariable(
+                    irGetField(getter.dispatchReceiverParameter?.let { irGet(it) }, backingField, type),
+                    inventUniqueName = false,
                 )
                 resultVar.parent = getter
                 statements.add(resultVar)

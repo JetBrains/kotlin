@@ -117,7 +117,8 @@ internal class StepHandler(
                 ProgressionDirection.INCREASING -> stepArgExpression
                 ProgressionDirection.DECREASING -> {
                     if (stepArgVar == null) {
-                        stepNegation = scope.createTmpVariable(stepArgExpression.shallowCopy().negate())
+                        stepNegation =
+                            scope.createTemporaryVariable(stepArgExpression.shallowCopy().negate(), inventUniqueName = false)
                         irGet(stepNegation)
                     } else {
                         // Step is already stored in a variable, just negate it.
@@ -137,14 +138,15 @@ internal class StepHandler(
                     }
                     if (stepArgVar == null) {
                         // Create a temporary variable for the possibly-negated step, so we don't have to re-check every time step is used.
-                        stepNegation = scope.createTmpVariable(
+                        stepNegation = scope.createTemporaryVariable(
                             irIfThenElse(
                                 stepType,
                                 nestedStepNonPositiveCheck,
                                 stepArgExpression.shallowCopy().negate(),
                                 stepArgExpression.shallowCopy()
                             ),
-                            nameHint = "maybeNegatedStep"
+                            nameHint = "maybeNegatedStep",
+                            inventUniqueName = false,
                         )
                         irGet(stepNegation)
                     } else {

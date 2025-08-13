@@ -52,12 +52,13 @@ abstract class NumericForLoopHeader<T : NumericHeaderInfo>(
                 // In the above example, if first() is a Long and last() is an Int, this creates a
                 // LongProgression so last() should be cast to a Long.
                 inductionVariable =
-                    scope.createTmpVariable(
+                    scope.createTemporaryVariable(
                         headerInfo.first.asElementType(),
                         nameHint = inductionVariableName,
                         isMutable = true,
                         origin = this@NumericForLoopHeader.context.inductionVariableOrigin,
-                        irType = elementClass.defaultType
+                        irType = elementClass.defaultType,
+                        inventUniqueName = false,
                     )
 
                 // Due to features of PSI2IR we can obtain nullable arguments here while actually

@@ -7,7 +7,6 @@ package org.jetbrains.kotlin.backend.common.lower.loops
 
 import org.jetbrains.kotlin.backend.common.lower.DeclarationIrBuilder
 import org.jetbrains.kotlin.builtins.PrimitiveType
-import org.jetbrains.kotlin.ir.builders.createTmpVariable
 import org.jetbrains.kotlin.ir.builders.irGet
 import org.jetbrains.kotlin.ir.declarations.IrClass
 import org.jetbrains.kotlin.ir.declarations.IrReturnTarget
@@ -109,7 +108,13 @@ internal fun DeclarationIrBuilder.createTemporaryVariableIfNecessary(
     isMutable: Boolean = false
 ): Pair<IrVariable?, IrExpression> =
     if (expression.canHaveSideEffects) {
-        scope.createTmpVariable(expression, nameHint = nameHint, irType = irType, isMutable = isMutable).let { Pair(it, irGet(it)) }
+        scope.createTemporaryVariable(
+            expression,
+            nameHint = nameHint,
+            irType = irType,
+            isMutable = isMutable,
+            inventUniqueName = false
+        ).let { Pair(it, irGet(it)) }
     } else {
         Pair(null, expression)
     }
@@ -130,7 +135,13 @@ internal fun DeclarationIrBuilder.createLoopTemporaryVariableIfNecessary(
     isMutable: Boolean = false
 ): Pair<IrVariable?, IrExpression> =
     if (expression.canChangeValueDuringExecution) {
-        scope.createTmpVariable(expression, nameHint = nameHint, irType = irType, isMutable = isMutable).let { Pair(it, irGet(it)) }
+        scope.createTemporaryVariable(
+            expression,
+            nameHint = nameHint,
+            irType = irType,
+            isMutable = isMutable,
+            inventUniqueName = false,
+        ).let { Pair(it, irGet(it)) }
     } else {
         Pair(null, expression)
     }
