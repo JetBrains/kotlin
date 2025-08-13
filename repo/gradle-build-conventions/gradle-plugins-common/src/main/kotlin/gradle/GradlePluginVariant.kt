@@ -38,9 +38,6 @@ enum class GradlePluginVariant(
     companion object {
         const val GRADLE_COMMON_COMPILE_API_VERSION = "8.14"
 
-        /**
-         * These values are used in [org.jetbrains.kotlin.gradle.GradleCompatibilityIT.buildScriptResolvesGradleVersionSpecificJars] and [GradlePluginTests]
-         */
         val MIDDLE_GRADLE_VARIANT_FOR_TESTS = GradlePluginVariant.values().run { this[size / 2] }
         val MAXIMUM_SUPPORTED_GRADLE_VARIANT = GradlePluginVariant.values().last()
     }

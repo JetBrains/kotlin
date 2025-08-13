@@ -2,9 +2,15 @@ import gradle.GradlePluginVariant
 import org.gradle.api.Project
 import org.gradle.api.attributes.Usage
 import org.gradle.api.internal.project.ProjectInternal
+import org.gradle.api.plugins.ExtraPropertiesExtension
+import org.gradle.kotlin.dsl.get
+import org.gradle.kotlin.dsl.getByType
 import org.gradle.kotlin.dsl.named
 import org.gradle.kotlin.dsl.project
 import org.gradle.testfixtures.ProjectBuilder
+import org.jetbrains.dokka.gradle.AbstractDokkaLeafTask
+import org.jetbrains.dokka.gradle.GradleDokkaSourceSetBuilder
+import org.jetbrains.dokka.gradle.tasks.DokkaGenerateTask
 import org.jetbrains.kotlin.gradle.plugin.extraProperties
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.io.TempDir
@@ -29,18 +35,18 @@ class GradlePluginTests {
         val producerPluginDependency = createKotlinSubproject("producerPluginDependency", root)
         producerPluginDependency.version = "1.0"
         producerPluginDependency.beforeEvaluate {
-            plugins.apply("gradle-plugin-dependency-configuration")
+            plugins.apply(GRADLE_PLUGIN_DEPENDENCY_CONFIGURATION_CONVENTION_PLUGIN)
         }
 
         val producerPlugin = createKotlinSubproject("producerPlugin", root)
         producerPlugin.version = "1.0"
         producerPlugin.beforeEvaluate {
-            plugins.apply("gradle-plugin-common-configuration")
+            plugins.apply(GRADLE_PLUGIN_COMMON_CONFIGURATION_CONVENTION_PLUGIN)
         }
 
         val consumerPlugin = createKotlinSubproject("consumerPlugin", root)
         consumerPlugin.beforeEvaluate {
-            plugins.apply("gradle-plugin-common-configuration")
+            plugins.apply(GRADLE_PLUGIN_COMMON_CONFIGURATION_CONVENTION_PLUGIN)
             dependencies.add("commonImplementation", dependencies.project(":producerPlugin"))
             dependencies.add("commonImplementation", dependencies.project(":producerPluginDependency"))
         }
@@ -97,6 +103,51 @@ class GradlePluginTests {
         )
     }
 
+    @Test
+    fun `gradle variant source sets - dokka generation doesn't see main source set in variant source sets`() {
+        val root = createFakeKotlinRoot()
+        val project = createKotlinSubproject("project", root)
+        root.extraProperties.set("kotlin.build.gradle.publish.javadocs", "true")
+        project.beforeEvaluate {
+            plugins.apply(GRADLE_PLUGIN_DEPENDENCY_CONFIGURATION_CONVENTION_PLUGIN)
+            plugins.apply(GRADLE_PLUGIN_API_REFERENCE)
+        }
+        project.afterEvaluate {
+            extensions.getByType<PluginApiReferenceExtension>().enableForAllGradlePluginVariants()
+        }
+        project.evaluate()
+
+        val mainDokkaTask = project.tasks.getByName("dokkaHtml") as AbstractDokkaLeafTask
+        val variantSourceSetDokkaTask = project.tasks.getByName(
+            "dokka${GradlePluginVariant.MIDDLE_GRADLE_VARIANT_FOR_TESTS.sourceSetName.replaceFirstChar { it.uppercaseChar() }}Html"
+        ) as AbstractDokkaLeafTask
+
+        val targetSourceSets = listOf(
+            "main",
+            "common",
+            GradlePluginVariant.MIDDLE_GRADLE_VARIANT_FOR_TESTS.sourceSetName
+        )
+
+        assertEquals(
+            listOf(
+                "main" to false,
+                "common" to false,
+                GradlePluginVariant.MIDDLE_GRADLE_VARIANT_FOR_TESTS.sourceSetName to true,
+            ),
+            targetSourceSets.map { mainDokkaTask.dokkaSourceSets.getByName(it).state() }
+        )
+        assertEquals(
+            listOf(
+                "main" to true,
+                "common" to false,
+                GradlePluginVariant.MIDDLE_GRADLE_VARIANT_FOR_TESTS.sourceSetName to false,
+            ),
+            targetSourceSets.map { variantSourceSetDokkaTask.dokkaSourceSets.getByName(it).state() },
+        )
+    }
+
+    private fun GradleDokkaSourceSetBuilder.state() = name to suppress.get()
+
     private fun Project.actualCompilationClasspath(
         variantSourceSetName: String,
         dependencyPathsToCheck: List<Path>,
@@ -133,5 +184,11 @@ class GradlePluginTests {
         createKotlinSubproject("kotlin-compiler-embeddable", root)
 
         return root
+    }
+
+    companion object {
+        private const val GRADLE_PLUGIN_DEPENDENCY_CONFIGURATION_CONVENTION_PLUGIN = "gradle-plugin-dependency-configuration"
+        private const val GRADLE_PLUGIN_COMMON_CONFIGURATION_CONVENTION_PLUGIN = "gradle-plugin-common-configuration"
+        private const val GRADLE_PLUGIN_API_REFERENCE = "gradle-plugin-api-reference"
     }
 }

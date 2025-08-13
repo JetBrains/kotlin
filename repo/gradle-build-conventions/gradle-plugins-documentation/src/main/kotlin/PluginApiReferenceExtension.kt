@@ -14,7 +14,8 @@ import javax.inject.Inject
 abstract class PluginApiReferenceExtension @Inject constructor(
     private val project: Project
 ) {
-    fun enableForGradlePluginVariants(variants: Set<GradlePluginVariant>) {
+    fun enableForAllGradlePluginVariants() {
+        val variants = GradlePluginVariant.values()
         if (project.kotlinBuildProperties.publishGradlePluginsJavadoc) {
             variants.forEach { variant ->
                 project.generateJavadocForPluginVariant(variant)
