@@ -1,6 +1,5 @@
 // LANGUAGE: +MultiPlatformProjects
 // ISSUE: KT-80064
-// IGNORE_HMPP: ANY
 
 // MODULE: lib-common
 typealias Some = Int
@@ -23,6 +22,6 @@ fun testAppCommon(c: Some) {}
 fun testAppIntermediate(s: Some) {}
 
 // MODULE: app-platform(lib-platform, lib2-platform)()(app-inter)
-// fun testAppPlatform(s: Some) {}
+fun testAppPlatform(s: Some) {}
 
 fun box() = "OK"

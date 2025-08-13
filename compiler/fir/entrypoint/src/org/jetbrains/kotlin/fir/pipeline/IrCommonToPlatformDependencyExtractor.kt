@@ -92,7 +92,7 @@ class IrCommonToPlatformDependencyActualizerMapContributor private constructor(
             commonFirClassSymbol: FirClassLikeSymbol<*>,
             platformFirClassSymbol: FirClassLikeSymbol<*>,
         ) {
-            val commonIrClassSymbol = commonFirClassSymbol.toIrSymbol() as IrClassSymbol
+            val commonIrClassSymbol = commonFirClassSymbol.toIrSymbol() as? IrClassSymbol ?: return
             val platformClassSymbol = when (val platformSymbol = platformFirClassSymbol.toIrSymbol()) {
                 is IrClassSymbol -> platformSymbol
                 is IrTypeAliasSymbol -> {
@@ -125,8 +125,8 @@ class IrCommonToPlatformDependencyActualizerMapContributor private constructor(
                         appendLine("Platform symbol: $platformFirClassSymbol")
                     }
                 }
-                val expandedCommonFirClassSymbol = commonFirClassSymbol.fullyExpandedClass(commonFirClassSymbol.moduleData.session)!!
-                val expandedPlatformFirClassSymbol = platformFirClassSymbol.fullyExpandedClass(platformFirClassSymbol.moduleData.session)!!
+                val expandedCommonFirClassSymbol = commonFirClassSymbol.fullyExpandedClass(platformMappingProvider.commonSymbolProvider.session)!!
+                val expandedPlatformFirClassSymbol = platformFirClassSymbol.fullyExpandedClass(platformMappingProvider.platformSymbolProvider.session)!!
                 processPairOfClasses(expandedCommonFirClassSymbol, expandedPlatformFirClassSymbol)
             } else {
                 processPairOfClasses(commonFirClassSymbol, platformFirClassSymbol)
