@@ -14,6 +14,7 @@ import org.jetbrains.kotlin.analysis.low.level.api.fir.file.structure.*
 import org.jetbrains.kotlin.analysis.low.level.api.fir.resolve.*
 import org.jetbrains.kotlin.analysis.low.level.api.fir.resolve.extensions.AbstractResolveExtensionDisposalAfterModificationEventTest
 import org.jetbrains.kotlin.analysis.low.level.api.fir.sessions.*
+import org.jetbrains.kotlin.analysis.low.level.api.fir.symbolProviders.combined.AbstractCombinedPackageDelegationSymbolProviderTest
 import org.jetbrains.kotlin.generators.TestGroup
 import org.jetbrains.kotlin.generators.TestGroupSuite
 import org.jetbrains.kotlin.generators.util.TestGeneratorUtil
@@ -342,6 +343,10 @@ internal fun TestGroupSuite.generateFirLowLevelApiTests() {
 
         testClass<AbstractScriptPsiBasedContainingClassCalculatorConsistencyTest> {
             model("psiBasedContainingClass", pattern = TestGeneratorUtil.KTS)
+        }
+
+        testClass<AbstractCombinedPackageDelegationSymbolProviderTest> {
+            model("symbolProviders/combinedPackageDelegationSymbolProvider")
         }
     }
 
