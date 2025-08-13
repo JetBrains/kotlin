@@ -169,18 +169,18 @@ internal fun <T : BitcodePostProcessingContext> PhaseEngine<T>.runBitcodePostPro
     )
     useContext(OptimizationState(context.config, optimizationConfig, context.performanceManager)) {
         val module = this@runBitcodePostProcessing.context.llvmModule
-        it.runPhase(StackProtectorPhase, module)
-        it.runPhase(MandatoryBitcodeLLVMPostprocessingPhase, module)
-        it.runPhase(ModuleBitcodeOptimizationPhase, module)
-        it.runPhase(LTOBitcodeOptimizationPhase, module)
+        it.runAndMeasurePhase(StackProtectorPhase, module)
+        it.runAndMeasurePhase(MandatoryBitcodeLLVMPostprocessingPhase, module)
+        it.runAndMeasurePhase(ModuleBitcodeOptimizationPhase, module)
+        it.runAndMeasurePhase(LTOBitcodeOptimizationPhase, module)
         when (context.config.sanitizer) {
-            SanitizerKind.THREAD -> it.runPhase(ThreadSanitizerPhase, module)
+            SanitizerKind.THREAD -> it.runAndMeasurePhase(ThreadSanitizerPhase, module)
             SanitizerKind.ADDRESS -> context.reportCompilationError("Address sanitizer is not supported yet")
             null -> {}
         }
     }
-    runPhase(RemoveRedundantSafepointsPhase)
+    runAndMeasurePhase(RemoveRedundantSafepointsPhase)
     if (context.config.optimizationsEnabled) {
-        runPhase(OptimizeTLSDataLoadsPhase)
+        runAndMeasurePhase(OptimizeTLSDataLoadsPhase)
     }
 }
