@@ -1,5 +1,6 @@
 plugins {
     kotlin("jvm")
+    id("project-tests-convention")
 }
 
 sourceSets {
@@ -24,4 +25,6 @@ optInTo("org.jetbrains.kotlin.backend.konan.InternalKotlinNativeApi")
 
 testsJar()
 
-objCExportHeaderGeneratorTest("test")
+projectTests {
+    objCExportHeaderGeneratorTestTask("test")
+}

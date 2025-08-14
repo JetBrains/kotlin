@@ -1,6 +1,7 @@
 plugins {
     kotlin("jvm")
     id("jps-compatible")
+    id("project-tests-convention")
 }
 
 description = "Integrated Swift Export Environment"
@@ -36,11 +37,13 @@ sourceSets {
     }
 }
 
+projectTests {
+    nativeTestTask("test", null) {
+        dependsOn(":dist", ":kotlin-native:distInvalidateStaleCaches")
+    }
 
-val test by nativeTest("test", null) {
-    dependsOn(":dist", ":kotlin-native:distInvalidateStaleCaches")
+    withJvmStdlibAndReflect()
 }
-
 
 publish()
 

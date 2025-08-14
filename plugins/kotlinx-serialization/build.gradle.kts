@@ -190,18 +190,18 @@ projectTests {
         setUpJsIrBoxTests()
     }
 
+    nativeTestTask(
+        taskName = "nativeTest",
+        tag = "serialization-native", // Include all tests with the "serialization-native" tag
+        requirePlatformLibs = false,
+        customTestDependencies = listOf(coreNativeRuntimeForTests, jsonNativeRuntimeForTests),
+        compilerPluginDependencies = listOf(serializationPluginForTests)
+    )
+
     testGenerator("org.jetbrains.kotlin.generators.tests.GenerateSerializationTestsKt")
 
     withJvmStdlibAndReflect()
 }
-
-val nativeTest = nativeTest(
-    taskName = "nativeTest",
-    tag = "serialization-native", // Include all tests with the "serialization-native" tag
-    requirePlatformLibs = false,
-    customTestDependencies = listOf(coreNativeRuntimeForTests, jsonNativeRuntimeForTests),
-    compilerPluginDependencies = listOf(serializationPluginForTests)
-)
 
 fun Test.setUpJsIrBoxTests() {
     useJsIrBoxTests(version = version, buildDir = layout.buildDirectory)

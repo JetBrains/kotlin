@@ -6,6 +6,7 @@ import org.jetbrains.kotlin.konan.target.KonanTarget
 
 plugins {
     kotlin("jvm")
+    id("project-tests-convention")
 }
 
 repositories {
@@ -71,10 +72,12 @@ sourceSets {
     }
 }
 
-nativeTest(
-    taskName = "test",
-    tag = "litmuskt-native", // Include all tests with the "litmuskt-native" tag.
-    requirePlatformLibs = true,
-    customTestDependencies = listOf(litmusKt),
-    allowParallelExecution = false,
-)
+projectTests {
+    nativeTestTask(
+        taskName = "test",
+        tag = "litmuskt-native", // Include all tests with the "litmuskt-native" tag.
+        requirePlatformLibs = true,
+        customTestDependencies = listOf(litmusKt),
+        allowParallelExecution = false,
+    )
+}

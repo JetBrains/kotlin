@@ -1,6 +1,7 @@
 plugins {
     kotlin("jvm")
     id("jps-compatible")
+    id("project-tests-convention")
 }
 
 description = "A set of integration tests for Swift Export Standalone based on external projects"
@@ -29,8 +30,10 @@ sourceSets {
     }
 }
 
-val test by nativeTestWithExternalDependencies("test", requirePlatformLibs = true) {
-    dependsOn(":kotlin-native:distInvalidateStaleCaches")
+projectTests {
+    nativeTestTaskWithExternalDependencies("test", requirePlatformLibs = true) {
+        dependsOn(":kotlin-native:distInvalidateStaleCaches")
+    }
 }
 
 testsJar()

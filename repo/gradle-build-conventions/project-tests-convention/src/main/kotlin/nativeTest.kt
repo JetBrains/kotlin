@@ -4,7 +4,6 @@ import org.gradle.api.Project
 import org.gradle.api.artifacts.Configuration
 import org.gradle.api.attributes.Usage
 import org.gradle.api.file.ConfigurableFileCollection
-import org.gradle.api.file.ConfigurableFileTree
 import org.gradle.api.file.DirectoryProperty
 import org.gradle.api.file.FileCollection
 import org.gradle.api.model.ObjectFactory
@@ -286,7 +285,8 @@ private fun ProviderFactory.testProperty(property: TestProperty) =
  *   for the duration of test execution.
  * @param allowParallelExecution if false, force junit to execute test sequentially
  */
-fun Project.nativeTest(
+@Suppress("UNCHECKED_CAST")
+fun ProjectTestsExtension.nativeTestTask(
     taskName: String,
     tag: String?,
     requirePlatformLibs: Boolean = false,
@@ -298,17 +298,21 @@ fun Project.nativeTest(
     maxMetaspaceSizeMb: Int = 512,
     defineJDKEnvVariables: List<JdkMajorVersion> = emptyList(),
     body: Test.() -> Unit = {},
-) = projectTest(
-    taskName,
+): TaskProvider<Test> = testTask(
+    taskName = taskName,
     jUnitMode = JUnitMode.JUnit5,
     maxHeapSizeMb = 3072, // Extra heap space for Kotlin/Native compiler.
     maxMetaspaceSizeMb = maxMetaspaceSizeMb,
     defineJDKEnvVariables = defineJDKEnvVariables,
+    skipInLocalBuild = false,
 ) {
+    val project = this@nativeTestTask.project
+    val kotlinBuildProperties = project.kotlinBuildProperties
+
     group = "verification"
 
     if (kotlinBuildProperties.isKotlinNativeEnabled) {
-        workingDir = rootDir
+        workingDir = project.rootDir
 
         // Use ARM64 JDK on ARM64 Mac as required by the K/N compiler.
         // See https://youtrack.jetbrains.com/issue/KTI-2421#focus=Comments-27-12231298.0-0.
@@ -332,7 +336,7 @@ fun Project.nativeTest(
         // additional stack frames more compared to the old one because of another launcher, etc. and it turns out this is not enough.
         jvmArgs("-Xss2m")
 
-        jvmArgumentProviders.add(objects.newInstance(NativeArgsProvider::class.java, requirePlatformLibs).apply {
+        jvmArgumentProviders.add(project.objects.newInstance(NativeArgsProvider::class.java, requirePlatformLibs).apply {
             this.customCompilerDependencies.from(customCompilerDependencies)
             this.compilerPluginDependencies.from(compilerPluginDependencies)
             this.customTestDependencies.from(customTestDependencies)
@@ -392,4 +396,4 @@ fun Project.nativeTest(
     environment("LIBCLANG_DISABLE_CRASH_RECOVERY" to "1")
 
     body()
-}
+} as TaskProvider<Test>

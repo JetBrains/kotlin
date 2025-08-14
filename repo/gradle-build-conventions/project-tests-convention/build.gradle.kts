@@ -34,4 +34,5 @@ dependencies {
     implementation(libs.develocity.gradlePlugin)
     implementation("org.jetbrains.kotlin:kotlin-build-gradle-plugin:${kotlinBuildProperties.buildGradlePluginVersion}")
     api(project(":utilities"))
+    compileOnly("org.jetbrains.kotlin:kotlin-gradle-plugin:${project.bootstrapKotlinVersion}")
 }

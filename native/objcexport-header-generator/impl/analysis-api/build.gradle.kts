@@ -1,5 +1,6 @@
 plugins {
     kotlin("jvm")
+    id("project-tests-convention")
 }
 
 kotlin {
@@ -30,4 +31,6 @@ sourceSets {
 
 testsJar()
 
-objCExportHeaderGeneratorTest("test")
+projectTests {
+    objCExportHeaderGeneratorTestTask("test")
+}

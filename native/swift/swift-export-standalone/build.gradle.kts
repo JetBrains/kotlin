@@ -1,9 +1,8 @@
-import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
-
 plugins {
     kotlin("jvm")
     id("jps-compatible")
     id("gradle-plugin-compiler-dependency-configuration")
+    id("project-tests-convention")
 }
 
 description = "Standalone Runner for Swift Export"

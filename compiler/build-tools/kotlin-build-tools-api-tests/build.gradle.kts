@@ -4,7 +4,7 @@ plugins {
     kotlin("jvm")
     `jvm-test-suite`
     id("test-symlink-transformation")
-    id("compiler-tests-convention")
+    id("project-tests-convention")
 }
 
 dependencies {
@@ -97,7 +97,7 @@ testing {
                     }
                 }
                 targets.all {
-                    compilerTests {
+                    projectTests {
                         testTask(taskName = testTask.name, jUnitMode = JUnitMode.JUnit5, skipInLocalBuild = false) {
                             ensureExecutedAgainstExpectedBuildToolsImplVersion(implVersion)
                             systemProperty("kotlin.build-tools-api.log.level", "DEBUG")
@@ -126,7 +126,7 @@ testing {
 
             targets.all {
                 if (!testTask.name.startsWith("testCompatibility")) {
-                    compilerTests {
+                    projectTests {
                         testTask(taskName = testTask.name, jUnitMode = JUnitMode.JUnit5, skipInLocalBuild = false) {
                             systemProperty("kotlin.build-tools-api.log.level", "DEBUG")
                         }

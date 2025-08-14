@@ -37,31 +37,31 @@ projectTests {
     testData(project(":compiler").isolated, "testData/diagnostics")
     testData(project(":native:native.tests").isolated, "testData/klib")
     testData(project(":native:native.tests").isolated, "testData/irProvidersMismatch")
+
+    nativeTestTask(
+        "test",
+        null,
+        allowParallelExecution = true,
+        requirePlatformLibs = true,
+    ) {
+        // To workaround KTI-2421, we make these tests run on JDK 11 instead of the project-default JDK 8.
+        // Kotlin test infra uses reflection to access JDK internals.
+        // With JDK 11, some JVM args are required to silence the warnings caused by that:
+        jvmArgs("--add-opens=java.base/java.io=ALL-UNNAMED")
+
+        extensions.configure<TestInputsCheckExtension> {
+            isNative.set(true)
+            useXcode.set(OperatingSystem.current().isMacOsX)
+        }
+        // nativeTest sets workingDir to rootDir so here we need to override it
+        workingDir = projectDir
+        systemProperty("user.dir", layout.buildDirectory.asFile.get().absolutePath)
+    }
+
+    testGenerator("org.jetbrains.kotlin.generators.tests.GenerateKlibNativeTestsKt") {
+        javaLauncher.set(project.getToolchainLauncherFor(JdkMajorVersion.JDK_11_0))
+        dependsOn(":compiler:generateTestData")
+    }
 }
 
 testsJar {}
-
-nativeTest(
-    "test",
-    null,
-    allowParallelExecution = true,
-    requirePlatformLibs = true,
-) {
-    // To workaround KTI-2421, we make these tests run on JDK 11 instead of the project-default JDK 8.
-    // Kotlin test infra uses reflection to access JDK internals.
-    // With JDK 11, some JVM args are required to silence the warnings caused by that:
-    jvmArgs("--add-opens=java.base/java.io=ALL-UNNAMED")
-
-    extensions.configure<TestInputsCheckExtension> {
-        isNative.set(true)
-        useXcode.set(OperatingSystem.current().isMacOsX)
-    }
-    // nativeTest sets workingDir to rootDir so here we need to override it
-    workingDir = projectDir
-    systemProperty("user.dir", layout.buildDirectory.asFile.get().absolutePath)
-}
-
-val generateTests by generator("org.jetbrains.kotlin.generators.tests.GenerateKlibNativeTestsKt") {
-    javaLauncher.set(project.getToolchainLauncherFor(JdkMajorVersion.JDK_11_0))
-    dependsOn(":compiler:generateTestData")
-}
